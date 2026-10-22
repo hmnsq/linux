@@ -11,14 +11,14 @@
 void scx_tick(struct rq *rq);
 void init_scx_entity(struct sched_ext_entity *scx);
 void scx_pre_fork(struct task_struct *p);
-int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs);
+整数 scx_fork(struct task_struct *p, struct kernel_clone_args *kargs);
 void scx_post_fork(struct task_struct *p);
 void scx_cancel_fork(struct task_struct *p);
 bool scx_can_stop_tick(struct rq *rq);
 void scx_rq_activate(struct rq *rq);
 void scx_rq_deactivate(struct rq *rq);
-int scx_check_setscheduler(struct task_struct *p, int policy);
-bool task_should_scx(int policy);
+整数 scx_check_setscheduler(struct task_struct *p, 整数 policy);
+bool task_should_scx(整数 policy);
 bool scx_allow_ttwu_queue(const struct task_struct *p);
 bool scx_allow_proxy_exec(const struct task_struct *p);
 void scx_proxy_donor_start(struct rq *rq);
@@ -27,15 +27,15 @@ void init_sched_ext_class(void);
 
 static inline u32 scx_cpuperf_target(s32 cpu)
 {
-	if (scx_enabled())
-		return cpu_rq(cpu)->scx.cpuperf_target;
-	else
-		return 0;
+	如果 (scx_enabled())
+		返回 cpu_rq(cpu)->scx.cpuperf_target;
+	否则
+		返回 0;
 }
 
 static inline bool task_on_scx(const struct task_struct *p)
 {
-	return scx_enabled() && p->sched_class == &ext_sched_class;
+	返回 scx_enabled() && p->sched_class == &ext_sched_class;
 }
 
 #ifdef CONFIG_SCHED_CORE
@@ -43,21 +43,21 @@ bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
 		   bool in_fi);
 #endif
 
-#else	/* CONFIG_SCHED_CLASS_EXT */
+#否则	/* CONFIG_SCHED_CLASS_EXT */
 
 static inline void scx_tick(struct rq *rq) {}
 static inline void scx_pre_fork(struct task_struct *p) {}
-static inline int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs) { return 0; }
+static inline 整数 scx_fork(struct task_struct *p, struct kernel_clone_args *kargs) { 返回 0; }
 static inline void scx_post_fork(struct task_struct *p) {}
 static inline void scx_cancel_fork(struct task_struct *p) {}
-static inline u32 scx_cpuperf_target(s32 cpu) { return 0; }
-static inline bool scx_can_stop_tick(struct rq *rq) { return true; }
+static inline u32 scx_cpuperf_target(s32 cpu) { 返回 0; }
+static inline bool scx_can_stop_tick(struct rq *rq) { 返回 true; }
 static inline void scx_rq_activate(struct rq *rq) {}
 static inline void scx_rq_deactivate(struct rq *rq) {}
-static inline int scx_check_setscheduler(struct task_struct *p, int policy) { return 0; }
-static inline bool task_on_scx(const struct task_struct *p) { return false; }
-static inline bool scx_allow_ttwu_queue(const struct task_struct *p) { return true; }
-static inline bool scx_allow_proxy_exec(const struct task_struct *p) { return true; }
+static inline 整数 scx_check_setscheduler(struct task_struct *p, 整数 policy) { 返回 0; }
+static inline bool task_on_scx(const struct task_struct *p) { 返回 false; }
+static inline bool scx_allow_ttwu_queue(const struct task_struct *p) { 返回 true; }
+static inline bool scx_allow_proxy_exec(const struct task_struct *p) { 返回 true; }
 static inline void scx_proxy_donor_start(struct rq *rq) {}
 static inline void scx_proxy_reenqueue_retry(struct rq *rq,
 					     struct task_struct *next) {}
@@ -70,29 +70,29 @@ void __scx_update_idle(struct rq *rq, bool idle, bool do_notify);
 
 static inline void scx_update_idle(struct rq *rq, bool idle, bool do_notify)
 {
-	if (scx_enabled())
+	如果 (scx_enabled())
 		__scx_update_idle(rq, idle, do_notify);
 }
-#else
+#否则
 static inline void scx_update_idle(struct rq *rq, bool idle, bool do_notify) {}
 #endif
 
 #ifdef CONFIG_CGROUP_SCHED
 #ifdef CONFIG_EXT_GROUP_SCHED
 void scx_tg_init(struct task_group *tg);
-int scx_tg_online(struct task_group *tg);
+整数 scx_tg_online(struct task_group *tg);
 void scx_tg_offline(struct task_group *tg);
-int scx_cgroup_can_attach(struct cgroup_taskset *tset);
+整数 scx_cgroup_can_attach(struct cgroup_taskset *tset);
 void scx_cgroup_move_task(struct task_struct *p);
 void scx_cgroup_cancel_attach(struct cgroup_taskset *tset);
 void scx_group_set_weight(struct task_group *tg, unsigned long cgrp_weight);
 void scx_group_set_idle(struct task_group *tg, bool idle);
 void scx_group_set_bandwidth(struct task_group *tg, u64 period_us, u64 quota_us, u64 burst_us);
-#else	/* CONFIG_EXT_GROUP_SCHED */
+#否则	/* CONFIG_EXT_GROUP_SCHED */
 static inline void scx_tg_init(struct task_group *tg) {}
-static inline int scx_tg_online(struct task_group *tg) { return 0; }
+static inline 整数 scx_tg_online(struct task_group *tg) { 返回 0; }
 static inline void scx_tg_offline(struct task_group *tg) {}
-static inline int scx_cgroup_can_attach(struct cgroup_taskset *tset) { return 0; }
+static inline 整数 scx_cgroup_can_attach(struct cgroup_taskset *tset) { 返回 0; }
 static inline void scx_cgroup_move_task(struct task_struct *p) {}
 static inline void scx_cgroup_cancel_attach(struct cgroup_taskset *tset) {}
 static inline void scx_group_set_weight(struct task_group *tg, unsigned long cgrp_weight) {}

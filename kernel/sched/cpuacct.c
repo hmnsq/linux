@@ -32,18 +32,18 @@ struct cpuacct {
 
 static inline struct cpuacct *css_ca(struct cgroup_subsys_state *css)
 {
-	return css ? container_of(css, struct cpuacct, css) : NULL;
+	返回 css ? container_of(css, struct cpuacct, css) : NULL;
 }
 
 /* Return CPU accounting group to which this task belongs */
 static inline struct cpuacct *task_ca(struct task_struct *tsk)
 {
-	return css_ca(task_css(tsk, cpuacct_cgrp_id));
+	返回 css_ca(task_css(tsk, cpuacct_cgrp_id));
 }
 
 static inline struct cpuacct *parent_ca(struct cpuacct *ca)
 {
-	return css_ca(ca->css.parent);
+	返回 css_ca(ca->css.parent);
 }
 
 static DEFINE_PER_CPU(u64, root_cpuacct_cpuusage);
@@ -58,29 +58,29 @@ cpuacct_css_alloc(struct cgroup_subsys_state *parent_css)
 {
 	struct cpuacct *ca;
 
-	if (!parent_css)
-		return &root_cpuacct.css;
+	如果 (!parent_css)
+		返回 &root_cpuacct.css;
 
 	ca = kzalloc_obj(*ca);
-	if (!ca)
+	如果 (!ca)
 		goto out;
 
 	ca->cpuusage = alloc_percpu(u64);
-	if (!ca->cpuusage)
+	如果 (!ca->cpuusage)
 		goto out_free_ca;
 
 	ca->cpustat = alloc_percpu(struct kernel_cpustat);
-	if (!ca->cpustat)
+	如果 (!ca->cpustat)
 		goto out_free_cpuusage;
 
-	return &ca->css;
+	返回 &ca->css;
 
 out_free_cpuusage:
 	free_percpu(ca->cpuusage);
 out_free_ca:
 	kfree(ca);
 out:
-	return ERR_PTR(-ENOMEM);
+	返回 ERR_PTR(-ENOMEM);
 }
 
 /* Destroy an existing CPU accounting group */
@@ -93,7 +93,7 @@ static void cpuacct_css_free(struct cgroup_subsys_state *css)
 	kfree(ca);
 }
 
-static u64 cpuacct_cpuusage_read(struct cpuacct *ca, int cpu,
+static u64 cpuacct_cpuusage_read(struct cpuacct *ca, 整数 cpu,
 				 enum cpuacct_stat_index index)
 {
 	u64 *cpuusage = per_cpu_ptr(ca->cpuusage, cpu);
@@ -104,8 +104,8 @@ static u64 cpuacct_cpuusage_read(struct cpuacct *ca, int cpu,
 	 * We allow index == CPUACCT_STAT_NSTATS here to read
 	 * the sum of usages.
 	 */
-	if (WARN_ON_ONCE(index > CPUACCT_STAT_NSTATS))
-		return 0;
+	如果 (WARN_ON_ONCE(index > CPUACCT_STAT_NSTATS))
+		返回 0;
 
 #ifndef CONFIG_64BIT
 	/*
@@ -131,17 +131,17 @@ static u64 cpuacct_cpuusage_read(struct cpuacct *ca, int cpu,
 	raw_spin_rq_unlock_irq(cpu_rq(cpu));
 #endif
 
-	return data;
+	返回 data;
 }
 
-static void cpuacct_cpuusage_write(struct cpuacct *ca, int cpu)
+static void cpuacct_cpuusage_write(struct cpuacct *ca, 整数 cpu)
 {
 	u64 *cpuusage = per_cpu_ptr(ca->cpuusage, cpu);
 	u64 *cpustat = per_cpu_ptr(ca->cpustat, cpu)->cpustat;
 
 	/* Don't allow to reset global kernel_cpustat */
-	if (ca == &root_cpuacct)
-		return;
+	如果 (ca == &root_cpuacct)
+		返回;
 
 #ifndef CONFIG_64BIT
 	/*
@@ -165,107 +165,107 @@ static u64 __cpuusage_read(struct cgroup_subsys_state *css,
 {
 	struct cpuacct *ca = css_ca(css);
 	u64 totalcpuusage = 0;
-	int i;
+	整数 i;
 
 	for_each_possible_cpu(i)
 		totalcpuusage += cpuacct_cpuusage_read(ca, i, index);
 
-	return totalcpuusage;
+	返回 totalcpuusage;
 }
 
 static u64 cpuusage_user_read(struct cgroup_subsys_state *css,
 			      struct cftype *cft)
 {
-	return __cpuusage_read(css, CPUACCT_STAT_USER);
+	返回 __cpuusage_read(css, CPUACCT_STAT_USER);
 }
 
 static u64 cpuusage_sys_read(struct cgroup_subsys_state *css,
 			     struct cftype *cft)
 {
-	return __cpuusage_read(css, CPUACCT_STAT_SYSTEM);
+	返回 __cpuusage_read(css, CPUACCT_STAT_SYSTEM);
 }
 
 static u64 cpuusage_read(struct cgroup_subsys_state *css, struct cftype *cft)
 {
-	return __cpuusage_read(css, CPUACCT_STAT_NSTATS);
+	返回 __cpuusage_read(css, CPUACCT_STAT_NSTATS);
 }
 
-static int cpuusage_write(struct cgroup_subsys_state *css, struct cftype *cft,
+static 整数 cpuusage_write(struct cgroup_subsys_state *css, struct cftype *cft,
 			  u64 val)
 {
 	struct cpuacct *ca = css_ca(css);
-	int cpu;
+	整数 cpu;
 
 	/*
 	 * Only allow '0' here to do a reset.
 	 */
-	if (val)
-		return -EINVAL;
+	如果 (val)
+		返回 -EINVAL;
 
 	for_each_possible_cpu(cpu)
 		cpuacct_cpuusage_write(ca, cpu);
 
-	return 0;
+	返回 0;
 }
 
-static int __cpuacct_percpu_seq_show(struct seq_file *m,
+static 整数 __cpuacct_percpu_seq_show(struct seq_file *m,
 				     enum cpuacct_stat_index index)
 {
 	struct cpuacct *ca = css_ca(seq_css(m));
 	u64 percpu;
-	int i;
+	整数 i;
 
 	for_each_possible_cpu(i) {
 		percpu = cpuacct_cpuusage_read(ca, i, index);
 		seq_printf(m, "%llu ", (unsigned long long) percpu);
 	}
 	seq_printf(m, "\n");
-	return 0;
+	返回 0;
 }
 
-static int cpuacct_percpu_user_seq_show(struct seq_file *m, void *V)
+static 整数 cpuacct_percpu_user_seq_show(struct seq_file *m, void *V)
 {
-	return __cpuacct_percpu_seq_show(m, CPUACCT_STAT_USER);
+	返回 __cpuacct_percpu_seq_show(m, CPUACCT_STAT_USER);
 }
 
-static int cpuacct_percpu_sys_seq_show(struct seq_file *m, void *V)
+static 整数 cpuacct_percpu_sys_seq_show(struct seq_file *m, void *V)
 {
-	return __cpuacct_percpu_seq_show(m, CPUACCT_STAT_SYSTEM);
+	返回 __cpuacct_percpu_seq_show(m, CPUACCT_STAT_SYSTEM);
 }
 
-static int cpuacct_percpu_seq_show(struct seq_file *m, void *V)
+static 整数 cpuacct_percpu_seq_show(struct seq_file *m, void *V)
 {
-	return __cpuacct_percpu_seq_show(m, CPUACCT_STAT_NSTATS);
+	返回 __cpuacct_percpu_seq_show(m, CPUACCT_STAT_NSTATS);
 }
 
-static int cpuacct_all_seq_show(struct seq_file *m, void *V)
+static 整数 cpuacct_all_seq_show(struct seq_file *m, void *V)
 {
 	struct cpuacct *ca = css_ca(seq_css(m));
-	int index;
-	int cpu;
+	整数 index;
+	整数 cpu;
 
 	seq_puts(m, "cpu");
-	for (index = 0; index < CPUACCT_STAT_NSTATS; index++)
+	为 (index = 0; index < CPUACCT_STAT_NSTATS; index++)
 		seq_printf(m, " %s", cpuacct_stat_desc[index]);
 	seq_puts(m, "\n");
 
 	for_each_possible_cpu(cpu) {
 		seq_printf(m, "%d", cpu);
-		for (index = 0; index < CPUACCT_STAT_NSTATS; index++)
+		为 (index = 0; index < CPUACCT_STAT_NSTATS; index++)
 			seq_printf(m, " %llu",
 				   cpuacct_cpuusage_read(ca, cpu, index));
 		seq_puts(m, "\n");
 	}
-	return 0;
+	返回 0;
 }
 
-static int cpuacct_stats_show(struct seq_file *sf, void *v)
+static 整数 cpuacct_stats_show(struct seq_file *sf, void *v)
 {
 	struct cpuacct *ca = css_ca(seq_css(sf));
 	struct task_cputime cputime;
 	u64 val[CPUACCT_STAT_NSTATS];
-	int cpu;
-	int stat;
+	整数 cpu;
+	整数 stat;
 
 	memset(&cputime, 0, sizeof(cputime));
 	for_each_possible_cpu(cpu) {
@@ -283,12 +283,12 @@ static int cpuacct_stats_show(struct seq_file *sf, void *v)
 	cputime_adjust(&cputime, &seq_css(sf)->cgroup->prev_cputime,
 		&val[CPUACCT_STAT_USER], &val[CPUACCT_STAT_SYSTEM]);
 
-	for (stat = 0; stat < CPUACCT_STAT_NSTATS; stat++) {
+	为 (stat = 0; stat < CPUACCT_STAT_NSTATS; stat++) {
 		seq_printf(sf, "%s %llu\n", cpuacct_stat_desc[stat],
 			nsec_to_clock_t(val[stat]));
 	}
 
-	return 0;
+	返回 0;
 }
 
 static struct cftype files[] = {
@@ -335,12 +335,12 @@ static struct cftype files[] = {
  */
 void cpuacct_charge(struct task_struct *tsk, u64 cputime)
 {
-	unsigned int cpu = task_cpu(tsk);
+	unsigned 整数 cpu = task_cpu(tsk);
 	struct cpuacct *ca;
 
 	lockdep_assert_rq_held(cpu_rq(cpu));
 
-	for (ca = task_ca(tsk); ca; ca = parent_ca(ca))
+	为 (ca = task_ca(tsk); ca; ca = parent_ca(ca))
 		*per_cpu_ptr(ca->cpuusage, cpu) += cputime;
 }
 
@@ -349,11 +349,11 @@ void cpuacct_charge(struct task_struct *tsk, u64 cputime)
  *
  * Note: it's the caller that updates the account of the root cgroup.
  */
-void cpuacct_account_field(struct task_struct *tsk, int index, u64 val)
+void cpuacct_account_field(struct task_struct *tsk, 整数 index, u64 val)
 {
 	struct cpuacct *ca;
 
-	for (ca = task_ca(tsk); ca != &root_cpuacct; ca = parent_ca(ca))
+	为 (ca = task_ca(tsk); ca != &root_cpuacct; ca = parent_ca(ca))
 		__this_cpu_add(ca->cpustat->cpustat[index], val);
 }
 

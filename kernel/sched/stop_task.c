@@ -9,51 +9,51 @@
  */
 #include "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+static 整数
+select_task_rq_stop(struct task_struct *p, 整数 cpu, 整数 flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	返回 task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
+static 整数
 balance_stop(struct rq *rq, struct rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	返回 sched_stop_runnable(rq);
 }
 
 static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+wakeup_preempt_stop(struct rq *rq, struct task_struct *p, 整数 flags)
 {
 	/* we're never preempted */
 }
 
 static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	如果 (type == SNT_REPICK)
+		返回;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
 static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	如果 (!sched_stop_runnable(rq))
+		返回 NULL;
 
-	return rq->stop;
+	返回 rq->stop;
 }
 
 static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+enqueue_task_stop(struct rq *rq, struct task_struct *p, 整数 flags)
 {
 	add_nr_running(rq, 1);
 }
 
 static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+dequeue_task_stop(struct rq *rq, struct task_struct *p, 整数 flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	返回 true;
 }
 
 static void yield_task_stop(struct rq *rq)
@@ -74,7 +74,7 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+static void task_tick_stop(struct rq *rq, struct task_struct *curr, 整数 queued)
 {
 }
 
@@ -86,8 +86,8 @@ static void switching_to_stop(struct rq *rq, struct task_struct *p)
 static void
 prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	如果 (p->prio == oldprio)
+		返回;
 
 	BUG(); /* how!?, what priority? */
 }
