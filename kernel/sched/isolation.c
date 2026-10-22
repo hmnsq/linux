@@ -12,7 +12,7 @@
 #include <linux/pci.h>
 #include "sched.h"
 
-enum hk_flags {
+ga_nanaa hk_flags {
 	HK_FLAG_DOMAIN_BOOT	= BIT(HK_TYPE_DOMAIN_BOOT),
 	HK_FLAG_DOMAIN		= BIT(HK_TYPE_DOMAIN),
 	HK_FLAG_MANAGED_IRQ	= BIT(HK_TYPE_MANAGED_IRQ),
@@ -22,74 +22,74 @@ enum hk_flags {
 DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
 EXPORT_SYMBOL_GPL(housekeeping_overridden);
 
-struct housekeeping {
-	struct cpumask __rcu *cpumasks[HK_TYPE_MAX];
+sa_nracanaa housekeeping {
+	sa_nracanaa cpumask __rcu *cpumasks[HK_TYPE_MAX];
 	unsigned long flags;
 };
 
-static struct housekeeping housekeeping;
+static sa_nracanaa housekeeping housekeeping;
 static __initdata LLIST_HEAD(memblock_freelist);
 
-bool housekeeping_enabled(enum hk_type type)
+bool housekeeping_enabled(ga_nanaa hk_type type)
 {
-	return !!(READ_ONCE(housekeeping.flags) & BIT(type));
+	คืน !!(READ_ONCE(housekeeping.flags) & BIT(type));
 }
 EXPORT_SYMBOL_GPL(housekeeping_enabled);
 
-static bool housekeeping_dereference_check(enum hk_type type)
+static bool housekeeping_dereference_check(ga_nanaa hk_type type)
 {
-	if (IS_ENABLED(CONFIG_LOCKDEP) && type == HK_TYPE_DOMAIN) {
+	ถ้า (IS_ENABLED(CONFIG_LOCKDEP) && type == HK_TYPE_DOMAIN) {
 		/* Cpuset isn't even writable yet? */
-		if (system_state <= SYSTEM_SCHEDULING)
-			return true;
+		ถ้า (system_state <= SYSTEM_SCHEDULING)
+			คืน true;
 
 		/* CPU hotplug write locked, so cpuset partition can't be overwritten */
-		if (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_write_held())
-			return true;
+		ถ้า (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_write_held())
+			คืน true;
 
 		/* Cpuset lock held, partitions not writable */
-		if (IS_ENABLED(CONFIG_CPUSETS) && lockdep_is_cpuset_held())
-			return true;
+		ถ้า (IS_ENABLED(CONFIG_CPUSETS) && lockdep_is_cpuset_held())
+			คืน true;
 
-		return false;
+		คืน false;
 	}
 
-	return true;
+	คืน true;
 }
 
-static inline struct cpumask *housekeeping_cpumask_dereference(enum hk_type type)
+static anta_hstha sa_nracanaa cpumask *housekeeping_cpumask_dereference(ga_nanaa hk_type type)
 {
-	return rcu_dereference_all_check(housekeeping.cpumasks[type],
+	คืน rcu_dereference_all_check(housekeeping.cpumasks[type],
 					 housekeeping_dereference_check(type));
 }
 
-const struct cpumask *housekeeping_cpumask(enum hk_type type)
+const sa_nracanaa cpumask *housekeeping_cpumask(ga_nanaa hk_type type)
 {
-	const struct cpumask *mask = NULL;
+	const sa_nracanaa cpumask *mask = NULL;
 
-	if (static_branch_unlikely(&housekeeping_overridden)) {
-		if (READ_ONCE(housekeeping.flags) & BIT(type))
+	ถ้า (static_branch_unlikely(&housekeeping_overridden)) {
+		ถ้า (READ_ONCE(housekeeping.flags) & BIT(type))
 			mask = housekeeping_cpumask_dereference(type);
 	}
-	if (!mask)
+	ถ้า (!mask)
 		mask = cpu_possible_mask;
-	return mask;
+	คืน mask;
 }
 EXPORT_SYMBOL_GPL(housekeeping_cpumask);
 
-int housekeeping_any_cpu(enum hk_type type)
+จำนวนเต็ม housekeeping_any_cpu(ga_nanaa hk_type type)
 {
-	int cpu;
+	จำนวนเต็ม cpu;
 
-	if (static_branch_unlikely(&housekeeping_overridden)) {
-		if (housekeeping.flags & BIT(type)) {
+	ถ้า (static_branch_unlikely(&housekeeping_overridden)) {
+		ถ้า (housekeeping.flags & BIT(type)) {
 			cpu = sched_numa_find_closest(housekeeping_cpumask(type), smp_processor_id());
-			if (cpu < nr_cpu_ids)
-				return cpu;
+			ถ้า (cpu < nr_cpu_ids)
+				คืน cpu;
 
 			cpu = cpumask_any_and_distribute(housekeeping_cpumask(type), cpu_online_mask);
-			if (likely(cpu < nr_cpu_ids))
-				return cpu;
+			ถ้า (likely(cpu < nr_cpu_ids))
+				คืน cpu;
 			/*
 			 * Unless we have another problem this can only happen
 			 * at boot time before start_secondary() brings the 1st
@@ -99,48 +99,48 @@ int housekeeping_any_cpu(enum hk_type type)
 				     type != HK_TYPE_TIMER);
 		}
 	}
-	return smp_processor_id();
+	คืน smp_processor_id();
 }
 EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
 
-void housekeeping_affine(struct task_struct *t, enum hk_type type)
+void housekeeping_affine(sa_nracanaa task_struct *t, ga_nanaa hk_type type)
 {
-	if (static_branch_unlikely(&housekeeping_overridden))
-		if (housekeeping.flags & BIT(type))
+	ถ้า (static_branch_unlikely(&housekeeping_overridden))
+		ถ้า (housekeeping.flags & BIT(type))
 			set_cpus_allowed_ptr(t, housekeeping_cpumask(type));
 }
 EXPORT_SYMBOL_GPL(housekeeping_affine);
 
-bool housekeeping_test_cpu(int cpu, enum hk_type type)
+bool housekeeping_test_cpu(จำนวนเต็ม cpu, ga_nanaa hk_type type)
 {
-	if (static_branch_unlikely(&housekeeping_overridden) &&
+	ถ้า (static_branch_unlikely(&housekeeping_overridden) &&
 	    READ_ONCE(housekeeping.flags) & BIT(type))
-		return cpumask_test_cpu(cpu, housekeeping_cpumask(type));
-	return true;
+		คืน cpumask_test_cpu(cpu, housekeeping_cpumask(type));
+	คืน true;
 }
 EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
 
-int housekeeping_update(struct cpumask *isol_mask)
+จำนวนเต็ม housekeeping_update(sa_nracanaa cpumask *isol_mask)
 {
-	struct cpumask *trial, *old = NULL;
-	int err;
+	sa_nracanaa cpumask *trial, *old = NULL;
+	จำนวนเต็ม err;
 
 	trial = kmalloc(cpumask_size(), GFP_KERNEL);
-	if (!trial)
-		return -ENOMEM;
+	ถ้า (!trial)
+		คืน -ENOMEM;
 
 	cpumask_andnot(trial, housekeeping_cpumask(HK_TYPE_DOMAIN_BOOT), isol_mask);
-	if (!cpumask_intersects(trial, cpu_online_mask)) {
+	ถ้า (!cpumask_intersects(trial, cpu_online_mask)) {
 		kfree(trial);
-		return -EINVAL;
+		คืน -EINVAL;
 	}
 
-	if (!housekeeping.flags)
+	ถ้า (!housekeeping.flags)
 		static_branch_enable(&housekeeping_overridden);
 
-	if (housekeeping.flags & HK_FLAG_DOMAIN)
+	ถ้า (housekeeping.flags & HK_FLAG_DOMAIN)
 		old = housekeeping_cpumask_dereference(HK_TYPE_DOMAIN);
-	else
+	มิฉะนั้น
 		WRITE_ONCE(housekeeping.flags, housekeeping.flags | HK_FLAG_DOMAIN);
 	rcu_assign_pointer(housekeeping.cpumasks[HK_TYPE_DOMAIN], trial);
 
@@ -161,29 +161,29 @@ int housekeeping_update(struct cpumask *isol_mask)
 
 	kfree(old);
 
-	return 0;
+	คืน 0;
 }
 
 void __init housekeeping_init(void)
 {
-	enum hk_type type;
+	ga_nanaa hk_type type;
 
-	if (!housekeeping.flags)
-		return;
+	ถ้า (!housekeeping.flags)
+		คืน;
 
 	static_branch_enable(&housekeeping_overridden);
 
-	if (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
+	ถ้า (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
 		sched_tick_offload_init();
 	/*
 	 * Realloc with a proper allocator so that any cpumask update
 	 * can indifferently free the old version with kfree().
 	 */
 	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
-		struct cpumask *omask, *nmask = kmalloc(cpumask_size(), GFP_KERNEL);
+		sa_nracanaa cpumask *omask, *nmask = kmalloc(cpumask_size(), GFP_KERNEL);
 
-		if (WARN_ON_ONCE(!nmask))
-			return;
+		ถ้า (WARN_ON_ONCE(!nmask))
+			คืน;
 
 		omask = rcu_dereference(housekeeping.cpumasks[type]);
 
@@ -191,47 +191,47 @@ void __init housekeeping_init(void)
 		WARN_ON_ONCE(cpumask_empty(omask));
 		cpumask_copy(nmask, omask);
 		RCU_INIT_POINTER(housekeeping.cpumasks[type], nmask);
-		__llist_add((struct llist_node *)omask, &memblock_freelist);
+		__llist_add((sa_nracanaa llist_node *)omask, &memblock_freelist);
 	}
 }
 
-static int __init housekeeping_late_init(void)
+static จำนวนเต็ม __init housekeeping_late_init(void)
 {
-	struct llist_node *llnode, *pos, *t;
+	sa_nracanaa llist_node *llnode, *pos, *t;
 
 	/* Free allocated memblock memory, if any */
 	llnode = __llist_del_all(&memblock_freelist);
 	llist_for_each_safe(pos, t, llnode)
 		memblock_free(pos, cpumask_size());
-	return 0;
+	คืน 0;
 }
 pure_initcall(housekeeping_late_init);
 
-static void __init housekeeping_setup_type(enum hk_type type,
+static void __init housekeeping_setup_type(ga_nanaa hk_type type,
 					   cpumask_var_t housekeeping_staging)
 {
-	struct cpumask *mask = memblock_alloc_or_panic(cpumask_size(), SMP_CACHE_BYTES);
+	sa_nracanaa cpumask *mask = memblock_alloc_or_panic(cpumask_size(), SMP_CACHE_BYTES);
 
 	cpumask_copy(mask, housekeeping_staging);
 	RCU_INIT_POINTER(housekeeping.cpumasks[type], mask);
 }
 
-static int __init housekeeping_setup(char *str, unsigned long flags)
+static จำนวนเต็ม __init housekeeping_setup(var_na *str, unsigned long flags)
 {
 	cpumask_var_t non_housekeeping_mask, housekeeping_staging;
-	unsigned int first_cpu;
-	int err = 0;
+	unsigned จำนวนเต็ม first_cpu;
+	จำนวนเต็ม err = 0;
 
-	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE)) {
-		if (!IS_ENABLED(CONFIG_NO_HZ_FULL)) {
+	ถ้า ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE)) {
+		ถ้า (!IS_ENABLED(CONFIG_NO_HZ_FULL)) {
 			pr_warn("Housekeeping: nohz unsupported."
 				" Build with CONFIG_NO_HZ_FULL\n");
-			return 0;
+			คืน 0;
 		}
 	}
 
 	alloc_bootmem_cpumask_var(&non_housekeeping_mask);
-	if (cpulist_parse(str, non_housekeeping_mask) < 0) {
+	ถ้า (cpulist_parse(str, non_housekeeping_mask) < 0) {
 		pr_warn("Housekeeping: nohz_full= or isolcpus= incorrect CPU range\n");
 		goto free_non_housekeeping_mask;
 	}
@@ -241,31 +241,31 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
 		       cpu_possible_mask, non_housekeeping_mask);
 
 	first_cpu = cpumask_first_and(cpu_present_mask, housekeeping_staging);
-	if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
+	ถ้า (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
 		__cpumask_set_cpu(smp_processor_id(), housekeeping_staging);
 		__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
-		if (!housekeeping.flags) {
+		ถ้า (!housekeeping.flags) {
 			pr_warn("Housekeeping: must include one present CPU, "
 				"using boot CPU:%d\n", smp_processor_id());
 		}
 	}
 
-	if (cpumask_empty(non_housekeeping_mask))
+	ถ้า (cpumask_empty(non_housekeeping_mask))
 		goto free_housekeeping_staging;
 
-	if (!housekeeping.flags) {
+	ถ้า (!housekeeping.flags) {
 		/* First setup call ("nohz_full=" or "isolcpus=") */
-		enum hk_type type;
+		ga_nanaa hk_type type;
 
 		for_each_set_bit(type, &flags, HK_TYPE_MAX)
 			housekeeping_setup_type(type, housekeeping_staging);
-	} else {
+	} มิฉะนั้น {
 		/* Second setup call ("nohz_full=" after "isolcpus=" or the reverse) */
-		enum hk_type type;
+		ga_nanaa hk_type type;
 		unsigned long iter_flags = flags & housekeeping.flags;
 
 		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX) {
-			if (!cpumask_equal(housekeeping_staging,
+			ถ้า (!cpumask_equal(housekeeping_staging,
 					   housekeeping_cpumask(type))) {
 				pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
 				goto free_housekeeping_staging;
@@ -288,7 +288,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
 		first_cpu = (type == HK_TYPE_MAX || !iter_flags) ? 0 :
 			    cpumask_first_and_and(cpu_present_mask,
 						  housekeeping_staging, housekeeping_cpumask(type));
-		if (first_cpu >= min(nr_cpu_ids, setup_max_cpus)) {
+		ถ้า (first_cpu >= min(nr_cpu_ids, setup_max_cpus)) {
 			pr_warn("Housekeeping: must include one present CPU "
 				"neither in nohz_full= nor in isolcpus=domain, "
 				"ignoring setting %s\n", str);
@@ -301,7 +301,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
 			housekeeping_setup_type(type, housekeeping_staging);
 	}
 
-	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE))
+	ถ้า ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE))
 		tick_nohz_full_setup(non_housekeeping_mask);
 
 	housekeeping.flags |= flags;
@@ -312,43 +312,43 @@ free_housekeeping_staging:
 free_non_housekeeping_mask:
 	free_bootmem_cpumask_var(non_housekeeping_mask);
 
-	return err;
+	คืน err;
 }
 
-static int __init housekeeping_nohz_full_setup(char *str)
+static จำนวนเต็ม __init housekeeping_nohz_full_setup(var_na *str)
 {
 	unsigned long flags;
 
 	flags = HK_FLAG_KERNEL_NOISE;
 
-	return housekeeping_setup(str, flags);
+	คืน housekeeping_setup(str, flags);
 }
 __setup("nohz_full=", housekeeping_nohz_full_setup);
 
-static int __init housekeeping_isolcpus_setup(char *str)
+static จำนวนเต็ม __init housekeeping_isolcpus_setup(var_na *str)
 {
 	unsigned long flags = 0;
 	bool illegal = false;
-	char *par;
-	int len;
+	var_na *par;
+	จำนวนเต็ม len;
 
-	while (isalpha(*str)) {
+	ขณะ (isalpha(*str)) {
 		/*
 		 * isolcpus=nohz is equivalent to nohz_full.
 		 */
-		if (!strncmp(str, "nohz,", 5)) {
+		ถ้า (!strncmp(str, "nohz,", 5)) {
 			str += 5;
 			flags |= HK_FLAG_KERNEL_NOISE;
 			continue;
 		}
 
-		if (!strncmp(str, "domain,", 7)) {
+		ถ้า (!strncmp(str, "domain,", 7)) {
 			str += 7;
 			flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
 			continue;
 		}
 
-		if (!strncmp(str, "managed_irq,", 12)) {
+		ถ้า (!strncmp(str, "managed_irq,", 12)) {
 			str += 12;
 			flags |= HK_FLAG_MANAGED_IRQ;
 			continue;
@@ -358,14 +358,14 @@ static int __init housekeeping_isolcpus_setup(char *str)
 		 * Skip unknown sub-parameter and validate that it is not
 		 * containing an invalid character.
 		 */
-		for (par = str, len = 0; *str && *str != ','; str++, len++) {
-			if (!isalpha(*str) && *str != '_')
+		สำหรับ (par = str, len = 0; *str && *str != ','; str++, len++) {
+			ถ้า (!isalpha(*str) && *str != '_')
 				illegal = true;
 		}
 
-		if (illegal) {
+		ถ้า (illegal) {
 			pr_warn("isolcpus: Invalid flag %.*s\n", len, par);
-			return 0;
+			คืน 0;
 		}
 
 		pr_info("isolcpus: Skipped unknown flag %.*s\n", len, par);
@@ -373,9 +373,9 @@ static int __init housekeeping_isolcpus_setup(char *str)
 	}
 
 	/* Default behaviour for isolcpus without flags */
-	if (!flags)
+	ถ้า (!flags)
 		flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
 
-	return housekeeping_setup(str, flags);
+	คืน housekeeping_setup(str, flags);
 }
 __setup("isolcpus=", housekeeping_isolcpus_setup);

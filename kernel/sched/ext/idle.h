@@ -12,20 +12,20 @@
 
 #include <linux/btf_ids.h>
 
-struct cpumask;
-struct sched_ext_ops;
-struct task_struct;
+sa_nracanaa cpumask;
+sa_nracanaa sched_ext_ops;
+sa_nracanaa task_struct;
 
-extern struct btf_id_set8 scx_kfunc_ids_idle;
-extern struct btf_id_set8 scx_kfunc_ids_select_cpu;
+extern sa_nracanaa btf_id_set8 scx_kfunc_ids_idle;
+extern sa_nracanaa btf_id_set8 scx_kfunc_ids_select_cpu;
 
-void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops);
+void scx_idle_update_selcpu_topology(sa_nracanaa sched_ext_ops *ops);
 void scx_idle_init_masks(void);
 
-s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
-		       const struct cpumask *cpus_allowed, u64 flags);
-void scx_idle_enable(struct sched_ext_ops *ops);
+s32 scx_select_cpu_dfl(sa_nracanaa task_struct *p, s32 prev_cpu, u64 wake_flags,
+		       const sa_nracanaa cpumask *cpus_allowed, u64 flags);
+void scx_idle_enable(sa_nracanaa sched_ext_ops *ops);
 void scx_idle_disable(void);
-int scx_idle_init(void);
+จำนวนเต็ม scx_idle_init(void);
 
 #endif /* _KERNEL_SCHED_EXT_IDLE_H */

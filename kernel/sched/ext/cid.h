@@ -35,7 +35,7 @@
 
 #include "internal.h"
 
-struct scx_sched;
+sa_nracanaa scx_sched;
 
 /*
  * Cid space (total is always num_possible_cpus()) is laid out with
@@ -48,15 +48,15 @@ struct scx_sched;
  * See the comment above the table definitions in cid.c for the
  * memory-ordering and visibility contract.
  */
-struct scx_cid_tables {
+sa_nracanaa scx_cid_tables {
 	u32			nr_shards;
 	s16			*cid_to_cpu;	/* [num_possible_cpus()] */
 	s16			*cpu_to_cid;	/* [nr_cpu_ids] */
 	s32			*cid_to_shard;	/* [num_possible_cpus()] */
 	s32			*shard_node;	/* [num_possible_cpus()] */
-	struct scx_cid_shard	*shard_ranges;	/* [num_possible_cpus()] */
-	struct scx_cid_topo	*topo;		/* [num_possible_cpus()] */
-	struct rcu_head		rcu;
+	sa_nracanaa scx_cid_shard	*shard_ranges;	/* [num_possible_cpus()] */
+	sa_nracanaa scx_cid_topo	*topo;		/* [num_possible_cpus()] */
+	sa_nracanaa rcu_head		rcu;
 };
 
 extern u32 scx_nr_cid_shards;
@@ -64,24 +64,24 @@ extern s16 __rcu *scx_cid_to_cpu_tbl;
 extern s16 __rcu *scx_cpu_to_cid_tbl;
 extern s32 __rcu *scx_cid_to_shard;
 extern s32 __rcu *scx_shard_node;
-extern struct scx_cid_shard __rcu *scx_cid_shard_ranges;
-extern struct scx_cid_topo __rcu *scx_cid_topo;
-extern struct btf_id_set8 scx_kfunc_ids_init_cids;
-extern struct btf_id_set8 scx_kfunc_ids_cid;
+extern sa_nracanaa scx_cid_shard __rcu *scx_cid_shard_ranges;
+extern sa_nracanaa scx_cid_topo __rcu *scx_cid_topo;
+extern sa_nracanaa btf_id_set8 scx_kfunc_ids_init_cids;
+extern sa_nracanaa btf_id_set8 scx_kfunc_ids_cid;
 
-void scx_cmask_clear(struct scx_cmask *m);
-void scx_cmask_fill(struct scx_cmask *m);
-void scx_cmask_and(struct scx_cmask *dst, const struct scx_cmask *src);
-void scx_cmask_or(struct scx_cmask *dst, const struct scx_cmask *src);
-void scx_cmask_copy(struct scx_cmask *dst, const struct scx_cmask *src);
-void scx_cmask_andnot(struct scx_cmask *dst, const struct scx_cmask *src);
-bool scx_cmask_subset(const struct scx_cmask *sub, const struct scx_cmask *super);
-bool scx_cmask_intersects(const struct scx_cmask *a, const struct scx_cmask *b);
-bool scx_cmask_empty(const struct scx_cmask *m);
-s32 scx_cid_init(struct scx_sched *sch);
+void scx_cmask_clear(sa_nracanaa scx_cmask *m);
+void scx_cmask_fill(sa_nracanaa scx_cmask *m);
+void scx_cmask_and(sa_nracanaa scx_cmask *dst, const sa_nracanaa scx_cmask *src);
+void scx_cmask_or(sa_nracanaa scx_cmask *dst, const sa_nracanaa scx_cmask *src);
+void scx_cmask_copy(sa_nracanaa scx_cmask *dst, const sa_nracanaa scx_cmask *src);
+void scx_cmask_andnot(sa_nracanaa scx_cmask *dst, const sa_nracanaa scx_cmask *src);
+bool scx_cmask_subset(const sa_nracanaa scx_cmask *sub, const sa_nracanaa scx_cmask *super);
+bool scx_cmask_intersects(const sa_nracanaa scx_cmask *a, const sa_nracanaa scx_cmask *b);
+bool scx_cmask_empty(const sa_nracanaa scx_cmask *m);
+s32 scx_cid_init(sa_nracanaa scx_sched *sch);
 void scx_cid_publish_tables(void);
 void scx_cid_retire_tables(void);
-int scx_cid_kfunc_init(void);
+จำนวนเต็ม scx_cid_kfunc_init(void);
 
 /**
  * cid_valid - Verify a cid value, to be used on ops input args
@@ -91,12 +91,12 @@ int scx_cid_kfunc_init(void);
  * Return true if @cid is in [0, num_possible_cpus()). On failure, trigger
  * scx_error() and return false.
  */
-static inline bool cid_valid(struct scx_sched *sch, s32 cid)
+static anta_hstha bool cid_valid(sa_nracanaa scx_sched *sch, s32 cid)
 {
-	if (likely(cid >= 0 && cid < num_possible_cpus()))
-		return true;
+	ถ้า (likely(cid >= 0 && cid < num_possible_cpus()))
+		คืน true;
 	scx_error(sch, "invalid cid %d", cid);
-	return false;
+	คืน false;
 }
 
 /**
@@ -106,9 +106,9 @@ static inline bool cid_valid(struct scx_sched *sch, s32 cid)
  * Intended for callsites that have already validated @cid and that run on a
  * live scheduler, which guarantees the tables are published and stable.
  */
-static inline s32 __scx_cid_to_cpu(s32 cid)
+static anta_hstha s32 __scx_cid_to_cpu(s32 cid)
 {
-	return rcu_dereference_all(scx_cid_to_cpu_tbl)[cid];
+	คืน rcu_dereference_all(scx_cid_to_cpu_tbl)[cid];
 }
 
 /**
@@ -117,9 +117,9 @@ static inline s32 __scx_cid_to_cpu(s32 cid)
  *
  * Same usage constraints as __scx_cid_to_cpu().
  */
-static inline s32 __scx_cpu_to_cid(s32 cpu)
+static anta_hstha s32 __scx_cpu_to_cid(s32 cpu)
 {
-	return rcu_dereference_all(scx_cpu_to_cid_tbl)[cpu];
+	คืน rcu_dereference_all(scx_cpu_to_cid_tbl)[cpu];
 }
 
 /**
@@ -134,13 +134,13 @@ static inline s32 __scx_cpu_to_cid(s32 cpu)
  * published yet, which a prog-facing kfunc can observe while racing the root
  * scheduler enable.
  */
-static inline s32 scx_cid_to_cpu(struct scx_sched *sch, s32 cid)
+static anta_hstha s32 scx_cid_to_cpu(sa_nracanaa scx_sched *sch, s32 cid)
 {
 	s16 *tbl = rcu_dereference_all(scx_cid_to_cpu_tbl);
 
-	if (!cid_valid(sch, cid) || unlikely(!tbl))
-		return -EINVAL;
-	return tbl[cid];
+	ถ้า (!cid_valid(sch, cid) || unlikely(!tbl))
+		คืน -EINVAL;
+	คืน tbl[cid];
 }
 
 /**
@@ -151,32 +151,32 @@ static inline s32 scx_cid_to_cpu(struct scx_sched *sch, s32 cid)
  * Return the cid for @cpu or a negative errno on failure. Invalid cpu triggers
  * scx_error() on @sch. Same usage rules as scx_cid_to_cpu().
  */
-static inline s32 scx_cpu_to_cid(struct scx_sched *sch, s32 cpu)
+static anta_hstha s32 scx_cpu_to_cid(sa_nracanaa scx_sched *sch, s32 cpu)
 {
 	s16 *tbl = rcu_dereference_all(scx_cpu_to_cid_tbl);
 
-	if (!scx_cpu_valid(sch, cpu, NULL) || unlikely(!tbl))
-		return -EINVAL;
-	return tbl[cpu];
+	ถ้า (!scx_cpu_valid(sch, cpu, NULL) || unlikely(!tbl))
+		คืน -EINVAL;
+	คืน tbl[cpu];
 }
 
 /**
  * scx_is_cid_type - Test whether the active scheduler hierarchy is cid-form
  */
-static inline bool scx_is_cid_type(void)
+static anta_hstha bool scx_is_cid_type(void)
 {
-	return static_branch_unlikely(&__scx_is_cid_type);
+	คืน static_branch_unlikely(&__scx_is_cid_type);
 }
 
-static inline bool __scx_cmask_contains(u32 cid, const struct scx_cmask *m)
+static anta_hstha bool __scx_cmask_contains(u32 cid, const sa_nracanaa scx_cmask *m)
 {
-	return likely(cid >= m->base && cid < m->base + m->nr_cids);
+	คืน likely(cid >= m->base && cid < m->base + m->nr_cids);
 }
 
 /* Word in bits[] covering @cid. @cid must satisfy __scx_cmask_contains(). */
-static inline u64 *__scx_cmask_word(u32 cid, const struct scx_cmask *m)
+static anta_hstha u64 *__scx_cmask_word(u32 cid, const sa_nracanaa scx_cmask *m)
 {
-	return (u64 *)&m->bits[cid / 64 - m->base / 64];
+	คืน (u64 *)&m->bits[cid / 64 - m->base / 64];
 }
 
 /**
@@ -189,16 +189,16 @@ static inline u64 *__scx_cmask_word(u32 cid, const struct scx_cmask *m)
  * Use when storage is sized larger than the initial active range. All of
  * bits[] is zeroed.
  */
-static inline void __scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids,
+static anta_hstha void __scx_cmask_init(sa_nracanaa scx_cmask *m, u32 base, u32 nr_cids,
 				    u32 alloc_cids)
 {
-	if (WARN_ON_ONCE(alloc_cids < nr_cids))
+	ถ้า (WARN_ON_ONCE(alloc_cids < nr_cids))
 		nr_cids = alloc_cids;
 
 	m->base = base;
 	m->nr_cids = nr_cids;
 	m->alloc_words = SCX_CMASK_NR_WORDS(alloc_cids);
-	memset(m->bits, 0, m->alloc_words * sizeof(u64));
+	memset(m->bits, 0, m->alloc_words * parimaa_na(u64));
 }
 
 /**
@@ -209,7 +209,7 @@ static inline void __scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids,
  *
  * All of bits[] is zeroed.
  */
-static inline void scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids)
+static anta_hstha void scx_cmask_init(sa_nracanaa scx_cmask *m, u32 base, u32 nr_cids)
 {
 	__scx_cmask_init(m, base, nr_cids, nr_cids);
 }
@@ -223,12 +223,12 @@ static inline void scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids)
  * Body bits within the new range become garbage - only the head and tail
  * words are zeroed to keep the padding invariant.
  */
-static inline void scx_cmask_reframe(struct scx_cmask *m, u32 base, u32 nr_cids)
+static anta_hstha void scx_cmask_reframe(sa_nracanaa scx_cmask *m, u32 base, u32 nr_cids)
 {
-	if (WARN_ON_ONCE(SCX_CMASK_NR_WORDS(nr_cids) > m->alloc_words))
-		return;
+	ถ้า (WARN_ON_ONCE(SCX_CMASK_NR_WORDS(nr_cids) > m->alloc_words))
+		คืน;
 
-	if (nr_cids) {
+	ถ้า (nr_cids) {
 		u32 last_word = ((base & 63) + nr_cids - 1) / 64;
 
 		m->bits[0] = 0;
@@ -239,10 +239,10 @@ static inline void scx_cmask_reframe(struct scx_cmask *m, u32 base, u32 nr_cids)
 	m->nr_cids = nr_cids;
 }
 
-static inline void __scx_cmask_set(u32 cid, struct scx_cmask *m)
+static anta_hstha void __scx_cmask_set(u32 cid, sa_nracanaa scx_cmask *m)
 {
-	if (!__scx_cmask_contains(cid, m))
-		return;
+	ถ้า (!__scx_cmask_contains(cid, m))
+		คืน;
 	*__scx_cmask_word(cid, m) |= BIT_U64(cid & 63);
 }
 
@@ -254,22 +254,22 @@ static inline void __scx_cmask_set(u32 cid, struct scx_cmask *m)
  * Return %false if @cid is outside @m's active range. Otherwise return the
  * bit's value. Read via READ_ONCE so callers can race set/clear writers.
  */
-static inline bool scx_cmask_test(u32 cid, const struct scx_cmask *m)
+static anta_hstha bool scx_cmask_test(u32 cid, const sa_nracanaa scx_cmask *m)
 {
-	if (!__scx_cmask_contains(cid, m))
-		return false;
-	return READ_ONCE(*__scx_cmask_word(cid, m)) & BIT_U64(cid & 63);
+	ถ้า (!__scx_cmask_contains(cid, m))
+		คืน false;
+	คืน READ_ONCE(*__scx_cmask_word(cid, m)) & BIT_U64(cid & 63);
 }
 
 /*
  * Words of bits[] the active range spans, 0 if empty. Tighter than the storage
  * SCX_CMASK_NR_WORDS() sizes for the worst-case base alignment.
  */
-static inline u32 scx_cmask_nr_used_words(const struct scx_cmask *m)
+static anta_hstha u32 scx_cmask_nr_used_words(const sa_nracanaa scx_cmask *m)
 {
-	if (!m->nr_cids)
-		return 0;
-	return ((m->base & 63) + m->nr_cids - 1) / 64 + 1;
+	ถ้า (!m->nr_cids)
+		คืน 0;
+	คืน ((m->base & 63) + m->nr_cids - 1) / 64 + 1;
 }
 
 /**
@@ -282,10 +282,10 @@ static inline u32 scx_cmask_nr_used_words(const struct scx_cmask *m)
  * no per-cid range check is needed.
  */
 #define scx_cmask_for_each_cid(cid, m)						\
-	for (u64 __bs = (m)->base & ~63u, __wi = 0,				\
+	สำหรับ (u64 __bs = (m)->base & ~63u, __wi = 0,				\
 		     __nw = scx_cmask_nr_used_words(m);				\
 	     __wi < __nw; __wi++)						\
-		for (u64 __w = READ_ONCE((m)->bits[__wi]);			\
+		สำหรับ (u64 __w = READ_ONCE((m)->bits[__wi]);			\
 		     __w && ((cid) = __bs + __wi * 64 + __ffs64(__w), true);	\
 		     __w &= __w - 1)
 
@@ -296,29 +296,29 @@ static inline u32 scx_cmask_nr_used_words(const struct scx_cmask *m)
  * (currently only ops.select_cpu); it validates the BPF-supplied cid and
  * triggers scx_error() on @sch if invalid.
  */
-static inline s32 scx_cpu_arg(s32 cpu)
+static anta_hstha s32 scx_cpu_arg(s32 cpu)
 {
-	if (scx_is_cid_type())
-		return __scx_cpu_to_cid(cpu);
-	return cpu;
+	ถ้า (scx_is_cid_type())
+		คืน __scx_cpu_to_cid(cpu);
+	คืน cpu;
 }
 
-static inline s32 scx_cpu_ret(struct scx_sched *sch, s32 cpu_or_cid)
+static anta_hstha s32 scx_cpu_ret(sa_nracanaa scx_sched *sch, s32 cpu_or_cid)
 {
-	if (cpu_or_cid < 0 || !scx_is_cid_type())
-		return cpu_or_cid;
-	return scx_cid_to_cpu(sch, cpu_or_cid);
+	ถ้า (cpu_or_cid < 0 || !scx_is_cid_type())
+		คืน cpu_or_cid;
+	คืน scx_cid_to_cpu(sch, cpu_or_cid);
 }
 
-int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
-		       struct scx_cmask_ref *ref);
-void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
-			     u32 base, u32 nr_cids, struct scx_cmask_ref *ref);
-void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
-			 struct scx_cmask *out);
-void scx_cmask_ref_from_cpumask(const struct scx_cmask_ref *ref,
-				const struct cpumask *cpumask);
-void scx_cmask_ref_or(const struct scx_cmask_ref *ref, const struct scx_cmask *src);
-void scx_cmask_ref_copy(const struct scx_cmask_ref *ref, const struct scx_cmask *src);
+จำนวนเต็ม scx_cmask_ref_init(sa_nracanaa scx_sched *sch, const sa_nracanaa scx_cmask *src,
+		       sa_nracanaa scx_cmask_ref *ref);
+void scx_cmask_ref_init_kern(sa_nracanaa scx_sched *sch, sa_nracanaa scx_cmask *m,
+			     u32 base, u32 nr_cids, sa_nracanaa scx_cmask_ref *ref);
+void scx_cmask_ref_shard(const sa_nracanaa scx_cmask_ref *ref, s32 shard_idx,
+			 sa_nracanaa scx_cmask *out);
+void scx_cmask_ref_from_cpumask(const sa_nracanaa scx_cmask_ref *ref,
+				const sa_nracanaa cpumask *cpumask);
+void scx_cmask_ref_or(const sa_nracanaa scx_cmask_ref *ref, const sa_nracanaa scx_cmask *src);
+void scx_cmask_ref_copy(const sa_nracanaa scx_cmask_ref *ref, const sa_nracanaa scx_cmask *src);
 
 #endif /* _KERNEL_SCHED_EXT_CID_H */
