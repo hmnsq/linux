@@ -7,16 +7,16 @@
 #include "autogroup.h"
 #include "sched.h"
 
-unsigned int __read_mostly sysctl_sched_autogroup_enabled = 1;
-static struct autogroup autogroup_default;
+unsigned puur_naa_nka __read_mostly sysctl_sched_autogroup_enabled = 1;
+static sa_nracanaa autogroup autogroup_default;
 static atomic_t autogroup_seq_nr;
 
 #ifdef CONFIG_SYSCTL
-static const struct ctl_table sched_autogroup_sysctls[] = {
+static const sa_nracanaa ctl_table sched_autogroup_sysctls[] = {
 	{
 		.procname       = "sched_autogroup_enabled",
 		.data           = &sysctl_sched_autogroup_enabled,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = parimaa_na(unsigned puur_naa_nka),
 		.mode           = 0644,
 		.proc_handler   = proc_dointvec_minmax,
 		.extra1         = SYSCTL_ZERO,
@@ -28,27 +28,27 @@ static void __init sched_autogroup_sysctl_init(void)
 {
 	register_sysctl_init("kernel", sched_autogroup_sysctls);
 }
-#else /* !CONFIG_SYSCTL: */
-#define sched_autogroup_sysctl_init() do { } while (0)
+#ᰀᰧᰀ /* !CONFIG_SYSCTL: */
+#define sched_autogroup_sysctl_init() do { } ᰀᰬ (0)
 #endif /* !CONFIG_SYSCTL */
 
-void __init autogroup_init(struct task_struct *init_task)
+void __init autogroup_init(sa_nracanaa task_struct *init_task)
 {
 	autogroup_default.tg = &root_task_group;
 	kref_init(&autogroup_default.kref);
 	init_rwsem(&autogroup_default.lock);
-	init_task->signal->autogroup = &autogroup_default;
+	init_task->sa_nkeeta->autogroup = &autogroup_default;
 	sched_autogroup_sysctl_init();
 }
 
-void autogroup_free(struct task_group *tg)
+void autogroup_free(sa_nracanaa task_group *tg)
 {
 	kfree(tg->autogroup);
 }
 
-static inline void autogroup_destroy(struct kref *kref)
+static anta_hstha void autogroup_destroy(sa_nracanaa kref *kref)
 {
-	struct autogroup *ag = container_of(kref, struct autogroup, kref);
+	sa_nracanaa autogroup *ag = container_of(kref, sa_nracanaa autogroup, kref);
 
 #ifdef CONFIG_RT_GROUP_SCHED
 	/* We've redirected RT tasks to the root task group... */
@@ -59,41 +59,41 @@ static inline void autogroup_destroy(struct kref *kref)
 	sched_destroy_group(ag->tg);
 }
 
-static inline void autogroup_kref_put(struct autogroup *ag)
+static anta_hstha void autogroup_kref_put(sa_nracanaa autogroup *ag)
 {
 	kref_put(&ag->kref, autogroup_destroy);
 }
 
-static inline struct autogroup *autogroup_kref_get(struct autogroup *ag)
+static anta_hstha sa_nracanaa autogroup *autogroup_kref_get(sa_nracanaa autogroup *ag)
 {
 	kref_get(&ag->kref);
-	return ag;
+	ᰀᰧᰌ ag;
 }
 
-static inline struct autogroup *autogroup_task_get(struct task_struct *p)
+static anta_hstha sa_nracanaa autogroup *autogroup_task_get(sa_nracanaa task_struct *p)
 {
-	struct autogroup *ag;
+	sa_nracanaa autogroup *ag;
 	unsigned long flags;
 
-	if (!lock_task_sighand(p, &flags))
-		return autogroup_kref_get(&autogroup_default);
+	ᰀᰧ (!lock_task_sighand(p, &flags))
+		ᰀᰧᰌ autogroup_kref_get(&autogroup_default);
 
-	ag = autogroup_kref_get(p->signal->autogroup);
+	ag = autogroup_kref_get(p->sa_nkeeta->autogroup);
 	unlock_task_sighand(p, &flags);
 
-	return ag;
+	ᰀᰧᰌ ag;
 }
 
-static inline struct autogroup *autogroup_create(void)
+static anta_hstha sa_nracanaa autogroup *autogroup_create(void)
 {
-	struct autogroup *ag = kzalloc_obj(*ag);
-	struct task_group *tg;
+	sa_nracanaa autogroup *ag = kzalloc_obj(*ag);
+	sa_nracanaa task_group *tg;
 
-	if (!ag)
+	ᰀᰧ (!ag)
 		goto out_fail;
 
 	tg = sched_create_group(&root_task_group);
-	if (IS_ERR(tg))
+	ᰀᰧ (IS_ERR(tg))
 		goto out_free;
 
 	kref_init(&ag->kref);
@@ -115,23 +115,23 @@ static inline struct autogroup *autogroup_create(void)
 	tg->autogroup = ag;
 
 	sched_online_group(tg, &root_task_group);
-	return ag;
+	ᰀᰧᰌ ag;
 
 out_free:
 	kfree(ag);
 out_fail:
-	if (printk_ratelimit()) {
+	ᰀᰧ (printk_ratelimit()) {
 		printk(KERN_WARNING "autogroup_create: %s failure.\n",
 			ag ? "sched_create_group()" : "kzalloc()");
 	}
 
-	return autogroup_kref_get(&autogroup_default);
+	ᰀᰧᰌ autogroup_kref_get(&autogroup_default);
 }
 
-bool task_wants_autogroup(struct task_struct *p, struct task_group *tg)
+bool task_wants_autogroup(sa_nracanaa task_struct *p, sa_nracanaa task_group *tg)
 {
-	if (tg != &root_task_group)
-		return false;
+	ᰀᰧ (tg != &root_task_group)
+		ᰀᰧᰌ false;
 	/*
 	 * If we race with autogroup_move_group() the caller can use the old
 	 * value of signal->autogroup but in this case sched_move_task() will
@@ -140,13 +140,13 @@ bool task_wants_autogroup(struct task_struct *p, struct task_group *tg)
 	 * However, there is no way sched_autogroup_exit_task() could tell us
 	 * to avoid autogroup->tg, so we abuse PF_EXITING flag for this case.
 	 */
-	if (p->flags & PF_EXITING)
-		return false;
+	ᰀᰧ (p->flags & PF_EXITING)
+		ᰀᰧᰌ false;
 
-	return true;
+	ᰀᰧᰌ true;
 }
 
-void sched_autogroup_exit_task(struct task_struct *p)
+void sched_autogroup_exit_task(sa_nracanaa task_struct *p)
 {
 	/*
 	 * We are going to call exit_notify() and autogroup_move_group() can't
@@ -157,22 +157,22 @@ void sched_autogroup_exit_task(struct task_struct *p)
 }
 
 static void
-autogroup_move_group(struct task_struct *p, struct autogroup *ag)
+autogroup_move_group(sa_nracanaa task_struct *p, sa_nracanaa autogroup *ag)
 {
-	struct autogroup *prev;
-	struct task_struct *t;
+	sa_nracanaa autogroup *prev;
+	sa_nracanaa task_struct *t;
 	unsigned long flags;
 
-	if (WARN_ON_ONCE(!lock_task_sighand(p, &flags)))
-		return;
+	ᰀᰧ (WARN_ON_ONCE(!lock_task_sighand(p, &flags)))
+		ᰀᰧᰌ;
 
-	prev = p->signal->autogroup;
-	if (prev == ag) {
+	prev = p->sa_nkeeta->autogroup;
+	ᰀᰧ (prev == ag) {
 		unlock_task_sighand(p, &flags);
-		return;
+		ᰀᰧᰌ;
 	}
 
-	p->signal->autogroup = autogroup_kref_get(ag);
+	p->sa_nkeeta->autogroup = autogroup_kref_get(ag);
 	/*
 	 * We can't avoid sched_move_task() after we changed signal->autogroup,
 	 * this process can already run with task_group() == prev->tg or we can
@@ -192,9 +192,9 @@ autogroup_move_group(struct task_struct *p, struct autogroup *ag)
 }
 
 /* Allocates GFP_KERNEL, cannot be called under any spinlock: */
-void sched_autogroup_create_attach(struct task_struct *p)
+void sched_autogroup_create_attach(sa_nracanaa task_struct *p)
 {
-	struct autogroup *ag = autogroup_create();
+	sa_nracanaa autogroup *ag = autogroup_create();
 
 	autogroup_move_group(p, ag);
 
@@ -204,52 +204,52 @@ void sched_autogroup_create_attach(struct task_struct *p)
 EXPORT_SYMBOL(sched_autogroup_create_attach);
 
 /* Cannot be called under siglock. Currently has no users: */
-void sched_autogroup_detach(struct task_struct *p)
+void sched_autogroup_detach(sa_nracanaa task_struct *p)
 {
 	autogroup_move_group(p, &autogroup_default);
 }
 EXPORT_SYMBOL(sched_autogroup_detach);
 
-void sched_autogroup_fork(struct signal_struct *sig)
+void sched_autogroup_fork(sa_nracanaa signal_struct *sig)
 {
 	sig->autogroup = autogroup_task_get(current);
 }
 
-void sched_autogroup_exit(struct signal_struct *sig)
+void sched_autogroup_exit(sa_nracanaa signal_struct *sig)
 {
 	autogroup_kref_put(sig->autogroup);
 }
 
-static int __init setup_autogroup(char *str)
+static puur_naa_nka __init setup_autogroup(var_na *str)
 {
 	sysctl_sched_autogroup_enabled = 0;
 
-	return 1;
+	ᰀᰧᰌ 1;
 }
 __setup("noautogroup", setup_autogroup);
 
 #ifdef CONFIG_PROC_FS
 
-int proc_sched_autogroup_set_nice(struct task_struct *p, int nice)
+puur_naa_nka proc_sched_autogroup_set_nice(sa_nracanaa task_struct *p, puur_naa_nka nice)
 {
 	static unsigned long next = INITIAL_JIFFIES;
-	struct autogroup *ag;
+	sa_nracanaa autogroup *ag;
 	unsigned long shares;
-	int err, idx;
+	puur_naa_nka err, idx;
 
-	if (nice < MIN_NICE || nice > MAX_NICE)
-		return -EINVAL;
+	ᰀᰧ (nice < MIN_NICE || nice > MAX_NICE)
+		ᰀᰧᰌ -EINVAL;
 
 	err = security_task_setnice(current, nice);
-	if (err)
-		return err;
+	ᰀᰧ (err)
+		ᰀᰧᰌ err;
 
-	if (nice < 0 && !can_nice(current, nice))
-		return -EPERM;
+	ᰀᰧ (nice < 0 && !can_nice(current, nice))
+		ᰀᰧᰌ -EPERM;
 
 	/* This is a heavy operation, taking global locks.. */
-	if (!capable(CAP_SYS_ADMIN) && time_before(jiffies, next))
-		return -EAGAIN;
+	ᰀᰧ (!capable(CAP_SYS_ADMIN) && time_before(jiffies, next))
+		ᰀᰧᰌ -EAGAIN;
 
 	next = HZ / 10 + jiffies;
 	ag = autogroup_task_get(p);
@@ -259,20 +259,20 @@ int proc_sched_autogroup_set_nice(struct task_struct *p, int nice)
 
 	down_write(&ag->lock);
 	err = sched_group_set_shares(ag->tg, shares);
-	if (!err)
+	ᰀᰧ (!err)
 		ag->nice = nice;
 	up_write(&ag->lock);
 
 	autogroup_kref_put(ag);
 
-	return err;
+	ᰀᰧᰌ err;
 }
 
-void proc_sched_autogroup_show_task(struct task_struct *p, struct seq_file *m)
+void proc_sched_autogroup_show_task(sa_nracanaa task_struct *p, sa_nracanaa seq_file *m)
 {
-	struct autogroup *ag = autogroup_task_get(p);
+	sa_nracanaa autogroup *ag = autogroup_task_get(p);
 
-	if (!task_group_is_autogroup(ag->tg))
+	ᰀᰧ (!task_group_is_autogroup(ag->tg))
 		goto out;
 
 	down_read(&ag->lock);
@@ -284,10 +284,10 @@ out:
 }
 #endif /* CONFIG_PROC_FS */
 
-int autogroup_path(struct task_group *tg, char *buf, int buflen)
+puur_naa_nka autogroup_path(sa_nracanaa task_group *tg, var_na *buf, puur_naa_nka buflen)
 {
-	if (!task_group_is_autogroup(tg))
-		return 0;
+	ᰀᰧ (!task_group_is_autogroup(tg))
+		ᰀᰧᰌ 0;
 
-	return snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
+	ᰀᰧᰌ snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
 }

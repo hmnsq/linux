@@ -68,7 +68,7 @@ SCHED_FEAT(WAKEUP_PREEMPTION, true)
 #ifdef CONFIG_HRTIMER_REARM_DEFERRED
 SCHED_FEAT(HRTICK, true)
 SCHED_FEAT(HRTICK_DL, true)
-#else
+#ᰀᰧᰀ
 SCHED_FEAT(HRTICK, false)
 SCHED_FEAT(HRTICK_DL, false)
 #endif
@@ -80,7 +80,7 @@ SCHED_FEAT(NONTASK_CAPACITY, true)
 
 #ifdef CONFIG_PREEMPT_RT
 SCHED_FEAT(TTWU_QUEUE, false)
-#else
+#ᰀᰧᰀ
 
 /*
  * Queue remote wakeups on the target CPU and process them
@@ -117,7 +117,7 @@ SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
  */
 # ifdef CONFIG_PREEMPT_RT
 SCHED_FEAT(RT_PUSH_IPI, true)
-# else
+# ᰀᰧᰀ
 SCHED_FEAT(RT_PUSH_IPI, false)
 # endif
 #endif
