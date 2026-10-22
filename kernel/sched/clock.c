@@ -54,22 +54,22 @@
  *
  */
 
-#include <linux/sched/clock.h>
-#include "sched.h"
+#अन्तर्भाव <linux/sched/clock.h>
+#अन्तर्भाव "sched.h"
 
 /*
  * Scheduler clock - returns current time in nanosec units.
  * This is default implementation.
  * Architectures and sub-architectures can override this.
  */
-notrace unsigned long long __weak sched_clock(void)
+notrace अचिन्हित दीर्घ दीर्घ __weak sched_clock(शून्य)
 {
-	return (unsigned long long)(jiffies - INITIAL_JIFFIES)
+	प्रत्यागम (अचिन्हित दीर्घ दीर्घ)(jiffies - INITIAL_JIFFIES)
 					* (NSEC_PER_SEC / HZ);
 }
-EXPORT_SYMBOL_GPL(sched_clock);
+EXPORT_प्रतीक_GPL(sched_clock);
 
-static DEFINE_STATIC_KEY_FALSE(sched_clock_running);
+स्थिर DEFINE_STATIC_कुंजी_FALSE(sched_clock_running);
 
 #ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
 /*
@@ -79,47 +79,47 @@ static DEFINE_STATIC_KEY_FALSE(sched_clock_running);
  * Similarly we start with __sched_clock_stable_early, thereby assuming we
  * will become stable, such that there's only a single 1 -> 0 transition.
  */
-static DEFINE_STATIC_KEY_FALSE(__sched_clock_stable);
-static int __sched_clock_stable_early = 1;
+स्थिर DEFINE_STATIC_कुंजी_FALSE(__sched_clock_stable);
+स्थिर पूर्णाङ्क __sched_clock_stable_early = 1;
 
 /*
  * We want: ktime_get_ns() + __gtod_offset == sched_clock() + __sched_clock_offset
  */
 __read_mostly u64 __sched_clock_offset;
-static __read_mostly u64 __gtod_offset;
+स्थिर __read_mostly u64 __gtod_offset;
 
-struct sched_clock_data {
+संरचना sched_clock_data {
 	u64			tick_raw;
 	u64			tick_gtod;
-	u64			clock;
+	u64			घड़ी;
 };
 
-static DEFINE_PER_CPU_SHARED_ALIGNED(struct sched_clock_data, sched_clock_data);
+स्थिर DEFINE_PER_CPU_SHARED_ALIGNED(संरचना sched_clock_data, sched_clock_data);
 
-static __always_inline struct sched_clock_data *this_scd(void)
+स्थिर __always_inline संरचना sched_clock_data *this_scd(शून्य)
 {
-	return this_cpu_ptr(&sched_clock_data);
+	प्रत्यागम this_cpu_ptr(&sched_clock_data);
 }
 
-notrace static inline struct sched_clock_data *cpu_sdc(int cpu)
+notrace स्थिर अन्तःस्थ संरचना sched_clock_data *cpu_sdc(पूर्णाङ्क cpu)
 {
-	return &per_cpu(sched_clock_data, cpu);
+	प्रत्यागम &per_cpu(sched_clock_data, cpu);
 }
 
-notrace int sched_clock_stable(void)
+notrace पूर्णाङ्क sched_clock_stable(शून्य)
 {
-	return static_branch_likely(&__sched_clock_stable);
+	प्रत्यागम static_branch_likely(&__sched_clock_stable);
 }
 
-notrace static void __scd_stamp(struct sched_clock_data *scd)
+notrace स्थिर शून्य __scd_stamp(संरचना sched_clock_data *scd)
 {
 	scd->tick_gtod = ktime_get_ns();
 	scd->tick_raw = sched_clock();
 }
 
-notrace static void __set_sched_clock_stable(void)
+notrace स्थिर शून्य __set_sched_clock_stable(शून्य)
 {
-	struct sched_clock_data *scd;
+	संरचना sched_clock_data *scd;
 
 	/*
 	 * Since we're still unstable and the tick is already running, we have
@@ -152,16 +152,16 @@ notrace static void __set_sched_clock_stable(void)
  * The only way to fully avoid random clock jumps is to boot with:
  * "tsc=unstable".
  */
-notrace static void __sched_clock_work(struct work_struct *work)
+notrace स्थिर शून्य __sched_clock_work(संरचना work_struct *work)
 {
-	struct sched_clock_data *scd;
-	int cpu;
+	संरचना sched_clock_data *scd;
+	पूर्णाङ्क cpu;
 
 	/* take a current timestamp and set 'now' */
 	preempt_disable();
 	scd = this_scd();
 	__scd_stamp(scd);
-	scd->clock = scd->tick_gtod + __gtod_offset;
+	scd->घड़ी = scd->tick_gtod + __gtod_offset;
 	preempt_enable();
 
 	/* clone to all CPUs */
@@ -177,36 +177,36 @@ notrace static void __sched_clock_work(struct work_struct *work)
 	static_branch_disable(&__sched_clock_stable);
 }
 
-static DECLARE_WORK(sched_clock_work, __sched_clock_work);
+स्थिर DECLARE_WORK(sched_clock_work, __sched_clock_work);
 
-notrace static void __clear_sched_clock_stable(void)
+notrace स्थिर शून्य __clear_sched_clock_stable(शून्य)
 {
-	if (!sched_clock_stable())
-		return;
+	यदि (!sched_clock_stable())
+		प्रत्यागम;
 
 	tick_dep_set(TICK_DEP_BIT_CLOCK_UNSTABLE);
 	schedule_work(&sched_clock_work);
 }
 
-notrace void clear_sched_clock_stable(void)
+notrace शून्य clear_sched_clock_stable(शून्य)
 {
 	__sched_clock_stable_early = 0;
 
 	smp_mb(); /* matches sched_clock_init_late() */
 
-	if (static_key_count(&sched_clock_running.key) == 2)
+	यदि (static_कुंजी_गिनती(&sched_clock_running.कुंजी) == 2)
 		__clear_sched_clock_stable();
 }
 
-notrace static void __sched_clock_gtod_offset(void)
+notrace स्थिर शून्य __sched_clock_gtod_offset(शून्य)
 {
-	struct sched_clock_data *scd = this_scd();
+	संरचना sched_clock_data *scd = this_scd();
 
 	__scd_stamp(scd);
 	__gtod_offset = (scd->tick_raw + __sched_clock_offset) - scd->tick_gtod;
 }
 
-void __init sched_clock_init(void)
+शून्य __init sched_clock_init(शून्य)
 {
 	/*
 	 * Set __gtod_offset such that once we mark sched_clock_running,
@@ -225,7 +225,7 @@ void __init sched_clock_init(void)
  * We run this as late_initcall() such that it runs after all built-in drivers,
  * notably: acpi_processor and intel_idle, which can mark the TSC as unstable.
  */
-static int __init sched_clock_init_late(void)
+स्थिर पूर्णाङ्क __init sched_clock_init_late(शून्य)
 {
 	static_branch_inc(&sched_clock_running);
 	/*
@@ -237,12 +237,12 @@ static int __init sched_clock_init_late(void)
 	 */
 	smp_mb(); /* matches {set,clear}_sched_clock_stable() */
 
-	if (__sched_clock_stable_early)
+	यदि (__sched_clock_stable_early)
 		__set_sched_clock_stable();
-	else
+	अन्यथा
 		disable_sched_clock_irqtime();  /* disable if clock unstable. */
 
-	return 0;
+	प्रत्यागम 0;
 }
 late_initcall(sched_clock_init_late);
 
@@ -250,14 +250,14 @@ late_initcall(sched_clock_init_late);
  * min, max except they take wrapping into account
  */
 
-static __always_inline u64 wrap_min(u64 x, u64 y)
+स्थिर __always_inline u64 wrap_min(u64 x, u64 y)
 {
-	return (s64)(x - y) < 0 ? x : y;
+	प्रत्यागम (s64)(x - y) < 0 ? x : y;
 }
 
-static __always_inline u64 wrap_max(u64 x, u64 y)
+स्थिर __always_inline u64 wrap_max(u64 x, u64 y)
 {
-	return (s64)(x - y) > 0 ? x : y;
+	प्रत्यागम (s64)(x - y) > 0 ? x : y;
 }
 
 /*
@@ -266,18 +266,18 @@ static __always_inline u64 wrap_max(u64 x, u64 y)
  *  - filter out backward motion
  *  - use the GTOD tick value to create a window to filter crazy TSC values
  */
-static __always_inline u64 sched_clock_local(struct sched_clock_data *scd)
+स्थिर __always_inline u64 sched_clock_local(संरचना sched_clock_data *scd)
 {
-	u64 now, clock, old_clock, min_clock, max_clock, gtod;
+	u64 now, घड़ी, old_clock, min_clock, max_clock, gtod;
 	s64 delta;
 
 again:
 	now = sched_clock_noinstr();
 	delta = now - scd->tick_raw;
-	if (unlikely(delta < 0))
+	यदि (unlikely(delta < 0))
 		delta = 0;
 
-	old_clock = scd->clock;
+	old_clock = scd->घड़ी;
 
 	/*
 	 * scd->clock = clamp(scd->tick_gtod + delta,
@@ -286,51 +286,51 @@ again:
 	 */
 
 	gtod = scd->tick_gtod + __gtod_offset;
-	clock = gtod + delta;
+	घड़ी = gtod + delta;
 	min_clock = wrap_max(gtod, old_clock);
 	max_clock = wrap_max(old_clock, gtod + TICK_NSEC);
 
-	clock = wrap_max(clock, min_clock);
-	clock = wrap_min(clock, max_clock);
+	घड़ी = wrap_max(घड़ी, min_clock);
+	घड़ी = wrap_min(घड़ी, max_clock);
 
-	if (!raw_try_cmpxchg64(&scd->clock, &old_clock, clock))
-		goto again;
+	यदि (!raw_try_cmpxchg64(&scd->घड़ी, &old_clock, घड़ी))
+		गच्छ again;
 
-	return clock;
+	प्रत्यागम घड़ी;
 }
 
-noinstr u64 local_clock_noinstr(void)
+noinstr u64 local_clock_noinstr(शून्य)
 {
-	u64 clock;
+	u64 घड़ी;
 
-	if (static_branch_likely(&__sched_clock_stable))
-		return sched_clock_noinstr() + __sched_clock_offset;
+	यदि (static_branch_likely(&__sched_clock_stable))
+		प्रत्यागम sched_clock_noinstr() + __sched_clock_offset;
 
-	if (!static_branch_likely(&sched_clock_running))
-		return sched_clock_noinstr();
+	यदि (!static_branch_likely(&sched_clock_running))
+		प्रत्यागम sched_clock_noinstr();
 
-	clock = sched_clock_local(this_scd());
+	घड़ी = sched_clock_local(this_scd());
 
-	return clock;
+	प्रत्यागम घड़ी;
 }
 
-u64 local_clock(void)
+u64 local_clock(शून्य)
 {
 	u64 now;
 	preempt_disable_notrace();
 	now = local_clock_noinstr();
 	preempt_enable_notrace();
-	return now;
+	प्रत्यागम now;
 }
-EXPORT_SYMBOL_GPL(local_clock);
+EXPORT_प्रतीक_GPL(local_clock);
 
-static notrace u64 sched_clock_remote(struct sched_clock_data *scd)
+स्थिर notrace u64 sched_clock_remote(संरचना sched_clock_data *scd)
 {
-	struct sched_clock_data *my_scd = this_scd();
+	संरचना sched_clock_data *my_scd = this_scd();
 	u64 this_clock, remote_clock;
 	u64 *ptr, old_val, val;
 
-#if BITS_PER_LONG != 64
+#यदि BITS_PER_LONG != 64
 again:
 	/*
 	 * Careful here: The local and the remote clock values need to
@@ -349,16 +349,16 @@ again:
 	 * update on the remote CPU can hit in between the readout of
 	 * the low 32-bit and the high 32-bit portion.
 	 */
-	remote_clock = cmpxchg64(&scd->clock, 0, 0);
-#else
+	remote_clock = cmpxchg64(&scd->घड़ी, 0, 0);
+#अन्यथा
 	/*
 	 * On 64-bit kernels the read of [my]scd->clock is atomic versus the
 	 * update, so we can avoid the above 32-bit dance.
 	 */
 	sched_clock_local(my_scd);
 again:
-	this_clock = my_scd->clock;
-	remote_clock = scd->clock;
+	this_clock = my_scd->घड़ी;
+	remote_clock = scd->घड़ी;
 #endif
 
 	/*
@@ -367,23 +367,23 @@ again:
 	 * larger time as the latest time for both
 	 * runqueues. (this creates monotonic movement)
 	 */
-	if (likely((s64)(remote_clock - this_clock) < 0)) {
-		ptr = &scd->clock;
+	यदि (likely((s64)(remote_clock - this_clock) < 0)) {
+		ptr = &scd->घड़ी;
 		old_val = remote_clock;
 		val = this_clock;
-	} else {
+	} अन्यथा {
 		/*
 		 * Should be rare, but possible:
 		 */
-		ptr = &my_scd->clock;
+		ptr = &my_scd->घड़ी;
 		old_val = this_clock;
 		val = remote_clock;
 	}
 
-	if (!try_cmpxchg64(ptr, &old_val, val))
-		goto again;
+	यदि (!try_cmpxchg64(ptr, &old_val, val))
+		गच्छ again;
 
-	return val;
+	प्रत्यागम val;
 }
 
 /*
@@ -391,39 +391,39 @@ again:
  *
  * See cpu_clock().
  */
-notrace u64 sched_clock_cpu(int cpu)
+notrace u64 sched_clock_cpu(पूर्णाङ्क cpu)
 {
-	struct sched_clock_data *scd;
-	u64 clock;
+	संरचना sched_clock_data *scd;
+	u64 घड़ी;
 
-	if (sched_clock_stable())
-		return sched_clock() + __sched_clock_offset;
+	यदि (sched_clock_stable())
+		प्रत्यागम sched_clock() + __sched_clock_offset;
 
-	if (!static_branch_likely(&sched_clock_running))
-		return sched_clock();
+	यदि (!static_branch_likely(&sched_clock_running))
+		प्रत्यागम sched_clock();
 
 	preempt_disable_notrace();
 	scd = cpu_sdc(cpu);
 
-	if (cpu != smp_processor_id())
-		clock = sched_clock_remote(scd);
-	else
-		clock = sched_clock_local(scd);
+	यदि (cpu != smp_processor_id())
+		घड़ी = sched_clock_remote(scd);
+	अन्यथा
+		घड़ी = sched_clock_local(scd);
 	preempt_enable_notrace();
 
-	return clock;
+	प्रत्यागम घड़ी;
 }
-EXPORT_SYMBOL_GPL(sched_clock_cpu);
+EXPORT_प्रतीक_GPL(sched_clock_cpu);
 
-notrace void sched_clock_tick(void)
+notrace शून्य sched_clock_tick(शून्य)
 {
-	struct sched_clock_data *scd;
+	संरचना sched_clock_data *scd;
 
-	if (sched_clock_stable())
-		return;
+	यदि (sched_clock_stable())
+		प्रत्यागम;
 
-	if (!static_branch_likely(&sched_clock_running))
-		return;
+	यदि (!static_branch_likely(&sched_clock_running))
+		प्रत्यागम;
 
 	lockdep_assert_irqs_disabled();
 
@@ -432,10 +432,10 @@ notrace void sched_clock_tick(void)
 	sched_clock_local(scd);
 }
 
-notrace void sched_clock_tick_stable(void)
+notrace शून्य sched_clock_tick_stable(शून्य)
 {
-	if (!sched_clock_stable())
-		return;
+	यदि (!sched_clock_stable())
+		प्रत्यागम;
 
 	/*
 	 * Called under watchdog_lock.
@@ -452,34 +452,34 @@ notrace void sched_clock_tick_stable(void)
 /*
  * We are going deep-idle (IRQs are disabled):
  */
-notrace void sched_clock_idle_sleep_event(void)
+notrace शून्य sched_clock_idle_sleep_event(शून्य)
 {
 	sched_clock_cpu(smp_processor_id());
 }
-EXPORT_SYMBOL_GPL(sched_clock_idle_sleep_event);
+EXPORT_प्रतीक_GPL(sched_clock_idle_sleep_event);
 
 /*
  * We just idled; resync with ktime.
  */
-notrace void sched_clock_idle_wakeup_event(void)
+notrace शून्य sched_clock_idle_wakeup_event(शून्य)
 {
-	unsigned long flags;
+	अचिन्हित दीर्घ flags;
 
-	if (sched_clock_stable())
-		return;
+	यदि (sched_clock_stable())
+		प्रत्यागम;
 
-	if (unlikely(timekeeping_suspended))
-		return;
+	यदि (unlikely(timekeeping_suspended))
+		प्रत्यागम;
 
 	local_irq_save(flags);
 	sched_clock_tick();
 	local_irq_restore(flags);
 }
-EXPORT_SYMBOL_GPL(sched_clock_idle_wakeup_event);
+EXPORT_प्रतीक_GPL(sched_clock_idle_wakeup_event);
 
-#else /* !CONFIG_HAVE_UNSTABLE_SCHED_CLOCK: */
+#अन्यथा /* !CONFIG_HAVE_UNSTABLE_SCHED_CLOCK: */
 
-void __init sched_clock_init(void)
+शून्य __init sched_clock_init(शून्य)
 {
 	static_branch_inc(&sched_clock_running);
 	local_irq_disable();
@@ -487,12 +487,12 @@ void __init sched_clock_init(void)
 	local_irq_enable();
 }
 
-notrace u64 sched_clock_cpu(int cpu)
+notrace u64 sched_clock_cpu(पूर्णाङ्क cpu)
 {
-	if (!static_branch_likely(&sched_clock_running))
-		return 0;
+	यदि (!static_branch_likely(&sched_clock_running))
+		प्रत्यागम 0;
 
-	return sched_clock();
+	प्रत्यागम sched_clock();
 }
 
 #endif /* !CONFIG_HAVE_UNSTABLE_SCHED_CLOCK */
@@ -505,7 +505,7 @@ notrace u64 sched_clock_cpu(int cpu)
  * On bare metal this function should return the same as local_clock.
  * Architectures and sub-architectures can override this.
  */
-notrace u64 __weak running_clock(void)
+notrace u64 __weak running_clock(शून्य)
 {
-	return local_clock();
+	प्रत्यागम local_clock();
 }
