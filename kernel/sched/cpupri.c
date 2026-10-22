@@ -22,7 +22,7 @@
  *  worst case complexity of O(min(101, nr_domcpus)), though the scenario that
  *  yields the worst case search is fairly contrived.
  */
-#include "sched.h"
+#ضمن "sched.h"
 
 /*
  * p->rt_priority   p->prio   newpri   cpupri
@@ -40,38 +40,38 @@
  *
  *				 100	  100 (CPUPRI_HIGHER)
  */
-static int convert_prio(int prio)
+ساكن صحيح convert_prio(صحيح prio)
 {
-	int cpupri;
+	صحيح cpupri;
 
-	switch (prio) {
-	case CPUPRI_INVALID:
+	بدل (prio) {
+	حالة CPUPRI_INVALID:
 		cpupri = CPUPRI_INVALID;	/* -1 */
-		break;
+		اكسر;
 
-	case 0 ... 98:
+	حالة 0 ... 98:
 		cpupri = MAX_RT_PRIO-1 - prio;	/* 1 ... 99 */
-		break;
+		اكسر;
 
-	case MAX_RT_PRIO-1:
+	حالة MAX_RT_PRIO-1:
 		cpupri = CPUPRI_NORMAL;		/*  0 */
-		break;
+		اكسر;
 
-	case MAX_RT_PRIO:
+	حالة MAX_RT_PRIO:
 		cpupri = CPUPRI_HIGHER;		/* 100 */
-		break;
+		اكسر;
 	}
 
-	return cpupri;
+	أرجع cpupri;
 }
 
-static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
-				struct cpumask *lowest_mask, int idx)
+ساكن مضمن صحيح __cpupri_find(بنية cpupri *cp, بنية task_struct *p,
+				بنية cpumask *lowest_mask, صحيح idx)
 {
-	struct cpupri_vec *vec  = &cp->pri_to_cpu[idx];
-	int skip = 0;
+	بنية cpupri_vec *vec  = &cp->pri_to_cpu[idx];
+	صحيح skip = 0;
 
-	if (!atomic_read(&(vec)->count))
+	إذا (!atomic_read(&(vec)->كدي))
 		skip = 1;
 	/*
 	 * When looking at the vector, we need to read the counter,
@@ -94,13 +94,13 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 	smp_rmb();
 
 	/* Need to do the rmb for every iteration */
-	if (skip)
-		return 0;
+	إذا (skip)
+		أرجع 0;
 
-	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
-		return 0;
+	إذا (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
+		أرجع 0;
 
-	if (lowest_mask) {
+	إذا (lowest_mask) {
 		cpumask_and(lowest_mask, &p->cpus_mask, vec->mask);
 		cpumask_and(lowest_mask, lowest_mask, cpu_active_mask);
 
@@ -112,17 +112,17 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 		 * condition, simply act as though we never hit this
 		 * priority level and continue on.
 		 */
-		if (cpumask_empty(lowest_mask))
-			return 0;
+		إذا (cpumask_empty(lowest_mask))
+			أرجع 0;
 	}
 
-	return 1;
+	أرجع 1;
 }
 
-int cpupri_find(struct cpupri *cp, struct task_struct *p,
-		struct cpumask *lowest_mask)
+صحيح cpupri_find(بنية cpupri *cp, بنية task_struct *p,
+		بنية cpumask *lowest_mask)
 {
-	return cpupri_find_fitness(cp, p, lowest_mask, NULL);
+	أرجع cpupri_find_fitness(cp, p, lowest_mask, عدم);
 }
 
 /**
@@ -142,26 +142,26 @@ int cpupri_find(struct cpupri *cp, struct task_struct *p,
  *
  * Return: (int)bool - CPUs were found
  */
-int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
-		struct cpumask *lowest_mask,
-		bool (*fitness_fn)(struct task_struct *p, int cpu))
+صحيح cpupri_find_fitness(بنية cpupri *cp, بنية task_struct *p,
+		بنية cpumask *lowest_mask,
+		bool (*fitness_fn)(بنية task_struct *p, صحيح cpu))
 {
-	int task_pri = convert_prio(p->prio);
-	int idx, cpu;
+	صحيح task_pri = convert_prio(p->prio);
+	صحيح idx, cpu;
 
 	WARN_ON_ONCE(task_pri >= CPUPRI_NR_PRIORITIES);
 
-	for (idx = 0; idx < task_pri; idx++) {
+	لكل (idx = 0; idx < task_pri; idx++) {
 
-		if (!__cpupri_find(cp, p, lowest_mask, idx))
-			continue;
+		إذا (!__cpupri_find(cp, p, lowest_mask, idx))
+			استمر;
 
-		if (!lowest_mask || !fitness_fn)
-			return 1;
+		إذا (!lowest_mask || !fitness_fn)
+			أرجع 1;
 
 		/* Ensure the capacity of the CPUs fit the task */
 		for_each_cpu(cpu, lowest_mask) {
-			if (!fitness_fn(p, cpu))
+			إذا (!fitness_fn(p, cpu))
 				cpumask_clear_cpu(cpu, lowest_mask);
 		}
 
@@ -169,10 +169,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 		 * If no CPU at the current priority can fit the task
 		 * continue looking
 		 */
-		if (cpumask_empty(lowest_mask))
-			continue;
+		إذا (cpumask_empty(lowest_mask))
+			استمر;
 
-		return 1;
+		أرجع 1;
 	}
 
 	/*
@@ -192,10 +192,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 	 * must do proper RT planning to avoid overloading the system if they
 	 * really care.
 	 */
-	if (fitness_fn)
-		return cpupri_find(cp, p, lowest_mask);
+	إذا (fitness_fn)
+		أرجع cpupri_find(cp, p, lowest_mask);
 
-	return 0;
+	أرجع 0;
 }
 
 /**
@@ -208,18 +208,18 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpupri_set(struct cpupri *cp, int cpu, int newpri)
+فراغ cpupri_set(بنية cpupri *cp, صحيح cpu, صحيح newpri)
 {
-	int *currpri = &cp->cpu_to_pri[cpu];
-	int oldpri = *currpri;
-	int do_mb = 0;
+	صحيح *currpri = &cp->cpu_to_pri[cpu];
+	صحيح oldpri = *currpri;
+	صحيح do_mb = 0;
 
 	newpri = convert_prio(newpri);
 
 	BUG_ON(newpri >= CPUPRI_NR_PRIORITIES);
 
-	if (newpri == oldpri)
-		return;
+	إذا (newpri == oldpri)
+		أرجع;
 
 	/*
 	 * If the CPU was currently mapped to a different value, we
@@ -227,8 +227,8 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 	 * Note, we must add the new value first, otherwise we risk the
 	 * cpu being missed by the priority loop in cpupri_find.
 	 */
-	if (likely(newpri != CPUPRI_INVALID)) {
-		struct cpupri_vec *vec = &cp->pri_to_cpu[newpri];
+	إذا (likely(newpri != CPUPRI_INVALID)) {
+		بنية cpupri_vec *vec = &cp->pri_to_cpu[newpri];
 
 		cpumask_set_cpu(cpu, vec->mask);
 		/*
@@ -237,11 +237,11 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		 * make sure the vector is visible when count is set.
 		 */
 		smp_mb__before_atomic();
-		atomic_inc(&(vec)->count);
+		atomic_inc(&(vec)->كدي);
 		do_mb = 1;
 	}
-	if (likely(oldpri != CPUPRI_INVALID)) {
-		struct cpupri_vec *vec  = &cp->pri_to_cpu[oldpri];
+	إذا (likely(oldpri != CPUPRI_INVALID)) {
+		بنية cpupri_vec *vec  = &cp->pri_to_cpu[oldpri];
 
 		/*
 		 * Because the order of modification of the vec->count
@@ -255,14 +255,14 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		 * We only need to do a memory barrier if we updated
 		 * the new priority vec.
 		 */
-		if (do_mb)
+		إذا (do_mb)
 			smp_mb__after_atomic();
 
 		/*
 		 * When removing from the vector, we decrement the counter first
 		 * do a memory barrier and then clear the mask.
 		 */
-		atomic_dec(&(vec)->count);
+		atomic_dec(&(vec)->كدي);
 		smp_mb__after_atomic();
 		cpumask_clear_cpu(cpu, vec->mask);
 	}
@@ -276,42 +276,42 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
  *
  * Return: -ENOMEM on memory allocation failure.
  */
-int cpupri_init(struct cpupri *cp)
+صحيح cpupri_init(بنية cpupri *cp)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
-		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
+	لكل (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
+		بنية cpupri_vec *vec = &cp->pri_to_cpu[i];
 
-		atomic_set(&vec->count, 0);
-		if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
-			goto cleanup;
+		atomic_set(&vec->كدي, 0);
+		إذا (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
+			اذهب cleanup;
 	}
 
-	cp->cpu_to_pri = kzalloc_objs(int, nr_cpu_ids);
-	if (!cp->cpu_to_pri)
-		goto cleanup;
+	cp->cpu_to_pri = kzalloc_objs(صحيح, nr_cpu_ids);
+	إذا (!cp->cpu_to_pri)
+		اذهب cleanup;
 
 	for_each_possible_cpu(i)
 		cp->cpu_to_pri[i] = CPUPRI_INVALID;
 
-	return 0;
+	أرجع 0;
 
 cleanup:
-	for (i--; i >= 0; i--)
+	لكل (i--; i >= 0; i--)
 		free_cpumask_var(cp->pri_to_cpu[i].mask);
-	return -ENOMEM;
+	أرجع -ENOMEM;
 }
 
 /**
  * cpupri_cleanup - clean up the cpupri structure
  * @cp: The cpupri context
  */
-void cpupri_cleanup(struct cpupri *cp)
+فراغ cpupri_cleanup(بنية cpupri *cp)
 {
-	int i;
+	صحيح i;
 
 	kfree(cp->cpu_to_pri);
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
+	لكل (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
 		free_cpumask_var(cp->pri_to_cpu[i].mask);
 }
