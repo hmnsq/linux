@@ -9,52 +9,52 @@
  *   coalescing source files to amortize header inclusion
  *   cost. )
  */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/debug.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/loadavg.h>
-#include <linux/sched/nohz.h>
-#include <linux/sched/mm.h>
-#include <linux/sched/rseq_api.h>
-#include <linux/sched/task_stack.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/clock.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/cputime.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/debug.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/isolation.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/loadavg.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/nohz.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/mm.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/rseq_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/task_stack.h>
 
-#include <linux/cpufreq.h>
-#include <linux/cpumask_api.h>
-#include <linux/cpuset.h>
-#include <linux/ctype.h>
-#include <linux/debugfs.h>
-#include <linux/energy_model.h>
-#include <linux/hashtable_api.h>
-#include <linux/irq.h>
-#include <linux/kobject_api.h>
-#include <linux/membarrier.h>
-#include <linux/mempolicy.h>
-#include <linux/nmi.h>
-#include <linux/nospec.h>
-#include <linux/proc_fs.h>
-#include <linux/psi.h>
-#include <linux/ptrace_api.h>
-#include <linux/sched_clock.h>
-#include <linux/security.h>
-#include <linux/spinlock_api.h>
-#include <linux/swait_api.h>
-#include <linux/timex.h>
-#include <linux/utsname.h>
-#include <linux/wait_api.h>
-#include <linux/workqueue_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/cpufreq.h>
+#ଅନ୍ତର୍ଭାଵ <linux/cpumask_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/cpuset.h>
+#ଅନ୍ତର୍ଭାଵ <linux/ctype.h>
+#ଅନ୍ତର୍ଭାଵ <linux/debugfs.h>
+#ଅନ୍ତର୍ଭାଵ <linux/energy_model.h>
+#ଅନ୍ତର୍ଭାଵ <linux/hashtable_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/irq.h>
+#ଅନ୍ତର୍ଭାଵ <linux/kobject_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/membarrier.h>
+#ଅନ୍ତର୍ଭାଵ <linux/mempolicy.h>
+#ଅନ୍ତର୍ଭାଵ <linux/nmi.h>
+#ଅନ୍ତର୍ଭାଵ <linux/nospec.h>
+#ଅନ୍ତର୍ଭାଵ <linux/proc_fs.h>
+#ଅନ୍ତର୍ଭାଵ <linux/psi.h>
+#ଅନ୍ତର୍ଭାଵ <linux/ptrace_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched_clock.h>
+#ଅନ୍ତର୍ଭାଵ <linux/security.h>
+#ଅନ୍ତର୍ଭାଵ <linux/spinlock_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/swait_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/timex.h>
+#ଅନ୍ତର୍ଭାଵ <linux/utsname.h>
+#ଅନ୍ତର୍ଭାଵ <linux/wait_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/workqueue_api.h>
 
-#include <uapi/linux/prctl.h>
-#include <uapi/linux/sched/types.h>
+#ଅନ୍ତର୍ଭାଵ <uapi/linux/prctl.h>
+#ଅନ୍ତର୍ଭାଵ <uapi/linux/sched/types.h>
 
-#include <asm/switch_to.h>
+#ଅନ୍ତର୍ଭାଵ <asm/switch_to.h>
 
-#include "sched.h"
-#include "sched-pelt.h"
-#include "stats.h"
-#include "autogroup.h"
+#ଅନ୍ତର୍ଭାଵ "sched.h"
+#ଅନ୍ତର୍ଭାଵ "sched-pelt.h"
+#ଅନ୍ତର୍ଭାଵ "stats.h"
+#ଅନ୍ତର୍ଭାଵ "autogroup.h"
 
-#include "clock.c"
+#ଅନ୍ତର୍ଭାଵ "clock.c"
 
 #ifdef CONFIG_CGROUP_CPUACCT
 # include "cpuacct.c"
@@ -68,22 +68,22 @@
 # include "cpufreq_schedutil.c"
 #endif
 
-#include "debug.c"
+#ଅନ୍ତର୍ଭାଵ "debug.c"
 
 #ifdef CONFIG_SCHEDSTATS
 # include "stats.c"
 #endif
 
-#include "loadavg.c"
-#include "completion.c"
-#include "swait.c"
-#include "wait_bit.c"
-#include "wait.c"
+#ଅନ୍ତର୍ଭାଵ "loadavg.c"
+#ଅନ୍ତର୍ଭାଵ "completion.c"
+#ଅନ୍ତର୍ଭାଵ "swait.c"
+#ଅନ୍ତର୍ଭାଵ "wait_bit.c"
+#ଅନ୍ତର୍ଭାଵ "wait.c"
 
-#include "cpupri.c"
-#include "stop_task.c"
+#ଅନ୍ତର୍ଭାଵ "cpupri.c"
+#ଅନ୍ତର୍ଭାଵ "stop_task.c"
 
-#include "topology.c"
+#ଅନ୍ତର୍ଭାଵ "topology.c"
 
 #ifdef CONFIG_SCHED_CORE
 # include "core_sched.c"

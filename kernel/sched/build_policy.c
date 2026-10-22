@@ -13,49 +13,49 @@
  */
 
 /* Headers: */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/hotplug.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/posix-timers.h>
-#include <linux/sched/rt.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/clock.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/cputime.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/hotplug.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/isolation.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/posix-timers.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sched/rt.h>
 
-#include <linux/cpuidle.h>
-#include <linux/jiffies.h>
-#include <linux/kobject.h>
-#include <linux/livepatch.h>
-#include <linux/pm.h>
-#include <linux/psi.h>
-#include <linux/rhashtable.h>
-#include <linux/seq_buf.h>
-#include <linux/seqlock_api.h>
-#include <linux/slab.h>
-#include <linux/suspend.h>
-#include <linux/tsacct_kern.h>
-#include <linux/vtime.h>
-#include <linux/sysrq.h>
-#include <linux/percpu-rwsem.h>
+#ଅନ୍ତର୍ଭାଵ <linux/cpuidle.h>
+#ଅନ୍ତର୍ଭାଵ <linux/jiffies.h>
+#ଅନ୍ତର୍ଭାଵ <linux/kobject.h>
+#ଅନ୍ତର୍ଭାଵ <linux/livepatch.h>
+#ଅନ୍ତର୍ଭାଵ <linux/pm.h>
+#ଅନ୍ତର୍ଭାଵ <linux/psi.h>
+#ଅନ୍ତର୍ଭାଵ <linux/rhashtable.h>
+#ଅନ୍ତର୍ଭାଵ <linux/seq_buf.h>
+#ଅନ୍ତର୍ଭାଵ <linux/seqlock_api.h>
+#ଅନ୍ତର୍ଭାଵ <linux/slab.h>
+#ଅନ୍ତର୍ଭାଵ <linux/suspend.h>
+#ଅନ୍ତର୍ଭାଵ <linux/tsacct_kern.h>
+#ଅନ୍ତର୍ଭାଵ <linux/vtime.h>
+#ଅନ୍ତର୍ଭାଵ <linux/sysrq.h>
+#ଅନ୍ତର୍ଭାଵ <linux/percpu-rwsem.h>
 
-#include <uapi/linux/sched/types.h>
+#ଅନ୍ତର୍ଭାଵ <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "smp.h"
+#ଅନ୍ତର୍ଭାଵ "sched.h"
+#ଅନ୍ତର୍ଭାଵ "smp.h"
 
-#include "autogroup.h"
-#include "stats.h"
-#include "pelt.h"
+#ଅନ୍ତର୍ଭାଵ "autogroup.h"
+#ଅନ୍ତର୍ଭାଵ "stats.h"
+#ଅନ୍ତର୍ଭାଵ "pelt.h"
 
 /* Source code modules: */
 
-#include "idle.c"
+#ଅନ୍ତର୍ଭାଵ "idle.c"
 
-#include "rt.c"
-#include "cpudeadline.c"
+#ଅନ୍ତର୍ଭାଵ "rt.c"
+#ଅନ୍ତର୍ଭାଵ "cpudeadline.c"
 
-#include "pelt.c"
+#ଅନ୍ତର୍ଭାଵ "pelt.c"
 
-#include "cputime.c"
-#include "deadline.c"
+#ଅନ୍ତର୍ଭାଵ "cputime.c"
+#ଅନ୍ତର୍ଭାଵ "deadline.c"
 
 #ifdef CONFIG_SCHED_CLASS_EXT
 # include <linux/btf_ids.h>
@@ -75,4 +75,4 @@
 # include "ext/sub.c"
 #endif
 
-#include "syscalls.c"
+#ଅନ୍ତର୍ଭାଵ "syscalls.c"

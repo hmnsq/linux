@@ -4,19 +4,19 @@
  * Auto-group scheduling implementation:
  */
 
-#include "autogroup.h"
-#include "sched.h"
+#ଅନ୍ତର୍ଭାଵ "autogroup.h"
+#ଅନ୍ତର୍ଭାଵ "sched.h"
 
-unsigned int __read_mostly sysctl_sched_autogroup_enabled = 1;
-static struct autogroup autogroup_default;
-static atomic_t autogroup_seq_nr;
+unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା __read_mostly sysctl_sched_autogroup_enabled = 1;
+ସ୍ଥିର ସଂରଚନା autogroup autogroup_default;
+ସ୍ଥିର atomic_t autogroup_seq_nr;
 
 #ifdef CONFIG_SYSCTL
-static const struct ctl_table sched_autogroup_sysctls[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା ctl_table sched_autogroup_sysctls[] = {
 	{
 		.procname       = "sched_autogroup_enabled",
 		.data           = &sysctl_sched_autogroup_enabled,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = ଆକାର(unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା),
 		.mode           = 0644,
 		.proc_handler   = proc_dointvec_minmax,
 		.extra1         = SYSCTL_ZERO,
@@ -24,77 +24,77 @@ static const struct ctl_table sched_autogroup_sysctls[] = {
 	},
 };
 
-static void __init sched_autogroup_sysctl_init(void)
+ସ୍ଥିର ଶୂନ୍ୟ __init sched_autogroup_sysctl_init(ଶୂନ୍ୟ)
 {
 	register_sysctl_init("kernel", sched_autogroup_sysctls);
 }
-#else /* !CONFIG_SYSCTL: */
-#define sched_autogroup_sysctl_init() do { } while (0)
+#ଅନ୍ୟଥା /* !CONFIG_SYSCTL: */
+#define sched_autogroup_sysctl_init() କର { } ଯେତେବେଳେ (0)
 #endif /* !CONFIG_SYSCTL */
 
-void __init autogroup_init(struct task_struct *init_task)
+ଶୂନ୍ୟ __init autogroup_init(ସଂରଚନା task_struct *init_task)
 {
-	autogroup_default.tg = &root_task_group;
+	autogroup_default.tg = &ମୂଳ_task_group;
 	kref_init(&autogroup_default.kref);
 	init_rwsem(&autogroup_default.lock);
-	init_task->signal->autogroup = &autogroup_default;
+	init_task->ସଙ୍କେତ->autogroup = &autogroup_default;
 	sched_autogroup_sysctl_init();
 }
 
-void autogroup_free(struct task_group *tg)
+ଶୂନ୍ୟ autogroup_free(ସଂରଚନା task_group *tg)
 {
 	kfree(tg->autogroup);
 }
 
-static inline void autogroup_destroy(struct kref *kref)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ autogroup_destroy(ସଂରଚନା kref *kref)
 {
-	struct autogroup *ag = container_of(kref, struct autogroup, kref);
+	ସଂରଚନା autogroup *ag = container_of(kref, ସଂରଚନା autogroup, kref);
 
 #ifdef CONFIG_RT_GROUP_SCHED
 	/* We've redirected RT tasks to the root task group... */
-	ag->tg->rt_se = NULL;
-	ag->tg->rt_rq = NULL;
+	ag->tg->rt_se = ଖାଲି;
+	ag->tg->rt_rq = ଖାଲି;
 #endif
 	sched_release_group(ag->tg);
 	sched_destroy_group(ag->tg);
 }
 
-static inline void autogroup_kref_put(struct autogroup *ag)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ autogroup_kref_put(ସଂରଚନା autogroup *ag)
 {
 	kref_put(&ag->kref, autogroup_destroy);
 }
 
-static inline struct autogroup *autogroup_kref_get(struct autogroup *ag)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ସଂରଚନା autogroup *autogroup_kref_get(ସଂରଚନା autogroup *ag)
 {
 	kref_get(&ag->kref);
-	return ag;
+	ଫେରନ୍ତୁ ag;
 }
 
-static inline struct autogroup *autogroup_task_get(struct task_struct *p)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ସଂରଚନା autogroup *autogroup_task_get(ସଂରଚନା task_struct *p)
 {
-	struct autogroup *ag;
+	ସଂରଚନା autogroup *ag;
 	unsigned long flags;
 
-	if (!lock_task_sighand(p, &flags))
-		return autogroup_kref_get(&autogroup_default);
+	ଯଦି (!lock_task_sighand(p, &flags))
+		ଫେରନ୍ତୁ autogroup_kref_get(&autogroup_default);
 
-	ag = autogroup_kref_get(p->signal->autogroup);
+	ag = autogroup_kref_get(p->ସଙ୍କେତ->autogroup);
 	unlock_task_sighand(p, &flags);
 
-	return ag;
+	ଫେରନ୍ତୁ ag;
 }
 
-static inline struct autogroup *autogroup_create(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ସଂରଚନା autogroup *autogroup_create(ଶୂନ୍ୟ)
 {
-	struct autogroup *ag = kzalloc_obj(*ag);
-	struct task_group *tg;
+	ସଂରଚନା autogroup *ag = kzalloc_obj(*ag);
+	ସଂରଚନା task_group *tg;
 
-	if (!ag)
-		goto out_fail;
+	ଯଦି (!ag)
+		ଯାଅ out_fail;
 
-	tg = sched_create_group(&root_task_group);
-	if (IS_ERR(tg))
-		goto out_free;
+	tg = sched_create_group(&ମୂଳ_task_group);
+	ଯଦି (IS_ERR(tg))
+		ଯାଅ out_free;
 
 	kref_init(&ag->kref);
 	init_rwsem(&ag->lock);
@@ -109,29 +109,29 @@ static inline struct autogroup *autogroup_create(void)
 	 * the policy change to proceed.
 	 */
 	free_rt_sched_group(tg);
-	tg->rt_se = root_task_group.rt_se;
-	tg->rt_rq = root_task_group.rt_rq;
+	tg->rt_se = ମୂଳ_task_group.rt_se;
+	tg->rt_rq = ମୂଳ_task_group.rt_rq;
 #endif /* CONFIG_RT_GROUP_SCHED */
 	tg->autogroup = ag;
 
-	sched_online_group(tg, &root_task_group);
-	return ag;
+	sched_online_group(tg, &ମୂଳ_task_group);
+	ଫେରନ୍ତୁ ag;
 
 out_free:
 	kfree(ag);
 out_fail:
-	if (printk_ratelimit()) {
+	ଯଦି (printk_ratelimit()) {
 		printk(KERN_WARNING "autogroup_create: %s failure.\n",
 			ag ? "sched_create_group()" : "kzalloc()");
 	}
 
-	return autogroup_kref_get(&autogroup_default);
+	ଫେରନ୍ତୁ autogroup_kref_get(&autogroup_default);
 }
 
-bool task_wants_autogroup(struct task_struct *p, struct task_group *tg)
+bool task_wants_autogroup(ସଂରଚନା task_struct *p, ସଂରଚନା task_group *tg)
 {
-	if (tg != &root_task_group)
-		return false;
+	ଯଦି (tg != &ମୂଳ_task_group)
+		ଫେରନ୍ତୁ false;
 	/*
 	 * If we race with autogroup_move_group() the caller can use the old
 	 * value of signal->autogroup but in this case sched_move_task() will
@@ -140,13 +140,13 @@ bool task_wants_autogroup(struct task_struct *p, struct task_group *tg)
 	 * However, there is no way sched_autogroup_exit_task() could tell us
 	 * to avoid autogroup->tg, so we abuse PF_EXITING flag for this case.
 	 */
-	if (p->flags & PF_EXITING)
-		return false;
+	ଯଦି (p->flags & PF_EXITING)
+		ଫେରନ୍ତୁ false;
 
-	return true;
+	ଫେରନ୍ତୁ true;
 }
 
-void sched_autogroup_exit_task(struct task_struct *p)
+ଶୂନ୍ୟ sched_autogroup_exit_task(ସଂରଚନା task_struct *p)
 {
 	/*
 	 * We are going to call exit_notify() and autogroup_move_group() can't
@@ -156,23 +156,23 @@ void sched_autogroup_exit_task(struct task_struct *p)
 	sched_move_task(p, true);
 }
 
-static void
-autogroup_move_group(struct task_struct *p, struct autogroup *ag)
+ସ୍ଥିର ଶୂନ୍ୟ
+autogroup_move_group(ସଂରଚନା task_struct *p, ସଂରଚନା autogroup *ag)
 {
-	struct autogroup *prev;
-	struct task_struct *t;
+	ସଂରଚନା autogroup *prev;
+	ସଂରଚନା task_struct *t;
 	unsigned long flags;
 
-	if (WARN_ON_ONCE(!lock_task_sighand(p, &flags)))
-		return;
+	ଯଦି (WARN_ON_ONCE(!lock_task_sighand(p, &flags)))
+		ଫେରନ୍ତୁ;
 
-	prev = p->signal->autogroup;
-	if (prev == ag) {
+	prev = p->ସଙ୍କେତ->autogroup;
+	ଯଦି (prev == ag) {
 		unlock_task_sighand(p, &flags);
-		return;
+		ଫେରନ୍ତୁ;
 	}
 
-	p->signal->autogroup = autogroup_kref_get(ag);
+	p->ସଙ୍କେତ->autogroup = autogroup_kref_get(ag);
 	/*
 	 * We can't avoid sched_move_task() after we changed signal->autogroup,
 	 * this process can already run with task_group() == prev->tg or we can
@@ -192,64 +192,64 @@ autogroup_move_group(struct task_struct *p, struct autogroup *ag)
 }
 
 /* Allocates GFP_KERNEL, cannot be called under any spinlock: */
-void sched_autogroup_create_attach(struct task_struct *p)
+ଶୂନ୍ୟ sched_autogroup_create_attach(ସଂରଚନା task_struct *p)
 {
-	struct autogroup *ag = autogroup_create();
+	ସଂରଚନା autogroup *ag = autogroup_create();
 
 	autogroup_move_group(p, ag);
 
 	/* Drop extra reference added by autogroup_create(): */
 	autogroup_kref_put(ag);
 }
-EXPORT_SYMBOL(sched_autogroup_create_attach);
+EXPORT_ପ୍ରତୀକ(sched_autogroup_create_attach);
 
 /* Cannot be called under siglock. Currently has no users: */
-void sched_autogroup_detach(struct task_struct *p)
+ଶୂନ୍ୟ sched_autogroup_detach(ସଂରଚନା task_struct *p)
 {
 	autogroup_move_group(p, &autogroup_default);
 }
-EXPORT_SYMBOL(sched_autogroup_detach);
+EXPORT_ପ୍ରତୀକ(sched_autogroup_detach);
 
-void sched_autogroup_fork(struct signal_struct *sig)
+ଶୂନ୍ୟ sched_autogroup_fork(ସଂରଚନା signal_struct *sig)
 {
 	sig->autogroup = autogroup_task_get(current);
 }
 
-void sched_autogroup_exit(struct signal_struct *sig)
+ଶୂନ୍ୟ sched_autogroup_exit(ସଂରଚନା signal_struct *sig)
 {
 	autogroup_kref_put(sig->autogroup);
 }
 
-static int __init setup_autogroup(char *str)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା __init setup_autogroup(ଅକ୍ଷର *str)
 {
 	sysctl_sched_autogroup_enabled = 0;
 
-	return 1;
+	ଫେରନ୍ତୁ 1;
 }
 __setup("noautogroup", setup_autogroup);
 
 #ifdef CONFIG_PROC_FS
 
-int proc_sched_autogroup_set_nice(struct task_struct *p, int nice)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା proc_sched_autogroup_set_nice(ସଂରଚନା task_struct *p, ପୂର୍ଣ୍ଣସଂଖ୍ୟା nice)
 {
-	static unsigned long next = INITIAL_JIFFIES;
-	struct autogroup *ag;
+	ସ୍ଥିର unsigned long next = INITIAL_JIFFIES;
+	ସଂରଚନା autogroup *ag;
 	unsigned long shares;
-	int err, idx;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା err, idx;
 
-	if (nice < MIN_NICE || nice > MAX_NICE)
-		return -EINVAL;
+	ଯଦି (nice < MIN_NICE || nice > MAX_NICE)
+		ଫେରନ୍ତୁ -EINVAL;
 
 	err = security_task_setnice(current, nice);
-	if (err)
-		return err;
+	ଯଦି (err)
+		ଫେରନ୍ତୁ err;
 
-	if (nice < 0 && !can_nice(current, nice))
-		return -EPERM;
+	ଯଦି (nice < 0 && !can_nice(current, nice))
+		ଫେରନ୍ତୁ -EPERM;
 
 	/* This is a heavy operation, taking global locks.. */
-	if (!capable(CAP_SYS_ADMIN) && time_before(jiffies, next))
-		return -EAGAIN;
+	ଯଦି (!capable(CAP_SYS_ADMIN) && time_before(jiffies, next))
+		ଫେରନ୍ତୁ -EAGAIN;
 
 	next = HZ / 10 + jiffies;
 	ag = autogroup_task_get(p);
@@ -259,21 +259,21 @@ int proc_sched_autogroup_set_nice(struct task_struct *p, int nice)
 
 	down_write(&ag->lock);
 	err = sched_group_set_shares(ag->tg, shares);
-	if (!err)
+	ଯଦି (!err)
 		ag->nice = nice;
 	up_write(&ag->lock);
 
 	autogroup_kref_put(ag);
 
-	return err;
+	ଫେରନ୍ତୁ err;
 }
 
-void proc_sched_autogroup_show_task(struct task_struct *p, struct seq_file *m)
+ଶୂନ୍ୟ proc_sched_autogroup_show_task(ସଂରଚନା task_struct *p, ସଂରଚନା seq_file *m)
 {
-	struct autogroup *ag = autogroup_task_get(p);
+	ସଂରଚନା autogroup *ag = autogroup_task_get(p);
 
-	if (!task_group_is_autogroup(ag->tg))
-		goto out;
+	ଯଦି (!task_group_is_autogroup(ag->tg))
+		ଯାଅ out;
 
 	down_read(&ag->lock);
 	seq_printf(m, "/autogroup-%ld nice %d\n", ag->id, ag->nice);
@@ -284,10 +284,10 @@ out:
 }
 #endif /* CONFIG_PROC_FS */
 
-int autogroup_path(struct task_group *tg, char *buf, int buflen)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା autogroup_path(ସଂରଚନା task_group *tg, ଅକ୍ଷର *buf, ପୂର୍ଣ୍ଣସଂଖ୍ୟା buflen)
 {
-	if (!task_group_is_autogroup(tg))
-		return 0;
+	ଯଦି (!task_group_is_autogroup(tg))
+		ଫେରନ୍ତୁ 0;
 
-	return snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
+	ଫେରନ୍ତୁ snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
 }
