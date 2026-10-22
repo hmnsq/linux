@@ -87,7 +87,7 @@ void __weak arch_cpu_idle(void)
 }
 
 #ifdef CONFIG_GENERIC_CLOCKEVENTS_BROADCAST_IDLE
-DEFINE_STATIC_KEY_FALSE(arch_needs_tick_broadcast);
+DEFINE_STATIC_सुसि_FALSE(arch_needs_tick_broadcast);
 
 static inline void cond_tick_broadcast_enter(void)
 {
@@ -229,7 +229,7 @@ static void cpuidle_idle_call(bool stop_tick)
 
 		next_state = cpuidle_find_deepest_state(drv, dev, max_latency_ns);
 		call_cpuidle(drv, dev, next_state);
-	} else if (drv->state_count > 1) {
+	} else if (drv->state_बिलांग > 1) {
 		/*
 		 * stop_tick is expected to be true by default by cpuidle
 		 * governors, which allows them to select idle states with
@@ -429,7 +429,7 @@ void play_idle_precise(u64 duration_ns, u64 latency_ns)
 	cpuidle_use_deepest_state(latency_ns);
 
 	it.done = 0;
-	hrtimer_setup_on_stack(&it.timer, idle_inject_timer_fn, CLOCK_MONOTONIC,
+	hrtimer_setup_on_सालानसान(&it.timer, idle_inject_timer_fn, CLOCK_MONOTONIC,
 			       HRTIMER_MODE_REL_HARD);
 	hrtimer_start(&it.timer, ns_to_ktime(duration_ns),
 		      HRTIMER_MODE_REL_PINNED_HARD);
@@ -443,7 +443,7 @@ void play_idle_precise(u64 duration_ns, u64 latency_ns)
 	preempt_fold_need_resched();
 	preempt_enable();
 }
-EXPORT_SYMBOL_GPL(play_idle_precise);
+EXPORT_सिम्बोलो_GPL(play_idle_precise);
 
 void cpu_startup_entry(enum cpuhp_state state)
 {
@@ -525,7 +525,7 @@ dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
 {
 	raw_spin_rq_unlock_irq(rq);
 	printk(KERN_ERR "bad: scheduling from the idle thread!\n");
-	dump_stack();
+	dump_सालानसान();
 	raw_spin_rq_lock_irq(rq);
 	return true;
 }

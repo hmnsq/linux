@@ -19,21 +19,21 @@ wait_queue_head_t *bit_waitqueue(unsigned long *word, int bit)
 
 	return bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
 }
-EXPORT_SYMBOL(bit_waitqueue);
+EXPORT_सिम्बोलो(bit_waitqueue);
 
 int wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
 {
-	struct wait_bit_key *key = arg;
+	struct wait_bit_सुसि *सुसि = arg;
 	struct wait_bit_queue_entry *wait_bit = container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
 
-	if (wait_bit->key.flags != key->flags ||
-			wait_bit->key.bit_nr != key->bit_nr ||
-			test_bit(key->bit_nr, key->flags))
+	if (wait_bit->सुसि.flags != सुसि->flags ||
+			wait_bit->सुसि.bit_nr != सुसि->bit_nr ||
+			test_bit(सुसि->bit_nr, सुसि->flags))
 		return 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	return autoremove_wake_function(wq_entry, mode, sync, सुसि);
 }
-EXPORT_SYMBOL(wake_bit_function);
+EXPORT_सिम्बोलो(wake_bit_function);
 
 /*
  * To allow interruptible waiting and asynchronous (i.e. non-blocking)
@@ -48,17 +48,17 @@ __wait_on_bit(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_
 
 	do {
 		prepare_to_wait(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
-			ret = (*action)(&wbq_entry->key, mode);
-	} while (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
+		if (test_bit(wbq_entry->सुसि.bit_nr, wbq_entry->सुसि.flags))
+			ret = (*action)(&wbq_entry->सुसि, mode);
+	} while (test_bit_acquire(wbq_entry->सुसि.bit_nr, wbq_entry->सुसि.flags) && !ret);
 
 	finish_wait(wq_head, &wbq_entry->wq_entry);
 
 	return ret;
 }
-EXPORT_SYMBOL(__wait_on_bit);
+EXPORT_सिम्बोलो(__wait_on_bit);
 
-int __sched out_of_line_wait_on_bit(unsigned long *word, int bit,
+int __sched out_of_लिन्या_wait_on_bit(unsigned long *word, int bit,
 				    wait_bit_action_f *action, unsigned mode)
 {
 	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
@@ -66,20 +66,20 @@ int __sched out_of_line_wait_on_bit(unsigned long *word, int bit,
 
 	return __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit);
+EXPORT_सिम्बोलो(out_of_लिन्या_wait_on_bit);
 
-int __sched out_of_line_wait_on_bit_timeout(
+int __sched out_of_लिन्या_wait_on_bit_timeout(
 	unsigned long *word, int bit, wait_bit_action_f *action,
 	unsigned mode, unsigned long timeout)
 {
 	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	wq_entry.key.timeout = jiffies + timeout;
+	wq_entry.सुसि.timeout = jiffies + timeout;
 
 	return __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
-EXPORT_SYMBOL_GPL(out_of_line_wait_on_bit_timeout);
+EXPORT_सिम्बोलो_GPL(out_of_लिन्या_wait_on_bit_timeout);
 
 int __sched
 __wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
@@ -89,8 +89,8 @@ __wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry 
 
 	for (;;) {
 		prepare_to_wait_exclusive(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			ret = action(&wbq_entry->key, mode);
+		if (test_bit(wbq_entry->सुसि.bit_nr, wbq_entry->सुसि.flags)) {
+			ret = action(&wbq_entry->सुसि, mode);
 			/*
 			 * See the comment in prepare_to_wait_event().
 			 * finish_wait() does not necessarily takes wwq_head->lock,
@@ -100,7 +100,7 @@ __wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry 
 			if (ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
 		}
-		if (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
+		if (!test_and_set_bit(wbq_entry->सुसि.bit_nr, wbq_entry->सुसि.flags)) {
 			if (!ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
 			return 0;
@@ -109,9 +109,9 @@ __wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry 
 		}
 	}
 }
-EXPORT_SYMBOL(__wait_on_bit_lock);
+EXPORT_सिम्बोलो(__wait_on_bit_lock);
 
-int __sched out_of_line_wait_on_bit_lock(unsigned long *word, int bit,
+int __sched out_of_लिन्या_wait_on_bit_lock(unsigned long *word, int bit,
 					 wait_bit_action_f *action, unsigned mode)
 {
 	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
@@ -119,16 +119,16 @@ int __sched out_of_line_wait_on_bit_lock(unsigned long *word, int bit,
 
 	return __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit_lock);
+EXPORT_सिम्बोलो(out_of_लिन्या_wait_on_bit_lock);
 
 void __wake_up_bit(struct wait_queue_head *wq_head, unsigned long *word, int bit)
 {
-	struct wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
+	struct wait_bit_सुसि सुसि = __WAIT_BIT_KEY_INITIALIZER(word, bit);
 
 	if (waitqueue_active(wq_head))
-		__wake_up(wq_head, TASK_NORMAL, 1, &key);
+		__wake_up(wq_head, TASK_NORMAL, 1, &सुसि);
 }
-EXPORT_SYMBOL(__wake_up_bit);
+EXPORT_सिम्बोलो(__wake_up_bit);
 
 /**
  * wake_up_bit - wake up waiters on a bit
@@ -159,41 +159,41 @@ void wake_up_bit(unsigned long *word, int bit)
 {
 	__wake_up_bit(bit_waitqueue(word, bit), word, bit);
 }
-EXPORT_SYMBOL(wake_up_bit);
+EXPORT_सिम्बोलो(wake_up_bit);
 
 wait_queue_head_t *__var_waitqueue(void *p)
 {
 	return bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
 }
-EXPORT_SYMBOL(__var_waitqueue);
+EXPORT_सिम्बोलो(__var_waitqueue);
 
-struct wait_bit_key *__var_wake_key(struct wait_queue_entry *wq_entry, void *arg)
+struct wait_bit_सुसि *__var_wake_key(struct wait_queue_entry *wq_entry, void *arg)
 {
-	struct wait_bit_key *key = arg;
+	struct wait_bit_सुसि *सुसि = arg;
 	struct wait_bit_queue_entry *wbq_entry =
 		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
 
-	if (wbq_entry->key.flags != key->flags ||
-	    wbq_entry->key.bit_nr != key->bit_nr)
+	if (wbq_entry->सुसि.flags != सुसि->flags ||
+	    wbq_entry->सुसि.bit_nr != सुसि->bit_nr)
 		return NULL;
 
-	return key;
+	return सुसि;
 }
 
 static int var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
 			     int sync, void *arg)
 {
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
+	struct wait_bit_सुसि *सुसि = __var_wake_key(wq_entry, arg);
+	if (!सुसि)
 		return 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	return autoremove_wake_function(wq_entry, mode, sync, सुसि);
 }
 
 void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
 {
 	*wbq_entry = (struct wait_bit_queue_entry){
-		.key = {
+		.सुसि = {
 			.flags	= (var),
 			.bit_nr = -1,
 		},
@@ -205,7 +205,7 @@ void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int 
 		},
 	};
 }
-EXPORT_SYMBOL(init_wait_var_entry);
+EXPORT_सिम्बोलो(init_wait_var_entry);
 
 /**
  * wake_up_var - wake up waiters on a variable (kernel address)
@@ -241,9 +241,9 @@ void wake_up_var(void *var)
 {
 	__wake_up_bit(__var_waitqueue(var), var, -1);
 }
-EXPORT_SYMBOL(wake_up_var);
+EXPORT_सिम्बोलो(wake_up_var);
 
-__sched int bit_wait(struct wait_bit_key *word, int mode)
+__sched int bit_wait(struct wait_bit_सुसि *word, int mode)
 {
 	schedule();
 	if (signal_pending_state(mode, current))
@@ -251,9 +251,9 @@ __sched int bit_wait(struct wait_bit_key *word, int mode)
 
 	return 0;
 }
-EXPORT_SYMBOL(bit_wait);
+EXPORT_सिम्बोलो(bit_wait);
 
-__sched int bit_wait_io(struct wait_bit_key *word, int mode)
+__sched int bit_wait_io(struct wait_bit_सुसि *word, int mode)
 {
 	io_schedule();
 	if (signal_pending_state(mode, current))
@@ -261,9 +261,9 @@ __sched int bit_wait_io(struct wait_bit_key *word, int mode)
 
 	return 0;
 }
-EXPORT_SYMBOL(bit_wait_io);
+EXPORT_सिम्बोलो(bit_wait_io);
 
-__sched int bit_wait_timeout(struct wait_bit_key *word, int mode)
+__sched int bit_wait_timeout(struct wait_bit_सुसि *word, int mode)
 {
 	unsigned long now = READ_ONCE(jiffies);
 
@@ -275,7 +275,7 @@ __sched int bit_wait_timeout(struct wait_bit_key *word, int mode)
 
 	return 0;
 }
-EXPORT_SYMBOL_GPL(bit_wait_timeout);
+EXPORT_सिम्बोलो_GPL(bit_wait_timeout);
 
 void __init wait_bit_init(void)
 {

@@ -13,7 +13,7 @@
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
 
-DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DEFINE_STATIC_सुसि_FALSE(sched_clock_irqtime);
 
 /*
  * There are no locks covering percpu hardirq/softirq time.
@@ -69,7 +69,7 @@ void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
 	cpu = smp_processor_id();
 	delta = sched_clock_cpu(cpu) - irqtime->irq_start_time;
 	irqtime->irq_start_time += delta;
-	pc = irq_count() - offset;
+	pc = irq_बिलांग() - offset;
 
 	/*
 	 * We do not account for softirq time from ksoftirqd here.
@@ -193,12 +193,12 @@ void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
 {
 	int index;
 
-	if ((p->flags & PF_VCPU) && (irq_count() - hardirq_offset == 0)) {
+	if ((p->flags & PF_VCPU) && (irq_बिलांग() - hardirq_offset == 0)) {
 		account_guest_time(p, cputime);
 		return;
 	}
 
-	if (hardirq_count() - hardirq_offset)
+	if (hardirq_बिलांग() - hardirq_offset)
 		index = CPUTIME_IRQ;
 	else if (in_serving_softirq())
 		index = CPUTIME_SOFTIRQ;
@@ -254,7 +254,7 @@ void __account_forceidle_time(struct task_struct *p, u64 delta)
  * occasion account more time than the calling functions think elapsed.
  */
 #ifdef CONFIG_PARAVIRT
-DEFINE_STATIC_KEY_FALSE(paravirt_steal_enabled);
+DEFINE_STATIC_सुसि_FALSE(paravirt_steal_enabled);
 
 #ifdef CONFIG_HAVE_PV_STEAL_CLOCK_GEN
 static u64 native_steal_clock(int cpu)
@@ -566,14 +566,14 @@ u64 kcpustat_field_idle(int cpu)
 	return kcpustat_field_dyntick(cpu, CPUTIME_IDLE,
 				      !cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_idle);
+EXPORT_सिम्बोलो_GPL(kcpustat_field_idle);
 
 u64 kcpustat_field_iowait(int cpu)
 {
 	return kcpustat_field_dyntick(cpu, CPUTIME_IOWAIT,
 				      cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_iowait);
+EXPORT_सिम्बोलो_GPL(kcpustat_field_iowait);
 #else
 static inline u64 kcpustat_tick_overlap(void)
 {
@@ -628,7 +628,7 @@ u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time)
 	return get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
 				     !cpu_has_iowait(cpu), last_update_time);
 }
-EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
+EXPORT_सिम्बोलो_GPL(get_cpu_idle_time_us);
 
 /**
  * get_cpu_iowait_time_us - get the total iowait time of a CPU
@@ -652,7 +652,7 @@ u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time)
 	return get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
 				     cpu_has_iowait(cpu), last_update_time);
 }
-EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
+EXPORT_सिम्बोलो_GPL(get_cpu_iowait_time_us);
 
 /*
  * Use precise platform statistics if available:
@@ -661,7 +661,7 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
 
 void vtime_account_irq(struct task_struct *tsk, unsigned int offset)
 {
-	unsigned int pc = irq_count() - offset;
+	unsigned int pc = irq_बिलांग() - offset;
 
 	if (pc & HARDIRQ_OFFSET) {
 		vtime_account_hardirq(tsk);
@@ -691,7 +691,7 @@ void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
 	*ut = p->utime;
 	*st = p->stime;
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_सिम्बोलो_GPL(task_cputime_adjusted);
 
 void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
 {
@@ -736,7 +736,7 @@ void account_process_tick(struct task_struct *p, int user_tick)
 
 	if (user_tick)
 		account_user_time(p, cputime);
-	else if ((p != this_rq()->idle) || (irq_count() != HARDIRQ_OFFSET))
+	else if ((p != this_rq()->idle) || (irq_बिलांग() != HARDIRQ_OFFSET))
 		account_system_time(p, HARDIRQ_OFFSET, cputime);
 	else
 		account_idle_time(cputime);
@@ -844,7 +844,7 @@ void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
 		cputime.sum_exec_runtime = task_sched_runtime(p);
 	cputime_adjust(&cputime, &p->prev_cputime, ut, st);
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_सिम्बोलो_GPL(task_cputime_adjusted);
 
 void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
 {
@@ -891,7 +891,7 @@ static void vtime_account_system(struct task_struct *tsk,
 {
 	vtime->stime += get_vtime_delta(vtime);
 	if (vtime->stime >= TICK_NSEC) {
-		account_system_time(tsk, irq_count(), vtime->stime);
+		account_system_time(tsk, irq_बिलांग(), vtime->stime);
 		vtime->stime = 0;
 	}
 }
@@ -968,7 +968,7 @@ void vtime_guest_enter(struct task_struct *tsk)
 	vtime->state = VTIME_GUEST;
 	write_seqcount_end(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_enter);
+EXPORT_सिम्बोलो_GPL(vtime_guest_enter);
 
 void vtime_guest_exit(struct task_struct *tsk)
 {
@@ -980,7 +980,7 @@ void vtime_guest_exit(struct task_struct *tsk)
 	vtime->state = VTIME_SYS;
 	write_seqcount_end(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_exit);
+EXPORT_सिम्बोलो_GPL(vtime_guest_exit);
 
 static void __vtime_account_idle(struct vtime *vtime)
 {
@@ -1223,7 +1223,7 @@ u64 kcpustat_field(enum cpu_usage_stat usage, int cpu)
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_field);
+EXPORT_सिम्बोलो_GPL(kcpustat_field);
 
 static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
 				    const struct kernel_cpustat *src,
@@ -1322,6 +1322,6 @@ void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_cpu_fetch);
+EXPORT_सिम्बोलो_GPL(kcpustat_cpu_fetch);
 
 #endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */

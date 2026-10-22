@@ -80,7 +80,7 @@ static inline struct dl_rq *dl_rq_of_se(struct sched_dl_entity *dl_se)
 
 static inline int on_dl_rq(struct sched_dl_entity *dl_se)
 {
-	return !RB_EMPTY_NODE(&dl_se->rb_node);
+	return !RB_EMPTY_बुहोल(&dl_se->rb_बुहोल);
 }
 
 #ifdef CONFIG_RT_MUTEXES
@@ -127,7 +127,7 @@ static inline struct dl_bw *dl_bw_of(int i)
 
 static inline int dl_bw_cpus(int i)
 {
-	struct root_domain *rd = cpu_rq(i)->rd;
+	struct उगात_domain *rd = cpu_rq(i)->rd;
 
 	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
 			 "sched RCU must be held");
@@ -165,7 +165,7 @@ static inline unsigned long dl_bw_capacity(int i)
 
 bool dl_bw_visited(int cpu, u64 cookie)
 {
-	struct root_domain *rd = cpu_rq(cpu)->rd;
+	struct उगात_domain *rd = cpu_rq(cpu)->rd;
 
 	if (rd->visit_cookie == cookie)
 		return true;
@@ -177,7 +177,7 @@ bool dl_bw_visited(int cpu, u64 cookie)
 static inline
 void __dl_update(struct dl_bw *dl_b, s64 bw)
 {
-	struct root_domain *rd = container_of(dl_b, struct root_domain, dl_bw);
+	struct उगात_domain *rd = container_of(dl_b, struct उगात_domain, dl_bw);
 	int i;
 
 	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
@@ -501,7 +501,7 @@ static void task_contending(struct sched_dl_entity *dl_se, int flags)
 
 static inline int is_leftmost(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
 {
-	return rb_first_cached(&dl_rq->root) == &dl_se->rb_node;
+	return rb_first_cached(&dl_rq->उगात) == &dl_se->rb_बुहोल;
 }
 
 static void init_dl_rq_bw_ratio(struct dl_rq *dl_rq);
@@ -518,13 +518,13 @@ void init_dl_bw(struct dl_bw *dl_b)
 
 void init_dl_rq(struct dl_rq *dl_rq)
 {
-	dl_rq->root = RB_ROOT_CACHED;
+	dl_rq->उगात = RB_उगात_CACHED;
 
 	/* zero means no -deadline tasks */
 	dl_rq->earliest_dl.curr = dl_rq->earliest_dl.next = 0;
 
 	dl_rq->overloaded = 0;
-	dl_rq->pushable_dl_tasks_root = RB_ROOT_CACHED;
+	dl_rq->pushable_dl_tasks_उगात = RB_उगात_CACHED;
 
 	dl_rq->running_bw = 0;
 	dl_rq->this_bw = 0;
@@ -533,7 +533,7 @@ void init_dl_rq(struct dl_rq *dl_rq)
 
 static inline int dl_overloaded(struct rq *rq)
 {
-	return atomic_read(&rq->rd->dlo_count);
+	return atomic_read(&rq->rd->dlo_बिलांग);
 }
 
 static inline void dl_set_overload(struct rq *rq)
@@ -549,7 +549,7 @@ static inline void dl_set_overload(struct rq *rq)
 	 * Matched by the barrier in pull_dl_task().
 	 */
 	smp_wmb();
-	atomic_inc(&rq->rd->dlo_count);
+	atomic_inc(&rq->rd->dlo_बिलांग);
 }
 
 static inline void dl_clear_overload(struct rq *rq)
@@ -557,21 +557,21 @@ static inline void dl_clear_overload(struct rq *rq)
 	if (!rq->online)
 		return;
 
-	atomic_dec(&rq->rd->dlo_count);
+	atomic_dec(&rq->rd->dlo_बिलांग);
 	cpumask_clear_cpu(rq->cpu, rq->rd->dlo_mask);
 }
 
-#define __node_2_pdl(node) \
-	rb_entry((node), struct task_struct, pushable_dl_tasks)
+#define __node_2_pdl(बुहोल) \
+	rb_entry((बुहोल), struct task_struct, pushable_dl_tasks)
 
-static inline bool __pushable_less(struct rb_node *a, const struct rb_node *b)
+static inline bool __pushable_less(struct rb_बुहोल *a, const struct rb_बुहोल *b)
 {
 	return dl_entity_preempt(&__node_2_pdl(a)->dl, &__node_2_pdl(b)->dl);
 }
 
 static inline int has_pushable_dl_tasks(struct rq *rq)
 {
-	return !RB_EMPTY_ROOT(&rq->dl.pushable_dl_tasks_root.rb_root);
+	return !RB_EMPTY_उगात(&rq->dl.pushable_dl_tasks_उगात.rb_उगात);
 }
 
 /*
@@ -580,12 +580,12 @@ static inline int has_pushable_dl_tasks(struct rq *rq)
  */
 static void enqueue_pushable_dl_task(struct rq *rq, struct task_struct *p)
 {
-	struct rb_node *leftmost;
+	struct rb_बुहोल *leftmost;
 
-	WARN_ON_ONCE(!RB_EMPTY_NODE(&p->pushable_dl_tasks));
+	WARN_ON_ONCE(!RB_EMPTY_बुहोल(&p->pushable_dl_tasks));
 
 	leftmost = rb_add_cached(&p->pushable_dl_tasks,
-				 &rq->dl.pushable_dl_tasks_root,
+				 &rq->dl.pushable_dl_tasks_उगात,
 				 __pushable_less);
 	if (leftmost)
 		rq->dl.earliest_dl.next = p->dl.deadline;
@@ -599,17 +599,17 @@ static void enqueue_pushable_dl_task(struct rq *rq, struct task_struct *p)
 static void dequeue_pushable_dl_task(struct rq *rq, struct task_struct *p)
 {
 	struct dl_rq *dl_rq = &rq->dl;
-	struct rb_root_cached *root = &dl_rq->pushable_dl_tasks_root;
-	struct rb_node *leftmost;
+	struct rb_उगात_cached *उगात = &dl_rq->pushable_dl_tasks_उगात;
+	struct rb_बुहोल *leftmost;
 
-	if (RB_EMPTY_NODE(&p->pushable_dl_tasks))
+	if (RB_EMPTY_बुहोल(&p->pushable_dl_tasks))
 		return;
 
-	leftmost = rb_erase_cached(&p->pushable_dl_tasks, root);
+	leftmost = rb_erase_cached(&p->pushable_dl_tasks, उगात);
 	if (leftmost)
 		dl_rq->earliest_dl.next = __node_2_pdl(leftmost)->dl.deadline;
 
-	RB_CLEAR_NODE(&p->pushable_dl_tasks);
+	RB_CLEAR_बुहोल(&p->pushable_dl_tasks);
 
 	if (!has_pushable_dl_tasks(rq) && rq->dl.overloaded) {
 		dl_clear_overload(rq);
@@ -617,25 +617,25 @@ static void dequeue_pushable_dl_task(struct rq *rq, struct task_struct *p)
 	}
 }
 
-static int push_dl_task(struct rq *rq);
+static int इतुलाक_dl_task(struct rq *rq);
 
 static inline bool need_pull_dl_task(struct rq *rq, struct task_struct *prev)
 {
 	return rq->online && dl_task(prev);
 }
 
-static DEFINE_PER_CPU(struct balance_callback, dl_push_head);
+static DEFINE_PER_CPU(struct balance_callback, dl_इतुलाक_head);
 static DEFINE_PER_CPU(struct balance_callback, dl_pull_head);
 
-static void push_dl_tasks(struct rq *);
+static void इतुलाक_dl_tasks(struct rq *);
 static void pull_dl_task(struct rq *);
 
-static inline void deadline_queue_push_tasks(struct rq *rq)
+static inline void deadline_queue_इतुलाक_tasks(struct rq *rq)
 {
 	if (!has_pushable_dl_tasks(rq))
 		return;
 
-	queue_balance_callback(rq, &per_cpu(dl_push_head, rq->cpu), push_dl_tasks);
+	queue_balance_callback(rq, &per_cpu(dl_इतुलाक_head, rq->cpu), इतुलाक_dl_tasks);
 }
 
 static inline void deadline_queue_pull_task(struct rq *rq)
@@ -919,7 +919,7 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
  */
 static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
 {
-	u64 left, right;
+	u64 कालिवा, कानान;
 
 	/*
 	 * left and right are the two sides of the equation above,
@@ -939,11 +939,11 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
 	 * of anything below microseconds resolution is actually fiction
 	 * (but still we want to give the user that illusion >;).
 	 */
-	left = (pi_of(dl_se)->dl_deadline >> DL_SCALE) * (dl_se->runtime >> DL_SCALE);
-	right = ((dl_se->deadline - t) >> DL_SCALE) *
+	कालिवा = (pi_of(dl_se)->dl_deadline >> DL_SCALE) * (dl_se->runtime >> DL_SCALE);
+	कानान = ((dl_se->deadline - t) >> DL_SCALE) *
 		(pi_of(dl_se)->dl_runtime >> DL_SCALE);
 
-	return dl_time_before(right, left);
+	return dl_time_before(कानान, कालिवा);
 }
 
 /*
@@ -1130,7 +1130,7 @@ static void __push_dl_task(struct rq *rq, struct rq_flags *rf)
 		 * rq->lock.
 		 */
 		rq_unpin_lock(rq, rf);
-		push_dl_task(rq);
+		इतुलाक_dl_task(rq);
 		rq_repin_lock(rq, rf);
 	}
 }
@@ -2212,8 +2212,8 @@ static void init_dl_inactive_task_timer(struct sched_dl_entity *dl_se)
 	hrtimer_setup(timer, inactive_task_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
 }
 
-#define __node_2_dle(node) \
-	rb_entry((node), struct sched_dl_entity, rb_node)
+#define __node_2_dle(बुहोल) \
+	rb_entry((बुहोल), struct sched_dl_entity, rb_बुहोल)
 
 static void inc_dl_deadline(struct dl_rq *dl_rq, u64 deadline)
 {
@@ -2242,7 +2242,7 @@ static void dec_dl_deadline(struct dl_rq *dl_rq, u64 deadline)
 		cpudl_clear(&rq->rd->cpudl, rq->cpu, rq->online);
 		cpupri_set(&rq->rd->cpupri, rq->cpu, rq->rt.highest_prio.curr);
 	} else {
-		struct rb_node *leftmost = rb_first_cached(&dl_rq->root);
+		struct rb_बुहोल *leftmost = rb_first_cached(&dl_rq->उगात);
 		struct sched_dl_entity *entry = __node_2_dle(leftmost);
 
 		dl_rq->earliest_dl.curr = entry->deadline;
@@ -2275,7 +2275,7 @@ void dec_dl_tasks(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
 	dec_dl_deadline(dl_rq, dl_se->deadline);
 }
 
-static inline bool __dl_less(struct rb_node *a, const struct rb_node *b)
+static inline bool __dl_less(struct rb_बुहोल *a, const struct rb_बुहोल *b)
 {
 	return dl_time_before(__node_2_dle(a)->deadline, __node_2_dle(b)->deadline);
 }
@@ -2358,9 +2358,9 @@ static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
 {
 	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
 
-	WARN_ON_ONCE(!RB_EMPTY_NODE(&dl_se->rb_node));
+	WARN_ON_ONCE(!RB_EMPTY_बुहोल(&dl_se->rb_बुहोल));
 
-	rb_add_cached(&dl_se->rb_node, &dl_rq->root, __dl_less);
+	rb_add_cached(&dl_se->rb_बुहोल, &dl_rq->उगात, __dl_less);
 
 	inc_dl_tasks(dl_se, dl_rq);
 }
@@ -2369,12 +2369,12 @@ static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
 {
 	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
 
-	if (RB_EMPTY_NODE(&dl_se->rb_node))
+	if (RB_EMPTY_बुहोल(&dl_se->rb_बुहोल))
 		return;
 
-	rb_erase_cached(&dl_se->rb_node, &dl_rq->root);
+	rb_erase_cached(&dl_se->rb_बुहोल, &dl_rq->उगात);
 
-	RB_CLEAR_NODE(&dl_se->rb_node);
+	RB_CLEAR_बुहोल(&dl_se->rb_बुहोल);
 
 	dec_dl_tasks(dl_se, dl_rq);
 }
@@ -2797,7 +2797,7 @@ static void set_next_task_dl(struct rq *rq, struct task_struct *p, enum snt_e ty
 	if (rq->donor->sched_class != &dl_sched_class)
 		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
 
-	deadline_queue_push_tasks(rq);
+	deadline_queue_इतुलाक_tasks(rq);
 
 	if (hrtick_enabled_dl(rq))
 		start_hrtick_dl(rq, &p->dl);
@@ -2805,12 +2805,12 @@ static void set_next_task_dl(struct rq *rq, struct task_struct *p, enum snt_e ty
 
 static struct sched_dl_entity *pick_next_dl_entity(struct dl_rq *dl_rq)
 {
-	struct rb_node *left = rb_first_cached(&dl_rq->root);
+	struct rb_बुहोल *कालिवा = rb_first_cached(&dl_rq->उगात);
 
-	if (!left)
+	if (!कालिवा)
 		return NULL;
 
-	return __node_2_dle(left);
+	return __node_2_dle(कालिवा);
 }
 
 /*
@@ -2912,19 +2912,19 @@ static void task_fork_dl(struct task_struct *p)
 static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu)
 {
 	struct task_struct *p = NULL;
-	struct rb_node *next_node;
+	struct rb_बुहोल *next_बुहोल;
 
 	if (!has_pushable_dl_tasks(rq))
 		return NULL;
 
-	next_node = rb_first_cached(&rq->dl.pushable_dl_tasks_root);
-	while (next_node) {
-		p = __node_2_pdl(next_node);
+	next_बुहोल = rb_first_cached(&rq->dl.pushable_dl_tasks_उगात);
+	while (next_बुहोल) {
+		p = __node_2_pdl(next_बुहोल);
 
 		if (task_is_pushable(rq, p, cpu))
 			return p;
 
-		next_node = rb_next(next_node);
+		next_बुहोल = rb_next(next_बुहोल);
 	}
 
 	return NULL;
@@ -3023,21 +3023,21 @@ static int find_later_rq(struct task_struct *task)
 static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
 {
 	struct task_struct *i, *p = NULL;
-	struct rb_node *next_node;
+	struct rb_बुहोल *next_बुहोल;
 
 	if (!has_pushable_dl_tasks(rq))
 		return NULL;
 
-	next_node = rb_first_cached(&rq->dl.pushable_dl_tasks_root);
-	while (next_node) {
-		i = __node_2_pdl(next_node);
+	next_बुहोल = rb_first_cached(&rq->dl.pushable_dl_tasks_उगात);
+	while (next_बुहोल) {
+		i = __node_2_pdl(next_बुहोल);
 		/* skip tasks that cannot be migrated */
 		if (!task_on_cpu(rq, i) && !is_migration_disabled(i)) {
 			p = i;
 			break;
 		}
 
-		next_node = rb_next(next_node);
+		next_बुहोल = rb_next(next_बुहोल);
 	}
 
 	if (!p)
@@ -3138,7 +3138,7 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
  * can be sent to some other CPU where they can preempt
  * and start executing.
  */
-static int push_dl_task(struct rq *rq)
+static int इतुलाक_dl_task(struct rq *rq)
 {
 	struct task_struct *next_task;
 	struct rq *later_rq;
@@ -3211,17 +3211,17 @@ out:
 	return ret;
 }
 
-static void push_dl_tasks(struct rq *rq)
+static void इतुलाक_dl_tasks(struct rq *rq)
 {
 	/* push_dl_task() will return true if it moved a -deadline task */
-	while (push_dl_task(rq))
+	while (इतुलाक_dl_task(rq))
 		;
 }
 
 static void pull_dl_task(struct rq *this_rq)
 {
 	int this_cpu = this_rq->cpu, cpu;
-	struct task_struct *p, *push_task;
+	struct task_struct *p, *इतुलाक_task;
 	bool resched = false;
 	struct rq *src_rq;
 	u64 dmin = LONG_MAX;
@@ -3251,7 +3251,7 @@ static void pull_dl_task(struct rq *this_rq)
 			continue;
 
 		/* Might drop this_rq->lock */
-		push_task = NULL;
+		इतुलाक_task = NULL;
 		double_lock_balance(this_rq, src_rq);
 
 		/*
@@ -3282,7 +3282,7 @@ static void pull_dl_task(struct rq *this_rq)
 				goto skip;
 
 			if (is_migration_disabled(p)) {
-				push_task = get_push_task(src_rq);
+				इतुलाक_task = get_इतुलाक_task(src_rq);
 			} else {
 				move_queued_task_locked(src_rq, this_rq, p);
 				dmin = p->dl.deadline;
@@ -3294,11 +3294,11 @@ static void pull_dl_task(struct rq *this_rq)
 skip:
 		double_unlock_balance(this_rq, src_rq);
 
-		if (push_task) {
+		if (इतुलाक_task) {
 			preempt_disable();
 			raw_spin_rq_unlock(this_rq);
-			stop_one_cpu_nowait(src_rq->cpu, push_cpu_stop,
-					    push_task, &src_rq->push_work);
+			stop_one_cpu_nowait(src_rq->cpu, इतुलाक_cpu_stop,
+					    इतुलाक_task, &src_rq->इतुलाक_work);
 			preempt_enable();
 			raw_spin_rq_lock(this_rq);
 		}
@@ -3320,7 +3320,7 @@ static void task_woken_dl(struct rq *rq, struct task_struct *p)
 	    dl_task(rq->donor) &&
 	    (rq->curr->nr_cpus_allowed < 2 ||
 	     !dl_entity_preempt(&p->dl, &rq->donor->dl))) {
-		push_dl_tasks(rq);
+		इतुलाक_dl_tasks(rq);
 	}
 }
 
@@ -3390,8 +3390,8 @@ void __init init_sched_dl_class(void)
 	unsigned int i;
 
 	for_each_possible_cpu(i)
-		zalloc_cpumask_var_node(&per_cpu(local_cpu_mask_dl, i),
-					GFP_KERNEL, cpu_to_node(i));
+		zalloc_cpumask_var_बुहोल(&per_cpu(local_cpu_mask_dl, i),
+					GFP_KERNEL, cpu_to_बुहोल(i));
 }
 
 /*
@@ -3424,7 +3424,7 @@ static void dl_get_task_effective_cpus(struct task_struct *p, struct cpumask *cp
 }
 
 /* The caller should hold cpuset_mutex */
-void dl_add_task_root_domain(struct task_struct *p)
+void dl_add_task_उगात_domain(struct task_struct *p)
 {
 	struct rq_flags rf;
 	struct rq *rq;
@@ -3451,7 +3451,7 @@ void dl_add_task_root_domain(struct task_struct *p)
 	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
 }
 
-static void dl_server_add_bw(struct root_domain *rd, int cpu)
+static void dl_server_add_bw(struct उगात_domain *rd, int cpu)
 {
 	struct sched_dl_entity *dl_se;
 
@@ -3483,7 +3483,7 @@ static u64 dl_server_read_bw(int cpu)
 	return dl_bw;
 }
 
-void dl_clear_root_domain(struct root_domain *rd)
+void dl_clear_उगात_domain(struct उगात_domain *rd)
 {
 	int i;
 
@@ -3505,9 +3505,9 @@ void dl_clear_root_domain(struct root_domain *rd)
 		dl_server_add_bw(rd, i);
 }
 
-void dl_clear_root_domain_cpu(int cpu)
+void dl_clear_उगात_domain_cpu(int cpu)
 {
-	dl_clear_root_domain(cpu_rq(cpu)->rd);
+	dl_clear_उगात_domain(cpu_rq(cpu)->rd);
 }
 
 static void switched_from_dl(struct rq *rq, struct task_struct *p)
@@ -3583,7 +3583,7 @@ static void switched_to_dl(struct rq *rq, struct task_struct *p)
 
 	if (rq->donor != p) {
 		if (p->nr_cpus_allowed > 1 && rq->dl.overloaded)
-			deadline_queue_push_tasks(rq);
+			deadline_queue_इतुलाक_tasks(rq);
 		if (dl_task(rq->donor))
 			wakeup_preempt_dl(rq, p, 0);
 		else
@@ -3965,7 +3965,7 @@ static void __dl_clear_params(struct sched_dl_entity *dl_se)
 
 void init_dl_entity(struct sched_dl_entity *dl_se)
 {
-	RB_CLEAR_NODE(&dl_se->rb_node);
+	RB_CLEAR_बुहोल(&dl_se->rb_बुहोल);
 	init_dl_task_timer(dl_se);
 	init_dl_inactive_task_timer(dl_se);
 	__dl_clear_params(dl_se);
@@ -4095,7 +4095,7 @@ void dl_bw_free(int cpu, u64 dl_bw)
 	dl_bw_manage(dl_bw_req_free, cpu, dl_bw);
 }
 
-void print_dl_stats(struct seq_file *m, int cpu)
+void इलिम्बाग_dl_stats(struct seq_file *m, int cpu)
 {
-	print_dl_rq(m, cpu, &cpu_rq(cpu)->dl);
+	इलिम्बाग_dl_rq(m, cpu, &cpu_rq(cpu)->dl);
 }

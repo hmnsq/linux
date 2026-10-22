@@ -29,7 +29,7 @@ s32 scx_arena_pool_init(struct scx_sched *sch)
 	if (!sch->arena_map)
 		return 0;
 
-	sch->arena_pool = gen_pool_create(SCX_ARENA_MIN_ORDER, NUMA_NO_NODE);
+	sch->arena_pool = gen_pool_create(SCX_ARENA_MIN_ORDER, NUMA_NO_बुहोल);
 	if (!sch->arena_pool)
 		return -ENOMEM;
 	return 0;
@@ -76,13 +76,13 @@ static int scx_arena_grow(struct scx_sched *sch, u32 page_cnt)
 		return -EINVAL;
 
 	p = bpf_arena_alloc_pages_sleepable(sch->arena_map, NULL,
-					    page_cnt, NUMA_NO_NODE, 0);
+					    page_cnt, NUMA_NO_बुहोल, 0);
 	if (!p)
 		return -ENOMEM;
 
 	ret = gen_pool_add(sch->arena_pool,
 			   (unsigned long)scx_arena_to_kaddr(sch, p),
-			   page_cnt * PAGE_SIZE, NUMA_NO_NODE);
+			   page_cnt * PAGE_SIZE, NUMA_NO_बुहोल);
 	if (ret) {
 		bpf_arena_free_pages_non_sleepable(sch->arena_map, p, page_cnt);
 		return ret;

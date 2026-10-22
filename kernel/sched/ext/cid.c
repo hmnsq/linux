@@ -22,7 +22,7 @@ u32 scx_nr_cid_shards;
 s16 __rcu *scx_cid_to_cpu_tbl;
 s16 __rcu *scx_cpu_to_cid_tbl;
 s32 __rcu *scx_cid_to_shard;
-s32 __rcu *scx_shard_node;
+s32 __rcu *scx_shard_बुहोल;
 struct scx_cid_shard __rcu *scx_cid_shard_ranges;
 struct scx_cid_topo __rcu *scx_cid_topo;
 
@@ -30,7 +30,7 @@ static struct scx_cid_tables *scx_cid_tables;	/* used only during alloc/free */
 
 #define SCX_CID_TOPO_NEG	(struct scx_cid_topo) {				\
 	.core_cid = -1, .core_idx = -1, .llc_cid = -1, .llc_idx = -1,		\
-	.node_cid = -1, .node_idx = -1, .shard_cid = -1, .shard_idx = -1,	\
+	.बुहोल_cid = -1, .बुहोल_idx = -1, .shard_cid = -1, .shard_idx = -1,	\
 }
 
 /*
@@ -42,11 +42,11 @@ static const struct cpumask *cpu_llc_mask(int cpu, struct cpumask *fallbacks)
 {
 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
 
-	if (!ci || !ci->info_list || !ci->num_leaves) {
+	if (!ci || !ci->info_list || !ci->नुमेरो_leaves) {
 		cpumask_set_cpu(cpu, fallbacks);
-		return cpumask_of_node(cpu_to_node(cpu));
+		return cpumask_of_बुहोल(cpu_to_बुहोल(cpu));
 	}
-	return &ci->info_list[ci->num_leaves - 1].shared_cpu_map;
+	return &ci->info_list[ci->नुमेरो_leaves - 1].shared_cpu_map;
 }
 
 /*
@@ -82,7 +82,7 @@ static void scx_cid_tables_free(struct scx_cid_tables *tbls)
 	kvfree(tbls->cid_to_cpu);
 	kvfree(tbls->cpu_to_cid);
 	kvfree(tbls->cid_to_shard);
-	kvfree(tbls->shard_node);
+	kvfree(tbls->shard_बुहोल);
 	kvfree(tbls->shard_ranges);
 	kvfree(tbls->topo);
 	kfree(tbls);
@@ -95,7 +95,7 @@ static void scx_cid_tables_free_rcufn(struct rcu_head *rcu)
 
 static struct scx_cid_tables *scx_cid_alloc_tables(void)
 {
-	u32 npossible = num_possible_cpus();
+	u32 npossible = नुमेरो_possible_cpus();
 	struct scx_cid_tables *tbls;
 
 	tbls = kzalloc_obj(*tbls);
@@ -105,12 +105,12 @@ static struct scx_cid_tables *scx_cid_alloc_tables(void)
 	tbls->cid_to_cpu = kvzalloc_objs(*tbls->cid_to_cpu, npossible);
 	tbls->cpu_to_cid = kvzalloc_objs(*tbls->cpu_to_cid, nr_cpu_ids);
 	tbls->cid_to_shard = kvzalloc_objs(*tbls->cid_to_shard, npossible);
-	tbls->shard_node = kvzalloc_objs(*tbls->shard_node, npossible);
+	tbls->shard_बुहोल = kvzalloc_objs(*tbls->shard_बुहोल, npossible);
 	tbls->shard_ranges = kvzalloc_objs(*tbls->shard_ranges, npossible);
 	tbls->topo = kvzalloc_objs(*tbls->topo, npossible);
 
 	if (!tbls->cid_to_cpu || !tbls->cpu_to_cid || !tbls->cid_to_shard ||
-	    !tbls->shard_node || !tbls->shard_ranges || !tbls->topo) {
+	    !tbls->shard_बुहोल || !tbls->shard_ranges || !tbls->topo) {
 		scx_cid_tables_free(tbls);
 		return NULL;
 	}
@@ -133,7 +133,7 @@ void scx_cid_publish_tables(void)
 	rcu_assign_pointer(scx_cid_to_cpu_tbl, tbls->cid_to_cpu);
 	rcu_assign_pointer(scx_cpu_to_cid_tbl, tbls->cpu_to_cid);
 	rcu_assign_pointer(scx_cid_to_shard, tbls->cid_to_shard);
-	rcu_assign_pointer(scx_shard_node, tbls->shard_node);
+	rcu_assign_pointer(scx_shard_बुहोल, tbls->shard_बुहोल);
 	rcu_assign_pointer(scx_cid_shard_ranges, tbls->shard_ranges);
 	rcu_assign_pointer(scx_cid_topo, tbls->topo);
 }
@@ -158,7 +158,7 @@ void scx_cid_retire_tables(void)
 	RCU_INIT_POINTER(scx_cid_to_cpu_tbl, NULL);
 	RCU_INIT_POINTER(scx_cpu_to_cid_tbl, NULL);
 	RCU_INIT_POINTER(scx_cid_to_shard, NULL);
-	RCU_INIT_POINTER(scx_shard_node, NULL);
+	RCU_INIT_POINTER(scx_shard_बुहोल, NULL);
 	RCU_INIT_POINTER(scx_cid_shard_ranges, NULL);
 	RCU_INIT_POINTER(scx_cid_topo, NULL);
 	call_rcu(&tbls->rcu, scx_cid_tables_free_rcufn);
@@ -180,14 +180,14 @@ void scx_cid_retire_tables(void)
 s32 scx_cid_init(struct scx_sched *sch)
 {
 	cpumask_var_t to_walk __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-	cpumask_var_t node_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
+	cpumask_var_t बुहोल_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t llc_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t core_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t llc_fallback __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t online_no_topo __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	struct scx_cid_tables *tbls;
 	u32 next_cid = 0;
-	s32 next_node_idx = 0, next_llc_idx = 0, next_core_idx = 0;
+	s32 next_बुहोल_idx = 0, next_llc_idx = 0, next_core_idx = 0;
 	s32 next_shard_idx = 0;
 	u32 shard_size, max_cids;
 	u32 notopo_in_shard;
@@ -209,11 +209,11 @@ s32 scx_cid_init(struct scx_sched *sch)
 
 	scx_cid_tables = tbls;
 
-	for (si = 0; si < num_possible_cpus(); si++)
-		tbls->shard_node[si] = NUMA_NO_NODE;
+	for (si = 0; si < नुमेरो_possible_cpus(); si++)
+		tbls->shard_बुहोल[si] = NUMA_NO_बुहोल;
 
 	if (!zalloc_cpumask_var(&to_walk, GFP_KERNEL) ||
-	    !zalloc_cpumask_var(&node_scratch, GFP_KERNEL) ||
+	    !zalloc_cpumask_var(&बुहोल_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&llc_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&core_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&llc_fallback, GFP_KERNEL) ||
@@ -228,9 +228,9 @@ s32 scx_cid_init(struct scx_sched *sch)
 
 	while (!cpumask_empty(to_walk)) {
 		s32 next_cpu = cpumask_first(to_walk);
-		s32 nid = cpu_to_node(next_cpu);
-		s32 node_cid = next_cid;
-		s32 node_idx;
+		s32 nid = cpu_to_बुहोल(next_cpu);
+		s32 बुहोल_cid = next_cid;
+		s32 बुहोल_idx;
 
 		/*
 		 * No NUMA info: skip and let the tail loop assign a no-topo
@@ -241,15 +241,15 @@ s32 scx_cid_init(struct scx_sched *sch)
 			continue;
 		}
 
-		node_idx = next_node_idx++;
+		बुहोल_idx = next_बुहोल_idx++;
 
 		/* node_scratch = to_walk & this node */
-		cpumask_and(node_scratch, to_walk, cpumask_of_node(nid));
-		if (WARN_ON_ONCE(!cpumask_test_cpu(next_cpu, node_scratch)))
+		cpumask_and(बुहोल_scratch, to_walk, cpumask_of_बुहोल(nid));
+		if (WARN_ON_ONCE(!cpumask_test_cpu(next_cpu, बुहोल_scratch)))
 			return -EINVAL;
 
-		while (!cpumask_empty(node_scratch)) {
-			s32 ncpu = cpumask_first(node_scratch);
+		while (!cpumask_empty(बुहोल_scratch)) {
+			s32 ncpu = cpumask_first(बुहोल_scratch);
 			const struct cpumask *llc_mask = cpu_llc_mask(ncpu, llc_fallback);
 			s32 llc_cid = next_cid;
 			s32 llc_idx = next_llc_idx++;
@@ -258,14 +258,14 @@ s32 scx_cid_init(struct scx_sched *sch)
 			s32 shard_cid, shard_idx;
 
 			/* llc_scratch = node_scratch & this llc */
-			cpumask_and(llc_scratch, node_scratch, llc_mask);
+			cpumask_and(llc_scratch, बुहोल_scratch, llc_mask);
 			if (WARN_ON_ONCE(!cpumask_test_cpu(ncpu, llc_scratch)))
 				return -EINVAL;
 
 			calc_shard_layout(llc_scratch, shard_size, &cores_per_shard, &nr_large);
 			shard_cid = next_cid;
 			shard_idx = next_shard_idx++;
-			tbls->shard_node[shard_idx] = nid;
+			tbls->shard_बुहोल[shard_idx] = nid;
 
 			while (!cpumask_empty(llc_scratch)) {
 				s32 lcpu = cpumask_first(llc_scratch);
@@ -296,7 +296,7 @@ s32 scx_cid_init(struct scx_sched *sch)
 					cids_in_shard = 0;
 					shard_cid = next_cid;
 					shard_idx = next_shard_idx++;
-					tbls->shard_node[shard_idx] = nid;
+					tbls->shard_बुहोल[shard_idx] = nid;
 				}
 				cores_in_shard++;
 				cids_in_shard += cids_in_core;
@@ -312,14 +312,14 @@ s32 scx_cid_init(struct scx_sched *sch)
 						.core_idx = core_idx,
 						.llc_cid = llc_cid,
 						.llc_idx = llc_idx,
-						.node_cid = node_cid,
-						.node_idx = node_idx,
+						.बुहोल_cid = बुहोल_cid,
+						.बुहोल_idx = बुहोल_idx,
 						.shard_cid = shard_cid,
 						.shard_idx = shard_idx,
 					};
 
 					cpumask_clear_cpu(ccpu, llc_scratch);
-					cpumask_clear_cpu(ccpu, node_scratch);
+					cpumask_clear_cpu(ccpu, बुहोल_scratch);
 					cpumask_clear_cpu(ccpu, to_walk);
 				}
 			}
@@ -363,10 +363,10 @@ s32 scx_cid_init(struct scx_sched *sch)
 
 	if (!cpumask_empty(llc_fallback))
 		pr_warn("scx_cid: cpus without cacheinfo, using node mask as llc: %*pbl\n",
-			cpumask_pr_args(llc_fallback));
+			cpumask_pr_मगा_कातविरान(llc_fallback));
 	if (!cpumask_empty(online_no_topo))
 		pr_warn("scx_cid: online cpus with no usable topology: %*pbl\n",
-			cpumask_pr_args(online_no_topo));
+			cpumask_pr_मगा_कातविरान(online_no_topo));
 
 	/*
 	 * Fill cid_shard_ranges[] from cid_to_shard[]. Shards are contiguous
@@ -393,12 +393,12 @@ s32 scx_cid_init(struct scx_sched *sch)
  */
 void scx_cmask_clear(struct scx_cmask *m)
 {
-	u32 nr_words;
+	u32 nr_मगा_सालिता;
 
 	if (!m->nr_cids)
 		return;
-	nr_words = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
-	memset(m->bits, 0, nr_words * sizeof(u64));
+	nr_मगा_सालिता = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
+	memset(m->bits, 0, nr_मगा_सालिता * sizeof(u64));
 }
 
 /**
@@ -409,12 +409,12 @@ void scx_cmask_clear(struct scx_cmask *m)
  */
 void scx_cmask_fill(struct scx_cmask *m)
 {
-	u32 nr_words, head_bits, tail_bits;
+	u32 nr_मगा_सालिता, head_bits, tail_bits;
 
 	if (!m->nr_cids)
 		return;
-	nr_words = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
-	memset(m->bits, 0xff, nr_words * sizeof(u64));
+	nr_मगा_सालिता = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
+	memset(m->bits, 0xff, nr_मगा_सालिता * sizeof(u64));
 
 	/* clear word-0 bits below base */
 	head_bits = m->base & 63;
@@ -424,21 +424,21 @@ void scx_cmask_fill(struct scx_cmask *m)
 	/* clear last-word bits at or past base + nr_cids */
 	tail_bits = (m->base + m->nr_cids) & 63;
 	if (tail_bits)
-		m->bits[nr_words - 1] &= (1ULL << tail_bits) - 1;
+		m->bits[nr_मगा_सालिता - 1] &= (1ULL << tail_bits) - 1;
 }
 
 /*
  * Return the index of the largest entry in @counts, or NUMA_NO_NODE if all
  * entries are zero. Ties resolve to the lowest index.
  */
-static s32 pick_max_node(const u32 *counts, u32 n)
+static s32 pick_max_बुहोल(const u32 *counts, u32 n)
 {
-	s32 best = NUMA_NO_NODE;
-	u32 best_count = 0, i;
+	s32 best = NUMA_NO_बुहोल;
+	u32 best_बिलांग = 0, i;
 
 	for (i = 0; i < n; i++) {
-		if (counts[i] > best_count) {
-			best_count = counts[i];
+		if (counts[i] > best_बिलांग) {
+			best_बिलांग = counts[i];
 			best = i;
 		}
 	}
@@ -469,10 +469,10 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 				      const struct bpf_prog_aux *aux)
 {
 	cpumask_var_t seen __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-	u32 *node_counts __free(kfree) = NULL;
+	u32 *बुहोल_counts __free(kfree) = NULL;
 	s32 *cpu_to_cid __free(kfree) = NULL;
 	s32 *shard_start __free(kfree) = NULL;
-	u32 npossible = num_possible_cpus();
+	u32 npossible = नुमेरो_possible_cpus();
 	struct scx_cid_tables *tbls;
 	struct scx_sched *sch;
 	u32 nr_shards = shard_start_cnt;
@@ -490,7 +490,7 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	 * region that arena fault recovery covers.
 	 */
 	alloced = zalloc_cpumask_var(&seen, GFP_KERNEL);
-	node_counts = kzalloc_objs(*node_counts, nr_node_ids);
+	बुहोल_counts = kzalloc_objs(*बुहोल_counts, nr_बुहोल_ids);
 	if (cpu_to_cid_cnt == nr_cpu_ids)
 		cpu_to_cid = kmemdup(cpu_to_cid__arena, cpu_to_cid_cnt * sizeof(s32),
 				     GFP_KERNEL);
@@ -520,7 +520,7 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 		return;
 	}
 
-	if (!alloced || !node_counts || !cpu_to_cid || !shard_start) {
+	if (!alloced || !बुहोल_counts || !cpu_to_cid || !shard_start) {
 		scx_error(sch, "scx_bpf_cid_override: allocation failed");
 		return;
 	}
@@ -582,14 +582,14 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	for (si = 0; si < nr_shards; si++) {
 		u32 end = (si + 1 < nr_shards) ? shard_start[si + 1] : npossible;
 
-		memset(node_counts, 0, nr_node_ids * sizeof(*node_counts));
+		memset(बुहोल_counts, 0, nr_बुहोल_ids * sizeof(*बुहोल_counts));
 		for (cid = shard_start[si]; cid < end; cid++) {
-			s32 node = cpu_to_node(tbls->cid_to_cpu[cid]);
+			s32 बुहोल = cpu_to_बुहोल(tbls->cid_to_cpu[cid]);
 
-			if (numa_valid_node(node))
-				node_counts[node]++;
+			if (numa_valid_बुहोल(बुहोल))
+				बुहोल_counts[बुहोल]++;
 		}
-		tbls->shard_node[si] = pick_max_node(node_counts, nr_node_ids);
+		tbls->shard_बुहोल[si] = pick_max_बुहोल(बुहोल_counts, nr_बुहोल_ids);
 	}
 
 	/*
@@ -947,7 +947,7 @@ __bpf_kfunc void scx_bpf_cid_topo(s32 cid, struct scx_cid_topo *out, size_t out_
 __bpf_kfunc_end_defs();
 
 BTF_KFUNCS_START(scx_kfunc_ids_init_cids)
-BTF_ID_FLAGS(func, scx_bpf_cid_override, KF_IMPLICIT_ARGS | KF_SLEEPABLE)
+BTF_ID_FLAGS(func, scx_bpf_cid_override, KF_IMPLICIT_मगा_कातविरान | KF_SLEEPABLE)
 BTF_KFUNCS_END(scx_kfunc_ids_init_cids)
 
 static const struct btf_kfunc_id_set scx_kfunc_set_init_cids = {
@@ -957,9 +957,9 @@ static const struct btf_kfunc_id_set scx_kfunc_set_init_cids = {
 };
 
 BTF_KFUNCS_START(scx_kfunc_ids_cid)
-BTF_ID_FLAGS(func, scx_bpf_cid_to_cpu, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpu_to_cid, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cid_topo, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_cid_to_cpu, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cpu_to_cid, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cid_topo, KF_IMPLICIT_मगा_कातविरान)
 BTF_KFUNCS_END(scx_kfunc_ids_cid)
 
 static const struct btf_kfunc_id_set scx_kfunc_set_cid = {
@@ -982,15 +982,15 @@ static const struct btf_kfunc_id_set scx_kfunc_set_cid = {
 int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
 		       struct scx_cmask_ref *ref)
 {
-	u32 base, nr_cids, alloc_words, npossible = num_possible_cpus();
+	u32 base, nr_cids, alloc_मगा_सालिता, npossible = नुमेरो_possible_cpus();
 	s32 *cid_to_shard;
 
 	base = READ_ONCE(src->base);
 	nr_cids = READ_ONCE(src->nr_cids);
-	alloc_words = READ_ONCE(src->alloc_words);
+	alloc_मगा_सालिता = READ_ONCE(src->alloc_मगा_सालिता);
 
 	if (unlikely(base >= npossible || nr_cids > npossible - base ||
-		     SCX_CMASK_NR_WORDS(nr_cids) > alloc_words))
+		     SCX_CMASK_NR_मगा_सालिता(nr_cids) > alloc_मगा_सालिता))
 		return -EINVAL;
 
 	ref->sch = sch;
@@ -1028,7 +1028,7 @@ void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
 
 	WRITE_ONCE(m->base, base);
 	WRITE_ONCE(m->nr_cids, nr_cids);
-	WRITE_ONCE(m->alloc_words, SCX_CMASK_NR_WORDS(nr_cids));
+	WRITE_ONCE(m->alloc_मगा_सालिता, SCX_CMASK_NR_मगा_सालिता(nr_cids));
 
 	ref->sch = sch;
 	ref->src = m;
@@ -1061,7 +1061,7 @@ void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
 		&rcu_dereference_all(scx_cid_shard_ranges)[shard_idx];
 	u32 shard_base = shard->base_cid;
 	u32 shard_end = shard_base + shard->nr_cids;
-	u32 isect_base, isect_end, nr_words, src_off, wi;
+	u32 isect_base, isect_end, nr_मगा_सालिता, src_off, wi;
 	u64 head_mask, tail_mask;
 
 	isect_base = max(ref->base, shard_base);
@@ -1073,10 +1073,10 @@ void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
 		return;
 	}
 
-	nr_words = ((isect_end - 1) / 64) - (isect_base / 64) + 1;
-	if (nr_words > out->alloc_words) {
+	nr_मगा_सालिता = ((isect_end - 1) / 64) - (isect_base / 64) + 1;
+	if (nr_मगा_सालिता > out->alloc_मगा_सालिता) {
 		scx_error(ref->sch, "scx_cmask_ref_shard: out alloc_words=%u < %u for shard %d",
-			  out->alloc_words, nr_words, shard_idx);
+			  out->alloc_मगा_सालिता, nr_मगा_सालिता, shard_idx);
 		out->base = shard_base;
 		out->nr_cids = 0;
 		return;
@@ -1086,13 +1086,13 @@ void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
 	out->nr_cids = isect_end - isect_base;
 	src_off = (isect_base / 64) - (ref->base / 64);
 
-	for (wi = 0; wi < nr_words; wi++)
+	for (wi = 0; wi < nr_मगा_सालिता; wi++)
 		out->bits[wi] = READ_ONCE(ref->src->bits[src_off + wi]);
 
 	head_mask = GENMASK_U64(63, isect_base & 63);
 	out->bits[0] &= head_mask;
 	tail_mask = GENMASK_U64((isect_end - 1) & 63, 0);
-	out->bits[nr_words - 1] &= tail_mask;
+	out->bits[nr_मगा_सालिता - 1] &= tail_mask;
 }
 
 /**
@@ -1140,13 +1140,13 @@ void scx_cmask_ref_from_cpumask(const struct scx_cmask_ref *ref,
 {
 	struct scx_cmask *m = ref->src;
 	u32 base = ref->base, nr_cids = ref->nr_cids;
-	u32 wi, nr_words;
+	u32 wi, nr_मगा_सालिता;
 
 	if (!nr_cids)
 		return;
 
-	nr_words = (base + nr_cids - 1) / 64 - base / 64 + 1;
-	for (wi = 0; wi < nr_words; wi++) {
+	nr_मगा_सालिता = (base + nr_cids - 1) / 64 - base / 64 + 1;
+	for (wi = 0; wi < nr_मगा_सालिता; wi++) {
 		u32 word_first_cid = (base / 64 + wi) * 64;
 		u64 word = 0;
 		u32 bit;

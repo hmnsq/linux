@@ -111,7 +111,7 @@ static unsigned long sched_core_clone_cookie(struct task_struct *p)
 
 void sched_core_fork(struct task_struct *p)
 {
-	RB_CLEAR_NODE(&p->core_node);
+	RB_CLEAR_बुहोल(&p->core_बुहोल);
 	p->core_cookie = sched_core_clone_cookie(current);
 }
 
@@ -249,7 +249,7 @@ void __sched_core_account_forceidle(struct rq *rq)
 
 	lockdep_assert_rq_held(rq);
 
-	WARN_ON_ONCE(!rq->core->core_forceidle_count);
+	WARN_ON_ONCE(!rq->core->core_forceidle_बिलांग);
 
 	if (rq->core->core_forceidle_start == 0)
 		return;
@@ -262,14 +262,14 @@ void __sched_core_account_forceidle(struct rq *rq)
 
 	if (WARN_ON_ONCE(!rq->core->core_forceidle_occupation)) {
 		/* can't be forced idle without a running task */
-	} else if (rq->core->core_forceidle_count > 1 ||
+	} else if (rq->core->core_forceidle_बिलांग > 1 ||
 		   rq->core->core_forceidle_occupation > 1) {
 		/*
 		 * For larger SMT configurations, we need to scale the charged
 		 * forced idle amount since there can be more than one forced
 		 * idle sibling and more than one running cookied task.
 		 */
-		delta *= rq->core->core_forceidle_count;
+		delta *= rq->core->core_forceidle_बिलांग;
 		delta = div_u64(delta, rq->core->core_forceidle_occupation);
 	}
 
@@ -290,7 +290,7 @@ void __sched_core_account_forceidle(struct rq *rq)
 
 void __sched_core_tick(struct rq *rq)
 {
-	if (!rq->core->core_forceidle_count)
+	if (!rq->core->core_forceidle_बिलांग)
 		return;
 
 	if (rq != rq->core)

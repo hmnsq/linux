@@ -5,13 +5,13 @@
 #include "sched.h"
 
 void __init_swait_queue_head(struct swait_queue_head *q, const char *name,
-			     struct lock_class_key *key)
+			     struct lock_class_सुसि *सुसि)
 {
 	raw_spin_lock_init(&q->lock);
-	lockdep_set_class_and_name(&q->lock, key, name);
+	lockdep_set_class_and_name(&q->lock, सुसि, name);
 	INIT_LIST_HEAD(&q->task_list);
 }
-EXPORT_SYMBOL(__init_swait_queue_head);
+EXPORT_सिम्बोलो(__init_swait_queue_head);
 
 /*
  * The thing about the wake_up_state() return value; I think we can ignore it.
@@ -30,7 +30,7 @@ void swake_up_locked(struct swait_queue_head *q, int wake_flags)
 	try_to_wake_up(curr->task, TASK_NORMAL, wake_flags);
 	list_del_init(&curr->task_list);
 }
-EXPORT_SYMBOL(swake_up_locked);
+EXPORT_सिम्बोलो(swake_up_locked);
 
 /*
  * Wake up all waiters. This is an interface which is solely exposed for
@@ -53,7 +53,7 @@ void swake_up_one(struct swait_queue_head *q)
 	swake_up_locked(q, 0);
 	raw_spin_unlock_irqrestore(&q->lock, flags);
 }
-EXPORT_SYMBOL(swake_up_one);
+EXPORT_सिम्बोलो(swake_up_one);
 
 /*
  * Does not allow usage from IRQ disabled, since we must be able to
@@ -80,7 +80,7 @@ void swake_up_all(struct swait_queue_head *q)
 	}
 	raw_spin_unlock_irq(&q->lock);
 }
-EXPORT_SYMBOL(swake_up_all);
+EXPORT_सिम्बोलो(swake_up_all);
 
 void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait)
 {
@@ -98,7 +98,7 @@ void prepare_to_swait_exclusive(struct swait_queue_head *q, struct swait_queue *
 	set_current_state(state);
 	raw_spin_unlock_irqrestore(&q->lock, flags);
 }
-EXPORT_SYMBOL(prepare_to_swait_exclusive);
+EXPORT_सिम्बोलो(prepare_to_swait_exclusive);
 
 long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queue *wait, int state)
 {
@@ -121,7 +121,7 @@ long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queue *wait
 
 	return ret;
 }
-EXPORT_SYMBOL(prepare_to_swait_event);
+EXPORT_सिम्बोलो(prepare_to_swait_event);
 
 void __finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
 {
@@ -142,4 +142,4 @@ void finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
 		raw_spin_unlock_irqrestore(&q->lock, flags);
 	}
 }
-EXPORT_SYMBOL(finish_swait);
+EXPORT_सिम्बोलो(finish_swait);

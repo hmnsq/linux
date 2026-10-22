@@ -101,7 +101,7 @@ SCHED_FEAT(SIS_UTIL, true)
  */
 SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
 
-#ifdef HAVE_RT_PUSH_IPI
+#ifdef HAVE_RT_इतुलाक_IPI
 /*
  * In order to avoid a thundering herd attack of CPUs that are
  * lowering their priorities at the same time, and there being
@@ -116,9 +116,9 @@ SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
  * it only default enabled for PREEMPT_RT.
  */
 # ifdef CONFIG_PREEMPT_RT
-SCHED_FEAT(RT_PUSH_IPI, true)
+SCHED_FEAT(RT_इतुलाक_IPI, true)
 # else
-SCHED_FEAT(RT_PUSH_IPI, false)
+SCHED_FEAT(RT_इतुलाक_IPI, false)
 # endif
 #endif
 

@@ -37,7 +37,7 @@ bool scx_allow_proxy_exec(const struct task_struct *p)
  * are used as temporary markers to indicate that the dereferences need to be
  * updated to point to the associated scheduler instances rather than scx_root.
  */
-struct scx_sched __rcu *scx_root;
+struct scx_sched __rcu *scx_उगात;
 
 /*
  * All scheds, writers must hold both scx_enable_mutex and scx_sched_lock.
@@ -47,9 +47,9 @@ LIST_HEAD(scx_sched_all);
 
 #ifdef CONFIG_EXT_SUB_SCHED
 const struct rhashtable_params scx_sched_hash_params = {
-	.key_len		= sizeof_field(struct scx_sched, ops.sub_cgroup_id),
-	.key_offset		= offsetof(struct scx_sched, ops.sub_cgroup_id),
-	.head_offset		= offsetof(struct scx_sched, hash_node),
+	.सुसि_len		= sizeof_field(struct scx_sched, ops.sub_cgroup_id),
+	.सुसि_offset		= offsetof(struct scx_sched, ops.sub_cgroup_id),
+	.head_offset		= offsetof(struct scx_sched, hash_बुहोल),
 	.insecure_elasticity	= true,	/* inserted under scx_sched_lock */
 };
 
@@ -58,9 +58,9 @@ struct rhashtable scx_sched_hash;
 
 /* see SCX_OPS_TID_TO_TASK */
 static const struct rhashtable_params scx_tid_hash_params = {
-	.key_len		= sizeof_field(struct sched_ext_entity, tid),
-	.key_offset		= offsetof(struct sched_ext_entity, tid),
-	.head_offset		= offsetof(struct sched_ext_entity, tid_hash_node),
+	.सुसि_len		= sizeof_field(struct sched_ext_entity, tid),
+	.सुसि_offset		= offsetof(struct sched_ext_entity, tid),
+	.head_offset		= offsetof(struct sched_ext_entity, tid_hash_बुहोल),
 	.insecure_elasticity	= true,	/* inserted/removed under scx_tasks_lock */
 };
 static struct rhashtable scx_tid_hash;
@@ -76,14 +76,14 @@ static LIST_HEAD(scx_tasks);
 
 /* ops enable/disable */
 DEFINE_MUTEX(scx_enable_mutex);
-DEFINE_STATIC_KEY_FALSE(__scx_enabled);
+DEFINE_STATIC_सुसि_FALSE(__scx_enabled);
 DEFINE_PERCPU_RWSEM(scx_fork_rwsem);
 static atomic_t scx_enable_state_var = ATOMIC_INIT(SCX_DISABLED);
 static DEFINE_RAW_SPINLOCK(scx_bypass_lock);
 static bool scx_init_task_enabled;
 static bool scx_switching_all;
-DEFINE_STATIC_KEY_FALSE(__scx_switched_all);
-static DEFINE_STATIC_KEY_FALSE(__scx_tid_to_task_enabled);
+DEFINE_STATIC_सुसि_FALSE(__scx_switched_all);
+static DEFINE_STATIC_सुसि_FALSE(__scx_tid_to_task_enabled);
 
 /*
  * Gates cgroup ops delivery. Set at the end of the cgroup init phase of root
@@ -195,9 +195,9 @@ static DEFINE_PER_CPU(struct scx_tid_alloc, scx_tid_alloc);
 static DEFINE_PER_CPU(struct task_struct *, direct_dispatch_task);
 
 static const struct rhashtable_params dsq_hash_params = {
-	.key_len		= sizeof_field(struct scx_dispatch_q, id),
-	.key_offset		= offsetof(struct scx_dispatch_q, id),
-	.head_offset		= offsetof(struct scx_dispatch_q, hash_node),
+	.सुसि_len		= sizeof_field(struct scx_dispatch_q, id),
+	.सुसि_offset		= offsetof(struct scx_dispatch_q, id),
+	.head_offset		= offsetof(struct scx_dispatch_q, hash_बुहोल),
 };
 
 static LLIST_HEAD(dsqs_to_free);
@@ -270,12 +270,12 @@ __printf(5, 6) bool __scx_exit(struct scx_sched *sch,
 			       enum scx_exit_kind kind, s64 exit_code,
 			       s32 exit_cpu, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 	bool ret;
 
-	va_start(args, fmt);
-	ret = scx_vexit(sch, kind, exit_code, exit_cpu, fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	ret = scx_vexit(sch, kind, exit_code, exit_cpu, fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	return ret;
 }
@@ -309,7 +309,7 @@ bool scx_is_descendant(struct scx_sched *sch, struct scx_sched *ancestor)
 
 static struct scx_dispatch_q *find_global_dsq(struct scx_sched *sch, s32 cpu)
 {
-	return &sch->pnode[cpu_to_node(cpu)]->global_dsq;
+	return &sch->pnode[cpu_to_बुहोल(cpu)]->global_dsq;
 }
 
 static struct scx_dispatch_q *find_user_dsq(struct scx_sched *sch, u64 dsq_id)
@@ -449,7 +449,7 @@ static void switch_rq_lock(struct rq *from, struct rq *to)
  * Flipped on enable per sch->is_cid_type. Declared in internal.h so
  * subsystem inlines can read it.
  */
-DEFINE_STATIC_KEY_FALSE(__scx_is_cid_type);
+DEFINE_STATIC_सुसि_FALSE(__scx_is_cid_type);
 
 /**
  * scx_fill_cmask_scratch - Build this cpu's arena cmask from @cpumask
@@ -467,7 +467,7 @@ static struct scx_cmask *scx_fill_cmask_scratch(struct scx_sched *sch,
 	struct scx_cmask *kern_va = *this_cpu_ptr(sch->set_cmask_scratch);
 	struct scx_cmask_ref ref;
 
-	scx_cmask_ref_init_kern(sch, kern_va, 0, num_possible_cpus(), &ref);
+	scx_cmask_ref_init_kern(sch, kern_va, 0, नुमेरो_possible_cpus(), &ref);
 	scx_cmask_ref_from_cpumask(&ref, cpumask);
 	return kern_va;
 }
@@ -517,28 +517,28 @@ enum scx_dsq_iter_flags {
 static struct task_struct *nldsq_next_task(struct scx_dispatch_q *dsq,
 					   struct task_struct *cur, bool rev)
 {
-	struct list_head *list_node;
-	struct scx_dsq_list_node *dsq_lnode;
+	struct list_head *list_बुहोल;
+	struct scx_dsq_list_बुहोल *dsq_lnode;
 
 	lockdep_assert_held(&dsq->lock);
 
 	if (cur)
-		list_node = &cur->scx.dsq_list.node;
+		list_बुहोल = &cur->scx.dsq_list.बुहोल;
 	else
-		list_node = &dsq->list;
+		list_बुहोल = &dsq->list;
 
 	/* find the next task, need to skip BPF iteration cursors */
 	do {
 		if (rev)
-			list_node = list_node->prev;
+			list_बुहोल = list_बुहोल->prev;
 		else
-			list_node = list_node->next;
+			list_बुहोल = list_बुहोल->next;
 
-		if (list_node == &dsq->list)
+		if (list_बुहोल == &dsq->list)
 			return NULL;
 
-		dsq_lnode = container_of(list_node, struct scx_dsq_list_node,
-					 node);
+		dsq_lnode = container_of(list_बुहोल, struct scx_dsq_list_बुहोल,
+					 बुहोल);
 	} while (dsq_lnode->flags & SCX_DSQ_LNODE_ITER_CURSOR);
 
 	return container_of(dsq_lnode, struct task_struct, scx.dsq_list);
@@ -561,7 +561,7 @@ static struct task_struct *nldsq_next_task(struct scx_dispatch_q *dsq,
  * bounds the iteration and guarantees that vtime never jumps in the other
  * direction while iterating.
  */
-static struct task_struct *nldsq_cursor_next_task(struct scx_dsq_list_node *cursor,
+static struct task_struct *nldsq_cursor_next_task(struct scx_dsq_list_बुहोल *cursor,
 						  struct scx_dispatch_q *dsq)
 {
 	bool rev = cursor->flags & SCX_DSQ_ITER_REV;
@@ -570,7 +570,7 @@ static struct task_struct *nldsq_cursor_next_task(struct scx_dsq_list_node *curs
 	lockdep_assert_held(&dsq->lock);
 	BUG_ON(!(cursor->flags & SCX_DSQ_LNODE_ITER_CURSOR));
 
-	if (list_empty(&cursor->node))
+	if (list_empty(&cursor->बुहोल))
 		p = NULL;
 	else
 		p = container_of(cursor, struct task_struct, scx.dsq_list);
@@ -582,11 +582,11 @@ static struct task_struct *nldsq_cursor_next_task(struct scx_dsq_list_node *curs
 
 	if (p) {
 		if (rev)
-			list_move_tail(&cursor->node, &p->scx.dsq_list.node);
+			list_move_tail(&cursor->बुहोल, &p->scx.dsq_list.बुहोल);
 		else
-			list_move(&cursor->node, &p->scx.dsq_list.node);
+			list_move(&cursor->बुहोल, &p->scx.dsq_list.बुहोल);
 	} else {
-		list_del_init(&cursor->node);
+		list_del_init(&cursor->बुहोल);
 	}
 
 	return p;
@@ -605,7 +605,7 @@ static struct task_struct *nldsq_cursor_next_task(struct scx_dsq_list_node *curs
  *
  * On %false return, the caller can assume full ownership of @p.
  */
-static bool nldsq_cursor_lost_task(struct scx_dsq_list_node *cursor,
+static bool nldsq_cursor_lost_task(struct scx_dsq_list_बुहोल *cursor,
 				   struct rq *rq, struct scx_dispatch_q *dsq,
 				   struct task_struct *p)
 {
@@ -635,7 +635,7 @@ static bool nldsq_cursor_lost_task(struct scx_dsq_list_node *cursor,
  * bpf_for_each(). See bpf_iter_scx_dsq_*().
  */
 struct bpf_iter_scx_dsq_kern {
-	struct scx_dsq_list_node	cursor;
+	struct scx_dsq_list_बुहोल	cursor;
 	struct scx_dispatch_q		*dsq;
 	u64				slice;
 	u64				vtime;
@@ -736,7 +736,7 @@ void scx_task_iter_start(struct scx_task_iter *iter, struct cgroup *cgrp)
 	raw_spin_lock_irq(&scx_tasks_lock);
 
 	iter->cursor = (struct sched_ext_entity){ .flags = SCX_TASK_CURSOR };
-	list_add(&iter->cursor.tasks_node, &scx_tasks);
+	list_add(&iter->cursor.tasks_बुहोल, &scx_tasks);
 	iter->list_locked = true;
 }
 
@@ -812,7 +812,7 @@ void scx_task_iter_stop(struct scx_task_iter *iter)
 	}
 #endif
 	__scx_task_iter_maybe_relock(iter);
-	list_del_init(&iter->cursor.tasks_node);
+	list_del_init(&iter->cursor.tasks_बुहोल);
 	scx_task_iter_unlock(iter);
 }
 
@@ -826,7 +826,7 @@ void scx_task_iter_stop(struct scx_task_iter *iter)
  */
 static struct task_struct *scx_task_iter_next(struct scx_task_iter *iter)
 {
-	struct list_head *cursor = &iter->cursor.tasks_node;
+	struct list_head *cursor = &iter->cursor.tasks_बुहोल;
 	struct sched_ext_entity *pos;
 
 	if (!(++iter->cnt % SCX_TASK_ITER_BATCH)) {
@@ -855,11 +855,11 @@ static struct task_struct *scx_task_iter_next(struct scx_task_iter *iter)
 #endif
 	__scx_task_iter_maybe_relock(iter);
 
-	list_for_each_entry(pos, cursor, tasks_node) {
-		if (&pos->tasks_node == &scx_tasks)
+	list_for_each_entry(pos, cursor, tasks_बुहोल) {
+		if (&pos->tasks_बुहोल == &scx_tasks)
 			return NULL;
 		if (!(pos->flags & SCX_TASK_CURSOR)) {
-			list_move(cursor, &pos->tasks_node);
+			list_move(cursor, &pos->tasks_बुहोल);
 			return container_of(pos, struct task_struct, scx);
 		}
 	}
@@ -938,7 +938,7 @@ struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
  * @kind: a kind of event to dump
  */
 #define scx_dump_event(s, events, kind) do {					\
-	scx_dump_line(&(s), "%40s: %16lld", #kind, (events)->kind);		\
+	scx_dump_लिन्या(&(s), "%40s: %16lld", #kind, (events)->kind);		\
 } while (0)
 
 
@@ -1132,13 +1132,13 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 		 */
 		smp_mb();
 
-		if (list_empty(&drl->node) ||
+		if (list_empty(&drl->बुहोल) ||
 		    (READ_ONCE(drl->flags) & reenq_flags) != reenq_flags) {
 
 			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
 
-			if (list_empty(&drl->node))
-				list_move_tail(&drl->node, &rq->scx.deferred_reenq_locals);
+			if (list_empty(&drl->बुहोल))
+				list_move_tail(&drl->बुहोल, &rq->scx.deferred_reenq_locals);
 			WRITE_ONCE(drl->flags, drl->flags | reenq_flags);
 		}
 	} else if (!(dsq->id & SCX_DSQ_FLAG_BUILTIN)) {
@@ -1153,7 +1153,7 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 		 */
 		smp_mb();
 
-		if (list_empty(&dru->node) ||
+		if (list_empty(&dru->बुहोल) ||
 		    (READ_ONCE(dru->flags) & reenq_flags) != reenq_flags) {
 
 			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
@@ -1162,8 +1162,8 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 			if (unlikely(READ_ONCE(dsq->id) == SCX_DSQ_INVALID))
 				return;
 
-			if (list_empty(&dru->node))
-				list_move_tail(&dru->node, &rq->scx.deferred_reenq_users);
+			if (list_empty(&dru->बुहोल))
+				list_move_tail(&dru->बुहोल, &rq->scx.deferred_reenq_users);
 			WRITE_ONCE(dru->flags, dru->flags | reenq_flags);
 		}
 	} else {
@@ -1247,34 +1247,34 @@ static void clear_task_slice_oob(struct task_struct *p)
  * A HEAD insert should land behind any leading protected tasks. Return %true
  * indicates whether @p became the first entry.
  */
-static bool dsq_insert_head(struct scx_dispatch_q *dsq, struct task_struct *p)
+static bool dsq_इसिंगित_head(struct scx_dispatch_q *dsq, struct task_struct *p)
 {
 	struct list_head *pos = &dsq->list;
-	struct scx_dsq_list_node *node;
+	struct scx_dsq_list_बुहोल *बुहोल;
 
 	/*
 	 * Only rq-owned DSQs can hold protected tasks and the associated rq
 	 * lock keeps their flags stable.
 	 */
 	if (!dsq_is_rq_owned(dsq)) {
-		list_add(&p->scx.dsq_list.node, &dsq->list);
+		list_add(&p->scx.dsq_list.बुहोल, &dsq->list);
 		return true;
 	}
 
-	list_for_each_entry(node, &dsq->list, node) {
+	list_for_each_entry(बुहोल, &dsq->list, बुहोल) {
 		struct task_struct *q;
 
-		if (WARN_ON_ONCE(node->flags & SCX_DSQ_LNODE_ITER_CURSOR))
+		if (WARN_ON_ONCE(बुहोल->flags & SCX_DSQ_LNODE_ITER_CURSOR))
 			continue;
 
-		q = container_of(node, struct task_struct, scx.dsq_list);
+		q = container_of(बुहोल, struct task_struct, scx.dsq_list);
 		if (!(q->scx.flags & SCX_TASK_PROTECTED))
 			break;
 
-		pos = &node->node;
+		pos = &बुहोल->बुहोल;
 	}
 
-	list_add(&p->scx.dsq_list.node, pos);
+	list_add(&p->scx.dsq_list.बुहोल, pos);
 
 	return pos == &dsq->list;
 }
@@ -1430,13 +1430,13 @@ static void update_curr_scx(struct rq *rq)
 	dl_server_update(&rq->ext_server, delta_exec);
 }
 
-static bool scx_dsq_priq_less(struct rb_node *node_a,
-			      const struct rb_node *node_b)
+static bool scx_dsq_priq_less(struct rb_बुहोल *बुहोल_a,
+			      const struct rb_बुहोल *बुहोल_b)
 {
 	const struct task_struct *a =
-		container_of(node_a, struct task_struct, scx.dsq_priq);
+		container_of(बुहोल_a, struct task_struct, scx.dsq_priq);
 	const struct task_struct *b =
-		container_of(node_b, struct task_struct, scx.dsq_priq);
+		container_of(बुहोल_b, struct task_struct, scx.dsq_priq);
 
 	return time_before64(a->scx.dsq_vtime, b->scx.dsq_vtime);
 }
@@ -1613,9 +1613,9 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 		is_rq_owned = true;
 	}
 
-	WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.node));
+	WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.बुहोल));
 	WARN_ON_ONCE((p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) ||
-		     !RB_EMPTY_NODE(&p->scx.dsq_priq));
+		     !RB_EMPTY_बुहोल(&p->scx.dsq_priq));
 
 	if (!is_rq_owned) {
 		raw_spin_lock_nested(&dsq->lock,
@@ -1651,14 +1651,14 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 		apply_slice_vtime(p, slice, vtime, enq_flags);
 
 	if (enq_flags & SCX_ENQ_DSQ_PRIQ) {
-		struct rb_node *rbp;
+		struct rb_बुहोल *rbp;
 
 		/*
 		 * A PRIQ DSQ shouldn't be using FIFO enqueueing. As tasks are
 		 * linked to both the rbtree and list on PRIQs, this can only be
 		 * tested easily when adding the first task.
 		 */
-		if (unlikely(RB_EMPTY_ROOT(&dsq->priq) &&
+		if (unlikely(RB_EMPTY_उगात(&dsq->priq) &&
 			     nldsq_next_task(dsq, NULL, false)))
 			scx_error(sch, "DSQ ID 0x%016llx already had FIFO-enqueued tasks",
 				  dsq->id);
@@ -1675,22 +1675,22 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 			struct task_struct *prev =
 				container_of(rbp, struct task_struct,
 					     scx.dsq_priq);
-			list_add(&p->scx.dsq_list.node, &prev->scx.dsq_list.node);
+			list_add(&p->scx.dsq_list.बुहोल, &prev->scx.dsq_list.बुहोल);
 			/* first task unchanged - no update needed */
 		} else {
-			list_add(&p->scx.dsq_list.node, &dsq->list);
+			list_add(&p->scx.dsq_list.बुहोल, &dsq->list);
 			/* not builtin and new task is at head - use fastpath */
 			rcu_assign_pointer(dsq->first_task, p);
 		}
 	} else {
 		/* a FIFO DSQ shouldn't be using PRIQ enqueuing */
-		if (unlikely(!RB_EMPTY_ROOT(&dsq->priq)))
+		if (unlikely(!RB_EMPTY_उगात(&dsq->priq)))
 			scx_error(sch, "DSQ ID 0x%016llx already had PRIQ-enqueued tasks",
 				  dsq->id);
 
 		if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT)) {
 			/* new task inserted at head - use fastpath */
-			if (dsq_insert_head(dsq, p) && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
+			if (dsq_इसिंगित_head(dsq, p) && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
 				rcu_assign_pointer(dsq->first_task, p);
 		} else {
 			/*
@@ -1698,7 +1698,7 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 			 * list_empty() here isn't a reliable proxy for "no real
 			 * task in the DSQ". Test dsq->first_task directly.
 			 */
-			list_add_tail(&p->scx.dsq_list.node, &dsq->list);
+			list_add_tail(&p->scx.dsq_list.बुहोल, &dsq->list);
 			if (!dsq->first_task && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
 				rcu_assign_pointer(dsq->first_task, p);
 		}
@@ -1755,15 +1755,15 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 
 void scx_task_unlink_from_dsq(struct task_struct *p, struct scx_dispatch_q *dsq)
 {
-	WARN_ON_ONCE(list_empty(&p->scx.dsq_list.node));
+	WARN_ON_ONCE(list_empty(&p->scx.dsq_list.बुहोल));
 
 	if (p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) {
 		rb_erase(&p->scx.dsq_priq, &dsq->priq);
-		RB_CLEAR_NODE(&p->scx.dsq_priq);
+		RB_CLEAR_बुहोल(&p->scx.dsq_priq);
 		p->scx.dsq_flags &= ~SCX_TASK_DSQ_ON_PRIQ;
 	}
 
-	list_del_init(&p->scx.dsq_list.node);
+	list_del_init(&p->scx.dsq_list.बुहोल);
 	dsq_dec_nr(dsq, p);
 
 	if (!(dsq->id & SCX_DSQ_FLAG_BUILTIN) && rcu_access_pointer(dsq->first_task) == p) {
@@ -1786,8 +1786,8 @@ void scx_dispatch_dequeue(struct rq *rq, struct task_struct *p)
 		 * If !dsq && on-list, @p is on @rq's ddsp_deferred_locals.
 		 * Unlinking is all that's needed to cancel.
 		 */
-		if (unlikely(!list_empty(&p->scx.dsq_list.node)))
-			list_del_init(&p->scx.dsq_list.node);
+		if (unlikely(!list_empty(&p->scx.dsq_list.बुहोल)))
+			list_del_init(&p->scx.dsq_list.बुहोल);
 
 		/*
 		 * When dispatching directly from the BPF scheduler to a local
@@ -1818,7 +1818,7 @@ void scx_dispatch_dequeue(struct rq *rq, struct task_struct *p)
 		 * holding_cpu which tells dispatch_to_local_dsq() that it lost
 		 * the race.
 		 */
-		WARN_ON_ONCE(!list_empty(&p->scx.dsq_list.node));
+		WARN_ON_ONCE(!list_empty(&p->scx.dsq_list.बुहोल));
 		p->scx.holding_cpu = -1;
 	}
 	p->scx.dsq = NULL;
@@ -1968,8 +1968,8 @@ static void direct_dispatch(struct scx_sched *sch, struct task_struct *p,
 			break;
 		}
 
-		WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.node));
-		list_add_tail(&p->scx.dsq_list.node,
+		WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.बुहोल));
+		list_add_tail(&p->scx.dsq_list.बुहोल,
 			      &rq->scx.ddsp_deferred_locals);
 		schedule_deferred_locked(rq);
 		return;
@@ -2129,7 +2129,7 @@ enqueue:
 
 static bool task_runnable(const struct task_struct *p)
 {
-	return !list_empty(&p->scx.runnable_node);
+	return !list_empty(&p->scx.runnable_बुहोल);
 }
 
 static void set_task_runnable(struct rq *rq, struct task_struct *p)
@@ -2145,7 +2145,7 @@ static void set_task_runnable(struct rq *rq, struct task_struct *p)
 	 * list_add_tail() must be used. scx_bypass() and rq_offline_scx()
 	 * depend on tasks being appended to the runnable_list.
 	 */
-	list_add_tail(&p->scx.runnable_node, &rq->scx.runnable_list);
+	list_add_tail(&p->scx.runnable_बुहोल, &rq->scx.runnable_list);
 
 	/*
 	 * Record the rq @p is runnable on, maintained under the rq lock so it
@@ -2157,7 +2157,7 @@ static void set_task_runnable(struct rq *rq, struct task_struct *p)
 
 static void clr_task_runnable(struct task_struct *p, bool reset_runnable_at)
 {
-	list_del_init(&p->scx.runnable_node);
+	list_del_init(&p->scx.runnable_बुहोल);
 	WRITE_ONCE(p->scx.runnable_cpu, -1);
 	if (reset_runnable_at) {
 		p->scx.flags |= SCX_TASK_RESET_RUNNABLE_AT;
@@ -2426,9 +2426,9 @@ void scx_move_local_task_to_local_dsq(struct scx_sched *sch, struct task_struct 
 	dst_dsq = scx_resolve_local_dsq(sch, dst_rq, p, &enq_flags);
 
 	if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT))
-		dsq_insert_head(dst_dsq, p);
+		dsq_इसिंगित_head(dst_dsq, p);
 	else
-		list_add_tail(&p->scx.dsq_list.node, &dst_dsq->list);
+		list_add_tail(&p->scx.dsq_list.बुहोल, &dst_dsq->list);
 
 	dsq_inc_nr(dst_dsq, p, enq_flags);
 	p->scx.dsq = dst_dsq;
@@ -2743,9 +2743,9 @@ retry:
 
 bool scx_consume_global_dsq(struct scx_sched *sch, struct rq *rq)
 {
-	int node = cpu_to_node(cpu_of(rq));
+	int बुहोल = cpu_to_बुहोल(cpu_of(rq));
 
-	return scx_consume_dispatch_q(sch, rq, &sch->pnode[node]->global_dsq, 0);
+	return scx_consume_dispatch_q(sch, rq, &sch->pnode[बुहोल]->global_dsq, 0);
 }
 
 /**
@@ -2896,7 +2896,7 @@ retry:
 
 		/* see SCX_EV_INSERT_NOT_OWNED definition */
 		if (unlikely(!scx_task_on_sched(sch, p))) {
-			__scx_add_event(sch, SCX_EV_INSERT_NOT_OWNED, 1);
+			__scx_add_event(sch, SCX_EV_इसिंगित_NOT_OWNED, 1);
 			return;
 		}
 
@@ -2964,7 +2964,7 @@ static inline void maybe_queue_balance_callback(struct rq *rq)
 
 static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev)
 {
-	struct scx_sched *root_sch = scx_root_protected_live();
+	struct scx_sched *उगात_sch = scx_उगात_protected_live();
 	enum scx_dsp_verdict verdict;
 	s32 cpu = cpu_of(rq);
 
@@ -2973,7 +2973,7 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 
 	scx_process_sync_ecaps(rq, prev);
 
-	if ((root_sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT) &&
+	if ((उगात_sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT) &&
 	    unlikely(rq->scx.cpu_released)) {
 		/*
 		 * If the previous sched_class for the current CPU was not SCX,
@@ -2981,8 +2981,8 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 		 * core. This callback complements ->cpu_release(), which is
 		 * emitted in switch_class().
 		 */
-		if (root_sch->ops.cpu_acquire)
-			SCX_CALL_OP(root_sch, cpu_acquire, rq, cpu, NULL);
+		if (उगात_sch->ops.cpu_acquire)
+			SCX_CALL_OP(उगात_sch, cpu_acquire, rq, cpu, NULL);
 		rq->scx.cpu_released = false;
 	}
 
@@ -3012,7 +3012,7 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 		goto has_tasks;
 	}
 
-	verdict = scx_dispatch_sched(root_sch, rq, prev, false);
+	verdict = scx_dispatch_sched(उगात_sch, rq, prev, false);
 	if (verdict != SCX_DSP_NONE)
 		goto has_tasks;
 
@@ -3135,7 +3135,7 @@ preempt_reason_from_class(const struct sched_class *class)
 
 static void switch_class(struct rq *rq, struct task_struct *next)
 {
-	struct scx_sched *sch = scx_root_protected_live();
+	struct scx_sched *sch = scx_उगात_protected_live();
 	const struct sched_class *next_class = next->sched_class;
 
 	if (!(sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT))
@@ -3161,12 +3161,12 @@ static void switch_class(struct rq *rq, struct task_struct *next)
 	 */
 	if (!rq->scx.cpu_released) {
 		if (sch->ops.cpu_release) {
-			struct scx_cpu_release_args args = {
+			struct scx_cpu_release_मगा_कातविरान मगा_कातविरान = {
 				.reason = preempt_reason_from_class(next_class),
 				.task = next,
 			};
 
-			SCX_CALL_OP(sch, cpu_release, rq, cpu_of(rq), &args);
+			SCX_CALL_OP(sch, cpu_release, rq, cpu_of(rq), &मगा_कातविरान);
 		}
 		rq->scx.cpu_released = true;
 	}
@@ -3335,7 +3335,7 @@ retry:
 static struct task_struct *first_local_task(struct rq *rq)
 {
 	return list_first_entry_or_null(&rq->scx.local_dsq.list,
-					struct task_struct, scx.dsq_list.node);
+					struct task_struct, scx.dsq_list.बुहोल);
 }
 
 /*
@@ -3701,7 +3701,7 @@ static void set_cpus_allowed_scx(struct task_struct *p,
 
 static void handle_hotplug(struct rq *rq, bool online)
 {
-	struct scx_sched *sch = scx_root_protected();
+	struct scx_sched *sch = scx_उगात_protected();
 	s32 cpu = cpu_of(rq);
 	s32 cpu_or_cid = cpu;
 
@@ -3794,7 +3794,7 @@ static void rq_offline_scx(struct rq *rq)
 	 * onto the local DSQ so that they run here and balance_push() moves
 	 * them off.
 	 */
-	list_for_each_entry_safe_reverse(p, n, &rq->scx.runnable_list, scx.runnable_node) {
+	list_for_each_entry_safe_reverse(p, n, &rq->scx.runnable_list, scx.runnable_बुहोल) {
 		if (p->scx.dsq == &rq->scx.local_dsq)
 			continue;
 		guard(sched_change)(p, DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK);
@@ -3809,11 +3809,11 @@ static bool check_rq_for_timeouts(struct rq *rq)
 	bool timed_out = false;
 
 	rq_lock_irqsave(rq, &rf);
-	sch = rcu_dereference_bh(scx_root);
+	sch = rcu_dereference_bh(scx_उगात);
 	if (unlikely(!sch))
 		goto out_unlock;
 
-	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_node) {
+	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_बुहोल) {
 		struct scx_sched *sch = scx_task_sched(p);
 		unsigned long last_runnable = p->scx.runnable_at;
 
@@ -3866,22 +3866,22 @@ static void scx_watchdog_workfn(struct work_struct *work)
 
 void scx_tick(struct rq *rq)
 {
-	struct scx_sched *root;
+	struct scx_sched *उगात;
 	unsigned long last_check;
 
 	if (!scx_enabled())
 		return;
 
-	root = rcu_dereference_bh(scx_root);
-	if (unlikely(!root))
+	उगात = rcu_dereference_bh(scx_उगात);
+	if (unlikely(!उगात))
 		return;
 
 	last_check = READ_ONCE(scx_watchdog_timestamp);
 	if (unlikely(time_after(jiffies,
-				last_check + READ_ONCE(root->watchdog_timeout)))) {
+				last_check + READ_ONCE(उगात->watchdog_timeout)))) {
 		u32 dur_ms = jiffies_to_msecs(jiffies - last_check);
 
-		scx_exit(root, SCX_EXIT_ERROR_STALL, 0,
+		scx_exit(उगात, SCX_EXIT_ERROR_STALL, 0,
 			 "watchdog failed to check in for %u.%03us",
 			 dur_ms / 1000, dur_ms % 1000);
 	}
@@ -3919,14 +3919,14 @@ static struct cgroup *tg_cgrp(struct task_group *tg)
 	if (tg && tg->css.cgroup)
 		return tg->css.cgroup;
 	else
-		return &cgrp_dfl_root.cgrp;
+		return &cgrp_dfl_उगात.cgrp;
 }
 
-#define SCX_INIT_TASK_ARGS_CGROUP(cgrp)		.cgroup = (cgrp),
+#define SCX_INIT_TASK_मगा_कातविरान_CGROUP(cgrp)		.cgroup = (cgrp),
 
 #else	/* CONFIG_EXT_GROUP_SCHED */
 
-#define SCX_INIT_TASK_ARGS_CGROUP(cgrp)
+#define SCX_INIT_TASK_मगा_कातविरान_CGROUP(cgrp)
 
 #endif	/* CONFIG_EXT_GROUP_SCHED */
 
@@ -3950,12 +3950,12 @@ int __scx_init_task(struct scx_sched *sch, struct task_struct *p,
 	p->scx.disallow = false;
 
 	if (SCX_HAS_OP(sch, init_task)) {
-		struct scx_init_task_args args = {
-			SCX_INIT_TASK_ARGS_CGROUP(cgrp ?: tg_cgrp(task_group(p)))
+		struct scx_init_task_मगा_कातविरान मगा_कातविरान = {
+			SCX_INIT_TASK_मगा_कातविरान_CGROUP(cgrp ?: tg_cgrp(task_group(p)))
 			.fork = fork,
 		};
 
-		ret = SCX_CALL_OP_RET(sch, init_task, NULL, p, &args);
+		ret = SCX_CALL_OP_RET(sch, init_task, NULL, p, &मगा_कातविरान);
 		if (unlikely(ret)) {
 			ret = scx_ops_sanitize_err(sch, "init_task", ret);
 			return ret;
@@ -4025,11 +4025,11 @@ static void __scx_enable_task(struct scx_sched *sch, struct task_struct *p)
 	if (SCX_HAS_OP(sch, enable)) {
 		if (scx_is_cid_type()) {
 			struct scx_cmask *cmask = scx_fill_cmask_scratch(sch, p->cpus_ptr);
-			struct scx_enable_args args = {
+			struct scx_enable_मगा_कातविरान मगा_कातविरान = {
 				.cmask_arena_addr = scx_kaddr_to_arena(sch, cmask),
 			};
 
-			SCX_CALL_CID_OP_TASK(sch, enable, rq, p, &args);
+			SCX_CALL_CID_OP_TASK(sch, enable, rq, p, &मगा_कातविरान);
 		} else {
 			SCX_CALL_OP_TASK(sch, enable, rq, p);
 		}
@@ -4086,7 +4086,7 @@ static void scx_disable_task(struct scx_sched *sch, struct task_struct *p)
 
 void __scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
 {
-	struct scx_exit_task_args args = {
+	struct scx_exit_task_मगा_कातविरान मगा_कातविरान = {
 		.cancelled = false,
 	};
 
@@ -4097,7 +4097,7 @@ void __scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
 	case SCX_TASK_NONE:
 		return;
 	case SCX_TASK_INIT:
-		args.cancelled = true;
+		मगा_कातविरान.cancelled = true;
 		break;
 	case SCX_TASK_READY:
 		break;
@@ -4110,7 +4110,7 @@ void __scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
 	}
 
 	if (SCX_HAS_OP(sch, exit_task))
-		SCX_CALL_OP_TASK(sch, exit_task, task_rq(p), p, &args);
+		SCX_CALL_OP_TASK(sch, exit_task, task_rq(p), p, &मगा_कातविरान);
 }
 
 /*
@@ -4120,14 +4120,14 @@ void __scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
  */
 void scx_sub_init_cancel_task(struct scx_sched *sch, struct task_struct *p)
 {
-	struct scx_exit_task_args args = { .cancelled = true };
+	struct scx_exit_task_मगा_कातविरान मगा_कातविरान = { .cancelled = true };
 
 	lockdep_assert_held(&p->pi_lock);
 	lockdep_assert_rq_held(task_rq(p));
 
 	/* @p was never associated with @sch, dispatch on the explicit @sch */
 	if (SCX_HAS_OP(sch, exit_task))
-		__SCX_CALL_OP_TASK(sch, ops, exit_task, task_rq(p), p, &args);
+		__SCX_CALL_OP_TASK(sch, ops, exit_task, task_rq(p), p, &मगा_कातविरान);
 }
 
 void scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
@@ -4154,12 +4154,12 @@ void scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
 void init_scx_entity(struct sched_ext_entity *scx)
 {
 	memset(scx, 0, sizeof(*scx));
-	INIT_LIST_HEAD(&scx->dsq_list.node);
-	RB_CLEAR_NODE(&scx->dsq_priq);
+	INIT_LIST_HEAD(&scx->dsq_list.बुहोल);
+	RB_CLEAR_बुहोल(&scx->dsq_priq);
 	scx->sticky_cpu = -1;
 	scx->holding_cpu = -1;
 	scx->runnable_cpu = -1;
-	INIT_LIST_HEAD(&scx->runnable_node);
+	INIT_LIST_HEAD(&scx->runnable_बुहोल);
 	scx->runnable_at = jiffies;
 	scx->ddsp_dsq_id = SCX_DSQ_INVALID;
 	scx->slice = SCX_SLICE_DFL;
@@ -4180,14 +4180,14 @@ static u64 scx_alloc_tid(void)
 	return ta->next++;
 }
 
-static void scx_tid_hash_insert(struct task_struct *p)
+static void scx_tid_hash_इसिंगित(struct task_struct *p)
 {
 	int ret;
 
 	lockdep_assert_held(&scx_tasks_lock);
 
-	ret = rhashtable_lookup_insert_fast(&scx_tid_hash,
-					    &p->scx.tid_hash_node,
+	ret = rhashtable_lookup_इसिंगित_fast(&scx_tid_hash,
+					    &p->scx.tid_hash_बुहोल,
 					    scx_tid_hash_params);
 	WARN_ON_ONCE(ret);
 }
@@ -4203,7 +4203,7 @@ void scx_pre_fork(struct task_struct *p)
 	percpu_down_read(&scx_fork_rwsem);
 }
 
-int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs)
+int scx_fork(struct task_struct *p, struct kernel_clone_मगा_कातविरान *kargs)
 {
 	s32 ret;
 
@@ -4215,7 +4215,7 @@ int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs)
 #ifdef CONFIG_EXT_SUB_SCHED
 		struct scx_sched *sch = scx_cgroup_sched(kargs->cset->dfl_cgrp);
 #else
-		struct scx_sched *sch = scx_root_protected_live();
+		struct scx_sched *sch = scx_उगात_protected_live();
 #endif
 		scx_set_task_state(p, SCX_TASK_INIT_BEGIN);
 		ret = __scx_init_task(sch, p, NULL, true);
@@ -4251,9 +4251,9 @@ void scx_post_fork(struct task_struct *p)
 	}
 
 	scoped_guard(raw_spinlock_irq, &scx_tasks_lock) {
-		list_add_tail(&p->scx.tasks_node, &scx_tasks);
+		list_add_tail(&p->scx.tasks_बुहोल, &scx_tasks);
 		if (scx_tid_to_task_enabled())
-			scx_tid_hash_insert(p);
+			scx_tid_hash_इसिंगित(p);
 	}
 
 	percpu_up_read(&scx_fork_rwsem);
@@ -4312,10 +4312,10 @@ void sched_ext_dead(struct task_struct *p)
 	 * Remove from scx_tasks and exit @p.
 	 */
 	scoped_guard(raw_spinlock_irqsave, &scx_tasks_lock) {
-		list_del_init(&p->scx.tasks_node);
+		list_del_init(&p->scx.tasks_बुहोल);
 		if (scx_tid_to_task_enabled())
 			rhashtable_remove_fast(&scx_tid_hash,
-					       &p->scx.tid_hash_node,
+					       &p->scx.tid_hash_बुहोल,
 					       scx_tid_hash_params);
 	}
 
@@ -4438,7 +4438,7 @@ static void process_ddsp_deferred_locals(struct rq *rq)
 	 * temporarily.
 	 */
 	while ((p = list_first_entry_or_null(&rq->scx.ddsp_deferred_locals,
-				struct task_struct, scx.dsq_list.node))) {
+				struct task_struct, scx.dsq_list.बुहोल))) {
 		struct scx_sched *sch = scx_task_sched(p);
 		struct scx_dispatch_q *dsq;
 		u64 dsq_id = p->scx.ddsp_dsq_id;
@@ -4446,7 +4446,7 @@ static void process_ddsp_deferred_locals(struct rq *rq)
 		u64 slice = p->scx.ddsp_slice;
 		u64 vtime = p->scx.ddsp_vtime;
 
-		list_del_init(&p->scx.dsq_list.node);
+		list_del_init(&p->scx.dsq_list.बुहोल);
 		clear_direct_dispatch(p);
 
 		dsq = find_dsq_for_dispatch(sch, rq, dsq_id, task_cpu(p));
@@ -4538,7 +4538,7 @@ static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
 	 * first to avoid processing the same tasks repeatedly.
 	 */
 	list_for_each_entry_safe(p, n, &rq->scx.local_dsq.list,
-				 scx.dsq_list.node) {
+				 scx.dsq_list.बुहोल) {
 		struct scx_sched *task_sch = scx_task_sched(p);
 		u32 reason;
 
@@ -4569,11 +4569,11 @@ static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
 			p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
 		p->scx.flags |= reason;
 
-		list_add_tail(&p->scx.dsq_list.node, &tasks);
+		list_add_tail(&p->scx.dsq_list.बुहोल, &tasks);
 	}
 
-	list_for_each_entry_safe(p, n, &tasks, scx.dsq_list.node) {
-		list_del_init(&p->scx.dsq_list.node);
+	list_for_each_entry_safe(p, n, &tasks, scx.dsq_list.बुहोल) {
+		list_del_init(&p->scx.dsq_list.बुहोल);
 
 		scx_do_enqueue_task(rq, p, SCX_ENQ_REENQ, -1);
 
@@ -4615,7 +4615,7 @@ static void process_deferred_reenq_locals(struct rq *rq)
 			struct scx_deferred_reenq_local *drl =
 				list_first_entry_or_null(&rq->scx.deferred_reenq_locals,
 							 struct scx_deferred_reenq_local,
-							 node);
+							 बुहोल);
 			struct scx_sched_pcpu *sch_pcpu;
 
 			if (!drl)
@@ -4627,7 +4627,7 @@ static void process_deferred_reenq_locals(struct rq *rq)
 
 			reenq_flags = drl->flags;
 			WRITE_ONCE(drl->flags, 0);
-			list_del_init(&drl->node);
+			list_del_init(&drl->बुहोल);
 		}
 
 		/* see schedule_dsq_reenq() */
@@ -4647,7 +4647,7 @@ static void reenq_user(struct rq *rq, struct scx_dispatch_q *dsq, u64 reenq_flag
 {
 	struct rq *locked_rq = rq;
 	struct scx_sched *sch = dsq->sched;
-	struct scx_dsq_list_node cursor = INIT_DSQ_LIST_CURSOR(cursor, dsq, 0);
+	struct scx_dsq_list_बुहोल cursor = INIT_DSQ_LIST_CURSOR(cursor, dsq, 0);
 	struct task_struct *p;
 	s32 nr_enqueued = 0;
 
@@ -4708,7 +4708,7 @@ static void reenq_user(struct rq *rq, struct scx_dispatch_q *dsq, u64 reenq_flag
 		raw_spin_lock(&dsq->lock);
 	}
 
-	list_del_init(&cursor.node);
+	list_del_init(&cursor.बुहोल);
 	raw_spin_unlock(&dsq->lock);
 
 	if (locked_rq != rq) {
@@ -4732,7 +4732,7 @@ static void process_deferred_reenq_users(struct rq *rq)
 			struct scx_deferred_reenq_user *dru =
 				list_first_entry_or_null(&rq->scx.deferred_reenq_users,
 							 struct scx_deferred_reenq_user,
-							 node);
+							 बुहोल);
 			struct scx_dsq_pcpu *dsq_pcpu;
 
 			if (!dru)
@@ -4743,7 +4743,7 @@ static void process_deferred_reenq_users(struct rq *rq)
 			dsq = dsq_pcpu->dsq;
 			reenq_flags = dru->flags;
 			WRITE_ONCE(dru->flags, 0);
-			list_del_init(&dru->node);
+			list_del_init(&dru->बुहोल);
 		}
 
 		/* see schedule_dsq_reenq() */
@@ -4844,7 +4844,7 @@ static struct scx_sched *scx_tg_sched(struct task_group *tg)
 		       lockdep_is_held(&scx_cgroup_ops_rwsem));
 
 	if (!tg->css.cgroup)
-		tg = &root_task_group;
+		tg = &उगात_task_group;
 	/* INITED means ops.cgroup_init() succeeded on @tg->scx.sched */
 	return (tg->scx.flags & SCX_TG_INITED) ? tg->scx.sched : NULL;
 }
@@ -4871,7 +4871,7 @@ static struct scx_sched *scx_tg_knob_sched(struct task_group *tg)
 		       lockdep_is_held(&scx_cgroup_ops_rwsem));
 
 	if (!tg->css.cgroup || !tg->css.parent)
-		return scx_tg_sched(&root_task_group);
+		return scx_tg_sched(&उगात_task_group);
 	return scx_tg_sched(css_tg(tg->css.parent));
 }
 
@@ -4893,10 +4893,10 @@ int scx_tg_online(struct task_group *tg)
 		if (cgroup_on_dfl(tg->css.cgroup))
 			sch = scx_cgroup_sched(tg->css.cgroup);
 		else
-			sch = scx_tg_sched(&root_task_group);
+			sch = scx_tg_sched(&उगात_task_group);
 
 		if (SCX_HAS_OP(sch, cgroup_init)) {
-			struct scx_cgroup_init_args args =
+			struct scx_cgroup_init_मगा_कातविरान मगा_कातविरान =
 				{ .weight = tg->scx.weight,
 				  .bw_period_us = tg->scx.bw_period_us,
 				  .bw_quota_us = tg->scx.bw_quota_us,
@@ -4904,7 +4904,7 @@ int scx_tg_online(struct task_group *tg)
 				  .sched_idle = tg->scx.idle };
 
 			ret = SCX_CALL_OP_RET(sch, cgroup_init,
-					      NULL, tg->css.cgroup, &args);
+					      NULL, tg->css.cgroup, &मगा_कातविरान);
 			if (ret)
 				ret = scx_ops_sanitize_err(sch, "cgroup_init", ret);
 		}
@@ -5101,9 +5101,9 @@ void scx_group_set_bandwidth(struct task_group *tg,
 #endif	/* CONFIG_EXT_GROUP_SCHED */
 
 #if defined(CONFIG_EXT_GROUP_SCHED) || defined(CONFIG_EXT_SUB_SCHED)
-static struct cgroup *root_cgroup(void)
+static struct cgroup *उगात_cgroup(void)
 {
-	return &cgrp_dfl_root.cgrp;
+	return &cgrp_dfl_उगात.cgrp;
 }
 
 /*
@@ -5127,7 +5127,7 @@ void scx_cgroup_unlock(void)
 	cgroup_unlock();
 }
 #else	/* CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED */
-static inline struct cgroup *root_cgroup(void) { return NULL; }
+static inline struct cgroup *उगात_cgroup(void) { return NULL; }
 static inline void scx_cgroup_lock(void) {}
 static inline void scx_cgroup_unlock(void) {}
 #endif	/* CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED */
@@ -5194,7 +5194,7 @@ s32 scx_init_dsq(struct scx_dispatch_q *dsq, u64 dsq_id, struct scx_sched *sch)
 		struct scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
 
 		pcpu->dsq = dsq;
-		INIT_LIST_HEAD(&pcpu->deferred_reenq_user.node);
+		INIT_LIST_HEAD(&pcpu->deferred_reenq_user.बुहोल);
 	}
 
 	return 0;
@@ -5213,9 +5213,9 @@ static void exit_dsq(struct scx_dispatch_q *dsq)
 		 * free_dsq_irq_workfn() cancelled the reenqs before the grace
 		 * period and schedule_dsq_reenq() queues nothing after that.
 		 */
-		if (WARN_ON_ONCE(!list_empty(&dru->node))) {
+		if (WARN_ON_ONCE(!list_empty(&dru->बुहोल))) {
 			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
-			list_del_init(&dru->node);
+			list_del_init(&dru->बुहोल);
 		}
 	}
 
@@ -5232,10 +5232,10 @@ static void free_dsq_rcufn(struct rcu_head *rcu)
 
 static void free_dsq_irq_workfn(struct irq_work *irq_work)
 {
-	struct llist_node *to_free = llist_del_all(&dsqs_to_free);
+	struct llist_बुहोल *to_free = llist_del_all(&dsqs_to_free);
 	struct scx_dispatch_q *dsq, *tmp_dsq;
 
-	llist_for_each_entry_safe(dsq, tmp_dsq, to_free, free_node) {
+	llist_for_each_entry_safe(dsq, tmp_dsq, to_free, free_बुहोल) {
 		s32 cpu;
 
 		/*
@@ -5250,7 +5250,7 @@ static void free_dsq_irq_workfn(struct irq_work *irq_work)
 			struct rq *rq = cpu_rq(cpu);
 
 			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
-			list_del_init(&pcpu->deferred_reenq_user.node);
+			list_del_init(&pcpu->deferred_reenq_user.बुहोल);
 		}
 
 		call_rcu(&dsq->rcu, free_dsq_rcufn);
@@ -5278,7 +5278,7 @@ static void destroy_dsq(struct scx_sched *sch, u64 dsq_id)
 		goto out_unlock_dsq;
 	}
 
-	if (rhashtable_remove_fast(&sch->dsq_hash, &dsq->hash_node,
+	if (rhashtable_remove_fast(&sch->dsq_hash, &dsq->hash_बुहोल,
 				   dsq_hash_params))
 		goto out_unlock_dsq;
 
@@ -5289,7 +5289,7 @@ static void destroy_dsq(struct scx_sched *sch, u64 dsq_id)
 	 * operations inside scheduler locks.
 	 */
 	dsq->id = SCX_DSQ_INVALID;
-	if (llist_add(&dsq->free_node, &dsqs_to_free))
+	if (llist_add(&dsq->free_बुहोल, &dsqs_to_free))
 		irq_work_queue(&free_dsq_irq_work);
 
 out_unlock_dsq:
@@ -5307,7 +5307,7 @@ static void scx_cgroup_exit(struct scx_sched *sch)
 	 * scx_tg_on/offline() are excluded through cgroup_lock(). If we walk
 	 * cgroups and exit all the inited ones, all online cgroups are exited.
 	 */
-	css_for_each_descendant_post(css, &root_task_group.css) {
+	css_for_each_descendant_post(css, &उगात_task_group.css) {
 		struct task_group *tg = css_tg(css);
 
 		/* also clear the sched of tgs whose ops.cgroup_init() failed */
@@ -5329,14 +5329,14 @@ static int scx_cgroup_init(struct scx_sched *sch)
 	 * scx_tg_on/offline() are excluded through cgroup_lock(). If we walk
 	 * cgroups and init, all online cgroups are initialized.
 	 */
-	css_for_each_descendant_pre(css, &root_task_group.css) {
+	css_for_each_descendant_pre(css, &उगात_task_group.css) {
 		struct task_group *tg = css_tg(css);
 
 		if ((tg->scx.flags & (SCX_TG_ONLINE | SCX_TG_INITED)) != SCX_TG_ONLINE)
 			continue;
 
 		if (sch->ops.cgroup_init) {
-			struct scx_cgroup_init_args args = {
+			struct scx_cgroup_init_मगा_कातविरान मगा_कातविरान = {
 				.weight = tg->scx.weight,
 				.bw_period_us = tg->scx.bw_period_us,
 				.bw_quota_us = tg->scx.bw_quota_us,
@@ -5344,7 +5344,7 @@ static int scx_cgroup_init(struct scx_sched *sch)
 				.sched_idle = tg->scx.idle,
 			};
 
-			ret = SCX_CALL_OP_RET(sch, cgroup_init, NULL, css->cgroup, &args);
+			ret = SCX_CALL_OP_RET(sch, cgroup_init, NULL, css->cgroup, &मगा_कातविरान);
 			if (ret) {
 				scx_error(sch, "ops.cgroup_init() failed (%d)", ret);
 				return ret;
@@ -5430,7 +5430,7 @@ static bool scx_claim_exit(struct scx_sched *sch, enum scx_exit_kind kind);
 s32 scx_alloc_kern_arena_objs(struct scx_sched *sch)
 {
 	size_t size = struct_size_t(struct scx_cmask, bits,
-				    SCX_CMASK_NR_WORDS(num_possible_cpus()));
+				    SCX_CMASK_NR_मगा_सालिता(नुमेरो_possible_cpus()));
 	struct scx_cmask *online;
 	struct scx_cmask_ref ref;
 	int cpu;
@@ -5451,7 +5451,7 @@ s32 scx_alloc_kern_arena_objs(struct scx_sched *sch)
 		*slot = scx_arena_alloc(sch, size);
 		if (!*slot)
 			return -ENOMEM;
-		scx_cmask_init(*slot, 0, num_possible_cpus());
+		scx_cmask_init(*slot, 0, नुमेरो_possible_cpus());
 	}
 
 	/* pack the online mask alongside the scratch masks */
@@ -5460,7 +5460,7 @@ s32 scx_alloc_kern_arena_objs(struct scx_sched *sch)
 		return -ENOMEM;
 
 	scoped_guard(rcu) {
-		scx_cmask_ref_init_kern(sch, online, 0, num_possible_cpus(), &ref);
+		scx_cmask_ref_init_kern(sch, online, 0, नुमेरो_possible_cpus(), &ref);
 		scx_cmask_ref_from_cpumask(&ref, cpu_active_mask);
 	}
 	sch->online_cmask = online;
@@ -5471,7 +5471,7 @@ s32 scx_alloc_kern_arena_objs(struct scx_sched *sch)
 static void scx_free_kern_arena_objs(struct scx_sched *sch)
 {
 	size_t size = struct_size_t(struct scx_cmask, bits,
-				    SCX_CMASK_NR_WORDS(num_possible_cpus()));
+				    SCX_CMASK_NR_मगा_सालिता(नुमेरो_possible_cpus()));
 	int cpu;
 
 	scx_arena_free(sch, sch->online_cmask, size);
@@ -5493,7 +5493,7 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
 	struct scx_sched *sch = container_of(rcu_work, struct scx_sched, rcu_work);
 	struct rhashtable_iter rht_iter;
 	struct scx_dispatch_q *dsq;
-	int cpu, node;
+	int cpu, बुहोल;
 
 	irq_work_sync(&sch->propagate_exit_irq_work);
 	irq_work_sync(&sch->disable_irq_work);
@@ -5521,7 +5521,7 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
 		 * period. As that blocks new deferrals, all
 		 * deferred_reenq_local_node's must be off-list by now.
 		 */
-		WARN_ON_ONCE(!list_empty(&pcpu->deferred_reenq_local.node));
+		WARN_ON_ONCE(!list_empty(&pcpu->deferred_reenq_local.बुहोल));
 
 		/* remove the queued ecaps sync so the pcpu can be freed */
 		scx_discard_ecaps_to_sync(cpu, pcpu);
@@ -5531,7 +5531,7 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
 		 * pcpu's to_kick_node is off the list before it is freed.
 		 */
 		irq_work_sync(&cpu_rq(cpu)->scx.kick_cpus_irq_work);
-		WARN_ON_ONCE(!list_empty(&pcpu->to_kick_node));
+		WARN_ON_ONCE(!list_empty(&pcpu->to_kick_बुहोल));
 		free_cpumask_var(pcpu->cpus_to_kick);
 		free_cpumask_var(pcpu->cpus_to_kick_if_idle);
 		free_cpumask_var(pcpu->cpus_to_preempt);
@@ -5542,8 +5542,8 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
 
 	free_percpu(sch->pcpu);
 
-	for_each_node_state(node, N_POSSIBLE)
-		free_pnode(sch->pnode[node]);
+	for_each_बुहोल_state(बुहोल, N_POSSIBLE)
+		free_pnode(sch->pnode[बुहोल]);
 	kfree(sch->pnode);
 
 	scx_free_pshards(sch);
@@ -5620,11 +5620,11 @@ static ssize_t scx_attr_caps_show(struct kobject *kobj,
 				  struct kobj_attribute *ka, char *buf)
 {
 	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
-	u32 npossible = num_possible_cpus();
+	u32 npossible = नुमेरो_possible_cpus();
 	struct scx_cmask *agg __free(kfree) =
-		kzalloc_flex(*agg, bits, SCX_CMASK_NR_WORDS(npossible));
+		kzalloc_flex(*agg, bits, SCX_CMASK_NR_मगा_सालिता(npossible));
 	unsigned long *agg_bm __free(bitmap) = bitmap_zalloc(npossible, GFP_KERNEL);
-	ssize_t count = 0;
+	ssize_t बिलांग = 0;
 	s32 cap, si;
 
 	if (!agg || !agg_bm)
@@ -5643,10 +5643,10 @@ static ssize_t scx_attr_caps_show(struct kobject *kobj,
 		}
 		/* %*pbl takes unsigned long bitmap layout, convert from u64 */
 		bitmap_from_arr64(agg_bm, agg->bits, npossible);
-		count += sysfs_emit_at(buf, count, "%s: %*pbl\n",
+		बिलांग += sysfs_emit_at(buf, बिलांग, "%s: %*pbl\n",
 				       scx_cap_names[cap], npossible, agg_bm);
 	}
-	return count;
+	return बिलांग;
 }
 SCX_ATTR(caps);
 #endif	/* CONFIG_EXT_SUB_SCHED */
@@ -5756,21 +5756,21 @@ bool scx_allow_ttwu_queue(const struct task_struct *p)
 static __printf(2, 3) bool handle_lockup(int exit_cpu, const char *fmt, ...)
 {
 	struct scx_sched *sch;
-	va_list args;
+	va_list मगा_कातविरान;
 	bool ret;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
+	sch = rcu_dereference(scx_उगात);
 	if (unlikely(!sch))
 		return false;
 
 	switch (scx_enable_state()) {
 	case SCX_ENABLING:
 	case SCX_ENABLED:
-		va_start(args, fmt);
-		ret = scx_vexit(sch, SCX_EXIT_ERROR, 0, exit_cpu, fmt, args);
-		va_end(args);
+		va_start(मगा_कातविरान, fmt);
+		ret = scx_vexit(sch, SCX_EXIT_ERROR, 0, exit_cpu, fmt, मगा_कातविरान);
+		va_end(मगा_कातविरान);
 		return ret;
 	default:
 		return false;
@@ -5798,7 +5798,7 @@ bool scx_rcu_cpu_stall(const struct cpumask *stalled_mask)
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
+	sch = rcu_dereference(scx_उगात);
 	if (unlikely(!sch))
 		return false;
 
@@ -5819,10 +5819,10 @@ bool scx_rcu_cpu_stall(const struct cpumask *stalled_mask)
 		return false;
 
 #ifdef CONFIG_STACKTRACE
-	ei->bt_len = stack_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
+	ei->bt_len = सालानसान_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
 #endif
-	scnprintf(ei->msg, SCX_EXIT_MSG_LEN, "RCU CPU stall on CPUs (%*pbl)",
-		  cpumask_pr_args(stalled_mask));
+	scnprintf(ei->मेनसाहे, SCX_EXIT_मेनसाहे_LEN, "RCU CPU stall on CPUs (%*pbl)",
+		  cpumask_pr_मगा_कातविरान(stalled_mask));
 	ei->kind = SCX_EXIT_ERROR;
 	ei->reason = scx_exit_reason(SCX_EXIT_ERROR);
 	ei->exit_cpu = exit_cpu;
@@ -5887,7 +5887,7 @@ static u32 bypass_lb_cpu(struct scx_sched *sch, s32 donor,
 	struct rq *donor_rq = cpu_rq(donor);
 	struct scx_dispatch_q *donor_dsq = scx_bypass_dsq(sch, donor);
 	struct task_struct *p, *n;
-	struct scx_dsq_list_node cursor = INIT_DSQ_LIST_CURSOR(cursor, donor_dsq, 0);
+	struct scx_dsq_list_बुहोल cursor = INIT_DSQ_LIST_CURSOR(cursor, donor_dsq, 0);
 	s32 delta = READ_ONCE(donor_dsq->nr) - nr_donor_target;
 	u32 nr_balanced = 0, min_delta_us;
 
@@ -5903,7 +5903,7 @@ static u32 bypass_lb_cpu(struct scx_sched *sch, s32 donor,
 
 	raw_spin_rq_lock_irq(donor_rq);
 	raw_spin_lock(&donor_dsq->lock);
-	list_add(&cursor.node, &donor_dsq->list);
+	list_add(&cursor.बुहोल, &donor_dsq->list);
 resume:
 	n = container_of(&cursor, struct task_struct, scx.dsq_list);
 	n = nldsq_next_task(donor_dsq, n, false);
@@ -5967,7 +5967,7 @@ resume:
 
 		nr_balanced++;
 		if (!(nr_balanced % SCX_BYPASS_LB_BATCH) && n) {
-			list_move_tail(&cursor.node, &n->scx.dsq_list.node);
+			list_move_tail(&cursor.बुहोल, &n->scx.dsq_list.बुहोल);
 			raw_spin_unlock(&donor_dsq->lock);
 			scx_rq_lock_drop(donor_rq);
 			raw_spin_rq_unlock_irq(donor_rq);
@@ -5978,7 +5978,7 @@ resume:
 		}
 	}
 
-	list_del_init(&cursor.node);
+	list_del_init(&cursor.बुहोल);
 	raw_spin_unlock(&donor_dsq->lock);
 	scx_rq_lock_drop(donor_rq);
 	raw_spin_rq_unlock_irq(donor_rq);
@@ -5986,9 +5986,9 @@ resume:
 	return nr_balanced;
 }
 
-static void bypass_lb_node(struct scx_sched *sch, int node)
+static void bypass_lb_बुहोल(struct scx_sched *sch, int बुहोल)
 {
-	const struct cpumask *node_mask = cpumask_of_node(node);
+	const struct cpumask *बुहोल_mask = cpumask_of_बुहोल(बुहोल);
 	struct cpumask *donee_mask = sch->bypass_lb_donee_cpumask;
 	struct cpumask *resched_mask = sch->bypass_lb_resched_cpumask;
 	u32 nr_tasks = 0, nr_cpus = 0, nr_balanced = 0;
@@ -5998,7 +5998,7 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 	int cpu;
 
 	/* count the target tasks and CPUs */
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
+	for_each_cpu_and(cpu, cpu_online_mask, बुहोल_mask) {
 		u32 nr = READ_ONCE(scx_bypass_dsq(sch, cpu)->nr);
 
 		nr_tasks += nr;
@@ -6020,14 +6020,14 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 	nr_donor_target = DIV_ROUND_UP(nr_target * SCX_BYPASS_LB_DONOR_PCT, 100);
 
 	cpumask_clear(donee_mask);
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
+	for_each_cpu_and(cpu, cpu_online_mask, बुहोल_mask) {
 		if (READ_ONCE(scx_bypass_dsq(sch, cpu)->nr) < nr_target)
 			cpumask_set_cpu(cpu, donee_mask);
 	}
 
 	/* iterate !donee CPUs and see if they should be offloaded */
 	cpumask_clear(resched_mask);
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
+	for_each_cpu_and(cpu, cpu_online_mask, बुहोल_mask) {
 		if (cpumask_empty(donee_mask))
 			break;
 		if (cpumask_test_cpu(cpu, donee_mask))
@@ -6042,7 +6042,7 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 	for_each_cpu(cpu, resched_mask)
 		resched_cpu(cpu);
 
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
+	for_each_cpu_and(cpu, cpu_online_mask, बुहोल_mask) {
 		u32 nr = READ_ONCE(scx_bypass_dsq(sch, cpu)->nr);
 
 		after_min = min(nr, after_min);
@@ -6050,7 +6050,7 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 
 	}
 
-	trace_sched_ext_bypass_lb(node, nr_cpus, nr_tasks, nr_balanced,
+	trace_sched_ext_bypass_lb(बुहोल, nr_cpus, nr_tasks, nr_balanced,
 				  before_min, before_max, after_min, after_max);
 }
 
@@ -6066,14 +6066,14 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 static void scx_bypass_lb_timerfn(struct timer_list *timer)
 {
 	struct scx_sched *sch = container_of(timer, struct scx_sched, bypass_lb_timer);
-	int node;
+	int बुहोल;
 	u32 intv_us;
 
 	if (!scx_bypass_dsp_enabled(sch))
 		return;
 
-	for_each_node_with_cpus(node)
-		bypass_lb_node(sch, node);
+	for_each_बुहोल_with_cpus(बुहोल)
+		bypass_lb_बुहोल(sch, बुहोल);
 
 	intv_us = READ_ONCE(scx_bypass_lb_intv_us);
 	if (intv_us)
@@ -6193,7 +6193,7 @@ static void unbypass_renotify_idle(struct rq *rq, struct scx_sched *pos,
 				   struct scx_sched_pcpu *pcpu)
 {
 	if (!pos->level) {
-		rq->scx.flags |= SCX_RQ_ROOT_IDLE_RENOTIFY;
+		rq->scx.flags |= SCX_RQ_उगात_IDLE_RENOTIFY;
 		return;
 	}
 #ifdef CONFIG_EXT_SUB_SCHED
@@ -6330,7 +6330,7 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 		 * visit all nodes.
 		 */
 		list_for_each_entry_safe_reverse(p, n, &rq->scx.runnable_list,
-						 scx.runnable_node) {
+						 scx.runnable_बुहोल) {
 			if (!scx_is_descendant(scx_task_sched(p), sch))
 				continue;
 
@@ -6369,7 +6369,7 @@ unlock:
 static void free_exit_info(struct scx_exit_info *ei)
 {
 	kvfree(ei->dump);
-	kfree(ei->msg);
+	kfree(ei->मेनसाहे);
 	kfree(ei->bt);
 	kfree(ei);
 }
@@ -6384,10 +6384,10 @@ static struct scx_exit_info *alloc_exit_info(size_t exit_dump_len)
 
 	ei->exit_cpu = -1;
 	ei->bt = kzalloc_objs(ei->bt[0], SCX_EXIT_BT_LEN);
-	ei->msg = kzalloc(SCX_EXIT_MSG_LEN, GFP_KERNEL);
+	ei->मेनसाहे = kzalloc(SCX_EXIT_मेनसाहे_LEN, GFP_KERNEL);
 	ei->dump = kvzalloc(exit_dump_len, GFP_KERNEL);
 
-	if (!ei->bt || !ei->msg || !ei->dump) {
+	if (!ei->bt || !ei->मेनसाहे || !ei->dump) {
 		free_exit_info(ei);
 		return NULL;
 	}
@@ -6481,8 +6481,8 @@ s32 scx_link_sched(struct scx_sched *sch)
 				return -EBUSY;
 			}
 
-			ret = rhashtable_lookup_insert_fast(&scx_sched_hash,
-					&sch->hash_node, scx_sched_hash_params);
+			ret = rhashtable_lookup_इसिंगित_fast(&scx_sched_hash,
+					&sch->hash_बुहोल, scx_sched_hash_params);
 			if (ret) {
 				scx_error(sch, "failed to insert into scx_sched_hash (%d)",
 					  ret);
@@ -6498,7 +6498,7 @@ s32 scx_link_sched(struct scx_sched *sch)
 			 */
 			smp_mb();
 			if (unlikely(READ_ONCE(parent->aborting))) {
-				rhashtable_remove_fast(&scx_sched_hash, &sch->hash_node,
+				rhashtable_remove_fast(&scx_sched_hash, &sch->hash_बुहोल,
 						       scx_sched_hash_params);
 				list_del_rcu(&sch->sibling);
 				scx_error(sch, "parent disabled (%d)", -ENOENT);
@@ -6521,7 +6521,7 @@ void scx_unlink_sched(struct scx_sched *sch)
 	scoped_guard(raw_spinlock_irq, &scx_sched_lock) {
 #ifdef CONFIG_EXT_SUB_SCHED
 		if (sch->linked) {
-			rhashtable_remove_fast(&scx_sched_hash, &sch->hash_node,
+			rhashtable_remove_fast(&scx_sched_hash, &sch->hash_बुहोल,
 					       scx_sched_hash_params);
 			list_del_rcu(&sch->sibling);
 			sch->linked = false;
@@ -6553,10 +6553,10 @@ void scx_log_sched_disable(struct scx_sched *sch)
 		pr_err("sched_ext: BPF %s \"%s\" disabled (%s)\n", type,
 		       sch->ops.name, ei->reason);
 
-		if (ei->msg[0] != '\0')
-			pr_err("sched_ext: %s: %s\n", sch->ops.name, ei->msg);
+		if (ei->मेनसाहे[0] != '\0')
+			pr_err("sched_ext: %s: %s\n", sch->ops.name, ei->मेनसाहे);
 #ifdef CONFIG_STACKTRACE
-		stack_trace_print(ei->bt, ei->bt_len, 2);
+		सालानसान_trace_इलिम्बाग(ei->bt, ei->bt_len, 2);
 #endif
 	} else {
 		pr_info("sched_ext: BPF %s \"%s\" disabled (%s)\n", type,
@@ -6564,7 +6564,7 @@ void scx_log_sched_disable(struct scx_sched *sch)
 	}
 }
 
-static void scx_root_disable(struct scx_sched *sch)
+static void scx_उगात_disable(struct scx_sched *sch)
 {
 	struct scx_task_iter sti;
 	struct task_struct *p;
@@ -6581,7 +6581,7 @@ static void scx_root_disable(struct scx_sched *sch)
 		break;
 	case SCX_DISABLED:
 		pr_warn("sched_ext: ops error detected without ops (%s)\n",
-			sch->exit_info->msg);
+			sch->exit_info->मेनसाहे);
 		WARN_ON_ONCE(scx_set_enable_state(SCX_DISABLED) != SCX_DISABLING);
 		goto done;
 	default:
@@ -6703,7 +6703,7 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * cpus_read_lock(). See handle_hotplug().
 	 */
 	cpus_read_lock();
-	RCU_INIT_POINTER(scx_root, NULL);
+	RCU_INIT_POINTER(scx_उगात, NULL);
 	scx_cid_retire_tables();
 	cpus_read_unlock();
 
@@ -6820,7 +6820,7 @@ static void scx_disable_workfn(struct kthread_work *work)
 	if (scx_parent(sch))
 		scx_sub_disable(sch);
 	else
-		scx_root_disable(sch);
+		scx_उगात_disable(sch);
 }
 
 static void scx_disable(struct scx_sched *sch, enum scx_exit_kind kind)
@@ -6858,39 +6858,39 @@ static void dump_newline(struct seq_buf *s)
 		seq_buf_putc(s, '\n');
 }
 
-__printf(2, 3) void scx_dump_line(struct seq_buf *s, const char *fmt, ...)
+__printf(2, 3) void scx_dump_लिन्या(struct seq_buf *s, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
 #ifdef CONFIG_TRACEPOINTS
 	if (trace_sched_ext_dump_enabled()) {
 		/* protected by scx_dump_lock */
-		static char line_buf[SCX_EXIT_MSG_LEN];
+		static char लिन्या_buf[SCX_EXIT_मेनसाहे_LEN];
 
-		va_start(args, fmt);
-		vscnprintf(line_buf, sizeof(line_buf), fmt, args);
-		va_end(args);
+		va_start(मगा_कातविरान, fmt);
+		vscnprintf(लिन्या_buf, sizeof(लिन्या_buf), fmt, मगा_कातविरान);
+		va_end(मगा_कातविरान);
 
-		trace_call__sched_ext_dump(line_buf);
+		trace_call__sched_ext_dump(लिन्या_buf);
 	}
 #endif
 	/* @s may be zero sized and seq_buf triggers WARN if so */
 	if (s->size) {
-		va_start(args, fmt);
-		seq_buf_vprintf(s, fmt, args);
-		va_end(args);
+		va_start(मगा_कातविरान, fmt);
+		seq_buf_vprintf(s, fmt, मगा_कातविरान);
+		va_end(मगा_कातविरान);
 
 		seq_buf_putc(s, '\n');
 	}
 }
 
-static void dump_stack_trace(struct seq_buf *s, const char *prefix,
+static void dump_सालानसान_trace(struct seq_buf *s, const char *prefix,
 			     const unsigned long *bt, unsigned int len)
 {
 	unsigned int i;
 
 	for (i = 0; i < len; i++)
-		scx_dump_line(s, "%s%pS", prefix, (void *)bt[i]);
+		scx_dump_लिन्या(s, "%s%pS", prefix, (void *)bt[i]);
 }
 
 static void ops_dump_init(struct seq_buf *s, const char *prefix)
@@ -6909,7 +6909,7 @@ static void ops_dump_init(struct seq_buf *s, const char *prefix)
 static void ops_dump_flush(void)
 {
 	struct scx_dump_data *dd = &scx_dump_data;
-	char *line = dd->buf.line;
+	char *लिन्या = dd->buf.लिन्या;
 
 	if (!dd->cursor)
 		return;
@@ -6928,7 +6928,7 @@ static void ops_dump_flush(void)
 	 * separately.
 	 */
 	while (true) {
-		char *end = line;
+		char *end = लिन्या;
 		char c;
 
 		while (*end != '\n' && *end != '\0')
@@ -6940,7 +6940,7 @@ static void ops_dump_flush(void)
 		 */
 		c = *end;
 		*end = '\0';
-		scx_dump_line(dd->s, "%s%s", dd->prefix, line);
+		scx_dump_लिन्या(dd->s, "%s%s", dd->prefix, लिन्या);
 		if (c == '\0')
 			break;
 
@@ -6948,7 +6948,7 @@ static void ops_dump_flush(void)
 		end++;
 		if (*end == '\0')
 			break;
-		line = end;
+		लिन्या = end;
 	}
 
 	dd->cursor = 0;
@@ -6984,18 +6984,18 @@ static void scx_dump_task(struct scx_sched *sch, struct seq_buf *s, struct scx_d
 			  (unsigned long long)p->scx.dsq->id);
 
 	dump_newline(s);
-	scx_dump_line(s, " %c%c %s[%d] %s%s %+ldms",
+	scx_dump_लिन्या(s, " %c%c %s[%d] %s%s %+ldms",
 		      marker, task_state_to_char(p), p->comm, p->pid, own_marker, sch_id_buf,
 		      jiffies_delta_msecs(p->scx.runnable_at, dctx->at_jiffies));
-	scx_dump_line(s, "      scx_state/flags=%u/0x%x dsq_flags=0x%x ops_state/qseq=%lu/%lu",
+	scx_dump_लिन्या(s, "      scx_state/flags=%u/0x%x dsq_flags=0x%x ops_state/qseq=%lu/%lu",
 		      scx_get_task_state(p) >> SCX_TASK_STATE_SHIFT,
 		      p->scx.flags & ~SCX_TASK_STATE_MASK, p->scx.dsq_flags,
 		      ops_state & SCX_OPSS_STATE_MASK, ops_state >> SCX_OPSS_QSEQ_SHIFT);
-	scx_dump_line(s, "      sticky/holding_cpu=%d/%d dsq_id=%s",
+	scx_dump_लिन्या(s, "      sticky/holding_cpu=%d/%d dsq_id=%s",
 		      p->scx.sticky_cpu, p->scx.holding_cpu, dsq_id_buf);
-	scx_dump_line(s, "      dsq_vtime=%llu slice=%llu weight=%u",
+	scx_dump_लिन्या(s, "      dsq_vtime=%llu slice=%llu weight=%u",
 		      p->scx.dsq_vtime, p->scx.slice, p->scx.weight);
-	scx_dump_line(s, "      cpus=%*pb no_mig=%u", cpumask_pr_args(p->cpus_ptr),
+	scx_dump_लिन्या(s, "      cpus=%*pb no_mig=%u", cpumask_pr_मगा_कातविरान(p->cpus_ptr),
 		      p->migration_disabled);
 
 	if (SCX_HAS_OP(sch, dump_task)) {
@@ -7005,11 +7005,11 @@ static void scx_dump_task(struct scx_sched *sch, struct seq_buf *s, struct scx_d
 	}
 
 #ifdef CONFIG_STACKTRACE
-	bt_len = stack_trace_save_tsk(p, bt, SCX_EXIT_BT_LEN, 1);
+	bt_len = सालानसान_trace_save_tsk(p, bt, SCX_EXIT_BT_LEN, 1);
 #endif
 	if (bt_len) {
 		dump_newline(s);
-		dump_stack_trace(s, "    ", bt, bt_len);
+		dump_सालानसान_trace(s, "    ", bt, bt_len);
 	}
 }
 
@@ -7044,27 +7044,27 @@ static void scx_dump_cpu(struct scx_sched *sch, struct seq_buf *s,
 	seq_buf_init(&ns, buf, avail);
 
 	dump_newline(&ns);
-	scx_dump_line(&ns, "CPU %-4d: nr_run=%u flags=0x%x cpu_rel=%d ksync=%lu",
+	scx_dump_लिन्या(&ns, "CPU %-4d: nr_run=%u flags=0x%x cpu_rel=%d ksync=%lu",
 		      cpu, rq->scx.nr_running, rq->scx.flags, rq->scx.cpu_released,
 		      rq->scx.kick_sync);
 	scx_rescue_dump(&ns, rq);
-	scx_dump_line(&ns, "          curr=%s[%d] class=%ps",
+	scx_dump_लिन्या(&ns, "          curr=%s[%d] class=%ps",
 		      rq->curr->comm, rq->curr->pid, rq->curr->sched_class);
 	if (!cpumask_empty(pcpu->cpus_to_kick))
-		scx_dump_line(&ns, "  cpus_to_kick   : %*pb",
-			      cpumask_pr_args(pcpu->cpus_to_kick));
+		scx_dump_लिन्या(&ns, "  cpus_to_kick   : %*pb",
+			      cpumask_pr_मगा_कातविरान(pcpu->cpus_to_kick));
 	if (!cpumask_empty(pcpu->cpus_to_kick_if_idle))
-		scx_dump_line(&ns, "  idle_to_kick   : %*pb",
-			      cpumask_pr_args(pcpu->cpus_to_kick_if_idle));
+		scx_dump_लिन्या(&ns, "  idle_to_kick   : %*pb",
+			      cpumask_pr_मगा_कातविरान(pcpu->cpus_to_kick_if_idle));
 	if (!cpumask_empty(pcpu->cpus_to_preempt))
-		scx_dump_line(&ns, "  cpus_to_preempt: %*pb",
-			      cpumask_pr_args(pcpu->cpus_to_preempt));
+		scx_dump_लिन्या(&ns, "  cpus_to_preempt: %*pb",
+			      cpumask_pr_मगा_कातविरान(pcpu->cpus_to_preempt));
 	if (!cpumask_empty(pcpu->cpus_to_wait))
-		scx_dump_line(&ns, "  cpus_to_wait   : %*pb",
-			      cpumask_pr_args(pcpu->cpus_to_wait));
+		scx_dump_लिन्या(&ns, "  cpus_to_wait   : %*pb",
+			      cpumask_pr_मगा_कातविरान(pcpu->cpus_to_wait));
 	if (!cpumask_empty(rq->scx.cpus_to_sync))
-		scx_dump_line(&ns, "  cpus_to_sync   : %*pb",
-			      cpumask_pr_args(rq->scx.cpus_to_sync));
+		scx_dump_लिन्या(&ns, "  cpus_to_sync   : %*pb",
+			      cpumask_pr_मगा_कातविरान(rq->scx.cpus_to_sync));
 
 	used = seq_buf_used(&ns);
 	if (SCX_HAS_OP(sch, dump_cpu)) {
@@ -7094,7 +7094,7 @@ static void scx_dump_cpu(struct scx_sched *sch, struct seq_buf *s,
 	    (dump_all_tasks || scx_task_on_sched(sch, rq->curr)))
 		scx_dump_task(sch, s, dctx, rq, rq->curr, '*');
 
-	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_node)
+	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_बुहोल)
 		if (dump_all_tasks || scx_task_on_sched(sch, p))
 			scx_dump_task(sch, s, dctx, rq, p, ' ');
 next:
@@ -7132,26 +7132,26 @@ static void scx_dump_state(struct scx_sched *sch, struct scx_exit_info *ei,
 
 #ifdef CONFIG_EXT_SUB_SCHED
 	if (sch->level == 0)
-		scx_dump_line(&s, "%s: root", sch->ops.name);
+		scx_dump_लिन्या(&s, "%s: root", sch->ops.name);
 	else
-		scx_dump_line(&s, "%s: sub%d-%llu %s",
+		scx_dump_लिन्या(&s, "%s: sub%d-%llu %s",
 			      sch->ops.name, sch->level, sch->ops.sub_cgroup_id,
 			      sch->cgrp_path);
 #endif
 	if (ei->kind == SCX_EXIT_NONE) {
-		scx_dump_line(&s, "Debug dump triggered by %s", ei->reason);
+		scx_dump_लिन्या(&s, "Debug dump triggered by %s", ei->reason);
 	} else {
 		if (ei->exit_cpu >= 0)
-			scx_dump_line(&s, "%s[%d] triggered exit kind %d on CPU %d:",
+			scx_dump_लिन्या(&s, "%s[%d] triggered exit kind %d on CPU %d:",
 				      current->comm, current->pid, ei->kind,
 				      ei->exit_cpu);
 		else
-			scx_dump_line(&s, "%s[%d] triggered exit kind %d:",
+			scx_dump_लिन्या(&s, "%s[%d] triggered exit kind %d:",
 				      current->comm, current->pid, ei->kind);
-		scx_dump_line(&s, "  %s (%s)", ei->reason, ei->msg);
+		scx_dump_लिन्या(&s, "  %s (%s)", ei->reason, ei->मेनसाहे);
 		dump_newline(&s);
-		scx_dump_line(&s, "Backtrace:");
-		dump_stack_trace(&s, "  ", ei->bt, ei->bt_len);
+		scx_dump_लिन्या(&s, "Backtrace:");
+		dump_सालानसान_trace(&s, "  ", ei->bt, ei->bt_len);
 	}
 
 	if (SCX_HAS_OP(sch, dump)) {
@@ -7161,8 +7161,8 @@ static void scx_dump_state(struct scx_sched *sch, struct scx_exit_info *ei,
 	}
 
 	dump_newline(&s);
-	scx_dump_line(&s, "CPU states");
-	scx_dump_line(&s, "----------");
+	scx_dump_लिन्या(&s, "CPU states");
+	scx_dump_लिन्या(&s, "----------");
 
 	/*
 	 * Dump stalled CPUs first so they aren't lost to dump truncation, then
@@ -7185,8 +7185,8 @@ static void scx_dump_state(struct scx_sched *sch, struct scx_exit_info *ei,
 	}
 
 	dump_newline(&s);
-	scx_dump_line(&s, "Event counters");
-	scx_dump_line(&s, "--------------");
+	scx_dump_लिन्या(&s, "Event counters");
+	scx_dump_लिन्या(&s, "--------------");
 
 	scx_read_events(sch, &events);
 #define SCX_EVENT(name)	scx_dump_event(s, &events, name)
@@ -7222,7 +7222,7 @@ static void scx_finish_exit(struct scx_sched *sch, enum scx_exit_kind kind,
 	 * Skip the backtrace when exiting from NMI.
 	 */
 	if (kind >= SCX_EXIT_ERROR && !in_nmi())
-		ei->bt_len = stack_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
+		ei->bt_len = सालानसान_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
 #endif
 	/*
 	 * Set ei->kind and ->reason for scx_dump_state(). They'll be set again
@@ -7237,7 +7237,7 @@ static void scx_finish_exit(struct scx_sched *sch, enum scx_exit_kind kind,
 
 bool scx_vexit(struct scx_sched *sch,
 	       enum scx_exit_kind kind, s64 exit_code, s32 exit_cpu,
-	       const char *fmt, va_list args)
+	       const char *fmt, va_list मगा_कातविरान)
 {
 	struct scx_exit_info *ei = sch->exit_info;
 
@@ -7246,7 +7246,7 @@ bool scx_vexit(struct scx_sched *sch,
 	if (!scx_claim_exit(sch, kind))
 		return false;
 
-	vscnprintf(ei->msg, SCX_EXIT_MSG_LEN, fmt, args);
+	vscnprintf(ei->मेनसाहे, SCX_EXIT_मेनसाहे_LEN, fmt, मगा_कातविरान);
 
 	scx_finish_exit(sch, kind, exit_code, exit_cpu);
 	return true;
@@ -7266,8 +7266,8 @@ static int alloc_kick_syncs(void)
 
 		WARN_ON_ONCE(rcu_access_pointer(*ksyncs));
 
-		new_ksyncs = kvzalloc_node(struct_size(new_ksyncs, syncs, nr_cpu_ids),
-					   GFP_KERNEL, cpu_to_node(cpu));
+		new_ksyncs = kvzalloc_बुहोल(struct_size(new_ksyncs, syncs, nr_cpu_ids),
+					   GFP_KERNEL, cpu_to_बुहोल(cpu));
 		if (!new_ksyncs) {
 			free_kick_syncs();
 			return -ENOMEM;
@@ -7287,11 +7287,11 @@ static void free_pnode(struct scx_sched_pnode *pnode)
 	kfree(pnode);
 }
 
-static struct scx_sched_pnode *alloc_pnode(struct scx_sched *sch, int node)
+static struct scx_sched_pnode *alloc_pnode(struct scx_sched *sch, int बुहोल)
 {
 	struct scx_sched_pnode *pnode;
 
-	pnode = kzalloc_node(sizeof(*pnode), GFP_KERNEL, node);
+	pnode = kzalloc_बुहोल(sizeof(*pnode), GFP_KERNEL, बुहोल);
 	if (!pnode)
 		return NULL;
 
@@ -7314,7 +7314,7 @@ struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
 	struct sched_ext_ops *ops = cmd->ops;
 	struct scx_sched *sch;
 	s32 level = parent ? parent->level + 1 : 0;
-	s32 node, cpu, ret, bypass_fail_cpu = nr_cpu_ids;
+	s32 बुहोल, cpu, ret, bypass_fail_cpu = nr_cpu_ids;
 
 	sch = kzalloc_flex(*sch, ancestors, level + 1);
 	if (!sch) {
@@ -7332,15 +7332,15 @@ struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
 	if (ret < 0)
 		goto err_free_ei;
 
-	sch->pnode = kzalloc_objs(sch->pnode[0], nr_node_ids);
+	sch->pnode = kzalloc_objs(sch->pnode[0], nr_बुहोल_ids);
 	if (!sch->pnode) {
 		ret = -ENOMEM;
 		goto err_free_hash;
 	}
 
-	for_each_node_state(node, N_POSSIBLE) {
-		sch->pnode[node] = alloc_pnode(sch, node);
-		if (!sch->pnode[node]) {
+	for_each_बुहोल_state(बुहोल, N_POSSIBLE) {
+		sch->pnode[बुहोल] = alloc_pnode(sch, बुहोल);
+		if (!sch->pnode[बुहोल]) {
 			ret = -ENOMEM;
 			goto err_free_pnode;
 		}
@@ -7366,17 +7366,17 @@ struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
 	for_each_possible_cpu(cpu) {
 		struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
 
-		node = cpu_to_node(cpu);
+		बुहोल = cpu_to_बुहोल(cpu);
 		pcpu->sch = sch;
-		INIT_LIST_HEAD(&pcpu->deferred_reenq_local.node);
+		INIT_LIST_HEAD(&pcpu->deferred_reenq_local.बुहोल);
 #ifdef CONFIG_EXT_SUB_SCHED
-		init_llist_node(&pcpu->ecaps_to_sync_node);
+		init_llist_बुहोल(&pcpu->ecaps_to_sync_बुहोल);
 #endif
-		INIT_LIST_HEAD(&pcpu->to_kick_node);
-		if (!zalloc_cpumask_var_node(&pcpu->cpus_to_kick, GFP_KERNEL, node) ||
-		    !zalloc_cpumask_var_node(&pcpu->cpus_to_kick_if_idle, GFP_KERNEL, node) ||
-		    !zalloc_cpumask_var_node(&pcpu->cpus_to_preempt, GFP_KERNEL, node) ||
-		    !zalloc_cpumask_var_node(&pcpu->cpus_to_wait, GFP_KERNEL, node)) {
+		INIT_LIST_HEAD(&pcpu->to_kick_बुहोल);
+		if (!zalloc_cpumask_var_बुहोल(&pcpu->cpus_to_kick, GFP_KERNEL, बुहोल) ||
+		    !zalloc_cpumask_var_बुहोल(&pcpu->cpus_to_kick_if_idle, GFP_KERNEL, बुहोल) ||
+		    !zalloc_cpumask_var_बुहोल(&pcpu->cpus_to_preempt, GFP_KERNEL, बुहोल) ||
+		    !zalloc_cpumask_var_बुहोल(&pcpu->cpus_to_wait, GFP_KERNEL, बुहोल)) {
 			ret = -ENOMEM;
 			goto err_free_pcpu;
 		}
@@ -7520,8 +7520,8 @@ err_free_pcpu:
 	}
 	free_percpu(sch->pcpu);
 err_free_pnode:
-	for_each_node_state(node, N_POSSIBLE)
-		free_pnode(sch->pnode[node]);
+	for_each_बुहोल_state(बुहोल, N_POSSIBLE)
+		free_pnode(sch->pnode[बुहोल]);
 	kfree(sch->pnode);
 err_free_hash:
 	rhashtable_free_and_destroy(&sch->dsq_hash, NULL, NULL);
@@ -7616,7 +7616,7 @@ int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
 	 * SCX_OPS_BUILTIN_IDLE_PER_NODE requires built-in CPU idle
 	 * selection policy to be enabled.
 	 */
-	if ((ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE) &&
+	if ((ops->flags & SCX_OPS_BUILTIN_IDLE_PER_बुहोल) &&
 	    (ops->update_idle && !(ops->flags & SCX_OPS_KEEP_BUILTIN_IDLE))) {
 		scx_error(sch, "SCX_OPS_BUILTIN_IDLE_PER_NODE requires CPU idle selection enabled");
 		return -EINVAL;
@@ -7650,11 +7650,11 @@ int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
 	return 0;
 }
 
-static void scx_root_enable_workfn(struct kthread_work *work)
+static void scx_उगात_enable_workfn(struct kthread_work *work)
 {
 	struct scx_enable_cmd *cmd = container_of(work, struct scx_enable_cmd, work);
 	struct sched_ext_ops *ops = cmd->ops;
-	struct cgroup *cgrp = root_cgroup();
+	struct cgroup *cgrp = उगात_cgroup();
 	struct scx_sched *sch;
 	struct scx_task_iter sti;
 	struct task_struct *p;
@@ -7699,7 +7699,7 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * scx_alloc_and_add_sched() succeeds.
 	 */
 	WARN_ON_ONCE(scx_set_enable_state(SCX_ENABLING) != SCX_DISABLED);
-	WARN_ON_ONCE(scx_root);
+	WARN_ON_ONCE(scx_उगात);
 
 	sch = scx_alloc_and_add_sched(cmd, cgrp, NULL);
 	if (IS_ERR(sch)) {
@@ -7744,7 +7744,7 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * Make the scheduler instance visible. Must be inside cpus_read_lock().
 	 * See handle_hotplug().
 	 */
-	rcu_assign_pointer(scx_root, sch);
+	rcu_assign_pointer(scx_उगात, sch);
 
 	ret = scx_link_sched(sch);
 	if (ret) {
@@ -7790,7 +7790,7 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 		goto err_disable;
 	}
 
-	scx_init_root_caps(sch);
+	scx_init_उगात_caps(sch);
 
 	/* the cid caps and shards are live now, so ops.init() can query them */
 	if (sch->ops.init) {
@@ -7957,8 +7957,8 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 		 * list_empty() guards against sched_ext_dead() having taken @p
 		 * off the list while init ran unlocked.
 		 */
-		if (scx_tid_to_task_enabled() && !list_empty(&p->scx.tasks_node))
-			scx_tid_hash_insert(p);
+		if (scx_tid_to_task_enabled() && !list_empty(&p->scx.tasks_बुहोल))
+			scx_tid_hash_इसिंगित(p);
 
 		put_task_struct(p);
 	}
@@ -8099,7 +8099,7 @@ static s32 scx_enable(struct scx_enable_cmd *cmd, struct bpf_link *link)
 		kthread_init_work(&cmd->work, scx_sub_enable_workfn);
 	else
 #endif	/* CONFIG_EXT_SUB_SCHED */
-		kthread_init_work(&cmd->work, scx_root_enable_workfn);
+		kthread_init_work(&cmd->work, scx_उगात_enable_workfn);
 
 	kthread_queue_work(READ_ONCE(helper), &cmd->work);
 	kthread_flush_work(&cmd->work);
@@ -8123,7 +8123,7 @@ static bool bpf_scx_is_valid_access(int off, int size,
 {
 	if (type != BPF_READ)
 		return false;
-	if (off < 0 || off >= sizeof(__u64) * MAX_BPF_FUNC_ARGS)
+	if (off < 0 || off >= sizeof(__u64) * MAX_BPF_FUNC_मगा_कातविरान)
 		return false;
 	if (off % size != 0)
 		return false;
@@ -8141,7 +8141,7 @@ static int bpf_scx_btf_struct_access_common(const struct bpf_reg_state *reg,
 	if (t == task_struct_type &&
 	    off >= offsetof(struct task_struct, scx.disallow) &&
 	    off + size <= offsetofend(struct task_struct, scx.disallow))
-		return SCALAR_VALUE;
+		return SCALAR_हालागा;
 
 	return -EACCES;
 }
@@ -8158,7 +8158,7 @@ static int bpf_scx_btf_struct_access(struct bpf_verifier_log *log,
 		     off + size <= offsetofend(struct task_struct, scx.slice)) ||
 		    (off >= offsetof(struct task_struct, scx.dsq_vtime) &&
 		     off + size <= offsetofend(struct task_struct, scx.dsq_vtime)))
-			return SCALAR_VALUE;
+			return SCALAR_हालागा;
 	}
 
 	return bpf_scx_btf_struct_access_common(reg, off, size);
@@ -8294,11 +8294,11 @@ static int bpf_scx_check_member(const struct btf_type *t,
 	 */
 	switch (moff) {
 	case offsetof(struct sched_ext_ops, dispatch):
-		prog->aux->priv_stack_requested = true;
+		prog->aux->priv_सालानसान_requested = true;
 		prog->aux->recursion_detected = scx_pstack_recursion_on_dispatch;
 		break;
 	case offsetof(struct sched_ext_ops, sub_caps_updated):
-		prog->aux->priv_stack_requested = true;
+		prog->aux->priv_सालानसान_requested = true;
 		prog->aux->recursion_detected = scx_pstack_recursion_on_caps_updated;
 		break;
 	}
@@ -8416,14 +8416,14 @@ static bool sched_ext_ops__core_sched_before(struct task_struct *a, struct task_
 static void sched_ext_ops__set_weight(struct task_struct *p, u32 weight) {}
 static void sched_ext_ops__set_cpumask(struct task_struct *p, const struct cpumask *mask) {}
 static void sched_ext_ops__update_idle(s32 cpu, bool idle) {}
-static void sched_ext_ops__cpu_acquire(s32 cpu, struct scx_cpu_acquire_args *args) {}
-static void sched_ext_ops__cpu_release(s32 cpu, struct scx_cpu_release_args *args) {}
-static s32 sched_ext_ops__init_task(struct task_struct *p, struct scx_init_task_args *args) { return -EINVAL; }
-static void sched_ext_ops__exit_task(struct task_struct *p, struct scx_exit_task_args *args) {}
+static void sched_ext_ops__cpu_acquire(s32 cpu, struct scx_cpu_acquire_मगा_कातविरान *मगा_कातविरान) {}
+static void sched_ext_ops__cpu_release(s32 cpu, struct scx_cpu_release_मगा_कातविरान *मगा_कातविरान) {}
+static s32 sched_ext_ops__init_task(struct task_struct *p, struct scx_init_task_मगा_कातविरान *मगा_कातविरान) { return -EINVAL; }
+static void sched_ext_ops__exit_task(struct task_struct *p, struct scx_exit_task_मगा_कातविरान *मगा_कातविरान) {}
 static void sched_ext_ops__enable(struct task_struct *p) {}
 static void sched_ext_ops__disable(struct task_struct *p) {}
 #ifdef CONFIG_EXT_GROUP_SCHED
-static s32 sched_ext_ops__cgroup_init(struct cgroup *cgrp, struct scx_cgroup_init_args *args) { return -EINVAL; }
+static s32 sched_ext_ops__cgroup_init(struct cgroup *cgrp, struct scx_cgroup_init_मगा_कातविरान *मगा_कातविरान) { return -EINVAL; }
 static void sched_ext_ops__cgroup_exit(struct cgroup *cgrp) {}
 static s32 sched_ext_ops__cgroup_prep_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) { return -EINVAL; }
 static void sched_ext_ops__cgroup_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) {}
@@ -8432,8 +8432,8 @@ static void sched_ext_ops__cgroup_set_weight(struct cgroup *cgrp, u32 weight) {}
 static void sched_ext_ops__cgroup_set_bandwidth(struct cgroup *cgrp, u64 period_us, u64 quota_us, u64 burst_us) {}
 static void sched_ext_ops__cgroup_set_idle(struct cgroup *cgrp, bool idle) {}
 #endif	/* CONFIG_EXT_GROUP_SCHED */
-static s32 sched_ext_ops__sub_attach(struct scx_sub_attach_args *args) { return -EINVAL; }
-static void sched_ext_ops__sub_detach(struct scx_sub_detach_args *args) {}
+static s32 sched_ext_ops__sub_attach(struct scx_sub_attach_मगा_कातविरान *मगा_कातविरान) { return -EINVAL; }
+static void sched_ext_ops__sub_detach(struct scx_sub_detach_मगा_कातविरान *मगा_कातविरान) {}
 static void sched_ext_ops__cpu_online(s32 cpu) {}
 static void sched_ext_ops__cpu_offline(s32 cpu) {}
 static s32 sched_ext_ops__init_cids(void) { return -EINVAL; }
@@ -8507,7 +8507,7 @@ static struct bpf_struct_ops bpf_sched_ext_ops = {
  * sub-sched notifiers because no cpu-form stub exists to reuse.
  */
 static void sched_ext_ops_cid__set_cmask(struct task_struct *p, const struct scx_cmask *cmask__arena) {}
-static void sched_ext_ops_cid__enable(struct task_struct *p, struct scx_enable_args *args) {}
+static void sched_ext_ops_cid__enable(struct task_struct *p, struct scx_enable_मगा_कातविरान *मगा_कातविरान) {}
 static void sched_ext_ops__sub_caps_updated(const struct scx_cmask *cmask__arena, u64 caps) {}
 static void sched_ext_ops__sub_ecaps_updated(s32 cid, u64 before, u64 after) {}
 
@@ -8578,25 +8578,25 @@ static struct bpf_struct_ops bpf_sched_ext_ops_cid = {
  * System integration and init.
  */
 
-static void sysrq_handle_sched_ext_reset(u8 key)
+static void sysrq_handle_sched_ext_reset(u8 सुसि)
 {
 	struct scx_sched *sch;
 
-	sch = rcu_dereference(scx_root);
+	sch = rcu_dereference(scx_उगात);
 	if (likely(sch))
 		scx_disable(sch, SCX_EXIT_SYSRQ);
 	else
 		pr_info("sched_ext: BPF schedulers not loaded\n");
 }
 
-static const struct sysrq_key_op sysrq_sched_ext_reset_op = {
+static const struct sysrq_सुसि_op sysrq_sched_ext_reset_op = {
 	.handler	= sysrq_handle_sched_ext_reset,
-	.help_msg	= "reset-sched-ext(S)",
-	.action_msg	= "Disable sched_ext and revert all tasks to CFS",
+	.help_मेनसाहे	= "reset-sched-ext(S)",
+	.action_मेनसाहे	= "Disable sched_ext and revert all tasks to CFS",
 	.enable_mask	= SYSRQ_ENABLE_RTNICE,
 };
 
-static void sysrq_handle_sched_ext_dump(u8 key)
+static void sysrq_handle_sched_ext_dump(u8 सुसि)
 {
 	struct scx_exit_info ei = {
 		.kind		= SCX_EXIT_NONE,
@@ -8609,10 +8609,10 @@ static void sysrq_handle_sched_ext_dump(u8 key)
 		scx_dump_state(sch, &ei, 0, false);
 }
 
-static const struct sysrq_key_op sysrq_sched_ext_dump_op = {
+static const struct sysrq_सुसि_op sysrq_sched_ext_dump_op = {
 	.handler	= sysrq_handle_sched_ext_dump,
-	.help_msg	= "dump-sched-ext(D)",
-	.action_msg	= "Trigger sched_ext debug dump",
+	.help_मेनसाहे	= "dump-sched-ext(D)",
+	.action_मेनसाहे	= "Trigger sched_ext debug dump",
 	.enable_mask	= SYSRQ_ENABLE_RTNICE,
 };
 
@@ -8736,8 +8736,8 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
 	 * the list under local_irq_save() and only this irq_work consumes it.
 	 * A plain list without locking is sufficient.
 	 */
-	list_for_each_entry_safe(pcpu, tmp, &this_scx->sched_pcpus_to_kick, to_kick_node) {
-		list_del_init(&pcpu->to_kick_node);
+	list_for_each_entry_safe(pcpu, tmp, &this_scx->sched_pcpus_to_kick, to_kick_बुहोल) {
+		list_del_init(&pcpu->to_kick_बुहोल);
 
 		for_each_cpu(cpu, pcpu->cpus_to_kick) {
 			should_wait |= kick_one_cpu(cpu, pcpu, this_rq, ksyncs);
@@ -8776,7 +8776,7 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
  * itself is accessible. While safe, this function isn't synchronized and may
  * print out mixups or garbages of limited length.
  */
-void print_scx_info(const char *log_lvl, struct task_struct *p)
+void इलिम्बाग_scx_info(const char *log_lvl, struct task_struct *p)
 {
 	struct scx_sched *sch;
 	enum scx_enable_state state = scx_enable_state();
@@ -8820,7 +8820,7 @@ static int scx_pm_handler(struct notifier_block *nb, unsigned long event, void *
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
+	sch = rcu_dereference(scx_उगात);
 	if (!sch)
 		return NOTIFY_OK;
 
@@ -8866,7 +8866,7 @@ void __init init_sched_ext_class(void)
 
 	for_each_possible_cpu(cpu) {
 		struct rq *rq = cpu_rq(cpu);
-		int  n = cpu_to_node(cpu);
+		int  n = cpu_to_बुहोल(cpu);
 
 		/* local_dsq's sch will be set during scx_root_enable() */
 		BUG_ON(scx_init_dsq(&rq->scx.local_dsq, SCX_DSQ_LOCAL, NULL));
@@ -8878,7 +8878,7 @@ void __init init_sched_ext_class(void)
 		INIT_LIST_HEAD(&rq->scx.runnable_list);
 		INIT_LIST_HEAD(&rq->scx.ddsp_deferred_locals);
 
-		BUG_ON(!zalloc_cpumask_var_node(&rq->scx.cpus_to_sync, GFP_KERNEL, n));
+		BUG_ON(!zalloc_cpumask_var_बुहोल(&rq->scx.cpus_to_sync, GFP_KERNEL, n));
 		INIT_LIST_HEAD(&rq->scx.sched_pcpus_to_kick);
 		raw_spin_lock_init(&rq->scx.deferred_reenq_lock);
 		INIT_LIST_HEAD(&rq->scx.deferred_reenq_locals);
@@ -8890,8 +8890,8 @@ void __init init_sched_ext_class(void)
 			cpu_rq(cpu)->scx.flags |= SCX_RQ_ONLINE;
 	}
 
-	register_sysrq_key('S', &sysrq_sched_ext_reset_op);
-	register_sysrq_key('D', &sysrq_sched_ext_dump_op);
+	register_sysrq_सुसि('S', &sysrq_sched_ext_reset_op);
+	register_sysrq_सुसि('D', &sysrq_sched_ext_dump_op);
 	INIT_DELAYED_WORK(&scx_watchdog_work, scx_watchdog_workfn);
 
 #ifdef CONFIG_EXT_SUB_SCHED
@@ -8930,7 +8930,7 @@ static bool scx_vet_enq_flags(struct scx_sched *sch, u64 dsq_id, u64 *enq_flags)
 	return true;
 }
 
-static bool scx_dsq_insert_preamble(struct scx_sched *sch, struct task_struct *p,
+static bool scx_dsq_इसिंगित_preamble(struct scx_sched *sch, struct task_struct *p,
 				    u64 dsq_id, u64 *enq_flags)
 {
 	lockdep_assert_irqs_disabled();
@@ -8942,7 +8942,7 @@ static bool scx_dsq_insert_preamble(struct scx_sched *sch, struct task_struct *p
 
 	/* see SCX_EV_INSERT_NOT_OWNED definition */
 	if (unlikely(!scx_task_on_sched(sch, p))) {
-		__scx_add_event(sch, SCX_EV_INSERT_NOT_OWNED, 1);
+		__scx_add_event(sch, SCX_EV_इसिंगित_NOT_OWNED, 1);
 		return false;
 	}
 
@@ -8952,7 +8952,7 @@ static bool scx_dsq_insert_preamble(struct scx_sched *sch, struct task_struct *p
 	return true;
 }
 
-static void scx_dsq_insert_commit(struct scx_sched *sch, struct task_struct *p,
+static void scx_dsq_इसिंगित_commit(struct scx_sched *sch, struct task_struct *p,
 				  u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags)
 {
 	struct scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
@@ -9021,7 +9021,7 @@ __bpf_kfunc_start_defs();
  * scheduler, %false return triggers scheduler abort and the caller doesn't need
  * to check the return value.
  */
-__bpf_kfunc bool scx_bpf_dsq_insert___v2(struct task_struct *p, u64 dsq_id,
+__bpf_kfunc bool scx_bpf_dsq_इसिंगित_v2(struct task_struct *p, u64 dsq_id,
 					 u64 slice, u64 enq_flags,
 					 const struct bpf_prog_aux *aux)
 {
@@ -9032,10 +9032,10 @@ __bpf_kfunc bool scx_bpf_dsq_insert___v2(struct task_struct *p, u64 dsq_id,
 	if (unlikely(!sch))
 		return false;
 
-	if (!scx_dsq_insert_preamble(sch, p, dsq_id, &enq_flags))
+	if (!scx_dsq_इसिंगित_preamble(sch, p, dsq_id, &enq_flags))
 		return false;
 
-	scx_dsq_insert_commit(sch, p, dsq_id, slice, 0, enq_flags);
+	scx_dsq_इसिंगित_commit(sch, p, dsq_id, slice, 0, enq_flags);
 
 	return true;
 }
@@ -9043,25 +9043,25 @@ __bpf_kfunc bool scx_bpf_dsq_insert___v2(struct task_struct *p, u64 dsq_id,
 /*
  * COMPAT: Will be removed in v6.23 along with the ___v2 suffix.
  */
-__bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id,
+__bpf_kfunc void scx_bpf_dsq_इसिंगित(struct task_struct *p, u64 dsq_id,
 				    u64 slice, u64 enq_flags,
 				    const struct bpf_prog_aux *aux)
 {
-	scx_bpf_dsq_insert___v2(p, dsq_id, slice, enq_flags, aux);
+	scx_bpf_dsq_इसिंगित_v2(p, dsq_id, slice, enq_flags, aux);
 }
 
-static bool scx_dsq_insert_vtime(struct scx_sched *sch, struct task_struct *p,
+static bool scx_dsq_इसिंगित_vtime(struct scx_sched *sch, struct task_struct *p,
 				 u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags)
 {
-	if (!scx_dsq_insert_preamble(sch, p, dsq_id, &enq_flags))
+	if (!scx_dsq_इसिंगित_preamble(sch, p, dsq_id, &enq_flags))
 		return false;
 
-	scx_dsq_insert_commit(sch, p, dsq_id, slice, vtime, enq_flags | SCX_ENQ_DSQ_PRIQ);
+	scx_dsq_इसिंगित_commit(sch, p, dsq_id, slice, vtime, enq_flags | SCX_ENQ_DSQ_PRIQ);
 
 	return true;
 }
 
-struct scx_bpf_dsq_insert_vtime_args {
+struct scx_bpf_dsq_इसिंगित_vtime_मगा_कातविरान {
 	/* @p can't be packed together as KF_RCU is not transitive */
 	u64			dsq_id;
 	u64			slice;
@@ -9102,7 +9102,7 @@ struct scx_bpf_dsq_insert_vtime_args {
  */
 __bpf_kfunc bool
 __scx_bpf_dsq_insert_vtime(struct task_struct *p,
-			   struct scx_bpf_dsq_insert_vtime_args *args,
+			   struct scx_bpf_dsq_इसिंगित_vtime_मगा_कातविरान *मगा_कातविरान,
 			   const struct bpf_prog_aux *aux)
 {
 	struct scx_sched *sch;
@@ -9113,21 +9113,21 @@ __scx_bpf_dsq_insert_vtime(struct task_struct *p,
 	if (unlikely(!sch))
 		return false;
 
-	return scx_dsq_insert_vtime(sch, p, args->dsq_id, args->slice,
-				    args->vtime, args->enq_flags);
+	return scx_dsq_इसिंगित_vtime(sch, p, मगा_कातविरान->dsq_id, मगा_कातविरान->slice,
+				    मगा_कातविरान->vtime, मगा_कातविरान->enq_flags);
 }
 
 /*
  * COMPAT: Will be removed in v6.23.
  */
-__bpf_kfunc void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id,
+__bpf_kfunc void scx_bpf_dsq_इसिंगित_vtime(struct task_struct *p, u64 dsq_id,
 					  u64 slice, u64 vtime, u64 enq_flags)
 {
 	struct scx_sched *sch;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
+	sch = rcu_dereference(scx_उगात);
 	if (unlikely(!sch))
 		return;
 
@@ -9149,16 +9149,16 @@ __bpf_kfunc void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id,
 	}
 #endif
 
-	scx_dsq_insert_vtime(sch, p, dsq_id, slice, vtime, enq_flags);
+	scx_dsq_इसिंगित_vtime(sch, p, dsq_id, slice, vtime, enq_flags);
 }
 
 __bpf_kfunc_end_defs();
 
 BTF_KFUNCS_START(scx_kfunc_ids_enqueue_dispatch)
-BTF_ID_FLAGS(func, scx_bpf_dsq_insert, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_dsq_insert___v2, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime, KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_इसिंगित, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_इसिंगित_v2, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
+BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_इसिंगित_vtime, KF_RCU)
 BTF_KFUNCS_END(scx_kfunc_ids_enqueue_dispatch)
 
 static const struct btf_kfunc_id_set scx_kfunc_set_enqueue_dispatch = {
@@ -9491,17 +9491,17 @@ __bpf_kfunc bool scx_bpf_dsq_move_vtime(struct bpf_iter_scx_dsq *it__iter,
 __bpf_kfunc_end_defs();
 
 BTF_KFUNCS_START(scx_kfunc_ids_dispatch)
-BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dsq_move_to_local, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dsq_move_to_local___v2, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_dsq_move_to_local, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_dsq_move_to_local___v2, KF_IMPLICIT_मगा_कातविरान)
 /* scx_bpf_dsq_move*() also in scx_kfunc_ids_unlocked: callable from unlocked contexts */
 BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move_vtime, KF_RCU)
 #ifdef CONFIG_EXT_SUB_SCHED
-BTF_ID_FLAGS(func, scx_bpf_sub_dispatch, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_sub_dispatch, KF_IMPLICIT_मगा_कातविरान)
 #endif
 BTF_KFUNCS_END(scx_kfunc_ids_dispatch)
 
@@ -9540,7 +9540,7 @@ __bpf_kfunc u32 scx_bpf_reenqueue_local(const struct bpf_prog_aux *aux)
 __bpf_kfunc_end_defs();
 
 BTF_KFUNCS_START(scx_kfunc_ids_cpu_release)
-BTF_ID_FLAGS(func, scx_bpf_reenqueue_local, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_reenqueue_local, KF_IMPLICIT_मगा_कातविरान)
 BTF_KFUNCS_END(scx_kfunc_ids_cpu_release)
 
 static const struct btf_kfunc_id_set scx_kfunc_set_cpu_release = {
@@ -9560,20 +9560,20 @@ __bpf_kfunc_start_defs();
  * Create a custom DSQ identified by @dsq_id. Can be called from any sleepable
  * scx callback, and any BPF_PROG_TYPE_SYSCALL prog.
  */
-__bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 node, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 बुहोल, const struct bpf_prog_aux *aux)
 {
 	struct scx_dispatch_q *dsq;
 	struct scx_sched *sch;
 	s32 ret;
 
-	if (unlikely(node >= (int)nr_node_ids ||
-		     (node < 0 && node != NUMA_NO_NODE)))
+	if (unlikely(बुहोल >= (int)nr_बुहोल_ids ||
+		     (बुहोल < 0 && बुहोल != NUMA_NO_बुहोल)))
 		return -EINVAL;
 
 	if (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN))
 		return -EINVAL;
 
-	dsq = kmalloc_node(sizeof(*dsq), GFP_KERNEL, node);
+	dsq = kmalloc_बुहोल(sizeof(*dsq), GFP_KERNEL, बुहोल);
 	if (!dsq)
 		return -ENOMEM;
 
@@ -9592,7 +9592,7 @@ __bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 node, const struct bpf_prog_a
 	sch = scx_prog_sched(aux);
 	if (sch) {
 		dsq->sched = sch;
-		ret = rhashtable_lookup_insert_fast(&sch->dsq_hash, &dsq->hash_node,
+		ret = rhashtable_lookup_इसिंगित_fast(&sch->dsq_hash, &dsq->hash_बुहोल,
 						    dsq_hash_params);
 	} else {
 		ret = -ENODEV;
@@ -9609,16 +9609,16 @@ __bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 node, const struct bpf_prog_a
 __bpf_kfunc_end_defs();
 
 BTF_KFUNCS_START(scx_kfunc_ids_unlocked)
-BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_IMPLICIT_ARGS | KF_SLEEPABLE)
+BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_IMPLICIT_मगा_कातविरान | KF_SLEEPABLE)
 /* also in scx_kfunc_ids_dispatch: also callable from ops.dispatch() */
 BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move_vtime, KF_RCU)
 /* also in scx_kfunc_ids_select_cpu: also callable from ops.select_cpu()/ops.enqueue() */
-BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
 BTF_KFUNCS_END(scx_kfunc_ids_unlocked)
 
 static const struct btf_kfunc_id_set scx_kfunc_set_unlocked = {
@@ -9776,8 +9776,8 @@ void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags)
 			cpumask_set_cpu(cpu, pcpu->cpus_to_wait);
 	}
 
-	if (list_empty(&pcpu->to_kick_node))
-		list_add_tail(&pcpu->to_kick_node, &this_rq->scx.sched_pcpus_to_kick);
+	if (list_empty(&pcpu->to_kick_बुहोल))
+		list_add_tail(&pcpu->to_kick_बुहोल, &this_rq->scx.sched_pcpus_to_kick);
 	irq_work_queue(&this_rq->scx.kick_cpus_irq_work);
 out:
 	local_irq_restore(irq_flags);
@@ -9977,11 +9977,11 @@ __bpf_kfunc void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it)
 	if (!kit->dsq)
 		return;
 
-	if (!list_empty(&kit->cursor.node)) {
+	if (!list_empty(&kit->cursor.बुहोल)) {
 		unsigned long flags;
 
 		raw_spin_lock_irqsave(&kit->dsq->lock, flags);
-		list_del_init(&kit->cursor.node);
+		list_del_init(&kit->cursor.बुहोल);
 		raw_spin_unlock_irqrestore(&kit->dsq->lock, flags);
 	}
 	kit->dsq = NULL;
@@ -10087,11 +10087,11 @@ __bpf_kfunc void scx_bpf_reenqueue_local___v2(const struct bpf_prog_aux *aux)
 __bpf_kfunc_end_defs();
 
 __printf(5, 0)
-static s32 __bstr_format(struct scx_sched *sch, u64 *data_buf, char *line_buf,
-			 size_t line_size, char *fmt, unsigned long long *data,
+static s32 __bstr_format(struct scx_sched *sch, u64 *data_buf, char *लिन्या_buf,
+			 size_t लिन्या_size, char *fmt, unsigned long long *data,
 			 u32 data__sz)
 {
-	struct bpf_bprintf_data bprintf_data = { .get_bin_args = true };
+	struct bpf_bprintf_data bprintf_data = { .get_bin_मगा_कातविरान = true };
 	s32 ret;
 
 	if (data__sz % 8 || data__sz > MAX_BPRINTF_VARARGS * 8 ||
@@ -10113,8 +10113,8 @@ static s32 __bstr_format(struct scx_sched *sch, u64 *data_buf, char *line_buf,
 		return ret;
 	}
 
-	ret = bstr_printf(line_buf, line_size, fmt,
-			  bprintf_data.bin_args);
+	ret = bstr_printf(लिन्या_buf, लिन्या_size, fmt,
+			  bprintf_data.bin_मगा_कातविरान);
 	bpf_bprintf_cleanup(&bprintf_data);
 	if (ret < 0) {
 		scx_error(sch, "(\"%s\", %p, %u) failed to format", fmt, data, data__sz);
@@ -10148,10 +10148,10 @@ bool scx_exit_bstr(struct scx_sched *sch, enum scx_exit_kind kind,
 	if (!scx_claim_exit(sch, kind))
 		return false;
 
-	ret = __bstr_format(fmt_blame, data_buf, ei->msg, SCX_EXIT_MSG_LEN,
+	ret = __bstr_format(fmt_blame, data_buf, ei->मेनसाहे, SCX_EXIT_मेनसाहे_LEN,
 			    fmt, data, data__sz);
 	if (ret < 0)
-		scnprintf(ei->msg, SCX_EXIT_MSG_LEN,
+		scnprintf(ei->मेनसाहे, SCX_EXIT_मेनसाहे_LEN,
 			  "exit message formatting failed (%d)", ret);
 
 	scx_finish_exit(sch, kind, exit_code, raw_smp_processor_id());
@@ -10244,16 +10244,16 @@ __bpf_kfunc void scx_bpf_dump_bstr(char *fmt, unsigned long long *data,
 	}
 
 	/* append the formatted string to the line buf */
-	ret = __bstr_format(sch, buf->data, buf->line + dd->cursor,
-			    sizeof(buf->line) - dd->cursor, fmt, data, data__sz);
+	ret = __bstr_format(sch, buf->data, buf->लिन्या + dd->cursor,
+			    sizeof(buf->लिन्या) - dd->cursor, fmt, data, data__sz);
 	if (ret < 0) {
-		scx_dump_line(dd->s, "%s[!] (\"%s\", %p, %u) failed to format (%d)",
+		scx_dump_लिन्या(dd->s, "%s[!] (\"%s\", %p, %u) failed to format (%d)",
 			      dd->prefix, fmt, data, data__sz, ret);
 		return;
 	}
 
 	dd->cursor += ret;
-	dd->cursor = min_t(s32, dd->cursor, sizeof(buf->line));
+	dd->cursor = min_t(s32, dd->cursor, sizeof(buf->लिन्या));
 
 	if (!dd->cursor)
 		return;
@@ -10266,7 +10266,7 @@ __bpf_kfunc void scx_bpf_dump_bstr(char *fmt, unsigned long long *data,
 	 * truncation is when the caller keeps generating newlines in the middle
 	 * instead of the end consecutively. Don't do that.
 	 */
-	if (dd->cursor >= sizeof(buf->line) || buf->line[dd->cursor - 1] == '\n')
+	if (dd->cursor >= sizeof(buf->लिन्या) || buf->लिन्या[dd->cursor - 1] == '\n')
 		ops_dump_flush();
 }
 
@@ -10484,9 +10484,9 @@ __bpf_kfunc s32 scx_bpf_cidperf_set(s32 cid, u32 perf,
  *
  * All valid node IDs in the system are smaller than the returned value.
  */
-__bpf_kfunc u32 scx_bpf_nr_node_ids(void)
+__bpf_kfunc u32 scx_bpf_nr_बुहोल_ids(void)
 {
-	return nr_node_ids;
+	return nr_बुहोल_ids;
 }
 
 /**
@@ -10506,7 +10506,7 @@ __bpf_kfunc u32 scx_bpf_nr_cpu_ids(void)
  */
 __bpf_kfunc u32 scx_bpf_nr_cids(void)
 {
-	return num_possible_cpus();
+	return नुमेरो_possible_cpus();
 }
 
 /**
@@ -10521,7 +10521,7 @@ __bpf_kfunc u32 scx_bpf_nr_cids(void)
  */
 __bpf_kfunc u32 scx_bpf_nr_online_cids(void)
 {
-	return num_online_cpus();
+	return नुमेरो_online_cpus();
 }
 
 /**
@@ -10730,7 +10730,7 @@ __bpf_kfunc struct task_struct *scx_bpf_tid_to_task(u64 tid)
 	struct sched_ext_entity *scx;
 
 	if (!scx_tid_to_task_enabled()) {
-		struct scx_sched *sch = rcu_dereference(scx_root);
+		struct scx_sched *sch = rcu_dereference(scx_उगात);
 
 		if (sch)
 			scx_error(sch, "scx_bpf_tid_to_task() called without SCX_OPS_TID_TO_TASK");
@@ -10869,7 +10869,7 @@ __bpf_kfunc struct cgroup *scx_bpf_task_cgroup(struct task_struct *p,
 					       const struct bpf_prog_aux *aux)
 {
 	struct task_group *tg = p->sched_task_group;
-	struct cgroup *cgrp = &cgrp_dfl_root.cgrp;
+	struct cgroup *cgrp = &cgrp_dfl_उगात.cgrp;
 	struct scx_sched *sch;
 
 	guard(rcu)();
@@ -10892,32 +10892,32 @@ out:
 __bpf_kfunc_end_defs();
 
 BTF_KFUNCS_START(scx_kfunc_ids_any)
-BTF_ID_FLAGS(func, scx_bpf_task_set_slice, KF_IMPLICIT_ARGS | KF_RCU);
-BTF_ID_FLAGS(func, scx_bpf_task_set_dsq_vtime, KF_IMPLICIT_ARGS | KF_RCU);
-BTF_ID_FLAGS(func, scx_bpf_kick_cpu, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_kick_cid, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dsq_nr_queued, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_destroy_dsq, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dsq_peek, KF_IMPLICIT_ARGS | KF_RCU_PROTECTED | KF_RET_NULL)
-BTF_ID_FLAGS(func, scx_bpf_dsq_reenq, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_reenqueue_local___v2, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, bpf_iter_scx_dsq_new, KF_IMPLICIT_ARGS | KF_ITER_NEW | KF_RCU_PROTECTED)
+BTF_ID_FLAGS(func, scx_bpf_task_set_slice, KF_IMPLICIT_मगा_कातविरान | KF_RCU);
+BTF_ID_FLAGS(func, scx_bpf_task_set_dsq_vtime, KF_IMPLICIT_मगा_कातविरान | KF_RCU);
+BTF_ID_FLAGS(func, scx_bpf_kick_cpu, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_kick_cid, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_dsq_nr_queued, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_destroy_dsq, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_dsq_peek, KF_IMPLICIT_मगा_कातविरान | KF_RCU_PROTECTED | KF_RET_NULL)
+BTF_ID_FLAGS(func, scx_bpf_dsq_reenq, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_reenqueue_local___v2, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, bpf_iter_scx_dsq_new, KF_IMPLICIT_मगा_कातविरान | KF_ITER_NEW | KF_RCU_PROTECTED)
 BTF_ID_FLAGS(func, bpf_iter_scx_dsq_next, KF_ITER_NEXT | KF_RET_NULL)
 BTF_ID_FLAGS(func, bpf_iter_scx_dsq_destroy, KF_ITER_DESTROY)
-BTF_ID_FLAGS(func, scx_bpf_exit_bstr, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_error_bstr, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dump_bstr, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_set, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cidperf_cap, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cidperf_cur, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cidperf_set, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_nr_node_ids)
+BTF_ID_FLAGS(func, scx_bpf_exit_bstr, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_error_bstr, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_dump_bstr, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_set, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cidperf_cap, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cidperf_cur, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cidperf_set, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_nr_बुहोल_ids)
 BTF_ID_FLAGS(func, scx_bpf_nr_cpu_ids)
 BTF_ID_FLAGS(func, scx_bpf_nr_cids)
 BTF_ID_FLAGS(func, scx_bpf_nr_online_cids)
-BTF_ID_FLAGS(func, scx_bpf_online_cmask, KF_IMPLICIT_ARGS | KF_ARENA_RET)
+BTF_ID_FLAGS(func, scx_bpf_online_cmask, KF_IMPLICIT_मगा_कातविरान | KF_ARENA_RET)
 BTF_ID_FLAGS(func, scx_bpf_this_cid)
 BTF_ID_FLAGS(func, scx_bpf_get_possible_cpumask, KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_get_online_cpumask, KF_ACQUIRE)
@@ -10925,19 +10925,19 @@ BTF_ID_FLAGS(func, scx_bpf_put_cpumask, KF_RELEASE)
 BTF_ID_FLAGS(func, scx_bpf_task_running, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_task_cid, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_locked_rq, KF_IMPLICIT_ARGS | KF_RET_NULL)
-BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_IMPLICIT_ARGS | KF_RET_NULL | KF_RCU_PROTECTED)
-BTF_ID_FLAGS(func, scx_bpf_cid_curr, KF_IMPLICIT_ARGS | KF_RET_NULL | KF_RCU_PROTECTED)
+BTF_ID_FLAGS(func, scx_bpf_locked_rq, KF_IMPLICIT_मगा_कातविरान | KF_RET_NULL)
+BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_IMPLICIT_मगा_कातविरान | KF_RET_NULL | KF_RCU_PROTECTED)
+BTF_ID_FLAGS(func, scx_bpf_cid_curr, KF_IMPLICIT_मगा_कातविरान | KF_RET_NULL | KF_RCU_PROTECTED)
 BTF_ID_FLAGS(func, scx_bpf_tid_to_task, KF_RET_NULL | KF_RCU_PROTECTED)
 BTF_ID_FLAGS(func, scx_bpf_now)
-BTF_ID_FLAGS(func, scx_bpf_events, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_events, KF_IMPLICIT_मगा_कातविरान)
 #ifdef CONFIG_CGROUP_SCHED
-BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_IMPLICIT_ARGS | KF_RCU | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_IMPLICIT_मगा_कातविरान | KF_RCU | KF_ACQUIRE)
 #endif
-BTF_ID_FLAGS(func, scx_bpf_sub_grant, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_sub_revoke, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_sub_caps, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_sub_kill_bstr, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_sub_grant, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_sub_revoke, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_sub_caps, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_sub_kill_bstr, KF_IMPLICIT_मगा_कातविरान)
 BTF_KFUNCS_END(scx_kfunc_ids_any)
 
 static const struct btf_kfunc_id_set scx_kfunc_set_any = {
@@ -10961,29 +10961,29 @@ static const struct btf_kfunc_id_set scx_kfunc_set_any = {
  * dropped globally.
  */
 BTF_KFUNCS_START(scx_kfunc_ids_cpu_only)
-BTF_ID_FLAGS(func, scx_bpf_kick_cpu, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_kick_cpu, KF_IMPLICIT_मगा_कातविरान)
 BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_IMPLICIT_ARGS | KF_RET_NULL | KF_RCU_PROTECTED)
-BTF_ID_FLAGS(func, scx_bpf_cpu_node, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_set, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_IMPLICIT_मगा_कातविरान | KF_RET_NULL | KF_RCU_PROTECTED)
+BTF_ID_FLAGS(func, scx_bpf_cpu_बुहोल, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_set, KF_IMPLICIT_मगा_कातविरान)
 BTF_ID_FLAGS(func, scx_bpf_get_possible_cpumask, KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_get_online_cpumask, KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_put_cpumask, KF_RELEASE)
-BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
+BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask_node, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask_node, KF_IMPLICIT_ARGS | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask, KF_IMPLICIT_मगा_कातविरान | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask_बुहोल, KF_IMPLICIT_मगा_कातविरान | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask, KF_IMPLICIT_मगा_कातविरान | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask_बुहोल, KF_IMPLICIT_मगा_कातविरान | KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_put_idle_cpumask, KF_RELEASE)
-BTF_ID_FLAGS(func, scx_bpf_test_and_clear_cpu_idle, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_node, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_node, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_test_and_clear_cpu_idle, KF_IMPLICIT_मगा_कातविरान)
+BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_बुहोल, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_बुहोल, KF_IMPLICIT_मगा_कातविरान | KF_RCU)
 BTF_KFUNCS_END(scx_kfunc_ids_cpu_only)
 
 /*

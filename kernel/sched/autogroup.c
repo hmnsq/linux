@@ -34,7 +34,7 @@ static void __init sched_autogroup_sysctl_init(void)
 
 void __init autogroup_init(struct task_struct *init_task)
 {
-	autogroup_default.tg = &root_task_group;
+	autogroup_default.tg = &उगात_task_group;
 	kref_init(&autogroup_default.kref);
 	init_rwsem(&autogroup_default.lock);
 	init_task->signal->autogroup = &autogroup_default;
@@ -92,7 +92,7 @@ static inline struct autogroup *autogroup_create(void)
 	if (!ag)
 		goto out_fail;
 
-	tg = sched_create_group(&root_task_group);
+	tg = sched_create_group(&उगात_task_group);
 	if (IS_ERR(tg))
 		goto out_free;
 
@@ -109,12 +109,12 @@ static inline struct autogroup *autogroup_create(void)
 	 * the policy change to proceed.
 	 */
 	free_rt_sched_group(tg);
-	tg->rt_se = root_task_group.rt_se;
-	tg->rt_rq = root_task_group.rt_rq;
+	tg->rt_se = उगात_task_group.rt_se;
+	tg->rt_rq = उगात_task_group.rt_rq;
 #endif /* CONFIG_RT_GROUP_SCHED */
 	tg->autogroup = ag;
 
-	sched_online_group(tg, &root_task_group);
+	sched_online_group(tg, &उगात_task_group);
 	return ag;
 
 out_free:
@@ -130,7 +130,7 @@ out_fail:
 
 bool task_wants_autogroup(struct task_struct *p, struct task_group *tg)
 {
-	if (tg != &root_task_group)
+	if (tg != &उगात_task_group)
 		return false;
 	/*
 	 * If we race with autogroup_move_group() the caller can use the old
@@ -201,14 +201,14 @@ void sched_autogroup_create_attach(struct task_struct *p)
 	/* Drop extra reference added by autogroup_create(): */
 	autogroup_kref_put(ag);
 }
-EXPORT_SYMBOL(sched_autogroup_create_attach);
+EXPORT_सिम्बोलो(sched_autogroup_create_attach);
 
 /* Cannot be called under siglock. Currently has no users: */
 void sched_autogroup_detach(struct task_struct *p)
 {
 	autogroup_move_group(p, &autogroup_default);
 }
-EXPORT_SYMBOL(sched_autogroup_detach);
+EXPORT_सिम्बोलो(sched_autogroup_detach);
 
 void sched_autogroup_fork(struct signal_struct *sig)
 {

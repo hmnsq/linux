@@ -99,39 +99,39 @@
 #include "../smpboot.h"
 #include "../locking/mutex.h"
 
-EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpu);
-EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpumask);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(ipi_send_cpu);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(ipi_send_cpumask);
 
 /*
  * Export tracepoints that act as a bare tracehook (ie: have no trace event
  * associated with them) to allow external modules to probe them.
  */
-EXPORT_TRACEPOINT_SYMBOL_GPL(pelt_cfs_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(pelt_rt_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(pelt_dl_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(pelt_irq_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(pelt_se_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(pelt_hw_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_cpu_capacity_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_overutilized_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_util_est_cfs_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_util_est_se_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_update_nr_running_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_entry_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_exit_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_set_need_resched_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_dl_throttle_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_dl_replenish_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_dl_update_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_dl_server_start_tp);
-EXPORT_TRACEPOINT_SYMBOL_GPL(sched_dl_server_stop_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(pelt_cfs_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(pelt_rt_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(pelt_dl_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(pelt_irq_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(pelt_se_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(pelt_hw_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_cpu_capacity_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_overutilized_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_util_est_cfs_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_util_est_se_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_update_nr_running_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_compute_energy_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_entry_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_exit_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_set_need_resched_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_dl_throttle_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_dl_replenish_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_dl_update_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_dl_server_start_tp);
+EXPORT_TRACEPOINT_सिम्बोलो_GPL(sched_dl_server_stop_tp);
 
 DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
 DEFINE_PER_CPU(struct rnd_state, sched_rnd_state);
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
-DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
+DEFINE_STATIC_सुसि_TRUE(__sched_proxy_exec);
 static int __init setup_proxy_exec(char *str)
 {
 	bool proxy_enable = true;
@@ -193,7 +193,7 @@ __read_mostly int scheduler_running;
 
 #ifdef CONFIG_SCHED_CORE
 
-DEFINE_STATIC_KEY_FALSE(__sched_core_enabled);
+DEFINE_STATIC_सुसि_FALSE(__sched_core_enabled);
 
 /* kernel prio, less is more */
 static inline int __task_prio(const struct task_struct *p)
@@ -276,23 +276,23 @@ static inline bool __sched_core_less(const struct task_struct *a,
 		return false;
 
 	/* flip prio, so high prio is leftmost */
-	if (prio_less(b, a, !!task_rq(a)->core->core_forceidle_count))
+	if (prio_less(b, a, !!task_rq(a)->core->core_forceidle_बिलांग))
 		return true;
 
 	return false;
 }
 
-#define __node_2_sc(node) rb_entry((node), struct task_struct, core_node)
+#define __node_2_sc(बुहोल) rb_entry((बुहोल), struct task_struct, core_बुहोल)
 
-static inline bool rb_sched_core_less(struct rb_node *a, const struct rb_node *b)
+static inline bool rb_sched_core_less(struct rb_बुहोल *a, const struct rb_बुहोल *b)
 {
 	return __sched_core_less(__node_2_sc(a), __node_2_sc(b));
 }
 
-static inline int rb_sched_core_cmp(const void *key, const struct rb_node *node)
+static inline int rb_sched_core_cmp(const void *सुसि, const struct rb_बुहोल *बुहोल)
 {
-	const struct task_struct *p = __node_2_sc(node);
-	unsigned long cookie = (unsigned long)key;
+	const struct task_struct *p = __node_2_sc(बुहोल);
+	unsigned long cookie = (unsigned long)सुसि;
 
 	if (cookie < p->core_cookie)
 		return -1;
@@ -313,7 +313,7 @@ void sched_core_enqueue(struct rq *rq, struct task_struct *p)
 	if (!p->core_cookie)
 		return;
 
-	rb_add(&p->core_node, &rq->core_tree, rb_sched_core_less);
+	rb_add(&p->core_बुहोल, &rq->core_पुनो, rb_sched_core_less);
 }
 
 void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags)
@@ -324,8 +324,8 @@ void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags)
 	rq->core->core_task_seq++;
 
 	if (sched_core_enqueued(p)) {
-		rb_erase(&p->core_node, &rq->core_tree);
-		RB_CLEAR_NODE(&p->core_node);
+		rb_erase(&p->core_बुहोल, &rq->core_पुनो);
+		RB_CLEAR_बुहोल(&p->core_बुहोल);
 	}
 
 	/*
@@ -334,7 +334,7 @@ void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags)
 	 * and re-examine whether the core is still in forced idle state.
 	 */
 	if (!(flags & DEQUEUE_SAVE) && rq->nr_running == 1 &&
-	    rq->core->core_forceidle_count && rq->curr == rq->idle)
+	    rq->core->core_forceidle_बिलांग && rq->curr == rq->idle)
 		resched_curr(rq);
 }
 
@@ -348,15 +348,15 @@ static int sched_task_is_throttled(struct task_struct *p, int cpu)
 
 static struct task_struct *sched_core_next(struct task_struct *p, unsigned long cookie)
 {
-	struct rb_node *node = &p->core_node;
+	struct rb_बुहोल *बुहोल = &p->core_बुहोल;
 	int cpu = task_cpu(p);
 
 	do {
-		node = rb_next(node);
-		if (!node)
+		बुहोल = rb_next(बुहोल);
+		if (!बुहोल)
 			return NULL;
 
-		p = __node_2_sc(node);
+		p = __node_2_sc(बुहोल);
 		if (p->core_cookie != cookie)
 			return NULL;
 
@@ -372,13 +372,13 @@ static struct task_struct *sched_core_next(struct task_struct *p, unsigned long 
 static struct task_struct *sched_core_find(struct rq *rq, unsigned long cookie)
 {
 	struct task_struct *p;
-	struct rb_node *node;
+	struct rb_बुहोल *बुहोल;
 
-	node = rb_find_first((void *)cookie, &rq->core_tree, rb_sched_core_cmp);
-	if (!node)
+	बुहोल = rb_find_first((void *)cookie, &rq->core_पुनो, rb_sched_core_cmp);
+	if (!बुहोल)
 		return NULL;
 
-	p = __node_2_sc(node);
+	p = __node_2_sc(बुहोल);
 	if (!sched_task_is_throttled(p, rq->cpu))
 		return p;
 
@@ -399,7 +399,7 @@ static struct task_struct *sched_core_find(struct rq *rq, unsigned long cookie)
  */
 
 static DEFINE_MUTEX(sched_core_mutex);
-static atomic_t sched_core_count;
+static atomic_t sched_core_बिलांग;
 static struct cpumask sched_core_mask;
 
 static void sched_core_lock(int cpu, unsigned long *flags)
@@ -477,7 +477,7 @@ static void sched_core_assert_empty(void)
 	int cpu;
 
 	for_each_possible_cpu(cpu)
-		WARN_ON_ONCE(!RB_EMPTY_ROOT(&cpu_rq(cpu)->core_tree));
+		WARN_ON_ONCE(!RB_EMPTY_उगात(&cpu_rq(cpu)->core_पुनो));
 }
 
 static void __sched_core_enable(void)
@@ -501,21 +501,21 @@ static void __sched_core_disable(void)
 
 void sched_core_get(void)
 {
-	if (atomic_inc_not_zero(&sched_core_count))
+	if (atomic_inc_not_zero(&sched_core_बिलांग))
 		return;
 
 	mutex_lock(&sched_core_mutex);
-	if (!atomic_read(&sched_core_count))
+	if (!atomic_read(&sched_core_बिलांग))
 		__sched_core_enable();
 
 	smp_mb__before_atomic();
-	atomic_inc(&sched_core_count);
+	atomic_inc(&sched_core_बिलांग);
 	mutex_unlock(&sched_core_mutex);
 }
 
 static void __sched_core_put(struct work_struct *work)
 {
-	if (atomic_dec_and_mutex_lock(&sched_core_count, &sched_core_mutex)) {
+	if (atomic_dec_and_mutex_lock(&sched_core_बिलांग, &sched_core_mutex)) {
 		__sched_core_disable();
 		mutex_unlock(&sched_core_mutex);
 	}
@@ -532,7 +532,7 @@ void sched_core_put(void)
 	 * 'work'. If it is the last *again*, we rely on
 	 * WORK_STRUCT_PENDING_BIT.
 	 */
-	if (!atomic_add_unless(&sched_core_count, -1, 1))
+	if (!atomic_add_unless(&sched_core_बिलांग, -1, 1))
 		schedule_work(&_work);
 }
 
@@ -545,18 +545,18 @@ sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags) { }
 #endif /* !CONFIG_SCHED_CORE */
 
 /* need a wrapper since we may need to trace from modules */
-EXPORT_TRACEPOINT_SYMBOL(sched_set_state_tp);
+EXPORT_TRACEPOINT_सिम्बोलो(sched_set_state_tp);
 
 /*
  * Call via the helper macro trace_set_current_state.
  * Calls to this function MUST be guarded by a
  * tracepoint_enabled(sched_set_state_tp)
  */
-void __trace_set_current_state(int state_value)
+void __trace_set_current_state(int state_हालागा)
 {
-	trace_call__sched_set_state_tp(current, state_value);
+	trace_call__sched_set_state_tp(current, state_हालागा);
 }
-EXPORT_SYMBOL(__trace_set_current_state);
+EXPORT_सिम्बोलो(__trace_set_current_state);
 
 int task_llc(const struct task_struct *p)
 {
@@ -805,7 +805,7 @@ struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
 
 /* Use CONFIG_PARAVIRT as this will avoid more #ifdef in arch code. */
 #ifdef CONFIG_PARAVIRT
-DEFINE_STATIC_KEY_FALSE(paravirt_steal_rq_enabled);
+DEFINE_STATIC_सुसि_FALSE(paravirt_steal_rq_enabled);
 #endif
 
 static void update_rq_clock_task(struct rq *rq, s64 delta)
@@ -1100,7 +1100,7 @@ static inline bool set_nr_if_polling(struct task_struct *p)
 
 static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
 {
-	struct wake_q_node *node = &task->wake_q;
+	struct wake_q_बुहोल *बुहोल = &task->wake_q;
 
 	/*
 	 * Atomically grab the task, if ->wake_q is !nil already it means
@@ -1111,14 +1111,14 @@ static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
 	 * state, even in the failed case, an explicit smp_mb() must be used.
 	 */
 	smp_mb__before_atomic();
-	if (unlikely(cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL)))
+	if (unlikely(cmpxchg_relaxed(&बुहोल->next, NULL, WAKE_Q_TAIL)))
 		return false;
 
 	/*
 	 * The head is context local, there can be no concurrency.
 	 */
-	*head->lastp = node;
-	head->lastp = &node->next;
+	*head->lastp = बुहोल;
+	head->lastp = &बुहोल->next;
 	return true;
 }
 
@@ -1165,13 +1165,13 @@ void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task)
 
 void wake_up_q(struct wake_q_head *head)
 {
-	struct wake_q_node *node = head->first;
+	struct wake_q_बुहोल *बुहोल = head->first;
 
-	while (node != WAKE_Q_TAIL) {
+	while (बुहोल != WAKE_Q_TAIL) {
 		struct task_struct *task;
 
-		task = container_of(node, struct task_struct, wake_q);
-		node = node->next;
+		task = container_of(बुहोल, struct task_struct, wake_q);
+		बुहोल = बुहोल->next;
 		/* pairs with cmpxchg_relaxed() in __wake_q_add() */
 		WRITE_ONCE(task->wake_q.next, NULL);
 		/* Task can safely be re-inserted now. */
@@ -1239,7 +1239,7 @@ void __trace_set_need_resched(struct task_struct *curr, int tif)
 {
 	trace_call__sched_set_need_resched_tp(curr, smp_processor_id(), tif);
 }
-EXPORT_SYMBOL_GPL(__trace_set_need_resched);
+EXPORT_सिम्बोलो_GPL(__trace_set_need_resched);
 
 void resched_curr(struct rq *rq)
 {
@@ -1247,7 +1247,7 @@ void resched_curr(struct rq *rq)
 }
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
-static DEFINE_STATIC_KEY_FALSE(sk_dynamic_preempt_lazy);
+static DEFINE_STATIC_सुसि_FALSE(sk_dynamic_preempt_lazy);
 static __always_inline bool dynamic_preempt_lazy(void)
 {
 	return static_branch_unlikely(&sk_dynamic_preempt_lazy);
@@ -1497,7 +1497,7 @@ bool sched_can_stop_tick(struct rq *rq)
  *
  * Caller must hold rcu_lock or sufficient equivalent.
  */
-int walk_tg_tree_from(struct task_group *from,
+int walk_tg_पुनो_from(struct task_group *from,
 			     tg_visitor down, tg_visitor up, void *data)
 {
 	struct task_group *parent, *child;
@@ -1614,11 +1614,11 @@ static struct uclamp_se uclamp_default[UCLAMP_CNT];
  *   * An admin modifying the sysctl_sched_uclamp_{min, max} via procfs.
  *   * An admin modifying the cgroup cpu.uclamp.{min, max}
  */
-DEFINE_STATIC_KEY_FALSE(sched_uclamp_used);
+DEFINE_STATIC_सुसि_FALSE(sched_uclamp_used);
 
 static inline unsigned int
-uclamp_idle_value(struct rq *rq, enum uclamp_id clamp_id,
-		  unsigned int clamp_value)
+uclamp_idle_हालागा(struct rq *rq, enum uclamp_id clamp_id,
+		  unsigned int clamp_हालागा)
 {
 	/*
 	 * Avoid blocked utilization pushing up the frequency when we go
@@ -1627,25 +1627,25 @@ uclamp_idle_value(struct rq *rq, enum uclamp_id clamp_id,
 	 */
 	if (clamp_id == UCLAMP_MAX) {
 		rq->uclamp_flags |= UCLAMP_FLAG_IDLE;
-		return clamp_value;
+		return clamp_हालागा;
 	}
 
 	return uclamp_none(UCLAMP_MIN);
 }
 
 static inline void uclamp_idle_reset(struct rq *rq, enum uclamp_id clamp_id,
-				     unsigned int clamp_value)
+				     unsigned int clamp_हालागा)
 {
 	/* Reset max-clamp retention only on idle exit */
 	if (!(rq->uclamp_flags & UCLAMP_FLAG_IDLE))
 		return;
 
-	uclamp_rq_set(rq, clamp_id, clamp_value);
+	uclamp_rq_set(rq, clamp_id, clamp_हालागा);
 }
 
 static inline
-unsigned int uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
-				   unsigned int clamp_value)
+unsigned int uclamp_rq_max_हालागा(struct rq *rq, enum uclamp_id clamp_id,
+				   unsigned int clamp_हालागा)
 {
 	struct uclamp_bucket *bucket = rq->uclamp[clamp_id].bucket;
 	int bucket_id = UCLAMP_BUCKETS - 1;
@@ -1657,11 +1657,11 @@ unsigned int uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
 	for ( ; bucket_id >= 0; bucket_id--) {
 		if (!bucket[bucket_id].tasks)
 			continue;
-		return bucket[bucket_id].value;
+		return bucket[bucket_id].हालागा;
 	}
 
 	/* No tasks -- default clamp values */
-	return uclamp_idle_value(rq, clamp_id, clamp_value);
+	return uclamp_idle_हालागा(rq, clamp_id, clamp_हालागा);
 }
 
 static void __uclamp_update_util_min_rt_default(struct task_struct *p)
@@ -1697,7 +1697,7 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
 	/* Copy by value as we could modify it */
 	struct uclamp_se uc_req = p->uclamp_req[clamp_id];
 #ifdef CONFIG_UCLAMP_TASK_GROUP
-	unsigned int tg_min, tg_max, value;
+	unsigned int tg_min, tg_max, हालागा;
 
 	/*
 	 * Tasks in autogroups or root task group will be
@@ -1705,14 +1705,14 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
 	 */
 	if (task_group_is_autogroup(task_group(p)))
 		return uc_req;
-	if (task_group(p) == &root_task_group)
+	if (task_group(p) == &उगात_task_group)
 		return uc_req;
 
-	tg_min = task_group(p)->uclamp[UCLAMP_MIN].value;
-	tg_max = task_group(p)->uclamp[UCLAMP_MAX].value;
-	value = uc_req.value;
-	value = clamp(value, tg_min, tg_max);
-	uclamp_se_set(&uc_req, value, false);
+	tg_min = task_group(p)->uclamp[UCLAMP_MIN].हालागा;
+	tg_max = task_group(p)->uclamp[UCLAMP_MAX].हालागा;
+	हालागा = uc_req.हालागा;
+	हालागा = clamp(हालागा, tg_min, tg_max);
+	uclamp_se_set(&uc_req, हालागा, false);
 #endif
 
 	return uc_req;
@@ -1733,23 +1733,23 @@ uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
 	struct uclamp_se uc_max = uclamp_default[clamp_id];
 
 	/* System default restrictions always apply */
-	if (unlikely(uc_req.value > uc_max.value))
+	if (unlikely(uc_req.हालागा > uc_max.हालागा))
 		return uc_max;
 
 	return uc_req;
 }
 
-unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+unsigned long uclamp_eff_हालागा(struct task_struct *p, enum uclamp_id clamp_id)
 {
 	struct uclamp_se uc_eff;
 
 	/* Task currently refcounted: use back-annotated (effective) value */
 	if (p->uclamp[clamp_id].active)
-		return (unsigned long)p->uclamp[clamp_id].value;
+		return (unsigned long)p->uclamp[clamp_id].हालागा;
 
 	uc_eff = uclamp_eff_get(p, clamp_id);
 
-	return (unsigned long)uc_eff.value;
+	return (unsigned long)uc_eff.हालागा;
 }
 
 /*
@@ -1778,17 +1778,17 @@ static inline void uclamp_rq_inc_id(struct rq *rq, struct task_struct *p,
 	bucket->tasks++;
 	uc_se->active = true;
 
-	uclamp_idle_reset(rq, clamp_id, uc_se->value);
+	uclamp_idle_reset(rq, clamp_id, uc_se->हालागा);
 
 	/*
 	 * Local max aggregation: rq buckets always track the max
 	 * "requested" clamp value of its RUNNABLE tasks.
 	 */
-	if (bucket->tasks == 1 || uc_se->value > bucket->value)
-		bucket->value = uc_se->value;
+	if (bucket->tasks == 1 || uc_se->हालागा > bucket->हालागा)
+		bucket->हालागा = uc_se->हालागा;
 
-	if (uc_se->value > uclamp_rq_get(rq, clamp_id))
-		uclamp_rq_set(rq, clamp_id, uc_se->value);
+	if (uc_se->हालागा > uclamp_rq_get(rq, clamp_id))
+		uclamp_rq_set(rq, clamp_id, uc_se->हालागा);
 }
 
 /*
@@ -1859,9 +1859,9 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
 	 * Defensive programming: this should never happen. If it happens,
 	 * e.g. due to future modification, warn and fix up the expected value.
 	 */
-	WARN_ON_ONCE(bucket->value > rq_clamp);
-	if (bucket->value >= rq_clamp) {
-		bkt_clamp = uclamp_rq_max_value(rq, clamp_id, uc_se->value);
+	WARN_ON_ONCE(bucket->हालागा > rq_clamp);
+	if (bucket->हालागा >= rq_clamp) {
+		bkt_clamp = uclamp_rq_max_हालागा(rq, clamp_id, uc_se->हालागा);
 		uclamp_rq_set(rq, clamp_id, bkt_clamp);
 	}
 }
@@ -1981,9 +1981,9 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css);
 
 #ifdef CONFIG_SYSCTL
 #ifdef CONFIG_UCLAMP_TASK_GROUP
-static void uclamp_update_root_tg(void)
+static void uclamp_update_उगात_tg(void)
 {
-	struct task_group *tg = &root_task_group;
+	struct task_group *tg = &उगात_task_group;
 
 	uclamp_se_set(&tg->uclamp_req[UCLAMP_MIN],
 		      sysctl_sched_uclamp_util_min, false);
@@ -1991,10 +1991,10 @@ static void uclamp_update_root_tg(void)
 		      sysctl_sched_uclamp_util_max, false);
 
 	guard(rcu)();
-	cpu_util_update_eff(&root_task_group.css);
+	cpu_util_update_eff(&उगात_task_group.css);
 }
 #else
-static void uclamp_update_root_tg(void) { }
+static void uclamp_update_उगात_tg(void) { }
 #endif
 
 static void uclamp_sync_util_min_rt_default(void)
@@ -2026,7 +2026,7 @@ static void uclamp_sync_util_min_rt_default(void)
 static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
 				void *buffer, size_t *lenp, loff_t *ppos)
 {
-	bool update_root_tg = false;
+	bool update_उगात_tg = false;
 	int old_min, old_max, old_min_rt;
 	int result;
 
@@ -2053,17 +2053,17 @@ static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
 	if (old_min != sysctl_sched_uclamp_util_min) {
 		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
 			      sysctl_sched_uclamp_util_min, false);
-		update_root_tg = true;
+		update_उगात_tg = true;
 	}
 	if (old_max != sysctl_sched_uclamp_util_max) {
 		uclamp_se_set(&uclamp_default[UCLAMP_MAX],
 			      sysctl_sched_uclamp_util_max, false);
-		update_root_tg = true;
+		update_उगात_tg = true;
 	}
 
-	if (update_root_tg) {
+	if (update_उगात_tg) {
 		sched_uclamp_enable();
-		uclamp_update_root_tg();
+		uclamp_update_उगात_tg();
 	}
 
 	if (old_min_rt != sysctl_sched_uclamp_util_min_rt_default) {
@@ -2118,7 +2118,7 @@ static void __init init_uclamp_rq(struct rq *rq)
 
 	for_each_clamp_id(clamp_id) {
 		uc_rq[clamp_id] = (struct uclamp_rq) {
-			.value = uclamp_none(clamp_id)
+			.हालागा = uclamp_none(clamp_id)
 		};
 	}
 
@@ -2144,8 +2144,8 @@ static void __init init_uclamp(void)
 	for_each_clamp_id(clamp_id) {
 		uclamp_default[clamp_id] = uc_max;
 #ifdef CONFIG_UCLAMP_TASK_GROUP
-		root_task_group.uclamp_req[clamp_id] = uc_max;
-		root_task_group.uclamp[clamp_id] = uc_max;
+		उगात_task_group.uclamp_req[clamp_id] = uc_max;
+		उगात_task_group.uclamp[clamp_id] = uc_max;
 #endif
 	}
 }
@@ -2495,19 +2495,19 @@ void ___migrate_enable(void)
 
 	__set_cpus_allowed_ptr(p, &ac);
 }
-EXPORT_SYMBOL_GPL(___migrate_enable);
+EXPORT_सिम्बोलो_GPL(___migrate_enable);
 
 void migrate_disable(void)
 {
 	__migrate_disable();
 }
-EXPORT_SYMBOL_GPL(migrate_disable);
+EXPORT_सिम्बोलो_GPL(migrate_disable);
 
 void migrate_enable(void)
 {
 	__migrate_enable();
 }
-EXPORT_SYMBOL_GPL(migrate_enable);
+EXPORT_सिम्बोलो_GPL(migrate_enable);
 
 static inline bool rq_has_pinned_tasks(struct rq *rq)
 {
@@ -2768,7 +2768,7 @@ out:
 	return 0;
 }
 
-int push_cpu_stop(void *arg)
+int इतुलाक_cpu_stop(void *arg)
 {
 	struct rq *lowest_rq = NULL, *rq = this_rq();
 	struct task_struct *p = arg;
@@ -2780,11 +2780,11 @@ int push_cpu_stop(void *arg)
 		goto out_unlock;
 
 	if (is_migration_disabled(p)) {
-		p->migration_flags |= MDF_PUSH;
+		p->migration_flags |= MDF_इतुलाक;
 		goto out_unlock;
 	}
 
-	p->migration_flags &= ~MDF_PUSH;
+	p->migration_flags &= ~MDF_इतुलाक;
 
 	if (p->sched_class->find_lock_rq)
 		lowest_rq = p->sched_class->find_lock_rq(p, rq);
@@ -2803,7 +2803,7 @@ int push_cpu_stop(void *arg)
 	double_unlock_balance(rq, lowest_rq);
 
 out_unlock:
-	rq->push_busy = false;
+	rq->इतुलाक_busy = false;
 	raw_spin_rq_unlock(rq);
 	raw_spin_unlock_irq(&p->pi_lock);
 
@@ -2870,7 +2870,7 @@ void set_cpus_allowed_force(struct task_struct *p, const struct cpumask *new_mas
 }
 
 int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
-		      int node)
+		      int बुहोल)
 {
 	cpumask_t *user_mask;
 	unsigned long flags;
@@ -2889,7 +2889,7 @@ int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
 	if (data_race(!src->user_cpus_ptr))
 		return 0;
 
-	user_mask = alloc_user_cpus_ptr(node);
+	user_mask = alloc_user_cpus_ptr(बुहोल);
 	if (!user_mask)
 		return -ENOMEM;
 
@@ -3018,12 +3018,12 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 	 */
 	if (cpumask_test_cpu(task_cpu(p), &p->cpus_mask) ||
 	    (task_current_donor(rq, p) && !task_current(rq, p))) {
-		struct task_struct *push_task = NULL;
+		struct task_struct *इतुलाक_task = NULL;
 
 		if ((flags & SCA_MIGRATE_ENABLE) &&
-		    (p->migration_flags & MDF_PUSH) && !rq->push_busy) {
-			rq->push_busy = true;
-			push_task = get_task_struct(p);
+		    (p->migration_flags & MDF_इतुलाक) && !rq->इतुलाक_busy) {
+			rq->इतुलाक_busy = true;
+			इतुलाक_task = get_task_struct(p);
 		}
 
 		/*
@@ -3038,9 +3038,9 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 
 		preempt_disable();
 		task_rq_unlock(rq, p, rf);
-		if (push_task) {
-			stop_one_cpu_nowait(rq->cpu, push_cpu_stop,
-					    p, &rq->push_work);
+		if (इतुलाक_task) {
+			stop_one_cpu_nowait(rq->cpu, इतुलाक_cpu_stop,
+					    p, &rq->इतुलाक_work);
 		}
 		preempt_enable();
 
@@ -3106,7 +3106,7 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 			pending->stop_pending = true;
 
 		if (flags & SCA_MIGRATE_ENABLE)
-			p->migration_flags &= ~MDF_PUSH;
+			p->migration_flags &= ~MDF_इतुलाक;
 
 		preempt_disable();
 		task_rq_unlock(rq, p, rf);
@@ -3267,7 +3267,7 @@ int set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask)
 
 	return __set_cpus_allowed_ptr(p, &ac);
 }
-EXPORT_SYMBOL_GPL(set_cpus_allowed_ptr);
+EXPORT_सिम्बोलो_GPL(set_cpus_allowed_ptr);
 
 /*
  * Change a given task's CPU affinity to the intersection of its current
@@ -3350,7 +3350,7 @@ out_set_mask:
 	if (printk_ratelimit()) {
 		printk_deferred("Overriding affinity for process %d (%s) to CPUs %*pbl\n",
 				task_pid_nr(p), p->comm,
-				cpumask_pr_args(override_mask));
+				cpumask_pr_मगा_कातविरान(override_mask));
 	}
 
 	WARN_ON(set_cpus_allowed_ptr(p, override_mask));
@@ -3571,7 +3571,7 @@ void kick_process(struct task_struct *p)
 	if ((cpu != smp_processor_id()) && task_curr(p))
 		smp_send_reschedule(cpu);
 }
-EXPORT_SYMBOL_GPL(kick_process);
+EXPORT_सिम्बोलो_GPL(kick_process);
 
 /*
  * ->cpus_ptr is protected by both rq->lock and p->pi_lock
@@ -3597,7 +3597,7 @@ EXPORT_SYMBOL_GPL(kick_process);
  */
 static int select_fallback_rq(int cpu, struct task_struct *p)
 {
-	int nid = cpu_to_node(cpu);
+	int nid = cpu_to_बुहोल(cpu);
 	const struct cpumask *nodemask = NULL;
 	enum { cpuset, possible, fail } state = cpuset;
 	int dest_cpu;
@@ -3608,7 +3608,7 @@ static int select_fallback_rq(int cpu, struct task_struct *p)
 	 * select the CPU on the other node.
 	 */
 	if (nid != -1) {
-		nodemask = cpumask_of_node(nid);
+		nodemask = cpumask_of_बुहोल(nid);
 
 		/* Look for allowed, online CPU in same node. */
 		for_each_cpu(dest_cpu, nodemask) {
@@ -3693,7 +3693,7 @@ int select_task_rq(struct task_struct *p, int cpu, int *wake_flags)
 
 void sched_set_stop_task(int cpu, struct task_struct *stop)
 {
-	static struct lock_class_key stop_pi_lock;
+	static struct lock_class_सुसि stop_pi_lock;
 	struct sched_param param = { .sched_priority = MAX_RT_PRIO - 1 };
 	struct task_struct *old_stop = cpu_rq(cpu)->stop;
 
@@ -3766,7 +3766,7 @@ ttwu_stat(struct task_struct *p, int cpu, int wake_flags)
 	if (wake_flags & WF_MIGRATED)
 		__schedstat_inc(p->stats.nr_wakeups_migrate);
 
-	__schedstat_inc(rq->ttwu_count);
+	__schedstat_inc(rq->ttwu_बिलांग);
 	__schedstat_inc(p->stats.nr_wakeups);
 
 	if (wake_flags & WF_SYNC)
@@ -3963,7 +3963,7 @@ static int ttwu_runnable(struct task_struct *p, int wake_flags)
 
 void sched_ttwu_pending(void *arg)
 {
-	struct llist_node *llist = arg;
+	struct llist_बुहोल *llist = arg;
 	struct rq *rq = this_rq();
 	struct task_struct *p, *t;
 	struct rq_flags rf;
@@ -4619,7 +4619,7 @@ int wake_up_process(struct task_struct *p)
 {
 	return try_to_wake_up(p, TASK_NORMAL, 0);
 }
-EXPORT_SYMBOL(wake_up_process);
+EXPORT_सिम्बोलो(wake_up_process);
 
 int wake_up_state(struct task_struct *p, unsigned int state)
 {
@@ -4645,7 +4645,7 @@ static void __sched_fork(u64 clone_flags, struct task_struct *p)
 	p->se.vruntime			= 0;
 	p->se.vlag			= 0;
 	p->se.rel_deadline		= 0;
-	INIT_LIST_HEAD(&p->se.group_node);
+	INIT_LIST_HEAD(&p->se.group_बुहोल);
 
 	/* A delayed task cannot be in clone(). */
 	WARN_ON_ONCE(p->se.sched_delayed);
@@ -4688,7 +4688,7 @@ static void __sched_fork(u64 clone_flags, struct task_struct *p)
 	init_sched_mm(p);
 }
 
-DEFINE_STATIC_KEY_FALSE(sched_numa_balancing);
+DEFINE_STATIC_सुसि_FALSE(sched_numa_balancing);
 
 #ifdef CONFIG_NUMA_BALANCING
 
@@ -4718,7 +4718,7 @@ static void reset_memory_tiering(void)
 
 	for_each_online_pgdat(pgdat) {
 		pgdat->nbp_threshold = 0;
-		pgdat->nbp_th_nr_cand = node_page_state(pgdat, PGPROMOTE_CANDIDATE);
+		pgdat->nbp_th_nr_cand = बुहोल_page_state(pgdat, PGPROMOTE_CANDIDATE);
 		pgdat->nbp_th_start = jiffies_to_msecs(jiffies);
 	}
 }
@@ -4752,7 +4752,7 @@ static int sysctl_numa_balancing(const struct ctl_table *table, int write,
 
 #ifdef CONFIG_SCHEDSTATS
 
-DEFINE_STATIC_KEY_FALSE(sched_schedstats);
+DEFINE_STATIC_सुसि_FALSE(sched_schedstats);
 
 static void set_schedstats(bool enabled)
 {
@@ -4937,14 +4937,14 @@ int sched_fork(u64 clone_flags, struct task_struct *p)
 		memset(&p->sched_info, 0, sizeof(p->sched_info));
 #endif
 	p->on_cpu = 0;
-	init_task_preempt_count(p);
-	plist_node_init(&p->pushable_tasks, MAX_PRIO);
-	RB_CLEAR_NODE(&p->pushable_dl_tasks);
+	init_task_preempt_बिलांग(p);
+	plist_बुहोल_init(&p->pushable_tasks, MAX_PRIO);
+	RB_CLEAR_बुहोल(&p->pushable_dl_tasks);
 
 	return 0;
 }
 
-int sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs)
+int sched_cgroup_fork(struct task_struct *p, struct kernel_clone_मगा_कातविरान *kargs)
 {
 	unsigned long flags;
 
@@ -5050,19 +5050,19 @@ void wake_up_new_task(struct task_struct *p)
 
 #ifdef CONFIG_PREEMPT_NOTIFIERS
 
-static DEFINE_STATIC_KEY_FALSE(preempt_notifier_key);
+static DEFINE_STATIC_सुसि_FALSE(preempt_notifier_सुसि);
 
 void preempt_notifier_inc(void)
 {
-	static_branch_inc(&preempt_notifier_key);
+	static_branch_inc(&preempt_notifier_सुसि);
 }
-EXPORT_SYMBOL_GPL(preempt_notifier_inc);
+EXPORT_सिम्बोलो_GPL(preempt_notifier_inc);
 
 void preempt_notifier_dec(void)
 {
-	static_branch_dec(&preempt_notifier_key);
+	static_branch_dec(&preempt_notifier_सुसि);
 }
-EXPORT_SYMBOL_GPL(preempt_notifier_dec);
+EXPORT_सिम्बोलो_GPL(preempt_notifier_dec);
 
 /**
  * preempt_notifier_register - tell me when current is being preempted & rescheduled
@@ -5070,12 +5070,12 @@ EXPORT_SYMBOL_GPL(preempt_notifier_dec);
  */
 void preempt_notifier_register(struct preempt_notifier *notifier)
 {
-	if (!static_branch_unlikely(&preempt_notifier_key))
+	if (!static_branch_unlikely(&preempt_notifier_सुसि))
 		WARN(1, "registering preempt_notifier while notifiers disabled\n");
 
 	hlist_add_head(&notifier->link, &current->preempt_notifiers);
 }
-EXPORT_SYMBOL_GPL(preempt_notifier_register);
+EXPORT_सिम्बोलो_GPL(preempt_notifier_register);
 
 /**
  * preempt_notifier_unregister - no longer interested in preemption notifications
@@ -5087,7 +5087,7 @@ void preempt_notifier_unregister(struct preempt_notifier *notifier)
 {
 	hlist_del(&notifier->link);
 }
-EXPORT_SYMBOL_GPL(preempt_notifier_unregister);
+EXPORT_सिम्बोलो_GPL(preempt_notifier_unregister);
 
 static void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
 {
@@ -5099,7 +5099,7 @@ static void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
 
 static __always_inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
 {
-	if (static_branch_unlikely(&preempt_notifier_key))
+	if (static_branch_unlikely(&preempt_notifier_सुसि))
 		__fire_sched_in_preempt_notifiers(curr);
 }
 
@@ -5117,7 +5117,7 @@ static __always_inline void
 fire_sched_out_preempt_notifiers(struct task_struct *curr,
 				 struct task_struct *next)
 {
-	if (static_branch_unlikely(&preempt_notifier_key))
+	if (static_branch_unlikely(&preempt_notifier_सुसि))
 		__fire_sched_out_preempt_notifiers(curr, next);
 }
 
@@ -5182,13 +5182,13 @@ static void zap_balance_callbacks(struct rq *rq)
 
 	head = rq->balance_callback;
 	while (head) {
-		if (head == &balance_push_callback)
+		if (head == &balance_इतुलाक_callback)
 			found = true;
 		next = head->next;
 		head->next = NULL;
 		head = next;
 	}
-	rq->balance_callback = found ? &balance_push_callback : NULL;
+	rq->balance_callback = found ? &balance_इतुलाक_callback : NULL;
 }
 
 static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
@@ -5208,7 +5208,7 @@ static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
 	}
 }
 
-static void balance_push(struct rq *rq);
+static void balance_इतुलाक(struct rq *rq);
 
 /*
  * balance_push_callback is a right abuse of the callback interface and plays
@@ -5221,9 +5221,9 @@ static void balance_push(struct rq *rq);
  * This abuse is tolerated because it places all the unlikely/odd cases behind
  * a single test, namely: rq->balance_callback == NULL.
  */
-struct balance_callback balance_push_callback = {
+struct balance_callback balance_इतुलाक_callback = {
 	.next = NULL,
-	.func = balance_push,
+	.func = balance_इतुलाक,
 };
 
 static inline struct balance_callback *
@@ -5243,7 +5243,7 @@ __splice_balance_callbacks(struct rq *rq, bool split)
 	 * In that case it would be possible for __schedule() to interleave
 	 * and observe the list empty.
 	 */
-	if (split && head == &balance_push_callback)
+	if (split && head == &balance_इतुलाक_callback)
 		head = NULL;
 	else
 		rq->balance_callback = NULL;
@@ -5406,10 +5406,10 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	 *
 	 * Also, see FORK_PREEMPT_COUNT.
 	 */
-	if (WARN_ONCE(preempt_count() != 2*PREEMPT_DISABLE_OFFSET,
+	if (WARN_ONCE(preempt_बिलांग() != 2*PREEMPT_DISABLE_OFFSET,
 		      "corrupted preempt_count: %s/%d/0x%x\n",
-		      current->comm, current->pid, preempt_count()))
-		preempt_count_set(FORK_PREEMPT_COUNT);
+		      current->comm, current->pid, preempt_बिलांग()))
+		preempt_बिलांग_set(FORK_PREEMPT_बिलांग);
 
 	rq->prev_mm = NULL;
 
@@ -5478,7 +5478,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 		cgroup_task_dead(prev);
 
 		/* Task is done with its stack. */
-		put_task_stack(prev);
+		put_task_सालानसान(prev);
 
 		put_task_struct_rcu_user(prev);
 	}
@@ -5619,7 +5619,7 @@ bool single_task_running(void)
 {
 	return raw_rq()->nr_running == 1;
 }
-EXPORT_SYMBOL(single_task_running);
+EXPORT_सिम्बोलो(single_task_running);
 
 unsigned long long nr_context_switches_cpu(int cpu)
 {
@@ -5716,8 +5716,8 @@ DEFINE_PER_CPU(struct kernel_cpustat, kernel_cpustat) = {
 #endif
 };
 
-EXPORT_PER_CPU_SYMBOL(kstat);
-EXPORT_PER_CPU_SYMBOL(kernel_cpustat);
+EXPORT_PER_CPU_सिम्बोलो(kstat);
+EXPORT_PER_CPU_सिम्बोलो(kernel_cpustat);
 
 /*
  * The function fair_sched_class.update_curr accesses the struct curr
@@ -5837,7 +5837,7 @@ void sched_tick(void)
 	u64 resched_latency;
 
 	if (!cpu_preferred(cpu))
-		sched_push_current_non_preferred_cpu(rq);
+		sched_इतुलाक_current_non_preferred_cpu(rq);
 
 	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
 		arch_scale_freq_tick();
@@ -6030,7 +6030,7 @@ static inline void sched_tick_stop(int cpu) { }
  */
 static inline void preempt_latency_start(int val)
 {
-	if (preempt_count() == val) {
+	if (preempt_बिलांग() == val) {
 		unsigned long ip = get_lock_parent_ip();
 #ifdef CONFIG_DEBUG_PREEMPT
 		current->preempt_disable_ip = ip;
@@ -6039,7 +6039,7 @@ static inline void preempt_latency_start(int val)
 	}
 }
 
-void preempt_count_add(int val)
+void preempt_बिलांग_add(int val)
 {
 #ifdef CONFIG_DEBUG_PREEMPT
 	/*
@@ -6050,7 +6050,7 @@ void preempt_count_add(int val)
 	 * bits.
 	 */
 	if (!IS_ENABLED(CONFIG_HAS_SEPARATE_PREEMPT_RESCHED_BITS) &&
-	    DEBUG_LOCKS_WARN_ON((preempt_count() < 0)))
+	    DEBUG_LOCKS_WARN_ON((preempt_बिलांग() < 0)))
 		return;
 #endif
 	__preempt_count_add(val);
@@ -6058,13 +6058,13 @@ void preempt_count_add(int val)
 	/*
 	 * Spinlock count overflowing soon?
 	 */
-	DEBUG_LOCKS_WARN_ON((preempt_count() & PREEMPT_MASK) >=
+	DEBUG_LOCKS_WARN_ON((preempt_बिलांग() & PREEMPT_MASK) >=
 				PREEMPT_MASK - 10);
 #endif
 	preempt_latency_start(val);
 }
-EXPORT_SYMBOL(preempt_count_add);
-NOKPROBE_SYMBOL(preempt_count_add);
+EXPORT_सिम्बोलो(preempt_बिलांग_add);
+NOKPROBE_सिम्बोलो(preempt_बिलांग_add);
 
 /*
  * If the value passed in equals to the current preempt count
@@ -6072,18 +6072,18 @@ NOKPROBE_SYMBOL(preempt_count_add);
  */
 static inline void preempt_latency_stop(int val)
 {
-	if (preempt_count() == val)
+	if (preempt_बिलांग() == val)
 		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
 }
 
-void preempt_count_sub(int val)
+void preempt_बिलांग_sub(int val)
 {
 #ifdef CONFIG_DEBUG_PREEMPT
 	/*
 	 * Underflow?
 	 */
 	unsigned int uval = val;
-	unsigned int pc = preempt_count();
+	unsigned int pc = preempt_बिलांग();
 
 	if (DEBUG_LOCKS_WARN_ON(pc - uval > pc))
 		return;
@@ -6091,15 +6091,15 @@ void preempt_count_sub(int val)
 	 * Is the spinlock portion underflowing?
 	 */
 	if (DEBUG_LOCKS_WARN_ON((val < PREEMPT_MASK) &&
-			!(preempt_count() & PREEMPT_MASK)))
+			!(preempt_बिलांग() & PREEMPT_MASK)))
 		return;
 #endif
 
 	preempt_latency_stop(val);
 	__preempt_count_sub(val);
 }
-EXPORT_SYMBOL(preempt_count_sub);
-NOKPROBE_SYMBOL(preempt_count_sub);
+EXPORT_सिम्बोलो(preempt_बिलांग_sub);
+NOKPROBE_सिम्बोलो(preempt_बिलांग_sub);
 
 #else
 static inline void preempt_latency_start(int val) { }
@@ -6127,19 +6127,19 @@ static noinline void __schedule_bug(struct task_struct *prev)
 		return;
 
 	printk(KERN_ERR "BUG: scheduling while atomic: %s/%d/0x%08x\n",
-		prev->comm, prev->pid, preempt_count());
+		prev->comm, prev->pid, preempt_बिलांग());
 
 	debug_show_held_locks(prev);
-	print_modules();
+	इलिम्बाग_modules();
 	if (irqs_disabled())
-		print_irqtrace_events(prev);
+		इलिम्बाग_irqtrace_events(prev);
 	if (IS_ENABLED(CONFIG_DEBUG_PREEMPT)) {
 		pr_err("Preemption disabled at:");
-		print_ip_sym(KERN_ERR, preempt_disable_ip);
+		इलिम्बाग_ip_sym(KERN_ERR, preempt_disable_ip);
 	}
 	check_panic_on_warn("scheduling while atomic");
 
-	dump_stack();
+	dump_सालानसान();
 	add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
 }
 
@@ -6148,8 +6148,8 @@ static noinline void __schedule_bug(struct task_struct *prev)
  */
 static inline void schedule_debug(struct task_struct *prev, bool preempt)
 {
-#ifdef CONFIG_SCHED_STACK_END_CHECK
-	if (task_stack_end_corrupted(prev))
+#ifdef CONFIG_SCHED_सालानसान_END_CHECK
+	if (task_सालानसान_end_corrupted(prev))
 		panic("corrupted stack end detected inside scheduler\n");
 
 	if (task_scs_end_corrupted(prev))
@@ -6157,24 +6157,24 @@ static inline void schedule_debug(struct task_struct *prev, bool preempt)
 #endif
 
 #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
-	if (!preempt && READ_ONCE(prev->__state) && prev->non_block_count) {
+	if (!preempt && READ_ONCE(prev->__state) && prev->non_block_बिलांग) {
 		printk(KERN_ERR "BUG: scheduling in a non-blocking section: %s/%d/%i\n",
-			prev->comm, prev->pid, prev->non_block_count);
-		dump_stack();
+			prev->comm, prev->pid, prev->non_block_बिलांग);
+		dump_सालानसान();
 		add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
 	}
 #endif
 
 	if (unlikely(in_atomic_preempt_off())) {
 		__schedule_bug(prev);
-		preempt_count_set(PREEMPT_DISABLED);
+		preempt_बिलांग_set(PREEMPT_DISABLED);
 	}
 	rcu_sleep_check();
 	WARN_ON_ONCE(ct_state() == CT_STATE_USER);
 
 	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
 
-	schedstat_inc(this_rq()->sched_count);
+	schedstat_inc(this_rq()->sched_बिलांग);
 }
 
 static void prev_balance(struct rq *rq, struct rq_flags *rf)
@@ -6350,7 +6350,7 @@ restart:
 
 	/* reset state */
 	rq->core->core_cookie = 0UL;
-	if (rq->core->core_forceidle_count) {
+	if (rq->core->core_forceidle_बिलांग) {
 		if (!core_clock_updated) {
 			update_rq_clock(rq->core);
 			core_clock_updated = true;
@@ -6358,7 +6358,7 @@ restart:
 		sched_core_account_forceidle(rq);
 		/* reset after accounting force idle */
 		rq->core->core_forceidle_start = 0;
-		rq->core->core_forceidle_count = 0;
+		rq->core->core_forceidle_बिलांग = 0;
 		rq->core->core_forceidle_occupation = 0;
 		need_sync = true;
 		fi_before = true;
@@ -6462,7 +6462,7 @@ restart:
 
 		if (p == rq_i->idle) {
 			if (rq_i->nr_running) {
-				rq->core->core_forceidle_count++;
+				rq->core->core_forceidle_बिलांग++;
 				if (!fi_before)
 					rq->core->core_forceidle_seq++;
 			}
@@ -6471,7 +6471,7 @@ restart:
 		}
 	}
 
-	if (schedstat_enabled() && rq->core->core_forceidle_count) {
+	if (schedstat_enabled() && rq->core->core_forceidle_बिलांग) {
 		rq->core->core_forceidle_start = rq_clock(rq->core);
 		rq->core->core_forceidle_occupation = occ;
 	}
@@ -6511,8 +6511,8 @@ restart:
 		 *  1            0       1
 		 *  1            1       0
 		 */
-		if (!(fi_before && rq->core->core_forceidle_count))
-			task_vruntime_update(rq_i, rq_i->core_pick, !!rq->core->core_forceidle_count);
+		if (!(fi_before && rq->core->core_forceidle_बिलांग))
+			task_vruntime_update(rq_i, rq_i->core_pick, !!rq->core->core_forceidle_बिलांग);
 
 		rq_i->core_pick->core_occupation = occ;
 
@@ -6537,7 +6537,7 @@ restart:
 out_set_next:
 	rq->core->core_pick_in_flight--;
 	put_prev_set_next_task(rq, rq->donor, next);
-	if (rq->core->core_forceidle_count && next == rq->idle)
+	if (rq->core->core_forceidle_बिलांग && next == rq->idle)
 		queue_core_balance(rq);
 
 	return next;
@@ -6729,7 +6729,7 @@ static void sched_core_cpu_deactivate(unsigned int cpu)
 	core_rq->core_task_seq             = rq->core_task_seq;
 	core_rq->core_pick_seq             = rq->core_pick_seq;
 	core_rq->core_cookie               = rq->core_cookie;
-	core_rq->core_forceidle_count      = rq->core_forceidle_count;
+	core_rq->core_forceidle_बिलांग      = rq->core_forceidle_बिलांग;
 	core_rq->core_forceidle_seq        = rq->core_forceidle_seq;
 	core_rq->core_forceidle_occupation = rq->core_forceidle_occupation;
 
@@ -6968,7 +6968,7 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
 		 * because @p is deactivated (won't be balanced) and
 		 * we hold the rq_lock.
 		 */
-		list_add(&p->se.group_node, &migrate_list);
+		list_add(&p->se.group_बुहोल, &migrate_list);
 	}
 	proxy_release_rq_lock(rq, rf);
 
@@ -7213,7 +7213,7 @@ static void __sched notrace __schedule(int sched_mode)
 	 */
 	bool preempt = sched_mode > SM_NONE;
 	bool is_switch = false;
-	unsigned long *switch_count;
+	unsigned long *switch_बिलांग;
 	unsigned long prev_state;
 	struct rq_flags rf;
 	struct rq *rq;
@@ -7261,7 +7261,7 @@ static void __sched notrace __schedule(int sched_mode)
 	update_rq_clock(rq);
 	rq->clock_update_flags = RQCF_UPDATED;
 
-	switch_count = &prev->nivcsw;
+	switch_बिलांग = &prev->nivcsw;
 
 	/* Task state changes only considers SM_PREEMPT as preemption */
 	preempt = sched_mode == SM_PREEMPT;
@@ -7286,7 +7286,7 @@ static void __sched notrace __schedule(int sched_mode)
 		 */
 		try_to_block_task(rq, prev, &prev_state,
 				  !task_is_blocked(prev) || !scx_allow_proxy_exec(prev));
-		switch_count = &prev->nvcsw;
+		switch_बिलांग = &prev->nvcsw;
 	}
 
 pick_again:
@@ -7370,7 +7370,7 @@ keep_resched:
 		 * SYNC_CORE command when switching between processes, cf.
 		 * the inline comments in membarrier_arch_switch_mm().
 		 */
-		++*switch_count;
+		++*switch_बिलांग;
 
 		psi_account_irqtime(rq, prev, next);
 		psi_sched_switch(prev, next, !task_on_rq_queued(prev) ||
@@ -7474,7 +7474,7 @@ asmlinkage __visible void __sched schedule(void)
 	__schedule_loop(SM_NONE);
 	sched_update_worker(tsk);
 }
-EXPORT_SYMBOL(schedule);
+EXPORT_सिम्बोलो(schedule);
 
 /*
  * synchronize_rcu_tasks() makes sure that no task is stuck in preempted
@@ -7537,7 +7537,7 @@ void __sched notrace schedule_rtlock(void)
 {
 	__schedule_loop(SM_RTLOCK_WAIT);
 }
-NOKPROBE_SYMBOL(schedule_rtlock);
+NOKPROBE_सिम्बोलो(schedule_rtlock);
 #endif
 
 static void __sched notrace preempt_schedule_common(void)
@@ -7584,8 +7584,8 @@ asmlinkage __visible void __sched notrace preempt_schedule(void)
 		return;
 	preempt_schedule_common();
 }
-NOKPROBE_SYMBOL(preempt_schedule);
-EXPORT_SYMBOL(preempt_schedule);
+NOKPROBE_सिम्बोलो(preempt_schedule);
+EXPORT_सिम्बोलो(preempt_schedule);
 
 /**
  * preempt_schedule_notrace - preempt_schedule called by tracing
@@ -7637,7 +7637,7 @@ asmlinkage __visible void __sched notrace preempt_schedule_notrace(void)
 		preempt_enable_no_resched_notrace();
 	} while (need_resched());
 }
-EXPORT_SYMBOL_GPL(preempt_schedule_notrace);
+EXPORT_सिम्बोलो_GPL(preempt_schedule_notrace);
 
 #endif /* CONFIG_PREEMPTION */
 
@@ -7652,7 +7652,7 @@ asmlinkage __visible void __sched preempt_schedule_irq(void)
 	enum ctx_state prev_state;
 
 	/* Catch callers which need to be fixed */
-	BUG_ON(preempt_count() || !irqs_disabled());
+	BUG_ON(preempt_बिलांग() || !irqs_disabled());
 
 	prev_state = exception_enter();
 
@@ -7668,12 +7668,12 @@ asmlinkage __visible void __sched preempt_schedule_irq(void)
 }
 
 int default_wake_function(wait_queue_entry_t *curr, unsigned mode, int wake_flags,
-			  void *key)
+			  void *सुसि)
 {
 	WARN_ON_ONCE(wake_flags & ~(WF_SYNC|WF_CURRENT_CPU));
 	return try_to_wake_up(curr->private, mode, wake_flags);
 }
-EXPORT_SYMBOL(default_wake_function);
+EXPORT_सिम्बोलो(default_wake_function);
 
 const struct sched_class *__setscheduler_class(int policy, int prio)
 {
@@ -7760,7 +7760,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 	/*
 	 * If nothing changed; bail early.
 	 */
-	if (p->pi_top_task == pi_task && prio == p->prio && !dl_prio(prio))
+	if (p->pi_इताअस_task == pi_task && prio == p->prio && !dl_prio(prio))
 		return;
 
 	rq = __task_rq_lock(p, &rf);
@@ -7775,7 +7775,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 	 * task is allowed to run again (and can exit). This ensures the pointer
 	 * points to a blocked task -- which guarantees the task is present.
 	 */
-	p->pi_top_task = pi_task;
+	p->pi_इताअस_task = pi_task;
 
 	/*
 	 * For FIFO/RR we only need to set prio, if that matches we're done.
@@ -7880,7 +7880,7 @@ int __sched __cond_resched(void)
 #endif
 	return 0;
 }
-EXPORT_SYMBOL(__cond_resched);
+EXPORT_सिम्बोलो(__cond_resched);
 #endif
 
 /*
@@ -7907,7 +7907,7 @@ int __cond_resched_lock(spinlock_t *lock)
 	}
 	return ret;
 }
-EXPORT_SYMBOL(__cond_resched_lock);
+EXPORT_सिम्बोलो(__cond_resched_lock);
 
 int __cond_resched_rwlock_read(rwlock_t *lock)
 {
@@ -7925,7 +7925,7 @@ int __cond_resched_rwlock_read(rwlock_t *lock)
 	}
 	return ret;
 }
-EXPORT_SYMBOL(__cond_resched_rwlock_read);
+EXPORT_सिम्बोलो(__cond_resched_rwlock_read);
 
 int __cond_resched_rwlock_write(rwlock_t *lock)
 {
@@ -7943,7 +7943,7 @@ int __cond_resched_rwlock_write(rwlock_t *lock)
 	}
 	return ret;
 }
-EXPORT_SYMBOL(__cond_resched_rwlock_write);
+EXPORT_सिम्बोलो(__cond_resched_rwlock_write);
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
 
@@ -7984,8 +7984,8 @@ int sched_dynamic_mode(const char *str)
 	return -EINVAL;
 }
 
-# define preempt_dynamic_key_enable(f)	static_key_enable(&sk_dynamic_##f.key)
-# define preempt_dynamic_key_disable(f)	static_key_disable(&sk_dynamic_##f.key)
+# define preempt_dynamic_सुसि_enable(f)	static_सुसि_enable(&sk_dynamic_##f.सुसि)
+# define preempt_dynamic_सुसि_disable(f)	static_सुसि_disable(&sk_dynamic_##f.सुसि)
 
 static DEFINE_MUTEX(sched_dynamic_mutex);
 
@@ -7993,13 +7993,13 @@ static void __sched_dynamic_update(int mode)
 {
 	switch (mode) {
 	case preempt_dynamic_full:
-		preempt_dynamic_key_disable(preempt_lazy);
+		preempt_dynamic_सुसि_disable(preempt_lazy);
 		if (mode != preempt_dynamic_mode)
 			pr_info("Dynamic Preempt: full\n");
 		break;
 
 	case preempt_dynamic_lazy:
-		preempt_dynamic_key_enable(preempt_lazy);
+		preempt_dynamic_सुसि_enable(preempt_lazy);
 		if (mode != preempt_dynamic_mode)
 			pr_info("Dynamic Preempt: lazy\n");
 		break;
@@ -8049,7 +8049,7 @@ static void __init preempt_dynamic_init(void)
 		WARN_ON_ONCE(mode == preempt_dynamic_undefined);	\
 		return mode == preempt_dynamic_##mode;			\
 	}								\
-	EXPORT_SYMBOL_GPL(preempt_model_##mode)
+	EXPORT_सिम्बोलो_GPL(preempt_model_##mode)
 
 PREEMPT_MODEL_ACCESSOR(full);
 PREEMPT_MODEL_ACCESSOR(lazy);
@@ -8136,7 +8136,7 @@ long __sched io_schedule_timeout(long timeout)
 
 	return ret;
 }
-EXPORT_SYMBOL(io_schedule_timeout);
+EXPORT_सिम्बोलो(io_schedule_timeout);
 
 void __sched io_schedule(void)
 {
@@ -8146,21 +8146,21 @@ void __sched io_schedule(void)
 	schedule();
 	io_schedule_finish(token);
 }
-EXPORT_SYMBOL(io_schedule);
+EXPORT_सिम्बोलो(io_schedule);
 
 void sched_show_task(struct task_struct *p)
 {
 	unsigned long free;
 	int ppid;
 
-	if (!try_get_task_stack(p))
+	if (!try_get_task_सालानसान(p))
 		return;
 
 	pr_info("task:%-15.15s state:%c", p->comm, task_state_to_char(p));
 
 	if (task_is_running(p))
 		pr_cont("  running task    ");
-	free = stack_not_used(p);
+	free = सालानसान_not_used(p);
 	ppid = 0;
 	rcu_read_lock();
 	if (pid_alive(p))
@@ -8170,13 +8170,13 @@ void sched_show_task(struct task_struct *p)
 		free, task_pid_nr(p), task_tgid_nr(p),
 		ppid, p->flags, read_task_thread_flags(p));
 
-	print_worker_info(KERN_INFO, p);
-	print_stop_info(KERN_INFO, p);
-	print_scx_info(KERN_INFO, p);
-	show_stack(p, NULL, KERN_INFO);
-	put_task_stack(p);
+	इलिम्बाग_worker_info(KERN_INFO, p);
+	इलिम्बाग_stop_info(KERN_INFO, p);
+	इलिम्बाग_scx_info(KERN_INFO, p);
+	show_सालानसान(p, NULL, KERN_INFO);
+	put_task_सालानसान(p);
 }
-EXPORT_SYMBOL_GPL(sched_show_task);
+EXPORT_सिम्बोलो_GPL(sched_show_task);
 
 static inline bool
 state_filter_match(unsigned long state_filter, struct task_struct *p)
@@ -8289,7 +8289,7 @@ void __init init_idle(struct task_struct *idle, int cpu)
 	raw_spin_unlock_irqrestore(&idle->pi_lock, flags);
 
 	/* Set the preempt count _outside_ the spinlocks! */
-	init_idle_preempt_count(idle, cpu);
+	init_idle_preempt_बिलांग(idle, cpu);
 
 	/*
 	 * The idle tasks have their own, simple scheduling class:
@@ -8420,7 +8420,7 @@ static int __balance_push_cpu_stop(void *arg)
 	return 0;
 }
 
-static DEFINE_PER_CPU(struct cpu_stop_work, push_work);
+static DEFINE_PER_CPU(struct cpu_stop_work, इतुलाक_work);
 
 /*
  * Ensure we only run per-cpu kthreads once the CPU goes !active.
@@ -8428,17 +8428,17 @@ static DEFINE_PER_CPU(struct cpu_stop_work, push_work);
  * This is enabled below SCHED_AP_ACTIVE; when !cpu_active(), but only
  * effective when the hotplug motion is down.
  */
-static void balance_push(struct rq *rq)
+static void balance_इतुलाक(struct rq *rq)
 	__must_hold(__rq_lockp(rq))
 {
-	struct task_struct *push_task = rq->curr;
+	struct task_struct *इतुलाक_task = rq->curr;
 
 	lockdep_assert_rq_held(rq);
 
 	/*
 	 * Ensure the thing is persistent until balance_push_set(.on = false);
 	 */
-	rq->balance_callback = &balance_push_callback;
+	rq->balance_callback = &balance_इतुलाक_callback;
 
 	/*
 	 * Only active while going offline and when invoked on the outgoing
@@ -8451,8 +8451,8 @@ static void balance_push(struct rq *rq)
 	 * Both the cpu-hotplug and stop task are in this case and are
 	 * required to complete the hotplug process.
 	 */
-	if (kthread_is_per_cpu(push_task) ||
-	    is_migration_disabled(push_task)) {
+	if (kthread_is_per_cpu(इतुलाक_task) ||
+	    is_migration_disabled(इतुलाक_task)) {
 
 		/*
 		 * If this is the idle task on the outgoing CPU try to wake
@@ -8474,15 +8474,15 @@ static void balance_push(struct rq *rq)
 		return;
 	}
 
-	get_task_struct(push_task);
+	get_task_struct(इतुलाक_task);
 	/*
 	 * Temporarily drop rq->lock such that we can wake-up the stop task.
 	 * Both preemption and IRQs are still disabled.
 	 */
 	preempt_disable();
 	raw_spin_rq_unlock(rq);
-	stop_one_cpu_nowait(rq->cpu, __balance_push_cpu_stop, push_task,
-			    this_cpu_ptr(&push_work));
+	stop_one_cpu_nowait(rq->cpu, __balance_push_cpu_stop, इतुलाक_task,
+			    this_cpu_ptr(&इतुलाक_work));
 	preempt_enable();
 	/*
 	 * At this point need_resched() is true and we'll take the loop in
@@ -8492,7 +8492,7 @@ static void balance_push(struct rq *rq)
 	raw_spin_rq_lock(rq);
 }
 
-static void balance_push_set(int cpu, bool on)
+static void balance_इतुलाक_set(int cpu, bool on)
 {
 	struct rq *rq = cpu_rq(cpu);
 	struct rq_flags rf;
@@ -8500,8 +8500,8 @@ static void balance_push_set(int cpu, bool on)
 	rq_lock_irqsave(rq, &rf);
 	if (on) {
 		WARN_ON_ONCE(rq->balance_callback);
-		rq->balance_callback = &balance_push_callback;
-	} else if (rq->balance_callback == &balance_push_callback) {
+		rq->balance_callback = &balance_इतुलाक_callback;
+	} else if (rq->balance_callback == &balance_इतुलाक_callback) {
 		rq->balance_callback = NULL;
 	}
 	rq_unlock_irqrestore(rq, &rf);
@@ -8524,11 +8524,11 @@ static void balance_hotplug_wait(void)
 
 #else /* !CONFIG_HOTPLUG_CPU: */
 
-static inline void balance_push(struct rq *rq)
+static inline void balance_इतुलाक(struct rq *rq)
 {
 }
 
-static inline void balance_push_set(int cpu, bool on)
+static inline void balance_इतुलाक_set(int cpu, bool on)
 {
 }
 
@@ -8596,7 +8596,7 @@ static inline void sched_set_rq_offline(struct rq *rq, int cpu)
 /*
  * used to mark begin/end of suspend/resume:
  */
-static int num_cpus_frozen;
+static int नुमेरो_cpus_frozen;
 
 /*
  * Update cpusets according to cpu_active mask.  If cpusets are
@@ -8616,7 +8616,7 @@ static void cpuset_cpu_active(void)
 		 * domain, ignoring cpusets.
 		 */
 		cpuset_reset_sched_domains();
-		if (--num_cpus_frozen)
+		if (--नुमेरो_cpus_frozen)
 			return;
 		/*
 		 * This is the last CPU online operation. So fall through and
@@ -8633,7 +8633,7 @@ static void cpuset_cpu_inactive(unsigned int cpu)
 	if (!cpuhp_tasks_frozen) {
 		cpuset_update_active_cpus();
 	} else {
-		num_cpus_frozen++;
+		नुमेरो_cpus_frozen++;
 		cpuset_reset_sched_domains();
 	}
 }
@@ -8658,7 +8658,7 @@ int sched_cpu_activate(unsigned int cpu)
 	 * Clear the balance_push callback and prepare to schedule
 	 * regular tasks.
 	 */
-	balance_push_set(cpu, false);
+	balance_इतुलाक_set(cpu, false);
 
 	/*
 	 * When going up, increment the number of cores with SMT present.
@@ -8718,7 +8718,7 @@ int sched_cpu_deactivate(unsigned int cpu)
 	 * push those tasks away until this gets cleared, see
 	 * sched_cpu_dying().
 	 */
-	balance_push_set(cpu, true);
+	balance_इतुलाक_set(cpu, true);
 
 	/*
 	 * We've cleared cpu_active_mask / set balance_push, wait for all
@@ -8856,7 +8856,7 @@ int sched_cpu_dying(unsigned int cpu)
 
 void __init sched_init_smp(void)
 {
-	sched_init_numa(NUMA_NO_NODE);
+	sched_init_numa(NUMA_NO_बुहोल);
 
 	prandom_init_once(&sched_rnd_state);
 
@@ -8902,7 +8902,7 @@ int in_sched_functions(unsigned long addr)
  * Default task group.
  * Every task in system belongs to this group at bootup.
  */
-struct task_group root_task_group;
+struct task_group उगात_task_group;
 LIST_HEAD(task_groups);
 
 /* Cacheline aligned slab cache for task_group */
@@ -8927,21 +8927,21 @@ void __init sched_init(void)
 	wait_bit_init();
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	root_task_group.cfs_rq = &runqueues.cfs;
+	उगात_task_group.cfs_rq = &runqueues.cfs;
 
-	root_task_group.shares = ROOT_TASK_GROUP_LOAD;
-	init_cfs_bandwidth(&root_task_group.cfs_bandwidth, NULL);
+	उगात_task_group.shares = उगात_TASK_GROUP_LOAD;
+	init_cfs_bandwidth(&उगात_task_group.cfs_bandwidth, NULL);
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 #ifdef CONFIG_EXT_GROUP_SCHED
-	scx_tg_init(&root_task_group);
+	scx_tg_init(&उगात_task_group);
 #endif /* CONFIG_EXT_GROUP_SCHED */
 #ifdef CONFIG_RT_GROUP_SCHED
 	ptr += 2 * nr_cpu_ids * sizeof(void **);
 	ptr = (unsigned long)kzalloc(ptr, GFP_NOWAIT);
-	root_task_group.rt_se = (struct sched_rt_entity **)ptr;
+	उगात_task_group.rt_se = (struct sched_rt_entity **)ptr;
 	ptr += nr_cpu_ids * sizeof(void **);
 
-	root_task_group.rt_rq = (struct rt_rq **)ptr;
+	उगात_task_group.rt_rq = (struct rt_rq **)ptr;
 	ptr += nr_cpu_ids * sizeof(void **);
 
 #endif /* CONFIG_RT_GROUP_SCHED */
@@ -8949,16 +8949,16 @@ void __init sched_init(void)
 	init_defrootdomain();
 
 #ifdef CONFIG_RT_GROUP_SCHED
-	init_rt_bandwidth(&root_task_group.rt_bandwidth,
+	init_rt_bandwidth(&उगात_task_group.rt_bandwidth,
 			global_rt_period(), global_rt_runtime());
 #endif /* CONFIG_RT_GROUP_SCHED */
 
 #ifdef CONFIG_CGROUP_SCHED
 	task_group_cache = KMEM_CACHE(task_group, 0);
 
-	list_add(&root_task_group.list, &task_groups);
-	INIT_LIST_HEAD(&root_task_group.children);
-	INIT_LIST_HEAD(&root_task_group.siblings);
+	list_add(&उगात_task_group.list, &task_groups);
+	INIT_LIST_HEAD(&उगात_task_group.children);
+	INIT_LIST_HEAD(&उगात_task_group.siblings);
 	autogroup_init(&init_task);
 #endif /* CONFIG_CGROUP_SCHED */
 
@@ -8995,7 +8995,7 @@ void __init sched_init(void)
 		 * We achieve this by letting root_task_group's tasks sit
 		 * directly in rq->cfs (i.e root_task_group->se[] = NULL).
 		 */
-		init_tg_cfs_entry(&root_task_group, &rq->cfs, NULL, i, NULL);
+		init_tg_cfs_entry(&उगात_task_group, &rq->cfs, NULL, i, NULL);
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 
 #ifdef CONFIG_RT_GROUP_SCHED
@@ -9005,17 +9005,17 @@ void __init sched_init(void)
 		 * yet.
 		 */
 		rq->rt.rt_runtime = global_rt_runtime();
-		init_tg_rt_entry(&root_task_group, &rq->rt, NULL, i, NULL);
+		init_tg_rt_entry(&उगात_task_group, &rq->rt, NULL, i, NULL);
 #endif
 		rq->next_class = &idle_sched_class;
 
 		rq->sd = NULL;
 		rq->rd = NULL;
 		rq->cpu_capacity = SCHED_CAPACITY_SCALE;
-		rq->balance_callback = &balance_push_callback;
+		rq->balance_callback = &balance_इतुलाक_callback;
 		rq->active_balance = 0;
 		rq->next_balance = jiffies;
-		rq->push_cpu = 0;
+		rq->इतुलाक_cpu = 0;
 		rq->cpu = i;
 		rq->online = 0;
 		rq->idle_stamp = 0;
@@ -9024,7 +9024,7 @@ void __init sched_init(void)
 
 		INIT_LIST_HEAD(&rq->cfs_tasks);
 
-		rq_attach_root(rq, &def_root_domain);
+		rq_attach_उगात(rq, &def_उगात_domain);
 #ifdef CONFIG_NO_HZ_COMMON
 		rq->last_blocked_load_update_tick = jiffies;
 		atomic_set(&rq->nohz_flags, 0);
@@ -9046,8 +9046,8 @@ void __init sched_init(void)
 		rq->core_pick = NULL;
 		rq->core_dl_server = NULL;
 		rq->core_enabled = 0;
-		rq->core_tree = RB_ROOT;
-		rq->core_forceidle_count = 0;
+		rq->core_पुनो = RB_उगात;
+		rq->core_forceidle_बिलांग = 0;
 		rq->core_forceidle_occupation = 0;
 		rq->core_forceidle_start = 0;
 		rq->core_pick_in_flight = 0;
@@ -9059,7 +9059,7 @@ void __init sched_init(void)
 		rq->cpu_epoch_next = jiffies;
 #endif
 
-		zalloc_cpumask_var_node(&rq->scratch_mask, GFP_KERNEL, cpu_to_node(i));
+		zalloc_cpumask_var_बुहोल(&rq->scratch_mask, GFP_KERNEL, cpu_to_बुहोल(i));
 	}
 
 	set_load_weight(&init_task, false);
@@ -9092,7 +9092,7 @@ void __init sched_init(void)
 
 	idle_thread_set_boot_cpu();
 
-	balance_push_set(smp_processor_id(), false);
+	balance_इतुलाक_set(smp_processor_id(), false);
 	init_sched_fair_class();
 	init_sched_ext_class();
 
@@ -9107,7 +9107,7 @@ void __init sched_init(void)
 
 #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
 
-void __might_sleep(const char *file, int line)
+void __might_sleep(const char *file, int लिन्या)
 {
 	unsigned int state = get_current_state();
 	/*
@@ -9121,32 +9121,32 @@ void __might_sleep(const char *file, int line)
 			(void *)current->task_state_change,
 			(void *)current->task_state_change);
 
-	__might_resched(file, line, 0);
+	__might_resched(file, लिन्या, 0);
 }
-EXPORT_SYMBOL(__might_sleep);
+EXPORT_सिम्बोलो(__might_sleep);
 
-static void print_preempt_disable_ip(int preempt_offset, unsigned long ip)
+static void इलिम्बाग_preempt_disable_ip(int preempt_offset, unsigned long ip)
 {
 	if (!IS_ENABLED(CONFIG_DEBUG_PREEMPT))
 		return;
 
-	if (preempt_count() == preempt_offset)
+	if (preempt_बिलांग() == preempt_offset)
 		return;
 
 	pr_err("Preemption disabled at:");
-	print_ip_sym(KERN_ERR, ip);
+	इलिम्बाग_ip_sym(KERN_ERR, ip);
 }
 
 static inline bool resched_offsets_ok(unsigned int offsets)
 {
-	unsigned int nested = preempt_count();
+	unsigned int nested = preempt_बिलांग();
 
 	nested += rcu_preempt_depth() << MIGHT_RESCHED_RCU_SHIFT;
 
 	return nested == offsets;
 }
 
-void __might_resched(const char *file, int line, unsigned int offsets)
+void __might_resched(const char *file, int लिन्या, unsigned int offsets)
 {
 	/* Ratelimiting timestamp: */
 	static unsigned long prev_jiffy;
@@ -9157,7 +9157,7 @@ void __might_resched(const char *file, int line, unsigned int offsets)
 	rcu_sleep_check();
 
 	if ((resched_offsets_ok(offsets) && !irqs_disabled() &&
-	     !is_idle_task(current) && !current->non_block_count) ||
+	     !is_idle_task(current) && !current->non_block_बिलांग) ||
 	    system_state == SYSTEM_BOOTING || system_state > SYSTEM_RUNNING ||
 	    oops_in_progress)
 		return;
@@ -9170,11 +9170,11 @@ void __might_resched(const char *file, int line, unsigned int offsets)
 	preempt_disable_ip = get_preempt_disable_ip(current);
 
 	pr_err("BUG: sleeping function called from invalid context at %s:%d\n",
-	       file, line);
+	       file, लिन्या);
 	pr_err("in_atomic(): %d, irqs_disabled(): %d, non_block: %d, pid: %d, name: %s\n",
-	       in_atomic(), irqs_disabled(), current->non_block_count,
+	       in_atomic(), irqs_disabled(), current->non_block_बिलांग,
 	       current->pid, current->comm);
-	pr_err("preempt_count: %x, expected: %x\n", preempt_count(),
+	pr_err("preempt_count: %x, expected: %x\n", preempt_बिलांग(),
 	       offsets & MIGHT_RESCHED_PREEMPT_MASK);
 
 	if (IS_ENABLED(CONFIG_PREEMPT_RCU)) {
@@ -9182,51 +9182,51 @@ void __might_resched(const char *file, int line, unsigned int offsets)
 		       rcu_preempt_depth(), offsets >> MIGHT_RESCHED_RCU_SHIFT);
 	}
 
-	if (task_stack_end_corrupted(current))
+	if (task_सालानसान_end_corrupted(current))
 		pr_emerg("Thread overran stack, or stack corrupted\n");
 
 	debug_show_held_locks(current);
 	if (irqs_disabled())
-		print_irqtrace_events(current);
+		इलिम्बाग_irqtrace_events(current);
 
-	print_preempt_disable_ip(offsets & MIGHT_RESCHED_PREEMPT_MASK,
+	इलिम्बाग_preempt_disable_ip(offsets & MIGHT_RESCHED_PREEMPT_MASK,
 				 preempt_disable_ip);
 
-	dump_stack();
+	dump_सालानसान();
 	add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
 }
-EXPORT_SYMBOL(__might_resched);
+EXPORT_सिम्बोलो(__might_resched);
 
-void __cant_sleep(const char *file, int line)
+void __cant_sleep(const char *file, int लिन्या)
 {
 	static unsigned long prev_jiffy;
 
 	if (irqs_disabled())
 		return;
 
-	if (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
+	if (!IS_ENABLED(CONFIG_PREEMPT_बिलांग))
 		return;
 
-	if (preempt_count())
+	if (preempt_बिलांग())
 		return;
 
 	if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
 		return;
 	prev_jiffy = jiffies;
 
-	printk(KERN_ERR "BUG: assuming atomic context at %s:%d\n", file, line);
+	printk(KERN_ERR "BUG: assuming atomic context at %s:%d\n", file, लिन्या);
 	printk(KERN_ERR "in_atomic(): %d, irqs_disabled(): %d, pid: %d, name: %s\n",
 			in_atomic(), irqs_disabled(),
 			current->pid, current->comm);
 
 	debug_show_held_locks(current);
-	dump_stack();
+	dump_सालानसान();
 	add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
 }
-EXPORT_SYMBOL_GPL(__cant_sleep);
+EXPORT_सिम्बोलो_GPL(__cant_sleep);
 
 # ifdef CONFIG_SMP
-void __cant_migrate(const char *file, int line)
+void __cant_migrate(const char *file, int लिन्या)
 {
 	static unsigned long prev_jiffy;
 
@@ -9236,26 +9236,26 @@ void __cant_migrate(const char *file, int line)
 	if (is_migration_disabled(current))
 		return;
 
-	if (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
+	if (!IS_ENABLED(CONFIG_PREEMPT_बिलांग))
 		return;
 
-	if (preempt_count())
+	if (preempt_बिलांग())
 		return;
 
 	if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
 		return;
 	prev_jiffy = jiffies;
 
-	pr_err("BUG: assuming non migratable context at %s:%d\n", file, line);
+	pr_err("BUG: assuming non migratable context at %s:%d\n", file, लिन्या);
 	pr_err("in_atomic(): %d, irqs_disabled(): %d, migration_disabled() %u pid: %d, name: %s\n",
 	       in_atomic(), irqs_disabled(), is_migration_disabled(current),
 	       current->pid, current->comm);
 
 	debug_show_held_locks(current);
-	dump_stack();
+	dump_सालानसान();
 	add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
 }
-EXPORT_SYMBOL_GPL(__cant_migrate);
+EXPORT_सिम्बोलो_GPL(__cant_migrate);
 # endif /* CONFIG_SMP */
 #endif /* CONFIG_DEBUG_ATOMIC_SLEEP */
 
@@ -9508,7 +9508,7 @@ cpu_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
 
 	if (!parent) {
 		/* This is early initialization for the top cgroup */
-		return &root_task_group.css;
+		return &उगात_task_group.css;
 	}
 
 	tg = sched_create_group(parent);
@@ -9601,7 +9601,7 @@ static void cpu_cgroup_cancel_attach(struct cgroup_taskset *tset)
 #ifdef CONFIG_UCLAMP_TASK_GROUP
 static void cpu_util_update_eff(struct cgroup_subsys_state *css)
 {
-	struct cgroup_subsys_state *top_css = css;
+	struct cgroup_subsys_state *इताअस_css = css;
 	struct uclamp_se *uc_parent = NULL;
 	struct uclamp_se *uc_se = NULL;
 	unsigned int eff[UCLAMP_CNT];
@@ -9611,17 +9611,17 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
 	lockdep_assert_held(&uclamp_mutex);
 	WARN_ON_ONCE(!rcu_read_lock_held());
 
-	css_for_each_descendant_pre(css, top_css) {
+	css_for_each_descendant_pre(css, इताअस_css) {
 		uc_parent = css_tg(css)->parent
 			? css_tg(css)->parent->uclamp : NULL;
 
 		for_each_clamp_id(clamp_id) {
 			/* Assume effective clamps matches requested clamps */
-			eff[clamp_id] = css_tg(css)->uclamp_req[clamp_id].value;
+			eff[clamp_id] = css_tg(css)->uclamp_req[clamp_id].हालागा;
 			/* Cap effective clamps with parent's effective clamps */
 			if (uc_parent &&
-			    eff[clamp_id] > uc_parent[clamp_id].value) {
-				eff[clamp_id] = uc_parent[clamp_id].value;
+			    eff[clamp_id] > uc_parent[clamp_id].हालागा) {
+				eff[clamp_id] = uc_parent[clamp_id].हालागा;
 			}
 		}
 		/* Ensure protection is always capped by limit */
@@ -9631,9 +9631,9 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
 		clamps = 0x0;
 		uc_se = css_tg(css)->uclamp;
 		for_each_clamp_id(clamp_id) {
-			if (eff[clamp_id] == uc_se[clamp_id].value)
+			if (eff[clamp_id] == uc_se[clamp_id].हालागा)
 				continue;
-			uc_se[clamp_id].value = eff[clamp_id];
+			uc_se[clamp_id].हालागा = eff[clamp_id];
 			uc_se[clamp_id].bucket_id = uclamp_bucket_id(eff[clamp_id]);
 			clamps |= (0x1 << clamp_id);
 		}
@@ -9707,7 +9707,7 @@ static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
 	guard(rcu)();
 
 	tg = css_tg(of_css(of));
-	if (tg->uclamp_req[clamp_id].value != req.util)
+	if (tg->uclamp_req[clamp_id].हालागा != req.util)
 		uclamp_se_set(&tg->uclamp_req[clamp_id], req.util, false);
 
 	/*
@@ -9736,7 +9736,7 @@ static ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
 	return cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MAX);
 }
 
-static inline void cpu_uclamp_print(struct seq_file *sf,
+static inline void cpu_uclamp_इलिम्बाग(struct seq_file *sf,
 				    enum uclamp_id clamp_id)
 {
 	struct task_group *tg;
@@ -9746,7 +9746,7 @@ static inline void cpu_uclamp_print(struct seq_file *sf,
 
 	scoped_guard (rcu) {
 		tg = css_tg(seq_css(sf));
-		util_clamp = tg->uclamp_req[clamp_id].value;
+		util_clamp = tg->uclamp_req[clamp_id].हालागा;
 	}
 
 	if (util_clamp == SCHED_CAPACITY_SCALE) {
@@ -9761,13 +9761,13 @@ static inline void cpu_uclamp_print(struct seq_file *sf,
 
 static int cpu_uclamp_min_show(struct seq_file *sf, void *v)
 {
-	cpu_uclamp_print(sf, UCLAMP_MIN);
+	cpu_uclamp_इलिम्बाग(sf, UCLAMP_MIN);
 	return 0;
 }
 
 static int cpu_uclamp_max_show(struct seq_file *sf, void *v)
 {
-	cpu_uclamp_print(sf, UCLAMP_MAX);
+	cpu_uclamp_इलिम्बाग(sf, UCLAMP_MAX);
 	return 0;
 }
 #endif /* CONFIG_UCLAMP_TASK_GROUP */
@@ -9994,7 +9994,7 @@ static int __cfs_schedulable(struct task_group *tg, u64 period, u64 quota)
 	}
 
 	guard(rcu)();
-	return walk_tg_tree(tg_cfs_schedulable_down, tg_nop, &data);
+	return walk_tg_पुनो(tg_cfs_schedulable_down, tg_nop, &data);
 }
 
 static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
@@ -10006,7 +10006,7 @@ static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
 	seq_printf(sf, "nr_throttled %d\n", cfs_b->nr_throttled);
 	seq_printf(sf, "throttled_time %llu\n", cfs_b->throttled_time);
 
-	if (schedstat_enabled() && tg != &root_task_group) {
+	if (schedstat_enabled() && tg != &उगात_task_group) {
 		struct sched_statistics *stats;
 		u64 ws = 0;
 		int i;
@@ -10088,7 +10088,7 @@ static int tg_set_bandwidth(struct task_group *tg,
 	const u64 max_usec = U64_MAX / NSEC_PER_USEC;
 	int ret = 0;
 
-	if (tg == &root_task_group)
+	if (tg == &उगात_task_group)
 		return -EINVAL;
 
 	/* Values should survive translation to nsec */
@@ -10272,13 +10272,13 @@ static struct cftype cpu_legacy_files[] = {
 #ifdef CONFIG_UCLAMP_TASK_GROUP
 	{
 		.name = "uclamp.min",
-		.flags = CFTYPE_NOT_ON_ROOT,
+		.flags = CFTYPE_NOT_ON_उगात,
 		.seq_show = cpu_uclamp_min_show,
 		.write = cpu_uclamp_min_write,
 	},
 	{
 		.name = "uclamp.max",
-		.flags = CFTYPE_NOT_ON_ROOT,
+		.flags = CFTYPE_NOT_ON_उगात,
 		.seq_show = cpu_uclamp_max_show,
 		.write = cpu_uclamp_max_write,
 	},
@@ -10302,9 +10302,9 @@ static struct cftype rt_group_files[] = {
 };
 
 # ifdef CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED
-DEFINE_STATIC_KEY_FALSE(rt_group_sched);
+DEFINE_STATIC_सुसि_FALSE(rt_group_sched);
 # else
-DEFINE_STATIC_KEY_TRUE(rt_group_sched);
+DEFINE_STATIC_सुसि_TRUE(rt_group_sched);
 # endif
 
 static int __init setup_rt_group_sched(char *str)
@@ -10443,7 +10443,7 @@ static int cpu_weight_nice_write_s64(struct cgroup_subsys_state *css,
 }
 #endif /* CONFIG_GROUP_SCHED_WEIGHT */
 
-static void __maybe_unused cpu_period_quota_print(struct seq_file *sf,
+static void __maybe_unused cpu_period_quota_इलिम्बाग(struct seq_file *sf,
 						  long period, long quota)
 {
 	if (quota < 0)
@@ -10480,7 +10480,7 @@ static int cpu_max_show(struct seq_file *sf, void *v)
 	u64 period_us, quota_us;
 
 	tg_bandwidth(tg, &period_us, &quota_us, NULL);
-	cpu_period_quota_print(sf, period_us, quota_us);
+	cpu_period_quota_इलिम्बाग(sf, period_us, quota_us);
 	return 0;
 }
 
@@ -10503,19 +10503,19 @@ static struct cftype cpu_files[] = {
 #ifdef CONFIG_GROUP_SCHED_WEIGHT
 	{
 		.name = "weight",
-		.flags = CFTYPE_NOT_ON_ROOT,
+		.flags = CFTYPE_NOT_ON_उगात,
 		.read_u64 = cpu_weight_read_u64,
 		.write_u64 = cpu_weight_write_u64,
 	},
 	{
 		.name = "weight.nice",
-		.flags = CFTYPE_NOT_ON_ROOT,
+		.flags = CFTYPE_NOT_ON_उगात,
 		.read_s64 = cpu_weight_nice_read_s64,
 		.write_s64 = cpu_weight_nice_write_s64,
 	},
 	{
 		.name = "idle",
-		.flags = CFTYPE_NOT_ON_ROOT,
+		.flags = CFTYPE_NOT_ON_उगात,
 		.read_s64 = cpu_idle_read_s64,
 		.write_s64 = cpu_idle_write_s64,
 	},
@@ -10523,13 +10523,13 @@ static struct cftype cpu_files[] = {
 #ifdef CONFIG_GROUP_SCHED_BANDWIDTH
 	{
 		.name = "max",
-		.flags = CFTYPE_NOT_ON_ROOT,
+		.flags = CFTYPE_NOT_ON_उगात,
 		.seq_show = cpu_max_show,
 		.write = cpu_max_write,
 	},
 	{
 		.name = "max.burst",
-		.flags = CFTYPE_NOT_ON_ROOT,
+		.flags = CFTYPE_NOT_ON_उगात,
 		.read_u64 = cpu_burst_read_u64,
 		.write_u64 = cpu_burst_write_u64,
 	},
@@ -10537,13 +10537,13 @@ static struct cftype cpu_files[] = {
 #ifdef CONFIG_UCLAMP_TASK_GROUP
 	{
 		.name = "uclamp.min",
-		.flags = CFTYPE_NOT_ON_ROOT,
+		.flags = CFTYPE_NOT_ON_उगात,
 		.seq_show = cpu_uclamp_min_show,
 		.write = cpu_uclamp_min_write,
 	},
 	{
 		.name = "uclamp.max",
-		.flags = CFTYPE_NOT_ON_ROOT,
+		.flags = CFTYPE_NOT_ON_उगात,
 		.seq_show = cpu_uclamp_max_show,
 		.write = cpu_uclamp_max_write,
 	},
@@ -10630,9 +10630,9 @@ const u32 sched_prio_to_wmult[40] = {
  /*  15 */ 119304647, 148102320, 186737708, 238609294, 286331153,
 };
 
-void call_trace_sched_update_nr_running(struct rq *rq, int count)
+void call_trace_sched_update_nr_running(struct rq *rq, int बिलांग)
 {
-        trace_sched_update_nr_running_tp(rq, count);
+        trace_sched_update_nr_running_tp(rq, बिलांग);
 }
 
 #ifdef CONFIG_SCHED_MM_CID
@@ -10777,7 +10777,7 @@ static void __mm_update_max_cids(struct mm_mm_cid *mc)
 	opt_cids = min(mc->nr_cpus_allowed, mc->users);
 
 	/* Adjust the maximum CIDs to +25% limited by the number of possible CPUs */
-	max_cids = min(opt_cids + (opt_cids / 4), num_possible_cpus());
+	max_cids = min(opt_cids + (opt_cids / 4), नुमेरो_possible_cpus());
 	WRITE_ONCE(mc->max_cids, max_cids);
 }
 
@@ -10787,7 +10787,7 @@ static inline unsigned int mm_cid_calc_pcpu_thrs(struct mm_mm_cid *mc)
 
 	opt_cids = min(mc->nr_cpus_allowed, mc->users);
 	/* Has to be at least 1 because 0 indicates PCPU mode off */
-	return max(min(opt_cids - opt_cids / 4, num_possible_cpus() / 2), 1);
+	return max(min(opt_cids - opt_cids / 4, नुमेरो_possible_cpus() / 2), 1);
 }
 
 static bool mm_update_max_cids(struct mm_struct *mm)
@@ -10961,7 +10961,7 @@ static void mm_cid_fixup_tasks_to_cpus(void)
 
 	lockdep_assert_held(&mm->mm_cid.mutex);
 
-	hlist_for_each_entry(t, &mm->mm_cid.user_list, mm_cid.node) {
+	hlist_for_each_entry(t, &mm->mm_cid.user_list, mm_cid.बुहोल) {
 		/* Current has already transferred before invoking the fixup. */
 		if (t != current)
 			mm_cid_fixup_task_to_cpu(t, mm);
@@ -10975,7 +10975,7 @@ static bool sched_mm_cid_add_user(struct task_struct *t, struct mm_struct *mm)
 	lockdep_assert_held(&mm->mm_cid.lock);
 
 	t->mm_cid.active = 1;
-	hlist_add_head(&t->mm_cid.node, &mm->mm_cid.user_list);
+	hlist_add_head(&t->mm_cid.बुहोल, &mm->mm_cid.user_list);
 	mm->mm_cid.users++;
 	return mm_update_max_cids(mm);
 }
@@ -11033,7 +11033,7 @@ static bool sched_mm_cid_remove_user(struct task_struct *t)
 	/* Clear the transition bit */
 	t->mm_cid.cid = cid_from_transit_cid(t->mm_cid.cid);
 	mm_unset_cid_on_task(t);
-	hlist_del_init(&t->mm_cid.node);
+	hlist_del_init(&t->mm_cid.बुहोल);
 	t->mm->mm_cid.users--;
 	return mm_update_max_cids(t->mm);
 }
@@ -11178,7 +11178,7 @@ void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
 	INIT_WORK(&mm->mm_cid.work, mm_cid_work_fn);
 	INIT_HLIST_HEAD(&mm->mm_cid.user_list);
 	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
-	bitmap_zero(mm_cidmask(mm), num_possible_cpus());
+	bitmap_zero(mm_cidmask(mm), नुमेरो_possible_cpus());
 }
 #else /* CONFIG_SCHED_MM_CID */
 static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpumask *affmsk) { }
@@ -11281,9 +11281,9 @@ void sched_change_end(struct sched_change_ctx *ctx)
 }
 
 #ifdef CONFIG_PREFERRED_CPU
-static DEFINE_PER_CPU(struct cpu_stop_work, npc_push_task_work);
+static DEFINE_PER_CPU(struct cpu_stop_work, npc_इतुलाक_task_work);
 
-static int sched_non_preferred_cpu_push_stop(void *arg)
+static int sched_non_preferred_cpu_इतुलाक_stop(void *arg)
 {
 	struct task_struct *p = arg;
 	struct rq *rq = this_rq();
@@ -11292,7 +11292,7 @@ static int sched_non_preferred_cpu_push_stop(void *arg)
 
 	if (cpu_preferred(rq->cpu)) {
 		scoped_guard(rq_lock_irqsave, rq)
-			rq->npc_push_work_pending = false;
+			rq->npc_इतुलाक_work_pending = false;
 		put_task_struct(p);
 		return 0;
 	}
@@ -11308,7 +11308,7 @@ static int sched_non_preferred_cpu_push_stop(void *arg)
 		cpu = select_fallback_rq(rq->cpu, p);
 		context_unsafe_alias(rq);
 		rq_lock(rq, &rf);
-		rq->npc_push_work_pending = false;
+		rq->npc_इतुलाक_work_pending = false;
 		update_rq_clock(rq);
 
 		if (task_rq(p) == rq && task_on_rq_queued(p)) {
@@ -11339,28 +11339,28 @@ static int sched_non_preferred_cpu_push_stop(void *arg)
  *
  * If task is affined only on non-preferred CPUs, no point in moving it out.
  */
-void sched_push_current_non_preferred_cpu(struct rq *rq)
+void sched_इतुलाक_current_non_preferred_cpu(struct rq *rq)
 {
-	struct task_struct *push_task = rq->curr;
+	struct task_struct *इतुलाक_task = rq->curr;
 
 	scoped_guard(rq_lock, rq) {
 		/* Push the task if its explicit affinity allows */
-		if (!task_can_migrate_to_preferred(push_task, rq->cpu))
+		if (!task_can_migrate_to_preferred(इतुलाक_task, rq->cpu))
 			return;
 
 		/* There is already a stopper thread. Don't race with it. */
-		if (rq->npc_push_work_pending)
+		if (rq->npc_इतुलाक_work_pending)
 			return;
 
-		if (is_migration_disabled(push_task))
+		if (is_migration_disabled(इतुलाक_task))
 			return;
 
-		rq->npc_push_work_pending = true;
+		rq->npc_इतुलाक_work_pending = true;
 	}
 
 	/* sched_tick runs with interrupts disabled. */
-	get_task_struct(push_task);
-	stop_one_cpu_nowait(rq->cpu, sched_non_preferred_cpu_push_stop,
-			    push_task, this_cpu_ptr(&npc_push_task_work));
+	get_task_struct(इतुलाक_task);
+	stop_one_cpu_nowait(rq->cpu, sched_non_preferred_cpu_इतुलाक_stop,
+			    इतुलाक_task, this_cpu_ptr(&npc_इतुलाक_task_work));
 }
 #endif

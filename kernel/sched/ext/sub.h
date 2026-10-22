@@ -14,8 +14,8 @@
 
 #ifdef CONFIG_EXT_SUB_SCHED
 
-struct scx_sched *scx_skip_subtree_pre(struct scx_sched *pos, struct scx_sched *root);
-struct scx_sched *scx_next_descendant_pre(struct scx_sched *pos, struct scx_sched *root);
+struct scx_sched *scx_skip_subtree_pre(struct scx_sched *pos, struct scx_sched *उगात);
+struct scx_sched *scx_next_descendant_pre(struct scx_sched *pos, struct scx_sched *उगात);
 void scx_set_task_sched(struct task_struct *p, struct scx_sched *sch);
 struct cgroup *sch_cgroup(struct scx_sched *sch);
 void set_cgroup_sched(struct cgroup *cgrp, struct scx_sched *sch);
@@ -27,7 +27,7 @@ void scx_sub_enable_workfn(struct kthread_work *work);
 bool scx_bpf_sub_dispatch(u64 cgroup_id, const struct bpf_prog_aux *aux);
 void scx_free_pshards(struct scx_sched *sch);
 s32 scx_alloc_pshards(struct scx_sched *sch);
-void scx_init_root_caps(struct scx_sched *sch);
+void scx_init_उगात_caps(struct scx_sched *sch);
 void scx_process_sync_ecaps(struct rq *rq, struct task_struct *prev);
 void scx_unbypass_replay_ecaps(struct rq *rq, struct scx_sched *sch);
 void scx_online_ecaps(struct rq *rq);
@@ -74,8 +74,8 @@ static inline void scx_dec_has_subs(struct scx_sched *sch)
 
 #else	/* CONFIG_EXT_SUB_SCHED */
 
-static inline struct scx_sched *scx_next_descendant_pre(struct scx_sched *pos, struct scx_sched *root) { return pos ? NULL : root; }
-static inline struct scx_sched *scx_skip_subtree_pre(struct scx_sched *pos, struct scx_sched *root) { return NULL; }
+static inline struct scx_sched *scx_next_descendant_pre(struct scx_sched *pos, struct scx_sched *उगात) { return pos ? NULL : उगात; }
+static inline struct scx_sched *scx_skip_subtree_pre(struct scx_sched *pos, struct scx_sched *उगात) { return NULL; }
 static inline void scx_set_task_sched(struct task_struct *p, struct scx_sched *sch) {}
 static inline struct cgroup *sch_cgroup(struct scx_sched *sch) { return NULL; }
 static inline const char *sch_cgrp_path(struct scx_sched *sch) { return "/"; }
@@ -84,7 +84,7 @@ static inline void drain_descendants(struct scx_sched *sch) { }
 static inline void scx_sub_disable(struct scx_sched *sch) { }
 static inline void scx_free_pshards(struct scx_sched *sch) {}
 static inline s32 scx_alloc_pshards(struct scx_sched *sch) { return 0; }
-static inline void scx_init_root_caps(struct scx_sched *sch) {}
+static inline void scx_init_उगात_caps(struct scx_sched *sch) {}
 static inline void scx_process_sync_ecaps(struct rq *rq, struct task_struct *prev) {}
 static inline void scx_unbypass_replay_ecaps(struct rq *rq, struct scx_sched *sch) {}
 static inline void scx_online_ecaps(struct rq *rq) {}
@@ -114,9 +114,9 @@ static inline void scx_dec_has_subs(struct scx_sched *sch) {}
  * node to be visited. Must be called with scx_enable_mutex, scx_sched_lock, or
  * RCU read lock.
  */
-#define scx_for_each_descendant_pre(pos, root)					\
-	for ((pos) = scx_next_descendant_pre(NULL, (root)); (pos);		\
-	     (pos) = scx_next_descendant_pre((pos), (root)))
+#define scx_for_each_descendant_pre(pos, उगात)					\
+	for ((pos) = scx_next_descendant_pre(NULL, (उगात)); (pos);		\
+	     (pos) = scx_next_descendant_pre((pos), (उगात)))
 
 #ifdef CONFIG_EXT_SUB_SCHED
 

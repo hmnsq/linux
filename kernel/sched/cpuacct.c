@@ -46,10 +46,10 @@ static inline struct cpuacct *parent_ca(struct cpuacct *ca)
 	return css_ca(ca->css.parent);
 }
 
-static DEFINE_PER_CPU(u64, root_cpuacct_cpuusage);
-static struct cpuacct root_cpuacct = {
+static DEFINE_PER_CPU(u64, उगात_cpuacct_cpuusage);
+static struct cpuacct उगात_cpuacct = {
 	.cpustat	= &kernel_cpustat,
-	.cpuusage	= &root_cpuacct_cpuusage,
+	.cpuusage	= &उगात_cpuacct_cpuusage,
 };
 
 /* Create a new CPU accounting group */
@@ -59,7 +59,7 @@ cpuacct_css_alloc(struct cgroup_subsys_state *parent_css)
 	struct cpuacct *ca;
 
 	if (!parent_css)
-		return &root_cpuacct.css;
+		return &उगात_cpuacct.css;
 
 	ca = kzalloc_obj(*ca);
 	if (!ca)
@@ -140,7 +140,7 @@ static void cpuacct_cpuusage_write(struct cpuacct *ca, int cpu)
 	u64 *cpustat = per_cpu_ptr(ca->cpustat, cpu)->cpustat;
 
 	/* Don't allow to reset global kernel_cpustat */
-	if (ca == &root_cpuacct)
+	if (ca == &उगात_cpuacct)
 		return;
 
 #ifndef CONFIG_64BIT
@@ -353,7 +353,7 @@ void cpuacct_account_field(struct task_struct *tsk, int index, u64 val)
 {
 	struct cpuacct *ca;
 
-	for (ca = task_ca(tsk); ca != &root_cpuacct; ca = parent_ca(ca))
+	for (ca = task_ca(tsk); ca != &उगात_cpuacct; ca = parent_ca(ca))
 		__this_cpu_add(ca->cpustat->cpustat[index], val);
 }
 

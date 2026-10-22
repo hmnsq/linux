@@ -26,7 +26,7 @@
  * On while any sub-scheduler exists so that a root-only system doesn't pay for
  * the sub-sched portions of hot paths. See scx_has_subs().
  */
-DEFINE_STATIC_KEY_FALSE(__scx_has_subs);
+DEFINE_STATIC_सुसि_FALSE(__scx_has_subs);
 
 /* latched at root enable before any rescue runs */
 static s32 scx_rescue_bw_1024;
@@ -44,7 +44,7 @@ static unsigned long scx_rescue_overload_after;
  * return @pos's next sibling, or the closest ancestor's next sibling, or NULL
  * if @pos's subtree is the last under @root. Same locking rules.
  */
-struct scx_sched *scx_skip_subtree_pre(struct scx_sched *pos, struct scx_sched *root)
+struct scx_sched *scx_skip_subtree_pre(struct scx_sched *pos, struct scx_sched *उगात)
 {
 	struct scx_sched *next;
 
@@ -52,7 +52,7 @@ struct scx_sched *scx_skip_subtree_pre(struct scx_sched *pos, struct scx_sched *
 		       lockdep_is_held(&scx_sched_lock) ||
 		       rcu_read_lock_any_held());
 
-	while (pos != root) {
+	while (pos != उगात) {
 		next = list_next_or_null_rcu(&scx_parent(pos)->children, &pos->sibling,
 					     struct scx_sched, sibling);
 		if (next)
@@ -71,7 +71,7 @@ struct scx_sched *scx_skip_subtree_pre(struct scx_sched *pos, struct scx_sched *
  * visit for pre-order traversal of @root's descendants. @root is included in
  * the iteration and the first node to be visited.
  */
-struct scx_sched *scx_next_descendant_pre(struct scx_sched *pos, struct scx_sched *root)
+struct scx_sched *scx_next_descendant_pre(struct scx_sched *pos, struct scx_sched *उगात)
 {
 	struct scx_sched *next;
 
@@ -81,7 +81,7 @@ struct scx_sched *scx_next_descendant_pre(struct scx_sched *pos, struct scx_sche
 
 	/* if first iteration, visit @root */
 	if (!pos)
-		return root;
+		return उगात;
 
 	/* visit the first child if exists */
 	next = list_first_or_null_rcu(&pos->children, struct scx_sched, sibling);
@@ -89,7 +89,7 @@ struct scx_sched *scx_next_descendant_pre(struct scx_sched *pos, struct scx_sche
 		return next;
 
 	/* no child, visit my or the closest ancestor's next sibling */
-	return scx_skip_subtree_pre(pos, root);
+	return scx_skip_subtree_pre(pos, उगात);
 }
 
 static struct scx_sched *scx_find_sub_sched(u64 cgroup_id)
@@ -128,7 +128,7 @@ static void free_pshard(struct scx_pshard *pshard)
 	if (cu->cmask_arena_out)
 		scx_arena_free(pshard->sch, cu->cmask_arena_out,
 			       struct_size_t(struct scx_cmask, bits,
-					     SCX_CMASK_NR_WORDS(pshard->nr_cids)));
+					     SCX_CMASK_NR_मगा_सालिता(pshard->nr_cids)));
 	kfree(pshard);
 }
 
@@ -143,18 +143,18 @@ void scx_free_pshards(struct scx_sched *sch)
 	kfree(sch->pshard);
 }
 
-static struct scx_pshard *alloc_pshard(struct scx_sched *sch, s32 shard_idx, s32 node)
+static struct scx_pshard *alloc_pshard(struct scx_sched *sch, s32 shard_idx, s32 बुहोल)
 {
 	const struct scx_cid_shard *shard =
 		&rcu_dereference_protected(scx_cid_shard_ranges,
 					   lockdep_is_held(&scx_enable_mutex))[shard_idx];
 	size_t cmask_size = struct_size_t(struct scx_cmask, bits,
-					  SCX_CMASK_NR_WORDS(shard->nr_cids));
+					  SCX_CMASK_NR_मगा_सालिता(shard->nr_cids));
 	struct scx_pshard *pshard;
 	struct scx_caps_updated *cu;
 	s32 i;
 
-	pshard = kzalloc_node(sizeof(*pshard), GFP_KERNEL, node);
+	pshard = kzalloc_बुहोल(sizeof(*pshard), GFP_KERNEL, बुहोल);
 	if (!pshard)
 		return NULL;
 
@@ -168,7 +168,7 @@ static struct scx_pshard *alloc_pshard(struct scx_sched *sch, s32 shard_idx, s32
 
 	cu = &pshard->caps_updated;
 	raw_spin_lock_init(&cu->lock);
-	INIT_LIST_HEAD(&cu->node_in_flight);
+	INIT_LIST_HEAD(&cu->बुहोल_in_flight);
 	__scx_cmask_init(&cu->cmask, shard->base_cid, shard->nr_cids, SCX_CID_SHARD_MAX_CPUS);
 
 	cu->cmask_arena_out = scx_arena_alloc(sch, cmask_size);
@@ -185,13 +185,13 @@ static struct scx_pshard *alloc_pshard(struct scx_sched *sch, s32 shard_idx, s32
 s32 scx_alloc_pshards(struct scx_sched *sch)
 {
 	struct scx_pshard **pshard;
-	s32 *shard_node;
+	s32 *shard_बुहोल;
 	s32 si;
 
 	if (!sch->is_cid_type || !sch->arena_pool)
 		return 0;
 
-	shard_node = rcu_dereference_protected(scx_shard_node,
+	shard_बुहोल = rcu_dereference_protected(scx_shard_बुहोल,
 					       lockdep_is_held(&scx_enable_mutex));
 
 	pshard = kzalloc_objs(pshard[0], scx_nr_cid_shards);
@@ -199,7 +199,7 @@ s32 scx_alloc_pshards(struct scx_sched *sch)
 		return -ENOMEM;
 
 	for (si = 0; si < scx_nr_cid_shards; si++) {
-		pshard[si] = alloc_pshard(sch, si, shard_node[si]);
+		pshard[si] = alloc_pshard(sch, si, shard_बुहोल[si]);
 		if (!pshard[si]) {
 			while (--si >= 0)
 				free_pshard(pshard[si]);
@@ -224,7 +224,7 @@ s32 scx_alloc_pshards(struct scx_sched *sch)
  * Seed the root's caps fully. Root owns all cids on all caps at enable time.
  * Children acquire caps via scx_bpf_sub_grant().
  */
-void scx_init_root_caps(struct scx_sched *sch)
+void scx_init_उगात_caps(struct scx_sched *sch)
 {
 	s32 si, i;
 
@@ -479,7 +479,7 @@ static void scx_rescue_check_overload(struct rq *rq)
 	lockdep_assert_rq_held(rq);
 
 	p = list_first_entry_or_null(&rq->scx.rescue.dsq.list, struct task_struct,
-				     scx.dsq_list.node);
+				     scx.dsq_list.बुहोल);
 	if (!p)
 		return;
 
@@ -552,7 +552,7 @@ static void scx_rescue_timerfn(struct timer_list *timer)
 
 		/* there's enough budget to start rescuing the next one */
 		p = list_first_entry(&rq->scx.rescue.dsq.list, struct task_struct,
-				     scx.dsq_list.node);
+				     scx.dsq_list.बुहोल);
 		scx_task_unlink_from_dsq(p, &rq->scx.rescue.dsq);
 		scx_rescue_admit(rq, p, slice);
 		scx_move_local_task_to_local_dsq(scx_task_sched(p), p,
@@ -590,7 +590,7 @@ void scx_rescue_flush(struct rq *rq)
 		scx_task_slice_ended(rq, rq->scx.rescue.curr);
 
 	/* and flush out all pending ones */
-	list_for_each_entry_safe(p, n, &rq->scx.rescue.dsq.list, scx.dsq_list.node) {
+	list_for_each_entry_safe(p, n, &rq->scx.rescue.dsq.list, scx.dsq_list.बुहोल) {
 		scx_task_unlink_from_dsq(p, &rq->scx.rescue.dsq);
 		scx_move_local_task_to_local_dsq(scx_task_sched(p), p,
 						 SCX_ENQ_IGNORE_CAPS, rq);
@@ -603,7 +603,7 @@ void scx_rescue_dump(struct seq_buf *s, struct rq *rq)
 {
 	struct task_struct *p = rq->scx.rescue.curr;
 
-	scx_dump_line(s, "          rescue=%u budget=%lldus rescuing=%s[%d]",
+	scx_dump_लिन्या(s, "          rescue=%u budget=%lldus rescuing=%s[%d]",
 		      rq->scx.rescue.dsq.nr,
 		      div_s64(rq->scx.rescue.budget, NSEC_PER_USEC),
 		      p ? p->comm : "none", p ? p->pid : -1);
@@ -792,7 +792,7 @@ void scx_reenq_reject(struct rq *rq)
 	 * Move to a private list so a task re-rejected by the
 	 * scx_do_enqueue_task() below isn't revisited this round.
 	 */
-	list_for_each_entry_safe(p, n, &rq->scx.reject_dsq.list, scx.dsq_list.node) {
+	list_for_each_entry_safe(p, n, &rq->scx.reject_dsq.list, scx.dsq_list.बुहोल) {
 		/* migration_pending tasks should have bypassed to local DSQ */
 		if (WARN_ON_ONCE(p->migration_pending))
 			continue;
@@ -804,11 +804,11 @@ void scx_reenq_reject(struct rq *rq)
 			p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
 		p->scx.flags |= SCX_TASK_REENQ_CAP;
 
-		list_add_tail(&p->scx.dsq_list.node, &tasks);
+		list_add_tail(&p->scx.dsq_list.बुहोल, &tasks);
 	}
 
-	list_for_each_entry_safe(p, n, &tasks, scx.dsq_list.node) {
-		list_del_init(&p->scx.dsq_list.node);
+	list_for_each_entry_safe(p, n, &tasks, scx.dsq_list.बुहोल) {
+		list_del_init(&p->scx.dsq_list.बुहोल);
 
 		scx_do_enqueue_task(rq, p, SCX_ENQ_REENQ, -1);
 
@@ -825,8 +825,8 @@ static void caps_updated_record(struct scx_pshard *ps, const struct scx_cmask *c
 	guard(raw_spinlock)(&cu->lock);
 	scx_cmask_or(&cu->cmask, cids);
 	cu->caps |= caps;
-	if (list_empty(&cu->node_in_flight))
-		list_add_tail(&cu->node_in_flight, to_deliver);
+	if (list_empty(&cu->बुहोल_in_flight))
+		list_add_tail(&cu->बुहोल_in_flight, to_deliver);
 }
 
 /* deliver queued caps_updated callbacks, see struct scx_caps_updated */
@@ -834,7 +834,7 @@ static void caps_updated_deliver(struct list_head *to_deliver)
 {
 	struct scx_caps_updated *cu, *tmp;
 
-	list_for_each_entry_safe(cu, tmp, to_deliver, node_in_flight) {
+	list_for_each_entry_safe(cu, tmp, to_deliver, बुहोल_in_flight) {
 		struct scx_pshard *ps = container_of(cu, struct scx_pshard, caps_updated);
 		struct scx_sched *sch = ps->sch;
 
@@ -860,7 +860,7 @@ static void caps_updated_deliver(struct list_head *to_deliver)
 					scx_cmask_clear(&cu->cmask);
 					cu->caps = 0;
 				} else {
-					list_del_init(&cu->node_in_flight);
+					list_del_init(&cu->बुहोल_in_flight);
 				}
 			}
 			if (!caps)
@@ -889,8 +889,8 @@ static void scx_sub_seed_caps(struct scx_sched *sch)
 		struct scx_caps_updated *cu = &ps->caps_updated;
 
 		scoped_guard (raw_spinlock, &cu->lock) {
-			if (cu->caps && list_empty(&cu->node_in_flight))
-				list_add_tail(&cu->node_in_flight, &to_deliver);
+			if (cu->caps && list_empty(&cu->बुहोल_in_flight))
+				list_add_tail(&cu->बुहोल_in_flight, &to_deliver);
 		}
 	}
 	caps_updated_deliver(&to_deliver);
@@ -928,21 +928,21 @@ static void queue_sync_ecaps(struct scx_sched *sch, s32 cid)
 	smp_mb();
 
 	/* @cid's pshard->lock excludes concurrent queueing attempts */
-	if (llist_on_list(&pcpu->ecaps_to_sync_node))
+	if (llist_on_list(&pcpu->ecaps_to_sync_बुहोल))
 		return;
-	if (llist_add(&pcpu->ecaps_to_sync_node, &cpu_rq(cpu)->scx.ecaps_to_sync))
+	if (llist_add(&pcpu->ecaps_to_sync_बुहोल, &cpu_rq(cpu)->scx.ecaps_to_sync))
 		scx_kick_cpu(sch->ancestors[0], cpu, 0);
 }
 
 /* discard @rq's queued ecaps syncs */
 static void discard_queued_syncs(struct rq *rq)
 {
-	struct llist_node *pos, *tmp;
+	struct llist_बुहोल *pos, *tmp;
 
 	lockdep_assert_rq_held(rq);
 
 	llist_for_each_safe(pos, tmp, llist_del_all(&rq->scx.ecaps_to_sync))
-		init_llist_node(pos);
+		init_llist_बुहोल(pos);
 }
 
 /**
@@ -962,7 +962,7 @@ void scx_process_sync_ecaps(struct rq *rq, struct task_struct *prev)
 {
 	s32 cpu = cpu_of(rq);
 	s32 cid, shard;
-	struct llist_node *batch, *pos, *tmp;
+	struct llist_बुहोल *batch, *pos, *tmp;
 	u64 lost_all = 0;
 
 	lockdep_assert_rq_held(rq);
@@ -990,11 +990,11 @@ void scx_process_sync_ecaps(struct rq *rq, struct task_struct *prev)
 	batch = llist_del_all(&rq->scx.ecaps_to_sync);
 	llist_for_each_safe(pos, tmp, batch) {
 		struct scx_sched_pcpu *pcpu =
-			container_of(pos, struct scx_sched_pcpu, ecaps_to_sync_node);
+			container_of(pos, struct scx_sched_pcpu, ecaps_to_sync_बुहोल);
 		struct scx_pshard *ps = pcpu->sch->pshard[shard];
 		u64 old, ecaps, lost, gained;
 
-		init_llist_node(pos);
+		init_llist_बुहोल(pos);
 
 		/* pairs with smp_mb() in queue_sync_ecaps(), see there */
 		smp_mb();
@@ -1096,7 +1096,7 @@ void scx_unbypass_replay_ecaps(struct rq *rq, struct scx_sched *sch)
  */
 void scx_online_ecaps(struct rq *rq)
 {
-	struct scx_sched *root, *pos;
+	struct scx_sched *उगात, *pos;
 	s32 cid, shard;
 
 	/*
@@ -1110,11 +1110,11 @@ void scx_online_ecaps(struct rq *rq)
 
 	guard(rq_lock_irqsave)(rq);
 
-	root = scx_root_protected();
+	उगात = scx_उगात_protected();
 	cid = __scx_cpu_to_cid(cpu_of(rq));
 	shard = rcu_dereference_all(scx_cid_to_shard)[cid];
 
-	scx_for_each_descendant_pre(pos, root) {
+	scx_for_each_descendant_pre(pos, उगात) {
 		struct scx_pshard *ps;
 
 		/* root holds every cap and never uses ecaps */
@@ -1138,13 +1138,13 @@ void scx_online_ecaps(struct rq *rq)
 void scx_offline_ecaps(struct rq *rq)
 {
 	s32 cpu = cpu_of(rq);
-	struct scx_sched *root, *pos;
+	struct scx_sched *उगात, *pos;
 
 	guard(rq_lock_irqsave)(rq);
 
-	root = scx_root_protected();
+	उगात = scx_उगात_protected();
 
-	scx_for_each_descendant_pre(pos, root) {
+	scx_for_each_descendant_pre(pos, उगात) {
 		/* root holds every cap and never uses ecaps */
 		if (!pos->level)
 			continue;
@@ -1160,19 +1160,19 @@ void scx_offline_ecaps(struct rq *rq)
 void scx_discard_ecaps_to_sync(s32 cpu, struct scx_sched_pcpu *pcpu)
 {
 	struct rq *rq = cpu_rq(cpu);
-	struct llist_node *head = NULL, *tail = NULL;
-	struct llist_node *pos, *tmp;
+	struct llist_बुहोल *head = NULL, *tail = NULL;
+	struct llist_बुहोल *pos, *tmp;
 
 	/*
 	 * llist can't unlink a single node. Take all queued nodes, drop @pcpu's
 	 * and resplice the rest. Nodes in the taken batch read as on-list
 	 * throughout, so queue_sync_ecaps() stays correct.
 	 */
-	if (llist_on_list(&pcpu->ecaps_to_sync_node)) {
+	if (llist_on_list(&pcpu->ecaps_to_sync_बुहोल)) {
 		scoped_guard (rq_lock_irqsave, rq) {
 			llist_for_each_safe(pos, tmp, llist_del_all(&rq->scx.ecaps_to_sync)) {
-				if (pos == &pcpu->ecaps_to_sync_node) {
-					init_llist_node(pos);
+				if (pos == &pcpu->ecaps_to_sync_बुहोल) {
+					init_llist_बुहोल(pos);
 				} else {
 					pos->next = head;
 					head = pos;
@@ -1195,7 +1195,7 @@ void scx_discard_ecaps_to_sync(s32 cpu, struct scx_sched_pcpu *pcpu)
 	 */
 	while (true) {
 		scoped_guard (rq_lock_irqsave, rq) {
-			if (!llist_on_list(&pcpu->ecaps_to_sync_node))
+			if (!llist_on_list(&pcpu->ecaps_to_sync_बुहोल))
 				return;
 		}
 		cpu_relax();
@@ -1353,7 +1353,7 @@ static s32 scx_cgroup_claim_subtree(struct scx_sched *sch)
 
 	css_for_each_descendant_pre(css, ecss) {
 		struct task_group *tg = css_tg(css);
-		struct scx_cgroup_init_args args = {
+		struct scx_cgroup_init_मगा_कातविरान मगा_कातविरान = {
 			.weight = tg->scx.weight,
 			.bw_period_us = tg->scx.bw_period_us,
 			.bw_quota_us = tg->scx.bw_quota_us,
@@ -1366,7 +1366,7 @@ static s32 scx_cgroup_claim_subtree(struct scx_sched *sch)
 			continue;
 
 		if (SCX_HAS_OP(sch, cgroup_init)) {
-			ret = SCX_CALL_OP_RET(sch, cgroup_init, NULL, css->cgroup, &args);
+			ret = SCX_CALL_OP_RET(sch, cgroup_init, NULL, css->cgroup, &मगा_कातविरान);
 			if (ret) {
 				scx_error(sch, "ops.cgroup_init() failed (%d)", ret);
 				goto err;
@@ -1457,7 +1457,7 @@ static void scx_cgroup_return_subtree(struct scx_sched *sch)
 
 	css_for_each_descendant_pre(css, ecss) {
 		struct task_group *tg = css_tg(css);
-		struct scx_cgroup_init_args args = {
+		struct scx_cgroup_init_मगा_कातविरान मगा_कातविरान = {
 			.weight = tg->scx.weight,
 			.bw_period_us = tg->scx.bw_period_us,
 			.bw_quota_us = tg->scx.bw_quota_us,
@@ -1486,7 +1486,7 @@ static void scx_cgroup_return_subtree(struct scx_sched *sch)
 			continue;
 
 		if (SCX_HAS_OP(parent, cgroup_init)) {
-			ret = SCX_CALL_OP_RET(parent, cgroup_init, NULL, css->cgroup, &args);
+			ret = SCX_CALL_OP_RET(parent, cgroup_init, NULL, css->cgroup, &मगा_कातविरान);
 			if (ret) {
 				scx_error(parent, "ops.cgroup_init() failed (%d) while disabling a sub-scheduler",
 					  ret);
@@ -1638,12 +1638,12 @@ dump:
 	wake_up_all(&scx_unlink_waitq);
 
 	if (parent->ops.sub_detach && sch->sub_attached) {
-		struct scx_sub_detach_args sub_detach_args = {
+		struct scx_sub_detach_मगा_कातविरान sub_detach_मगा_कातविरान = {
 			.ops = &sch->ops,
 			.cgroup_path = sch->cgrp_path,
 		};
 		SCX_CALL_OP(parent, sub_detach, NULL,
-			    &sub_detach_args);
+			    &sub_detach_मगा_कातविरान);
 	}
 
 	scx_log_sched_disable(sch);
@@ -1818,13 +1818,13 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 		sch->exit_info->flags |= SCX_EFLAG_INITIALIZED;
 	}
 
-	struct scx_sub_attach_args sub_attach_args = {
+	struct scx_sub_attach_मगा_कातविरान sub_attach_मगा_कातविरान = {
 		.ops = &sch->ops,
 		.cgroup_path = sch->cgrp_path,
 	};
 
 	ret = SCX_CALL_OP_RET(parent, sub_attach, NULL,
-			      &sub_attach_args);
+			      &sub_attach_मगा_कातविरान);
 	if (ret) {
 		ret = scx_ops_sanitize_err(sch, "sub_attach", ret);
 		scx_error(sch, "parent rejected (%d)", ret);

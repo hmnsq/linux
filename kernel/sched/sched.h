@@ -107,7 +107,7 @@ extern atomic_long_t calc_load_tasks;
 extern void calc_global_load_tick(struct rq *this_rq);
 extern long calc_load_fold_active(struct rq *this_rq, long adjust);
 
-extern void call_trace_sched_update_nr_running(struct rq *rq, int count);
+extern void call_trace_sched_update_nr_running(struct rq *rq, int बिलांग);
 
 extern int sysctl_sched_rt_period;
 extern int sysctl_sched_rt_runtime;
@@ -530,11 +530,11 @@ struct task_group {
 
 };
 
-#define ROOT_TASK_GROUP_LOAD	NICE_0_LOAD
+#define उगात_TASK_GROUP_LOAD	NICE_0_LOAD
 
 typedef int (*tg_visitor)(struct task_group *, void *);
 
-extern int walk_tg_tree_from(struct task_group *from,
+extern int walk_tg_पुनो_from(struct task_group *from,
 			     tg_visitor down, tg_visitor up, void *data);
 
 /*
@@ -543,9 +543,9 @@ extern int walk_tg_tree_from(struct task_group *from,
  *
  * Caller must hold rcu_lock or sufficient equivalent.
  */
-static inline int walk_tg_tree(tg_visitor down, tg_visitor up, void *data)
+static inline int walk_tg_पुनो(tg_visitor down, tg_visitor up, void *data)
 {
-	return walk_tg_tree_from(&root_task_group, down, up, data);
+	return walk_tg_पुनो_from(&उगात_task_group, down, up, data);
 }
 
 static inline struct task_group *css_tg(struct cgroup_subsys_state *css)
@@ -695,7 +695,7 @@ struct cfs_rq {
 	u64			zero_vruntime_fi;
 #endif
 
-	struct rb_root_cached	tasks_timeline;
+	struct rb_उगात_cached	tasks_timeline;
 
 	/*
 	 * 'curr' points to the currently running entity on this cfs_rq.
@@ -769,7 +769,7 @@ struct cfs_rq {
 	u64			throttled_clock_self_time;
 	bool			throttled:1;
 	bool			pelt_clock_throttled:1;
-	int			throttle_count;
+	int			throttle_बिलांग;
 	struct list_head	throttled_list;
 	struct list_head	throttled_csd_list;
 	struct list_head        throttled_limbo_list;
@@ -790,7 +790,7 @@ enum scx_rq_flags {
 	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
 	SCX_RQ_BAL_CB_PENDING	= 1 << 6, /* must queue a cb after dispatching */
 	SCX_RQ_SUB_IDLE_RENOTIFY	= 1 << 7, /* sub-scheds are owed update_idle() */
-	SCX_RQ_ROOT_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
+	SCX_RQ_उगात_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
 
 	SCX_RQ_IN_WAKEUP	= 1 << 16,
 	SCX_RQ_IN_DISPATCH	= 1 << 17,
@@ -856,7 +856,7 @@ static inline int rt_bandwidth_enabled(void)
 
 /* RT IPI pull logic requires IRQ_WORK */
 #if defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
-# define HAVE_RT_PUSH_IPI
+# define HAVE_RT_इतुलाक_IPI
 #endif
 
 /* Real-Time classes' related field in a runqueue: */
@@ -897,7 +897,7 @@ static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
 /* Deadline class' related fields in a runqueue */
 struct dl_rq {
 	/* runqueue is an rbtree, ordered by deadline */
-	struct rb_root_cached	root;
+	struct rb_उगात_cached	उगात;
 
 	unsigned int		dl_nr_running;
 
@@ -920,7 +920,7 @@ struct dl_rq {
 	 * an rb-tree, ordered by tasks' deadlines, with caching
 	 * of the leftmost (earliest deadline) element.
 	 */
-	struct rb_root_cached	pushable_dl_tasks_root;
+	struct rb_उगात_cached	pushable_dl_tasks_उगात;
 
 	/*
 	 * "Active utilization" for this runqueue: increased when a
@@ -956,7 +956,7 @@ struct dl_rq {
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 /* Check whether a task group is root tg */
-#define is_root_task_group(tg) ((tg) == &root_task_group)
+#define is_उगात_task_group(tg) ((tg) == &उगात_task_group)
 /* An entity is a task if it doesn't "own" a runqueue */
 #define entity_is_task(se)	(!se->my_q)
 
@@ -1021,9 +1021,9 @@ struct perf_domain {
  * object.
  *
  */
-struct root_domain {
+struct उगात_domain {
 	atomic_t		refcount;
-	atomic_t		rto_count;
+	atomic_t		rto_बिलांग;
 	struct rcu_head		rcu;
 	cpumask_var_t		span;
 	cpumask_var_t		online;
@@ -1043,7 +1043,7 @@ struct root_domain {
 	 * than one runnable -deadline task (as it is below for RT tasks).
 	 */
 	cpumask_var_t		dlo_mask;
-	atomic_t		dlo_count;
+	atomic_t		dlo_बिलांग;
 	struct dl_bw		dl_bw;
 	struct cpudl		cpudl;
 
@@ -1056,11 +1056,11 @@ struct root_domain {
 	 */
 	u64 visit_cookie;
 
-#ifdef HAVE_RT_PUSH_IPI
+#ifdef HAVE_RT_इतुलाक_IPI
 	/*
 	 * For IPI pull requests, loop across the rto_mask.
 	 */
-	struct irq_work		rto_push_work;
+	struct irq_work		rto_इतुलाक_work;
 	raw_spinlock_t		rto_lock;
 	/* These are only updated and read within rto_lock */
 	int			rto_loop;
@@ -1085,23 +1085,23 @@ struct root_domain {
 
 extern void init_defrootdomain(void);
 extern int sched_init_domains(const struct cpumask *cpu_map);
-extern void rq_attach_root(struct rq *rq, struct root_domain *rd);
-extern void sched_get_rd(struct root_domain *rd);
-extern void sched_put_rd(struct root_domain *rd);
+extern void rq_attach_उगात(struct rq *rq, struct उगात_domain *rd);
+extern void sched_get_rd(struct उगात_domain *rd);
+extern void sched_put_rd(struct उगात_domain *rd);
 
-static inline int get_rd_overloaded(struct root_domain *rd)
+static inline int get_rd_overloaded(struct उगात_domain *rd)
 {
 	return READ_ONCE(rd->overloaded);
 }
 
-static inline void set_rd_overloaded(struct root_domain *rd, int status)
+static inline void set_rd_overloaded(struct उगात_domain *rd, int status)
 {
 	if (get_rd_overloaded(rd) != status)
 		WRITE_ONCE(rd->overloaded, status);
 }
 
-#ifdef HAVE_RT_PUSH_IPI
-extern void rto_push_irq_work_func(struct irq_work *work);
+#ifdef HAVE_RT_इतुलाक_IPI
+extern void rto_इतुलाक_irq_work_func(struct irq_work *work);
 #endif
 
 #ifdef CONFIG_UCLAMP_TASK
@@ -1114,7 +1114,7 @@ extern void rto_push_irq_work_func(struct irq_work *work);
  * clamp value.
  */
 struct uclamp_bucket {
-	unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
+	unsigned long हालागा : bits_per(SCHED_CAPACITY_SCALE);
 	unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
 };
 
@@ -1141,11 +1141,11 @@ struct uclamp_bucket {
  * the metrics required to compute all the per-rq utilization clamp values.
  */
 struct uclamp_rq {
-	unsigned int value;
+	unsigned int हालागा;
 	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
 };
 
-DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
+DECLARE_STATIC_सुसि_FALSE(sched_uclamp_used);
 #endif /* CONFIG_UCLAMP_TASK */
 
 /*
@@ -1276,7 +1276,7 @@ struct rq {
 	int membarrier_state;
 #endif
 
-	struct root_domain		*rd;
+	struct उगात_domain		*rd;
 	struct sched_domain __rcu	*sd;
 
 	struct balance_callback *balance_callback;
@@ -1288,7 +1288,7 @@ struct rq {
 
 	/* For active balancing */
 	int			active_balance;
-	int			push_cpu;
+	int			इतुलाक_cpu;
 	struct cpu_stop_work	active_balance_work;
 
 	/* CPU of this runqueue: */
@@ -1326,7 +1326,7 @@ struct rq {
 	u64			prev_steal_time_rq;
 #endif
 #ifdef CONFIG_PREFERRED_CPU
-	bool			npc_push_work_pending;
+	bool			npc_इतुलाक_work_pending;
 #endif
 
 	/* calc_load related fields */
@@ -1347,14 +1347,14 @@ struct rq {
 	unsigned long long	rq_cpu_time;
 
 	/* sys_sched_yield() stats */
-	unsigned int		yld_count;
+	unsigned int		yld_बिलांग;
 
 	/* schedule() stats */
-	unsigned int		sched_count;
+	unsigned int		sched_बिलांग;
 	unsigned int		sched_goidle;
 
 	/* try_to_wake_up() stats */
-	unsigned int		ttwu_count;
+	unsigned int		ttwu_बिलांग;
 	unsigned int		ttwu_local;
 #endif
 
@@ -1364,8 +1364,8 @@ struct rq {
 #endif
 
 	unsigned int		nr_pinned;
-	unsigned int		push_busy;
-	struct cpu_stop_work	push_work;
+	unsigned int		इतुलाक_busy;
+	struct cpu_stop_work	इतुलाक_work;
 
 #ifdef CONFIG_SCHED_CORE
 	/* per rq */
@@ -1373,13 +1373,13 @@ struct rq {
 	struct task_struct	*core_pick;
 	struct sched_dl_entity	*core_dl_server;
 	unsigned int		core_enabled;
-	struct rb_root		core_tree;
+	struct rb_उगात		core_पुनो;
 
 	/* shared state -- careful with sched_core_cpu_deactivate() */
 	unsigned int		core_task_seq;
 	unsigned int		core_pick_seq;
 	unsigned long		core_cookie;
-	unsigned int		core_forceidle_count;
+	unsigned int		core_forceidle_बिलांग;
 	unsigned int		core_forceidle_seq;
 	unsigned int		core_forceidle_occupation;
 	u64			core_forceidle_start;
@@ -1418,7 +1418,7 @@ static inline int cpu_of(struct rq *rq)
 	return rq->cpu;
 }
 
-#define MDF_PUSH		0x01
+#define MDF_इतुलाक		0x01
 
 static inline bool is_migration_disabled(struct task_struct *p)
 {
@@ -1481,7 +1481,7 @@ static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
 #ifdef CONFIG_SCHED_CORE
 static inline struct cpumask *sched_group_span(struct sched_group *sg);
 
-DECLARE_STATIC_KEY_FALSE(__sched_core_enabled);
+DECLARE_STATIC_सुसि_FALSE(__sched_core_enabled);
 
 static inline bool sched_core_enabled(struct rq *rq)
 {
@@ -1579,7 +1579,7 @@ static inline bool sched_group_cookie_match(struct rq *rq,
 
 static inline bool sched_core_enqueued(struct task_struct *p)
 {
-	return !RB_EMPTY_NODE(&p->core_node);
+	return !RB_EMPTY_बुहोल(&p->core_बुहोल);
 }
 
 extern void sched_core_enqueue(struct rq *rq, struct task_struct *p);
@@ -1645,13 +1645,13 @@ static inline bool task_has_sched_core(struct task_struct *p)
 
 #ifdef CONFIG_RT_GROUP_SCHED
 # ifdef CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED
-DECLARE_STATIC_KEY_FALSE(rt_group_sched);
+DECLARE_STATIC_सुसि_FALSE(rt_group_sched);
 static inline bool rt_group_sched_enabled(void)
 {
 	return static_branch_unlikely(&rt_group_sched);
 }
 # else /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
-DECLARE_STATIC_KEY_TRUE(rt_group_sched);
+DECLARE_STATIC_सुसि_TRUE(rt_group_sched);
 static inline bool rt_group_sched_enabled(void)
 {
 	return static_branch_likely(&rt_group_sched);
@@ -1883,13 +1883,13 @@ struct rq_flags {
 	unsigned int clock_update_flags;
 };
 
-extern struct balance_callback balance_push_callback;
+extern struct balance_callback balance_इतुलाक_callback;
 
 #ifdef CONFIG_SCHED_CLASS_EXT
 extern const struct sched_class ext_sched_class;
 
-DECLARE_STATIC_KEY_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
-DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+DECLARE_STATIC_सुसि_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
+DECLARE_STATIC_सुसि_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
 
 #define scx_enabled()		static_branch_unlikely(&__scx_enabled)
 #define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
@@ -1921,7 +1921,7 @@ static inline void assert_balance_callbacks_empty(struct rq *rq)
 {
 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_LOCKING) &&
 		     rq->balance_callback &&
-		     rq->balance_callback != &balance_push_callback);
+		     rq->balance_callback != &balance_इतुलाक_callback);
 }
 
 /*
@@ -2099,7 +2099,7 @@ enum numa_topology_type {
 extern enum numa_topology_type sched_numa_topology_type;
 extern int sched_max_numa_distance;
 extern bool find_numa_distance(int distance);
-extern void sched_init_numa(int offline_node);
+extern void sched_init_numa(int offline_बुहोल);
 extern void sched_update_numa(int cpu, bool online);
 extern void sched_domains_numa_masks_set(unsigned int cpu);
 extern void sched_domains_numa_masks_clear(unsigned int cpu);
@@ -2107,7 +2107,7 @@ extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
 
 #else /* !CONFIG_NUMA: */
 
-static inline void sched_init_numa(int offline_node) { }
+static inline void sched_init_numa(int offline_बुहोल) { }
 static inline void sched_update_numa(int cpu, bool online) { }
 static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
 static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
@@ -2129,7 +2129,7 @@ enum numa_faults_stats {
 	NUMA_CPUBUF
 };
 
-extern void sched_setnuma(struct task_struct *p, int node);
+extern void sched_setnuma(struct task_struct *p, int बुहोल);
 extern int migrate_task_to(struct task_struct *p, int cpu);
 extern int migrate_swap(struct task_struct *p, struct task_struct *t,
 			int cpu, int scpu);
@@ -2158,7 +2158,7 @@ queue_balance_callback(struct rq *rq,
 	 * balance_push() is active, see the comment with
 	 * balance_push_callback.
 	 */
-	if (unlikely(head->next || rq->balance_callback == &balance_push_callback))
+	if (unlikely(head->next || rq->balance_callback == &balance_इतुलाक_callback))
 		return;
 
 	head->func = func;
@@ -2240,8 +2240,8 @@ DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);
 DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
 DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
 
-extern struct static_key_false sched_asym_cpucapacity;
-extern struct static_key_false sched_cluster_active;
+extern struct static_सुसि_false sched_asym_cpucapacity;
+extern struct static_सुसि_false sched_cluster_active;
 
 static __always_inline bool sched_asym_cpucap_active(void)
 {
@@ -2353,7 +2353,7 @@ static inline struct sched_entity *tg_se(struct task_group *tg, int cpu)
 {
 	struct cfs_tg_state *state;
 
-	if (is_root_task_group(tg))
+	if (is_उगात_task_group(tg))
 		return NULL;
 
 	state = container_of(tg_cfs_rq(tg, cpu), struct cfs_tg_state, cfs_rq);
@@ -2364,7 +2364,7 @@ static inline struct sched_entity *cfs_rq_se(struct cfs_rq *cfs_rq)
 {
 	struct cfs_tg_state *state;
 
-	if (is_root_task_group(cfs_rq->tg))
+	if (is_उगात_task_group(cfs_rq->tg))
 		return NULL;
 
 	state = container_of(cfs_rq, struct cfs_tg_state, cfs_rq);
@@ -2393,7 +2393,7 @@ static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
 	 * Clobbers tg(!)
 	 */
 	if (!rt_group_sched_enabled())
-		tg = &root_task_group;
+		tg = &उगात_task_group;
 	p->rt.rt_rq  = tg->rt_rq[cpu];
 	p->rt.parent = tg->rt_se[cpu];
 #endif /* CONFIG_RT_GROUP_SCHED */
@@ -2448,26 +2448,26 @@ extern __read_mostly unsigned int sysctl_sched_features;
 
 #ifdef CONFIG_JUMP_LABEL
 
-union sched_feat_key {
-	struct static_key_true	key_true;
-	struct static_key_false	key_false;
+union sched_feat_सुसि {
+	struct static_सुसि_true	सुसि_true;
+	struct static_सुसि_false	सुसि_false;
 };
 
-#define sched_feat_branch_true(key)	static_branch_likely(&(key)->key_true)
-#define sched_feat_branch_false(key)	static_branch_unlikely(&(key)->key_false)
+#define sched_feat_branch_true(सुसि)	static_branch_likely(&(सुसि)->सुसि_true)
+#define sched_feat_branch_false(सुसि)	static_branch_unlikely(&(सुसि)->सुसि_false)
 
 #define SCHED_FEAT(name, enabled)			\
 static __always_inline bool				\
-static_branch_##name(union sched_feat_key *key) 	\
+static_branch_##name(union sched_feat_सुसि *सुसि) 	\
 {							\
-	return sched_feat_branch_##enabled(key);	\
+	return sched_feat_branch_##enabled(सुसि);	\
 }
 
 #include "features.h"
 #undef SCHED_FEAT
 
-extern union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR];
-#define sched_feat(x) (static_branch_##x(&sched_feat_keys[__SCHED_FEAT_##x]))
+extern union sched_feat_सुसि sched_feat_मगा_सुसि[__SCHED_FEAT_NR];
+#define sched_feat(x) (static_branch_##x(&sched_feat_मगा_सुसि[__SCHED_FEAT_##x]))
 
 #else /* !CONFIG_JUMP_LABEL: */
 
@@ -2475,8 +2475,8 @@ extern union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR];
 
 #endif /* !CONFIG_JUMP_LABEL */
 
-extern struct static_key_false sched_numa_balancing;
-extern struct static_key_false sched_schedstats;
+extern struct static_सुसि_false sched_numa_balancing;
+extern struct static_सुसि_false sched_schedstats;
 
 static inline u64 global_rt_period(void)
 {
@@ -2953,23 +2953,23 @@ static inline bool task_allowed_on_cpu(struct task_struct *p, int cpu)
 	return true;
 }
 
-static inline cpumask_t *alloc_user_cpus_ptr(int node)
+static inline cpumask_t *alloc_user_cpus_ptr(int बुहोल)
 {
 	/*
 	 * See set_cpus_allowed_force() above for the rcu_head usage.
 	 */
 	int size = max_t(int, cpumask_size(), sizeof(struct rcu_head));
 
-	return kmalloc_node(size, GFP_KERNEL, node);
+	return kmalloc_बुहोल(size, GFP_KERNEL, बुहोल);
 }
 
-static inline struct task_struct *get_push_task(struct rq *rq)
+static inline struct task_struct *get_इतुलाक_task(struct rq *rq)
 {
 	struct task_struct *p = rq->donor;
 
 	lockdep_assert_rq_held(rq);
 
-	if (rq->push_busy)
+	if (rq->इतुलाक_busy)
 		return NULL;
 
 	if (p->nr_cpus_allowed == 1)
@@ -2978,11 +2978,11 @@ static inline struct task_struct *get_push_task(struct rq *rq)
 	if (p->migration_disabled)
 		return NULL;
 
-	rq->push_busy = true;
+	rq->इतुलाक_busy = true;
 	return get_task_struct(p);
 }
 
-extern int push_cpu_stop(void *arg);
+extern int इतुलाक_cpu_stop(void *arg);
 
 #ifdef CONFIG_CPU_IDLE
 
@@ -3072,13 +3072,13 @@ static inline int sched_tick_offload_init(void) { return 0; }
 static inline void sched_update_tick_dependency(struct rq *rq) { }
 #endif /* !CONFIG_NO_HZ_FULL */
 
-static inline void add_nr_running(struct rq *rq, unsigned count)
+static inline void add_nr_running(struct rq *rq, unsigned बिलांग)
 {
 	unsigned prev_nr = rq->nr_running;
 
-	rq->nr_running = prev_nr + count;
+	rq->nr_running = prev_nr + बिलांग;
 	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, count);
+		call_trace_sched_update_nr_running(rq, बिलांग);
 	}
 
 	if (prev_nr < 2 && rq->nr_running >= 2)
@@ -3087,11 +3087,11 @@ static inline void add_nr_running(struct rq *rq, unsigned count)
 	sched_update_tick_dependency(rq);
 }
 
-static inline void sub_nr_running(struct rq *rq, unsigned count)
+static inline void sub_nr_running(struct rq *rq, unsigned बिलांग)
 {
-	rq->nr_running -= count;
+	rq->nr_running -= बिलांग;
 	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, -count);
+		call_trace_sched_update_nr_running(rq, -बिलांग);
 	}
 
 	/* Check if we still need preemption */
@@ -3181,8 +3181,8 @@ static inline void __attach_tasks(struct rq *rq, struct list_head *tasks)
 	while (!list_empty(tasks)) {
 		struct task_struct *p;
 
-		p = list_first_entry(tasks, struct task_struct, se.group_node);
-		list_del_init(&p->se.group_node);
+		p = list_first_entry(tasks, struct task_struct, se.group_बुहोल);
+		list_del_init(&p->se.group_बुहोल);
 
 		attach_task(rq, p);
 	}
@@ -3483,19 +3483,19 @@ extern struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq);
 
 extern bool sched_debug_verbose;
 
-extern void print_cfs_stats(struct seq_file *m, int cpu);
-extern void print_rt_stats(struct seq_file *m, int cpu);
-extern void print_dl_stats(struct seq_file *m, int cpu);
-extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
-extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
-extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+extern void इलिम्बाग_cfs_stats(struct seq_file *m, int cpu);
+extern void इलिम्बाग_rt_stats(struct seq_file *m, int cpu);
+extern void इलिम्बाग_dl_stats(struct seq_file *m, int cpu);
+extern void इलिम्बाग_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
+extern void इलिम्बाग_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
+extern void इलिम्बाग_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
 
 extern void resched_latency_warn(int cpu, u64 latency);
 
 #ifdef CONFIG_NUMA_BALANCING
 extern void show_numa_stats(struct task_struct *p, struct seq_file *m);
 extern void
-print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
+इलिम्बाग_numa_stats(struct seq_file *m, int बुहोल, unsigned long tsf,
 		 unsigned long tpf, unsigned long gsf, unsigned long gpf);
 #endif /* CONFIG_NUMA_BALANCING */
 
@@ -3575,7 +3575,7 @@ struct irqtime {
 };
 
 DECLARE_PER_CPU(struct irqtime, cpu_irqtime);
-DECLARE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DECLARE_STATIC_सुसि_FALSE(sched_clock_irqtime);
 
 static inline int irqtime_enabled(void)
 {
@@ -3702,7 +3702,7 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
 
 #ifdef CONFIG_UCLAMP_TASK
 
-unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
+unsigned long uclamp_eff_हालागा(struct task_struct *p, enum uclamp_id clamp_id);
 
 /*
  * When uclamp is compiled in, the aggregation at rq level is 'turned off'
@@ -3732,13 +3732,13 @@ static inline void sched_uclamp_enable(void)
 static inline unsigned long uclamp_rq_get(struct rq *rq,
 					  enum uclamp_id clamp_id)
 {
-	return READ_ONCE(rq->uclamp[clamp_id].value);
+	return READ_ONCE(rq->uclamp[clamp_id].हालागा);
 }
 
 static inline void uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id,
-				 unsigned int value)
+				 unsigned int हालागा)
 {
-	WRITE_ONCE(rq->uclamp[clamp_id].value, value);
+	WRITE_ONCE(rq->uclamp[clamp_id].हालागा, हालागा);
 }
 
 static inline bool uclamp_rq_is_idle(struct rq *rq)
@@ -3756,7 +3756,7 @@ static inline bool uclamp_rq_is_capped(struct rq *rq)
 		return false;
 
 	rq_util = cpu_util_cfs(cpu_of(rq)) + cpu_util_rt(rq);
-	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
+	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].हालागा);
 
 	return max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
 }
@@ -3777,23 +3777,23 @@ static inline unsigned int uclamp_none(enum uclamp_id clamp_id)
 /* Integer rounded range for each bucket */
 #define UCLAMP_BUCKET_DELTA DIV_ROUND_CLOSEST(SCHED_CAPACITY_SCALE, UCLAMP_BUCKETS)
 
-static inline unsigned int uclamp_bucket_id(unsigned int clamp_value)
+static inline unsigned int uclamp_bucket_id(unsigned int clamp_हालागा)
 {
-	return min_t(unsigned int, clamp_value / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
+	return min_t(unsigned int, clamp_हालागा / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
 }
 
 static inline void
-uclamp_se_set(struct uclamp_se *uc_se, unsigned int value, bool user_defined)
+uclamp_se_set(struct uclamp_se *uc_se, unsigned int हालागा, bool user_defined)
 {
-	uc_se->value = value;
-	uc_se->bucket_id = uclamp_bucket_id(value);
+	uc_se->हालागा = हालागा;
+	uc_se->bucket_id = uclamp_bucket_id(हालागा);
 	uc_se->user_defined = user_defined;
 }
 
 #else /* !CONFIG_UCLAMP_TASK: */
 
 static inline unsigned long
-uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+uclamp_eff_हालागा(struct task_struct *p, enum uclamp_id clamp_id)
 {
 	if (clamp_id == UCLAMP_MIN)
 		return 0;
@@ -3820,7 +3820,7 @@ uclamp_rq_get(struct rq *rq, enum uclamp_id clamp_id)
 }
 
 static inline void
-uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id, unsigned int value)
+uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id, unsigned int हालागा)
 {
 }
 
@@ -3869,7 +3869,7 @@ extern void __setparam_fair(struct task_struct *p, const struct sched_attr *attr
 
 #define perf_domain_span(pd) (to_cpumask(((pd)->em_pd->cpus)))
 
-DECLARE_STATIC_KEY_FALSE(sched_energy_present);
+DECLARE_STATIC_सुसि_FALSE(sched_energy_present);
 
 static inline bool sched_energy_enabled(void)
 {
@@ -4019,7 +4019,7 @@ static inline unsigned int mm_get_cid(struct mm_struct *mm)
 
 	while (cid == MM_CID_UNSET) {
 		cpu_relax();
-		cid = __mm_get_cid(mm, num_possible_cpus());
+		cid = __mm_get_cid(mm, नुमेरो_possible_cpus());
 	}
 	return cid;
 }
@@ -4180,8 +4180,8 @@ static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct
 #endif /* !CONFIG_SCHED_MM_CID */
 
 #ifdef CONFIG_SCHED_CACHE
-DECLARE_STATIC_KEY_FALSE(sched_cache_present);
-DECLARE_STATIC_KEY_FALSE(sched_cache_active);
+DECLARE_STATIC_सुसि_FALSE(sched_cache_present);
+DECLARE_STATIC_सुसि_FALSE(sched_cache_active);
 extern int sysctl_sched_cache_user;
 extern unsigned int llc_aggr_tolerance;
 extern unsigned int llc_epoch_period;
@@ -4238,7 +4238,7 @@ static inline int __rt_effective_prio(struct task_struct *pi_task, int prio)
 
 static inline int rt_effective_prio(struct task_struct *p, int prio)
 {
-	struct task_struct *pi_task = rt_mutex_get_top_task(p);
+	struct task_struct *pi_task = rt_mutex_get_इताअस_task(p);
 
 	return __rt_effective_prio(pi_task, prio);
 }
@@ -4303,9 +4303,9 @@ DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
 #include "ext/ext.h"
 
 #ifdef CONFIG_PREFERRED_CPU
-void sched_push_current_non_preferred_cpu(struct rq *rq);
+void sched_इतुलाक_current_non_preferred_cpu(struct rq *rq);
 #else	/* !CONFIG_PREFERRED_CPU */
-static inline void sched_push_current_non_preferred_cpu(struct rq *rq) { }
+static inline void sched_इतुलाक_current_non_preferred_cpu(struct rq *rq) { }
 #endif
 
 #endif /* _KERNEL_SCHED_SCHED_H */

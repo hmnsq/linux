@@ -40,7 +40,7 @@ void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
 
 	__schedstat_set(stats->wait_max,
 			max(schedstat_val(stats->wait_max), delta));
-	__schedstat_inc(stats->wait_count);
+	__schedstat_inc(stats->wait_बिलांग);
 	__schedstat_add(stats->wait_sum, delta);
 	__schedstat_set(stats->wait_start, 0);
 }
@@ -87,7 +87,7 @@ void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
 		if (p) {
 			if (p->in_iowait) {
 				__schedstat_add(stats->iowait_sum, delta);
-				__schedstat_inc(stats->iowait_count);
+				__schedstat_inc(stats->iowait_बिलांग);
 				trace_sched_stat_iowait(p, delta);
 			}
 
@@ -123,9 +123,9 @@ static int show_schedstat(struct seq_file *seq, void *v)
 		/* runqueue-specific stats */
 		seq_printf(seq,
 		    "cpu%d %u 0 %u %u %u %u %llu %llu %lu",
-		    cpu, rq->yld_count,
-		    rq->sched_count, rq->sched_goidle,
-		    rq->ttwu_count, rq->ttwu_local,
+		    cpu, rq->yld_बिलांग,
+		    rq->sched_बिलांग, rq->sched_goidle,
+		    rq->ttwu_बिलांग, rq->ttwu_local,
 		    rq->rq_cpu_time,
 		    rq->rq_sched_info.run_delay, rq->rq_sched_info.pcount);
 
@@ -137,10 +137,10 @@ static int show_schedstat(struct seq_file *seq, void *v)
 			enum cpu_idle_type itype;
 
 			seq_printf(seq, "domain%d %s %*pb", dcount++, sd->name,
-				   cpumask_pr_args(sched_domain_span(sd)));
+				   cpumask_pr_मगा_कातविरान(sched_domain_span(sd)));
 			for (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
 				seq_printf(seq, " %u %u %u %u %u %u %u %u %u %u %u",
-				    sd->lb_count[itype],
+				    sd->lb_बिलांग[itype],
 				    sd->lb_balanced[itype],
 				    sd->lb_failed[itype],
 				    sd->lb_imbalance_load[itype],
@@ -154,9 +154,9 @@ static int show_schedstat(struct seq_file *seq, void *v)
 			}
 			seq_printf(seq,
 				   " %u %u %u %u %u %u %u %u %u %u %u %u\n",
-			    sd->alb_count, sd->alb_failed, sd->alb_pushed,
-			    sd->sbe_count, sd->sbe_balanced, sd->sbe_pushed,
-			    sd->sbf_count, sd->sbf_balanced, sd->sbf_pushed,
+			    sd->alb_बिलांग, sd->alb_failed, sd->alb_pushed,
+			    sd->sbe_बिलांग, sd->sbe_balanced, sd->sbe_pushed,
+			    sd->sbf_बिलांग, sd->sbf_balanced, sd->sbf_pushed,
 			    sd->ttwu_wake_remote, sd->ttwu_move_affine,
 			    sd->ttwu_move_balance);
 		}

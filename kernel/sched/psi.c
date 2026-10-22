@@ -143,8 +143,8 @@
 
 static int psi_bug __read_mostly;
 
-DEFINE_STATIC_KEY_FALSE(psi_disabled);
-static DEFINE_STATIC_KEY_TRUE(psi_cgroups_enabled);
+DEFINE_STATIC_सुसि_FALSE(psi_disabled);
+static DEFINE_STATIC_सुसि_TRUE(psi_cgroups_enabled);
 
 #ifdef CONFIG_PSI_DEFAULT_DISABLED
 static bool psi_enable;
@@ -415,11 +415,11 @@ static void collect_percpu_times(struct psi_group *group,
 }
 
 /* Trigger tracking window manipulations */
-static void window_reset(struct psi_window *win, u64 now, u64 value,
+static void window_reset(struct psi_window *win, u64 now, u64 हालागा,
 			 u64 prev_growth)
 {
 	win->start_time = now;
-	win->start_value = value;
+	win->start_हालागा = हालागा;
 	win->prev_growth = prev_growth;
 }
 
@@ -434,13 +434,13 @@ static void window_reset(struct psi_window *win, u64 now, u64 value,
  * positive direction and over relatively small window sizes the growth
  * is close to linear.
  */
-static u64 window_update(struct psi_window *win, u64 now, u64 value)
+static u64 window_update(struct psi_window *win, u64 now, u64 हालागा)
 {
 	u64 elapsed;
 	u64 growth;
 
 	elapsed = now - win->start_time;
-	growth = value - win->start_value;
+	growth = हालागा - win->start_हालागा;
 	/*
 	 * After each tracking window passes win->start_value and
 	 * win->start_time get reset and win->prev_growth stores
@@ -449,7 +449,7 @@ static u64 window_update(struct psi_window *win, u64 now, u64 value)
 	 * growth from the previous window assuming it was linear.
 	 */
 	if (elapsed > win->size)
-		window_reset(win, now, value, growth);
+		window_reset(win, now, हालागा, growth);
 	else {
 		u32 remaining;
 
@@ -480,7 +480,7 @@ static void update_triggers(struct psi_group *group, u64 now,
 	 * On subsequent updates, calculate growth deltas and let
 	 * watchers know when their specified thresholds are exceeded.
 	 */
-	list_for_each_entry(t, triggers, node) {
+	list_for_each_entry(t, triggers, बुहोल) {
 		u64 growth;
 		bool new_stall;
 
@@ -614,7 +614,7 @@ static void init_rtpoll_triggers(struct psi_group *group, u64 now)
 {
 	struct psi_trigger *t;
 
-	list_for_each_entry(t, &group->rtpoll_triggers, node)
+	list_for_each_entry(t, &group->rtpoll_triggers, बुहोल)
 		window_reset(&t->win, now,
 				group->total[PSI_POLL][t->state], 0);
 	memcpy(group->rtpoll_total, group->total[PSI_POLL],
@@ -734,7 +734,7 @@ static int psi_rtpoll_worker(void *data)
 {
 	struct psi_group *group = (struct psi_group *)data;
 
-	sched_set_fifo_low(current);
+	sched_set_fifo_माबाबा(current);
 
 	while (true) {
 		wait_event_interruptible(group->rtpoll_wait,
@@ -1071,7 +1071,7 @@ void psi_memstall_enter(unsigned long *flags)
 
 	rq_unlock_irq(rq, &rf);
 }
-EXPORT_SYMBOL_GPL(psi_memstall_enter);
+EXPORT_सिम्बोलो_GPL(psi_memstall_enter);
 
 /**
  * psi_memstall_leave - mark the end of an memory stall section
@@ -1101,7 +1101,7 @@ void psi_memstall_leave(unsigned long *flags)
 
 	rq_unlock_irq(rq, &rf);
 }
-EXPORT_SYMBOL_GPL(psi_memstall_leave);
+EXPORT_सिम्बोलो_GPL(psi_memstall_leave);
 
 #ifdef CONFIG_CGROUPS
 int psi_cgroup_alloc(struct cgroup *cgroup)
@@ -1400,7 +1400,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 	if (privileged) {
 		mutex_lock(&group->rtpoll_trigger_lock);
 
-		list_add(&t->node, &group->rtpoll_triggers);
+		list_add(&t->बुहोल, &group->rtpoll_triggers);
 		group->rtpoll_min_period = min(group->rtpoll_min_period,
 			div_u64(t->win.size, UPDATES_PER_WINDOW));
 		group->rtpoll_nr_triggers[t->state]++;
@@ -1412,7 +1412,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 	} else {
 		mutex_lock(&group->avgs_lock);
 
-		list_add(&t->node, &group->avg_triggers);
+		list_add(&t->बुहोल, &group->avg_triggers);
 		group->avg_nr_triggers[t->state]++;
 
 		mutex_unlock(&group->avgs_lock);
@@ -1445,18 +1445,18 @@ void psi_trigger_destroy(struct psi_trigger *t)
 
 	if (t->aggregator == PSI_AVGS) {
 		mutex_lock(&group->avgs_lock);
-		if (!list_empty(&t->node)) {
-			list_del(&t->node);
+		if (!list_empty(&t->बुहोल)) {
+			list_del(&t->बुहोल);
 			group->avg_nr_triggers[t->state]--;
 		}
 		mutex_unlock(&group->avgs_lock);
 	} else {
 		mutex_lock(&group->rtpoll_trigger_lock);
-		if (!list_empty(&t->node)) {
+		if (!list_empty(&t->बुहोल)) {
 			struct psi_trigger *tmp;
 			u64 period = ULLONG_MAX;
 
-			list_del(&t->node);
+			list_del(&t->बुहोल);
 			group->rtpoll_nr_triggers[t->state]--;
 			if (!group->rtpoll_nr_triggers[t->state])
 				group->rtpoll_states &= ~(1 << t->state);
@@ -1465,7 +1465,7 @@ void psi_trigger_destroy(struct psi_trigger *t)
 			 * iff the destroying trigger had the min window size.
 			 */
 			if (group->rtpoll_min_period == div_u64(t->win.size, UPDATES_PER_WINDOW)) {
-				list_for_each_entry(tmp, &group->rtpoll_triggers, node)
+				list_for_each_entry(tmp, &group->rtpoll_triggers, बुहोल)
 					period = min(period, div_u64(tmp->win.size,
 							UPDATES_PER_WINDOW));
 				group->rtpoll_min_period = period;

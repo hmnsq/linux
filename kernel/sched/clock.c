@@ -67,9 +67,9 @@ notrace unsigned long long __weak sched_clock(void)
 	return (unsigned long long)(jiffies - INITIAL_JIFFIES)
 					* (NSEC_PER_SEC / HZ);
 }
-EXPORT_SYMBOL_GPL(sched_clock);
+EXPORT_सिम्बोलो_GPL(sched_clock);
 
-static DEFINE_STATIC_KEY_FALSE(sched_clock_running);
+static DEFINE_STATIC_सुसि_FALSE(sched_clock_running);
 
 #ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
 /*
@@ -79,7 +79,7 @@ static DEFINE_STATIC_KEY_FALSE(sched_clock_running);
  * Similarly we start with __sched_clock_stable_early, thereby assuming we
  * will become stable, such that there's only a single 1 -> 0 transition.
  */
-static DEFINE_STATIC_KEY_FALSE(__sched_clock_stable);
+static DEFINE_STATIC_सुसि_FALSE(__sched_clock_stable);
 static int __sched_clock_stable_early = 1;
 
 /*
@@ -194,7 +194,7 @@ notrace void clear_sched_clock_stable(void)
 
 	smp_mb(); /* matches sched_clock_init_late() */
 
-	if (static_key_count(&sched_clock_running.key) == 2)
+	if (static_सुसि_बिलांग(&sched_clock_running.सुसि) == 2)
 		__clear_sched_clock_stable();
 }
 
@@ -322,7 +322,7 @@ u64 local_clock(void)
 	preempt_enable_notrace();
 	return now;
 }
-EXPORT_SYMBOL_GPL(local_clock);
+EXPORT_सिम्बोलो_GPL(local_clock);
 
 static notrace u64 sched_clock_remote(struct sched_clock_data *scd)
 {
@@ -413,7 +413,7 @@ notrace u64 sched_clock_cpu(int cpu)
 
 	return clock;
 }
-EXPORT_SYMBOL_GPL(sched_clock_cpu);
+EXPORT_सिम्बोलो_GPL(sched_clock_cpu);
 
 notrace void sched_clock_tick(void)
 {
@@ -456,7 +456,7 @@ notrace void sched_clock_idle_sleep_event(void)
 {
 	sched_clock_cpu(smp_processor_id());
 }
-EXPORT_SYMBOL_GPL(sched_clock_idle_sleep_event);
+EXPORT_सिम्बोलो_GPL(sched_clock_idle_sleep_event);
 
 /*
  * We just idled; resync with ktime.
@@ -475,7 +475,7 @@ notrace void sched_clock_idle_wakeup_event(void)
 	sched_clock_tick();
 	local_irq_restore(flags);
 }
-EXPORT_SYMBOL_GPL(sched_clock_idle_wakeup_event);
+EXPORT_सिम्बोलो_GPL(sched_clock_idle_wakeup_event);
 
 #else /* !CONFIG_HAVE_UNSTABLE_SCHED_CLOCK: */
 

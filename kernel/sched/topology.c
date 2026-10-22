@@ -68,7 +68,7 @@ static int sched_domain_debug_one(struct sched_domain *sd, int cpu, int level,
 
 	printk(KERN_DEBUG "%*s domain-%d: ", level, "", level);
 	printk(KERN_CONT "span=%*pbl level=%s\n",
-	       cpumask_pr_args(sched_domain_span(sd)), sd->name);
+	       cpumask_pr_मगा_कातविरान(sched_domain_span(sd)), sd->name);
 
 	if (!cpumask_test_cpu(cpu, sched_domain_span(sd))) {
 		printk(KERN_ERR "ERROR: domain->span does not contain CPU%d\n", cpu);
@@ -117,12 +117,12 @@ static int sched_domain_debug_one(struct sched_domain *sd, int cpu, int level,
 
 		printk(KERN_CONT " %d:{ span=%*pbl",
 				group->sgc->id,
-				cpumask_pr_args(sched_group_span(group)));
+				cpumask_pr_मगा_कातविरान(sched_group_span(group)));
 
 		if ((sd->flags & SD_NUMA) &&
 		    !cpumask_equal(group_balance_mask(group), sched_group_span(group))) {
 			printk(KERN_CONT " mask=%*pbl",
-				cpumask_pr_args(group_balance_mask(group)));
+				cpumask_pr_मगा_कातविरान(group_balance_mask(group)));
 		}
 
 		if (group->sgc->capacity != SCHED_CAPACITY_SCALE)
@@ -223,7 +223,7 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
 }
 
 #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-DEFINE_STATIC_KEY_FALSE(sched_energy_present);
+DEFINE_STATIC_सुसि_FALSE(sched_energy_present);
 static unsigned int sysctl_sched_energy_aware = 1;
 static DEFINE_MUTEX(sched_energy_mutex);
 static bool sched_energy_update;
@@ -243,7 +243,7 @@ static bool sched_is_eas_possible(const struct cpumask *cpu_mask)
 	if (!any_asym_capacity) {
 		if (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS, CPUs do not have asymmetric capacities\n",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_मगा_कातविरान(cpu_mask));
 		}
 		return false;
 	}
@@ -252,7 +252,7 @@ static bool sched_is_eas_possible(const struct cpumask *cpu_mask)
 	if (sched_smt_active()) {
 		if (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS, SMT is not supported\n",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_मगा_कातविरान(cpu_mask));
 		}
 		return false;
 	}
@@ -260,7 +260,7 @@ static bool sched_is_eas_possible(const struct cpumask *cpu_mask)
 	if (!arch_scale_freq_invariant()) {
 		if (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS: frequency-invariant load tracking not yet supported",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_मगा_कातविरान(cpu_mask));
 		}
 		return false;
 	}
@@ -268,7 +268,7 @@ static bool sched_is_eas_possible(const struct cpumask *cpu_mask)
 	if (!cpufreq_ready_for_eas(cpu_mask)) {
 		if (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS: cpufreq is not ready\n",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_मगा_कातविरान(cpu_mask));
 		}
 		return false;
 	}
@@ -380,12 +380,12 @@ static void perf_domain_debug(const struct cpumask *cpu_map,
 	if (!sched_debug() || !pd)
 		return;
 
-	printk(KERN_DEBUG "root_domain %*pbl:", cpumask_pr_args(cpu_map));
+	printk(KERN_DEBUG "root_domain %*pbl:", cpumask_pr_मगा_कातविरान(cpu_map));
 
 	while (pd) {
 		printk(KERN_CONT " pd%d:{ cpus=%*pbl nr_pstate=%d }",
 				cpumask_first(perf_domain_span(pd)),
-				cpumask_pr_args(perf_domain_span(pd)),
+				cpumask_pr_मगा_कातविरान(perf_domain_span(pd)),
 				em_pd_nr_perf_states(pd->em_pd));
 		pd = pd->next;
 	}
@@ -427,7 +427,7 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
 	int i;
 	struct perf_domain *pd = NULL, *tmp;
 	int cpu = cpumask_first(cpu_map);
-	struct root_domain *rd = cpu_rq(cpu)->rd;
+	struct उगात_domain *rd = cpu_rq(cpu)->rd;
 
 	if (!sysctl_sched_energy_aware)
 		goto free;
@@ -473,7 +473,7 @@ static void free_pd(struct perf_domain *pd) { }
 
 static void free_rootdomain(struct rcu_head *rcu)
 {
-	struct root_domain *rd = container_of(rcu, struct root_domain, rcu);
+	struct उगात_domain *rd = container_of(rcu, struct उगात_domain, rcu);
 
 	cpupri_cleanup(&rd->cpupri);
 	cpudl_cleanup(&rd->cpudl);
@@ -485,9 +485,9 @@ static void free_rootdomain(struct rcu_head *rcu)
 	kfree(rd);
 }
 
-void rq_attach_root(struct rq *rq, struct root_domain *rd)
+void rq_attach_उगात(struct rq *rq, struct उगात_domain *rd)
 {
-	struct root_domain *old_rd = NULL;
+	struct उगात_domain *old_rd = NULL;
 	struct rq_flags rf;
 
 	rq_lock_irqsave(rq, &rf);
@@ -535,12 +535,12 @@ void rq_attach_root(struct rq *rq, struct root_domain *rd)
 		call_rcu(&old_rd->rcu, free_rootdomain);
 }
 
-void sched_get_rd(struct root_domain *rd)
+void sched_get_rd(struct उगात_domain *rd)
 {
 	atomic_inc(&rd->refcount);
 }
 
-void sched_put_rd(struct root_domain *rd)
+void sched_put_rd(struct उगात_domain *rd)
 {
 	if (!atomic_dec_and_test(&rd->refcount))
 		return;
@@ -548,7 +548,7 @@ void sched_put_rd(struct root_domain *rd)
 	call_rcu(&rd->rcu, free_rootdomain);
 }
 
-static int init_rootdomain(struct root_domain *rd)
+static int init_rootdomain(struct उगात_domain *rd)
 {
 	if (!zalloc_cpumask_var(&rd->span, GFP_KERNEL))
 		goto out;
@@ -559,10 +559,10 @@ static int init_rootdomain(struct root_domain *rd)
 	if (!zalloc_cpumask_var(&rd->rto_mask, GFP_KERNEL))
 		goto free_dlo_mask;
 
-#ifdef HAVE_RT_PUSH_IPI
+#ifdef HAVE_RT_इतुलाक_IPI
 	rd->rto_cpu = -1;
 	raw_spin_lock_init(&rd->rto_lock);
-	rd->rto_push_work = IRQ_WORK_INIT_HARD(rto_push_irq_work_func);
+	rd->rto_इतुलाक_work = IRQ_WORK_INIT_HARD(rto_इतुलाक_irq_work_func);
 #endif
 
 	rd->visit_cookie = 0;
@@ -592,18 +592,18 @@ out:
  * By default the system creates a single root-domain with all CPUs as
  * members (mimicking the global state we have today).
  */
-struct root_domain def_root_domain;
+struct उगात_domain def_उगात_domain;
 
 void __init init_defrootdomain(void)
 {
-	init_rootdomain(&def_root_domain);
+	init_rootdomain(&def_उगात_domain);
 
-	atomic_set(&def_root_domain.refcount, 1);
+	atomic_set(&def_उगात_domain.refcount, 1);
 }
 
-static struct root_domain *alloc_rootdomain(void)
+static struct उगात_domain *alloc_rootdomain(void)
 {
-	struct root_domain *rd;
+	struct उगात_domain *rd;
 
 	rd = kzalloc_obj(*rd);
 	if (!rd)
@@ -696,10 +696,10 @@ DEFINE_PER_CPU(struct sched_domain __rcu *, sd_numa);
 DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
 DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
 
-DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
-DEFINE_STATIC_KEY_FALSE(sched_cluster_active);
+DEFINE_STATIC_सुसि_FALSE(sched_asym_cpucapacity);
+DEFINE_STATIC_सुसि_FALSE(sched_cluster_active);
 
-static void update_top_cache_domain(int cpu)
+static void update_इताअस_cache_domain(int cpu)
 {
 	struct sched_domain_shared *sds = NULL;
 	struct sched_domain *sd;
@@ -757,7 +757,7 @@ static void update_top_cache_domain(int cpu)
  * hold the hotplug lock.
  */
 static void
-cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
+cpu_attach_domain(struct sched_domain *sd, struct उगात_domain *rd, int cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 	struct sched_domain *tmp;
@@ -836,19 +836,19 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
 
 	sched_domain_debug(sd, cpu);
 
-	rq_attach_root(rq, rd);
+	rq_attach_उगात(rq, rd);
 	tmp = rq->sd;
 	rcu_assign_pointer(rq->sd, sd);
 	dirty_sched_domain_sysctl(cpu);
 	destroy_sched_domains(tmp);
 
-	update_top_cache_domain(cpu);
+	update_इताअस_cache_domain(cpu);
 }
 
 struct s_data {
 	struct sched_domain_shared * __percpu *sds;
 	struct sched_domain * __percpu *sd;
-	struct root_domain	*rd;
+	struct उगात_domain	*rd;
 };
 
 enum s_alloc {
@@ -861,12 +861,12 @@ enum s_alloc {
 
 #ifdef CONFIG_SCHED_CACHE
 /* hardware support for cache aware scheduling */
-DEFINE_STATIC_KEY_FALSE(sched_cache_present);
+DEFINE_STATIC_सुसि_FALSE(sched_cache_present);
 /*
  * Indicator of whether cache aware scheduling
  * is active, used by the scheduler.
  */
-DEFINE_STATIC_KEY_FALSE(sched_cache_active);
+DEFINE_STATIC_सुसि_FALSE(sched_cache_active);
 /* user wants cache aware scheduling [0 or 1] */
 int sysctl_sched_cache_user = 1;
 
@@ -905,7 +905,7 @@ static unsigned long get_effective_llc_bytes(int cpu,
 static bool alloc_sd_llc(const struct cpumask *cpu_map,
 			 struct s_data *d)
 {
-	struct sched_domain *sd, *top_llc, *parent;
+	struct sched_domain *sd, *इताअस_llc, *parent;
 	unsigned int *p;
 	int i;
 
@@ -914,25 +914,25 @@ static bool alloc_sd_llc(const struct cpumask *cpu_map,
 		if (!sd)
 			goto err;
 
-		p = kcalloc_node(max_lid + 1, sizeof(unsigned int),
-				 GFP_KERNEL, cpu_to_node(i));
+		p = kcalloc_बुहोल(max_lid + 1, sizeof(unsigned int),
+				 GFP_KERNEL, cpu_to_बुहोल(i));
 		if (!p)
 			goto err;
 
-		top_llc = sd;
+		इताअस_llc = sd;
 		/*
 		 * Find the topmost SD_SHARE_LLC domain.
 		 * Not yet attached to the CPU, so per_cpu(sd_llc, i)
 		 * can not be used.
 		 */
-		while ((parent = rcu_dereference_protected(top_llc->parent, true)) &&
+		while ((parent = rcu_dereference_protected(इताअस_llc->parent, true)) &&
 		       (parent->flags & SD_SHARE_LLC))
-			top_llc = parent;
+			इताअस_llc = parent;
 
-		if (top_llc->flags & SD_SHARE_LLC) {
+		if (इताअस_llc->flags & SD_SHARE_LLC) {
 			sd->llc_max = max_lid + 1;
 			sd->llc_counts = p;
-			sd->llc_bytes = get_effective_llc_bytes(i, top_llc);
+			sd->llc_bytes = get_effective_llc_bytes(i, इताअस_llc);
 		} else {
 			/* avoid memory leak */
 			kfree(p);
@@ -1259,8 +1259,8 @@ build_group_from_child_sched_domain(struct sched_domain *sd, int cpu)
 	struct sched_group *sg;
 	struct cpumask *sg_span;
 
-	sg = kzalloc_node(sizeof(struct sched_group) + cpumask_size(),
-			GFP_KERNEL, cpu_to_node(cpu));
+	sg = kzalloc_बुहोल(sizeof(struct sched_group) + cpumask_size(),
+			GFP_KERNEL, cpu_to_बुहोल(cpu));
 
 	if (!sg)
 		return NULL;
@@ -1698,7 +1698,7 @@ asym_cpu_capacity_classify(const struct cpumask *sd_span,
 			   const struct cpumask *cpu_map)
 {
 	struct asym_cap_data *entry;
-	int count = 0, miss = 0;
+	int बिलांग = 0, miss = 0;
 
 	/*
 	 * Count how many unique CPU capacities this domain spans across
@@ -1708,15 +1708,15 @@ asym_cpu_capacity_classify(const struct cpumask *sd_span,
 	 */
 	list_for_each_entry(entry, &asym_cap_list, link) {
 		if (cpumask_intersects(sd_span, cpu_capacity_span(entry)))
-			++count;
+			++बिलांग;
 		else if (cpumask_intersects(cpu_map, cpu_capacity_span(entry)))
 			++miss;
 	}
 
-	WARN_ON_ONCE(!count && !list_empty(&asym_cap_list));
+	WARN_ON_ONCE(!बिलांग && !list_empty(&asym_cap_list));
 
 	/* No asymmetry detected */
-	if (count < 2)
+	if (बिलांग < 2)
 		return 0;
 	/* Some of the available CPU capacity values have not been detected */
 	if (miss)
@@ -1736,7 +1736,7 @@ static void free_asym_cap_entry(struct rcu_head *head)
 static inline void asym_cpu_capacity_update_data(int cpu)
 {
 	unsigned long capacity = arch_scale_cpu_capacity(cpu);
-	struct asym_cap_data *insert_entry = NULL;
+	struct asym_cap_data *इसिंगित_entry = NULL;
 	struct asym_cap_data *entry;
 
 	/*
@@ -1746,8 +1746,8 @@ static inline void asym_cpu_capacity_update_data(int cpu)
 	list_for_each_entry(entry, &asym_cap_list, link) {
 		if (capacity == entry->capacity)
 			goto done;
-		else if (!insert_entry && capacity > entry->capacity)
-			insert_entry = list_prev_entry(entry, link);
+		else if (!इसिंगित_entry && capacity > entry->capacity)
+			इसिंगित_entry = list_prev_entry(entry, link);
 	}
 
 	entry = kzalloc(sizeof(*entry) + cpumask_size(), GFP_KERNEL);
@@ -1756,10 +1756,10 @@ static inline void asym_cpu_capacity_update_data(int cpu)
 	entry->capacity = capacity;
 
 	/* If NULL then the new capacity is the smallest, add last. */
-	if (!insert_entry)
+	if (!इसिंगित_entry)
 		list_add_tail_rcu(&entry->link, &asym_cap_list);
 	else
-		list_add_rcu(&entry->link, &insert_entry->link);
+		list_add_rcu(&entry->link, &इसिंगित_entry->link);
 done:
 	__cpumask_set_cpu(cpu, cpu_capacity_span(entry));
 }
@@ -1915,11 +1915,11 @@ enum numa_topology_type sched_numa_topology_type;
  * for building NUMA scheduling domains.
  */
 static int			sched_domains_numa_levels;
-static int			sched_numa_node_levels;
+static int			sched_numa_बुहोल_levels;
 
 int				sched_max_numa_distance;
 static int			*sched_domains_numa_distance;
-static int			*sched_numa_node_distance;
+static int			*sched_numa_बुहोल_distance;
 static struct cpumask		***sched_domains_numa_masks;
 #endif /* CONFIG_NUMA */
 
@@ -2030,7 +2030,7 @@ sd_init(struct sched_domain_topology_level *tl,
 
 		sd->flags &= ~SD_PREFER_SIBLING;
 		sd->flags |= SD_SERIALIZE;
-		if (sched_domains_numa_distance[tl->numa_level] > node_reclaim_distance) {
+		if (sched_domains_numa_distance[tl->numa_level] > बुहोल_reclaim_distance) {
 			sd->flags &= ~(SD_BALANCE_EXEC |
 				       SD_BALANCE_FORK |
 				       SD_WAKE_AFFINE);
@@ -2098,7 +2098,7 @@ const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu
 
 const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
 {
-	return cpu_node_mask(cpu);
+	return cpu_बुहोल_mask(cpu);
 }
 
 /*
@@ -2144,7 +2144,7 @@ static int cpu_numa_flags(void)
 
 static const struct cpumask *sd_numa_mask(struct sched_domain_topology_level *tl, int cpu)
 {
-	return sched_domains_numa_masks[tl->numa_level][cpu_to_node(cpu)];
+	return sched_domains_numa_masks[tl->numa_level][cpu_to_बुहोल(cpu)];
 }
 
 static void sched_numa_warn(const char *str)
@@ -2159,13 +2159,13 @@ static void sched_numa_warn(const char *str)
 
 	printk(KERN_WARNING "ERROR: %s\n\n", str);
 
-	for (i = 0; i < nr_node_ids; i++) {
+	for (i = 0; i < nr_बुहोल_ids; i++) {
 		printk(KERN_WARNING "  ");
-		for (j = 0; j < nr_node_ids; j++) {
-			if (!node_state(i, N_CPU) || !node_state(j, N_CPU))
-				printk(KERN_CONT "(%02d) ", node_distance(i,j));
+		for (j = 0; j < nr_बुहोल_ids; j++) {
+			if (!बुहोल_state(i, N_CPU) || !बुहोल_state(j, N_CPU))
+				printk(KERN_CONT "(%02d) ", बुहोल_distance(i,j));
 			else
-				printk(KERN_CONT " %02d  ", node_distance(i,j));
+				printk(KERN_CONT " %02d  ", बुहोल_distance(i,j));
 		}
 		printk(KERN_CONT "\n");
 	}
@@ -2177,14 +2177,14 @@ bool find_numa_distance(int distance)
 	bool found = false;
 	int i, *distances;
 
-	if (distance == node_distance(0, 0))
+	if (distance == बुहोल_distance(0, 0))
 		return true;
 
 	rcu_read_lock();
-	distances = rcu_dereference(sched_numa_node_distance);
+	distances = rcu_dereference(sched_numa_बुहोल_distance);
 	if (!distances)
 		goto unlock;
-	for (i = 0; i < sched_numa_node_levels; i++) {
+	for (i = 0; i < sched_numa_बुहोल_levels; i++) {
 		if (distances[i] == distance) {
 			found = true;
 			break;
@@ -2196,8 +2196,8 @@ unlock:
 	return found;
 }
 
-#define for_each_cpu_node_but(n, nbut)		\
-	for_each_node_state(n, N_CPU)		\
+#define for_each_cpu_बुहोल_but(n, nbut)		\
+	for_each_बुहोल_state(n, N_CPU)		\
 		if (n == nbut)			\
 			continue;		\
 		else
@@ -2221,7 +2221,7 @@ unlock:
  *   there is an intermediary node C, which is < N hops away from both
  *   nodes A and B, the system is a glueless mesh.
  */
-static void init_numa_topology_type(int offline_node)
+static void init_numa_topology_type(int offline_बुहोल)
 {
 	int a, b, c, n;
 
@@ -2232,16 +2232,16 @@ static void init_numa_topology_type(int offline_node)
 		return;
 	}
 
-	for_each_cpu_node_but(a, offline_node) {
-		for_each_cpu_node_but(b, offline_node) {
+	for_each_cpu_बुहोल_but(a, offline_बुहोल) {
+		for_each_cpu_बुहोल_but(b, offline_बुहोल) {
 			/* Find two nodes furthest removed from each other. */
-			if (node_distance(a, b) < n)
+			if (बुहोल_distance(a, b) < n)
 				continue;
 
 			/* Is there an intermediary node between a and b? */
-			for_each_cpu_node_but(c, offline_node) {
-				if (node_distance(a, c) < n &&
-				    node_distance(b, c) < n) {
+			for_each_cpu_बुहोल_but(c, offline_बुहोल) {
+				if (बुहोल_distance(a, c) < n &&
+				    बुहोल_distance(b, c) < n) {
 					sched_numa_topology_type =
 							NUMA_GLUELESS_MESH;
 					return;
@@ -2258,7 +2258,7 @@ static void init_numa_topology_type(int offline_node)
 }
 
 
-#define NR_DISTANCE_VALUES (1 << DISTANCE_BITS)
+#define NR_DISTANCE_मगा_हालागा (1 << DISTANCE_BITS)
 
 /*
  * An architecture could modify its NUMA distance, to change
@@ -2268,20 +2268,20 @@ static void init_numa_topology_type(int offline_node)
  * A NUMA level is created for each unique
  * arch_sched_node_distance.
  */
-static int numa_node_dist(int i, int j)
+static int numa_बुहोल_dist(int i, int j)
 {
-	return node_distance(i, j);
+	return बुहोल_distance(i, j);
 }
 
-int arch_sched_node_distance(int from, int to)
-			     __weak __alias(numa_node_dist);
+int arch_sched_बुहोल_distance(int from, int to)
+			     __weak __alias(numa_बुहोल_dist);
 
-static bool modified_sched_node_distance(void)
+static bool modified_sched_बुहोल_distance(void)
 {
-	return numa_node_dist != arch_sched_node_distance;
+	return numa_बुहोल_dist != arch_sched_बुहोल_distance;
 }
 
-static int sched_record_numa_dist(int offline_node, int (*n_dist)(int, int),
+static int sched_record_numa_dist(int offline_बुहोल, int (*n_dist)(int, int),
 				  int **dist, int *levels)
 {
 	unsigned long *distance_map __free(bitmap) = NULL;
@@ -2293,16 +2293,16 @@ static int sched_record_numa_dist(int offline_node, int (*n_dist)(int, int),
 	 * O(nr_nodes^2) de-duplicating selection sort -- in order to find the
 	 * unique distances in the node_distance() table.
 	 */
-	distance_map = bitmap_alloc(NR_DISTANCE_VALUES, GFP_KERNEL);
+	distance_map = bitmap_alloc(NR_DISTANCE_मगा_हालागा, GFP_KERNEL);
 	if (!distance_map)
 		return -ENOMEM;
 
-	bitmap_zero(distance_map, NR_DISTANCE_VALUES);
-	for_each_cpu_node_but(i, offline_node) {
-		for_each_cpu_node_but(j, offline_node) {
+	bitmap_zero(distance_map, NR_DISTANCE_मगा_हालागा);
+	for_each_cpu_बुहोल_but(i, offline_बुहोल) {
+		for_each_cpu_बुहोल_but(j, offline_बुहोल) {
 			int distance = n_dist(i, j);
 
-			if (distance < LOCAL_DISTANCE || distance >= NR_DISTANCE_VALUES) {
+			if (distance < LOCAL_DISTANCE || distance >= NR_DISTANCE_मगा_हालागा) {
 				sched_numa_warn("Invalid distance value range");
 				return -EINVAL;
 			}
@@ -2314,14 +2314,14 @@ static int sched_record_numa_dist(int offline_node, int (*n_dist)(int, int),
 	 * We can now figure out how many unique distance values there are and
 	 * allocate memory accordingly.
 	 */
-	nr_levels = bitmap_weight(distance_map, NR_DISTANCE_VALUES);
+	nr_levels = bitmap_weight(distance_map, NR_DISTANCE_मगा_हालागा);
 
 	distances = kzalloc_objs(int, nr_levels);
 	if (!distances)
 		return -ENOMEM;
 
 	for (i = 0, j = 0; i < nr_levels; i++, j++) {
-		j = find_next_bit(distance_map, NR_DISTANCE_VALUES, j);
+		j = find_next_bit(distance_map, NR_DISTANCE_मगा_हालागा, j);
 		distances[i] = j;
 	}
 	*dist = distances;
@@ -2330,33 +2330,33 @@ static int sched_record_numa_dist(int offline_node, int (*n_dist)(int, int),
 	return 0;
 }
 
-void sched_init_numa(int offline_node)
+void sched_init_numa(int offline_बुहोल)
 {
 	struct sched_domain_topology_level *tl;
-	int nr_levels, nr_node_levels;
+	int nr_levels, nr_बुहोल_levels;
 	int i, j;
 	int *distances, *domain_distances;
 	struct cpumask ***masks;
 
 	/* Record the NUMA distances from SLIT table */
-	if (sched_record_numa_dist(offline_node, numa_node_dist, &distances,
-				   &nr_node_levels))
+	if (sched_record_numa_dist(offline_बुहोल, numa_बुहोल_dist, &distances,
+				   &nr_बुहोल_levels))
 		return;
 
 	/* Record modified NUMA distances for building sched domains */
-	if (modified_sched_node_distance()) {
-		if (sched_record_numa_dist(offline_node, arch_sched_node_distance,
+	if (modified_sched_बुहोल_distance()) {
+		if (sched_record_numa_dist(offline_बुहोल, arch_sched_बुहोल_distance,
 					   &domain_distances, &nr_levels)) {
 			kfree(distances);
 			return;
 		}
 	} else {
 		domain_distances = distances;
-		nr_levels = nr_node_levels;
+		nr_levels = nr_बुहोल_levels;
 	}
-	rcu_assign_pointer(sched_numa_node_distance, distances);
-	WRITE_ONCE(sched_max_numa_distance, distances[nr_node_levels - 1]);
-	WRITE_ONCE(sched_numa_node_levels, nr_node_levels);
+	rcu_assign_pointer(sched_numa_बुहोल_distance, distances);
+	WRITE_ONCE(sched_max_numa_distance, distances[nr_बुहोल_levels - 1]);
+	WRITE_ONCE(sched_numa_बुहोल_levels, nr_बुहोल_levels);
 
 	/*
 	 * 'nr_levels' contains the number of unique distances
@@ -2387,11 +2387,11 @@ void sched_init_numa(int offline_node)
 	 * CPUs of nodes that are that many hops away from us.
 	 */
 	for (i = 0; i < nr_levels; i++) {
-		masks[i] = kzalloc(nr_node_ids * sizeof(void *), GFP_KERNEL);
+		masks[i] = kzalloc(nr_बुहोल_ids * sizeof(void *), GFP_KERNEL);
 		if (!masks[i])
 			return;
 
-		for_each_cpu_node_but(j, offline_node) {
+		for_each_cpu_बुहोल_but(j, offline_बुहोल) {
 			struct cpumask *mask = kzalloc(cpumask_size(), GFP_KERNEL);
 			int k;
 
@@ -2400,17 +2400,17 @@ void sched_init_numa(int offline_node)
 
 			masks[i][j] = mask;
 
-			for_each_cpu_node_but(k, offline_node) {
+			for_each_cpu_बुहोल_but(k, offline_बुहोल) {
 				if (sched_debug() &&
-				    (arch_sched_node_distance(j, k) !=
-				     arch_sched_node_distance(k, j)))
+				    (arch_sched_बुहोल_distance(j, k) !=
+				     arch_sched_बुहोल_distance(k, j)))
 					sched_numa_warn("Node-distance not symmetric");
 
-				if (arch_sched_node_distance(j, k) >
+				if (arch_sched_बुहोल_distance(j, k) >
 				    sched_domains_numa_distance[i])
 					continue;
 
-				cpumask_or(mask, mask, cpumask_of_node(k));
+				cpumask_or(mask, mask, cpumask_of_बुहोल(k));
 			}
 		}
 	}
@@ -2433,7 +2433,7 @@ void sched_init_numa(int offline_node)
 	/*
 	 * Add the NUMA identity distance, aka single NODE.
 	 */
-	tl[i++] = SDTL_INIT(sd_numa_mask, NULL, NODE);
+	tl[i++] = SDTL_INIT(sd_numa_mask, NULL, बुहोल_2);
 
 	/*
 	 * .. and append 'j' levels of NUMA goodness.
@@ -2448,7 +2448,7 @@ void sched_init_numa(int offline_node)
 
 	sched_domains_numa_levels = nr_levels;
 
-	init_numa_topology_type(offline_node);
+	init_numa_topology_type(offline_बुहोल);
 }
 
 
@@ -2458,14 +2458,14 @@ static void sched_reset_numa(void)
 	struct cpumask ***masks;
 
 	nr_levels = sched_domains_numa_levels;
-	sched_numa_node_levels = 0;
+	sched_numa_बुहोल_levels = 0;
 	sched_domains_numa_levels = 0;
 	sched_max_numa_distance = 0;
 	sched_numa_topology_type = NUMA_DIRECT;
-	distances = sched_numa_node_distance;
-	if (sched_numa_node_distance != sched_domains_numa_distance)
+	distances = sched_numa_बुहोल_distance;
+	if (sched_numa_बुहोल_distance != sched_domains_numa_distance)
 		dom_distances = sched_domains_numa_distance;
-	rcu_assign_pointer(sched_numa_node_distance, NULL);
+	rcu_assign_pointer(sched_numa_बुहोल_distance, NULL);
 	rcu_assign_pointer(sched_domains_numa_distance, NULL);
 	masks = sched_domains_numa_masks;
 	rcu_assign_pointer(sched_domains_numa_masks, NULL);
@@ -2478,7 +2478,7 @@ static void sched_reset_numa(void)
 		for (i = 0; i < nr_levels && masks; i++) {
 			if (!masks[i])
 				continue;
-			for_each_node(j)
+			for_each_बुहोल(j)
 				kfree(masks[i][j]);
 			kfree(masks[i]);
 		}
@@ -2496,32 +2496,32 @@ static void sched_reset_numa(void)
  */
 void sched_update_numa(int cpu, bool online)
 {
-	int node;
+	int बुहोल;
 
-	node = cpu_to_node(cpu);
+	बुहोल = cpu_to_बुहोल(cpu);
 	/*
 	 * Scheduler NUMA topology is updated when the first CPU of a
 	 * node is onlined or the last CPU of a node is offlined.
 	 */
-	if (cpumask_weight(cpumask_of_node(node)) != 1)
+	if (cpumask_weight(cpumask_of_बुहोल(बुहोल)) != 1)
 		return;
 
 	sched_reset_numa();
-	sched_init_numa(online ? NUMA_NO_NODE : node);
+	sched_init_numa(online ? NUMA_NO_बुहोल : बुहोल);
 }
 
 void sched_domains_numa_masks_set(unsigned int cpu)
 {
-	int node = cpu_to_node(cpu);
+	int बुहोल = cpu_to_बुहोल(cpu);
 	int i, j;
 
 	for (i = 0; i < sched_domains_numa_levels; i++) {
-		for (j = 0; j < nr_node_ids; j++) {
-			if (!node_state(j, N_CPU))
+		for (j = 0; j < nr_बुहोल_ids; j++) {
+			if (!बुहोल_state(j, N_CPU))
 				continue;
 
 			/* Set ourselves in the remote node's masks */
-			if (arch_sched_node_distance(j, node) <=
+			if (arch_sched_बुहोल_distance(j, बुहोल) <=
 			    sched_domains_numa_distance[i])
 				cpumask_set_cpu(cpu, sched_domains_numa_masks[i][j]);
 		}
@@ -2533,7 +2533,7 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
 	int i, j;
 
 	for (i = 0; i < sched_domains_numa_levels; i++) {
-		for (j = 0; j < nr_node_ids; j++) {
+		for (j = 0; j < nr_बुहोल_ids; j++) {
 			if (sched_domains_numa_masks[i][j])
 				cpumask_clear_cpu(cpu, sched_domains_numa_masks[i][j]);
 		}
@@ -2550,7 +2550,7 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
  */
 int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
 {
-	int i, j = cpu_to_node(cpu), found = nr_cpu_ids;
+	int i, j = cpu_to_बुहोल(cpu), found = nr_cpu_ids;
 	struct cpumask ***masks;
 
 	rcu_read_lock();
@@ -2575,7 +2575,7 @@ unlock:
 struct __cmp_key {
 	const struct cpumask *cpus;
 	struct cpumask ***masks;
-	int node;
+	int बुहोल;
 	int cpu;
 	int w;
 };
@@ -2585,7 +2585,7 @@ static int hop_cmp(const void *a, const void *b)
 	struct cpumask **prev_hop, **cur_hop = *(struct cpumask ***)b;
 	struct __cmp_key *k = (struct __cmp_key *)a;
 
-	if (cpumask_weight_and(k->cpus, cur_hop[k->node]) <= k->cpu)
+	if (cpumask_weight_and(k->cpus, cur_hop[k->बुहोल]) <= k->cpu)
 		return 1;
 
 	if (b == k->masks) {
@@ -2594,7 +2594,7 @@ static int hop_cmp(const void *a, const void *b)
 	}
 
 	prev_hop = *((struct cpumask ***)b - 1);
-	k->w = cpumask_weight_and(k->cpus, prev_hop[k->node]);
+	k->w = cpumask_weight_and(k->cpus, prev_hop[k->बुहोल]);
 	if (k->w <= k->cpu)
 		return 0;
 
@@ -2611,20 +2611,20 @@ static int hop_cmp(const void *a, const void *b)
  *
  * Return: cpu, or nr_cpu_ids when nothing found.
  */
-int sched_numa_find_nth_cpu(const struct cpumask *cpus, int cpu, int node)
+int sched_numa_find_nth_cpu(const struct cpumask *cpus, int cpu, int बुहोल)
 {
 	struct __cmp_key k = { .cpus = cpus, .cpu = cpu };
 	struct cpumask ***hop_masks;
 	int hop, ret = nr_cpu_ids;
 
-	if (node == NUMA_NO_NODE)
+	if (बुहोल == NUMA_NO_बुहोल)
 		return cpumask_nth_and(cpu, cpus, cpu_online_mask);
 
 	rcu_read_lock();
 
 	/* CPU-less node entries are uninitialized in sched_domains_numa_masks */
-	node = numa_nearest_node(node, N_CPU);
-	k.node = node;
+	बुहोल = numa_nearest_बुहोल(बुहोल, N_CPU);
+	k.बुहोल = बुहोल;
 
 	k.masks = rcu_dereference(sched_domains_numa_masks);
 	if (!k.masks)
@@ -2636,13 +2636,13 @@ int sched_numa_find_nth_cpu(const struct cpumask *cpus, int cpu, int node)
 	hop = hop_masks	- k.masks;
 
 	ret = hop ?
-		cpumask_nth_and_andnot(cpu - k.w, cpus, k.masks[hop][node], k.masks[hop-1][node]) :
-		cpumask_nth_and(cpu, cpus, k.masks[0][node]);
+		cpumask_nth_and_andnot(cpu - k.w, cpus, k.masks[hop][बुहोल], k.masks[hop-1][बुहोल]) :
+		cpumask_nth_and(cpu, cpus, k.masks[0][बुहोल]);
 unlock:
 	rcu_read_unlock();
 	return ret;
 }
-EXPORT_SYMBOL_GPL(sched_numa_find_nth_cpu);
+EXPORT_सिम्बोलो_GPL(sched_numa_find_nth_cpu);
 
 /**
  * sched_numa_hop_mask() - Get the cpumask of CPUs at most @hops hops away from
@@ -2661,20 +2661,20 @@ EXPORT_SYMBOL_GPL(sched_numa_find_nth_cpu);
  * Also note that this is a reflection of sched_domains_numa_masks, which may change
  * during the lifetime of the system (offline nodes are taken out of the masks).
  */
-const struct cpumask *sched_numa_hop_mask(unsigned int node, unsigned int hops)
+const struct cpumask *sched_numa_hop_mask(unsigned int बुहोल, unsigned int hops)
 {
 	struct cpumask ***masks;
 
-	if (node >= nr_node_ids || hops >= sched_domains_numa_levels)
+	if (बुहोल >= nr_बुहोल_ids || hops >= sched_domains_numa_levels)
 		return ERR_PTR(-EINVAL);
 
 	masks = rcu_dereference(sched_domains_numa_masks);
 	if (!masks)
 		return ERR_PTR(-EBUSY);
 
-	return masks[hops][node];
+	return masks[hops][बुहोल];
 }
-EXPORT_SYMBOL_GPL(sched_numa_hop_mask);
+EXPORT_सिम्बोलो_GPL(sched_numa_hop_mask);
 
 #endif /* CONFIG_NUMA */
 
@@ -2703,15 +2703,15 @@ static int __sdt_alloc(const struct cpumask *cpu_map)
 			struct sched_group *sg;
 			struct sched_group_capacity *sgc;
 
-			sd = kzalloc_node(sizeof(struct sched_domain) + cpumask_size(),
-					GFP_KERNEL, cpu_to_node(j));
+			sd = kzalloc_बुहोल(sizeof(struct sched_domain) + cpumask_size(),
+					GFP_KERNEL, cpu_to_बुहोल(j));
 			if (!sd)
 				return -ENOMEM;
 
 			*per_cpu_ptr(sdd->sd, j) = sd;
 
-			sg = kzalloc_node(sizeof(struct sched_group) + cpumask_size(),
-					GFP_KERNEL, cpu_to_node(j));
+			sg = kzalloc_बुहोल(sizeof(struct sched_group) + cpumask_size(),
+					GFP_KERNEL, cpu_to_बुहोल(j));
 			if (!sg)
 				return -ENOMEM;
 
@@ -2719,8 +2719,8 @@ static int __sdt_alloc(const struct cpumask *cpu_map)
 
 			*per_cpu_ptr(sdd->sg, j) = sg;
 
-			sgc = kzalloc_node(sizeof(struct sched_group_capacity) + cpumask_size(),
-					GFP_KERNEL, cpu_to_node(j));
+			sgc = kzalloc_बुहोल(sizeof(struct sched_group_capacity) + cpumask_size(),
+					GFP_KERNEL, cpu_to_बुहोल(j));
 			if (!sgc)
 				return -ENOMEM;
 
@@ -2776,8 +2776,8 @@ static int __sds_alloc(struct s_data *d, const struct cpumask *cpu_map)
 	for_each_cpu(j, cpu_map) {
 		struct sched_domain_shared *sds;
 
-		sds = kzalloc_node(sizeof(struct sched_domain_shared),
-				GFP_KERNEL, cpu_to_node(j));
+		sds = kzalloc_बुहोल(sizeof(struct sched_domain_shared),
+				GFP_KERNEL, cpu_to_बुहोल(j));
 		if (!sds)
 			return -ENOMEM;
 
@@ -3236,7 +3236,7 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
 		static_branch_inc_cpuslocked(&sched_cluster_active);
 
 	if (rq && sched_debug_verbose)
-		pr_info("root domain span: %*pbl\n", cpumask_pr_args(cpu_map));
+		pr_info("root domain span: %*pbl\n", cpumask_pr_मगा_कातविरान(cpu_map));
 
 	ret = 0;
 error:
@@ -3342,7 +3342,7 @@ static void detach_destroy_domains(const struct cpumask *cpu_map)
 
 	rcu_read_lock();
 	for_each_cpu(i, cpu_map)
-		cpu_attach_domain(NULL, &def_root_domain, i);
+		cpu_attach_domain(NULL, &def_उगात_domain, i);
 	rcu_read_unlock();
 }
 

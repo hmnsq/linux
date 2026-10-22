@@ -122,7 +122,7 @@ struct scx_exit_info {
 	u32			bt_len;
 
 	/* informational message */
-	char			*msg;
+	char			*मेनसाहे;
 
 	/* debug dump */
 	char			*dump;
@@ -196,7 +196,7 @@ enum scx_ops_flags {
 	 * If set, enable per-node idle cpumasks. If clear, use a single global
 	 * flat idle cpumask.
 	 */
-	SCX_OPS_BUILTIN_IDLE_PER_NODE	= 1LLU << 6,
+	SCX_OPS_BUILTIN_IDLE_PER_बुहोल	= 1LLU << 6,
 
 	/*
 	 * If set, %SCX_ENQ_IMMED is assumed to be set on all local DSQ
@@ -221,7 +221,7 @@ enum scx_ops_flags {
 					  SCX_OPS_ENQ_MIGRATION_DISABLED |
 					  SCX_OPS_ALLOW_QUEUED_WAKEUP |
 					  SCX_OPS_SWITCH_PARTIAL |
-					  SCX_OPS_BUILTIN_IDLE_PER_NODE |
+					  SCX_OPS_BUILTIN_IDLE_PER_बुहोल |
 					  SCX_OPS_ALWAYS_ENQ_IMMED |
 					  SCX_OPS_TID_TO_TASK,
 
@@ -232,7 +232,7 @@ enum scx_ops_flags {
 };
 
 /* argument container for ops.init_task() */
-struct scx_init_task_args {
+struct scx_init_task_मगा_कातविरान {
 	/*
 	 * Set if ops.init_task() is being invoked on the fork path, as opposed
 	 * to the scheduler transition path.
@@ -245,7 +245,7 @@ struct scx_init_task_args {
 };
 
 /* argument container for ops.exit_task() */
-struct scx_exit_task_args {
+struct scx_exit_task_मगा_कातविरान {
 	/* Whether the task exited before running on sched_ext. */
 	bool cancelled;
 };
@@ -271,12 +271,12 @@ struct scx_exit_task_args {
  * before use. Once arena members can be typed, a typed alias will join this
  * field in an anonymous union at the same offset.
  */
-struct scx_enable_args {
+struct scx_enable_मगा_कातविरान {
 	u64	cmask_arena_addr;
 };
 
 /* argument container for ops.cgroup_init() */
-struct scx_cgroup_init_args {
+struct scx_cgroup_init_मगा_कातविरान {
 	/* the weight of the cgroup [1..10000] */
 	u32			weight;
 
@@ -304,10 +304,10 @@ enum scx_cpu_preempt_reason {
  * Argument container for ops.cpu_acquire(). Currently empty, but may be
  * expanded in the future.
  */
-struct scx_cpu_acquire_args {};
+struct scx_cpu_acquire_मगा_कातविरान {};
 
 /* argument container for ops.cpu_release() */
-struct scx_cpu_release_args {
+struct scx_cpu_release_मगा_कातविरान {
 	/* the reason the CPU was preempted */
 	enum scx_cpu_preempt_reason reason;
 
@@ -325,13 +325,13 @@ struct scx_dump_ctx {
 };
 
 /* argument container for ops.sub_attach() */
-struct scx_sub_attach_args {
+struct scx_sub_attach_मगा_कातविरान {
 	struct sched_ext_ops	*ops;
 	char			*cgroup_path;
 };
 
 /* argument container for ops.sub_detach() */
-struct scx_sub_detach_args {
+struct scx_sub_detach_मगा_कातविरान {
 	struct sched_ext_ops	*ops;
 	char			*cgroup_path;
 };
@@ -619,7 +619,7 @@ struct sched_ext_ops {
 	 * loading will abort loading of the BPF scheduler. During a fork, it
 	 * will abort that specific fork.
 	 */
-	s32 (*init_task)(struct task_struct *p, struct scx_init_task_args *args);
+	s32 (*init_task)(struct task_struct *p, struct scx_init_task_मगा_कातविरान *मगा_कातविरान);
 
 	/**
 	 * @exit_task: Exit a previously-running task from the system
@@ -629,7 +629,7 @@ struct sched_ext_ops {
 	 * @p is exiting or the BPF scheduler is being unloaded. Perform any
 	 * necessary cleanup for @p.
 	 */
-	void (*exit_task)(struct task_struct *p, struct scx_exit_task_args *args);
+	void (*exit_task)(struct task_struct *p, struct scx_exit_task_मगा_कातविरान *मगा_कातविरान);
 
 	/**
 	 * @enable: Enable BPF scheduling for a task
@@ -705,7 +705,7 @@ struct sched_ext_ops {
 	 * creation, it will abort the specific cgroup creation.
 	 */
 	s32 (*cgroup_init)(struct cgroup *cgrp,
-			   struct scx_cgroup_init_args *args);
+			   struct scx_cgroup_init_मगा_कातविरान *मगा_कातविरान);
 
 	/**
 	 * @cgroup_exit: Exit a cgroup
@@ -823,13 +823,13 @@ struct sched_ext_ops {
 	 *
 	 * Return 0 to accept the sub-scheduler. -errno to reject.
 	 */
-	s32 (*sub_attach)(struct scx_sub_attach_args *args);
+	s32 (*sub_attach)(struct scx_sub_attach_मगा_कातविरान *मगा_कातविरान);
 
 	/**
 	 * @sub_detach: Detach a sub-scheduler
 	 * @args: argument container, see the struct definition
 	 */
-	void (*sub_detach)(struct scx_sub_detach_args *args);
+	void (*sub_detach)(struct scx_sub_detach_मगा_कातविरान *मगा_कातविरान);
 
 	/**
 	 * @sub_caps_updated: Caps on this sub-sched's shard changed
@@ -1031,7 +1031,7 @@ struct sched_ext_ops {
 	 * A CPU that was previously released from the BPF scheduler is now once
 	 * again under its control. Deprecated; use SCX_ENQ_IMMED instead.
 	 */
-	void (*cpu_acquire)(s32 cpu, struct scx_cpu_acquire_args *args);
+	void (*cpu_acquire)(s32 cpu, struct scx_cpu_acquire_मगा_कातविरान *मगा_कातविरान);
 
 	/**
 	 * @cpu_release: A CPU is taken away from the BPF scheduler
@@ -1044,7 +1044,7 @@ struct sched_ext_ops {
 	 * caller should consult @args->reason to determine the cause.
 	 * Deprecated; use SCX_ENQ_IMMED instead.
 	 */
-	void (*cpu_release)(s32 cpu, struct scx_cpu_release_args *args);
+	void (*cpu_release)(s32 cpu, struct scx_cpu_release_मगा_कातविरान *मगा_कातविरान);
 };
 
 /**
@@ -1093,16 +1093,16 @@ struct sched_ext_ops_cid {
 			   const struct scx_cmask *cmask__arena);
 	void (*update_idle)(s32 cid, bool idle);
 	s32 (*init_task)(struct task_struct *p,
-			  struct scx_init_task_args *args);
+			  struct scx_init_task_मगा_कातविरान *मगा_कातविरान);
 	void (*exit_task)(struct task_struct *p,
-			   struct scx_exit_task_args *args);
-	void (*enable)(struct task_struct *p, struct scx_enable_args *args);
+			   struct scx_exit_task_मगा_कातविरान *मगा_कातविरान);
+	void (*enable)(struct task_struct *p, struct scx_enable_मगा_कातविरान *मगा_कातविरान);
 	void (*disable)(struct task_struct *p);
 	void (*dump)(struct scx_dump_ctx *ctx);
 	void (*dump_cid)(struct scx_dump_ctx *ctx, s32 cid, bool idle);
 	void (*dump_task)(struct scx_dump_ctx *ctx, struct task_struct *p);
 #ifdef CONFIG_EXT_GROUP_SCHED
-	s32 (*cpuctl_init)(struct cgroup *cgrp, struct scx_cgroup_init_args *args);
+	s32 (*cpuctl_init)(struct cgroup *cgrp, struct scx_cgroup_init_मगा_कातविरान *मगा_कातविरान);
 	void (*cpuctl_exit)(struct cgroup *cgrp);
 	s32 (*cpuctl_prep_move)(struct task_struct *p, struct cgroup *from,
 				struct cgroup *to);
@@ -1114,8 +1114,8 @@ struct sched_ext_ops_cid {
 				     u64 burst_us);
 	void (*cpuctl_set_idle)(struct cgroup *cgrp, bool idle);
 #endif	/* CONFIG_EXT_GROUP_SCHED */
-	s32 (*sub_attach)(struct scx_sub_attach_args *args);
-	void (*sub_detach)(struct scx_sub_detach_args *args);
+	s32 (*sub_attach)(struct scx_sub_attach_मगा_कातविरान *मगा_कातविरान);
+	void (*sub_detach)(struct scx_sub_detach_मगा_कातविरान *मगा_कातविरान);
 	void (*sub_caps_updated)(const struct scx_cmask *cmask__arena, u64 caps);
 	void (*sub_ecaps_updated)(s32 cid, u64 before, u64 after);
 	void (*cid_online)(s32 cid);
@@ -1246,7 +1246,7 @@ struct scx_event_stats {
 	 * up regardless of sub-sched enabling, it likely indicates a bug in the
 	 * scheduler.
 	 */
-	s64		SCX_EV_INSERT_NOT_OWNED;
+	s64		SCX_EV_इसिंगित_NOT_OWNED;
 
 	/*
 	 * The number of times tasks from bypassing descendants are scheduled
@@ -1308,7 +1308,7 @@ struct scx_event_stats {
 	SCX_EVENT(SCX_EV_BYPASS_DURATION);				\
 	SCX_EVENT(SCX_EV_BYPASS_DISPATCH);				\
 	SCX_EVENT(SCX_EV_BYPASS_ACTIVATE);				\
-	SCX_EVENT(SCX_EV_INSERT_NOT_OWNED);				\
+	SCX_EVENT(SCX_EV_इसिंगित_NOT_OWNED);				\
 	SCX_EVENT(SCX_EV_SUB_BYPASS_DISPATCH);				\
 	SCX_EVENT(SCX_EV_SUB_FORCED_ADMIT);				\
 	SCX_EVENT(SCX_EV_SUB_PREEMPT_DENIED);				\
@@ -1341,7 +1341,7 @@ struct scx_dsp_ctx {
 };
 
 struct scx_deferred_reenq_local {
-	struct list_head	node;
+	struct list_head	बुहोल;
 	u64			flags;
 };
 
@@ -1360,7 +1360,7 @@ struct scx_sched_pcpu {
 	cpumask_var_t		cpus_to_kick_if_idle;
 	cpumask_var_t		cpus_to_preempt;
 	cpumask_var_t		cpus_to_wait;
-	struct list_head	to_kick_node;
+	struct list_head	to_kick_बुहोल;
 
 #ifdef CONFIG_EXT_SUB_SCHED
 	/*
@@ -1377,7 +1377,7 @@ struct scx_sched_pcpu {
 	 * See queue_sync_ecaps() and scx_process_sync_ecaps().
 	 */
 	u64			ecaps;
-	struct llist_node	ecaps_to_sync_node;
+	struct llist_बुहोल	ecaps_to_sync_बुहोल;
 	/* owed a forced update_idle() re-notify on this cpu */
 	bool			idle_renotify;
 	/* effective caps as of the last sub_ecaps_updated() delivery */
@@ -1521,10 +1521,10 @@ struct scx_caps_updated {
 	raw_spinlock_t		lock;
 	u64			caps;
 	struct scx_cmask	*cmask_arena_out;
-	struct list_head	node_in_flight;
+	struct list_head	बुहोल_in_flight;
 	/* Kernel-side accumulator. Access as &cu->cmask. */
 	TRAILING_OVERLAP(struct scx_cmask, cmask, bits,
-			 u64 _bits[SCX_CMASK_NR_WORDS(SCX_CID_SHARD_MAX_CPUS)];
+			 u64 _bits[SCX_CMASK_NR_मगा_सालिता(SCX_CID_SHARD_MAX_CPUS)];
 	);
 };
 
@@ -1539,7 +1539,7 @@ struct scx_pshard {
 	 * scx_sched_pcpu->ecaps.
 	 */
 	TRAILING_OVERLAP(struct scx_cmask, cmask, bits,
-			 u64 _bits[SCX_CMASK_NR_WORDS(SCX_CID_SHARD_MAX_CPUS)];
+			 u64 _bits[SCX_CMASK_NR_मगा_सालिता(SCX_CID_SHARD_MAX_CPUS)];
 	) caps[__SCX_NR_CAPS];
 
 	/*
@@ -1643,7 +1643,7 @@ struct scx_sched {
 	u64			id;
 
 #ifdef CONFIG_EXT_SUB_SCHED
-	struct rhash_head	hash_node;
+	struct rhash_head	hash_बुहोल;
 
 	struct list_head	children;
 	struct list_head	sibling;
@@ -1832,7 +1832,7 @@ enum scx_reenq_flags {
 
 enum scx_pick_idle_cpu_flags {
 	SCX_PICK_IDLE_CORE	= 1LLU << 0,	/* pick a CPU whose SMT siblings are also idle */
-	SCX_PICK_IDLE_IN_NODE	= 1LLU << 1,	/* pick a CPU in the same target NUMA node */
+	SCX_PICK_IDLE_IN_बुहोल	= 1LLU << 1,	/* pick a CPU in the same target NUMA node */
 };
 
 enum scx_kick_flags {
@@ -2054,7 +2054,7 @@ struct scx_enable_cmd {
 /* string formatting from BPF */
 struct scx_bstr_buf {
 	u64			data[MAX_BPRINTF_VARARGS];
-	char			line[SCX_EXIT_MSG_LEN];
+	char			लिन्या[SCX_EXIT_मेनसाहे_LEN];
 };
 
 /* Internal helper for DEFINE_SCX_COMPAT_MARKER(). */
@@ -2078,7 +2078,7 @@ struct scx_bstr_buf {
 	__used __retain void scx_compat_marker_##func(void) {}			\
 	DECLARE_SCX_COMPAT_MARKER(func)
 
-extern struct scx_sched __rcu *scx_root;
+extern struct scx_sched __rcu *scx_उगात;
 DECLARE_PER_CPU(struct rq *, scx_locked_rq_state);
 
 /*
@@ -2086,7 +2086,7 @@ DECLARE_PER_CPU(struct rq *, scx_locked_rq_state);
  * in a hierarchy share one form, so this single key tells callsites which
  * view to use without per-sch dereferences. Use scx_is_cid_type() to test.
  */
-DECLARE_STATIC_KEY_FALSE(__scx_is_cid_type);
+DECLARE_STATIC_सुसि_FALSE(__scx_is_cid_type);
 
 int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id);
 
@@ -2094,7 +2094,7 @@ bool scx_cpu_valid(struct scx_sched *sch, s32 cpu, const char *where);
 
 __printf(5, 0) bool scx_vexit(struct scx_sched *sch, enum scx_exit_kind kind,
 			      s64 exit_code, s32 exit_cpu, const char *fmt,
-			      va_list args);
+			      va_list मगा_कातविरान);
 __printf(5, 6) bool __scx_exit(struct scx_sched *sch, enum scx_exit_kind kind,
 			       s64 exit_code, s32 exit_cpu, const char *fmt, ...);
 
@@ -2118,7 +2118,7 @@ bool scx_consume_global_dsq(struct scx_sched *sch, struct rq *rq);
 bool scx_rq_online(struct rq *rq);
 void scx_flush_dispatch_buf(struct scx_sched *sch, struct rq *rq);
 s32 scx_init_dsq(struct scx_dispatch_q *dsq, u64 dsq_id, struct scx_sched *sch);
-__printf(2, 3) void scx_dump_line(struct seq_buf *s, const char *fmt, ...);
+__printf(2, 3) void scx_dump_लिन्या(struct seq_buf *s, const char *fmt, ...);
 void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags);
 u64 __scx_bpf_now(struct rq *rq);
 void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
@@ -2163,9 +2163,9 @@ extern struct rhashtable scx_sched_hash;
 extern struct scx_sched *scx_enabling_sub_sched;
 #endif
 
-#define scx_exit(sch, kind, exit_code, fmt, args...)				\
+#define scx_exit(sch, kind, exit_code, fmt, मगा_कातविरान...)				\
 	__scx_exit(sch, kind, exit_code, raw_smp_processor_id(), fmt, ##args)
-#define scx_error(sch, fmt, args...)						\
+#define scx_error(sch, fmt, मगा_कातविरान...)						\
 	scx_exit((sch), SCX_EXIT_ERROR, 0, fmt, ##args)
 
 /**
@@ -2176,9 +2176,9 @@ extern struct scx_sched *scx_enabling_sub_sched;
  * can never race an update. Return the root sched with a plain load, never
  * %NULL.
  */
-static inline struct scx_sched *scx_root_protected_live(void)
+static inline struct scx_sched *scx_उगात_protected_live(void)
 {
-	return rcu_dereference_protected(scx_root, true);
+	return rcu_dereference_protected(scx_उगात, true);
 }
 
 /**
@@ -2188,9 +2188,9 @@ static inline struct scx_sched *scx_root_protected_live(void)
  * excludes them. Return the root sched with a plain load, %NULL if no scheduler
  * is loaded.
  */
-static inline struct scx_sched *scx_root_protected(void)
+static inline struct scx_sched *scx_उगात_protected(void)
 {
-	return rcu_dereference_protected(scx_root,
+	return rcu_dereference_protected(scx_उगात,
 					 lockdep_is_cpus_held() ||
 					 lockdep_is_held(&scx_enable_mutex));
 }
@@ -2244,12 +2244,12 @@ static inline int scx_ops_sanitize_err(struct scx_sched *sch, const char *ops_na
 
 static inline void scx_schedule_reenq_local(struct rq *rq, u64 reenq_flags)
 {
-	struct scx_sched *root = rcu_dereference_sched(scx_root);
+	struct scx_sched *उगात = rcu_dereference_sched(scx_उगात);
 
-	if (WARN_ON_ONCE(!root))
+	if (WARN_ON_ONCE(!उगात))
 		return;
 
-	schedule_dsq_reenq(root, &rq->scx.local_dsq, reenq_flags, rq);
+	schedule_dsq_reenq(उगात, &rq->scx.local_dsq, reenq_flags, rq);
 }
 
 /*
@@ -2282,7 +2282,7 @@ static inline void update_locked_rq(struct rq *rq)
  * @ops is the ops table to dispatch through: ops for the cpu form, ops_cid
  * for the cid form.
  */
-#define __SCX_CALL_OP(sch, ops, op, locked_rq, args...)				\
+#define __SCX_CALL_OP(sch, ops, op, locked_rq, मगा_कातविरान...)				\
 do {										\
 	struct rq *__prev_locked_rq;						\
 										\
@@ -2290,24 +2290,24 @@ do {										\
 		__prev_locked_rq = scx_locked_rq();				\
 		update_locked_rq(locked_rq);					\
 	}									\
-	(sch)->ops.op(args);							\
+	(sch)->ops.op(मगा_कातविरान);							\
 	if (locked_rq)								\
 		update_locked_rq(__prev_locked_rq);				\
 } while (0)
 
-#define SCX_CALL_OP(sch, op, locked_rq, args...)				\
+#define SCX_CALL_OP(sch, op, locked_rq, मगा_कातविरान...)				\
 	__SCX_CALL_OP(sch, ops, op, locked_rq, ##args)
 
-#define SCX_CALL_OP_RET(sch, op, locked_rq, args...)				\
+#define SCX_CALL_OP_RET(sch, op, locked_rq, मगा_कातविरान...)				\
 ({										\
 	struct rq *__prev_locked_rq;						\
-	__typeof__((sch)->ops.op(args)) __ret;					\
+	__typeof__((sch)->ops.op(मगा_कातविरान)) __ret;					\
 										\
 	if (locked_rq) {							\
 		__prev_locked_rq = scx_locked_rq();				\
 		update_locked_rq(locked_rq);					\
 	}									\
-	__ret = (sch)->ops.op(args);						\
+	__ret = (sch)->ops.op(मगा_कातविरान);						\
 	if (locked_rq)								\
 		update_locked_rq(__prev_locked_rq);				\
 	__ret;									\
@@ -2329,7 +2329,7 @@ do {										\
  * WARN_ON_ONCE() in each macro catches a re-entry of any of the three variants
  * while a previous one is still in progress.
  */
-#define __SCX_CALL_OP_TASK(sch, ops, op, locked_rq, task, args...)		\
+#define __SCX_CALL_OP_TASK(sch, ops, op, locked_rq, task, मगा_कातविरान...)		\
 do {										\
 	WARN_ON_ONCE(current->scx.kf_tasks[0]);					\
 	current->scx.kf_tasks[0] = task;					\
@@ -2341,7 +2341,7 @@ do {										\
  * A per-task op runs on @task's owner - WARN if @sch isn't it. Sites that must
  * target a different scheduler call __SCX_CALL_OP_TASK() directly.
  */
-#define SCX_CALL_OP_TASK(sch, op, locked_rq, task, args...)			\
+#define SCX_CALL_OP_TASK(sch, op, locked_rq, task, मगा_कातविरान...)			\
 do {										\
 	WARN_ON_ONCE(scx_has_subs() && (sch) != scx_task_sched_rcu(task));	\
 	__SCX_CALL_OP_TASK((sch), ops, op, locked_rq, task, ##args);		\
@@ -2352,10 +2352,10 @@ do {										\
  * cid-form signature differs from the cpu-form slot: set_cmask() takes an arena
  * cmask instead of a cpumask and enable() takes scx_enable_args.
  */
-#define SCX_CALL_CID_OP_TASK(sch, op, locked_rq, task, args...)			\
+#define SCX_CALL_CID_OP_TASK(sch, op, locked_rq, task, मगा_कातविरान...)			\
 	__SCX_CALL_OP_TASK(sch, ops_cid, op, locked_rq, task, ##args)
 
-#define SCX_CALL_OP_TASK_RET(sch, op, locked_rq, task, args...)			\
+#define SCX_CALL_OP_TASK_RET(sch, op, locked_rq, task, मगा_कातविरान...)			\
 ({										\
 	__typeof__((sch)->ops.op(task, ##args)) __ret;				\
 	WARN_ON_ONCE(scx_has_subs() && (sch) != scx_task_sched_rcu(task));	\
@@ -2366,7 +2366,7 @@ do {										\
 	__ret;									\
 })
 
-#define SCX_CALL_OP_2TASKS_RET(sch, op, locked_rq, task0, task1, args...)	\
+#define SCX_CALL_OP_2TASKS_RET(sch, op, locked_rq, task0, task1, मगा_कातविरान...)	\
 ({										\
 	__typeof__((sch)->ops.op(task0, task1, ##args)) __ret;			\
 	WARN_ON_ONCE(current->scx.kf_tasks[0]);					\
@@ -2398,7 +2398,7 @@ static inline bool scx_bypassing(struct scx_sched *sch, s32 cpu)
 }
 
 #ifdef CONFIG_EXT_SUB_SCHED
-DECLARE_STATIC_KEY_FALSE(__scx_has_subs);
+DECLARE_STATIC_सुसि_FALSE(__scx_has_subs);
 
 /**
  * scx_has_subs - Whether any sub-scheduler exists
@@ -2460,7 +2460,7 @@ static inline bool scx_task_on_sched(struct scx_sched *sch,
 static inline struct scx_sched *scx_prog_sched(const struct bpf_prog_aux *aux)
 {
 	struct sched_ext_ops *ops;
-	struct scx_sched *sch, *root;
+	struct scx_sched *sch, *उगात;
 
 	ops = bpf_prog_get_assoc_struct_ops(aux);
 	if (likely(ops)) {
@@ -2470,21 +2470,21 @@ static inline struct scx_sched *scx_prog_sched(const struct bpf_prog_aux *aux)
 		return sch;
 	}
 
-	root = rcu_dereference_all(scx_root);
-	if (root) {
-		if (unlikely(READ_ONCE(root->dead)))
+	उगात = rcu_dereference_all(scx_उगात);
+	if (उगात) {
+		if (unlikely(READ_ONCE(उगात->dead)))
 			return NULL;
 		/*
 		 * COMPAT-v6.19: Schedulers built before sub-sched support was
 		 * introduced may have unassociated non-struct_ops programs.
 		 */
-		if (!root->ops.sub_attach)
-			return root;
+		if (!उगात->ops.sub_attach)
+			return उगात;
 
-		if (!root->warned_unassoc_progs) {
+		if (!उगात->warned_unassoc_progs) {
 			printk_deferred(KERN_WARNING "sched_ext: Unassociated program %s (id %d)\n",
 					aux->name, aux->id);
-			root->warned_unassoc_progs = true;
+			उगात->warned_unassoc_progs = true;
 		}
 	}
 
@@ -2510,14 +2510,14 @@ static inline bool scx_has_subs(void) { return false; }
 
 static inline struct scx_sched *scx_task_sched(const struct task_struct *p)
 {
-	return rcu_dereference_protected(scx_root,
+	return rcu_dereference_protected(scx_उगात,
 					 lockdep_is_held(&p->pi_lock) ||
 					 lockdep_is_held(__rq_lockp(task_rq(p))));
 }
 
 static inline struct scx_sched *scx_task_sched_rcu(const struct task_struct *p)
 {
-	return rcu_dereference_all(scx_root);
+	return rcu_dereference_all(scx_उगात);
 }
 
 static inline bool scx_task_on_sched(struct scx_sched *sch,
@@ -2528,11 +2528,11 @@ static inline bool scx_task_on_sched(struct scx_sched *sch,
 
 static inline struct scx_sched *scx_prog_sched(const struct bpf_prog_aux *aux)
 {
-	struct scx_sched *root = rcu_dereference_all(scx_root);
+	struct scx_sched *उगात = rcu_dereference_all(scx_उगात);
 
-	if (root && unlikely(READ_ONCE(root->dead)))
+	if (उगात && unlikely(READ_ONCE(उगात->dead)))
 		return NULL;
-	return root;
+	return उगात;
 }
 
 static inline struct scx_sched *scx_parent(struct scx_sched *sch) { return NULL; }

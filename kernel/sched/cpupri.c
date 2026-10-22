@@ -71,7 +71,7 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 	struct cpupri_vec *vec  = &cp->pri_to_cpu[idx];
 	int skip = 0;
 
-	if (!atomic_read(&(vec)->count))
+	if (!atomic_read(&(vec)->बिलांग))
 		skip = 1;
 	/*
 	 * When looking at the vector, we need to read the counter,
@@ -237,7 +237,7 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		 * make sure the vector is visible when count is set.
 		 */
 		smp_mb__before_atomic();
-		atomic_inc(&(vec)->count);
+		atomic_inc(&(vec)->बिलांग);
 		do_mb = 1;
 	}
 	if (likely(oldpri != CPUPRI_INVALID)) {
@@ -262,7 +262,7 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		 * When removing from the vector, we decrement the counter first
 		 * do a memory barrier and then clear the mask.
 		 */
-		atomic_dec(&(vec)->count);
+		atomic_dec(&(vec)->बिलांग);
 		smp_mb__after_atomic();
 		cpumask_clear_cpu(cpu, vec->mask);
 	}
@@ -283,7 +283,7 @@ int cpupri_init(struct cpupri *cp)
 	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
 		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
 
-		atomic_set(&vec->count, 0);
+		atomic_set(&vec->बिलांग, 0);
 		if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
 			goto cleanup;
 	}

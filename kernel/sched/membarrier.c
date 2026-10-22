@@ -279,7 +279,7 @@ static int membarrier_global_expedited(void)
 	cpumask_var_t __free(free_cpumask_var) tmpmask = CPUMASK_VAR_NULL;
 	int cpu;
 
-	if (num_online_cpus() == 1)
+	if (नुमेरो_online_cpus() == 1)
 		return 0;
 
 	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
@@ -355,7 +355,7 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 	}
 
 	if (flags != MEMBARRIER_FLAG_SYNC_CORE &&
-	    (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1))
+	    (atomic_read(&mm->mm_users) == 1 || नुमेरो_online_cpus() == 1))
 		return 0;
 
 	/*
@@ -448,7 +448,7 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 	cpumask_var_t tmpmask;
 	int cpu;
 
-	if (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1) {
+	if (atomic_read(&mm->mm_users) == 1 || नुमेरो_online_cpus() == 1) {
 		this_cpu_write(runqueues.membarrier_state, membarrier_state);
 
 		/*
@@ -659,7 +659,7 @@ SYSCALL_DEFINE3(membarrier, int, cmd, unsigned int, flags, int, cpu_id)
 		/* MEMBARRIER_CMD_GLOBAL is not compatible with nohz_full. */
 		if (tick_nohz_full_enabled())
 			return -EINVAL;
-		if (num_online_cpus() > 1)
+		if (नुमेरो_online_cpus() > 1)
 			synchronize_rcu();
 		return 0;
 	case MEMBARRIER_CMD_GLOBAL_EXPEDITED:

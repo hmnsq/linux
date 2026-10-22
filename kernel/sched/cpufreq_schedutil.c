@@ -619,7 +619,7 @@ static ssize_t rate_limit_us_show(struct gov_attr_set *attr_set, char *buf)
 }
 
 static ssize_t
-rate_limit_us_store(struct gov_attr_set *attr_set, const char *buf, size_t count)
+rate_limit_us_store(struct gov_attr_set *attr_set, const char *buf, size_t बिलांग)
 {
 	struct sugov_tunables *tunables = to_sugov_tunables(attr_set);
 	struct sugov_policy *sg_policy;
@@ -633,7 +633,7 @@ rate_limit_us_store(struct gov_attr_set *attr_set, const char *buf, size_t count
 	list_for_each_entry(sg_policy, &attr_set->policy_list, tunables_hook)
 		sugov_update_rate_limit_us(sg_policy);
 
-	return count;
+	return बिलांग;
 }
 
 static struct governor_attr rate_limit_us = __ATTR_RW(rate_limit_us);
@@ -849,13 +849,13 @@ static void sugov_exit(struct cpufreq_policy *policy)
 {
 	struct sugov_policy *sg_policy = policy->governor_data;
 	struct sugov_tunables *tunables = sg_policy->tunables;
-	unsigned int count;
+	unsigned int बिलांग;
 
 	mutex_lock(&global_tunables_lock);
 
-	count = gov_attr_set_put(&tunables->attr_set, &sg_policy->tunables_hook);
+	बिलांग = gov_attr_set_put(&tunables->attr_set, &sg_policy->tunables_hook);
 	policy->governor_data = NULL;
-	if (!count)
+	if (!बिलांग)
 		sugov_clear_global_tunables();
 
 	mutex_unlock(&global_tunables_lock);

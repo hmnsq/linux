@@ -11,7 +11,7 @@
 #define CPUPRI_HIGHER		100
 
 struct cpupri_vec {
-	atomic_t		count;
+	atomic_t		बिलांग;
 	cpumask_var_t		mask;
 };
 

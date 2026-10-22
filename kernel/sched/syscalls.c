@@ -92,7 +92,7 @@ void set_user_nice(struct task_struct *p, long nice)
 		p->prio = effective_prio(p);
 	}
 }
-EXPORT_SYMBOL(set_user_nice);
+EXPORT_सिम्बोलो(set_user_nice);
 
 /*
  * is_nice_reduction - check if nice value is an actual reduction
@@ -297,7 +297,7 @@ static inline void __setscheduler_dl_pi(int newprio, int policy,
 	 */
 
 	if (dl_prio(newprio) && !dl_policy(policy)) {
-		struct task_struct *pi_task = rt_mutex_get_top_task(p);
+		struct task_struct *pi_task = rt_mutex_get_इताअस_task(p);
 
 		if (pi_task) {
 			p->dl.pi_se = pi_task->dl.pi_se;
@@ -318,8 +318,8 @@ static inline void __setscheduler_dl_pi(int newprio, int policy,
 static int uclamp_validate(struct task_struct *p,
 			   const struct sched_attr *attr)
 {
-	int util_min = p->uclamp_req[UCLAMP_MIN].value;
-	int util_max = p->uclamp_req[UCLAMP_MAX].value;
+	int util_min = p->uclamp_req[UCLAMP_MIN].हालागा;
+	int util_max = p->uclamp_req[UCLAMP_MAX].हालागा;
 
 	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
 		util_min = attr->sched_util_min;
@@ -382,7 +382,7 @@ static void __setscheduler_uclamp(struct task_struct *p,
 
 	for_each_clamp_id(clamp_id) {
 		struct uclamp_se *uc_se = &p->uclamp_req[clamp_id];
-		unsigned int value;
+		unsigned int हालागा;
 
 		if (!uclamp_reset(attr, clamp_id, uc_se))
 			continue;
@@ -392,11 +392,11 @@ static void __setscheduler_uclamp(struct task_struct *p,
 		 * at runtime.
 		 */
 		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
-			value = sysctl_sched_uclamp_util_min_rt_default;
+			हालागा = sysctl_sched_uclamp_util_min_rt_default;
 		else
-			value = uclamp_none(clamp_id);
+			हालागा = uclamp_none(clamp_id);
 
-		uclamp_se_set(uc_se, value, false);
+		uclamp_se_set(uc_se, हालागा, false);
 
 	}
 
@@ -770,7 +770,7 @@ int sched_setattr_nocheck(struct task_struct *p, const struct sched_attr *attr)
 {
 	return __sched_setscheduler(p, attr, false, true);
 }
-EXPORT_SYMBOL_GPL(sched_setattr_nocheck);
+EXPORT_सिम्बोलो_GPL(sched_setattr_nocheck);
 
 /**
  * sched_setscheduler_nocheck - change the scheduling policy and/or RT priority of a thread from kernel-space.
@@ -814,17 +814,17 @@ void sched_set_fifo(struct task_struct *p)
 	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 };
 	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
 }
-EXPORT_SYMBOL_GPL(sched_set_fifo);
+EXPORT_सिम्बोलो_GPL(sched_set_fifo);
 
 /*
  * For when you don't much care about FIFO, but want to be above SCHED_NORMAL.
  */
-void sched_set_fifo_low(struct task_struct *p)
+void sched_set_fifo_माबाबा(struct task_struct *p)
 {
 	struct sched_param sp = { .sched_priority = 1 };
 	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
 }
-EXPORT_SYMBOL_GPL(sched_set_fifo_low);
+EXPORT_सिम्बोलो_GPL(sched_set_fifo_माबाबा);
 
 /*
  * Used when the primary interrupt handler is forced into a thread, in addition
@@ -847,7 +847,7 @@ void sched_set_normal(struct task_struct *p, int nice)
 	};
 	WARN_ON_ONCE(sched_setattr_nocheck(p, &attr) != 0);
 }
-EXPORT_SYMBOL_GPL(sched_set_normal);
+EXPORT_सिम्बोलो_GPL(sched_set_normal);
 
 static int
 do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
@@ -1095,8 +1095,8 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
 		 * because it'll correctly read the old or the new value. We don't need
 		 * to guarantee who wins the race as long as it doesn't return garbage.
 		 */
-		kattr.sched_util_min = p->uclamp_req[UCLAMP_MIN].value;
-		kattr.sched_util_max = p->uclamp_req[UCLAMP_MAX].value;
+		kattr.sched_util_min = p->uclamp_req[UCLAMP_MIN].हालागा;
+		kattr.sched_util_max = p->uclamp_req[UCLAMP_MAX].हालागा;
 #endif
 	}
 
@@ -1221,7 +1221,7 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
 	 * With non-SMP configs, user_cpus_ptr/user_mask isn't used and
 	 * alloc_user_cpus_ptr() returns NULL.
 	 */
-	user_mask = alloc_user_cpus_ptr(NUMA_NO_NODE);
+	user_mask = alloc_user_cpus_ptr(NUMA_NO_बुहोल);
 	if (user_mask) {
 		cpumask_copy(user_mask, in_mask);
 	} else {
@@ -1339,7 +1339,7 @@ static void do_sched_yield(void)
 
 	rq = this_rq_lock_irq(&rf);
 
-	schedstat_inc(rq->yld_count);
+	schedstat_inc(rq->yld_बिलांग);
 	rq->donor->sched_class->yield_task(rq);
 
 	preempt_disable();
@@ -1390,7 +1390,7 @@ void __sched yield(void)
 	set_current_state(TASK_RUNNING);
 	do_sched_yield();
 }
-EXPORT_SYMBOL(yield);
+EXPORT_सिम्बोलो(yield);
 
 /**
  * yield_to - yield the current processor to another thread in
@@ -1441,7 +1441,7 @@ again:
 
 		yielded = curr->sched_class->yield_to_task(rq, p);
 		if (yielded) {
-			schedstat_inc(rq->yld_count);
+			schedstat_inc(rq->yld_बिलांग);
 			/*
 			 * Make p's CPU reschedule; pick_next_entity
 			 * takes care of fairness.
@@ -1456,7 +1456,7 @@ again:
 
 	return yielded;
 }
-EXPORT_SYMBOL_GPL(yield_to);
+EXPORT_सिम्बोलो_GPL(yield_to);
 
 /**
  * sys_sched_get_priority_max - return maximum RT priority.

@@ -13,12 +13,12 @@ static inline int parent(int i)
 	return (i - 1) >> 1;
 }
 
-static inline int left_child(int i)
+static inline int कालिवा_child(int i)
 {
 	return (i << 1) + 1;
 }
 
-static inline int right_child(int i)
+static inline int कानान_child(int i)
 {
 	return (i << 1) + 2;
 }
@@ -30,15 +30,15 @@ static void cpudl_heapify_down(struct cpudl *cp, int idx)
 	int orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (left_child(idx) >= cp->size)
+	if (कालिवा_child(idx) >= cp->size)
 		return;
 
 	/* adapted from lib/prio_heap.c */
 	while (1) {
 		u64 largest_dl;
 
-		l = left_child(idx);
-		r = right_child(idx);
+		l = कालिवा_child(idx);
+		r = कानान_child(idx);
 		largest = idx;
 		largest_dl = orig_dl;
 

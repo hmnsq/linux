@@ -4,7 +4,7 @@
 
 #ifdef CONFIG_SCHEDSTATS
 
-extern struct static_key_false sched_schedstats;
+extern struct static_सुसि_false sched_schedstats;
 
 /*
  * Expects runqueue lock to be held for atomicity of update

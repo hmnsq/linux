@@ -40,7 +40,7 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
 	data->func = func;
 	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), data);
 }
-EXPORT_SYMBOL_GPL(cpufreq_add_update_util_hook);
+EXPORT_सिम्बोलो_GPL(cpufreq_add_update_util_hook);
 
 /**
  * cpufreq_remove_update_util_hook - Clear the CPU's update_util_data pointer.
@@ -56,7 +56,7 @@ void cpufreq_remove_update_util_hook(int cpu)
 {
 	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), NULL);
 }
-EXPORT_SYMBOL_GPL(cpufreq_remove_update_util_hook);
+EXPORT_सिम्बोलो_GPL(cpufreq_remove_update_util_hook);
 
 /**
  * cpufreq_this_cpu_can_update - Check if cpufreq policy can be updated.

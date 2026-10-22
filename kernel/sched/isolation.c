@@ -19,8 +19,8 @@ enum hk_flags {
 	HK_FLAG_KERNEL_NOISE	= BIT(HK_TYPE_KERNEL_NOISE),
 };
 
-DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
-EXPORT_SYMBOL_GPL(housekeeping_overridden);
+DEFINE_STATIC_सुसि_FALSE(housekeeping_overridden);
+EXPORT_सिम्बोलो_GPL(housekeeping_overridden);
 
 struct housekeeping {
 	struct cpumask __rcu *cpumasks[HK_TYPE_MAX];
@@ -34,7 +34,7 @@ bool housekeeping_enabled(enum hk_type type)
 {
 	return !!(READ_ONCE(housekeeping.flags) & BIT(type));
 }
-EXPORT_SYMBOL_GPL(housekeeping_enabled);
+EXPORT_सिम्बोलो_GPL(housekeeping_enabled);
 
 static bool housekeeping_dereference_check(enum hk_type type)
 {
@@ -75,7 +75,7 @@ const struct cpumask *housekeeping_cpumask(enum hk_type type)
 		mask = cpu_possible_mask;
 	return mask;
 }
-EXPORT_SYMBOL_GPL(housekeeping_cpumask);
+EXPORT_सिम्बोलो_GPL(housekeeping_cpumask);
 
 int housekeeping_any_cpu(enum hk_type type)
 {
@@ -101,7 +101,7 @@ int housekeeping_any_cpu(enum hk_type type)
 	}
 	return smp_processor_id();
 }
-EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
+EXPORT_सिम्बोलो_GPL(housekeeping_any_cpu);
 
 void housekeeping_affine(struct task_struct *t, enum hk_type type)
 {
@@ -109,7 +109,7 @@ void housekeeping_affine(struct task_struct *t, enum hk_type type)
 		if (housekeeping.flags & BIT(type))
 			set_cpus_allowed_ptr(t, housekeeping_cpumask(type));
 }
-EXPORT_SYMBOL_GPL(housekeeping_affine);
+EXPORT_सिम्बोलो_GPL(housekeeping_affine);
 
 bool housekeeping_test_cpu(int cpu, enum hk_type type)
 {
@@ -118,7 +118,7 @@ bool housekeeping_test_cpu(int cpu, enum hk_type type)
 		return cpumask_test_cpu(cpu, housekeeping_cpumask(type));
 	return true;
 }
-EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
+EXPORT_सिम्बोलो_GPL(housekeeping_test_cpu);
 
 int housekeeping_update(struct cpumask *isol_mask)
 {
@@ -191,13 +191,13 @@ void __init housekeeping_init(void)
 		WARN_ON_ONCE(cpumask_empty(omask));
 		cpumask_copy(nmask, omask);
 		RCU_INIT_POINTER(housekeeping.cpumasks[type], nmask);
-		__llist_add((struct llist_node *)omask, &memblock_freelist);
+		__llist_add((struct llist_बुहोल *)omask, &memblock_freelist);
 	}
 }
 
 static int __init housekeeping_late_init(void)
 {
-	struct llist_node *llnode, *pos, *t;
+	struct llist_बुहोल *llnode, *pos, *t;
 
 	/* Free allocated memblock memory, if any */
 	llnode = __llist_del_all(&memblock_freelist);

@@ -26,7 +26,7 @@
 /*
  * Ease the printing of nsec fields:
  */
-static long long nsec_high(unsigned long long nsec)
+static long long nsec_माताअस(unsigned long long nsec)
 {
 	if ((long long)nsec < 0) {
 		nsec = -nsec;
@@ -38,7 +38,7 @@ static long long nsec_high(unsigned long long nsec)
 	return nsec;
 }
 
-static unsigned long nsec_low(unsigned long long nsec)
+static unsigned long nsec_माबाबा(unsigned long long nsec)
 {
 	if ((long long)nsec < 0)
 		nsec = -nsec;
@@ -46,7 +46,7 @@ static unsigned long nsec_low(unsigned long long nsec)
 	return do_div(nsec, 1000000);
 }
 
-#define SPLIT_NS(x) nsec_high(x), nsec_low(x)
+#define SPLIT_NS(x) nsec_माताअस(x), nsec_माबाबा(x)
 
 #define SCHED_FEAT(name, enabled)	\
 	#name ,
@@ -73,13 +73,13 @@ static int sched_feat_show(struct seq_file *m, void *v)
 
 #ifdef CONFIG_JUMP_LABEL
 
-#define jump_label_key__true  { .key_true  = STATIC_KEY_TRUE_INIT  }
-#define jump_label_key__false { .key_false = STATIC_KEY_FALSE_INIT }
+#define jump_label_सुसि_true  { .सुसि_true  = STATIC_सुसि_TRUE_INIT  }
+#define jump_label_सुसि_false { .सुसि_false = STATIC_सुसि_FALSE_INIT }
 
 #define SCHED_FEAT(name, enabled)	\
-	jump_label_key__##enabled ,
+	jump_label_सुसि##enabled ,
 
-union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR] = {
+union sched_feat_सुसि sched_feat_मगा_सुसि[__SCHED_FEAT_NR] = {
 #include "features.h"
 };
 
@@ -87,12 +87,12 @@ union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR] = {
 
 static void sched_feat_disable(int i)
 {
-	static_branch_disable_cpuslocked(&sched_feat_keys[i].key_true);
+	static_branch_disable_cpuslocked(&sched_feat_मगा_सुसि[i].सुसि_true);
 }
 
 static void sched_feat_enable(int i)
 {
-	static_branch_enable_cpuslocked(&sched_feat_keys[i].key_false);
+	static_branch_enable_cpuslocked(&sched_feat_मगा_सुसि[i].सुसि_false);
 }
 #else /* !CONFIG_JUMP_LABEL: */
 static void sched_feat_disable(int i) { };
@@ -381,9 +381,9 @@ static ssize_t sched_server_write_common(struct file *filp, const char __user *u
 	struct rq *rq = cpu_rq(cpu);
 	int retval = 0;
 	size_t err;
-	u64 value;
+	u64 हालागा;
 
-	err = kstrtoull_from_user(ubuf, cnt, 10, &value);
+	err = kstrtoull_from_user(ubuf, cnt, 10, &हालागा);
 	if (err)
 		return err;
 
@@ -393,14 +393,14 @@ static ssize_t sched_server_write_common(struct file *filp, const char __user *u
 
 		switch (param) {
 		case DL_RUNTIME:
-			if (runtime == value)
+			if (runtime == हालागा)
 				break;
-			runtime = value;
+			runtime = हालागा;
 			break;
 		case DL_PERIOD:
-			if (value == period)
+			if (हालागा == period)
 				break;
-			period = value;
+			period = हालागा;
 			break;
 		}
 
@@ -438,18 +438,18 @@ static size_t sched_server_show_common(struct seq_file *m, void *v, enum dl_para
 				       void *server)
 {
 	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
-	u64 value;
+	u64 हालागा;
 
 	switch (param) {
 	case DL_RUNTIME:
-		value = dl_se->dl_runtime;
+		हालागा = dl_se->dl_runtime;
 		break;
 	case DL_PERIOD:
-		value = dl_se->dl_period;
+		हालागा = dl_se->dl_period;
 		break;
 	}
 
-	seq_printf(m, "%llu\n", value);
+	seq_printf(m, "%llu\n", हालागा);
 	return 0;
 }
 
@@ -880,7 +880,7 @@ void dirty_sched_domain_sysctl(int cpu)
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group *tg)
+static void इलिम्बाग_cfs_group_stats(struct seq_file *m, int cpu, struct task_group *tg)
 {
 	struct sched_entity *se = tg_se(tg, cpu);
 
@@ -911,7 +911,7 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 		PN_SCHEDSTAT(slice_max);
 		PN_SCHEDSTAT(wait_max);
 		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
+		P_SCHEDSTAT(wait_बिलांग);
 	}
 
 	P(se->load.weight);
@@ -962,7 +962,7 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
 #endif
 
 static void
-print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
+इलिम्बाग_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 {
 	if (task_current(rq, p))
 		SEQ_printf(m, ">R");
@@ -987,7 +987,7 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_block_runtime)));
 
 #ifdef CONFIG_NUMA_BALANCING
-	SEQ_printf(m, "   %d      %d", task_node(p), task_numa_group_id(p));
+	SEQ_printf(m, "   %d      %d", task_बुहोल(p), task_numa_group_id(p));
 #endif
 #ifdef CONFIG_CGROUP_SCHED
 	SEQ_printf_task_group_path(m, task_group(p), "        %s")
@@ -996,7 +996,7 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 	SEQ_printf(m, "\n");
 }
 
-static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
+static void इलिम्बाग_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
 {
 	struct task_struct *g, *p;
 
@@ -1028,17 +1028,17 @@ static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
 		if (task_cpu(p) != rq_cpu)
 			continue;
 
-		print_task(m, rq, p);
+		इलिम्बाग_task(m, rq, p);
 	}
 	rcu_read_unlock();
 }
 
-void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+void इलिम्बाग_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 {
-	s64 left_vruntime = -1, right_vruntime = -1, left_deadline = -1, spread;
+	s64 कालिवा_vruntime = -1, कानान_vruntime = -1, कालिवा_deadline = -1, spread;
 	s64 zero_vruntime = -1, sum_w_vruntime = -1;
 	u64 avruntime;
-	struct sched_entity *last, *first, *root;
+	struct sched_entity *last, *first, *उगात;
 	struct rq *rq = cpu_rq(cpu);
 	unsigned int sum_shift;
 	unsigned long flags;
@@ -1053,15 +1053,15 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 #endif
 
 	raw_spin_rq_lock_irqsave(rq, flags);
-	root = __pick_root_entity(cfs_rq);
-	if (root)
-		left_vruntime = root->min_vruntime;
+	उगात = __pick_root_entity(cfs_rq);
+	if (उगात)
+		कालिवा_vruntime = उगात->min_vruntime;
 	first = __pick_first_entity(cfs_rq);
 	if (first)
-		left_deadline = first->deadline;
+		कालिवा_deadline = first->deadline;
 	last = __pick_last_entity(cfs_rq);
 	if (last)
-		right_vruntime = last->vruntime;
+		कानान_vruntime = last->vruntime;
 	zero_vruntime = cfs_rq->zero_vruntime;
 	sum_w_vruntime = cfs_rq->sum_w_vruntime;
 	sum_weight = cfs_rq->sum_weight;
@@ -1070,9 +1070,9 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_deadline",
-			SPLIT_NS(left_deadline));
+			SPLIT_NS(कालिवा_deadline));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_vruntime",
-			SPLIT_NS(left_vruntime));
+			SPLIT_NS(कालिवा_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "zero_vruntime",
 			SPLIT_NS(zero_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld (%d bits)\n", "sum_w_vruntime",
@@ -1083,8 +1083,8 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "avg_vruntime",
 			SPLIT_NS(avruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "right_vruntime",
-			SPLIT_NS(right_vruntime));
-	spread = right_vruntime - left_vruntime;
+			SPLIT_NS(कानान_vruntime));
+	spread = कानान_vruntime - कालिवा_vruntime;
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
 	SEQ_printf(m, "  .%-30s: %d\n", "nr_queued", cfs_rq->nr_queued);
 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_runnable", cfs_rq->h_nr_runnable);
@@ -1117,15 +1117,15 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	SEQ_printf(m, "  .%-30s: %d\n", "throttled",
 			cfs_rq->throttled);
 	SEQ_printf(m, "  .%-30s: %d\n", "throttle_count",
-			cfs_rq->throttle_count);
+			cfs_rq->throttle_बिलांग);
 #endif
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	print_cfs_group_stats(m, cpu, cfs_rq->tg);
+	इलिम्बाग_cfs_group_stats(m, cpu, cfs_rq->tg);
 #endif
 }
 
-void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
+void इलिम्बाग_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
 {
 #ifdef CONFIG_RT_GROUP_SCHED
 	SEQ_printf(m, "\n");
@@ -1155,7 +1155,7 @@ void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
 #undef P
 }
 
-void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
+void इलिम्बाग_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
 {
 	struct dl_bw *dl_bw;
 
@@ -1173,7 +1173,7 @@ void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
 #undef PU
 }
 
-static void print_cpu(struct seq_file *m, int cpu)
+static void इलिम्बाग_cpu(struct seq_file *m, int cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 
@@ -1216,19 +1216,19 @@ do {									\
 
 #define P(n) SEQ_printf(m, "  .%-30s: %d\n", #n, schedstat_val(rq->n));
 	if (schedstat_enabled()) {
-		P(yld_count);
-		P(sched_count);
+		P(yld_बिलांग);
+		P(sched_बिलांग);
 		P(sched_goidle);
-		P(ttwu_count);
+		P(ttwu_बिलांग);
 		P(ttwu_local);
 	}
 #undef P
 
-	print_cfs_stats(m, cpu);
-	print_rt_stats(m, cpu);
-	print_dl_stats(m, cpu);
+	इलिम्बाग_cfs_stats(m, cpu);
+	इलिम्बाग_rt_stats(m, cpu);
+	इलिम्बाग_dl_stats(m, cpu);
 
-	print_rq(m, rq, cpu);
+	इलिम्बाग_rq(m, rq, cpu);
 	SEQ_printf(m, "\n");
 }
 
@@ -1292,7 +1292,7 @@ static int sched_debug_show(struct seq_file *m, void *v)
 	int cpu = (unsigned long)(v - 2);
 
 	if (cpu != -1)
-		print_cpu(m, cpu);
+		इलिम्बाग_cpu(m, cpu);
 	else
 		sched_debug_header(m);
 
@@ -1312,7 +1312,7 @@ void sysrq_sched_debug_show(void)
 		 */
 		touch_nmi_watchdog();
 		touch_all_softlockup_watchdogs();
-		print_cpu(NULL, cpu);
+		इलिम्बाग_cpu(NULL, cpu);
 	}
 }
 
@@ -1372,10 +1372,10 @@ static const struct seq_operations sched_debug_sops = {
 
 
 #ifdef CONFIG_NUMA_BALANCING
-void print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
+void इलिम्बाग_numa_stats(struct seq_file *m, int बुहोल, unsigned long tsf,
 		unsigned long tpf, unsigned long gsf, unsigned long gpf)
 {
-	SEQ_printf(m, "numa_faults node=%d ", node);
+	SEQ_printf(m, "numa_faults node=%d ", बुहोल);
 	SEQ_printf(m, "task_private=%lu task_shared=%lu ", tpf, tsf);
 	SEQ_printf(m, "group_private=%lu group_shared=%lu\n", gpf, gsf);
 }
@@ -1392,7 +1392,7 @@ static void sched_show_numa(struct task_struct *p, struct seq_file *m)
 	P(numa_preferred_nid);
 	P(total_numa_faults);
 	SEQ_printf(m, "current_node=%d, numa_group_id=%d\n",
-			task_node(p), task_numa_group_id(p));
+			task_बुहोल(p), task_numa_group_id(p));
 	show_numa_stats(p, m);
 #endif /* CONFIG_NUMA_BALANCING */
 }
@@ -1433,9 +1433,9 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		PN_SCHEDSTAT(slice_max);
 		PN_SCHEDSTAT(wait_max);
 		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
+		P_SCHEDSTAT(wait_बिलांग);
 		PN_SCHEDSTAT(iowait_sum);
-		P_SCHEDSTAT(iowait_count);
+		P_SCHEDSTAT(iowait_बिलांग);
 		P_SCHEDSTAT(nr_failed_migrations_affine);
 		P_SCHEDSTAT(nr_failed_migrations_running);
 		P_SCHEDSTAT(nr_failed_migrations_hot);
@@ -1485,10 +1485,10 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	P(se.avg.last_update_time);
 	PM(se.avg.util_est, ~UTIL_AVG_UNCHANGED);
 #ifdef CONFIG_UCLAMP_TASK
-	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].value);
-	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].value);
-	__PS("effective uclamp.min", uclamp_eff_value(p, UCLAMP_MIN));
-	__PS("effective uclamp.max", uclamp_eff_value(p, UCLAMP_MAX));
+	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].हालागा);
+	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].हालागा);
+	__PS("effective uclamp.min", uclamp_eff_हालागा(p, UCLAMP_MIN));
+	__PS("effective uclamp.max", uclamp_eff_हालागा(p, UCLAMP_MAX));
 #endif /* CONFIG_UCLAMP_TASK */
 	P(policy);
 	P(prio);
@@ -1532,5 +1532,5 @@ void resched_latency_warn(int cpu, u64 latency)
 
 	pr_err("sched: CPU %d need_resched set for > %llu ns (%d ticks) without schedule\n",
 	       cpu, latency, cpu_rq(cpu)->ticks_without_resched);
-	dump_stack();
+	dump_सालानसान();
 }

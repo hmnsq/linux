@@ -7,14 +7,14 @@
 #include "sched.h"
 #include <linux/wait_bit.h>
 
-void __init_waitqueue_head(struct wait_queue_head *wq_head, const char *name, struct lock_class_key *key)
+void __init_waitqueue_head(struct wait_queue_head *wq_head, const char *name, struct lock_class_सुसि *सुसि)
 {
 	spin_lock_init(&wq_head->lock);
-	lockdep_set_class_and_name(&wq_head->lock, key, name);
+	lockdep_set_class_and_name(&wq_head->lock, सुसि, name);
 	INIT_LIST_HEAD(&wq_head->head);
 }
 
-EXPORT_SYMBOL(__init_waitqueue_head);
+EXPORT_सिम्बोलो(__init_waitqueue_head);
 
 void add_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
 {
@@ -25,7 +25,7 @@ void add_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq
 	__add_wait_queue(wq_head, wq_entry);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL(add_wait_queue);
+EXPORT_सिम्बोलो(add_wait_queue);
 
 void add_wait_queue_exclusive(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
 {
@@ -36,7 +36,7 @@ void add_wait_queue_exclusive(struct wait_queue_head *wq_head, struct wait_queue
 	__add_wait_queue_entry_tail(wq_head, wq_entry);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL(add_wait_queue_exclusive);
+EXPORT_सिम्बोलो(add_wait_queue_exclusive);
 
 void add_wait_queue_priority(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
 {
@@ -47,7 +47,7 @@ void add_wait_queue_priority(struct wait_queue_head *wq_head, struct wait_queue_
 	__add_wait_queue(wq_head, wq_entry);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL_GPL(add_wait_queue_priority);
+EXPORT_सिम्बोलो_GPL(add_wait_queue_priority);
 
 int add_wait_queue_priority_exclusive(struct wait_queue_head *wq_head,
 				      struct wait_queue_entry *wq_entry)
@@ -64,7 +64,7 @@ int add_wait_queue_priority_exclusive(struct wait_queue_head *wq_head,
 	list_add(&wq_entry->entry, head);
 	return 0;
 }
-EXPORT_SYMBOL_GPL(add_wait_queue_priority_exclusive);
+EXPORT_सिम्बोलो_GPL(add_wait_queue_priority_exclusive);
 
 void remove_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
 {
@@ -74,7 +74,7 @@ void remove_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry 
 	__remove_wait_queue(wq_head, wq_entry);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL(remove_wait_queue);
+EXPORT_सिम्बोलो(remove_wait_queue);
 
 /*
  * The core wakeup function. Non-exclusive wakeups (nr_exclusive == 0) just
@@ -90,7 +90,7 @@ EXPORT_SYMBOL(remove_wait_queue);
  * zero in this (rare) case, and we handle it by continuing to scan the queue.
  */
 static int __wake_up_common(struct wait_queue_head *wq_head, unsigned int mode,
-			int nr_exclusive, int wake_flags, void *key)
+			int nr_exclusive, int wake_flags, void *सुसि)
 {
 	wait_queue_entry_t *curr, *next;
 
@@ -105,7 +105,7 @@ static int __wake_up_common(struct wait_queue_head *wq_head, unsigned int mode,
 		unsigned flags = curr->flags;
 		int ret;
 
-		ret = curr->func(curr, mode, wake_flags, key);
+		ret = curr->func(curr, mode, wake_flags, सुसि);
 		if (ret < 0)
 			break;
 		if (ret && (flags & WQ_FLAG_EXCLUSIVE) && !--nr_exclusive)
@@ -116,14 +116,14 @@ static int __wake_up_common(struct wait_queue_head *wq_head, unsigned int mode,
 }
 
 static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int mode,
-			int nr_exclusive, int wake_flags, void *key)
+			int nr_exclusive, int wake_flags, void *सुसि)
 {
 	unsigned long flags;
 	int remaining;
 
 	spin_lock_irqsave(&wq_head->lock, flags);
 	remaining = __wake_up_common(wq_head, mode, nr_exclusive, wake_flags,
-			key);
+			सुसि);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 
 	return nr_exclusive - remaining;
@@ -141,15 +141,15 @@ static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int m
  * tasks that were awaken.
  */
 int __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
-	      int nr_exclusive, void *key)
+	      int nr_exclusive, void *सुसि)
 {
-	return __wake_up_common_lock(wq_head, mode, nr_exclusive, 0, key);
+	return __wake_up_common_lock(wq_head, mode, nr_exclusive, 0, सुसि);
 }
-EXPORT_SYMBOL(__wake_up);
+EXPORT_सिम्बोलो(__wake_up);
 
-void __wake_up_on_current_cpu(struct wait_queue_head *wq_head, unsigned int mode, void *key)
+void __wake_up_on_current_cpu(struct wait_queue_head *wq_head, unsigned int mode, void *सुसि)
 {
-	__wake_up_common_lock(wq_head, mode, 1, WF_CURRENT_CPU, key);
+	__wake_up_common_lock(wq_head, mode, 1, WF_CURRENT_CPU, सुसि);
 }
 
 /*
@@ -159,13 +159,13 @@ void __wake_up_locked(struct wait_queue_head *wq_head, unsigned int mode, int nr
 {
 	__wake_up_common(wq_head, mode, nr, 0, NULL);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked);
+EXPORT_सिम्बोलो_GPL(__wake_up_locked);
 
-void __wake_up_locked_key(struct wait_queue_head *wq_head, unsigned int mode, void *key)
+void __wake_up_locked_key(struct wait_queue_head *wq_head, unsigned int mode, void *सुसि)
 {
-	__wake_up_common(wq_head, mode, 1, 0, key);
+	__wake_up_common(wq_head, mode, 1, 0, सुसि);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked_key);
+EXPORT_सिम्बोलो_GPL(__wake_up_locked_key);
 
 /**
  * __wake_up_sync_key - wake up threads blocked on a waitqueue.
@@ -180,14 +180,14 @@ EXPORT_SYMBOL_GPL(__wake_up_locked_key);
  * before accessing the task state.
  */
 void __wake_up_sync_key(struct wait_queue_head *wq_head, unsigned int mode,
-			void *key)
+			void *सुसि)
 {
 	if (unlikely(!wq_head))
 		return;
 
-	__wake_up_common_lock(wq_head, mode, 1, WF_SYNC, key);
+	__wake_up_common_lock(wq_head, mode, 1, WF_SYNC, सुसि);
 }
-EXPORT_SYMBOL_GPL(__wake_up_sync_key);
+EXPORT_सिम्बोलो_GPL(__wake_up_sync_key);
 
 /**
  * __wake_up_locked_sync_key - wake up a thread blocked on a locked waitqueue.
@@ -198,11 +198,11 @@ EXPORT_SYMBOL_GPL(__wake_up_sync_key);
  * Same as __wake_up_sync_key(), but called with @wq_head->lock held.
  */
 void __wake_up_locked_sync_key(struct wait_queue_head *wq_head,
-			       unsigned int mode, void *key)
+			       unsigned int mode, void *सुसि)
 {
-        __wake_up_common(wq_head, mode, 1, WF_SYNC, key);
+        __wake_up_common(wq_head, mode, 1, WF_SYNC, सुसि);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked_sync_key);
+EXPORT_सिम्बोलो_GPL(__wake_up_locked_sync_key);
 
 /*
  * __wake_up_sync - see __wake_up_sync_key()
@@ -211,11 +211,11 @@ void __wake_up_sync(struct wait_queue_head *wq_head, unsigned int mode)
 {
 	__wake_up_sync_key(wq_head, mode, NULL);
 }
-EXPORT_SYMBOL_GPL(__wake_up_sync);	/* For internal use only */
+EXPORT_सिम्बोलो_GPL(__wake_up_sync);	/* For internal use only */
 
 void __wake_up_pollfree(struct wait_queue_head *wq_head)
 {
-	__wake_up(wq_head, TASK_NORMAL, 0, poll_to_key(EPOLLHUP | POLLFREE));
+	__wake_up(wq_head, TASK_NORMAL, 0, poll_to_सुसि(EPOLLHUP | POLLFREE));
 	/* POLLFREE must have cleared the queue. */
 	WARN_ON_ONCE(waitqueue_active(wq_head));
 }
@@ -244,7 +244,7 @@ prepare_to_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_ent
 	set_current_state(state);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL(prepare_to_wait);
+EXPORT_सिम्बोलो(prepare_to_wait);
 
 /* Returns true if we are the first waiter in the queue, false otherwise. */
 bool
@@ -263,7 +263,7 @@ prepare_to_wait_exclusive(struct wait_queue_head *wq_head, struct wait_queue_ent
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 	return was_empty;
 }
-EXPORT_SYMBOL(prepare_to_wait_exclusive);
+EXPORT_सिम्बोलो(prepare_to_wait_exclusive);
 
 void init_wait_entry(struct wait_queue_entry *wq_entry, int flags)
 {
@@ -272,7 +272,7 @@ void init_wait_entry(struct wait_queue_entry *wq_entry, int flags)
 	wq_entry->func = autoremove_wake_function;
 	INIT_LIST_HEAD(&wq_entry->entry);
 }
-EXPORT_SYMBOL(init_wait_entry);
+EXPORT_सिम्बोलो(init_wait_entry);
 
 long prepare_to_wait_event(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
 {
@@ -308,7 +308,7 @@ long prepare_to_wait_event(struct wait_queue_head *wq_head, struct wait_queue_en
 
 	return ret;
 }
-EXPORT_SYMBOL(prepare_to_wait_event);
+EXPORT_सिम्बोलो(prepare_to_wait_event);
 
 /*
  * Note! These two wait functions are entered with the
@@ -332,7 +332,7 @@ int do_wait_intr(wait_queue_head_t *wq, wait_queue_entry_t *wait)
 
 	return 0;
 }
-EXPORT_SYMBOL(do_wait_intr);
+EXPORT_सिम्बोलो(do_wait_intr);
 
 int do_wait_intr_irq(wait_queue_head_t *wq, wait_queue_entry_t *wait)
 {
@@ -349,7 +349,7 @@ int do_wait_intr_irq(wait_queue_head_t *wq, wait_queue_entry_t *wait)
 
 	return 0;
 }
-EXPORT_SYMBOL(do_wait_intr_irq);
+EXPORT_सिम्बोलो(do_wait_intr_irq);
 
 /**
  * finish_wait - clean up after waiting in a queue
@@ -384,18 +384,18 @@ void finish_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_en
 		spin_unlock_irqrestore(&wq_head->lock, flags);
 	}
 }
-EXPORT_SYMBOL(finish_wait);
+EXPORT_सिम्बोलो(finish_wait);
 
-int autoremove_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
+int autoremove_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *सुसि)
 {
-	int ret = default_wake_function(wq_entry, mode, sync, key);
+	int ret = default_wake_function(wq_entry, mode, sync, सुसि);
 
 	if (ret)
 		list_del_init_careful(&wq_entry->entry);
 
 	return ret;
 }
-EXPORT_SYMBOL(autoremove_wake_function);
+EXPORT_सिम्बोलो(autoremove_wake_function);
 
 /*
  * DEFINE_WAIT_FUNC(wait, woken_wake_func);
@@ -440,28 +440,28 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
 
 	return timeout;
 }
-EXPORT_SYMBOL(wait_woken);
+EXPORT_सिम्बोलो(wait_woken);
 
-int woken_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
+int woken_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *सुसि)
 {
 	/* Pairs with the smp_store_mb() in wait_woken(). */
 	smp_mb(); /* C */
 	wq_entry->flags |= WQ_FLAG_WOKEN;
 
-	return default_wake_function(wq_entry, mode, sync, key);
+	return default_wake_function(wq_entry, mode, sync, सुसि);
 }
-EXPORT_SYMBOL(woken_wake_function);
+EXPORT_सिम्बोलो(woken_wake_function);
 
 int woken_wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
 {
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
+	struct wait_bit_सुसि *सुसि = __var_wake_key(wq_entry, arg);
+	if (!सुसि)
 		return 0;
 
 	/* Pairs with the smp_store_mb() in wait_woken(). */
 	smp_mb(); /* C */
 	wq_entry->flags |= WQ_FLAG_WOKEN;
 
-	return default_wake_function(wq_entry, mode, sync, key);
+	return default_wake_function(wq_entry, mode, sync, सुसि);
 }
-EXPORT_SYMBOL(woken_wake_bit_function);
+EXPORT_सिम्बोलो(woken_wake_bit_function);
