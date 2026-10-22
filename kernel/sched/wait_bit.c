@@ -1,134 +1,134 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
-#include <linux/sched/debug.h>
-#include "sched.h"
+#ಅನ್ತರ್ಭಾವ <linux/sched/debug.h>
+#ಅನ್ತರ್ಭಾವ "sched.h"
 
 /*
  * The implementation of the wait_bit*() and related waiting APIs:
  */
 
-#define WAIT_TABLE_BITS 8
-#define WAIT_TABLE_SIZE (1 << WAIT_TABLE_BITS)
+#ವ್ಯಾಖ್ಯಾನಿಸು WAIT_ಕೋಷ್ಟಕ_ಬಿಟ್ಟುಗಳು 8
+#ವ್ಯಾಖ್ಯಾನಿಸು WAIT_ಕೋಷ್ಟಕ_ಗಾತ್ರ (1 << WAIT_ಕೋಷ್ಟಕ_ಬಿಟ್ಟುಗಳು)
 
-static wait_queue_head_t bit_wait_table[WAIT_TABLE_SIZE] __cacheline_aligned;
+ಸ್ಥಿರ wait_ಸರತಿ_ತಲೆ_t ಬಿಟ್_wait_ಕೋಷ್ಟಕ[WAIT_ಕೋಷ್ಟಕ_ಗಾತ್ರ] __cacheline_aligned;
 
-wait_queue_head_t *bit_waitqueue(unsigned long *word, int bit)
+wait_ಸರತಿ_ತಲೆ_t *ಬಿಟ್_waitqueue(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ *ಶಬ್ದ, ಪೂರ್ಣಾಂಕ ಬಿಟ್_2)
 {
-	const int shift = BITS_PER_LONG == 32 ? 5 : 6;
-	unsigned long val = (unsigned long)word << shift | bit;
+	ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ ಸರಿಸು = ಬಿಟ್ಟುಗಳು_ಪ್ರತಿ_LONG == 32 ? 5 : 6;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ val = (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)ಶಬ್ದ << ಸರಿಸು | ಬಿಟ್_2;
 
-	return bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
+	ಹಿಂತಿರುಗಿ ಬಿಟ್_wait_ಕೋಷ್ಟಕ + hash_long(val, WAIT_ಕೋಷ್ಟಕ_ಬಿಟ್ಟುಗಳು);
 }
-EXPORT_SYMBOL(bit_waitqueue);
+EXPORT_ಚಿಹ್ನೆ(ಬಿಟ್_waitqueue);
 
-int wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+ಪೂರ್ಣಾಂಕ wake_ಬಿಟ್_function(ರಚನೆ wait_ಸರತಿ_ನಮೂದು *wq_ನಮೂದು, ಚಿಹ್ನೆರಹಿತ ಬಹುಲಕ, ಪೂರ್ಣಾಂಕ sync, ಶೂನ್ಯ *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wait_bit = container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	ರಚನೆ wait_ಬಿಟ್_ಕೀಲಿ *ಕೀಲಿ = arg;
+	ರಚನೆ wait_ಬಿಟ್_ಸರತಿ_ನಮೂದು *wait_ಬಿಟ್ = container_ದ(wq_ನಮೂದು, ರಚನೆ wait_ಬಿಟ್_ಸರತಿ_ನಮೂದು, wq_ನಮೂದು);
 
-	if (wait_bit->key.flags != key->flags ||
-			wait_bit->key.bit_nr != key->bit_nr ||
-			test_bit(key->bit_nr, key->flags))
-		return 0;
+	ಆದರೆ (wait_ಬಿಟ್->ಕೀಲಿ.flags != ಕೀಲಿ->flags ||
+			wait_ಬಿಟ್->ಕೀಲಿ.ಬಿಟ್_nr != ಕೀಲಿ->ಬಿಟ್_nr ||
+			test_ಬಿಟ್(ಕೀಲಿ->ಬಿಟ್_nr, ಕೀಲಿ->flags))
+		ಹಿಂತಿರುಗಿ 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	ಹಿಂತಿರುಗಿ autoremove_wake_function(wq_ನಮೂದು, ಬಹುಲಕ, sync, ಕೀಲಿ);
 }
-EXPORT_SYMBOL(wake_bit_function);
+EXPORT_ಚಿಹ್ನೆ(wake_ಬಿಟ್_function);
 
 /*
  * To allow interruptible waiting and asynchronous (i.e. non-blocking)
  * waiting, the actions of __wait_on_bit() and __wait_on_bit_lock() are
  * permitted return codes. Nonzero return codes halt waiting and return.
  */
-int __sched
-__wait_on_bit(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
-	      wait_bit_action_f *action, unsigned mode)
+ಪೂರ್ಣಾಂಕ __sched
+__wait_on_bit(ರಚನೆ wait_ಸರತಿ_ತಲೆ *wq_ತಲೆ, ರಚನೆ wait_ಬಿಟ್_ಸರತಿ_ನಮೂದು *wbq_ನಮೂದು,
+	      wait_ಬಿಟ್_action_f *action, ಚಿಹ್ನೆರಹಿತ ಬಹುಲಕ)
 {
-	int ret = 0;
+	ಪೂರ್ಣಾಂಕ ret = 0;
 
-	do {
-		prepare_to_wait(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
-			ret = (*action)(&wbq_entry->key, mode);
-	} while (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
+	ಮಾಡು {
+		prepare_ಗಮ್ಯ_wait(wq_ತಲೆ, &wbq_ನಮೂದು->wq_ನಮೂದು, ಬಹುಲಕ);
+		ಆದರೆ (test_ಬಿಟ್(wbq_ನಮೂದು->ಕೀಲಿ.ಬಿಟ್_nr, wbq_ನಮೂದು->ಕೀಲಿ.flags))
+			ret = (*action)(&wbq_ನಮೂದು->ಕೀಲಿ, ಬಹುಲಕ);
+	} ಆಗ (test_ಬಿಟ್_acquire(wbq_ನಮೂದು->ಕೀಲಿ.ಬಿಟ್_nr, wbq_ನಮೂದು->ಕೀಲಿ.flags) && !ret);
 
-	finish_wait(wq_head, &wbq_entry->wq_entry);
+	ಮುಕ್ತಾಯ_wait(wq_ತಲೆ, &wbq_ನಮೂದು->wq_ನಮೂದು);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
-EXPORT_SYMBOL(__wait_on_bit);
+EXPORT_ಚಿಹ್ನೆ(__wait_on_bit);
 
-int __sched out_of_line_wait_on_bit(unsigned long *word, int bit,
-				    wait_bit_action_f *action, unsigned mode)
+ಪೂರ್ಣಾಂಕ __sched ಹೊರಹೋಗು_ದ_ಸಾಲು_wait_on_ಬಿಟ್(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ *ಶಬ್ದ, ಪೂರ್ಣಾಂಕ ಬಿಟ್_2,
+				    wait_ಬಿಟ್_action_f *action, ಚಿಹ್ನೆರಹಿತ ಬಹುಲಕ)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
-	DEFINE_WAIT_BIT(wq_entry, word, bit);
+	ರಚನೆ wait_ಸರತಿ_ತಲೆ *wq_ತಲೆ = ಬಿಟ್_waitqueue(ಶಬ್ದ, ಬಿಟ್_2);
+	DEFINE_WAIT_ಬಿಟ್(wq_ನಮೂದು, ಶಬ್ದ, ಬಿಟ್_2);
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	ಹಿಂತಿರುಗಿ __wait_on_bit(wq_ತಲೆ, &wq_ನಮೂದು, action, ಬಹುಲಕ);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit);
+EXPORT_ಚಿಹ್ನೆ(ಹೊರಹೋಗು_ದ_ಸಾಲು_wait_on_ಬಿಟ್);
 
-int __sched out_of_line_wait_on_bit_timeout(
-	unsigned long *word, int bit, wait_bit_action_f *action,
-	unsigned mode, unsigned long timeout)
+ಪೂರ್ಣಾಂಕ __sched ಹೊರಹೋಗು_ದ_ಸಾಲು_wait_on_ಬಿಟ್_timeout(
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ *ಶಬ್ದ, ಪೂರ್ಣಾಂಕ ಬಿಟ್_2, wait_ಬಿಟ್_action_f *action,
+	ಚಿಹ್ನೆರಹಿತ ಬಹುಲಕ, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ timeout)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
-	DEFINE_WAIT_BIT(wq_entry, word, bit);
+	ರಚನೆ wait_ಸರತಿ_ತಲೆ *wq_ತಲೆ = ಬಿಟ್_waitqueue(ಶಬ್ದ, ಬಿಟ್_2);
+	DEFINE_WAIT_ಬಿಟ್(wq_ನಮೂದು, ಶಬ್ದ, ಬಿಟ್_2);
 
-	wq_entry.key.timeout = jiffies + timeout;
+	wq_ನಮೂದು.ಕೀಲಿ.timeout = jiffies + timeout;
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	ಹಿಂತಿರುಗಿ __wait_on_bit(wq_ತಲೆ, &wq_ನಮೂದು, action, ಬಹುಲಕ);
 }
-EXPORT_SYMBOL_GPL(out_of_line_wait_on_bit_timeout);
+EXPORT_ಚಿಹ್ನೆ_GPL(ಹೊರಹೋಗು_ದ_ಸಾಲು_wait_on_ಬಿಟ್_timeout);
 
-int __sched
-__wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
-			wait_bit_action_f *action, unsigned mode)
+ಪೂರ್ಣಾಂಕ __sched
+__wait_on_bit_lock(ರಚನೆ wait_ಸರತಿ_ತಲೆ *wq_ತಲೆ, ರಚನೆ wait_ಬಿಟ್_ಸರತಿ_ನಮೂದು *wbq_ನಮೂದು,
+			wait_ಬಿಟ್_action_f *action, ಚಿಹ್ನೆರಹಿತ ಬಹುಲಕ)
 {
-	int ret = 0;
+	ಪೂರ್ಣಾಂಕ ret = 0;
 
-	for (;;) {
-		prepare_to_wait_exclusive(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			ret = action(&wbq_entry->key, mode);
+	ಗಾಗಿ (;;) {
+		prepare_ಗಮ್ಯ_wait_exclusive(wq_ತಲೆ, &wbq_ನಮೂದು->wq_ನಮೂದು, ಬಹುಲಕ);
+		ಆದರೆ (test_ಬಿಟ್(wbq_ನಮೂದು->ಕೀಲಿ.ಬಿಟ್_nr, wbq_ನಮೂದು->ಕೀಲಿ.flags)) {
+			ret = action(&wbq_ನಮೂದು->ಕೀಲಿ, ಬಹುಲಕ);
 			/*
 			 * See the comment in prepare_to_wait_event().
 			 * finish_wait() does not necessarily takes wwq_head->lock,
 			 * but test_and_set_bit() implies mb() which pairs with
 			 * smp_mb__after_atomic() before wake_up_page().
 			 */
-			if (ret)
-				finish_wait(wq_head, &wbq_entry->wq_entry);
+			ಆದರೆ (ret)
+				ಮುಕ್ತಾಯ_wait(wq_ತಲೆ, &wbq_ನಮೂದು->wq_ನಮೂದು);
 		}
-		if (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			if (!ret)
-				finish_wait(wq_head, &wbq_entry->wq_entry);
-			return 0;
-		} else if (ret) {
-			return ret;
+		ಆದರೆ (!test_and_ಗಣ_ಬಿಟ್(wbq_ನಮೂದು->ಕೀಲಿ.ಬಿಟ್_nr, wbq_ನಮೂದು->ಕೀಲಿ.flags)) {
+			ಆದರೆ (!ret)
+				ಮುಕ್ತಾಯ_wait(wq_ತಲೆ, &wbq_ನಮೂದು->wq_ನಮೂದು);
+			ಹಿಂತಿರುಗಿ 0;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ret) {
+			ಹಿಂತಿರುಗಿ ret;
 		}
 	}
 }
-EXPORT_SYMBOL(__wait_on_bit_lock);
+EXPORT_ಚಿಹ್ನೆ(__wait_on_bit_lock);
 
-int __sched out_of_line_wait_on_bit_lock(unsigned long *word, int bit,
-					 wait_bit_action_f *action, unsigned mode)
+ಪೂರ್ಣಾಂಕ __sched ಹೊರಹೋಗು_ದ_ಸಾಲು_wait_on_ಬಿಟ್_ಬೀಗ(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ *ಶಬ್ದ, ಪೂರ್ಣಾಂಕ ಬಿಟ್_2,
+					 wait_ಬಿಟ್_action_f *action, ಚಿಹ್ನೆರಹಿತ ಬಹುಲಕ)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
-	DEFINE_WAIT_BIT(wq_entry, word, bit);
+	ರಚನೆ wait_ಸರತಿ_ತಲೆ *wq_ತಲೆ = ಬಿಟ್_waitqueue(ಶಬ್ದ, ಬಿಟ್_2);
+	DEFINE_WAIT_ಬಿಟ್(wq_ನಮೂದು, ಶಬ್ದ, ಬಿಟ್_2);
 
-	return __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
+	ಹಿಂತಿರುಗಿ __wait_on_bit_lock(wq_ತಲೆ, &wq_ನಮೂದು, action, ಬಹುಲಕ);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit_lock);
+EXPORT_ಚಿಹ್ನೆ(ಹೊರಹೋಗು_ದ_ಸಾಲು_wait_on_ಬಿಟ್_ಬೀಗ);
 
-void __wake_up_bit(struct wait_queue_head *wq_head, unsigned long *word, int bit)
+ಶೂನ್ಯ __wake_up_bit(ರಚನೆ wait_ಸರತಿ_ತಲೆ *wq_ತಲೆ, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ *ಶಬ್ದ, ಪೂರ್ಣಾಂಕ ಬಿಟ್_2)
 {
-	struct wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
+	ರಚನೆ wait_ಬಿಟ್_ಕೀಲಿ ಕೀಲಿ = __WAIT_BIT_KEY_INITIALIZER(ಶಬ್ದ, ಬಿಟ್_2);
 
-	if (waitqueue_active(wq_head))
-		__wake_up(wq_head, TASK_NORMAL, 1, &key);
+	ಆದರೆ (waitqueue_ಸಕ್ರಿಯ(wq_ತಲೆ))
+		__wake_up(wq_ತಲೆ, TASK_ಸಾಮಾನ್ಯ, 1, &ಕೀಲಿ);
 }
-EXPORT_SYMBOL(__wake_up_bit);
+EXPORT_ಚಿಹ್ನೆ(__wake_up_bit);
 
 /**
  * wake_up_bit - wake up waiters on a bit
@@ -155,57 +155,57 @@ EXPORT_SYMBOL(__wake_up_bit);
  * cleared are guaranteed to be visible after the matching wait_on_bit()
  * completes.
  */
-void wake_up_bit(unsigned long *word, int bit)
+ಶೂನ್ಯ wake_ಮೇಲೆ_ಬಿಟ್(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ *ಶಬ್ದ, ಪೂರ್ಣಾಂಕ ಬಿಟ್_2)
 {
-	__wake_up_bit(bit_waitqueue(word, bit), word, bit);
+	__wake_up_bit(ಬಿಟ್_waitqueue(ಶಬ್ದ, ಬಿಟ್_2), ಶಬ್ದ, ಬಿಟ್_2);
 }
-EXPORT_SYMBOL(wake_up_bit);
+EXPORT_ಚಿಹ್ನೆ(wake_ಮೇಲೆ_ಬಿಟ್);
 
-wait_queue_head_t *__var_waitqueue(void *p)
+wait_ಸರತಿ_ತಲೆ_t *__var_waitqueue(ಶೂನ್ಯ *p)
 {
-	return bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
+	ಹಿಂತಿರುಗಿ ಬಿಟ್_wait_ಕೋಷ್ಟಕ + hash_ptr(p, WAIT_ಕೋಷ್ಟಕ_ಬಿಟ್ಟುಗಳು);
 }
-EXPORT_SYMBOL(__var_waitqueue);
+EXPORT_ಚಿಹ್ನೆ(__var_waitqueue);
 
-struct wait_bit_key *__var_wake_key(struct wait_queue_entry *wq_entry, void *arg)
+ರಚನೆ wait_ಬಿಟ್_ಕೀಲಿ *__var_wake_key(ರಚನೆ wait_ಸರತಿ_ನಮೂದು *wq_ನಮೂದು, ಶೂನ್ಯ *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wbq_entry =
-		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	ರಚನೆ wait_ಬಿಟ್_ಕೀಲಿ *ಕೀಲಿ = arg;
+	ರಚನೆ wait_ಬಿಟ್_ಸರತಿ_ನಮೂದು *wbq_ನಮೂದು =
+		container_ದ(wq_ನಮೂದು, ರಚನೆ wait_ಬಿಟ್_ಸರತಿ_ನಮೂದು, wq_ನಮೂದು);
 
-	if (wbq_entry->key.flags != key->flags ||
-	    wbq_entry->key.bit_nr != key->bit_nr)
-		return NULL;
+	ಆದರೆ (wbq_ನಮೂದು->ಕೀಲಿ.flags != ಕೀಲಿ->flags ||
+	    wbq_ನಮೂದು->ಕೀಲಿ.ಬಿಟ್_nr != ಕೀಲಿ->ಬಿಟ್_nr)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	return key;
-}
-
-static int var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
-			     int sync, void *arg)
-{
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
-
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	ಹಿಂತಿರುಗಿ ಕೀಲಿ;
 }
 
-void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ var_wake_function(ರಚನೆ wait_ಸರತಿ_ನಮೂದು *wq_ನಮೂದು, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಬಹುಲಕ,
+			     ಪೂರ್ಣಾಂಕ sync, ಶೂನ್ಯ *arg)
 {
-	*wbq_entry = (struct wait_bit_queue_entry){
-		.key = {
+	ರಚನೆ wait_ಬಿಟ್_ಕೀಲಿ *ಕೀಲಿ = __var_wake_key(wq_ನಮೂದು, arg);
+	ಆದರೆ (!ಕೀಲಿ)
+		ಹಿಂತಿರುಗಿ 0;
+
+	ಹಿಂತಿರುಗಿ autoremove_wake_function(wq_ನಮೂದು, ಬಹುಲಕ, sync, ಕೀಲಿ);
+}
+
+ಶೂನ್ಯ init_wait_var_ನಮೂದು(ರಚನೆ wait_ಬಿಟ್_ಸರತಿ_ನಮೂದು *wbq_ನಮೂದು, ಶೂನ್ಯ *var, ಪೂರ್ಣಾಂಕ flags)
+{
+	*wbq_ನಮೂದು = (ರಚನೆ wait_ಬಿಟ್_ಸರತಿ_ನಮೂದು){
+		.ಕೀಲಿ = {
 			.flags	= (var),
-			.bit_nr = -1,
+			.ಬಿಟ್_nr = -1,
 		},
-		.wq_entry = {
+		.wq_ನಮೂದು = {
 			.flags	 = flags,
-			.private = current,
+			.ಖಾಸಗಿ = current,
 			.func	 = var_wake_function,
-			.entry	 = LIST_HEAD_INIT(wbq_entry->wq_entry.entry),
+			.ನಮೂದು	 = LIST_ತಲೆ_INIT(wbq_ನಮೂದು->wq_ನಮೂದು.ನಮೂದು),
 		},
 	};
 }
-EXPORT_SYMBOL(init_wait_var_entry);
+EXPORT_ಚಿಹ್ನೆ(init_wait_var_ನಮೂದು);
 
 /**
  * wake_up_var - wake up waiters on a variable (kernel address)
@@ -237,50 +237,50 @@ EXPORT_SYMBOL(init_wait_var_entry);
  * variable was updated are guaranteed to be visible after the matching
  * wait_var_event() completes.
  */
-void wake_up_var(void *var)
+ಶೂನ್ಯ wake_ಮೇಲೆ_var(ಶೂನ್ಯ *var)
 {
 	__wake_up_bit(__var_waitqueue(var), var, -1);
 }
-EXPORT_SYMBOL(wake_up_var);
+EXPORT_ಚಿಹ್ನೆ(wake_ಮೇಲೆ_var);
 
-__sched int bit_wait(struct wait_bit_key *word, int mode)
+__sched ಪೂರ್ಣಾಂಕ ಬಿಟ್_wait(ರಚನೆ wait_ಬಿಟ್_ಕೀಲಿ *ಶಬ್ದ, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ)
 {
-	schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	ವೇಳಾಪಟ್ಟಿ();
+	ಆದರೆ (signal_pending_state(ಬಹುಲಕ, current))
+		ಹಿಂತಿರುಗಿ -EINTR;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-EXPORT_SYMBOL(bit_wait);
+EXPORT_ಚಿಹ್ನೆ(ಬಿಟ್_wait);
 
-__sched int bit_wait_io(struct wait_bit_key *word, int mode)
+__sched ಪೂರ್ಣಾಂಕ ಬಿಟ್_wait_io(ರಚನೆ wait_ಬಿಟ್_ಕೀಲಿ *ಶಬ್ದ, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ)
 {
-	io_schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	io_ವೇಳಾಪಟ್ಟಿ();
+	ಆದರೆ (signal_pending_state(ಬಹುಲಕ, current))
+		ಹಿಂತಿರುಗಿ -EINTR;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-EXPORT_SYMBOL(bit_wait_io);
+EXPORT_ಚಿಹ್ನೆ(ಬಿಟ್_wait_io);
 
-__sched int bit_wait_timeout(struct wait_bit_key *word, int mode)
+__sched ಪೂರ್ಣಾಂಕ ಬಿಟ್_wait_timeout(ರಚನೆ wait_ಬಿಟ್_ಕೀಲಿ *ಶಬ್ದ, ಪೂರ್ಣಾಂಕ ಬಹುಲಕ)
 {
-	unsigned long now = READ_ONCE(jiffies);
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ now = READ_ONCE(jiffies);
 
-	if (time_after_eq(now, word->timeout))
-		return -EAGAIN;
-	schedule_timeout(word->timeout - now);
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	ಆದರೆ (ಸಮಯ_after_eq(now, ಶಬ್ದ->timeout))
+		ಹಿಂತಿರುಗಿ -EAGAIN;
+	ವೇಳಾಪಟ್ಟಿ_timeout(ಶಬ್ದ->timeout - now);
+	ಆದರೆ (signal_pending_state(ಬಹುಲಕ, current))
+		ಹಿಂತಿರುಗಿ -EINTR;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-EXPORT_SYMBOL_GPL(bit_wait_timeout);
+EXPORT_ಚಿಹ್ನೆ_GPL(ಬಿಟ್_wait_timeout);
 
-void __init wait_bit_init(void)
+ಶೂನ್ಯ __init wait_ಬಿಟ್_init(ಶೂನ್ಯ)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	for (i = 0; i < WAIT_TABLE_SIZE; i++)
-		init_waitqueue_head(bit_wait_table + i);
+	ಗಾಗಿ (i = 0; i < WAIT_ಕೋಷ್ಟಕ_ಗಾತ್ರ; i++)
+		init_waitqueue_ತಲೆ(ಬಿಟ್_wait_ಕೋಷ್ಟಕ + i);
 }

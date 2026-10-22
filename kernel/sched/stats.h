@@ -1,19 +1,19 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#ifndef _KERNEL_STATS_H
-#define _KERNEL_STATS_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _KERNEL_STATS_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _KERNEL_STATS_H
 
-#ifdef CONFIG_SCHEDSTATS
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHEDSTATS
 
-extern struct static_key_false sched_schedstats;
+ಬಾಹ್ಯ ರಚನೆ static_ಕೀಲಿ_false sched_schedstats;
 
 /*
  * Expects runqueue lock to be held for atomicity of update
  */
-static inline void
-rq_sched_info_arrive(struct rq *rq, unsigned long long delta)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+rq_sched_info_arrive(ರಚನೆ rq *rq, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ delta)
 {
-	if (rq) {
-		rq->rq_sched_info.run_delay += delta;
+	ಆದರೆ (rq) {
+		rq->rq_sched_info.ಸತತ_delay += delta;
 		rq->rq_sched_info.pcount++;
 	}
 }
@@ -21,45 +21,45 @@ rq_sched_info_arrive(struct rq *rq, unsigned long long delta)
 /*
  * Expects runqueue lock to be held for atomicity of update
  */
-static inline void
-rq_sched_info_depart(struct rq *rq, unsigned long long delta)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+rq_sched_info_depart(ರಚನೆ rq *rq, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ delta)
 {
-	if (rq)
-		rq->rq_cpu_time += delta;
+	ಆದರೆ (rq)
+		rq->rq_cpu_ಸಮಯ += delta;
 }
 
-static inline void
-rq_sched_info_dequeue(struct rq *rq, unsigned long long delta)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+rq_sched_info_ಸರತಿಯಿಂದ_ತೆಗೆ(ರಚನೆ rq *rq, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ delta)
 {
-	if (rq)
-		rq->rq_sched_info.run_delay += delta;
+	ಆದರೆ (rq)
+		rq->rq_sched_info.ಸತತ_delay += delta;
 }
-#define   schedstat_enabled()		static_branch_unlikely(&sched_schedstats)
-#define __schedstat_inc(var)		do { var++; } while (0)
-#define   schedstat_inc(var)		do { if (schedstat_enabled()) { var++; } } while (0)
-#define __schedstat_add(var, amt)	do { var += (amt); } while (0)
-#define   schedstat_add(var, amt)	do { if (schedstat_enabled()) { var += (amt); } } while (0)
-#define __schedstat_set(var, val)	do { var = (val); } while (0)
-#define   schedstat_set(var, val)	do { if (schedstat_enabled()) { var = (val); } } while (0)
-#define   schedstat_val(var)		(var)
-#define   schedstat_val_or_zero(var)	((schedstat_enabled()) ? (var) : 0)
+#ವ್ಯಾಖ್ಯಾನಿಸು   schedstat_enabled()		static_branch_unlikely(&sched_schedstats)
+#ವ್ಯಾಖ್ಯಾನಿಸು __schedstat_inc(var)		ಮಾಡು { var++; } ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು   schedstat_inc(var)		ಮಾಡು { ಆದರೆ (schedstat_enabled()) { var++; } } ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು __schedstat_add(var, amt)	ಮಾಡು { var += (amt); } ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು   schedstat_ಕೂಡಿಸು(var, amt)	ಮಾಡು { ಆದರೆ (schedstat_enabled()) { var += (amt); } } ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು __schedstat_set(var, val)	ಮಾಡು { var = (val); } ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು   schedstat_ಗಣ(var, val)	ಮಾಡು { ಆದರೆ (schedstat_enabled()) { var = (val); } } ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು   schedstat_val(var)		(var)
+#ವ್ಯಾಖ್ಯಾನಿಸು   schedstat_val_or_zero(var)	((schedstat_enabled()) ? (var) : 0)
 
-void __update_stats_wait_start(struct rq *rq, struct task_struct *p,
-			       struct sched_statistics *stats);
+ಶೂನ್ಯ __update_stats_wait_start(ರಚನೆ rq *rq, ರಚನೆ task_struct *p,
+			       ರಚನೆ sched_statistics *stats);
 
-void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
-			     struct sched_statistics *stats);
-void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
-				    struct sched_statistics *stats);
+ಶೂನ್ಯ __update_stats_wait_end(ರಚನೆ rq *rq, ರಚನೆ task_struct *p,
+			     ರಚನೆ sched_statistics *stats);
+ಶೂನ್ಯ __update_stats_enqueue_sleeper(ರಚನೆ rq *rq, ರಚನೆ task_struct *p,
+				    ರಚನೆ sched_statistics *stats);
 
-static inline void
-check_schedstat_required(void)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+check_schedstat_required(ಶೂನ್ಯ)
 {
-	if (schedstat_enabled())
-		return;
+	ಆದರೆ (schedstat_enabled())
+		ಹಿಂತಿರುಗಿ;
 
 	/* Force schedstat enabled if a dependent tracepoint is active */
-	if (trace_sched_stat_wait_enabled()    ||
+	ಆದರೆ (trace_sched_stat_wait_enabled()    ||
 	    trace_sched_stat_sleep_enabled()   ||
 	    trace_sched_stat_iowait_enabled()  ||
 	    trace_sched_stat_blocked_enabled() ||
@@ -67,48 +67,48 @@ check_schedstat_required(void)
 		printk_deferred_once("Scheduler tracepoints stat_sleep, stat_iowait, stat_blocked and stat_runtime require the kernel parameter schedstats=enable or kernel.sched_schedstats=1\n");
 }
 
-#else /* !CONFIG_SCHEDSTATS: */
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_SCHEDSTATS: */
 
-static inline void rq_sched_info_arrive  (struct rq *rq, unsigned long long delta) { }
-static inline void rq_sched_info_dequeue(struct rq *rq, unsigned long long delta) { }
-static inline void rq_sched_info_depart  (struct rq *rq, unsigned long long delta) { }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ rq_sched_info_arrive  (ರಚನೆ rq *rq, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ delta) { }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ rq_sched_info_ಸರತಿಯಿಂದ_ತೆಗೆ(ರಚನೆ rq *rq, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ delta) { }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ rq_sched_info_depart  (ರಚನೆ rq *rq, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ delta) { }
 # define   schedstat_enabled()		0
-# define __schedstat_inc(var)		do { } while (0)
-# define   schedstat_inc(var)		do { } while (0)
-# define __schedstat_add(var, amt)	do { } while (0)
-# define   schedstat_add(var, amt)	do { } while (0)
-# define __schedstat_set(var, val)	do { } while (0)
-# define   schedstat_set(var, val)	do { } while (0)
+# define __schedstat_inc(var)		ಮಾಡು { } ಆಗ (0)
+# define   schedstat_inc(var)		ಮಾಡು { } ಆಗ (0)
+# define __schedstat_add(var, amt)	ಮಾಡು { } ಆಗ (0)
+# define   schedstat_ಕೂಡಿಸು(var, amt)	ಮಾಡು { } ಆಗ (0)
+# define __schedstat_set(var, val)	ಮಾಡು { } ಆಗ (0)
+# define   schedstat_ಗಣ(var, val)	ಮಾಡು { } ಆಗ (0)
 # define   schedstat_val(var)		0
 # define   schedstat_val_or_zero(var)	0
 
-# define __update_stats_wait_start(rq, p, stats)       do { } while (0)
-# define __update_stats_wait_end(rq, p, stats)         do { } while (0)
-# define __update_stats_enqueue_sleeper(rq, p, stats)  do { } while (0)
-# define check_schedstat_required()                    do { } while (0)
+# define __update_stats_wait_start(rq, p, stats)       ಮಾಡು { } ಆಗ (0)
+# define __update_stats_wait_end(rq, p, stats)         ಮಾಡು { } ಆಗ (0)
+# define __update_stats_enqueue_sleeper(rq, p, stats)  ಮಾಡು { } ಆಗ (0)
+# define check_schedstat_required()                    ಮಾಡು { } ಆಗ (0)
 
-#endif /* CONFIG_SCHEDSTATS */
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_SCHEDSTATS */
 
-static inline struct sched_statistics *
-__schedstats_from_se(struct sched_entity *se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ sched_statistics *
+__schedstats_from_se(ರಚನೆ sched_entity *se)
 {
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	if (!entity_is_task(se))
-		return &container_of(se, struct cfs_tg_state, se)->stats;
-#endif
-	return &task_of(se)->stats;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_FAIR_ಗುಂಪು_SCHED
+	ಆದರೆ (!entity_is_task(se))
+		ಹಿಂತಿರುಗಿ &container_ದ(se, ರಚನೆ cfs_tg_state, se)->stats;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ &task_ದ(se)->stats;
 }
 
-#ifdef CONFIG_PSI
-void psi_task_change(struct task_struct *task, int clear, int set);
-void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_PSI
+ಶೂನ್ಯ psi_task_change(ರಚನೆ task_struct *task, ಪೂರ್ಣಾಂಕ clear, ಪೂರ್ಣಾಂಕ ಗಣ);
+ಶೂನ್ಯ psi_task_switch(ರಚನೆ task_struct *prev, ರಚನೆ task_struct *ಮುಂದಿನ,
 		     bool sleep);
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev);
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
-static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
-				       struct task_struct *prev) {}
-#endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_IRQ_ಸಮಯ_ACCOUNTING
+ಶೂನ್ಯ psi_account_irqtime(ರಚನೆ rq *rq, ರಚನೆ task_struct *curr, ರಚನೆ task_struct *prev);
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_account_irqtime(ರಚನೆ rq *rq, ರಚನೆ task_struct *curr,
+				       ರಚನೆ task_struct *prev) {}
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_IRQ_TIME_ACCOUNTING */
 /*
  * PSI tracks state that persists across sleeps, such as iowaits and
  * memory stalls. As a result, it has to distinguish between sleeps,
@@ -120,53 +120,53 @@ static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
  * go through migration requeues. In this case, *sleeping* states need
  * to be transferred.
  */
-static inline void psi_enqueue(struct task_struct *p, int flags)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_ಸರತಿಗೆ_ಸೇರಿಸು(ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ flags)
 {
-	int clear = 0, set = 0;
+	ಪೂರ್ಣಾಂಕ clear = 0, ಗಣ = 0;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ಆದರೆ (static_branch_likely(&psi_disabled))
+		ಹಿಂತಿರುಗಿ;
 
 	/* Same runqueue, nothing changed for psi */
-	if (flags & ENQUEUE_RESTORE)
-		return;
+	ಆದರೆ (flags & ಸರತಿಗೆ_ಸೇರಿಸು_RESTORE)
+		ಹಿಂತಿರುಗಿ;
 
 	/* psi_sched_switch() will handle the flags */
-	if (task_on_cpu(task_rq(p), p))
-		return;
+	ಆದರೆ (task_on_cpu(task_rq(p), p))
+		ಹಿಂತಿರುಗಿ;
 
-	if (p->se.sched_delayed) {
+	ಆದರೆ (p->se.sched_delayed) {
 		/* CPU migration of "sleeping" task */
-		WARN_ON_ONCE(!(flags & ENQUEUE_MIGRATED));
-		if (p->in_memstall)
-			set |= TSK_MEMSTALL;
-		if (p->in_iowait)
-			set |= TSK_IOWAIT;
-	} else if (flags & ENQUEUE_MIGRATED) {
+		WARN_ON_ONCE(!(flags & ಸರತಿಗೆ_ಸೇರಿಸು_MIGRATED));
+		ಆದರೆ (p->ಒಳ_memstall)
+			ಗಣ |= TSK_MEMSTALL;
+		ಆದರೆ (p->ಒಳ_iowait)
+			ಗಣ |= TSK_IOWAIT;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (flags & ಸರತಿಗೆ_ಸೇರಿಸು_MIGRATED) {
 		/* CPU migration of runnable task */
-		set = TSK_RUNNING;
-		if (p->in_memstall)
-			set |= TSK_MEMSTALL | TSK_MEMSTALL_RUNNING;
-	} else {
+		ಗಣ = TSK_RUNNING;
+		ಆದರೆ (p->ಒಳ_memstall)
+			ಗಣ |= TSK_MEMSTALL | TSK_MEMSTALL_RUNNING;
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* Wakeup of new or sleeping task */
-		if (p->in_iowait)
+		ಆದರೆ (p->ಒಳ_iowait)
 			clear |= TSK_IOWAIT;
-		set = TSK_RUNNING;
-		if (p->in_memstall)
-			set |= TSK_MEMSTALL_RUNNING;
+		ಗಣ = TSK_RUNNING;
+		ಆದರೆ (p->ಒಳ_memstall)
+			ಗಣ |= TSK_MEMSTALL_RUNNING;
 	}
 
-	psi_task_change(p, clear, set);
+	psi_task_change(p, clear, ಗಣ);
 }
 
-static inline void psi_dequeue(struct task_struct *p, int flags)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_ಸರತಿಯಿಂದ_ತೆಗೆ(ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ flags)
 {
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ಆದರೆ (static_branch_likely(&psi_disabled))
+		ಹಿಂತಿರುಗಿ;
 
 	/* Same runqueue, nothing changed for psi */
-	if (flags & DEQUEUE_SAVE)
-		return;
+	ಆದರೆ (flags & ಸರತಿಯಿಂದ_ತೆಗೆ_SAVE)
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * A voluntary sleep is a dequeue followed by a task switch. To
@@ -179,8 +179,8 @@ static inline void psi_dequeue(struct task_struct *p, int flags)
 	 * TSK_ONCPU is set to ensure the task switch is imminent.
 	 * Otherwise clear the flags as usual.
 	 */
-	if ((flags & DEQUEUE_SLEEP) && (p->psi_flags & TSK_ONCPU))
-		return;
+	ಆದರೆ ((flags & ಸರತಿಯಿಂದ_ತೆಗೆ_SLEEP) && (p->psi_flags & TSK_ONCPU))
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * When migrating a task to another CPU, clear all psi
@@ -189,18 +189,18 @@ static inline void psi_dequeue(struct task_struct *p, int flags)
 	psi_task_change(p, p->psi_flags, 0);
 }
 
-static inline void psi_ttwu_dequeue(struct task_struct *p)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_ttwu_ಸರತಿಯಿಂದ_ತೆಗೆ(ರಚನೆ task_struct *p)
 {
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ಆದರೆ (static_branch_likely(&psi_disabled))
+		ಹಿಂತಿರುಗಿ;
 	/*
 	 * Is the task being migrated during a wakeup? Make sure to
 	 * deregister its sleep-persistent psi states from the old
 	 * queue, and let psi_enqueue() know it has to requeue.
 	 */
-	if (unlikely(p->psi_flags)) {
-		struct rq_flags rf;
-		struct rq *rq;
+	ಆದರೆ (unlikely(p->psi_flags)) {
+		ರಚನೆ rq_flags rf;
+		ರಚನೆ rq *rq;
 
 		rq = __task_rq_lock(p, &rf);
 		psi_task_change(p, p->psi_flags, 0);
@@ -208,51 +208,51 @@ static inline void psi_ttwu_dequeue(struct task_struct *p)
 	}
 }
 
-static inline void psi_sched_switch(struct task_struct *prev,
-				    struct task_struct *next,
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_sched_switch(ರಚನೆ task_struct *prev,
+				    ರಚನೆ task_struct *ಮುಂದಿನ,
 				    bool sleep)
 {
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ಆದರೆ (static_branch_likely(&psi_disabled))
+		ಹಿಂತಿರುಗಿ;
 
-	psi_task_switch(prev, next, sleep);
+	psi_task_switch(prev, ಮುಂದಿನ, sleep);
 }
 
-#else /* !CONFIG_PSI: */
-static inline void psi_enqueue(struct task_struct *p, bool migrate) {}
-static inline void psi_dequeue(struct task_struct *p, bool migrate) {}
-static inline void psi_ttwu_dequeue(struct task_struct *p) {}
-static inline void psi_sched_switch(struct task_struct *prev,
-				    struct task_struct *next,
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_PSI: */
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_ಸರತಿಗೆ_ಸೇರಿಸು(ರಚನೆ task_struct *p, bool migrate) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_ಸರತಿಯಿಂದ_ತೆಗೆ(ರಚನೆ task_struct *p, bool migrate) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_ttwu_ಸರತಿಯಿಂದ_ತೆಗೆ(ರಚನೆ task_struct *p) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_sched_switch(ರಚನೆ task_struct *prev,
+				    ರಚನೆ task_struct *ಮುಂದಿನ,
 				    bool sleep) {}
-static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
-				       struct task_struct *prev) {}
-#endif /* !CONFIG_PSI */
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ psi_account_irqtime(ರಚನೆ rq *rq, ರಚನೆ task_struct *curr,
+				       ರಚನೆ task_struct *prev) {}
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_PSI */
 
-#ifdef CONFIG_SCHED_INFO
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_INFO
 /*
  * We are interested in knowing how long it was from the *first* time a
  * task was queued to the time that it finally hit a CPU, we call this routine
  * from dequeue_task() to account for possible rq->clock skew across CPUs. The
  * delta taken on each CPU would annul the skew.
  */
-static inline void sched_info_dequeue(struct rq *rq, struct task_struct *t)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ sched_info_ಸರತಿಯಿಂದ_ತೆಗೆ(ರಚನೆ rq *rq, ರಚನೆ task_struct *t)
 {
-	unsigned long long delta = 0;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ delta = 0;
 
-	if (!t->sched_info.last_queued)
-		return;
+	ಆದರೆ (!t->sched_info.ಕೊನೆಯ_queued)
+		ಹಿಂತಿರುಗಿ;
 
-	delta = rq_clock(rq) - t->sched_info.last_queued;
-	t->sched_info.last_queued = 0;
-	t->sched_info.run_delay += delta;
-	if (delta > t->sched_info.max_run_delay) {
-		t->sched_info.max_run_delay = delta;
-		ktime_get_real_ts64(&t->sched_info.max_run_delay_ts);
+	delta = rq_clock(rq) - t->sched_info.ಕೊನೆಯ_queued;
+	t->sched_info.ಕೊನೆಯ_queued = 0;
+	t->sched_info.ಸತತ_delay += delta;
+	ಆದರೆ (delta > t->sched_info.max_ಸತತ_delay) {
+		t->sched_info.max_ಸತತ_delay = delta;
+		ktime_get_real_ts64(&t->sched_info.max_ಸತತ_delay_ts);
 	}
-	if (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
-		t->sched_info.min_run_delay = delta;
-	rq_sched_info_dequeue(rq, delta);
+	ಆದರೆ (delta && (!t->sched_info.min_ಸತತ_delay || delta < t->sched_info.min_ಸತತ_delay))
+		t->sched_info.min_ಸತತ_delay = delta;
+	rq_sched_info_ಸರತಿಯಿಂದ_ತೆಗೆ(rq, delta);
 }
 
 /*
@@ -260,25 +260,25 @@ static inline void sched_info_dequeue(struct rq *rq, struct task_struct *t)
  * long it was waiting to run.  We also note when it began so that we
  * can keep stats on how long its time-slice is.
  */
-static void sched_info_arrive(struct rq *rq, struct task_struct *t)
+ಸ್ಥಿರ ಶೂನ್ಯ sched_info_arrive(ರಚನೆ rq *rq, ರಚನೆ task_struct *t)
 {
-	unsigned long long now, delta = 0;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ now, delta = 0;
 
-	if (!t->sched_info.last_queued)
-		return;
+	ಆದರೆ (!t->sched_info.ಕೊನೆಯ_queued)
+		ಹಿಂತಿರುಗಿ;
 
 	now = rq_clock(rq);
-	delta = now - t->sched_info.last_queued;
-	t->sched_info.last_queued = 0;
-	t->sched_info.run_delay += delta;
-	t->sched_info.last_arrival = now;
+	delta = now - t->sched_info.ಕೊನೆಯ_queued;
+	t->sched_info.ಕೊನೆಯ_queued = 0;
+	t->sched_info.ಸತತ_delay += delta;
+	t->sched_info.ಕೊನೆಯ_ಆಗಮನ = now;
 	t->sched_info.pcount++;
-	if (delta > t->sched_info.max_run_delay) {
-		t->sched_info.max_run_delay = delta;
-		ktime_get_real_ts64(&t->sched_info.max_run_delay_ts);
+	ಆದರೆ (delta > t->sched_info.max_ಸತತ_delay) {
+		t->sched_info.max_ಸತತ_delay = delta;
+		ktime_get_real_ts64(&t->sched_info.max_ಸತತ_delay_ts);
 	}
-	if (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
-		t->sched_info.min_run_delay = delta;
+	ಆದರೆ (delta && (!t->sched_info.min_ಸತತ_delay || delta < t->sched_info.min_ಸತತ_delay))
+		t->sched_info.min_ಸತತ_delay = delta;
 
 	rq_sched_info_arrive(rq, delta);
 }
@@ -288,10 +288,10 @@ static void sched_info_arrive(struct rq *rq, struct task_struct *t)
  * the timestamp if it is already not set.  It's assumed that
  * sched_info_dequeue() will clear that stamp when appropriate.
  */
-static inline void sched_info_enqueue(struct rq *rq, struct task_struct *t)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ sched_info_ಸರತಿಗೆ_ಸೇರಿಸು(ರಚನೆ rq *rq, ರಚನೆ task_struct *t)
 {
-	if (!t->sched_info.last_queued)
-		t->sched_info.last_queued = rq_clock(rq);
+	ಆದರೆ (!t->sched_info.ಕೊನೆಯ_queued)
+		t->sched_info.ಕೊನೆಯ_queued = rq_clock(rq);
 }
 
 /*
@@ -302,14 +302,14 @@ static inline void sched_info_enqueue(struct rq *rq, struct task_struct *t)
  * sched_info_enqueue() to mark that it has now again started waiting on
  * the runqueue.
  */
-static inline void sched_info_depart(struct rq *rq, struct task_struct *t)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ sched_info_depart(ರಚನೆ rq *rq, ರಚನೆ task_struct *t)
 {
-	unsigned long long delta = rq_clock(rq) - t->sched_info.last_arrival;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ delta = rq_clock(rq) - t->sched_info.ಕೊನೆಯ_ಆಗಮನ;
 
 	rq_sched_info_depart(rq, delta);
 
-	if (task_is_running(t))
-		sched_info_enqueue(rq, t);
+	ಆದರೆ (task_is_running(t))
+		sched_info_ಸರತಿಗೆ_ಸೇರಿಸು(rq, t);
 }
 
 /*
@@ -317,25 +317,25 @@ static inline void sched_info_depart(struct rq *rq, struct task_struct *t)
  * their time slice.  (This may also be called when switching to or from
  * the idle task.)  We are only called when prev != next.
  */
-static inline void
-sched_info_switch(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+sched_info_switch(ರಚನೆ rq *rq, ರಚನೆ task_struct *prev, ರಚನೆ task_struct *ಮುಂದಿನ)
 {
 	/*
 	 * prev now departs the CPU.  It's not interesting to record
 	 * stats about how efficient we were at scheduling the idle
 	 * process, however.
 	 */
-	if (prev != rq->idle)
+	ಆದರೆ (prev != rq->idle)
 		sched_info_depart(rq, prev);
 
-	if (next != rq->idle)
-		sched_info_arrive(rq, next);
+	ಆದರೆ (ಮುಂದಿನ != rq->idle)
+		sched_info_arrive(rq, ಮುಂದಿನ);
 }
 
-#else /* !CONFIG_SCHED_INFO: */
-# define sched_info_enqueue(rq, t)	do { } while (0)
-# define sched_info_dequeue(rq, t)	do { } while (0)
-# define sched_info_switch(rq, t, next)	do { } while (0)
-#endif /* !CONFIG_SCHED_INFO */
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_SCHED_INFO: */
+# define sched_info_ಸರತಿಗೆ_ಸೇರಿಸು(rq, t)	ಮಾಡು { } ಆಗ (0)
+# define sched_info_ಸರತಿಯಿಂದ_ತೆಗೆ(rq, t)	ಮಾಡು { } ಆಗ (0)
+# define sched_info_switch(rq, t, ಮುಂದಿನ)	ಮಾಡು { } ಆಗ (0)
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_SCHED_INFO */
 
-#endif /* _KERNEL_STATS_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _KERNEL_STATS_H */

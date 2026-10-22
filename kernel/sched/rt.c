@@ -4,140 +4,140 @@
  * policies)
  */
 
-#include "sched.h"
-#include "pelt.h"
+#ಅನ್ತರ್ಭಾವ "sched.h"
+#ಅನ್ತರ್ಭಾವ "pelt.h"
 
-int sched_rr_timeslice = RR_TIMESLICE;
+ಪೂರ್ಣಾಂಕ sched_rr_timeslice = RR_TIMESLICE;
 /* More than 4 hours if BW_SHIFT equals 20. */
-static const u64 max_rt_runtime = MAX_BW;
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ u64 max_rt_runtime = MAX_BW;
 
 /*
  * period over which we measure -rt task CPU usage in us.
  * default: 1s
  */
-int sysctl_sched_rt_period = 1000000;
+ಪೂರ್ಣಾಂಕ sysctl_sched_rt_period = 1000000;
 
 /*
  * part of the period that we allow rt tasks to run in us.
  * default: 1s
  */
-int sysctl_sched_rt_runtime = 1000000;
+ಪೂರ್ಣಾಂಕ sysctl_sched_rt_runtime = 1000000;
 
-#ifdef CONFIG_SYSCTL
-static int sysctl_sched_rr_timeslice = (MSEC_PER_SEC * RR_TIMESLICE) / HZ;
-static int sched_rt_handler(const struct ctl_table *table, int write, void *buffer,
-		size_t *lenp, loff_t *ppos);
-static int sched_rr_handler(const struct ctl_table *table, int write, void *buffer,
-		size_t *lenp, loff_t *ppos);
-static const struct ctl_table sched_rt_sysctls[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SYSCTL
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sysctl_sched_rr_timeslice = (MSEC_ಪ್ರತಿ_SEC * RR_TIMESLICE) / HZ;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sched_rt_handler(ಸ್ಥಿರಾಂಕ ರಚನೆ ctl_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ಪೂರ್ಣಾಂಕ ಲಿಖ, ಶೂನ್ಯ *ಬಫರ್,
+		ಗಾತ್ರ_t *lenp, loff_t *ppos);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sched_rr_handler(ಸ್ಥಿರಾಂಕ ರಚನೆ ctl_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ಪೂರ್ಣಾಂಕ ಲಿಖ, ಶೂನ್ಯ *ಬಫರ್,
+		ಗಾತ್ರ_t *lenp, loff_t *ppos);
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ರಚನೆ ctl_ಕೋಷ್ಟಕ sched_rt_sysctls[] = {
 	{
 		.procname       = "sched_rt_period_us",
-		.data           = &sysctl_sched_rt_period,
-		.maxlen         = sizeof(int),
-		.mode           = 0644,
+		.ದತ್ತಾಂಶ           = &sysctl_sched_rt_period,
+		.maxlen         = ಗಾತ್ರ(ಪೂರ್ಣಾಂಕ),
+		.ಬಹುಲಕ           = 0644,
 		.proc_handler   = sched_rt_handler,
 		.extra1         = SYSCTL_ONE,
 		.extra2         = SYSCTL_INT_MAX,
 	},
 	{
 		.procname       = "sched_rt_runtime_us",
-		.data           = &sysctl_sched_rt_runtime,
-		.maxlen         = sizeof(int),
-		.mode           = 0644,
+		.ದತ್ತಾಂಶ           = &sysctl_sched_rt_runtime,
+		.maxlen         = ಗಾತ್ರ(ಪೂರ್ಣಾಂಕ),
+		.ಬಹುಲಕ           = 0644,
 		.proc_handler   = sched_rt_handler,
 		.extra1         = SYSCTL_NEG_ONE,
-		.extra2         = (void *)&sysctl_sched_rt_period,
+		.extra2         = (ಶೂನ್ಯ *)&sysctl_sched_rt_period,
 	},
 	{
 		.procname       = "sched_rr_timeslice_ms",
-		.data           = &sysctl_sched_rr_timeslice,
-		.maxlen         = sizeof(int),
-		.mode           = 0644,
+		.ದತ್ತಾಂಶ           = &sysctl_sched_rr_timeslice,
+		.maxlen         = ಗಾತ್ರ(ಪೂರ್ಣಾಂಕ),
+		.ಬಹುಲಕ           = 0644,
 		.proc_handler   = sched_rr_handler,
 	},
 };
 
-static int __init sched_rt_sysctl_init(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __init sched_rt_sysctl_init(ಶೂನ್ಯ)
 {
-	register_sysctl_init("kernel", sched_rt_sysctls);
-	return 0;
+	ರಿಜಿಸ್ಟರ್_sysctl_init("kernel", sched_rt_sysctls);
+	ಹಿಂತಿರುಗಿ 0;
 }
 late_initcall(sched_rt_sysctl_init);
-#endif /* CONFIG_SYSCTL */
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_SYSCTL */
 
-void init_rt_rq(struct rt_rq *rt_rq)
+ಶೂನ್ಯ init_rt_rq(ರಚನೆ rt_rq *rt_rq)
 {
-	struct rt_prio_array *array;
-	int i;
+	ರಚನೆ rt_prio_array *array;
+	ಪೂರ್ಣಾಂಕ i;
 
-	array = &rt_rq->active;
-	for (i = 0; i < MAX_RT_PRIO; i++) {
-		INIT_LIST_HEAD(array->queue + i);
+	array = &rt_rq->ಸಕ್ರಿಯ;
+	ಗಾಗಿ (i = 0; i < MAX_RT_PRIO; i++) {
+		INIT_LIST_ತಲೆ(array->ಸರತಿ + i);
 		__clear_bit(i, array->bitmap);
 	}
 	/* delimiter for bitsearch: */
 	__set_bit(MAX_RT_PRIO, array->bitmap);
 
 	rt_rq->highest_prio.curr = MAX_RT_PRIO-1;
-	rt_rq->highest_prio.next = MAX_RT_PRIO-1;
+	rt_rq->highest_prio.ಮುಂದಿನ = MAX_RT_PRIO-1;
 	rt_rq->overloaded = 0;
-	plist_head_init(&rt_rq->pushable_tasks);
+	plist_ತಲೆ_init(&rt_rq->pushable_tasks);
 	/* We start is dequeued state, because no RT tasks are queued */
 	rt_rq->rt_queued = 0;
 
-#ifdef CONFIG_RT_GROUP_SCHED
-	rt_rq->rt_time = 0;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_RT_ಗುಂಪು_SCHED
+	rt_rq->rt_ಸಮಯ = 0;
 	rt_rq->rt_throttled = 0;
 	rt_rq->rt_runtime = 0;
-	raw_spin_lock_init(&rt_rq->rt_runtime_lock);
-	rt_rq->tg = &root_task_group;
-#endif
+	raw_spin_ಬೀಗ_init(&rt_rq->rt_runtime_ಬೀಗ);
+	rt_rq->tg = &ಬೇರು_task_ಗುಂಪು;
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_RT_ಗುಂಪು_SCHED
 
-static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ do_sched_rt_period_timer(ರಚನೆ rt_bandwidth *rt_b, ಪೂರ್ಣಾಂಕ overrun);
 
-static enum hrtimer_restart sched_rt_period_timer(struct hrtimer *timer)
+ಸ್ಥಿರ ಎಣಿಕೆ hrtimer_restart sched_rt_period_timer(ರಚನೆ hrtimer *timer)
 {
-	struct rt_bandwidth *rt_b =
-		container_of(timer, struct rt_bandwidth, rt_period_timer);
-	int idle = 0;
-	int overrun;
+	ರಚನೆ rt_bandwidth *rt_b =
+		container_ದ(timer, ರಚನೆ rt_bandwidth, rt_period_timer);
+	ಪೂರ್ಣಾಂಕ idle = 0;
+	ಪೂರ್ಣಾಂಕ overrun;
 
-	raw_spin_lock(&rt_b->rt_runtime_lock);
-	for (;;) {
+	raw_spin_ಬೀಗ(&rt_b->rt_runtime_ಬೀಗ);
+	ಗಾಗಿ (;;) {
 		overrun = hrtimer_forward_now(timer, rt_b->rt_period);
-		if (!overrun)
-			break;
+		ಆದರೆ (!overrun)
+			ನಿಲ್ಲಿಸು;
 
-		raw_spin_unlock(&rt_b->rt_runtime_lock);
+		raw_spin_unlock(&rt_b->rt_runtime_ಬೀಗ);
 		idle = do_sched_rt_period_timer(rt_b, overrun);
-		raw_spin_lock(&rt_b->rt_runtime_lock);
+		raw_spin_ಬೀಗ(&rt_b->rt_runtime_ಬೀಗ);
 	}
-	if (idle)
-		rt_b->rt_period_active = 0;
-	raw_spin_unlock(&rt_b->rt_runtime_lock);
+	ಆದರೆ (idle)
+		rt_b->rt_period_ಸಕ್ರಿಯ = 0;
+	raw_spin_unlock(&rt_b->rt_runtime_ಬೀಗ);
 
-	return idle ? HRTIMER_NORESTART : HRTIMER_RESTART;
+	ಹಿಂತಿರುಗಿ idle ? HRTIMER_NORESTART : HRTIMER_RESTART;
 }
 
-void init_rt_bandwidth(struct rt_bandwidth *rt_b, u64 period, u64 runtime)
+ಶೂನ್ಯ init_rt_bandwidth(ರಚನೆ rt_bandwidth *rt_b, u64 period, u64 runtime)
 {
-	rt_b->rt_period = ns_to_ktime(period);
+	rt_b->rt_period = ns_ಗಮ್ಯ_ktime(period);
 	rt_b->rt_runtime = runtime;
 
-	raw_spin_lock_init(&rt_b->rt_runtime_lock);
+	raw_spin_ಬೀಗ_init(&rt_b->rt_runtime_ಬೀಗ);
 
-	hrtimer_setup(&rt_b->rt_period_timer, sched_rt_period_timer, CLOCK_MONOTONIC,
-		      HRTIMER_MODE_REL_HARD);
+	hrtimer_ಸಿದ್ಧತೆ(&rt_b->rt_period_timer, sched_rt_period_timer, CLOCK_MONOTONIC,
+		      HRTIMER_ಬಹುಲಕ_REL_HARD);
 }
 
-static inline void do_start_rt_bandwidth(struct rt_bandwidth *rt_b)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ do_ಆರಂಭ_rt_bandwidth(ರಚನೆ rt_bandwidth *rt_b)
 {
-	raw_spin_lock(&rt_b->rt_runtime_lock);
-	if (!rt_b->rt_period_active) {
-		rt_b->rt_period_active = 1;
+	raw_spin_ಬೀಗ(&rt_b->rt_runtime_ಬೀಗ);
+	ಆದರೆ (!rt_b->rt_period_ಸಕ್ರಿಯ) {
+		rt_b->rt_period_ಸಕ್ರಿಯ = 1;
 		/*
 		 * SCHED_DEADLINE updates the bandwidth, as a run away
 		 * RT task with a DL task could hog a CPU. But DL does
@@ -146,76 +146,76 @@ static inline void do_start_rt_bandwidth(struct rt_bandwidth *rt_b)
 		 * throttle when they start up. Kick the timer right away
 		 * to update the period.
 		 */
-		hrtimer_forward_now(&rt_b->rt_period_timer, ns_to_ktime(0));
-		hrtimer_start_expires(&rt_b->rt_period_timer,
-				      HRTIMER_MODE_ABS_PINNED_HARD);
+		hrtimer_forward_now(&rt_b->rt_period_timer, ns_ಗಮ್ಯ_ktime(0));
+		hrtimer_ಆರಂಭ_expires(&rt_b->rt_period_timer,
+				      HRTIMER_ಬಹುಲಕ_ABS_PINNED_HARD);
 	}
-	raw_spin_unlock(&rt_b->rt_runtime_lock);
+	raw_spin_unlock(&rt_b->rt_runtime_ಬೀಗ);
 }
 
-static void start_rt_bandwidth(struct rt_bandwidth *rt_b)
+ಸ್ಥಿರ ಶೂನ್ಯ ಆರಂಭ_rt_bandwidth(ರಚನೆ rt_bandwidth *rt_b)
 {
-	if (!rt_bandwidth_enabled() || rt_b->rt_runtime == RUNTIME_INF)
-		return;
+	ಆದರೆ (!rt_bandwidth_enabled() || rt_b->rt_runtime == RUNTIME_INF)
+		ಹಿಂತಿರುಗಿ;
 
-	do_start_rt_bandwidth(rt_b);
+	do_ಆರಂಭ_rt_bandwidth(rt_b);
 }
 
-static void destroy_rt_bandwidth(struct rt_bandwidth *rt_b)
+ಸ್ಥಿರ ಶೂನ್ಯ destroy_rt_bandwidth(ರಚನೆ rt_bandwidth *rt_b)
 {
 	hrtimer_cancel(&rt_b->rt_period_timer);
 }
 
-#define rt_entity_is_task(rt_se) (!(rt_se)->my_q)
+#ವ್ಯಾಖ್ಯಾನಿಸು rt_entity_is_task(rt_se) (!(rt_se)->my_q)
 
-static inline struct task_struct *rt_task_of(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ task_struct *rt_task_ದ(ರಚನೆ sched_rt_entity *rt_se)
 {
 	WARN_ON_ONCE(!rt_entity_is_task(rt_se));
 
-	return container_of(rt_se, struct task_struct, rt);
+	ಹಿಂತಿರುಗಿ container_ದ(rt_se, ರಚನೆ task_struct, rt);
 }
 
-static inline struct rq *rq_of_rt_rq(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ rq *rq_ದ_rt_rq(ರಚನೆ rt_rq *rt_rq)
 {
 	/* Cannot fold with non-CONFIG_RT_GROUP_SCHED version, layout */
-	WARN_ON(!rt_group_sched_enabled() && rt_rq->tg != &root_task_group);
-	return rt_rq->rq;
+	WARN_ON(!rt_ಗುಂಪು_sched_enabled() && rt_rq->tg != &ಬೇರು_task_ಗುಂಪು);
+	ಹಿಂತಿರುಗಿ rt_rq->rq;
 }
 
-static inline struct rt_rq *rt_rq_of_se(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ rt_rq *rt_rq_ದ_se(ರಚನೆ sched_rt_entity *rt_se)
 {
-	WARN_ON(!rt_group_sched_enabled() && rt_se->rt_rq->tg != &root_task_group);
-	return rt_se->rt_rq;
+	WARN_ON(!rt_ಗುಂಪು_sched_enabled() && rt_se->rt_rq->tg != &ಬೇರು_task_ಗುಂಪು);
+	ಹಿಂತಿರುಗಿ rt_se->rt_rq;
 }
 
-static inline struct rq *rq_of_rt_se(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ rq *rq_ದ_rt_se(ರಚನೆ sched_rt_entity *rt_se)
 {
-	struct rt_rq *rt_rq = rt_se->rt_rq;
+	ರಚನೆ rt_rq *rt_rq = rt_se->rt_rq;
 
-	WARN_ON(!rt_group_sched_enabled() && rt_rq->tg != &root_task_group);
-	return rt_rq->rq;
+	WARN_ON(!rt_ಗುಂಪು_sched_enabled() && rt_rq->tg != &ಬೇರು_task_ಗುಂಪು);
+	ಹಿಂತಿರುಗಿ rt_rq->rq;
 }
 
-void unregister_rt_sched_group(struct task_group *tg)
+ಶೂನ್ಯ unregister_rt_sched_ಗುಂಪು(ರಚನೆ task_ಗುಂಪು *tg)
 {
-	if (!rt_group_sched_enabled())
-		return;
+	ಆದರೆ (!rt_ಗುಂಪು_sched_enabled())
+		ಹಿಂತಿರುಗಿ;
 
-	if (tg->rt_se)
+	ಆದರೆ (tg->rt_se)
 		destroy_rt_bandwidth(&tg->rt_bandwidth);
 }
 
-void free_rt_sched_group(struct task_group *tg)
+ಶೂನ್ಯ free_rt_sched_ಗುಂಪು(ರಚನೆ task_ಗುಂಪು *tg)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	if (!rt_group_sched_enabled())
-		return;
+	ಆದರೆ (!rt_ಗುಂಪು_sched_enabled())
+		ಹಿಂತಿರುಗಿ;
 
 	for_each_possible_cpu(i) {
-		if (tg->rt_rq)
+		ಆದರೆ (tg->rt_rq)
 			kfree(tg->rt_rq[i]);
-		if (tg->rt_se)
+		ಆದರೆ (tg->rt_se)
 			kfree(tg->rt_se[i]);
 	}
 
@@ -223,11 +223,11 @@ void free_rt_sched_group(struct task_group *tg)
 	kfree(tg->rt_se);
 }
 
-void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
-		struct sched_rt_entity *rt_se, int cpu,
-		struct sched_rt_entity *parent)
+ಶೂನ್ಯ init_tg_rt_ನಮೂದು(ರಚನೆ task_ಗುಂಪು *tg, ರಚನೆ rt_rq *rt_rq,
+		ರಚನೆ sched_rt_entity *rt_se, ಪೂರ್ಣಾಂಕ cpu,
+		ರಚನೆ sched_rt_entity *ಪೋಷಕ)
 {
-	struct rq *rq = cpu_rq(cpu);
+	ರಚನೆ rq *rq = cpu_rq(cpu);
 
 	rt_rq->highest_prio.curr = MAX_RT_PRIO-1;
 	rt_rq->rt_nr_boosted = 0;
@@ -237,116 +237,116 @@ void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
 	tg->rt_rq[cpu] = rt_rq;
 	tg->rt_se[cpu] = rt_se;
 
-	if (!rt_se)
-		return;
+	ಆದರೆ (!rt_se)
+		ಹಿಂತಿರುಗಿ;
 
-	if (!parent)
+	ಆದರೆ (!ಪೋಷಕ)
 		rt_se->rt_rq = &rq->rt;
-	else
-		rt_se->rt_rq = parent->my_q;
+	ಇಲ್ಲದಿದ್ದರೆ
+		rt_se->rt_rq = ಪೋಷಕ->my_q;
 
 	rt_se->my_q = rt_rq;
-	rt_se->parent = parent;
-	INIT_LIST_HEAD(&rt_se->run_list);
+	rt_se->ಪೋಷಕ = ಪೋಷಕ;
+	INIT_LIST_ತಲೆ(&rt_se->ಸತತ_list);
 }
 
-int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent)
+ಪೂರ್ಣಾಂಕ alloc_rt_sched_ಗುಂಪು(ರಚನೆ task_ಗುಂಪು *tg, ರಚನೆ task_ಗುಂಪು *ಪೋಷಕ)
 {
-	struct rt_rq *rt_rq;
-	struct sched_rt_entity *rt_se;
-	int i;
+	ರಚನೆ rt_rq *rt_rq;
+	ರಚನೆ sched_rt_entity *rt_se;
+	ಪೂರ್ಣಾಂಕ i;
 
-	if (!rt_group_sched_enabled())
-		return 1;
+	ಆದರೆ (!rt_ಗುಂಪು_sched_enabled())
+		ಹಿಂತಿರುಗಿ 1;
 
 	tg->rt_rq = kzalloc_objs(rt_rq, nr_cpu_ids);
-	if (!tg->rt_rq)
-		goto err;
+	ಆದರೆ (!tg->rt_rq)
+		ಹೋಗು err;
 	tg->rt_se = kzalloc_objs(rt_se, nr_cpu_ids);
-	if (!tg->rt_se)
-		goto err;
+	ಆದರೆ (!tg->rt_se)
+		ಹೋಗು err;
 
-	init_rt_bandwidth(&tg->rt_bandwidth, ktime_to_ns(global_rt_period()), 0);
+	init_rt_bandwidth(&tg->rt_bandwidth, ktime_ಗಮ್ಯ_ns(global_rt_period()), 0);
 
 	for_each_possible_cpu(i) {
-		rt_rq = kzalloc_node(sizeof(struct rt_rq),
-				     GFP_KERNEL, cpu_to_node(i));
-		if (!rt_rq)
-			goto err;
+		rt_rq = kzalloc_ಗಂಟು(ಗಾತ್ರ(ರಚನೆ rt_rq),
+				     GFP_KERNEL, cpu_ಗಮ್ಯ_ಗಂಟು(i));
+		ಆದರೆ (!rt_rq)
+			ಹೋಗು err;
 
-		rt_se = kzalloc_node(sizeof(struct sched_rt_entity),
-				     GFP_KERNEL, cpu_to_node(i));
-		if (!rt_se)
-			goto err_free_rq;
+		rt_se = kzalloc_ಗಂಟು(ಗಾತ್ರ(ರಚನೆ sched_rt_entity),
+				     GFP_KERNEL, cpu_ಗಮ್ಯ_ಗಂಟು(i));
+		ಆದರೆ (!rt_se)
+			ಹೋಗು err_free_rq;
 
 		init_rt_rq(rt_rq);
 		rt_rq->rt_runtime = tg->rt_bandwidth.rt_runtime;
-		init_tg_rt_entry(tg, rt_rq, rt_se, i, parent->rt_se[i]);
+		init_tg_rt_ನಮೂದು(tg, rt_rq, rt_se, i, ಪೋಷಕ->rt_se[i]);
 	}
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 
 err_free_rq:
 	kfree(rt_rq);
 err:
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-#else /* !CONFIG_RT_GROUP_SCHED: */
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_RT_GROUP_SCHED: */
 
-#define rt_entity_is_task(rt_se) (1)
+#ವ್ಯಾಖ್ಯಾನಿಸು rt_entity_is_task(rt_se) (1)
 
-static inline struct task_struct *rt_task_of(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ task_struct *rt_task_ದ(ರಚನೆ sched_rt_entity *rt_se)
 {
-	return container_of(rt_se, struct task_struct, rt);
+	ಹಿಂತಿರುಗಿ container_ದ(rt_se, ರಚನೆ task_struct, rt);
 }
 
-static inline struct rq *rq_of_rt_rq(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ rq *rq_ದ_rt_rq(ರಚನೆ rt_rq *rt_rq)
 {
-	return container_of(rt_rq, struct rq, rt);
+	ಹಿಂತಿರುಗಿ container_ದ(rt_rq, ರಚನೆ rq, rt);
 }
 
-static inline struct rq *rq_of_rt_se(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ rq *rq_ದ_rt_se(ರಚನೆ sched_rt_entity *rt_se)
 {
-	struct task_struct *p = rt_task_of(rt_se);
+	ರಚನೆ task_struct *p = rt_task_ದ(rt_se);
 
-	return task_rq(p);
+	ಹಿಂತಿರುಗಿ task_rq(p);
 }
 
-static inline struct rt_rq *rt_rq_of_se(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ rt_rq *rt_rq_ದ_se(ರಚನೆ sched_rt_entity *rt_se)
 {
-	struct rq *rq = rq_of_rt_se(rt_se);
+	ರಚನೆ rq *rq = rq_ದ_rt_se(rt_se);
 
-	return &rq->rt;
+	ಹಿಂತಿರುಗಿ &rq->rt;
 }
 
-void unregister_rt_sched_group(struct task_group *tg) { }
+ಶೂನ್ಯ unregister_rt_sched_ಗುಂಪು(ರಚನೆ task_ಗುಂಪು *tg) { }
 
-void free_rt_sched_group(struct task_group *tg) { }
+ಶೂನ್ಯ free_rt_sched_ಗುಂಪು(ರಚನೆ task_ಗುಂಪು *tg) { }
 
-int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent)
+ಪೂರ್ಣಾಂಕ alloc_rt_sched_ಗುಂಪು(ರಚನೆ task_ಗುಂಪು *tg, ರಚನೆ task_ಗುಂಪು *ಪೋಷಕ)
 {
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
-#endif /* !CONFIG_RT_GROUP_SCHED */
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_RT_GROUP_SCHED */
 
-static inline bool need_pull_rt_task(struct rq *rq, struct task_struct *prev)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool need_pull_rt_task(ರಚನೆ rq *rq, ರಚನೆ task_struct *prev)
 {
 	/* Try to pull RT tasks here if we lower this rq's prio */
-	return rq->online && rq->rt.highest_prio.curr > prev->prio;
+	ಹಿಂತಿರುಗಿ rq->online && rq->rt.highest_prio.curr > prev->prio;
 }
 
-static inline int rt_overloaded(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ rt_overloaded(ರಚನೆ rq *rq)
 {
-	return atomic_read(&rq->rd->rto_count);
+	ಹಿಂತಿರುಗಿ atomic_read(&rq->rd->rto_ಎಣಿಕೆ);
 }
 
-static inline void rt_set_overload(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ rt_ಗಣ_overload(ರಚನೆ rq *rq)
 {
-	if (!rq->online)
-		return;
+	ಆದರೆ (!rq->online)
+		ಹಿಂತಿರುಗಿ;
 
-	cpumask_set_cpu(rq->cpu, rq->rd->rto_mask);
+	cpumask_ಗಣ_cpu(rq->cpu, rq->rd->rto_ಮುಖವಾಡ);
 	/*
 	 * Make sure the mask is visible before we set
 	 * the overload count. That is checked to determine
@@ -357,87 +357,87 @@ static inline void rt_set_overload(struct rq *rq)
 	 * Matched by the barrier in pull_rt_task().
 	 */
 	smp_wmb();
-	atomic_inc(&rq->rd->rto_count);
+	atomic_inc(&rq->rd->rto_ಎಣಿಕೆ);
 }
 
-static inline void rt_clear_overload(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ rt_clear_overload(ರಚನೆ rq *rq)
 {
-	if (!rq->online)
-		return;
+	ಆದರೆ (!rq->online)
+		ಹಿಂತಿರುಗಿ;
 
 	/* the order here really doesn't matter */
-	atomic_dec(&rq->rd->rto_count);
-	cpumask_clear_cpu(rq->cpu, rq->rd->rto_mask);
+	atomic_dec(&rq->rd->rto_ಎಣಿಕೆ);
+	cpumask_clear_cpu(rq->cpu, rq->rd->rto_ಮುಖವಾಡ);
 }
 
-static inline int has_pushable_tasks(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ has_pushable_tasks(ರಚನೆ rq *rq)
 {
-	return !plist_head_empty(&rq->rt.pushable_tasks);
+	ಹಿಂತಿರುಗಿ !plist_ತಲೆ_ಖಾಲಿಗಳು(&rq->rt.pushable_tasks);
 }
 
-static DEFINE_PER_CPU(struct balance_callback, rt_push_head);
-static DEFINE_PER_CPU(struct balance_callback, rt_pull_head);
+ಸ್ಥಿರ DEFINE_ಪ್ರತಿ_CPU(ರಚನೆ balance_callback, rt_ತಳ್ಳು_ತಲೆ);
+ಸ್ಥಿರ DEFINE_ಪ್ರತಿ_CPU(ರಚನೆ balance_callback, rt_pull_ತಲೆ);
 
-static void push_rt_tasks(struct rq *);
-static void pull_rt_task(struct rq *);
+ಸ್ಥಿರ ಶೂನ್ಯ ತಳ್ಳು_rt_tasks(ರಚನೆ rq *);
+ಸ್ಥಿರ ಶೂನ್ಯ pull_rt_task(ರಚನೆ rq *);
 
-static inline void rt_queue_push_tasks(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ rt_ಸರತಿ_ತಳ್ಳು_tasks(ರಚನೆ rq *rq)
 {
-	if (!has_pushable_tasks(rq))
-		return;
+	ಆದರೆ (!has_pushable_tasks(rq))
+		ಹಿಂತಿರುಗಿ;
 
-	queue_balance_callback(rq, &per_cpu(rt_push_head, rq->cpu), push_rt_tasks);
+	ಸರತಿ_balance_callback(rq, &ಪ್ರತಿ_cpu(rt_ತಳ್ಳು_ತಲೆ, rq->cpu), ತಳ್ಳು_rt_tasks);
 }
 
-static inline void rt_queue_pull_task(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ rt_ಸರತಿ_pull_task(ರಚನೆ rq *rq)
 {
-	queue_balance_callback(rq, &per_cpu(rt_pull_head, rq->cpu), pull_rt_task);
+	ಸರತಿ_balance_callback(rq, &ಪ್ರತಿ_cpu(rt_pull_ತಲೆ, rq->cpu), pull_rt_task);
 }
 
-static void enqueue_pushable_task(struct rq *rq, struct task_struct *p)
+ಸ್ಥಿರ ಶೂನ್ಯ ಸರತಿಗೆ_ಸೇರಿಸು_pushable_task(ರಚನೆ rq *rq, ರಚನೆ task_struct *p)
 {
 	plist_del(&p->pushable_tasks, &rq->rt.pushable_tasks);
-	plist_node_init(&p->pushable_tasks, p->prio);
-	plist_add(&p->pushable_tasks, &rq->rt.pushable_tasks);
+	plist_ಗಂಟು_init(&p->pushable_tasks, p->prio);
+	plist_ಕೂಡಿಸು(&p->pushable_tasks, &rq->rt.pushable_tasks);
 
 	/* Update the highest prio pushable task */
-	if (p->prio < rq->rt.highest_prio.next)
-		rq->rt.highest_prio.next = p->prio;
+	ಆದರೆ (p->prio < rq->rt.highest_prio.ಮುಂದಿನ)
+		rq->rt.highest_prio.ಮುಂದಿನ = p->prio;
 
-	if (!rq->rt.overloaded) {
-		rt_set_overload(rq);
+	ಆದರೆ (!rq->rt.overloaded) {
+		rt_ಗಣ_overload(rq);
 		rq->rt.overloaded = 1;
 	}
 }
 
-static void dequeue_pushable_task(struct rq *rq, struct task_struct *p)
+ಸ್ಥಿರ ಶೂನ್ಯ ಸರತಿಯಿಂದ_ತೆಗೆ_pushable_task(ರಚನೆ rq *rq, ರಚನೆ task_struct *p)
 {
 	plist_del(&p->pushable_tasks, &rq->rt.pushable_tasks);
 
 	/* Update the new highest prio pushable task */
-	if (has_pushable_tasks(rq)) {
-		p = plist_first_entry(&rq->rt.pushable_tasks,
-				      struct task_struct, pushable_tasks);
-		rq->rt.highest_prio.next = p->prio;
-	} else {
-		rq->rt.highest_prio.next = MAX_RT_PRIO-1;
+	ಆದರೆ (has_pushable_tasks(rq)) {
+		p = plist_ಮೊದಲ_ನಮೂದು(&rq->rt.pushable_tasks,
+				      ರಚನೆ task_struct, pushable_tasks);
+		rq->rt.highest_prio.ಮುಂದಿನ = p->prio;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		rq->rt.highest_prio.ಮುಂದಿನ = MAX_RT_PRIO-1;
 
-		if (rq->rt.overloaded) {
+		ಆದರೆ (rq->rt.overloaded) {
 			rt_clear_overload(rq);
 			rq->rt.overloaded = 0;
 		}
 	}
 }
 
-static void enqueue_top_rt_rq(struct rt_rq *rt_rq);
-static void dequeue_top_rt_rq(struct rt_rq *rt_rq, unsigned int count);
+ಸ್ಥಿರ ಶೂನ್ಯ ಸರತಿಗೆ_ಸೇರಿಸು_ತುದಿ_rt_rq(ರಚನೆ rt_rq *rt_rq);
+ಸ್ಥಿರ ಶೂನ್ಯ ಸರತಿಯಿಂದ_ತೆಗೆ_ತುದಿ_rt_rq(ರಚನೆ rt_rq *rt_rq, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2);
 
-static inline int on_rt_rq(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ on_rt_rq(ರಚನೆ sched_rt_entity *rt_se)
 {
-	return rt_se->on_rq;
+	ಹಿಂತಿರುಗಿ rt_se->on_rq;
 }
 
-#ifdef CONFIG_UCLAMP_TASK
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_UCLAMP_TASK
 /*
  * Verify the fitness of task @p to run on @cpu taking into account the uclamp
  * settings.
@@ -452,236 +452,236 @@ static inline int on_rt_rq(struct sched_rt_entity *rt_se)
  * Note that uclamp_min will be clamped to uclamp_max if uclamp_min
  * > uclamp_max.
  */
-static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool rt_task_ಹೊಂದುತ್ತದೆ_ಸಾಮರ್ಥ್ಯ(ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ cpu)
 {
-	unsigned int min_cap;
-	unsigned int max_cap;
-	unsigned int cpu_cap;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ min_cap;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ max_cap;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ cpu_cap;
 
 	/* Only heterogeneous systems can benefit from this check */
-	if (!sched_asym_cpucap_active())
-		return true;
+	ಆದರೆ (!sched_asym_cpucap_ಸಕ್ರಿಯ())
+		ಹಿಂತಿರುಗಿ true;
 
-	min_cap = uclamp_eff_value(p, UCLAMP_MIN);
-	max_cap = uclamp_eff_value(p, UCLAMP_MAX);
+	min_cap = uclamp_eff_ಮೌಲ್ಯ(p, UCLAMP_MIN);
+	max_cap = uclamp_eff_ಮೌಲ್ಯ(p, UCLAMP_MAX);
 
-	cpu_cap = arch_scale_cpu_capacity(cpu);
+	cpu_cap = arch_scale_cpu_ಸಾಮರ್ಥ್ಯ(cpu);
 
-	return cpu_cap >= min(min_cap, max_cap);
+	ಹಿಂತಿರುಗಿ cpu_cap >= min(min_cap, max_cap);
 }
-#else /* !CONFIG_UCLAMP_TASK: */
-static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_UCLAMP_TASK: */
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool rt_task_ಹೊಂದುತ್ತದೆ_ಸಾಮರ್ಥ್ಯ(ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ cpu)
 {
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
-#endif /* !CONFIG_UCLAMP_TASK */
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_UCLAMP_TASK */
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_RT_ಗುಂಪು_SCHED
 
-static inline u64 sched_rt_runtime(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u64 sched_rt_runtime(ರಚನೆ rt_rq *rt_rq)
 {
-	return rt_rq->rt_runtime;
-}
-
-static inline u64 sched_rt_period(struct rt_rq *rt_rq)
-{
-	return ktime_to_ns(rt_rq->tg->rt_bandwidth.rt_period);
+	ಹಿಂತಿರುಗಿ rt_rq->rt_runtime;
 }
 
-typedef struct task_group *rt_rq_iter_t;
-
-static inline struct task_group *next_task_group(struct task_group *tg)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u64 sched_rt_period(ರಚನೆ rt_rq *rt_rq)
 {
-	if (!rt_group_sched_enabled()) {
-		WARN_ON(tg != &root_task_group);
-		return NULL;
+	ಹಿಂತಿರುಗಿ ktime_ಗಮ್ಯ_ns(rt_rq->tg->rt_bandwidth.rt_period);
+}
+
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ task_ಗುಂಪು *rt_rq_iter_t;
+
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ task_ಗುಂಪು *ಮುಂದಿನ_task_ಗುಂಪು(ರಚನೆ task_ಗುಂಪು *tg)
+{
+	ಆದರೆ (!rt_ಗುಂಪು_sched_enabled()) {
+		WARN_ON(tg != &ಬೇರು_task_ಗುಂಪು);
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	do {
-		tg = list_entry_rcu(tg->list.next,
-			typeof(struct task_group), list);
-	} while (&tg->list != &task_groups && task_group_is_autogroup(tg));
+	ಮಾಡು {
+		tg = list_ನಮೂದು_rcu(tg->list.ಮುಂದಿನ,
+			typeof(ರಚನೆ task_ಗುಂಪು), list);
+	} ಆಗ (&tg->list != &task_groups && task_ಗುಂಪು_is_autogroup(tg));
 
-	if (&tg->list == &task_groups)
-		tg = NULL;
+	ಆದರೆ (&tg->list == &task_groups)
+		tg = ಖಾಲಿ;
 
-	return tg;
+	ಹಿಂತಿರುಗಿ tg;
 }
 
-#define for_each_rt_rq(rt_rq, iter, rq)					\
-	for (iter = &root_task_group;					\
-		iter && (rt_rq = iter->rt_rq[cpu_of(rq)]);		\
-		iter = next_task_group(iter))
+#ವ್ಯಾಖ್ಯಾನಿಸು for_each_rt_rq(rt_rq, iter, rq)					\
+	ಗಾಗಿ (iter = &ಬೇರು_task_ಗುಂಪು;					\
+		iter && (rt_rq = iter->rt_rq[cpu_ದ(rq)]);		\
+		iter = ಮುಂದಿನ_task_ಗುಂಪು(iter))
 
-#define for_each_sched_rt_entity(rt_se) \
-	for (; rt_se; rt_se = rt_se->parent)
+#ವ್ಯಾಖ್ಯಾನಿಸು for_each_sched_rt_entity(rt_se) \
+	ಗಾಗಿ (; rt_se; rt_se = rt_se->ಪೋಷಕ)
 
-static inline struct rt_rq *group_rt_rq(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ rt_rq *ಗುಂಪು_rt_rq(ರಚನೆ sched_rt_entity *rt_se)
 {
-	return rt_se->my_q;
+	ಹಿಂತಿರುಗಿ rt_se->my_q;
 }
 
-static void enqueue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags);
-static void dequeue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags);
+ಸ್ಥಿರ ಶೂನ್ಯ ಸರತಿಗೆ_ಸೇರಿಸು_rt_entity(ರಚನೆ sched_rt_entity *rt_se, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flags);
+ಸ್ಥಿರ ಶೂನ್ಯ ಸರತಿಯಿಂದ_ತೆಗೆ_rt_entity(ರಚನೆ sched_rt_entity *rt_se, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flags);
 
-static void sched_rt_rq_enqueue(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಶೂನ್ಯ sched_rt_rq_ಸರತಿಗೆ_ಸೇರಿಸು(ರಚನೆ rt_rq *rt_rq)
 {
-	struct task_struct *donor = rq_of_rt_rq(rt_rq)->donor;
-	struct rq *rq = rq_of_rt_rq(rt_rq);
-	struct sched_rt_entity *rt_se;
+	ರಚನೆ task_struct *donor = rq_ದ_rt_rq(rt_rq)->donor;
+	ರಚನೆ rq *rq = rq_ದ_rt_rq(rt_rq);
+	ರಚನೆ sched_rt_entity *rt_se;
 
-	int cpu = cpu_of(rq);
+	ಪೂರ್ಣಾಂಕ cpu = cpu_ದ(rq);
 
 	rt_se = rt_rq->tg->rt_se[cpu];
 
-	if (rt_rq->rt_nr_running) {
-		if (!rt_se)
-			enqueue_top_rt_rq(rt_rq);
-		else if (!on_rt_rq(rt_se))
-			enqueue_rt_entity(rt_se, 0);
+	ಆದರೆ (rt_rq->rt_nr_running) {
+		ಆದರೆ (!rt_se)
+			ಸರತಿಗೆ_ಸೇರಿಸು_ತುದಿ_rt_rq(rt_rq);
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (!on_rt_rq(rt_se))
+			ಸರತಿಗೆ_ಸೇರಿಸು_rt_entity(rt_se, 0);
 
-		if (rt_rq->highest_prio.curr < donor->prio)
+		ಆದರೆ (rt_rq->highest_prio.curr < donor->prio)
 			resched_curr(rq);
 	}
 }
 
-static void sched_rt_rq_dequeue(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಶೂನ್ಯ sched_rt_rq_ಸರತಿಯಿಂದ_ತೆಗೆ(ರಚನೆ rt_rq *rt_rq)
 {
-	struct sched_rt_entity *rt_se;
-	int cpu = cpu_of(rq_of_rt_rq(rt_rq));
+	ರಚನೆ sched_rt_entity *rt_se;
+	ಪೂರ್ಣಾಂಕ cpu = cpu_ದ(rq_ದ_rt_rq(rt_rq));
 
 	rt_se = rt_rq->tg->rt_se[cpu];
 
-	if (!rt_se) {
-		dequeue_top_rt_rq(rt_rq, rt_rq->rt_nr_running);
+	ಆದರೆ (!rt_se) {
+		ಸರತಿಯಿಂದ_ತೆಗೆ_ತುದಿ_rt_rq(rt_rq, rt_rq->rt_nr_running);
 		/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
-		cpufreq_update_util(rq_of_rt_rq(rt_rq), 0);
+		cpufreq_update_util(rq_ದ_rt_rq(rt_rq), 0);
 	}
-	else if (on_rt_rq(rt_se))
-		dequeue_rt_entity(rt_se, 0);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (on_rt_rq(rt_se))
+		ಸರತಿಯಿಂದ_ತೆಗೆ_rt_entity(rt_se, 0);
 }
 
-static inline int rt_rq_throttled(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ rt_rq_throttled(ರಚನೆ rt_rq *rt_rq)
 {
-	return rt_rq->rt_throttled && !rt_rq->rt_nr_boosted;
+	ಹಿಂತಿರುಗಿ rt_rq->rt_throttled && !rt_rq->rt_nr_boosted;
 }
 
-static int rt_se_boosted(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ rt_se_boosted(ರಚನೆ sched_rt_entity *rt_se)
 {
-	struct rt_rq *rt_rq = group_rt_rq(rt_se);
-	struct task_struct *p;
+	ರಚನೆ rt_rq *rt_rq = ಗುಂಪು_rt_rq(rt_se);
+	ರಚನೆ task_struct *p;
 
-	if (rt_rq)
-		return !!rt_rq->rt_nr_boosted;
+	ಆದರೆ (rt_rq)
+		ಹಿಂತಿರುಗಿ !!rt_rq->rt_nr_boosted;
 
-	p = rt_task_of(rt_se);
-	return p->prio != p->normal_prio;
+	p = rt_task_ದ(rt_se);
+	ಹಿಂತಿರುಗಿ p->prio != p->ಸಾಮಾನ್ಯ_prio;
 }
 
-static inline const struct cpumask *sched_rt_period_mask(void)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *sched_rt_period_ಮುಖವಾಡ(ಶೂನ್ಯ)
 {
-	return this_rq()->rd->span;
+	ಹಿಂತಿರುಗಿ this_rq()->rd->ಹರವು;
 }
 
-static inline
-struct rt_rq *sched_rt_period_rt_rq(struct rt_bandwidth *rt_b, int cpu)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ
+ರಚನೆ rt_rq *sched_rt_period_rt_rq(ರಚನೆ rt_bandwidth *rt_b, ಪೂರ್ಣಾಂಕ cpu)
 {
-	return container_of(rt_b, struct task_group, rt_bandwidth)->rt_rq[cpu];
+	ಹಿಂತಿರುಗಿ container_ದ(rt_b, ರಚನೆ task_ಗುಂಪು, rt_bandwidth)->rt_rq[cpu];
 }
 
-static inline struct rt_bandwidth *sched_rt_bandwidth(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ rt_bandwidth *sched_rt_bandwidth(ರಚನೆ rt_rq *rt_rq)
 {
-	return &rt_rq->tg->rt_bandwidth;
+	ಹಿಂತಿರುಗಿ &rt_rq->tg->rt_bandwidth;
 }
 
-bool sched_rt_bandwidth_account(struct rt_rq *rt_rq)
+bool sched_rt_bandwidth_account(ರಚನೆ rt_rq *rt_rq)
 {
-	struct rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
+	ರಚನೆ rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
 
-	return (hrtimer_active(&rt_b->rt_period_timer) ||
-		rt_rq->rt_time < rt_b->rt_runtime);
+	ಹಿಂತಿರುಗಿ (hrtimer_ಸಕ್ರಿಯ(&rt_b->rt_period_timer) ||
+		rt_rq->rt_ಸಮಯ < rt_b->rt_runtime);
 }
 
 /*
  * We ran out of runtime, see if we can borrow some from our neighbours.
  */
-static void do_balance_runtime(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಶೂನ್ಯ do_balance_runtime(ರಚನೆ rt_rq *rt_rq)
 {
-	struct rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
-	struct root_domain *rd = rq_of_rt_rq(rt_rq)->rd;
-	int i, weight;
+	ರಚನೆ rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
+	ರಚನೆ ಬೇರು_domain *rd = rq_ದ_rt_rq(rt_rq)->rd;
+	ಪೂರ್ಣಾಂಕ i, ತೂಕ;
 	u64 rt_period;
 
-	weight = cpumask_weight(rd->span);
+	ತೂಕ = cpumask_ತೂಕ(rd->ಹರವು);
 
-	raw_spin_lock(&rt_b->rt_runtime_lock);
-	rt_period = ktime_to_ns(rt_b->rt_period);
-	for_each_cpu(i, rd->span) {
-		struct rt_rq *iter = sched_rt_period_rt_rq(rt_b, i);
+	raw_spin_ಬೀಗ(&rt_b->rt_runtime_ಬೀಗ);
+	rt_period = ktime_ಗಮ್ಯ_ns(rt_b->rt_period);
+	for_each_cpu(i, rd->ಹರವು) {
+		ರಚನೆ rt_rq *iter = sched_rt_period_rt_rq(rt_b, i);
 		s64 diff;
 
-		if (iter == rt_rq)
-			continue;
+		ಆದರೆ (iter == rt_rq)
+			ಮುಂದುವರಿ;
 
-		raw_spin_lock(&iter->rt_runtime_lock);
+		raw_spin_ಬೀಗ(&iter->rt_runtime_ಬೀಗ);
 		/*
 		 * Either all rqs have inf runtime and there's nothing to steal
 		 * or __disable_runtime() below sets a specific rq to inf to
 		 * indicate its been disabled and disallow stealing.
 		 */
-		if (iter->rt_runtime == RUNTIME_INF)
-			goto next;
+		ಆದರೆ (iter->rt_runtime == RUNTIME_INF)
+			ಹೋಗು ಮುಂದಿನ;
 
 		/*
 		 * From runqueues with spare time, take 1/n part of their
 		 * spare time, but no more than our period.
 		 */
-		diff = iter->rt_runtime - iter->rt_time;
-		if (diff > 0) {
-			diff = div_u64((u64)diff, weight);
-			if (rt_rq->rt_runtime + diff > rt_period)
+		diff = iter->rt_runtime - iter->rt_ಸಮಯ;
+		ಆದರೆ (diff > 0) {
+			diff = div_u64((u64)diff, ತೂಕ);
+			ಆದರೆ (rt_rq->rt_runtime + diff > rt_period)
 				diff = rt_period - rt_rq->rt_runtime;
 			iter->rt_runtime -= diff;
 			rt_rq->rt_runtime += diff;
-			if (rt_rq->rt_runtime == rt_period) {
-				raw_spin_unlock(&iter->rt_runtime_lock);
-				break;
+			ಆದರೆ (rt_rq->rt_runtime == rt_period) {
+				raw_spin_unlock(&iter->rt_runtime_ಬೀಗ);
+				ನಿಲ್ಲಿಸು;
 			}
 		}
-next:
-		raw_spin_unlock(&iter->rt_runtime_lock);
+ಮುಂದಿನ:
+		raw_spin_unlock(&iter->rt_runtime_ಬೀಗ);
 	}
-	raw_spin_unlock(&rt_b->rt_runtime_lock);
+	raw_spin_unlock(&rt_b->rt_runtime_ಬೀಗ);
 }
 
 /*
  * Ensure this RQ takes back all the runtime it lend to its neighbours.
  */
-static void __disable_runtime(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ __disable_runtime(ರಚನೆ rq *rq)
 {
-	struct root_domain *rd = rq->rd;
+	ರಚನೆ ಬೇರು_domain *rd = rq->rd;
 	rt_rq_iter_t iter;
-	struct rt_rq *rt_rq;
+	ರಚನೆ rt_rq *rt_rq;
 
-	if (unlikely(!scheduler_running))
-		return;
+	ಆದರೆ (unlikely(!scheduler_running))
+		ಹಿಂತಿರುಗಿ;
 
 	for_each_rt_rq(rt_rq, iter, rq) {
-		struct rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
+		ರಚನೆ rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
 		s64 want;
-		int i;
+		ಪೂರ್ಣಾಂಕ i;
 
-		raw_spin_lock(&rt_b->rt_runtime_lock);
-		raw_spin_lock(&rt_rq->rt_runtime_lock);
+		raw_spin_ಬೀಗ(&rt_b->rt_runtime_ಬೀಗ);
+		raw_spin_ಬೀಗ(&rt_rq->rt_runtime_ಬೀಗ);
 		/*
 		 * Either we're all inf and nobody needs to borrow, or we're
 		 * already disabled and thus have nothing to do, or we have
 		 * exactly the right amount of runtime to take out.
 		 */
-		if (rt_rq->rt_runtime == RUNTIME_INF ||
+		ಆದರೆ (rt_rq->rt_runtime == RUNTIME_INF ||
 				rt_rq->rt_runtime == rt_b->rt_runtime)
-			goto balanced;
-		raw_spin_unlock(&rt_rq->rt_runtime_lock);
+			ಹೋಗು ಸಮತೋಲಿತ;
+		raw_spin_unlock(&rt_rq->rt_runtime_ಬೀಗ);
 
 		/*
 		 * Calculate the difference between what we started out with
@@ -693,94 +693,94 @@ static void __disable_runtime(struct rq *rq)
 		/*
 		 * Greedy reclaim, take back as much as we can.
 		 */
-		for_each_cpu(i, rd->span) {
-			struct rt_rq *iter = sched_rt_period_rt_rq(rt_b, i);
+		for_each_cpu(i, rd->ಹರವು) {
+			ರಚನೆ rt_rq *iter = sched_rt_period_rt_rq(rt_b, i);
 			s64 diff;
 
 			/*
 			 * Can't reclaim from ourselves or disabled runqueues.
 			 */
-			if (iter == rt_rq || iter->rt_runtime == RUNTIME_INF)
-				continue;
+			ಆದರೆ (iter == rt_rq || iter->rt_runtime == RUNTIME_INF)
+				ಮುಂದುವರಿ;
 
-			raw_spin_lock(&iter->rt_runtime_lock);
-			if (want > 0) {
+			raw_spin_ಬೀಗ(&iter->rt_runtime_ಬೀಗ);
+			ಆದರೆ (want > 0) {
 				diff = min_t(s64, iter->rt_runtime, want);
 				iter->rt_runtime -= diff;
 				want -= diff;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				iter->rt_runtime -= want;
 				want -= want;
 			}
-			raw_spin_unlock(&iter->rt_runtime_lock);
+			raw_spin_unlock(&iter->rt_runtime_ಬೀಗ);
 
-			if (!want)
-				break;
+			ಆದರೆ (!want)
+				ನಿಲ್ಲಿಸು;
 		}
 
-		raw_spin_lock(&rt_rq->rt_runtime_lock);
+		raw_spin_ಬೀಗ(&rt_rq->rt_runtime_ಬೀಗ);
 		/*
 		 * We cannot be left wanting - that would mean some runtime
 		 * leaked out of the system.
 		 */
 		WARN_ON_ONCE(want);
-balanced:
+ಸಮತೋಲಿತ:
 		/*
 		 * Disable all the borrow logic by pretending we have inf
 		 * runtime - in which case borrowing doesn't make sense.
 		 */
 		rt_rq->rt_runtime = RUNTIME_INF;
 		rt_rq->rt_throttled = 0;
-		raw_spin_unlock(&rt_rq->rt_runtime_lock);
-		raw_spin_unlock(&rt_b->rt_runtime_lock);
+		raw_spin_unlock(&rt_rq->rt_runtime_ಬೀಗ);
+		raw_spin_unlock(&rt_b->rt_runtime_ಬೀಗ);
 
 		/* Make rt_rq available for pick_next_task() */
-		sched_rt_rq_enqueue(rt_rq);
+		sched_rt_rq_ಸರತಿಗೆ_ಸೇರಿಸು(rt_rq);
 	}
 }
 
-static void __enable_runtime(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ __enable_runtime(ರಚನೆ rq *rq)
 {
 	rt_rq_iter_t iter;
-	struct rt_rq *rt_rq;
+	ರಚನೆ rt_rq *rt_rq;
 
-	if (unlikely(!scheduler_running))
-		return;
+	ಆದರೆ (unlikely(!scheduler_running))
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * Reset each runqueue's bandwidth settings
 	 */
 	for_each_rt_rq(rt_rq, iter, rq) {
-		struct rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
+		ರಚನೆ rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
 
-		raw_spin_lock(&rt_b->rt_runtime_lock);
-		raw_spin_lock(&rt_rq->rt_runtime_lock);
+		raw_spin_ಬೀಗ(&rt_b->rt_runtime_ಬೀಗ);
+		raw_spin_ಬೀಗ(&rt_rq->rt_runtime_ಬೀಗ);
 		rt_rq->rt_runtime = rt_b->rt_runtime;
-		rt_rq->rt_time = 0;
+		rt_rq->rt_ಸಮಯ = 0;
 		rt_rq->rt_throttled = 0;
-		raw_spin_unlock(&rt_rq->rt_runtime_lock);
-		raw_spin_unlock(&rt_b->rt_runtime_lock);
+		raw_spin_unlock(&rt_rq->rt_runtime_ಬೀಗ);
+		raw_spin_unlock(&rt_b->rt_runtime_ಬೀಗ);
 	}
 }
 
-static void balance_runtime(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಶೂನ್ಯ balance_runtime(ರಚನೆ rt_rq *rt_rq)
 {
-	if (!sched_feat(RT_RUNTIME_SHARE))
-		return;
+	ಆದರೆ (!sched_feat(RT_RUNTIME_SHARE))
+		ಹಿಂತಿರುಗಿ;
 
-	if (rt_rq->rt_time > rt_rq->rt_runtime) {
-		raw_spin_unlock(&rt_rq->rt_runtime_lock);
+	ಆದರೆ (rt_rq->rt_ಸಮಯ > rt_rq->rt_runtime) {
+		raw_spin_unlock(&rt_rq->rt_runtime_ಬೀಗ);
 		do_balance_runtime(rt_rq);
-		raw_spin_lock(&rt_rq->rt_runtime_lock);
+		raw_spin_ಬೀಗ(&rt_rq->rt_runtime_ಬೀಗ);
 	}
 }
 
-static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ do_sched_rt_period_timer(ರಚನೆ rt_bandwidth *rt_b, ಪೂರ್ಣಾಂಕ overrun)
 {
-	int i, idle = 1, throttled = 0;
-	const struct cpumask *span;
+	ಪೂರ್ಣಾಂಕ i, idle = 1, throttled = 0;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *ಹರವು;
 
-	span = sched_rt_period_mask();
+	ಹರವು = sched_rt_period_ಮುಖವಾಡ();
 
 	/*
 	 * FIXME: isolated CPUs should really leave the root task group,
@@ -791,42 +791,42 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun)
 	 * off to kill the perturbations it causes anyway.  Meanwhile,
 	 * this maintains functionality for boot and/or troubleshooting.
 	 */
-	if (rt_b == &root_task_group.rt_bandwidth)
-		span = cpu_online_mask;
+	ಆದರೆ (rt_b == &ಬೇರು_task_ಗುಂಪು.rt_bandwidth)
+		ಹರವು = cpu_online_ಮುಖವಾಡ;
 
-	for_each_cpu(i, span) {
-		int enqueue = 0;
-		struct rt_rq *rt_rq = sched_rt_period_rt_rq(rt_b, i);
-		struct rq *rq = rq_of_rt_rq(rt_rq);
-		struct rq_flags rf;
-		int skip;
+	for_each_cpu(i, ಹರವು) {
+		ಪೂರ್ಣಾಂಕ ಸರತಿಗೆ_ಸೇರಿಸು = 0;
+		ರಚನೆ rt_rq *rt_rq = sched_rt_period_rt_rq(rt_b, i);
+		ರಚನೆ rq *rq = rq_ದ_rt_rq(rt_rq);
+		ರಚನೆ rq_flags rf;
+		ಪೂರ್ಣಾಂಕ skip;
 
 		/*
 		 * When span == cpu_online_mask, taking each rq->lock
 		 * can be time-consuming. Try to avoid it when possible.
 		 */
-		raw_spin_lock(&rt_rq->rt_runtime_lock);
-		if (!sched_feat(RT_RUNTIME_SHARE) && rt_rq->rt_runtime != RUNTIME_INF)
+		raw_spin_ಬೀಗ(&rt_rq->rt_runtime_ಬೀಗ);
+		ಆದರೆ (!sched_feat(RT_RUNTIME_SHARE) && rt_rq->rt_runtime != RUNTIME_INF)
 			rt_rq->rt_runtime = rt_b->rt_runtime;
-		skip = !rt_rq->rt_time && !rt_rq->rt_nr_running;
-		raw_spin_unlock(&rt_rq->rt_runtime_lock);
-		if (skip)
-			continue;
+		skip = !rt_rq->rt_ಸಮಯ && !rt_rq->rt_nr_running;
+		raw_spin_unlock(&rt_rq->rt_runtime_ಬೀಗ);
+		ಆದರೆ (skip)
+			ಮುಂದುವರಿ;
 
-		rq_lock(rq, &rf);
+		rq_ಬೀಗ(rq, &rf);
 		update_rq_clock(rq);
 
-		if (rt_rq->rt_time) {
+		ಆದರೆ (rt_rq->rt_ಸಮಯ) {
 			u64 runtime;
 
-			raw_spin_lock(&rt_rq->rt_runtime_lock);
-			if (rt_rq->rt_throttled)
+			raw_spin_ಬೀಗ(&rt_rq->rt_runtime_ಬೀಗ);
+			ಆದರೆ (rt_rq->rt_throttled)
 				balance_runtime(rt_rq);
 			runtime = rt_rq->rt_runtime;
-			rt_rq->rt_time -= min(rt_rq->rt_time, overrun*runtime);
-			if (rt_rq->rt_throttled && rt_rq->rt_time < runtime) {
+			rt_rq->rt_ಸಮಯ -= min(rt_rq->rt_ಸಮಯ, overrun*runtime);
+			ಆದರೆ (rt_rq->rt_throttled && rt_rq->rt_ಸಮಯ < runtime) {
 				rt_rq->rt_throttled = 0;
-				enqueue = 1;
+				ಸರತಿಗೆ_ಸೇರಿಸು = 1;
 
 				/*
 				 * When we're idle and a woken (rt) task is
@@ -835,210 +835,210 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun)
 				 * and this unthrottle will get accounted as
 				 * 'runtime'.
 				 */
-				if (rt_rq->rt_nr_running && rq->curr == rq->idle)
+				ಆದರೆ (rt_rq->rt_nr_running && rq->curr == rq->idle)
 					rq_clock_cancel_skipupdate(rq);
 			}
-			if (rt_rq->rt_time || rt_rq->rt_nr_running)
+			ಆದರೆ (rt_rq->rt_ಸಮಯ || rt_rq->rt_nr_running)
 				idle = 0;
-			raw_spin_unlock(&rt_rq->rt_runtime_lock);
-		} else if (rt_rq->rt_nr_running) {
+			raw_spin_unlock(&rt_rq->rt_runtime_ಬೀಗ);
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (rt_rq->rt_nr_running) {
 			idle = 0;
-			if (!rt_rq_throttled(rt_rq))
-				enqueue = 1;
+			ಆದರೆ (!rt_rq_throttled(rt_rq))
+				ಸರತಿಗೆ_ಸೇರಿಸು = 1;
 		}
-		if (rt_rq->rt_throttled)
+		ಆದರೆ (rt_rq->rt_throttled)
 			throttled = 1;
 
-		if (enqueue)
-			sched_rt_rq_enqueue(rt_rq);
+		ಆದರೆ (ಸರತಿಗೆ_ಸೇರಿಸು)
+			sched_rt_rq_ಸರತಿಗೆ_ಸೇರಿಸು(rt_rq);
 		rq_unlock(rq, &rf);
 	}
 
-	if (!throttled && (!rt_bandwidth_enabled() || rt_b->rt_runtime == RUNTIME_INF))
-		return 1;
+	ಆದರೆ (!throttled && (!rt_bandwidth_enabled() || rt_b->rt_runtime == RUNTIME_INF))
+		ಹಿಂತಿರುಗಿ 1;
 
-	return idle;
+	ಹಿಂತಿರುಗಿ idle;
 }
 
-static int sched_rt_runtime_exceeded(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sched_rt_runtime_exceeded(ರಚನೆ rt_rq *rt_rq)
 {
 	u64 runtime = sched_rt_runtime(rt_rq);
 
-	if (rt_rq->rt_throttled)
-		return rt_rq_throttled(rt_rq);
+	ಆದರೆ (rt_rq->rt_throttled)
+		ಹಿಂತಿರುಗಿ rt_rq_throttled(rt_rq);
 
-	if (runtime >= sched_rt_period(rt_rq))
-		return 0;
+	ಆದರೆ (runtime >= sched_rt_period(rt_rq))
+		ಹಿಂತಿರುಗಿ 0;
 
 	balance_runtime(rt_rq);
 	runtime = sched_rt_runtime(rt_rq);
-	if (runtime == RUNTIME_INF)
-		return 0;
+	ಆದರೆ (runtime == RUNTIME_INF)
+		ಹಿಂತಿರುಗಿ 0;
 
-	if (rt_rq->rt_time > runtime) {
-		struct rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
+	ಆದರೆ (rt_rq->rt_ಸಮಯ > runtime) {
+		ರಚನೆ rt_bandwidth *rt_b = sched_rt_bandwidth(rt_rq);
 
 		/*
 		 * Don't actually throttle groups that have no runtime assigned
 		 * but accrue some time due to boosting.
 		 */
-		if (likely(rt_b->rt_runtime)) {
+		ಆದರೆ (likely(rt_b->rt_runtime)) {
 			rt_rq->rt_throttled = 1;
 			printk_deferred_once("sched: RT throttling activated\n");
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/*
 			 * In case we did anyway, make it go away,
 			 * replenishment is a joke, since it will replenish us
 			 * with exactly 0 ns.
 			 */
-			rt_rq->rt_time = 0;
+			rt_rq->rt_ಸಮಯ = 0;
 		}
 
-		if (rt_rq_throttled(rt_rq)) {
-			sched_rt_rq_dequeue(rt_rq);
-			return 1;
+		ಆದರೆ (rt_rq_throttled(rt_rq)) {
+			sched_rt_rq_ಸರತಿಯಿಂದ_ತೆಗೆ(rt_rq);
+			ಹಿಂತಿರುಗಿ 1;
 		}
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-#else /* !CONFIG_RT_GROUP_SCHED: */
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_RT_GROUP_SCHED: */
 
-typedef struct rt_rq *rt_rq_iter_t;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ rt_rq *rt_rq_iter_t;
 
-#define for_each_rt_rq(rt_rq, iter, rq) \
-	for ((void) iter, rt_rq = &rq->rt; rt_rq; rt_rq = NULL)
+#ವ್ಯಾಖ್ಯಾನಿಸು for_each_rt_rq(rt_rq, iter, rq) \
+	ಗಾಗಿ ((ಶೂನ್ಯ) iter, rt_rq = &rq->rt; rt_rq; rt_rq = ಖಾಲಿ)
 
-#define for_each_sched_rt_entity(rt_se) \
-	for (; rt_se; rt_se = NULL)
+#ವ್ಯಾಖ್ಯಾನಿಸು for_each_sched_rt_entity(rt_se) \
+	ಗಾಗಿ (; rt_se; rt_se = ಖಾಲಿ)
 
-static inline struct rt_rq *group_rt_rq(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ rt_rq *ಗುಂಪು_rt_rq(ರಚನೆ sched_rt_entity *rt_se)
 {
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-static inline void sched_rt_rq_enqueue(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ sched_rt_rq_ಸರತಿಗೆ_ಸೇರಿಸು(ರಚನೆ rt_rq *rt_rq)
 {
-	struct rq *rq = rq_of_rt_rq(rt_rq);
+	ರಚನೆ rq *rq = rq_ದ_rt_rq(rt_rq);
 
-	if (!rt_rq->rt_nr_running)
-		return;
+	ಆದರೆ (!rt_rq->rt_nr_running)
+		ಹಿಂತಿರುಗಿ;
 
-	enqueue_top_rt_rq(rt_rq);
+	ಸರತಿಗೆ_ಸೇರಿಸು_ತುದಿ_rt_rq(rt_rq);
 	resched_curr(rq);
 }
 
-static inline void sched_rt_rq_dequeue(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ sched_rt_rq_ಸರತಿಯಿಂದ_ತೆಗೆ(ರಚನೆ rt_rq *rt_rq)
 {
-	dequeue_top_rt_rq(rt_rq, rt_rq->rt_nr_running);
+	ಸರತಿಯಿಂದ_ತೆಗೆ_ತುದಿ_rt_rq(rt_rq, rt_rq->rt_nr_running);
 }
 
-static inline int rt_rq_throttled(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ rt_rq_throttled(ರಚನೆ rt_rq *rt_rq)
 {
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
 
-static inline const struct cpumask *sched_rt_period_mask(void)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *sched_rt_period_ಮುಖವಾಡ(ಶೂನ್ಯ)
 {
-	return cpu_online_mask;
+	ಹಿಂತಿರುಗಿ cpu_online_ಮುಖವಾಡ;
 }
 
-static inline
-struct rt_rq *sched_rt_period_rt_rq(struct rt_bandwidth *rt_b, int cpu)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ
+ರಚನೆ rt_rq *sched_rt_period_rt_rq(ರಚನೆ rt_bandwidth *rt_b, ಪೂರ್ಣಾಂಕ cpu)
 {
-	return &cpu_rq(cpu)->rt;
+	ಹಿಂತಿರುಗಿ &cpu_rq(cpu)->rt;
 }
 
-static void __enable_runtime(struct rq *rq) { }
-static void __disable_runtime(struct rq *rq) { }
+ಸ್ಥಿರ ಶೂನ್ಯ __enable_runtime(ರಚನೆ rq *rq) { }
+ಸ್ಥಿರ ಶೂನ್ಯ __disable_runtime(ರಚನೆ rq *rq) { }
 
-#endif /* !CONFIG_RT_GROUP_SCHED */
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_RT_GROUP_SCHED */
 
-static inline int rt_se_prio(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ rt_se_prio(ರಚನೆ sched_rt_entity *rt_se)
 {
-#ifdef CONFIG_RT_GROUP_SCHED
-	struct rt_rq *rt_rq = group_rt_rq(rt_se);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_RT_ಗುಂಪು_SCHED
+	ರಚನೆ rt_rq *rt_rq = ಗುಂಪು_rt_rq(rt_se);
 
-	if (rt_rq)
-		return rt_rq->highest_prio.curr;
-#endif
+	ಆದರೆ (rt_rq)
+		ಹಿಂತಿರುಗಿ rt_rq->highest_prio.curr;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return rt_task_of(rt_se)->prio;
+	ಹಿಂತಿರುಗಿ rt_task_ದ(rt_se)->prio;
 }
 
 /*
  * Update the current task's runtime statistics. Skip current tasks that
  * are not in our scheduling class.
  */
-static void update_curr_rt(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ update_curr_rt(ರಚನೆ rq *rq)
 {
-	struct task_struct *donor = rq->donor;
+	ರಚನೆ task_struct *donor = rq->donor;
 	s64 delta_exec;
 
-	if (donor->sched_class != &rt_sched_class)
-		return;
+	ಆದರೆ (donor->sched_class != &rt_sched_class)
+		ಹಿಂತಿರುಗಿ;
 
 	delta_exec = update_curr_common(rq);
-	if (unlikely(delta_exec <= 0))
-		return;
+	ಆದರೆ (unlikely(delta_exec <= 0))
+		ಹಿಂತಿರುಗಿ;
 
-#ifdef CONFIG_RT_GROUP_SCHED
-	struct sched_rt_entity *rt_se = &donor->rt;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_RT_ಗುಂಪು_SCHED
+	ರಚನೆ sched_rt_entity *rt_se = &donor->rt;
 
-	if (!rt_bandwidth_enabled())
-		return;
+	ಆದರೆ (!rt_bandwidth_enabled())
+		ಹಿಂತಿರುಗಿ;
 
 	for_each_sched_rt_entity(rt_se) {
-		struct rt_rq *rt_rq = rt_rq_of_se(rt_se);
-		int exceeded;
+		ರಚನೆ rt_rq *rt_rq = rt_rq_ದ_se(rt_se);
+		ಪೂರ್ಣಾಂಕ exceeded;
 
-		if (sched_rt_runtime(rt_rq) != RUNTIME_INF) {
-			raw_spin_lock(&rt_rq->rt_runtime_lock);
-			rt_rq->rt_time += delta_exec;
+		ಆದರೆ (sched_rt_runtime(rt_rq) != RUNTIME_INF) {
+			raw_spin_ಬೀಗ(&rt_rq->rt_runtime_ಬೀಗ);
+			rt_rq->rt_ಸಮಯ += delta_exec;
 			exceeded = sched_rt_runtime_exceeded(rt_rq);
-			if (exceeded)
+			ಆದರೆ (exceeded)
 				resched_curr(rq);
-			raw_spin_unlock(&rt_rq->rt_runtime_lock);
-			if (exceeded)
-				do_start_rt_bandwidth(sched_rt_bandwidth(rt_rq));
+			raw_spin_unlock(&rt_rq->rt_runtime_ಬೀಗ);
+			ಆದರೆ (exceeded)
+				do_ಆರಂಭ_rt_bandwidth(sched_rt_bandwidth(rt_rq));
 		}
 	}
-#endif /* CONFIG_RT_GROUP_SCHED */
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_RT_GROUP_SCHED */
 }
 
-static void
-dequeue_top_rt_rq(struct rt_rq *rt_rq, unsigned int count)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಸರತಿಯಿಂದ_ತೆಗೆ_ತುದಿ_rt_rq(ರಚನೆ rt_rq *rt_rq, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2)
 {
-	struct rq *rq = rq_of_rt_rq(rt_rq);
+	ರಚನೆ rq *rq = rq_ದ_rt_rq(rt_rq);
 
 	BUG_ON(&rq->rt != rt_rq);
 
-	if (!rt_rq->rt_queued)
-		return;
+	ಆದರೆ (!rt_rq->rt_queued)
+		ಹಿಂತಿರುಗಿ;
 
 	BUG_ON(!rq->nr_running);
 
-	sub_nr_running(rq, count);
+	sub_nr_running(rq, ಎಣಿಕೆ_2);
 	rt_rq->rt_queued = 0;
 
 }
 
-static void
-enqueue_top_rt_rq(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಸರತಿಗೆ_ಸೇರಿಸು_ತುದಿ_rt_rq(ರಚನೆ rt_rq *rt_rq)
 {
-	struct rq *rq = rq_of_rt_rq(rt_rq);
+	ರಚನೆ rq *rq = rq_ದ_rt_rq(rt_rq);
 
 	BUG_ON(&rq->rt != rt_rq);
 
-	if (rt_rq->rt_queued)
-		return;
+	ಆದರೆ (rt_rq->rt_queued)
+		ಹಿಂತಿರುಗಿ;
 
-	if (rt_rq_throttled(rt_rq))
-		return;
+	ಆದರೆ (rt_rq_throttled(rt_rq))
+		ಹಿಂತಿರುಗಿ;
 
-	if (rt_rq->rt_nr_running) {
-		add_nr_running(rq, rt_rq->rt_nr_running);
+	ಆದರೆ (rt_rq->rt_nr_running) {
+		ಕೂಡಿಸು_nr_running(rq, rt_rq->rt_nr_running);
 		rt_rq->rt_queued = 1;
 	}
 
@@ -1046,53 +1046,53 @@ enqueue_top_rt_rq(struct rt_rq *rt_rq)
 	cpufreq_update_util(rq, 0);
 }
 
-static void
-inc_rt_prio_smp(struct rt_rq *rt_rq, int prio, int prev_prio)
+ಸ್ಥಿರ ಶೂನ್ಯ
+inc_rt_prio_smp(ರಚನೆ rt_rq *rt_rq, ಪೂರ್ಣಾಂಕ prio, ಪೂರ್ಣಾಂಕ prev_prio)
 {
-	struct rq *rq = rq_of_rt_rq(rt_rq);
+	ರಚನೆ rq *rq = rq_ದ_rt_rq(rt_rq);
 
 	/*
 	 * Change rq's cpupri only if rt_rq is the top queue.
 	 */
-	if (IS_ENABLED(CONFIG_RT_GROUP_SCHED) && &rq->rt != rt_rq)
-		return;
+	ಆದರೆ (IS_ENABLED(CONFIG_RT_ಗುಂಪು_SCHED) && &rq->rt != rt_rq)
+		ಹಿಂತಿರುಗಿ;
 
-	if (rq->online && prio < prev_prio)
-		cpupri_set(&rq->rd->cpupri, rq->cpu, prio);
+	ಆದರೆ (rq->online && prio < prev_prio)
+		cpupri_ಗಣ(&rq->rd->cpupri, rq->cpu, prio);
 }
 
-static void
-dec_rt_prio_smp(struct rt_rq *rt_rq, int prio, int prev_prio)
+ಸ್ಥಿರ ಶೂನ್ಯ
+dec_rt_prio_smp(ರಚನೆ rt_rq *rt_rq, ಪೂರ್ಣಾಂಕ prio, ಪೂರ್ಣಾಂಕ prev_prio)
 {
-	struct rq *rq = rq_of_rt_rq(rt_rq);
+	ರಚನೆ rq *rq = rq_ದ_rt_rq(rt_rq);
 
 	/*
 	 * Change rq's cpupri only if rt_rq is the top queue.
 	 */
-	if (IS_ENABLED(CONFIG_RT_GROUP_SCHED) && &rq->rt != rt_rq)
-		return;
+	ಆದರೆ (IS_ENABLED(CONFIG_RT_ಗುಂಪು_SCHED) && &rq->rt != rt_rq)
+		ಹಿಂತಿರುಗಿ;
 
-	if (rq->online && rt_rq->highest_prio.curr != prev_prio)
-		cpupri_set(&rq->rd->cpupri, rq->cpu, rt_rq->highest_prio.curr);
+	ಆದರೆ (rq->online && rt_rq->highest_prio.curr != prev_prio)
+		cpupri_ಗಣ(&rq->rd->cpupri, rq->cpu, rt_rq->highest_prio.curr);
 }
 
-static void
-inc_rt_prio(struct rt_rq *rt_rq, int prio)
+ಸ್ಥಿರ ಶೂನ್ಯ
+inc_rt_prio(ರಚನೆ rt_rq *rt_rq, ಪೂರ್ಣಾಂಕ prio)
 {
-	int prev_prio = rt_rq->highest_prio.curr;
+	ಪೂರ್ಣಾಂಕ prev_prio = rt_rq->highest_prio.curr;
 
-	if (prio < prev_prio)
+	ಆದರೆ (prio < prev_prio)
 		rt_rq->highest_prio.curr = prio;
 
 	inc_rt_prio_smp(rt_rq, prio, prev_prio);
 }
 
-static void
-dec_rt_prio(struct rt_rq *rt_rq, int prio)
+ಸ್ಥಿರ ಶೂನ್ಯ
+dec_rt_prio(ರಚನೆ rt_rq *rt_rq, ಪೂರ್ಣಾಂಕ prio)
 {
-	int prev_prio = rt_rq->highest_prio.curr;
+	ಪೂರ್ಣಾಂಕ prev_prio = rt_rq->highest_prio.curr;
 
-	if (rt_rq->rt_nr_running) {
+	ಆದರೆ (rt_rq->rt_nr_running) {
 
 		WARN_ON(prio < prev_prio);
 
@@ -1100,92 +1100,92 @@ dec_rt_prio(struct rt_rq *rt_rq, int prio)
 		 * This may have been our highest task, and therefore
 		 * we may have some re-computation to do
 		 */
-		if (prio == prev_prio) {
-			struct rt_prio_array *array = &rt_rq->active;
+		ಆದರೆ (prio == prev_prio) {
+			ರಚನೆ rt_prio_array *array = &rt_rq->ಸಕ್ರಿಯ;
 
 			rt_rq->highest_prio.curr =
-				sched_find_first_bit(array->bitmap);
+				sched_ಕಂಡುಹಿಡಿ_ಮೊದಲ_ಬಿಟ್(array->bitmap);
 		}
 
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		rt_rq->highest_prio.curr = MAX_RT_PRIO-1;
 	}
 
 	dec_rt_prio_smp(rt_rq, prio, prev_prio);
 }
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_RT_ಗುಂಪು_SCHED
 
-static void
-inc_rt_group(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಶೂನ್ಯ
+inc_rt_ಗುಂಪು(ರಚನೆ sched_rt_entity *rt_se, ರಚನೆ rt_rq *rt_rq)
 {
-	if (rt_se_boosted(rt_se))
+	ಆದರೆ (rt_se_boosted(rt_se))
 		rt_rq->rt_nr_boosted++;
 
-	start_rt_bandwidth(&rt_rq->tg->rt_bandwidth);
+	ಆರಂಭ_rt_bandwidth(&rt_rq->tg->rt_bandwidth);
 }
 
-static void
-dec_rt_group(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಶೂನ್ಯ
+dec_rt_ಗುಂಪು(ರಚನೆ sched_rt_entity *rt_se, ರಚನೆ rt_rq *rt_rq)
 {
-	if (rt_se_boosted(rt_se))
+	ಆದರೆ (rt_se_boosted(rt_se))
 		rt_rq->rt_nr_boosted--;
 
 	WARN_ON(!rt_rq->rt_nr_running && rt_rq->rt_nr_boosted);
 }
 
-#else /* !CONFIG_RT_GROUP_SCHED: */
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_RT_GROUP_SCHED: */
 
-static void
-inc_rt_group(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಶೂನ್ಯ
+inc_rt_ಗುಂಪು(ರಚನೆ sched_rt_entity *rt_se, ರಚನೆ rt_rq *rt_rq)
 {
 }
 
-static inline
-void dec_rt_group(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ
+ಶೂನ್ಯ dec_rt_ಗುಂಪು(ರಚನೆ sched_rt_entity *rt_se, ರಚನೆ rt_rq *rt_rq) {}
 
-#endif /* !CONFIG_RT_GROUP_SCHED */
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_RT_GROUP_SCHED */
 
-static inline
-unsigned int rt_se_nr_running(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ
+ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ rt_se_nr_running(ರಚನೆ sched_rt_entity *rt_se)
 {
-	struct rt_rq *group_rq = group_rt_rq(rt_se);
+	ರಚನೆ rt_rq *ಗುಂಪು_rq = ಗುಂಪು_rt_rq(rt_se);
 
-	if (group_rq)
-		return group_rq->rt_nr_running;
-	else
-		return 1;
+	ಆದರೆ (ಗುಂಪು_rq)
+		ಹಿಂತಿರುಗಿ ಗುಂಪು_rq->rt_nr_running;
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಹಿಂತಿರುಗಿ 1;
 }
 
-static inline
-unsigned int rt_se_rr_nr_running(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ
+ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ rt_se_rr_nr_running(ರಚನೆ sched_rt_entity *rt_se)
 {
-	struct rt_rq *group_rq = group_rt_rq(rt_se);
-	struct task_struct *tsk;
+	ರಚನೆ rt_rq *ಗುಂಪು_rq = ಗುಂಪು_rt_rq(rt_se);
+	ರಚನೆ task_struct *tsk;
 
-	if (group_rq)
-		return group_rq->rr_nr_running;
+	ಆದರೆ (ಗುಂಪು_rq)
+		ಹಿಂತಿರುಗಿ ಗುಂಪು_rq->rr_nr_running;
 
-	tsk = rt_task_of(rt_se);
+	tsk = rt_task_ದ(rt_se);
 
-	return (tsk->policy == SCHED_RR) ? 1 : 0;
+	ಹಿಂತಿರುಗಿ (tsk->policy == SCHED_RR) ? 1 : 0;
 }
 
-static inline
-void inc_rt_tasks(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ
+ಶೂನ್ಯ inc_rt_tasks(ರಚನೆ sched_rt_entity *rt_se, ರಚನೆ rt_rq *rt_rq)
 {
-	int prio = rt_se_prio(rt_se);
+	ಪೂರ್ಣಾಂಕ prio = rt_se_prio(rt_se);
 
 	WARN_ON(!rt_prio(prio));
 	rt_rq->rt_nr_running += rt_se_nr_running(rt_se);
 	rt_rq->rr_nr_running += rt_se_rr_nr_running(rt_se);
 
 	inc_rt_prio(rt_rq, prio);
-	inc_rt_group(rt_se, rt_rq);
+	inc_rt_ಗುಂಪು(rt_se, rt_rq);
 }
 
-static inline
-void dec_rt_tasks(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ
+ಶೂನ್ಯ dec_rt_tasks(ರಚನೆ sched_rt_entity *rt_se, ರಚನೆ rt_rq *rt_rq)
 {
 	WARN_ON(!rt_prio(rt_se_prio(rt_se)));
 	WARN_ON(!rt_rq->rt_nr_running);
@@ -1193,7 +1193,7 @@ void dec_rt_tasks(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
 	rt_rq->rr_nr_running -= rt_se_rr_nr_running(rt_se);
 
 	dec_rt_prio(rt_rq, rt_se_prio(rt_se));
-	dec_rt_group(rt_se, rt_rq);
+	dec_rt_ಗುಂಪು(rt_se, rt_rq);
 }
 
 /*
@@ -1201,139 +1201,139 @@ void dec_rt_tasks(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
  *
  * assumes ENQUEUE/DEQUEUE flags match
  */
-static inline bool move_entity(unsigned int flags)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool move_entity(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flags)
 {
-	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) == DEQUEUE_SAVE)
-		return false;
+	ಆದರೆ ((flags & (ಸರತಿಯಿಂದ_ತೆಗೆ_SAVE | ಸರತಿಯಿಂದ_ತೆಗೆ_MOVE)) == ಸರತಿಯಿಂದ_ತೆಗೆ_SAVE)
+		ಹಿಂತಿರುಗಿ false;
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static void __delist_rt_entity(struct sched_rt_entity *rt_se, struct rt_prio_array *array)
+ಸ್ಥಿರ ಶೂನ್ಯ __delist_rt_entity(ರಚನೆ sched_rt_entity *rt_se, ರಚನೆ rt_prio_array *array)
 {
-	list_del_init(&rt_se->run_list);
+	list_del_init(&rt_se->ಸತತ_list);
 
-	if (list_empty(array->queue + rt_se_prio(rt_se)))
+	ಆದರೆ (list_ಖಾಲಿಗಳು(array->ಸರತಿ + rt_se_prio(rt_se)))
 		__clear_bit(rt_se_prio(rt_se), array->bitmap);
 
 	rt_se->on_list = 0;
 }
 
-static inline struct sched_statistics *
-__schedstats_from_rt_se(struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ರಚನೆ sched_statistics *
+__schedstats_from_rt_se(ರಚನೆ sched_rt_entity *rt_se)
 {
 	/* schedstats is not supported for rt group. */
-	if (!rt_entity_is_task(rt_se))
-		return NULL;
+	ಆದರೆ (!rt_entity_is_task(rt_se))
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	return &rt_task_of(rt_se)->stats;
+	ಹಿಂತಿರುಗಿ &rt_task_ದ(rt_se)->stats;
 }
 
-static inline void
-update_stats_wait_start_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+update_stats_wait_ಆರಂಭ_rt(ರಚನೆ rt_rq *rt_rq, ರಚನೆ sched_rt_entity *rt_se)
 {
-	struct sched_statistics *stats;
-	struct task_struct *p = NULL;
+	ರಚನೆ sched_statistics *stats;
+	ರಚನೆ task_struct *p = ಖಾಲಿ;
 
-	if (!schedstat_enabled())
-		return;
+	ಆದರೆ (!schedstat_enabled())
+		ಹಿಂತಿರುಗಿ;
 
-	if (rt_entity_is_task(rt_se))
-		p = rt_task_of(rt_se);
+	ಆದರೆ (rt_entity_is_task(rt_se))
+		p = rt_task_ದ(rt_se);
 
 	stats = __schedstats_from_rt_se(rt_se);
-	if (!stats)
-		return;
+	ಆದರೆ (!stats)
+		ಹಿಂತಿರುಗಿ;
 
-	__update_stats_wait_start(rq_of_rt_rq(rt_rq), p, stats);
+	__update_stats_wait_start(rq_ದ_rt_rq(rt_rq), p, stats);
 }
 
-static inline void
-update_stats_enqueue_sleeper_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+update_stats_ಸರತಿಗೆ_ಸೇರಿಸು_sleeper_rt(ರಚನೆ rt_rq *rt_rq, ರಚನೆ sched_rt_entity *rt_se)
 {
-	struct sched_statistics *stats;
-	struct task_struct *p = NULL;
+	ರಚನೆ sched_statistics *stats;
+	ರಚನೆ task_struct *p = ಖಾಲಿ;
 
-	if (!schedstat_enabled())
-		return;
+	ಆದರೆ (!schedstat_enabled())
+		ಹಿಂತಿರುಗಿ;
 
-	if (rt_entity_is_task(rt_se))
-		p = rt_task_of(rt_se);
+	ಆದರೆ (rt_entity_is_task(rt_se))
+		p = rt_task_ದ(rt_se);
 
 	stats = __schedstats_from_rt_se(rt_se);
-	if (!stats)
-		return;
+	ಆದರೆ (!stats)
+		ಹಿಂತಿರುಗಿ;
 
-	__update_stats_enqueue_sleeper(rq_of_rt_rq(rt_rq), p, stats);
+	__update_stats_enqueue_sleeper(rq_ದ_rt_rq(rt_rq), p, stats);
 }
 
-static inline void
-update_stats_enqueue_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se,
-			int flags)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+update_stats_ಸರತಿಗೆ_ಸೇರಿಸು_rt(ರಚನೆ rt_rq *rt_rq, ರಚನೆ sched_rt_entity *rt_se,
+			ಪೂರ್ಣಾಂಕ flags)
 {
-	if (!schedstat_enabled())
-		return;
+	ಆದರೆ (!schedstat_enabled())
+		ಹಿಂತಿರುಗಿ;
 
-	if (flags & ENQUEUE_WAKEUP)
-		update_stats_enqueue_sleeper_rt(rt_rq, rt_se);
+	ಆದರೆ (flags & ಸರತಿಗೆ_ಸೇರಿಸು_WAKEUP)
+		update_stats_ಸರತಿಗೆ_ಸೇರಿಸು_sleeper_rt(rt_rq, rt_se);
 }
 
-static inline void
-update_stats_wait_end_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+update_stats_wait_ಕೊನೆ_rt(ರಚನೆ rt_rq *rt_rq, ರಚನೆ sched_rt_entity *rt_se)
 {
-	struct sched_statistics *stats;
-	struct task_struct *p = NULL;
+	ರಚನೆ sched_statistics *stats;
+	ರಚನೆ task_struct *p = ಖಾಲಿ;
 
-	if (!schedstat_enabled())
-		return;
+	ಆದರೆ (!schedstat_enabled())
+		ಹಿಂತಿರುಗಿ;
 
-	if (rt_entity_is_task(rt_se))
-		p = rt_task_of(rt_se);
+	ಆದರೆ (rt_entity_is_task(rt_se))
+		p = rt_task_ದ(rt_se);
 
 	stats = __schedstats_from_rt_se(rt_se);
-	if (!stats)
-		return;
+	ಆದರೆ (!stats)
+		ಹಿಂತಿರುಗಿ;
 
-	__update_stats_wait_end(rq_of_rt_rq(rt_rq), p, stats);
+	__update_stats_wait_end(rq_ದ_rt_rq(rt_rq), p, stats);
 }
 
-static inline void
-update_stats_dequeue_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se,
-			int flags)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
+update_stats_ಸರತಿಯಿಂದ_ತೆಗೆ_rt(ರಚನೆ rt_rq *rt_rq, ರಚನೆ sched_rt_entity *rt_se,
+			ಪೂರ್ಣಾಂಕ flags)
 {
-	struct task_struct *p = NULL;
-	struct rq *rq = rq_of_rt_rq(rt_rq);
+	ರಚನೆ task_struct *p = ಖಾಲಿ;
+	ರಚನೆ rq *rq = rq_ದ_rt_rq(rt_rq);
 
-	if (!schedstat_enabled())
-		return;
+	ಆದರೆ (!schedstat_enabled())
+		ಹಿಂತಿರುಗಿ;
 
-	if (rt_entity_is_task(rt_se)) {
-		p = rt_task_of(rt_se);
+	ಆದರೆ (rt_entity_is_task(rt_se)) {
+		p = rt_task_ದ(rt_se);
 
-		if (p != rq->curr)
-			update_stats_wait_end_rt(rt_rq, rt_se);
+		ಆದರೆ (p != rq->curr)
+			update_stats_wait_ಕೊನೆ_rt(rt_rq, rt_se);
 	}
 
-	if ((flags & DEQUEUE_SLEEP) && p) {
-		unsigned int state;
+	ಆದರೆ ((flags & ಸರತಿಯಿಂದ_ತೆಗೆ_SLEEP) && p) {
+		ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ state;
 
 		state = READ_ONCE(p->__state);
-		if (state & TASK_INTERRUPTIBLE)
-			__schedstat_set(p->stats.sleep_start,
-					rq_clock(rq_of_rt_rq(rt_rq)));
+		ಆದರೆ (state & TASK_INTERRUPTIBLE)
+			__schedstat_set(p->stats.sleep_ಆರಂಭ,
+					rq_clock(rq_ದ_rt_rq(rt_rq)));
 
-		if (state & TASK_UNINTERRUPTIBLE)
-			__schedstat_set(p->stats.block_start,
-					rq_clock(rq_of_rt_rq(rt_rq)));
+		ಆದರೆ (state & TASK_UNINTERRUPTIBLE)
+			__schedstat_set(p->stats.ಖಂಡ_ಆರಂಭ,
+					rq_clock(rq_ದ_rt_rq(rt_rq)));
 	}
 }
 
-static void __enqueue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ __enqueue_rt_entity(ರಚನೆ sched_rt_entity *rt_se, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flags)
 {
-	struct rt_rq *rt_rq = rt_rq_of_se(rt_se);
-	struct rt_prio_array *array = &rt_rq->active;
-	struct rt_rq *group_rq = group_rt_rq(rt_se);
-	struct list_head *queue = array->queue + rt_se_prio(rt_se);
+	ರಚನೆ rt_rq *rt_rq = rt_rq_ದ_se(rt_se);
+	ರಚನೆ rt_prio_array *array = &rt_rq->ಸಕ್ರಿಯ;
+	ರಚನೆ rt_rq *ಗುಂಪು_rq = ಗುಂಪು_rt_rq(rt_se);
+	ರಚನೆ list_ತಲೆ *ಸರತಿ = array->ಸರತಿ + rt_se_prio(rt_se);
 
 	/*
 	 * Don't enqueue the group if its throttled, or when empty.
@@ -1341,18 +1341,18 @@ static void __enqueue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flag
 	 * get throttled and the current group doesn't have any other
 	 * active members.
 	 */
-	if (group_rq && (rt_rq_throttled(group_rq) || !group_rq->rt_nr_running)) {
-		if (rt_se->on_list)
+	ಆದರೆ (ಗುಂಪು_rq && (rt_rq_throttled(ಗುಂಪು_rq) || !ಗುಂಪು_rq->rt_nr_running)) {
+		ಆದರೆ (rt_se->on_list)
 			__delist_rt_entity(rt_se, array);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	if (move_entity(flags)) {
+	ಆದರೆ (move_entity(flags)) {
 		WARN_ON_ONCE(rt_se->on_list);
-		if (flags & ENQUEUE_HEAD)
-			list_add(&rt_se->run_list, queue);
-		else
-			list_add_tail(&rt_se->run_list, queue);
+		ಆದರೆ (flags & ಸರತಿಗೆ_ಸೇರಿಸು_ತಲೆ)
+			list_ಕೂಡಿಸು(&rt_se->ಸತತ_list, ಸರತಿ);
+		ಇಲ್ಲದಿದ್ದರೆ
+			list_ಕೂಡಿಸು_ಬಾಲ(&rt_se->ಸತತ_list, ಸರತಿ);
 
 		__set_bit(rt_se_prio(rt_se), array->bitmap);
 		rt_se->on_list = 1;
@@ -1362,12 +1362,12 @@ static void __enqueue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flag
 	inc_rt_tasks(rt_se, rt_rq);
 }
 
-static void __dequeue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ __dequeue_rt_entity(ರಚನೆ sched_rt_entity *rt_se, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flags)
 {
-	struct rt_rq *rt_rq = rt_rq_of_se(rt_se);
-	struct rt_prio_array *array = &rt_rq->active;
+	ರಚನೆ rt_rq *rt_rq = rt_rq_ದ_se(rt_se);
+	ರಚನೆ rt_prio_array *array = &rt_rq->ಸಕ್ರಿಯ;
 
-	if (move_entity(flags)) {
+	ಆದರೆ (move_entity(flags)) {
 		WARN_ON_ONCE(!rt_se->on_list);
 		__delist_rt_entity(rt_se, array);
 	}
@@ -1380,140 +1380,140 @@ static void __dequeue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flag
  * Because the prio of an upper entry depends on the lower
  * entries, we must remove entries top - down.
  */
-static void dequeue_rt_stack(struct sched_rt_entity *rt_se, unsigned int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ ಸರತಿಯಿಂದ_ತೆಗೆ_rt_ರಾಶಿ(ರಚನೆ sched_rt_entity *rt_se, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flags)
 {
-	struct sched_rt_entity *back = NULL;
-	unsigned int rt_nr_running;
+	ರಚನೆ sched_rt_entity *ಹಿಂಭಾಗ = ಖಾಲಿ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ rt_nr_running;
 
 	for_each_sched_rt_entity(rt_se) {
-		rt_se->back = back;
-		back = rt_se;
+		rt_se->ಹಿಂಭಾಗ = ಹಿಂಭಾಗ;
+		ಹಿಂಭಾಗ = rt_se;
 	}
 
-	rt_nr_running = rt_rq_of_se(back)->rt_nr_running;
+	rt_nr_running = rt_rq_ದ_se(ಹಿಂಭಾಗ)->rt_nr_running;
 
-	for (rt_se = back; rt_se; rt_se = rt_se->back) {
-		if (on_rt_rq(rt_se))
+	ಗಾಗಿ (rt_se = ಹಿಂಭಾಗ; rt_se; rt_se = rt_se->ಹಿಂಭಾಗ) {
+		ಆದರೆ (on_rt_rq(rt_se))
 			__dequeue_rt_entity(rt_se, flags);
 	}
 
-	dequeue_top_rt_rq(rt_rq_of_se(back), rt_nr_running);
+	ಸರತಿಯಿಂದ_ತೆಗೆ_ತುದಿ_rt_rq(rt_rq_ದ_se(ಹಿಂಭಾಗ), rt_nr_running);
 }
 
-static void enqueue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ ಸರತಿಗೆ_ಸೇರಿಸು_rt_entity(ರಚನೆ sched_rt_entity *rt_se, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flags)
 {
-	struct rq *rq = rq_of_rt_se(rt_se);
+	ರಚನೆ rq *rq = rq_ದ_rt_se(rt_se);
 
-	update_stats_enqueue_rt(rt_rq_of_se(rt_se), rt_se, flags);
+	update_stats_ಸರತಿಗೆ_ಸೇರಿಸು_rt(rt_rq_ದ_se(rt_se), rt_se, flags);
 
-	dequeue_rt_stack(rt_se, flags);
+	ಸರತಿಯಿಂದ_ತೆಗೆ_rt_ರಾಶಿ(rt_se, flags);
 	for_each_sched_rt_entity(rt_se)
 		__enqueue_rt_entity(rt_se, flags);
-	enqueue_top_rt_rq(&rq->rt);
+	ಸರತಿಗೆ_ಸೇರಿಸು_ತುದಿ_rt_rq(&rq->rt);
 }
 
-static void dequeue_rt_entity(struct sched_rt_entity *rt_se, unsigned int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ ಸರತಿಯಿಂದ_ತೆಗೆ_rt_entity(ರಚನೆ sched_rt_entity *rt_se, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flags)
 {
-	struct rq *rq = rq_of_rt_se(rt_se);
+	ರಚನೆ rq *rq = rq_ದ_rt_se(rt_se);
 
-	update_stats_dequeue_rt(rt_rq_of_se(rt_se), rt_se, flags);
+	update_stats_ಸರತಿಯಿಂದ_ತೆಗೆ_rt(rt_rq_ದ_se(rt_se), rt_se, flags);
 
-	dequeue_rt_stack(rt_se, flags);
+	ಸರತಿಯಿಂದ_ತೆಗೆ_rt_ರಾಶಿ(rt_se, flags);
 
 	for_each_sched_rt_entity(rt_se) {
-		struct rt_rq *rt_rq = group_rt_rq(rt_se);
+		ರಚನೆ rt_rq *rt_rq = ಗುಂಪು_rt_rq(rt_se);
 
-		if (rt_rq && rt_rq->rt_nr_running)
+		ಆದರೆ (rt_rq && rt_rq->rt_nr_running)
 			__enqueue_rt_entity(rt_se, flags);
 	}
-	enqueue_top_rt_rq(&rq->rt);
+	ಸರತಿಗೆ_ಸೇರಿಸು_ತುದಿ_rt_rq(&rq->rt);
 }
 
 /*
  * Adding/removing a task to/from a priority array:
  */
-static void
-enqueue_task_rt(struct rq *rq, struct task_struct *p, int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಸರತಿಗೆ_ಸೇರಿಸು_task_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ flags)
 {
-	struct sched_rt_entity *rt_se = &p->rt;
+	ರಚನೆ sched_rt_entity *rt_se = &p->rt;
 
-	if (flags & ENQUEUE_WAKEUP)
+	ಆದರೆ (flags & ಸರತಿಗೆ_ಸೇರಿಸು_WAKEUP)
 		rt_se->timeout = 0;
 
 	check_schedstat_required();
-	update_stats_wait_start_rt(rt_rq_of_se(rt_se), rt_se);
+	update_stats_wait_ಆರಂಭ_rt(rt_rq_ದ_se(rt_se), rt_se);
 
-	enqueue_rt_entity(rt_se, flags);
+	ಸರತಿಗೆ_ಸೇರಿಸು_rt_entity(rt_se, flags);
 
-	if (task_is_blocked(p))
-		return;
+	ಆದರೆ (task_is_blocked(p))
+		ಹಿಂತಿರುಗಿ;
 
-	if (!task_current(rq, p) && p->nr_cpus_allowed > 1)
-		enqueue_pushable_task(rq, p);
+	ಆದರೆ (!task_current(rq, p) && p->nr_cpus_allowed > 1)
+		ಸರತಿಗೆ_ಸೇರಿಸು_pushable_task(rq, p);
 }
 
-static bool dequeue_task_rt(struct rq *rq, struct task_struct *p, int flags)
+ಸ್ಥಿರ bool ಸರತಿಯಿಂದ_ತೆಗೆ_task_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ flags)
 {
-	struct sched_rt_entity *rt_se = &p->rt;
+	ರಚನೆ sched_rt_entity *rt_se = &p->rt;
 
 	update_curr_rt(rq);
-	dequeue_rt_entity(rt_se, flags);
+	ಸರತಿಯಿಂದ_ತೆಗೆ_rt_entity(rt_se, flags);
 
-	dequeue_pushable_task(rq, p);
+	ಸರತಿಯಿಂದ_ತೆಗೆ_pushable_task(rq, p);
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 /*
  * Put task to the head or the end of the run list without the overhead of
  * dequeue followed by enqueue.
  */
-static void
-requeue_rt_entity(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se, int head)
+ಸ್ಥಿರ ಶೂನ್ಯ
+requeue_rt_entity(ರಚನೆ rt_rq *rt_rq, ರಚನೆ sched_rt_entity *rt_se, ಪೂರ್ಣಾಂಕ ತಲೆ)
 {
-	if (on_rt_rq(rt_se)) {
-		struct rt_prio_array *array = &rt_rq->active;
-		struct list_head *queue = array->queue + rt_se_prio(rt_se);
+	ಆದರೆ (on_rt_rq(rt_se)) {
+		ರಚನೆ rt_prio_array *array = &rt_rq->ಸಕ್ರಿಯ;
+		ರಚನೆ list_ತಲೆ *ಸರತಿ = array->ಸರತಿ + rt_se_prio(rt_se);
 
-		if (head)
-			list_move(&rt_se->run_list, queue);
-		else
-			list_move_tail(&rt_se->run_list, queue);
+		ಆದರೆ (ತಲೆ)
+			list_move(&rt_se->ಸತತ_list, ಸರತಿ);
+		ಇಲ್ಲದಿದ್ದರೆ
+			list_move_ಬಾಲ(&rt_se->ಸತತ_list, ಸರತಿ);
 	}
 }
 
-static void requeue_task_rt(struct rq *rq, struct task_struct *p, int head)
+ಸ್ಥಿರ ಶೂನ್ಯ requeue_task_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ ತಲೆ)
 {
-	struct sched_rt_entity *rt_se = &p->rt;
-	struct rt_rq *rt_rq;
+	ರಚನೆ sched_rt_entity *rt_se = &p->rt;
+	ರಚನೆ rt_rq *rt_rq;
 
 	for_each_sched_rt_entity(rt_se) {
-		rt_rq = rt_rq_of_se(rt_se);
-		requeue_rt_entity(rt_rq, rt_se, head);
+		rt_rq = rt_rq_ದ_se(rt_se);
+		requeue_rt_entity(rt_rq, rt_se, ತಲೆ);
 	}
 }
 
-static void yield_task_rt(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ yield_task_rt(ರಚನೆ rq *rq)
 {
 	requeue_task_rt(rq, rq->donor, 0);
 }
 
-static int find_lowest_rq(struct task_struct *task);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಕಂಡುಹಿಡಿ_ಅತಿಕಡಿಮೆ_rq(ರಚನೆ task_struct *task);
 
-static int
-select_task_rq_rt(struct task_struct *p, int cpu, int flags)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+select_task_rq_rt(ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ cpu, ಪೂರ್ಣಾಂಕ flags)
 {
-	struct task_struct *curr, *donor;
-	struct rq *rq;
+	ರಚನೆ task_struct *curr, *donor;
+	ರಚನೆ rq *rq;
 	bool test;
 
 	/* For anything but wake ups, just return the task_cpu */
-	if (!(flags & (WF_TTWU | WF_FORK)))
-		goto out;
+	ಆದರೆ (!(flags & (WF_TTWU | WF_FORK)))
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	rq = cpu_rq(cpu);
 
-	rcu_read_lock();
+	rcu_read_ಬೀಗ();
 	curr = READ_ONCE(rq->curr); /* unlocked access */
 	donor = READ_ONCE(rq->donor);
 
@@ -1547,45 +1547,45 @@ select_task_rq_rt(struct task_struct *p, int cpu, int flags)
 	       unlikely(rt_task(donor)) &&
 	       (curr->nr_cpus_allowed < 2 || donor->prio <= p->prio);
 
-	if (test || !rt_task_fits_capacity(p, cpu)) {
-		int target = find_lowest_rq(p);
+	ಆದರೆ (test || !rt_task_ಹೊಂದುತ್ತದೆ_ಸಾಮರ್ಥ್ಯ(p, cpu)) {
+		ಪೂರ್ಣಾಂಕ ಗುರಿ = ಕಂಡುಹಿಡಿ_ಅತಿಕಡಿಮೆ_rq(p);
 
 		/*
 		 * Bail out if we were forcing a migration to find a better
 		 * fitting CPU but our search failed.
 		 */
-		if (!test && target != -1 && !rt_task_fits_capacity(p, target))
-			goto out_unlock;
+		ಆದರೆ (!test && ಗುರಿ != -1 && !rt_task_ಹೊಂದುತ್ತದೆ_ಸಾಮರ್ಥ್ಯ(p, ಗುರಿ))
+			ಹೋಗು ಹೊರಹೋಗು_unlock;
 
 		/*
 		 * Don't bother moving it if the destination CPU is
 		 * not running a lower priority task.
 		 */
-		if (target != -1 &&
-		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
-			cpu = target;
+		ಆದರೆ (ಗುರಿ != -1 &&
+		    p->prio < cpu_rq(ಗುರಿ)->rt.highest_prio.curr)
+			cpu = ಗುರಿ;
 	}
 
-out_unlock:
+ಹೊರಹೋಗು_unlock:
 	rcu_read_unlock();
 
-out:
-	return cpu;
+ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ cpu;
 }
 
-static void check_preempt_equal_prio(struct rq *rq, struct task_struct *p)
+ಸ್ಥಿರ ಶೂನ್ಯ check_preempt_equal_prio(ರಚನೆ rq *rq, ರಚನೆ task_struct *p)
 {
-	if (rq->curr->nr_cpus_allowed == 1 ||
-	    !cpupri_find(&rq->rd->cpupri, rq->donor, NULL))
-		return;
+	ಆದರೆ (rq->curr->nr_cpus_allowed == 1 ||
+	    !cpupri_ಕಂಡುಹಿಡಿ(&rq->rd->cpupri, rq->donor, ಖಾಲಿ))
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * p is migratable, so let's not schedule it and
 	 * see if it is pushed or pulled somewhere else.
 	 */
-	if (p->nr_cpus_allowed != 1 &&
-	    cpupri_find(&rq->rd->cpupri, p, NULL))
-		return;
+	ಆದರೆ (p->nr_cpus_allowed != 1 &&
+	    cpupri_ಕಂಡುಹಿಡಿ(&rq->rd->cpupri, p, ಖಾಲಿ))
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * There appear to be other CPUs that can accept
@@ -1596,46 +1596,46 @@ static void check_preempt_equal_prio(struct rq *rq, struct task_struct *p)
 	resched_curr(rq);
 }
 
-static int balance_rt(struct rq *rq, struct rq_flags *rf)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ balance_rt(ರಚನೆ rq *rq, ರಚನೆ rq_flags *rf)
 {
 	/*
 	 * Note, rq->donor may change during rq lock drops,
 	 * so don't re-use p across lock drops
 	 */
-	struct task_struct *p = rq->donor;
+	ರಚನೆ task_struct *p = rq->donor;
 
-	if (!on_rt_rq(&p->rt) && need_pull_rt_task(rq, p)) {
+	ಆದರೆ (!on_rt_rq(&p->rt) && need_pull_rt_task(rq, p)) {
 		/*
 		 * This is OK, because current is on_cpu, which avoids it being
 		 * picked for load-balance and preemption/IRQs are still
 		 * disabled avoiding further scheduler activity on it and we've
 		 * not yet started the picking loop.
 		 */
-		rq_unpin_lock(rq, rf);
+		rq_unpin_ಬೀಗ(rq, rf);
 		pull_rt_task(rq);
-		rq_repin_lock(rq, rf);
+		rq_repin_ಬೀಗ(rq, rf);
 	}
 
-	return sched_stop_runnable(rq) || sched_dl_runnable(rq) || sched_rt_runnable(rq);
+	ಹಿಂತಿರುಗಿ sched_stop_runnable(rq) || sched_dl_runnable(rq) || sched_rt_runnable(rq);
 }
 
 /*
  * Preempt the current task with a newly woken task if needed:
  */
-static void wakeup_preempt_rt(struct rq *rq, struct task_struct *p, int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ wakeup_preempt_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ flags)
 {
-	struct task_struct *donor = rq->donor;
+	ರಚನೆ task_struct *donor = rq->donor;
 
 	/*
 	 * XXX If we're preempted by DL, queue a push?
 	 */
-	if (p->sched_class != &rt_sched_class ||
+	ಆದರೆ (p->sched_class != &rt_sched_class ||
 	    donor->sched_class != &rt_sched_class)
-		return;
+		ಹಿಂತಿರುಗಿ;
 
-	if (p->prio < donor->prio) {
+	ಆದರೆ (p->prio < donor->prio) {
 		resched_curr(rq);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	/*
@@ -1650,163 +1650,163 @@ static void wakeup_preempt_rt(struct rq *rq, struct task_struct *p, int flags)
 	 * to move current somewhere else, making room for our non-migratable
 	 * task.
 	 */
-	if (p->prio == donor->prio && !test_tsk_need_resched(rq->curr))
+	ಆದರೆ (p->prio == donor->prio && !test_tsk_need_resched(rq->curr))
 		check_preempt_equal_prio(rq, p);
 }
 
-static inline void set_next_task_rt(struct rq *rq, struct task_struct *p, enum snt_e type)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ ಗಣ_ಮುಂದಿನ_task_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ಎಣಿಕೆ snt_e type)
 {
-	struct sched_rt_entity *rt_se = &p->rt;
-	struct rt_rq *rt_rq = &rq->rt;
+	ರಚನೆ sched_rt_entity *rt_se = &p->rt;
+	ರಚನೆ rt_rq *rt_rq = &rq->rt;
 
-	if (type == SNT_REPICK)
-		return;
+	ಆದರೆ (type == SNT_REPICK)
+		ಹಿಂತಿರುಗಿ;
 
-	p->se.exec_start = rq_clock_task(rq);
-	if (on_rt_rq(&p->rt))
-		update_stats_wait_end_rt(rt_rq, rt_se);
+	p->se.exec_ಆರಂಭ = rq_clock_task(rq);
+	ಆದರೆ (on_rt_rq(&p->rt))
+		update_stats_wait_ಕೊನೆ_rt(rt_rq, rt_se);
 
 	/* The running task is never eligible for pushing */
-	dequeue_pushable_task(rq, p);
+	ಸರತಿಯಿಂದ_ತೆಗೆ_pushable_task(rq, p);
 
-	if (type != SNT_PICK)
-		return;
+	ಆದರೆ (type != SNT_PICK)
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * If prev task was rt, put_prev_task() has already updated the
 	 * utilization. We only care of the case where we start to schedule a
 	 * rt task
 	 */
-	if (rq->donor->sched_class != &rt_sched_class)
-		update_rt_rq_load_avg(rq_clock_pelt(rq), rq, 0);
+	ಆದರೆ (rq->donor->sched_class != &rt_sched_class)
+		update_rt_rq_ತುಂಬು_avg(rq_clock_pelt(rq), rq, 0);
 
-	rt_queue_push_tasks(rq);
+	rt_ಸರತಿ_ತಳ್ಳು_tasks(rq);
 }
 
-static struct sched_rt_entity *pick_next_rt_entity(struct rt_rq *rt_rq)
+ಸ್ಥಿರ ರಚನೆ sched_rt_entity *pick_ಮುಂದಿನ_rt_entity(ರಚನೆ rt_rq *rt_rq)
 {
-	struct rt_prio_array *array = &rt_rq->active;
-	struct sched_rt_entity *next = NULL;
-	struct list_head *queue;
-	int idx;
+	ರಚನೆ rt_prio_array *array = &rt_rq->ಸಕ್ರಿಯ;
+	ರಚನೆ sched_rt_entity *ಮುಂದಿನ = ಖಾಲಿ;
+	ರಚನೆ list_ತಲೆ *ಸರತಿ;
+	ಪೂರ್ಣಾಂಕ idx;
 
-	idx = sched_find_first_bit(array->bitmap);
+	idx = sched_ಕಂಡುಹಿಡಿ_ಮೊದಲ_ಬಿಟ್(array->bitmap);
 	BUG_ON(idx >= MAX_RT_PRIO);
 
-	queue = array->queue + idx;
-	if (WARN_ON_ONCE(list_empty(queue)))
-		return NULL;
-	next = list_entry(queue->next, struct sched_rt_entity, run_list);
+	ಸರತಿ = array->ಸರತಿ + idx;
+	ಆದರೆ (WARN_ON_ONCE(list_ಖಾಲಿಗಳು(ಸರತಿ)))
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	ಮುಂದಿನ = list_ನಮೂದು(ಸರತಿ->ಮುಂದಿನ, ರಚನೆ sched_rt_entity, ಸತತ_list);
 
-	return next;
+	ಹಿಂತಿರುಗಿ ಮುಂದಿನ;
 }
 
-static struct task_struct *_pick_next_task_rt(struct rq *rq)
+ಸ್ಥಿರ ರಚನೆ task_struct *pick_ಮುಂದಿನ_task_rt(ರಚನೆ rq *rq)
 {
-	struct sched_rt_entity *rt_se;
-	struct rt_rq *rt_rq  = &rq->rt;
+	ರಚನೆ sched_rt_entity *rt_se;
+	ರಚನೆ rt_rq *rt_rq  = &rq->rt;
 
-	do {
-		rt_se = pick_next_rt_entity(rt_rq);
-		if (unlikely(!rt_se))
-			return NULL;
-		rt_rq = group_rt_rq(rt_se);
-	} while (rt_rq);
+	ಮಾಡು {
+		rt_se = pick_ಮುಂದಿನ_rt_entity(rt_rq);
+		ಆದರೆ (unlikely(!rt_se))
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+		rt_rq = ಗುಂಪು_rt_rq(rt_se);
+	} ಆಗ (rt_rq);
 
-	return rt_task_of(rt_se);
+	ಹಿಂತಿರುಗಿ rt_task_ದ(rt_se);
 }
 
-static struct task_struct *pick_task_rt(struct rq *rq, struct rq_flags *rf)
+ಸ್ಥಿರ ರಚನೆ task_struct *pick_task_rt(ರಚನೆ rq *rq, ರಚನೆ rq_flags *rf)
 {
-	struct task_struct *p;
+	ರಚನೆ task_struct *p;
 
-	if (!sched_rt_runnable(rq))
-		return NULL;
+	ಆದರೆ (!sched_rt_runnable(rq))
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	p = _pick_next_task_rt(rq);
+	p = pick_ಮುಂದಿನ_task_rt(rq);
 
-	return p;
+	ಹಿಂತಿರುಗಿ p;
 }
 
-static void put_prev_task_rt(struct rq *rq, struct task_struct *p, struct task_struct *next)
+ಸ್ಥಿರ ಶೂನ್ಯ put_prev_task_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ರಚನೆ task_struct *ಮುಂದಿನ)
 {
-	struct sched_rt_entity *rt_se = &p->rt;
-	struct rt_rq *rt_rq = &rq->rt;
+	ರಚನೆ sched_rt_entity *rt_se = &p->rt;
+	ರಚನೆ rt_rq *rt_rq = &rq->rt;
 
-	if (on_rt_rq(&p->rt))
-		update_stats_wait_start_rt(rt_rq, rt_se);
+	ಆದರೆ (on_rt_rq(&p->rt))
+		update_stats_wait_ಆರಂಭ_rt(rt_rq, rt_se);
 
 	update_curr_rt(rq);
 
-	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, 1);
+	update_rt_rq_ತುಂಬು_avg(rq_clock_pelt(rq), rq, 1);
 
-	if (task_is_blocked(p))
-		return;
+	ಆದರೆ (task_is_blocked(p))
+		ಹಿಂತಿರುಗಿ;
 	/*
 	 * The previous task needs to be made eligible for pushing
 	 * if it is still active
 	 */
-	if (on_rt_rq(&p->rt) && p->nr_cpus_allowed > 1)
-		enqueue_pushable_task(rq, p);
+	ಆದರೆ (on_rt_rq(&p->rt) && p->nr_cpus_allowed > 1)
+		ಸರತಿಗೆ_ಸೇರಿಸು_pushable_task(rq, p);
 }
 
 /* Only try algorithms three times */
-#define RT_MAX_TRIES 3
+#ವ್ಯಾಖ್ಯಾನಿಸು RT_MAX_TRIES 3
 
 /*
  * Return the highest pushable rq's task, which is suitable to be executed
  * on the CPU, NULL otherwise
  */
-static struct task_struct *pick_highest_pushable_task(struct rq *rq, int cpu)
+ಸ್ಥಿರ ರಚನೆ task_struct *pick_highest_pushable_task(ರಚನೆ rq *rq, ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct plist_head *head = &rq->rt.pushable_tasks;
-	struct task_struct *p;
+	ರಚನೆ plist_ತಲೆ *ತಲೆ = &rq->rt.pushable_tasks;
+	ರಚನೆ task_struct *p;
 
-	if (!has_pushable_tasks(rq))
-		return NULL;
+	ಆದರೆ (!has_pushable_tasks(rq))
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	plist_for_each_entry(p, head, pushable_tasks) {
-		if (task_is_pushable(rq, p, cpu))
-			return p;
+	plist_for_each_ನಮೂದು(p, ತಲೆ, pushable_tasks) {
+		ಆದರೆ (task_is_pushable(rq, p, cpu))
+			ಹಿಂತಿರುಗಿ p;
 	}
 
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-static DEFINE_PER_CPU(cpumask_var_t, local_cpu_mask);
+ಸ್ಥಿರ DEFINE_ಪ್ರತಿ_CPU(cpumask_var_t, local_cpu_ಮುಖವಾಡ);
 
-static int find_lowest_rq(struct task_struct *task)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಕಂಡುಹಿಡಿ_ಅತಿಕಡಿಮೆ_rq(ರಚನೆ task_struct *task)
 {
-	struct sched_domain *sd;
-	struct cpumask *lowest_mask = this_cpu_cpumask_var_ptr(local_cpu_mask);
-	int this_cpu = smp_processor_id();
-	int cpu      = task_cpu(task);
-	int ret;
+	ರಚನೆ sched_domain *sd;
+	ರಚನೆ cpumask *ಅತಿಕಡಿಮೆ_ಮುಖವಾಡ = this_cpu_cpumask_var_ptr(local_cpu_ಮುಖವಾಡ);
+	ಪೂರ್ಣಾಂಕ this_cpu = smp_processor_id();
+	ಪೂರ್ಣಾಂಕ cpu      = task_cpu(task);
+	ಪೂರ್ಣಾಂಕ ret;
 
 	/* Make sure the mask is initialized first */
-	if (unlikely(!lowest_mask))
-		return -1;
+	ಆದರೆ (unlikely(!ಅತಿಕಡಿಮೆ_ಮುಖವಾಡ))
+		ಹಿಂತಿರುಗಿ -1;
 
-	if (task->nr_cpus_allowed == 1)
-		return -1; /* No other targets possible */
+	ಆದರೆ (task->nr_cpus_allowed == 1)
+		ಹಿಂತಿರುಗಿ -1; /* No other targets possible */
 
 	/*
 	 * If we're on asym system ensure we consider the different capacities
 	 * of the CPUs when searching for the lowest_mask.
 	 */
-	if (sched_asym_cpucap_active()) {
+	ಆದರೆ (sched_asym_cpucap_ಸಕ್ರಿಯ()) {
 
-		ret = cpupri_find_fitness(&task_rq(task)->rd->cpupri,
-					  task, lowest_mask,
-					  rt_task_fits_capacity);
-	} else {
+		ret = cpupri_ಕಂಡುಹಿಡಿ_fitness(&task_rq(task)->rd->cpupri,
+					  task, ಅತಿಕಡಿಮೆ_ಮುಖವಾಡ,
+					  rt_task_ಹೊಂದುತ್ತದೆ_ಸಾಮರ್ಥ್ಯ);
+	} ಇಲ್ಲದಿದ್ದರೆ {
 
-		ret = cpupri_find(&task_rq(task)->rd->cpupri,
-				  task, lowest_mask);
+		ret = cpupri_ಕಂಡುಹಿಡಿ(&task_rq(task)->rd->cpupri,
+				  task, ಅತಿಕಡಿಮೆ_ಮುಖವಾಡ);
 	}
 
-	if (!ret)
-		return -1; /* No targets found */
+	ಆದರೆ (!ret)
+		ಹಿಂತಿರುಗಿ -1; /* No targets found */
 
 	/*
 	 * At this point we have built a mask of CPUs representing the
@@ -1816,36 +1816,36 @@ static int find_lowest_rq(struct task_struct *task)
 	 * We prioritize the last CPU that the task executed on since
 	 * it is most likely cache-hot in that location.
 	 */
-	if (cpumask_test_cpu(cpu, lowest_mask))
-		return cpu;
+	ಆದರೆ (cpumask_test_cpu(cpu, ಅತಿಕಡಿಮೆ_ಮುಖವಾಡ))
+		ಹಿಂತಿರುಗಿ cpu;
 
 	/*
 	 * Otherwise, we consult the sched_domains span maps to figure
 	 * out which CPU is logically closest to our hot cache data.
 	 */
-	if (!cpumask_test_cpu(this_cpu, lowest_mask))
+	ಆದರೆ (!cpumask_test_cpu(this_cpu, ಅತಿಕಡಿಮೆ_ಮುಖವಾಡ))
 		this_cpu = -1; /* Skip this_cpu opt if not among lowest */
 
-	rcu_read_lock();
+	rcu_read_ಬೀಗ();
 	for_each_domain(cpu, sd) {
-		if (sd->flags & SD_WAKE_AFFINE) {
-			int best_cpu;
+		ಆದರೆ (sd->flags & SD_WAKE_AFFINE) {
+			ಪೂರ್ಣಾಂಕ ಉತ್ತಮ_cpu;
 
 			/*
 			 * "this_cpu" is cheaper to preempt than a
 			 * remote processor.
 			 */
-			if (this_cpu != -1 &&
-			    cpumask_test_cpu(this_cpu, sched_domain_span(sd))) {
+			ಆದರೆ (this_cpu != -1 &&
+			    cpumask_test_cpu(this_cpu, sched_domain_ಹರವು(sd))) {
 				rcu_read_unlock();
-				return this_cpu;
+				ಹಿಂತಿರುಗಿ this_cpu;
 			}
 
-			best_cpu = cpumask_any_and_distribute(lowest_mask,
-							      sched_domain_span(sd));
-			if (best_cpu < nr_cpu_ids) {
+			ಉತ್ತಮ_cpu = cpumask_any_and_distribute(ಅತಿಕಡಿಮೆ_ಮುಖವಾಡ,
+							      sched_domain_ಹರವು(sd));
+			ಆದರೆ (ಉತ್ತಮ_cpu < nr_cpu_ids) {
 				rcu_read_unlock();
-				return best_cpu;
+				ಹಿಂತಿರುಗಿ ಉತ್ತಮ_cpu;
 			}
 		}
 	}
@@ -1856,34 +1856,34 @@ static int find_lowest_rq(struct task_struct *task)
 	 * just give the caller *something* to work with from the compatible
 	 * locations.
 	 */
-	if (this_cpu != -1)
-		return this_cpu;
+	ಆದರೆ (this_cpu != -1)
+		ಹಿಂತಿರುಗಿ this_cpu;
 
-	cpu = cpumask_any_distribute(lowest_mask);
-	if (cpu < nr_cpu_ids)
-		return cpu;
+	cpu = cpumask_any_distribute(ಅತಿಕಡಿಮೆ_ಮುಖವಾಡ);
+	ಆದರೆ (cpu < nr_cpu_ids)
+		ಹಿಂತಿರುಗಿ cpu;
 
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
 
-static struct task_struct *pick_next_pushable_task(struct rq *rq)
+ಸ್ಥಿರ ರಚನೆ task_struct *pick_ಮುಂದಿನ_pushable_task(ರಚನೆ rq *rq)
 {
-	struct plist_head *head = &rq->rt.pushable_tasks;
-	struct task_struct *i, *p = NULL;
+	ರಚನೆ plist_ತಲೆ *ತಲೆ = &rq->rt.pushable_tasks;
+	ರಚನೆ task_struct *i, *p = ಖಾಲಿ;
 
-	if (!has_pushable_tasks(rq))
-		return NULL;
+	ಆದರೆ (!has_pushable_tasks(rq))
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	plist_for_each_entry(i, head, pushable_tasks) {
+	plist_for_each_ನಮೂದು(i, ತಲೆ, pushable_tasks) {
 		/* skip tasks that cannot be migrated */
-		if (!task_on_cpu(rq, i) && !is_migration_disabled(i)) {
+		ಆದರೆ (!task_on_cpu(rq, i) && !is_migration_disabled(i)) {
 			p = i;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 
-	if (!p)
-		return NULL;
+	ಆದರೆ (!p)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
 	BUG_ON(rq->cpu != task_cpu(p));
 	BUG_ON(task_current(rq, p));
@@ -1893,36 +1893,36 @@ static struct task_struct *pick_next_pushable_task(struct rq *rq)
 	BUG_ON(!task_on_rq_queued(p));
 	BUG_ON(!rt_task(p));
 
-	return p;
+	ಹಿಂತಿರುಗಿ p;
 }
 
 /* Will lock the rq it finds */
-static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
+ಸ್ಥಿರ ರಚನೆ rq *ಕಂಡುಹಿಡಿ_ಬೀಗ_ಅತಿಕಡಿಮೆ_rq(ರಚನೆ task_struct *task, ರಚನೆ rq *rq)
 {
-	struct rq *lowest_rq = NULL;
-	int tries;
-	int cpu;
+	ರಚನೆ rq *ಅತಿಕಡಿಮೆ_rq = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ tries;
+	ಪೂರ್ಣಾಂಕ cpu;
 
-	for (tries = 0; tries < RT_MAX_TRIES; tries++) {
-		cpu = find_lowest_rq(task);
+	ಗಾಗಿ (tries = 0; tries < RT_MAX_TRIES; tries++) {
+		cpu = ಕಂಡುಹಿಡಿ_ಅತಿಕಡಿಮೆ_rq(task);
 
-		if ((cpu == -1) || (cpu == rq->cpu))
-			break;
+		ಆದರೆ ((cpu == -1) || (cpu == rq->cpu))
+			ನಿಲ್ಲಿಸು;
 
-		lowest_rq = cpu_rq(cpu);
+		ಅತಿಕಡಿಮೆ_rq = cpu_rq(cpu);
 
-		if (lowest_rq->rt.highest_prio.curr <= task->prio) {
+		ಆದರೆ (ಅತಿಕಡಿಮೆ_rq->rt.highest_prio.curr <= task->prio) {
 			/*
 			 * Target rq has tasks of equal or higher priority,
 			 * retrying does not release any lock and is unlikely
 			 * to yield a different result.
 			 */
-			lowest_rq = NULL;
-			break;
+			ಅತಿಕಡಿಮೆ_rq = ಖಾಲಿ;
+			ನಿಲ್ಲಿಸು;
 		}
 
 		/* if the prio of this runqueue changed, try again */
-		if (double_lock_balance(rq, lowest_rq)) {
+		ಆದರೆ (double_ಬೀಗ_balance(rq, ಅತಿಕಡಿಮೆ_rq)) {
 			/*
 			 * We had to unlock the run queue. In
 			 * the mean time, task could have
@@ -1933,26 +1933,26 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
 			 * "migrate_disabled" and then got preempted, so we must
 			 * check the task migration disable flag here too.
 			 */
-			if (unlikely(is_migration_disabled(task) ||
-				     !cpumask_test_cpu(lowest_rq->cpu, &task->cpus_mask) ||
-				     task != pick_next_pushable_task(rq))) {
+			ಆದರೆ (unlikely(is_migration_disabled(task) ||
+				     !cpumask_test_cpu(ಅತಿಕಡಿಮೆ_rq->cpu, &task->cpus_ಮುಖವಾಡ) ||
+				     task != pick_ಮುಂದಿನ_pushable_task(rq))) {
 
-				double_unlock_balance(rq, lowest_rq);
-				lowest_rq = NULL;
-				break;
+				double_unlock_balance(rq, ಅತಿಕಡಿಮೆ_rq);
+				ಅತಿಕಡಿಮೆ_rq = ಖಾಲಿ;
+				ನಿಲ್ಲಿಸು;
 			}
 		}
 
 		/* If this rq is still suitable use it. */
-		if (lowest_rq->rt.highest_prio.curr > task->prio)
-			break;
+		ಆದರೆ (ಅತಿಕಡಿಮೆ_rq->rt.highest_prio.curr > task->prio)
+			ನಿಲ್ಲಿಸು;
 
 		/* try again */
-		double_unlock_balance(rq, lowest_rq);
-		lowest_rq = NULL;
+		double_unlock_balance(rq, ಅತಿಕಡಿಮೆ_rq);
+		ಅತಿಕಡಿಮೆ_rq = ಖಾಲಿ;
 	}
 
-	return lowest_rq;
+	ಹಿಂತಿರುಗಿ ಅತಿಕಡಿಮೆ_rq;
 }
 
 /*
@@ -1960,18 +1960,18 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
  * running task can migrate over to a CPU that is running a task
  * of lesser priority.
  */
-static int push_rt_task(struct rq *rq, bool pull)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ತಳ್ಳು_rt_task(ರಚನೆ rq *rq, bool pull)
 {
-	struct task_struct *next_task;
-	struct rq *lowest_rq;
-	int ret = 0;
+	ರಚನೆ task_struct *ಮುಂದಿನ_task;
+	ರಚನೆ rq *ಅತಿಕಡಿಮೆ_rq;
+	ಪೂರ್ಣಾಂಕ ret = 0;
 
-	if (!rq->rt.overloaded)
-		return 0;
+	ಆದರೆ (!rq->rt.overloaded)
+		ಹಿಂತಿರುಗಿ 0;
 
-	next_task = pick_next_pushable_task(rq);
-	if (!next_task)
-		return 0;
+	ಮುಂದಿನ_task = pick_ಮುಂದಿನ_pushable_task(rq);
+	ಆದರೆ (!ಮುಂದಿನ_task)
+		ಹಿಂತಿರುಗಿ 0;
 
 retry:
 	/*
@@ -1979,17 +1979,17 @@ retry:
 	 * higher priority than current. If that's the case
 	 * just reschedule current.
 	 */
-	if (unlikely(next_task->prio < rq->donor->prio)) {
+	ಆದರೆ (unlikely(ಮುಂದಿನ_task->prio < rq->donor->prio)) {
 		resched_curr(rq);
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (is_migration_disabled(next_task)) {
-		struct task_struct *push_task = NULL;
-		int cpu;
+	ಆದರೆ (is_migration_disabled(ಮುಂದಿನ_task)) {
+		ರಚನೆ task_struct *ತಳ್ಳು_task = ಖಾಲಿ;
+		ಪೂರ್ಣಾಂಕ cpu;
 
-		if (!pull || rq->push_busy)
-			return 0;
+		ಆದರೆ (!pull || rq->ತಳ್ಳು_busy)
+			ಹಿಂತಿರುಗಿ 0;
 
 		/*
 		 * Invoking find_lowest_rq() on anything but an RT task doesn't
@@ -2000,12 +2000,12 @@ retry:
 		 * Note that the stoppers are masqueraded as SCHED_FIFO
 		 * (cf. sched_set_stop_task()), so we can't rely on rt_task().
 		 */
-		if (rq->donor->sched_class != &rt_sched_class)
-			return 0;
+		ಆದರೆ (rq->donor->sched_class != &rt_sched_class)
+			ಹಿಂತಿರುಗಿ 0;
 
-		cpu = find_lowest_rq(rq->curr);
-		if (cpu == -1 || cpu == rq->cpu)
-			return 0;
+		cpu = ಕಂಡುಹಿಡಿ_ಅತಿಕಡಿಮೆ_rq(rq->curr);
+		ಆದರೆ (cpu == -1 || cpu == rq->cpu)
+			ಹಿಂತಿರುಗಿ 0;
 
 		/*
 		 * Given we found a CPU with lower priority than @next_task,
@@ -2013,29 +2013,29 @@ retry:
 		 * to this other CPU, instead attempt to push the current
 		 * running task on this CPU away.
 		 */
-		push_task = get_push_task(rq);
-		if (push_task) {
+		ತಳ್ಳು_task = get_ತಳ್ಳು_task(rq);
+		ಆದರೆ (ತಳ್ಳು_task) {
 			preempt_disable();
 			raw_spin_rq_unlock(rq);
-			stop_one_cpu_nowait(rq->cpu, push_cpu_stop,
-					    push_task, &rq->push_work);
+			stop_one_cpu_nowait(rq->cpu, ತಳ್ಳು_cpu_stop,
+					    ತಳ್ಳು_task, &rq->ತಳ್ಳು_work);
 			preempt_enable();
-			raw_spin_rq_lock(rq);
+			raw_spin_rq_ಬೀಗ(rq);
 		}
 
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (WARN_ON(next_task == rq->curr))
-		return 0;
+	ಆದರೆ (WARN_ON(ಮುಂದಿನ_task == rq->curr))
+		ಹಿಂತಿರುಗಿ 0;
 
 	/* We might release rq lock */
-	get_task_struct(next_task);
+	get_task_struct(ಮುಂದಿನ_task);
 
 	/* find_lock_lowest_rq locks the rq if found */
-	lowest_rq = find_lock_lowest_rq(next_task, rq);
-	if (!lowest_rq) {
-		struct task_struct *task;
+	ಅತಿಕಡಿಮೆ_rq = ಕಂಡುಹಿಡಿ_ಬೀಗ_ಅತಿಕಡಿಮೆ_rq(ಮುಂದಿನ_task, rq);
+	ಆದರೆ (!ಅತಿಕಡಿಮೆ_rq) {
+		ರಚನೆ task_struct *task;
 		/*
 		 * find_lock_lowest_rq releases rq->lock
 		 * so it is possible that next_task has migrated.
@@ -2044,48 +2044,48 @@ retry:
 		 * run-queue and is also still the next task eligible for
 		 * pushing.
 		 */
-		task = pick_next_pushable_task(rq);
-		if (task == next_task) {
+		task = pick_ಮುಂದಿನ_pushable_task(rq);
+		ಆದರೆ (task == ಮುಂದಿನ_task) {
 			/*
 			 * The task hasn't migrated, and is still the next
 			 * eligible task, but we failed to find a run-queue
 			 * to push it to.  Do not retry in this case, since
 			 * other CPUs will pull from us when ready.
 			 */
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 
-		if (!task)
+		ಆದರೆ (!task)
 			/* No more tasks, just exit */
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 
 		/*
 		 * Something has shifted, try again.
 		 */
-		put_task_struct(next_task);
-		next_task = task;
-		goto retry;
+		put_task_struct(ಮುಂದಿನ_task);
+		ಮುಂದಿನ_task = task;
+		ಹೋಗು retry;
 	}
 
-	move_queued_task_locked(rq, lowest_rq, next_task);
-	resched_curr(lowest_rq);
+	move_queued_task_locked(rq, ಅತಿಕಡಿಮೆ_rq, ಮುಂದಿನ_task);
+	resched_curr(ಅತಿಕಡಿಮೆ_rq);
 	ret = 1;
 
-	double_unlock_balance(rq, lowest_rq);
-out:
-	put_task_struct(next_task);
+	double_unlock_balance(rq, ಅತಿಕಡಿಮೆ_rq);
+ಹೊರಹೋಗು:
+	put_task_struct(ಮುಂದಿನ_task);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static void push_rt_tasks(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ ತಳ್ಳು_rt_tasks(ರಚನೆ rq *rq)
 {
 	/* push_rt_task will return true if it moved an RT */
-	while (push_rt_task(rq, false))
+	ಆಗ (ತಳ್ಳು_rt_task(rq, false))
 		;
 }
 
-#ifdef HAVE_RT_PUSH_IPI
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_RT_ತಳ್ಳು_IPI
 
 /*
  * When a high priority task schedules out from a CPU and a lower priority
@@ -2128,11 +2128,11 @@ static void push_rt_tasks(struct rq *rq)
  * the rt_loop_next will cause the iterator to perform another scan.
  *
  */
-static int rto_next_cpu(struct root_domain *rd)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ rto_ಮುಂದಿನ_cpu(ರಚನೆ ಬೇರು_domain *rd)
 {
-	int this_cpu = smp_processor_id();
-	int next;
-	int cpu;
+	ಪೂರ್ಣಾಂಕ this_cpu = smp_processor_id();
+	ಪೂರ್ಣಾಂಕ ಮುಂದಿನ;
+	ಪೂರ್ಣಾಂಕ cpu;
 
 	/*
 	 * When starting the IPI RT pushing, the rto_cpu is set to -1,
@@ -2147,19 +2147,19 @@ static int rto_next_cpu(struct root_domain *rd)
 	 * the rto_lock held, but any CPU may increment the rto_loop_next
 	 * without any locking.
 	 */
-	for (;;) {
+	ಗಾಗಿ (;;) {
 
 		/* When rto_cpu is -1 this acts like cpumask_first() */
-		cpu = cpumask_next(rd->rto_cpu, rd->rto_mask);
+		cpu = cpumask_ಮುಂದಿನ(rd->rto_cpu, rd->rto_ಮುಖವಾಡ);
 
 		rd->rto_cpu = cpu;
 
 		/* Do not send IPI to self */
-		if (cpu == this_cpu)
-			continue;
+		ಆದರೆ (cpu == this_cpu)
+			ಮುಂದುವರಿ;
 
-		if (cpu < nr_cpu_ids)
-			return cpu;
+		ಆದರೆ (cpu < nr_cpu_ids)
+			ಹಿಂತಿರುಗಿ cpu;
 
 		rd->rto_cpu = -1;
 
@@ -2169,39 +2169,39 @@ static int rto_next_cpu(struct root_domain *rd)
 		 *
 		 * Matches WMB in rt_set_overload().
 		 */
-		next = atomic_read_acquire(&rd->rto_loop_next);
+		ಮುಂದಿನ = atomic_read_acquire(&rd->rto_loop_ಮುಂದಿನ);
 
-		if (rd->rto_loop == next)
-			break;
+		ಆದರೆ (rd->rto_loop == ಮುಂದಿನ)
+			ನಿಲ್ಲಿಸು;
 
-		rd->rto_loop = next;
+		rd->rto_loop = ಮುಂದಿನ;
 	}
 
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
 
-static inline bool rto_start_trylock(atomic_t *v)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool rto_ಆರಂಭ_trylock(atomic_t *v)
 {
-	return !atomic_cmpxchg_acquire(v, 0, 1);
+	ಹಿಂತಿರುಗಿ !atomic_cmpxchg_acquire(v, 0, 1);
 }
 
-static inline void rto_start_unlock(atomic_t *v)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ rto_ಆರಂಭ_unlock(atomic_t *v)
 {
-	atomic_set_release(v, 0);
+	atomic_ಗಣ_release(v, 0);
 }
 
-static void tell_cpu_to_push(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ tell_cpu_ಗಮ್ಯ_ತಳ್ಳು(ರಚನೆ rq *rq)
 {
-	int cpu = -1;
+	ಪೂರ್ಣಾಂಕ cpu = -1;
 
 	/* Keep the loop going if the IPI is currently active */
-	atomic_inc(&rq->rd->rto_loop_next);
+	atomic_inc(&rq->rd->rto_loop_ಮುಂದಿನ);
 
 	/* Only one CPU can initiate a loop at a time */
-	if (!rto_start_trylock(&rq->rd->rto_loop_start))
-		return;
+	ಆದರೆ (!rto_ಆರಂಭ_trylock(&rq->rd->rto_loop_ಆರಂಭ))
+		ಹಿಂತಿರುಗಿ;
 
-	raw_spin_lock(&rq->rd->rto_lock);
+	raw_spin_ಬೀಗ(&rq->rd->rto_ಬೀಗ);
 
 	/*
 	 * The rto_cpu is updated under the lock, if it has a valid CPU
@@ -2209,27 +2209,27 @@ static void tell_cpu_to_push(struct rq *rq)
 	 * update to loop_next, and nothing needs to be done here.
 	 * Otherwise it is finishing up and an IPI needs to be sent.
 	 */
-	if (rq->rd->rto_cpu < 0)
-		cpu = rto_next_cpu(rq->rd);
+	ಆದರೆ (rq->rd->rto_cpu < 0)
+		cpu = rto_ಮುಂದಿನ_cpu(rq->rd);
 
-	raw_spin_unlock(&rq->rd->rto_lock);
+	raw_spin_unlock(&rq->rd->rto_ಬೀಗ);
 
-	rto_start_unlock(&rq->rd->rto_loop_start);
+	rto_ಆರಂಭ_unlock(&rq->rd->rto_loop_ಆರಂಭ);
 
-	if (cpu >= 0) {
+	ಆದರೆ (cpu >= 0) {
 		/* Make sure the rd does not get freed while pushing */
 		sched_get_rd(rq->rd);
-		irq_work_queue_on(&rq->rd->rto_push_work, cpu);
+		irq_work_ಸರತಿ_on(&rq->rd->rto_ತಳ್ಳು_work, cpu);
 	}
 }
 
 /* Called from hardirq context */
-void rto_push_irq_work_func(struct irq_work *work)
+ಶೂನ್ಯ rto_ತಳ್ಳು_irq_work_func(ರಚನೆ irq_work *work)
 {
-	struct root_domain *rd =
-		container_of(work, struct root_domain, rto_push_work);
-	struct rq *rq;
-	int cpu;
+	ರಚನೆ ಬೇರು_domain *rd =
+		container_ದ(work, ರಚನೆ ಬೇರು_domain, rto_ತಳ್ಳು_work);
+	ರಚನೆ rq *rq;
+	ಪೂರ್ಣಾಂಕ cpu;
 
 	rq = this_rq();
 
@@ -2237,40 +2237,40 @@ void rto_push_irq_work_func(struct irq_work *work)
 	 * We do not need to grab the lock to check for has_pushable_tasks.
 	 * When it gets updated, a check is made if a push is possible.
 	 */
-	if (has_pushable_tasks(rq)) {
-		raw_spin_rq_lock(rq);
-		while (push_rt_task(rq, true))
+	ಆದರೆ (has_pushable_tasks(rq)) {
+		raw_spin_rq_ಬೀಗ(rq);
+		ಆಗ (ತಳ್ಳು_rt_task(rq, true))
 			;
 		raw_spin_rq_unlock(rq);
 	}
 
-	raw_spin_lock(&rd->rto_lock);
+	raw_spin_ಬೀಗ(&rd->rto_ಬೀಗ);
 
 	/* Pass the IPI to the next rt overloaded queue */
-	cpu = rto_next_cpu(rd);
+	cpu = rto_ಮುಂದಿನ_cpu(rd);
 
-	raw_spin_unlock(&rd->rto_lock);
+	raw_spin_unlock(&rd->rto_ಬೀಗ);
 
-	if (cpu < 0) {
+	ಆದರೆ (cpu < 0) {
 		sched_put_rd(rd);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	/* Try the next RT overloaded CPU */
-	irq_work_queue_on(&rd->rto_push_work, cpu);
+	irq_work_ಸರತಿ_on(&rd->rto_ತಳ್ಳು_work, cpu);
 }
-#endif /* HAVE_RT_PUSH_IPI */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_RT_PUSH_IPI */
 
-static void pull_rt_task(struct rq *this_rq)
+ಸ್ಥಿರ ಶೂನ್ಯ pull_rt_task(ರಚನೆ rq *this_rq)
 {
-	int this_cpu = this_rq->cpu, cpu;
+	ಪೂರ್ಣಾಂಕ this_cpu = this_rq->cpu, cpu;
 	bool resched = false;
-	struct task_struct *p, *push_task;
-	struct rq *src_rq;
-	int rt_overload_count = rt_overloaded(this_rq);
+	ರಚನೆ task_struct *p, *ತಳ್ಳು_task;
+	ರಚನೆ rq *src_rq;
+	ಪೂರ್ಣಾಂಕ rt_overload_ಎಣಿಕೆ = rt_overloaded(this_rq);
 
-	if (likely(!rt_overload_count))
-		return;
+	ಆದರೆ (likely(!rt_overload_ಎಣಿಕೆ))
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * Match the barrier from rt_set_overloaded; this guarantees that if we
@@ -2279,20 +2279,20 @@ static void pull_rt_task(struct rq *this_rq)
 	smp_rmb();
 
 	/* If we are the only overloaded CPU do nothing */
-	if (rt_overload_count == 1 &&
-	    cpumask_test_cpu(this_rq->cpu, this_rq->rd->rto_mask))
-		return;
+	ಆದರೆ (rt_overload_ಎಣಿಕೆ == 1 &&
+	    cpumask_test_cpu(this_rq->cpu, this_rq->rd->rto_ಮುಖವಾಡ))
+		ಹಿಂತಿರುಗಿ;
 
-#ifdef HAVE_RT_PUSH_IPI
-	if (sched_feat(RT_PUSH_IPI)) {
-		tell_cpu_to_push(this_rq);
-		return;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_RT_ತಳ್ಳು_IPI
+	ಆದರೆ (sched_feat(RT_ತಳ್ಳು_IPI)) {
+		tell_cpu_ಗಮ್ಯ_ತಳ್ಳು(this_rq);
+		ಹಿಂತಿರುಗಿ;
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	for_each_cpu(cpu, this_rq->rd->rto_mask) {
-		if (this_cpu == cpu)
-			continue;
+	for_each_cpu(cpu, this_rq->rd->rto_ಮುಖವಾಡ) {
+		ಆದರೆ (this_cpu == cpu)
+			ಮುಂದುವರಿ;
 
 		src_rq = cpu_rq(cpu);
 
@@ -2303,17 +2303,17 @@ static void pull_rt_task(struct rq *this_rq)
 		 * logically higher, the src_rq will push this task away.
 		 * And if its going logically lower, we do not care
 		 */
-		if (src_rq->rt.highest_prio.next >=
+		ಆದರೆ (src_rq->rt.highest_prio.ಮುಂದಿನ >=
 		    this_rq->rt.highest_prio.curr)
-			continue;
+			ಮುಂದುವರಿ;
 
 		/*
 		 * We can potentially drop this_rq's lock in
 		 * double_lock_balance, and another CPU could
 		 * alter this_rq
 		 */
-		push_task = NULL;
-		double_lock_balance(this_rq, src_rq);
+		ತಳ್ಳು_task = ಖಾಲಿ;
+		double_ಬೀಗ_balance(this_rq, src_rq);
 
 		/*
 		 * We can pull only a task, which is pushable
@@ -2325,7 +2325,7 @@ static void pull_rt_task(struct rq *this_rq)
 		 * Do we have an RT task that preempts
 		 * the to-be-scheduled task?
 		 */
-		if (p && (p->prio < this_rq->rt.highest_prio.curr)) {
+		ಆದರೆ (p && (p->prio < this_rq->rt.highest_prio.curr)) {
 			WARN_ON(p == src_rq->curr);
 			WARN_ON(!task_on_rq_queued(p));
 
@@ -2337,12 +2337,12 @@ static void pull_rt_task(struct rq *this_rq)
 			 * p if it is lower in priority than the
 			 * current task on the run queue
 			 */
-			if (p->prio < src_rq->donor->prio)
-				goto skip;
+			ಆದರೆ (p->prio < src_rq->donor->prio)
+				ಹೋಗು skip;
 
-			if (is_migration_disabled(p)) {
-				push_task = get_push_task(src_rq);
-			} else {
+			ಆದರೆ (is_migration_disabled(p)) {
+				ತಳ್ಳು_task = get_ತಳ್ಳು_task(src_rq);
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				move_queued_task_locked(src_rq, this_rq, p);
 				resched = true;
 			}
@@ -2356,17 +2356,17 @@ static void pull_rt_task(struct rq *this_rq)
 skip:
 		double_unlock_balance(this_rq, src_rq);
 
-		if (push_task) {
+		ಆದರೆ (ತಳ್ಳು_task) {
 			preempt_disable();
 			raw_spin_rq_unlock(this_rq);
-			stop_one_cpu_nowait(src_rq->cpu, push_cpu_stop,
-					    push_task, &src_rq->push_work);
+			stop_one_cpu_nowait(src_rq->cpu, ತಳ್ಳು_cpu_stop,
+					    ತಳ್ಳು_task, &src_rq->ತಳ್ಳು_work);
 			preempt_enable();
-			raw_spin_rq_lock(this_rq);
+			raw_spin_rq_ಬೀಗ(this_rq);
 		}
 	}
 
-	if (resched)
+	ಆದರೆ (resched)
 		resched_curr(this_rq);
 }
 
@@ -2374,46 +2374,46 @@ skip:
  * If we are not running and we are not going to reschedule soon, we should
  * try to push tasks away now
  */
-static void task_woken_rt(struct rq *rq, struct task_struct *p)
+ಸ್ಥಿರ ಶೂನ್ಯ task_woken_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p)
 {
-	bool need_to_push = !task_on_cpu(rq, p) &&
+	bool need_ಗಮ್ಯ_ತಳ್ಳು = !task_on_cpu(rq, p) &&
 			    !test_tsk_need_resched(rq->curr) &&
 			    p->nr_cpus_allowed > 1 &&
 			    (dl_task(rq->donor) || rt_task(rq->donor)) &&
 			    (rq->curr->nr_cpus_allowed < 2 ||
 			     rq->donor->prio <= p->prio);
 
-	if (need_to_push)
-		push_rt_tasks(rq);
+	ಆದರೆ (need_ಗಮ್ಯ_ತಳ್ಳು)
+		ತಳ್ಳು_rt_tasks(rq);
 }
 
 /* Assumes rq->lock is held */
-static void rq_online_rt(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ rq_online_rt(ರಚನೆ rq *rq)
 {
-	if (rq->rt.overloaded)
-		rt_set_overload(rq);
+	ಆದರೆ (rq->rt.overloaded)
+		rt_ಗಣ_overload(rq);
 
 	__enable_runtime(rq);
 
-	cpupri_set(&rq->rd->cpupri, rq->cpu, rq->rt.highest_prio.curr);
+	cpupri_ಗಣ(&rq->rd->cpupri, rq->cpu, rq->rt.highest_prio.curr);
 }
 
 /* Assumes rq->lock is held */
-static void rq_offline_rt(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ rq_offline_rt(ರಚನೆ rq *rq)
 {
-	if (rq->rt.overloaded)
+	ಆದರೆ (rq->rt.overloaded)
 		rt_clear_overload(rq);
 
 	__disable_runtime(rq);
 
-	cpupri_set(&rq->rd->cpupri, rq->cpu, CPUPRI_INVALID);
+	cpupri_ಗಣ(&rq->rd->cpupri, rq->cpu, CPUPRI_INVALID);
 }
 
 /*
  * When switch from the rt queue, we bring ourselves to a position
  * that we might want to pull RT tasks from other runqueues.
  */
-static void switched_from_rt(struct rq *rq, struct task_struct *p)
+ಸ್ಥಿರ ಶೂನ್ಯ switched_from_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p)
 {
 	/*
 	 * If there are other RT tasks then we will reschedule
@@ -2422,19 +2422,19 @@ static void switched_from_rt(struct rq *rq, struct task_struct *p)
 	 * we may need to handle the pulling of RT tasks
 	 * now.
 	 */
-	if (!task_on_rq_queued(p) || rq->rt.rt_nr_running)
-		return;
+	ಆದರೆ (!task_on_rq_queued(p) || rq->rt.rt_nr_running)
+		ಹಿಂತಿರುಗಿ;
 
-	rt_queue_pull_task(rq);
+	rt_ಸರತಿ_pull_task(rq);
 }
 
-void __init init_sched_rt_class(void)
+ಶೂನ್ಯ __init init_sched_rt_class(ಶೂನ್ಯ)
 {
-	unsigned int i;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
 
 	for_each_possible_cpu(i) {
-		zalloc_cpumask_var_node(&per_cpu(local_cpu_mask, i),
-					GFP_KERNEL, cpu_to_node(i));
+		zalloc_cpumask_var_ಗಂಟು(&ಪ್ರತಿ_cpu(local_cpu_ಮುಖವಾಡ, i),
+					GFP_KERNEL, cpu_ಗಮ್ಯ_ಗಂಟು(i));
 	}
 }
 
@@ -2443,15 +2443,15 @@ void __init init_sched_rt_class(void)
  * with RT tasks. In this case we try to push them off to
  * other runqueues.
  */
-static void switched_to_rt(struct rq *rq, struct task_struct *p)
+ಸ್ಥಿರ ಶೂನ್ಯ switched_ಗಮ್ಯ_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p)
 {
 	/*
 	 * If we are running, update the avg_rt tracking, as the running time
 	 * will now on be accounted into the latter.
 	 */
-	if (task_current(rq, p)) {
-		update_rt_rq_load_avg(rq_clock_pelt(rq), rq, 0);
-		return;
+	ಆದರೆ (task_current(rq, p)) {
+		update_rt_rq_ತುಂಬು_avg(rq_clock_pelt(rq), rq, 0);
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	/*
@@ -2459,10 +2459,10 @@ static void switched_to_rt(struct rq *rq, struct task_struct *p)
 	 * running task. If that current running task is also an RT task
 	 * then see if we can move to another run queue.
 	 */
-	if (task_on_rq_queued(p)) {
-		if (p->nr_cpus_allowed > 1 && rq->rt.overloaded)
-			rt_queue_push_tasks(rq);
-		if (p->prio < rq->donor->prio && cpu_online(cpu_of(rq)))
+	ಆದರೆ (task_on_rq_queued(p)) {
+		ಆದರೆ (p->nr_cpus_allowed > 1 && rq->rt.overloaded)
+			rt_ಸರತಿ_ತಳ್ಳು_tasks(rq);
+		ಆದರೆ (p->prio < rq->donor->prio && cpu_online(cpu_ದ(rq)))
 			resched_curr(rq);
 	}
 }
@@ -2471,67 +2471,67 @@ static void switched_to_rt(struct rq *rq, struct task_struct *p)
  * Priority of the task has changed. This may cause
  * us to initiate a push or pull.
  */
-static void
-prio_changed_rt(struct rq *rq, struct task_struct *p, u64 oldprio)
+ಸ್ಥಿರ ಶೂನ್ಯ
+prio_ಬದಲಾಯಿತು_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, u64 oldprio)
 {
-	if (!task_on_rq_queued(p))
-		return;
+	ಆದರೆ (!task_on_rq_queued(p))
+		ಹಿಂತಿರುಗಿ;
 
-	if (p->prio == oldprio)
-		return;
+	ಆದರೆ (p->prio == oldprio)
+		ಹಿಂತಿರುಗಿ;
 
-	if (task_current_donor(rq, p)) {
+	ಆದರೆ (task_current_donor(rq, p)) {
 		/*
 		 * If our priority decreases while running, we
 		 * may need to pull tasks to this runqueue.
 		 */
-		if (oldprio < p->prio)
-			rt_queue_pull_task(rq);
+		ಆದರೆ (oldprio < p->prio)
+			rt_ಸರತಿ_pull_task(rq);
 
 		/*
 		 * If there's a higher priority task waiting to run
 		 * then reschedule.
 		 */
-		if (p->prio > rq->rt.highest_prio.curr)
+		ಆದರೆ (p->prio > rq->rt.highest_prio.curr)
 			resched_curr(rq);
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/*
 		 * This task is not running, but if it is
 		 * greater than the current running task
 		 * then reschedule.
 		 */
-		if (p->prio < rq->donor->prio)
+		ಆದರೆ (p->prio < rq->donor->prio)
 			resched_curr(rq);
 	}
 }
 
-#ifdef CONFIG_POSIX_TIMERS
-static void watchdog(struct rq *rq, struct task_struct *p)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_POSIX_TIMERS
+ಸ್ಥಿರ ಶೂನ್ಯ watchdog(ರಚನೆ rq *rq, ರಚನೆ task_struct *p)
 {
-	unsigned long soft, hard;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ soft, hard;
 
 	/* max may change after cur was read, this will be fixed next tick */
 	soft = task_rlimit(p, RLIMIT_RTTIME);
 	hard = task_rlimit_max(p, RLIMIT_RTTIME);
 
-	if (soft != RLIM_INFINITY) {
-		unsigned long next;
+	ಆದರೆ (soft != RLIM_INFINITY) {
+		ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಮುಂದಿನ;
 
-		if (p->rt.watchdog_stamp != jiffies) {
+		ಆದರೆ (p->rt.watchdog_stamp != jiffies) {
 			p->rt.timeout++;
 			p->rt.watchdog_stamp = jiffies;
 		}
 
-		next = DIV_ROUND_UP(min(soft, hard), USEC_PER_SEC/HZ);
-		if (p->rt.timeout > next) {
+		ಮುಂದಿನ = DIV_ಸುತ್ತು_ಮೇಲೆ(min(soft, hard), USEC_ಪ್ರತಿ_SEC/HZ);
+		ಆದರೆ (p->rt.timeout > ಮುಂದಿನ) {
 			posix_cputimers_rt_watchdog(&p->posix_cputimers,
-						    p->se.sum_exec_runtime);
+						    p->se.ಮೊತ್ತ_exec_runtime);
 		}
 	}
 }
-#else /* !CONFIG_POSIX_TIMERS: */
-static inline void watchdog(struct rq *rq, struct task_struct *p) { }
-#endif /* !CONFIG_POSIX_TIMERS */
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_POSIX_TIMERS: */
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ watchdog(ರಚನೆ rq *rq, ರಚನೆ task_struct *p) { }
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_POSIX_TIMERS */
 
 /*
  * scheduler tick hitting a task of our scheduling class.
@@ -2541,12 +2541,12 @@ static inline void watchdog(struct rq *rq, struct task_struct *p) { }
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
+ಸ್ಥಿರ ಶೂನ್ಯ task_tick_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ queued)
 {
-	struct sched_rt_entity *rt_se = &p->rt;
+	ರಚನೆ sched_rt_entity *rt_se = &p->rt;
 
 	update_curr_rt(rq);
-	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, 1);
+	update_rt_rq_ತುಂಬು_avg(rq_clock_pelt(rq), rq, 1);
 
 	watchdog(rq, p);
 
@@ -2554,135 +2554,135 @@ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
 	 * RR tasks need a special form of time-slice management.
 	 * FIFO tasks have no timeslices.
 	 */
-	if (p->policy != SCHED_RR)
-		return;
+	ಆದರೆ (p->policy != SCHED_RR)
+		ಹಿಂತಿರುಗಿ;
 
-	if (--p->rt.time_slice)
-		return;
+	ಆದರೆ (--p->rt.ಸಮಯ_ತುಂಡು)
+		ಹಿಂತಿರುಗಿ;
 
-	p->rt.time_slice = sched_rr_timeslice;
+	p->rt.ಸಮಯ_ತುಂಡು = sched_rr_timeslice;
 
 	/*
 	 * Requeue to the end of queue if we (and all of our ancestors) are not
 	 * the only element on the queue
 	 */
 	for_each_sched_rt_entity(rt_se) {
-		if (rt_se->run_list.prev != rt_se->run_list.next) {
+		ಆದರೆ (rt_se->ಸತತ_list.prev != rt_se->ಸತತ_list.ಮುಂದಿನ) {
 			requeue_task_rt(rq, p, 0);
 			resched_curr(rq);
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
 	}
 }
 
-static unsigned int get_rr_interval_rt(struct rq *rq, struct task_struct *task)
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ get_rr_interval_rt(ರಚನೆ rq *rq, ರಚನೆ task_struct *task)
 {
 	/*
 	 * Time slice is 0 for SCHED_FIFO tasks
 	 */
-	if (task->policy == SCHED_RR)
-		return sched_rr_timeslice;
-	else
-		return 0;
+	ಆದರೆ (task->policy == SCHED_RR)
+		ಹಿಂತಿರುಗಿ sched_rr_timeslice;
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಹಿಂತಿರುಗಿ 0;
 }
 
-#ifdef CONFIG_SCHED_CORE
-static int task_is_throttled_rt(struct task_struct *p, int cpu)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CORE
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ task_is_throttled_rt(ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct rt_rq *rt_rq;
+	ರಚನೆ rt_rq *rt_rq;
 
-#ifdef CONFIG_RT_GROUP_SCHED // XXX maybe add task_rt_rq(), see also sched_rt_period_rt_rq
-	rt_rq = task_group(p)->rt_rq[cpu];
-	WARN_ON(!rt_group_sched_enabled() && rt_rq->tg != &root_task_group);
-#else
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_RT_ಗುಂಪು_SCHED // XXX maybe add task_rt_rq(), see also sched_rt_period_rt_rq
+	rt_rq = task_ಗುಂಪು(p)->rt_rq[cpu];
+	WARN_ON(!rt_ಗುಂಪು_sched_enabled() && rt_rq->tg != &ಬೇರು_task_ಗುಂಪು);
+#ಇಲ್ಲದಿದ್ದರೆ
 	rt_rq = &cpu_rq(cpu)->rt;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	return rt_rq_throttled(rt_rq);
+	ಹಿಂತಿರುಗಿ rt_rq_throttled(rt_rq);
 }
-#endif /* CONFIG_SCHED_CORE */
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_SCHED_CORE */
 
 DEFINE_SCHED_CLASS(rt) = {
-	.enqueue_task		= enqueue_task_rt,
-	.dequeue_task		= dequeue_task_rt,
+	.ಸರತಿಗೆ_ಸೇರಿಸು_task		= ಸರತಿಗೆ_ಸೇರಿಸು_task_rt,
+	.ಸರತಿಯಿಂದ_ತೆಗೆ_task		= ಸರತಿಯಿಂದ_ತೆಗೆ_task_rt,
 	.yield_task		= yield_task_rt,
 
 	.wakeup_preempt		= wakeup_preempt_rt,
 
 	.pick_task		= pick_task_rt,
 	.put_prev_task		= put_prev_task_rt,
-	.set_next_task          = set_next_task_rt,
+	.ಗಣ_ಮುಂದಿನ_task          = ಗಣ_ಮುಂದಿನ_task_rt,
 
 	.balance		= balance_rt,
 	.select_task_rq		= select_task_rq_rt,
-	.set_cpus_allowed       = set_cpus_allowed_common,
+	.ಗಣ_cpus_allowed       = ಗಣ_cpus_allowed_common,
 	.rq_online              = rq_online_rt,
 	.rq_offline             = rq_offline_rt,
 	.task_woken		= task_woken_rt,
 	.switched_from		= switched_from_rt,
-	.find_lock_rq		= find_lock_lowest_rq,
+	.ಕಂಡುಹಿಡಿ_ಬೀಗ_rq		= ಕಂಡುಹಿಡಿ_ಬೀಗ_ಅತಿಕಡಿಮೆ_rq,
 
 	.task_tick		= task_tick_rt,
 
 	.get_rr_interval	= get_rr_interval_rt,
 
-	.switched_to		= switched_to_rt,
-	.prio_changed		= prio_changed_rt,
+	.switched_ಗಮ್ಯ		= switched_ಗಮ್ಯ_rt,
+	.prio_ಬದಲಾಯಿತು		= prio_ಬದಲಾಯಿತು_rt,
 
 	.update_curr		= update_curr_rt,
 
-#ifdef CONFIG_SCHED_CORE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CORE
 	.task_is_throttled	= task_is_throttled_rt,
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef CONFIG_UCLAMP_TASK
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_UCLAMP_TASK
 	.uclamp_enabled		= 1,
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 };
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_RT_ಗುಂಪು_SCHED
 /*
  * Ensure that the real time constraints are schedulable.
  */
-static DEFINE_MUTEX(rt_constraints_mutex);
+ಸ್ಥಿರ DEFINE_MUTEX(rt_constraints_mutex);
 
-static inline int tg_has_rt_tasks(struct task_group *tg)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ tg_has_rt_tasks(ರಚನೆ task_ಗುಂಪು *tg)
 {
-	struct task_struct *task;
-	struct css_task_iter it;
-	int ret = 0;
+	ರಚನೆ task_struct *task;
+	ರಚನೆ css_task_iter it;
+	ಪೂರ್ಣಾಂಕ ret = 0;
 
 	/*
 	 * Autogroups do not have RT tasks; see autogroup_create().
 	 */
-	if (task_group_is_autogroup(tg))
-		return 0;
+	ಆದರೆ (task_ಗುಂಪು_is_autogroup(tg))
+		ಹಿಂತಿರುಗಿ 0;
 
-	css_task_iter_start(&tg->css, 0, &it);
-	while (!ret && (task = css_task_iter_next(&it)))
+	css_task_iter_ಆರಂಭ(&tg->css, 0, &it);
+	ಆಗ (!ret && (task = css_task_iter_ಮುಂದಿನ(&it)))
 		ret |= rt_task(task);
-	css_task_iter_end(&it);
+	css_task_iter_ಕೊನೆ(&it);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-struct rt_schedulable_data {
-	struct task_group *tg;
+ರಚನೆ rt_schedulable_ದತ್ತಾಂಶ {
+	ರಚನೆ task_ಗುಂಪು *tg;
 	u64 rt_period;
 	u64 rt_runtime;
 };
 
-static int tg_rt_schedulable(struct task_group *tg, void *data)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ tg_rt_schedulable(ರಚನೆ task_ಗುಂಪು *tg, ಶೂನ್ಯ *ದತ್ತಾಂಶ)
 {
-	struct rt_schedulable_data *d = data;
-	struct task_group *child;
-	u64 total, sum = 0;
+	ರಚನೆ rt_schedulable_ದತ್ತಾಂಶ *d = ದತ್ತಾಂಶ;
+	ರಚನೆ task_ಗುಂಪು *ಮಗು;
+	u64 ಒಟ್ಟು, ಮೊತ್ತ = 0;
 	u64 period, runtime;
 
-	period = ktime_to_ns(tg->rt_bandwidth.rt_period);
+	period = ktime_ಗಮ್ಯ_ns(tg->rt_bandwidth.rt_period);
 	runtime = tg->rt_bandwidth.rt_runtime;
 
-	if (tg == d->tg) {
+	ಆದರೆ (tg == d->tg) {
 		period = d->rt_period;
 		runtime = d->rt_runtime;
 	}
@@ -2690,211 +2690,211 @@ static int tg_rt_schedulable(struct task_group *tg, void *data)
 	/*
 	 * Cannot have more runtime than the period.
 	 */
-	if (runtime > period && runtime != RUNTIME_INF)
-		return -EINVAL;
+	ಆದರೆ (runtime > period && runtime != RUNTIME_INF)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
 	/*
 	 * Ensure we don't starve existing RT tasks if runtime turns zero.
 	 */
-	if (rt_bandwidth_enabled() && !runtime &&
+	ಆದರೆ (rt_bandwidth_enabled() && !runtime &&
 	    tg->rt_bandwidth.rt_runtime && tg_has_rt_tasks(tg))
-		return -EBUSY;
+		ಹಿಂತಿರುಗಿ -EBUSY;
 
-	total = to_ratio(period, runtime);
+	ಒಟ್ಟು = ಗಮ್ಯ_ಅನುಪಾತ(period, runtime);
 
 	/*
 	 * Nobody can have more than the global setting allows.
 	 */
-	if (total > to_ratio(global_rt_period(), global_rt_runtime()))
-		return -EINVAL;
+	ಆದರೆ (ಒಟ್ಟು > ಗಮ್ಯ_ಅನುಪಾತ(global_rt_period(), global_rt_runtime()))
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
 	/*
 	 * The sum of our children's runtime should not exceed our own.
 	 */
-	list_for_each_entry_rcu(child, &tg->children, siblings) {
-		period = ktime_to_ns(child->rt_bandwidth.rt_period);
-		runtime = child->rt_bandwidth.rt_runtime;
+	list_for_each_ನಮೂದು_rcu(ಮಗು, &tg->children, siblings) {
+		period = ktime_ಗಮ್ಯ_ns(ಮಗು->rt_bandwidth.rt_period);
+		runtime = ಮಗು->rt_bandwidth.rt_runtime;
 
-		if (child == d->tg) {
+		ಆದರೆ (ಮಗು == d->tg) {
 			period = d->rt_period;
 			runtime = d->rt_runtime;
 		}
 
-		sum += to_ratio(period, runtime);
+		ಮೊತ್ತ += ಗಮ್ಯ_ಅನುಪಾತ(period, runtime);
 	}
 
-	if (sum > total)
-		return -EINVAL;
+	ಆದರೆ (ಮೊತ್ತ > ಒಟ್ಟು)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int __rt_schedulable(struct task_group *tg, u64 period, u64 runtime)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __rt_schedulable(ರಚನೆ task_ಗುಂಪು *tg, u64 period, u64 runtime)
 {
-	int ret;
+	ಪೂರ್ಣಾಂಕ ret;
 
-	struct rt_schedulable_data data = {
+	ರಚನೆ rt_schedulable_ದತ್ತಾಂಶ ದತ್ತಾಂಶ = {
 		.tg = tg,
 		.rt_period = period,
 		.rt_runtime = runtime,
 	};
 
-	rcu_read_lock();
-	ret = walk_tg_tree(tg_rt_schedulable, tg_nop, &data);
+	rcu_read_ಬೀಗ();
+	ret = walk_tg_ವೃಕ್ಷ(tg_rt_schedulable, tg_nop, &ದತ್ತಾಂಶ);
 	rcu_read_unlock();
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static int tg_set_rt_bandwidth(struct task_group *tg,
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ tg_ಗಣ_rt_bandwidth(ರಚನೆ task_ಗುಂಪು *tg,
 		u64 rt_period, u64 rt_runtime)
 {
-	int i, err = 0;
+	ಪೂರ್ಣಾಂಕ i, err = 0;
 
 	/*
 	 * Disallowing the root group RT runtime is BAD, it would disallow the
 	 * kernel creating (and or operating) RT threads.
 	 */
-	if (tg == &root_task_group && rt_runtime == 0)
-		return -EINVAL;
+	ಆದರೆ (tg == &ಬೇರು_task_ಗುಂಪು && rt_runtime == 0)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
 	/* No period doesn't make any sense. */
-	if (rt_period == 0)
-		return -EINVAL;
+	ಆದರೆ (rt_period == 0)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
 	/*
 	 * Bound quota to defend quota against overflow during bandwidth shift.
 	 */
-	if (rt_runtime != RUNTIME_INF && rt_runtime > max_rt_runtime)
-		return -EINVAL;
+	ಆದರೆ (rt_runtime != RUNTIME_INF && rt_runtime > max_rt_runtime)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
-	mutex_lock(&rt_constraints_mutex);
+	mutex_ಬೀಗ(&rt_constraints_mutex);
 	err = __rt_schedulable(tg, rt_period, rt_runtime);
-	if (err)
-		goto unlock;
+	ಆದರೆ (err)
+		ಹೋಗು unlock;
 
-	raw_spin_lock_irq(&tg->rt_bandwidth.rt_runtime_lock);
-	tg->rt_bandwidth.rt_period = ns_to_ktime(rt_period);
+	raw_spin_ಬೀಗ_irq(&tg->rt_bandwidth.rt_runtime_ಬೀಗ);
+	tg->rt_bandwidth.rt_period = ns_ಗಮ್ಯ_ktime(rt_period);
 	tg->rt_bandwidth.rt_runtime = rt_runtime;
 
 	for_each_possible_cpu(i) {
-		struct rt_rq *rt_rq = tg->rt_rq[i];
+		ರಚನೆ rt_rq *rt_rq = tg->rt_rq[i];
 
-		raw_spin_lock(&rt_rq->rt_runtime_lock);
+		raw_spin_ಬೀಗ(&rt_rq->rt_runtime_ಬೀಗ);
 		rt_rq->rt_runtime = rt_runtime;
-		raw_spin_unlock(&rt_rq->rt_runtime_lock);
+		raw_spin_unlock(&rt_rq->rt_runtime_ಬೀಗ);
 	}
-	raw_spin_unlock_irq(&tg->rt_bandwidth.rt_runtime_lock);
+	raw_spin_unlock_irq(&tg->rt_bandwidth.rt_runtime_ಬೀಗ);
 unlock:
 	mutex_unlock(&rt_constraints_mutex);
 
-	return err;
+	ಹಿಂತಿರುಗಿ err;
 }
 
-int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us)
+ಪೂರ್ಣಾಂಕ sched_ಗುಂಪು_ಗಣ_rt_runtime(ರಚನೆ task_ಗುಂಪು *tg, ದೀರ್ಘ rt_runtime_us)
 {
 	u64 rt_runtime, rt_period;
 
-	rt_period = ktime_to_ns(tg->rt_bandwidth.rt_period);
-	rt_runtime = (u64)rt_runtime_us * NSEC_PER_USEC;
-	if (rt_runtime_us < 0)
+	rt_period = ktime_ಗಮ್ಯ_ns(tg->rt_bandwidth.rt_period);
+	rt_runtime = (u64)rt_runtime_us * NSEC_ಪ್ರತಿ_USEC;
+	ಆದರೆ (rt_runtime_us < 0)
 		rt_runtime = RUNTIME_INF;
-	else if ((u64)rt_runtime_us > U64_MAX / NSEC_PER_USEC)
-		return -EINVAL;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((u64)rt_runtime_us > U64_MAX / NSEC_ಪ್ರತಿ_USEC)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
-	return tg_set_rt_bandwidth(tg, rt_period, rt_runtime);
+	ಹಿಂತಿರುಗಿ tg_ಗಣ_rt_bandwidth(tg, rt_period, rt_runtime);
 }
 
-long sched_group_rt_runtime(struct task_group *tg)
+ದೀರ್ಘ sched_ಗುಂಪು_rt_runtime(ರಚನೆ task_ಗುಂಪು *tg)
 {
 	u64 rt_runtime_us;
 
-	if (tg->rt_bandwidth.rt_runtime == RUNTIME_INF)
-		return -1;
+	ಆದರೆ (tg->rt_bandwidth.rt_runtime == RUNTIME_INF)
+		ಹಿಂತಿರುಗಿ -1;
 
 	rt_runtime_us = tg->rt_bandwidth.rt_runtime;
-	do_div(rt_runtime_us, NSEC_PER_USEC);
-	return rt_runtime_us;
+	do_div(rt_runtime_us, NSEC_ಪ್ರತಿ_USEC);
+	ಹಿಂತಿರುಗಿ rt_runtime_us;
 }
 
-int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us)
+ಪೂರ್ಣಾಂಕ sched_ಗುಂಪು_ಗಣ_rt_period(ರಚನೆ task_ಗುಂಪು *tg, u64 rt_period_us)
 {
 	u64 rt_runtime, rt_period;
 
-	if (rt_period_us > U64_MAX / NSEC_PER_USEC)
-		return -EINVAL;
+	ಆದರೆ (rt_period_us > U64_MAX / NSEC_ಪ್ರತಿ_USEC)
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
-	rt_period = rt_period_us * NSEC_PER_USEC;
+	rt_period = rt_period_us * NSEC_ಪ್ರತಿ_USEC;
 	rt_runtime = tg->rt_bandwidth.rt_runtime;
 
-	return tg_set_rt_bandwidth(tg, rt_period, rt_runtime);
+	ಹಿಂತಿರುಗಿ tg_ಗಣ_rt_bandwidth(tg, rt_period, rt_runtime);
 }
 
-long sched_group_rt_period(struct task_group *tg)
+ದೀರ್ಘ sched_ಗುಂಪು_rt_period(ರಚನೆ task_ಗುಂಪು *tg)
 {
 	u64 rt_period_us;
 
-	rt_period_us = ktime_to_ns(tg->rt_bandwidth.rt_period);
-	do_div(rt_period_us, NSEC_PER_USEC);
-	return rt_period_us;
+	rt_period_us = ktime_ಗಮ್ಯ_ns(tg->rt_bandwidth.rt_period);
+	do_div(rt_period_us, NSEC_ಪ್ರತಿ_USEC);
+	ಹಿಂತಿರುಗಿ rt_period_us;
 }
 
-int sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk)
+ಪೂರ್ಣಾಂಕ sched_rt_can_attach(ರಚನೆ task_ಗುಂಪು *tg, ರಚನೆ task_struct *tsk)
 {
 	/* Don't accept real-time tasks when there is no way for them to run */
-	if (rt_group_sched_enabled() && rt_task(tsk) && tg->rt_bandwidth.rt_runtime == 0)
-		return 0;
+	ಆದರೆ (rt_ಗುಂಪು_sched_enabled() && rt_task(tsk) && tg->rt_bandwidth.rt_runtime == 0)
+		ಹಿಂತಿರುಗಿ 0;
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-#endif /* !CONFIG_RT_GROUP_SCHED */
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_RT_GROUP_SCHED */
 
-#ifdef CONFIG_SYSCTL
-static int sched_rt_global_validate(void)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SYSCTL
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sched_rt_global_validate(ಶೂನ್ಯ)
 {
-	if ((sysctl_sched_rt_runtime != RUNTIME_INF) &&
+	ಆದರೆ ((sysctl_sched_rt_runtime != RUNTIME_INF) &&
 		((sysctl_sched_rt_runtime > sysctl_sched_rt_period) ||
 		 ((u64)sysctl_sched_rt_runtime *
-			NSEC_PER_USEC > max_rt_runtime)))
-		return -EINVAL;
+			NSEC_ಪ್ರತಿ_USEC > max_rt_runtime)))
+		ಹಿಂತಿರುಗಿ -EINVAL;
 
-#ifdef CONFIG_RT_GROUP_SCHED
-	if (!rt_group_sched_enabled())
-		return 0;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_RT_ಗುಂಪು_SCHED
+	ಆದರೆ (!rt_ಗುಂಪು_sched_enabled())
+		ಹಿಂತಿರುಗಿ 0;
 
 	scoped_guard(mutex, &rt_constraints_mutex)
-		return __rt_schedulable(NULL, 0, 0);
-#endif
-	return 0;
+		ಹಿಂತಿರುಗಿ __rt_schedulable(ಖಾಲಿ, 0, 0);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int sched_rt_handler(const struct ctl_table *table, int write, void *buffer,
-		size_t *lenp, loff_t *ppos)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sched_rt_handler(ಸ್ಥಿರಾಂಕ ರಚನೆ ctl_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ಪೂರ್ಣಾಂಕ ಲಿಖ, ಶೂನ್ಯ *ಬಫರ್,
+		ಗಾತ್ರ_t *lenp, loff_t *ppos)
 {
-	int old_period, old_runtime;
-	static DEFINE_MUTEX(mutex);
-	int ret;
+	ಪೂರ್ಣಾಂಕ old_period, old_runtime;
+	ಸ್ಥಿರ DEFINE_MUTEX(mutex);
+	ಪೂರ್ಣಾಂಕ ret;
 
-	mutex_lock(&mutex);
-	sched_domains_mutex_lock();
+	mutex_ಬೀಗ(&mutex);
+	sched_domains_mutex_ಬೀಗ();
 	old_period = sysctl_sched_rt_period;
 	old_runtime = sysctl_sched_rt_runtime;
 
-	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+	ret = proc_dointvec_minmax(ಕೋಷ್ಟಕ, ಲಿಖ, ಬಫರ್, lenp, ppos);
 
-	if (!ret && write) {
+	ಆದರೆ (!ret && ಲಿಖ) {
 		ret = sched_rt_global_validate();
-		if (ret)
-			goto undo;
+		ಆದರೆ (ret)
+			ಹೋಗು undo;
 
 		ret = sched_dl_global_validate();
-		if (ret)
-			goto undo;
+		ಆದರೆ (ret)
+			ಹೋಗು undo;
 
 		sched_dl_do_global();
 	}
-	if (0) {
+	ಆದರೆ (0) {
 undo:
 		sysctl_sched_rt_period = old_period;
 		sysctl_sched_rt_runtime = old_runtime;
@@ -2908,41 +2908,41 @@ undo:
 	 */
 	rebuild_sched_domains();
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static int sched_rr_handler(const struct ctl_table *table, int write, void *buffer,
-		size_t *lenp, loff_t *ppos)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sched_rr_handler(ಸ್ಥಿರಾಂಕ ರಚನೆ ctl_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ಪೂರ್ಣಾಂಕ ಲಿಖ, ಶೂನ್ಯ *ಬಫರ್,
+		ಗಾತ್ರ_t *lenp, loff_t *ppos)
 {
-	int ret;
-	static DEFINE_MUTEX(mutex);
+	ಪೂರ್ಣಾಂಕ ret;
+	ಸ್ಥಿರ DEFINE_MUTEX(mutex);
 
-	mutex_lock(&mutex);
-	ret = proc_dointvec(table, write, buffer, lenp, ppos);
+	mutex_ಬೀಗ(&mutex);
+	ret = proc_dointvec(ಕೋಷ್ಟಕ, ಲಿಖ, ಬಫರ್, lenp, ppos);
 	/*
 	 * Make sure that internally we keep jiffies.
 	 * Also, writing zero resets the time-slice to default:
 	 */
-	if (!ret && write) {
+	ಆದರೆ (!ret && ಲಿಖ) {
 		sched_rr_timeslice =
 			sysctl_sched_rr_timeslice <= 0 ? RR_TIMESLICE :
-			msecs_to_jiffies(sysctl_sched_rr_timeslice);
+			msecs_ಗಮ್ಯ_jiffies(sysctl_sched_rr_timeslice);
 
-		if (sysctl_sched_rr_timeslice <= 0)
-			sysctl_sched_rr_timeslice = jiffies_to_msecs(RR_TIMESLICE);
+		ಆದರೆ (sysctl_sched_rr_timeslice <= 0)
+			sysctl_sched_rr_timeslice = jiffies_ಗಮ್ಯ_msecs(RR_TIMESLICE);
 	}
 	mutex_unlock(&mutex);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
-#endif /* CONFIG_SYSCTL */
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_SYSCTL */
 
-void print_rt_stats(struct seq_file *m, int cpu)
+ಶೂನ್ಯ print_rt_stats(ರಚನೆ seq_file *m, ಪೂರ್ಣಾಂಕ cpu)
 {
 	rt_rq_iter_t iter;
-	struct rt_rq *rt_rq;
+	ರಚನೆ rt_rq *rt_rq;
 
-	rcu_read_lock();
+	rcu_read_ಬೀಗ();
 	for_each_rt_rq(rt_rq, iter, cpu_rq(cpu))
 		print_rt_rq(m, cpu, rt_rq);
 	rcu_read_unlock();

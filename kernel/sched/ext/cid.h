@@ -30,12 +30,12 @@
  * Copyright (c) 2026 Meta Platforms, Inc. and affiliates.
  * Copyright (c) 2026 Tejun Heo <tj@kernel.org>
  */
-#ifndef _KERNEL_SCHED_EXT_CID_H
-#define _KERNEL_SCHED_EXT_CID_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _KERNEL_SCHED_EXT_CID_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _KERNEL_SCHED_EXT_CID_H
 
-#include "internal.h"
+#ಅನ್ತರ್ಭಾವ "internal.h"
 
-struct scx_sched;
+ರಚನೆ scx_sched;
 
 /*
  * Cid space (total is always num_possible_cpus()) is laid out with
@@ -48,40 +48,40 @@ struct scx_sched;
  * See the comment above the table definitions in cid.c for the
  * memory-ordering and visibility contract.
  */
-struct scx_cid_tables {
+ರಚನೆ scx_cid_tables {
 	u32			nr_shards;
-	s16			*cid_to_cpu;	/* [num_possible_cpus()] */
-	s16			*cpu_to_cid;	/* [nr_cpu_ids] */
-	s32			*cid_to_shard;	/* [num_possible_cpus()] */
-	s32			*shard_node;	/* [num_possible_cpus()] */
-	struct scx_cid_shard	*shard_ranges;	/* [num_possible_cpus()] */
-	struct scx_cid_topo	*topo;		/* [num_possible_cpus()] */
-	struct rcu_head		rcu;
+	s16			*cid_ಗಮ್ಯ_cpu;	/* [num_possible_cpus()] */
+	s16			*cpu_ಗಮ್ಯ_cid;	/* [nr_cpu_ids] */
+	s32			*cid_ಗಮ್ಯ_shard;	/* [num_possible_cpus()] */
+	s32			*shard_ಗಂಟು;	/* [num_possible_cpus()] */
+	ರಚನೆ scx_cid_shard	*shard_ranges;	/* [num_possible_cpus()] */
+	ರಚನೆ scx_cid_topo	*topo;		/* [num_possible_cpus()] */
+	ರಚನೆ rcu_ತಲೆ		rcu;
 };
 
-extern u32 scx_nr_cid_shards;
-extern s16 __rcu *scx_cid_to_cpu_tbl;
-extern s16 __rcu *scx_cpu_to_cid_tbl;
-extern s32 __rcu *scx_cid_to_shard;
-extern s32 __rcu *scx_shard_node;
-extern struct scx_cid_shard __rcu *scx_cid_shard_ranges;
-extern struct scx_cid_topo __rcu *scx_cid_topo;
-extern struct btf_id_set8 scx_kfunc_ids_init_cids;
-extern struct btf_id_set8 scx_kfunc_ids_cid;
+ಬಾಹ್ಯ u32 scx_nr_cid_shards;
+ಬಾಹ್ಯ s16 __rcu *scx_cid_ಗಮ್ಯ_cpu_tbl;
+ಬಾಹ್ಯ s16 __rcu *scx_cpu_ಗಮ್ಯ_cid_tbl;
+ಬಾಹ್ಯ s32 __rcu *scx_cid_ಗಮ್ಯ_shard;
+ಬಾಹ್ಯ s32 __rcu *scx_shard_ಗಂಟು;
+ಬಾಹ್ಯ ರಚನೆ scx_cid_shard __rcu *scx_cid_shard_ranges;
+ಬಾಹ್ಯ ರಚನೆ scx_cid_topo __rcu *scx_cid_topo;
+ಬಾಹ್ಯ ರಚನೆ btf_id_set8 scx_kfunc_ids_init_cids;
+ಬಾಹ್ಯ ರಚನೆ btf_id_set8 scx_kfunc_ids_cid;
 
-void scx_cmask_clear(struct scx_cmask *m);
-void scx_cmask_fill(struct scx_cmask *m);
-void scx_cmask_and(struct scx_cmask *dst, const struct scx_cmask *src);
-void scx_cmask_or(struct scx_cmask *dst, const struct scx_cmask *src);
-void scx_cmask_copy(struct scx_cmask *dst, const struct scx_cmask *src);
-void scx_cmask_andnot(struct scx_cmask *dst, const struct scx_cmask *src);
-bool scx_cmask_subset(const struct scx_cmask *sub, const struct scx_cmask *super);
-bool scx_cmask_intersects(const struct scx_cmask *a, const struct scx_cmask *b);
-bool scx_cmask_empty(const struct scx_cmask *m);
-s32 scx_cid_init(struct scx_sched *sch);
-void scx_cid_publish_tables(void);
-void scx_cid_retire_tables(void);
-int scx_cid_kfunc_init(void);
+ಶೂನ್ಯ scx_cmask_clear(ರಚನೆ scx_cmask *m);
+ಶೂನ್ಯ scx_cmask_fill(ರಚನೆ scx_cmask *m);
+ಶೂನ್ಯ scx_cmask_and(ರಚನೆ scx_cmask *dst, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *src);
+ಶೂನ್ಯ scx_cmask_or(ರಚನೆ scx_cmask *dst, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *src);
+ಶೂನ್ಯ scx_cmask_copy(ರಚನೆ scx_cmask *dst, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *src);
+ಶೂನ್ಯ scx_cmask_andnot(ರಚನೆ scx_cmask *dst, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *src);
+bool scx_cmask_subset(ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *sub, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *super);
+bool scx_cmask_intersects(ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *a, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *b);
+bool scx_cmask_ಖಾಲಿಗಳು(ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *m);
+s32 scx_cid_init(ರಚನೆ scx_sched *sch);
+ಶೂನ್ಯ scx_cid_publish_tables(ಶೂನ್ಯ);
+ಶೂನ್ಯ scx_cid_retire_tables(ಶೂನ್ಯ);
+ಪೂರ್ಣಾಂಕ scx_cid_kfunc_init(ಶೂನ್ಯ);
 
 /**
  * cid_valid - Verify a cid value, to be used on ops input args
@@ -91,12 +91,12 @@ int scx_cid_kfunc_init(void);
  * Return true if @cid is in [0, num_possible_cpus()). On failure, trigger
  * scx_error() and return false.
  */
-static inline bool cid_valid(struct scx_sched *sch, s32 cid)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool cid_valid(ರಚನೆ scx_sched *sch, s32 cid)
 {
-	if (likely(cid >= 0 && cid < num_possible_cpus()))
-		return true;
+	ಆದರೆ (likely(cid >= 0 && cid < ಅಂಕೆ_possible_cpus()))
+		ಹಿಂತಿರುಗಿ true;
 	scx_error(sch, "invalid cid %d", cid);
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
 
 /**
@@ -106,9 +106,9 @@ static inline bool cid_valid(struct scx_sched *sch, s32 cid)
  * Intended for callsites that have already validated @cid and that run on a
  * live scheduler, which guarantees the tables are published and stable.
  */
-static inline s32 __scx_cid_to_cpu(s32 cid)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ s32 __scx_cid_to_cpu(s32 cid)
 {
-	return rcu_dereference_all(scx_cid_to_cpu_tbl)[cid];
+	ಹಿಂತಿರುಗಿ rcu_dereference_all(scx_cid_ಗಮ್ಯ_cpu_tbl)[cid];
 }
 
 /**
@@ -117,9 +117,9 @@ static inline s32 __scx_cid_to_cpu(s32 cid)
  *
  * Same usage constraints as __scx_cid_to_cpu().
  */
-static inline s32 __scx_cpu_to_cid(s32 cpu)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ s32 __scx_cpu_to_cid(s32 cpu)
 {
-	return rcu_dereference_all(scx_cpu_to_cid_tbl)[cpu];
+	ಹಿಂತಿರುಗಿ rcu_dereference_all(scx_cpu_ಗಮ್ಯ_cid_tbl)[cpu];
 }
 
 /**
@@ -134,13 +134,13 @@ static inline s32 __scx_cpu_to_cid(s32 cpu)
  * published yet, which a prog-facing kfunc can observe while racing the root
  * scheduler enable.
  */
-static inline s32 scx_cid_to_cpu(struct scx_sched *sch, s32 cid)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ s32 scx_cid_ಗಮ್ಯ_cpu(ರಚನೆ scx_sched *sch, s32 cid)
 {
-	s16 *tbl = rcu_dereference_all(scx_cid_to_cpu_tbl);
+	s16 *tbl = rcu_dereference_all(scx_cid_ಗಮ್ಯ_cpu_tbl);
 
-	if (!cid_valid(sch, cid) || unlikely(!tbl))
-		return -EINVAL;
-	return tbl[cid];
+	ಆದರೆ (!cid_valid(sch, cid) || unlikely(!tbl))
+		ಹಿಂತಿರುಗಿ -EINVAL;
+	ಹಿಂತಿರುಗಿ tbl[cid];
 }
 
 /**
@@ -151,32 +151,32 @@ static inline s32 scx_cid_to_cpu(struct scx_sched *sch, s32 cid)
  * Return the cid for @cpu or a negative errno on failure. Invalid cpu triggers
  * scx_error() on @sch. Same usage rules as scx_cid_to_cpu().
  */
-static inline s32 scx_cpu_to_cid(struct scx_sched *sch, s32 cpu)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ s32 scx_cpu_ಗಮ್ಯ_cid(ರಚನೆ scx_sched *sch, s32 cpu)
 {
-	s16 *tbl = rcu_dereference_all(scx_cpu_to_cid_tbl);
+	s16 *tbl = rcu_dereference_all(scx_cpu_ಗಮ್ಯ_cid_tbl);
 
-	if (!scx_cpu_valid(sch, cpu, NULL) || unlikely(!tbl))
-		return -EINVAL;
-	return tbl[cpu];
+	ಆದರೆ (!scx_cpu_valid(sch, cpu, ಖಾಲಿ) || unlikely(!tbl))
+		ಹಿಂತಿರುಗಿ -EINVAL;
+	ಹಿಂತಿರುಗಿ tbl[cpu];
 }
 
 /**
  * scx_is_cid_type - Test whether the active scheduler hierarchy is cid-form
  */
-static inline bool scx_is_cid_type(void)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool scx_is_cid_type(ಶೂನ್ಯ)
 {
-	return static_branch_unlikely(&__scx_is_cid_type);
+	ಹಿಂತಿರುಗಿ static_branch_unlikely(&__scx_is_cid_type);
 }
 
-static inline bool __scx_cmask_contains(u32 cid, const struct scx_cmask *m)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool __scx_cmask_contains(u32 cid, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *m)
 {
-	return likely(cid >= m->base && cid < m->base + m->nr_cids);
+	ಹಿಂತಿರುಗಿ likely(cid >= m->ತಳ && cid < m->ತಳ + m->nr_cids);
 }
 
 /* Word in bits[] covering @cid. @cid must satisfy __scx_cmask_contains(). */
-static inline u64 *__scx_cmask_word(u32 cid, const struct scx_cmask *m)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u64 *__scx_cmask_word(u32 cid, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *m)
 {
-	return (u64 *)&m->bits[cid / 64 - m->base / 64];
+	ಹಿಂತಿರುಗಿ (u64 *)&m->ಬಿಟ್ಟುಗಳು[cid / 64 - m->ತಳ / 64];
 }
 
 /**
@@ -189,16 +189,16 @@ static inline u64 *__scx_cmask_word(u32 cid, const struct scx_cmask *m)
  * Use when storage is sized larger than the initial active range. All of
  * bits[] is zeroed.
  */
-static inline void __scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids,
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ __scx_cmask_init(ರಚನೆ scx_cmask *m, u32 ತಳ, u32 nr_cids,
 				    u32 alloc_cids)
 {
-	if (WARN_ON_ONCE(alloc_cids < nr_cids))
+	ಆದರೆ (WARN_ON_ONCE(alloc_cids < nr_cids))
 		nr_cids = alloc_cids;
 
-	m->base = base;
+	m->ತಳ = ತಳ;
 	m->nr_cids = nr_cids;
-	m->alloc_words = SCX_CMASK_NR_WORDS(alloc_cids);
-	memset(m->bits, 0, m->alloc_words * sizeof(u64));
+	m->alloc_ಪದಗಳು = SCX_CMASK_NR_ಪದಗಳು(alloc_cids);
+	memset(m->ಬಿಟ್ಟುಗಳು, 0, m->alloc_ಪದಗಳು * ಗಾತ್ರ(u64));
 }
 
 /**
@@ -209,9 +209,9 @@ static inline void __scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids,
  *
  * All of bits[] is zeroed.
  */
-static inline void scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_cmask_init(ರಚನೆ scx_cmask *m, u32 ತಳ, u32 nr_cids)
 {
-	__scx_cmask_init(m, base, nr_cids, nr_cids);
+	__scx_cmask_init(m, ತಳ, nr_cids, nr_cids);
 }
 
 /**
@@ -223,27 +223,27 @@ static inline void scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids)
  * Body bits within the new range become garbage - only the head and tail
  * words are zeroed to keep the padding invariant.
  */
-static inline void scx_cmask_reframe(struct scx_cmask *m, u32 base, u32 nr_cids)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_cmask_reframe(ರಚನೆ scx_cmask *m, u32 ತಳ, u32 nr_cids)
 {
-	if (WARN_ON_ONCE(SCX_CMASK_NR_WORDS(nr_cids) > m->alloc_words))
-		return;
+	ಆದರೆ (WARN_ON_ONCE(SCX_CMASK_NR_ಪದಗಳು(nr_cids) > m->alloc_ಪದಗಳು))
+		ಹಿಂತಿರುಗಿ;
 
-	if (nr_cids) {
-		u32 last_word = ((base & 63) + nr_cids - 1) / 64;
+	ಆದರೆ (nr_cids) {
+		u32 ಕೊನೆಯ_ಶಬ್ದ = ((ತಳ & 63) + nr_cids - 1) / 64;
 
-		m->bits[0] = 0;
-		m->bits[last_word] = 0;
+		m->ಬಿಟ್ಟುಗಳು[0] = 0;
+		m->ಬಿಟ್ಟುಗಳು[ಕೊನೆಯ_ಶಬ್ದ] = 0;
 	}
 
-	m->base = base;
+	m->ತಳ = ತಳ;
 	m->nr_cids = nr_cids;
 }
 
-static inline void __scx_cmask_set(u32 cid, struct scx_cmask *m)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ __scx_cmask_set(u32 cid, ರಚನೆ scx_cmask *m)
 {
-	if (!__scx_cmask_contains(cid, m))
-		return;
-	*__scx_cmask_word(cid, m) |= BIT_U64(cid & 63);
+	ಆದರೆ (!__scx_cmask_contains(cid, m))
+		ಹಿಂತಿರುಗಿ;
+	*__scx_cmask_word(cid, m) |= ಬಿಟ್_U64(cid & 63);
 }
 
 /**
@@ -254,22 +254,22 @@ static inline void __scx_cmask_set(u32 cid, struct scx_cmask *m)
  * Return %false if @cid is outside @m's active range. Otherwise return the
  * bit's value. Read via READ_ONCE so callers can race set/clear writers.
  */
-static inline bool scx_cmask_test(u32 cid, const struct scx_cmask *m)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool scx_cmask_test(u32 cid, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *m)
 {
-	if (!__scx_cmask_contains(cid, m))
-		return false;
-	return READ_ONCE(*__scx_cmask_word(cid, m)) & BIT_U64(cid & 63);
+	ಆದರೆ (!__scx_cmask_contains(cid, m))
+		ಹಿಂತಿರುಗಿ false;
+	ಹಿಂತಿರುಗಿ READ_ONCE(*__scx_cmask_word(cid, m)) & ಬಿಟ್_U64(cid & 63);
 }
 
 /*
  * Words of bits[] the active range spans, 0 if empty. Tighter than the storage
  * SCX_CMASK_NR_WORDS() sizes for the worst-case base alignment.
  */
-static inline u32 scx_cmask_nr_used_words(const struct scx_cmask *m)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u32 scx_cmask_nr_ಬಳಸಿದ_ಪದಗಳು(ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *m)
 {
-	if (!m->nr_cids)
-		return 0;
-	return ((m->base & 63) + m->nr_cids - 1) / 64 + 1;
+	ಆದರೆ (!m->nr_cids)
+		ಹಿಂತಿರುಗಿ 0;
+	ಹಿಂತಿರುಗಿ ((m->ತಳ & 63) + m->nr_cids - 1) / 64 + 1;
 }
 
 /**
@@ -281,11 +281,11 @@ static inline u32 scx_cmask_nr_used_words(const struct scx_cmask *m)
  * words the active range spans, where head and tail padding is kept zero, so
  * no per-cid range check is needed.
  */
-#define scx_cmask_for_each_cid(cid, m)						\
-	for (u64 __bs = (m)->base & ~63u, __wi = 0,				\
-		     __nw = scx_cmask_nr_used_words(m);				\
+#ವ್ಯಾಖ್ಯಾನಿಸು scx_cmask_for_each_cid(cid, m)						\
+	ಗಾಗಿ (u64 __bs = (m)->ತಳ & ~63u, __wi = 0,				\
+		     __nw = scx_cmask_nr_ಬಳಸಿದ_ಪದಗಳು(m);				\
 	     __wi < __nw; __wi++)						\
-		for (u64 __w = READ_ONCE((m)->bits[__wi]);			\
+		ಗಾಗಿ (u64 __w = READ_ONCE((m)->ಬಿಟ್ಟುಗಳು[__wi]);			\
 		     __w && ((cid) = __bs + __wi * 64 + __ffs64(__w), true);	\
 		     __w &= __w - 1)
 
@@ -296,29 +296,29 @@ static inline u32 scx_cmask_nr_used_words(const struct scx_cmask *m)
  * (currently only ops.select_cpu); it validates the BPF-supplied cid and
  * triggers scx_error() on @sch if invalid.
  */
-static inline s32 scx_cpu_arg(s32 cpu)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ s32 scx_cpu_arg(s32 cpu)
 {
-	if (scx_is_cid_type())
-		return __scx_cpu_to_cid(cpu);
-	return cpu;
+	ಆದರೆ (scx_is_cid_type())
+		ಹಿಂತಿರುಗಿ __scx_cpu_to_cid(cpu);
+	ಹಿಂತಿರುಗಿ cpu;
 }
 
-static inline s32 scx_cpu_ret(struct scx_sched *sch, s32 cpu_or_cid)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ s32 scx_cpu_ret(ರಚನೆ scx_sched *sch, s32 cpu_or_cid)
 {
-	if (cpu_or_cid < 0 || !scx_is_cid_type())
-		return cpu_or_cid;
-	return scx_cid_to_cpu(sch, cpu_or_cid);
+	ಆದರೆ (cpu_or_cid < 0 || !scx_is_cid_type())
+		ಹಿಂತಿರುಗಿ cpu_or_cid;
+	ಹಿಂತಿರುಗಿ scx_cid_ಗಮ್ಯ_cpu(sch, cpu_or_cid);
 }
 
-int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
-		       struct scx_cmask_ref *ref);
-void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
-			     u32 base, u32 nr_cids, struct scx_cmask_ref *ref);
-void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
-			 struct scx_cmask *out);
-void scx_cmask_ref_from_cpumask(const struct scx_cmask_ref *ref,
-				const struct cpumask *cpumask);
-void scx_cmask_ref_or(const struct scx_cmask_ref *ref, const struct scx_cmask *src);
-void scx_cmask_ref_copy(const struct scx_cmask_ref *ref, const struct scx_cmask *src);
+ಪೂರ್ಣಾಂಕ scx_cmask_ref_init(ರಚನೆ scx_sched *sch, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *src,
+		       ರಚನೆ scx_cmask_ref *ref);
+ಶೂನ್ಯ scx_cmask_ref_init_kern(ರಚನೆ scx_sched *sch, ರಚನೆ scx_cmask *m,
+			     u32 ತಳ, u32 nr_cids, ರಚನೆ scx_cmask_ref *ref);
+ಶೂನ್ಯ scx_cmask_ref_shard(ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask_ref *ref, s32 shard_idx,
+			 ರಚನೆ scx_cmask *ಹೊರಹೋಗು);
+ಶೂನ್ಯ scx_cmask_ref_from_cpumask(ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask_ref *ref,
+				ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpumask);
+ಶೂನ್ಯ scx_cmask_ref_or(ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask_ref *ref, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *src);
+ಶೂನ್ಯ scx_cmask_ref_copy(ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask_ref *ref, ಸ್ಥಿರಾಂಕ ರಚನೆ scx_cmask *src);
 
-#endif /* _KERNEL_SCHED_EXT_CID_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _KERNEL_SCHED_EXT_CID_H */

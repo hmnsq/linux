@@ -2,16 +2,16 @@
 /*
  * <linux/swait.h> (simple wait queues ) implementation:
  */
-#include "sched.h"
+#ಅನ್ತರ್ಭಾವ "sched.h"
 
-void __init_swait_queue_head(struct swait_queue_head *q, const char *name,
-			     struct lock_class_key *key)
+ಶೂನ್ಯ __init_swait_queue_head(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name,
+			     ರಚನೆ ಬೀಗ_class_ಕೀಲಿ *ಕೀಲಿ)
 {
-	raw_spin_lock_init(&q->lock);
-	lockdep_set_class_and_name(&q->lock, key, name);
-	INIT_LIST_HEAD(&q->task_list);
+	raw_spin_ಬೀಗ_init(&q->ಬೀಗ);
+	lockdep_ಗಣ_class_and_name(&q->ಬೀಗ, ಕೀಲಿ, name);
+	INIT_LIST_ತಲೆ(&q->task_list);
 }
-EXPORT_SYMBOL(__init_swait_queue_head);
+EXPORT_ಚಿಹ್ನೆ(__init_swait_queue_head);
 
 /*
  * The thing about the wake_up_state() return value; I think we can ignore it.
@@ -19,18 +19,18 @@ EXPORT_SYMBOL(__init_swait_queue_head);
  * If for some reason it would return 0, that means the previously waiting
  * task is already running, so it will observe condition true (or has already).
  */
-void swake_up_locked(struct swait_queue_head *q, int wake_flags)
+ಶೂನ್ಯ swake_ಮೇಲೆ_locked(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q, ಪೂರ್ಣಾಂಕ wake_flags)
 {
-	struct swait_queue *curr;
+	ರಚನೆ swait_ಸರತಿ *curr;
 
-	if (list_empty(&q->task_list))
-		return;
+	ಆದರೆ (list_ಖಾಲಿಗಳು(&q->task_list))
+		ಹಿಂತಿರುಗಿ;
 
-	curr = list_first_entry(&q->task_list, typeof(*curr), task_list);
-	try_to_wake_up(curr->task, TASK_NORMAL, wake_flags);
+	curr = list_ಮೊದಲ_ನಮೂದು(&q->task_list, typeof(*curr), task_list);
+	try_ಗಮ್ಯ_wake_ಮೇಲೆ(curr->task, TASK_ಸಾಮಾನ್ಯ, wake_flags);
 	list_del_init(&curr->task_list);
 }
-EXPORT_SYMBOL(swake_up_locked);
+EXPORT_ಚಿಹ್ನೆ(swake_ಮೇಲೆ_locked);
 
 /*
  * Wake up all waiters. This is an interface which is solely exposed for
@@ -39,107 +39,107 @@ EXPORT_SYMBOL(swake_up_locked);
  * It is intentionally different from swake_up_all() to allow usage from
  * hard interrupt context and interrupt disabled regions.
  */
-void swake_up_all_locked(struct swait_queue_head *q)
+ಶೂನ್ಯ swake_ಮೇಲೆ_all_locked(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q)
 {
-	while (!list_empty(&q->task_list))
-		swake_up_locked(q, 0);
+	ಆಗ (!list_ಖಾಲಿಗಳು(&q->task_list))
+		swake_ಮೇಲೆ_locked(q, 0);
 }
 
-void swake_up_one(struct swait_queue_head *q)
+ಶೂನ್ಯ swake_ಮೇಲೆ_one(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q)
 {
-	unsigned long flags;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ flags;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
-	swake_up_locked(q, 0);
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	raw_spin_ಬೀಗ_irqsave(&q->ಬೀಗ, flags);
+	swake_ಮೇಲೆ_locked(q, 0);
+	raw_spin_unlock_irqrestore(&q->ಬೀಗ, flags);
 }
-EXPORT_SYMBOL(swake_up_one);
+EXPORT_ಚಿಹ್ನೆ(swake_ಮೇಲೆ_one);
 
 /*
  * Does not allow usage from IRQ disabled, since we must be able to
  * release IRQs to guarantee bounded hold time.
  */
-void swake_up_all(struct swait_queue_head *q)
+ಶೂನ್ಯ swake_ಮೇಲೆ_all(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q)
 {
-	struct swait_queue *curr;
-	LIST_HEAD(tmp);
+	ರಚನೆ swait_ಸರತಿ *curr;
+	LIST_ತಲೆ(tmp);
 
-	raw_spin_lock_irq(&q->lock);
+	raw_spin_ಬೀಗ_irq(&q->ಬೀಗ);
 	list_splice_init(&q->task_list, &tmp);
-	while (!list_empty(&tmp)) {
-		curr = list_first_entry(&tmp, typeof(*curr), task_list);
+	ಆಗ (!list_ಖಾಲಿಗಳು(&tmp)) {
+		curr = list_ಮೊದಲ_ನಮೂದು(&tmp, typeof(*curr), task_list);
 
-		wake_up_state(curr->task, TASK_NORMAL);
+		wake_ಮೇಲೆ_state(curr->task, TASK_ಸಾಮಾನ್ಯ);
 		list_del_init(&curr->task_list);
 
-		if (list_empty(&tmp))
-			break;
+		ಆದರೆ (list_ಖಾಲಿಗಳು(&tmp))
+			ನಿಲ್ಲಿಸು;
 
-		raw_spin_unlock_irq(&q->lock);
-		raw_spin_lock_irq(&q->lock);
+		raw_spin_unlock_irq(&q->ಬೀಗ);
+		raw_spin_ಬೀಗ_irq(&q->ಬೀಗ);
 	}
-	raw_spin_unlock_irq(&q->lock);
+	raw_spin_unlock_irq(&q->ಬೀಗ);
 }
-EXPORT_SYMBOL(swake_up_all);
+EXPORT_ಚಿಹ್ನೆ(swake_ಮೇಲೆ_all);
 
-void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait)
+ಶೂನ್ಯ __prepare_to_swait(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q, ರಚನೆ swait_ಸರತಿ *wait)
 {
 	wait->task = current;
-	if (list_empty(&wait->task_list))
-		list_add_tail(&wait->task_list, &q->task_list);
+	ಆದರೆ (list_ಖಾಲಿಗಳು(&wait->task_list))
+		list_ಕೂಡಿಸು_ಬಾಲ(&wait->task_list, &q->task_list);
 }
 
-void prepare_to_swait_exclusive(struct swait_queue_head *q, struct swait_queue *wait, int state)
+ಶೂನ್ಯ prepare_ಗಮ್ಯ_swait_exclusive(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q, ರಚನೆ swait_ಸರತಿ *wait, ಪೂರ್ಣಾಂಕ state)
 {
-	unsigned long flags;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ flags;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
+	raw_spin_ಬೀಗ_irqsave(&q->ಬೀಗ, flags);
 	__prepare_to_swait(q, wait);
-	set_current_state(state);
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	ಗಣ_current_state(state);
+	raw_spin_unlock_irqrestore(&q->ಬೀಗ, flags);
 }
-EXPORT_SYMBOL(prepare_to_swait_exclusive);
+EXPORT_ಚಿಹ್ನೆ(prepare_ಗಮ್ಯ_swait_exclusive);
 
-long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queue *wait, int state)
+ದೀರ್ಘ prepare_ಗಮ್ಯ_swait_event(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q, ರಚನೆ swait_ಸರತಿ *wait, ಪೂರ್ಣಾಂಕ state)
 {
-	unsigned long flags;
-	long ret = 0;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ flags;
+	ದೀರ್ಘ ret = 0;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
-	if (signal_pending_state(state, current)) {
+	raw_spin_ಬೀಗ_irqsave(&q->ಬೀಗ, flags);
+	ಆದರೆ (signal_pending_state(state, current)) {
 		/*
 		 * See prepare_to_wait_event(). TL;DR, subsequent swake_up_one()
 		 * must not see us.
 		 */
 		list_del_init(&wait->task_list);
 		ret = -ERESTARTSYS;
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		__prepare_to_swait(q, wait);
-		set_current_state(state);
+		ಗಣ_current_state(state);
 	}
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	raw_spin_unlock_irqrestore(&q->ಬೀಗ, flags);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
-EXPORT_SYMBOL(prepare_to_swait_event);
+EXPORT_ಚಿಹ್ನೆ(prepare_ಗಮ್ಯ_swait_event);
 
-void __finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
+ಶೂನ್ಯ __finish_swait(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q, ರಚನೆ swait_ಸರತಿ *wait)
 {
 	__set_current_state(TASK_RUNNING);
-	if (!list_empty(&wait->task_list))
+	ಆದರೆ (!list_ಖಾಲಿಗಳು(&wait->task_list))
 		list_del_init(&wait->task_list);
 }
 
-void finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
+ಶೂನ್ಯ ಮುಕ್ತಾಯ_swait(ರಚನೆ swait_ಸರತಿ_ತಲೆ *q, ರಚನೆ swait_ಸರತಿ *wait)
 {
-	unsigned long flags;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ flags;
 
 	__set_current_state(TASK_RUNNING);
 
-	if (!list_empty_careful(&wait->task_list)) {
-		raw_spin_lock_irqsave(&q->lock, flags);
+	ಆದರೆ (!list_ಖಾಲಿಗಳು_careful(&wait->task_list)) {
+		raw_spin_ಬೀಗ_irqsave(&q->ಬೀಗ, flags);
 		list_del_init(&wait->task_list);
-		raw_spin_unlock_irqrestore(&q->lock, flags);
+		raw_spin_unlock_irqrestore(&q->ಬೀಗ, flags);
 	}
 }
-EXPORT_SYMBOL(finish_swait);
+EXPORT_ಚಿಹ್ನೆ(ಮುಕ್ತಾಯ_swait);

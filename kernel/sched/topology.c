@@ -3,412 +3,412 @@
  * Scheduler topology setup/handling methods
  */
 
-#include <linux/sched/isolation.h>
-#include <linux/sched/clock.h>
-#include <linux/bsearch.h>
-#include "sched.h"
+#ಅನ್ತರ್ಭಾವ <linux/sched/isolation.h>
+#ಅನ್ತರ್ಭಾವ <linux/sched/clock.h>
+#ಅನ್ತರ್ಭಾವ <linux/bsearch.h>
+#ಅನ್ತರ್ಭಾವ "sched.h"
 
 DEFINE_MUTEX(sched_domains_mutex);
-void sched_domains_mutex_lock(void)
+ಶೂನ್ಯ sched_domains_mutex_ಬೀಗ(ಶೂನ್ಯ)
 {
-	mutex_lock(&sched_domains_mutex);
+	mutex_ಬೀಗ(&sched_domains_mutex);
 }
-void sched_domains_mutex_unlock(void)
+ಶೂನ್ಯ sched_domains_mutex_unlock(ಶೂನ್ಯ)
 {
 	mutex_unlock(&sched_domains_mutex);
 }
 
 /* Protected by sched_domains_mutex: */
-static cpumask_var_t sched_domains_llc_id_allocmask;
-static cpumask_var_t sched_domains_tmpmask;
-static cpumask_var_t sched_domains_tmpmask2;
-int max_lid;
+ಸ್ಥಿರ cpumask_var_t sched_domains_llc_id_allocmask;
+ಸ್ಥಿರ cpumask_var_t sched_domains_tmpmask;
+ಸ್ಥಿರ cpumask_var_t sched_domains_tmpmask2;
+ಪೂರ್ಣಾಂಕ max_lid;
 
-static int __init sched_debug_setup(char *str)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __init sched_debug_ಸಿದ್ಧತೆ(ಅಕ್ಷರ *str)
 {
 	sched_debug_verbose = true;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-early_param("sched_verbose", sched_debug_setup);
+early_param("sched_verbose", sched_debug_ಸಿದ್ಧತೆ);
 
-#ifdef CONFIG_SCHED_SMT
-static bool sched_smt_asym_packing __read_mostly;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_SMT
+ಸ್ಥಿರ bool sched_smt_asym_packing __read_mostly;
 
-static int __init setup_sched_smt_asym_packing(char *str)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __init ಸಿದ್ಧತೆ_sched_smt_asym_packing(ಅಕ್ಷರ *str)
 {
-	if (strcmp(str, "on"))
-		return 0;
+	ಆದರೆ (strcmp(str, "on"))
+		ಹಿಂತಿರುಗಿ 0;
 
 	sched_smt_asym_packing = true;
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
-__setup("sched_smt_asym_packing=", setup_sched_smt_asym_packing);
-#endif
+__setup("sched_smt_asym_packing=", ಸಿದ್ಧತೆ_sched_smt_asym_packing);
+#ಆದರೆ_ಅಂತ್ಯ
 
-static inline bool sched_debug(void)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool sched_debug(ಶೂನ್ಯ)
 {
-	return sched_debug_verbose;
+	ಹಿಂತಿರುಗಿ sched_debug_verbose;
 }
 
-#define SD_FLAG(_name, mflags) [__##_name] = { .meta_flags = mflags, .name = #_name },
-const struct sd_flag_debug sd_flag_debug[] = {
-#include <linux/sched/sd_flags.h>
+#ವ್ಯಾಖ್ಯಾನಿಸು SD_FLAG(_name, mflags) [__##_name] = { .meta_flags = mflags, .name = #_name },
+ಸ್ಥಿರಾಂಕ ರಚನೆ sd_flag_debug sd_flag_debug[] = {
+#ಅನ್ತರ್ಭಾವ <linux/sched/sd_flags.h>
 };
-#undef SD_FLAG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SD_FLAG
 
-static int sched_domain_debug_one(struct sched_domain *sd, int cpu, int level,
-				  struct cpumask *groupmask)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sched_domain_debug_one(ರಚನೆ sched_domain *sd, ಪೂರ್ಣಾಂಕ cpu, ಪೂರ್ಣಾಂಕ level,
+				  ರಚನೆ cpumask *groupmask)
 {
-	struct sched_group *group = sd->groups;
-	unsigned long flags = sd->flags;
-	unsigned int idx;
+	ರಚನೆ sched_ಗುಂಪು *ಗುಂಪು = sd->groups;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ flags = sd->flags;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ idx;
 
 	cpumask_clear(groupmask);
 
 	printk(KERN_DEBUG "%*s domain-%d: ", level, "", level);
 	printk(KERN_CONT "span=%*pbl level=%s\n",
-	       cpumask_pr_args(sched_domain_span(sd)), sd->name);
+	       cpumask_pr_ವಾದಗಳು(sched_domain_ಹರವು(sd)), sd->name);
 
-	if (!cpumask_test_cpu(cpu, sched_domain_span(sd))) {
+	ಆದರೆ (!cpumask_test_cpu(cpu, sched_domain_ಹರವು(sd))) {
 		printk(KERN_ERR "ERROR: domain->span does not contain CPU%d\n", cpu);
 	}
-	if (group && !cpumask_test_cpu(cpu, sched_group_span(group))) {
+	ಆದರೆ (ಗುಂಪು && !cpumask_test_cpu(cpu, sched_ಗುಂಪು_ಹರವು(ಗುಂಪು))) {
 		printk(KERN_ERR "ERROR: domain->groups does not contain CPU%d\n", cpu);
 	}
 
-	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
-		unsigned int flag = BIT(idx);
-		unsigned int meta_flags = sd_flag_debug[idx].meta_flags;
+	for_each_ಗಣ_ಬಿಟ್(idx, &flags, __SD_FLAG_CNT) {
+		ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ flag = ಬಿಟ್(idx);
+		ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ meta_flags = sd_flag_debug[idx].meta_flags;
 
-		if ((meta_flags & SDF_SHARED_CHILD) && sd->child &&
-		    !(sd->child->flags & flag))
+		ಆದರೆ ((meta_flags & SDF_SHARED_ಮಗು) && sd->ಮಗು &&
+		    !(sd->ಮಗು->flags & flag))
 			printk(KERN_ERR "ERROR: flag %s set here but not in child\n",
 			       sd_flag_debug[idx].name);
 
-		if ((meta_flags & SDF_SHARED_PARENT) && sd->parent &&
-		    !(sd->parent->flags & flag))
+		ಆದರೆ ((meta_flags & SDF_SHARED_ಪೋಷಕ) && sd->ಪೋಷಕ &&
+		    !(sd->ಪೋಷಕ->flags & flag))
 			printk(KERN_ERR "ERROR: flag %s set here but not in parent\n",
 			       sd_flag_debug[idx].name);
 	}
 
 	printk(KERN_DEBUG "%*s groups:", level + 1, "");
-	do {
-		if (!group) {
+	ಮಾಡು {
+		ಆದರೆ (!ಗುಂಪು) {
 			printk("\n");
 			printk(KERN_ERR "ERROR: group is NULL\n");
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 
-		if (cpumask_empty(sched_group_span(group))) {
+		ಆದರೆ (cpumask_ಖಾಲಿಗಳು(sched_ಗುಂಪು_ಹರವು(ಗುಂಪು))) {
 			printk(KERN_CONT "\n");
 			printk(KERN_ERR "ERROR: empty group\n");
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 
-		if (!(sd->flags & SD_NUMA) &&
-		    cpumask_intersects(groupmask, sched_group_span(group))) {
+		ಆದರೆ (!(sd->flags & SD_NUMA) &&
+		    cpumask_intersects(groupmask, sched_ಗುಂಪು_ಹರವು(ಗುಂಪು))) {
 			printk(KERN_CONT "\n");
 			printk(KERN_ERR "ERROR: repeated CPUs\n");
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 
-		cpumask_or(groupmask, groupmask, sched_group_span(group));
+		cpumask_or(groupmask, groupmask, sched_ಗುಂಪು_ಹರವು(ಗುಂಪು));
 
 		printk(KERN_CONT " %d:{ span=%*pbl",
-				group->sgc->id,
-				cpumask_pr_args(sched_group_span(group)));
+				ಗುಂಪು->sgc->id,
+				cpumask_pr_ವಾದಗಳು(sched_ಗುಂಪು_ಹರವು(ಗುಂಪು)));
 
-		if ((sd->flags & SD_NUMA) &&
-		    !cpumask_equal(group_balance_mask(group), sched_group_span(group))) {
+		ಆದರೆ ((sd->flags & SD_NUMA) &&
+		    !cpumask_equal(ಗುಂಪು_balance_ಮುಖವಾಡ(ಗುಂಪು), sched_ಗುಂಪು_ಹರವು(ಗುಂಪು))) {
 			printk(KERN_CONT " mask=%*pbl",
-				cpumask_pr_args(group_balance_mask(group)));
+				cpumask_pr_ವಾದಗಳು(ಗುಂಪು_balance_ಮುಖವಾಡ(ಗುಂಪು)));
 		}
 
-		if (group->sgc->capacity != SCHED_CAPACITY_SCALE)
-			printk(KERN_CONT " cap=%lu", group->sgc->capacity);
+		ಆದರೆ (ಗುಂಪು->sgc->ಸಾಮರ್ಥ್ಯ != SCHED_ಸಾಮರ್ಥ್ಯ_SCALE)
+			printk(KERN_CONT " cap=%lu", ಗುಂಪು->sgc->ಸಾಮರ್ಥ್ಯ);
 
-		if (group == sd->groups && sd->child &&
-		    !cpumask_equal(sched_domain_span(sd->child),
-				   sched_group_span(group))) {
+		ಆದರೆ (ಗುಂಪು == sd->groups && sd->ಮಗು &&
+		    !cpumask_equal(sched_domain_ಹರವು(sd->ಮಗು),
+				   sched_ಗುಂಪು_ಹರವು(ಗುಂಪು))) {
 			printk(KERN_ERR "ERROR: domain->groups does not match domain->child\n");
 		}
 
 		printk(KERN_CONT " }");
 
-		group = group->next;
+		ಗುಂಪು = ಗುಂಪು->ಮುಂದಿನ;
 
-		if (group != sd->groups)
+		ಆದರೆ (ಗುಂಪು != sd->groups)
 			printk(KERN_CONT ",");
 
-	} while (group != sd->groups);
+	} ಆಗ (ಗುಂಪು != sd->groups);
 	printk(KERN_CONT "\n");
 
-	if (!cpumask_equal(sched_domain_span(sd), groupmask))
+	ಆದರೆ (!cpumask_equal(sched_domain_ಹರವು(sd), groupmask))
 		printk(KERN_ERR "ERROR: groups don't span domain->span\n");
 
-	if (sd->parent &&
-	    !cpumask_subset(groupmask, sched_domain_span(sd->parent)))
+	ಆದರೆ (sd->ಪೋಷಕ &&
+	    !cpumask_subset(groupmask, sched_domain_ಹರವು(sd->ಪೋಷಕ)))
 		printk(KERN_ERR "ERROR: parent span is not a superset of domain->span\n");
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void sched_domain_debug(struct sched_domain *sd, int cpu)
+ಸ್ಥಿರ ಶೂನ್ಯ sched_domain_debug(ರಚನೆ sched_domain *sd, ಪೂರ್ಣಾಂಕ cpu)
 {
-	int level = 0;
+	ಪೂರ್ಣಾಂಕ level = 0;
 
-	if (!sched_debug_verbose)
-		return;
+	ಆದರೆ (!sched_debug_verbose)
+		ಹಿಂತಿರುಗಿ;
 
-	if (!sd) {
+	ಆದರೆ (!sd) {
 		printk(KERN_DEBUG "CPU%d attaching NULL sched-domain.\n", cpu);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	printk(KERN_DEBUG "CPU%d attaching sched-domain(s):\n", cpu);
 
-	for (;;) {
-		if (sched_domain_debug_one(sd, cpu, level, sched_domains_tmpmask))
-			break;
+	ಗಾಗಿ (;;) {
+		ಆದರೆ (sched_domain_debug_one(sd, cpu, level, sched_domains_tmpmask))
+			ನಿಲ್ಲಿಸು;
 		level++;
-		sd = sd->parent;
-		if (!sd)
-			break;
+		sd = sd->ಪೋಷಕ;
+		ಆದರೆ (!sd)
+			ನಿಲ್ಲಿಸು;
 	}
 }
 
 /* Generate a mask of SD flags with the SDF_NEEDS_GROUPS metaflag */
-#define SD_FLAG(name, mflags) (name * !!((mflags) & SDF_NEEDS_GROUPS)) |
-static const unsigned int SD_DEGENERATE_GROUPS_MASK =
-#include <linux/sched/sd_flags.h>
+#ವ್ಯಾಖ್ಯಾನಿಸು SD_FLAG(name, mflags) (name * !!((mflags) & SDF_NEEDS_GROUPS)) |
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ SD_DEGENERATE_GROUPS_ಮುಖವಾಡ =
+#ಅನ್ತರ್ಭಾವ <linux/sched/sd_flags.h>
 0;
-#undef SD_FLAG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SD_FLAG
 
-static int sd_degenerate(struct sched_domain *sd)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sd_degenerate(ರಚನೆ sched_domain *sd)
 {
-	if (cpumask_weight(sched_domain_span(sd)) == 1)
-		return 1;
+	ಆದರೆ (cpumask_ತೂಕ(sched_domain_ಹರವು(sd)) == 1)
+		ಹಿಂತಿರುಗಿ 1;
 
 	/* Following flags need at least 2 groups */
-	if ((sd->flags & SD_DEGENERATE_GROUPS_MASK) &&
-	    (sd->groups != sd->groups->next))
-		return 0;
+	ಆದರೆ ((sd->flags & SD_DEGENERATE_GROUPS_ಮುಖವಾಡ) &&
+	    (sd->groups != sd->groups->ಮುಂದಿನ))
+		ಹಿಂತಿರುಗಿ 0;
 
 	/* Following flags don't use groups */
-	if (sd->flags & (SD_WAKE_AFFINE))
-		return 0;
+	ಆದರೆ (sd->flags & (SD_WAKE_AFFINE))
+		ಹಿಂತಿರುಗಿ 0;
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-static int
-sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+sd_ಪೋಷಕ_degenerate(ರಚನೆ sched_domain *sd, ರಚನೆ sched_domain *ಪೋಷಕ)
 {
-	unsigned long cflags = sd->flags, pflags = parent->flags;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ cflags = sd->flags, pflags = ಪೋಷಕ->flags;
 
-	if (sd_degenerate(parent))
-		return 1;
+	ಆದರೆ (sd_degenerate(ಪೋಷಕ))
+		ಹಿಂತಿರುಗಿ 1;
 
-	if (!cpumask_equal(sched_domain_span(sd), sched_domain_span(parent)))
-		return 0;
+	ಆದರೆ (!cpumask_equal(sched_domain_ಹರವು(sd), sched_domain_ಹರವು(ಪೋಷಕ)))
+		ಹಿಂತಿರುಗಿ 0;
 
 	/* Flags needing groups don't count if only 1 group in parent */
-	if (parent->groups == parent->groups->next)
-		pflags &= ~SD_DEGENERATE_GROUPS_MASK;
+	ಆದರೆ (ಪೋಷಕ->groups == ಪೋಷಕ->groups->ಮುಂದಿನ)
+		pflags &= ~SD_DEGENERATE_GROUPS_ಮುಖವಾಡ;
 
-	if (~cflags & pflags)
-		return 0;
+	ಆದರೆ (~cflags & pflags)
+		ಹಿಂತಿರುಗಿ 0;
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-DEFINE_STATIC_KEY_FALSE(sched_energy_present);
-static unsigned int sysctl_sched_energy_aware = 1;
-static DEFINE_MUTEX(sched_energy_mutex);
-static bool sched_energy_update;
+#ಆದರೆ defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+DEFINE_STATIC_ಕೀಲಿ_FALSE(sched_energy_present);
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ sysctl_sched_energy_aware = 1;
+ಸ್ಥಿರ DEFINE_MUTEX(sched_energy_mutex);
+ಸ್ಥಿರ bool sched_energy_update;
 
-static bool sched_is_eas_possible(const struct cpumask *cpu_mask)
+ಸ್ಥಿರ bool sched_is_eas_possible(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_ಮುಖವಾಡ)
 {
-	bool any_asym_capacity = false;
-	int i;
+	bool any_asym_ಸಾಮರ್ಥ್ಯ = false;
+	ಪೂರ್ಣಾಂಕ i;
 
 	/* EAS is enabled for asymmetric CPU capacity topologies. */
-	for_each_cpu(i, cpu_mask) {
-		if (rcu_access_pointer(per_cpu(sd_asym_cpucapacity, i))) {
-			any_asym_capacity = true;
-			break;
+	for_each_cpu(i, cpu_ಮುಖವಾಡ) {
+		ಆದರೆ (rcu_access_ಸೂಚಕ(ಪ್ರತಿ_cpu(sd_asym_cpucapacity, i))) {
+			any_asym_ಸಾಮರ್ಥ್ಯ = true;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
-	if (!any_asym_capacity) {
-		if (sched_debug()) {
+	ಆದರೆ (!any_asym_ಸಾಮರ್ಥ್ಯ) {
+		ಆದರೆ (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS, CPUs do not have asymmetric capacities\n",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_ವಾದಗಳು(cpu_ಮುಖವಾಡ));
 		}
-		return false;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
 	/* EAS definitely does *not* handle SMT */
-	if (sched_smt_active()) {
-		if (sched_debug()) {
+	ಆದರೆ (sched_smt_ಸಕ್ರಿಯ()) {
+		ಆದರೆ (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS, SMT is not supported\n",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_ವಾದಗಳು(cpu_ಮುಖವಾಡ));
 		}
-		return false;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	if (!arch_scale_freq_invariant()) {
-		if (sched_debug()) {
+	ಆದರೆ (!arch_scale_freq_invariant()) {
+		ಆದರೆ (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS: frequency-invariant load tracking not yet supported",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_ವಾದಗಳು(cpu_ಮುಖವಾಡ));
 		}
-		return false;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	if (!cpufreq_ready_for_eas(cpu_mask)) {
-		if (sched_debug()) {
+	ಆದರೆ (!cpufreq_ready_for_eas(cpu_ಮುಖವಾಡ)) {
+		ಆದರೆ (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS: cpufreq is not ready\n",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_ವಾದಗಳು(cpu_ಮುಖವಾಡ));
 		}
-		return false;
+		ಹಿಂತಿರುಗಿ false;
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-void rebuild_sched_domains_energy(void)
+ಶೂನ್ಯ rebuild_sched_domains_energy(ಶೂನ್ಯ)
 {
-	mutex_lock(&sched_energy_mutex);
+	mutex_ಬೀಗ(&sched_energy_mutex);
 	sched_energy_update = true;
 	rebuild_sched_domains();
 	sched_energy_update = false;
 	mutex_unlock(&sched_energy_mutex);
 }
 
-#ifdef CONFIG_SYSCTL
-static int sched_energy_aware_handler(const struct ctl_table *table, int write,
-		void *buffer, size_t *lenp, loff_t *ppos)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SYSCTL
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sched_energy_aware_handler(ಸ್ಥಿರಾಂಕ ರಚನೆ ctl_ಕೋಷ್ಟಕ *ಕೋಷ್ಟಕ, ಪೂರ್ಣಾಂಕ ಲಿಖ,
+		ಶೂನ್ಯ *ಬಫರ್, ಗಾತ್ರ_t *lenp, loff_t *ppos)
 {
-	int ret;
+	ಪೂರ್ಣಾಂಕ ret;
 
-	if (write && !capable(CAP_SYS_ADMIN))
-		return -EPERM;
+	ಆದರೆ (ಲಿಖ && !capable(CAP_SYS_ADMIN))
+		ಹಿಂತಿರುಗಿ -EPERM;
 
-	if (!sched_is_eas_possible(cpu_active_mask)) {
-		if (write) {
-			return -EOPNOTSUPP;
-		} else {
+	ಆದರೆ (!sched_is_eas_possible(cpu_ಸಕ್ರಿಯ_ಮುಖವಾಡ)) {
+		ಆದರೆ (ಲಿಖ) {
+			ಹಿಂತಿರುಗಿ -EOPNOTSUPP;
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			*lenp = 0;
-			return 0;
+			ಹಿಂತಿರುಗಿ 0;
 		}
 	}
 
-	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-	if (!ret && write) {
-		if (sysctl_sched_energy_aware != sched_energy_enabled())
+	ret = proc_dointvec_minmax(ಕೋಷ್ಟಕ, ಲಿಖ, ಬಫರ್, lenp, ppos);
+	ಆದರೆ (!ret && ಲಿಖ) {
+		ಆದರೆ (sysctl_sched_energy_aware != sched_energy_enabled())
 			rebuild_sched_domains_energy();
 	}
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static const struct ctl_table sched_energy_aware_sysctls[] = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ರಚನೆ ctl_ಕೋಷ್ಟಕ sched_energy_aware_sysctls[] = {
 	{
 		.procname       = "sched_energy_aware",
-		.data           = &sysctl_sched_energy_aware,
-		.maxlen         = sizeof(unsigned int),
-		.mode           = 0644,
+		.ದತ್ತಾಂಶ           = &sysctl_sched_energy_aware,
+		.maxlen         = ಗಾತ್ರ(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ),
+		.ಬಹುಲಕ           = 0644,
 		.proc_handler   = sched_energy_aware_handler,
 		.extra1         = SYSCTL_ZERO,
 		.extra2         = SYSCTL_ONE,
 	},
 };
 
-static int __init sched_energy_aware_sysctl_init(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __init sched_energy_aware_sysctl_init(ಶೂನ್ಯ)
 {
-	register_sysctl_init("kernel", sched_energy_aware_sysctls);
-	return 0;
+	ರಿಜಿಸ್ಟರ್_sysctl_init("kernel", sched_energy_aware_sysctls);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 late_initcall(sched_energy_aware_sysctl_init);
-#endif /* CONFIG_SYSCTL */
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_SYSCTL */
 
-static void free_pd(struct perf_domain *pd)
+ಸ್ಥಿರ ಶೂನ್ಯ free_pd(ರಚನೆ perf_domain *pd)
 {
-	struct perf_domain *tmp;
+	ರಚನೆ perf_domain *tmp;
 
-	while (pd) {
-		tmp = pd->next;
+	ಆಗ (pd) {
+		tmp = pd->ಮುಂದಿನ;
 		kfree(pd);
 		pd = tmp;
 	}
 }
 
-static struct perf_domain *find_pd(struct perf_domain *pd, int cpu)
+ಸ್ಥಿರ ರಚನೆ perf_domain *ಕಂಡುಹಿಡಿ_pd(ರಚನೆ perf_domain *pd, ಪೂರ್ಣಾಂಕ cpu)
 {
-	while (pd) {
-		if (cpumask_test_cpu(cpu, perf_domain_span(pd)))
-			return pd;
-		pd = pd->next;
+	ಆಗ (pd) {
+		ಆದರೆ (cpumask_test_cpu(cpu, perf_domain_ಹರವು(pd)))
+			ಹಿಂತಿರುಗಿ pd;
+		pd = pd->ಮುಂದಿನ;
 	}
 
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-static struct perf_domain *pd_init(int cpu)
+ಸ್ಥಿರ ರಚನೆ perf_domain *pd_init(ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct em_perf_domain *obj = em_cpu_get(cpu);
-	struct perf_domain *pd;
+	ರಚನೆ em_perf_domain *obj = em_cpu_get(cpu);
+	ರಚನೆ perf_domain *pd;
 
-	if (!obj) {
-		if (sched_debug())
+	ಆದರೆ (!obj) {
+		ಆದರೆ (sched_debug())
 			pr_info("%s: no EM found for CPU%d\n", __func__, cpu);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
 	pd = kzalloc_obj(*pd);
-	if (!pd)
-		return NULL;
+	ಆದರೆ (!pd)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	pd->em_pd = obj;
 
-	return pd;
+	ಹಿಂತಿರುಗಿ pd;
 }
 
-static void perf_domain_debug(const struct cpumask *cpu_map,
-						struct perf_domain *pd)
+ಸ್ಥಿರ ಶೂನ್ಯ perf_domain_debug(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map,
+						ರಚನೆ perf_domain *pd)
 {
-	if (!sched_debug() || !pd)
-		return;
+	ಆದರೆ (!sched_debug() || !pd)
+		ಹಿಂತಿರುಗಿ;
 
-	printk(KERN_DEBUG "root_domain %*pbl:", cpumask_pr_args(cpu_map));
+	printk(KERN_DEBUG "root_domain %*pbl:", cpumask_pr_ವಾದಗಳು(cpu_map));
 
-	while (pd) {
+	ಆಗ (pd) {
 		printk(KERN_CONT " pd%d:{ cpus=%*pbl nr_pstate=%d }",
-				cpumask_first(perf_domain_span(pd)),
-				cpumask_pr_args(perf_domain_span(pd)),
-				em_pd_nr_perf_states(pd->em_pd));
-		pd = pd->next;
+				cpumask_ಮೊದಲ(perf_domain_ಹರವು(pd)),
+				cpumask_pr_ವಾದಗಳು(perf_domain_ಹರವು(pd)),
+				em_pd_nr_perf_ಸ್ಥಿತಿಗಳು(pd->em_pd));
+		pd = pd->ಮುಂದಿನ;
 	}
 
 	printk(KERN_CONT "\n");
 }
 
-static void destroy_perf_domain_rcu(struct rcu_head *rp)
+ಸ್ಥಿರ ಶೂನ್ಯ destroy_perf_domain_rcu(ರಚನೆ rcu_ತಲೆ *rp)
 {
-	struct perf_domain *pd;
+	ರಚನೆ perf_domain *pd;
 
-	pd = container_of(rp, struct perf_domain, rcu);
+	pd = container_ದ(rp, ರಚನೆ perf_domain, rcu);
 	free_pd(pd);
 }
 
-static void sched_energy_set(bool has_eas)
+ಸ್ಥಿರ ಶೂನ್ಯ sched_energy_ಗಣ(bool has_eas)
 {
-	if (!has_eas && sched_energy_enabled()) {
-		if (sched_debug())
+	ಆದರೆ (!has_eas && sched_energy_enabled()) {
+		ಆದರೆ (sched_debug())
 			pr_info("%s: stopping EAS\n", __func__);
 		static_branch_disable_cpuslocked(&sched_energy_present);
-	} else if (has_eas && !sched_energy_enabled()) {
-		if (sched_debug())
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (has_eas && !sched_energy_enabled()) {
+		ಆದರೆ (sched_debug())
 			pr_info("%s: starting EAS\n", __func__);
 		static_branch_enable_cpuslocked(&sched_energy_present);
 	}
@@ -422,29 +422,29 @@ static void sched_energy_set(bool has_eas)
  *    4. schedutil is driving the frequency of all CPUs of the rd;
  *    5. frequency invariance support is present;
  */
-static bool build_perf_domains(const struct cpumask *cpu_map)
+ಸ್ಥಿರ bool build_perf_domains(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	int i;
-	struct perf_domain *pd = NULL, *tmp;
-	int cpu = cpumask_first(cpu_map);
-	struct root_domain *rd = cpu_rq(cpu)->rd;
+	ಪೂರ್ಣಾಂಕ i;
+	ರಚನೆ perf_domain *pd = ಖಾಲಿ, *tmp;
+	ಪೂರ್ಣಾಂಕ cpu = cpumask_ಮೊದಲ(cpu_map);
+	ರಚನೆ ಬೇರು_domain *rd = cpu_rq(cpu)->rd;
 
-	if (!sysctl_sched_energy_aware)
-		goto free;
+	ಆದರೆ (!sysctl_sched_energy_aware)
+		ಹೋಗು ಬಿಡುಗಡೆ;
 
-	if (!sched_is_eas_possible(cpu_map))
-		goto free;
+	ಆದರೆ (!sched_is_eas_possible(cpu_map))
+		ಹೋಗು ಬಿಡುಗಡೆ;
 
 	for_each_cpu(i, cpu_map) {
 		/* Skip already covered CPUs. */
-		if (find_pd(pd, i))
-			continue;
+		ಆದರೆ (ಕಂಡುಹಿಡಿ_pd(pd, i))
+			ಮುಂದುವರಿ;
 
 		/* Create the new pd and add it to the local list. */
 		tmp = pd_init(i);
-		if (!tmp)
-			goto free;
-		tmp->next = pd;
+		ಆದರೆ (!tmp)
+			ಹೋಗು ಬಿಡುಗಡೆ;
+		tmp->ಮುಂದಿನ = pd;
 		pd = tmp;
 	}
 
@@ -452,198 +452,198 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
 
 	/* Attach the new list of performance domains to the root domain. */
 	tmp = rd->pd;
-	rcu_assign_pointer(rd->pd, pd);
-	if (tmp)
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(rd->pd, pd);
+	ಆದರೆ (tmp)
 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
 
-	return !!pd;
+	ಹಿಂತಿರುಗಿ !!pd;
 
-free:
+ಬಿಡುಗಡೆ:
 	free_pd(pd);
 	tmp = rd->pd;
-	rcu_assign_pointer(rd->pd, NULL);
-	if (tmp)
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(rd->pd, ಖಾಲಿ);
+	ಆದರೆ (tmp)
 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
 
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
-#else /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
-static void free_pd(struct perf_domain *pd) { }
-#endif /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
+#ಇಲ್ಲದಿದ್ದರೆ /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
+ಸ್ಥಿರ ಶೂನ್ಯ free_pd(ರಚನೆ perf_domain *pd) { }
+#ಆದರೆ_ಅಂತ್ಯ /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
 
-static void free_rootdomain(struct rcu_head *rcu)
+ಸ್ಥಿರ ಶೂನ್ಯ free_rootdomain(ರಚನೆ rcu_ತಲೆ *rcu)
 {
-	struct root_domain *rd = container_of(rcu, struct root_domain, rcu);
+	ರಚನೆ ಬೇರು_domain *rd = container_ದ(rcu, ರಚನೆ ಬೇರು_domain, rcu);
 
 	cpupri_cleanup(&rd->cpupri);
 	cpudl_cleanup(&rd->cpudl);
-	free_cpumask_var(rd->dlo_mask);
-	free_cpumask_var(rd->rto_mask);
+	free_cpumask_var(rd->dlo_ಮುಖವಾಡ);
+	free_cpumask_var(rd->rto_ಮುಖವಾಡ);
 	free_cpumask_var(rd->online);
-	free_cpumask_var(rd->span);
+	free_cpumask_var(rd->ಹರವು);
 	free_pd(rd->pd);
 	kfree(rd);
 }
 
-void rq_attach_root(struct rq *rq, struct root_domain *rd)
+ಶೂನ್ಯ rq_attach_ಬೇರು(ರಚನೆ rq *rq, ರಚನೆ ಬೇರು_domain *rd)
 {
-	struct root_domain *old_rd = NULL;
-	struct rq_flags rf;
+	ರಚನೆ ಬೇರು_domain *old_rd = ಖಾಲಿ;
+	ರಚನೆ rq_flags rf;
 
-	rq_lock_irqsave(rq, &rf);
+	rq_ಬೀಗ_irqsave(rq, &rf);
 
-	if (rq->rd) {
+	ಆದರೆ (rq->rd) {
 		old_rd = rq->rd;
 
-		if (cpumask_test_cpu(rq->cpu, old_rd->online))
-			set_rq_offline(rq);
+		ಆದರೆ (cpumask_test_cpu(rq->cpu, old_rd->online))
+			ಗಣ_rq_offline(rq);
 
-		cpumask_clear_cpu(rq->cpu, old_rd->span);
+		cpumask_clear_cpu(rq->cpu, old_rd->ಹರವು);
 
 		/*
 		 * If we don't want to free the old_rd yet then
 		 * set old_rd to NULL to skip the freeing later
 		 * in this function:
 		 */
-		if (!atomic_dec_and_test(&old_rd->refcount))
-			old_rd = NULL;
+		ಆದರೆ (!atomic_dec_and_test(&old_rd->refcount))
+			old_rd = ಖಾಲಿ;
 	}
 
 	atomic_inc(&rd->refcount);
 	rq->rd = rd;
 
-	cpumask_set_cpu(rq->cpu, rd->span);
-	if (cpumask_test_cpu(rq->cpu, cpu_active_mask))
-		set_rq_online(rq);
+	cpumask_ಗಣ_cpu(rq->cpu, rd->ಹರವು);
+	ಆದರೆ (cpumask_test_cpu(rq->cpu, cpu_ಸಕ್ರಿಯ_ಮುಖವಾಡ))
+		ಗಣ_rq_online(rq);
 
 	/*
 	 * Because the rq is not a task, dl_add_task_root_domain() did not
 	 * move the fair server bw to the rd if it already started.
 	 * Add it now.
 	 */
-	if (rq->fair_server.dl_server)
+	ಆದರೆ (rq->fair_server.dl_server)
 		__dl_server_attach_root(&rq->fair_server, rq);
 
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (rq->ext_server.dl_server)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CLASS_EXT
+	ಆದರೆ (rq->ext_server.dl_server)
 		__dl_server_attach_root(&rq->ext_server, rq);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	rq_unlock_irqrestore(rq, &rf);
 
-	if (old_rd)
+	ಆದರೆ (old_rd)
 		call_rcu(&old_rd->rcu, free_rootdomain);
 }
 
-void sched_get_rd(struct root_domain *rd)
+ಶೂನ್ಯ sched_get_rd(ರಚನೆ ಬೇರು_domain *rd)
 {
 	atomic_inc(&rd->refcount);
 }
 
-void sched_put_rd(struct root_domain *rd)
+ಶೂನ್ಯ sched_put_rd(ರಚನೆ ಬೇರು_domain *rd)
 {
-	if (!atomic_dec_and_test(&rd->refcount))
-		return;
+	ಆದರೆ (!atomic_dec_and_test(&rd->refcount))
+		ಹಿಂತಿರುಗಿ;
 
 	call_rcu(&rd->rcu, free_rootdomain);
 }
 
-static int init_rootdomain(struct root_domain *rd)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ init_rootdomain(ರಚನೆ ಬೇರು_domain *rd)
 {
-	if (!zalloc_cpumask_var(&rd->span, GFP_KERNEL))
-		goto out;
-	if (!zalloc_cpumask_var(&rd->online, GFP_KERNEL))
-		goto free_span;
-	if (!zalloc_cpumask_var(&rd->dlo_mask, GFP_KERNEL))
-		goto free_online;
-	if (!zalloc_cpumask_var(&rd->rto_mask, GFP_KERNEL))
-		goto free_dlo_mask;
+	ಆದರೆ (!zalloc_cpumask_var(&rd->ಹರವು, GFP_KERNEL))
+		ಹೋಗು ಹೊರಹೋಗು;
+	ಆದರೆ (!zalloc_cpumask_var(&rd->online, GFP_KERNEL))
+		ಹೋಗು free_ಹರವು;
+	ಆದರೆ (!zalloc_cpumask_var(&rd->dlo_ಮುಖವಾಡ, GFP_KERNEL))
+		ಹೋಗು free_online;
+	ಆದರೆ (!zalloc_cpumask_var(&rd->rto_ಮುಖವಾಡ, GFP_KERNEL))
+		ಹೋಗು free_dlo_ಮುಖವಾಡ;
 
-#ifdef HAVE_RT_PUSH_IPI
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_RT_ತಳ್ಳು_IPI
 	rd->rto_cpu = -1;
-	raw_spin_lock_init(&rd->rto_lock);
-	rd->rto_push_work = IRQ_WORK_INIT_HARD(rto_push_irq_work_func);
-#endif
+	raw_spin_ಬೀಗ_init(&rd->rto_ಬೀಗ);
+	rd->rto_ತಳ್ಳು_work = IRQ_WORK_INIT_HARD(rto_ತಳ್ಳು_irq_work_func);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	rd->visit_cookie = 0;
+	rd->ಭೇಟಿ_cookie = 0;
 	init_dl_bw(&rd->dl_bw);
-	if (cpudl_init(&rd->cpudl) != 0)
-		goto free_rto_mask;
+	ಆದರೆ (cpudl_init(&rd->cpudl) != 0)
+		ಹೋಗು free_rto_ಮುಖವಾಡ;
 
-	if (cpupri_init(&rd->cpupri) != 0)
-		goto free_cpudl;
-	return 0;
+	ಆದರೆ (cpupri_init(&rd->cpupri) != 0)
+		ಹೋಗು free_cpudl;
+	ಹಿಂತಿರುಗಿ 0;
 
 free_cpudl:
 	cpudl_cleanup(&rd->cpudl);
-free_rto_mask:
-	free_cpumask_var(rd->rto_mask);
-free_dlo_mask:
-	free_cpumask_var(rd->dlo_mask);
+free_rto_ಮುಖವಾಡ:
+	free_cpumask_var(rd->rto_ಮುಖವಾಡ);
+free_dlo_ಮುಖವಾಡ:
+	free_cpumask_var(rd->dlo_ಮುಖವಾಡ);
 free_online:
 	free_cpumask_var(rd->online);
-free_span:
-	free_cpumask_var(rd->span);
-out:
-	return -ENOMEM;
+free_ಹರವು:
+	free_cpumask_var(rd->ಹರವು);
+ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ -ENOMEM;
 }
 
 /*
  * By default the system creates a single root-domain with all CPUs as
  * members (mimicking the global state we have today).
  */
-struct root_domain def_root_domain;
+ರಚನೆ ಬೇರು_domain def_ಬೇರು_domain;
 
-void __init init_defrootdomain(void)
+ಶೂನ್ಯ __init init_defrootdomain(ಶೂನ್ಯ)
 {
-	init_rootdomain(&def_root_domain);
+	init_rootdomain(&def_ಬೇರು_domain);
 
-	atomic_set(&def_root_domain.refcount, 1);
+	atomic_ಗಣ(&def_ಬೇರು_domain.refcount, 1);
 }
 
-static struct root_domain *alloc_rootdomain(void)
+ಸ್ಥಿರ ರಚನೆ ಬೇರು_domain *alloc_rootdomain(ಶೂನ್ಯ)
 {
-	struct root_domain *rd;
+	ರಚನೆ ಬೇರು_domain *rd;
 
 	rd = kzalloc_obj(*rd);
-	if (!rd)
-		return NULL;
+	ಆದರೆ (!rd)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	if (init_rootdomain(rd) != 0) {
+	ಆದರೆ (init_rootdomain(rd) != 0) {
 		kfree(rd);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	return rd;
+	ಹಿಂತಿರುಗಿ rd;
 }
 
-static void free_sched_groups(struct sched_group *sg, int free_sgc)
+ಸ್ಥಿರ ಶೂನ್ಯ free_sched_groups(ರಚನೆ sched_ಗುಂಪು *sg, ಪೂರ್ಣಾಂಕ free_sgc)
 {
-	struct sched_group *tmp, *first;
+	ರಚನೆ sched_ಗುಂಪು *tmp, *ಮೊದಲ;
 
-	if (!sg)
-		return;
+	ಆದರೆ (!sg)
+		ಹಿಂತಿರುಗಿ;
 
-	first = sg;
-	do {
-		tmp = sg->next;
+	ಮೊದಲ = sg;
+	ಮಾಡು {
+		tmp = sg->ಮುಂದಿನ;
 
-		if (free_sgc && atomic_dec_and_test(&sg->sgc->ref))
+		ಆದರೆ (free_sgc && atomic_dec_and_test(&sg->sgc->ref))
 			kfree(sg->sgc);
 
-		if (atomic_dec_and_test(&sg->ref))
+		ಆದರೆ (atomic_dec_and_test(&sg->ref))
 			kfree(sg);
 		sg = tmp;
-	} while (sg != first);
+	} ಆಗ (sg != ಮೊದಲ);
 }
 
-static void free_sched_domain_shared(struct sched_domain_shared *sds)
+ಸ್ಥಿರ ಶೂನ್ಯ free_sched_domain_shared(ರಚನೆ sched_domain_shared *sds)
 {
-	if (sds && atomic_dec_and_test(&sds->ref))
+	ಆದರೆ (sds && atomic_dec_and_test(&sds->ref))
 		kfree(sds);
 }
 
-static void destroy_sched_domain(struct sched_domain *sd)
+ಸ್ಥಿರ ಶೂನ್ಯ destroy_sched_domain(ರಚನೆ sched_domain *sd)
 {
 	/*
 	 * A normal sched domain may have multiple group references, an
@@ -653,27 +653,27 @@ static void destroy_sched_domain(struct sched_domain *sd)
 	free_sched_groups(sd->groups, 1);
 	free_sched_domain_shared(sd->shared);
 
-#ifdef CONFIG_SCHED_CACHE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CACHE
 	/* only the bottom sd has llc_counts array */
 	kfree(sd->llc_counts);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	kfree(sd);
 }
 
-static void destroy_sched_domains_rcu(struct rcu_head *rcu)
+ಸ್ಥಿರ ಶೂನ್ಯ destroy_sched_domains_rcu(ರಚನೆ rcu_ತಲೆ *rcu)
 {
-	struct sched_domain *sd = container_of(rcu, struct sched_domain, rcu);
+	ರಚನೆ sched_domain *sd = container_ದ(rcu, ರಚನೆ sched_domain, rcu);
 
-	while (sd) {
-		struct sched_domain *parent = sd->parent;
+	ಆಗ (sd) {
+		ರಚನೆ sched_domain *ಪೋಷಕ = sd->ಪೋಷಕ;
 		destroy_sched_domain(sd);
-		sd = parent;
+		sd = ಪೋಷಕ;
 	}
 }
 
-static void destroy_sched_domains(struct sched_domain *sd)
+ಸ್ಥಿರ ಶೂನ್ಯ destroy_sched_domains(ರಚನೆ sched_domain *sd)
 {
-	if (sd)
+	ಆದರೆ (sd)
 		call_rcu(&sd->rcu, destroy_sched_domains_rcu);
 }
 
@@ -686,58 +686,58 @@ static void destroy_sched_domains(struct sched_domain *sd)
  * of the domain), this allows us to quickly tell if two CPUs are in the same
  * cache domain, see cpus_share_cache().
  */
-DEFINE_PER_CPU(struct sched_domain __rcu *, sd_llc);
-DEFINE_PER_CPU(int, sd_llc_size);
-DEFINE_PER_CPU(int, sd_llc_id) = -1;
-DEFINE_PER_CPU(int, sd_share_id);
-DEFINE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
-DEFINE_PER_CPU(struct sched_domain_shared __rcu *, sd_balance_shared);
-DEFINE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
-DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
+DEFINE_ಪ್ರತಿ_CPU(ರಚನೆ sched_domain __rcu *, sd_llc);
+DEFINE_ಪ್ರತಿ_CPU(ಪೂರ್ಣಾಂಕ, sd_llc_ಗಾತ್ರ);
+DEFINE_ಪ್ರತಿ_CPU(ಪೂರ್ಣಾಂಕ, sd_llc_id) = -1;
+DEFINE_ಪ್ರತಿ_CPU(ಪೂರ್ಣಾಂಕ, sd_share_id);
+DEFINE_ಪ್ರತಿ_CPU(ರಚನೆ sched_domain_shared __rcu *, sd_llc_shared);
+DEFINE_ಪ್ರತಿ_CPU(ರಚನೆ sched_domain_shared __rcu *, sd_balance_shared);
+DEFINE_ಪ್ರತಿ_CPU(ರಚನೆ sched_domain __rcu *, sd_numa);
+DEFINE_ಪ್ರತಿ_CPU(ರಚನೆ sched_domain __rcu *, sd_asym_packing);
+DEFINE_ಪ್ರತಿ_CPU(ರಚನೆ sched_domain __rcu *, sd_asym_cpucapacity);
 
-DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
-DEFINE_STATIC_KEY_FALSE(sched_cluster_active);
+DEFINE_STATIC_ಕೀಲಿ_FALSE(sched_asym_cpucapacity);
+DEFINE_STATIC_ಕೀಲಿ_FALSE(sched_cluster_ಸಕ್ರಿಯ);
 
-static void update_top_cache_domain(int cpu)
+ಸ್ಥಿರ ಶೂನ್ಯ update_ತುದಿ_cache_domain(ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct sched_domain_shared *sds = NULL;
-	struct sched_domain *sd;
-	int id = cpu;
-	int size = 1;
+	ರಚನೆ sched_domain_shared *sds = ಖಾಲಿ;
+	ರಚನೆ sched_domain *sd;
+	ಪೂರ್ಣಾಂಕ id = cpu;
+	ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2 = 1;
 
 	sd = highest_flag_domain(cpu, SD_SHARE_LLC);
-	if (sd) {
-		id = cpumask_first(sched_domain_span(sd));
-		size = cpumask_weight(sched_domain_span(sd));
+	ಆದರೆ (sd) {
+		id = cpumask_ಮೊದಲ(sched_domain_ಹರವು(sd));
+		ಗಾತ್ರ_2 = cpumask_ತೂಕ(sched_domain_ಹರವು(sd));
 
 		/* If sd_llc exists, sd_llc_shared should exist too. */
 		WARN_ON_ONCE(!sd->shared);
 		sds = sd->shared;
 	}
 
-	rcu_assign_pointer(per_cpu(sd_llc, cpu), sd);
-	per_cpu(sd_llc_size, cpu) = size;
-	rcu_assign_pointer(per_cpu(sd_llc_shared, cpu), sds);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(ಪ್ರತಿ_cpu(sd_llc, cpu), sd);
+	ಪ್ರತಿ_cpu(sd_llc_ಗಾತ್ರ, cpu) = ಗಾತ್ರ_2;
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(ಪ್ರತಿ_cpu(sd_llc_shared, cpu), sds);
 
-	sd = lowest_flag_domain(cpu, SD_CLUSTER);
-	if (sd)
-		id = cpumask_first(sched_domain_span(sd));
+	sd = ಅತಿಕಡಿಮೆ_flag_domain(cpu, SD_CLUSTER);
+	ಆದರೆ (sd)
+		id = cpumask_ಮೊದಲ(sched_domain_ಹರವು(sd));
 
 	/*
 	 * This assignment should be placed after the sd_llc_id as
 	 * we want this id equals to cluster id on cluster machines
 	 * but equals to LLC id on non-Cluster machines.
 	 */
-	per_cpu(sd_share_id, cpu) = id;
+	ಪ್ರತಿ_cpu(sd_share_id, cpu) = id;
 
-	sd = lowest_flag_domain(cpu, SD_NUMA);
-	rcu_assign_pointer(per_cpu(sd_numa, cpu), sd);
+	sd = ಅತಿಕಡಿಮೆ_flag_domain(cpu, SD_NUMA);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(ಪ್ರತಿ_cpu(sd_numa, cpu), sd);
 
 	sd = highest_flag_domain(cpu, SD_ASYM_PACKING);
-	rcu_assign_pointer(per_cpu(sd_asym_packing, cpu), sd);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(ಪ್ರತಿ_cpu(sd_asym_packing, cpu), sd);
 
-	sd = lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY_FULL);
+	sd = ಅತಿಕಡಿಮೆ_flag_domain(cpu, SD_ASYM_CPUCAPACITY_ತುಂಬಿದ);
 	/*
 	 * The shared object is attached to sd_asym_cpucapacity only when the
 	 * asym domain is non-overlapping (i.e., not built from SD_NUMA).
@@ -745,34 +745,34 @@ static void update_top_cache_domain(int cpu)
 	 * SD_SHARE_LLC path own the shared object, so sd->shared may be NULL
 	 * here.
 	 */
-	if (sd && sd->shared)
+	ಆದರೆ (sd && sd->shared)
 		sds = sd->shared;
 
-	rcu_assign_pointer(per_cpu(sd_asym_cpucapacity, cpu), sd);
-	rcu_assign_pointer(per_cpu(sd_balance_shared, cpu), sds);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(ಪ್ರತಿ_cpu(sd_asym_cpucapacity, cpu), sd);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(ಪ್ರತಿ_cpu(sd_balance_shared, cpu), sds);
 }
 
 /*
  * Attach the domain 'sd' to 'cpu' as its base domain. Callers must
  * hold the hotplug lock.
  */
-static void
-cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
+ಸ್ಥಿರ ಶೂನ್ಯ
+cpu_attach_domain(ರಚನೆ sched_domain *sd, ರಚನೆ ಬೇರು_domain *rd, ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct sched_domain *tmp;
+	ರಚನೆ rq *rq = cpu_rq(cpu);
+	ರಚನೆ sched_domain *tmp;
 
 	/* Remove the sched domains which do not contribute to scheduling. */
-	for (tmp = sd; tmp; ) {
-		struct sched_domain *parent = tmp->parent;
-		if (!parent)
-			break;
+	ಗಾಗಿ (tmp = sd; tmp; ) {
+		ರಚನೆ sched_domain *ಪೋಷಕ = tmp->ಪೋಷಕ;
+		ಆದರೆ (!ಪೋಷಕ)
+			ನಿಲ್ಲಿಸು;
 
-		if (sd_parent_degenerate(tmp, parent)) {
-			tmp->parent = parent->parent;
+		ಆದರೆ (sd_ಪೋಷಕ_degenerate(tmp, ಪೋಷಕ)) {
+			tmp->ಪೋಷಕ = ಪೋಷಕ->ಪೋಷಕ;
 
 			/* Pick reference to parent->shared. */
-			if (parent->shared) {
+			ಆದರೆ (ಪೋಷಕ->shared) {
 				/*
 				 * It is safe to free a sd->shared that
 				 * has not been published yet. If a
@@ -781,13 +781,13 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
 				 * not be freed here.
 				 */
 				free_sched_domain_shared(tmp->shared);
-				tmp->shared = parent->shared;
-				parent->shared = NULL;
+				tmp->shared = ಪೋಷಕ->shared;
+				ಪೋಷಕ->shared = ಖಾಲಿ;
 			}
 
-			if (parent->parent) {
-				parent->parent->child = tmp;
-				parent->parent->groups->flags = tmp->flags;
+			ಆದರೆ (ಪೋಷಕ->ಪೋಷಕ) {
+				ಪೋಷಕ->ಪೋಷಕ->ಮಗು = tmp;
+				ಪೋಷಕ->ಪೋಷಕ->groups->flags = tmp->flags;
 			}
 
 			/*
@@ -795,40 +795,40 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
 			 * degenerate parent; the spans match for this
 			 * so the property transfers.
 			 */
-			if (parent->flags & SD_PREFER_SIBLING)
+			ಆದರೆ (ಪೋಷಕ->flags & SD_PREFER_SIBLING)
 				tmp->flags |= SD_PREFER_SIBLING;
-			destroy_sched_domain(parent);
-		} else
-			tmp = tmp->parent;
+			destroy_sched_domain(ಪೋಷಕ);
+		} ಇಲ್ಲದಿದ್ದರೆ
+			tmp = tmp->ಪೋಷಕ;
 	}
 
-	if (sd && sd_degenerate(sd)) {
+	ಆದರೆ (sd && sd_degenerate(sd)) {
 		tmp = sd;
-		sd = sd->parent;
+		sd = sd->ಪೋಷಕ;
 
-		if (sd) {
-			struct sched_group *sg = sd->groups;
+		ಆದರೆ (sd) {
+			ರಚನೆ sched_ಗುಂಪು *sg = sd->groups;
 
-#ifdef CONFIG_SCHED_CACHE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CACHE
 			/* move buffer to parent as child is being destroyed */
 			sd->llc_counts = tmp->llc_counts;
 			sd->llc_max = tmp->llc_max;
-			sd->llc_bytes = tmp->llc_bytes;
+			sd->llc_ಬೈಟುಗಳು = tmp->llc_ಬೈಟುಗಳು;
 			/* make sure destroy_sched_domain() does not free it */
-			tmp->llc_counts = NULL;
+			tmp->llc_counts = ಖಾಲಿ;
 			tmp->llc_max = 0;
-			tmp->llc_bytes = 0;
-#endif
+			tmp->llc_ಬೈಟುಗಳು = 0;
+#ಆದರೆ_ಅಂತ್ಯ
 			/*
 			 * sched groups hold the flags of the child sched
 			 * domain for convenience. Clear such flags since
 			 * the child is being destroyed.
 			 */
-			do {
+			ಮಾಡು {
 				sg->flags = 0;
-			} while (sg != sd->groups);
+			} ಆಗ (sg != sd->groups);
 
-			sd->child = NULL;
+			sd->ಮಗು = ಖಾಲಿ;
 		}
 
 		destroy_sched_domain(tmp);
@@ -836,22 +836,22 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
 
 	sched_domain_debug(sd, cpu);
 
-	rq_attach_root(rq, rd);
+	rq_attach_ಬೇರು(rq, rd);
 	tmp = rq->sd;
-	rcu_assign_pointer(rq->sd, sd);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(rq->sd, sd);
 	dirty_sched_domain_sysctl(cpu);
 	destroy_sched_domains(tmp);
 
-	update_top_cache_domain(cpu);
+	update_ತುದಿ_cache_domain(cpu);
 }
 
-struct s_data {
-	struct sched_domain_shared * __percpu *sds;
-	struct sched_domain * __percpu *sd;
-	struct root_domain	*rd;
+ರಚನೆ s_ದತ್ತಾಂಶ {
+	ರಚನೆ sched_domain_shared * __percpu *sds;
+	ರಚನೆ sched_domain * __percpu *sd;
+	ರಚನೆ ಬೇರು_domain	*rd;
 };
 
-enum s_alloc {
+ಎಣಿಕೆ s_alloc {
 	sa_rootdomain,
 	sa_sd,
 	sa_sd_shared,
@@ -859,16 +859,16 @@ enum s_alloc {
 	sa_none,
 };
 
-#ifdef CONFIG_SCHED_CACHE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CACHE
 /* hardware support for cache aware scheduling */
-DEFINE_STATIC_KEY_FALSE(sched_cache_present);
+DEFINE_STATIC_ಕೀಲಿ_FALSE(sched_cache_present);
 /*
  * Indicator of whether cache aware scheduling
  * is active, used by the scheduler.
  */
-DEFINE_STATIC_KEY_FALSE(sched_cache_active);
+DEFINE_STATIC_ಕೀಲಿ_FALSE(sched_cache_ಸಕ್ರಿಯ);
 /* user wants cache aware scheduling [0 or 1] */
-int sysctl_sched_cache_user = 1;
+ಪೂರ್ಣಾಂಕ sysctl_sched_cache_user = 1;
 
 /*
  * Get the effective LLC size in bytes that @cpu's bottom sched_domain
@@ -885,90 +885,90 @@ int sysctl_sched_cache_user = 1;
  * to fill in the bottom domain's llc_bytes once the cache attributes
  * are available.
  */
-static unsigned long get_effective_llc_bytes(int cpu,
-					     struct sched_domain *sd)
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ get_effective_llc_ಬೈಟುಗಳು(ಪೂರ್ಣಾಂಕ cpu,
+					     ರಚನೆ sched_domain *sd)
 {
-	struct cacheinfo *ci;
-	unsigned int hw_weight;
+	ರಚನೆ cacheinfo *ci;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ hw_ತೂಕ;
 
 	ci = get_cpu_cacheinfo_llc(cpu);
-	if (!ci)
-		return 0;
+	ಆದರೆ (!ci)
+		ಹಿಂತಿರುಗಿ 0;
 
-	hw_weight = cpumask_weight(&ci->shared_cpu_map);
-	if (!hw_weight)
-		return 0;
+	hw_ತೂಕ = cpumask_ತೂಕ(&ci->shared_cpu_map);
+	ಆದರೆ (!hw_ತೂಕ)
+		ಹಿಂತಿರುಗಿ 0;
 
-	return div_u64((u64)ci->size * sd->span_weight, hw_weight);
+	ಹಿಂತಿರುಗಿ div_u64((u64)ci->ಗಾತ್ರ_2 * sd->ಹರವು_ತೂಕ, hw_ತೂಕ);
 }
 
-static bool alloc_sd_llc(const struct cpumask *cpu_map,
-			 struct s_data *d)
+ಸ್ಥಿರ bool alloc_sd_llc(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map,
+			 ರಚನೆ s_ದತ್ತಾಂಶ *d)
 {
-	struct sched_domain *sd, *top_llc, *parent;
-	unsigned int *p;
-	int i;
+	ರಚನೆ sched_domain *sd, *ತುದಿ_llc, *ಪೋಷಕ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ *p;
+	ಪೂರ್ಣಾಂಕ i;
 
 	for_each_cpu(i, cpu_map) {
-		sd = *per_cpu_ptr(d->sd, i);
-		if (!sd)
-			goto err;
+		sd = *ಪ್ರತಿ_cpu_ptr(d->sd, i);
+		ಆದರೆ (!sd)
+			ಹೋಗು err;
 
-		p = kcalloc_node(max_lid + 1, sizeof(unsigned int),
-				 GFP_KERNEL, cpu_to_node(i));
-		if (!p)
-			goto err;
+		p = kcalloc_ಗಂಟು(max_lid + 1, ಗಾತ್ರ(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ),
+				 GFP_KERNEL, cpu_ಗಮ್ಯ_ಗಂಟು(i));
+		ಆದರೆ (!p)
+			ಹೋಗು err;
 
-		top_llc = sd;
+		ತುದಿ_llc = sd;
 		/*
 		 * Find the topmost SD_SHARE_LLC domain.
 		 * Not yet attached to the CPU, so per_cpu(sd_llc, i)
 		 * can not be used.
 		 */
-		while ((parent = rcu_dereference_protected(top_llc->parent, true)) &&
-		       (parent->flags & SD_SHARE_LLC))
-			top_llc = parent;
+		ಆಗ ((ಪೋಷಕ = rcu_dereference_protected(ತುದಿ_llc->ಪೋಷಕ, true)) &&
+		       (ಪೋಷಕ->flags & SD_SHARE_LLC))
+			ತುದಿ_llc = ಪೋಷಕ;
 
-		if (top_llc->flags & SD_SHARE_LLC) {
+		ಆದರೆ (ತುದಿ_llc->flags & SD_SHARE_LLC) {
 			sd->llc_max = max_lid + 1;
 			sd->llc_counts = p;
-			sd->llc_bytes = get_effective_llc_bytes(i, top_llc);
-		} else {
+			sd->llc_ಬೈಟುಗಳು = get_effective_llc_ಬೈಟುಗಳು(i, ತುದಿ_llc);
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* avoid memory leak */
 			kfree(p);
 		}
 	}
 
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 err:
 	for_each_cpu(i, cpu_map) {
-		sd = *per_cpu_ptr(d->sd, i);
-		if (sd) {
+		sd = *ಪ್ರತಿ_cpu_ptr(d->sd, i);
+		ಆದರೆ (sd) {
 			kfree(sd->llc_counts);
-			sd->llc_counts = NULL;
+			sd->llc_counts = ಖಾಲಿ;
 			sd->llc_max = 0;
-			sd->llc_bytes = 0;
+			sd->llc_ಬೈಟುಗಳು = 0;
 		}
 	}
 
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
 
 /*
  * Enable/disable cache aware scheduling according to
  * user input and the presence of hardware support.
  */
-static void _sched_cache_active_set(void)
+ಸ್ಥಿರ ಶೂನ್ಯ sched_cache_ಸಕ್ರಿಯ_ಗಣ_2(ಶೂನ್ಯ)
 {
 	lockdep_assert_cpus_held();
 	lockdep_assert_held(&sched_domains_mutex);
 
 	/* hardware does not support */
-	if (!static_branch_likely(&sched_cache_present)) {
-		static_branch_disable_cpuslocked(&sched_cache_active);
-		if (sched_debug())
+	ಆದರೆ (!static_branch_likely(&sched_cache_present)) {
+		static_branch_disable_cpuslocked(&sched_cache_ಸಕ್ರಿಯ);
+		ಆದರೆ (sched_debug())
 			pr_info("%s: cache aware scheduling not supported on this platform\n", __func__);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	/*
@@ -977,23 +977,23 @@ static void _sched_cache_active_set(void)
 	 * It is not in the critical path, leave as-is
 	 * for now.
 	 */
-	if (sysctl_sched_cache_user) {
-		static_branch_enable_cpuslocked(&sched_cache_active);
-		if (sched_debug())
+	ಆದರೆ (sysctl_sched_cache_user) {
+		static_branch_enable_cpuslocked(&sched_cache_ಸಕ್ರಿಯ);
+		ಆದರೆ (sched_debug())
 			pr_info("%s: enabling cache aware scheduling\n", __func__);
-	} else {
-		static_branch_disable_cpuslocked(&sched_cache_active);
-		if (sched_debug())
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		static_branch_disable_cpuslocked(&sched_cache_ಸಕ್ರಿಯ);
+		ಆದರೆ (sched_debug())
 			pr_info("%s: disabling cache aware scheduling\n", __func__);
 	}
 }
 
 /* used by debugfs */
-void sched_cache_active_set(void)
+ಶೂನ್ಯ sched_cache_ಸಕ್ರಿಯ_ಗಣ(ಶೂನ್ಯ)
 {
-	cpus_read_lock();
-	sched_domains_mutex_lock();
-	_sched_cache_active_set();
+	cpus_read_ಬೀಗ();
+	sched_domains_mutex_ಬೀಗ();
+	sched_cache_ಸಕ್ರಿಯ_ಗಣ_2();
 	sched_domains_mutex_unlock();
 	cpus_read_unlock();
 }
@@ -1010,12 +1010,12 @@ void sched_cache_active_set(void)
  * and does not populates the per-CPU struct cpu_cacheinfo array
  * that get_cpu_cacheinfo_llc() reads.
  */
-void sched_update_llc_bytes(const struct cpumask *cpus)
+ಶೂನ್ಯ sched_update_llc_ಬೈಟುಗಳು(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpus)
 {
-	struct sched_domain *sd, *sdp;
-	unsigned int i;
+	ರಚನೆ sched_domain *sd, *sdp;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
 
-	sched_domains_mutex_lock();
+	sched_domains_mutex_ಬೀಗ();
 
 	/*
 	 * ci->shared_cpu_map is built incrementally as CPUs come
@@ -1031,39 +1031,39 @@ void sched_update_llc_bytes(const struct cpumask *cpus)
 	 * own LLC domain to scale its share of the physical cache.
 	 */
 	for_each_cpu(i, cpus) {
-		sdp = rcu_dereference_sched_domain(per_cpu(sd_llc, i));
-		if (!sdp)
-			continue;
+		sdp = rcu_dereference_sched_domain(ಪ್ರತಿ_cpu(sd_llc, i));
+		ಆದರೆ (!sdp)
+			ಮುಂದುವರಿ;
 
 		sd = rcu_dereference_sched_domain(cpu_rq(i)->sd);
-		if (sd)
-			sd->llc_bytes = get_effective_llc_bytes(i, sdp);
+		ಆದರೆ (sd)
+			sd->llc_ಬೈಟುಗಳು = get_effective_llc_ಬೈಟುಗಳು(i, sdp);
 	}
 
 	sched_domains_mutex_unlock();
 }
 
-static void sched_cache_set(bool has_multi_llcs)
+ಸ್ಥಿರ ಶೂನ್ಯ sched_cache_ಗಣ(bool has_multi_llcs)
 {
 	/*
 	 * TBD: check before writing to it. sched domain rebuild
 	 * is not in the critical path, leave as-is for now.
 	 */
-	if (has_multi_llcs)
+	ಆದರೆ (has_multi_llcs)
 		static_branch_enable_cpuslocked(&sched_cache_present);
-	else
+	ಇಲ್ಲದಿದ್ದರೆ
 		static_branch_disable_cpuslocked(&sched_cache_present);
 
-	_sched_cache_active_set();
+	sched_cache_ಸಕ್ರಿಯ_ಗಣ_2();
 }
-#else
-static bool alloc_sd_llc(const struct cpumask *cpu_map,
-			 struct s_data *d)
+#ಇಲ್ಲದಿದ್ದರೆ
+ಸ್ಥಿರ bool alloc_sd_llc(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map,
+			 ರಚನೆ s_ದತ್ತಾಂಶ *d)
 {
-	return false;
+	ಹಿಂತಿರುಗಿ false;
 }
-static inline void sched_cache_set(bool has_multi_llcs) { }
-#endif
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ sched_cache_ಗಣ(bool has_multi_llcs) { }
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * Return true if @sd belongs to an LLC group whose enclosing
@@ -1082,18 +1082,18 @@ static inline void sched_cache_set(bool has_multi_llcs) { }
  * cache-aware scheduling. Conversely, if there is only one
  * LLC per partition, cache-aware scheduling should be disabled.
  */
-static bool sd_in_multi_llcs(struct sched_domain *sd)
+ಸ್ಥಿರ bool sd_ಒಳ_multi_llcs(ರಚನೆ sched_domain *sd)
 {
-	struct sched_domain *sdp = sd->parent;
+	ರಚನೆ sched_domain *sdp = sd->ಪೋಷಕ;
 
 	/* it does not make sense to aggregate to 1 CPU */
-	if (sd->span_weight == 1)
-		return false;
+	ಆದರೆ (sd->ಹರವು_ತೂಕ == 1)
+		ಹಿಂತಿರುಗಿ false;
 
-	while (sdp && sdp->span_weight == sd->span_weight)
-		sdp = sdp->parent;
+	ಆಗ (sdp && sdp->ಹರವು_ತೂಕ == sd->ಹರವು_ತೂಕ)
+		sdp = sdp->ಪೋಷಕ;
 
-	return !!sdp;
+	ಹಿಂತಿರುಗಿ !!sdp;
 }
 
 /*
@@ -1105,9 +1105,9 @@ static bool sd_in_multi_llcs(struct sched_domain *sd)
  *
  * Also see should_we_balance().
  */
-int group_balance_cpu(struct sched_group *sg)
+ಪೂರ್ಣಾಂಕ ಗುಂಪು_balance_cpu(ರಚನೆ sched_ಗುಂಪು *sg)
 {
-	return cpumask_first(group_balance_mask(sg));
+	ಹಿಂತಿರುಗಿ cpumask_ಮೊದಲ(ಗುಂಪು_balance_ಮುಖವಾಡ(sg));
 }
 
 
@@ -1216,36 +1216,36 @@ int group_balance_cpu(struct sched_group *sg)
  * can fully construct this using the sched_domain bits (which are already
  * complete).
  */
-static void
-build_balance_mask(struct sched_domain *sd, struct sched_group *sg, struct cpumask *mask)
+ಸ್ಥಿರ ಶೂನ್ಯ
+build_balance_ಮುಖವಾಡ(ರಚನೆ sched_domain *sd, ರಚನೆ sched_ಗುಂಪು *sg, ರಚನೆ cpumask *ಮುಖವಾಡ)
 {
-	const struct cpumask *sg_span = sched_group_span(sg);
-	struct sd_data *sdd = sd->private;
-	struct sched_domain *sibling;
-	int i;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *sg_ಹರವು = sched_ಗುಂಪು_ಹರವು(sg);
+	ರಚನೆ sd_ದತ್ತಾಂಶ *sdd = sd->ಖಾಸಗಿ;
+	ರಚನೆ sched_domain *sibling;
+	ಪೂರ್ಣಾಂಕ i;
 
-	cpumask_clear(mask);
+	cpumask_clear(ಮುಖವಾಡ);
 
-	for_each_cpu(i, sg_span) {
-		sibling = *per_cpu_ptr(sdd->sd, i);
+	for_each_cpu(i, sg_ಹರವು) {
+		sibling = *ಪ್ರತಿ_cpu_ptr(sdd->sd, i);
 
 		/*
 		 * Can happen in the asymmetric case, where these siblings are
 		 * unused. The mask will not be empty because those CPUs that
 		 * do have the top domain _should_ span the domain.
 		 */
-		if (!sibling->child)
-			continue;
+		ಆದರೆ (!sibling->ಮಗು)
+			ಮುಂದುವರಿ;
 
 		/* If we would not end up here, we can't continue from here */
-		if (!cpumask_equal(sg_span, sched_domain_span(sibling->child)))
-			continue;
+		ಆದರೆ (!cpumask_equal(sg_ಹರವು, sched_domain_ಹರವು(sibling->ಮಗು)))
+			ಮುಂದುವರಿ;
 
-		cpumask_set_cpu(i, mask);
+		cpumask_ಗಣ_cpu(i, ಮುಖವಾಡ);
 	}
 
 	/* We must not have empty masks here */
-	WARN_ON_ONCE(cpumask_empty(mask));
+	WARN_ON_ONCE(cpumask_ಖಾಲಿಗಳು(ಮುಖವಾಡ));
 }
 
 /*
@@ -1253,102 +1253,102 @@ build_balance_mask(struct sched_domain *sd, struct sched_group *sg, struct cpuma
  * immediately access remote memory to construct this group's load-balance
  * statistics having the groups node local is of dubious benefit.
  */
-static struct sched_group *
-build_group_from_child_sched_domain(struct sched_domain *sd, int cpu)
+ಸ್ಥಿರ ರಚನೆ sched_ಗುಂಪು *
+build_ಗುಂಪು_from_ಮಗು_sched_domain(ರಚನೆ sched_domain *sd, ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct sched_group *sg;
-	struct cpumask *sg_span;
+	ರಚನೆ sched_ಗುಂಪು *sg;
+	ರಚನೆ cpumask *sg_ಹರವು;
 
-	sg = kzalloc_node(sizeof(struct sched_group) + cpumask_size(),
-			GFP_KERNEL, cpu_to_node(cpu));
+	sg = kzalloc_ಗಂಟು(ಗಾತ್ರ(ರಚನೆ sched_ಗುಂಪು) + cpumask_ಗಾತ್ರ(),
+			GFP_KERNEL, cpu_ಗಮ್ಯ_ಗಂಟು(cpu));
 
-	if (!sg)
-		return NULL;
+	ಆದರೆ (!sg)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	sg_span = sched_group_span(sg);
-	if (sd->child) {
-		cpumask_copy(sg_span, sched_domain_span(sd->child));
-		sg->flags = sd->child->flags;
-	} else {
-		cpumask_copy(sg_span, sched_domain_span(sd));
+	sg_ಹರವು = sched_ಗುಂಪು_ಹರವು(sg);
+	ಆದರೆ (sd->ಮಗು) {
+		cpumask_copy(sg_ಹರವು, sched_domain_ಹರವು(sd->ಮಗು));
+		sg->flags = sd->ಮಗು->flags;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		cpumask_copy(sg_ಹರವು, sched_domain_ಹರವು(sd));
 	}
 
 	atomic_inc(&sg->ref);
-	return sg;
+	ಹಿಂತಿರುಗಿ sg;
 }
 
-static void init_overlap_sched_group(struct sched_domain *sd,
-				     struct sched_group *sg)
+ಸ್ಥಿರ ಶೂನ್ಯ init_overlap_sched_ಗುಂಪು(ರಚನೆ sched_domain *sd,
+				     ರಚನೆ sched_ಗುಂಪು *sg)
 {
-	struct cpumask *mask = sched_domains_tmpmask2;
-	struct sd_data *sdd = sd->private;
-	struct cpumask *sg_span;
-	int cpu;
+	ರಚನೆ cpumask *ಮುಖವಾಡ = sched_domains_tmpmask2;
+	ರಚನೆ sd_ದತ್ತಾಂಶ *sdd = sd->ಖಾಸಗಿ;
+	ರಚನೆ cpumask *sg_ಹರವು;
+	ಪೂರ್ಣಾಂಕ cpu;
 
-	build_balance_mask(sd, sg, mask);
-	cpu = cpumask_first(mask);
+	build_balance_ಮುಖವಾಡ(sd, sg, ಮುಖವಾಡ);
+	cpu = cpumask_ಮೊದಲ(ಮುಖವಾಡ);
 
-	sg->sgc = *per_cpu_ptr(sdd->sgc, cpu);
-	if (atomic_inc_return(&sg->sgc->ref) == 1)
-		cpumask_copy(group_balance_mask(sg), mask);
-	else
-		WARN_ON_ONCE(!cpumask_equal(group_balance_mask(sg), mask));
+	sg->sgc = *ಪ್ರತಿ_cpu_ptr(sdd->sgc, cpu);
+	ಆದರೆ (atomic_inc_return(&sg->sgc->ref) == 1)
+		cpumask_copy(ಗುಂಪು_balance_ಮುಖವಾಡ(sg), ಮುಖವಾಡ);
+	ಇಲ್ಲದಿದ್ದರೆ
+		WARN_ON_ONCE(!cpumask_equal(ಗುಂಪು_balance_ಮುಖವಾಡ(sg), ಮುಖವಾಡ));
 
 	/*
 	 * Initialize sgc->capacity such that even if we mess up the
 	 * domains and no possible iteration will get us here, we won't
 	 * die on a /0 trap.
 	 */
-	sg_span = sched_group_span(sg);
-	sg->sgc->capacity = SCHED_CAPACITY_SCALE * cpumask_weight(sg_span);
-	sg->sgc->min_capacity = SCHED_CAPACITY_SCALE;
-	sg->sgc->max_capacity = SCHED_CAPACITY_SCALE;
+	sg_ಹರವು = sched_ಗುಂಪು_ಹರವು(sg);
+	sg->sgc->ಸಾಮರ್ಥ್ಯ = SCHED_ಸಾಮರ್ಥ್ಯ_SCALE * cpumask_ತೂಕ(sg_ಹರವು);
+	sg->sgc->min_ಸಾಮರ್ಥ್ಯ = SCHED_ಸಾಮರ್ಥ್ಯ_SCALE;
+	sg->sgc->max_ಸಾಮರ್ಥ್ಯ = SCHED_ಸಾಮರ್ಥ್ಯ_SCALE;
 }
 
-static struct sched_domain *
-find_descended_sibling(struct sched_domain *sd, struct sched_domain *sibling)
+ಸ್ಥಿರ ರಚನೆ sched_domain *
+ಕಂಡುಹಿಡಿ_descended_sibling(ರಚನೆ sched_domain *sd, ರಚನೆ sched_domain *sibling)
 {
 	/*
 	 * The proper descendant would be the one whose child won't span out
 	 * of sd
 	 */
-	while (sibling->child &&
-	       !cpumask_subset(sched_domain_span(sibling->child),
-			       sched_domain_span(sd)))
-		sibling = sibling->child;
+	ಆಗ (sibling->ಮಗು &&
+	       !cpumask_subset(sched_domain_ಹರವು(sibling->ಮಗು),
+			       sched_domain_ಹರವು(sd)))
+		sibling = sibling->ಮಗು;
 
 	/*
 	 * As we are referencing sgc across different topology level, we need
 	 * to go down to skip those sched_domains which don't contribute to
 	 * scheduling because they will be degenerated in cpu_attach_domain
 	 */
-	while (sibling->child &&
-	       cpumask_equal(sched_domain_span(sibling->child),
-			     sched_domain_span(sibling)))
-		sibling = sibling->child;
+	ಆಗ (sibling->ಮಗು &&
+	       cpumask_equal(sched_domain_ಹರವು(sibling->ಮಗು),
+			     sched_domain_ಹರವು(sibling)))
+		sibling = sibling->ಮಗು;
 
-	return sibling;
+	ಹಿಂತಿರುಗಿ sibling;
 }
 
-static int
-build_overlap_sched_groups(struct sched_domain *sd, int cpu)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+build_overlap_sched_groups(ರಚನೆ sched_domain *sd, ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct sched_group *first = NULL, *last = NULL, *sg;
-	const struct cpumask *span = sched_domain_span(sd);
-	struct cpumask *covered = sched_domains_tmpmask;
-	struct sd_data *sdd = sd->private;
-	struct sched_domain *sibling;
-	int i;
+	ರಚನೆ sched_ಗುಂಪು *ಮೊದಲ = ಖಾಲಿ, *ಕೊನೆಯ = ಖಾಲಿ, *sg;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *ಹರವು = sched_domain_ಹರವು(sd);
+	ರಚನೆ cpumask *covered = sched_domains_tmpmask;
+	ರಚನೆ sd_ದತ್ತಾಂಶ *sdd = sd->ಖಾಸಗಿ;
+	ರಚನೆ sched_domain *sibling;
+	ಪೂರ್ಣಾಂಕ i;
 
 	cpumask_clear(covered);
 
-	for_each_cpu_wrap(i, span, cpu) {
-		struct cpumask *sg_span;
+	for_each_cpu_wrap(i, ಹರವು, cpu) {
+		ರಚನೆ cpumask *sg_ಹರವು;
 
-		if (cpumask_test_cpu(i, covered))
-			continue;
+		ಆದರೆ (cpumask_test_cpu(i, covered))
+			ಮುಂದುವರಿ;
 
-		sibling = *per_cpu_ptr(sdd->sd, i);
+		sibling = *ಪ್ರತಿ_cpu_ptr(sdd->sd, i);
 
 		/*
 		 * Asymmetric node setups can result in situations where the
@@ -1360,8 +1360,8 @@ build_overlap_sched_groups(struct sched_domain *sd, int cpu)
 		 * Domains should always include the CPU they're built on, so
 		 * check that.
 		 */
-		if (!cpumask_test_cpu(i, sched_domain_span(sibling)))
-			continue;
+		ಆದರೆ (!cpumask_test_cpu(i, sched_domain_ಹರವು(sibling)))
+			ಮುಂದುವರಿ;
 
 		/*
 		 * Usually we build sched_group by sibling's child sched_domain
@@ -1394,34 +1394,34 @@ build_overlap_sched_groups(struct sched_domain *sd, int cpu)
 		 * The NUMA-2 groups for nodes 0 and 3 are obviously buggered, as the
 		 * group span isn't a subset of the domain span.
 		 */
-		if (sibling->child &&
-		    !cpumask_subset(sched_domain_span(sibling->child), span))
-			sibling = find_descended_sibling(sd, sibling);
+		ಆದರೆ (sibling->ಮಗು &&
+		    !cpumask_subset(sched_domain_ಹರವು(sibling->ಮಗು), ಹರವು))
+			sibling = ಕಂಡುಹಿಡಿ_descended_sibling(sd, sibling);
 
-		sg = build_group_from_child_sched_domain(sibling, cpu);
-		if (!sg)
-			goto fail;
+		sg = build_ಗುಂಪು_from_ಮಗು_sched_domain(sibling, cpu);
+		ಆದರೆ (!sg)
+			ಹೋಗು fail;
 
-		sg_span = sched_group_span(sg);
-		cpumask_or(covered, covered, sg_span);
+		sg_ಹರವು = sched_ಗುಂಪು_ಹರವು(sg);
+		cpumask_or(covered, covered, sg_ಹರವು);
 
-		init_overlap_sched_group(sibling, sg);
+		init_overlap_sched_ಗುಂಪು(sibling, sg);
 
-		if (!first)
-			first = sg;
-		if (last)
-			last->next = sg;
-		last = sg;
-		last->next = first;
+		ಆದರೆ (!ಮೊದಲ)
+			ಮೊದಲ = sg;
+		ಆದರೆ (ಕೊನೆಯ)
+			ಕೊನೆಯ->ಮುಂದಿನ = sg;
+		ಕೊನೆಯ = sg;
+		ಕೊನೆಯ->ಮುಂದಿನ = ಮೊದಲ;
 	}
-	sd->groups = first;
+	sd->groups = ಮೊದಲ;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 
 fail:
-	free_sched_groups(first, 0);
+	free_sched_groups(ಮೊದಲ, 0);
 
-	return -ENOMEM;
+	ಹಿಂತಿರುಗಿ -ENOMEM;
 }
 
 
@@ -1496,42 +1496,42 @@ fail:
  * [*] in other words, the first group of each domain is its child domain.
  */
 
-static struct sched_group *get_group(int cpu, struct sd_data *sdd)
+ಸ್ಥಿರ ರಚನೆ sched_ಗುಂಪು *get_ಗುಂಪು(ಪೂರ್ಣಾಂಕ cpu, ರಚನೆ sd_ದತ್ತಾಂಶ *sdd)
 {
-	struct sched_domain *sd = *per_cpu_ptr(sdd->sd, cpu);
-	struct sched_domain *child = sd->child;
-	struct sched_group *sg;
-	bool already_visited;
+	ರಚನೆ sched_domain *sd = *ಪ್ರತಿ_cpu_ptr(sdd->sd, cpu);
+	ರಚನೆ sched_domain *ಮಗು = sd->ಮಗು;
+	ರಚನೆ sched_ಗುಂಪು *sg;
+	bool already_ಭೇಟಿಯಾದ;
 
-	if (child)
-		cpu = cpumask_first(sched_domain_span(child));
+	ಆದರೆ (ಮಗು)
+		cpu = cpumask_ಮೊದಲ(sched_domain_ಹರವು(ಮಗು));
 
-	sg = *per_cpu_ptr(sdd->sg, cpu);
-	sg->sgc = *per_cpu_ptr(sdd->sgc, cpu);
+	sg = *ಪ್ರತಿ_cpu_ptr(sdd->sg, cpu);
+	sg->sgc = *ಪ್ರತಿ_cpu_ptr(sdd->sgc, cpu);
 
 	/* Increase refcounts for claim_allocations: */
-	already_visited = atomic_inc_return(&sg->ref) > 1;
+	already_ಭೇಟಿಯಾದ = atomic_inc_return(&sg->ref) > 1;
 	/* sgc visits should follow a similar trend as sg */
-	WARN_ON(already_visited != (atomic_inc_return(&sg->sgc->ref) > 1));
+	WARN_ON(already_ಭೇಟಿಯಾದ != (atomic_inc_return(&sg->sgc->ref) > 1));
 
 	/* If we have already visited that group, it's already initialized. */
-	if (already_visited)
-		return sg;
+	ಆದರೆ (already_ಭೇಟಿಯಾದ)
+		ಹಿಂತಿರುಗಿ sg;
 
-	if (child) {
-		cpumask_copy(sched_group_span(sg), sched_domain_span(child));
-		cpumask_copy(group_balance_mask(sg), sched_group_span(sg));
-		sg->flags = child->flags;
-	} else {
-		cpumask_set_cpu(cpu, sched_group_span(sg));
-		cpumask_set_cpu(cpu, group_balance_mask(sg));
+	ಆದರೆ (ಮಗು) {
+		cpumask_copy(sched_ಗುಂಪು_ಹರವು(sg), sched_domain_ಹರವು(ಮಗು));
+		cpumask_copy(ಗುಂಪು_balance_ಮುಖವಾಡ(sg), sched_ಗುಂಪು_ಹರವು(sg));
+		sg->flags = ಮಗು->flags;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		cpumask_ಗಣ_cpu(cpu, sched_ಗುಂಪು_ಹರವು(sg));
+		cpumask_ಗಣ_cpu(cpu, ಗುಂಪು_balance_ಮುಖವಾಡ(sg));
 	}
 
-	sg->sgc->capacity = SCHED_CAPACITY_SCALE * cpumask_weight(sched_group_span(sg));
-	sg->sgc->min_capacity = SCHED_CAPACITY_SCALE;
-	sg->sgc->max_capacity = SCHED_CAPACITY_SCALE;
+	sg->sgc->ಸಾಮರ್ಥ್ಯ = SCHED_ಸಾಮರ್ಥ್ಯ_SCALE * cpumask_ತೂಕ(sched_ಗುಂಪು_ಹರವು(sg));
+	sg->sgc->min_ಸಾಮರ್ಥ್ಯ = SCHED_ಸಾಮರ್ಥ್ಯ_SCALE;
+	sg->sgc->max_ಸಾಮರ್ಥ್ಯ = SCHED_ಸಾಮರ್ಥ್ಯ_SCALE;
 
-	return sg;
+	ಹಿಂತಿರುಗಿ sg;
 }
 
 /*
@@ -1541,40 +1541,40 @@ static struct sched_group *get_group(int cpu, struct sd_data *sdd)
  *
  * Assumes the sched_domain tree is fully constructed
  */
-static int
-build_sched_groups(struct sched_domain *sd, int cpu)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+build_sched_groups(ರಚನೆ sched_domain *sd, ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct sched_group *first = NULL, *last = NULL;
-	struct sd_data *sdd = sd->private;
-	const struct cpumask *span = sched_domain_span(sd);
-	struct cpumask *covered;
-	int i;
+	ರಚನೆ sched_ಗುಂಪು *ಮೊದಲ = ಖಾಲಿ, *ಕೊನೆಯ = ಖಾಲಿ;
+	ರಚನೆ sd_ದತ್ತಾಂಶ *sdd = sd->ಖಾಸಗಿ;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *ಹರವು = sched_domain_ಹರವು(sd);
+	ರಚನೆ cpumask *covered;
+	ಪೂರ್ಣಾಂಕ i;
 
 	lockdep_assert_held(&sched_domains_mutex);
 	covered = sched_domains_tmpmask;
 
 	cpumask_clear(covered);
 
-	for_each_cpu_wrap(i, span, cpu) {
-		struct sched_group *sg;
+	for_each_cpu_wrap(i, ಹರವು, cpu) {
+		ರಚನೆ sched_ಗುಂಪು *sg;
 
-		if (cpumask_test_cpu(i, covered))
-			continue;
+		ಆದರೆ (cpumask_test_cpu(i, covered))
+			ಮುಂದುವರಿ;
 
-		sg = get_group(i, sdd);
+		sg = get_ಗುಂಪು(i, sdd);
 
-		cpumask_or(covered, covered, sched_group_span(sg));
+		cpumask_or(covered, covered, sched_ಗುಂಪು_ಹರವು(sg));
 
-		if (!first)
-			first = sg;
-		if (last)
-			last->next = sg;
-		last = sg;
+		ಆದರೆ (!ಮೊದಲ)
+			ಮೊದಲ = sg;
+		ಆದರೆ (ಕೊನೆಯ)
+			ಕೊನೆಯ->ಮುಂದಿನ = sg;
+		ಕೊನೆಯ = sg;
 	}
-	last->next = first;
-	sd->groups = first;
+	ಕೊನೆಯ->ಮುಂದಿನ = ಮೊದಲ;
+	sd->groups = ಮೊದಲ;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
@@ -1587,60 +1587,60 @@ build_sched_groups(struct sched_domain *sd, int cpu)
  * group having more cpu_capacity will pickup more load compared to the
  * group having less cpu_capacity.
  */
-static void init_sched_groups_capacity(int cpu, struct sched_domain *sd)
+ಸ್ಥಿರ ಶೂನ್ಯ init_sched_groups_ಸಾಮರ್ಥ್ಯ(ಪೂರ್ಣಾಂಕ cpu, ರಚನೆ sched_domain *sd)
 {
-	struct sched_group *sg = sd->groups;
-	struct cpumask *mask = sched_domains_tmpmask2;
+	ರಚನೆ sched_ಗುಂಪು *sg = sd->groups;
+	ರಚನೆ cpumask *ಮುಖವಾಡ = sched_domains_tmpmask2;
 
 	WARN_ON(!sg);
 
-	do {
-		int cpu, cores = 0, max_cpu = -1;
+	ಮಾಡು {
+		ಪೂರ್ಣಾಂಕ cpu, cores = 0, max_cpu = -1;
 
-		sg->group_weight = cpumask_weight(sched_group_span(sg));
+		sg->ಗುಂಪು_ತೂಕ = cpumask_ತೂಕ(sched_ಗುಂಪು_ಹರವು(sg));
 
-		cpumask_copy(mask, sched_group_span(sg));
-		for_each_cpu(cpu, mask) {
+		cpumask_copy(ಮುಖವಾಡ, sched_ಗುಂಪು_ಹರವು(sg));
+		for_each_cpu(cpu, ಮುಖವಾಡ) {
 			cores++;
-			cpumask_andnot(mask, mask, cpu_smt_mask(cpu));
+			cpumask_andnot(ಮುಖವಾಡ, ಮುಖವಾಡ, cpu_smt_ಮುಖವಾಡ(cpu));
 		}
 		sg->cores = cores;
 
-		if (!(sd->flags & SD_ASYM_PACKING))
-			goto next;
+		ಆದರೆ (!(sd->flags & SD_ASYM_PACKING))
+			ಹೋಗು ಮುಂದಿನ;
 
-		for_each_cpu(cpu, sched_group_span(sg)) {
-			if (max_cpu < 0)
+		for_each_cpu(cpu, sched_ಗುಂಪು_ಹರವು(sg)) {
+			ಆದರೆ (max_cpu < 0)
 				max_cpu = cpu;
-			else if (sched_asym_prefer(cpu, max_cpu))
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (sched_asym_prefer(cpu, max_cpu))
 				max_cpu = cpu;
 		}
 		sg->asym_prefer_cpu = max_cpu;
 
-next:
-		sg = sg->next;
-	} while (sg != sd->groups);
+ಮುಂದಿನ:
+		sg = sg->ಮುಂದಿನ;
+	} ಆಗ (sg != sd->groups);
 
-	if (cpu != group_balance_cpu(sg))
-		return;
+	ಆದರೆ (cpu != ಗುಂಪು_balance_cpu(sg))
+		ಹಿಂತಿರುಗಿ;
 
-	update_group_capacity(sd, cpu);
+	update_ಗುಂಪು_ಸಾಮರ್ಥ್ಯ(sd, cpu);
 }
 
 /* Update the "asym_prefer_cpu" when arch_asym_cpu_priority() changes. */
-void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
+ಶೂನ್ಯ sched_update_asym_prefer_cpu(ಪೂರ್ಣಾಂಕ cpu, ಪೂರ್ಣಾಂಕ old_prio, ಪೂರ್ಣಾಂಕ new_prio)
 {
-	int asym_prefer_cpu = cpu;
-	struct sched_domain *sd;
+	ಪೂರ್ಣಾಂಕ asym_prefer_cpu = cpu;
+	ರಚನೆ sched_domain *sd;
 
 	guard(rcu)();
 
 	for_each_domain(cpu, sd) {
-		struct sched_group *sg;
-		int group_cpu;
+		ರಚನೆ sched_ಗುಂಪು *sg;
+		ಪೂರ್ಣಾಂಕ ಗುಂಪು_cpu;
 
-		if (!(sd->flags & SD_ASYM_PACKING))
-			continue;
+		ಆದರೆ (!(sd->flags & SD_ASYM_PACKING))
+			ಮುಂದುವರಿ;
 
 		/*
 		 * Groups of overlapping domain are replicated per NUMA
@@ -1654,27 +1654,27 @@ void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
 		WARN_ON_ONCE(sd->flags & SD_NUMA);
 
 		sg = sd->groups;
-		if (cpu != sg->asym_prefer_cpu) {
+		ಆದರೆ (cpu != sg->asym_prefer_cpu) {
 			/*
 			 * Since the parent is a superset of the current group,
 			 * if the cpu is not the "asym_prefer_cpu" at the
 			 * current level, it cannot be the preferred CPU at a
 			 * higher levels either.
 			 */
-			if (!sched_asym_prefer(cpu, sg->asym_prefer_cpu))
-				return;
+			ಆದರೆ (!sched_asym_prefer(cpu, sg->asym_prefer_cpu))
+				ಹಿಂತಿರುಗಿ;
 
 			WRITE_ONCE(sg->asym_prefer_cpu, cpu);
-			continue;
+			ಮುಂದುವರಿ;
 		}
 
 		/* Ranking has improved; CPU is still the preferred one. */
-		if (new_prio >= old_prio)
-			continue;
+		ಆದರೆ (new_prio >= old_prio)
+			ಮುಂದುವರಿ;
 
-		for_each_cpu(group_cpu, sched_group_span(sg)) {
-			if (sched_asym_prefer(group_cpu, asym_prefer_cpu))
-				asym_prefer_cpu = group_cpu;
+		for_each_cpu(ಗುಂಪು_cpu, sched_ಗುಂಪು_ಹರವು(sg)) {
+			ಆದರೆ (sched_asym_prefer(ಗುಂಪು_cpu, asym_prefer_cpu))
+				asym_prefer_cpu = ಗುಂಪು_cpu;
 		}
 
 		WRITE_ONCE(sg->asym_prefer_cpu, asym_prefer_cpu);
@@ -1687,18 +1687,18 @@ void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
  * capacity.
  * The lifespan of data is unlimited.
  */
-LIST_HEAD(asym_cap_list);
+LIST_ತಲೆ(asym_cap_list);
 
 /*
  * Verify whether there is any CPU capacity asymmetry in a given sched domain.
  * Provides sd_flags reflecting the asymmetry scope.
  */
-static inline int
-asym_cpu_capacity_classify(const struct cpumask *sd_span,
-			   const struct cpumask *cpu_map)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ
+asym_cpu_ಸಾಮರ್ಥ್ಯ_classify(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *sd_ಹರವು,
+			   ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	struct asym_cap_data *entry;
-	int count = 0, miss = 0;
+	ರಚನೆ asym_cap_ದತ್ತಾಂಶ *ನಮೂದು;
+	ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = 0, ತಪ್ಪಿದ = 0;
 
 	/*
 	 * Count how many unique CPU capacities this domain spans across
@@ -1706,62 +1706,62 @@ asym_cpu_capacity_classify(const struct cpumask *sd_span,
 	 * CPUs capacities). Take into account CPUs that might be offline:
 	 * skip those.
 	 */
-	list_for_each_entry(entry, &asym_cap_list, link) {
-		if (cpumask_intersects(sd_span, cpu_capacity_span(entry)))
-			++count;
-		else if (cpumask_intersects(cpu_map, cpu_capacity_span(entry)))
-			++miss;
+	list_for_each_ನಮೂದು(ನಮೂದು, &asym_cap_list, link) {
+		ಆದರೆ (cpumask_intersects(sd_ಹರವು, cpu_ಸಾಮರ್ಥ್ಯ_ಹರವು(ನಮೂದು)))
+			++ಎಣಿಕೆ_2;
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cpumask_intersects(cpu_map, cpu_ಸಾಮರ್ಥ್ಯ_ಹರವು(ನಮೂದು)))
+			++ತಪ್ಪಿದ;
 	}
 
-	WARN_ON_ONCE(!count && !list_empty(&asym_cap_list));
+	WARN_ON_ONCE(!ಎಣಿಕೆ_2 && !list_ಖಾಲಿಗಳು(&asym_cap_list));
 
 	/* No asymmetry detected */
-	if (count < 2)
-		return 0;
+	ಆದರೆ (ಎಣಿಕೆ_2 < 2)
+		ಹಿಂತಿರುಗಿ 0;
 	/* Some of the available CPU capacity values have not been detected */
-	if (miss)
-		return SD_ASYM_CPUCAPACITY;
+	ಆದರೆ (ತಪ್ಪಿದ)
+		ಹಿಂತಿರುಗಿ SD_ASYM_CPUCAPACITY;
 
 	/* Full asymmetry */
-	return SD_ASYM_CPUCAPACITY | SD_ASYM_CPUCAPACITY_FULL;
+	ಹಿಂತಿರುಗಿ SD_ASYM_CPUCAPACITY | SD_ASYM_CPUCAPACITY_ತುಂಬಿದ;
 
 }
 
-static void free_asym_cap_entry(struct rcu_head *head)
+ಸ್ಥಿರ ಶೂನ್ಯ free_asym_cap_ನಮೂದು(ರಚನೆ rcu_ತಲೆ *ತಲೆ)
 {
-	struct asym_cap_data *entry = container_of(head, struct asym_cap_data, rcu);
-	kfree(entry);
+	ರಚನೆ asym_cap_ದತ್ತಾಂಶ *ನಮೂದು = container_ದ(ತಲೆ, ರಚನೆ asym_cap_ದತ್ತಾಂಶ, rcu);
+	kfree(ನಮೂದು);
 }
 
-static inline void asym_cpu_capacity_update_data(int cpu)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ asym_cpu_ಸಾಮರ್ಥ್ಯ_update_ದತ್ತಾಂಶ(ಪೂರ್ಣಾಂಕ cpu)
 {
-	unsigned long capacity = arch_scale_cpu_capacity(cpu);
-	struct asym_cap_data *insert_entry = NULL;
-	struct asym_cap_data *entry;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಸಾಮರ್ಥ್ಯ = arch_scale_cpu_ಸಾಮರ್ಥ್ಯ(cpu);
+	ರಚನೆ asym_cap_ದತ್ತಾಂಶ *ಸೇರಿಸು_ನಮೂದು = ಖಾಲಿ;
+	ರಚನೆ asym_cap_ದತ್ತಾಂಶ *ನಮೂದು;
 
 	/*
 	 * Search if capacity already exits. If not, track which the entry
 	 * where we should insert to keep the list ordered descending.
 	 */
-	list_for_each_entry(entry, &asym_cap_list, link) {
-		if (capacity == entry->capacity)
-			goto done;
-		else if (!insert_entry && capacity > entry->capacity)
-			insert_entry = list_prev_entry(entry, link);
+	list_for_each_ನಮೂದು(ನಮೂದು, &asym_cap_list, link) {
+		ಆದರೆ (ಸಾಮರ್ಥ್ಯ == ನಮೂದು->ಸಾಮರ್ಥ್ಯ)
+			ಹೋಗು ಮುಗಿದ;
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (!ಸೇರಿಸು_ನಮೂದು && ಸಾಮರ್ಥ್ಯ > ನಮೂದು->ಸಾಮರ್ಥ್ಯ)
+			ಸೇರಿಸು_ನಮೂದು = list_prev_ನಮೂದು(ನಮೂದು, link);
 	}
 
-	entry = kzalloc(sizeof(*entry) + cpumask_size(), GFP_KERNEL);
-	if (WARN_ONCE(!entry, "Failed to allocate memory for asymmetry data\n"))
-		return;
-	entry->capacity = capacity;
+	ನಮೂದು = kzalloc(ಗಾತ್ರ(*ನಮೂದು) + cpumask_ಗಾತ್ರ(), GFP_KERNEL);
+	ಆದರೆ (WARN_ONCE(!ನಮೂದು, "Failed to allocate memory for asymmetry data\n"))
+		ಹಿಂತಿರುಗಿ;
+	ನಮೂದು->ಸಾಮರ್ಥ್ಯ = ಸಾಮರ್ಥ್ಯ;
 
 	/* If NULL then the new capacity is the smallest, add last. */
-	if (!insert_entry)
-		list_add_tail_rcu(&entry->link, &asym_cap_list);
-	else
-		list_add_rcu(&entry->link, &insert_entry->link);
-done:
-	__cpumask_set_cpu(cpu, cpu_capacity_span(entry));
+	ಆದರೆ (!ಸೇರಿಸು_ನಮೂದು)
+		list_ಕೂಡಿಸು_ಬಾಲ_rcu(&ನಮೂದು->link, &asym_cap_list);
+	ಇಲ್ಲದಿದ್ದರೆ
+		list_ಕೂಡಿಸು_rcu(&ನಮೂದು->link, &ಸೇರಿಸು_ನಮೂದು->link);
+ಮುಗಿದ:
+	__cpumask_set_cpu(cpu, cpu_ಸಾಮರ್ಥ್ಯ_ಹರವು(ನಮೂದು));
 }
 
 /*
@@ -1769,21 +1769,21 @@ done:
  * An update requires explicit request to rebuild sched domains
  * with state indicating CPU topology changes.
  */
-static void asym_cpu_capacity_scan(void)
+ಸ್ಥಿರ ಶೂನ್ಯ asym_cpu_ಸಾಮರ್ಥ್ಯ_ಪರಿಶೀಲನೆ(ಶೂನ್ಯ)
 {
-	struct asym_cap_data *entry, *next;
-	int cpu;
+	ರಚನೆ asym_cap_ದತ್ತಾಂಶ *ನಮೂದು, *ಮುಂದಿನ;
+	ಪೂರ್ಣಾಂಕ cpu;
 
-	list_for_each_entry(entry, &asym_cap_list, link)
-		cpumask_clear(cpu_capacity_span(entry));
+	list_for_each_ನಮೂದು(ನಮೂದು, &asym_cap_list, link)
+		cpumask_clear(cpu_ಸಾಮರ್ಥ್ಯ_ಹರವು(ನಮೂದು));
 
-	for_each_cpu_and(cpu, cpu_possible_mask, housekeeping_cpumask(HK_TYPE_DOMAIN))
-		asym_cpu_capacity_update_data(cpu);
+	for_each_cpu_and(cpu, cpu_possible_ಮುಖವಾಡ, housekeeping_cpumask(HK_TYPE_DOMAIN))
+		asym_cpu_ಸಾಮರ್ಥ್ಯ_update_ದತ್ತಾಂಶ(cpu);
 
-	list_for_each_entry_safe(entry, next, &asym_cap_list, link) {
-		if (cpumask_empty(cpu_capacity_span(entry))) {
-			list_del_rcu(&entry->link);
-			call_rcu(&entry->rcu, free_asym_cap_entry);
+	list_for_each_ನಮೂದು_ಸುರಕ್ಷಿತ(ನಮೂದು, ಮುಂದಿನ, &asym_cap_list, link) {
+		ಆದರೆ (cpumask_ಖಾಲಿಗಳು(cpu_ಸಾಮರ್ಥ್ಯ_ಹರವು(ನಮೂದು))) {
+			list_del_rcu(&ನಮೂದು->link);
+			call_rcu(&ನಮೂದು->rcu, free_asym_cap_ನಮೂದು);
 		}
 	}
 
@@ -1791,10 +1791,10 @@ static void asym_cpu_capacity_scan(void)
 	 * Only one capacity value has been detected i.e. this system is symmetric.
 	 * No need to keep this data around.
 	 */
-	if (list_is_singular(&asym_cap_list)) {
-		entry = list_first_entry(&asym_cap_list, typeof(*entry), link);
-		list_del_rcu(&entry->link);
-		call_rcu(&entry->rcu, free_asym_cap_entry);
+	ಆದರೆ (list_is_singular(&asym_cap_list)) {
+		ನಮೂದು = list_ಮೊದಲ_ನಮೂದು(&asym_cap_list, typeof(*ನಮೂದು), link);
+		list_del_rcu(&ನಮೂದು->link);
+		call_rcu(&ನಮೂದು->rcu, free_asym_cap_ನಮೂದು);
 	}
 }
 
@@ -1803,81 +1803,81 @@ static void asym_cpu_capacity_scan(void)
  * Non-inlined to reduce accumulated stack pressure in build_sched_domains()
  */
 
-static int default_relax_domain_level = -1;
-int sched_domain_level_max;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ default_relax_domain_level = -1;
+ಪೂರ್ಣಾಂಕ sched_domain_level_max;
 
-static int __init setup_relax_domain_level(char *str)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __init ಸಿದ್ಧತೆ_relax_domain_level(ಅಕ್ಷರ *str)
 {
-	if (kstrtoint(str, 0, &default_relax_domain_level))
+	ಆದರೆ (kstrtoint(str, 0, &default_relax_domain_level))
 		pr_warn("Unable to set relax_domain_level\n");
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
-__setup("relax_domain_level=", setup_relax_domain_level);
+__setup("relax_domain_level=", ಸಿದ್ಧತೆ_relax_domain_level);
 
-static void set_domain_attribute(struct sched_domain *sd,
-				 struct sched_domain_attr *attr)
+ಸ್ಥಿರ ಶೂನ್ಯ ಗಣ_domain_attribute(ರಚನೆ sched_domain *sd,
+				 ರಚನೆ sched_domain_attr *attr)
 {
-	int request;
+	ಪೂರ್ಣಾಂಕ request;
 
-	if (!attr || attr->relax_domain_level < 0) {
-		if (default_relax_domain_level < 0)
-			return;
+	ಆದರೆ (!attr || attr->relax_domain_level < 0) {
+		ಆದರೆ (default_relax_domain_level < 0)
+			ಹಿಂತಿರುಗಿ;
 		request = default_relax_domain_level;
-	} else
+	} ಇಲ್ಲದಿದ್ದರೆ
 		request = attr->relax_domain_level;
 
-	if (sd->level >= request) {
+	ಆದರೆ (sd->level >= request) {
 		/* Turn off idle balance on this domain: */
 		sd->flags &= ~(SD_BALANCE_WAKE|SD_BALANCE_NEWIDLE);
 	}
 }
 
-static void __sdt_free(const struct cpumask *cpu_map);
-static int __sdt_alloc(const struct cpumask *cpu_map);
+ಸ್ಥಿರ ಶೂನ್ಯ __sdt_free(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __sdt_alloc(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map);
 
-static void __sds_free(struct s_data *d, const struct cpumask *cpu_map);
-static int __sds_alloc(struct s_data *d, const struct cpumask *cpu_map);
+ಸ್ಥಿರ ಶೂನ್ಯ __sds_free(ರಚನೆ s_ದತ್ತಾಂಶ *d, ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __sds_alloc(ರಚನೆ s_ದತ್ತಾಂಶ *d, ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map);
 
-static void __free_domain_allocs(struct s_data *d, enum s_alloc what,
-				 const struct cpumask *cpu_map)
+ಸ್ಥಿರ ಶೂನ್ಯ __free_domain_allocs(ರಚನೆ s_ದತ್ತಾಂಶ *d, ಎಣಿಕೆ s_alloc what,
+				 ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	switch (what) {
-	case sa_rootdomain:
-		if (!atomic_read(&d->rd->refcount))
+	ಆಯ್ಕೆ (what) {
+	ಸ್ಥಿತಿ sa_rootdomain:
+		ಆದರೆ (!atomic_read(&d->rd->refcount))
 			free_rootdomain(&d->rd->rcu);
 		fallthrough;
-	case sa_sd:
+	ಸ್ಥಿತಿ sa_sd:
 		free_percpu(d->sd);
 		fallthrough;
-	case sa_sd_shared:
+	ಸ್ಥಿತಿ sa_sd_shared:
 		__sds_free(d, cpu_map);
 		fallthrough;
-	case sa_sd_storage:
+	ಸ್ಥಿತಿ sa_sd_storage:
 		__sdt_free(cpu_map);
 		fallthrough;
-	case sa_none:
-		break;
+	ಸ್ಥಿತಿ sa_none:
+		ನಿಲ್ಲಿಸು;
 	}
 }
 
-static enum s_alloc
-__visit_domain_allocation_hell(struct s_data *d, const struct cpumask *cpu_map)
+ಸ್ಥಿರ ಎಣಿಕೆ s_alloc
+__visit_domain_allocation_hell(ರಚನೆ s_ದತ್ತಾಂಶ *d, ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	memset(d, 0, sizeof(*d));
+	memset(d, 0, ಗಾತ್ರ(*d));
 
-	if (__sdt_alloc(cpu_map))
-		return sa_sd_storage;
-	if (__sds_alloc(d, cpu_map))
-		return sa_sd_shared;
-	d->sd = alloc_percpu(struct sched_domain *);
-	if (!d->sd)
-		return sa_sd_shared;
+	ಆದರೆ (__sdt_alloc(cpu_map))
+		ಹಿಂತಿರುಗಿ sa_sd_storage;
+	ಆದರೆ (__sds_alloc(d, cpu_map))
+		ಹಿಂತಿರುಗಿ sa_sd_shared;
+	d->sd = alloc_percpu(ರಚನೆ sched_domain *);
+	ಆದರೆ (!d->sd)
+		ಹಿಂತಿರುಗಿ sa_sd_shared;
 	d->rd = alloc_rootdomain();
-	if (!d->rd)
-		return sa_sd;
+	ಆದರೆ (!d->rd)
+		ಹಿಂತಿರುಗಿ sa_sd;
 
-	return sa_rootdomain;
+	ಹಿಂತಿರುಗಿ sa_rootdomain;
 }
 
 /*
@@ -1885,43 +1885,43 @@ __visit_domain_allocation_hell(struct s_data *d, const struct cpumask *cpu_map)
  * sched_group structure so that the subsequent __free_domain_allocs()
  * will not free the data we're using.
  */
-static void claim_allocations(int cpu, struct s_data *d)
+ಸ್ಥಿರ ಶೂನ್ಯ claim_allocations(ಪೂರ್ಣಾಂಕ cpu, ರಚನೆ s_ದತ್ತಾಂಶ *d)
 {
-	struct sched_domain *sd;
+	ರಚನೆ sched_domain *sd;
 
-	if (atomic_read(&(*per_cpu_ptr(d->sds, cpu))->ref))
-		*per_cpu_ptr(d->sds, cpu) = NULL;
+	ಆದರೆ (atomic_read(&(*ಪ್ರತಿ_cpu_ptr(d->sds, cpu))->ref))
+		*ಪ್ರತಿ_cpu_ptr(d->sds, cpu) = ಖಾಲಿ;
 
-	for (sd = *per_cpu_ptr(d->sd, cpu); sd; sd = sd->parent) {
-		struct sd_data *sdd = sd->private;
+	ಗಾಗಿ (sd = *ಪ್ರತಿ_cpu_ptr(d->sd, cpu); sd; sd = sd->ಪೋಷಕ) {
+		ರಚನೆ sd_ದತ್ತಾಂಶ *sdd = sd->ಖಾಸಗಿ;
 
-		WARN_ON_ONCE(*per_cpu_ptr(sdd->sd, cpu) != sd);
-		*per_cpu_ptr(sdd->sd, cpu) = NULL;
+		WARN_ON_ONCE(*ಪ್ರತಿ_cpu_ptr(sdd->sd, cpu) != sd);
+		*ಪ್ರತಿ_cpu_ptr(sdd->sd, cpu) = ಖಾಲಿ;
 
-		if (atomic_read(&(*per_cpu_ptr(sdd->sg, cpu))->ref))
-			*per_cpu_ptr(sdd->sg, cpu) = NULL;
+		ಆದರೆ (atomic_read(&(*ಪ್ರತಿ_cpu_ptr(sdd->sg, cpu))->ref))
+			*ಪ್ರತಿ_cpu_ptr(sdd->sg, cpu) = ಖಾಲಿ;
 
-		if (atomic_read(&(*per_cpu_ptr(sdd->sgc, cpu))->ref))
-			*per_cpu_ptr(sdd->sgc, cpu) = NULL;
+		ಆದರೆ (atomic_read(&(*ಪ್ರತಿ_cpu_ptr(sdd->sgc, cpu))->ref))
+			*ಪ್ರತಿ_cpu_ptr(sdd->sgc, cpu) = ಖಾಲಿ;
 	}
 }
 
-#ifdef CONFIG_NUMA
-enum numa_topology_type sched_numa_topology_type;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_NUMA
+ಎಣಿಕೆ numa_topology_type sched_numa_topology_type;
 
 /*
  * sched_domains_numa_distance is derived from sched_numa_node_distance
  * and provides a simplified view of NUMA distances used specifically
  * for building NUMA scheduling domains.
  */
-static int			sched_domains_numa_levels;
-static int			sched_numa_node_levels;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ			sched_domains_numa_ಮಟ್ಟಗಳು;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ			sched_numa_ಗಂಟು_ಮಟ್ಟಗಳು;
 
-int				sched_max_numa_distance;
-static int			*sched_domains_numa_distance;
-static int			*sched_numa_node_distance;
-static struct cpumask		***sched_domains_numa_masks;
-#endif /* CONFIG_NUMA */
+ಪೂರ್ಣಾಂಕ				sched_max_numa_ದೂರ;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ			*sched_domains_numa_ದೂರ;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ			*sched_numa_ಗಂಟು_ದೂರ;
+ಸ್ಥಿರ ರಚನೆ cpumask		***sched_domains_numa_masks;
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_NUMA */
 
 /*
  * SD_flags allowed in topology descriptions.
@@ -1940,44 +1940,44 @@ static struct cpumask		***sched_domains_numa_masks;
  *
  *   SD_ASYM_PACKING        - describes SMT quirks
  */
-#define TOPOLOGY_SD_FLAGS		\
+#ವ್ಯಾಖ್ಯಾನಿಸು TOPOLOGY_SD_FLAGS		\
 	(SD_SHARE_CPUCAPACITY	|	\
 	 SD_CLUSTER		|	\
 	 SD_SHARE_LLC		|	\
 	 SD_NUMA		|	\
 	 SD_ASYM_PACKING)
 
-static struct sched_domain *
-sd_init(struct sched_domain_topology_level *tl,
-	const struct cpumask *cpu_map,
-	struct sched_domain *child, int cpu)
+ಸ್ಥಿರ ರಚನೆ sched_domain *
+sd_init(ರಚನೆ sched_domain_topology_level *tl,
+	ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map,
+	ರಚನೆ sched_domain *ಮಗು, ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct sd_data *sdd = &tl->data;
-	struct sched_domain *sd = *per_cpu_ptr(sdd->sd, cpu);
-	int sd_id, sd_weight, sd_flags = 0;
-	struct cpumask *sd_span;
+	ರಚನೆ sd_ದತ್ತಾಂಶ *sdd = &tl->ದತ್ತಾಂಶ;
+	ರಚನೆ sched_domain *sd = *ಪ್ರತಿ_cpu_ptr(sdd->sd, cpu);
+	ಪೂರ್ಣಾಂಕ sd_id, sd_ತೂಕ, sd_flags = 0;
+	ರಚನೆ cpumask *sd_ಹರವು;
 	u64 now = sched_clock();
 
-	sd_span = sched_domain_span(sd);
-	cpumask_and(sd_span, cpu_map, tl->mask(tl, cpu));
-	sd_weight = cpumask_weight(sd_span);
-	sd_id = cpumask_first(sd_span);
+	sd_ಹರವು = sched_domain_ಹರವು(sd);
+	cpumask_and(sd_ಹರವು, cpu_map, tl->ಮುಖವಾಡ(tl, cpu));
+	sd_ತೂಕ = cpumask_ತೂಕ(sd_ಹರವು);
+	sd_id = cpumask_ಮೊದಲ(sd_ಹರವು);
 
-	if (tl->sd_flags)
+	ಆದರೆ (tl->sd_flags)
 		sd_flags = (*tl->sd_flags)();
-	if (WARN_ONCE(sd_flags & ~TOPOLOGY_SD_FLAGS,
+	ಆದರೆ (WARN_ONCE(sd_flags & ~TOPOLOGY_SD_FLAGS,
 		      "wrong sd_flags in topology description\n"))
 		sd_flags &= TOPOLOGY_SD_FLAGS;
-#ifdef CONFIG_SCHED_SMT
-	if (sched_smt_asym_packing && (sd_flags & SD_SHARE_CPUCAPACITY))
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_SMT
+	ಆದರೆ (sched_smt_asym_packing && (sd_flags & SD_SHARE_CPUCAPACITY))
 		sd_flags |= SD_ASYM_PACKING;
-#endif
-	sd_flags |= asym_cpu_capacity_classify(sd_span, cpu_map);
+#ಆದರೆ_ಅಂತ್ಯ
+	sd_flags |= asym_cpu_ಸಾಮರ್ಥ್ಯ_classify(sd_ಹರವು, cpu_map);
 
-	*sd = (struct sched_domain){
-		.min_interval		= sd_weight,
-		.max_interval		= 2*sd_weight,
-		.busy_factor		= 16,
+	*sd = (ರಚನೆ sched_domain){
+		.min_interval		= sd_ತೂಕ,
+		.max_interval		= 2*sd_ತೂಕ,
+		.busy_ಗುಣಕ		= 16,
 		.imbalance_pct		= 117,
 
 		.cache_nice_tries	= 0,
@@ -1995,18 +1995,18 @@ sd_init(struct sched_domain_topology_level *tl,
 					| sd_flags
 					,
 
-		.last_balance		= jiffies,
-		.balance_interval	= sd_weight,
+		.ಕೊನೆಯ_balance		= jiffies,
+		.balance_interval	= sd_ತೂಕ,
 
 		/* 50% success rate */
 		.newidle_call		= 512,
 		.newidle_success	= 256,
-		.newidle_ratio		= 512,
+		.newidle_ಅನುಪಾತ		= 512,
 		.newidle_stamp		= now,
 
-		.max_newidle_lb_cost	= 0,
-		.last_decay_max_lb_cost	= jiffies,
-		.child			= child,
+		.max_newidle_lb_ವೆಚ್ಚ	= 0,
+		.ಕೊನೆಯ_decay_max_lb_ವೆಚ್ಚ	= jiffies,
+		.ಮಗು			= ಮಗು,
 		.name			= tl->name,
 	};
 
@@ -2017,68 +2017,68 @@ sd_init(struct sched_domain_topology_level *tl,
 	/*
 	 * Convert topological properties into behaviour.
 	 */
-	if (sd->flags & SD_SHARE_CPUCAPACITY) {
+	ಆದರೆ (sd->flags & SD_SHARE_CPUCAPACITY) {
 		sd->imbalance_pct = 110;
 
-	} else if (sd->flags & SD_SHARE_LLC) {
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (sd->flags & SD_SHARE_LLC) {
 		sd->imbalance_pct = 117;
 		sd->cache_nice_tries = 1;
 
-#ifdef CONFIG_NUMA
-	} else if (sd->flags & SD_NUMA) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_NUMA
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (sd->flags & SD_NUMA) {
 		sd->cache_nice_tries = 2;
 
 		sd->flags &= ~SD_PREFER_SIBLING;
 		sd->flags |= SD_SERIALIZE;
-		if (sched_domains_numa_distance[tl->numa_level] > node_reclaim_distance) {
+		ಆದರೆ (sched_domains_numa_ದೂರ[tl->numa_level] > ಗಂಟು_reclaim_ದೂರ) {
 			sd->flags &= ~(SD_BALANCE_EXEC |
 				       SD_BALANCE_FORK |
 				       SD_WAKE_AFFINE);
 		}
 
-#endif /* CONFIG_NUMA */
-	} else {
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_NUMA */
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		sd->cache_nice_tries = 1;
 	}
 
-	sd->private = sdd;
+	sd->ಖಾಸಗಿ = sdd;
 
-	return sd;
+	ಹಿಂತಿರುಗಿ sd;
 }
 
-#ifdef CONFIG_SCHED_SMT
-int cpu_smt_flags(void)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_SMT
+ಪೂರ್ಣಾಂಕ cpu_smt_flags(ಶೂನ್ಯ)
 {
-	return SD_SHARE_CPUCAPACITY | SD_SHARE_LLC;
+	ಹಿಂತಿರುಗಿ SD_SHARE_CPUCAPACITY | SD_SHARE_LLC;
 }
 
-const struct cpumask *tl_smt_mask(struct sched_domain_topology_level *tl, int cpu)
+ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *tl_smt_ಮುಖವಾಡ(ರಚನೆ sched_domain_topology_level *tl, ಪೂರ್ಣಾಂಕ cpu)
 {
-	return cpu_smt_mask(cpu);
+	ಹಿಂತಿರುಗಿ cpu_smt_ಮುಖವಾಡ(cpu);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef CONFIG_SCHED_CLUSTER
-int cpu_cluster_flags(void)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CLUSTER
+ಪೂರ್ಣಾಂಕ cpu_cluster_flags(ಶೂನ್ಯ)
 {
-	return SD_CLUSTER | SD_SHARE_LLC;
-}
-
-const struct cpumask *tl_cls_mask(struct sched_domain_topology_level *tl, int cpu)
-{
-	return cpu_clustergroup_mask(cpu);
-}
-#endif
-
-#ifdef CONFIG_SCHED_MC
-int cpu_core_flags(void)
-{
-	return SD_SHARE_LLC;
+	ಹಿಂತಿರುಗಿ SD_CLUSTER | SD_SHARE_LLC;
 }
 
-const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
+ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *tl_cls_ಮುಖವಾಡ(ರಚನೆ sched_domain_topology_level *tl, ಪೂರ್ಣಾಂಕ cpu)
 {
-	return cpu_coregroup_mask(cpu);
+	ಹಿಂತಿರುಗಿ cpu_clustergroup_ಮುಖವಾಡ(cpu);
+}
+#ಆದರೆ_ಅಂತ್ಯ
+
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_MC
+ಪೂರ್ಣಾಂಕ cpu_core_flags(ಶೂನ್ಯ)
+{
+	ಹಿಂತಿರುಗಿ SD_SHARE_LLC;
+}
+
+ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *tl_mc_ಮುಖವಾಡ(ರಚನೆ sched_domain_topology_level *tl, ಪೂರ್ಣಾಂಕ cpu)
+{
+	ಹಿಂತಿರುಗಿ cpu_coregroup_ಮುಖವಾಡ(cpu);
 }
 
 /*
@@ -2086,121 +2086,121 @@ const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu
  * such as powerpc. Provide a way for arch to specify where its LLC is
  * if it falls in exception category
  */
-# ifndef arch_llc_mask
-#define arch_llc_mask(cpu) cpu_coregroup_mask(cpu)
+# ifndef arch_llc_ಮುಖವಾಡ
+#ವ್ಯಾಖ್ಯಾನಿಸು arch_llc_ಮುಖವಾಡ(cpu) cpu_coregroup_ಮುಖವಾಡ(cpu)
 # endif
 
-#else
-#define arch_llc_mask(cpu) cpumask_of(cpu)
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು arch_llc_ಮುಖವಾಡ(cpu) cpumask_ದ(cpu)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define llc_mask(cpu) arch_llc_mask(cpu)
+#ವ್ಯಾಖ್ಯಾನಿಸು llc_ಮುಖವಾಡ(cpu) arch_llc_ಮುಖವಾಡ(cpu)
 
-const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *tl_pkg_ಮುಖವಾಡ(ರಚನೆ sched_domain_topology_level *tl, ಪೂರ್ಣಾಂಕ cpu)
 {
-	return cpu_node_mask(cpu);
+	ಹಿಂತಿರುಗಿ cpu_ಗಂಟು_ಮುಖವಾಡ(cpu);
 }
 
 /*
  * Topology list, bottom-up.
  */
-static struct sched_domain_topology_level default_topology[] = {
-#ifdef CONFIG_SCHED_SMT
-	SDTL_INIT(tl_smt_mask, cpu_smt_flags, SMT),
-#endif
+ಸ್ಥಿರ ರಚನೆ sched_domain_topology_level default_topology[] = {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_SMT
+	SDTL_INIT(tl_smt_ಮುಖವಾಡ, cpu_smt_flags, SMT),
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef CONFIG_SCHED_CLUSTER
-	SDTL_INIT(tl_cls_mask, cpu_cluster_flags, CLS),
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CLUSTER
+	SDTL_INIT(tl_cls_ಮುಖವಾಡ, cpu_cluster_flags, CLS),
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef CONFIG_SCHED_MC
-	SDTL_INIT(tl_mc_mask, cpu_core_flags, MC),
-#endif
-	SDTL_INIT(tl_pkg_mask, NULL, PKG),
-	{ NULL, },
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_MC
+	SDTL_INIT(tl_mc_ಮುಖವಾಡ, cpu_core_flags, MC),
+#ಆದರೆ_ಅಂತ್ಯ
+	SDTL_INIT(tl_pkg_ಮುಖವಾಡ, ಖಾಲಿ, PKG),
+	{ ಖಾಲಿ, },
 };
 
-static struct sched_domain_topology_level *sched_domain_topology =
+ಸ್ಥಿರ ರಚನೆ sched_domain_topology_level *sched_domain_topology =
 	default_topology;
-static struct sched_domain_topology_level *sched_domain_topology_saved;
+ಸ್ಥಿರ ರಚನೆ sched_domain_topology_level *sched_domain_topology_saved;
 
-#define for_each_sd_topology(tl)			\
-	for (tl = sched_domain_topology; tl->mask; tl++)
+#ವ್ಯಾಖ್ಯಾನಿಸು for_each_sd_topology(tl)			\
+	ಗಾಗಿ (tl = sched_domain_topology; tl->ಮುಖವಾಡ; tl++)
 
-void __init set_sched_topology(struct sched_domain_topology_level *tl)
+ಶೂನ್ಯ __init ಗಣ_sched_topology(ರಚನೆ sched_domain_topology_level *tl)
 {
-	if (WARN_ON_ONCE(sched_smp_initialized))
-		return;
+	ಆದರೆ (WARN_ON_ONCE(sched_smp_initialized))
+		ಹಿಂತಿರುಗಿ;
 
 	sched_domain_topology = tl;
-	sched_domain_topology_saved = NULL;
+	sched_domain_topology_saved = ಖಾಲಿ;
 }
 
-#ifdef CONFIG_NUMA
-static int cpu_numa_flags(void)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_NUMA
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ cpu_numa_flags(ಶೂನ್ಯ)
 {
-	return SD_NUMA;
+	ಹಿಂತಿರುಗಿ SD_NUMA;
 }
 
-static const struct cpumask *sd_numa_mask(struct sched_domain_topology_level *tl, int cpu)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *sd_numa_ಮುಖವಾಡ(ರಚನೆ sched_domain_topology_level *tl, ಪೂರ್ಣಾಂಕ cpu)
 {
-	return sched_domains_numa_masks[tl->numa_level][cpu_to_node(cpu)];
+	ಹಿಂತಿರುಗಿ sched_domains_numa_masks[tl->numa_level][cpu_ಗಮ್ಯ_ಗಂಟು(cpu)];
 }
 
-static void sched_numa_warn(const char *str)
+ಸ್ಥಿರ ಶೂನ್ಯ sched_numa_warn(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str)
 {
-	static int done = false;
-	int i,j;
+	ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಮುಗಿದ = false;
+	ಪೂರ್ಣಾಂಕ i,j;
 
-	if (done)
-		return;
+	ಆದರೆ (ಮುಗಿದ)
+		ಹಿಂತಿರುಗಿ;
 
-	done = true;
+	ಮುಗಿದ = true;
 
 	printk(KERN_WARNING "ERROR: %s\n\n", str);
 
-	for (i = 0; i < nr_node_ids; i++) {
+	ಗಾಗಿ (i = 0; i < nr_ಗಂಟು_ids; i++) {
 		printk(KERN_WARNING "  ");
-		for (j = 0; j < nr_node_ids; j++) {
-			if (!node_state(i, N_CPU) || !node_state(j, N_CPU))
-				printk(KERN_CONT "(%02d) ", node_distance(i,j));
-			else
-				printk(KERN_CONT " %02d  ", node_distance(i,j));
+		ಗಾಗಿ (j = 0; j < nr_ಗಂಟು_ids; j++) {
+			ಆದರೆ (!ಗಂಟು_state(i, N_CPU) || !ಗಂಟು_state(j, N_CPU))
+				printk(KERN_CONT "(%02d) ", ಗಂಟು_ದೂರ(i,j));
+			ಇಲ್ಲದಿದ್ದರೆ
+				printk(KERN_CONT " %02d  ", ಗಂಟು_ದೂರ(i,j));
 		}
 		printk(KERN_CONT "\n");
 	}
 	printk(KERN_WARNING "\n");
 }
 
-bool find_numa_distance(int distance)
+bool ಕಂಡುಹಿಡಿ_numa_ದೂರ(ಪೂರ್ಣಾಂಕ ದೂರ)
 {
-	bool found = false;
-	int i, *distances;
+	bool ಸಿಕ್ಕಿತು = false;
+	ಪೂರ್ಣಾಂಕ i, *distances;
 
-	if (distance == node_distance(0, 0))
-		return true;
+	ಆದರೆ (ದೂರ == ಗಂಟು_ದೂರ(0, 0))
+		ಹಿಂತಿರುಗಿ true;
 
-	rcu_read_lock();
-	distances = rcu_dereference(sched_numa_node_distance);
-	if (!distances)
-		goto unlock;
-	for (i = 0; i < sched_numa_node_levels; i++) {
-		if (distances[i] == distance) {
-			found = true;
-			break;
+	rcu_read_ಬೀಗ();
+	distances = rcu_dereference(sched_numa_ಗಂಟು_ದೂರ);
+	ಆದರೆ (!distances)
+		ಹೋಗು unlock;
+	ಗಾಗಿ (i = 0; i < sched_numa_ಗಂಟು_ಮಟ್ಟಗಳು; i++) {
+		ಆದರೆ (distances[i] == ದೂರ) {
+			ಸಿಕ್ಕಿತು = true;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 unlock:
 	rcu_read_unlock();
 
-	return found;
+	ಹಿಂತಿರುಗಿ ಸಿಕ್ಕಿತು;
 }
 
-#define for_each_cpu_node_but(n, nbut)		\
-	for_each_node_state(n, N_CPU)		\
-		if (n == nbut)			\
-			continue;		\
-		else
+#ವ್ಯಾಖ್ಯಾನಿಸು for_each_cpu_ಗಂಟು_but(n, nbut)		\
+	for_each_ಗಂಟು_state(n, N_CPU)		\
+		ಆದರೆ (n == nbut)			\
+			ಮುಂದುವರಿ;		\
+		ಇಲ್ಲದಿದ್ದರೆ
 
 /*
  * A system can have three types of NUMA topology:
@@ -2221,44 +2221,44 @@ unlock:
  *   there is an intermediary node C, which is < N hops away from both
  *   nodes A and B, the system is a glueless mesh.
  */
-static void init_numa_topology_type(int offline_node)
+ಸ್ಥಿರ ಶೂನ್ಯ init_numa_topology_type(ಪೂರ್ಣಾಂಕ offline_ಗಂಟು)
 {
-	int a, b, c, n;
+	ಪೂರ್ಣಾಂಕ a, b, c, n;
 
-	n = sched_max_numa_distance;
+	n = sched_max_numa_ದೂರ;
 
-	if (sched_domains_numa_levels <= 2) {
-		sched_numa_topology_type = NUMA_DIRECT;
-		return;
+	ಆದರೆ (sched_domains_numa_ಮಟ್ಟಗಳು <= 2) {
+		sched_numa_topology_type = NUMA_ನೇರ;
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	for_each_cpu_node_but(a, offline_node) {
-		for_each_cpu_node_but(b, offline_node) {
+	for_each_cpu_ಗಂಟು_but(a, offline_ಗಂಟು) {
+		for_each_cpu_ಗಂಟು_but(b, offline_ಗಂಟು) {
 			/* Find two nodes furthest removed from each other. */
-			if (node_distance(a, b) < n)
-				continue;
+			ಆದರೆ (ಗಂಟು_ದೂರ(a, b) < n)
+				ಮುಂದುವರಿ;
 
 			/* Is there an intermediary node between a and b? */
-			for_each_cpu_node_but(c, offline_node) {
-				if (node_distance(a, c) < n &&
-				    node_distance(b, c) < n) {
+			for_each_cpu_ಗಂಟು_but(c, offline_ಗಂಟು) {
+				ಆದರೆ (ಗಂಟು_ದೂರ(a, c) < n &&
+				    ಗಂಟು_ದೂರ(b, c) < n) {
 					sched_numa_topology_type =
 							NUMA_GLUELESS_MESH;
-					return;
+					ಹಿಂತಿರುಗಿ;
 				}
 			}
 
 			sched_numa_topology_type = NUMA_BACKPLANE;
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
 	}
 
 	pr_err("Failed to find a NUMA topology type, defaulting to DIRECT\n");
-	sched_numa_topology_type = NUMA_DIRECT;
+	sched_numa_topology_type = NUMA_ನೇರ;
 }
 
 
-#define NR_DISTANCE_VALUES (1 << DISTANCE_BITS)
+#ವ್ಯಾಖ್ಯಾನಿಸು NR_ದೂರ_ಮೌಲ್ಯಗಳು (1 << ದೂರ_ಬಿಟ್ಟುಗಳು)
 
 /*
  * An architecture could modify its NUMA distance, to change
@@ -2268,95 +2268,95 @@ static void init_numa_topology_type(int offline_node)
  * A NUMA level is created for each unique
  * arch_sched_node_distance.
  */
-static int numa_node_dist(int i, int j)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ numa_ಗಂಟು_dist(ಪೂರ್ಣಾಂಕ i, ಪೂರ್ಣಾಂಕ j)
 {
-	return node_distance(i, j);
+	ಹಿಂತಿರುಗಿ ಗಂಟು_ದೂರ(i, j);
 }
 
-int arch_sched_node_distance(int from, int to)
-			     __weak __alias(numa_node_dist);
+ಪೂರ್ಣಾಂಕ arch_sched_ಗಂಟು_ದೂರ(ಪೂರ್ಣಾಂಕ from, ಪೂರ್ಣಾಂಕ ಗಮ್ಯ)
+			     __weak __alias(numa_ಗಂಟು_dist);
 
-static bool modified_sched_node_distance(void)
+ಸ್ಥಿರ bool modified_sched_ಗಂಟು_ದೂರ(ಶೂನ್ಯ)
 {
-	return numa_node_dist != arch_sched_node_distance;
+	ಹಿಂತಿರುಗಿ numa_ಗಂಟು_dist != arch_sched_ಗಂಟು_ದೂರ;
 }
 
-static int sched_record_numa_dist(int offline_node, int (*n_dist)(int, int),
-				  int **dist, int *levels)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ sched_ದಾಖಲೆ_numa_dist(ಪೂರ್ಣಾಂಕ offline_ಗಂಟು, ಪೂರ್ಣಾಂಕ (*n_dist)(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ),
+				  ಪೂರ್ಣಾಂಕ **dist, ಪೂರ್ಣಾಂಕ *ಮಟ್ಟಗಳು)
 {
-	unsigned long *distance_map __free(bitmap) = NULL;
-	int nr_levels = 0;
-	int i, j;
-	int *distances;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ *ದೂರ_map __free(bitmap) = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ nr_ಮಟ್ಟಗಳು = 0;
+	ಪೂರ್ಣಾಂಕ i, j;
+	ಪೂರ್ಣಾಂಕ *distances;
 
 	/*
 	 * O(nr_nodes^2) de-duplicating selection sort -- in order to find the
 	 * unique distances in the node_distance() table.
 	 */
-	distance_map = bitmap_alloc(NR_DISTANCE_VALUES, GFP_KERNEL);
-	if (!distance_map)
-		return -ENOMEM;
+	ದೂರ_map = bitmap_alloc(NR_ದೂರ_ಮೌಲ್ಯಗಳು, GFP_KERNEL);
+	ಆದರೆ (!ದೂರ_map)
+		ಹಿಂತಿರುಗಿ -ENOMEM;
 
-	bitmap_zero(distance_map, NR_DISTANCE_VALUES);
-	for_each_cpu_node_but(i, offline_node) {
-		for_each_cpu_node_but(j, offline_node) {
-			int distance = n_dist(i, j);
+	bitmap_zero(ದೂರ_map, NR_ದೂರ_ಮೌಲ್ಯಗಳು);
+	for_each_cpu_ಗಂಟು_but(i, offline_ಗಂಟು) {
+		for_each_cpu_ಗಂಟು_but(j, offline_ಗಂಟು) {
+			ಪೂರ್ಣಾಂಕ ದೂರ = n_dist(i, j);
 
-			if (distance < LOCAL_DISTANCE || distance >= NR_DISTANCE_VALUES) {
+			ಆದರೆ (ದೂರ < LOCAL_ದೂರ || ದೂರ >= NR_ದೂರ_ಮೌಲ್ಯಗಳು) {
 				sched_numa_warn("Invalid distance value range");
-				return -EINVAL;
+				ಹಿಂತಿರುಗಿ -EINVAL;
 			}
 
-			bitmap_set(distance_map, distance, 1);
+			bitmap_ಗಣ(ದೂರ_map, ದೂರ, 1);
 		}
 	}
 	/*
 	 * We can now figure out how many unique distance values there are and
 	 * allocate memory accordingly.
 	 */
-	nr_levels = bitmap_weight(distance_map, NR_DISTANCE_VALUES);
+	nr_ಮಟ್ಟಗಳು = bitmap_ತೂಕ(ದೂರ_map, NR_ದೂರ_ಮೌಲ್ಯಗಳು);
 
-	distances = kzalloc_objs(int, nr_levels);
-	if (!distances)
-		return -ENOMEM;
+	distances = kzalloc_objs(ಪೂರ್ಣಾಂಕ, nr_ಮಟ್ಟಗಳು);
+	ಆದರೆ (!distances)
+		ಹಿಂತಿರುಗಿ -ENOMEM;
 
-	for (i = 0, j = 0; i < nr_levels; i++, j++) {
-		j = find_next_bit(distance_map, NR_DISTANCE_VALUES, j);
+	ಗಾಗಿ (i = 0, j = 0; i < nr_ಮಟ್ಟಗಳು; i++, j++) {
+		j = ಕಂಡುಹಿಡಿ_ಮುಂದಿನ_ಬಿಟ್(ದೂರ_map, NR_ದೂರ_ಮೌಲ್ಯಗಳು, j);
 		distances[i] = j;
 	}
 	*dist = distances;
-	*levels = nr_levels;
+	*ಮಟ್ಟಗಳು = nr_ಮಟ್ಟಗಳು;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-void sched_init_numa(int offline_node)
+ಶೂನ್ಯ sched_init_numa(ಪೂರ್ಣಾಂಕ offline_ಗಂಟು)
 {
-	struct sched_domain_topology_level *tl;
-	int nr_levels, nr_node_levels;
-	int i, j;
-	int *distances, *domain_distances;
-	struct cpumask ***masks;
+	ರಚನೆ sched_domain_topology_level *tl;
+	ಪೂರ್ಣಾಂಕ nr_ಮಟ್ಟಗಳು, nr_ಗಂಟು_ಮಟ್ಟಗಳು;
+	ಪೂರ್ಣಾಂಕ i, j;
+	ಪೂರ್ಣಾಂಕ *distances, *domain_distances;
+	ರಚನೆ cpumask ***masks;
 
 	/* Record the NUMA distances from SLIT table */
-	if (sched_record_numa_dist(offline_node, numa_node_dist, &distances,
-				   &nr_node_levels))
-		return;
+	ಆದರೆ (sched_ದಾಖಲೆ_numa_dist(offline_ಗಂಟು, numa_ಗಂಟು_dist, &distances,
+				   &nr_ಗಂಟು_ಮಟ್ಟಗಳು))
+		ಹಿಂತಿರುಗಿ;
 
 	/* Record modified NUMA distances for building sched domains */
-	if (modified_sched_node_distance()) {
-		if (sched_record_numa_dist(offline_node, arch_sched_node_distance,
-					   &domain_distances, &nr_levels)) {
+	ಆದರೆ (modified_sched_ಗಂಟು_ದೂರ()) {
+		ಆದರೆ (sched_ದಾಖಲೆ_numa_dist(offline_ಗಂಟು, arch_sched_ಗಂಟು_ದೂರ,
+					   &domain_distances, &nr_ಮಟ್ಟಗಳು)) {
 			kfree(distances);
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		domain_distances = distances;
-		nr_levels = nr_node_levels;
+		nr_ಮಟ್ಟಗಳು = nr_ಗಂಟು_ಮಟ್ಟಗಳು;
 	}
-	rcu_assign_pointer(sched_numa_node_distance, distances);
-	WRITE_ONCE(sched_max_numa_distance, distances[nr_node_levels - 1]);
-	WRITE_ONCE(sched_numa_node_levels, nr_node_levels);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(sched_numa_ಗಂಟು_ದೂರ, distances);
+	WRITE_ONCE(sched_max_numa_ದೂರ, distances[nr_ಗಂಟು_ಮಟ್ಟಗಳು - 1]);
+	WRITE_ONCE(sched_numa_ಗಂಟು_ಮಟ್ಟಗಳು, nr_ಗಂಟು_ಮಟ್ಟಗಳು);
 
 	/*
 	 * 'nr_levels' contains the number of unique distances
@@ -2374,167 +2374,167 @@ void sched_init_numa(int offline_node)
 	 *
 	 * We reset it to 'nr_levels' at the end of this function.
 	 */
-	rcu_assign_pointer(sched_domains_numa_distance, domain_distances);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(sched_domains_numa_ದೂರ, domain_distances);
 
-	sched_domains_numa_levels = 0;
+	sched_domains_numa_ಮಟ್ಟಗಳು = 0;
 
-	masks = kzalloc(sizeof(void *) * nr_levels, GFP_KERNEL);
-	if (!masks)
-		return;
+	masks = kzalloc(ಗಾತ್ರ(ಶೂನ್ಯ *) * nr_ಮಟ್ಟಗಳು, GFP_KERNEL);
+	ಆದರೆ (!masks)
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * Now for each level, construct a mask per node which contains all
 	 * CPUs of nodes that are that many hops away from us.
 	 */
-	for (i = 0; i < nr_levels; i++) {
-		masks[i] = kzalloc(nr_node_ids * sizeof(void *), GFP_KERNEL);
-		if (!masks[i])
-			return;
+	ಗಾಗಿ (i = 0; i < nr_ಮಟ್ಟಗಳು; i++) {
+		masks[i] = kzalloc(nr_ಗಂಟು_ids * ಗಾತ್ರ(ಶೂನ್ಯ *), GFP_KERNEL);
+		ಆದರೆ (!masks[i])
+			ಹಿಂತಿರುಗಿ;
 
-		for_each_cpu_node_but(j, offline_node) {
-			struct cpumask *mask = kzalloc(cpumask_size(), GFP_KERNEL);
-			int k;
+		for_each_cpu_ಗಂಟು_but(j, offline_ಗಂಟು) {
+			ರಚನೆ cpumask *ಮುಖವಾಡ = kzalloc(cpumask_ಗಾತ್ರ(), GFP_KERNEL);
+			ಪೂರ್ಣಾಂಕ k;
 
-			if (!mask)
-				return;
+			ಆದರೆ (!ಮುಖವಾಡ)
+				ಹಿಂತಿರುಗಿ;
 
-			masks[i][j] = mask;
+			masks[i][j] = ಮುಖವಾಡ;
 
-			for_each_cpu_node_but(k, offline_node) {
-				if (sched_debug() &&
-				    (arch_sched_node_distance(j, k) !=
-				     arch_sched_node_distance(k, j)))
+			for_each_cpu_ಗಂಟು_but(k, offline_ಗಂಟು) {
+				ಆದರೆ (sched_debug() &&
+				    (arch_sched_ಗಂಟು_ದೂರ(j, k) !=
+				     arch_sched_ಗಂಟು_ದೂರ(k, j)))
 					sched_numa_warn("Node-distance not symmetric");
 
-				if (arch_sched_node_distance(j, k) >
-				    sched_domains_numa_distance[i])
-					continue;
+				ಆದರೆ (arch_sched_ಗಂಟು_ದೂರ(j, k) >
+				    sched_domains_numa_ದೂರ[i])
+					ಮುಂದುವರಿ;
 
-				cpumask_or(mask, mask, cpumask_of_node(k));
+				cpumask_or(ಮುಖವಾಡ, ಮುಖವಾಡ, cpumask_ದ_ಗಂಟು(k));
 			}
 		}
 	}
-	rcu_assign_pointer(sched_domains_numa_masks, masks);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(sched_domains_numa_masks, masks);
 
 	/* Compute default topology size */
-	for (i = 0; sched_domain_topology[i].mask; i++);
+	ಗಾಗಿ (i = 0; sched_domain_topology[i].ಮುಖವಾಡ; i++);
 
-	tl = kzalloc((i + nr_levels + 1) *
-			sizeof(struct sched_domain_topology_level), GFP_KERNEL);
-	if (!tl)
-		return;
+	tl = kzalloc((i + nr_ಮಟ್ಟಗಳು + 1) *
+			ಗಾತ್ರ(ರಚನೆ sched_domain_topology_level), GFP_KERNEL);
+	ಆದರೆ (!tl)
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * Copy the default topology bits..
 	 */
-	for (i = 0; sched_domain_topology[i].mask; i++)
+	ಗಾಗಿ (i = 0; sched_domain_topology[i].ಮುಖವಾಡ; i++)
 		tl[i] = sched_domain_topology[i];
 
 	/*
 	 * Add the NUMA identity distance, aka single NODE.
 	 */
-	tl[i++] = SDTL_INIT(sd_numa_mask, NULL, NODE);
+	tl[i++] = SDTL_INIT(sd_numa_ಮುಖವಾಡ, ಖಾಲಿ, ಗಂಟು_2);
 
 	/*
 	 * .. and append 'j' levels of NUMA goodness.
 	 */
-	for (j = 1; j < nr_levels; i++, j++) {
-		tl[i] = SDTL_INIT(sd_numa_mask, cpu_numa_flags, NUMA);
+	ಗಾಗಿ (j = 1; j < nr_ಮಟ್ಟಗಳು; i++, j++) {
+		tl[i] = SDTL_INIT(sd_numa_ಮುಖವಾಡ, cpu_numa_flags, NUMA);
 		tl[i].numa_level = j;
 	}
 
 	sched_domain_topology_saved = sched_domain_topology;
 	sched_domain_topology = tl;
 
-	sched_domains_numa_levels = nr_levels;
+	sched_domains_numa_ಮಟ್ಟಗಳು = nr_ಮಟ್ಟಗಳು;
 
-	init_numa_topology_type(offline_node);
+	init_numa_topology_type(offline_ಗಂಟು);
 }
 
 
-static void sched_reset_numa(void)
+ಸ್ಥಿರ ಶೂನ್ಯ sched_reset_numa(ಶೂನ್ಯ)
 {
-	int nr_levels, *distances, *dom_distances = NULL;
-	struct cpumask ***masks;
+	ಪೂರ್ಣಾಂಕ nr_ಮಟ್ಟಗಳು, *distances, *dom_distances = ಖಾಲಿ;
+	ರಚನೆ cpumask ***masks;
 
-	nr_levels = sched_domains_numa_levels;
-	sched_numa_node_levels = 0;
-	sched_domains_numa_levels = 0;
-	sched_max_numa_distance = 0;
-	sched_numa_topology_type = NUMA_DIRECT;
-	distances = sched_numa_node_distance;
-	if (sched_numa_node_distance != sched_domains_numa_distance)
-		dom_distances = sched_domains_numa_distance;
-	rcu_assign_pointer(sched_numa_node_distance, NULL);
-	rcu_assign_pointer(sched_domains_numa_distance, NULL);
+	nr_ಮಟ್ಟಗಳು = sched_domains_numa_ಮಟ್ಟಗಳು;
+	sched_numa_ಗಂಟು_ಮಟ್ಟಗಳು = 0;
+	sched_domains_numa_ಮಟ್ಟಗಳು = 0;
+	sched_max_numa_ದೂರ = 0;
+	sched_numa_topology_type = NUMA_ನೇರ;
+	distances = sched_numa_ಗಂಟು_ದೂರ;
+	ಆದರೆ (sched_numa_ಗಂಟು_ದೂರ != sched_domains_numa_ದೂರ)
+		dom_distances = sched_domains_numa_ದೂರ;
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(sched_numa_ಗಂಟು_ದೂರ, ಖಾಲಿ);
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(sched_domains_numa_ದೂರ, ಖಾಲಿ);
 	masks = sched_domains_numa_masks;
-	rcu_assign_pointer(sched_domains_numa_masks, NULL);
-	if (distances || masks) {
-		int i, j;
+	rcu_ನಿಯೋಜಿಸು_ಸೂಚಕ(sched_domains_numa_masks, ಖಾಲಿ);
+	ಆದರೆ (distances || masks) {
+		ಪೂರ್ಣಾಂಕ i, j;
 
 		synchronize_rcu();
 		kfree(distances);
 		kfree(dom_distances);
-		for (i = 0; i < nr_levels && masks; i++) {
-			if (!masks[i])
-				continue;
-			for_each_node(j)
+		ಗಾಗಿ (i = 0; i < nr_ಮಟ್ಟಗಳು && masks; i++) {
+			ಆದರೆ (!masks[i])
+				ಮುಂದುವರಿ;
+			for_each_ಗಂಟು(j)
 				kfree(masks[i][j]);
 			kfree(masks[i]);
 		}
 		kfree(masks);
 	}
-	if (sched_domain_topology_saved) {
+	ಆದರೆ (sched_domain_topology_saved) {
 		kfree(sched_domain_topology);
 		sched_domain_topology = sched_domain_topology_saved;
-		sched_domain_topology_saved = NULL;
+		sched_domain_topology_saved = ಖಾಲಿ;
 	}
 }
 
 /*
  * Call with hotplug lock held
  */
-void sched_update_numa(int cpu, bool online)
+ಶೂನ್ಯ sched_update_numa(ಪೂರ್ಣಾಂಕ cpu, bool online)
 {
-	int node;
+	ಪೂರ್ಣಾಂಕ ಗಂಟು;
 
-	node = cpu_to_node(cpu);
+	ಗಂಟು = cpu_ಗಮ್ಯ_ಗಂಟು(cpu);
 	/*
 	 * Scheduler NUMA topology is updated when the first CPU of a
 	 * node is onlined or the last CPU of a node is offlined.
 	 */
-	if (cpumask_weight(cpumask_of_node(node)) != 1)
-		return;
+	ಆದರೆ (cpumask_ತೂಕ(cpumask_ದ_ಗಂಟು(ಗಂಟು)) != 1)
+		ಹಿಂತಿರುಗಿ;
 
 	sched_reset_numa();
-	sched_init_numa(online ? NUMA_NO_NODE : node);
+	sched_init_numa(online ? NUMA_NO_ಗಂಟು : ಗಂಟು);
 }
 
-void sched_domains_numa_masks_set(unsigned int cpu)
+ಶೂನ್ಯ sched_domains_numa_masks_ಗಣ(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ cpu)
 {
-	int node = cpu_to_node(cpu);
-	int i, j;
+	ಪೂರ್ಣಾಂಕ ಗಂಟು = cpu_ಗಮ್ಯ_ಗಂಟು(cpu);
+	ಪೂರ್ಣಾಂಕ i, j;
 
-	for (i = 0; i < sched_domains_numa_levels; i++) {
-		for (j = 0; j < nr_node_ids; j++) {
-			if (!node_state(j, N_CPU))
-				continue;
+	ಗಾಗಿ (i = 0; i < sched_domains_numa_ಮಟ್ಟಗಳು; i++) {
+		ಗಾಗಿ (j = 0; j < nr_ಗಂಟು_ids; j++) {
+			ಆದರೆ (!ಗಂಟು_state(j, N_CPU))
+				ಮುಂದುವರಿ;
 
 			/* Set ourselves in the remote node's masks */
-			if (arch_sched_node_distance(j, node) <=
-			    sched_domains_numa_distance[i])
-				cpumask_set_cpu(cpu, sched_domains_numa_masks[i][j]);
+			ಆದರೆ (arch_sched_ಗಂಟು_ದೂರ(j, ಗಂಟು) <=
+			    sched_domains_numa_ದೂರ[i])
+				cpumask_ಗಣ_cpu(cpu, sched_domains_numa_masks[i][j]);
 		}
 	}
 }
 
-void sched_domains_numa_masks_clear(unsigned int cpu)
+ಶೂನ್ಯ sched_domains_numa_masks_clear(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ cpu)
 {
-	int i, j;
+	ಪೂರ್ಣಾಂಕ i, j;
 
-	for (i = 0; i < sched_domains_numa_levels; i++) {
-		for (j = 0; j < nr_node_ids; j++) {
-			if (sched_domains_numa_masks[i][j])
+	ಗಾಗಿ (i = 0; i < sched_domains_numa_ಮಟ್ಟಗಳು; i++) {
+		ಗಾಗಿ (j = 0; j < nr_ಗಂಟು_ids; j++) {
+			ಆದರೆ (sched_domains_numa_masks[i][j])
 				cpumask_clear_cpu(cpu, sched_domains_numa_masks[i][j]);
 		}
 	}
@@ -2548,57 +2548,57 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
  *
  * returns: cpu, or nr_cpu_ids when nothing found.
  */
-int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
+ಪೂರ್ಣಾಂಕ sched_numa_ಕಂಡುಹಿಡಿ_closest(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpus, ಪೂರ್ಣಾಂಕ cpu)
 {
-	int i, j = cpu_to_node(cpu), found = nr_cpu_ids;
-	struct cpumask ***masks;
+	ಪೂರ್ಣಾಂಕ i, j = cpu_ಗಮ್ಯ_ಗಂಟು(cpu), ಸಿಕ್ಕಿತು = nr_cpu_ids;
+	ರಚನೆ cpumask ***masks;
 
-	rcu_read_lock();
+	rcu_read_ಬೀಗ();
 	masks = rcu_dereference(sched_domains_numa_masks);
-	if (!masks)
-		goto unlock;
-	for (i = 0; i < sched_domains_numa_levels; i++) {
-		if (!masks[i][j])
-			break;
+	ಆದರೆ (!masks)
+		ಹೋಗು unlock;
+	ಗಾಗಿ (i = 0; i < sched_domains_numa_ಮಟ್ಟಗಳು; i++) {
+		ಆದರೆ (!masks[i][j])
+			ನಿಲ್ಲಿಸು;
 		cpu = cpumask_any_and_distribute(cpus, masks[i][j]);
-		if (cpu < nr_cpu_ids) {
-			found = cpu;
-			break;
+		ಆದರೆ (cpu < nr_cpu_ids) {
+			ಸಿಕ್ಕಿತು = cpu;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 unlock:
 	rcu_read_unlock();
 
-	return found;
+	ಹಿಂತಿರುಗಿ ಸಿಕ್ಕಿತು;
 }
 
-struct __cmp_key {
-	const struct cpumask *cpus;
-	struct cpumask ***masks;
-	int node;
-	int cpu;
-	int w;
+ರಚನೆ __cmp_key {
+	ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpus;
+	ರಚನೆ cpumask ***masks;
+	ಪೂರ್ಣಾಂಕ ಗಂಟು;
+	ಪೂರ್ಣಾಂಕ cpu;
+	ಪೂರ್ಣಾಂಕ w;
 };
 
-static int hop_cmp(const void *a, const void *b)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ hop_cmp(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *a, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *b)
 {
-	struct cpumask **prev_hop, **cur_hop = *(struct cpumask ***)b;
-	struct __cmp_key *k = (struct __cmp_key *)a;
+	ರಚನೆ cpumask **prev_hop, **cur_hop = *(ರಚನೆ cpumask ***)b;
+	ರಚನೆ __cmp_key *k = (ರಚನೆ __cmp_key *)a;
 
-	if (cpumask_weight_and(k->cpus, cur_hop[k->node]) <= k->cpu)
-		return 1;
+	ಆದರೆ (cpumask_ತೂಕ_and(k->cpus, cur_hop[k->ಗಂಟು]) <= k->cpu)
+		ಹಿಂತಿರುಗಿ 1;
 
-	if (b == k->masks) {
+	ಆದರೆ (b == k->masks) {
 		k->w = 0;
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	prev_hop = *((struct cpumask ***)b - 1);
-	k->w = cpumask_weight_and(k->cpus, prev_hop[k->node]);
-	if (k->w <= k->cpu)
-		return 0;
+	prev_hop = *((ರಚನೆ cpumask ***)b - 1);
+	k->w = cpumask_ತೂಕ_and(k->cpus, prev_hop[k->ಗಂಟು]);
+	ಆದರೆ (k->w <= k->cpu)
+		ಹಿಂತಿರುಗಿ 0;
 
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
 
 /**
@@ -2611,38 +2611,38 @@ static int hop_cmp(const void *a, const void *b)
  *
  * Return: cpu, or nr_cpu_ids when nothing found.
  */
-int sched_numa_find_nth_cpu(const struct cpumask *cpus, int cpu, int node)
+ಪೂರ್ಣಾಂಕ sched_numa_ಕಂಡುಹಿಡಿ_nth_cpu(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpus, ಪೂರ್ಣಾಂಕ cpu, ಪೂರ್ಣಾಂಕ ಗಂಟು)
 {
-	struct __cmp_key k = { .cpus = cpus, .cpu = cpu };
-	struct cpumask ***hop_masks;
-	int hop, ret = nr_cpu_ids;
+	ರಚನೆ __cmp_key k = { .cpus = cpus, .cpu = cpu };
+	ರಚನೆ cpumask ***hop_masks;
+	ಪೂರ್ಣಾಂಕ hop, ret = nr_cpu_ids;
 
-	if (node == NUMA_NO_NODE)
-		return cpumask_nth_and(cpu, cpus, cpu_online_mask);
+	ಆದರೆ (ಗಂಟು == NUMA_NO_ಗಂಟು)
+		ಹಿಂತಿರುಗಿ cpumask_nth_and(cpu, cpus, cpu_online_ಮುಖವಾಡ);
 
-	rcu_read_lock();
+	rcu_read_ಬೀಗ();
 
 	/* CPU-less node entries are uninitialized in sched_domains_numa_masks */
-	node = numa_nearest_node(node, N_CPU);
-	k.node = node;
+	ಗಂಟು = numa_ಹತ್ತಿರದ_ಗಂಟು(ಗಂಟು, N_CPU);
+	k.ಗಂಟು = ಗಂಟು;
 
 	k.masks = rcu_dereference(sched_domains_numa_masks);
-	if (!k.masks)
-		goto unlock;
+	ಆದರೆ (!k.masks)
+		ಹೋಗು unlock;
 
-	hop_masks = bsearch(&k, k.masks, sched_domains_numa_levels, sizeof(k.masks[0]), hop_cmp);
-	if (!hop_masks)
-		goto unlock;
+	hop_masks = bsearch(&k, k.masks, sched_domains_numa_ಮಟ್ಟಗಳು, ಗಾತ್ರ(k.masks[0]), hop_cmp);
+	ಆದರೆ (!hop_masks)
+		ಹೋಗು unlock;
 	hop = hop_masks	- k.masks;
 
 	ret = hop ?
-		cpumask_nth_and_andnot(cpu - k.w, cpus, k.masks[hop][node], k.masks[hop-1][node]) :
-		cpumask_nth_and(cpu, cpus, k.masks[0][node]);
+		cpumask_nth_and_andnot(cpu - k.w, cpus, k.masks[hop][ಗಂಟು], k.masks[hop-1][ಗಂಟು]) :
+		cpumask_nth_and(cpu, cpus, k.masks[0][ಗಂಟು]);
 unlock:
 	rcu_read_unlock();
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
-EXPORT_SYMBOL_GPL(sched_numa_find_nth_cpu);
+EXPORT_ಚಿಹ್ನೆ_GPL(sched_numa_ಕಂಡುಹಿಡಿ_nth_cpu);
 
 /**
  * sched_numa_hop_mask() - Get the cpumask of CPUs at most @hops hops away from
@@ -2661,200 +2661,200 @@ EXPORT_SYMBOL_GPL(sched_numa_find_nth_cpu);
  * Also note that this is a reflection of sched_domains_numa_masks, which may change
  * during the lifetime of the system (offline nodes are taken out of the masks).
  */
-const struct cpumask *sched_numa_hop_mask(unsigned int node, unsigned int hops)
+ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *sched_numa_hop_ಮುಖವಾಡ(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಗಂಟು, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ hops)
 {
-	struct cpumask ***masks;
+	ರಚನೆ cpumask ***masks;
 
-	if (node >= nr_node_ids || hops >= sched_domains_numa_levels)
-		return ERR_PTR(-EINVAL);
+	ಆದರೆ (ಗಂಟು >= nr_ಗಂಟು_ids || hops >= sched_domains_numa_ಮಟ್ಟಗಳು)
+		ಹಿಂತಿರುಗಿ ERR_PTR(-EINVAL);
 
 	masks = rcu_dereference(sched_domains_numa_masks);
-	if (!masks)
-		return ERR_PTR(-EBUSY);
+	ಆದರೆ (!masks)
+		ಹಿಂತಿರುಗಿ ERR_PTR(-EBUSY);
 
-	return masks[hops][node];
+	ಹಿಂತಿರುಗಿ masks[hops][ಗಂಟು];
 }
-EXPORT_SYMBOL_GPL(sched_numa_hop_mask);
+EXPORT_ಚಿಹ್ನೆ_GPL(sched_numa_hop_ಮುಖವಾಡ);
 
-#endif /* CONFIG_NUMA */
+#ಆದರೆ_ಅಂತ್ಯ /* CONFIG_NUMA */
 
-static int __sdt_alloc(const struct cpumask *cpu_map)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __sdt_alloc(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	struct sched_domain_topology_level *tl;
-	int j;
+	ರಚನೆ sched_domain_topology_level *tl;
+	ಪೂರ್ಣಾಂಕ j;
 
 	for_each_sd_topology(tl) {
-		struct sd_data *sdd = &tl->data;
+		ರಚನೆ sd_ದತ್ತಾಂಶ *sdd = &tl->ದತ್ತಾಂಶ;
 
-		sdd->sd = alloc_percpu(struct sched_domain *);
-		if (!sdd->sd)
-			return -ENOMEM;
+		sdd->sd = alloc_percpu(ರಚನೆ sched_domain *);
+		ಆದರೆ (!sdd->sd)
+			ಹಿಂತಿರುಗಿ -ENOMEM;
 
-		sdd->sg = alloc_percpu(struct sched_group *);
-		if (!sdd->sg)
-			return -ENOMEM;
+		sdd->sg = alloc_percpu(ರಚನೆ sched_ಗುಂಪು *);
+		ಆದರೆ (!sdd->sg)
+			ಹಿಂತಿರುಗಿ -ENOMEM;
 
-		sdd->sgc = alloc_percpu(struct sched_group_capacity *);
-		if (!sdd->sgc)
-			return -ENOMEM;
+		sdd->sgc = alloc_percpu(ರಚನೆ sched_ಗುಂಪು_ಸಾಮರ್ಥ್ಯ *);
+		ಆದರೆ (!sdd->sgc)
+			ಹಿಂತಿರುಗಿ -ENOMEM;
 
 		for_each_cpu(j, cpu_map) {
-			struct sched_domain *sd;
-			struct sched_group *sg;
-			struct sched_group_capacity *sgc;
+			ರಚನೆ sched_domain *sd;
+			ರಚನೆ sched_ಗುಂಪು *sg;
+			ರಚನೆ sched_ಗುಂಪು_ಸಾಮರ್ಥ್ಯ *sgc;
 
-			sd = kzalloc_node(sizeof(struct sched_domain) + cpumask_size(),
-					GFP_KERNEL, cpu_to_node(j));
-			if (!sd)
-				return -ENOMEM;
+			sd = kzalloc_ಗಂಟು(ಗಾತ್ರ(ರಚನೆ sched_domain) + cpumask_ಗಾತ್ರ(),
+					GFP_KERNEL, cpu_ಗಮ್ಯ_ಗಂಟು(j));
+			ಆದರೆ (!sd)
+				ಹಿಂತಿರುಗಿ -ENOMEM;
 
-			*per_cpu_ptr(sdd->sd, j) = sd;
+			*ಪ್ರತಿ_cpu_ptr(sdd->sd, j) = sd;
 
-			sg = kzalloc_node(sizeof(struct sched_group) + cpumask_size(),
-					GFP_KERNEL, cpu_to_node(j));
-			if (!sg)
-				return -ENOMEM;
+			sg = kzalloc_ಗಂಟು(ಗಾತ್ರ(ರಚನೆ sched_ಗುಂಪು) + cpumask_ಗಾತ್ರ(),
+					GFP_KERNEL, cpu_ಗಮ್ಯ_ಗಂಟು(j));
+			ಆದರೆ (!sg)
+				ಹಿಂತಿರುಗಿ -ENOMEM;
 
-			sg->next = sg;
+			sg->ಮುಂದಿನ = sg;
 
-			*per_cpu_ptr(sdd->sg, j) = sg;
+			*ಪ್ರತಿ_cpu_ptr(sdd->sg, j) = sg;
 
-			sgc = kzalloc_node(sizeof(struct sched_group_capacity) + cpumask_size(),
-					GFP_KERNEL, cpu_to_node(j));
-			if (!sgc)
-				return -ENOMEM;
+			sgc = kzalloc_ಗಂಟು(ಗಾತ್ರ(ರಚನೆ sched_ಗುಂಪು_ಸಾಮರ್ಥ್ಯ) + cpumask_ಗಾತ್ರ(),
+					GFP_KERNEL, cpu_ಗಮ್ಯ_ಗಂಟು(j));
+			ಆದರೆ (!sgc)
+				ಹಿಂತಿರುಗಿ -ENOMEM;
 
 			sgc->id = j;
 
-			*per_cpu_ptr(sdd->sgc, j) = sgc;
+			*ಪ್ರತಿ_cpu_ptr(sdd->sgc, j) = sgc;
 		}
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void __sdt_free(const struct cpumask *cpu_map)
+ಸ್ಥಿರ ಶೂನ್ಯ __sdt_free(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	struct sched_domain_topology_level *tl;
-	int j;
+	ರಚನೆ sched_domain_topology_level *tl;
+	ಪೂರ್ಣಾಂಕ j;
 
 	for_each_sd_topology(tl) {
-		struct sd_data *sdd = &tl->data;
+		ರಚನೆ sd_ದತ್ತಾಂಶ *sdd = &tl->ದತ್ತಾಂಶ;
 
 		for_each_cpu(j, cpu_map) {
-			struct sched_domain *sd;
+			ರಚನೆ sched_domain *sd;
 
-			if (sdd->sd) {
-				sd = *per_cpu_ptr(sdd->sd, j);
-				if (sd && (sd->flags & SD_NUMA))
+			ಆದರೆ (sdd->sd) {
+				sd = *ಪ್ರತಿ_cpu_ptr(sdd->sd, j);
+				ಆದರೆ (sd && (sd->flags & SD_NUMA))
 					free_sched_groups(sd->groups, 0);
-				kfree(*per_cpu_ptr(sdd->sd, j));
+				kfree(*ಪ್ರತಿ_cpu_ptr(sdd->sd, j));
 			}
 
-			if (sdd->sg)
-				kfree(*per_cpu_ptr(sdd->sg, j));
-			if (sdd->sgc)
-				kfree(*per_cpu_ptr(sdd->sgc, j));
+			ಆದರೆ (sdd->sg)
+				kfree(*ಪ್ರತಿ_cpu_ptr(sdd->sg, j));
+			ಆದರೆ (sdd->sgc)
+				kfree(*ಪ್ರತಿ_cpu_ptr(sdd->sgc, j));
 		}
 		free_percpu(sdd->sd);
-		sdd->sd = NULL;
+		sdd->sd = ಖಾಲಿ;
 		free_percpu(sdd->sg);
-		sdd->sg = NULL;
+		sdd->sg = ಖಾಲಿ;
 		free_percpu(sdd->sgc);
-		sdd->sgc = NULL;
+		sdd->sgc = ಖಾಲಿ;
 	}
 }
 
-static int __sds_alloc(struct s_data *d, const struct cpumask *cpu_map)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __sds_alloc(ರಚನೆ s_ದತ್ತಾಂಶ *d, ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	int j;
+	ಪೂರ್ಣಾಂಕ j;
 
-	d->sds = alloc_percpu(struct sched_domain_shared *);
-	if (!d->sds)
-		return -ENOMEM;
+	d->sds = alloc_percpu(ರಚನೆ sched_domain_shared *);
+	ಆದರೆ (!d->sds)
+		ಹಿಂತಿರುಗಿ -ENOMEM;
 
 	for_each_cpu(j, cpu_map) {
-		struct sched_domain_shared *sds;
+		ರಚನೆ sched_domain_shared *sds;
 
-		sds = kzalloc_node(sizeof(struct sched_domain_shared),
-				GFP_KERNEL, cpu_to_node(j));
-		if (!sds)
-			return -ENOMEM;
+		sds = kzalloc_ಗಂಟು(ಗಾತ್ರ(ರಚನೆ sched_domain_shared),
+				GFP_KERNEL, cpu_ಗಮ್ಯ_ಗಂಟು(j));
+		ಆದರೆ (!sds)
+			ಹಿಂತಿರುಗಿ -ENOMEM;
 
-		*per_cpu_ptr(d->sds, j) = sds;
+		*ಪ್ರತಿ_cpu_ptr(d->sds, j) = sds;
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void __sds_free(struct s_data *d, const struct cpumask *cpu_map)
+ಸ್ಥಿರ ಶೂನ್ಯ __sds_free(ರಚನೆ s_ದತ್ತಾಂಶ *d, ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	int j;
+	ಪೂರ್ಣಾಂಕ j;
 
-	if (!d->sds)
-		return;
+	ಆದರೆ (!d->sds)
+		ಹಿಂತಿರುಗಿ;
 
 	for_each_cpu(j, cpu_map)
-		kfree(*per_cpu_ptr(d->sds, j));
+		kfree(*ಪ್ರತಿ_cpu_ptr(d->sds, j));
 
 	free_percpu(d->sds);
-	d->sds = NULL;
+	d->sds = ಖಾಲಿ;
 }
 
-static struct sched_domain *build_sched_domain(struct sched_domain_topology_level *tl,
-		const struct cpumask *cpu_map, struct sched_domain_attr *attr,
-		struct sched_domain *child, int cpu)
+ಸ್ಥಿರ ರಚನೆ sched_domain *build_sched_domain(ರಚನೆ sched_domain_topology_level *tl,
+		ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map, ರಚನೆ sched_domain_attr *attr,
+		ರಚನೆ sched_domain *ಮಗು, ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct sched_domain *sd = sd_init(tl, cpu_map, child, cpu);
+	ರಚನೆ sched_domain *sd = sd_init(tl, cpu_map, ಮಗು, cpu);
 
-	if (child) {
-		sd->level = child->level + 1;
+	ಆದರೆ (ಮಗು) {
+		sd->level = ಮಗು->level + 1;
 		sched_domain_level_max = max(sched_domain_level_max, sd->level);
-		child->parent = sd;
+		ಮಗು->ಪೋಷಕ = sd;
 
-		if (!cpumask_subset(sched_domain_span(child),
-				    sched_domain_span(sd))) {
+		ಆದರೆ (!cpumask_subset(sched_domain_ಹರವು(ಮಗು),
+				    sched_domain_ಹರವು(sd))) {
 			pr_err("BUG: arch topology borken\n");
 			pr_err("     the %s domain not a subset of the %s domain\n",
-					child->name, sd->name);
+					ಮಗು->name, sd->name);
 			/* Fixup, ensure @sd has at least @child CPUs. */
-			cpumask_or(sched_domain_span(sd),
-				   sched_domain_span(sd),
-				   sched_domain_span(child));
+			cpumask_or(sched_domain_ಹರವು(sd),
+				   sched_domain_ಹರವು(sd),
+				   sched_domain_ಹರವು(ಮಗು));
 		}
 
 	}
-	set_domain_attribute(sd, attr);
+	ಗಣ_domain_attribute(sd, attr);
 
-	return sd;
+	ಹಿಂತಿರುಗಿ sd;
 }
 
 /*
  * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
  * any two given CPUs on non-NUMA topology levels.
  */
-static bool topology_span_sane(const struct cpumask *cpu_map)
+ಸ್ಥಿರ bool topology_ಹರವು_sane(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	struct sched_domain_topology_level *tl;
-	struct cpumask *covered, *id_seen;
-	int cpu;
+	ರಚನೆ sched_domain_topology_level *tl;
+	ರಚನೆ cpumask *covered, *id_ನೋಡಿದ;
+	ಪೂರ್ಣಾಂಕ cpu;
 
 	lockdep_assert_held(&sched_domains_mutex);
 	covered = sched_domains_tmpmask;
-	id_seen = sched_domains_tmpmask2;
+	id_ನೋಡಿದ = sched_domains_tmpmask2;
 
 	for_each_sd_topology(tl) {
-		int tl_common_flags = 0;
+		ಪೂರ್ಣಾಂಕ tl_common_flags = 0;
 
-		if (tl->sd_flags)
+		ಆದರೆ (tl->sd_flags)
 			tl_common_flags = (*tl->sd_flags)();
 
 		/* NUMA levels are allowed to overlap */
-		if (tl_common_flags & SD_NUMA)
-			continue;
+		ಆದರೆ (tl_common_flags & SD_NUMA)
+			ಮುಂದುವರಿ;
 
 		cpumask_clear(covered);
-		cpumask_clear(id_seen);
+		cpumask_clear(id_ನೋಡಿದ);
 
 		/*
 		 * Non-NUMA levels cannot partially overlap - they must be either
@@ -2863,42 +2863,42 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
 		 * breaks the linking done for an earlier span.
 		 */
 		for_each_cpu(cpu, cpu_map) {
-			const struct cpumask *tl_cpu_mask = tl->mask(tl, cpu);
-			int id;
+			ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *tl_cpu_ಮುಖವಾಡ = tl->ಮುಖವಾಡ(tl, cpu);
+			ಪೂರ್ಣಾಂಕ id;
 
 			/* lowest bit set in this mask is used as a unique id */
-			id = cpumask_first(tl_cpu_mask);
+			id = cpumask_ಮೊದಲ(tl_cpu_ಮುಖವಾಡ);
 
-			if (cpumask_test_cpu(id, id_seen)) {
+			ಆದರೆ (cpumask_test_cpu(id, id_ನೋಡಿದ)) {
 				/* First CPU has already been seen, ensure identical spans */
-				if (!cpumask_equal(tl->mask(tl, id), tl_cpu_mask))
-					return false;
-			} else {
+				ಆದರೆ (!cpumask_equal(tl->ಮುಖವಾಡ(tl, id), tl_cpu_ಮುಖವಾಡ))
+					ಹಿಂತಿರುಗಿ false;
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				/* First CPU hasn't been seen before, ensure it's a completely new span */
-				if (cpumask_intersects(tl_cpu_mask, covered))
-					return false;
+				ಆದರೆ (cpumask_intersects(tl_cpu_ಮುಖವಾಡ, covered))
+					ಹಿಂತಿರುಗಿ false;
 
-				cpumask_or(covered, covered, tl_cpu_mask);
-				cpumask_set_cpu(id, id_seen);
+				cpumask_or(covered, covered, tl_cpu_ಮುಖವಾಡ);
+				cpumask_ಗಣ_cpu(id, id_ನೋಡಿದ);
 			}
 		}
 	}
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
 /*
  * Calculate an allowed NUMA imbalance such that LLCs do not get
  * imbalanced.
  */
-static void adjust_numa_imbalance(struct sched_domain *sd_llc)
+ಸ್ಥಿರ ಶೂನ್ಯ adjust_numa_imbalance(ರಚನೆ sched_domain *sd_llc)
 {
-	struct sched_domain *parent;
-	unsigned int imb_span = 1;
-	unsigned int imb = 0;
-	unsigned int nr_llcs;
+	ರಚನೆ sched_domain *ಪೋಷಕ;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ imb_ಹರವು = 1;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ imb = 0;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ nr_llcs;
 
 	WARN_ON(!(sd_llc->flags & SD_SHARE_LLC));
-	WARN_ON(!sd_llc->parent);
+	WARN_ON(!sd_llc->ಪೋಷಕ);
 
 	/*
 	 * For a single LLC per node, allow an
@@ -2920,14 +2920,14 @@ static void adjust_numa_imbalance(struct sched_domain *sd_llc)
 	 * factors and that there is a correlation
 	 * between LLCs and memory channels.
 	 */
-	nr_llcs = sd_llc->parent->span_weight / sd_llc->span_weight;
-	if (nr_llcs == 1)
-		imb = sd_llc->parent->span_weight >> 3;
-	else
+	nr_llcs = sd_llc->ಪೋಷಕ->ಹರವು_ತೂಕ / sd_llc->ಹರವು_ತೂಕ;
+	ಆದರೆ (nr_llcs == 1)
+		imb = sd_llc->ಪೋಷಕ->ಹರವು_ತೂಕ >> 3;
+	ಇಲ್ಲದಿದ್ದರೆ
 		imb = nr_llcs;
 
 	imb = max(1U, imb);
-	sd_llc->parent->imb_numa_nr = imb;
+	sd_llc->ಪೋಷಕ->imb_numa_nr = imb;
 
 	/*
 	 * Set span based on the first NUMA domain.
@@ -2938,27 +2938,27 @@ static void adjust_numa_imbalance(struct sched_domain *sd_llc)
 	 * parent which is the lowest an SD_NUMA domain can
 	 * be relative to sd_llc.
 	 */
-	parent = sd_llc->parent->parent;
-	while (parent && !(parent->flags & SD_NUMA))
-		parent = parent->parent;
+	ಪೋಷಕ = sd_llc->ಪೋಷಕ->ಪೋಷಕ;
+	ಆಗ (ಪೋಷಕ && !(ಪೋಷಕ->flags & SD_NUMA))
+		ಪೋಷಕ = ಪೋಷಕ->ಪೋಷಕ;
 
-	imb_span = parent ? parent->span_weight : sd_llc->parent->span_weight;
+	imb_ಹರವು = ಪೋಷಕ ? ಪೋಷಕ->ಹರವು_ತೂಕ : sd_llc->ಪೋಷಕ->ಹರವು_ತೂಕ;
 
 	/* Update the upper remainder of the topology */
-	parent = sd_llc->parent;
-	while (parent) {
-		int factor = max(1U, (parent->span_weight / imb_span));
+	ಪೋಷಕ = sd_llc->ಪೋಷಕ;
+	ಆಗ (ಪೋಷಕ) {
+		ಪೂರ್ಣಾಂಕ ಗುಣಕ = max(1U, (ಪೋಷಕ->ಹರವು_ತೂಕ / imb_ಹರವು));
 
-		parent->imb_numa_nr = imb * factor;
-		parent = parent->parent;
+		ಪೋಷಕ->imb_numa_nr = imb * ಗುಣಕ;
+		ಪೋಷಕ = ಪೋಷಕ->ಪೋಷಕ;
 	}
 }
 
-static void
-init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ
+init_sched_domain_shared(ರಚನೆ s_ದತ್ತಾಂಶ *d, ರಚನೆ sched_domain *sd, ಪೂರ್ಣಾಂಕ flags)
 {
-	struct sched_domain_shared *sds = NULL;
-	int cpu;
+	ರಚನೆ sched_domain_shared *sds = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ cpu;
 
 	/*
 	 * Multiple domains can try to claim a shared object like
@@ -2974,15 +2974,15 @@ init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
 	 * If the domain only has single CPU, allow temporary overlap
 	 * in allocation since the domains will be degenerated later.
 	 */
-	for_each_cpu(cpu, sched_domain_span(sd)) {
-		sds = *per_cpu_ptr(d->sds, cpu);
+	for_each_cpu(cpu, sched_domain_ಹರವು(sd)) {
+		sds = *ಪ್ರತಿ_cpu_ptr(d->sds, cpu);
 
-		if (!sds->alloc_flags ||
-		    sd->span_weight == 1 ||
+		ಆದರೆ (!sds->alloc_flags ||
+		    sd->ಹರವು_ತೂಕ == 1 ||
 		    sds->alloc_flags == flags) {
 			sds->alloc_flags = flags;
 			sd->shared = sds;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 
@@ -2990,7 +2990,7 @@ init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
 	 * Use the sd_shared corresponding to the last
 	 * CPU in the span if none are avaialable.
 	 */
-	if (WARN_ON_ONCE(!sd->shared))
+	ಆದರೆ (WARN_ON_ONCE(!sd->shared))
 		sd->shared = sds;
 
 	/*
@@ -2998,7 +2998,7 @@ init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
 	 * sd_balance_shared; on the asym-capacity path it is initialized but
 	 * never read.
 	 */
-	atomic_set(&sd->shared->nr_busy_cpus, sd->span_weight);
+	atomic_ಗಣ(&sd->shared->nr_busy_cpus, sd->ಹರವು_ತೂಕ);
 	atomic_inc(&sd->shared->ref);
 }
 
@@ -3017,76 +3017,76 @@ init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
  *
  * Return true if this CPU's asym path claimed sd->shared, false otherwise.
  */
-static bool claim_asym_sched_domain_shared(struct s_data *d, int cpu)
+ಸ್ಥಿರ bool claim_asym_sched_domain_shared(ರಚನೆ s_ದತ್ತಾಂಶ *d, ಪೂರ್ಣಾಂಕ cpu)
 {
-	struct sched_domain *sd = *per_cpu_ptr(d->sd, cpu);
-	struct sched_domain *sd_asym;
+	ರಚನೆ sched_domain *sd = *ಪ್ರತಿ_cpu_ptr(d->sd, cpu);
+	ರಚನೆ sched_domain *sd_asym;
 
-	if (!sd)
-		return false;
+	ಆದರೆ (!sd)
+		ಹಿಂತಿರುಗಿ false;
 
 	sd_asym = sd;
-	while (sd_asym && !(sd_asym->flags & SD_ASYM_CPUCAPACITY_FULL))
-		sd_asym = sd_asym->parent;
+	ಆಗ (sd_asym && !(sd_asym->flags & SD_ASYM_CPUCAPACITY_ತುಂಬಿದ))
+		sd_asym = sd_asym->ಪೋಷಕ;
 
-	if (!sd_asym || (sd_asym->flags & SD_NUMA))
-		return false;
+	ಆದರೆ (!sd_asym || (sd_asym->flags & SD_NUMA))
+		ಹಿಂತಿರುಗಿ false;
 
 	init_sched_domain_shared(d, sd_asym, SD_ASYM_CPUCAPACITY);
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static int __sched_domains_alloc_llc_id(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ __sched_domains_alloc_llc_id(ಶೂನ್ಯ)
 {
-	int lid, max;
+	ಪೂರ್ಣಾಂಕ lid, max;
 
 	lockdep_assert_held(&sched_domains_mutex);
 
-	lid = cpumask_first_zero(sched_domains_llc_id_allocmask);
+	lid = cpumask_ಮೊದಲ_zero(sched_domains_llc_id_allocmask);
 	/*
 	 * llc_id space should never grow larger than the
 	 * possible number of CPUs in the system.
 	 */
-	if (lid >= nr_cpu_ids)
-		return -1;
+	ಆದರೆ (lid >= nr_cpu_ids)
+		ಹಿಂತಿರುಗಿ -1;
 
 	__cpumask_set_cpu(lid, sched_domains_llc_id_allocmask);
-	max = cpumask_last(sched_domains_llc_id_allocmask);
-	if (max > max_lid)
+	max = cpumask_ಕೊನೆಯ(sched_domains_llc_id_allocmask);
+	ಆದರೆ (max > max_lid)
 		max_lid = max;
 
-	return lid;
+	ಹಿಂತಿರುಗಿ lid;
 }
 
-static void __sched_domains_free_llc_id(int cpu)
+ಸ್ಥಿರ ಶೂನ್ಯ __sched_domains_free_llc_id(ಪೂರ್ಣಾಂಕ cpu)
 {
-	int i, lid, max;
+	ಪೂರ್ಣಾಂಕ i, lid, max;
 
 	lockdep_assert_held(&sched_domains_mutex);
 
-	lid = per_cpu(sd_llc_id, cpu);
-	if (lid == -1 || lid >= nr_cpu_ids)
-		return;
+	lid = ಪ್ರತಿ_cpu(sd_llc_id, cpu);
+	ಆದರೆ (lid == -1 || lid >= nr_cpu_ids)
+		ಹಿಂತಿರುಗಿ;
 
-	per_cpu(sd_llc_id, cpu) = -1;
+	ಪ್ರತಿ_cpu(sd_llc_id, cpu) = -1;
 
-	for_each_cpu(i, llc_mask(cpu)) {
+	for_each_cpu(i, llc_ಮುಖವಾಡ(cpu)) {
 		/* An online CPU owns the llc_id. */
-		if (per_cpu(sd_llc_id, i) == lid)
-			return;
+		ಆದರೆ (ಪ್ರತಿ_cpu(sd_llc_id, i) == lid)
+			ಹಿಂತಿರುಗಿ;
 	}
 
 	__cpumask_clear_cpu(lid, sched_domains_llc_id_allocmask);
 
-	max = cpumask_last(sched_domains_llc_id_allocmask);
+	max = cpumask_ಕೊನೆಯ(sched_domains_llc_id_allocmask);
 	/* shrink max lid to save memory */
-	if (max < max_lid)
+	ಆದರೆ (max < max_lid)
 		max_lid = max;
 }
 
-void sched_domains_free_llc_id(int cpu)
+ಶೂನ್ಯ sched_domains_free_llc_id(ಪೂರ್ಣಾಂಕ cpu)
 {
-	sched_domains_mutex_lock();
+	sched_domains_mutex_ಬೀಗ();
 	__sched_domains_free_llc_id(cpu);
 	sched_domains_mutex_unlock();
 }
@@ -3095,204 +3095,204 @@ void sched_domains_free_llc_id(int cpu)
  * Build sched domains for a given set of CPUs and attach the sched domains
  * to the individual CPUs
  */
-static int
-build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *attr,
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+build_sched_domains(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map, ರಚನೆ sched_domain_attr *attr,
 		    bool *multi_llcs)
 {
-	enum s_alloc alloc_state = sa_none;
+	ಎಣಿಕೆ s_alloc alloc_state = sa_none;
 	bool has_multi_llcs = false;
-	struct sched_domain *sd;
-	struct s_data d;
-	struct rq *rq = NULL;
-	int i, ret = -ENOMEM;
+	ರಚನೆ sched_domain *sd;
+	ರಚನೆ s_ದತ್ತಾಂಶ d;
+	ರಚನೆ rq *rq = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ i, ret = -ENOMEM;
 	bool has_asym = false;
 	bool has_cluster = false;
 
-	if (WARN_ON(cpumask_empty(cpu_map)))
-		goto error;
+	ಆದರೆ (WARN_ON(cpumask_ಖಾಲಿಗಳು(cpu_map)))
+		ಹೋಗು error;
 
 	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
-	if (alloc_state != sa_rootdomain)
-		goto error;
+	ಆದರೆ (alloc_state != sa_rootdomain)
+		ಹೋಗು error;
 
 	/* Set up domains for CPUs specified by the cpu_map: */
 	for_each_cpu(i, cpu_map) {
-		struct sched_domain_topology_level *tl;
-		int lid;
+		ರಚನೆ sched_domain_topology_level *tl;
+		ಪೂರ್ಣಾಂಕ lid;
 
-		sd = NULL;
+		sd = ಖಾಲಿ;
 		for_each_sd_topology(tl) {
 
 			sd = build_sched_domain(tl, cpu_map, attr, sd, i);
 
 			has_asym |= sd->flags & SD_ASYM_CPUCAPACITY;
 
-			if (tl == sched_domain_topology)
-				*per_cpu_ptr(d.sd, i) = sd;
-			if (cpumask_equal(cpu_map, sched_domain_span(sd)))
-				break;
+			ಆದರೆ (tl == sched_domain_topology)
+				*ಪ್ರತಿ_cpu_ptr(d.sd, i) = sd;
+			ಆದರೆ (cpumask_equal(cpu_map, sched_domain_ಹರವು(sd)))
+				ನಿಲ್ಲಿಸು;
 		}
 
-		lid = per_cpu(sd_llc_id, i);
-		if (lid == -1) {
+		lid = ಪ್ರತಿ_cpu(sd_llc_id, i);
+		ಆದರೆ (lid == -1) {
 			/* try to reuse the llc_id of its siblings */
-			for (int j = cpumask_first(llc_mask(i));
+			ಗಾಗಿ (ಪೂರ್ಣಾಂಕ j = cpumask_ಮೊದಲ(llc_ಮುಖವಾಡ(i));
 			     j < nr_cpu_ids;
-			     j = cpumask_next(j, llc_mask(i))) {
-				if (i == j)
-					continue;
+			     j = cpumask_ಮುಂದಿನ(j, llc_ಮುಖವಾಡ(i))) {
+				ಆದರೆ (i == j)
+					ಮುಂದುವರಿ;
 
-				lid = per_cpu(sd_llc_id, j);
+				lid = ಪ್ರತಿ_cpu(sd_llc_id, j);
 
-				if (lid != -1) {
-					per_cpu(sd_llc_id, i) = lid;
+				ಆದರೆ (lid != -1) {
+					ಪ್ರತಿ_cpu(sd_llc_id, i) = lid;
 
-					break;
+					ನಿಲ್ಲಿಸು;
 				}
 			}
 
 			/* a new LLC is detected */
-			if (lid == -1)
-				per_cpu(sd_llc_id, i) = __sched_domains_alloc_llc_id();
+			ಆದರೆ (lid == -1)
+				ಪ್ರತಿ_cpu(sd_llc_id, i) = __sched_domains_alloc_llc_id();
 		}
 	}
 
-	if (WARN_ON(!topology_span_sane(cpu_map)))
-		goto error;
+	ಆದರೆ (WARN_ON(!topology_ಹರವು_sane(cpu_map)))
+		ಹೋಗು error;
 
 	/* Build the groups for the domains */
 	for_each_cpu(i, cpu_map) {
-		for (sd = *per_cpu_ptr(d.sd, i); sd; sd = sd->parent) {
-			sd->span_weight = cpumask_weight(sched_domain_span(sd));
-			if (sd->flags & SD_NUMA) {
-				if (build_overlap_sched_groups(sd, i))
-					goto error;
-			} else {
-				if (build_sched_groups(sd, i))
-					goto error;
+		ಗಾಗಿ (sd = *ಪ್ರತಿ_cpu_ptr(d.sd, i); sd; sd = sd->ಪೋಷಕ) {
+			sd->ಹರವು_ತೂಕ = cpumask_ತೂಕ(sched_domain_ಹರವು(sd));
+			ಆದರೆ (sd->flags & SD_NUMA) {
+				ಆದರೆ (build_overlap_sched_groups(sd, i))
+					ಹೋಗು error;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ಆದರೆ (build_sched_groups(sd, i))
+					ಹೋಗು error;
 			}
 		}
 	}
 
 	for_each_cpu(i, cpu_map) {
-		sd = *per_cpu_ptr(d.sd, i);
-		if (!sd)
-			continue;
+		sd = *ಪ್ರತಿ_cpu_ptr(d.sd, i);
+		ಆದರೆ (!sd)
+			ಮುಂದುವರಿ;
 
-		if (has_asym)
+		ಆದರೆ (has_asym)
 			claim_asym_sched_domain_shared(&d, i);
 
 		/* First, find the topmost SD_SHARE_LLC domain */
-		while (sd->parent && (sd->parent->flags & SD_SHARE_LLC))
-			sd = sd->parent;
+		ಆಗ (sd->ಪೋಷಕ && (sd->ಪೋಷಕ->flags & SD_SHARE_LLC))
+			sd = sd->ಪೋಷಕ;
 
-		if (sd->flags & SD_SHARE_LLC) {
+		ಆದರೆ (sd->flags & SD_SHARE_LLC) {
 			init_sched_domain_shared(&d, sd, SD_SHARE_LLC);
 
 			/*
 			 * In presence of higher domains, adjust the
 			 * NUMA imbalance stats for the hierarchy.
 			 */
-			if (sd->parent) {
-				if (IS_ENABLED(CONFIG_NUMA))
+			ಆದರೆ (sd->ಪೋಷಕ) {
+				ಆದರೆ (IS_ENABLED(CONFIG_NUMA))
 					adjust_numa_imbalance(sd);
 
-				if (sd_in_multi_llcs(sd))
+				ಆದರೆ (sd_ಒಳ_multi_llcs(sd))
 					has_multi_llcs = true;
 			}
 		}
 	}
 
 	/* Calculate CPU capacity for physical packages and nodes */
-	for (i = nr_cpumask_bits-1; i >= 0; i--) {
-		if (!cpumask_test_cpu(i, cpu_map))
-			continue;
+	ಗಾಗಿ (i = nr_cpumask_ಬಿಟ್ಟುಗಳು-1; i >= 0; i--) {
+		ಆದರೆ (!cpumask_test_cpu(i, cpu_map))
+			ಮುಂದುವರಿ;
 
 		claim_allocations(i, &d);
 
-		for (sd = *per_cpu_ptr(d.sd, i); sd; sd = sd->parent)
-			init_sched_groups_capacity(i, sd);
+		ಗಾಗಿ (sd = *ಪ್ರತಿ_cpu_ptr(d.sd, i); sd; sd = sd->ಪೋಷಕ)
+			init_sched_groups_ಸಾಮರ್ಥ್ಯ(i, sd);
 	}
 
 	alloc_sd_llc(cpu_map, &d);
 
 	/* Attach the domains */
-	rcu_read_lock();
+	rcu_read_ಬೀಗ();
 	for_each_cpu(i, cpu_map) {
 		rq = cpu_rq(i);
-		sd = *per_cpu_ptr(d.sd, i);
+		sd = *ಪ್ರತಿ_cpu_ptr(d.sd, i);
 
 		cpu_attach_domain(sd, d.rd, i);
 
-		if (lowest_flag_domain(i, SD_CLUSTER))
+		ಆದರೆ (ಅತಿಕಡಿಮೆ_flag_domain(i, SD_CLUSTER))
 			has_cluster = true;
 	}
 	rcu_read_unlock();
 
-	if (has_asym)
+	ಆದರೆ (has_asym)
 		static_branch_inc_cpuslocked(&sched_asym_cpucapacity);
 
-	if (has_cluster)
-		static_branch_inc_cpuslocked(&sched_cluster_active);
+	ಆದರೆ (has_cluster)
+		static_branch_inc_cpuslocked(&sched_cluster_ಸಕ್ರಿಯ);
 
-	if (rq && sched_debug_verbose)
-		pr_info("root domain span: %*pbl\n", cpumask_pr_args(cpu_map));
+	ಆದರೆ (rq && sched_debug_verbose)
+		pr_info("root domain span: %*pbl\n", cpumask_pr_ವಾದಗಳು(cpu_map));
 
 	ret = 0;
 error:
 	*multi_llcs = has_multi_llcs;
 	__free_domain_allocs(&d, alloc_state, cpu_map);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /* Current sched domains: */
-static cpumask_var_t			*doms_cur;
+ಸ್ಥಿರ cpumask_var_t			*doms_cur;
 
 /* Number of sched domains in 'doms_cur': */
-static int				ndoms_cur;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ				ndoms_cur;
 
 /* Attributes of custom domains in 'doms_cur' */
-static struct sched_domain_attr		*dattr_cur;
+ಸ್ಥಿರ ರಚನೆ sched_domain_attr		*dattr_cur;
 
 /*
  * Special case: If a kmalloc() of a doms_cur partition (array of
  * cpumask) fails, then fallback to a single sched domain,
  * as determined by the single cpumask fallback_doms.
  */
-static cpumask_var_t			fallback_doms;
+ಸ್ಥಿರ cpumask_var_t			fallback_doms;
 
 /*
  * arch_update_cpu_topology lets virtualized architectures update the
  * CPU core maps. It is supposed to return 1 if the topology changed
  * or 0 if it stayed the same.
  */
-int __weak arch_update_cpu_topology(void)
+ಪೂರ್ಣಾಂಕ __weak arch_update_cpu_topology(ಶೂನ್ಯ)
 {
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-cpumask_var_t *alloc_sched_domains(unsigned int ndoms)
+cpumask_var_t *alloc_sched_domains(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ndoms)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 	cpumask_var_t *doms;
 
 	doms = kmalloc_objs(*doms, ndoms);
-	if (!doms)
-		return NULL;
-	for (i = 0; i < ndoms; i++) {
-		if (!alloc_cpumask_var(&doms[i], GFP_KERNEL)) {
+	ಆದರೆ (!doms)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	ಗಾಗಿ (i = 0; i < ndoms; i++) {
+		ಆದರೆ (!alloc_cpumask_var(&doms[i], GFP_KERNEL)) {
 			free_sched_domains(doms, i);
-			return NULL;
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
 	}
-	return doms;
+	ಹಿಂತಿರುಗಿ doms;
 }
 
-void free_sched_domains(cpumask_var_t doms[], unsigned int ndoms)
+ಶೂನ್ಯ free_sched_domains(cpumask_var_t doms[], ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ndoms)
 {
-	unsigned int i;
-	for (i = 0; i < ndoms; i++)
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
+	ಗಾಗಿ (i = 0; i < ndoms; i++)
 		free_cpumask_var(doms[i]);
 	kfree(doms);
 }
@@ -3301,10 +3301,10 @@ void free_sched_domains(cpumask_var_t doms[], unsigned int ndoms)
  * Set up scheduler domains and groups.  For now this just excludes isolated
  * CPUs, but could be used to exclude other special cases in the future.
  */
-int __init sched_init_domains(const struct cpumask *cpu_map)
+ಪೂರ್ಣಾಂಕ __init sched_init_domains(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
 	bool multi_llcs;
-	int err;
+	ಪೂರ್ಣಾಂಕ err;
 
 	zalloc_cpumask_var(&sched_domains_llc_id_allocmask, GFP_KERNEL);
 	zalloc_cpumask_var(&sched_domains_tmpmask, GFP_KERNEL);
@@ -3312,55 +3312,55 @@ int __init sched_init_domains(const struct cpumask *cpu_map)
 	zalloc_cpumask_var(&fallback_doms, GFP_KERNEL);
 
 	arch_update_cpu_topology();
-	asym_cpu_capacity_scan();
+	asym_cpu_ಸಾಮರ್ಥ್ಯ_ಪರಿಶೀಲನೆ();
 	ndoms_cur = 1;
 	doms_cur = alloc_sched_domains(ndoms_cur);
-	if (!doms_cur)
+	ಆದರೆ (!doms_cur)
 		doms_cur = &fallback_doms;
 	cpumask_and(doms_cur[0], cpu_map, housekeeping_cpumask(HK_TYPE_DOMAIN));
-	err = build_sched_domains(doms_cur[0], NULL, &multi_llcs);
-	if (!err)
-		sched_cache_set(multi_llcs);
+	err = build_sched_domains(doms_cur[0], ಖಾಲಿ, &multi_llcs);
+	ಆದರೆ (!err)
+		sched_cache_ಗಣ(multi_llcs);
 
-	return err;
+	ಹಿಂತಿರುಗಿ err;
 }
 
 /*
  * Detach sched domains from a group of CPUs specified in cpu_map
  * These CPUs will now be attached to the NULL domain
  */
-static void detach_destroy_domains(const struct cpumask *cpu_map)
+ಸ್ಥಿರ ಶೂನ್ಯ detach_destroy_domains(ಸ್ಥಿರಾಂಕ ರಚನೆ cpumask *cpu_map)
 {
-	unsigned int cpu = cpumask_any(cpu_map);
-	int i;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ cpu = cpumask_any(cpu_map);
+	ಪೂರ್ಣಾಂಕ i;
 
-	if (rcu_access_pointer(per_cpu(sd_asym_cpucapacity, cpu)))
+	ಆದರೆ (rcu_access_ಸೂಚಕ(ಪ್ರತಿ_cpu(sd_asym_cpucapacity, cpu)))
 		static_branch_dec_cpuslocked(&sched_asym_cpucapacity);
 
-	if (static_branch_unlikely(&sched_cluster_active))
-		static_branch_dec_cpuslocked(&sched_cluster_active);
+	ಆದರೆ (static_branch_unlikely(&sched_cluster_ಸಕ್ರಿಯ))
+		static_branch_dec_cpuslocked(&sched_cluster_ಸಕ್ರಿಯ);
 
-	rcu_read_lock();
+	rcu_read_ಬೀಗ();
 	for_each_cpu(i, cpu_map)
-		cpu_attach_domain(NULL, &def_root_domain, i);
+		cpu_attach_domain(ಖಾಲಿ, &def_ಬೇರು_domain, i);
 	rcu_read_unlock();
 }
 
 /* handle null as "default" */
-static int dattrs_equal(struct sched_domain_attr *cur, int idx_cur,
-			struct sched_domain_attr *new, int idx_new)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ dattrs_equal(ರಚನೆ sched_domain_attr *cur, ಪೂರ್ಣಾಂಕ idx_cur,
+			ರಚನೆ sched_domain_attr *new, ಪೂರ್ಣಾಂಕ idx_new)
 {
-	struct sched_domain_attr tmp;
+	ರಚನೆ sched_domain_attr tmp;
 
 	/* Fast path: */
-	if (!new && !cur)
-		return 1;
+	ಆದರೆ (!new && !cur)
+		ಹಿಂತಿರುಗಿ 1;
 
 	tmp = SD_ATTR_INIT;
 
-	return !memcmp(cur ? (cur + idx_cur) : &tmp,
+	ಹಿಂತಿರುಗಿ !memcmp(cur ? (cur + idx_cur) : &tmp,
 			new ? (new + idx_new) : &tmp,
-			sizeof(struct sched_domain_attr));
+			ಗಾತ್ರ(ರಚನೆ sched_domain_attr));
 }
 
 /*
@@ -3389,41 +3389,41 @@ static int dattrs_equal(struct sched_domain_attr *cur, int idx_cur,
  *
  * Call with hotplug lock and sched_domains_mutex held
  */
-static void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-				    struct sched_domain_attr *dattr_new)
+ಸ್ಥಿರ ಶೂನ್ಯ ವಿಭಜನೆ_sched_domains_locked(ಪೂರ್ಣಾಂಕ ndoms_new, cpumask_var_t doms_new[],
+				    ರಚನೆ sched_domain_attr *dattr_new)
 {
 	bool __maybe_unused has_eas = false;
 	bool has_multi_llcs = false, multi_llcs;
-	int i, j, n;
-	int new_topology;
+	ಪೂರ್ಣಾಂಕ i, j, n;
+	ಪೂರ್ಣಾಂಕ new_topology;
 
 	lockdep_assert_held(&sched_domains_mutex);
 
 	/* Let the architecture update CPU core mappings: */
 	new_topology = arch_update_cpu_topology();
 	/* Trigger rebuilding CPU capacity asymmetry data */
-	if (new_topology)
-		asym_cpu_capacity_scan();
+	ಆದರೆ (new_topology)
+		asym_cpu_ಸಾಮರ್ಥ್ಯ_ಪರಿಶೀಲನೆ();
 
-	if (!doms_new) {
+	ಆದರೆ (!doms_new) {
 		WARN_ON_ONCE(dattr_new);
 		n = 0;
 		doms_new = alloc_sched_domains(1);
-		if (doms_new) {
+		ಆದರೆ (doms_new) {
 			n = 1;
-			cpumask_and(doms_new[0], cpu_active_mask,
+			cpumask_and(doms_new[0], cpu_ಸಕ್ರಿಯ_ಮುಖವಾಡ,
 				    housekeeping_cpumask(HK_TYPE_DOMAIN));
 		}
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		n = ndoms_new;
 	}
 
 	/* Destroy deleted domains: */
-	for (i = 0; i < ndoms_cur; i++) {
-		for (j = 0; j < n && !new_topology; j++) {
-			if (cpumask_equal(doms_cur[i], doms_new[j]) &&
+	ಗಾಗಿ (i = 0; i < ndoms_cur; i++) {
+		ಗಾಗಿ (j = 0; j < n && !new_topology; j++) {
+			ಆದರೆ (cpumask_equal(doms_cur[i], doms_new[j]) &&
 			    dattrs_equal(dattr_cur, i, dattr_new, j))
-				goto match1;
+				ಹೋಗು match1;
 		}
 		/* No match - a current sched domain not in new doms_new[] */
 		detach_destroy_domains(doms_cur[i]);
@@ -3432,17 +3432,17 @@ match1:
 	}
 
 	n = ndoms_cur;
-	if (!doms_new) {
+	ಆದರೆ (!doms_new) {
 		n = 0;
 		doms_new = &fallback_doms;
-		cpumask_and(doms_new[0], cpu_active_mask,
+		cpumask_and(doms_new[0], cpu_ಸಕ್ರಿಯ_ಮುಖವಾಡ,
 			    housekeeping_cpumask(HK_TYPE_DOMAIN));
 	}
 
 	/* Build new domains: */
-	for (i = 0; i < ndoms_new; i++) {
-		for (j = 0; j < n && !new_topology; j++) {
-			if (cpumask_equal(doms_new[i], doms_cur[j]) &&
+	ಗಾಗಿ (i = 0; i < ndoms_new; i++) {
+		ಗಾಗಿ (j = 0; j < n && !new_topology; j++) {
+			ಆದರೆ (cpumask_equal(doms_new[i], doms_cur[j]) &&
 			    dattrs_equal(dattr_new, i, dattr_cur, j)) {
 				/*
 				 * Reused partition has to be taken care
@@ -3457,36 +3457,36 @@ match1:
 				 * scheduling globally despite the reused
 				 * multi-LLC partition still being active.
 				 */
-				struct sched_domain *sd;
-				int cpu = cpumask_first(doms_cur[j]);
+				ರಚನೆ sched_domain *sd;
+				ಪೂರ್ಣಾಂಕ cpu = cpumask_ಮೊದಲ(doms_cur[j]);
 
 				guard(rcu)();
 				sd = rcu_dereference(cpu_rq(cpu)->sd);
-				while (sd && sd->parent && (sd->parent->flags & SD_SHARE_LLC))
-					sd = sd->parent;
-				if (sd && (sd->flags & SD_SHARE_LLC) && sd->parent &&
-				    sd_in_multi_llcs(sd))
+				ಆಗ (sd && sd->ಪೋಷಕ && (sd->ಪೋಷಕ->flags & SD_SHARE_LLC))
+					sd = sd->ಪೋಷಕ;
+				ಆದರೆ (sd && (sd->flags & SD_SHARE_LLC) && sd->ಪೋಷಕ &&
+				    sd_ಒಳ_multi_llcs(sd))
 					has_multi_llcs = true;
-				goto match2;
+				ಹೋಗು match2;
 			}
 		}
 		/* No match - add a new doms_new */
-		build_sched_domains(doms_new[i], dattr_new ? dattr_new + i : NULL,
+		build_sched_domains(doms_new[i], dattr_new ? dattr_new + i : ಖಾಲಿ,
 				    &multi_llcs);
 		has_multi_llcs |= multi_llcs;
 match2:
 		;
 	}
-	sched_cache_set(has_multi_llcs);
+	sched_cache_ಗಣ(has_multi_llcs);
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+#ಆದರೆ defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
 	/* Build perf domains: */
-	for (i = 0; i < ndoms_new; i++) {
-		for (j = 0; j < n && !sched_energy_update; j++) {
-			if (cpumask_equal(doms_new[i], doms_cur[j]) &&
-			    cpu_rq(cpumask_first(doms_cur[j]))->rd->pd) {
+	ಗಾಗಿ (i = 0; i < ndoms_new; i++) {
+		ಗಾಗಿ (j = 0; j < n && !sched_energy_update; j++) {
+			ಆದರೆ (cpumask_equal(doms_new[i], doms_cur[j]) &&
+			    cpu_rq(cpumask_ಮೊದಲ(doms_cur[j]))->rd->pd) {
 				has_eas = true;
-				goto match3;
+				ಹೋಗು match3;
 			}
 		}
 		/* No match - add perf domains for a new rd */
@@ -3494,11 +3494,11 @@ match2:
 match3:
 		;
 	}
-	sched_energy_set(has_eas);
-#endif
+	sched_energy_ಗಣ(has_eas);
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Remember the new sched domains: */
-	if (doms_cur != &fallback_doms)
+	ಆದರೆ (doms_cur != &fallback_doms)
 		free_sched_domains(doms_cur, ndoms_cur);
 
 	kfree(dattr_cur);
@@ -3513,10 +3513,10 @@ match3:
 /*
  * Call with hotplug lock held
  */
-void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-			     struct sched_domain_attr *dattr_new)
+ಶೂನ್ಯ ವಿಭಜನೆ_sched_domains(ಪೂರ್ಣಾಂಕ ndoms_new, cpumask_var_t doms_new[],
+			     ರಚನೆ sched_domain_attr *dattr_new)
 {
-	sched_domains_mutex_lock();
-	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+	sched_domains_mutex_ಬೀಗ();
+	ವಿಭಜನೆ_sched_domains_locked(ndoms_new, doms_new, dattr_new);
 	sched_domains_mutex_unlock();
 }

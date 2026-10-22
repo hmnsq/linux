@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#ಅನ್ತರ್ಭಾವ "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+select_task_rq_stop(ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ cpu, ಪೂರ್ಣಾಂಕ flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	ಹಿಂತಿರುಗಿ task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+balance_stop(ರಚನೆ rq *rq, ರಚನೆ rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	ಹಿಂತಿರುಗಿ sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ
+wakeup_preempt_stop(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+ಸ್ಥಿರ ಶೂನ್ಯ ಗಣ_ಮುಂದಿನ_task_stop(ರಚನೆ rq *rq, ರಚನೆ task_struct *stop, ಎಣಿಕೆ snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	ಆದರೆ (type == SNT_REPICK)
+		ಹಿಂತಿರುಗಿ;
 
-	stop->se.exec_start = rq_clock_task(rq);
+	stop->se.exec_ಆರಂಭ = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+ಸ್ಥಿರ ರಚನೆ task_struct *pick_task_stop(ರಚನೆ rq *rq, ರಚನೆ rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	ಆದರೆ (!sched_stop_runnable(rq))
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	return rq->stop;
+	ಹಿಂತಿರುಗಿ rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಸರತಿಗೆ_ಸೇರಿಸು_task_stop(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ flags)
 {
-	add_nr_running(rq, 1);
+	ಕೂಡಿಸು_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ಸ್ಥಿರ bool
+ಸರತಿಯಿಂದ_ತೆಗೆ_task_stop(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	ಹಿಂತಿರುಗಿ true;
 }
 
-static void yield_task_stop(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ yield_task_stop(ರಚನೆ rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ಸ್ಥಿರ ಶೂನ್ಯ put_prev_task_stop(ರಚನೆ rq *rq, ರಚನೆ task_struct *prev, ರಚನೆ task_struct *ಮುಂದಿನ)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+ಸ್ಥಿರ ಶೂನ್ಯ task_tick_stop(ರಚನೆ rq *rq, ರಚನೆ task_struct *curr, ಪೂರ್ಣಾಂಕ queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+ಸ್ಥಿರ ಶೂನ್ಯ switching_ಗಮ್ಯ_stop(ರಚನೆ rq *rq, ರಚನೆ task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+ಸ್ಥಿರ ಶೂನ್ಯ
+prio_ಬದಲಾಯಿತು_stop(ರಚನೆ rq *rq, ರಚನೆ task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	ಆದರೆ (p->prio == oldprio)
+		ಹಿಂತಿರುಗಿ;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ update_curr_stop(ರಚನೆ rq *rq)
 {
 }
 
@@ -100,23 +100,23 @@ static void update_curr_stop(struct rq *rq)
  * Simple, special scheduling class for the per-CPU stop tasks:
  */
 DEFINE_SCHED_CLASS(stop) = {
-	.enqueue_task		= enqueue_task_stop,
-	.dequeue_task		= dequeue_task_stop,
+	.ಸರತಿಗೆ_ಸೇರಿಸು_task		= ಸರತಿಗೆ_ಸೇರಿಸು_task_stop,
+	.ಸರತಿಯಿಂದ_ತೆಗೆ_task		= ಸರತಿಯಿಂದ_ತೆಗೆ_task_stop,
 	.yield_task		= yield_task_stop,
 
 	.wakeup_preempt		= wakeup_preempt_stop,
 
 	.pick_task		= pick_task_stop,
 	.put_prev_task		= put_prev_task_stop,
-	.set_next_task          = set_next_task_stop,
+	.ಗಣ_ಮುಂದಿನ_task          = ಗಣ_ಮುಂದಿನ_task_stop,
 
 	.balance		= balance_stop,
 	.select_task_rq		= select_task_rq_stop,
-	.set_cpus_allowed	= set_cpus_allowed_common,
+	.ಗಣ_cpus_allowed	= ಗಣ_cpus_allowed_common,
 
 	.task_tick		= task_tick_stop,
 
-	.prio_changed		= prio_changed_stop,
-	.switching_to		= switching_to_stop,
+	.prio_ಬದಲಾಯಿತು		= prio_ಬದಲಾಯಿತು_stop,
+	.switching_ಗಮ್ಯ		= switching_ಗಮ್ಯ_stop,
 	.update_curr		= update_curr_stop,
 };

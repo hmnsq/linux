@@ -1,81 +1,81 @@
 // SPDX-License-Identifier: GPL-2.0
-#ifndef _KERNEL_SCHED_PELT_H
-#define _KERNEL_SCHED_PELT_H
-#include "sched.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _KERNEL_SCHED_PELT_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _KERNEL_SCHED_PELT_H
+#ಅನ್ತರ್ಭಾವ "sched.h"
 
-#include "sched-pelt.h"
+#ಅನ್ತರ್ಭಾವ "sched-pelt.h"
 
-int __update_load_avg_blocked_se(u64 now, struct sched_entity *se);
-int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se);
-int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
-int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
-int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
-bool update_other_load_avgs(struct rq *rq);
+ಪೂರ್ಣಾಂಕ __update_load_avg_blocked_se(u64 now, ರಚನೆ sched_entity *se);
+ಪೂರ್ಣಾಂಕ __update_load_avg_se(u64 now, ರಚನೆ cfs_rq *cfs_rq, ರಚನೆ sched_entity *se);
+ಪೂರ್ಣಾಂಕ __update_load_avg_cfs_rq(u64 now, ರಚನೆ cfs_rq *cfs_rq);
+ಪೂರ್ಣಾಂಕ update_rt_rq_ತುಂಬು_avg(u64 now, ರಚನೆ rq *rq, ಪೂರ್ಣಾಂಕ running);
+ಪೂರ್ಣಾಂಕ update_dl_rq_ತುಂಬು_avg(u64 now, ರಚನೆ rq *rq, ಪೂರ್ಣಾಂಕ running);
+bool update_other_ತುಂಬು_avgs(ರಚನೆ rq *rq);
 
-#ifdef CONFIG_SCHED_HW_PRESSURE
-int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_HW_PRESSURE
+ಪೂರ್ಣಾಂಕ update_hw_ತುಂಬು_avg(u64 now, ರಚನೆ rq *rq, u64 ಸಾಮರ್ಥ್ಯ);
 
-static inline u64 hw_load_avg(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u64 hw_ತುಂಬು_avg(ರಚನೆ rq *rq)
 {
-	return READ_ONCE(rq->avg_hw.load_avg);
+	ಹಿಂತಿರುಗಿ READ_ONCE(rq->avg_hw.ತುಂಬು_avg);
 }
-#else /* !CONFIG_SCHED_HW_PRESSURE: */
-static inline int
-update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_SCHED_HW_PRESSURE: */
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ
+update_hw_ತುಂಬು_avg(u64 now, ರಚನೆ rq *rq, u64 ಸಾಮರ್ಥ್ಯ)
 {
-	return 0;
-}
-
-static inline u64 hw_load_avg(struct rq *rq)
-{
-	return 0;
-}
-#endif /* !CONFIG_SCHED_HW_PRESSURE */
-
-#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-int update_irq_load_avg(struct rq *rq, u64 running);
-#else
-static inline int
-update_irq_load_avg(struct rq *rq, u64 running)
-{
-	return 0;
-}
-#endif
-
-#define PELT_MIN_DIVIDER	(LOAD_AVG_MAX - 1024)
-
-static inline u32 get_pelt_divider(struct sched_avg *avg)
-{
-	return PELT_MIN_DIVIDER + avg->period_contrib;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static inline void cfs_se_util_change(struct sched_avg *avg)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u64 hw_ತುಂಬು_avg(ರಚನೆ rq *rq)
 {
-	unsigned int enqueued;
+	ಹಿಂತಿರುಗಿ 0;
+}
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_SCHED_HW_PRESSURE */
 
-	if (!sched_feat(UTIL_EST))
-		return;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_HAVE_SCHED_AVG_IRQ
+ಪೂರ್ಣಾಂಕ update_irq_ತುಂಬು_avg(ರಚನೆ rq *rq, u64 running);
+#ಇಲ್ಲದಿದ್ದರೆ
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ
+update_irq_ತುಂಬು_avg(ರಚನೆ rq *rq, u64 running)
+{
+	ಹಿಂತಿರುಗಿ 0;
+}
+#ಆದರೆ_ಅಂತ್ಯ
+
+#ವ್ಯಾಖ್ಯಾನಿಸು PELT_MIN_DIVIDER	(ತುಂಬು_AVG_MAX - 1024)
+
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u32 get_pelt_divider(ರಚನೆ sched_avg *avg)
+{
+	ಹಿಂತಿರುಗಿ PELT_MIN_DIVIDER + avg->period_contrib;
+}
+
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ cfs_se_util_change(ರಚನೆ sched_avg *avg)
+{
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ enqueued;
+
+	ಆದರೆ (!sched_feat(UTIL_EST))
+		ಹಿಂತಿರುಗಿ;
 
 	/* Avoid store if the flag has been already reset */
 	enqueued = avg->util_est;
-	if (!(enqueued & UTIL_AVG_UNCHANGED))
-		return;
+	ಆದರೆ (!(enqueued & UTIL_AVG_UNCHANGED))
+		ಹಿಂತಿರುಗಿ;
 
 	/* Reset flag to report util_avg has been updated */
 	enqueued &= ~UTIL_AVG_UNCHANGED;
 	WRITE_ONCE(avg->util_est, enqueued);
 }
 
-static inline u64 rq_clock_pelt(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u64 rq_clock_pelt(ರಚನೆ rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_pelt - rq->lost_idle_time;
+	ಹಿಂತಿರುಗಿ rq->clock_pelt - rq->ಕಳೆದುಹೋದ_idle_ಸಮಯ;
 }
 
 /* The rq is idle, we can sync to clock_task */
-static inline void _update_idle_rq_clock_pelt(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ _update_idle_rq_clock_pelt(ರಚನೆ rq *rq)
 {
 	rq->clock_pelt  = rq_clock_task(rq);
 
@@ -97,11 +97,11 @@ static inline void _update_idle_rq_clock_pelt(struct rq *rq)
  * clock pelt      | 1| 2|    3|    4| 7| 8| 9|   10|   11|14|15|16
  *
  */
-static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ update_rq_clock_pelt(ರಚನೆ rq *rq, s64 delta)
 {
-	if (unlikely(is_idle_task(rq->curr))) {
+	ಆದರೆ (unlikely(is_idle_task(rq->curr))) {
 		_update_idle_rq_clock_pelt(rq);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	/*
@@ -120,8 +120,8 @@ static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
 	 * Scale the elapsed time to reflect the real amount of
 	 * computation
 	 */
-	delta = cap_scale(delta, arch_scale_cpu_capacity(cpu_of(rq)));
-	delta = cap_scale(delta, arch_scale_freq_capacity(cpu_of(rq)));
+	delta = cap_scale(delta, arch_scale_cpu_ಸಾಮರ್ಥ್ಯ(cpu_ದ(rq)));
+	delta = cap_scale(delta, arch_scale_freq_ಸಾಮರ್ಥ್ಯ(cpu_ದ(rq)));
 
 	rq->clock_pelt += delta;
 }
@@ -135,12 +135,12 @@ static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
  * the position in the current window (period_contrib) and we use the higher
  * bound of util_sum to decide.
  */
-static inline void update_idle_rq_clock_pelt(struct rq *rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ update_idle_rq_clock_pelt(ರಚನೆ rq *rq)
 {
-	u32 divider = ((LOAD_AVG_MAX - 1024) << SCHED_CAPACITY_SHIFT) - LOAD_AVG_MAX;
-	u32 util_sum = rq->cfs.avg.util_sum;
-	util_sum += rq->avg_rt.util_sum;
-	util_sum += rq->avg_dl.util_sum;
+	u32 divider = ((ತುಂಬು_AVG_MAX - 1024) << SCHED_ಸಾಮರ್ಥ್ಯ_ಸರಿಸು) - ತುಂಬು_AVG_MAX;
+	u32 util_ಮೊತ್ತ = rq->cfs.avg.util_ಮೊತ್ತ;
+	util_ಮೊತ್ತ += rq->avg_rt.util_ಮೊತ್ತ;
+	util_ಮೊತ್ತ += rq->avg_dl.util_ಮೊತ್ತ;
 
 	/*
 	 * Reflecting stolen time makes sense only if the idle
@@ -151,39 +151,39 @@ static inline void update_idle_rq_clock_pelt(struct rq *rq)
 	 * this case. We keep track of this lost idle time compare to
 	 * rq's clock_task.
 	 */
-	if (util_sum >= divider)
-		rq->lost_idle_time += rq_clock_task(rq) - rq->clock_pelt;
+	ಆದರೆ (util_ಮೊತ್ತ >= divider)
+		rq->ಕಳೆದುಹೋದ_idle_ಸಮಯ += rq_clock_task(rq) - rq->clock_pelt;
 
 	_update_idle_rq_clock_pelt(rq);
 }
 
-#ifdef CONFIG_CFS_BANDWIDTH
-static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_CFS_BANDWIDTH
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ update_idle_cfs_rq_clock_pelt(ರಚನೆ cfs_rq *cfs_rq)
 {
 	u64 throttled;
 
-	if (unlikely(cfs_rq->pelt_clock_throttled))
+	ಆದರೆ (unlikely(cfs_rq->pelt_clock_throttled))
 		throttled = U64_MAX;
-	else
-		throttled = cfs_rq->throttled_clock_pelt_time;
+	ಇಲ್ಲದಿದ್ದರೆ
+		throttled = cfs_rq->throttled_clock_pelt_ಸಮಯ;
 
 	u64_u32_store(cfs_rq->throttled_pelt_idle, throttled);
 }
 
 /* rq->task_clock normalized against any time this cfs_rq has spent throttled */
-static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u64 cfs_rq_clock_pelt(ರಚನೆ cfs_rq *cfs_rq)
 {
-	if (unlikely(cfs_rq->pelt_clock_throttled))
-		return cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_time;
+	ಆದರೆ (unlikely(cfs_rq->pelt_clock_throttled))
+		ಹಿಂತಿರುಗಿ cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_ಸಮಯ;
 
-	return rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
+	ಹಿಂತಿರುಗಿ rq_clock_pelt(rq_ದ(cfs_rq)) - cfs_rq->throttled_clock_pelt_ಸಮಯ;
 }
-#else /* !CONFIG_CFS_BANDWIDTH: */
-static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq) { }
-static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+#ಇಲ್ಲದಿದ್ದರೆ /* !CONFIG_CFS_BANDWIDTH: */
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ update_idle_cfs_rq_clock_pelt(ರಚನೆ cfs_rq *cfs_rq) { }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u64 cfs_rq_clock_pelt(ರಚನೆ cfs_rq *cfs_rq)
 {
-	return rq_clock_pelt(rq_of(cfs_rq));
+	ಹಿಂತಿರುಗಿ rq_clock_pelt(rq_ದ(cfs_rq));
 }
-#endif /* !CONFIG_CFS_BANDWIDTH */
+#ಆದರೆ_ಅಂತ್ಯ /* !CONFIG_CFS_BANDWIDTH */
 
-#endif /* _KERNEL_SCHED_PELT_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _KERNEL_SCHED_PELT_H */

@@ -6,97 +6,97 @@
  * Copyright (c) 2022 Tejun Heo <tj@kernel.org>
  * Copyright (c) 2022 David Vernet <dvernet@meta.com>
  */
-#ifdef CONFIG_SCHED_CLASS_EXT
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CLASS_EXT
 
-void scx_tick(struct rq *rq);
-void init_scx_entity(struct sched_ext_entity *scx);
-void scx_pre_fork(struct task_struct *p);
-int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs);
-void scx_post_fork(struct task_struct *p);
-void scx_cancel_fork(struct task_struct *p);
-bool scx_can_stop_tick(struct rq *rq);
-void scx_rq_activate(struct rq *rq);
-void scx_rq_deactivate(struct rq *rq);
-int scx_check_setscheduler(struct task_struct *p, int policy);
-bool task_should_scx(int policy);
-bool scx_allow_ttwu_queue(const struct task_struct *p);
-bool scx_allow_proxy_exec(const struct task_struct *p);
-void scx_proxy_donor_start(struct rq *rq);
-void scx_proxy_reenqueue_retry(struct rq *rq, struct task_struct *next);
-void init_sched_ext_class(void);
+ಶೂನ್ಯ scx_tick(ರಚನೆ rq *rq);
+ಶೂನ್ಯ init_scx_entity(ರಚನೆ sched_ext_entity *scx);
+ಶೂನ್ಯ scx_pre_fork(ರಚನೆ task_struct *p);
+ಪೂರ್ಣಾಂಕ scx_fork(ರಚನೆ task_struct *p, ರಚನೆ kernel_clone_ವಾದಗಳು *kargs);
+ಶೂನ್ಯ scx_post_fork(ರಚನೆ task_struct *p);
+ಶೂನ್ಯ scx_cancel_fork(ರಚನೆ task_struct *p);
+bool scx_can_stop_tick(ರಚನೆ rq *rq);
+ಶೂನ್ಯ scx_rq_activate(ರಚನೆ rq *rq);
+ಶೂನ್ಯ scx_rq_deactivate(ರಚನೆ rq *rq);
+ಪೂರ್ಣಾಂಕ scx_check_setscheduler(ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ policy);
+bool task_should_scx(ಪೂರ್ಣಾಂಕ policy);
+bool scx_allow_ttwu_ಸರತಿ(ಸ್ಥಿರಾಂಕ ರಚನೆ task_struct *p);
+bool scx_allow_proxy_exec(ಸ್ಥಿರಾಂಕ ರಚನೆ task_struct *p);
+ಶೂನ್ಯ scx_proxy_donor_ಆರಂಭ(ರಚನೆ rq *rq);
+ಶೂನ್ಯ scx_proxy_reenqueue_retry(ರಚನೆ rq *rq, ರಚನೆ task_struct *ಮುಂದಿನ);
+ಶೂನ್ಯ init_sched_ext_class(ಶೂನ್ಯ);
 
-static inline u32 scx_cpuperf_target(s32 cpu)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u32 scx_cpuperf_ಗುರಿ(s32 cpu)
 {
-	if (scx_enabled())
-		return cpu_rq(cpu)->scx.cpuperf_target;
-	else
-		return 0;
+	ಆದರೆ (scx_enabled())
+		ಹಿಂತಿರುಗಿ cpu_rq(cpu)->scx.cpuperf_ಗುರಿ;
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಹಿಂತಿರುಗಿ 0;
 }
 
-static inline bool task_on_scx(const struct task_struct *p)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool task_on_scx(ಸ್ಥಿರಾಂಕ ರಚನೆ task_struct *p)
 {
-	return scx_enabled() && p->sched_class == &ext_sched_class;
+	ಹಿಂತಿರುಗಿ scx_enabled() && p->sched_class == &ext_sched_class;
 }
 
-#ifdef CONFIG_SCHED_CORE
-bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
-		   bool in_fi);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CORE
+bool scx_prio_less(ಸ್ಥಿರಾಂಕ ರಚನೆ task_struct *a, ಸ್ಥಿರಾಂಕ ರಚನೆ task_struct *b,
+		   bool ಒಳ_fi);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#else	/* CONFIG_SCHED_CLASS_EXT */
+#ಇಲ್ಲದಿದ್ದರೆ	/* CONFIG_SCHED_CLASS_EXT */
 
-static inline void scx_tick(struct rq *rq) {}
-static inline void scx_pre_fork(struct task_struct *p) {}
-static inline int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs) { return 0; }
-static inline void scx_post_fork(struct task_struct *p) {}
-static inline void scx_cancel_fork(struct task_struct *p) {}
-static inline u32 scx_cpuperf_target(s32 cpu) { return 0; }
-static inline bool scx_can_stop_tick(struct rq *rq) { return true; }
-static inline void scx_rq_activate(struct rq *rq) {}
-static inline void scx_rq_deactivate(struct rq *rq) {}
-static inline int scx_check_setscheduler(struct task_struct *p, int policy) { return 0; }
-static inline bool task_on_scx(const struct task_struct *p) { return false; }
-static inline bool scx_allow_ttwu_queue(const struct task_struct *p) { return true; }
-static inline bool scx_allow_proxy_exec(const struct task_struct *p) { return true; }
-static inline void scx_proxy_donor_start(struct rq *rq) {}
-static inline void scx_proxy_reenqueue_retry(struct rq *rq,
-					     struct task_struct *next) {}
-static inline void init_sched_ext_class(void) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_tick(ರಚನೆ rq *rq) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_pre_fork(ರಚನೆ task_struct *p) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ scx_fork(ರಚನೆ task_struct *p, ರಚನೆ kernel_clone_ವಾದಗಳು *kargs) { ಹಿಂತಿರುಗಿ 0; }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_post_fork(ರಚನೆ task_struct *p) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_cancel_fork(ರಚನೆ task_struct *p) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ u32 scx_cpuperf_ಗುರಿ(s32 cpu) { ಹಿಂತಿರುಗಿ 0; }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool scx_can_stop_tick(ರಚನೆ rq *rq) { ಹಿಂತಿರುಗಿ true; }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_rq_activate(ರಚನೆ rq *rq) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_rq_deactivate(ರಚನೆ rq *rq) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ scx_check_setscheduler(ರಚನೆ task_struct *p, ಪೂರ್ಣಾಂಕ policy) { ಹಿಂತಿರುಗಿ 0; }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool task_on_scx(ಸ್ಥಿರಾಂಕ ರಚನೆ task_struct *p) { ಹಿಂತಿರುಗಿ false; }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool scx_allow_ttwu_ಸರತಿ(ಸ್ಥಿರಾಂಕ ರಚನೆ task_struct *p) { ಹಿಂತಿರುಗಿ true; }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ bool scx_allow_proxy_exec(ಸ್ಥಿರಾಂಕ ರಚನೆ task_struct *p) { ಹಿಂತಿರುಗಿ true; }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_proxy_donor_ಆರಂಭ(ರಚನೆ rq *rq) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_proxy_reenqueue_retry(ರಚನೆ rq *rq,
+					     ರಚನೆ task_struct *ಮುಂದಿನ) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ init_sched_ext_class(ಶೂನ್ಯ) {}
 
-#endif	/* CONFIG_SCHED_CLASS_EXT */
+#ಆದರೆ_ಅಂತ್ಯ	/* CONFIG_SCHED_CLASS_EXT */
 
-#ifdef CONFIG_SCHED_CLASS_EXT
-void __scx_update_idle(struct rq *rq, bool idle, bool do_notify);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_SCHED_CLASS_EXT
+ಶೂನ್ಯ __scx_update_idle(ರಚನೆ rq *rq, bool idle, bool do_notify);
 
-static inline void scx_update_idle(struct rq *rq, bool idle, bool do_notify)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_update_idle(ರಚನೆ rq *rq, bool idle, bool do_notify)
 {
-	if (scx_enabled())
+	ಆದರೆ (scx_enabled())
 		__scx_update_idle(rq, idle, do_notify);
 }
-#else
-static inline void scx_update_idle(struct rq *rq, bool idle, bool do_notify) {}
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_update_idle(ರಚನೆ rq *rq, bool idle, bool do_notify) {}
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef CONFIG_CGROUP_SCHED
-#ifdef CONFIG_EXT_GROUP_SCHED
-void scx_tg_init(struct task_group *tg);
-int scx_tg_online(struct task_group *tg);
-void scx_tg_offline(struct task_group *tg);
-int scx_cgroup_can_attach(struct cgroup_taskset *tset);
-void scx_cgroup_move_task(struct task_struct *p);
-void scx_cgroup_cancel_attach(struct cgroup_taskset *tset);
-void scx_group_set_weight(struct task_group *tg, unsigned long cgrp_weight);
-void scx_group_set_idle(struct task_group *tg, bool idle);
-void scx_group_set_bandwidth(struct task_group *tg, u64 period_us, u64 quota_us, u64 burst_us);
-#else	/* CONFIG_EXT_GROUP_SCHED */
-static inline void scx_tg_init(struct task_group *tg) {}
-static inline int scx_tg_online(struct task_group *tg) { return 0; }
-static inline void scx_tg_offline(struct task_group *tg) {}
-static inline int scx_cgroup_can_attach(struct cgroup_taskset *tset) { return 0; }
-static inline void scx_cgroup_move_task(struct task_struct *p) {}
-static inline void scx_cgroup_cancel_attach(struct cgroup_taskset *tset) {}
-static inline void scx_group_set_weight(struct task_group *tg, unsigned long cgrp_weight) {}
-static inline void scx_group_set_idle(struct task_group *tg, bool idle) {}
-static inline void scx_group_set_bandwidth(struct task_group *tg, u64 period_us, u64 quota_us, u64 burst_us) {}
-#endif	/* CONFIG_EXT_GROUP_SCHED */
-#endif	/* CONFIG_CGROUP_SCHED */
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_CGROUP_SCHED
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ CONFIG_EXT_ಗುಂಪು_SCHED
+ಶೂನ್ಯ scx_tg_init(ರಚನೆ task_ಗುಂಪು *tg);
+ಪೂರ್ಣಾಂಕ scx_tg_online(ರಚನೆ task_ಗುಂಪು *tg);
+ಶೂನ್ಯ scx_tg_offline(ರಚನೆ task_ಗುಂಪು *tg);
+ಪೂರ್ಣಾಂಕ scx_cgroup_can_attach(ರಚನೆ cgroup_taskset *tset);
+ಶೂನ್ಯ scx_cgroup_move_task(ರಚನೆ task_struct *p);
+ಶೂನ್ಯ scx_cgroup_cancel_attach(ರಚನೆ cgroup_taskset *tset);
+ಶೂನ್ಯ scx_ಗುಂಪು_ಗಣ_ತೂಕ(ರಚನೆ task_ಗುಂಪು *tg, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ cgrp_ತೂಕ);
+ಶೂನ್ಯ scx_ಗುಂಪು_ಗಣ_idle(ರಚನೆ task_ಗುಂಪು *tg, bool idle);
+ಶೂನ್ಯ scx_ಗುಂಪು_ಗಣ_bandwidth(ರಚನೆ task_ಗುಂಪು *tg, u64 period_us, u64 quota_us, u64 ಅವಧಿ_us);
+#ಇಲ್ಲದಿದ್ದರೆ	/* CONFIG_EXT_GROUP_SCHED */
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_tg_init(ರಚನೆ task_ಗುಂಪು *tg) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ scx_tg_online(ರಚನೆ task_ಗುಂಪು *tg) { ಹಿಂತಿರುಗಿ 0; }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_tg_offline(ರಚನೆ task_ಗುಂಪು *tg) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ scx_cgroup_can_attach(ರಚನೆ cgroup_taskset *tset) { ಹಿಂತಿರುಗಿ 0; }
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_cgroup_move_task(ರಚನೆ task_struct *p) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_cgroup_cancel_attach(ರಚನೆ cgroup_taskset *tset) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_ಗುಂಪು_ಗಣ_ತೂಕ(ರಚನೆ task_ಗುಂಪು *tg, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ cgrp_ತೂಕ) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_ಗುಂಪು_ಗಣ_idle(ರಚನೆ task_ಗುಂಪು *tg, bool idle) {}
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ scx_ಗುಂಪು_ಗಣ_bandwidth(ರಚನೆ task_ಗುಂಪು *tg, u64 period_us, u64 quota_us, u64 ಅವಧಿ_us) {}
+#ಆದರೆ_ಅಂತ್ಯ	/* CONFIG_EXT_GROUP_SCHED */
+#ಆದರೆ_ಅಂತ್ಯ	/* CONFIG_CGROUP_SCHED */
