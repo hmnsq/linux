@@ -136,165 +136,165 @@
  * cost-wise, yet way more sensitive and accurate than periodic
  * sampling of the aggregate task states would be.
  */
-#include <linux/sched/clock.h>
-#include <linux/workqueue.h>
-#include <linux/psi.h>
-#include "sched.h"
+#ضمن <linux/sched/clock.h>
+#ضمن <linux/workqueue.h>
+#ضمن <linux/psi.h>
+#ضمن "sched.h"
 
-static int psi_bug __read_mostly;
+ساكن صحيح psi_bug __read_mostly;
 
-DEFINE_STATIC_KEY_FALSE(psi_disabled);
-static DEFINE_STATIC_KEY_TRUE(psi_cgroups_enabled);
+DEFINE_STATIC_کلید_FALSE(psi_disabled);
+ساكن DEFINE_STATIC_کلید_TRUE(psi_cgroups_enabled);
 
-#ifdef CONFIG_PSI_DEFAULT_DISABLED
-static bool psi_enable;
-#else
-static bool psi_enable = true;
-#endif
-static int __init setup_psi(char *str)
+#جے_تعریف_شدہ CONFIG_PSI_DEFAULT_DISABLED
+ساكن bool psi_enable;
+#وإلا
+ساكن bool psi_enable = true;
+#جے_انت
+ساكن صحيح __init تیاری_psi(حرف *str)
 {
-	return kstrtobool(str, &psi_enable) == 0;
+	أرجع kstrtobool(str, &psi_enable) == 0;
 }
-__setup("psi=", setup_psi);
+__setup("psi=", تیاری_psi);
 
 /* Running averages - we need to be higher-res than loadavg */
-#define PSI_FREQ	(2*HZ+1)	/* 2 sec intervals */
-#define EXP_10s		1677		/* 1/exp(2s/10s) as fixed-point */
-#define EXP_60s		1981		/* 1/exp(2s/60s) */
-#define EXP_300s	2034		/* 1/exp(2s/300s) */
+#تعریف_کرو PSI_FREQ	(2*HZ+1)	/* 2 sec intervals */
+#تعریف_کرو EXP_10s		1677		/* 1/exp(2s/10s) as fixed-point */
+#تعریف_کرو EXP_60s		1981		/* 1/exp(2s/60s) */
+#تعریف_کرو EXP_300s	2034		/* 1/exp(2s/300s) */
 
 /* PSI trigger definitions */
-#define WINDOW_MAX_US 10000000	/* Max window size is 10s */
-#define UPDATES_PER_WINDOW 10	/* 10 updates per window */
+#تعریف_کرو کھڑکی_MAX_US 10000000	/* Max window size is 10s */
+#تعریف_کرو UPDATES_فی_کھڑکی 10	/* 10 updates per window */
 
 /* Sampling frequency in nanoseconds */
-static u64 psi_period __read_mostly;
+ساكن u64 psi_period __read_mostly;
 
 /* System-level pressure and stall tracking */
-static DEFINE_PER_CPU(struct psi_group_cpu, system_group_pcpu);
-struct psi_group psi_system = {
-	.pcpu = &system_group_pcpu,
+ساكن DEFINE_فی_CPU(بنية psi_گروہ_cpu, system_گروہ_pcpu);
+بنية psi_گروہ psi_system = {
+	.pcpu = &system_گروہ_pcpu,
 };
 
-static DEFINE_PER_CPU(seqcount_t, psi_seq) = SEQCNT_ZERO(psi_seq);
+ساكن DEFINE_فی_CPU(seqcount_t, psi_seq) = SEQCNT_ZERO(psi_seq);
 
-static inline void psi_write_begin(int cpu)
+ساكن مضمن فراغ psi_write_begin(صحيح cpu)
 {
-	write_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
+	write_seqcount_begin(فی_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline void psi_write_end(int cpu)
+ساكن مضمن فراغ psi_write_سرا(صحيح cpu)
 {
-	write_seqcount_end(per_cpu_ptr(&psi_seq, cpu));
+	write_seqcount_سرا(فی_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline u32 psi_read_begin(int cpu)
+ساكن مضمن u32 psi_read_begin(صحيح cpu)
 {
-	return read_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
+	أرجع read_seqcount_begin(فی_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline bool psi_read_retry(int cpu, u32 seq)
+ساكن مضمن bool psi_read_retry(صحيح cpu, u32 seq)
 {
-	return read_seqcount_retry(per_cpu_ptr(&psi_seq, cpu), seq);
+	أرجع read_seqcount_retry(فی_cpu_ptr(&psi_seq, cpu), seq);
 }
 
-static void psi_avgs_work(struct work_struct *work);
+ساكن فراغ psi_avgs_work(بنية work_struct *work);
 
-static void poll_timer_fn(struct timer_list *t);
+ساكن فراغ poll_timer_fn(بنية timer_list *t);
 
-static void group_init(struct psi_group *group)
+ساكن فراغ گروہ_init(بنية psi_گروہ *گروہ)
 {
-	group->enabled = true;
-	group->avg_last_update = sched_clock();
-	group->avg_next_update = group->avg_last_update + psi_period;
-	mutex_init(&group->avgs_lock);
+	گروہ->enabled = true;
+	گروہ->avg_آخری_update = sched_clock();
+	گروہ->avg_اگلا_update = گروہ->avg_آخری_update + psi_period;
+	mutex_init(&گروہ->avgs_جندرا);
 
 	/* Init avg trigger-related members */
-	INIT_LIST_HEAD(&group->avg_triggers);
-	memset(group->avg_nr_triggers, 0, sizeof(group->avg_nr_triggers));
-	INIT_DELAYED_WORK(&group->avgs_work, psi_avgs_work);
+	INIT_LIST_سر(&گروہ->avg_triggers);
+	memset(گروہ->avg_nr_triggers, 0, حجم(گروہ->avg_nr_triggers));
+	INIT_DELAYED_WORK(&گروہ->avgs_work, psi_avgs_work);
 
 	/* Init rtpoll trigger-related members */
-	atomic_set(&group->rtpoll_scheduled, 0);
-	mutex_init(&group->rtpoll_trigger_lock);
-	INIT_LIST_HEAD(&group->rtpoll_triggers);
-	group->rtpoll_min_period = U32_MAX;
-	group->rtpoll_next_update = ULLONG_MAX;
-	init_waitqueue_head(&group->rtpoll_wait);
-	timer_setup(&group->rtpoll_timer, poll_timer_fn, 0);
-	rcu_assign_pointer(group->rtpoll_task, NULL);
+	atomic_سیٹ(&گروہ->rtpoll_scheduled, 0);
+	mutex_init(&گروہ->rtpoll_trigger_جندرا);
+	INIT_LIST_سر(&گروہ->rtpoll_triggers);
+	گروہ->rtpoll_min_period = U32_MAX;
+	گروہ->rtpoll_اگلا_update = ULLONG_MAX;
+	init_waitqueue_سر(&گروہ->rtpoll_wait);
+	timer_تیاری(&گروہ->rtpoll_timer, poll_timer_fn, 0);
+	rcu_سونپو_اشارہ_گر(گروہ->rtpoll_task, عدم);
 }
 
-void __init psi_init(void)
+فراغ __init psi_init(فراغ)
 {
-	if (!psi_enable) {
+	إذا (!psi_enable) {
 		static_branch_enable(&psi_disabled);
 		static_branch_disable(&psi_cgroups_enabled);
-		return;
+		أرجع;
 	}
 
-	if (!cgroup_psi_enabled())
+	إذا (!cgroup_psi_enabled())
 		static_branch_disable(&psi_cgroups_enabled);
 
-	psi_period = jiffies_to_nsecs(PSI_FREQ);
-	group_init(&psi_system);
+	psi_period = jiffies_منزل_nsecs(PSI_FREQ);
+	گروہ_init(&psi_system);
 }
 
-static u32 test_states(unsigned int *tasks, u32 state_mask)
+ساكن u32 test_حالتاں(بنانشانی صحيح *tasks, u32 state_نقاب)
 {
-	const bool oncpu = state_mask & PSI_ONCPU;
+	ثابت bool oncpu = state_نقاب & PSI_ONCPU;
 
-	if (tasks[NR_IOWAIT]) {
-		state_mask |= BIT(PSI_IO_SOME);
-		if (!tasks[NR_RUNNING])
-			state_mask |= BIT(PSI_IO_FULL);
+	إذا (tasks[NR_IOWAIT]) {
+		state_نقاب |= ثنائی_ہندسہ(PSI_IO_SOME);
+		إذا (!tasks[NR_RUNNING])
+			state_نقاب |= ثنائی_ہندسہ(PSI_IO_بھریا);
 	}
 
-	if (tasks[NR_MEMSTALL]) {
-		state_mask |= BIT(PSI_MEM_SOME);
-		if (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
-			state_mask |= BIT(PSI_MEM_FULL);
+	إذا (tasks[NR_MEMSTALL]) {
+		state_نقاب |= ثنائی_ہندسہ(PSI_MEM_SOME);
+		إذا (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
+			state_نقاب |= ثنائی_ہندسہ(PSI_MEM_بھریا);
 	}
 
-	if (tasks[NR_RUNNING] > oncpu)
-		state_mask |= BIT(PSI_CPU_SOME);
+	إذا (tasks[NR_RUNNING] > oncpu)
+		state_نقاب |= ثنائی_ہندسہ(PSI_CPU_SOME);
 
-	if (tasks[NR_RUNNING] && !oncpu)
-		state_mask |= BIT(PSI_CPU_FULL);
+	إذا (tasks[NR_RUNNING] && !oncpu)
+		state_نقاب |= ثنائی_ہندسہ(PSI_CPU_بھریا);
 
-	if (tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] || tasks[NR_RUNNING])
-		state_mask |= BIT(PSI_NONIDLE);
+	إذا (tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] || tasks[NR_RUNNING])
+		state_نقاب |= ثنائی_ہندسہ(PSI_NONIDLE);
 
-	return state_mask;
+	أرجع state_نقاب;
 }
 
-static void get_recent_times(struct psi_group *group, int cpu,
-			     enum psi_aggregators aggregator, u32 *times,
-			     u32 *pchanged_states)
+ساكن فراغ get_recent_times(بنية psi_گروہ *گروہ, صحيح cpu,
+			     تعداد psi_aggregators aggregator, u32 *times,
+			     u32 *pchanged_حالتاں)
 {
-	struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
-	int current_cpu = raw_smp_processor_id();
-	unsigned int tasks[NR_PSI_TASK_COUNTS];
-	u64 now, state_start;
-	enum psi_states s;
-	unsigned int seq;
-	u32 state_mask;
+	بنية psi_گروہ_cpu *groupc = فی_cpu_ptr(گروہ->pcpu, cpu);
+	صحيح current_cpu = raw_smp_processor_id();
+	بنانشانی صحيح tasks[NR_PSI_TASK_COUNTS];
+	u64 now, state_شروع;
+	تعداد psi_حالتاں s;
+	بنانشانی صحيح seq;
+	u32 state_نقاب;
 
-	*pchanged_states = 0;
+	*pchanged_حالتاں = 0;
 
 	/* Snapshot a coherent view of the CPU state */
-	do {
+	افعل {
 		seq = psi_read_begin(cpu);
 		now = cpu_clock(cpu);
-		memcpy(times, groupc->times, sizeof(groupc->times));
-		state_mask = groupc->state_mask;
-		state_start = groupc->state_start;
-		if (cpu == current_cpu)
-			memcpy(tasks, groupc->tasks, sizeof(groupc->tasks));
-	} while (psi_read_retry(cpu, seq));
+		حافظہ_نقل(times, groupc->times, حجم(groupc->times));
+		state_نقاب = groupc->state_نقاب;
+		state_شروع = groupc->state_شروع;
+		إذا (cpu == current_cpu)
+			حافظہ_نقل(tasks, groupc->tasks, حجم(groupc->tasks));
+	} طالما (psi_read_retry(cpu, seq));
 
 	/* Calculate state time deltas against the previous snapshot */
-	for (s = 0; s < NR_PSI_STATES; s++) {
+	لكل (s = 0; s < NR_PSI_حالتاں; s++) {
 		u32 delta;
 		/*
 		 * In addition to already concluded states, we also
@@ -305,15 +305,15 @@ static void get_recent_times(struct psi_group *group, int cpu,
 		 * (u32) and our reported pressure close to what's
 		 * actually happening.
 		 */
-		if (state_mask & (1 << s))
-			times[s] += now - state_start;
+		إذا (state_نقاب & (1 << s))
+			times[s] += now - state_شروع;
 
 		delta = times[s] - groupc->times_prev[aggregator][s];
 		groupc->times_prev[aggregator][s] = times[s];
 
 		times[s] = delta;
-		if (delta)
-			*pchanged_states |= (1 << s);
+		إذا (delta)
+			*pchanged_حالتاں |= (1 << s);
 	}
 
 	/*
@@ -324,50 +324,50 @@ static void get_recent_times(struct psi_group *group, int cpu,
 	 * (NR_RUNNING > 1 || NR_IOWAIT > 0 || NR_MEMSTALL > 0), for other CPUs
 	 * we can just check PSI_NONIDLE delta.
 	 */
-	if (current_work() == &group->avgs_work.work) {
+	إذا (current_work() == &گروہ->avgs_work.work) {
 		bool reschedule;
 
-		if (cpu == current_cpu)
+		إذا (cpu == current_cpu)
 			reschedule = tasks[NR_RUNNING] +
 				     tasks[NR_IOWAIT] +
 				     tasks[NR_MEMSTALL] > 1;
-		else
-			reschedule = *pchanged_states & (1 << PSI_NONIDLE);
+		وإلا
+			reschedule = *pchanged_حالتاں & (1 << PSI_NONIDLE);
 
-		if (reschedule)
-			*pchanged_states |= PSI_STATE_RESCHEDULE;
+		إذا (reschedule)
+			*pchanged_حالتاں |= PSI_STATE_RESCHEDULE;
 	}
 }
 
-static void calc_avgs(unsigned long avg[3], int missed_periods,
-		      u64 time, u64 period)
+ساكن فراغ calc_avgs(بنانشانی لما avg[3], صحيح missed_periods,
+		      u64 ویلا, u64 period)
 {
-	unsigned long pct;
+	بنانشانی لما pct;
 
 	/* Fill in zeroes for periods of no activity */
-	if (missed_periods) {
-		avg[0] = calc_load_n(avg[0], EXP_10s, 0, missed_periods);
-		avg[1] = calc_load_n(avg[1], EXP_60s, 0, missed_periods);
-		avg[2] = calc_load_n(avg[2], EXP_300s, 0, missed_periods);
+	إذا (missed_periods) {
+		avg[0] = calc_لدو_n(avg[0], EXP_10s, 0, missed_periods);
+		avg[1] = calc_لدو_n(avg[1], EXP_60s, 0, missed_periods);
+		avg[2] = calc_لدو_n(avg[2], EXP_300s, 0, missed_periods);
 	}
 
 	/* Sample the most recent active period */
-	pct = div_u64(time * 100, period);
+	pct = div_u64(ویلا * 100, period);
 	pct *= FIXED_1;
-	avg[0] = calc_load(avg[0], EXP_10s, pct);
-	avg[1] = calc_load(avg[1], EXP_60s, pct);
-	avg[2] = calc_load(avg[2], EXP_300s, pct);
+	avg[0] = calc_لدو(avg[0], EXP_10s, pct);
+	avg[1] = calc_لدو(avg[1], EXP_60s, pct);
+	avg[2] = calc_لدو(avg[2], EXP_300s, pct);
 }
 
-static void collect_percpu_times(struct psi_group *group,
-				 enum psi_aggregators aggregator,
-				 u32 *pchanged_states)
+ساكن فراغ collect_percpu_times(بنية psi_گروہ *گروہ,
+				 تعداد psi_aggregators aggregator,
+				 u32 *pchanged_حالتاں)
 {
-	u64 deltas[NR_PSI_STATES - 1] = { 0, };
-	unsigned long nonidle_total = 0;
-	u32 changed_states = 0;
-	int cpu;
-	int s;
+	u64 deltas[NR_PSI_حالتاں - 1] = { 0, };
+	بنانشانی لما nonidle_کل = 0;
+	u32 بدلیا_حالتاں = 0;
+	صحيح cpu;
+	صحيح s;
 
 	/*
 	 * Collect the per-cpu time buckets and average them into a
@@ -378,18 +378,18 @@ static void collect_percpu_times(struct psi_group *group,
 	 * loading, or even entirely idle CPUs.
 	 */
 	for_each_possible_cpu(cpu) {
-		u32 times[NR_PSI_STATES];
+		u32 times[NR_PSI_حالتاں];
 		u32 nonidle;
-		u32 cpu_changed_states;
+		u32 cpu_بدلیا_حالتاں;
 
-		get_recent_times(group, cpu, aggregator, times,
-				&cpu_changed_states);
-		changed_states |= cpu_changed_states;
+		get_recent_times(گروہ, cpu, aggregator, times,
+				&cpu_بدلیا_حالتاں);
+		بدلیا_حالتاں |= cpu_بدلیا_حالتاں;
 
-		nonidle = nsecs_to_jiffies(times[PSI_NONIDLE]);
-		nonidle_total += nonidle;
+		nonidle = nsecs_منزل_jiffies(times[PSI_NONIDLE]);
+		nonidle_کل += nonidle;
 
-		for (s = 0; s < PSI_NONIDLE; s++)
+		لكل (s = 0; s < PSI_NONIDLE; s++)
 			deltas[s] += (u64)times[s] * nonidle;
 	}
 
@@ -406,20 +406,20 @@ static void collect_percpu_times(struct psi_group *group,
 	 */
 
 	/* total= */
-	for (s = 0; s < NR_PSI_STATES - 1; s++)
-		group->total[aggregator][s] +=
-				div_u64(deltas[s], max(nonidle_total, 1UL));
+	لكل (s = 0; s < NR_PSI_حالتاں - 1; s++)
+		گروہ->کل[aggregator][s] +=
+				div_u64(deltas[s], max(nonidle_کل, 1UL));
 
-	if (pchanged_states)
-		*pchanged_states = changed_states;
+	إذا (pchanged_حالتاں)
+		*pchanged_حالتاں = بدلیا_حالتاں;
 }
 
 /* Trigger tracking window manipulations */
-static void window_reset(struct psi_window *win, u64 now, u64 value,
+ساكن فراغ کھڑکی_reset(بنية psi_کھڑکی *win, u64 now, u64 قدر,
 			 u64 prev_growth)
 {
-	win->start_time = now;
-	win->start_value = value;
+	win->شروع_ویلا = now;
+	win->شروع_قدر = قدر;
 	win->prev_growth = prev_growth;
 }
 
@@ -434,13 +434,13 @@ static void window_reset(struct psi_window *win, u64 now, u64 value,
  * positive direction and over relatively small window sizes the growth
  * is close to linear.
  */
-static u64 window_update(struct psi_window *win, u64 now, u64 value)
+ساكن u64 کھڑکی_update(بنية psi_کھڑکی *win, u64 now, u64 قدر)
 {
 	u64 elapsed;
 	u64 growth;
 
-	elapsed = now - win->start_time;
-	growth = value - win->start_value;
+	elapsed = now - win->شروع_ویلا;
+	growth = قدر - win->شروع_قدر;
 	/*
 	 * After each tracking window passes win->start_value and
 	 * win->start_time get reset and win->prev_growth stores
@@ -448,90 +448,90 @@ static u64 window_update(struct psi_window *win, u64 now, u64 value)
 	 * win->prev_growth is then used to interpolate additional
 	 * growth from the previous window assuming it was linear.
 	 */
-	if (elapsed > win->size)
-		window_reset(win, now, value, growth);
-	else {
-		u32 remaining;
+	إذا (elapsed > win->ناپ)
+		کھڑکی_reset(win, now, قدر, growth);
+	وإلا {
+		u32 بچیا;
 
-		remaining = win->size - elapsed;
-		growth += div64_u64(win->prev_growth * remaining, win->size);
+		بچیا = win->ناپ - elapsed;
+		growth += div64_u64(win->prev_growth * بچیا, win->ناپ);
 	}
 
-	return growth;
+	أرجع growth;
 }
 
-static void update_triggers(struct psi_group *group, u64 now,
-						   enum psi_aggregators aggregator)
+ساكن فراغ update_triggers(بنية psi_گروہ *گروہ, u64 now,
+						   تعداد psi_aggregators aggregator)
 {
-	struct psi_trigger *t;
-	u64 *total = group->total[aggregator];
-	struct list_head *triggers;
-	u64 *aggregator_total;
+	بنية psi_trigger *t;
+	u64 *کل = گروہ->کل[aggregator];
+	بنية list_سر *triggers;
+	u64 *aggregator_کل;
 
-	if (aggregator == PSI_AVGS) {
-		triggers = &group->avg_triggers;
-		aggregator_total = group->avg_total;
-	} else {
-		triggers = &group->rtpoll_triggers;
-		aggregator_total = group->rtpoll_total;
+	إذا (aggregator == PSI_AVGS) {
+		triggers = &گروہ->avg_triggers;
+		aggregator_کل = گروہ->avg_کل;
+	} وإلا {
+		triggers = &گروہ->rtpoll_triggers;
+		aggregator_کل = گروہ->rtpoll_کل;
 	}
 
 	/*
 	 * On subsequent updates, calculate growth deltas and let
 	 * watchers know when their specified thresholds are exceeded.
 	 */
-	list_for_each_entry(t, triggers, node) {
+	list_for_each_اندراج(t, triggers, گرہ) {
 		u64 growth;
 		bool new_stall;
 
-		new_stall = aggregator_total[t->state] != total[t->state];
+		new_stall = aggregator_کل[t->state] != کل[t->state];
 
 		/* Check for stall activity or a previous threshold breach */
-		if (!new_stall && !t->pending_event)
-			continue;
+		إذا (!new_stall && !t->pending_event)
+			استمر;
 		/*
 		 * Check for new stall activity, as well as deferred
 		 * events that occurred in the last window after the
 		 * trigger had already fired (we want to ratelimit
 		 * events without dropping any).
 		 */
-		if (new_stall) {
+		إذا (new_stall) {
 			/* Calculate growth since last update */
-			growth = window_update(&t->win, now, total[t->state]);
-			if (!t->pending_event) {
-				if (growth < t->threshold)
-					continue;
+			growth = کھڑکی_update(&t->win, now, کل[t->state]);
+			إذا (!t->pending_event) {
+				إذا (growth < t->حد)
+					استمر;
 
 				t->pending_event = true;
 			}
 		}
 		/* Limit event signaling to once per window */
-		if (now < t->last_event_time + t->win.size)
-			continue;
+		إذا (now < t->آخری_event_ویلا + t->win.ناپ)
+			استمر;
 
 		/* Generate an event */
-		if (cmpxchg(&t->event, 0, 1) == 0) {
-			if (t->of)
-				kernfs_notify(t->of->kn);
-			else
-				wake_up_interruptible(&t->event_wait);
+		إذا (cmpxchg(&t->event, 0, 1) == 0) {
+			إذا (t->دا)
+				kernfs_notify(t->دا->kn);
+			وإلا
+				wake_اتے_interruptible(&t->event_wait);
 		}
-		t->last_event_time = now;
+		t->آخری_event_ویلا = now;
 		/* Reset threshold breach flag once event got generated */
 		t->pending_event = false;
 	}
 }
 
-static u64 update_averages(struct psi_group *group, u64 now)
+ساكن u64 update_averages(بنية psi_گروہ *گروہ, u64 now)
 {
-	unsigned long missed_periods = 0;
+	بنانشانی لما missed_periods = 0;
 	u64 expires, period;
-	u64 avg_next_update;
-	int s;
+	u64 avg_اگلا_update;
+	صحيح s;
 
 	/* avgX= */
-	expires = group->avg_next_update;
-	if (now - expires >= psi_period)
+	expires = گروہ->avg_اگلا_update;
+	إذا (now - expires >= psi_period)
 		missed_periods = div_u64(now - expires, psi_period);
 
 	/*
@@ -541,14 +541,14 @@ static u64 update_averages(struct psi_group *group, u64 now)
 	 * But the deltas we sample out of the per-cpu buckets above
 	 * are based on the actual time elapsing between clock ticks.
 	 */
-	avg_next_update = expires + ((1 + missed_periods) * psi_period);
-	period = now - (group->avg_last_update + (missed_periods * psi_period));
-	group->avg_last_update = now;
+	avg_اگلا_update = expires + ((1 + missed_periods) * psi_period);
+	period = now - (گروہ->avg_آخری_update + (missed_periods * psi_period));
+	گروہ->avg_آخری_update = now;
 
-	for (s = 0; s < NR_PSI_STATES - 1; s++) {
+	لكل (s = 0; s < NR_PSI_حالتاں - 1; s++) {
 		u32 sample;
 
-		sample = group->total[PSI_AVGS][s] - group->avg_total[s];
+		sample = گروہ->کل[PSI_AVGS][s] - گروہ->avg_کل[s];
 		/*
 		 * Due to the lockless sampling of the time buckets,
 		 * recorded time deltas can slip into the next period,
@@ -566,30 +566,30 @@ static u64 update_averages(struct psi_group *group, u64 now)
 		 * delta slips from a period P to P+1, by definition
 		 * it frees up its time T in P.
 		 */
-		if (sample > period)
+		إذا (sample > period)
 			sample = period;
-		group->avg_total[s] += sample;
-		calc_avgs(group->avg[s], missed_periods, sample, period);
+		گروہ->avg_کل[s] += sample;
+		calc_avgs(گروہ->avg[s], missed_periods, sample, period);
 	}
 
-	return avg_next_update;
+	أرجع avg_اگلا_update;
 }
 
-static void psi_avgs_work(struct work_struct *work)
+ساكن فراغ psi_avgs_work(بنية work_struct *work)
 {
-	struct delayed_work *dwork;
-	struct psi_group *group;
-	u32 changed_states;
+	بنية delayed_work *dwork;
+	بنية psi_گروہ *گروہ;
+	u32 بدلیا_حالتاں;
 	u64 now;
 
-	dwork = to_delayed_work(work);
-	group = container_of(dwork, struct psi_group, avgs_work);
+	dwork = منزل_delayed_work(work);
+	گروہ = container_دا(dwork, بنية psi_گروہ, avgs_work);
 
-	mutex_lock(&group->avgs_lock);
+	mutex_جندرا(&گروہ->avgs_جندرا);
 
 	now = sched_clock();
 
-	collect_percpu_times(group, PSI_AVGS, &changed_states);
+	collect_percpu_times(گروہ, PSI_AVGS, &بدلیا_حالتاں);
 	/*
 	 * If there is task activity, periodically fold the per-cpu
 	 * times and feed samples into the running averages. If things
@@ -597,41 +597,41 @@ static void psi_avgs_work(struct work_struct *work)
 	 * Once restarted, we'll catch up the running averages in one
 	 * go - see calc_avgs() and missed_periods.
 	 */
-	if (now >= group->avg_next_update) {
-		update_triggers(group, now, PSI_AVGS);
-		group->avg_next_update = update_averages(group, now);
+	إذا (now >= گروہ->avg_اگلا_update) {
+		update_triggers(گروہ, now, PSI_AVGS);
+		گروہ->avg_اگلا_update = update_averages(گروہ, now);
 	}
 
-	if (changed_states & PSI_STATE_RESCHEDULE) {
-		schedule_delayed_work(dwork, nsecs_to_jiffies(
-				group->avg_next_update - now) + 1);
+	إذا (بدلیا_حالتاں & PSI_STATE_RESCHEDULE) {
+		ویلا_سارنی_delayed_work(dwork, nsecs_منزل_jiffies(
+				گروہ->avg_اگلا_update - now) + 1);
 	}
 
-	mutex_unlock(&group->avgs_lock);
+	mutex_unlock(&گروہ->avgs_جندرا);
 }
 
-static void init_rtpoll_triggers(struct psi_group *group, u64 now)
+ساكن فراغ init_rtpoll_triggers(بنية psi_گروہ *گروہ, u64 now)
 {
-	struct psi_trigger *t;
+	بنية psi_trigger *t;
 
-	list_for_each_entry(t, &group->rtpoll_triggers, node)
-		window_reset(&t->win, now,
-				group->total[PSI_POLL][t->state], 0);
-	memcpy(group->rtpoll_total, group->total[PSI_POLL],
-		   sizeof(group->rtpoll_total));
-	group->rtpoll_next_update = now + group->rtpoll_min_period;
+	list_for_each_اندراج(t, &گروہ->rtpoll_triggers, گرہ)
+		کھڑکی_reset(&t->win, now,
+				گروہ->کل[PSI_POLL][t->state], 0);
+	حافظہ_نقل(گروہ->rtpoll_کل, گروہ->کل[PSI_POLL],
+		   حجم(گروہ->rtpoll_کل));
+	گروہ->rtpoll_اگلا_update = now + گروہ->rtpoll_min_period;
 }
 
 /* Schedule rtpolling if it's not already scheduled or forced. */
-static void psi_schedule_rtpoll_work(struct psi_group *group, unsigned long delay,
+ساكن فراغ psi_ویلا_سارنی_rtpoll_work(بنية psi_گروہ *گروہ, بنانشانی لما delay,
 				   bool force)
 {
 	/*
 	 * atomic_xchg should be called even when !force to provide a
 	 * full memory barrier (see the comment inside psi_rtpoll_work).
 	 */
-	if (atomic_xchg(&group->rtpoll_scheduled, 1) && !force)
-		return;
+	إذا (atomic_xchg(&گروہ->rtpoll_scheduled, 1) && !force)
+		أرجع;
 
 	/*
 	 * Only test whether a worker is installed; do not dereference the task.
@@ -639,23 +639,23 @@ static void psi_schedule_rtpoll_work(struct psi_group *group, unsigned long dela
 	 * psi_cgroup_free() shuts it down before freeing the group.
 	 * The system PSI group is static.
 	 */
-	if (likely(rcu_access_pointer(group->rtpoll_task)))
-		mod_timer(&group->rtpoll_timer, jiffies + delay);
-	else
-		atomic_set(&group->rtpoll_scheduled, 0);
+	إذا (likely(rcu_access_اشارہ_گر(گروہ->rtpoll_task)))
+		mod_timer(&گروہ->rtpoll_timer, jiffies + delay);
+	وإلا
+		atomic_سیٹ(&گروہ->rtpoll_scheduled, 0);
 }
 
-static void psi_rtpoll_work(struct psi_group *group)
+ساكن فراغ psi_rtpoll_work(بنية psi_گروہ *گروہ)
 {
 	bool force_reschedule = false;
-	u32 changed_states;
+	u32 بدلیا_حالتاں;
 	u64 now;
 
-	mutex_lock(&group->rtpoll_trigger_lock);
+	mutex_جندرا(&گروہ->rtpoll_trigger_جندرا);
 
 	now = sched_clock();
 
-	if (now > group->rtpoll_until) {
+	إذا (now > گروہ->rtpoll_until) {
 		/*
 		 * We are either about to start or might stop rtpolling if no
 		 * state change was recorded. Resetting rtpoll_scheduled leaves
@@ -665,7 +665,7 @@ static void psi_rtpoll_work(struct psi_group *group)
 		 * should be negligible and rtpoll_next_update still keeps
 		 * updates correctly on schedule.
 		 */
-		atomic_set(&group->rtpoll_scheduled, 0);
+		atomic_سیٹ(&گروہ->rtpoll_scheduled, 0);
 		/*
 		 * A task change can race with the rtpoll worker that is supposed to
 		 * report on it. To avoid missing events, ensure ordering between
@@ -686,118 +686,118 @@ static void psi_rtpoll_work(struct psi_group *group)
 		 * The atomic_xchg() implies a full barrier.
 		 */
 		smp_mb();
-	} else {
+	} وإلا {
 		/* The rtpolling window is not over, keep rescheduling */
 		force_reschedule = true;
 	}
 
 
-	collect_percpu_times(group, PSI_POLL, &changed_states);
+	collect_percpu_times(گروہ, PSI_POLL, &بدلیا_حالتاں);
 
-	if (changed_states & group->rtpoll_states) {
+	إذا (بدلیا_حالتاں & گروہ->rtpoll_حالتاں) {
 		/* Initialize trigger windows when entering rtpolling mode */
-		if (now > group->rtpoll_until)
-			init_rtpoll_triggers(group, now);
+		إذا (now > گروہ->rtpoll_until)
+			init_rtpoll_triggers(گروہ, now);
 
 		/*
 		 * Keep the monitor active for at least the duration of the
 		 * minimum tracking window as long as monitor states are
 		 * changing.
 		 */
-		group->rtpoll_until = now +
-			group->rtpoll_min_period * UPDATES_PER_WINDOW;
+		گروہ->rtpoll_until = now +
+			گروہ->rtpoll_min_period * UPDATES_فی_کھڑکی;
 	}
 
-	if (now > group->rtpoll_until) {
-		group->rtpoll_next_update = ULLONG_MAX;
-		goto out;
+	إذا (now > گروہ->rtpoll_until) {
+		گروہ->rtpoll_اگلا_update = ULLONG_MAX;
+		اذهب باہرلا;
 	}
 
-	if (now >= group->rtpoll_next_update) {
-		if (changed_states & group->rtpoll_states) {
-			update_triggers(group, now, PSI_POLL);
-			memcpy(group->rtpoll_total, group->total[PSI_POLL],
-				   sizeof(group->rtpoll_total));
+	إذا (now >= گروہ->rtpoll_اگلا_update) {
+		إذا (بدلیا_حالتاں & گروہ->rtpoll_حالتاں) {
+			update_triggers(گروہ, now, PSI_POLL);
+			حافظہ_نقل(گروہ->rtpoll_کل, گروہ->کل[PSI_POLL],
+				   حجم(گروہ->rtpoll_کل));
 		}
-		group->rtpoll_next_update = now + group->rtpoll_min_period;
+		گروہ->rtpoll_اگلا_update = now + گروہ->rtpoll_min_period;
 	}
 
-	psi_schedule_rtpoll_work(group,
-		nsecs_to_jiffies(group->rtpoll_next_update - now) + 1,
+	psi_ویلا_سارنی_rtpoll_work(گروہ,
+		nsecs_منزل_jiffies(گروہ->rtpoll_اگلا_update - now) + 1,
 		force_reschedule);
 
-out:
-	mutex_unlock(&group->rtpoll_trigger_lock);
+باہرلا:
+	mutex_unlock(&گروہ->rtpoll_trigger_جندرا);
 }
 
-static int psi_rtpoll_worker(void *data)
+ساكن صحيح psi_rtpoll_کامہ(فراغ *انکڑے)
 {
-	struct psi_group *group = (struct psi_group *)data;
+	بنية psi_گروہ *گروہ = (بنية psi_گروہ *)انکڑے;
 
-	sched_set_fifo_low(current);
+	sched_سیٹ_fifo_کم(current);
 
-	while (true) {
-		wait_event_interruptible(group->rtpoll_wait,
-				atomic_cmpxchg(&group->rtpoll_wakeup, 1, 0) ||
+	طالما (true) {
+		wait_event_interruptible(گروہ->rtpoll_wait,
+				atomic_cmpxchg(&گروہ->rtpoll_wakeup, 1, 0) ||
 				kthread_should_stop());
-		if (kthread_should_stop())
-			break;
+		إذا (kthread_should_stop())
+			اكسر;
 
-		psi_rtpoll_work(group);
+		psi_rtpoll_work(گروہ);
 	}
-	return 0;
+	أرجع 0;
 }
 
-static void poll_timer_fn(struct timer_list *t)
+ساكن فراغ poll_timer_fn(بنية timer_list *t)
 {
-	struct psi_group *group = timer_container_of(group, t, rtpoll_timer);
+	بنية psi_گروہ *گروہ = timer_container_دا(گروہ, t, rtpoll_timer);
 
-	atomic_set(&group->rtpoll_wakeup, 1);
-	wake_up_interruptible(&group->rtpoll_wait);
+	atomic_سیٹ(&گروہ->rtpoll_wakeup, 1);
+	wake_اتے_interruptible(&گروہ->rtpoll_wait);
 }
 
-static void record_times(struct psi_group_cpu *groupc, u64 now)
+ساكن فراغ ریکارڈ_times(بنية psi_گروہ_cpu *groupc, u64 now)
 {
 	u32 delta;
 
-	delta = now - groupc->state_start;
-	groupc->state_start = now;
+	delta = now - groupc->state_شروع;
+	groupc->state_شروع = now;
 
-	if (groupc->state_mask & (1 << PSI_IO_SOME)) {
+	إذا (groupc->state_نقاب & (1 << PSI_IO_SOME)) {
 		groupc->times[PSI_IO_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_IO_FULL))
-			groupc->times[PSI_IO_FULL] += delta;
+		إذا (groupc->state_نقاب & (1 << PSI_IO_بھریا))
+			groupc->times[PSI_IO_بھریا] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_MEM_SOME)) {
+	إذا (groupc->state_نقاب & (1 << PSI_MEM_SOME)) {
 		groupc->times[PSI_MEM_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_MEM_FULL))
-			groupc->times[PSI_MEM_FULL] += delta;
+		إذا (groupc->state_نقاب & (1 << PSI_MEM_بھریا))
+			groupc->times[PSI_MEM_بھریا] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_CPU_SOME)) {
+	إذا (groupc->state_نقاب & (1 << PSI_CPU_SOME)) {
 		groupc->times[PSI_CPU_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_CPU_FULL))
-			groupc->times[PSI_CPU_FULL] += delta;
+		إذا (groupc->state_نقاب & (1 << PSI_CPU_بھریا))
+			groupc->times[PSI_CPU_بھریا] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_NONIDLE))
+	إذا (groupc->state_نقاب & (1 << PSI_NONIDLE))
 		groupc->times[PSI_NONIDLE] += delta;
 }
 
-#define for_each_group(iter, group) \
-	for (typeof(group) iter = group; iter; iter = iter->parent)
+#تعریف_کرو for_each_گروہ(iter, گروہ) \
+	لكل (typeof(گروہ) iter = گروہ; iter; iter = iter->ماپا)
 
-static void psi_group_change(struct psi_group *group, int cpu,
-			     unsigned int clear, unsigned int set,
+ساكن فراغ psi_گروہ_change(بنية psi_گروہ *گروہ, صحيح cpu,
+			     بنانشانی صحيح clear, بنانشانی صحيح سیٹ,
 			     u64 now, bool wake_clock)
 {
-	struct psi_group_cpu *groupc;
-	unsigned int t, m;
-	u32 state_mask;
+	بنية psi_گروہ_cpu *groupc;
+	بنانشانی صحيح t, m;
+	u32 state_نقاب;
 
 	lockdep_assert_rq_held(cpu_rq(cpu));
-	groupc = per_cpu_ptr(group->pcpu, cpu);
+	groupc = فی_cpu_ptr(گروہ->pcpu, cpu);
 
 	/*
 	 * Start with TSK_ONCPU, which doesn't have a corresponding
@@ -805,39 +805,39 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * the state mask. Clear, set, or carry the current state if
 	 * no changes are requested.
 	 */
-	if (unlikely(clear & TSK_ONCPU)) {
-		state_mask = 0;
+	إذا (unlikely(clear & TSK_ONCPU)) {
+		state_نقاب = 0;
 		clear &= ~TSK_ONCPU;
-	} else if (unlikely(set & TSK_ONCPU)) {
-		state_mask = PSI_ONCPU;
-		set &= ~TSK_ONCPU;
-	} else {
-		state_mask = groupc->state_mask & PSI_ONCPU;
+	} وإلا إذا (unlikely(سیٹ & TSK_ONCPU)) {
+		state_نقاب = PSI_ONCPU;
+		سیٹ &= ~TSK_ONCPU;
+	} وإلا {
+		state_نقاب = groupc->state_نقاب & PSI_ONCPU;
 	}
 
 	/*
 	 * The rest of the state mask is calculated based on the task
 	 * counts. Update those first, then construct the mask.
 	 */
-	for (t = 0, m = clear; m; m &= ~(1 << t), t++) {
-		if (!(m & (1 << t)))
-			continue;
-		if (groupc->tasks[t]) {
+	لكل (t = 0, m = clear; m; m &= ~(1 << t), t++) {
+		إذا (!(m & (1 << t)))
+			استمر;
+		إذا (groupc->tasks[t]) {
 			groupc->tasks[t]--;
-		} else if (!psi_bug) {
+		} وإلا إذا (!psi_bug) {
 			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
 					cpu, t, groupc->tasks[0],
 					groupc->tasks[1], groupc->tasks[2],
-					groupc->tasks[3], clear, set);
+					groupc->tasks[3], clear, سیٹ);
 			psi_bug = 1;
 		}
 	}
 
-	for (t = 0; set; set &= ~(1 << t), t++)
-		if (set & (1 << t))
+	لكل (t = 0; سیٹ; سیٹ &= ~(1 << t), t++)
+		إذا (سیٹ & (1 << t))
 			groupc->tasks[t]++;
 
-	if (!group->enabled) {
+	إذا (!گروہ->enabled) {
 		/*
 		 * On the first group change after disabling PSI, conclude
 		 * the current state and flush its time. This is unlikely
@@ -845,15 +845,15 @@ static void psi_group_change(struct psi_group *group, int cpu,
 		 * may have already incorporated the live state into times_prev;
 		 * avoid a delta sample underflow when PSI is later re-enabled.
 		 */
-		if (unlikely(groupc->state_mask & (1 << PSI_NONIDLE)))
-			record_times(groupc, now);
+		إذا (unlikely(groupc->state_نقاب & (1 << PSI_NONIDLE)))
+			ریکارڈ_times(groupc, now);
 
-		groupc->state_mask = state_mask;
+		groupc->state_نقاب = state_نقاب;
 
-		return;
+		أرجع;
 	}
 
-	state_mask = test_states(groupc->tasks, state_mask);
+	state_نقاب = test_حالتاں(groupc->tasks, state_نقاب);
 
 	/*
 	 * Since we care about lost potential, a memstall is FULL
@@ -863,91 +863,91 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * task in a cgroup is in_memstall, the corresponding groupc
 	 * on that cpu is in PSI_MEM_FULL state.
 	 */
-	if (unlikely((state_mask & PSI_ONCPU) && cpu_curr(cpu)->in_memstall))
-		state_mask |= (1 << PSI_MEM_FULL);
+	إذا (unlikely((state_نقاب & PSI_ONCPU) && cpu_curr(cpu)->وچ_memstall))
+		state_نقاب |= (1 << PSI_MEM_بھریا);
 
-	record_times(groupc, now);
+	ریکارڈ_times(groupc, now);
 
-	groupc->state_mask = state_mask;
+	groupc->state_نقاب = state_نقاب;
 
-	if (state_mask & group->rtpoll_states)
-		psi_schedule_rtpoll_work(group, 1, false);
+	إذا (state_نقاب & گروہ->rtpoll_حالتاں)
+		psi_ویلا_سارنی_rtpoll_work(گروہ, 1, false);
 
-	if (wake_clock && !delayed_work_pending(&group->avgs_work))
-		schedule_delayed_work(&group->avgs_work, PSI_FREQ);
+	إذا (wake_clock && !delayed_work_pending(&گروہ->avgs_work))
+		ویلا_سارنی_delayed_work(&گروہ->avgs_work, PSI_FREQ);
 }
 
-static inline struct psi_group *task_psi_group(struct task_struct *task)
+ساكن مضمن بنية psi_گروہ *task_psi_گروہ(بنية task_struct *task)
 {
-#ifdef CONFIG_CGROUPS
-	if (static_branch_likely(&psi_cgroups_enabled))
-		return cgroup_psi(task_dfl_cgroup(task));
-#endif
-	return &psi_system;
+#جے_تعریف_شدہ CONFIG_CGROUPS
+	إذا (static_branch_likely(&psi_cgroups_enabled))
+		أرجع cgroup_psi(task_dfl_cgroup(task));
+#جے_انت
+	أرجع &psi_system;
 }
 
-static void psi_flags_change(struct task_struct *task, int clear, int set)
+ساكن فراغ psi_flags_change(بنية task_struct *task, صحيح clear, صحيح سیٹ)
 {
-	if (((task->psi_flags & set) ||
+	إذا (((task->psi_flags & سیٹ) ||
 	     (task->psi_flags & clear) != clear) &&
 	    !psi_bug) {
 		printk_deferred(KERN_ERR "psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
 				task->pid, task->comm, task_cpu(task),
-				task->psi_flags, clear, set);
+				task->psi_flags, clear, سیٹ);
 		psi_bug = 1;
 	}
 
 	task->psi_flags &= ~clear;
-	task->psi_flags |= set;
+	task->psi_flags |= سیٹ;
 }
 
-void psi_task_change(struct task_struct *task, int clear, int set)
+فراغ psi_task_change(بنية task_struct *task, صحيح clear, صحيح سیٹ)
 {
-	int cpu = task_cpu(task);
+	صحيح cpu = task_cpu(task);
 	u64 now;
 
-	if (!task->pid)
-		return;
+	إذا (!task->pid)
+		أرجع;
 
-	psi_flags_change(task, clear, set);
+	psi_flags_change(task, clear, سیٹ);
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
-	for_each_group(group, task_psi_group(task))
-		psi_group_change(group, cpu, clear, set, now, true);
-	psi_write_end(cpu);
+	for_each_گروہ(گروہ, task_psi_گروہ(task))
+		psi_گروہ_change(گروہ, cpu, clear, سیٹ, now, true);
+	psi_write_سرا(cpu);
 }
 
-void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+فراغ psi_task_switch(بنية task_struct *prev, بنية task_struct *اگلا,
 		     bool sleep)
 {
-	struct psi_group *common = NULL;
-	int cpu = task_cpu(prev);
+	بنية psi_گروہ *common = عدم;
+	صحيح cpu = task_cpu(prev);
 	u64 now;
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
 
-	if (next->pid) {
-		psi_flags_change(next, 0, TSK_ONCPU);
+	إذا (اگلا->pid) {
+		psi_flags_change(اگلا, 0, TSK_ONCPU);
 		/*
 		 * Set TSK_ONCPU on @next's cgroups. If @next shares any
 		 * ancestors with @prev, those will already have @prev's
 		 * TSK_ONCPU bit set, and we can stop the iteration there.
 		 */
-		for_each_group(group, task_psi_group(next)) {
-			struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
+		for_each_گروہ(گروہ, task_psi_گروہ(اگلا)) {
+			بنية psi_گروہ_cpu *groupc = فی_cpu_ptr(گروہ->pcpu, cpu);
 
-			if (groupc->state_mask & PSI_ONCPU) {
-				common = group;
-				break;
+			إذا (groupc->state_نقاب & PSI_ONCPU) {
+				common = گروہ;
+				اكسر;
 			}
-			psi_group_change(group, cpu, 0, TSK_ONCPU, now, true);
+			psi_گروہ_change(گروہ, cpu, 0, TSK_ONCPU, now, true);
 		}
 	}
 
-	if (prev->pid) {
-		int clear = TSK_ONCPU, set = 0;
+	إذا (prev->pid) {
+		صحيح clear = TSK_ONCPU, سیٹ = 0;
 		bool wake_clock = true;
 
 		/*
@@ -956,12 +956,12 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		 * TSK_IOWAIT here, where we can combine it with
 		 * TSK_ONCPU and save walking common ancestors twice.
 		 */
-		if (sleep) {
+		إذا (sleep) {
 			clear |= TSK_RUNNING;
-			if (prev->in_memstall)
+			إذا (prev->وچ_memstall)
 				clear |= TSK_MEMSTALL_RUNNING;
-			if (prev->in_iowait)
-				set |= TSK_IOWAIT;
+			إذا (prev->وچ_iowait)
+				سیٹ |= TSK_IOWAIT;
 
 			/*
 			 * Periodic aggregation shuts off if there is a period of no
@@ -969,17 +969,17 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 			 * don't do this if the task change is the aggregation worker
 			 * itself going to sleep, or we'll ping-pong forever.
 			 */
-			if (unlikely((prev->flags & PF_WQ_WORKER) &&
-				     wq_worker_last_func(prev) == psi_avgs_work))
+			إذا (unlikely((prev->flags & PF_WQ_کامہ) &&
+				     wq_کامہ_آخری_func(prev) == psi_avgs_work))
 				wake_clock = false;
 		}
 
-		psi_flags_change(prev, clear, set);
+		psi_flags_change(prev, clear, سیٹ);
 
-		for_each_group(group, task_psi_group(prev)) {
-			if (group == common)
-				break;
-			psi_group_change(group, cpu, clear, set, now, wake_clock);
+		for_each_گروہ(گروہ, task_psi_گروہ(prev)) {
+			إذا (گروہ == common)
+				اكسر;
+			psi_گروہ_change(گروہ, cpu, clear, سیٹ, now, wake_clock);
 		}
 
 		/*
@@ -988,58 +988,58 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		 * to sleep, or only one task is memstall), finish propagating
 		 * those differences all the way up to the root.
 		 */
-		if ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
+		إذا ((prev->psi_flags ^ اگلا->psi_flags) & ~TSK_ONCPU) {
 			clear &= ~TSK_ONCPU;
-			for_each_group(group, common)
-				psi_group_change(group, cpu, clear, set, now, wake_clock);
+			for_each_گروہ(گروہ, common)
+				psi_گروہ_change(گروہ, cpu, clear, سیٹ, now, wake_clock);
 		}
 	}
-	psi_write_end(cpu);
+	psi_write_سرا(cpu);
 }
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev)
+#جے_تعریف_شدہ CONFIG_IRQ_ویلا_ACCOUNTING
+فراغ psi_account_irqtime(بنية rq *rq, بنية task_struct *curr, بنية task_struct *prev)
 {
-	int cpu = task_cpu(curr);
-	struct psi_group_cpu *groupc;
+	صحيح cpu = task_cpu(curr);
+	بنية psi_گروہ_cpu *groupc;
 	s64 delta;
 	u64 irq;
 	u64 now;
 
-	if (static_branch_likely(&psi_disabled) || !irqtime_enabled())
-		return;
+	إذا (static_branch_likely(&psi_disabled) || !irqtime_enabled())
+		أرجع;
 
-	if (!curr->pid)
-		return;
+	إذا (!curr->pid)
+		أرجع;
 
 	lockdep_assert_rq_held(rq);
-	if (prev && task_psi_group(prev) == task_psi_group(curr))
-		return;
+	إذا (prev && task_psi_گروہ(prev) == task_psi_گروہ(curr))
+		أرجع;
 
-	irq = irq_time_read(cpu);
-	delta = (s64)(irq - rq->psi_irq_time);
-	if (delta <= 0)
-		return;
-	rq->psi_irq_time = irq;
+	irq = irq_ویلا_read(cpu);
+	delta = (s64)(irq - rq->psi_irq_ویلا);
+	إذا (delta <= 0)
+		أرجع;
+	rq->psi_irq_ویلا = irq;
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
 
-	for_each_group(group, task_psi_group(curr)) {
-		if (!group->enabled)
-			continue;
+	for_each_گروہ(گروہ, task_psi_گروہ(curr)) {
+		إذا (!گروہ->enabled)
+			استمر;
 
-		groupc = per_cpu_ptr(group->pcpu, cpu);
+		groupc = فی_cpu_ptr(گروہ->pcpu, cpu);
 
-		record_times(groupc, now);
-		groupc->times[PSI_IRQ_FULL] += delta;
+		ریکارڈ_times(groupc, now);
+		groupc->times[PSI_IRQ_بھریا] += delta;
 
-		if (group->rtpoll_states & (1 << PSI_IRQ_FULL))
-			psi_schedule_rtpoll_work(group, 1, false);
+		إذا (گروہ->rtpoll_حالتاں & (1 << PSI_IRQ_بھریا))
+			psi_ویلا_سارنی_rtpoll_work(گروہ, 1, false);
 	}
-	psi_write_end(cpu);
+	psi_write_سرا(cpu);
 }
-#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+#جے_انت /* CONFIG_IRQ_TIME_ACCOUNTING */
 
 /**
  * psi_memstall_enter - mark the beginning of a memory stall section
@@ -1048,30 +1048,30 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
  * Marks the calling task as being stalled due to a lack of memory,
  * such as waiting for a refault or performing reclaim.
  */
-void psi_memstall_enter(unsigned long *flags)
+فراغ psi_memstall_enter(بنانشانی لما *flags)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	بنية rq_flags rf;
+	بنية rq *rq;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	إذا (static_branch_likely(&psi_disabled))
+		أرجع;
 
-	*flags = current->in_memstall;
-	if (*flags)
-		return;
+	*flags = current->وچ_memstall;
+	إذا (*flags)
+		أرجع;
 	/*
 	 * in_memstall setting & accounting needs to be atomic wrt
 	 * changes to the task's scheduling state, otherwise we can
 	 * race with CPU migration.
 	 */
-	rq = this_rq_lock_irq(&rf);
+	rq = this_rq_جندرا_irq(&rf);
 
-	current->in_memstall = 1;
+	current->وچ_memstall = 1;
 	psi_task_change(current, 0, TSK_MEMSTALL | TSK_MEMSTALL_RUNNING);
 
 	rq_unlock_irq(rq, &rf);
 }
-EXPORT_SYMBOL_GPL(psi_memstall_enter);
+EXPORT_علامت_GPL(psi_memstall_enter);
 
 /**
  * psi_memstall_leave - mark the end of an memory stall section
@@ -1079,54 +1079,54 @@ EXPORT_SYMBOL_GPL(psi_memstall_enter);
  *
  * Marks the calling task as no longer stalled due to lack of memory.
  */
-void psi_memstall_leave(unsigned long *flags)
+فراغ psi_memstall_leave(بنانشانی لما *flags)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	بنية rq_flags rf;
+	بنية rq *rq;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	إذا (static_branch_likely(&psi_disabled))
+		أرجع;
 
-	if (*flags)
-		return;
+	إذا (*flags)
+		أرجع;
 	/*
 	 * in_memstall clearing & accounting needs to be atomic wrt
 	 * changes to the task's scheduling state, otherwise we could
 	 * race with CPU migration.
 	 */
-	rq = this_rq_lock_irq(&rf);
+	rq = this_rq_جندرا_irq(&rf);
 
-	current->in_memstall = 0;
+	current->وچ_memstall = 0;
 	psi_task_change(current, TSK_MEMSTALL | TSK_MEMSTALL_RUNNING, 0);
 
 	rq_unlock_irq(rq, &rf);
 }
-EXPORT_SYMBOL_GPL(psi_memstall_leave);
+EXPORT_علامت_GPL(psi_memstall_leave);
 
-#ifdef CONFIG_CGROUPS
-int psi_cgroup_alloc(struct cgroup *cgroup)
+#جے_تعریف_شدہ CONFIG_CGROUPS
+صحيح psi_cgroup_alloc(بنية cgroup *cgroup)
 {
-	if (!static_branch_likely(&psi_cgroups_enabled))
-		return 0;
+	إذا (!static_branch_likely(&psi_cgroups_enabled))
+		أرجع 0;
 
-	cgroup->psi = kzalloc_obj(struct psi_group);
-	if (!cgroup->psi)
-		return -ENOMEM;
+	cgroup->psi = kzalloc_obj(بنية psi_گروہ);
+	إذا (!cgroup->psi)
+		أرجع -ENOMEM;
 
-	cgroup->psi->pcpu = alloc_percpu(struct psi_group_cpu);
-	if (!cgroup->psi->pcpu) {
+	cgroup->psi->pcpu = alloc_percpu(بنية psi_گروہ_cpu);
+	إذا (!cgroup->psi->pcpu) {
 		kfree(cgroup->psi);
-		return -ENOMEM;
+		أرجع -ENOMEM;
 	}
-	group_init(cgroup->psi);
-	cgroup->psi->parent = cgroup_psi(cgroup_parent(cgroup));
-	return 0;
+	گروہ_init(cgroup->psi);
+	cgroup->psi->ماپا = cgroup_psi(cgroup_ماپا(cgroup));
+	أرجع 0;
 }
 
-void psi_cgroup_free(struct cgroup *cgroup)
+فراغ psi_cgroup_free(بنية cgroup *cgroup)
 {
-	if (!static_branch_likely(&psi_cgroups_enabled))
-		return;
+	إذا (!static_branch_likely(&psi_cgroups_enabled))
+		أرجع;
 
 	cancel_delayed_work_sync(&cgroup->psi->avgs_work);
 	/*
@@ -1137,7 +1137,7 @@ void psi_cgroup_free(struct cgroup *cgroup)
 	timer_shutdown_sync(&cgroup->psi->rtpoll_timer);
 	free_percpu(cgroup->psi->pcpu);
 	/* All triggers must be removed by now */
-	WARN_ONCE(cgroup->psi->rtpoll_states, "psi: trigger leak\n");
+	WARN_ONCE(cgroup->psi->rtpoll_حالتاں, "psi: trigger leak\n");
 	kfree(cgroup->psi);
 }
 
@@ -1153,22 +1153,22 @@ void psi_cgroup_free(struct cgroup *cgroup)
  * changes to the task's scheduling state and - in case the task is
  * running - concurrent changes to its stall state.
  */
-void cgroup_move_task(struct task_struct *task, struct css_set *to)
+فراغ cgroup_move_task(بنية task_struct *task, بنية css_سیٹ *منزل)
 {
-	unsigned int task_flags;
-	struct rq_flags rf;
-	struct rq *rq;
+	بنانشانی صحيح task_flags;
+	بنية rq_flags rf;
+	بنية rq *rq;
 
-	if (!static_branch_likely(&psi_cgroups_enabled)) {
+	إذا (!static_branch_likely(&psi_cgroups_enabled)) {
 		/*
 		 * Lame to do this here, but the scheduler cannot be locked
 		 * from the outside, so we move cgroups from inside sched/.
 		 */
-		rcu_assign_pointer(task->cgroups, to);
-		return;
+		rcu_سونپو_اشارہ_گر(task->cgroups, منزل);
+		أرجع;
 	}
 
-	rq = task_rq_lock(task, &rf);
+	rq = task_rq_جندرا_2(task, &rf);
 
 	/*
 	 * We may race with schedule() dropping the rq lock between
@@ -1196,21 +1196,21 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
 	 */
 	task_flags = task->psi_flags;
 
-	if (task_flags)
+	إذا (task_flags)
 		psi_task_change(task, task_flags, 0);
 
 	/* See comment above */
-	rcu_assign_pointer(task->cgroups, to);
+	rcu_سونپو_اشارہ_گر(task->cgroups, منزل);
 
-	if (task_flags)
+	إذا (task_flags)
 		psi_task_change(task, 0, task_flags);
 
 	task_rq_unlock(rq, task, &rf);
 }
 
-void psi_cgroup_restart(struct psi_group *group)
+فراغ psi_cgroup_restart(بنية psi_گروہ *گروہ)
 {
-	int cpu;
+	صحيح cpu;
 
 	/*
 	 * After we disable psi_group->enabled, we don't actually
@@ -1227,70 +1227,70 @@ void psi_cgroup_restart(struct psi_group *group)
 	 * and restart groupc->state_start from now, use .clear = .set = 0
 	 * here since no task status really changed.
 	 */
-	if (!group->enabled)
-		return;
+	إذا (!گروہ->enabled)
+		أرجع;
 
 	for_each_possible_cpu(cpu) {
 		u64 now;
 
-		guard(rq_lock_irq)(cpu_rq(cpu));
+		guard(rq_جندرا_irq)(cpu_rq(cpu));
 
 		psi_write_begin(cpu);
 		now = cpu_clock(cpu);
-		psi_group_change(group, cpu, 0, 0, now, true);
-		psi_write_end(cpu);
+		psi_گروہ_change(گروہ, cpu, 0, 0, now, true);
+		psi_write_سرا(cpu);
 	}
 }
-#endif /* CONFIG_CGROUPS */
+#جے_انت /* CONFIG_CGROUPS */
 
-int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
+صحيح psi_show(بنية seq_file *m, بنية psi_گروہ *گروہ, تعداد psi_res res)
 {
-	bool only_full = false;
-	int full;
+	bool only_بھریا = false;
+	صحيح بھریا;
 	u64 now;
 
-	if (static_branch_likely(&psi_disabled))
-		return -EOPNOTSUPP;
+	إذا (static_branch_likely(&psi_disabled))
+		أرجع -EOPNOTSUPP;
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (!irqtime_enabled() && res == PSI_IRQ)
-		return -EOPNOTSUPP;
-#endif
+#جے_تعریف_شدہ CONFIG_IRQ_ویلا_ACCOUNTING
+	إذا (!irqtime_enabled() && res == PSI_IRQ)
+		أرجع -EOPNOTSUPP;
+#جے_انت
 
 	/* Update averages before reporting them */
-	mutex_lock(&group->avgs_lock);
+	mutex_جندرا(&گروہ->avgs_جندرا);
 	now = sched_clock();
-	collect_percpu_times(group, PSI_AVGS, NULL);
-	if (now >= group->avg_next_update)
-		group->avg_next_update = update_averages(group, now);
-	mutex_unlock(&group->avgs_lock);
+	collect_percpu_times(گروہ, PSI_AVGS, عدم);
+	إذا (now >= گروہ->avg_اگلا_update)
+		گروہ->avg_اگلا_update = update_averages(گروہ, now);
+	mutex_unlock(&گروہ->avgs_جندرا);
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	only_full = res == PSI_IRQ;
-#endif
+#جے_تعریف_شدہ CONFIG_IRQ_ویلا_ACCOUNTING
+	only_بھریا = res == PSI_IRQ;
+#جے_انت
 
-	for (full = 0; full < 2 - only_full; full++) {
-		unsigned long avg[3] = { 0, };
-		u64 total = 0;
-		int w;
+	لكل (بھریا = 0; بھریا < 2 - only_بھریا; بھریا++) {
+		بنانشانی لما avg[3] = { 0, };
+		u64 کل = 0;
+		صحيح w;
 
 		/* CPU FULL is undefined at the system level */
-		if (!(group == &psi_system && res == PSI_CPU && full)) {
-			for (w = 0; w < 3; w++)
-				avg[w] = group->avg[res * 2 + full][w];
-			total = div_u64(group->total[PSI_AVGS][res * 2 + full],
-					NSEC_PER_USEC);
+		إذا (!(گروہ == &psi_system && res == PSI_CPU && بھریا)) {
+			لكل (w = 0; w < 3; w++)
+				avg[w] = گروہ->avg[res * 2 + بھریا][w];
+			کل = div_u64(گروہ->کل[PSI_AVGS][res * 2 + بھریا],
+					NSEC_فی_USEC);
 		}
 
 		seq_printf(m, "%s avg10=%lu.%02lu avg60=%lu.%02lu avg300=%lu.%02lu total=%llu\n",
-			   full || only_full ? "full" : "some",
-			   LOAD_INT(avg[0]), LOAD_FRAC(avg[0]),
-			   LOAD_INT(avg[1]), LOAD_FRAC(avg[1]),
-			   LOAD_INT(avg[2]), LOAD_FRAC(avg[2]),
-			   total);
+			   بھریا || only_بھریا ? "full" : "some",
+			   لدو_INT(avg[0]), لدو_FRAC(avg[0]),
+			   لدو_INT(avg[1]), لدو_FRAC(avg[1]),
+			   لدو_INT(avg[2]), لدو_FRAC(avg[2]),
+			   کل);
 	}
 
-	return 0;
+	أرجع 0;
 }
 
 /*
@@ -1300,48 +1300,48 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
  * other lock that forks can wait behind. If two callers race, the loser stops
  * its never-woken kthread.
  */
-int psi_trigger_create_rtpoll_worker(struct psi_group *group)
+صحيح psi_trigger_create_rtpoll_کامہ(بنية psi_گروہ *گروہ)
 {
-	struct task_struct *task;
+	بنية task_struct *task;
 
-	task = kthread_create(psi_rtpoll_worker, group, "psimon");
-	if (IS_ERR(task))
-		return PTR_ERR(task);
+	task = kthread_create(psi_rtpoll_کامہ, گروہ, "psimon");
+	إذا (IS_ERR(task))
+		أرجع PTR_ERR(task);
 
-	scoped_guard(mutex, &group->rtpoll_trigger_lock) {
-		if (!rcu_access_pointer(group->rtpoll_task)) {
-			atomic_set(&group->rtpoll_wakeup, 0);
-			wake_up_process(task);
-			rcu_assign_pointer(group->rtpoll_task, task);
+	scoped_guard(mutex, &گروہ->rtpoll_trigger_جندرا) {
+		إذا (!rcu_access_اشارہ_گر(گروہ->rtpoll_task)) {
+			atomic_سیٹ(&گروہ->rtpoll_wakeup, 0);
+			wake_اتے_process(task);
+			rcu_سونپو_اشارہ_گر(گروہ->rtpoll_task, task);
 
 			/*
 			 * Poll once to catch up on scheduling attempts dropped
 			 * while there was no rtpoll worker.
 			 */
-			psi_schedule_rtpoll_work(group, 1, true);
-			return 0;
+			psi_ویلا_سارنی_rtpoll_work(گروہ, 1, true);
+			أرجع 0;
 		}
 	}
 
 	kthread_stop(task);
-	return 0;
+	أرجع 0;
 }
 
-struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
-				       enum psi_res res, struct file *file,
-				       struct kernfs_open_file *of,
-				       bool *need_rtpoll_worker)
+بنية psi_trigger *psi_trigger_create(بنية psi_گروہ *گروہ, حرف *buf,
+				       تعداد psi_res res, بنية file *file,
+				       بنية kernfs_open_file *دا,
+				       bool *need_rtpoll_کامہ)
 {
-	struct psi_trigger *t;
-	enum psi_states state;
-	u32 threshold_us;
+	بنية psi_trigger *t;
+	تعداد psi_حالتاں state;
+	u32 حد_us;
 	bool privileged;
-	u32 window_us;
+	u32 کھڑکی_us;
 
-	*need_rtpoll_worker = false;
+	*need_rtpoll_کامہ = false;
 
-	if (static_branch_likely(&psi_disabled))
-		return ERR_PTR(-EOPNOTSUPP);
+	إذا (static_branch_likely(&psi_disabled))
+		أرجع ERR_PTR(-EOPNOTSUPP);
 
 	/*
 	 * Checking the privilege here on file->f_cred implies that a privileged user
@@ -1349,138 +1349,138 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 	 */
 	privileged = cap_raised(file->f_cred->cap_effective, CAP_SYS_RESOURCE);
 
-	if (sscanf(buf, "some %u %u", &threshold_us, &window_us) == 2)
+	إذا (لڑی_توں_پڑھو(buf, "some %u %u", &حد_us, &کھڑکی_us) == 2)
 		state = PSI_IO_SOME + res * 2;
-	else if (sscanf(buf, "full %u %u", &threshold_us, &window_us) == 2)
-		state = PSI_IO_FULL + res * 2;
-	else
-		return ERR_PTR(-EINVAL);
+	وإلا إذا (لڑی_توں_پڑھو(buf, "full %u %u", &حد_us, &کھڑکی_us) == 2)
+		state = PSI_IO_بھریا + res * 2;
+	وإلا
+		أرجع ERR_PTR(-EINVAL);
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (res == PSI_IRQ && --state != PSI_IRQ_FULL)
-		return ERR_PTR(-EINVAL);
-#endif
+#جے_تعریف_شدہ CONFIG_IRQ_ویلا_ACCOUNTING
+	إذا (res == PSI_IRQ && --state != PSI_IRQ_بھریا)
+		أرجع ERR_PTR(-EINVAL);
+#جے_انت
 
-	if (state >= PSI_NONIDLE)
-		return ERR_PTR(-EINVAL);
+	إذا (state >= PSI_NONIDLE)
+		أرجع ERR_PTR(-EINVAL);
 
-	if (window_us == 0 || window_us > WINDOW_MAX_US)
-		return ERR_PTR(-EINVAL);
+	إذا (کھڑکی_us == 0 || کھڑکی_us > کھڑکی_MAX_US)
+		أرجع ERR_PTR(-EINVAL);
 
 	/*
 	 * Unprivileged users can only use 2s windows so that averages aggregation
 	 * work is used, and no RT threads need to be spawned.
 	 */
-	if (!privileged && window_us % 2000000)
-		return ERR_PTR(-EINVAL);
+	إذا (!privileged && کھڑکی_us % 2000000)
+		أرجع ERR_PTR(-EINVAL);
 
 	/* Check threshold */
-	if (threshold_us == 0 || threshold_us > window_us)
-		return ERR_PTR(-EINVAL);
+	إذا (حد_us == 0 || حد_us > کھڑکی_us)
+		أرجع ERR_PTR(-EINVAL);
 
 	t = kmalloc_obj(*t);
-	if (!t)
-		return ERR_PTR(-ENOMEM);
+	إذا (!t)
+		أرجع ERR_PTR(-ENOMEM);
 
-	t->group = group;
+	t->گروہ = گروہ;
 	t->state = state;
-	t->threshold = threshold_us * NSEC_PER_USEC;
-	t->win.size = window_us * NSEC_PER_USEC;
-	window_reset(&t->win, sched_clock(),
-			group->total[PSI_POLL][t->state], 0);
+	t->حد = حد_us * NSEC_فی_USEC;
+	t->win.ناپ = کھڑکی_us * NSEC_فی_USEC;
+	کھڑکی_reset(&t->win, sched_clock(),
+			گروہ->کل[PSI_POLL][t->state], 0);
 
 	t->event = 0;
-	t->last_event_time = 0;
-	t->of = of;
-	if (!of)
-		init_waitqueue_head(&t->event_wait);
+	t->آخری_event_ویلا = 0;
+	t->دا = دا;
+	إذا (!دا)
+		init_waitqueue_سر(&t->event_wait);
 	t->pending_event = false;
 	t->aggregator = privileged ? PSI_POLL : PSI_AVGS;
 
-	if (privileged) {
-		mutex_lock(&group->rtpoll_trigger_lock);
+	إذا (privileged) {
+		mutex_جندرا(&گروہ->rtpoll_trigger_جندرا);
 
-		list_add(&t->node, &group->rtpoll_triggers);
-		group->rtpoll_min_period = min(group->rtpoll_min_period,
-			div_u64(t->win.size, UPDATES_PER_WINDOW));
-		group->rtpoll_nr_triggers[t->state]++;
-		group->rtpoll_states |= (1 << t->state);
+		list_جوڑو(&t->گرہ, &گروہ->rtpoll_triggers);
+		گروہ->rtpoll_min_period = min(گروہ->rtpoll_min_period,
+			div_u64(t->win.ناپ, UPDATES_فی_کھڑکی));
+		گروہ->rtpoll_nr_triggers[t->state]++;
+		گروہ->rtpoll_حالتاں |= (1 << t->state);
 
-		*need_rtpoll_worker = !rcu_access_pointer(group->rtpoll_task);
+		*need_rtpoll_کامہ = !rcu_access_اشارہ_گر(گروہ->rtpoll_task);
 
-		mutex_unlock(&group->rtpoll_trigger_lock);
-	} else {
-		mutex_lock(&group->avgs_lock);
+		mutex_unlock(&گروہ->rtpoll_trigger_جندرا);
+	} وإلا {
+		mutex_جندرا(&گروہ->avgs_جندرا);
 
-		list_add(&t->node, &group->avg_triggers);
-		group->avg_nr_triggers[t->state]++;
+		list_جوڑو(&t->گرہ, &گروہ->avg_triggers);
+		گروہ->avg_nr_triggers[t->state]++;
 
-		mutex_unlock(&group->avgs_lock);
+		mutex_unlock(&گروہ->avgs_جندرا);
 	}
-	return t;
+	أرجع t;
 }
 
-void psi_trigger_destroy(struct psi_trigger *t)
+فراغ psi_trigger_destroy(بنية psi_trigger *t)
 {
-	struct psi_group *group;
-	struct task_struct *task_to_destroy = NULL;
+	بنية psi_گروہ *گروہ;
+	بنية task_struct *task_منزل_destroy = عدم;
 
 	/*
 	 * We do not check psi_disabled since it might have been disabled after
 	 * the trigger got created.
 	 */
-	if (!t)
-		return;
+	إذا (!t)
+		أرجع;
 
-	group = t->group;
+	گروہ = t->گروہ;
 	/*
 	 * Wakeup waiters to stop polling and clear the queue to prevent it from
 	 * being accessed later. Can happen if cgroup is deleted from under a
 	 * polling process.
 	 */
-	if (t->of)
-		kernfs_notify(t->of->kn);
-	else
-		wake_up_interruptible(&t->event_wait);
+	إذا (t->دا)
+		kernfs_notify(t->دا->kn);
+	وإلا
+		wake_اتے_interruptible(&t->event_wait);
 
-	if (t->aggregator == PSI_AVGS) {
-		mutex_lock(&group->avgs_lock);
-		if (!list_empty(&t->node)) {
-			list_del(&t->node);
-			group->avg_nr_triggers[t->state]--;
+	إذا (t->aggregator == PSI_AVGS) {
+		mutex_جندرا(&گروہ->avgs_جندرا);
+		إذا (!list_خالی_تھاواں(&t->گرہ)) {
+			list_del(&t->گرہ);
+			گروہ->avg_nr_triggers[t->state]--;
 		}
-		mutex_unlock(&group->avgs_lock);
-	} else {
-		mutex_lock(&group->rtpoll_trigger_lock);
-		if (!list_empty(&t->node)) {
-			struct psi_trigger *tmp;
+		mutex_unlock(&گروہ->avgs_جندرا);
+	} وإلا {
+		mutex_جندرا(&گروہ->rtpoll_trigger_جندرا);
+		إذا (!list_خالی_تھاواں(&t->گرہ)) {
+			بنية psi_trigger *tmp;
 			u64 period = ULLONG_MAX;
 
-			list_del(&t->node);
-			group->rtpoll_nr_triggers[t->state]--;
-			if (!group->rtpoll_nr_triggers[t->state])
-				group->rtpoll_states &= ~(1 << t->state);
+			list_del(&t->گرہ);
+			گروہ->rtpoll_nr_triggers[t->state]--;
+			إذا (!گروہ->rtpoll_nr_triggers[t->state])
+				گروہ->rtpoll_حالتاں &= ~(1 << t->state);
 			/*
 			 * Reset min update period for the remaining triggers
 			 * iff the destroying trigger had the min window size.
 			 */
-			if (group->rtpoll_min_period == div_u64(t->win.size, UPDATES_PER_WINDOW)) {
-				list_for_each_entry(tmp, &group->rtpoll_triggers, node)
-					period = min(period, div_u64(tmp->win.size,
-							UPDATES_PER_WINDOW));
-				group->rtpoll_min_period = period;
+			إذا (گروہ->rtpoll_min_period == div_u64(t->win.ناپ, UPDATES_فی_کھڑکی)) {
+				list_for_each_اندراج(tmp, &گروہ->rtpoll_triggers, گرہ)
+					period = min(period, div_u64(tmp->win.ناپ,
+							UPDATES_فی_کھڑکی));
+				گروہ->rtpoll_min_period = period;
 			}
 			/* Destroy rtpoll_task when the last trigger is destroyed */
-			if (group->rtpoll_states == 0) {
-				group->rtpoll_until = 0;
-				task_to_destroy = rcu_dereference_protected(
-						group->rtpoll_task,
-						lockdep_is_held(&group->rtpoll_trigger_lock));
-				rcu_assign_pointer(group->rtpoll_task, NULL);
-				timer_delete(&group->rtpoll_timer);
+			إذا (گروہ->rtpoll_حالتاں == 0) {
+				گروہ->rtpoll_until = 0;
+				task_منزل_destroy = rcu_dereference_protected(
+						گروہ->rtpoll_task,
+						lockdep_is_held(&گروہ->rtpoll_trigger_جندرا));
+				rcu_سونپو_اشارہ_گر(گروہ->rtpoll_task, عدم);
+				timer_delete(&گروہ->rtpoll_timer);
 			}
 		}
-		mutex_unlock(&group->rtpoll_trigger_lock);
+		mutex_unlock(&گروہ->rtpoll_trigger_جندرا);
 	}
 
 	/*
@@ -1488,157 +1488,157 @@ void psi_trigger_destroy(struct psi_trigger *t)
 	 * a deadlock while waiting for psi_rtpoll_work to acquire
 	 * rtpoll_trigger_lock
 	 */
-	if (task_to_destroy) {
-		kthread_stop(task_to_destroy);
-		atomic_set(&group->rtpoll_scheduled, 0);
+	إذا (task_منزل_destroy) {
+		kthread_stop(task_منزل_destroy);
+		atomic_سیٹ(&گروہ->rtpoll_scheduled, 0);
 	}
 	kfree(t);
 }
 
-__poll_t psi_trigger_poll(void **trigger_ptr,
-				struct file *file, poll_table *wait)
+__poll_t psi_trigger_poll(فراغ **trigger_ptr,
+				بنية file *file, poll_جدول *wait)
 {
 	__poll_t ret = DEFAULT_POLLMASK;
-	struct psi_trigger *t;
+	بنية psi_trigger *t;
 
-	if (static_branch_likely(&psi_disabled))
-		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+	إذا (static_branch_likely(&psi_disabled))
+		أرجع DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
 
-	t = smp_load_acquire(trigger_ptr);
-	if (!t)
-		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+	t = smp_لدو_acquire(trigger_ptr);
+	إذا (!t)
+		أرجع DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
 
-	if (t->of)
-		kernfs_generic_poll(t->of, wait);
-	else
+	إذا (t->دا)
+		kernfs_generic_poll(t->دا, wait);
+	وإلا
 		poll_wait(file, &t->event_wait, wait);
 
-	if (cmpxchg(&t->event, 1, 0) == 1)
+	إذا (cmpxchg(&t->event, 1, 0) == 1)
 		ret |= EPOLLPRI;
 
-	return ret;
+	أرجع ret;
 }
 
-#ifdef CONFIG_PROC_FS
-static int psi_io_show(struct seq_file *m, void *v)
+#جے_تعریف_شدہ CONFIG_PROC_FS
+ساكن صحيح psi_io_show(بنية seq_file *m, فراغ *v)
 {
-	return psi_show(m, &psi_system, PSI_IO);
+	أرجع psi_show(m, &psi_system, PSI_IO);
 }
 
-static int psi_memory_show(struct seq_file *m, void *v)
+ساكن صحيح psi_حافظہ_show(بنية seq_file *m, فراغ *v)
 {
-	return psi_show(m, &psi_system, PSI_MEM);
+	أرجع psi_show(m, &psi_system, PSI_MEM);
 }
 
-static int psi_cpu_show(struct seq_file *m, void *v)
+ساكن صحيح psi_cpu_show(بنية seq_file *m, فراغ *v)
 {
-	return psi_show(m, &psi_system, PSI_CPU);
+	أرجع psi_show(m, &psi_system, PSI_CPU);
 }
 
-static int psi_io_open(struct inode *inode, struct file *file)
+ساكن صحيح psi_io_open(بنية inode *inode, بنية file *file)
 {
-	return single_open(file, psi_io_show, NULL);
+	أرجع single_open(file, psi_io_show, عدم);
 }
 
-static int psi_memory_open(struct inode *inode, struct file *file)
+ساكن صحيح psi_حافظہ_open(بنية inode *inode, بنية file *file)
 {
-	return single_open(file, psi_memory_show, NULL);
+	أرجع single_open(file, psi_حافظہ_show, عدم);
 }
 
-static int psi_cpu_open(struct inode *inode, struct file *file)
+ساكن صحيح psi_cpu_open(بنية inode *inode, بنية file *file)
 {
-	return single_open(file, psi_cpu_show, NULL);
+	أرجع single_open(file, psi_cpu_show, عدم);
 }
 
-static ssize_t psi_write(struct file *file, const char __user *user_buf,
-			 size_t nbytes, enum psi_res res)
+ساكن ssize_t psi_write(بنية file *file, ثابت حرف __user *user_buf,
+			 ناپ_t nbytes, تعداد psi_res res)
 {
-	char buf[32];
-	size_t buf_size;
-	struct seq_file *seq;
-	struct psi_trigger *new;
-	bool need_rtpoll_worker;
-	int ret;
+	حرف buf[32];
+	ناپ_t buf_ناپ;
+	بنية seq_file *seq;
+	بنية psi_trigger *new;
+	bool need_rtpoll_کامہ;
+	صحيح ret;
 
-	if (static_branch_likely(&psi_disabled))
-		return -EOPNOTSUPP;
+	إذا (static_branch_likely(&psi_disabled))
+		أرجع -EOPNOTSUPP;
 
-	if (!nbytes)
-		return -EINVAL;
+	إذا (!nbytes)
+		أرجع -EINVAL;
 
-	buf_size = min(nbytes, sizeof(buf));
-	if (copy_from_user(buf, user_buf, buf_size))
-		return -EFAULT;
+	buf_ناپ = min(nbytes, حجم(buf));
+	إذا (copy_from_user(buf, user_buf, buf_ناپ))
+		أرجع -EFAULT;
 
-	buf[buf_size - 1] = '\0';
+	buf[buf_ناپ - 1] = '\0';
 
-	seq = file->private_data;
+	seq = file->نجی_انکڑے;
 
 	/* Take seq->lock to protect seq->private from concurrent writes */
-	mutex_lock(&seq->lock);
+	mutex_جندرا(&seq->جندرا);
 
 	/* Allow only one trigger per file descriptor */
-	if (seq->private) {
-		mutex_unlock(&seq->lock);
-		return -EBUSY;
+	إذا (seq->خاص) {
+		mutex_unlock(&seq->جندرا);
+		أرجع -EBUSY;
 	}
 
-	new = psi_trigger_create(&psi_system, buf, res, file, NULL,
-				 &need_rtpoll_worker);
-	if (IS_ERR(new)) {
-		mutex_unlock(&seq->lock);
-		return PTR_ERR(new);
+	new = psi_trigger_create(&psi_system, buf, res, file, عدم,
+				 &need_rtpoll_کامہ);
+	إذا (IS_ERR(new)) {
+		mutex_unlock(&seq->جندرا);
+		أرجع PTR_ERR(new);
 	}
 
-	if (need_rtpoll_worker) {
-		ret = psi_trigger_create_rtpoll_worker(&psi_system);
-		if (ret) {
+	إذا (need_rtpoll_کامہ) {
+		ret = psi_trigger_create_rtpoll_کامہ(&psi_system);
+		إذا (ret) {
 			psi_trigger_destroy(new);
-			mutex_unlock(&seq->lock);
-			return ret;
+			mutex_unlock(&seq->جندرا);
+			أرجع ret;
 		}
 	}
 
-	smp_store_release(&seq->private, new);
-	mutex_unlock(&seq->lock);
+	smp_store_release(&seq->خاص, new);
+	mutex_unlock(&seq->جندرا);
 
-	return nbytes;
+	أرجع nbytes;
 }
 
-static ssize_t psi_io_write(struct file *file, const char __user *user_buf,
-			    size_t nbytes, loff_t *ppos)
+ساكن ssize_t psi_io_write(بنية file *file, ثابت حرف __user *user_buf,
+			    ناپ_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_IO);
+	أرجع psi_write(file, user_buf, nbytes, PSI_IO);
 }
 
-static ssize_t psi_memory_write(struct file *file, const char __user *user_buf,
-				size_t nbytes, loff_t *ppos)
+ساكن ssize_t psi_حافظہ_write(بنية file *file, ثابت حرف __user *user_buf,
+				ناپ_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_MEM);
+	أرجع psi_write(file, user_buf, nbytes, PSI_MEM);
 }
 
-static ssize_t psi_cpu_write(struct file *file, const char __user *user_buf,
-			     size_t nbytes, loff_t *ppos)
+ساكن ssize_t psi_cpu_write(بنية file *file, ثابت حرف __user *user_buf,
+			     ناپ_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_CPU);
+	أرجع psi_write(file, user_buf, nbytes, PSI_CPU);
 }
 
-static __poll_t psi_fop_poll(struct file *file, poll_table *wait)
+ساكن __poll_t psi_fop_poll(بنية file *file, poll_جدول *wait)
 {
-	struct seq_file *seq = file->private_data;
+	بنية seq_file *seq = file->نجی_انکڑے;
 
-	return psi_trigger_poll(&seq->private, file, wait);
+	أرجع psi_trigger_poll(&seq->خاص, file, wait);
 }
 
-static int psi_fop_release(struct inode *inode, struct file *file)
+ساكن صحيح psi_fop_release(بنية inode *inode, بنية file *file)
 {
-	struct seq_file *seq = file->private_data;
+	بنية seq_file *seq = file->نجی_انکڑے;
 
-	psi_trigger_destroy(seq->private);
-	return single_release(inode, file);
+	psi_trigger_destroy(seq->خاص);
+	أرجع single_release(inode, file);
 }
 
-static const struct proc_ops psi_io_proc_ops = {
+ساكن ثابت بنية proc_ops psi_io_proc_ops = {
 	.proc_open	= psi_io_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1647,16 +1647,16 @@ static const struct proc_ops psi_io_proc_ops = {
 	.proc_release	= psi_fop_release,
 };
 
-static const struct proc_ops psi_memory_proc_ops = {
-	.proc_open	= psi_memory_open,
+ساكن ثابت بنية proc_ops psi_حافظہ_proc_ops = {
+	.proc_open	= psi_حافظہ_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
-	.proc_write	= psi_memory_write,
+	.proc_write	= psi_حافظہ_write,
 	.proc_poll	= psi_fop_poll,
 	.proc_release	= psi_fop_release,
 };
 
-static const struct proc_ops psi_cpu_proc_ops = {
+ساكن ثابت بنية proc_ops psi_cpu_proc_ops = {
 	.proc_open	= psi_cpu_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1665,24 +1665,24 @@ static const struct proc_ops psi_cpu_proc_ops = {
 	.proc_release	= psi_fop_release,
 };
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-static int psi_irq_show(struct seq_file *m, void *v)
+#جے_تعریف_شدہ CONFIG_IRQ_ویلا_ACCOUNTING
+ساكن صحيح psi_irq_show(بنية seq_file *m, فراغ *v)
 {
-	return psi_show(m, &psi_system, PSI_IRQ);
+	أرجع psi_show(m, &psi_system, PSI_IRQ);
 }
 
-static int psi_irq_open(struct inode *inode, struct file *file)
+ساكن صحيح psi_irq_open(بنية inode *inode, بنية file *file)
 {
-	return single_open(file, psi_irq_show, NULL);
+	أرجع single_open(file, psi_irq_show, عدم);
 }
 
-static ssize_t psi_irq_write(struct file *file, const char __user *user_buf,
-			     size_t nbytes, loff_t *ppos)
+ساكن ssize_t psi_irq_write(بنية file *file, ثابت حرف __user *user_buf,
+			     ناپ_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_IRQ);
+	أرجع psi_write(file, user_buf, nbytes, PSI_IRQ);
 }
 
-static const struct proc_ops psi_irq_proc_ops = {
+ساكن ثابت بنية proc_ops psi_irq_proc_ops = {
 	.proc_open	= psi_irq_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1690,21 +1690,21 @@ static const struct proc_ops psi_irq_proc_ops = {
 	.proc_poll	= psi_fop_poll,
 	.proc_release	= psi_fop_release,
 };
-#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+#جے_انت /* CONFIG_IRQ_TIME_ACCOUNTING */
 
-static int __init psi_proc_init(void)
+ساكن صحيح __init psi_proc_init(فراغ)
 {
-	if (psi_enable) {
-		proc_mkdir("pressure", NULL);
-		proc_create("pressure/io", 0666, NULL, &psi_io_proc_ops);
-		proc_create("pressure/memory", 0666, NULL, &psi_memory_proc_ops);
-		proc_create("pressure/cpu", 0666, NULL, &psi_cpu_proc_ops);
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-		proc_create("pressure/irq", 0666, NULL, &psi_irq_proc_ops);
-#endif
+	إذا (psi_enable) {
+		proc_mkdir("pressure", عدم);
+		proc_create("pressure/io", 0666, عدم, &psi_io_proc_ops);
+		proc_create("pressure/memory", 0666, عدم, &psi_حافظہ_proc_ops);
+		proc_create("pressure/cpu", 0666, عدم, &psi_cpu_proc_ops);
+#جے_تعریف_شدہ CONFIG_IRQ_ویلا_ACCOUNTING
+		proc_create("pressure/irq", 0666, عدم, &psi_irq_proc_ops);
+#جے_انت
 	}
-	return 0;
+	أرجع 0;
 }
 module_init(psi_proc_init);
 
-#endif /* CONFIG_PROC_FS */
+#جے_انت /* CONFIG_PROC_FS */
