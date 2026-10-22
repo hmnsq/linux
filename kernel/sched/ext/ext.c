@@ -6,27 +6,27 @@
  * Copyright (c) 2022 Tejun Heo <tj@kernel.org>
  * Copyright (c) 2022 David Vernet <dvernet@meta.com>
  */
-#include <linux/bitmap.h>
-#include <linux/btf_ids.h>
-#include <linux/rhashtable.h>
-#include <linux/sched/clock.h>
-#include <linux/sched/isolation.h>
-#include <linux/suspend.h>
-#include <linux/sysrq.h>
+#অন্তর্ভাৱ <linux/bitmap.h>
+#অন্তর্ভাৱ <linux/btf_ids.h>
+#অন্তর্ভাৱ <linux/rhashtable.h>
+#অন্তর্ভাৱ <linux/sched/clock.h>
+#অন্তর্ভাৱ <linux/sched/isolation.h>
+#অন্তর্ভাৱ <linux/suspend.h>
+#অন্তর্ভাৱ <linux/sysrq.h>
 
-#include "../pelt.h"
-#include "internal.h"
-#include "cid.h"
-#include "arena.h"
-#include "idle.h"
-#include "sub.h"
-#include "inlines.h"
+#অন্তর্ভাৱ "../pelt.h"
+#অন্তর্ভাৱ "internal.h"
+#অন্তর্ভাৱ "cid.h"
+#অন্তর্ভাৱ "arena.h"
+#অন্তর্ভাৱ "idle.h"
+#অন্তর্ভাৱ "sub.h"
+#অন্তর্ভাৱ "inlines.h"
 
 DEFINE_RAW_SPINLOCK(scx_sched_lock);
 
-bool scx_allow_proxy_exec(const struct task_struct *p)
+bool scx_allow_proxy_exec(ধ্রুৱ সংরচনা task_struct *p)
 {
-	return true;
+	ঘূৰাই true;
 }
 
 /*
@@ -37,7 +37,7 @@ bool scx_allow_proxy_exec(const struct task_struct *p)
  * are used as temporary markers to indicate that the dereferences need to be
  * updated to point to the associated scheduler instances rather than scx_root.
  */
-struct scx_sched __rcu *scx_root;
+সংরচনা scx_sched __rcu *scx_মূল;
 
 /*
  * All scheds, writers must hold both scx_enable_mutex and scx_sched_lock.
@@ -46,24 +46,24 @@ struct scx_sched __rcu *scx_root;
 LIST_HEAD(scx_sched_all);
 
 #ifdef CONFIG_EXT_SUB_SCHED
-const struct rhashtable_params scx_sched_hash_params = {
-	.key_len		= sizeof_field(struct scx_sched, ops.sub_cgroup_id),
-	.key_offset		= offsetof(struct scx_sched, ops.sub_cgroup_id),
-	.head_offset		= offsetof(struct scx_sched, hash_node),
+ধ্রুৱ সংরচনা rhashtable_params scx_sched_hash_params = {
+	.চাবি_len		= sizeof_field(সংরচনা scx_sched, ops.sub_cgroup_id),
+	.চাবি_offset		= offsetof(সংরচনা scx_sched, ops.sub_cgroup_id),
+	.head_offset		= offsetof(সংরচনা scx_sched, hash_গ্ৰন্থি),
 	.insecure_elasticity	= true,	/* inserted under scx_sched_lock */
 };
 
-struct rhashtable scx_sched_hash;
+সংরচনা rhashtable scx_sched_hash;
 #endif
 
 /* see SCX_OPS_TID_TO_TASK */
-static const struct rhashtable_params scx_tid_hash_params = {
-	.key_len		= sizeof_field(struct sched_ext_entity, tid),
-	.key_offset		= offsetof(struct sched_ext_entity, tid),
-	.head_offset		= offsetof(struct sched_ext_entity, tid_hash_node),
+স্থির ধ্রুৱ সংরচনা rhashtable_params scx_tid_hash_params = {
+	.চাবি_len		= sizeof_field(সংরচনা sched_ext_entity, tid),
+	.চাবি_offset		= offsetof(সংরচনা sched_ext_entity, tid),
+	.head_offset		= offsetof(সংরচনা sched_ext_entity, tid_hash_গ্ৰন্থি),
 	.insecure_elasticity	= true,	/* inserted/removed under scx_tasks_lock */
 };
-static struct rhashtable scx_tid_hash;
+স্থির সংরচনা rhashtable scx_tid_hash;
 
 /*
  * During exit, a task may schedule after losing its PIDs. When disabling the
@@ -71,19 +71,19 @@ static struct rhashtable scx_tid_hash;
  * guarantee system safety. Maintain a dedicated task list which contains every
  * task between its fork and eventual free.
  */
-static DEFINE_RAW_SPINLOCK(scx_tasks_lock);
-static LIST_HEAD(scx_tasks);
+স্থির DEFINE_RAW_SPINLOCK(scx_tasks_lock);
+স্থির LIST_HEAD(scx_tasks);
 
 /* ops enable/disable */
 DEFINE_MUTEX(scx_enable_mutex);
-DEFINE_STATIC_KEY_FALSE(__scx_enabled);
+DEFINE_STATIC_চাবি_FALSE(__scx_enabled);
 DEFINE_PERCPU_RWSEM(scx_fork_rwsem);
-static atomic_t scx_enable_state_var = ATOMIC_INIT(SCX_DISABLED);
-static DEFINE_RAW_SPINLOCK(scx_bypass_lock);
-static bool scx_init_task_enabled;
-static bool scx_switching_all;
-DEFINE_STATIC_KEY_FALSE(__scx_switched_all);
-static DEFINE_STATIC_KEY_FALSE(__scx_tid_to_task_enabled);
+স্থির atomic_t scx_enable_state_var = ATOMIC_INIT(SCX_DISABLED);
+স্থির DEFINE_RAW_SPINLOCK(scx_bypass_lock);
+স্থির bool scx_init_task_enabled;
+স্থির bool scx_switching_all;
+DEFINE_STATIC_চাবি_FALSE(__scx_switched_all);
+স্থির DEFINE_STATIC_চাবি_FALSE(__scx_tid_to_task_enabled);
 
 /*
  * Gates cgroup ops delivery. Set at the end of the cgroup init phase of root
@@ -99,32 +99,32 @@ bool scx_cgroup_enabled;
  * take the address, and hints "likely enabled" for the common case where
  * the feature is in use.
  */
-static inline bool scx_tid_to_task_enabled(void)
+স্থির অন্তঃস্থ bool scx_tid_to_task_enabled(শূন্য)
 {
-	return static_branch_likely(&__scx_tid_to_task_enabled);
+	ঘূৰাই static_branch_likely(&__scx_tid_to_task_enabled);
 }
 
-static atomic_long_t scx_nr_rejected = ATOMIC_LONG_INIT(0);
-static atomic_long_t scx_hotplug_seq = ATOMIC_LONG_INIT(0);
+স্থির atomic_long_t scx_nr_rejected = ATOMIC_LONG_INIT(0);
+স্থির atomic_long_t scx_hotplug_seq = ATOMIC_LONG_INIT(0);
 
 /* Global cursor for the per-CPU tid allocator. Starts at 1; tid 0 is reserved. */
-static atomic64_t scx_tid_cursor = ATOMIC64_INIT(1);
+স্থির atomic64_t scx_tid_cursor = ATOMIC64_INIT(1);
 
 /* is @dsq synchronized by the containing rq lock instead of dsq->lock? */
-static bool dsq_is_rq_owned(struct scx_dispatch_q *dsq)
+স্থির bool dsq_is_rq_owned(সংরচনা scx_dispatch_q *dsq)
 {
-	switch (dsq->id) {
-	case SCX_DSQ_LOCAL:
-	case SCX_DSQ_REJECT:
-	case SCX_DSQ_RESCUE:
-		return true;
-	default:
-		return false;
+	ৱিকল্প (dsq->id) {
+	পক্ষ SCX_DSQ_LOCAL:
+	পক্ষ SCX_DSQ_REJECT:
+	পক্ষ SCX_DSQ_RESCUE:
+		ঘূৰাই true;
+	স্ৱভাৱ:
+		ঘূৰাই false;
 	}
 }
 
 /* Cursor for unique scx_sched instance ids. id 0 is reserved. */
-static atomic64_t scx_sched_id_cursor = ATOMIC64_INIT(0);
+স্থির atomic64_t scx_sched_id_cursor = ATOMIC64_INIT(0);
 
 #ifdef CONFIG_EXT_SUB_SCHED
 /*
@@ -132,9 +132,9 @@ static atomic64_t scx_sched_id_cursor = ATOMIC64_INIT(0);
  * tasks for the sub-sched being enabled. Use a global variable instead of a
  * per-task field as all enables are serialized.
  */
-struct scx_sched *scx_enabling_sub_sched;
-#else
-#define scx_enabling_sub_sched	(struct scx_sched *)NULL
+সংরচনা scx_sched *scx_enabling_sub_sched;
+#অন্যথা
+#define scx_enabling_sub_sched	(সংরচনা scx_sched *)রিক্ত
 #endif	/* CONFIG_EXT_SUB_SCHED */
 
 /*
@@ -142,13 +142,13 @@ struct scx_sched *scx_enabling_sub_sched;
  * scheduler is enabled. This can be used to check if any custom sched_ext
  * scheduler has ever been used in the system.
  */
-static atomic_long_t scx_enable_seq = ATOMIC_LONG_INIT(0);
+স্থির atomic_long_t scx_enable_seq = ATOMIC_LONG_INIT(0);
 
 /*
  * Watchdog interval. All scx_sched's share a single watchdog timer and the
  * interval is half of the shortest sch->watchdog_timeout.
  */
-static unsigned long scx_watchdog_interval;
+স্থির unsigned long scx_watchdog_interval;
 
 /*
  * The last time the delayed work was run. This delayed work relies on
@@ -156,9 +156,9 @@ static unsigned long scx_watchdog_interval;
  * that this work itself could get wedged. To account for this, we check that
  * it's not stalled in the timer tick, and trigger an error if it is.
  */
-static unsigned long scx_watchdog_timestamp = INITIAL_JIFFIES;
+স্থির unsigned long scx_watchdog_timestamp = INITIAL_JIFFIES;
 
-static struct delayed_work scx_watchdog_work;
+স্থির সংরচনা delayed_work scx_watchdog_work;
 
 /*
  * For %SCX_KICK_WAIT: Each CPU has a pointer to an array of kick_sync sequence
@@ -167,23 +167,23 @@ static struct delayed_work scx_watchdog_work;
  * lazily when enabling and freed when disabling to avoid waste when sched_ext
  * isn't active.
  */
-struct scx_kick_syncs {
-	struct rcu_head		rcu;
+সংরচনা scx_kick_syncs {
+	সংরচনা rcu_head		rcu;
 	unsigned long		syncs[];
 };
 
-static DEFINE_PER_CPU(struct scx_kick_syncs __rcu *, scx_kick_syncs);
+স্থির DEFINE_PER_CPU(সংরচনা scx_kick_syncs __rcu *, scx_kick_syncs);
 
 /*
  * Per-CPU buffered allocator state for p->scx.tid. Each CPU pulls a chunk of
  * SCX_TID_CHUNK ids from scx_tid_cursor and hands them out locally without
  * further synchronization. See scx_alloc_tid().
  */
-struct scx_tid_alloc {
+সংরচনা scx_tid_alloc {
 	u64	next;
 	u64	end;
 };
-static DEFINE_PER_CPU(struct scx_tid_alloc, scx_tid_alloc);
+স্থির DEFINE_PER_CPU(সংরচনা scx_tid_alloc, scx_tid_alloc);
 
 /*
  * Direct dispatch marker.
@@ -192,59 +192,59 @@ static DEFINE_PER_CPU(struct scx_tid_alloc, scx_tid_alloc);
  * pointer points to the task currently being enqueued. An ERR_PTR value is used
  * to indicate that direct dispatch has already happened.
  */
-static DEFINE_PER_CPU(struct task_struct *, direct_dispatch_task);
+স্থির DEFINE_PER_CPU(সংরচনা task_struct *, direct_dispatch_task);
 
-static const struct rhashtable_params dsq_hash_params = {
-	.key_len		= sizeof_field(struct scx_dispatch_q, id),
-	.key_offset		= offsetof(struct scx_dispatch_q, id),
-	.head_offset		= offsetof(struct scx_dispatch_q, hash_node),
+স্থির ধ্রুৱ সংরচনা rhashtable_params dsq_hash_params = {
+	.চাবি_len		= sizeof_field(সংরচনা scx_dispatch_q, id),
+	.চাবি_offset		= offsetof(সংরচনা scx_dispatch_q, id),
+	.head_offset		= offsetof(সংরচনা scx_dispatch_q, hash_গ্ৰন্থি),
 };
 
-static LLIST_HEAD(dsqs_to_free);
+স্থির LLIST_HEAD(dsqs_to_free);
 
 /* ops debug dump */
-static DEFINE_RAW_SPINLOCK(scx_dump_lock);
+স্থির DEFINE_RAW_SPINLOCK(scx_dump_lock);
 
-struct scx_dump_data {
+সংরচনা scx_dump_data {
 	s32			cpu;
 	bool			first;
 	s32			cursor;
-	struct seq_buf		*s;
-	const char		*prefix;
-	struct scx_bstr_buf	buf;
+	সংরচনা seq_buf		*s;
+	ধ্রুৱ ৱর্ণ		*prefix;
+	সংরচনা scx_bstr_buf	buf;
 };
 
-static struct scx_dump_data scx_dump_data = {
+স্থির সংরচনা scx_dump_data scx_dump_data = {
 	.cpu			= -1,
 };
 
 /* /sys/kernel/sched_ext interface */
-static struct kset *scx_kset;
+স্থির সংরচনা kset *scx_kset;
 
 /*
  * Parameters that can be adjusted through /sys/module/sched_ext/parameters.
  * There usually is no reason to modify these as normal scheduler operation
  * shouldn't be affected by them. The knobs are primarily for debugging.
  */
-static unsigned int scx_slice_bypass_us = SCX_SLICE_BYPASS / NSEC_PER_USEC;
-static unsigned int scx_bypass_lb_intv_us = SCX_BYPASS_LB_DFL_INTV_US;
+স্থির unsigned পূর্ণাঙ্ক scx_slice_bypass_us = SCX_SLICE_BYPASS / NSEC_PER_USEC;
+স্থির unsigned পূর্ণাঙ্ক scx_bypass_lb_intv_us = SCX_BYPASS_LB_DFL_INTV_US;
 
-static int set_slice_us(const char *val, const struct kernel_param *kp)
+স্থির পূর্ণাঙ্ক set_slice_us(ধ্রুৱ ৱর্ণ *val, ধ্রুৱ সংরচনা kernel_param *kp)
 {
-	return param_set_uint_minmax(val, kp, 100, 100 * USEC_PER_MSEC);
+	ঘূৰাই param_set_uint_minmax(val, kp, 100, 100 * USEC_PER_MSEC);
 }
 
-static const struct kernel_param_ops slice_us_param_ops = {
+স্থির ধ্রুৱ সংরচনা kernel_param_ops slice_us_param_ops = {
 	.set = set_slice_us,
 	.get = param_get_uint,
 };
 
-static int set_bypass_lb_intv_us(const char *val, const struct kernel_param *kp)
+স্থির পূর্ণাঙ্ক set_bypass_lb_intv_us(ধ্রুৱ ৱর্ণ *val, ধ্রুৱ সংরচনা kernel_param *kp)
 {
-	return param_set_uint_minmax(val, kp, 0, 10 * USEC_PER_SEC);
+	ঘূৰাই param_set_uint_minmax(val, kp, 0, 10 * USEC_PER_SEC);
 }
 
-static const struct kernel_param_ops bypass_lb_intv_us_param_ops = {
+স্থির ধ্রুৱ সংরচনা kernel_param_ops bypass_lb_intv_us_param_ops = {
 	.set = set_bypass_lb_intv_us,
 	.get = param_get_uint,
 };
@@ -260,15 +260,15 @@ MODULE_PARM_DESC(bypass_lb_intv_us, "bypass load balance interval in microsecond
 #undef MODULE_PARAM_PREFIX
 
 #define CREATE_TRACE_POINTS
-#include <trace/events/sched_ext.h>
+#অন্তর্ভাৱ <trace/events/sched_ext.h>
 
-static void run_deferred(struct rq *rq);
-static bool task_dead_and_done(struct task_struct *p);
-static void scx_disable(struct scx_sched *sch, enum scx_exit_kind kind);
+স্থির শূন্য run_deferred(সংরচনা rq *rq);
+স্থির bool task_dead_and_done(সংরচনা task_struct *p);
+স্থির শূন্য scx_disable(সংরচনা scx_sched *sch, গণনা scx_exit_kind kind);
 
-__printf(5, 6) bool __scx_exit(struct scx_sched *sch,
-			       enum scx_exit_kind kind, s64 exit_code,
-			       s32 exit_cpu, const char *fmt, ...)
+__printf(5, 6) bool __scx_exit(সংরচনা scx_sched *sch,
+			       গণনা scx_exit_kind kind, s64 exit_code,
+			       s32 exit_cpu, ধ্রুৱ ৱর্ণ *fmt, ...)
 {
 	va_list args;
 	bool ret;
@@ -277,20 +277,20 @@ __printf(5, 6) bool __scx_exit(struct scx_sched *sch,
 	ret = scx_vexit(sch, kind, exit_code, exit_cpu, fmt, args);
 	va_end(args);
 
-	return ret;
+	ঘূৰাই ret;
 }
 
-static long jiffies_delta_msecs(unsigned long at, unsigned long now)
+স্থির long jiffies_delta_msecs(unsigned long at, unsigned long now)
 {
-	if (time_after(at, now))
-		return jiffies_to_msecs(at - now);
-	else
-		return -(long)jiffies_to_msecs(now - at);
+	যদি (time_after(at, now))
+		ঘূৰাই jiffies_to_msecs(at - now);
+	অন্যথা
+		ঘূৰাই -(long)jiffies_to_msecs(now - at);
 }
 
-static bool u32_before(u32 a, u32 b)
+স্থির bool u32_before(u32 a, u32 b)
 {
-	return (s32)(a - b) < 0;
+	ঘূৰাই (s32)(a - b) < 0;
 }
 
 /**
@@ -300,32 +300,32 @@ static bool u32_before(u32 a, u32 b)
  *
  * Test whether @sch is a descendant of @ancestor.
  */
-bool scx_is_descendant(struct scx_sched *sch, struct scx_sched *ancestor)
+bool scx_is_descendant(সংরচনা scx_sched *sch, সংরচনা scx_sched *ancestor)
 {
-	if (sch->level < ancestor->level)
-		return false;
-	return sch->ancestors[ancestor->level] == ancestor;
+	যদি (sch->level < ancestor->level)
+		ঘূৰাই false;
+	ঘূৰাই sch->ancestors[ancestor->level] == ancestor;
 }
 
-static struct scx_dispatch_q *find_global_dsq(struct scx_sched *sch, s32 cpu)
+স্থির সংরচনা scx_dispatch_q *find_global_dsq(সংরচনা scx_sched *sch, s32 cpu)
 {
-	return &sch->pnode[cpu_to_node(cpu)]->global_dsq;
+	ঘূৰাই &sch->pnode[cpu_to_গ্ৰন্থি(cpu)]->global_dsq;
 }
 
-static struct scx_dispatch_q *find_user_dsq(struct scx_sched *sch, u64 dsq_id)
+স্থির সংরচনা scx_dispatch_q *find_user_dsq(সংরচনা scx_sched *sch, u64 dsq_id)
 {
-	return rhashtable_lookup(&sch->dsq_hash, &dsq_id, dsq_hash_params);
+	ঘূৰাই rhashtable_lookup(&sch->dsq_hash, &dsq_id, dsq_hash_params);
 }
 
-static const struct sched_class *scx_setscheduler_class(struct task_struct *p)
+স্থির ধ্রুৱ সংরচনা sched_class *scx_setscheduler_class(সংরচনা task_struct *p)
 {
-	if (p->sched_class == &stop_sched_class)
-		return &stop_sched_class;
+	যদি (p->sched_class == &stop_sched_class)
+		ঘূৰাই &stop_sched_class;
 
-	return __setscheduler_class(p->policy, p->prio);
+	ঘূৰাই __setscheduler_class(p->policy, p->prio);
 }
 
-static struct scx_dispatch_q *bypass_enq_target_dsq(struct scx_sched *sch, s32 cpu)
+স্থির সংরচনা scx_dispatch_q *bypass_enq_target_dsq(সংরচনা scx_sched *sch, s32 cpu)
 {
 #ifdef CONFIG_EXT_SUB_SCHED
 	/*
@@ -339,11 +339,11 @@ static struct scx_dispatch_q *bypass_enq_target_dsq(struct scx_sched *sch, s32 c
 	 * are re-enqueued after scx_bypassing() is turned on, guaranteeing that
 	 * all tasks are transferred to the right DSQs.
 	 */
-	while (scx_parent(sch) && scx_bypassing(sch, cpu))
+	যেতিয়ালৈ (scx_parent(sch) && scx_bypassing(sch, cpu))
 		sch = scx_parent(sch);
 #endif	/* CONFIG_EXT_SUB_SCHED */
 
-	return scx_bypass_dsq(sch, cpu);
+	ঘূৰাই scx_bypass_dsq(sch, cpu);
 }
 
 /**
@@ -356,7 +356,7 @@ static struct scx_dispatch_q *bypass_enq_target_dsq(struct scx_sched *sch, s32 c
  * before going to idle and not inserting a task into @rq's local DSQ after a
  * %false return doesn't cause @rq to stall.
  */
-static bool rq_is_open(struct rq *rq, u64 enq_flags)
+স্থির bool rq_is_open(সংরচনা rq *rq, u64 enq_flags)
 {
 	lockdep_assert_rq_held(rq);
 
@@ -364,15 +364,15 @@ static bool rq_is_open(struct rq *rq, u64 enq_flags)
 	 * A higher-priority class task is either running or in the process of
 	 * waking up on @rq.
 	 */
-	if (sched_class_above(rq->next_class, &ext_sched_class))
-		return false;
+	যদি (sched_class_above(rq->next_class, &ext_sched_class))
+		ঘূৰাই false;
 
 	/*
 	 * @rq is either in transition to or in idle and there is no
 	 * higher-priority class task waking up on it.
 	 */
-	if (sched_class_above(&ext_sched_class, rq->next_class))
-		return true;
+	যদি (sched_class_above(&ext_sched_class, rq->next_class))
+		ঘূৰাই true;
 
 	/*
 	 * @rq is either picking, in transition to, or running an SCX task.
@@ -384,22 +384,22 @@ static bool rq_is_open(struct rq *rq, u64 enq_flags)
 	 * $curr's slice. We say yes here and resolve it at the end of dispatch.
 	 * See dispatch_one().
 	 */
-	if (rq->scx.flags & SCX_RQ_IN_DISPATCH)
-		return true;
+	যদি (rq->scx.flags & SCX_RQ_IN_DISPATCH)
+		ঘূৰাই true;
 
 	/*
 	 * %SCX_ENQ_PREEMPT clears $curr's slice if on SCX and kicks dispatch,
 	 * so allow it to avoid spuriously triggering reenq on a combined
 	 * PREEMPT|IMMED insertion.
 	 */
-	if (enq_flags & SCX_ENQ_PREEMPT) {
-		struct task_struct *curr = rq->curr;
+	যদি (enq_flags & SCX_ENQ_PREEMPT) {
+		সংরচনা task_struct *curr = rq->curr;
 
 		/*
 		 * A protected slice refuses the preemption and the cpu stays
 		 * occupied. See rq_owned_post_enq().
 		 */
-		return curr->sched_class != &ext_sched_class ||
+		ঘূৰাই curr->sched_class != &ext_sched_class ||
 			likely(!(curr->scx.flags & SCX_TASK_PROTECTED));
 	}
 
@@ -407,7 +407,7 @@ static bool rq_is_open(struct rq *rq, u64 enq_flags)
 	 * @rq is either in transition to or running an SCX task and can't go
 	 * idle without another SCX dispatch cycle.
 	 */
-	return false;
+	ঘূৰাই false;
 }
 
 /*
@@ -416,32 +416,32 @@ static bool rq_is_open(struct rq *rq, u64 enq_flags)
  * This allows kfuncs to safely operate on rq from any scx ops callback,
  * knowing which rq is already locked.
  */
-DEFINE_PER_CPU(struct rq *, scx_locked_rq_state);
+DEFINE_PER_CPU(সংরচনা rq *, scx_locked_rq_state);
 
 /*
  * Under core scheduling, a pick that releases the rq lock invalidates the
  * core-wide selection it is part of. Count the releases so that the core-sched
  * pick can tell whether one happened across dispatch.
  */
-static void scx_rq_lock_drop(struct rq *rq)
+স্থির শূন্য scx_rq_lock_drop(সংরচনা rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 #ifdef CONFIG_SCHED_CORE
-	if (sched_core_enabled(rq))
+	যদি (sched_core_enabled(rq))
 		rq->scx.lock_drop_seq++;
 #endif
 }
 
-static void switch_rq_lock(struct rq *from, struct rq *to)
+স্থির শূন্য switch_rq_lock(সংরচনা rq *from, সংরচনা rq *to)
 {
 	bool tracked = scx_locked_rq() == from;
 
-	if (tracked)
-		update_locked_rq(NULL);
+	যদি (tracked)
+		update_locked_rq(রিক্ত);
 	scx_rq_lock_drop(from);
 	raw_spin_rq_unlock(from);
 	raw_spin_rq_lock(to);
-	if (tracked)
+	যদি (tracked)
 		update_locked_rq(to);
 }
 
@@ -449,7 +449,7 @@ static void switch_rq_lock(struct rq *from, struct rq *to)
  * Flipped on enable per sch->is_cid_type. Declared in internal.h so
  * subsystem inlines can read it.
  */
-DEFINE_STATIC_KEY_FALSE(__scx_is_cid_type);
+DEFINE_STATIC_চাবি_FALSE(__scx_is_cid_type);
 
 /**
  * scx_fill_cmask_scratch - Build this cpu's arena cmask from @cpumask
@@ -461,15 +461,15 @@ DEFINE_STATIC_KEY_FALSE(__scx_is_cid_type);
  * must hold an rq lock so this cpu is the sole kernel writer for as long as the
  * returned address is in use.
  */
-static struct scx_cmask *scx_fill_cmask_scratch(struct scx_sched *sch,
-						const struct cpumask *cpumask)
+স্থির সংরচনা scx_cmask *scx_fill_cmask_scratch(সংরচনা scx_sched *sch,
+						ধ্রুৱ সংরচনা cpumask *cpumask)
 {
-	struct scx_cmask *kern_va = *this_cpu_ptr(sch->set_cmask_scratch);
-	struct scx_cmask_ref ref;
+	সংরচনা scx_cmask *kern_va = *this_cpu_ptr(sch->set_cmask_scratch);
+	সংরচনা scx_cmask_ref ref;
 
-	scx_cmask_ref_init_kern(sch, kern_va, 0, num_possible_cpus(), &ref);
+	scx_cmask_ref_init_kern(sch, kern_va, 0, অঙ্ক_possible_cpus(), &ref);
 	scx_cmask_ref_from_cpumask(&ref, cpumask);
-	return kern_va;
+	ঘূৰাই kern_va;
 }
 
 /**
@@ -482,18 +482,18 @@ static struct scx_cmask *scx_fill_cmask_scratch(struct scx_sched *sch,
  * For cid-form schedulers, translate @cpumask to a cmask in the per-cpu scratch
  * and dispatch through the ops_cid union view. Caller must hold @rq's rq lock.
  */
-static inline void scx_call_op_set_cpumask(struct scx_sched *sch, struct rq *rq,
-					   struct task_struct *task,
-					   const struct cpumask *cpumask)
+স্থির অন্তঃস্থ শূন্য scx_call_op_set_cpumask(সংরচনা scx_sched *sch, সংরচনা rq *rq,
+					   সংরচনা task_struct *task,
+					   ধ্রুৱ সংরচনা cpumask *cpumask)
 {
-	if (scx_is_cid_type())
+	যদি (scx_is_cid_type())
 		SCX_CALL_CID_OP_TASK(sch, set_cmask, rq, task,
 				     scx_fill_cmask_scratch(sch, cpumask));
-	else
+	অন্যথা
 		SCX_CALL_OP_TASK(sch, set_cpumask, rq, task, cpumask);
 }
 
-enum scx_dsq_iter_flags {
+গণনা scx_dsq_iter_flags {
 	/* iterate in the reverse dispatch order */
 	SCX_DSQ_ITER_REV		= 1U << 16,
 
@@ -514,38 +514,38 @@ enum scx_dsq_iter_flags {
  *
  * Returns %NULL when iteration is finished.
  */
-static struct task_struct *nldsq_next_task(struct scx_dispatch_q *dsq,
-					   struct task_struct *cur, bool rev)
+স্থির সংরচনা task_struct *nldsq_next_task(সংরচনা scx_dispatch_q *dsq,
+					   সংরচনা task_struct *cur, bool rev)
 {
-	struct list_head *list_node;
-	struct scx_dsq_list_node *dsq_lnode;
+	সংরচনা list_head *list_গ্ৰন্থি;
+	সংরচনা scx_dsq_list_গ্ৰন্থি *dsq_lnode;
 
 	lockdep_assert_held(&dsq->lock);
 
-	if (cur)
-		list_node = &cur->scx.dsq_list.node;
-	else
-		list_node = &dsq->list;
+	যদি (cur)
+		list_গ্ৰন্থি = &cur->scx.dsq_list.গ্ৰন্থি;
+	অন্যথা
+		list_গ্ৰন্থি = &dsq->list;
 
 	/* find the next task, need to skip BPF iteration cursors */
-	do {
-		if (rev)
-			list_node = list_node->prev;
-		else
-			list_node = list_node->next;
+	কৰা {
+		যদি (rev)
+			list_গ্ৰন্থি = list_গ্ৰন্থি->prev;
+		অন্যথা
+			list_গ্ৰন্থি = list_গ্ৰন্থি->next;
 
-		if (list_node == &dsq->list)
-			return NULL;
+		যদি (list_গ্ৰন্থি == &dsq->list)
+			ঘূৰাই রিক্ত;
 
-		dsq_lnode = container_of(list_node, struct scx_dsq_list_node,
-					 node);
-	} while (dsq_lnode->flags & SCX_DSQ_LNODE_ITER_CURSOR);
+		dsq_lnode = container_of(list_গ্ৰন্থি, সংরচনা scx_dsq_list_গ্ৰন্থি,
+					 গ্ৰন্থি);
+	} যেতিয়ালৈ (dsq_lnode->flags & SCX_DSQ_LNODE_ITER_CURSOR);
 
-	return container_of(dsq_lnode, struct task_struct, scx.dsq_list);
+	ঘূৰাই container_of(dsq_lnode, সংরচনা task_struct, scx.dsq_list);
 }
 
 #define nldsq_for_each_task(p, dsq)						\
-	for ((p) = nldsq_next_task((dsq), NULL, false); (p);			\
+	বাবে ((p) = nldsq_next_task((dsq), রিক্ত, false); (p);			\
 	     (p) = nldsq_next_task((dsq), (p), false))
 
 /**
@@ -561,35 +561,35 @@ static struct task_struct *nldsq_next_task(struct scx_dispatch_q *dsq,
  * bounds the iteration and guarantees that vtime never jumps in the other
  * direction while iterating.
  */
-static struct task_struct *nldsq_cursor_next_task(struct scx_dsq_list_node *cursor,
-						  struct scx_dispatch_q *dsq)
+স্থির সংরচনা task_struct *nldsq_cursor_next_task(সংরচনা scx_dsq_list_গ্ৰন্থি *cursor,
+						  সংরচনা scx_dispatch_q *dsq)
 {
 	bool rev = cursor->flags & SCX_DSQ_ITER_REV;
-	struct task_struct *p;
+	সংরচনা task_struct *p;
 
 	lockdep_assert_held(&dsq->lock);
 	BUG_ON(!(cursor->flags & SCX_DSQ_LNODE_ITER_CURSOR));
 
-	if (list_empty(&cursor->node))
-		p = NULL;
-	else
-		p = container_of(cursor, struct task_struct, scx.dsq_list);
+	যদি (list_empty(&cursor->গ্ৰন্থি))
+		p = রিক্ত;
+	অন্যথা
+		p = container_of(cursor, সংরচনা task_struct, scx.dsq_list);
 
 	/* skip cursors and tasks that were queued after @cursor init */
-	do {
+	কৰা {
 		p = nldsq_next_task(dsq, p, rev);
-	} while (p && unlikely(u32_before(cursor->priv, p->scx.dsq_seq)));
+	} যেতিয়ালৈ (p && unlikely(u32_before(cursor->priv, p->scx.dsq_seq)));
 
-	if (p) {
-		if (rev)
-			list_move_tail(&cursor->node, &p->scx.dsq_list.node);
-		else
-			list_move(&cursor->node, &p->scx.dsq_list.node);
-	} else {
-		list_del_init(&cursor->node);
+	যদি (p) {
+		যদি (rev)
+			list_move_tail(&cursor->গ্ৰন্থি, &p->scx.dsq_list.গ্ৰন্থি);
+		অন্যথা
+			list_move(&cursor->গ্ৰন্থি, &p->scx.dsq_list.গ্ৰন্থি);
+	} অন্যথা {
+		list_del_init(&cursor->গ্ৰন্থি);
 	}
 
-	return p;
+	ঘূৰাই p;
 }
 
 /**
@@ -605,9 +605,9 @@ static struct task_struct *nldsq_cursor_next_task(struct scx_dsq_list_node *curs
  *
  * On %false return, the caller can assume full ownership of @p.
  */
-static bool nldsq_cursor_lost_task(struct scx_dsq_list_node *cursor,
-				   struct rq *rq, struct scx_dispatch_q *dsq,
-				   struct task_struct *p)
+স্থির bool nldsq_cursor_lost_task(সংরচনা scx_dsq_list_গ্ৰন্থি *cursor,
+				   সংরচনা rq *rq, সংরচনা scx_dispatch_q *dsq,
+				   সংরচনা task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
 	lockdep_assert_held(&dsq->lock);
@@ -616,16 +616,16 @@ static bool nldsq_cursor_lost_task(struct scx_dsq_list_node *cursor,
 	 * @p could have already left $src_dsq, got re-enqueud, or be in the
 	 * process of being consumed by someone else.
 	 */
-	if (unlikely(p->scx.dsq != dsq ||
+	যদি (unlikely(p->scx.dsq != dsq ||
 		     u32_before(cursor->priv, p->scx.dsq_seq) ||
 		     p->scx.holding_cpu >= 0))
-		return true;
+		ঘূৰাই true;
 
 	/* if @p has stayed on @dsq, its rq couldn't have changed */
-	if (WARN_ON_ONCE(rq != task_rq(p)))
-		return true;
+	যদি (WARN_ON_ONCE(rq != task_rq(p)))
+		ঘূৰাই true;
 
-	return false;
+	ঘূৰাই false;
 }
 
 /*
@@ -634,54 +634,54 @@ static bool nldsq_cursor_lost_task(struct scx_dsq_list_node *cursor,
  * changes without breaking backward compatibility. Can be used with
  * bpf_for_each(). See bpf_iter_scx_dsq_*().
  */
-struct bpf_iter_scx_dsq_kern {
-	struct scx_dsq_list_node	cursor;
-	struct scx_dispatch_q		*dsq;
+সংরচনা bpf_iter_scx_dsq_kern {
+	সংরচনা scx_dsq_list_গ্ৰন্থি	cursor;
+	সংরচনা scx_dispatch_q		*dsq;
 	u64				slice;
 	u64				vtime;
 } __attribute__((aligned(8)));
 
-struct bpf_iter_scx_dsq {
+সংরচনা bpf_iter_scx_dsq {
 	u64				__opaque[6];
 } __attribute__((aligned(8)));
 
 
-u32 scx_get_task_state(const struct task_struct *p)
+u32 scx_get_task_state(ধ্রুৱ সংরচনা task_struct *p)
 {
-	return p->scx.flags & SCX_TASK_STATE_MASK;
+	ঘূৰাই p->scx.flags & SCX_TASK_STATE_MASK;
 }
 
-void scx_set_task_state(struct task_struct *p, u32 state)
+শূন্য scx_set_task_state(সংরচনা task_struct *p, u32 state)
 {
 	u32 prev_state = scx_get_task_state(p);
 	bool warn = false;
 
-	switch (state) {
-	case SCX_TASK_NONE:
+	ৱিকল্প (state) {
+	পক্ষ SCX_TASK_NONE:
 		warn = prev_state == SCX_TASK_DEAD;
-		break;
-	case SCX_TASK_INIT_BEGIN:
+		ভঙ্গ;
+	পক্ষ SCX_TASK_INIT_BEGIN:
 		warn = prev_state != SCX_TASK_NONE;
-		break;
-	case SCX_TASK_INIT:
+		ভঙ্গ;
+	পক্ষ SCX_TASK_INIT:
 		warn = prev_state != SCX_TASK_INIT_BEGIN;
 		p->scx.flags |= SCX_TASK_RESET_RUNNABLE_AT;
-		break;
-	case SCX_TASK_READY:
+		ভঙ্গ;
+	পক্ষ SCX_TASK_READY:
 		warn = !(prev_state == SCX_TASK_INIT ||
 			 prev_state == SCX_TASK_ENABLED);
-		break;
-	case SCX_TASK_ENABLED:
+		ভঙ্গ;
+	পক্ষ SCX_TASK_ENABLED:
 		warn = prev_state != SCX_TASK_READY;
-		break;
-	case SCX_TASK_DEAD:
+		ভঙ্গ;
+	পক্ষ SCX_TASK_DEAD:
 		warn = !(prev_state == SCX_TASK_NONE ||
 			 prev_state == SCX_TASK_INIT_BEGIN);
-		break;
-	default:
+		ভঙ্গ;
+	স্ৱভাৱ:
 		WARN_ONCE(1, "sched_ext: Invalid task state %d -> %d for %s[%d]",
 			  prev_state, state, p->comm, p->pid);
-		return;
+		ঘূৰাই;
 	}
 
 	WARN_ONCE(warn, "sched_ext: Invalid task state transition 0x%x -> 0x%x for %s[%d]",
@@ -719,33 +719,33 @@ void scx_set_task_state(struct task_struct *p, u32 state)
  * All tasks which existed when the iteration started are guaranteed to be
  * visited as long as they are not dead.
  */
-void scx_task_iter_start(struct scx_task_iter *iter, struct cgroup *cgrp)
+শূন্য scx_task_iter_start(সংরচনা scx_task_iter *iter, সংরচনা cgroup *cgrp)
 {
-	memset(iter, 0, sizeof(*iter));
+	memset(iter, 0, পরিমাণ(*iter));
 
 #ifdef CONFIG_EXT_SUB_SCHED
-	if (cgrp) {
+	যদি (cgrp) {
 		lockdep_assert_held(&cgroup_mutex);
 		iter->cgrp = cgrp;
-		iter->css_pos = css_next_descendant_pre(NULL, &iter->cgrp->self);
+		iter->css_pos = css_next_descendant_pre(রিক্ত, &iter->cgrp->self);
 		css_task_iter_start(iter->css_pos, CSS_TASK_ITER_WITH_DEAD,
 				    &iter->css_iter);
-		return;
+		ঘূৰাই;
 	}
 #endif
 	raw_spin_lock_irq(&scx_tasks_lock);
 
-	iter->cursor = (struct sched_ext_entity){ .flags = SCX_TASK_CURSOR };
-	list_add(&iter->cursor.tasks_node, &scx_tasks);
+	iter->cursor = (সংরচনা sched_ext_entity){ .flags = SCX_TASK_CURSOR };
+	list_add(&iter->cursor.tasks_গ্ৰন্থি, &scx_tasks);
 	iter->list_locked = true;
 }
 
-static void __scx_task_iter_rq_unlock(struct scx_task_iter *iter)
+স্থির শূন্য __scx_task_iter_rq_unlock(সংরচনা scx_task_iter *iter)
 {
-	if (iter->locked_task) {
+	যদি (iter->locked_task) {
 		__balance_callbacks(iter->rq, &iter->rf);
 		task_rq_unlock(iter->rq, iter->locked_task, &iter->rf);
-		iter->locked_task = NULL;
+		iter->locked_task = রিক্ত;
 	}
 }
 
@@ -758,18 +758,18 @@ static void __scx_task_iter_rq_unlock(struct scx_task_iter *iter)
  * This function can be safely called anytime during an iteration. The next
  * iterator operation will automatically restore the necessary locking.
  */
-void scx_task_iter_unlock(struct scx_task_iter *iter)
+শূন্য scx_task_iter_unlock(সংরচনা scx_task_iter *iter)
 {
 	__scx_task_iter_rq_unlock(iter);
-	if (iter->list_locked) {
+	যদি (iter->list_locked) {
 		iter->list_locked = false;
 		raw_spin_unlock_irq(&scx_tasks_lock);
 	}
 }
 
-static void __scx_task_iter_maybe_relock(struct scx_task_iter *iter)
+স্থির শূন্য __scx_task_iter_maybe_relock(সংরচনা scx_task_iter *iter)
 {
-	if (!iter->list_locked) {
+	যদি (!iter->list_locked) {
 		raw_spin_lock_irq(&scx_tasks_lock);
 		iter->list_locked = true;
 	}
@@ -783,11 +783,11 @@ static void __scx_task_iter_maybe_relock(struct scx_task_iter *iter)
  * Counterpart to scx_task_iter_unlock(). Locking @p's rq is optional. Once
  * re-acquired, both locks are managed by the iterator from here on.
  */
-static void scx_task_iter_relock(struct scx_task_iter *iter,
-				 struct task_struct *p)
+স্থির শূন্য scx_task_iter_relock(সংরচনা scx_task_iter *iter,
+				 সংরচনা task_struct *p)
 {
 	__scx_task_iter_maybe_relock(iter);
-	if (p) {
+	যদি (p) {
 		iter->rq = task_rq_lock(p, &iter->rf);
 		iter->locked_task = p;
 	}
@@ -801,18 +801,18 @@ static void scx_task_iter_relock(struct scx_task_iter *iter,
  * which is released on return. If the iterator holds a task's rq lock, that rq
  * lock is also released. See scx_task_iter_start() for details.
  */
-void scx_task_iter_stop(struct scx_task_iter *iter)
+শূন্য scx_task_iter_stop(সংরচনা scx_task_iter *iter)
 {
 #ifdef CONFIG_EXT_SUB_SCHED
-	if (iter->cgrp) {
-		if (iter->css_pos)
+	যদি (iter->cgrp) {
+		যদি (iter->css_pos)
 			css_task_iter_end(&iter->css_iter);
 		__scx_task_iter_rq_unlock(iter);
-		return;
+		ঘূৰাই;
 	}
 #endif
 	__scx_task_iter_maybe_relock(iter);
-	list_del_init(&iter->cursor.tasks_node);
+	list_del_init(&iter->cursor.tasks_গ্ৰন্থি);
 	scx_task_iter_unlock(iter);
 }
 
@@ -824,43 +824,43 @@ void scx_task_iter_stop(struct scx_task_iter *iter)
  * and re-acquired every %SCX_TASK_ITER_BATCH iterations to avoid causing stalls
  * by holding scx_tasks_lock for too long.
  */
-static struct task_struct *scx_task_iter_next(struct scx_task_iter *iter)
+স্থির সংরচনা task_struct *scx_task_iter_next(সংরচনা scx_task_iter *iter)
 {
-	struct list_head *cursor = &iter->cursor.tasks_node;
-	struct sched_ext_entity *pos;
+	সংরচনা list_head *cursor = &iter->cursor.tasks_গ্ৰন্থি;
+	সংরচনা sched_ext_entity *pos;
 
-	if (!(++iter->cnt % SCX_TASK_ITER_BATCH)) {
+	যদি (!(++iter->cnt % SCX_TASK_ITER_BATCH)) {
 		scx_task_iter_unlock(iter);
 		cond_resched();
 	}
 
 #ifdef CONFIG_EXT_SUB_SCHED
-	if (iter->cgrp) {
-		while (iter->css_pos) {
-			struct task_struct *p;
+	যদি (iter->cgrp) {
+		যেতিয়ালৈ (iter->css_pos) {
+			সংরচনা task_struct *p;
 
 			p = css_task_iter_next(&iter->css_iter);
-			if (p)
-				return p;
+			যদি (p)
+				ঘূৰাই p;
 
 			css_task_iter_end(&iter->css_iter);
 			iter->css_pos = css_next_descendant_pre(iter->css_pos,
 								&iter->cgrp->self);
-			if (iter->css_pos)
+			যদি (iter->css_pos)
 				css_task_iter_start(iter->css_pos, CSS_TASK_ITER_WITH_DEAD,
 						    &iter->css_iter);
 		}
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 #endif
 	__scx_task_iter_maybe_relock(iter);
 
-	list_for_each_entry(pos, cursor, tasks_node) {
-		if (&pos->tasks_node == &scx_tasks)
-			return NULL;
-		if (!(pos->flags & SCX_TASK_CURSOR)) {
-			list_move(cursor, &pos->tasks_node);
-			return container_of(pos, struct task_struct, scx);
+	list_for_each_entry(pos, cursor, tasks_গ্ৰন্থি) {
+		যদি (&pos->tasks_গ্ৰন্থি == &scx_tasks)
+			ঘূৰাই রিক্ত;
+		যদি (!(pos->flags & SCX_TASK_CURSOR)) {
+			list_move(cursor, &pos->tasks_গ্ৰন্থি);
+			ঘূৰাই container_of(pos, সংরচনা task_struct, scx);
 		}
 	}
 
@@ -876,13 +876,13 @@ static struct task_struct *scx_task_iter_next(struct scx_task_iter *iter)
  * whether they would like to filter out dead tasks. See scx_task_iter_start()
  * for details.
  */
-struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
+সংরচনা task_struct *scx_task_iter_next_locked(সংরচনা scx_task_iter *iter)
 {
-	struct task_struct *p;
+	সংরচনা task_struct *p;
 
 	__scx_task_iter_rq_unlock(iter);
 
-	while ((p = scx_task_iter_next(iter))) {
+	যেতিয়ালৈ ((p = scx_task_iter_next(iter))) {
 		/*
 		 * scx_task_iter is used to prepare and move tasks into SCX
 		 * while loading the BPF scheduler and vice-versa while
@@ -908,8 +908,8 @@ struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
 		 *
 		 * Test for idle_sched_class as only init_tasks are on it.
 		 */
-		if (p->sched_class == &idle_sched_class)
-			continue;
+		যদি (p->sched_class == &idle_sched_class)
+			অনুৱর্ত;
 
 		iter->rq = task_rq_lock(p, &iter->rf);
 		iter->locked_task = p;
@@ -921,14 +921,14 @@ struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
 		 * set by sched_ext_dead() under @p's rq lock. Test it to
 		 * avoid visiting tasks which are already dead from SCX POV.
 		 */
-		if (scx_get_task_state(p) == SCX_TASK_DEAD) {
+		যদি (scx_get_task_state(p) == SCX_TASK_DEAD) {
 			__scx_task_iter_rq_unlock(iter);
-			continue;
+			অনুৱর্ত;
 		}
 
-		return p;
+		ঘূৰাই p;
 	}
-	return NULL;
+	ঘূৰাই রিক্ত;
 }
 
 /**
@@ -937,30 +937,30 @@ struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
  * @events: event stats
  * @kind: a kind of event to dump
  */
-#define scx_dump_event(s, events, kind) do {					\
-	scx_dump_line(&(s), "%40s: %16lld", #kind, (events)->kind);		\
-} while (0)
+#define scx_dump_event(s, events, kind) কৰা {					\
+	scx_dump_সাৰি(&(s), "%40s: %16lld", #kind, (events)->kind);		\
+} যেতিয়ালৈ (0)
 
 
-static void scx_read_events(struct scx_sched *sch,
-			    struct scx_event_stats *events);
+স্থির শূন্য scx_read_events(সংরচনা scx_sched *sch,
+			    সংরচনা scx_event_stats *events);
 
-static enum scx_enable_state scx_enable_state(void)
+স্থির গণনা scx_enable_state scx_enable_state(শূন্য)
 {
-	return atomic_read(&scx_enable_state_var);
+	ঘূৰাই atomic_read(&scx_enable_state_var);
 }
 
-static enum scx_enable_state scx_set_enable_state(enum scx_enable_state to)
+স্থির গণনা scx_enable_state scx_set_enable_state(গণনা scx_enable_state to)
 {
-	return atomic_xchg(&scx_enable_state_var, to);
+	ঘূৰাই atomic_xchg(&scx_enable_state_var, to);
 }
 
-static bool scx_tryset_enable_state(enum scx_enable_state to,
-				    enum scx_enable_state from)
+স্থির bool scx_tryset_enable_state(গণনা scx_enable_state to,
+				    গণনা scx_enable_state from)
 {
-	int from_v = from;
+	পূর্ণাঙ্ক from_v = from;
 
-	return atomic_try_cmpxchg(&scx_enable_state_var, &from_v, to);
+	ঘূৰাই atomic_try_cmpxchg(&scx_enable_state_var, &from_v, to);
 }
 
 /**
@@ -973,16 +973,16 @@ static bool scx_tryset_enable_state(enum scx_enable_state to,
  * has load_acquire semantics to ensure that the caller can see the updates made
  * in the enqueueing and dispatching paths.
  */
-static void wait_ops_state(struct task_struct *p, unsigned long opss)
+স্থির শূন্য wait_ops_state(সংরচনা task_struct *p, unsigned long opss)
 {
-	do {
+	কৰা {
 		cpu_relax();
-	} while (atomic_long_read_acquire(&p->scx.ops_state) == opss);
+	} যেতিয়ালৈ (atomic_long_read_acquire(&p->scx.ops_state) == opss);
 }
 
-static inline bool __cpu_valid(s32 cpu)
+স্থির অন্তঃস্থ bool __cpu_valid(s32 cpu)
 {
-	return likely(cpu >= 0 && cpu < nr_cpu_ids && cpu_possible(cpu));
+	ঘূৰাই likely(cpu >= 0 && cpu < nr_cpu_ids && cpu_possible(cpu));
 }
 
 /**
@@ -995,24 +995,24 @@ static inline bool __cpu_valid(s32 cpu)
  * Verify that it is in range and one of the possible cpus. If invalid, trigger
  * an ops error.
  */
-bool scx_cpu_valid(struct scx_sched *sch, s32 cpu, const char *where)
+bool scx_cpu_valid(সংরচনা scx_sched *sch, s32 cpu, ধ্রুৱ ৱর্ণ *where)
 {
-	if (__cpu_valid(cpu)) {
-		return true;
-	} else {
+	যদি (__cpu_valid(cpu)) {
+		ঘূৰাই true;
+	} অন্যথা {
 		scx_error(sch, "invalid CPU %d%s%s", cpu, where ? " " : "", where ?: "");
-		return false;
+		ঘূৰাই false;
 	}
 }
 
-static void deferred_bal_cb_workfn(struct rq *rq)
+স্থির শূন্য deferred_bal_cb_workfn(সংরচনা rq *rq)
 {
 	run_deferred(rq);
 }
 
-static void deferred_irq_workfn(struct irq_work *irq_work)
+স্থির শূন্য deferred_irq_workfn(সংরচনা irq_work *irq_work)
 {
-	struct rq *rq = container_of(irq_work, struct rq, scx.deferred_irq_work);
+	সংরচনা rq *rq = container_of(irq_work, সংরচনা rq, scx.deferred_irq_work);
 
 	raw_spin_rq_lock(rq);
 	run_deferred(rq);
@@ -1028,7 +1028,7 @@ static void deferred_irq_workfn(struct irq_work *irq_work)
  * with @rq locked but unpinned, and thus can unlock @rq to e.g. migrate tasks
  * to other rqs.
  */
-static void schedule_deferred(struct rq *rq)
+স্থির শূন্য schedule_deferred(সংরচনা rq *rq)
 {
 	/*
 	 * This is the fallback when schedule_deferred_locked() can't use
@@ -1052,7 +1052,7 @@ static void schedule_deferred(struct rq *rq)
  * Schedule execution of deferred actions on @rq. Equivalent to
  * schedule_deferred() but requires @rq to be locked and can be more efficient.
  */
-static void schedule_deferred_locked(struct rq *rq)
+স্থির শূন্য schedule_deferred_locked(সংরচনা rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
@@ -1061,12 +1061,12 @@ static void schedule_deferred_locked(struct rq *rq)
 	 * afterwards which will then run the deferred actions, no need to
 	 * schedule anything.
 	 */
-	if (rq->scx.flags & SCX_RQ_IN_WAKEUP)
-		return;
+	যদি (rq->scx.flags & SCX_RQ_IN_WAKEUP)
+		ঘূৰাই;
 
 	/* Don't do anything if there already is a deferred operation. */
-	if (rq->scx.flags & SCX_RQ_BAL_CB_PENDING)
-		return;
+	যদি (rq->scx.flags & SCX_RQ_BAL_CB_PENDING)
+		ঘূৰাই;
 
 	/*
 	 * If in dispatch, the balance callbacks will be called before rq lock
@@ -1079,9 +1079,9 @@ static void schedule_deferred_locked(struct rq *rq)
 	 *
 	 * Just let dispatch_one() know that it must do it itself.
 	 */
-	if (rq->scx.flags & SCX_RQ_IN_DISPATCH) {
+	যদি (rq->scx.flags & SCX_RQ_IN_DISPATCH) {
 		rq->scx.flags |= SCX_RQ_BAL_CB_PENDING;
-		return;
+		ঘূৰাই;
 	}
 
 	/*
@@ -1092,24 +1092,24 @@ static void schedule_deferred_locked(struct rq *rq)
 	schedule_deferred(rq);
 }
 
-void scx_proxy_reenqueue_retry(struct rq *rq, struct task_struct *next)
+শূন্য scx_proxy_reenqueue_retry(সংরচনা rq *rq, সংরচনা task_struct *next)
 {
 }
 
-void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
-			u64 reenq_flags, struct rq *locked_rq)
+শূন্য schedule_dsq_reenq(সংরচনা scx_sched *sch, সংরচনা scx_dispatch_q *dsq,
+			u64 reenq_flags, সংরচনা rq *locked_rq)
 {
-	struct rq *rq;
+	সংরচনা rq *rq;
 
 	/*
 	 * Allowing reenqueues doesn't make sense while bypassing. This also
 	 * blocks from new reenqueues to be scheduled on dead scheds.
 	 */
-	if (unlikely(READ_ONCE(sch->bypass_depth)))
-		return;
+	যদি (unlikely(READ_ONCE(sch->bypass_depth)))
+		ঘূৰাই;
 
-	if (dsq->id == SCX_DSQ_LOCAL) {
-		rq = container_of(dsq, struct rq, scx.local_dsq);
+	যদি (dsq->id == SCX_DSQ_LOCAL) {
+		rq = container_of(dsq, সংরচনা rq, scx.local_dsq);
 
 		/*
 		 * A sub-sched lacking baseline access on the target cid has no
@@ -1118,13 +1118,13 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 		 * can't happen - if the caller has seen its ownership, so does
 		 * this test.
 		 */
-		if (unlikely(scx_missing_caps(sch, cpu_of(rq), SCX_CAP_BASE))) {
+		যদি (unlikely(scx_missing_caps(sch, cpu_of(rq), SCX_CAP_BASE))) {
 			__scx_add_event(sch, SCX_EV_SUB_REENQ_DENIED, 1);
-			return;
+			ঘূৰাই;
 		}
 
-		struct scx_sched_pcpu *sch_pcpu = per_cpu_ptr(sch->pcpu, cpu_of(rq));
-		struct scx_deferred_reenq_local *drl = &sch_pcpu->deferred_reenq_local;
+		সংরচনা scx_sched_pcpu *sch_pcpu = per_cpu_ptr(sch->pcpu, cpu_of(rq));
+		সংরচনা scx_deferred_reenq_local *drl = &sch_pcpu->deferred_reenq_local;
 
 		/*
 		 * Pairs with smp_mb() in process_deferred_reenq_locals() and
@@ -1132,20 +1132,20 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 		 */
 		smp_mb();
 
-		if (list_empty(&drl->node) ||
+		যদি (list_empty(&drl->গ্ৰন্থি) ||
 		    (READ_ONCE(drl->flags) & reenq_flags) != reenq_flags) {
 
 			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
 
-			if (list_empty(&drl->node))
-				list_move_tail(&drl->node, &rq->scx.deferred_reenq_locals);
+			যদি (list_empty(&drl->গ্ৰন্থি))
+				list_move_tail(&drl->গ্ৰন্থি, &rq->scx.deferred_reenq_locals);
 			WRITE_ONCE(drl->flags, drl->flags | reenq_flags);
 		}
-	} else if (!(dsq->id & SCX_DSQ_FLAG_BUILTIN)) {
+	} অন্যথা যদি (!(dsq->id & SCX_DSQ_FLAG_BUILTIN)) {
 		rq = this_rq();
 
-		struct scx_dsq_pcpu *dsq_pcpu = per_cpu_ptr(dsq->pcpu, cpu_of(rq));
-		struct scx_deferred_reenq_user *dru = &dsq_pcpu->deferred_reenq_user;
+		সংরচনা scx_dsq_pcpu *dsq_pcpu = per_cpu_ptr(dsq->pcpu, cpu_of(rq));
+		সংরচনা scx_deferred_reenq_user *dru = &dsq_pcpu->deferred_reenq_user;
 
 		/*
 		 * Pairs with smp_mb() in process_deferred_reenq_users() and
@@ -1153,27 +1153,27 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 		 */
 		smp_mb();
 
-		if (list_empty(&dru->node) ||
+		যদি (list_empty(&dru->গ্ৰন্থি) ||
 		    (READ_ONCE(dru->flags) & reenq_flags) != reenq_flags) {
 
 			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
 
 			/* @dsq is being destroyed, see free_dsq_irq_workfn() */
-			if (unlikely(READ_ONCE(dsq->id) == SCX_DSQ_INVALID))
-				return;
+			যদি (unlikely(READ_ONCE(dsq->id) == SCX_DSQ_INVALID))
+				ঘূৰাই;
 
-			if (list_empty(&dru->node))
-				list_move_tail(&dru->node, &rq->scx.deferred_reenq_users);
+			যদি (list_empty(&dru->গ্ৰন্থি))
+				list_move_tail(&dru->গ্ৰন্থি, &rq->scx.deferred_reenq_users);
 			WRITE_ONCE(dru->flags, dru->flags | reenq_flags);
 		}
-	} else {
+	} অন্যথা {
 		scx_error(sch, "DSQ 0x%llx not allowed for reenq", dsq->id);
-		return;
+		ঘূৰাই;
 	}
 
-	if (rq == locked_rq)
+	যদি (rq == locked_rq)
 		schedule_deferred_locked(rq);
-	else
+	অন্যথা
 		schedule_deferred(rq);
 }
 
@@ -1193,7 +1193,7 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
  * collisions practically impossible. A theoretical collision just lets a stale
  * request through once.
  */
-enum scx_slice_oob_consts {
+গণনা scx_slice_oob_consts {
 	SCX_SLICE_OOB_DUR_BITS	= 43,
 	SCX_SLICE_OOB_ID_BITS	= 64 - SCX_SLICE_OOB_DUR_BITS - 1,
 
@@ -1233,9 +1233,9 @@ enum scx_slice_oob_consts {
  */
 
 /* clear a pending slice request */
-static void clear_task_slice_oob(struct task_struct *p)
+স্থির শূন্য clear_task_slice_oob(সংরচনা task_struct *p)
 {
-	if (unlikely(atomic64_read(&p->scx.slice_oob)))
+	যদি (unlikely(atomic64_read(&p->scx.slice_oob)))
 		atomic64_set(&p->scx.slice_oob, 0);
 }
 
@@ -1247,36 +1247,36 @@ static void clear_task_slice_oob(struct task_struct *p)
  * A HEAD insert should land behind any leading protected tasks. Return %true
  * indicates whether @p became the first entry.
  */
-static bool dsq_insert_head(struct scx_dispatch_q *dsq, struct task_struct *p)
+স্থির bool dsq_ঢোকাও_head(সংরচনা scx_dispatch_q *dsq, সংরচনা task_struct *p)
 {
-	struct list_head *pos = &dsq->list;
-	struct scx_dsq_list_node *node;
+	সংরচনা list_head *pos = &dsq->list;
+	সংরচনা scx_dsq_list_গ্ৰন্থি *গ্ৰন্থি;
 
 	/*
 	 * Only rq-owned DSQs can hold protected tasks and the associated rq
 	 * lock keeps their flags stable.
 	 */
-	if (!dsq_is_rq_owned(dsq)) {
-		list_add(&p->scx.dsq_list.node, &dsq->list);
-		return true;
+	যদি (!dsq_is_rq_owned(dsq)) {
+		list_add(&p->scx.dsq_list.গ্ৰন্থি, &dsq->list);
+		ঘূৰাই true;
 	}
 
-	list_for_each_entry(node, &dsq->list, node) {
-		struct task_struct *q;
+	list_for_each_entry(গ্ৰন্থি, &dsq->list, গ্ৰন্থি) {
+		সংরচনা task_struct *q;
 
-		if (WARN_ON_ONCE(node->flags & SCX_DSQ_LNODE_ITER_CURSOR))
-			continue;
+		যদি (WARN_ON_ONCE(গ্ৰন্থি->flags & SCX_DSQ_LNODE_ITER_CURSOR))
+			অনুৱর্ত;
 
-		q = container_of(node, struct task_struct, scx.dsq_list);
-		if (!(q->scx.flags & SCX_TASK_PROTECTED))
-			break;
+		q = container_of(গ্ৰন্থি, সংরচনা task_struct, scx.dsq_list);
+		যদি (!(q->scx.flags & SCX_TASK_PROTECTED))
+			ভঙ্গ;
 
-		pos = &node->node;
+		pos = &গ্ৰন্থি->গ্ৰন্থি;
 	}
 
-	list_add(&p->scx.dsq_list.node, pos);
+	list_add(&p->scx.dsq_list.গ্ৰন্থি, pos);
 
-	return pos == &dsq->list;
+	ঘূৰাই pos == &dsq->list;
 }
 
 /**
@@ -1287,24 +1287,24 @@ static bool dsq_insert_head(struct scx_dispatch_q *dsq, struct task_struct *p)
  * While %SCX_TASK_PROTECTED is set, BPF schedulers may not modify the slice.
  * Refuse and return %false.
  */
-static bool set_task_slice_keep_oob(struct task_struct *p, u64 slice)
+স্থির bool set_task_slice_keep_oob(সংরচনা task_struct *p, u64 slice)
 {
 	lockdep_assert_rq_held(task_rq(p));
 
-	if (unlikely(p->scx.flags & SCX_TASK_PROTECTED))
-		return false;
+	যদি (unlikely(p->scx.flags & SCX_TASK_PROTECTED))
+		ঘূৰাই false;
 
 	p->scx.slice = slice;
-	return true;
+	ঘূৰাই true;
 }
 
 /* set @p's slice, superseding any pending out-of-band request */
-bool scx_set_task_slice(struct task_struct *p, u64 slice)
+bool scx_set_task_slice(সংরচনা task_struct *p, u64 slice)
 {
-	if (!set_task_slice_keep_oob(p, slice))
-		return false;
+	যদি (!set_task_slice_keep_oob(p, slice))
+		ঘূৰাই false;
 	clear_task_slice_oob(p);
-	return true;
+	ঘূৰাই true;
 }
 
 /**
@@ -1321,26 +1321,26 @@ bool scx_set_task_slice(struct task_struct *p, u64 slice)
  * queued task instead loses its DSQ position on any dequeue and the slice ends
  * with it.
  */
-void scx_task_slice_ended(struct rq *rq, struct task_struct *p)
+শূন্য scx_task_slice_ended(সংরচনা rq *rq, সংরচনা task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
 
 	p->scx.flags &= ~SCX_TASK_PROTECTED;
-	if (unlikely(p == scx_rescuee(rq)))
+	যদি (unlikely(p == scx_rescuee(rq)))
 		scx_rescue_end(rq);
 }
 
 /* request @p's slice to be set to @slice, see the write rules above */
-static void set_task_slice_oob(struct scx_sched *sch, struct task_struct *p, u64 slice)
+স্থির শূন্য set_task_slice_oob(সংরচনা scx_sched *sch, সংরচনা task_struct *p, u64 slice)
 {
 	u64 dur;
 
-	if (slice == SCX_SLICE_INF) {
+	যদি (slice == SCX_SLICE_INF) {
 		dur = SCX_SLICE_OOB_DUR_MASK;
-	} else if (unlikely(slice >= SCX_SLICE_OOB_DUR_MASK)) {
+	} অন্যথা যদি (unlikely(slice >= SCX_SLICE_OOB_DUR_MASK)) {
 		dur = SCX_SLICE_OOB_DUR_MASK - 1;
 		scx_add_event(sch, SCX_EV_SLICE_CLAMPED, 1);
-	} else {
+	} অন্যথা {
 		dur = slice;
 	}
 
@@ -1355,34 +1355,34 @@ static void set_task_slice_oob(struct scx_sched *sch, struct task_struct *p, u64
  * protected slice refuses both. %SCX_EV_SLICE_DENIED counts the denials. See
  * the write rules above.
  */
-static void apply_task_slice_oob(struct rq *rq, struct task_struct *p)
+স্থির শূন্য apply_task_slice_oob(সংরচনা rq *rq, সংরচনা task_struct *p)
 {
 	u64 oob, dur, slice;
 
 	lockdep_assert_rq_held(rq);
 
-	if (likely(!atomic64_read(&p->scx.slice_oob)))
-		return;
+	যদি (likely(!atomic64_read(&p->scx.slice_oob)))
+		ঘূৰাই;
 
 	oob = atomic64_xchg(&p->scx.slice_oob, 0);
-	if (unlikely(!oob))
-		return;
+	যদি (unlikely(!oob))
+		ঘূৰাই;
 
 	/* the issuing scheduler no longer owns @p, drop the request */
-	if (unlikely(((oob >> SCX_SLICE_OOB_ID_SHIFT) & SCX_SLICE_OOB_ID_MASK) !=
+	যদি (unlikely(((oob >> SCX_SLICE_OOB_ID_SHIFT) & SCX_SLICE_OOB_ID_MASK) !=
 		     (scx_task_sched(p)->id & SCX_SLICE_OOB_ID_MASK)))
-		return;
+		ঘূৰাই;
 
 	dur = oob & SCX_SLICE_OOB_DUR_MASK;
 	slice = dur == SCX_SLICE_OOB_DUR_MASK ? SCX_SLICE_INF : dur;
 
-	if (slice > p->scx.slice &&
+	যদি (slice > p->scx.slice &&
 	    unlikely(scx_missing_caps(scx_task_sched(p), cpu_of(rq), SCX_CAP_BASE))) {
 		__scx_add_event(scx_task_sched(p), SCX_EV_SLICE_DENIED, 1);
-		return;
+		ঘূৰাই;
 	}
 
-	if (unlikely(!set_task_slice_keep_oob(p, slice)))
+	যদি (unlikely(!set_task_slice_keep_oob(p, slice)))
 		__scx_add_event(scx_task_sched(p), SCX_EV_SLICE_DENIED, 1);
 }
 
@@ -1391,57 +1391,57 @@ static void apply_task_slice_oob(struct rq *rq, struct task_struct *p)
  * and they are committed here, at the insertion. A zero @slice keeps the
  * current value, floored at 1 so the task isn't treated as expired.
  */
-static void apply_slice_vtime(struct task_struct *p, u64 slice, u64 vtime, u64 enq_flags)
+স্থির শূন্য apply_slice_vtime(সংরচনা task_struct *p, u64 slice, u64 vtime, u64 enq_flags)
 {
-	if (slice) {
+	যদি (slice) {
 		p->scx.slice = slice;
 		/*
 		 * An explicit slice supersedes a pending oob request. A carried
 		 * default refill is not an explicit request and must keep it.
 		 */
-		if (!(enq_flags & SCX_ENQ_SLICE_DFL))
+		যদি (!(enq_flags & SCX_ENQ_SLICE_DFL))
 			clear_task_slice_oob(p);
-	} else if (!p->scx.slice) {
+	} অন্যথা যদি (!p->scx.slice) {
 		p->scx.slice = 1;
 	}
 
-	if (enq_flags & SCX_ENQ_DSQ_PRIQ)
+	যদি (enq_flags & SCX_ENQ_DSQ_PRIQ)
 		p->scx.dsq_vtime = vtime;
 }
 
-static void update_curr_scx(struct rq *rq)
+স্থির শূন্য update_curr_scx(সংরচনা rq *rq)
 {
-	struct task_struct *curr = rq->curr;
+	সংরচনা task_struct *curr = rq->curr;
 	s64 delta_exec;
 
 	/* apply even on 0 delta_exec, callers may still act on the slice */
 	apply_task_slice_oob(rq, curr);
 
 	delta_exec = update_curr_common(rq);
-	if (unlikely(delta_exec <= 0))
-		return;
+	যদি (unlikely(delta_exec <= 0))
+		ঘূৰাই;
 
-	if (curr->scx.slice != SCX_SLICE_INF)
+	যদি (curr->scx.slice != SCX_SLICE_INF)
 		curr->scx.slice -= min_t(u64, curr->scx.slice, delta_exec);
 
-	if (unlikely(curr == scx_rescuee(rq)))
+	যদি (unlikely(curr == scx_rescuee(rq)))
 		scx_rescue_charge(rq, delta_exec);
 
 	dl_server_update(&rq->ext_server, delta_exec);
 }
 
-static bool scx_dsq_priq_less(struct rb_node *node_a,
-			      const struct rb_node *node_b)
+স্থির bool scx_dsq_priq_less(সংরচনা rb_গ্ৰন্থি *গ্ৰন্থি_a,
+			      ধ্রুৱ সংরচনা rb_গ্ৰন্থি *গ্ৰন্থি_b)
 {
-	const struct task_struct *a =
-		container_of(node_a, struct task_struct, scx.dsq_priq);
-	const struct task_struct *b =
-		container_of(node_b, struct task_struct, scx.dsq_priq);
+	ধ্রুৱ সংরচনা task_struct *a =
+		container_of(গ্ৰন্থি_a, সংরচনা task_struct, scx.dsq_priq);
+	ধ্রুৱ সংরচনা task_struct *b =
+		container_of(গ্ৰন্থি_b, সংরচনা task_struct, scx.dsq_priq);
 
-	return time_before64(a->scx.dsq_vtime, b->scx.dsq_vtime);
+	ঘূৰাই time_before64(a->scx.dsq_vtime, b->scx.dsq_vtime);
 }
 
-static void dsq_inc_nr(struct scx_dispatch_q *dsq, struct task_struct *p, u64 enq_flags)
+স্থির শূন্য dsq_inc_nr(সংরচনা scx_dispatch_q *dsq, সংরচনা task_struct *p, u64 enq_flags)
 {
 	/* scx_bpf_dsq_nr_queued() reads ->nr without locking, use WRITE_ONCE() */
 	WRITE_ONCE(dsq->nr, dsq->nr + 1);
@@ -1454,19 +1454,19 @@ static void dsq_inc_nr(struct scx_dispatch_q *dsq, struct task_struct *p, u64 en
 	 * scx_do_enqueue_task() so that we can maintain IMMED protection
 	 * through e.g. SAVE/RESTORE cycles and slice extensions.
 	 */
-	if (enq_flags & SCX_ENQ_IMMED) {
-		if (unlikely(dsq->id != SCX_DSQ_LOCAL)) {
+	যদি (enq_flags & SCX_ENQ_IMMED) {
+		যদি (unlikely(dsq->id != SCX_DSQ_LOCAL)) {
 			WARN_ON_ONCE(!(enq_flags & SCX_ENQ_GDSQ_FALLBACK));
-			return;
+			ঘূৰাই;
 		}
 		p->scx.flags |= SCX_TASK_IMMED;
 	}
 
-	if (p->scx.flags & SCX_TASK_IMMED) {
-		struct rq *rq = container_of(dsq, struct rq, scx.local_dsq);
+	যদি (p->scx.flags & SCX_TASK_IMMED) {
+		সংরচনা rq *rq = container_of(dsq, সংরচনা rq, scx.local_dsq);
 
-		if (WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
-			return;
+		যদি (WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
+			ঘূৰাই;
 
 		rq->scx.nr_immed++;
 
@@ -1474,28 +1474,28 @@ static void dsq_inc_nr(struct scx_dispatch_q *dsq, struct task_struct *p, u64 en
 		 * If @rq already had other tasks or the current task is not
 		 * done yet, @p can't go on the CPU immediately. Re-enqueue.
 		 */
-		if (unlikely(dsq->nr > 1 || !rq_is_open(rq, enq_flags)))
+		যদি (unlikely(dsq->nr > 1 || !rq_is_open(rq, enq_flags)))
 			scx_schedule_reenq_local(rq, 0);
 	}
 }
 
-static void dsq_dec_nr(struct scx_dispatch_q *dsq, struct task_struct *p)
+স্থির শূন্য dsq_dec_nr(সংরচনা scx_dispatch_q *dsq, সংরচনা task_struct *p)
 {
 	/* see dsq_inc_nr() */
 	WRITE_ONCE(dsq->nr, dsq->nr - 1);
 
-	if (p->scx.flags & SCX_TASK_IMMED) {
-		struct rq *rq = container_of(dsq, struct rq, scx.local_dsq);
+	যদি (p->scx.flags & SCX_TASK_IMMED) {
+		সংরচনা rq *rq = container_of(dsq, সংরচনা rq, scx.local_dsq);
 
-		if (WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL) ||
+		যদি (WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL) ||
 		    WARN_ON_ONCE(rq->scx.nr_immed <= 0))
-			return;
+			ঘূৰাই;
 
 		rq->scx.nr_immed--;
 	}
 }
 
-static void refill_task_slice_dfl(struct scx_sched *sch, struct task_struct *p)
+স্থির শূন্য refill_task_slice_dfl(সংরচনা scx_sched *sch, সংরচনা task_struct *p)
 {
 	/*
 	 * A default refill is not an explicit request, so it must not drop a
@@ -1509,7 +1509,7 @@ static void refill_task_slice_dfl(struct scx_sched *sch, struct task_struct *p)
  * Return true if @p is moving due to an internal SCX migration, false
  * otherwise.
  */
-static inline bool task_scx_migrating(struct task_struct *p)
+স্থির অন্তঃস্থ bool task_scx_migrating(সংরচনা task_struct *p)
 {
 	/*
 	 * We only need to check sticky_cpu: it is set to the destination
@@ -1517,34 +1517,34 @@ static inline bool task_scx_migrating(struct task_struct *p)
 	 * and cleared when the task is enqueued on the destination, so it
 	 * is only non-negative during an internal SCX migration.
 	 */
-	return p->scx.sticky_cpu >= 0;
+	ঘূৰাই p->scx.sticky_cpu >= 0;
 }
 
 /* Must be called under the lock serializing @p's custody transfers. */
-static bool task_leave_custody(struct task_struct *p)
+স্থির bool task_leave_custody(সংরচনা task_struct *p)
 {
-	if (!(p->scx.flags & SCX_TASK_IN_CUSTODY) || task_scx_migrating(p))
-		return false;
+	যদি (!(p->scx.flags & SCX_TASK_IN_CUSTODY) || task_scx_migrating(p))
+		ঘূৰাই false;
 
 	p->scx.flags &= ~SCX_TASK_IN_CUSTODY;
-	return true;
+	ঘূৰাই true;
 }
 
-static void rq_owned_post_enq(struct scx_sched *sch, struct rq *rq,
-			      struct scx_dispatch_q *dsq, struct task_struct *p,
+স্থির শূন্য rq_owned_post_enq(সংরচনা scx_sched *sch, সংরচনা rq *rq,
+			      সংরচনা scx_dispatch_q *dsq, সংরচনা task_struct *p,
 			      u64 enq_flags)
 {
-	if (task_leave_custody(p) && SCX_HAS_OP(sch, dequeue))
+	যদি (task_leave_custody(p) && SCX_HAS_OP(sch, dequeue))
 		SCX_CALL_OP_TASK(sch, dequeue, rq, p, 0);
 
 	/*
 	 * Only local inserts get the wakeup treatment below. Rejects kick the
 	 * deferred reenq and rescue parks are paced by the rescue timer.
 	 */
-	if (unlikely(dsq->id != SCX_DSQ_LOCAL)) {
-		if (dsq->id == SCX_DSQ_REJECT)
+	যদি (unlikely(dsq->id != SCX_DSQ_LOCAL)) {
+		যদি (dsq->id == SCX_DSQ_REJECT)
 			schedule_deferred_locked(rq);
-		return;
+		ঘূৰাই;
 	}
 
 	/*
@@ -1579,7 +1579,7 @@ static void rq_owned_post_enq(struct scx_sched *sch, struct rq *rq,
 	 * @rq->next_class is below &ext_sched_class, it will also
 	 * resched_curr(rq).
 	 */
-	if (sched_class_above(p->sched_class, rq->next_class))
+	যদি (sched_class_above(p->sched_class, rq->next_class))
 		wakeup_preempt(rq, p, 0);
 
 	/*
@@ -1590,38 +1590,38 @@ static void rq_owned_post_enq(struct scx_sched *sch, struct rq *rq,
 	 * a resched if @rq->next_class was idle. It's harmless, since
 	 * need_resched is cleared immediately after task pick.
 	 */
-	if (rq->scx.flags & SCX_RQ_IN_DISPATCH)
-		return;
+	যদি (rq->scx.flags & SCX_RQ_IN_DISPATCH)
+		ঘূৰাই;
 
-	if ((enq_flags & SCX_ENQ_PREEMPT) && p != rq->curr &&
+	যদি ((enq_flags & SCX_ENQ_PREEMPT) && p != rq->curr &&
 	    rq->curr->sched_class == &ext_sched_class) {
-		if (likely(scx_set_task_slice(rq->curr, 0)))
+		যদি (likely(scx_set_task_slice(rq->curr, 0)))
 			resched_curr(rq);
-		else
+		অন্যথা
 			__scx_add_event(sch, SCX_EV_SLICE_DENIED, 1);
 	}
 }
 
-static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
-				 struct scx_dispatch_q *dsq, struct task_struct *p,
+স্থির শূন্য scx_dispatch_enqueue(সংরচনা scx_sched *sch, সংরচনা rq *rq,
+				 সংরচনা scx_dispatch_q *dsq, সংরচনা task_struct *p,
 				 u64 slice, u64 vtime, u64 enq_flags)
 {
 	bool is_rq_owned = false;
 
-	if (dsq->id == SCX_DSQ_LOCAL) {
+	যদি (dsq->id == SCX_DSQ_LOCAL) {
 		dsq = scx_resolve_local_dsq(sch, rq, p, &enq_flags);
 		is_rq_owned = true;
 	}
 
-	WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.node));
+	WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.গ্ৰন্থি));
 	WARN_ON_ONCE((p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) ||
-		     !RB_EMPTY_NODE(&p->scx.dsq_priq));
+		     !RB_EMPTY_গ্ৰন্থি(&p->scx.dsq_priq));
 
-	if (!is_rq_owned) {
+	যদি (!is_rq_owned) {
 		raw_spin_lock_nested(&dsq->lock,
 			(enq_flags & SCX_ENQ_NESTED) ? SINGLE_DEPTH_NESTING : 0);
 
-		if (unlikely(dsq->id == SCX_DSQ_INVALID)) {
+		যদি (unlikely(dsq->id == SCX_DSQ_INVALID)) {
 			scx_error(sch, "attempting to dispatch to a destroyed dsq");
 			/* fall back to the global dsq */
 			raw_spin_unlock(&dsq->lock);
@@ -1630,7 +1630,7 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 		}
 	}
 
-	if (unlikely((dsq->id & SCX_DSQ_FLAG_BUILTIN) &&
+	যদি (unlikely((dsq->id & SCX_DSQ_FLAG_BUILTIN) &&
 		     (enq_flags & SCX_ENQ_DSQ_PRIQ))) {
 		/*
 		 * SCX_DSQ_LOCAL and SCX_DSQ_GLOBAL DSQs always consume from
@@ -1647,19 +1647,19 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 	 * @dsq is locked and @enq_flags is sanitized. Commit the carried slice
 	 * and vtime before the PRIQ insertion below reads the new dsq_vtime.
 	 */
-	if (enq_flags & SCX_ENQ_APPLY_SLICE)
+	যদি (enq_flags & SCX_ENQ_APPLY_SLICE)
 		apply_slice_vtime(p, slice, vtime, enq_flags);
 
-	if (enq_flags & SCX_ENQ_DSQ_PRIQ) {
-		struct rb_node *rbp;
+	যদি (enq_flags & SCX_ENQ_DSQ_PRIQ) {
+		সংরচনা rb_গ্ৰন্থি *rbp;
 
 		/*
 		 * A PRIQ DSQ shouldn't be using FIFO enqueueing. As tasks are
 		 * linked to both the rbtree and list on PRIQs, this can only be
 		 * tested easily when adding the first task.
 		 */
-		if (unlikely(RB_EMPTY_ROOT(&dsq->priq) &&
-			     nldsq_next_task(dsq, NULL, false)))
+		যদি (unlikely(RB_EMPTY_মূল(&dsq->priq) &&
+			     nldsq_next_task(dsq, রিক্ত, false)))
 			scx_error(sch, "DSQ ID 0x%016llx already had FIFO-enqueued tasks",
 				  dsq->id);
 
@@ -1671,35 +1671,35 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 		 * that @dsq->list is vtime ordered.
 		 */
 		rbp = rb_prev(&p->scx.dsq_priq);
-		if (rbp) {
-			struct task_struct *prev =
-				container_of(rbp, struct task_struct,
+		যদি (rbp) {
+			সংরচনা task_struct *prev =
+				container_of(rbp, সংরচনা task_struct,
 					     scx.dsq_priq);
-			list_add(&p->scx.dsq_list.node, &prev->scx.dsq_list.node);
+			list_add(&p->scx.dsq_list.গ্ৰন্থি, &prev->scx.dsq_list.গ্ৰন্থি);
 			/* first task unchanged - no update needed */
-		} else {
-			list_add(&p->scx.dsq_list.node, &dsq->list);
+		} অন্যথা {
+			list_add(&p->scx.dsq_list.গ্ৰন্থি, &dsq->list);
 			/* not builtin and new task is at head - use fastpath */
 			rcu_assign_pointer(dsq->first_task, p);
 		}
-	} else {
+	} অন্যথা {
 		/* a FIFO DSQ shouldn't be using PRIQ enqueuing */
-		if (unlikely(!RB_EMPTY_ROOT(&dsq->priq)))
+		যদি (unlikely(!RB_EMPTY_মূল(&dsq->priq)))
 			scx_error(sch, "DSQ ID 0x%016llx already had PRIQ-enqueued tasks",
 				  dsq->id);
 
-		if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT)) {
+		যদি (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT)) {
 			/* new task inserted at head - use fastpath */
-			if (dsq_insert_head(dsq, p) && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
+			যদি (dsq_ঢোকাও_head(dsq, p) && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
 				rcu_assign_pointer(dsq->first_task, p);
-		} else {
+		} অন্যথা {
 			/*
 			 * dsq->list can contain parked BPF iterator cursors, so
 			 * list_empty() here isn't a reliable proxy for "no real
 			 * task in the DSQ". Test dsq->first_task directly.
 			 */
-			list_add_tail(&p->scx.dsq_list.node, &dsq->list);
-			if (!dsq->first_task && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
+			list_add_tail(&p->scx.dsq_list.গ্ৰন্থি, &dsq->list);
+			যদি (!dsq->first_task && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
 				rcu_assign_pointer(dsq->first_task, p);
 		}
 	}
@@ -1718,9 +1718,9 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 	 * ops_state first, both sides would modify p->scx.flags
 	 * concurrently in a non-atomic way.
 	 */
-	if (is_rq_owned) {
+	যদি (is_rq_owned) {
 		rq_owned_post_enq(sch, rq, dsq, p, enq_flags);
-	} else {
+	} অন্যথা {
 		bool call_dequeue = false;
 
 		/*
@@ -1734,14 +1734,14 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 		 * consumers see the flag clear; the callback runs after
 		 * @dsq->lock is dropped because it may lock a DSQ itself.
 		 */
-		if (dsq->id == SCX_DSQ_GLOBAL || dsq->id == SCX_DSQ_BYPASS)
+		যদি (dsq->id == SCX_DSQ_GLOBAL || dsq->id == SCX_DSQ_BYPASS)
 			call_dequeue = task_leave_custody(p);
-		else
+		অন্যথা
 			p->scx.flags |= SCX_TASK_IN_CUSTODY;
 
 		raw_spin_unlock(&dsq->lock);
 
-		if (call_dequeue && SCX_HAS_OP(sch, dequeue))
+		যদি (call_dequeue && SCX_HAS_OP(sch, dequeue))
 			SCX_CALL_OP_TASK(sch, dequeue, rq, p, 0);
 	}
 
@@ -1749,45 +1749,45 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 	 * We're transitioning out of QUEUEING or DISPATCHING. store_release to
 	 * match waiters' load_acquire.
 	 */
-	if (enq_flags & SCX_ENQ_CLEAR_OPSS)
+	যদি (enq_flags & SCX_ENQ_CLEAR_OPSS)
 		atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
 }
 
-void scx_task_unlink_from_dsq(struct task_struct *p, struct scx_dispatch_q *dsq)
+শূন্য scx_task_unlink_from_dsq(সংরচনা task_struct *p, সংরচনা scx_dispatch_q *dsq)
 {
-	WARN_ON_ONCE(list_empty(&p->scx.dsq_list.node));
+	WARN_ON_ONCE(list_empty(&p->scx.dsq_list.গ্ৰন্থি));
 
-	if (p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) {
+	যদি (p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) {
 		rb_erase(&p->scx.dsq_priq, &dsq->priq);
-		RB_CLEAR_NODE(&p->scx.dsq_priq);
+		RB_CLEAR_গ্ৰন্থি(&p->scx.dsq_priq);
 		p->scx.dsq_flags &= ~SCX_TASK_DSQ_ON_PRIQ;
 	}
 
-	list_del_init(&p->scx.dsq_list.node);
+	list_del_init(&p->scx.dsq_list.গ্ৰন্থি);
 	dsq_dec_nr(dsq, p);
 
-	if (!(dsq->id & SCX_DSQ_FLAG_BUILTIN) && rcu_access_pointer(dsq->first_task) == p) {
-		struct task_struct *first_task;
+	যদি (!(dsq->id & SCX_DSQ_FLAG_BUILTIN) && rcu_access_pointer(dsq->first_task) == p) {
+		সংরচনা task_struct *first_task;
 
-		first_task = nldsq_next_task(dsq, NULL, false);
+		first_task = nldsq_next_task(dsq, রিক্ত, false);
 		rcu_assign_pointer(dsq->first_task, first_task);
 	}
 }
 
-void scx_dispatch_dequeue(struct rq *rq, struct task_struct *p)
+শূন্য scx_dispatch_dequeue(সংরচনা rq *rq, সংরচনা task_struct *p)
 {
-	struct scx_dispatch_q *dsq = p->scx.dsq;
+	সংরচনা scx_dispatch_q *dsq = p->scx.dsq;
 	bool is_rq_owned = dsq && dsq_is_rq_owned(dsq);
 
 	lockdep_assert_rq_held(rq);
 
-	if (!dsq) {
+	যদি (!dsq) {
 		/*
 		 * If !dsq && on-list, @p is on @rq's ddsp_deferred_locals.
 		 * Unlinking is all that's needed to cancel.
 		 */
-		if (unlikely(!list_empty(&p->scx.dsq_list.node)))
-			list_del_init(&p->scx.dsq_list.node);
+		যদি (unlikely(!list_empty(&p->scx.dsq_list.গ্ৰন্থি)))
+			list_del_init(&p->scx.dsq_list.গ্ৰন্থি);
 
 		/*
 		 * When dispatching directly from the BPF scheduler to a local
@@ -1795,35 +1795,35 @@ void scx_dispatch_dequeue(struct rq *rq, struct task_struct *p)
 		 * @p->scx.holding_cpu may be set under the protection of
 		 * %SCX_OPSS_DISPATCHING.
 		 */
-		if (p->scx.holding_cpu >= 0)
+		যদি (p->scx.holding_cpu >= 0)
 			p->scx.holding_cpu = -1;
 
-		return;
+		ঘূৰাই;
 	}
 
-	if (!is_rq_owned)
+	যদি (!is_rq_owned)
 		raw_spin_lock(&dsq->lock);
 
 	/*
 	 * Now that we hold @dsq->lock, @p->holding_cpu and @p->scx.dsq_* can't
 	 * change underneath us.
 	*/
-	if (p->scx.holding_cpu < 0) {
+	যদি (p->scx.holding_cpu < 0) {
 		/* @p must still be on @dsq, dequeue */
 		scx_task_unlink_from_dsq(p, dsq);
-	} else {
+	} অন্যথা {
 		/*
 		 * We're racing against dispatch_to_local_dsq() which already
 		 * removed @p from @dsq and set @p->scx.holding_cpu. Clear the
 		 * holding_cpu which tells dispatch_to_local_dsq() that it lost
 		 * the race.
 		 */
-		WARN_ON_ONCE(!list_empty(&p->scx.dsq_list.node));
+		WARN_ON_ONCE(!list_empty(&p->scx.dsq_list.গ্ৰন্থি));
 		p->scx.holding_cpu = -1;
 	}
-	p->scx.dsq = NULL;
+	p->scx.dsq = রিক্ত;
 
-	if (!is_rq_owned)
+	যদি (!is_rq_owned)
 		raw_spin_unlock(&dsq->lock);
 }
 
@@ -1831,54 +1831,54 @@ void scx_dispatch_dequeue(struct rq *rq, struct task_struct *p)
  * Abbreviated version of scx_dispatch_dequeue() that can be used when both
  * @p's rq and dsq are locked.
  */
-static void dispatch_dequeue_locked(struct task_struct *p,
-				    struct scx_dispatch_q *dsq)
+স্থির শূন্য dispatch_dequeue_locked(সংরচনা task_struct *p,
+				    সংরচনা scx_dispatch_q *dsq)
 {
 	lockdep_assert_rq_held(task_rq(p));
 	lockdep_assert_held(&dsq->lock);
 
 	scx_task_unlink_from_dsq(p, dsq);
-	p->scx.dsq = NULL;
+	p->scx.dsq = রিক্ত;
 }
 
-static struct scx_dispatch_q *find_dsq_for_dispatch(struct scx_sched *sch,
-						    struct rq *rq, u64 dsq_id,
+স্থির সংরচনা scx_dispatch_q *find_dsq_for_dispatch(সংরচনা scx_sched *sch,
+						    সংরচনা rq *rq, u64 dsq_id,
 						    s32 tcpu)
 {
-	struct scx_dispatch_q *dsq;
+	সংরচনা scx_dispatch_q *dsq;
 
-	if (dsq_id == SCX_DSQ_LOCAL)
-		return &rq->scx.local_dsq;
+	যদি (dsq_id == SCX_DSQ_LOCAL)
+		ঘূৰাই &rq->scx.local_dsq;
 
-	if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
+	যদি ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
 		s32 cpu = scx_cpu_ret(sch, dsq_id & SCX_DSQ_LOCAL_CPU_MASK);
 
-		if (!scx_cpu_valid(sch, cpu, "in SCX_DSQ_LOCAL_ON dispatch verdict"))
-			return find_global_dsq(sch, tcpu);
+		যদি (!scx_cpu_valid(sch, cpu, "in SCX_DSQ_LOCAL_ON dispatch verdict"))
+			ঘূৰাই find_global_dsq(sch, tcpu);
 
-		return &cpu_rq(cpu)->scx.local_dsq;
+		ঘূৰাই &cpu_rq(cpu)->scx.local_dsq;
 	}
 
-	if (dsq_id == SCX_DSQ_GLOBAL)
+	যদি (dsq_id == SCX_DSQ_GLOBAL)
 		dsq = find_global_dsq(sch, tcpu);
-	else
+	অন্যথা
 		dsq = find_user_dsq(sch, dsq_id);
 
 	/*
 	 * Built-in DSQs are never inserted into dsq_hash, so REJECT and RESCUE
 	 * hit the error below. They cannot be reached with an ID.
 	 */
-	if (unlikely(!dsq)) {
+	যদি (unlikely(!dsq)) {
 		scx_error(sch, "non-existent DSQ 0x%llx", dsq_id);
-		return find_global_dsq(sch, tcpu);
+		ঘূৰাই find_global_dsq(sch, tcpu);
 	}
 
-	return dsq;
+	ঘূৰাই dsq;
 }
 
-static void mark_direct_dispatch(struct scx_sched *sch,
-				 struct task_struct *ddsp_task,
-				 struct task_struct *p, u64 dsq_id,
+স্থির শূন্য mark_direct_dispatch(সংরচনা scx_sched *sch,
+				 সংরচনা task_struct *ddsp_task,
+				 সংরচনা task_struct *p, u64 dsq_id,
 				 u64 slice, u64 vtime, u64 enq_flags)
 {
 	/*
@@ -1889,15 +1889,15 @@ static void mark_direct_dispatch(struct scx_sched *sch,
 	__this_cpu_write(direct_dispatch_task, ERR_PTR(-ESRCH));
 
 	/* @p must match the task on the enqueue path */
-	if (unlikely(p != ddsp_task)) {
-		if (IS_ERR(ddsp_task))
+	যদি (unlikely(p != ddsp_task)) {
+		যদি (IS_ERR(ddsp_task))
 			scx_error(sch, "%s[%d] already direct-dispatched",
 				  p->comm, p->pid);
-		else
+		অন্যথা
 			scx_error(sch, "scheduling for %s[%d] but trying to direct-dispatch %s[%d]",
 				  ddsp_task->comm, ddsp_task->pid,
 				  p->comm, p->pid);
-		return;
+		ঘূৰাই;
 	}
 
 	WARN_ON_ONCE(p->scx.ddsp_dsq_id != SCX_DSQ_INVALID);
@@ -1924,17 +1924,17 @@ static void mark_direct_dispatch(struct scx_sched *sch,
  *    the scx_bypass() loop, so that stale state is not reused by a subsequent
  *    scheduler instance
  */
-static inline void clear_direct_dispatch(struct task_struct *p)
+স্থির অন্তঃস্থ শূন্য clear_direct_dispatch(সংরচনা task_struct *p)
 {
 	p->scx.ddsp_dsq_id = SCX_DSQ_INVALID;
 	p->scx.ddsp_enq_flags = 0;
 }
 
-static void direct_dispatch(struct scx_sched *sch, struct task_struct *p,
+স্থির শূন্য direct_dispatch(সংরচনা scx_sched *sch, সংরচনা task_struct *p,
 			    u64 enq_flags)
 {
-	struct rq *rq = task_rq(p);
-	struct scx_dispatch_q *dsq =
+	সংরচনা rq *rq = task_rq(p);
+	সংরচনা scx_dispatch_q *dsq =
 		find_dsq_for_dispatch(sch, rq, p->scx.ddsp_dsq_id, task_cpu(p));
 	u64 ddsp_enq_flags, slice, vtime;
 
@@ -1946,33 +1946,33 @@ static void direct_dispatch(struct scx_sched *sch, struct task_struct *p,
 	 * DSQ_LOCAL_ON verdicts targeting the local DSQ of a remote CPU, defer
 	 * the enqueue so that it's executed when @rq can be unlocked.
 	 */
-	if (dsq->id == SCX_DSQ_LOCAL && dsq != &rq->scx.local_dsq) {
+	যদি (dsq->id == SCX_DSQ_LOCAL && dsq != &rq->scx.local_dsq) {
 		unsigned long opss;
 
 		opss = atomic_long_read(&p->scx.ops_state) & SCX_OPSS_STATE_MASK;
 
-		switch (opss & SCX_OPSS_STATE_MASK) {
-		case SCX_OPSS_NONE:
-			break;
-		case SCX_OPSS_QUEUEING:
+		ৱিকল্প (opss & SCX_OPSS_STATE_MASK) {
+		পক্ষ SCX_OPSS_NONE:
+			ভঙ্গ;
+		পক্ষ SCX_OPSS_QUEUEING:
 			/*
 			 * As @p was never passed to the BPF side, _release is
 			 * not strictly necessary. Still do it for consistency.
 			 */
 			atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
-			break;
-		default:
+			ভঙ্গ;
+		স্ৱভাৱ:
 			WARN_ONCE(true, "sched_ext: %s[%d] has invalid ops state 0x%lx in direct_dispatch()",
 				  p->comm, p->pid, opss);
 			atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
-			break;
+			ভঙ্গ;
 		}
 
-		WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.node));
-		list_add_tail(&p->scx.dsq_list.node,
+		WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.গ্ৰন্থি));
+		list_add_tail(&p->scx.dsq_list.গ্ৰন্থি,
 			      &rq->scx.ddsp_deferred_locals);
 		schedule_deferred_locked(rq);
-		return;
+		ঘূৰাই;
 	}
 
 	ddsp_enq_flags = p->scx.ddsp_enq_flags;
@@ -1984,7 +1984,7 @@ static void direct_dispatch(struct scx_sched *sch, struct task_struct *p,
 			     ddsp_enq_flags | SCX_ENQ_APPLY_SLICE | SCX_ENQ_CLEAR_OPSS);
 }
 
-bool scx_rq_online(struct rq *rq)
+bool scx_rq_online(সংরচনা rq *rq)
 {
 	/*
 	 * Test both cpu_active() and %SCX_RQ_ONLINE. %SCX_RQ_ONLINE indicates
@@ -1993,22 +1993,22 @@ bool scx_rq_online(struct rq *rq)
 	 * stay set until the current scheduling operation is complete even if
 	 * we aren't locking @rq.
 	 */
-	return likely((rq->scx.flags & SCX_RQ_ONLINE) && cpu_active(cpu_of(rq)));
+	ঘূৰাই likely((rq->scx.flags & SCX_RQ_ONLINE) && cpu_active(cpu_of(rq)));
 }
 
-void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
-			 int sticky_cpu)
+শূন্য scx_do_enqueue_task(সংরচনা rq *rq, সংরচনা task_struct *p, u64 enq_flags,
+			 পূর্ণাঙ্ক sticky_cpu)
 {
-	struct scx_sched *sch = scx_task_sched(p);
-	struct task_struct **ddsp_taskp;
-	struct scx_dispatch_q *dsq;
+	সংরচনা scx_sched *sch = scx_task_sched(p);
+	সংরচনা task_struct **ddsp_taskp;
+	সংরচনা scx_dispatch_q *dsq;
 	unsigned long qseq;
 
 	WARN_ON_ONCE(!(p->scx.flags & SCX_TASK_QUEUED));
 
 	/* internal movements - rq migration / RESTORE */
-	if (sticky_cpu == cpu_of(rq))
-		goto local_norefill;
+	যদি (sticky_cpu == cpu_of(rq))
+		গচ্ছ local_norefill;
 
 	/*
 	 * Clear persistent TASK_IMMED for fresh enqueues, see dsq_inc_nr().
@@ -2024,15 +2024,15 @@ void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
 	 * cid it lacks caps on. Eject the owning scheduler and strand the task
 	 * to be picked up during sched exit.
 	 */
-	if (enq_flags & SCX_ENQ_REENQ) {
-		if (++p->scx.reenq_cnt > 1)
+	যদি (enq_flags & SCX_ENQ_REENQ) {
+		যদি (++p->scx.reenq_cnt > 1)
 			__scx_add_event(sch, SCX_EV_REENQ_REPEAT, 1);
 
-		if (unlikely(p->scx.reenq_cnt > SCX_REENQ_MAX_REPEAT)) {
+		যদি (unlikely(p->scx.reenq_cnt > SCX_REENQ_MAX_REPEAT)) {
 			__scx_exit(sch, SCX_EXIT_ERROR_REENQ, 0, cpu_of(rq),
 				   "%s[%d] reenqueued %u times without running",
 				   p->comm, p->pid, p->scx.reenq_cnt);
-			return;
+			ঘূৰাই;
 		}
 	}
 
@@ -2041,34 +2041,34 @@ void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
 	 * is offline and are just running the hotplug path. Don't bother the
 	 * BPF scheduler.
 	 */
-	if (!scx_rq_online(rq))
-		goto local;
+	যদি (!scx_rq_online(rq))
+		গচ্ছ local;
 
-	if (scx_bypassing(sch, cpu_of(rq))) {
+	যদি (scx_bypassing(sch, cpu_of(rq))) {
 		__scx_add_event(sch, SCX_EV_BYPASS_DISPATCH, 1);
-		goto bypass;
+		গচ্ছ bypass;
 	}
 
-	if (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
-		goto direct;
+	যদি (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
+		গচ্ছ direct;
 
 	/* see %SCX_OPS_ENQ_EXITING */
-	if (!(sch->ops.flags & SCX_OPS_ENQ_EXITING) &&
+	যদি (!(sch->ops.flags & SCX_OPS_ENQ_EXITING) &&
 	    unlikely(p->flags & PF_EXITING)) {
 		__scx_add_event(sch, SCX_EV_ENQ_SKIP_EXITING, 1);
 		enq_flags |= SCX_ENQ_RESCUE;	/* avoid looping on cap rejection */
-		goto local;
+		গচ্ছ local;
 	}
 
 	/* see %SCX_OPS_ENQ_MIGRATION_DISABLED */
-	if (!(sch->ops.flags & SCX_OPS_ENQ_MIGRATION_DISABLED) &&
+	যদি (!(sch->ops.flags & SCX_OPS_ENQ_MIGRATION_DISABLED) &&
 	    is_migration_disabled(p)) {
 		__scx_add_event(sch, SCX_EV_ENQ_SKIP_MIGRATION_DISABLED, 1);
-		goto local;
+		গচ্ছ local;
 	}
 
-	if (unlikely(!SCX_HAS_OP(sch, enqueue)))
-		goto global;
+	যদি (unlikely(!SCX_HAS_OP(sch, enqueue)))
+		গচ্ছ global;
 
 	/*
 	 * DSQ bypass didn't trigger, enqueue on the BPF scheduler. Wrap the
@@ -2088,9 +2088,9 @@ void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
 
 	SCX_CALL_OP_TASK(sch, enqueue, rq, p, enq_flags);
 
-	*ddsp_taskp = NULL;
-	if (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
-		goto direct;
+	*ddsp_taskp = রিক্ত;
+	যদি (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
+		গচ্ছ direct;
 
 	/*
 	 * Task is now in BPF scheduler's custody. Set %SCX_TASK_IN_CUSTODY
@@ -2103,23 +2103,23 @@ void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
 	 * dequeue may be waiting. The store_release matches their load_acquire.
 	 */
 	atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_QUEUED | qseq);
-	return;
+	ঘূৰাই;
 
 direct:
 	direct_dispatch(sch, p, enq_flags);
-	return;
+	ঘূৰাই;
 local_norefill:
 	scx_dispatch_enqueue(sch, rq, &rq->scx.local_dsq, p, 0, 0, enq_flags);
-	return;
+	ঘূৰাই;
 local:
 	dsq = &rq->scx.local_dsq;
-	goto enqueue;
+	গচ্ছ enqueue;
 global:
 	dsq = find_global_dsq(sch, task_cpu(p));
-	goto enqueue;
+	গচ্ছ enqueue;
 bypass:
 	dsq = bypass_enq_target_dsq(sch, task_cpu(p));
-	goto enqueue;
+	গচ্ছ enqueue;
 
 enqueue:
 	refill_task_slice_dfl(sch, p);
@@ -2127,16 +2127,16 @@ enqueue:
 	scx_dispatch_enqueue(sch, rq, dsq, p, 0, 0, enq_flags);
 }
 
-static bool task_runnable(const struct task_struct *p)
+স্থির bool task_runnable(ধ্রুৱ সংরচনা task_struct *p)
 {
-	return !list_empty(&p->scx.runnable_node);
+	ঘূৰাই !list_empty(&p->scx.runnable_গ্ৰন্থি);
 }
 
-static void set_task_runnable(struct rq *rq, struct task_struct *p)
+স্থির শূন্য set_task_runnable(সংরচনা rq *rq, সংরচনা task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
 
-	if (p->scx.flags & SCX_TASK_RESET_RUNNABLE_AT) {
+	যদি (p->scx.flags & SCX_TASK_RESET_RUNNABLE_AT) {
 		p->scx.runnable_at = jiffies;
 		p->scx.flags &= ~SCX_TASK_RESET_RUNNABLE_AT;
 	}
@@ -2145,7 +2145,7 @@ static void set_task_runnable(struct rq *rq, struct task_struct *p)
 	 * list_add_tail() must be used. scx_bypass() and rq_offline_scx()
 	 * depend on tasks being appended to the runnable_list.
 	 */
-	list_add_tail(&p->scx.runnable_node, &rq->scx.runnable_list);
+	list_add_tail(&p->scx.runnable_গ্ৰন্থি, &rq->scx.runnable_list);
 
 	/*
 	 * Record the rq @p is runnable on, maintained under the rq lock so it
@@ -2155,27 +2155,27 @@ static void set_task_runnable(struct rq *rq, struct task_struct *p)
 	WRITE_ONCE(p->scx.runnable_cpu, cpu_of(rq));
 }
 
-static void clr_task_runnable(struct task_struct *p, bool reset_runnable_at)
+স্থির শূন্য clr_task_runnable(সংরচনা task_struct *p, bool reset_runnable_at)
 {
-	list_del_init(&p->scx.runnable_node);
+	list_del_init(&p->scx.runnable_গ্ৰন্থি);
 	WRITE_ONCE(p->scx.runnable_cpu, -1);
-	if (reset_runnable_at) {
+	যদি (reset_runnable_at) {
 		p->scx.flags |= SCX_TASK_RESET_RUNNABLE_AT;
 		p->scx.reenq_cnt = 0;
 	}
 }
 
-static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int core_enq_flags)
+স্থির শূন্য enqueue_task_scx(সংরচনা rq *rq, সংরচনা task_struct *p, পূর্ণাঙ্ক core_enq_flags)
 {
-	struct scx_sched *sch = scx_task_sched(p);
-	int sticky_cpu = p->scx.sticky_cpu;
+	সংরচনা scx_sched *sch = scx_task_sched(p);
+	পূর্ণাঙ্ক sticky_cpu = p->scx.sticky_cpu;
 	u64 enq_flags = core_enq_flags | rq->scx.remote_activate_enq_flags;
 
 	/*
 	 * An SCX-internal migration ends on arrival. Clear sticky_cpu so @p can
 	 * leave custody when inserted into the destination DSQ.
 	 */
-	if (sticky_cpu >= 0)
+	যদি (sticky_cpu >= 0)
 		p->scx.sticky_cpu = -1;
 
 	/*
@@ -2183,7 +2183,7 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int core_enq_
 	 * returns. Only the core's wakeup path delivers one. The flags stashed
 	 * for a remote activation may carry the wakeup bit without it.
 	 */
-	if (core_enq_flags & ENQUEUE_WAKEUP)
+	যদি (core_enq_flags & ENQUEUE_WAKEUP)
 		rq->scx.flags |= SCX_RQ_IN_WAKEUP;
 
 	/*
@@ -2193,14 +2193,14 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int core_enq_
 	 * direct-dispatch into the local DSQ by setting the sticky_cpu. Mark
 	 * IGNORE_CAPS to force entry into the local DSQ.
 	 */
-	if (unlikely(enq_flags & ENQUEUE_RESTORE) && task_current(rq, p)) {
+	যদি (unlikely(enq_flags & ENQUEUE_RESTORE) && task_current(rq, p)) {
 		sticky_cpu = cpu_of(rq);
 		enq_flags |= SCX_ENQ_IGNORE_CAPS;
 	}
 
-	if (p->scx.flags & SCX_TASK_QUEUED) {
+	যদি (p->scx.flags & SCX_TASK_QUEUED) {
 		WARN_ON_ONCE(!task_runnable(p));
-		goto out;
+		গচ্ছ out;
 	}
 
 	set_task_runnable(rq, p);
@@ -2208,25 +2208,25 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int core_enq_
 	rq->scx.nr_running++;
 	add_nr_running(rq, 1);
 
-	if (SCX_HAS_OP(sch, runnable) && !task_on_rq_migrating(p))
+	যদি (SCX_HAS_OP(sch, runnable) && !task_on_rq_migrating(p))
 		SCX_CALL_OP_TASK(sch, runnable, rq, p, enq_flags);
 
 	/* Start dl_server if this is the first task being enqueued */
-	if (rq->scx.nr_running == 1)
+	যদি (rq->scx.nr_running == 1)
 		dl_server_start(&rq->ext_server);
 
 	scx_do_enqueue_task(rq, p, enq_flags, sticky_cpu);
 out:
 	rq->scx.flags &= ~SCX_RQ_IN_WAKEUP;
 
-	if ((enq_flags & SCX_ENQ_CPU_SELECTED) &&
+	যদি ((enq_flags & SCX_ENQ_CPU_SELECTED) &&
 	    unlikely(cpu_of(rq) != p->scx.selected_cpu))
 		__scx_add_event(sch, SCX_EV_SELECT_CPU_FALLBACK, 1);
 }
 
-static void ops_dequeue(struct rq *rq, struct task_struct *p, u64 deq_flags)
+স্থির শূন্য ops_dequeue(সংরচনা rq *rq, সংরচনা task_struct *p, u64 deq_flags)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 	unsigned long opss;
 
 	/* dequeue is always temporary, don't reset runnable_at */
@@ -2236,16 +2236,16 @@ retry:
 	/* acquire ensures that we see the preceding updates on QUEUED */
 	opss = atomic_long_read_acquire(&p->scx.ops_state);
 
-	switch (opss & SCX_OPSS_STATE_MASK) {
-	case SCX_OPSS_NONE:
-		break;
-	case SCX_OPSS_QUEUEING:
+	ৱিকল্প (opss & SCX_OPSS_STATE_MASK) {
+	পক্ষ SCX_OPSS_NONE:
+		ভঙ্গ;
+	পক্ষ SCX_OPSS_QUEUEING:
 		/*
 		 * QUEUEING is started and finished while holding @p's rq lock.
 		 * As we're holding the rq lock now, we shouldn't see QUEUEING.
 		 */
 		BUG();
-	case SCX_OPSS_QUEUED:
+	পক্ষ SCX_OPSS_QUEUED:
 		/*
 		 * A queued task must always be in BPF scheduler's custody. If
 		 * SCX_TASK_IN_CUSTODY is clear, finish_dispatch() on another
@@ -2255,16 +2255,16 @@ retry:
 		 * cpu_relax() is bounded: we will observe NONE (or DISPATCHING,
 		 * handled by the fallthrough) on a subsequent iteration.
 		 */
-		if (unlikely(!(READ_ONCE(p->scx.flags) & SCX_TASK_IN_CUSTODY))) {
+		যদি (unlikely(!(READ_ONCE(p->scx.flags) & SCX_TASK_IN_CUSTODY))) {
 			cpu_relax();
-			goto retry;
+			গচ্ছ retry;
 		}
 
-		if (atomic_long_try_cmpxchg(&p->scx.ops_state, &opss,
+		যদি (atomic_long_try_cmpxchg(&p->scx.ops_state, &opss,
 					    SCX_OPSS_NONE))
-			break;
+			ভঙ্গ;
 		fallthrough;
-	case SCX_OPSS_DISPATCHING:
+	পক্ষ SCX_OPSS_DISPATCHING:
 		/*
 		 * If @p is being dispatched from the BPF scheduler to a DSQ,
 		 * wait for the transfer to complete so that @p doesn't get
@@ -2280,7 +2280,7 @@ retry:
 		 */
 		wait_ops_state(p, SCX_OPSS_DISPATCHING);
 		BUG_ON(atomic_long_read(&p->scx.ops_state) != SCX_OPSS_NONE);
-		break;
+		ভঙ্গ;
 	}
 
 	/*
@@ -2297,25 +2297,25 @@ retry:
 	 * NONE but the task may still have %SCX_TASK_IN_CUSTODY set until
 	 * it is enqueued on the destination.
 	 */
-	if (task_leave_custody(p) && SCX_HAS_OP(sch, dequeue))
+	যদি (task_leave_custody(p) && SCX_HAS_OP(sch, dequeue))
 		SCX_CALL_OP_TASK(sch, dequeue, rq, p, deq_flags);
 }
 
-static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int core_deq_flags)
+স্থির bool dequeue_task_scx(সংরচনা rq *rq, সংরচনা task_struct *p, পূর্ণাঙ্ক core_deq_flags)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 	u64 deq_flags = core_deq_flags;
 
 	/*
 	 * Set %SCX_DEQ_SCHED_CHANGE when the dequeue is due to a property
 	 * change (not sleep).
 	 */
-	if (!(deq_flags & DEQUEUE_SLEEP))
+	যদি (!(deq_flags & DEQUEUE_SLEEP))
 		deq_flags |= SCX_DEQ_SCHED_CHANGE;
 
-	if (!(p->scx.flags & SCX_TASK_QUEUED)) {
+	যদি (!(p->scx.flags & SCX_TASK_QUEUED)) {
 		WARN_ON_ONCE(task_runnable(p));
-		return true;
+		ঘূৰাই true;
 	}
 
 	ops_dequeue(rq, p, deq_flags);
@@ -2332,19 +2332,19 @@ static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int core_deq_
 	 * information meaningful to the BPF scheduler and can be suppressed by
 	 * skipping the callbacks if the task is !QUEUED.
 	 */
-	if (task_current(rq, p) &&
+	যদি (task_current(rq, p) &&
 	    (SCX_HAS_OP(sch, stopping) || unlikely(p == scx_rescuee(rq)))) {
 		update_curr_scx(rq);
-		if (SCX_HAS_OP(sch, stopping))
+		যদি (SCX_HAS_OP(sch, stopping))
 			SCX_CALL_OP_TASK(sch, stopping, rq, p, false);
 	}
 
-	if (SCX_HAS_OP(sch, quiescent) && !task_on_rq_migrating(p))
+	যদি (SCX_HAS_OP(sch, quiescent) && !task_on_rq_migrating(p))
 		SCX_CALL_OP_TASK(sch, quiescent, rq, p, deq_flags);
 
-	if (deq_flags & SCX_DEQ_SLEEP)
+	যদি (deq_flags & SCX_DEQ_SLEEP)
 		p->scx.flags |= SCX_TASK_DEQD_FOR_SLEEP;
-	else
+	অন্যথা
 		p->scx.flags &= ~SCX_TASK_DEQD_FOR_SLEEP;
 
 	p->scx.flags &= ~SCX_TASK_QUEUED;
@@ -2354,50 +2354,50 @@ static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int core_deq_
 	scx_dispatch_dequeue(rq, p);
 
 	/* see scx_task_slice_ended() for the save/restore exception */
-	if (!((deq_flags & DEQUEUE_SAVE) && task_current(rq, p)))
+	যদি (!((deq_flags & DEQUEUE_SAVE) && task_current(rq, p)))
 		scx_task_slice_ended(rq, p);
 
 	clear_direct_dispatch(p);
-	return true;
+	ঘূৰাই true;
 }
 
-static void yield_task_scx(struct rq *rq)
+স্থির শূন্য yield_task_scx(সংরচনা rq *rq)
 {
-	struct task_struct *p = rq->donor;
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা task_struct *p = rq->donor;
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 
 	/* a yield gives the slice up */
 	scx_task_slice_ended(rq, p);
 
-	if (SCX_HAS_OP(sch, yield))
-		SCX_CALL_OP_2TASKS_RET(sch, yield, rq, p, NULL);
-	else
+	যদি (SCX_HAS_OP(sch, yield))
+		SCX_CALL_OP_2TASKS_RET(sch, yield, rq, p, রিক্ত);
+	অন্যথা
 		scx_set_task_slice(p, 0);
 }
 
-static bool yield_to_task_scx(struct rq *rq, struct task_struct *to)
+স্থির bool yield_to_task_scx(সংরচনা rq *rq, সংরচনা task_struct *to)
 {
-	struct task_struct *from = rq->donor;
-	struct scx_sched *sch = scx_task_sched(from);
+	সংরচনা task_struct *from = rq->donor;
+	সংরচনা scx_sched *sch = scx_task_sched(from);
 
 	/* like a plain yield, giving the slice up ends the protection */
 	scx_task_slice_ended(rq, from);
 
-	if (SCX_HAS_OP(sch, yield) && sch == scx_task_sched(to))
-		return SCX_CALL_OP_2TASKS_RET(sch, yield, rq, from, to);
-	else
-		return false;
+	যদি (SCX_HAS_OP(sch, yield) && sch == scx_task_sched(to))
+		ঘূৰাই SCX_CALL_OP_2TASKS_RET(sch, yield, rq, from, to);
+	অন্যথা
+		ঘূৰাই false;
 }
 
-static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p, int wake_flags)
+স্থির শূন্য wakeup_preempt_scx(সংরচনা rq *rq, সংরচনা task_struct *p, পূর্ণাঙ্ক wake_flags)
 {
 	/*
 	 * Preemption between SCX tasks is implemented by resetting the victim
 	 * task's slice to 0 and triggering reschedule on the target CPU.
 	 * Nothing to do.
 	 */
-	if (p->sched_class == &ext_sched_class)
-		return;
+	যদি (p->sched_class == &ext_sched_class)
+		ঘূৰাই;
 
 	/*
 	 * Getting preempted by a higher-priority class. Reenqueue IMMED tasks.
@@ -2409,14 +2409,14 @@ static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p, int wake_fl
 	 *
 	 * - A higher-priority wakes up while SCX dispatch is in progress.
 	 */
-	if (rq->scx.nr_immed)
+	যদি (rq->scx.nr_immed)
 		scx_schedule_reenq_local(rq, 0);
 }
 
-void scx_move_local_task_to_local_dsq(struct scx_sched *sch, struct task_struct *p,
-				      u64 enq_flags, struct rq *dst_rq)
+শূন্য scx_move_local_task_to_local_dsq(সংরচনা scx_sched *sch, সংরচনা task_struct *p,
+				      u64 enq_flags, সংরচনা rq *dst_rq)
 {
-	struct scx_dispatch_q *dst_dsq;
+	সংরচনা scx_dispatch_q *dst_dsq;
 
 	lockdep_assert_rq_held(dst_rq);
 
@@ -2425,10 +2425,10 @@ void scx_move_local_task_to_local_dsq(struct scx_sched *sch, struct task_struct 
 
 	dst_dsq = scx_resolve_local_dsq(sch, dst_rq, p, &enq_flags);
 
-	if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT))
-		dsq_insert_head(dst_dsq, p);
-	else
-		list_add_tail(&p->scx.dsq_list.node, &dst_dsq->list);
+	যদি (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT))
+		dsq_ঢোকাও_head(dst_dsq, p);
+	অন্যথা
+		list_add_tail(&p->scx.dsq_list.গ্ৰন্থি, &dst_dsq->list);
 
 	dsq_inc_nr(dst_dsq, p, enq_flags);
 	p->scx.dsq = dst_dsq;
@@ -2446,9 +2446,9 @@ void scx_move_local_task_to_local_dsq(struct scx_sched *sch, struct task_struct 
  *
  * Move @p which is currently on @src_rq to @dst_rq's local DSQ.
  */
-static void move_remote_task_to_local_dsq(struct scx_sched *sch,
-					  struct task_struct *p, u64 enq_flags,
-					  struct rq *src_rq, struct rq *dst_rq)
+স্থির শূন্য move_remote_task_to_local_dsq(সংরচনা scx_sched *sch,
+					  সংরচনা task_struct *p, u64 enq_flags,
+					  সংরচনা rq *src_rq, সংরচনা rq *dst_rq)
 {
 	lockdep_assert_rq_held(src_rq);
 
@@ -2475,7 +2475,7 @@ static void move_remote_task_to_local_dsq(struct scx_sched *sch,
 	dst_rq->scx.remote_activate_sch = sch;
 	activate_task(dst_rq, p, 0);
 	dst_rq->scx.remote_activate_enq_flags = 0;
-	dst_rq->scx.remote_activate_sch = NULL;
+	dst_rq->scx.remote_activate_sch = রিক্ত;
 }
 
 /*
@@ -2498,8 +2498,8 @@ static void move_remote_task_to_local_dsq(struct scx_sched *sch,
  * The caller must ensure that @p and @rq are on different CPUs.
  * If enforce == true, caller must hold @p's rq lock.
  */
-static bool task_can_run_on_remote_rq(struct scx_sched *sch,
-				      struct task_struct *p, struct rq *rq,
+স্থির bool task_can_run_on_remote_rq(সংরচনা scx_sched *sch,
+				      সংরচনা task_struct *p, সংরচনা rq *rq,
 				      bool enforce)
 {
 	s32 cpu = cpu_of(rq);
@@ -2509,7 +2509,7 @@ static bool task_can_run_on_remote_rq(struct scx_sched *sch,
 	 * out, make sure we're holding @p's rq lock so as not to risk
 	 * erroneously killing the BPF scheduler.
 	 */
-	if (enforce)
+	যদি (enforce)
 		lockdep_assert_rq_held(task_rq(p));
 
 	WARN_ON_ONCE(task_cpu(p) == cpu);
@@ -2526,11 +2526,11 @@ static bool task_can_run_on_remote_rq(struct scx_sched *sch,
 	 * and the BPF scheduler failing to check migration disabled state can
 	 * easily be masked if task_allowed_on_cpu() is done first.
 	 */
-	if (unlikely(is_migration_disabled(p))) {
-		if (enforce)
+	যদি (unlikely(is_migration_disabled(p))) {
+		যদি (enforce)
 			scx_error(sch, "SCX_DSQ_LOCAL[_ON] cannot move migration disabled %s[%d] from CPU %d to %d",
 				  p->comm, p->pid, task_cpu(p), cpu);
-		return false;
+		ঘূৰাই false;
 	}
 
 	/*
@@ -2539,20 +2539,20 @@ static bool task_can_run_on_remote_rq(struct scx_sched *sch,
 	 * between scx_bpf_dsq_insert() calls and here. Trigger error iff the
 	 * picked CPU is outside the allowed mask.
 	 */
-	if (!task_allowed_on_cpu(p, cpu)) {
-		if (enforce)
+	যদি (!task_allowed_on_cpu(p, cpu)) {
+		যদি (enforce)
 			scx_error(sch, "SCX_DSQ_LOCAL[_ON] target CPU %d not allowed for %s[%d]",
 				  cpu, p->comm, p->pid);
-		return false;
+		ঘূৰাই false;
 	}
 
-	if (!scx_rq_online(rq)) {
-		if (enforce)
+	যদি (!scx_rq_online(rq)) {
+		যদি (enforce)
 			__scx_add_event(sch, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE, 1);
-		return false;
+		ঘূৰাই false;
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
 /**
@@ -2585,10 +2585,10 @@ static bool task_can_run_on_remote_rq(struct scx_sched *sch,
  * On return, @dsq is unlocked and @src_rq is locked. Returns %true if @p is
  * still valid. %false if lost to dequeue.
  */
-static bool unlink_dsq_and_switch_rq_lock(struct task_struct *p,
-					  struct scx_dispatch_q *dsq,
-					  struct rq *locked_rq,
-					  struct rq *src_rq)
+স্থির bool unlink_dsq_and_switch_rq_lock(সংরচনা task_struct *p,
+					  সংরচনা scx_dispatch_q *dsq,
+					  সংরচনা rq *locked_rq,
+					  সংরচনা rq *src_rq)
 {
 	s32 cpu = raw_smp_processor_id();
 
@@ -2603,24 +2603,24 @@ static bool unlink_dsq_and_switch_rq_lock(struct task_struct *p,
 	switch_rq_lock(locked_rq, src_rq);
 
 	/* task_rq couldn't have changed if we're still the holding cpu */
-	if (likely(p->scx.holding_cpu == cpu) && !WARN_ON_ONCE(src_rq != task_rq(p))) {
+	যদি (likely(p->scx.holding_cpu == cpu) && !WARN_ON_ONCE(src_rq != task_rq(p))) {
 		scx_wait_dispatching(p);
-		return true;
+		ঘূৰাই true;
 	}
 
-	return false;
+	ঘূৰাই false;
 }
 
-static bool consume_remote_task(struct scx_sched *sch, struct rq *this_rq,
-				struct task_struct *p, u64 enq_flags,
-				struct scx_dispatch_q *dsq, struct rq *src_rq)
+স্থির bool consume_remote_task(সংরচনা scx_sched *sch, সংরচনা rq *this_rq,
+				সংরচনা task_struct *p, u64 enq_flags,
+				সংরচনা scx_dispatch_q *dsq, সংরচনা rq *src_rq)
 {
-	if (unlink_dsq_and_switch_rq_lock(p, dsq, this_rq, src_rq)) {
+	যদি (unlink_dsq_and_switch_rq_lock(p, dsq, this_rq, src_rq)) {
 		move_remote_task_to_local_dsq(sch, p, enq_flags, src_rq, this_rq);
-		return true;
-	} else {
+		ঘূৰাই true;
+	} অন্যথা {
 		switch_rq_lock(src_rq, this_rq);
-		return false;
+		ঘূৰাই false;
 	}
 }
 
@@ -2640,12 +2640,12 @@ static bool consume_remote_task(struct scx_sched *sch, struct rq *this_rq,
  * On return, @src_dsq is unlocked and only @p's new task_rq, which is the
  * return value, is locked.
  */
-static struct rq *move_task_between_dsqs(struct scx_sched *sch,
-					 struct task_struct *p, u64 enq_flags,
-					 struct scx_dispatch_q *src_dsq,
-					 struct scx_dispatch_q *dst_dsq)
+স্থির সংরচনা rq *move_task_between_dsqs(সংরচনা scx_sched *sch,
+					 সংরচনা task_struct *p, u64 enq_flags,
+					 সংরচনা scx_dispatch_q *src_dsq,
+					 সংরচনা scx_dispatch_q *dst_dsq)
 {
-	struct rq *src_rq = task_rq(p), *dst_rq;
+	সংরচনা rq *src_rq = task_rq(p), *dst_rq;
 
 	BUG_ON(src_dsq->id == SCX_DSQ_LOCAL);
 	lockdep_assert_held(&src_dsq->lock);
@@ -2653,15 +2653,15 @@ static struct rq *move_task_between_dsqs(struct scx_sched *sch,
 
 	scx_wait_dispatching(p);
 
-	if (dst_dsq->id == SCX_DSQ_LOCAL) {
-		dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
-		if (src_rq != dst_rq &&
+	যদি (dst_dsq->id == SCX_DSQ_LOCAL) {
+		dst_rq = container_of(dst_dsq, সংরচনা rq, scx.local_dsq);
+		যদি (src_rq != dst_rq &&
 		    unlikely(!task_can_run_on_remote_rq(sch, p, dst_rq, true))) {
 			dst_dsq = find_global_dsq(sch, task_cpu(p));
 			dst_rq = src_rq;
 			enq_flags |= SCX_ENQ_GDSQ_FALLBACK;
 		}
-	} else {
+	} অন্যথা {
 		/* no need to migrate if destination is a non-local DSQ */
 		dst_rq = src_rq;
 	}
@@ -2670,17 +2670,17 @@ static struct rq *move_task_between_dsqs(struct scx_sched *sch,
 	 * Move @p into $dst_dsq. If $dst_dsq is the local DSQ of a different
 	 * CPU, @p will be migrated.
 	 */
-	if (dst_dsq->id == SCX_DSQ_LOCAL) {
+	যদি (dst_dsq->id == SCX_DSQ_LOCAL) {
 		/* @p is going from a non-local DSQ to a local DSQ */
-		if (src_rq == dst_rq) {
+		যদি (src_rq == dst_rq) {
 			scx_task_unlink_from_dsq(p, src_dsq);
 			raw_spin_unlock(&src_dsq->lock);
 			scx_move_local_task_to_local_dsq(sch, p, enq_flags, dst_rq);
-		} else {
+		} অন্যথা {
 			raw_spin_unlock(&src_dsq->lock);
 			move_remote_task_to_local_dsq(sch, p, enq_flags, src_rq, dst_rq);
 		}
-	} else {
+	} অন্যথা {
 		/*
 		 * @p is going from a non-local DSQ to a non-local DSQ. As
 		 * $src_dsq is already locked, do an abbreviated dequeue.
@@ -2691,26 +2691,26 @@ static struct rq *move_task_between_dsqs(struct scx_sched *sch,
 		scx_dispatch_enqueue(sch, dst_rq, dst_dsq, p, 0, 0, enq_flags);
 	}
 
-	return dst_rq;
+	ঘূৰাই dst_rq;
 }
 
-bool scx_consume_dispatch_q(struct scx_sched *sch, struct rq *rq,
-			    struct scx_dispatch_q *dsq, u64 enq_flags)
+bool scx_consume_dispatch_q(সংরচনা scx_sched *sch, সংরচনা rq *rq,
+			    সংরচনা scx_dispatch_q *dsq, u64 enq_flags)
 {
-	struct task_struct *p;
+	সংরচনা task_struct *p;
 retry:
 	/*
 	 * The caller can't expect to successfully consume a task if the task's
 	 * addition to @dsq isn't guaranteed to be visible somehow. Test
 	 * @dsq->list without locking and skip if it seems empty.
 	 */
-	if (list_empty(&dsq->list))
-		return false;
+	যদি (list_empty(&dsq->list))
+		ঘূৰাই false;
 
 	raw_spin_lock(&dsq->lock);
 
 	nldsq_for_each_task(p, dsq) {
-		struct rq *task_rq = task_rq(p);
+		সংরচনা rq *task_rq = task_rq(p);
 
 		/*
 		 * This loop can lead to multiple lockup scenarios, e.g. the BPF
@@ -2720,32 +2720,32 @@ retry:
 		 * the system into the bypass mode. This can easily live-lock the
 		 * machine. If aborting, exit from all non-bypass DSQs.
 		 */
-		if (unlikely(READ_ONCE(sch->aborting)) && dsq->id != SCX_DSQ_BYPASS)
-			break;
+		যদি (unlikely(READ_ONCE(sch->aborting)) && dsq->id != SCX_DSQ_BYPASS)
+			ভঙ্গ;
 
-		if (rq == task_rq) {
+		যদি (rq == task_rq) {
 			scx_task_unlink_from_dsq(p, dsq);
 			raw_spin_unlock(&dsq->lock);
 			scx_move_local_task_to_local_dsq(sch, p, enq_flags, rq);
-			return true;
+			ঘূৰাই true;
 		}
 
-		if (task_can_run_on_remote_rq(sch, p, rq, false)) {
-			if (likely(consume_remote_task(sch, rq, p, enq_flags, dsq, task_rq)))
-				return true;
-			goto retry;
+		যদি (task_can_run_on_remote_rq(sch, p, rq, false)) {
+			যদি (likely(consume_remote_task(sch, rq, p, enq_flags, dsq, task_rq)))
+				ঘূৰাই true;
+			গচ্ছ retry;
 		}
 	}
 
 	raw_spin_unlock(&dsq->lock);
-	return false;
+	ঘূৰাই false;
 }
 
-bool scx_consume_global_dsq(struct scx_sched *sch, struct rq *rq)
+bool scx_consume_global_dsq(সংরচনা scx_sched *sch, সংরচনা rq *rq)
 {
-	int node = cpu_to_node(cpu_of(rq));
+	পূর্ণাঙ্ক গ্ৰন্থি = cpu_to_গ্ৰন্থি(cpu_of(rq));
 
-	return scx_consume_dispatch_q(sch, rq, &sch->pnode[node]->global_dsq, 0);
+	ঘূৰাই scx_consume_dispatch_q(sch, rq, &sch->pnode[গ্ৰন্থি]->global_dsq, 0);
 }
 
 /**
@@ -2765,13 +2765,13 @@ bool scx_consume_global_dsq(struct scx_sched *sch, struct rq *rq)
  * The caller must have exclusive ownership of @p (e.g. through
  * %SCX_OPSS_DISPATCHING).
  */
-static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
-				  struct scx_dispatch_q *dst_dsq, struct task_struct *p,
+স্থির শূন্য dispatch_to_local_dsq(সংরচনা scx_sched *sch, সংরচনা rq *rq,
+				  সংরচনা scx_dispatch_q *dst_dsq, সংরচনা task_struct *p,
 				  u64 slice, u64 vtime, u64 enq_flags)
 {
-	struct rq *src_rq = task_rq(p);
-	struct rq *dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
-	struct rq *locked_rq = rq;
+	সংরচনা rq *src_rq = task_rq(p);
+	সংরচনা rq *dst_rq = container_of(dst_dsq, সংরচনা rq, scx.local_dsq);
+	সংরচনা rq *locked_rq = rq;
 
 	/*
 	 * We're synchronized against dequeue through DISPATCHING. As @p can't
@@ -2779,10 +2779,10 @@ static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
 	 *
 	 * If dispatching to @rq that @p is already on, no lock dancing needed.
 	 */
-	if (rq == src_rq && rq == dst_rq) {
+	যদি (rq == src_rq && rq == dst_rq) {
 		scx_dispatch_enqueue(sch, rq, dst_dsq, p, slice, vtime,
 				     enq_flags | SCX_ENQ_APPLY_SLICE | SCX_ENQ_CLEAR_OPSS);
-		return;
+		ঘূৰাই;
 	}
 
 	/*
@@ -2802,13 +2802,13 @@ static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
 	atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
 
 	/* switch to @src_rq lock */
-	if (locked_rq != src_rq) {
+	যদি (locked_rq != src_rq) {
 		switch_rq_lock(locked_rq, src_rq);
 		locked_rq = src_rq;
 	}
 
 	/* task_rq couldn't have changed if we're still the holding cpu */
-	if (likely(p->scx.holding_cpu == raw_smp_processor_id()) &&
+	যদি (likely(p->scx.holding_cpu == raw_smp_processor_id()) &&
 	    !WARN_ON_ONCE(src_rq != task_rq(p))) {
 		bool fallback = false;
 		/*
@@ -2816,18 +2816,18 @@ static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
 		 * through the full deactivate/activate cycle. Optimize by
 		 * abbreviating move_remote_task_to_local_dsq().
 		 */
-		if (src_rq == dst_rq) {
+		যদি (src_rq == dst_rq) {
 			p->scx.holding_cpu = -1;
 			scx_dispatch_enqueue(sch, dst_rq, &dst_rq->scx.local_dsq, p,
 					     slice, vtime, enq_flags | SCX_ENQ_APPLY_SLICE);
-		} else if (unlikely(!task_can_run_on_remote_rq(sch, p, dst_rq, true))) {
+		} অন্যথা যদি (unlikely(!task_can_run_on_remote_rq(sch, p, dst_rq, true))) {
 			p->scx.holding_cpu = -1;
 			fallback = true;
 			scx_dispatch_enqueue(sch, src_rq, find_global_dsq(sch, task_cpu(p)),
 					     p, slice, vtime,
 					     enq_flags | SCX_ENQ_APPLY_SLICE |
 					     SCX_ENQ_GDSQ_FALLBACK);
-		} else {
+		} অন্যথা {
 			apply_slice_vtime(p, slice, vtime, enq_flags);
 			move_remote_task_to_local_dsq(sch, p, enq_flags, src_rq, dst_rq);
 			/* task has been moved to dst_rq, which is now locked */
@@ -2835,12 +2835,12 @@ static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
 		}
 
 		/* if the destination CPU is idle, wake it up */
-		if (!fallback && sched_class_above(p->sched_class, dst_rq->curr->sched_class))
+		যদি (!fallback && sched_class_above(p->sched_class, dst_rq->curr->sched_class))
 			resched_curr(dst_rq);
 	}
 
 	/* switch back to @rq lock */
-	if (locked_rq != rq)
+	যদি (locked_rq != rq)
 		switch_rq_lock(locked_rq, rq);
 }
 
@@ -2866,11 +2866,11 @@ static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
  * was valid in the first place. Make sure that the task is still owned by the
  * BPF scheduler and claim the ownership before dispatching.
  */
-static void finish_dispatch(struct scx_sched *sch, struct rq *rq, struct task_struct *p,
+স্থির শূন্য finish_dispatch(সংরচনা scx_sched *sch, সংরচনা rq *rq, সংরচনা task_struct *p,
 			    unsigned long qseq_at_dispatch, u64 dsq_id,
 			    u64 slice, u64 vtime, u64 enq_flags)
 {
-	struct scx_dispatch_q *dsq;
+	সংরচনা scx_dispatch_q *dsq;
 	unsigned long opss;
 
 retry:
@@ -2880,24 +2880,24 @@ retry:
 	 */
 	opss = atomic_long_read(&p->scx.ops_state);
 
-	switch (opss & SCX_OPSS_STATE_MASK) {
-	case SCX_OPSS_DISPATCHING:
-	case SCX_OPSS_NONE:
+	ৱিকল্প (opss & SCX_OPSS_STATE_MASK) {
+	পক্ষ SCX_OPSS_DISPATCHING:
+	পক্ষ SCX_OPSS_NONE:
 		/* someone else already got to it */
-		return;
-	case SCX_OPSS_QUEUED:
+		ঘূৰাই;
+	পক্ষ SCX_OPSS_QUEUED:
 		/*
 		 * If qseq doesn't match, @p has gone through at least one
 		 * dispatch/dequeue and re-enqueue cycle between
 		 * scx_bpf_dsq_insert() and here and we have no claim on it.
 		 */
-		if ((opss & SCX_OPSS_QSEQ_MASK) != qseq_at_dispatch)
-			return;
+		যদি ((opss & SCX_OPSS_QSEQ_MASK) != qseq_at_dispatch)
+			ঘূৰাই;
 
 		/* see SCX_EV_INSERT_NOT_OWNED definition */
-		if (unlikely(!scx_task_on_sched(sch, p))) {
-			__scx_add_event(sch, SCX_EV_INSERT_NOT_OWNED, 1);
-			return;
+		যদি (unlikely(!scx_task_on_sched(sch, p))) {
+			__scx_add_event(sch, SCX_EV_ঢোকাও_NOT_OWNED, 1);
+			ঘূৰাই;
 		}
 
 		/*
@@ -2907,11 +2907,11 @@ retry:
 		 * claim @p by atomically transitioning it from QUEUED to
 		 * DISPATCHING.
 		 */
-		if (likely(atomic_long_try_cmpxchg(&p->scx.ops_state, &opss,
+		যদি (likely(atomic_long_try_cmpxchg(&p->scx.ops_state, &opss,
 						   SCX_OPSS_DISPATCHING)))
-			break;
-		goto retry;
-	case SCX_OPSS_QUEUEING:
+			ভঙ্গ;
+		গচ্ছ retry;
+	পক্ষ SCX_OPSS_QUEUEING:
 		/*
 		 * scx_do_enqueue_task() is in the process of transferring the
 		 * task to the BPF scheduler while holding @p's rq lock. As we
@@ -2919,27 +2919,27 @@ retry:
 		 * path may depend upon, it's safe to wait.
 		 */
 		wait_ops_state(p, opss);
-		goto retry;
+		গচ্ছ retry;
 	}
 
 	BUG_ON(!(p->scx.flags & SCX_TASK_QUEUED));
 
 	dsq = find_dsq_for_dispatch(sch, rq, dsq_id, task_cpu(p));
 
-	if (dsq->id == SCX_DSQ_LOCAL)
+	যদি (dsq->id == SCX_DSQ_LOCAL)
 		dispatch_to_local_dsq(sch, rq, dsq, p, slice, vtime, enq_flags);
-	else
+	অন্যথা
 		scx_dispatch_enqueue(sch, rq, dsq, p, slice, vtime,
 				     enq_flags | SCX_ENQ_APPLY_SLICE | SCX_ENQ_CLEAR_OPSS);
 }
 
-void scx_flush_dispatch_buf(struct scx_sched *sch, struct rq *rq)
+শূন্য scx_flush_dispatch_buf(সংরচনা scx_sched *sch, সংরচনা rq *rq)
 {
-	struct scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
+	সংরচনা scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
 	u32 u;
 
-	for (u = 0; u < dspc->cursor; u++) {
-		struct scx_dsp_buf_ent *ent = &dspc->buf[u];
+	বাবে (u = 0; u < dspc->cursor; u++) {
+		সংরচনা scx_dsp_buf_ent *ent = &dspc->buf[u];
 
 		finish_dispatch(sch, rq, ent->task, ent->qseq, ent->dsq_id,
 				ent->slice, ent->vtime, ent->enq_flags);
@@ -2949,12 +2949,12 @@ void scx_flush_dispatch_buf(struct scx_sched *sch, struct rq *rq)
 	dspc->cursor = 0;
 }
 
-static inline void maybe_queue_balance_callback(struct rq *rq)
+স্থির অন্তঃস্থ শূন্য maybe_queue_balance_callback(সংরচনা rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
-	if (!(rq->scx.flags & SCX_RQ_BAL_CB_PENDING))
-		return;
+	যদি (!(rq->scx.flags & SCX_RQ_BAL_CB_PENDING))
+		ঘূৰাই;
 
 	queue_balance_callback(rq, &rq->scx.deferred_bal_cb,
 				deferred_bal_cb_workfn);
@@ -2962,10 +2962,10 @@ static inline void maybe_queue_balance_callback(struct rq *rq)
 	rq->scx.flags &= ~SCX_RQ_BAL_CB_PENDING;
 }
 
-static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev)
+স্থির গণনা scx_dsp_verdict dispatch_one(সংরচনা rq *rq, সংরচনা task_struct *prev)
 {
-	struct scx_sched *root_sch = scx_root_protected_live();
-	enum scx_dsp_verdict verdict;
+	সংরচনা scx_sched *মূল_sch = scx_মূল_protected_live();
+	গণনা scx_dsp_verdict verdict;
 	s32 cpu = cpu_of(rq);
 
 	lockdep_assert_rq_held(rq);
@@ -2973,7 +2973,7 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 
 	scx_process_sync_ecaps(rq, prev);
 
-	if ((root_sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT) &&
+	যদি ((মূল_sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT) &&
 	    unlikely(rq->scx.cpu_released)) {
 		/*
 		 * If the previous sched_class for the current CPU was not SCX,
@@ -2981,12 +2981,12 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 		 * core. This callback complements ->cpu_release(), which is
 		 * emitted in switch_class().
 		 */
-		if (root_sch->ops.cpu_acquire)
-			SCX_CALL_OP(root_sch, cpu_acquire, rq, cpu, NULL);
+		যদি (মূল_sch->ops.cpu_acquire)
+			SCX_CALL_OP(মূল_sch, cpu_acquire, rq, cpu, রিক্ত);
 		rq->scx.cpu_released = false;
 	}
 
-	if (prev->sched_class == &ext_sched_class) {
+	যদি (prev->sched_class == &ext_sched_class) {
 		update_curr_scx(rq);
 
 		/*
@@ -2999,22 +2999,22 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 		 * See scx_disable_workfn() for the explanation on the bypassing
 		 * test.
 		 */
-		if ((prev->scx.flags & SCX_TASK_QUEUED) && prev->scx.slice &&
+		যদি ((prev->scx.flags & SCX_TASK_QUEUED) && prev->scx.slice &&
 		    !scx_bypassing(scx_task_sched(prev), cpu)) {
 			verdict = SCX_DSP_PREV;
-			goto has_tasks;
+			গচ্ছ has_tasks;
 		}
 	}
 
 	/* if there already are tasks to run, nothing to do */
-	if (rq->scx.local_dsq.nr) {
+	যদি (rq->scx.local_dsq.nr) {
 		verdict = SCX_DSP_LOCAL;
-		goto has_tasks;
+		গচ্ছ has_tasks;
 	}
 
-	verdict = scx_dispatch_sched(root_sch, rq, prev, false);
-	if (verdict != SCX_DSP_NONE)
-		goto has_tasks;
+	verdict = scx_dispatch_sched(মূল_sch, rq, prev, false);
+	যদি (verdict != SCX_DSP_NONE)
+		গচ্ছ has_tasks;
 
 	/*
 	 * Didn't find another task to run. Keep running @prev unless its own
@@ -3022,18 +3022,18 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 	 * put_prev_task_scx(). Read the scheduler here as the dispatch above
 	 * may have dropped the rq lock while @prev changed class or scheduler.
 	 */
-	if (prev->scx.flags & SCX_TASK_QUEUED) {
-		struct scx_sched *prev_sch = scx_task_sched(prev);
+	যদি (prev->scx.flags & SCX_TASK_QUEUED) {
+		সংরচনা scx_sched *prev_sch = scx_task_sched(prev);
 
-		if ((!(prev_sch->ops.flags & SCX_OPS_ENQ_LAST) ||
+		যদি ((!(prev_sch->ops.flags & SCX_OPS_ENQ_LAST) ||
 		     scx_bypassing(prev_sch, cpu)) && scx_task_can_stay_on_cpu(rq, prev)) {
 			__scx_add_event(prev_sch, SCX_EV_DISPATCH_KEEP_LAST, 1);
 			verdict = SCX_DSP_PREV;
-			goto has_tasks;
+			গচ্ছ has_tasks;
 		}
 	}
 	rq->scx.flags &= ~SCX_RQ_IN_DISPATCH;
-	return SCX_DSP_NONE;
+	ঘূৰাই SCX_DSP_NONE;
 
 has_tasks:
 	/*
@@ -3046,21 +3046,21 @@ has_tasks:
 	 * - A non-IMMED HEAD task can get queued in front of an IMMED task
 	 *   between the IMMED queueing and the subsequent scheduling event.
 	 */
-	if (unlikely(rq->scx.local_dsq.nr > 1 && rq->scx.nr_immed))
+	যদি (unlikely(rq->scx.local_dsq.nr > 1 && rq->scx.nr_immed))
 		scx_schedule_reenq_local(rq, 0);
 
 	rq->scx.flags &= ~SCX_RQ_IN_DISPATCH;
-	return verdict;
+	ঘূৰাই verdict;
 }
 
-static void set_next_task_scx(struct rq *rq, struct task_struct *p, enum snt_e type)
+স্থির শূন্য set_next_task_scx(সংরচনা rq *rq, সংরচনা task_struct *p, গণনা snt_e type)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 
-	if (type == SNT_REPICK)
-		return;
+	যদি (type == SNT_REPICK)
+		ঘূৰাই;
 
-	if (p->scx.flags & SCX_TASK_QUEUED) {
+	যদি (p->scx.flags & SCX_TASK_QUEUED) {
 		/*
 		 * Core-sched might decide to execute @p before it is
 		 * dispatched. Call ops_dequeue() to notify the BPF scheduler.
@@ -3072,7 +3072,7 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, enum snt_e t
 	p->se.exec_start = rq_clock_task(rq);
 
 	/* see dequeue_task_scx() on why we skip when !QUEUED */
-	if (SCX_HAS_OP(sch, running) && (p->scx.flags & SCX_TASK_QUEUED))
+	যদি (SCX_HAS_OP(sch, running) && (p->scx.flags & SCX_TASK_QUEUED))
 		SCX_CALL_OP_TASK(sch, running, rq, p);
 
 	clr_task_runnable(p, true);
@@ -3089,8 +3089,8 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, enum snt_e t
 	 * nohz. In the future, we might want to add a mechanism to update
 	 * load_avgs periodically on tick-stopped CPUs.
 	 */
-	if (p->scx.slice == SCX_SLICE_INF) {
-		if (!(rq->scx.flags & SCX_RQ_CAN_STOP_TICK)) {
+	যদি (p->scx.slice == SCX_SLICE_INF) {
+		যদি (!(rq->scx.flags & SCX_RQ_CAN_STOP_TICK)) {
 			/*
 			 * Bypass mode always assigns finite slices, so @p
 			 * can't have an infinite slice while bypassing.
@@ -3102,8 +3102,8 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, enum snt_e t
 
 			update_other_load_avgs(rq);
 		}
-	} else {
-		if (rq->scx.flags & SCX_RQ_CAN_STOP_TICK) {
+	} অন্যথা {
+		যদি (rq->scx.flags & SCX_RQ_CAN_STOP_TICK) {
 			rq->scx.flags &= ~SCX_RQ_CAN_STOP_TICK;
 			update_other_load_avgs(rq);
 		}
@@ -3112,34 +3112,34 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, enum snt_e t
 		 * @rq still references the outgoing scheduling context. A finite
 		 * slice is sufficient by itself to require the tick.
 		 */
-		if (tick_nohz_full_cpu(cpu_of(rq)))
+		যদি (tick_nohz_full_cpu(cpu_of(rq)))
 			tick_nohz_dep_set_cpu(cpu_of(rq), TICK_DEP_BIT_SCHED);
 	}
 }
 
-void scx_proxy_donor_start(struct rq *rq)
+শূন্য scx_proxy_donor_start(সংরচনা rq *rq)
 {
 }
 
-static enum scx_cpu_preempt_reason
-preempt_reason_from_class(const struct sched_class *class)
+স্থির গণনা scx_cpu_preempt_reason
+preempt_reason_from_class(ধ্রুৱ সংরচনা sched_class *class)
 {
-	if (class == &stop_sched_class)
-		return SCX_CPU_PREEMPT_STOP;
-	if (class == &dl_sched_class)
-		return SCX_CPU_PREEMPT_DL;
-	if (class == &rt_sched_class)
-		return SCX_CPU_PREEMPT_RT;
-	return SCX_CPU_PREEMPT_UNKNOWN;
+	যদি (class == &stop_sched_class)
+		ঘূৰাই SCX_CPU_PREEMPT_STOP;
+	যদি (class == &dl_sched_class)
+		ঘূৰাই SCX_CPU_PREEMPT_DL;
+	যদি (class == &rt_sched_class)
+		ঘূৰাই SCX_CPU_PREEMPT_RT;
+	ঘূৰাই SCX_CPU_PREEMPT_UNKNOWN;
 }
 
-static void switch_class(struct rq *rq, struct task_struct *next)
+স্থির শূন্য switch_class(সংরচনা rq *rq, সংরচনা task_struct *next)
 {
-	struct scx_sched *sch = scx_root_protected_live();
-	const struct sched_class *next_class = next->sched_class;
+	সংরচনা scx_sched *sch = scx_মূল_protected_live();
+	ধ্রুৱ সংরচনা sched_class *next_class = next->sched_class;
 
-	if (!(sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT))
-		return;
+	যদি (!(sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT))
+		ঘূৰাই;
 
 	/*
 	 * The callback is conceptually meant to convey that the CPU is no
@@ -3147,8 +3147,8 @@ static void switch_class(struct rq *rq, struct task_struct *next)
 	 * if the next class is below SCX (in which case the BPF scheduler has
 	 * actively decided not to schedule any tasks on the CPU).
 	 */
-	if (sched_class_above(&ext_sched_class, next_class))
-		return;
+	যদি (sched_class_above(&ext_sched_class, next_class))
+		ঘূৰাই;
 
 	/*
 	 * At this point we know that SCX was preempted by a higher priority
@@ -3159,9 +3159,9 @@ static void switch_class(struct rq *rq, struct task_struct *next)
 	 * ->cpu_release() complements ->cpu_acquire(), which is emitted the
 	 *  next time that dispatch_one() is invoked.
 	 */
-	if (!rq->scx.cpu_released) {
-		if (sch->ops.cpu_release) {
-			struct scx_cpu_release_args args = {
+	যদি (!rq->scx.cpu_released) {
+		যদি (sch->ops.cpu_release) {
+			সংরচনা scx_cpu_release_args args = {
 				.reason = preempt_reason_from_class(next_class),
 				.task = next,
 			};
@@ -3172,10 +3172,10 @@ static void switch_class(struct rq *rq, struct task_struct *next)
 	}
 }
 
-static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
-			      struct task_struct *next)
+স্থির শূন্য put_prev_task_scx(সংরচনা rq *rq, সংরচনা task_struct *p,
+			      সংরচনা task_struct *next)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 	bool rescue_keep = false;
 
 	/* see kick_sync_wait_bal_cb() */
@@ -3187,18 +3187,18 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 	 * If the slice is consumed, protection ends with it. A rescuee
 	 * preempted beforehand keeps going, see scx_rescue_keep().
 	 */
-	if (!p->scx.slice) {
-		if (unlikely(p == scx_rescuee(rq)))
+	যদি (!p->scx.slice) {
+		যদি (unlikely(p == scx_rescuee(rq)))
 			rescue_keep = scx_rescue_keep(rq, p);
-		if (!rescue_keep)
+		যদি (!rescue_keep)
 			scx_task_slice_ended(rq, p);
 	}
 
 	/* see dequeue_task_scx() on why we skip when !QUEUED */
-	if (SCX_HAS_OP(sch, stopping) && (p->scx.flags & SCX_TASK_QUEUED))
+	যদি (SCX_HAS_OP(sch, stopping) && (p->scx.flags & SCX_TASK_QUEUED))
 		SCX_CALL_OP_TASK(sch, stopping, rq, p, true);
 
-	if (p->scx.flags & SCX_TASK_QUEUED) {
+	যদি (p->scx.flags & SCX_TASK_QUEUED) {
 		set_task_runnable(rq, p);
 
 		/*
@@ -3211,13 +3211,13 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 		 * An open rescue must keep @p on the local DSQ even if the
 		 * scheduler zeroed the slice in ops.stopping() above.
 		 */
-		if ((p->scx.slice || unlikely(p == scx_rescuee(rq))) &&
+		যদি ((p->scx.slice || unlikely(p == scx_rescuee(rq))) &&
 		    !scx_bypassing(sch, cpu_of(rq))) {
-			if (p->scx.flags & SCX_TASK_IMMED) {
+			যদি (p->scx.flags & SCX_TASK_IMMED) {
 				p->scx.flags |= SCX_TASK_REENQ_PREEMPTED;
 				scx_do_enqueue_task(rq, p, SCX_ENQ_REENQ, -1);
 				p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
-			} else {
+			} অন্যথা {
 				u64 enq_flags = 0;
 
 				/*
@@ -3225,18 +3225,18 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 				 * by another SCX task, append to the local DSQ,
 				 * see scx_rescue_keep().
 				 */
-				if (unlikely(p == scx_rescuee(rq))) {
+				যদি (unlikely(p == scx_rescuee(rq))) {
 					enq_flags |= SCX_ENQ_IGNORE_CAPS;
-					if (!rescue_keep)
+					যদি (!rescue_keep)
 						enq_flags |= SCX_ENQ_HEAD;
-				} else {
+				} অন্যথা {
 					enq_flags |= SCX_ENQ_HEAD;
 				}
 
 				scx_dispatch_enqueue(sch, rq, &rq->scx.local_dsq, p, 0, 0,
 						     enq_flags);
 			}
-			goto switch_class;
+			গচ্ছ switch_class;
 		}
 
 		/*
@@ -3249,7 +3249,7 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 		 * locally runnable and can legitimately go idle with @p still
 		 * runnable (see do_pick_task_scx()).
 		 */
-		if (next && sched_class_above(&ext_sched_class, next->sched_class) &&
+		যদি (next && sched_class_above(&ext_sched_class, next->sched_class) &&
 		    scx_task_can_stay_on_cpu(rq, p)) {
 			WARN_ON_ONCE(!sched_core_enabled(rq) &&
 				     !(sch->ops.flags & SCX_OPS_ENQ_LAST));
@@ -3262,21 +3262,21 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 			 * resched_curr() would flag @p and __schedule() clears
 			 * that right after the pick. Flag @next instead.
 			 */
-			if (p->scx.dsq == &rq->scx.local_dsq)
+			যদি (p->scx.dsq == &rq->scx.local_dsq)
 				set_tsk_need_resched(next);
-		} else {
+		} অন্যথা {
 			scx_do_enqueue_task(rq, p, 0, -1);
 		}
 	}
 
 switch_class:
-	if (next && next->sched_class != &ext_sched_class)
+	যদি (next && next->sched_class != &ext_sched_class)
 		switch_class(rq, next);
 }
 
-static void kick_sync_wait_bal_cb(struct rq *rq)
+স্থির শূন্য kick_sync_wait_bal_cb(সংরচনা rq *rq)
 {
-	struct scx_kick_syncs __rcu *ks;
+	সংরচনা scx_kick_syncs __rcu *ks;
 	unsigned long *ksyncs;
 	bool waited;
 	s32 cpu;
@@ -3290,8 +3290,8 @@ static void kick_sync_wait_bal_cb(struct rq *rq)
 	 * kicked CPUs are already on their way to advance the kick_syncs being
 	 * waited on. Don't get in the way.
 	 */
-	if (unlikely(cpu_of(rq) != smp_processor_id()))
-		return;
+	যদি (unlikely(cpu_of(rq) != smp_processor_id()))
+		ঘূৰাই;
 
 	ks = __this_cpu_read(scx_kick_syncs);
 	ksyncs = rcu_dereference_sched(ks)->syncs;
@@ -3312,15 +3312,15 @@ retry:
 		 * smp_load_acquire() pairs with smp_store_release() on
 		 * kick_sync updates on the target CPUs.
 		 */
-		if (cpu == cpu_of(rq) ||
+		যদি (cpu == cpu_of(rq) ||
 		    smp_load_acquire(&cpu_rq(cpu)->scx.kick_sync) != ksyncs[cpu]) {
 			cpumask_clear_cpu(cpu, rq->scx.cpus_to_sync);
-			continue;
+			অনুৱর্ত;
 		}
 
 		scx_rq_lock_drop(rq);
 		raw_spin_rq_unlock_irq(rq);
-		while (READ_ONCE(cpu_rq(cpu)->scx.kick_sync) == ksyncs[cpu]) {
+		যেতিয়ালৈ (READ_ONCE(cpu_rq(cpu)->scx.kick_sync) == ksyncs[cpu]) {
 			smp_store_release(&rq->scx.kick_sync, rq->scx.kick_sync + 1);
 			cpu_relax();
 		}
@@ -3328,23 +3328,23 @@ retry:
 		waited = true;
 	}
 
-	if (waited)
-		goto retry;
+	যদি (waited)
+		গচ্ছ retry;
 }
 
-static struct task_struct *first_local_task(struct rq *rq)
+স্থির সংরচনা task_struct *first_local_task(সংরচনা rq *rq)
 {
-	return list_first_entry_or_null(&rq->scx.local_dsq.list,
-					struct task_struct, scx.dsq_list.node);
+	ঘূৰাই list_first_entry_or_null(&rq->scx.local_dsq.list,
+					সংরচনা task_struct, scx.dsq_list.গ্ৰন্থি);
 }
 
 /*
  * Run dispatch and queue the follow-up work for a pick.
  */
-static enum scx_dsp_verdict dispatch_pick(struct rq *rq, struct rq_flags *rf,
-					  struct task_struct *prev)
+স্থির গণনা scx_dsp_verdict dispatch_pick(সংরচনা rq *rq, সংরচনা rq_flags *rf,
+					  সংরচনা task_struct *prev)
 {
-	enum scx_dsp_verdict verdict;
+	গণনা scx_dsp_verdict verdict;
 
 	rq_unpin_lock(rq, rf);
 	verdict = dispatch_one(rq, prev);
@@ -3356,13 +3356,13 @@ static enum scx_dsp_verdict dispatch_pick(struct rq *rq, struct rq_flags *rf,
 	 * Waiting directly in the pick path would deadlock against CPUs sending
 	 * us IPIs (e.g. TLB flushes) while we wait for them.
 	 */
-	if (unlikely(rq->scx.kick_sync_pending)) {
+	যদি (unlikely(rq->scx.kick_sync_pending)) {
 		rq->scx.kick_sync_pending = false;
 		queue_balance_callback(rq, &rq->scx.kick_sync_bal_cb,
 				       kick_sync_wait_bal_cb);
 	}
 
-	return verdict;
+	ঘূৰাই verdict;
 }
 
 #ifdef CONFIG_SCHED_CORE
@@ -3373,30 +3373,30 @@ static enum scx_dsp_verdict dispatch_pick(struct rq *rq, struct rq_flags *rf,
  * in between - return %SCX_DSP_RETRY to restart the selection against current
  * state.
  */
-static enum scx_dsp_verdict dispatch_core_pick(struct rq *rq, struct rq_flags *rf,
-					       struct task_struct *prev)
+স্থির গণনা scx_dsp_verdict dispatch_core_pick(সংরচনা rq *rq, সংরচনা rq_flags *rf,
+					       সংরচনা task_struct *prev)
 {
-	enum scx_dsp_verdict verdict;
+	গণনা scx_dsp_verdict verdict;
 	u32 seq = rq->scx.lock_drop_seq;
 
 	/* another dispatch is in flight on @rq, let that handle it */
-	if (rq->scx.flags & SCX_RQ_IN_DISPATCH)
-		return SCX_DSP_NONE;
+	যদি (rq->scx.flags & SCX_RQ_IN_DISPATCH)
+		ঘূৰাই SCX_DSP_NONE;
 
 	rq_unpin_lock(rq, rf);
 
 	verdict = dispatch_one(rq, prev);
 
-	if (cpu_of(rq) == smp_processor_id()) {
+	যদি (cpu_of(rq) == smp_processor_id()) {
 		maybe_queue_balance_callback(rq);
 
 		/* see dispatch_pick() */
-		if (unlikely(rq->scx.kick_sync_pending)) {
+		যদি (unlikely(rq->scx.kick_sync_pending)) {
 			rq->scx.kick_sync_pending = false;
 			queue_balance_callback(rq, &rq->scx.kick_sync_bal_cb,
 					       kick_sync_wait_bal_cb);
 		}
-	} else if (unlikely(rq->scx.flags & SCX_RQ_BAL_CB_PENDING)) {
+	} অন্যথা যদি (unlikely(rq->scx.flags & SCX_RQ_BAL_CB_PENDING)) {
 		/*
 		 * Balance callbacks must run in the context that queued them,
 		 * so they can't be queued on another CPU's rq. Run the deferred
@@ -3409,38 +3409,38 @@ static enum scx_dsp_verdict dispatch_core_pick(struct rq *rq, struct rq_flags *r
 	rq_repin_lock(rq, rf);
 
 	/* if dispatch_one() released the rq lock, restart the selection */
-	if (rq->scx.lock_drop_seq != seq)
-		return SCX_DSP_RETRY;
+	যদি (rq->scx.lock_drop_seq != seq)
+		ঘূৰাই SCX_DSP_RETRY;
 
-	return verdict;
+	ঘূৰাই verdict;
 }
-#else	/* CONFIG_SCHED_CORE */
-static enum scx_dsp_verdict dispatch_core_pick(struct rq *rq, struct rq_flags *rf,
-					       struct task_struct *prev)
+#অন্যথা	/* CONFIG_SCHED_CORE */
+স্থির গণনা scx_dsp_verdict dispatch_core_pick(সংরচনা rq *rq, সংরচনা rq_flags *rf,
+					       সংরচনা task_struct *prev)
 {
-	return SCX_DSP_NONE;
+	ঘূৰাই SCX_DSP_NONE;
 }
 #endif	/* CONFIG_SCHED_CORE */
 
-static struct task_struct *
-do_pick_task_scx(struct rq *rq, struct rq_flags *rf, bool force_scx)
+স্থির সংরচনা task_struct *
+do_pick_task_scx(সংরচনা rq *rq, সংরচনা rq_flags *rf, bool force_scx)
 {
-	struct task_struct *prev = rq->curr;
-	enum scx_dsp_verdict verdict;
-	struct task_struct *p;
+	সংরচনা task_struct *prev = rq->curr;
+	গণনা scx_dsp_verdict verdict;
+	সংরচনা task_struct *p;
 
 	/* see kick_sync_wait_bal_cb() */
 	smp_store_release(&rq->scx.kick_sync, rq->scx.kick_sync + 1);
 
 	rq_modified_begin(rq, &ext_sched_class);
 
-	if (sched_core_enabled(rq))
+	যদি (sched_core_enabled(rq))
 		verdict = dispatch_core_pick(rq, rf, prev);
-	else
+	অন্যথা
 		verdict = dispatch_pick(rq, rf, prev);
 
-	if (verdict == SCX_DSP_RETRY)
-		return RETRY_TASK;
+	যদি (verdict == SCX_DSP_RETRY)
+		ঘূৰাই RETRY_TASK;
 
 	/*
 	 * If any higher-priority sched class enqueued a runnable task on this
@@ -3450,29 +3450,29 @@ do_pick_task_scx(struct rq *rq, struct rq_flags *rf, bool force_scx)
 	 * If @force_scx is true, always try to pick a SCHED_EXT task,
 	 * regardless of any higher-priority sched classes activity.
 	 */
-	if (!force_scx && rq_modified_above(rq, &ext_sched_class))
-		return RETRY_TASK;
+	যদি (!force_scx && rq_modified_above(rq, &ext_sched_class))
+		ঘূৰাই RETRY_TASK;
 
 	/*
 	 * If we're keeping @prev, replenish slice if necessary and keep running
 	 * @prev. Otherwise, pop the first one from the local DSQ.
 	 */
-	if (verdict == SCX_DSP_PREV) {
+	যদি (verdict == SCX_DSP_PREV) {
 		p = prev;
-		if (!p->scx.slice) {
+		যদি (!p->scx.slice) {
 			/* the slice is consumed, protection ends */
 			scx_task_slice_ended(rq, p);
 			refill_task_slice_dfl(scx_task_sched(p), p);
 		}
-	} else {
+	} অন্যথা {
 		p = first_local_task(rq);
-		if (!p)
-			return NULL;
+		যদি (!p)
+			ঘূৰাই রিক্ত;
 
-		if (unlikely(!p->scx.slice) && scx_task_can_stay_on_cpu(rq, p)) {
-			struct scx_sched *sch = scx_task_sched(p);
+		যদি (unlikely(!p->scx.slice) && scx_task_can_stay_on_cpu(rq, p)) {
+			সংরচনা scx_sched *sch = scx_task_sched(p);
 
-			if (!scx_bypassing(sch, cpu_of(rq)) &&
+			যদি (!scx_bypassing(sch, cpu_of(rq)) &&
 			    !sch->warned_zero_slice) {
 				printk_deferred(KERN_WARNING "sched_ext: %s[%d] has zero slice in %s()\n",
 						p->comm, p->pid, __func__);
@@ -3482,12 +3482,12 @@ do_pick_task_scx(struct rq *rq, struct rq_flags *rf, bool force_scx)
 		}
 	}
 
-	return p;
+	ঘূৰাই p;
 }
 
-static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
+স্থির সংরচনা task_struct *pick_task_scx(সংরচনা rq *rq, সংরচনা rq_flags *rf)
 {
-	return do_pick_task_scx(rq, rf, false);
+	ঘূৰাই do_pick_task_scx(rq, rf, false);
 }
 
 /*
@@ -3496,21 +3496,21 @@ static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
  * Use do_pick_task_scx() directly with @force_scx enabled, since the
  * dl_server must always select a sched_ext task.
  */
-static struct task_struct *
-ext_server_pick_task(struct sched_dl_entity *dl_se, struct rq_flags *rf)
+স্থির সংরচনা task_struct *
+ext_server_pick_task(সংরচনা sched_dl_entity *dl_se, সংরচনা rq_flags *rf)
 {
-	if (!scx_enabled())
-		return NULL;
+	যদি (!scx_enabled())
+		ঘূৰাই রিক্ত;
 
-	return do_pick_task_scx(dl_se->rq, rf, true);
+	ঘূৰাই do_pick_task_scx(dl_se->rq, rf, true);
 }
 
 /*
  * Initialize the ext server deadline entity.
  */
-void ext_server_init(struct rq *rq)
+শূন্য ext_server_init(সংরচনা rq *rq)
 {
-	struct sched_dl_entity *dl_se = &rq->ext_server;
+	সংরচনা sched_dl_entity *dl_se = &rq->ext_server;
 
 	init_dl_entity(dl_se);
 
@@ -3541,27 +3541,27 @@ void ext_server_init(struct rq *rq)
  *
  * Return: %true if @a should run after @b.
  */
-bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
+bool scx_prio_less(ধ্রুৱ সংরচনা task_struct *a, ধ্রুৱ সংরচনা task_struct *b,
 		   bool in_fi)
 {
-	struct scx_sched *sch_a = scx_task_sched(a);
-	struct scx_sched *sch_b = scx_task_sched(b);
-	struct scx_sched *sch = NULL;
+	সংরচনা scx_sched *sch_a = scx_task_sched(a);
+	সংরচনা scx_sched *sch_b = scx_task_sched(b);
+	সংরচনা scx_sched *sch = রিক্ত;
 	bool a_running, b_running;
 
-	if (sch_a == sch_b) {
-		if (SCX_HAS_OP(sch_a, core_sched_before))
+	যদি (sch_a == sch_b) {
+		যদি (SCX_HAS_OP(sch_a, core_sched_before))
 			sch = sch_a;
-	} else {
+	} অন্যথা {
 		s32 level;
 
-		for (level = min(sch_a->level, sch_b->level); level >= 0; level--) {
-			struct scx_sched *anc = sch_a->ancestors[level];
+		বাবে (level = min(sch_a->level, sch_b->level); level >= 0; level--) {
+			সংরচনা scx_sched *anc = sch_a->ancestors[level];
 
-			if (anc == sch_b->ancestors[level] &&
+			যদি (anc == sch_b->ancestors[level] &&
 			    SCX_HAS_OP(anc, core_sched_before)) {
 				sch = anc;
-				break;
+				ভঙ্গ;
 			}
 		}
 	}
@@ -3575,10 +3575,10 @@ bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
 	 * calling ops.core_sched_before(). Accesses are controlled by the
 	 * verifier.
 	 */
-	if (sch && !scx_bypassing(sch, task_cpu(a)) && !scx_bypassing(sch, task_cpu(b)))
-		return SCX_CALL_OP_2TASKS_RET(sch, core_sched_before, task_rq(a),
-					      (struct task_struct *)b,
-					      (struct task_struct *)a);
+	যদি (sch && !scx_bypassing(sch, task_cpu(a)) && !scx_bypassing(sch, task_cpu(b)))
+		ঘূৰাই SCX_CALL_OP_2TASKS_RET(sch, core_sched_before, task_rq(a),
+					      (সংরচনা task_struct *)b,
+					      (সংরচনা task_struct *)a);
 
 	/*
 	 * runnable_at is refreshed only on enqueue, so a task which keeps
@@ -3588,16 +3588,16 @@ bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
 	 */
 	a_running = a->on_cpu;
 	b_running = b->on_cpu;
-	if (a_running != b_running)
-		return a_running;
+	যদি (a_running != b_running)
+		ঘূৰাই a_running;
 
-	return time_after(a->scx.runnable_at, b->scx.runnable_at);
+	ঘূৰাই time_after(a->scx.runnable_at, b->scx.runnable_at);
 }
 #endif	/* CONFIG_SCHED_CORE */
 
-static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flags)
+স্থির পূর্ণাঙ্ক select_task_rq_scx(সংরচনা task_struct *p, পূর্ণাঙ্ক prev_cpu, পূর্ণাঙ্ক wake_flags)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 	bool bypassing;
 
 	/*
@@ -3610,30 +3610,30 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
 	 * which can decide to preempt self to force it through the regular
 	 * scheduling path.
 	 */
-	if (unlikely(wake_flags & WF_EXEC))
-		return prev_cpu;
+	যদি (unlikely(wake_flags & WF_EXEC))
+		ঘূৰাই prev_cpu;
 
 	bypassing = scx_bypassing(sch, task_cpu(p));
-	if (likely(SCX_HAS_OP(sch, select_cpu)) && !bypassing) {
+	যদি (likely(SCX_HAS_OP(sch, select_cpu)) && !bypassing) {
 		s32 cpu;
-		struct task_struct **ddsp_taskp;
+		সংরচনা task_struct **ddsp_taskp;
 
 		ddsp_taskp = this_cpu_ptr(&direct_dispatch_task);
 		WARN_ON_ONCE(*ddsp_taskp);
 		*ddsp_taskp = p;
 
 		this_rq()->scx.in_select_cpu = true;
-		cpu = SCX_CALL_OP_TASK_RET(sch, select_cpu, NULL, p,
+		cpu = SCX_CALL_OP_TASK_RET(sch, select_cpu, রিক্ত, p,
 					   scx_cpu_arg(prev_cpu), wake_flags);
 		cpu = scx_cpu_ret(sch, cpu);
 		this_rq()->scx.in_select_cpu = false;
 		p->scx.selected_cpu = cpu;
-		*ddsp_taskp = NULL;
-		if (scx_cpu_valid(sch, cpu, "from ops.select_cpu()"))
-			return cpu;
-		else
-			return prev_cpu;
-	} else {
+		*ddsp_taskp = রিক্ত;
+		যদি (scx_cpu_valid(sch, cpu, "from ops.select_cpu()"))
+			ঘূৰাই cpu;
+		অন্যথা
+			ঘূৰাই prev_cpu;
+	} অন্যথা {
 		s32 cpu;
 
 		/*
@@ -3643,14 +3643,14 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
 		 * scheduler does its own idle tracking and the built-in idle
 		 * cpumasks are not updated. Leave @p on @prev_cpu.
 		 */
-		if (bypassing) {
+		যদি (bypassing) {
 			__scx_add_event(sch, SCX_EV_BYPASS_DISPATCH, 1);
 			p->scx.selected_cpu = prev_cpu;
-			return prev_cpu;
+			ঘূৰাই prev_cpu;
 		}
 
-		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, NULL, 0);
-		if (cpu >= 0) {
+		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, রিক্ত, 0);
+		যদি (cpu >= 0) {
 			/*
 			 * Carry the slice refill and let the insertion commit
 			 * it under rq lock. See the write rules.
@@ -3659,29 +3659,29 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
 			p->scx.ddsp_slice = READ_ONCE(sch->slice_dfl);
 			p->scx.ddsp_enq_flags = SCX_ENQ_SLICE_DFL;
 			p->scx.ddsp_dsq_id = SCX_DSQ_LOCAL;
-		} else {
+		} অন্যথা {
 			cpu = prev_cpu;
 		}
 		p->scx.selected_cpu = cpu;
 
-		return cpu;
+		ঘূৰাই cpu;
 	}
 }
 
-static void task_woken_scx(struct rq *rq, struct task_struct *p)
+স্থির শূন্য task_woken_scx(সংরচনা rq *rq, সংরচনা task_struct *p)
 {
 	run_deferred(rq);
 }
 
-static void set_cpus_allowed_scx(struct task_struct *p,
-				 struct affinity_context *ac)
+স্থির শূন্য set_cpus_allowed_scx(সংরচনা task_struct *p,
+				 সংরচনা affinity_context *ac)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 
 	set_cpus_allowed_common(p, ac);
 
-	if (task_dead_and_done(p))
-		return;
+	যদি (task_dead_and_done(p))
+		ঘূৰাই;
 
 	/*
 	 * The effective cpumask is stored in @p->cpus_ptr which may temporarily
@@ -3694,14 +3694,14 @@ static void set_cpus_allowed_scx(struct task_struct *p,
 	 * The cid form receives the initial mask when the task is enabled and
 	 * hears about changes only afterwards, see struct scx_enable_args.
 	 */
-	if (SCX_HAS_OP(sch, set_cpumask) &&
+	যদি (SCX_HAS_OP(sch, set_cpumask) &&
 	    (!scx_is_cid_type() || scx_get_task_state(p) == SCX_TASK_ENABLED))
-		scx_call_op_set_cpumask(sch, task_rq(p), p, (struct cpumask *)p->cpus_ptr);
+		scx_call_op_set_cpumask(sch, task_rq(p), p, (সংরচনা cpumask *)p->cpus_ptr);
 }
 
-static void handle_hotplug(struct rq *rq, bool online)
+স্থির শূন্য handle_hotplug(সংরচনা rq *rq, bool online)
 {
-	struct scx_sched *sch = scx_root_protected();
+	সংরচনা scx_sched *sch = scx_মূল_protected();
 	s32 cpu = cpu_of(rq);
 	s32 cpu_or_cid = cpu;
 
@@ -3712,15 +3712,15 @@ static void handle_hotplug(struct rq *rq, bool online)
 	 * stable here. Note that we can't depend on scx_enabled() test as the
 	 * hotplug ops need to be enabled before __scx_enabled is set.
 	 */
-	if (unlikely(!sch))
-		return;
+	যদি (unlikely(!sch))
+		ঘূৰাই;
 
-	if (scx_enabled())
+	যদি (scx_enabled())
 		scx_idle_update_selcpu_topology(&sch->ops);
 
-	if (online)
+	যদি (online)
 		scx_online_ecaps(rq);
-	else
+	অন্যথা
 		scx_offline_ecaps(rq);
 
 	/*
@@ -3731,61 +3731,61 @@ static void handle_hotplug(struct rq *rq, bool online)
 	 * the translation. If the table is NULL, the ops are also cleared and
 	 * @cpu_or_cid goes unused.
 	 */
-	if (scx_is_cid_type()) {
+	যদি (scx_is_cid_type()) {
 		s16 *tbl = rcu_dereference_check(scx_cpu_to_cid_tbl,
 						 lockdep_is_cpus_held());
 
-		if (tbl) {
-			struct scx_sched *pos;
+		যদি (tbl) {
+			সংরচনা scx_sched *pos;
 
 			cpu_or_cid = tbl[cpu];
 
 			guard(raw_spinlock_irqsave)(&scx_sched_lock);
 			list_for_each_entry(pos, &scx_sched_all, all) {
-				struct scx_cmask *mask = pos->online_cmask;
+				সংরচনা scx_cmask *mask = pos->online_cmask;
 
-				if (mask)
+				যদি (mask)
 					__assign_bit(cpu_or_cid, (unsigned long *)mask->bits,
 						     online);
 			}
 		}
 	}
 
-	if (online && SCX_HAS_OP(sch, cpu_online))
-		SCX_CALL_OP(sch, cpu_online, NULL, cpu_or_cid);
-	else if (!online && SCX_HAS_OP(sch, cpu_offline))
-		SCX_CALL_OP(sch, cpu_offline, NULL, cpu_or_cid);
-	else
+	যদি (online && SCX_HAS_OP(sch, cpu_online))
+		SCX_CALL_OP(sch, cpu_online, রিক্ত, cpu_or_cid);
+	অন্যথা যদি (!online && SCX_HAS_OP(sch, cpu_offline))
+		SCX_CALL_OP(sch, cpu_offline, রিক্ত, cpu_or_cid);
+	অন্যথা
 		scx_exit(sch, SCX_EXIT_UNREG_KERN,
 			 SCX_ECODE_ACT_RESTART | SCX_ECODE_RSN_HOTPLUG,
 			 "cpu %d going %s, exiting scheduler", cpu,
 			 online ? "online" : "offline");
 }
 
-void scx_rq_activate(struct rq *rq)
+শূন্য scx_rq_activate(সংরচনা rq *rq)
 {
 	handle_hotplug(rq, true);
 }
 
-void scx_rq_deactivate(struct rq *rq)
+শূন্য scx_rq_deactivate(সংরচনা rq *rq)
 {
 	handle_hotplug(rq, false);
 }
 
-static void rq_online_scx(struct rq *rq)
+স্থির শূন্য rq_online_scx(সংরচনা rq *rq)
 {
 	rq->scx.flags |= SCX_RQ_ONLINE;
 }
 
-static void rq_offline_scx(struct rq *rq)
+স্থির শূন্য rq_offline_scx(সংরচনা rq *rq)
 {
-	struct task_struct *p, *n;
+	সংরচনা task_struct *p, *n;
 
 	rq->scx.flags &= ~SCX_RQ_ONLINE;
 
 	/* sched domain rebuilds call rq_offline with the CPU staying alive */
-	if (cpu_active(cpu_of(rq)))
-		return;
+	যদি (cpu_active(cpu_of(rq)))
+		ঘূৰাই;
 
 	scx_rescue_flush(rq);
 
@@ -3794,32 +3794,32 @@ static void rq_offline_scx(struct rq *rq)
 	 * onto the local DSQ so that they run here and balance_push() moves
 	 * them off.
 	 */
-	list_for_each_entry_safe_reverse(p, n, &rq->scx.runnable_list, scx.runnable_node) {
-		if (p->scx.dsq == &rq->scx.local_dsq)
-			continue;
+	list_for_each_entry_safe_reverse(p, n, &rq->scx.runnable_list, scx.runnable_গ্ৰন্থি) {
+		যদি (p->scx.dsq == &rq->scx.local_dsq)
+			অনুৱর্ত;
 		guard(sched_change)(p, DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK);
 	}
 }
 
-static bool check_rq_for_timeouts(struct rq *rq)
+স্থির bool check_rq_for_timeouts(সংরচনা rq *rq)
 {
-	struct scx_sched *sch;
-	struct task_struct *p;
-	struct rq_flags rf;
+	সংরচনা scx_sched *sch;
+	সংরচনা task_struct *p;
+	সংরচনা rq_flags rf;
 	bool timed_out = false;
 
 	rq_lock_irqsave(rq, &rf);
-	sch = rcu_dereference_bh(scx_root);
-	if (unlikely(!sch))
-		goto out_unlock;
+	sch = rcu_dereference_bh(scx_মূল);
+	যদি (unlikely(!sch))
+		গচ্ছ out_unlock;
 
-	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_node) {
-		struct scx_sched *sch = scx_task_sched(p);
+	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_গ্ৰন্থি) {
+		সংরচনা scx_sched *sch = scx_task_sched(p);
 		unsigned long last_runnable = p->scx.runnable_at;
 
-		if (unlikely(time_after(jiffies,
+		যদি (unlikely(time_after(jiffies,
 					last_runnable + READ_ONCE(sch->watchdog_timeout)))) {
-			struct scx_dispatch_q *dsq = READ_ONCE(p->scx.dsq);
+			সংরচনা scx_dispatch_q *dsq = READ_ONCE(p->scx.dsq);
 			u32 dur_ms = jiffies_to_msecs(jiffies - last_runnable);
 
 			/*
@@ -3829,7 +3829,7 @@ static bool check_rq_for_timeouts(struct rq *rq)
 			 * Blame the drainer. The local DSQ is consumed by the
 			 * cpu itself and keeps blame on the owner.
 			 */
-			if (dsq && dsq->sched && dsq->id != SCX_DSQ_LOCAL)
+			যদি (dsq && dsq->sched && dsq->id != SCX_DSQ_LOCAL)
 				sch = dsq->sched;
 
 			__scx_exit(sch, SCX_EXIT_ERROR_STALL, 0, cpu_of(rq),
@@ -3837,51 +3837,51 @@ static bool check_rq_for_timeouts(struct rq *rq)
 				   p->comm, p->pid, dur_ms / 1000,
 				   dur_ms % 1000);
 			timed_out = true;
-			break;
+			ভঙ্গ;
 		}
 	}
 out_unlock:
 	rq_unlock_irqrestore(rq, &rf);
-	return timed_out;
+	ঘূৰাই timed_out;
 }
 
-static void scx_watchdog_workfn(struct work_struct *work)
+স্থির শূন্য scx_watchdog_workfn(সংরচনা work_struct *work)
 {
 	unsigned long intv;
-	int cpu;
+	পূর্ণাঙ্ক cpu;
 
 	WRITE_ONCE(scx_watchdog_timestamp, jiffies);
 
 	for_each_online_cpu(cpu) {
-		if (unlikely(check_rq_for_timeouts(cpu_rq(cpu))))
-			break;
+		যদি (unlikely(check_rq_for_timeouts(cpu_rq(cpu))))
+			ভঙ্গ;
 
 		cond_resched();
 	}
 
 	intv = READ_ONCE(scx_watchdog_interval);
-	if (intv < ULONG_MAX)
+	যদি (intv < ULONG_MAX)
 		queue_delayed_work(system_dfl_wq, to_delayed_work(work), intv);
 }
 
-void scx_tick(struct rq *rq)
+শূন্য scx_tick(সংরচনা rq *rq)
 {
-	struct scx_sched *root;
+	সংরচনা scx_sched *মূল;
 	unsigned long last_check;
 
-	if (!scx_enabled())
-		return;
+	যদি (!scx_enabled())
+		ঘূৰাই;
 
-	root = rcu_dereference_bh(scx_root);
-	if (unlikely(!root))
-		return;
+	মূল = rcu_dereference_bh(scx_মূল);
+	যদি (unlikely(!মূল))
+		ঘূৰাই;
 
 	last_check = READ_ONCE(scx_watchdog_timestamp);
-	if (unlikely(time_after(jiffies,
-				last_check + READ_ONCE(root->watchdog_timeout)))) {
+	যদি (unlikely(time_after(jiffies,
+				last_check + READ_ONCE(মূল->watchdog_timeout)))) {
 		u32 dur_ms = jiffies_to_msecs(jiffies - last_check);
 
-		scx_exit(root, SCX_EXIT_ERROR_STALL, 0,
+		scx_exit(মূল, SCX_EXIT_ERROR_STALL, 0,
 			 "watchdog failed to check in for %u.%03us",
 			 dur_ms / 1000, dur_ms % 1000);
 	}
@@ -3889,9 +3889,9 @@ void scx_tick(struct rq *rq)
 	update_other_load_avgs(rq);
 }
 
-static void task_tick_scx(struct rq *rq, struct task_struct *curr, int queued)
+স্থির শূন্য task_tick_scx(সংরচনা rq *rq, সংরচনা task_struct *curr, পূর্ণাঙ্ক queued)
 {
-	struct scx_sched *sch = scx_task_sched(curr);
+	সংরচনা scx_sched *sch = scx_task_sched(curr);
 
 	update_curr_scx(rq);
 
@@ -3899,32 +3899,32 @@ static void task_tick_scx(struct rq *rq, struct task_struct *curr, int queued)
 	 * While disabling, always resched as we can't trust the slice
 	 * management.
 	 */
-	if (scx_bypassing(sch, cpu_of(rq)))
+	যদি (scx_bypassing(sch, cpu_of(rq)))
 		scx_set_task_slice(curr, 0);
-	else if (SCX_HAS_OP(sch, tick))
+	অন্যথা যদি (SCX_HAS_OP(sch, tick))
 		SCX_CALL_OP_TASK(sch, tick, rq, curr);
 
-	if (!curr->scx.slice)
+	যদি (!curr->scx.slice)
 		resched_curr(rq);
 }
 
 #ifdef CONFIG_EXT_GROUP_SCHED
-static struct cgroup *tg_cgrp(struct task_group *tg)
+স্থির সংরচনা cgroup *tg_cgrp(সংরচনা task_group *tg)
 {
 	/*
 	 * If CGROUP_SCHED is disabled, @tg is NULL. If @tg is an autogroup,
 	 * @tg->css.cgroup is NULL. In both cases, @tg can be treated as the
 	 * root cgroup.
 	 */
-	if (tg && tg->css.cgroup)
-		return tg->css.cgroup;
-	else
-		return &cgrp_dfl_root.cgrp;
+	যদি (tg && tg->css.cgroup)
+		ঘূৰাই tg->css.cgroup;
+	অন্যথা
+		ঘূৰাই &cgrp_dfl_মূল.cgrp;
 }
 
 #define SCX_INIT_TASK_ARGS_CGROUP(cgrp)		.cgroup = (cgrp),
 
-#else	/* CONFIG_EXT_GROUP_SCHED */
+#অন্যথা	/* CONFIG_EXT_GROUP_SCHED */
 
 #define SCX_INIT_TASK_ARGS_CGROUP(cgrp)
 
@@ -3942,39 +3942,39 @@ static struct cgroup *tg_cgrp(struct task_group *tg)
  *
  * Return 0 on success, -errno on failure.
  */
-int __scx_init_task(struct scx_sched *sch, struct task_struct *p,
-		    struct cgroup *cgrp, bool fork)
+পূর্ণাঙ্ক __scx_init_task(সংরচনা scx_sched *sch, সংরচনা task_struct *p,
+		    সংরচনা cgroup *cgrp, bool fork)
 {
-	int ret;
+	পূর্ণাঙ্ক ret;
 
 	p->scx.disallow = false;
 
-	if (SCX_HAS_OP(sch, init_task)) {
-		struct scx_init_task_args args = {
+	যদি (SCX_HAS_OP(sch, init_task)) {
+		সংরচনা scx_init_task_args args = {
 			SCX_INIT_TASK_ARGS_CGROUP(cgrp ?: tg_cgrp(task_group(p)))
 			.fork = fork,
 		};
 
-		ret = SCX_CALL_OP_RET(sch, init_task, NULL, p, &args);
-		if (unlikely(ret)) {
+		ret = SCX_CALL_OP_RET(sch, init_task, রিক্ত, p, &args);
+		যদি (unlikely(ret)) {
 			ret = scx_ops_sanitize_err(sch, "init_task", ret);
-			return ret;
+			ঘূৰাই ret;
 		}
 	}
 
-	if (p->scx.disallow) {
-		if (unlikely(scx_parent(sch))) {
+	যদি (p->scx.disallow) {
+		যদি (unlikely(scx_parent(sch))) {
 			scx_error(sch, "non-root ops.init_task() set task->scx.disallow for %s[%d]",
 				  p->comm, p->pid);
-		} else if (unlikely(fork)) {
+		} অন্যথা যদি (unlikely(fork)) {
 			scx_error(sch, "ops.init_task() set task->scx.disallow for %s[%d] during fork",
 				  p->comm, p->pid);
-		} else if (unlikely(scx_enable_state() != SCX_ENABLING)) {
+		} অন্যথা যদি (unlikely(scx_enable_state() != SCX_ENABLING)) {
 			scx_error(sch, "ops.init_task() set task->scx.disallow for %s[%d] outside the enable path",
 				  p->comm, p->pid);
-		} else {
-			struct rq *rq;
-			struct rq_flags rf;
+		} অন্যথা {
+			সংরচনা rq *rq;
+			সংরচনা rq_flags rf;
 
 			rq = task_rq_lock(p, &rf);
 
@@ -3985,7 +3985,7 @@ int __scx_init_task(struct scx_sched *sch, struct task_struct *p,
 			 * guarantees that if ops.init_task() sets @p->disallow,
 			 * @p can never be in SCX.
 			 */
-			if (p->policy == SCHED_EXT) {
+			যদি (p->policy == SCHED_EXT) {
 				p->policy = SCHED_NORMAL;
 				atomic_long_inc(&scx_nr_rejected);
 			}
@@ -3994,12 +3994,12 @@ int __scx_init_task(struct scx_sched *sch, struct task_struct *p,
 		}
 	}
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static void __scx_enable_task(struct scx_sched *sch, struct task_struct *p)
+স্থির শূন্য __scx_enable_task(সংরচনা scx_sched *sch, সংরচনা task_struct *p)
 {
-	struct rq *rq = task_rq(p);
+	সংরচনা rq *rq = task_rq(p);
 	u32 weight;
 
 	lockdep_assert_rq_held(rq);
@@ -4015,22 +4015,22 @@ static void __scx_enable_task(struct scx_sched *sch, struct task_struct *p)
 	 * Set the weight before calling ops.enable() so that the scheduler
 	 * doesn't see a stale value if they inspect the task struct.
 	 */
-	if (task_has_idle_policy(p))
+	যদি (task_has_idle_policy(p))
 		weight = WEIGHT_IDLEPRIO;
-	else
+	অন্যথা
 		weight = sched_prio_to_weight[p->static_prio - MAX_RT_PRIO];
 
 	p->scx.weight = sched_weight_to_cgroup(weight);
 
-	if (SCX_HAS_OP(sch, enable)) {
-		if (scx_is_cid_type()) {
-			struct scx_cmask *cmask = scx_fill_cmask_scratch(sch, p->cpus_ptr);
-			struct scx_enable_args args = {
+	যদি (SCX_HAS_OP(sch, enable)) {
+		যদি (scx_is_cid_type()) {
+			সংরচনা scx_cmask *cmask = scx_fill_cmask_scratch(sch, p->cpus_ptr);
+			সংরচনা scx_enable_args args = {
 				.cmask_arena_addr = scx_kaddr_to_arena(sch, cmask),
 			};
 
 			SCX_CALL_CID_OP_TASK(sch, enable, rq, p, &args);
-		} else {
+		} অন্যথা {
 			SCX_CALL_OP_TASK(sch, enable, rq, p);
 		}
 	}
@@ -4041,29 +4041,29 @@ static void __scx_enable_task(struct scx_sched *sch, struct task_struct *p)
 	 * is in place when weight-dependent state is derived, see struct
 	 * scx_enable_args.
 	 */
-	if (scx_is_cid_type() && SCX_HAS_OP(sch, set_cpumask))
+	যদি (scx_is_cid_type() && SCX_HAS_OP(sch, set_cpumask))
 		scx_call_op_set_cpumask(sch, rq, p, p->cpus_ptr);
 
-	if (SCX_HAS_OP(sch, set_weight))
+	যদি (SCX_HAS_OP(sch, set_weight))
 		SCX_CALL_OP_TASK(sch, set_weight, rq, p, p->scx.weight);
 }
 
-void scx_enable_task(struct scx_sched *sch, struct task_struct *p)
+শূন্য scx_enable_task(সংরচনা scx_sched *sch, সংরচনা task_struct *p)
 {
 	__scx_enable_task(sch, p);
 	scx_set_task_state(p, SCX_TASK_ENABLED);
 }
 
-static void scx_disable_task(struct scx_sched *sch, struct task_struct *p)
+স্থির শূন্য scx_disable_task(সংরচনা scx_sched *sch, সংরচনা task_struct *p)
 {
-	struct rq *rq = task_rq(p);
+	সংরচনা rq *rq = task_rq(p);
 
 	lockdep_assert_rq_held(rq);
 	WARN_ON_ONCE(scx_get_task_state(p) != SCX_TASK_ENABLED);
 
 	clear_direct_dispatch(p);
 
-	if (SCX_HAS_OP(sch, disable))
+	যদি (SCX_HAS_OP(sch, disable))
 		SCX_CALL_OP_TASK(sch, disable, rq, p);
 	scx_set_task_state(p, SCX_TASK_READY);
 
@@ -4084,32 +4084,32 @@ static void scx_disable_task(struct scx_sched *sch, struct task_struct *p)
 	WARN_ON_ONCE(p->scx.flags & SCX_TASK_IN_CUSTODY);
 }
 
-void __scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
+শূন্য __scx_disable_and_exit_task(সংরচনা scx_sched *sch, সংরচনা task_struct *p)
 {
-	struct scx_exit_task_args args = {
+	সংরচনা scx_exit_task_args args = {
 		.cancelled = false,
 	};
 
 	lockdep_assert_held(&p->pi_lock);
 	lockdep_assert_rq_held(task_rq(p));
 
-	switch (scx_get_task_state(p)) {
-	case SCX_TASK_NONE:
-		return;
-	case SCX_TASK_INIT:
+	ৱিকল্প (scx_get_task_state(p)) {
+	পক্ষ SCX_TASK_NONE:
+		ঘূৰাই;
+	পক্ষ SCX_TASK_INIT:
 		args.cancelled = true;
-		break;
-	case SCX_TASK_READY:
-		break;
-	case SCX_TASK_ENABLED:
+		ভঙ্গ;
+	পক্ষ SCX_TASK_READY:
+		ভঙ্গ;
+	পক্ষ SCX_TASK_ENABLED:
 		scx_disable_task(sch, p);
-		break;
-	default:
+		ভঙ্গ;
+	স্ৱভাৱ:
 		WARN_ON_ONCE(true);
-		return;
+		ঘূৰাই;
 	}
 
-	if (SCX_HAS_OP(sch, exit_task))
+	যদি (SCX_HAS_OP(sch, exit_task))
 		SCX_CALL_OP_TASK(sch, exit_task, task_rq(p), p, &args);
 }
 
@@ -4118,19 +4118,19 @@ void __scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
  * ran. The task state has not been transitioned, so this mirrors the
  * SCX_TASK_INIT branch in __scx_disable_and_exit_task().
  */
-void scx_sub_init_cancel_task(struct scx_sched *sch, struct task_struct *p)
+শূন্য scx_sub_init_cancel_task(সংরচনা scx_sched *sch, সংরচনা task_struct *p)
 {
-	struct scx_exit_task_args args = { .cancelled = true };
+	সংরচনা scx_exit_task_args args = { .cancelled = true };
 
 	lockdep_assert_held(&p->pi_lock);
 	lockdep_assert_rq_held(task_rq(p));
 
 	/* @p was never associated with @sch, dispatch on the explicit @sch */
-	if (SCX_HAS_OP(sch, exit_task))
+	যদি (SCX_HAS_OP(sch, exit_task))
 		__SCX_CALL_OP_TASK(sch, ops, exit_task, task_rq(p), p, &args);
 }
 
-void scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
+শূন্য scx_disable_and_exit_task(সংরচনা scx_sched *sch, সংরচনা task_struct *p)
 {
 	__scx_disable_and_exit_task(sch, p);
 
@@ -4141,58 +4141,58 @@ void scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
 	 * it, so undo only init_task. The flag is only set on the sub-enable
 	 * path, so it's always clear when @p arrives here in %SCX_TASK_NONE.
 	 */
-	if (p->scx.flags & SCX_TASK_SUB_INIT) {
-		if (!WARN_ON_ONCE(!scx_enabling_sub_sched))
+	যদি (p->scx.flags & SCX_TASK_SUB_INIT) {
+		যদি (!WARN_ON_ONCE(!scx_enabling_sub_sched))
 			scx_sub_init_cancel_task(scx_enabling_sub_sched, p);
 		p->scx.flags &= ~SCX_TASK_SUB_INIT;
 	}
 
-	scx_set_task_sched(p, NULL);
+	scx_set_task_sched(p, রিক্ত);
 	scx_set_task_state(p, SCX_TASK_NONE);
 }
 
-void init_scx_entity(struct sched_ext_entity *scx)
+শূন্য init_scx_entity(সংরচনা sched_ext_entity *scx)
 {
-	memset(scx, 0, sizeof(*scx));
-	INIT_LIST_HEAD(&scx->dsq_list.node);
-	RB_CLEAR_NODE(&scx->dsq_priq);
+	memset(scx, 0, পরিমাণ(*scx));
+	INIT_LIST_HEAD(&scx->dsq_list.গ্ৰন্থি);
+	RB_CLEAR_গ্ৰন্থি(&scx->dsq_priq);
 	scx->sticky_cpu = -1;
 	scx->holding_cpu = -1;
 	scx->runnable_cpu = -1;
-	INIT_LIST_HEAD(&scx->runnable_node);
+	INIT_LIST_HEAD(&scx->runnable_গ্ৰন্থি);
 	scx->runnable_at = jiffies;
 	scx->ddsp_dsq_id = SCX_DSQ_INVALID;
 	scx->slice = SCX_SLICE_DFL;
 }
 
 /* See scx_tid_alloc / scx_tid_cursor. */
-static u64 scx_alloc_tid(void)
+স্থির u64 scx_alloc_tid(শূন্য)
 {
-	struct scx_tid_alloc *ta;
+	সংরচনা scx_tid_alloc *ta;
 
 	guard(preempt)();
 	ta = this_cpu_ptr(&scx_tid_alloc);
 
-	if (unlikely(ta->next >= ta->end)) {
+	যদি (unlikely(ta->next >= ta->end)) {
 		ta->next = atomic64_fetch_add(SCX_TID_CHUNK, &scx_tid_cursor);
 		ta->end = ta->next + SCX_TID_CHUNK;
 	}
-	return ta->next++;
+	ঘূৰাই ta->next++;
 }
 
-static void scx_tid_hash_insert(struct task_struct *p)
+স্থির শূন্য scx_tid_hash_ঢোকাও(সংরচনা task_struct *p)
 {
-	int ret;
+	পূর্ণাঙ্ক ret;
 
 	lockdep_assert_held(&scx_tasks_lock);
 
-	ret = rhashtable_lookup_insert_fast(&scx_tid_hash,
-					    &p->scx.tid_hash_node,
+	ret = rhashtable_lookup_ঢোকাও_fast(&scx_tid_hash,
+					    &p->scx.tid_hash_গ্ৰন্থি,
 					    scx_tid_hash_params);
 	WARN_ON_ONCE(ret);
 }
 
-void scx_pre_fork(struct task_struct *p)
+শূন্য scx_pre_fork(সংরচনা task_struct *p)
 {
 	/*
 	 * BPF scheduler enable/disable paths want to be able to iterate and
@@ -4203,7 +4203,7 @@ void scx_pre_fork(struct task_struct *p)
 	percpu_down_read(&scx_fork_rwsem);
 }
 
-int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs)
+পূর্ণাঙ্ক scx_fork(সংরচনা task_struct *p, সংরচনা kernel_clone_args *kargs)
 {
 	s32 ret;
 
@@ -4211,28 +4211,28 @@ int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs)
 
 	p->scx.tid = scx_alloc_tid();
 
-	if (scx_init_task_enabled) {
+	যদি (scx_init_task_enabled) {
 #ifdef CONFIG_EXT_SUB_SCHED
-		struct scx_sched *sch = scx_cgroup_sched(kargs->cset->dfl_cgrp);
-#else
-		struct scx_sched *sch = scx_root_protected_live();
+		সংরচনা scx_sched *sch = scx_cgroup_sched(kargs->cset->dfl_cgrp);
+#অন্যথা
+		সংরচনা scx_sched *sch = scx_মূল_protected_live();
 #endif
 		scx_set_task_state(p, SCX_TASK_INIT_BEGIN);
-		ret = __scx_init_task(sch, p, NULL, true);
-		if (unlikely(ret)) {
+		ret = __scx_init_task(sch, p, রিক্ত, true);
+		যদি (unlikely(ret)) {
 			scx_set_task_state(p, SCX_TASK_NONE);
-			return ret;
+			ঘূৰাই ret;
 		}
 		scx_set_task_state(p, SCX_TASK_INIT);
 		scx_set_task_sched(p, sch);
 	}
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-void scx_post_fork(struct task_struct *p)
+শূন্য scx_post_fork(সংরচনা task_struct *p)
 {
-	if (scx_init_task_enabled) {
+	যদি (scx_init_task_enabled) {
 		scx_set_task_state(p, SCX_TASK_READY);
 
 		/*
@@ -4240,9 +4240,9 @@ void scx_post_fork(struct task_struct *p)
 		 * Otherwise, it'll be enabled in switching_to_scx() if and
 		 * when it's ever configured to run with a SCHED_EXT policy.
 		 */
-		if (p->sched_class == &ext_sched_class) {
-			struct rq_flags rf;
-			struct rq *rq;
+		যদি (p->sched_class == &ext_sched_class) {
+			সংরচনা rq_flags rf;
+			সংরচনা rq *rq;
 
 			rq = task_rq_lock(p, &rf);
 			scx_enable_task(scx_task_sched(p), p);
@@ -4251,19 +4251,19 @@ void scx_post_fork(struct task_struct *p)
 	}
 
 	scoped_guard(raw_spinlock_irq, &scx_tasks_lock) {
-		list_add_tail(&p->scx.tasks_node, &scx_tasks);
-		if (scx_tid_to_task_enabled())
-			scx_tid_hash_insert(p);
+		list_add_tail(&p->scx.tasks_গ্ৰন্থি, &scx_tasks);
+		যদি (scx_tid_to_task_enabled())
+			scx_tid_hash_ঢোকাও(p);
 	}
 
 	percpu_up_read(&scx_fork_rwsem);
 }
 
-void scx_cancel_fork(struct task_struct *p)
+শূন্য scx_cancel_fork(সংরচনা task_struct *p)
 {
-	if (scx_init_task_enabled) {
-		struct rq *rq;
-		struct rq_flags rf;
+	যদি (scx_init_task_enabled) {
+		সংরচনা rq *rq;
+		সংরচনা rq_flags rf;
 
 		rq = task_rq_lock(p, &rf);
 		WARN_ON_ONCE(scx_get_task_state(p) >= SCX_TASK_READY);
@@ -4288,9 +4288,9 @@ void scx_cancel_fork(struct task_struct *p)
  * that needs to happen on the task. Use this test to short-circuit sched_class
  * operations which may be called on dead tasks.
  */
-static bool task_dead_and_done(struct task_struct *p)
+স্থির bool task_dead_and_done(সংরচনা task_struct *p)
 {
-	struct rq *rq = task_rq(p);
+	সংরচনা rq *rq = task_rq(p);
 
 	lockdep_assert_rq_held(rq);
 
@@ -4299,11 +4299,11 @@ static bool task_dead_and_done(struct task_struct *p)
 	 * disabled and __schedule(). If @p has %TASK_DEAD set and off CPU, @p
 	 * won't ever run again.
 	 */
-	return unlikely(READ_ONCE(p->__state) == TASK_DEAD) &&
+	ঘূৰাই unlikely(READ_ONCE(p->__state) == TASK_DEAD) &&
 		!task_on_cpu(rq, p);
 }
 
-void sched_ext_dead(struct task_struct *p)
+শূন্য sched_ext_dead(সংরচনা task_struct *p)
 {
 	/*
 	 * By the time control reaches here, @p has %TASK_DEAD set, switched out
@@ -4312,10 +4312,10 @@ void sched_ext_dead(struct task_struct *p)
 	 * Remove from scx_tasks and exit @p.
 	 */
 	scoped_guard(raw_spinlock_irqsave, &scx_tasks_lock) {
-		list_del_init(&p->scx.tasks_node);
-		if (scx_tid_to_task_enabled())
+		list_del_init(&p->scx.tasks_গ্ৰন্থি);
+		যদি (scx_tid_to_task_enabled())
 			rhashtable_remove_fast(&scx_tid_hash,
-					       &p->scx.tid_hash_node,
+					       &p->scx.tid_hash_গ্ৰন্থি,
 					       scx_tid_hash_params);
 	}
 
@@ -4332,27 +4332,27 @@ void sched_ext_dead(struct task_struct *p)
 	 * into ops; transition to %DEAD so the post-init recheck unwinds
 	 * via scx_sub_init_cancel_task().
 	 */
-	if (scx_get_task_state(p) != SCX_TASK_NONE) {
-		struct rq_flags rf;
-		struct rq *rq;
+	যদি (scx_get_task_state(p) != SCX_TASK_NONE) {
+		সংরচনা rq_flags rf;
+		সংরচনা rq *rq;
 
 		rq = task_rq_lock(p, &rf);
-		if (scx_get_task_state(p) != SCX_TASK_INIT_BEGIN)
+		যদি (scx_get_task_state(p) != SCX_TASK_INIT_BEGIN)
 			scx_disable_and_exit_task(scx_task_sched(p), p);
 		scx_set_task_state(p, SCX_TASK_DEAD);
 		task_rq_unlock(rq, p, &rf);
 	}
 }
 
-static void reweight_task_scx(struct rq *rq, struct task_struct *p,
-			      const struct load_weight *lw)
+স্থির শূন্য reweight_task_scx(সংরচনা rq *rq, সংরচনা task_struct *p,
+			      ধ্রুৱ সংরচনা load_weight *lw)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 
 	lockdep_assert_rq_held(task_rq(p));
 
-	if (task_dead_and_done(p))
-		return;
+	যদি (task_dead_and_done(p))
+		ঘূৰাই;
 
 	/*
 	 * When switching sched_class away from SCX, reweight_task_scx()
@@ -4362,24 +4362,24 @@ static void reweight_task_scx(struct rq *rq, struct task_struct *p,
 	 * p->scx.weight will be recalculated in scx_enable_task() if the task
 	 * ever returns to SCX class.
 	 */
-	if (scx_get_task_state(p) != SCX_TASK_ENABLED)
-		return;
+	যদি (scx_get_task_state(p) != SCX_TASK_ENABLED)
+		ঘূৰাই;
 
 	p->scx.weight = sched_weight_to_cgroup(scale_load_down(lw->weight));
-	if (SCX_HAS_OP(sch, set_weight))
+	যদি (SCX_HAS_OP(sch, set_weight))
 		SCX_CALL_OP_TASK(sch, set_weight, rq, p, p->scx.weight);
 }
 
-static void prio_changed_scx(struct rq *rq, struct task_struct *p, u64 oldprio)
+স্থির শূন্য prio_changed_scx(সংরচনা rq *rq, সংরচনা task_struct *p, u64 oldprio)
 {
 }
 
-static void switching_to_scx(struct rq *rq, struct task_struct *p)
+স্থির শূন্য switching_to_scx(সংরচনা rq *rq, সংরচনা task_struct *p)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 
-	if (task_dead_and_done(p))
-		return;
+	যদি (task_dead_and_done(p))
+		ঘূৰাই;
 
 	scx_enable_task(sch, p);
 
@@ -4388,14 +4388,14 @@ static void switching_to_scx(struct rq *rq, struct task_struct *p)
 	 * different scheduler class. Keep the BPF scheduler up-to-date. The cid
 	 * form gets its mask from scx_enable_task().
 	 */
-	if (!scx_is_cid_type() && SCX_HAS_OP(sch, set_cpumask))
-		scx_call_op_set_cpumask(sch, rq, p, (struct cpumask *)p->cpus_ptr);
+	যদি (!scx_is_cid_type() && SCX_HAS_OP(sch, set_cpumask))
+		scx_call_op_set_cpumask(sch, rq, p, (সংরচনা cpumask *)p->cpus_ptr);
 }
 
-static void switched_from_scx(struct rq *rq, struct task_struct *p)
+স্থির শূন্য switched_from_scx(সংরচনা rq *rq, সংরচনা task_struct *p)
 {
-	if (task_dead_and_done(p))
-		return;
+	যদি (task_dead_and_done(p))
+		ঘূৰাই;
 
 	/*
 	 * %NONE means SCX is no longer tracking @p at the task level (e.g.
@@ -4404,29 +4404,29 @@ static void switched_from_scx(struct rq *rq, struct task_struct *p)
 	 * scx_disable_task() would WARN on the non-%ENABLED state and trigger a
 	 * NONE -> READY validation failure.
 	 */
-	if (scx_get_task_state(p) == SCX_TASK_NONE)
-		return;
+	যদি (scx_get_task_state(p) == SCX_TASK_NONE)
+		ঘূৰাই;
 
 	scx_disable_task(scx_task_sched(p), p);
 }
 
-static void switched_to_scx(struct rq *rq, struct task_struct *p) {}
+স্থির শূন্য switched_to_scx(সংরচনা rq *rq, সংরচনা task_struct *p) {}
 
-int scx_check_setscheduler(struct task_struct *p, int policy)
+পূর্ণাঙ্ক scx_check_setscheduler(সংরচনা task_struct *p, পূর্ণাঙ্ক policy)
 {
 	lockdep_assert_rq_held(task_rq(p));
 
 	/* if disallow, reject transitioning into SCX */
-	if (scx_enabled() && READ_ONCE(p->scx.disallow) &&
+	যদি (scx_enabled() && READ_ONCE(p->scx.disallow) &&
 	    p->policy != policy && policy == SCHED_EXT)
-		return -EACCES;
+		ঘূৰাই -EACCES;
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static void process_ddsp_deferred_locals(struct rq *rq)
+স্থির শূন্য process_ddsp_deferred_locals(সংরচনা rq *rq)
 {
-	struct task_struct *p;
+	সংরচনা task_struct *p;
 
 	lockdep_assert_rq_held(rq);
 
@@ -4437,20 +4437,20 @@ static void process_ddsp_deferred_locals(struct rq *rq)
 	 * list_for_each_entry_safe() as dispatch_local_dsq() may unlock @rq
 	 * temporarily.
 	 */
-	while ((p = list_first_entry_or_null(&rq->scx.ddsp_deferred_locals,
-				struct task_struct, scx.dsq_list.node))) {
-		struct scx_sched *sch = scx_task_sched(p);
-		struct scx_dispatch_q *dsq;
+	যেতিয়ালৈ ((p = list_first_entry_or_null(&rq->scx.ddsp_deferred_locals,
+				সংরচনা task_struct, scx.dsq_list.গ্ৰন্থি))) {
+		সংরচনা scx_sched *sch = scx_task_sched(p);
+		সংরচনা scx_dispatch_q *dsq;
 		u64 dsq_id = p->scx.ddsp_dsq_id;
 		u64 enq_flags = p->scx.ddsp_enq_flags;
 		u64 slice = p->scx.ddsp_slice;
 		u64 vtime = p->scx.ddsp_vtime;
 
-		list_del_init(&p->scx.dsq_list.node);
+		list_del_init(&p->scx.dsq_list.গ্ৰন্থি);
 		clear_direct_dispatch(p);
 
 		dsq = find_dsq_for_dispatch(sch, rq, dsq_id, task_cpu(p));
-		if (!WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
+		যদি (!WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
 			dispatch_to_local_dsq(sch, rq, dsq, p, slice, vtime, enq_flags);
 	}
 }
@@ -4478,7 +4478,7 @@ static void process_ddsp_deferred_locals(struct rq *rq)
  * another reenq cycle. Repetitions are bounded by %SCX_REENQ_MAX_REPEAT in
  * scx_do_enqueue_task(), which ejects the task's owning scheduler.
  */
-static bool local_task_should_reenq(struct rq *rq, struct task_struct *p,
+স্থির bool local_task_should_reenq(সংরচনা rq *rq, সংরচনা task_struct *p,
 				    u64 *reenq_flags, u32 *reason)
 {
 	bool first;
@@ -4486,25 +4486,25 @@ static bool local_task_should_reenq(struct rq *rq, struct task_struct *p,
 	first = !(*reenq_flags & SCX_REENQ_TSR_NOT_FIRST);
 	*reenq_flags |= SCX_REENQ_TSR_NOT_FIRST;
 
-	if (unlikely((p->scx.flags & SCX_TASK_PROTECTED) || p == scx_rescuee(rq)))
-		return false;
+	যদি (unlikely((p->scx.flags & SCX_TASK_PROTECTED) || p == scx_rescuee(rq)))
+		ঘূৰাই false;
 
 	*reason = SCX_TASK_REENQ_KFUNC;
 
-	if ((p->scx.flags & SCX_TASK_IMMED) &&
+	যদি ((p->scx.flags & SCX_TASK_IMMED) &&
 	    (!first || !(*reenq_flags & SCX_REENQ_TSR_RQ_OPEN))) {
 		__scx_add_event(scx_task_sched(p), SCX_EV_REENQ_IMMED, 1);
 		*reason = SCX_TASK_REENQ_IMMED;
-		return true;
+		ঘূৰাই true;
 	}
 
-	if ((*reenq_flags & SCX_REENQ_CAP_REVOKE) &&
+	যদি ((*reenq_flags & SCX_REENQ_CAP_REVOKE) &&
 	    scx_task_reenq_on_cap_revoke(rq, p)) {
 		*reason = SCX_TASK_REENQ_CAP;
-		return true;
+		ঘূৰাই true;
 	}
 
-	return *reenq_flags & SCX_REENQ_ANY;
+	ঘূৰাই *reenq_flags & SCX_REENQ_ANY;
 }
 
 /*
@@ -4513,23 +4513,23 @@ static bool local_task_should_reenq(struct rq *rq, struct task_struct *p,
  * %SCX_OPSS_DISPATCHING. Wait for the dispatch to finish before operating on
  * @p.
  */
-void scx_wait_dispatching(struct task_struct *p)
+শূন্য scx_wait_dispatching(সংরচনা task_struct *p)
 {
-	if (unlikely(atomic_long_read_acquire(&p->scx.ops_state) == SCX_OPSS_DISPATCHING))
+	যদি (unlikely(atomic_long_read_acquire(&p->scx.ops_state) == SCX_OPSS_DISPATCHING))
 		wait_ops_state(p, SCX_OPSS_DISPATCHING);
 }
 
-static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
+স্থির u32 reenq_local(সংরচনা scx_sched *sch, সংরচনা rq *rq, u64 reenq_flags)
 {
 	LIST_HEAD(tasks);
 	u32 nr_enqueued = 0;
-	struct task_struct *p, *n;
+	সংরচনা task_struct *p, *n;
 
 	lockdep_assert_rq_held(rq);
 
-	if (WARN_ON_ONCE(reenq_flags & __SCX_REENQ_TSR_MASK))
+	যদি (WARN_ON_ONCE(reenq_flags & __SCX_REENQ_TSR_MASK))
 		reenq_flags &= ~__SCX_REENQ_TSR_MASK;
-	if (rq_is_open(rq, 0))
+	যদি (rq_is_open(rq, 0))
 		reenq_flags |= SCX_REENQ_TSR_RQ_OPEN;
 
 	/*
@@ -4538,8 +4538,8 @@ static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
 	 * first to avoid processing the same tasks repeatedly.
 	 */
 	list_for_each_entry_safe(p, n, &rq->scx.local_dsq.list,
-				 scx.dsq_list.node) {
-		struct scx_sched *task_sch = scx_task_sched(p);
+				 scx.dsq_list.গ্ৰন্থি) {
+		সংরচনা scx_sched *task_sch = scx_task_sched(p);
 		u32 reason;
 
 		/*
@@ -4553,27 +4553,27 @@ static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
 		 * the current local DSQ for running tasks and thus are not
 		 * visible to the BPF scheduler.
 		 */
-		if (p->migration_pending)
-			continue;
+		যদি (p->migration_pending)
+			অনুৱর্ত;
 
-		if (!scx_is_descendant(task_sch, sch))
-			continue;
+		যদি (!scx_is_descendant(task_sch, sch))
+			অনুৱর্ত;
 
-		if (!local_task_should_reenq(rq, p, &reenq_flags, &reason))
-			continue;
+		যদি (!local_task_should_reenq(rq, p, &reenq_flags, &reason))
+			অনুৱর্ত;
 
 		scx_wait_dispatching(p);
 		scx_dispatch_dequeue(rq, p);
 
-		if (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_MASK))
+		যদি (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_MASK))
 			p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
 		p->scx.flags |= reason;
 
-		list_add_tail(&p->scx.dsq_list.node, &tasks);
+		list_add_tail(&p->scx.dsq_list.গ্ৰন্থি, &tasks);
 	}
 
-	list_for_each_entry_safe(p, n, &tasks, scx.dsq_list.node) {
-		list_del_init(&p->scx.dsq_list.node);
+	list_for_each_entry_safe(p, n, &tasks, scx.dsq_list.গ্ৰন্থি) {
+		list_del_init(&p->scx.dsq_list.গ্ৰন্থি);
 
 		scx_do_enqueue_task(rq, p, SCX_ENQ_REENQ, -1);
 
@@ -4588,17 +4588,17 @@ static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
 	 * Zero the slice to evict it. The enqueue gate blocks new capless
 	 * inserts, so no later pick can slip through after the scan.
 	 */
-	if ((reenq_flags & SCX_REENQ_CAP_REVOKE) &&
+	যদি ((reenq_flags & SCX_REENQ_CAP_REVOKE) &&
 	    rq->curr->sched_class == &ext_sched_class &&
 	    scx_task_reenq_on_cap_revoke(rq, rq->curr)) {
 		scx_set_task_slice(rq->curr, 0);
 		resched_curr(rq);
 	}
 
-	return nr_enqueued;
+	ঘূৰাই nr_enqueued;
 }
 
-static void process_deferred_reenq_locals(struct rq *rq)
+স্থির শূন্য process_deferred_reenq_locals(সংরচনা rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
@@ -4607,27 +4607,27 @@ static void process_deferred_reenq_locals(struct rq *rq)
 	 * bounces straight back to the local DSQ. That recursion is bounded by
 	 * the per-task reenqueue cap in scx_do_enqueue_task().
 	 */
-	while (true) {
-		struct scx_sched *sch;
+	যেতিয়ালৈ (true) {
+		সংরচনা scx_sched *sch;
 		u64 reenq_flags;
 
 		scoped_guard (raw_spinlock, &rq->scx.deferred_reenq_lock) {
-			struct scx_deferred_reenq_local *drl =
+			সংরচনা scx_deferred_reenq_local *drl =
 				list_first_entry_or_null(&rq->scx.deferred_reenq_locals,
-							 struct scx_deferred_reenq_local,
-							 node);
-			struct scx_sched_pcpu *sch_pcpu;
+							 সংরচনা scx_deferred_reenq_local,
+							 গ্ৰন্থি);
+			সংরচনা scx_sched_pcpu *sch_pcpu;
 
-			if (!drl)
-				return;
+			যদি (!drl)
+				ঘূৰাই;
 
-			sch_pcpu = container_of(drl, struct scx_sched_pcpu,
+			sch_pcpu = container_of(drl, সংরচনা scx_sched_pcpu,
 						deferred_reenq_local);
 			sch = sch_pcpu->sch;
 
 			reenq_flags = drl->flags;
 			WRITE_ONCE(drl->flags, 0);
-			list_del_init(&drl->node);
+			list_del_init(&drl->গ্ৰন্থি);
 		}
 
 		/* see schedule_dsq_reenq() */
@@ -4637,43 +4637,43 @@ static void process_deferred_reenq_locals(struct rq *rq)
 	}
 }
 
-static bool user_task_should_reenq(struct task_struct *p, u64 reenq_flags, u32 *reason)
+স্থির bool user_task_should_reenq(সংরচনা task_struct *p, u64 reenq_flags, u32 *reason)
 {
 	*reason = SCX_TASK_REENQ_KFUNC;
-	return reenq_flags & SCX_REENQ_ANY;
+	ঘূৰাই reenq_flags & SCX_REENQ_ANY;
 }
 
-static void reenq_user(struct rq *rq, struct scx_dispatch_q *dsq, u64 reenq_flags)
+স্থির শূন্য reenq_user(সংরচনা rq *rq, সংরচনা scx_dispatch_q *dsq, u64 reenq_flags)
 {
-	struct rq *locked_rq = rq;
-	struct scx_sched *sch = dsq->sched;
-	struct scx_dsq_list_node cursor = INIT_DSQ_LIST_CURSOR(cursor, dsq, 0);
-	struct task_struct *p;
+	সংরচনা rq *locked_rq = rq;
+	সংরচনা scx_sched *sch = dsq->sched;
+	সংরচনা scx_dsq_list_গ্ৰন্থি cursor = INIT_DSQ_LIST_CURSOR(cursor, dsq, 0);
+	সংরচনা task_struct *p;
 	s32 nr_enqueued = 0;
 
 	lockdep_assert_rq_held(rq);
 
 	raw_spin_lock(&dsq->lock);
 
-	while (likely(!READ_ONCE(sch->bypass_depth))) {
-		struct rq *task_rq;
+	যেতিয়ালৈ (likely(!READ_ONCE(sch->bypass_depth))) {
+		সংরচনা rq *task_rq;
 		u32 reason;
 
 		p = nldsq_cursor_next_task(&cursor, dsq);
-		if (!p)
-			break;
+		যদি (!p)
+			ভঙ্গ;
 
-		if (!user_task_should_reenq(p, reenq_flags, &reason))
-			continue;
+		যদি (!user_task_should_reenq(p, reenq_flags, &reason))
+			অনুৱর্ত;
 
 		task_rq = task_rq(p);
 
-		if (locked_rq != task_rq) {
-			if (locked_rq) {
+		যদি (locked_rq != task_rq) {
+			যদি (locked_rq) {
 				scx_rq_lock_drop(locked_rq);
 				raw_spin_rq_unlock(locked_rq);
 			}
-			if (unlikely(!raw_spin_rq_trylock(task_rq))) {
+			যদি (unlikely(!raw_spin_rq_trylock(task_rq))) {
 				raw_spin_unlock(&dsq->lock);
 				raw_spin_rq_lock(task_rq);
 				raw_spin_lock(&dsq->lock);
@@ -4681,8 +4681,8 @@ static void reenq_user(struct rq *rq, struct scx_dispatch_q *dsq, u64 reenq_flag
 			locked_rq = task_rq;
 
 			/* did we lose @p while switching locks? */
-			if (nldsq_cursor_lost_task(&cursor, task_rq, dsq, p))
-				continue;
+			যদি (nldsq_cursor_lost_task(&cursor, task_rq, dsq, p))
+				অনুৱর্ত;
 		}
 
 		/* @p is on @dsq, its rq and @dsq are locked */
@@ -4690,7 +4690,7 @@ static void reenq_user(struct rq *rq, struct scx_dispatch_q *dsq, u64 reenq_flag
 		dispatch_dequeue_locked(p, dsq);
 		raw_spin_unlock(&dsq->lock);
 
-		if (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_MASK))
+		যদি (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_MASK))
 			p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
 		p->scx.flags |= reason;
 
@@ -4698,21 +4698,21 @@ static void reenq_user(struct rq *rq, struct scx_dispatch_q *dsq, u64 reenq_flag
 
 		p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
 
-		if (!(++nr_enqueued % SCX_TASK_ITER_BATCH)) {
+		যদি (!(++nr_enqueued % SCX_TASK_ITER_BATCH)) {
 			scx_rq_lock_drop(locked_rq);
 			raw_spin_rq_unlock(locked_rq);
-			locked_rq = NULL;
+			locked_rq = রিক্ত;
 			cpu_relax();
 		}
 
 		raw_spin_lock(&dsq->lock);
 	}
 
-	list_del_init(&cursor.node);
+	list_del_init(&cursor.গ্ৰন্থি);
 	raw_spin_unlock(&dsq->lock);
 
-	if (locked_rq != rq) {
-		if (locked_rq) {
+	যদি (locked_rq != rq) {
+		যদি (locked_rq) {
 			scx_rq_lock_drop(locked_rq);
 			raw_spin_rq_unlock(locked_rq);
 		}
@@ -4720,30 +4720,30 @@ static void reenq_user(struct rq *rq, struct scx_dispatch_q *dsq, u64 reenq_flag
 	}
 }
 
-static void process_deferred_reenq_users(struct rq *rq)
+স্থির শূন্য process_deferred_reenq_users(সংরচনা rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
-	while (true) {
-		struct scx_dispatch_q *dsq;
+	যেতিয়ালৈ (true) {
+		সংরচনা scx_dispatch_q *dsq;
 		u64 dsq_id, reenq_flags;
 
 		scoped_guard (raw_spinlock, &rq->scx.deferred_reenq_lock) {
-			struct scx_deferred_reenq_user *dru =
+			সংরচনা scx_deferred_reenq_user *dru =
 				list_first_entry_or_null(&rq->scx.deferred_reenq_users,
-							 struct scx_deferred_reenq_user,
-							 node);
-			struct scx_dsq_pcpu *dsq_pcpu;
+							 সংরচনা scx_deferred_reenq_user,
+							 গ্ৰন্থি);
+			সংরচনা scx_dsq_pcpu *dsq_pcpu;
 
-			if (!dru)
-				return;
+			যদি (!dru)
+				ঘূৰাই;
 
-			dsq_pcpu = container_of(dru, struct scx_dsq_pcpu,
+			dsq_pcpu = container_of(dru, সংরচনা scx_dsq_pcpu,
 						deferred_reenq_user);
 			dsq = dsq_pcpu->dsq;
 			reenq_flags = dru->flags;
 			WRITE_ONCE(dru->flags, 0);
-			list_del_init(&dru->node);
+			list_del_init(&dru->গ্ৰন্থি);
 		}
 
 		/* see schedule_dsq_reenq() */
@@ -4751,35 +4751,35 @@ static void process_deferred_reenq_users(struct rq *rq)
 
 		/* destroy_dsq() may have raced and invalidated @dsq, nothing to reenq */
 		dsq_id = READ_ONCE(dsq->id);
-		if (unlikely(dsq_id == SCX_DSQ_INVALID))
-			continue;
+		যদি (unlikely(dsq_id == SCX_DSQ_INVALID))
+			অনুৱর্ত;
 
 		BUG_ON(dsq_id & SCX_DSQ_FLAG_BUILTIN);
 		reenq_user(rq, dsq, reenq_flags);
 	}
 }
 
-static void run_deferred(struct rq *rq)
+স্থির শূন্য run_deferred(সংরচনা rq *rq)
 {
 	process_ddsp_deferred_locals(rq);
 
-	if (!list_empty(&rq->scx.deferred_reenq_locals))
+	যদি (!list_empty(&rq->scx.deferred_reenq_locals))
 		process_deferred_reenq_locals(rq);
 
-	if (!list_empty(&rq->scx.deferred_reenq_users))
+	যদি (!list_empty(&rq->scx.deferred_reenq_users))
 		process_deferred_reenq_users(rq);
 
 	scx_reenq_reject(rq);
 }
 
 #ifdef CONFIG_NO_HZ_FULL
-bool scx_can_stop_tick(struct rq *rq)
+bool scx_can_stop_tick(সংরচনা rq *rq)
 {
-	struct task_struct *p = rq->curr;
-	struct scx_sched *sch = scx_task_sched(p);
+	সংরচনা task_struct *p = rq->curr;
+	সংরচনা scx_sched *sch = scx_task_sched(p);
 
-	if (p->sched_class != &ext_sched_class)
-		return true;
+	যদি (p->sched_class != &ext_sched_class)
+		ঘূৰাই true;
 
 	/*
 	 * @rq->curr may still reference an outgoing EXT task after it has been
@@ -4787,25 +4787,25 @@ bool scx_can_stop_tick(struct rq *rq)
 	 * slice state. If another task is dispatched from a DSQ,
 	 * set_next_task_scx() will update the dependency for the incoming task.
 	 */
-	if (!rq->scx.nr_running)
-		return true;
+	যদি (!rq->scx.nr_running)
+		ঘূৰাই true;
 
-	if (scx_bypassing(sch, cpu_of(rq)))
-		return false;
+	যদি (scx_bypassing(sch, cpu_of(rq)))
+		ঘূৰাই false;
 
 	/*
 	 * A running rescuee's charging and expiry are tick-driven, see
 	 * scx_rescue_charge(). Keep the tick while rescue is in progress.
 	 */
-	if (unlikely(p == scx_rescuee(rq)))
-		return false;
+	যদি (unlikely(p == scx_rescuee(rq)))
+		ঘূৰাই false;
 
 	/*
 	 * @rq can dispatch from different DSQs, so we can't tell whether it
 	 * needs the tick or not by looking at nr_running. Allow stopping ticks
 	 * iff the BPF scheduler indicated so. See set_next_task_scx().
 	 */
-	return rq->scx.flags & SCX_RQ_CAN_STOP_TICK;
+	ঘূৰাই rq->scx.flags & SCX_RQ_CAN_STOP_TICK;
 }
 #endif
 
@@ -4813,7 +4813,7 @@ bool scx_can_stop_tick(struct rq *rq)
 
 DEFINE_STATIC_PERCPU_RWSEM(scx_cgroup_ops_rwsem);
 
-void scx_tg_init(struct task_group *tg)
+শূন্য scx_tg_init(সংরচনা task_group *tg)
 {
 	tg->scx.weight = CGROUP_WEIGHT_DFL;
 	tg->scx.bw_period_us = default_bw_period_us();
@@ -4838,15 +4838,15 @@ void scx_tg_init(struct task_group *tg)
  * write-lock it, and tg on/offline can't overlap such callers as a css's files
  * are created after online and drained before offline.
  */
-static struct scx_sched *scx_tg_sched(struct task_group *tg)
+স্থির সংরচনা scx_sched *scx_tg_sched(সংরচনা task_group *tg)
 {
 	lockdep_assert(lockdep_is_held(&cgroup_mutex) ||
 		       lockdep_is_held(&scx_cgroup_ops_rwsem));
 
-	if (!tg->css.cgroup)
-		tg = &root_task_group;
+	যদি (!tg->css.cgroup)
+		tg = &মূল_task_group;
 	/* INITED means ops.cgroup_init() succeeded on @tg->scx.sched */
-	return (tg->scx.flags & SCX_TG_INITED) ? tg->scx.sched : NULL;
+	ঘূৰাই (tg->scx.flags & SCX_TG_INITED) ? tg->scx.sched : রিক্ত;
 }
 
 /**
@@ -4865,24 +4865,24 @@ static struct scx_sched *scx_tg_sched(struct task_group *tg)
  * side. That extends scx_tg_sched()'s file-write argument to the parent's
  * sched read: a parent css outlives its children's files.
  */
-static struct scx_sched *scx_tg_knob_sched(struct task_group *tg)
+স্থির সংরচনা scx_sched *scx_tg_knob_sched(সংরচনা task_group *tg)
 {
 	lockdep_assert(lockdep_is_held(&cgroup_mutex) ||
 		       lockdep_is_held(&scx_cgroup_ops_rwsem));
 
-	if (!tg->css.cgroup || !tg->css.parent)
-		return scx_tg_sched(&root_task_group);
-	return scx_tg_sched(css_tg(tg->css.parent));
+	যদি (!tg->css.cgroup || !tg->css.parent)
+		ঘূৰাই scx_tg_sched(&মূল_task_group);
+	ঘূৰাই scx_tg_sched(css_tg(tg->css.parent));
 }
 
-int scx_tg_online(struct task_group *tg)
+পূর্ণাঙ্ক scx_tg_online(সংরচনা task_group *tg)
 {
-	int ret = 0;
+	পূর্ণাঙ্ক ret = 0;
 
 	WARN_ON_ONCE(tg->scx.flags & (SCX_TG_ONLINE | SCX_TG_INITED));
 
-	if (scx_cgroup_enabled) {
-		struct scx_sched *sch;
+	যদি (scx_cgroup_enabled) {
+		সংরচনা scx_sched *sch;
 
 		/*
 		 * The cgroup lifetime notifier populates cgrp->scx_sched before
@@ -4890,13 +4890,13 @@ int scx_tg_online(struct task_group *tg)
 		 * attached to the cgroup2 hierarchy, so a cgroup1 task_group
 		 * always belongs to the root sched.
 		 */
-		if (cgroup_on_dfl(tg->css.cgroup))
+		যদি (cgroup_on_dfl(tg->css.cgroup))
 			sch = scx_cgroup_sched(tg->css.cgroup);
-		else
-			sch = scx_tg_sched(&root_task_group);
+		অন্যথা
+			sch = scx_tg_sched(&মূল_task_group);
 
-		if (SCX_HAS_OP(sch, cgroup_init)) {
-			struct scx_cgroup_init_args args =
+		যদি (SCX_HAS_OP(sch, cgroup_init)) {
+			সংরচনা scx_cgroup_init_args args =
 				{ .weight = tg->scx.weight,
 				  .bw_period_us = tg->scx.bw_period_us,
 				  .bw_quota_us = tg->scx.bw_quota_us,
@@ -4904,32 +4904,32 @@ int scx_tg_online(struct task_group *tg)
 				  .sched_idle = tg->scx.idle };
 
 			ret = SCX_CALL_OP_RET(sch, cgroup_init,
-					      NULL, tg->css.cgroup, &args);
-			if (ret)
+					      রিক্ত, tg->css.cgroup, &args);
+			যদি (ret)
 				ret = scx_ops_sanitize_err(sch, "cgroup_init", ret);
 		}
-		if (ret == 0) {
+		যদি (ret == 0) {
 			tg->scx.sched = sch;
 			tg->scx.flags |= SCX_TG_ONLINE | SCX_TG_INITED;
 		}
-	} else {
+	} অন্যথা {
 		tg->scx.flags |= SCX_TG_ONLINE;
 	}
 
-	return ret;
+	ঘূৰাই ret;
 }
 
-void scx_tg_offline(struct task_group *tg)
+শূন্য scx_tg_offline(সংরচনা task_group *tg)
 {
-	struct scx_sched *sch = tg->scx.sched;
+	সংরচনা scx_sched *sch = tg->scx.sched;
 
 	WARN_ON_ONCE(!(tg->scx.flags & SCX_TG_ONLINE));
 
 	/* INITED implies non-NULL @sch, test before SCX_HAS_OP() derefs */
-	if (scx_cgroup_enabled && (tg->scx.flags & SCX_TG_INITED) &&
+	যদি (scx_cgroup_enabled && (tg->scx.flags & SCX_TG_INITED) &&
 	    SCX_HAS_OP(sch, cgroup_exit))
-		SCX_CALL_OP(sch, cgroup_exit, NULL, tg->css.cgroup);
-	tg->scx.sched = NULL;
+		SCX_CALL_OP(sch, cgroup_exit, রিক্ত, tg->css.cgroup);
+	tg->scx.sched = রিক্ত;
 	tg->scx.flags &= ~(SCX_TG_ONLINE | SCX_TG_INITED);
 }
 
@@ -4938,24 +4938,24 @@ void scx_tg_offline(struct task_group *tg)
  * at CGROUP_TASK_MIGRATED of the same migration or under scx_cgroup_lock(),
  * both while holding cgroup_mutex.
  */
-static struct scx_sched *scx_cgroup_task_sched(struct task_struct *p)
+স্থির সংরচনা scx_sched *scx_cgroup_task_sched(সংরচনা task_struct *p)
 {
-	return rcu_dereference_protected(p->scx.sched, lockdep_is_held(&cgroup_mutex));
+	ঘূৰাই rcu_dereference_protected(p->scx.sched, lockdep_is_held(&cgroup_mutex));
 }
 
-int scx_cgroup_can_attach(struct cgroup_taskset *tset)
+পূর্ণাঙ্ক scx_cgroup_can_attach(সংরচনা cgroup_taskset *tset)
 {
-	struct cgroup_subsys_state *css;
-	struct task_struct *p;
-	int ret;
+	সংরচনা cgroup_subsys_state *css;
+	সংরচনা task_struct *p;
+	পূর্ণাঙ্ক ret;
 
-	if (!scx_cgroup_enabled)
-		return 0;
+	যদি (!scx_cgroup_enabled)
+		ঘূৰাই 0;
 
 	cgroup_taskset_for_each(p, css, tset) {
-		struct scx_sched *sch = scx_cgroup_task_sched(p);
-		struct cgroup *from = tg_cgrp(task_group(p));
-		struct cgroup *to = tg_cgrp(css_tg(css));
+		সংরচনা scx_sched *sch = scx_cgroup_task_sched(p);
+		সংরচনা cgroup *from = tg_cgrp(task_group(p));
+		সংরচনা cgroup *to = tg_cgrp(css_tg(css));
 
 		WARN_ON_ONCE(p->scx.cgrp_moving_from);
 
@@ -4964,8 +4964,8 @@ int scx_cgroup_can_attach(struct cgroup_taskset *tset)
 		 * behavior so that ops.cgroup_prep_move() and ops.cgroup_move()
 		 * always match one-to-one.
 		 */
-		if (from == to)
-			continue;
+		যদি (from == to)
+			অনুৱর্ত;
 
 		/*
 		 * The cgroup_move ops are delivered to @p's sched, and only for
@@ -4973,43 +4973,43 @@ int scx_cgroup_can_attach(struct cgroup_taskset *tset)
 		 * cgroup's sched and is reported through the
 		 * exit_task/init_task pair that the re-homing generates.
 		 */
-		if (!sch || sch != scx_cgroup_sched(task_css_set(p)->mg_dst_cset->dfl_cgrp))
-			continue;
+		যদি (!sch || sch != scx_cgroup_sched(task_css_set(p)->mg_dst_cset->dfl_cgrp))
+			অনুৱর্ত;
 
-		if (SCX_HAS_OP(sch, cgroup_prep_move)) {
-			ret = SCX_CALL_OP_RET(sch, cgroup_prep_move, NULL,
+		যদি (SCX_HAS_OP(sch, cgroup_prep_move)) {
+			ret = SCX_CALL_OP_RET(sch, cgroup_prep_move, রিক্ত,
 					      p, from, css->cgroup);
-			if (ret) {
+			যদি (ret) {
 				ret = scx_ops_sanitize_err(sch, "cgroup_prep_move", ret);
-				goto err;
+				গচ্ছ err;
 			}
 		}
 
 		p->scx.cgrp_moving_from = from;
 	}
 
-	return 0;
+	ঘূৰাই 0;
 
 err:
 	cgroup_taskset_for_each(p, css, tset) {
-		struct scx_sched *sch = scx_cgroup_task_sched(p);
+		সংরচনা scx_sched *sch = scx_cgroup_task_sched(p);
 
 		/* cgrp_moving_from implies non-NULL @sch, test it first */
-		if (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_cancel_move))
-			SCX_CALL_OP(sch, cgroup_cancel_move, NULL,
+		যদি (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_cancel_move))
+			SCX_CALL_OP(sch, cgroup_cancel_move, রিক্ত,
 				    p, p->scx.cgrp_moving_from, css->cgroup);
-		p->scx.cgrp_moving_from = NULL;
+		p->scx.cgrp_moving_from = রিক্ত;
 	}
 
-	return ret;
+	ঘূৰাই ret;
 }
 
-void scx_cgroup_move_task(struct task_struct *p)
+শূন্য scx_cgroup_move_task(সংরচনা task_struct *p)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
-	if (!scx_cgroup_enabled)
-		return;
+	যদি (!scx_cgroup_enabled)
+		ঘূৰাই;
 
 	/*
 	 * Migration keys off css rather than cgroup identity, so it can hand an
@@ -5018,58 +5018,58 @@ void scx_cgroup_move_task(struct task_struct *p)
 	 * move paired.
 	 */
 	sch = scx_cgroup_task_sched(p);
-	if (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_move))
+	যদি (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_move))
 		SCX_CALL_OP_TASK(sch, cgroup_move, task_rq(p),
 				 p, p->scx.cgrp_moving_from,
 				 tg_cgrp(task_group(p)));
-	p->scx.cgrp_moving_from = NULL;
+	p->scx.cgrp_moving_from = রিক্ত;
 }
 
-void scx_cgroup_cancel_attach(struct cgroup_taskset *tset)
+শূন্য scx_cgroup_cancel_attach(সংরচনা cgroup_taskset *tset)
 {
-	struct cgroup_subsys_state *css;
-	struct task_struct *p;
+	সংরচনা cgroup_subsys_state *css;
+	সংরচনা task_struct *p;
 
-	if (!scx_cgroup_enabled)
-		return;
+	যদি (!scx_cgroup_enabled)
+		ঘূৰাই;
 
 	cgroup_taskset_for_each(p, css, tset) {
-		struct scx_sched *sch = scx_cgroup_task_sched(p);
+		সংরচনা scx_sched *sch = scx_cgroup_task_sched(p);
 
 		/* cgrp_moving_from implies non-NULL @sch, test it first */
-		if (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_cancel_move))
-			SCX_CALL_OP(sch, cgroup_cancel_move, NULL,
+		যদি (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_cancel_move))
+			SCX_CALL_OP(sch, cgroup_cancel_move, রিক্ত,
 				    p, p->scx.cgrp_moving_from, css->cgroup);
-		p->scx.cgrp_moving_from = NULL;
+		p->scx.cgrp_moving_from = রিক্ত;
 	}
 }
 
-void scx_group_set_weight(struct task_group *tg, unsigned long weight)
+শূন্য scx_group_set_weight(সংরচনা task_group *tg, unsigned long weight)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	percpu_down_read(&scx_cgroup_ops_rwsem);
 	sch = scx_tg_knob_sched(tg);
 
-	if (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_set_weight) &&
+	যদি (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_set_weight) &&
 	    tg->scx.weight != weight)
-		SCX_CALL_OP(sch, cgroup_set_weight, NULL, tg_cgrp(tg), weight);
+		SCX_CALL_OP(sch, cgroup_set_weight, রিক্ত, tg_cgrp(tg), weight);
 
 	tg->scx.weight = weight;
 
 	percpu_up_read(&scx_cgroup_ops_rwsem);
 }
 
-void scx_group_set_idle(struct task_group *tg, bool idle)
+শূন্য scx_group_set_idle(সংরচনা task_group *tg, bool idle)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	percpu_down_read(&scx_cgroup_ops_rwsem);
 	sch = scx_tg_knob_sched(tg);
 
-	if (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_set_idle) &&
+	যদি (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_set_idle) &&
 	    tg->scx.idle != idle)
-		SCX_CALL_OP(sch, cgroup_set_idle, NULL, tg_cgrp(tg), idle);
+		SCX_CALL_OP(sch, cgroup_set_idle, রিক্ত, tg_cgrp(tg), idle);
 
 	/* Update the task group's idle state */
 	tg->scx.idle = idle;
@@ -5077,19 +5077,19 @@ void scx_group_set_idle(struct task_group *tg, bool idle)
 	percpu_up_read(&scx_cgroup_ops_rwsem);
 }
 
-void scx_group_set_bandwidth(struct task_group *tg,
+শূন্য scx_group_set_bandwidth(সংরচনা task_group *tg,
 			     u64 period_us, u64 quota_us, u64 burst_us)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	percpu_down_read(&scx_cgroup_ops_rwsem);
 	sch = scx_tg_knob_sched(tg);
 
-	if (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_set_bandwidth) &&
+	যদি (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_set_bandwidth) &&
 	    (tg->scx.bw_period_us != period_us ||
 	     tg->scx.bw_quota_us != quota_us ||
 	     tg->scx.bw_burst_us != burst_us))
-		SCX_CALL_OP(sch, cgroup_set_bandwidth, NULL,
+		SCX_CALL_OP(sch, cgroup_set_bandwidth, রিক্ত,
 			    tg_cgrp(tg), period_us, quota_us, burst_us);
 
 	tg->scx.bw_period_us = period_us;
@@ -5100,10 +5100,10 @@ void scx_group_set_bandwidth(struct task_group *tg,
 }
 #endif	/* CONFIG_EXT_GROUP_SCHED */
 
-#if defined(CONFIG_EXT_GROUP_SCHED) || defined(CONFIG_EXT_SUB_SCHED)
-static struct cgroup *root_cgroup(void)
+#যদি defined(CONFIG_EXT_GROUP_SCHED) || defined(CONFIG_EXT_SUB_SCHED)
+স্থির সংরচনা cgroup *মূল_cgroup(শূন্য)
 {
-	return &cgrp_dfl_root.cgrp;
+	ঘূৰাই &cgrp_dfl_মূল.cgrp;
 }
 
 /*
@@ -5111,7 +5111,7 @@ static struct cgroup *root_cgroup(void)
  * for cgroup_mutex deadlocks with cgroup teardown, which holds it while
  * draining a set_* file write blocked on the rwsem behind the writer.
  */
-void scx_cgroup_lock(void)
+শূন্য scx_cgroup_lock(শূন্য)
 {
 	cgroup_lock();
 #ifdef CONFIG_EXT_GROUP_SCHED
@@ -5119,17 +5119,17 @@ void scx_cgroup_lock(void)
 #endif
 }
 
-void scx_cgroup_unlock(void)
+শূন্য scx_cgroup_unlock(শূন্য)
 {
 #ifdef CONFIG_EXT_GROUP_SCHED
 	percpu_up_write(&scx_cgroup_ops_rwsem);
 #endif
 	cgroup_unlock();
 }
-#else	/* CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED */
-static inline struct cgroup *root_cgroup(void) { return NULL; }
-static inline void scx_cgroup_lock(void) {}
-static inline void scx_cgroup_unlock(void) {}
+#অন্যথা	/* CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED */
+স্থির অন্তঃস্থ সংরচনা cgroup *মূল_cgroup(শূন্য) { ঘূৰাই রিক্ত; }
+স্থির অন্তঃস্থ শূন্য scx_cgroup_lock(শূন্য) {}
+স্থির অন্তঃস্থ শূন্য scx_cgroup_unlock(শূন্য) {}
 #endif	/* CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED */
 
 /*
@@ -5175,67 +5175,67 @@ DEFINE_SCHED_CLASS(ext) = {
 #endif
 };
 
-s32 scx_init_dsq(struct scx_dispatch_q *dsq, u64 dsq_id, struct scx_sched *sch)
+s32 scx_init_dsq(সংরচনা scx_dispatch_q *dsq, u64 dsq_id, সংরচনা scx_sched *sch)
 {
 	s32 cpu;
 
-	memset(dsq, 0, sizeof(*dsq));
+	memset(dsq, 0, পরিমাণ(*dsq));
 
 	raw_spin_lock_init(&dsq->lock);
 	INIT_LIST_HEAD(&dsq->list);
 	dsq->id = dsq_id;
 	dsq->sched = sch;
 
-	dsq->pcpu = alloc_percpu(struct scx_dsq_pcpu);
-	if (!dsq->pcpu)
-		return -ENOMEM;
+	dsq->pcpu = alloc_percpu(সংরচনা scx_dsq_pcpu);
+	যদি (!dsq->pcpu)
+		ঘূৰাই -ENOMEM;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
+		সংরচনা scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
 
 		pcpu->dsq = dsq;
-		INIT_LIST_HEAD(&pcpu->deferred_reenq_user.node);
+		INIT_LIST_HEAD(&pcpu->deferred_reenq_user.গ্ৰন্থি);
 	}
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static void exit_dsq(struct scx_dispatch_q *dsq)
+স্থির শূন্য exit_dsq(সংরচনা scx_dispatch_q *dsq)
 {
 	s32 cpu;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
-		struct scx_deferred_reenq_user *dru = &pcpu->deferred_reenq_user;
-		struct rq *rq = cpu_rq(cpu);
+		সংরচনা scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
+		সংরচনা scx_deferred_reenq_user *dru = &pcpu->deferred_reenq_user;
+		সংরচনা rq *rq = cpu_rq(cpu);
 
 		/*
 		 * free_dsq_irq_workfn() cancelled the reenqs before the grace
 		 * period and schedule_dsq_reenq() queues nothing after that.
 		 */
-		if (WARN_ON_ONCE(!list_empty(&dru->node))) {
+		যদি (WARN_ON_ONCE(!list_empty(&dru->গ্ৰন্থি))) {
 			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
-			list_del_init(&dru->node);
+			list_del_init(&dru->গ্ৰন্থি);
 		}
 	}
 
 	free_percpu(dsq->pcpu);
 }
 
-static void free_dsq_rcufn(struct rcu_head *rcu)
+স্থির শূন্য free_dsq_rcufn(সংরচনা rcu_head *rcu)
 {
-	struct scx_dispatch_q *dsq = container_of(rcu, struct scx_dispatch_q, rcu);
+	সংরচনা scx_dispatch_q *dsq = container_of(rcu, সংরচনা scx_dispatch_q, rcu);
 
 	exit_dsq(dsq);
 	kfree(dsq);
 }
 
-static void free_dsq_irq_workfn(struct irq_work *irq_work)
+স্থির শূন্য free_dsq_irq_workfn(সংরচনা irq_work *irq_work)
 {
-	struct llist_node *to_free = llist_del_all(&dsqs_to_free);
-	struct scx_dispatch_q *dsq, *tmp_dsq;
+	সংরচনা llist_গ্ৰন্থি *to_free = llist_del_all(&dsqs_to_free);
+	সংরচনা scx_dispatch_q *dsq, *tmp_dsq;
 
-	llist_for_each_entry_safe(dsq, tmp_dsq, to_free, free_node) {
+	llist_for_each_entry_safe(dsq, tmp_dsq, to_free, free_গ্ৰন্থি) {
 		s32 cpu;
 
 		/*
@@ -5246,41 +5246,41 @@ static void free_dsq_irq_workfn(struct irq_work *irq_work)
 		 * and queues nothing.
 		 */
 		for_each_possible_cpu(cpu) {
-			struct scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
-			struct rq *rq = cpu_rq(cpu);
+			সংরচনা scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
+			সংরচনা rq *rq = cpu_rq(cpu);
 
 			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
-			list_del_init(&pcpu->deferred_reenq_user.node);
+			list_del_init(&pcpu->deferred_reenq_user.গ্ৰন্থি);
 		}
 
 		call_rcu(&dsq->rcu, free_dsq_rcufn);
 	}
 }
 
-static DEFINE_IRQ_WORK(free_dsq_irq_work, free_dsq_irq_workfn);
+স্থির DEFINE_IRQ_WORK(free_dsq_irq_work, free_dsq_irq_workfn);
 
-static void destroy_dsq(struct scx_sched *sch, u64 dsq_id)
+স্থির শূন্য destroy_dsq(সংরচনা scx_sched *sch, u64 dsq_id)
 {
-	struct scx_dispatch_q *dsq;
+	সংরচনা scx_dispatch_q *dsq;
 	unsigned long flags;
 
 	rcu_read_lock();
 
 	dsq = find_user_dsq(sch, dsq_id);
-	if (!dsq)
-		goto out_unlock_rcu;
+	যদি (!dsq)
+		গচ্ছ out_unlock_rcu;
 
 	raw_spin_lock_irqsave(&dsq->lock, flags);
 
-	if (dsq->nr) {
+	যদি (dsq->nr) {
 		scx_error(sch, "attempting to destroy in-use dsq 0x%016llx (nr=%u)",
 			  dsq->id, dsq->nr);
-		goto out_unlock_dsq;
+		গচ্ছ out_unlock_dsq;
 	}
 
-	if (rhashtable_remove_fast(&sch->dsq_hash, &dsq->hash_node,
+	যদি (rhashtable_remove_fast(&sch->dsq_hash, &dsq->hash_গ্ৰন্থি,
 				   dsq_hash_params))
-		goto out_unlock_dsq;
+		গচ্ছ out_unlock_dsq;
 
 	/*
 	 * Mark dead by invalidating ->id to prevent scx_dispatch_enqueue() from
@@ -5289,7 +5289,7 @@ static void destroy_dsq(struct scx_sched *sch, u64 dsq_id)
 	 * operations inside scheduler locks.
 	 */
 	dsq->id = SCX_DSQ_INVALID;
-	if (llist_add(&dsq->free_node, &dsqs_to_free))
+	যদি (llist_add(&dsq->free_গ্ৰন্থি, &dsqs_to_free))
 		irq_work_queue(&free_dsq_irq_work);
 
 out_unlock_dsq:
@@ -5299,44 +5299,44 @@ out_unlock_rcu:
 }
 
 #ifdef CONFIG_EXT_GROUP_SCHED
-static void scx_cgroup_exit(struct scx_sched *sch)
+স্থির শূন্য scx_cgroup_exit(সংরচনা scx_sched *sch)
 {
-	struct cgroup_subsys_state *css;
+	সংরচনা cgroup_subsys_state *css;
 
 	/*
 	 * scx_tg_on/offline() are excluded through cgroup_lock(). If we walk
 	 * cgroups and exit all the inited ones, all online cgroups are exited.
 	 */
-	css_for_each_descendant_post(css, &root_task_group.css) {
-		struct task_group *tg = css_tg(css);
+	css_for_each_descendant_post(css, &মূল_task_group.css) {
+		সংরচনা task_group *tg = css_tg(css);
 
 		/* also clear the sched of tgs whose ops.cgroup_init() failed */
-		tg->scx.sched = NULL;
-		if (tg->scx.flags & SCX_TG_INITED) {
+		tg->scx.sched = রিক্ত;
+		যদি (tg->scx.flags & SCX_TG_INITED) {
 			tg->scx.flags &= ~SCX_TG_INITED;
-			if (sch->ops.cgroup_exit)
-				SCX_CALL_OP(sch, cgroup_exit, NULL, css->cgroup);
+			যদি (sch->ops.cgroup_exit)
+				SCX_CALL_OP(sch, cgroup_exit, রিক্ত, css->cgroup);
 		}
 	}
 }
 
-static int scx_cgroup_init(struct scx_sched *sch)
+স্থির পূর্ণাঙ্ক scx_cgroup_init(সংরচনা scx_sched *sch)
 {
-	struct cgroup_subsys_state *css;
-	int ret;
+	সংরচনা cgroup_subsys_state *css;
+	পূর্ণাঙ্ক ret;
 
 	/*
 	 * scx_tg_on/offline() are excluded through cgroup_lock(). If we walk
 	 * cgroups and init, all online cgroups are initialized.
 	 */
-	css_for_each_descendant_pre(css, &root_task_group.css) {
-		struct task_group *tg = css_tg(css);
+	css_for_each_descendant_pre(css, &মূল_task_group.css) {
+		সংরচনা task_group *tg = css_tg(css);
 
-		if ((tg->scx.flags & (SCX_TG_ONLINE | SCX_TG_INITED)) != SCX_TG_ONLINE)
-			continue;
+		যদি ((tg->scx.flags & (SCX_TG_ONLINE | SCX_TG_INITED)) != SCX_TG_ONLINE)
+			অনুৱর্ত;
 
-		if (sch->ops.cgroup_init) {
-			struct scx_cgroup_init_args args = {
+		যদি (sch->ops.cgroup_init) {
+			সংরচনা scx_cgroup_init_args args = {
 				.weight = tg->scx.weight,
 				.bw_period_us = tg->scx.bw_period_us,
 				.bw_quota_us = tg->scx.bw_quota_us,
@@ -5344,10 +5344,10 @@ static int scx_cgroup_init(struct scx_sched *sch)
 				.sched_idle = tg->scx.idle,
 			};
 
-			ret = SCX_CALL_OP_RET(sch, cgroup_init, NULL, css->cgroup, &args);
-			if (ret) {
+			ret = SCX_CALL_OP_RET(sch, cgroup_init, রিক্ত, css->cgroup, &args);
+			যদি (ret) {
 				scx_error(sch, "ops.cgroup_init() failed (%d)", ret);
-				return ret;
+				ঘূৰাই ret;
 			}
 		}
 
@@ -5355,12 +5355,12 @@ static int scx_cgroup_init(struct scx_sched *sch)
 		tg->scx.flags |= SCX_TG_INITED;
 	}
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-#else
-static void scx_cgroup_exit(struct scx_sched *sch) {}
-static int scx_cgroup_init(struct scx_sched *sch) { return 0; }
+#অন্যথা
+স্থির শূন্য scx_cgroup_exit(সংরচনা scx_sched *sch) {}
+স্থির পূর্ণাঙ্ক scx_cgroup_init(সংরচনা scx_sched *sch) { ঘূৰাই 0; }
 #endif
 
 
@@ -5369,131 +5369,131 @@ static int scx_cgroup_init(struct scx_sched *sch) { return 0; }
  */
 
 #define SCX_ATTR(_name)								\
-	static struct kobj_attribute scx_attr_##_name = {			\
+	স্থির সংরচনা kobj_attribute scx_attr_##_name = {			\
 		.attr = { .name = __stringify(_name), .mode = 0444 },		\
 		.show = scx_attr_##_name##_show,				\
 	}
 
-static ssize_t scx_attr_state_show(struct kobject *kobj,
-				   struct kobj_attribute *ka, char *buf)
+স্থির ssize_t scx_attr_state_show(সংরচনা kobject *kobj,
+				   সংরচনা kobj_attribute *ka, ৱর্ণ *buf)
 {
-	return sysfs_emit(buf, "%s\n", scx_enable_state_str[scx_enable_state()]);
+	ঘূৰাই sysfs_emit(buf, "%s\n", scx_enable_state_str[scx_enable_state()]);
 }
 SCX_ATTR(state);
 
-static ssize_t scx_attr_switch_all_show(struct kobject *kobj,
-					struct kobj_attribute *ka, char *buf)
+স্থির ssize_t scx_attr_switch_all_show(সংরচনা kobject *kobj,
+					সংরচনা kobj_attribute *ka, ৱর্ণ *buf)
 {
-	return sysfs_emit(buf, "%d\n", READ_ONCE(scx_switching_all));
+	ঘূৰাই sysfs_emit(buf, "%d\n", READ_ONCE(scx_switching_all));
 }
 SCX_ATTR(switch_all);
 
-static ssize_t scx_attr_nr_rejected_show(struct kobject *kobj,
-					 struct kobj_attribute *ka, char *buf)
+স্থির ssize_t scx_attr_nr_rejected_show(সংরচনা kobject *kobj,
+					 সংরচনা kobj_attribute *ka, ৱর্ণ *buf)
 {
-	return sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_nr_rejected));
+	ঘূৰাই sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_nr_rejected));
 }
 SCX_ATTR(nr_rejected);
 
-static ssize_t scx_attr_hotplug_seq_show(struct kobject *kobj,
-					 struct kobj_attribute *ka, char *buf)
+স্থির ssize_t scx_attr_hotplug_seq_show(সংরচনা kobject *kobj,
+					 সংরচনা kobj_attribute *ka, ৱর্ণ *buf)
 {
-	return sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_hotplug_seq));
+	ঘূৰাই sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_hotplug_seq));
 }
 SCX_ATTR(hotplug_seq);
 
-static ssize_t scx_attr_enable_seq_show(struct kobject *kobj,
-					struct kobj_attribute *ka, char *buf)
+স্থির ssize_t scx_attr_enable_seq_show(সংরচনা kobject *kobj,
+					সংরচনা kobj_attribute *ka, ৱর্ণ *buf)
 {
-	return sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_enable_seq));
+	ঘূৰাই sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_enable_seq));
 }
 SCX_ATTR(enable_seq);
 
-static struct attribute *scx_global_attrs[] = {
+স্থির সংরচনা attribute *scx_global_attrs[] = {
 	&scx_attr_state.attr,
 	&scx_attr_switch_all.attr,
 	&scx_attr_nr_rejected.attr,
 	&scx_attr_hotplug_seq.attr,
 	&scx_attr_enable_seq.attr,
-	NULL,
+	রিক্ত,
 };
 
-static const struct attribute_group scx_global_attr_group = {
+স্থির ধ্রুৱ সংরচনা attribute_group scx_global_attr_group = {
 	.attrs = scx_global_attrs,
 };
 
-static void free_pnode(struct scx_sched_pnode *pnode);
-static void free_exit_info(struct scx_exit_info *ei);
-static const char *scx_exit_reason(enum scx_exit_kind kind);
-static bool scx_claim_exit(struct scx_sched *sch, enum scx_exit_kind kind);
+স্থির শূন্য free_pnode(সংরচনা scx_sched_pnode *pnode);
+স্থির শূন্য free_exit_info(সংরচনা scx_exit_info *ei);
+স্থির ধ্রুৱ ৱর্ণ *scx_exit_reason(গণনা scx_exit_kind kind);
+স্থির bool scx_claim_exit(সংরচনা scx_sched *sch, গণনা scx_exit_kind kind);
 
-s32 scx_alloc_kern_arena_objs(struct scx_sched *sch)
+s32 scx_alloc_kern_arena_objs(সংরচনা scx_sched *sch)
 {
-	size_t size = struct_size_t(struct scx_cmask, bits,
-				    SCX_CMASK_NR_WORDS(num_possible_cpus()));
-	struct scx_cmask *online;
-	struct scx_cmask_ref ref;
-	int cpu;
+	size_t size = struct_size_t(সংরচনা scx_cmask, bits,
+				    SCX_CMASK_NR_শব্দগুলি(অঙ্ক_possible_cpus()));
+	সংরচনা scx_cmask *online;
+	সংরচনা scx_cmask_ref ref;
+	পূর্ণাঙ্ক cpu;
 
 	/* hotplug stays excluded until the online mask is published */
 	lockdep_assert_cpus_held();
 
-	if (!sch->is_cid_type || !sch->arena_pool)
-		return 0;
+	যদি (!sch->is_cid_type || !sch->arena_pool)
+		ঘূৰাই 0;
 
-	sch->set_cmask_scratch = alloc_percpu(struct scx_cmask *);
-	if (!sch->set_cmask_scratch)
-		return -ENOMEM;
+	sch->set_cmask_scratch = alloc_percpu(সংরচনা scx_cmask *);
+	যদি (!sch->set_cmask_scratch)
+		ঘূৰাই -ENOMEM;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_cmask **slot = per_cpu_ptr(sch->set_cmask_scratch, cpu);
+		সংরচনা scx_cmask **slot = per_cpu_ptr(sch->set_cmask_scratch, cpu);
 
 		*slot = scx_arena_alloc(sch, size);
-		if (!*slot)
-			return -ENOMEM;
-		scx_cmask_init(*slot, 0, num_possible_cpus());
+		যদি (!*slot)
+			ঘূৰাই -ENOMEM;
+		scx_cmask_init(*slot, 0, অঙ্ক_possible_cpus());
 	}
 
 	/* pack the online mask alongside the scratch masks */
 	online = scx_arena_alloc(sch, size);
-	if (!online)
-		return -ENOMEM;
+	যদি (!online)
+		ঘূৰাই -ENOMEM;
 
 	scoped_guard(rcu) {
-		scx_cmask_ref_init_kern(sch, online, 0, num_possible_cpus(), &ref);
+		scx_cmask_ref_init_kern(sch, online, 0, অঙ্ক_possible_cpus(), &ref);
 		scx_cmask_ref_from_cpumask(&ref, cpu_active_mask);
 	}
 	sch->online_cmask = online;
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static void scx_free_kern_arena_objs(struct scx_sched *sch)
+স্থির শূন্য scx_free_kern_arena_objs(সংরচনা scx_sched *sch)
 {
-	size_t size = struct_size_t(struct scx_cmask, bits,
-				    SCX_CMASK_NR_WORDS(num_possible_cpus()));
-	int cpu;
+	size_t size = struct_size_t(সংরচনা scx_cmask, bits,
+				    SCX_CMASK_NR_শব্দগুলি(অঙ্ক_possible_cpus()));
+	পূর্ণাঙ্ক cpu;
 
 	scx_arena_free(sch, sch->online_cmask, size);
-	if (!sch->set_cmask_scratch)
-		return;
+	যদি (!sch->set_cmask_scratch)
+		ঘূৰাই;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_cmask **slot = per_cpu_ptr(sch->set_cmask_scratch, cpu);
+		সংরচনা scx_cmask **slot = per_cpu_ptr(sch->set_cmask_scratch, cpu);
 
 		scx_arena_free(sch, *slot, size);
 	}
 	free_percpu(sch->set_cmask_scratch);
-	sch->set_cmask_scratch = NULL;
+	sch->set_cmask_scratch = রিক্ত;
 }
 
-static void scx_sched_free_rcu_work(struct work_struct *work)
+স্থির শূন্য scx_sched_free_rcu_work(সংরচনা work_struct *work)
 {
-	struct rcu_work *rcu_work = to_rcu_work(work);
-	struct scx_sched *sch = container_of(rcu_work, struct scx_sched, rcu_work);
-	struct rhashtable_iter rht_iter;
-	struct scx_dispatch_q *dsq;
-	int cpu, node;
+	সংরচনা rcu_work *rcu_work = to_rcu_work(work);
+	সংরচনা scx_sched *sch = container_of(rcu_work, সংরচনা scx_sched, rcu_work);
+	সংরচনা rhashtable_iter rht_iter;
+	সংরচনা scx_dispatch_q *dsq;
+	পূর্ণাঙ্ক cpu, গ্ৰন্থি;
 
 	irq_work_sync(&sch->propagate_exit_irq_work);
 	irq_work_sync(&sch->disable_irq_work);
@@ -5505,23 +5505,23 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
 
 #ifdef CONFIG_EXT_SUB_SCHED
 	kfree(sch->cgrp_path);
-	if (sch_cgroup(sch))
+	যদি (sch_cgroup(sch))
 		cgroup_put(sch_cgroup(sch));
-	if (sch->sub_kset)
+	যদি (sch->sub_kset)
 		kobject_put(&sch->sub_kset->kobj);
-	if (scx_parent(sch))
+	যদি (scx_parent(sch))
 		kobject_put(&scx_parent(sch)->kobj);
 #endif	/* CONFIG_EXT_SUB_SCHED */
 
 	for_each_possible_cpu(cpu) {
-		struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
+		সংরচনা scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
 
 		/*
 		 * $sch would have entered bypass mode before the RCU grace
 		 * period. As that blocks new deferrals, all
 		 * deferred_reenq_local_node's must be off-list by now.
 		 */
-		WARN_ON_ONCE(!list_empty(&pcpu->deferred_reenq_local.node));
+		WARN_ON_ONCE(!list_empty(&pcpu->deferred_reenq_local.গ্ৰন্থি));
 
 		/* remove the queued ecaps sync so the pcpu can be freed */
 		scx_discard_ecaps_to_sync(cpu, pcpu);
@@ -5531,7 +5531,7 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
 		 * pcpu's to_kick_node is off the list before it is freed.
 		 */
 		irq_work_sync(&cpu_rq(cpu)->scx.kick_cpus_irq_work);
-		WARN_ON_ONCE(!list_empty(&pcpu->to_kick_node));
+		WARN_ON_ONCE(!list_empty(&pcpu->to_kick_গ্ৰন্থি));
 		free_cpumask_var(pcpu->cpus_to_kick);
 		free_cpumask_var(pcpu->cpus_to_kick_if_idle);
 		free_cpumask_var(pcpu->cpus_to_preempt);
@@ -5542,28 +5542,28 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
 
 	free_percpu(sch->pcpu);
 
-	for_each_node_state(node, N_POSSIBLE)
-		free_pnode(sch->pnode[node]);
+	for_each_গ্ৰন্থি_state(গ্ৰন্থি, N_POSSIBLE)
+		free_pnode(sch->pnode[গ্ৰন্থি]);
 	kfree(sch->pnode);
 
 	scx_free_pshards(sch);
 
 	rhashtable_walk_enter(&sch->dsq_hash, &rht_iter);
-	do {
+	কৰা {
 		rhashtable_walk_start(&rht_iter);
 
-		while (!IS_ERR_OR_NULL((dsq = rhashtable_walk_next(&rht_iter))))
+		যেতিয়ালৈ (!IS_ERR_OR_NULL((dsq = rhashtable_walk_next(&rht_iter))))
 			destroy_dsq(sch, dsq->id);
 
 		rhashtable_walk_stop(&rht_iter);
-	} while (dsq == ERR_PTR(-EAGAIN));
+	} যেতিয়ালৈ (dsq == ERR_PTR(-EAGAIN));
 	rhashtable_walk_exit(&rht_iter);
 
-	rhashtable_free_and_destroy(&sch->dsq_hash, NULL, NULL);
+	rhashtable_free_and_destroy(&sch->dsq_hash, রিক্ত, রিক্ত);
 	free_exit_info(sch->exit_info);
 	scx_free_kern_arena_objs(sch);
 	scx_arena_pool_destroy(sch);
-	if (sch->arena_map)
+	যদি (sch->arena_map)
 		bpf_map_put(sch->arena_map);
 
 	/* @sch is completely inactive by now */
@@ -5572,20 +5572,20 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
 	kfree(sch);
 }
 
-static void scx_kobj_release(struct kobject *kobj)
+স্থির শূন্য scx_kobj_release(সংরচনা kobject *kobj)
 {
-	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
+	সংরচনা scx_sched *sch = container_of(kobj, সংরচনা scx_sched, kobj);
 
 	INIT_RCU_WORK(&sch->rcu_work, scx_sched_free_rcu_work);
 	queue_rcu_work(system_dfl_wq, &sch->rcu_work);
 }
 
-static ssize_t scx_attr_ops_show(struct kobject *kobj,
-				 struct kobj_attribute *ka, char *buf)
+স্থির ssize_t scx_attr_ops_show(সংরচনা kobject *kobj,
+				 সংরচনা kobj_attribute *ka, ৱর্ণ *buf)
 {
-	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
+	সংরচনা scx_sched *sch = container_of(kobj, সংরচনা scx_sched, kobj);
 
-	return sysfs_emit(buf, "%s\n", sch->ops.name);
+	ঘূৰাই sysfs_emit(buf, "%s\n", sch->ops.name);
 }
 SCX_ATTR(ops);
 
@@ -5593,49 +5593,49 @@ SCX_ATTR(ops);
 	sysfs_emit_at(buf, at, "%s %llu\n", #kind, (events)->kind);		\
 })
 
-static ssize_t scx_attr_events_show(struct kobject *kobj,
-				    struct kobj_attribute *ka, char *buf)
+স্থির ssize_t scx_attr_events_show(সংরচনা kobject *kobj,
+				    সংরচনা kobj_attribute *ka, ৱর্ণ *buf)
 {
-	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
-	struct scx_event_stats events;
-	int at = 0;
+	সংরচনা scx_sched *sch = container_of(kobj, সংরচনা scx_sched, kobj);
+	সংরচনা scx_event_stats events;
+	পূর্ণাঙ্ক at = 0;
 
 	scx_read_events(sch, &events);
 #define SCX_EVENT(name)	(at += scx_attr_event_show(buf, at, &events, name))
 	SCX_EVENTS_LIST(SCX_EVENT);
 #undef SCX_EVENT
-	return at;
+	ঘূৰাই at;
 }
 SCX_ATTR(events);
 
 #ifdef CONFIG_EXT_SUB_SCHED
-static const char *scx_cap_names[__SCX_NR_CAPS] = {
+স্থির ধ্রুৱ ৱর্ণ *scx_cap_names[__SCX_NR_CAPS] = {
 	[__SCX_CAP_ENQ_IMMED]	= "enq_immed",
 	[__SCX_CAP_ENQ]		= "enq",
 	[__SCX_CAP_PREEMPT]	= "preempt",
 	[__SCX_CAP_PERF]	= "perf",
 };
 
-static ssize_t scx_attr_caps_show(struct kobject *kobj,
-				  struct kobj_attribute *ka, char *buf)
+স্থির ssize_t scx_attr_caps_show(সংরচনা kobject *kobj,
+				  সংরচনা kobj_attribute *ka, ৱর্ণ *buf)
 {
-	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
-	u32 npossible = num_possible_cpus();
-	struct scx_cmask *agg __free(kfree) =
-		kzalloc_flex(*agg, bits, SCX_CMASK_NR_WORDS(npossible));
+	সংরচনা scx_sched *sch = container_of(kobj, সংরচনা scx_sched, kobj);
+	u32 npossible = অঙ্ক_possible_cpus();
+	সংরচনা scx_cmask *agg __free(kfree) =
+		kzalloc_flex(*agg, bits, SCX_CMASK_NR_শব্দগুলি(npossible));
 	unsigned long *agg_bm __free(bitmap) = bitmap_zalloc(npossible, GFP_KERNEL);
-	ssize_t count = 0;
+	ssize_t গুনতি = 0;
 	s32 cap, si;
 
-	if (!agg || !agg_bm)
-		return -ENOMEM;
+	যদি (!agg || !agg_bm)
+		ঘূৰাই -ENOMEM;
 
-	for (cap = 0; cap < __SCX_NR_CAPS; cap++) {
+	বাবে (cap = 0; cap < __SCX_NR_CAPS; cap++) {
 		SCX_CMASK_DEFINE(snap, 0, SCX_CID_SHARD_MAX_CPUS);
 
 		scx_cmask_init(agg, 0, npossible);
-		for (si = 0; si < sch->nr_pshards; si++) {
-			struct scx_cmask *cm = &sch->pshard[si]->caps[cap].cmask;
+		বাবে (si = 0; si < sch->nr_pshards; si++) {
+			সংরচনা scx_cmask *cm = &sch->pshard[si]->caps[cap].cmask;
 
 			scx_cmask_reframe(snap, cm->base, cm->nr_cids);
 			scx_cmask_copy(snap, cm);
@@ -5643,48 +5643,48 @@ static ssize_t scx_attr_caps_show(struct kobject *kobj,
 		}
 		/* %*pbl takes unsigned long bitmap layout, convert from u64 */
 		bitmap_from_arr64(agg_bm, agg->bits, npossible);
-		count += sysfs_emit_at(buf, count, "%s: %*pbl\n",
+		গুনতি += sysfs_emit_at(buf, গুনতি, "%s: %*pbl\n",
 				       scx_cap_names[cap], npossible, agg_bm);
 	}
-	return count;
+	ঘূৰাই গুনতি;
 }
 SCX_ATTR(caps);
 #endif	/* CONFIG_EXT_SUB_SCHED */
 
-static struct attribute *scx_sched_attrs[] = {
+স্থির সংরচনা attribute *scx_sched_attrs[] = {
 	&scx_attr_ops.attr,
 	&scx_attr_events.attr,
 #ifdef CONFIG_EXT_SUB_SCHED
 	&scx_attr_caps.attr,
 #endif
-	NULL,
+	রিক্ত,
 };
 ATTRIBUTE_GROUPS(scx_sched);
 
-static const struct kobj_type scx_ktype = {
+স্থির ধ্রুৱ সংরচনা kobj_type scx_ktype = {
 	.release = scx_kobj_release,
 	.sysfs_ops = &kobj_sysfs_ops,
 	.default_groups = scx_sched_groups,
 };
 
-static int scx_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
+স্থির পূর্ণাঙ্ক scx_uevent(ধ্রুৱ সংরচনা kobject *kobj, সংরচনা kobj_uevent_env *env)
 {
-	const struct scx_sched *sch;
+	ধ্রুৱ সংরচনা scx_sched *sch;
 
 	/*
 	 * scx_uevent() can be reached by both scx_sched kobjects (scx_ktype)
 	 * and sub-scheduler kset kobjects (kset_ktype) through the parent
 	 * chain walk. Filter out the latter to avoid invalid casts.
 	 */
-	if (kobj->ktype != &scx_ktype)
-		return 0;
+	যদি (kobj->ktype != &scx_ktype)
+		ঘূৰাই 0;
 
-	sch = container_of(kobj, struct scx_sched, kobj);
+	sch = container_of(kobj, সংরচনা scx_sched, kobj);
 
-	return add_uevent_var(env, "SCXOPS=%s", sch->ops.name);
+	ঘূৰাই add_uevent_var(env, "SCXOPS=%s", sch->ops.name);
 }
 
-static const struct kset_uevent_ops scx_uevent_ops = {
+স্থির ধ্রুৱ সংরচনা kset_uevent_ops scx_uevent_ops = {
 	.uevent = scx_uevent,
 };
 
@@ -5692,15 +5692,15 @@ static const struct kset_uevent_ops scx_uevent_ops = {
  * Used by sched_fork() and __setscheduler_class() to pick the matching
  * sched_class. dl/rt are already handled.
  */
-bool task_should_scx(int policy)
+bool task_should_scx(পূর্ণাঙ্ক policy)
 {
 	/* if disabled, nothing should be on it */
-	if (!scx_enabled())
-		return false;
+	যদি (!scx_enabled())
+		ঘূৰাই false;
 
 	/* scx is taking over all SCHED_OTHER and SCHED_EXT tasks */
-	if (READ_ONCE(scx_switching_all))
-		return true;
+	যদি (READ_ONCE(scx_switching_all))
+		ঘূৰাই true;
 
 	/*
 	 * scx is tearing down - keep new SCHED_EXT tasks out.
@@ -5715,30 +5715,30 @@ bool task_should_scx(int policy)
 	 * the stalled task, the disable path can never grab the mutex to clear
 	 * scx_switching_all.
 	 */
-	if (unlikely(scx_enable_state() == SCX_DISABLING))
-		return false;
+	যদি (unlikely(scx_enable_state() == SCX_DISABLING))
+		ঘূৰাই false;
 
-	return policy == SCHED_EXT;
+	ঘূৰাই policy == SCHED_EXT;
 }
 
-bool scx_allow_ttwu_queue(const struct task_struct *p)
+bool scx_allow_ttwu_queue(ধ্রুৱ সংরচনা task_struct *p)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
-	if (!scx_enabled())
-		return true;
+	যদি (!scx_enabled())
+		ঘূৰাই true;
 
 	sch = scx_task_sched(p);
-	if (unlikely(!sch))
-		return true;
+	যদি (unlikely(!sch))
+		ঘূৰাই true;
 
-	if (sch->ops.flags & SCX_OPS_ALLOW_QUEUED_WAKEUP)
-		return true;
+	যদি (sch->ops.flags & SCX_OPS_ALLOW_QUEUED_WAKEUP)
+		ঘূৰাই true;
 
-	if (unlikely(p->sched_class != &ext_sched_class))
-		return true;
+	যদি (unlikely(p->sched_class != &ext_sched_class))
+		ঘূৰাই true;
 
-	return false;
+	ঘূৰাই false;
 }
 
 /**
@@ -5753,27 +5753,27 @@ bool scx_allow_ttwu_queue(const struct task_struct *p)
  * resolve the lockup. %false if sched_ext is not enabled or abort was already
  * initiated by someone else.
  */
-static __printf(2, 3) bool handle_lockup(int exit_cpu, const char *fmt, ...)
+স্থির __printf(2, 3) bool handle_lockup(পূর্ণাঙ্ক exit_cpu, ধ্রুৱ ৱর্ণ *fmt, ...)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 	va_list args;
 	bool ret;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
-	if (unlikely(!sch))
-		return false;
+	sch = rcu_dereference(scx_মূল);
+	যদি (unlikely(!sch))
+		ঘূৰাই false;
 
-	switch (scx_enable_state()) {
-	case SCX_ENABLING:
-	case SCX_ENABLED:
+	ৱিকল্প (scx_enable_state()) {
+	পক্ষ SCX_ENABLING:
+	পক্ষ SCX_ENABLED:
 		va_start(args, fmt);
 		ret = scx_vexit(sch, SCX_EXIT_ERROR, 0, exit_cpu, fmt, args);
 		va_end(args);
-		return ret;
-	default:
-		return false;
+		ঘূৰাই ret;
+	স্ৱভাৱ:
+		ঘূৰাই false;
 	}
 }
 
@@ -5790,38 +5790,38 @@ static __printf(2, 3) bool handle_lockup(int exit_cpu, const char *fmt, ...)
  * resolve the reported RCU stall. %false if sched_ext is not enabled or someone
  * else already initiated abort.
  */
-bool scx_rcu_cpu_stall(const struct cpumask *stalled_mask)
+bool scx_rcu_cpu_stall(ধ্রুৱ সংরচনা cpumask *stalled_mask)
 {
-	struct scx_sched *sch;
-	struct scx_exit_info *ei;
-	int exit_cpu;
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_exit_info *ei;
+	পূর্ণাঙ্ক exit_cpu;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
-	if (unlikely(!sch))
-		return false;
+	sch = rcu_dereference(scx_মূল);
+	যদি (unlikely(!sch))
+		ঘূৰাই false;
 
-	switch (scx_enable_state()) {
-	case SCX_ENABLING:
-	case SCX_ENABLED:
-		break;
-	default:
-		return false;
+	ৱিকল্প (scx_enable_state()) {
+	পক্ষ SCX_ENABLING:
+	পক্ষ SCX_ENABLED:
+		ভঙ্গ;
+	স্ৱভাৱ:
+		ঘূৰাই false;
 	}
 
-	exit_cpu = cpumask_empty(stalled_mask) ? -1 : (int)cpumask_first(stalled_mask);
+	exit_cpu = cpumask_empty(stalled_mask) ? -1 : (পূর্ণাঙ্ক)cpumask_first(stalled_mask);
 	ei = sch->exit_info;
 
 	guard(preempt)();
 
-	if (!scx_claim_exit(sch, SCX_EXIT_ERROR))
-		return false;
+	যদি (!scx_claim_exit(sch, SCX_EXIT_ERROR))
+		ঘূৰাই false;
 
 #ifdef CONFIG_STACKTRACE
-	ei->bt_len = stack_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
+	ei->bt_len = স্তূপ_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
 #endif
-	scnprintf(ei->msg, SCX_EXIT_MSG_LEN, "RCU CPU stall on CPUs (%*pbl)",
+	scnprintf(ei->বাৰ্তা, SCX_EXIT_বাৰ্তা_LEN, "RCU CPU stall on CPUs (%*pbl)",
 		  cpumask_pr_args(stalled_mask));
 	ei->kind = SCX_EXIT_ERROR;
 	ei->reason = scx_exit_reason(SCX_EXIT_ERROR);
@@ -5829,7 +5829,7 @@ bool scx_rcu_cpu_stall(const struct cpumask *stalled_mask)
 	cpumask_copy(sch->stall_cpus, stalled_mask);
 
 	irq_work_queue(&sch->disable_irq_work);
-	return true;
+	ঘূৰাই true;
 }
 
 /**
@@ -5842,12 +5842,12 @@ bool scx_rcu_cpu_stall(const struct cpumask *stalled_mask)
  * soft-lockup watchdog when the triggering point is close and tries to unjam
  * the system and aborting the BPF scheduler.
  */
-void scx_softlockup(u32 dur_s)
+শূন্য scx_softlockup(u32 dur_s)
 {
-	int cpu = smp_processor_id();
+	পূর্ণাঙ্ক cpu = smp_processor_id();
 
-	if (!handle_lockup(cpu, "soft lockup - CPU %d stuck for %us", cpu, dur_s))
-		return;
+	যদি (!handle_lockup(cpu, "soft lockup - CPU %d stuck for %us", cpu, dur_s))
+		ঘূৰাই;
 
 	printk_deferred(KERN_ERR "sched_ext: Soft lockup - CPU %d stuck for %us, disabling BPF scheduler\n",
 			cpu, dur_s);
@@ -5870,24 +5870,24 @@ void scx_softlockup(u32 dur_s)
  * resolve the lockup. %false if sched_ext is not enabled or abort was already
  * initiated by someone else.
  */
-bool scx_hardlockup(int cpu)
+bool scx_hardlockup(পূর্ণাঙ্ক cpu)
 {
-	if (!handle_lockup(cpu, "hard lockup - CPU %d", cpu))
-		return false;
+	যদি (!handle_lockup(cpu, "hard lockup - CPU %d", cpu))
+		ঘূৰাই false;
 
 	printk_deferred(KERN_ERR "sched_ext: Hard lockup - CPU %d, disabling BPF scheduler\n",
 			cpu);
-	return true;
+	ঘূৰাই true;
 }
 
-static u32 bypass_lb_cpu(struct scx_sched *sch, s32 donor,
-			 struct cpumask *donee_mask, struct cpumask *resched_mask,
+স্থির u32 bypass_lb_cpu(সংরচনা scx_sched *sch, s32 donor,
+			 সংরচনা cpumask *donee_mask, সংরচনা cpumask *resched_mask,
 			 u32 nr_donor_target, u32 nr_donee_target)
 {
-	struct rq *donor_rq = cpu_rq(donor);
-	struct scx_dispatch_q *donor_dsq = scx_bypass_dsq(sch, donor);
-	struct task_struct *p, *n;
-	struct scx_dsq_list_node cursor = INIT_DSQ_LIST_CURSOR(cursor, donor_dsq, 0);
+	সংরচনা rq *donor_rq = cpu_rq(donor);
+	সংরচনা scx_dispatch_q *donor_dsq = scx_bypass_dsq(sch, donor);
+	সংরচনা task_struct *p, *n;
+	সংরচনা scx_dsq_list_গ্ৰন্থি cursor = INIT_DSQ_LIST_CURSOR(cursor, donor_dsq, 0);
 	s32 delta = READ_ONCE(donor_dsq->nr) - nr_donor_target;
 	u32 nr_balanced = 0, min_delta_us;
 
@@ -5898,27 +5898,27 @@ static u32 bypass_lb_cpu(struct scx_sched *sch, s32 donor,
 	 * threshold.
 	 */
 	min_delta_us = READ_ONCE(scx_bypass_lb_intv_us) / SCX_BYPASS_LB_MIN_DELTA_DIV;
-	if (delta < DIV_ROUND_UP(min_delta_us, READ_ONCE(scx_slice_bypass_us)))
-		return 0;
+	যদি (delta < DIV_ROUND_UP(min_delta_us, READ_ONCE(scx_slice_bypass_us)))
+		ঘূৰাই 0;
 
 	raw_spin_rq_lock_irq(donor_rq);
 	raw_spin_lock(&donor_dsq->lock);
-	list_add(&cursor.node, &donor_dsq->list);
+	list_add(&cursor.গ্ৰন্থি, &donor_dsq->list);
 resume:
-	n = container_of(&cursor, struct task_struct, scx.dsq_list);
+	n = container_of(&cursor, সংরচনা task_struct, scx.dsq_list);
 	n = nldsq_next_task(donor_dsq, n, false);
 
-	while ((p = n)) {
-		struct scx_dispatch_q *donee_dsq;
-		int donee;
+	যেতিয়ালৈ ((p = n)) {
+		সংরচনা scx_dispatch_q *donee_dsq;
+		পূর্ণাঙ্ক donee;
 
 		n = nldsq_next_task(donor_dsq, n, false);
 
-		if (donor_dsq->nr <= nr_donor_target)
-			break;
+		যদি (donor_dsq->nr <= nr_donor_target)
+			ভঙ্গ;
 
-		if (cpumask_empty(donee_mask))
-			break;
+		যদি (cpumask_empty(donee_mask))
+			ভঙ্গ;
 
 		/*
 		 * If an earlier pass placed @p on @donor_dsq from a different
@@ -5926,12 +5926,12 @@ resume:
 		 * previous CPU and task_rq(@p) != @donor_rq. @p can't be moved
 		 * without its rq locked. Skip.
 		 */
-		if (task_rq(p) != donor_rq)
-			continue;
+		যদি (task_rq(p) != donor_rq)
+			অনুৱর্ত;
 
 		donee = cpumask_any_and_distribute(donee_mask, p->cpus_ptr);
-		if (donee >= nr_cpu_ids)
-			continue;
+		যদি (donee >= nr_cpu_ids)
+			অনুৱর্ত;
 
 		donee_dsq = scx_bypass_dsq(sch, donee);
 
@@ -5939,8 +5939,8 @@ resume:
 		 * $p's rq is not locked but $p's DSQ lock protects its
 		 * scheduling properties making this test safe.
 		 */
-		if (!task_can_run_on_remote_rq(sch, p, cpu_rq(donee), false))
-			continue;
+		যদি (!task_can_run_on_remote_rq(sch, p, cpu_rq(donee), false))
+			অনুৱর্ত;
 
 		/*
 		 * Moving $p from one non-local DSQ to another. The source rq
@@ -5962,43 +5962,43 @@ resume:
 		 */
 		cpumask_set_cpu(donee, resched_mask);
 
-		if (READ_ONCE(donee_dsq->nr) >= nr_donee_target)
+		যদি (READ_ONCE(donee_dsq->nr) >= nr_donee_target)
 			cpumask_clear_cpu(donee, donee_mask);
 
 		nr_balanced++;
-		if (!(nr_balanced % SCX_BYPASS_LB_BATCH) && n) {
-			list_move_tail(&cursor.node, &n->scx.dsq_list.node);
+		যদি (!(nr_balanced % SCX_BYPASS_LB_BATCH) && n) {
+			list_move_tail(&cursor.গ্ৰন্থি, &n->scx.dsq_list.গ্ৰন্থি);
 			raw_spin_unlock(&donor_dsq->lock);
 			scx_rq_lock_drop(donor_rq);
 			raw_spin_rq_unlock_irq(donor_rq);
 			cpu_relax();
 			raw_spin_rq_lock_irq(donor_rq);
 			raw_spin_lock(&donor_dsq->lock);
-			goto resume;
+			গচ্ছ resume;
 		}
 	}
 
-	list_del_init(&cursor.node);
+	list_del_init(&cursor.গ্ৰন্থি);
 	raw_spin_unlock(&donor_dsq->lock);
 	scx_rq_lock_drop(donor_rq);
 	raw_spin_rq_unlock_irq(donor_rq);
 
-	return nr_balanced;
+	ঘূৰাই nr_balanced;
 }
 
-static void bypass_lb_node(struct scx_sched *sch, int node)
+স্থির শূন্য bypass_lb_গ্ৰন্থি(সংরচনা scx_sched *sch, পূর্ণাঙ্ক গ্ৰন্থি)
 {
-	const struct cpumask *node_mask = cpumask_of_node(node);
-	struct cpumask *donee_mask = sch->bypass_lb_donee_cpumask;
-	struct cpumask *resched_mask = sch->bypass_lb_resched_cpumask;
+	ধ্রুৱ সংরচনা cpumask *গ্ৰন্থি_mask = cpumask_of_গ্ৰন্থি(গ্ৰন্থি);
+	সংরচনা cpumask *donee_mask = sch->bypass_lb_donee_cpumask;
+	সংরচনা cpumask *resched_mask = sch->bypass_lb_resched_cpumask;
 	u32 nr_tasks = 0, nr_cpus = 0, nr_balanced = 0;
 	u32 nr_target, nr_donor_target;
 	u32 before_min = U32_MAX, before_max = 0;
 	u32 after_min = U32_MAX, after_max = 0;
-	int cpu;
+	পূর্ণাঙ্ক cpu;
 
 	/* count the target tasks and CPUs */
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
+	for_each_cpu_and(cpu, cpu_online_mask, গ্ৰন্থি_mask) {
 		u32 nr = READ_ONCE(scx_bypass_dsq(sch, cpu)->nr);
 
 		nr_tasks += nr;
@@ -6008,8 +6008,8 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 		before_max = max(nr, before_max);
 	}
 
-	if (!nr_cpus)
-		return;
+	যদি (!nr_cpus)
+		ঘূৰাই;
 
 	/*
 	 * We don't want CPUs to have more than $nr_donor_target tasks and
@@ -6020,20 +6020,20 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 	nr_donor_target = DIV_ROUND_UP(nr_target * SCX_BYPASS_LB_DONOR_PCT, 100);
 
 	cpumask_clear(donee_mask);
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
-		if (READ_ONCE(scx_bypass_dsq(sch, cpu)->nr) < nr_target)
+	for_each_cpu_and(cpu, cpu_online_mask, গ্ৰন্থি_mask) {
+		যদি (READ_ONCE(scx_bypass_dsq(sch, cpu)->nr) < nr_target)
 			cpumask_set_cpu(cpu, donee_mask);
 	}
 
 	/* iterate !donee CPUs and see if they should be offloaded */
 	cpumask_clear(resched_mask);
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
-		if (cpumask_empty(donee_mask))
-			break;
-		if (cpumask_test_cpu(cpu, donee_mask))
-			continue;
-		if (READ_ONCE(scx_bypass_dsq(sch, cpu)->nr) <= nr_donor_target)
-			continue;
+	for_each_cpu_and(cpu, cpu_online_mask, গ্ৰন্থি_mask) {
+		যদি (cpumask_empty(donee_mask))
+			ভঙ্গ;
+		যদি (cpumask_test_cpu(cpu, donee_mask))
+			অনুৱর্ত;
+		যদি (READ_ONCE(scx_bypass_dsq(sch, cpu)->nr) <= nr_donor_target)
+			অনুৱর্ত;
 
 		nr_balanced += bypass_lb_cpu(sch, cpu, donee_mask, resched_mask,
 					     nr_donor_target, nr_target);
@@ -6042,7 +6042,7 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 	for_each_cpu(cpu, resched_mask)
 		resched_cpu(cpu);
 
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
+	for_each_cpu_and(cpu, cpu_online_mask, গ্ৰন্থি_mask) {
 		u32 nr = READ_ONCE(scx_bypass_dsq(sch, cpu)->nr);
 
 		after_min = min(nr, after_min);
@@ -6050,7 +6050,7 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 
 	}
 
-	trace_sched_ext_bypass_lb(node, nr_cpus, nr_tasks, nr_balanced,
+	trace_sched_ext_bypass_lb(গ্ৰন্থি, nr_cpus, nr_tasks, nr_balanced,
 				  before_min, before_max, after_min, after_max);
 }
 
@@ -6063,56 +6063,56 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
  * outcomes, a simple load balancing mechanism is implemented by the following
  * timer which runs periodically while bypass mode is in effect.
  */
-static void scx_bypass_lb_timerfn(struct timer_list *timer)
+স্থির শূন্য scx_bypass_lb_timerfn(সংরচনা timer_list *timer)
 {
-	struct scx_sched *sch = container_of(timer, struct scx_sched, bypass_lb_timer);
-	int node;
+	সংরচনা scx_sched *sch = container_of(timer, সংরচনা scx_sched, bypass_lb_timer);
+	পূর্ণাঙ্ক গ্ৰন্থি;
 	u32 intv_us;
 
-	if (!scx_bypass_dsp_enabled(sch))
-		return;
+	যদি (!scx_bypass_dsp_enabled(sch))
+		ঘূৰাই;
 
-	for_each_node_with_cpus(node)
-		bypass_lb_node(sch, node);
+	for_each_গ্ৰন্থি_with_cpus(গ্ৰন্থি)
+		bypass_lb_গ্ৰন্থি(sch, গ্ৰন্থি);
 
 	intv_us = READ_ONCE(scx_bypass_lb_intv_us);
-	if (intv_us)
+	যদি (intv_us)
 		mod_timer(timer, jiffies + usecs_to_jiffies(intv_us));
 }
 
-static bool inc_bypass_depth(struct scx_sched *sch)
+স্থির bool inc_bypass_depth(সংরচনা scx_sched *sch)
 {
 	lockdep_assert_held(&scx_bypass_lock);
 
 	WARN_ON_ONCE(sch->bypass_depth < 0);
 	WRITE_ONCE(sch->bypass_depth, sch->bypass_depth + 1);
-	if (sch->bypass_depth != 1)
-		return false;
+	যদি (sch->bypass_depth != 1)
+		ঘূৰাই false;
 
 	WRITE_ONCE(sch->slice_dfl, READ_ONCE(scx_slice_bypass_us) * NSEC_PER_USEC);
 	sch->bypass_timestamp = ktime_get_ns();
 	scx_add_event(sch, SCX_EV_BYPASS_ACTIVATE, 1);
-	return true;
+	ঘূৰাই true;
 }
 
-static bool dec_bypass_depth(struct scx_sched *sch)
+স্থির bool dec_bypass_depth(সংরচনা scx_sched *sch)
 {
 	lockdep_assert_held(&scx_bypass_lock);
 
 	WARN_ON_ONCE(sch->bypass_depth < 1);
 	WRITE_ONCE(sch->bypass_depth, sch->bypass_depth - 1);
-	if (sch->bypass_depth != 0)
-		return false;
+	যদি (sch->bypass_depth != 0)
+		ঘূৰাই false;
 
 	WRITE_ONCE(sch->slice_dfl, SCX_SLICE_DFL);
 	scx_add_event(sch, SCX_EV_BYPASS_DURATION,
 		      ktime_get_ns() - sch->bypass_timestamp);
-	return true;
+	ঘূৰাই true;
 }
 
-static void enable_bypass_dsp(struct scx_sched *sch)
+স্থির শূন্য enable_bypass_dsp(সংরচনা scx_sched *sch)
 {
-	struct scx_sched *host = scx_parent(sch) ?: sch;
+	সংরচনা scx_sched *host = scx_parent(sch) ?: sch;
 	u32 intv_us = READ_ONCE(scx_bypass_lb_intv_us);
 	s32 ret;
 
@@ -6120,8 +6120,8 @@ static void enable_bypass_dsp(struct scx_sched *sch)
 	 * @sch->bypass_depth transitioning from 0 to 1 triggers enabling.
 	 * Shouldn't stagger.
 	 */
-	if (WARN_ON_ONCE(test_and_set_bit(0, &sch->bypass_dsp_claim)))
-		return;
+	যদি (WARN_ON_ONCE(test_and_set_bit(0, &sch->bypass_dsp_claim)))
+		ঘূৰাই;
 
 	/*
 	 * When a sub-sched bypasses, its tasks are queued on the bypass DSQs of
@@ -6139,7 +6139,7 @@ static void enable_bypass_dsp(struct scx_sched *sch)
 	ret = atomic_inc_return(&sch->bypass_dsp_enable_depth);
 	WARN_ON_ONCE(ret <= 0);
 
-	if (host != sch) {
+	যদি (host != sch) {
 		ret = atomic_inc_return(&host->bypass_dsp_enable_depth);
 		WARN_ON_ONCE(ret <= 0);
 	}
@@ -6148,23 +6148,23 @@ static void enable_bypass_dsp(struct scx_sched *sch)
 	 * The LB timer will stop running if bypass dispatch is disabled. Start
 	 * after enabling bypass dispatch.
 	 */
-	if (intv_us && !timer_pending(&host->bypass_lb_timer))
+	যদি (intv_us && !timer_pending(&host->bypass_lb_timer))
 		mod_timer(&host->bypass_lb_timer,
 			  jiffies + usecs_to_jiffies(intv_us));
 }
 
 /* may be called without holding scx_bypass_lock */
-void scx_disable_bypass_dsp(struct scx_sched *sch)
+শূন্য scx_disable_bypass_dsp(সংরচনা scx_sched *sch)
 {
 	s32 ret;
 
-	if (!test_and_clear_bit(0, &sch->bypass_dsp_claim))
-		return;
+	যদি (!test_and_clear_bit(0, &sch->bypass_dsp_claim))
+		ঘূৰাই;
 
 	ret = atomic_dec_return(&sch->bypass_dsp_enable_depth);
 	WARN_ON_ONCE(ret < 0);
 
-	if (scx_parent(sch)) {
+	যদি (scx_parent(sch)) {
 		ret = atomic_dec_return(&scx_parent(sch)->bypass_dsp_enable_depth);
 		WARN_ON_ONCE(ret < 0);
 	}
@@ -6189,12 +6189,12 @@ void scx_disable_bypass_dsp(struct scx_sched *sch)
  * However, the root uses a separate per-rq flag so its re-notify keeps working
  * even when !CONFIG_EXT_SUB_SCHED.
  */
-static void unbypass_renotify_idle(struct rq *rq, struct scx_sched *pos,
-				   struct scx_sched_pcpu *pcpu)
+স্থির শূন্য unbypass_renotify_idle(সংরচনা rq *rq, সংরচনা scx_sched *pos,
+				   সংরচনা scx_sched_pcpu *pcpu)
 {
-	if (!pos->level) {
-		rq->scx.flags |= SCX_RQ_ROOT_IDLE_RENOTIFY;
-		return;
+	যদি (!pos->level) {
+		rq->scx.flags |= SCX_RQ_মূল_IDLE_RENOTIFY;
+		ঘূৰাই;
 	}
 #ifdef CONFIG_EXT_SUB_SCHED
 	pcpu->idle_renotify = true;
@@ -6234,20 +6234,20 @@ static void unbypass_renotify_idle(struct rq *rq, struct scx_sched *pos,
  *
  * - scx_prio_less() reverts to the default runnable_at order.
  */
-void scx_bypass(struct scx_sched *sch, bool bypass)
+শূন্য scx_bypass(সংরচনা scx_sched *sch, bool bypass)
 {
-	struct scx_sched *pos;
+	সংরচনা scx_sched *pos;
 	unsigned long flags;
-	int cpu;
+	পূর্ণাঙ্ক cpu;
 	bool changed;
 
 	raw_spin_lock_irqsave(&scx_bypass_lock, flags);
 
-	if (bypass) {
+	যদি (bypass) {
 		changed = inc_bypass_depth(sch);
-		if (changed)
+		যদি (changed)
 			enable_bypass_dsp(sch);
-	} else {
+	} অন্যথা {
 		changed = dec_bypass_depth(sch);
 	}
 
@@ -6260,12 +6260,12 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 	 */
 	raw_spin_lock(&scx_sched_lock);
 	scx_for_each_descendant_pre(pos, sch) {
-		if (pos == sch)
-			continue;
-		if (bypass) {
-			if (inc_bypass_depth(pos))
+		যদি (pos == sch)
+			অনুৱর্ত;
+		যদি (bypass) {
+			যদি (inc_bypass_depth(pos))
 				enable_bypass_dsp(pos);
-		} else {
+		} অন্যথা {
 			dec_bypass_depth(pos);
 		}
 	}
@@ -6275,8 +6275,8 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 	 * A descendant's depth is at least @sch's, so no bypass state changed
 	 * unless @sch's did.
 	 */
-	if (!changed)
-		goto unlock;
+	যদি (!changed)
+		গচ্ছ unlock;
 
 	/*
 	 * No task property is changing. We just need to make sure all currently
@@ -6288,21 +6288,21 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 	 * cpus_read_lock(). Walk all possible CPUs instead of online.
 	 */
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
-		struct task_struct *p, *n;
+		সংরচনা rq *rq = cpu_rq(cpu);
+		সংরচনা task_struct *p, *n;
 
 		raw_spin_rq_lock(rq);
 		raw_spin_lock(&scx_sched_lock);
 
 		scx_for_each_descendant_pre(pos, sch) {
-			struct scx_sched_pcpu *pcpu = per_cpu_ptr(pos->pcpu, cpu);
+			সংরচনা scx_sched_pcpu *pcpu = per_cpu_ptr(pos->pcpu, cpu);
 			bool was_bypassing = pcpu->flags & SCX_SCHED_PCPU_BYPASSING;
 
-			if (pos->bypass_depth) {
+			যদি (pos->bypass_depth) {
 				pcpu->flags |= SCX_SCHED_PCPU_BYPASSING;
-			} else {
+			} অন্যথা {
 				pcpu->flags &= ~SCX_SCHED_PCPU_BYPASSING;
-				if (was_bypassing) {
+				যদি (was_bypassing) {
 					unbypass_renotify_idle(rq, pos, pcpu);
 					scx_unbypass_replay_ecaps(rq, pos);
 				}
@@ -6316,10 +6316,10 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 		 * while bypassing. Either we see enabled or the enable path
 		 * sees scx_bypassing() before moving tasks to SCX.
 		 */
-		if (!scx_enabled()) {
+		যদি (!scx_enabled()) {
 			scx_rq_lock_drop(rq);
 			raw_spin_rq_unlock(rq);
-			continue;
+			অনুৱর্ত;
 		}
 
 		/*
@@ -6330,15 +6330,15 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 		 * visit all nodes.
 		 */
 		list_for_each_entry_safe_reverse(p, n, &rq->scx.runnable_list,
-						 scx.runnable_node) {
-			if (!scx_is_descendant(scx_task_sched(p), sch))
-				continue;
+						 scx.runnable_গ্ৰন্থি) {
+			যদি (!scx_is_descendant(scx_task_sched(p), sch))
+				অনুৱর্ত;
 
 			/*
 			 * Bypass trumps protection. Cycling clears for queued
 			 * tasks but current task needs explicit stripping.
 			 */
-			if (bypass && task_current(rq, p))
+			যদি (bypass && task_current(rq, p))
 				scx_task_slice_ended(rq, p);
 
 			/* cycling deq/enq is enough, see the function comment */
@@ -6348,7 +6348,7 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 		}
 
 		/* resched to restore ticks and idle state */
-		if (cpu_online(cpu) || cpu == smp_processor_id())
+		যদি (cpu_online(cpu) || cpu == smp_processor_id())
 			resched_curr(rq);
 
 		scx_rq_lock_drop(rq);
@@ -6356,94 +6356,94 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 	}
 
 	/* disarming must come after moving all tasks out of the bypass DSQs */
-	if (!bypass) {
+	যদি (!bypass) {
 		guard(raw_spinlock)(&scx_sched_lock);
 		scx_for_each_descendant_pre(pos, sch)
-			if (!pos->bypass_depth)
+			যদি (!pos->bypass_depth)
 				scx_disable_bypass_dsp(pos);
 	}
 unlock:
 	raw_spin_unlock_irqrestore(&scx_bypass_lock, flags);
 }
 
-static void free_exit_info(struct scx_exit_info *ei)
+স্থির শূন্য free_exit_info(সংরচনা scx_exit_info *ei)
 {
 	kvfree(ei->dump);
-	kfree(ei->msg);
+	kfree(ei->বাৰ্তা);
 	kfree(ei->bt);
 	kfree(ei);
 }
 
-static struct scx_exit_info *alloc_exit_info(size_t exit_dump_len)
+স্থির সংরচনা scx_exit_info *alloc_exit_info(size_t exit_dump_len)
 {
-	struct scx_exit_info *ei;
+	সংরচনা scx_exit_info *ei;
 
 	ei = kzalloc_obj(*ei);
-	if (!ei)
-		return NULL;
+	যদি (!ei)
+		ঘূৰাই রিক্ত;
 
 	ei->exit_cpu = -1;
 	ei->bt = kzalloc_objs(ei->bt[0], SCX_EXIT_BT_LEN);
-	ei->msg = kzalloc(SCX_EXIT_MSG_LEN, GFP_KERNEL);
+	ei->বাৰ্তা = kzalloc(SCX_EXIT_বাৰ্তা_LEN, GFP_KERNEL);
 	ei->dump = kvzalloc(exit_dump_len, GFP_KERNEL);
 
-	if (!ei->bt || !ei->msg || !ei->dump) {
+	যদি (!ei->bt || !ei->বাৰ্তা || !ei->dump) {
 		free_exit_info(ei);
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
-	return ei;
+	ঘূৰাই ei;
 }
 
-static const char *scx_exit_reason(enum scx_exit_kind kind)
+স্থির ধ্রুৱ ৱর্ণ *scx_exit_reason(গণনা scx_exit_kind kind)
 {
-	switch (kind) {
-	case SCX_EXIT_UNREG:
-		return "unregistered from user space";
-	case SCX_EXIT_UNREG_BPF:
-		return "unregistered from BPF";
-	case SCX_EXIT_UNREG_KERN:
-		return "unregistered from the main kernel";
-	case SCX_EXIT_SYSRQ:
-		return "disabled by sysrq-S";
-	case SCX_EXIT_PARENT:
-		return "parent exiting";
-	case SCX_EXIT_PARENT_KILL:
-		return "killed by parent scheduler";
-	case SCX_EXIT_ERROR:
-		return "runtime error";
-	case SCX_EXIT_ERROR_BPF:
-		return "scx_bpf_error";
-	case SCX_EXIT_ERROR_STALL:
-		return "runnable task stall";
-	case SCX_EXIT_ERROR_REENQ:
-		return "reenqueue limit";
-	case SCX_EXIT_ERROR_RESCUE:
-		return "rescue bandwidth overload";
-	default:
-		return "<UNKNOWN>";
+	ৱিকল্প (kind) {
+	পক্ষ SCX_EXIT_UNREG:
+		ঘূৰাই "unregistered from user space";
+	পক্ষ SCX_EXIT_UNREG_BPF:
+		ঘূৰাই "unregistered from BPF";
+	পক্ষ SCX_EXIT_UNREG_KERN:
+		ঘূৰাই "unregistered from the main kernel";
+	পক্ষ SCX_EXIT_SYSRQ:
+		ঘূৰাই "disabled by sysrq-S";
+	পক্ষ SCX_EXIT_PARENT:
+		ঘূৰাই "parent exiting";
+	পক্ষ SCX_EXIT_PARENT_KILL:
+		ঘূৰাই "killed by parent scheduler";
+	পক্ষ SCX_EXIT_ERROR:
+		ঘূৰাই "runtime error";
+	পক্ষ SCX_EXIT_ERROR_BPF:
+		ঘূৰাই "scx_bpf_error";
+	পক্ষ SCX_EXIT_ERROR_STALL:
+		ঘূৰাই "runnable task stall";
+	পক্ষ SCX_EXIT_ERROR_REENQ:
+		ঘূৰাই "reenqueue limit";
+	পক্ষ SCX_EXIT_ERROR_RESCUE:
+		ঘূৰাই "rescue bandwidth overload";
+	স্ৱভাৱ:
+		ঘূৰাই "<UNKNOWN>";
 	}
 }
 
-static void free_kick_syncs(void)
+স্থির শূন্য free_kick_syncs(শূন্য)
 {
-	int cpu;
+	পূর্ণাঙ্ক cpu;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_kick_syncs __rcu **ksyncs = per_cpu_ptr(&scx_kick_syncs, cpu);
-		struct scx_kick_syncs *to_free;
+		সংরচনা scx_kick_syncs __rcu **ksyncs = per_cpu_ptr(&scx_kick_syncs, cpu);
+		সংরচনা scx_kick_syncs *to_free;
 
 		/* flush the pending kick before freeing @ksyncs */
 		irq_work_sync(&cpu_rq(cpu)->scx.kick_cpus_irq_work);
-		to_free = rcu_replace_pointer(*ksyncs, NULL, true);
-		if (to_free)
+		to_free = rcu_replace_pointer(*ksyncs, রিক্ত, true);
+		যদি (to_free)
 			kvfree_rcu(to_free, rcu);
 	}
 }
 
-static void refresh_watchdog(void)
+স্থির শূন্য refresh_watchdog(শূন্য)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 	unsigned long intv = ULONG_MAX;
 
 	/* take the shortest timeout and use its half for watchdog interval */
@@ -6455,20 +6455,20 @@ static void refresh_watchdog(void)
 	WRITE_ONCE(scx_watchdog_timestamp, jiffies);
 	WRITE_ONCE(scx_watchdog_interval, intv);
 
-	if (intv < ULONG_MAX)
+	যদি (intv < ULONG_MAX)
 		mod_delayed_work(system_dfl_wq, &scx_watchdog_work, intv);
-	else
+	অন্যথা
 		cancel_delayed_work_sync(&scx_watchdog_work);
 }
 
-s32 scx_link_sched(struct scx_sched *sch)
+s32 scx_link_sched(সংরচনা scx_sched *sch)
 {
 	scoped_guard(raw_spinlock_irqsave, &scx_bypass_lock)	/* for the parent bypass check */
 	scoped_guard(raw_spinlock, &scx_sched_lock) {
 #ifdef CONFIG_EXT_SUB_SCHED
-		struct scx_sched *parent = scx_parent(sch);
+		সংরচনা scx_sched *parent = scx_parent(sch);
 
-		if (parent) {
+		যদি (parent) {
 			s32 ret;
 
 			/*
@@ -6476,17 +6476,17 @@ s32 scx_link_sched(struct scx_sched *sch)
 			 * depth count, so inheriting it is tricky and has no
 			 * valid use case. Refuse it.
 			 */
-			if (READ_ONCE(parent->bypass_depth)) {
+			যদি (READ_ONCE(parent->bypass_depth)) {
 				scx_error(sch, "parent bypassing (%d)", -EBUSY);
-				return -EBUSY;
+				ঘূৰাই -EBUSY;
 			}
 
-			ret = rhashtable_lookup_insert_fast(&scx_sched_hash,
-					&sch->hash_node, scx_sched_hash_params);
-			if (ret) {
+			ret = rhashtable_lookup_ঢোকাও_fast(&scx_sched_hash,
+					&sch->hash_গ্ৰন্থি, scx_sched_hash_params);
+			যদি (ret) {
 				scx_error(sch, "failed to insert into scx_sched_hash (%d)",
 					  ret);
-				return ret;
+				ঘূৰাই ret;
 			}
 
 			list_add_tail_rcu(&sch->sibling, &parent->children);
@@ -6497,12 +6497,12 @@ s32 scx_link_sched(struct scx_sched *sch)
 			 * out, or the exit path sees us and exits us.
 			 */
 			smp_mb();
-			if (unlikely(READ_ONCE(parent->aborting))) {
-				rhashtable_remove_fast(&scx_sched_hash, &sch->hash_node,
+			যদি (unlikely(READ_ONCE(parent->aborting))) {
+				rhashtable_remove_fast(&scx_sched_hash, &sch->hash_গ্ৰন্থি,
 						       scx_sched_hash_params);
 				list_del_rcu(&sch->sibling);
 				scx_error(sch, "parent disabled (%d)", -ENOENT);
-				return -ENOENT;
+				ঘূৰাই -ENOENT;
 			}
 
 			sch->linked = true;
@@ -6513,15 +6513,15 @@ s32 scx_link_sched(struct scx_sched *sch)
 	}
 
 	refresh_watchdog();
-	return 0;
+	ঘূৰাই 0;
 }
 
-void scx_unlink_sched(struct scx_sched *sch)
+শূন্য scx_unlink_sched(সংরচনা scx_sched *sch)
 {
 	scoped_guard(raw_spinlock_irq, &scx_sched_lock) {
 #ifdef CONFIG_EXT_SUB_SCHED
-		if (sch->linked) {
-			rhashtable_remove_fast(&scx_sched_hash, &sch->hash_node,
+		যদি (sch->linked) {
+			rhashtable_remove_fast(&scx_sched_hash, &sch->hash_গ্ৰন্থি,
 					       scx_sched_hash_params);
 			list_del_rcu(&sch->sibling);
 			sch->linked = false;
@@ -6538,54 +6538,54 @@ void scx_unlink_sched(struct scx_sched *sch)
  * @sch. Once @sch becomes empty during disable, there's no point in dumping it.
  * This prevents calling dump ops on a dead sch.
  */
-void scx_disable_dump(struct scx_sched *sch)
+শূন্য scx_disable_dump(সংরচনা scx_sched *sch)
 {
 	guard(raw_spinlock_irqsave)(&scx_dump_lock);
 	sch->dump_disabled = true;
 }
 
-void scx_log_sched_disable(struct scx_sched *sch)
+শূন্য scx_log_sched_disable(সংরচনা scx_sched *sch)
 {
-	struct scx_exit_info *ei = sch->exit_info;
-	const char *type = scx_parent(sch) ? "sub-scheduler" : "scheduler";
+	সংরচনা scx_exit_info *ei = sch->exit_info;
+	ধ্রুৱ ৱর্ণ *type = scx_parent(sch) ? "sub-scheduler" : "scheduler";
 
-	if (ei->kind >= SCX_EXIT_ERROR) {
+	যদি (ei->kind >= SCX_EXIT_ERROR) {
 		pr_err("sched_ext: BPF %s \"%s\" disabled (%s)\n", type,
 		       sch->ops.name, ei->reason);
 
-		if (ei->msg[0] != '\0')
-			pr_err("sched_ext: %s: %s\n", sch->ops.name, ei->msg);
+		যদি (ei->বাৰ্তা[0] != '\0')
+			pr_err("sched_ext: %s: %s\n", sch->ops.name, ei->বাৰ্তা);
 #ifdef CONFIG_STACKTRACE
-		stack_trace_print(ei->bt, ei->bt_len, 2);
+		স্তূপ_trace_print(ei->bt, ei->bt_len, 2);
 #endif
-	} else {
+	} অন্যথা {
 		pr_info("sched_ext: BPF %s \"%s\" disabled (%s)\n", type,
 			sch->ops.name, ei->reason);
 	}
 }
 
-static void scx_root_disable(struct scx_sched *sch)
+স্থির শূন্য scx_মূল_disable(সংরচনা scx_sched *sch)
 {
-	struct scx_task_iter sti;
-	struct task_struct *p;
+	সংরচনা scx_task_iter sti;
+	সংরচনা task_struct *p;
 	bool was_switched_all;
-	int cpu;
+	পূর্ণাঙ্ক cpu;
 
 	/* guarantee forward progress and wait for descendants to be disabled */
 	scx_bypass(sch, true);
 	drain_descendants(sch);
 
-	switch (scx_set_enable_state(SCX_DISABLING)) {
-	case SCX_DISABLING:
+	ৱিকল্প (scx_set_enable_state(SCX_DISABLING)) {
+	পক্ষ SCX_DISABLING:
 		WARN_ONCE(true, "sched_ext: duplicate disabling instance?");
-		break;
-	case SCX_DISABLED:
+		ভঙ্গ;
+	পক্ষ SCX_DISABLED:
 		pr_warn("sched_ext: ops error detected without ops (%s)\n",
-			sch->exit_info->msg);
+			sch->exit_info->বাৰ্তা);
 		WARN_ON_ONCE(scx_set_enable_state(SCX_DISABLED) != SCX_DISABLING);
-		goto done;
-	default:
-		break;
+		গচ্ছ done;
+	স্ৱভাৱ:
+		ভঙ্গ;
 	}
 
 	/*
@@ -6617,15 +6617,15 @@ static void scx_root_disable(struct scx_sched *sch)
 
 	scx_init_task_enabled = false;
 
-	scx_task_iter_start(&sti, NULL);
-	while ((p = scx_task_iter_next_locked(&sti))) {
-		unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
-		const struct sched_class *old_class = p->sched_class;
-		const struct sched_class *new_class = scx_setscheduler_class(p);
+	scx_task_iter_start(&sti, রিক্ত);
+	যেতিয়ালৈ ((p = scx_task_iter_next_locked(&sti))) {
+		unsigned পূর্ণাঙ্ক queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
+		ধ্রুৱ সংরচনা sched_class *old_class = p->sched_class;
+		ধ্রুৱ সংরচনা sched_class *new_class = scx_setscheduler_class(p);
 
 		update_rq_clock(task_rq(p));
 
-		if (old_class != new_class)
+		যদি (old_class != new_class)
 			queue_flags |= DEQUEUE_CLASS;
 
 		scoped_guard (sched_change, p, queue_flags) {
@@ -6639,7 +6639,7 @@ static void scx_root_disable(struct scx_sched *sch)
 	scx_disable_dump(sch);
 
 	scx_cgroup_lock();
-	set_cgroup_sched(sch_cgroup(sch), NULL);
+	set_cgroup_sched(sch_cgroup(sch), রিক্ত);
 	scx_cgroup_unlock();
 
 	percpu_up_write(&scx_fork_rwsem);
@@ -6658,15 +6658,15 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * both servers end up detached and we just WARN.
 	 */
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
+		সংরচনা rq *rq = cpu_rq(cpu);
 
 		scoped_guard(rq_lock_irqsave, rq) {
 			update_rq_clock(rq);
-			if (was_switched_all) {
-				if (WARN_ON_ONCE(dl_server_swap_bw(&rq->ext_server,
+			যদি (was_switched_all) {
+				যদি (WARN_ON_ONCE(dl_server_swap_bw(&rq->ext_server,
 								   &rq->fair_server)))
 					pr_warn("failed to re-attach fair_server on CPU %d\n", cpu);
-			} else {
+			} অন্যথা {
 				dl_server_detach_bw(&rq->ext_server);
 			}
 		}
@@ -6675,18 +6675,18 @@ static void scx_root_disable(struct scx_sched *sch)
 	/* no task is on scx, turn off all the switches and flush in-progress calls */
 	static_branch_disable(&__scx_enabled);
 	static_branch_disable(&__scx_is_cid_type);
-	if (sch->ops.flags & SCX_OPS_TID_TO_TASK)
+	যদি (sch->ops.flags & SCX_OPS_TID_TO_TASK)
 		static_branch_disable(&__scx_tid_to_task_enabled);
 	bitmap_zero(sch->has_op, SCX_OPI_END);
 	scx_idle_disable();
 	synchronize_rcu();
-	if (sch->ops.flags & SCX_OPS_TID_TO_TASK)
-		rhashtable_free_and_destroy(&scx_tid_hash, NULL, NULL);
+	যদি (sch->ops.flags & SCX_OPS_TID_TO_TASK)
+		rhashtable_free_and_destroy(&scx_tid_hash, রিক্ত, রিক্ত);
 
 	scx_log_sched_disable(sch);
 
-	if (sch->ops.exit)
-		SCX_CALL_OP(sch, exit, NULL, sch->exit_info);
+	যদি (sch->ops.exit)
+		SCX_CALL_OP(sch, exit, রিক্ত, sch->exit_info);
 
 	/*
 	 * @sch's non-ops programs such as timers and tracers can fire after
@@ -6703,7 +6703,7 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * cpus_read_lock(). See handle_hotplug().
 	 */
 	cpus_read_lock();
-	RCU_INIT_POINTER(scx_root, NULL);
+	RCU_INIT_POINTER(scx_মূল, রিক্ত);
 	scx_cid_retire_tables();
 	cpus_read_unlock();
 
@@ -6713,11 +6713,11 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * the next scheduler is loaded.
 	 */
 #ifdef CONFIG_EXT_SUB_SCHED
-	if (sch->sub_kset)
+	যদি (sch->sub_kset)
 		kobject_del(&sch->sub_kset->kobj);
 #endif
 	/* not added if enable failed before scx_sched_sysfs_add() */
-	if (sch->kobj.state_in_sysfs)
+	যদি (sch->kobj.state_in_sysfs)
 		kobject_del(&sch->kobj);
 
 	free_kick_syncs();
@@ -6739,11 +6739,11 @@ done:
  * separate helper kthreads parallelizes it. No recursion as only non-PARENT
  * claims propagate.
  */
-static void scx_propagate_exit_irq_workfn(struct irq_work *irq_work)
+স্থির শূন্য scx_propagate_exit_irq_workfn(সংরচনা irq_work *irq_work)
 {
-	struct scx_sched *sch = container_of(irq_work, struct scx_sched,
+	সংরচনা scx_sched *sch = container_of(irq_work, সংরচনা scx_sched,
 					     propagate_exit_irq_work);
-	struct scx_sched *pos;
+	সংরচনা scx_sched *pos;
 
 	scoped_guard (raw_spinlock_irqsave, &scx_sched_lock) {
 		scx_for_each_descendant_pre(pos, sch)
@@ -6760,23 +6760,23 @@ static void scx_propagate_exit_irq_workfn(struct irq_work *irq_work)
  *
  * Lock-free and safe to call from any context including NMI.
  */
-static bool scx_claim_exit(struct scx_sched *sch, enum scx_exit_kind kind)
+স্থির bool scx_claim_exit(সংরচনা scx_sched *sch, গণনা scx_exit_kind kind)
 {
-	int none = SCX_EXIT_NONE;
+	পূর্ণাঙ্ক none = SCX_EXIT_NONE;
 
 	lockdep_assert_preemption_disabled();
 
-	if (WARN_ON_ONCE(kind == SCX_EXIT_NONE || kind == SCX_EXIT_DONE))
+	যদি (WARN_ON_ONCE(kind == SCX_EXIT_NONE || kind == SCX_EXIT_DONE))
 		kind = SCX_EXIT_ERROR;
 
-	if (!atomic_try_cmpxchg(&sch->exit_kind, &none, kind))
-		return false;
+	যদি (!atomic_try_cmpxchg(&sch->exit_kind, &none, kind))
+		ঘূৰাই false;
 
-	if (kind == SCX_EXIT_PARENT) {
+	যদি (kind == SCX_EXIT_PARENT) {
 		/* an ancestor is already sweeping the subtree */
 		WRITE_ONCE(sch->aborting, true);
-	} else {
-		struct scx_sched *pos;
+	} অন্যথা {
+		সংরচনা scx_sched *pos;
 
 		/*
 		 * CPUs may be live-locked in the dispatch paths of @sch or its
@@ -6797,36 +6797,36 @@ static bool scx_claim_exit(struct scx_sched *sch, enum scx_exit_kind kind)
 	/* fired after ->aborting is set so callbacks can't delay recovery */
 	trace_sched_ext_exit(sch, kind);
 
-	return true;
+	ঘূৰাই true;
 }
 
-static void scx_disable_workfn(struct kthread_work *work)
+স্থির শূন্য scx_disable_workfn(সংরচনা kthread_work *work)
 {
-	struct scx_sched *sch = container_of(work, struct scx_sched, disable_work);
-	struct scx_exit_info *ei = sch->exit_info;
-	int kind;
+	সংরচনা scx_sched *sch = container_of(work, সংরচনা scx_sched, disable_work);
+	সংরচনা scx_exit_info *ei = sch->exit_info;
+	পূর্ণাঙ্ক kind;
 
 	kind = atomic_read(&sch->exit_kind);
-	while (true) {
-		if (kind == SCX_EXIT_DONE)	/* already disabled? */
-			return;
+	যেতিয়ালৈ (true) {
+		যদি (kind == SCX_EXIT_DONE)	/* already disabled? */
+			ঘূৰাই;
 		WARN_ON_ONCE(kind == SCX_EXIT_NONE);
-		if (atomic_try_cmpxchg(&sch->exit_kind, &kind, SCX_EXIT_DONE))
-			break;
+		যদি (atomic_try_cmpxchg(&sch->exit_kind, &kind, SCX_EXIT_DONE))
+			ভঙ্গ;
 	}
 	ei->kind = kind;
 	ei->reason = scx_exit_reason(ei->kind);
 
-	if (scx_parent(sch))
+	যদি (scx_parent(sch))
 		scx_sub_disable(sch);
-	else
-		scx_root_disable(sch);
+	অন্যথা
+		scx_মূল_disable(sch);
 }
 
-static void scx_disable(struct scx_sched *sch, enum scx_exit_kind kind)
+স্থির শূন্য scx_disable(সংরচনা scx_sched *sch, গণনা scx_exit_kind kind)
 {
 	guard(preempt)();
-	if (scx_claim_exit(sch, kind))
+	যদি (scx_claim_exit(sch, kind))
 		irq_work_queue(&sch->disable_irq_work);
 }
 
@@ -6838,44 +6838,44 @@ static void scx_disable(struct scx_sched *sch, enum scx_exit_kind kind)
  * as a noop. Syncing the irq_work first is required to guarantee the
  * kthread work has been queued before waiting for it.
  */
-void scx_flush_disable_work(struct scx_sched *sch)
+শূন্য scx_flush_disable_work(সংরচনা scx_sched *sch)
 {
-	int kind;
+	পূর্ণাঙ্ক kind;
 
-	do {
+	কৰা {
 		irq_work_sync(&sch->disable_irq_work);
 		kthread_flush_work(&sch->disable_work);
 		kind = atomic_read(&sch->exit_kind);
-	} while (kind != SCX_EXIT_NONE && kind != SCX_EXIT_DONE);
+	} যেতিয়ালৈ (kind != SCX_EXIT_NONE && kind != SCX_EXIT_DONE);
 }
 
-static void dump_newline(struct seq_buf *s)
+স্থির শূন্য dump_newline(সংরচনা seq_buf *s)
 {
 	trace_sched_ext_dump("");
 
 	/* @s may be zero sized and seq_buf triggers WARN if so */
-	if (s->size)
+	যদি (s->size)
 		seq_buf_putc(s, '\n');
 }
 
-__printf(2, 3) void scx_dump_line(struct seq_buf *s, const char *fmt, ...)
+__printf(2, 3) শূন্য scx_dump_সাৰি(সংরচনা seq_buf *s, ধ্রুৱ ৱর্ণ *fmt, ...)
 {
 	va_list args;
 
 #ifdef CONFIG_TRACEPOINTS
-	if (trace_sched_ext_dump_enabled()) {
+	যদি (trace_sched_ext_dump_enabled()) {
 		/* protected by scx_dump_lock */
-		static char line_buf[SCX_EXIT_MSG_LEN];
+		স্থির ৱর্ণ সাৰি_buf[SCX_EXIT_বাৰ্তা_LEN];
 
 		va_start(args, fmt);
-		vscnprintf(line_buf, sizeof(line_buf), fmt, args);
+		vscnprintf(সাৰি_buf, পরিমাণ(সাৰি_buf), fmt, args);
 		va_end(args);
 
-		trace_call__sched_ext_dump(line_buf);
+		trace_call__sched_ext_dump(সাৰি_buf);
 	}
 #endif
 	/* @s may be zero sized and seq_buf triggers WARN if so */
-	if (s->size) {
+	যদি (s->size) {
 		va_start(args, fmt);
 		seq_buf_vprintf(s, fmt, args);
 		va_end(args);
@@ -6884,18 +6884,18 @@ __printf(2, 3) void scx_dump_line(struct seq_buf *s, const char *fmt, ...)
 	}
 }
 
-static void dump_stack_trace(struct seq_buf *s, const char *prefix,
-			     const unsigned long *bt, unsigned int len)
+স্থির শূন্য dump_স্তূপ_trace(সংরচনা seq_buf *s, ধ্রুৱ ৱর্ণ *prefix,
+			     ধ্রুৱ unsigned long *bt, unsigned পূর্ণাঙ্ক len)
 {
-	unsigned int i;
+	unsigned পূর্ণাঙ্ক i;
 
-	for (i = 0; i < len; i++)
-		scx_dump_line(s, "%s%pS", prefix, (void *)bt[i]);
+	বাবে (i = 0; i < len; i++)
+		scx_dump_সাৰি(s, "%s%pS", prefix, (শূন্য *)bt[i]);
 }
 
-static void ops_dump_init(struct seq_buf *s, const char *prefix)
+স্থির শূন্য ops_dump_init(সংরচনা seq_buf *s, ধ্রুৱ ৱর্ণ *prefix)
 {
-	struct scx_dump_data *dd = &scx_dump_data;
+	সংরচনা scx_dump_data *dd = &scx_dump_data;
 
 	lockdep_assert_irqs_disabled();
 
@@ -6906,19 +6906,19 @@ static void ops_dump_init(struct seq_buf *s, const char *prefix)
 	dd->prefix = prefix;
 }
 
-static void ops_dump_flush(void)
+স্থির শূন্য ops_dump_flush(শূন্য)
 {
-	struct scx_dump_data *dd = &scx_dump_data;
-	char *line = dd->buf.line;
+	সংরচনা scx_dump_data *dd = &scx_dump_data;
+	ৱর্ণ *সাৰি = dd->buf.সাৰি;
 
-	if (!dd->cursor)
-		return;
+	যদি (!dd->cursor)
+		ঘূৰাই;
 
 	/*
 	 * There's something to flush and this is the first line. Insert a blank
 	 * line to distinguish ops dump.
 	 */
-	if (dd->first) {
+	যদি (dd->first) {
 		dump_newline(dd->s);
 		dd->first = false;
 	}
@@ -6927,11 +6927,11 @@ static void ops_dump_flush(void)
 	 * There may be multiple lines in $line. Scan and emit each line
 	 * separately.
 	 */
-	while (true) {
-		char *end = line;
-		char c;
+	যেতিয়ালৈ (true) {
+		ৱর্ণ *end = সাৰি;
+		ৱর্ণ c;
 
-		while (*end != '\n' && *end != '\0')
+		যেতিয়ালৈ (*end != '\n' && *end != '\0')
 			end++;
 
 		/*
@@ -6940,90 +6940,90 @@ static void ops_dump_flush(void)
 		 */
 		c = *end;
 		*end = '\0';
-		scx_dump_line(dd->s, "%s%s", dd->prefix, line);
-		if (c == '\0')
-			break;
+		scx_dump_সাৰি(dd->s, "%s%s", dd->prefix, সাৰি);
+		যদি (c == '\0')
+			ভঙ্গ;
 
 		/* move to the next line */
 		end++;
-		if (*end == '\0')
-			break;
-		line = end;
+		যদি (*end == '\0')
+			ভঙ্গ;
+		সাৰি = end;
 	}
 
 	dd->cursor = 0;
 }
 
-static void ops_dump_exit(void)
+স্থির শূন্য ops_dump_exit(শূন্য)
 {
 	ops_dump_flush();
 	scx_dump_data.cpu = -1;
 }
 
-static void scx_dump_task(struct scx_sched *sch, struct seq_buf *s, struct scx_dump_ctx *dctx,
-			  struct rq *rq, struct task_struct *p, char marker)
+স্থির শূন্য scx_dump_task(সংরচনা scx_sched *sch, সংরচনা seq_buf *s, সংরচনা scx_dump_ctx *dctx,
+			  সংরচনা rq *rq, সংরচনা task_struct *p, ৱর্ণ marker)
 {
-	static unsigned long bt[SCX_EXIT_BT_LEN];
-	struct scx_sched *task_sch = scx_task_sched(p);
-	const char *own_marker;
-	char sch_id_buf[32];
-	char dsq_id_buf[19] = "(n/a)";
+	স্থির unsigned long bt[SCX_EXIT_BT_LEN];
+	সংরচনা scx_sched *task_sch = scx_task_sched(p);
+	ধ্রুৱ ৱর্ণ *own_marker;
+	ৱর্ণ sch_id_buf[32];
+	ৱর্ণ dsq_id_buf[19] = "(n/a)";
 	unsigned long ops_state = atomic_long_read(&p->scx.ops_state);
-	unsigned int bt_len = 0;
+	unsigned পূর্ণাঙ্ক bt_len = 0;
 
 	own_marker = task_sch == sch ? "*" : "";
 
-	if (task_sch->level == 0)
-		scnprintf(sch_id_buf, sizeof(sch_id_buf), "root");
-	else
-		scnprintf(sch_id_buf, sizeof(sch_id_buf), "sub%d-%llu",
+	যদি (task_sch->level == 0)
+		scnprintf(sch_id_buf, পরিমাণ(sch_id_buf), "root");
+	অন্যথা
+		scnprintf(sch_id_buf, পরিমাণ(sch_id_buf), "sub%d-%llu",
 			  task_sch->level, task_sch->ops.sub_cgroup_id);
 
-	if (p->scx.dsq)
-		scnprintf(dsq_id_buf, sizeof(dsq_id_buf), "0x%llx",
+	যদি (p->scx.dsq)
+		scnprintf(dsq_id_buf, পরিমাণ(dsq_id_buf), "0x%llx",
 			  (unsigned long long)p->scx.dsq->id);
 
 	dump_newline(s);
-	scx_dump_line(s, " %c%c %s[%d] %s%s %+ldms",
+	scx_dump_সাৰি(s, " %c%c %s[%d] %s%s %+ldms",
 		      marker, task_state_to_char(p), p->comm, p->pid, own_marker, sch_id_buf,
 		      jiffies_delta_msecs(p->scx.runnable_at, dctx->at_jiffies));
-	scx_dump_line(s, "      scx_state/flags=%u/0x%x dsq_flags=0x%x ops_state/qseq=%lu/%lu",
+	scx_dump_সাৰি(s, "      scx_state/flags=%u/0x%x dsq_flags=0x%x ops_state/qseq=%lu/%lu",
 		      scx_get_task_state(p) >> SCX_TASK_STATE_SHIFT,
 		      p->scx.flags & ~SCX_TASK_STATE_MASK, p->scx.dsq_flags,
 		      ops_state & SCX_OPSS_STATE_MASK, ops_state >> SCX_OPSS_QSEQ_SHIFT);
-	scx_dump_line(s, "      sticky/holding_cpu=%d/%d dsq_id=%s",
+	scx_dump_সাৰি(s, "      sticky/holding_cpu=%d/%d dsq_id=%s",
 		      p->scx.sticky_cpu, p->scx.holding_cpu, dsq_id_buf);
-	scx_dump_line(s, "      dsq_vtime=%llu slice=%llu weight=%u",
+	scx_dump_সাৰি(s, "      dsq_vtime=%llu slice=%llu weight=%u",
 		      p->scx.dsq_vtime, p->scx.slice, p->scx.weight);
-	scx_dump_line(s, "      cpus=%*pb no_mig=%u", cpumask_pr_args(p->cpus_ptr),
+	scx_dump_সাৰি(s, "      cpus=%*pb no_mig=%u", cpumask_pr_args(p->cpus_ptr),
 		      p->migration_disabled);
 
-	if (SCX_HAS_OP(sch, dump_task)) {
+	যদি (SCX_HAS_OP(sch, dump_task)) {
 		ops_dump_init(s, "    ");
 		SCX_CALL_OP(sch, dump_task, rq, dctx, p);
 		ops_dump_exit();
 	}
 
 #ifdef CONFIG_STACKTRACE
-	bt_len = stack_trace_save_tsk(p, bt, SCX_EXIT_BT_LEN, 1);
+	bt_len = স্তূপ_trace_save_tsk(p, bt, SCX_EXIT_BT_LEN, 1);
 #endif
-	if (bt_len) {
+	যদি (bt_len) {
 		dump_newline(s);
-		dump_stack_trace(s, "    ", bt, bt_len);
+		dump_স্তূপ_trace(s, "    ", bt, bt_len);
 	}
 }
 
-static void scx_dump_cpu(struct scx_sched *sch, struct seq_buf *s,
-			 struct scx_dump_ctx *dctx, int cpu,
+স্থির শূন্য scx_dump_cpu(সংরচনা scx_sched *sch, সংরচনা seq_buf *s,
+			 সংরচনা scx_dump_ctx *dctx, পূর্ণাঙ্ক cpu,
 			 bool dump_all_tasks)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
-	struct rq_flags rf;
-	struct task_struct *p;
-	struct seq_buf ns;
+	সংরচনা rq *rq = cpu_rq(cpu);
+	সংরচনা scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
+	সংরচনা rq_flags rf;
+	সংরচনা task_struct *p;
+	সংরচনা seq_buf ns;
 	size_t avail, used;
-	char *buf;
+	ৱর্ণ *buf;
 	bool idle;
 
 	rq_lock_irqsave(rq, &rf);
@@ -7031,8 +7031,8 @@ static void scx_dump_cpu(struct scx_sched *sch, struct seq_buf *s,
 	idle = list_empty(&rq->scx.runnable_list) &&
 		rq->curr->sched_class == &idle_sched_class;
 
-	if (idle && !SCX_HAS_OP(sch, dump_cpu))
-		goto next;
+	যদি (idle && !SCX_HAS_OP(sch, dump_cpu))
+		গচ্ছ next;
 
 	/*
 	 * We don't yet know whether ops.dump_cpu() will produce output
@@ -7044,30 +7044,30 @@ static void scx_dump_cpu(struct scx_sched *sch, struct seq_buf *s,
 	seq_buf_init(&ns, buf, avail);
 
 	dump_newline(&ns);
-	scx_dump_line(&ns, "CPU %-4d: nr_run=%u flags=0x%x cpu_rel=%d ksync=%lu",
+	scx_dump_সাৰি(&ns, "CPU %-4d: nr_run=%u flags=0x%x cpu_rel=%d ksync=%lu",
 		      cpu, rq->scx.nr_running, rq->scx.flags, rq->scx.cpu_released,
 		      rq->scx.kick_sync);
 	scx_rescue_dump(&ns, rq);
-	scx_dump_line(&ns, "          curr=%s[%d] class=%ps",
+	scx_dump_সাৰি(&ns, "          curr=%s[%d] class=%ps",
 		      rq->curr->comm, rq->curr->pid, rq->curr->sched_class);
-	if (!cpumask_empty(pcpu->cpus_to_kick))
-		scx_dump_line(&ns, "  cpus_to_kick   : %*pb",
+	যদি (!cpumask_empty(pcpu->cpus_to_kick))
+		scx_dump_সাৰি(&ns, "  cpus_to_kick   : %*pb",
 			      cpumask_pr_args(pcpu->cpus_to_kick));
-	if (!cpumask_empty(pcpu->cpus_to_kick_if_idle))
-		scx_dump_line(&ns, "  idle_to_kick   : %*pb",
+	যদি (!cpumask_empty(pcpu->cpus_to_kick_if_idle))
+		scx_dump_সাৰি(&ns, "  idle_to_kick   : %*pb",
 			      cpumask_pr_args(pcpu->cpus_to_kick_if_idle));
-	if (!cpumask_empty(pcpu->cpus_to_preempt))
-		scx_dump_line(&ns, "  cpus_to_preempt: %*pb",
+	যদি (!cpumask_empty(pcpu->cpus_to_preempt))
+		scx_dump_সাৰি(&ns, "  cpus_to_preempt: %*pb",
 			      cpumask_pr_args(pcpu->cpus_to_preempt));
-	if (!cpumask_empty(pcpu->cpus_to_wait))
-		scx_dump_line(&ns, "  cpus_to_wait   : %*pb",
+	যদি (!cpumask_empty(pcpu->cpus_to_wait))
+		scx_dump_সাৰি(&ns, "  cpus_to_wait   : %*pb",
 			      cpumask_pr_args(pcpu->cpus_to_wait));
-	if (!cpumask_empty(rq->scx.cpus_to_sync))
-		scx_dump_line(&ns, "  cpus_to_sync   : %*pb",
+	যদি (!cpumask_empty(rq->scx.cpus_to_sync))
+		scx_dump_সাৰি(&ns, "  cpus_to_sync   : %*pb",
 			      cpumask_pr_args(rq->scx.cpus_to_sync));
 
 	used = seq_buf_used(&ns);
-	if (SCX_HAS_OP(sch, dump_cpu)) {
+	যদি (SCX_HAS_OP(sch, dump_cpu)) {
 		ops_dump_init(&ns, "  ");
 		SCX_CALL_OP(sch, dump_cpu, rq, dctx, scx_cpu_arg(cpu), idle);
 		ops_dump_exit();
@@ -7077,25 +7077,25 @@ static void scx_dump_cpu(struct scx_sched *sch, struct seq_buf *s,
 	 * If idle && nothing generated by ops.dump_cpu(), there's
 	 * nothing interesting. Skip.
 	 */
-	if (idle && used == seq_buf_used(&ns))
-		goto next;
+	যদি (idle && used == seq_buf_used(&ns))
+		গচ্ছ next;
 
 	/*
 	 * $s may already have overflowed when $ns was created. If so,
 	 * calling commit on it will trigger BUG.
 	 */
-	if (avail) {
+	যদি (avail) {
 		seq_buf_commit(s, seq_buf_used(&ns));
-		if (seq_buf_has_overflowed(&ns))
+		যদি (seq_buf_has_overflowed(&ns))
 			seq_buf_set_overflow(s);
 	}
 
-	if (rq->curr->sched_class == &ext_sched_class &&
+	যদি (rq->curr->sched_class == &ext_sched_class &&
 	    (dump_all_tasks || scx_task_on_sched(sch, rq->curr)))
 		scx_dump_task(sch, s, dctx, rq, rq->curr, '*');
 
-	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_node)
-		if (dump_all_tasks || scx_task_on_sched(sch, p))
+	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_গ্ৰন্থি)
+		যদি (dump_all_tasks || scx_task_on_sched(sch, p))
 			scx_dump_task(sch, s, dctx, rq, p, ' ');
 next:
 	rq_unlock_irqrestore(rq, &rf);
@@ -7108,112 +7108,112 @@ next:
  * separately. For error dumps, @dump_all_tasks=true since only the failing
  * scheduler is dumped.
  */
-static void scx_dump_state(struct scx_sched *sch, struct scx_exit_info *ei,
+স্থির শূন্য scx_dump_state(সংরচনা scx_sched *sch, সংরচনা scx_exit_info *ei,
 			   size_t dump_len, bool dump_all_tasks)
 {
-	static const char trunc_marker[] = "\n\n~~~~ TRUNCATED ~~~~\n";
-	struct scx_dump_ctx dctx = {
+	স্থির ধ্রুৱ ৱর্ণ trunc_marker[] = "\n\n~~~~ TRUNCATED ~~~~\n";
+	সংরচনা scx_dump_ctx dctx = {
 		.kind = ei->kind,
 		.exit_code = ei->exit_code,
 		.reason = ei->reason,
 		.at_ns = ktime_get_ns(),
 		.at_jiffies = jiffies,
 	};
-	struct seq_buf s;
-	struct scx_event_stats events;
-	int cpu;
+	সংরচনা seq_buf s;
+	সংরচনা scx_event_stats events;
+	পূর্ণাঙ্ক cpu;
 
 	guard(raw_spinlock_irqsave)(&scx_dump_lock);
 
-	if (sch->dump_disabled)
-		return;
+	যদি (sch->dump_disabled)
+		ঘূৰাই;
 
 	seq_buf_init(&s, ei->dump, dump_len);
 
 #ifdef CONFIG_EXT_SUB_SCHED
-	if (sch->level == 0)
-		scx_dump_line(&s, "%s: root", sch->ops.name);
-	else
-		scx_dump_line(&s, "%s: sub%d-%llu %s",
+	যদি (sch->level == 0)
+		scx_dump_সাৰি(&s, "%s: root", sch->ops.name);
+	অন্যথা
+		scx_dump_সাৰি(&s, "%s: sub%d-%llu %s",
 			      sch->ops.name, sch->level, sch->ops.sub_cgroup_id,
 			      sch->cgrp_path);
 #endif
-	if (ei->kind == SCX_EXIT_NONE) {
-		scx_dump_line(&s, "Debug dump triggered by %s", ei->reason);
-	} else {
-		if (ei->exit_cpu >= 0)
-			scx_dump_line(&s, "%s[%d] triggered exit kind %d on CPU %d:",
+	যদি (ei->kind == SCX_EXIT_NONE) {
+		scx_dump_সাৰি(&s, "Debug dump triggered by %s", ei->reason);
+	} অন্যথা {
+		যদি (ei->exit_cpu >= 0)
+			scx_dump_সাৰি(&s, "%s[%d] triggered exit kind %d on CPU %d:",
 				      current->comm, current->pid, ei->kind,
 				      ei->exit_cpu);
-		else
-			scx_dump_line(&s, "%s[%d] triggered exit kind %d:",
+		অন্যথা
+			scx_dump_সাৰি(&s, "%s[%d] triggered exit kind %d:",
 				      current->comm, current->pid, ei->kind);
-		scx_dump_line(&s, "  %s (%s)", ei->reason, ei->msg);
+		scx_dump_সাৰি(&s, "  %s (%s)", ei->reason, ei->বাৰ্তা);
 		dump_newline(&s);
-		scx_dump_line(&s, "Backtrace:");
-		dump_stack_trace(&s, "  ", ei->bt, ei->bt_len);
+		scx_dump_সাৰি(&s, "Backtrace:");
+		dump_স্তূপ_trace(&s, "  ", ei->bt, ei->bt_len);
 	}
 
-	if (SCX_HAS_OP(sch, dump)) {
+	যদি (SCX_HAS_OP(sch, dump)) {
 		ops_dump_init(&s, "");
-		SCX_CALL_OP(sch, dump, NULL, &dctx);
+		SCX_CALL_OP(sch, dump, রিক্ত, &dctx);
 		ops_dump_exit();
 	}
 
 	dump_newline(&s);
-	scx_dump_line(&s, "CPU states");
-	scx_dump_line(&s, "----------");
+	scx_dump_সাৰি(&s, "CPU states");
+	scx_dump_সাৰি(&s, "----------");
 
 	/*
 	 * Dump stalled CPUs first so they aren't lost to dump truncation, then
 	 * walk the rest in order. Fall back to exit_cpu if no stall mask set.
 	 */
-	if (!cpumask_empty(sch->stall_cpus)) {
+	যদি (!cpumask_empty(sch->stall_cpus)) {
 		for_each_cpu(cpu, sch->stall_cpus)
 			scx_dump_cpu(sch, &s, &dctx, cpu, dump_all_tasks);
 		for_each_possible_cpu(cpu) {
-			if (!cpumask_test_cpu(cpu, sch->stall_cpus))
+			যদি (!cpumask_test_cpu(cpu, sch->stall_cpus))
 				scx_dump_cpu(sch, &s, &dctx, cpu, dump_all_tasks);
 		}
-	} else {
-		if (ei->exit_cpu >= 0)
+	} অন্যথা {
+		যদি (ei->exit_cpu >= 0)
 			scx_dump_cpu(sch, &s, &dctx, ei->exit_cpu, dump_all_tasks);
 		for_each_possible_cpu(cpu) {
-			if (cpu != ei->exit_cpu)
+			যদি (cpu != ei->exit_cpu)
 				scx_dump_cpu(sch, &s, &dctx, cpu, dump_all_tasks);
 		}
 	}
 
 	dump_newline(&s);
-	scx_dump_line(&s, "Event counters");
-	scx_dump_line(&s, "--------------");
+	scx_dump_সাৰি(&s, "Event counters");
+	scx_dump_সাৰি(&s, "--------------");
 
 	scx_read_events(sch, &events);
 #define SCX_EVENT(name)	scx_dump_event(s, &events, name)
 	SCX_EVENTS_LIST(SCX_EVENT);
 #undef SCX_EVENT
 
-	if (seq_buf_has_overflowed(&s) && dump_len >= sizeof(trunc_marker))
-		memcpy(ei->dump + dump_len - sizeof(trunc_marker),
-		       trunc_marker, sizeof(trunc_marker));
+	যদি (seq_buf_has_overflowed(&s) && dump_len >= পরিমাণ(trunc_marker))
+		memcpy(ei->dump + dump_len - পরিমাণ(trunc_marker),
+		       trunc_marker, পরিমাণ(trunc_marker));
 }
 
-static void scx_disable_irq_workfn(struct irq_work *irq_work)
+স্থির শূন্য scx_disable_irq_workfn(সংরচনা irq_work *irq_work)
 {
-	struct scx_sched *sch = container_of(irq_work, struct scx_sched, disable_irq_work);
-	struct scx_exit_info *ei = sch->exit_info;
+	সংরচনা scx_sched *sch = container_of(irq_work, সংরচনা scx_sched, disable_irq_work);
+	সংরচনা scx_exit_info *ei = sch->exit_info;
 
-	if (ei->kind >= SCX_EXIT_ERROR)
+	যদি (ei->kind >= SCX_EXIT_ERROR)
 		scx_dump_state(sch, ei, sch->ops.exit_dump_len, true);
 
 	kthread_queue_work(sch->helper, &sch->disable_work);
 }
 
 /* finish exit_info and kick the disable work, ei->msg must already be set */
-static void scx_finish_exit(struct scx_sched *sch, enum scx_exit_kind kind,
+স্থির শূন্য scx_finish_exit(সংরচনা scx_sched *sch, গণনা scx_exit_kind kind,
 			    s64 exit_code, s32 exit_cpu)
 {
-	struct scx_exit_info *ei = sch->exit_info;
+	সংরচনা scx_exit_info *ei = sch->exit_info;
 
 	ei->exit_code = exit_code;
 #ifdef CONFIG_STACKTRACE
@@ -7221,8 +7221,8 @@ static void scx_finish_exit(struct scx_sched *sch, enum scx_exit_kind kind,
 	 * stack_trace_save()'s NMI-safety is arch-dependent and undocumented.
 	 * Skip the backtrace when exiting from NMI.
 	 */
-	if (kind >= SCX_EXIT_ERROR && !in_nmi())
-		ei->bt_len = stack_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
+	যদি (kind >= SCX_EXIT_ERROR && !in_nmi())
+		ei->bt_len = স্তূপ_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
 #endif
 	/*
 	 * Set ei->kind and ->reason for scx_dump_state(). They'll be set again
@@ -7235,171 +7235,171 @@ static void scx_finish_exit(struct scx_sched *sch, enum scx_exit_kind kind,
 	irq_work_queue(&sch->disable_irq_work);
 }
 
-bool scx_vexit(struct scx_sched *sch,
-	       enum scx_exit_kind kind, s64 exit_code, s32 exit_cpu,
-	       const char *fmt, va_list args)
+bool scx_vexit(সংরচনা scx_sched *sch,
+	       গণনা scx_exit_kind kind, s64 exit_code, s32 exit_cpu,
+	       ধ্রুৱ ৱর্ণ *fmt, va_list args)
 {
-	struct scx_exit_info *ei = sch->exit_info;
+	সংরচনা scx_exit_info *ei = sch->exit_info;
 
 	guard(preempt)();
 
-	if (!scx_claim_exit(sch, kind))
-		return false;
+	যদি (!scx_claim_exit(sch, kind))
+		ঘূৰাই false;
 
-	vscnprintf(ei->msg, SCX_EXIT_MSG_LEN, fmt, args);
+	vscnprintf(ei->বাৰ্তা, SCX_EXIT_বাৰ্তা_LEN, fmt, args);
 
 	scx_finish_exit(sch, kind, exit_code, exit_cpu);
-	return true;
+	ঘূৰাই true;
 }
 
-static int alloc_kick_syncs(void)
+স্থির পূর্ণাঙ্ক alloc_kick_syncs(শূন্য)
 {
-	int cpu;
+	পূর্ণাঙ্ক cpu;
 
 	/*
 	 * Allocate per-CPU arrays sized by nr_cpu_ids. Use kvzalloc as size
 	 * can exceed percpu allocator limits on large machines.
 	 */
 	for_each_possible_cpu(cpu) {
-		struct scx_kick_syncs __rcu **ksyncs = per_cpu_ptr(&scx_kick_syncs, cpu);
-		struct scx_kick_syncs *new_ksyncs;
+		সংরচনা scx_kick_syncs __rcu **ksyncs = per_cpu_ptr(&scx_kick_syncs, cpu);
+		সংরচনা scx_kick_syncs *new_ksyncs;
 
 		WARN_ON_ONCE(rcu_access_pointer(*ksyncs));
 
-		new_ksyncs = kvzalloc_node(struct_size(new_ksyncs, syncs, nr_cpu_ids),
-					   GFP_KERNEL, cpu_to_node(cpu));
-		if (!new_ksyncs) {
+		new_ksyncs = kvzalloc_গ্ৰন্থি(struct_size(new_ksyncs, syncs, nr_cpu_ids),
+					   GFP_KERNEL, cpu_to_গ্ৰন্থি(cpu));
+		যদি (!new_ksyncs) {
 			free_kick_syncs();
-			return -ENOMEM;
+			ঘূৰাই -ENOMEM;
 		}
 
 		rcu_assign_pointer(*ksyncs, new_ksyncs);
 	}
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static void free_pnode(struct scx_sched_pnode *pnode)
+স্থির শূন্য free_pnode(সংরচনা scx_sched_pnode *pnode)
 {
-	if (!pnode)
-		return;
+	যদি (!pnode)
+		ঘূৰাই;
 	exit_dsq(&pnode->global_dsq);
 	kfree(pnode);
 }
 
-static struct scx_sched_pnode *alloc_pnode(struct scx_sched *sch, int node)
+স্থির সংরচনা scx_sched_pnode *alloc_pnode(সংরচনা scx_sched *sch, পূর্ণাঙ্ক গ্ৰন্থি)
 {
-	struct scx_sched_pnode *pnode;
+	সংরচনা scx_sched_pnode *pnode;
 
-	pnode = kzalloc_node(sizeof(*pnode), GFP_KERNEL, node);
-	if (!pnode)
-		return NULL;
+	pnode = kzalloc_গ্ৰন্থি(পরিমাণ(*pnode), GFP_KERNEL, গ্ৰন্থি);
+	যদি (!pnode)
+		ঘূৰাই রিক্ত;
 
-	if (scx_init_dsq(&pnode->global_dsq, SCX_DSQ_GLOBAL, sch)) {
+	যদি (scx_init_dsq(&pnode->global_dsq, SCX_DSQ_GLOBAL, sch)) {
 		kfree(pnode);
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
-	return pnode;
+	ঘূৰাই pnode;
 }
 
 /*
  * Allocate and initialize a new scx_sched. @cgrp's reference is always
  * consumed whether the function succeeds or fails.
  */
-struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
-					  struct cgroup *cgrp,
-					  struct scx_sched *parent)
+সংরচনা scx_sched *scx_alloc_and_add_sched(সংরচনা scx_enable_cmd *cmd,
+					  সংরচনা cgroup *cgrp,
+					  সংরচনা scx_sched *parent)
 {
-	struct sched_ext_ops *ops = cmd->ops;
-	struct scx_sched *sch;
+	সংরচনা sched_ext_ops *ops = cmd->ops;
+	সংরচনা scx_sched *sch;
 	s32 level = parent ? parent->level + 1 : 0;
-	s32 node, cpu, ret, bypass_fail_cpu = nr_cpu_ids;
+	s32 গ্ৰন্থি, cpu, ret, bypass_fail_cpu = nr_cpu_ids;
 
 	sch = kzalloc_flex(*sch, ancestors, level + 1);
-	if (!sch) {
+	যদি (!sch) {
 		ret = -ENOMEM;
-		goto err_put_cgrp;
+		গচ্ছ err_put_cgrp;
 	}
 
 	sch->exit_info = alloc_exit_info(ops->exit_dump_len);
-	if (!sch->exit_info) {
+	যদি (!sch->exit_info) {
 		ret = -ENOMEM;
-		goto err_free_sch;
+		গচ্ছ err_free_sch;
 	}
 
 	ret = rhashtable_init(&sch->dsq_hash, &dsq_hash_params);
-	if (ret < 0)
-		goto err_free_ei;
+	যদি (ret < 0)
+		গচ্ছ err_free_ei;
 
-	sch->pnode = kzalloc_objs(sch->pnode[0], nr_node_ids);
-	if (!sch->pnode) {
+	sch->pnode = kzalloc_objs(sch->pnode[0], nr_গ্ৰন্থি_ids);
+	যদি (!sch->pnode) {
 		ret = -ENOMEM;
-		goto err_free_hash;
+		গচ্ছ err_free_hash;
 	}
 
-	for_each_node_state(node, N_POSSIBLE) {
-		sch->pnode[node] = alloc_pnode(sch, node);
-		if (!sch->pnode[node]) {
+	for_each_গ্ৰন্থি_state(গ্ৰন্থি, N_POSSIBLE) {
+		sch->pnode[গ্ৰন্থি] = alloc_pnode(sch, গ্ৰন্থি);
+		যদি (!sch->pnode[গ্ৰন্থি]) {
 			ret = -ENOMEM;
-			goto err_free_pnode;
+			গচ্ছ err_free_pnode;
 		}
 	}
 
 	sch->dsp_max_batch = ops->dispatch_max_batch ?: SCX_DSP_DFL_MAX_BATCH;
-	sch->pcpu = __alloc_percpu(struct_size_t(struct scx_sched_pcpu,
+	sch->pcpu = __alloc_percpu(struct_size_t(সংরচনা scx_sched_pcpu,
 						 dsp_ctx.buf, sch->dsp_max_batch),
-				   __alignof__(struct scx_sched_pcpu));
-	if (!sch->pcpu) {
+				   __alignof__(সংরচনা scx_sched_pcpu));
+	যদি (!sch->pcpu) {
 		ret = -ENOMEM;
-		goto err_free_pnode;
+		গচ্ছ err_free_pnode;
 	}
 
 	for_each_possible_cpu(cpu) {
 		ret = scx_init_dsq(scx_bypass_dsq(sch, cpu), SCX_DSQ_BYPASS, sch);
-		if (ret) {
+		যদি (ret) {
 			bypass_fail_cpu = cpu;
-			goto err_free_pcpu;
+			গচ্ছ err_free_pcpu;
 		}
 	}
 
 	for_each_possible_cpu(cpu) {
-		struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
+		সংরচনা scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
 
-		node = cpu_to_node(cpu);
+		গ্ৰন্থি = cpu_to_গ্ৰন্থি(cpu);
 		pcpu->sch = sch;
-		INIT_LIST_HEAD(&pcpu->deferred_reenq_local.node);
+		INIT_LIST_HEAD(&pcpu->deferred_reenq_local.গ্ৰন্থি);
 #ifdef CONFIG_EXT_SUB_SCHED
-		init_llist_node(&pcpu->ecaps_to_sync_node);
+		init_llist_গ্ৰন্থি(&pcpu->ecaps_to_sync_গ্ৰন্থি);
 #endif
-		INIT_LIST_HEAD(&pcpu->to_kick_node);
-		if (!zalloc_cpumask_var_node(&pcpu->cpus_to_kick, GFP_KERNEL, node) ||
-		    !zalloc_cpumask_var_node(&pcpu->cpus_to_kick_if_idle, GFP_KERNEL, node) ||
-		    !zalloc_cpumask_var_node(&pcpu->cpus_to_preempt, GFP_KERNEL, node) ||
-		    !zalloc_cpumask_var_node(&pcpu->cpus_to_wait, GFP_KERNEL, node)) {
+		INIT_LIST_HEAD(&pcpu->to_kick_গ্ৰন্থি);
+		যদি (!zalloc_cpumask_var_গ্ৰন্থি(&pcpu->cpus_to_kick, GFP_KERNEL, গ্ৰন্থি) ||
+		    !zalloc_cpumask_var_গ্ৰন্থি(&pcpu->cpus_to_kick_if_idle, GFP_KERNEL, গ্ৰন্থি) ||
+		    !zalloc_cpumask_var_গ্ৰন্থি(&pcpu->cpus_to_preempt, GFP_KERNEL, গ্ৰন্থি) ||
+		    !zalloc_cpumask_var_গ্ৰন্থি(&pcpu->cpus_to_wait, GFP_KERNEL, গ্ৰন্থি)) {
 			ret = -ENOMEM;
-			goto err_free_pcpu;
+			গচ্ছ err_free_pcpu;
 		}
 	}
 
 	sch->helper = kthread_run_worker(0, "sched_ext_helper");
-	if (IS_ERR(sch->helper)) {
+	যদি (IS_ERR(sch->helper)) {
 		ret = PTR_ERR(sch->helper);
-		goto err_free_pcpu;
+		গচ্ছ err_free_pcpu;
 	}
 
 	sched_set_fifo(sch->helper->task);
 
-	if (parent)
+	যদি (parent)
 		memcpy(sch->ancestors, parent->ancestors,
-		       level * sizeof(parent->ancestors[0]));
+		       level * পরিমাণ(parent->ancestors[0]));
 	sch->ancestors[level] = sch;
 	sch->level = level;
 	sch->id = atomic64_inc_return(&scx_sched_id_cursor);
 
-	if (ops->timeout_ms)
+	যদি (ops->timeout_ms)
 		sch->watchdog_timeout = msecs_to_jiffies(ops->timeout_ms);
-	else
+	অন্যথা
 		sch->watchdog_timeout = SCX_WATCHDOG_MAX_TIMEOUT;
 
 	sch->slice_dfl = SCX_SLICE_DFL;
@@ -7409,42 +7409,42 @@ struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
 	kthread_init_work(&sch->disable_work, scx_disable_workfn);
 	timer_setup(&sch->bypass_lb_timer, scx_bypass_lb_timerfn, 0);
 
-	if (!alloc_cpumask_var(&sch->bypass_lb_donee_cpumask, GFP_KERNEL)) {
+	যদি (!alloc_cpumask_var(&sch->bypass_lb_donee_cpumask, GFP_KERNEL)) {
 		ret = -ENOMEM;
-		goto err_stop_helper;
+		গচ্ছ err_stop_helper;
 	}
-	if (!alloc_cpumask_var(&sch->bypass_lb_resched_cpumask, GFP_KERNEL)) {
+	যদি (!alloc_cpumask_var(&sch->bypass_lb_resched_cpumask, GFP_KERNEL)) {
 		ret = -ENOMEM;
-		goto err_free_lb_cpumask;
+		গচ্ছ err_free_lb_cpumask;
 	}
-	if (!zalloc_cpumask_var(&sch->stall_cpus, GFP_KERNEL)) {
+	যদি (!zalloc_cpumask_var(&sch->stall_cpus, GFP_KERNEL)) {
 		ret = -ENOMEM;
-		goto err_free_lb_resched_cpumask;
+		গচ্ছ err_free_lb_resched_cpumask;
 	}
 	/*
 	 * Copy ops through the right union view. For cid-form the source is
 	 * struct sched_ext_ops_cid which lacks the trailing cpu_acquire/
 	 * cpu_release; those stay zero from kzalloc.
 	 */
-	if (cmd->is_cid_type) {
+	যদি (cmd->is_cid_type) {
 		sch->ops_cid = *cmd->ops_cid;
 		sch->is_cid_type = true;
-	} else {
+	} অন্যথা {
 		sch->ops = *cmd->ops;
 	}
 
 #ifdef CONFIG_EXT_SUB_SCHED
-	char *buf = kzalloc(PATH_MAX, GFP_KERNEL);
-	if (!buf) {
+	ৱর্ণ *buf = kzalloc(PATH_MAX, GFP_KERNEL);
+	যদি (!buf) {
 		ret = -ENOMEM;
-		goto err_free_lb_resched;
+		গচ্ছ err_free_lb_resched;
 	}
 	cgroup_path(cgrp, buf, PATH_MAX);
 	sch->cgrp_path = kstrdup(buf, GFP_KERNEL);
 	kfree(buf);
-	if (!sch->cgrp_path) {
+	যদি (!sch->cgrp_path) {
 		ret = -ENOMEM;
-		goto err_free_lb_resched;
+		গচ্ছ err_free_lb_resched;
 	}
 
 	sch->cgrp = cgrp;
@@ -7463,7 +7463,7 @@ struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
 	INIT_LIST_HEAD(&sch->all);
 
 #ifdef CONFIG_EXT_SUB_SCHED
-	if (parent) {
+	যদি (parent) {
 		/*
 		 * Pin @parent for @sch's lifetime. The kobject hierarchy pins
 		 * it only via @parent->sub_kset, which is dropped during
@@ -7487,12 +7487,12 @@ struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
 	 */
 	sch->arena_map = cmd->arena_map;
 	/* BPF arena is only available on MMU && 64BIT */
-#if defined(CONFIG_MMU) && defined(CONFIG_64BIT)
-	if (sch->arena_map)
+#যদি defined(CONFIG_MMU) && defined(CONFIG_64BIT)
+	যদি (sch->arena_map)
 		sch->arena_kern_base = bpf_arena_map_kern_vm_start(sch->arena_map);
 #endif
-	cmd->arena_map = NULL;
-	return sch;
+	cmd->arena_map = রিক্ত;
+	ঘূৰাই sch;
 
 #ifdef CONFIG_EXT_SUB_SCHED
 err_free_lb_resched:
@@ -7506,7 +7506,7 @@ err_stop_helper:
 	kthread_destroy_worker(sch->helper);
 err_free_pcpu:
 	for_each_possible_cpu(cpu) {
-		struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
+		সংরচনা scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
 
 		free_cpumask_var(pcpu->cpus_to_kick);
 		free_cpumask_var(pcpu->cpus_to_kick_if_idle);
@@ -7514,17 +7514,17 @@ err_free_pcpu:
 		free_cpumask_var(pcpu->cpus_to_wait);
 	}
 	for_each_possible_cpu(cpu) {
-		if (cpu == bypass_fail_cpu)
-			break;
+		যদি (cpu == bypass_fail_cpu)
+			ভঙ্গ;
 		exit_dsq(scx_bypass_dsq(sch, cpu));
 	}
 	free_percpu(sch->pcpu);
 err_free_pnode:
-	for_each_node_state(node, N_POSSIBLE)
-		free_pnode(sch->pnode[node]);
+	for_each_গ্ৰন্থি_state(গ্ৰন্থি, N_POSSIBLE)
+		free_pnode(sch->pnode[গ্ৰন্থি]);
 	kfree(sch->pnode);
 err_free_hash:
-	rhashtable_free_and_destroy(&sch->dsq_hash, NULL, NULL);
+	rhashtable_free_and_destroy(&sch->dsq_hash, রিক্ত, রিক্ত);
 err_free_ei:
 	free_exit_info(sch->exit_info);
 err_free_sch:
@@ -7533,7 +7533,7 @@ err_put_cgrp:
 #ifdef CONFIG_EXT_SUB_SCHED
 	cgroup_put(cgrp);
 #endif
-	return ERR_PTR(ret);
+	ঘূৰাই ERR_PTR(ret);
 }
 
 /*
@@ -7541,33 +7541,33 @@ err_put_cgrp:
  * implements ops.sub_attach. Called by the enable workfns once @sch's
  * sysfs-visible state is initialized.
  */
-int scx_sched_sysfs_add(struct scx_sched *sch)
+পূর্ণাঙ্ক scx_sched_sysfs_add(সংরচনা scx_sched *sch)
 {
 #ifdef CONFIG_EXT_SUB_SCHED
-	struct scx_sched *parent = scx_parent(sch);
-	int ret;
+	সংরচনা scx_sched *parent = scx_parent(sch);
+	পূর্ণাঙ্ক ret;
 
-	if (parent)
+	যদি (parent)
 		ret = kobject_add(&sch->kobj, &parent->sub_kset->kobj,
 				  "sub-%llu", cgroup_id(sch_cgroup(sch)));
-	else
-		ret = kobject_add(&sch->kobj, NULL, "root");
-	if (ret < 0)
-		return ret;
+	অন্যথা
+		ret = kobject_add(&sch->kobj, রিক্ত, "root");
+	যদি (ret < 0)
+		ঘূৰাই ret;
 
-	if (sch->ops.sub_attach) {
-		sch->sub_kset = kset_create_and_add("sub", NULL, &sch->kobj);
-		if (!sch->sub_kset)
-			return -ENOMEM;
+	যদি (sch->ops.sub_attach) {
+		sch->sub_kset = kset_create_and_add("sub", রিক্ত, &sch->kobj);
+		যদি (!sch->sub_kset)
+			ঘূৰাই -ENOMEM;
 	}
-	return 0;
-#else
-	return kobject_add(&sch->kobj, NULL, "root");
+	ঘূৰাই 0;
+#অন্যথা
+	ঘূৰাই kobject_add(&sch->kobj, রিক্ত, "root");
 #endif
 }
 
-static int check_hotplug_seq(struct scx_sched *sch,
-			      const struct sched_ext_ops *ops)
+স্থির পূর্ণাঙ্ক check_hotplug_seq(সংরচনা scx_sched *sch,
+			      ধ্রুৱ সংরচনা sched_ext_ops *ops)
 {
 	unsigned long long global_hotplug_seq;
 
@@ -7576,29 +7576,29 @@ static int check_hotplug_seq(struct scx_sched *sch,
 	 * initialized, and when we were able to attach, exit and notify user
 	 * space about it.
 	 */
-	if (ops->hotplug_seq) {
+	যদি (ops->hotplug_seq) {
 		global_hotplug_seq = atomic_long_read(&scx_hotplug_seq);
-		if (ops->hotplug_seq != global_hotplug_seq) {
+		যদি (ops->hotplug_seq != global_hotplug_seq) {
 			scx_exit(sch, SCX_EXIT_UNREG_KERN,
 				 SCX_ECODE_ACT_RESTART | SCX_ECODE_RSN_HOTPLUG,
 				 "expected hotplug seq %llu did not match actual %llu",
 				 ops->hotplug_seq, global_hotplug_seq);
-			return -EBUSY;
+			ঘূৰাই -EBUSY;
 		}
 	}
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
+পূর্ণাঙ্ক scx_validate_ops(সংরচনা scx_sched *sch, ধ্রুৱ সংরচনা sched_ext_ops *ops)
 {
 	/*
 	 * It doesn't make sense to specify the SCX_OPS_ENQ_LAST flag if the
 	 * ops.enqueue() callback isn't implemented.
 	 */
-	if ((ops->flags & SCX_OPS_ENQ_LAST) && !ops->enqueue) {
+	যদি ((ops->flags & SCX_OPS_ENQ_LAST) && !ops->enqueue) {
 		scx_error(sch, "SCX_OPS_ENQ_LAST requires ops.enqueue() to be implemented");
-		return -EINVAL;
+		ঘূৰাই -EINVAL;
 	}
 
 	/*
@@ -7606,20 +7606,20 @@ int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
 	 * may set it to declare a dependency; reject if the root hasn't
 	 * enabled it.
 	 */
-	if ((ops->flags & SCX_OPS_TID_TO_TASK) && scx_parent(sch) &&
+	যদি ((ops->flags & SCX_OPS_TID_TO_TASK) && scx_parent(sch) &&
 	    !(sch->ancestors[0]->ops.flags & SCX_OPS_TID_TO_TASK)) {
 		scx_error(sch, "SCX_OPS_TID_TO_TASK requires root scheduler to enable it");
-		return -EINVAL;
+		ঘূৰাই -EINVAL;
 	}
 
 	/*
 	 * SCX_OPS_BUILTIN_IDLE_PER_NODE requires built-in CPU idle
 	 * selection policy to be enabled.
 	 */
-	if ((ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE) &&
+	যদি ((ops->flags & SCX_OPS_BUILTIN_IDLE_PER_গ্ৰন্থি) &&
 	    (ops->update_idle && !(ops->flags & SCX_OPS_KEEP_BUILTIN_IDLE))) {
 		scx_error(sch, "SCX_OPS_BUILTIN_IDLE_PER_NODE requires CPU idle selection enabled");
-		return -EINVAL;
+		ঘূৰাই -EINVAL;
 	}
 
 	/*
@@ -7627,7 +7627,7 @@ int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
 	 * cpu_release tail; reading those fields off a cid-form @ops would
 	 * run past the BPF allocation. Skip for cid-form.
 	 */
-	if (!sch->is_cid_type && (ops->cpu_acquire || ops->cpu_release))
+	যদি (!sch->is_cid_type && (ops->cpu_acquire || ops->cpu_release))
 		pr_warn_ratelimited("ops->cpu_acquire/release() are deprecated, use sched_switch TP instead\n");
 
 	/*
@@ -7636,35 +7636,35 @@ int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
 	 * and a root that accepts sub-scheds must expose cid-form state to
 	 * them. Reject cpu-form schedulers on either side.
 	 */
-	if (!sch->is_cid_type) {
-		if (scx_parent(sch)) {
+	যদি (!sch->is_cid_type) {
+		যদি (scx_parent(sch)) {
 			scx_error(sch, "sub-sched requires cid-form struct_ops");
-			return -EINVAL;
+			ঘূৰাই -EINVAL;
 		}
-		if (ops->sub_attach || ops->sub_detach) {
+		যদি (ops->sub_attach || ops->sub_detach) {
 			scx_error(sch, "sub_attach/sub_detach requires cid-form struct_ops");
-			return -EINVAL;
+			ঘূৰাই -EINVAL;
 		}
 	}
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static void scx_root_enable_workfn(struct kthread_work *work)
+স্থির শূন্য scx_মূল_enable_workfn(সংরচনা kthread_work *work)
 {
-	struct scx_enable_cmd *cmd = container_of(work, struct scx_enable_cmd, work);
-	struct sched_ext_ops *ops = cmd->ops;
-	struct cgroup *cgrp = root_cgroup();
-	struct scx_sched *sch;
-	struct scx_task_iter sti;
-	struct task_struct *p;
-	int i, cpu, ret;
+	সংরচনা scx_enable_cmd *cmd = container_of(work, সংরচনা scx_enable_cmd, work);
+	সংরচনা sched_ext_ops *ops = cmd->ops;
+	সংরচনা cgroup *cgrp = মূল_cgroup();
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_task_iter sti;
+	সংরচনা task_struct *p;
+	পূর্ণাঙ্ক i, cpu, ret;
 
 	mutex_lock(&scx_enable_mutex);
 
-	if (scx_enable_state() != SCX_DISABLED) {
+	যদি (scx_enable_state() != SCX_DISABLED) {
 		ret = -EBUSY;
-		goto err_unlock;
+		গচ্ছ err_unlock;
 	}
 
 	/*
@@ -7675,19 +7675,19 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * finished tearing down; proceeding would let the in-flight unreg's
 	 * RCU_INIT_POINTER(NULL) clobber the @ops->priv we are about to assign.
 	 */
-	if (rcu_access_pointer(ops->priv)) {
+	যদি (rcu_access_pointer(ops->priv)) {
 		ret = -EBUSY;
-		goto err_unlock;
+		গচ্ছ err_unlock;
 	}
 
 	ret = alloc_kick_syncs();
-	if (ret)
-		goto err_unlock;
+	যদি (ret)
+		গচ্ছ err_unlock;
 
-	if (ops->flags & SCX_OPS_TID_TO_TASK) {
+	যদি (ops->flags & SCX_OPS_TID_TO_TASK) {
 		ret = rhashtable_init(&scx_tid_hash, &scx_tid_hash_params);
-		if (ret)
-			goto err_free_ksyncs;
+		যদি (ret)
+			গচ্ছ err_free_ksyncs;
 	}
 
 #ifdef CONFIG_EXT_SUB_SCHED
@@ -7699,22 +7699,22 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * scx_alloc_and_add_sched() succeeds.
 	 */
 	WARN_ON_ONCE(scx_set_enable_state(SCX_ENABLING) != SCX_DISABLED);
-	WARN_ON_ONCE(scx_root);
+	WARN_ON_ONCE(scx_মূল);
 
-	sch = scx_alloc_and_add_sched(cmd, cgrp, NULL);
-	if (IS_ERR(sch)) {
+	sch = scx_alloc_and_add_sched(cmd, cgrp, রিক্ত);
+	যদি (IS_ERR(sch)) {
 		ret = PTR_ERR(sch);
 		WARN_ON_ONCE(scx_set_enable_state(SCX_DISABLED) != SCX_ENABLING);
-		goto err_free_tid_hash;
+		গচ্ছ err_free_tid_hash;
 	}
 
-	if (sch->is_cid_type)
+	যদি (sch->is_cid_type)
 		static_branch_enable(&__scx_is_cid_type);
 
 	atomic_long_set(&scx_nr_rejected, 0);
 
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
+		সংরচনা rq *rq = cpu_rq(cpu);
 
 		rq->scx.local_dsq.sched = sch;
 		rq->scx.cpuperf_target = SCX_CPUPERF_ONE;
@@ -7735,21 +7735,21 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * ops.init_cids() has finalized the layout.
 	 */
 	ret = scx_cid_init(sch);
-	if (ret) {
+	যদি (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		গচ্ছ err_disable;
 	}
 
 	/*
 	 * Make the scheduler instance visible. Must be inside cpus_read_lock().
 	 * See handle_hotplug().
 	 */
-	rcu_assign_pointer(scx_root, sch);
+	rcu_assign_pointer(scx_মূল, sch);
 
 	ret = scx_link_sched(sch);
-	if (ret) {
+	যদি (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		গচ্ছ err_disable;
 	}
 
 	scx_idle_enable(ops);
@@ -7759,13 +7759,13 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * which may call scx_bpf_cid_override(). Run it before the caps and
 	 * shard state are built so the final layout is in effect.
 	 */
-	if (sch->is_cid_type && sch->ops_cid.init_cids) {
-		ret = SCX_CALL_OP_RET(sch, init_cids, NULL);
-		if (ret) {
+	যদি (sch->is_cid_type && sch->ops_cid.init_cids) {
+		ret = SCX_CALL_OP_RET(sch, init_cids, রিক্ত);
+		যদি (ret) {
 			ret = scx_ops_sanitize_err(sch, "init_cids", ret);
 			cpus_read_unlock();
 			scx_error(sch, "ops.init_cids() failed (%d)", ret);
-			goto err_disable;
+			গচ্ছ err_disable;
 		}
 	}
 
@@ -7773,59 +7773,59 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	scx_cid_publish_tables();
 
 	ret = scx_arena_pool_init(sch);
-	if (ret) {
+	যদি (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		গচ্ছ err_disable;
 	}
 
 	ret = scx_alloc_kern_arena_objs(sch);
-	if (ret) {
+	যদি (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		গচ্ছ err_disable;
 	}
 
 	ret = scx_alloc_pshards(sch);
-	if (ret) {
+	যদি (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		গচ্ছ err_disable;
 	}
 
-	scx_init_root_caps(sch);
+	scx_init_মূল_caps(sch);
 
 	/* the cid caps and shards are live now, so ops.init() can query them */
-	if (sch->ops.init) {
-		ret = SCX_CALL_OP_RET(sch, init, NULL);
-		if (ret) {
+	যদি (sch->ops.init) {
+		ret = SCX_CALL_OP_RET(sch, init, রিক্ত);
+		যদি (ret) {
 			ret = scx_ops_sanitize_err(sch, "init", ret);
 			cpus_read_unlock();
 			scx_error(sch, "ops.init() failed (%d)", ret);
-			goto err_disable;
+			গচ্ছ err_disable;
 		}
 		sch->exit_info->flags |= SCX_EFLAG_INITIALIZED;
 	}
 
 	ret = scx_sched_sysfs_add(sch);
-	if (ret) {
+	যদি (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		গচ্ছ err_disable;
 	}
 
-	for (i = SCX_OPI_CPU_HOTPLUG_BEGIN; i < SCX_OPI_CPU_HOTPLUG_END; i++)
-		if (((void (**)(void))ops)[i])
+	বাবে (i = SCX_OPI_CPU_HOTPLUG_BEGIN; i < SCX_OPI_CPU_HOTPLUG_END; i++)
+		যদি (((শূন্য (**)(শূন্য))ops)[i])
 			set_bit(i, sch->has_op);
 
 	ret = check_hotplug_seq(sch, ops);
-	if (ret) {
+	যদি (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		গচ্ছ err_disable;
 	}
 	scx_idle_update_selcpu_topology(ops);
 
 	cpus_read_unlock();
 
 	ret = scx_validate_ops(sch, ops);
-	if (ret)
-		goto err_disable;
+	যদি (ret)
+		গচ্ছ err_disable;
 
 	/*
 	 * Attach the ext_server bandwidth reservation before anything is
@@ -7839,16 +7839,16 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * automatically.
 	 */
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
+		সংরচনা rq *rq = cpu_rq(cpu);
 
 		scoped_guard(rq_lock_irqsave, rq) {
 			update_rq_clock(rq);
 			ret = dl_server_attach_bw(&rq->ext_server);
 		}
-		if (ret) {
+		যদি (ret) {
 			pr_warn("sched_ext: failed to attach ext_server on CPU %d (%d)\n",
 				cpu, ret);
-			goto err_disable;
+			গচ্ছ err_disable;
 		}
 	}
 
@@ -7860,11 +7860,11 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 */
 	scx_bypass(sch, true);
 
-	for (i = SCX_OPI_NORMAL_BEGIN; i < SCX_OPI_NORMAL_END; i++)
-		if (((void (**)(void))ops)[i])
+	বাবে (i = SCX_OPI_NORMAL_BEGIN; i < SCX_OPI_NORMAL_END; i++)
+		যদি (((শূন্য (**)(শূন্য))ops)[i])
 			set_bit(i, sch->has_op);
 
-	if (sch->ops.cpu_acquire || sch->ops.cpu_release)
+	যদি (sch->ops.cpu_acquire || sch->ops.cpu_release)
 		sch->ops.flags |= SCX_OPS_HAS_CPU_PREEMPT;
 
 	/*
@@ -7877,7 +7877,7 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	scx_init_task_enabled = true;
 
 	/* flip under fork_rwsem; the iter below covers existing tasks */
-	if (ops->flags & SCX_OPS_TID_TO_TASK)
+	যদি (ops->flags & SCX_OPS_TID_TO_TASK)
 		static_branch_enable(&__scx_tid_to_task_enabled);
 
 	/*
@@ -7896,14 +7896,14 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	scx_cgroup_lock();
 	set_cgroup_sched(sch_cgroup(sch), sch);
 	ret = scx_cgroup_init(sch);
-	if (ret)
-		goto err_disable_unlock_all;
+	যদি (ret)
+		গচ্ছ err_disable_unlock_all;
 
 	WARN_ON_ONCE(scx_cgroup_enabled);
 	scx_cgroup_enabled = true;
 
-	scx_task_iter_start(&sti, NULL);
-	while ((p = scx_task_iter_next_locked(&sti))) {
+	scx_task_iter_start(&sti, রিক্ত);
+	যেতিয়ালৈ ((p = scx_task_iter_next_locked(&sti))) {
 		/*
 		 * @p is in scx_tasks under scx_tasks_lock, and SCX_TASK_DEAD
 		 * tasks are filtered by scx_task_iter_next_locked().
@@ -7925,28 +7925,28 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 		scx_set_task_state(p, SCX_TASK_INIT_BEGIN);
 		scx_task_iter_unlock(&sti);
 
-		ret = __scx_init_task(sch, p, NULL, false);
+		ret = __scx_init_task(sch, p, রিক্ত, false);
 
 		scx_task_iter_relock(&sti, p);
 
-		if (unlikely(ret)) {
-			if (scx_get_task_state(p) != SCX_TASK_DEAD)
+		যদি (unlikely(ret)) {
+			যদি (scx_get_task_state(p) != SCX_TASK_DEAD)
 				scx_set_task_state(p, SCX_TASK_NONE);
 			scx_task_iter_stop(&sti);
 			scx_error(sch, "ops.init_task() failed (%d) for %s[%d]",
 				  ret, p->comm, p->pid);
 			put_task_struct(p);
-			goto err_disable_unlock_all;
+			গচ্ছ err_disable_unlock_all;
 		}
 
-		if (scx_get_task_state(p) == SCX_TASK_DEAD) {
+		যদি (scx_get_task_state(p) == SCX_TASK_DEAD) {
 			/*
 			 * sched_ext_dead() observed %INIT_BEGIN and set %DEAD.
 			 * ops.exit_task() is owed to the sched __scx_init_task()
 			 * ran against; call it now.
 			 */
 			scx_sub_init_cancel_task(sch, p);
-		} else {
+		} অন্যথা {
 			scx_set_task_state(p, SCX_TASK_INIT);
 			scx_set_task_sched(p, sch);
 			scx_set_task_state(p, SCX_TASK_READY);
@@ -7957,8 +7957,8 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 		 * list_empty() guards against sched_ext_dead() having taken @p
 		 * off the list while init ran unlocked.
 		 */
-		if (scx_tid_to_task_enabled() && !list_empty(&p->scx.tasks_node))
-			scx_tid_hash_insert(p);
+		যদি (scx_tid_to_task_enabled() && !list_empty(&p->scx.tasks_গ্ৰন্থি))
+			scx_tid_hash_ঢোকাও(p);
 
 		put_task_struct(p);
 	}
@@ -7979,16 +7979,16 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * scx_tasks_lock.
 	 */
 	percpu_down_write(&scx_fork_rwsem);
-	scx_task_iter_start(&sti, NULL);
-	while ((p = scx_task_iter_next_locked(&sti))) {
-		unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
-		const struct sched_class *old_class = p->sched_class;
-		const struct sched_class *new_class = scx_setscheduler_class(p);
+	scx_task_iter_start(&sti, রিক্ত);
+	যেতিয়ালৈ ((p = scx_task_iter_next_locked(&sti))) {
+		unsigned পূর্ণাঙ্ক queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
+		ধ্রুৱ সংরচনা sched_class *old_class = p->sched_class;
+		ধ্রুৱ সংরচনা sched_class *new_class = scx_setscheduler_class(p);
 
-		if (scx_get_task_state(p) != SCX_TASK_READY)
-			continue;
+		যদি (scx_get_task_state(p) != SCX_TASK_READY)
+			অনুৱর্ত;
 
-		if (old_class != new_class)
+		যদি (old_class != new_class)
 			queue_flags |= DEQUEUE_CLASS;
 
 		scoped_guard (sched_change, p, queue_flags) {
@@ -8001,13 +8001,13 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 
 	scx_bypass(sch, false);
 
-	if (!scx_tryset_enable_state(SCX_ENABLED, SCX_ENABLING)) {
+	যদি (!scx_tryset_enable_state(SCX_ENABLED, SCX_ENABLING)) {
 		WARN_ON_ONCE(atomic_read(&sch->exit_kind) == SCX_EXIT_NONE);
 		ret = -EBUSY;
-		goto err_disable;
+		গচ্ছ err_disable;
 	}
 
-	if (!(ops->flags & SCX_OPS_SWITCH_PARTIAL))
+	যদি (!(ops->flags & SCX_OPS_SWITCH_PARTIAL))
 		static_branch_enable(&__scx_switched_all);
 
 	/*
@@ -8019,9 +8019,9 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 *
 	 * In partial mode keep fair_server attached.
 	 */
-	if (scx_switched_all()) {
+	যদি (scx_switched_all()) {
 		for_each_possible_cpu(cpu) {
-			struct rq *rq = cpu_rq(cpu);
+			সংরচনা rq *rq = cpu_rq(cpu);
 
 			guard(rq_lock_irqsave)(rq);
 			update_rq_clock(rq);
@@ -8037,17 +8037,17 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	atomic_long_inc(&scx_enable_seq);
 
 	cmd->ret = 0;
-	return;
+	ঘূৰাই;
 
 err_free_tid_hash:
-	if (ops->flags & SCX_OPS_TID_TO_TASK)
-		rhashtable_free_and_destroy(&scx_tid_hash, NULL, NULL);
+	যদি (ops->flags & SCX_OPS_TID_TO_TASK)
+		rhashtable_free_and_destroy(&scx_tid_hash, রিক্ত, রিক্ত);
 err_free_ksyncs:
 	free_kick_syncs();
 err_unlock:
 	mutex_unlock(&scx_enable_mutex);
 	cmd->ret = ret;
-	return;
+	ঘূৰাই;
 
 err_disable_unlock_all:
 	scx_cgroup_unlock();
@@ -8069,24 +8069,24 @@ err_disable:
 	cmd->ret = 0;
 }
 
-static s32 scx_enable(struct scx_enable_cmd *cmd, struct bpf_link *link)
+স্থির s32 scx_enable(সংরচনা scx_enable_cmd *cmd, সংরচনা bpf_link *link)
 {
-	static struct kthread_worker *helper;
-	static DEFINE_MUTEX(helper_mutex);
+	স্থির সংরচনা kthread_worker *helper;
+	স্থির DEFINE_MUTEX(helper_mutex);
 
-	if (housekeeping_enabled(HK_TYPE_DOMAIN_BOOT)) {
+	যদি (housekeeping_enabled(HK_TYPE_DOMAIN_BOOT)) {
 		pr_err("sched_ext: Not compatible with \"isolcpus=\" domain isolation\n");
-		return -EINVAL;
+		ঘূৰাই -EINVAL;
 	}
 
-	if (!READ_ONCE(helper)) {
+	যদি (!READ_ONCE(helper)) {
 		mutex_lock(&helper_mutex);
-		if (!helper) {
-			struct kthread_worker *w =
+		যদি (!helper) {
+			সংরচনা kthread_worker *w =
 				kthread_run_worker(0, "scx_enable_helper");
-			if (IS_ERR_OR_NULL(w)) {
+			যদি (IS_ERR_OR_NULL(w)) {
 				mutex_unlock(&helper_mutex);
-				return -ENOMEM;
+				ঘূৰাই -ENOMEM;
 			}
 			sched_set_fifo(w->task);
 			WRITE_ONCE(helper, w);
@@ -8095,192 +8095,192 @@ static s32 scx_enable(struct scx_enable_cmd *cmd, struct bpf_link *link)
 	}
 
 #ifdef CONFIG_EXT_SUB_SCHED
-	if (cmd->ops->sub_cgroup_id > 1)
+	যদি (cmd->ops->sub_cgroup_id > 1)
 		kthread_init_work(&cmd->work, scx_sub_enable_workfn);
-	else
+	অন্যথা
 #endif	/* CONFIG_EXT_SUB_SCHED */
-		kthread_init_work(&cmd->work, scx_root_enable_workfn);
+		kthread_init_work(&cmd->work, scx_মূল_enable_workfn);
 
 	kthread_queue_work(READ_ONCE(helper), &cmd->work);
 	kthread_flush_work(&cmd->work);
-	return cmd->ret;
+	ঘূৰাই cmd->ret;
 }
 
 
 /********************************************************************************
  * bpf_struct_ops plumbing.
  */
-#include <linux/bpf_verifier.h>
-#include <linux/bpf.h>
-#include <linux/btf.h>
+#অন্তর্ভাৱ <linux/bpf_verifier.h>
+#অন্তর্ভাৱ <linux/bpf.h>
+#অন্তর্ভাৱ <linux/btf.h>
 
-static const struct btf_type *task_struct_type;
+স্থির ধ্রুৱ সংরচনা btf_type *task_struct_type;
 
-static bool bpf_scx_is_valid_access(int off, int size,
-				    enum bpf_access_type type,
-				    const struct bpf_prog *prog,
-				    struct bpf_insn_access_aux *info)
+স্থির bool bpf_scx_is_valid_access(পূর্ণাঙ্ক off, পূর্ণাঙ্ক size,
+				    গণনা bpf_access_type type,
+				    ধ্রুৱ সংরচনা bpf_prog *prog,
+				    সংরচনা bpf_insn_access_aux *info)
 {
-	if (type != BPF_READ)
-		return false;
-	if (off < 0 || off >= sizeof(__u64) * MAX_BPF_FUNC_ARGS)
-		return false;
-	if (off % size != 0)
-		return false;
+	যদি (type != BPF_READ)
+		ঘূৰাই false;
+	যদি (off < 0 || off >= পরিমাণ(__u64) * MAX_BPF_FUNC_ARGS)
+		ঘূৰাই false;
+	যদি (off % size != 0)
+		ঘূৰাই false;
 
-	return btf_ctx_access(off, size, type, prog, info);
+	ঘূৰাই btf_ctx_access(off, size, type, prog, info);
 }
 
 /* common to both forms: only scx.disallow is writable */
-static int bpf_scx_btf_struct_access_common(const struct bpf_reg_state *reg,
-					    int off, int size)
+স্থির পূর্ণাঙ্ক bpf_scx_btf_struct_access_common(ধ্রুৱ সংরচনা bpf_reg_state *reg,
+					    পূর্ণাঙ্ক off, পূর্ণাঙ্ক size)
 {
-	const struct btf_type *t;
+	ধ্রুৱ সংরচনা btf_type *t;
 
 	t = btf_type_by_id(reg->btf, reg->btf_id);
-	if (t == task_struct_type &&
-	    off >= offsetof(struct task_struct, scx.disallow) &&
-	    off + size <= offsetofend(struct task_struct, scx.disallow))
-		return SCALAR_VALUE;
+	যদি (t == task_struct_type &&
+	    off >= offsetof(সংরচনা task_struct, scx.disallow) &&
+	    off + size <= offsetofend(সংরচনা task_struct, scx.disallow))
+		ঘূৰাই SCALAR_মান;
 
-	return -EACCES;
+	ঘূৰাই -EACCES;
 }
 
-static int bpf_scx_btf_struct_access(struct bpf_verifier_log *log,
-				     const struct bpf_reg_state *reg, int off,
-				     int size)
+স্থির পূর্ণাঙ্ক bpf_scx_btf_struct_access(সংরচনা bpf_verifier_log *log,
+				     ধ্রুৱ সংরচনা bpf_reg_state *reg, পূর্ণাঙ্ক off,
+				     পূর্ণাঙ্ক size)
 {
-	const struct btf_type *t;
+	ধ্রুৱ সংরচনা btf_type *t;
 
 	t = btf_type_by_id(reg->btf, reg->btf_id);
-	if (t == task_struct_type) {
-		if ((off >= offsetof(struct task_struct, scx.slice) &&
-		     off + size <= offsetofend(struct task_struct, scx.slice)) ||
-		    (off >= offsetof(struct task_struct, scx.dsq_vtime) &&
-		     off + size <= offsetofend(struct task_struct, scx.dsq_vtime)))
-			return SCALAR_VALUE;
+	যদি (t == task_struct_type) {
+		যদি ((off >= offsetof(সংরচনা task_struct, scx.slice) &&
+		     off + size <= offsetofend(সংরচনা task_struct, scx.slice)) ||
+		    (off >= offsetof(সংরচনা task_struct, scx.dsq_vtime) &&
+		     off + size <= offsetofend(সংরচনা task_struct, scx.dsq_vtime)))
+			ঘূৰাই SCALAR_মান;
 	}
 
-	return bpf_scx_btf_struct_access_common(reg, off, size);
+	ঘূৰাই bpf_scx_btf_struct_access_common(reg, off, size);
 }
 
 /* cid-form rejects direct slice and dsq_vtime writes in favor of the kfuncs */
-static int bpf_scx_cid_btf_struct_access(struct bpf_verifier_log *log,
-					 const struct bpf_reg_state *reg, int off,
-					 int size)
+স্থির পূর্ণাঙ্ক bpf_scx_cid_btf_struct_access(সংরচনা bpf_verifier_log *log,
+					 ধ্রুৱ সংরচনা bpf_reg_state *reg, পূর্ণাঙ্ক off,
+					 পূর্ণাঙ্ক size)
 {
-	return bpf_scx_btf_struct_access_common(reg, off, size);
+	ঘূৰাই bpf_scx_btf_struct_access_common(reg, off, size);
 }
 
-static const struct bpf_verifier_ops bpf_scx_verifier_ops = {
+স্থির ধ্রুৱ সংরচনা bpf_verifier_ops bpf_scx_verifier_ops = {
 	.get_func_proto = bpf_base_func_proto,
 	.is_valid_access = bpf_scx_is_valid_access,
 	.btf_struct_access = bpf_scx_btf_struct_access,
 };
 
-static const struct bpf_verifier_ops bpf_scx_cid_verifier_ops = {
+স্থির ধ্রুৱ সংরচনা bpf_verifier_ops bpf_scx_cid_verifier_ops = {
 	.get_func_proto = bpf_base_func_proto,
 	.is_valid_access = bpf_scx_is_valid_access,
 	.btf_struct_access = bpf_scx_cid_btf_struct_access,
 };
 
-static int bpf_scx_init_member(const struct btf_type *t,
-			       const struct btf_member *member,
-			       void *kdata, const void *udata)
+স্থির পূর্ণাঙ্ক bpf_scx_init_member(ধ্রুৱ সংরচনা btf_type *t,
+			       ধ্রুৱ সংরচনা btf_member *member,
+			       শূন্য *kdata, ধ্রুৱ শূন্য *udata)
 {
-	const struct sched_ext_ops *uops = udata;
-	struct sched_ext_ops *ops = kdata;
+	ধ্রুৱ সংরচনা sched_ext_ops *uops = udata;
+	সংরচনা sched_ext_ops *ops = kdata;
 	u32 moff = __btf_member_bit_offset(t, member) / 8;
-	int ret;
+	পূর্ণাঙ্ক ret;
 
-	switch (moff) {
-	case offsetof(struct sched_ext_ops, dispatch_max_batch):
-		if (*(u32 *)(udata + moff) > INT_MAX)
-			return -E2BIG;
+	ৱিকল্প (moff) {
+	পক্ষ offsetof(সংরচনা sched_ext_ops, dispatch_max_batch):
+		যদি (*(u32 *)(udata + moff) > INT_MAX)
+			ঘূৰাই -E2BIG;
 		ops->dispatch_max_batch = *(u32 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, flags):
-		if (*(u64 *)(udata + moff) & ~SCX_OPS_ALL_FLAGS)
-			return -EINVAL;
+		ঘূৰাই 1;
+	পক্ষ offsetof(সংরচনা sched_ext_ops, flags):
+		যদি (*(u64 *)(udata + moff) & ~SCX_OPS_ALL_FLAGS)
+			ঘূৰাই -EINVAL;
 		ops->flags = *(u64 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, name):
+		ঘূৰাই 1;
+	পক্ষ offsetof(সংরচনা sched_ext_ops, name):
 		ret = bpf_obj_name_cpy(ops->name, uops->name,
-				       sizeof(ops->name));
-		if (ret < 0)
-			return ret;
-		if (ret == 0)
-			return -EINVAL;
-		return 1;
-	case offsetof(struct sched_ext_ops, timeout_ms):
-		if (msecs_to_jiffies(*(u32 *)(udata + moff)) >
+				       পরিমাণ(ops->name));
+		যদি (ret < 0)
+			ঘূৰাই ret;
+		যদি (ret == 0)
+			ঘূৰাই -EINVAL;
+		ঘূৰাই 1;
+	পক্ষ offsetof(সংরচনা sched_ext_ops, timeout_ms):
+		যদি (msecs_to_jiffies(*(u32 *)(udata + moff)) >
 		    SCX_WATCHDOG_MAX_TIMEOUT)
-			return -E2BIG;
+			ঘূৰাই -E2BIG;
 		ops->timeout_ms = *(u32 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, exit_dump_len):
+		ঘূৰাই 1;
+	পক্ষ offsetof(সংরচনা sched_ext_ops, exit_dump_len):
 		ops->exit_dump_len =
 			*(u32 *)(udata + moff) ?: SCX_EXIT_DUMP_DFL_LEN;
-		return 1;
-	case offsetof(struct sched_ext_ops, hotplug_seq):
+		ঘূৰাই 1;
+	পক্ষ offsetof(সংরচনা sched_ext_ops, hotplug_seq):
 		ops->hotplug_seq = *(u64 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, cid_shard_size):
+		ঘূৰাই 1;
+	পক্ষ offsetof(সংরচনা sched_ext_ops, cid_shard_size):
 		ops->cid_shard_size = *(u32 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, rescue_bandwidth_ppt): {
+		ঘূৰাই 1;
+	পক্ষ offsetof(সংরচনা sched_ext_ops, rescue_bandwidth_ppt): {
 		u32 bw_ppt = *(u32 *)(udata + moff);
 
-		if (bw_ppt > SCX_RESCUE_MAX_BW_PPT && bw_ppt != SCX_RESCUE_DISABLE)
-			return -E2BIG;
+		যদি (bw_ppt > SCX_RESCUE_MAX_BW_PPT && bw_ppt != SCX_RESCUE_DISABLE)
+			ঘূৰাই -E2BIG;
 		ops->rescue_bandwidth_ppt = bw_ppt;
-		return 1;
+		ঘূৰাই 1;
 	}
-	case offsetof(struct sched_ext_ops, rescue_quantum_us): {
+	পক্ষ offsetof(সংরচনা sched_ext_ops, rescue_quantum_us): {
 		u32 quantum_us = *(u32 *)(udata + moff);
 
-		if (quantum_us > SCX_RESCUE_MAX_QUANTUM_US)
-			return -E2BIG;
-		if (quantum_us && quantum_us < SCX_RESCUE_MIN_QUANTUM_US)
-			return -EINVAL;
+		যদি (quantum_us > SCX_RESCUE_MAX_QUANTUM_US)
+			ঘূৰাই -E2BIG;
+		যদি (quantum_us && quantum_us < SCX_RESCUE_MIN_QUANTUM_US)
+			ঘূৰাই -EINVAL;
 		ops->rescue_quantum_us = quantum_us;
-		return 1;
+		ঘূৰাই 1;
 	}
 #ifdef CONFIG_EXT_SUB_SCHED
-	case offsetof(struct sched_ext_ops, sub_cgroup_id):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, sub_cgroup_id):
 		ops->sub_cgroup_id = *(u64 *)(udata + moff);
-		return 1;
+		ঘূৰাই 1;
 #endif	/* CONFIG_EXT_SUB_SCHED */
 	}
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static int bpf_scx_check_member(const struct btf_type *t,
-				const struct btf_member *member,
-				const struct bpf_prog *prog)
+স্থির পূর্ণাঙ্ক bpf_scx_check_member(ধ্রুৱ সংরচনা btf_type *t,
+				ধ্রুৱ সংরচনা btf_member *member,
+				ধ্রুৱ সংরচনা bpf_prog *prog)
 {
 	u32 moff = __btf_member_bit_offset(t, member) / 8;
 
-	switch (moff) {
-	case offsetof(struct sched_ext_ops, init_task):
+	ৱিকল্প (moff) {
+	পক্ষ offsetof(সংরচনা sched_ext_ops, init_task):
 #ifdef CONFIG_EXT_GROUP_SCHED
-	case offsetof(struct sched_ext_ops, cgroup_init):
-	case offsetof(struct sched_ext_ops, cgroup_exit):
-	case offsetof(struct sched_ext_ops, cgroup_prep_move):
-	case offsetof(struct sched_ext_ops, cgroup_set_bandwidth):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, cgroup_init):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, cgroup_exit):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, cgroup_prep_move):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, cgroup_set_bandwidth):
 #endif
-	case offsetof(struct sched_ext_ops, cpu_online):
-	case offsetof(struct sched_ext_ops, cpu_offline):
-	case offsetof(struct sched_ext_ops, init_cids):
-	case offsetof(struct sched_ext_ops, init):
-	case offsetof(struct sched_ext_ops, exit):
-	case offsetof(struct sched_ext_ops, sub_attach):
-	case offsetof(struct sched_ext_ops, sub_detach):
-		break;
-	default:
-		if (prog->sleepable)
-			return -EINVAL;
+	পক্ষ offsetof(সংরচনা sched_ext_ops, cpu_online):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, cpu_offline):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, init_cids):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, init):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, exit):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, sub_attach):
+	পক্ষ offsetof(সংরচনা sched_ext_ops, sub_detach):
+		ভঙ্গ;
+	স্ৱভাৱ:
+		যদি (prog->sleepable)
+			ঘূৰাই -EINVAL;
 	}
 
 #ifdef CONFIG_EXT_SUB_SCHED
@@ -8292,31 +8292,31 @@ static int bpf_scx_check_member(const struct btf_type *t,
 	 * sub-scheds and sub-scheds themselves but I don't know how to access
 	 * struct_ops from here.
 	 */
-	switch (moff) {
-	case offsetof(struct sched_ext_ops, dispatch):
-		prog->aux->priv_stack_requested = true;
+	ৱিকল্প (moff) {
+	পক্ষ offsetof(সংরচনা sched_ext_ops, dispatch):
+		prog->aux->priv_স্তূপ_requested = true;
 		prog->aux->recursion_detected = scx_pstack_recursion_on_dispatch;
-		break;
-	case offsetof(struct sched_ext_ops, sub_caps_updated):
-		prog->aux->priv_stack_requested = true;
+		ভঙ্গ;
+	পক্ষ offsetof(সংরচনা sched_ext_ops, sub_caps_updated):
+		prog->aux->priv_স্তূপ_requested = true;
 		prog->aux->recursion_detected = scx_pstack_recursion_on_caps_updated;
-		break;
+		ভঙ্গ;
 	}
 #endif	/* CONFIG_EXT_SUB_SCHED */
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static int bpf_scx_reg(void *kdata, struct bpf_link *link)
+স্থির পূর্ণাঙ্ক bpf_scx_reg(শূন্য *kdata, সংরচনা bpf_link *link)
 {
-	struct scx_enable_cmd cmd = { .ops = kdata };
+	সংরচনা scx_enable_cmd cmd = { .ops = kdata };
 
-	return scx_enable(&cmd, link);
+	ঘূৰাই scx_enable(&cmd, link);
 }
 
-struct scx_arena_scan {
-	struct bpf_map	*arena;
-	int		err;
+সংরচনা scx_arena_scan {
+	সংরচনা bpf_map	*arena;
+	পূর্ণাঙ্ক		err;
 };
 
 /*
@@ -8324,68 +8324,68 @@ struct scx_arena_scan {
  * member prog contributes at most one arena via bpf_prog_arena().
  * Require all non-NULL contributions to match.
  */
-static int scx_arena_scan_prog(struct bpf_prog *prog, void *data)
+স্থির পূর্ণাঙ্ক scx_arena_scan_prog(সংরচনা bpf_prog *prog, শূন্য *data)
 {
-	struct scx_arena_scan *s = data;
-	struct bpf_map *arena = NULL;
+	সংরচনা scx_arena_scan *s = data;
+	সংরচনা bpf_map *arena = রিক্ত;
 
 	/* arena.o, which defines these, is built only on MMU && 64BIT */
-#if defined(CONFIG_MMU) && defined(CONFIG_64BIT)
+#যদি defined(CONFIG_MMU) && defined(CONFIG_64BIT)
 	arena = bpf_prog_arena(prog);
 #endif
-	if (!arena)
-		return 0;
-	if (s->arena && s->arena != arena) {
+	যদি (!arena)
+		ঘূৰাই 0;
+	যদি (s->arena && s->arena != arena) {
 		s->err = -EINVAL;
-		return 1;
+		ঘূৰাই 1;
 	}
 	s->arena = arena;
-	return 0;
+	ঘূৰাই 0;
 }
 
-static int bpf_scx_reg_cid(void *kdata, struct bpf_link *link)
+স্থির পূর্ণাঙ্ক bpf_scx_reg_cid(শূন্য *kdata, সংরচনা bpf_link *link)
 {
-	struct scx_enable_cmd cmd = { .ops_cid = kdata, .is_cid_type = true };
-	struct scx_arena_scan scan = {};
-	int ret;
+	সংরচনা scx_enable_cmd cmd = { .ops_cid = kdata, .is_cid_type = true };
+	সংরচনা scx_arena_scan scan = {};
+	পূর্ণাঙ্ক ret;
 
 	bpf_struct_ops_for_each_prog(kdata, scx_arena_scan_prog, &scan);
-	if (scan.err) {
+	যদি (scan.err) {
 		pr_err("sched_ext: cid-form scheduler uses multiple arena maps\n");
-		return scan.err;
+		ঘূৰাই scan.err;
 	}
-	if (!scan.arena) {
+	যদি (!scan.arena) {
 		pr_err("sched_ext: cid-form scheduler must use a BPF arena map\n");
-		return -EINVAL;
+		ঘূৰাই -EINVAL;
 	}
 
 	bpf_map_inc(scan.arena);
 	cmd.arena_map = scan.arena;
 	ret = scx_enable(&cmd, link);
-	if (cmd.arena_map)		/* not consumed by scx_alloc_and_add_sched() */
+	যদি (cmd.arena_map)		/* not consumed by scx_alloc_and_add_sched() */
 		bpf_map_put(cmd.arena_map);
-	return ret;
+	ঘূৰাই ret;
 }
 
-static void bpf_scx_unreg(void *kdata, struct bpf_link *link)
+স্থির শূন্য bpf_scx_unreg(শূন্য *kdata, সংরচনা bpf_link *link)
 {
-	struct sched_ext_ops *ops = kdata;
-	struct scx_sched *sch = rcu_dereference_protected(ops->priv, true);
+	সংরচনা sched_ext_ops *ops = kdata;
+	সংরচনা scx_sched *sch = rcu_dereference_protected(ops->priv, true);
 
 	scx_disable(sch, SCX_EXIT_UNREG);
 	scx_flush_disable_work(sch);
-	RCU_INIT_POINTER(ops->priv, NULL);
+	RCU_INIT_POINTER(ops->priv, রিক্ত);
 	kobject_put(&sch->kobj);
 }
 
-static int bpf_scx_init(struct btf *btf)
+স্থির পূর্ণাঙ্ক bpf_scx_init(সংরচনা btf *btf)
 {
 	task_struct_type = btf_type_by_id(btf, btf_tracing_ids[BTF_TRACING_TYPE_TASK]);
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static int bpf_scx_update(void *kdata, void *old_kdata, struct bpf_link *link)
+স্থির পূর্ণাঙ্ক bpf_scx_update(শূন্য *kdata, শূন্য *old_kdata, সংরচনা bpf_link *link)
 {
 	/*
 	 * sched_ext does not support updating the actively-loaded BPF
@@ -8394,56 +8394,56 @@ static int bpf_scx_update(void *kdata, void *old_kdata, struct bpf_link *link)
 	 * etc. Similarly, we can always race with unregistration happening
 	 * elsewhere, such as with sysrq.
 	 */
-	return -EOPNOTSUPP;
+	ঘূৰাই -EOPNOTSUPP;
 }
 
-static int bpf_scx_validate(void *kdata)
+স্থির পূর্ণাঙ্ক bpf_scx_validate(শূন্য *kdata)
 {
-	return 0;
+	ঘূৰাই 0;
 }
 
-static s32 sched_ext_ops__select_cpu(struct task_struct *p, s32 prev_cpu, u64 wake_flags) { return -EINVAL; }
-static void sched_ext_ops__enqueue(struct task_struct *p, u64 enq_flags) {}
-static void sched_ext_ops__dequeue(struct task_struct *p, u64 enq_flags) {}
-static void sched_ext_ops__dispatch(s32 prev_cpu, struct task_struct *prev__nullable) {}
-static void sched_ext_ops__tick(struct task_struct *p) {}
-static void sched_ext_ops__runnable(struct task_struct *p, u64 enq_flags) {}
-static void sched_ext_ops__running(struct task_struct *p) {}
-static void sched_ext_ops__stopping(struct task_struct *p, bool runnable) {}
-static void sched_ext_ops__quiescent(struct task_struct *p, u64 deq_flags) {}
-static bool sched_ext_ops__yield(struct task_struct *from, struct task_struct *to__nullable) { return false; }
-static bool sched_ext_ops__core_sched_before(struct task_struct *a, struct task_struct *b) { return false; }
-static void sched_ext_ops__set_weight(struct task_struct *p, u32 weight) {}
-static void sched_ext_ops__set_cpumask(struct task_struct *p, const struct cpumask *mask) {}
-static void sched_ext_ops__update_idle(s32 cpu, bool idle) {}
-static void sched_ext_ops__cpu_acquire(s32 cpu, struct scx_cpu_acquire_args *args) {}
-static void sched_ext_ops__cpu_release(s32 cpu, struct scx_cpu_release_args *args) {}
-static s32 sched_ext_ops__init_task(struct task_struct *p, struct scx_init_task_args *args) { return -EINVAL; }
-static void sched_ext_ops__exit_task(struct task_struct *p, struct scx_exit_task_args *args) {}
-static void sched_ext_ops__enable(struct task_struct *p) {}
-static void sched_ext_ops__disable(struct task_struct *p) {}
+স্থির s32 sched_ext_ops__select_cpu(সংরচনা task_struct *p, s32 prev_cpu, u64 wake_flags) { ঘূৰাই -EINVAL; }
+স্থির শূন্য sched_ext_ops__enqueue(সংরচনা task_struct *p, u64 enq_flags) {}
+স্থির শূন্য sched_ext_ops__dequeue(সংরচনা task_struct *p, u64 enq_flags) {}
+স্থির শূন্য sched_ext_ops__dispatch(s32 prev_cpu, সংরচনা task_struct *prev__nullable) {}
+স্থির শূন্য sched_ext_ops__tick(সংরচনা task_struct *p) {}
+স্থির শূন্য sched_ext_ops__runnable(সংরচনা task_struct *p, u64 enq_flags) {}
+স্থির শূন্য sched_ext_ops__running(সংরচনা task_struct *p) {}
+স্থির শূন্য sched_ext_ops__stopping(সংরচনা task_struct *p, bool runnable) {}
+স্থির শূন্য sched_ext_ops__quiescent(সংরচনা task_struct *p, u64 deq_flags) {}
+স্থির bool sched_ext_ops__yield(সংরচনা task_struct *from, সংরচনা task_struct *to__nullable) { ঘূৰাই false; }
+স্থির bool sched_ext_ops__core_sched_before(সংরচনা task_struct *a, সংরচনা task_struct *b) { ঘূৰাই false; }
+স্থির শূন্য sched_ext_ops__set_weight(সংরচনা task_struct *p, u32 weight) {}
+স্থির শূন্য sched_ext_ops__set_cpumask(সংরচনা task_struct *p, ধ্রুৱ সংরচনা cpumask *mask) {}
+স্থির শূন্য sched_ext_ops__update_idle(s32 cpu, bool idle) {}
+স্থির শূন্য sched_ext_ops__cpu_acquire(s32 cpu, সংরচনা scx_cpu_acquire_args *args) {}
+স্থির শূন্য sched_ext_ops__cpu_release(s32 cpu, সংরচনা scx_cpu_release_args *args) {}
+স্থির s32 sched_ext_ops__init_task(সংরচনা task_struct *p, সংরচনা scx_init_task_args *args) { ঘূৰাই -EINVAL; }
+স্থির শূন্য sched_ext_ops__exit_task(সংরচনা task_struct *p, সংরচনা scx_exit_task_args *args) {}
+স্থির শূন্য sched_ext_ops__enable(সংরচনা task_struct *p) {}
+স্থির শূন্য sched_ext_ops__disable(সংরচনা task_struct *p) {}
 #ifdef CONFIG_EXT_GROUP_SCHED
-static s32 sched_ext_ops__cgroup_init(struct cgroup *cgrp, struct scx_cgroup_init_args *args) { return -EINVAL; }
-static void sched_ext_ops__cgroup_exit(struct cgroup *cgrp) {}
-static s32 sched_ext_ops__cgroup_prep_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) { return -EINVAL; }
-static void sched_ext_ops__cgroup_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) {}
-static void sched_ext_ops__cgroup_cancel_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) {}
-static void sched_ext_ops__cgroup_set_weight(struct cgroup *cgrp, u32 weight) {}
-static void sched_ext_ops__cgroup_set_bandwidth(struct cgroup *cgrp, u64 period_us, u64 quota_us, u64 burst_us) {}
-static void sched_ext_ops__cgroup_set_idle(struct cgroup *cgrp, bool idle) {}
+স্থির s32 sched_ext_ops__cgroup_init(সংরচনা cgroup *cgrp, সংরচনা scx_cgroup_init_args *args) { ঘূৰাই -EINVAL; }
+স্থির শূন্য sched_ext_ops__cgroup_exit(সংরচনা cgroup *cgrp) {}
+স্থির s32 sched_ext_ops__cgroup_prep_move(সংরচনা task_struct *p, সংরচনা cgroup *from, সংরচনা cgroup *to) { ঘূৰাই -EINVAL; }
+স্থির শূন্য sched_ext_ops__cgroup_move(সংরচনা task_struct *p, সংরচনা cgroup *from, সংরচনা cgroup *to) {}
+স্থির শূন্য sched_ext_ops__cgroup_cancel_move(সংরচনা task_struct *p, সংরচনা cgroup *from, সংরচনা cgroup *to) {}
+স্থির শূন্য sched_ext_ops__cgroup_set_weight(সংরচনা cgroup *cgrp, u32 weight) {}
+স্থির শূন্য sched_ext_ops__cgroup_set_bandwidth(সংরচনা cgroup *cgrp, u64 period_us, u64 quota_us, u64 burst_us) {}
+স্থির শূন্য sched_ext_ops__cgroup_set_idle(সংরচনা cgroup *cgrp, bool idle) {}
 #endif	/* CONFIG_EXT_GROUP_SCHED */
-static s32 sched_ext_ops__sub_attach(struct scx_sub_attach_args *args) { return -EINVAL; }
-static void sched_ext_ops__sub_detach(struct scx_sub_detach_args *args) {}
-static void sched_ext_ops__cpu_online(s32 cpu) {}
-static void sched_ext_ops__cpu_offline(s32 cpu) {}
-static s32 sched_ext_ops__init_cids(void) { return -EINVAL; }
-static s32 sched_ext_ops__init(void) { return -EINVAL; }
-static void sched_ext_ops__exit(struct scx_exit_info *info) {}
-static void sched_ext_ops__dump(struct scx_dump_ctx *ctx) {}
-static void sched_ext_ops__dump_cpu(struct scx_dump_ctx *ctx, s32 cpu, bool idle) {}
-static void sched_ext_ops__dump_task(struct scx_dump_ctx *ctx, struct task_struct *p) {}
+স্থির s32 sched_ext_ops__sub_attach(সংরচনা scx_sub_attach_args *args) { ঘূৰাই -EINVAL; }
+স্থির শূন্য sched_ext_ops__sub_detach(সংরচনা scx_sub_detach_args *args) {}
+স্থির শূন্য sched_ext_ops__cpu_online(s32 cpu) {}
+স্থির শূন্য sched_ext_ops__cpu_offline(s32 cpu) {}
+স্থির s32 sched_ext_ops__init_cids(শূন্য) { ঘূৰাই -EINVAL; }
+স্থির s32 sched_ext_ops__init(শূন্য) { ঘূৰাই -EINVAL; }
+স্থির শূন্য sched_ext_ops__exit(সংরচনা scx_exit_info *info) {}
+স্থির শূন্য sched_ext_ops__dump(সংরচনা scx_dump_ctx *ctx) {}
+স্থির শূন্য sched_ext_ops__dump_cpu(সংরচনা scx_dump_ctx *ctx, s32 cpu, bool idle) {}
+স্থির শূন্য sched_ext_ops__dump_task(সংরচনা scx_dump_ctx *ctx, সংরচনা task_struct *p) {}
 
-static struct sched_ext_ops __bpf_ops_sched_ext_ops = {
+স্থির সংরচনা sched_ext_ops __bpf_ops_sched_ext_ops = {
 	.select_cpu		= sched_ext_ops__select_cpu,
 	.enqueue		= sched_ext_ops__enqueue,
 	.dequeue		= sched_ext_ops__dequeue,
@@ -8486,7 +8486,7 @@ static struct sched_ext_ops __bpf_ops_sched_ext_ops = {
 	.dump_task		= sched_ext_ops__dump_task,
 };
 
-static struct bpf_struct_ops bpf_sched_ext_ops = {
+স্থির সংরচনা bpf_struct_ops bpf_sched_ext_ops = {
 	.verifier_ops = &bpf_scx_verifier_ops,
 	.reg = bpf_scx_reg,
 	.unreg = bpf_scx_unreg,
@@ -8506,12 +8506,12 @@ static struct bpf_struct_ops bpf_sched_ext_ops = {
  * fresh stubs, set_cmask and enable due to argument differences and the
  * sub-sched notifiers because no cpu-form stub exists to reuse.
  */
-static void sched_ext_ops_cid__set_cmask(struct task_struct *p, const struct scx_cmask *cmask__arena) {}
-static void sched_ext_ops_cid__enable(struct task_struct *p, struct scx_enable_args *args) {}
-static void sched_ext_ops__sub_caps_updated(const struct scx_cmask *cmask__arena, u64 caps) {}
-static void sched_ext_ops__sub_ecaps_updated(s32 cid, u64 before, u64 after) {}
+স্থির শূন্য sched_ext_ops_cid__set_cmask(সংরচনা task_struct *p, ধ্রুৱ সংরচনা scx_cmask *cmask__arena) {}
+স্থির শূন্য sched_ext_ops_cid__enable(সংরচনা task_struct *p, সংরচনা scx_enable_args *args) {}
+স্থির শূন্য sched_ext_ops__sub_caps_updated(ধ্রুৱ সংরচনা scx_cmask *cmask__arena, u64 caps) {}
+স্থির শূন্য sched_ext_ops__sub_ecaps_updated(s32 cid, u64 before, u64 after) {}
 
-static struct sched_ext_ops_cid __bpf_ops_sched_ext_ops_cid = {
+স্থির সংরচনা sched_ext_ops_cid __bpf_ops_sched_ext_ops_cid = {
 	.select_cid		= sched_ext_ops__select_cpu,
 	.enqueue		= sched_ext_ops__enqueue,
 	.dequeue		= sched_ext_ops__dequeue,
@@ -8559,7 +8559,7 @@ static struct sched_ext_ops_cid __bpf_ops_sched_ext_ops_cid = {
  * init_member, check_member, reg, unreg, etc. process kdata as the byte block
  * verified to match by the BUILD_BUG_ON checks in scx_init().
  */
-static struct bpf_struct_ops bpf_sched_ext_ops_cid = {
+স্থির সংরচনা bpf_struct_ops bpf_sched_ext_ops_cid = {
 	.verifier_ops = &bpf_scx_cid_verifier_ops,
 	.reg = bpf_scx_reg_cid,
 	.unreg = bpf_scx_unreg,
@@ -8578,45 +8578,45 @@ static struct bpf_struct_ops bpf_sched_ext_ops_cid = {
  * System integration and init.
  */
 
-static void sysrq_handle_sched_ext_reset(u8 key)
+স্থির শূন্য sysrq_handle_sched_ext_reset(u8 চাবি)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
-	sch = rcu_dereference(scx_root);
-	if (likely(sch))
+	sch = rcu_dereference(scx_মূল);
+	যদি (likely(sch))
 		scx_disable(sch, SCX_EXIT_SYSRQ);
-	else
+	অন্যথা
 		pr_info("sched_ext: BPF schedulers not loaded\n");
 }
 
-static const struct sysrq_key_op sysrq_sched_ext_reset_op = {
+স্থির ধ্রুৱ সংরচনা sysrq_চাবি_op sysrq_sched_ext_reset_op = {
 	.handler	= sysrq_handle_sched_ext_reset,
-	.help_msg	= "reset-sched-ext(S)",
-	.action_msg	= "Disable sched_ext and revert all tasks to CFS",
+	.help_বাৰ্তা	= "reset-sched-ext(S)",
+	.action_বাৰ্তা	= "Disable sched_ext and revert all tasks to CFS",
 	.enable_mask	= SYSRQ_ENABLE_RTNICE,
 };
 
-static void sysrq_handle_sched_ext_dump(u8 key)
+স্থির শূন্য sysrq_handle_sched_ext_dump(u8 চাবি)
 {
-	struct scx_exit_info ei = {
+	সংরচনা scx_exit_info ei = {
 		.kind		= SCX_EXIT_NONE,
 		.exit_cpu	= -1,
 		.reason		= "SysRq-D",
 	};
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	list_for_each_entry_rcu(sch, &scx_sched_all, all)
 		scx_dump_state(sch, &ei, 0, false);
 }
 
-static const struct sysrq_key_op sysrq_sched_ext_dump_op = {
+স্থির ধ্রুৱ সংরচনা sysrq_চাবি_op sysrq_sched_ext_dump_op = {
 	.handler	= sysrq_handle_sched_ext_dump,
-	.help_msg	= "dump-sched-ext(D)",
-	.action_msg	= "Trigger sched_ext debug dump",
+	.help_বাৰ্তা	= "dump-sched-ext(D)",
+	.action_বাৰ্তা	= "Trigger sched_ext debug dump",
 	.enable_mask	= SYSRQ_ENABLE_RTNICE,
 };
 
-static bool can_skip_idle_kick(struct rq *rq)
+স্থির bool can_skip_idle_kick(সংরচনা rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
@@ -8630,15 +8630,15 @@ static bool can_skip_idle_kick(struct rq *rq)
 	 * The race window is small and we don't and can't guarantee that @rq is
 	 * only kicked while idle anyway. Skip only when sure.
 	 */
-	return !is_idle_task(rq->curr) && !(rq->scx.flags & SCX_RQ_IN_DISPATCH);
+	ঘূৰাই !is_idle_task(rq->curr) && !(rq->scx.flags & SCX_RQ_IN_DISPATCH);
 }
 
-static bool kick_one_cpu(s32 cpu, struct scx_sched_pcpu *pcpu, struct rq *this_rq,
+স্থির bool kick_one_cpu(s32 cpu, সংরচনা scx_sched_pcpu *pcpu, সংরচনা rq *this_rq,
 			 unsigned long *ksyncs)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct scx_rq *this_scx = &this_rq->scx;
-	const struct sched_class *cur_class;
+	সংরচনা rq *rq = cpu_rq(cpu);
+	সংরচনা scx_rq *this_scx = &this_rq->scx;
+	ধ্রুৱ সংরচনা sched_class *cur_class;
 	bool should_wait = false;
 	bool kickable;
 	unsigned long flags;
@@ -8657,21 +8657,21 @@ static bool kick_one_cpu(s32 cpu, struct scx_sched_pcpu *pcpu, struct rq *this_r
 	kickable = (cpu_online(cpu) || cpu == cpu_of(this_rq)) &&
 		   !sched_class_above(cur_class, &ext_sched_class);
 
-	if (kickable && !scx_missing_caps(pcpu->sch, cpu, SCX_CAP_BASE)) {
-		if (cpumask_test_cpu(cpu, pcpu->cpus_to_preempt)) {
-			if (cur_class == &ext_sched_class) {
+	যদি (kickable && !scx_missing_caps(pcpu->sch, cpu, SCX_CAP_BASE)) {
+		যদি (cpumask_test_cpu(cpu, pcpu->cpus_to_preempt)) {
+			যদি (cur_class == &ext_sched_class) {
 				u64 caps = scx_caps_for_preempt(pcpu->sch, rq, 0);
 
-				if (unlikely(scx_missing_caps(pcpu->sch, cpu, caps)))
+				যদি (unlikely(scx_missing_caps(pcpu->sch, cpu, caps)))
 					__scx_add_event(pcpu->sch, SCX_EV_SUB_PREEMPT_DENIED, 1);
-				else if (unlikely(!scx_set_task_slice(rq->curr, 0)))
+				অন্যথা যদি (unlikely(!scx_set_task_slice(rq->curr, 0)))
 					__scx_add_event(pcpu->sch, SCX_EV_SLICE_DENIED, 1);
 			}
 			cpumask_clear_cpu(cpu, pcpu->cpus_to_preempt);
 		}
 
-		if (cpumask_test_cpu(cpu, pcpu->cpus_to_wait)) {
-			if (cur_class == &ext_sched_class) {
+		যদি (cpumask_test_cpu(cpu, pcpu->cpus_to_wait)) {
+			যদি (cur_class == &ext_sched_class) {
 				cpumask_set_cpu(cpu, this_scx->cpus_to_sync);
 				ksyncs[cpu] = rq->scx.kick_sync;
 				should_wait = true;
@@ -8680,9 +8680,9 @@ static bool kick_one_cpu(s32 cpu, struct scx_sched_pcpu *pcpu, struct rq *this_r
 		}
 
 		resched_curr(rq);
-	} else {
+	} অন্যথা {
 		/* a kickable cpu was skipped solely for the missing caps */
-		if (kickable)
+		যদি (kickable)
 			__scx_add_event(pcpu->sch, SCX_EV_SUB_KICK_DENIED, 1);
 		cpumask_clear_cpu(cpu, pcpu->cpus_to_preempt);
 		cpumask_clear_cpu(cpu, pcpu->cpus_to_wait);
@@ -8691,23 +8691,23 @@ static bool kick_one_cpu(s32 cpu, struct scx_sched_pcpu *pcpu, struct rq *this_r
 	scx_rq_lock_drop(rq);
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 
-	return should_wait;
+	ঘূৰাই should_wait;
 }
 
-static void kick_one_cpu_if_idle(s32 cpu, struct scx_sched_pcpu *pcpu,
-				 struct rq *this_rq)
+স্থির শূন্য kick_one_cpu_if_idle(s32 cpu, সংরচনা scx_sched_pcpu *pcpu,
+				 সংরচনা rq *this_rq)
 {
-	struct rq *rq = cpu_rq(cpu);
+	সংরচনা rq *rq = cpu_rq(cpu);
 	unsigned long flags;
 
 	raw_spin_rq_lock_irqsave(rq, flags);
 
 	/* idle kicks need baseline access too, see kick_one_cpu() */
-	if (!can_skip_idle_kick(rq) &&
+	যদি (!can_skip_idle_kick(rq) &&
 	    (cpu_online(cpu) || cpu == cpu_of(this_rq))) {
-		if (likely(!scx_missing_caps(pcpu->sch, cpu, SCX_CAP_BASE)))
+		যদি (likely(!scx_missing_caps(pcpu->sch, cpu, SCX_CAP_BASE)))
 			resched_curr(rq);
-		else
+		অন্যথা
 			__scx_add_event(pcpu->sch, SCX_EV_SUB_KICK_DENIED, 1);
 	}
 
@@ -8715,19 +8715,19 @@ static void kick_one_cpu_if_idle(s32 cpu, struct scx_sched_pcpu *pcpu,
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 }
 
-static void kick_cpus_irq_workfn(struct irq_work *irq_work)
+স্থির শূন্য kick_cpus_irq_workfn(সংরচনা irq_work *irq_work)
 {
-	struct rq *this_rq = this_rq();
-	struct scx_rq *this_scx = &this_rq->scx;
-	struct scx_kick_syncs __rcu *ksyncs_pcpu = __this_cpu_read(scx_kick_syncs);
-	struct scx_sched_pcpu *pcpu, *tmp;
+	সংরচনা rq *this_rq = this_rq();
+	সংরচনা scx_rq *this_scx = &this_rq->scx;
+	সংরচনা scx_kick_syncs __rcu *ksyncs_pcpu = __this_cpu_read(scx_kick_syncs);
+	সংরচনা scx_sched_pcpu *pcpu, *tmp;
 	bool should_wait = false;
 	unsigned long *ksyncs;
 	s32 cpu;
 
 	/* can race with free_kick_syncs() during scheduler disable */
-	if (unlikely(!ksyncs_pcpu))
-		return;
+	যদি (unlikely(!ksyncs_pcpu))
+		ঘূৰাই;
 
 	ksyncs = rcu_dereference_bh(ksyncs_pcpu)->syncs;
 
@@ -8736,8 +8736,8 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
 	 * the list under local_irq_save() and only this irq_work consumes it.
 	 * A plain list without locking is sufficient.
 	 */
-	list_for_each_entry_safe(pcpu, tmp, &this_scx->sched_pcpus_to_kick, to_kick_node) {
-		list_del_init(&pcpu->to_kick_node);
+	list_for_each_entry_safe(pcpu, tmp, &this_scx->sched_pcpus_to_kick, to_kick_গ্ৰন্থি) {
+		list_del_init(&pcpu->to_kick_গ্ৰন্থি);
 
 		for_each_cpu(cpu, pcpu->cpus_to_kick) {
 			should_wait |= kick_one_cpu(cpu, pcpu, this_rq, ksyncs);
@@ -8755,7 +8755,7 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
 	 * Can't wait in hardirq — kick_sync can't advance, deadlocking if
 	 * CPUs wait for each other. Defer to kick_sync_wait_bal_cb().
 	 */
-	if (should_wait) {
+	যদি (should_wait) {
 		raw_spin_rq_lock(this_rq);
 		this_scx->kick_sync_pending = true;
 		resched_curr(this_rq);
@@ -8776,36 +8776,36 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
  * itself is accessible. While safe, this function isn't synchronized and may
  * print out mixups or garbages of limited length.
  */
-void print_scx_info(const char *log_lvl, struct task_struct *p)
+শূন্য print_scx_info(ধ্রুৱ ৱর্ণ *log_lvl, সংরচনা task_struct *p)
 {
-	struct scx_sched *sch;
-	enum scx_enable_state state = scx_enable_state();
-	const char *all = READ_ONCE(scx_switching_all) ? "+all" : "";
-	char runnable_at_buf[22] = "?";
-	struct sched_class *class;
+	সংরচনা scx_sched *sch;
+	গণনা scx_enable_state state = scx_enable_state();
+	ধ্রুৱ ৱর্ণ *all = READ_ONCE(scx_switching_all) ? "+all" : "";
+	ৱর্ণ runnable_at_buf[22] = "?";
+	সংরচনা sched_class *class;
 	unsigned long runnable_at;
 
 	guard(rcu)();
 
 	sch = scx_task_sched_rcu(p);
 
-	if (!sch)
-		return;
+	যদি (!sch)
+		ঘূৰাই;
 
 	/*
 	 * Carefully check if the task was running on sched_ext, and then
 	 * carefully copy the time it's been runnable, and its state.
 	 */
-	if (copy_from_kernel_nofault(&class, &p->sched_class, sizeof(class)) ||
+	যদি (copy_from_kernel_nofault(&class, &p->sched_class, পরিমাণ(class)) ||
 	    class != &ext_sched_class) {
 		printk("%sSched_ext: %s (%s%s)", log_lvl, sch->ops.name,
 		       scx_enable_state_str[state], all);
-		return;
+		ঘূৰাই;
 	}
 
-	if (!copy_from_kernel_nofault(&runnable_at, &p->scx.runnable_at,
-				      sizeof(runnable_at)))
-		scnprintf(runnable_at_buf, sizeof(runnable_at_buf), "%+ldms",
+	যদি (!copy_from_kernel_nofault(&runnable_at, &p->scx.runnable_at,
+				      পরিমাণ(runnable_at)))
+		scnprintf(runnable_at_buf, পরিমাণ(runnable_at_buf), "%+ldms",
 			  jiffies_delta_msecs(runnable_at, jiffies));
 
 	/* print everything onto one line to conserve console space */
@@ -8814,15 +8814,15 @@ void print_scx_info(const char *log_lvl, struct task_struct *p)
 	       runnable_at_buf);
 }
 
-static int scx_pm_handler(struct notifier_block *nb, unsigned long event, void *ptr)
+স্থির পূর্ণাঙ্ক scx_pm_handler(সংরচনা notifier_block *nb, unsigned long event, শূন্য *ptr)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
-	if (!sch)
-		return NOTIFY_OK;
+	sch = rcu_dereference(scx_মূল);
+	যদি (!sch)
+		ঘূৰাই NOTIFY_OK;
 
 	/*
 	 * SCX schedulers often have userspace components which are sometimes
@@ -8830,27 +8830,27 @@ static int scx_pm_handler(struct notifier_block *nb, unsigned long event, void *
 	 * userspace which can lead to scheduling misbehaviors including stalls.
 	 * Let's bypass while PM operations are in progress.
 	 */
-	switch (event) {
-	case PM_HIBERNATION_PREPARE:
-	case PM_SUSPEND_PREPARE:
-	case PM_RESTORE_PREPARE:
+	ৱিকল্প (event) {
+	পক্ষ PM_HIBERNATION_PREPARE:
+	পক্ষ PM_SUSPEND_PREPARE:
+	পক্ষ PM_RESTORE_PREPARE:
 		scx_bypass(sch, true);
-		break;
-	case PM_POST_HIBERNATION:
-	case PM_POST_SUSPEND:
-	case PM_POST_RESTORE:
+		ভঙ্গ;
+	পক্ষ PM_POST_HIBERNATION:
+	পক্ষ PM_POST_SUSPEND:
+	পক্ষ PM_POST_RESTORE:
 		scx_bypass(sch, false);
-		break;
+		ভঙ্গ;
 	}
 
-	return NOTIFY_OK;
+	ঘূৰাই NOTIFY_OK;
 }
 
-static struct notifier_block scx_pm_notifier = {
+স্থির সংরচনা notifier_block scx_pm_notifier = {
 	.notifier_call = scx_pm_handler,
 };
 
-void __init init_sched_ext_class(void)
+শূন্য __init init_sched_ext_class(শূন্য)
 {
 	s32 cpu, v;
 
@@ -8865,20 +8865,20 @@ void __init init_sched_ext_class(void)
 	scx_idle_init_masks();
 
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
-		int  n = cpu_to_node(cpu);
+		সংরচনা rq *rq = cpu_rq(cpu);
+		পূর্ণাঙ্ক  n = cpu_to_গ্ৰন্থি(cpu);
 
 		/* local_dsq's sch will be set during scx_root_enable() */
-		BUG_ON(scx_init_dsq(&rq->scx.local_dsq, SCX_DSQ_LOCAL, NULL));
+		BUG_ON(scx_init_dsq(&rq->scx.local_dsq, SCX_DSQ_LOCAL, রিক্ত));
 #ifdef CONFIG_EXT_SUB_SCHED
-		BUG_ON(scx_init_dsq(&rq->scx.reject_dsq, SCX_DSQ_REJECT, NULL));
+		BUG_ON(scx_init_dsq(&rq->scx.reject_dsq, SCX_DSQ_REJECT, রিক্ত));
 		scx_rescue_init(rq);
 #endif
 
 		INIT_LIST_HEAD(&rq->scx.runnable_list);
 		INIT_LIST_HEAD(&rq->scx.ddsp_deferred_locals);
 
-		BUG_ON(!zalloc_cpumask_var_node(&rq->scx.cpus_to_sync, GFP_KERNEL, n));
+		BUG_ON(!zalloc_cpumask_var_গ্ৰন্থি(&rq->scx.cpus_to_sync, GFP_KERNEL, n));
 		INIT_LIST_HEAD(&rq->scx.sched_pcpus_to_kick);
 		raw_spin_lock_init(&rq->scx.deferred_reenq_lock);
 		INIT_LIST_HEAD(&rq->scx.deferred_reenq_locals);
@@ -8886,12 +8886,12 @@ void __init init_sched_ext_class(void)
 		rq->scx.deferred_irq_work = IRQ_WORK_INIT_HARD(deferred_irq_workfn);
 		rq->scx.kick_cpus_irq_work = IRQ_WORK_INIT_HARD(kick_cpus_irq_workfn);
 
-		if (cpu_online(cpu))
+		যদি (cpu_online(cpu))
 			cpu_rq(cpu)->scx.flags |= SCX_RQ_ONLINE;
 	}
 
-	register_sysrq_key('S', &sysrq_sched_ext_reset_op);
-	register_sysrq_key('D', &sysrq_sched_ext_dump_op);
+	register_sysrq_চাবি('S', &sysrq_sched_ext_reset_op);
+	register_sysrq_চাবি('D', &sysrq_sched_ext_dump_op);
 	INIT_DELAYED_WORK(&scx_watchdog_work, scx_watchdog_workfn);
 
 #ifdef CONFIG_EXT_SUB_SCHED
@@ -8903,73 +8903,73 @@ void __init init_sched_ext_class(void)
 /********************************************************************************
  * Helpers that can be called from the BPF scheduler.
  */
-static bool scx_vet_enq_flags(struct scx_sched *sch, u64 dsq_id, u64 *enq_flags)
+স্থির bool scx_vet_enq_flags(সংরচনা scx_sched *sch, u64 dsq_id, u64 *enq_flags)
 {
 	bool is_local = dsq_id == SCX_DSQ_LOCAL ||
 		(dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON;
 
-	if (unlikely(*enq_flags & __SCX_ENQ_INTERNAL_MASK)) {
+	যদি (unlikely(*enq_flags & __SCX_ENQ_INTERNAL_MASK)) {
 		scx_error(sch, "invalid enq_flags 0x%llx", *enq_flags);
-		return false;
+		ঘূৰাই false;
 	}
 
-	if (*enq_flags & SCX_ENQ_IMMED) {
-		if (unlikely(!is_local)) {
+	যদি (*enq_flags & SCX_ENQ_IMMED) {
+		যদি (unlikely(!is_local)) {
 			scx_error(sch, "SCX_ENQ_IMMED on a non-local DSQ 0x%llx", dsq_id);
-			return false;
+			ঘূৰাই false;
 		}
-	} else if ((sch->ops.flags & SCX_OPS_ALWAYS_ENQ_IMMED) && is_local) {
+	} অন্যথা যদি ((sch->ops.flags & SCX_OPS_ALWAYS_ENQ_IMMED) && is_local) {
 		*enq_flags |= SCX_ENQ_IMMED;
 	}
 
-	if (unlikely((*enq_flags & SCX_ENQ_RESCUE) && !is_local)) {
+	যদি (unlikely((*enq_flags & SCX_ENQ_RESCUE) && !is_local)) {
 		scx_error(sch, "SCX_ENQ_RESCUE on a non-local DSQ 0x%llx", dsq_id);
-		return false;
+		ঘূৰাই false;
 	}
 
-	return true;
+	ঘূৰাই true;
 }
 
-static bool scx_dsq_insert_preamble(struct scx_sched *sch, struct task_struct *p,
+স্থির bool scx_dsq_ঢোকাও_preamble(সংরচনা scx_sched *sch, সংরচনা task_struct *p,
 				    u64 dsq_id, u64 *enq_flags)
 {
 	lockdep_assert_irqs_disabled();
 
-	if (unlikely(!p)) {
+	যদি (unlikely(!p)) {
 		scx_error(sch, "called with NULL task");
-		return false;
+		ঘূৰাই false;
 	}
 
 	/* see SCX_EV_INSERT_NOT_OWNED definition */
-	if (unlikely(!scx_task_on_sched(sch, p))) {
-		__scx_add_event(sch, SCX_EV_INSERT_NOT_OWNED, 1);
-		return false;
+	যদি (unlikely(!scx_task_on_sched(sch, p))) {
+		__scx_add_event(sch, SCX_EV_ঢোকাও_NOT_OWNED, 1);
+		ঘূৰাই false;
 	}
 
-	if (!scx_vet_enq_flags(sch, dsq_id, enq_flags))
-		return false;
+	যদি (!scx_vet_enq_flags(sch, dsq_id, enq_flags))
+		ঘূৰাই false;
 
-	return true;
+	ঘূৰাই true;
 }
 
-static void scx_dsq_insert_commit(struct scx_sched *sch, struct task_struct *p,
+স্থির শূন্য scx_dsq_ঢোকাও_commit(সংরচনা scx_sched *sch, সংরচনা task_struct *p,
 				  u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags)
 {
-	struct scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
-	struct task_struct *ddsp_task;
+	সংরচনা scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
+	সংরচনা task_struct *ddsp_task;
 
 	ddsp_task = __this_cpu_read(direct_dispatch_task);
-	if (ddsp_task) {
+	যদি (ddsp_task) {
 		mark_direct_dispatch(sch, ddsp_task, p, dsq_id, slice, vtime, enq_flags);
-		return;
+		ঘূৰাই;
 	}
 
-	if (unlikely(dspc->cursor >= sch->dsp_max_batch)) {
+	যদি (unlikely(dspc->cursor >= sch->dsp_max_batch)) {
 		scx_error(sch, "dispatch buffer overflow");
-		return;
+		ঘূৰাই;
 	}
 
-	dspc->buf[dspc->cursor++] = (struct scx_dsp_buf_ent){
+	dspc->buf[dspc->cursor++] = (সংরচনা scx_dsp_buf_ent){
 		.task = p,
 		.qseq = atomic_long_read(&p->scx.ops_state) & SCX_OPSS_QSEQ_MASK,
 		.dsq_id = dsq_id,
@@ -9021,47 +9021,47 @@ __bpf_kfunc_start_defs();
  * scheduler, %false return triggers scheduler abort and the caller doesn't need
  * to check the return value.
  */
-__bpf_kfunc bool scx_bpf_dsq_insert___v2(struct task_struct *p, u64 dsq_id,
+__bpf_kfunc bool scx_bpf_dsq_ঢোকাও_v2(সংরচনা task_struct *p, u64 dsq_id,
 					 u64 slice, u64 enq_flags,
-					 const struct bpf_prog_aux *aux)
+					 ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return false;
+	যদি (unlikely(!sch))
+		ঘূৰাই false;
 
-	if (!scx_dsq_insert_preamble(sch, p, dsq_id, &enq_flags))
-		return false;
+	যদি (!scx_dsq_ঢোকাও_preamble(sch, p, dsq_id, &enq_flags))
+		ঘূৰাই false;
 
-	scx_dsq_insert_commit(sch, p, dsq_id, slice, 0, enq_flags);
+	scx_dsq_ঢোকাও_commit(sch, p, dsq_id, slice, 0, enq_flags);
 
-	return true;
+	ঘূৰাই true;
 }
 
 /*
  * COMPAT: Will be removed in v6.23 along with the ___v2 suffix.
  */
-__bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id,
+__bpf_kfunc শূন্য scx_bpf_dsq_ঢোকাও(সংরচনা task_struct *p, u64 dsq_id,
 				    u64 slice, u64 enq_flags,
-				    const struct bpf_prog_aux *aux)
+				    ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	scx_bpf_dsq_insert___v2(p, dsq_id, slice, enq_flags, aux);
+	scx_bpf_dsq_ঢোকাও_v2(p, dsq_id, slice, enq_flags, aux);
 }
 
-static bool scx_dsq_insert_vtime(struct scx_sched *sch, struct task_struct *p,
+স্থির bool scx_dsq_ঢোকাও_vtime(সংরচনা scx_sched *sch, সংরচনা task_struct *p,
 				 u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags)
 {
-	if (!scx_dsq_insert_preamble(sch, p, dsq_id, &enq_flags))
-		return false;
+	যদি (!scx_dsq_ঢোকাও_preamble(sch, p, dsq_id, &enq_flags))
+		ঘূৰাই false;
 
-	scx_dsq_insert_commit(sch, p, dsq_id, slice, vtime, enq_flags | SCX_ENQ_DSQ_PRIQ);
+	scx_dsq_ঢোকাও_commit(sch, p, dsq_id, slice, vtime, enq_flags | SCX_ENQ_DSQ_PRIQ);
 
-	return true;
+	ঘূৰাই true;
 }
 
-struct scx_bpf_dsq_insert_vtime_args {
+সংরচনা scx_bpf_dsq_ঢোকাও_vtime_args {
 	/* @p can't be packed together as KF_RCU is not transitive */
 	u64			dsq_id;
 	u64			slice;
@@ -9101,35 +9101,35 @@ struct scx_bpf_dsq_insert_vtime_args {
  * to check the return value.
  */
 __bpf_kfunc bool
-__scx_bpf_dsq_insert_vtime(struct task_struct *p,
-			   struct scx_bpf_dsq_insert_vtime_args *args,
-			   const struct bpf_prog_aux *aux)
+__scx_bpf_dsq_insert_vtime(সংরচনা task_struct *p,
+			   সংরচনা scx_bpf_dsq_ঢোকাও_vtime_args *args,
+			   ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return false;
+	যদি (unlikely(!sch))
+		ঘূৰাই false;
 
-	return scx_dsq_insert_vtime(sch, p, args->dsq_id, args->slice,
+	ঘূৰাই scx_dsq_ঢোকাও_vtime(sch, p, args->dsq_id, args->slice,
 				    args->vtime, args->enq_flags);
 }
 
 /*
  * COMPAT: Will be removed in v6.23.
  */
-__bpf_kfunc void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id,
+__bpf_kfunc শূন্য scx_bpf_dsq_ঢোকাও_vtime(সংরচনা task_struct *p, u64 dsq_id,
 					  u64 slice, u64 vtime, u64 enq_flags)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
-	if (unlikely(!sch))
-		return;
+	sch = rcu_dereference(scx_মূল);
+	যদি (unlikely(!sch))
+		ঘূৰাই;
 
 #ifdef CONFIG_EXT_SUB_SCHED
 	/*
@@ -9140,40 +9140,40 @@ __bpf_kfunc void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id,
 	 * scheduler can't be determined and there is nothing obviously wrong
 	 * to report; just refuse the call.
 	 */
-	if (unlikely(!list_empty(&sch->children))) {
-		struct scx_sched *tsch = scx_task_sched_rcu(p);
+	যদি (unlikely(!list_empty(&sch->children))) {
+		সংরচনা scx_sched *tsch = scx_task_sched_rcu(p);
 
-		if (tsch)
+		যদি (tsch)
 			scx_error(tsch, "__scx_bpf_dsq_insert_vtime() must be used");
-		return;
+		ঘূৰাই;
 	}
 #endif
 
-	scx_dsq_insert_vtime(sch, p, dsq_id, slice, vtime, enq_flags);
+	scx_dsq_ঢোকাও_vtime(sch, p, dsq_id, slice, vtime, enq_flags);
 }
 
 __bpf_kfunc_end_defs();
 
 BTF_KFUNCS_START(scx_kfunc_ids_enqueue_dispatch)
-BTF_ID_FLAGS(func, scx_bpf_dsq_insert, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_dsq_insert___v2, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_ঢোকাও, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_ঢোকাও_v2, KF_IMPLICIT_ARGS | KF_RCU)
 BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime, KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_ঢোকাও_vtime, KF_RCU)
 BTF_KFUNCS_END(scx_kfunc_ids_enqueue_dispatch)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_enqueue_dispatch = {
+স্থির ধ্রুৱ সংরচনা btf_kfunc_id_set scx_kfunc_set_enqueue_dispatch = {
 	.owner			= THIS_MODULE,
 	.set			= &scx_kfunc_ids_enqueue_dispatch,
 	.filter			= scx_kfunc_context_filter,
 };
 
-static bool scx_dsq_move(struct bpf_iter_scx_dsq_kern *kit,
-			 struct task_struct *p, u64 dsq_id, u64 enq_flags,
+স্থির bool scx_dsq_move(সংরচনা bpf_iter_scx_dsq_kern *kit,
+			 সংরচনা task_struct *p, u64 dsq_id, u64 enq_flags,
 			 bool priq)
 {
-	struct scx_dispatch_q *src_dsq = kit->dsq, *dst_dsq;
-	struct scx_sched *sch;
-	struct rq *p_rq, *src_rq, *locked_rq;
+	সংরচনা scx_dispatch_q *src_dsq = kit->dsq, *dst_dsq;
+	সংরচনা scx_sched *sch;
+	সংরচনা rq *p_rq, *src_rq, *locked_rq;
 	bool dispatched = false;
 	unsigned long flags;
 
@@ -9182,24 +9182,24 @@ static bool scx_dsq_move(struct bpf_iter_scx_dsq_kern *kit,
 	 * KF_ITER_NEW return, so a BPF program may legally reach here after
 	 * bpf_iter_scx_dsq_new() failed and left @kit->dsq NULL.
 	 */
-	if (unlikely(!src_dsq))
-		return false;
+	যদি (unlikely(!src_dsq))
+		ঘূৰাই false;
 
 	sch = src_dsq->sched;
 
-	if (!scx_vet_enq_flags(sch, dsq_id, &enq_flags))
-		return false;
+	যদি (!scx_vet_enq_flags(sch, dsq_id, &enq_flags))
+		ঘূৰাই false;
 
 	/* internal bit, can only go in after @enq_flags is vetted */
-	if (priq)
+	যদি (priq)
 		enq_flags |= SCX_ENQ_DSQ_PRIQ;
 
 	/*
 	 * If the BPF scheduler keeps calling this function repeatedly, it can
 	 * cause similar live-lock conditions as scx_consume_dispatch_q().
 	 */
-	if (unlikely(READ_ONCE(sch->aborting)))
-		return false;
+	যদি (unlikely(READ_ONCE(sch->aborting)))
+		ঘূৰাই false;
 
 	/*
 	 * Can be called from either ops.dispatch() holding the dispatched rq's
@@ -9216,10 +9216,10 @@ static bool scx_dsq_move(struct bpf_iter_scx_dsq_kern *kit,
 	 */
 	locked_rq = scx_locked_rq();
 
-	if (locked_rq) {
-		if (locked_rq != src_rq)
+	যদি (locked_rq) {
+		যদি (locked_rq != src_rq)
 			switch_rq_lock(locked_rq, src_rq);
-	} else {
+	} অন্যথা {
 		raw_spin_rq_lock(src_rq);
 	}
 
@@ -9227,20 +9227,20 @@ static bool scx_dsq_move(struct bpf_iter_scx_dsq_kern *kit,
 	raw_spin_lock(&src_dsq->lock);
 
 	/* did someone else get to it while we dropped the locks? */
-	if (nldsq_cursor_lost_task(&kit->cursor, src_rq, src_dsq, p)) {
+	যদি (nldsq_cursor_lost_task(&kit->cursor, src_rq, src_dsq, p)) {
 		raw_spin_unlock(&src_dsq->lock);
-		goto out;
+		গচ্ছ out;
 	}
 
 	/*
 	 * @p has been on $src_dsq and can't move anymore. If @p is not on @sch,
 	 * the caller didn't have authority over @p at the time of the call.
 	 */
-	if (unlikely(!scx_task_on_sched(sch, p))) {
+	যদি (unlikely(!scx_task_on_sched(sch, p))) {
 		scx_error(sch, "scx_bpf_dsq_move[_vtime]() on %s[%d] but the task belongs to a different scheduler",
 			  p->comm, p->pid);
 		raw_spin_unlock(&src_dsq->lock);
-		goto out;
+		গচ্ছ out;
 	}
 
 	/* @p is still on $src_dsq and stable, determine the destination */
@@ -9251,26 +9251,26 @@ static bool scx_dsq_move(struct bpf_iter_scx_dsq_kern *kit,
 	 * with both $src_dsq and its task_rq locked, satisfying the write
 	 * rules, and the PRIQ insertion into $dst_dsq reads the new vtime.
 	 */
-	if (kit->cursor.flags & __SCX_DSQ_ITER_HAS_VTIME)
+	যদি (kit->cursor.flags & __SCX_DSQ_ITER_HAS_VTIME)
 		p->scx.dsq_vtime = kit->vtime;
-	if (kit->cursor.flags & __SCX_DSQ_ITER_HAS_SLICE)
+	যদি (kit->cursor.flags & __SCX_DSQ_ITER_HAS_SLICE)
 		scx_set_task_slice(p, kit->slice);
 
 	/* execute move */
 	p_rq = move_task_between_dsqs(sch, p, enq_flags, src_dsq, dst_dsq);
 	dispatched = true;
 out:
-	if (locked_rq) {
-		if (locked_rq != p_rq)
+	যদি (locked_rq) {
+		যদি (locked_rq != p_rq)
 			switch_rq_lock(p_rq, locked_rq);
-	} else {
+	} অন্যথা {
 		scx_rq_lock_drop(p_rq);
 		raw_spin_rq_unlock_irqrestore(p_rq, flags);
 	}
 
 	kit->cursor.flags &= ~(__SCX_DSQ_ITER_HAS_SLICE |
 			       __SCX_DSQ_ITER_HAS_VTIME);
-	return dispatched;
+	ঘূৰাই dispatched;
 }
 
 __bpf_kfunc_start_defs();
@@ -9281,17 +9281,17 @@ __bpf_kfunc_start_defs();
  *
  * Can only be called from ops.dispatch().
  */
-__bpf_kfunc u32 scx_bpf_dispatch_nr_slots(const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_dispatch_nr_slots(ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return 0;
+	যদি (unlikely(!sch))
+		ঘূৰাই 0;
 
-	return sch->dsp_max_batch - __this_cpu_read(sch->pcpu->dsp_ctx.cursor);
+	ঘূৰাই sch->dsp_max_batch - __this_cpu_read(sch->pcpu->dsp_ctx.cursor);
 }
 
 /**
@@ -9301,22 +9301,22 @@ __bpf_kfunc u32 scx_bpf_dispatch_nr_slots(const struct bpf_prog_aux *aux)
  * Cancel the latest dispatch. Can be called multiple times to cancel further
  * dispatches. Can only be called from ops.dispatch().
  */
-__bpf_kfunc void scx_bpf_dispatch_cancel(const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_dispatch_cancel(ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_dsp_ctx *dspc;
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_dsp_ctx *dspc;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	যদি (unlikely(!sch))
+		ঘূৰাই;
 
 	dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
 
-	if (dspc->cursor > 0)
+	যদি (dspc->cursor > 0)
 		dspc->cursor--;
-	else
+	অন্যথা
 		scx_error(sch, "dispatch buffer underflow");
 }
 
@@ -9346,32 +9346,32 @@ __bpf_kfunc void scx_bpf_dispatch_cancel(const struct bpf_prog_aux *aux)
  * move.
  */
 __bpf_kfunc bool scx_bpf_dsq_move_to_local___v2(u64 dsq_id, u64 enq_flags,
-						const struct bpf_prog_aux *aux)
+						ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_dispatch_q *dsq;
-	struct scx_sched *sch;
-	struct scx_dsp_ctx *dspc;
+	সংরচনা scx_dispatch_q *dsq;
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_dsp_ctx *dspc;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return false;
+	যদি (unlikely(!sch))
+		ঘূৰাই false;
 
-	if (!scx_vet_enq_flags(sch, SCX_DSQ_LOCAL, &enq_flags))
-		return false;
+	যদি (!scx_vet_enq_flags(sch, SCX_DSQ_LOCAL, &enq_flags))
+		ঘূৰাই false;
 
 	dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
 
 	scx_flush_dispatch_buf(sch, dspc->rq);
 
 	dsq = find_user_dsq(sch, dsq_id);
-	if (unlikely(!dsq)) {
+	যদি (unlikely(!dsq)) {
 		scx_error(sch, "invalid DSQ ID 0x%016llx", dsq_id);
-		return false;
+		ঘূৰাই false;
 	}
 
-	if (scx_consume_dispatch_q(sch, dspc->rq, dsq, enq_flags)) {
+	যদি (scx_consume_dispatch_q(sch, dspc->rq, dsq, enq_flags)) {
 		/*
 		 * A successfully consumed task can be dequeued before it starts
 		 * running while the CPU is trying to migrate other dispatched
@@ -9379,18 +9379,18 @@ __bpf_kfunc bool scx_bpf_dsq_move_to_local___v2(u64 dsq_id, u64 enq_flags,
 		 * local DSQ.
 		 */
 		dspc->nr_tasks++;
-		return true;
-	} else {
-		return false;
+		ঘূৰাই true;
+	} অন্যথা {
+		ঘূৰাই false;
 	}
 }
 
 /*
  * COMPAT: ___v2 was introduced in v7.1. Remove this and ___v2 tag in the future.
  */
-__bpf_kfunc bool scx_bpf_dsq_move_to_local(u64 dsq_id, const struct bpf_prog_aux *aux)
+__bpf_kfunc bool scx_bpf_dsq_move_to_local(u64 dsq_id, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	return scx_bpf_dsq_move_to_local___v2(dsq_id, 0, aux);
+	ঘূৰাই scx_bpf_dsq_move_to_local___v2(dsq_id, 0, aux);
 }
 
 /**
@@ -9402,10 +9402,10 @@ __bpf_kfunc bool scx_bpf_dsq_move_to_local(u64 dsq_id, const struct bpf_prog_aux
  * scx_bpf_dsq_move[_vtime](). If this function is not called, the previous
  * slice duration is kept.
  */
-__bpf_kfunc void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter,
+__bpf_kfunc শূন্য scx_bpf_dsq_move_set_slice(সংরচনা bpf_iter_scx_dsq *it__iter,
 					    u64 slice)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it__iter;
+	সংরচনা bpf_iter_scx_dsq_kern *kit = (শূন্য *)it__iter;
 
 	kit->slice = slice;
 	kit->cursor.flags |= __SCX_DSQ_ITER_HAS_SLICE;
@@ -9421,10 +9421,10 @@ __bpf_kfunc void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter,
  * vtime is kept. If scx_bpf_dsq_move() is used to dispatch the next task, the
  * override is ignored and cleared.
  */
-__bpf_kfunc void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter,
+__bpf_kfunc শূন্য scx_bpf_dsq_move_set_vtime(সংরচনা bpf_iter_scx_dsq *it__iter,
 					    u64 vtime)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it__iter;
+	সংরচনা bpf_iter_scx_dsq_kern *kit = (শূন্য *)it__iter;
 
 	kit->vtime = vtime;
 	kit->cursor.flags |= __SCX_DSQ_ITER_HAS_VTIME;
@@ -9455,11 +9455,11 @@ __bpf_kfunc void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter,
  * consumed, dequeued, or, for sub-scheds, @dsq_id points to a disallowed local
  * DSQ.
  */
-__bpf_kfunc bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter,
-				  struct task_struct *p, u64 dsq_id,
+__bpf_kfunc bool scx_bpf_dsq_move(সংরচনা bpf_iter_scx_dsq *it__iter,
+				  সংরচনা task_struct *p, u64 dsq_id,
 				  u64 enq_flags)
 {
-	return scx_dsq_move((struct bpf_iter_scx_dsq_kern *)it__iter,
+	ঘূৰাই scx_dsq_move((সংরচনা bpf_iter_scx_dsq_kern *)it__iter,
 			    p, dsq_id, enq_flags, false);
 }
 
@@ -9480,11 +9480,11 @@ __bpf_kfunc bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter,
  * All other aspects are identical to scx_bpf_dsq_move(). See
  * scx_bpf_dsq_insert_vtime() for more information on @vtime.
  */
-__bpf_kfunc bool scx_bpf_dsq_move_vtime(struct bpf_iter_scx_dsq *it__iter,
-					struct task_struct *p, u64 dsq_id,
+__bpf_kfunc bool scx_bpf_dsq_move_vtime(সংরচনা bpf_iter_scx_dsq *it__iter,
+					সংরচনা task_struct *p, u64 dsq_id,
 					u64 enq_flags)
 {
-	return scx_dsq_move((struct bpf_iter_scx_dsq_kern *)it__iter,
+	ঘূৰাই scx_dsq_move((সংরচনা bpf_iter_scx_dsq_kern *)it__iter,
 			    p, dsq_id, enq_flags, true);
 }
 
@@ -9505,7 +9505,7 @@ BTF_ID_FLAGS(func, scx_bpf_sub_dispatch, KF_IMPLICIT_ARGS)
 #endif
 BTF_KFUNCS_END(scx_kfunc_ids_dispatch)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_dispatch = {
+স্থির ধ্রুৱ সংরচনা btf_kfunc_id_set scx_kfunc_set_dispatch = {
 	.owner			= THIS_MODULE,
 	.set			= &scx_kfunc_ids_dispatch,
 	.filter			= scx_kfunc_context_filter,
@@ -9521,20 +9521,20 @@ __bpf_kfunc_start_defs();
  * caller's CPU, and re-enqueue them in the BPF scheduler. Returns the number of
  * processed tasks. Can only be called from ops.cpu_release().
  */
-__bpf_kfunc u32 scx_bpf_reenqueue_local(const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_reenqueue_local(ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct rq *rq;
+	সংরচনা scx_sched *sch;
+	সংরচনা rq *rq;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return 0;
+	যদি (unlikely(!sch))
+		ঘূৰাই 0;
 
 	rq = cpu_rq(smp_processor_id());
 	lockdep_assert_rq_held(rq);
 
-	return reenq_local(sch, rq, SCX_REENQ_ANY);
+	ঘূৰাই reenq_local(sch, rq, SCX_REENQ_ANY);
 }
 
 __bpf_kfunc_end_defs();
@@ -9543,7 +9543,7 @@ BTF_KFUNCS_START(scx_kfunc_ids_cpu_release)
 BTF_ID_FLAGS(func, scx_bpf_reenqueue_local, KF_IMPLICIT_ARGS)
 BTF_KFUNCS_END(scx_kfunc_ids_cpu_release)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_cpu_release = {
+স্থির ধ্রুৱ সংরচনা btf_kfunc_id_set scx_kfunc_set_cpu_release = {
 	.owner			= THIS_MODULE,
 	.set			= &scx_kfunc_ids_cpu_release,
 	.filter			= scx_kfunc_context_filter,
@@ -9560,50 +9560,50 @@ __bpf_kfunc_start_defs();
  * Create a custom DSQ identified by @dsq_id. Can be called from any sleepable
  * scx callback, and any BPF_PROG_TYPE_SYSCALL prog.
  */
-__bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 node, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 গ্ৰন্থি, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_dispatch_q *dsq;
-	struct scx_sched *sch;
+	সংরচনা scx_dispatch_q *dsq;
+	সংরচনা scx_sched *sch;
 	s32 ret;
 
-	if (unlikely(node >= (int)nr_node_ids ||
-		     (node < 0 && node != NUMA_NO_NODE)))
-		return -EINVAL;
+	যদি (unlikely(গ্ৰন্থি >= (পূর্ণাঙ্ক)nr_গ্ৰন্থি_ids ||
+		     (গ্ৰন্থি < 0 && গ্ৰন্থি != NUMA_NO_গ্ৰন্থি)))
+		ঘূৰাই -EINVAL;
 
-	if (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN))
-		return -EINVAL;
+	যদি (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN))
+		ঘূৰাই -EINVAL;
 
-	dsq = kmalloc_node(sizeof(*dsq), GFP_KERNEL, node);
-	if (!dsq)
-		return -ENOMEM;
+	dsq = kmalloc_গ্ৰন্থি(পরিমাণ(*dsq), GFP_KERNEL, গ্ৰন্থি);
+	যদি (!dsq)
+		ঘূৰাই -ENOMEM;
 
 	/*
 	 * scx_init_dsq() must be called in GFP_KERNEL context. Init it with
 	 * NULL @sch and update afterwards.
 	 */
-	ret = scx_init_dsq(dsq, dsq_id, NULL);
-	if (ret) {
+	ret = scx_init_dsq(dsq, dsq_id, রিক্ত);
+	যদি (ret) {
 		kfree(dsq);
-		return ret;
+		ঘূৰাই ret;
 	}
 
 	rcu_read_lock();
 
 	sch = scx_prog_sched(aux);
-	if (sch) {
+	যদি (sch) {
 		dsq->sched = sch;
-		ret = rhashtable_lookup_insert_fast(&sch->dsq_hash, &dsq->hash_node,
+		ret = rhashtable_lookup_ঢোকাও_fast(&sch->dsq_hash, &dsq->hash_গ্ৰন্থি,
 						    dsq_hash_params);
-	} else {
+	} অন্যথা {
 		ret = -ENODEV;
 	}
 
 	rcu_read_unlock();
-	if (ret) {
+	যদি (ret) {
 		exit_dsq(dsq);
 		kfree(dsq);
 	}
-	return ret;
+	ঘূৰাই ret;
 }
 
 __bpf_kfunc_end_defs();
@@ -9621,7 +9621,7 @@ BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_ARGS | KF_RCU)
 BTF_KFUNCS_END(scx_kfunc_ids_unlocked)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_unlocked = {
+স্থির ধ্রুৱ সংরচনা btf_kfunc_id_set scx_kfunc_set_unlocked = {
 	.owner			= THIS_MODULE,
 	.set			= &scx_kfunc_ids_unlocked,
 	.filter			= scx_kfunc_context_filter,
@@ -9647,16 +9647,16 @@ __bpf_kfunc_start_defs();
  *
  * Return %true on success, %false if @p is not on the calling scheduler.
  */
-__bpf_kfunc bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice,
-					const struct bpf_prog_aux *aux)
+__bpf_kfunc bool scx_bpf_task_set_slice(সংরচনা task_struct *p, u64 slice,
+					ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct rq *locked_rq;
+	সংরচনা scx_sched *sch;
+	সংরচনা rq *locked_rq;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch || !scx_task_on_sched(sch, p)))
-		return false;
+	যদি (unlikely(!sch || !scx_task_on_sched(sch, p)))
+		ঘূৰাই false;
 
 	/*
 	 * Directly write only when we hold the lock of the rq @p is queued or
@@ -9672,24 +9672,24 @@ __bpf_kfunc bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice,
 	 * and the tick-time expiry check.
 	 */
 	locked_rq = scx_locked_rq();
-	if (!locked_rq ||
+	যদি (!locked_rq ||
 	    (READ_ONCE(p->scx.runnable_cpu) != cpu_of(locked_rq) &&
 	     !task_current(locked_rq, p))) {
 		set_task_slice_oob(sch, p, slice);
-		return true;
+		ঘূৰাই true;
 	}
 
 	/* under the rq lock: apply now, extensions gated on baseline access */
-	if (slice > p->scx.slice &&
+	যদি (slice > p->scx.slice &&
 	    unlikely(scx_missing_caps(sch, cpu_of(locked_rq), SCX_CAP_BASE))) {
 		__scx_add_event(sch, SCX_EV_SLICE_DENIED, 1);
-		return true;
+		ঘূৰাই true;
 	}
 
-	if (unlikely(!scx_set_task_slice(p, slice)))
+	যদি (unlikely(!scx_set_task_slice(p, slice)))
 		__scx_add_event(sch, SCX_EV_SLICE_DENIED, 1);
 
-	return true;
+	ঘূৰাই true;
 }
 
 /**
@@ -9701,33 +9701,33 @@ __bpf_kfunc bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice,
  * Set @p's virtual time to @vtime. Returns %true on success, %false if the
  * calling scheduler doesn't have authority over @p.
  */
-__bpf_kfunc bool scx_bpf_task_set_dsq_vtime(struct task_struct *p, u64 vtime,
-					    const struct bpf_prog_aux *aux)
+__bpf_kfunc bool scx_bpf_task_set_dsq_vtime(সংরচনা task_struct *p, u64 vtime,
+					    ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch || !scx_task_on_sched(sch, p)))
-		return false;
+	যদি (unlikely(!sch || !scx_task_on_sched(sch, p)))
+		ঘূৰাই false;
 
 	p->scx.dsq_vtime = vtime;
-	return true;
+	ঘূৰাই true;
 }
 
-void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags)
+শূন্য scx_kick_cpu(সংরচনা scx_sched *sch, s32 cpu, u64 flags)
 {
-	struct scx_sched_pcpu *pcpu;
-	struct rq *this_rq;
+	সংরচনা scx_sched_pcpu *pcpu;
+	সংরচনা rq *this_rq;
 	unsigned long irq_flags;
 
 	/*
 	 * The per-cpu kick list is guarded only by local_irq_save(), which does
 	 * not mask NMIs, so kicking from NMI could corrupt it and is unsupported.
 	 */
-	if (unlikely(in_nmi())) {
+	যদি (unlikely(in_nmi())) {
 		scx_error(sch, "scx_bpf_kick_cpu() called from NMI");
-		return;
+		ঘূৰাই;
 	}
 
 	local_irq_save(irq_flags);
@@ -9740,8 +9740,8 @@ void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags)
 	 * lead to irq_work_queue() malfunction such as infinite busy wait for
 	 * IRQ status update. Suppress kicking.
 	 */
-	if (scx_bypassing(sch, cpu_of(this_rq)))
-		goto out;
+	যদি (scx_bypassing(sch, cpu_of(this_rq)))
+		গচ্ছ out;
 
 	/*
 	 * Actual kicking is bounced to kick_cpus_irq_workfn() to avoid nesting
@@ -9751,33 +9751,33 @@ void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags)
 	 * The kick masks are owned by @sch->pcpu, so that a preempt kick can be
 	 * attributed to @sch.
 	 */
-	if (flags & SCX_KICK_IDLE) {
-		struct rq *target_rq = cpu_rq(cpu);
+	যদি (flags & SCX_KICK_IDLE) {
+		সংরচনা rq *target_rq = cpu_rq(cpu);
 
-		if (unlikely(flags & (SCX_KICK_PREEMPT | SCX_KICK_WAIT)))
+		যদি (unlikely(flags & (SCX_KICK_PREEMPT | SCX_KICK_WAIT)))
 			scx_error(sch, "PREEMPT/WAIT cannot be used with SCX_KICK_IDLE");
 
-		if (raw_spin_rq_trylock(target_rq)) {
-			if (can_skip_idle_kick(target_rq)) {
+		যদি (raw_spin_rq_trylock(target_rq)) {
+			যদি (can_skip_idle_kick(target_rq)) {
 				scx_rq_lock_drop(target_rq);
 				raw_spin_rq_unlock(target_rq);
-				goto out;
+				গচ্ছ out;
 			}
 			scx_rq_lock_drop(target_rq);
 			raw_spin_rq_unlock(target_rq);
 		}
 		cpumask_set_cpu(cpu, pcpu->cpus_to_kick_if_idle);
-	} else {
+	} অন্যথা {
 		cpumask_set_cpu(cpu, pcpu->cpus_to_kick);
 
-		if (flags & SCX_KICK_PREEMPT)
+		যদি (flags & SCX_KICK_PREEMPT)
 			cpumask_set_cpu(cpu, pcpu->cpus_to_preempt);
-		if (flags & SCX_KICK_WAIT)
+		যদি (flags & SCX_KICK_WAIT)
 			cpumask_set_cpu(cpu, pcpu->cpus_to_wait);
 	}
 
-	if (list_empty(&pcpu->to_kick_node))
-		list_add_tail(&pcpu->to_kick_node, &this_rq->scx.sched_pcpus_to_kick);
+	যদি (list_empty(&pcpu->to_kick_গ্ৰন্থি))
+		list_add_tail(&pcpu->to_kick_গ্ৰন্থি, &this_rq->scx.sched_pcpus_to_kick);
 	irq_work_queue(&this_rq->scx.kick_cpus_irq_work);
 out:
 	local_irq_restore(irq_flags);
@@ -9794,13 +9794,13 @@ out:
  * scx_ops operation and the actual kicking is performed asynchronously through
  * an irq work.
  */
-__bpf_kfunc void scx_bpf_kick_cpu(s32 cpu, u64 flags, const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_kick_cpu(s32 cpu, u64 flags, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (likely(sch) && scx_cpu_valid(sch, cpu, NULL))
+	যদি (likely(sch) && scx_cpu_valid(sch, cpu, রিক্ত))
 		scx_kick_cpu(sch, cpu, flags);
 }
 
@@ -9816,18 +9816,18 @@ __bpf_kfunc void scx_bpf_kick_cpu(s32 cpu, u64 flags, const struct bpf_prog_aux 
  * %SCX_KICK_PREEMPT degrades to a plain reschedule if the caller lacks
  * %SCX_CAP_PREEMPT for a task outside its subtree.
  */
-__bpf_kfunc void scx_bpf_kick_cid(s32 cid, u64 flags, const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_kick_cid(s32 cid, u64 flags, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	যদি (unlikely(!sch))
+		ঘূৰাই;
 	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return;
+	যদি (cpu < 0)
+		ঘূৰাই;
 	scx_kick_cpu(sch, cpu, flags);
 }
 
@@ -9843,41 +9843,41 @@ __bpf_kfunc void scx_bpf_kick_cid(s32 cid, u64 flags, const struct bpf_prog_aux 
  * operation is locked to - e.g. the rq being dispatched for in ops.dispatch() -
  * or the calling CPU's when no rq is locked.
  */
-__bpf_kfunc s32 scx_bpf_dsq_nr_queued(u64 dsq_id, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_dsq_nr_queued(u64 dsq_id, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_dispatch_q *dsq;
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_dispatch_q *dsq;
 	s32 ret;
 
 	preempt_disable();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch)) {
+	যদি (unlikely(!sch)) {
 		ret = -ENODEV;
-		goto out;
+		গচ্ছ out;
 	}
 
-	if (dsq_id == SCX_DSQ_LOCAL) {
+	যদি (dsq_id == SCX_DSQ_LOCAL) {
 		ret = READ_ONCE((scx_locked_rq() ?: this_rq())->scx.local_dsq.nr);
-		goto out;
-	} else if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
+		গচ্ছ out;
+	} অন্যথা যদি ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
 		s32 cpu = scx_cpu_ret(sch, dsq_id & SCX_DSQ_LOCAL_CPU_MASK);
 
-		if (scx_cpu_valid(sch, cpu, NULL)) {
+		যদি (scx_cpu_valid(sch, cpu, রিক্ত)) {
 			ret = READ_ONCE(cpu_rq(cpu)->scx.local_dsq.nr);
-			goto out;
+			গচ্ছ out;
 		}
-	} else {
+	} অন্যথা {
 		dsq = find_user_dsq(sch, dsq_id);
-		if (dsq) {
+		যদি (dsq) {
 			ret = READ_ONCE(dsq->nr);
-			goto out;
+			গচ্ছ out;
 		}
 	}
 	ret = -ENOENT;
 out:
 	preempt_enable();
-	return ret;
+	ঘূৰাই ret;
 }
 
 /**
@@ -9890,13 +9890,13 @@ out:
  * empty and no further tasks are dispatched to it. Ignored if called on a DSQ
  * which doesn't exist. Can be called from any online scx_ops operations.
  */
-__bpf_kfunc void scx_bpf_destroy_dsq(u64 dsq_id, const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_destroy_dsq(u64 dsq_id, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (sch)
+	যদি (sch)
 		destroy_dsq(sch, dsq_id);
 }
 
@@ -9911,16 +9911,16 @@ __bpf_kfunc void scx_bpf_destroy_dsq(u64 dsq_id, const struct bpf_prog_aux *aux)
  * tasks in the DSQ specified by @dsq_id. Iteration using @it only includes
  * tasks which are already queued when this function is invoked.
  */
-__bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
-				     u64 flags, const struct bpf_prog_aux *aux)
+__bpf_kfunc পূর্ণাঙ্ক bpf_iter_scx_dsq_new(সংরচনা bpf_iter_scx_dsq *it, u64 dsq_id,
+				     u64 flags, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
-	struct scx_sched *sch;
+	সংরচনা bpf_iter_scx_dsq_kern *kit = (শূন্য *)it;
+	সংরচনা scx_sched *sch;
 
-	BUILD_BUG_ON(sizeof(struct bpf_iter_scx_dsq_kern) >
-		     sizeof(struct bpf_iter_scx_dsq));
-	BUILD_BUG_ON(__alignof__(struct bpf_iter_scx_dsq_kern) !=
-		     __alignof__(struct bpf_iter_scx_dsq));
+	BUILD_BUG_ON(পরিমাণ(সংরচনা bpf_iter_scx_dsq_kern) >
+		     পরিমাণ(সংরচনা bpf_iter_scx_dsq));
+	BUILD_BUG_ON(__alignof__(সংরচনা bpf_iter_scx_dsq_kern) !=
+		     __alignof__(সংরচনা bpf_iter_scx_dsq));
 	BUILD_BUG_ON(__SCX_DSQ_ITER_ALL_FLAGS &
 		     ((1U << __SCX_DSQ_LNODE_PRIV_SHIFT) - 1));
 
@@ -9928,22 +9928,22 @@ __bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
 	 * next() and destroy() will be called regardless of the return value.
 	 * Always clear $kit->dsq.
 	 */
-	kit->dsq = NULL;
+	kit->dsq = রিক্ত;
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	যদি (unlikely(!sch))
+		ঘূৰাই -ENODEV;
 
-	if (flags & ~__SCX_DSQ_ITER_USER_FLAGS)
-		return -EINVAL;
+	যদি (flags & ~__SCX_DSQ_ITER_USER_FLAGS)
+		ঘূৰাই -EINVAL;
 
 	kit->dsq = find_user_dsq(sch, dsq_id);
-	if (!kit->dsq)
-		return -ENOENT;
+	যদি (!kit->dsq)
+		ঘূৰাই -ENOENT;
 
 	kit->cursor = INIT_DSQ_LIST_CURSOR(kit->cursor, kit->dsq, flags);
 
-	return 0;
+	ঘূৰাই 0;
 }
 
 /**
@@ -9952,16 +9952,16 @@ __bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
  *
  * Return the next task. See bpf_iter_scx_dsq_new().
  */
-__bpf_kfunc struct task_struct *bpf_iter_scx_dsq_next(struct bpf_iter_scx_dsq *it)
+__bpf_kfunc সংরচনা task_struct *bpf_iter_scx_dsq_next(সংরচনা bpf_iter_scx_dsq *it)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
+	সংরচনা bpf_iter_scx_dsq_kern *kit = (শূন্য *)it;
 
-	if (!kit->dsq)
-		return NULL;
+	যদি (!kit->dsq)
+		ঘূৰাই রিক্ত;
 
 	guard(raw_spinlock_irqsave)(&kit->dsq->lock);
 
-	return nldsq_cursor_next_task(&kit->cursor, kit->dsq);
+	ঘূৰাই nldsq_cursor_next_task(&kit->cursor, kit->dsq);
 }
 
 /**
@@ -9970,21 +9970,21 @@ __bpf_kfunc struct task_struct *bpf_iter_scx_dsq_next(struct bpf_iter_scx_dsq *i
  *
  * Undo bpf_iter_scx_dsq_new().
  */
-__bpf_kfunc void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it)
+__bpf_kfunc শূন্য bpf_iter_scx_dsq_destroy(সংরচনা bpf_iter_scx_dsq *it)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
+	সংরচনা bpf_iter_scx_dsq_kern *kit = (শূন্য *)it;
 
-	if (!kit->dsq)
-		return;
+	যদি (!kit->dsq)
+		ঘূৰাই;
 
-	if (!list_empty(&kit->cursor.node)) {
+	যদি (!list_empty(&kit->cursor.গ্ৰন্থি)) {
 		unsigned long flags;
 
 		raw_spin_lock_irqsave(&kit->dsq->lock, flags);
-		list_del_init(&kit->cursor.node);
+		list_del_init(&kit->cursor.গ্ৰন্থি);
 		raw_spin_unlock_irqrestore(&kit->dsq->lock, flags);
 	}
-	kit->dsq = NULL;
+	kit->dsq = রিক্ত;
 }
 
 /**
@@ -9999,28 +9999,28 @@ __bpf_kfunc void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it)
  *
  * Returns the pointer, or NULL indicates an empty queue OR internal error.
  */
-__bpf_kfunc struct task_struct *scx_bpf_dsq_peek(u64 dsq_id,
-						 const struct bpf_prog_aux *aux)
+__bpf_kfunc সংরচনা task_struct *scx_bpf_dsq_peek(u64 dsq_id,
+						 ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_dispatch_q *dsq;
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_dispatch_q *dsq;
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
+	যদি (unlikely(!sch))
+		ঘূৰাই রিক্ত;
 
-	if (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN)) {
+	যদি (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN)) {
 		scx_error(sch, "peek disallowed on builtin DSQ 0x%llx", dsq_id);
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
 	dsq = find_user_dsq(sch, dsq_id);
-	if (unlikely(!dsq)) {
+	যদি (unlikely(!dsq)) {
 		scx_error(sch, "peek on non-existent DSQ 0x%llx", dsq_id);
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
-	return rcu_dereference(dsq->first_task);
+	ঘূৰাই rcu_dereference(dsq->first_task);
 }
 
 /**
@@ -10042,26 +10042,26 @@ __bpf_kfunc struct task_struct *scx_bpf_dsq_peek(u64 dsq_id,
  * operation is locked to - e.g. the rq being dispatched for in ops.dispatch() -
  * or the calling CPU's when no rq is locked.
  */
-__bpf_kfunc void scx_bpf_dsq_reenq(u64 dsq_id, u64 reenq_flags,
-				   const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_dsq_reenq(u64 dsq_id, u64 reenq_flags,
+				   ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct rq *locked_rq = scx_locked_rq();
-	struct scx_sched *sch;
-	struct scx_dispatch_q *dsq;
+	সংরচনা rq *locked_rq = scx_locked_rq();
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_dispatch_q *dsq;
 
 	guard(preempt)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	যদি (unlikely(!sch))
+		ঘূৰাই;
 
-	if (unlikely(reenq_flags & ~__SCX_REENQ_USER_MASK)) {
+	যদি (unlikely(reenq_flags & ~__SCX_REENQ_USER_MASK)) {
 		scx_error(sch, "invalid SCX_REENQ flags 0x%llx", reenq_flags);
-		return;
+		ঘূৰাই;
 	}
 
 	/* not specifying any filter bits is the same as %SCX_REENQ_ANY */
-	if (!(reenq_flags & __SCX_REENQ_FILTER_MASK))
+	যদি (!(reenq_flags & __SCX_REENQ_FILTER_MASK))
 		reenq_flags |= SCX_REENQ_ANY;
 
 	dsq = find_dsq_for_dispatch(sch, locked_rq ?: this_rq(), dsq_id, smp_processor_id());
@@ -10079,7 +10079,7 @@ __bpf_kfunc void scx_bpf_dsq_reenq(u64 dsq_id, u64 reenq_flags,
  * This is now a special case of scx_bpf_dsq_reenq() and may be removed in the
  * future.
  */
-__bpf_kfunc void scx_bpf_reenqueue_local___v2(const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_reenqueue_local___v2(ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
 	scx_bpf_dsq_reenq(SCX_DSQ_LOCAL, 0, aux);
 }
@@ -10087,41 +10087,41 @@ __bpf_kfunc void scx_bpf_reenqueue_local___v2(const struct bpf_prog_aux *aux)
 __bpf_kfunc_end_defs();
 
 __printf(5, 0)
-static s32 __bstr_format(struct scx_sched *sch, u64 *data_buf, char *line_buf,
-			 size_t line_size, char *fmt, unsigned long long *data,
+স্থির s32 __bstr_format(সংরচনা scx_sched *sch, u64 *data_buf, ৱর্ণ *সাৰি_buf,
+			 size_t সাৰি_size, ৱর্ণ *fmt, unsigned long long *data,
 			 u32 data__sz)
 {
-	struct bpf_bprintf_data bprintf_data = { .get_bin_args = true };
+	সংরচনা bpf_bprintf_data bprintf_data = { .get_bin_args = true };
 	s32 ret;
 
-	if (data__sz % 8 || data__sz > MAX_BPRINTF_VARARGS * 8 ||
+	যদি (data__sz % 8 || data__sz > MAX_BPRINTF_VARARGS * 8 ||
 	    (data__sz && !data)) {
-		scx_error(sch, "invalid data=%p and data__sz=%u", (void *)data, data__sz);
-		return -EINVAL;
+		scx_error(sch, "invalid data=%p and data__sz=%u", (শূন্য *)data, data__sz);
+		ঘূৰাই -EINVAL;
 	}
 
 	ret = copy_from_kernel_nofault(data_buf, data, data__sz);
-	if (ret < 0) {
+	যদি (ret < 0) {
 		scx_error(sch, "failed to read data fields (%d)", ret);
-		return ret;
+		ঘূৰাই ret;
 	}
 
 	ret = bpf_bprintf_prepare(fmt, UINT_MAX, data_buf, data__sz / 8,
 				  &bprintf_data);
-	if (ret < 0) {
+	যদি (ret < 0) {
 		scx_error(sch, "format preparation failed (%d)", ret);
-		return ret;
+		ঘূৰাই ret;
 	}
 
-	ret = bstr_printf(line_buf, line_size, fmt,
+	ret = bstr_printf(সাৰি_buf, সাৰি_size, fmt,
 			  bprintf_data.bin_args);
 	bpf_bprintf_cleanup(&bprintf_data);
-	if (ret < 0) {
+	যদি (ret < 0) {
 		scx_error(sch, "(\"%s\", %p, %u) failed to format", fmt, data, data__sz);
-		return ret;
+		ঘূৰাই ret;
 	}
 
-	return ret;
+	ঘূৰাই ret;
 }
 
 /*
@@ -10135,27 +10135,27 @@ static s32 __bstr_format(struct scx_sched *sch, u64 *data_buf, char *line_buf,
  * claim - @sch still exits with the claimed kind and a fallback message.
  */
 __printf(5, 0)
-bool scx_exit_bstr(struct scx_sched *sch, enum scx_exit_kind kind,
-		   s64 exit_code, struct scx_sched *fmt_blame, char *fmt,
+bool scx_exit_bstr(সংরচনা scx_sched *sch, গণনা scx_exit_kind kind,
+		   s64 exit_code, সংরচনা scx_sched *fmt_blame, ৱর্ণ *fmt,
 		   unsigned long long *data, u32 data__sz)
 {
-	struct scx_exit_info *ei = sch->exit_info;
+	সংরচনা scx_exit_info *ei = sch->exit_info;
 	u64 data_buf[MAX_BPRINTF_VARARGS];
 	s32 ret;
 
 	guard(preempt)();
 
-	if (!scx_claim_exit(sch, kind))
-		return false;
+	যদি (!scx_claim_exit(sch, kind))
+		ঘূৰাই false;
 
-	ret = __bstr_format(fmt_blame, data_buf, ei->msg, SCX_EXIT_MSG_LEN,
+	ret = __bstr_format(fmt_blame, data_buf, ei->বাৰ্তা, SCX_EXIT_বাৰ্তা_LEN,
 			    fmt, data, data__sz);
-	if (ret < 0)
-		scnprintf(ei->msg, SCX_EXIT_MSG_LEN,
+	যদি (ret < 0)
+		scnprintf(ei->বাৰ্তা, SCX_EXIT_বাৰ্তা_LEN,
 			  "exit message formatting failed (%d)", ret);
 
 	scx_finish_exit(sch, kind, exit_code, raw_smp_processor_id());
-	return true;
+	ঘূৰাই true;
 }
 
 __bpf_kfunc_start_defs();
@@ -10172,16 +10172,16 @@ __bpf_kfunc_start_defs();
  * disabling.
  */
 __printf(2, 0)
-__bpf_kfunc void scx_bpf_exit_bstr(s64 exit_code, char *fmt,
+__bpf_kfunc শূন্য scx_bpf_exit_bstr(s64 exit_code, ৱর্ণ *fmt,
 				   unsigned long long *data, u32 data__sz,
-				   const struct bpf_prog_aux *aux)
+				   ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (likely(sch))
+	যদি (likely(sch))
 		scx_exit_bstr(sch, SCX_EXIT_UNREG_BPF, exit_code, sch, fmt,
 			      data, data__sz);
 }
@@ -10197,15 +10197,15 @@ __bpf_kfunc void scx_bpf_exit_bstr(s64 exit_code, char *fmt,
  * disabling.
  */
 __printf(1, 0)
-__bpf_kfunc void scx_bpf_error_bstr(char *fmt, unsigned long long *data,
-				    u32 data__sz, const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_error_bstr(ৱর্ণ *fmt, unsigned long long *data,
+				    u32 data__sz, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (likely(sch))
+	যদি (likely(sch))
 		scx_exit_bstr(sch, SCX_EXIT_ERROR_BPF, 0, sch, fmt, data,
 			      data__sz);
 }
@@ -10224,39 +10224,39 @@ __bpf_kfunc void scx_bpf_error_bstr(char *fmt, unsigned long long *data,
  * multiple calls. The last line is automatically terminated.
  */
 __printf(1, 0)
-__bpf_kfunc void scx_bpf_dump_bstr(char *fmt, unsigned long long *data,
-				   u32 data__sz, const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_dump_bstr(ৱর্ণ *fmt, unsigned long long *data,
+				   u32 data__sz, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_dump_data *dd = &scx_dump_data;
-	struct scx_bstr_buf *buf = &dd->buf;
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_dump_data *dd = &scx_dump_data;
+	সংরচনা scx_bstr_buf *buf = &dd->buf;
 	s32 ret;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	যদি (unlikely(!sch))
+		ঘূৰাই;
 
-	if (raw_smp_processor_id() != dd->cpu) {
+	যদি (raw_smp_processor_id() != dd->cpu) {
 		scx_error(sch, "scx_bpf_dump() must only be called from ops.dump() and friends");
-		return;
+		ঘূৰাই;
 	}
 
 	/* append the formatted string to the line buf */
-	ret = __bstr_format(sch, buf->data, buf->line + dd->cursor,
-			    sizeof(buf->line) - dd->cursor, fmt, data, data__sz);
-	if (ret < 0) {
-		scx_dump_line(dd->s, "%s[!] (\"%s\", %p, %u) failed to format (%d)",
+	ret = __bstr_format(sch, buf->data, buf->সাৰি + dd->cursor,
+			    পরিমাণ(buf->সাৰি) - dd->cursor, fmt, data, data__sz);
+	যদি (ret < 0) {
+		scx_dump_সাৰি(dd->s, "%s[!] (\"%s\", %p, %u) failed to format (%d)",
 			      dd->prefix, fmt, data, data__sz, ret);
-		return;
+		ঘূৰাই;
 	}
 
 	dd->cursor += ret;
-	dd->cursor = min_t(s32, dd->cursor, sizeof(buf->line));
+	dd->cursor = min_t(s32, dd->cursor, পরিমাণ(buf->সাৰি));
 
-	if (!dd->cursor)
-		return;
+	যদি (!dd->cursor)
+		ঘূৰাই;
 
 	/*
 	 * If the line buf overflowed or ends in a newline, flush it into the
@@ -10266,7 +10266,7 @@ __bpf_kfunc void scx_bpf_dump_bstr(char *fmt, unsigned long long *data,
 	 * truncation is when the caller keeps generating newlines in the middle
 	 * instead of the end consecutively. Don't do that.
 	 */
-	if (dd->cursor >= sizeof(buf->line) || buf->line[dd->cursor - 1] == '\n')
+	যদি (dd->cursor >= পরিমাণ(buf->সাৰি) || buf->সাৰি[dd->cursor - 1] == '\n')
 		ops_dump_flush();
 }
 
@@ -10279,17 +10279,17 @@ __bpf_kfunc void scx_bpf_dump_bstr(char *fmt, unsigned long long *data,
  * performant CPU in the system. The return value is in the range [1,
  * %SCX_CPUPERF_ONE]. See scx_bpf_cpuperf_cur().
  */
-__bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (likely(sch) && scx_cpu_valid(sch, cpu, NULL))
-		return arch_scale_cpu_capacity(cpu);
-	else
-		return SCX_CPUPERF_ONE;
+	যদি (likely(sch) && scx_cpu_valid(sch, cpu, রিক্ত))
+		ঘূৰাই arch_scale_cpu_capacity(cpu);
+	অন্যথা
+		ঘূৰাই SCX_CPUPERF_ONE;
 }
 
 /**
@@ -10299,20 +10299,20 @@ __bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu, const struct bpf_prog_aux *aux)
  *
  * cid-addressed equivalent of scx_bpf_cpuperf_cap().
  */
-__bpf_kfunc u32 scx_bpf_cidperf_cap(s32 cid, const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_cidperf_cap(s32 cid, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return SCX_CPUPERF_ONE;
+	যদি (unlikely(!sch))
+		ঘূৰাই SCX_CPUPERF_ONE;
 	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return SCX_CPUPERF_ONE;
-	return arch_scale_cpu_capacity(cpu);
+	যদি (cpu < 0)
+		ঘূৰাই SCX_CPUPERF_ONE;
+	ঘূৰাই arch_scale_cpu_capacity(cpu);
 }
 
 /**
@@ -10330,17 +10330,17 @@ __bpf_kfunc u32 scx_bpf_cidperf_cap(s32 cid, const struct bpf_prog_aux *aux)
  *
  * The result is in the range [1, %SCX_CPUPERF_ONE].
  */
-__bpf_kfunc u32 scx_bpf_cpuperf_cur(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_cpuperf_cur(s32 cpu, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (likely(sch) && scx_cpu_valid(sch, cpu, NULL))
-		return arch_scale_freq_capacity(cpu);
-	else
-		return SCX_CPUPERF_ONE;
+	যদি (likely(sch) && scx_cpu_valid(sch, cpu, রিক্ত))
+		ঘূৰাই arch_scale_freq_capacity(cpu);
+	অন্যথা
+		ঘূৰাই SCX_CPUPERF_ONE;
 }
 
 /**
@@ -10350,36 +10350,36 @@ __bpf_kfunc u32 scx_bpf_cpuperf_cur(s32 cpu, const struct bpf_prog_aux *aux)
  *
  * cid-addressed equivalent of scx_bpf_cpuperf_cur().
  */
-__bpf_kfunc u32 scx_bpf_cidperf_cur(s32 cid, const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_cidperf_cur(s32 cid, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return SCX_CPUPERF_ONE;
+	যদি (unlikely(!sch))
+		ঘূৰাই SCX_CPUPERF_ONE;
 	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return SCX_CPUPERF_ONE;
-	return arch_scale_freq_capacity(cpu);
+	যদি (cpu < 0)
+		ঘূৰাই SCX_CPUPERF_ONE;
+	ঘূৰাই arch_scale_freq_capacity(cpu);
 }
 
 /* validate and apply a cpuperf target, see scx_bpf_cpuperf_set() */
-static s32 scx_cpuperf_set(struct scx_sched *sch, s32 cpu, u32 perf)
+স্থির s32 scx_cpuperf_set(সংরচনা scx_sched *sch, s32 cpu, u32 perf)
 {
-	struct rq *rq, *locked_rq;
-	struct rq_flags rf;
+	সংরচনা rq *rq, *locked_rq;
+	সংরচনা rq_flags rf;
 	s32 ret;
 
-	if (unlikely(perf > SCX_CPUPERF_ONE)) {
+	যদি (unlikely(perf > SCX_CPUPERF_ONE)) {
 		scx_error(sch, "Invalid cpuperf target %u for CPU %d", perf, cpu);
-		return -EINVAL;
+		ঘূৰাই -EINVAL;
 	}
 
-	if (!scx_cpu_valid(sch, cpu, NULL))
-		return -EINVAL;
+	যদি (!scx_cpu_valid(sch, cpu, রিক্ত))
+		ঘূৰাই -EINVAL;
 
 	rq = cpu_rq(cpu);
 	locked_rq = scx_locked_rq();
@@ -10388,16 +10388,16 @@ static s32 scx_cpuperf_set(struct scx_sched *sch, s32 cpu, u32 perf)
 	 * When called with an rq lock held, restrict the operation to the
 	 * corresponding CPU to prevent ABBA deadlocks.
 	 */
-	if (locked_rq && rq != locked_rq) {
+	যদি (locked_rq && rq != locked_rq) {
 		scx_error(sch, "Invalid target CPU %d", cpu);
-		return -EINVAL;
+		ঘূৰাই -EINVAL;
 	}
 
 	/*
 	 * If no rq lock is held, allow to operate on any CPU by acquiring
 	 * the corresponding rq lock.
 	 */
-	if (!locked_rq) {
+	যদি (!locked_rq) {
 		rq_lock_irqsave(rq, &rf);
 		update_rq_clock(rq);
 	}
@@ -10407,19 +10407,19 @@ static s32 scx_cpuperf_set(struct scx_sched *sch, s32 cpu, u32 perf)
 	 * authoritative: a write can never land after a revoke has taken
 	 * effect on @cpu.
 	 */
-	if (likely(!scx_missing_caps(sch, cpu, SCX_CAP_PERF))) {
+	যদি (likely(!scx_missing_caps(sch, cpu, SCX_CAP_PERF))) {
 		rq->scx.cpuperf_target = perf;
 		cpufreq_update_util(rq, 0);
 		ret = 0;
-	} else {
+	} অন্যথা {
 		__scx_add_event(sch, SCX_EV_SUB_CIDPERF_DENIED, 1);
 		ret = -EACCES;
 	}
 
-	if (!locked_rq)
+	যদি (!locked_rq)
 		rq_unlock_irqrestore(rq, &rf);
 
-	return ret;
+	ঘূৰাই ret;
 }
 
 /**
@@ -10437,15 +10437,15 @@ static s32 scx_cpuperf_set(struct scx_sched *sch, s32 cpu, u32 perf)
  * use. Consult hardware and cpufreq documentation for more information. The
  * current performance level can be monitored using scx_bpf_cpuperf_cur().
  */
-__bpf_kfunc void scx_bpf_cpuperf_set(s32 cpu, u32 perf, const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_cpuperf_set(s32 cpu, u32 perf, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	যদি (unlikely(!sch))
+		ঘূৰাই;
 
 	scx_cpuperf_set(sch, cpu, perf);
 }
@@ -10462,21 +10462,21 @@ __bpf_kfunc void scx_bpf_cpuperf_set(s32 cpu, u32 perf, const struct bpf_prog_au
  * resolve.
  */
 __bpf_kfunc s32 scx_bpf_cidperf_set(s32 cid, u32 perf,
-				    const struct bpf_prog_aux *aux)
+				    ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	যদি (unlikely(!sch))
+		ঘূৰাই -ENODEV;
 	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return cpu;
+	যদি (cpu < 0)
+		ঘূৰাই cpu;
 
-	return scx_cpuperf_set(sch, cpu, perf);
+	ঘূৰাই scx_cpuperf_set(sch, cpu, perf);
 }
 
 /**
@@ -10484,9 +10484,9 @@ __bpf_kfunc s32 scx_bpf_cidperf_set(s32 cid, u32 perf,
  *
  * All valid node IDs in the system are smaller than the returned value.
  */
-__bpf_kfunc u32 scx_bpf_nr_node_ids(void)
+__bpf_kfunc u32 scx_bpf_nr_গ্ৰন্থি_ids(শূন্য)
 {
-	return nr_node_ids;
+	ঘূৰাই nr_গ্ৰন্থি_ids;
 }
 
 /**
@@ -10494,9 +10494,9 @@ __bpf_kfunc u32 scx_bpf_nr_node_ids(void)
  *
  * All valid CPU IDs in the system are smaller than the returned value.
  */
-__bpf_kfunc u32 scx_bpf_nr_cpu_ids(void)
+__bpf_kfunc u32 scx_bpf_nr_cpu_ids(শূন্য)
 {
-	return nr_cpu_ids;
+	ঘূৰাই nr_cpu_ids;
 }
 
 /**
@@ -10504,9 +10504,9 @@ __bpf_kfunc u32 scx_bpf_nr_cpu_ids(void)
  *
  * Equals num_possible_cpus(). All valid cids are in [0, return value).
  */
-__bpf_kfunc u32 scx_bpf_nr_cids(void)
+__bpf_kfunc u32 scx_bpf_nr_cids(শূন্য)
 {
-	return num_possible_cpus();
+	ঘূৰাই অঙ্ক_possible_cpus();
 }
 
 /**
@@ -10519,9 +10519,9 @@ __bpf_kfunc u32 scx_bpf_nr_cids(void)
  * through the ops.cid_online / ops.cid_offline callbacks, starting from the
  * mask scx_bpf_online_cmask() returns.
  */
-__bpf_kfunc u32 scx_bpf_nr_online_cids(void)
+__bpf_kfunc u32 scx_bpf_nr_online_cids(শূন্য)
 {
-	return num_online_cpus();
+	ঘূৰাই অঙ্ক_online_cpus();
 }
 
 /**
@@ -10537,21 +10537,21 @@ __bpf_kfunc u32 scx_bpf_nr_online_cids(void)
  * through ops.exit(). Root ops.init() runs with hotplug excluded. Other
  * contexts can observe concurrent updates.
  */
-__bpf_kfunc const void *scx_bpf_online_cmask(const struct bpf_prog_aux *aux)
+__bpf_kfunc ধ্রুৱ শূন্য *scx_bpf_online_cmask(ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_cmask *online;
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_cmask *online;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
+	যদি (unlikely(!sch))
+		ঘূৰাই রিক্ত;
 	online = sch->online_cmask;
-	if (unlikely(!online))
-		return NULL;
+	যদি (unlikely(!online))
+		ঘূৰাই রিক্ত;
 
-	return (void *)scx_kaddr_to_arena(sch, online);
+	ঘূৰাই (শূন্য *)scx_kaddr_to_arena(sch, online);
 }
 
 /**
@@ -10561,39 +10561,39 @@ __bpf_kfunc const void *scx_bpf_online_cmask(const struct bpf_prog_aux *aux)
  * The current cpu is trivially valid, so this is just a table lookup. Return
  * -EINVAL if called before any scheduler has ever published its cid tables.
  */
-__bpf_kfunc s32 scx_bpf_this_cid(void)
+__bpf_kfunc s32 scx_bpf_this_cid(শূন্য)
 {
 	s16 *tbl;
 
 	guard(rcu)();
 
 	tbl = rcu_dereference(scx_cpu_to_cid_tbl);
-	if (!tbl)
-		return -EINVAL;
-	return tbl[raw_smp_processor_id()];
+	যদি (!tbl)
+		ঘূৰাই -EINVAL;
+	ঘূৰাই tbl[raw_smp_processor_id()];
 }
 
 /**
  * scx_bpf_get_possible_cpumask - Get a referenced kptr to cpu_possible_mask
  */
-__bpf_kfunc const struct cpumask *scx_bpf_get_possible_cpumask(void)
+__bpf_kfunc ধ্রুৱ সংরচনা cpumask *scx_bpf_get_possible_cpumask(শূন্য)
 {
-	return cpu_possible_mask;
+	ঘূৰাই cpu_possible_mask;
 }
 
 /**
  * scx_bpf_get_online_cpumask - Get a referenced kptr to cpu_online_mask
  */
-__bpf_kfunc const struct cpumask *scx_bpf_get_online_cpumask(void)
+__bpf_kfunc ধ্রুৱ সংরচনা cpumask *scx_bpf_get_online_cpumask(শূন্য)
 {
-	return cpu_online_mask;
+	ঘূৰাই cpu_online_mask;
 }
 
 /**
  * scx_bpf_put_cpumask - Release a possible/online cpumask
  * @cpumask: cpumask to release
  */
-__bpf_kfunc void scx_bpf_put_cpumask(const struct cpumask *cpumask)
+__bpf_kfunc শূন্য scx_bpf_put_cpumask(ধ্রুৱ সংরচনা cpumask *cpumask)
 {
 	/*
 	 * Empty function body because we aren't actually acquiring or releasing
@@ -10607,18 +10607,18 @@ __bpf_kfunc void scx_bpf_put_cpumask(const struct cpumask *cpumask)
  * scx_bpf_task_running - Is task currently running?
  * @p: task of interest
  */
-__bpf_kfunc bool scx_bpf_task_running(const struct task_struct *p)
+__bpf_kfunc bool scx_bpf_task_running(ধ্রুৱ সংরচনা task_struct *p)
 {
-	return task_rq(p)->curr == p;
+	ঘূৰাই task_rq(p)->curr == p;
 }
 
 /**
  * scx_bpf_task_cpu - CPU a task is currently associated with
  * @p: task of interest
  */
-__bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
+__bpf_kfunc s32 scx_bpf_task_cpu(ধ্রুৱ সংরচনা task_struct *p)
 {
-	return task_cpu(p);
+	ঘূৰাই task_cpu(p);
 }
 
 /**
@@ -10629,7 +10629,7 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
  * valid cpu, so this is just a table lookup. Return -EINVAL if called before
  * any scheduler has ever published its cid tables.
  */
-__bpf_kfunc s32 scx_bpf_task_cid(const struct task_struct *p)
+__bpf_kfunc s32 scx_bpf_task_cid(ধ্রুৱ সংরচনা task_struct *p)
 {
 	s16 *tbl;
 
@@ -10637,9 +10637,9 @@ __bpf_kfunc s32 scx_bpf_task_cid(const struct task_struct *p)
 	guard(rcu)();
 
 	tbl = rcu_dereference(scx_cpu_to_cid_tbl);
-	if (!tbl)
-		return -EINVAL;
-	return tbl[task_cpu(p)];
+	যদি (!tbl)
+		ঘূৰাই -EINVAL;
+	ঘূৰাই tbl[task_cpu(p)];
 }
 
 /**
@@ -10649,24 +10649,24 @@ __bpf_kfunc s32 scx_bpf_task_cid(const struct task_struct *p)
  * Returns the rq if a rq lock is currently held by SCX.
  * Otherwise emits an error and returns NULL.
  */
-__bpf_kfunc struct rq *scx_bpf_locked_rq(const struct bpf_prog_aux *aux)
+__bpf_kfunc সংরচনা rq *scx_bpf_locked_rq(ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct rq *rq;
+	সংরচনা scx_sched *sch;
+	সংরচনা rq *rq;
 
 	guard(preempt)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
+	যদি (unlikely(!sch))
+		ঘূৰাই রিক্ত;
 
 	rq = scx_locked_rq();
-	if (!rq) {
+	যদি (!rq) {
 		scx_error(sch, "accessing rq without holding rq lock");
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
-	return rq;
+	ঘূৰাই rq;
 }
 
 /**
@@ -10676,20 +10676,20 @@ __bpf_kfunc struct rq *scx_bpf_locked_rq(const struct bpf_prog_aux *aux)
  *
  * Callers must hold RCU read lock (KF_RCU).
  */
-__bpf_kfunc struct task_struct *scx_bpf_cpu_curr(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc সংরচনা task_struct *scx_bpf_cpu_curr(s32 cpu, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
+	যদি (unlikely(!sch))
+		ঘূৰাই রিক্ত;
 
-	if (!scx_cpu_valid(sch, cpu, NULL))
-		return NULL;
+	যদি (!scx_cpu_valid(sch, cpu, রিক্ত))
+		ঘূৰাই রিক্ত;
 
-	return rcu_dereference(cpu_rq(cpu)->curr);
+	ঘূৰাই rcu_dereference(cpu_rq(cpu)->curr);
 }
 
 /**
@@ -10700,20 +10700,20 @@ __bpf_kfunc struct task_struct *scx_bpf_cpu_curr(s32 cpu, const struct bpf_prog_
  * cid-addressed equivalent of scx_bpf_cpu_curr(). Callers must hold RCU
  * read lock (KF_RCU).
  */
-__bpf_kfunc struct task_struct *scx_bpf_cid_curr(s32 cid, const struct bpf_prog_aux *aux)
+__bpf_kfunc সংরচনা task_struct *scx_bpf_cid_curr(s32 cid, ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	সংরচনা scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
+	যদি (unlikely(!sch))
+		ঘূৰাই রিক্ত;
 	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return NULL;
-	return rcu_dereference(cpu_rq(cpu)->curr);
+	যদি (cpu < 0)
+		ঘূৰাই রিক্ত;
+	ঘূৰাই rcu_dereference(cpu_rq(cpu)->curr);
 }
 
 /**
@@ -10725,35 +10725,35 @@ __bpf_kfunc struct task_struct *scx_bpf_cid_curr(s32 cid, const struct bpf_prog_
  * (KF_RCU_PROTECTED). Requires SCX_OPS_TID_TO_TASK to be set on the root
  * scheduler; otherwise an error is raised and NULL returned.
  */
-__bpf_kfunc struct task_struct *scx_bpf_tid_to_task(u64 tid)
+__bpf_kfunc সংরচনা task_struct *scx_bpf_tid_to_task(u64 tid)
 {
-	struct sched_ext_entity *scx;
+	সংরচনা sched_ext_entity *scx;
 
-	if (!scx_tid_to_task_enabled()) {
-		struct scx_sched *sch = rcu_dereference(scx_root);
+	যদি (!scx_tid_to_task_enabled()) {
+		সংরচনা scx_sched *sch = rcu_dereference(scx_মূল);
 
-		if (sch)
+		যদি (sch)
 			scx_error(sch, "scx_bpf_tid_to_task() called without SCX_OPS_TID_TO_TASK");
-		return NULL;
+		ঘূৰাই রিক্ত;
 	}
 
 	scx = rhashtable_lookup(&scx_tid_hash, &tid, scx_tid_hash_params);
-	if (!scx)
-		return NULL;
+	যদি (!scx)
+		ঘূৰাই রিক্ত;
 
-	return container_of(scx, struct task_struct, scx);
+	ঘূৰাই container_of(scx, সংরচনা task_struct, scx);
 }
 
-u64 __scx_bpf_now(struct rq *rq)
+u64 __scx_bpf_now(সংরচনা rq *rq)
 {
 	/* the caller must be on @rq's cpu or hold its lock */
 	lockdep_assert((rq == this_rq() && !preemptible()) ||
 		       lockdep_is_held(__rq_lockp(rq)));
 
-	if (smp_load_acquire(&rq->scx.flags) & SCX_RQ_CLK_VALID) {
+	যদি (smp_load_acquire(&rq->scx.flags) & SCX_RQ_CLK_VALID) {
 		/* if the rq clock is valid, use the cached rq clock */
-		return READ_ONCE(rq->scx.clock);
-	} else {
+		ঘূৰাই READ_ONCE(rq->scx.clock);
+	} অন্যথা {
 		/*
 		 * Otherwise, return a fresh rq clock.
 		 *
@@ -10761,7 +10761,7 @@ u64 __scx_bpf_now(struct rq *rq)
 		 * In this case, keep the updated rq clock invalid so the next
 		 * read outside the rq lock gets a fresh rq clock.
 		 */
-		return sched_clock_cpu(cpu_of(rq));
+		ঘূৰাই sched_clock_cpu(cpu_of(rq));
 	}
 }
 
@@ -10793,7 +10793,7 @@ u64 __scx_bpf_now(struct rq *rq)
  *  clock values in two different scx_bpf_now() calls in the same CPU
  *  during the same period of when the rq clock is valid.
  */
-__bpf_kfunc u64 scx_bpf_now(void)
+__bpf_kfunc u64 scx_bpf_now(শূন্য)
 {
 	/*
 	 * Note that scx_bpf_now() is re-entrant between a process context and
@@ -10802,17 +10802,17 @@ __bpf_kfunc u64 scx_bpf_now(void)
 	 * from a caller.
 	 */
 	guard(preempt)();
-	return __scx_bpf_now(this_rq());
+	ঘূৰাই __scx_bpf_now(this_rq());
 }
 
-static void scx_read_events(struct scx_sched *sch, struct scx_event_stats *events)
+স্থির শূন্য scx_read_events(সংরচনা scx_sched *sch, সংরচনা scx_event_stats *events)
 {
-	int cpu;
+	পূর্ণাঙ্ক cpu;
 
 	/* Aggregate per-CPU event counters into @events. */
-	memset(events, 0, sizeof(*events));
+	memset(events, 0, পরিমাণ(*events));
 	for_each_possible_cpu(cpu) {
-		struct scx_event_stats *e_cpu = &per_cpu_ptr(sch->pcpu, cpu)->event_stats;
+		সংরচনা scx_event_stats *e_cpu = &per_cpu_ptr(sch->pcpu, cpu)->event_stats;
 #define SCX_EVENT(name)	(events->name += READ_ONCE(e_cpu->name))
 		SCX_EVENTS_LIST(SCX_EVENT);
 #undef SCX_EVENT
@@ -10828,18 +10828,18 @@ static void scx_read_events(struct scx_sched *sch, struct scx_event_stats *event
  * Read the event counters of the scheduler associated with the calling program.
  * @events is zeroed when no scheduler can be resolved.
  */
-__bpf_kfunc void scx_bpf_events(struct scx_event_stats *events, size_t events__sz,
-				const struct bpf_prog_aux *aux)
+__bpf_kfunc শূন্য scx_bpf_events(সংরচনা scx_event_stats *events, size_t events__sz,
+				ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_event_stats e_sys;
+	সংরচনা scx_sched *sch;
+	সংরচনা scx_event_stats e_sys;
 
 	rcu_read_lock();
 	sch = scx_prog_sched(aux);
-	if (sch)
+	যদি (sch)
 		scx_read_events(sch, &e_sys);
-	else
-		memset(&e_sys, 0, sizeof(e_sys));
+	অন্যথা
+		memset(&e_sys, 0, পরিমাণ(e_sys));
 	rcu_read_unlock();
 
 	/*
@@ -10849,7 +10849,7 @@ __bpf_kfunc void scx_bpf_events(struct scx_event_stats *events, size_t events__s
 	 * (an older vmlinux.h). Hence, we use the smaller size to avoid
 	 * memory corruption.
 	 */
-	events__sz = min(events__sz, sizeof(*events));
+	events__sz = min(events__sz, পরিমাণ(*events));
 	memcpy(events, &e_sys, events__sz);
 }
 
@@ -10865,27 +10865,27 @@ __bpf_kfunc void scx_bpf_events(struct scx_event_stats *events, size_t events__s
  * @p->sched_task_group is stable for the duration of the SCX op. See
  * SCX_CALL_OP_TASK() for details.
  */
-__bpf_kfunc struct cgroup *scx_bpf_task_cgroup(struct task_struct *p,
-					       const struct bpf_prog_aux *aux)
+__bpf_kfunc সংরচনা cgroup *scx_bpf_task_cgroup(সংরচনা task_struct *p,
+					       ধ্রুৱ সংরচনা bpf_prog_aux *aux)
 {
-	struct task_group *tg = p->sched_task_group;
-	struct cgroup *cgrp = &cgrp_dfl_root.cgrp;
-	struct scx_sched *sch;
+	সংরচনা task_group *tg = p->sched_task_group;
+	সংরচনা cgroup *cgrp = &cgrp_dfl_মূল.cgrp;
+	সংরচনা scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		goto out;
+	যদি (unlikely(!sch))
+		গচ্ছ out;
 
-	if (!scx_kf_arg_task_ok(sch, p))
-		goto out;
+	যদি (!scx_kf_arg_task_ok(sch, p))
+		গচ্ছ out;
 
 	cgrp = tg_cgrp(tg);
 
 out:
 	cgroup_get(cgrp);
-	return cgrp;
+	ঘূৰাই cgrp;
 }
 #endif	/* CONFIG_CGROUP_SCHED */
 
@@ -10913,7 +10913,7 @@ BTF_ID_FLAGS(func, scx_bpf_cpuperf_set, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_cidperf_cap, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_cidperf_cur, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_cidperf_set, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_nr_node_ids)
+BTF_ID_FLAGS(func, scx_bpf_nr_গ্ৰন্থি_ids)
 BTF_ID_FLAGS(func, scx_bpf_nr_cpu_ids)
 BTF_ID_FLAGS(func, scx_bpf_nr_cids)
 BTF_ID_FLAGS(func, scx_bpf_nr_online_cids)
@@ -10940,7 +10940,7 @@ BTF_ID_FLAGS(func, scx_bpf_sub_caps, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_sub_kill_bstr, KF_IMPLICIT_ARGS)
 BTF_KFUNCS_END(scx_kfunc_ids_any)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_any = {
+স্থির ধ্রুৱ সংরচনা btf_kfunc_id_set scx_kfunc_set_any = {
 	.owner			= THIS_MODULE,
 	.set			= &scx_kfunc_ids_any,
 	.filter			= scx_kfunc_context_filter,
@@ -10964,7 +10964,7 @@ BTF_KFUNCS_START(scx_kfunc_ids_cpu_only)
 BTF_ID_FLAGS(func, scx_bpf_kick_cpu, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_IMPLICIT_ARGS | KF_RET_NULL | KF_RCU_PROTECTED)
-BTF_ID_FLAGS(func, scx_bpf_cpu_node, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_cpu_গ্ৰন্থি, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_cpuperf_set, KF_IMPLICIT_ARGS)
@@ -10975,15 +10975,15 @@ BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_ARGS | KF_RCU)
 BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_ARGS | KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask_node, KF_IMPLICIT_ARGS | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask_গ্ৰন্থি, KF_IMPLICIT_ARGS | KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask_node, KF_IMPLICIT_ARGS | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask_গ্ৰন্থি, KF_IMPLICIT_ARGS | KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_put_idle_cpumask, KF_RELEASE)
 BTF_ID_FLAGS(func, scx_bpf_test_and_clear_cpu_idle, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_node, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_গ্ৰন্থি, KF_IMPLICIT_ARGS | KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_node, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_গ্ৰন্থি, KF_IMPLICIT_ARGS | KF_RCU)
 BTF_KFUNCS_END(scx_kfunc_ids_cpu_only)
 
 /*
@@ -10993,7 +10993,7 @@ BTF_KFUNCS_END(scx_kfunc_ids_cpu_only)
  * consults this table to decide whether a context-sensitive kfunc is callable
  * from a given SCX op.
  */
-enum scx_kf_allow_flags {
+গণনা scx_kf_allow_flags {
 	SCX_KF_ALLOW_UNLOCKED		= 1 << 0,
 	SCX_KF_ALLOW_INIT_CIDS		= 1 << 1,
 	SCX_KF_ALLOW_CPU_RELEASE	= 1 << 2,
@@ -11007,7 +11007,7 @@ enum scx_kf_allow_flags {
  * SCX_OP_IDX(op). Ops not listed only permit kfuncs that are not
  * context-sensitive.
  */
-static const u32 scx_kf_allow_flags[] = {
+স্থির ধ্রুৱ u32 scx_kf_allow_flags[] = {
 	[SCX_OP_IDX(select_cpu)]	= SCX_KF_ALLOW_SELECT_CPU | SCX_KF_ALLOW_ENQUEUE,
 	[SCX_OP_IDX(enqueue)]		= SCX_KF_ALLOW_SELECT_CPU | SCX_KF_ALLOW_ENQUEUE,
 	[SCX_OP_IDX(dispatch)]		= SCX_KF_ALLOW_ENQUEUE | SCX_KF_ALLOW_DISPATCH,
@@ -11041,7 +11041,7 @@ static const u32 scx_kf_allow_flags[] = {
  * kfunc - so the filter must short-circuit on kfuncs it doesn't govern by
  * falling through to "allow" when none of the SCX sets contain the kfunc.
  */
-int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id)
+পূর্ণাঙ্ক scx_kfunc_context_filter(ধ্রুৱ সংরচনা bpf_prog *prog, u32 kfunc_id)
 {
 	bool in_unlocked = btf_id_set8_contains(&scx_kfunc_ids_unlocked, kfunc_id);
 	bool in_init_cids = btf_id_set8_contains(&scx_kfunc_ids_init_cids, kfunc_id);
@@ -11056,16 +11056,16 @@ int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id)
 	u32 moff, flags;
 
 	/* Not an SCX kfunc - allow. */
-	if (!(in_unlocked || in_init_cids || in_select_cpu || in_enqueue || in_dispatch ||
+	যদি (!(in_unlocked || in_init_cids || in_select_cpu || in_enqueue || in_dispatch ||
 	      in_cpu_release || in_idle || in_any || in_cid))
-		return 0;
+		ঘূৰাই 0;
 
 	/* SYSCALL progs (e.g. BPF test_run()) may call unlocked and select_cpu kfuncs. */
-	if (prog->type == BPF_PROG_TYPE_SYSCALL)
-		return (in_unlocked || in_select_cpu || in_idle || in_any || in_cid) ? 0 : -EACCES;
+	যদি (prog->type == BPF_PROG_TYPE_SYSCALL)
+		ঘূৰাই (in_unlocked || in_select_cpu || in_idle || in_any || in_cid) ? 0 : -EACCES;
 
-	if (prog->type != BPF_PROG_TYPE_STRUCT_OPS)
-		return (in_any || in_idle || in_cid) ? 0 : -EACCES;
+	যদি (prog->type != BPF_PROG_TYPE_STRUCT_OPS)
+		ঘূৰাই (in_any || in_idle || in_cid) ? 0 : -EACCES;
 
 	/*
 	 * add_subprog_and_kfunc() collects all kfunc calls, including dead code
@@ -11074,8 +11074,8 @@ int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id)
 	 * do_check_main() re-runs the filter with st_ops set and enforces the
 	 * actual restrictions.
 	 */
-	if (!prog->aux->st_ops)
-		return 0;
+	যদি (!prog->aux->st_ops)
+		ঘূৰাই 0;
 
 	/*
 	 * Non-SCX struct_ops: SCX kfuncs are not permitted.
@@ -11086,9 +11086,9 @@ int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id)
 	 * scx_kf_allow_flags[] table indexed by SCX_MOFF_IDX(moff) applies to
 	 * both.
 	 */
-	if (prog->aux->st_ops != &bpf_sched_ext_ops &&
+	যদি (prog->aux->st_ops != &bpf_sched_ext_ops &&
 	    prog->aux->st_ops != &bpf_sched_ext_ops_cid)
-		return -EACCES;
+		ঘূৰাই -EACCES;
 
 	/*
 	 * cid-form schedulers must use cid/cmask kfuncs. cid and cpu are both
@@ -11096,35 +11096,35 @@ int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id)
 	 * load time. The reverse (cpu-form calling cid-form kfuncs) is
 	 * intentionally permissive to ease gradual cpumask -> cid migration.
 	 */
-	if (prog->aux->st_ops == &bpf_sched_ext_ops_cid && in_cpu_only)
-		return -EACCES;
+	যদি (prog->aux->st_ops == &bpf_sched_ext_ops_cid && in_cpu_only)
+		ঘূৰাই -EACCES;
 
 	/* SCX struct_ops: check the per-op allow list. */
-	if (in_any || in_idle || in_cid)
-		return 0;
+	যদি (in_any || in_idle || in_cid)
+		ঘূৰাই 0;
 
 	moff = prog->aux->attach_st_ops_member_off;
 	flags = scx_kf_allow_flags[SCX_MOFF_IDX(moff)];
 
-	if ((flags & SCX_KF_ALLOW_UNLOCKED) && in_unlocked)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_INIT_CIDS) && in_init_cids)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_CPU_RELEASE) && in_cpu_release)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_DISPATCH) && in_dispatch)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_ENQUEUE) && in_enqueue)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_SELECT_CPU) && in_select_cpu)
-		return 0;
+	যদি ((flags & SCX_KF_ALLOW_UNLOCKED) && in_unlocked)
+		ঘূৰাই 0;
+	যদি ((flags & SCX_KF_ALLOW_INIT_CIDS) && in_init_cids)
+		ঘূৰাই 0;
+	যদি ((flags & SCX_KF_ALLOW_CPU_RELEASE) && in_cpu_release)
+		ঘূৰাই 0;
+	যদি ((flags & SCX_KF_ALLOW_DISPATCH) && in_dispatch)
+		ঘূৰাই 0;
+	যদি ((flags & SCX_KF_ALLOW_ENQUEUE) && in_enqueue)
+		ঘূৰাই 0;
+	যদি ((flags & SCX_KF_ALLOW_SELECT_CPU) && in_select_cpu)
+		ঘূৰাই 0;
 
-	return -EACCES;
+	ঘূৰাই -EACCES;
 }
 
-static int __init scx_init(void)
+স্থির পূর্ণাঙ্ক __init scx_init(শূন্য)
 {
-	int ret;
+	পূর্ণাঙ্ক ret;
 
 	/*
 	 * sched_ext_ops_cid mirrors sched_ext_ops up to and including @priv.
@@ -11133,8 +11133,8 @@ static int __init scx_init(void)
 	 * matching for the shared fields. Catch any drift at boot.
 	 */
 #define CID_OFFSET_MATCH(cpu_field, cid_field)					\
-	BUILD_BUG_ON(offsetof(struct sched_ext_ops, cpu_field) !=		\
-		     offsetof(struct sched_ext_ops_cid, cid_field))
+	BUILD_BUG_ON(offsetof(সংরচনা sched_ext_ops, cpu_field) !=		\
+		     offsetof(সংরচনা sched_ext_ops_cid, cid_field))
 	/* data fields used by bpf_scx_init_member() */
 	CID_OFFSET_MATCH(dispatch_max_batch, dispatch_max_batch);
 	CID_OFFSET_MATCH(flags, flags);
@@ -11195,8 +11195,8 @@ static int __init scx_init(void)
 	 * cpu_acquire/cpu_release for cid-form because reading those fields
 	 * past the BPF allocation would be UB.
 	 */
-	BUILD_BUG_ON(offsetof(struct sched_ext_ops_cid, __end) !=
-		     offsetofend(struct sched_ext_ops, priv));
+	BUILD_BUG_ON(offsetof(সংরচনা sched_ext_ops_cid, __end) !=
+		     offsetofend(সংরচনা sched_ext_ops, priv));
 #undef CID_OFFSET_MATCH
 
 	/*
@@ -11211,7 +11211,7 @@ static int __init scx_init(void)
 	 * kfunc lookup; it consults scx_kf_allow_flags[] to enforce per-op
 	 * restrictions at verify time.
 	 */
-	if ((ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
+	যদি ((ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
 					     &scx_kfunc_set_enqueue_dispatch)) ||
 	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
 					     &scx_kfunc_set_dispatch)) ||
@@ -11228,52 +11228,52 @@ static int __init scx_init(void)
 	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL,
 					     &scx_kfunc_set_any))) {
 		pr_err("sched_ext: Failed to register kfunc sets (%d)\n", ret);
-		return ret;
+		ঘূৰাই ret;
 	}
 
 	ret = scx_idle_init();
-	if (ret) {
+	যদি (ret) {
 		pr_err("sched_ext: Failed to initialize idle tracking (%d)\n", ret);
-		return ret;
+		ঘূৰাই ret;
 	}
 
 	ret = scx_cid_kfunc_init();
-	if (ret) {
+	যদি (ret) {
 		pr_err("sched_ext: Failed to register cid kfuncs (%d)\n", ret);
-		return ret;
+		ঘূৰাই ret;
 	}
 
 	ret = register_bpf_struct_ops(&bpf_sched_ext_ops, sched_ext_ops);
-	if (ret) {
+	যদি (ret) {
 		pr_err("sched_ext: Failed to register struct_ops (%d)\n", ret);
-		return ret;
+		ঘূৰাই ret;
 	}
 
 	ret = register_bpf_struct_ops(&bpf_sched_ext_ops_cid, sched_ext_ops_cid);
-	if (ret) {
+	যদি (ret) {
 		pr_err("sched_ext: Failed to register cid struct_ops (%d)\n", ret);
-		return ret;
+		ঘূৰাই ret;
 	}
 
 	ret = register_pm_notifier(&scx_pm_notifier);
-	if (ret) {
+	যদি (ret) {
 		pr_err("sched_ext: Failed to register PM notifier (%d)\n", ret);
-		return ret;
+		ঘূৰাই ret;
 	}
 
 	scx_kset = kset_create_and_add("sched_ext", &scx_uevent_ops, kernel_kobj);
-	if (!scx_kset) {
+	যদি (!scx_kset) {
 		pr_err("sched_ext: Failed to create /sys/kernel/sched_ext\n");
-		return -ENOMEM;
+		ঘূৰাই -ENOMEM;
 	}
 
 	ret = sysfs_create_group(&scx_kset->kobj, &scx_global_attr_group);
-	if (ret < 0) {
+	যদি (ret < 0) {
 		pr_err("sched_ext: Failed to add global attributes\n");
-		return ret;
+		ঘূৰাই ret;
 	}
 
-	return 0;
+	ঘূৰাই 0;
 }
 __initcall(scx_init);
 

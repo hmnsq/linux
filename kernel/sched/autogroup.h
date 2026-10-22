@@ -2,65 +2,65 @@
 #ifndef _KERNEL_SCHED_AUTOGROUP_H
 #define _KERNEL_SCHED_AUTOGROUP_H
 
-#include "sched.h"
+#অন্তর্ভাৱ "sched.h"
 
 #ifdef CONFIG_SCHED_AUTOGROUP
 
-struct autogroup {
+সংরচনা autogroup {
 	/*
 	 * Reference doesn't mean how many threads attach to this
 	 * autogroup now. It just stands for the number of tasks
 	 * which could use this autogroup.
 	 */
-	struct kref		kref;
-	struct task_group	*tg;
-	struct rw_semaphore	lock;
+	সংরচনা kref		kref;
+	সংরচনা task_group	*tg;
+	সংরচনা rw_semaphore	lock;
 	unsigned long		id;
-	int			nice;
+	পূর্ণাঙ্ক			nice;
 };
 
-extern void autogroup_init(struct task_struct *init_task);
-extern void autogroup_free(struct task_group *tg);
+বাহ্য শূন্য autogroup_init(সংরচনা task_struct *init_task);
+বাহ্য শূন্য autogroup_free(সংরচনা task_group *tg);
 
-static inline bool task_group_is_autogroup(struct task_group *tg)
+স্থির অন্তঃস্থ bool task_group_is_autogroup(সংরচনা task_group *tg)
 {
-	return !!tg->autogroup;
+	ঘূৰাই !!tg->autogroup;
 }
 
-extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
+বাহ্য bool task_wants_autogroup(সংরচনা task_struct *p, সংরচনা task_group *tg);
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+স্থির অন্তঃস্থ সংরচনা task_group *
+autogroup_task_group(সংরচনা task_struct *p, সংরচনা task_group *tg)
 {
-	extern unsigned int sysctl_sched_autogroup_enabled;
-	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+	বাহ্য unsigned পূর্ণাঙ্ক sysctl_sched_autogroup_enabled;
+	পূর্ণাঙ্ক enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
 
-	if (enabled && task_wants_autogroup(p, tg))
-		return p->signal->autogroup->tg;
+	যদি (enabled && task_wants_autogroup(p, tg))
+		ঘূৰাই p->সঙ্কেত->autogroup->tg;
 
-	return tg;
+	ঘূৰাই tg;
 }
 
-extern int autogroup_path(struct task_group *tg, char *buf, int buflen);
+বাহ্য পূর্ণাঙ্ক autogroup_path(সংরচনা task_group *tg, ৱর্ণ *buf, পূর্ণাঙ্ক buflen);
 
-#else /* !CONFIG_SCHED_AUTOGROUP: */
+#অন্যথা /* !CONFIG_SCHED_AUTOGROUP: */
 
-static inline void autogroup_init(struct task_struct *init_task) {  }
-static inline void autogroup_free(struct task_group *tg) { }
-static inline bool task_group_is_autogroup(struct task_group *tg)
+স্থির অন্তঃস্থ শূন্য autogroup_init(সংরচনা task_struct *init_task) {  }
+স্থির অন্তঃস্থ শূন্য autogroup_free(সংরচনা task_group *tg) { }
+স্থির অন্তঃস্থ bool task_group_is_autogroup(সংরচনা task_group *tg)
 {
-	return 0;
+	ঘূৰাই 0;
 }
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+স্থির অন্তঃস্থ সংরচনা task_group *
+autogroup_task_group(সংরচনা task_struct *p, সংরচনা task_group *tg)
 {
-	return tg;
+	ঘূৰাই tg;
 }
 
-static inline int autogroup_path(struct task_group *tg, char *buf, int buflen)
+স্থির অন্তঃস্থ পূর্ণাঙ্ক autogroup_path(সংরচনা task_group *tg, ৱর্ণ *buf, পূর্ণাঙ্ক buflen)
 {
-	return 0;
+	ঘূৰাই 0;
 }
 
 #endif /* !CONFIG_SCHED_AUTOGROUP */
