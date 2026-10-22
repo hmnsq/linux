@@ -2,16 +2,16 @@
 /*
  * <linux/swait.h> (simple wait queues ) implementation:
  */
-#include "sched.h"
+#అన్తర్భావ "sched.h"
 
-void __init_swait_queue_head(struct swait_queue_head *q, const char *name,
-			     struct lock_class_key *key)
+శూన్య __init_swait_queue_head(నిర్మాణం swait_వరుస_తల *q, స్థిరరాశి అక్షరం *name,
+			     నిర్మాణం తాళం_class_కీలకం *కీలకం)
 {
-	raw_spin_lock_init(&q->lock);
-	lockdep_set_class_and_name(&q->lock, key, name);
-	INIT_LIST_HEAD(&q->task_list);
+	raw_spin_తాళం_init(&q->తాళం);
+	lockdep_సమితి_class_and_name(&q->తాళం, కీలకం, name);
+	INIT_LIST_తల(&q->task_list);
 }
-EXPORT_SYMBOL(__init_swait_queue_head);
+EXPORT_చిహ్నం(__init_swait_queue_head);
 
 /*
  * The thing about the wake_up_state() return value; I think we can ignore it.
@@ -19,18 +19,18 @@ EXPORT_SYMBOL(__init_swait_queue_head);
  * If for some reason it would return 0, that means the previously waiting
  * task is already running, so it will observe condition true (or has already).
  */
-void swake_up_locked(struct swait_queue_head *q, int wake_flags)
+శూన్య swake_పైకి_locked(నిర్మాణం swait_వరుస_తల *q, పూర్ణాంకం wake_flags)
 {
-	struct swait_queue *curr;
+	నిర్మాణం swait_వరుస *curr;
 
-	if (list_empty(&q->task_list))
-		return;
+	ఒకవేళ (list_ఖాళీలు(&q->task_list))
+		తిరిగి;
 
-	curr = list_first_entry(&q->task_list, typeof(*curr), task_list);
-	try_to_wake_up(curr->task, TASK_NORMAL, wake_flags);
+	curr = list_మొదటి_నమోదు(&q->task_list, typeof(*curr), task_list);
+	try_గమ్యం_wake_పైకి(curr->task, TASK_సాధారణ, wake_flags);
 	list_del_init(&curr->task_list);
 }
-EXPORT_SYMBOL(swake_up_locked);
+EXPORT_చిహ్నం(swake_పైకి_locked);
 
 /*
  * Wake up all waiters. This is an interface which is solely exposed for
@@ -39,107 +39,107 @@ EXPORT_SYMBOL(swake_up_locked);
  * It is intentionally different from swake_up_all() to allow usage from
  * hard interrupt context and interrupt disabled regions.
  */
-void swake_up_all_locked(struct swait_queue_head *q)
+శూన్య swake_పైకి_all_locked(నిర్మాణం swait_వరుస_తల *q)
 {
-	while (!list_empty(&q->task_list))
-		swake_up_locked(q, 0);
+	అయితే (!list_ఖాళీలు(&q->task_list))
+		swake_పైకి_locked(q, 0);
 }
 
-void swake_up_one(struct swait_queue_head *q)
+శూన్య swake_పైకి_one(నిర్మాణం swait_వరుస_తల *q)
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
-	swake_up_locked(q, 0);
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	raw_spin_తాళం_irqsave(&q->తాళం, flags);
+	swake_పైకి_locked(q, 0);
+	raw_spin_unlock_irqrestore(&q->తాళం, flags);
 }
-EXPORT_SYMBOL(swake_up_one);
+EXPORT_చిహ్నం(swake_పైకి_one);
 
 /*
  * Does not allow usage from IRQ disabled, since we must be able to
  * release IRQs to guarantee bounded hold time.
  */
-void swake_up_all(struct swait_queue_head *q)
+శూన్య swake_పైకి_all(నిర్మాణం swait_వరుస_తల *q)
 {
-	struct swait_queue *curr;
-	LIST_HEAD(tmp);
+	నిర్మాణం swait_వరుస *curr;
+	LIST_తల(tmp);
 
-	raw_spin_lock_irq(&q->lock);
+	raw_spin_తాళం_irq(&q->తాళం);
 	list_splice_init(&q->task_list, &tmp);
-	while (!list_empty(&tmp)) {
-		curr = list_first_entry(&tmp, typeof(*curr), task_list);
+	అయితే (!list_ఖాళీలు(&tmp)) {
+		curr = list_మొదటి_నమోదు(&tmp, typeof(*curr), task_list);
 
-		wake_up_state(curr->task, TASK_NORMAL);
+		wake_పైకి_state(curr->task, TASK_సాధారణ);
 		list_del_init(&curr->task_list);
 
-		if (list_empty(&tmp))
-			break;
+		ఒకవేళ (list_ఖాళీలు(&tmp))
+			ఆపు;
 
-		raw_spin_unlock_irq(&q->lock);
-		raw_spin_lock_irq(&q->lock);
+		raw_spin_unlock_irq(&q->తాళం);
+		raw_spin_తాళం_irq(&q->తాళం);
 	}
-	raw_spin_unlock_irq(&q->lock);
+	raw_spin_unlock_irq(&q->తాళం);
 }
-EXPORT_SYMBOL(swake_up_all);
+EXPORT_చిహ్నం(swake_పైకి_all);
 
-void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait)
+శూన్య __prepare_to_swait(నిర్మాణం swait_వరుస_తల *q, నిర్మాణం swait_వరుస *wait)
 {
 	wait->task = current;
-	if (list_empty(&wait->task_list))
-		list_add_tail(&wait->task_list, &q->task_list);
+	ఒకవేళ (list_ఖాళీలు(&wait->task_list))
+		list_కూడు_తోక(&wait->task_list, &q->task_list);
 }
 
-void prepare_to_swait_exclusive(struct swait_queue_head *q, struct swait_queue *wait, int state)
+శూన్య prepare_గమ్యం_swait_exclusive(నిర్మాణం swait_వరుస_తల *q, నిర్మాణం swait_వరుస *wait, పూర్ణాంకం state)
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
+	raw_spin_తాళం_irqsave(&q->తాళం, flags);
 	__prepare_to_swait(q, wait);
-	set_current_state(state);
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	సమితి_current_state(state);
+	raw_spin_unlock_irqrestore(&q->తాళం, flags);
 }
-EXPORT_SYMBOL(prepare_to_swait_exclusive);
+EXPORT_చిహ్నం(prepare_గమ్యం_swait_exclusive);
 
-long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queue *wait, int state)
+దీర్ఘ prepare_గమ్యం_swait_event(నిర్మాణం swait_వరుస_తల *q, నిర్మాణం swait_వరుస *wait, పూర్ణాంకం state)
 {
-	unsigned long flags;
-	long ret = 0;
+	గుర్తులేని దీర్ఘ flags;
+	దీర్ఘ ret = 0;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
-	if (signal_pending_state(state, current)) {
+	raw_spin_తాళం_irqsave(&q->తాళం, flags);
+	ఒకవేళ (signal_pending_state(state, current)) {
 		/*
 		 * See prepare_to_wait_event(). TL;DR, subsequent swake_up_one()
 		 * must not see us.
 		 */
 		list_del_init(&wait->task_list);
 		ret = -ERESTARTSYS;
-	} else {
+	} లేకపోతే {
 		__prepare_to_swait(q, wait);
-		set_current_state(state);
+		సమితి_current_state(state);
 	}
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	raw_spin_unlock_irqrestore(&q->తాళం, flags);
 
-	return ret;
+	తిరిగి ret;
 }
-EXPORT_SYMBOL(prepare_to_swait_event);
+EXPORT_చిహ్నం(prepare_గమ్యం_swait_event);
 
-void __finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
+శూన్య __finish_swait(నిర్మాణం swait_వరుస_తల *q, నిర్మాణం swait_వరుస *wait)
 {
 	__set_current_state(TASK_RUNNING);
-	if (!list_empty(&wait->task_list))
+	ఒకవేళ (!list_ఖాళీలు(&wait->task_list))
 		list_del_init(&wait->task_list);
 }
 
-void finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
+శూన్య ముగింపు_swait(నిర్మాణం swait_వరుస_తల *q, నిర్మాణం swait_వరుస *wait)
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
 	__set_current_state(TASK_RUNNING);
 
-	if (!list_empty_careful(&wait->task_list)) {
-		raw_spin_lock_irqsave(&q->lock, flags);
+	ఒకవేళ (!list_ఖాళీలు_careful(&wait->task_list)) {
+		raw_spin_తాళం_irqsave(&q->తాళం, flags);
 		list_del_init(&wait->task_list);
-		raw_spin_unlock_irqrestore(&q->lock, flags);
+		raw_spin_unlock_irqrestore(&q->తాళం, flags);
 	}
 }
-EXPORT_SYMBOL(finish_swait);
+EXPORT_చిహ్నం(ముగింపు_swait);

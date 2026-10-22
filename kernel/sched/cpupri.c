@@ -22,7 +22,7 @@
  *  worst case complexity of O(min(101, nr_domcpus)), though the scenario that
  *  yields the worst case search is fairly contrived.
  */
-#include "sched.h"
+#అన్తర్భావ "sched.h"
 
 /*
  * p->rt_priority   p->prio   newpri   cpupri
@@ -40,38 +40,38 @@
  *
  *				 100	  100 (CPUPRI_HIGHER)
  */
-static int convert_prio(int prio)
+స్థిర పూర్ణాంకం convert_prio(పూర్ణాంకం prio)
 {
-	int cpupri;
+	పూర్ణాంకం cpupri;
 
-	switch (prio) {
-	case CPUPRI_INVALID:
+	ఎంపిక (prio) {
+	స్థితి CPUPRI_INVALID:
 		cpupri = CPUPRI_INVALID;	/* -1 */
-		break;
+		ఆపు;
 
-	case 0 ... 98:
+	స్థితి 0 ... 98:
 		cpupri = MAX_RT_PRIO-1 - prio;	/* 1 ... 99 */
-		break;
+		ఆపు;
 
-	case MAX_RT_PRIO-1:
-		cpupri = CPUPRI_NORMAL;		/*  0 */
-		break;
+	స్థితి MAX_RT_PRIO-1:
+		cpupri = CPUPRI_సాధారణ;		/*  0 */
+		ఆపు;
 
-	case MAX_RT_PRIO:
+	స్థితి MAX_RT_PRIO:
 		cpupri = CPUPRI_HIGHER;		/* 100 */
-		break;
+		ఆపు;
 	}
 
-	return cpupri;
+	తిరిగి cpupri;
 }
 
-static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
-				struct cpumask *lowest_mask, int idx)
+స్థిర అంతఃవరుస పూర్ణాంకం __cpupri_find(నిర్మాణం cpupri *cp, నిర్మాణం task_struct *p,
+				నిర్మాణం cpumask *అత్యల్ప_ముసుగు, పూర్ణాంకం idx)
 {
-	struct cpupri_vec *vec  = &cp->pri_to_cpu[idx];
-	int skip = 0;
+	నిర్మాణం cpupri_vec *vec  = &cp->pri_గమ్యం_cpu[idx];
+	పూర్ణాంకం skip = 0;
 
-	if (!atomic_read(&(vec)->count))
+	ఒకవేళ (!atomic_read(&(vec)->లెక్క))
 		skip = 1;
 	/*
 	 * When looking at the vector, we need to read the counter,
@@ -94,15 +94,15 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 	smp_rmb();
 
 	/* Need to do the rmb for every iteration */
-	if (skip)
-		return 0;
+	ఒకవేళ (skip)
+		తిరిగి 0;
 
-	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
-		return 0;
+	ఒకవేళ (cpumask_any_and(&p->cpus_ముసుగు, vec->ముసుగు) >= nr_cpu_ids)
+		తిరిగి 0;
 
-	if (lowest_mask) {
-		cpumask_and(lowest_mask, &p->cpus_mask, vec->mask);
-		cpumask_and(lowest_mask, lowest_mask, cpu_active_mask);
+	ఒకవేళ (అత్యల్ప_ముసుగు) {
+		cpumask_and(అత్యల్ప_ముసుగు, &p->cpus_ముసుగు, vec->ముసుగు);
+		cpumask_and(అత్యల్ప_ముసుగు, అత్యల్ప_ముసుగు, cpu_చురుకైన_ముసుగు);
 
 		/*
 		 * We have to ensure that we have at least one bit
@@ -112,17 +112,17 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 		 * condition, simply act as though we never hit this
 		 * priority level and continue on.
 		 */
-		if (cpumask_empty(lowest_mask))
-			return 0;
+		ఒకవేళ (cpumask_ఖాళీలు(అత్యల్ప_ముసుగు))
+			తిరిగి 0;
 	}
 
-	return 1;
+	తిరిగి 1;
 }
 
-int cpupri_find(struct cpupri *cp, struct task_struct *p,
-		struct cpumask *lowest_mask)
+పూర్ణాంకం cpupri_కనుగొను(నిర్మాణం cpupri *cp, నిర్మాణం task_struct *p,
+		నిర్మాణం cpumask *అత్యల్ప_ముసుగు)
 {
-	return cpupri_find_fitness(cp, p, lowest_mask, NULL);
+	తిరిగి cpupri_కనుగొను_fitness(cp, p, అత్యల్ప_ముసుగు, ఖాళీ);
 }
 
 /**
@@ -142,37 +142,37 @@ int cpupri_find(struct cpupri *cp, struct task_struct *p,
  *
  * Return: (int)bool - CPUs were found
  */
-int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
-		struct cpumask *lowest_mask,
-		bool (*fitness_fn)(struct task_struct *p, int cpu))
+పూర్ణాంకం cpupri_కనుగొను_fitness(నిర్మాణం cpupri *cp, నిర్మాణం task_struct *p,
+		నిర్మాణం cpumask *అత్యల్ప_ముసుగు,
+		bool (*fitness_fn)(నిర్మాణం task_struct *p, పూర్ణాంకం cpu))
 {
-	int task_pri = convert_prio(p->prio);
-	int idx, cpu;
+	పూర్ణాంకం task_pri = convert_prio(p->prio);
+	పూర్ణాంకం idx, cpu;
 
 	WARN_ON_ONCE(task_pri >= CPUPRI_NR_PRIORITIES);
 
-	for (idx = 0; idx < task_pri; idx++) {
+	కొరకు (idx = 0; idx < task_pri; idx++) {
 
-		if (!__cpupri_find(cp, p, lowest_mask, idx))
-			continue;
+		ఒకవేళ (!__cpupri_find(cp, p, అత్యల్ప_ముసుగు, idx))
+			కొనసాగు;
 
-		if (!lowest_mask || !fitness_fn)
-			return 1;
+		ఒకవేళ (!అత్యల్ప_ముసుగు || !fitness_fn)
+			తిరిగి 1;
 
 		/* Ensure the capacity of the CPUs fit the task */
-		for_each_cpu(cpu, lowest_mask) {
-			if (!fitness_fn(p, cpu))
-				cpumask_clear_cpu(cpu, lowest_mask);
+		for_each_cpu(cpu, అత్యల్ప_ముసుగు) {
+			ఒకవేళ (!fitness_fn(p, cpu))
+				cpumask_clear_cpu(cpu, అత్యల్ప_ముసుగు);
 		}
 
 		/*
 		 * If no CPU at the current priority can fit the task
 		 * continue looking
 		 */
-		if (cpumask_empty(lowest_mask))
-			continue;
+		ఒకవేళ (cpumask_ఖాళీలు(అత్యల్ప_ముసుగు))
+			కొనసాగు;
 
-		return 1;
+		తిరిగి 1;
 	}
 
 	/*
@@ -192,10 +192,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 	 * must do proper RT planning to avoid overloading the system if they
 	 * really care.
 	 */
-	if (fitness_fn)
-		return cpupri_find(cp, p, lowest_mask);
+	ఒకవేళ (fitness_fn)
+		తిరిగి cpupri_కనుగొను(cp, p, అత్యల్ప_ముసుగు);
 
-	return 0;
+	తిరిగి 0;
 }
 
 /**
@@ -208,18 +208,18 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpupri_set(struct cpupri *cp, int cpu, int newpri)
+శూన్య cpupri_సమితి(నిర్మాణం cpupri *cp, పూర్ణాంకం cpu, పూర్ణాంకం newpri)
 {
-	int *currpri = &cp->cpu_to_pri[cpu];
-	int oldpri = *currpri;
-	int do_mb = 0;
+	పూర్ణాంకం *currpri = &cp->cpu_గమ్యం_pri[cpu];
+	పూర్ణాంకం oldpri = *currpri;
+	పూర్ణాంకం do_mb = 0;
 
 	newpri = convert_prio(newpri);
 
 	BUG_ON(newpri >= CPUPRI_NR_PRIORITIES);
 
-	if (newpri == oldpri)
-		return;
+	ఒకవేళ (newpri == oldpri)
+		తిరిగి;
 
 	/*
 	 * If the CPU was currently mapped to a different value, we
@@ -227,21 +227,21 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 	 * Note, we must add the new value first, otherwise we risk the
 	 * cpu being missed by the priority loop in cpupri_find.
 	 */
-	if (likely(newpri != CPUPRI_INVALID)) {
-		struct cpupri_vec *vec = &cp->pri_to_cpu[newpri];
+	ఒకవేళ (likely(newpri != CPUPRI_INVALID)) {
+		నిర్మాణం cpupri_vec *vec = &cp->pri_గమ్యం_cpu[newpri];
 
-		cpumask_set_cpu(cpu, vec->mask);
+		cpumask_సమితి_cpu(cpu, vec->ముసుగు);
 		/*
 		 * When adding a new vector, we update the mask first,
 		 * do a write memory barrier, and then update the count, to
 		 * make sure the vector is visible when count is set.
 		 */
 		smp_mb__before_atomic();
-		atomic_inc(&(vec)->count);
+		atomic_inc(&(vec)->లెక్క);
 		do_mb = 1;
 	}
-	if (likely(oldpri != CPUPRI_INVALID)) {
-		struct cpupri_vec *vec  = &cp->pri_to_cpu[oldpri];
+	ఒకవేళ (likely(oldpri != CPUPRI_INVALID)) {
+		నిర్మాణం cpupri_vec *vec  = &cp->pri_గమ్యం_cpu[oldpri];
 
 		/*
 		 * Because the order of modification of the vec->count
@@ -255,16 +255,16 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		 * We only need to do a memory barrier if we updated
 		 * the new priority vec.
 		 */
-		if (do_mb)
+		ఒకవేళ (do_mb)
 			smp_mb__after_atomic();
 
 		/*
 		 * When removing from the vector, we decrement the counter first
 		 * do a memory barrier and then clear the mask.
 		 */
-		atomic_dec(&(vec)->count);
+		atomic_dec(&(vec)->లెక్క);
 		smp_mb__after_atomic();
-		cpumask_clear_cpu(cpu, vec->mask);
+		cpumask_clear_cpu(cpu, vec->ముసుగు);
 	}
 
 	*currpri = newpri;
@@ -276,42 +276,42 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
  *
  * Return: -ENOMEM on memory allocation failure.
  */
-int cpupri_init(struct cpupri *cp)
+పూర్ణాంకం cpupri_init(నిర్మాణం cpupri *cp)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
-		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
+	కొరకు (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
+		నిర్మాణం cpupri_vec *vec = &cp->pri_గమ్యం_cpu[i];
 
-		atomic_set(&vec->count, 0);
-		if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
-			goto cleanup;
+		atomic_సమితి(&vec->లెక్క, 0);
+		ఒకవేళ (!zalloc_cpumask_var(&vec->ముసుగు, GFP_KERNEL))
+			వెళ్ళు cleanup;
 	}
 
-	cp->cpu_to_pri = kzalloc_objs(int, nr_cpu_ids);
-	if (!cp->cpu_to_pri)
-		goto cleanup;
+	cp->cpu_గమ్యం_pri = kzalloc_objs(పూర్ణాంకం, nr_cpu_ids);
+	ఒకవేళ (!cp->cpu_గమ్యం_pri)
+		వెళ్ళు cleanup;
 
 	for_each_possible_cpu(i)
-		cp->cpu_to_pri[i] = CPUPRI_INVALID;
+		cp->cpu_గమ్యం_pri[i] = CPUPRI_INVALID;
 
-	return 0;
+	తిరిగి 0;
 
 cleanup:
-	for (i--; i >= 0; i--)
-		free_cpumask_var(cp->pri_to_cpu[i].mask);
-	return -ENOMEM;
+	కొరకు (i--; i >= 0; i--)
+		free_cpumask_var(cp->pri_గమ్యం_cpu[i].ముసుగు);
+	తిరిగి -ENOMEM;
 }
 
 /**
  * cpupri_cleanup - clean up the cpupri structure
  * @cp: The cpupri context
  */
-void cpupri_cleanup(struct cpupri *cp)
+శూన్య cpupri_cleanup(నిర్మాణం cpupri *cp)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	kfree(cp->cpu_to_pri);
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
-		free_cpumask_var(cp->pri_to_cpu[i].mask);
+	kfree(cp->cpu_గమ్యం_pri);
+	కొరకు (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
+		free_cpumask_var(cp->pri_గమ్యం_cpu[i].ముసుగు);
 }

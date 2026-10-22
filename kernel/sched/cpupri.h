@@ -1,30 +1,30 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#include <linux/atomic.h>
-#include <linux/cpumask.h>
-#include <linux/sched/rt.h>
+#అన్తర్భావ <linux/atomic.h>
+#అన్తర్భావ <linux/cpumask.h>
+#అన్తర్భావ <linux/sched/rt.h>
 
-#define CPUPRI_NR_PRIORITIES	(MAX_RT_PRIO+1)
+#నిర్వచించు CPUPRI_NR_PRIORITIES	(MAX_RT_PRIO+1)
 
-#define CPUPRI_INVALID		-1
-#define CPUPRI_NORMAL		 0
+#నిర్వచించు CPUPRI_INVALID		-1
+#నిర్వచించు CPUPRI_సాధారణ		 0
 /* values 1-99 are for RT1-RT99 priorities */
-#define CPUPRI_HIGHER		100
+#నిర్వచించు CPUPRI_HIGHER		100
 
-struct cpupri_vec {
-	atomic_t		count;
-	cpumask_var_t		mask;
+నిర్మాణం cpupri_vec {
+	atomic_t		లెక్క;
+	cpumask_var_t		ముసుగు;
 };
 
-struct cpupri {
-	struct cpupri_vec	pri_to_cpu[CPUPRI_NR_PRIORITIES];
-	int			*cpu_to_pri;
+నిర్మాణం cpupri {
+	నిర్మాణం cpupri_vec	pri_గమ్యం_cpu[CPUPRI_NR_PRIORITIES];
+	పూర్ణాంకం			*cpu_గమ్యం_pri;
 };
 
-int  cpupri_find(struct cpupri *cp, struct task_struct *p,
-		 struct cpumask *lowest_mask);
-int  cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
-			 struct cpumask *lowest_mask,
-			 bool (*fitness_fn)(struct task_struct *p, int cpu));
-void cpupri_set(struct cpupri *cp, int cpu, int pri);
-int  cpupri_init(struct cpupri *cp);
-void cpupri_cleanup(struct cpupri *cp);
+పూర్ణాంకం  cpupri_కనుగొను(నిర్మాణం cpupri *cp, నిర్మాణం task_struct *p,
+		 నిర్మాణం cpumask *అత్యల్ప_ముసుగు);
+పూర్ణాంకం  cpupri_కనుగొను_fitness(నిర్మాణం cpupri *cp, నిర్మాణం task_struct *p,
+			 నిర్మాణం cpumask *అత్యల్ప_ముసుగు,
+			 bool (*fitness_fn)(నిర్మాణం task_struct *p, పూర్ణాంకం cpu));
+శూన్య cpupri_సమితి(నిర్మాణం cpupri *cp, పూర్ణాంకం cpu, పూర్ణాంకం pri);
+పూర్ణాంకం  cpupri_init(నిర్మాణం cpupri *cp);
+శూన్య cpupri_cleanup(నిర్మాణం cpupri *cp);

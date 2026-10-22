@@ -4,20 +4,20 @@
  * Using the avg_vruntime, do the right thing and preserve lag across
  * sleep+wake cycles. EEVDF placement strategy #1, #2 if disabled.
  */
-SCHED_FEAT(PLACE_LAG, true)
+SCHED_FEAT(ఉంచు_LAG, true)
 /*
  * Give new tasks half a slice to ease into the competition.
  */
-SCHED_FEAT(PLACE_DEADLINE_INITIAL, true)
+SCHED_FEAT(ఉంచు_DEADLINE_INITIAL, true)
 /*
  * Preserve relative virtual deadline on 'migration'.
  */
-SCHED_FEAT(PLACE_REL_DEADLINE, true)
+SCHED_FEAT(ఉంచు_REL_DEADLINE, true)
 /*
  * Inhibit (wakeup) preemption until the current task has either matched the
  * 0-lag point or until is has exhausted it's slice.
  */
-SCHED_FEAT(RUN_TO_PARITY, true)
+SCHED_FEAT(నిరంతరం_గమ్యం_PARITY, true)
 /*
  * Allow wakeup of tasks with a shorter slice to cancel RUN_TO_PARITY for
  * current.
@@ -29,7 +29,7 @@ SCHED_FEAT(PREEMPT_SHORT, true)
  * wakeup-preemption), since its likely going to consume data we
  * touched, increases cache locality.
  */
-SCHED_FEAT(NEXT_BUDDY, false)
+SCHED_FEAT(తదుపరి_BUDDY, false)
 
 /*
  * Allow completely ignoring cfs_rq->next; which can be set from various
@@ -55,7 +55,7 @@ SCHED_FEAT(CACHE_HOT_BUDDY, true)
  *
  * DELAY_ZERO clips the lag on dequeue (or wakeup) to 0.
  */
-SCHED_FEAT(DELAY_DEQUEUE, true)
+SCHED_FEAT(DELAY_వరుస_నుండి_తీయి, true)
 SCHED_FEAT(DELAY_ZERO, true)
 
 SCHED_FEAT(PARANOID_AVG, false)
@@ -65,29 +65,29 @@ SCHED_FEAT(PARANOID_AVG, false)
  */
 SCHED_FEAT(WAKEUP_PREEMPTION, true)
 
-#ifdef CONFIG_HRTIMER_REARM_DEFERRED
+#నిర్వచితమైతే CONFIG_HRTIMER_REARM_DEFERRED
 SCHED_FEAT(HRTICK, true)
 SCHED_FEAT(HRTICK_DL, true)
-#else
+#లేకపోతే
 SCHED_FEAT(HRTICK, false)
 SCHED_FEAT(HRTICK_DL, false)
-#endif
+#అయితే_ముగింపు
 
 /*
  * Decrement CPU capacity based on time not spent running tasks
  */
-SCHED_FEAT(NONTASK_CAPACITY, true)
+SCHED_FEAT(NONTASK_సామర్థ్యం, true)
 
-#ifdef CONFIG_PREEMPT_RT
-SCHED_FEAT(TTWU_QUEUE, false)
-#else
+#నిర్వచితమైతే CONFIG_PREEMPT_RT
+SCHED_FEAT(TTWU_వరుస, false)
+#లేకపోతే
 
 /*
  * Queue remote wakeups on the target CPU and process them
  * using the scheduler IPI. Reduces rq->lock contention/bounces.
  */
-SCHED_FEAT(TTWU_QUEUE, true)
-#endif
+SCHED_FEAT(TTWU_వరుస, true)
+#అయితే_ముగింపు
 
 /*
  * When doing wakeups, attempt to limit superfluous scans of the LLC domain.
@@ -101,7 +101,7 @@ SCHED_FEAT(SIS_UTIL, true)
  */
 SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
 
-#ifdef HAVE_RT_PUSH_IPI
+#నిర్వచితమైతే HAVE_RT_నెట్టు_IPI
 /*
  * In order to avoid a thundering herd attack of CPUs that are
  * lowering their priorities at the same time, and there being
@@ -116,18 +116,18 @@ SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
  * it only default enabled for PREEMPT_RT.
  */
 # ifdef CONFIG_PREEMPT_RT
-SCHED_FEAT(RT_PUSH_IPI, true)
-# else
-SCHED_FEAT(RT_PUSH_IPI, false)
+SCHED_FEAT(RT_నెట్టు_IPI, true)
+# లేకపోతే
+SCHED_FEAT(RT_నెట్టు_IPI, false)
 # endif
-#endif
+#అయితే_ముగింపు
 
 SCHED_FEAT(RT_RUNTIME_SHARE, false)
 SCHED_FEAT(LB_MIN, false)
-SCHED_FEAT(ATTACH_AGE_LOAD, true)
+SCHED_FEAT(ATTACH_AGE_ఎక్కించు, true)
 
 SCHED_FEAT(WA_IDLE, true)
-SCHED_FEAT(WA_WEIGHT, true)
+SCHED_FEAT(WA_బరువు, true)
 SCHED_FEAT(WA_BIAS, true)
 
 /*
@@ -141,4 +141,4 @@ SCHED_FEAT(LATENCY_WARN, false)
  * Do newidle balancing proportional to its success rate using randomization.
  */
 SCHED_FEAT(NI_RANDOM, true)
-SCHED_FEAT(NI_RATE, true)
+SCHED_FEAT(NI_రేటు, true)

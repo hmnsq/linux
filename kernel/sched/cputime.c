@@ -2,18 +2,18 @@
 /*
  * Simple CPU accounting cgroup controller
  */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/tsacct_kern.h>
-#include "sched.h"
+#అన్తర్భావ <linux/sched/clock.h>
+#అన్తర్భావ <linux/sched/cputime.h>
+#అన్తర్భావ <linux/tsacct_kern.h>
+#అన్తర్భావ "sched.h"
 
-#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
- #include <asm/cputime.h>
-#endif
+#నిర్వచితమైతే CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+ #అన్తర్భావ <asm/cputime.h>
+#అయితే_ముగింపు
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
 
-DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DEFINE_STATIC_కీలకం_FALSE(sched_clock_irqtime);
 
 /*
  * There are no locks covering percpu hardirq/softirq time.
@@ -26,50 +26,50 @@ DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
  * task when IRQ is in progress while we read rq->clock. That is a worthy
  * compromise in place of having locks on each IRQ in account_system_time.
  */
-DEFINE_PER_CPU(struct irqtime, cpu_irqtime);
+DEFINE_చొప్పున_CPU(నిర్మాణం irqtime, cpu_irqtime);
 
-void enable_sched_clock_irqtime(void)
+శూన్య enable_sched_clock_irqtime(శూన్య)
 {
 	static_branch_enable(&sched_clock_irqtime);
 }
 
-void disable_sched_clock_irqtime(void)
+శూన్య disable_sched_clock_irqtime(శూన్య)
 {
-	if (irqtime_enabled())
+	ఒకవేళ (irqtime_enabled())
 		static_branch_disable(&sched_clock_irqtime);
 }
 
-static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
-				  enum cpu_usage_stat idx)
+స్థిర శూన్య irqtime_account_delta(నిర్మాణం irqtime *irqtime, u64 delta,
+				  గణన cpu_usage_stat idx)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
 	u64_stats_update_begin(&irqtime->sync);
 	cpustat[idx] += delta;
-	irqtime->total += delta;
-	if (!kcpustat_idle_dyntick())
+	irqtime->మొత్తం += delta;
+	ఒకవేళ (!kcpustat_idle_dyntick())
 		irqtime->tick_delta += delta;
-	u64_stats_update_end(&irqtime->sync);
+	u64_stats_update_చివర(&irqtime->sync);
 }
 
 /*
  * Called after incrementing preempt_count on {soft,}irq_enter
  * and before decrementing preempt_count on {soft,}irq_exit.
  */
-void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
+శూన్య irqtime_account_irq(నిర్మాణం task_struct *curr, గుర్తులేని పూర్ణాంకం స్థానభ్రంశం)
 {
-	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
-	unsigned int pc;
+	నిర్మాణం irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
+	గుర్తులేని పూర్ణాంకం pc;
 	s64 delta;
-	int cpu;
+	పూర్ణాంకం cpu;
 
-	if (!irqtime_enabled())
-		return;
+	ఒకవేళ (!irqtime_enabled())
+		తిరిగి;
 
 	cpu = smp_processor_id();
-	delta = sched_clock_cpu(cpu) - irqtime->irq_start_time;
-	irqtime->irq_start_time += delta;
-	pc = irq_count() - offset;
+	delta = sched_clock_cpu(cpu) - irqtime->irq_ప్రారంభం_సమయం;
+	irqtime->irq_ప్రారంభం_సమయం += delta;
+	pc = irq_లెక్క() - స్థానభ్రంశం;
 
 	/*
 	 * We do not account for softirq time from ksoftirqd here.
@@ -77,33 +77,33 @@ void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
 	 * in that case, so as not to confuse scheduler with a special task
 	 * that do not consume any time, but still wants to run.
 	 */
-	if (pc & HARDIRQ_MASK)
+	ఒకవేళ (pc & HARDIRQ_ముసుగు)
 		irqtime_account_delta(irqtime, delta, CPUTIME_IRQ);
-	else if ((pc & SOFTIRQ_OFFSET) && curr != this_cpu_ksoftirqd())
+	లేకపోతే ఒకవేళ ((pc & SOFTIRQ_స్థానభ్రంశం) && curr != this_cpu_ksoftirqd())
 		irqtime_account_delta(irqtime, delta, CPUTIME_SOFTIRQ);
 }
 
-static u64 irqtime_tick_accounted(u64 maxtime)
+స్థిర u64 irqtime_tick_accounted(u64 maxtime)
 {
-	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
+	నిర్మాణం irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
 	u64 delta;
 
 	delta = min(irqtime->tick_delta, maxtime);
 	irqtime->tick_delta -= delta;
 
-	return delta;
+	తిరిగి delta;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#లేకపోతే /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
-static u64 irqtime_tick_accounted(u64 dummy)
+స్థిర u64 irqtime_tick_accounted(u64 dummy)
 {
-	return 0;
+	తిరిగి 0;
 }
 
-#endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
+#అయితే_ముగింపు /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-static inline void task_group_account_field(struct task_struct *p, int index,
+స్థిర అంతఃవరుస శూన్య task_సమూహం_account_క్షేత్రం(నిర్మాణం task_struct *p, పూర్ణాంకం సూచీ,
 					    u64 tmp)
 {
 	/*
@@ -112,9 +112,9 @@ static inline void task_group_account_field(struct task_struct *p, int index,
 	 * is the only cgroup, then nothing else should be necessary.
 	 *
 	 */
-	__this_cpu_add(kernel_cpustat.cpustat[index], tmp);
+	__this_cpu_add(kernel_cpustat.cpustat[సూచీ], tmp);
 
-	cgroup_account_cputime_field(p, index, tmp);
+	cgroup_account_cputime_క్షేత్రం(p, సూచీ, tmp);
 }
 
 /*
@@ -122,18 +122,18 @@ static inline void task_group_account_field(struct task_struct *p, int index,
  * @p: the process that the CPU time gets accounted to
  * @cputime: the CPU time spent in user space since the last update
  */
-void account_user_time(struct task_struct *p, u64 cputime)
+శూన్య account_user_సమయం(నిర్మాణం task_struct *p, u64 cputime)
 {
-	int index;
+	పూర్ణాంకం సూచీ;
 
 	/* Add user time to process. */
 	p->utime += cputime;
-	account_group_user_time(p, cputime);
+	account_సమూహం_user_సమయం(p, cputime);
 
-	index = (task_nice(p) > 0) ? CPUTIME_NICE : CPUTIME_USER;
+	సూచీ = (task_nice(p) > 0) ? CPUTIME_NICE : CPUTIME_USER;
 
 	/* Add user time to cpustat. */
-	task_group_account_field(p, index, cputime);
+	task_సమూహం_account_క్షేత్రం(p, సూచీ, cputime);
 
 	/* Account for user time used */
 	acct_account_cputime(p);
@@ -144,21 +144,21 @@ void account_user_time(struct task_struct *p, u64 cputime)
  * @p: the process that the CPU time gets accounted to
  * @cputime: the CPU time spent in virtual machine since the last update
  */
-void account_guest_time(struct task_struct *p, u64 cputime)
+శూన్య account_guest_సమయం(నిర్మాణం task_struct *p, u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
 	/* Add guest time to process. */
 	p->utime += cputime;
-	account_group_user_time(p, cputime);
+	account_సమూహం_user_సమయం(p, cputime);
 	p->gtime += cputime;
 
 	/* Add guest time to cpustat. */
-	if (task_nice(p) > 0) {
-		task_group_account_field(p, CPUTIME_NICE, cputime);
+	ఒకవేళ (task_nice(p) > 0) {
+		task_సమూహం_account_క్షేత్రం(p, CPUTIME_NICE, cputime);
 		cpustat[CPUTIME_GUEST_NICE] += cputime;
-	} else {
-		task_group_account_field(p, CPUTIME_USER, cputime);
+	} లేకపోతే {
+		task_సమూహం_account_క్షేత్రం(p, CPUTIME_USER, cputime);
 		cpustat[CPUTIME_GUEST] += cputime;
 	}
 }
@@ -169,15 +169,15 @@ void account_guest_time(struct task_struct *p, u64 cputime)
  * @cputime: the CPU time spent in kernel space since the last update
  * @index: pointer to cpustat field that has to be updated
  */
-void account_system_index_time(struct task_struct *p,
-			       u64 cputime, enum cpu_usage_stat index)
+శూన్య account_system_సూచీ_సమయం(నిర్మాణం task_struct *p,
+			       u64 cputime, గణన cpu_usage_stat సూచీ)
 {
 	/* Add system time to process. */
 	p->stime += cputime;
-	account_group_system_time(p, cputime);
+	account_సమూహం_system_సమయం(p, cputime);
 
 	/* Add system time to cpustat. */
-	task_group_account_field(p, index, cputime);
+	task_సమూహం_account_క్షేత్రం(p, సూచీ, cputime);
 
 	/* Account for system time used */
 	acct_account_cputime(p);
@@ -189,30 +189,30 @@ void account_system_index_time(struct task_struct *p,
  * @hardirq_offset: the offset to subtract from hardirq_count()
  * @cputime: the CPU time spent in kernel space since the last update
  */
-void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
+శూన్య account_system_సమయం(నిర్మాణం task_struct *p, పూర్ణాంకం hardirq_స్థానభ్రంశం, u64 cputime)
 {
-	int index;
+	పూర్ణాంకం సూచీ;
 
-	if ((p->flags & PF_VCPU) && (irq_count() - hardirq_offset == 0)) {
-		account_guest_time(p, cputime);
-		return;
+	ఒకవేళ ((p->flags & PF_VCPU) && (irq_లెక్క() - hardirq_స్థానభ్రంశం == 0)) {
+		account_guest_సమయం(p, cputime);
+		తిరిగి;
 	}
 
-	if (hardirq_count() - hardirq_offset)
-		index = CPUTIME_IRQ;
-	else if (in_serving_softirq())
-		index = CPUTIME_SOFTIRQ;
-	else
-		index = CPUTIME_SYSTEM;
+	ఒకవేళ (hardirq_లెక్క() - hardirq_స్థానభ్రంశం)
+		సూచీ = CPUTIME_IRQ;
+	లేకపోతే ఒకవేళ (లోపల_serving_softirq())
+		సూచీ = CPUTIME_SOFTIRQ;
+	లేకపోతే
+		సూచీ = CPUTIME_SYSTEM;
 
-	account_system_index_time(p, cputime, index);
+	account_system_సూచీ_సమయం(p, cputime, సూచీ);
 }
 
 /*
  * Account for involuntary wait time.
  * @cputime: the CPU time spent in involuntary wait
  */
-void account_steal_time(u64 cputime)
+శూన్య account_steal_సమయం(u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
@@ -223,112 +223,112 @@ void account_steal_time(u64 cputime)
  * Account for idle time.
  * @cputime: the CPU time spent in idle wait
  */
-void account_idle_time(u64 cputime)
+శూన్య account_idle_సమయం(u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
-	if (cpu_has_iowait(smp_processor_id()))
+	ఒకవేళ (cpu_has_iowait(smp_processor_id()))
 		cpustat[CPUTIME_IOWAIT] += cputime;
-	else
+	లేకపోతే
 		cpustat[CPUTIME_IDLE] += cputime;
 }
 
 
-#ifdef CONFIG_SCHED_CORE
+#నిర్వచితమైతే CONFIG_SCHED_CORE
 /*
  * Account for forceidle time due to core scheduling.
  *
  * REQUIRES: schedstat is enabled.
  */
-void __account_forceidle_time(struct task_struct *p, u64 delta)
+శూన్య __account_forceidle_time(నిర్మాణం task_struct *p, u64 delta)
 {
-	__schedstat_add(p->stats.core_forceidle_sum, delta);
+	__schedstat_add(p->stats.core_forceidle_కూడిక, delta);
 
-	task_group_account_field(p, CPUTIME_FORCEIDLE, delta);
+	task_సమూహం_account_క్షేత్రం(p, CPUTIME_FORCEIDLE, delta);
 }
-#endif /* CONFIG_SCHED_CORE */
+#అయితే_ముగింపు /* CONFIG_SCHED_CORE */
 
 /*
  * When a guest is interrupted for a longer amount of time, missed clock
  * ticks are not redelivered later. Due to that, this function may on
  * occasion account more time than the calling functions think elapsed.
  */
-#ifdef CONFIG_PARAVIRT
-DEFINE_STATIC_KEY_FALSE(paravirt_steal_enabled);
+#నిర్వచితమైతే CONFIG_PARAVIRT
+DEFINE_STATIC_కీలకం_FALSE(paravirt_steal_enabled);
 
-#ifdef CONFIG_HAVE_PV_STEAL_CLOCK_GEN
-static u64 native_steal_clock(int cpu)
+#నిర్వచితమైతే CONFIG_HAVE_PV_STEAL_CLOCK_GEN
+స్థిర u64 native_steal_clock(పూర్ణాంకం cpu)
 {
-	return 0;
+	తిరిగి 0;
 }
 
 DEFINE_STATIC_CALL(pv_steal_clock, native_steal_clock);
-#endif
-#endif
+#అయితే_ముగింపు
+#అయితే_ముగింపు
 
-static __always_inline u64 steal_account_process_time(u64 maxtime)
+స్థిర __always_inline u64 steal_account_process_సమయం(u64 maxtime)
 {
-#ifdef CONFIG_PARAVIRT
-	if (static_branch_unlikely(&paravirt_steal_enabled)) {
+#నిర్వచితమైతే CONFIG_PARAVIRT
+	ఒకవేళ (static_branch_unlikely(&paravirt_steal_enabled)) {
 		u64 steal;
 
 		steal = paravirt_steal_clock(smp_processor_id());
-		steal -= this_rq()->prev_steal_time;
+		steal -= this_rq()->prev_steal_సమయం;
 		steal = min(steal, maxtime);
-		account_steal_time(steal);
-		this_rq()->prev_steal_time += steal;
+		account_steal_సమయం(steal);
+		this_rq()->prev_steal_సమయం += steal;
 
-		return steal;
+		తిరిగి steal;
 	}
-#endif /* CONFIG_PARAVIRT */
-	return 0;
+#అయితే_ముగింపు /* CONFIG_PARAVIRT */
+	తిరిగి 0;
 }
 
 /*
  * Account how much elapsed time was spent in steal, IRQ, or softirq time.
  */
-static inline u64 account_other_time(u64 max)
+స్థిర అంతఃవరుస u64 account_other_సమయం(u64 max)
 {
 	u64 accounted;
 
 	lockdep_assert_irqs_disabled();
 
-	accounted = steal_account_process_time(max);
+	accounted = steal_account_process_సమయం(max);
 
-	if (accounted < max)
+	ఒకవేళ (accounted < max)
 		accounted += irqtime_tick_accounted(max - accounted);
 
-	return accounted;
+	తిరిగి accounted;
 }
 
-#ifdef CONFIG_64BIT
-static inline u64 read_sum_exec_runtime(struct task_struct *t)
+#నిర్వచితమైతే CONFIG_64_బిట్టు
+స్థిర అంతఃవరుస u64 read_కూడిక_exec_runtime(నిర్మాణం task_struct *t)
 {
-	return t->se.sum_exec_runtime;
+	తిరిగి t->se.కూడిక_exec_runtime;
 }
-#else /* !CONFIG_64BIT: */
-static u64 read_sum_exec_runtime(struct task_struct *t)
+#లేకపోతే /* !CONFIG_64BIT: */
+స్థిర u64 read_కూడిక_exec_runtime(నిర్మాణం task_struct *t)
 {
 	u64 ns;
-	struct rq_flags rf;
-	struct rq *rq;
+	నిర్మాణం rq_flags rf;
+	నిర్మాణం rq *rq;
 
-	rq = task_rq_lock(t, &rf);
-	ns = t->se.sum_exec_runtime;
+	rq = task_rq_తాళం_2(t, &rf);
+	ns = t->se.కూడిక_exec_runtime;
 	task_rq_unlock(rq, t, &rf);
 
-	return ns;
+	తిరిగి ns;
 }
-#endif /* !CONFIG_64BIT */
+#అయితే_ముగింపు /* !CONFIG_64BIT */
 
 /*
  * Accumulate raw cputime values of dead tasks (sig->[us]time) and live
  * tasks (sum on group iteration) belonging to @tsk's group.
  */
-void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+శూన్య thread_సమూహం_cputime(నిర్మాణం task_struct *tsk, నిర్మాణం task_cputime *times)
 {
-	struct signal_struct *sig = tsk->signal;
-	struct task_struct *t;
+	నిర్మాణం signal_struct *sig = tsk->సంకేతం;
+	నిర్మాణం task_struct *t;
 	u64 utime, stime;
 
 	/*
@@ -339,25 +339,25 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
 	 * those pending times and rely only on values updated on tick or
 	 * other scheduler action.
 	 */
-	if (same_thread_group(current, tsk))
-		(void) task_sched_runtime(current);
+	ఒకవేళ (same_thread_సమూహం(current, tsk))
+		(శూన్య) task_sched_runtime(current);
 
 	guard(rcu)();
-	scoped_seqlock_read (&sig->stats_lock, ss_lock_irqsave) {
+	scoped_seqlock_read (&sig->stats_తాళం, ss_తాళం_irqsave) {
 		times->utime = sig->utime;
 		times->stime = sig->stime;
-		times->sum_exec_runtime = sig->sum_sched_runtime;
+		times->కూడిక_exec_runtime = sig->కూడిక_sched_runtime;
 
 		__for_each_thread(sig, t) {
 			task_cputime(t, &utime, &stime);
 			times->utime += utime;
 			times->stime += stime;
-			times->sum_exec_runtime += read_sum_exec_runtime(t);
+			times->కూడిక_exec_runtime += read_కూడిక_exec_runtime(t);
 		}
 	}
 }
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
 /*
  * Account a tick to a process and cpustat
  * @p: the process that the CPU time gets accounted to
@@ -379,7 +379,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
  * p->stime and friends are only updated on system time and not on IRQ
  * softirq as those do not count in task exec_runtime any more.
  */
-static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+స్థిర శూన్య irqtime_account_process_tick(నిర్మాణం task_struct *p, పూర్ణాంకం user_tick,
 					 u64 cputime)
 {
 	u64 other;
@@ -391,48 +391,48 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
 	 * idle, or potentially user or system time. Due to rounding,
 	 * other time can exceed ticks occasionally.
 	 */
-	other = account_other_time(ULONG_MAX);
-	if (other >= cputime)
-		return;
+	other = account_other_సమయం(ULONG_MAX);
+	ఒకవేళ (other >= cputime)
+		తిరిగి;
 
 	cputime -= other;
 
-	if (this_cpu_ksoftirqd() == p) {
+	ఒకవేళ (this_cpu_ksoftirqd() == p) {
 		/*
 		 * ksoftirqd time do not get accounted in cpu_softirq_time.
 		 * So, we have to handle it separately here.
 		 * Also, p->stime needs to be updated for ksoftirqd.
 		 */
-		account_system_index_time(p, cputime, CPUTIME_SOFTIRQ);
-	} else if (user_tick) {
-		account_user_time(p, cputime);
-	} else if (p == this_rq()->idle) {
-		account_idle_time(cputime);
-	} else if (p->flags & PF_VCPU) { /* System time or guest time */
-		account_guest_time(p, cputime);
-	} else {
-		account_system_index_time(p, cputime, CPUTIME_SYSTEM);
+		account_system_సూచీ_సమయం(p, cputime, CPUTIME_SOFTIRQ);
+	} లేకపోతే ఒకవేళ (user_tick) {
+		account_user_సమయం(p, cputime);
+	} లేకపోతే ఒకవేళ (p == this_rq()->idle) {
+		account_idle_సమయం(cputime);
+	} లేకపోతే ఒకవేళ (p->flags & PF_VCPU) { /* System time or guest time */
+		account_guest_సమయం(p, cputime);
+	} లేకపోతే {
+		account_system_సూచీ_సమయం(p, cputime, CPUTIME_SYSTEM);
 	}
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
-static inline void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+#లేకపోతే /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+స్థిర అంతఃవరుస శూన్య irqtime_account_process_tick(నిర్మాణం task_struct *p, పూర్ణాంకం user_tick,
 						u64 cputime) { }
-#endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
+#అయితే_ముగింపు /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-#if defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
-static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
+#ఒకవేళ defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
+స్థిర శూన్య kcpustat_idle_stop(నిర్మాణం kernel_cpustat *kc, u64 now)
 {
 	u64 *cpustat = kc->cpustat;
 	u64 delta, steal, steal_delta;
-	int iowait;
+	పూర్ణాంకం iowait;
 
-	if (!kc->idle_elapse)
-		return;
+	ఒకవేళ (!kc->idle_elapse)
+		తిరిగి;
 
 	iowait = cpu_has_iowait(smp_processor_id());
 	delta = now - kc->idle_entrytime;
-	steal = steal_account_process_time(delta);
+	steal = steal_account_process_సమయం(delta);
 
 	/*
 	 * Record the idle time after substracting the steal time from
@@ -444,42 +444,42 @@ static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
 	delta -= steal_delta;
 	kc->idle_stealtime[iowait] -= steal_delta;
 
-	if (iowait)
+	ఒకవేళ (iowait)
 		cpustat[CPUTIME_IOWAIT] += delta;
-	else
+	లేకపోతే
 		cpustat[CPUTIME_IDLE] += delta;
 
 	kc->idle_stealtime[iowait] += steal;
 	kc->idle_entrytime = now;
 	kc->idle_elapse = false;
-	write_seqcount_end(&kc->idle_sleeptime_seq);
+	write_seqcount_చివర(&kc->idle_sleeptime_seq);
 }
 
-static void kcpustat_idle_start(struct kernel_cpustat *kc, u64 now)
+స్థిర శూన్య kcpustat_idle_ప్రారంభం(నిర్మాణం kernel_cpustat *kc, u64 now)
 {
 	/* Irqtime accounting might have been enabled in the middle of the IRQ */
-	if (kc->idle_elapse)
-		return;
+	ఒకవేళ (kc->idle_elapse)
+		తిరిగి;
 
 	write_seqcount_begin(&kc->idle_sleeptime_seq);
 	kc->idle_entrytime = now;
 	kc->idle_elapse = true;
-	write_seqcount_end(&kc->idle_sleeptime_seq);
+	write_seqcount_చివర(&kc->idle_sleeptime_seq);
 }
 
-void kcpustat_dyntick_stop(u64 now, u64 tick_start)
+శూన్య kcpustat_dyntick_stop(u64 now, u64 tick_ప్రారంభం)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	నిర్మాణం kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
+	ఒకవేళ (!vtime_generic_enabled_this_cpu()) {
 		WARN_ON_ONCE(!kc->idle_dyntick);
-		if (kc->idle_tick_period != tick_start) {
-			kc->idle_tick_period = tick_start;
+		ఒకవేళ (kc->idle_tick_period != tick_ప్రారంభం) {
+			kc->idle_tick_period = tick_ప్రారంభం;
 			kc->idle_tick_overlap = 0;
 		}
-		tick_start = max(tick_start, kc->idle_dyntick_entry);
-		if (!WARN_ON_ONCE(now < tick_start))
-			kc->idle_tick_overlap += now - tick_start;
+		tick_ప్రారంభం = max(tick_ప్రారంభం, kc->idle_dyntick_నమోదు);
+		ఒకవేళ (!WARN_ON_ONCE(now < tick_ప్రారంభం))
+			kc->idle_tick_overlap += now - tick_ప్రారంభం;
 		kcpustat_idle_stop(kc, now);
 		kc->idle_dyntick = false;
 		vtime_dyntick_stop();
@@ -490,39 +490,39 @@ void kcpustat_dyntick_stop(u64 now, u64 tick_start)
  * The first tick after dyntick-idle covers a period that the dyntick-idle
  * accounting may already have accounted in part.
  */
-static inline u64 kcpustat_tick_overlap(void)
+స్థిర అంతఃవరుస u64 kcpustat_tick_overlap(శూన్య)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	నిర్మాణం kernel_cpustat *kc = kcpustat_this_cpu;
 	u64 overlap = kc->idle_tick_overlap;
 
 	kc->idle_tick_overlap = 0;
-	return overlap;
+	తిరిగి overlap;
 }
 
-void kcpustat_dyntick_start(u64 now)
+శూన్య kcpustat_dyntick_ప్రారంభం(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	నిర్మాణం kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
-		vtime_dyntick_start();
+	ఒకవేళ (!vtime_generic_enabled_this_cpu()) {
+		vtime_dyntick_ప్రారంభం();
 		kc->idle_dyntick = true;
-		kc->idle_dyntick_entry = now;
-		kcpustat_idle_start(kc, now);
+		kc->idle_dyntick_నమోదు = now;
+		kcpustat_idle_ప్రారంభం(kc, now);
 	}
 }
 
-void kcpustat_irq_enter(u64 now)
+శూన్య kcpustat_irq_enter(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	నిర్మాణం kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu() &&
+	ఒకవేళ (!vtime_generic_enabled_this_cpu() &&
 	    (irqtime_enabled() || vtime_accounting_enabled_this_cpu()))
 		kcpustat_idle_stop(kc, now);
 }
 
-void kcpustat_irq_exit(u64 now)
+శూన్య kcpustat_irq_exit(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	నిర్మాణం kernel_cpustat *kc = kcpustat_this_cpu;
 
 	/*
 	 * Generic vtime already does its own idle accounting.
@@ -531,79 +531,79 @@ void kcpustat_irq_exit(u64 now)
 	 * as the irqtime config is enabled to handle case where irqtime
 	 * accounting got runtime disabled in the middle of an IRQ.
 	 */
-	if (!vtime_generic_enabled_this_cpu() &&
-	    (IS_ENABLED(CONFIG_IRQ_TIME_ACCOUNTING) || vtime_accounting_enabled_this_cpu()))
-		kcpustat_idle_start(kc, now);
+	ఒకవేళ (!vtime_generic_enabled_this_cpu() &&
+	    (IS_ENABLED(CONFIG_IRQ_సమయం_ACCOUNTING) || vtime_accounting_enabled_this_cpu()))
+		kcpustat_idle_ప్రారంభం(kc, now);
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+స్థిర u64 kcpustat_క్షేత్రం_dyntick(పూర్ణాంకం cpu, గణన cpu_usage_stat idx,
 				  bool compute_delta, u64 now)
 {
-	struct kernel_cpustat *kc = &kcpustat_cpu(cpu);
-	int iowait = idx == CPUTIME_IOWAIT;
+	నిర్మాణం kernel_cpustat *kc = &kcpustat_cpu(cpu);
+	పూర్ణాంకం iowait = idx == CPUTIME_IOWAIT;
 	u64 *cpustat = kc->cpustat;
-	unsigned int seq;
+	గుర్తులేని పూర్ణాంకం seq;
 	u64 idle;
 
-	do {
+	చేయి {
 		seq = read_seqcount_begin(&kc->idle_sleeptime_seq);
 
 		idle = cpustat[idx];
 
-		if (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
+		ఒకవేళ (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
 			u64 delta = now - kc->idle_entrytime;
 
 			delta -= min_t(u64, kc->idle_stealtime[iowait], delta);
 			idle += delta;
 		}
-	} while (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
+	} అయితే (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
 
-	return idle;
+	తిరిగి idle;
 }
 
-u64 kcpustat_field_idle(int cpu)
+u64 kcpustat_క్షేత్రం_idle(పూర్ణాంకం cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IDLE,
+	తిరిగి kcpustat_క్షేత్రం_dyntick(cpu, CPUTIME_IDLE,
 				      !cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_idle);
+EXPORT_చిహ్నం_GPL(kcpustat_క్షేత్రం_idle);
 
-u64 kcpustat_field_iowait(int cpu)
+u64 kcpustat_క్షేత్రం_iowait(పూర్ణాంకం cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IOWAIT,
+	తిరిగి kcpustat_క్షేత్రం_dyntick(cpu, CPUTIME_IOWAIT,
 				      cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_iowait);
-#else
-static inline u64 kcpustat_tick_overlap(void)
+EXPORT_చిహ్నం_GPL(kcpustat_క్షేత్రం_iowait);
+#లేకపోతే
+స్థిర అంతఃవరుస u64 kcpustat_tick_overlap(శూన్య)
 {
-	return 0;
+	తిరిగి 0;
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+స్థిర u64 kcpustat_క్షేత్రం_dyntick(పూర్ణాంకం cpu, గణన cpu_usage_stat idx,
 				  bool compute_delta, ktime_t now)
 {
-	return kcpustat_cpu(cpu).cpustat[idx];
+	తిరిగి kcpustat_cpu(cpu).cpustat[idx];
 }
-#endif /* CONFIG_NO_HZ_COMMON && !CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE */
+#అయితే_ముగింపు /* CONFIG_NO_HZ_COMMON && !CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE */
 
-static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
-				 bool compute_delta, u64 *last_update_time)
+స్థిర u64 get_cpu_sleep_సమయం_us(పూర్ణాంకం cpu, గణన cpu_usage_stat idx,
+				 bool compute_delta, u64 *చివరి_update_సమయం)
 {
 	ktime_t now = ktime_get();
 	u64 res;
 
-	if (vtime_generic_enabled_cpu(cpu))
-		res = kcpustat_field(idx, cpu);
-	else
-		res = kcpustat_field_dyntick(cpu, idx, compute_delta, now);
+	ఒకవేళ (vtime_generic_enabled_cpu(cpu))
+		res = kcpustat_క్షేత్రం(idx, cpu);
+	లేకపోతే
+		res = kcpustat_క్షేత్రం_dyntick(cpu, idx, compute_delta, now);
 
-	do_div(res, NSEC_PER_USEC);
+	do_div(res, NSEC_చొప్పున_USEC);
 
-	if (last_update_time)
-		*last_update_time = ktime_to_us(now);
+	ఒకవేళ (చివరి_update_సమయం)
+		*చివరి_update_సమయం = ktime_గమ్యం_us(now);
 
-	return res;
+	తిరిగి res;
 }
 
 /**
@@ -623,12 +623,12 @@ static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
  *
  * Return: total idle time of the @cpu
  */
-u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_idle_సమయం_us(పూర్ణాంకం cpu, u64 *చివరి_update_సమయం)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
-				     !cpu_has_iowait(cpu), last_update_time);
+	తిరిగి get_cpu_sleep_సమయం_us(cpu, CPUTIME_IDLE,
+				     !cpu_has_iowait(cpu), చివరి_update_సమయం);
 }
-EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
+EXPORT_చిహ్నం_GPL(get_cpu_idle_సమయం_us);
 
 /**
  * get_cpu_iowait_time_us - get the total iowait time of a CPU
@@ -647,99 +647,99 @@ EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
  *
  * Return: total iowait time of @cpu
  */
-u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_iowait_సమయం_us(పూర్ణాంకం cpu, u64 *చివరి_update_సమయం)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
-				     cpu_has_iowait(cpu), last_update_time);
+	తిరిగి get_cpu_sleep_సమయం_us(cpu, CPUTIME_IOWAIT,
+				     cpu_has_iowait(cpu), చివరి_update_సమయం);
 }
-EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
+EXPORT_చిహ్నం_GPL(get_cpu_iowait_సమయం_us);
 
 /*
  * Use precise platform statistics if available:
  */
-#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+#నిర్వచితమైతే CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
 
-void vtime_account_irq(struct task_struct *tsk, unsigned int offset)
+శూన్య vtime_account_irq(నిర్మాణం task_struct *tsk, గుర్తులేని పూర్ణాంకం స్థానభ్రంశం)
 {
-	unsigned int pc = irq_count() - offset;
+	గుర్తులేని పూర్ణాంకం pc = irq_లెక్క() - స్థానభ్రంశం;
 
-	if (pc & HARDIRQ_OFFSET) {
+	ఒకవేళ (pc & HARDIRQ_స్థానభ్రంశం) {
 		vtime_account_hardirq(tsk);
-	} else if (pc & SOFTIRQ_OFFSET) {
+	} లేకపోతే ఒకవేళ (pc & SOFTIRQ_స్థానభ్రంశం) {
 		vtime_account_softirq(tsk);
-	} else if (!kcpustat_idle_dyntick()) {
-		if (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
+	} లేకపోతే ఒకవేళ (!kcpustat_idle_dyntick()) {
+		ఒకవేళ (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
 		    is_idle_task(tsk)) {
 			vtime_account_idle(tsk);
-		} else {
+		} లేకపోతే {
 			vtime_account_kernel(tsk);
 		}
-	} else {
+	} లేకపోతే {
 		vtime_reset();
 	}
 }
 
-void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+శూన్య cputime_adjust(నిర్మాణం task_cputime *curr, నిర్మాణం prev_cputime *prev,
 		    u64 *ut, u64 *st)
 {
 	*ut = curr->utime;
 	*st = curr->stime;
 }
 
-void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+శూన్య task_cputime_adjusted(నిర్మాణం task_struct *p, u64 *ut, u64 *st)
 {
 	*ut = p->utime;
 	*st = p->stime;
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_చిహ్నం_GPL(task_cputime_adjusted);
 
-void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+శూన్య thread_సమూహం_cputime_adjusted(నిర్మాణం task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime;
+	నిర్మాణం task_cputime cputime;
 
-	thread_group_cputime(p, &cputime);
+	thread_సమూహం_cputime(p, &cputime);
 
 	*ut = cputime.utime;
 	*st = cputime.stime;
 }
 
-#else /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
+#లేకపోతే /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
 
 /*
  * Account a single tick of CPU time.
  * @p: the process that the CPU time gets accounted to
  * @user_tick: indicates if the tick is a user or a system tick
  */
-void account_process_tick(struct task_struct *p, int user_tick)
+శూన్య account_process_tick(నిర్మాణం task_struct *p, పూర్ణాంకం user_tick)
 {
 	u64 cputime, steal;
 
-	if (vtime_accounting_enabled_this_cpu())
-		return;
+	ఒకవేళ (vtime_accounting_enabled_this_cpu())
+		తిరిగి;
 
-	if (kcpustat_idle_dyntick())
-		return;
+	ఒకవేళ (kcpustat_idle_dyntick())
+		తిరిగి;
 
 	cputime = TICK_NSEC - kcpustat_tick_overlap();
 
-	if (irqtime_enabled()) {
+	ఒకవేళ (irqtime_enabled()) {
 		irqtime_account_process_tick(p, user_tick, cputime);
-		return;
+		తిరిగి;
 	}
 
-	steal = steal_account_process_time(ULONG_MAX);
+	steal = steal_account_process_సమయం(ULONG_MAX);
 
-	if (steal >= cputime)
-		return;
+	ఒకవేళ (steal >= cputime)
+		తిరిగి;
 
 	cputime -= steal;
 
-	if (user_tick)
-		account_user_time(p, cputime);
-	else if ((p != this_rq()->idle) || (irq_count() != HARDIRQ_OFFSET))
-		account_system_time(p, HARDIRQ_OFFSET, cputime);
-	else
-		account_idle_time(cputime);
+	ఒకవేళ (user_tick)
+		account_user_సమయం(p, cputime);
+	లేకపోతే ఒకవేళ ((p != this_rq()->idle) || (irq_లెక్క() != HARDIRQ_స్థానభ్రంశం))
+		account_system_సమయం(p, HARDIRQ_స్థానభ్రంశం, cputime);
+	లేకపోతే
+		account_idle_సమయం(cputime);
 }
 
 /*
@@ -762,15 +762,15 @@ void account_process_tick(struct task_struct *p, int user_tick)
  *
  * Assuming that rtime_i+1 >= rtime_i.
  */
-void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+శూన్య cputime_adjust(నిర్మాణం task_cputime *curr, నిర్మాణం prev_cputime *prev,
 		    u64 *ut, u64 *st)
 {
 	u64 rtime, stime, utime;
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
 	/* Serialize concurrent callers such that we can honour our guarantees */
-	raw_spin_lock_irqsave(&prev->lock, flags);
-	rtime = curr->sum_exec_runtime;
+	raw_spin_తాళం_irqsave(&prev->తాళం, flags);
+	rtime = curr->కూడిక_exec_runtime;
 
 	/*
 	 * This is possible under two circumstances:
@@ -780,8 +780,8 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * In both cases this acts as a filter such that the rest of the code
 	 * can assume it is monotonic regardless of anything else.
 	 */
-	if (prev->stime + prev->utime >= rtime)
-		goto out;
+	ఒకవేళ (prev->stime + prev->utime >= rtime)
+		వెళ్ళు బహిర్గతం;
 
 	stime = curr->stime;
 	utime = curr->utime;
@@ -791,14 +791,14 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * Once a task gets some ticks, the monotonicity code at 'update:'
 	 * will ensure things converge to the observed ratio.
 	 */
-	if (stime == 0) {
+	ఒకవేళ (stime == 0) {
 		utime = rtime;
-		goto update;
+		వెళ్ళు update;
 	}
 
-	if (utime == 0) {
+	ఒకవేళ (utime == 0) {
 		stime = rtime;
-		goto update;
+		వెళ్ళు update;
 	}
 
 	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
@@ -813,7 +813,7 @@ update:
 	 *            = (rtime_i+1 - rtime_i) + utime_i
 	 *            >= utime_i
 	 */
-	if (stime < prev->stime)
+	ఒకవేళ (stime < prev->stime)
 		stime = prev->stime;
 	utime = rtime - stime;
 
@@ -821,53 +821,53 @@ update:
 	 * Make sure utime doesn't go backwards; this still preserves
 	 * monotonicity for stime, analogous argument to above.
 	 */
-	if (utime < prev->utime) {
+	ఒకవేళ (utime < prev->utime) {
 		utime = prev->utime;
 		stime = rtime - utime;
 	}
 
 	prev->stime = stime;
 	prev->utime = utime;
-out:
+బహిర్గతం:
 	*ut = prev->utime;
 	*st = prev->stime;
-	raw_spin_unlock_irqrestore(&prev->lock, flags);
+	raw_spin_unlock_irqrestore(&prev->తాళం, flags);
 }
 
-void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+శూన్య task_cputime_adjusted(నిర్మాణం task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime = {
-		.sum_exec_runtime = p->se.sum_exec_runtime,
+	నిర్మాణం task_cputime cputime = {
+		.కూడిక_exec_runtime = p->se.కూడిక_exec_runtime,
 	};
 
-	if (task_cputime(p, &cputime.utime, &cputime.stime))
-		cputime.sum_exec_runtime = task_sched_runtime(p);
+	ఒకవేళ (task_cputime(p, &cputime.utime, &cputime.stime))
+		cputime.కూడిక_exec_runtime = task_sched_runtime(p);
 	cputime_adjust(&cputime, &p->prev_cputime, ut, st);
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_చిహ్నం_GPL(task_cputime_adjusted);
 
-void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+శూన్య thread_సమూహం_cputime_adjusted(నిర్మాణం task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime;
+	నిర్మాణం task_cputime cputime;
 
-	thread_group_cputime(p, &cputime);
-	cputime_adjust(&cputime, &p->signal->prev_cputime, ut, st);
+	thread_సమూహం_cputime(p, &cputime);
+	cputime_adjust(&cputime, &p->సంకేతం->prev_cputime, ut, st);
 }
-#endif /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
+#అయితే_ముగింపు /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
 
-#ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
-static u64 vtime_delta(struct vtime *vtime)
+#నిర్వచితమైతే CONFIG_VIRT_CPU_ACCOUNTING_GEN
+స్థిర u64 vtime_delta(నిర్మాణం vtime *vtime)
 {
-	unsigned long long clock;
+	గుర్తులేని దీర్ఘ దీర్ఘ clock;
 
 	clock = sched_clock();
-	if (clock < vtime->starttime)
-		return 0;
+	ఒకవేళ (clock < vtime->starttime)
+		తిరిగి 0;
 
-	return clock - vtime->starttime;
+	తిరిగి clock - vtime->starttime;
 }
 
-static u64 get_vtime_delta(struct vtime *vtime)
+స్థిర u64 get_vtime_delta(నిర్మాణం vtime *vtime)
 {
 	u64 delta = vtime_delta(vtime);
 	u64 other;
@@ -879,82 +879,82 @@ static u64 get_vtime_delta(struct vtime *vtime)
 	 * elapsed time. Limit account_other_time to prevent rounding
 	 * errors from causing elapsed vtime to go negative.
 	 */
-	other = account_other_time(delta);
+	other = account_other_సమయం(delta);
 	WARN_ON_ONCE(vtime->state == VTIME_INACTIVE);
 	vtime->starttime += delta;
 
-	return delta - other;
+	తిరిగి delta - other;
 }
 
-static void vtime_account_system(struct task_struct *tsk,
-				 struct vtime *vtime)
+స్థిర శూన్య vtime_account_system(నిర్మాణం task_struct *tsk,
+				 నిర్మాణం vtime *vtime)
 {
 	vtime->stime += get_vtime_delta(vtime);
-	if (vtime->stime >= TICK_NSEC) {
-		account_system_time(tsk, irq_count(), vtime->stime);
+	ఒకవేళ (vtime->stime >= TICK_NSEC) {
+		account_system_సమయం(tsk, irq_లెక్క(), vtime->stime);
 		vtime->stime = 0;
 	}
 }
 
-static void vtime_account_guest(struct task_struct *tsk,
-				struct vtime *vtime)
+స్థిర శూన్య vtime_account_guest(నిర్మాణం task_struct *tsk,
+				నిర్మాణం vtime *vtime)
 {
 	vtime->gtime += get_vtime_delta(vtime);
-	if (vtime->gtime >= TICK_NSEC) {
-		account_guest_time(tsk, vtime->gtime);
+	ఒకవేళ (vtime->gtime >= TICK_NSEC) {
+		account_guest_సమయం(tsk, vtime->gtime);
 		vtime->gtime = 0;
 	}
 }
 
-static void __vtime_account_kernel(struct task_struct *tsk,
-				   struct vtime *vtime)
+స్థిర శూన్య __vtime_account_kernel(నిర్మాణం task_struct *tsk,
+				   నిర్మాణం vtime *vtime)
 {
 	/* We might have scheduled out from guest path */
-	if (vtime->state == VTIME_GUEST)
+	ఒకవేళ (vtime->state == VTIME_GUEST)
 		vtime_account_guest(tsk, vtime);
-	else
+	లేకపోతే
 		vtime_account_system(tsk, vtime);
 }
 
-void vtime_account_kernel(struct task_struct *tsk)
+శూన్య vtime_account_kernel(నిర్మాణం task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	నిర్మాణం vtime *vtime = &tsk->vtime;
 
-	if (!vtime_delta(vtime))
-		return;
+	ఒకవేళ (!vtime_delta(vtime))
+		తిరిగి;
 
 	write_seqcount_begin(&vtime->seqcount);
 	__vtime_account_kernel(tsk, vtime);
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_చివర(&vtime->seqcount);
 }
 
-void vtime_user_enter(struct task_struct *tsk)
+శూన్య vtime_user_enter(నిర్మాణం task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	నిర్మాణం vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime_account_system(tsk, vtime);
 	vtime->state = VTIME_USER;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_చివర(&vtime->seqcount);
 }
 
-void vtime_user_exit(struct task_struct *tsk)
+శూన్య vtime_user_exit(నిర్మాణం task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	నిర్మాణం vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime->utime += get_vtime_delta(vtime);
-	if (vtime->utime >= TICK_NSEC) {
-		account_user_time(tsk, vtime->utime);
+	ఒకవేళ (vtime->utime >= TICK_NSEC) {
+		account_user_సమయం(tsk, vtime->utime);
 		vtime->utime = 0;
 	}
 	vtime->state = VTIME_SYS;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_చివర(&vtime->seqcount);
 }
 
-void vtime_guest_enter(struct task_struct *tsk)
+శూన్య vtime_guest_enter(నిర్మాణం task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	నిర్మాణం vtime *vtime = &tsk->vtime;
 	/*
 	 * The flags must be updated under the lock with
 	 * the vtime_starttime flush and update.
@@ -966,87 +966,87 @@ void vtime_guest_enter(struct task_struct *tsk)
 	vtime_account_system(tsk, vtime);
 	tsk->flags |= PF_VCPU;
 	vtime->state = VTIME_GUEST;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_చివర(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_enter);
+EXPORT_చిహ్నం_GPL(vtime_guest_enter);
 
-void vtime_guest_exit(struct task_struct *tsk)
+శూన్య vtime_guest_exit(నిర్మాణం task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	నిర్మాణం vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime_account_guest(tsk, vtime);
 	tsk->flags &= ~PF_VCPU;
 	vtime->state = VTIME_SYS;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_చివర(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_exit);
+EXPORT_చిహ్నం_GPL(vtime_guest_exit);
 
-static void __vtime_account_idle(struct vtime *vtime)
+స్థిర శూన్య __vtime_account_idle(నిర్మాణం vtime *vtime)
 {
-	account_idle_time(get_vtime_delta(vtime));
+	account_idle_సమయం(get_vtime_delta(vtime));
 }
 
-void vtime_task_switch_generic(struct task_struct *prev)
+శూన్య vtime_task_switch_generic(నిర్మాణం task_struct *prev)
 {
-	struct vtime *vtime = &prev->vtime;
+	నిర్మాణం vtime *vtime = &prev->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (vtime->state == VTIME_IDLE)
+	ఒకవేళ (vtime->state == VTIME_IDLE)
 		__vtime_account_idle(vtime);
-	else
+	లేకపోతే
 		__vtime_account_kernel(prev, vtime);
 	vtime->state = VTIME_INACTIVE;
 	vtime->cpu = -1;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_చివర(&vtime->seqcount);
 
 	vtime = &current->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (is_idle_task(current))
+	ఒకవేళ (is_idle_task(current))
 		vtime->state = VTIME_IDLE;
-	else if (current->flags & PF_VCPU)
+	లేకపోతే ఒకవేళ (current->flags & PF_VCPU)
 		vtime->state = VTIME_GUEST;
-	else
+	లేకపోతే
 		vtime->state = VTIME_SYS;
 	vtime->starttime = sched_clock();
 	vtime->cpu = smp_processor_id();
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_చివర(&vtime->seqcount);
 }
 
-void vtime_init_idle(struct task_struct *t, int cpu)
+శూన్య vtime_init_idle(నిర్మాణం task_struct *t, పూర్ణాంకం cpu)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned long flags;
+	నిర్మాణం vtime *vtime = &t->vtime;
+	గుర్తులేని దీర్ఘ flags;
 
 	local_irq_save(flags);
 	write_seqcount_begin(&vtime->seqcount);
 	vtime->state = VTIME_IDLE;
 	vtime->starttime = sched_clock();
 	vtime->cpu = cpu;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_చివర(&vtime->seqcount);
 	local_irq_restore(flags);
 }
 
-u64 task_gtime(struct task_struct *t)
+u64 task_gtime(నిర్మాణం task_struct *t)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	నిర్మాణం vtime *vtime = &t->vtime;
+	గుర్తులేని పూర్ణాంకం seq;
 	u64 gtime;
 
-	if (!vtime_accounting_enabled())
-		return t->gtime;
+	ఒకవేళ (!vtime_accounting_enabled())
+		తిరిగి t->gtime;
 
-	do {
+	చేయి {
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		gtime = t->gtime;
-		if (vtime->state == VTIME_GUEST)
+		ఒకవేళ (vtime->state == VTIME_GUEST)
 			gtime += vtime->gtime + vtime_delta(vtime);
 
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} అయితే (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return gtime;
+	తిరిగి gtime;
 }
 
 /*
@@ -1054,20 +1054,20 @@ u64 task_gtime(struct task_struct *t)
  * add up the pending nohz execution time since the last
  * cputime snapshot.
  */
-bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
+bool task_cputime(నిర్మాణం task_struct *t, u64 *utime, u64 *stime)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	నిర్మాణం vtime *vtime = &t->vtime;
+	గుర్తులేని పూర్ణాంకం seq;
 	u64 delta;
-	int ret;
+	పూర్ణాంకం ret;
 
-	if (!vtime_accounting_enabled()) {
+	ఒకవేళ (!vtime_accounting_enabled()) {
 		*utime = t->utime;
 		*stime = t->stime;
-		return false;
+		తిరిగి false;
 	}
 
-	do {
+	చేయి {
 		ret = false;
 		seq = read_seqcount_begin(&vtime->seqcount);
 
@@ -1075,8 +1075,8 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		*stime = t->stime;
 
 		/* Task is sleeping or idle, nothing to add */
-		if (vtime->state < VTIME_SYS)
-			continue;
+		ఒకవేళ (vtime->state < VTIME_SYS)
+			కొనసాగు;
 
 		ret = true;
 		delta = vtime_delta(vtime);
@@ -1085,25 +1085,25 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		 * Task runs either in user (including guest) or kernel space,
 		 * add pending nohz time to the right place.
 		 */
-		if (vtime->state == VTIME_SYS)
+		ఒకవేళ (vtime->state == VTIME_SYS)
 			*stime += vtime->stime + delta;
-		else
+		లేకపోతే
 			*utime += vtime->utime + delta;
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} అయితే (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return ret;
+	తిరిగి ret;
 }
 
-static int vtime_state_fetch(struct vtime *vtime, int cpu)
+స్థిర పూర్ణాంకం vtime_state_fetch(నిర్మాణం vtime *vtime, పూర్ణాంకం cpu)
 {
-	int state = READ_ONCE(vtime->state);
+	పూర్ణాంకం state = READ_ONCE(vtime->state);
 
 	/*
 	 * We raced against a context switch, fetch the
 	 * kcpustat task again.
 	 */
-	if (vtime->cpu != cpu && vtime->cpu != -1)
-		return -EAGAIN;
+	ఒకవేళ (vtime->cpu != cpu && vtime->cpu != -1)
+		తిరిగి -EAGAIN;
 
 	/*
 	 * Two possible things here:
@@ -1114,37 +1114,37 @@ static int vtime_state_fetch(struct vtime *vtime, int cpu)
 	 *
 	 * Case 1) is ok but 2) is not. So wait for a safe VTIME state.
 	 */
-	if (state == VTIME_INACTIVE)
-		return -EAGAIN;
+	ఒకవేళ (state == VTIME_INACTIVE)
+		తిరిగి -EAGAIN;
 
-	return state;
+	తిరిగి state;
 }
 
-static u64 kcpustat_user_vtime(struct vtime *vtime)
+స్థిర u64 kcpustat_user_vtime(నిర్మాణం vtime *vtime)
 {
-	if (vtime->state == VTIME_USER)
-		return vtime->utime + vtime_delta(vtime);
-	else if (vtime->state == VTIME_GUEST)
-		return vtime->gtime + vtime_delta(vtime);
-	return 0;
+	ఒకవేళ (vtime->state == VTIME_USER)
+		తిరిగి vtime->utime + vtime_delta(vtime);
+	లేకపోతే ఒకవేళ (vtime->state == VTIME_GUEST)
+		తిరిగి vtime->gtime + vtime_delta(vtime);
+	తిరిగి 0;
 }
 
-static int kcpustat_field_vtime(u64 *cpustat,
-				struct task_struct *tsk,
-				enum cpu_usage_stat usage,
-				int cpu, u64 *val)
+స్థిర పూర్ణాంకం kcpustat_క్షేత్రం_vtime(u64 *cpustat,
+				నిర్మాణం task_struct *tsk,
+				గణన cpu_usage_stat usage,
+				పూర్ణాంకం cpu, u64 *val)
 {
-	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	నిర్మాణం vtime *vtime = &tsk->vtime;
+	గుర్తులేని పూర్ణాంకం seq;
 
-	do {
-		int state;
+	చేయి {
+		పూర్ణాంకం state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		ఒకవేళ (state < 0)
+			తిరిగి state;
 
 		*val = cpustat[usage];
 
@@ -1155,100 +1155,100 @@ static int kcpustat_field_vtime(u64 *cpustat,
 		 * updates which is a no go on nohz_full (although the scheduler
 		 * may still interrupt the target if rescheduling is needed...)
 		 */
-		switch (usage) {
-		case CPUTIME_SYSTEM:
-			if (state == VTIME_SYS)
+		ఎంపిక (usage) {
+		స్థితి CPUTIME_SYSTEM:
+			ఒకవేళ (state == VTIME_SYS)
 				*val += vtime->stime + vtime_delta(vtime);
-			break;
-		case CPUTIME_USER:
-			if (task_nice(tsk) <= 0)
+			ఆపు;
+		స్థితి CPUTIME_USER:
+			ఒకవేళ (task_nice(tsk) <= 0)
 				*val += kcpustat_user_vtime(vtime);
-			break;
-		case CPUTIME_NICE:
-			if (task_nice(tsk) > 0)
+			ఆపు;
+		స్థితి CPUTIME_NICE:
+			ఒకవేళ (task_nice(tsk) > 0)
 				*val += kcpustat_user_vtime(vtime);
-			break;
-		case CPUTIME_GUEST:
-			if (state == VTIME_GUEST && task_nice(tsk) <= 0)
+			ఆపు;
+		స్థితి CPUTIME_GUEST:
+			ఒకవేళ (state == VTIME_GUEST && task_nice(tsk) <= 0)
 				*val += vtime->gtime + vtime_delta(vtime);
-			break;
-		case CPUTIME_GUEST_NICE:
-			if (state == VTIME_GUEST && task_nice(tsk) > 0)
+			ఆపు;
+		స్థితి CPUTIME_GUEST_NICE:
+			ఒకవేళ (state == VTIME_GUEST && task_nice(tsk) > 0)
 				*val += vtime->gtime + vtime_delta(vtime);
-			break;
-		case CPUTIME_IDLE:
-			if (state == VTIME_IDLE && !cpu_has_iowait(cpu))
+			ఆపు;
+		స్థితి CPUTIME_IDLE:
+			ఒకవేళ (state == VTIME_IDLE && !cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
-			break;
-		case CPUTIME_IOWAIT:
-			if (state == VTIME_IDLE && cpu_has_iowait(cpu))
+			ఆపు;
+		స్థితి CPUTIME_IOWAIT:
+			ఒకవేళ (state == VTIME_IDLE && cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
-			break;
-		default:
-			break;
+			ఆపు;
+		అప్రమేయ:
+			ఆపు;
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} అయితే (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	తిరిగి 0;
 }
 
-u64 kcpustat_field(enum cpu_usage_stat usage, int cpu)
+u64 kcpustat_క్షేత్రం(గణన cpu_usage_stat usage, పూర్ణాంకం cpu)
 {
 	u64 *cpustat = kcpustat_cpu(cpu).cpustat;
 	u64 val = cpustat[usage];
-	struct rq *rq;
-	int err;
+	నిర్మాణం rq *rq;
+	పూర్ణాంకం err;
 
-	if (!vtime_generic_enabled_cpu(cpu))
-		return kcpustat_field_default(usage, cpu);
+	ఒకవేళ (!vtime_generic_enabled_cpu(cpu))
+		తిరిగి kcpustat_క్షేత్రం_default(usage, cpu);
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
-		struct task_struct *curr;
+	కొరకు (;;) {
+		నిర్మాణం task_struct *curr;
 
-		rcu_read_lock();
+		rcu_read_తాళం();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		ఒకవేళ (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
-			return cpustat[usage];
+			తిరిగి cpustat[usage];
 		}
 
-		err = kcpustat_field_vtime(cpustat, curr, usage, cpu, &val);
+		err = kcpustat_క్షేత్రం_vtime(cpustat, curr, usage, cpu, &val);
 		rcu_read_unlock();
 
-		if (!err)
-			return val;
+		ఒకవేళ (!err)
+			తిరిగి val;
 
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_field);
+EXPORT_చిహ్నం_GPL(kcpustat_క్షేత్రం);
 
-static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
-				    const struct kernel_cpustat *src,
-				    struct task_struct *tsk, int cpu)
+స్థిర పూర్ణాంకం kcpustat_cpu_fetch_vtime(నిర్మాణం kernel_cpustat *dst,
+				    స్థిరరాశి నిర్మాణం kernel_cpustat *src,
+				    నిర్మాణం task_struct *tsk, పూర్ణాంకం cpu)
 {
-	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	నిర్మాణం vtime *vtime = &tsk->vtime;
+	గుర్తులేని పూర్ణాంకం seq;
 
-	do {
+	చేయి {
 		u64 *cpustat;
 		u64 delta;
-		int state;
+		పూర్ణాంకం state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		ఒకవేళ (state < 0)
+			తిరిగి state;
 
 		*dst = *src;
 		cpustat = dst->cpustat;
 
 		/* Task is sleeping or dead, nothing to add */
-		if (state < VTIME_IDLE)
-			continue;
+		ఒకవేళ (state < VTIME_IDLE)
+			కొనసాగు;
 
 		delta = vtime_delta(vtime);
 
@@ -1256,72 +1256,72 @@ static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
 		 * Task runs either in user (including guest) or kernel space,
 		 * add pending nohz time to the right place.
 		 */
-		switch (state) {
-		case VTIME_SYS:
+		ఎంపిక (state) {
+		స్థితి VTIME_SYS:
 			cpustat[CPUTIME_SYSTEM] += vtime->stime + delta;
-			break;
-		case VTIME_USER:
-			if (task_nice(tsk) > 0)
+			ఆపు;
+		స్థితి VTIME_USER:
+			ఒకవేళ (task_nice(tsk) > 0)
 				cpustat[CPUTIME_NICE] += vtime->utime + delta;
-			else
+			లేకపోతే
 				cpustat[CPUTIME_USER] += vtime->utime + delta;
-			break;
-		case VTIME_GUEST:
-			if (task_nice(tsk) > 0) {
+			ఆపు;
+		స్థితి VTIME_GUEST:
+			ఒకవేళ (task_nice(tsk) > 0) {
 				cpustat[CPUTIME_GUEST_NICE] += vtime->gtime + delta;
 				cpustat[CPUTIME_NICE] += vtime->gtime + delta;
-			} else {
+			} లేకపోతే {
 				cpustat[CPUTIME_GUEST] += vtime->gtime + delta;
 				cpustat[CPUTIME_USER] += vtime->gtime + delta;
 			}
-			break;
-		case VTIME_IDLE:
-			if (cpu_has_iowait(cpu))
+			ఆపు;
+		స్థితి VTIME_IDLE:
+			ఒకవేళ (cpu_has_iowait(cpu))
 				cpustat[CPUTIME_IOWAIT] += delta;
-			else
+			లేకపోతే
 				cpustat[CPUTIME_IDLE] += delta;
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			WARN_ON_ONCE(1);
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} అయితే (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	తిరిగి 0;
 }
 
-void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
+శూన్య kcpustat_cpu_fetch(నిర్మాణం kernel_cpustat *dst, పూర్ణాంకం cpu)
 {
-	const struct kernel_cpustat *src = &kcpustat_cpu(cpu);
-	struct rq *rq;
-	int err;
+	స్థిరరాశి నిర్మాణం kernel_cpustat *src = &kcpustat_cpu(cpu);
+	నిర్మాణం rq *rq;
+	పూర్ణాంకం err;
 
-	if (!vtime_generic_enabled_cpu(cpu)) {
+	ఒకవేళ (!vtime_generic_enabled_cpu(cpu)) {
 		kcpustat_cpu_fetch_default(dst, cpu);
-		return;
+		తిరిగి;
 	}
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
-		struct task_struct *curr;
+	కొరకు (;;) {
+		నిర్మాణం task_struct *curr;
 
-		rcu_read_lock();
+		rcu_read_తాళం();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		ఒకవేళ (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
 			kcpustat_cpu_fetch_default(dst, cpu);
-			return;
+			తిరిగి;
 		}
 
 		err = kcpustat_cpu_fetch_vtime(dst, src, curr, cpu);
 		rcu_read_unlock();
 
-		if (!err)
-			return;
+		ఒకవేళ (!err)
+			తిరిగి;
 
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_cpu_fetch);
+EXPORT_చిహ్నం_GPL(kcpustat_cpu_fetch);
 
-#endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */
+#అయితే_ముగింపు /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */

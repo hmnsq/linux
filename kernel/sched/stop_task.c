@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#అన్తర్భావ "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+స్థిర పూర్ణాంకం
+select_task_rq_stop(నిర్మాణం task_struct *p, పూర్ణాంకం cpu, పూర్ణాంకం flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	తిరిగి task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+స్థిర పూర్ణాంకం
+balance_stop(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	తిరిగి sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+స్థిర శూన్య
+wakeup_preempt_stop(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+స్థిర శూన్య సమితి_తదుపరి_task_stop(నిర్మాణం rq *rq, నిర్మాణం task_struct *stop, గణన snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	ఒకవేళ (type == SNT_REPICK)
+		తిరిగి;
 
-	stop->se.exec_start = rq_clock_task(rq);
+	stop->se.exec_ప్రారంభం = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+స్థిర నిర్మాణం task_struct *pick_task_stop(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	ఒకవేళ (!sched_stop_runnable(rq))
+		తిరిగి ఖాళీ;
 
-	return rq->stop;
+	తిరిగి rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+స్థిర శూన్య
+వరుసలో_చేర్చు_task_stop(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags)
 {
-	add_nr_running(rq, 1);
+	కూడు_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+స్థిర bool
+వరుస_నుండి_తీయి_task_stop(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	తిరిగి true;
 }
 
-static void yield_task_stop(struct rq *rq)
+స్థిర శూన్య yield_task_stop(నిర్మాణం rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+స్థిర శూన్య put_prev_task_stop(నిర్మాణం rq *rq, నిర్మాణం task_struct *prev, నిర్మాణం task_struct *తదుపరి)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+స్థిర శూన్య task_tick_stop(నిర్మాణం rq *rq, నిర్మాణం task_struct *curr, పూర్ణాంకం queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+స్థిర శూన్య switching_గమ్యం_stop(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+స్థిర శూన్య
+prio_మారింది_stop(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	ఒకవేళ (p->prio == oldprio)
+		తిరిగి;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+స్థిర శూన్య update_curr_stop(నిర్మాణం rq *rq)
 {
 }
 
@@ -100,23 +100,23 @@ static void update_curr_stop(struct rq *rq)
  * Simple, special scheduling class for the per-CPU stop tasks:
  */
 DEFINE_SCHED_CLASS(stop) = {
-	.enqueue_task		= enqueue_task_stop,
-	.dequeue_task		= dequeue_task_stop,
+	.వరుసలో_చేర్చు_task		= వరుసలో_చేర్చు_task_stop,
+	.వరుస_నుండి_తీయి_task		= వరుస_నుండి_తీయి_task_stop,
 	.yield_task		= yield_task_stop,
 
 	.wakeup_preempt		= wakeup_preempt_stop,
 
 	.pick_task		= pick_task_stop,
 	.put_prev_task		= put_prev_task_stop,
-	.set_next_task          = set_next_task_stop,
+	.సమితి_తదుపరి_task          = సమితి_తదుపరి_task_stop,
 
 	.balance		= balance_stop,
 	.select_task_rq		= select_task_rq_stop,
-	.set_cpus_allowed	= set_cpus_allowed_common,
+	.సమితి_cpus_allowed	= సమితి_cpus_allowed_common,
 
 	.task_tick		= task_tick_stop,
 
-	.prio_changed		= prio_changed_stop,
-	.switching_to		= switching_to_stop,
+	.prio_మారింది		= prio_మారింది_stop,
+	.switching_గమ్యం		= switching_గమ్యం_stop,
 	.update_curr		= update_curr_stop,
 };

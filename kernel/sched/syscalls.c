@@ -7,27 +7,27 @@
  *  Copyright (C) 1991-2002  Linus Torvalds
  *  Copyright (C) 1998-2024  Ingo Molnar, Red Hat
  */
-#include <linux/sched.h>
-#include <linux/cpuset.h>
-#include <linux/sched/debug.h>
+#అన్తర్భావ <linux/sched.h>
+#అన్తర్భావ <linux/cpuset.h>
+#అన్తర్భావ <linux/sched/debug.h>
 
-#include <uapi/linux/sched/types.h>
+#అన్తర్భావ <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "autogroup.h"
+#అన్తర్భావ "sched.h"
+#అన్తర్భావ "autogroup.h"
 
-static inline int __normal_prio(int policy, int rt_prio, int nice)
+స్థిర అంతఃవరుస పూర్ణాంకం __normal_prio(పూర్ణాంకం policy, పూర్ణాంకం rt_prio, పూర్ణాంకం nice)
 {
-	int prio;
+	పూర్ణాంకం prio;
 
-	if (dl_policy(policy))
+	ఒకవేళ (dl_policy(policy))
 		prio = MAX_DL_PRIO - 1;
-	else if (rt_policy(policy))
+	లేకపోతే ఒకవేళ (rt_policy(policy))
 		prio = MAX_RT_PRIO - 1 - rt_prio;
-	else
-		prio = NICE_TO_PRIO(nice);
+	లేకపోతే
+		prio = NICE_గమ్యం_PRIO(nice);
 
-	return prio;
+	తిరిగి prio;
 }
 
 /*
@@ -37,9 +37,9 @@ static inline int __normal_prio(int policy, int rt_prio, int nice)
  * setprio syscalls, and whenever the interactivity
  * estimator recalculates.
  */
-static inline int normal_prio(struct task_struct *p)
+స్థిర అంతఃవరుస పూర్ణాంకం సాధారణ_prio(నిర్మాణం task_struct *p)
 {
-	return __normal_prio(p->policy, p->rt_priority, PRIO_TO_NICE(p->static_prio));
+	తిరిగి __normal_prio(p->policy, p->rt_ప్రాధాన్యత, PRIO_గమ్యం_NICE(p->static_prio));
 }
 
 /*
@@ -49,30 +49,30 @@ static inline int normal_prio(struct task_struct *p)
  * interactivity modifiers. Will be RT if the task got
  * RT-boosted. If not then it returns p->normal_prio.
  */
-static int effective_prio(struct task_struct *p)
+స్థిర పూర్ణాంకం effective_prio(నిర్మాణం task_struct *p)
 {
-	p->normal_prio = normal_prio(p);
+	p->సాధారణ_prio = సాధారణ_prio(p);
 	/*
 	 * If we are RT tasks or we were boosted to RT priority,
 	 * keep the priority unchanged. Otherwise, update priority
 	 * to the normal priority:
 	 */
-	if (!rt_or_dl_prio(p->prio))
-		return p->normal_prio;
-	return p->prio;
+	ఒకవేళ (!rt_or_dl_prio(p->prio))
+		తిరిగి p->సాధారణ_prio;
+	తిరిగి p->prio;
 }
 
-void set_user_nice(struct task_struct *p, long nice)
+శూన్య సమితి_user_nice(నిర్మాణం task_struct *p, దీర్ఘ nice)
 {
-	int old_prio;
+	పూర్ణాంకం old_prio;
 
-	if (task_nice(p) == nice || nice < MIN_NICE || nice > MAX_NICE)
-		return;
+	ఒకవేళ (task_nice(p) == nice || nice < MIN_NICE || nice > MAX_NICE)
+		తిరిగి;
 	/*
 	 * We have to be careful, if called from sys_setpriority(),
 	 * the task might be in the middle of scheduling on another CPU.
 	 */
-	guard(task_rq_lock)(p);
+	guard(task_rq_తాళం_2)(p);
 
 	/*
 	 * The RT priorities are set via sched_setscheduler(), but we still
@@ -80,19 +80,19 @@ void set_user_nice(struct task_struct *p, long nice)
 	 * it won't have any effect on scheduling until the task is
 	 * SCHED_DEADLINE, SCHED_FIFO or SCHED_RR:
 	 */
-	if (task_has_dl_policy(p) || task_has_rt_policy(p)) {
-		p->static_prio = NICE_TO_PRIO(nice);
-		return;
+	ఒకవేళ (task_has_dl_policy(p) || task_has_rt_policy(p)) {
+		p->static_prio = NICE_గమ్యం_PRIO(nice);
+		తిరిగి;
 	}
 
-	scoped_guard (sched_change, p, DEQUEUE_SAVE) {
-		p->static_prio = NICE_TO_PRIO(nice);
-		set_load_weight(p, true);
+	scoped_guard (sched_change, p, వరుస_నుండి_తీయి_SAVE) {
+		p->static_prio = NICE_గమ్యం_PRIO(nice);
+		సమితి_ఎక్కించు_బరువు(p, true);
 		old_prio = p->prio;
 		p->prio = effective_prio(p);
 	}
 }
-EXPORT_SYMBOL(set_user_nice);
+EXPORT_చిహ్నం(సమితి_user_nice);
 
 /*
  * is_nice_reduction - check if nice value is an actual reduction
@@ -102,12 +102,12 @@ EXPORT_SYMBOL(set_user_nice);
  * @p: task
  * @nice: nice value
  */
-static bool is_nice_reduction(const struct task_struct *p, const int nice)
+స్థిర bool is_nice_reduction(స్థిరరాశి నిర్మాణం task_struct *p, స్థిరరాశి పూర్ణాంకం nice)
 {
 	/* Convert nice value [19,-20] to rlimit style value [1,40]: */
-	int nice_rlim = nice_to_rlimit(nice);
+	పూర్ణాంకం nice_rlim = nice_గమ్యం_rlimit(nice);
 
-	return (nice_rlim <= task_rlimit(p, RLIMIT_NICE));
+	తిరిగి (nice_rlim <= task_rlimit(p, RLIMIT_NICE));
 }
 
 /*
@@ -115,12 +115,12 @@ static bool is_nice_reduction(const struct task_struct *p, const int nice)
  * @p: task
  * @nice: nice value
  */
-int can_nice(const struct task_struct *p, const int nice)
+పూర్ణాంకం can_nice(స్థిరరాశి నిర్మాణం task_struct *p, స్థిరరాశి పూర్ణాంకం nice)
 {
-	return is_nice_reduction(p, nice) || capable(CAP_SYS_NICE);
+	తిరిగి is_nice_reduction(p, nice) || capable(CAP_SYS_NICE);
 }
 
-#ifdef __ARCH_WANT_SYS_NICE
+#నిర్వచితమైతే __ARCH_WANT_SYS_NICE
 
 /*
  * sys_nice - change the priority of the current process.
@@ -129,31 +129,31 @@ int can_nice(const struct task_struct *p, const int nice)
  * sys_setpriority is a more generic, but much slower function that
  * does similar things.
  */
-SYSCALL_DEFINE1(nice, int, increment)
+SYSCALL_DEFINE1(nice, పూర్ణాంకం, increment)
 {
-	long nice, retval;
+	దీర్ఘ nice, retval;
 
 	/*
 	 * Setpriority might change our priority at the same moment.
 	 * We don't have to worry. Conceptually one call occurs first
 	 * and we have a single winner.
 	 */
-	increment = clamp(increment, -NICE_WIDTH, NICE_WIDTH);
+	increment = clamp(increment, -NICE_వెడల్పు, NICE_వెడల్పు);
 	nice = task_nice(current) + increment;
 
 	nice = clamp_val(nice, MIN_NICE, MAX_NICE);
-	if (increment < 0 && !can_nice(current, nice))
-		return -EPERM;
+	ఒకవేళ (increment < 0 && !can_nice(current, nice))
+		తిరిగి -EPERM;
 
 	retval = security_task_setnice(current, nice);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	set_user_nice(current, nice);
-	return 0;
+	సమితి_user_nice(current, nice);
+	తిరిగి 0;
 }
 
-#endif /* __ARCH_WANT_SYS_NICE */
+#అయితే_ముగింపు /* __ARCH_WANT_SYS_NICE */
 
 /**
  * task_prio - return the priority value of a given task.
@@ -167,9 +167,9 @@ SYSCALL_DEFINE1(nice, int, increment)
  * fifo, rr             [-2 ... -100]     [98 ... 0]  [1 ... 99]
  * deadline                     -101             -1           0
  */
-int task_prio(const struct task_struct *p)
+పూర్ణాంకం task_prio(స్థిరరాశి నిర్మాణం task_struct *p)
 {
-	return p->prio - MAX_RT_PRIO;
+	తిరిగి p->prio - MAX_RT_PRIO;
 }
 
 /**
@@ -178,9 +178,9 @@ int task_prio(const struct task_struct *p)
  *
  * Return: 1 if the CPU is currently idle. 0 otherwise.
  */
-int idle_cpu(int cpu)
+పూర్ణాంకం idle_cpu(పూర్ణాంకం cpu)
 {
-	return idle_rq(cpu_rq(cpu));
+	తిరిగి idle_rq(cpu_rq(cpu));
 }
 
 /**
@@ -189,22 +189,22 @@ int idle_cpu(int cpu)
  *
  * Return: The idle task for the CPU @cpu.
  */
-struct task_struct *idle_task(int cpu)
+నిర్మాణం task_struct *idle_task(పూర్ణాంకం cpu)
 {
-	return cpu_rq(cpu)->idle;
+	తిరిగి cpu_rq(cpu)->idle;
 }
 
-#ifdef CONFIG_SCHED_CORE
-int sched_core_idle_cpu(int cpu)
+#నిర్వచితమైతే CONFIG_SCHED_CORE
+పూర్ణాంకం sched_core_idle_cpu(పూర్ణాంకం cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	నిర్మాణం rq *rq = cpu_rq(cpu);
 
-	if (sched_core_enabled(rq) && rq->curr == rq->idle)
-		return 1;
+	ఒకవేళ (sched_core_enabled(rq) && rq->curr == rq->idle)
+		తిరిగి 1;
 
-	return idle_cpu(cpu);
+	తిరిగి idle_cpu(cpu);
 }
-#endif /* CONFIG_SCHED_CORE */
+#అయితే_ముగింపు /* CONFIG_SCHED_CORE */
 
 /**
  * find_process_by_pid - find a process with a matching PID value.
@@ -212,51 +212,51 @@ int sched_core_idle_cpu(int cpu)
  *
  * The task of @pid, if found. %NULL otherwise.
  */
-static struct task_struct *find_process_by_pid(pid_t pid)
+స్థిర నిర్మాణం task_struct *కనుగొను_process_by_pid(pid_t pid)
 {
-	return pid ? find_task_by_vpid(pid) : current;
+	తిరిగి pid ? కనుగొను_task_by_vpid(pid) : current;
 }
 
-static struct task_struct *find_get_task(pid_t pid)
+స్థిర నిర్మాణం task_struct *కనుగొను_get_task(pid_t pid)
 {
-	struct task_struct *p;
+	నిర్మాణం task_struct *p;
 	guard(rcu)();
 
-	p = find_process_by_pid(pid);
-	if (likely(p))
+	p = కనుగొను_process_by_pid(pid);
+	ఒకవేళ (likely(p))
 		get_task_struct(p);
 
-	return p;
+	తిరిగి p;
 }
 
-DEFINE_CLASS(find_get_task, struct task_struct *, if (_T) put_task_struct(_T),
-	     find_get_task(pid), pid_t pid)
+DEFINE_CLASS(కనుగొను_get_task, నిర్మాణం task_struct *, ఒకవేళ (_T) put_task_struct(_T),
+	     కనుగొను_get_task(pid), pid_t pid)
 
 /*
  * sched_setparam() passes in -1 for its policy, to let the functions
  * it calls know not to change it.
  */
-#define SETPARAM_POLICY	-1
+#నిర్వచించు SETPARAM_POLICY	-1
 
-static void __setscheduler_params(struct task_struct *p,
-		const struct sched_attr *attr)
+స్థిర శూన్య __setscheduler_params(నిర్మాణం task_struct *p,
+		స్థిరరాశి నిర్మాణం sched_attr *attr)
 {
-	int policy = attr->sched_policy;
+	పూర్ణాంకం policy = attr->sched_policy;
 
-	if (policy == SETPARAM_POLICY)
+	ఒకవేళ (policy == SETPARAM_POLICY)
 		policy = p->policy;
 
 	p->policy = policy;
 
-	if (dl_policy(policy))
+	ఒకవేళ (dl_policy(policy))
 		__setparam_dl(p, attr);
-	else if (fair_policy(policy))
+	లేకపోతే ఒకవేళ (fair_policy(policy))
 		__setparam_fair(p, attr);
 
 	/* rt-policy tasks do not have a timerslack */
-	if (rt_or_dl_task_policy(p)) {
+	ఒకవేళ (rt_or_dl_task_policy(p)) {
 		p->timer_slack_ns = 0;
-	} else if (p->timer_slack_ns == 0) {
+	} లేకపోతే ఒకవేళ (p->timer_slack_ns == 0) {
 		/* when switching back to non-rt policy, restore timerslack */
 		p->timer_slack_ns = p->default_timer_slack_ns;
 	}
@@ -266,28 +266,28 @@ static void __setscheduler_params(struct task_struct *p,
 	 * !rt_policy. Always setting this ensures that things like
 	 * getparam()/getattr() don't report silly values for !rt tasks.
 	 */
-	p->rt_priority = attr->sched_priority;
-	p->normal_prio = normal_prio(p);
-	set_load_weight(p, true);
+	p->rt_ప్రాధాన్యత = attr->sched_ప్రాధాన్యత;
+	p->సాధారణ_prio = సాధారణ_prio(p);
+	సమితి_ఎక్కించు_బరువు(p, true);
 }
 
 /*
  * Check the target process has a UID that matches the current process's:
  */
-static bool check_same_owner(struct task_struct *p)
+స్థిర bool check_same_owner(నిర్మాణం task_struct *p)
 {
-	const struct cred *cred = current_cred(), *pcred;
+	స్థిరరాశి నిర్మాణం cred *cred = current_cred(), *pcred;
 	guard(rcu)();
 
 	pcred = __task_cred(p);
-	return (uid_eq(cred->euid, pcred->euid) ||
+	తిరిగి (uid_eq(cred->euid, pcred->euid) ||
 		uid_eq(cred->euid, pcred->uid));
 }
 
-#ifdef CONFIG_RT_MUTEXES
-static inline void __setscheduler_dl_pi(int newprio, int policy,
-			      struct task_struct *p,
-			      struct sched_change_ctx *scope)
+#నిర్వచితమైతే CONFIG_RT_MUTEXES
+స్థిర అంతఃవరుస శూన్య __setscheduler_dl_pi(పూర్ణాంకం newprio, పూర్ణాంకం policy,
+			      నిర్మాణం task_struct *p,
+			      నిర్మాణం sched_change_ctx *scope)
 {
 	/*
 	 * In case a DEADLINE task (either proper or boosted) gets
@@ -296,47 +296,47 @@ static inline void __setscheduler_dl_pi(int newprio, int policy,
 	 * sure replenishment happens with the next enqueue.
 	 */
 
-	if (dl_prio(newprio) && !dl_policy(policy)) {
-		struct task_struct *pi_task = rt_mutex_get_top_task(p);
+	ఒకవేళ (dl_prio(newprio) && !dl_policy(policy)) {
+		నిర్మాణం task_struct *pi_task = rt_mutex_get_శిఖరం_task(p);
 
-		if (pi_task) {
+		ఒకవేళ (pi_task) {
 			p->dl.pi_se = pi_task->dl.pi_se;
-			scope->flags |= ENQUEUE_REPLENISH;
+			scope->flags |= వరుసలో_చేర్చు_REPLENISH;
 		}
 	}
 }
-#else /* !CONFIG_RT_MUTEXES */
-static inline void __setscheduler_dl_pi(int newprio, int policy,
-			      struct task_struct *p,
-			      struct sched_change_ctx *scope)
+#లేకపోతే /* !CONFIG_RT_MUTEXES */
+స్థిర అంతఃవరుస శూన్య __setscheduler_dl_pi(పూర్ణాంకం newprio, పూర్ణాంకం policy,
+			      నిర్మాణం task_struct *p,
+			      నిర్మాణం sched_change_ctx *scope)
 {
 }
-#endif /* !CONFIG_RT_MUTEXES */
+#అయితే_ముగింపు /* !CONFIG_RT_MUTEXES */
 
-#ifdef CONFIG_UCLAMP_TASK
+#నిర్వచితమైతే CONFIG_UCLAMP_TASK
 
-static int uclamp_validate(struct task_struct *p,
-			   const struct sched_attr *attr)
+స్థిర పూర్ణాంకం uclamp_validate(నిర్మాణం task_struct *p,
+			   స్థిరరాశి నిర్మాణం sched_attr *attr)
 {
-	int util_min = p->uclamp_req[UCLAMP_MIN].value;
-	int util_max = p->uclamp_req[UCLAMP_MAX].value;
+	పూర్ణాంకం util_min = p->uclamp_req[UCLAMP_MIN].విలువ;
+	పూర్ణాంకం util_max = p->uclamp_req[UCLAMP_MAX].విలువ;
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
+	ఒకవేళ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
 		util_min = attr->sched_util_min;
 
-		if (util_min + 1 > SCHED_CAPACITY_SCALE + 1)
-			return -EINVAL;
+		ఒకవేళ (util_min + 1 > SCHED_సామర్థ్యం_SCALE + 1)
+			తిరిగి -EINVAL;
 	}
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
+	ఒకవేళ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
 		util_max = attr->sched_util_max;
 
-		if (util_max + 1 > SCHED_CAPACITY_SCALE + 1)
-			return -EINVAL;
+		ఒకవేళ (util_max + 1 > SCHED_సామర్థ్యం_SCALE + 1)
+			తిరిగి -EINVAL;
 	}
 
-	if (util_min != -1 && util_max != -1 && util_min > util_max)
-		return -EINVAL;
+	ఒకవేళ (util_min != -1 && util_max != -1 && util_min > util_max)
+		తిరిగి -EINVAL;
 
 	/*
 	 * We have valid uclamp attributes; make sure uclamp is enabled.
@@ -347,112 +347,112 @@ static int uclamp_validate(struct task_struct *p,
 	 */
 	sched_uclamp_enable();
 
-	return 0;
+	తిరిగి 0;
 }
 
-static bool uclamp_reset(const struct sched_attr *attr,
-			 enum uclamp_id clamp_id,
-			 struct uclamp_se *uc_se)
+స్థిర bool uclamp_reset(స్థిరరాశి నిర్మాణం sched_attr *attr,
+			 గణన uclamp_id clamp_id,
+			 నిర్మాణం uclamp_se *uc_se)
 {
 	/* Reset on sched class change for a non user-defined clamp value. */
-	if (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)) &&
+	ఒకవేళ (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)) &&
 	    !uc_se->user_defined)
-		return true;
+		తిరిగి true;
 
 	/* Reset on sched_util_{min,max} == -1. */
-	if (clamp_id == UCLAMP_MIN &&
+	ఒకవేళ (clamp_id == UCLAMP_MIN &&
 	    attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
 	    attr->sched_util_min == -1) {
-		return true;
+		తిరిగి true;
 	}
 
-	if (clamp_id == UCLAMP_MAX &&
+	ఒకవేళ (clamp_id == UCLAMP_MAX &&
 	    attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
 	    attr->sched_util_max == -1) {
-		return true;
+		తిరిగి true;
 	}
 
-	return false;
+	తిరిగి false;
 }
 
-static void __setscheduler_uclamp(struct task_struct *p,
-				  const struct sched_attr *attr)
+స్థిర శూన్య __setscheduler_uclamp(నిర్మాణం task_struct *p,
+				  స్థిరరాశి నిర్మాణం sched_attr *attr)
 {
-	enum uclamp_id clamp_id;
+	గణన uclamp_id clamp_id;
 
 	for_each_clamp_id(clamp_id) {
-		struct uclamp_se *uc_se = &p->uclamp_req[clamp_id];
-		unsigned int value;
+		నిర్మాణం uclamp_se *uc_se = &p->uclamp_req[clamp_id];
+		గుర్తులేని పూర్ణాంకం విలువ;
 
-		if (!uclamp_reset(attr, clamp_id, uc_se))
-			continue;
+		ఒకవేళ (!uclamp_reset(attr, clamp_id, uc_se))
+			కొనసాగు;
 
 		/*
 		 * RT by default have a 100% boost value that could be modified
 		 * at runtime.
 		 */
-		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
-			value = sysctl_sched_uclamp_util_min_rt_default;
-		else
-			value = uclamp_none(clamp_id);
+		ఒకవేళ (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
+			విలువ = sysctl_sched_uclamp_util_min_rt_default;
+		లేకపోతే
+			విలువ = uclamp_none(clamp_id);
 
-		uclamp_se_set(uc_se, value, false);
+		uclamp_se_సమితి(uc_se, విలువ, false);
 
 	}
 
-	if (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)))
-		return;
+	ఒకవేళ (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)))
+		తిరిగి;
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
+	ఒకవేళ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
 	    attr->sched_util_min != -1) {
-		uclamp_se_set(&p->uclamp_req[UCLAMP_MIN],
+		uclamp_se_సమితి(&p->uclamp_req[UCLAMP_MIN],
 			      attr->sched_util_min, true);
 	}
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
+	ఒకవేళ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
 	    attr->sched_util_max != -1) {
-		uclamp_se_set(&p->uclamp_req[UCLAMP_MAX],
+		uclamp_se_సమితి(&p->uclamp_req[UCLAMP_MAX],
 			      attr->sched_util_max, true);
 	}
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
+#లేకపోతే /* !CONFIG_UCLAMP_TASK: */
 
-static inline int uclamp_validate(struct task_struct *p,
-				  const struct sched_attr *attr)
+స్థిర అంతఃవరుస పూర్ణాంకం uclamp_validate(నిర్మాణం task_struct *p,
+				  స్థిరరాశి నిర్మాణం sched_attr *attr)
 {
-	return -EOPNOTSUPP;
+	తిరిగి -EOPNOTSUPP;
 }
-static void __setscheduler_uclamp(struct task_struct *p,
-				  const struct sched_attr *attr) { }
-#endif /* !CONFIG_UCLAMP_TASK */
+స్థిర శూన్య __setscheduler_uclamp(నిర్మాణం task_struct *p,
+				  స్థిరరాశి నిర్మాణం sched_attr *attr) { }
+#అయితే_ముగింపు /* !CONFIG_UCLAMP_TASK */
 
 /*
  * Allow unprivileged RT tasks to decrease priority.
  * Only issue a capable test if needed and only once to avoid an audit
  * event on permitted non-privileged operations:
  */
-static int user_check_sched_setscheduler(struct task_struct *p,
-					 const struct sched_attr *attr,
-					 int policy, int reset_on_fork)
+స్థిర పూర్ణాంకం user_check_sched_setscheduler(నిర్మాణం task_struct *p,
+					 స్థిరరాశి నిర్మాణం sched_attr *attr,
+					 పూర్ణాంకం policy, పూర్ణాంకం reset_on_fork)
 {
-	if (fair_policy(policy)) {
-		if (attr->sched_nice < task_nice(p) &&
+	ఒకవేళ (fair_policy(policy)) {
+		ఒకవేళ (attr->sched_nice < task_nice(p) &&
 		    !is_nice_reduction(p, attr->sched_nice))
-			goto req_priv;
+			వెళ్ళు req_priv;
 	}
 
-	if (rt_policy(policy)) {
-		unsigned long rlim_rtprio = task_rlimit(p, RLIMIT_RTPRIO);
+	ఒకవేళ (rt_policy(policy)) {
+		గుర్తులేని దీర్ఘ rlim_rtprio = task_rlimit(p, RLIMIT_RTPRIO);
 
 		/* Can't set/change the rt policy: */
-		if (policy != p->policy && !rlim_rtprio)
-			goto req_priv;
+		ఒకవేళ (policy != p->policy && !rlim_rtprio)
+			వెళ్ళు req_priv;
 
 		/* Can't increase priority: */
-		if (attr->sched_priority > p->rt_priority &&
-		    attr->sched_priority > rlim_rtprio)
-			goto req_priv;
+		ఒకవేళ (attr->sched_ప్రాధాన్యత > p->rt_ప్రాధాన్యత &&
+		    attr->sched_ప్రాధాన్యత > rlim_rtprio)
+			వెళ్ళు req_priv;
 	}
 
 	/*
@@ -461,104 +461,104 @@ static int user_check_sched_setscheduler(struct task_struct *p,
 	 * unprivileged DL tasks to increase their relative deadline
 	 * or reduce their runtime (both ways reducing utilization)
 	 */
-	if (dl_policy(policy))
-		goto req_priv;
+	ఒకవేళ (dl_policy(policy))
+		వెళ్ళు req_priv;
 
 	/*
 	 * Treat SCHED_IDLE as nice 20. Only allow a switch to
 	 * SCHED_NORMAL if the RLIMIT_NICE would normally permit it.
 	 */
-	if (task_has_idle_policy(p) && !idle_policy(policy)) {
-		if (!is_nice_reduction(p, task_nice(p)))
-			goto req_priv;
+	ఒకవేళ (task_has_idle_policy(p) && !idle_policy(policy)) {
+		ఒకవేళ (!is_nice_reduction(p, task_nice(p)))
+			వెళ్ళు req_priv;
 	}
 
 	/* Can't change other user's priorities: */
-	if (!check_same_owner(p))
-		goto req_priv;
+	ఒకవేళ (!check_same_owner(p))
+		వెళ్ళు req_priv;
 
 	/* Normal users shall not reset the sched_reset_on_fork flag: */
-	if (p->sched_reset_on_fork && !reset_on_fork)
-		goto req_priv;
+	ఒకవేళ (p->sched_reset_on_fork && !reset_on_fork)
+		వెళ్ళు req_priv;
 
-	return 0;
+	తిరిగి 0;
 
 req_priv:
-	if (!capable(CAP_SYS_NICE))
-		return -EPERM;
+	ఒకవేళ (!capable(CAP_SYS_NICE))
+		తిరిగి -EPERM;
 
-	return 0;
+	తిరిగి 0;
 }
 
-int __sched_setscheduler(struct task_struct *p,
-			 const struct sched_attr *attr,
+పూర్ణాంకం __sched_setscheduler(నిర్మాణం task_struct *p,
+			 స్థిరరాశి నిర్మాణం sched_attr *attr,
 			 bool user, bool pi)
 {
-	int oldpolicy = -1, policy = attr->sched_policy;
-	int retval, oldprio, newprio;
-	const struct sched_class *prev_class, *next_class;
-	struct balance_callback *head;
-	struct rq_flags rf;
-	int reset_on_fork;
-	int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
-	struct rq *rq;
+	పూర్ణాంకం oldpolicy = -1, policy = attr->sched_policy;
+	పూర్ణాంకం retval, oldprio, newprio;
+	స్థిరరాశి నిర్మాణం sched_class *prev_class, *తదుపరి_class;
+	నిర్మాణం balance_callback *తల;
+	నిర్మాణం rq_flags rf;
+	పూర్ణాంకం reset_on_fork;
+	పూర్ణాంకం వరుస_flags = వరుస_నుండి_తీయి_SAVE | వరుస_నుండి_తీయి_MOVE | వరుస_నుండి_తీయి_NOCLOCK;
+	నిర్మాణం rq *rq;
 	bool cpuset_locked = false;
 
 	/* The pi code expects interrupts enabled */
-	BUG_ON(pi && in_interrupt());
+	BUG_ON(pi && లోపల_అంతరాయం());
 recheck:
 	/* Double check policy once rq lock held: */
-	if (policy < 0) {
+	ఒకవేళ (policy < 0) {
 		reset_on_fork = p->sched_reset_on_fork;
 		policy = oldpolicy = p->policy;
-	} else {
+	} లేకపోతే {
 		reset_on_fork = !!(attr->sched_flags & SCHED_FLAG_RESET_ON_FORK);
 
-		if (!valid_policy(policy))
-			return -EINVAL;
+		ఒకవేళ (!valid_policy(policy))
+			తిరిగి -EINVAL;
 	}
 
-	if (attr->sched_flags & ~(SCHED_FLAG_ALL | SCHED_FLAG_SUGOV))
-		return -EINVAL;
+	ఒకవేళ (attr->sched_flags & ~(SCHED_FLAG_ALL | SCHED_FLAG_SUGOV))
+		తిరిగి -EINVAL;
 
 	/*
 	 * Valid priorities for SCHED_FIFO and SCHED_RR are
 	 * 1..MAX_RT_PRIO-1, valid priority for SCHED_NORMAL,
 	 * SCHED_BATCH and SCHED_IDLE is 0.
 	 */
-	if (attr->sched_priority > MAX_RT_PRIO-1)
-		return -EINVAL;
-	if ((dl_policy(policy) && !__checkparam_dl(attr)) ||
-	    (rt_policy(policy) != (attr->sched_priority != 0)))
-		return -EINVAL;
+	ఒకవేళ (attr->sched_ప్రాధాన్యత > MAX_RT_PRIO-1)
+		తిరిగి -EINVAL;
+	ఒకవేళ ((dl_policy(policy) && !__checkparam_dl(attr)) ||
+	    (rt_policy(policy) != (attr->sched_ప్రాధాన్యత != 0)))
+		తిరిగి -EINVAL;
 
-	if (user) {
+	ఒకవేళ (user) {
 		retval = user_check_sched_setscheduler(p, attr, policy, reset_on_fork);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
-		if (attr->sched_flags & SCHED_FLAG_SUGOV)
-			return -EINVAL;
+		ఒకవేళ (attr->sched_flags & SCHED_FLAG_SUGOV)
+			తిరిగి -EINVAL;
 
 		retval = security_task_setscheduler(p);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 	}
 
 	/* Update task specific "requested" clamps */
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
+	ఒకవేళ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
 		retval = uclamp_validate(p, attr);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 	}
 
 	/*
 	 * SCHED_DEADLINE bandwidth accounting relies on stable cpusets
 	 * information.
 	 */
-	if (dl_policy(policy) || dl_policy(p->policy)) {
+	ఒకవేళ (dl_policy(policy) || dl_policy(p->policy)) {
 		cpuset_locked = true;
-		cpuset_lock();
+		cpuset_తాళం();
 	}
 
 	/*
@@ -568,81 +568,81 @@ recheck:
 	 * To be able to change p->policy safely, the appropriate
 	 * runqueue lock must be held.
 	 */
-	rq = task_rq_lock(p, &rf);
+	rq = task_rq_తాళం_2(p, &rf);
 	update_rq_clock(rq);
 
 	/*
 	 * Changing the policy of the stop threads its a very bad idea:
 	 */
-	if (p == rq->stop) {
+	ఒకవేళ (p == rq->stop) {
 		retval = -EINVAL;
-		goto unlock;
+		వెళ్ళు unlock;
 	}
 
 	retval = scx_check_setscheduler(p, policy);
-	if (retval)
-		goto unlock;
+	ఒకవేళ (retval)
+		వెళ్ళు unlock;
 
 	/*
 	 * If not changing anything there's no need to proceed further,
 	 * but store a possible modification of reset_on_fork.
 	 */
-	if (unlikely(policy == p->policy)) {
-		if (fair_policy(policy) &&
+	ఒకవేళ (unlikely(policy == p->policy)) {
+		ఒకవేళ (fair_policy(policy) &&
 		    (attr->sched_nice != task_nice(p) ||
-		     (attr->sched_runtime != p->se.slice)))
-			goto change;
-		if (rt_policy(policy) && attr->sched_priority != p->rt_priority)
-			goto change;
-		if (dl_policy(policy) && dl_param_changed(p, attr))
-			goto change;
-		if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
-			goto change;
+		     (attr->sched_runtime != p->se.ముక్క)))
+			వెళ్ళు change;
+		ఒకవేళ (rt_policy(policy) && attr->sched_ప్రాధాన్యత != p->rt_ప్రాధాన్యత)
+			వెళ్ళు change;
+		ఒకవేళ (dl_policy(policy) && dl_param_మారింది(p, attr))
+			వెళ్ళు change;
+		ఒకవేళ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
+			వెళ్ళు change;
 
 		p->sched_reset_on_fork = reset_on_fork;
 		retval = 0;
-		goto unlock;
+		వెళ్ళు unlock;
 	}
 change:
 
-	if (user) {
-#ifdef CONFIG_RT_GROUP_SCHED
+	ఒకవేళ (user) {
+#నిర్వచితమైతే CONFIG_RT_సమూహం_SCHED
 		/*
 		 * Do not allow real-time tasks into groups that have no runtime
 		 * assigned.
 		 */
-		if (rt_group_sched_enabled() &&
+		ఒకవేళ (rt_సమూహం_sched_enabled() &&
 				rt_bandwidth_enabled() && rt_policy(policy) &&
-				task_group(p)->rt_bandwidth.rt_runtime == 0 &&
-				!task_group_is_autogroup(task_group(p))) {
+				task_సమూహం(p)->rt_bandwidth.rt_runtime == 0 &&
+				!task_సమూహం_is_autogroup(task_సమూహం(p))) {
 			retval = -EPERM;
-			goto unlock;
+			వెళ్ళు unlock;
 		}
-#endif /* CONFIG_RT_GROUP_SCHED */
-		if (dl_bandwidth_enabled() && dl_policy(policy) &&
+#అయితే_ముగింపు /* CONFIG_RT_GROUP_SCHED */
+		ఒకవేళ (dl_bandwidth_enabled() && dl_policy(policy) &&
 				!(attr->sched_flags & SCHED_FLAG_SUGOV)) {
-			cpumask_t *span = rq->rd->span;
+			cpumask_t *పరిధి = rq->rd->పరిధి;
 
 			/*
 			 * Don't allow tasks with an affinity mask smaller than
 			 * the entire root_domain to become SCHED_DEADLINE. We
 			 * will also fail if there's no bandwidth available.
 			 */
-			if (!cpumask_subset(span, p->cpus_ptr) ||
+			ఒకవేళ (!cpumask_subset(పరిధి, p->cpus_ptr) ||
 			    rq->rd->dl_bw.bw == 0) {
 				retval = -EPERM;
-				goto unlock;
+				వెళ్ళు unlock;
 			}
 		}
 	}
 
 	/* Re-check policy now with rq lock held: */
-	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
+	ఒకవేళ (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
 		policy = oldpolicy = -1;
 		task_rq_unlock(rq, p, &rf);
-		if (cpuset_locked)
+		ఒకవేళ (cpuset_locked)
 			cpuset_unlock();
-		goto recheck;
+		వెళ్ళు recheck;
 	}
 
 	/*
@@ -650,16 +650,16 @@ change:
 	 * of a SCHED_DEADLINE task) we need to check if enough bandwidth
 	 * is available.
 	 */
-	if ((dl_policy(policy) || dl_task(p)) && sched_dl_overflow(p, policy, attr)) {
+	ఒకవేళ ((dl_policy(policy) || dl_task(p)) && sched_dl_అధికప్రవాహం(p, policy, attr)) {
 		retval = -EBUSY;
-		goto unlock;
+		వెళ్ళు unlock;
 	}
 
 	p->sched_reset_on_fork = reset_on_fork;
 	oldprio = p->prio;
 
-	newprio = __normal_prio(policy, attr->sched_priority, attr->sched_nice);
-	if (pi) {
+	newprio = __normal_prio(policy, attr->sched_ప్రాధాన్యత, attr->sched_nice);
+	ఒకవేళ (pi) {
 		/*
 		 * Take priority boosted tasks into account. If the new
 		 * effective priority is unchanged, we just store the new
@@ -668,80 +668,80 @@ change:
 		 * itself.
 		 */
 		newprio = rt_effective_prio(p, newprio);
-		if (newprio == oldprio && !dl_prio(newprio))
-			queue_flags &= ~DEQUEUE_MOVE;
+		ఒకవేళ (newprio == oldprio && !dl_prio(newprio))
+			వరుస_flags &= ~వరుస_నుండి_తీయి_MOVE;
 	}
 
 	prev_class = p->sched_class;
-	next_class = __setscheduler_class(policy, newprio);
+	తదుపరి_class = __setscheduler_class(policy, newprio);
 
-	if (prev_class != next_class)
-		queue_flags |= DEQUEUE_CLASS;
+	ఒకవేళ (prev_class != తదుపరి_class)
+		వరుస_flags |= వరుస_నుండి_తీయి_CLASS;
 
-	scoped_guard (sched_change, p, queue_flags) {
+	scoped_guard (sched_change, p, వరుస_flags) {
 
-		if (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
+		ఒకవేళ (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
 			__setscheduler_params(p, attr);
-			p->sched_class = next_class;
+			p->sched_class = తదుపరి_class;
 			p->prio = newprio;
 			__setscheduler_dl_pi(newprio, policy, p, scope);
 		}
 		__setscheduler_uclamp(p, attr);
 
-		if (scope->queued) {
+		ఒకవేళ (scope->queued) {
 			/*
 			 * We enqueue to tail when the priority of a task is
 			 * increased (user space view).
 			 */
-			if (oldprio < p->prio)
-				scope->flags |= ENQUEUE_HEAD;
+			ఒకవేళ (oldprio < p->prio)
+				scope->flags |= వరుసలో_చేర్చు_తల;
 		}
 	}
 
 	/* Avoid rq from going away on us: */
 	preempt_disable();
-	head = splice_balance_callbacks(rq);
+	తల = splice_balance_callbacks(rq);
 	task_rq_unlock(rq, p, &rf);
 
-	if (pi) {
-		if (cpuset_locked)
+	ఒకవేళ (pi) {
+		ఒకవేళ (cpuset_locked)
 			cpuset_unlock();
 		rt_mutex_adjust_pi(p);
 	}
 
 	/* Run balance callbacks after we've adjusted the PI chain: */
-	balance_callbacks(rq, head);
+	balance_callbacks(rq, తల);
 	preempt_enable();
 
-	return 0;
+	తిరిగి 0;
 
 unlock:
 	task_rq_unlock(rq, p, &rf);
-	if (cpuset_locked)
+	ఒకవేళ (cpuset_locked)
 		cpuset_unlock();
-	return retval;
+	తిరిగి retval;
 }
 
-static int _sched_setscheduler(struct task_struct *p, int policy,
-			       const struct sched_param *param, bool check)
+స్థిర పూర్ణాంకం _sched_setscheduler(నిర్మాణం task_struct *p, పూర్ణాంకం policy,
+			       స్థిరరాశి నిర్మాణం sched_param *param, bool check)
 {
-	struct sched_attr attr = {
+	నిర్మాణం sched_attr attr = {
 		.sched_policy   = policy,
-		.sched_priority = param->sched_priority,
-		.sched_nice	= PRIO_TO_NICE(p->static_prio),
+		.sched_ప్రాధాన్యత = param->sched_ప్రాధాన్యత,
+		.sched_nice	= PRIO_గమ్యం_NICE(p->static_prio),
 	};
 
-	if (p->se.custom_slice)
-		attr.sched_runtime = p->se.slice;
+	ఒకవేళ (p->se.custom_ముక్క)
+		attr.sched_runtime = p->se.ముక్క;
 
 	/* Fixup the legacy SCHED_RESET_ON_FORK hack. */
-	if ((policy != SETPARAM_POLICY) && (policy & SCHED_RESET_ON_FORK)) {
+	ఒకవేళ ((policy != SETPARAM_POLICY) && (policy & SCHED_RESET_ON_FORK)) {
 		attr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
 		policy &= ~SCHED_RESET_ON_FORK;
 		attr.sched_policy = policy;
 	}
 
-	return __sched_setscheduler(p, &attr, check, true);
+	తిరిగి __sched_setscheduler(p, &attr, check, true);
 }
 /**
  * sched_setscheduler - change the scheduling policy and/or RT priority of a thread.
@@ -755,22 +755,22 @@ static int _sched_setscheduler(struct task_struct *p, int policy,
  *
  * NOTE that the task may be already dead.
  */
-int sched_setscheduler(struct task_struct *p, int policy,
-		       const struct sched_param *param)
+పూర్ణాంకం sched_setscheduler(నిర్మాణం task_struct *p, పూర్ణాంకం policy,
+		       స్థిరరాశి నిర్మాణం sched_param *param)
 {
-	return _sched_setscheduler(p, policy, param, true);
+	తిరిగి _sched_setscheduler(p, policy, param, true);
 }
 
-int sched_setattr(struct task_struct *p, const struct sched_attr *attr)
+పూర్ణాంకం sched_setattr(నిర్మాణం task_struct *p, స్థిరరాశి నిర్మాణం sched_attr *attr)
 {
-	return __sched_setscheduler(p, attr, true, true);
+	తిరిగి __sched_setscheduler(p, attr, true, true);
 }
 
-int sched_setattr_nocheck(struct task_struct *p, const struct sched_attr *attr)
+పూర్ణాంకం sched_setattr_nocheck(నిర్మాణం task_struct *p, స్థిరరాశి నిర్మాణం sched_attr *attr)
 {
-	return __sched_setscheduler(p, attr, false, true);
+	తిరిగి __sched_setscheduler(p, attr, false, true);
 }
-EXPORT_SYMBOL_GPL(sched_setattr_nocheck);
+EXPORT_చిహ్నం_GPL(sched_setattr_nocheck);
 
 /**
  * sched_setscheduler_nocheck - change the scheduling policy and/or RT priority of a thread from kernel-space.
@@ -785,10 +785,10 @@ EXPORT_SYMBOL_GPL(sched_setattr_nocheck);
  *
  * Return: 0 on success. An error code otherwise.
  */
-int sched_setscheduler_nocheck(struct task_struct *p, int policy,
-			       const struct sched_param *param)
+పూర్ణాంకం sched_setscheduler_nocheck(నిర్మాణం task_struct *p, పూర్ణాంకం policy,
+			       స్థిరరాశి నిర్మాణం sched_param *param)
 {
-	return _sched_setscheduler(p, policy, param, false);
+	తిరిగి _sched_setscheduler(p, policy, param, false);
 }
 
 /*
@@ -809,22 +809,22 @@ int sched_setscheduler_nocheck(struct task_struct *p, int policy,
  * The administrator _MUST_ configure the system, the kernel simply doesn't
  * know enough information to make a sensible choice.
  */
-void sched_set_fifo(struct task_struct *p)
+శూన్య sched_సమితి_fifo(నిర్మాణం task_struct *p)
 {
-	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 };
+	నిర్మాణం sched_param sp = { .sched_ప్రాధాన్యత = MAX_RT_PRIO / 2 };
 	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
 }
-EXPORT_SYMBOL_GPL(sched_set_fifo);
+EXPORT_చిహ్నం_GPL(sched_సమితి_fifo);
 
 /*
  * For when you don't much care about FIFO, but want to be above SCHED_NORMAL.
  */
-void sched_set_fifo_low(struct task_struct *p)
+శూన్య sched_సమితి_fifo_దిగువ(నిర్మాణం task_struct *p)
 {
-	struct sched_param sp = { .sched_priority = 1 };
+	నిర్మాణం sched_param sp = { .sched_ప్రాధాన్యత = 1 };
 	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
 }
-EXPORT_SYMBOL_GPL(sched_set_fifo_low);
+EXPORT_చిహ్నం_GPL(sched_సమితి_fifo_దిగువ);
 
 /*
  * Used when the primary interrupt handler is forced into a thread, in addition
@@ -833,70 +833,70 @@ EXPORT_SYMBOL_GPL(sched_set_fifo_low);
  * emulating the behavior of a non-PREEMPT_RT system where the primary handler
  * runs in hard interrupt context.
  */
-void sched_set_fifo_secondary(struct task_struct *p)
+శూన్య sched_సమితి_fifo_secondary(నిర్మాణం task_struct *p)
 {
-	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 - 1 };
+	నిర్మాణం sched_param sp = { .sched_ప్రాధాన్యత = MAX_RT_PRIO / 2 - 1 };
 	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
 }
 
-void sched_set_normal(struct task_struct *p, int nice)
+శూన్య sched_సమితి_సాధారణ(నిర్మాణం task_struct *p, పూర్ణాంకం nice)
 {
-	struct sched_attr attr = {
-		.sched_policy = SCHED_NORMAL,
+	నిర్మాణం sched_attr attr = {
+		.sched_policy = SCHED_సాధారణ,
 		.sched_nice = nice,
 	};
 	WARN_ON_ONCE(sched_setattr_nocheck(p, &attr) != 0);
 }
-EXPORT_SYMBOL_GPL(sched_set_normal);
+EXPORT_చిహ్నం_GPL(sched_సమితి_సాధారణ);
 
-static int
-do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
+స్థిర పూర్ణాంకం
+do_sched_setscheduler(pid_t pid, పూర్ణాంకం policy, నిర్మాణం sched_param __user *param)
 {
-	struct sched_param lparam;
+	నిర్మాణం sched_param lparam;
 
-	if (unlikely(!param || pid < 0))
-		return -EINVAL;
-	if (copy_from_user(&lparam, param, sizeof(struct sched_param)))
-		return -EFAULT;
+	ఒకవేళ (unlikely(!param || pid < 0))
+		తిరిగి -EINVAL;
+	ఒకవేళ (copy_from_user(&lparam, param, పరిమాణం(నిర్మాణం sched_param)))
+		తిరిగి -EFAULT;
 
-	CLASS(find_get_task, p)(pid);
-	if (!p)
-		return -ESRCH;
+	CLASS(కనుగొను_get_task, p)(pid);
+	ఒకవేళ (!p)
+		తిరిగి -ESRCH;
 
-	return sched_setscheduler(p, policy, &lparam);
+	తిరిగి sched_setscheduler(p, policy, &lparam);
 }
 
 /*
  * Mimics kernel/events/core.c perf_copy_attr().
  */
-static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *attr)
+స్థిర పూర్ణాంకం sched_copy_attr(నిర్మాణం sched_attr __user *uattr, నిర్మాణం sched_attr *attr)
 {
-	u32 size;
-	int ret;
+	u32 కొలత;
+	పూర్ణాంకం ret;
 
 	/* Zero the full structure, so that a short copy will be nice: */
-	memset(attr, 0, sizeof(*attr));
+	memset(attr, 0, పరిమాణం(*attr));
 
-	ret = get_user(size, &uattr->size);
-	if (ret)
-		return ret;
+	ret = get_user(కొలత, &uattr->కొలత);
+	ఒకవేళ (ret)
+		తిరిగి ret;
 
 	/* ABI compatibility quirk: */
-	if (!size)
-		size = SCHED_ATTR_SIZE_VER0;
-	if (size < SCHED_ATTR_SIZE_VER0 || size > PAGE_SIZE)
-		goto err_size;
+	ఒకవేళ (!కొలత)
+		కొలత = SCHED_ATTR_కొలత_VER0;
+	ఒకవేళ (కొలత < SCHED_ATTR_కొలత_VER0 || కొలత > పుట_కొలత)
+		వెళ్ళు err_కొలత;
 
-	ret = copy_struct_from_user(attr, sizeof(*attr), uattr, size);
-	if (ret) {
-		if (ret == -E2BIG)
-			goto err_size;
-		return ret;
+	ret = copy_struct_from_user(attr, పరిమాణం(*attr), uattr, కొలత);
+	ఒకవేళ (ret) {
+		ఒకవేళ (ret == -E2BIG)
+			వెళ్ళు err_కొలత;
+		తిరిగి ret;
 	}
 
-	if ((attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) &&
-	    size < SCHED_ATTR_SIZE_VER1)
-		return -EINVAL;
+	ఒకవేళ ((attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) &&
+	    కొలత < SCHED_ATTR_కొలత_VER1)
+		తిరిగి -EINVAL;
 
 	/*
 	 * XXX: Do we want to be lenient like existing syscalls; or do we want
@@ -904,22 +904,22 @@ static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *a
 	 */
 	attr->sched_nice = clamp(attr->sched_nice, MIN_NICE, MAX_NICE);
 
-	return 0;
+	తిరిగి 0;
 
-err_size:
-	put_user(sizeof(*attr), &uattr->size);
-	return -E2BIG;
+err_కొలత:
+	put_user(పరిమాణం(*attr), &uattr->కొలత);
+	తిరిగి -E2BIG;
 }
 
-static void get_params(struct task_struct *p, struct sched_attr *attr, unsigned int flags)
+స్థిర శూన్య get_params(నిర్మాణం task_struct *p, నిర్మాణం sched_attr *attr, గుర్తులేని పూర్ణాంకం flags)
 {
-	if (task_has_dl_policy(p)) {
+	ఒకవేళ (task_has_dl_policy(p)) {
 		__getparam_dl(p, attr, flags);
-	} else if (task_has_rt_policy(p)) {
-		attr->sched_priority = p->rt_priority;
-	} else {
+	} లేకపోతే ఒకవేళ (task_has_rt_policy(p)) {
+		attr->sched_ప్రాధాన్యత = p->rt_ప్రాధాన్యత;
+	} లేకపోతే {
 		attr->sched_nice = task_nice(p);
-		attr->sched_runtime = p->se.slice;
+		attr->sched_runtime = p->se.ముక్క;
 	}
 }
 
@@ -931,12 +931,12 @@ static void get_params(struct task_struct *p, struct sched_attr *attr, unsigned 
  *
  * Return: 0 on success. An error code otherwise.
  */
-SYSCALL_DEFINE3(sched_setscheduler, pid_t, pid, int, policy, struct sched_param __user *, param)
+SYSCALL_DEFINE3(sched_setscheduler, pid_t, pid, పూర్ణాంకం, policy, నిర్మాణం sched_param __user *, param)
 {
-	if (policy < 0)
-		return -EINVAL;
+	ఒకవేళ (policy < 0)
+		తిరిగి -EINVAL;
 
-	return do_sched_setscheduler(pid, policy, param);
+	తిరిగి do_sched_setscheduler(pid, policy, param);
 }
 
 /**
@@ -946,9 +946,9 @@ SYSCALL_DEFINE3(sched_setscheduler, pid_t, pid, int, policy, struct sched_param 
  *
  * Return: 0 on success. An error code otherwise.
  */
-SYSCALL_DEFINE2(sched_setparam, pid_t, pid, struct sched_param __user *, param)
+SYSCALL_DEFINE2(sched_setparam, pid_t, pid, నిర్మాణం sched_param __user *, param)
 {
-	return do_sched_setscheduler(pid, SETPARAM_POLICY, param);
+	తిరిగి do_sched_setscheduler(pid, SETPARAM_POLICY, param);
 }
 
 /**
@@ -957,32 +957,32 @@ SYSCALL_DEFINE2(sched_setparam, pid_t, pid, struct sched_param __user *, param)
  * @uattr: structure containing the extended parameters.
  * @flags: for future extension.
  */
-SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
-			       unsigned int, flags)
+SYSCALL_DEFINE3(sched_setattr, pid_t, pid, నిర్మాణం sched_attr __user *, uattr,
+			       గుర్తులేని పూర్ణాంకం, flags)
 {
-	struct sched_attr attr;
-	int retval;
+	నిర్మాణం sched_attr attr;
+	పూర్ణాంకం retval;
 
-	if (unlikely(!uattr || pid < 0 || flags))
-		return -EINVAL;
+	ఒకవేళ (unlikely(!uattr || pid < 0 || flags))
+		తిరిగి -EINVAL;
 
 	retval = sched_copy_attr(uattr, &attr);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	if ((int)attr.sched_policy < 0)
-		return -EINVAL;
-	if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
+	ఒకవేళ ((పూర్ణాంకం)attr.sched_policy < 0)
+		తిరిగి -EINVAL;
+	ఒకవేళ (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
 		attr.sched_policy = SETPARAM_POLICY;
 
-	CLASS(find_get_task, p)(pid);
-	if (!p)
-		return -ESRCH;
+	CLASS(కనుగొను_get_task, p)(pid);
+	ఒకవేళ (!p)
+		తిరిగి -ESRCH;
 
-	if (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
+	ఒకవేళ (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
 		get_params(p, &attr, 0);
 
-	return sched_setattr(p, &attr);
+	తిరిగి sched_setattr(p, &attr);
 }
 
 /**
@@ -994,24 +994,24 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
  */
 SYSCALL_DEFINE1(sched_getscheduler, pid_t, pid)
 {
-	struct task_struct *p;
-	int retval;
+	నిర్మాణం task_struct *p;
+	పూర్ణాంకం retval;
 
-	if (pid < 0)
-		return -EINVAL;
+	ఒకవేళ (pid < 0)
+		తిరిగి -EINVAL;
 
 	guard(rcu)();
-	p = find_process_by_pid(pid);
-	if (!p)
-		return -ESRCH;
+	p = కనుగొను_process_by_pid(pid);
+	ఒకవేళ (!p)
+		తిరిగి -ESRCH;
 
 	retval = security_task_getscheduler(p);
-	if (!retval) {
+	ఒకవేళ (!retval) {
 		retval = p->policy;
-		if (p->sched_reset_on_fork)
+		ఒకవేళ (p->sched_reset_on_fork)
 			retval |= SCHED_RESET_ON_FORK;
 	}
-	return retval;
+	తిరిగి retval;
 }
 
 /**
@@ -1022,32 +1022,32 @@ SYSCALL_DEFINE1(sched_getscheduler, pid_t, pid)
  * Return: On success, 0 and the RT priority is in @param. Otherwise, an error
  * code.
  */
-SYSCALL_DEFINE2(sched_getparam, pid_t, pid, struct sched_param __user *, param)
+SYSCALL_DEFINE2(sched_getparam, pid_t, pid, నిర్మాణం sched_param __user *, param)
 {
-	struct sched_param lp = { .sched_priority = 0 };
-	struct task_struct *p;
-	int retval;
+	నిర్మాణం sched_param lp = { .sched_ప్రాధాన్యత = 0 };
+	నిర్మాణం task_struct *p;
+	పూర్ణాంకం retval;
 
-	if (unlikely(!param || pid < 0))
-		return -EINVAL;
+	ఒకవేళ (unlikely(!param || pid < 0))
+		తిరిగి -EINVAL;
 
 	scoped_guard (rcu) {
-		p = find_process_by_pid(pid);
-		if (!p)
-			return -ESRCH;
+		p = కనుగొను_process_by_pid(pid);
+		ఒకవేళ (!p)
+			తిరిగి -ESRCH;
 
 		retval = security_task_getscheduler(p);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
-		if (task_has_rt_policy(p))
-			lp.sched_priority = p->rt_priority;
+		ఒకవేళ (task_has_rt_policy(p))
+			lp.sched_ప్రాధాన్యత = p->rt_ప్రాధాన్యత;
 	}
 
 	/*
 	 * This one might sleep, we cannot do it with a spinlock held ...
 	 */
-	return copy_to_user(param, &lp, sizeof(*param)) ? -EFAULT : 0;
+	తిరిగి copy_గమ్యం_user(param, &lp, పరిమాణం(*param)) ? -EFAULT : 0;
 }
 
 /**
@@ -1057,68 +1057,68 @@ SYSCALL_DEFINE2(sched_getparam, pid_t, pid, struct sched_param __user *, param)
  * @usize: sizeof(attr) for fwd/bwd comp.
  * @flags: for future extension.
  */
-SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
-		unsigned int, usize, unsigned int, flags)
+SYSCALL_DEFINE4(sched_getattr, pid_t, pid, నిర్మాణం sched_attr __user *, uattr,
+		గుర్తులేని పూర్ణాంకం, usize, గుర్తులేని పూర్ణాంకం, flags)
 {
-	struct sched_attr kattr = { };
-	struct task_struct *p;
-	int retval;
+	నిర్మాణం sched_attr kattr = { };
+	నిర్మాణం task_struct *p;
+	పూర్ణాంకం retval;
 
-	if (unlikely(!uattr || pid < 0 || usize > PAGE_SIZE ||
-		     usize < SCHED_ATTR_SIZE_VER0))
-		return -EINVAL;
+	ఒకవేళ (unlikely(!uattr || pid < 0 || usize > పుట_కొలత ||
+		     usize < SCHED_ATTR_కొలత_VER0))
+		తిరిగి -EINVAL;
 
 	scoped_guard (rcu) {
-		p = find_process_by_pid(pid);
-		if (!p)
-			return -ESRCH;
+		p = కనుగొను_process_by_pid(pid);
+		ఒకవేళ (!p)
+			తిరిగి -ESRCH;
 
-		if (flags) {
-			if (!task_has_dl_policy(p) ||
+		ఒకవేళ (flags) {
+			ఒకవేళ (!task_has_dl_policy(p) ||
 			    flags != SCHED_GETATTR_FLAG_DL_DYNAMIC)
-				return -EINVAL;
+				తిరిగి -EINVAL;
 		}
 
 		retval = security_task_getscheduler(p);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
 		kattr.sched_policy = p->policy;
-		if (p->sched_reset_on_fork)
+		ఒకవేళ (p->sched_reset_on_fork)
 			kattr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
 		get_params(p, &kattr, flags);
 		kattr.sched_flags &= SCHED_FLAG_ALL;
 
-#ifdef CONFIG_UCLAMP_TASK
+#నిర్వచితమైతే CONFIG_UCLAMP_TASK
 		/*
 		 * This could race with another potential updater, but this is fine
 		 * because it'll correctly read the old or the new value. We don't need
 		 * to guarantee who wins the race as long as it doesn't return garbage.
 		 */
-		kattr.sched_util_min = p->uclamp_req[UCLAMP_MIN].value;
-		kattr.sched_util_max = p->uclamp_req[UCLAMP_MAX].value;
-#endif
+		kattr.sched_util_min = p->uclamp_req[UCLAMP_MIN].విలువ;
+		kattr.sched_util_max = p->uclamp_req[UCLAMP_MAX].విలువ;
+#అయితే_ముగింపు
 	}
 
-	kattr.size = min(usize, sizeof(kattr));
-	return copy_struct_to_user(uattr, usize, &kattr, sizeof(kattr), NULL);
+	kattr.కొలత = min(usize, పరిమాణం(kattr));
+	తిరిగి copy_struct_గమ్యం_user(uattr, usize, &kattr, పరిమాణం(kattr), ఖాళీ);
 }
 
-int dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
+పూర్ణాంకం dl_task_check_affinity(నిర్మాణం task_struct *p, స్థిరరాశి నిర్మాణం cpumask *ముసుగు)
 {
 	/*
 	 * If the task isn't a deadline task or admission control is
 	 * disabled then we don't care about affinity changes.
 	 */
-	if (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
-		return 0;
+	ఒకవేళ (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
+		తిరిగి 0;
 
 	/*
 	 * The special/sugov task isn't part of regular bandwidth/admission
 	 * control so let userspace change affinities.
 	 */
-	if (dl_entity_is_special(&p->dl))
-		return 0;
+	ఒకవేళ (dl_entity_is_special(&p->dl))
+		తిరిగి 0;
 
 	/*
 	 * Since bandwidth control happens on root_domain basis,
@@ -1127,46 +1127,46 @@ int dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
 	 * root_domain.
 	 */
 	guard(rcu)();
-	if (!cpumask_subset(task_rq(p)->rd->span, mask))
-		return -EBUSY;
+	ఒకవేళ (!cpumask_subset(task_rq(p)->rd->పరిధి, ముసుగు))
+		తిరిగి -EBUSY;
 
-	return 0;
+	తిరిగి 0;
 }
 
-int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
+పూర్ణాంకం __sched_setaffinity(నిర్మాణం task_struct *p, నిర్మాణం affinity_context *ctx)
 {
-	int retval;
-	cpumask_var_t cpus_allowed, new_mask;
+	పూర్ణాంకం retval;
+	cpumask_var_t cpus_allowed, new_ముసుగు;
 
-	if (!alloc_cpumask_var(&cpus_allowed, GFP_KERNEL))
-		return -ENOMEM;
+	ఒకవేళ (!alloc_cpumask_var(&cpus_allowed, GFP_KERNEL))
+		తిరిగి -ENOMEM;
 
-	if (!alloc_cpumask_var(&new_mask, GFP_KERNEL)) {
+	ఒకవేళ (!alloc_cpumask_var(&new_ముసుగు, GFP_KERNEL)) {
 		retval = -ENOMEM;
-		goto out_free_cpus_allowed;
+		వెళ్ళు బహిర్గతం_free_cpus_allowed;
 	}
 
 	cpuset_cpus_allowed(p, cpus_allowed);
-	cpumask_and(new_mask, ctx->new_mask, cpus_allowed);
+	cpumask_and(new_ముసుగు, ctx->new_ముసుగు, cpus_allowed);
 
-	ctx->new_mask = new_mask;
+	ctx->new_ముసుగు = new_ముసుగు;
 	ctx->flags |= SCA_CHECK;
 
-	retval = dl_task_check_affinity(p, new_mask);
-	if (retval)
-		goto out_free_new_mask;
+	retval = dl_task_check_affinity(p, new_ముసుగు);
+	ఒకవేళ (retval)
+		వెళ్ళు బహిర్గతం_free_new_ముసుగు;
 
 	retval = __set_cpus_allowed_ptr(p, ctx);
-	if (retval)
-		goto out_free_new_mask;
+	ఒకవేళ (retval)
+		వెళ్ళు బహిర్గతం_free_new_ముసుగు;
 
 	cpuset_cpus_allowed(p, cpus_allowed);
-	if (!cpumask_subset(new_mask, cpus_allowed)) {
+	ఒకవేళ (!cpumask_subset(new_ముసుగు, cpus_allowed)) {
 		/*
 		 * We must have raced with a concurrent cpuset update.
 		 * Just reset the cpumask to the cpuset's cpus_allowed.
 		 */
-		cpumask_copy(new_mask, cpus_allowed);
+		cpumask_copy(new_ముసుగు, cpus_allowed);
 
 		/*
 		 * If SCA_USER is set, a 2nd call to __set_cpus_allowed_ptr()
@@ -1176,79 +1176,79 @@ int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
 		 * we need to further restrict the mask to what is allowed
 		 * by that old user_cpus_ptr.
 		 */
-		if (unlikely((ctx->flags & SCA_USER) && ctx->user_mask)) {
-			bool empty = !cpumask_and(new_mask, new_mask,
-						  ctx->user_mask);
+		ఒకవేళ (unlikely((ctx->flags & SCA_USER) && ctx->user_ముసుగు)) {
+			bool ఖాళీలు = !cpumask_and(new_ముసుగు, new_ముసుగు,
+						  ctx->user_ముసుగు);
 
-			if (empty)
-				cpumask_copy(new_mask, cpus_allowed);
+			ఒకవేళ (ఖాళీలు)
+				cpumask_copy(new_ముసుగు, cpus_allowed);
 		}
 		__set_cpus_allowed_ptr(p, ctx);
 		retval = -EINVAL;
 	}
 
-out_free_new_mask:
-	free_cpumask_var(new_mask);
-out_free_cpus_allowed:
+బహిర్గతం_free_new_ముసుగు:
+	free_cpumask_var(new_ముసుగు);
+బహిర్గతం_free_cpus_allowed:
 	free_cpumask_var(cpus_allowed);
-	return retval;
+	తిరిగి retval;
 }
 
-long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
+దీర్ఘ sched_setaffinity(pid_t pid, స్థిరరాశి నిర్మాణం cpumask *లోపల_ముసుగు)
 {
-	struct affinity_context ac;
-	struct cpumask *user_mask;
-	int retval;
+	నిర్మాణం affinity_context ac;
+	నిర్మాణం cpumask *user_ముసుగు;
+	పూర్ణాంకం retval;
 
-	CLASS(find_get_task, p)(pid);
-	if (!p)
-		return -ESRCH;
+	CLASS(కనుగొను_get_task, p)(pid);
+	ఒకవేళ (!p)
+		తిరిగి -ESRCH;
 
-	if (p->flags & PF_NO_SETAFFINITY)
-		return -EINVAL;
+	ఒకవేళ (p->flags & PF_NO_SETAFFINITY)
+		తిరిగి -EINVAL;
 
-	if (!check_same_owner(p)) {
+	ఒకవేళ (!check_same_owner(p)) {
 		guard(rcu)();
-		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE))
-			return -EPERM;
+		ఒకవేళ (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE))
+			తిరిగి -EPERM;
 	}
 
 	retval = security_task_setscheduler(p);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
 	/*
 	 * With non-SMP configs, user_cpus_ptr/user_mask isn't used and
 	 * alloc_user_cpus_ptr() returns NULL.
 	 */
-	user_mask = alloc_user_cpus_ptr(NUMA_NO_NODE);
-	if (user_mask) {
-		cpumask_copy(user_mask, in_mask);
-	} else {
-		return -ENOMEM;
+	user_ముసుగు = alloc_user_cpus_ptr(NUMA_NO_కణుపు);
+	ఒకవేళ (user_ముసుగు) {
+		cpumask_copy(user_ముసుగు, లోపల_ముసుగు);
+	} లేకపోతే {
+		తిరిగి -ENOMEM;
 	}
 
-	ac = (struct affinity_context){
-		.new_mask  = in_mask,
-		.user_mask = user_mask,
+	ac = (నిర్మాణం affinity_context){
+		.new_ముసుగు  = లోపల_ముసుగు,
+		.user_ముసుగు = user_ముసుగు,
 		.flags     = SCA_USER,
 	};
 
 	retval = __sched_setaffinity(p, &ac);
-	kfree(ac.user_mask);
+	kfree(ac.user_ముసుగు);
 
-	return retval;
+	తిరిగి retval;
 }
 
-static int get_user_cpu_mask(unsigned long __user *user_mask_ptr, unsigned len,
-			     struct cpumask *new_mask)
+స్థిర పూర్ణాంకం get_user_cpu_ముసుగు(గుర్తులేని దీర్ఘ __user *user_ముసుగు_ptr, గుర్తులేని len,
+			     నిర్మాణం cpumask *new_ముసుగు)
 {
-	if (len < cpumask_size())
-		cpumask_clear(new_mask);
-	else if (len > cpumask_size())
-		len = cpumask_size();
+	ఒకవేళ (len < cpumask_కొలత())
+		cpumask_clear(new_ముసుగు);
+	లేకపోతే ఒకవేళ (len > cpumask_కొలత())
+		len = cpumask_కొలత();
 
-	return copy_from_user(new_mask, user_mask_ptr, len) ? -EFAULT : 0;
+	తిరిగి copy_from_user(new_ముసుగు, user_ముసుగు_ptr, len) ? -EFAULT : 0;
 }
 
 /**
@@ -1259,40 +1259,40 @@ static int get_user_cpu_mask(unsigned long __user *user_mask_ptr, unsigned len,
  *
  * Return: 0 on success. An error code otherwise.
  */
-SYSCALL_DEFINE3(sched_setaffinity, pid_t, pid, unsigned int, len,
-		unsigned long __user *, user_mask_ptr)
+SYSCALL_DEFINE3(sched_setaffinity, pid_t, pid, గుర్తులేని పూర్ణాంకం, len,
+		గుర్తులేని దీర్ఘ __user *, user_ముసుగు_ptr)
 {
-	cpumask_var_t new_mask;
-	int retval;
+	cpumask_var_t new_ముసుగు;
+	పూర్ణాంకం retval;
 
-	if (!alloc_cpumask_var(&new_mask, GFP_KERNEL))
-		return -ENOMEM;
+	ఒకవేళ (!alloc_cpumask_var(&new_ముసుగు, GFP_KERNEL))
+		తిరిగి -ENOMEM;
 
-	retval = get_user_cpu_mask(user_mask_ptr, len, new_mask);
-	if (retval == 0)
-		retval = sched_setaffinity(pid, new_mask);
-	free_cpumask_var(new_mask);
-	return retval;
+	retval = get_user_cpu_ముసుగు(user_ముసుగు_ptr, len, new_ముసుగు);
+	ఒకవేళ (retval == 0)
+		retval = sched_setaffinity(pid, new_ముసుగు);
+	free_cpumask_var(new_ముసుగు);
+	తిరిగి retval;
 }
 
-long sched_getaffinity(pid_t pid, struct cpumask *mask)
+దీర్ఘ sched_getaffinity(pid_t pid, నిర్మాణం cpumask *ముసుగు)
 {
-	struct task_struct *p;
-	int retval;
+	నిర్మాణం task_struct *p;
+	పూర్ణాంకం retval;
 
 	guard(rcu)();
-	p = find_process_by_pid(pid);
-	if (!p)
-		return -ESRCH;
+	p = కనుగొను_process_by_pid(pid);
+	ఒకవేళ (!p)
+		తిరిగి -ESRCH;
 
 	retval = security_task_getscheduler(p);
-	if (retval)
-		return retval;
+	ఒకవేళ (retval)
+		తిరిగి retval;
 
-	guard(raw_spinlock_irqsave)(&p->pi_lock);
-	cpumask_and(mask, &p->cpus_mask, cpu_active_mask);
+	guard(raw_spinlock_irqsave)(&p->pi_తాళం);
+	cpumask_and(ముసుగు, &p->cpus_ముసుగు, cpu_చురుకైన_ముసుగు);
 
-	return 0;
+	తిరిగి 0;
 }
 
 /**
@@ -1304,49 +1304,49 @@ long sched_getaffinity(pid_t pid, struct cpumask *mask)
  * Return: size of CPU mask copied to user_mask_ptr on success. An
  * error code otherwise.
  */
-SYSCALL_DEFINE3(sched_getaffinity, pid_t, pid, unsigned int, len,
-		unsigned long __user *, user_mask_ptr)
+SYSCALL_DEFINE3(sched_getaffinity, pid_t, pid, గుర్తులేని పూర్ణాంకం, len,
+		గుర్తులేని దీర్ఘ __user *, user_ముసుగు_ptr)
 {
-	int ret;
-	cpumask_var_t mask;
+	పూర్ణాంకం ret;
+	cpumask_var_t ముసుగు;
 
-	if ((len * BITS_PER_BYTE) < nr_cpu_ids)
-		return -EINVAL;
-	if (len & (sizeof(unsigned long)-1))
-		return -EINVAL;
+	ఒకవేళ ((len * బిట్లు_చొప్పున_BYTE) < nr_cpu_ids)
+		తిరిగి -EINVAL;
+	ఒకవేళ (len & (పరిమాణం(గుర్తులేని దీర్ఘ)-1))
+		తిరిగి -EINVAL;
 
-	if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
-		return -ENOMEM;
+	ఒకవేళ (!zalloc_cpumask_var(&ముసుగు, GFP_KERNEL))
+		తిరిగి -ENOMEM;
 
-	ret = sched_getaffinity(pid, mask);
-	if (ret == 0) {
-		unsigned int retlen = min(len, cpumask_size());
+	ret = sched_getaffinity(pid, ముసుగు);
+	ఒకవేళ (ret == 0) {
+		గుర్తులేని పూర్ణాంకం retlen = min(len, cpumask_కొలత());
 
-		if (copy_to_user(user_mask_ptr, cpumask_bits(mask), retlen))
+		ఒకవేళ (copy_గమ్యం_user(user_ముసుగు_ptr, cpumask_బిట్లు(ముసుగు), retlen))
 			ret = -EFAULT;
-		else
+		లేకపోతే
 			ret = retlen;
 	}
-	free_cpumask_var(mask);
+	free_cpumask_var(ముసుగు);
 
-	return ret;
+	తిరిగి ret;
 }
 
-static void do_sched_yield(void)
+స్థిర శూన్య do_sched_yield(శూన్య)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	నిర్మాణం rq_flags rf;
+	నిర్మాణం rq *rq;
 
-	rq = this_rq_lock_irq(&rf);
+	rq = this_rq_తాళం_irq(&rf);
 
-	schedstat_inc(rq->yld_count);
+	schedstat_inc(rq->yld_లెక్క);
 	rq->donor->sched_class->yield_task(rq);
 
 	preempt_disable();
 	rq_unlock_irq(rq, &rf);
 	sched_preempt_enable_no_resched();
 
-	schedule();
+	కాలపట్టిక();
 }
 
 /**
@@ -1360,7 +1360,7 @@ static void do_sched_yield(void)
 SYSCALL_DEFINE0(sched_yield)
 {
 	do_sched_yield();
-	return 0;
+	తిరిగి 0;
 }
 
 /**
@@ -1385,12 +1385,12 @@ SYSCALL_DEFINE0(sched_yield)
  * If you want to use yield() to be 'nice' for others, use cond_resched().
  * If you still want to use yield(), do not!
  */
-void __sched yield(void)
+శూన్య __sched yield(శూన్య)
 {
-	set_current_state(TASK_RUNNING);
+	సమితి_current_state(TASK_RUNNING);
 	do_sched_yield();
 }
-EXPORT_SYMBOL(yield);
+EXPORT_చిహ్నం(yield);
 
 /**
  * yield_to - yield the current processor to another thread in
@@ -1407,13 +1407,13 @@ EXPORT_SYMBOL(yield);
  *	false (0) if we failed to boost the target.
  *	-ESRCH if there's no task to yield to.
  */
-int __sched yield_to(struct task_struct *p, bool preempt)
+పూర్ణాంకం __sched yield_గమ్యం(నిర్మాణం task_struct *p, bool preempt)
 {
-	struct task_struct *curr;
-	struct rq *rq, *p_rq;
-	int yielded = 0;
+	నిర్మాణం task_struct *curr;
+	నిర్మాణం rq *rq, *p_rq;
+	పూర్ణాంకం yielded = 0;
 
-	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
+	scoped_guard (raw_spinlock_irqsave, &p->pi_తాళం) {
 		rq = this_rq();
 		curr = rq->donor;
 
@@ -1423,40 +1423,40 @@ again:
 		 * If we're the only runnable task on the rq and target rq also
 		 * has only one task, there's absolutely no point in yielding.
 		 */
-		if (rq->nr_running == 1 && p_rq->nr_running == 1)
-			return -ESRCH;
+		ఒకవేళ (rq->nr_running == 1 && p_rq->nr_running == 1)
+			తిరిగి -ESRCH;
 
-		guard(double_rq_lock)(rq, p_rq);
-		if (task_rq(p) != p_rq)
-			goto again;
+		guard(double_rq_తాళం)(rq, p_rq);
+		ఒకవేళ (task_rq(p) != p_rq)
+			వెళ్ళు again;
 
-		if (!curr->sched_class->yield_to_task)
-			return 0;
+		ఒకవేళ (!curr->sched_class->yield_గమ్యం_task)
+			తిరిగి 0;
 
-		if (curr->sched_class != p->sched_class)
-			return 0;
+		ఒకవేళ (curr->sched_class != p->sched_class)
+			తిరిగి 0;
 
-		if (task_on_cpu(p_rq, p) || !task_is_running(p))
-			return 0;
+		ఒకవేళ (task_on_cpu(p_rq, p) || !task_is_running(p))
+			తిరిగి 0;
 
-		yielded = curr->sched_class->yield_to_task(rq, p);
-		if (yielded) {
-			schedstat_inc(rq->yld_count);
+		yielded = curr->sched_class->yield_గమ్యం_task(rq, p);
+		ఒకవేళ (yielded) {
+			schedstat_inc(rq->yld_లెక్క);
 			/*
 			 * Make p's CPU reschedule; pick_next_entity
 			 * takes care of fairness.
 			 */
-			if (preempt && rq != p_rq)
+			ఒకవేళ (preempt && rq != p_rq)
 				resched_curr(p_rq);
 		}
 	}
 
-	if (yielded)
-		schedule();
+	ఒకవేళ (yielded)
+		కాలపట్టిక();
 
-	return yielded;
+	తిరిగి yielded;
 }
-EXPORT_SYMBOL_GPL(yield_to);
+EXPORT_చిహ్నం_GPL(yield_గమ్యం);
 
 /**
  * sys_sched_get_priority_max - return maximum RT priority.
@@ -1466,24 +1466,24 @@ EXPORT_SYMBOL_GPL(yield_to);
  * rt_priority that can be used by a given scheduling class.
  * On failure, a negative error code is returned.
  */
-SYSCALL_DEFINE1(sched_get_priority_max, int, policy)
+SYSCALL_DEFINE1(sched_get_ప్రాధాన్యత_max, పూర్ణాంకం, policy)
 {
-	int ret = -EINVAL;
+	పూర్ణాంకం ret = -EINVAL;
 
-	switch (policy) {
-	case SCHED_FIFO:
-	case SCHED_RR:
+	ఎంపిక (policy) {
+	స్థితి SCHED_FIFO:
+	స్థితి SCHED_RR:
 		ret = MAX_RT_PRIO-1;
-		break;
-	case SCHED_DEADLINE:
-	case SCHED_NORMAL:
-	case SCHED_BATCH:
-	case SCHED_IDLE:
-	case SCHED_EXT:
+		ఆపు;
+	స్థితి SCHED_DEADLINE:
+	స్థితి SCHED_సాధారణ:
+	స్థితి SCHED_BATCH:
+	స్థితి SCHED_IDLE:
+	స్థితి SCHED_EXT:
 		ret = 0;
-		break;
+		ఆపు;
 	}
-	return ret;
+	తిరిగి ret;
 }
 
 /**
@@ -1494,51 +1494,51 @@ SYSCALL_DEFINE1(sched_get_priority_max, int, policy)
  * rt_priority that can be used by a given scheduling class.
  * On failure, a negative error code is returned.
  */
-SYSCALL_DEFINE1(sched_get_priority_min, int, policy)
+SYSCALL_DEFINE1(sched_get_ప్రాధాన్యత_min, పూర్ణాంకం, policy)
 {
-	int ret = -EINVAL;
+	పూర్ణాంకం ret = -EINVAL;
 
-	switch (policy) {
-	case SCHED_FIFO:
-	case SCHED_RR:
+	ఎంపిక (policy) {
+	స్థితి SCHED_FIFO:
+	స్థితి SCHED_RR:
 		ret = 1;
-		break;
-	case SCHED_DEADLINE:
-	case SCHED_NORMAL:
-	case SCHED_BATCH:
-	case SCHED_IDLE:
-	case SCHED_EXT:
+		ఆపు;
+	స్థితి SCHED_DEADLINE:
+	స్థితి SCHED_సాధారణ:
+	స్థితి SCHED_BATCH:
+	స్థితి SCHED_IDLE:
+	స్థితి SCHED_EXT:
 		ret = 0;
 	}
-	return ret;
+	తిరిగి ret;
 }
 
-static int sched_rr_get_interval(pid_t pid, struct timespec64 *t)
+స్థిర పూర్ణాంకం sched_rr_get_interval(pid_t pid, నిర్మాణం timespec64 *t)
 {
-	unsigned int time_slice = 0;
-	int retval;
+	గుర్తులేని పూర్ణాంకం సమయం_ముక్క = 0;
+	పూర్ణాంకం retval;
 
-	if (pid < 0)
-		return -EINVAL;
+	ఒకవేళ (pid < 0)
+		తిరిగి -EINVAL;
 
 	scoped_guard (rcu) {
-		struct task_struct *p = find_process_by_pid(pid);
-		if (!p)
-			return -ESRCH;
+		నిర్మాణం task_struct *p = కనుగొను_process_by_pid(pid);
+		ఒకవేళ (!p)
+			తిరిగి -ESRCH;
 
 		retval = security_task_getscheduler(p);
-		if (retval)
-			return retval;
+		ఒకవేళ (retval)
+			తిరిగి retval;
 
-		scoped_guard (task_rq_lock, p) {
-			struct rq *rq = scope.rq;
-			if (p->sched_class->get_rr_interval)
-				time_slice = p->sched_class->get_rr_interval(rq, p);
+		scoped_guard (task_rq_తాళం_2, p) {
+			నిర్మాణం rq *rq = scope.rq;
+			ఒకవేళ (p->sched_class->get_rr_interval)
+				సమయం_ముక్క = p->sched_class->get_rr_interval(rq, p);
 		}
 	}
 
-	jiffies_to_timespec64(time_slice, t);
-	return 0;
+	jiffies_గమ్యం_timespec64(సమయం_ముక్క, t);
+	తిరిగి 0;
 }
 
 /**
@@ -1553,26 +1553,26 @@ static int sched_rr_get_interval(pid_t pid, struct timespec64 *t)
  * an error code.
  */
 SYSCALL_DEFINE2(sched_rr_get_interval, pid_t, pid,
-		struct __kernel_timespec __user *, interval)
+		నిర్మాణం __kernel_timespec __user *, interval)
 {
-	struct timespec64 t;
-	int retval = sched_rr_get_interval(pid, &t);
+	నిర్మాణం timespec64 t;
+	పూర్ణాంకం retval = sched_rr_get_interval(pid, &t);
 
-	if (retval == 0)
+	ఒకవేళ (retval == 0)
 		retval = put_timespec64(&t, interval);
 
-	return retval;
+	తిరిగి retval;
 }
 
-#ifdef CONFIG_COMPAT_32BIT_TIME
+#నిర్వచితమైతే CONFIG_COMPAT_32_బిట్టు_సమయం
 SYSCALL_DEFINE2(sched_rr_get_interval_time32, pid_t, pid,
-		struct old_timespec32 __user *, interval)
+		నిర్మాణం old_timespec32 __user *, interval)
 {
-	struct timespec64 t;
-	int retval = sched_rr_get_interval(pid, &t);
+	నిర్మాణం timespec64 t;
+	పూర్ణాంకం retval = sched_rr_get_interval(pid, &t);
 
-	if (retval == 0)
+	ఒకవేళ (retval == 0)
 		retval = put_old_timespec32(&t, interval);
-	return retval;
+	తిరిగి retval;
 }
-#endif
+#అయితే_ముగింపు

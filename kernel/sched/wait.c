@@ -4,77 +4,77 @@
  *
  * (C) 2004 Nadia Yvette Chambers, Oracle
  */
-#include "sched.h"
-#include <linux/wait_bit.h>
+#అన్తర్భావ "sched.h"
+#అన్తర్భావ <linux/wait_bit.h>
 
-void __init_waitqueue_head(struct wait_queue_head *wq_head, const char *name, struct lock_class_key *key)
+శూన్య __init_waitqueue_head(నిర్మాణం wait_వరుస_తల *wq_తల, స్థిరరాశి అక్షరం *name, నిర్మాణం తాళం_class_కీలకం *కీలకం)
 {
-	spin_lock_init(&wq_head->lock);
-	lockdep_set_class_and_name(&wq_head->lock, key, name);
-	INIT_LIST_HEAD(&wq_head->head);
+	spin_తాళం_init(&wq_తల->తాళం);
+	lockdep_సమితి_class_and_name(&wq_తల->తాళం, కీలకం, name);
+	INIT_LIST_తల(&wq_తల->తల);
 }
 
-EXPORT_SYMBOL(__init_waitqueue_head);
+EXPORT_చిహ్నం(__init_waitqueue_head);
 
-void add_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+శూన్య కూడు_wait_వరుస(నిర్మాణం wait_వరుస_తల *wq_తల, నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు)
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
-	wq_entry->flags &= ~WQ_FLAG_EXCLUSIVE;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	__add_wait_queue(wq_head, wq_entry);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	wq_నమోదు->flags &= ~WQ_FLAG_EXCLUSIVE;
+	spin_తాళం_irqsave(&wq_తల->తాళం, flags);
+	__add_wait_queue(wq_తల, wq_నమోదు);
+	spin_unlock_irqrestore(&wq_తల->తాళం, flags);
 }
-EXPORT_SYMBOL(add_wait_queue);
+EXPORT_చిహ్నం(కూడు_wait_వరుస);
 
-void add_wait_queue_exclusive(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+శూన్య కూడు_wait_వరుస_exclusive(నిర్మాణం wait_వరుస_తల *wq_తల, నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు)
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
-	wq_entry->flags |= WQ_FLAG_EXCLUSIVE;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	__add_wait_queue_entry_tail(wq_head, wq_entry);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	wq_నమోదు->flags |= WQ_FLAG_EXCLUSIVE;
+	spin_తాళం_irqsave(&wq_తల->తాళం, flags);
+	__add_wait_queue_entry_tail(wq_తల, wq_నమోదు);
+	spin_unlock_irqrestore(&wq_తల->తాళం, flags);
 }
-EXPORT_SYMBOL(add_wait_queue_exclusive);
+EXPORT_చిహ్నం(కూడు_wait_వరుస_exclusive);
 
-void add_wait_queue_priority(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+శూన్య కూడు_wait_వరుస_ప్రాధాన్యత(నిర్మాణం wait_వరుస_తల *wq_తల, నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు)
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
-	wq_entry->flags |= WQ_FLAG_PRIORITY;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	__add_wait_queue(wq_head, wq_entry);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	wq_నమోదు->flags |= WQ_FLAG_ప్రాధాన్యత;
+	spin_తాళం_irqsave(&wq_తల->తాళం, flags);
+	__add_wait_queue(wq_తల, wq_నమోదు);
+	spin_unlock_irqrestore(&wq_తల->తాళం, flags);
 }
-EXPORT_SYMBOL_GPL(add_wait_queue_priority);
+EXPORT_చిహ్నం_GPL(కూడు_wait_వరుస_ప్రాధాన్యత);
 
-int add_wait_queue_priority_exclusive(struct wait_queue_head *wq_head,
-				      struct wait_queue_entry *wq_entry)
+పూర్ణాంకం కూడు_wait_వరుస_ప్రాధాన్యత_exclusive(నిర్మాణం wait_వరుస_తల *wq_తల,
+				      నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు)
 {
-	struct list_head *head = &wq_head->head;
+	నిర్మాణం list_తల *తల = &wq_తల->తల;
 
-	guard(spinlock_irqsave)(&wq_head->lock);
+	guard(spinlock_irqsave)(&wq_తల->తాళం);
 
-	if (!list_empty(head) &&
-	    (list_first_entry(head, typeof(*wq_entry), entry)->flags & WQ_FLAG_PRIORITY))
-		return -EBUSY;
+	ఒకవేళ (!list_ఖాళీలు(తల) &&
+	    (list_మొదటి_నమోదు(తల, typeof(*wq_నమోదు), నమోదు_2)->flags & WQ_FLAG_ప్రాధాన్యత))
+		తిరిగి -EBUSY;
 
-	wq_entry->flags |= WQ_FLAG_EXCLUSIVE | WQ_FLAG_PRIORITY;
-	list_add(&wq_entry->entry, head);
-	return 0;
+	wq_నమోదు->flags |= WQ_FLAG_EXCLUSIVE | WQ_FLAG_ప్రాధాన్యత;
+	list_కూడు(&wq_నమోదు->నమోదు_2, తల);
+	తిరిగి 0;
 }
-EXPORT_SYMBOL_GPL(add_wait_queue_priority_exclusive);
+EXPORT_చిహ్నం_GPL(కూడు_wait_వరుస_ప్రాధాన్యత_exclusive);
 
-void remove_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+శూన్య remove_wait_వరుస(నిర్మాణం wait_వరుస_తల *wq_తల, నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు)
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
-	spin_lock_irqsave(&wq_head->lock, flags);
-	__remove_wait_queue(wq_head, wq_entry);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	spin_తాళం_irqsave(&wq_తల->తాళం, flags);
+	__remove_wait_queue(wq_తల, wq_నమోదు);
+	spin_unlock_irqrestore(&wq_తల->తాళం, flags);
 }
-EXPORT_SYMBOL(remove_wait_queue);
+EXPORT_చిహ్నం(remove_wait_వరుస);
 
 /*
  * The core wakeup function. Non-exclusive wakeups (nr_exclusive == 0) just
@@ -89,44 +89,44 @@ EXPORT_SYMBOL(remove_wait_queue);
  * started to run but is not in state TASK_RUNNING. try_to_wake_up() returns
  * zero in this (rare) case, and we handle it by continuing to scan the queue.
  */
-static int __wake_up_common(struct wait_queue_head *wq_head, unsigned int mode,
-			int nr_exclusive, int wake_flags, void *key)
+స్థిర పూర్ణాంకం __wake_up_common(నిర్మాణం wait_వరుస_తల *wq_తల, గుర్తులేని పూర్ణాంకం బహుళకం,
+			పూర్ణాంకం nr_exclusive, పూర్ణాంకం wake_flags, శూన్య *కీలకం)
 {
-	wait_queue_entry_t *curr, *next;
+	wait_వరుస_నమోదు_t *curr, *తదుపరి;
 
-	lockdep_assert_held(&wq_head->lock);
+	lockdep_assert_held(&wq_తల->తాళం);
 
-	curr = list_first_entry(&wq_head->head, wait_queue_entry_t, entry);
+	curr = list_మొదటి_నమోదు(&wq_తల->తల, wait_వరుస_నమోదు_t, నమోదు_2);
 
-	if (&curr->entry == &wq_head->head)
-		return nr_exclusive;
+	ఒకవేళ (&curr->నమోదు_2 == &wq_తల->తల)
+		తిరిగి nr_exclusive;
 
-	list_for_each_entry_safe_from(curr, next, &wq_head->head, entry) {
-		unsigned flags = curr->flags;
-		int ret;
+	list_for_each_నమోదు_సురక్షిత_from(curr, తదుపరి, &wq_తల->తల, నమోదు_2) {
+		గుర్తులేని flags = curr->flags;
+		పూర్ణాంకం ret;
 
-		ret = curr->func(curr, mode, wake_flags, key);
-		if (ret < 0)
-			break;
-		if (ret && (flags & WQ_FLAG_EXCLUSIVE) && !--nr_exclusive)
-			break;
+		ret = curr->func(curr, బహుళకం, wake_flags, కీలకం);
+		ఒకవేళ (ret < 0)
+			ఆపు;
+		ఒకవేళ (ret && (flags & WQ_FLAG_EXCLUSIVE) && !--nr_exclusive)
+			ఆపు;
 	}
 
-	return nr_exclusive;
+	తిరిగి nr_exclusive;
 }
 
-static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int mode,
-			int nr_exclusive, int wake_flags, void *key)
+స్థిర పూర్ణాంకం __wake_up_common_lock(నిర్మాణం wait_వరుస_తల *wq_తల, గుర్తులేని పూర్ణాంకం బహుళకం,
+			పూర్ణాంకం nr_exclusive, పూర్ణాంకం wake_flags, శూన్య *కీలకం)
 {
-	unsigned long flags;
-	int remaining;
+	గుర్తులేని దీర్ఘ flags;
+	పూర్ణాంకం మిగిలిన;
 
-	spin_lock_irqsave(&wq_head->lock, flags);
-	remaining = __wake_up_common(wq_head, mode, nr_exclusive, wake_flags,
-			key);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	spin_తాళం_irqsave(&wq_తల->తాళం, flags);
+	మిగిలిన = __wake_up_common(wq_తల, బహుళకం, nr_exclusive, wake_flags,
+			కీలకం);
+	spin_unlock_irqrestore(&wq_తల->తాళం, flags);
 
-	return nr_exclusive - remaining;
+	తిరిగి nr_exclusive - మిగిలిన;
 }
 
 /**
@@ -140,32 +140,32 @@ static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int m
  * before accessing the task state.  Returns the number of exclusive
  * tasks that were awaken.
  */
-int __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
-	      int nr_exclusive, void *key)
+పూర్ణాంకం __wake_up(నిర్మాణం wait_వరుస_తల *wq_తల, గుర్తులేని పూర్ణాంకం బహుళకం,
+	      పూర్ణాంకం nr_exclusive, శూన్య *కీలకం)
 {
-	return __wake_up_common_lock(wq_head, mode, nr_exclusive, 0, key);
+	తిరిగి __wake_up_common_lock(wq_తల, బహుళకం, nr_exclusive, 0, కీలకం);
 }
-EXPORT_SYMBOL(__wake_up);
+EXPORT_చిహ్నం(__wake_up);
 
-void __wake_up_on_current_cpu(struct wait_queue_head *wq_head, unsigned int mode, void *key)
+శూన్య __wake_up_on_current_cpu(నిర్మాణం wait_వరుస_తల *wq_తల, గుర్తులేని పూర్ణాంకం బహుళకం, శూన్య *కీలకం)
 {
-	__wake_up_common_lock(wq_head, mode, 1, WF_CURRENT_CPU, key);
+	__wake_up_common_lock(wq_తల, బహుళకం, 1, WF_CURRENT_CPU, కీలకం);
 }
 
 /*
  * Same as __wake_up but called with the spinlock in wait_queue_head_t held.
  */
-void __wake_up_locked(struct wait_queue_head *wq_head, unsigned int mode, int nr)
+శూన్య __wake_up_locked(నిర్మాణం wait_వరుస_తల *wq_తల, గుర్తులేని పూర్ణాంకం బహుళకం, పూర్ణాంకం nr)
 {
-	__wake_up_common(wq_head, mode, nr, 0, NULL);
+	__wake_up_common(wq_తల, బహుళకం, nr, 0, ఖాళీ);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked);
+EXPORT_చిహ్నం_GPL(__wake_up_locked);
 
-void __wake_up_locked_key(struct wait_queue_head *wq_head, unsigned int mode, void *key)
+శూన్య __wake_up_locked_key(నిర్మాణం wait_వరుస_తల *wq_తల, గుర్తులేని పూర్ణాంకం బహుళకం, శూన్య *కీలకం)
 {
-	__wake_up_common(wq_head, mode, 1, 0, key);
+	__wake_up_common(wq_తల, బహుళకం, 1, 0, కీలకం);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked_key);
+EXPORT_చిహ్నం_GPL(__wake_up_locked_key);
 
 /**
  * __wake_up_sync_key - wake up threads blocked on a waitqueue.
@@ -179,15 +179,15 @@ EXPORT_SYMBOL_GPL(__wake_up_locked_key);
  * If this function wakes up a task, it executes a full memory barrier
  * before accessing the task state.
  */
-void __wake_up_sync_key(struct wait_queue_head *wq_head, unsigned int mode,
-			void *key)
+శూన్య __wake_up_sync_key(నిర్మాణం wait_వరుస_తల *wq_తల, గుర్తులేని పూర్ణాంకం బహుళకం,
+			శూన్య *కీలకం)
 {
-	if (unlikely(!wq_head))
-		return;
+	ఒకవేళ (unlikely(!wq_తల))
+		తిరిగి;
 
-	__wake_up_common_lock(wq_head, mode, 1, WF_SYNC, key);
+	__wake_up_common_lock(wq_తల, బహుళకం, 1, WF_SYNC, కీలకం);
 }
-EXPORT_SYMBOL_GPL(__wake_up_sync_key);
+EXPORT_చిహ్నం_GPL(__wake_up_sync_key);
 
 /**
  * __wake_up_locked_sync_key - wake up a thread blocked on a locked waitqueue.
@@ -197,27 +197,27 @@ EXPORT_SYMBOL_GPL(__wake_up_sync_key);
  *
  * Same as __wake_up_sync_key(), but called with @wq_head->lock held.
  */
-void __wake_up_locked_sync_key(struct wait_queue_head *wq_head,
-			       unsigned int mode, void *key)
+శూన్య __wake_up_locked_sync_key(నిర్మాణం wait_వరుస_తల *wq_తల,
+			       గుర్తులేని పూర్ణాంకం బహుళకం, శూన్య *కీలకం)
 {
-        __wake_up_common(wq_head, mode, 1, WF_SYNC, key);
+        __wake_up_common(wq_తల, బహుళకం, 1, WF_SYNC, కీలకం);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked_sync_key);
+EXPORT_చిహ్నం_GPL(__wake_up_locked_sync_key);
 
 /*
  * __wake_up_sync - see __wake_up_sync_key()
  */
-void __wake_up_sync(struct wait_queue_head *wq_head, unsigned int mode)
+శూన్య __wake_up_sync(నిర్మాణం wait_వరుస_తల *wq_తల, గుర్తులేని పూర్ణాంకం బహుళకం)
 {
-	__wake_up_sync_key(wq_head, mode, NULL);
+	__wake_up_sync_key(wq_తల, బహుళకం, ఖాళీ);
 }
-EXPORT_SYMBOL_GPL(__wake_up_sync);	/* For internal use only */
+EXPORT_చిహ్నం_GPL(__wake_up_sync);	/* For internal use only */
 
-void __wake_up_pollfree(struct wait_queue_head *wq_head)
+శూన్య __wake_up_pollfree(నిర్మాణం wait_వరుస_తల *wq_తల)
 {
-	__wake_up(wq_head, TASK_NORMAL, 0, poll_to_key(EPOLLHUP | POLLFREE));
+	__wake_up(wq_తల, TASK_సాధారణ, 0, poll_గమ్యం_కీలకం(EPOLLHUP | POLLFREE));
 	/* POLLFREE must have cleared the queue. */
-	WARN_ON_ONCE(waitqueue_active(wq_head));
+	WARN_ON_ONCE(waitqueue_చురుకైన(wq_తల));
 }
 
 /*
@@ -232,55 +232,55 @@ void __wake_up_pollfree(struct wait_queue_head *wq_head)
  * stops them from bleeding out - it would still allow subsequent
  * loads to move into the critical region).
  */
-void
-prepare_to_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
+శూన్య
+prepare_గమ్యం_wait(నిర్మాణం wait_వరుస_తల *wq_తల, నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు, పూర్ణాంకం state)
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
-	wq_entry->flags &= ~WQ_FLAG_EXCLUSIVE;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	if (list_empty(&wq_entry->entry))
-		__add_wait_queue(wq_head, wq_entry);
-	set_current_state(state);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	wq_నమోదు->flags &= ~WQ_FLAG_EXCLUSIVE;
+	spin_తాళం_irqsave(&wq_తల->తాళం, flags);
+	ఒకవేళ (list_ఖాళీలు(&wq_నమోదు->నమోదు_2))
+		__add_wait_queue(wq_తల, wq_నమోదు);
+	సమితి_current_state(state);
+	spin_unlock_irqrestore(&wq_తల->తాళం, flags);
 }
-EXPORT_SYMBOL(prepare_to_wait);
+EXPORT_చిహ్నం(prepare_గమ్యం_wait);
 
 /* Returns true if we are the first waiter in the queue, false otherwise. */
 bool
-prepare_to_wait_exclusive(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
+prepare_గమ్యం_wait_exclusive(నిర్మాణం wait_వరుస_తల *wq_తల, నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు, పూర్ణాంకం state)
 {
-	unsigned long flags;
-	bool was_empty = false;
+	గుర్తులేని దీర్ఘ flags;
+	bool was_ఖాళీలు = false;
 
-	wq_entry->flags |= WQ_FLAG_EXCLUSIVE;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	if (list_empty(&wq_entry->entry)) {
-		was_empty = list_empty(&wq_head->head);
-		__add_wait_queue_entry_tail(wq_head, wq_entry);
+	wq_నమోదు->flags |= WQ_FLAG_EXCLUSIVE;
+	spin_తాళం_irqsave(&wq_తల->తాళం, flags);
+	ఒకవేళ (list_ఖాళీలు(&wq_నమోదు->నమోదు_2)) {
+		was_ఖాళీలు = list_ఖాళీలు(&wq_తల->తల);
+		__add_wait_queue_entry_tail(wq_తల, wq_నమోదు);
 	}
-	set_current_state(state);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
-	return was_empty;
+	సమితి_current_state(state);
+	spin_unlock_irqrestore(&wq_తల->తాళం, flags);
+	తిరిగి was_ఖాళీలు;
 }
-EXPORT_SYMBOL(prepare_to_wait_exclusive);
+EXPORT_చిహ్నం(prepare_గమ్యం_wait_exclusive);
 
-void init_wait_entry(struct wait_queue_entry *wq_entry, int flags)
+శూన్య init_wait_నమోదు(నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు, పూర్ణాంకం flags)
 {
-	wq_entry->flags = flags;
-	wq_entry->private = current;
-	wq_entry->func = autoremove_wake_function;
-	INIT_LIST_HEAD(&wq_entry->entry);
+	wq_నమోదు->flags = flags;
+	wq_నమోదు->అంతరంగ = current;
+	wq_నమోదు->func = autoremove_wake_function;
+	INIT_LIST_తల(&wq_నమోదు->నమోదు_2);
 }
-EXPORT_SYMBOL(init_wait_entry);
+EXPORT_చిహ్నం(init_wait_నమోదు);
 
-long prepare_to_wait_event(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
+దీర్ఘ prepare_గమ్యం_wait_event(నిర్మాణం wait_వరుస_తల *wq_తల, నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు, పూర్ణాంకం state)
 {
-	unsigned long flags;
-	long ret = 0;
+	గుర్తులేని దీర్ఘ flags;
+	దీర్ఘ ret = 0;
 
-	spin_lock_irqsave(&wq_head->lock, flags);
-	if (signal_pending_state(state, current)) {
+	spin_తాళం_irqsave(&wq_తల->తాళం, flags);
+	ఒకవేళ (signal_pending_state(state, current)) {
 		/*
 		 * Exclusive waiter must not fail if it was selected by wakeup,
 		 * it should "consume" the condition we were waiting for.
@@ -293,22 +293,22 @@ long prepare_to_wait_event(struct wait_queue_head *wq_head, struct wait_queue_en
 		 * can't see us, it should wake up another exclusive waiter if
 		 * we fail.
 		 */
-		list_del_init(&wq_entry->entry);
+		list_del_init(&wq_నమోదు->నమోదు_2);
 		ret = -ERESTARTSYS;
-	} else {
-		if (list_empty(&wq_entry->entry)) {
-			if (wq_entry->flags & WQ_FLAG_EXCLUSIVE)
-				__add_wait_queue_entry_tail(wq_head, wq_entry);
-			else
-				__add_wait_queue(wq_head, wq_entry);
+	} లేకపోతే {
+		ఒకవేళ (list_ఖాళీలు(&wq_నమోదు->నమోదు_2)) {
+			ఒకవేళ (wq_నమోదు->flags & WQ_FLAG_EXCLUSIVE)
+				__add_wait_queue_entry_tail(wq_తల, wq_నమోదు);
+			లేకపోతే
+				__add_wait_queue(wq_తల, wq_నమోదు);
 		}
-		set_current_state(state);
+		సమితి_current_state(state);
 	}
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	spin_unlock_irqrestore(&wq_తల->తాళం, flags);
 
-	return ret;
+	తిరిగి ret;
 }
-EXPORT_SYMBOL(prepare_to_wait_event);
+EXPORT_చిహ్నం(prepare_గమ్యం_wait_event);
 
 /*
  * Note! These two wait functions are entered with the
@@ -317,39 +317,39 @@ EXPORT_SYMBOL(prepare_to_wait_event);
  * condition in the caller before they add the wait
  * entry to the wake queue.
  */
-int do_wait_intr(wait_queue_head_t *wq, wait_queue_entry_t *wait)
+పూర్ణాంకం do_wait_intr(wait_వరుస_తల_t *wq, wait_వరుస_నమోదు_t *wait)
 {
-	if (likely(list_empty(&wait->entry)))
+	ఒకవేళ (likely(list_ఖాళీలు(&wait->నమోదు_2)))
 		__add_wait_queue_entry_tail(wq, wait);
 
-	set_current_state(TASK_INTERRUPTIBLE);
-	if (signal_pending(current))
-		return -ERESTARTSYS;
+	సమితి_current_state(TASK_INTERRUPTIBLE);
+	ఒకవేళ (signal_pending(current))
+		తిరిగి -ERESTARTSYS;
 
-	spin_unlock(&wq->lock);
-	schedule();
-	spin_lock(&wq->lock);
+	spin_unlock(&wq->తాళం);
+	కాలపట్టిక();
+	spin_తాళం(&wq->తాళం);
 
-	return 0;
+	తిరిగి 0;
 }
-EXPORT_SYMBOL(do_wait_intr);
+EXPORT_చిహ్నం(do_wait_intr);
 
-int do_wait_intr_irq(wait_queue_head_t *wq, wait_queue_entry_t *wait)
+పూర్ణాంకం do_wait_intr_irq(wait_వరుస_తల_t *wq, wait_వరుస_నమోదు_t *wait)
 {
-	if (likely(list_empty(&wait->entry)))
+	ఒకవేళ (likely(list_ఖాళీలు(&wait->నమోదు_2)))
 		__add_wait_queue_entry_tail(wq, wait);
 
-	set_current_state(TASK_INTERRUPTIBLE);
-	if (signal_pending(current))
-		return -ERESTARTSYS;
+	సమితి_current_state(TASK_INTERRUPTIBLE);
+	ఒకవేళ (signal_pending(current))
+		తిరిగి -ERESTARTSYS;
 
-	spin_unlock_irq(&wq->lock);
-	schedule();
-	spin_lock_irq(&wq->lock);
+	spin_unlock_irq(&wq->తాళం);
+	కాలపట్టిక();
+	spin_తాళం_irq(&wq->తాళం);
 
-	return 0;
+	తిరిగి 0;
 }
-EXPORT_SYMBOL(do_wait_intr_irq);
+EXPORT_చిహ్నం(do_wait_intr_irq);
 
 /**
  * finish_wait - clean up after waiting in a queue
@@ -360,9 +360,9 @@ EXPORT_SYMBOL(do_wait_intr_irq);
  * the wait descriptor from the given waitqueue if still
  * queued.
  */
-void finish_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+శూన్య ముగింపు_wait(నిర్మాణం wait_వరుస_తల *wq_తల, నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు)
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
 	__set_current_state(TASK_RUNNING);
 	/*
@@ -378,24 +378,24 @@ void finish_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_en
 	 *    have _one_ other CPU that looks at or modifies
 	 *    the list).
 	 */
-	if (!list_empty_careful(&wq_entry->entry)) {
-		spin_lock_irqsave(&wq_head->lock, flags);
-		list_del_init(&wq_entry->entry);
-		spin_unlock_irqrestore(&wq_head->lock, flags);
+	ఒకవేళ (!list_ఖాళీలు_careful(&wq_నమోదు->నమోదు_2)) {
+		spin_తాళం_irqsave(&wq_తల->తాళం, flags);
+		list_del_init(&wq_నమోదు->నమోదు_2);
+		spin_unlock_irqrestore(&wq_తల->తాళం, flags);
 	}
 }
-EXPORT_SYMBOL(finish_wait);
+EXPORT_చిహ్నం(ముగింపు_wait);
 
-int autoremove_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
+పూర్ణాంకం autoremove_wake_function(నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు, గుర్తులేని బహుళకం, పూర్ణాంకం sync, శూన్య *కీలకం)
 {
-	int ret = default_wake_function(wq_entry, mode, sync, key);
+	పూర్ణాంకం ret = default_wake_function(wq_నమోదు, బహుళకం, sync, కీలకం);
 
-	if (ret)
-		list_del_init_careful(&wq_entry->entry);
+	ఒకవేళ (ret)
+		list_del_init_careful(&wq_నమోదు->నమోదు_2);
 
-	return ret;
+	తిరిగి ret;
 }
-EXPORT_SYMBOL(autoremove_wake_function);
+EXPORT_చిహ్నం(autoremove_wake_function);
 
 /*
  * DEFINE_WAIT_FUNC(wait, woken_wake_func);
@@ -417,7 +417,7 @@ EXPORT_SYMBOL(autoremove_wake_function);
  * }						smp_mb(); // C
  * remove_wait_queue(&wq_head, &wait);		wq_entry->flags |= WQ_FLAG_WOKEN;
  */
-long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
+దీర్ఘ wait_woken(నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు, గుర్తులేని బహుళకం, దీర్ఘ timeout)
 {
 	/*
 	 * The below executes an smp_mb(), which matches with the full barrier
@@ -425,9 +425,9 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
 	 * either we see the store to wq_entry->flags in woken_wake_function()
 	 * or woken_wake_function() sees our store to current->state.
 	 */
-	set_current_state(mode); /* A */
-	if (!(wq_entry->flags & WQ_FLAG_WOKEN) && !kthread_should_stop_or_park())
-		timeout = schedule_timeout(timeout);
+	సమితి_current_state(బహుళకం); /* A */
+	ఒకవేళ (!(wq_నమోదు->flags & WQ_FLAG_WOKEN) && !kthread_should_stop_or_park())
+		timeout = కాలపట్టిక_timeout(timeout);
 	__set_current_state(TASK_RUNNING);
 
 	/*
@@ -436,32 +436,32 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
 	 * being true or the store to wq_entry->flags in woken_wake_function()
 	 * follows ours in the coherence order.
 	 */
-	smp_store_mb(wq_entry->flags, wq_entry->flags & ~WQ_FLAG_WOKEN); /* B */
+	smp_store_mb(wq_నమోదు->flags, wq_నమోదు->flags & ~WQ_FLAG_WOKEN); /* B */
 
-	return timeout;
+	తిరిగి timeout;
 }
-EXPORT_SYMBOL(wait_woken);
+EXPORT_చిహ్నం(wait_woken);
 
-int woken_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
+పూర్ణాంకం woken_wake_function(నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు, గుర్తులేని బహుళకం, పూర్ణాంకం sync, శూన్య *కీలకం)
 {
 	/* Pairs with the smp_store_mb() in wait_woken(). */
 	smp_mb(); /* C */
-	wq_entry->flags |= WQ_FLAG_WOKEN;
+	wq_నమోదు->flags |= WQ_FLAG_WOKEN;
 
-	return default_wake_function(wq_entry, mode, sync, key);
+	తిరిగి default_wake_function(wq_నమోదు, బహుళకం, sync, కీలకం);
 }
-EXPORT_SYMBOL(woken_wake_function);
+EXPORT_చిహ్నం(woken_wake_function);
 
-int woken_wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+పూర్ణాంకం woken_wake_బిట్టు_function(నిర్మాణం wait_వరుస_నమోదు *wq_నమోదు, గుర్తులేని బహుళకం, పూర్ణాంకం sync, శూన్య *arg)
 {
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
+	నిర్మాణం wait_బిట్టు_కీలకం *కీలకం = __var_wake_key(wq_నమోదు, arg);
+	ఒకవేళ (!కీలకం)
+		తిరిగి 0;
 
 	/* Pairs with the smp_store_mb() in wait_woken(). */
 	smp_mb(); /* C */
-	wq_entry->flags |= WQ_FLAG_WOKEN;
+	wq_నమోదు->flags |= WQ_FLAG_WOKEN;
 
-	return default_wake_function(wq_entry, mode, sync, key);
+	తిరిగి default_wake_function(wq_నమోదు, బహుళకం, sync, కీలకం);
 }
-EXPORT_SYMBOL(woken_wake_bit_function);
+EXPORT_చిహ్నం(woken_wake_బిట్టు_function);

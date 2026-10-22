@@ -13,51 +13,51 @@
  */
 
 /* Headers: */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/hotplug.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/posix-timers.h>
-#include <linux/sched/rt.h>
+#అన్తర్భావ <linux/sched/clock.h>
+#అన్తర్భావ <linux/sched/cputime.h>
+#అన్తర్భావ <linux/sched/hotplug.h>
+#అన్తర్భావ <linux/sched/isolation.h>
+#అన్తర్భావ <linux/sched/posix-timers.h>
+#అన్తర్భావ <linux/sched/rt.h>
 
-#include <linux/cpuidle.h>
-#include <linux/jiffies.h>
-#include <linux/kobject.h>
-#include <linux/livepatch.h>
-#include <linux/pm.h>
-#include <linux/psi.h>
-#include <linux/rhashtable.h>
-#include <linux/seq_buf.h>
-#include <linux/seqlock_api.h>
-#include <linux/slab.h>
-#include <linux/suspend.h>
-#include <linux/tsacct_kern.h>
-#include <linux/vtime.h>
-#include <linux/sysrq.h>
-#include <linux/percpu-rwsem.h>
+#అన్తర్భావ <linux/cpuidle.h>
+#అన్తర్భావ <linux/jiffies.h>
+#అన్తర్భావ <linux/kobject.h>
+#అన్తర్భావ <linux/livepatch.h>
+#అన్తర్భావ <linux/pm.h>
+#అన్తర్భావ <linux/psi.h>
+#అన్తర్భావ <linux/rhashtable.h>
+#అన్తర్భావ <linux/seq_buf.h>
+#అన్తర్భావ <linux/seqlock_api.h>
+#అన్తర్భావ <linux/slab.h>
+#అన్తర్భావ <linux/suspend.h>
+#అన్తర్భావ <linux/tsacct_kern.h>
+#అన్తర్భావ <linux/vtime.h>
+#అన్తర్భావ <linux/sysrq.h>
+#అన్తర్భావ <linux/percpu-rwsem.h>
 
-#include <uapi/linux/sched/types.h>
+#అన్తర్భావ <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "smp.h"
+#అన్తర్భావ "sched.h"
+#అన్తర్భావ "smp.h"
 
-#include "autogroup.h"
-#include "stats.h"
-#include "pelt.h"
+#అన్తర్భావ "autogroup.h"
+#అన్తర్భావ "stats.h"
+#అన్తర్భావ "pelt.h"
 
 /* Source code modules: */
 
-#include "idle.c"
+#అన్తర్భావ "idle.c"
 
-#include "rt.c"
-#include "cpudeadline.c"
+#అన్తర్భావ "rt.c"
+#అన్తర్భావ "cpudeadline.c"
 
-#include "pelt.c"
+#అన్తర్భావ "pelt.c"
 
-#include "cputime.c"
-#include "deadline.c"
+#అన్తర్భావ "cputime.c"
+#అన్తర్భావ "deadline.c"
 
-#ifdef CONFIG_SCHED_CLASS_EXT
+#నిర్వచితమైతే CONFIG_SCHED_CLASS_EXT
 # include <linux/btf_ids.h>
 # include <linux/find.h>
 # include <linux/genalloc.h>
@@ -73,6 +73,6 @@
 # include "ext/arena.c"
 # include "ext/idle.c"
 # include "ext/sub.c"
-#endif
+#అయితే_ముగింపు
 
-#include "syscalls.c"
+#అన్తర్భావ "syscalls.c"

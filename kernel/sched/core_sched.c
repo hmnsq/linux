@@ -4,42 +4,42 @@
  * A simple wrapper around refcount. An allocated sched_core_cookie's
  * address is used to compute the cookie of the task.
  */
-#include "sched.h"
+#అన్తర్భావ "sched.h"
 
-struct sched_core_cookie {
+నిర్మాణం sched_core_cookie {
 	refcount_t refcnt;
 };
 
-static unsigned long sched_core_alloc_cookie(void)
+స్థిర గుర్తులేని దీర్ఘ sched_core_alloc_cookie(శూన్య)
 {
-	struct sched_core_cookie *ck = kmalloc_obj(*ck);
-	if (!ck)
-		return 0;
+	నిర్మాణం sched_core_cookie *ck = kmalloc_obj(*ck);
+	ఒకవేళ (!ck)
+		తిరిగి 0;
 
-	refcount_set(&ck->refcnt, 1);
+	refcount_సమితి(&ck->refcnt, 1);
 	sched_core_get();
 
-	return (unsigned long)ck;
+	తిరిగి (గుర్తులేని దీర్ఘ)ck;
 }
 
-static void sched_core_put_cookie(unsigned long cookie)
+స్థిర శూన్య sched_core_put_cookie(గుర్తులేని దీర్ఘ cookie)
 {
-	struct sched_core_cookie *ptr = (void *)cookie;
+	నిర్మాణం sched_core_cookie *ptr = (శూన్య *)cookie;
 
-	if (ptr && refcount_dec_and_test(&ptr->refcnt)) {
+	ఒకవేళ (ptr && refcount_dec_and_test(&ptr->refcnt)) {
 		kfree(ptr);
 		sched_core_put();
 	}
 }
 
-static unsigned long sched_core_get_cookie(unsigned long cookie)
+స్థిర గుర్తులేని దీర్ఘ sched_core_get_cookie(గుర్తులేని దీర్ఘ cookie)
 {
-	struct sched_core_cookie *ptr = (void *)cookie;
+	నిర్మాణం sched_core_cookie *ptr = (శూన్య *)cookie;
 
-	if (ptr)
+	ఒకవేళ (ptr)
 		refcount_inc(&ptr->refcnt);
 
-	return cookie;
+	తిరిగి cookie;
 }
 
 /*
@@ -52,14 +52,14 @@ static unsigned long sched_core_get_cookie(unsigned long cookie)
  *
  * Returns: the old cookie
  */
-static unsigned long sched_core_update_cookie(struct task_struct *p,
-					      unsigned long cookie)
+స్థిర గుర్తులేని దీర్ఘ sched_core_update_cookie(నిర్మాణం task_struct *p,
+					      గుర్తులేని దీర్ఘ cookie)
 {
-	unsigned long old_cookie;
-	struct rq_flags rf;
-	struct rq *rq;
+	గుర్తులేని దీర్ఘ old_cookie;
+	నిర్మాణం rq_flags rf;
+	నిర్మాణం rq *rq;
 
-	rq = task_rq_lock(p, &rf);
+	rq = task_rq_తాళం_2(p, &rf);
 
 	/*
 	 * Since creating a cookie implies sched_core_get(), and we cannot set
@@ -69,8 +69,8 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	 */
 	WARN_ON_ONCE((p->core_cookie || cookie) && !sched_core_enabled(rq));
 
-	if (sched_core_enqueued(p))
-		sched_core_dequeue(rq, p, DEQUEUE_SAVE);
+	ఒకవేళ (sched_core_enqueued(p))
+		sched_core_వరుస_నుండి_తీయి(rq, p, వరుస_నుండి_తీయి_SAVE);
 
 	old_cookie = p->core_cookie;
 	p->core_cookie = cookie;
@@ -78,8 +78,8 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	/*
 	 * Consider the cases: !prev_cookie and !cookie.
 	 */
-	if (cookie && task_on_rq_queued(p))
-		sched_core_enqueue(rq, p);
+	ఒకవేళ (cookie && task_on_rq_queued(p))
+		sched_core_వరుసలో_చేర్చు(rq, p);
 
 	/*
 	 * If task is currently running, it may not be compatible anymore after
@@ -90,37 +90,37 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	 * core has now entered/left forced idle state. Defer accounting to the
 	 * next scheduling edge, rather than always forcing a reschedule here.
 	 */
-	if (task_on_cpu(rq, p))
+	ఒకవేళ (task_on_cpu(rq, p))
 		resched_curr(rq);
 
 	task_rq_unlock(rq, p, &rf);
 
-	return old_cookie;
+	తిరిగి old_cookie;
 }
 
-static unsigned long sched_core_clone_cookie(struct task_struct *p)
+స్థిర గుర్తులేని దీర్ఘ sched_core_clone_cookie(నిర్మాణం task_struct *p)
 {
-	unsigned long cookie, flags;
+	గుర్తులేని దీర్ఘ cookie, flags;
 
-	raw_spin_lock_irqsave(&p->pi_lock, flags);
+	raw_spin_తాళం_irqsave(&p->pi_తాళం, flags);
 	cookie = sched_core_get_cookie(p->core_cookie);
-	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
+	raw_spin_unlock_irqrestore(&p->pi_తాళం, flags);
 
-	return cookie;
+	తిరిగి cookie;
 }
 
-void sched_core_fork(struct task_struct *p)
+శూన్య sched_core_fork(నిర్మాణం task_struct *p)
 {
-	RB_CLEAR_NODE(&p->core_node);
+	RB_CLEAR_కణుపు(&p->core_కణుపు);
 	p->core_cookie = sched_core_clone_cookie(current);
 }
 
-void sched_core_free(struct task_struct *p)
+శూన్య sched_core_free(నిర్మాణం task_struct *p)
 {
 	sched_core_put_cookie(p->core_cookie);
 }
 
-static void __sched_core_set(struct task_struct *p, unsigned long cookie)
+స్థిర శూన్య __sched_core_set(నిర్మాణం task_struct *p, గుర్తులేని దీర్ఘ cookie)
 {
 	cookie = sched_core_get_cookie(cookie);
 	cookie = sched_core_update_cookie(p, cookie);
@@ -128,33 +128,33 @@ static void __sched_core_set(struct task_struct *p, unsigned long cookie)
 }
 
 /* Called from prctl interface: PR_SCHED_CORE */
-int sched_core_share_pid(unsigned int cmd, pid_t pid, enum pid_type type,
-			 unsigned long uaddr)
+పూర్ణాంకం sched_core_share_pid(గుర్తులేని పూర్ణాంకం cmd, pid_t pid, గణన pid_type type,
+			 గుర్తులేని దీర్ఘ uaddr)
 {
-	unsigned long cookie = 0, id = 0;
-	struct task_struct *task, *p;
-	struct pid *grp;
-	int err = 0;
+	గుర్తులేని దీర్ఘ cookie = 0, id = 0;
+	నిర్మాణం task_struct *task, *p;
+	నిర్మాణం pid *grp;
+	పూర్ణాంకం err = 0;
 
-	if (!sched_smt_active())
-		return -ENODEV;
+	ఒకవేళ (!sched_smt_చురుకైన())
+		తిరిగి -ENODEV;
 
 	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD != PIDTYPE_PID);
-	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD_GROUP != PIDTYPE_TGID);
-	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_PROCESS_GROUP != PIDTYPE_PGID);
+	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD_సమూహం != PIDTYPE_TGID);
+	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_PROCESS_సమూహం != PIDTYPE_PGID);
 
-	if (type > PIDTYPE_PGID || cmd >= PR_SCHED_CORE_MAX || pid < 0 ||
+	ఒకవేళ (type > PIDTYPE_PGID || cmd >= PR_SCHED_CORE_MAX || pid < 0 ||
 	    (cmd != PR_SCHED_CORE_GET && uaddr))
-		return -EINVAL;
+		తిరిగి -EINVAL;
 
-	rcu_read_lock();
-	if (pid == 0) {
+	rcu_read_తాళం();
+	ఒకవేళ (pid == 0) {
 		task = current;
-	} else {
-		task = find_task_by_vpid(pid);
-		if (!task) {
+	} లేకపోతే {
+		task = కనుగొను_task_by_vpid(pid);
+		ఒకవేళ (!task) {
 			rcu_read_unlock();
-			return -ESRCH;
+			తిరిగి -ESRCH;
 		}
 	}
 	get_task_struct(task);
@@ -164,121 +164,121 @@ int sched_core_share_pid(unsigned int cmd, pid_t pid, enum pid_type type,
 	 * Check if this process has the right to modify the specified
 	 * process. Use the regular "ptrace_may_access()" checks.
 	 */
-	if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
+	ఒకవేళ (!ptrace_may_access(task, PTRACE_బహుళకం_READ_REALCREDS)) {
 		err = -EPERM;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	switch (cmd) {
-	case PR_SCHED_CORE_GET:
-		if (type != PIDTYPE_PID || uaddr & 7) {
+	ఎంపిక (cmd) {
+	స్థితి PR_SCHED_CORE_GET:
+		ఒకవేళ (type != PIDTYPE_PID || uaddr & 7) {
 			err = -EINVAL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		cookie = sched_core_clone_cookie(task);
-		if (cookie) {
+		ఒకవేళ (cookie) {
 			/* XXX improve ? */
-			ptr_to_hashval((void *)cookie, &id);
+			ptr_గమ్యం_hashval((శూన్య *)cookie, &id);
 		}
 		err = put_user(id, (u64 __user *)uaddr);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
-	case PR_SCHED_CORE_CREATE:
+	స్థితి PR_SCHED_CORE_CREATE:
 		cookie = sched_core_alloc_cookie();
-		if (!cookie) {
+		ఒకవేళ (!cookie) {
 			err = -ENOMEM;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
-		break;
+		ఆపు;
 
-	case PR_SCHED_CORE_SHARE_TO:
+	స్థితి PR_SCHED_CORE_SHARE_గమ్యం:
 		cookie = sched_core_clone_cookie(current);
-		break;
+		ఆపు;
 
-	case PR_SCHED_CORE_SHARE_FROM:
-		if (type != PIDTYPE_PID) {
+	స్థితి PR_SCHED_CORE_SHARE_FROM:
+		ఒకవేళ (type != PIDTYPE_PID) {
 			err = -EINVAL;
-			goto out;
+			వెళ్ళు బహిర్గతం;
 		}
 		cookie = sched_core_clone_cookie(task);
 		__sched_core_set(current, cookie);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 
-	default:
+	అప్రమేయ:
 		err = -EINVAL;
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (type == PIDTYPE_PID) {
+	ఒకవేళ (type == PIDTYPE_PID) {
 		__sched_core_set(task, cookie);
-		goto out;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	read_lock(&tasklist_lock);
+	read_తాళం(&tasklist_తాళం);
 	grp = task_pid_type(task, type);
 
 	do_each_pid_thread(grp, type, p) {
-		if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS)) {
+		ఒకవేళ (!ptrace_may_access(p, PTRACE_బహుళకం_READ_REALCREDS)) {
 			err = -EPERM;
-			goto out_tasklist;
+			వెళ్ళు బహిర్గతం_tasklist;
 		}
 	} while_each_pid_thread(grp, type, p);
 
 	do_each_pid_thread(grp, type, p) {
 		__sched_core_set(p, cookie);
 	} while_each_pid_thread(grp, type, p);
-out_tasklist:
-	read_unlock(&tasklist_lock);
+బహిర్గతం_tasklist:
+	read_unlock(&tasklist_తాళం);
 
-out:
+బహిర్గతం:
 	sched_core_put_cookie(cookie);
 	put_task_struct(task);
-	return err;
+	తిరిగి err;
 }
 
-#ifdef CONFIG_SCHEDSTATS
+#నిర్వచితమైతే CONFIG_SCHEDSTATS
 
 /* REQUIRES: rq->core's clock recently updated. */
-void __sched_core_account_forceidle(struct rq *rq)
+శూన్య __sched_core_account_forceidle(నిర్మాణం rq *rq)
 {
-	const struct cpumask *smt_mask = cpu_smt_mask(cpu_of(rq));
+	స్థిరరాశి నిర్మాణం cpumask *smt_ముసుగు = cpu_smt_ముసుగు(cpu_యొక్క(rq));
 	u64 delta, now = rq_clock(rq->core);
-	struct rq *rq_i;
-	struct task_struct *p;
-	int i;
+	నిర్మాణం rq *rq_i;
+	నిర్మాణం task_struct *p;
+	పూర్ణాంకం i;
 
 	lockdep_assert_rq_held(rq);
 
-	WARN_ON_ONCE(!rq->core->core_forceidle_count);
+	WARN_ON_ONCE(!rq->core->core_forceidle_లెక్క);
 
-	if (rq->core->core_forceidle_start == 0)
-		return;
+	ఒకవేళ (rq->core->core_forceidle_ప్రారంభం == 0)
+		తిరిగి;
 
-	delta = now - rq->core->core_forceidle_start;
-	if (unlikely((s64)delta <= 0))
-		return;
+	delta = now - rq->core->core_forceidle_ప్రారంభం;
+	ఒకవేళ (unlikely((s64)delta <= 0))
+		తిరిగి;
 
-	rq->core->core_forceidle_start = now;
+	rq->core->core_forceidle_ప్రారంభం = now;
 
-	if (WARN_ON_ONCE(!rq->core->core_forceidle_occupation)) {
+	ఒకవేళ (WARN_ON_ONCE(!rq->core->core_forceidle_occupation)) {
 		/* can't be forced idle without a running task */
-	} else if (rq->core->core_forceidle_count > 1 ||
+	} లేకపోతే ఒకవేళ (rq->core->core_forceidle_లెక్క > 1 ||
 		   rq->core->core_forceidle_occupation > 1) {
 		/*
 		 * For larger SMT configurations, we need to scale the charged
 		 * forced idle amount since there can be more than one forced
 		 * idle sibling and more than one running cookied task.
 		 */
-		delta *= rq->core->core_forceidle_count;
+		delta *= rq->core->core_forceidle_లెక్క;
 		delta = div_u64(delta, rq->core->core_forceidle_occupation);
 	}
 
-	for_each_cpu(i, smt_mask) {
+	for_each_cpu(i, smt_ముసుగు) {
 		rq_i = cpu_rq(i);
 		p = rq_i->core_pick ?: rq_i->curr;
 
-		if (p == rq_i->idle)
-			continue;
+		ఒకవేళ (p == rq_i->idle)
+			కొనసాగు;
 
 		/*
 		 * Note: this will account forceidle to the current CPU, even
@@ -288,15 +288,15 @@ void __sched_core_account_forceidle(struct rq *rq)
 	}
 }
 
-void __sched_core_tick(struct rq *rq)
+శూన్య __sched_core_tick(నిర్మాణం rq *rq)
 {
-	if (!rq->core->core_forceidle_count)
-		return;
+	ఒకవేళ (!rq->core->core_forceidle_లెక్క)
+		తిరిగి;
 
-	if (rq != rq->core)
+	ఒకవేళ (rq != rq->core)
 		update_rq_clock(rq->core);
 
 	__sched_core_account_forceidle(rq);
 }
 
-#endif /* CONFIG_SCHEDSTATS */
+#అయితే_ముగింపు /* CONFIG_SCHEDSTATS */

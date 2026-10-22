@@ -7,25 +7,25 @@
  * Copyright (c) 2022 David Vernet <dvernet@meta.com>
  * Copyright (c) 2024 Andrea Righi <arighi@nvidia.com>
  */
-#ifndef _KERNEL_SCHED_EXT_IDLE_H
-#define _KERNEL_SCHED_EXT_IDLE_H
+#నిర్వచితం_కాకపోతే _KERNEL_SCHED_EXT_IDLE_H
+#నిర్వచించు _KERNEL_SCHED_EXT_IDLE_H
 
-#include <linux/btf_ids.h>
+#అన్తర్భావ <linux/btf_ids.h>
 
-struct cpumask;
-struct sched_ext_ops;
-struct task_struct;
+నిర్మాణం cpumask;
+నిర్మాణం sched_ext_ops;
+నిర్మాణం task_struct;
 
-extern struct btf_id_set8 scx_kfunc_ids_idle;
-extern struct btf_id_set8 scx_kfunc_ids_select_cpu;
+బాహ్య నిర్మాణం btf_id_set8 scx_kfunc_ids_idle;
+బాహ్య నిర్మాణం btf_id_set8 scx_kfunc_ids_select_cpu;
 
-void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops);
-void scx_idle_init_masks(void);
+శూన్య scx_idle_update_selcpu_topology(నిర్మాణం sched_ext_ops *ops);
+శూన్య scx_idle_init_masks(శూన్య);
 
-s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
-		       const struct cpumask *cpus_allowed, u64 flags);
-void scx_idle_enable(struct sched_ext_ops *ops);
-void scx_idle_disable(void);
-int scx_idle_init(void);
+s32 scx_select_cpu_dfl(నిర్మాణం task_struct *p, s32 prev_cpu, u64 wake_flags,
+		       స్థిరరాశి నిర్మాణం cpumask *cpus_allowed, u64 flags);
+శూన్య scx_idle_enable(నిర్మాణం sched_ext_ops *ops);
+శూన్య scx_idle_disable(శూన్య);
+పూర్ణాంకం scx_idle_init(శూన్య);
 
-#endif /* _KERNEL_SCHED_EXT_IDLE_H */
+#అయితే_ముగింపు /* _KERNEL_SCHED_EXT_IDLE_H */

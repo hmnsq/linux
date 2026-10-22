@@ -1,24 +1,24 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#include <linux/types.h>
-#include <linux/spinlock.h>
+#అన్తర్భావ <linux/types.h>
+#అన్తర్భావ <linux/spinlock.h>
 
-#define IDX_INVALID		-1
+#నిర్వచించు IDX_INVALID		-1
 
-struct cpudl_item {
+నిర్మాణం cpudl_అంశం {
 	u64			dl;
-	int			cpu;
-	int			idx;
+	పూర్ణాంకం			cpu;
+	పూర్ణాంకం			idx;
 };
 
-struct cpudl {
-	raw_spinlock_t		lock;
-	int			size;
+నిర్మాణం cpudl {
+	raw_spinlock_t		తాళం;
+	పూర్ణాంకం			కొలత;
 	cpumask_var_t		free_cpus;
-	struct cpudl_item	*elements;
+	నిర్మాణం cpudl_అంశం	*elements;
 };
 
-int  cpudl_find(struct cpudl *cp, struct task_struct *p, struct cpumask *later_mask);
-void cpudl_set(struct cpudl *cp, int cpu, u64 dl);
-void cpudl_clear(struct cpudl *cp, int cpu, bool online);
-int  cpudl_init(struct cpudl *cp);
-void cpudl_cleanup(struct cpudl *cp);
+పూర్ణాంకం  cpudl_కనుగొను(నిర్మాణం cpudl *cp, నిర్మాణం task_struct *p, నిర్మాణం cpumask *later_ముసుగు);
+శూన్య cpudl_సమితి(నిర్మాణం cpudl *cp, పూర్ణాంకం cpu, u64 dl);
+శూన్య cpudl_clear(నిర్మాణం cpudl *cp, పూర్ణాంకం cpu, bool online);
+పూర్ణాంకం  cpudl_init(నిర్మాణం cpudl *cp);
+శూన్య cpudl_cleanup(నిర్మాణం cpudl *cp);

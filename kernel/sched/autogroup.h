@@ -1,68 +1,68 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#ifndef _KERNEL_SCHED_AUTOGROUP_H
-#define _KERNEL_SCHED_AUTOGROUP_H
+#నిర్వచితం_కాకపోతే _KERNEL_SCHED_AUTOGROUP_H
+#నిర్వచించు _KERNEL_SCHED_AUTOGROUP_H
 
-#include "sched.h"
+#అన్తర్భావ "sched.h"
 
-#ifdef CONFIG_SCHED_AUTOGROUP
+#నిర్వచితమైతే CONFIG_SCHED_AUTOGROUP
 
-struct autogroup {
+నిర్మాణం autogroup {
 	/*
 	 * Reference doesn't mean how many threads attach to this
 	 * autogroup now. It just stands for the number of tasks
 	 * which could use this autogroup.
 	 */
-	struct kref		kref;
-	struct task_group	*tg;
-	struct rw_semaphore	lock;
-	unsigned long		id;
-	int			nice;
+	నిర్మాణం kref		kref;
+	నిర్మాణం task_సమూహం	*tg;
+	నిర్మాణం rw_semaphore	తాళం;
+	గుర్తులేని దీర్ఘ		id;
+	పూర్ణాంకం			nice;
 };
 
-extern void autogroup_init(struct task_struct *init_task);
-extern void autogroup_free(struct task_group *tg);
+బాహ్య శూన్య autogroup_init(నిర్మాణం task_struct *init_task);
+బాహ్య శూన్య autogroup_free(నిర్మాణం task_సమూహం *tg);
 
-static inline bool task_group_is_autogroup(struct task_group *tg)
+స్థిర అంతఃవరుస bool task_సమూహం_is_autogroup(నిర్మాణం task_సమూహం *tg)
 {
-	return !!tg->autogroup;
+	తిరిగి !!tg->autogroup;
 }
 
-extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
+బాహ్య bool task_కోరుతుంది_autogroup(నిర్మాణం task_struct *p, నిర్మాణం task_సమూహం *tg);
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+స్థిర అంతఃవరుస నిర్మాణం task_సమూహం *
+autogroup_task_సమూహం(నిర్మాణం task_struct *p, నిర్మాణం task_సమూహం *tg)
 {
-	extern unsigned int sysctl_sched_autogroup_enabled;
-	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+	బాహ్య గుర్తులేని పూర్ణాంకం sysctl_sched_autogroup_enabled;
+	పూర్ణాంకం enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
 
-	if (enabled && task_wants_autogroup(p, tg))
-		return p->signal->autogroup->tg;
+	ఒకవేళ (enabled && task_కోరుతుంది_autogroup(p, tg))
+		తిరిగి p->సంకేతం->autogroup->tg;
 
-	return tg;
+	తిరిగి tg;
 }
 
-extern int autogroup_path(struct task_group *tg, char *buf, int buflen);
+బాహ్య పూర్ణాంకం autogroup_మార్గం(నిర్మాణం task_సమూహం *tg, అక్షరం *buf, పూర్ణాంకం buflen);
 
-#else /* !CONFIG_SCHED_AUTOGROUP: */
+#లేకపోతే /* !CONFIG_SCHED_AUTOGROUP: */
 
-static inline void autogroup_init(struct task_struct *init_task) {  }
-static inline void autogroup_free(struct task_group *tg) { }
-static inline bool task_group_is_autogroup(struct task_group *tg)
+స్థిర అంతఃవరుస శూన్య autogroup_init(నిర్మాణం task_struct *init_task) {  }
+స్థిర అంతఃవరుస శూన్య autogroup_free(నిర్మాణం task_సమూహం *tg) { }
+స్థిర అంతఃవరుస bool task_సమూహం_is_autogroup(నిర్మాణం task_సమూహం *tg)
 {
-	return 0;
+	తిరిగి 0;
 }
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+స్థిర అంతఃవరుస నిర్మాణం task_సమూహం *
+autogroup_task_సమూహం(నిర్మాణం task_struct *p, నిర్మాణం task_సమూహం *tg)
 {
-	return tg;
+	తిరిగి tg;
 }
 
-static inline int autogroup_path(struct task_group *tg, char *buf, int buflen)
+స్థిర అంతఃవరుస పూర్ణాంకం autogroup_మార్గం(నిర్మాణం task_సమూహం *tg, అక్షరం *buf, పూర్ణాంకం buflen)
 {
-	return 0;
+	తిరిగి 0;
 }
 
-#endif /* !CONFIG_SCHED_AUTOGROUP */
+#అయితే_ముగింపు /* !CONFIG_SCHED_AUTOGROUP */
 
-#endif /* _KERNEL_SCHED_AUTOGROUP_H */
+#అయితే_ముగింపు /* _KERNEL_SCHED_AUTOGROUP_H */

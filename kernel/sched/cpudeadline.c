@@ -6,59 +6,59 @@
  *
  *  Author: Juri Lelli <j.lelli@sssup.it>
  */
-#include "sched.h"
+#అన్తర్భావ "sched.h"
 
-static inline int parent(int i)
+స్థిర అంతఃవరుస పూర్ణాంకం మాతృ(పూర్ణాంకం i)
 {
-	return (i - 1) >> 1;
+	తిరిగి (i - 1) >> 1;
 }
 
-static inline int left_child(int i)
+స్థిర అంతఃవరుస పూర్ణాంకం ఎడమ_బిడ్డ(పూర్ణాంకం i)
 {
-	return (i << 1) + 1;
+	తిరిగి (i << 1) + 1;
 }
 
-static inline int right_child(int i)
+స్థిర అంతఃవరుస పూర్ణాంకం కుడి_బిడ్డ(పూర్ణాంకం i)
 {
-	return (i << 1) + 2;
+	తిరిగి (i << 1) + 2;
 }
 
-static void cpudl_heapify_down(struct cpudl *cp, int idx)
+స్థిర శూన్య cpudl_heapify_కిందికి(నిర్మాణం cpudl *cp, పూర్ణాంకం idx)
 {
-	int l, r, largest;
+	పూర్ణాంకం l, r, అతిపెద్ద;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	పూర్ణాంకం orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (left_child(idx) >= cp->size)
-		return;
+	ఒకవేళ (ఎడమ_బిడ్డ(idx) >= cp->కొలత)
+		తిరిగి;
 
 	/* adapted from lib/prio_heap.c */
-	while (1) {
-		u64 largest_dl;
+	అయితే (1) {
+		u64 అతిపెద్ద_dl;
 
-		l = left_child(idx);
-		r = right_child(idx);
-		largest = idx;
-		largest_dl = orig_dl;
+		l = ఎడమ_బిడ్డ(idx);
+		r = కుడి_బిడ్డ(idx);
+		అతిపెద్ద = idx;
+		అతిపెద్ద_dl = orig_dl;
 
-		if ((l < cp->size) && dl_time_before(orig_dl,
+		ఒకవేళ ((l < cp->కొలత) && dl_సమయం_before(orig_dl,
 						cp->elements[l].dl)) {
-			largest = l;
-			largest_dl = cp->elements[l].dl;
+			అతిపెద్ద = l;
+			అతిపెద్ద_dl = cp->elements[l].dl;
 		}
-		if ((r < cp->size) && dl_time_before(largest_dl,
+		ఒకవేళ ((r < cp->కొలత) && dl_సమయం_before(అతిపెద్ద_dl,
 						cp->elements[r].dl))
-			largest = r;
+			అతిపెద్ద = r;
 
-		if (largest == idx)
-			break;
+		ఒకవేళ (అతిపెద్ద == idx)
+			ఆపు;
 
 		/* pull largest child onto idx */
-		cp->elements[idx].cpu = cp->elements[largest].cpu;
-		cp->elements[idx].dl = cp->elements[largest].dl;
+		cp->elements[idx].cpu = cp->elements[అతిపెద్ద].cpu;
+		cp->elements[idx].dl = cp->elements[అతిపెద్ద].dl;
 		cp->elements[cp->elements[idx].cpu].idx = idx;
-		idx = largest;
+		idx = అతిపెద్ద;
 	}
 	/* actual push down of saved original values orig_* */
 	cp->elements[idx].cpu = orig_cpu;
@@ -66,44 +66,44 @@ static void cpudl_heapify_down(struct cpudl *cp, int idx)
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify_up(struct cpudl *cp, int idx)
+స్థిర శూన్య cpudl_heapify_పైకి(నిర్మాణం cpudl *cp, పూర్ణాంకం idx)
 {
-	int p;
+	పూర్ణాంకం p;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	పూర్ణాంకం orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (idx == 0)
-		return;
+	ఒకవేళ (idx == 0)
+		తిరిగి;
 
-	do {
-		p = parent(idx);
-		if (dl_time_before(orig_dl, cp->elements[p].dl))
-			break;
+	చేయి {
+		p = మాతృ(idx);
+		ఒకవేళ (dl_సమయం_before(orig_dl, cp->elements[p].dl))
+			ఆపు;
 		/* pull parent onto idx */
 		cp->elements[idx].cpu = cp->elements[p].cpu;
 		cp->elements[idx].dl = cp->elements[p].dl;
 		cp->elements[cp->elements[idx].cpu].idx = idx;
 		idx = p;
-	} while (idx != 0);
+	} అయితే (idx != 0);
 	/* actual push up of saved original values orig_* */
 	cp->elements[idx].cpu = orig_cpu;
 	cp->elements[idx].dl = orig_dl;
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify(struct cpudl *cp, int idx)
+స్థిర శూన్య cpudl_heapify(నిర్మాణం cpudl *cp, పూర్ణాంకం idx)
 {
-	if (idx > 0 && dl_time_before(cp->elements[parent(idx)].dl,
+	ఒకవేళ (idx > 0 && dl_సమయం_before(cp->elements[మాతృ(idx)].dl,
 				cp->elements[idx].dl))
-		cpudl_heapify_up(cp, idx);
-	else
-		cpudl_heapify_down(cp, idx);
+		cpudl_heapify_పైకి(cp, idx);
+	లేకపోతే
+		cpudl_heapify_కిందికి(cp, idx);
 }
 
-static inline int cpudl_maximum(struct cpudl *cp)
+స్థిర అంతఃవరుస పూర్ణాంకం cpudl_గరిష్ఠ(నిర్మాణం cpudl *cp)
 {
-	return cp->elements[0].cpu;
+	తిరిగి cp->elements[0].cpu;
 }
 
 /*
@@ -114,27 +114,27 @@ static inline int cpudl_maximum(struct cpudl *cp)
  *
  * Returns: int - CPUs were found
  */
-int cpudl_find(struct cpudl *cp, struct task_struct *p,
-	       struct cpumask *later_mask)
+పూర్ణాంకం cpudl_కనుగొను(నిర్మాణం cpudl *cp, నిర్మాణం task_struct *p,
+	       నిర్మాణం cpumask *later_ముసుగు)
 {
-	const struct sched_dl_entity *dl_se = &p->dl;
+	స్థిరరాశి నిర్మాణం sched_dl_entity *dl_se = &p->dl;
 
-	if (later_mask &&
-	    cpumask_and(later_mask, cp->free_cpus, &p->cpus_mask)) {
-		unsigned long cap, max_cap = 0;
-		int cpu, max_cpu = -1;
+	ఒకవేళ (later_ముసుగు &&
+	    cpumask_and(later_ముసుగు, cp->free_cpus, &p->cpus_ముసుగు)) {
+		గుర్తులేని దీర్ఘ cap, max_cap = 0;
+		పూర్ణాంకం cpu, max_cpu = -1;
 
-		if (!sched_asym_cpucap_active())
-			return 1;
+		ఒకవేళ (!sched_asym_cpucap_చురుకైన())
+			తిరిగి 1;
 
 		/* Ensure the capacity of the CPUs fits the task. */
-		for_each_cpu(cpu, later_mask) {
-			if (!dl_task_fits_capacity(p, cpu)) {
-				cpumask_clear_cpu(cpu, later_mask);
+		for_each_cpu(cpu, later_ముసుగు) {
+			ఒకవేళ (!dl_task_సరిపోతుంది_సామర్థ్యం(p, cpu)) {
+				cpumask_clear_cpu(cpu, later_ముసుగు);
 
-				cap = arch_scale_cpu_capacity(cpu);
+				cap = arch_scale_cpu_సామర్థ్యం(cpu);
 
-				if (cap > max_cap ||
+				ఒకవేళ (cap > max_cap ||
 				    (cpu == task_cpu(p) && cap == max_cap)) {
 					max_cap = cap;
 					max_cpu = cpu;
@@ -142,24 +142,24 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
 			}
 		}
 
-		if (cpumask_empty(later_mask))
-			cpumask_set_cpu(max_cpu, later_mask);
+		ఒకవేళ (cpumask_ఖాళీలు(later_ముసుగు))
+			cpumask_సమితి_cpu(max_cpu, later_ముసుగు);
 
-		return 1;
-	} else {
-		int best_cpu = cpudl_maximum(cp);
+		తిరిగి 1;
+	} లేకపోతే {
+		పూర్ణాంకం ఉత్తమ_cpu = cpudl_గరిష్ఠ(cp);
 
-		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
+		WARN_ON(ఉత్తమ_cpu != -1 && !cpu_present(ఉత్తమ_cpu));
 
-		if (cpumask_test_cpu(best_cpu, &p->cpus_mask) &&
-		    dl_time_before(dl_se->deadline, cp->elements[0].dl)) {
-			if (later_mask)
-				cpumask_set_cpu(best_cpu, later_mask);
+		ఒకవేళ (cpumask_test_cpu(ఉత్తమ_cpu, &p->cpus_ముసుగు) &&
+		    dl_సమయం_before(dl_se->deadline, cp->elements[0].dl)) {
+			ఒకవేళ (later_ముసుగు)
+				cpumask_సమితి_cpu(ఉత్తమ_cpu, later_ముసుగు);
 
-			return 1;
+			తిరిగి 1;
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -172,37 +172,37 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpudl_clear(struct cpudl *cp, int cpu, bool online)
+శూన్య cpudl_clear(నిర్మాణం cpudl *cp, పూర్ణాంకం cpu, bool online)
 {
-	int old_idx, new_cpu;
-	unsigned long flags;
+	పూర్ణాంకం old_idx, new_cpu;
+	గుర్తులేని దీర్ఘ flags;
 
 	WARN_ON(!cpu_present(cpu));
 
-	raw_spin_lock_irqsave(&cp->lock, flags);
+	raw_spin_తాళం_irqsave(&cp->తాళం, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
+	ఒకవేళ (old_idx == IDX_INVALID) {
 		/*
 		 * Nothing to remove if old_idx was invalid.
 		 * This could happen if rq_online_dl or rq_offline_dl is
 		 * called for a CPU without -dl tasks running.
 		 */
-	} else {
-		new_cpu = cp->elements[cp->size - 1].cpu;
-		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
+	} లేకపోతే {
+		new_cpu = cp->elements[cp->కొలత - 1].cpu;
+		cp->elements[old_idx].dl = cp->elements[cp->కొలత - 1].dl;
 		cp->elements[old_idx].cpu = new_cpu;
-		cp->size--;
+		cp->కొలత--;
 		cp->elements[new_cpu].idx = old_idx;
 		cp->elements[cpu].idx = IDX_INVALID;
 		cpudl_heapify(cp, old_idx);
 	}
-	if (likely(online))
+	ఒకవేళ (likely(online))
 		__cpumask_set_cpu(cpu, cp->free_cpus);
-	else
+	లేకపోతే
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
 
-	raw_spin_unlock_irqrestore(&cp->lock, flags);
+	raw_spin_unlock_irqrestore(&cp->తాళం, flags);
 }
 
 /*
@@ -215,63 +215,63 @@ void cpudl_clear(struct cpudl *cp, int cpu, bool online)
  *
  * Returns: (void)
  */
-void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
+శూన్య cpudl_సమితి(నిర్మాణం cpudl *cp, పూర్ణాంకం cpu, u64 dl)
 {
-	int old_idx;
-	unsigned long flags;
+	పూర్ణాంకం old_idx;
+	గుర్తులేని దీర్ఘ flags;
 
 	WARN_ON(!cpu_present(cpu));
 
-	raw_spin_lock_irqsave(&cp->lock, flags);
+	raw_spin_తాళం_irqsave(&cp->తాళం, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
-		int new_idx = cp->size++;
+	ఒకవేళ (old_idx == IDX_INVALID) {
+		పూర్ణాంకం new_idx = cp->కొలత++;
 
 		cp->elements[new_idx].dl = dl;
 		cp->elements[new_idx].cpu = cpu;
 		cp->elements[cpu].idx = new_idx;
-		cpudl_heapify_up(cp, new_idx);
+		cpudl_heapify_పైకి(cp, new_idx);
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
-	} else {
+	} లేకపోతే {
 		cp->elements[old_idx].dl = dl;
 		cpudl_heapify(cp, old_idx);
 	}
 
-	raw_spin_unlock_irqrestore(&cp->lock, flags);
+	raw_spin_unlock_irqrestore(&cp->తాళం, flags);
 }
 
 /*
  * cpudl_init - initialize the cpudl structure
  * @cp: the cpudl max-heap context
  */
-int cpudl_init(struct cpudl *cp)
+పూర్ణాంకం cpudl_init(నిర్మాణం cpudl *cp)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	raw_spin_lock_init(&cp->lock);
-	cp->size = 0;
+	raw_spin_తాళం_init(&cp->తాళం);
+	cp->కొలత = 0;
 
-	cp->elements = kzalloc_objs(struct cpudl_item, nr_cpu_ids);
-	if (!cp->elements)
-		return -ENOMEM;
+	cp->elements = kzalloc_objs(నిర్మాణం cpudl_అంశం, nr_cpu_ids);
+	ఒకవేళ (!cp->elements)
+		తిరిగి -ENOMEM;
 
-	if (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
+	ఒకవేళ (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
 		kfree(cp->elements);
-		return -ENOMEM;
+		తిరిగి -ENOMEM;
 	}
 
 	for_each_possible_cpu(i)
 		cp->elements[i].idx = IDX_INVALID;
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
  * cpudl_cleanup - clean up the cpudl structure
  * @cp: the cpudl max-heap context
  */
-void cpudl_cleanup(struct cpudl *cp)
+శూన్య cpudl_cleanup(నిర్మాణం cpudl *cp)
 {
 	free_cpumask_var(cp->free_cpus);
 	kfree(cp->elements);

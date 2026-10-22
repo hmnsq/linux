@@ -136,165 +136,165 @@
  * cost-wise, yet way more sensitive and accurate than periodic
  * sampling of the aggregate task states would be.
  */
-#include <linux/sched/clock.h>
-#include <linux/workqueue.h>
-#include <linux/psi.h>
-#include "sched.h"
+#అన్తర్భావ <linux/sched/clock.h>
+#అన్తర్భావ <linux/workqueue.h>
+#అన్తర్భావ <linux/psi.h>
+#అన్తర్భావ "sched.h"
 
-static int psi_bug __read_mostly;
+స్థిర పూర్ణాంకం psi_bug __read_mostly;
 
-DEFINE_STATIC_KEY_FALSE(psi_disabled);
-static DEFINE_STATIC_KEY_TRUE(psi_cgroups_enabled);
+DEFINE_STATIC_కీలకం_FALSE(psi_disabled);
+స్థిర DEFINE_STATIC_కీలకం_TRUE(psi_cgroups_enabled);
 
-#ifdef CONFIG_PSI_DEFAULT_DISABLED
-static bool psi_enable;
-#else
-static bool psi_enable = true;
-#endif
-static int __init setup_psi(char *str)
+#నిర్వచితమైతే CONFIG_PSI_DEFAULT_DISABLED
+స్థిర bool psi_enable;
+#లేకపోతే
+స్థిర bool psi_enable = true;
+#అయితే_ముగింపు
+స్థిర పూర్ణాంకం __init అమరిక_psi(అక్షరం *str)
 {
-	return kstrtobool(str, &psi_enable) == 0;
+	తిరిగి kstrtobool(str, &psi_enable) == 0;
 }
-__setup("psi=", setup_psi);
+__setup("psi=", అమరిక_psi);
 
 /* Running averages - we need to be higher-res than loadavg */
-#define PSI_FREQ	(2*HZ+1)	/* 2 sec intervals */
-#define EXP_10s		1677		/* 1/exp(2s/10s) as fixed-point */
-#define EXP_60s		1981		/* 1/exp(2s/60s) */
-#define EXP_300s	2034		/* 1/exp(2s/300s) */
+#నిర్వచించు PSI_FREQ	(2*HZ+1)	/* 2 sec intervals */
+#నిర్వచించు EXP_10s		1677		/* 1/exp(2s/10s) as fixed-point */
+#నిర్వచించు EXP_60s		1981		/* 1/exp(2s/60s) */
+#నిర్వచించు EXP_300s	2034		/* 1/exp(2s/300s) */
 
 /* PSI trigger definitions */
-#define WINDOW_MAX_US 10000000	/* Max window size is 10s */
-#define UPDATES_PER_WINDOW 10	/* 10 updates per window */
+#నిర్వచించు కిటికీ_MAX_US 10000000	/* Max window size is 10s */
+#నిర్వచించు UPDATES_చొప్పున_కిటికీ 10	/* 10 updates per window */
 
 /* Sampling frequency in nanoseconds */
-static u64 psi_period __read_mostly;
+స్థిర u64 psi_period __read_mostly;
 
 /* System-level pressure and stall tracking */
-static DEFINE_PER_CPU(struct psi_group_cpu, system_group_pcpu);
-struct psi_group psi_system = {
-	.pcpu = &system_group_pcpu,
+స్థిర DEFINE_చొప్పున_CPU(నిర్మాణం psi_సమూహం_cpu, system_సమూహం_pcpu);
+నిర్మాణం psi_సమూహం psi_system = {
+	.pcpu = &system_సమూహం_pcpu,
 };
 
-static DEFINE_PER_CPU(seqcount_t, psi_seq) = SEQCNT_ZERO(psi_seq);
+స్థిర DEFINE_చొప్పున_CPU(seqcount_t, psi_seq) = SEQCNT_ZERO(psi_seq);
 
-static inline void psi_write_begin(int cpu)
+స్థిర అంతఃవరుస శూన్య psi_write_begin(పూర్ణాంకం cpu)
 {
-	write_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
+	write_seqcount_begin(చొప్పున_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline void psi_write_end(int cpu)
+స్థిర అంతఃవరుస శూన్య psi_write_చివర(పూర్ణాంకం cpu)
 {
-	write_seqcount_end(per_cpu_ptr(&psi_seq, cpu));
+	write_seqcount_చివర(చొప్పున_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline u32 psi_read_begin(int cpu)
+స్థిర అంతఃవరుస u32 psi_read_begin(పూర్ణాంకం cpu)
 {
-	return read_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
+	తిరిగి read_seqcount_begin(చొప్పున_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline bool psi_read_retry(int cpu, u32 seq)
+స్థిర అంతఃవరుస bool psi_read_retry(పూర్ణాంకం cpu, u32 seq)
 {
-	return read_seqcount_retry(per_cpu_ptr(&psi_seq, cpu), seq);
+	తిరిగి read_seqcount_retry(చొప్పున_cpu_ptr(&psi_seq, cpu), seq);
 }
 
-static void psi_avgs_work(struct work_struct *work);
+స్థిర శూన్య psi_avgs_work(నిర్మాణం work_struct *work);
 
-static void poll_timer_fn(struct timer_list *t);
+స్థిర శూన్య poll_timer_fn(నిర్మాణం timer_list *t);
 
-static void group_init(struct psi_group *group)
+స్థిర శూన్య సమూహం_init(నిర్మాణం psi_సమూహం *సమూహం)
 {
-	group->enabled = true;
-	group->avg_last_update = sched_clock();
-	group->avg_next_update = group->avg_last_update + psi_period;
-	mutex_init(&group->avgs_lock);
+	సమూహం->enabled = true;
+	సమూహం->avg_చివరి_update = sched_clock();
+	సమూహం->avg_తదుపరి_update = సమూహం->avg_చివరి_update + psi_period;
+	mutex_init(&సమూహం->avgs_తాళం);
 
 	/* Init avg trigger-related members */
-	INIT_LIST_HEAD(&group->avg_triggers);
-	memset(group->avg_nr_triggers, 0, sizeof(group->avg_nr_triggers));
-	INIT_DELAYED_WORK(&group->avgs_work, psi_avgs_work);
+	INIT_LIST_తల(&సమూహం->avg_triggers);
+	memset(సమూహం->avg_nr_triggers, 0, పరిమాణం(సమూహం->avg_nr_triggers));
+	INIT_DELAYED_WORK(&సమూహం->avgs_work, psi_avgs_work);
 
 	/* Init rtpoll trigger-related members */
-	atomic_set(&group->rtpoll_scheduled, 0);
-	mutex_init(&group->rtpoll_trigger_lock);
-	INIT_LIST_HEAD(&group->rtpoll_triggers);
-	group->rtpoll_min_period = U32_MAX;
-	group->rtpoll_next_update = ULLONG_MAX;
-	init_waitqueue_head(&group->rtpoll_wait);
-	timer_setup(&group->rtpoll_timer, poll_timer_fn, 0);
-	rcu_assign_pointer(group->rtpoll_task, NULL);
+	atomic_సమితి(&సమూహం->rtpoll_scheduled, 0);
+	mutex_init(&సమూహం->rtpoll_trigger_తాళం);
+	INIT_LIST_తల(&సమూహం->rtpoll_triggers);
+	సమూహం->rtpoll_min_period = U32_MAX;
+	సమూహం->rtpoll_తదుపరి_update = ULLONG_MAX;
+	init_waitqueue_తల(&సమూహం->rtpoll_wait);
+	timer_అమరిక(&సమూహం->rtpoll_timer, poll_timer_fn, 0);
+	rcu_కేటాయించు_సూచిక(సమూహం->rtpoll_task, ఖాళీ);
 }
 
-void __init psi_init(void)
+శూన్య __init psi_init(శూన్య)
 {
-	if (!psi_enable) {
+	ఒకవేళ (!psi_enable) {
 		static_branch_enable(&psi_disabled);
 		static_branch_disable(&psi_cgroups_enabled);
-		return;
+		తిరిగి;
 	}
 
-	if (!cgroup_psi_enabled())
+	ఒకవేళ (!cgroup_psi_enabled())
 		static_branch_disable(&psi_cgroups_enabled);
 
-	psi_period = jiffies_to_nsecs(PSI_FREQ);
-	group_init(&psi_system);
+	psi_period = jiffies_గమ్యం_nsecs(PSI_FREQ);
+	సమూహం_init(&psi_system);
 }
 
-static u32 test_states(unsigned int *tasks, u32 state_mask)
+స్థిర u32 test_స్థితులు(గుర్తులేని పూర్ణాంకం *tasks, u32 state_ముసుగు)
 {
-	const bool oncpu = state_mask & PSI_ONCPU;
+	స్థిరరాశి bool oncpu = state_ముసుగు & PSI_ONCPU;
 
-	if (tasks[NR_IOWAIT]) {
-		state_mask |= BIT(PSI_IO_SOME);
-		if (!tasks[NR_RUNNING])
-			state_mask |= BIT(PSI_IO_FULL);
+	ఒకవేళ (tasks[NR_IOWAIT]) {
+		state_ముసుగు |= బిట్టు(PSI_IO_SOME);
+		ఒకవేళ (!tasks[NR_RUNNING])
+			state_ముసుగు |= బిట్టు(PSI_IO_నిండిన);
 	}
 
-	if (tasks[NR_MEMSTALL]) {
-		state_mask |= BIT(PSI_MEM_SOME);
-		if (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
-			state_mask |= BIT(PSI_MEM_FULL);
+	ఒకవేళ (tasks[NR_MEMSTALL]) {
+		state_ముసుగు |= బిట్టు(PSI_MEM_SOME);
+		ఒకవేళ (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
+			state_ముసుగు |= బిట్టు(PSI_MEM_నిండిన);
 	}
 
-	if (tasks[NR_RUNNING] > oncpu)
-		state_mask |= BIT(PSI_CPU_SOME);
+	ఒకవేళ (tasks[NR_RUNNING] > oncpu)
+		state_ముసుగు |= బిట్టు(PSI_CPU_SOME);
 
-	if (tasks[NR_RUNNING] && !oncpu)
-		state_mask |= BIT(PSI_CPU_FULL);
+	ఒకవేళ (tasks[NR_RUNNING] && !oncpu)
+		state_ముసుగు |= బిట్టు(PSI_CPU_నిండిన);
 
-	if (tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] || tasks[NR_RUNNING])
-		state_mask |= BIT(PSI_NONIDLE);
+	ఒకవేళ (tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] || tasks[NR_RUNNING])
+		state_ముసుగు |= బిట్టు(PSI_NONIDLE);
 
-	return state_mask;
+	తిరిగి state_ముసుగు;
 }
 
-static void get_recent_times(struct psi_group *group, int cpu,
-			     enum psi_aggregators aggregator, u32 *times,
-			     u32 *pchanged_states)
+స్థిర శూన్య get_recent_times(నిర్మాణం psi_సమూహం *సమూహం, పూర్ణాంకం cpu,
+			     గణన psi_aggregators aggregator, u32 *times,
+			     u32 *pchanged_స్థితులు)
 {
-	struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
-	int current_cpu = raw_smp_processor_id();
-	unsigned int tasks[NR_PSI_TASK_COUNTS];
-	u64 now, state_start;
-	enum psi_states s;
-	unsigned int seq;
-	u32 state_mask;
+	నిర్మాణం psi_సమూహం_cpu *groupc = చొప్పున_cpu_ptr(సమూహం->pcpu, cpu);
+	పూర్ణాంకం current_cpu = raw_smp_processor_id();
+	గుర్తులేని పూర్ణాంకం tasks[NR_PSI_TASK_COUNTS];
+	u64 now, state_ప్రారంభం;
+	గణన psi_స్థితులు s;
+	గుర్తులేని పూర్ణాంకం seq;
+	u32 state_ముసుగు;
 
-	*pchanged_states = 0;
+	*pchanged_స్థితులు = 0;
 
 	/* Snapshot a coherent view of the CPU state */
-	do {
+	చేయి {
 		seq = psi_read_begin(cpu);
 		now = cpu_clock(cpu);
-		memcpy(times, groupc->times, sizeof(groupc->times));
-		state_mask = groupc->state_mask;
-		state_start = groupc->state_start;
-		if (cpu == current_cpu)
-			memcpy(tasks, groupc->tasks, sizeof(groupc->tasks));
-	} while (psi_read_retry(cpu, seq));
+		జ్ఞాపకం_నకలు(times, groupc->times, పరిమాణం(groupc->times));
+		state_ముసుగు = groupc->state_ముసుగు;
+		state_ప్రారంభం = groupc->state_ప్రారంభం;
+		ఒకవేళ (cpu == current_cpu)
+			జ్ఞాపకం_నకలు(tasks, groupc->tasks, పరిమాణం(groupc->tasks));
+	} అయితే (psi_read_retry(cpu, seq));
 
 	/* Calculate state time deltas against the previous snapshot */
-	for (s = 0; s < NR_PSI_STATES; s++) {
+	కొరకు (s = 0; s < NR_PSI_స్థితులు; s++) {
 		u32 delta;
 		/*
 		 * In addition to already concluded states, we also
@@ -305,15 +305,15 @@ static void get_recent_times(struct psi_group *group, int cpu,
 		 * (u32) and our reported pressure close to what's
 		 * actually happening.
 		 */
-		if (state_mask & (1 << s))
-			times[s] += now - state_start;
+		ఒకవేళ (state_ముసుగు & (1 << s))
+			times[s] += now - state_ప్రారంభం;
 
 		delta = times[s] - groupc->times_prev[aggregator][s];
 		groupc->times_prev[aggregator][s] = times[s];
 
 		times[s] = delta;
-		if (delta)
-			*pchanged_states |= (1 << s);
+		ఒకవేళ (delta)
+			*pchanged_స్థితులు |= (1 << s);
 	}
 
 	/*
@@ -324,50 +324,50 @@ static void get_recent_times(struct psi_group *group, int cpu,
 	 * (NR_RUNNING > 1 || NR_IOWAIT > 0 || NR_MEMSTALL > 0), for other CPUs
 	 * we can just check PSI_NONIDLE delta.
 	 */
-	if (current_work() == &group->avgs_work.work) {
+	ఒకవేళ (current_work() == &సమూహం->avgs_work.work) {
 		bool reschedule;
 
-		if (cpu == current_cpu)
+		ఒకవేళ (cpu == current_cpu)
 			reschedule = tasks[NR_RUNNING] +
 				     tasks[NR_IOWAIT] +
 				     tasks[NR_MEMSTALL] > 1;
-		else
-			reschedule = *pchanged_states & (1 << PSI_NONIDLE);
+		లేకపోతే
+			reschedule = *pchanged_స్థితులు & (1 << PSI_NONIDLE);
 
-		if (reschedule)
-			*pchanged_states |= PSI_STATE_RESCHEDULE;
+		ఒకవేళ (reschedule)
+			*pchanged_స్థితులు |= PSI_STATE_RESCHEDULE;
 	}
 }
 
-static void calc_avgs(unsigned long avg[3], int missed_periods,
-		      u64 time, u64 period)
+స్థిర శూన్య calc_avgs(గుర్తులేని దీర్ఘ avg[3], పూర్ణాంకం missed_periods,
+		      u64 సమయం, u64 period)
 {
-	unsigned long pct;
+	గుర్తులేని దీర్ఘ pct;
 
 	/* Fill in zeroes for periods of no activity */
-	if (missed_periods) {
-		avg[0] = calc_load_n(avg[0], EXP_10s, 0, missed_periods);
-		avg[1] = calc_load_n(avg[1], EXP_60s, 0, missed_periods);
-		avg[2] = calc_load_n(avg[2], EXP_300s, 0, missed_periods);
+	ఒకవేళ (missed_periods) {
+		avg[0] = calc_ఎక్కించు_n(avg[0], EXP_10s, 0, missed_periods);
+		avg[1] = calc_ఎక్కించు_n(avg[1], EXP_60s, 0, missed_periods);
+		avg[2] = calc_ఎక్కించు_n(avg[2], EXP_300s, 0, missed_periods);
 	}
 
 	/* Sample the most recent active period */
-	pct = div_u64(time * 100, period);
+	pct = div_u64(సమయం * 100, period);
 	pct *= FIXED_1;
-	avg[0] = calc_load(avg[0], EXP_10s, pct);
-	avg[1] = calc_load(avg[1], EXP_60s, pct);
-	avg[2] = calc_load(avg[2], EXP_300s, pct);
+	avg[0] = calc_ఎక్కించు(avg[0], EXP_10s, pct);
+	avg[1] = calc_ఎక్కించు(avg[1], EXP_60s, pct);
+	avg[2] = calc_ఎక్కించు(avg[2], EXP_300s, pct);
 }
 
-static void collect_percpu_times(struct psi_group *group,
-				 enum psi_aggregators aggregator,
-				 u32 *pchanged_states)
+స్థిర శూన్య collect_percpu_times(నిర్మాణం psi_సమూహం *సమూహం,
+				 గణన psi_aggregators aggregator,
+				 u32 *pchanged_స్థితులు)
 {
-	u64 deltas[NR_PSI_STATES - 1] = { 0, };
-	unsigned long nonidle_total = 0;
-	u32 changed_states = 0;
-	int cpu;
-	int s;
+	u64 deltas[NR_PSI_స్థితులు - 1] = { 0, };
+	గుర్తులేని దీర్ఘ nonidle_మొత్తం = 0;
+	u32 మారింది_స్థితులు = 0;
+	పూర్ణాంకం cpu;
+	పూర్ణాంకం s;
 
 	/*
 	 * Collect the per-cpu time buckets and average them into a
@@ -378,18 +378,18 @@ static void collect_percpu_times(struct psi_group *group,
 	 * loading, or even entirely idle CPUs.
 	 */
 	for_each_possible_cpu(cpu) {
-		u32 times[NR_PSI_STATES];
+		u32 times[NR_PSI_స్థితులు];
 		u32 nonidle;
-		u32 cpu_changed_states;
+		u32 cpu_మారింది_స్థితులు;
 
-		get_recent_times(group, cpu, aggregator, times,
-				&cpu_changed_states);
-		changed_states |= cpu_changed_states;
+		get_recent_times(సమూహం, cpu, aggregator, times,
+				&cpu_మారింది_స్థితులు);
+		మారింది_స్థితులు |= cpu_మారింది_స్థితులు;
 
-		nonidle = nsecs_to_jiffies(times[PSI_NONIDLE]);
-		nonidle_total += nonidle;
+		nonidle = nsecs_గమ్యం_jiffies(times[PSI_NONIDLE]);
+		nonidle_మొత్తం += nonidle;
 
-		for (s = 0; s < PSI_NONIDLE; s++)
+		కొరకు (s = 0; s < PSI_NONIDLE; s++)
 			deltas[s] += (u64)times[s] * nonidle;
 	}
 
@@ -406,20 +406,20 @@ static void collect_percpu_times(struct psi_group *group,
 	 */
 
 	/* total= */
-	for (s = 0; s < NR_PSI_STATES - 1; s++)
-		group->total[aggregator][s] +=
-				div_u64(deltas[s], max(nonidle_total, 1UL));
+	కొరకు (s = 0; s < NR_PSI_స్థితులు - 1; s++)
+		సమూహం->మొత్తం[aggregator][s] +=
+				div_u64(deltas[s], max(nonidle_మొత్తం, 1UL));
 
-	if (pchanged_states)
-		*pchanged_states = changed_states;
+	ఒకవేళ (pchanged_స్థితులు)
+		*pchanged_స్థితులు = మారింది_స్థితులు;
 }
 
 /* Trigger tracking window manipulations */
-static void window_reset(struct psi_window *win, u64 now, u64 value,
+స్థిర శూన్య కిటికీ_reset(నిర్మాణం psi_కిటికీ *win, u64 now, u64 విలువ,
 			 u64 prev_growth)
 {
-	win->start_time = now;
-	win->start_value = value;
+	win->ప్రారంభం_సమయం = now;
+	win->ప్రారంభం_విలువ = విలువ;
 	win->prev_growth = prev_growth;
 }
 
@@ -434,13 +434,13 @@ static void window_reset(struct psi_window *win, u64 now, u64 value,
  * positive direction and over relatively small window sizes the growth
  * is close to linear.
  */
-static u64 window_update(struct psi_window *win, u64 now, u64 value)
+స్థిర u64 కిటికీ_update(నిర్మాణం psi_కిటికీ *win, u64 now, u64 విలువ)
 {
 	u64 elapsed;
 	u64 growth;
 
-	elapsed = now - win->start_time;
-	growth = value - win->start_value;
+	elapsed = now - win->ప్రారంభం_సమయం;
+	growth = విలువ - win->ప్రారంభం_విలువ;
 	/*
 	 * After each tracking window passes win->start_value and
 	 * win->start_time get reset and win->prev_growth stores
@@ -448,90 +448,90 @@ static u64 window_update(struct psi_window *win, u64 now, u64 value)
 	 * win->prev_growth is then used to interpolate additional
 	 * growth from the previous window assuming it was linear.
 	 */
-	if (elapsed > win->size)
-		window_reset(win, now, value, growth);
-	else {
-		u32 remaining;
+	ఒకవేళ (elapsed > win->కొలత)
+		కిటికీ_reset(win, now, విలువ, growth);
+	లేకపోతే {
+		u32 మిగిలిన;
 
-		remaining = win->size - elapsed;
-		growth += div64_u64(win->prev_growth * remaining, win->size);
+		మిగిలిన = win->కొలత - elapsed;
+		growth += div64_u64(win->prev_growth * మిగిలిన, win->కొలత);
 	}
 
-	return growth;
+	తిరిగి growth;
 }
 
-static void update_triggers(struct psi_group *group, u64 now,
-						   enum psi_aggregators aggregator)
+స్థిర శూన్య update_triggers(నిర్మాణం psi_సమూహం *సమూహం, u64 now,
+						   గణన psi_aggregators aggregator)
 {
-	struct psi_trigger *t;
-	u64 *total = group->total[aggregator];
-	struct list_head *triggers;
-	u64 *aggregator_total;
+	నిర్మాణం psi_trigger *t;
+	u64 *మొత్తం = సమూహం->మొత్తం[aggregator];
+	నిర్మాణం list_తల *triggers;
+	u64 *aggregator_మొత్తం;
 
-	if (aggregator == PSI_AVGS) {
-		triggers = &group->avg_triggers;
-		aggregator_total = group->avg_total;
-	} else {
-		triggers = &group->rtpoll_triggers;
-		aggregator_total = group->rtpoll_total;
+	ఒకవేళ (aggregator == PSI_AVGS) {
+		triggers = &సమూహం->avg_triggers;
+		aggregator_మొత్తం = సమూహం->avg_మొత్తం;
+	} లేకపోతే {
+		triggers = &సమూహం->rtpoll_triggers;
+		aggregator_మొత్తం = సమూహం->rtpoll_మొత్తం;
 	}
 
 	/*
 	 * On subsequent updates, calculate growth deltas and let
 	 * watchers know when their specified thresholds are exceeded.
 	 */
-	list_for_each_entry(t, triggers, node) {
+	list_for_each_నమోదు(t, triggers, కణుపు) {
 		u64 growth;
 		bool new_stall;
 
-		new_stall = aggregator_total[t->state] != total[t->state];
+		new_stall = aggregator_మొత్తం[t->state] != మొత్తం[t->state];
 
 		/* Check for stall activity or a previous threshold breach */
-		if (!new_stall && !t->pending_event)
-			continue;
+		ఒకవేళ (!new_stall && !t->pending_event)
+			కొనసాగు;
 		/*
 		 * Check for new stall activity, as well as deferred
 		 * events that occurred in the last window after the
 		 * trigger had already fired (we want to ratelimit
 		 * events without dropping any).
 		 */
-		if (new_stall) {
+		ఒకవేళ (new_stall) {
 			/* Calculate growth since last update */
-			growth = window_update(&t->win, now, total[t->state]);
-			if (!t->pending_event) {
-				if (growth < t->threshold)
-					continue;
+			growth = కిటికీ_update(&t->win, now, మొత్తం[t->state]);
+			ఒకవేళ (!t->pending_event) {
+				ఒకవేళ (growth < t->పరిమితి)
+					కొనసాగు;
 
 				t->pending_event = true;
 			}
 		}
 		/* Limit event signaling to once per window */
-		if (now < t->last_event_time + t->win.size)
-			continue;
+		ఒకవేళ (now < t->చివరి_event_సమయం + t->win.కొలత)
+			కొనసాగు;
 
 		/* Generate an event */
-		if (cmpxchg(&t->event, 0, 1) == 0) {
-			if (t->of)
-				kernfs_notify(t->of->kn);
-			else
-				wake_up_interruptible(&t->event_wait);
+		ఒకవేళ (cmpxchg(&t->event, 0, 1) == 0) {
+			ఒకవేళ (t->యొక్క)
+				kernfs_notify(t->యొక్క->kn);
+			లేకపోతే
+				wake_పైకి_interruptible(&t->event_wait);
 		}
-		t->last_event_time = now;
+		t->చివరి_event_సమయం = now;
 		/* Reset threshold breach flag once event got generated */
 		t->pending_event = false;
 	}
 }
 
-static u64 update_averages(struct psi_group *group, u64 now)
+స్థిర u64 update_averages(నిర్మాణం psi_సమూహం *సమూహం, u64 now)
 {
-	unsigned long missed_periods = 0;
+	గుర్తులేని దీర్ఘ missed_periods = 0;
 	u64 expires, period;
-	u64 avg_next_update;
-	int s;
+	u64 avg_తదుపరి_update;
+	పూర్ణాంకం s;
 
 	/* avgX= */
-	expires = group->avg_next_update;
-	if (now - expires >= psi_period)
+	expires = సమూహం->avg_తదుపరి_update;
+	ఒకవేళ (now - expires >= psi_period)
 		missed_periods = div_u64(now - expires, psi_period);
 
 	/*
@@ -541,14 +541,14 @@ static u64 update_averages(struct psi_group *group, u64 now)
 	 * But the deltas we sample out of the per-cpu buckets above
 	 * are based on the actual time elapsing between clock ticks.
 	 */
-	avg_next_update = expires + ((1 + missed_periods) * psi_period);
-	period = now - (group->avg_last_update + (missed_periods * psi_period));
-	group->avg_last_update = now;
+	avg_తదుపరి_update = expires + ((1 + missed_periods) * psi_period);
+	period = now - (సమూహం->avg_చివరి_update + (missed_periods * psi_period));
+	సమూహం->avg_చివరి_update = now;
 
-	for (s = 0; s < NR_PSI_STATES - 1; s++) {
+	కొరకు (s = 0; s < NR_PSI_స్థితులు - 1; s++) {
 		u32 sample;
 
-		sample = group->total[PSI_AVGS][s] - group->avg_total[s];
+		sample = సమూహం->మొత్తం[PSI_AVGS][s] - సమూహం->avg_మొత్తం[s];
 		/*
 		 * Due to the lockless sampling of the time buckets,
 		 * recorded time deltas can slip into the next period,
@@ -566,30 +566,30 @@ static u64 update_averages(struct psi_group *group, u64 now)
 		 * delta slips from a period P to P+1, by definition
 		 * it frees up its time T in P.
 		 */
-		if (sample > period)
+		ఒకవేళ (sample > period)
 			sample = period;
-		group->avg_total[s] += sample;
-		calc_avgs(group->avg[s], missed_periods, sample, period);
+		సమూహం->avg_మొత్తం[s] += sample;
+		calc_avgs(సమూహం->avg[s], missed_periods, sample, period);
 	}
 
-	return avg_next_update;
+	తిరిగి avg_తదుపరి_update;
 }
 
-static void psi_avgs_work(struct work_struct *work)
+స్థిర శూన్య psi_avgs_work(నిర్మాణం work_struct *work)
 {
-	struct delayed_work *dwork;
-	struct psi_group *group;
-	u32 changed_states;
+	నిర్మాణం delayed_work *dwork;
+	నిర్మాణం psi_సమూహం *సమూహం;
+	u32 మారింది_స్థితులు;
 	u64 now;
 
-	dwork = to_delayed_work(work);
-	group = container_of(dwork, struct psi_group, avgs_work);
+	dwork = గమ్యం_delayed_work(work);
+	సమూహం = container_యొక్క(dwork, నిర్మాణం psi_సమూహం, avgs_work);
 
-	mutex_lock(&group->avgs_lock);
+	mutex_తాళం(&సమూహం->avgs_తాళం);
 
 	now = sched_clock();
 
-	collect_percpu_times(group, PSI_AVGS, &changed_states);
+	collect_percpu_times(సమూహం, PSI_AVGS, &మారింది_స్థితులు);
 	/*
 	 * If there is task activity, periodically fold the per-cpu
 	 * times and feed samples into the running averages. If things
@@ -597,41 +597,41 @@ static void psi_avgs_work(struct work_struct *work)
 	 * Once restarted, we'll catch up the running averages in one
 	 * go - see calc_avgs() and missed_periods.
 	 */
-	if (now >= group->avg_next_update) {
-		update_triggers(group, now, PSI_AVGS);
-		group->avg_next_update = update_averages(group, now);
+	ఒకవేళ (now >= సమూహం->avg_తదుపరి_update) {
+		update_triggers(సమూహం, now, PSI_AVGS);
+		సమూహం->avg_తదుపరి_update = update_averages(సమూహం, now);
 	}
 
-	if (changed_states & PSI_STATE_RESCHEDULE) {
-		schedule_delayed_work(dwork, nsecs_to_jiffies(
-				group->avg_next_update - now) + 1);
+	ఒకవేళ (మారింది_స్థితులు & PSI_STATE_RESCHEDULE) {
+		కాలపట్టిక_delayed_work(dwork, nsecs_గమ్యం_jiffies(
+				సమూహం->avg_తదుపరి_update - now) + 1);
 	}
 
-	mutex_unlock(&group->avgs_lock);
+	mutex_unlock(&సమూహం->avgs_తాళం);
 }
 
-static void init_rtpoll_triggers(struct psi_group *group, u64 now)
+స్థిర శూన్య init_rtpoll_triggers(నిర్మాణం psi_సమూహం *సమూహం, u64 now)
 {
-	struct psi_trigger *t;
+	నిర్మాణం psi_trigger *t;
 
-	list_for_each_entry(t, &group->rtpoll_triggers, node)
-		window_reset(&t->win, now,
-				group->total[PSI_POLL][t->state], 0);
-	memcpy(group->rtpoll_total, group->total[PSI_POLL],
-		   sizeof(group->rtpoll_total));
-	group->rtpoll_next_update = now + group->rtpoll_min_period;
+	list_for_each_నమోదు(t, &సమూహం->rtpoll_triggers, కణుపు)
+		కిటికీ_reset(&t->win, now,
+				సమూహం->మొత్తం[PSI_POLL][t->state], 0);
+	జ్ఞాపకం_నకలు(సమూహం->rtpoll_మొత్తం, సమూహం->మొత్తం[PSI_POLL],
+		   పరిమాణం(సమూహం->rtpoll_మొత్తం));
+	సమూహం->rtpoll_తదుపరి_update = now + సమూహం->rtpoll_min_period;
 }
 
 /* Schedule rtpolling if it's not already scheduled or forced. */
-static void psi_schedule_rtpoll_work(struct psi_group *group, unsigned long delay,
+స్థిర శూన్య psi_కాలపట్టిక_rtpoll_work(నిర్మాణం psi_సమూహం *సమూహం, గుర్తులేని దీర్ఘ delay,
 				   bool force)
 {
 	/*
 	 * atomic_xchg should be called even when !force to provide a
 	 * full memory barrier (see the comment inside psi_rtpoll_work).
 	 */
-	if (atomic_xchg(&group->rtpoll_scheduled, 1) && !force)
-		return;
+	ఒకవేళ (atomic_xchg(&సమూహం->rtpoll_scheduled, 1) && !force)
+		తిరిగి;
 
 	/*
 	 * Only test whether a worker is installed; do not dereference the task.
@@ -639,23 +639,23 @@ static void psi_schedule_rtpoll_work(struct psi_group *group, unsigned long dela
 	 * psi_cgroup_free() shuts it down before freeing the group.
 	 * The system PSI group is static.
 	 */
-	if (likely(rcu_access_pointer(group->rtpoll_task)))
-		mod_timer(&group->rtpoll_timer, jiffies + delay);
-	else
-		atomic_set(&group->rtpoll_scheduled, 0);
+	ఒకవేళ (likely(rcu_access_సూచిక(సమూహం->rtpoll_task)))
+		mod_timer(&సమూహం->rtpoll_timer, jiffies + delay);
+	లేకపోతే
+		atomic_సమితి(&సమూహం->rtpoll_scheduled, 0);
 }
 
-static void psi_rtpoll_work(struct psi_group *group)
+స్థిర శూన్య psi_rtpoll_work(నిర్మాణం psi_సమూహం *సమూహం)
 {
 	bool force_reschedule = false;
-	u32 changed_states;
+	u32 మారింది_స్థితులు;
 	u64 now;
 
-	mutex_lock(&group->rtpoll_trigger_lock);
+	mutex_తాళం(&సమూహం->rtpoll_trigger_తాళం);
 
 	now = sched_clock();
 
-	if (now > group->rtpoll_until) {
+	ఒకవేళ (now > సమూహం->rtpoll_until) {
 		/*
 		 * We are either about to start or might stop rtpolling if no
 		 * state change was recorded. Resetting rtpoll_scheduled leaves
@@ -665,7 +665,7 @@ static void psi_rtpoll_work(struct psi_group *group)
 		 * should be negligible and rtpoll_next_update still keeps
 		 * updates correctly on schedule.
 		 */
-		atomic_set(&group->rtpoll_scheduled, 0);
+		atomic_సమితి(&సమూహం->rtpoll_scheduled, 0);
 		/*
 		 * A task change can race with the rtpoll worker that is supposed to
 		 * report on it. To avoid missing events, ensure ordering between
@@ -686,118 +686,118 @@ static void psi_rtpoll_work(struct psi_group *group)
 		 * The atomic_xchg() implies a full barrier.
 		 */
 		smp_mb();
-	} else {
+	} లేకపోతే {
 		/* The rtpolling window is not over, keep rescheduling */
 		force_reschedule = true;
 	}
 
 
-	collect_percpu_times(group, PSI_POLL, &changed_states);
+	collect_percpu_times(సమూహం, PSI_POLL, &మారింది_స్థితులు);
 
-	if (changed_states & group->rtpoll_states) {
+	ఒకవేళ (మారింది_స్థితులు & సమూహం->rtpoll_స్థితులు) {
 		/* Initialize trigger windows when entering rtpolling mode */
-		if (now > group->rtpoll_until)
-			init_rtpoll_triggers(group, now);
+		ఒకవేళ (now > సమూహం->rtpoll_until)
+			init_rtpoll_triggers(సమూహం, now);
 
 		/*
 		 * Keep the monitor active for at least the duration of the
 		 * minimum tracking window as long as monitor states are
 		 * changing.
 		 */
-		group->rtpoll_until = now +
-			group->rtpoll_min_period * UPDATES_PER_WINDOW;
+		సమూహం->rtpoll_until = now +
+			సమూహం->rtpoll_min_period * UPDATES_చొప్పున_కిటికీ;
 	}
 
-	if (now > group->rtpoll_until) {
-		group->rtpoll_next_update = ULLONG_MAX;
-		goto out;
+	ఒకవేళ (now > సమూహం->rtpoll_until) {
+		సమూహం->rtpoll_తదుపరి_update = ULLONG_MAX;
+		వెళ్ళు బహిర్గతం;
 	}
 
-	if (now >= group->rtpoll_next_update) {
-		if (changed_states & group->rtpoll_states) {
-			update_triggers(group, now, PSI_POLL);
-			memcpy(group->rtpoll_total, group->total[PSI_POLL],
-				   sizeof(group->rtpoll_total));
+	ఒకవేళ (now >= సమూహం->rtpoll_తదుపరి_update) {
+		ఒకవేళ (మారింది_స్థితులు & సమూహం->rtpoll_స్థితులు) {
+			update_triggers(సమూహం, now, PSI_POLL);
+			జ్ఞాపకం_నకలు(సమూహం->rtpoll_మొత్తం, సమూహం->మొత్తం[PSI_POLL],
+				   పరిమాణం(సమూహం->rtpoll_మొత్తం));
 		}
-		group->rtpoll_next_update = now + group->rtpoll_min_period;
+		సమూహం->rtpoll_తదుపరి_update = now + సమూహం->rtpoll_min_period;
 	}
 
-	psi_schedule_rtpoll_work(group,
-		nsecs_to_jiffies(group->rtpoll_next_update - now) + 1,
+	psi_కాలపట్టిక_rtpoll_work(సమూహం,
+		nsecs_గమ్యం_jiffies(సమూహం->rtpoll_తదుపరి_update - now) + 1,
 		force_reschedule);
 
-out:
-	mutex_unlock(&group->rtpoll_trigger_lock);
+బహిర్గతం:
+	mutex_unlock(&సమూహం->rtpoll_trigger_తాళం);
 }
 
-static int psi_rtpoll_worker(void *data)
+స్థిర పూర్ణాంకం psi_rtpoll_కార్మికుడు(శూన్య *దత్తాంశం)
 {
-	struct psi_group *group = (struct psi_group *)data;
+	నిర్మాణం psi_సమూహం *సమూహం = (నిర్మాణం psi_సమూహం *)దత్తాంశం;
 
-	sched_set_fifo_low(current);
+	sched_సమితి_fifo_దిగువ(current);
 
-	while (true) {
-		wait_event_interruptible(group->rtpoll_wait,
-				atomic_cmpxchg(&group->rtpoll_wakeup, 1, 0) ||
+	అయితే (true) {
+		wait_event_interruptible(సమూహం->rtpoll_wait,
+				atomic_cmpxchg(&సమూహం->rtpoll_wakeup, 1, 0) ||
 				kthread_should_stop());
-		if (kthread_should_stop())
-			break;
+		ఒకవేళ (kthread_should_stop())
+			ఆపు;
 
-		psi_rtpoll_work(group);
+		psi_rtpoll_work(సమూహం);
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static void poll_timer_fn(struct timer_list *t)
+స్థిర శూన్య poll_timer_fn(నిర్మాణం timer_list *t)
 {
-	struct psi_group *group = timer_container_of(group, t, rtpoll_timer);
+	నిర్మాణం psi_సమూహం *సమూహం = timer_container_యొక్క(సమూహం, t, rtpoll_timer);
 
-	atomic_set(&group->rtpoll_wakeup, 1);
-	wake_up_interruptible(&group->rtpoll_wait);
+	atomic_సమితి(&సమూహం->rtpoll_wakeup, 1);
+	wake_పైకి_interruptible(&సమూహం->rtpoll_wait);
 }
 
-static void record_times(struct psi_group_cpu *groupc, u64 now)
+స్థిర శూన్య రికార్డు_times(నిర్మాణం psi_సమూహం_cpu *groupc, u64 now)
 {
 	u32 delta;
 
-	delta = now - groupc->state_start;
-	groupc->state_start = now;
+	delta = now - groupc->state_ప్రారంభం;
+	groupc->state_ప్రారంభం = now;
 
-	if (groupc->state_mask & (1 << PSI_IO_SOME)) {
+	ఒకవేళ (groupc->state_ముసుగు & (1 << PSI_IO_SOME)) {
 		groupc->times[PSI_IO_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_IO_FULL))
-			groupc->times[PSI_IO_FULL] += delta;
+		ఒకవేళ (groupc->state_ముసుగు & (1 << PSI_IO_నిండిన))
+			groupc->times[PSI_IO_నిండిన] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_MEM_SOME)) {
+	ఒకవేళ (groupc->state_ముసుగు & (1 << PSI_MEM_SOME)) {
 		groupc->times[PSI_MEM_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_MEM_FULL))
-			groupc->times[PSI_MEM_FULL] += delta;
+		ఒకవేళ (groupc->state_ముసుగు & (1 << PSI_MEM_నిండిన))
+			groupc->times[PSI_MEM_నిండిన] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_CPU_SOME)) {
+	ఒకవేళ (groupc->state_ముసుగు & (1 << PSI_CPU_SOME)) {
 		groupc->times[PSI_CPU_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_CPU_FULL))
-			groupc->times[PSI_CPU_FULL] += delta;
+		ఒకవేళ (groupc->state_ముసుగు & (1 << PSI_CPU_నిండిన))
+			groupc->times[PSI_CPU_నిండిన] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_NONIDLE))
+	ఒకవేళ (groupc->state_ముసుగు & (1 << PSI_NONIDLE))
 		groupc->times[PSI_NONIDLE] += delta;
 }
 
-#define for_each_group(iter, group) \
-	for (typeof(group) iter = group; iter; iter = iter->parent)
+#నిర్వచించు for_each_సమూహం(iter, సమూహం) \
+	కొరకు (typeof(సమూహం) iter = సమూహం; iter; iter = iter->మాతృ)
 
-static void psi_group_change(struct psi_group *group, int cpu,
-			     unsigned int clear, unsigned int set,
+స్థిర శూన్య psi_సమూహం_change(నిర్మాణం psi_సమూహం *సమూహం, పూర్ణాంకం cpu,
+			     గుర్తులేని పూర్ణాంకం clear, గుర్తులేని పూర్ణాంకం సమితి,
 			     u64 now, bool wake_clock)
 {
-	struct psi_group_cpu *groupc;
-	unsigned int t, m;
-	u32 state_mask;
+	నిర్మాణం psi_సమూహం_cpu *groupc;
+	గుర్తులేని పూర్ణాంకం t, m;
+	u32 state_ముసుగు;
 
 	lockdep_assert_rq_held(cpu_rq(cpu));
-	groupc = per_cpu_ptr(group->pcpu, cpu);
+	groupc = చొప్పున_cpu_ptr(సమూహం->pcpu, cpu);
 
 	/*
 	 * Start with TSK_ONCPU, which doesn't have a corresponding
@@ -805,39 +805,39 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * the state mask. Clear, set, or carry the current state if
 	 * no changes are requested.
 	 */
-	if (unlikely(clear & TSK_ONCPU)) {
-		state_mask = 0;
+	ఒకవేళ (unlikely(clear & TSK_ONCPU)) {
+		state_ముసుగు = 0;
 		clear &= ~TSK_ONCPU;
-	} else if (unlikely(set & TSK_ONCPU)) {
-		state_mask = PSI_ONCPU;
-		set &= ~TSK_ONCPU;
-	} else {
-		state_mask = groupc->state_mask & PSI_ONCPU;
+	} లేకపోతే ఒకవేళ (unlikely(సమితి & TSK_ONCPU)) {
+		state_ముసుగు = PSI_ONCPU;
+		సమితి &= ~TSK_ONCPU;
+	} లేకపోతే {
+		state_ముసుగు = groupc->state_ముసుగు & PSI_ONCPU;
 	}
 
 	/*
 	 * The rest of the state mask is calculated based on the task
 	 * counts. Update those first, then construct the mask.
 	 */
-	for (t = 0, m = clear; m; m &= ~(1 << t), t++) {
-		if (!(m & (1 << t)))
-			continue;
-		if (groupc->tasks[t]) {
+	కొరకు (t = 0, m = clear; m; m &= ~(1 << t), t++) {
+		ఒకవేళ (!(m & (1 << t)))
+			కొనసాగు;
+		ఒకవేళ (groupc->tasks[t]) {
 			groupc->tasks[t]--;
-		} else if (!psi_bug) {
+		} లేకపోతే ఒకవేళ (!psi_bug) {
 			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
 					cpu, t, groupc->tasks[0],
 					groupc->tasks[1], groupc->tasks[2],
-					groupc->tasks[3], clear, set);
+					groupc->tasks[3], clear, సమితి);
 			psi_bug = 1;
 		}
 	}
 
-	for (t = 0; set; set &= ~(1 << t), t++)
-		if (set & (1 << t))
+	కొరకు (t = 0; సమితి; సమితి &= ~(1 << t), t++)
+		ఒకవేళ (సమితి & (1 << t))
 			groupc->tasks[t]++;
 
-	if (!group->enabled) {
+	ఒకవేళ (!సమూహం->enabled) {
 		/*
 		 * On the first group change after disabling PSI, conclude
 		 * the current state and flush its time. This is unlikely
@@ -845,15 +845,15 @@ static void psi_group_change(struct psi_group *group, int cpu,
 		 * may have already incorporated the live state into times_prev;
 		 * avoid a delta sample underflow when PSI is later re-enabled.
 		 */
-		if (unlikely(groupc->state_mask & (1 << PSI_NONIDLE)))
-			record_times(groupc, now);
+		ఒకవేళ (unlikely(groupc->state_ముసుగు & (1 << PSI_NONIDLE)))
+			రికార్డు_times(groupc, now);
 
-		groupc->state_mask = state_mask;
+		groupc->state_ముసుగు = state_ముసుగు;
 
-		return;
+		తిరిగి;
 	}
 
-	state_mask = test_states(groupc->tasks, state_mask);
+	state_ముసుగు = test_స్థితులు(groupc->tasks, state_ముసుగు);
 
 	/*
 	 * Since we care about lost potential, a memstall is FULL
@@ -863,91 +863,91 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * task in a cgroup is in_memstall, the corresponding groupc
 	 * on that cpu is in PSI_MEM_FULL state.
 	 */
-	if (unlikely((state_mask & PSI_ONCPU) && cpu_curr(cpu)->in_memstall))
-		state_mask |= (1 << PSI_MEM_FULL);
+	ఒకవేళ (unlikely((state_ముసుగు & PSI_ONCPU) && cpu_curr(cpu)->లోపల_memstall))
+		state_ముసుగు |= (1 << PSI_MEM_నిండిన);
 
-	record_times(groupc, now);
+	రికార్డు_times(groupc, now);
 
-	groupc->state_mask = state_mask;
+	groupc->state_ముసుగు = state_ముసుగు;
 
-	if (state_mask & group->rtpoll_states)
-		psi_schedule_rtpoll_work(group, 1, false);
+	ఒకవేళ (state_ముసుగు & సమూహం->rtpoll_స్థితులు)
+		psi_కాలపట్టిక_rtpoll_work(సమూహం, 1, false);
 
-	if (wake_clock && !delayed_work_pending(&group->avgs_work))
-		schedule_delayed_work(&group->avgs_work, PSI_FREQ);
+	ఒకవేళ (wake_clock && !delayed_work_pending(&సమూహం->avgs_work))
+		కాలపట్టిక_delayed_work(&సమూహం->avgs_work, PSI_FREQ);
 }
 
-static inline struct psi_group *task_psi_group(struct task_struct *task)
+స్థిర అంతఃవరుస నిర్మాణం psi_సమూహం *task_psi_సమూహం(నిర్మాణం task_struct *task)
 {
-#ifdef CONFIG_CGROUPS
-	if (static_branch_likely(&psi_cgroups_enabled))
-		return cgroup_psi(task_dfl_cgroup(task));
-#endif
-	return &psi_system;
+#నిర్వచితమైతే CONFIG_CGROUPS
+	ఒకవేళ (static_branch_likely(&psi_cgroups_enabled))
+		తిరిగి cgroup_psi(task_dfl_cgroup(task));
+#అయితే_ముగింపు
+	తిరిగి &psi_system;
 }
 
-static void psi_flags_change(struct task_struct *task, int clear, int set)
+స్థిర శూన్య psi_flags_change(నిర్మాణం task_struct *task, పూర్ణాంకం clear, పూర్ణాంకం సమితి)
 {
-	if (((task->psi_flags & set) ||
+	ఒకవేళ (((task->psi_flags & సమితి) ||
 	     (task->psi_flags & clear) != clear) &&
 	    !psi_bug) {
 		printk_deferred(KERN_ERR "psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
 				task->pid, task->comm, task_cpu(task),
-				task->psi_flags, clear, set);
+				task->psi_flags, clear, సమితి);
 		psi_bug = 1;
 	}
 
 	task->psi_flags &= ~clear;
-	task->psi_flags |= set;
+	task->psi_flags |= సమితి;
 }
 
-void psi_task_change(struct task_struct *task, int clear, int set)
+శూన్య psi_task_change(నిర్మాణం task_struct *task, పూర్ణాంకం clear, పూర్ణాంకం సమితి)
 {
-	int cpu = task_cpu(task);
+	పూర్ణాంకం cpu = task_cpu(task);
 	u64 now;
 
-	if (!task->pid)
-		return;
+	ఒకవేళ (!task->pid)
+		తిరిగి;
 
-	psi_flags_change(task, clear, set);
+	psi_flags_change(task, clear, సమితి);
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
-	for_each_group(group, task_psi_group(task))
-		psi_group_change(group, cpu, clear, set, now, true);
-	psi_write_end(cpu);
+	for_each_సమూహం(సమూహం, task_psi_సమూహం(task))
+		psi_సమూహం_change(సమూహం, cpu, clear, సమితి, now, true);
+	psi_write_చివర(cpu);
 }
 
-void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+శూన్య psi_task_switch(నిర్మాణం task_struct *prev, నిర్మాణం task_struct *తదుపరి,
 		     bool sleep)
 {
-	struct psi_group *common = NULL;
-	int cpu = task_cpu(prev);
+	నిర్మాణం psi_సమూహం *common = ఖాళీ;
+	పూర్ణాంకం cpu = task_cpu(prev);
 	u64 now;
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
 
-	if (next->pid) {
-		psi_flags_change(next, 0, TSK_ONCPU);
+	ఒకవేళ (తదుపరి->pid) {
+		psi_flags_change(తదుపరి, 0, TSK_ONCPU);
 		/*
 		 * Set TSK_ONCPU on @next's cgroups. If @next shares any
 		 * ancestors with @prev, those will already have @prev's
 		 * TSK_ONCPU bit set, and we can stop the iteration there.
 		 */
-		for_each_group(group, task_psi_group(next)) {
-			struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
+		for_each_సమూహం(సమూహం, task_psi_సమూహం(తదుపరి)) {
+			నిర్మాణం psi_సమూహం_cpu *groupc = చొప్పున_cpu_ptr(సమూహం->pcpu, cpu);
 
-			if (groupc->state_mask & PSI_ONCPU) {
-				common = group;
-				break;
+			ఒకవేళ (groupc->state_ముసుగు & PSI_ONCPU) {
+				common = సమూహం;
+				ఆపు;
 			}
-			psi_group_change(group, cpu, 0, TSK_ONCPU, now, true);
+			psi_సమూహం_change(సమూహం, cpu, 0, TSK_ONCPU, now, true);
 		}
 	}
 
-	if (prev->pid) {
-		int clear = TSK_ONCPU, set = 0;
+	ఒకవేళ (prev->pid) {
+		పూర్ణాంకం clear = TSK_ONCPU, సమితి = 0;
 		bool wake_clock = true;
 
 		/*
@@ -956,12 +956,12 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		 * TSK_IOWAIT here, where we can combine it with
 		 * TSK_ONCPU and save walking common ancestors twice.
 		 */
-		if (sleep) {
+		ఒకవేళ (sleep) {
 			clear |= TSK_RUNNING;
-			if (prev->in_memstall)
+			ఒకవేళ (prev->లోపల_memstall)
 				clear |= TSK_MEMSTALL_RUNNING;
-			if (prev->in_iowait)
-				set |= TSK_IOWAIT;
+			ఒకవేళ (prev->లోపల_iowait)
+				సమితి |= TSK_IOWAIT;
 
 			/*
 			 * Periodic aggregation shuts off if there is a period of no
@@ -969,17 +969,17 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 			 * don't do this if the task change is the aggregation worker
 			 * itself going to sleep, or we'll ping-pong forever.
 			 */
-			if (unlikely((prev->flags & PF_WQ_WORKER) &&
-				     wq_worker_last_func(prev) == psi_avgs_work))
+			ఒకవేళ (unlikely((prev->flags & PF_WQ_కార్మికుడు) &&
+				     wq_కార్మికుడు_చివరి_func(prev) == psi_avgs_work))
 				wake_clock = false;
 		}
 
-		psi_flags_change(prev, clear, set);
+		psi_flags_change(prev, clear, సమితి);
 
-		for_each_group(group, task_psi_group(prev)) {
-			if (group == common)
-				break;
-			psi_group_change(group, cpu, clear, set, now, wake_clock);
+		for_each_సమూహం(సమూహం, task_psi_సమూహం(prev)) {
+			ఒకవేళ (సమూహం == common)
+				ఆపు;
+			psi_సమూహం_change(సమూహం, cpu, clear, సమితి, now, wake_clock);
 		}
 
 		/*
@@ -988,58 +988,58 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		 * to sleep, or only one task is memstall), finish propagating
 		 * those differences all the way up to the root.
 		 */
-		if ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
+		ఒకవేళ ((prev->psi_flags ^ తదుపరి->psi_flags) & ~TSK_ONCPU) {
 			clear &= ~TSK_ONCPU;
-			for_each_group(group, common)
-				psi_group_change(group, cpu, clear, set, now, wake_clock);
+			for_each_సమూహం(సమూహం, common)
+				psi_సమూహం_change(సమూహం, cpu, clear, సమితి, now, wake_clock);
 		}
 	}
-	psi_write_end(cpu);
+	psi_write_చివర(cpu);
 }
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev)
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
+శూన్య psi_account_irqtime(నిర్మాణం rq *rq, నిర్మాణం task_struct *curr, నిర్మాణం task_struct *prev)
 {
-	int cpu = task_cpu(curr);
-	struct psi_group_cpu *groupc;
+	పూర్ణాంకం cpu = task_cpu(curr);
+	నిర్మాణం psi_సమూహం_cpu *groupc;
 	s64 delta;
 	u64 irq;
 	u64 now;
 
-	if (static_branch_likely(&psi_disabled) || !irqtime_enabled())
-		return;
+	ఒకవేళ (static_branch_likely(&psi_disabled) || !irqtime_enabled())
+		తిరిగి;
 
-	if (!curr->pid)
-		return;
+	ఒకవేళ (!curr->pid)
+		తిరిగి;
 
 	lockdep_assert_rq_held(rq);
-	if (prev && task_psi_group(prev) == task_psi_group(curr))
-		return;
+	ఒకవేళ (prev && task_psi_సమూహం(prev) == task_psi_సమూహం(curr))
+		తిరిగి;
 
-	irq = irq_time_read(cpu);
-	delta = (s64)(irq - rq->psi_irq_time);
-	if (delta <= 0)
-		return;
-	rq->psi_irq_time = irq;
+	irq = irq_సమయం_read(cpu);
+	delta = (s64)(irq - rq->psi_irq_సమయం);
+	ఒకవేళ (delta <= 0)
+		తిరిగి;
+	rq->psi_irq_సమయం = irq;
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
 
-	for_each_group(group, task_psi_group(curr)) {
-		if (!group->enabled)
-			continue;
+	for_each_సమూహం(సమూహం, task_psi_సమూహం(curr)) {
+		ఒకవేళ (!సమూహం->enabled)
+			కొనసాగు;
 
-		groupc = per_cpu_ptr(group->pcpu, cpu);
+		groupc = చొప్పున_cpu_ptr(సమూహం->pcpu, cpu);
 
-		record_times(groupc, now);
-		groupc->times[PSI_IRQ_FULL] += delta;
+		రికార్డు_times(groupc, now);
+		groupc->times[PSI_IRQ_నిండిన] += delta;
 
-		if (group->rtpoll_states & (1 << PSI_IRQ_FULL))
-			psi_schedule_rtpoll_work(group, 1, false);
+		ఒకవేళ (సమూహం->rtpoll_స్థితులు & (1 << PSI_IRQ_నిండిన))
+			psi_కాలపట్టిక_rtpoll_work(సమూహం, 1, false);
 	}
-	psi_write_end(cpu);
+	psi_write_చివర(cpu);
 }
-#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+#అయితే_ముగింపు /* CONFIG_IRQ_TIME_ACCOUNTING */
 
 /**
  * psi_memstall_enter - mark the beginning of a memory stall section
@@ -1048,30 +1048,30 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
  * Marks the calling task as being stalled due to a lack of memory,
  * such as waiting for a refault or performing reclaim.
  */
-void psi_memstall_enter(unsigned long *flags)
+శూన్య psi_memstall_enter(గుర్తులేని దీర్ఘ *flags)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	నిర్మాణం rq_flags rf;
+	నిర్మాణం rq *rq;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ఒకవేళ (static_branch_likely(&psi_disabled))
+		తిరిగి;
 
-	*flags = current->in_memstall;
-	if (*flags)
-		return;
+	*flags = current->లోపల_memstall;
+	ఒకవేళ (*flags)
+		తిరిగి;
 	/*
 	 * in_memstall setting & accounting needs to be atomic wrt
 	 * changes to the task's scheduling state, otherwise we can
 	 * race with CPU migration.
 	 */
-	rq = this_rq_lock_irq(&rf);
+	rq = this_rq_తాళం_irq(&rf);
 
-	current->in_memstall = 1;
+	current->లోపల_memstall = 1;
 	psi_task_change(current, 0, TSK_MEMSTALL | TSK_MEMSTALL_RUNNING);
 
 	rq_unlock_irq(rq, &rf);
 }
-EXPORT_SYMBOL_GPL(psi_memstall_enter);
+EXPORT_చిహ్నం_GPL(psi_memstall_enter);
 
 /**
  * psi_memstall_leave - mark the end of an memory stall section
@@ -1079,54 +1079,54 @@ EXPORT_SYMBOL_GPL(psi_memstall_enter);
  *
  * Marks the calling task as no longer stalled due to lack of memory.
  */
-void psi_memstall_leave(unsigned long *flags)
+శూన్య psi_memstall_leave(గుర్తులేని దీర్ఘ *flags)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	నిర్మాణం rq_flags rf;
+	నిర్మాణం rq *rq;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ఒకవేళ (static_branch_likely(&psi_disabled))
+		తిరిగి;
 
-	if (*flags)
-		return;
+	ఒకవేళ (*flags)
+		తిరిగి;
 	/*
 	 * in_memstall clearing & accounting needs to be atomic wrt
 	 * changes to the task's scheduling state, otherwise we could
 	 * race with CPU migration.
 	 */
-	rq = this_rq_lock_irq(&rf);
+	rq = this_rq_తాళం_irq(&rf);
 
-	current->in_memstall = 0;
+	current->లోపల_memstall = 0;
 	psi_task_change(current, TSK_MEMSTALL | TSK_MEMSTALL_RUNNING, 0);
 
 	rq_unlock_irq(rq, &rf);
 }
-EXPORT_SYMBOL_GPL(psi_memstall_leave);
+EXPORT_చిహ్నం_GPL(psi_memstall_leave);
 
-#ifdef CONFIG_CGROUPS
-int psi_cgroup_alloc(struct cgroup *cgroup)
+#నిర్వచితమైతే CONFIG_CGROUPS
+పూర్ణాంకం psi_cgroup_alloc(నిర్మాణం cgroup *cgroup)
 {
-	if (!static_branch_likely(&psi_cgroups_enabled))
-		return 0;
+	ఒకవేళ (!static_branch_likely(&psi_cgroups_enabled))
+		తిరిగి 0;
 
-	cgroup->psi = kzalloc_obj(struct psi_group);
-	if (!cgroup->psi)
-		return -ENOMEM;
+	cgroup->psi = kzalloc_obj(నిర్మాణం psi_సమూహం);
+	ఒకవేళ (!cgroup->psi)
+		తిరిగి -ENOMEM;
 
-	cgroup->psi->pcpu = alloc_percpu(struct psi_group_cpu);
-	if (!cgroup->psi->pcpu) {
+	cgroup->psi->pcpu = alloc_percpu(నిర్మాణం psi_సమూహం_cpu);
+	ఒకవేళ (!cgroup->psi->pcpu) {
 		kfree(cgroup->psi);
-		return -ENOMEM;
+		తిరిగి -ENOMEM;
 	}
-	group_init(cgroup->psi);
-	cgroup->psi->parent = cgroup_psi(cgroup_parent(cgroup));
-	return 0;
+	సమూహం_init(cgroup->psi);
+	cgroup->psi->మాతృ = cgroup_psi(cgroup_మాతృ(cgroup));
+	తిరిగి 0;
 }
 
-void psi_cgroup_free(struct cgroup *cgroup)
+శూన్య psi_cgroup_free(నిర్మాణం cgroup *cgroup)
 {
-	if (!static_branch_likely(&psi_cgroups_enabled))
-		return;
+	ఒకవేళ (!static_branch_likely(&psi_cgroups_enabled))
+		తిరిగి;
 
 	cancel_delayed_work_sync(&cgroup->psi->avgs_work);
 	/*
@@ -1137,7 +1137,7 @@ void psi_cgroup_free(struct cgroup *cgroup)
 	timer_shutdown_sync(&cgroup->psi->rtpoll_timer);
 	free_percpu(cgroup->psi->pcpu);
 	/* All triggers must be removed by now */
-	WARN_ONCE(cgroup->psi->rtpoll_states, "psi: trigger leak\n");
+	WARN_ONCE(cgroup->psi->rtpoll_స్థితులు, "psi: trigger leak\n");
 	kfree(cgroup->psi);
 }
 
@@ -1153,22 +1153,22 @@ void psi_cgroup_free(struct cgroup *cgroup)
  * changes to the task's scheduling state and - in case the task is
  * running - concurrent changes to its stall state.
  */
-void cgroup_move_task(struct task_struct *task, struct css_set *to)
+శూన్య cgroup_move_task(నిర్మాణం task_struct *task, నిర్మాణం css_సమితి *గమ్యం)
 {
-	unsigned int task_flags;
-	struct rq_flags rf;
-	struct rq *rq;
+	గుర్తులేని పూర్ణాంకం task_flags;
+	నిర్మాణం rq_flags rf;
+	నిర్మాణం rq *rq;
 
-	if (!static_branch_likely(&psi_cgroups_enabled)) {
+	ఒకవేళ (!static_branch_likely(&psi_cgroups_enabled)) {
 		/*
 		 * Lame to do this here, but the scheduler cannot be locked
 		 * from the outside, so we move cgroups from inside sched/.
 		 */
-		rcu_assign_pointer(task->cgroups, to);
-		return;
+		rcu_కేటాయించు_సూచిక(task->cgroups, గమ్యం);
+		తిరిగి;
 	}
 
-	rq = task_rq_lock(task, &rf);
+	rq = task_rq_తాళం_2(task, &rf);
 
 	/*
 	 * We may race with schedule() dropping the rq lock between
@@ -1196,21 +1196,21 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
 	 */
 	task_flags = task->psi_flags;
 
-	if (task_flags)
+	ఒకవేళ (task_flags)
 		psi_task_change(task, task_flags, 0);
 
 	/* See comment above */
-	rcu_assign_pointer(task->cgroups, to);
+	rcu_కేటాయించు_సూచిక(task->cgroups, గమ్యం);
 
-	if (task_flags)
+	ఒకవేళ (task_flags)
 		psi_task_change(task, 0, task_flags);
 
 	task_rq_unlock(rq, task, &rf);
 }
 
-void psi_cgroup_restart(struct psi_group *group)
+శూన్య psi_cgroup_restart(నిర్మాణం psi_సమూహం *సమూహం)
 {
-	int cpu;
+	పూర్ణాంకం cpu;
 
 	/*
 	 * After we disable psi_group->enabled, we don't actually
@@ -1227,70 +1227,70 @@ void psi_cgroup_restart(struct psi_group *group)
 	 * and restart groupc->state_start from now, use .clear = .set = 0
 	 * here since no task status really changed.
 	 */
-	if (!group->enabled)
-		return;
+	ఒకవేళ (!సమూహం->enabled)
+		తిరిగి;
 
 	for_each_possible_cpu(cpu) {
 		u64 now;
 
-		guard(rq_lock_irq)(cpu_rq(cpu));
+		guard(rq_తాళం_irq)(cpu_rq(cpu));
 
 		psi_write_begin(cpu);
 		now = cpu_clock(cpu);
-		psi_group_change(group, cpu, 0, 0, now, true);
-		psi_write_end(cpu);
+		psi_సమూహం_change(సమూహం, cpu, 0, 0, now, true);
+		psi_write_చివర(cpu);
 	}
 }
-#endif /* CONFIG_CGROUPS */
+#అయితే_ముగింపు /* CONFIG_CGROUPS */
 
-int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
+పూర్ణాంకం psi_show(నిర్మాణం seq_file *m, నిర్మాణం psi_సమూహం *సమూహం, గణన psi_res res)
 {
-	bool only_full = false;
-	int full;
+	bool only_నిండిన = false;
+	పూర్ణాంకం నిండిన;
 	u64 now;
 
-	if (static_branch_likely(&psi_disabled))
-		return -EOPNOTSUPP;
+	ఒకవేళ (static_branch_likely(&psi_disabled))
+		తిరిగి -EOPNOTSUPP;
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (!irqtime_enabled() && res == PSI_IRQ)
-		return -EOPNOTSUPP;
-#endif
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
+	ఒకవేళ (!irqtime_enabled() && res == PSI_IRQ)
+		తిరిగి -EOPNOTSUPP;
+#అయితే_ముగింపు
 
 	/* Update averages before reporting them */
-	mutex_lock(&group->avgs_lock);
+	mutex_తాళం(&సమూహం->avgs_తాళం);
 	now = sched_clock();
-	collect_percpu_times(group, PSI_AVGS, NULL);
-	if (now >= group->avg_next_update)
-		group->avg_next_update = update_averages(group, now);
-	mutex_unlock(&group->avgs_lock);
+	collect_percpu_times(సమూహం, PSI_AVGS, ఖాళీ);
+	ఒకవేళ (now >= సమూహం->avg_తదుపరి_update)
+		సమూహం->avg_తదుపరి_update = update_averages(సమూహం, now);
+	mutex_unlock(&సమూహం->avgs_తాళం);
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	only_full = res == PSI_IRQ;
-#endif
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
+	only_నిండిన = res == PSI_IRQ;
+#అయితే_ముగింపు
 
-	for (full = 0; full < 2 - only_full; full++) {
-		unsigned long avg[3] = { 0, };
-		u64 total = 0;
-		int w;
+	కొరకు (నిండిన = 0; నిండిన < 2 - only_నిండిన; నిండిన++) {
+		గుర్తులేని దీర్ఘ avg[3] = { 0, };
+		u64 మొత్తం = 0;
+		పూర్ణాంకం w;
 
 		/* CPU FULL is undefined at the system level */
-		if (!(group == &psi_system && res == PSI_CPU && full)) {
-			for (w = 0; w < 3; w++)
-				avg[w] = group->avg[res * 2 + full][w];
-			total = div_u64(group->total[PSI_AVGS][res * 2 + full],
-					NSEC_PER_USEC);
+		ఒకవేళ (!(సమూహం == &psi_system && res == PSI_CPU && నిండిన)) {
+			కొరకు (w = 0; w < 3; w++)
+				avg[w] = సమూహం->avg[res * 2 + నిండిన][w];
+			మొత్తం = div_u64(సమూహం->మొత్తం[PSI_AVGS][res * 2 + నిండిన],
+					NSEC_చొప్పున_USEC);
 		}
 
 		seq_printf(m, "%s avg10=%lu.%02lu avg60=%lu.%02lu avg300=%lu.%02lu total=%llu\n",
-			   full || only_full ? "full" : "some",
-			   LOAD_INT(avg[0]), LOAD_FRAC(avg[0]),
-			   LOAD_INT(avg[1]), LOAD_FRAC(avg[1]),
-			   LOAD_INT(avg[2]), LOAD_FRAC(avg[2]),
-			   total);
+			   నిండిన || only_నిండిన ? "full" : "some",
+			   ఎక్కించు_INT(avg[0]), ఎక్కించు_FRAC(avg[0]),
+			   ఎక్కించు_INT(avg[1]), ఎక్కించు_FRAC(avg[1]),
+			   ఎక్కించు_INT(avg[2]), ఎక్కించు_FRAC(avg[2]),
+			   మొత్తం);
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
 /*
@@ -1300,48 +1300,48 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
  * other lock that forks can wait behind. If two callers race, the loser stops
  * its never-woken kthread.
  */
-int psi_trigger_create_rtpoll_worker(struct psi_group *group)
+పూర్ణాంకం psi_trigger_create_rtpoll_కార్మికుడు(నిర్మాణం psi_సమూహం *సమూహం)
 {
-	struct task_struct *task;
+	నిర్మాణం task_struct *task;
 
-	task = kthread_create(psi_rtpoll_worker, group, "psimon");
-	if (IS_ERR(task))
-		return PTR_ERR(task);
+	task = kthread_create(psi_rtpoll_కార్మికుడు, సమూహం, "psimon");
+	ఒకవేళ (IS_ERR(task))
+		తిరిగి PTR_ERR(task);
 
-	scoped_guard(mutex, &group->rtpoll_trigger_lock) {
-		if (!rcu_access_pointer(group->rtpoll_task)) {
-			atomic_set(&group->rtpoll_wakeup, 0);
-			wake_up_process(task);
-			rcu_assign_pointer(group->rtpoll_task, task);
+	scoped_guard(mutex, &సమూహం->rtpoll_trigger_తాళం) {
+		ఒకవేళ (!rcu_access_సూచిక(సమూహం->rtpoll_task)) {
+			atomic_సమితి(&సమూహం->rtpoll_wakeup, 0);
+			wake_పైకి_process(task);
+			rcu_కేటాయించు_సూచిక(సమూహం->rtpoll_task, task);
 
 			/*
 			 * Poll once to catch up on scheduling attempts dropped
 			 * while there was no rtpoll worker.
 			 */
-			psi_schedule_rtpoll_work(group, 1, true);
-			return 0;
+			psi_కాలపట్టిక_rtpoll_work(సమూహం, 1, true);
+			తిరిగి 0;
 		}
 	}
 
 	kthread_stop(task);
-	return 0;
+	తిరిగి 0;
 }
 
-struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
-				       enum psi_res res, struct file *file,
-				       struct kernfs_open_file *of,
-				       bool *need_rtpoll_worker)
+నిర్మాణం psi_trigger *psi_trigger_create(నిర్మాణం psi_సమూహం *సమూహం, అక్షరం *buf,
+				       గణన psi_res res, నిర్మాణం file *file,
+				       నిర్మాణం kernfs_open_file *యొక్క,
+				       bool *need_rtpoll_కార్మికుడు)
 {
-	struct psi_trigger *t;
-	enum psi_states state;
-	u32 threshold_us;
+	నిర్మాణం psi_trigger *t;
+	గణన psi_స్థితులు state;
+	u32 పరిమితి_us;
 	bool privileged;
-	u32 window_us;
+	u32 కిటికీ_us;
 
-	*need_rtpoll_worker = false;
+	*need_rtpoll_కార్మికుడు = false;
 
-	if (static_branch_likely(&psi_disabled))
-		return ERR_PTR(-EOPNOTSUPP);
+	ఒకవేళ (static_branch_likely(&psi_disabled))
+		తిరిగి ERR_PTR(-EOPNOTSUPP);
 
 	/*
 	 * Checking the privilege here on file->f_cred implies that a privileged user
@@ -1349,138 +1349,138 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 	 */
 	privileged = cap_raised(file->f_cred->cap_effective, CAP_SYS_RESOURCE);
 
-	if (sscanf(buf, "some %u %u", &threshold_us, &window_us) == 2)
+	ఒకవేళ (అక్షరశ్రేణి_చదువు(buf, "some %u %u", &పరిమితి_us, &కిటికీ_us) == 2)
 		state = PSI_IO_SOME + res * 2;
-	else if (sscanf(buf, "full %u %u", &threshold_us, &window_us) == 2)
-		state = PSI_IO_FULL + res * 2;
-	else
-		return ERR_PTR(-EINVAL);
+	లేకపోతే ఒకవేళ (అక్షరశ్రేణి_చదువు(buf, "full %u %u", &పరిమితి_us, &కిటికీ_us) == 2)
+		state = PSI_IO_నిండిన + res * 2;
+	లేకపోతే
+		తిరిగి ERR_PTR(-EINVAL);
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (res == PSI_IRQ && --state != PSI_IRQ_FULL)
-		return ERR_PTR(-EINVAL);
-#endif
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
+	ఒకవేళ (res == PSI_IRQ && --state != PSI_IRQ_నిండిన)
+		తిరిగి ERR_PTR(-EINVAL);
+#అయితే_ముగింపు
 
-	if (state >= PSI_NONIDLE)
-		return ERR_PTR(-EINVAL);
+	ఒకవేళ (state >= PSI_NONIDLE)
+		తిరిగి ERR_PTR(-EINVAL);
 
-	if (window_us == 0 || window_us > WINDOW_MAX_US)
-		return ERR_PTR(-EINVAL);
+	ఒకవేళ (కిటికీ_us == 0 || కిటికీ_us > కిటికీ_MAX_US)
+		తిరిగి ERR_PTR(-EINVAL);
 
 	/*
 	 * Unprivileged users can only use 2s windows so that averages aggregation
 	 * work is used, and no RT threads need to be spawned.
 	 */
-	if (!privileged && window_us % 2000000)
-		return ERR_PTR(-EINVAL);
+	ఒకవేళ (!privileged && కిటికీ_us % 2000000)
+		తిరిగి ERR_PTR(-EINVAL);
 
 	/* Check threshold */
-	if (threshold_us == 0 || threshold_us > window_us)
-		return ERR_PTR(-EINVAL);
+	ఒకవేళ (పరిమితి_us == 0 || పరిమితి_us > కిటికీ_us)
+		తిరిగి ERR_PTR(-EINVAL);
 
 	t = kmalloc_obj(*t);
-	if (!t)
-		return ERR_PTR(-ENOMEM);
+	ఒకవేళ (!t)
+		తిరిగి ERR_PTR(-ENOMEM);
 
-	t->group = group;
+	t->సమూహం = సమూహం;
 	t->state = state;
-	t->threshold = threshold_us * NSEC_PER_USEC;
-	t->win.size = window_us * NSEC_PER_USEC;
-	window_reset(&t->win, sched_clock(),
-			group->total[PSI_POLL][t->state], 0);
+	t->పరిమితి = పరిమితి_us * NSEC_చొప్పున_USEC;
+	t->win.కొలత = కిటికీ_us * NSEC_చొప్పున_USEC;
+	కిటికీ_reset(&t->win, sched_clock(),
+			సమూహం->మొత్తం[PSI_POLL][t->state], 0);
 
 	t->event = 0;
-	t->last_event_time = 0;
-	t->of = of;
-	if (!of)
-		init_waitqueue_head(&t->event_wait);
+	t->చివరి_event_సమయం = 0;
+	t->యొక్క = యొక్క;
+	ఒకవేళ (!యొక్క)
+		init_waitqueue_తల(&t->event_wait);
 	t->pending_event = false;
 	t->aggregator = privileged ? PSI_POLL : PSI_AVGS;
 
-	if (privileged) {
-		mutex_lock(&group->rtpoll_trigger_lock);
+	ఒకవేళ (privileged) {
+		mutex_తాళం(&సమూహం->rtpoll_trigger_తాళం);
 
-		list_add(&t->node, &group->rtpoll_triggers);
-		group->rtpoll_min_period = min(group->rtpoll_min_period,
-			div_u64(t->win.size, UPDATES_PER_WINDOW));
-		group->rtpoll_nr_triggers[t->state]++;
-		group->rtpoll_states |= (1 << t->state);
+		list_కూడు(&t->కణుపు, &సమూహం->rtpoll_triggers);
+		సమూహం->rtpoll_min_period = min(సమూహం->rtpoll_min_period,
+			div_u64(t->win.కొలత, UPDATES_చొప్పున_కిటికీ));
+		సమూహం->rtpoll_nr_triggers[t->state]++;
+		సమూహం->rtpoll_స్థితులు |= (1 << t->state);
 
-		*need_rtpoll_worker = !rcu_access_pointer(group->rtpoll_task);
+		*need_rtpoll_కార్మికుడు = !rcu_access_సూచిక(సమూహం->rtpoll_task);
 
-		mutex_unlock(&group->rtpoll_trigger_lock);
-	} else {
-		mutex_lock(&group->avgs_lock);
+		mutex_unlock(&సమూహం->rtpoll_trigger_తాళం);
+	} లేకపోతే {
+		mutex_తాళం(&సమూహం->avgs_తాళం);
 
-		list_add(&t->node, &group->avg_triggers);
-		group->avg_nr_triggers[t->state]++;
+		list_కూడు(&t->కణుపు, &సమూహం->avg_triggers);
+		సమూహం->avg_nr_triggers[t->state]++;
 
-		mutex_unlock(&group->avgs_lock);
+		mutex_unlock(&సమూహం->avgs_తాళం);
 	}
-	return t;
+	తిరిగి t;
 }
 
-void psi_trigger_destroy(struct psi_trigger *t)
+శూన్య psi_trigger_destroy(నిర్మాణం psi_trigger *t)
 {
-	struct psi_group *group;
-	struct task_struct *task_to_destroy = NULL;
+	నిర్మాణం psi_సమూహం *సమూహం;
+	నిర్మాణం task_struct *task_గమ్యం_destroy = ఖాళీ;
 
 	/*
 	 * We do not check psi_disabled since it might have been disabled after
 	 * the trigger got created.
 	 */
-	if (!t)
-		return;
+	ఒకవేళ (!t)
+		తిరిగి;
 
-	group = t->group;
+	సమూహం = t->సమూహం;
 	/*
 	 * Wakeup waiters to stop polling and clear the queue to prevent it from
 	 * being accessed later. Can happen if cgroup is deleted from under a
 	 * polling process.
 	 */
-	if (t->of)
-		kernfs_notify(t->of->kn);
-	else
-		wake_up_interruptible(&t->event_wait);
+	ఒకవేళ (t->యొక్క)
+		kernfs_notify(t->యొక్క->kn);
+	లేకపోతే
+		wake_పైకి_interruptible(&t->event_wait);
 
-	if (t->aggregator == PSI_AVGS) {
-		mutex_lock(&group->avgs_lock);
-		if (!list_empty(&t->node)) {
-			list_del(&t->node);
-			group->avg_nr_triggers[t->state]--;
+	ఒకవేళ (t->aggregator == PSI_AVGS) {
+		mutex_తాళం(&సమూహం->avgs_తాళం);
+		ఒకవేళ (!list_ఖాళీలు(&t->కణుపు)) {
+			list_del(&t->కణుపు);
+			సమూహం->avg_nr_triggers[t->state]--;
 		}
-		mutex_unlock(&group->avgs_lock);
-	} else {
-		mutex_lock(&group->rtpoll_trigger_lock);
-		if (!list_empty(&t->node)) {
-			struct psi_trigger *tmp;
+		mutex_unlock(&సమూహం->avgs_తాళం);
+	} లేకపోతే {
+		mutex_తాళం(&సమూహం->rtpoll_trigger_తాళం);
+		ఒకవేళ (!list_ఖాళీలు(&t->కణుపు)) {
+			నిర్మాణం psi_trigger *tmp;
 			u64 period = ULLONG_MAX;
 
-			list_del(&t->node);
-			group->rtpoll_nr_triggers[t->state]--;
-			if (!group->rtpoll_nr_triggers[t->state])
-				group->rtpoll_states &= ~(1 << t->state);
+			list_del(&t->కణుపు);
+			సమూహం->rtpoll_nr_triggers[t->state]--;
+			ఒకవేళ (!సమూహం->rtpoll_nr_triggers[t->state])
+				సమూహం->rtpoll_స్థితులు &= ~(1 << t->state);
 			/*
 			 * Reset min update period for the remaining triggers
 			 * iff the destroying trigger had the min window size.
 			 */
-			if (group->rtpoll_min_period == div_u64(t->win.size, UPDATES_PER_WINDOW)) {
-				list_for_each_entry(tmp, &group->rtpoll_triggers, node)
-					period = min(period, div_u64(tmp->win.size,
-							UPDATES_PER_WINDOW));
-				group->rtpoll_min_period = period;
+			ఒకవేళ (సమూహం->rtpoll_min_period == div_u64(t->win.కొలత, UPDATES_చొప్పున_కిటికీ)) {
+				list_for_each_నమోదు(tmp, &సమూహం->rtpoll_triggers, కణుపు)
+					period = min(period, div_u64(tmp->win.కొలత,
+							UPDATES_చొప్పున_కిటికీ));
+				సమూహం->rtpoll_min_period = period;
 			}
 			/* Destroy rtpoll_task when the last trigger is destroyed */
-			if (group->rtpoll_states == 0) {
-				group->rtpoll_until = 0;
-				task_to_destroy = rcu_dereference_protected(
-						group->rtpoll_task,
-						lockdep_is_held(&group->rtpoll_trigger_lock));
-				rcu_assign_pointer(group->rtpoll_task, NULL);
-				timer_delete(&group->rtpoll_timer);
+			ఒకవేళ (సమూహం->rtpoll_స్థితులు == 0) {
+				సమూహం->rtpoll_until = 0;
+				task_గమ్యం_destroy = rcu_dereference_protected(
+						సమూహం->rtpoll_task,
+						lockdep_is_held(&సమూహం->rtpoll_trigger_తాళం));
+				rcu_కేటాయించు_సూచిక(సమూహం->rtpoll_task, ఖాళీ);
+				timer_delete(&సమూహం->rtpoll_timer);
 			}
 		}
-		mutex_unlock(&group->rtpoll_trigger_lock);
+		mutex_unlock(&సమూహం->rtpoll_trigger_తాళం);
 	}
 
 	/*
@@ -1488,157 +1488,157 @@ void psi_trigger_destroy(struct psi_trigger *t)
 	 * a deadlock while waiting for psi_rtpoll_work to acquire
 	 * rtpoll_trigger_lock
 	 */
-	if (task_to_destroy) {
-		kthread_stop(task_to_destroy);
-		atomic_set(&group->rtpoll_scheduled, 0);
+	ఒకవేళ (task_గమ్యం_destroy) {
+		kthread_stop(task_గమ్యం_destroy);
+		atomic_సమితి(&సమూహం->rtpoll_scheduled, 0);
 	}
 	kfree(t);
 }
 
-__poll_t psi_trigger_poll(void **trigger_ptr,
-				struct file *file, poll_table *wait)
+__poll_t psi_trigger_poll(శూన్య **trigger_ptr,
+				నిర్మాణం file *file, poll_పట్టిక *wait)
 {
 	__poll_t ret = DEFAULT_POLLMASK;
-	struct psi_trigger *t;
+	నిర్మాణం psi_trigger *t;
 
-	if (static_branch_likely(&psi_disabled))
-		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+	ఒకవేళ (static_branch_likely(&psi_disabled))
+		తిరిగి DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
 
-	t = smp_load_acquire(trigger_ptr);
-	if (!t)
-		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+	t = smp_ఎక్కించు_acquire(trigger_ptr);
+	ఒకవేళ (!t)
+		తిరిగి DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
 
-	if (t->of)
-		kernfs_generic_poll(t->of, wait);
-	else
+	ఒకవేళ (t->యొక్క)
+		kernfs_generic_poll(t->యొక్క, wait);
+	లేకపోతే
 		poll_wait(file, &t->event_wait, wait);
 
-	if (cmpxchg(&t->event, 1, 0) == 1)
+	ఒకవేళ (cmpxchg(&t->event, 1, 0) == 1)
 		ret |= EPOLLPRI;
 
-	return ret;
+	తిరిగి ret;
 }
 
-#ifdef CONFIG_PROC_FS
-static int psi_io_show(struct seq_file *m, void *v)
+#నిర్వచితమైతే CONFIG_PROC_FS
+స్థిర పూర్ణాంకం psi_io_show(నిర్మాణం seq_file *m, శూన్య *v)
 {
-	return psi_show(m, &psi_system, PSI_IO);
+	తిరిగి psi_show(m, &psi_system, PSI_IO);
 }
 
-static int psi_memory_show(struct seq_file *m, void *v)
+స్థిర పూర్ణాంకం psi_జ్ఞాపకం_show(నిర్మాణం seq_file *m, శూన్య *v)
 {
-	return psi_show(m, &psi_system, PSI_MEM);
+	తిరిగి psi_show(m, &psi_system, PSI_MEM);
 }
 
-static int psi_cpu_show(struct seq_file *m, void *v)
+స్థిర పూర్ణాంకం psi_cpu_show(నిర్మాణం seq_file *m, శూన్య *v)
 {
-	return psi_show(m, &psi_system, PSI_CPU);
+	తిరిగి psi_show(m, &psi_system, PSI_CPU);
 }
 
-static int psi_io_open(struct inode *inode, struct file *file)
+స్థిర పూర్ణాంకం psi_io_open(నిర్మాణం inode *inode, నిర్మాణం file *file)
 {
-	return single_open(file, psi_io_show, NULL);
+	తిరిగి single_open(file, psi_io_show, ఖాళీ);
 }
 
-static int psi_memory_open(struct inode *inode, struct file *file)
+స్థిర పూర్ణాంకం psi_జ్ఞాపకం_open(నిర్మాణం inode *inode, నిర్మాణం file *file)
 {
-	return single_open(file, psi_memory_show, NULL);
+	తిరిగి single_open(file, psi_జ్ఞాపకం_show, ఖాళీ);
 }
 
-static int psi_cpu_open(struct inode *inode, struct file *file)
+స్థిర పూర్ణాంకం psi_cpu_open(నిర్మాణం inode *inode, నిర్మాణం file *file)
 {
-	return single_open(file, psi_cpu_show, NULL);
+	తిరిగి single_open(file, psi_cpu_show, ఖాళీ);
 }
 
-static ssize_t psi_write(struct file *file, const char __user *user_buf,
-			 size_t nbytes, enum psi_res res)
+స్థిర ssize_t psi_write(నిర్మాణం file *file, స్థిరరాశి అక్షరం __user *user_buf,
+			 కొలత_t nbytes, గణన psi_res res)
 {
-	char buf[32];
-	size_t buf_size;
-	struct seq_file *seq;
-	struct psi_trigger *new;
-	bool need_rtpoll_worker;
-	int ret;
+	అక్షరం buf[32];
+	కొలత_t buf_కొలత;
+	నిర్మాణం seq_file *seq;
+	నిర్మాణం psi_trigger *new;
+	bool need_rtpoll_కార్మికుడు;
+	పూర్ణాంకం ret;
 
-	if (static_branch_likely(&psi_disabled))
-		return -EOPNOTSUPP;
+	ఒకవేళ (static_branch_likely(&psi_disabled))
+		తిరిగి -EOPNOTSUPP;
 
-	if (!nbytes)
-		return -EINVAL;
+	ఒకవేళ (!nbytes)
+		తిరిగి -EINVAL;
 
-	buf_size = min(nbytes, sizeof(buf));
-	if (copy_from_user(buf, user_buf, buf_size))
-		return -EFAULT;
+	buf_కొలత = min(nbytes, పరిమాణం(buf));
+	ఒకవేళ (copy_from_user(buf, user_buf, buf_కొలత))
+		తిరిగి -EFAULT;
 
-	buf[buf_size - 1] = '\0';
+	buf[buf_కొలత - 1] = '\0';
 
-	seq = file->private_data;
+	seq = file->వ్యక్తిగత_దత్తాంశం;
 
 	/* Take seq->lock to protect seq->private from concurrent writes */
-	mutex_lock(&seq->lock);
+	mutex_తాళం(&seq->తాళం);
 
 	/* Allow only one trigger per file descriptor */
-	if (seq->private) {
-		mutex_unlock(&seq->lock);
-		return -EBUSY;
+	ఒకవేళ (seq->అంతరంగ) {
+		mutex_unlock(&seq->తాళం);
+		తిరిగి -EBUSY;
 	}
 
-	new = psi_trigger_create(&psi_system, buf, res, file, NULL,
-				 &need_rtpoll_worker);
-	if (IS_ERR(new)) {
-		mutex_unlock(&seq->lock);
-		return PTR_ERR(new);
+	new = psi_trigger_create(&psi_system, buf, res, file, ఖాళీ,
+				 &need_rtpoll_కార్మికుడు);
+	ఒకవేళ (IS_ERR(new)) {
+		mutex_unlock(&seq->తాళం);
+		తిరిగి PTR_ERR(new);
 	}
 
-	if (need_rtpoll_worker) {
-		ret = psi_trigger_create_rtpoll_worker(&psi_system);
-		if (ret) {
+	ఒకవేళ (need_rtpoll_కార్మికుడు) {
+		ret = psi_trigger_create_rtpoll_కార్మికుడు(&psi_system);
+		ఒకవేళ (ret) {
 			psi_trigger_destroy(new);
-			mutex_unlock(&seq->lock);
-			return ret;
+			mutex_unlock(&seq->తాళం);
+			తిరిగి ret;
 		}
 	}
 
-	smp_store_release(&seq->private, new);
-	mutex_unlock(&seq->lock);
+	smp_store_release(&seq->అంతరంగ, new);
+	mutex_unlock(&seq->తాళం);
 
-	return nbytes;
+	తిరిగి nbytes;
 }
 
-static ssize_t psi_io_write(struct file *file, const char __user *user_buf,
-			    size_t nbytes, loff_t *ppos)
+స్థిర ssize_t psi_io_write(నిర్మాణం file *file, స్థిరరాశి అక్షరం __user *user_buf,
+			    కొలత_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_IO);
+	తిరిగి psi_write(file, user_buf, nbytes, PSI_IO);
 }
 
-static ssize_t psi_memory_write(struct file *file, const char __user *user_buf,
-				size_t nbytes, loff_t *ppos)
+స్థిర ssize_t psi_జ్ఞాపకం_write(నిర్మాణం file *file, స్థిరరాశి అక్షరం __user *user_buf,
+				కొలత_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_MEM);
+	తిరిగి psi_write(file, user_buf, nbytes, PSI_MEM);
 }
 
-static ssize_t psi_cpu_write(struct file *file, const char __user *user_buf,
-			     size_t nbytes, loff_t *ppos)
+స్థిర ssize_t psi_cpu_write(నిర్మాణం file *file, స్థిరరాశి అక్షరం __user *user_buf,
+			     కొలత_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_CPU);
+	తిరిగి psi_write(file, user_buf, nbytes, PSI_CPU);
 }
 
-static __poll_t psi_fop_poll(struct file *file, poll_table *wait)
+స్థిర __poll_t psi_fop_poll(నిర్మాణం file *file, poll_పట్టిక *wait)
 {
-	struct seq_file *seq = file->private_data;
+	నిర్మాణం seq_file *seq = file->వ్యక్తిగత_దత్తాంశం;
 
-	return psi_trigger_poll(&seq->private, file, wait);
+	తిరిగి psi_trigger_poll(&seq->అంతరంగ, file, wait);
 }
 
-static int psi_fop_release(struct inode *inode, struct file *file)
+స్థిర పూర్ణాంకం psi_fop_release(నిర్మాణం inode *inode, నిర్మాణం file *file)
 {
-	struct seq_file *seq = file->private_data;
+	నిర్మాణం seq_file *seq = file->వ్యక్తిగత_దత్తాంశం;
 
-	psi_trigger_destroy(seq->private);
-	return single_release(inode, file);
+	psi_trigger_destroy(seq->అంతరంగ);
+	తిరిగి single_release(inode, file);
 }
 
-static const struct proc_ops psi_io_proc_ops = {
+స్థిర స్థిరరాశి నిర్మాణం proc_ops psi_io_proc_ops = {
 	.proc_open	= psi_io_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1647,16 +1647,16 @@ static const struct proc_ops psi_io_proc_ops = {
 	.proc_release	= psi_fop_release,
 };
 
-static const struct proc_ops psi_memory_proc_ops = {
-	.proc_open	= psi_memory_open,
+స్థిర స్థిరరాశి నిర్మాణం proc_ops psi_జ్ఞాపకం_proc_ops = {
+	.proc_open	= psi_జ్ఞాపకం_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
-	.proc_write	= psi_memory_write,
+	.proc_write	= psi_జ్ఞాపకం_write,
 	.proc_poll	= psi_fop_poll,
 	.proc_release	= psi_fop_release,
 };
 
-static const struct proc_ops psi_cpu_proc_ops = {
+స్థిర స్థిరరాశి నిర్మాణం proc_ops psi_cpu_proc_ops = {
 	.proc_open	= psi_cpu_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1665,24 +1665,24 @@ static const struct proc_ops psi_cpu_proc_ops = {
 	.proc_release	= psi_fop_release,
 };
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-static int psi_irq_show(struct seq_file *m, void *v)
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
+స్థిర పూర్ణాంకం psi_irq_show(నిర్మాణం seq_file *m, శూన్య *v)
 {
-	return psi_show(m, &psi_system, PSI_IRQ);
+	తిరిగి psi_show(m, &psi_system, PSI_IRQ);
 }
 
-static int psi_irq_open(struct inode *inode, struct file *file)
+స్థిర పూర్ణాంకం psi_irq_open(నిర్మాణం inode *inode, నిర్మాణం file *file)
 {
-	return single_open(file, psi_irq_show, NULL);
+	తిరిగి single_open(file, psi_irq_show, ఖాళీ);
 }
 
-static ssize_t psi_irq_write(struct file *file, const char __user *user_buf,
-			     size_t nbytes, loff_t *ppos)
+స్థిర ssize_t psi_irq_write(నిర్మాణం file *file, స్థిరరాశి అక్షరం __user *user_buf,
+			     కొలత_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_IRQ);
+	తిరిగి psi_write(file, user_buf, nbytes, PSI_IRQ);
 }
 
-static const struct proc_ops psi_irq_proc_ops = {
+స్థిర స్థిరరాశి నిర్మాణం proc_ops psi_irq_proc_ops = {
 	.proc_open	= psi_irq_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1690,21 +1690,21 @@ static const struct proc_ops psi_irq_proc_ops = {
 	.proc_poll	= psi_fop_poll,
 	.proc_release	= psi_fop_release,
 };
-#endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+#అయితే_ముగింపు /* CONFIG_IRQ_TIME_ACCOUNTING */
 
-static int __init psi_proc_init(void)
+స్థిర పూర్ణాంకం __init psi_proc_init(శూన్య)
 {
-	if (psi_enable) {
-		proc_mkdir("pressure", NULL);
-		proc_create("pressure/io", 0666, NULL, &psi_io_proc_ops);
-		proc_create("pressure/memory", 0666, NULL, &psi_memory_proc_ops);
-		proc_create("pressure/cpu", 0666, NULL, &psi_cpu_proc_ops);
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-		proc_create("pressure/irq", 0666, NULL, &psi_irq_proc_ops);
-#endif
+	ఒకవేళ (psi_enable) {
+		proc_mkdir("pressure", ఖాళీ);
+		proc_create("pressure/io", 0666, ఖాళీ, &psi_io_proc_ops);
+		proc_create("pressure/memory", 0666, ఖాళీ, &psi_జ్ఞాపకం_proc_ops);
+		proc_create("pressure/cpu", 0666, ఖాళీ, &psi_cpu_proc_ops);
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
+		proc_create("pressure/irq", 0666, ఖాళీ, &psi_irq_proc_ops);
+#అయితే_ముగింపు
 	}
-	return 0;
+	తిరిగి 0;
 }
 module_init(psi_proc_init);
 
-#endif /* CONFIG_PROC_FS */
+#అయితే_ముగింపు /* CONFIG_PROC_FS */

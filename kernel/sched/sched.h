@@ -2,135 +2,135 @@
 /*
  * Scheduler internal types and methods:
  */
-#ifndef _KERNEL_SCHED_SCHED_H
-#define _KERNEL_SCHED_SCHED_H
+#నిర్వచితం_కాకపోతే _KERNEL_SCHED_SCHED_H
+#నిర్వచించు _KERNEL_SCHED_SCHED_H
 
-#include <linux/prandom.h>
-#include <linux/sched/affinity.h>
-#include <linux/sched/autogroup.h>
-#include <linux/sched/cpufreq.h>
-#include <linux/sched/deadline.h>
-#include <linux/sched.h>
-#include <linux/sched/loadavg.h>
-#include <linux/sched/mm.h>
-#include <linux/sched/rseq_api.h>
-#include <linux/sched/signal.h>
-#include <linux/sched/smt.h>
-#include <linux/sched/stat.h>
-#include <linux/sched/sysctl.h>
-#include <linux/sched/task_flags.h>
-#include <linux/sched/task.h>
-#include <linux/sched/topology.h>
-#include <linux/atomic.h>
-#include <linux/bitmap.h>
-#include <linux/bug.h>
-#include <linux/capability.h>
-#include <linux/cgroup_api.h>
-#include <linux/cgroup.h>
-#include <linux/context_tracking.h>
-#include <linux/cpufreq.h>
-#include <linux/cpumask_api.h>
-#include <linux/cpuset.h>
-#include <linux/ctype.h>
-#include <linux/file.h>
-#include <linux/fs_api.h>
-#include <linux/hrtimer_api.h>
-#include <linux/interrupt.h>
-#include <linux/irq_work.h>
-#include <linux/jiffies.h>
-#include <linux/kref_api.h>
-#include <linux/kthread.h>
-#include <linux/ktime_api.h>
-#include <linux/lockdep_api.h>
-#include <linux/lockdep.h>
-#include <linux/memblock.h>
-#include <linux/memcontrol.h>
-#include <linux/minmax.h>
-#include <linux/mm.h>
-#include <linux/module.h>
-#include <linux/mutex_api.h>
-#include <linux/plist.h>
-#include <linux/poll.h>
-#include <linux/proc_fs.h>
-#include <linux/profile.h>
-#include <linux/psi.h>
-#include <linux/rcupdate.h>
-#include <linux/seq_file.h>
-#include <linux/seqlock.h>
-#include <linux/softirq.h>
-#include <linux/spinlock_api.h>
-#include <linux/static_key.h>
-#include <linux/stop_machine.h>
-#include <linux/syscalls_api.h>
-#include <linux/syscalls.h>
-#include <linux/tick.h>
-#include <linux/topology.h>
-#include <linux/types.h>
-#include <linux/u64_stats_sync_api.h>
-#include <linux/uaccess.h>
-#include <linux/vmstat.h>
-#include <linux/wait_api.h>
-#include <linux/wait_bit.h>
-#include <linux/workqueue_api.h>
-#include <linux/delayacct.h>
-#include <linux/mmu_context.h>
+#అన్తర్భావ <linux/prandom.h>
+#అన్తర్భావ <linux/sched/affinity.h>
+#అన్తర్భావ <linux/sched/autogroup.h>
+#అన్తర్భావ <linux/sched/cpufreq.h>
+#అన్తర్భావ <linux/sched/deadline.h>
+#అన్తర్భావ <linux/sched.h>
+#అన్తర్భావ <linux/sched/loadavg.h>
+#అన్తర్భావ <linux/sched/mm.h>
+#అన్తర్భావ <linux/sched/rseq_api.h>
+#అన్తర్భావ <linux/sched/signal.h>
+#అన్తర్భావ <linux/sched/smt.h>
+#అన్తర్భావ <linux/sched/stat.h>
+#అన్తర్భావ <linux/sched/sysctl.h>
+#అన్తర్భావ <linux/sched/task_flags.h>
+#అన్తర్భావ <linux/sched/task.h>
+#అన్తర్భావ <linux/sched/topology.h>
+#అన్తర్భావ <linux/atomic.h>
+#అన్తర్భావ <linux/bitmap.h>
+#అన్తర్భావ <linux/bug.h>
+#అన్తర్భావ <linux/capability.h>
+#అన్తర్భావ <linux/cgroup_api.h>
+#అన్తర్భావ <linux/cgroup.h>
+#అన్తర్భావ <linux/context_tracking.h>
+#అన్తర్భావ <linux/cpufreq.h>
+#అన్తర్భావ <linux/cpumask_api.h>
+#అన్తర్భావ <linux/cpuset.h>
+#అన్తర్భావ <linux/ctype.h>
+#అన్తర్భావ <linux/file.h>
+#అన్తర్భావ <linux/fs_api.h>
+#అన్తర్భావ <linux/hrtimer_api.h>
+#అన్తర్భావ <linux/interrupt.h>
+#అన్తర్భావ <linux/irq_work.h>
+#అన్తర్భావ <linux/jiffies.h>
+#అన్తర్భావ <linux/kref_api.h>
+#అన్తర్భావ <linux/kthread.h>
+#అన్తర్భావ <linux/ktime_api.h>
+#అన్తర్భావ <linux/lockdep_api.h>
+#అన్తర్భావ <linux/lockdep.h>
+#అన్తర్భావ <linux/memblock.h>
+#అన్తర్భావ <linux/memcontrol.h>
+#అన్తర్భావ <linux/minmax.h>
+#అన్తర్భావ <linux/mm.h>
+#అన్తర్భావ <linux/module.h>
+#అన్తర్భావ <linux/mutex_api.h>
+#అన్తర్భావ <linux/plist.h>
+#అన్తర్భావ <linux/poll.h>
+#అన్తర్భావ <linux/proc_fs.h>
+#అన్తర్భావ <linux/profile.h>
+#అన్తర్భావ <linux/psi.h>
+#అన్తర్భావ <linux/rcupdate.h>
+#అన్తర్భావ <linux/seq_file.h>
+#అన్తర్భావ <linux/seqlock.h>
+#అన్తర్భావ <linux/softirq.h>
+#అన్తర్భావ <linux/spinlock_api.h>
+#అన్తర్భావ <linux/static_key.h>
+#అన్తర్భావ <linux/stop_machine.h>
+#అన్తర్భావ <linux/syscalls_api.h>
+#అన్తర్భావ <linux/syscalls.h>
+#అన్తర్భావ <linux/tick.h>
+#అన్తర్భావ <linux/topology.h>
+#అన్తర్భావ <linux/types.h>
+#అన్తర్భావ <linux/u64_stats_sync_api.h>
+#అన్తర్భావ <linux/uaccess.h>
+#అన్తర్భావ <linux/vmstat.h>
+#అన్తర్భావ <linux/wait_api.h>
+#అన్తర్భావ <linux/wait_bit.h>
+#అన్తర్భావ <linux/workqueue_api.h>
+#అన్తర్భావ <linux/delayacct.h>
+#అన్తర్భావ <linux/mmu_context.h>
 
-#include <trace/events/power.h>
-#include <trace/events/sched.h>
+#అన్తర్భావ <trace/events/power.h>
+#అన్తర్భావ <trace/events/sched.h>
 
-#include "../workqueue_internal.h"
+#అన్తర్భావ "../workqueue_internal.h"
 
-struct rq;
-struct cfs_rq;
-struct rt_rq;
-struct sched_group;
-struct cpuidle_state;
+నిర్మాణం rq;
+నిర్మాణం cfs_rq;
+నిర్మాణం rt_rq;
+నిర్మాణం sched_సమూహం;
+నిర్మాణం cpuidle_state;
 
-#if defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
+#ఒకవేళ defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
 # include <asm/paravirt.h>
-#endif
+#అయితే_ముగింపు
 
-#include <asm/barrier.h>
+#అన్తర్భావ <asm/barrier.h>
 
-#include "cpupri.h"
-#include "cpudeadline.h"
+#అన్తర్భావ "cpupri.h"
+#అన్తర్భావ "cpudeadline.h"
 
 /* task_struct::on_rq states: */
-#define TASK_ON_RQ_QUEUED	1
-#define TASK_ON_RQ_MIGRATING	2
+#నిర్వచించు TASK_ON_RQ_QUEUED	1
+#నిర్వచించు TASK_ON_RQ_MIGRATING	2
 
-extern __read_mostly int scheduler_running;
+బాహ్య __read_mostly పూర్ణాంకం scheduler_running;
 
-extern unsigned long calc_load_update;
-extern atomic_long_t calc_load_tasks;
+బాహ్య గుర్తులేని దీర్ఘ calc_ఎక్కించు_update;
+బాహ్య atomic_long_t calc_ఎక్కించు_tasks;
 
-extern void calc_global_load_tick(struct rq *this_rq);
-extern long calc_load_fold_active(struct rq *this_rq, long adjust);
+బాహ్య శూన్య calc_global_ఎక్కించు_tick(నిర్మాణం rq *this_rq);
+బాహ్య దీర్ఘ calc_ఎక్కించు_fold_చురుకైన(నిర్మాణం rq *this_rq, దీర్ఘ adjust);
 
-extern void call_trace_sched_update_nr_running(struct rq *rq, int count);
+బాహ్య శూన్య call_trace_sched_update_nr_running(నిర్మాణం rq *rq, పూర్ణాంకం లెక్క);
 
-extern int sysctl_sched_rt_period;
-extern int sysctl_sched_rt_runtime;
-extern int sched_rr_timeslice;
+బాహ్య పూర్ణాంకం sysctl_sched_rt_period;
+బాహ్య పూర్ణాంకం sysctl_sched_rt_runtime;
+బాహ్య పూర్ణాంకం sched_rr_timeslice;
 
 /*
  * Asymmetric CPU capacity bits
  */
-struct asym_cap_data {
-	struct list_head link;
-	struct rcu_head rcu;
-	unsigned long capacity;
-	unsigned long cpus[];
+నిర్మాణం asym_cap_దత్తాంశం {
+	నిర్మాణం list_తల link;
+	నిర్మాణం rcu_తల rcu;
+	గుర్తులేని దీర్ఘ సామర్థ్యం;
+	గుర్తులేని దీర్ఘ cpus[];
 };
 
-extern struct list_head asym_cap_list;
+బాహ్య నిర్మాణం list_తల asym_cap_list;
 
-#define cpu_capacity_span(asym_data) to_cpumask((asym_data)->cpus)
+#నిర్వచించు cpu_సామర్థ్యం_పరిధి(asym_దత్తాంశం) గమ్యం_cpumask((asym_దత్తాంశం)->cpus)
 
 /*
  * Helpers for converting nanosecond timing to jiffy resolution
  */
-#define NS_TO_JIFFIES(time)	((unsigned long)(time) / (NSEC_PER_SEC/HZ))
+#నిర్వచించు NS_గమ్యం_JIFFIES(సమయం)	((గుర్తులేని దీర్ఘ)(సమయం) / (NSEC_చొప్పున_SEC/HZ))
 
 /*
  * Increase resolution of nice-level calculations for 64-bit architectures.
@@ -146,22 +146,22 @@ extern struct list_head asym_cap_list;
  * Really only required when CONFIG_FAIR_GROUP_SCHED=y is also set, but to
  * increase coverage and consistency always enable it on 64-bit platforms.
  */
-#ifdef CONFIG_64BIT
-# define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT + SCHED_FIXEDPOINT_SHIFT)
-# define scale_load(w)		((w) << SCHED_FIXEDPOINT_SHIFT)
-# define scale_load_down(w)					\
+#నిర్వచితమైతే CONFIG_64_బిట్టు
+# define NICE_0_ఎక్కించు_జరుపు	(SCHED_FIXEDPOINT_జరుపు + SCHED_FIXEDPOINT_జరుపు)
+# define scale_ఎక్కించు(w)		((w) << SCHED_FIXEDPOINT_జరుపు)
+# define scale_ఎక్కించు_కిందికి(w)					\
 ({								\
-	unsigned long __w = (w);				\
+	గుర్తులేని దీర్ఘ __w = (w);				\
 								\
-	if (__w)						\
-		__w = max(2UL, __w >> SCHED_FIXEDPOINT_SHIFT);	\
+	ఒకవేళ (__w)						\
+		__w = max(2UL, __w >> SCHED_FIXEDPOINT_జరుపు);	\
 	__w;							\
 })
-#else
-# define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT)
-# define scale_load(w)		(w)
-# define scale_load_down(w)	(w)
-#endif
+#లేకపోతే
+# define NICE_0_ఎక్కించు_జరుపు	(SCHED_FIXEDPOINT_జరుపు)
+# define scale_ఎక్కించు(w)		(w)
+# define scale_ఎక్కించు_కిందికి(w)	(w)
+#అయితే_ముగింపు
 
 /*
  * Task weight (visible to users) and its load (invisible to users) have
@@ -172,73 +172,73 @@ extern struct list_head asym_cap_list;
  *  scale_load(sched_prio_to_weight[NICE_TO_PRIO(0)-MAX_RT_PRIO]) == NICE_0_LOAD
  *
  */
-#define NICE_0_LOAD		(1L << NICE_0_LOAD_SHIFT)
+#నిర్వచించు NICE_0_ఎక్కించు		(1L << NICE_0_ఎక్కించు_జరుపు)
 
 /*
  * Single value that decides SCHED_DEADLINE internal math precision.
  * 10 -> just above 1us
  * 9  -> just above 0.5us
  */
-#define DL_SCALE		10
+#నిర్వచించు DL_SCALE		10
 
 /*
  * Single value that denotes runtime == period, ie unlimited time.
  */
-#define RUNTIME_INF		((u64)~0ULL)
+#నిర్వచించు RUNTIME_INF		((u64)~0ULL)
 
-static inline int idle_policy(int policy)
+స్థిర అంతఃవరుస పూర్ణాంకం idle_policy(పూర్ణాంకం policy)
 {
-	return policy == SCHED_IDLE;
+	తిరిగి policy == SCHED_IDLE;
 }
 
-static inline int normal_policy(int policy)
+స్థిర అంతఃవరుస పూర్ణాంకం సాధారణ_policy(పూర్ణాంకం policy)
 {
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (policy == SCHED_EXT)
-		return true;
-#endif
-	return policy == SCHED_NORMAL;
+#నిర్వచితమైతే CONFIG_SCHED_CLASS_EXT
+	ఒకవేళ (policy == SCHED_EXT)
+		తిరిగి true;
+#అయితే_ముగింపు
+	తిరిగి policy == SCHED_సాధారణ;
 }
 
-static inline int fair_policy(int policy)
+స్థిర అంతఃవరుస పూర్ణాంకం fair_policy(పూర్ణాంకం policy)
 {
-	return normal_policy(policy) || policy == SCHED_BATCH;
+	తిరిగి సాధారణ_policy(policy) || policy == SCHED_BATCH;
 }
 
-static inline int rt_policy(int policy)
+స్థిర అంతఃవరుస పూర్ణాంకం rt_policy(పూర్ణాంకం policy)
 {
-	return policy == SCHED_FIFO || policy == SCHED_RR;
+	తిరిగి policy == SCHED_FIFO || policy == SCHED_RR;
 }
 
-static inline int dl_policy(int policy)
+స్థిర అంతఃవరుస పూర్ణాంకం dl_policy(పూర్ణాంకం policy)
 {
-	return policy == SCHED_DEADLINE;
+	తిరిగి policy == SCHED_DEADLINE;
 }
 
-static inline bool valid_policy(int policy)
+స్థిర అంతఃవరుస bool valid_policy(పూర్ణాంకం policy)
 {
-	return idle_policy(policy) || fair_policy(policy) ||
+	తిరిగి idle_policy(policy) || fair_policy(policy) ||
 		rt_policy(policy) || dl_policy(policy);
 }
 
-static inline int task_has_idle_policy(struct task_struct *p)
+స్థిర అంతఃవరుస పూర్ణాంకం task_has_idle_policy(నిర్మాణం task_struct *p)
 {
-	return idle_policy(p->policy);
+	తిరిగి idle_policy(p->policy);
 }
 
-static inline int task_has_rt_policy(struct task_struct *p)
+స్థిర అంతఃవరుస పూర్ణాంకం task_has_rt_policy(నిర్మాణం task_struct *p)
 {
-	return rt_policy(p->policy);
+	తిరిగి rt_policy(p->policy);
 }
 
-static inline int task_has_dl_policy(struct task_struct *p)
+స్థిర అంతఃవరుస పూర్ణాంకం task_has_dl_policy(నిర్మాణం task_struct *p)
 {
-	return dl_policy(p->policy);
+	తిరిగి dl_policy(p->policy);
 }
 
-#define cap_scale(v, s)		((v)*(s) >> SCHED_CAPACITY_SHIFT)
+#నిర్వచించు cap_scale(v, s)		((v)*(s) >> SCHED_సామర్థ్యం_జరుపు)
 
-static inline void update_avg(u64 *avg, u64 sample)
+స్థిర అంతఃవరుస శూన్య update_avg(u64 *avg, u64 sample)
 {
 	s64 diff = sample - *avg;
 
@@ -249,8 +249,8 @@ static inline void update_avg(u64 *avg, u64 sample)
  * Shifting a value by an exponent greater *or equal* to the size of said value
  * is UB; cap at size-1.
  */
-#define shr_bound(val, shift)							\
-	(val >> min_t(typeof(shift), shift, BITS_PER_TYPE(typeof(val)) - 1))
+#నిర్వచించు shr_bound(val, జరుపు)							\
+	(val >> min_t(typeof(జరుపు), జరుపు, బిట్లు_చొప్పున_TYPE(typeof(val)) - 1))
 
 /*
  * cgroup weight knobs should use the common MIN, DFL and MAX values which are
@@ -258,16 +258,16 @@ static inline void update_avg(u64 *avg, u64 sample)
  * maps pretty well onto the shares value used by scheduler and the round-trip
  * conversions preserve the original value over the entire range.
  */
-static inline unsigned long sched_weight_from_cgroup(unsigned long cgrp_weight)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ sched_బరువు_from_cgroup(గుర్తులేని దీర్ఘ cgrp_బరువు)
 {
-	return DIV_ROUND_CLOSEST_ULL(cgrp_weight * 1024, CGROUP_WEIGHT_DFL);
+	తిరిగి DIV_విడత_CLOSEST_ULL(cgrp_బరువు * 1024, CGROUP_బరువు_DFL);
 }
 
-static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ sched_బరువు_గమ్యం_cgroup(గుర్తులేని దీర్ఘ బరువు)
 {
-	return clamp_t(unsigned long,
-		       DIV_ROUND_CLOSEST_ULL(weight * CGROUP_WEIGHT_DFL, 1024),
-		       CGROUP_WEIGHT_MIN, CGROUP_WEIGHT_MAX);
+	తిరిగి clamp_t(గుర్తులేని దీర్ఘ,
+		       DIV_విడత_CLOSEST_ULL(బరువు * CGROUP_బరువు_DFL, 1024),
+		       CGROUP_బరువు_MIN, CGROUP_బరువు_MAX);
 }
 
 /*
@@ -282,49 +282,49 @@ static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
  *
  * SUGOV stands for SchedUtil GOVernor.
  */
-#define SCHED_FLAG_SUGOV	0x10000000
+#నిర్వచించు SCHED_FLAG_SUGOV	0x10000000
 
-#define SCHED_DL_FLAGS		(SCHED_FLAG_RECLAIM | SCHED_FLAG_DL_OVERRUN | SCHED_FLAG_SUGOV)
+#నిర్వచించు SCHED_DL_FLAGS		(SCHED_FLAG_RECLAIM | SCHED_FLAG_DL_OVERRUN | SCHED_FLAG_SUGOV)
 
-static inline bool dl_entity_is_special(const struct sched_dl_entity *dl_se)
+స్థిర అంతఃవరుస bool dl_entity_is_special(స్థిరరాశి నిర్మాణం sched_dl_entity *dl_se)
 {
-#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-	return unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
-#else
-	return false;
-#endif
+#నిర్వచితమైతే CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+	తిరిగి unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
+#లేకపోతే
+	తిరిగి false;
+#అయితే_ముగింపు
 }
 
 /*
  * Tells if entity @a should preempt entity @b.
  */
-static inline bool dl_entity_preempt(const struct sched_dl_entity *a,
-				     const struct sched_dl_entity *b)
+స్థిర అంతఃవరుస bool dl_entity_preempt(స్థిరరాశి నిర్మాణం sched_dl_entity *a,
+				     స్థిరరాశి నిర్మాణం sched_dl_entity *b)
 {
-	return dl_entity_is_special(a) ||
-	       dl_time_before(a->deadline, b->deadline);
+	తిరిగి dl_entity_is_special(a) ||
+	       dl_సమయం_before(a->deadline, b->deadline);
 }
 
 /*
  * This is the priority-queue data structure of the RT scheduling class:
  */
-struct rt_prio_array {
+నిర్మాణం rt_prio_array {
 	DECLARE_BITMAP(bitmap, MAX_RT_PRIO+1); /* include 1 bit for delimiter */
-	struct list_head queue[MAX_RT_PRIO];
+	నిర్మాణం list_తల వరుస[MAX_RT_PRIO];
 };
 
-struct rt_bandwidth {
+నిర్మాణం rt_bandwidth {
 	/* nests inside the rq lock: */
-	raw_spinlock_t		rt_runtime_lock;
+	raw_spinlock_t		rt_runtime_తాళం;
 	ktime_t			rt_period;
 	u64			rt_runtime;
-	struct hrtimer		rt_period_timer;
-	unsigned int		rt_period_active;
+	నిర్మాణం hrtimer		rt_period_timer;
+	గుర్తులేని పూర్ణాంకం		rt_period_చురుకైన;
 };
 
-static inline int dl_bandwidth_enabled(void)
+స్థిర అంతఃవరుస పూర్ణాంకం dl_bandwidth_enabled(శూన్య)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	తిరిగి sysctl_sched_rt_runtime >= 0;
 }
 
 /*
@@ -345,23 +345,23 @@ static inline int dl_bandwidth_enabled(void)
  *  - bw (< 100%) is the deadline bandwidth of each CPU;
  *  - total_bw is the currently allocated bandwidth in each root domain;
  */
-struct dl_bw {
-	raw_spinlock_t		lock;
+నిర్మాణం dl_bw {
+	raw_spinlock_t		తాళం;
 	u64			bw;
-	u64			total_bw;
+	u64			మొత్తం_bw;
 };
 
-extern void init_dl_bw(struct dl_bw *dl_b);
-extern int  sched_dl_global_validate(void);
-extern void sched_dl_do_global(void);
-extern int  sched_dl_overflow(struct task_struct *p, int policy, const struct sched_attr *attr);
-extern void __setparam_dl(struct task_struct *p, const struct sched_attr *attr);
-extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags);
-extern bool __checkparam_dl(const struct sched_attr *attr);
-extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
-extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
-extern int  dl_bw_deactivate(int cpu);
-extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec);
+బాహ్య శూన్య init_dl_bw(నిర్మాణం dl_bw *dl_b);
+బాహ్య పూర్ణాంకం  sched_dl_global_validate(శూన్య);
+బాహ్య శూన్య sched_dl_do_global(శూన్య);
+బాహ్య పూర్ణాంకం  sched_dl_అధికప్రవాహం(నిర్మాణం task_struct *p, పూర్ణాంకం policy, స్థిరరాశి నిర్మాణం sched_attr *attr);
+బాహ్య శూన్య __setparam_dl(నిర్మాణం task_struct *p, స్థిరరాశి నిర్మాణం sched_attr *attr);
+బాహ్య శూన్య __getparam_dl(నిర్మాణం task_struct *p, నిర్మాణం sched_attr *attr, గుర్తులేని పూర్ణాంకం flags);
+బాహ్య bool __checkparam_dl(స్థిరరాశి నిర్మాణం sched_attr *attr);
+బాహ్య bool dl_param_మారింది(నిర్మాణం task_struct *p, స్థిరరాశి నిర్మాణం sched_attr *attr);
+బాహ్య పూర్ణాంకం  dl_cpuset_cpumask_can_shrink(స్థిరరాశి నిర్మాణం cpumask *cur, స్థిరరాశి నిర్మాణం cpumask *trial);
+బాహ్య పూర్ణాంకం  dl_bw_deactivate(పూర్ణాంకం cpu);
+బాహ్య s64 dl_scaled_delta_exec(నిర్మాణం rq *rq, నిర్మాణం sched_dl_entity *dl_se, s64 delta_exec);
 /*
  * SCHED_DEADLINE supports servers (nested scheduling) with the following
  * interface:
@@ -408,134 +408,134 @@ extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s6
  * naturally thottled to once per period, avoiding high context switch
  * workloads from spamming the hrtimer program/cancel paths.
  */
-extern void dl_server_update_idle(struct sched_dl_entity *dl_se, s64 delta_exec);
-extern void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec);
-extern void dl_server_start(struct sched_dl_entity *dl_se);
-extern void dl_server_stop(struct sched_dl_entity *dl_se);
-extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+బాహ్య శూన్య dl_server_update_idle(నిర్మాణం sched_dl_entity *dl_se, s64 delta_exec);
+బాహ్య శూన్య dl_server_update(నిర్మాణం sched_dl_entity *dl_se, s64 delta_exec);
+బాహ్య శూన్య dl_server_ప్రారంభం(నిర్మాణం sched_dl_entity *dl_se);
+బాహ్య శూన్య dl_server_stop(నిర్మాణం sched_dl_entity *dl_se);
+బాహ్య శూన్య dl_server_init(నిర్మాణం sched_dl_entity *dl_se, నిర్మాణం rq *rq,
 		    dl_server_pick_f pick_task);
-extern void sched_init_dl_servers(void);
+బాహ్య శూన్య sched_init_dl_servers(శూన్య);
 
-extern void fair_server_init(struct rq *rq);
-extern void ext_server_init(struct rq *rq);
-extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq);
-extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
+బాహ్య శూన్య fair_server_init(నిర్మాణం rq *rq);
+బాహ్య శూన్య ext_server_init(నిర్మాణం rq *rq);
+బాహ్య శూన్య __dl_server_attach_root(నిర్మాణం sched_dl_entity *dl_se, నిర్మాణం rq *rq);
+బాహ్య పూర్ణాంకం dl_server_apply_params(నిర్మాణం sched_dl_entity *dl_se,
 		    u64 runtime, u64 period, bool init);
-extern int dl_server_attach_bw(struct sched_dl_entity *dl_se);
-extern void dl_server_detach_bw(struct sched_dl_entity *dl_se);
-extern int dl_server_swap_bw(struct sched_dl_entity *detach_se,
-			     struct sched_dl_entity *attach_se);
+బాహ్య పూర్ణాంకం dl_server_attach_bw(నిర్మాణం sched_dl_entity *dl_se);
+బాహ్య శూన్య dl_server_detach_bw(నిర్మాణం sched_dl_entity *dl_se);
+బాహ్య పూర్ణాంకం dl_server_మార్పిడి_bw(నిర్మాణం sched_dl_entity *detach_se,
+			     నిర్మాణం sched_dl_entity *attach_se);
 
-static inline bool dl_server_active(struct sched_dl_entity *dl_se)
+స్థిర అంతఃవరుస bool dl_server_చురుకైన(నిర్మాణం sched_dl_entity *dl_se)
 {
-	return dl_se->dl_server_active;
+	తిరిగి dl_se->dl_server_చురుకైన;
 }
 
-#ifdef CONFIG_CGROUP_SCHED
+#నిర్వచితమైతే CONFIG_CGROUP_SCHED
 
-extern struct list_head task_groups;
+బాహ్య నిర్మాణం list_తల task_groups;
 
-#ifdef CONFIG_GROUP_SCHED_BANDWIDTH
-extern const u64 max_bw_quota_period_us;
+#నిర్వచితమైతే CONFIG_సమూహం_SCHED_BANDWIDTH
+బాహ్య స్థిరరాశి u64 max_bw_quota_period_us;
 
 /*
  * default period for group bandwidth.
  * default: 0.1s, units: microseconds
  */
-static inline u64 default_bw_period_us(void)
+స్థిర అంతఃవరుస u64 default_bw_period_us(శూన్య)
 {
-	return 100000ULL;
+	తిరిగి 100000ULL;
 }
-#endif /* CONFIG_GROUP_SCHED_BANDWIDTH */
+#అయితే_ముగింపు /* CONFIG_GROUP_SCHED_BANDWIDTH */
 
-struct cfs_bandwidth {
-#ifdef CONFIG_CFS_BANDWIDTH
-	raw_spinlock_t		lock;
+నిర్మాణం cfs_bandwidth {
+#నిర్వచితమైతే CONFIG_CFS_BANDWIDTH
+	raw_spinlock_t		తాళం;
 	ktime_t			period;
 	u64			quota;
 	u64			runtime;
-	u64			burst;
+	u64			వ్యవధి;
 	u64			runtime_snap;
-	s64			hierarchical_quota;
+	s64			క్రమానుగత_quota;
 
 	u8			idle;
-	u8			period_active;
+	u8			period_చురుకైన;
 	u8			slack_started;
-	struct hrtimer		period_timer;
-	struct hrtimer		slack_timer;
-	struct list_head	throttled_cfs_rq;
+	నిర్మాణం hrtimer		period_timer;
+	నిర్మాణం hrtimer		slack_timer;
+	నిర్మాణం list_తల	throttled_cfs_rq;
 
 	/* Statistics: */
-	int			nr_periods;
-	int			nr_throttled;
-	int			nr_burst;
-	u64			throttled_time;
-	u64			burst_time;
-#endif /* CONFIG_CFS_BANDWIDTH */
+	పూర్ణాంకం			nr_periods;
+	పూర్ణాంకం			nr_throttled;
+	పూర్ణాంకం			nr_వ్యవధి;
+	u64			throttled_సమయం;
+	u64			వ్యవధి_సమయం;
+#అయితే_ముగింపు /* CONFIG_CFS_BANDWIDTH */
 };
 
 /* Task group related information */
-struct task_group {
-	struct cgroup_subsys_state css;
+నిర్మాణం task_సమూహం {
+	నిర్మాణం cgroup_subsys_state css;
 
-#ifdef CONFIG_GROUP_SCHED_WEIGHT
+#నిర్వచితమైతే CONFIG_సమూహం_SCHED_బరువు
 	/* A positive value indicates that this is a SCHED_IDLE group. */
-	int			idle;
-#endif
+	పూర్ణాంకం			idle;
+#అయితే_ముగింపు
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
 	/* runqueue "owned" by this group on each CPU */
-	struct cfs_rq __percpu	*cfs_rq;
-	unsigned long		shares;
+	నిర్మాణం cfs_rq __percpu	*cfs_rq;
+	గుర్తులేని దీర్ఘ		shares;
 	/*
 	 * load_avg can be heavily contended at clock tick time, so put
 	 * it in its own cache-line separated from the fields above which
 	 * will also be accessed at each tick.
 	 */
-	atomic_long_t		load_avg ____cacheline_aligned;
+	atomic_long_t		ఎక్కించు_avg ____cacheline_aligned;
 	atomic_long_t		runnable_avg;
 
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+#అయితే_ముగింపు /* CONFIG_FAIR_GROUP_SCHED */
 
-#ifdef CONFIG_RT_GROUP_SCHED
-	struct sched_rt_entity	**rt_se;
-	struct rt_rq		**rt_rq;
+#నిర్వచితమైతే CONFIG_RT_సమూహం_SCHED
+	నిర్మాణం sched_rt_entity	**rt_se;
+	నిర్మాణం rt_rq		**rt_rq;
 
-	struct rt_bandwidth	rt_bandwidth;
-#endif
+	నిర్మాణం rt_bandwidth	rt_bandwidth;
+#అయితే_ముగింపు
 
-	struct scx_task_group	scx;
+	నిర్మాణం scx_task_సమూహం	scx;
 
-	struct rcu_head		rcu;
-	struct list_head	list;
+	నిర్మాణం rcu_తల		rcu;
+	నిర్మాణం list_తల	list;
 
-	struct task_group	*parent;
-	struct list_head	siblings;
-	struct list_head	children;
+	నిర్మాణం task_సమూహం	*మాతృ;
+	నిర్మాణం list_తల	siblings;
+	నిర్మాణం list_తల	children;
 
-#ifdef CONFIG_SCHED_AUTOGROUP
-	struct autogroup	*autogroup;
-#endif
+#నిర్వచితమైతే CONFIG_SCHED_AUTOGROUP
+	నిర్మాణం autogroup	*autogroup;
+#అయితే_ముగింపు
 
-	struct cfs_bandwidth	cfs_bandwidth;
+	నిర్మాణం cfs_bandwidth	cfs_bandwidth;
 
-#ifdef CONFIG_UCLAMP_TASK_GROUP
+#నిర్వచితమైతే CONFIG_UCLAMP_TASK_సమూహం
 	/* The two decimal precision [%] value requested from user-space */
-	unsigned int		uclamp_pct[UCLAMP_CNT];
+	గుర్తులేని పూర్ణాంకం		uclamp_pct[UCLAMP_CNT];
 	/* Clamp values requested for a task group */
-	struct uclamp_se	uclamp_req[UCLAMP_CNT];
+	నిర్మాణం uclamp_se	uclamp_req[UCLAMP_CNT];
 	/* Effective clamp values used for a task group */
-	struct uclamp_se	uclamp[UCLAMP_CNT];
-#endif
+	నిర్మాణం uclamp_se	uclamp[UCLAMP_CNT];
+#అయితే_ముగింపు
 
 };
 
-#define ROOT_TASK_GROUP_LOAD	NICE_0_LOAD
+#నిర్వచించు మూలం_TASK_సమూహం_ఎక్కించు	NICE_0_ఎక్కించు
 
-typedef int (*tg_visitor)(struct task_group *, void *);
+రకనిర్వచనం పూర్ణాంకం (*tg_visitor)(నిర్మాణం task_సమూహం *, శూన్య *);
 
-extern int walk_tg_tree_from(struct task_group *from,
-			     tg_visitor down, tg_visitor up, void *data);
+బాహ్య పూర్ణాంకం walk_tg_వృక్షం_from(నిర్మాణం task_సమూహం *from,
+			     tg_visitor కిందికి, tg_visitor పైకి, శూన్య *దత్తాంశం);
 
 /*
  * Iterate the full tree, calling @down when first entering a node and @up when
@@ -543,80 +543,80 @@ extern int walk_tg_tree_from(struct task_group *from,
  *
  * Caller must hold rcu_lock or sufficient equivalent.
  */
-static inline int walk_tg_tree(tg_visitor down, tg_visitor up, void *data)
+స్థిర అంతఃవరుస పూర్ణాంకం walk_tg_వృక్షం(tg_visitor కిందికి, tg_visitor పైకి, శూన్య *దత్తాంశం)
 {
-	return walk_tg_tree_from(&root_task_group, down, up, data);
+	తిరిగి walk_tg_వృక్షం_from(&మూలం_task_సమూహం, కిందికి, పైకి, దత్తాంశం);
 }
 
-static inline struct task_group *css_tg(struct cgroup_subsys_state *css)
+స్థిర అంతఃవరుస నిర్మాణం task_సమూహం *css_tg(నిర్మాణం cgroup_subsys_state *css)
 {
-	return css ? container_of(css, struct task_group, css) : NULL;
+	తిరిగి css ? container_యొక్క(css, నిర్మాణం task_సమూహం, css) : ఖాళీ;
 }
 
-extern int tg_nop(struct task_group *tg, void *data);
+బాహ్య పూర్ణాంకం tg_nop(నిర్మాణం task_సమూహం *tg, శూన్య *దత్తాంశం);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-extern void free_fair_sched_group(struct task_group *tg);
-extern int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent);
-extern void online_fair_sched_group(struct task_group *tg);
-extern void unregister_fair_sched_group(struct task_group *tg);
-extern void __sched_cgroup_mode_update(int mode);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline void free_fair_sched_group(struct task_group *tg) { }
-static inline int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
+బాహ్య శూన్య free_fair_sched_సమూహం(నిర్మాణం task_సమూహం *tg);
+బాహ్య పూర్ణాంకం alloc_fair_sched_సమూహం(నిర్మాణం task_సమూహం *tg, నిర్మాణం task_సమూహం *మాతృ);
+బాహ్య శూన్య online_fair_sched_సమూహం(నిర్మాణం task_సమూహం *tg);
+బాహ్య శూన్య unregister_fair_sched_సమూహం(నిర్మాణం task_సమూహం *tg);
+బాహ్య శూన్య __sched_cgroup_mode_update(పూర్ణాంకం బహుళకం);
+#లేకపోతే /* !CONFIG_FAIR_GROUP_SCHED: */
+స్థిర అంతఃవరుస శూన్య free_fair_sched_సమూహం(నిర్మాణం task_సమూహం *tg) { }
+స్థిర అంతఃవరుస పూర్ణాంకం alloc_fair_sched_సమూహం(నిర్మాణం task_సమూహం *tg, నిర్మాణం task_సమూహం *మాతృ)
 {
-       return 1;
+       తిరిగి 1;
 }
-static inline void online_fair_sched_group(struct task_group *tg) { }
-static inline void unregister_fair_sched_group(struct task_group *tg) { }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+స్థిర అంతఃవరుస శూన్య online_fair_sched_సమూహం(నిర్మాణం task_సమూహం *tg) { }
+స్థిర అంతఃవరుస శూన్య unregister_fair_sched_సమూహం(నిర్మాణం task_సమూహం *tg) { }
+#అయితే_ముగింపు /* !CONFIG_FAIR_GROUP_SCHED */
 
-extern void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
-			struct sched_entity *se, int cpu,
-			struct sched_entity *parent);
-extern void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent);
+బాహ్య శూన్య init_tg_cfs_నమోదు(నిర్మాణం task_సమూహం *tg, నిర్మాణం cfs_rq *cfs_rq,
+			నిర్మాణం sched_entity *se, పూర్ణాంకం cpu,
+			నిర్మాణం sched_entity *మాతృ);
+బాహ్య శూన్య init_cfs_bandwidth(నిర్మాణం cfs_bandwidth *cfs_b, నిర్మాణం cfs_bandwidth *మాతృ);
 
-extern void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b);
-extern void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b);
-extern void unthrottle_cfs_rq(struct cfs_rq *cfs_rq);
-extern bool cfs_task_bw_constrained(struct task_struct *p);
+బాహ్య శూన్య __refill_cfs_bandwidth_runtime(నిర్మాణం cfs_bandwidth *cfs_b);
+బాహ్య శూన్య ప్రారంభం_cfs_bandwidth(నిర్మాణం cfs_bandwidth *cfs_b);
+బాహ్య శూన్య unthrottle_cfs_rq(నిర్మాణం cfs_rq *cfs_rq);
+బాహ్య bool cfs_task_bw_constrained(నిర్మాణం task_struct *p);
 
-extern void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
-		struct sched_rt_entity *rt_se, int cpu,
-		struct sched_rt_entity *parent);
-extern int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us);
-extern int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us);
-extern long sched_group_rt_runtime(struct task_group *tg);
-extern long sched_group_rt_period(struct task_group *tg);
-extern int sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk);
+బాహ్య శూన్య init_tg_rt_నమోదు(నిర్మాణం task_సమూహం *tg, నిర్మాణం rt_rq *rt_rq,
+		నిర్మాణం sched_rt_entity *rt_se, పూర్ణాంకం cpu,
+		నిర్మాణం sched_rt_entity *మాతృ);
+బాహ్య పూర్ణాంకం sched_సమూహం_సమితి_rt_runtime(నిర్మాణం task_సమూహం *tg, దీర్ఘ rt_runtime_us);
+బాహ్య పూర్ణాంకం sched_సమూహం_సమితి_rt_period(నిర్మాణం task_సమూహం *tg, u64 rt_period_us);
+బాహ్య దీర్ఘ sched_సమూహం_rt_runtime(నిర్మాణం task_సమూహం *tg);
+బాహ్య దీర్ఘ sched_సమూహం_rt_period(నిర్మాణం task_సమూహం *tg);
+బాహ్య పూర్ణాంకం sched_rt_can_attach(నిర్మాణం task_సమూహం *tg, నిర్మాణం task_struct *tsk);
 
-extern struct task_group *sched_create_group(struct task_group *parent);
-extern void sched_online_group(struct task_group *tg,
-			       struct task_group *parent);
-extern void sched_destroy_group(struct task_group *tg);
-extern void sched_release_group(struct task_group *tg);
+బాహ్య నిర్మాణం task_సమూహం *sched_create_సమూహం(నిర్మాణం task_సమూహం *మాతృ);
+బాహ్య శూన్య sched_online_సమూహం(నిర్మాణం task_సమూహం *tg,
+			       నిర్మాణం task_సమూహం *మాతృ);
+బాహ్య శూన్య sched_destroy_సమూహం(నిర్మాణం task_సమూహం *tg);
+బాహ్య శూన్య sched_release_సమూహం(నిర్మాణం task_సమూహం *tg);
 
-extern void sched_move_task(struct task_struct *tsk, bool for_autogroup);
+బాహ్య శూన్య sched_move_task(నిర్మాణం task_struct *tsk, bool for_autogroup);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-extern int sched_group_set_shares(struct task_group *tg, unsigned long shares);
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
+బాహ్య పూర్ణాంకం sched_సమూహం_సమితి_shares(నిర్మాణం task_సమూహం *tg, గుర్తులేని దీర్ఘ shares);
 
-extern int sched_group_set_idle(struct task_group *tg, long idle);
+బాహ్య పూర్ణాంకం sched_సమూహం_సమితి_idle(నిర్మాణం task_సమూహం *tg, దీర్ఘ idle);
 
-extern void set_task_rq_fair(struct sched_entity *se,
-			     struct cfs_rq *prev, struct cfs_rq *next);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline int sched_group_set_shares(struct task_group *tg, unsigned long shares) { return 0; }
-static inline int sched_group_set_idle(struct task_group *tg, long idle) { return 0; }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+బాహ్య శూన్య సమితి_task_rq_fair(నిర్మాణం sched_entity *se,
+			     నిర్మాణం cfs_rq *prev, నిర్మాణం cfs_rq *తదుపరి);
+#లేకపోతే /* !CONFIG_FAIR_GROUP_SCHED: */
+స్థిర అంతఃవరుస పూర్ణాంకం sched_సమూహం_సమితి_shares(నిర్మాణం task_సమూహం *tg, గుర్తులేని దీర్ఘ shares) { తిరిగి 0; }
+స్థిర అంతఃవరుస పూర్ణాంకం sched_సమూహం_సమితి_idle(నిర్మాణం task_సమూహం *tg, దీర్ఘ idle) { తిరిగి 0; }
+#అయితే_ముగింపు /* !CONFIG_FAIR_GROUP_SCHED */
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#లేకపోతే /* !CONFIG_CGROUP_SCHED: */
 
-struct cfs_bandwidth { };
+నిర్మాణం cfs_bandwidth { };
 
-static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false; }
+స్థిర అంతఃవరుస bool cfs_task_bw_constrained(నిర్మాణం task_struct *p) { తిరిగి false; }
 
-#endif /* !CONFIG_CGROUP_SCHED */
+#అయితే_ముగింపు /* !CONFIG_CGROUP_SCHED */
 
 /*
  * A weight of 0 or 1 can cause arithmetics problems.
@@ -626,12 +626,12 @@ static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false
  * (The default weight is 1024 - so there's no practical
  *  limitation from this.)
  */
-#define MIN_SHARES		(1UL <<  1)
-#define MAX_SHARES		(1UL << 18)
+#నిర్వచించు MIN_SHARES		(1UL <<  1)
+#నిర్వచించు MAX_SHARES		(1UL << 18)
 
-extern void unregister_rt_sched_group(struct task_group *tg);
-extern void free_rt_sched_group(struct task_group *tg);
-extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent);
+బాహ్య శూన్య unregister_rt_sched_సమూహం(నిర్మాణం task_సమూహం *tg);
+బాహ్య శూన్య free_rt_sched_సమూహం(నిర్మాణం task_సమూహం *tg);
+బాహ్య పూర్ణాంకం alloc_rt_sched_సమూహం(నిర్మాణం task_సమూహం *tg, నిర్మాణం task_సమూహం *మాతృ);
 
 /*
  * u64_u32_load/u64_u32_store
@@ -639,14 +639,14 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
  * Use a copy of a u64 value to protect against data race. This is only
  * applicable for 32-bits architectures.
  */
-#ifdef CONFIG_64BIT
-# define u64_u32_load_copy(var, copy)		var
+#నిర్వచితమైతే CONFIG_64_బిట్టు
+# define u64_u32_ఎక్కించు_copy(var, copy)		var
 # define u64_u32_store_copy(var, copy, val)	(var = val)
-#else
-# define u64_u32_load_copy(var, copy)					\
+#లేకపోతే
+# define u64_u32_ఎక్కించు_copy(var, copy)					\
 ({									\
 	u64 __val, __val_copy;						\
-	do {								\
+	చేయి {								\
 		__val_copy = copy;					\
 		/*							\
 		 * paired with u64_u32_store_copy(), ordering access	\
@@ -654,11 +654,11 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
 		 */							\
 		smp_rmb();						\
 		__val = var;						\
-	} while (__val != __val_copy);					\
+	} అయితే (__val != __val_copy);					\
 	__val;								\
 })
 # define u64_u32_store_copy(var, copy, val)				\
-do {									\
+చేయి {									\
 	typeof(val) __val = (val);					\
 	var = __val;							\
 	/*								\
@@ -667,65 +667,65 @@ do {									\
 	 */								\
 	smp_wmb();							\
 	copy = __val;							\
-} while (0)
-#endif
-# define u64_u32_load(var)		u64_u32_load_copy(var, var##_copy)
+} అయితే (0)
+#అయితే_ముగింపు
+# define u64_u32_ఎక్కించు(var)		u64_u32_ఎక్కించు_copy(var, var##_copy)
 # define u64_u32_store(var, val)	u64_u32_store_copy(var, var##_copy, val)
 
-struct balance_callback {
-	struct balance_callback *next;
-	void (*func)(struct rq *rq);
+నిర్మాణం balance_callback {
+	నిర్మాణం balance_callback *తదుపరి;
+	శూన్య (*func)(నిర్మాణం rq *rq);
 };
 
 /* Fair scheduling SCHED_{NORMAL,BATCH,IDLE} related fields in a runqueue: */
-struct cfs_rq {
-	struct load_weight	load;
-	unsigned int		nr_queued;
-	unsigned int		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_idle;		/* SCHED_IDLE */
+నిర్మాణం cfs_rq {
+	నిర్మాణం ఎక్కించు_బరువు	ఎక్కించు;
+	గుర్తులేని పూర్ణాంకం		nr_queued;
+	గుర్తులేని పూర్ణాంకం		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	గుర్తులేని పూర్ణాంకం		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	గుర్తులేని పూర్ణాంకం		h_nr_idle;		/* SCHED_IDLE */
 
-	s64			sum_w_vruntime;
-	u64			sum_weight;
+	s64			కూడిక_w_vruntime;
+	u64			కూడిక_బరువు;
 	u64			zero_vruntime;
-	unsigned int		sum_shift;
+	గుర్తులేని పూర్ణాంకం		కూడిక_జరుపు;
 
-#ifdef CONFIG_SCHED_CORE
-	unsigned int		forceidle_seq;
+#నిర్వచితమైతే CONFIG_SCHED_CORE
+	గుర్తులేని పూర్ణాంకం		forceidle_seq;
 	u64			zero_vruntime_fi;
-#endif
+#అయితే_ముగింపు
 
-	struct rb_root_cached	tasks_timeline;
+	నిర్మాణం rb_మూలం_cached	tasks_timeline;
 
 	/*
 	 * 'curr' points to the currently running entity on this cfs_rq.
 	 * It is set to NULL otherwise (i.e when none are currently running).
 	 */
-	struct sched_entity	*curr;
-	struct sched_entity	*next;
+	నిర్మాణం sched_entity	*curr;
+	నిర్మాణం sched_entity	*తదుపరి;
 
 	/*
 	 * CFS load tracking
 	 */
-	struct sched_entity	*h_curr;
-	struct sched_avg	avg;
-#ifndef CONFIG_64BIT
-	u64			last_update_time_copy;
-#endif
-	struct {
-		raw_spinlock_t	lock ____cacheline_aligned;
-		int		nr;
-		unsigned long	load_avg;
-		unsigned long	util_avg;
-		unsigned long	runnable_avg;
+	నిర్మాణం sched_entity	*h_curr;
+	నిర్మాణం sched_avg	avg;
+#నిర్వచితం_కాకపోతే CONFIG_64_బిట్టు
+	u64			చివరి_update_సమయం_copy;
+#అయితే_ముగింపు
+	నిర్మాణం {
+		raw_spinlock_t	తాళం ____cacheline_aligned;
+		పూర్ణాంకం		nr;
+		గుర్తులేని దీర్ఘ	ఎక్కించు_avg;
+		గుర్తులేని దీర్ఘ	util_avg;
+		గుర్తులేని దీర్ఘ	runnable_avg;
 	} removed;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	u64			last_update_tg_load_avg;
-	unsigned long		tg_load_avg_contrib;
-	unsigned long		tg_runnable_avg_contrib;
-	long			propagate;
-	long			prop_runnable_sum;
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
+	u64			చివరి_update_tg_ఎక్కించు_avg;
+	గుర్తులేని దీర్ఘ		tg_ఎక్కించు_avg_contrib;
+	గుర్తులేని దీర్ఘ		tg_runnable_avg_contrib;
+	దీర్ఘ			propagate;
+	దీర్ఘ			prop_runnable_కూడిక;
 
 	/*
 	 *   h_load = weight * f(tg)
@@ -733,11 +733,11 @@ struct cfs_rq {
 	 * Where f(tg) is the recursive weight fraction assigned to
 	 * this group.
 	 */
-	unsigned long		h_load;
-	u64			last_h_load_update;
-	struct sched_entity	*h_load_next;
+	గుర్తులేని దీర్ఘ		h_ఎక్కించు;
+	u64			చివరి_h_ఎక్కించు_update;
+	నిర్మాణం sched_entity	*h_ఎక్కించు_తదుపరి;
 
-	struct rq		*rq;	/* CPU runqueue to which this cfs_rq is attached */
+	నిర్మాణం rq		*rq;	/* CPU runqueue to which this cfs_rq is attached */
 
 	/*
 	 * leaf cfs_rqs are those that hold tasks (lowest schedulable entity in
@@ -747,39 +747,39 @@ struct cfs_rq {
 	 * leaf_cfs_rq_list ties together list of leaf cfs_rq's in a CPU.
 	 * This list is used during load balance.
 	 */
-	int			on_list;
-	struct list_head	leaf_cfs_rq_list;
-	struct task_group	*tg;	/* Group that "owns" this runqueue */
+	పూర్ణాంకం			on_list;
+	నిర్మాణం list_తల	ఆకు_cfs_rq_list;
+	నిర్మాణం task_సమూహం	*tg;	/* Group that "owns" this runqueue */
 
 	/* Locally cached copy of our task_group's idle value */
-	int			idle;
+	పూర్ణాంకం			idle;
 
 # ifdef CONFIG_CFS_BANDWIDTH
-	int			runtime_enabled;
-	s64			runtime_remaining;
+	పూర్ణాంకం			runtime_enabled;
+	s64			runtime_మిగిలిన;
 
 	u64			throttled_pelt_idle;
-#  ifndef CONFIG_64BIT
+#  ifndef CONFIG_64_బిట్టు
 	u64                     throttled_pelt_idle_copy;
 #  endif
 	u64			throttled_clock;
 	u64			throttled_clock_pelt;
-	u64			throttled_clock_pelt_time;
+	u64			throttled_clock_pelt_సమయం;
 	u64			throttled_clock_self;
-	u64			throttled_clock_self_time;
+	u64			throttled_clock_self_సమయం;
 	bool			throttled:1;
 	bool			pelt_clock_throttled:1;
-	int			throttle_count;
-	struct list_head	throttled_list;
-	struct list_head	throttled_csd_list;
-	struct list_head        throttled_limbo_list;
+	పూర్ణాంకం			throttle_లెక్క;
+	నిర్మాణం list_తల	throttled_list;
+	నిర్మాణం list_తల	throttled_csd_list;
+	నిర్మాణం list_తల        throttled_limbo_list;
 # endif /* CONFIG_CFS_BANDWIDTH */
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+#అయితే_ముగింపు /* CONFIG_FAIR_GROUP_SCHED */
 };
 
-#ifdef CONFIG_SCHED_CLASS_EXT
+#నిర్వచితమైతే CONFIG_SCHED_CLASS_EXT
 /* scx_rq->flags, protected by the rq lock */
-enum scx_rq_flags {
+గణన scx_rq_flags {
 	/*
 	 * A hotplugged CPU starts scheduling before rq_online_scx(). Track
 	 * ops.cpu_on/offline() state so that ops.enqueue/dispatch() are called
@@ -790,116 +790,116 @@ enum scx_rq_flags {
 	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
 	SCX_RQ_BAL_CB_PENDING	= 1 << 6, /* must queue a cb after dispatching */
 	SCX_RQ_SUB_IDLE_RENOTIFY	= 1 << 7, /* sub-scheds are owed update_idle() */
-	SCX_RQ_ROOT_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
+	SCX_RQ_మూలం_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
 
-	SCX_RQ_IN_WAKEUP	= 1 << 16,
-	SCX_RQ_IN_DISPATCH	= 1 << 17,
+	SCX_RQ_లోపల_WAKEUP	= 1 << 16,
+	SCX_RQ_లోపల_DISPATCH	= 1 << 17,
 };
 
 /* per-rq rescue execution state, see scx_rescue_timerfn() */
-struct scx_rq_rescue {
-	struct scx_dispatch_q	dsq;			/* stranded tasks awaiting rescue */
+నిర్మాణం scx_rq_rescue {
+	నిర్మాణం scx_dispatch_q	dsq;			/* stranded tasks awaiting rescue */
 	s64			budget;			/* execution token bucket, ns */
 	u64			clock;			/* last budget accrual timestamp */
-	struct task_struct	*curr;			/* task being rescued, one at a time */
-	s64			slice;			/* curr's admitted slice */
+	నిర్మాణం task_struct	*curr;			/* task being rescued, one at a time */
+	s64			ముక్క;			/* curr's admitted slice */
 	u64			exec_snap;		/* sum_exec_runtime at admission */
-	struct timer_list	timer;			/* paces admission and escalation */
+	నిర్మాణం timer_list	timer;			/* paces admission and escalation */
 	u64			kill_at;		/* last ejection, init before any */
 };
 
-struct scx_rq {
-	struct scx_dispatch_q	local_dsq;
-#ifdef CONFIG_EXT_SUB_SCHED
-	struct scx_dispatch_q	reject_dsq;		/* staging for cap-rejected tasks */
-	struct scx_rq_rescue	rescue;
-#endif
-	struct list_head	runnable_list;		/* runnable tasks on this rq */
-	struct list_head	ddsp_deferred_locals;	/* deferred ddsps from enq */
+నిర్మాణం scx_rq {
+	నిర్మాణం scx_dispatch_q	local_dsq;
+#నిర్వచితమైతే CONFIG_EXT_SUB_SCHED
+	నిర్మాణం scx_dispatch_q	reject_dsq;		/* staging for cap-rejected tasks */
+	నిర్మాణం scx_rq_rescue	rescue;
+#అయితే_ముగింపు
+	నిర్మాణం list_తల	runnable_list;		/* runnable tasks on this rq */
+	నిర్మాణం list_తల	ddsp_deferred_locals;	/* deferred ddsps from enq */
 	/* both stashed across the activate_task() in move_remote_task_to_local_dsq() */
 	u64			remote_activate_enq_flags;
-	struct scx_sched	*remote_activate_sch;
+	నిర్మాణం scx_sched	*remote_activate_sch;
 	u32			nr_running;
-	u32			cpuperf_target;		/* [0, SCHED_CAPACITY_SCALE] */
-	bool			in_select_cpu;
+	u32			cpuperf_లక్ష్యం;		/* [0, SCHED_CAPACITY_SCALE] */
+	bool			లోపల_select_cpu;
 	bool			cpu_released;
 	u32			flags;
 	u32			nr_immed;		/* ENQ_IMMED tasks on local_dsq */
-#ifdef CONFIG_SCHED_CORE
-	u32			lock_drop_seq;	/* nr dispatch lock releases */
-#endif
+#నిర్వచితమైతే CONFIG_SCHED_CORE
+	u32			తాళం_drop_seq;	/* nr dispatch lock releases */
+#అయితే_ముగింపు
 	u64			clock;			/* current per-rq clock -- see scx_bpf_now() */
-#ifdef CONFIG_EXT_SUB_SCHED
-	struct llist_head	ecaps_to_sync;		/* pending ecaps syncs */
-	struct task_struct	*sub_dispatch_prev;
-#endif
-	cpumask_var_t		cpus_to_sync;
+#నిర్వచితమైతే CONFIG_EXT_SUB_SCHED
+	నిర్మాణం llist_తల	ecaps_గమ్యం_sync;		/* pending ecaps syncs */
+	నిర్మాణం task_struct	*sub_dispatch_prev;
+#అయితే_ముగింపు
+	cpumask_var_t		cpus_గమ్యం_sync;
 	bool			kick_sync_pending;
-	unsigned long		kick_sync;
+	గుర్తులేని దీర్ఘ		kick_sync;
 
-	struct list_head	sched_pcpus_to_kick;	/* see kick_cpus_irq_workfn() */
+	నిర్మాణం list_తల	sched_pcpus_గమ్యం_kick;	/* see kick_cpus_irq_workfn() */
 
-	raw_spinlock_t		deferred_reenq_lock;
-	struct list_head	deferred_reenq_locals;	/* scheds requesting reenq of local DSQ */
-	struct list_head	deferred_reenq_users;	/* user DSQs requesting reenq */
-	struct balance_callback	deferred_bal_cb;
-	struct balance_callback	kick_sync_bal_cb;
-	struct irq_work		deferred_irq_work;
-	struct irq_work		kick_cpus_irq_work;
+	raw_spinlock_t		deferred_reenq_తాళం;
+	నిర్మాణం list_తల	deferred_reenq_locals;	/* scheds requesting reenq of local DSQ */
+	నిర్మాణం list_తల	deferred_reenq_users;	/* user DSQs requesting reenq */
+	నిర్మాణం balance_callback	deferred_bal_cb;
+	నిర్మాణం balance_callback	kick_sync_bal_cb;
+	నిర్మాణం irq_work		deferred_irq_work;
+	నిర్మాణం irq_work		kick_cpus_irq_work;
 };
-#endif /* CONFIG_SCHED_CLASS_EXT */
+#అయితే_ముగింపు /* CONFIG_SCHED_CLASS_EXT */
 
-static inline int rt_bandwidth_enabled(void)
+స్థిర అంతఃవరుస పూర్ణాంకం rt_bandwidth_enabled(శూన్య)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	తిరిగి sysctl_sched_rt_runtime >= 0;
 }
 
 /* RT IPI pull logic requires IRQ_WORK */
-#if defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
-# define HAVE_RT_PUSH_IPI
-#endif
+#ఒకవేళ defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
+# define HAVE_RT_నెట్టు_IPI
+#అయితే_ముగింపు
 
 /* Real-Time classes' related field in a runqueue: */
-struct rt_rq {
-	struct rt_prio_array	active;
-	unsigned int		rt_nr_running;
-	unsigned int		rr_nr_running;
-	struct {
-		int		curr; /* highest queued rt task prio */
-		int		next; /* next highest */
+నిర్మాణం rt_rq {
+	నిర్మాణం rt_prio_array	చురుకైన;
+	గుర్తులేని పూర్ణాంకం		rt_nr_running;
+	గుర్తులేని పూర్ణాంకం		rr_nr_running;
+	నిర్మాణం {
+		పూర్ణాంకం		curr; /* highest queued rt task prio */
+		పూర్ణాంకం		తదుపరి; /* next highest */
 	} highest_prio;
 	bool			overloaded;
-	struct plist_head	pushable_tasks;
+	నిర్మాణం plist_తల	pushable_tasks;
 
-	int			rt_queued;
+	పూర్ణాంకం			rt_queued;
 
-#ifdef CONFIG_RT_GROUP_SCHED
-	int			rt_throttled;
-	u64			rt_time; /* consumed RT time, goes up in update_curr_rt */
+#నిర్వచితమైతే CONFIG_RT_సమూహం_SCHED
+	పూర్ణాంకం			rt_throttled;
+	u64			rt_సమయం; /* consumed RT time, goes up in update_curr_rt */
 	u64			rt_runtime; /* allotted RT time, "slice" from rt_bandwidth, RT sharing/balancing */
 	/* Nests inside the rq lock: */
-	raw_spinlock_t		rt_runtime_lock;
+	raw_spinlock_t		rt_runtime_తాళం;
 
-	unsigned int		rt_nr_boosted;
+	గుర్తులేని పూర్ణాంకం		rt_nr_boosted;
 
-	struct rq		*rq; /* this is always top-level rq, cache? */
-#endif
-#ifdef CONFIG_CGROUP_SCHED
-	struct task_group	*tg; /* this tg has "this" rt_rq on given CPU for runnable entities */
-#endif
+	నిర్మాణం rq		*rq; /* this is always top-level rq, cache? */
+#అయితే_ముగింపు
+#నిర్వచితమైతే CONFIG_CGROUP_SCHED
+	నిర్మాణం task_సమూహం	*tg; /* this tg has "this" rt_rq on given CPU for runnable entities */
+#అయితే_ముగింపు
 };
 
-static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
+స్థిర అంతఃవరుస bool rt_rq_is_runnable(నిర్మాణం rt_rq *rt_rq)
 {
-	return rt_rq->rt_queued && rt_rq->rt_nr_running;
+	తిరిగి rt_rq->rt_queued && rt_rq->rt_nr_running;
 }
 
 /* Deadline class' related fields in a runqueue */
-struct dl_rq {
+నిర్మాణం dl_rq {
 	/* runqueue is an rbtree, ordered by deadline */
-	struct rb_root_cached	root;
+	నిర్మాణం rb_మూలం_cached	మూలం;
 
-	unsigned int		dl_nr_running;
+	గుర్తులేని పూర్ణాంకం		dl_nr_running;
 
 	/*
 	 * Deadline values of the currently executing and the
@@ -907,20 +907,20 @@ struct dl_rq {
 	 * the decision whether or not a ready but not running task
 	 * should migrate somewhere else.
 	 */
-	struct {
+	నిర్మాణం {
 		u64		curr;
-		u64		next;
+		u64		తదుపరి;
 	} earliest_dl;
 
 	bool			overloaded;
 
-	struct sched_dl_entity	*curr;
+	నిర్మాణం sched_dl_entity	*curr;
 	/*
 	 * Tasks on this rq that can be pushed away. They are kept in
 	 * an rb-tree, ordered by tasks' deadlines, with caching
 	 * of the leftmost (earliest deadline) element.
 	 */
-	struct rb_root_cached	pushable_dl_tasks_root;
+	నిర్మాణం rb_మూలం_cached	pushable_dl_tasks_మూలం;
 
 	/*
 	 * "Active utilization" for this runqueue: increased when a
@@ -951,66 +951,66 @@ struct dl_rq {
 	 * Inverse of the fraction of CPU utilization that can be reclaimed
 	 * by the GRUB algorithm.
 	 */
-	u64			bw_ratio;
+	u64			bw_నిష్పత్తి;
 };
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
 /* Check whether a task group is root tg */
-#define is_root_task_group(tg) ((tg) == &root_task_group)
+#నిర్వచించు is_మూలం_task_సమూహం(tg) ((tg) == &మూలం_task_సమూహం)
 /* An entity is a task if it doesn't "own" a runqueue */
-#define entity_is_task(se)	(!se->my_q)
+#నిర్వచించు entity_is_task(se)	(!se->my_q)
 
-static inline void se_update_runnable(struct sched_entity *se)
+స్థిర అంతఃవరుస శూన్య se_update_runnable(నిర్మాణం sched_entity *se)
 {
-	if (!entity_is_task(se))
-		se->runnable_weight = se->my_q->h_nr_runnable;
+	ఒకవేళ (!entity_is_task(se))
+		se->runnable_బరువు = se->my_q->h_nr_runnable;
 }
 
-static inline long se_runnable(struct sched_entity *se)
+స్థిర అంతఃవరుస దీర్ఘ se_runnable(నిర్మాణం sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	ఒకవేళ (se->sched_delayed)
+		తిరిగి false;
 
-	if (entity_is_task(se))
-		return !!se->on_rq;
-	else
-		return se->runnable_weight;
+	ఒకవేళ (entity_is_task(se))
+		తిరిగి !!se->on_rq;
+	లేకపోతే
+		తిరిగి se->runnable_బరువు;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#లేకపోతే /* !CONFIG_FAIR_GROUP_SCHED: */
 
-#define entity_is_task(se)	1
+#నిర్వచించు entity_is_task(se)	1
 
-static inline void se_update_runnable(struct sched_entity *se) { }
+స్థిర అంతఃవరుస శూన్య se_update_runnable(నిర్మాణం sched_entity *se) { }
 
-static inline long se_runnable(struct sched_entity *se)
+స్థిర అంతఃవరుస దీర్ఘ se_runnable(నిర్మాణం sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	ఒకవేళ (se->sched_delayed)
+		తిరిగి false;
 
-	return !!se->on_rq;
+	తిరిగి !!se->on_rq;
 }
 
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#అయితే_ముగింపు /* !CONFIG_FAIR_GROUP_SCHED */
 
 /*
  * XXX we want to get rid of these helpers and use the full load resolution.
  */
-static inline long se_weight(struct sched_entity *se)
+స్థిర అంతఃవరుస దీర్ఘ se_బరువు(నిర్మాణం sched_entity *se)
 {
-	return scale_load_down(se->load.weight);
+	తిరిగి scale_ఎక్కించు_కిందికి(se->ఎక్కించు.బరువు);
 }
 
 
-static inline bool sched_asym_prefer(int a, int b)
+స్థిర అంతఃవరుస bool sched_asym_prefer(పూర్ణాంకం a, పూర్ణాంకం b)
 {
-	return arch_asym_cpu_priority(a) > arch_asym_cpu_priority(b);
+	తిరిగి arch_asym_cpu_ప్రాధాన్యత(a) > arch_asym_cpu_ప్రాధాన్యత(b);
 }
 
-struct perf_domain {
-	struct em_perf_domain *em_pd;
-	struct perf_domain *next;
-	struct rcu_head rcu;
+నిర్మాణం perf_domain {
+	నిర్మాణం em_perf_domain *em_pd;
+	నిర్మాణం perf_domain *తదుపరి;
+	నిర్మాణం rcu_తల rcu;
 };
 
 /*
@@ -1021,11 +1021,11 @@ struct perf_domain {
  * object.
  *
  */
-struct root_domain {
+నిర్మాణం మూలం_domain {
 	atomic_t		refcount;
-	atomic_t		rto_count;
-	struct rcu_head		rcu;
-	cpumask_var_t		span;
+	atomic_t		rto_లెక్క;
+	నిర్మాణం rcu_తల		rcu;
+	cpumask_var_t		పరిధి;
 	cpumask_var_t		online;
 
 	/*
@@ -1042,10 +1042,10 @@ struct root_domain {
 	 * The bit corresponding to a CPU gets set here if such CPU has more
 	 * than one runnable -deadline task (as it is below for RT tasks).
 	 */
-	cpumask_var_t		dlo_mask;
-	atomic_t		dlo_count;
-	struct dl_bw		dl_bw;
-	struct cpudl		cpudl;
+	cpumask_var_t		dlo_ముసుగు;
+	atomic_t		dlo_లెక్క;
+	నిర్మాణం dl_bw		dl_bw;
+	నిర్మాణం cpudl		cpudl;
 
 	/*
 	 * Indicate whether a root_domain's dl_bw has been checked or
@@ -1054,57 +1054,57 @@ struct root_domain {
 	 * Also, some corner cases, like 'wrap around' is dangerous, but given
 	 * that u64 is 'big enough'. So that shouldn't be a concern.
 	 */
-	u64 visit_cookie;
+	u64 సందర్శించు_cookie;
 
-#ifdef HAVE_RT_PUSH_IPI
+#నిర్వచితమైతే HAVE_RT_నెట్టు_IPI
 	/*
 	 * For IPI pull requests, loop across the rto_mask.
 	 */
-	struct irq_work		rto_push_work;
-	raw_spinlock_t		rto_lock;
+	నిర్మాణం irq_work		rto_నెట్టు_work;
+	raw_spinlock_t		rto_తాళం;
 	/* These are only updated and read within rto_lock */
-	int			rto_loop;
-	int			rto_cpu;
+	పూర్ణాంకం			rto_loop;
+	పూర్ణాంకం			rto_cpu;
 	/* These atomics are updated outside of a lock */
-	atomic_t		rto_loop_next;
-	atomic_t		rto_loop_start;
-#endif /* HAVE_RT_PUSH_IPI */
+	atomic_t		rto_loop_తదుపరి;
+	atomic_t		rto_loop_ప్రారంభం;
+#అయితే_ముగింపు /* HAVE_RT_PUSH_IPI */
 	/*
 	 * The "RT overload" flag: it gets set if a CPU has more than
 	 * one runnable RT task.
 	 */
-	cpumask_var_t		rto_mask;
-	struct cpupri		cpupri;
+	cpumask_var_t		rto_ముసుగు;
+	నిర్మాణం cpupri		cpupri;
 
 	/*
 	 * NULL-terminated list of performance domains intersecting with the
 	 * CPUs of the rd. Protected by RCU.
 	 */
-	struct perf_domain __rcu *pd;
+	నిర్మాణం perf_domain __rcu *pd;
 };
 
-extern void init_defrootdomain(void);
-extern int sched_init_domains(const struct cpumask *cpu_map);
-extern void rq_attach_root(struct rq *rq, struct root_domain *rd);
-extern void sched_get_rd(struct root_domain *rd);
-extern void sched_put_rd(struct root_domain *rd);
+బాహ్య శూన్య init_defrootdomain(శూన్య);
+బాహ్య పూర్ణాంకం sched_init_domains(స్థిరరాశి నిర్మాణం cpumask *cpu_map);
+బాహ్య శూన్య rq_attach_మూలం(నిర్మాణం rq *rq, నిర్మాణం మూలం_domain *rd);
+బాహ్య శూన్య sched_get_rd(నిర్మాణం మూలం_domain *rd);
+బాహ్య శూన్య sched_put_rd(నిర్మాణం మూలం_domain *rd);
 
-static inline int get_rd_overloaded(struct root_domain *rd)
+స్థిర అంతఃవరుస పూర్ణాంకం get_rd_overloaded(నిర్మాణం మూలం_domain *rd)
 {
-	return READ_ONCE(rd->overloaded);
+	తిరిగి READ_ONCE(rd->overloaded);
 }
 
-static inline void set_rd_overloaded(struct root_domain *rd, int status)
+స్థిర అంతఃవరుస శూన్య సమితి_rd_overloaded(నిర్మాణం మూలం_domain *rd, పూర్ణాంకం స్థితి_2)
 {
-	if (get_rd_overloaded(rd) != status)
-		WRITE_ONCE(rd->overloaded, status);
+	ఒకవేళ (get_rd_overloaded(rd) != స్థితి_2)
+		WRITE_ONCE(rd->overloaded, స్థితి_2);
 }
 
-#ifdef HAVE_RT_PUSH_IPI
-extern void rto_push_irq_work_func(struct irq_work *work);
-#endif
+#నిర్వచితమైతే HAVE_RT_నెట్టు_IPI
+బాహ్య శూన్య rto_నెట్టు_irq_work_func(నిర్మాణం irq_work *work);
+#అయితే_ముగింపు
 
-#ifdef CONFIG_UCLAMP_TASK
+#నిర్వచితమైతే CONFIG_UCLAMP_TASK
 /*
  * struct uclamp_bucket - Utilization clamp bucket
  * @value: utilization clamp value for tasks on this clamp bucket
@@ -1113,9 +1113,9 @@ extern void rto_push_irq_work_func(struct irq_work *work);
  * Keep track of how many tasks are RUNNABLE for a given utilization
  * clamp value.
  */
-struct uclamp_bucket {
-	unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
-	unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
+నిర్మాణం uclamp_పాత్ర {
+	గుర్తులేని దీర్ఘ విలువ : బిట్లు_చొప్పున(SCHED_సామర్థ్యం_SCALE);
+	గుర్తులేని దీర్ఘ tasks : బిట్లు_చొప్పున_LONG - బిట్లు_చొప్పున(SCHED_సామర్థ్యం_SCALE);
 };
 
 /*
@@ -1140,13 +1140,13 @@ struct uclamp_bucket {
  * utilization clamp values (UCLAMP_BUCKETS), use a simple array to track
  * the metrics required to compute all the per-rq utilization clamp values.
  */
-struct uclamp_rq {
-	unsigned int value;
-	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
+నిర్మాణం uclamp_rq {
+	గుర్తులేని పూర్ణాంకం విలువ;
+	నిర్మాణం uclamp_పాత్ర పాత్ర[UCLAMP_BUCKETS];
 };
 
-DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
-#endif /* CONFIG_UCLAMP_TASK */
+DECLARE_STATIC_కీలకం_FALSE(sched_uclamp_వాడిన);
+#అయితే_ముగింపు /* CONFIG_UCLAMP_TASK */
 
 /*
  * This is the main, per-CPU runqueue data structure.
@@ -1155,7 +1155,7 @@ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
  * (such as the load balancing or the thread migration code), lock
  * acquire operations must be ordered by ascending &runqueue.
  */
-struct rq {
+నిర్మాణం rq {
 	/*
 	 * The following members are loaded together, without holding the
 	 * rq->lock, in an extremely hot loop in update_sg_lb_stats()
@@ -1164,23 +1164,23 @@ struct rq {
 	 * line. Even though some of them are frequently modified, they are
 	 * loaded much more frequently than they are stored.
 	 */
-	unsigned int		nr_running;
-#ifdef CONFIG_NUMA_BALANCING
-	unsigned int		nr_numa_running;
-	unsigned int		nr_preferred_running;
-#endif
-	unsigned int		ttwu_pending;
-	unsigned long		cpu_capacity;
-#ifdef CONFIG_SCHED_PROXY_EXEC
-	struct task_struct __rcu	*donor;  /* Scheduling context */
-	struct task_struct __rcu	*curr;   /* Execution context */
-#else
-	union {
-		struct task_struct __rcu *donor; /* Scheduler context */
-		struct task_struct __rcu *curr;  /* Execution context */
+	గుర్తులేని పూర్ణాంకం		nr_running;
+#నిర్వచితమైతే CONFIG_NUMA_BALANCING
+	గుర్తులేని పూర్ణాంకం		nr_numa_running;
+	గుర్తులేని పూర్ణాంకం		nr_preferred_running;
+#అయితే_ముగింపు
+	గుర్తులేని పూర్ణాంకం		ttwu_pending;
+	గుర్తులేని దీర్ఘ		cpu_సామర్థ్యం;
+#నిర్వచితమైతే CONFIG_SCHED_PROXY_EXEC
+	నిర్మాణం task_struct __rcu	*donor;  /* Scheduling context */
+	నిర్మాణం task_struct __rcu	*curr;   /* Execution context */
+#లేకపోతే
+	సంఘం {
+		నిర్మాణం task_struct __rcu *donor; /* Scheduler context */
+		నిర్మాణం task_struct __rcu *curr;  /* Execution context */
 	};
-#endif
-	struct task_struct	*idle;
+#అయితే_ముగింపు
+	నిర్మాణం task_struct	*idle;
 	/* padding left here deliberately */
 
 	/*
@@ -1192,51 +1192,51 @@ struct rq {
 	/* runqueue lock: */
 	raw_spinlock_t		__lock;
 
-#ifdef CONFIG_NO_HZ_COMMON
-	unsigned int		nohz_tick_stopped;
+#నిర్వచితమైతే CONFIG_NO_HZ_COMMON
+	గుర్తులేని పూర్ణాంకం		nohz_tick_stopped;
 	atomic_t		nohz_flags;
-	unsigned int		has_blocked_load;
-	unsigned long		last_blocked_load_update_tick;
-	call_single_data_t	nohz_csd;
-#endif /* CONFIG_NO_HZ_COMMON */
+	గుర్తులేని పూర్ణాంకం		has_blocked_ఎక్కించు;
+	గుర్తులేని దీర్ఘ		చివరి_blocked_ఎక్కించు_update_tick;
+	call_single_దత్తాంశం_t	nohz_csd;
+#అయితే_ముగింపు /* CONFIG_NO_HZ_COMMON */
 
-#ifdef CONFIG_UCLAMP_TASK
+#నిర్వచితమైతే CONFIG_UCLAMP_TASK
 	/* Utilization clamp values based on CPU's RUNNABLE tasks */
-	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
-	unsigned int		uclamp_flags;
-#define UCLAMP_FLAG_IDLE 0x01
-#endif
+	నిర్మాణం uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+	గుర్తులేని పూర్ణాంకం		uclamp_flags;
+#నిర్వచించు UCLAMP_FLAG_IDLE 0x01
+#అయితే_ముగింపు
 
-	struct cfs_rq		cfs;
-	struct rt_rq		rt;
-	struct dl_rq		dl;
-#ifdef CONFIG_SCHED_CLASS_EXT
-	struct scx_rq		scx;
-	struct sched_dl_entity	ext_server;
-#endif
-#ifdef CONFIG_SCHED_CACHE
-	raw_spinlock_t		cpu_epoch_lock ____cacheline_aligned;
+	నిర్మాణం cfs_rq		cfs;
+	నిర్మాణం rt_rq		rt;
+	నిర్మాణం dl_rq		dl;
+#నిర్వచితమైతే CONFIG_SCHED_CLASS_EXT
+	నిర్మాణం scx_rq		scx;
+	నిర్మాణం sched_dl_entity	ext_server;
+#అయితే_ముగింపు
+#నిర్వచితమైతే CONFIG_SCHED_CACHE
+	raw_spinlock_t		cpu_epoch_తాళం ____cacheline_aligned;
 	u64			cpu_runtime;
-	unsigned long		cpu_epoch;
-	unsigned long		cpu_epoch_next;
-#endif
+	గుర్తులేని దీర్ఘ		cpu_epoch;
+	గుర్తులేని దీర్ఘ		cpu_epoch_తదుపరి;
+#అయితే_ముగింపు
 
-	struct sched_dl_entity	fair_server;
+	నిర్మాణం sched_dl_entity	fair_server;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
 	/* list of leaf cfs_rq on this CPU: */
-	struct list_head	leaf_cfs_rq_list;
-	struct list_head	*tmp_alone_branch;
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+	నిర్మాణం list_తల	ఆకు_cfs_rq_list;
+	నిర్మాణం list_తల	*tmp_alone_branch;
+#అయితే_ముగింపు /* CONFIG_FAIR_GROUP_SCHED */
 
-#ifdef CONFIG_NUMA_BALANCING
-	unsigned int		numa_migrate_on;
-#endif
+#నిర్వచితమైతే CONFIG_NUMA_BALANCING
+	గుర్తులేని పూర్ణాంకం		numa_migrate_on;
+#అయితే_ముగింపు
 
-#ifdef CONFIG_SCHED_CACHE
-	unsigned int		nr_pref_llc_running;
-	unsigned int		nr_llc_running;
-#endif
+#నిర్వచితమైతే CONFIG_SCHED_CACHE
+	గుర్తులేని పూర్ణాంకం		nr_pref_llc_running;
+	గుర్తులేని పూర్ణాంకం		nr_llc_running;
+#అయితే_ముగింపు
 
 	/*
 	 * This is part of a global counter where only the total sum
@@ -1244,13 +1244,13 @@ struct rq {
 	 * one CPU and if it got migrated afterwards it may decrease
 	 * it on another CPU. Always updated under the runqueue lock:
 	 */
-	unsigned long		nr_uninterruptible;
+	గుర్తులేని దీర్ఘ		nr_uninterruptible;
 
-	struct sched_dl_entity	*dl_server;
-	struct task_struct	*stop;
-	const struct sched_class *next_class;
-	unsigned long		next_balance;
-	struct mm_struct	*prev_mm;
+	నిర్మాణం sched_dl_entity	*dl_server;
+	నిర్మాణం task_struct	*stop;
+	స్థిరరాశి నిర్మాణం sched_class *తదుపరి_class;
+	గుర్తులేని దీర్ఘ		తదుపరి_balance;
+	నిర్మాణం mm_struct	*prev_mm;
 
 	/*
 	 * The following fields of clock data are frequently referenced
@@ -1259,194 +1259,194 @@ struct rq {
 	u64			clock_task ____cacheline_aligned;
 	u64			clock_pelt;
 	u64			clock;
-	unsigned long		lost_idle_time;
-	unsigned int		clock_update_flags;
+	గుర్తులేని దీర్ఘ		కోల్పోయిన_idle_సమయం;
+	గుర్తులేని పూర్ణాంకం		clock_update_flags;
 	u64			clock_pelt_idle;
 	u64			clock_idle;
 
-#ifndef CONFIG_64BIT
+#నిర్వచితం_కాకపోతే CONFIG_64_బిట్టు
 	u64			clock_pelt_idle_copy;
 	u64			clock_idle_copy;
-#endif
+#అయితే_ముగింపు
 
-	u64 last_seen_need_resched_ns;
-	int ticks_without_resched;
+	u64 చివరి_చూసిన_need_resched_ns;
+	పూర్ణాంకం ticks_without_resched;
 
-#ifdef CONFIG_MEMBARRIER
-	int membarrier_state;
-#endif
+#నిర్వచితమైతే CONFIG_MEMBARRIER
+	పూర్ణాంకం membarrier_state;
+#అయితే_ముగింపు
 
-	struct root_domain		*rd;
-	struct sched_domain __rcu	*sd;
+	నిర్మాణం మూలం_domain		*rd;
+	నిర్మాణం sched_domain __rcu	*sd;
 
-	struct balance_callback *balance_callback;
+	నిర్మాణం balance_callback *balance_callback;
 
-	unsigned char		nohz_idle_balance;
-	unsigned char		idle_balance;
+	గుర్తులేని అక్షరం		nohz_idle_balance;
+	గుర్తులేని అక్షరం		idle_balance;
 
-	unsigned long		misfit_task_load;
+	గుర్తులేని దీర్ఘ		misfit_task_ఎక్కించు;
 
 	/* For active balancing */
-	int			active_balance;
-	int			push_cpu;
-	struct cpu_stop_work	active_balance_work;
+	పూర్ణాంకం			చురుకైన_balance;
+	పూర్ణాంకం			నెట్టు_cpu;
+	నిర్మాణం cpu_stop_work	చురుకైన_balance_work;
 
 	/* CPU of this runqueue: */
-	int			cpu;
-	int			online;
+	పూర్ణాంకం			cpu;
+	పూర్ణాంకం			online;
 
-	struct list_head cfs_tasks;
+	నిర్మాణం list_తల cfs_tasks;
 
-	struct sched_avg	avg_rt;
-	struct sched_avg	avg_dl;
-#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-	struct sched_avg	avg_irq;
-#endif
-#ifdef CONFIG_SCHED_HW_PRESSURE
-	struct sched_avg	avg_hw;
-#endif
+	నిర్మాణం sched_avg	avg_rt;
+	నిర్మాణం sched_avg	avg_dl;
+#నిర్వచితమైతే CONFIG_HAVE_SCHED_AVG_IRQ
+	నిర్మాణం sched_avg	avg_irq;
+#అయితే_ముగింపు
+#నిర్వచితమైతే CONFIG_SCHED_HW_PRESSURE
+	నిర్మాణం sched_avg	avg_hw;
+#అయితే_ముగింపు
 	u64			idle_stamp;
 	u64			avg_idle;
 
 	/* This is used to determine avg_idle's max value */
-	u64			max_idle_balance_cost;
+	u64			max_idle_balance_ఖర్చు;
 
-#ifdef CONFIG_HOTPLUG_CPU
-	struct rcuwait		hotplug_wait;
-#endif
+#నిర్వచితమైతే CONFIG_HOTPLUG_CPU
+	నిర్మాణం rcuwait		hotplug_wait;
+#అయితే_ముగింపు
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	u64			prev_irq_time;
-	u64			psi_irq_time;
-#endif
-#ifdef CONFIG_PARAVIRT
-	u64			prev_steal_time;
-#endif
-#ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-	u64			prev_steal_time_rq;
-#endif
-#ifdef CONFIG_PREFERRED_CPU
-	bool			npc_push_work_pending;
-#endif
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
+	u64			prev_irq_సమయం;
+	u64			psi_irq_సమయం;
+#అయితే_ముగింపు
+#నిర్వచితమైతే CONFIG_PARAVIRT
+	u64			prev_steal_సమయం;
+#అయితే_ముగింపు
+#నిర్వచితమైతే CONFIG_PARAVIRT_సమయం_ACCOUNTING
+	u64			prev_steal_సమయం_rq;
+#అయితే_ముగింపు
+#నిర్వచితమైతే CONFIG_PREFERRED_CPU
+	bool			npc_నెట్టు_work_pending;
+#అయితే_ముగింపు
 
 	/* calc_load related fields */
-	unsigned long		calc_load_update;
-	long			calc_load_active;
+	గుర్తులేని దీర్ఘ		calc_ఎక్కించు_update;
+	దీర్ఘ			calc_ఎక్కించు_చురుకైన;
 
-#ifdef CONFIG_SCHED_HRTICK
-	call_single_data_t	hrtick_csd;
-	struct hrtimer		hrtick_timer;
-	ktime_t			hrtick_time;
+#నిర్వచితమైతే CONFIG_SCHED_HRTICK
+	call_single_దత్తాంశం_t	hrtick_csd;
+	నిర్మాణం hrtimer		hrtick_timer;
+	ktime_t			hrtick_సమయం;
 	ktime_t			hrtick_delay;
-	unsigned int		hrtick_sched;
-#endif
+	గుర్తులేని పూర్ణాంకం		hrtick_sched;
+#అయితే_ముగింపు
 
-#ifdef CONFIG_SCHEDSTATS
+#నిర్వచితమైతే CONFIG_SCHEDSTATS
 	/* latency stats */
-	struct sched_info	rq_sched_info;
-	unsigned long long	rq_cpu_time;
+	నిర్మాణం sched_info	rq_sched_info;
+	గుర్తులేని దీర్ఘ దీర్ఘ	rq_cpu_సమయం;
 
 	/* sys_sched_yield() stats */
-	unsigned int		yld_count;
+	గుర్తులేని పూర్ణాంకం		yld_లెక్క;
 
 	/* schedule() stats */
-	unsigned int		sched_count;
-	unsigned int		sched_goidle;
+	గుర్తులేని పూర్ణాంకం		sched_లెక్క;
+	గుర్తులేని పూర్ణాంకం		sched_goidle;
 
 	/* try_to_wake_up() stats */
-	unsigned int		ttwu_count;
-	unsigned int		ttwu_local;
-#endif
+	గుర్తులేని పూర్ణాంకం		ttwu_లెక్క;
+	గుర్తులేని పూర్ణాంకం		ttwu_local;
+#అయితే_ముగింపు
 
-#ifdef CONFIG_CPU_IDLE
+#నిర్వచితమైతే CONFIG_CPU_IDLE
 	/* Must be inspected within a RCU lock section */
-	struct cpuidle_state	*idle_state;
-#endif
+	నిర్మాణం cpuidle_state	*idle_state;
+#అయితే_ముగింపు
 
-	unsigned int		nr_pinned;
-	unsigned int		push_busy;
-	struct cpu_stop_work	push_work;
+	గుర్తులేని పూర్ణాంకం		nr_pinned;
+	గుర్తులేని పూర్ణాంకం		నెట్టు_busy;
+	నిర్మాణం cpu_stop_work	నెట్టు_work;
 
-#ifdef CONFIG_SCHED_CORE
+#నిర్వచితమైతే CONFIG_SCHED_CORE
 	/* per rq */
-	struct rq		*core;
-	struct task_struct	*core_pick;
-	struct sched_dl_entity	*core_dl_server;
-	unsigned int		core_enabled;
-	struct rb_root		core_tree;
+	నిర్మాణం rq		*core;
+	నిర్మాణం task_struct	*core_pick;
+	నిర్మాణం sched_dl_entity	*core_dl_server;
+	గుర్తులేని పూర్ణాంకం		core_enabled;
+	నిర్మాణం rb_మూలం		core_వృక్షం;
 
 	/* shared state -- careful with sched_core_cpu_deactivate() */
-	unsigned int		core_task_seq;
-	unsigned int		core_pick_seq;
-	unsigned long		core_cookie;
-	unsigned int		core_forceidle_count;
-	unsigned int		core_forceidle_seq;
-	unsigned int		core_forceidle_occupation;
-	u64			core_forceidle_start;
-	unsigned int		core_pick_in_flight;
-#endif /* CONFIG_SCHED_CORE */
+	గుర్తులేని పూర్ణాంకం		core_task_seq;
+	గుర్తులేని పూర్ణాంకం		core_pick_seq;
+	గుర్తులేని దీర్ఘ		core_cookie;
+	గుర్తులేని పూర్ణాంకం		core_forceidle_లెక్క;
+	గుర్తులేని పూర్ణాంకం		core_forceidle_seq;
+	గుర్తులేని పూర్ణాంకం		core_forceidle_occupation;
+	u64			core_forceidle_ప్రారంభం;
+	గుర్తులేని పూర్ణాంకం		core_pick_లోపల_flight;
+#అయితే_ముగింపు /* CONFIG_SCHED_CORE */
 
 	/* Scratch cpumask to be temporarily used under rq_lock */
-	cpumask_var_t		scratch_mask;
+	cpumask_var_t		scratch_ముసుగు;
 
-#ifdef CONFIG_CFS_BANDWIDTH
-	call_single_data_t	cfsb_csd;
-	struct list_head	cfsb_csd_list;
-#endif
+#నిర్వచితమైతే CONFIG_CFS_BANDWIDTH
+	call_single_దత్తాంశం_t	cfsb_csd;
+	నిర్మాణం list_తల	cfsb_csd_list;
+#అయితే_ముగింపు
 
 	atomic_t		nr_iowait;
 } __no_randomize_layout;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
 
 /* CPU runqueue to which this cfs_rq is attached */
-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+స్థిర అంతఃవరుస నిర్మాణం rq *rq_యొక్క(నిర్మాణం cfs_rq *cfs_rq)
 {
-	return cfs_rq->rq;
+	తిరిగి cfs_rq->rq;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#లేకపోతే /* !CONFIG_FAIR_GROUP_SCHED: */
 
-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+స్థిర అంతఃవరుస నిర్మాణం rq *rq_యొక్క(నిర్మాణం cfs_rq *cfs_rq)
 {
-	return container_of(cfs_rq, struct rq, cfs);
+	తిరిగి container_యొక్క(cfs_rq, నిర్మాణం rq, cfs);
 }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#అయితే_ముగింపు /* !CONFIG_FAIR_GROUP_SCHED */
 
-static inline int cpu_of(struct rq *rq)
+స్థిర అంతఃవరుస పూర్ణాంకం cpu_యొక్క(నిర్మాణం rq *rq)
 {
-	return rq->cpu;
-}
-
-#define MDF_PUSH		0x01
-
-static inline bool is_migration_disabled(struct task_struct *p)
-{
-	return p->migration_disabled;
+	తిరిగి rq->cpu;
 }
 
-DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
-DECLARE_PER_CPU(struct rnd_state, sched_rnd_state);
+#నిర్వచించు MDF_నెట్టు		0x01
 
-static inline u32 sched_rng(void)
+స్థిర అంతఃవరుస bool is_migration_disabled(నిర్మాణం task_struct *p)
 {
-	return prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
+	తిరిగి p->migration_disabled;
 }
 
-static __always_inline struct rq *__this_rq(void)
+DECLARE_చొప్పున_CPU_SHARED_ALIGNED(నిర్మాణం rq, runqueues);
+DECLARE_చొప్పున_CPU(నిర్మాణం rnd_state, sched_rnd_state);
+
+స్థిర అంతఃవరుస u32 sched_rng(శూన్య)
 {
-	return this_cpu_ptr(&runqueues);
+	తిరిగి prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
 }
 
-#define cpu_rq(cpu)		(&per_cpu(runqueues, (cpu)))
-#define this_rq()		__this_rq()
-#define task_rq(p)		cpu_rq(task_cpu(p))
-#define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
-#define raw_rq()		raw_cpu_ptr(&runqueues)
-
-static inline bool idle_rq(struct rq *rq)
+స్థిర __always_inline నిర్మాణం rq *__this_rq(శూన్య)
 {
-	return rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
+	తిరిగి this_cpu_ptr(&runqueues);
+}
+
+#నిర్వచించు cpu_rq(cpu)		(&చొప్పున_cpu(runqueues, (cpu)))
+#నిర్వచించు this_rq()		__this_rq()
+#నిర్వచించు task_rq(p)		cpu_rq(task_cpu(p))
+#నిర్వచించు cpu_curr(cpu)		(cpu_rq(cpu)->curr)
+#నిర్వచించు raw_rq()		raw_cpu_ptr(&runqueues)
+
+స్థిర అంతఃవరుస bool idle_rq(నిర్మాణం rq *rq)
+{
+	తిరిగి rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
 }
 
 /**
@@ -1455,69 +1455,69 @@ static inline bool idle_rq(struct rq *rq)
  *
  * Return: 1 if the CPU is currently idle. 0 otherwise.
  */
-static inline bool available_idle_cpu(int cpu)
+స్థిర అంతఃవరుస bool అందుబాటు_idle_cpu(పూర్ణాంకం cpu)
 {
-	if (!idle_rq(cpu_rq(cpu)))
-		return 0;
+	ఒకవేళ (!idle_rq(cpu_rq(cpu)))
+		తిరిగి 0;
 
-	if (vcpu_is_preempted(cpu))
-		return 0;
+	ఒకవేళ (vcpu_is_preempted(cpu))
+		తిరిగి 0;
 
-	return 1;
+	తిరిగి 1;
 }
 
-#ifdef CONFIG_SCHED_PROXY_EXEC
-static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+#నిర్వచితమైతే CONFIG_SCHED_PROXY_EXEC
+స్థిర అంతఃవరుస శూన్య rq_సమితి_donor(నిర్మాణం rq *rq, నిర్మాణం task_struct *t)
 {
-	rcu_assign_pointer(rq->donor, t);
+	rcu_కేటాయించు_సూచిక(rq->donor, t);
 }
-#else
-static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+#లేకపోతే
+స్థిర అంతఃవరుస శూన్య rq_సమితి_donor(నిర్మాణం rq *rq, నిర్మాణం task_struct *t)
 {
 	/* Do nothing */
 }
-#endif
+#అయితే_ముగింపు
 
-#ifdef CONFIG_SCHED_CORE
-static inline struct cpumask *sched_group_span(struct sched_group *sg);
+#నిర్వచితమైతే CONFIG_SCHED_CORE
+స్థిర అంతఃవరుస నిర్మాణం cpumask *sched_సమూహం_పరిధి(నిర్మాణం sched_సమూహం *sg);
 
-DECLARE_STATIC_KEY_FALSE(__sched_core_enabled);
+DECLARE_STATIC_కీలకం_FALSE(__sched_core_enabled);
 
-static inline bool sched_core_enabled(struct rq *rq)
+స్థిర అంతఃవరుస bool sched_core_enabled(నిర్మాణం rq *rq)
 {
-	return static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
+	తిరిగి static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
 }
 
-static inline bool sched_core_disabled(void)
+స్థిర అంతఃవరుస bool sched_core_disabled(శూన్య)
 {
-	return !static_branch_unlikely(&__sched_core_enabled);
+	తిరిగి !static_branch_unlikely(&__sched_core_enabled);
 }
 
 /*
  * Be careful with this function; not for general use. The return value isn't
  * stable unless you actually hold a relevant rq->__lock.
  */
-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+స్థిర అంతఃవరుస raw_spinlock_t *rq_lockp(నిర్మాణం rq *rq)
 {
-	if (sched_core_enabled(rq))
-		return &rq->core->__lock;
+	ఒకవేళ (sched_core_enabled(rq))
+		తిరిగి &rq->core->__lock;
 
-	return &rq->__lock;
+	తిరిగి &rq->__lock;
 }
 
-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+స్థిర అంతఃవరుస raw_spinlock_t *__rq_lockp(నిర్మాణం rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	if (rq->core_enabled)
-		return &rq->core->__lock;
+	ఒకవేళ (rq->core_enabled)
+		తిరిగి &rq->core->__lock;
 
-	return &rq->__lock;
+	తిరిగి &rq->__lock;
 }
 
-extern bool
-cfs_prio_less(const struct task_struct *a, const struct task_struct *b, bool fi);
+బాహ్య bool
+cfs_prio_less(స్థిరరాశి నిర్మాణం task_struct *a, స్థిరరాశి నిర్మాణం task_struct *b, bool fi);
 
-extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_fi);
+బాహ్య శూన్య task_vruntime_update(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, bool లోపల_fi);
 
 /*
  * Helpers to check if the CPU's core cookie matches with the task's cookie
@@ -1525,31 +1525,31 @@ extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_f
  * A special case is that the task's cookie always matches with CPU's core
  * cookie if the CPU is in an idle core.
  */
-static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస bool sched_cpu_cookie_సరిపోలిక(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	ఒకవేళ (!sched_core_enabled(rq))
+		తిరిగి true;
 
-	return rq->core->core_cookie == p->core_cookie;
+	తిరిగి rq->core->core_cookie == p->core_cookie;
 }
 
-static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస bool sched_core_cookie_సరిపోలిక(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
 	bool idle_core = true;
-	int cpu;
+	పూర్ణాంకం cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	ఒకవేళ (!sched_core_enabled(rq))
+		తిరిగి true;
 
-	if (rq->core->core_cookie == p->core_cookie)
-		return true;
+	ఒకవేళ (rq->core->core_cookie == p->core_cookie)
+		తిరిగి true;
 
-	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
-		if (!available_idle_cpu(cpu)) {
+	for_each_cpu(cpu, cpu_smt_ముసుగు(cpu_యొక్క(rq))) {
+		ఒకవేళ (!అందుబాటు_idle_cpu(cpu)) {
 			idle_core = false;
-			break;
+			ఆపు;
 		}
 	}
 
@@ -1557,230 +1557,230 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
 	 * A CPU in an idle core is always the best choice for tasks with
 	 * cookies.
 	 */
-	return idle_core;
+	తిరిగి idle_core;
 }
 
-static inline bool sched_group_cookie_match(struct rq *rq,
-					    struct task_struct *p,
-					    struct sched_group *group)
+స్థిర అంతఃవరుస bool sched_సమూహం_cookie_సరిపోలిక(నిర్మాణం rq *rq,
+					    నిర్మాణం task_struct *p,
+					    నిర్మాణం sched_సమూహం *సమూహం)
 {
-	int cpu;
+	పూర్ణాంకం cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	ఒకవేళ (!sched_core_enabled(rq))
+		తిరిగి true;
 
-	for_each_cpu_and(cpu, sched_group_span(group), p->cpus_ptr) {
-		if (sched_core_cookie_match(cpu_rq(cpu), p))
-			return true;
+	for_each_cpu_and(cpu, sched_సమూహం_పరిధి(సమూహం), p->cpus_ptr) {
+		ఒకవేళ (sched_core_cookie_సరిపోలిక(cpu_rq(cpu), p))
+			తిరిగి true;
 	}
-	return false;
+	తిరిగి false;
 }
 
-static inline bool sched_core_enqueued(struct task_struct *p)
+స్థిర అంతఃవరుస bool sched_core_enqueued(నిర్మాణం task_struct *p)
 {
-	return !RB_EMPTY_NODE(&p->core_node);
+	తిరిగి !RB_ఖాళీలు_కణుపు(&p->core_కణుపు);
 }
 
-extern void sched_core_enqueue(struct rq *rq, struct task_struct *p);
-extern void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags);
+బాహ్య శూన్య sched_core_వరుసలో_చేర్చు(నిర్మాణం rq *rq, నిర్మాణం task_struct *p);
+బాహ్య శూన్య sched_core_వరుస_నుండి_తీయి(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags);
 
-extern void sched_core_get(void);
-extern void sched_core_put(void);
+బాహ్య శూన్య sched_core_get(శూన్య);
+బాహ్య శూన్య sched_core_put(శూన్య);
 
-static inline bool task_has_sched_core(struct task_struct *p)
+స్థిర అంతఃవరుస bool task_has_sched_core(నిర్మాణం task_struct *p)
 {
-	if (sched_core_disabled())
-		return false;
+	ఒకవేళ (sched_core_disabled())
+		తిరిగి false;
 
-	return !!p->core_cookie;
+	తిరిగి !!p->core_cookie;
 }
 
-#else /* !CONFIG_SCHED_CORE: */
+#లేకపోతే /* !CONFIG_SCHED_CORE: */
 
-static inline bool sched_core_enabled(struct rq *rq)
+స్థిర అంతఃవరుస bool sched_core_enabled(నిర్మాణం rq *rq)
 {
-	return false;
+	తిరిగి false;
 }
 
-static inline bool sched_core_disabled(void)
+స్థిర అంతఃవరుస bool sched_core_disabled(శూన్య)
 {
-	return true;
+	తిరిగి true;
 }
 
-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+స్థిర అంతఃవరుస raw_spinlock_t *rq_lockp(నిర్మాణం rq *rq)
 {
-	return &rq->__lock;
+	తిరిగి &rq->__lock;
 }
 
-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+స్థిర అంతఃవరుస raw_spinlock_t *__rq_lockp(నిర్మాణం rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	return &rq->__lock;
+	తిరిగి &rq->__lock;
 }
 
-static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస bool sched_cpu_cookie_సరిపోలిక(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
-	return true;
+	తిరిగి true;
 }
 
-static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస bool sched_core_cookie_సరిపోలిక(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
-	return true;
+	తిరిగి true;
 }
 
-static inline bool sched_group_cookie_match(struct rq *rq,
-					    struct task_struct *p,
-					    struct sched_group *group)
+స్థిర అంతఃవరుస bool sched_సమూహం_cookie_సరిపోలిక(నిర్మాణం rq *rq,
+					    నిర్మాణం task_struct *p,
+					    నిర్మాణం sched_సమూహం *సమూహం)
 {
-	return true;
+	తిరిగి true;
 }
 
-static inline bool task_has_sched_core(struct task_struct *p)
+స్థిర అంతఃవరుస bool task_has_sched_core(నిర్మాణం task_struct *p)
 {
-	return false;
+	తిరిగి false;
 }
 
-#endif /* !CONFIG_SCHED_CORE */
+#అయితే_ముగింపు /* !CONFIG_SCHED_CORE */
 
-#ifdef CONFIG_RT_GROUP_SCHED
-# ifdef CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED
-DECLARE_STATIC_KEY_FALSE(rt_group_sched);
-static inline bool rt_group_sched_enabled(void)
+#నిర్వచితమైతే CONFIG_RT_సమూహం_SCHED
+# ifdef CONFIG_RT_సమూహం_SCHED_DEFAULT_DISABLED
+DECLARE_STATIC_కీలకం_FALSE(rt_సమూహం_sched);
+స్థిర అంతఃవరుస bool rt_సమూహం_sched_enabled(శూన్య)
 {
-	return static_branch_unlikely(&rt_group_sched);
+	తిరిగి static_branch_unlikely(&rt_సమూహం_sched);
 }
-# else /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
-DECLARE_STATIC_KEY_TRUE(rt_group_sched);
-static inline bool rt_group_sched_enabled(void)
+# లేకపోతే /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
+DECLARE_STATIC_కీలకం_TRUE(rt_సమూహం_sched);
+స్థిర అంతఃవరుస bool rt_సమూహం_sched_enabled(శూన్య)
 {
-	return static_branch_likely(&rt_group_sched);
+	తిరిగి static_branch_likely(&rt_సమూహం_sched);
 }
 # endif /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED */
-#else /* !CONFIG_RT_GROUP_SCHED: */
-# define rt_group_sched_enabled()	false
-#endif /* !CONFIG_RT_GROUP_SCHED */
+#లేకపోతే /* !CONFIG_RT_GROUP_SCHED: */
+# define rt_సమూహం_sched_enabled()	false
+#అయితే_ముగింపు /* !CONFIG_RT_GROUP_SCHED */
 
-static inline void lockdep_assert_rq_held(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య lockdep_assert_rq_held(నిర్మాణం rq *rq)
 	__assumes_ctx_lock(__rq_lockp(rq))
 {
 	lockdep_assert_held(__rq_lockp(rq));
 }
 
-extern void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
+బాహ్య శూన్య raw_spin_rq_తాళం_nested(నిర్మాణం rq *rq, పూర్ణాంకం subclass)
 	__acquires(__rq_lockp(rq));
 
-extern bool raw_spin_rq_trylock(struct rq *rq)
+బాహ్య bool raw_spin_rq_trylock(నిర్మాణం rq *rq)
 	__cond_acquires(true, __rq_lockp(rq));
 
-static inline void raw_spin_rq_lock(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య raw_spin_rq_తాళం(నిర్మాణం rq *rq)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock_nested(rq, 0);
+	raw_spin_rq_తాళం_nested(rq, 0);
 }
 
-static inline void raw_spin_rq_unlock(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య raw_spin_rq_unlock(నిర్మాణం rq *rq)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_unlock(rq_lockp(rq));
 }
 
-static inline void raw_spin_rq_lock_irq(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య raw_spin_rq_తాళం_irq(నిర్మాణం rq *rq)
 	__acquires(__rq_lockp(rq))
 {
 	local_irq_disable();
-	raw_spin_rq_lock(rq);
+	raw_spin_rq_తాళం(rq);
 }
 
-static inline void raw_spin_rq_unlock_irq(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య raw_spin_rq_unlock_irq(నిర్మాణం rq *rq)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_rq_unlock(rq);
 	local_irq_enable();
 }
 
-static inline unsigned long _raw_spin_rq_lock_irqsave(struct rq *rq)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ raw_spin_rq_తాళం_irqsave_2(నిర్మాణం rq *rq)
 	__acquires(__rq_lockp(rq))
 {
-	unsigned long flags;
+	గుర్తులేని దీర్ఘ flags;
 
 	local_irq_save(flags);
-	raw_spin_rq_lock(rq);
+	raw_spin_rq_తాళం(rq);
 
-	return flags;
+	తిరిగి flags;
 }
 
-static inline void raw_spin_rq_unlock_irqrestore(struct rq *rq, unsigned long flags)
+స్థిర అంతఃవరుస శూన్య raw_spin_rq_unlock_irqrestore(నిర్మాణం rq *rq, గుర్తులేని దీర్ఘ flags)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_rq_unlock(rq);
 	local_irq_restore(flags);
 }
 
-#define raw_spin_rq_lock_irqsave(rq, flags)	\
-do {						\
-	flags = _raw_spin_rq_lock_irqsave(rq);	\
-} while (0)
+#నిర్వచించు raw_spin_rq_తాళం_irqsave(rq, flags)	\
+చేయి {						\
+	flags = raw_spin_rq_తాళం_irqsave_2(rq);	\
+} అయితే (0)
 
-extern void __update_idle_core(struct rq *rq);
+బాహ్య శూన్య __update_idle_core(నిర్మాణం rq *rq);
 
-static inline void update_idle_core(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య update_idle_core(నిర్మాణం rq *rq)
 {
-	if (sched_smt_active())
+	ఒకవేళ (sched_smt_చురుకైన())
 		__update_idle_core(rq);
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-static inline struct task_struct *task_of(struct sched_entity *se)
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
+స్థిర అంతఃవరుస నిర్మాణం task_struct *task_యొక్క(నిర్మాణం sched_entity *se)
 {
 	WARN_ON_ONCE(!entity_is_task(se));
-	return container_of(se, struct task_struct, se);
+	తిరిగి container_యొక్క(se, నిర్మాణం task_struct, se);
 }
 
-static inline struct cfs_rq *task_cfs_rq(struct task_struct *p)
+స్థిర అంతఃవరుస నిర్మాణం cfs_rq *task_cfs_rq(నిర్మాణం task_struct *p)
 {
-	return p->se.cfs_rq;
+	తిరిగి p->se.cfs_rq;
 }
 
 /* runqueue on which this entity is (to be) queued */
-static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
+స్థిర అంతఃవరుస నిర్మాణం cfs_rq *cfs_rq_యొక్క(స్థిరరాశి నిర్మాణం sched_entity *se)
 {
-	return se->cfs_rq;
+	తిరిగి se->cfs_rq;
 }
 
 /* runqueue "owned" by this group */
-static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+స్థిర అంతఃవరుస నిర్మాణం cfs_rq *సమూహం_cfs_rq(నిర్మాణం sched_entity *grp)
 {
-	return grp->my_q;
+	తిరిగి grp->my_q;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#లేకపోతే /* !CONFIG_FAIR_GROUP_SCHED: */
 
-#define task_of(_se)		container_of(_se, struct task_struct, se)
+#నిర్వచించు task_యొక్క(_se)		container_యొక్క(_se, నిర్మాణం task_struct, se)
 
-static inline struct cfs_rq *task_cfs_rq(const struct task_struct *p)
+స్థిర అంతఃవరుస నిర్మాణం cfs_rq *task_cfs_rq(స్థిరరాశి నిర్మాణం task_struct *p)
 {
-	return &task_rq(p)->cfs;
+	తిరిగి &task_rq(p)->cfs;
 }
 
-static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
+స్థిర అంతఃవరుస నిర్మాణం cfs_rq *cfs_rq_యొక్క(స్థిరరాశి నిర్మాణం sched_entity *se)
 {
-	const struct task_struct *p = task_of(se);
-	struct rq *rq = task_rq(p);
+	స్థిరరాశి నిర్మాణం task_struct *p = task_యొక్క(se);
+	నిర్మాణం rq *rq = task_rq(p);
 
-	return &rq->cfs;
+	తిరిగి &rq->cfs;
 }
 
 /* runqueue "owned" by this group */
-static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+స్థిర అంతఃవరుస నిర్మాణం cfs_rq *సమూహం_cfs_rq(నిర్మాణం sched_entity *grp)
 {
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#అయితే_ముగింపు /* !CONFIG_FAIR_GROUP_SCHED */
 
-extern void update_rq_avg_idle(struct rq *rq);
-extern void update_rq_clock(struct rq *rq);
+బాహ్య శూన్య update_rq_avg_idle(నిర్మాణం rq *rq);
+బాహ్య శూన్య update_rq_clock(నిర్మాణం rq *rq);
 
 /*
  * rq::clock_update_flags bits
@@ -1805,11 +1805,11 @@ extern void update_rq_clock(struct rq *rq);
  * one position though, because the next rq_unpin_lock() will shift it
  * back.
  */
-#define RQCF_REQ_SKIP		0x01
-#define RQCF_ACT_SKIP		0x02
-#define RQCF_UPDATED		0x04
+#నిర్వచించు RQCF_REQ_SKIP		0x01
+#నిర్వచించు RQCF_ACT_SKIP		0x02
+#నిర్వచించు RQCF_UPDATED		0x04
 
-static inline void assert_clock_updated(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య assert_clock_updated(నిర్మాణం rq *rq)
 {
 	/*
 	 * The only reason for not seeing a clock update since the
@@ -1818,23 +1818,23 @@ static inline void assert_clock_updated(struct rq *rq)
 	WARN_ON_ONCE(rq->clock_update_flags < RQCF_ACT_SKIP);
 }
 
-static inline u64 rq_clock(struct rq *rq)
+స్థిర అంతఃవరుస u64 rq_clock(నిర్మాణం rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock;
+	తిరిగి rq->clock;
 }
 
-static inline u64 rq_clock_task(struct rq *rq)
+స్థిర అంతఃవరుస u64 rq_clock_task(నిర్మాణం rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_task;
+	తిరిగి rq->clock_task;
 }
 
-static inline void rq_clock_skip_update(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య rq_clock_skip_update(నిర్మాణం rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags |= RQCF_REQ_SKIP;
@@ -1844,7 +1844,7 @@ static inline void rq_clock_skip_update(struct rq *rq)
  * See rt task throttling, which is the only time a skip
  * request is canceled.
  */
-static inline void rq_clock_cancel_skipupdate(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య rq_clock_cancel_skipupdate(నిర్మాణం rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags &= ~RQCF_REQ_SKIP;
@@ -1859,69 +1859,69 @@ static inline void rq_clock_cancel_skipupdate(struct rq *rq)
  * After the iterative traversal, we need to call rq_clock_stop_loop_update()
  * to clear RQCF_ACT_SKIP of rq->clock_update_flags.
  */
-static inline void rq_clock_start_loop_update(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య rq_clock_ప్రారంభం_loop_update(నిర్మాణం rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	WARN_ON_ONCE(rq->clock_update_flags & RQCF_ACT_SKIP);
 	rq->clock_update_flags |= RQCF_ACT_SKIP;
 }
 
-static inline void rq_clock_stop_loop_update(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య rq_clock_stop_loop_update(నిర్మాణం rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags &= ~RQCF_ACT_SKIP;
 }
 
-struct rq_flags {
-	unsigned long flags;
-	struct pin_cookie cookie;
+నిర్మాణం rq_flags {
+	గుర్తులేని దీర్ఘ flags;
+	నిర్మాణం pin_cookie cookie;
 	/*
 	 * A copy of (rq::clock_update_flags & RQCF_UPDATED) for the
 	 * current pin context is stashed here in case it needs to be
 	 * restored in rq_repin_lock().
 	 */
-	unsigned int clock_update_flags;
+	గుర్తులేని పూర్ణాంకం clock_update_flags;
 };
 
-extern struct balance_callback balance_push_callback;
+బాహ్య నిర్మాణం balance_callback balance_నెట్టు_callback;
 
-#ifdef CONFIG_SCHED_CLASS_EXT
-extern const struct sched_class ext_sched_class;
+#నిర్వచితమైతే CONFIG_SCHED_CLASS_EXT
+బాహ్య స్థిరరాశి నిర్మాణం sched_class ext_sched_class;
 
-DECLARE_STATIC_KEY_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
-DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+DECLARE_STATIC_కీలకం_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
+DECLARE_STATIC_కీలకం_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
 
-#define scx_enabled()		static_branch_unlikely(&__scx_enabled)
-#define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
+#నిర్వచించు scx_enabled()		static_branch_unlikely(&__scx_enabled)
+#నిర్వచించు scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
 
-static inline void scx_rq_clock_update(struct rq *rq, u64 clock)
+స్థిర అంతఃవరుస శూన్య scx_rq_clock_update(నిర్మాణం rq *rq, u64 clock)
 {
-	if (!scx_enabled())
-		return;
+	ఒకవేళ (!scx_enabled())
+		తిరిగి;
 	WRITE_ONCE(rq->scx.clock, clock);
 	smp_store_release(&rq->scx.flags, rq->scx.flags | SCX_RQ_CLK_VALID);
 }
 
-static inline void scx_rq_clock_invalidate(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య scx_rq_clock_invalidate(నిర్మాణం rq *rq)
 {
-	if (!scx_enabled())
-		return;
+	ఒకవేళ (!scx_enabled())
+		తిరిగి;
 	WRITE_ONCE(rq->scx.flags, rq->scx.flags & ~SCX_RQ_CLK_VALID);
 }
 
-#else /* !CONFIG_SCHED_CLASS_EXT: */
-#define scx_enabled()		false
-#define scx_switched_all()	false
+#లేకపోతే /* !CONFIG_SCHED_CLASS_EXT: */
+#నిర్వచించు scx_enabled()		false
+#నిర్వచించు scx_switched_all()	false
 
-static inline void scx_rq_clock_update(struct rq *rq, u64 clock) {}
-static inline void scx_rq_clock_invalidate(struct rq *rq) {}
-#endif /* !CONFIG_SCHED_CLASS_EXT */
+స్థిర అంతఃవరుస శూన్య scx_rq_clock_update(నిర్మాణం rq *rq, u64 clock) {}
+స్థిర అంతఃవరుస శూన్య scx_rq_clock_invalidate(నిర్మాణం rq *rq) {}
+#అయితే_ముగింపు /* !CONFIG_SCHED_CLASS_EXT */
 
-static inline void assert_balance_callbacks_empty(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య assert_balance_callbacks_ఖాళీలు(నిర్మాణం rq *rq)
 {
 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_LOCKING) &&
 		     rq->balance_callback &&
-		     rq->balance_callback != &balance_push_callback);
+		     rq->balance_callback != &balance_నెట్టు_callback);
 }
 
 /*
@@ -1934,27 +1934,27 @@ static inline void assert_balance_callbacks_empty(struct rq *rq)
  *
  * Also see Documentation/locking/lockdep-design.rst.
  */
-static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య rq_pin_తాళం(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 {
-	rf->cookie = lockdep_pin_lock(__rq_lockp(rq));
+	rf->cookie = lockdep_pin_తాళం(__rq_lockp(rq));
 
 	rq->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 	rf->clock_update_flags = 0;
-	assert_balance_callbacks_empty(rq);
+	assert_balance_callbacks_ఖాళీలు(rq);
 }
 
-static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య rq_unpin_తాళం(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 {
-	if (rq->clock_update_flags > RQCF_ACT_SKIP)
+	ఒకవేళ (rq->clock_update_flags > RQCF_ACT_SKIP)
 		rf->clock_update_flags = RQCF_UPDATED;
 
 	scx_rq_clock_invalidate(rq);
-	lockdep_unpin_lock(__rq_lockp(rq), rf->cookie);
+	lockdep_unpin_తాళం(__rq_lockp(rq), rf->cookie);
 }
 
-static inline void rq_repin_lock(struct rq *rq, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య rq_repin_తాళం(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 {
-	lockdep_repin_lock(__rq_lockp(rq), rf->cookie);
+	lockdep_repin_తాళం(__rq_lockp(rq), rf->cookie);
 
 	/*
 	 * Restore the value we stashed in @rf for this pin context.
@@ -1962,194 +1962,194 @@ static inline void rq_repin_lock(struct rq *rq, struct rq_flags *rf)
 	rq->clock_update_flags |= rf->clock_update_flags;
 }
 
-#define __task_rq_lock(...) __acquire_ret(___task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
-extern struct rq *___task_rq_lock(struct task_struct *p, struct rq_flags *rf) __acquires_ret;
+#నిర్వచించు __task_rq_lock(...) __acquire_ret(___task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
+బాహ్య నిర్మాణం rq *___task_rq_lock(నిర్మాణం task_struct *p, నిర్మాణం rq_flags *rf) __acquires_ret;
 
-#define task_rq_lock(...) __acquire_ret(_task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
-extern struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
-	__acquires(&p->pi_lock) __acquires_ret;
+#నిర్వచించు task_rq_తాళం_2(...) __acquire_ret(task_rq_తాళం(__VA_ARGS__), __rq_lockp(__ret))
+బాహ్య నిర్మాణం rq *task_rq_తాళం(నిర్మాణం task_struct *p, నిర్మాణం rq_flags *rf)
+	__acquires(&p->pi_తాళం) __acquires_ret;
 
-static inline void
-__task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య
+__task_rq_unlock(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, నిర్మాణం rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_తాళం(rq, rf);
 	raw_spin_rq_unlock(rq);
 }
 
-static inline void
-task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
-	__releases(__rq_lockp(rq), &p->pi_lock)
+స్థిర అంతఃవరుస శూన్య
+task_rq_unlock(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, నిర్మాణం rq_flags *rf)
+	__releases(__rq_lockp(rq), &p->pi_తాళం)
 {
 	__task_rq_unlock(rq, p, rf);
-	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
+	raw_spin_unlock_irqrestore(&p->pi_తాళం, rf->flags);
 }
 
-DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
-		    _T->rq = task_rq_lock(_T->lock, &_T->rf),
-		    task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-		    struct rq *rq; struct rq_flags rf)
-DECLARE_LOCK_GUARD_1_ATTRS(task_rq_lock, __acquires(_T->pi_lock), __releases((*(struct task_struct **)_T)->pi_lock))
-#define class_task_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(task_rq_lock, _T)
+DEFINE_తాళం_GUARD_1(task_rq_తాళం_2, నిర్మాణం task_struct,
+		    _T->rq = task_rq_తాళం_2(_T->తాళం, &_T->rf),
+		    task_rq_unlock(_T->rq, _T->తాళం, &_T->rf),
+		    నిర్మాణం rq *rq; నిర్మాణం rq_flags rf)
+DECLARE_తాళం_GUARD_1_ATTRS(task_rq_తాళం_2, __acquires(_T->pi_తాళం), __releases((*(నిర్మాణం task_struct **)_T)->pi_తాళం))
+#నిర్వచించు class_task_rq_తాళం_constructor(_T) WITH_తాళం_GUARD_1_ATTRS(task_rq_తాళం_2, _T)
 
-DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
-		    _T->rq = __task_rq_lock(_T->lock, &_T->rf),
-		    __task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-		    struct rq *rq; struct rq_flags rf)
+DEFINE_తాళం_GUARD_1(__task_rq_lock, నిర్మాణం task_struct,
+		    _T->rq = __task_rq_lock(_T->తాళం, &_T->rf),
+		    __task_rq_unlock(_T->rq, _T->తాళం, &_T->rf),
+		    నిర్మాణం rq *rq; నిర్మాణం rq_flags rf)
 
-static inline void rq_lock_irqsave(struct rq *rq, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య rq_తాళం_irqsave(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock_irqsave(rq, rf->flags);
-	rq_pin_lock(rq, rf);
+	raw_spin_rq_తాళం_irqsave(rq, rf->flags);
+	rq_pin_తాళం(rq, rf);
 }
 
-static inline void rq_lock_irq(struct rq *rq, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య rq_తాళం_irq(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock_irq(rq);
-	rq_pin_lock(rq, rf);
+	raw_spin_rq_తాళం_irq(rq);
+	rq_pin_తాళం(rq, rf);
 }
 
-static inline void rq_lock(struct rq *rq, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య rq_తాళం(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock(rq);
-	rq_pin_lock(rq, rf);
+	raw_spin_rq_తాళం(rq);
+	rq_pin_తాళం(rq, rf);
 }
 
-static inline void rq_unlock_irqrestore(struct rq *rq, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య rq_unlock_irqrestore(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_తాళం(rq, rf);
 	raw_spin_rq_unlock_irqrestore(rq, rf->flags);
 }
 
-static inline void rq_unlock_irq(struct rq *rq, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య rq_unlock_irq(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_తాళం(rq, rf);
 	raw_spin_rq_unlock_irq(rq);
 }
 
-static inline void rq_unlock(struct rq *rq, struct rq_flags *rf)
+స్థిర అంతఃవరుస శూన్య rq_unlock(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_తాళం(rq, rf);
 	raw_spin_rq_unlock(rq);
 }
 
-DEFINE_LOCK_GUARD_1(rq_lock, struct rq,
-		    rq_lock(_T->lock, &_T->rf),
-		    rq_unlock(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+DEFINE_తాళం_GUARD_1(rq_తాళం, నిర్మాణం rq,
+		    rq_తాళం(_T->తాళం, &_T->rf),
+		    rq_unlock(_T->తాళం, &_T->rf),
+		    నిర్మాణం rq_flags rf)
 
-DECLARE_LOCK_GUARD_1_ATTRS(rq_lock, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock, _T)
+DECLARE_తాళం_GUARD_1_ATTRS(rq_తాళం, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(నిర్మాణం rq **)_T)));
+#నిర్వచించు class_rq_తాళం_constructor(_T) WITH_తాళం_GUARD_1_ATTRS(rq_తాళం, _T)
 
-DEFINE_LOCK_GUARD_1(rq_lock_irq, struct rq,
-		    rq_lock_irq(_T->lock, &_T->rf),
-		    rq_unlock_irq(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+DEFINE_తాళం_GUARD_1(rq_తాళం_irq, నిర్మాణం rq,
+		    rq_తాళం_irq(_T->తాళం, &_T->rf),
+		    rq_unlock_irq(_T->తాళం, &_T->rf),
+		    నిర్మాణం rq_flags rf)
 
-DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irq, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_rq_lock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irq, _T)
+DECLARE_తాళం_GUARD_1_ATTRS(rq_తాళం_irq, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(నిర్మాణం rq **)_T)));
+#నిర్వచించు class_rq_తాళం_irq_constructor(_T) WITH_తాళం_GUARD_1_ATTRS(rq_తాళం_irq, _T)
 
-DEFINE_LOCK_GUARD_1(rq_lock_irqsave, struct rq,
-		    rq_lock_irqsave(_T->lock, &_T->rf),
-		    rq_unlock_irqrestore(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+DEFINE_తాళం_GUARD_1(rq_తాళం_irqsave, నిర్మాణం rq,
+		    rq_తాళం_irqsave(_T->తాళం, &_T->rf),
+		    rq_unlock_irqrestore(_T->తాళం, &_T->rf),
+		    నిర్మాణం rq_flags rf)
 
-DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_rq_lock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, _T)
+DECLARE_తాళం_GUARD_1_ATTRS(rq_తాళం_irqsave, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(నిర్మాణం rq **)_T)));
+#నిర్వచించు class_rq_తాళం_irqsave_constructor(_T) WITH_తాళం_GUARD_1_ATTRS(rq_తాళం_irqsave, _T)
 
-DEFINE_LOCK_GUARD_1(raw_spin_rq_lock_irqsave, struct rq,
-		    raw_spin_rq_lock_irqsave(_T->lock, _T->flags),
-		    raw_spin_rq_unlock_irqrestore(_T->lock, _T->flags),
-		    unsigned long flags)
+DEFINE_తాళం_GUARD_1(raw_spin_rq_తాళం_irqsave, నిర్మాణం rq,
+		    raw_spin_rq_తాళం_irqsave(_T->తాళం, _T->flags),
+		    raw_spin_rq_unlock_irqrestore(_T->తాళం, _T->flags),
+		    గుర్తులేని దీర్ఘ flags)
 
-DECLARE_LOCK_GUARD_1_ATTRS(raw_spin_rq_lock_irqsave, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_raw_spin_rq_lock_irqsave_constructor(_T) \
-	WITH_LOCK_GUARD_1_ATTRS(raw_spin_rq_lock_irqsave, _T)
+DECLARE_తాళం_GUARD_1_ATTRS(raw_spin_rq_తాళం_irqsave, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(నిర్మాణం rq **)_T)));
+#నిర్వచించు class_raw_spin_rq_తాళం_irqsave_constructor(_T) \
+	WITH_తాళం_GUARD_1_ATTRS(raw_spin_rq_తాళం_irqsave, _T)
 
-#define this_rq_lock_irq(...) __acquire_ret(_this_rq_lock_irq(__VA_ARGS__), __rq_lockp(__ret))
-static inline struct rq *_this_rq_lock_irq(struct rq_flags *rf) __acquires_ret
+#నిర్వచించు this_rq_తాళం_irq(...) __acquire_ret(this_rq_తాళం_irq_2(__VA_ARGS__), __rq_lockp(__ret))
+స్థిర అంతఃవరుస నిర్మాణం rq *this_rq_తాళం_irq_2(నిర్మాణం rq_flags *rf) __acquires_ret
 {
-	struct rq *rq;
+	నిర్మాణం rq *rq;
 
 	local_irq_disable();
 	rq = this_rq();
-	rq_lock(rq, rf);
+	rq_తాళం(rq, rf);
 
-	return rq;
+	తిరిగి rq;
 }
 
-#ifdef CONFIG_NUMA
+#నిర్వచితమైతే CONFIG_NUMA
 
-enum numa_topology_type {
-	NUMA_DIRECT,
+గణన numa_topology_type {
+	NUMA_ప్రత్యక్ష,
 	NUMA_GLUELESS_MESH,
 	NUMA_BACKPLANE,
 };
 
-extern enum numa_topology_type sched_numa_topology_type;
-extern int sched_max_numa_distance;
-extern bool find_numa_distance(int distance);
-extern void sched_init_numa(int offline_node);
-extern void sched_update_numa(int cpu, bool online);
-extern void sched_domains_numa_masks_set(unsigned int cpu);
-extern void sched_domains_numa_masks_clear(unsigned int cpu);
-extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
+బాహ్య గణన numa_topology_type sched_numa_topology_type;
+బాహ్య పూర్ణాంకం sched_max_numa_దూరం;
+బాహ్య bool కనుగొను_numa_దూరం(పూర్ణాంకం దూరం);
+బాహ్య శూన్య sched_init_numa(పూర్ణాంకం offline_కణుపు);
+బాహ్య శూన్య sched_update_numa(పూర్ణాంకం cpu, bool online);
+బాహ్య శూన్య sched_domains_numa_masks_సమితి(గుర్తులేని పూర్ణాంకం cpu);
+బాహ్య శూన్య sched_domains_numa_masks_clear(గుర్తులేని పూర్ణాంకం cpu);
+బాహ్య పూర్ణాంకం sched_numa_కనుగొను_closest(స్థిరరాశి నిర్మాణం cpumask *cpus, పూర్ణాంకం cpu);
 
-#else /* !CONFIG_NUMA: */
+#లేకపోతే /* !CONFIG_NUMA: */
 
-static inline void sched_init_numa(int offline_node) { }
-static inline void sched_update_numa(int cpu, bool online) { }
-static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
-static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
+స్థిర అంతఃవరుస శూన్య sched_init_numa(పూర్ణాంకం offline_కణుపు) { }
+స్థిర అంతఃవరుస శూన్య sched_update_numa(పూర్ణాంకం cpu, bool online) { }
+స్థిర అంతఃవరుస శూన్య sched_domains_numa_masks_సమితి(గుర్తులేని పూర్ణాంకం cpu) { }
+స్థిర అంతఃవరుస శూన్య sched_domains_numa_masks_clear(గుర్తులేని పూర్ణాంకం cpu) { }
 
-static inline int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
+స్థిర అంతఃవరుస పూర్ణాంకం sched_numa_కనుగొను_closest(స్థిరరాశి నిర్మాణం cpumask *cpus, పూర్ణాంకం cpu)
 {
-	return nr_cpu_ids;
+	తిరిగి nr_cpu_ids;
 }
 
-#endif /* !CONFIG_NUMA */
+#అయితే_ముగింపు /* !CONFIG_NUMA */
 
-#ifdef CONFIG_NUMA_BALANCING
+#నిర్వచితమైతే CONFIG_NUMA_BALANCING
 
 /* The regions in numa_faults array from task_struct */
-enum numa_faults_stats {
+గణన numa_దోషాలు_stats {
 	NUMA_MEM = 0,
 	NUMA_CPU,
 	NUMA_MEMBUF,
 	NUMA_CPUBUF
 };
 
-extern void sched_setnuma(struct task_struct *p, int node);
-extern int migrate_task_to(struct task_struct *p, int cpu);
-extern int migrate_swap(struct task_struct *p, struct task_struct *t,
-			int cpu, int scpu);
-extern void init_numa_balancing(u64 clone_flags, struct task_struct *p);
+బాహ్య శూన్య sched_setnuma(నిర్మాణం task_struct *p, పూర్ణాంకం కణుపు);
+బాహ్య పూర్ణాంకం migrate_task_గమ్యం(నిర్మాణం task_struct *p, పూర్ణాంకం cpu);
+బాహ్య పూర్ణాంకం migrate_మార్పిడి(నిర్మాణం task_struct *p, నిర్మాణం task_struct *t,
+			పూర్ణాంకం cpu, పూర్ణాంకం scpu);
+బాహ్య శూన్య init_numa_balancing(u64 clone_flags, నిర్మాణం task_struct *p);
 
-#else /* !CONFIG_NUMA_BALANCING: */
+#లేకపోతే /* !CONFIG_NUMA_BALANCING: */
 
-static inline void
-init_numa_balancing(u64 clone_flags, struct task_struct *p)
+స్థిర అంతఃవరుస శూన్య
+init_numa_balancing(u64 clone_flags, నిర్మాణం task_struct *p)
 {
 }
 
-#endif /* !CONFIG_NUMA_BALANCING */
+#అయితే_ముగింపు /* !CONFIG_NUMA_BALANCING */
 
-int task_llc(const struct task_struct *p);
+పూర్ణాంకం task_llc(స్థిరరాశి నిర్మాణం task_struct *p);
 
-static inline void
-queue_balance_callback(struct rq *rq,
-		       struct balance_callback *head,
-		       void (*func)(struct rq *rq))
+స్థిర అంతఃవరుస శూన్య
+వరుస_balance_callback(నిర్మాణం rq *rq,
+		       నిర్మాణం balance_callback *తల,
+		       శూన్య (*func)(నిర్మాణం rq *rq))
 {
 	lockdep_assert_rq_held(rq);
 
@@ -2158,15 +2158,15 @@ queue_balance_callback(struct rq *rq,
 	 * balance_push() is active, see the comment with
 	 * balance_push_callback.
 	 */
-	if (unlikely(head->next || rq->balance_callback == &balance_push_callback))
-		return;
+	ఒకవేళ (unlikely(తల->తదుపరి || rq->balance_callback == &balance_నెట్టు_callback))
+		తిరిగి;
 
-	head->func = func;
-	head->next = rq->balance_callback;
-	rq->balance_callback = head;
+	తల->func = func;
+	తల->తదుపరి = rq->balance_callback;
+	rq->balance_callback = తల;
 }
 
-#define rcu_dereference_sched_domain(p) \
+#నిర్వచించు rcu_dereference_sched_domain(p) \
 	rcu_dereference_all_check((p), lockdep_is_held(&sched_domains_mutex))
 
 /*
@@ -2176,16 +2176,16 @@ queue_balance_callback(struct rq *rq,
  * The domain tree of any CPU may only be accessed from within
  * preempt-disabled sections.
  */
-#define for_each_domain(cpu, __sd) \
-	for (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
-			__sd; __sd = __sd->parent)
+#నిర్వచించు for_each_domain(cpu, __sd) \
+	కొరకు (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
+			__sd; __sd = __sd->మాతృ)
 
 /* A mask of all the SD flags that have the SDF_SHARED_CHILD metaflag */
-#define SD_FLAG(name, mflags) (name * !!((mflags) & SDF_SHARED_CHILD)) |
-static const unsigned int SD_SHARED_CHILD_MASK =
-#include <linux/sched/sd_flags.h>
+#నిర్వచించు SD_FLAG(name, mflags) (name * !!((mflags) & SDF_SHARED_బిడ్డ)) |
+స్థిర స్థిరరాశి గుర్తులేని పూర్ణాంకం SD_SHARED_బిడ్డ_ముసుగు =
+#అన్తర్భావ <linux/sched/sd_flags.h>
 0;
-#undef SD_FLAG
+#నిర్వచనం_రద్దు SD_FLAG
 
 /**
  * highest_flag_domain - Return highest sched_domain containing flag.
@@ -2197,83 +2197,83 @@ static const unsigned int SD_SHARED_CHILD_MASK =
  * Returns the highest sched_domain of a CPU which contains @flag. If @flag has
  * the SDF_SHARED_CHILD metaflag, all the children domains also have @flag.
  */
-static inline struct sched_domain *highest_flag_domain(int cpu, int flag)
+స్థిర అంతఃవరుస నిర్మాణం sched_domain *highest_flag_domain(పూర్ణాంకం cpu, పూర్ణాంకం flag)
 {
-	struct sched_domain *sd, *hsd = NULL;
+	నిర్మాణం sched_domain *sd, *hsd = ఖాళీ;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag) {
+		ఒకవేళ (sd->flags & flag) {
 			hsd = sd;
-			continue;
+			కొనసాగు;
 		}
 
 		/*
 		 * Stop the search if @flag is known to be shared at lower
 		 * levels. It will not be found further up.
 		 */
-		if (flag & SD_SHARED_CHILD_MASK)
-			break;
+		ఒకవేళ (flag & SD_SHARED_బిడ్డ_ముసుగు)
+			ఆపు;
 	}
 
-	return hsd;
+	తిరిగి hsd;
 }
 
-static inline struct sched_domain *lowest_flag_domain(int cpu, int flag)
+స్థిర అంతఃవరుస నిర్మాణం sched_domain *అత్యల్ప_flag_domain(పూర్ణాంకం cpu, పూర్ణాంకం flag)
 {
-	struct sched_domain *sd;
+	నిర్మాణం sched_domain *sd;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag)
-			break;
+		ఒకవేళ (sd->flags & flag)
+			ఆపు;
 	}
 
-	return sd;
+	తిరిగి sd;
 }
 
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_llc);
-DECLARE_PER_CPU(int, sd_llc_size);
-DECLARE_PER_CPU(int, sd_llc_id);
-DECLARE_PER_CPU(int, sd_share_id);
-DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
-DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_balance_shared);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
+DECLARE_చొప్పున_CPU(నిర్మాణం sched_domain __rcu *, sd_llc);
+DECLARE_చొప్పున_CPU(పూర్ణాంకం, sd_llc_కొలత);
+DECLARE_చొప్పున_CPU(పూర్ణాంకం, sd_llc_id);
+DECLARE_చొప్పున_CPU(పూర్ణాంకం, sd_share_id);
+DECLARE_చొప్పున_CPU(నిర్మాణం sched_domain_shared __rcu *, sd_llc_shared);
+DECLARE_చొప్పున_CPU(నిర్మాణం sched_domain_shared __rcu *, sd_balance_shared);
+DECLARE_చొప్పున_CPU(నిర్మాణం sched_domain __rcu *, sd_numa);
+DECLARE_చొప్పున_CPU(నిర్మాణం sched_domain __rcu *, sd_asym_packing);
+DECLARE_చొప్పున_CPU(నిర్మాణం sched_domain __rcu *, sd_asym_cpucapacity);
 
-extern struct static_key_false sched_asym_cpucapacity;
-extern struct static_key_false sched_cluster_active;
+బాహ్య నిర్మాణం static_కీలకం_false sched_asym_cpucapacity;
+బాహ్య నిర్మాణం static_కీలకం_false sched_cluster_చురుకైన;
 
-static __always_inline bool sched_asym_cpucap_active(void)
+స్థిర __always_inline bool sched_asym_cpucap_చురుకైన(శూన్య)
 {
-	return static_branch_unlikely(&sched_asym_cpucapacity);
+	తిరిగి static_branch_unlikely(&sched_asym_cpucapacity);
 }
 
-struct sched_group_capacity {
+నిర్మాణం sched_సమూహం_సామర్థ్యం {
 	atomic_t		ref;
 	/*
 	 * CPU capacity of this group, SCHED_CAPACITY_SCALE being max capacity
 	 * for a single CPU.
 	 */
-	unsigned long		capacity;
-	unsigned long		min_capacity;		/* Min per-CPU capacity in group */
-	unsigned long		max_capacity;		/* Max per-CPU capacity in group */
-	unsigned long		next_update;
-	int			imbalance;		/* XXX unrelated to capacity but shared group state */
+	గుర్తులేని దీర్ఘ		సామర్థ్యం;
+	గుర్తులేని దీర్ఘ		min_సామర్థ్యం;		/* Min per-CPU capacity in group */
+	గుర్తులేని దీర్ఘ		max_సామర్థ్యం;		/* Max per-CPU capacity in group */
+	గుర్తులేని దీర్ఘ		తదుపరి_update;
+	పూర్ణాంకం			imbalance;		/* XXX unrelated to capacity but shared group state */
 
-	int			id;
+	పూర్ణాంకం			id;
 
-	unsigned long		cpumask[];		/* Balance mask */
+	గుర్తులేని దీర్ఘ		cpumask[];		/* Balance mask */
 };
 
-struct sched_group {
-	struct sched_group	*next;			/* Must be a circular list */
+నిర్మాణం sched_సమూహం {
+	నిర్మాణం sched_సమూహం	*తదుపరి;			/* Must be a circular list */
 	atomic_t		ref;
 
-	unsigned int		group_weight;
-	unsigned int		cores;
-	struct sched_group_capacity *sgc;
-	int			asym_prefer_cpu;	/* CPU of highest priority in group */
-	int			flags;
+	గుర్తులేని పూర్ణాంకం		సమూహం_బరువు;
+	గుర్తులేని పూర్ణాంకం		cores;
+	నిర్మాణం sched_సమూహం_సామర్థ్యం *sgc;
+	పూర్ణాంకం			asym_prefer_cpu;	/* CPU of highest priority in group */
+	పూర్ణాంకం			flags;
 
 	/*
 	 * The CPUs this group covers.
@@ -2282,37 +2282,37 @@ struct sched_group {
 	 * by attaching extra space to the end of the structure,
 	 * depending on how many CPUs the kernel has booted up with)
 	 */
-	unsigned long		cpumask[];
+	గుర్తులేని దీర్ఘ		cpumask[];
 };
 
-static inline struct cpumask *sched_group_span(struct sched_group *sg)
+స్థిర అంతఃవరుస నిర్మాణం cpumask *sched_సమూహం_పరిధి(నిర్మాణం sched_సమూహం *sg)
 {
-	return to_cpumask(sg->cpumask);
+	తిరిగి గమ్యం_cpumask(sg->cpumask);
 }
 
 /*
  * See build_balance_mask().
  */
-static inline struct cpumask *group_balance_mask(struct sched_group *sg)
+స్థిర అంతఃవరుస నిర్మాణం cpumask *సమూహం_balance_ముసుగు(నిర్మాణం sched_సమూహం *sg)
 {
-	return to_cpumask(sg->sgc->cpumask);
+	తిరిగి గమ్యం_cpumask(sg->sgc->cpumask);
 }
 
-extern int group_balance_cpu(struct sched_group *sg);
+బాహ్య పూర్ణాంకం సమూహం_balance_cpu(నిర్మాణం sched_సమూహం *sg);
 
-extern void update_sched_domain_debugfs(void);
-extern void dirty_sched_domain_sysctl(int cpu);
+బాహ్య శూన్య update_sched_domain_debugfs(శూన్య);
+బాహ్య శూన్య dirty_sched_domain_sysctl(పూర్ణాంకం cpu);
 
-extern int sched_update_scaling(void);
+బాహ్య పూర్ణాంకం sched_update_scaling(శూన్య);
 
-static inline const struct cpumask *task_user_cpus(struct task_struct *p)
+స్థిర అంతఃవరుస స్థిరరాశి నిర్మాణం cpumask *task_user_cpus(నిర్మాణం task_struct *p)
 {
-	if (!p->user_cpus_ptr)
-		return cpu_possible_mask; /* &init_task.cpus_mask */
-	return p->user_cpus_ptr;
+	ఒకవేళ (!p->user_cpus_ptr)
+		తిరిగి cpu_possible_ముసుగు; /* &init_task.cpus_mask */
+	తిరిగి p->user_cpus_ptr;
 }
 
-#ifdef CONFIG_CGROUP_SCHED
+#నిర్వచితమైతే CONFIG_CGROUP_SCHED
 
 /*
  * Return the group to which this tasks belongs.
@@ -2327,93 +2327,93 @@ static inline const struct cpumask *task_user_cpus(struct task_struct *p)
  * Instead we use a 'copy' which is updated from sched_move_task() while
  * holding both task_struct::pi_lock and rq::lock.
  */
-static inline struct task_group *task_group(struct task_struct *p)
+స్థిర అంతఃవరుస నిర్మాణం task_సమూహం *task_సమూహం(నిర్మాణం task_struct *p)
 {
-	return p->sched_task_group;
+	తిరిగి p->sched_task_సమూహం;
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
 /*
  * Defined here to be available before stats.h is included, since
  * stats.h has dependencies on things defined later in this file.
  */
-struct cfs_tg_state {
-	struct cfs_rq		cfs_rq;
-	struct sched_entity	se;
-	struct sched_statistics	stats;
+నిర్మాణం cfs_tg_state {
+	నిర్మాణం cfs_rq		cfs_rq;
+	నిర్మాణం sched_entity	se;
+	నిర్మాణం sched_statistics	stats;
 } __no_randomize_layout;
 
 /* Access a specific CPU's cfs_rq from a task group */
-static inline struct cfs_rq *tg_cfs_rq(struct task_group *tg, int cpu)
+స్థిర అంతఃవరుస నిర్మాణం cfs_rq *tg_cfs_rq(నిర్మాణం task_సమూహం *tg, పూర్ణాంకం cpu)
 {
-	return per_cpu_ptr(tg->cfs_rq, cpu);
+	తిరిగి చొప్పున_cpu_ptr(tg->cfs_rq, cpu);
 }
 
-static inline struct sched_entity *tg_se(struct task_group *tg, int cpu)
+స్థిర అంతఃవరుస నిర్మాణం sched_entity *tg_se(నిర్మాణం task_సమూహం *tg, పూర్ణాంకం cpu)
 {
-	struct cfs_tg_state *state;
+	నిర్మాణం cfs_tg_state *state;
 
-	if (is_root_task_group(tg))
-		return NULL;
+	ఒకవేళ (is_మూలం_task_సమూహం(tg))
+		తిరిగి ఖాళీ;
 
-	state = container_of(tg_cfs_rq(tg, cpu), struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	state = container_యొక్క(tg_cfs_rq(tg, cpu), నిర్మాణం cfs_tg_state, cfs_rq);
+	తిరిగి &state->se;
 }
 
-static inline struct sched_entity *cfs_rq_se(struct cfs_rq *cfs_rq)
+స్థిర అంతఃవరుస నిర్మాణం sched_entity *cfs_rq_se(నిర్మాణం cfs_rq *cfs_rq)
 {
-	struct cfs_tg_state *state;
+	నిర్మాణం cfs_tg_state *state;
 
-	if (is_root_task_group(cfs_rq->tg))
-		return NULL;
+	ఒకవేళ (is_మూలం_task_సమూహం(cfs_rq->tg))
+		తిరిగి ఖాళీ;
 
-	state = container_of(cfs_rq, struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	state = container_యొక్క(cfs_rq, నిర్మాణం cfs_tg_state, cfs_rq);
+	తిరిగి &state->se;
 }
-#endif
+#అయితే_ముగింపు
 
 /* Change a task's cfs_rq and parent entity if it moves across CPUs/groups */
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
+స్థిర అంతఃవరుస శూన్య సమితి_task_rq(నిర్మాణం task_struct *p, గుర్తులేని పూర్ణాంకం cpu)
 {
-#if defined(CONFIG_FAIR_GROUP_SCHED) || defined(CONFIG_RT_GROUP_SCHED)
-	struct task_group *tg = task_group(p);
-#endif
+#ఒకవేళ defined(CONFIG_FAIR_సమూహం_SCHED) || defined(CONFIG_RT_సమూహం_SCHED)
+	నిర్మాణం task_సమూహం *tg = task_సమూహం(p);
+#అయితే_ముగింపు
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	set_task_rq_fair(&p->se, p->se.cfs_rq, tg_cfs_rq(tg, cpu));
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
+	సమితి_task_rq_fair(&p->se, p->se.cfs_rq, tg_cfs_rq(tg, cpu));
 	p->se.cfs_rq = tg_cfs_rq(tg, cpu);
-	p->se.parent = tg_se(tg, cpu);
-	p->se.depth = p->se.parent ? p->se.parent->depth + 1 : 0;
-#endif
+	p->se.మాతృ = tg_se(tg, cpu);
+	p->se.లోతు = p->se.మాతృ ? p->se.మాతృ->లోతు + 1 : 0;
+#అయితే_ముగింపు
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#నిర్వచితమైతే CONFIG_RT_సమూహం_SCHED
 	/*
 	 * p->rt.rt_rq is NULL initially and it is easier to assign
 	 * root_task_group's rt_rq than switching in rt_rq_of_se()
 	 * Clobbers tg(!)
 	 */
-	if (!rt_group_sched_enabled())
-		tg = &root_task_group;
+	ఒకవేళ (!rt_సమూహం_sched_enabled())
+		tg = &మూలం_task_సమూహం;
 	p->rt.rt_rq  = tg->rt_rq[cpu];
-	p->rt.parent = tg->rt_se[cpu];
-#endif /* CONFIG_RT_GROUP_SCHED */
+	p->rt.మాతృ = tg->rt_se[cpu];
+#అయితే_ముగింపు /* CONFIG_RT_GROUP_SCHED */
 }
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#లేకపోతే /* !CONFIG_CGROUP_SCHED: */
 
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu) { }
+స్థిర అంతఃవరుస శూన్య సమితి_task_rq(నిర్మాణం task_struct *p, గుర్తులేని పూర్ణాంకం cpu) { }
 
-static inline struct task_group *task_group(struct task_struct *p)
+స్థిర అంతఃవరుస నిర్మాణం task_సమూహం *task_సమూహం(నిర్మాణం task_struct *p)
 {
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-#endif /* !CONFIG_CGROUP_SCHED */
+#అయితే_ముగింపు /* !CONFIG_CGROUP_SCHED */
 
-static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
+స్థిర అంతఃవరుస శూన్య __set_task_cpu(నిర్మాణం task_struct *p, గుర్తులేని పూర్ణాంకం cpu)
 {
-	set_task_rq(p, cpu);
-#ifdef CONFIG_SMP
+	సమితి_task_rq(p, cpu);
+#నిర్వచితమైతే CONFIG_SMP
 	/*
 	 * After ->cpu is set up to a new value, task_rq_lock(p, ...) can be
 	 * successfully executed on another CPU. We must ensure that updates of
@@ -2422,81 +2422,81 @@ static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
 	smp_wmb();
 	WRITE_ONCE(task_thread_info(p)->cpu, cpu);
 	p->wake_cpu = cpu;
-	rseq_sched_set_ids_changed(p);
-#endif /* CONFIG_SMP */
+	rseq_sched_సమితి_ids_మారింది(p);
+#అయితే_ముగింపు /* CONFIG_SMP */
 }
 
 /*
  * Tunables:
  */
 
-#define SCHED_FEAT(name, enabled)	\
+#నిర్వచించు SCHED_FEAT(name, enabled)	\
 	__SCHED_FEAT_##name ,
 
-enum {
-#include "features.h"
+గణన {
+#అన్తర్భావ "features.h"
 	__SCHED_FEAT_NR,
 };
 
-#undef SCHED_FEAT
+#నిర్వచనం_రద్దు SCHED_FEAT
 
 /*
  * To support run-time toggling of sched features, all the translation units
  * (but core.c) reference the sysctl_sched_features defined in core.c.
  */
-extern __read_mostly unsigned int sysctl_sched_features;
+బాహ్య __read_mostly గుర్తులేని పూర్ణాంకం sysctl_sched_features;
 
-#ifdef CONFIG_JUMP_LABEL
+#నిర్వచితమైతే CONFIG_JUMP_LABEL
 
-union sched_feat_key {
-	struct static_key_true	key_true;
-	struct static_key_false	key_false;
+సంఘం sched_feat_కీలకం {
+	నిర్మాణం static_కీలకం_true	కీలకం_true;
+	నిర్మాణం static_కీలకం_false	కీలకం_false;
 };
 
-#define sched_feat_branch_true(key)	static_branch_likely(&(key)->key_true)
-#define sched_feat_branch_false(key)	static_branch_unlikely(&(key)->key_false)
+#నిర్వచించు sched_feat_branch_true(కీలకం)	static_branch_likely(&(కీలకం)->కీలకం_true)
+#నిర్వచించు sched_feat_branch_false(కీలకం)	static_branch_unlikely(&(కీలకం)->కీలకం_false)
 
-#define SCHED_FEAT(name, enabled)			\
-static __always_inline bool				\
-static_branch_##name(union sched_feat_key *key) 	\
+#నిర్వచించు SCHED_FEAT(name, enabled)			\
+స్థిర __always_inline bool				\
+static_branch_##name(సంఘం sched_feat_కీలకం *కీలకం) 	\
 {							\
-	return sched_feat_branch_##enabled(key);	\
+	తిరిగి sched_feat_branch_##enabled(కీలకం);	\
 }
 
-#include "features.h"
-#undef SCHED_FEAT
+#అన్తర్భావ "features.h"
+#నిర్వచనం_రద్దు SCHED_FEAT
 
-extern union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR];
-#define sched_feat(x) (static_branch_##x(&sched_feat_keys[__SCHED_FEAT_##x]))
+బాహ్య సంఘం sched_feat_కీలకం sched_feat_కీలకాలు[__SCHED_FEAT_NR];
+#నిర్వచించు sched_feat(x) (static_branch_##x(&sched_feat_కీలకాలు[__SCHED_FEAT_##x]))
 
-#else /* !CONFIG_JUMP_LABEL: */
+#లేకపోతే /* !CONFIG_JUMP_LABEL: */
 
-#define sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
+#నిర్వచించు sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
 
-#endif /* !CONFIG_JUMP_LABEL */
+#అయితే_ముగింపు /* !CONFIG_JUMP_LABEL */
 
-extern struct static_key_false sched_numa_balancing;
-extern struct static_key_false sched_schedstats;
+బాహ్య నిర్మాణం static_కీలకం_false sched_numa_balancing;
+బాహ్య నిర్మాణం static_కీలకం_false sched_schedstats;
 
-static inline u64 global_rt_period(void)
+స్థిర అంతఃవరుస u64 global_rt_period(శూన్య)
 {
-	return (u64)sysctl_sched_rt_period * NSEC_PER_USEC;
+	తిరిగి (u64)sysctl_sched_rt_period * NSEC_చొప్పున_USEC;
 }
 
-static inline u64 global_rt_runtime(void)
+స్థిర అంతఃవరుస u64 global_rt_runtime(శూన్య)
 {
-	if (sysctl_sched_rt_runtime < 0)
-		return RUNTIME_INF;
+	ఒకవేళ (sysctl_sched_rt_runtime < 0)
+		తిరిగి RUNTIME_INF;
 
-	return (u64)sysctl_sched_rt_runtime * NSEC_PER_USEC;
+	తిరిగి (u64)sysctl_sched_rt_runtime * NSEC_చొప్పున_USEC;
 }
 
 /*
  * Is p the current execution context?
  */
-static inline int task_current(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస పూర్ణాంకం task_current(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
-	return rq->curr == p;
+	తిరిగి rq->curr == p;
 }
 
 /*
@@ -2505,55 +2505,55 @@ static inline int task_current(struct rq *rq, struct task_struct *p)
  * Note that it might be the current execution context at the same time if
  * rq->curr == rq->donor == p.
  */
-static inline int task_current_donor(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస పూర్ణాంకం task_current_donor(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
-	return rq->donor == p;
+	తిరిగి rq->donor == p;
 }
 
-static inline bool task_is_blocked(struct task_struct *p)
+స్థిర అంతఃవరుస bool task_is_blocked(నిర్మాణం task_struct *p)
 {
-	if (!sched_proxy_exec())
-		return false;
+	ఒకవేళ (!sched_proxy_exec())
+		తిరిగి false;
 
-	return !!p->blocked_on;
+	తిరిగి !!p->blocked_on;
 }
 
-#ifdef CONFIG_SCHED_PROXY_EXEC
-void sched_proxy_block_task(struct rq *rq, struct task_struct *p);
-#else
-static inline void sched_proxy_block_task(struct rq *rq, struct task_struct *p) {}
-#endif
+#నిర్వచితమైతే CONFIG_SCHED_PROXY_EXEC
+శూన్య sched_proxy_ఖండం_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *p);
+#లేకపోతే
+స్థిర అంతఃవరుస శూన్య sched_proxy_ఖండం_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *p) {}
+#అయితే_ముగింపు
 
-static inline int task_on_cpu(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస పూర్ణాంకం task_on_cpu(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
-	return p->on_cpu;
+	తిరిగి p->on_cpu;
 }
 
-static inline int task_on_rq_queued(struct task_struct *p)
+స్థిర అంతఃవరుస పూర్ణాంకం task_on_rq_queued(నిర్మాణం task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
+	తిరిగి READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
 }
 
-static inline int task_on_rq_migrating(struct task_struct *p)
+స్థిర అంతఃవరుస పూర్ణాంకం task_on_rq_migrating(నిర్మాణం task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
+	తిరిగి READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
 }
 
 /* Wake flags. The first three directly map to some SD flag value */
-#define WF_EXEC			0x02 /* Wakeup after exec; maps to SD_BALANCE_EXEC */
-#define WF_FORK			0x04 /* Wakeup after fork; maps to SD_BALANCE_FORK */
-#define WF_TTWU			0x08 /* Wakeup;            maps to SD_BALANCE_WAKE */
+#నిర్వచించు WF_EXEC			0x02 /* Wakeup after exec; maps to SD_BALANCE_EXEC */
+#నిర్వచించు WF_FORK			0x04 /* Wakeup after fork; maps to SD_BALANCE_FORK */
+#నిర్వచించు WF_TTWU			0x08 /* Wakeup;            maps to SD_BALANCE_WAKE */
 /*
  * Hint that the caller expects the waker to sleep soon.
  * Scheduler classes may use it for placement or preemption.
  * Callers must not rely on it to prevent migration,
  * preserve CPU locality or make the wakee run next.
  */
-#define WF_SYNC			0x10
-#define WF_MIGRATED		0x20 /* Internal use, task got migrated */
-#define WF_CURRENT_CPU		0x40 /* Prefer to move the wakee to the current CPU. */
-#define WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
-#define WF_TTWU_RQ		0x100 /* Wakeup completed through ttwu_runnable() */
+#నిర్వచించు WF_SYNC			0x10
+#నిర్వచించు WF_MIGRATED		0x20 /* Internal use, task got migrated */
+#నిర్వచించు WF_CURRENT_CPU		0x40 /* Prefer to move the wakee to the current CPU. */
+#నిర్వచించు WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
+#నిర్వచించు WF_TTWU_RQ		0x100 /* Wakeup completed through ttwu_runnable() */
 
 static_assert(WF_EXEC == SD_BALANCE_EXEC);
 static_assert(WF_FORK == SD_BALANCE_FORK);
@@ -2568,11 +2568,11 @@ static_assert(WF_TTWU == SD_BALANCE_WAKE);
  * slice expiry etc.
  */
 
-#define WEIGHT_IDLEPRIO		3
-#define WMULT_IDLEPRIO		1431655765
+#నిర్వచించు బరువు_IDLEPRIO		3
+#నిర్వచించు WMULT_IDLEPRIO		1431655765
 
-extern const int		sched_prio_to_weight[40];
-extern const u32		sched_prio_to_wmult[40];
+బాహ్య స్థిరరాశి పూర్ణాంకం		sched_prio_గమ్యం_బరువు[40];
+బాహ్య స్థిరరాశి u32		sched_prio_గమ్యం_wmult[40];
 
 /*
  * {de,en}queue flags:
@@ -2605,55 +2605,55 @@ extern const u32		sched_prio_to_wmult[40];
  * SCHED_DEADLINE seems to rely on this for now.
  */
 
-#define DEQUEUE_SLEEP		0x0001 /* Matches ENQUEUE_WAKEUP */
-#define DEQUEUE_SAVE		0x0002 /* Matches ENQUEUE_RESTORE */
-#define DEQUEUE_MOVE		0x0004 /* Matches ENQUEUE_MOVE */
-#define DEQUEUE_NOCLOCK		0x0008 /* Matches ENQUEUE_NOCLOCK */
+#నిర్వచించు వరుస_నుండి_తీయి_SLEEP		0x0001 /* Matches ENQUEUE_WAKEUP */
+#నిర్వచించు వరుస_నుండి_తీయి_SAVE		0x0002 /* Matches ENQUEUE_RESTORE */
+#నిర్వచించు వరుస_నుండి_తీయి_MOVE		0x0004 /* Matches ENQUEUE_MOVE */
+#నిర్వచించు వరుస_నుండి_తీయి_NOCLOCK		0x0008 /* Matches ENQUEUE_NOCLOCK */
 
-#define DEQUEUE_MIGRATING	0x0010 /* Matches ENQUEUE_MIGRATING */
-#define DEQUEUE_DELAYED		0x0020 /* Matches ENQUEUE_DELAYED */
-#define DEQUEUE_CLASS		0x0040 /* Matches ENQUEUE_CLASS */
+#నిర్వచించు వరుస_నుండి_తీయి_MIGRATING	0x0010 /* Matches ENQUEUE_MIGRATING */
+#నిర్వచించు వరుస_నుండి_తీయి_DELAYED		0x0020 /* Matches ENQUEUE_DELAYED */
+#నిర్వచించు వరుస_నుండి_తీయి_CLASS		0x0040 /* Matches ENQUEUE_CLASS */
 
-#define DEQUEUE_SPECIAL		0x00010000
-#define DEQUEUE_THROTTLE	0x00020000
+#నిర్వచించు వరుస_నుండి_తీయి_SPECIAL		0x00010000
+#నిర్వచించు వరుస_నుండి_తీయి_THROTTLE	0x00020000
 
-#define ENQUEUE_WAKEUP		0x0001
-#define ENQUEUE_RESTORE		0x0002
-#define ENQUEUE_MOVE		0x0004
-#define ENQUEUE_NOCLOCK		0x0008
+#నిర్వచించు వరుసలో_చేర్చు_WAKEUP		0x0001
+#నిర్వచించు వరుసలో_చేర్చు_RESTORE		0x0002
+#నిర్వచించు వరుసలో_చేర్చు_MOVE		0x0004
+#నిర్వచించు వరుసలో_చేర్చు_NOCLOCK		0x0008
 
-#define ENQUEUE_MIGRATING	0x0010
-#define ENQUEUE_DELAYED		0x0020
-#define ENQUEUE_CLASS		0x0040
+#నిర్వచించు వరుసలో_చేర్చు_MIGRATING	0x0010
+#నిర్వచించు వరుసలో_చేర్చు_DELAYED		0x0020
+#నిర్వచించు వరుసలో_చేర్చు_CLASS		0x0040
 
-#define ENQUEUE_HEAD		0x00010000
-#define ENQUEUE_REPLENISH	0x00020000
-#define ENQUEUE_MIGRATED	0x00040000
-#define ENQUEUE_INITIAL		0x00080000
-#define ENQUEUE_RQ_SELECTED	0x00100000
-#define ENQUEUE_QUEUED		0x00200000
+#నిర్వచించు వరుసలో_చేర్చు_తల		0x00010000
+#నిర్వచించు వరుసలో_చేర్చు_REPLENISH	0x00020000
+#నిర్వచించు వరుసలో_చేర్చు_MIGRATED	0x00040000
+#నిర్వచించు వరుసలో_చేర్చు_INITIAL		0x00080000
+#నిర్వచించు వరుసలో_చేర్చు_RQ_SELECTED	0x00100000
+#నిర్వచించు వరుసలో_చేర్చు_QUEUED		0x00200000
 
-#define RETRY_TASK		((void *)-1UL)
+#నిర్వచించు RETRY_TASK		((శూన్య *)-1UL)
 
-struct affinity_context {
-	const struct cpumask	*new_mask;
-	struct cpumask		*user_mask;
-	unsigned int		flags;
+నిర్మాణం affinity_context {
+	స్థిరరాశి నిర్మాణం cpumask	*new_ముసుగు;
+	నిర్మాణం cpumask		*user_ముసుగు;
+	గుర్తులేని పూర్ణాంకం		flags;
 };
 
-extern s64 update_curr_common(struct rq *rq);
+బాహ్య s64 update_curr_common(నిర్మాణం rq *rq);
 
-enum snt_e {
-	SNT_NORMAL,	/* set_next_task() */
+గణన snt_e {
+	SNT_సాధారణ,	/* set_next_task() */
 	SNT_PICK,	/* put_prev_set_next_task(): prev != next */
 	SNT_REPICK,	/* put_prev_set_next_task(): prev == next */
 };
 
-struct sched_class {
+నిర్మాణం sched_class {
 
-#ifdef CONFIG_UCLAMP_TASK
-	int uclamp_enabled;
-#endif
+#నిర్వచితమైతే CONFIG_UCLAMP_TASK
+	పూర్ణాంకం uclamp_enabled;
+#అయితే_ముగింపు
 
 	/*
 	 * move_queued_task/activate_task/enqueue_task: rq->lock
@@ -2663,7 +2663,7 @@ struct sched_class {
 	 * proxy_task_current: rq->lock
 	 * sched_change_end
 	 */
-	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
+	శూన్య (*వరుసలో_చేర్చు_task) (నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags);
 	/*
 	 * move_queued_task/deactivate_task/dequeue_task: rq->lock
 	 * __schedule/block_task/dequeue_task: rq->lock
@@ -2671,16 +2671,16 @@ struct sched_class {
 	 * wait_task_inactive: task_rq_lock
 	 * sched_change_begin
 	 */
-	bool (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
+	bool (*వరుస_నుండి_తీయి_task) (నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags);
 
 	/*
 	 * do_sched_yield: rq->lock
 	 */
-	void (*yield_task)   (struct rq *rq);
+	శూన్య (*yield_task)   (నిర్మాణం rq *rq);
 	/*
 	 * yield_to: rq->lock (double)
 	 */
-	bool (*yield_to_task)(struct rq *rq, struct task_struct *p);
+	bool (*yield_గమ్యం_task)(నిర్మాణం rq *rq, నిర్మాణం task_struct *p);
 
 	/*
 	 * move_queued_task: rq->lock
@@ -2689,154 +2689,154 @@ struct sched_class {
 	 * ttwu_runnable: task_rq_lock
 	 * wake_up_new_task: task_rq_lock
 	 */
-	void (*wakeup_preempt)(struct rq *rq, struct task_struct *p, int flags);
+	శూన్య (*wakeup_preempt)(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags);
 
 	/*
 	 * schedule/pick_next_task/prev_balance: rq->lock
 	 */
-	int (*balance)(struct rq *rq, struct rq_flags *rf);
+	పూర్ణాంకం (*balance)(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf);
 
 	/*
 	 * schedule/pick_next_task: rq->lock
 	 */
-	struct task_struct *(*pick_task)(struct rq *rq, struct rq_flags *rf);
+	నిర్మాణం task_struct *(*pick_task)(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf);
 
 	/*
 	 * sched_change:
 	 * __schedule: rq->lock
 	 */
-	void (*put_prev_task)(struct rq *rq, struct task_struct *p, struct task_struct *next);
-	void (*set_next_task)(struct rq *rq, struct task_struct *p, enum snt_e type);
+	శూన్య (*put_prev_task)(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, నిర్మాణం task_struct *తదుపరి);
+	శూన్య (*సమితి_తదుపరి_task)(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, గణన snt_e type);
 
 	/*
 	 * select_task_rq: p->pi_lock
 	 * sched_exec: p->pi_lock
 	 */
-	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int flags);
+	పూర్ణాంకం  (*select_task_rq)(నిర్మాణం task_struct *p, పూర్ణాంకం task_cpu, పూర్ణాంకం flags);
 
 	/*
 	 * set_task_cpu: p->pi_lock || rq->lock (ttwu like)
 	 */
-	void (*migrate_task_rq)(struct task_struct *p, int new_cpu);
+	శూన్య (*migrate_task_rq)(నిర్మాణం task_struct *p, పూర్ణాంకం new_cpu);
 
 	/*
 	 * ttwu_do_activate: rq->lock
 	 * wake_up_new_task: task_rq_lock
 	 */
-	void (*task_woken)(struct rq *this_rq, struct task_struct *task);
+	శూన్య (*task_woken)(నిర్మాణం rq *this_rq, నిర్మాణం task_struct *task);
 
 	/*
 	 * do_set_cpus_allowed: task_rq_lock + sched_change
 	 */
-	void (*set_cpus_allowed)(struct task_struct *p, struct affinity_context *ctx);
+	శూన్య (*సమితి_cpus_allowed)(నిర్మాణం task_struct *p, నిర్మాణం affinity_context *ctx);
 
 	/*
 	 * sched_set_rq_{on,off}line: rq->lock
 	 */
-	void (*rq_online)(struct rq *rq);
-	void (*rq_offline)(struct rq *rq);
+	శూన్య (*rq_online)(నిర్మాణం rq *rq);
+	శూన్య (*rq_offline)(నిర్మాణం rq *rq);
 
 	/*
 	 * push_cpu_stop: p->pi_lock && rq->lock
 	 */
-	struct rq *(*find_lock_rq)(struct task_struct *p, struct rq *rq);
+	నిర్మాణం rq *(*కనుగొను_తాళం_rq)(నిర్మాణం task_struct *p, నిర్మాణం rq *rq);
 
 	/*
 	 * hrtick: rq->lock
 	 * sched_tick: rq->lock
 	 * sched_tick_remote: rq->lock
 	 */
-	void (*task_tick)(struct rq *rq, struct task_struct *p, int queued);
+	శూన్య (*task_tick)(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం queued);
 	/*
 	 * sched_cgroup_fork: p->pi_lock
 	 */
-	void (*task_fork)(struct task_struct *p);
+	శూన్య (*task_fork)(నిర్మాణం task_struct *p);
 	/*
 	 * finish_task_switch: no locks
 	 */
-	void (*task_dead)(struct task_struct *p);
+	శూన్య (*task_dead)(నిర్మాణం task_struct *p);
 
 	/*
 	 * sched_change
 	 */
-	void (*switching_from)(struct rq *this_rq, struct task_struct *task);
-	void (*switched_from) (struct rq *this_rq, struct task_struct *task);
-	void (*switching_to)  (struct rq *this_rq, struct task_struct *task);
-	void (*switched_to)   (struct rq *this_rq, struct task_struct *task);
-	u64  (*get_prio)     (struct rq *this_rq, struct task_struct *task);
-	void (*prio_changed) (struct rq *this_rq, struct task_struct *task,
+	శూన్య (*switching_from)(నిర్మాణం rq *this_rq, నిర్మాణం task_struct *task);
+	శూన్య (*switched_from) (నిర్మాణం rq *this_rq, నిర్మాణం task_struct *task);
+	శూన్య (*switching_గమ్యం)  (నిర్మాణం rq *this_rq, నిర్మాణం task_struct *task);
+	శూన్య (*switched_గమ్యం)   (నిర్మాణం rq *this_rq, నిర్మాణం task_struct *task);
+	u64  (*get_prio)     (నిర్మాణం rq *this_rq, నిర్మాణం task_struct *task);
+	శూన్య (*prio_మారింది) (నిర్మాణం rq *this_rq, నిర్మాణం task_struct *task,
 			      u64 oldprio);
 
 	/*
 	 * set_load_weight: task_rq_lock + sched_change
 	 * __setscheduler_parms: task_rq_lock + sched_change
 	 */
-	void (*reweight_task)(struct rq *this_rq, struct task_struct *task,
-			      const struct load_weight *lw);
+	శూన్య (*reweight_task)(నిర్మాణం rq *this_rq, నిర్మాణం task_struct *task,
+			      స్థిరరాశి నిర్మాణం ఎక్కించు_బరువు *lw);
 
 	/*
 	 * sched_rr_get_interval: task_rq_lock
 	 */
-	unsigned int (*get_rr_interval)(struct rq *rq,
-					struct task_struct *task);
+	గుర్తులేని పూర్ణాంకం (*get_rr_interval)(నిర్మాణం rq *rq,
+					నిర్మాణం task_struct *task);
 
 	/*
 	 * task_sched_runtime: task_rq_lock
 	 */
-	void (*update_curr)(struct rq *rq);
+	శూన్య (*update_curr)(నిర్మాణం rq *rq);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#నిర్వచితమైతే CONFIG_FAIR_సమూహం_SCHED
 	/*
 	 * sched_change_group: task_rq_lock + sched_change
 	 */
-	void (*task_change_group)(struct task_struct *p);
-#endif
+	శూన్య (*task_change_సమూహం)(నిర్మాణం task_struct *p);
+#అయితే_ముగింపు
 
-#ifdef CONFIG_SCHED_CORE
+#నిర్వచితమైతే CONFIG_SCHED_CORE
 	/*
 	 * pick_next_task: rq->lock
 	 * try_steal_cookie: rq->lock (double)
 	 */
-	int (*task_is_throttled)(struct task_struct *p, int cpu);
-#endif
+	పూర్ణాంకం (*task_is_throttled)(నిర్మాణం task_struct *p, పూర్ణాంకం cpu);
+#అయితే_ముగింపు
 };
 
-static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
+స్థిర అంతఃవరుస శూన్య put_prev_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *prev)
 {
 	WARN_ON_ONCE(rq->donor != prev);
-	prev->sched_class->put_prev_task(rq, prev, NULL);
+	prev->sched_class->put_prev_task(rq, prev, ఖాళీ);
 }
 
-static inline void set_next_task(struct rq *rq, struct task_struct *next)
+స్థిర అంతఃవరుస శూన్య సమితి_తదుపరి_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *తదుపరి)
 {
-	next->sched_class->set_next_task(rq, next, SNT_NORMAL);
+	తదుపరి->sched_class->సమితి_తదుపరి_task(rq, తదుపరి, SNT_సాధారణ);
 }
 
-static inline void
-__put_prev_set_next_dl_server(struct rq *rq,
-			      struct task_struct *prev,
-			      struct task_struct *next)
+స్థిర అంతఃవరుస శూన్య
+__put_prev_set_next_dl_server(నిర్మాణం rq *rq,
+			      నిర్మాణం task_struct *prev,
+			      నిర్మాణం task_struct *తదుపరి)
 {
-	prev->dl_server = NULL;
-	next->dl_server = rq->dl_server;
-	rq->dl_server = NULL;
+	prev->dl_server = ఖాళీ;
+	తదుపరి->dl_server = rq->dl_server;
+	rq->dl_server = ఖాళీ;
 }
 
-static inline void put_prev_set_next_task(struct rq *rq,
-					  struct task_struct *prev,
-					  struct task_struct *next)
+స్థిర అంతఃవరుస శూన్య put_prev_సమితి_తదుపరి_task(నిర్మాణం rq *rq,
+					  నిర్మాణం task_struct *prev,
+					  నిర్మాణం task_struct *తదుపరి)
 {
 	WARN_ON_ONCE(rq->donor != prev);
 
-	__put_prev_set_next_dl_server(rq, prev, next);
+	__put_prev_set_next_dl_server(rq, prev, తదుపరి);
 
-	if (next == prev) {
-		next->sched_class->set_next_task(rq, next, SNT_REPICK);
-		return;
+	ఒకవేళ (తదుపరి == prev) {
+		తదుపరి->sched_class->సమితి_తదుపరి_task(rq, తదుపరి, SNT_REPICK);
+		తిరిగి;
 	}
 
-	prev->sched_class->put_prev_task(rq, prev, next);
-	next->sched_class->set_next_task(rq, next, SNT_PICK);
+	prev->sched_class->put_prev_task(rq, prev, తదుపరి);
+	తదుపరి->sched_class->సమితి_తదుపరి_task(rq, తదుపరి, SNT_PICK);
 }
 
 /*
@@ -2849,263 +2849,263 @@ static inline void put_prev_set_next_task(struct rq *rq,
  *
  * Also enforce alignment on the instance, not the type, to guarantee layout.
  */
-#define DEFINE_SCHED_CLASS(name) \
-const struct sched_class name##_sched_class \
-	__aligned(__alignof__(struct sched_class)) \
+#నిర్వచించు DEFINE_SCHED_CLASS(name) \
+స్థిరరాశి నిర్మాణం sched_class name##_sched_class \
+	__aligned(__alignof__(నిర్మాణం sched_class)) \
 	__section("__" #name "_sched_class")
 
 /* Defined in include/asm-generic/vmlinux.lds.h */
-extern struct sched_class __sched_class_highest[];
-extern struct sched_class __sched_class_lowest[];
+బాహ్య నిర్మాణం sched_class __sched_class_highest[];
+బాహ్య నిర్మాణం sched_class __sched_class_lowest[];
 
-extern const struct sched_class stop_sched_class;
-extern const struct sched_class dl_sched_class;
-extern const struct sched_class rt_sched_class;
-extern const struct sched_class fair_sched_class;
-extern const struct sched_class idle_sched_class;
+బాహ్య స్థిరరాశి నిర్మాణం sched_class stop_sched_class;
+బాహ్య స్థిరరాశి నిర్మాణం sched_class dl_sched_class;
+బాహ్య స్థిరరాశి నిర్మాణం sched_class rt_sched_class;
+బాహ్య స్థిరరాశి నిర్మాణం sched_class fair_sched_class;
+బాహ్య స్థిరరాశి నిర్మాణం sched_class idle_sched_class;
 
 /*
  * Iterate only active classes. SCX can take over all fair tasks or be
  * completely disabled. If the former, skip fair. If the latter, skip SCX.
  */
-static inline const struct sched_class *next_active_class(const struct sched_class *class)
+స్థిర అంతఃవరుస స్థిరరాశి నిర్మాణం sched_class *తదుపరి_చురుకైన_class(స్థిరరాశి నిర్మాణం sched_class *class)
 {
 	class++;
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (scx_switched_all() && class == &fair_sched_class)
+#నిర్వచితమైతే CONFIG_SCHED_CLASS_EXT
+	ఒకవేళ (scx_switched_all() && class == &fair_sched_class)
 		class++;
-	if (!scx_enabled() && class == &ext_sched_class)
+	ఒకవేళ (!scx_enabled() && class == &ext_sched_class)
 		class++;
-#endif
-	return class;
+#అయితే_ముగింపు
+	తిరిగి class;
 }
 
-#define for_class_range(class, _from, _to) \
-	for (class = (_from); class < (_to); class++)
+#నిర్వచించు for_class_range(class, _from, గమ్యం_2) \
+	కొరకు (class = (_from); class < (గమ్యం_2); class++)
 
-#define for_each_class(class) \
+#నిర్వచించు for_each_class(class) \
 	for_class_range(class, __sched_class_highest, __sched_class_lowest)
 
-#define for_active_class_range(class, _from, _to)				\
-	for (class = (_from); class != (_to); class = next_active_class(class))
+#నిర్వచించు for_చురుకైన_class_range(class, _from, గమ్యం_2)				\
+	కొరకు (class = (_from); class != (గమ్యం_2); class = తదుపరి_చురుకైన_class(class))
 
-#define for_each_active_class(class)						\
-	for_active_class_range(class, __sched_class_highest, __sched_class_lowest)
+#నిర్వచించు for_each_చురుకైన_class(class)						\
+	for_చురుకైన_class_range(class, __sched_class_highest, __sched_class_lowest)
 
-#define sched_class_above(_a, _b)	((_a) < (_b))
+#నిర్వచించు sched_class_above(_a, _b)	((_a) < (_b))
 
-static inline void rq_modified_begin(struct rq *rq, const struct sched_class *class)
+స్థిర అంతఃవరుస శూన్య rq_modified_begin(నిర్మాణం rq *rq, స్థిరరాశి నిర్మాణం sched_class *class)
 {
-	if (sched_class_above(rq->next_class, class))
-		rq->next_class = class;
+	ఒకవేళ (sched_class_above(rq->తదుపరి_class, class))
+		rq->తదుపరి_class = class;
 }
 
-static inline bool rq_modified_above(struct rq *rq, const struct sched_class *class)
+స్థిర అంతఃవరుస bool rq_modified_above(నిర్మాణం rq *rq, స్థిరరాశి నిర్మాణం sched_class *class)
 {
-	return sched_class_above(rq->next_class, class);
+	తిరిగి sched_class_above(rq->తదుపరి_class, class);
 }
 
-static inline bool sched_stop_runnable(struct rq *rq)
+స్థిర అంతఃవరుస bool sched_stop_runnable(నిర్మాణం rq *rq)
 {
-	return rq->stop && task_on_rq_queued(rq->stop);
+	తిరిగి rq->stop && task_on_rq_queued(rq->stop);
 }
 
-static inline bool sched_dl_runnable(struct rq *rq)
+స్థిర అంతఃవరుస bool sched_dl_runnable(నిర్మాణం rq *rq)
 {
-	return rq->dl.dl_nr_running > 0;
+	తిరిగి rq->dl.dl_nr_running > 0;
 }
 
-static inline bool sched_rt_runnable(struct rq *rq)
+స్థిర అంతఃవరుస bool sched_rt_runnable(నిర్మాణం rq *rq)
 {
-	return rq->rt.rt_queued > 0;
+	తిరిగి rq->rt.rt_queued > 0;
 }
 
-static inline bool sched_fair_runnable(struct rq *rq)
+స్థిర అంతఃవరుస bool sched_fair_runnable(నిర్మాణం rq *rq)
 {
-	return rq->cfs.nr_queued > 0;
+	తిరిగి rq->cfs.nr_queued > 0;
 }
 
-extern struct task_struct *pick_task_fair(struct rq *rq, struct rq_flags *rf);
-extern struct task_struct *pick_task_idle(struct rq *rq, struct rq_flags *rf);
+బాహ్య నిర్మాణం task_struct *pick_task_fair(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf);
+బాహ్య నిర్మాణం task_struct *pick_task_idle(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf);
 
-#define SCA_CHECK		0x01
-#define SCA_MIGRATE_DISABLE	0x02
-#define SCA_MIGRATE_ENABLE	0x04
-#define SCA_USER		0x08
+#నిర్వచించు SCA_CHECK		0x01
+#నిర్వచించు SCA_MIGRATE_DISABLE	0x02
+#నిర్వచించు SCA_MIGRATE_ENABLE	0x04
+#నిర్వచించు SCA_USER		0x08
 
-extern void update_group_capacity(struct sched_domain *sd, int cpu);
+బాహ్య శూన్య update_సమూహం_సామర్థ్యం(నిర్మాణం sched_domain *sd, పూర్ణాంకం cpu);
 
-extern void sched_balance_trigger(struct rq *rq);
+బాహ్య శూన్య sched_balance_trigger(నిర్మాణం rq *rq);
 
-extern int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx);
-extern void set_cpus_allowed_common(struct task_struct *p, struct affinity_context *ctx);
+బాహ్య పూర్ణాంకం __set_cpus_allowed_ptr(నిర్మాణం task_struct *p, నిర్మాణం affinity_context *ctx);
+బాహ్య శూన్య సమితి_cpus_allowed_common(నిర్మాణం task_struct *p, నిర్మాణం affinity_context *ctx);
 
-static inline bool task_allowed_on_cpu(struct task_struct *p, int cpu)
+స్థిర అంతఃవరుస bool task_allowed_on_cpu(నిర్మాణం task_struct *p, పూర్ణాంకం cpu)
 {
 	/* When not in the task's cpumask, no point in looking further. */
-	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-		return false;
+	ఒకవేళ (!cpumask_test_cpu(cpu, p->cpus_ptr))
+		తిరిగి false;
 
 	/* Can @cpu run a user thread? */
-	if (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
-		return false;
+	ఒకవేళ (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
+		తిరిగి false;
 
-	return true;
+	తిరిగి true;
 }
 
-static inline cpumask_t *alloc_user_cpus_ptr(int node)
+స్థిర అంతఃవరుస cpumask_t *alloc_user_cpus_ptr(పూర్ణాంకం కణుపు)
 {
 	/*
 	 * See set_cpus_allowed_force() above for the rcu_head usage.
 	 */
-	int size = max_t(int, cpumask_size(), sizeof(struct rcu_head));
+	పూర్ణాంకం కొలత = max_t(పూర్ణాంకం, cpumask_కొలత(), పరిమాణం(నిర్మాణం rcu_తల));
 
-	return kmalloc_node(size, GFP_KERNEL, node);
+	తిరిగి kmalloc_కణుపు(కొలత, GFP_KERNEL, కణుపు);
 }
 
-static inline struct task_struct *get_push_task(struct rq *rq)
+స్థిర అంతఃవరుస నిర్మాణం task_struct *get_నెట్టు_task(నిర్మాణం rq *rq)
 {
-	struct task_struct *p = rq->donor;
+	నిర్మాణం task_struct *p = rq->donor;
 
 	lockdep_assert_rq_held(rq);
 
-	if (rq->push_busy)
-		return NULL;
+	ఒకవేళ (rq->నెట్టు_busy)
+		తిరిగి ఖాళీ;
 
-	if (p->nr_cpus_allowed == 1)
-		return NULL;
+	ఒకవేళ (p->nr_cpus_allowed == 1)
+		తిరిగి ఖాళీ;
 
-	if (p->migration_disabled)
-		return NULL;
+	ఒకవేళ (p->migration_disabled)
+		తిరిగి ఖాళీ;
 
-	rq->push_busy = true;
-	return get_task_struct(p);
+	rq->నెట్టు_busy = true;
+	తిరిగి get_task_struct(p);
 }
 
-extern int push_cpu_stop(void *arg);
+బాహ్య పూర్ణాంకం నెట్టు_cpu_stop(శూన్య *arg);
 
-#ifdef CONFIG_CPU_IDLE
+#నిర్వచితమైతే CONFIG_CPU_IDLE
 
-static inline void idle_set_state(struct rq *rq,
-				  struct cpuidle_state *idle_state)
+స్థిర అంతఃవరుస శూన్య idle_సమితి_state(నిర్మాణం rq *rq,
+				  నిర్మాణం cpuidle_state *idle_state)
 {
 	rq->idle_state = idle_state;
 }
 
-static inline struct cpuidle_state *idle_get_state(struct rq *rq)
+స్థిర అంతఃవరుస నిర్మాణం cpuidle_state *idle_get_state(నిర్మాణం rq *rq)
 {
-	lockdep_assert(rcu_read_lock_any_held());
+	lockdep_assert(rcu_read_తాళం_any_held());
 
-	return rq->idle_state;
+	తిరిగి rq->idle_state;
 }
 
-#else /* !CONFIG_CPU_IDLE: */
+#లేకపోతే /* !CONFIG_CPU_IDLE: */
 
-static inline void idle_set_state(struct rq *rq,
-				  struct cpuidle_state *idle_state)
+స్థిర అంతఃవరుస శూన్య idle_సమితి_state(నిర్మాణం rq *rq,
+				  నిర్మాణం cpuidle_state *idle_state)
 {
 }
 
-static inline struct cpuidle_state *idle_get_state(struct rq *rq)
+స్థిర అంతఃవరుస నిర్మాణం cpuidle_state *idle_get_state(నిర్మాణం rq *rq)
 {
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
-#endif /* !CONFIG_CPU_IDLE */
+#అయితే_ముగింపు /* !CONFIG_CPU_IDLE */
 
-extern void schedule_idle(void);
-asmlinkage void schedule_user(void);
+బాహ్య శూన్య కాలపట్టిక_idle(శూన్య);
+asmlinkage శూన్య కాలపట్టిక_user(శూన్య);
 
-extern void sysrq_sched_debug_show(void);
-extern void sched_init_granularity(void);
-extern void update_max_interval(void);
+బాహ్య శూన్య sysrq_sched_debug_show(శూన్య);
+బాహ్య శూన్య sched_init_granularity(శూన్య);
+బాహ్య శూన్య update_max_interval(శూన్య);
 
-extern void init_sched_dl_class(void);
-extern void init_sched_rt_class(void);
-extern void init_sched_fair_class(void);
+బాహ్య శూన్య init_sched_dl_class(శూన్య);
+బాహ్య శూన్య init_sched_rt_class(శూన్య);
+బాహ్య శూన్య init_sched_fair_class(శూన్య);
 
-extern void resched_curr(struct rq *rq);
-extern void resched_curr_lazy(struct rq *rq);
-extern void resched_cpu(int cpu);
+బాహ్య శూన్య resched_curr(నిర్మాణం rq *rq);
+బాహ్య శూన్య resched_curr_lazy(నిర్మాణం rq *rq);
+బాహ్య శూన్య resched_cpu(పూర్ణాంకం cpu);
 
-extern void init_rt_bandwidth(struct rt_bandwidth *rt_b, u64 period, u64 runtime);
-extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
+బాహ్య శూన్య init_rt_bandwidth(నిర్మాణం rt_bandwidth *rt_b, u64 period, u64 runtime);
+బాహ్య bool sched_rt_bandwidth_account(నిర్మాణం rt_rq *rt_rq);
 
-extern void init_dl_entity(struct sched_dl_entity *dl_se);
+బాహ్య శూన్య init_dl_entity(నిర్మాణం sched_dl_entity *dl_se);
 
-extern void init_cfs_throttle_work(struct task_struct *p);
+బాహ్య శూన్య init_cfs_throttle_work(నిర్మాణం task_struct *p);
 
-#define BW_SHIFT		20
-#define BW_UNIT			(1 << BW_SHIFT)
-#define RATIO_SHIFT		8
-#define MAX_BW_BITS		(64 - BW_SHIFT)
-#define MAX_BW			((1ULL << MAX_BW_BITS) - 1)
+#నిర్వచించు BW_జరుపు		20
+#నిర్వచించు BW_UNIT			(1 << BW_జరుపు)
+#నిర్వచించు నిష్పత్తి_జరుపు		8
+#నిర్వచించు MAX_BW_బిట్లు		(64 - BW_జరుపు)
+#నిర్వచించు MAX_BW			((1ULL << MAX_BW_బిట్లు) - 1)
 
-extern u64 to_ratio(u64 period, u64 runtime);
+బాహ్య u64 గమ్యం_నిష్పత్తి(u64 period, u64 runtime);
 
-extern void init_entity_runnable_average(struct sched_entity *se);
-extern void post_init_entity_util_avg(struct task_struct *p);
+బాహ్య శూన్య init_entity_runnable_సరాసరి(నిర్మాణం sched_entity *se);
+బాహ్య శూన్య post_init_entity_util_avg(నిర్మాణం task_struct *p);
 
-#ifdef CONFIG_NO_HZ_FULL
-extern bool sched_can_stop_tick(struct rq *rq);
-extern int __init sched_tick_offload_init(void);
+#నిర్వచితమైతే CONFIG_NO_HZ_నిండిన
+బాహ్య bool sched_can_stop_tick(నిర్మాణం rq *rq);
+బాహ్య పూర్ణాంకం __init sched_tick_offload_init(శూన్య);
 
 /*
  * Tick may be needed by tasks in the runqueue depending on their policy and
  * requirements. If tick is needed, lets send the target an IPI to kick it out of
  * nohz mode if necessary.
  */
-static inline void sched_update_tick_dependency(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య sched_update_tick_dependency(నిర్మాణం rq *rq)
 {
-	int cpu = cpu_of(rq);
+	పూర్ణాంకం cpu = cpu_యొక్క(rq);
 
-	if (!tick_nohz_full_cpu(cpu))
-		return;
+	ఒకవేళ (!tick_nohz_నిండిన_cpu(cpu))
+		తిరిగి;
 
-	if (sched_can_stop_tick(rq))
-		tick_nohz_dep_clear_cpu(cpu, TICK_DEP_BIT_SCHED);
-	else
-		tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
+	ఒకవేళ (sched_can_stop_tick(rq))
+		tick_nohz_dep_clear_cpu(cpu, TICK_DEP_బిట్టు_SCHED);
+	లేకపోతే
+		tick_nohz_dep_సమితి_cpu(cpu, TICK_DEP_బిట్టు_SCHED);
 }
-#else /* !CONFIG_NO_HZ_FULL: */
-static inline int sched_tick_offload_init(void) { return 0; }
-static inline void sched_update_tick_dependency(struct rq *rq) { }
-#endif /* !CONFIG_NO_HZ_FULL */
+#లేకపోతే /* !CONFIG_NO_HZ_FULL: */
+స్థిర అంతఃవరుస పూర్ణాంకం sched_tick_offload_init(శూన్య) { తిరిగి 0; }
+స్థిర అంతఃవరుస శూన్య sched_update_tick_dependency(నిర్మాణం rq *rq) { }
+#అయితే_ముగింపు /* !CONFIG_NO_HZ_FULL */
 
-static inline void add_nr_running(struct rq *rq, unsigned count)
+స్థిర అంతఃవరుస శూన్య కూడు_nr_running(నిర్మాణం rq *rq, గుర్తులేని లెక్క)
 {
-	unsigned prev_nr = rq->nr_running;
+	గుర్తులేని prev_nr = rq->nr_running;
 
-	rq->nr_running = prev_nr + count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, count);
+	rq->nr_running = prev_nr + లెక్క;
+	ఒకవేళ (trace_sched_update_nr_running_tp_enabled()) {
+		call_trace_sched_update_nr_running(rq, లెక్క);
 	}
 
-	if (prev_nr < 2 && rq->nr_running >= 2)
-		set_rd_overloaded(rq->rd, 1);
+	ఒకవేళ (prev_nr < 2 && rq->nr_running >= 2)
+		సమితి_rd_overloaded(rq->rd, 1);
 
 	sched_update_tick_dependency(rq);
 }
 
-static inline void sub_nr_running(struct rq *rq, unsigned count)
+స్థిర అంతఃవరుస శూన్య sub_nr_running(నిర్మాణం rq *rq, గుర్తులేని లెక్క)
 {
-	rq->nr_running -= count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, -count);
+	rq->nr_running -= లెక్క;
+	ఒకవేళ (trace_sched_update_nr_running_tp_enabled()) {
+		call_trace_sched_update_nr_running(rq, -లెక్క);
 	}
 
 	/* Check if we still need preemption */
 	sched_update_tick_dependency(rq);
 }
 
-static inline void __block_task(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస శూన్య __block_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
-	if (p->sched_contributes_to_load)
+	ఒకవేళ (p->sched_contributes_గమ్యం_ఎక్కించు)
 		rq->nr_uninterruptible++;
 
-	if (p->in_iowait) {
+	ఒకవేళ (p->లోపల_iowait) {
 		atomic_inc(&rq->nr_iowait);
-		delayacct_blkio_start();
+		delayacct_blkio_ప్రారంభం();
 	}
 
 	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
@@ -3141,20 +3141,20 @@ static inline void __block_task(struct rq *rq, struct task_struct *p)
 	smp_store_release(&p->on_rq, 0);
 }
 
-extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
-extern void deactivate_task(struct rq *rq, struct task_struct *p, int flags);
+బాహ్య శూన్య activate_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags);
+బాహ్య శూన్య deactivate_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags);
 
-extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
+బాహ్య శూన్య wakeup_preempt(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags);
 
 /*
  * attach_task() -- attach the task detached by detach_task() to its new rq.
  */
-static inline void attach_task(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస శూన్య attach_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
 
 	WARN_ON_ONCE(task_rq(p) != rq);
-	activate_task(rq, p, ENQUEUE_NOCLOCK);
+	activate_task(rq, p, వరుసలో_చేర్చు_NOCLOCK);
 	wakeup_preempt(rq, p, 0);
 }
 
@@ -3162,9 +3162,9 @@ static inline void attach_task(struct rq *rq, struct task_struct *p)
  * attach_one_task() -- attaches the task returned from detach_one_task() to
  * its new rq.
  */
-static inline void attach_one_task(struct rq *rq, struct task_struct *p)
+స్థిర అంతఃవరుస శూన్య attach_one_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *p)
 {
-	guard(rq_lock)(rq);
+	guard(rq_తాళం)(rq);
 	update_rq_clock(rq);
 	attach_task(rq, p);
 }
@@ -3173,82 +3173,82 @@ static inline void attach_one_task(struct rq *rq, struct task_struct *p)
  * __attach_tasks() - attaches a list of tasks (using se.group_node) to
  * the new rq
  */
-static inline void __attach_tasks(struct rq *rq, struct list_head *tasks)
+స్థిర అంతఃవరుస శూన్య __attach_tasks(నిర్మాణం rq *rq, నిర్మాణం list_తల *tasks)
 {
-	guard(rq_lock)(rq);
+	guard(rq_తాళం)(rq);
 	update_rq_clock(rq);
 
-	while (!list_empty(tasks)) {
-		struct task_struct *p;
+	అయితే (!list_ఖాళీలు(tasks)) {
+		నిర్మాణం task_struct *p;
 
-		p = list_first_entry(tasks, struct task_struct, se.group_node);
-		list_del_init(&p->se.group_node);
+		p = list_మొదటి_నమోదు(tasks, నిర్మాణం task_struct, se.సమూహం_కణుపు);
+		list_del_init(&p->se.సమూహం_కణుపు);
 
 		attach_task(rq, p);
 	}
 }
 
-#ifdef CONFIG_PREEMPT_RT
+#నిర్వచితమైతే CONFIG_PREEMPT_RT
 # define SCHED_NR_MIGRATE_BREAK 8
-#else
+#లేకపోతే
 # define SCHED_NR_MIGRATE_BREAK 32
-#endif
+#అయితే_ముగింపు
 
-extern __read_mostly unsigned int sysctl_sched_nr_migrate;
-extern __read_mostly unsigned int sysctl_sched_migration_cost;
+బాహ్య __read_mostly గుర్తులేని పూర్ణాంకం sysctl_sched_nr_migrate;
+బాహ్య __read_mostly గుర్తులేని పూర్ణాంకం sysctl_sched_migration_ఖర్చు;
 
-extern unsigned int sysctl_sched_base_slice;
+బాహ్య గుర్తులేని పూర్ణాంకం sysctl_sched_పునాది_ముక్క;
 
-extern int sysctl_resched_latency_warn_ms;
-extern int sysctl_resched_latency_warn_once;
+బాహ్య పూర్ణాంకం sysctl_resched_latency_warn_ms;
+బాహ్య పూర్ణాంకం sysctl_resched_latency_warn_once;
 
-extern unsigned int sysctl_sched_tunable_scaling;
+బాహ్య గుర్తులేని పూర్ణాంకం sysctl_sched_tunable_scaling;
 
-extern unsigned int sysctl_numa_balancing_scan_delay;
-extern unsigned int sysctl_numa_balancing_scan_period_min;
-extern unsigned int sysctl_numa_balancing_scan_period_max;
-extern unsigned int sysctl_numa_balancing_scan_size;
-extern unsigned int sysctl_numa_balancing_hot_threshold;
+బాహ్య గుర్తులేని పూర్ణాంకం sysctl_numa_balancing_పరిశీలన_delay;
+బాహ్య గుర్తులేని పూర్ణాంకం sysctl_numa_balancing_పరిశీలన_period_min;
+బాహ్య గుర్తులేని పూర్ణాంకం sysctl_numa_balancing_పరిశీలన_period_max;
+బాహ్య గుర్తులేని పూర్ణాంకం sysctl_numa_balancing_పరిశీలన_కొలత;
+బాహ్య గుర్తులేని పూర్ణాంకం sysctl_numa_balancing_hot_పరిమితి;
 
-#ifdef CONFIG_SCHED_HRTICK
+#నిర్వచితమైతే CONFIG_SCHED_HRTICK
 
 /*
  * Use hrtick when:
  *  - enabled by features
  *  - hrtimer is actually high res
  */
-static inline bool hrtick_enabled(struct rq *rq)
+స్థిర అంతఃవరుస bool hrtick_enabled(నిర్మాణం rq *rq)
 {
-	return cpu_active(cpu_of(rq)) && hrtimer_highres_enabled();
+	తిరిగి cpu_చురుకైన(cpu_యొక్క(rq)) && hrtimer_highres_enabled();
 }
 
-static inline bool hrtick_enabled_fair(struct rq *rq)
+స్థిర అంతఃవరుస bool hrtick_enabled_fair(నిర్మాణం rq *rq)
 {
-	return sched_feat(HRTICK) && hrtick_enabled(rq);
+	తిరిగి sched_feat(HRTICK) && hrtick_enabled(rq);
 }
 
-static inline bool hrtick_enabled_dl(struct rq *rq)
+స్థిర అంతఃవరుస bool hrtick_enabled_dl(నిర్మాణం rq *rq)
 {
-	return sched_feat(HRTICK_DL) && hrtick_enabled(rq);
+	తిరిగి sched_feat(HRTICK_DL) && hrtick_enabled(rq);
 }
 
-extern void hrtick_start(struct rq *rq, u64 delay);
-static inline bool hrtick_active(struct rq *rq)
+బాహ్య శూన్య hrtick_ప్రారంభం(నిర్మాణం rq *rq, u64 delay);
+స్థిర అంతఃవరుస bool hrtick_చురుకైన(నిర్మాణం rq *rq)
 {
-	return hrtimer_active(&rq->hrtick_timer);
+	తిరిగి hrtimer_చురుకైన(&rq->hrtick_timer);
 }
 
-#else /* !CONFIG_SCHED_HRTICK: */
-static inline bool hrtick_enabled_fair(struct rq *rq) { return false; }
-static inline bool hrtick_enabled_dl(struct rq *rq) { return false; }
-static inline bool hrtick_enabled(struct rq *rq) { return false; }
-#endif /* !CONFIG_SCHED_HRTICK */
+#లేకపోతే /* !CONFIG_SCHED_HRTICK: */
+స్థిర అంతఃవరుస bool hrtick_enabled_fair(నిర్మాణం rq *rq) { తిరిగి false; }
+స్థిర అంతఃవరుస bool hrtick_enabled_dl(నిర్మాణం rq *rq) { తిరిగి false; }
+స్థిర అంతఃవరుస bool hrtick_enabled(నిర్మాణం rq *rq) { తిరిగి false; }
+#అయితే_ముగింపు /* !CONFIG_SCHED_HRTICK */
 
-#ifndef arch_scale_freq_tick
-static __always_inline void arch_scale_freq_tick(void) { }
-#endif
+#నిర్వచితం_కాకపోతే arch_scale_freq_tick
+స్థిర __always_inline శూన్య arch_scale_freq_tick(శూన్య) { }
+#అయితే_ముగింపు
 
-#ifndef arch_scale_freq_capacity
+#నిర్వచితం_కాకపోతే arch_scale_freq_సామర్థ్యం
 /**
  * arch_scale_freq_capacity - get the frequency scale factor of a given CPU.
  * @cpu: the CPU in question.
@@ -3259,12 +3259,12 @@ static __always_inline void arch_scale_freq_tick(void) { }
  *     ------ * SCHED_CAPACITY_SCALE
  *     f_max
  */
-static __always_inline
-unsigned long arch_scale_freq_capacity(int cpu)
+స్థిర __always_inline
+గుర్తులేని దీర్ఘ arch_scale_freq_సామర్థ్యం(పూర్ణాంకం cpu)
 {
-	return SCHED_CAPACITY_SCALE;
+	తిరిగి SCHED_సామర్థ్యం_SCALE;
 }
-#endif
+#అయితే_ముగింపు
 
 /*
  * In double_lock_balance()/double_rq_lock(), we use raw_spin_rq_lock() to
@@ -3272,33 +3272,33 @@ unsigned long arch_scale_freq_capacity(int cpu)
  * we need to call double_rq_clock_clear_update() to clear RQCF_UPDATED of
  * rq->clock_update_flags to avoid the WARN_DOUBLE_CLOCK warning.
  */
-static inline void double_rq_clock_clear_update(struct rq *rq1, struct rq *rq2)
+స్థిర అంతఃవరుస శూన్య double_rq_clock_clear_update(నిర్మాణం rq *rq1, నిర్మాణం rq *rq2)
 {
 	rq1->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 	rq2->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 }
 
-#define DEFINE_LOCK_GUARD_2(name, type, _lock, _unlock, ...)				\
+#నిర్వచించు DEFINE_తాళం_GUARD_2(name, type, తాళం_2, _unlock, ...)				\
 __DEFINE_UNLOCK_GUARD(name, type, _unlock, type *lock2; __VA_ARGS__)			\
-static inline class_##name##_t class_##name##_constructor(type *lock, type *lock2)	\
+స్థిర అంతఃవరుస class_##name##_t class_##name##_constructor(type *తాళం, type *lock2)	\
 	__no_context_analysis								\
-{ class_##name##_t _t = { .lock = lock, .lock2 = lock2 }, *_T = &_t;			\
-  _lock; return _t; }
-#define DECLARE_LOCK_GUARD_2_ATTRS(_name, _lock, _unlock1, _unlock2)			\
-static inline class_##_name##_t class_##_name##_constructor(lock_##_name##_t *_T1,	\
-							    lock_##_name##_t *_T2) _lock; \
-static __always_inline void __class_##_name##_cleanup_ctx1(class_##_name##_t **_T1)	\
+{ class_##name##_t _t = { .తాళం = తాళం, .lock2 = lock2 }, *_T = &_t;			\
+  తాళం_2; తిరిగి _t; }
+#నిర్వచించు DECLARE_తాళం_GUARD_2_ATTRS(_name, తాళం_2, _unlock1, _unlock2)			\
+స్థిర అంతఃవరుస class_##_name##_t class_##_name##_constructor(తాళం_3##_name##_t *_T1,	\
+							    తాళం_3##_name##_t *_T2) తాళం_2; \
+స్థిర __always_inline శూన్య __class_##_name##_cleanup_ctx1(class_##_name##_t **_T1)	\
 	__no_context_analysis _unlock1 { }						\
-static __always_inline void __class_##_name##_cleanup_ctx2(class_##_name##_t **_T2)	\
+స్థిర __always_inline శూన్య __class_##_name##_cleanup_ctx2(class_##_name##_t **_T2)	\
 	__no_context_analysis _unlock2 { }
-#define WITH_LOCK_GUARD_2_ATTRS(_name, _T1, _T2)					\
+#నిర్వచించు WITH_తాళం_GUARD_2_ATTRS(_name, _T1, _T2)					\
 	class_##_name##_constructor(_T1, _T2),						\
-	*__UNIQUE_ID(unlock1) __cleanup(__class_##_name##_cleanup_ctx1) = (void *)(_T1),\
-	*__UNIQUE_ID(unlock2) __cleanup(__class_##_name##_cleanup_ctx2) = (void *)(_T2)
+	*__UNIQUE_ID(unlock1) __cleanup(__class_##_name##_cleanup_ctx1) = (శూన్య *)(_T1),\
+	*__UNIQUE_ID(unlock2) __cleanup(__class_##_name##_cleanup_ctx2) = (శూన్య *)(_T2)
 
-static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
+స్థిర అంతఃవరుస bool rq_క్రమం_less(నిర్మాణం rq *rq1, నిర్మాణం rq *rq2)
 {
-#ifdef CONFIG_SCHED_CORE
+#నిర్వచితమైతే CONFIG_SCHED_CORE
 	/*
 	 * In order to not have {0,2},{1,3} turn into into an AB-BA,
 	 * order by core-id first and cpu-id second.
@@ -3310,22 +3310,22 @@ static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
 	 *
 	 * when only cpu-id is considered.
 	 */
-	if (rq1->core->cpu < rq2->core->cpu)
-		return true;
-	if (rq1->core->cpu > rq2->core->cpu)
-		return false;
+	ఒకవేళ (rq1->core->cpu < rq2->core->cpu)
+		తిరిగి true;
+	ఒకవేళ (rq1->core->cpu > rq2->core->cpu)
+		తిరిగి false;
 
 	/*
 	 * __sched_core_flip() relies on SMT having cpu-id lock order.
 	 */
-#endif /* CONFIG_SCHED_CORE */
-	return rq1->cpu < rq2->cpu;
+#అయితే_ముగింపు /* CONFIG_SCHED_CORE */
+	తిరిగి rq1->cpu < rq2->cpu;
 }
 
-extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
+బాహ్య శూన్య double_rq_తాళం(నిర్మాణం rq *rq1, నిర్మాణం rq *rq2)
 	__acquires(__rq_lockp(rq1), __rq_lockp(rq2));
 
-#ifdef CONFIG_PREEMPTION
+#నిర్వచితమైతే CONFIG_PREEMPTION
 
 /*
  * fair double_lock_balance: Safely acquires both rq->locks in a fair
@@ -3335,17 +3335,17 @@ extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
  * reduces latency compared to the unfair variant below.  However, it
  * also adds more overhead and therefore may reduce throughput.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+స్థిర అంతఃవరుస పూర్ణాంకం double_తాళం_balance_2(నిర్మాణం rq *this_rq, నిర్మాణం rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	raw_spin_rq_unlock(this_rq);
-	double_rq_lock(this_rq, busiest);
+	double_rq_తాళం(this_rq, busiest);
 
-	return 1;
+	తిరిగి 1;
 }
 
-#else /* !CONFIG_PREEMPTION: */
+#లేకపోతే /* !CONFIG_PREEMPTION: */
 /*
  * Unfair double_lock_balance: Optimizes throughput at the expense of
  * latency by eliminating extra atomic operations when the locks are
@@ -3353,104 +3353,104 @@ static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
  * grant the double lock to lower CPUs over higher ids under contention,
  * regardless of entry order into the function.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+స్థిర అంతఃవరుస పూర్ణాంకం double_తాళం_balance_2(నిర్మాణం rq *this_rq, నిర్మాణం rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
+	ఒకవేళ (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
 		__acquire(__rq_lockp(busiest)); /* already held */
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (likely(raw_spin_rq_trylock(busiest))) {
+	ఒకవేళ (likely(raw_spin_rq_trylock(busiest))) {
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (rq_order_less(this_rq, busiest)) {
-		raw_spin_rq_lock_nested(busiest, SINGLE_DEPTH_NESTING);
+	ఒకవేళ (rq_క్రమం_less(this_rq, busiest)) {
+		raw_spin_rq_తాళం_nested(busiest, SINGLE_లోతు_NESTING);
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		తిరిగి 0;
 	}
 
 	raw_spin_rq_unlock(this_rq);
-	double_rq_lock(this_rq, busiest);
+	double_rq_తాళం(this_rq, busiest);
 
-	return 1;
+	తిరిగి 1;
 }
 
-#endif /* !CONFIG_PREEMPTION */
+#అయితే_ముగింపు /* !CONFIG_PREEMPTION */
 
 /*
  * double_lock_balance - lock the busiest runqueue, this_rq is locked already.
  */
-static inline int double_lock_balance(struct rq *this_rq, struct rq *busiest)
+స్థిర అంతఃవరుస పూర్ణాంకం double_తాళం_balance(నిర్మాణం rq *this_rq, నిర్మాణం rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	lockdep_assert_irqs_disabled();
 
-	return _double_lock_balance(this_rq, busiest);
+	తిరిగి double_తాళం_balance_2(this_rq, busiest);
 }
 
-static inline void double_unlock_balance(struct rq *this_rq, struct rq *busiest)
+స్థిర అంతఃవరుస శూన్య double_unlock_balance(నిర్మాణం rq *this_rq, నిర్మాణం rq *busiest)
 	__releases(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) != __rq_lockp(busiest))
+	ఒకవేళ (__rq_lockp(this_rq) != __rq_lockp(busiest))
 		raw_spin_rq_unlock(busiest);
-	else
+	లేకపోతే
 		__release(__rq_lockp(busiest)); /* fake release */
-	lock_set_subclass(&__rq_lockp(this_rq)->dep_map, 0, _RET_IP_);
+	తాళం_సమితి_subclass(&__rq_lockp(this_rq)->dep_map, 0, _RET_IP_);
 }
 
-static inline void double_lock(spinlock_t *l1, spinlock_t *l2)
+స్థిర అంతఃవరుస శూన్య double_తాళం(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
-		swap(l1, l2);
+	ఒకవేళ (l1 > l2)
+		మార్పిడి(l1, l2);
 
-	spin_lock(l1);
-	spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
+	spin_తాళం(l1);
+	spin_తాళం_nested(l2, SINGLE_లోతు_NESTING);
 }
 
-static inline void double_lock_irq(spinlock_t *l1, spinlock_t *l2)
+స్థిర అంతఃవరుస శూన్య double_తాళం_irq(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
-		swap(l1, l2);
+	ఒకవేళ (l1 > l2)
+		మార్పిడి(l1, l2);
 
-	spin_lock_irq(l1);
-	spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
+	spin_తాళం_irq(l1);
+	spin_తాళం_nested(l2, SINGLE_లోతు_NESTING);
 }
 
-static inline void double_raw_lock(raw_spinlock_t *l1, raw_spinlock_t *l2)
+స్థిర అంతఃవరుస శూన్య double_raw_తాళం(raw_spinlock_t *l1, raw_spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
-		swap(l1, l2);
+	ఒకవేళ (l1 > l2)
+		మార్పిడి(l1, l2);
 
-	raw_spin_lock(l1);
-	raw_spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
+	raw_spin_తాళం(l1);
+	raw_spin_తాళం_nested(l2, SINGLE_లోతు_NESTING);
 }
 
-static inline void double_raw_unlock(raw_spinlock_t *l1, raw_spinlock_t *l2)
+స్థిర అంతఃవరుస శూన్య double_raw_unlock(raw_spinlock_t *l1, raw_spinlock_t *l2)
 	__releases(l1, l2)
 {
 	raw_spin_unlock(l1);
 	raw_spin_unlock(l2);
 }
 
-DEFINE_LOCK_GUARD_2(double_raw_spinlock, raw_spinlock_t,
-		    double_raw_lock(_T->lock, _T->lock2),
-		    double_raw_unlock(_T->lock, _T->lock2))
+DEFINE_తాళం_GUARD_2(double_raw_spinlock, raw_spinlock_t,
+		    double_raw_తాళం(_T->తాళం, _T->lock2),
+		    double_raw_unlock(_T->తాళం, _T->lock2))
 
-DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock,
+DECLARE_తాళం_GUARD_2_ATTRS(double_raw_spinlock,
 			   __acquires(_T1, _T2),
 			   __releases(*(raw_spinlock_t **)_T1),
 			   __releases(*(raw_spinlock_t **)_T2));
-#define class_double_raw_spinlock_constructor(_T1, _T2) \
-	WITH_LOCK_GUARD_2_ATTRS(double_raw_spinlock, _T1, _T2)
+#నిర్వచించు class_double_raw_spinlock_constructor(_T1, _T2) \
+	WITH_తాళం_GUARD_2_ATTRS(double_raw_spinlock, _T1, _T2)
 
 /*
  * double_rq_unlock - safely unlock two runqueues
@@ -3458,128 +3458,128 @@ DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock,
  * Note this does not restore interrupts like task_rq_unlock,
  * you need to do so manually after calling.
  */
-static inline void double_rq_unlock(struct rq *rq1, struct rq *rq2)
+స్థిర అంతఃవరుస శూన్య double_rq_unlock(నిర్మాణం rq *rq1, నిర్మాణం rq *rq2)
 	__releases(__rq_lockp(rq1), __rq_lockp(rq2))
 {
-	if (__rq_lockp(rq1) != __rq_lockp(rq2))
+	ఒకవేళ (__rq_lockp(rq1) != __rq_lockp(rq2))
 		raw_spin_rq_unlock(rq2);
-	else
+	లేకపోతే
 		__release(__rq_lockp(rq2)); /* fake release */
 	raw_spin_rq_unlock(rq1);
 }
 
-extern void set_rq_online (struct rq *rq);
-extern void set_rq_offline(struct rq *rq);
+బాహ్య శూన్య సమితి_rq_online (నిర్మాణం rq *rq);
+బాహ్య శూన్య సమితి_rq_offline(నిర్మాణం rq *rq);
 
-extern bool sched_smp_initialized;
+బాహ్య bool sched_smp_initialized;
 
-DEFINE_LOCK_GUARD_2(double_rq_lock, struct rq,
-		    double_rq_lock(_T->lock, _T->lock2),
-		    double_rq_unlock(_T->lock, _T->lock2))
+DEFINE_తాళం_GUARD_2(double_rq_తాళం, నిర్మాణం rq,
+		    double_rq_తాళం(_T->తాళం, _T->lock2),
+		    double_rq_unlock(_T->తాళం, _T->lock2))
 
-extern struct sched_entity *__pick_root_entity(struct cfs_rq *cfs_rq);
-extern struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq);
-extern struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq);
+బాహ్య నిర్మాణం sched_entity *__pick_root_entity(నిర్మాణం cfs_rq *cfs_rq);
+బాహ్య నిర్మాణం sched_entity *__pick_first_entity(నిర్మాణం cfs_rq *cfs_rq);
+బాహ్య నిర్మాణం sched_entity *__pick_last_entity(నిర్మాణం cfs_rq *cfs_rq);
 
-extern bool sched_debug_verbose;
+బాహ్య bool sched_debug_verbose;
 
-extern void print_cfs_stats(struct seq_file *m, int cpu);
-extern void print_rt_stats(struct seq_file *m, int cpu);
-extern void print_dl_stats(struct seq_file *m, int cpu);
-extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
-extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
-extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+బాహ్య శూన్య print_cfs_stats(నిర్మాణం seq_file *m, పూర్ణాంకం cpu);
+బాహ్య శూన్య print_rt_stats(నిర్మాణం seq_file *m, పూర్ణాంకం cpu);
+బాహ్య శూన్య print_dl_stats(నిర్మాణం seq_file *m, పూర్ణాంకం cpu);
+బాహ్య శూన్య print_cfs_rq(నిర్మాణం seq_file *m, పూర్ణాంకం cpu, నిర్మాణం cfs_rq *cfs_rq);
+బాహ్య శూన్య print_rt_rq(నిర్మాణం seq_file *m, పూర్ణాంకం cpu, నిర్మాణం rt_rq *rt_rq);
+బాహ్య శూన్య print_dl_rq(నిర్మాణం seq_file *m, పూర్ణాంకం cpu, నిర్మాణం dl_rq *dl_rq);
 
-extern void resched_latency_warn(int cpu, u64 latency);
+బాహ్య శూన్య resched_latency_warn(పూర్ణాంకం cpu, u64 latency);
 
-#ifdef CONFIG_NUMA_BALANCING
-extern void show_numa_stats(struct task_struct *p, struct seq_file *m);
-extern void
-print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
-		 unsigned long tpf, unsigned long gsf, unsigned long gpf);
-#endif /* CONFIG_NUMA_BALANCING */
+#నిర్వచితమైతే CONFIG_NUMA_BALANCING
+బాహ్య శూన్య show_numa_stats(నిర్మాణం task_struct *p, నిర్మాణం seq_file *m);
+బాహ్య శూన్య
+print_numa_stats(నిర్మాణం seq_file *m, పూర్ణాంకం కణుపు, గుర్తులేని దీర్ఘ tsf,
+		 గుర్తులేని దీర్ఘ tpf, గుర్తులేని దీర్ఘ gsf, గుర్తులేని దీర్ఘ gpf);
+#అయితే_ముగింపు /* CONFIG_NUMA_BALANCING */
 
-extern void init_cfs_rq(struct cfs_rq *cfs_rq);
-extern void init_rt_rq(struct rt_rq *rt_rq);
-extern void init_dl_rq(struct dl_rq *dl_rq);
+బాహ్య శూన్య init_cfs_rq(నిర్మాణం cfs_rq *cfs_rq);
+బాహ్య శూన్య init_rt_rq(నిర్మాణం rt_rq *rt_rq);
+బాహ్య శూన్య init_dl_rq(నిర్మాణం dl_rq *dl_rq);
 
-extern void cfs_bandwidth_usage_inc(void);
-extern void cfs_bandwidth_usage_dec(void);
+బాహ్య శూన్య cfs_bandwidth_usage_inc(శూన్య);
+బాహ్య శూన్య cfs_bandwidth_usage_dec(శూన్య);
 
-#ifdef CONFIG_NO_HZ_COMMON
+#నిర్వచితమైతే CONFIG_NO_HZ_COMMON
 
-#define NOHZ_BALANCE_KICK_BIT	0
-#define NOHZ_STATS_KICK_BIT	1
-#define NOHZ_NEWILB_KICK_BIT	2
-#define NOHZ_NEXT_KICK_BIT	3
+#నిర్వచించు NOHZ_BALANCE_KICK_బిట్టు	0
+#నిర్వచించు NOHZ_STATS_KICK_బిట్టు	1
+#నిర్వచించు NOHZ_NEWILB_KICK_బిట్టు	2
+#నిర్వచించు NOHZ_తదుపరి_KICK_బిట్టు	3
 
 /* Run sched_balance_domains() */
-#define NOHZ_BALANCE_KICK	BIT(NOHZ_BALANCE_KICK_BIT)
+#నిర్వచించు NOHZ_BALANCE_KICK	బిట్టు(NOHZ_BALANCE_KICK_బిట్టు)
 /* Update blocked load */
-#define NOHZ_STATS_KICK		BIT(NOHZ_STATS_KICK_BIT)
+#నిర్వచించు NOHZ_STATS_KICK		బిట్టు(NOHZ_STATS_KICK_బిట్టు)
 /* Update blocked load when entering idle */
-#define NOHZ_NEWILB_KICK	BIT(NOHZ_NEWILB_KICK_BIT)
+#నిర్వచించు NOHZ_NEWILB_KICK	బిట్టు(NOHZ_NEWILB_KICK_బిట్టు)
 /* Update nohz.next_balance */
-#define NOHZ_NEXT_KICK		BIT(NOHZ_NEXT_KICK_BIT)
+#నిర్వచించు NOHZ_తదుపరి_KICK		బిట్టు(NOHZ_తదుపరి_KICK_బిట్టు)
 
-#define NOHZ_KICK_MASK		(NOHZ_BALANCE_KICK | NOHZ_STATS_KICK | NOHZ_NEXT_KICK)
+#నిర్వచించు NOHZ_KICK_ముసుగు		(NOHZ_BALANCE_KICK | NOHZ_STATS_KICK | NOHZ_తదుపరి_KICK)
 
-#define nohz_flags(cpu)		(&cpu_rq(cpu)->nohz_flags)
+#నిర్వచించు nohz_flags(cpu)		(&cpu_rq(cpu)->nohz_flags)
 
-extern void nohz_balance_exit_idle(struct rq *rq);
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline void nohz_balance_exit_idle(struct rq *rq) { }
-#endif /* !CONFIG_NO_HZ_COMMON */
+బాహ్య శూన్య nohz_balance_exit_idle(నిర్మాణం rq *rq);
+#లేకపోతే /* !CONFIG_NO_HZ_COMMON: */
+స్థిర అంతఃవరుస శూన్య nohz_balance_exit_idle(నిర్మాణం rq *rq) { }
+#అయితే_ముగింపు /* !CONFIG_NO_HZ_COMMON */
 
-#ifdef CONFIG_NO_HZ_COMMON
-extern void nohz_run_idle_balance(int cpu);
-#else
-static inline void nohz_run_idle_balance(int cpu) { }
-#endif
+#నిర్వచితమైతే CONFIG_NO_HZ_COMMON
+బాహ్య శూన్య nohz_నిరంతరం_idle_balance(పూర్ణాంకం cpu);
+#లేకపోతే
+స్థిర అంతఃవరుస శూన్య nohz_నిరంతరం_idle_balance(పూర్ణాంకం cpu) { }
+#అయితే_ముగింపు
 
-#include "stats.h"
+#అన్తర్భావ "stats.h"
 
-#if defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
+#ఒకవేళ defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
 
-extern void __sched_core_account_forceidle(struct rq *rq);
+బాహ్య శూన్య __sched_core_account_forceidle(నిర్మాణం rq *rq);
 
-static inline void sched_core_account_forceidle(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య sched_core_account_forceidle(నిర్మాణం rq *rq)
 {
-	if (schedstat_enabled())
+	ఒకవేళ (schedstat_enabled())
 		__sched_core_account_forceidle(rq);
 }
 
-extern void __sched_core_tick(struct rq *rq);
+బాహ్య శూన్య __sched_core_tick(నిర్మాణం rq *rq);
 
-static inline void sched_core_tick(struct rq *rq)
+స్థిర అంతఃవరుస శూన్య sched_core_tick(నిర్మాణం rq *rq)
 {
-	if (sched_core_enabled(rq) && schedstat_enabled())
+	ఒకవేళ (sched_core_enabled(rq) && schedstat_enabled())
 		__sched_core_tick(rq);
 }
 
-#else /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
+#లేకపోతే /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
 
-static inline void sched_core_account_forceidle(struct rq *rq) { }
+స్థిర అంతఃవరుస శూన్య sched_core_account_forceidle(నిర్మాణం rq *rq) { }
 
-static inline void sched_core_tick(struct rq *rq) { }
+స్థిర అంతఃవరుస శూన్య sched_core_tick(నిర్మాణం rq *rq) { }
 
-#endif /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS) */
+#అయితే_ముగింపు /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS) */
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+#నిర్వచితమైతే CONFIG_IRQ_సమయం_ACCOUNTING
 
-struct irqtime {
-	u64			total;
+నిర్మాణం irqtime {
+	u64			మొత్తం;
 	u64			tick_delta;
-	u64			irq_start_time;
-	struct u64_stats_sync	sync;
+	u64			irq_ప్రారంభం_సమయం;
+	నిర్మాణం u64_stats_sync	sync;
 };
 
-DECLARE_PER_CPU(struct irqtime, cpu_irqtime);
-DECLARE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DECLARE_చొప్పున_CPU(నిర్మాణం irqtime, cpu_irqtime);
+DECLARE_STATIC_కీలకం_FALSE(sched_clock_irqtime);
 
-static inline int irqtime_enabled(void)
+స్థిర అంతఃవరుస పూర్ణాంకం irqtime_enabled(శూన్య)
 {
-	return static_branch_likely(&sched_clock_irqtime);
+	తిరిగి static_branch_likely(&sched_clock_irqtime);
 }
 
 /*
@@ -3587,32 +3587,32 @@ static inline int irqtime_enabled(void)
  * Otherwise ksoftirqd's sum_exec_runtime is subtracted its own runtime
  * and never move forward.
  */
-static inline u64 irq_time_read(int cpu)
+స్థిర అంతఃవరుస u64 irq_సమయం_read(పూర్ణాంకం cpu)
 {
-	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
-	unsigned int seq;
-	u64 total;
+	నిర్మాణం irqtime *irqtime = &చొప్పున_cpu(cpu_irqtime, cpu);
+	గుర్తులేని పూర్ణాంకం seq;
+	u64 మొత్తం;
 
-	do {
+	చేయి {
 		seq = __u64_stats_fetch_begin(&irqtime->sync);
-		total = irqtime->total;
-	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
+		మొత్తం = irqtime->మొత్తం;
+	} అయితే (__u64_stats_fetch_retry(&irqtime->sync, seq));
 
-	return total;
+	తిరిగి మొత్తం;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#లేకపోతే /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
-static inline int irqtime_enabled(void)
+స్థిర అంతఃవరుస పూర్ణాంకం irqtime_enabled(శూన్య)
 {
-	return 0;
+	తిరిగి 0;
 }
 
-#endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
+#అయితే_ముగింపు /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-#ifdef CONFIG_CPU_FREQ
+#నిర్వచితమైతే CONFIG_CPU_FREQ
 
-DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
+DECLARE_చొప్పున_CPU(నిర్మాణం update_util_దత్తాంశం __rcu *, cpufreq_update_util_దత్తాంశం);
 
 /**
  * cpufreq_update_util - Take a note about CPU utilization changes.
@@ -3636,34 +3636,34 @@ DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
  * but that really is a band-aid.  Going forward it should be replaced with
  * solutions targeted more specifically at RT tasks.
  */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags)
+స్థిర అంతఃవరుస శూన్య cpufreq_update_util(నిర్మాణం rq *rq, గుర్తులేని పూర్ణాంకం flags)
 {
-	struct update_util_data *data;
+	నిర్మాణం update_util_దత్తాంశం *దత్తాంశం;
 
-	data = rcu_dereference_sched(*per_cpu_ptr(&cpufreq_update_util_data,
-						  cpu_of(rq)));
-	if (data)
-		data->func(data, rq_clock(rq), flags);
+	దత్తాంశం = rcu_dereference_sched(*చొప్పున_cpu_ptr(&cpufreq_update_util_దత్తాంశం,
+						  cpu_యొక్క(rq)));
+	ఒకవేళ (దత్తాంశం)
+		దత్తాంశం->func(దత్తాంశం, rq_clock(rq), flags);
 }
-#else /* !CONFIG_CPU_FREQ: */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) { }
-#endif /* !CONFIG_CPU_FREQ */
+#లేకపోతే /* !CONFIG_CPU_FREQ: */
+స్థిర అంతఃవరుస శూన్య cpufreq_update_util(నిర్మాణం rq *rq, గుర్తులేని పూర్ణాంకం flags) { }
+#అయితే_ముగింపు /* !CONFIG_CPU_FREQ */
 
-#ifdef arch_scale_freq_capacity
+#నిర్వచితమైతే arch_scale_freq_సామర్థ్యం
 # ifndef arch_scale_freq_invariant
 #  define arch_scale_freq_invariant()	true
 # endif
-#else
+#లేకపోతే
 # define arch_scale_freq_invariant()	false
-#endif
+#అయితే_ముగింపు
 
-unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
-				 unsigned long *min,
-				 unsigned long *max);
+గుర్తులేని దీర్ఘ effective_cpu_util(పూర్ణాంకం cpu, గుర్తులేని దీర్ఘ util_cfs,
+				 గుర్తులేని దీర్ఘ *min,
+				 గుర్తులేని దీర్ఘ *max);
 
-unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
-				 unsigned long min,
-				 unsigned long max);
+గుర్తులేని దీర్ఘ sugov_effective_cpu_perf(పూర్ణాంకం cpu, గుర్తులేని దీర్ఘ actual,
+				 గుర్తులేని దీర్ఘ min,
+				 గుర్తులేని దీర్ఘ max);
 
 
 /*
@@ -3674,35 +3674,35 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
  * greater than or equal to task's deadline density right shifted by
  * (BW_SHIFT - SCHED_CAPACITY_SHIFT) and false otherwise.
  */
-static inline bool dl_task_fits_capacity(struct task_struct *p, int cpu)
+స్థిర అంతఃవరుస bool dl_task_సరిపోతుంది_సామర్థ్యం(నిర్మాణం task_struct *p, పూర్ణాంకం cpu)
 {
-	unsigned long cap = arch_scale_cpu_capacity(cpu);
+	గుర్తులేని దీర్ఘ cap = arch_scale_cpu_సామర్థ్యం(cpu);
 
-	return cap >= p->dl.dl_density >> (BW_SHIFT - SCHED_CAPACITY_SHIFT);
+	తిరిగి cap >= p->dl.dl_density >> (BW_జరుపు - SCHED_సామర్థ్యం_జరుపు);
 }
 
-static inline unsigned long cpu_bw_dl(struct rq *rq)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ cpu_bw_dl(నిర్మాణం rq *rq)
 {
-	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+	తిరిగి (rq->dl.running_bw * SCHED_సామర్థ్యం_SCALE) >> BW_జరుపు;
 }
 
-static inline unsigned long cpu_util_dl(struct rq *rq)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ cpu_util_dl(నిర్మాణం rq *rq)
 {
-	return READ_ONCE(rq->avg_dl.util_avg);
+	తిరిగి READ_ONCE(rq->avg_dl.util_avg);
 }
 
 
-extern unsigned long cpu_util_cfs(int cpu);
-extern unsigned long cpu_util_cfs_boost(int cpu);
+బాహ్య గుర్తులేని దీర్ఘ cpu_util_cfs(పూర్ణాంకం cpu);
+బాహ్య గుర్తులేని దీర్ఘ cpu_util_cfs_boost(పూర్ణాంకం cpu);
 
-static inline unsigned long cpu_util_rt(struct rq *rq)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ cpu_util_rt(నిర్మాణం rq *rq)
 {
-	return READ_ONCE(rq->avg_rt.util_avg);
+	తిరిగి READ_ONCE(rq->avg_rt.util_avg);
 }
 
-#ifdef CONFIG_UCLAMP_TASK
+#నిర్వచితమైతే CONFIG_UCLAMP_TASK
 
-unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
+గుర్తులేని దీర్ఘ uclamp_eff_విలువ(నిర్మాణం task_struct *p, గణన uclamp_id clamp_id);
 
 /*
  * When uclamp is compiled in, the aggregation at rq level is 'turned off'
@@ -3712,9 +3712,9 @@ unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
  * Returns true if userspace opted-in to use uclamp and aggregation at rq level
  * hence is active.
  */
-static inline bool uclamp_is_used(void)
+స్థిర అంతఃవరుస bool uclamp_is_వాడిన(శూన్య)
 {
-	return static_branch_likely(&sched_uclamp_used);
+	తిరిగి static_branch_likely(&sched_uclamp_వాడిన);
 }
 
 /*
@@ -3723,168 +3723,168 @@ static inline bool uclamp_is_used(void)
  * calling cpus_read_lock(). Because we never disable this
  * static key once enable it.
  */
-static inline void sched_uclamp_enable(void)
+స్థిర అంతఃవరుస శూన్య sched_uclamp_enable(శూన్య)
 {
-	if (!uclamp_is_used())
-		static_branch_enable(&sched_uclamp_used);
+	ఒకవేళ (!uclamp_is_వాడిన())
+		static_branch_enable(&sched_uclamp_వాడిన);
 }
 
-static inline unsigned long uclamp_rq_get(struct rq *rq,
-					  enum uclamp_id clamp_id)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ uclamp_rq_get(నిర్మాణం rq *rq,
+					  గణన uclamp_id clamp_id)
 {
-	return READ_ONCE(rq->uclamp[clamp_id].value);
+	తిరిగి READ_ONCE(rq->uclamp[clamp_id].విలువ);
 }
 
-static inline void uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id,
-				 unsigned int value)
+స్థిర అంతఃవరుస శూన్య uclamp_rq_సమితి(నిర్మాణం rq *rq, గణన uclamp_id clamp_id,
+				 గుర్తులేని పూర్ణాంకం విలువ)
 {
-	WRITE_ONCE(rq->uclamp[clamp_id].value, value);
+	WRITE_ONCE(rq->uclamp[clamp_id].విలువ, విలువ);
 }
 
-static inline bool uclamp_rq_is_idle(struct rq *rq)
+స్థిర అంతఃవరుస bool uclamp_rq_is_idle(నిర్మాణం rq *rq)
 {
-	return rq->uclamp_flags & UCLAMP_FLAG_IDLE;
+	తిరిగి rq->uclamp_flags & UCLAMP_FLAG_IDLE;
 }
 
 /* Is the rq being capped/throttled by uclamp_max? */
-static inline bool uclamp_rq_is_capped(struct rq *rq)
+స్థిర అంతఃవరుస bool uclamp_rq_is_capped(నిర్మాణం rq *rq)
 {
-	unsigned long rq_util;
-	unsigned long max_util;
+	గుర్తులేని దీర్ఘ rq_util;
+	గుర్తులేని దీర్ఘ max_util;
 
-	if (!uclamp_is_used())
-		return false;
+	ఒకవేళ (!uclamp_is_వాడిన())
+		తిరిగి false;
 
-	rq_util = cpu_util_cfs(cpu_of(rq)) + cpu_util_rt(rq);
-	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
+	rq_util = cpu_util_cfs(cpu_యొక్క(rq)) + cpu_util_rt(rq);
+	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].విలువ);
 
-	return max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
+	తిరిగి max_util != SCHED_సామర్థ్యం_SCALE && rq_util >= max_util;
 }
 
-#define for_each_clamp_id(clamp_id) \
-	for ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
+#నిర్వచించు for_each_clamp_id(clamp_id) \
+	కొరకు ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
 
-extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+బాహ్య గుర్తులేని పూర్ణాంకం sysctl_sched_uclamp_util_min_rt_default;
 
 
-static inline unsigned int uclamp_none(enum uclamp_id clamp_id)
+స్థిర అంతఃవరుస గుర్తులేని పూర్ణాంకం uclamp_none(గణన uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
-	return SCHED_CAPACITY_SCALE;
+	ఒకవేళ (clamp_id == UCLAMP_MIN)
+		తిరిగి 0;
+	తిరిగి SCHED_సామర్థ్యం_SCALE;
 }
 
 /* Integer rounded range for each bucket */
-#define UCLAMP_BUCKET_DELTA DIV_ROUND_CLOSEST(SCHED_CAPACITY_SCALE, UCLAMP_BUCKETS)
+#నిర్వచించు UCLAMP_పాత్ర_DELTA DIV_విడత_CLOSEST(SCHED_సామర్థ్యం_SCALE, UCLAMP_BUCKETS)
 
-static inline unsigned int uclamp_bucket_id(unsigned int clamp_value)
+స్థిర అంతఃవరుస గుర్తులేని పూర్ణాంకం uclamp_పాత్ర_id(గుర్తులేని పూర్ణాంకం clamp_విలువ)
 {
-	return min_t(unsigned int, clamp_value / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
+	తిరిగి min_t(గుర్తులేని పూర్ణాంకం, clamp_విలువ / UCLAMP_పాత్ర_DELTA, UCLAMP_BUCKETS - 1);
 }
 
-static inline void
-uclamp_se_set(struct uclamp_se *uc_se, unsigned int value, bool user_defined)
+స్థిర అంతఃవరుస శూన్య
+uclamp_se_సమితి(నిర్మాణం uclamp_se *uc_se, గుర్తులేని పూర్ణాంకం విలువ, bool user_defined)
 {
-	uc_se->value = value;
-	uc_se->bucket_id = uclamp_bucket_id(value);
+	uc_se->విలువ = విలువ;
+	uc_se->పాత్ర_id = uclamp_పాత్ర_id(విలువ);
 	uc_se->user_defined = user_defined;
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
+#లేకపోతే /* !CONFIG_UCLAMP_TASK: */
 
-static inline unsigned long
-uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ
+uclamp_eff_విలువ(నిర్మాణం task_struct *p, గణన uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	ఒకవేళ (clamp_id == UCLAMP_MIN)
+		తిరిగి 0;
 
-	return SCHED_CAPACITY_SCALE;
+	తిరిగి SCHED_సామర్థ్యం_SCALE;
 }
 
-static inline bool uclamp_rq_is_capped(struct rq *rq) { return false; }
+స్థిర అంతఃవరుస bool uclamp_rq_is_capped(నిర్మాణం rq *rq) { తిరిగి false; }
 
-static inline bool uclamp_is_used(void)
+స్థిర అంతఃవరుస bool uclamp_is_వాడిన(శూన్య)
 {
-	return false;
+	తిరిగి false;
 }
 
-static inline void sched_uclamp_enable(void) {}
+స్థిర అంతఃవరుస శూన్య sched_uclamp_enable(శూన్య) {}
 
-static inline unsigned long
-uclamp_rq_get(struct rq *rq, enum uclamp_id clamp_id)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ
+uclamp_rq_get(నిర్మాణం rq *rq, గణన uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	ఒకవేళ (clamp_id == UCLAMP_MIN)
+		తిరిగి 0;
 
-	return SCHED_CAPACITY_SCALE;
+	తిరిగి SCHED_సామర్థ్యం_SCALE;
 }
 
-static inline void
-uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id, unsigned int value)
+స్థిర అంతఃవరుస శూన్య
+uclamp_rq_సమితి(నిర్మాణం rq *rq, గణన uclamp_id clamp_id, గుర్తులేని పూర్ణాంకం విలువ)
 {
 }
 
-static inline bool uclamp_rq_is_idle(struct rq *rq)
+స్థిర అంతఃవరుస bool uclamp_rq_is_idle(నిర్మాణం rq *rq)
 {
-	return false;
+	తిరిగి false;
 }
 
-#endif /* !CONFIG_UCLAMP_TASK */
+#అయితే_ముగింపు /* !CONFIG_UCLAMP_TASK */
 
-#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+#నిర్వచితమైతే CONFIG_HAVE_SCHED_AVG_IRQ
 
-static inline unsigned long cpu_util_irq(struct rq *rq)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ cpu_util_irq(నిర్మాణం rq *rq)
 {
-	return READ_ONCE(rq->avg_irq.util_avg);
+	తిరిగి READ_ONCE(rq->avg_irq.util_avg);
 }
 
-static inline
-unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
+స్థిర అంతఃవరుస
+గుర్తులేని దీర్ఘ scale_irq_సామర్థ్యం(గుర్తులేని దీర్ఘ util, గుర్తులేని దీర్ఘ irq, గుర్తులేని దీర్ఘ max)
 {
 	util *= (max - irq);
 	util /= max;
 
-	return util;
+	తిరిగి util;
 
 }
 
-#else /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
+#లేకపోతే /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
 
-static inline unsigned long cpu_util_irq(struct rq *rq)
+స్థిర అంతఃవరుస గుర్తులేని దీర్ఘ cpu_util_irq(నిర్మాణం rq *rq)
 {
-	return 0;
+	తిరిగి 0;
 }
 
-static inline
-unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
+స్థిర అంతఃవరుస
+గుర్తులేని దీర్ఘ scale_irq_సామర్థ్యం(గుర్తులేని దీర్ఘ util, గుర్తులేని దీర్ఘ irq, గుర్తులేని దీర్ఘ max)
 {
-	return util;
+	తిరిగి util;
 }
 
-#endif /* !CONFIG_HAVE_SCHED_AVG_IRQ */
+#అయితే_ముగింపు /* !CONFIG_HAVE_SCHED_AVG_IRQ */
 
-extern void __setparam_fair(struct task_struct *p, const struct sched_attr *attr);
+బాహ్య శూన్య __setparam_fair(నిర్మాణం task_struct *p, స్థిరరాశి నిర్మాణం sched_attr *attr);
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+#ఒకవేళ defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
 
-#define perf_domain_span(pd) (to_cpumask(((pd)->em_pd->cpus)))
+#నిర్వచించు perf_domain_పరిధి(pd) (గమ్యం_cpumask(((pd)->em_pd->cpus)))
 
-DECLARE_STATIC_KEY_FALSE(sched_energy_present);
+DECLARE_STATIC_కీలకం_FALSE(sched_energy_present);
 
-static inline bool sched_energy_enabled(void)
+స్థిర అంతఃవరుస bool sched_energy_enabled(శూన్య)
 {
-	return static_branch_unlikely(&sched_energy_present);
+	తిరిగి static_branch_unlikely(&sched_energy_present);
 }
 
-#else /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
+#లేకపోతే /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
 
-#define perf_domain_span(pd) NULL
+#నిర్వచించు perf_domain_పరిధి(pd) ఖాళీ
 
-static inline bool sched_energy_enabled(void) { return false; }
+స్థిర అంతఃవరుస bool sched_energy_enabled(శూన్య) { తిరిగి false; }
 
-#endif /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
+#అయితే_ముగింపు /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
 
-#ifdef CONFIG_MEMBARRIER
+#నిర్వచితమైతే CONFIG_MEMBARRIER
 
 /*
  * The scheduler provides memory barriers required by membarrier between:
@@ -3892,377 +3892,377 @@ static inline bool sched_energy_enabled(void) { return false; }
  * - store to rq->membarrier_state and following user-space memory accesses.
  * In the same way it provides those guarantees around store to rq->curr.
  */
-static inline void membarrier_switch_mm(struct rq *rq,
-					struct mm_struct *prev_mm,
-					struct mm_struct *next_mm)
+స్థిర అంతఃవరుస శూన్య membarrier_switch_mm(నిర్మాణం rq *rq,
+					నిర్మాణం mm_struct *prev_mm,
+					నిర్మాణం mm_struct *తదుపరి_mm)
 {
-	int membarrier_state;
+	పూర్ణాంకం membarrier_state;
 
-	if (prev_mm == next_mm)
-		return;
+	ఒకవేళ (prev_mm == తదుపరి_mm)
+		తిరిగి;
 
-	membarrier_state = atomic_read(&next_mm->membarrier_state);
-	if (READ_ONCE(rq->membarrier_state) == membarrier_state)
-		return;
+	membarrier_state = atomic_read(&తదుపరి_mm->membarrier_state);
+	ఒకవేళ (READ_ONCE(rq->membarrier_state) == membarrier_state)
+		తిరిగి;
 
 	WRITE_ONCE(rq->membarrier_state, membarrier_state);
 }
 
-#else /* !CONFIG_MEMBARRIER: */
+#లేకపోతే /* !CONFIG_MEMBARRIER: */
 
-static inline void membarrier_switch_mm(struct rq *rq,
-					struct mm_struct *prev_mm,
-					struct mm_struct *next_mm)
+స్థిర అంతఃవరుస శూన్య membarrier_switch_mm(నిర్మాణం rq *rq,
+					నిర్మాణం mm_struct *prev_mm,
+					నిర్మాణం mm_struct *తదుపరి_mm)
 {
 }
 
-#endif /* !CONFIG_MEMBARRIER */
+#అయితే_ముగింపు /* !CONFIG_MEMBARRIER */
 
-static inline bool is_per_cpu_kthread(struct task_struct *p)
+స్థిర అంతఃవరుస bool is_చొప్పున_cpu_kthread(నిర్మాణం task_struct *p)
 {
-	if (!(p->flags & PF_KTHREAD))
-		return false;
+	ఒకవేళ (!(p->flags & PF_KTHREAD))
+		తిరిగి false;
 
-	if (p->nr_cpus_allowed != 1)
-		return false;
+	ఒకవేళ (p->nr_cpus_allowed != 1)
+		తిరిగి false;
 
-	return true;
+	తిరిగి true;
 }
 
-extern void swake_up_all_locked(struct swait_queue_head *q);
-extern void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait);
+బాహ్య శూన్య swake_పైకి_all_locked(నిర్మాణం swait_వరుస_తల *q);
+బాహ్య శూన్య __prepare_to_swait(నిర్మాణం swait_వరుస_తల *q, నిర్మాణం swait_వరుస *wait);
 
-extern int try_to_wake_up(struct task_struct *tsk, unsigned int state, int wake_flags);
+బాహ్య పూర్ణాంకం try_గమ్యం_wake_పైకి(నిర్మాణం task_struct *tsk, గుర్తులేని పూర్ణాంకం state, పూర్ణాంకం wake_flags);
 
-#ifdef CONFIG_PREEMPT_DYNAMIC
-extern int preempt_dynamic_mode;
-extern int sched_dynamic_mode(const char *str);
-extern void sched_dynamic_update(int mode);
-#endif
-extern const char *preempt_modes[];
+#నిర్వచితమైతే CONFIG_PREEMPT_DYNAMIC
+బాహ్య పూర్ణాంకం preempt_dynamic_బహుళకం;
+బాహ్య పూర్ణాంకం sched_dynamic_బహుళకం(స్థిరరాశి అక్షరం *str);
+బాహ్య శూన్య sched_dynamic_update(పూర్ణాంకం బహుళకం);
+#అయితే_ముగింపు
+బాహ్య స్థిరరాశి అక్షరం *preempt_modes[];
 
-#ifdef CONFIG_SCHED_MM_CID
+#నిర్వచితమైతే CONFIG_SCHED_MM_CID
 
-static __always_inline bool cid_on_cpu(unsigned int cid)
+స్థిర __always_inline bool cid_on_cpu(గుర్తులేని పూర్ణాంకం cid)
 {
-	return cid & MM_CID_ONCPU;
+	తిరిగి cid & MM_CID_ONCPU;
 }
 
-static __always_inline bool cid_in_transit(unsigned int cid)
+స్థిర __always_inline bool cid_లోపల_transit(గుర్తులేని పూర్ణాంకం cid)
 {
-	return cid & MM_CID_TRANSIT;
+	తిరిగి cid & MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cpu_cid_to_cid(unsigned int cid)
+స్థిర __always_inline గుర్తులేని పూర్ణాంకం cpu_cid_గమ్యం_cid(గుర్తులేని పూర్ణాంకం cid)
 {
-	return cid & ~MM_CID_ONCPU;
+	తిరిగి cid & ~MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_cpu_cid(unsigned int cid)
+స్థిర __always_inline గుర్తులేని పూర్ణాంకం cid_గమ్యం_cpu_cid(గుర్తులేని పూర్ణాంకం cid)
 {
-	return cid | MM_CID_ONCPU;
+	తిరిగి cid | MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_transit_cid(unsigned int cid)
+స్థిర __always_inline గుర్తులేని పూర్ణాంకం cid_గమ్యం_transit_cid(గుర్తులేని పూర్ణాంకం cid)
 {
-	return cid | MM_CID_TRANSIT;
+	తిరిగి cid | MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cid_from_transit_cid(unsigned int cid)
+స్థిర __always_inline గుర్తులేని పూర్ణాంకం cid_from_transit_cid(గుర్తులేని పూర్ణాంకం cid)
 {
-	return cid & ~MM_CID_TRANSIT;
+	తిరిగి cid & ~MM_CID_TRANSIT;
 }
 
-static __always_inline bool cid_on_task(unsigned int cid)
+స్థిర __always_inline bool cid_on_task(గుర్తులేని పూర్ణాంకం cid)
 {
 	/* True if none of the MM_CID_ONCPU, MM_CID_TRANSIT, MM_CID_UNSET bits is set */
-	return cid < MM_CID_TRANSIT;
+	తిరిగి cid < MM_CID_TRANSIT;
 }
 
-static __always_inline void mm_drop_cid(struct mm_struct *mm, unsigned int cid)
+స్థిర __always_inline శూన్య mm_drop_cid(నిర్మాణం mm_struct *mm, గుర్తులేని పూర్ణాంకం cid)
 {
-	clear_bit(cid, mm_cidmask(mm));
+	clear_బిట్టు(cid, mm_cidmask(mm));
 }
 
-static __always_inline void mm_unset_cid_on_task(struct task_struct *t)
+స్థిర __always_inline శూన్య mm_unset_cid_on_task(నిర్మాణం task_struct *t)
 {
-	unsigned int cid = t->mm_cid.cid;
+	గుర్తులేని పూర్ణాంకం cid = t->mm_cid.cid;
 
 	t->mm_cid.cid = MM_CID_UNSET;
-	if (cid_on_task(cid))
+	ఒకవేళ (cid_on_task(cid))
 		mm_drop_cid(t->mm, cid);
 }
 
-static __always_inline void mm_drop_cid_on_cpu(struct mm_struct *mm, struct mm_cid_pcpu *pcp)
+స్థిర __always_inline శూన్య mm_drop_cid_on_cpu(నిర్మాణం mm_struct *mm, నిర్మాణం mm_cid_pcpu *pcp)
 {
 	/* Clear the ONCPU bit, but do not set UNSET in the per CPU storage */
-	if (cid_on_cpu(pcp->cid)) {
-		pcp->cid = cpu_cid_to_cid(pcp->cid);
+	ఒకవేళ (cid_on_cpu(pcp->cid)) {
+		pcp->cid = cpu_cid_గమ్యం_cid(pcp->cid);
 		mm_drop_cid(mm, pcp->cid);
 	}
 }
 
-static inline unsigned int __mm_get_cid(struct mm_struct *mm, unsigned int max_cids)
+స్థిర అంతఃవరుస గుర్తులేని పూర్ణాంకం __mm_get_cid(నిర్మాణం mm_struct *mm, గుర్తులేని పూర్ణాంకం max_cids)
 {
-	unsigned int cid = find_first_zero_bit(mm_cidmask(mm), max_cids);
+	గుర్తులేని పూర్ణాంకం cid = కనుగొను_మొదటి_zero_బిట్టు(mm_cidmask(mm), max_cids);
 
-	if (cid >= max_cids)
-		return MM_CID_UNSET;
-	if (test_and_set_bit(cid, mm_cidmask(mm)))
-		return MM_CID_UNSET;
-	return cid;
+	ఒకవేళ (cid >= max_cids)
+		తిరిగి MM_CID_UNSET;
+	ఒకవేళ (test_and_సమితి_బిట్టు(cid, mm_cidmask(mm)))
+		తిరిగి MM_CID_UNSET;
+	తిరిగి cid;
 }
 
-static inline unsigned int mm_get_cid(struct mm_struct *mm)
+స్థిర అంతఃవరుస గుర్తులేని పూర్ణాంకం mm_get_cid(నిర్మాణం mm_struct *mm)
 {
-	unsigned int cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
+	గుర్తులేని పూర్ణాంకం cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
 
-	while (cid == MM_CID_UNSET) {
+	అయితే (cid == MM_CID_UNSET) {
 		cpu_relax();
-		cid = __mm_get_cid(mm, num_possible_cpus());
+		cid = __mm_get_cid(mm, అంకె_possible_cpus());
 	}
-	return cid;
+	తిరిగి cid;
 }
 
-static inline unsigned int mm_cid_converge(struct mm_struct *mm, unsigned int orig_cid,
-					   unsigned int max_cids)
+స్థిర అంతఃవరుస గుర్తులేని పూర్ణాంకం mm_cid_converge(నిర్మాణం mm_struct *mm, గుర్తులేని పూర్ణాంకం orig_cid,
+					   గుర్తులేని పూర్ణాంకం max_cids)
 {
-	unsigned int new_cid, cid = cpu_cid_to_cid(orig_cid);
+	గుర్తులేని పూర్ణాంకం new_cid, cid = cpu_cid_గమ్యం_cid(orig_cid);
 
 	/* Is it in the optimal CID space? */
-	if (likely(cid < max_cids))
-		return orig_cid;
+	ఒకవేళ (likely(cid < max_cids))
+		తిరిగి orig_cid;
 
 	/* Try to find one in the optimal space. Otherwise keep the provided. */
 	new_cid = __mm_get_cid(mm, max_cids);
-	if (new_cid != MM_CID_UNSET) {
+	ఒకవేళ (new_cid != MM_CID_UNSET) {
 		mm_drop_cid(mm, cid);
 		/* Preserve the ONCPU mode of the original CID */
-		return new_cid | (orig_cid & MM_CID_ONCPU);
+		తిరిగి new_cid | (orig_cid & MM_CID_ONCPU);
 	}
-	return orig_cid;
+	తిరిగి orig_cid;
 }
 
-static __always_inline void mm_cid_update_task_cid(struct task_struct *t, unsigned int cid)
+స్థిర __always_inline శూన్య mm_cid_update_task_cid(నిర్మాణం task_struct *t, గుర్తులేని పూర్ణాంకం cid)
 {
-	if (t->mm_cid.cid != cid) {
+	ఒకవేళ (t->mm_cid.cid != cid) {
 		t->mm_cid.cid = cid;
-		rseq_sched_set_ids_changed(t);
+		rseq_sched_సమితి_ids_మారింది(t);
 	}
 }
 
-static __always_inline void mm_cid_update_pcpu_cid(struct mm_struct *mm, unsigned int cid)
+స్థిర __always_inline శూన్య mm_cid_update_pcpu_cid(నిర్మాణం mm_struct *mm, గుర్తులేని పూర్ణాంకం cid)
 {
 	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
 }
 
-static __always_inline void mm_cid_from_cpu(struct task_struct *t, unsigned int cpu_cid,
-					    unsigned int mode)
+స్థిర __always_inline శూన్య mm_cid_from_cpu(నిర్మాణం task_struct *t, గుర్తులేని పూర్ణాంకం cpu_cid,
+					    గుర్తులేని పూర్ణాంకం బహుళకం)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
-	struct mm_struct *mm = t->mm;
+	గుర్తులేని పూర్ణాంకం max_cids, tcid = t->mm_cid.cid;
+	నిర్మాణం mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case where both have the ONCPU bit set */
-	if (likely(cid_on_cpu(cpu_cid & tcid))) {
-		if (likely(cpu_cid_to_cid(cpu_cid) < max_cids)) {
+	ఒకవేళ (likely(cid_on_cpu(cpu_cid & tcid))) {
+		ఒకవేళ (likely(cpu_cid_గమ్యం_cid(cpu_cid) < max_cids)) {
 			mm_cid_update_task_cid(t, cpu_cid);
-			return;
+			తిరిగి;
 		}
 		/* Try to converge into the optimal CID space */
 		cpu_cid = mm_cid_converge(mm, cpu_cid, max_cids);
-	} else {
+	} లేకపోతే {
 		/* Hand over or drop the task owned CID */
-		if (cid_on_task(tcid)) {
-			if (cid_on_cpu(cpu_cid))
+		ఒకవేళ (cid_on_task(tcid)) {
+			ఒకవేళ (cid_on_cpu(cpu_cid))
 				mm_unset_cid_on_task(t);
-			else
-				cpu_cid = cid_to_cpu_cid(tcid);
+			లేకపోతే
+				cpu_cid = cid_గమ్యం_cpu_cid(tcid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_cpu(cpu_cid))
-			cpu_cid = cid_to_cpu_cid(mm_get_cid(mm));
+		ఒకవేళ (!cid_on_cpu(cpu_cid))
+			cpu_cid = cid_గమ్యం_cpu_cid(mm_get_cid(mm));
 
 		/* Handle the transition mode flag if required */
-		if (mode & MM_CID_TRANSIT)
-			cpu_cid = cpu_cid_to_cid(cpu_cid) | MM_CID_TRANSIT;
+		ఒకవేళ (బహుళకం & MM_CID_TRANSIT)
+			cpu_cid = cpu_cid_గమ్యం_cid(cpu_cid) | MM_CID_TRANSIT;
 	}
 	mm_cid_update_pcpu_cid(mm, cpu_cid);
 	mm_cid_update_task_cid(t, cpu_cid);
 }
 
-static __always_inline void mm_cid_from_task(struct task_struct *t, unsigned int cpu_cid,
-					     unsigned int mode)
+స్థిర __always_inline శూన్య mm_cid_from_task(నిర్మాణం task_struct *t, గుర్తులేని పూర్ణాంకం cpu_cid,
+					     గుర్తులేని పూర్ణాంకం బహుళకం)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
-	struct mm_struct *mm = t->mm;
+	గుర్తులేని పూర్ణాంకం max_cids, tcid = t->mm_cid.cid;
+	నిర్మాణం mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case, where both have the ONCPU bit clear */
-	if (likely(cid_on_task(tcid | cpu_cid))) {
-		if (likely(tcid < max_cids)) {
+	ఒకవేళ (likely(cid_on_task(tcid | cpu_cid))) {
+		ఒకవేళ (likely(tcid < max_cids)) {
 			mm_cid_update_pcpu_cid(mm, tcid);
-			return;
+			తిరిగి;
 		}
 		/* Try to converge into the optimal CID space */
 		tcid = mm_cid_converge(mm, tcid, max_cids);
-	} else {
+	} లేకపోతే {
 		/* Hand over or drop the CPU owned CID */
-		if (cid_on_cpu(cpu_cid)) {
-			if (cid_on_task(tcid))
+		ఒకవేళ (cid_on_cpu(cpu_cid)) {
+			ఒకవేళ (cid_on_task(tcid))
 				mm_drop_cid_on_cpu(mm, this_cpu_ptr(mm->mm_cid.pcpu));
-			else
-				tcid = cpu_cid_to_cid(cpu_cid);
+			లేకపోతే
+				tcid = cpu_cid_గమ్యం_cid(cpu_cid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_task(tcid))
+		ఒకవేళ (!cid_on_task(tcid))
 			tcid = mm_get_cid(mm);
 		/* Set the transition mode flag if required */
-		tcid |= mode & MM_CID_TRANSIT;
+		tcid |= బహుళకం & MM_CID_TRANSIT;
 	}
 	mm_cid_update_pcpu_cid(mm, tcid);
 	mm_cid_update_task_cid(t, tcid);
 }
 
-static __always_inline void mm_cid_schedin(struct task_struct *next)
+స్థిర __always_inline శూన్య mm_cid_schedin(నిర్మాణం task_struct *తదుపరి)
 {
-	struct mm_struct *mm = next->mm;
-	unsigned int cpu_cid, mode;
+	నిర్మాణం mm_struct *mm = తదుపరి->mm;
+	గుర్తులేని పూర్ణాంకం cpu_cid, బహుళకం;
 
-	if (!next->mm_cid.active)
-		return;
+	ఒకవేళ (!తదుపరి->mm_cid.చురుకైన)
+		తిరిగి;
 
 	cpu_cid = __this_cpu_read(mm->mm_cid.pcpu->cid);
-	mode = READ_ONCE(mm->mm_cid.mode);
-	if (likely(!cid_on_cpu(mode)))
-		mm_cid_from_task(next, cpu_cid, mode);
-	else
-		mm_cid_from_cpu(next, cpu_cid, mode);
+	బహుళకం = READ_ONCE(mm->mm_cid.బహుళకం);
+	ఒకవేళ (likely(!cid_on_cpu(బహుళకం)))
+		mm_cid_from_task(తదుపరి, cpu_cid, బహుళకం);
+	లేకపోతే
+		mm_cid_from_cpu(తదుపరి, cpu_cid, బహుళకం);
 }
 
-static __always_inline void mm_cid_schedout(struct task_struct *prev)
+స్థిర __always_inline శూన్య mm_cid_schedout(నిర్మాణం task_struct *prev)
 {
-	struct mm_struct *mm = prev->mm;
-	unsigned int mode, cid;
+	నిర్మాణం mm_struct *mm = prev->mm;
+	గుర్తులేని పూర్ణాంకం బహుళకం, cid;
 
 	/* During mode transitions CIDs are temporary and need to be dropped */
-	if (likely(!cid_in_transit(prev->mm_cid.cid)))
-		return;
+	ఒకవేళ (likely(!cid_లోపల_transit(prev->mm_cid.cid)))
+		తిరిగి;
 
-	mode = READ_ONCE(mm->mm_cid.mode);
+	బహుళకం = READ_ONCE(mm->mm_cid.బహుళకం);
 	cid = cid_from_transit_cid(prev->mm_cid.cid);
 
 	/*
 	 * If transition mode is done, transfer ownership when the CID is
 	 * within the convergence range to optimize the next schedule in.
 	 */
-	if (!cid_in_transit(mode) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
-		if (cid_on_cpu(mode))
-			cid = cid_to_cpu_cid(cid);
+	ఒకవేళ (!cid_లోపల_transit(బహుళకం) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
+		ఒకవేళ (cid_on_cpu(బహుళకం))
+			cid = cid_గమ్యం_cpu_cid(cid);
 
 		/* Update both so that the next schedule in goes into the fast path */
 		mm_cid_update_pcpu_cid(mm, cid);
 		prev->mm_cid.cid = cid;
-	} else {
+	} లేకపోతే {
 		mm_drop_cid(mm, cid);
 		prev->mm_cid.cid = MM_CID_UNSET;
 	}
 }
 
-static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next)
+స్థిర అంతఃవరుస శూన్య mm_cid_switch_గమ్యం(నిర్మాణం task_struct *prev, నిర్మాణం task_struct *తదుపరి)
 {
 	mm_cid_schedout(prev);
-	mm_cid_schedin(next);
+	mm_cid_schedin(తదుపరి);
 }
 
-#else /* !CONFIG_SCHED_MM_CID: */
-static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next) { }
-#endif /* !CONFIG_SCHED_MM_CID */
+#లేకపోతే /* !CONFIG_SCHED_MM_CID: */
+స్థిర అంతఃవరుస శూన్య mm_cid_switch_గమ్యం(నిర్మాణం task_struct *prev, నిర్మాణం task_struct *తదుపరి) { }
+#అయితే_ముగింపు /* !CONFIG_SCHED_MM_CID */
 
-#ifdef CONFIG_SCHED_CACHE
-DECLARE_STATIC_KEY_FALSE(sched_cache_present);
-DECLARE_STATIC_KEY_FALSE(sched_cache_active);
-extern int sysctl_sched_cache_user;
-extern unsigned int llc_aggr_tolerance;
-extern unsigned int llc_epoch_period;
-extern unsigned int llc_epoch_affinity_timeout;
-extern unsigned int llc_imb_pct;
-extern unsigned int llc_overaggr_pct;
+#నిర్వచితమైతే CONFIG_SCHED_CACHE
+DECLARE_STATIC_కీలకం_FALSE(sched_cache_present);
+DECLARE_STATIC_కీలకం_FALSE(sched_cache_చురుకైన);
+బాహ్య పూర్ణాంకం sysctl_sched_cache_user;
+బాహ్య గుర్తులేని పూర్ణాంకం llc_aggr_tolerance;
+బాహ్య గుర్తులేని పూర్ణాంకం llc_epoch_period;
+బాహ్య గుర్తులేని పూర్ణాంకం llc_epoch_affinity_timeout;
+బాహ్య గుర్తులేని పూర్ణాంకం llc_imb_pct;
+బాహ్య గుర్తులేని పూర్ణాంకం llc_overaggr_pct;
 
-static inline bool sched_cache_enabled(void)
+స్థిర అంతఃవరుస bool sched_cache_enabled(శూన్య)
 {
-	return static_branch_unlikely(&sched_cache_active);
+	తిరిగి static_branch_unlikely(&sched_cache_చురుకైన);
 }
 
-extern void sched_cache_active_set(void);
+బాహ్య శూన్య sched_cache_చురుకైన_సమితి(శూన్య);
 
-#endif
+#అయితే_ముగింపు
 
-void sched_domains_free_llc_id(int cpu);
+శూన్య sched_domains_free_llc_id(పూర్ణాంకం cpu);
 
-extern void init_sched_mm(struct task_struct *p);
+బాహ్య శూన్య init_sched_mm(నిర్మాణం task_struct *p);
 
-extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
-extern int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se);
-static inline
-void move_queued_task_locked(struct rq *src_rq, struct rq *dst_rq, struct task_struct *task)
+బాహ్య u64 avg_vruntime(నిర్మాణం cfs_rq *cfs_rq);
+బాహ్య పూర్ణాంకం entity_eligible(నిర్మాణం cfs_rq *cfs_rq, నిర్మాణం sched_entity *se);
+స్థిర అంతఃవరుస
+శూన్య move_queued_task_locked(నిర్మాణం rq *src_rq, నిర్మాణం rq *dst_rq, నిర్మాణం task_struct *task)
 {
 	lockdep_assert_rq_held(src_rq);
 	lockdep_assert_rq_held(dst_rq);
 
 	deactivate_task(src_rq, task, 0);
-	set_task_cpu(task, dst_rq->cpu);
+	సమితి_task_cpu(task, dst_rq->cpu);
 	activate_task(dst_rq, task, 0);
 	wakeup_preempt(dst_rq, task, 0);
 }
 
-static inline
-bool task_is_pushable(struct rq *rq, struct task_struct *p, int cpu)
+స్థిర అంతఃవరుస
+bool task_is_pushable(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం cpu)
 {
-	if (!task_on_cpu(rq, p) &&
-	    cpumask_test_cpu(cpu, &p->cpus_mask))
-		return true;
+	ఒకవేళ (!task_on_cpu(rq, p) &&
+	    cpumask_test_cpu(cpu, &p->cpus_ముసుగు))
+		తిరిగి true;
 
-	return false;
+	తిరిగి false;
 }
 
-#ifdef CONFIG_RT_MUTEXES
+#నిర్వచితమైతే CONFIG_RT_MUTEXES
 
-static inline int __rt_effective_prio(struct task_struct *pi_task, int prio)
+స్థిర అంతఃవరుస పూర్ణాంకం __rt_effective_prio(నిర్మాణం task_struct *pi_task, పూర్ణాంకం prio)
 {
-	if (pi_task)
+	ఒకవేళ (pi_task)
 		prio = min(prio, pi_task->prio);
 
-	return prio;
+	తిరిగి prio;
 }
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+స్థిర అంతఃవరుస పూర్ణాంకం rt_effective_prio(నిర్మాణం task_struct *p, పూర్ణాంకం prio)
 {
-	struct task_struct *pi_task = rt_mutex_get_top_task(p);
+	నిర్మాణం task_struct *pi_task = rt_mutex_get_శిఖరం_task(p);
 
-	return __rt_effective_prio(pi_task, prio);
+	తిరిగి __rt_effective_prio(pi_task, prio);
 }
 
-#else /* !CONFIG_RT_MUTEXES: */
+#లేకపోతే /* !CONFIG_RT_MUTEXES: */
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+స్థిర అంతఃవరుస పూర్ణాంకం rt_effective_prio(నిర్మాణం task_struct *p, పూర్ణాంకం prio)
 {
-	return prio;
+	తిరిగి prio;
 }
 
-#endif /* !CONFIG_RT_MUTEXES */
+#అయితే_ముగింపు /* !CONFIG_RT_MUTEXES */
 
-extern int __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
-extern int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
-extern const struct sched_class *__setscheduler_class(int policy, int prio);
-extern void set_load_weight(struct task_struct *p, bool update_load);
-extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
-extern bool dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+బాహ్య పూర్ణాంకం __sched_setscheduler(నిర్మాణం task_struct *p, స్థిరరాశి నిర్మాణం sched_attr *attr, bool user, bool pi);
+బాహ్య పూర్ణాంకం __sched_setaffinity(నిర్మాణం task_struct *p, నిర్మాణం affinity_context *ctx);
+బాహ్య స్థిరరాశి నిర్మాణం sched_class *__setscheduler_class(పూర్ణాంకం policy, పూర్ణాంకం prio);
+బాహ్య శూన్య సమితి_ఎక్కించు_బరువు(నిర్మాణం task_struct *p, bool update_ఎక్కించు);
+బాహ్య శూన్య వరుసలో_చేర్చు_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags);
+బాహ్య bool వరుస_నుండి_తీయి_task(నిర్మాణం rq *rq, నిర్మాణం task_struct *p, పూర్ణాంకం flags);
 
-extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
+బాహ్య నిర్మాణం balance_callback *splice_balance_callbacks(నిర్మాణం rq *rq);
 
-extern void __balance_callbacks(struct rq *rq, struct rq_flags *rf);
-extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
+బాహ్య శూన్య __balance_callbacks(నిర్మాణం rq *rq, నిర్మాణం rq_flags *rf);
+బాహ్య శూన్య balance_callbacks(నిర్మాణం rq *rq, నిర్మాణం balance_callback *తల);
 
 /*
  * The 'sched_change' pattern is the safe, easy and slow way of changing a
@@ -4281,31 +4281,31 @@ extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
  * of the task between sched_change_begin() and sched_change_end(). Ensuring
  * the task's queueing state is idempotent across the operation.
  */
-struct sched_change_ctx {
+నిర్మాణం sched_change_ctx {
 	u64			prio;
-	struct task_struct	*p;
-	const struct sched_class *class;
-	int			flags;
+	నిర్మాణం task_struct	*p;
+	స్థిరరాశి నిర్మాణం sched_class *class;
+	పూర్ణాంకం			flags;
 	bool			queued;
 	bool			running;
 };
 
-struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags);
-void sched_change_end(struct sched_change_ctx *ctx);
+నిర్మాణం sched_change_ctx *sched_change_begin(నిర్మాణం task_struct *p, గుర్తులేని పూర్ణాంకం flags);
+శూన్య sched_change_చివర(నిర్మాణం sched_change_ctx *ctx);
 
-DEFINE_CLASS(sched_change, struct sched_change_ctx *,
-	     sched_change_end(_T),
+DEFINE_CLASS(sched_change, నిర్మాణం sched_change_ctx *,
+	     sched_change_చివర(_T),
 	     sched_change_begin(p, flags),
-	     struct task_struct *p, unsigned int flags)
+	     నిర్మాణం task_struct *p, గుర్తులేని పూర్ణాంకం flags)
 
 DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
 
-#include "ext/ext.h"
+#అన్తర్భావ "ext/ext.h"
 
-#ifdef CONFIG_PREFERRED_CPU
-void sched_push_current_non_preferred_cpu(struct rq *rq);
-#else	/* !CONFIG_PREFERRED_CPU */
-static inline void sched_push_current_non_preferred_cpu(struct rq *rq) { }
-#endif
+#నిర్వచితమైతే CONFIG_PREFERRED_CPU
+శూన్య sched_నెట్టు_current_non_preferred_cpu(నిర్మాణం rq *rq);
+#లేకపోతే	/* !CONFIG_PREFERRED_CPU */
+స్థిర అంతఃవరుస శూన్య sched_నెట్టు_current_non_preferred_cpu(నిర్మాణం rq *rq) { }
+#అయితే_ముగింపు
 
-#endif /* _KERNEL_SCHED_SCHED_H */
+#అయితే_ముగింపు /* _KERNEL_SCHED_SCHED_H */

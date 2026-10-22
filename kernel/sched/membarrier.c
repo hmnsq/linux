@@ -4,8 +4,8 @@
  *
  * membarrier system call
  */
-#include <uapi/linux/membarrier.h>
-#include "sched.h"
+#అన్తర్భావ <uapi/linux/membarrier.h>
+#అన్తర్భావ "sched.h"
 
 /*
  * For documentation purposes, here are some membarrier ordering
@@ -139,58 +139,58 @@
  * Bitmask made from a "or" of all commands within enum membarrier_cmd,
  * except MEMBARRIER_CMD_QUERY.
  */
-#ifdef CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE
-#define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK			\
-	(MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE			\
-	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE)
-#else
-#define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK	0
-#endif
+#నిర్వచితమైతే CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE
+#నిర్వచించు MEMBARRIER_వ్యక్తిగత_EXPEDITED_SYNC_CORE_BITMASK			\
+	(MEMBARRIER_CMD_వ్యక్తిగత_EXPEDITED_SYNC_CORE			\
+	| MEMBARRIER_CMD_రిజిస్టరు_వ్యక్తిగత_EXPEDITED_SYNC_CORE)
+#లేకపోతే
+#నిర్వచించు MEMBARRIER_వ్యక్తిగత_EXPEDITED_SYNC_CORE_BITMASK	0
+#అయితే_ముగింపు
 
-#ifdef CONFIG_RSEQ
-#define MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK		\
-	(MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ			\
-	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ)
-#else
-#define MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK	0
-#endif
+#నిర్వచితమైతే CONFIG_RSEQ
+#నిర్వచించు MEMBARRIER_వ్యక్తిగత_EXPEDITED_RSEQ_BITMASK		\
+	(MEMBARRIER_CMD_వ్యక్తిగత_EXPEDITED_RSEQ			\
+	| MEMBARRIER_CMD_రిజిస్టరు_వ్యక్తిగత_EXPEDITED_RSEQ)
+#లేకపోతే
+#నిర్వచించు MEMBARRIER_వ్యక్తిగత_EXPEDITED_RSEQ_BITMASK	0
+#అయితే_ముగింపు
 
-#define MEMBARRIER_CMD_BITMASK						\
+#నిర్వచించు MEMBARRIER_CMD_BITMASK						\
 	(MEMBARRIER_CMD_GLOBAL | MEMBARRIER_CMD_GLOBAL_EXPEDITED	\
-	| MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED			\
-	| MEMBARRIER_CMD_PRIVATE_EXPEDITED				\
-	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED			\
-	| MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK		\
-	| MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK			\
+	| MEMBARRIER_CMD_రిజిస్టరు_GLOBAL_EXPEDITED			\
+	| MEMBARRIER_CMD_వ్యక్తిగత_EXPEDITED				\
+	| MEMBARRIER_CMD_రిజిస్టరు_వ్యక్తిగత_EXPEDITED			\
+	| MEMBARRIER_వ్యక్తిగత_EXPEDITED_SYNC_CORE_BITMASK		\
+	| MEMBARRIER_వ్యక్తిగత_EXPEDITED_RSEQ_BITMASK			\
 	| MEMBARRIER_CMD_GET_REGISTRATIONS)
 
 /*
  * Scoped guard for memory barriers on entry and exit.
  * Matches memory barriers before & after rq->curr modification in scheduler.
  */
-DEFINE_LOCK_GUARD_0(mb, smp_mb(), smp_mb())
-static DEFINE_MUTEX(membarrier_ipi_mutex);
-static DEFINE_PER_CPU(struct mutex, membarrier_cpu_mutexes);
+DEFINE_తాళం_GUARD_0(mb, smp_mb(), smp_mb())
+స్థిర DEFINE_MUTEX(membarrier_ipi_mutex);
+స్థిర DEFINE_చొప్పున_CPU(నిర్మాణం mutex, membarrier_cpu_mutexes);
 
-#define SERIALIZE_IPI() guard(mutex)(&membarrier_ipi_mutex)
-#define SERIALIZE_IPI_CPU(cpu_id) guard(mutex)(&per_cpu(membarrier_cpu_mutexes, cpu_id))
+#నిర్వచించు SERIALIZE_IPI() guard(mutex)(&membarrier_ipi_mutex)
+#నిర్వచించు SERIALIZE_IPI_CPU(cpu_id) guard(mutex)(&చొప్పున_cpu(membarrier_cpu_mutexes, cpu_id))
 
-static int __init membarrier_init(void)
+స్థిర పూర్ణాంకం __init membarrier_init(శూన్య)
 {
-	int i;
+	పూర్ణాంకం i;
 
 	for_each_possible_cpu(i)
-		mutex_init(&per_cpu(membarrier_cpu_mutexes, i));
-	return 0;
+		mutex_init(&చొప్పున_cpu(membarrier_cpu_mutexes, i));
+	తిరిగి 0;
 }
 core_initcall(membarrier_init);
 
-static void ipi_mb(void *info)
+స్థిర శూన్య ipi_mb(శూన్య *info)
 {
 	smp_mb();	/* IPIs should be serializing but paranoid. */
 }
 
-static void ipi_sync_core(void *info)
+స్థిర శూన్య ipi_sync_core(శూన్య *info)
 {
 	/*
 	 * The smp_mb() in membarrier after all the IPIs is supposed to
@@ -207,7 +207,7 @@ static void ipi_sync_core(void *info)
 	sync_core_before_usermode();
 }
 
-static void ipi_rseq(void *info)
+స్థిర శూన్య ipi_rseq(శూన్య *info)
 {
 	/*
 	 * Ensure that all stores done by the calling thread are visible
@@ -223,18 +223,18 @@ static void ipi_rseq(void *info)
 	 * only updated if they change as a consequence of preemption after
 	 * return from this IPI.
 	 */
-	if (rseq_v2(current))
+	ఒకవేళ (rseq_v2(current))
 		rseq_sched_switch_event(current);
-	else
+	లేకపోతే
 		rseq_force_update();
 }
 
-static void ipi_sync_rq_state(void *info)
+స్థిర శూన్య ipi_sync_rq_state(శూన్య *info)
 {
-	struct mm_struct *mm = (struct mm_struct *) info;
+	నిర్మాణం mm_struct *mm = (నిర్మాణం mm_struct *) info;
 
-	if (current->mm != mm)
-		return;
+	ఒకవేళ (current->mm != mm)
+		తిరిగి;
 	this_cpu_write(runqueues.membarrier_state,
 		       atomic_read(&mm->membarrier_state));
 	/*
@@ -246,7 +246,7 @@ static void ipi_sync_rq_state(void *info)
 	smp_mb();
 }
 
-void membarrier_exec_mmap(struct mm_struct *mm)
+శూన్య membarrier_exec_mmap(నిర్మాణం mm_struct *mm)
 {
 	/*
 	 * Issue a memory barrier before clearing membarrier_state to
@@ -254,7 +254,7 @@ void membarrier_exec_mmap(struct mm_struct *mm)
 	 * clearing this state.
 	 */
 	smp_mb();
-	atomic_set(&mm->membarrier_state, 0);
+	atomic_సమితి(&mm->membarrier_state, 0);
 	/*
 	 * Keep the runqueue membarrier_state in sync with this mm
 	 * membarrier_state.
@@ -262,36 +262,36 @@ void membarrier_exec_mmap(struct mm_struct *mm)
 	this_cpu_write(runqueues.membarrier_state, 0);
 }
 
-void membarrier_update_current_mm(struct mm_struct *next_mm)
+శూన్య membarrier_update_current_mm(నిర్మాణం mm_struct *తదుపరి_mm)
 {
-	struct rq *rq = this_rq();
-	int membarrier_state = 0;
+	నిర్మాణం rq *rq = this_rq();
+	పూర్ణాంకం membarrier_state = 0;
 
-	if (next_mm)
-		membarrier_state = atomic_read(&next_mm->membarrier_state);
-	if (READ_ONCE(rq->membarrier_state) == membarrier_state)
-		return;
+	ఒకవేళ (తదుపరి_mm)
+		membarrier_state = atomic_read(&తదుపరి_mm->membarrier_state);
+	ఒకవేళ (READ_ONCE(rq->membarrier_state) == membarrier_state)
+		తిరిగి;
 	WRITE_ONCE(rq->membarrier_state, membarrier_state);
 }
 
-static int membarrier_global_expedited(void)
+స్థిర పూర్ణాంకం membarrier_global_expedited(శూన్య)
 {
 	cpumask_var_t __free(free_cpumask_var) tmpmask = CPUMASK_VAR_NULL;
-	int cpu;
+	పూర్ణాంకం cpu;
 
-	if (num_online_cpus() == 1)
-		return 0;
+	ఒకవేళ (అంకె_online_cpus() == 1)
+		తిరిగి 0;
 
-	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-		return -ENOMEM;
+	ఒకవేళ (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+		తిరిగి -ENOMEM;
 
 	guard(mb)();
 	SERIALIZE_IPI();
-	guard(cpus_read_lock)();
+	guard(cpus_read_తాళం)();
 
-	rcu_read_lock();
+	rcu_read_తాళం();
 	for_each_online_cpu(cpu) {
-		struct task_struct *p;
+		నిర్మాణం task_struct *p;
 
 		/*
 		 * Skipping the current CPU is OK even through we can be
@@ -301,62 +301,62 @@ static int membarrier_global_expedited(void)
 		 * thread. Therefore, we can skip this CPU from the
 		 * iteration.
 		 */
-		if (cpu == raw_smp_processor_id())
-			continue;
+		ఒకవేళ (cpu == raw_smp_processor_id())
+			కొనసాగు;
 
-		if (!(READ_ONCE(cpu_rq(cpu)->membarrier_state) &
+		ఒకవేళ (!(READ_ONCE(cpu_rq(cpu)->membarrier_state) &
 		    MEMBARRIER_STATE_GLOBAL_EXPEDITED))
-			continue;
+			కొనసాగు;
 
 		/*
 		 * Skip the CPU if it runs a kernel thread which is not using
 		 * a task mm.
 		 */
 		p = rcu_dereference(cpu_rq(cpu)->curr);
-		if (!p->mm)
-			continue;
+		ఒకవేళ (!p->mm)
+			కొనసాగు;
 
 		__cpumask_set_cpu(cpu, tmpmask);
 	}
 	rcu_read_unlock();
 
 	preempt_disable();
-	smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
+	smp_call_function_many(tmpmask, ipi_mb, ఖాళీ, 1);
 	preempt_enable();
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int membarrier_private_expedited(int flags, int cpu_id)
+స్థిర పూర్ణాంకం membarrier_వ్యక్తిగత_expedited(పూర్ణాంకం flags, పూర్ణాంకం cpu_id)
 {
-	struct mm_struct *mm = current->mm;
+	నిర్మాణం mm_struct *mm = current->mm;
 	smp_call_func_t ipi_func = ipi_mb;
 
-	if (flags == MEMBARRIER_FLAG_SYNC_CORE) {
-		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
-			return -EINVAL;
-		if (!(atomic_read(&mm->membarrier_state) &
-		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY))
-			return -EPERM;
+	ఒకవేళ (flags == MEMBARRIER_FLAG_SYNC_CORE) {
+		ఒకవేళ (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
+			తిరిగి -EINVAL;
+		ఒకవేళ (!(atomic_read(&mm->membarrier_state) &
+		      MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_SYNC_CORE_READY))
+			తిరిగి -EPERM;
 		ipi_func = ipi_sync_core;
 		prepare_sync_core_cmd(mm);
-	} else if (flags == MEMBARRIER_FLAG_RSEQ) {
-		if (!IS_ENABLED(CONFIG_RSEQ))
-			return -EINVAL;
-		if (!(atomic_read(&mm->membarrier_state) &
-		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY))
-			return -EPERM;
+	} లేకపోతే ఒకవేళ (flags == MEMBARRIER_FLAG_RSEQ) {
+		ఒకవేళ (!IS_ENABLED(CONFIG_RSEQ))
+			తిరిగి -EINVAL;
+		ఒకవేళ (!(atomic_read(&mm->membarrier_state) &
+		      MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_RSEQ_READY))
+			తిరిగి -EPERM;
 		ipi_func = ipi_rseq;
-	} else {
+	} లేకపోతే {
 		WARN_ON_ONCE(flags);
-		if (!(atomic_read(&mm->membarrier_state) &
-		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY))
-			return -EPERM;
+		ఒకవేళ (!(atomic_read(&mm->membarrier_state) &
+		      MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_READY))
+			తిరిగి -EPERM;
 	}
 
-	if (flags != MEMBARRIER_FLAG_SYNC_CORE &&
-	    (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1))
-		return 0;
+	ఒకవేళ (flags != MEMBARRIER_FLAG_SYNC_CORE &&
+	    (atomic_read(&mm->mm_users) == 1 || అంకె_online_cpus() == 1))
+		తిరిగి 0;
 
 	/*
 	 * Matches memory barriers after rq->curr modification in
@@ -371,45 +371,45 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 	 * rq->curr modification in scheduler.
 	 */
 	guard(mb)();
-	if (cpu_id >= 0) {
-		if (cpu_id >= nr_cpu_ids || !cpu_possible(cpu_id))
-			return 0;
+	ఒకవేళ (cpu_id >= 0) {
+		ఒకవేళ (cpu_id >= nr_cpu_ids || !cpu_possible(cpu_id))
+			తిరిగి 0;
 
 		SERIALIZE_IPI_CPU(cpu_id);
-		guard(cpus_read_lock)();
-		struct task_struct *p;
+		guard(cpus_read_తాళం)();
+		నిర్మాణం task_struct *p;
 
-		if (!cpu_online(cpu_id))
-			return 0;
+		ఒకవేళ (!cpu_online(cpu_id))
+			తిరిగి 0;
 
-		rcu_read_lock();
+		rcu_read_తాళం();
 		p = rcu_dereference(cpu_rq(cpu_id)->curr);
-		if (!p || p->mm != mm) {
+		ఒకవేళ (!p || p->mm != mm) {
 			rcu_read_unlock();
-			return 0;
+			తిరిగి 0;
 		}
 		rcu_read_unlock();
 		/*
 		 * smp_call_function_single() will call ipi_func() if cpu_id
 		 * is the calling CPU.
 		 */
-		smp_call_function_single(cpu_id, ipi_func, NULL, 1);
-	} else {
+		smp_call_function_single(cpu_id, ipi_func, ఖాళీ, 1);
+	} లేకపోతే {
 		cpumask_var_t __free(free_cpumask_var) tmpmask = CPUMASK_VAR_NULL;
-		int cpu;
+		పూర్ణాంకం cpu;
 
-		if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-			return -ENOMEM;
+		ఒకవేళ (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+			తిరిగి -ENOMEM;
 
 		SERIALIZE_IPI();
-		guard(cpus_read_lock)();
+		guard(cpus_read_తాళం)();
 
-		rcu_read_lock();
+		rcu_read_తాళం();
 		for_each_online_cpu(cpu) {
-			struct task_struct *p;
+			నిర్మాణం task_struct *p;
 
 			p = rcu_dereference(cpu_rq(cpu)->curr);
-			if (p && p->mm == mm)
+			ఒకవేళ (p && p->mm == mm)
 				__cpumask_set_cpu(cpu, tmpmask);
 		}
 		rcu_read_unlock();
@@ -430,25 +430,25 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 		 * caller.  User code is not supposed to issue syscalls at
 		 * all from inside an rseq critical section.
 		 */
-		if (flags != MEMBARRIER_FLAG_SYNC_CORE) {
+		ఒకవేళ (flags != MEMBARRIER_FLAG_SYNC_CORE) {
 			preempt_disable();
-			smp_call_function_many(tmpmask, ipi_func, NULL, true);
+			smp_call_function_many(tmpmask, ipi_func, ఖాళీ, true);
 			preempt_enable();
-		} else {
-			on_each_cpu_mask(tmpmask, ipi_func, NULL, true);
+		} లేకపోతే {
+			on_each_cpu_ముసుగు(tmpmask, ipi_func, ఖాళీ, true);
 		}
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int sync_runqueues_membarrier_state(struct mm_struct *mm)
+స్థిర పూర్ణాంకం sync_runqueues_membarrier_state(నిర్మాణం mm_struct *mm)
 {
-	int membarrier_state = atomic_read(&mm->membarrier_state);
+	పూర్ణాంకం membarrier_state = atomic_read(&mm->membarrier_state);
 	cpumask_var_t tmpmask;
-	int cpu;
+	పూర్ణాంకం cpu;
 
-	if (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1) {
+	ఒకవేళ (atomic_read(&mm->mm_users) == 1 || అంకె_online_cpus() == 1) {
 		this_cpu_write(runqueues.membarrier_state, membarrier_state);
 
 		/*
@@ -459,11 +459,11 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 		 * registration.
 		 */
 		smp_mb();
-		return 0;
+		తిరిగి 0;
 	}
 
-	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-		return -ENOMEM;
+	ఒకవేళ (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+		తిరిగి -ENOMEM;
 
 	/*
 	 * For mm with multiple users, we need to ensure all future
@@ -480,64 +480,64 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 	 * updated.
 	 */
 	SERIALIZE_IPI();
-	cpus_read_lock();
-	rcu_read_lock();
+	cpus_read_తాళం();
+	rcu_read_తాళం();
 	for_each_online_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
-		struct task_struct *p;
+		నిర్మాణం rq *rq = cpu_rq(cpu);
+		నిర్మాణం task_struct *p;
 
 		p = rcu_dereference(rq->curr);
-		if (p && p->mm == mm)
+		ఒకవేళ (p && p->mm == mm)
 			__cpumask_set_cpu(cpu, tmpmask);
 	}
 	rcu_read_unlock();
 
-	on_each_cpu_mask(tmpmask, ipi_sync_rq_state, mm, true);
+	on_each_cpu_ముసుగు(tmpmask, ipi_sync_rq_state, mm, true);
 
 	free_cpumask_var(tmpmask);
 	cpus_read_unlock();
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int membarrier_register_global_expedited(void)
+స్థిర పూర్ణాంకం membarrier_రిజిస్టరు_global_expedited(శూన్య)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int ret;
+	నిర్మాణం task_struct *p = current;
+	నిర్మాణం mm_struct *mm = p->mm;
+	పూర్ణాంకం ret;
 
-	if (atomic_read(&mm->membarrier_state) &
+	ఒకవేళ (atomic_read(&mm->membarrier_state) &
 	    MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY)
-		return 0;
+		తిరిగి 0;
 	atomic_or(MEMBARRIER_STATE_GLOBAL_EXPEDITED, &mm->membarrier_state);
 	ret = sync_runqueues_membarrier_state(mm);
-	if (ret)
-		return ret;
+	ఒకవేళ (ret)
+		తిరిగి ret;
 	atomic_or(MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY,
 		  &mm->membarrier_state);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int membarrier_register_private_expedited(int flags)
+స్థిర పూర్ణాంకం membarrier_రిజిస్టరు_వ్యక్తిగత_expedited(పూర్ణాంకం flags)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int ready_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY,
-	    set_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED,
+	నిర్మాణం task_struct *p = current;
+	నిర్మాణం mm_struct *mm = p->mm;
+	పూర్ణాంకం ready_state = MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_READY,
+	    సమితి_state = MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED,
 	    ret;
 
-	if (flags == MEMBARRIER_FLAG_SYNC_CORE) {
-		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
-			return -EINVAL;
+	ఒకవేళ (flags == MEMBARRIER_FLAG_SYNC_CORE) {
+		ఒకవేళ (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
+			తిరిగి -EINVAL;
 		ready_state =
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY;
-	} else if (flags == MEMBARRIER_FLAG_RSEQ) {
-		if (!IS_ENABLED(CONFIG_RSEQ))
-			return -EINVAL;
+			MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_SYNC_CORE_READY;
+	} లేకపోతే ఒకవేళ (flags == MEMBARRIER_FLAG_RSEQ) {
+		ఒకవేళ (!IS_ENABLED(CONFIG_RSEQ))
+			తిరిగి -EINVAL;
 		ready_state =
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY;
-	} else {
+			MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_RSEQ_READY;
+	} లేకపోతే {
 		WARN_ON_ONCE(flags);
 	}
 
@@ -546,53 +546,53 @@ static int membarrier_register_private_expedited(int flags)
 	 * groups, which use the same mm. (CLONE_VM but not
 	 * CLONE_THREAD).
 	 */
-	if ((atomic_read(&mm->membarrier_state) & ready_state) == ready_state)
-		return 0;
-	if (flags & MEMBARRIER_FLAG_SYNC_CORE)
-		set_state |= MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE;
-	if (flags & MEMBARRIER_FLAG_RSEQ)
-		set_state |= MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ;
-	atomic_or(set_state, &mm->membarrier_state);
+	ఒకవేళ ((atomic_read(&mm->membarrier_state) & ready_state) == ready_state)
+		తిరిగి 0;
+	ఒకవేళ (flags & MEMBARRIER_FLAG_SYNC_CORE)
+		సమితి_state |= MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_SYNC_CORE;
+	ఒకవేళ (flags & MEMBARRIER_FLAG_RSEQ)
+		సమితి_state |= MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_RSEQ;
+	atomic_or(సమితి_state, &mm->membarrier_state);
 	ret = sync_runqueues_membarrier_state(mm);
-	if (ret)
-		return ret;
+	ఒకవేళ (ret)
+		తిరిగి ret;
 	atomic_or(ready_state, &mm->membarrier_state);
 
-	return 0;
+	తిరిగి 0;
 }
 
-static int membarrier_get_registrations(void)
+స్థిర పూర్ణాంకం membarrier_get_registrations(శూన్య)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int registrations_mask = 0, membarrier_state, i;
-	static const int states[] = {
+	నిర్మాణం task_struct *p = current;
+	నిర్మాణం mm_struct *mm = p->mm;
+	పూర్ణాంకం registrations_ముసుగు = 0, membarrier_state, i;
+	స్థిర స్థిరరాశి పూర్ణాంకం స్థితులు[] = {
 		MEMBARRIER_STATE_GLOBAL_EXPEDITED |
 			MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY,
-		MEMBARRIER_STATE_PRIVATE_EXPEDITED |
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY,
-		MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE |
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY,
-		MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ |
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY
+		MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED |
+			MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_READY,
+		MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_SYNC_CORE |
+			MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_SYNC_CORE_READY,
+		MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_RSEQ |
+			MEMBARRIER_STATE_వ్యక్తిగత_EXPEDITED_RSEQ_READY
 	};
-	static const int registration_cmds[] = {
-		MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
-		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED,
-		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE,
-		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ
+	స్థిర స్థిరరాశి పూర్ణాంకం registration_cmds[] = {
+		MEMBARRIER_CMD_రిజిస్టరు_GLOBAL_EXPEDITED,
+		MEMBARRIER_CMD_రిజిస్టరు_వ్యక్తిగత_EXPEDITED,
+		MEMBARRIER_CMD_రిజిస్టరు_వ్యక్తిగత_EXPEDITED_SYNC_CORE,
+		MEMBARRIER_CMD_రిజిస్టరు_వ్యక్తిగత_EXPEDITED_RSEQ
 	};
-	BUILD_BUG_ON(ARRAY_SIZE(states) != ARRAY_SIZE(registration_cmds));
+	BUILD_BUG_ON(ARRAY_కొలత(స్థితులు) != ARRAY_కొలత(registration_cmds));
 
 	membarrier_state = atomic_read(&mm->membarrier_state);
-	for (i = 0; i < ARRAY_SIZE(states); ++i) {
-		if (membarrier_state & states[i]) {
-			registrations_mask |= registration_cmds[i];
-			membarrier_state &= ~states[i];
+	కొరకు (i = 0; i < ARRAY_కొలత(స్థితులు); ++i) {
+		ఒకవేళ (membarrier_state & స్థితులు[i]) {
+			registrations_ముసుగు |= registration_cmds[i];
+			membarrier_state &= ~స్థితులు[i];
 		}
 	}
 	WARN_ON_ONCE(membarrier_state != 0);
-	return registrations_mask;
+	తిరిగి registrations_ముసుగు;
 }
 
 /**
@@ -631,56 +631,56 @@ static int membarrier_get_registrations(void)
  *        smp_mb()           X           O            O
  *        sys_membarrier()   O           O            O
  */
-SYSCALL_DEFINE3(membarrier, int, cmd, unsigned int, flags, int, cpu_id)
+SYSCALL_DEFINE3(membarrier, పూర్ణాంకం, cmd, గుర్తులేని పూర్ణాంకం, flags, పూర్ణాంకం, cpu_id)
 {
-	switch (cmd) {
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
-		if (unlikely(flags && flags != MEMBARRIER_CMD_FLAG_CPU))
-			return -EINVAL;
-		break;
-	default:
-		if (unlikely(flags))
-			return -EINVAL;
+	ఎంపిక (cmd) {
+	స్థితి MEMBARRIER_CMD_వ్యక్తిగత_EXPEDITED_RSEQ:
+		ఒకవేళ (unlikely(flags && flags != MEMBARRIER_CMD_FLAG_CPU))
+			తిరిగి -EINVAL;
+		ఆపు;
+	అప్రమేయ:
+		ఒకవేళ (unlikely(flags))
+			తిరిగి -EINVAL;
 	}
 
-	if (!(flags & MEMBARRIER_CMD_FLAG_CPU))
+	ఒకవేళ (!(flags & MEMBARRIER_CMD_FLAG_CPU))
 		cpu_id = -1;
 
-	switch (cmd) {
-	case MEMBARRIER_CMD_QUERY:
+	ఎంపిక (cmd) {
+	స్థితి MEMBARRIER_CMD_QUERY:
 	{
-		int cmd_mask = MEMBARRIER_CMD_BITMASK;
+		పూర్ణాంకం cmd_ముసుగు = MEMBARRIER_CMD_BITMASK;
 
-		if (tick_nohz_full_enabled())
-			cmd_mask &= ~MEMBARRIER_CMD_GLOBAL;
-		return cmd_mask;
+		ఒకవేళ (tick_nohz_నిండిన_enabled())
+			cmd_ముసుగు &= ~MEMBARRIER_CMD_GLOBAL;
+		తిరిగి cmd_ముసుగు;
 	}
-	case MEMBARRIER_CMD_GLOBAL:
+	స్థితి MEMBARRIER_CMD_GLOBAL:
 		/* MEMBARRIER_CMD_GLOBAL is not compatible with nohz_full. */
-		if (tick_nohz_full_enabled())
-			return -EINVAL;
-		if (num_online_cpus() > 1)
+		ఒకవేళ (tick_nohz_నిండిన_enabled())
+			తిరిగి -EINVAL;
+		ఒకవేళ (అంకె_online_cpus() > 1)
 			synchronize_rcu();
-		return 0;
-	case MEMBARRIER_CMD_GLOBAL_EXPEDITED:
-		return membarrier_global_expedited();
-	case MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED:
-		return membarrier_register_global_expedited();
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED:
-		return membarrier_private_expedited(0, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED:
-		return membarrier_register_private_expedited(0);
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE:
-		return membarrier_private_expedited(MEMBARRIER_FLAG_SYNC_CORE, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE:
-		return membarrier_register_private_expedited(MEMBARRIER_FLAG_SYNC_CORE);
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
-		return membarrier_private_expedited(MEMBARRIER_FLAG_RSEQ, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ:
-		return membarrier_register_private_expedited(MEMBARRIER_FLAG_RSEQ);
-	case MEMBARRIER_CMD_GET_REGISTRATIONS:
-		return membarrier_get_registrations();
-	default:
-		return -EINVAL;
+		తిరిగి 0;
+	స్థితి MEMBARRIER_CMD_GLOBAL_EXPEDITED:
+		తిరిగి membarrier_global_expedited();
+	స్థితి MEMBARRIER_CMD_రిజిస్టరు_GLOBAL_EXPEDITED:
+		తిరిగి membarrier_రిజిస్టరు_global_expedited();
+	స్థితి MEMBARRIER_CMD_వ్యక్తిగత_EXPEDITED:
+		తిరిగి membarrier_వ్యక్తిగత_expedited(0, cpu_id);
+	స్థితి MEMBARRIER_CMD_రిజిస్టరు_వ్యక్తిగత_EXPEDITED:
+		తిరిగి membarrier_రిజిస్టరు_వ్యక్తిగత_expedited(0);
+	స్థితి MEMBARRIER_CMD_వ్యక్తిగత_EXPEDITED_SYNC_CORE:
+		తిరిగి membarrier_వ్యక్తిగత_expedited(MEMBARRIER_FLAG_SYNC_CORE, cpu_id);
+	స్థితి MEMBARRIER_CMD_రిజిస్టరు_వ్యక్తిగత_EXPEDITED_SYNC_CORE:
+		తిరిగి membarrier_రిజిస్టరు_వ్యక్తిగత_expedited(MEMBARRIER_FLAG_SYNC_CORE);
+	స్థితి MEMBARRIER_CMD_వ్యక్తిగత_EXPEDITED_RSEQ:
+		తిరిగి membarrier_వ్యక్తిగత_expedited(MEMBARRIER_FLAG_RSEQ, cpu_id);
+	స్థితి MEMBARRIER_CMD_రిజిస్టరు_వ్యక్తిగత_EXPEDITED_RSEQ:
+		తిరిగి membarrier_రిజిస్టరు_వ్యక్తిగత_expedited(MEMBARRIER_FLAG_RSEQ);
+	స్థితి MEMBARRIER_CMD_GET_REGISTRATIONS:
+		తిరిగి membarrier_get_registrations();
+	అప్రమేయ:
+		తిరిగి -EINVAL;
 	}
 }
