@@ -40,9 +40,9 @@
  *
  *				 100	  100 (CPUPRI_HIGHER)
  */
-static int convert_prio(int prio)
+static 정수 convert_prio(정수 prio)
 {
-	int cpupri;
+	정수 cpupri;
 
 	switch (prio) {
 	case CPUPRI_INVALID:
@@ -62,16 +62,16 @@ static int convert_prio(int prio)
 		break;
 	}
 
-	return cpupri;
+	반환 cpupri;
 }
 
-static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
-				struct cpumask *lowest_mask, int idx)
+static inline 정수 __cpupri_find(struct cpupri *cp, struct task_struct *p,
+				struct cpumask *lowest_mask, 정수 idx)
 {
 	struct cpupri_vec *vec  = &cp->pri_to_cpu[idx];
-	int skip = 0;
+	정수 skip = 0;
 
-	if (!atomic_read(&(vec)->count))
+	만약 (!atomic_read(&(vec)->count))
 		skip = 1;
 	/*
 	 * When looking at the vector, we need to read the counter,
@@ -94,13 +94,13 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 	smp_rmb();
 
 	/* Need to do the rmb for every iteration */
-	if (skip)
-		return 0;
+	만약 (skip)
+		반환 0;
 
-	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
-		return 0;
+	만약 (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
+		반환 0;
 
-	if (lowest_mask) {
+	만약 (lowest_mask) {
 		cpumask_and(lowest_mask, &p->cpus_mask, vec->mask);
 		cpumask_and(lowest_mask, lowest_mask, cpu_active_mask);
 
@@ -112,17 +112,17 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 		 * condition, simply act as though we never hit this
 		 * priority level and continue on.
 		 */
-		if (cpumask_empty(lowest_mask))
-			return 0;
+		만약 (cpumask_empty(lowest_mask))
+			반환 0;
 	}
 
-	return 1;
+	반환 1;
 }
 
-int cpupri_find(struct cpupri *cp, struct task_struct *p,
+정수 cpupri_find(struct cpupri *cp, struct task_struct *p,
 		struct cpumask *lowest_mask)
 {
-	return cpupri_find_fitness(cp, p, lowest_mask, NULL);
+	반환 cpupri_find_fitness(cp, p, lowest_mask, NULL);
 }
 
 /**
@@ -142,26 +142,26 @@ int cpupri_find(struct cpupri *cp, struct task_struct *p,
  *
  * Return: (int)bool - CPUs were found
  */
-int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
+정수 cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 		struct cpumask *lowest_mask,
-		bool (*fitness_fn)(struct task_struct *p, int cpu))
+		bool (*fitness_fn)(struct task_struct *p, 정수 cpu))
 {
-	int task_pri = convert_prio(p->prio);
-	int idx, cpu;
+	정수 task_pri = convert_prio(p->prio);
+	정수 idx, cpu;
 
 	WARN_ON_ONCE(task_pri >= CPUPRI_NR_PRIORITIES);
 
-	for (idx = 0; idx < task_pri; idx++) {
+	위해 (idx = 0; idx < task_pri; idx++) {
 
-		if (!__cpupri_find(cp, p, lowest_mask, idx))
+		만약 (!__cpupri_find(cp, p, lowest_mask, idx))
 			continue;
 
-		if (!lowest_mask || !fitness_fn)
-			return 1;
+		만약 (!lowest_mask || !fitness_fn)
+			반환 1;
 
 		/* Ensure the capacity of the CPUs fit the task */
 		for_each_cpu(cpu, lowest_mask) {
-			if (!fitness_fn(p, cpu))
+			만약 (!fitness_fn(p, cpu))
 				cpumask_clear_cpu(cpu, lowest_mask);
 		}
 
@@ -169,10 +169,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 		 * If no CPU at the current priority can fit the task
 		 * continue looking
 		 */
-		if (cpumask_empty(lowest_mask))
+		만약 (cpumask_empty(lowest_mask))
 			continue;
 
-		return 1;
+		반환 1;
 	}
 
 	/*
@@ -192,10 +192,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 	 * must do proper RT planning to avoid overloading the system if they
 	 * really care.
 	 */
-	if (fitness_fn)
-		return cpupri_find(cp, p, lowest_mask);
+	만약 (fitness_fn)
+		반환 cpupri_find(cp, p, lowest_mask);
 
-	return 0;
+	반환 0;
 }
 
 /**
@@ -208,18 +208,18 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpupri_set(struct cpupri *cp, int cpu, int newpri)
+void cpupri_set(struct cpupri *cp, 정수 cpu, 정수 newpri)
 {
-	int *currpri = &cp->cpu_to_pri[cpu];
-	int oldpri = *currpri;
-	int do_mb = 0;
+	정수 *currpri = &cp->cpu_to_pri[cpu];
+	정수 oldpri = *currpri;
+	정수 do_mb = 0;
 
 	newpri = convert_prio(newpri);
 
 	BUG_ON(newpri >= CPUPRI_NR_PRIORITIES);
 
-	if (newpri == oldpri)
-		return;
+	만약 (newpri == oldpri)
+		반환;
 
 	/*
 	 * If the CPU was currently mapped to a different value, we
@@ -227,7 +227,7 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 	 * Note, we must add the new value first, otherwise we risk the
 	 * cpu being missed by the priority loop in cpupri_find.
 	 */
-	if (likely(newpri != CPUPRI_INVALID)) {
+	만약 (likely(newpri != CPUPRI_INVALID)) {
 		struct cpupri_vec *vec = &cp->pri_to_cpu[newpri];
 
 		cpumask_set_cpu(cpu, vec->mask);
@@ -240,7 +240,7 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		atomic_inc(&(vec)->count);
 		do_mb = 1;
 	}
-	if (likely(oldpri != CPUPRI_INVALID)) {
+	만약 (likely(oldpri != CPUPRI_INVALID)) {
 		struct cpupri_vec *vec  = &cp->pri_to_cpu[oldpri];
 
 		/*
@@ -255,7 +255,7 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		 * We only need to do a memory barrier if we updated
 		 * the new priority vec.
 		 */
-		if (do_mb)
+		만약 (do_mb)
 			smp_mb__after_atomic();
 
 		/*
@@ -276,31 +276,31 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
  *
  * Return: -ENOMEM on memory allocation failure.
  */
-int cpupri_init(struct cpupri *cp)
+정수 cpupri_init(struct cpupri *cp)
 {
-	int i;
+	정수 i;
 
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
+	위해 (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
 		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
 
 		atomic_set(&vec->count, 0);
-		if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
+		만약 (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
 			goto cleanup;
 	}
 
-	cp->cpu_to_pri = kzalloc_objs(int, nr_cpu_ids);
-	if (!cp->cpu_to_pri)
+	cp->cpu_to_pri = kzalloc_objs(정수, nr_cpu_ids);
+	만약 (!cp->cpu_to_pri)
 		goto cleanup;
 
 	for_each_possible_cpu(i)
 		cp->cpu_to_pri[i] = CPUPRI_INVALID;
 
-	return 0;
+	반환 0;
 
 cleanup:
-	for (i--; i >= 0; i--)
+	위해 (i--; i >= 0; i--)
 		free_cpumask_var(cp->pri_to_cpu[i].mask);
-	return -ENOMEM;
+	반환 -ENOMEM;
 }
 
 /**
@@ -309,9 +309,9 @@ cleanup:
  */
 void cpupri_cleanup(struct cpupri *cp)
 {
-	int i;
+	정수 i;
 
 	kfree(cp->cpu_to_pri);
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
+	위해 (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
 		free_cpumask_var(cp->pri_to_cpu[i].mask);
 }

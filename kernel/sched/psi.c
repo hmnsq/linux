@@ -141,19 +141,19 @@
 #include <linux/psi.h>
 #include "sched.h"
 
-static int psi_bug __read_mostly;
+static 정수 psi_bug __read_mostly;
 
 DEFINE_STATIC_KEY_FALSE(psi_disabled);
 static DEFINE_STATIC_KEY_TRUE(psi_cgroups_enabled);
 
 #ifdef CONFIG_PSI_DEFAULT_DISABLED
 static bool psi_enable;
-#else
+#아니면
 static bool psi_enable = true;
 #endif
-static int __init setup_psi(char *str)
+static 정수 __init setup_psi(char *str)
 {
-	return kstrtobool(str, &psi_enable) == 0;
+	반환 kstrtobool(str, &psi_enable) == 0;
 }
 __setup("psi=", setup_psi);
 
@@ -178,24 +178,24 @@ struct psi_group psi_system = {
 
 static DEFINE_PER_CPU(seqcount_t, psi_seq) = SEQCNT_ZERO(psi_seq);
 
-static inline void psi_write_begin(int cpu)
+static inline void psi_write_begin(정수 cpu)
 {
 	write_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline void psi_write_end(int cpu)
+static inline void psi_write_end(정수 cpu)
 {
 	write_seqcount_end(per_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline u32 psi_read_begin(int cpu)
+static inline u32 psi_read_begin(정수 cpu)
 {
-	return read_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
+	반환 read_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline bool psi_read_retry(int cpu, u32 seq)
+static inline bool psi_read_retry(정수 cpu, u32 seq)
 {
-	return read_seqcount_retry(per_cpu_ptr(&psi_seq, cpu), seq);
+	반환 read_seqcount_retry(per_cpu_ptr(&psi_seq, cpu), seq);
 }
 
 static void psi_avgs_work(struct work_struct *work);
@@ -227,57 +227,57 @@ static void group_init(struct psi_group *group)
 
 void __init psi_init(void)
 {
-	if (!psi_enable) {
+	만약 (!psi_enable) {
 		static_branch_enable(&psi_disabled);
 		static_branch_disable(&psi_cgroups_enabled);
-		return;
+		반환;
 	}
 
-	if (!cgroup_psi_enabled())
+	만약 (!cgroup_psi_enabled())
 		static_branch_disable(&psi_cgroups_enabled);
 
 	psi_period = jiffies_to_nsecs(PSI_FREQ);
 	group_init(&psi_system);
 }
 
-static u32 test_states(unsigned int *tasks, u32 state_mask)
+static u32 test_states(unsigned 정수 *tasks, u32 state_mask)
 {
 	const bool oncpu = state_mask & PSI_ONCPU;
 
-	if (tasks[NR_IOWAIT]) {
+	만약 (tasks[NR_IOWAIT]) {
 		state_mask |= BIT(PSI_IO_SOME);
-		if (!tasks[NR_RUNNING])
+		만약 (!tasks[NR_RUNNING])
 			state_mask |= BIT(PSI_IO_FULL);
 	}
 
-	if (tasks[NR_MEMSTALL]) {
+	만약 (tasks[NR_MEMSTALL]) {
 		state_mask |= BIT(PSI_MEM_SOME);
-		if (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
+		만약 (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
 			state_mask |= BIT(PSI_MEM_FULL);
 	}
 
-	if (tasks[NR_RUNNING] > oncpu)
+	만약 (tasks[NR_RUNNING] > oncpu)
 		state_mask |= BIT(PSI_CPU_SOME);
 
-	if (tasks[NR_RUNNING] && !oncpu)
+	만약 (tasks[NR_RUNNING] && !oncpu)
 		state_mask |= BIT(PSI_CPU_FULL);
 
-	if (tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] || tasks[NR_RUNNING])
+	만약 (tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] || tasks[NR_RUNNING])
 		state_mask |= BIT(PSI_NONIDLE);
 
-	return state_mask;
+	반환 state_mask;
 }
 
-static void get_recent_times(struct psi_group *group, int cpu,
+static void get_recent_times(struct psi_group *group, 정수 cpu,
 			     enum psi_aggregators aggregator, u32 *times,
 			     u32 *pchanged_states)
 {
 	struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
-	int current_cpu = raw_smp_processor_id();
-	unsigned int tasks[NR_PSI_TASK_COUNTS];
+	정수 current_cpu = raw_smp_processor_id();
+	unsigned 정수 tasks[NR_PSI_TASK_COUNTS];
 	u64 now, state_start;
 	enum psi_states s;
-	unsigned int seq;
+	unsigned 정수 seq;
 	u32 state_mask;
 
 	*pchanged_states = 0;
@@ -289,12 +289,12 @@ static void get_recent_times(struct psi_group *group, int cpu,
 		memcpy(times, groupc->times, sizeof(groupc->times));
 		state_mask = groupc->state_mask;
 		state_start = groupc->state_start;
-		if (cpu == current_cpu)
+		만약 (cpu == current_cpu)
 			memcpy(tasks, groupc->tasks, sizeof(groupc->tasks));
-	} while (psi_read_retry(cpu, seq));
+	} 동안 (psi_read_retry(cpu, seq));
 
 	/* Calculate state time deltas against the previous snapshot */
-	for (s = 0; s < NR_PSI_STATES; s++) {
+	위해 (s = 0; s < NR_PSI_STATES; s++) {
 		u32 delta;
 		/*
 		 * In addition to already concluded states, we also
@@ -305,14 +305,14 @@ static void get_recent_times(struct psi_group *group, int cpu,
 		 * (u32) and our reported pressure close to what's
 		 * actually happening.
 		 */
-		if (state_mask & (1 << s))
+		만약 (state_mask & (1 << s))
 			times[s] += now - state_start;
 
 		delta = times[s] - groupc->times_prev[aggregator][s];
 		groupc->times_prev[aggregator][s] = times[s];
 
 		times[s] = delta;
-		if (delta)
+		만약 (delta)
 			*pchanged_states |= (1 << s);
 	}
 
@@ -324,28 +324,28 @@ static void get_recent_times(struct psi_group *group, int cpu,
 	 * (NR_RUNNING > 1 || NR_IOWAIT > 0 || NR_MEMSTALL > 0), for other CPUs
 	 * we can just check PSI_NONIDLE delta.
 	 */
-	if (current_work() == &group->avgs_work.work) {
+	만약 (current_work() == &group->avgs_work.work) {
 		bool reschedule;
 
-		if (cpu == current_cpu)
+		만약 (cpu == current_cpu)
 			reschedule = tasks[NR_RUNNING] +
 				     tasks[NR_IOWAIT] +
 				     tasks[NR_MEMSTALL] > 1;
-		else
+		아니면
 			reschedule = *pchanged_states & (1 << PSI_NONIDLE);
 
-		if (reschedule)
+		만약 (reschedule)
 			*pchanged_states |= PSI_STATE_RESCHEDULE;
 	}
 }
 
-static void calc_avgs(unsigned long avg[3], int missed_periods,
+static void calc_avgs(unsigned long avg[3], 정수 missed_periods,
 		      u64 time, u64 period)
 {
 	unsigned long pct;
 
 	/* Fill in zeroes for periods of no activity */
-	if (missed_periods) {
+	만약 (missed_periods) {
 		avg[0] = calc_load_n(avg[0], EXP_10s, 0, missed_periods);
 		avg[1] = calc_load_n(avg[1], EXP_60s, 0, missed_periods);
 		avg[2] = calc_load_n(avg[2], EXP_300s, 0, missed_periods);
@@ -366,8 +366,8 @@ static void collect_percpu_times(struct psi_group *group,
 	u64 deltas[NR_PSI_STATES - 1] = { 0, };
 	unsigned long nonidle_total = 0;
 	u32 changed_states = 0;
-	int cpu;
-	int s;
+	정수 cpu;
+	정수 s;
 
 	/*
 	 * Collect the per-cpu time buckets and average them into a
@@ -389,7 +389,7 @@ static void collect_percpu_times(struct psi_group *group,
 		nonidle = nsecs_to_jiffies(times[PSI_NONIDLE]);
 		nonidle_total += nonidle;
 
-		for (s = 0; s < PSI_NONIDLE; s++)
+		위해 (s = 0; s < PSI_NONIDLE; s++)
 			deltas[s] += (u64)times[s] * nonidle;
 	}
 
@@ -406,11 +406,11 @@ static void collect_percpu_times(struct psi_group *group,
 	 */
 
 	/* total= */
-	for (s = 0; s < NR_PSI_STATES - 1; s++)
+	위해 (s = 0; s < NR_PSI_STATES - 1; s++)
 		group->total[aggregator][s] +=
 				div_u64(deltas[s], max(nonidle_total, 1UL));
 
-	if (pchanged_states)
+	만약 (pchanged_states)
 		*pchanged_states = changed_states;
 }
 
@@ -448,16 +448,16 @@ static u64 window_update(struct psi_window *win, u64 now, u64 value)
 	 * win->prev_growth is then used to interpolate additional
 	 * growth from the previous window assuming it was linear.
 	 */
-	if (elapsed > win->size)
+	만약 (elapsed > win->size)
 		window_reset(win, now, value, growth);
-	else {
+	아니면 {
 		u32 remaining;
 
 		remaining = win->size - elapsed;
 		growth += div64_u64(win->prev_growth * remaining, win->size);
 	}
 
-	return growth;
+	반환 growth;
 }
 
 static void update_triggers(struct psi_group *group, u64 now,
@@ -468,10 +468,10 @@ static void update_triggers(struct psi_group *group, u64 now,
 	struct list_head *triggers;
 	u64 *aggregator_total;
 
-	if (aggregator == PSI_AVGS) {
+	만약 (aggregator == PSI_AVGS) {
 		triggers = &group->avg_triggers;
 		aggregator_total = group->avg_total;
-	} else {
+	} 아니면 {
 		triggers = &group->rtpoll_triggers;
 		aggregator_total = group->rtpoll_total;
 	}
@@ -487,7 +487,7 @@ static void update_triggers(struct psi_group *group, u64 now,
 		new_stall = aggregator_total[t->state] != total[t->state];
 
 		/* Check for stall activity or a previous threshold breach */
-		if (!new_stall && !t->pending_event)
+		만약 (!new_stall && !t->pending_event)
 			continue;
 		/*
 		 * Check for new stall activity, as well as deferred
@@ -495,25 +495,25 @@ static void update_triggers(struct psi_group *group, u64 now,
 		 * trigger had already fired (we want to ratelimit
 		 * events without dropping any).
 		 */
-		if (new_stall) {
+		만약 (new_stall) {
 			/* Calculate growth since last update */
 			growth = window_update(&t->win, now, total[t->state]);
-			if (!t->pending_event) {
-				if (growth < t->threshold)
+			만약 (!t->pending_event) {
+				만약 (growth < t->threshold)
 					continue;
 
 				t->pending_event = true;
 			}
 		}
 		/* Limit event signaling to once per window */
-		if (now < t->last_event_time + t->win.size)
+		만약 (now < t->last_event_time + t->win.size)
 			continue;
 
 		/* Generate an event */
-		if (cmpxchg(&t->event, 0, 1) == 0) {
-			if (t->of)
+		만약 (cmpxchg(&t->event, 0, 1) == 0) {
+			만약 (t->of)
 				kernfs_notify(t->of->kn);
-			else
+			아니면
 				wake_up_interruptible(&t->event_wait);
 		}
 		t->last_event_time = now;
@@ -527,11 +527,11 @@ static u64 update_averages(struct psi_group *group, u64 now)
 	unsigned long missed_periods = 0;
 	u64 expires, period;
 	u64 avg_next_update;
-	int s;
+	정수 s;
 
 	/* avgX= */
 	expires = group->avg_next_update;
-	if (now - expires >= psi_period)
+	만약 (now - expires >= psi_period)
 		missed_periods = div_u64(now - expires, psi_period);
 
 	/*
@@ -545,7 +545,7 @@ static u64 update_averages(struct psi_group *group, u64 now)
 	period = now - (group->avg_last_update + (missed_periods * psi_period));
 	group->avg_last_update = now;
 
-	for (s = 0; s < NR_PSI_STATES - 1; s++) {
+	위해 (s = 0; s < NR_PSI_STATES - 1; s++) {
 		u32 sample;
 
 		sample = group->total[PSI_AVGS][s] - group->avg_total[s];
@@ -566,13 +566,13 @@ static u64 update_averages(struct psi_group *group, u64 now)
 		 * delta slips from a period P to P+1, by definition
 		 * it frees up its time T in P.
 		 */
-		if (sample > period)
+		만약 (sample > period)
 			sample = period;
 		group->avg_total[s] += sample;
 		calc_avgs(group->avg[s], missed_periods, sample, period);
 	}
 
-	return avg_next_update;
+	반환 avg_next_update;
 }
 
 static void psi_avgs_work(struct work_struct *work)
@@ -597,12 +597,12 @@ static void psi_avgs_work(struct work_struct *work)
 	 * Once restarted, we'll catch up the running averages in one
 	 * go - see calc_avgs() and missed_periods.
 	 */
-	if (now >= group->avg_next_update) {
+	만약 (now >= group->avg_next_update) {
 		update_triggers(group, now, PSI_AVGS);
 		group->avg_next_update = update_averages(group, now);
 	}
 
-	if (changed_states & PSI_STATE_RESCHEDULE) {
+	만약 (changed_states & PSI_STATE_RESCHEDULE) {
 		schedule_delayed_work(dwork, nsecs_to_jiffies(
 				group->avg_next_update - now) + 1);
 	}
@@ -630,8 +630,8 @@ static void psi_schedule_rtpoll_work(struct psi_group *group, unsigned long dela
 	 * atomic_xchg should be called even when !force to provide a
 	 * full memory barrier (see the comment inside psi_rtpoll_work).
 	 */
-	if (atomic_xchg(&group->rtpoll_scheduled, 1) && !force)
-		return;
+	만약 (atomic_xchg(&group->rtpoll_scheduled, 1) && !force)
+		반환;
 
 	/*
 	 * Only test whether a worker is installed; do not dereference the task.
@@ -639,9 +639,9 @@ static void psi_schedule_rtpoll_work(struct psi_group *group, unsigned long dela
 	 * psi_cgroup_free() shuts it down before freeing the group.
 	 * The system PSI group is static.
 	 */
-	if (likely(rcu_access_pointer(group->rtpoll_task)))
+	만약 (likely(rcu_access_pointer(group->rtpoll_task)))
 		mod_timer(&group->rtpoll_timer, jiffies + delay);
-	else
+	아니면
 		atomic_set(&group->rtpoll_scheduled, 0);
 }
 
@@ -655,7 +655,7 @@ static void psi_rtpoll_work(struct psi_group *group)
 
 	now = sched_clock();
 
-	if (now > group->rtpoll_until) {
+	만약 (now > group->rtpoll_until) {
 		/*
 		 * We are either about to start or might stop rtpolling if no
 		 * state change was recorded. Resetting rtpoll_scheduled leaves
@@ -686,7 +686,7 @@ static void psi_rtpoll_work(struct psi_group *group)
 		 * The atomic_xchg() implies a full barrier.
 		 */
 		smp_mb();
-	} else {
+	} 아니면 {
 		/* The rtpolling window is not over, keep rescheduling */
 		force_reschedule = true;
 	}
@@ -694,9 +694,9 @@ static void psi_rtpoll_work(struct psi_group *group)
 
 	collect_percpu_times(group, PSI_POLL, &changed_states);
 
-	if (changed_states & group->rtpoll_states) {
+	만약 (changed_states & group->rtpoll_states) {
 		/* Initialize trigger windows when entering rtpolling mode */
-		if (now > group->rtpoll_until)
+		만약 (now > group->rtpoll_until)
 			init_rtpoll_triggers(group, now);
 
 		/*
@@ -708,13 +708,13 @@ static void psi_rtpoll_work(struct psi_group *group)
 			group->rtpoll_min_period * UPDATES_PER_WINDOW;
 	}
 
-	if (now > group->rtpoll_until) {
+	만약 (now > group->rtpoll_until) {
 		group->rtpoll_next_update = ULLONG_MAX;
 		goto out;
 	}
 
-	if (now >= group->rtpoll_next_update) {
-		if (changed_states & group->rtpoll_states) {
+	만약 (now >= group->rtpoll_next_update) {
+		만약 (changed_states & group->rtpoll_states) {
 			update_triggers(group, now, PSI_POLL);
 			memcpy(group->rtpoll_total, group->total[PSI_POLL],
 				   sizeof(group->rtpoll_total));
@@ -730,22 +730,22 @@ out:
 	mutex_unlock(&group->rtpoll_trigger_lock);
 }
 
-static int psi_rtpoll_worker(void *data)
+static 정수 psi_rtpoll_worker(void *data)
 {
 	struct psi_group *group = (struct psi_group *)data;
 
 	sched_set_fifo_low(current);
 
-	while (true) {
+	동안 (true) {
 		wait_event_interruptible(group->rtpoll_wait,
 				atomic_cmpxchg(&group->rtpoll_wakeup, 1, 0) ||
 				kthread_should_stop());
-		if (kthread_should_stop())
+		만약 (kthread_should_stop())
 			break;
 
 		psi_rtpoll_work(group);
 	}
-	return 0;
+	반환 0;
 }
 
 static void poll_timer_fn(struct timer_list *t)
@@ -763,37 +763,37 @@ static void record_times(struct psi_group_cpu *groupc, u64 now)
 	delta = now - groupc->state_start;
 	groupc->state_start = now;
 
-	if (groupc->state_mask & (1 << PSI_IO_SOME)) {
+	만약 (groupc->state_mask & (1 << PSI_IO_SOME)) {
 		groupc->times[PSI_IO_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_IO_FULL))
+		만약 (groupc->state_mask & (1 << PSI_IO_FULL))
 			groupc->times[PSI_IO_FULL] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_MEM_SOME)) {
+	만약 (groupc->state_mask & (1 << PSI_MEM_SOME)) {
 		groupc->times[PSI_MEM_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_MEM_FULL))
+		만약 (groupc->state_mask & (1 << PSI_MEM_FULL))
 			groupc->times[PSI_MEM_FULL] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_CPU_SOME)) {
+	만약 (groupc->state_mask & (1 << PSI_CPU_SOME)) {
 		groupc->times[PSI_CPU_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_CPU_FULL))
+		만약 (groupc->state_mask & (1 << PSI_CPU_FULL))
 			groupc->times[PSI_CPU_FULL] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_NONIDLE))
+	만약 (groupc->state_mask & (1 << PSI_NONIDLE))
 		groupc->times[PSI_NONIDLE] += delta;
 }
 
 #define for_each_group(iter, group) \
-	for (typeof(group) iter = group; iter; iter = iter->parent)
+	위해 (typeof(group) iter = group; iter; iter = iter->parent)
 
-static void psi_group_change(struct psi_group *group, int cpu,
-			     unsigned int clear, unsigned int set,
+static void psi_group_change(struct psi_group *group, 정수 cpu,
+			     unsigned 정수 clear, unsigned 정수 set,
 			     u64 now, bool wake_clock)
 {
 	struct psi_group_cpu *groupc;
-	unsigned int t, m;
+	unsigned 정수 t, m;
 	u32 state_mask;
 
 	lockdep_assert_rq_held(cpu_rq(cpu));
@@ -805,13 +805,13 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * the state mask. Clear, set, or carry the current state if
 	 * no changes are requested.
 	 */
-	if (unlikely(clear & TSK_ONCPU)) {
+	만약 (unlikely(clear & TSK_ONCPU)) {
 		state_mask = 0;
 		clear &= ~TSK_ONCPU;
-	} else if (unlikely(set & TSK_ONCPU)) {
+	} 아니면 만약 (unlikely(set & TSK_ONCPU)) {
 		state_mask = PSI_ONCPU;
 		set &= ~TSK_ONCPU;
-	} else {
+	} 아니면 {
 		state_mask = groupc->state_mask & PSI_ONCPU;
 	}
 
@@ -819,12 +819,12 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * The rest of the state mask is calculated based on the task
 	 * counts. Update those first, then construct the mask.
 	 */
-	for (t = 0, m = clear; m; m &= ~(1 << t), t++) {
-		if (!(m & (1 << t)))
+	위해 (t = 0, m = clear; m; m &= ~(1 << t), t++) {
+		만약 (!(m & (1 << t)))
 			continue;
-		if (groupc->tasks[t]) {
+		만약 (groupc->tasks[t]) {
 			groupc->tasks[t]--;
-		} else if (!psi_bug) {
+		} 아니면 만약 (!psi_bug) {
 			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
 					cpu, t, groupc->tasks[0],
 					groupc->tasks[1], groupc->tasks[2],
@@ -833,11 +833,11 @@ static void psi_group_change(struct psi_group *group, int cpu,
 		}
 	}
 
-	for (t = 0; set; set &= ~(1 << t), t++)
-		if (set & (1 << t))
+	위해 (t = 0; set; set &= ~(1 << t), t++)
+		만약 (set & (1 << t))
 			groupc->tasks[t]++;
 
-	if (!group->enabled) {
+	만약 (!group->enabled) {
 		/*
 		 * On the first group change after disabling PSI, conclude
 		 * the current state and flush its time. This is unlikely
@@ -845,12 +845,12 @@ static void psi_group_change(struct psi_group *group, int cpu,
 		 * may have already incorporated the live state into times_prev;
 		 * avoid a delta sample underflow when PSI is later re-enabled.
 		 */
-		if (unlikely(groupc->state_mask & (1 << PSI_NONIDLE)))
+		만약 (unlikely(groupc->state_mask & (1 << PSI_NONIDLE)))
 			record_times(groupc, now);
 
 		groupc->state_mask = state_mask;
 
-		return;
+		반환;
 	}
 
 	state_mask = test_states(groupc->tasks, state_mask);
@@ -863,32 +863,32 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * task in a cgroup is in_memstall, the corresponding groupc
 	 * on that cpu is in PSI_MEM_FULL state.
 	 */
-	if (unlikely((state_mask & PSI_ONCPU) && cpu_curr(cpu)->in_memstall))
+	만약 (unlikely((state_mask & PSI_ONCPU) && cpu_curr(cpu)->in_memstall))
 		state_mask |= (1 << PSI_MEM_FULL);
 
 	record_times(groupc, now);
 
 	groupc->state_mask = state_mask;
 
-	if (state_mask & group->rtpoll_states)
+	만약 (state_mask & group->rtpoll_states)
 		psi_schedule_rtpoll_work(group, 1, false);
 
-	if (wake_clock && !delayed_work_pending(&group->avgs_work))
+	만약 (wake_clock && !delayed_work_pending(&group->avgs_work))
 		schedule_delayed_work(&group->avgs_work, PSI_FREQ);
 }
 
 static inline struct psi_group *task_psi_group(struct task_struct *task)
 {
 #ifdef CONFIG_CGROUPS
-	if (static_branch_likely(&psi_cgroups_enabled))
-		return cgroup_psi(task_dfl_cgroup(task));
+	만약 (static_branch_likely(&psi_cgroups_enabled))
+		반환 cgroup_psi(task_dfl_cgroup(task));
 #endif
-	return &psi_system;
+	반환 &psi_system;
 }
 
-static void psi_flags_change(struct task_struct *task, int clear, int set)
+static void psi_flags_change(struct task_struct *task, 정수 clear, 정수 set)
 {
-	if (((task->psi_flags & set) ||
+	만약 (((task->psi_flags & set) ||
 	     (task->psi_flags & clear) != clear) &&
 	    !psi_bug) {
 		printk_deferred(KERN_ERR "psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
@@ -901,13 +901,13 @@ static void psi_flags_change(struct task_struct *task, int clear, int set)
 	task->psi_flags |= set;
 }
 
-void psi_task_change(struct task_struct *task, int clear, int set)
+void psi_task_change(struct task_struct *task, 정수 clear, 정수 set)
 {
-	int cpu = task_cpu(task);
+	정수 cpu = task_cpu(task);
 	u64 now;
 
-	if (!task->pid)
-		return;
+	만약 (!task->pid)
+		반환;
 
 	psi_flags_change(task, clear, set);
 
@@ -922,13 +922,13 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		     bool sleep)
 {
 	struct psi_group *common = NULL;
-	int cpu = task_cpu(prev);
+	정수 cpu = task_cpu(prev);
 	u64 now;
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
 
-	if (next->pid) {
+	만약 (next->pid) {
 		psi_flags_change(next, 0, TSK_ONCPU);
 		/*
 		 * Set TSK_ONCPU on @next's cgroups. If @next shares any
@@ -938,7 +938,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		for_each_group(group, task_psi_group(next)) {
 			struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
 
-			if (groupc->state_mask & PSI_ONCPU) {
+			만약 (groupc->state_mask & PSI_ONCPU) {
 				common = group;
 				break;
 			}
@@ -946,8 +946,8 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		}
 	}
 
-	if (prev->pid) {
-		int clear = TSK_ONCPU, set = 0;
+	만약 (prev->pid) {
+		정수 clear = TSK_ONCPU, set = 0;
 		bool wake_clock = true;
 
 		/*
@@ -956,11 +956,11 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		 * TSK_IOWAIT here, where we can combine it with
 		 * TSK_ONCPU and save walking common ancestors twice.
 		 */
-		if (sleep) {
+		만약 (sleep) {
 			clear |= TSK_RUNNING;
-			if (prev->in_memstall)
+			만약 (prev->in_memstall)
 				clear |= TSK_MEMSTALL_RUNNING;
-			if (prev->in_iowait)
+			만약 (prev->in_iowait)
 				set |= TSK_IOWAIT;
 
 			/*
@@ -969,7 +969,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 			 * don't do this if the task change is the aggregation worker
 			 * itself going to sleep, or we'll ping-pong forever.
 			 */
-			if (unlikely((prev->flags & PF_WQ_WORKER) &&
+			만약 (unlikely((prev->flags & PF_WQ_WORKER) &&
 				     wq_worker_last_func(prev) == psi_avgs_work))
 				wake_clock = false;
 		}
@@ -977,7 +977,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		psi_flags_change(prev, clear, set);
 
 		for_each_group(group, task_psi_group(prev)) {
-			if (group == common)
+			만약 (group == common)
 				break;
 			psi_group_change(group, cpu, clear, set, now, wake_clock);
 		}
@@ -988,7 +988,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		 * to sleep, or only one task is memstall), finish propagating
 		 * those differences all the way up to the root.
 		 */
-		if ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
+		만약 ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
 			clear &= ~TSK_ONCPU;
 			for_each_group(group, common)
 				psi_group_change(group, cpu, clear, set, now, wake_clock);
@@ -1000,33 +1000,33 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
 void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev)
 {
-	int cpu = task_cpu(curr);
+	정수 cpu = task_cpu(curr);
 	struct psi_group_cpu *groupc;
 	s64 delta;
 	u64 irq;
 	u64 now;
 
-	if (static_branch_likely(&psi_disabled) || !irqtime_enabled())
-		return;
+	만약 (static_branch_likely(&psi_disabled) || !irqtime_enabled())
+		반환;
 
-	if (!curr->pid)
-		return;
+	만약 (!curr->pid)
+		반환;
 
 	lockdep_assert_rq_held(rq);
-	if (prev && task_psi_group(prev) == task_psi_group(curr))
-		return;
+	만약 (prev && task_psi_group(prev) == task_psi_group(curr))
+		반환;
 
 	irq = irq_time_read(cpu);
 	delta = (s64)(irq - rq->psi_irq_time);
-	if (delta <= 0)
-		return;
+	만약 (delta <= 0)
+		반환;
 	rq->psi_irq_time = irq;
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
 
 	for_each_group(group, task_psi_group(curr)) {
-		if (!group->enabled)
+		만약 (!group->enabled)
 			continue;
 
 		groupc = per_cpu_ptr(group->pcpu, cpu);
@@ -1034,7 +1034,7 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
 		record_times(groupc, now);
 		groupc->times[PSI_IRQ_FULL] += delta;
 
-		if (group->rtpoll_states & (1 << PSI_IRQ_FULL))
+		만약 (group->rtpoll_states & (1 << PSI_IRQ_FULL))
 			psi_schedule_rtpoll_work(group, 1, false);
 	}
 	psi_write_end(cpu);
@@ -1053,12 +1053,12 @@ void psi_memstall_enter(unsigned long *flags)
 	struct rq_flags rf;
 	struct rq *rq;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	만약 (static_branch_likely(&psi_disabled))
+		반환;
 
 	*flags = current->in_memstall;
-	if (*flags)
-		return;
+	만약 (*flags)
+		반환;
 	/*
 	 * in_memstall setting & accounting needs to be atomic wrt
 	 * changes to the task's scheduling state, otherwise we can
@@ -1084,11 +1084,11 @@ void psi_memstall_leave(unsigned long *flags)
 	struct rq_flags rf;
 	struct rq *rq;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	만약 (static_branch_likely(&psi_disabled))
+		반환;
 
-	if (*flags)
-		return;
+	만약 (*flags)
+		반환;
 	/*
 	 * in_memstall clearing & accounting needs to be atomic wrt
 	 * changes to the task's scheduling state, otherwise we could
@@ -1104,29 +1104,29 @@ void psi_memstall_leave(unsigned long *flags)
 EXPORT_SYMBOL_GPL(psi_memstall_leave);
 
 #ifdef CONFIG_CGROUPS
-int psi_cgroup_alloc(struct cgroup *cgroup)
+정수 psi_cgroup_alloc(struct cgroup *cgroup)
 {
-	if (!static_branch_likely(&psi_cgroups_enabled))
-		return 0;
+	만약 (!static_branch_likely(&psi_cgroups_enabled))
+		반환 0;
 
 	cgroup->psi = kzalloc_obj(struct psi_group);
-	if (!cgroup->psi)
-		return -ENOMEM;
+	만약 (!cgroup->psi)
+		반환 -ENOMEM;
 
 	cgroup->psi->pcpu = alloc_percpu(struct psi_group_cpu);
-	if (!cgroup->psi->pcpu) {
+	만약 (!cgroup->psi->pcpu) {
 		kfree(cgroup->psi);
-		return -ENOMEM;
+		반환 -ENOMEM;
 	}
 	group_init(cgroup->psi);
 	cgroup->psi->parent = cgroup_psi(cgroup_parent(cgroup));
-	return 0;
+	반환 0;
 }
 
 void psi_cgroup_free(struct cgroup *cgroup)
 {
-	if (!static_branch_likely(&psi_cgroups_enabled))
-		return;
+	만약 (!static_branch_likely(&psi_cgroups_enabled))
+		반환;
 
 	cancel_delayed_work_sync(&cgroup->psi->avgs_work);
 	/*
@@ -1155,17 +1155,17 @@ void psi_cgroup_free(struct cgroup *cgroup)
  */
 void cgroup_move_task(struct task_struct *task, struct css_set *to)
 {
-	unsigned int task_flags;
+	unsigned 정수 task_flags;
 	struct rq_flags rf;
 	struct rq *rq;
 
-	if (!static_branch_likely(&psi_cgroups_enabled)) {
+	만약 (!static_branch_likely(&psi_cgroups_enabled)) {
 		/*
 		 * Lame to do this here, but the scheduler cannot be locked
 		 * from the outside, so we move cgroups from inside sched/.
 		 */
 		rcu_assign_pointer(task->cgroups, to);
-		return;
+		반환;
 	}
 
 	rq = task_rq_lock(task, &rf);
@@ -1196,13 +1196,13 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
 	 */
 	task_flags = task->psi_flags;
 
-	if (task_flags)
+	만약 (task_flags)
 		psi_task_change(task, task_flags, 0);
 
 	/* See comment above */
 	rcu_assign_pointer(task->cgroups, to);
 
-	if (task_flags)
+	만약 (task_flags)
 		psi_task_change(task, 0, task_flags);
 
 	task_rq_unlock(rq, task, &rf);
@@ -1210,7 +1210,7 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
 
 void psi_cgroup_restart(struct psi_group *group)
 {
-	int cpu;
+	정수 cpu;
 
 	/*
 	 * After we disable psi_group->enabled, we don't actually
@@ -1227,8 +1227,8 @@ void psi_cgroup_restart(struct psi_group *group)
 	 * and restart groupc->state_start from now, use .clear = .set = 0
 	 * here since no task status really changed.
 	 */
-	if (!group->enabled)
-		return;
+	만약 (!group->enabled)
+		반환;
 
 	for_each_possible_cpu(cpu) {
 		u64 now;
@@ -1243,25 +1243,25 @@ void psi_cgroup_restart(struct psi_group *group)
 }
 #endif /* CONFIG_CGROUPS */
 
-int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
+정수 psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
 {
 	bool only_full = false;
-	int full;
+	정수 full;
 	u64 now;
 
-	if (static_branch_likely(&psi_disabled))
-		return -EOPNOTSUPP;
+	만약 (static_branch_likely(&psi_disabled))
+		반환 -EOPNOTSUPP;
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (!irqtime_enabled() && res == PSI_IRQ)
-		return -EOPNOTSUPP;
+	만약 (!irqtime_enabled() && res == PSI_IRQ)
+		반환 -EOPNOTSUPP;
 #endif
 
 	/* Update averages before reporting them */
 	mutex_lock(&group->avgs_lock);
 	now = sched_clock();
 	collect_percpu_times(group, PSI_AVGS, NULL);
-	if (now >= group->avg_next_update)
+	만약 (now >= group->avg_next_update)
 		group->avg_next_update = update_averages(group, now);
 	mutex_unlock(&group->avgs_lock);
 
@@ -1269,14 +1269,14 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
 	only_full = res == PSI_IRQ;
 #endif
 
-	for (full = 0; full < 2 - only_full; full++) {
+	위해 (full = 0; full < 2 - only_full; full++) {
 		unsigned long avg[3] = { 0, };
 		u64 total = 0;
-		int w;
+		정수 w;
 
 		/* CPU FULL is undefined at the system level */
-		if (!(group == &psi_system && res == PSI_CPU && full)) {
-			for (w = 0; w < 3; w++)
+		만약 (!(group == &psi_system && res == PSI_CPU && full)) {
+			위해 (w = 0; w < 3; w++)
 				avg[w] = group->avg[res * 2 + full][w];
 			total = div_u64(group->total[PSI_AVGS][res * 2 + full],
 					NSEC_PER_USEC);
@@ -1290,7 +1290,7 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
 			   total);
 	}
 
-	return 0;
+	반환 0;
 }
 
 /*
@@ -1300,16 +1300,16 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
  * other lock that forks can wait behind. If two callers race, the loser stops
  * its never-woken kthread.
  */
-int psi_trigger_create_rtpoll_worker(struct psi_group *group)
+정수 psi_trigger_create_rtpoll_worker(struct psi_group *group)
 {
 	struct task_struct *task;
 
 	task = kthread_create(psi_rtpoll_worker, group, "psimon");
-	if (IS_ERR(task))
-		return PTR_ERR(task);
+	만약 (IS_ERR(task))
+		반환 PTR_ERR(task);
 
 	scoped_guard(mutex, &group->rtpoll_trigger_lock) {
-		if (!rcu_access_pointer(group->rtpoll_task)) {
+		만약 (!rcu_access_pointer(group->rtpoll_task)) {
 			atomic_set(&group->rtpoll_wakeup, 0);
 			wake_up_process(task);
 			rcu_assign_pointer(group->rtpoll_task, task);
@@ -1319,12 +1319,12 @@ int psi_trigger_create_rtpoll_worker(struct psi_group *group)
 			 * while there was no rtpoll worker.
 			 */
 			psi_schedule_rtpoll_work(group, 1, true);
-			return 0;
+			반환 0;
 		}
 	}
 
 	kthread_stop(task);
-	return 0;
+	반환 0;
 }
 
 struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
@@ -1340,8 +1340,8 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 
 	*need_rtpoll_worker = false;
 
-	if (static_branch_likely(&psi_disabled))
-		return ERR_PTR(-EOPNOTSUPP);
+	만약 (static_branch_likely(&psi_disabled))
+		반환 ERR_PTR(-EOPNOTSUPP);
 
 	/*
 	 * Checking the privilege here on file->f_cred implies that a privileged user
@@ -1349,38 +1349,38 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 	 */
 	privileged = cap_raised(file->f_cred->cap_effective, CAP_SYS_RESOURCE);
 
-	if (sscanf(buf, "some %u %u", &threshold_us, &window_us) == 2)
+	만약 (sscanf(buf, "some %u %u", &threshold_us, &window_us) == 2)
 		state = PSI_IO_SOME + res * 2;
-	else if (sscanf(buf, "full %u %u", &threshold_us, &window_us) == 2)
+	아니면 만약 (sscanf(buf, "full %u %u", &threshold_us, &window_us) == 2)
 		state = PSI_IO_FULL + res * 2;
-	else
-		return ERR_PTR(-EINVAL);
+	아니면
+		반환 ERR_PTR(-EINVAL);
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (res == PSI_IRQ && --state != PSI_IRQ_FULL)
-		return ERR_PTR(-EINVAL);
+	만약 (res == PSI_IRQ && --state != PSI_IRQ_FULL)
+		반환 ERR_PTR(-EINVAL);
 #endif
 
-	if (state >= PSI_NONIDLE)
-		return ERR_PTR(-EINVAL);
+	만약 (state >= PSI_NONIDLE)
+		반환 ERR_PTR(-EINVAL);
 
-	if (window_us == 0 || window_us > WINDOW_MAX_US)
-		return ERR_PTR(-EINVAL);
+	만약 (window_us == 0 || window_us > WINDOW_MAX_US)
+		반환 ERR_PTR(-EINVAL);
 
 	/*
 	 * Unprivileged users can only use 2s windows so that averages aggregation
 	 * work is used, and no RT threads need to be spawned.
 	 */
-	if (!privileged && window_us % 2000000)
-		return ERR_PTR(-EINVAL);
+	만약 (!privileged && window_us % 2000000)
+		반환 ERR_PTR(-EINVAL);
 
 	/* Check threshold */
-	if (threshold_us == 0 || threshold_us > window_us)
-		return ERR_PTR(-EINVAL);
+	만약 (threshold_us == 0 || threshold_us > window_us)
+		반환 ERR_PTR(-EINVAL);
 
 	t = kmalloc_obj(*t);
-	if (!t)
-		return ERR_PTR(-ENOMEM);
+	만약 (!t)
+		반환 ERR_PTR(-ENOMEM);
 
 	t->group = group;
 	t->state = state;
@@ -1392,12 +1392,12 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 	t->event = 0;
 	t->last_event_time = 0;
 	t->of = of;
-	if (!of)
+	만약 (!of)
 		init_waitqueue_head(&t->event_wait);
 	t->pending_event = false;
 	t->aggregator = privileged ? PSI_POLL : PSI_AVGS;
 
-	if (privileged) {
+	만약 (privileged) {
 		mutex_lock(&group->rtpoll_trigger_lock);
 
 		list_add(&t->node, &group->rtpoll_triggers);
@@ -1409,7 +1409,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 		*need_rtpoll_worker = !rcu_access_pointer(group->rtpoll_task);
 
 		mutex_unlock(&group->rtpoll_trigger_lock);
-	} else {
+	} 아니면 {
 		mutex_lock(&group->avgs_lock);
 
 		list_add(&t->node, &group->avg_triggers);
@@ -1417,7 +1417,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 
 		mutex_unlock(&group->avgs_lock);
 	}
-	return t;
+	반환 t;
 }
 
 void psi_trigger_destroy(struct psi_trigger *t)
@@ -1429,8 +1429,8 @@ void psi_trigger_destroy(struct psi_trigger *t)
 	 * We do not check psi_disabled since it might have been disabled after
 	 * the trigger got created.
 	 */
-	if (!t)
-		return;
+	만약 (!t)
+		반환;
 
 	group = t->group;
 	/*
@@ -1438,40 +1438,40 @@ void psi_trigger_destroy(struct psi_trigger *t)
 	 * being accessed later. Can happen if cgroup is deleted from under a
 	 * polling process.
 	 */
-	if (t->of)
+	만약 (t->of)
 		kernfs_notify(t->of->kn);
-	else
+	아니면
 		wake_up_interruptible(&t->event_wait);
 
-	if (t->aggregator == PSI_AVGS) {
+	만약 (t->aggregator == PSI_AVGS) {
 		mutex_lock(&group->avgs_lock);
-		if (!list_empty(&t->node)) {
+		만약 (!list_empty(&t->node)) {
 			list_del(&t->node);
 			group->avg_nr_triggers[t->state]--;
 		}
 		mutex_unlock(&group->avgs_lock);
-	} else {
+	} 아니면 {
 		mutex_lock(&group->rtpoll_trigger_lock);
-		if (!list_empty(&t->node)) {
+		만약 (!list_empty(&t->node)) {
 			struct psi_trigger *tmp;
 			u64 period = ULLONG_MAX;
 
 			list_del(&t->node);
 			group->rtpoll_nr_triggers[t->state]--;
-			if (!group->rtpoll_nr_triggers[t->state])
+			만약 (!group->rtpoll_nr_triggers[t->state])
 				group->rtpoll_states &= ~(1 << t->state);
 			/*
 			 * Reset min update period for the remaining triggers
 			 * iff the destroying trigger had the min window size.
 			 */
-			if (group->rtpoll_min_period == div_u64(t->win.size, UPDATES_PER_WINDOW)) {
+			만약 (group->rtpoll_min_period == div_u64(t->win.size, UPDATES_PER_WINDOW)) {
 				list_for_each_entry(tmp, &group->rtpoll_triggers, node)
 					period = min(period, div_u64(tmp->win.size,
 							UPDATES_PER_WINDOW));
 				group->rtpoll_min_period = period;
 			}
 			/* Destroy rtpoll_task when the last trigger is destroyed */
-			if (group->rtpoll_states == 0) {
+			만약 (group->rtpoll_states == 0) {
 				group->rtpoll_until = 0;
 				task_to_destroy = rcu_dereference_protected(
 						group->rtpoll_task,
@@ -1488,7 +1488,7 @@ void psi_trigger_destroy(struct psi_trigger *t)
 	 * a deadlock while waiting for psi_rtpoll_work to acquire
 	 * rtpoll_trigger_lock
 	 */
-	if (task_to_destroy) {
+	만약 (task_to_destroy) {
 		kthread_stop(task_to_destroy);
 		atomic_set(&group->rtpoll_scheduled, 0);
 	}
@@ -1501,53 +1501,53 @@ __poll_t psi_trigger_poll(void **trigger_ptr,
 	__poll_t ret = DEFAULT_POLLMASK;
 	struct psi_trigger *t;
 
-	if (static_branch_likely(&psi_disabled))
-		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+	만약 (static_branch_likely(&psi_disabled))
+		반환 DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
 
 	t = smp_load_acquire(trigger_ptr);
-	if (!t)
-		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+	만약 (!t)
+		반환 DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
 
-	if (t->of)
+	만약 (t->of)
 		kernfs_generic_poll(t->of, wait);
-	else
+	아니면
 		poll_wait(file, &t->event_wait, wait);
 
-	if (cmpxchg(&t->event, 1, 0) == 1)
+	만약 (cmpxchg(&t->event, 1, 0) == 1)
 		ret |= EPOLLPRI;
 
-	return ret;
+	반환 ret;
 }
 
 #ifdef CONFIG_PROC_FS
-static int psi_io_show(struct seq_file *m, void *v)
+static 정수 psi_io_show(struct seq_file *m, void *v)
 {
-	return psi_show(m, &psi_system, PSI_IO);
+	반환 psi_show(m, &psi_system, PSI_IO);
 }
 
-static int psi_memory_show(struct seq_file *m, void *v)
+static 정수 psi_memory_show(struct seq_file *m, void *v)
 {
-	return psi_show(m, &psi_system, PSI_MEM);
+	반환 psi_show(m, &psi_system, PSI_MEM);
 }
 
-static int psi_cpu_show(struct seq_file *m, void *v)
+static 정수 psi_cpu_show(struct seq_file *m, void *v)
 {
-	return psi_show(m, &psi_system, PSI_CPU);
+	반환 psi_show(m, &psi_system, PSI_CPU);
 }
 
-static int psi_io_open(struct inode *inode, struct file *file)
+static 정수 psi_io_open(struct inode *inode, struct file *file)
 {
-	return single_open(file, psi_io_show, NULL);
+	반환 single_open(file, psi_io_show, NULL);
 }
 
-static int psi_memory_open(struct inode *inode, struct file *file)
+static 정수 psi_memory_open(struct inode *inode, struct file *file)
 {
-	return single_open(file, psi_memory_show, NULL);
+	반환 single_open(file, psi_memory_show, NULL);
 }
 
-static int psi_cpu_open(struct inode *inode, struct file *file)
+static 정수 psi_cpu_open(struct inode *inode, struct file *file)
 {
-	return single_open(file, psi_cpu_show, NULL);
+	반환 single_open(file, psi_cpu_show, NULL);
 }
 
 static ssize_t psi_write(struct file *file, const char __user *user_buf,
@@ -1558,17 +1558,17 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
 	struct seq_file *seq;
 	struct psi_trigger *new;
 	bool need_rtpoll_worker;
-	int ret;
+	정수 ret;
 
-	if (static_branch_likely(&psi_disabled))
-		return -EOPNOTSUPP;
+	만약 (static_branch_likely(&psi_disabled))
+		반환 -EOPNOTSUPP;
 
-	if (!nbytes)
-		return -EINVAL;
+	만약 (!nbytes)
+		반환 -EINVAL;
 
 	buf_size = min(nbytes, sizeof(buf));
-	if (copy_from_user(buf, user_buf, buf_size))
-		return -EFAULT;
+	만약 (copy_from_user(buf, user_buf, buf_size))
+		반환 -EFAULT;
 
 	buf[buf_size - 1] = '\0';
 
@@ -1578,64 +1578,64 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
 	mutex_lock(&seq->lock);
 
 	/* Allow only one trigger per file descriptor */
-	if (seq->private) {
+	만약 (seq->private) {
 		mutex_unlock(&seq->lock);
-		return -EBUSY;
+		반환 -EBUSY;
 	}
 
 	new = psi_trigger_create(&psi_system, buf, res, file, NULL,
 				 &need_rtpoll_worker);
-	if (IS_ERR(new)) {
+	만약 (IS_ERR(new)) {
 		mutex_unlock(&seq->lock);
-		return PTR_ERR(new);
+		반환 PTR_ERR(new);
 	}
 
-	if (need_rtpoll_worker) {
+	만약 (need_rtpoll_worker) {
 		ret = psi_trigger_create_rtpoll_worker(&psi_system);
-		if (ret) {
+		만약 (ret) {
 			psi_trigger_destroy(new);
 			mutex_unlock(&seq->lock);
-			return ret;
+			반환 ret;
 		}
 	}
 
 	smp_store_release(&seq->private, new);
 	mutex_unlock(&seq->lock);
 
-	return nbytes;
+	반환 nbytes;
 }
 
 static ssize_t psi_io_write(struct file *file, const char __user *user_buf,
 			    size_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_IO);
+	반환 psi_write(file, user_buf, nbytes, PSI_IO);
 }
 
 static ssize_t psi_memory_write(struct file *file, const char __user *user_buf,
 				size_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_MEM);
+	반환 psi_write(file, user_buf, nbytes, PSI_MEM);
 }
 
 static ssize_t psi_cpu_write(struct file *file, const char __user *user_buf,
 			     size_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_CPU);
+	반환 psi_write(file, user_buf, nbytes, PSI_CPU);
 }
 
 static __poll_t psi_fop_poll(struct file *file, poll_table *wait)
 {
 	struct seq_file *seq = file->private_data;
 
-	return psi_trigger_poll(&seq->private, file, wait);
+	반환 psi_trigger_poll(&seq->private, file, wait);
 }
 
-static int psi_fop_release(struct inode *inode, struct file *file)
+static 정수 psi_fop_release(struct inode *inode, struct file *file)
 {
 	struct seq_file *seq = file->private_data;
 
 	psi_trigger_destroy(seq->private);
-	return single_release(inode, file);
+	반환 single_release(inode, file);
 }
 
 static const struct proc_ops psi_io_proc_ops = {
@@ -1666,20 +1666,20 @@ static const struct proc_ops psi_cpu_proc_ops = {
 };
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-static int psi_irq_show(struct seq_file *m, void *v)
+static 정수 psi_irq_show(struct seq_file *m, void *v)
 {
-	return psi_show(m, &psi_system, PSI_IRQ);
+	반환 psi_show(m, &psi_system, PSI_IRQ);
 }
 
-static int psi_irq_open(struct inode *inode, struct file *file)
+static 정수 psi_irq_open(struct inode *inode, struct file *file)
 {
-	return single_open(file, psi_irq_show, NULL);
+	반환 single_open(file, psi_irq_show, NULL);
 }
 
 static ssize_t psi_irq_write(struct file *file, const char __user *user_buf,
 			     size_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_IRQ);
+	반환 psi_write(file, user_buf, nbytes, PSI_IRQ);
 }
 
 static const struct proc_ops psi_irq_proc_ops = {
@@ -1692,9 +1692,9 @@ static const struct proc_ops psi_irq_proc_ops = {
 };
 #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
 
-static int __init psi_proc_init(void)
+static 정수 __init psi_proc_init(void)
 {
-	if (psi_enable) {
+	만약 (psi_enable) {
 		proc_mkdir("pressure", NULL);
 		proc_create("pressure/io", 0666, NULL, &psi_io_proc_ops);
 		proc_create("pressure/memory", 0666, NULL, &psi_memory_proc_ops);
@@ -1703,7 +1703,7 @@ static int __init psi_proc_init(void)
 		proc_create("pressure/irq", 0666, NULL, &psi_irq_proc_ops);
 #endif
 	}
-	return 0;
+	반환 0;
 }
 module_init(psi_proc_init);
 

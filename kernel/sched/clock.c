@@ -64,7 +64,7 @@
  */
 notrace unsigned long long __weak sched_clock(void)
 {
-	return (unsigned long long)(jiffies - INITIAL_JIFFIES)
+	반환 (unsigned long long)(jiffies - INITIAL_JIFFIES)
 					* (NSEC_PER_SEC / HZ);
 }
 EXPORT_SYMBOL_GPL(sched_clock);
@@ -80,7 +80,7 @@ static DEFINE_STATIC_KEY_FALSE(sched_clock_running);
  * will become stable, such that there's only a single 1 -> 0 transition.
  */
 static DEFINE_STATIC_KEY_FALSE(__sched_clock_stable);
-static int __sched_clock_stable_early = 1;
+static 정수 __sched_clock_stable_early = 1;
 
 /*
  * We want: ktime_get_ns() + __gtod_offset == sched_clock() + __sched_clock_offset
@@ -98,17 +98,17 @@ static DEFINE_PER_CPU_SHARED_ALIGNED(struct sched_clock_data, sched_clock_data);
 
 static __always_inline struct sched_clock_data *this_scd(void)
 {
-	return this_cpu_ptr(&sched_clock_data);
+	반환 this_cpu_ptr(&sched_clock_data);
 }
 
-notrace static inline struct sched_clock_data *cpu_sdc(int cpu)
+notrace static inline struct sched_clock_data *cpu_sdc(정수 cpu)
 {
-	return &per_cpu(sched_clock_data, cpu);
+	반환 &per_cpu(sched_clock_data, cpu);
 }
 
-notrace int sched_clock_stable(void)
+notrace 정수 sched_clock_stable(void)
 {
-	return static_branch_likely(&__sched_clock_stable);
+	반환 static_branch_likely(&__sched_clock_stable);
 }
 
 notrace static void __scd_stamp(struct sched_clock_data *scd)
@@ -155,7 +155,7 @@ notrace static void __set_sched_clock_stable(void)
 notrace static void __sched_clock_work(struct work_struct *work)
 {
 	struct sched_clock_data *scd;
-	int cpu;
+	정수 cpu;
 
 	/* take a current timestamp and set 'now' */
 	preempt_disable();
@@ -181,8 +181,8 @@ static DECLARE_WORK(sched_clock_work, __sched_clock_work);
 
 notrace static void __clear_sched_clock_stable(void)
 {
-	if (!sched_clock_stable())
-		return;
+	만약 (!sched_clock_stable())
+		반환;
 
 	tick_dep_set(TICK_DEP_BIT_CLOCK_UNSTABLE);
 	schedule_work(&sched_clock_work);
@@ -194,7 +194,7 @@ notrace void clear_sched_clock_stable(void)
 
 	smp_mb(); /* matches sched_clock_init_late() */
 
-	if (static_key_count(&sched_clock_running.key) == 2)
+	만약 (static_key_count(&sched_clock_running.key) == 2)
 		__clear_sched_clock_stable();
 }
 
@@ -225,7 +225,7 @@ void __init sched_clock_init(void)
  * We run this as late_initcall() such that it runs after all built-in drivers,
  * notably: acpi_processor and intel_idle, which can mark the TSC as unstable.
  */
-static int __init sched_clock_init_late(void)
+static 정수 __init sched_clock_init_late(void)
 {
 	static_branch_inc(&sched_clock_running);
 	/*
@@ -237,12 +237,12 @@ static int __init sched_clock_init_late(void)
 	 */
 	smp_mb(); /* matches {set,clear}_sched_clock_stable() */
 
-	if (__sched_clock_stable_early)
+	만약 (__sched_clock_stable_early)
 		__set_sched_clock_stable();
-	else
+	아니면
 		disable_sched_clock_irqtime();  /* disable if clock unstable. */
 
-	return 0;
+	반환 0;
 }
 late_initcall(sched_clock_init_late);
 
@@ -252,12 +252,12 @@ late_initcall(sched_clock_init_late);
 
 static __always_inline u64 wrap_min(u64 x, u64 y)
 {
-	return (s64)(x - y) < 0 ? x : y;
+	반환 (s64)(x - y) < 0 ? x : y;
 }
 
 static __always_inline u64 wrap_max(u64 x, u64 y)
 {
-	return (s64)(x - y) > 0 ? x : y;
+	반환 (s64)(x - y) > 0 ? x : y;
 }
 
 /*
@@ -274,7 +274,7 @@ static __always_inline u64 sched_clock_local(struct sched_clock_data *scd)
 again:
 	now = sched_clock_noinstr();
 	delta = now - scd->tick_raw;
-	if (unlikely(delta < 0))
+	만약 (unlikely(delta < 0))
 		delta = 0;
 
 	old_clock = scd->clock;
@@ -293,25 +293,25 @@ again:
 	clock = wrap_max(clock, min_clock);
 	clock = wrap_min(clock, max_clock);
 
-	if (!raw_try_cmpxchg64(&scd->clock, &old_clock, clock))
+	만약 (!raw_try_cmpxchg64(&scd->clock, &old_clock, clock))
 		goto again;
 
-	return clock;
+	반환 clock;
 }
 
 noinstr u64 local_clock_noinstr(void)
 {
 	u64 clock;
 
-	if (static_branch_likely(&__sched_clock_stable))
-		return sched_clock_noinstr() + __sched_clock_offset;
+	만약 (static_branch_likely(&__sched_clock_stable))
+		반환 sched_clock_noinstr() + __sched_clock_offset;
 
-	if (!static_branch_likely(&sched_clock_running))
-		return sched_clock_noinstr();
+	만약 (!static_branch_likely(&sched_clock_running))
+		반환 sched_clock_noinstr();
 
 	clock = sched_clock_local(this_scd());
 
-	return clock;
+	반환 clock;
 }
 
 u64 local_clock(void)
@@ -320,7 +320,7 @@ u64 local_clock(void)
 	preempt_disable_notrace();
 	now = local_clock_noinstr();
 	preempt_enable_notrace();
-	return now;
+	반환 now;
 }
 EXPORT_SYMBOL_GPL(local_clock);
 
@@ -330,7 +330,7 @@ static notrace u64 sched_clock_remote(struct sched_clock_data *scd)
 	u64 this_clock, remote_clock;
 	u64 *ptr, old_val, val;
 
-#if BITS_PER_LONG != 64
+#만약 BITS_PER_LONG != 64
 again:
 	/*
 	 * Careful here: The local and the remote clock values need to
@@ -350,7 +350,7 @@ again:
 	 * the low 32-bit and the high 32-bit portion.
 	 */
 	remote_clock = cmpxchg64(&scd->clock, 0, 0);
-#else
+#아니면
 	/*
 	 * On 64-bit kernels the read of [my]scd->clock is atomic versus the
 	 * update, so we can avoid the above 32-bit dance.
@@ -367,11 +367,11 @@ again:
 	 * larger time as the latest time for both
 	 * runqueues. (this creates monotonic movement)
 	 */
-	if (likely((s64)(remote_clock - this_clock) < 0)) {
+	만약 (likely((s64)(remote_clock - this_clock) < 0)) {
 		ptr = &scd->clock;
 		old_val = remote_clock;
 		val = this_clock;
-	} else {
+	} 아니면 {
 		/*
 		 * Should be rare, but possible:
 		 */
@@ -380,10 +380,10 @@ again:
 		val = remote_clock;
 	}
 
-	if (!try_cmpxchg64(ptr, &old_val, val))
+	만약 (!try_cmpxchg64(ptr, &old_val, val))
 		goto again;
 
-	return val;
+	반환 val;
 }
 
 /*
@@ -391,27 +391,27 @@ again:
  *
  * See cpu_clock().
  */
-notrace u64 sched_clock_cpu(int cpu)
+notrace u64 sched_clock_cpu(정수 cpu)
 {
 	struct sched_clock_data *scd;
 	u64 clock;
 
-	if (sched_clock_stable())
-		return sched_clock() + __sched_clock_offset;
+	만약 (sched_clock_stable())
+		반환 sched_clock() + __sched_clock_offset;
 
-	if (!static_branch_likely(&sched_clock_running))
-		return sched_clock();
+	만약 (!static_branch_likely(&sched_clock_running))
+		반환 sched_clock();
 
 	preempt_disable_notrace();
 	scd = cpu_sdc(cpu);
 
-	if (cpu != smp_processor_id())
+	만약 (cpu != smp_processor_id())
 		clock = sched_clock_remote(scd);
-	else
+	아니면
 		clock = sched_clock_local(scd);
 	preempt_enable_notrace();
 
-	return clock;
+	반환 clock;
 }
 EXPORT_SYMBOL_GPL(sched_clock_cpu);
 
@@ -419,11 +419,11 @@ notrace void sched_clock_tick(void)
 {
 	struct sched_clock_data *scd;
 
-	if (sched_clock_stable())
-		return;
+	만약 (sched_clock_stable())
+		반환;
 
-	if (!static_branch_likely(&sched_clock_running))
-		return;
+	만약 (!static_branch_likely(&sched_clock_running))
+		반환;
 
 	lockdep_assert_irqs_disabled();
 
@@ -434,8 +434,8 @@ notrace void sched_clock_tick(void)
 
 notrace void sched_clock_tick_stable(void)
 {
-	if (!sched_clock_stable())
-		return;
+	만약 (!sched_clock_stable())
+		반환;
 
 	/*
 	 * Called under watchdog_lock.
@@ -465,11 +465,11 @@ notrace void sched_clock_idle_wakeup_event(void)
 {
 	unsigned long flags;
 
-	if (sched_clock_stable())
-		return;
+	만약 (sched_clock_stable())
+		반환;
 
-	if (unlikely(timekeeping_suspended))
-		return;
+	만약 (unlikely(timekeeping_suspended))
+		반환;
 
 	local_irq_save(flags);
 	sched_clock_tick();
@@ -477,7 +477,7 @@ notrace void sched_clock_idle_wakeup_event(void)
 }
 EXPORT_SYMBOL_GPL(sched_clock_idle_wakeup_event);
 
-#else /* !CONFIG_HAVE_UNSTABLE_SCHED_CLOCK: */
+#아니면 /* !CONFIG_HAVE_UNSTABLE_SCHED_CLOCK: */
 
 void __init sched_clock_init(void)
 {
@@ -487,12 +487,12 @@ void __init sched_clock_init(void)
 	local_irq_enable();
 }
 
-notrace u64 sched_clock_cpu(int cpu)
+notrace u64 sched_clock_cpu(정수 cpu)
 {
-	if (!static_branch_likely(&sched_clock_running))
-		return 0;
+	만약 (!static_branch_likely(&sched_clock_running))
+		반환 0;
 
-	return sched_clock();
+	반환 sched_clock();
 }
 
 #endif /* !CONFIG_HAVE_UNSTABLE_SCHED_CLOCK */
@@ -507,5 +507,5 @@ notrace u64 sched_clock_cpu(int cpu)
  */
 notrace u64 __weak running_clock(void)
 {
-	return local_clock();
+	반환 local_clock();
 }

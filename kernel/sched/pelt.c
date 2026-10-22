@@ -31,10 +31,10 @@
  */
 static u64 decay_load(u64 val, u64 n)
 {
-	unsigned int local_n;
+	unsigned 정수 local_n;
 
-	if (unlikely(n > LOAD_AVG_PERIOD * 63))
-		return 0;
+	만약 (unlikely(n > LOAD_AVG_PERIOD * 63))
+		반환 0;
 
 	/* after bounds checking we can collapse to 32-bit */
 	local_n = n;
@@ -46,13 +46,13 @@ static u64 decay_load(u64 val, u64 n)
 	 *
 	 * To achieve constant time decay_load.
 	 */
-	if (unlikely(local_n >= LOAD_AVG_PERIOD)) {
+	만약 (unlikely(local_n >= LOAD_AVG_PERIOD)) {
 		val >>= local_n / LOAD_AVG_PERIOD;
 		local_n %= LOAD_AVG_PERIOD;
 	}
 
 	val = mul_u64_u32_shr(val, runnable_avg_yN_inv[local_n], 32);
-	return val;
+	반환 val;
 }
 
 static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
@@ -75,7 +75,7 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
 	 */
 	c2 = LOAD_AVG_MAX - decay_load(LOAD_AVG_MAX, periods) - 1024;
 
-	return c1 + c2 + c3;
+	반환 c1 + c2 + c3;
 }
 
 /*
@@ -101,7 +101,7 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
  */
 static __always_inline u32
 accumulate_sum(u64 delta, struct sched_avg *sa,
-	       unsigned long load, unsigned long runnable, int running)
+	       unsigned long load, unsigned long runnable, 정수 running)
 {
 	u32 contrib = (u32)delta; /* p == 0 -> delta < 1024 */
 	u64 periods;
@@ -112,7 +112,7 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
 	/*
 	 * Step 1: decay old *_sum if we crossed period boundaries.
 	 */
-	if (periods) {
+	만약 (periods) {
 		sa->load_sum = decay_load(sa->load_sum, periods);
 		sa->runnable_sum =
 			decay_load(sa->runnable_sum, periods);
@@ -122,7 +122,7 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
 		 * Step 2
 		 */
 		delta %= 1024;
-		if (load) {
+		만약 (load) {
 			/*
 			 * This relies on the:
 			 *
@@ -139,14 +139,14 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
 	}
 	sa->period_contrib = delta;
 
-	if (load)
+	만약 (load)
 		sa->load_sum += load * contrib;
-	if (runnable)
+	만약 (runnable)
 		sa->runnable_sum += runnable * contrib << SCHED_CAPACITY_SHIFT;
-	if (running)
+	만약 (running)
 		sa->util_sum += contrib << SCHED_CAPACITY_SHIFT;
 
-	return periods;
+	반환 periods;
 }
 
 /*
@@ -177,9 +177,9 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
  *   load_avg = u_0` + y*(u_0 + u_1*y + u_2*y^2 + ... )
  *            = u_0 + u_1*y + u_2*y^2 + ... [re-labeling u_i --> u_{i+1}]
  */
-static __always_inline int
+static __always_inline 정수
 ___update_load_sum(u64 now, struct sched_avg *sa,
-		  unsigned long load, unsigned long runnable, int running)
+		  unsigned long load, unsigned long runnable, 정수 running)
 {
 	u64 delta;
 
@@ -188,9 +188,9 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 * This should only happen when time goes backwards, which it
 	 * unfortunately does during sched clock init when we swap over to TSC.
 	 */
-	if ((s64)delta < 0) {
+	만약 ((s64)delta < 0) {
 		sa->last_update_time = now;
-		return 0;
+		반환 0;
 	}
 
 	/*
@@ -198,8 +198,8 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 * approximation of 1us and fast to compute.
 	 */
 	delta >>= 10;
-	if (!delta)
-		return 0;
+	만약 (!delta)
+		반환 0;
 
 	sa->last_update_time += delta << 10;
 
@@ -214,7 +214,7 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 *
 	 * Also see the comment in accumulate_sum().
 	 */
-	if (!load)
+	만약 (!load)
 		runnable = running = 0;
 
 	/*
@@ -224,10 +224,10 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 * Step 1: accumulate *_sum since last_update_time. If we haven't
 	 * crossed period boundaries, finish.
 	 */
-	if (!accumulate_sum(delta, sa, load, runnable, running))
-		return 0;
+	만약 (!accumulate_sum(delta, sa, load, runnable, running))
+		반환 0;
 
-	return 1;
+	반환 1;
 }
 
 /*
@@ -293,44 +293,44 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load)
  *   load_avg = \Sum se->avg.load_avg
  */
 
-int __update_load_avg_blocked_se(u64 now, struct sched_entity *se)
+정수 __update_load_avg_blocked_se(u64 now, struct sched_entity *se)
 {
-	if (___update_load_sum(now, &se->avg, 0, 0, 0)) {
+	만약 (___update_load_sum(now, &se->avg, 0, 0, 0)) {
 		___update_load_avg(&se->avg, se_weight(se));
 		trace_pelt_se_tp(se);
-		return 1;
+		반환 1;
 	}
 
-	return 0;
+	반환 0;
 }
 
-int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se)
+정수 __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se)
 {
-	if (___update_load_sum(now, &se->avg, !!se->on_rq, se_runnable(se),
+	만약 (___update_load_sum(now, &se->avg, !!se->on_rq, se_runnable(se),
 				cfs_rq->h_curr == se)) {
 
 		___update_load_avg(&se->avg, se_weight(se));
 		cfs_se_util_change(&se->avg);
 		trace_pelt_se_tp(se);
-		return 1;
+		반환 1;
 	}
 
-	return 0;
+	반환 0;
 }
 
-int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq)
+정수 __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq)
 {
-	if (___update_load_sum(now, &cfs_rq->avg,
+	만약 (___update_load_sum(now, &cfs_rq->avg,
 				scale_load_down(cfs_rq->load.weight),
 				cfs_rq->h_nr_runnable,
 				cfs_rq->h_curr != NULL)) {
 
 		___update_load_avg(&cfs_rq->avg, 1);
 		trace_pelt_cfs_tp(cfs_rq);
-		return 1;
+		반환 1;
 	}
 
-	return 0;
+	반환 0;
 }
 
 /*
@@ -344,19 +344,19 @@ int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq)
  *
  */
 
-int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
+정수 update_rt_rq_load_avg(u64 now, struct rq *rq, 정수 running)
 {
-	if (___update_load_sum(now, &rq->avg_rt,
+	만약 (___update_load_sum(now, &rq->avg_rt,
 				running,
 				running,
 				running)) {
 
 		___update_load_avg(&rq->avg_rt, 1);
 		trace_pelt_rt_tp(rq);
-		return 1;
+		반환 1;
 	}
 
-	return 0;
+	반환 0;
 }
 
 /*
@@ -370,19 +370,19 @@ int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
  *
  */
 
-int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+정수 update_dl_rq_load_avg(u64 now, struct rq *rq, 정수 running)
 {
-	if (___update_load_sum(now, &rq->avg_dl,
+	만약 (___update_load_sum(now, &rq->avg_dl,
 				running,
 				running,
 				running)) {
 
 		___update_load_avg(&rq->avg_dl, 1);
 		trace_pelt_dl_tp(rq);
-		return 1;
+		반환 1;
 	}
 
-	return 0;
+	반환 0;
 }
 
 #ifdef CONFIG_SCHED_HW_PRESSURE
@@ -401,18 +401,18 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
  *			capped capacity a cpu due to a HW event.
  */
 
-int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+정수 update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
 {
-	if (___update_load_sum(now, &rq->avg_hw,
+	만약 (___update_load_sum(now, &rq->avg_hw,
 			       capacity,
 			       capacity,
 			       capacity)) {
 		___update_load_avg(&rq->avg_hw, 1);
 		trace_pelt_hw_tp(rq);
-		return 1;
+		반환 1;
 	}
 
-	return 0;
+	반환 0;
 }
 #endif /* CONFIG_SCHED_HW_PRESSURE */
 
@@ -428,9 +428,9 @@ int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
  *
  */
 
-int update_irq_load_avg(struct rq *rq, u64 running)
+정수 update_irq_load_avg(struct rq *rq, u64 running)
 {
-	int ret = 0;
+	정수 ret = 0;
 
 	/*
 	 * We can't use clock_pelt because IRQ time is not accounted in
@@ -460,12 +460,12 @@ int update_irq_load_avg(struct rq *rq, u64 running)
 				1,
 				1);
 
-	if (ret) {
+	만약 (ret) {
 		___update_load_avg(&rq->avg_irq, 1);
 		trace_pelt_irq_tp(rq);
 	}
 
-	return ret;
+	반환 ret;
 }
 #endif /* CONFIG_HAVE_SCHED_AVG_IRQ */
 
@@ -483,7 +483,7 @@ bool update_other_load_avgs(struct rq *rq)
 	lockdep_assert_rq_held(rq);
 
 	/* hw_pressure doesn't care about invariance */
-	return update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
+	반환 update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
 		update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
 		update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure) |
 		update_irq_load_avg(rq, 0);

@@ -86,7 +86,7 @@ struct rt_rq;
 struct sched_group;
 struct cpuidle_state;
 
-#if defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
+#만약 defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
 # include <asm/paravirt.h>
 #endif
 
@@ -99,7 +99,7 @@ struct cpuidle_state;
 #define TASK_ON_RQ_QUEUED	1
 #define TASK_ON_RQ_MIGRATING	2
 
-extern __read_mostly int scheduler_running;
+extern __read_mostly 정수 scheduler_running;
 
 extern unsigned long calc_load_update;
 extern atomic_long_t calc_load_tasks;
@@ -107,11 +107,11 @@ extern atomic_long_t calc_load_tasks;
 extern void calc_global_load_tick(struct rq *this_rq);
 extern long calc_load_fold_active(struct rq *this_rq, long adjust);
 
-extern void call_trace_sched_update_nr_running(struct rq *rq, int count);
+extern void call_trace_sched_update_nr_running(struct rq *rq, 정수 count);
 
-extern int sysctl_sched_rt_period;
-extern int sysctl_sched_rt_runtime;
-extern int sched_rr_timeslice;
+extern 정수 sysctl_sched_rt_period;
+extern 정수 sysctl_sched_rt_runtime;
+extern 정수 sched_rr_timeslice;
 
 /*
  * Asymmetric CPU capacity bits
@@ -153,11 +153,11 @@ extern struct list_head asym_cap_list;
 ({								\
 	unsigned long __w = (w);				\
 								\
-	if (__w)						\
+	만약 (__w)						\
 		__w = max(2UL, __w >> SCHED_FIXEDPOINT_SHIFT);	\
 	__w;							\
 })
-#else
+#아니면
 # define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT)
 # define scale_load(w)		(w)
 # define scale_load_down(w)	(w)
@@ -186,54 +186,54 @@ extern struct list_head asym_cap_list;
  */
 #define RUNTIME_INF		((u64)~0ULL)
 
-static inline int idle_policy(int policy)
+static inline 정수 idle_policy(정수 policy)
 {
-	return policy == SCHED_IDLE;
+	반환 policy == SCHED_IDLE;
 }
 
-static inline int normal_policy(int policy)
+static inline 정수 normal_policy(정수 policy)
 {
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (policy == SCHED_EXT)
-		return true;
+	만약 (policy == SCHED_EXT)
+		반환 true;
 #endif
-	return policy == SCHED_NORMAL;
+	반환 policy == SCHED_NORMAL;
 }
 
-static inline int fair_policy(int policy)
+static inline 정수 fair_policy(정수 policy)
 {
-	return normal_policy(policy) || policy == SCHED_BATCH;
+	반환 normal_policy(policy) || policy == SCHED_BATCH;
 }
 
-static inline int rt_policy(int policy)
+static inline 정수 rt_policy(정수 policy)
 {
-	return policy == SCHED_FIFO || policy == SCHED_RR;
+	반환 policy == SCHED_FIFO || policy == SCHED_RR;
 }
 
-static inline int dl_policy(int policy)
+static inline 정수 dl_policy(정수 policy)
 {
-	return policy == SCHED_DEADLINE;
+	반환 policy == SCHED_DEADLINE;
 }
 
-static inline bool valid_policy(int policy)
+static inline bool valid_policy(정수 policy)
 {
-	return idle_policy(policy) || fair_policy(policy) ||
+	반환 idle_policy(policy) || fair_policy(policy) ||
 		rt_policy(policy) || dl_policy(policy);
 }
 
-static inline int task_has_idle_policy(struct task_struct *p)
+static inline 정수 task_has_idle_policy(struct task_struct *p)
 {
-	return idle_policy(p->policy);
+	반환 idle_policy(p->policy);
 }
 
-static inline int task_has_rt_policy(struct task_struct *p)
+static inline 정수 task_has_rt_policy(struct task_struct *p)
 {
-	return rt_policy(p->policy);
+	반환 rt_policy(p->policy);
 }
 
-static inline int task_has_dl_policy(struct task_struct *p)
+static inline 정수 task_has_dl_policy(struct task_struct *p)
 {
-	return dl_policy(p->policy);
+	반환 dl_policy(p->policy);
 }
 
 #define cap_scale(v, s)		((v)*(s) >> SCHED_CAPACITY_SHIFT)
@@ -260,12 +260,12 @@ static inline void update_avg(u64 *avg, u64 sample)
  */
 static inline unsigned long sched_weight_from_cgroup(unsigned long cgrp_weight)
 {
-	return DIV_ROUND_CLOSEST_ULL(cgrp_weight * 1024, CGROUP_WEIGHT_DFL);
+	반환 DIV_ROUND_CLOSEST_ULL(cgrp_weight * 1024, CGROUP_WEIGHT_DFL);
 }
 
 static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
 {
-	return clamp_t(unsigned long,
+	반환 clamp_t(unsigned long,
 		       DIV_ROUND_CLOSEST_ULL(weight * CGROUP_WEIGHT_DFL, 1024),
 		       CGROUP_WEIGHT_MIN, CGROUP_WEIGHT_MAX);
 }
@@ -289,9 +289,9 @@ static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
 static inline bool dl_entity_is_special(const struct sched_dl_entity *dl_se)
 {
 #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-	return unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
-#else
-	return false;
+	반환 unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
+#아니면
+	반환 false;
 #endif
 }
 
@@ -301,7 +301,7 @@ static inline bool dl_entity_is_special(const struct sched_dl_entity *dl_se)
 static inline bool dl_entity_preempt(const struct sched_dl_entity *a,
 				     const struct sched_dl_entity *b)
 {
-	return dl_entity_is_special(a) ||
+	반환 dl_entity_is_special(a) ||
 	       dl_time_before(a->deadline, b->deadline);
 }
 
@@ -319,12 +319,12 @@ struct rt_bandwidth {
 	ktime_t			rt_period;
 	u64			rt_runtime;
 	struct hrtimer		rt_period_timer;
-	unsigned int		rt_period_active;
+	unsigned 정수		rt_period_active;
 };
 
-static inline int dl_bandwidth_enabled(void)
+static inline 정수 dl_bandwidth_enabled(void)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	반환 sysctl_sched_rt_runtime >= 0;
 }
 
 /*
@@ -352,15 +352,15 @@ struct dl_bw {
 };
 
 extern void init_dl_bw(struct dl_bw *dl_b);
-extern int  sched_dl_global_validate(void);
+extern 정수  sched_dl_global_validate(void);
 extern void sched_dl_do_global(void);
-extern int  sched_dl_overflow(struct task_struct *p, int policy, const struct sched_attr *attr);
+extern 정수  sched_dl_overflow(struct task_struct *p, 정수 policy, const struct sched_attr *attr);
 extern void __setparam_dl(struct task_struct *p, const struct sched_attr *attr);
-extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags);
+extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned 정수 flags);
 extern bool __checkparam_dl(const struct sched_attr *attr);
 extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
-extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
-extern int  dl_bw_deactivate(int cpu);
+extern 정수  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
+extern 정수  dl_bw_deactivate(정수 cpu);
 extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec);
 /*
  * SCHED_DEADLINE supports servers (nested scheduling) with the following
@@ -419,16 +419,16 @@ extern void sched_init_dl_servers(void);
 extern void fair_server_init(struct rq *rq);
 extern void ext_server_init(struct rq *rq);
 extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq);
-extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
+extern 정수 dl_server_apply_params(struct sched_dl_entity *dl_se,
 		    u64 runtime, u64 period, bool init);
-extern int dl_server_attach_bw(struct sched_dl_entity *dl_se);
+extern 정수 dl_server_attach_bw(struct sched_dl_entity *dl_se);
 extern void dl_server_detach_bw(struct sched_dl_entity *dl_se);
-extern int dl_server_swap_bw(struct sched_dl_entity *detach_se,
+extern 정수 dl_server_swap_bw(struct sched_dl_entity *detach_se,
 			     struct sched_dl_entity *attach_se);
 
 static inline bool dl_server_active(struct sched_dl_entity *dl_se)
 {
-	return dl_se->dl_server_active;
+	반환 dl_se->dl_server_active;
 }
 
 #ifdef CONFIG_CGROUP_SCHED
@@ -444,7 +444,7 @@ extern const u64 max_bw_quota_period_us;
  */
 static inline u64 default_bw_period_us(void)
 {
-	return 100000ULL;
+	반환 100000ULL;
 }
 #endif /* CONFIG_GROUP_SCHED_BANDWIDTH */
 
@@ -466,9 +466,9 @@ struct cfs_bandwidth {
 	struct list_head	throttled_cfs_rq;
 
 	/* Statistics: */
-	int			nr_periods;
-	int			nr_throttled;
-	int			nr_burst;
+	정수			nr_periods;
+	정수			nr_throttled;
+	정수			nr_burst;
 	u64			throttled_time;
 	u64			burst_time;
 #endif /* CONFIG_CFS_BANDWIDTH */
@@ -480,7 +480,7 @@ struct task_group {
 
 #ifdef CONFIG_GROUP_SCHED_WEIGHT
 	/* A positive value indicates that this is a SCHED_IDLE group. */
-	int			idle;
+	정수			idle;
 #endif
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -521,7 +521,7 @@ struct task_group {
 
 #ifdef CONFIG_UCLAMP_TASK_GROUP
 	/* The two decimal precision [%] value requested from user-space */
-	unsigned int		uclamp_pct[UCLAMP_CNT];
+	unsigned 정수		uclamp_pct[UCLAMP_CNT];
 	/* Clamp values requested for a task group */
 	struct uclamp_se	uclamp_req[UCLAMP_CNT];
 	/* Effective clamp values used for a task group */
@@ -532,9 +532,9 @@ struct task_group {
 
 #define ROOT_TASK_GROUP_LOAD	NICE_0_LOAD
 
-typedef int (*tg_visitor)(struct task_group *, void *);
+typedef 정수 (*tg_visitor)(struct task_group *, void *);
 
-extern int walk_tg_tree_from(struct task_group *from,
+extern 정수 walk_tg_tree_from(struct task_group *from,
 			     tg_visitor down, tg_visitor up, void *data);
 
 /*
@@ -543,36 +543,36 @@ extern int walk_tg_tree_from(struct task_group *from,
  *
  * Caller must hold rcu_lock or sufficient equivalent.
  */
-static inline int walk_tg_tree(tg_visitor down, tg_visitor up, void *data)
+static inline 정수 walk_tg_tree(tg_visitor down, tg_visitor up, void *data)
 {
-	return walk_tg_tree_from(&root_task_group, down, up, data);
+	반환 walk_tg_tree_from(&root_task_group, down, up, data);
 }
 
 static inline struct task_group *css_tg(struct cgroup_subsys_state *css)
 {
-	return css ? container_of(css, struct task_group, css) : NULL;
+	반환 css ? container_of(css, struct task_group, css) : NULL;
 }
 
-extern int tg_nop(struct task_group *tg, void *data);
+extern 정수 tg_nop(struct task_group *tg, void *data);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 extern void free_fair_sched_group(struct task_group *tg);
-extern int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent);
+extern 정수 alloc_fair_sched_group(struct task_group *tg, struct task_group *parent);
 extern void online_fair_sched_group(struct task_group *tg);
 extern void unregister_fair_sched_group(struct task_group *tg);
-extern void __sched_cgroup_mode_update(int mode);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+extern void __sched_cgroup_mode_update(정수 mode);
+#아니면 /* !CONFIG_FAIR_GROUP_SCHED: */
 static inline void free_fair_sched_group(struct task_group *tg) { }
-static inline int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
+static inline 정수 alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
 {
-       return 1;
+       반환 1;
 }
 static inline void online_fair_sched_group(struct task_group *tg) { }
 static inline void unregister_fair_sched_group(struct task_group *tg) { }
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
 extern void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
-			struct sched_entity *se, int cpu,
+			struct sched_entity *se, 정수 cpu,
 			struct sched_entity *parent);
 extern void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent);
 
@@ -582,13 +582,13 @@ extern void unthrottle_cfs_rq(struct cfs_rq *cfs_rq);
 extern bool cfs_task_bw_constrained(struct task_struct *p);
 
 extern void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
-		struct sched_rt_entity *rt_se, int cpu,
+		struct sched_rt_entity *rt_se, 정수 cpu,
 		struct sched_rt_entity *parent);
-extern int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us);
-extern int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us);
+extern 정수 sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us);
+extern 정수 sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us);
 extern long sched_group_rt_runtime(struct task_group *tg);
 extern long sched_group_rt_period(struct task_group *tg);
-extern int sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk);
+extern 정수 sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk);
 
 extern struct task_group *sched_create_group(struct task_group *parent);
 extern void sched_online_group(struct task_group *tg,
@@ -599,22 +599,22 @@ extern void sched_release_group(struct task_group *tg);
 extern void sched_move_task(struct task_struct *tsk, bool for_autogroup);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-extern int sched_group_set_shares(struct task_group *tg, unsigned long shares);
+extern 정수 sched_group_set_shares(struct task_group *tg, unsigned long shares);
 
-extern int sched_group_set_idle(struct task_group *tg, long idle);
+extern 정수 sched_group_set_idle(struct task_group *tg, long idle);
 
 extern void set_task_rq_fair(struct sched_entity *se,
 			     struct cfs_rq *prev, struct cfs_rq *next);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline int sched_group_set_shares(struct task_group *tg, unsigned long shares) { return 0; }
-static inline int sched_group_set_idle(struct task_group *tg, long idle) { return 0; }
+#아니면 /* !CONFIG_FAIR_GROUP_SCHED: */
+static inline 정수 sched_group_set_shares(struct task_group *tg, unsigned long shares) { 반환 0; }
+static inline 정수 sched_group_set_idle(struct task_group *tg, long idle) { 반환 0; }
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#아니면 /* !CONFIG_CGROUP_SCHED: */
 
 struct cfs_bandwidth { };
 
-static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false; }
+static inline bool cfs_task_bw_constrained(struct task_struct *p) { 반환 false; }
 
 #endif /* !CONFIG_CGROUP_SCHED */
 
@@ -631,7 +631,7 @@ static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false
 
 extern void unregister_rt_sched_group(struct task_group *tg);
 extern void free_rt_sched_group(struct task_group *tg);
-extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent);
+extern 정수 alloc_rt_sched_group(struct task_group *tg, struct task_group *parent);
 
 /*
  * u64_u32_load/u64_u32_store
@@ -642,7 +642,7 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
 #ifdef CONFIG_64BIT
 # define u64_u32_load_copy(var, copy)		var
 # define u64_u32_store_copy(var, copy, val)	(var = val)
-#else
+#아니면
 # define u64_u32_load_copy(var, copy)					\
 ({									\
 	u64 __val, __val_copy;						\
@@ -654,7 +654,7 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
 		 */							\
 		smp_rmb();						\
 		__val = var;						\
-	} while (__val != __val_copy);					\
+	} 동안 (__val != __val_copy);					\
 	__val;								\
 })
 # define u64_u32_store_copy(var, copy, val)				\
@@ -667,7 +667,7 @@ do {									\
 	 */								\
 	smp_wmb();							\
 	copy = __val;							\
-} while (0)
+} 동안 (0)
 #endif
 # define u64_u32_load(var)		u64_u32_load_copy(var, var##_copy)
 # define u64_u32_store(var, val)	u64_u32_store_copy(var, var##_copy, val)
@@ -680,18 +680,18 @@ struct balance_callback {
 /* Fair scheduling SCHED_{NORMAL,BATCH,IDLE} related fields in a runqueue: */
 struct cfs_rq {
 	struct load_weight	load;
-	unsigned int		nr_queued;
-	unsigned int		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_idle;		/* SCHED_IDLE */
+	unsigned 정수		nr_queued;
+	unsigned 정수		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	unsigned 정수		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	unsigned 정수		h_nr_idle;		/* SCHED_IDLE */
 
 	s64			sum_w_vruntime;
 	u64			sum_weight;
 	u64			zero_vruntime;
-	unsigned int		sum_shift;
+	unsigned 정수		sum_shift;
 
 #ifdef CONFIG_SCHED_CORE
-	unsigned int		forceidle_seq;
+	unsigned 정수		forceidle_seq;
 	u64			zero_vruntime_fi;
 #endif
 
@@ -714,7 +714,7 @@ struct cfs_rq {
 #endif
 	struct {
 		raw_spinlock_t	lock ____cacheline_aligned;
-		int		nr;
+		정수		nr;
 		unsigned long	load_avg;
 		unsigned long	util_avg;
 		unsigned long	runnable_avg;
@@ -747,15 +747,15 @@ struct cfs_rq {
 	 * leaf_cfs_rq_list ties together list of leaf cfs_rq's in a CPU.
 	 * This list is used during load balance.
 	 */
-	int			on_list;
+	정수			on_list;
 	struct list_head	leaf_cfs_rq_list;
 	struct task_group	*tg;	/* Group that "owns" this runqueue */
 
 	/* Locally cached copy of our task_group's idle value */
-	int			idle;
+	정수			idle;
 
 # ifdef CONFIG_CFS_BANDWIDTH
-	int			runtime_enabled;
+	정수			runtime_enabled;
 	s64			runtime_remaining;
 
 	u64			throttled_pelt_idle;
@@ -769,7 +769,7 @@ struct cfs_rq {
 	u64			throttled_clock_self_time;
 	bool			throttled:1;
 	bool			pelt_clock_throttled:1;
-	int			throttle_count;
+	정수			throttle_count;
 	struct list_head	throttled_list;
 	struct list_head	throttled_csd_list;
 	struct list_head        throttled_limbo_list;
@@ -849,38 +849,38 @@ struct scx_rq {
 };
 #endif /* CONFIG_SCHED_CLASS_EXT */
 
-static inline int rt_bandwidth_enabled(void)
+static inline 정수 rt_bandwidth_enabled(void)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	반환 sysctl_sched_rt_runtime >= 0;
 }
 
 /* RT IPI pull logic requires IRQ_WORK */
-#if defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
+#만약 defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
 # define HAVE_RT_PUSH_IPI
 #endif
 
 /* Real-Time classes' related field in a runqueue: */
 struct rt_rq {
 	struct rt_prio_array	active;
-	unsigned int		rt_nr_running;
-	unsigned int		rr_nr_running;
+	unsigned 정수		rt_nr_running;
+	unsigned 정수		rr_nr_running;
 	struct {
-		int		curr; /* highest queued rt task prio */
-		int		next; /* next highest */
+		정수		curr; /* highest queued rt task prio */
+		정수		next; /* next highest */
 	} highest_prio;
 	bool			overloaded;
 	struct plist_head	pushable_tasks;
 
-	int			rt_queued;
+	정수			rt_queued;
 
 #ifdef CONFIG_RT_GROUP_SCHED
-	int			rt_throttled;
+	정수			rt_throttled;
 	u64			rt_time; /* consumed RT time, goes up in update_curr_rt */
 	u64			rt_runtime; /* allotted RT time, "slice" from rt_bandwidth, RT sharing/balancing */
 	/* Nests inside the rq lock: */
 	raw_spinlock_t		rt_runtime_lock;
 
-	unsigned int		rt_nr_boosted;
+	unsigned 정수		rt_nr_boosted;
 
 	struct rq		*rq; /* this is always top-level rq, cache? */
 #endif
@@ -891,7 +891,7 @@ struct rt_rq {
 
 static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
 {
-	return rt_rq->rt_queued && rt_rq->rt_nr_running;
+	반환 rt_rq->rt_queued && rt_rq->rt_nr_running;
 }
 
 /* Deadline class' related fields in a runqueue */
@@ -899,7 +899,7 @@ struct dl_rq {
 	/* runqueue is an rbtree, ordered by deadline */
 	struct rb_root_cached	root;
 
-	unsigned int		dl_nr_running;
+	unsigned 정수		dl_nr_running;
 
 	/*
 	 * Deadline values of the currently executing and the
@@ -962,22 +962,22 @@ struct dl_rq {
 
 static inline void se_update_runnable(struct sched_entity *se)
 {
-	if (!entity_is_task(se))
+	만약 (!entity_is_task(se))
 		se->runnable_weight = se->my_q->h_nr_runnable;
 }
 
 static inline long se_runnable(struct sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	만약 (se->sched_delayed)
+		반환 false;
 
-	if (entity_is_task(se))
-		return !!se->on_rq;
-	else
-		return se->runnable_weight;
+	만약 (entity_is_task(se))
+		반환 !!se->on_rq;
+	아니면
+		반환 se->runnable_weight;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#아니면 /* !CONFIG_FAIR_GROUP_SCHED: */
 
 #define entity_is_task(se)	1
 
@@ -985,10 +985,10 @@ static inline void se_update_runnable(struct sched_entity *se) { }
 
 static inline long se_runnable(struct sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	만약 (se->sched_delayed)
+		반환 false;
 
-	return !!se->on_rq;
+	반환 !!se->on_rq;
 }
 
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
@@ -998,13 +998,13 @@ static inline long se_runnable(struct sched_entity *se)
  */
 static inline long se_weight(struct sched_entity *se)
 {
-	return scale_load_down(se->load.weight);
+	반환 scale_load_down(se->load.weight);
 }
 
 
-static inline bool sched_asym_prefer(int a, int b)
+static inline bool sched_asym_prefer(정수 a, 정수 b)
 {
-	return arch_asym_cpu_priority(a) > arch_asym_cpu_priority(b);
+	반환 arch_asym_cpu_priority(a) > arch_asym_cpu_priority(b);
 }
 
 struct perf_domain {
@@ -1063,8 +1063,8 @@ struct root_domain {
 	struct irq_work		rto_push_work;
 	raw_spinlock_t		rto_lock;
 	/* These are only updated and read within rto_lock */
-	int			rto_loop;
-	int			rto_cpu;
+	정수			rto_loop;
+	정수			rto_cpu;
 	/* These atomics are updated outside of a lock */
 	atomic_t		rto_loop_next;
 	atomic_t		rto_loop_start;
@@ -1084,19 +1084,19 @@ struct root_domain {
 };
 
 extern void init_defrootdomain(void);
-extern int sched_init_domains(const struct cpumask *cpu_map);
+extern 정수 sched_init_domains(const struct cpumask *cpu_map);
 extern void rq_attach_root(struct rq *rq, struct root_domain *rd);
 extern void sched_get_rd(struct root_domain *rd);
 extern void sched_put_rd(struct root_domain *rd);
 
-static inline int get_rd_overloaded(struct root_domain *rd)
+static inline 정수 get_rd_overloaded(struct root_domain *rd)
 {
-	return READ_ONCE(rd->overloaded);
+	반환 READ_ONCE(rd->overloaded);
 }
 
-static inline void set_rd_overloaded(struct root_domain *rd, int status)
+static inline void set_rd_overloaded(struct root_domain *rd, 정수 status)
 {
-	if (get_rd_overloaded(rd) != status)
+	만약 (get_rd_overloaded(rd) != status)
 		WRITE_ONCE(rd->overloaded, status);
 }
 
@@ -1141,7 +1141,7 @@ struct uclamp_bucket {
  * the metrics required to compute all the per-rq utilization clamp values.
  */
 struct uclamp_rq {
-	unsigned int value;
+	unsigned 정수 value;
 	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
 };
 
@@ -1164,17 +1164,17 @@ struct rq {
 	 * line. Even though some of them are frequently modified, they are
 	 * loaded much more frequently than they are stored.
 	 */
-	unsigned int		nr_running;
+	unsigned 정수		nr_running;
 #ifdef CONFIG_NUMA_BALANCING
-	unsigned int		nr_numa_running;
-	unsigned int		nr_preferred_running;
+	unsigned 정수		nr_numa_running;
+	unsigned 정수		nr_preferred_running;
 #endif
-	unsigned int		ttwu_pending;
+	unsigned 정수		ttwu_pending;
 	unsigned long		cpu_capacity;
 #ifdef CONFIG_SCHED_PROXY_EXEC
 	struct task_struct __rcu	*donor;  /* Scheduling context */
 	struct task_struct __rcu	*curr;   /* Execution context */
-#else
+#아니면
 	union {
 		struct task_struct __rcu *donor; /* Scheduler context */
 		struct task_struct __rcu *curr;  /* Execution context */
@@ -1193,9 +1193,9 @@ struct rq {
 	raw_spinlock_t		__lock;
 
 #ifdef CONFIG_NO_HZ_COMMON
-	unsigned int		nohz_tick_stopped;
+	unsigned 정수		nohz_tick_stopped;
 	atomic_t		nohz_flags;
-	unsigned int		has_blocked_load;
+	unsigned 정수		has_blocked_load;
 	unsigned long		last_blocked_load_update_tick;
 	call_single_data_t	nohz_csd;
 #endif /* CONFIG_NO_HZ_COMMON */
@@ -1203,7 +1203,7 @@ struct rq {
 #ifdef CONFIG_UCLAMP_TASK
 	/* Utilization clamp values based on CPU's RUNNABLE tasks */
 	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
-	unsigned int		uclamp_flags;
+	unsigned 정수		uclamp_flags;
 #define UCLAMP_FLAG_IDLE 0x01
 #endif
 
@@ -1230,12 +1230,12 @@ struct rq {
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 
 #ifdef CONFIG_NUMA_BALANCING
-	unsigned int		numa_migrate_on;
+	unsigned 정수		numa_migrate_on;
 #endif
 
 #ifdef CONFIG_SCHED_CACHE
-	unsigned int		nr_pref_llc_running;
-	unsigned int		nr_llc_running;
+	unsigned 정수		nr_pref_llc_running;
+	unsigned 정수		nr_llc_running;
 #endif
 
 	/*
@@ -1260,7 +1260,7 @@ struct rq {
 	u64			clock_pelt;
 	u64			clock;
 	unsigned long		lost_idle_time;
-	unsigned int		clock_update_flags;
+	unsigned 정수		clock_update_flags;
 	u64			clock_pelt_idle;
 	u64			clock_idle;
 
@@ -1270,10 +1270,10 @@ struct rq {
 #endif
 
 	u64 last_seen_need_resched_ns;
-	int ticks_without_resched;
+	정수 ticks_without_resched;
 
 #ifdef CONFIG_MEMBARRIER
-	int membarrier_state;
+	정수 membarrier_state;
 #endif
 
 	struct root_domain		*rd;
@@ -1287,13 +1287,13 @@ struct rq {
 	unsigned long		misfit_task_load;
 
 	/* For active balancing */
-	int			active_balance;
-	int			push_cpu;
+	정수			active_balance;
+	정수			push_cpu;
 	struct cpu_stop_work	active_balance_work;
 
 	/* CPU of this runqueue: */
-	int			cpu;
-	int			online;
+	정수			cpu;
+	정수			online;
 
 	struct list_head cfs_tasks;
 
@@ -1338,7 +1338,7 @@ struct rq {
 	struct hrtimer		hrtick_timer;
 	ktime_t			hrtick_time;
 	ktime_t			hrtick_delay;
-	unsigned int		hrtick_sched;
+	unsigned 정수		hrtick_sched;
 #endif
 
 #ifdef CONFIG_SCHEDSTATS
@@ -1347,15 +1347,15 @@ struct rq {
 	unsigned long long	rq_cpu_time;
 
 	/* sys_sched_yield() stats */
-	unsigned int		yld_count;
+	unsigned 정수		yld_count;
 
 	/* schedule() stats */
-	unsigned int		sched_count;
-	unsigned int		sched_goidle;
+	unsigned 정수		sched_count;
+	unsigned 정수		sched_goidle;
 
 	/* try_to_wake_up() stats */
-	unsigned int		ttwu_count;
-	unsigned int		ttwu_local;
+	unsigned 정수		ttwu_count;
+	unsigned 정수		ttwu_local;
 #endif
 
 #ifdef CONFIG_CPU_IDLE
@@ -1363,8 +1363,8 @@ struct rq {
 	struct cpuidle_state	*idle_state;
 #endif
 
-	unsigned int		nr_pinned;
-	unsigned int		push_busy;
+	unsigned 정수		nr_pinned;
+	unsigned 정수		push_busy;
 	struct cpu_stop_work	push_work;
 
 #ifdef CONFIG_SCHED_CORE
@@ -1372,18 +1372,18 @@ struct rq {
 	struct rq		*core;
 	struct task_struct	*core_pick;
 	struct sched_dl_entity	*core_dl_server;
-	unsigned int		core_enabled;
+	unsigned 정수		core_enabled;
 	struct rb_root		core_tree;
 
 	/* shared state -- careful with sched_core_cpu_deactivate() */
-	unsigned int		core_task_seq;
-	unsigned int		core_pick_seq;
+	unsigned 정수		core_task_seq;
+	unsigned 정수		core_pick_seq;
 	unsigned long		core_cookie;
-	unsigned int		core_forceidle_count;
-	unsigned int		core_forceidle_seq;
-	unsigned int		core_forceidle_occupation;
+	unsigned 정수		core_forceidle_count;
+	unsigned 정수		core_forceidle_seq;
+	unsigned 정수		core_forceidle_occupation;
 	u64			core_forceidle_start;
-	unsigned int		core_pick_in_flight;
+	unsigned 정수		core_pick_in_flight;
 #endif /* CONFIG_SCHED_CORE */
 
 	/* Scratch cpumask to be temporarily used under rq_lock */
@@ -1402,27 +1402,27 @@ struct rq {
 /* CPU runqueue to which this cfs_rq is attached */
 static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
 {
-	return cfs_rq->rq;
+	반환 cfs_rq->rq;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#아니면 /* !CONFIG_FAIR_GROUP_SCHED: */
 
 static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
 {
-	return container_of(cfs_rq, struct rq, cfs);
+	반환 container_of(cfs_rq, struct rq, cfs);
 }
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-static inline int cpu_of(struct rq *rq)
+static inline 정수 cpu_of(struct rq *rq)
 {
-	return rq->cpu;
+	반환 rq->cpu;
 }
 
 #define MDF_PUSH		0x01
 
 static inline bool is_migration_disabled(struct task_struct *p)
 {
-	return p->migration_disabled;
+	반환 p->migration_disabled;
 }
 
 DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
@@ -1430,12 +1430,12 @@ DECLARE_PER_CPU(struct rnd_state, sched_rnd_state);
 
 static inline u32 sched_rng(void)
 {
-	return prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
+	반환 prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
 }
 
 static __always_inline struct rq *__this_rq(void)
 {
-	return this_cpu_ptr(&runqueues);
+	반환 this_cpu_ptr(&runqueues);
 }
 
 #define cpu_rq(cpu)		(&per_cpu(runqueues, (cpu)))
@@ -1446,7 +1446,7 @@ static __always_inline struct rq *__this_rq(void)
 
 static inline bool idle_rq(struct rq *rq)
 {
-	return rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
+	반환 rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
 }
 
 /**
@@ -1455,15 +1455,15 @@ static inline bool idle_rq(struct rq *rq)
  *
  * Return: 1 if the CPU is currently idle. 0 otherwise.
  */
-static inline bool available_idle_cpu(int cpu)
+static inline bool available_idle_cpu(정수 cpu)
 {
-	if (!idle_rq(cpu_rq(cpu)))
-		return 0;
+	만약 (!idle_rq(cpu_rq(cpu)))
+		반환 0;
 
-	if (vcpu_is_preempted(cpu))
-		return 0;
+	만약 (vcpu_is_preempted(cpu))
+		반환 0;
 
-	return 1;
+	반환 1;
 }
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
@@ -1471,7 +1471,7 @@ static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
 {
 	rcu_assign_pointer(rq->donor, t);
 }
-#else
+#아니면
 static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
 {
 	/* Do nothing */
@@ -1485,12 +1485,12 @@ DECLARE_STATIC_KEY_FALSE(__sched_core_enabled);
 
 static inline bool sched_core_enabled(struct rq *rq)
 {
-	return static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
+	반환 static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
 }
 
 static inline bool sched_core_disabled(void)
 {
-	return !static_branch_unlikely(&__sched_core_enabled);
+	반환 !static_branch_unlikely(&__sched_core_enabled);
 }
 
 /*
@@ -1499,19 +1499,19 @@ static inline bool sched_core_disabled(void)
  */
 static inline raw_spinlock_t *rq_lockp(struct rq *rq)
 {
-	if (sched_core_enabled(rq))
-		return &rq->core->__lock;
+	만약 (sched_core_enabled(rq))
+		반환 &rq->core->__lock;
 
-	return &rq->__lock;
+	반환 &rq->__lock;
 }
 
 static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	if (rq->core_enabled)
-		return &rq->core->__lock;
+	만약 (rq->core_enabled)
+		반환 &rq->core->__lock;
 
-	return &rq->__lock;
+	반환 &rq->__lock;
 }
 
 extern bool
@@ -1528,26 +1528,26 @@ extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_f
 static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
 {
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	만약 (!sched_core_enabled(rq))
+		반환 true;
 
-	return rq->core->core_cookie == p->core_cookie;
+	반환 rq->core->core_cookie == p->core_cookie;
 }
 
 static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
 {
 	bool idle_core = true;
-	int cpu;
+	정수 cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	만약 (!sched_core_enabled(rq))
+		반환 true;
 
-	if (rq->core->core_cookie == p->core_cookie)
-		return true;
+	만약 (rq->core->core_cookie == p->core_cookie)
+		반환 true;
 
 	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
-		if (!available_idle_cpu(cpu)) {
+		만약 (!available_idle_cpu(cpu)) {
 			idle_core = false;
 			break;
 		}
@@ -1557,88 +1557,88 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
 	 * A CPU in an idle core is always the best choice for tasks with
 	 * cookies.
 	 */
-	return idle_core;
+	반환 idle_core;
 }
 
 static inline bool sched_group_cookie_match(struct rq *rq,
 					    struct task_struct *p,
 					    struct sched_group *group)
 {
-	int cpu;
+	정수 cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	만약 (!sched_core_enabled(rq))
+		반환 true;
 
 	for_each_cpu_and(cpu, sched_group_span(group), p->cpus_ptr) {
-		if (sched_core_cookie_match(cpu_rq(cpu), p))
-			return true;
+		만약 (sched_core_cookie_match(cpu_rq(cpu), p))
+			반환 true;
 	}
-	return false;
+	반환 false;
 }
 
 static inline bool sched_core_enqueued(struct task_struct *p)
 {
-	return !RB_EMPTY_NODE(&p->core_node);
+	반환 !RB_EMPTY_NODE(&p->core_node);
 }
 
 extern void sched_core_enqueue(struct rq *rq, struct task_struct *p);
-extern void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags);
+extern void sched_core_dequeue(struct rq *rq, struct task_struct *p, 정수 flags);
 
 extern void sched_core_get(void);
 extern void sched_core_put(void);
 
 static inline bool task_has_sched_core(struct task_struct *p)
 {
-	if (sched_core_disabled())
-		return false;
+	만약 (sched_core_disabled())
+		반환 false;
 
-	return !!p->core_cookie;
+	반환 !!p->core_cookie;
 }
 
-#else /* !CONFIG_SCHED_CORE: */
+#아니면 /* !CONFIG_SCHED_CORE: */
 
 static inline bool sched_core_enabled(struct rq *rq)
 {
-	return false;
+	반환 false;
 }
 
 static inline bool sched_core_disabled(void)
 {
-	return true;
+	반환 true;
 }
 
 static inline raw_spinlock_t *rq_lockp(struct rq *rq)
 {
-	return &rq->__lock;
+	반환 &rq->__lock;
 }
 
 static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	return &rq->__lock;
+	반환 &rq->__lock;
 }
 
 static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
 {
-	return true;
+	반환 true;
 }
 
 static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
 {
-	return true;
+	반환 true;
 }
 
 static inline bool sched_group_cookie_match(struct rq *rq,
 					    struct task_struct *p,
 					    struct sched_group *group)
 {
-	return true;
+	반환 true;
 }
 
 static inline bool task_has_sched_core(struct task_struct *p)
 {
-	return false;
+	반환 false;
 }
 
 #endif /* !CONFIG_SCHED_CORE */
@@ -1648,16 +1648,16 @@ static inline bool task_has_sched_core(struct task_struct *p)
 DECLARE_STATIC_KEY_FALSE(rt_group_sched);
 static inline bool rt_group_sched_enabled(void)
 {
-	return static_branch_unlikely(&rt_group_sched);
+	반환 static_branch_unlikely(&rt_group_sched);
 }
-# else /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
+# 아니면 /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
 DECLARE_STATIC_KEY_TRUE(rt_group_sched);
 static inline bool rt_group_sched_enabled(void)
 {
-	return static_branch_likely(&rt_group_sched);
+	반환 static_branch_likely(&rt_group_sched);
 }
 # endif /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED */
-#else /* !CONFIG_RT_GROUP_SCHED: */
+#아니면 /* !CONFIG_RT_GROUP_SCHED: */
 # define rt_group_sched_enabled()	false
 #endif /* !CONFIG_RT_GROUP_SCHED */
 
@@ -1667,7 +1667,7 @@ static inline void lockdep_assert_rq_held(struct rq *rq)
 	lockdep_assert_held(__rq_lockp(rq));
 }
 
-extern void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
+extern void raw_spin_rq_lock_nested(struct rq *rq, 정수 subclass)
 	__acquires(__rq_lockp(rq));
 
 extern bool raw_spin_rq_trylock(struct rq *rq)
@@ -1707,7 +1707,7 @@ static inline unsigned long _raw_spin_rq_lock_irqsave(struct rq *rq)
 	local_irq_save(flags);
 	raw_spin_rq_lock(rq);
 
-	return flags;
+	반환 flags;
 }
 
 static inline void raw_spin_rq_unlock_irqrestore(struct rq *rq, unsigned long flags)
@@ -1720,13 +1720,13 @@ static inline void raw_spin_rq_unlock_irqrestore(struct rq *rq, unsigned long fl
 #define raw_spin_rq_lock_irqsave(rq, flags)	\
 do {						\
 	flags = _raw_spin_rq_lock_irqsave(rq);	\
-} while (0)
+} 동안 (0)
 
 extern void __update_idle_core(struct rq *rq);
 
 static inline void update_idle_core(struct rq *rq)
 {
-	if (sched_smt_active())
+	만약 (sched_smt_active())
 		__update_idle_core(rq);
 }
 
@@ -1734,33 +1734,33 @@ static inline void update_idle_core(struct rq *rq)
 static inline struct task_struct *task_of(struct sched_entity *se)
 {
 	WARN_ON_ONCE(!entity_is_task(se));
-	return container_of(se, struct task_struct, se);
+	반환 container_of(se, struct task_struct, se);
 }
 
 static inline struct cfs_rq *task_cfs_rq(struct task_struct *p)
 {
-	return p->se.cfs_rq;
+	반환 p->se.cfs_rq;
 }
 
 /* runqueue on which this entity is (to be) queued */
 static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
 {
-	return se->cfs_rq;
+	반환 se->cfs_rq;
 }
 
 /* runqueue "owned" by this group */
 static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
 {
-	return grp->my_q;
+	반환 grp->my_q;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#아니면 /* !CONFIG_FAIR_GROUP_SCHED: */
 
 #define task_of(_se)		container_of(_se, struct task_struct, se)
 
 static inline struct cfs_rq *task_cfs_rq(const struct task_struct *p)
 {
-	return &task_rq(p)->cfs;
+	반환 &task_rq(p)->cfs;
 }
 
 static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
@@ -1768,13 +1768,13 @@ static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
 	const struct task_struct *p = task_of(se);
 	struct rq *rq = task_rq(p);
 
-	return &rq->cfs;
+	반환 &rq->cfs;
 }
 
 /* runqueue "owned" by this group */
 static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
 {
-	return NULL;
+	반환 NULL;
 }
 
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
@@ -1823,7 +1823,7 @@ static inline u64 rq_clock(struct rq *rq)
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock;
+	반환 rq->clock;
 }
 
 static inline u64 rq_clock_task(struct rq *rq)
@@ -1831,7 +1831,7 @@ static inline u64 rq_clock_task(struct rq *rq)
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_task;
+	반환 rq->clock_task;
 }
 
 static inline void rq_clock_skip_update(struct rq *rq)
@@ -1880,7 +1880,7 @@ struct rq_flags {
 	 * current pin context is stashed here in case it needs to be
 	 * restored in rq_repin_lock().
 	 */
-	unsigned int clock_update_flags;
+	unsigned 정수 clock_update_flags;
 };
 
 extern struct balance_callback balance_push_callback;
@@ -1896,20 +1896,20 @@ DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
 
 static inline void scx_rq_clock_update(struct rq *rq, u64 clock)
 {
-	if (!scx_enabled())
-		return;
+	만약 (!scx_enabled())
+		반환;
 	WRITE_ONCE(rq->scx.clock, clock);
 	smp_store_release(&rq->scx.flags, rq->scx.flags | SCX_RQ_CLK_VALID);
 }
 
 static inline void scx_rq_clock_invalidate(struct rq *rq)
 {
-	if (!scx_enabled())
-		return;
+	만약 (!scx_enabled())
+		반환;
 	WRITE_ONCE(rq->scx.flags, rq->scx.flags & ~SCX_RQ_CLK_VALID);
 }
 
-#else /* !CONFIG_SCHED_CLASS_EXT: */
+#아니면 /* !CONFIG_SCHED_CLASS_EXT: */
 #define scx_enabled()		false
 #define scx_switched_all()	false
 
@@ -1945,7 +1945,7 @@ static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
 
 static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
 {
-	if (rq->clock_update_flags > RQCF_ACT_SKIP)
+	만약 (rq->clock_update_flags > RQCF_ACT_SKIP)
 		rf->clock_update_flags = RQCF_UPDATED;
 
 	scx_rq_clock_invalidate(rq);
@@ -2085,7 +2085,7 @@ static inline struct rq *_this_rq_lock_irq(struct rq_flags *rf) __acquires_ret
 	rq = this_rq();
 	rq_lock(rq, rf);
 
-	return rq;
+	반환 rq;
 }
 
 #ifdef CONFIG_NUMA
@@ -2097,24 +2097,24 @@ enum numa_topology_type {
 };
 
 extern enum numa_topology_type sched_numa_topology_type;
-extern int sched_max_numa_distance;
-extern bool find_numa_distance(int distance);
-extern void sched_init_numa(int offline_node);
-extern void sched_update_numa(int cpu, bool online);
-extern void sched_domains_numa_masks_set(unsigned int cpu);
-extern void sched_domains_numa_masks_clear(unsigned int cpu);
-extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
+extern 정수 sched_max_numa_distance;
+extern bool find_numa_distance(정수 distance);
+extern void sched_init_numa(정수 offline_node);
+extern void sched_update_numa(정수 cpu, bool online);
+extern void sched_domains_numa_masks_set(unsigned 정수 cpu);
+extern void sched_domains_numa_masks_clear(unsigned 정수 cpu);
+extern 정수 sched_numa_find_closest(const struct cpumask *cpus, 정수 cpu);
 
-#else /* !CONFIG_NUMA: */
+#아니면 /* !CONFIG_NUMA: */
 
-static inline void sched_init_numa(int offline_node) { }
-static inline void sched_update_numa(int cpu, bool online) { }
-static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
-static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
+static inline void sched_init_numa(정수 offline_node) { }
+static inline void sched_update_numa(정수 cpu, bool online) { }
+static inline void sched_domains_numa_masks_set(unsigned 정수 cpu) { }
+static inline void sched_domains_numa_masks_clear(unsigned 정수 cpu) { }
 
-static inline int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
+static inline 정수 sched_numa_find_closest(const struct cpumask *cpus, 정수 cpu)
 {
-	return nr_cpu_ids;
+	반환 nr_cpu_ids;
 }
 
 #endif /* !CONFIG_NUMA */
@@ -2129,13 +2129,13 @@ enum numa_faults_stats {
 	NUMA_CPUBUF
 };
 
-extern void sched_setnuma(struct task_struct *p, int node);
-extern int migrate_task_to(struct task_struct *p, int cpu);
-extern int migrate_swap(struct task_struct *p, struct task_struct *t,
-			int cpu, int scpu);
+extern void sched_setnuma(struct task_struct *p, 정수 node);
+extern 정수 migrate_task_to(struct task_struct *p, 정수 cpu);
+extern 정수 migrate_swap(struct task_struct *p, struct task_struct *t,
+			정수 cpu, 정수 scpu);
 extern void init_numa_balancing(u64 clone_flags, struct task_struct *p);
 
-#else /* !CONFIG_NUMA_BALANCING: */
+#아니면 /* !CONFIG_NUMA_BALANCING: */
 
 static inline void
 init_numa_balancing(u64 clone_flags, struct task_struct *p)
@@ -2144,7 +2144,7 @@ init_numa_balancing(u64 clone_flags, struct task_struct *p)
 
 #endif /* !CONFIG_NUMA_BALANCING */
 
-int task_llc(const struct task_struct *p);
+정수 task_llc(const struct task_struct *p);
 
 static inline void
 queue_balance_callback(struct rq *rq,
@@ -2158,8 +2158,8 @@ queue_balance_callback(struct rq *rq,
 	 * balance_push() is active, see the comment with
 	 * balance_push_callback.
 	 */
-	if (unlikely(head->next || rq->balance_callback == &balance_push_callback))
-		return;
+	만약 (unlikely(head->next || rq->balance_callback == &balance_push_callback))
+		반환;
 
 	head->func = func;
 	head->next = rq->balance_callback;
@@ -2177,12 +2177,12 @@ queue_balance_callback(struct rq *rq,
  * preempt-disabled sections.
  */
 #define for_each_domain(cpu, __sd) \
-	for (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
+	위해 (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
 			__sd; __sd = __sd->parent)
 
 /* A mask of all the SD flags that have the SDF_SHARED_CHILD metaflag */
 #define SD_FLAG(name, mflags) (name * !!((mflags) & SDF_SHARED_CHILD)) |
-static const unsigned int SD_SHARED_CHILD_MASK =
+static const unsigned 정수 SD_SHARED_CHILD_MASK =
 #include <linux/sched/sd_flags.h>
 0;
 #undef SD_FLAG
@@ -2197,12 +2197,12 @@ static const unsigned int SD_SHARED_CHILD_MASK =
  * Returns the highest sched_domain of a CPU which contains @flag. If @flag has
  * the SDF_SHARED_CHILD metaflag, all the children domains also have @flag.
  */
-static inline struct sched_domain *highest_flag_domain(int cpu, int flag)
+static inline struct sched_domain *highest_flag_domain(정수 cpu, 정수 flag)
 {
 	struct sched_domain *sd, *hsd = NULL;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag) {
+		만약 (sd->flags & flag) {
 			hsd = sd;
 			continue;
 		}
@@ -2211,29 +2211,29 @@ static inline struct sched_domain *highest_flag_domain(int cpu, int flag)
 		 * Stop the search if @flag is known to be shared at lower
 		 * levels. It will not be found further up.
 		 */
-		if (flag & SD_SHARED_CHILD_MASK)
+		만약 (flag & SD_SHARED_CHILD_MASK)
 			break;
 	}
 
-	return hsd;
+	반환 hsd;
 }
 
-static inline struct sched_domain *lowest_flag_domain(int cpu, int flag)
+static inline struct sched_domain *lowest_flag_domain(정수 cpu, 정수 flag)
 {
 	struct sched_domain *sd;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag)
+		만약 (sd->flags & flag)
 			break;
 	}
 
-	return sd;
+	반환 sd;
 }
 
 DECLARE_PER_CPU(struct sched_domain __rcu *, sd_llc);
-DECLARE_PER_CPU(int, sd_llc_size);
-DECLARE_PER_CPU(int, sd_llc_id);
-DECLARE_PER_CPU(int, sd_share_id);
+DECLARE_PER_CPU(정수, sd_llc_size);
+DECLARE_PER_CPU(정수, sd_llc_id);
+DECLARE_PER_CPU(정수, sd_share_id);
 DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
 DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_balance_shared);
 DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);
@@ -2245,7 +2245,7 @@ extern struct static_key_false sched_cluster_active;
 
 static __always_inline bool sched_asym_cpucap_active(void)
 {
-	return static_branch_unlikely(&sched_asym_cpucapacity);
+	반환 static_branch_unlikely(&sched_asym_cpucapacity);
 }
 
 struct sched_group_capacity {
@@ -2258,9 +2258,9 @@ struct sched_group_capacity {
 	unsigned long		min_capacity;		/* Min per-CPU capacity in group */
 	unsigned long		max_capacity;		/* Max per-CPU capacity in group */
 	unsigned long		next_update;
-	int			imbalance;		/* XXX unrelated to capacity but shared group state */
+	정수			imbalance;		/* XXX unrelated to capacity but shared group state */
 
-	int			id;
+	정수			id;
 
 	unsigned long		cpumask[];		/* Balance mask */
 };
@@ -2269,11 +2269,11 @@ struct sched_group {
 	struct sched_group	*next;			/* Must be a circular list */
 	atomic_t		ref;
 
-	unsigned int		group_weight;
-	unsigned int		cores;
+	unsigned 정수		group_weight;
+	unsigned 정수		cores;
 	struct sched_group_capacity *sgc;
-	int			asym_prefer_cpu;	/* CPU of highest priority in group */
-	int			flags;
+	정수			asym_prefer_cpu;	/* CPU of highest priority in group */
+	정수			flags;
 
 	/*
 	 * The CPUs this group covers.
@@ -2287,7 +2287,7 @@ struct sched_group {
 
 static inline struct cpumask *sched_group_span(struct sched_group *sg)
 {
-	return to_cpumask(sg->cpumask);
+	반환 to_cpumask(sg->cpumask);
 }
 
 /*
@@ -2295,21 +2295,21 @@ static inline struct cpumask *sched_group_span(struct sched_group *sg)
  */
 static inline struct cpumask *group_balance_mask(struct sched_group *sg)
 {
-	return to_cpumask(sg->sgc->cpumask);
+	반환 to_cpumask(sg->sgc->cpumask);
 }
 
-extern int group_balance_cpu(struct sched_group *sg);
+extern 정수 group_balance_cpu(struct sched_group *sg);
 
 extern void update_sched_domain_debugfs(void);
-extern void dirty_sched_domain_sysctl(int cpu);
+extern void dirty_sched_domain_sysctl(정수 cpu);
 
-extern int sched_update_scaling(void);
+extern 정수 sched_update_scaling(void);
 
 static inline const struct cpumask *task_user_cpus(struct task_struct *p)
 {
-	if (!p->user_cpus_ptr)
-		return cpu_possible_mask; /* &init_task.cpus_mask */
-	return p->user_cpus_ptr;
+	만약 (!p->user_cpus_ptr)
+		반환 cpu_possible_mask; /* &init_task.cpus_mask */
+	반환 p->user_cpus_ptr;
 }
 
 #ifdef CONFIG_CGROUP_SCHED
@@ -2329,7 +2329,7 @@ static inline const struct cpumask *task_user_cpus(struct task_struct *p)
  */
 static inline struct task_group *task_group(struct task_struct *p)
 {
-	return p->sched_task_group;
+	반환 p->sched_task_group;
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -2344,38 +2344,38 @@ struct cfs_tg_state {
 } __no_randomize_layout;
 
 /* Access a specific CPU's cfs_rq from a task group */
-static inline struct cfs_rq *tg_cfs_rq(struct task_group *tg, int cpu)
+static inline struct cfs_rq *tg_cfs_rq(struct task_group *tg, 정수 cpu)
 {
-	return per_cpu_ptr(tg->cfs_rq, cpu);
+	반환 per_cpu_ptr(tg->cfs_rq, cpu);
 }
 
-static inline struct sched_entity *tg_se(struct task_group *tg, int cpu)
+static inline struct sched_entity *tg_se(struct task_group *tg, 정수 cpu)
 {
 	struct cfs_tg_state *state;
 
-	if (is_root_task_group(tg))
-		return NULL;
+	만약 (is_root_task_group(tg))
+		반환 NULL;
 
 	state = container_of(tg_cfs_rq(tg, cpu), struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	반환 &state->se;
 }
 
 static inline struct sched_entity *cfs_rq_se(struct cfs_rq *cfs_rq)
 {
 	struct cfs_tg_state *state;
 
-	if (is_root_task_group(cfs_rq->tg))
-		return NULL;
+	만약 (is_root_task_group(cfs_rq->tg))
+		반환 NULL;
 
 	state = container_of(cfs_rq, struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	반환 &state->se;
 }
 #endif
 
 /* Change a task's cfs_rq and parent entity if it moves across CPUs/groups */
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
+static inline void set_task_rq(struct task_struct *p, unsigned 정수 cpu)
 {
-#if defined(CONFIG_FAIR_GROUP_SCHED) || defined(CONFIG_RT_GROUP_SCHED)
+#만약 defined(CONFIG_FAIR_GROUP_SCHED) || defined(CONFIG_RT_GROUP_SCHED)
 	struct task_group *tg = task_group(p);
 #endif
 
@@ -2392,25 +2392,25 @@ static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
 	 * root_task_group's rt_rq than switching in rt_rq_of_se()
 	 * Clobbers tg(!)
 	 */
-	if (!rt_group_sched_enabled())
+	만약 (!rt_group_sched_enabled())
 		tg = &root_task_group;
 	p->rt.rt_rq  = tg->rt_rq[cpu];
 	p->rt.parent = tg->rt_se[cpu];
 #endif /* CONFIG_RT_GROUP_SCHED */
 }
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#아니면 /* !CONFIG_CGROUP_SCHED: */
 
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu) { }
+static inline void set_task_rq(struct task_struct *p, unsigned 정수 cpu) { }
 
 static inline struct task_group *task_group(struct task_struct *p)
 {
-	return NULL;
+	반환 NULL;
 }
 
 #endif /* !CONFIG_CGROUP_SCHED */
 
-static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
+static inline void __set_task_cpu(struct task_struct *p, unsigned 정수 cpu)
 {
 	set_task_rq(p, cpu);
 #ifdef CONFIG_SMP
@@ -2444,7 +2444,7 @@ enum {
  * To support run-time toggling of sched features, all the translation units
  * (but core.c) reference the sysctl_sched_features defined in core.c.
  */
-extern __read_mostly unsigned int sysctl_sched_features;
+extern __read_mostly unsigned 정수 sysctl_sched_features;
 
 #ifdef CONFIG_JUMP_LABEL
 
@@ -2460,7 +2460,7 @@ union sched_feat_key {
 static __always_inline bool				\
 static_branch_##name(union sched_feat_key *key) 	\
 {							\
-	return sched_feat_branch_##enabled(key);	\
+	반환 sched_feat_branch_##enabled(key);	\
 }
 
 #include "features.h"
@@ -2469,7 +2469,7 @@ static_branch_##name(union sched_feat_key *key) 	\
 extern union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR];
 #define sched_feat(x) (static_branch_##x(&sched_feat_keys[__SCHED_FEAT_##x]))
 
-#else /* !CONFIG_JUMP_LABEL: */
+#아니면 /* !CONFIG_JUMP_LABEL: */
 
 #define sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
 
@@ -2480,23 +2480,23 @@ extern struct static_key_false sched_schedstats;
 
 static inline u64 global_rt_period(void)
 {
-	return (u64)sysctl_sched_rt_period * NSEC_PER_USEC;
+	반환 (u64)sysctl_sched_rt_period * NSEC_PER_USEC;
 }
 
 static inline u64 global_rt_runtime(void)
 {
-	if (sysctl_sched_rt_runtime < 0)
-		return RUNTIME_INF;
+	만약 (sysctl_sched_rt_runtime < 0)
+		반환 RUNTIME_INF;
 
-	return (u64)sysctl_sched_rt_runtime * NSEC_PER_USEC;
+	반환 (u64)sysctl_sched_rt_runtime * NSEC_PER_USEC;
 }
 
 /*
  * Is p the current execution context?
  */
-static inline int task_current(struct rq *rq, struct task_struct *p)
+static inline 정수 task_current(struct rq *rq, struct task_struct *p)
 {
-	return rq->curr == p;
+	반환 rq->curr == p;
 }
 
 /*
@@ -2505,38 +2505,38 @@ static inline int task_current(struct rq *rq, struct task_struct *p)
  * Note that it might be the current execution context at the same time if
  * rq->curr == rq->donor == p.
  */
-static inline int task_current_donor(struct rq *rq, struct task_struct *p)
+static inline 정수 task_current_donor(struct rq *rq, struct task_struct *p)
 {
-	return rq->donor == p;
+	반환 rq->donor == p;
 }
 
 static inline bool task_is_blocked(struct task_struct *p)
 {
-	if (!sched_proxy_exec())
-		return false;
+	만약 (!sched_proxy_exec())
+		반환 false;
 
-	return !!p->blocked_on;
+	반환 !!p->blocked_on;
 }
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
 void sched_proxy_block_task(struct rq *rq, struct task_struct *p);
-#else
+#아니면
 static inline void sched_proxy_block_task(struct rq *rq, struct task_struct *p) {}
 #endif
 
-static inline int task_on_cpu(struct rq *rq, struct task_struct *p)
+static inline 정수 task_on_cpu(struct rq *rq, struct task_struct *p)
 {
-	return p->on_cpu;
+	반환 p->on_cpu;
 }
 
-static inline int task_on_rq_queued(struct task_struct *p)
+static inline 정수 task_on_rq_queued(struct task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
+	반환 READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
 }
 
-static inline int task_on_rq_migrating(struct task_struct *p)
+static inline 정수 task_on_rq_migrating(struct task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
+	반환 READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
 }
 
 /* Wake flags. The first three directly map to some SD flag value */
@@ -2571,7 +2571,7 @@ static_assert(WF_TTWU == SD_BALANCE_WAKE);
 #define WEIGHT_IDLEPRIO		3
 #define WMULT_IDLEPRIO		1431655765
 
-extern const int		sched_prio_to_weight[40];
+extern const 정수		sched_prio_to_weight[40];
 extern const u32		sched_prio_to_wmult[40];
 
 /*
@@ -2638,7 +2638,7 @@ extern const u32		sched_prio_to_wmult[40];
 struct affinity_context {
 	const struct cpumask	*new_mask;
 	struct cpumask		*user_mask;
-	unsigned int		flags;
+	unsigned 정수		flags;
 };
 
 extern s64 update_curr_common(struct rq *rq);
@@ -2652,7 +2652,7 @@ enum snt_e {
 struct sched_class {
 
 #ifdef CONFIG_UCLAMP_TASK
-	int uclamp_enabled;
+	정수 uclamp_enabled;
 #endif
 
 	/*
@@ -2663,7 +2663,7 @@ struct sched_class {
 	 * proxy_task_current: rq->lock
 	 * sched_change_end
 	 */
-	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
+	void (*enqueue_task) (struct rq *rq, struct task_struct *p, 정수 flags);
 	/*
 	 * move_queued_task/deactivate_task/dequeue_task: rq->lock
 	 * __schedule/block_task/dequeue_task: rq->lock
@@ -2671,7 +2671,7 @@ struct sched_class {
 	 * wait_task_inactive: task_rq_lock
 	 * sched_change_begin
 	 */
-	bool (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
+	bool (*dequeue_task) (struct rq *rq, struct task_struct *p, 정수 flags);
 
 	/*
 	 * do_sched_yield: rq->lock
@@ -2689,12 +2689,12 @@ struct sched_class {
 	 * ttwu_runnable: task_rq_lock
 	 * wake_up_new_task: task_rq_lock
 	 */
-	void (*wakeup_preempt)(struct rq *rq, struct task_struct *p, int flags);
+	void (*wakeup_preempt)(struct rq *rq, struct task_struct *p, 정수 flags);
 
 	/*
 	 * schedule/pick_next_task/prev_balance: rq->lock
 	 */
-	int (*balance)(struct rq *rq, struct rq_flags *rf);
+	정수 (*balance)(struct rq *rq, struct rq_flags *rf);
 
 	/*
 	 * schedule/pick_next_task: rq->lock
@@ -2712,12 +2712,12 @@ struct sched_class {
 	 * select_task_rq: p->pi_lock
 	 * sched_exec: p->pi_lock
 	 */
-	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int flags);
+	정수  (*select_task_rq)(struct task_struct *p, 정수 task_cpu, 정수 flags);
 
 	/*
 	 * set_task_cpu: p->pi_lock || rq->lock (ttwu like)
 	 */
-	void (*migrate_task_rq)(struct task_struct *p, int new_cpu);
+	void (*migrate_task_rq)(struct task_struct *p, 정수 new_cpu);
 
 	/*
 	 * ttwu_do_activate: rq->lock
@@ -2746,7 +2746,7 @@ struct sched_class {
 	 * sched_tick: rq->lock
 	 * sched_tick_remote: rq->lock
 	 */
-	void (*task_tick)(struct rq *rq, struct task_struct *p, int queued);
+	void (*task_tick)(struct rq *rq, struct task_struct *p, 정수 queued);
 	/*
 	 * sched_cgroup_fork: p->pi_lock
 	 */
@@ -2777,7 +2777,7 @@ struct sched_class {
 	/*
 	 * sched_rr_get_interval: task_rq_lock
 	 */
-	unsigned int (*get_rr_interval)(struct rq *rq,
+	unsigned 정수 (*get_rr_interval)(struct rq *rq,
 					struct task_struct *task);
 
 	/*
@@ -2797,7 +2797,7 @@ struct sched_class {
 	 * pick_next_task: rq->lock
 	 * try_steal_cookie: rq->lock (double)
 	 */
-	int (*task_is_throttled)(struct task_struct *p, int cpu);
+	정수 (*task_is_throttled)(struct task_struct *p, 정수 cpu);
 #endif
 };
 
@@ -2830,9 +2830,9 @@ static inline void put_prev_set_next_task(struct rq *rq,
 
 	__put_prev_set_next_dl_server(rq, prev, next);
 
-	if (next == prev) {
+	만약 (next == prev) {
 		next->sched_class->set_next_task(rq, next, SNT_REPICK);
-		return;
+		반환;
 	}
 
 	prev->sched_class->put_prev_task(rq, prev, next);
@@ -2872,22 +2872,22 @@ static inline const struct sched_class *next_active_class(const struct sched_cla
 {
 	class++;
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (scx_switched_all() && class == &fair_sched_class)
+	만약 (scx_switched_all() && class == &fair_sched_class)
 		class++;
-	if (!scx_enabled() && class == &ext_sched_class)
+	만약 (!scx_enabled() && class == &ext_sched_class)
 		class++;
 #endif
-	return class;
+	반환 class;
 }
 
 #define for_class_range(class, _from, _to) \
-	for (class = (_from); class < (_to); class++)
+	위해 (class = (_from); class < (_to); class++)
 
 #define for_each_class(class) \
 	for_class_range(class, __sched_class_highest, __sched_class_lowest)
 
 #define for_active_class_range(class, _from, _to)				\
-	for (class = (_from); class != (_to); class = next_active_class(class))
+	위해 (class = (_from); class != (_to); class = next_active_class(class))
 
 #define for_each_active_class(class)						\
 	for_active_class_range(class, __sched_class_highest, __sched_class_lowest)
@@ -2896,33 +2896,33 @@ static inline const struct sched_class *next_active_class(const struct sched_cla
 
 static inline void rq_modified_begin(struct rq *rq, const struct sched_class *class)
 {
-	if (sched_class_above(rq->next_class, class))
+	만약 (sched_class_above(rq->next_class, class))
 		rq->next_class = class;
 }
 
 static inline bool rq_modified_above(struct rq *rq, const struct sched_class *class)
 {
-	return sched_class_above(rq->next_class, class);
+	반환 sched_class_above(rq->next_class, class);
 }
 
 static inline bool sched_stop_runnable(struct rq *rq)
 {
-	return rq->stop && task_on_rq_queued(rq->stop);
+	반환 rq->stop && task_on_rq_queued(rq->stop);
 }
 
 static inline bool sched_dl_runnable(struct rq *rq)
 {
-	return rq->dl.dl_nr_running > 0;
+	반환 rq->dl.dl_nr_running > 0;
 }
 
 static inline bool sched_rt_runnable(struct rq *rq)
 {
-	return rq->rt.rt_queued > 0;
+	반환 rq->rt.rt_queued > 0;
 }
 
 static inline bool sched_fair_runnable(struct rq *rq)
 {
-	return rq->cfs.nr_queued > 0;
+	반환 rq->cfs.nr_queued > 0;
 }
 
 extern struct task_struct *pick_task_fair(struct rq *rq, struct rq_flags *rf);
@@ -2933,34 +2933,34 @@ extern struct task_struct *pick_task_idle(struct rq *rq, struct rq_flags *rf);
 #define SCA_MIGRATE_ENABLE	0x04
 #define SCA_USER		0x08
 
-extern void update_group_capacity(struct sched_domain *sd, int cpu);
+extern void update_group_capacity(struct sched_domain *sd, 정수 cpu);
 
 extern void sched_balance_trigger(struct rq *rq);
 
-extern int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx);
+extern 정수 __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx);
 extern void set_cpus_allowed_common(struct task_struct *p, struct affinity_context *ctx);
 
-static inline bool task_allowed_on_cpu(struct task_struct *p, int cpu)
+static inline bool task_allowed_on_cpu(struct task_struct *p, 정수 cpu)
 {
 	/* When not in the task's cpumask, no point in looking further. */
-	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-		return false;
+	만약 (!cpumask_test_cpu(cpu, p->cpus_ptr))
+		반환 false;
 
 	/* Can @cpu run a user thread? */
-	if (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
-		return false;
+	만약 (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
+		반환 false;
 
-	return true;
+	반환 true;
 }
 
-static inline cpumask_t *alloc_user_cpus_ptr(int node)
+static inline cpumask_t *alloc_user_cpus_ptr(정수 node)
 {
 	/*
 	 * See set_cpus_allowed_force() above for the rcu_head usage.
 	 */
-	int size = max_t(int, cpumask_size(), sizeof(struct rcu_head));
+	정수 size = max_t(정수, cpumask_size(), sizeof(struct rcu_head));
 
-	return kmalloc_node(size, GFP_KERNEL, node);
+	반환 kmalloc_node(size, GFP_KERNEL, node);
 }
 
 static inline struct task_struct *get_push_task(struct rq *rq)
@@ -2969,20 +2969,20 @@ static inline struct task_struct *get_push_task(struct rq *rq)
 
 	lockdep_assert_rq_held(rq);
 
-	if (rq->push_busy)
-		return NULL;
+	만약 (rq->push_busy)
+		반환 NULL;
 
-	if (p->nr_cpus_allowed == 1)
-		return NULL;
+	만약 (p->nr_cpus_allowed == 1)
+		반환 NULL;
 
-	if (p->migration_disabled)
-		return NULL;
+	만약 (p->migration_disabled)
+		반환 NULL;
 
 	rq->push_busy = true;
-	return get_task_struct(p);
+	반환 get_task_struct(p);
 }
 
-extern int push_cpu_stop(void *arg);
+extern 정수 push_cpu_stop(void *arg);
 
 #ifdef CONFIG_CPU_IDLE
 
@@ -2996,10 +2996,10 @@ static inline struct cpuidle_state *idle_get_state(struct rq *rq)
 {
 	lockdep_assert(rcu_read_lock_any_held());
 
-	return rq->idle_state;
+	반환 rq->idle_state;
 }
 
-#else /* !CONFIG_CPU_IDLE: */
+#아니면 /* !CONFIG_CPU_IDLE: */
 
 static inline void idle_set_state(struct rq *rq,
 				  struct cpuidle_state *idle_state)
@@ -3008,7 +3008,7 @@ static inline void idle_set_state(struct rq *rq,
 
 static inline struct cpuidle_state *idle_get_state(struct rq *rq)
 {
-	return NULL;
+	반환 NULL;
 }
 
 #endif /* !CONFIG_CPU_IDLE */
@@ -3026,7 +3026,7 @@ extern void init_sched_fair_class(void);
 
 extern void resched_curr(struct rq *rq);
 extern void resched_curr_lazy(struct rq *rq);
-extern void resched_cpu(int cpu);
+extern void resched_cpu(정수 cpu);
 
 extern void init_rt_bandwidth(struct rt_bandwidth *rt_b, u64 period, u64 runtime);
 extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
@@ -3048,7 +3048,7 @@ extern void post_init_entity_util_avg(struct task_struct *p);
 
 #ifdef CONFIG_NO_HZ_FULL
 extern bool sched_can_stop_tick(struct rq *rq);
-extern int __init sched_tick_offload_init(void);
+extern 정수 __init sched_tick_offload_init(void);
 
 /*
  * Tick may be needed by tasks in the runqueue depending on their policy and
@@ -3057,18 +3057,18 @@ extern int __init sched_tick_offload_init(void);
  */
 static inline void sched_update_tick_dependency(struct rq *rq)
 {
-	int cpu = cpu_of(rq);
+	정수 cpu = cpu_of(rq);
 
-	if (!tick_nohz_full_cpu(cpu))
-		return;
+	만약 (!tick_nohz_full_cpu(cpu))
+		반환;
 
-	if (sched_can_stop_tick(rq))
+	만약 (sched_can_stop_tick(rq))
 		tick_nohz_dep_clear_cpu(cpu, TICK_DEP_BIT_SCHED);
-	else
+	아니면
 		tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
 }
-#else /* !CONFIG_NO_HZ_FULL: */
-static inline int sched_tick_offload_init(void) { return 0; }
+#아니면 /* !CONFIG_NO_HZ_FULL: */
+static inline 정수 sched_tick_offload_init(void) { 반환 0; }
 static inline void sched_update_tick_dependency(struct rq *rq) { }
 #endif /* !CONFIG_NO_HZ_FULL */
 
@@ -3077,11 +3077,11 @@ static inline void add_nr_running(struct rq *rq, unsigned count)
 	unsigned prev_nr = rq->nr_running;
 
 	rq->nr_running = prev_nr + count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
+	만약 (trace_sched_update_nr_running_tp_enabled()) {
 		call_trace_sched_update_nr_running(rq, count);
 	}
 
-	if (prev_nr < 2 && rq->nr_running >= 2)
+	만약 (prev_nr < 2 && rq->nr_running >= 2)
 		set_rd_overloaded(rq->rd, 1);
 
 	sched_update_tick_dependency(rq);
@@ -3090,7 +3090,7 @@ static inline void add_nr_running(struct rq *rq, unsigned count)
 static inline void sub_nr_running(struct rq *rq, unsigned count)
 {
 	rq->nr_running -= count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
+	만약 (trace_sched_update_nr_running_tp_enabled()) {
 		call_trace_sched_update_nr_running(rq, -count);
 	}
 
@@ -3100,10 +3100,10 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
 
 static inline void __block_task(struct rq *rq, struct task_struct *p)
 {
-	if (p->sched_contributes_to_load)
+	만약 (p->sched_contributes_to_load)
 		rq->nr_uninterruptible++;
 
-	if (p->in_iowait) {
+	만약 (p->in_iowait) {
 		atomic_inc(&rq->nr_iowait);
 		delayacct_blkio_start();
 	}
@@ -3141,10 +3141,10 @@ static inline void __block_task(struct rq *rq, struct task_struct *p)
 	smp_store_release(&p->on_rq, 0);
 }
 
-extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
-extern void deactivate_task(struct rq *rq, struct task_struct *p, int flags);
+extern void activate_task(struct rq *rq, struct task_struct *p, 정수 flags);
+extern void deactivate_task(struct rq *rq, struct task_struct *p, 정수 flags);
 
-extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
+extern void wakeup_preempt(struct rq *rq, struct task_struct *p, 정수 flags);
 
 /*
  * attach_task() -- attach the task detached by detach_task() to its new rq.
@@ -3178,7 +3178,7 @@ static inline void __attach_tasks(struct rq *rq, struct list_head *tasks)
 	guard(rq_lock)(rq);
 	update_rq_clock(rq);
 
-	while (!list_empty(tasks)) {
+	동안 (!list_empty(tasks)) {
 		struct task_struct *p;
 
 		p = list_first_entry(tasks, struct task_struct, se.group_node);
@@ -3190,25 +3190,25 @@ static inline void __attach_tasks(struct rq *rq, struct list_head *tasks)
 
 #ifdef CONFIG_PREEMPT_RT
 # define SCHED_NR_MIGRATE_BREAK 8
-#else
+#아니면
 # define SCHED_NR_MIGRATE_BREAK 32
 #endif
 
-extern __read_mostly unsigned int sysctl_sched_nr_migrate;
-extern __read_mostly unsigned int sysctl_sched_migration_cost;
+extern __read_mostly unsigned 정수 sysctl_sched_nr_migrate;
+extern __read_mostly unsigned 정수 sysctl_sched_migration_cost;
 
-extern unsigned int sysctl_sched_base_slice;
+extern unsigned 정수 sysctl_sched_base_slice;
 
-extern int sysctl_resched_latency_warn_ms;
-extern int sysctl_resched_latency_warn_once;
+extern 정수 sysctl_resched_latency_warn_ms;
+extern 정수 sysctl_resched_latency_warn_once;
 
-extern unsigned int sysctl_sched_tunable_scaling;
+extern unsigned 정수 sysctl_sched_tunable_scaling;
 
-extern unsigned int sysctl_numa_balancing_scan_delay;
-extern unsigned int sysctl_numa_balancing_scan_period_min;
-extern unsigned int sysctl_numa_balancing_scan_period_max;
-extern unsigned int sysctl_numa_balancing_scan_size;
-extern unsigned int sysctl_numa_balancing_hot_threshold;
+extern unsigned 정수 sysctl_numa_balancing_scan_delay;
+extern unsigned 정수 sysctl_numa_balancing_scan_period_min;
+extern unsigned 정수 sysctl_numa_balancing_scan_period_max;
+extern unsigned 정수 sysctl_numa_balancing_scan_size;
+extern unsigned 정수 sysctl_numa_balancing_hot_threshold;
 
 #ifdef CONFIG_SCHED_HRTICK
 
@@ -3219,29 +3219,29 @@ extern unsigned int sysctl_numa_balancing_hot_threshold;
  */
 static inline bool hrtick_enabled(struct rq *rq)
 {
-	return cpu_active(cpu_of(rq)) && hrtimer_highres_enabled();
+	반환 cpu_active(cpu_of(rq)) && hrtimer_highres_enabled();
 }
 
 static inline bool hrtick_enabled_fair(struct rq *rq)
 {
-	return sched_feat(HRTICK) && hrtick_enabled(rq);
+	반환 sched_feat(HRTICK) && hrtick_enabled(rq);
 }
 
 static inline bool hrtick_enabled_dl(struct rq *rq)
 {
-	return sched_feat(HRTICK_DL) && hrtick_enabled(rq);
+	반환 sched_feat(HRTICK_DL) && hrtick_enabled(rq);
 }
 
 extern void hrtick_start(struct rq *rq, u64 delay);
 static inline bool hrtick_active(struct rq *rq)
 {
-	return hrtimer_active(&rq->hrtick_timer);
+	반환 hrtimer_active(&rq->hrtick_timer);
 }
 
-#else /* !CONFIG_SCHED_HRTICK: */
-static inline bool hrtick_enabled_fair(struct rq *rq) { return false; }
-static inline bool hrtick_enabled_dl(struct rq *rq) { return false; }
-static inline bool hrtick_enabled(struct rq *rq) { return false; }
+#아니면 /* !CONFIG_SCHED_HRTICK: */
+static inline bool hrtick_enabled_fair(struct rq *rq) { 반환 false; }
+static inline bool hrtick_enabled_dl(struct rq *rq) { 반환 false; }
+static inline bool hrtick_enabled(struct rq *rq) { 반환 false; }
 #endif /* !CONFIG_SCHED_HRTICK */
 
 #ifndef arch_scale_freq_tick
@@ -3260,9 +3260,9 @@ static __always_inline void arch_scale_freq_tick(void) { }
  *     f_max
  */
 static __always_inline
-unsigned long arch_scale_freq_capacity(int cpu)
+unsigned long arch_scale_freq_capacity(정수 cpu)
 {
-	return SCHED_CAPACITY_SCALE;
+	반환 SCHED_CAPACITY_SCALE;
 }
 #endif
 
@@ -3283,7 +3283,7 @@ __DEFINE_UNLOCK_GUARD(name, type, _unlock, type *lock2; __VA_ARGS__)			\
 static inline class_##name##_t class_##name##_constructor(type *lock, type *lock2)	\
 	__no_context_analysis								\
 { class_##name##_t _t = { .lock = lock, .lock2 = lock2 }, *_T = &_t;			\
-  _lock; return _t; }
+  _lock; 반환 _t; }
 #define DECLARE_LOCK_GUARD_2_ATTRS(_name, _lock, _unlock1, _unlock2)			\
 static inline class_##_name##_t class_##_name##_constructor(lock_##_name##_t *_T1,	\
 							    lock_##_name##_t *_T2) _lock; \
@@ -3310,16 +3310,16 @@ static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
 	 *
 	 * when only cpu-id is considered.
 	 */
-	if (rq1->core->cpu < rq2->core->cpu)
-		return true;
-	if (rq1->core->cpu > rq2->core->cpu)
-		return false;
+	만약 (rq1->core->cpu < rq2->core->cpu)
+		반환 true;
+	만약 (rq1->core->cpu > rq2->core->cpu)
+		반환 false;
 
 	/*
 	 * __sched_core_flip() relies on SMT having cpu-id lock order.
 	 */
 #endif /* CONFIG_SCHED_CORE */
-	return rq1->cpu < rq2->cpu;
+	반환 rq1->cpu < rq2->cpu;
 }
 
 extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
@@ -3335,17 +3335,17 @@ extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
  * reduces latency compared to the unfair variant below.  However, it
  * also adds more overhead and therefore may reduce throughput.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+static inline 정수 _double_lock_balance(struct rq *this_rq, struct rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	raw_spin_rq_unlock(this_rq);
 	double_rq_lock(this_rq, busiest);
 
-	return 1;
+	반환 1;
 }
 
-#else /* !CONFIG_PREEMPTION: */
+#아니면 /* !CONFIG_PREEMPTION: */
 /*
  * Unfair double_lock_balance: Optimizes throughput at the expense of
  * latency by eliminating extra atomic operations when the locks are
@@ -3353,31 +3353,31 @@ static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
  * grant the double lock to lower CPUs over higher ids under contention,
  * regardless of entry order into the function.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+static inline 정수 _double_lock_balance(struct rq *this_rq, struct rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
+	만약 (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
 		__acquire(__rq_lockp(busiest)); /* already held */
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		반환 0;
 	}
 
-	if (likely(raw_spin_rq_trylock(busiest))) {
+	만약 (likely(raw_spin_rq_trylock(busiest))) {
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		반환 0;
 	}
 
-	if (rq_order_less(this_rq, busiest)) {
+	만약 (rq_order_less(this_rq, busiest)) {
 		raw_spin_rq_lock_nested(busiest, SINGLE_DEPTH_NESTING);
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		반환 0;
 	}
 
 	raw_spin_rq_unlock(this_rq);
 	double_rq_lock(this_rq, busiest);
 
-	return 1;
+	반환 1;
 }
 
 #endif /* !CONFIG_PREEMPTION */
@@ -3385,21 +3385,21 @@ static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
 /*
  * double_lock_balance - lock the busiest runqueue, this_rq is locked already.
  */
-static inline int double_lock_balance(struct rq *this_rq, struct rq *busiest)
+static inline 정수 double_lock_balance(struct rq *this_rq, struct rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	lockdep_assert_irqs_disabled();
 
-	return _double_lock_balance(this_rq, busiest);
+	반환 _double_lock_balance(this_rq, busiest);
 }
 
 static inline void double_unlock_balance(struct rq *this_rq, struct rq *busiest)
 	__releases(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) != __rq_lockp(busiest))
+	만약 (__rq_lockp(this_rq) != __rq_lockp(busiest))
 		raw_spin_rq_unlock(busiest);
-	else
+	아니면
 		__release(__rq_lockp(busiest)); /* fake release */
 	lock_set_subclass(&__rq_lockp(this_rq)->dep_map, 0, _RET_IP_);
 }
@@ -3407,7 +3407,7 @@ static inline void double_unlock_balance(struct rq *this_rq, struct rq *busiest)
 static inline void double_lock(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
+	만약 (l1 > l2)
 		swap(l1, l2);
 
 	spin_lock(l1);
@@ -3417,7 +3417,7 @@ static inline void double_lock(spinlock_t *l1, spinlock_t *l2)
 static inline void double_lock_irq(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
+	만약 (l1 > l2)
 		swap(l1, l2);
 
 	spin_lock_irq(l1);
@@ -3427,7 +3427,7 @@ static inline void double_lock_irq(spinlock_t *l1, spinlock_t *l2)
 static inline void double_raw_lock(raw_spinlock_t *l1, raw_spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
+	만약 (l1 > l2)
 		swap(l1, l2);
 
 	raw_spin_lock(l1);
@@ -3461,9 +3461,9 @@ DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock,
 static inline void double_rq_unlock(struct rq *rq1, struct rq *rq2)
 	__releases(__rq_lockp(rq1), __rq_lockp(rq2))
 {
-	if (__rq_lockp(rq1) != __rq_lockp(rq2))
+	만약 (__rq_lockp(rq1) != __rq_lockp(rq2))
 		raw_spin_rq_unlock(rq2);
-	else
+	아니면
 		__release(__rq_lockp(rq2)); /* fake release */
 	raw_spin_rq_unlock(rq1);
 }
@@ -3483,19 +3483,19 @@ extern struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq);
 
 extern bool sched_debug_verbose;
 
-extern void print_cfs_stats(struct seq_file *m, int cpu);
-extern void print_rt_stats(struct seq_file *m, int cpu);
-extern void print_dl_stats(struct seq_file *m, int cpu);
-extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
-extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
-extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+extern void print_cfs_stats(struct seq_file *m, 정수 cpu);
+extern void print_rt_stats(struct seq_file *m, 정수 cpu);
+extern void print_dl_stats(struct seq_file *m, 정수 cpu);
+extern void print_cfs_rq(struct seq_file *m, 정수 cpu, struct cfs_rq *cfs_rq);
+extern void print_rt_rq(struct seq_file *m, 정수 cpu, struct rt_rq *rt_rq);
+extern void print_dl_rq(struct seq_file *m, 정수 cpu, struct dl_rq *dl_rq);
 
-extern void resched_latency_warn(int cpu, u64 latency);
+extern void resched_latency_warn(정수 cpu, u64 latency);
 
 #ifdef CONFIG_NUMA_BALANCING
 extern void show_numa_stats(struct task_struct *p, struct seq_file *m);
 extern void
-print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
+print_numa_stats(struct seq_file *m, 정수 node, unsigned long tsf,
 		 unsigned long tpf, unsigned long gsf, unsigned long gpf);
 #endif /* CONFIG_NUMA_BALANCING */
 
@@ -3527,25 +3527,25 @@ extern void cfs_bandwidth_usage_dec(void);
 #define nohz_flags(cpu)		(&cpu_rq(cpu)->nohz_flags)
 
 extern void nohz_balance_exit_idle(struct rq *rq);
-#else /* !CONFIG_NO_HZ_COMMON: */
+#아니면 /* !CONFIG_NO_HZ_COMMON: */
 static inline void nohz_balance_exit_idle(struct rq *rq) { }
 #endif /* !CONFIG_NO_HZ_COMMON */
 
 #ifdef CONFIG_NO_HZ_COMMON
-extern void nohz_run_idle_balance(int cpu);
-#else
-static inline void nohz_run_idle_balance(int cpu) { }
+extern void nohz_run_idle_balance(정수 cpu);
+#아니면
+static inline void nohz_run_idle_balance(정수 cpu) { }
 #endif
 
 #include "stats.h"
 
-#if defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
+#만약 defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
 
 extern void __sched_core_account_forceidle(struct rq *rq);
 
 static inline void sched_core_account_forceidle(struct rq *rq)
 {
-	if (schedstat_enabled())
+	만약 (schedstat_enabled())
 		__sched_core_account_forceidle(rq);
 }
 
@@ -3553,11 +3553,11 @@ extern void __sched_core_tick(struct rq *rq);
 
 static inline void sched_core_tick(struct rq *rq)
 {
-	if (sched_core_enabled(rq) && schedstat_enabled())
+	만약 (sched_core_enabled(rq) && schedstat_enabled())
 		__sched_core_tick(rq);
 }
 
-#else /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
+#아니면 /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
 
 static inline void sched_core_account_forceidle(struct rq *rq) { }
 
@@ -3577,9 +3577,9 @@ struct irqtime {
 DECLARE_PER_CPU(struct irqtime, cpu_irqtime);
 DECLARE_STATIC_KEY_FALSE(sched_clock_irqtime);
 
-static inline int irqtime_enabled(void)
+static inline 정수 irqtime_enabled(void)
 {
-	return static_branch_likely(&sched_clock_irqtime);
+	반환 static_branch_likely(&sched_clock_irqtime);
 }
 
 /*
@@ -3587,25 +3587,25 @@ static inline int irqtime_enabled(void)
  * Otherwise ksoftirqd's sum_exec_runtime is subtracted its own runtime
  * and never move forward.
  */
-static inline u64 irq_time_read(int cpu)
+static inline u64 irq_time_read(정수 cpu)
 {
 	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
-	unsigned int seq;
+	unsigned 정수 seq;
 	u64 total;
 
 	do {
 		seq = __u64_stats_fetch_begin(&irqtime->sync);
 		total = irqtime->total;
-	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
+	} 동안 (__u64_stats_fetch_retry(&irqtime->sync, seq));
 
-	return total;
+	반환 total;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#아니면 /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
-static inline int irqtime_enabled(void)
+static inline 정수 irqtime_enabled(void)
 {
-	return 0;
+	반환 0;
 }
 
 #endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
@@ -3636,32 +3636,32 @@ DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
  * but that really is a band-aid.  Going forward it should be replaced with
  * solutions targeted more specifically at RT tasks.
  */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags)
+static inline void cpufreq_update_util(struct rq *rq, unsigned 정수 flags)
 {
 	struct update_util_data *data;
 
 	data = rcu_dereference_sched(*per_cpu_ptr(&cpufreq_update_util_data,
 						  cpu_of(rq)));
-	if (data)
+	만약 (data)
 		data->func(data, rq_clock(rq), flags);
 }
-#else /* !CONFIG_CPU_FREQ: */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) { }
+#아니면 /* !CONFIG_CPU_FREQ: */
+static inline void cpufreq_update_util(struct rq *rq, unsigned 정수 flags) { }
 #endif /* !CONFIG_CPU_FREQ */
 
 #ifdef arch_scale_freq_capacity
 # ifndef arch_scale_freq_invariant
 #  define arch_scale_freq_invariant()	true
 # endif
-#else
+#아니면
 # define arch_scale_freq_invariant()	false
 #endif
 
-unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
+unsigned long effective_cpu_util(정수 cpu, unsigned long util_cfs,
 				 unsigned long *min,
 				 unsigned long *max);
 
-unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
+unsigned long sugov_effective_cpu_perf(정수 cpu, unsigned long actual,
 				 unsigned long min,
 				 unsigned long max);
 
@@ -3674,30 +3674,30 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
  * greater than or equal to task's deadline density right shifted by
  * (BW_SHIFT - SCHED_CAPACITY_SHIFT) and false otherwise.
  */
-static inline bool dl_task_fits_capacity(struct task_struct *p, int cpu)
+static inline bool dl_task_fits_capacity(struct task_struct *p, 정수 cpu)
 {
 	unsigned long cap = arch_scale_cpu_capacity(cpu);
 
-	return cap >= p->dl.dl_density >> (BW_SHIFT - SCHED_CAPACITY_SHIFT);
+	반환 cap >= p->dl.dl_density >> (BW_SHIFT - SCHED_CAPACITY_SHIFT);
 }
 
 static inline unsigned long cpu_bw_dl(struct rq *rq)
 {
-	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+	반환 (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
 }
 
 static inline unsigned long cpu_util_dl(struct rq *rq)
 {
-	return READ_ONCE(rq->avg_dl.util_avg);
+	반환 READ_ONCE(rq->avg_dl.util_avg);
 }
 
 
-extern unsigned long cpu_util_cfs(int cpu);
-extern unsigned long cpu_util_cfs_boost(int cpu);
+extern unsigned long cpu_util_cfs(정수 cpu);
+extern unsigned long cpu_util_cfs_boost(정수 cpu);
 
 static inline unsigned long cpu_util_rt(struct rq *rq)
 {
-	return READ_ONCE(rq->avg_rt.util_avg);
+	반환 READ_ONCE(rq->avg_rt.util_avg);
 }
 
 #ifdef CONFIG_UCLAMP_TASK
@@ -3714,7 +3714,7 @@ unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
  */
 static inline bool uclamp_is_used(void)
 {
-	return static_branch_likely(&sched_uclamp_used);
+	반환 static_branch_likely(&sched_uclamp_used);
 }
 
 /*
@@ -3725,25 +3725,25 @@ static inline bool uclamp_is_used(void)
  */
 static inline void sched_uclamp_enable(void)
 {
-	if (!uclamp_is_used())
+	만약 (!uclamp_is_used())
 		static_branch_enable(&sched_uclamp_used);
 }
 
 static inline unsigned long uclamp_rq_get(struct rq *rq,
 					  enum uclamp_id clamp_id)
 {
-	return READ_ONCE(rq->uclamp[clamp_id].value);
+	반환 READ_ONCE(rq->uclamp[clamp_id].value);
 }
 
 static inline void uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id,
-				 unsigned int value)
+				 unsigned 정수 value)
 {
 	WRITE_ONCE(rq->uclamp[clamp_id].value, value);
 }
 
 static inline bool uclamp_rq_is_idle(struct rq *rq)
 {
-	return rq->uclamp_flags & UCLAMP_FLAG_IDLE;
+	반환 rq->uclamp_flags & UCLAMP_FLAG_IDLE;
 }
 
 /* Is the rq being capped/throttled by uclamp_max? */
@@ -3752,60 +3752,60 @@ static inline bool uclamp_rq_is_capped(struct rq *rq)
 	unsigned long rq_util;
 	unsigned long max_util;
 
-	if (!uclamp_is_used())
-		return false;
+	만약 (!uclamp_is_used())
+		반환 false;
 
 	rq_util = cpu_util_cfs(cpu_of(rq)) + cpu_util_rt(rq);
 	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
 
-	return max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
+	반환 max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
 }
 
 #define for_each_clamp_id(clamp_id) \
-	for ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
+	위해 ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
 
-extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+extern unsigned 정수 sysctl_sched_uclamp_util_min_rt_default;
 
 
-static inline unsigned int uclamp_none(enum uclamp_id clamp_id)
+static inline unsigned 정수 uclamp_none(enum uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
-	return SCHED_CAPACITY_SCALE;
+	만약 (clamp_id == UCLAMP_MIN)
+		반환 0;
+	반환 SCHED_CAPACITY_SCALE;
 }
 
 /* Integer rounded range for each bucket */
 #define UCLAMP_BUCKET_DELTA DIV_ROUND_CLOSEST(SCHED_CAPACITY_SCALE, UCLAMP_BUCKETS)
 
-static inline unsigned int uclamp_bucket_id(unsigned int clamp_value)
+static inline unsigned 정수 uclamp_bucket_id(unsigned 정수 clamp_value)
 {
-	return min_t(unsigned int, clamp_value / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
+	반환 min_t(unsigned 정수, clamp_value / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
 }
 
 static inline void
-uclamp_se_set(struct uclamp_se *uc_se, unsigned int value, bool user_defined)
+uclamp_se_set(struct uclamp_se *uc_se, unsigned 정수 value, bool user_defined)
 {
 	uc_se->value = value;
 	uc_se->bucket_id = uclamp_bucket_id(value);
 	uc_se->user_defined = user_defined;
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
+#아니면 /* !CONFIG_UCLAMP_TASK: */
 
 static inline unsigned long
 uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	만약 (clamp_id == UCLAMP_MIN)
+		반환 0;
 
-	return SCHED_CAPACITY_SCALE;
+	반환 SCHED_CAPACITY_SCALE;
 }
 
-static inline bool uclamp_rq_is_capped(struct rq *rq) { return false; }
+static inline bool uclamp_rq_is_capped(struct rq *rq) { 반환 false; }
 
 static inline bool uclamp_is_used(void)
 {
-	return false;
+	반환 false;
 }
 
 static inline void sched_uclamp_enable(void) {}
@@ -3813,20 +3813,20 @@ static inline void sched_uclamp_enable(void) {}
 static inline unsigned long
 uclamp_rq_get(struct rq *rq, enum uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	만약 (clamp_id == UCLAMP_MIN)
+		반환 0;
 
-	return SCHED_CAPACITY_SCALE;
+	반환 SCHED_CAPACITY_SCALE;
 }
 
 static inline void
-uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id, unsigned int value)
+uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id, unsigned 정수 value)
 {
 }
 
 static inline bool uclamp_rq_is_idle(struct rq *rq)
 {
-	return false;
+	반환 false;
 }
 
 #endif /* !CONFIG_UCLAMP_TASK */
@@ -3835,7 +3835,7 @@ static inline bool uclamp_rq_is_idle(struct rq *rq)
 
 static inline unsigned long cpu_util_irq(struct rq *rq)
 {
-	return READ_ONCE(rq->avg_irq.util_avg);
+	반환 READ_ONCE(rq->avg_irq.util_avg);
 }
 
 static inline
@@ -3844,28 +3844,28 @@ unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned
 	util *= (max - irq);
 	util /= max;
 
-	return util;
+	반환 util;
 
 }
 
-#else /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
+#아니면 /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
 
 static inline unsigned long cpu_util_irq(struct rq *rq)
 {
-	return 0;
+	반환 0;
 }
 
 static inline
 unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
 {
-	return util;
+	반환 util;
 }
 
 #endif /* !CONFIG_HAVE_SCHED_AVG_IRQ */
 
 extern void __setparam_fair(struct task_struct *p, const struct sched_attr *attr);
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+#만약 defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
 
 #define perf_domain_span(pd) (to_cpumask(((pd)->em_pd->cpus)))
 
@@ -3873,14 +3873,14 @@ DECLARE_STATIC_KEY_FALSE(sched_energy_present);
 
 static inline bool sched_energy_enabled(void)
 {
-	return static_branch_unlikely(&sched_energy_present);
+	반환 static_branch_unlikely(&sched_energy_present);
 }
 
-#else /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
+#아니면 /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
 
 #define perf_domain_span(pd) NULL
 
-static inline bool sched_energy_enabled(void) { return false; }
+static inline bool sched_energy_enabled(void) { 반환 false; }
 
 #endif /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
 
@@ -3896,19 +3896,19 @@ static inline void membarrier_switch_mm(struct rq *rq,
 					struct mm_struct *prev_mm,
 					struct mm_struct *next_mm)
 {
-	int membarrier_state;
+	정수 membarrier_state;
 
-	if (prev_mm == next_mm)
-		return;
+	만약 (prev_mm == next_mm)
+		반환;
 
 	membarrier_state = atomic_read(&next_mm->membarrier_state);
-	if (READ_ONCE(rq->membarrier_state) == membarrier_state)
-		return;
+	만약 (READ_ONCE(rq->membarrier_state) == membarrier_state)
+		반환;
 
 	WRITE_ONCE(rq->membarrier_state, membarrier_state);
 }
 
-#else /* !CONFIG_MEMBARRIER: */
+#아니면 /* !CONFIG_MEMBARRIER: */
 
 static inline void membarrier_switch_mm(struct rq *rq,
 					struct mm_struct *prev_mm,
@@ -3920,202 +3920,202 @@ static inline void membarrier_switch_mm(struct rq *rq,
 
 static inline bool is_per_cpu_kthread(struct task_struct *p)
 {
-	if (!(p->flags & PF_KTHREAD))
-		return false;
+	만약 (!(p->flags & PF_KTHREAD))
+		반환 false;
 
-	if (p->nr_cpus_allowed != 1)
-		return false;
+	만약 (p->nr_cpus_allowed != 1)
+		반환 false;
 
-	return true;
+	반환 true;
 }
 
 extern void swake_up_all_locked(struct swait_queue_head *q);
 extern void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait);
 
-extern int try_to_wake_up(struct task_struct *tsk, unsigned int state, int wake_flags);
+extern 정수 try_to_wake_up(struct task_struct *tsk, unsigned 정수 state, 정수 wake_flags);
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
-extern int preempt_dynamic_mode;
-extern int sched_dynamic_mode(const char *str);
-extern void sched_dynamic_update(int mode);
+extern 정수 preempt_dynamic_mode;
+extern 정수 sched_dynamic_mode(const char *str);
+extern void sched_dynamic_update(정수 mode);
 #endif
 extern const char *preempt_modes[];
 
 #ifdef CONFIG_SCHED_MM_CID
 
-static __always_inline bool cid_on_cpu(unsigned int cid)
+static __always_inline bool cid_on_cpu(unsigned 정수 cid)
 {
-	return cid & MM_CID_ONCPU;
+	반환 cid & MM_CID_ONCPU;
 }
 
-static __always_inline bool cid_in_transit(unsigned int cid)
+static __always_inline bool cid_in_transit(unsigned 정수 cid)
 {
-	return cid & MM_CID_TRANSIT;
+	반환 cid & MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cpu_cid_to_cid(unsigned int cid)
+static __always_inline unsigned 정수 cpu_cid_to_cid(unsigned 정수 cid)
 {
-	return cid & ~MM_CID_ONCPU;
+	반환 cid & ~MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_cpu_cid(unsigned int cid)
+static __always_inline unsigned 정수 cid_to_cpu_cid(unsigned 정수 cid)
 {
-	return cid | MM_CID_ONCPU;
+	반환 cid | MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_transit_cid(unsigned int cid)
+static __always_inline unsigned 정수 cid_to_transit_cid(unsigned 정수 cid)
 {
-	return cid | MM_CID_TRANSIT;
+	반환 cid | MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cid_from_transit_cid(unsigned int cid)
+static __always_inline unsigned 정수 cid_from_transit_cid(unsigned 정수 cid)
 {
-	return cid & ~MM_CID_TRANSIT;
+	반환 cid & ~MM_CID_TRANSIT;
 }
 
-static __always_inline bool cid_on_task(unsigned int cid)
+static __always_inline bool cid_on_task(unsigned 정수 cid)
 {
 	/* True if none of the MM_CID_ONCPU, MM_CID_TRANSIT, MM_CID_UNSET bits is set */
-	return cid < MM_CID_TRANSIT;
+	반환 cid < MM_CID_TRANSIT;
 }
 
-static __always_inline void mm_drop_cid(struct mm_struct *mm, unsigned int cid)
+static __always_inline void mm_drop_cid(struct mm_struct *mm, unsigned 정수 cid)
 {
 	clear_bit(cid, mm_cidmask(mm));
 }
 
 static __always_inline void mm_unset_cid_on_task(struct task_struct *t)
 {
-	unsigned int cid = t->mm_cid.cid;
+	unsigned 정수 cid = t->mm_cid.cid;
 
 	t->mm_cid.cid = MM_CID_UNSET;
-	if (cid_on_task(cid))
+	만약 (cid_on_task(cid))
 		mm_drop_cid(t->mm, cid);
 }
 
 static __always_inline void mm_drop_cid_on_cpu(struct mm_struct *mm, struct mm_cid_pcpu *pcp)
 {
 	/* Clear the ONCPU bit, but do not set UNSET in the per CPU storage */
-	if (cid_on_cpu(pcp->cid)) {
+	만약 (cid_on_cpu(pcp->cid)) {
 		pcp->cid = cpu_cid_to_cid(pcp->cid);
 		mm_drop_cid(mm, pcp->cid);
 	}
 }
 
-static inline unsigned int __mm_get_cid(struct mm_struct *mm, unsigned int max_cids)
+static inline unsigned 정수 __mm_get_cid(struct mm_struct *mm, unsigned 정수 max_cids)
 {
-	unsigned int cid = find_first_zero_bit(mm_cidmask(mm), max_cids);
+	unsigned 정수 cid = find_first_zero_bit(mm_cidmask(mm), max_cids);
 
-	if (cid >= max_cids)
-		return MM_CID_UNSET;
-	if (test_and_set_bit(cid, mm_cidmask(mm)))
-		return MM_CID_UNSET;
-	return cid;
+	만약 (cid >= max_cids)
+		반환 MM_CID_UNSET;
+	만약 (test_and_set_bit(cid, mm_cidmask(mm)))
+		반환 MM_CID_UNSET;
+	반환 cid;
 }
 
-static inline unsigned int mm_get_cid(struct mm_struct *mm)
+static inline unsigned 정수 mm_get_cid(struct mm_struct *mm)
 {
-	unsigned int cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
+	unsigned 정수 cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
 
-	while (cid == MM_CID_UNSET) {
+	동안 (cid == MM_CID_UNSET) {
 		cpu_relax();
 		cid = __mm_get_cid(mm, num_possible_cpus());
 	}
-	return cid;
+	반환 cid;
 }
 
-static inline unsigned int mm_cid_converge(struct mm_struct *mm, unsigned int orig_cid,
-					   unsigned int max_cids)
+static inline unsigned 정수 mm_cid_converge(struct mm_struct *mm, unsigned 정수 orig_cid,
+					   unsigned 정수 max_cids)
 {
-	unsigned int new_cid, cid = cpu_cid_to_cid(orig_cid);
+	unsigned 정수 new_cid, cid = cpu_cid_to_cid(orig_cid);
 
 	/* Is it in the optimal CID space? */
-	if (likely(cid < max_cids))
-		return orig_cid;
+	만약 (likely(cid < max_cids))
+		반환 orig_cid;
 
 	/* Try to find one in the optimal space. Otherwise keep the provided. */
 	new_cid = __mm_get_cid(mm, max_cids);
-	if (new_cid != MM_CID_UNSET) {
+	만약 (new_cid != MM_CID_UNSET) {
 		mm_drop_cid(mm, cid);
 		/* Preserve the ONCPU mode of the original CID */
-		return new_cid | (orig_cid & MM_CID_ONCPU);
+		반환 new_cid | (orig_cid & MM_CID_ONCPU);
 	}
-	return orig_cid;
+	반환 orig_cid;
 }
 
-static __always_inline void mm_cid_update_task_cid(struct task_struct *t, unsigned int cid)
+static __always_inline void mm_cid_update_task_cid(struct task_struct *t, unsigned 정수 cid)
 {
-	if (t->mm_cid.cid != cid) {
+	만약 (t->mm_cid.cid != cid) {
 		t->mm_cid.cid = cid;
 		rseq_sched_set_ids_changed(t);
 	}
 }
 
-static __always_inline void mm_cid_update_pcpu_cid(struct mm_struct *mm, unsigned int cid)
+static __always_inline void mm_cid_update_pcpu_cid(struct mm_struct *mm, unsigned 정수 cid)
 {
 	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
 }
 
-static __always_inline void mm_cid_from_cpu(struct task_struct *t, unsigned int cpu_cid,
-					    unsigned int mode)
+static __always_inline void mm_cid_from_cpu(struct task_struct *t, unsigned 정수 cpu_cid,
+					    unsigned 정수 mode)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
+	unsigned 정수 max_cids, tcid = t->mm_cid.cid;
 	struct mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case where both have the ONCPU bit set */
-	if (likely(cid_on_cpu(cpu_cid & tcid))) {
-		if (likely(cpu_cid_to_cid(cpu_cid) < max_cids)) {
+	만약 (likely(cid_on_cpu(cpu_cid & tcid))) {
+		만약 (likely(cpu_cid_to_cid(cpu_cid) < max_cids)) {
 			mm_cid_update_task_cid(t, cpu_cid);
-			return;
+			반환;
 		}
 		/* Try to converge into the optimal CID space */
 		cpu_cid = mm_cid_converge(mm, cpu_cid, max_cids);
-	} else {
+	} 아니면 {
 		/* Hand over or drop the task owned CID */
-		if (cid_on_task(tcid)) {
-			if (cid_on_cpu(cpu_cid))
+		만약 (cid_on_task(tcid)) {
+			만약 (cid_on_cpu(cpu_cid))
 				mm_unset_cid_on_task(t);
-			else
+			아니면
 				cpu_cid = cid_to_cpu_cid(tcid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_cpu(cpu_cid))
+		만약 (!cid_on_cpu(cpu_cid))
 			cpu_cid = cid_to_cpu_cid(mm_get_cid(mm));
 
 		/* Handle the transition mode flag if required */
-		if (mode & MM_CID_TRANSIT)
+		만약 (mode & MM_CID_TRANSIT)
 			cpu_cid = cpu_cid_to_cid(cpu_cid) | MM_CID_TRANSIT;
 	}
 	mm_cid_update_pcpu_cid(mm, cpu_cid);
 	mm_cid_update_task_cid(t, cpu_cid);
 }
 
-static __always_inline void mm_cid_from_task(struct task_struct *t, unsigned int cpu_cid,
-					     unsigned int mode)
+static __always_inline void mm_cid_from_task(struct task_struct *t, unsigned 정수 cpu_cid,
+					     unsigned 정수 mode)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
+	unsigned 정수 max_cids, tcid = t->mm_cid.cid;
 	struct mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case, where both have the ONCPU bit clear */
-	if (likely(cid_on_task(tcid | cpu_cid))) {
-		if (likely(tcid < max_cids)) {
+	만약 (likely(cid_on_task(tcid | cpu_cid))) {
+		만약 (likely(tcid < max_cids)) {
 			mm_cid_update_pcpu_cid(mm, tcid);
-			return;
+			반환;
 		}
 		/* Try to converge into the optimal CID space */
 		tcid = mm_cid_converge(mm, tcid, max_cids);
-	} else {
+	} 아니면 {
 		/* Hand over or drop the CPU owned CID */
-		if (cid_on_cpu(cpu_cid)) {
-			if (cid_on_task(tcid))
+		만약 (cid_on_cpu(cpu_cid)) {
+			만약 (cid_on_task(tcid))
 				mm_drop_cid_on_cpu(mm, this_cpu_ptr(mm->mm_cid.pcpu));
-			else
+			아니면
 				tcid = cpu_cid_to_cid(cpu_cid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_task(tcid))
+		만약 (!cid_on_task(tcid))
 			tcid = mm_get_cid(mm);
 		/* Set the transition mode flag if required */
 		tcid |= mode & MM_CID_TRANSIT;
@@ -4127,27 +4127,27 @@ static __always_inline void mm_cid_from_task(struct task_struct *t, unsigned int
 static __always_inline void mm_cid_schedin(struct task_struct *next)
 {
 	struct mm_struct *mm = next->mm;
-	unsigned int cpu_cid, mode;
+	unsigned 정수 cpu_cid, mode;
 
-	if (!next->mm_cid.active)
-		return;
+	만약 (!next->mm_cid.active)
+		반환;
 
 	cpu_cid = __this_cpu_read(mm->mm_cid.pcpu->cid);
 	mode = READ_ONCE(mm->mm_cid.mode);
-	if (likely(!cid_on_cpu(mode)))
+	만약 (likely(!cid_on_cpu(mode)))
 		mm_cid_from_task(next, cpu_cid, mode);
-	else
+	아니면
 		mm_cid_from_cpu(next, cpu_cid, mode);
 }
 
 static __always_inline void mm_cid_schedout(struct task_struct *prev)
 {
 	struct mm_struct *mm = prev->mm;
-	unsigned int mode, cid;
+	unsigned 정수 mode, cid;
 
 	/* During mode transitions CIDs are temporary and need to be dropped */
-	if (likely(!cid_in_transit(prev->mm_cid.cid)))
-		return;
+	만약 (likely(!cid_in_transit(prev->mm_cid.cid)))
+		반환;
 
 	mode = READ_ONCE(mm->mm_cid.mode);
 	cid = cid_from_transit_cid(prev->mm_cid.cid);
@@ -4156,14 +4156,14 @@ static __always_inline void mm_cid_schedout(struct task_struct *prev)
 	 * If transition mode is done, transfer ownership when the CID is
 	 * within the convergence range to optimize the next schedule in.
 	 */
-	if (!cid_in_transit(mode) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
-		if (cid_on_cpu(mode))
+	만약 (!cid_in_transit(mode) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
+		만약 (cid_on_cpu(mode))
 			cid = cid_to_cpu_cid(cid);
 
 		/* Update both so that the next schedule in goes into the fast path */
 		mm_cid_update_pcpu_cid(mm, cid);
 		prev->mm_cid.cid = cid;
-	} else {
+	} 아니면 {
 		mm_drop_cid(mm, cid);
 		prev->mm_cid.cid = MM_CID_UNSET;
 	}
@@ -4175,35 +4175,35 @@ static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct
 	mm_cid_schedin(next);
 }
 
-#else /* !CONFIG_SCHED_MM_CID: */
+#아니면 /* !CONFIG_SCHED_MM_CID: */
 static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next) { }
 #endif /* !CONFIG_SCHED_MM_CID */
 
 #ifdef CONFIG_SCHED_CACHE
 DECLARE_STATIC_KEY_FALSE(sched_cache_present);
 DECLARE_STATIC_KEY_FALSE(sched_cache_active);
-extern int sysctl_sched_cache_user;
-extern unsigned int llc_aggr_tolerance;
-extern unsigned int llc_epoch_period;
-extern unsigned int llc_epoch_affinity_timeout;
-extern unsigned int llc_imb_pct;
-extern unsigned int llc_overaggr_pct;
+extern 정수 sysctl_sched_cache_user;
+extern unsigned 정수 llc_aggr_tolerance;
+extern unsigned 정수 llc_epoch_period;
+extern unsigned 정수 llc_epoch_affinity_timeout;
+extern unsigned 정수 llc_imb_pct;
+extern unsigned 정수 llc_overaggr_pct;
 
 static inline bool sched_cache_enabled(void)
 {
-	return static_branch_unlikely(&sched_cache_active);
+	반환 static_branch_unlikely(&sched_cache_active);
 }
 
 extern void sched_cache_active_set(void);
 
 #endif
 
-void sched_domains_free_llc_id(int cpu);
+void sched_domains_free_llc_id(정수 cpu);
 
 extern void init_sched_mm(struct task_struct *p);
 
 extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
-extern int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se);
+extern 정수 entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se);
 static inline
 void move_queued_task_locked(struct rq *src_rq, struct rq *dst_rq, struct task_struct *task)
 {
@@ -4217,47 +4217,47 @@ void move_queued_task_locked(struct rq *src_rq, struct rq *dst_rq, struct task_s
 }
 
 static inline
-bool task_is_pushable(struct rq *rq, struct task_struct *p, int cpu)
+bool task_is_pushable(struct rq *rq, struct task_struct *p, 정수 cpu)
 {
-	if (!task_on_cpu(rq, p) &&
+	만약 (!task_on_cpu(rq, p) &&
 	    cpumask_test_cpu(cpu, &p->cpus_mask))
-		return true;
+		반환 true;
 
-	return false;
+	반환 false;
 }
 
 #ifdef CONFIG_RT_MUTEXES
 
-static inline int __rt_effective_prio(struct task_struct *pi_task, int prio)
+static inline 정수 __rt_effective_prio(struct task_struct *pi_task, 정수 prio)
 {
-	if (pi_task)
+	만약 (pi_task)
 		prio = min(prio, pi_task->prio);
 
-	return prio;
+	반환 prio;
 }
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+static inline 정수 rt_effective_prio(struct task_struct *p, 정수 prio)
 {
 	struct task_struct *pi_task = rt_mutex_get_top_task(p);
 
-	return __rt_effective_prio(pi_task, prio);
+	반환 __rt_effective_prio(pi_task, prio);
 }
 
-#else /* !CONFIG_RT_MUTEXES: */
+#아니면 /* !CONFIG_RT_MUTEXES: */
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+static inline 정수 rt_effective_prio(struct task_struct *p, 정수 prio)
 {
-	return prio;
+	반환 prio;
 }
 
 #endif /* !CONFIG_RT_MUTEXES */
 
-extern int __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
-extern int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
-extern const struct sched_class *__setscheduler_class(int policy, int prio);
+extern 정수 __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
+extern 정수 __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
+extern const struct sched_class *__setscheduler_class(정수 policy, 정수 prio);
 extern void set_load_weight(struct task_struct *p, bool update_load);
-extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
-extern bool dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+extern void enqueue_task(struct rq *rq, struct task_struct *p, 정수 flags);
+extern bool dequeue_task(struct rq *rq, struct task_struct *p, 정수 flags);
 
 extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
 
@@ -4285,18 +4285,18 @@ struct sched_change_ctx {
 	u64			prio;
 	struct task_struct	*p;
 	const struct sched_class *class;
-	int			flags;
+	정수			flags;
 	bool			queued;
 	bool			running;
 };
 
-struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags);
+struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned 정수 flags);
 void sched_change_end(struct sched_change_ctx *ctx);
 
 DEFINE_CLASS(sched_change, struct sched_change_ctx *,
 	     sched_change_end(_T),
 	     sched_change_begin(p, flags),
-	     struct task_struct *p, unsigned int flags)
+	     struct task_struct *p, unsigned 정수 flags)
 
 DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
 
@@ -4304,7 +4304,7 @@ DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
 
 #ifdef CONFIG_PREFERRED_CPU
 void sched_push_current_non_preferred_cpu(struct rq *rq);
-#else	/* !CONFIG_PREFERRED_CPU */
+#아니면	/* !CONFIG_PREFERRED_CPU */
 static inline void sched_push_current_non_preferred_cpu(struct rq *rq) { }
 #endif
 

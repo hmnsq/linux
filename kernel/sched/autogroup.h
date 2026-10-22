@@ -16,7 +16,7 @@ struct autogroup {
 	struct task_group	*tg;
 	struct rw_semaphore	lock;
 	unsigned long		id;
-	int			nice;
+	정수			nice;
 };
 
 extern void autogroup_init(struct task_struct *init_task);
@@ -24,7 +24,7 @@ extern void autogroup_free(struct task_group *tg);
 
 static inline bool task_group_is_autogroup(struct task_group *tg)
 {
-	return !!tg->autogroup;
+	반환 !!tg->autogroup;
 }
 
 extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
@@ -32,35 +32,35 @@ extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
 static inline struct task_group *
 autogroup_task_group(struct task_struct *p, struct task_group *tg)
 {
-	extern unsigned int sysctl_sched_autogroup_enabled;
-	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+	extern unsigned 정수 sysctl_sched_autogroup_enabled;
+	정수 enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
 
-	if (enabled && task_wants_autogroup(p, tg))
-		return p->signal->autogroup->tg;
+	만약 (enabled && task_wants_autogroup(p, tg))
+		반환 p->signal->autogroup->tg;
 
-	return tg;
+	반환 tg;
 }
 
-extern int autogroup_path(struct task_group *tg, char *buf, int buflen);
+extern 정수 autogroup_path(struct task_group *tg, char *buf, 정수 buflen);
 
-#else /* !CONFIG_SCHED_AUTOGROUP: */
+#아니면 /* !CONFIG_SCHED_AUTOGROUP: */
 
 static inline void autogroup_init(struct task_struct *init_task) {  }
 static inline void autogroup_free(struct task_group *tg) { }
 static inline bool task_group_is_autogroup(struct task_group *tg)
 {
-	return 0;
+	반환 0;
 }
 
 static inline struct task_group *
 autogroup_task_group(struct task_struct *p, struct task_group *tg)
 {
-	return tg;
+	반환 tg;
 }
 
-static inline int autogroup_path(struct task_group *tg, char *buf, int buflen)
+static inline 정수 autogroup_path(struct task_group *tg, char *buf, 정수 buflen)
 {
-	return 0;
+	반환 0;
 }
 
 #endif /* !CONFIG_SCHED_AUTOGROUP */
