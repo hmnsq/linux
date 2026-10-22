@@ -4,27 +4,27 @@
  */
 #include "sched.h"
 
-void __update_stats_wait_start(struct rq *rq, struct task_struct *p,
-			       struct sched_statistics *stats)
+void __update_stats_wait_start(sa_nracanaa rq *rq, sa_nracanaa task_struct *p,
+			       sa_nracanaa sched_statistics *stats)
 {
 	u64 wait_start, prev_wait_start;
 
 	wait_start = rq_clock(rq);
 	prev_wait_start = schedstat_val(stats->wait_start);
 
-	if (p && likely(wait_start > prev_wait_start))
+	ប្រសិនបើ (p && likely(wait_start > prev_wait_start))
 		wait_start -= prev_wait_start;
 
 	__schedstat_set(stats->wait_start, wait_start);
 }
 
-void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
-			     struct sched_statistics *stats)
+void __update_stats_wait_end(sa_nracanaa rq *rq, sa_nracanaa task_struct *p,
+			     sa_nracanaa sched_statistics *stats)
 {
 	u64 delta = rq_clock(rq) - schedstat_val(stats->wait_start);
 
-	if (p) {
-		if (task_on_rq_migrating(p)) {
+	ប្រសិនបើ (p) {
+		ប្រសិនបើ (task_on_rq_migrating(p)) {
 			/*
 			 * Preserve migrating task's wait time so wait_start
 			 * time stamp can be adjusted to accumulate wait time
@@ -32,7 +32,7 @@ void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
 			 */
 			__schedstat_set(stats->wait_start, delta);
 
-			return;
+			ត្រឡប់;
 		}
 
 		trace_sched_stat_wait(p, delta);
@@ -45,47 +45,47 @@ void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
 	__schedstat_set(stats->wait_start, 0);
 }
 
-void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
-				    struct sched_statistics *stats)
+void __update_stats_enqueue_sleeper(sa_nracanaa rq *rq, sa_nracanaa task_struct *p,
+				    sa_nracanaa sched_statistics *stats)
 {
 	u64 sleep_start, block_start;
 
 	sleep_start = schedstat_val(stats->sleep_start);
 	block_start = schedstat_val(stats->block_start);
 
-	if (sleep_start) {
+	ប្រសិនបើ (sleep_start) {
 		u64 delta = rq_clock(rq) - sleep_start;
 
-		if ((s64)delta < 0)
+		ប្រសិនបើ ((s64)delta < 0)
 			delta = 0;
 
-		if (unlikely(delta > schedstat_val(stats->sleep_max)))
+		ប្រសិនបើ (unlikely(delta > schedstat_val(stats->sleep_max)))
 			__schedstat_set(stats->sleep_max, delta);
 
 		__schedstat_set(stats->sleep_start, 0);
 		__schedstat_add(stats->sum_sleep_runtime, delta);
 
-		if (p) {
+		ប្រសិនបើ (p) {
 			account_scheduler_latency(p, delta >> 10, 1);
 			trace_sched_stat_sleep(p, delta);
 		}
 	}
 
-	if (block_start) {
+	ប្រសិនបើ (block_start) {
 		u64 delta = rq_clock(rq) - block_start;
 
-		if ((s64)delta < 0)
+		ប្រសិនបើ ((s64)delta < 0)
 			delta = 0;
 
-		if (unlikely(delta > schedstat_val(stats->block_max)))
+		ប្រសិនបើ (unlikely(delta > schedstat_val(stats->block_max)))
 			__schedstat_set(stats->block_max, delta);
 
 		__schedstat_set(stats->block_start, 0);
 		__schedstat_add(stats->sum_sleep_runtime, delta);
 		__schedstat_add(stats->sum_block_runtime, delta);
 
-		if (p) {
-			if (p->in_iowait) {
+		ប្រសិនបើ (p) {
+			ប្រសិនបើ (p->in_iowait) {
 				__schedstat_add(stats->iowait_sum, delta);
 				__schedstat_inc(stats->iowait_count);
 				trace_sched_stat_iowait(p, delta);
@@ -106,17 +106,17 @@ void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
  */
 #define SCHEDSTAT_VERSION 17
 
-static int show_schedstat(struct seq_file *seq, void *v)
+static ចំនួនគត់ show_schedstat(sa_nracanaa seq_file *seq, void *v)
 {
-	int cpu;
+	ចំនួនគត់ cpu;
 
-	if (v == (void *)1) {
+	ប្រសិនបើ (v == (void *)1) {
 		seq_printf(seq, "version %d\n", SCHEDSTAT_VERSION);
 		seq_printf(seq, "timestamp %lu\n", jiffies);
-	} else {
-		struct rq *rq;
-		struct sched_domain *sd;
-		int dcount = 0;
+	} បើមិនដូច្នេះ {
+		sa_nracanaa rq *rq;
+		sa_nracanaa sched_domain *sd;
+		ចំនួនគត់ dcount = 0;
 		cpu = (unsigned long)(v - 2);
 		rq = cpu_rq(cpu);
 
@@ -134,11 +134,11 @@ static int show_schedstat(struct seq_file *seq, void *v)
 		/* domain-specific stats */
 		rcu_read_lock();
 		for_each_domain(cpu, sd) {
-			enum cpu_idle_type itype;
+			ga_nanaa cpu_idle_type itype;
 
 			seq_printf(seq, "domain%d %s %*pb", dcount++, sd->name,
 				   cpumask_pr_args(sched_domain_span(sd)));
-			for (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
+			សម្រាប់ (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
 				seq_printf(seq, " %u %u %u %u %u %u %u %u %u %u %u",
 				    sd->lb_count[itype],
 				    sd->lb_balanced[itype],
@@ -162,7 +162,7 @@ static int show_schedstat(struct seq_file *seq, void *v)
 		}
 		rcu_read_unlock();
 	}
-	return 0;
+	ត្រឡប់ 0;
 }
 
 /*
@@ -172,49 +172,49 @@ static int show_schedstat(struct seq_file *seq, void *v)
  * In a hotplugged system some CPUs, including cpu 0, may be missing so we have
  * to use cpumask_* to iterate over the CPUs.
  */
-static void *schedstat_start(struct seq_file *file, loff_t *offset)
+static void *schedstat_start(sa_nracanaa seq_file *file, loff_t *offset)
 {
 	unsigned long n = *offset;
 
-	if (n == 0)
-		return (void *) 1;
+	ប្រសិនបើ (n == 0)
+		ត្រឡប់ (void *) 1;
 
 	n--;
 
-	if (n > 0)
+	ប្រសិនបើ (n > 0)
 		n = cpumask_next(n - 1, cpu_online_mask);
-	else
+	បើមិនដូច្នេះ
 		n = cpumask_first(cpu_online_mask);
 
 	*offset = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	ប្រសិនបើ (n < nr_cpu_ids)
+		ត្រឡប់ (void *)(unsigned long)(n + 2);
 
-	return NULL;
+	ត្រឡប់ NULL;
 }
 
-static void *schedstat_next(struct seq_file *file, void *data, loff_t *offset)
+static void *schedstat_next(sa_nracanaa seq_file *file, void *data, loff_t *offset)
 {
 	(*offset)++;
 
-	return schedstat_start(file, offset);
+	ត្រឡប់ schedstat_start(file, offset);
 }
 
-static void schedstat_stop(struct seq_file *file, void *data)
+static void schedstat_stop(sa_nracanaa seq_file *file, void *data)
 {
 }
 
-static const struct seq_operations schedstat_sops = {
+static const sa_nracanaa seq_operations schedstat_sops = {
 	.start = schedstat_start,
 	.next  = schedstat_next,
 	.stop  = schedstat_stop,
 	.show  = show_schedstat,
 };
 
-static int __init proc_schedstat_init(void)
+static ចំនួនគត់ __init proc_schedstat_init(void)
 {
 	proc_create_seq("schedstat", 0, NULL, &schedstat_sops);
-	return 0;
+	ត្រឡប់ 0;
 }
 subsys_initcall(proc_schedstat_init);

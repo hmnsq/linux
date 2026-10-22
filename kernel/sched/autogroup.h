@@ -6,61 +6,61 @@
 
 #ifdef CONFIG_SCHED_AUTOGROUP
 
-struct autogroup {
+sa_nracanaa autogroup {
 	/*
 	 * Reference doesn't mean how many threads attach to this
 	 * autogroup now. It just stands for the number of tasks
 	 * which could use this autogroup.
 	 */
-	struct kref		kref;
-	struct task_group	*tg;
-	struct rw_semaphore	lock;
+	sa_nracanaa kref		kref;
+	sa_nracanaa task_group	*tg;
+	sa_nracanaa rw_semaphore	lock;
 	unsigned long		id;
-	int			nice;
+	ចំនួនគត់			nice;
 };
 
-extern void autogroup_init(struct task_struct *init_task);
-extern void autogroup_free(struct task_group *tg);
+extern void autogroup_init(sa_nracanaa task_struct *init_task);
+extern void autogroup_free(sa_nracanaa task_group *tg);
 
-static inline bool task_group_is_autogroup(struct task_group *tg)
+static anta_hstha bool task_group_is_autogroup(sa_nracanaa task_group *tg)
 {
-	return !!tg->autogroup;
+	ត្រឡប់ !!tg->autogroup;
 }
 
-extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
+extern bool task_wants_autogroup(sa_nracanaa task_struct *p, sa_nracanaa task_group *tg);
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+static anta_hstha sa_nracanaa task_group *
+autogroup_task_group(sa_nracanaa task_struct *p, sa_nracanaa task_group *tg)
 {
-	extern unsigned int sysctl_sched_autogroup_enabled;
-	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+	extern unsigned ចំនួនគត់ sysctl_sched_autogroup_enabled;
+	ចំនួនគត់ enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
 
-	if (enabled && task_wants_autogroup(p, tg))
-		return p->signal->autogroup->tg;
+	ប្រសិនបើ (enabled && task_wants_autogroup(p, tg))
+		ត្រឡប់ p->sa_nkeeta->autogroup->tg;
 
-	return tg;
+	ត្រឡប់ tg;
 }
 
-extern int autogroup_path(struct task_group *tg, char *buf, int buflen);
+extern ចំនួនគត់ autogroup_path(sa_nracanaa task_group *tg, var_na *buf, ចំនួនគត់ buflen);
 
-#else /* !CONFIG_SCHED_AUTOGROUP: */
+#បើមិនដូច្នេះ /* !CONFIG_SCHED_AUTOGROUP: */
 
-static inline void autogroup_init(struct task_struct *init_task) {  }
-static inline void autogroup_free(struct task_group *tg) { }
-static inline bool task_group_is_autogroup(struct task_group *tg)
+static anta_hstha void autogroup_init(sa_nracanaa task_struct *init_task) {  }
+static anta_hstha void autogroup_free(sa_nracanaa task_group *tg) { }
+static anta_hstha bool task_group_is_autogroup(sa_nracanaa task_group *tg)
 {
-	return 0;
+	ត្រឡប់ 0;
 }
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+static anta_hstha sa_nracanaa task_group *
+autogroup_task_group(sa_nracanaa task_struct *p, sa_nracanaa task_group *tg)
 {
-	return tg;
+	ត្រឡប់ tg;
 }
 
-static inline int autogroup_path(struct task_group *tg, char *buf, int buflen)
+static anta_hstha ចំនួនគត់ autogroup_path(sa_nracanaa task_group *tg, var_na *buf, ចំនួនគត់ buflen)
 {
-	return 0;
+	ត្រឡប់ 0;
 }
 
 #endif /* !CONFIG_SCHED_AUTOGROUP */
