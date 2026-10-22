@@ -10,22 +10,22 @@
 #ifndef _KERNEL_SCHED_EXT_IDLE_H
 #define _KERNEL_SCHED_EXT_IDLE_H
 
-#include <linux/btf_ids.h>
+#અન્તર્ભાવ <linux/btf_ids.h>
 
-struct cpumask;
-struct sched_ext_ops;
-struct task_struct;
+સંરચના cpumask;
+સંરચના sched_ext_ops;
+સંરચના task_struct;
 
-extern struct btf_id_set8 scx_kfunc_ids_idle;
-extern struct btf_id_set8 scx_kfunc_ids_select_cpu;
+બાહ્ય સંરચના btf_id_set8 scx_kfunc_ids_idle;
+બાહ્ય સંરચના btf_id_set8 scx_kfunc_ids_select_cpu;
 
-void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops);
-void scx_idle_init_masks(void);
+શૂન્ય scx_idle_update_selcpu_topology(સંરચના sched_ext_ops *ops);
+શૂન્ય scx_idle_init_masks(શૂન્ય);
 
-s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
-		       const struct cpumask *cpus_allowed, u64 flags);
-void scx_idle_enable(struct sched_ext_ops *ops);
-void scx_idle_disable(void);
-int scx_idle_init(void);
+s32 scx_select_cpu_dfl(સંરચના task_struct *p, s32 prev_cpu, u64 wake_flags,
+		       અચલ સંરચના cpumask *cpus_allowed, u64 flags);
+શૂન્ય scx_idle_enable(સંરચના sched_ext_ops *ops);
+શૂન્ય scx_idle_disable(શૂન્ય);
+પૂર્ણાંક scx_idle_init(શૂન્ય);
 
 #endif /* _KERNEL_SCHED_EXT_IDLE_H */

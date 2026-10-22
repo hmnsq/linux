@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
-#include <linux/sched/debug.h>
-#include "sched.h"
+#અન્તર્ભાવ <linux/sched/debug.h>
+#અન્તર્ભાવ "sched.h"
 
 /*
  * The implementation of the wait_bit*() and related waiting APIs:
@@ -10,125 +10,125 @@
 #define WAIT_TABLE_BITS 8
 #define WAIT_TABLE_SIZE (1 << WAIT_TABLE_BITS)
 
-static wait_queue_head_t bit_wait_table[WAIT_TABLE_SIZE] __cacheline_aligned;
+સ્થિર wait_queue_head_t bit_wait_table[WAIT_TABLE_SIZE] __cacheline_aligned;
 
-wait_queue_head_t *bit_waitqueue(unsigned long *word, int bit)
+wait_queue_head_t *bit_waitqueue(unsigned long *word, પૂર્ણાંક bit)
 {
-	const int shift = BITS_PER_LONG == 32 ? 5 : 6;
+	અચલ પૂર્ણાંક shift = BITS_PER_LONG == 32 ? 5 : 6;
 	unsigned long val = (unsigned long)word << shift | bit;
 
-	return bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
+	પાછા bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
 }
-EXPORT_SYMBOL(bit_waitqueue);
+EXPORT_પ્રતીક(bit_waitqueue);
 
-int wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+પૂર્ણાંક wake_bit_function(સંરચના wait_queue_entry *wq_entry, unsigned mode, પૂર્ણાંક sync, શૂન્ય *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wait_bit = container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	સંરચના wait_bit_ચાવી *ચાવી = arg;
+	સંરચના wait_bit_queue_entry *wait_bit = container_of(wq_entry, સંરચના wait_bit_queue_entry, wq_entry);
 
-	if (wait_bit->key.flags != key->flags ||
-			wait_bit->key.bit_nr != key->bit_nr ||
-			test_bit(key->bit_nr, key->flags))
-		return 0;
+	જો (wait_bit->ચાવી.flags != ચાવી->flags ||
+			wait_bit->ચાવી.bit_nr != ચાવી->bit_nr ||
+			test_bit(ચાવી->bit_nr, ચાવી->flags))
+		પાછા 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	પાછા autoremove_wake_function(wq_entry, mode, sync, ચાવી);
 }
-EXPORT_SYMBOL(wake_bit_function);
+EXPORT_પ્રતીક(wake_bit_function);
 
 /*
  * To allow interruptible waiting and asynchronous (i.e. non-blocking)
  * waiting, the actions of __wait_on_bit() and __wait_on_bit_lock() are
  * permitted return codes. Nonzero return codes halt waiting and return.
  */
-int __sched
-__wait_on_bit(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
+પૂર્ણાંક __sched
+__wait_on_bit(સંરચના wait_queue_head *wq_head, સંરચના wait_bit_queue_entry *wbq_entry,
 	      wait_bit_action_f *action, unsigned mode)
 {
-	int ret = 0;
+	પૂર્ણાંક ret = 0;
 
-	do {
+	કરો {
 		prepare_to_wait(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
-			ret = (*action)(&wbq_entry->key, mode);
-	} while (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
+		જો (test_bit(wbq_entry->ચાવી.bit_nr, wbq_entry->ચાવી.flags))
+			ret = (*action)(&wbq_entry->ચાવી, mode);
+	} જ્યારે (test_bit_acquire(wbq_entry->ચાવી.bit_nr, wbq_entry->ચાવી.flags) && !ret);
 
 	finish_wait(wq_head, &wbq_entry->wq_entry);
 
-	return ret;
+	પાછા ret;
 }
-EXPORT_SYMBOL(__wait_on_bit);
+EXPORT_પ્રતીક(__wait_on_bit);
 
-int __sched out_of_line_wait_on_bit(unsigned long *word, int bit,
+પૂર્ણાંક __sched out_of_લીટી_wait_on_bit(unsigned long *word, પૂર્ણાંક bit,
 				    wait_bit_action_f *action, unsigned mode)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	સંરચના wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	પાછા __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit);
+EXPORT_પ્રતીક(out_of_લીટી_wait_on_bit);
 
-int __sched out_of_line_wait_on_bit_timeout(
-	unsigned long *word, int bit, wait_bit_action_f *action,
+પૂર્ણાંક __sched out_of_લીટી_wait_on_bit_timeout(
+	unsigned long *word, પૂર્ણાંક bit, wait_bit_action_f *action,
 	unsigned mode, unsigned long timeout)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	સંરચના wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	wq_entry.key.timeout = jiffies + timeout;
+	wq_entry.ચાવી.timeout = jiffies + timeout;
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	પાછા __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
-EXPORT_SYMBOL_GPL(out_of_line_wait_on_bit_timeout);
+EXPORT_પ્રતીક_GPL(out_of_લીટી_wait_on_bit_timeout);
 
-int __sched
-__wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
+પૂર્ણાંક __sched
+__wait_on_bit_lock(સંરચના wait_queue_head *wq_head, સંરચના wait_bit_queue_entry *wbq_entry,
 			wait_bit_action_f *action, unsigned mode)
 {
-	int ret = 0;
+	પૂર્ણાંક ret = 0;
 
-	for (;;) {
+	માટે (;;) {
 		prepare_to_wait_exclusive(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			ret = action(&wbq_entry->key, mode);
+		જો (test_bit(wbq_entry->ચાવી.bit_nr, wbq_entry->ચાવી.flags)) {
+			ret = action(&wbq_entry->ચાવી, mode);
 			/*
 			 * See the comment in prepare_to_wait_event().
 			 * finish_wait() does not necessarily takes wwq_head->lock,
 			 * but test_and_set_bit() implies mb() which pairs with
 			 * smp_mb__after_atomic() before wake_up_page().
 			 */
-			if (ret)
+			જો (ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
 		}
-		if (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			if (!ret)
+		જો (!test_and_set_bit(wbq_entry->ચાવી.bit_nr, wbq_entry->ચાવી.flags)) {
+			જો (!ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
-			return 0;
-		} else if (ret) {
-			return ret;
+			પાછા 0;
+		} નહીંતર જો (ret) {
+			પાછા ret;
 		}
 	}
 }
-EXPORT_SYMBOL(__wait_on_bit_lock);
+EXPORT_પ્રતીક(__wait_on_bit_lock);
 
-int __sched out_of_line_wait_on_bit_lock(unsigned long *word, int bit,
+પૂર્ણાંક __sched out_of_લીટી_wait_on_bit_lock(unsigned long *word, પૂર્ણાંક bit,
 					 wait_bit_action_f *action, unsigned mode)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	સંરચના wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	return __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
+	પાછા __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit_lock);
+EXPORT_પ્રતીક(out_of_લીટી_wait_on_bit_lock);
 
-void __wake_up_bit(struct wait_queue_head *wq_head, unsigned long *word, int bit)
+શૂન્ય __wake_up_bit(સંરચના wait_queue_head *wq_head, unsigned long *word, પૂર્ણાંક bit)
 {
-	struct wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
+	સંરચના wait_bit_ચાવી ચાવી = __WAIT_BIT_KEY_INITIALIZER(word, bit);
 
-	if (waitqueue_active(wq_head))
-		__wake_up(wq_head, TASK_NORMAL, 1, &key);
+	જો (waitqueue_active(wq_head))
+		__wake_up(wq_head, TASK_NORMAL, 1, &ચાવી);
 }
-EXPORT_SYMBOL(__wake_up_bit);
+EXPORT_પ્રતીક(__wake_up_bit);
 
 /**
  * wake_up_bit - wake up waiters on a bit
@@ -155,57 +155,57 @@ EXPORT_SYMBOL(__wake_up_bit);
  * cleared are guaranteed to be visible after the matching wait_on_bit()
  * completes.
  */
-void wake_up_bit(unsigned long *word, int bit)
+શૂન્ય wake_up_bit(unsigned long *word, પૂર્ણાંક bit)
 {
 	__wake_up_bit(bit_waitqueue(word, bit), word, bit);
 }
-EXPORT_SYMBOL(wake_up_bit);
+EXPORT_પ્રતીક(wake_up_bit);
 
-wait_queue_head_t *__var_waitqueue(void *p)
+wait_queue_head_t *__var_waitqueue(શૂન્ય *p)
 {
-	return bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
+	પાછા bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
 }
-EXPORT_SYMBOL(__var_waitqueue);
+EXPORT_પ્રતીક(__var_waitqueue);
 
-struct wait_bit_key *__var_wake_key(struct wait_queue_entry *wq_entry, void *arg)
+સંરચના wait_bit_ચાવી *__var_wake_key(સંરચના wait_queue_entry *wq_entry, શૂન્ય *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wbq_entry =
-		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	સંરચના wait_bit_ચાવી *ચાવી = arg;
+	સંરચના wait_bit_queue_entry *wbq_entry =
+		container_of(wq_entry, સંરચના wait_bit_queue_entry, wq_entry);
 
-	if (wbq_entry->key.flags != key->flags ||
-	    wbq_entry->key.bit_nr != key->bit_nr)
-		return NULL;
+	જો (wbq_entry->ચાવી.flags != ચાવી->flags ||
+	    wbq_entry->ચાવી.bit_nr != ચાવી->bit_nr)
+		પાછા ખાલી;
 
-	return key;
-}
-
-static int var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
-			     int sync, void *arg)
-{
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
-
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	પાછા ચાવી;
 }
 
-void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
+સ્થિર પૂર્ણાંક var_wake_function(સંરચના wait_queue_entry *wq_entry, unsigned પૂર્ણાંક mode,
+			     પૂર્ણાંક sync, શૂન્ય *arg)
 {
-	*wbq_entry = (struct wait_bit_queue_entry){
-		.key = {
+	સંરચના wait_bit_ચાવી *ચાવી = __var_wake_key(wq_entry, arg);
+	જો (!ચાવી)
+		પાછા 0;
+
+	પાછા autoremove_wake_function(wq_entry, mode, sync, ચાવી);
+}
+
+શૂન્ય init_wait_var_entry(સંરચના wait_bit_queue_entry *wbq_entry, શૂન્ય *var, પૂર્ણાંક flags)
+{
+	*wbq_entry = (સંરચના wait_bit_queue_entry){
+		.ચાવી = {
 			.flags	= (var),
 			.bit_nr = -1,
 		},
 		.wq_entry = {
 			.flags	 = flags,
-			.private = current,
+			.ખાનગી = current,
 			.func	 = var_wake_function,
 			.entry	 = LIST_HEAD_INIT(wbq_entry->wq_entry.entry),
 		},
 	};
 }
-EXPORT_SYMBOL(init_wait_var_entry);
+EXPORT_પ્રતીક(init_wait_var_entry);
 
 /**
  * wake_up_var - wake up waiters on a variable (kernel address)
@@ -237,50 +237,50 @@ EXPORT_SYMBOL(init_wait_var_entry);
  * variable was updated are guaranteed to be visible after the matching
  * wait_var_event() completes.
  */
-void wake_up_var(void *var)
+શૂન્ય wake_up_var(શૂન્ય *var)
 {
 	__wake_up_bit(__var_waitqueue(var), var, -1);
 }
-EXPORT_SYMBOL(wake_up_var);
+EXPORT_પ્રતીક(wake_up_var);
 
-__sched int bit_wait(struct wait_bit_key *word, int mode)
+__sched પૂર્ણાંક bit_wait(સંરચના wait_bit_ચાવી *word, પૂર્ણાંક mode)
 {
 	schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	જો (signal_pending_state(mode, current))
+		પાછા -EINTR;
 
-	return 0;
+	પાછા 0;
 }
-EXPORT_SYMBOL(bit_wait);
+EXPORT_પ્રતીક(bit_wait);
 
-__sched int bit_wait_io(struct wait_bit_key *word, int mode)
+__sched પૂર્ણાંક bit_wait_io(સંરચના wait_bit_ચાવી *word, પૂર્ણાંક mode)
 {
 	io_schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	જો (signal_pending_state(mode, current))
+		પાછા -EINTR;
 
-	return 0;
+	પાછા 0;
 }
-EXPORT_SYMBOL(bit_wait_io);
+EXPORT_પ્રતીક(bit_wait_io);
 
-__sched int bit_wait_timeout(struct wait_bit_key *word, int mode)
+__sched પૂર્ણાંક bit_wait_timeout(સંરચના wait_bit_ચાવી *word, પૂર્ણાંક mode)
 {
 	unsigned long now = READ_ONCE(jiffies);
 
-	if (time_after_eq(now, word->timeout))
-		return -EAGAIN;
+	જો (time_after_eq(now, word->timeout))
+		પાછા -EAGAIN;
 	schedule_timeout(word->timeout - now);
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	જો (signal_pending_state(mode, current))
+		પાછા -EINTR;
 
-	return 0;
+	પાછા 0;
 }
-EXPORT_SYMBOL_GPL(bit_wait_timeout);
+EXPORT_પ્રતીક_GPL(bit_wait_timeout);
 
-void __init wait_bit_init(void)
+શૂન્ય __init wait_bit_init(શૂન્ય)
 {
-	int i;
+	પૂર્ણાંક i;
 
-	for (i = 0; i < WAIT_TABLE_SIZE; i++)
+	માટે (i = 0; i < WAIT_TABLE_SIZE; i++)
 		init_waitqueue_head(bit_wait_table + i);
 }

@@ -6,138 +6,138 @@
  *
  * Copyright(C) 2007, Red Hat, Inc., Ingo Molnar
  */
-#include <linux/debugfs.h>
-#include <linux/nmi.h>
-#include <linux/log2.h>
-#include "sched.h"
+#અન્તર્ભાવ <linux/debugfs.h>
+#અન્તર્ભાવ <linux/nmi.h>
+#અન્તર્ભાવ <linux/log2.h>
+#અન્તર્ભાવ "sched.h"
 
 /*
  * This allows printing both to /sys/kernel/debug/sched/debug and
  * to the console
  */
 #define SEQ_printf(m, x...)			\
- do {						\
-	if (m)					\
+ કરો {						\
+	જો (m)					\
 		seq_printf(m, x);		\
-	else					\
+	નહીંતર					\
 		pr_cont(x);			\
- } while (0)
+ } જ્યારે (0)
 
 /*
  * Ease the printing of nsec fields:
  */
-static long long nsec_high(unsigned long long nsec)
+સ્થિર long long nsec_ઉપલું(unsigned long long nsec)
 {
-	if ((long long)nsec < 0) {
+	જો ((long long)nsec < 0) {
 		nsec = -nsec;
 		do_div(nsec, 1000000);
-		return -nsec;
+		પાછા -nsec;
 	}
 	do_div(nsec, 1000000);
 
-	return nsec;
+	પાછા nsec;
 }
 
-static unsigned long nsec_low(unsigned long long nsec)
+સ્થિર unsigned long nsec_નીચલું(unsigned long long nsec)
 {
-	if ((long long)nsec < 0)
+	જો ((long long)nsec < 0)
 		nsec = -nsec;
 
-	return do_div(nsec, 1000000);
+	પાછા do_div(nsec, 1000000);
 }
 
-#define SPLIT_NS(x) nsec_high(x), nsec_low(x)
+#define SPLIT_NS(x) nsec_ઉપલું(x), nsec_નીચલું(x)
 
 #define SCHED_FEAT(name, enabled)	\
 	#name ,
 
-static const char * const sched_feat_names[] = {
-#include "features.h"
+સ્થિર અચલ અક્ષર * અચલ sched_feat_names[] = {
+#અન્તર્ભાવ "features.h"
 };
 
 #undef SCHED_FEAT
 
-static int sched_feat_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_feat_show(સંરચના seq_file *m, શૂન્ય *v)
 {
-	int i;
+	પૂર્ણાંક i;
 
-	for (i = 0; i < __SCHED_FEAT_NR; i++) {
-		if (!(sysctl_sched_features & (1UL << i)))
+	માટે (i = 0; i < __SCHED_FEAT_NR; i++) {
+		જો (!(sysctl_sched_features & (1UL << i)))
 			seq_puts(m, "NO_");
 		seq_printf(m, "%s ", sched_feat_names[i]);
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	પાછા 0;
 }
 
 #ifdef CONFIG_JUMP_LABEL
 
-#define jump_label_key__true  { .key_true  = STATIC_KEY_TRUE_INIT  }
-#define jump_label_key__false { .key_false = STATIC_KEY_FALSE_INIT }
+#define jump_label_ચાવી_true  { .ચાવી_true  = STATIC_ચાવી_TRUE_INIT  }
+#define jump_label_ચાવી_false { .ચાવી_false = STATIC_ચાવી_FALSE_INIT }
 
 #define SCHED_FEAT(name, enabled)	\
-	jump_label_key__##enabled ,
+	jump_label_ચાવી##enabled ,
 
-union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR] = {
-#include "features.h"
+સંઘ sched_feat_ચાવી sched_feat_ચાવીઓ[__SCHED_FEAT_NR] = {
+#અન્તર્ભાવ "features.h"
 };
 
 #undef SCHED_FEAT
 
-static void sched_feat_disable(int i)
+સ્થિર શૂન્ય sched_feat_disable(પૂર્ણાંક i)
 {
-	static_branch_disable_cpuslocked(&sched_feat_keys[i].key_true);
+	static_branch_disable_cpuslocked(&sched_feat_ચાવીઓ[i].ચાવી_true);
 }
 
-static void sched_feat_enable(int i)
+સ્થિર શૂન્ય sched_feat_enable(પૂર્ણાંક i)
 {
-	static_branch_enable_cpuslocked(&sched_feat_keys[i].key_false);
+	static_branch_enable_cpuslocked(&sched_feat_ચાવીઓ[i].ચાવી_false);
 }
-#else /* !CONFIG_JUMP_LABEL: */
-static void sched_feat_disable(int i) { };
-static void sched_feat_enable(int i) { };
+#નહીંતર /* !CONFIG_JUMP_LABEL: */
+સ્થિર શૂન્ય sched_feat_disable(પૂર્ણાંક i) { };
+સ્થિર શૂન્ય sched_feat_enable(પૂર્ણાંક i) { };
 #endif /* !CONFIG_JUMP_LABEL */
 
-static int sched_feat_set(char *cmp)
+સ્થિર પૂર્ણાંક sched_feat_set(અક્ષર *cmp)
 {
-	int i;
-	int neg = 0;
+	પૂર્ણાંક i;
+	પૂર્ણાંક neg = 0;
 
-	if (strncmp(cmp, "NO_", 3) == 0) {
+	જો (strncmp(cmp, "NO_", 3) == 0) {
 		neg = 1;
 		cmp += 3;
 	}
 
 	i = match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
-	if (i < 0)
-		return i;
+	જો (i < 0)
+		પાછા i;
 
-	if (neg) {
+	જો (neg) {
 		sysctl_sched_features &= ~(1UL << i);
 		sched_feat_disable(i);
-	} else {
+	} નહીંતર {
 		sysctl_sched_features |= (1UL << i);
 		sched_feat_enable(i);
 	}
 
-	return 0;
+	પાછા 0;
 }
 
-static ssize_t
-sched_feat_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t
+sched_feat_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 		size_t cnt, loff_t *ppos)
 {
-	char buf[64];
-	char *cmp;
-	int ret;
-	struct inode *inode;
+	અક્ષર buf[64];
+	અક્ષર *cmp;
+	પૂર્ણાંક ret;
+	સંરચના inode *inode;
 
-	if (cnt > 63)
+	જો (cnt > 63)
 		cnt = 63;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	જો (copy_from_user(buf, ubuf, cnt))
+		પાછા -EFAULT;
 
 	buf[cnt] = 0;
 	cmp = strstrip(buf);
@@ -149,78 +149,78 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
 	ret = sched_feat_set(cmp);
 	inode_unlock(inode);
 	cpus_read_unlock();
-	if (ret < 0)
-		return ret;
+	જો (ret < 0)
+		પાછા ret;
 
 	*ppos += cnt;
 
-	return cnt;
+	પાછા cnt;
 }
 
-static int sched_feat_open(struct inode *inode, struct file *filp)
+સ્થિર પૂર્ણાંક sched_feat_open(સંરચના inode *inode, સંરચના file *filp)
 {
-	return single_open(filp, sched_feat_show, NULL);
+	પાછા single_open(filp, sched_feat_show, ખાલી);
 }
 
-static const struct file_operations sched_feat_fops = {
+સ્થિર અચલ સંરચના file_operations sched_feat_fops = {
 	.open		= sched_feat_open,
-	.write		= sched_feat_write,
-	.read		= seq_read,
+	.લિખ		= sched_feat_write,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static ssize_t sched_scaling_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t sched_scaling_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	unsigned int scaling;
-	int ret;
+	unsigned પૂર્ણાંક scaling;
+	પૂર્ણાંક ret;
 
 	ret = kstrtouint_from_user(ubuf, cnt, 10, &scaling);
-	if (ret)
-		return ret;
+	જો (ret)
+		પાછા ret;
 
-	if (scaling >= SCHED_TUNABLESCALING_END)
-		return -EINVAL;
+	જો (scaling >= SCHED_TUNABLESCALING_END)
+		પાછા -EINVAL;
 
 	sysctl_sched_tunable_scaling = scaling;
-	if (sched_update_scaling())
-		return -EINVAL;
+	જો (sched_update_scaling())
+		પાછા -EINVAL;
 
 	*ppos += cnt;
-	return cnt;
+	પાછા cnt;
 }
 
-static int sched_scaling_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_scaling_show(સંરચના seq_file *m, શૂન્ય *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_tunable_scaling);
-	return 0;
+	પાછા 0;
 }
 
-static int sched_scaling_open(struct inode *inode, struct file *filp)
+સ્થિર પૂર્ણાંક sched_scaling_open(સંરચના inode *inode, સંરચના file *filp)
 {
-	return single_open(filp, sched_scaling_show, NULL);
+	પાછા single_open(filp, sched_scaling_show, ખાલી);
 }
 
-static const struct file_operations sched_scaling_fops = {
+સ્થિર અચલ સંરચના file_operations sched_scaling_fops = {
 	.open		= sched_scaling_open,
-	.write		= sched_scaling_write,
-	.read		= seq_read,
+	.લિખ		= sched_scaling_write,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
 #ifdef CONFIG_SCHED_CACHE
-static ssize_t
-sched_cache_enable_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t
+sched_cache_enable_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 			 size_t cnt, loff_t *ppos)
 {
 	bool val;
-	int ret;
+	પૂર્ણાંક ret;
 
 	ret = kstrtobool_from_user(ubuf, cnt, &val);
-	if (ret)
-		return ret;
+	જો (ret)
+		પાછા ret;
 
 	sysctl_sched_cache_user = val;
 
@@ -228,25 +228,25 @@ sched_cache_enable_write(struct file *filp, const char __user *ubuf,
 
 	*ppos += cnt;
 
-	return cnt;
+	પાછા cnt;
 }
 
-static int sched_cache_enable_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_cache_enable_show(સંરચના seq_file *m, શૂન્ય *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_cache_user);
-	return 0;
+	પાછા 0;
 }
 
-static int sched_cache_enable_open(struct inode *inode,
-				   struct file *filp)
+સ્થિર પૂર્ણાંક sched_cache_enable_open(સંરચના inode *inode,
+				   સંરચના file *filp)
 {
-	return single_open(filp, sched_cache_enable_show, NULL);
+	પાછા single_open(filp, sched_cache_enable_show, ખાલી);
 }
 
-static const struct file_operations sched_cache_enable_fops = {
+સ્થિર અચલ સંરચના file_operations sched_cache_enable_fops = {
 	.open           = sched_cache_enable_open,
-	.write          = sched_cache_enable_write,
-	.read           = seq_read,
+	.લિખ          = sched_cache_enable_write,
+	.પઠ           = seq_read,
 	.llseek         = seq_lseek,
 	.release        = single_release,
 };
@@ -254,58 +254,58 @@ static const struct file_operations sched_cache_enable_fops = {
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
 
-static ssize_t sched_dynamic_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t sched_dynamic_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	અક્ષર buf[16];
+	પૂર્ણાંક mode;
 
-	if (cnt > 15)
+	જો (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	જો (copy_from_user(buf, ubuf, cnt))
+		પાછા -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_dynamic_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	જો (mode < 0)
+		પાછા mode;
 
 	sched_dynamic_update(mode);
 
 	*ppos += cnt;
 
-	return cnt;
+	પાછા cnt;
 }
 
-static int sched_dynamic_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_dynamic_show(સંરચના seq_file *m, શૂન્ય *v)
 {
-	int mode = READ_ONCE(preempt_dynamic_mode);
+	પૂર્ણાંક mode = READ_ONCE(preempt_dynamic_mode);
 
 	/* Stop at NULL terminator */
-	for (int i = 0; preempt_modes[i]; i++) {
-		if (mode == i)
+	માટે (પૂર્ણાંક i = 0; preempt_modes[i]; i++) {
+		જો (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, preempt_modes[i]);
-		if (mode == i)
+		જો (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 
 	seq_puts(m, "\n");
-	return 0;
+	પાછા 0;
 }
 
-static int sched_dynamic_open(struct inode *inode, struct file *filp)
+સ્થિર પૂર્ણાંક sched_dynamic_open(સંરચના inode *inode, સંરચના file *filp)
 {
-	return single_open(filp, sched_dynamic_show, NULL);
+	પાછા single_open(filp, sched_dynamic_show, ખાલી);
 }
 
-static const struct file_operations sched_dynamic_fops = {
+સ્થિર અચલ સંરચના file_operations sched_dynamic_fops = {
 	.open		= sched_dynamic_open,
-	.write		= sched_dynamic_write,
-	.read		= seq_read,
+	.લિખ		= sched_dynamic_write,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
@@ -314,10 +314,10 @@ static const struct file_operations sched_dynamic_fops = {
 
 __read_mostly bool sched_debug_verbose;
 
-static struct dentry           *sd_dentry;
+સ્થિર સંરચના dentry           *sd_dentry;
 
 
-static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t sched_verbose_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 				  size_t cnt, loff_t *ppos)
 {
 	ssize_t result;
@@ -329,100 +329,100 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
 	orig = sched_debug_verbose;
 	result = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
 
-	if (sched_debug_verbose && !orig)
+	જો (sched_debug_verbose && !orig)
 		update_sched_domain_debugfs();
-	else if (!sched_debug_verbose && orig) {
+	નહીંતર જો (!sched_debug_verbose && orig) {
 		debugfs_remove(sd_dentry);
-		sd_dentry = NULL;
+		sd_dentry = ખાલી;
 	}
 
 	sched_domains_mutex_unlock();
 	cpus_read_unlock();
 
-	return result;
+	પાછા result;
 }
 
-static const struct file_operations sched_verbose_fops = {
-	.read =         debugfs_read_file_bool,
-	.write =        sched_verbose_write,
+સ્થિર અચલ સંરચના file_operations sched_verbose_fops = {
+	.પઠ =         debugfs_read_file_bool,
+	.લિખ =        sched_verbose_write,
 	.open =         simple_open,
 	.llseek =       default_llseek,
 };
 
-static const struct seq_operations sched_debug_sops;
+સ્થિર અચલ સંરચના seq_operations sched_debug_sops;
 
-static int sched_debug_open(struct inode *inode, struct file *filp)
+સ્થિર પૂર્ણાંક sched_debug_open(સંરચના inode *inode, સંરચના file *filp)
 {
-	return seq_open(filp, &sched_debug_sops);
+	પાછા seq_open(filp, &sched_debug_sops);
 }
 
-static const struct file_operations sched_debug_fops = {
+સ્થિર અચલ સંરચના file_operations sched_debug_fops = {
 	.open		= sched_debug_open,
-	.read		= seq_read,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= seq_release,
 };
 
-enum dl_param {
+ગણના dl_param {
 	DL_RUNTIME = 0,
 	DL_PERIOD,
 };
 
-static unsigned long dl_server_period_max = (1UL << 22) * NSEC_PER_USEC; /* ~4 seconds */
-static unsigned long dl_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
+સ્થિર unsigned long dl_server_period_max = (1UL << 22) * NSEC_PER_USEC; /* ~4 seconds */
+સ્થિર unsigned long dl_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
 
-static ssize_t sched_server_write_common(struct file *filp, const char __user *ubuf,
-					 size_t cnt, loff_t *ppos, enum dl_param param,
-					 void *server)
+સ્થિર ssize_t sched_server_write_common(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
+					 size_t cnt, loff_t *ppos, ગણના dl_param param,
+					 શૂન્ય *server)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
+	long cpu = (long) ((સંરચના seq_file *) filp->private_data)->ખાનગી;
+	સંરચના sched_dl_entity *dl_se = (સંરચના sched_dl_entity *)server;
 	u64 old_runtime, runtime, period;
-	struct rq *rq = cpu_rq(cpu);
-	int retval = 0;
+	સંરચના rq *rq = cpu_rq(cpu);
+	પૂર્ણાંક retval = 0;
 	size_t err;
-	u64 value;
+	u64 કિંમત;
 
-	err = kstrtoull_from_user(ubuf, cnt, 10, &value);
-	if (err)
-		return err;
+	err = kstrtoull_from_user(ubuf, cnt, 10, &કિંમત);
+	જો (err)
+		પાછા err;
 
 	scoped_guard (rq_lock_irqsave, rq) {
 		old_runtime = runtime = dl_se->dl_runtime;
 		period = dl_se->dl_period;
 
-		switch (param) {
-		case DL_RUNTIME:
-			if (runtime == value)
-				break;
-			runtime = value;
-			break;
-		case DL_PERIOD:
-			if (value == period)
-				break;
-			period = value;
-			break;
+		પસંદગી (param) {
+		સ્થિતિ DL_RUNTIME:
+			જો (runtime == કિંમત)
+				તોડો;
+			runtime = કિંમત;
+			તોડો;
+		સ્થિતિ DL_PERIOD:
+			જો (કિંમત == period)
+				તોડો;
+			period = કિંમત;
+			તોડો;
 		}
 
-		if (runtime > period ||
+		જો (runtime > period ||
 		    period > dl_server_period_max ||
 		    period < dl_server_period_min) {
-			return  -EINVAL;
+			પાછા  -EINVAL;
 		}
 
-		if (!cpu_online(cpu_of(rq)))
-			return -EBUSY;
+		જો (!cpu_online(cpu_of(rq)))
+			પાછા -EBUSY;
 
 		update_rq_clock(rq);
 		dl_server_stop(dl_se);
 		retval = dl_server_apply_params(dl_se, runtime, period, 0);
 		dl_server_start(dl_se);
 
-		if (retval < 0)
-			return retval;
+		જો (retval < 0)
+			પાછા retval;
 	}
 
-	if (!!old_runtime ^ !!runtime) {
+	જો (!!old_runtime ^ !!runtime) {
 		pr_info("%s server %sabled on CPU %d%s.\n",
 			server == &rq->fair_server ? "Fair" : "Ext",
 			runtime ? "en" : "dis",
@@ -431,207 +431,207 @@ static ssize_t sched_server_write_common(struct file *filp, const char __user *u
 	}
 
 	*ppos += cnt;
-	return cnt;
+	પાછા cnt;
 }
 
-static size_t sched_server_show_common(struct seq_file *m, void *v, enum dl_param param,
-				       void *server)
+સ્થિર size_t sched_server_show_common(સંરચના seq_file *m, શૂન્ય *v, ગણના dl_param param,
+				       શૂન્ય *server)
 {
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
-	u64 value;
+	સંરચના sched_dl_entity *dl_se = (સંરચના sched_dl_entity *)server;
+	u64 કિંમત;
 
-	switch (param) {
-	case DL_RUNTIME:
-		value = dl_se->dl_runtime;
-		break;
-	case DL_PERIOD:
-		value = dl_se->dl_period;
-		break;
+	પસંદગી (param) {
+	સ્થિતિ DL_RUNTIME:
+		કિંમત = dl_se->dl_runtime;
+		તોડો;
+	સ્થિતિ DL_PERIOD:
+		કિંમત = dl_se->dl_period;
+		તોડો;
 	}
 
-	seq_printf(m, "%llu\n", value);
-	return 0;
+	seq_printf(m, "%llu\n", કિંમત);
+	પાછા 0;
 }
 
-static ssize_t
-sched_fair_server_runtime_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t
+sched_fair_server_runtime_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 				size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((સંરચના seq_file *) filp->private_data)->ખાનગી;
+	સંરચના rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	પાછા sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_runtime_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_fair_server_runtime_show(સંરચના seq_file *m, શૂન્ય *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->ખાનગી;
+	સંરચના rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
+	પાછા sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
 }
 
-static int sched_fair_server_runtime_open(struct inode *inode, struct file *filp)
+સ્થિર પૂર્ણાંક sched_fair_server_runtime_open(સંરચના inode *inode, સંરચના file *filp)
 {
-	return single_open(filp, sched_fair_server_runtime_show, inode->i_private);
+	પાછા single_open(filp, sched_fair_server_runtime_show, inode->i_private);
 }
 
-static const struct file_operations fair_server_runtime_fops = {
+સ્થિર અચલ સંરચના file_operations fair_server_runtime_fops = {
 	.open		= sched_fair_server_runtime_open,
-	.write		= sched_fair_server_runtime_write,
-	.read		= seq_read,
+	.લિખ		= sched_fair_server_runtime_write,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static struct dentry *debugfs_sched;
+સ્થિર સંરચના dentry *debugfs_sched;
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-static ssize_t
-sched_ext_server_runtime_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t
+sched_ext_server_runtime_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 			       size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((સંરચના seq_file *) filp->private_data)->ખાનગી;
+	સંરચના rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	પાછા sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_runtime_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_ext_server_runtime_show(સંરચના seq_file *m, શૂન્ય *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->ખાનગી;
+	સંરચના rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
+	પાછા sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
 }
 
-static int sched_ext_server_runtime_open(struct inode *inode, struct file *filp)
+સ્થિર પૂર્ણાંક sched_ext_server_runtime_open(સંરચના inode *inode, સંરચના file *filp)
 {
-	return single_open(filp, sched_ext_server_runtime_show, inode->i_private);
+	પાછા single_open(filp, sched_ext_server_runtime_show, inode->i_private);
 }
 
-static const struct file_operations ext_server_runtime_fops = {
+સ્થિર અચલ સંરચના file_operations ext_server_runtime_fops = {
 	.open		= sched_ext_server_runtime_open,
-	.write		= sched_ext_server_runtime_write,
-	.read		= seq_read,
+	.લિખ		= sched_ext_server_runtime_write,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static ssize_t
-sched_ext_server_period_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t
+sched_ext_server_period_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 			      size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((સંરચના seq_file *) filp->private_data)->ખાનગી;
+	સંરચના rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	પાછા sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_period_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_ext_server_period_show(સંરચના seq_file *m, શૂન્ય *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->ખાનગી;
+	સંરચના rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
+	પાછા sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
 }
 
-static int sched_ext_server_period_open(struct inode *inode, struct file *filp)
+સ્થિર પૂર્ણાંક sched_ext_server_period_open(સંરચના inode *inode, સંરચના file *filp)
 {
-	return single_open(filp, sched_ext_server_period_show, inode->i_private);
+	પાછા single_open(filp, sched_ext_server_period_show, inode->i_private);
 }
 
-static const struct file_operations ext_server_period_fops = {
+સ્થિર અચલ સંરચના file_operations ext_server_period_fops = {
 	.open		= sched_ext_server_period_open,
-	.write		= sched_ext_server_period_write,
-	.read		= seq_read,
+	.લિખ		= sched_ext_server_period_write,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void debugfs_ext_server_init(void)
+સ્થિર શૂન્ય debugfs_ext_server_init(શૂન્ય)
 {
-	struct dentry *d_ext;
+	સંરચના dentry *d_ext;
 	unsigned long cpu;
 
 	d_ext = debugfs_create_dir("ext_server", debugfs_sched);
-	if (!d_ext)
-		return;
+	જો (!d_ext)
+		પાછા;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		સંરચના dentry *d_cpu;
+		અક્ષર buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, કદ(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_ext);
 
-		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &ext_server_runtime_fops);
-		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &ext_server_period_fops);
+		debugfs_create_file("runtime", 0644, d_cpu, (શૂન્ય *) cpu, &ext_server_runtime_fops);
+		debugfs_create_file("period", 0644, d_cpu, (શૂન્ય *) cpu, &ext_server_period_fops);
 	}
 }
 #endif /* CONFIG_SCHED_CLASS_EXT */
 
-static ssize_t
-sched_fair_server_period_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t
+sched_fair_server_period_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 			       size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((સંરચના seq_file *) filp->private_data)->ખાનગી;
+	સંરચના rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	પાછા sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_period_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_fair_server_period_show(સંરચના seq_file *m, શૂન્ય *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->ખાનગી;
+	સંરચના rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
+	પાછા sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
 }
 
-static int sched_fair_server_period_open(struct inode *inode, struct file *filp)
+સ્થિર પૂર્ણાંક sched_fair_server_period_open(સંરચના inode *inode, સંરચના file *filp)
 {
-	return single_open(filp, sched_fair_server_period_show, inode->i_private);
+	પાછા single_open(filp, sched_fair_server_period_show, inode->i_private);
 }
 
-static const struct file_operations fair_server_period_fops = {
+સ્થિર અચલ સંરચના file_operations fair_server_period_fops = {
 	.open		= sched_fair_server_period_open,
-	.write		= sched_fair_server_period_write,
-	.read		= seq_read,
+	.લિખ		= sched_fair_server_period_write,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void debugfs_fair_server_init(void)
+સ્થિર શૂન્ય debugfs_fair_server_init(શૂન્ય)
 {
-	struct dentry *d_fair;
+	સંરચના dentry *d_fair;
 	unsigned long cpu;
 
 	d_fair = debugfs_create_dir("fair_server", debugfs_sched);
-	if (!d_fair)
-		return;
+	જો (!d_fair)
+		પાછા;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		સંરચના dentry *d_cpu;
+		અક્ષર buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, કદ(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_fair);
 
-		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &fair_server_runtime_fops);
-		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &fair_server_period_fops);
+		debugfs_create_file("runtime", 0644, d_cpu, (શૂન્ય *) cpu, &fair_server_runtime_fops);
+		debugfs_create_file("period", 0644, d_cpu, (શૂન્ય *) cpu, &fair_server_period_fops);
 	}
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static int cgroup_mode = 2;
+સ્થિર પૂર્ણાંક cgroup_mode = 2;
 
 /* See __sched_cgroup_mode_update(). */
-static const char *cgroup_mode_str[] = {
+સ્થિર અચલ અક્ષર *cgroup_mode_str[] = {
 	"up",
 	"smp",
 	"concur",
@@ -639,80 +639,80 @@ static const char *cgroup_mode_str[] = {
 	"tasks",
 };
 
-static int sched_cgroup_mode(const char *str)
+સ્થિર પૂર્ણાંક sched_cgroup_mode(અચલ અક્ષર *str)
 {
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (!strcmp(str, cgroup_mode_str[i]))
-			return i;
+	માટે (પૂર્ણાંક i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		જો (!strcmp(str, cgroup_mode_str[i]))
+			પાછા i;
 	}
-	return -EINVAL;
+	પાછા -EINVAL;
 }
 
-static ssize_t sched_cgroup_write(struct file *filp, const char __user *ubuf,
+સ્થિર ssize_t sched_cgroup_write(સંરચના file *filp, અચલ અક્ષર __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	અક્ષર buf[16];
+	પૂર્ણાંક mode;
 
-	if (cnt > 15)
+	જો (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	જો (copy_from_user(buf, ubuf, cnt))
+		પાછા -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_cgroup_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	જો (mode < 0)
+		પાછા mode;
 
 	__sched_cgroup_mode_update(mode);
 	WRITE_ONCE(cgroup_mode, mode);
 
 	*ppos += cnt;
-	return cnt;
+	પાછા cnt;
 }
 
-static int sched_cgroup_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_cgroup_show(સંરચના seq_file *m, શૂન્ય *v)
 {
-	int mode = READ_ONCE(cgroup_mode);
+	પૂર્ણાંક mode = READ_ONCE(cgroup_mode);
 
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (mode == i)
+	માટે (પૂર્ણાંક i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		જો (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, cgroup_mode_str[i]);
-		if (mode == i)
+		જો (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 	seq_puts(m, "\n");
-	return 0;
+	પાછા 0;
 }
 
-static int sched_cgroup_open(struct inode *inode, struct file *filp)
+સ્થિર પૂર્ણાંક sched_cgroup_open(સંરચના inode *inode, સંરચના file *filp)
 {
-	return single_open(filp, sched_cgroup_show, NULL);
+	પાછા single_open(filp, sched_cgroup_show, ખાલી);
 }
 
-static const struct file_operations sched_cgroup_fops = {
+સ્થિર અચલ સંરચના file_operations sched_cgroup_fops = {
 	.open		= sched_cgroup_open,
-	.write		= sched_cgroup_write,
-	.read		= seq_read,
+	.લિખ		= sched_cgroup_write,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 #endif
 
-static __init int sched_init_debug(void)
+સ્થિર __init પૂર્ણાંક sched_init_debug(શૂન્ય)
 {
-	struct dentry __maybe_unused *numa, *llc;
+	સંરચના dentry __maybe_unused *numa, *llc;
 
-	debugfs_sched = debugfs_create_dir("sched", NULL);
+	debugfs_sched = debugfs_create_dir("sched", ખાલી);
 
-	debugfs_create_file("features", 0644, debugfs_sched, NULL, &sched_feat_fops);
+	debugfs_create_file("features", 0644, debugfs_sched, ખાલી, &sched_feat_fops);
 	debugfs_create_file_unsafe("verbose", 0644, debugfs_sched, &sched_debug_verbose, &sched_verbose_fops);
 #ifdef CONFIG_PREEMPT_DYNAMIC
-	debugfs_create_file("preempt", 0644, debugfs_sched, NULL, &sched_dynamic_fops);
+	debugfs_create_file("preempt", 0644, debugfs_sched, ખાલી, &sched_dynamic_fops);
 #endif
 
 	debugfs_create_u32("base_slice_ns", 0644, debugfs_sched, &sysctl_sched_base_slice);
@@ -720,7 +720,7 @@ static __init int sched_init_debug(void)
 	debugfs_create_u32("latency_warn_ms", 0644, debugfs_sched, &sysctl_resched_latency_warn_ms);
 	debugfs_create_u32("latency_warn_once", 0644, debugfs_sched, &sysctl_resched_latency_warn_once);
 
-	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, NULL, &sched_scaling_fops);
+	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, ખાલી, &sched_scaling_fops);
 	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
 	debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
 
@@ -740,7 +740,7 @@ static __init int sched_init_debug(void)
 
 #ifdef CONFIG_SCHED_CACHE
 	llc = debugfs_create_dir("llc_balancing", debugfs_sched);
-	debugfs_create_file("enabled", 0644, llc, NULL,
+	debugfs_create_file("enabled", 0644, llc, ખાલી,
 			    &sched_cache_enable_fops);
 	debugfs_create_u32("aggr_tolerance", 0644, llc,
 			   &llc_aggr_tolerance);
@@ -754,10 +754,10 @@ static __init int sched_init_debug(void)
 			   &llc_imb_pct);
 #endif
 
-	debugfs_create_file("debug", 0444, debugfs_sched, NULL, &sched_debug_fops);
+	debugfs_create_file("debug", 0444, debugfs_sched, ખાલી, &sched_debug_fops);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	debugfs_create_file("cgroup_mode", 0644, debugfs_sched, NULL, &sched_cgroup_fops);
+	debugfs_create_file("cgroup_mode", 0644, debugfs_sched, ખાલી, &sched_cgroup_fops);
 #endif
 
 	debugfs_fair_server_init();
@@ -765,16 +765,16 @@ static __init int sched_init_debug(void)
 	debugfs_ext_server_init();
 #endif
 
-	return 0;
+	પાછા 0;
 }
 late_initcall(sched_init_debug);
 
-static cpumask_var_t		sd_sysctl_cpus;
+સ્થિર cpumask_var_t		sd_sysctl_cpus;
 
-static int sd_flags_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sd_flags_show(સંરચના seq_file *m, શૂન્ય *v)
 {
-	unsigned long flags = *(unsigned int *)m->private;
-	int idx;
+	unsigned long flags = *(unsigned પૂર્ણાંક *)m->ખાનગી;
+	પૂર્ણાંક idx;
 
 	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
 		seq_puts(m, sd_flag_debug[idx].name);
@@ -782,22 +782,22 @@ static int sd_flags_show(struct seq_file *m, void *v)
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	પાછા 0;
 }
 
-static int sd_flags_open(struct inode *inode, struct file *file)
+સ્થિર પૂર્ણાંક sd_flags_open(સંરચના inode *inode, સંરચના file *file)
 {
-	return single_open(file, sd_flags_show, inode->i_private);
+	પાછા single_open(file, sd_flags_show, inode->i_private);
 }
 
-static const struct file_operations sd_flags_fops = {
+સ્થિર અચલ સંરચના file_operations sd_flags_fops = {
 	.open		= sd_flags_open,
-	.read		= seq_read,
+	.પઠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void register_sd(struct sched_domain *sd, struct dentry *parent)
+સ્થિર શૂન્ય register_sd(સંરચના sched_domain *sd, સંરચના dentry *parent)
 {
 #define SDM(type, mode, member)	\
 	debugfs_create_##type(#member, mode, parent, &sd->member)
@@ -816,53 +816,53 @@ static void register_sd(struct sched_domain *sd, struct dentry *parent)
 	debugfs_create_file("groups_flags", 0444, parent, &sd->groups->flags, &sd_flags_fops);
 	debugfs_create_u32("level", 0444, parent, (u32 *)&sd->level);
 
-	if (sd->flags & SD_ASYM_PACKING)
+	જો (sd->flags & SD_ASYM_PACKING)
 		debugfs_create_u32("group_asym_prefer_cpu", 0444, parent,
 				   (u32 *)&sd->groups->asym_prefer_cpu);
 }
 
-void update_sched_domain_debugfs(void)
+શૂન્ય update_sched_domain_debugfs(શૂન્ય)
 {
-	int cpu, i;
+	પૂર્ણાંક cpu, i;
 
 	/*
 	 * This can unfortunately be invoked before sched_debug_init() creates
 	 * the debug directory. Don't touch sd_sysctl_cpus until then.
 	 */
-	if (!debugfs_sched)
-		return;
+	જો (!debugfs_sched)
+		પાછા;
 
-	if (!sched_debug_verbose)
-		return;
+	જો (!sched_debug_verbose)
+		પાછા;
 
-	if (!cpumask_available(sd_sysctl_cpus)) {
-		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
-			return;
+	જો (!cpumask_available(sd_sysctl_cpus)) {
+		જો (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
+			પાછા;
 		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
 	}
 
-	if (!sd_dentry) {
+	જો (!sd_dentry) {
 		sd_dentry = debugfs_create_dir("domains", debugfs_sched);
 
 		/* rebuild sd_sysctl_cpus if empty since it gets cleared below */
-		if (cpumask_empty(sd_sysctl_cpus))
+		જો (cpumask_empty(sd_sysctl_cpus))
 			cpumask_copy(sd_sysctl_cpus, cpu_online_mask);
 	}
 
 	for_each_cpu(cpu, sd_sysctl_cpus) {
-		struct sched_domain *sd;
-		struct dentry *d_cpu;
-		char buf[32];
+		સંરચના sched_domain *sd;
+		સંરચના dentry *d_cpu;
+		અક્ષર buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%d", cpu);
+		snprintf(buf, કદ(buf), "cpu%d", cpu);
 		debugfs_lookup_and_remove(buf, sd_dentry);
 		d_cpu = debugfs_create_dir(buf, sd_dentry);
 
 		i = 0;
 		for_each_domain(cpu, sd) {
-			struct dentry *d_sd;
+			સંરચના dentry *d_sd;
 
-			snprintf(buf, sizeof(buf), "domain%d", i);
+			snprintf(buf, કદ(buf), "domain%d", i);
 			d_sd = debugfs_create_dir(buf, d_cpu);
 
 			register_sd(sd, d_sd);
@@ -873,16 +873,16 @@ void update_sched_domain_debugfs(void)
 	}
 }
 
-void dirty_sched_domain_sysctl(int cpu)
+શૂન્ય dirty_sched_domain_sysctl(પૂર્ણાંક cpu)
 {
-	if (cpumask_available(sd_sysctl_cpus))
+	જો (cpumask_available(sd_sysctl_cpus))
 		__cpumask_set_cpu(cpu, sd_sysctl_cpus);
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group *tg)
+સ્થિર શૂન્ય print_cfs_group_stats(સંરચના seq_file *m, પૂર્ણાંક cpu, સંરચના task_group *tg)
 {
-	struct sched_entity *se = tg_se(tg, cpu);
+	સંરચના sched_entity *se = tg_se(tg, cpu);
 
 #define P(F)		SEQ_printf(m, "  .%-30s: %lld\n",	#F, (long long)F)
 #define P_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld\n",	\
@@ -891,15 +891,15 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 #define PN_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld.%06ld\n", \
 		#F, SPLIT_NS((long long)schedstat_val(stats->F)))
 
-	if (!se)
-		return;
+	જો (!se)
+		પાછા;
 
 	PN(se->exec_start);
 	PN(se->vruntime);
 	PN(se->sum_exec_runtime);
 
-	if (schedstat_enabled()) {
-		struct sched_statistics *stats;
+	જો (schedstat_enabled()) {
+		સંરચના sched_statistics *stats;
 		stats = __schedstats_from_se(se);
 
 		PN_SCHEDSTAT(wait_start);
@@ -911,7 +911,7 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 		PN_SCHEDSTAT(slice_max);
 		PN_SCHEDSTAT(wait_max);
 		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
+		P_SCHEDSTAT(wait_ગણતરી);
 	}
 
 	P(se->load.weight);
@@ -927,13 +927,13 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 
 #ifdef CONFIG_CGROUP_SCHED
-static DEFINE_SPINLOCK(sched_debug_lock);
-static char group_path[PATH_MAX];
+સ્થિર DEFINE_SPINLOCK(sched_debug_lock);
+સ્થિર અક્ષર group_path[PATH_MAX];
 
-static void task_group_path(struct task_group *tg, char *path, int plen)
+સ્થિર શૂન્ય task_group_path(સંરચના task_group *tg, અક્ષર *path, પૂર્ણાંક plen)
 {
-	if (autogroup_path(tg, path, plen))
-		return;
+	જો (autogroup_path(tg, path, plen))
+		પાછા;
 
 	cgroup_path(tg->css.cgroup, path, plen);
 }
@@ -947,13 +947,13 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
  */
 #define SEQ_printf_task_group_path(m, tg, fmt...)			\
 {									\
-	if (spin_trylock(&sched_debug_lock)) {				\
-		task_group_path(tg, group_path, sizeof(group_path));	\
+	જો (spin_trylock(&sched_debug_lock)) {				\
+		task_group_path(tg, group_path, કદ(group_path));	\
 		SEQ_printf(m, fmt, group_path);				\
 		spin_unlock(&sched_debug_lock);				\
-	} else {							\
-		char buf[128];						\
-		char *bufend = buf + sizeof(buf) - 3;			\
+	} નહીંતર {							\
+		અક્ષર buf[128];						\
+		અક્ષર *bufend = buf + કદ(buf) - 3;			\
 		task_group_path(tg, buf, bufend - buf);			\
 		strcpy(bufend - 1, "...");				\
 		SEQ_printf(m, fmt, buf);				\
@@ -961,12 +961,12 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
 }
 #endif
 
-static void
-print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
+સ્થિર શૂન્ય
+print_task(સંરચના seq_file *m, સંરચના rq *rq, સંરચના task_struct *p)
 {
-	if (task_current(rq, p))
+	જો (task_current(rq, p))
 		SEQ_printf(m, ">R");
-	else
+	નહીંતર
 		SEQ_printf(m, " %c", task_state_to_char(p));
 
 	SEQ_printf(m, " %15s %5d %10ld %9Ld.%06ld   %c   %9Ld.%06ld %c %9Ld.%06ld %9Ld.%06ld %9Ld   %5d ",
@@ -987,7 +987,7 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_block_runtime)));
 
 #ifdef CONFIG_NUMA_BALANCING
-	SEQ_printf(m, "   %d      %d", task_node(p), task_numa_group_id(p));
+	SEQ_printf(m, "   %d      %d", task_ગાંઠ(p), task_numa_group_id(p));
 #endif
 #ifdef CONFIG_CGROUP_SCHED
 	SEQ_printf_task_group_path(m, task_group(p), "        %s")
@@ -996,9 +996,9 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 	SEQ_printf(m, "\n");
 }
 
-static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
+સ્થિર શૂન્ય print_rq(સંરચના seq_file *m, સંરચના rq *rq, પૂર્ણાંક rq_cpu)
 {
-	struct task_struct *g, *p;
+	સંરચના task_struct *g, *p;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "runnable tasks:\n");
@@ -1025,43 +1025,43 @@ static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
 
 	rcu_read_lock();
 	for_each_process_thread(g, p) {
-		if (task_cpu(p) != rq_cpu)
-			continue;
+		જો (task_cpu(p) != rq_cpu)
+			ચાલુ;
 
 		print_task(m, rq, p);
 	}
 	rcu_read_unlock();
 }
 
-void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+શૂન્ય print_cfs_rq(સંરચના seq_file *m, પૂર્ણાંક cpu, સંરચના cfs_rq *cfs_rq)
 {
-	s64 left_vruntime = -1, right_vruntime = -1, left_deadline = -1, spread;
+	s64 ડાબું_vruntime = -1, જમણું_vruntime = -1, ડાબું_deadline = -1, spread;
 	s64 zero_vruntime = -1, sum_w_vruntime = -1;
 	u64 avruntime;
-	struct sched_entity *last, *first, *root;
-	struct rq *rq = cpu_rq(cpu);
-	unsigned int sum_shift;
+	સંરચના sched_entity *last, *first, *મૂળ;
+	સંરચના rq *rq = cpu_rq(cpu);
+	unsigned પૂર્ણાંક sum_shift;
 	unsigned long flags;
 	u64 sum_weight;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, cfs_rq->tg, "cfs_rq[%d]:%s\n", cpu);
-#else
+#નહીંતર
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
 #endif
 
 	raw_spin_rq_lock_irqsave(rq, flags);
-	root = __pick_root_entity(cfs_rq);
-	if (root)
-		left_vruntime = root->min_vruntime;
+	મૂળ = __pick_root_entity(cfs_rq);
+	જો (મૂળ)
+		ડાબું_vruntime = મૂળ->min_vruntime;
 	first = __pick_first_entity(cfs_rq);
-	if (first)
-		left_deadline = first->deadline;
+	જો (first)
+		ડાબું_deadline = first->deadline;
 	last = __pick_last_entity(cfs_rq);
-	if (last)
-		right_vruntime = last->vruntime;
+	જો (last)
+		જમણું_vruntime = last->vruntime;
 	zero_vruntime = cfs_rq->zero_vruntime;
 	sum_w_vruntime = cfs_rq->sum_w_vruntime;
 	sum_weight = cfs_rq->sum_weight;
@@ -1070,9 +1070,9 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_deadline",
-			SPLIT_NS(left_deadline));
+			SPLIT_NS(ડાબું_deadline));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_vruntime",
-			SPLIT_NS(left_vruntime));
+			SPLIT_NS(ડાબું_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "zero_vruntime",
 			SPLIT_NS(zero_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld (%d bits)\n", "sum_w_vruntime",
@@ -1083,8 +1083,8 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "avg_vruntime",
 			SPLIT_NS(avruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "right_vruntime",
-			SPLIT_NS(right_vruntime));
-	spread = right_vruntime - left_vruntime;
+			SPLIT_NS(જમણું_vruntime));
+	spread = જમણું_vruntime - ડાબું_vruntime;
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
 	SEQ_printf(m, "  .%-30s: %d\n", "nr_queued", cfs_rq->nr_queued);
 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_runnable", cfs_rq->h_nr_runnable);
@@ -1117,7 +1117,7 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	SEQ_printf(m, "  .%-30s: %d\n", "throttled",
 			cfs_rq->throttled);
 	SEQ_printf(m, "  .%-30s: %d\n", "throttle_count",
-			cfs_rq->throttle_count);
+			cfs_rq->throttle_ગણતરી);
 #endif
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -1125,12 +1125,12 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 #endif
 }
 
-void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
+શૂન્ય print_rt_rq(સંરચના seq_file *m, પૂર્ણાંક cpu, સંરચના rt_rq *rt_rq)
 {
 #ifdef CONFIG_RT_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, rt_rq->tg, "rt_rq[%d]:%s\n", cpu);
-#else
+#નહીંતર
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "rt_rq[%d]:\n", cpu);
 #endif
@@ -1155,9 +1155,9 @@ void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
 #undef P
 }
 
-void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
+શૂન્ય print_dl_rq(સંરચના seq_file *m, પૂર્ણાંક cpu, સંરચના dl_rq *dl_rq)
 {
-	struct dl_bw *dl_bw;
+	સંરચના dl_bw *dl_bw;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "dl_rq[%d]:\n", cpu);
@@ -1173,28 +1173,28 @@ void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
 #undef PU
 }
 
-static void print_cpu(struct seq_file *m, int cpu)
+સ્થિર શૂન્ય print_cpu(સંરચના seq_file *m, પૂર્ણાંક cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	સંરચના rq *rq = cpu_rq(cpu);
 
 #ifdef CONFIG_X86
 	{
-		unsigned int freq = cpu_khz ? : 1;
+		unsigned પૂર્ણાંક freq = cpu_khz ? : 1;
 
 		SEQ_printf(m, "cpu#%d, %u.%03u MHz\n",
 			   cpu, freq / 1000, (freq % 1000));
 	}
-#else /* !CONFIG_X86: */
+#નહીંતર /* !CONFIG_X86: */
 	SEQ_printf(m, "cpu#%d\n", cpu);
 #endif /* !CONFIG_X86 */
 
 #define P(x)								\
-do {									\
-	if (sizeof(rq->x) == 4)						\
-		SEQ_printf(m, "  .%-30s: %d\n", #x, (int)(rq->x));	\
-	else								\
+કરો {									\
+	જો (કદ(rq->x) == 4)						\
+		SEQ_printf(m, "  .%-30s: %d\n", #x, (પૂર્ણાંક)(rq->x));	\
+	નહીંતર								\
 		SEQ_printf(m, "  .%-30s: %Ld\n", #x, (long long)(rq->x));\
-} while (0)
+} જ્યારે (0)
 
 #define PN(x) \
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, SPLIT_NS(rq->x))
@@ -1215,11 +1215,11 @@ do {									\
 #undef P64
 
 #define P(n) SEQ_printf(m, "  .%-30s: %d\n", #n, schedstat_val(rq->n));
-	if (schedstat_enabled()) {
-		P(yld_count);
-		P(sched_count);
+	જો (schedstat_enabled()) {
+		P(yld_ગણતરી);
+		P(sched_ગણતરી);
 		P(sched_goidle);
-		P(ttwu_count);
+		P(ttwu_ગણતરી);
 		P(ttwu_local);
 	}
 #undef P
@@ -1232,13 +1232,13 @@ do {									\
 	SEQ_printf(m, "\n");
 }
 
-static const char *sched_tunable_scaling_names[] = {
+સ્થિર અચલ અક્ષર *sched_tunable_scaling_names[] = {
 	"none",
 	"logarithmic",
 	"linear"
 };
 
-static void sched_debug_header(struct seq_file *m)
+સ્થિર શૂન્ય sched_debug_header(સંરચના seq_file *m)
 {
 	u64 ktime, sched_clk, cpu_clk;
 	unsigned long flags;
@@ -1251,7 +1251,7 @@ static void sched_debug_header(struct seq_file *m)
 
 	SEQ_printf(m, "Sched Debug Version: v0.11, %s %.*s\n",
 		init_utsname()->release,
-		(int)strcspn(init_utsname()->version, " "),
+		(પૂર્ણાંક)strcspn(init_utsname()->version, " "),
 		init_utsname()->version);
 
 #define P(x) \
@@ -1287,23 +1287,23 @@ static void sched_debug_header(struct seq_file *m)
 	SEQ_printf(m, "\n");
 }
 
-static int sched_debug_show(struct seq_file *m, void *v)
+સ્થિર પૂર્ણાંક sched_debug_show(સંરચના seq_file *m, શૂન્ય *v)
 {
-	int cpu = (unsigned long)(v - 2);
+	પૂર્ણાંક cpu = (unsigned long)(v - 2);
 
-	if (cpu != -1)
+	જો (cpu != -1)
 		print_cpu(m, cpu);
-	else
+	નહીંતર
 		sched_debug_header(m);
 
-	return 0;
+	પાછા 0;
 }
 
-void sysrq_sched_debug_show(void)
+શૂન્ય sysrq_sched_debug_show(શૂન્ય)
 {
-	int cpu;
+	પૂર્ણાંક cpu;
 
-	sched_debug_header(NULL);
+	sched_debug_header(ખાલી);
 	for_each_online_cpu(cpu) {
 		/*
 		 * Need to reset softlockup watchdogs on all CPUs, because
@@ -1312,7 +1312,7 @@ void sysrq_sched_debug_show(void)
 		 */
 		touch_nmi_watchdog();
 		touch_all_softlockup_watchdogs();
-		print_cpu(NULL, cpu);
+		print_cpu(ખાલી, cpu);
 	}
 }
 
@@ -1323,39 +1323,39 @@ void sysrq_sched_debug_show(void)
  * In a hotplugged system some CPUs, including CPU 0, may be missing so we have
  * to use cpumask_* to iterate over the CPUs.
  */
-static void *sched_debug_start(struct seq_file *file, loff_t *offset)
+સ્થિર શૂન્ય *sched_debug_start(સંરચના seq_file *file, loff_t *offset)
 {
 	unsigned long n = *offset;
 
-	if (n == 0)
-		return (void *) 1;
+	જો (n == 0)
+		પાછા (શૂન્ય *) 1;
 
 	n--;
 
-	if (n > 0)
+	જો (n > 0)
 		n = cpumask_next(n - 1, cpu_online_mask);
-	else
+	નહીંતર
 		n = cpumask_first(cpu_online_mask);
 
 	*offset = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	જો (n < nr_cpu_ids)
+		પાછા (શૂન્ય *)(unsigned long)(n + 2);
 
-	return NULL;
+	પાછા ખાલી;
 }
 
-static void *sched_debug_next(struct seq_file *file, void *data, loff_t *offset)
+સ્થિર શૂન્ય *sched_debug_next(સંરચના seq_file *file, શૂન્ય *data, loff_t *offset)
 {
 	(*offset)++;
-	return sched_debug_start(file, offset);
+	પાછા sched_debug_start(file, offset);
 }
 
-static void sched_debug_stop(struct seq_file *file, void *data)
+સ્થિર શૂન્ય sched_debug_stop(સંરચના seq_file *file, શૂન્ય *data)
 {
 }
 
-static const struct seq_operations sched_debug_sops = {
+સ્થિર અચલ સંરચના seq_operations sched_debug_sops = {
 	.start		= sched_debug_start,
 	.next		= sched_debug_next,
 	.stop		= sched_debug_stop,
@@ -1372,33 +1372,33 @@ static const struct seq_operations sched_debug_sops = {
 
 
 #ifdef CONFIG_NUMA_BALANCING
-void print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
+શૂન્ય print_numa_stats(સંરચના seq_file *m, પૂર્ણાંક ગાંઠ, unsigned long tsf,
 		unsigned long tpf, unsigned long gsf, unsigned long gpf)
 {
-	SEQ_printf(m, "numa_faults node=%d ", node);
+	SEQ_printf(m, "numa_faults node=%d ", ગાંઠ);
 	SEQ_printf(m, "task_private=%lu task_shared=%lu ", tpf, tsf);
 	SEQ_printf(m, "group_private=%lu group_shared=%lu\n", gpf, gsf);
 }
 #endif
 
 
-static void sched_show_numa(struct task_struct *p, struct seq_file *m)
+સ્થિર શૂન્ય sched_show_numa(સંરચના task_struct *p, સંરચના seq_file *m)
 {
 #ifdef CONFIG_NUMA_BALANCING
-	if (p->mm)
+	જો (p->mm)
 		P(mm->numa_scan_seq);
 
 	P(numa_pages_migrated);
 	P(numa_preferred_nid);
 	P(total_numa_faults);
 	SEQ_printf(m, "current_node=%d, numa_group_id=%d\n",
-			task_node(p), task_numa_group_id(p));
+			task_ગાંઠ(p), task_numa_group_id(p));
 	show_numa_stats(p, m);
 #endif /* CONFIG_NUMA_BALANCING */
 }
 
-void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
-						  struct seq_file *m)
+શૂન્ય proc_sched_show_task(સંરચના task_struct *p, સંરચના pid_namespace *ns,
+						  સંરચના seq_file *m)
 {
 	unsigned long nr_switches;
 
@@ -1419,7 +1419,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 
 	P(se.nr_migrations);
 
-	if (schedstat_enabled()) {
+	જો (schedstat_enabled()) {
 		u64 avg_atom, avg_per_cpu;
 
 		PN_SCHEDSTAT(sum_sleep_runtime);
@@ -1433,9 +1433,9 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		PN_SCHEDSTAT(slice_max);
 		PN_SCHEDSTAT(wait_max);
 		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
+		P_SCHEDSTAT(wait_ગણતરી);
 		PN_SCHEDSTAT(iowait_sum);
-		P_SCHEDSTAT(iowait_count);
+		P_SCHEDSTAT(iowait_ગણતરી);
 		P_SCHEDSTAT(nr_failed_migrations_affine);
 		P_SCHEDSTAT(nr_failed_migrations_running);
 		P_SCHEDSTAT(nr_failed_migrations_hot);
@@ -1450,16 +1450,16 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		P_SCHEDSTAT(nr_wakeups_affine_attempts);
 
 		avg_atom = p->se.sum_exec_runtime;
-		if (nr_switches)
+		જો (nr_switches)
 			avg_atom = div64_ul(avg_atom, nr_switches);
-		else
+		નહીંતર
 			avg_atom = -1LL;
 
 		avg_per_cpu = p->se.sum_exec_runtime;
-		if (p->se.nr_migrations) {
+		જો (p->se.nr_migrations) {
 			avg_per_cpu = div64_u64(avg_per_cpu,
 						p->se.nr_migrations);
-		} else {
+		} નહીંતર {
 			avg_per_cpu = -1LL;
 		}
 
@@ -1485,17 +1485,17 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	P(se.avg.last_update_time);
 	PM(se.avg.util_est, ~UTIL_AVG_UNCHANGED);
 #ifdef CONFIG_UCLAMP_TASK
-	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].value);
-	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].value);
-	__PS("effective uclamp.min", uclamp_eff_value(p, UCLAMP_MIN));
-	__PS("effective uclamp.max", uclamp_eff_value(p, UCLAMP_MAX));
+	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].કિંમત);
+	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].કિંમત);
+	__PS("effective uclamp.min", uclamp_eff_કિંમત(p, UCLAMP_MIN));
+	__PS("effective uclamp.max", uclamp_eff_કિંમત(p, UCLAMP_MAX));
 #endif /* CONFIG_UCLAMP_TASK */
 	P(policy);
 	P(prio);
-	if (task_has_dl_policy(p)) {
+	જો (task_has_dl_policy(p)) {
 		P(dl.runtime);
 		P(dl.deadline);
-	} else if (fair_policy(p->policy)) {
+	} નહીંતર જો (fair_policy(p->policy)) {
 		P(se.slice);
 	}
 #ifdef CONFIG_SCHED_CLASS_EXT
@@ -1505,7 +1505,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 #undef P_SCHEDSTAT
 
 	{
-		unsigned int this_cpu = raw_smp_processor_id();
+		unsigned પૂર્ણાંક this_cpu = raw_smp_processor_id();
 		u64 t0, t1;
 
 		t0 = cpu_clock(this_cpu);
@@ -1516,21 +1516,21 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	sched_show_numa(p, m);
 }
 
-void proc_sched_set_task(struct task_struct *p)
+શૂન્ય proc_sched_set_task(સંરચના task_struct *p)
 {
 #ifdef CONFIG_SCHEDSTATS
-	memset(&p->stats, 0, sizeof(p->stats));
+	memset(&p->stats, 0, કદ(p->stats));
 #endif
 }
 
-void resched_latency_warn(int cpu, u64 latency)
+શૂન્ય resched_latency_warn(પૂર્ણાંક cpu, u64 latency)
 {
-	static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
+	સ્થિર DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
 
-	if (likely(!__ratelimit(&latency_check_ratelimit)))
-		return;
+	જો (likely(!__ratelimit(&latency_check_ratelimit)))
+		પાછા;
 
 	pr_err("sched: CPU %d need_resched set for > %llu ns (%d ticks) without schedule\n",
 	       cpu, latency, cpu_rq(cpu)->ticks_without_resched);
-	dump_stack();
+	dump_ઢગલો();
 }
