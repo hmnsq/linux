@@ -29,7 +29,7 @@ SCHED_FEAT(PREEMPT_SHORT, true)
  * wakeup-preemption), since its likely going to consume data we
  * touched, increases cache locality.
  */
-SCHED_FEAT(NEXT_BUDDY, false)
+SCHED_FEAT(পরবর্তী_BUDDY, false)
 
 /*
  * Allow completely ignoring cfs_rq->next; which can be set from various
@@ -68,7 +68,7 @@ SCHED_FEAT(WAKEUP_PREEMPTION, true)
 #ifdef CONFIG_HRTIMER_REARM_DEFERRED
 SCHED_FEAT(HRTICK, true)
 SCHED_FEAT(HRTICK_DL, true)
-#else
+#অন্যথা
 SCHED_FEAT(HRTICK, false)
 SCHED_FEAT(HRTICK_DL, false)
 #endif
@@ -80,7 +80,7 @@ SCHED_FEAT(NONTASK_CAPACITY, true)
 
 #ifdef CONFIG_PREEMPT_RT
 SCHED_FEAT(TTWU_QUEUE, false)
-#else
+#অন্যথা
 
 /*
  * Queue remote wakeups on the target CPU and process them
@@ -101,7 +101,7 @@ SCHED_FEAT(SIS_UTIL, true)
  */
 SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
 
-#ifdef HAVE_RT_PUSH_IPI
+#ifdef HAVE_RT_ঠেলো_IPI
 /*
  * In order to avoid a thundering herd attack of CPUs that are
  * lowering their priorities at the same time, and there being
@@ -116,9 +116,9 @@ SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
  * it only default enabled for PREEMPT_RT.
  */
 # ifdef CONFIG_PREEMPT_RT
-SCHED_FEAT(RT_PUSH_IPI, true)
-# else
-SCHED_FEAT(RT_PUSH_IPI, false)
+SCHED_FEAT(RT_ঠেলো_IPI, true)
+# অন্যথা
+SCHED_FEAT(RT_ঠেলো_IPI, false)
 # endif
 #endif
 

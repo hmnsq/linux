@@ -14,32 +14,32 @@
  * Copyright (c) 2026 Meta Platforms, Inc. and affiliates.
  * Copyright (c) 2026 Tejun Heo <tj@kernel.org>
  */
-#include <linux/genalloc.h>
+#অন্তর্ভাব <linux/genalloc.h>
 
-#include "internal.h"
-#include "arena.h"
+#অন্তর্ভাব "internal.h"
+#অন্তর্ভাব "arena.h"
 
-enum scx_arena_consts {
+গণনা scx_arena_consts {
 	SCX_ARENA_MIN_ORDER		= 3,	/* 8-byte minimum sub-allocation */
 	SCX_ARENA_GROW_PAGES		= 4,	/* per growth */
 };
 
-s32 scx_arena_pool_init(struct scx_sched *sch)
+s32 scx_arena_pool_init(কাঠামো scx_sched *sch)
 {
-	if (!sch->arena_map)
-		return 0;
+	যদি (!sch->arena_map)
+		ফেরত 0;
 
-	sch->arena_pool = gen_pool_create(SCX_ARENA_MIN_ORDER, NUMA_NO_NODE);
-	if (!sch->arena_pool)
-		return -ENOMEM;
-	return 0;
+	sch->arena_pool = gen_pool_create(SCX_ARENA_MIN_ORDER, NUMA_NO_গ্রন্থি);
+	যদি (!sch->arena_pool)
+		ফেরত -ENOMEM;
+	ফেরত 0;
 }
 
-static void scx_arena_clear_chunk(struct gen_pool *pool, struct gen_pool_chunk *chunk,
-				  void *data)
+স্থির শূন্য scx_arena_clear_chunk(কাঠামো gen_pool *pool, কাঠামো gen_pool_chunk *chunk,
+				  শূন্য *তথ্য)
 {
-	int order = pool->min_alloc_order;
-	size_t chunk_sz = chunk->end_addr - chunk->start_addr + 1;
+	পূর্ণসংখ্যা order = pool->min_alloc_order;
+	আকার_t chunk_sz = chunk->end_addr - chunk->start_addr + 1;
 	unsigned long end_bit = chunk_sz >> order;
 	unsigned long b, e;
 
@@ -53,13 +53,13 @@ static void scx_arena_clear_chunk(struct gen_pool *pool, struct gen_pool_chunk *
  * scx_arena_clear_chunk() so gen_pool_destroy() doesn't BUG. The underlying
  * arena pages are released when the arena map itself is torn down.
  */
-void scx_arena_pool_destroy(struct scx_sched *sch)
+শূন্য scx_arena_pool_destroy(কাঠামো scx_sched *sch)
 {
-	if (!sch->arena_pool)
-		return;
-	gen_pool_for_each_chunk(sch->arena_pool, scx_arena_clear_chunk, NULL);
+	যদি (!sch->arena_pool)
+		ফেরত;
+	gen_pool_for_each_chunk(sch->arena_pool, scx_arena_clear_chunk, ফাঁকা);
 	gen_pool_destroy(sch->arena_pool);
-	sch->arena_pool = NULL;
+	sch->arena_pool = ফাঁকা;
 }
 
 /*
@@ -67,27 +67,27 @@ void scx_arena_pool_destroy(struct scx_sched *sch)
  * gen_pool_add() (which calls vzalloc(GFP_KERNEL)) require a sleepable
  * context.
  */
-static int scx_arena_grow(struct scx_sched *sch, u32 page_cnt)
+স্থির পূর্ণসংখ্যা scx_arena_grow(কাঠামো scx_sched *sch, u32 page_cnt)
 {
-	void *p;
-	int ret;
+	শূন্য *p;
+	পূর্ণসংখ্যা ret;
 
-	if (!sch->arena_map || !sch->arena_pool)
-		return -EINVAL;
+	যদি (!sch->arena_map || !sch->arena_pool)
+		ফেরত -EINVAL;
 
-	p = bpf_arena_alloc_pages_sleepable(sch->arena_map, NULL,
-					    page_cnt, NUMA_NO_NODE, 0);
-	if (!p)
-		return -ENOMEM;
+	p = bpf_arena_alloc_pages_sleepable(sch->arena_map, ফাঁকা,
+					    page_cnt, NUMA_NO_গ্রন্থি, 0);
+	যদি (!p)
+		ফেরত -ENOMEM;
 
 	ret = gen_pool_add(sch->arena_pool,
 			   (unsigned long)scx_arena_to_kaddr(sch, p),
-			   page_cnt * PAGE_SIZE, NUMA_NO_NODE);
-	if (ret) {
+			   page_cnt * PAGE_আকার, NUMA_NO_গ্রন্থি);
+	যদি (ret) {
 		bpf_arena_free_pages_non_sleepable(sch->arena_map, p, page_cnt);
-		return ret;
+		ফেরত ret;
 	}
-	return 0;
+	ফেরত 0;
 }
 
 /*
@@ -95,31 +95,31 @@ static int scx_arena_grow(struct scx_sched *sch, u32 page_cnt)
  * on failure. May grow the pool via scx_arena_grow() which sleeps. Caller must
  * be in a GFP_KERNEL context.
  */
-void *scx_arena_alloc(struct scx_sched *sch, size_t size)
+শূন্য *scx_arena_alloc(কাঠামো scx_sched *sch, আকার_t আকার_2)
 {
 	unsigned long kern_va;
 	u32 page_cnt;
 
 	might_sleep();
 
-	if (!sch->arena_pool)
-		return NULL;
+	যদি (!sch->arena_pool)
+		ফেরত ফাঁকা;
 
-	while (true) {
-		kern_va = gen_pool_alloc(sch->arena_pool, size);
-		if (kern_va)
-			break;
+	যখন (true) {
+		kern_va = gen_pool_alloc(sch->arena_pool, আকার_2);
+		যদি (kern_va)
+			বিরতি;
 		page_cnt = max_t(u32, SCX_ARENA_GROW_PAGES,
-				 (size + PAGE_SIZE - 1) >> PAGE_SHIFT);
-		if (scx_arena_grow(sch, page_cnt))
-			return NULL;
+				 (আকার_2 + PAGE_আকার - 1) >> PAGE_SHIFT);
+		যদি (scx_arena_grow(sch, page_cnt))
+			ফেরত ফাঁকা;
 	}
 
-	return (void *)kern_va;
+	ফেরত (শূন্য *)kern_va;
 }
 
-void scx_arena_free(struct scx_sched *sch, void *kern_va, size_t size)
+শূন্য scx_arena_free(কাঠামো scx_sched *sch, শূন্য *kern_va, আকার_t আকার_2)
 {
-	if (sch->arena_pool && kern_va)
-		gen_pool_free(sch->arena_pool, (unsigned long)kern_va, size);
+	যদি (sch->arena_pool && kern_va)
+		gen_pool_free(sch->arena_pool, (unsigned long)kern_va, আকার_2);
 }

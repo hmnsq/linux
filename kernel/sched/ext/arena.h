@@ -8,13 +8,13 @@
 #ifndef _KERNEL_SCHED_EXT_ARENA_H
 #define _KERNEL_SCHED_EXT_ARENA_H
 
-#include <linux/types.h>
+#অন্তর্ভাব <linux/types.h>
 
-struct scx_sched;
+কাঠামো scx_sched;
 
-s32 scx_arena_pool_init(struct scx_sched *sch);
-void scx_arena_pool_destroy(struct scx_sched *sch);
-void *scx_arena_alloc(struct scx_sched *sch, size_t size);
-void scx_arena_free(struct scx_sched *sch, void *kern_va, size_t size);
+s32 scx_arena_pool_init(কাঠামো scx_sched *sch);
+শূন্য scx_arena_pool_destroy(কাঠামো scx_sched *sch);
+শূন্য *scx_arena_alloc(কাঠামো scx_sched *sch, আকার_t আকার_2);
+শূন্য scx_arena_free(কাঠামো scx_sched *sch, শূন্য *kern_va, আকার_t আকার_2);
 
 #endif /* _KERNEL_SCHED_EXT_ARENA_H */
