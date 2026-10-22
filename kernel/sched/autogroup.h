@@ -1,68 +1,68 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#ifndef _KERNEL_SCHED_AUTOGROUP_H
-#define _KERNEL_SCHED_AUTOGROUP_H
+#اگر_تعریف_نشده _KERNEL_SCHED_AUTOGROUP_H
+#تعریف_کن _KERNEL_SCHED_AUTOGROUP_H
 
-#include "sched.h"
+#ضمن "sched.h"
 
-#ifdef CONFIG_SCHED_AUTOGROUP
+#اگر_تعریف_شده CONFIG_SCHED_AUTOGROUP
 
-struct autogroup {
+بنية autogroup {
 	/*
 	 * Reference doesn't mean how many threads attach to this
 	 * autogroup now. It just stands for the number of tasks
 	 * which could use this autogroup.
 	 */
-	struct kref		kref;
-	struct task_group	*tg;
-	struct rw_semaphore	lock;
-	unsigned long		id;
-	int			nice;
+	بنية kref		kref;
+	بنية task_گروه	*tg;
+	بنية rw_semaphore	قفل;
+	بیعلامت دراز		id;
+	صحيح			nice;
 };
 
-extern void autogroup_init(struct task_struct *init_task);
-extern void autogroup_free(struct task_group *tg);
+خارجي فراغ autogroup_init(بنية task_struct *init_task);
+خارجي فراغ autogroup_free(بنية task_گروه *tg);
 
-static inline bool task_group_is_autogroup(struct task_group *tg)
+ساكن مضمن bool task_گروه_is_autogroup(بنية task_گروه *tg)
 {
-	return !!tg->autogroup;
+	أرجع !!tg->autogroup;
 }
 
-extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
+خارجي bool task_میخواهد_autogroup(بنية task_struct *p, بنية task_گروه *tg);
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+ساكن مضمن بنية task_گروه *
+autogroup_task_گروه(بنية task_struct *p, بنية task_گروه *tg)
 {
-	extern unsigned int sysctl_sched_autogroup_enabled;
-	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+	خارجي بیعلامت صحيح sysctl_sched_autogroup_enabled;
+	صحيح enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
 
-	if (enabled && task_wants_autogroup(p, tg))
-		return p->signal->autogroup->tg;
+	إذا (enabled && task_میخواهد_autogroup(p, tg))
+		أرجع p->إشارة->autogroup->tg;
 
-	return tg;
+	أرجع tg;
 }
 
-extern int autogroup_path(struct task_group *tg, char *buf, int buflen);
+خارجي صحيح autogroup_مسیر(بنية task_گروه *tg, حرف *buf, صحيح buflen);
 
-#else /* !CONFIG_SCHED_AUTOGROUP: */
+#وإلا /* !CONFIG_SCHED_AUTOGROUP: */
 
-static inline void autogroup_init(struct task_struct *init_task) {  }
-static inline void autogroup_free(struct task_group *tg) { }
-static inline bool task_group_is_autogroup(struct task_group *tg)
+ساكن مضمن فراغ autogroup_init(بنية task_struct *init_task) {  }
+ساكن مضمن فراغ autogroup_free(بنية task_گروه *tg) { }
+ساكن مضمن bool task_گروه_is_autogroup(بنية task_گروه *tg)
 {
-	return 0;
+	أرجع 0;
 }
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+ساكن مضمن بنية task_گروه *
+autogroup_task_گروه(بنية task_struct *p, بنية task_گروه *tg)
 {
-	return tg;
+	أرجع tg;
 }
 
-static inline int autogroup_path(struct task_group *tg, char *buf, int buflen)
+ساكن مضمن صحيح autogroup_مسیر(بنية task_گروه *tg, حرف *buf, صحيح buflen)
 {
-	return 0;
+	أرجع 0;
 }
 
-#endif /* !CONFIG_SCHED_AUTOGROUP */
+#پایان_اگر /* !CONFIG_SCHED_AUTOGROUP */
 
-#endif /* _KERNEL_SCHED_AUTOGROUP_H */
+#پایان_اگر /* _KERNEL_SCHED_AUTOGROUP_H */

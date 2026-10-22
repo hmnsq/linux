@@ -7,14 +7,14 @@
  * Copyright (c) 2026 Meta Platforms, Inc. and affiliates.
  * Copyright (c) 2026 Tejun Heo <tj@kernel.org>
  */
-#ifndef _KERNEL_SCHED_EXT_INLINES_H
-#define _KERNEL_SCHED_EXT_INLINES_H
+#اگر_تعریف_نشده _KERNEL_SCHED_EXT_INLINES_H
+#تعریف_کن _KERNEL_SCHED_EXT_INLINES_H
 
-#include "internal.h"
-#include "cid.h"
+#ضمن "internal.h"
+#ضمن "cid.h"
 
 /* what dispatch concluded, consumed by the pick that follows */
-enum scx_dsp_verdict {
+تعداد scx_dsp_verdict {
 	SCX_DSP_NONE,		/* nothing to run */
 	SCX_DSP_LOCAL,		/* local DSQ has tasks */
 	SCX_DSP_PREV,		/* keep running @prev */
@@ -26,28 +26,28 @@ enum scx_dsp_verdict {
  * recursively as sub-sched dispatches nest. Always inline to reduce stack usage
  * from the call frame.
  */
-static __always_inline enum scx_dsp_verdict
-scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
-		   struct task_struct *prev, bool nested)
+ساكن __always_inline تعداد scx_dsp_verdict
+scx_dispatch_sched(بنية scx_sched *sch, بنية rq *rq,
+		   بنية task_struct *prev, bool nested)
 {
-	struct scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
-	int nr_loops = SCX_DSP_MAX_LOOPS;
-	s32 cpu = cpu_of(rq);
+	بنية scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
+	صحيح nr_loops = SCX_DSP_MAX_LOOPS;
+	s32 cpu = cpu_از(rq);
 	bool prev_on_sch = (prev->sched_class == &ext_sched_class) &&
 		scx_task_on_sched(sch, prev);
 
-	if (scx_consume_global_dsq(sch, rq))
-		return SCX_DSP_LOCAL;
+	إذا (scx_consume_global_dsq(sch, rq))
+		أرجع SCX_DSP_LOCAL;
 
-	if (scx_bypass_dsp_enabled(sch)) {
+	إذا (scx_bypass_dsp_enabled(sch)) {
 		/* if @sch is bypassing, only the bypass DSQs are active */
-		if (scx_bypassing(sch, cpu)) {
-			if (scx_consume_dispatch_q(sch, rq, scx_bypass_dsq(sch, cpu), 0))
-				return SCX_DSP_LOCAL;
-			return SCX_DSP_NONE;
+		إذا (scx_bypassing(sch, cpu)) {
+			إذا (scx_consume_dispatch_q(sch, rq, scx_bypass_dsq(sch, cpu), 0))
+				أرجع SCX_DSP_LOCAL;
+			أرجع SCX_DSP_NONE;
 		}
 
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شده CONFIG_EXT_SUB_SCHED
 		/*
 		 * If @sch isn't bypassing but its children are, @sch is
 		 * responsible for making forward progress for both its own
@@ -60,14 +60,14 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 		 * so that the BPF scheduler can fully control scheduling of
 		 * bypassed tasks.
 		 */
-		struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
+		بنية scx_sched_pcpu *pcpu = در_هر_cpu_ptr(sch->pcpu, cpu);
 
-		if (!(pcpu->bypass_host_seq++ % SCX_BYPASS_HOST_NTH) &&
+		إذا (!(pcpu->bypass_host_seq++ % SCX_BYPASS_HOST_NTH) &&
 		    scx_consume_dispatch_q(sch, rq, scx_bypass_dsq(sch, cpu), 0)) {
 			__scx_add_event(sch, SCX_EV_SUB_BYPASS_DISPATCH, 1);
-			return SCX_DSP_LOCAL;
+			أرجع SCX_DSP_LOCAL;
 		}
-#endif	/* CONFIG_EXT_SUB_SCHED */
+#پایان_اگر	/* CONFIG_EXT_SUB_SCHED */
 	}
 
 	/*
@@ -76,8 +76,8 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 	 * rq_offline_scx() moves this CPU's tasks to the local DSQ only after
 	 * the wait. The grace period can depend on those tasks running.
 	 */
-	if (unlikely(!SCX_HAS_OP(sch, dispatch)) || !(rq->scx.flags & SCX_RQ_ONLINE))
-		return SCX_DSP_NONE;
+	إذا (unlikely(!SCX_HAS_OP(sch, dispatch)) || !(rq->scx.flags & SCX_RQ_ONLINE))
+		أرجع SCX_DSP_NONE;
 
 	dspc->rq = rq;
 
@@ -88,31 +88,31 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 	 * produced some tasks, retry. The BPF scheduler may depend on this
 	 * looping behavior to simplify its implementation.
 	 */
-	do {
+	افعل {
 		dspc->nr_tasks = 0;
 
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شده CONFIG_EXT_SUB_SCHED
 		/* stash @prev so that nested invocations can access it */
-		if (!nested)
+		إذا (!nested)
 			rq->scx.sub_dispatch_prev = prev;
-#endif
+#پایان_اگر
 
 		SCX_CALL_OP(sch, dispatch, rq, scx_cpu_arg(cpu),
-			    prev_on_sch ? prev : NULL);
+			    prev_on_sch ? prev : عدم);
 
-#ifdef CONFIG_EXT_SUB_SCHED
-		if (!nested)
-			rq->scx.sub_dispatch_prev = NULL;
-#endif
+#اگر_تعریف_شده CONFIG_EXT_SUB_SCHED
+		إذا (!nested)
+			rq->scx.sub_dispatch_prev = عدم;
+#پایان_اگر
 
 		scx_flush_dispatch_buf(sch, rq);
 
-		if ((prev->scx.flags & SCX_TASK_QUEUED) && prev->scx.slice)
-			return SCX_DSP_PREV;
-		if (rq->scx.local_dsq.nr)
-			return SCX_DSP_LOCAL;
-		if (scx_consume_global_dsq(sch, rq))
-			return SCX_DSP_LOCAL;
+		إذا ((prev->scx.flags & SCX_TASK_QUEUED) && prev->scx.برش)
+			أرجع SCX_DSP_PREV;
+		إذا (rq->scx.local_dsq.nr)
+			أرجع SCX_DSP_LOCAL;
+		إذا (scx_consume_global_dsq(sch, rq))
+			أرجع SCX_DSP_LOCAL;
 
 		/*
 		 * ops.dispatch() can trap us in this loop by repeatedly
@@ -123,24 +123,24 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 		 * next, most likely idle, task, not the current one. Use
 		 * __scx_bpf_kick_cpu() for deferred kicking.
 		 */
-		if (unlikely(!--nr_loops)) {
+		إذا (unlikely(!--nr_loops)) {
 			scx_kick_cpu(sch, cpu, 0);
-			break;
+			اكسر;
 		}
-	} while (dspc->nr_tasks);
+	} طالما (dspc->nr_tasks);
 
 	/*
 	 * Prevent the CPU from going idle while bypassed descendants have tasks
 	 * queued. Without this fallback, bypassed tasks could stall if the host
 	 * scheduler's ops.dispatch() doesn't yield any tasks.
 	 */
-	if (scx_bypass_dsp_enabled(sch) &&
+	إذا (scx_bypass_dsp_enabled(sch) &&
 	    scx_consume_dispatch_q(sch, rq, scx_bypass_dsq(sch, cpu), 0)) {
 		__scx_add_event(sch, SCX_EV_SUB_BYPASS_DISPATCH, 1);
-		return SCX_DSP_LOCAL;
+		أرجع SCX_DSP_LOCAL;
 	}
 
-	return SCX_DSP_NONE;
+	أرجع SCX_DSP_NONE;
 }
 
-#endif /* _KERNEL_SCHED_EXT_INLINES_H */
+#پایان_اگر /* _KERNEL_SCHED_EXT_INLINES_H */

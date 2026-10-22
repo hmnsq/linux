@@ -2,135 +2,135 @@
 /*
  * Scheduler internal types and methods:
  */
-#ifndef _KERNEL_SCHED_SCHED_H
-#define _KERNEL_SCHED_SCHED_H
+#اگر_تعریف_نشده _KERNEL_SCHED_SCHED_H
+#تعریف_کن _KERNEL_SCHED_SCHED_H
 
-#include <linux/prandom.h>
-#include <linux/sched/affinity.h>
-#include <linux/sched/autogroup.h>
-#include <linux/sched/cpufreq.h>
-#include <linux/sched/deadline.h>
-#include <linux/sched.h>
-#include <linux/sched/loadavg.h>
-#include <linux/sched/mm.h>
-#include <linux/sched/rseq_api.h>
-#include <linux/sched/signal.h>
-#include <linux/sched/smt.h>
-#include <linux/sched/stat.h>
-#include <linux/sched/sysctl.h>
-#include <linux/sched/task_flags.h>
-#include <linux/sched/task.h>
-#include <linux/sched/topology.h>
-#include <linux/atomic.h>
-#include <linux/bitmap.h>
-#include <linux/bug.h>
-#include <linux/capability.h>
-#include <linux/cgroup_api.h>
-#include <linux/cgroup.h>
-#include <linux/context_tracking.h>
-#include <linux/cpufreq.h>
-#include <linux/cpumask_api.h>
-#include <linux/cpuset.h>
-#include <linux/ctype.h>
-#include <linux/file.h>
-#include <linux/fs_api.h>
-#include <linux/hrtimer_api.h>
-#include <linux/interrupt.h>
-#include <linux/irq_work.h>
-#include <linux/jiffies.h>
-#include <linux/kref_api.h>
-#include <linux/kthread.h>
-#include <linux/ktime_api.h>
-#include <linux/lockdep_api.h>
-#include <linux/lockdep.h>
-#include <linux/memblock.h>
-#include <linux/memcontrol.h>
-#include <linux/minmax.h>
-#include <linux/mm.h>
-#include <linux/module.h>
-#include <linux/mutex_api.h>
-#include <linux/plist.h>
-#include <linux/poll.h>
-#include <linux/proc_fs.h>
-#include <linux/profile.h>
-#include <linux/psi.h>
-#include <linux/rcupdate.h>
-#include <linux/seq_file.h>
-#include <linux/seqlock.h>
-#include <linux/softirq.h>
-#include <linux/spinlock_api.h>
-#include <linux/static_key.h>
-#include <linux/stop_machine.h>
-#include <linux/syscalls_api.h>
-#include <linux/syscalls.h>
-#include <linux/tick.h>
-#include <linux/topology.h>
-#include <linux/types.h>
-#include <linux/u64_stats_sync_api.h>
-#include <linux/uaccess.h>
-#include <linux/vmstat.h>
-#include <linux/wait_api.h>
-#include <linux/wait_bit.h>
-#include <linux/workqueue_api.h>
-#include <linux/delayacct.h>
-#include <linux/mmu_context.h>
+#ضمن <linux/prandom.h>
+#ضمن <linux/sched/affinity.h>
+#ضمن <linux/sched/autogroup.h>
+#ضمن <linux/sched/cpufreq.h>
+#ضمن <linux/sched/deadline.h>
+#ضمن <linux/sched.h>
+#ضمن <linux/sched/loadavg.h>
+#ضمن <linux/sched/mm.h>
+#ضمن <linux/sched/rseq_api.h>
+#ضمن <linux/sched/signal.h>
+#ضمن <linux/sched/smt.h>
+#ضمن <linux/sched/stat.h>
+#ضمن <linux/sched/sysctl.h>
+#ضمن <linux/sched/task_flags.h>
+#ضمن <linux/sched/task.h>
+#ضمن <linux/sched/topology.h>
+#ضمن <linux/atomic.h>
+#ضمن <linux/bitmap.h>
+#ضمن <linux/bug.h>
+#ضمن <linux/capability.h>
+#ضمن <linux/cgroup_api.h>
+#ضمن <linux/cgroup.h>
+#ضمن <linux/context_tracking.h>
+#ضمن <linux/cpufreq.h>
+#ضمن <linux/cpumask_api.h>
+#ضمن <linux/cpuset.h>
+#ضمن <linux/ctype.h>
+#ضمن <linux/file.h>
+#ضمن <linux/fs_api.h>
+#ضمن <linux/hrtimer_api.h>
+#ضمن <linux/interrupt.h>
+#ضمن <linux/irq_work.h>
+#ضمن <linux/jiffies.h>
+#ضمن <linux/kref_api.h>
+#ضمن <linux/kthread.h>
+#ضمن <linux/ktime_api.h>
+#ضمن <linux/lockdep_api.h>
+#ضمن <linux/lockdep.h>
+#ضمن <linux/memblock.h>
+#ضمن <linux/memcontrol.h>
+#ضمن <linux/minmax.h>
+#ضمن <linux/mm.h>
+#ضمن <linux/module.h>
+#ضمن <linux/mutex_api.h>
+#ضمن <linux/plist.h>
+#ضمن <linux/poll.h>
+#ضمن <linux/proc_fs.h>
+#ضمن <linux/profile.h>
+#ضمن <linux/psi.h>
+#ضمن <linux/rcupdate.h>
+#ضمن <linux/seq_file.h>
+#ضمن <linux/seqlock.h>
+#ضمن <linux/softirq.h>
+#ضمن <linux/spinlock_api.h>
+#ضمن <linux/static_key.h>
+#ضمن <linux/stop_machine.h>
+#ضمن <linux/syscalls_api.h>
+#ضمن <linux/syscalls.h>
+#ضمن <linux/tick.h>
+#ضمن <linux/topology.h>
+#ضمن <linux/types.h>
+#ضمن <linux/u64_stats_sync_api.h>
+#ضمن <linux/uaccess.h>
+#ضمن <linux/vmstat.h>
+#ضمن <linux/wait_api.h>
+#ضمن <linux/wait_bit.h>
+#ضمن <linux/workqueue_api.h>
+#ضمن <linux/delayacct.h>
+#ضمن <linux/mmu_context.h>
 
-#include <trace/events/power.h>
-#include <trace/events/sched.h>
+#ضمن <trace/events/power.h>
+#ضمن <trace/events/sched.h>
 
-#include "../workqueue_internal.h"
+#ضمن "../workqueue_internal.h"
 
-struct rq;
-struct cfs_rq;
-struct rt_rq;
-struct sched_group;
-struct cpuidle_state;
+بنية rq;
+بنية cfs_rq;
+بنية rt_rq;
+بنية sched_گروه;
+بنية cpuidle_state;
 
-#if defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
+#إذا defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
 # include <asm/paravirt.h>
-#endif
+#پایان_اگر
 
-#include <asm/barrier.h>
+#ضمن <asm/barrier.h>
 
-#include "cpupri.h"
-#include "cpudeadline.h"
+#ضمن "cpupri.h"
+#ضمن "cpudeadline.h"
 
 /* task_struct::on_rq states: */
-#define TASK_ON_RQ_QUEUED	1
-#define TASK_ON_RQ_MIGRATING	2
+#تعریف_کن TASK_ON_RQ_QUEUED	1
+#تعریف_کن TASK_ON_RQ_MIGRATING	2
 
-extern __read_mostly int scheduler_running;
+خارجي __read_mostly صحيح scheduler_running;
 
-extern unsigned long calc_load_update;
-extern atomic_long_t calc_load_tasks;
+خارجي بیعلامت دراز calc_بارگیری_update;
+خارجي atomic_long_t calc_بارگیری_tasks;
 
-extern void calc_global_load_tick(struct rq *this_rq);
-extern long calc_load_fold_active(struct rq *this_rq, long adjust);
+خارجي فراغ calc_global_بارگیری_tick(بنية rq *this_rq);
+خارجي دراز calc_بارگیری_fold_فعال(بنية rq *this_rq, دراز adjust);
 
-extern void call_trace_sched_update_nr_running(struct rq *rq, int count);
+خارجي فراغ call_trace_sched_update_nr_running(بنية rq *rq, صحيح شمار);
 
-extern int sysctl_sched_rt_period;
-extern int sysctl_sched_rt_runtime;
-extern int sched_rr_timeslice;
+خارجي صحيح sysctl_sched_rt_period;
+خارجي صحيح sysctl_sched_rt_runtime;
+خارجي صحيح sched_rr_timeslice;
 
 /*
  * Asymmetric CPU capacity bits
  */
-struct asym_cap_data {
-	struct list_head link;
-	struct rcu_head rcu;
-	unsigned long capacity;
-	unsigned long cpus[];
+بنية asym_cap_داده {
+	بنية list_سر link;
+	بنية rcu_سر rcu;
+	بیعلامت دراز ظرفیت;
+	بیعلامت دراز cpus[];
 };
 
-extern struct list_head asym_cap_list;
+خارجي بنية list_سر asym_cap_list;
 
-#define cpu_capacity_span(asym_data) to_cpumask((asym_data)->cpus)
+#تعریف_کن cpu_ظرفیت_بازه(asym_داده) مقصد_cpumask((asym_داده)->cpus)
 
 /*
  * Helpers for converting nanosecond timing to jiffy resolution
  */
-#define NS_TO_JIFFIES(time)	((unsigned long)(time) / (NSEC_PER_SEC/HZ))
+#تعریف_کن NS_مقصد_JIFFIES(زمان)	((بیعلامت دراز)(زمان) / (NSEC_در_هر_SEC/HZ))
 
 /*
  * Increase resolution of nice-level calculations for 64-bit architectures.
@@ -146,22 +146,22 @@ extern struct list_head asym_cap_list;
  * Really only required when CONFIG_FAIR_GROUP_SCHED=y is also set, but to
  * increase coverage and consistency always enable it on 64-bit platforms.
  */
-#ifdef CONFIG_64BIT
-# define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT + SCHED_FIXEDPOINT_SHIFT)
-# define scale_load(w)		((w) << SCHED_FIXEDPOINT_SHIFT)
-# define scale_load_down(w)					\
+#اگر_تعریف_شده CONFIG_64_بیت
+# define NICE_0_بارگیری_لغزش	(SCHED_FIXEDPOINT_لغزش + SCHED_FIXEDPOINT_لغزش)
+# define scale_بارگیری(w)		((w) << SCHED_FIXEDPOINT_لغزش)
+# define scale_بارگیری_پایین(w)					\
 ({								\
-	unsigned long __w = (w);				\
+	بیعلامت دراز __w = (w);				\
 								\
-	if (__w)						\
-		__w = max(2UL, __w >> SCHED_FIXEDPOINT_SHIFT);	\
+	إذا (__w)						\
+		__w = max(2UL, __w >> SCHED_FIXEDPOINT_لغزش);	\
 	__w;							\
 })
-#else
-# define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT)
-# define scale_load(w)		(w)
-# define scale_load_down(w)	(w)
-#endif
+#وإلا
+# define NICE_0_بارگیری_لغزش	(SCHED_FIXEDPOINT_لغزش)
+# define scale_بارگیری(w)		(w)
+# define scale_بارگیری_پایین(w)	(w)
+#پایان_اگر
 
 /*
  * Task weight (visible to users) and its load (invisible to users) have
@@ -172,73 +172,73 @@ extern struct list_head asym_cap_list;
  *  scale_load(sched_prio_to_weight[NICE_TO_PRIO(0)-MAX_RT_PRIO]) == NICE_0_LOAD
  *
  */
-#define NICE_0_LOAD		(1L << NICE_0_LOAD_SHIFT)
+#تعریف_کن NICE_0_بارگیری		(1L << NICE_0_بارگیری_لغزش)
 
 /*
  * Single value that decides SCHED_DEADLINE internal math precision.
  * 10 -> just above 1us
  * 9  -> just above 0.5us
  */
-#define DL_SCALE		10
+#تعریف_کن DL_SCALE		10
 
 /*
  * Single value that denotes runtime == period, ie unlimited time.
  */
-#define RUNTIME_INF		((u64)~0ULL)
+#تعریف_کن RUNTIME_INF		((u64)~0ULL)
 
-static inline int idle_policy(int policy)
+ساكن مضمن صحيح idle_policy(صحيح policy)
 {
-	return policy == SCHED_IDLE;
+	أرجع policy == SCHED_IDLE;
 }
 
-static inline int normal_policy(int policy)
+ساكن مضمن صحيح نرمال_policy(صحيح policy)
 {
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (policy == SCHED_EXT)
-		return true;
-#endif
-	return policy == SCHED_NORMAL;
+#اگر_تعریف_شده CONFIG_SCHED_CLASS_EXT
+	إذا (policy == SCHED_EXT)
+		أرجع true;
+#پایان_اگر
+	أرجع policy == SCHED_نرمال;
 }
 
-static inline int fair_policy(int policy)
+ساكن مضمن صحيح fair_policy(صحيح policy)
 {
-	return normal_policy(policy) || policy == SCHED_BATCH;
+	أرجع نرمال_policy(policy) || policy == SCHED_BATCH;
 }
 
-static inline int rt_policy(int policy)
+ساكن مضمن صحيح rt_policy(صحيح policy)
 {
-	return policy == SCHED_FIFO || policy == SCHED_RR;
+	أرجع policy == SCHED_FIFO || policy == SCHED_RR;
 }
 
-static inline int dl_policy(int policy)
+ساكن مضمن صحيح dl_policy(صحيح policy)
 {
-	return policy == SCHED_DEADLINE;
+	أرجع policy == SCHED_DEADLINE;
 }
 
-static inline bool valid_policy(int policy)
+ساكن مضمن bool valid_policy(صحيح policy)
 {
-	return idle_policy(policy) || fair_policy(policy) ||
+	أرجع idle_policy(policy) || fair_policy(policy) ||
 		rt_policy(policy) || dl_policy(policy);
 }
 
-static inline int task_has_idle_policy(struct task_struct *p)
+ساكن مضمن صحيح task_has_idle_policy(بنية task_struct *p)
 {
-	return idle_policy(p->policy);
+	أرجع idle_policy(p->policy);
 }
 
-static inline int task_has_rt_policy(struct task_struct *p)
+ساكن مضمن صحيح task_has_rt_policy(بنية task_struct *p)
 {
-	return rt_policy(p->policy);
+	أرجع rt_policy(p->policy);
 }
 
-static inline int task_has_dl_policy(struct task_struct *p)
+ساكن مضمن صحيح task_has_dl_policy(بنية task_struct *p)
 {
-	return dl_policy(p->policy);
+	أرجع dl_policy(p->policy);
 }
 
-#define cap_scale(v, s)		((v)*(s) >> SCHED_CAPACITY_SHIFT)
+#تعریف_کن cap_scale(v, s)		((v)*(s) >> SCHED_ظرفیت_لغزش)
 
-static inline void update_avg(u64 *avg, u64 sample)
+ساكن مضمن فراغ update_avg(u64 *avg, u64 sample)
 {
 	s64 diff = sample - *avg;
 
@@ -249,8 +249,8 @@ static inline void update_avg(u64 *avg, u64 sample)
  * Shifting a value by an exponent greater *or equal* to the size of said value
  * is UB; cap at size-1.
  */
-#define shr_bound(val, shift)							\
-	(val >> min_t(typeof(shift), shift, BITS_PER_TYPE(typeof(val)) - 1))
+#تعریف_کن shr_bound(val, لغزش)							\
+	(val >> min_t(typeof(لغزش), لغزش, بیتها_در_هر_TYPE(typeof(val)) - 1))
 
 /*
  * cgroup weight knobs should use the common MIN, DFL and MAX values which are
@@ -258,16 +258,16 @@ static inline void update_avg(u64 *avg, u64 sample)
  * maps pretty well onto the shares value used by scheduler and the round-trip
  * conversions preserve the original value over the entire range.
  */
-static inline unsigned long sched_weight_from_cgroup(unsigned long cgrp_weight)
+ساكن مضمن بیعلامت دراز sched_وزن_from_cgroup(بیعلامت دراز cgrp_وزن)
 {
-	return DIV_ROUND_CLOSEST_ULL(cgrp_weight * 1024, CGROUP_WEIGHT_DFL);
+	أرجع DIV_دور_CLOSEST_ULL(cgrp_وزن * 1024, CGROUP_وزن_DFL);
 }
 
-static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
+ساكن مضمن بیعلامت دراز sched_وزن_مقصد_cgroup(بیعلامت دراز وزن)
 {
-	return clamp_t(unsigned long,
-		       DIV_ROUND_CLOSEST_ULL(weight * CGROUP_WEIGHT_DFL, 1024),
-		       CGROUP_WEIGHT_MIN, CGROUP_WEIGHT_MAX);
+	أرجع clamp_t(بیعلامت دراز,
+		       DIV_دور_CLOSEST_ULL(وزن * CGROUP_وزن_DFL, 1024),
+		       CGROUP_وزن_MIN, CGROUP_وزن_MAX);
 }
 
 /*
@@ -282,49 +282,49 @@ static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
  *
  * SUGOV stands for SchedUtil GOVernor.
  */
-#define SCHED_FLAG_SUGOV	0x10000000
+#تعریف_کن SCHED_FLAG_SUGOV	0x10000000
 
-#define SCHED_DL_FLAGS		(SCHED_FLAG_RECLAIM | SCHED_FLAG_DL_OVERRUN | SCHED_FLAG_SUGOV)
+#تعریف_کن SCHED_DL_FLAGS		(SCHED_FLAG_RECLAIM | SCHED_FLAG_DL_OVERRUN | SCHED_FLAG_SUGOV)
 
-static inline bool dl_entity_is_special(const struct sched_dl_entity *dl_se)
+ساكن مضمن bool dl_entity_is_special(ثابت بنية sched_dl_entity *dl_se)
 {
-#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-	return unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
-#else
-	return false;
-#endif
+#اگر_تعریف_شده CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+	أرجع unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
+#وإلا
+	أرجع false;
+#پایان_اگر
 }
 
 /*
  * Tells if entity @a should preempt entity @b.
  */
-static inline bool dl_entity_preempt(const struct sched_dl_entity *a,
-				     const struct sched_dl_entity *b)
+ساكن مضمن bool dl_entity_preempt(ثابت بنية sched_dl_entity *a,
+				     ثابت بنية sched_dl_entity *b)
 {
-	return dl_entity_is_special(a) ||
-	       dl_time_before(a->deadline, b->deadline);
+	أرجع dl_entity_is_special(a) ||
+	       dl_زمان_before(a->deadline, b->deadline);
 }
 
 /*
  * This is the priority-queue data structure of the RT scheduling class:
  */
-struct rt_prio_array {
+بنية rt_prio_array {
 	DECLARE_BITMAP(bitmap, MAX_RT_PRIO+1); /* include 1 bit for delimiter */
-	struct list_head queue[MAX_RT_PRIO];
+	بنية list_سر صف[MAX_RT_PRIO];
 };
 
-struct rt_bandwidth {
+بنية rt_bandwidth {
 	/* nests inside the rq lock: */
-	raw_spinlock_t		rt_runtime_lock;
+	raw_spinlock_t		rt_runtime_قفل;
 	ktime_t			rt_period;
 	u64			rt_runtime;
-	struct hrtimer		rt_period_timer;
-	unsigned int		rt_period_active;
+	بنية hrtimer		rt_period_timer;
+	بیعلامت صحيح		rt_period_فعال;
 };
 
-static inline int dl_bandwidth_enabled(void)
+ساكن مضمن صحيح dl_bandwidth_enabled(فراغ)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	أرجع sysctl_sched_rt_runtime >= 0;
 }
 
 /*
@@ -345,23 +345,23 @@ static inline int dl_bandwidth_enabled(void)
  *  - bw (< 100%) is the deadline bandwidth of each CPU;
  *  - total_bw is the currently allocated bandwidth in each root domain;
  */
-struct dl_bw {
-	raw_spinlock_t		lock;
+بنية dl_bw {
+	raw_spinlock_t		قفل;
 	u64			bw;
-	u64			total_bw;
+	u64			مجموع_bw;
 };
 
-extern void init_dl_bw(struct dl_bw *dl_b);
-extern int  sched_dl_global_validate(void);
-extern void sched_dl_do_global(void);
-extern int  sched_dl_overflow(struct task_struct *p, int policy, const struct sched_attr *attr);
-extern void __setparam_dl(struct task_struct *p, const struct sched_attr *attr);
-extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags);
-extern bool __checkparam_dl(const struct sched_attr *attr);
-extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
-extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
-extern int  dl_bw_deactivate(int cpu);
-extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec);
+خارجي فراغ init_dl_bw(بنية dl_bw *dl_b);
+خارجي صحيح  sched_dl_global_validate(فراغ);
+خارجي فراغ sched_dl_do_global(فراغ);
+خارجي صحيح  sched_dl_سرریز(بنية task_struct *p, صحيح policy, ثابت بنية sched_attr *attr);
+خارجي فراغ __setparam_dl(بنية task_struct *p, ثابت بنية sched_attr *attr);
+خارجي فراغ __getparam_dl(بنية task_struct *p, بنية sched_attr *attr, بیعلامت صحيح flags);
+خارجي bool __checkparam_dl(ثابت بنية sched_attr *attr);
+خارجي bool dl_param_تغییریافته(بنية task_struct *p, ثابت بنية sched_attr *attr);
+خارجي صحيح  dl_cpuset_cpumask_can_shrink(ثابت بنية cpumask *cur, ثابت بنية cpumask *trial);
+خارجي صحيح  dl_bw_deactivate(صحيح cpu);
+خارجي s64 dl_scaled_delta_exec(بنية rq *rq, بنية sched_dl_entity *dl_se, s64 delta_exec);
 /*
  * SCHED_DEADLINE supports servers (nested scheduling) with the following
  * interface:
@@ -408,134 +408,134 @@ extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s6
  * naturally thottled to once per period, avoiding high context switch
  * workloads from spamming the hrtimer program/cancel paths.
  */
-extern void dl_server_update_idle(struct sched_dl_entity *dl_se, s64 delta_exec);
-extern void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec);
-extern void dl_server_start(struct sched_dl_entity *dl_se);
-extern void dl_server_stop(struct sched_dl_entity *dl_se);
-extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+خارجي فراغ dl_server_update_idle(بنية sched_dl_entity *dl_se, s64 delta_exec);
+خارجي فراغ dl_server_update(بنية sched_dl_entity *dl_se, s64 delta_exec);
+خارجي فراغ dl_server_شروع(بنية sched_dl_entity *dl_se);
+خارجي فراغ dl_server_stop(بنية sched_dl_entity *dl_se);
+خارجي فراغ dl_server_init(بنية sched_dl_entity *dl_se, بنية rq *rq,
 		    dl_server_pick_f pick_task);
-extern void sched_init_dl_servers(void);
+خارجي فراغ sched_init_dl_servers(فراغ);
 
-extern void fair_server_init(struct rq *rq);
-extern void ext_server_init(struct rq *rq);
-extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq);
-extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
+خارجي فراغ fair_server_init(بنية rq *rq);
+خارجي فراغ ext_server_init(بنية rq *rq);
+خارجي فراغ __dl_server_attach_root(بنية sched_dl_entity *dl_se, بنية rq *rq);
+خارجي صحيح dl_server_apply_params(بنية sched_dl_entity *dl_se,
 		    u64 runtime, u64 period, bool init);
-extern int dl_server_attach_bw(struct sched_dl_entity *dl_se);
-extern void dl_server_detach_bw(struct sched_dl_entity *dl_se);
-extern int dl_server_swap_bw(struct sched_dl_entity *detach_se,
-			     struct sched_dl_entity *attach_se);
+خارجي صحيح dl_server_attach_bw(بنية sched_dl_entity *dl_se);
+خارجي فراغ dl_server_detach_bw(بنية sched_dl_entity *dl_se);
+خارجي صحيح dl_server_جابجا_bw(بنية sched_dl_entity *detach_se,
+			     بنية sched_dl_entity *attach_se);
 
-static inline bool dl_server_active(struct sched_dl_entity *dl_se)
+ساكن مضمن bool dl_server_فعال(بنية sched_dl_entity *dl_se)
 {
-	return dl_se->dl_server_active;
+	أرجع dl_se->dl_server_فعال;
 }
 
-#ifdef CONFIG_CGROUP_SCHED
+#اگر_تعریف_شده CONFIG_CGROUP_SCHED
 
-extern struct list_head task_groups;
+خارجي بنية list_سر task_groups;
 
-#ifdef CONFIG_GROUP_SCHED_BANDWIDTH
-extern const u64 max_bw_quota_period_us;
+#اگر_تعریف_شده CONFIG_گروه_SCHED_BANDWIDTH
+خارجي ثابت u64 max_bw_quota_period_us;
 
 /*
  * default period for group bandwidth.
  * default: 0.1s, units: microseconds
  */
-static inline u64 default_bw_period_us(void)
+ساكن مضمن u64 default_bw_period_us(فراغ)
 {
-	return 100000ULL;
+	أرجع 100000ULL;
 }
-#endif /* CONFIG_GROUP_SCHED_BANDWIDTH */
+#پایان_اگر /* CONFIG_GROUP_SCHED_BANDWIDTH */
 
-struct cfs_bandwidth {
-#ifdef CONFIG_CFS_BANDWIDTH
-	raw_spinlock_t		lock;
+بنية cfs_bandwidth {
+#اگر_تعریف_شده CONFIG_CFS_BANDWIDTH
+	raw_spinlock_t		قفل;
 	ktime_t			period;
 	u64			quota;
 	u64			runtime;
-	u64			burst;
+	u64			مدت;
 	u64			runtime_snap;
-	s64			hierarchical_quota;
+	s64			سلسلهمراتبی_quota;
 
 	u8			idle;
-	u8			period_active;
+	u8			period_فعال;
 	u8			slack_started;
-	struct hrtimer		period_timer;
-	struct hrtimer		slack_timer;
-	struct list_head	throttled_cfs_rq;
+	بنية hrtimer		period_timer;
+	بنية hrtimer		slack_timer;
+	بنية list_سر	throttled_cfs_rq;
 
 	/* Statistics: */
-	int			nr_periods;
-	int			nr_throttled;
-	int			nr_burst;
-	u64			throttled_time;
-	u64			burst_time;
-#endif /* CONFIG_CFS_BANDWIDTH */
+	صحيح			nr_periods;
+	صحيح			nr_throttled;
+	صحيح			nr_مدت;
+	u64			throttled_زمان;
+	u64			مدت_زمان;
+#پایان_اگر /* CONFIG_CFS_BANDWIDTH */
 };
 
 /* Task group related information */
-struct task_group {
-	struct cgroup_subsys_state css;
+بنية task_گروه {
+	بنية cgroup_subsys_state css;
 
-#ifdef CONFIG_GROUP_SCHED_WEIGHT
+#اگر_تعریف_شده CONFIG_گروه_SCHED_وزن
 	/* A positive value indicates that this is a SCHED_IDLE group. */
-	int			idle;
-#endif
+	صحيح			idle;
+#پایان_اگر
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
 	/* runqueue "owned" by this group on each CPU */
-	struct cfs_rq __percpu	*cfs_rq;
-	unsigned long		shares;
+	بنية cfs_rq __percpu	*cfs_rq;
+	بیعلامت دراز		shares;
 	/*
 	 * load_avg can be heavily contended at clock tick time, so put
 	 * it in its own cache-line separated from the fields above which
 	 * will also be accessed at each tick.
 	 */
-	atomic_long_t		load_avg ____cacheline_aligned;
+	atomic_long_t		بارگیری_avg ____cacheline_aligned;
 	atomic_long_t		runnable_avg;
 
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+#پایان_اگر /* CONFIG_FAIR_GROUP_SCHED */
 
-#ifdef CONFIG_RT_GROUP_SCHED
-	struct sched_rt_entity	**rt_se;
-	struct rt_rq		**rt_rq;
+#اگر_تعریف_شده CONFIG_RT_گروه_SCHED
+	بنية sched_rt_entity	**rt_se;
+	بنية rt_rq		**rt_rq;
 
-	struct rt_bandwidth	rt_bandwidth;
-#endif
+	بنية rt_bandwidth	rt_bandwidth;
+#پایان_اگر
 
-	struct scx_task_group	scx;
+	بنية scx_task_گروه	scx;
 
-	struct rcu_head		rcu;
-	struct list_head	list;
+	بنية rcu_سر		rcu;
+	بنية list_سر	list;
 
-	struct task_group	*parent;
-	struct list_head	siblings;
-	struct list_head	children;
+	بنية task_گروه	*والد;
+	بنية list_سر	siblings;
+	بنية list_سر	children;
 
-#ifdef CONFIG_SCHED_AUTOGROUP
-	struct autogroup	*autogroup;
-#endif
+#اگر_تعریف_شده CONFIG_SCHED_AUTOGROUP
+	بنية autogroup	*autogroup;
+#پایان_اگر
 
-	struct cfs_bandwidth	cfs_bandwidth;
+	بنية cfs_bandwidth	cfs_bandwidth;
 
-#ifdef CONFIG_UCLAMP_TASK_GROUP
+#اگر_تعریف_شده CONFIG_UCLAMP_TASK_گروه
 	/* The two decimal precision [%] value requested from user-space */
-	unsigned int		uclamp_pct[UCLAMP_CNT];
+	بیعلامت صحيح		uclamp_pct[UCLAMP_CNT];
 	/* Clamp values requested for a task group */
-	struct uclamp_se	uclamp_req[UCLAMP_CNT];
+	بنية uclamp_se	uclamp_req[UCLAMP_CNT];
 	/* Effective clamp values used for a task group */
-	struct uclamp_se	uclamp[UCLAMP_CNT];
-#endif
+	بنية uclamp_se	uclamp[UCLAMP_CNT];
+#پایان_اگر
 
 };
 
-#define ROOT_TASK_GROUP_LOAD	NICE_0_LOAD
+#تعریف_کن ریشه_TASK_گروه_بارگیری	NICE_0_بارگیری
 
-typedef int (*tg_visitor)(struct task_group *, void *);
+تعريفنوع صحيح (*tg_visitor)(بنية task_گروه *, فراغ *);
 
-extern int walk_tg_tree_from(struct task_group *from,
-			     tg_visitor down, tg_visitor up, void *data);
+خارجي صحيح walk_tg_درخت_from(بنية task_گروه *from,
+			     tg_visitor پایین, tg_visitor به_بالا, فراغ *داده);
 
 /*
  * Iterate the full tree, calling @down when first entering a node and @up when
@@ -543,80 +543,80 @@ extern int walk_tg_tree_from(struct task_group *from,
  *
  * Caller must hold rcu_lock or sufficient equivalent.
  */
-static inline int walk_tg_tree(tg_visitor down, tg_visitor up, void *data)
+ساكن مضمن صحيح walk_tg_درخت(tg_visitor پایین, tg_visitor به_بالا, فراغ *داده)
 {
-	return walk_tg_tree_from(&root_task_group, down, up, data);
+	أرجع walk_tg_درخت_from(&ریشه_task_گروه, پایین, به_بالا, داده);
 }
 
-static inline struct task_group *css_tg(struct cgroup_subsys_state *css)
+ساكن مضمن بنية task_گروه *css_tg(بنية cgroup_subsys_state *css)
 {
-	return css ? container_of(css, struct task_group, css) : NULL;
+	أرجع css ? container_از(css, بنية task_گروه, css) : عدم;
 }
 
-extern int tg_nop(struct task_group *tg, void *data);
+خارجي صحيح tg_nop(بنية task_گروه *tg, فراغ *داده);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-extern void free_fair_sched_group(struct task_group *tg);
-extern int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent);
-extern void online_fair_sched_group(struct task_group *tg);
-extern void unregister_fair_sched_group(struct task_group *tg);
-extern void __sched_cgroup_mode_update(int mode);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline void free_fair_sched_group(struct task_group *tg) { }
-static inline int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
+خارجي فراغ free_fair_sched_گروه(بنية task_گروه *tg);
+خارجي صحيح alloc_fair_sched_گروه(بنية task_گروه *tg, بنية task_گروه *والد);
+خارجي فراغ online_fair_sched_گروه(بنية task_گروه *tg);
+خارجي فراغ unregister_fair_sched_گروه(بنية task_گروه *tg);
+خارجي فراغ __sched_cgroup_mode_update(صحيح نما);
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
+ساكن مضمن فراغ free_fair_sched_گروه(بنية task_گروه *tg) { }
+ساكن مضمن صحيح alloc_fair_sched_گروه(بنية task_گروه *tg, بنية task_گروه *والد)
 {
-       return 1;
+       أرجع 1;
 }
-static inline void online_fair_sched_group(struct task_group *tg) { }
-static inline void unregister_fair_sched_group(struct task_group *tg) { }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+ساكن مضمن فراغ online_fair_sched_گروه(بنية task_گروه *tg) { }
+ساكن مضمن فراغ unregister_fair_sched_گروه(بنية task_گروه *tg) { }
+#پایان_اگر /* !CONFIG_FAIR_GROUP_SCHED */
 
-extern void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
-			struct sched_entity *se, int cpu,
-			struct sched_entity *parent);
-extern void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent);
+خارجي فراغ init_tg_cfs_مدخل(بنية task_گروه *tg, بنية cfs_rq *cfs_rq,
+			بنية sched_entity *se, صحيح cpu,
+			بنية sched_entity *والد);
+خارجي فراغ init_cfs_bandwidth(بنية cfs_bandwidth *cfs_b, بنية cfs_bandwidth *والد);
 
-extern void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b);
-extern void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b);
-extern void unthrottle_cfs_rq(struct cfs_rq *cfs_rq);
-extern bool cfs_task_bw_constrained(struct task_struct *p);
+خارجي فراغ __refill_cfs_bandwidth_runtime(بنية cfs_bandwidth *cfs_b);
+خارجي فراغ شروع_cfs_bandwidth(بنية cfs_bandwidth *cfs_b);
+خارجي فراغ unthrottle_cfs_rq(بنية cfs_rq *cfs_rq);
+خارجي bool cfs_task_bw_constrained(بنية task_struct *p);
 
-extern void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
-		struct sched_rt_entity *rt_se, int cpu,
-		struct sched_rt_entity *parent);
-extern int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us);
-extern int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us);
-extern long sched_group_rt_runtime(struct task_group *tg);
-extern long sched_group_rt_period(struct task_group *tg);
-extern int sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk);
+خارجي فراغ init_tg_rt_مدخل(بنية task_گروه *tg, بنية rt_rq *rt_rq,
+		بنية sched_rt_entity *rt_se, صحيح cpu,
+		بنية sched_rt_entity *والد);
+خارجي صحيح sched_گروه_مجموعه_rt_runtime(بنية task_گروه *tg, دراز rt_runtime_us);
+خارجي صحيح sched_گروه_مجموعه_rt_period(بنية task_گروه *tg, u64 rt_period_us);
+خارجي دراز sched_گروه_rt_runtime(بنية task_گروه *tg);
+خارجي دراز sched_گروه_rt_period(بنية task_گروه *tg);
+خارجي صحيح sched_rt_can_attach(بنية task_گروه *tg, بنية task_struct *tsk);
 
-extern struct task_group *sched_create_group(struct task_group *parent);
-extern void sched_online_group(struct task_group *tg,
-			       struct task_group *parent);
-extern void sched_destroy_group(struct task_group *tg);
-extern void sched_release_group(struct task_group *tg);
+خارجي بنية task_گروه *sched_create_گروه(بنية task_گروه *والد);
+خارجي فراغ sched_online_گروه(بنية task_گروه *tg,
+			       بنية task_گروه *والد);
+خارجي فراغ sched_destroy_گروه(بنية task_گروه *tg);
+خارجي فراغ sched_release_گروه(بنية task_گروه *tg);
 
-extern void sched_move_task(struct task_struct *tsk, bool for_autogroup);
+خارجي فراغ sched_move_task(بنية task_struct *tsk, bool for_autogroup);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-extern int sched_group_set_shares(struct task_group *tg, unsigned long shares);
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
+خارجي صحيح sched_گروه_مجموعه_shares(بنية task_گروه *tg, بیعلامت دراز shares);
 
-extern int sched_group_set_idle(struct task_group *tg, long idle);
+خارجي صحيح sched_گروه_مجموعه_idle(بنية task_گروه *tg, دراز idle);
 
-extern void set_task_rq_fair(struct sched_entity *se,
-			     struct cfs_rq *prev, struct cfs_rq *next);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline int sched_group_set_shares(struct task_group *tg, unsigned long shares) { return 0; }
-static inline int sched_group_set_idle(struct task_group *tg, long idle) { return 0; }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+خارجي فراغ مجموعه_task_rq_fair(بنية sched_entity *se,
+			     بنية cfs_rq *prev, بنية cfs_rq *بعدی);
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
+ساكن مضمن صحيح sched_گروه_مجموعه_shares(بنية task_گروه *tg, بیعلامت دراز shares) { أرجع 0; }
+ساكن مضمن صحيح sched_گروه_مجموعه_idle(بنية task_گروه *tg, دراز idle) { أرجع 0; }
+#پایان_اگر /* !CONFIG_FAIR_GROUP_SCHED */
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#وإلا /* !CONFIG_CGROUP_SCHED: */
 
-struct cfs_bandwidth { };
+بنية cfs_bandwidth { };
 
-static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false; }
+ساكن مضمن bool cfs_task_bw_constrained(بنية task_struct *p) { أرجع false; }
 
-#endif /* !CONFIG_CGROUP_SCHED */
+#پایان_اگر /* !CONFIG_CGROUP_SCHED */
 
 /*
  * A weight of 0 or 1 can cause arithmetics problems.
@@ -626,12 +626,12 @@ static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false
  * (The default weight is 1024 - so there's no practical
  *  limitation from this.)
  */
-#define MIN_SHARES		(1UL <<  1)
-#define MAX_SHARES		(1UL << 18)
+#تعریف_کن MIN_SHARES		(1UL <<  1)
+#تعریف_کن MAX_SHARES		(1UL << 18)
 
-extern void unregister_rt_sched_group(struct task_group *tg);
-extern void free_rt_sched_group(struct task_group *tg);
-extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent);
+خارجي فراغ unregister_rt_sched_گروه(بنية task_گروه *tg);
+خارجي فراغ free_rt_sched_گروه(بنية task_گروه *tg);
+خارجي صحيح alloc_rt_sched_گروه(بنية task_گروه *tg, بنية task_گروه *والد);
 
 /*
  * u64_u32_load/u64_u32_store
@@ -639,14 +639,14 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
  * Use a copy of a u64 value to protect against data race. This is only
  * applicable for 32-bits architectures.
  */
-#ifdef CONFIG_64BIT
-# define u64_u32_load_copy(var, copy)		var
+#اگر_تعریف_شده CONFIG_64_بیت
+# define u64_u32_بارگیری_copy(var, copy)		var
 # define u64_u32_store_copy(var, copy, val)	(var = val)
-#else
-# define u64_u32_load_copy(var, copy)					\
+#وإلا
+# define u64_u32_بارگیری_copy(var, copy)					\
 ({									\
 	u64 __val, __val_copy;						\
-	do {								\
+	افعل {								\
 		__val_copy = copy;					\
 		/*							\
 		 * paired with u64_u32_store_copy(), ordering access	\
@@ -654,11 +654,11 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
 		 */							\
 		smp_rmb();						\
 		__val = var;						\
-	} while (__val != __val_copy);					\
+	} طالما (__val != __val_copy);					\
 	__val;								\
 })
 # define u64_u32_store_copy(var, copy, val)				\
-do {									\
+افعل {									\
 	typeof(val) __val = (val);					\
 	var = __val;							\
 	/*								\
@@ -667,65 +667,65 @@ do {									\
 	 */								\
 	smp_wmb();							\
 	copy = __val;							\
-} while (0)
-#endif
-# define u64_u32_load(var)		u64_u32_load_copy(var, var##_copy)
+} طالما (0)
+#پایان_اگر
+# define u64_u32_بارگیری(var)		u64_u32_بارگیری_copy(var, var##_copy)
 # define u64_u32_store(var, val)	u64_u32_store_copy(var, var##_copy, val)
 
-struct balance_callback {
-	struct balance_callback *next;
-	void (*func)(struct rq *rq);
+بنية balance_callback {
+	بنية balance_callback *بعدی;
+	فراغ (*func)(بنية rq *rq);
 };
 
 /* Fair scheduling SCHED_{NORMAL,BATCH,IDLE} related fields in a runqueue: */
-struct cfs_rq {
-	struct load_weight	load;
-	unsigned int		nr_queued;
-	unsigned int		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_idle;		/* SCHED_IDLE */
+بنية cfs_rq {
+	بنية بارگیری_وزن	بارگیری;
+	بیعلامت صحيح		nr_queued;
+	بیعلامت صحيح		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	بیعلامت صحيح		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	بیعلامت صحيح		h_nr_idle;		/* SCHED_IDLE */
 
-	s64			sum_w_vruntime;
-	u64			sum_weight;
+	s64			جمع_w_vruntime;
+	u64			جمع_وزن;
 	u64			zero_vruntime;
-	unsigned int		sum_shift;
+	بیعلامت صحيح		جمع_لغزش;
 
-#ifdef CONFIG_SCHED_CORE
-	unsigned int		forceidle_seq;
+#اگر_تعریف_شده CONFIG_SCHED_CORE
+	بیعلامت صحيح		forceidle_seq;
 	u64			zero_vruntime_fi;
-#endif
+#پایان_اگر
 
-	struct rb_root_cached	tasks_timeline;
+	بنية rb_ریشه_cached	tasks_timeline;
 
 	/*
 	 * 'curr' points to the currently running entity on this cfs_rq.
 	 * It is set to NULL otherwise (i.e when none are currently running).
 	 */
-	struct sched_entity	*curr;
-	struct sched_entity	*next;
+	بنية sched_entity	*curr;
+	بنية sched_entity	*بعدی;
 
 	/*
 	 * CFS load tracking
 	 */
-	struct sched_entity	*h_curr;
-	struct sched_avg	avg;
-#ifndef CONFIG_64BIT
-	u64			last_update_time_copy;
-#endif
-	struct {
-		raw_spinlock_t	lock ____cacheline_aligned;
-		int		nr;
-		unsigned long	load_avg;
-		unsigned long	util_avg;
-		unsigned long	runnable_avg;
+	بنية sched_entity	*h_curr;
+	بنية sched_avg	avg;
+#اگر_تعریف_نشده CONFIG_64_بیت
+	u64			آخرین_update_زمان_copy;
+#پایان_اگر
+	بنية {
+		raw_spinlock_t	قفل ____cacheline_aligned;
+		صحيح		nr;
+		بیعلامت دراز	بارگیری_avg;
+		بیعلامت دراز	util_avg;
+		بیعلامت دراز	runnable_avg;
 	} removed;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	u64			last_update_tg_load_avg;
-	unsigned long		tg_load_avg_contrib;
-	unsigned long		tg_runnable_avg_contrib;
-	long			propagate;
-	long			prop_runnable_sum;
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
+	u64			آخرین_update_tg_بارگیری_avg;
+	بیعلامت دراز		tg_بارگیری_avg_contrib;
+	بیعلامت دراز		tg_runnable_avg_contrib;
+	دراز			propagate;
+	دراز			prop_runnable_جمع;
 
 	/*
 	 *   h_load = weight * f(tg)
@@ -733,11 +733,11 @@ struct cfs_rq {
 	 * Where f(tg) is the recursive weight fraction assigned to
 	 * this group.
 	 */
-	unsigned long		h_load;
-	u64			last_h_load_update;
-	struct sched_entity	*h_load_next;
+	بیعلامت دراز		h_بارگیری;
+	u64			آخرین_h_بارگیری_update;
+	بنية sched_entity	*h_بارگیری_بعدی;
 
-	struct rq		*rq;	/* CPU runqueue to which this cfs_rq is attached */
+	بنية rq		*rq;	/* CPU runqueue to which this cfs_rq is attached */
 
 	/*
 	 * leaf cfs_rqs are those that hold tasks (lowest schedulable entity in
@@ -747,39 +747,39 @@ struct cfs_rq {
 	 * leaf_cfs_rq_list ties together list of leaf cfs_rq's in a CPU.
 	 * This list is used during load balance.
 	 */
-	int			on_list;
-	struct list_head	leaf_cfs_rq_list;
-	struct task_group	*tg;	/* Group that "owns" this runqueue */
+	صحيح			on_list;
+	بنية list_سر	برگ_cfs_rq_list;
+	بنية task_گروه	*tg;	/* Group that "owns" this runqueue */
 
 	/* Locally cached copy of our task_group's idle value */
-	int			idle;
+	صحيح			idle;
 
 # ifdef CONFIG_CFS_BANDWIDTH
-	int			runtime_enabled;
-	s64			runtime_remaining;
+	صحيح			runtime_enabled;
+	s64			runtime_مانده;
 
 	u64			throttled_pelt_idle;
-#  ifndef CONFIG_64BIT
+#  ifndef CONFIG_64_بیت
 	u64                     throttled_pelt_idle_copy;
 #  endif
 	u64			throttled_clock;
 	u64			throttled_clock_pelt;
-	u64			throttled_clock_pelt_time;
+	u64			throttled_clock_pelt_زمان;
 	u64			throttled_clock_self;
-	u64			throttled_clock_self_time;
+	u64			throttled_clock_self_زمان;
 	bool			throttled:1;
 	bool			pelt_clock_throttled:1;
-	int			throttle_count;
-	struct list_head	throttled_list;
-	struct list_head	throttled_csd_list;
-	struct list_head        throttled_limbo_list;
+	صحيح			throttle_شمار;
+	بنية list_سر	throttled_list;
+	بنية list_سر	throttled_csd_list;
+	بنية list_سر        throttled_limbo_list;
 # endif /* CONFIG_CFS_BANDWIDTH */
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+#پایان_اگر /* CONFIG_FAIR_GROUP_SCHED */
 };
 
-#ifdef CONFIG_SCHED_CLASS_EXT
+#اگر_تعریف_شده CONFIG_SCHED_CLASS_EXT
 /* scx_rq->flags, protected by the rq lock */
-enum scx_rq_flags {
+تعداد scx_rq_flags {
 	/*
 	 * A hotplugged CPU starts scheduling before rq_online_scx(). Track
 	 * ops.cpu_on/offline() state so that ops.enqueue/dispatch() are called
@@ -790,116 +790,116 @@ enum scx_rq_flags {
 	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
 	SCX_RQ_BAL_CB_PENDING	= 1 << 6, /* must queue a cb after dispatching */
 	SCX_RQ_SUB_IDLE_RENOTIFY	= 1 << 7, /* sub-scheds are owed update_idle() */
-	SCX_RQ_ROOT_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
+	SCX_RQ_ریشه_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
 
-	SCX_RQ_IN_WAKEUP	= 1 << 16,
-	SCX_RQ_IN_DISPATCH	= 1 << 17,
+	SCX_RQ_درون_WAKEUP	= 1 << 16,
+	SCX_RQ_درون_DISPATCH	= 1 << 17,
 };
 
 /* per-rq rescue execution state, see scx_rescue_timerfn() */
-struct scx_rq_rescue {
-	struct scx_dispatch_q	dsq;			/* stranded tasks awaiting rescue */
+بنية scx_rq_rescue {
+	بنية scx_dispatch_q	dsq;			/* stranded tasks awaiting rescue */
 	s64			budget;			/* execution token bucket, ns */
 	u64			clock;			/* last budget accrual timestamp */
-	struct task_struct	*curr;			/* task being rescued, one at a time */
-	s64			slice;			/* curr's admitted slice */
+	بنية task_struct	*curr;			/* task being rescued, one at a time */
+	s64			برش;			/* curr's admitted slice */
 	u64			exec_snap;		/* sum_exec_runtime at admission */
-	struct timer_list	timer;			/* paces admission and escalation */
+	بنية timer_list	timer;			/* paces admission and escalation */
 	u64			kill_at;		/* last ejection, init before any */
 };
 
-struct scx_rq {
-	struct scx_dispatch_q	local_dsq;
-#ifdef CONFIG_EXT_SUB_SCHED
-	struct scx_dispatch_q	reject_dsq;		/* staging for cap-rejected tasks */
-	struct scx_rq_rescue	rescue;
-#endif
-	struct list_head	runnable_list;		/* runnable tasks on this rq */
-	struct list_head	ddsp_deferred_locals;	/* deferred ddsps from enq */
+بنية scx_rq {
+	بنية scx_dispatch_q	local_dsq;
+#اگر_تعریف_شده CONFIG_EXT_SUB_SCHED
+	بنية scx_dispatch_q	reject_dsq;		/* staging for cap-rejected tasks */
+	بنية scx_rq_rescue	rescue;
+#پایان_اگر
+	بنية list_سر	runnable_list;		/* runnable tasks on this rq */
+	بنية list_سر	ddsp_deferred_locals;	/* deferred ddsps from enq */
 	/* both stashed across the activate_task() in move_remote_task_to_local_dsq() */
 	u64			remote_activate_enq_flags;
-	struct scx_sched	*remote_activate_sch;
+	بنية scx_sched	*remote_activate_sch;
 	u32			nr_running;
-	u32			cpuperf_target;		/* [0, SCHED_CAPACITY_SCALE] */
-	bool			in_select_cpu;
+	u32			cpuperf_هدف;		/* [0, SCHED_CAPACITY_SCALE] */
+	bool			درون_select_cpu;
 	bool			cpu_released;
 	u32			flags;
 	u32			nr_immed;		/* ENQ_IMMED tasks on local_dsq */
-#ifdef CONFIG_SCHED_CORE
-	u32			lock_drop_seq;	/* nr dispatch lock releases */
-#endif
+#اگر_تعریف_شده CONFIG_SCHED_CORE
+	u32			قفل_drop_seq;	/* nr dispatch lock releases */
+#پایان_اگر
 	u64			clock;			/* current per-rq clock -- see scx_bpf_now() */
-#ifdef CONFIG_EXT_SUB_SCHED
-	struct llist_head	ecaps_to_sync;		/* pending ecaps syncs */
-	struct task_struct	*sub_dispatch_prev;
-#endif
-	cpumask_var_t		cpus_to_sync;
+#اگر_تعریف_شده CONFIG_EXT_SUB_SCHED
+	بنية llist_سر	ecaps_مقصد_sync;		/* pending ecaps syncs */
+	بنية task_struct	*sub_dispatch_prev;
+#پایان_اگر
+	cpumask_var_t		cpus_مقصد_sync;
 	bool			kick_sync_pending;
-	unsigned long		kick_sync;
+	بیعلامت دراز		kick_sync;
 
-	struct list_head	sched_pcpus_to_kick;	/* see kick_cpus_irq_workfn() */
+	بنية list_سر	sched_pcpus_مقصد_kick;	/* see kick_cpus_irq_workfn() */
 
-	raw_spinlock_t		deferred_reenq_lock;
-	struct list_head	deferred_reenq_locals;	/* scheds requesting reenq of local DSQ */
-	struct list_head	deferred_reenq_users;	/* user DSQs requesting reenq */
-	struct balance_callback	deferred_bal_cb;
-	struct balance_callback	kick_sync_bal_cb;
-	struct irq_work		deferred_irq_work;
-	struct irq_work		kick_cpus_irq_work;
+	raw_spinlock_t		deferred_reenq_قفل;
+	بنية list_سر	deferred_reenq_locals;	/* scheds requesting reenq of local DSQ */
+	بنية list_سر	deferred_reenq_users;	/* user DSQs requesting reenq */
+	بنية balance_callback	deferred_bal_cb;
+	بنية balance_callback	kick_sync_bal_cb;
+	بنية irq_work		deferred_irq_work;
+	بنية irq_work		kick_cpus_irq_work;
 };
-#endif /* CONFIG_SCHED_CLASS_EXT */
+#پایان_اگر /* CONFIG_SCHED_CLASS_EXT */
 
-static inline int rt_bandwidth_enabled(void)
+ساكن مضمن صحيح rt_bandwidth_enabled(فراغ)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	أرجع sysctl_sched_rt_runtime >= 0;
 }
 
 /* RT IPI pull logic requires IRQ_WORK */
-#if defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
-# define HAVE_RT_PUSH_IPI
-#endif
+#إذا defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
+# define HAVE_RT_افزودن_IPI
+#پایان_اگر
 
 /* Real-Time classes' related field in a runqueue: */
-struct rt_rq {
-	struct rt_prio_array	active;
-	unsigned int		rt_nr_running;
-	unsigned int		rr_nr_running;
-	struct {
-		int		curr; /* highest queued rt task prio */
-		int		next; /* next highest */
+بنية rt_rq {
+	بنية rt_prio_array	فعال;
+	بیعلامت صحيح		rt_nr_running;
+	بیعلامت صحيح		rr_nr_running;
+	بنية {
+		صحيح		curr; /* highest queued rt task prio */
+		صحيح		بعدی; /* next highest */
 	} highest_prio;
 	bool			overloaded;
-	struct plist_head	pushable_tasks;
+	بنية plist_سر	pushable_tasks;
 
-	int			rt_queued;
+	صحيح			rt_queued;
 
-#ifdef CONFIG_RT_GROUP_SCHED
-	int			rt_throttled;
-	u64			rt_time; /* consumed RT time, goes up in update_curr_rt */
+#اگر_تعریف_شده CONFIG_RT_گروه_SCHED
+	صحيح			rt_throttled;
+	u64			rt_زمان; /* consumed RT time, goes up in update_curr_rt */
 	u64			rt_runtime; /* allotted RT time, "slice" from rt_bandwidth, RT sharing/balancing */
 	/* Nests inside the rq lock: */
-	raw_spinlock_t		rt_runtime_lock;
+	raw_spinlock_t		rt_runtime_قفل;
 
-	unsigned int		rt_nr_boosted;
+	بیعلامت صحيح		rt_nr_boosted;
 
-	struct rq		*rq; /* this is always top-level rq, cache? */
-#endif
-#ifdef CONFIG_CGROUP_SCHED
-	struct task_group	*tg; /* this tg has "this" rt_rq on given CPU for runnable entities */
-#endif
+	بنية rq		*rq; /* this is always top-level rq, cache? */
+#پایان_اگر
+#اگر_تعریف_شده CONFIG_CGROUP_SCHED
+	بنية task_گروه	*tg; /* this tg has "this" rt_rq on given CPU for runnable entities */
+#پایان_اگر
 };
 
-static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
+ساكن مضمن bool rt_rq_is_runnable(بنية rt_rq *rt_rq)
 {
-	return rt_rq->rt_queued && rt_rq->rt_nr_running;
+	أرجع rt_rq->rt_queued && rt_rq->rt_nr_running;
 }
 
 /* Deadline class' related fields in a runqueue */
-struct dl_rq {
+بنية dl_rq {
 	/* runqueue is an rbtree, ordered by deadline */
-	struct rb_root_cached	root;
+	بنية rb_ریشه_cached	ریشه;
 
-	unsigned int		dl_nr_running;
+	بیعلامت صحيح		dl_nr_running;
 
 	/*
 	 * Deadline values of the currently executing and the
@@ -907,20 +907,20 @@ struct dl_rq {
 	 * the decision whether or not a ready but not running task
 	 * should migrate somewhere else.
 	 */
-	struct {
+	بنية {
 		u64		curr;
-		u64		next;
+		u64		بعدی;
 	} earliest_dl;
 
 	bool			overloaded;
 
-	struct sched_dl_entity	*curr;
+	بنية sched_dl_entity	*curr;
 	/*
 	 * Tasks on this rq that can be pushed away. They are kept in
 	 * an rb-tree, ordered by tasks' deadlines, with caching
 	 * of the leftmost (earliest deadline) element.
 	 */
-	struct rb_root_cached	pushable_dl_tasks_root;
+	بنية rb_ریشه_cached	pushable_dl_tasks_ریشه;
 
 	/*
 	 * "Active utilization" for this runqueue: increased when a
@@ -951,66 +951,66 @@ struct dl_rq {
 	 * Inverse of the fraction of CPU utilization that can be reclaimed
 	 * by the GRUB algorithm.
 	 */
-	u64			bw_ratio;
+	u64			bw_نسبت;
 };
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
 /* Check whether a task group is root tg */
-#define is_root_task_group(tg) ((tg) == &root_task_group)
+#تعریف_کن is_ریشه_task_گروه(tg) ((tg) == &ریشه_task_گروه)
 /* An entity is a task if it doesn't "own" a runqueue */
-#define entity_is_task(se)	(!se->my_q)
+#تعریف_کن entity_is_task(se)	(!se->my_q)
 
-static inline void se_update_runnable(struct sched_entity *se)
+ساكن مضمن فراغ se_update_runnable(بنية sched_entity *se)
 {
-	if (!entity_is_task(se))
-		se->runnable_weight = se->my_q->h_nr_runnable;
+	إذا (!entity_is_task(se))
+		se->runnable_وزن = se->my_q->h_nr_runnable;
 }
 
-static inline long se_runnable(struct sched_entity *se)
+ساكن مضمن دراز se_runnable(بنية sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	إذا (se->sched_delayed)
+		أرجع false;
 
-	if (entity_is_task(se))
-		return !!se->on_rq;
-	else
-		return se->runnable_weight;
+	إذا (entity_is_task(se))
+		أرجع !!se->on_rq;
+	وإلا
+		أرجع se->runnable_وزن;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
 
-#define entity_is_task(se)	1
+#تعریف_کن entity_is_task(se)	1
 
-static inline void se_update_runnable(struct sched_entity *se) { }
+ساكن مضمن فراغ se_update_runnable(بنية sched_entity *se) { }
 
-static inline long se_runnable(struct sched_entity *se)
+ساكن مضمن دراز se_runnable(بنية sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	إذا (se->sched_delayed)
+		أرجع false;
 
-	return !!se->on_rq;
+	أرجع !!se->on_rq;
 }
 
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#پایان_اگر /* !CONFIG_FAIR_GROUP_SCHED */
 
 /*
  * XXX we want to get rid of these helpers and use the full load resolution.
  */
-static inline long se_weight(struct sched_entity *se)
+ساكن مضمن دراز se_وزن(بنية sched_entity *se)
 {
-	return scale_load_down(se->load.weight);
+	أرجع scale_بارگیری_پایین(se->بارگیری.وزن);
 }
 
 
-static inline bool sched_asym_prefer(int a, int b)
+ساكن مضمن bool sched_asym_prefer(صحيح a, صحيح b)
 {
-	return arch_asym_cpu_priority(a) > arch_asym_cpu_priority(b);
+	أرجع arch_asym_cpu_اولویت(a) > arch_asym_cpu_اولویت(b);
 }
 
-struct perf_domain {
-	struct em_perf_domain *em_pd;
-	struct perf_domain *next;
-	struct rcu_head rcu;
+بنية perf_domain {
+	بنية em_perf_domain *em_pd;
+	بنية perf_domain *بعدی;
+	بنية rcu_سر rcu;
 };
 
 /*
@@ -1021,11 +1021,11 @@ struct perf_domain {
  * object.
  *
  */
-struct root_domain {
+بنية ریشه_domain {
 	atomic_t		refcount;
-	atomic_t		rto_count;
-	struct rcu_head		rcu;
-	cpumask_var_t		span;
+	atomic_t		rto_شمار;
+	بنية rcu_سر		rcu;
+	cpumask_var_t		بازه;
 	cpumask_var_t		online;
 
 	/*
@@ -1042,10 +1042,10 @@ struct root_domain {
 	 * The bit corresponding to a CPU gets set here if such CPU has more
 	 * than one runnable -deadline task (as it is below for RT tasks).
 	 */
-	cpumask_var_t		dlo_mask;
-	atomic_t		dlo_count;
-	struct dl_bw		dl_bw;
-	struct cpudl		cpudl;
+	cpumask_var_t		dlo_ماسک;
+	atomic_t		dlo_شمار;
+	بنية dl_bw		dl_bw;
+	بنية cpudl		cpudl;
 
 	/*
 	 * Indicate whether a root_domain's dl_bw has been checked or
@@ -1054,57 +1054,57 @@ struct root_domain {
 	 * Also, some corner cases, like 'wrap around' is dangerous, but given
 	 * that u64 is 'big enough'. So that shouldn't be a concern.
 	 */
-	u64 visit_cookie;
+	u64 بازدید_cookie;
 
-#ifdef HAVE_RT_PUSH_IPI
+#اگر_تعریف_شده HAVE_RT_افزودن_IPI
 	/*
 	 * For IPI pull requests, loop across the rto_mask.
 	 */
-	struct irq_work		rto_push_work;
-	raw_spinlock_t		rto_lock;
+	بنية irq_work		rto_افزودن_work;
+	raw_spinlock_t		rto_قفل;
 	/* These are only updated and read within rto_lock */
-	int			rto_loop;
-	int			rto_cpu;
+	صحيح			rto_loop;
+	صحيح			rto_cpu;
 	/* These atomics are updated outside of a lock */
-	atomic_t		rto_loop_next;
-	atomic_t		rto_loop_start;
-#endif /* HAVE_RT_PUSH_IPI */
+	atomic_t		rto_loop_بعدی;
+	atomic_t		rto_loop_شروع;
+#پایان_اگر /* HAVE_RT_PUSH_IPI */
 	/*
 	 * The "RT overload" flag: it gets set if a CPU has more than
 	 * one runnable RT task.
 	 */
-	cpumask_var_t		rto_mask;
-	struct cpupri		cpupri;
+	cpumask_var_t		rto_ماسک;
+	بنية cpupri		cpupri;
 
 	/*
 	 * NULL-terminated list of performance domains intersecting with the
 	 * CPUs of the rd. Protected by RCU.
 	 */
-	struct perf_domain __rcu *pd;
+	بنية perf_domain __rcu *pd;
 };
 
-extern void init_defrootdomain(void);
-extern int sched_init_domains(const struct cpumask *cpu_map);
-extern void rq_attach_root(struct rq *rq, struct root_domain *rd);
-extern void sched_get_rd(struct root_domain *rd);
-extern void sched_put_rd(struct root_domain *rd);
+خارجي فراغ init_defrootdomain(فراغ);
+خارجي صحيح sched_init_domains(ثابت بنية cpumask *cpu_map);
+خارجي فراغ rq_attach_ریشه(بنية rq *rq, بنية ریشه_domain *rd);
+خارجي فراغ sched_get_rd(بنية ریشه_domain *rd);
+خارجي فراغ sched_put_rd(بنية ریشه_domain *rd);
 
-static inline int get_rd_overloaded(struct root_domain *rd)
+ساكن مضمن صحيح get_rd_overloaded(بنية ریشه_domain *rd)
 {
-	return READ_ONCE(rd->overloaded);
+	أرجع READ_ONCE(rd->overloaded);
 }
 
-static inline void set_rd_overloaded(struct root_domain *rd, int status)
+ساكن مضمن فراغ مجموعه_rd_overloaded(بنية ریشه_domain *rd, صحيح وضعیت)
 {
-	if (get_rd_overloaded(rd) != status)
-		WRITE_ONCE(rd->overloaded, status);
+	إذا (get_rd_overloaded(rd) != وضعیت)
+		WRITE_ONCE(rd->overloaded, وضعیت);
 }
 
-#ifdef HAVE_RT_PUSH_IPI
-extern void rto_push_irq_work_func(struct irq_work *work);
-#endif
+#اگر_تعریف_شده HAVE_RT_افزودن_IPI
+خارجي فراغ rto_افزودن_irq_work_func(بنية irq_work *work);
+#پایان_اگر
 
-#ifdef CONFIG_UCLAMP_TASK
+#اگر_تعریف_شده CONFIG_UCLAMP_TASK
 /*
  * struct uclamp_bucket - Utilization clamp bucket
  * @value: utilization clamp value for tasks on this clamp bucket
@@ -1113,9 +1113,9 @@ extern void rto_push_irq_work_func(struct irq_work *work);
  * Keep track of how many tasks are RUNNABLE for a given utilization
  * clamp value.
  */
-struct uclamp_bucket {
-	unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
-	unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
+بنية uclamp_سطل {
+	بیعلامت دراز مقدار : بیتها_در_هر(SCHED_ظرفیت_SCALE);
+	بیعلامت دراز tasks : بیتها_در_هر_LONG - بیتها_در_هر(SCHED_ظرفیت_SCALE);
 };
 
 /*
@@ -1140,13 +1140,13 @@ struct uclamp_bucket {
  * utilization clamp values (UCLAMP_BUCKETS), use a simple array to track
  * the metrics required to compute all the per-rq utilization clamp values.
  */
-struct uclamp_rq {
-	unsigned int value;
-	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
+بنية uclamp_rq {
+	بیعلامت صحيح مقدار;
+	بنية uclamp_سطل سطل[UCLAMP_BUCKETS];
 };
 
-DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
-#endif /* CONFIG_UCLAMP_TASK */
+DECLARE_STATIC_کلید_FALSE(sched_uclamp_استفاده_شده);
+#پایان_اگر /* CONFIG_UCLAMP_TASK */
 
 /*
  * This is the main, per-CPU runqueue data structure.
@@ -1155,7 +1155,7 @@ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
  * (such as the load balancing or the thread migration code), lock
  * acquire operations must be ordered by ascending &runqueue.
  */
-struct rq {
+بنية rq {
 	/*
 	 * The following members are loaded together, without holding the
 	 * rq->lock, in an extremely hot loop in update_sg_lb_stats()
@@ -1164,23 +1164,23 @@ struct rq {
 	 * line. Even though some of them are frequently modified, they are
 	 * loaded much more frequently than they are stored.
 	 */
-	unsigned int		nr_running;
-#ifdef CONFIG_NUMA_BALANCING
-	unsigned int		nr_numa_running;
-	unsigned int		nr_preferred_running;
-#endif
-	unsigned int		ttwu_pending;
-	unsigned long		cpu_capacity;
-#ifdef CONFIG_SCHED_PROXY_EXEC
-	struct task_struct __rcu	*donor;  /* Scheduling context */
-	struct task_struct __rcu	*curr;   /* Execution context */
-#else
-	union {
-		struct task_struct __rcu *donor; /* Scheduler context */
-		struct task_struct __rcu *curr;  /* Execution context */
+	بیعلامت صحيح		nr_running;
+#اگر_تعریف_شده CONFIG_NUMA_BALANCING
+	بیعلامت صحيح		nr_numa_running;
+	بیعلامت صحيح		nr_preferred_running;
+#پایان_اگر
+	بیعلامت صحيح		ttwu_pending;
+	بیعلامت دراز		cpu_ظرفیت;
+#اگر_تعریف_شده CONFIG_SCHED_PROXY_EXEC
+	بنية task_struct __rcu	*donor;  /* Scheduling context */
+	بنية task_struct __rcu	*curr;   /* Execution context */
+#وإلا
+	اتحاد {
+		بنية task_struct __rcu *donor; /* Scheduler context */
+		بنية task_struct __rcu *curr;  /* Execution context */
 	};
-#endif
-	struct task_struct	*idle;
+#پایان_اگر
+	بنية task_struct	*idle;
 	/* padding left here deliberately */
 
 	/*
@@ -1192,51 +1192,51 @@ struct rq {
 	/* runqueue lock: */
 	raw_spinlock_t		__lock;
 
-#ifdef CONFIG_NO_HZ_COMMON
-	unsigned int		nohz_tick_stopped;
+#اگر_تعریف_شده CONFIG_NO_HZ_COMMON
+	بیعلامت صحيح		nohz_tick_stopped;
 	atomic_t		nohz_flags;
-	unsigned int		has_blocked_load;
-	unsigned long		last_blocked_load_update_tick;
-	call_single_data_t	nohz_csd;
-#endif /* CONFIG_NO_HZ_COMMON */
+	بیعلامت صحيح		has_blocked_بارگیری;
+	بیعلامت دراز		آخرین_blocked_بارگیری_update_tick;
+	call_single_داده_t	nohz_csd;
+#پایان_اگر /* CONFIG_NO_HZ_COMMON */
 
-#ifdef CONFIG_UCLAMP_TASK
+#اگر_تعریف_شده CONFIG_UCLAMP_TASK
 	/* Utilization clamp values based on CPU's RUNNABLE tasks */
-	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
-	unsigned int		uclamp_flags;
-#define UCLAMP_FLAG_IDLE 0x01
-#endif
+	بنية uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+	بیعلامت صحيح		uclamp_flags;
+#تعریف_کن UCLAMP_FLAG_IDLE 0x01
+#پایان_اگر
 
-	struct cfs_rq		cfs;
-	struct rt_rq		rt;
-	struct dl_rq		dl;
-#ifdef CONFIG_SCHED_CLASS_EXT
-	struct scx_rq		scx;
-	struct sched_dl_entity	ext_server;
-#endif
-#ifdef CONFIG_SCHED_CACHE
-	raw_spinlock_t		cpu_epoch_lock ____cacheline_aligned;
+	بنية cfs_rq		cfs;
+	بنية rt_rq		rt;
+	بنية dl_rq		dl;
+#اگر_تعریف_شده CONFIG_SCHED_CLASS_EXT
+	بنية scx_rq		scx;
+	بنية sched_dl_entity	ext_server;
+#پایان_اگر
+#اگر_تعریف_شده CONFIG_SCHED_CACHE
+	raw_spinlock_t		cpu_epoch_قفل ____cacheline_aligned;
 	u64			cpu_runtime;
-	unsigned long		cpu_epoch;
-	unsigned long		cpu_epoch_next;
-#endif
+	بیعلامت دراز		cpu_epoch;
+	بیعلامت دراز		cpu_epoch_بعدی;
+#پایان_اگر
 
-	struct sched_dl_entity	fair_server;
+	بنية sched_dl_entity	fair_server;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
 	/* list of leaf cfs_rq on this CPU: */
-	struct list_head	leaf_cfs_rq_list;
-	struct list_head	*tmp_alone_branch;
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+	بنية list_سر	برگ_cfs_rq_list;
+	بنية list_سر	*tmp_alone_branch;
+#پایان_اگر /* CONFIG_FAIR_GROUP_SCHED */
 
-#ifdef CONFIG_NUMA_BALANCING
-	unsigned int		numa_migrate_on;
-#endif
+#اگر_تعریف_شده CONFIG_NUMA_BALANCING
+	بیعلامت صحيح		numa_migrate_on;
+#پایان_اگر
 
-#ifdef CONFIG_SCHED_CACHE
-	unsigned int		nr_pref_llc_running;
-	unsigned int		nr_llc_running;
-#endif
+#اگر_تعریف_شده CONFIG_SCHED_CACHE
+	بیعلامت صحيح		nr_pref_llc_running;
+	بیعلامت صحيح		nr_llc_running;
+#پایان_اگر
 
 	/*
 	 * This is part of a global counter where only the total sum
@@ -1244,13 +1244,13 @@ struct rq {
 	 * one CPU and if it got migrated afterwards it may decrease
 	 * it on another CPU. Always updated under the runqueue lock:
 	 */
-	unsigned long		nr_uninterruptible;
+	بیعلامت دراز		nr_uninterruptible;
 
-	struct sched_dl_entity	*dl_server;
-	struct task_struct	*stop;
-	const struct sched_class *next_class;
-	unsigned long		next_balance;
-	struct mm_struct	*prev_mm;
+	بنية sched_dl_entity	*dl_server;
+	بنية task_struct	*stop;
+	ثابت بنية sched_class *بعدی_class;
+	بیعلامت دراز		بعدی_balance;
+	بنية mm_struct	*prev_mm;
 
 	/*
 	 * The following fields of clock data are frequently referenced
@@ -1259,194 +1259,194 @@ struct rq {
 	u64			clock_task ____cacheline_aligned;
 	u64			clock_pelt;
 	u64			clock;
-	unsigned long		lost_idle_time;
-	unsigned int		clock_update_flags;
+	بیعلامت دراز		گمشده_idle_زمان;
+	بیعلامت صحيح		clock_update_flags;
 	u64			clock_pelt_idle;
 	u64			clock_idle;
 
-#ifndef CONFIG_64BIT
+#اگر_تعریف_نشده CONFIG_64_بیت
 	u64			clock_pelt_idle_copy;
 	u64			clock_idle_copy;
-#endif
+#پایان_اگر
 
-	u64 last_seen_need_resched_ns;
-	int ticks_without_resched;
+	u64 آخرین_دیده_need_resched_ns;
+	صحيح ticks_without_resched;
 
-#ifdef CONFIG_MEMBARRIER
-	int membarrier_state;
-#endif
+#اگر_تعریف_شده CONFIG_MEMBARRIER
+	صحيح membarrier_state;
+#پایان_اگر
 
-	struct root_domain		*rd;
-	struct sched_domain __rcu	*sd;
+	بنية ریشه_domain		*rd;
+	بنية sched_domain __rcu	*sd;
 
-	struct balance_callback *balance_callback;
+	بنية balance_callback *balance_callback;
 
-	unsigned char		nohz_idle_balance;
-	unsigned char		idle_balance;
+	بیعلامت حرف		nohz_idle_balance;
+	بیعلامت حرف		idle_balance;
 
-	unsigned long		misfit_task_load;
+	بیعلامت دراز		misfit_task_بارگیری;
 
 	/* For active balancing */
-	int			active_balance;
-	int			push_cpu;
-	struct cpu_stop_work	active_balance_work;
+	صحيح			فعال_balance;
+	صحيح			افزودن_cpu;
+	بنية cpu_stop_work	فعال_balance_work;
 
 	/* CPU of this runqueue: */
-	int			cpu;
-	int			online;
+	صحيح			cpu;
+	صحيح			online;
 
-	struct list_head cfs_tasks;
+	بنية list_سر cfs_tasks;
 
-	struct sched_avg	avg_rt;
-	struct sched_avg	avg_dl;
-#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-	struct sched_avg	avg_irq;
-#endif
-#ifdef CONFIG_SCHED_HW_PRESSURE
-	struct sched_avg	avg_hw;
-#endif
+	بنية sched_avg	avg_rt;
+	بنية sched_avg	avg_dl;
+#اگر_تعریف_شده CONFIG_HAVE_SCHED_AVG_IRQ
+	بنية sched_avg	avg_irq;
+#پایان_اگر
+#اگر_تعریف_شده CONFIG_SCHED_HW_PRESSURE
+	بنية sched_avg	avg_hw;
+#پایان_اگر
 	u64			idle_stamp;
 	u64			avg_idle;
 
 	/* This is used to determine avg_idle's max value */
-	u64			max_idle_balance_cost;
+	u64			max_idle_balance_هزینه;
 
-#ifdef CONFIG_HOTPLUG_CPU
-	struct rcuwait		hotplug_wait;
-#endif
+#اگر_تعریف_شده CONFIG_HOTPLUG_CPU
+	بنية rcuwait		hotplug_wait;
+#پایان_اگر
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	u64			prev_irq_time;
-	u64			psi_irq_time;
-#endif
-#ifdef CONFIG_PARAVIRT
-	u64			prev_steal_time;
-#endif
-#ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-	u64			prev_steal_time_rq;
-#endif
-#ifdef CONFIG_PREFERRED_CPU
-	bool			npc_push_work_pending;
-#endif
+#اگر_تعریف_شده CONFIG_IRQ_زمان_ACCOUNTING
+	u64			prev_irq_زمان;
+	u64			psi_irq_زمان;
+#پایان_اگر
+#اگر_تعریف_شده CONFIG_PARAVIRT
+	u64			prev_steal_زمان;
+#پایان_اگر
+#اگر_تعریف_شده CONFIG_PARAVIRT_زمان_ACCOUNTING
+	u64			prev_steal_زمان_rq;
+#پایان_اگر
+#اگر_تعریف_شده CONFIG_PREFERRED_CPU
+	bool			npc_افزودن_work_pending;
+#پایان_اگر
 
 	/* calc_load related fields */
-	unsigned long		calc_load_update;
-	long			calc_load_active;
+	بیعلامت دراز		calc_بارگیری_update;
+	دراز			calc_بارگیری_فعال;
 
-#ifdef CONFIG_SCHED_HRTICK
-	call_single_data_t	hrtick_csd;
-	struct hrtimer		hrtick_timer;
-	ktime_t			hrtick_time;
+#اگر_تعریف_شده CONFIG_SCHED_HRTICK
+	call_single_داده_t	hrtick_csd;
+	بنية hrtimer		hrtick_timer;
+	ktime_t			hrtick_زمان;
 	ktime_t			hrtick_delay;
-	unsigned int		hrtick_sched;
-#endif
+	بیعلامت صحيح		hrtick_sched;
+#پایان_اگر
 
-#ifdef CONFIG_SCHEDSTATS
+#اگر_تعریف_شده CONFIG_SCHEDSTATS
 	/* latency stats */
-	struct sched_info	rq_sched_info;
-	unsigned long long	rq_cpu_time;
+	بنية sched_info	rq_sched_info;
+	بیعلامت دراز دراز	rq_cpu_زمان;
 
 	/* sys_sched_yield() stats */
-	unsigned int		yld_count;
+	بیعلامت صحيح		yld_شمار;
 
 	/* schedule() stats */
-	unsigned int		sched_count;
-	unsigned int		sched_goidle;
+	بیعلامت صحيح		sched_شمار;
+	بیعلامت صحيح		sched_goidle;
 
 	/* try_to_wake_up() stats */
-	unsigned int		ttwu_count;
-	unsigned int		ttwu_local;
-#endif
+	بیعلامت صحيح		ttwu_شمار;
+	بیعلامت صحيح		ttwu_local;
+#پایان_اگر
 
-#ifdef CONFIG_CPU_IDLE
+#اگر_تعریف_شده CONFIG_CPU_IDLE
 	/* Must be inspected within a RCU lock section */
-	struct cpuidle_state	*idle_state;
-#endif
+	بنية cpuidle_state	*idle_state;
+#پایان_اگر
 
-	unsigned int		nr_pinned;
-	unsigned int		push_busy;
-	struct cpu_stop_work	push_work;
+	بیعلامت صحيح		nr_pinned;
+	بیعلامت صحيح		افزودن_busy;
+	بنية cpu_stop_work	افزودن_work;
 
-#ifdef CONFIG_SCHED_CORE
+#اگر_تعریف_شده CONFIG_SCHED_CORE
 	/* per rq */
-	struct rq		*core;
-	struct task_struct	*core_pick;
-	struct sched_dl_entity	*core_dl_server;
-	unsigned int		core_enabled;
-	struct rb_root		core_tree;
+	بنية rq		*core;
+	بنية task_struct	*core_pick;
+	بنية sched_dl_entity	*core_dl_server;
+	بیعلامت صحيح		core_enabled;
+	بنية rb_ریشه		core_درخت;
 
 	/* shared state -- careful with sched_core_cpu_deactivate() */
-	unsigned int		core_task_seq;
-	unsigned int		core_pick_seq;
-	unsigned long		core_cookie;
-	unsigned int		core_forceidle_count;
-	unsigned int		core_forceidle_seq;
-	unsigned int		core_forceidle_occupation;
-	u64			core_forceidle_start;
-	unsigned int		core_pick_in_flight;
-#endif /* CONFIG_SCHED_CORE */
+	بیعلامت صحيح		core_task_seq;
+	بیعلامت صحيح		core_pick_seq;
+	بیعلامت دراز		core_cookie;
+	بیعلامت صحيح		core_forceidle_شمار;
+	بیعلامت صحيح		core_forceidle_seq;
+	بیعلامت صحيح		core_forceidle_occupation;
+	u64			core_forceidle_شروع;
+	بیعلامت صحيح		core_pick_درون_flight;
+#پایان_اگر /* CONFIG_SCHED_CORE */
 
 	/* Scratch cpumask to be temporarily used under rq_lock */
-	cpumask_var_t		scratch_mask;
+	cpumask_var_t		scratch_ماسک;
 
-#ifdef CONFIG_CFS_BANDWIDTH
-	call_single_data_t	cfsb_csd;
-	struct list_head	cfsb_csd_list;
-#endif
+#اگر_تعریف_شده CONFIG_CFS_BANDWIDTH
+	call_single_داده_t	cfsb_csd;
+	بنية list_سر	cfsb_csd_list;
+#پایان_اگر
 
 	atomic_t		nr_iowait;
 } __no_randomize_layout;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
 
 /* CPU runqueue to which this cfs_rq is attached */
-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+ساكن مضمن بنية rq *rq_از(بنية cfs_rq *cfs_rq)
 {
-	return cfs_rq->rq;
+	أرجع cfs_rq->rq;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
 
-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+ساكن مضمن بنية rq *rq_از(بنية cfs_rq *cfs_rq)
 {
-	return container_of(cfs_rq, struct rq, cfs);
+	أرجع container_از(cfs_rq, بنية rq, cfs);
 }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#پایان_اگر /* !CONFIG_FAIR_GROUP_SCHED */
 
-static inline int cpu_of(struct rq *rq)
+ساكن مضمن صحيح cpu_از(بنية rq *rq)
 {
-	return rq->cpu;
-}
-
-#define MDF_PUSH		0x01
-
-static inline bool is_migration_disabled(struct task_struct *p)
-{
-	return p->migration_disabled;
+	أرجع rq->cpu;
 }
 
-DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
-DECLARE_PER_CPU(struct rnd_state, sched_rnd_state);
+#تعریف_کن MDF_افزودن		0x01
 
-static inline u32 sched_rng(void)
+ساكن مضمن bool is_migration_disabled(بنية task_struct *p)
 {
-	return prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
+	أرجع p->migration_disabled;
 }
 
-static __always_inline struct rq *__this_rq(void)
+DECLARE_در_هر_CPU_SHARED_ALIGNED(بنية rq, runqueues);
+DECLARE_در_هر_CPU(بنية rnd_state, sched_rnd_state);
+
+ساكن مضمن u32 sched_rng(فراغ)
 {
-	return this_cpu_ptr(&runqueues);
+	أرجع prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
 }
 
-#define cpu_rq(cpu)		(&per_cpu(runqueues, (cpu)))
-#define this_rq()		__this_rq()
-#define task_rq(p)		cpu_rq(task_cpu(p))
-#define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
-#define raw_rq()		raw_cpu_ptr(&runqueues)
-
-static inline bool idle_rq(struct rq *rq)
+ساكن __always_inline بنية rq *__this_rq(فراغ)
 {
-	return rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
+	أرجع this_cpu_ptr(&runqueues);
+}
+
+#تعریف_کن cpu_rq(cpu)		(&در_هر_cpu(runqueues, (cpu)))
+#تعریف_کن this_rq()		__this_rq()
+#تعریف_کن task_rq(p)		cpu_rq(task_cpu(p))
+#تعریف_کن cpu_curr(cpu)		(cpu_rq(cpu)->curr)
+#تعریف_کن raw_rq()		raw_cpu_ptr(&runqueues)
+
+ساكن مضمن bool idle_rq(بنية rq *rq)
+{
+	أرجع rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
 }
 
 /**
@@ -1455,69 +1455,69 @@ static inline bool idle_rq(struct rq *rq)
  *
  * Return: 1 if the CPU is currently idle. 0 otherwise.
  */
-static inline bool available_idle_cpu(int cpu)
+ساكن مضمن bool موجود_idle_cpu(صحيح cpu)
 {
-	if (!idle_rq(cpu_rq(cpu)))
-		return 0;
+	إذا (!idle_rq(cpu_rq(cpu)))
+		أرجع 0;
 
-	if (vcpu_is_preempted(cpu))
-		return 0;
+	إذا (vcpu_is_preempted(cpu))
+		أرجع 0;
 
-	return 1;
+	أرجع 1;
 }
 
-#ifdef CONFIG_SCHED_PROXY_EXEC
-static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+#اگر_تعریف_شده CONFIG_SCHED_PROXY_EXEC
+ساكن مضمن فراغ rq_مجموعه_donor(بنية rq *rq, بنية task_struct *t)
 {
-	rcu_assign_pointer(rq->donor, t);
+	rcu_تخصیص_بده_اشاره_گر(rq->donor, t);
 }
-#else
-static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+#وإلا
+ساكن مضمن فراغ rq_مجموعه_donor(بنية rq *rq, بنية task_struct *t)
 {
 	/* Do nothing */
 }
-#endif
+#پایان_اگر
 
-#ifdef CONFIG_SCHED_CORE
-static inline struct cpumask *sched_group_span(struct sched_group *sg);
+#اگر_تعریف_شده CONFIG_SCHED_CORE
+ساكن مضمن بنية cpumask *sched_گروه_بازه(بنية sched_گروه *sg);
 
-DECLARE_STATIC_KEY_FALSE(__sched_core_enabled);
+DECLARE_STATIC_کلید_FALSE(__sched_core_enabled);
 
-static inline bool sched_core_enabled(struct rq *rq)
+ساكن مضمن bool sched_core_enabled(بنية rq *rq)
 {
-	return static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
+	أرجع static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
 }
 
-static inline bool sched_core_disabled(void)
+ساكن مضمن bool sched_core_disabled(فراغ)
 {
-	return !static_branch_unlikely(&__sched_core_enabled);
+	أرجع !static_branch_unlikely(&__sched_core_enabled);
 }
 
 /*
  * Be careful with this function; not for general use. The return value isn't
  * stable unless you actually hold a relevant rq->__lock.
  */
-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+ساكن مضمن raw_spinlock_t *rq_lockp(بنية rq *rq)
 {
-	if (sched_core_enabled(rq))
-		return &rq->core->__lock;
+	إذا (sched_core_enabled(rq))
+		أرجع &rq->core->__lock;
 
-	return &rq->__lock;
+	أرجع &rq->__lock;
 }
 
-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+ساكن مضمن raw_spinlock_t *__rq_lockp(بنية rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	if (rq->core_enabled)
-		return &rq->core->__lock;
+	إذا (rq->core_enabled)
+		أرجع &rq->core->__lock;
 
-	return &rq->__lock;
+	أرجع &rq->__lock;
 }
 
-extern bool
-cfs_prio_less(const struct task_struct *a, const struct task_struct *b, bool fi);
+خارجي bool
+cfs_prio_less(ثابت بنية task_struct *a, ثابت بنية task_struct *b, bool fi);
 
-extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_fi);
+خارجي فراغ task_vruntime_update(بنية rq *rq, بنية task_struct *p, bool درون_fi);
 
 /*
  * Helpers to check if the CPU's core cookie matches with the task's cookie
@@ -1525,31 +1525,31 @@ extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_f
  * A special case is that the task's cookie always matches with CPU's core
  * cookie if the CPU is in an idle core.
  */
-static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
+ساكن مضمن bool sched_cpu_cookie_تطابق(بنية rq *rq, بنية task_struct *p)
 {
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	إذا (!sched_core_enabled(rq))
+		أرجع true;
 
-	return rq->core->core_cookie == p->core_cookie;
+	أرجع rq->core->core_cookie == p->core_cookie;
 }
 
-static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+ساكن مضمن bool sched_core_cookie_تطابق(بنية rq *rq, بنية task_struct *p)
 {
 	bool idle_core = true;
-	int cpu;
+	صحيح cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	إذا (!sched_core_enabled(rq))
+		أرجع true;
 
-	if (rq->core->core_cookie == p->core_cookie)
-		return true;
+	إذا (rq->core->core_cookie == p->core_cookie)
+		أرجع true;
 
-	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
-		if (!available_idle_cpu(cpu)) {
+	for_each_cpu(cpu, cpu_smt_ماسک(cpu_از(rq))) {
+		إذا (!موجود_idle_cpu(cpu)) {
 			idle_core = false;
-			break;
+			اكسر;
 		}
 	}
 
@@ -1557,230 +1557,230 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
 	 * A CPU in an idle core is always the best choice for tasks with
 	 * cookies.
 	 */
-	return idle_core;
+	أرجع idle_core;
 }
 
-static inline bool sched_group_cookie_match(struct rq *rq,
-					    struct task_struct *p,
-					    struct sched_group *group)
+ساكن مضمن bool sched_گروه_cookie_تطابق(بنية rq *rq,
+					    بنية task_struct *p,
+					    بنية sched_گروه *گروه)
 {
-	int cpu;
+	صحيح cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	إذا (!sched_core_enabled(rq))
+		أرجع true;
 
-	for_each_cpu_and(cpu, sched_group_span(group), p->cpus_ptr) {
-		if (sched_core_cookie_match(cpu_rq(cpu), p))
-			return true;
+	for_each_cpu_and(cpu, sched_گروه_بازه(گروه), p->cpus_ptr) {
+		إذا (sched_core_cookie_تطابق(cpu_rq(cpu), p))
+			أرجع true;
 	}
-	return false;
+	أرجع false;
 }
 
-static inline bool sched_core_enqueued(struct task_struct *p)
+ساكن مضمن bool sched_core_enqueued(بنية task_struct *p)
 {
-	return !RB_EMPTY_NODE(&p->core_node);
+	أرجع !RB_خالی_گره(&p->core_گره);
 }
 
-extern void sched_core_enqueue(struct rq *rq, struct task_struct *p);
-extern void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags);
+خارجي فراغ sched_core_افزودن_به_صف(بنية rq *rq, بنية task_struct *p);
+خارجي فراغ sched_core_خارج_از_صف(بنية rq *rq, بنية task_struct *p, صحيح flags);
 
-extern void sched_core_get(void);
-extern void sched_core_put(void);
+خارجي فراغ sched_core_get(فراغ);
+خارجي فراغ sched_core_put(فراغ);
 
-static inline bool task_has_sched_core(struct task_struct *p)
+ساكن مضمن bool task_has_sched_core(بنية task_struct *p)
 {
-	if (sched_core_disabled())
-		return false;
+	إذا (sched_core_disabled())
+		أرجع false;
 
-	return !!p->core_cookie;
+	أرجع !!p->core_cookie;
 }
 
-#else /* !CONFIG_SCHED_CORE: */
+#وإلا /* !CONFIG_SCHED_CORE: */
 
-static inline bool sched_core_enabled(struct rq *rq)
+ساكن مضمن bool sched_core_enabled(بنية rq *rq)
 {
-	return false;
+	أرجع false;
 }
 
-static inline bool sched_core_disabled(void)
+ساكن مضمن bool sched_core_disabled(فراغ)
 {
-	return true;
+	أرجع true;
 }
 
-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+ساكن مضمن raw_spinlock_t *rq_lockp(بنية rq *rq)
 {
-	return &rq->__lock;
+	أرجع &rq->__lock;
 }
 
-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+ساكن مضمن raw_spinlock_t *__rq_lockp(بنية rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	return &rq->__lock;
+	أرجع &rq->__lock;
 }
 
-static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
+ساكن مضمن bool sched_cpu_cookie_تطابق(بنية rq *rq, بنية task_struct *p)
 {
-	return true;
+	أرجع true;
 }
 
-static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+ساكن مضمن bool sched_core_cookie_تطابق(بنية rq *rq, بنية task_struct *p)
 {
-	return true;
+	أرجع true;
 }
 
-static inline bool sched_group_cookie_match(struct rq *rq,
-					    struct task_struct *p,
-					    struct sched_group *group)
+ساكن مضمن bool sched_گروه_cookie_تطابق(بنية rq *rq,
+					    بنية task_struct *p,
+					    بنية sched_گروه *گروه)
 {
-	return true;
+	أرجع true;
 }
 
-static inline bool task_has_sched_core(struct task_struct *p)
+ساكن مضمن bool task_has_sched_core(بنية task_struct *p)
 {
-	return false;
+	أرجع false;
 }
 
-#endif /* !CONFIG_SCHED_CORE */
+#پایان_اگر /* !CONFIG_SCHED_CORE */
 
-#ifdef CONFIG_RT_GROUP_SCHED
-# ifdef CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED
-DECLARE_STATIC_KEY_FALSE(rt_group_sched);
-static inline bool rt_group_sched_enabled(void)
+#اگر_تعریف_شده CONFIG_RT_گروه_SCHED
+# ifdef CONFIG_RT_گروه_SCHED_DEFAULT_DISABLED
+DECLARE_STATIC_کلید_FALSE(rt_گروه_sched);
+ساكن مضمن bool rt_گروه_sched_enabled(فراغ)
 {
-	return static_branch_unlikely(&rt_group_sched);
+	أرجع static_branch_unlikely(&rt_گروه_sched);
 }
-# else /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
-DECLARE_STATIC_KEY_TRUE(rt_group_sched);
-static inline bool rt_group_sched_enabled(void)
+# وإلا /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
+DECLARE_STATIC_کلید_TRUE(rt_گروه_sched);
+ساكن مضمن bool rt_گروه_sched_enabled(فراغ)
 {
-	return static_branch_likely(&rt_group_sched);
+	أرجع static_branch_likely(&rt_گروه_sched);
 }
 # endif /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED */
-#else /* !CONFIG_RT_GROUP_SCHED: */
-# define rt_group_sched_enabled()	false
-#endif /* !CONFIG_RT_GROUP_SCHED */
+#وإلا /* !CONFIG_RT_GROUP_SCHED: */
+# define rt_گروه_sched_enabled()	false
+#پایان_اگر /* !CONFIG_RT_GROUP_SCHED */
 
-static inline void lockdep_assert_rq_held(struct rq *rq)
+ساكن مضمن فراغ lockdep_assert_rq_held(بنية rq *rq)
 	__assumes_ctx_lock(__rq_lockp(rq))
 {
 	lockdep_assert_held(__rq_lockp(rq));
 }
 
-extern void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
+خارجي فراغ raw_spin_rq_قفل_nested(بنية rq *rq, صحيح subclass)
 	__acquires(__rq_lockp(rq));
 
-extern bool raw_spin_rq_trylock(struct rq *rq)
+خارجي bool raw_spin_rq_trylock(بنية rq *rq)
 	__cond_acquires(true, __rq_lockp(rq));
 
-static inline void raw_spin_rq_lock(struct rq *rq)
+ساكن مضمن فراغ raw_spin_rq_قفل(بنية rq *rq)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock_nested(rq, 0);
+	raw_spin_rq_قفل_nested(rq, 0);
 }
 
-static inline void raw_spin_rq_unlock(struct rq *rq)
+ساكن مضمن فراغ raw_spin_rq_unlock(بنية rq *rq)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_unlock(rq_lockp(rq));
 }
 
-static inline void raw_spin_rq_lock_irq(struct rq *rq)
+ساكن مضمن فراغ raw_spin_rq_قفل_irq(بنية rq *rq)
 	__acquires(__rq_lockp(rq))
 {
 	local_irq_disable();
-	raw_spin_rq_lock(rq);
+	raw_spin_rq_قفل(rq);
 }
 
-static inline void raw_spin_rq_unlock_irq(struct rq *rq)
+ساكن مضمن فراغ raw_spin_rq_unlock_irq(بنية rq *rq)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_rq_unlock(rq);
 	local_irq_enable();
 }
 
-static inline unsigned long _raw_spin_rq_lock_irqsave(struct rq *rq)
+ساكن مضمن بیعلامت دراز raw_spin_rq_قفل_irqsave_2(بنية rq *rq)
 	__acquires(__rq_lockp(rq))
 {
-	unsigned long flags;
+	بیعلامت دراز flags;
 
 	local_irq_save(flags);
-	raw_spin_rq_lock(rq);
+	raw_spin_rq_قفل(rq);
 
-	return flags;
+	أرجع flags;
 }
 
-static inline void raw_spin_rq_unlock_irqrestore(struct rq *rq, unsigned long flags)
+ساكن مضمن فراغ raw_spin_rq_unlock_irqrestore(بنية rq *rq, بیعلامت دراز flags)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_rq_unlock(rq);
 	local_irq_restore(flags);
 }
 
-#define raw_spin_rq_lock_irqsave(rq, flags)	\
-do {						\
-	flags = _raw_spin_rq_lock_irqsave(rq);	\
-} while (0)
+#تعریف_کن raw_spin_rq_قفل_irqsave(rq, flags)	\
+افعل {						\
+	flags = raw_spin_rq_قفل_irqsave_2(rq);	\
+} طالما (0)
 
-extern void __update_idle_core(struct rq *rq);
+خارجي فراغ __update_idle_core(بنية rq *rq);
 
-static inline void update_idle_core(struct rq *rq)
+ساكن مضمن فراغ update_idle_core(بنية rq *rq)
 {
-	if (sched_smt_active())
+	إذا (sched_smt_فعال())
 		__update_idle_core(rq);
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-static inline struct task_struct *task_of(struct sched_entity *se)
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
+ساكن مضمن بنية task_struct *task_از(بنية sched_entity *se)
 {
 	WARN_ON_ONCE(!entity_is_task(se));
-	return container_of(se, struct task_struct, se);
+	أرجع container_از(se, بنية task_struct, se);
 }
 
-static inline struct cfs_rq *task_cfs_rq(struct task_struct *p)
+ساكن مضمن بنية cfs_rq *task_cfs_rq(بنية task_struct *p)
 {
-	return p->se.cfs_rq;
+	أرجع p->se.cfs_rq;
 }
 
 /* runqueue on which this entity is (to be) queued */
-static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
+ساكن مضمن بنية cfs_rq *cfs_rq_از(ثابت بنية sched_entity *se)
 {
-	return se->cfs_rq;
+	أرجع se->cfs_rq;
 }
 
 /* runqueue "owned" by this group */
-static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+ساكن مضمن بنية cfs_rq *گروه_cfs_rq(بنية sched_entity *grp)
 {
-	return grp->my_q;
+	أرجع grp->my_q;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
 
-#define task_of(_se)		container_of(_se, struct task_struct, se)
+#تعریف_کن task_از(_se)		container_از(_se, بنية task_struct, se)
 
-static inline struct cfs_rq *task_cfs_rq(const struct task_struct *p)
+ساكن مضمن بنية cfs_rq *task_cfs_rq(ثابت بنية task_struct *p)
 {
-	return &task_rq(p)->cfs;
+	أرجع &task_rq(p)->cfs;
 }
 
-static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
+ساكن مضمن بنية cfs_rq *cfs_rq_از(ثابت بنية sched_entity *se)
 {
-	const struct task_struct *p = task_of(se);
-	struct rq *rq = task_rq(p);
+	ثابت بنية task_struct *p = task_از(se);
+	بنية rq *rq = task_rq(p);
 
-	return &rq->cfs;
+	أرجع &rq->cfs;
 }
 
 /* runqueue "owned" by this group */
-static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+ساكن مضمن بنية cfs_rq *گروه_cfs_rq(بنية sched_entity *grp)
 {
-	return NULL;
+	أرجع عدم;
 }
 
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#پایان_اگر /* !CONFIG_FAIR_GROUP_SCHED */
 
-extern void update_rq_avg_idle(struct rq *rq);
-extern void update_rq_clock(struct rq *rq);
+خارجي فراغ update_rq_avg_idle(بنية rq *rq);
+خارجي فراغ update_rq_clock(بنية rq *rq);
 
 /*
  * rq::clock_update_flags bits
@@ -1805,11 +1805,11 @@ extern void update_rq_clock(struct rq *rq);
  * one position though, because the next rq_unpin_lock() will shift it
  * back.
  */
-#define RQCF_REQ_SKIP		0x01
-#define RQCF_ACT_SKIP		0x02
-#define RQCF_UPDATED		0x04
+#تعریف_کن RQCF_REQ_SKIP		0x01
+#تعریف_کن RQCF_ACT_SKIP		0x02
+#تعریف_کن RQCF_UPDATED		0x04
 
-static inline void assert_clock_updated(struct rq *rq)
+ساكن مضمن فراغ assert_clock_updated(بنية rq *rq)
 {
 	/*
 	 * The only reason for not seeing a clock update since the
@@ -1818,23 +1818,23 @@ static inline void assert_clock_updated(struct rq *rq)
 	WARN_ON_ONCE(rq->clock_update_flags < RQCF_ACT_SKIP);
 }
 
-static inline u64 rq_clock(struct rq *rq)
+ساكن مضمن u64 rq_clock(بنية rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock;
+	أرجع rq->clock;
 }
 
-static inline u64 rq_clock_task(struct rq *rq)
+ساكن مضمن u64 rq_clock_task(بنية rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_task;
+	أرجع rq->clock_task;
 }
 
-static inline void rq_clock_skip_update(struct rq *rq)
+ساكن مضمن فراغ rq_clock_skip_update(بنية rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags |= RQCF_REQ_SKIP;
@@ -1844,7 +1844,7 @@ static inline void rq_clock_skip_update(struct rq *rq)
  * See rt task throttling, which is the only time a skip
  * request is canceled.
  */
-static inline void rq_clock_cancel_skipupdate(struct rq *rq)
+ساكن مضمن فراغ rq_clock_cancel_skipupdate(بنية rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags &= ~RQCF_REQ_SKIP;
@@ -1859,69 +1859,69 @@ static inline void rq_clock_cancel_skipupdate(struct rq *rq)
  * After the iterative traversal, we need to call rq_clock_stop_loop_update()
  * to clear RQCF_ACT_SKIP of rq->clock_update_flags.
  */
-static inline void rq_clock_start_loop_update(struct rq *rq)
+ساكن مضمن فراغ rq_clock_شروع_loop_update(بنية rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	WARN_ON_ONCE(rq->clock_update_flags & RQCF_ACT_SKIP);
 	rq->clock_update_flags |= RQCF_ACT_SKIP;
 }
 
-static inline void rq_clock_stop_loop_update(struct rq *rq)
+ساكن مضمن فراغ rq_clock_stop_loop_update(بنية rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags &= ~RQCF_ACT_SKIP;
 }
 
-struct rq_flags {
-	unsigned long flags;
-	struct pin_cookie cookie;
+بنية rq_flags {
+	بیعلامت دراز flags;
+	بنية pin_cookie cookie;
 	/*
 	 * A copy of (rq::clock_update_flags & RQCF_UPDATED) for the
 	 * current pin context is stashed here in case it needs to be
 	 * restored in rq_repin_lock().
 	 */
-	unsigned int clock_update_flags;
+	بیعلامت صحيح clock_update_flags;
 };
 
-extern struct balance_callback balance_push_callback;
+خارجي بنية balance_callback balance_افزودن_callback;
 
-#ifdef CONFIG_SCHED_CLASS_EXT
-extern const struct sched_class ext_sched_class;
+#اگر_تعریف_شده CONFIG_SCHED_CLASS_EXT
+خارجي ثابت بنية sched_class ext_sched_class;
 
-DECLARE_STATIC_KEY_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
-DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+DECLARE_STATIC_کلید_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
+DECLARE_STATIC_کلید_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
 
-#define scx_enabled()		static_branch_unlikely(&__scx_enabled)
-#define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
+#تعریف_کن scx_enabled()		static_branch_unlikely(&__scx_enabled)
+#تعریف_کن scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
 
-static inline void scx_rq_clock_update(struct rq *rq, u64 clock)
+ساكن مضمن فراغ scx_rq_clock_update(بنية rq *rq, u64 clock)
 {
-	if (!scx_enabled())
-		return;
+	إذا (!scx_enabled())
+		أرجع;
 	WRITE_ONCE(rq->scx.clock, clock);
 	smp_store_release(&rq->scx.flags, rq->scx.flags | SCX_RQ_CLK_VALID);
 }
 
-static inline void scx_rq_clock_invalidate(struct rq *rq)
+ساكن مضمن فراغ scx_rq_clock_invalidate(بنية rq *rq)
 {
-	if (!scx_enabled())
-		return;
+	إذا (!scx_enabled())
+		أرجع;
 	WRITE_ONCE(rq->scx.flags, rq->scx.flags & ~SCX_RQ_CLK_VALID);
 }
 
-#else /* !CONFIG_SCHED_CLASS_EXT: */
-#define scx_enabled()		false
-#define scx_switched_all()	false
+#وإلا /* !CONFIG_SCHED_CLASS_EXT: */
+#تعریف_کن scx_enabled()		false
+#تعریف_کن scx_switched_all()	false
 
-static inline void scx_rq_clock_update(struct rq *rq, u64 clock) {}
-static inline void scx_rq_clock_invalidate(struct rq *rq) {}
-#endif /* !CONFIG_SCHED_CLASS_EXT */
+ساكن مضمن فراغ scx_rq_clock_update(بنية rq *rq, u64 clock) {}
+ساكن مضمن فراغ scx_rq_clock_invalidate(بنية rq *rq) {}
+#پایان_اگر /* !CONFIG_SCHED_CLASS_EXT */
 
-static inline void assert_balance_callbacks_empty(struct rq *rq)
+ساكن مضمن فراغ assert_balance_callbacks_خالی(بنية rq *rq)
 {
 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_LOCKING) &&
 		     rq->balance_callback &&
-		     rq->balance_callback != &balance_push_callback);
+		     rq->balance_callback != &balance_افزودن_callback);
 }
 
 /*
@@ -1934,27 +1934,27 @@ static inline void assert_balance_callbacks_empty(struct rq *rq)
  *
  * Also see Documentation/locking/lockdep-design.rst.
  */
-static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ rq_pin_قفل(بنية rq *rq, بنية rq_flags *rf)
 {
-	rf->cookie = lockdep_pin_lock(__rq_lockp(rq));
+	rf->cookie = lockdep_pin_قفل(__rq_lockp(rq));
 
 	rq->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 	rf->clock_update_flags = 0;
-	assert_balance_callbacks_empty(rq);
+	assert_balance_callbacks_خالی(rq);
 }
 
-static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ rq_unpin_قفل(بنية rq *rq, بنية rq_flags *rf)
 {
-	if (rq->clock_update_flags > RQCF_ACT_SKIP)
+	إذا (rq->clock_update_flags > RQCF_ACT_SKIP)
 		rf->clock_update_flags = RQCF_UPDATED;
 
 	scx_rq_clock_invalidate(rq);
-	lockdep_unpin_lock(__rq_lockp(rq), rf->cookie);
+	lockdep_unpin_قفل(__rq_lockp(rq), rf->cookie);
 }
 
-static inline void rq_repin_lock(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ rq_repin_قفل(بنية rq *rq, بنية rq_flags *rf)
 {
-	lockdep_repin_lock(__rq_lockp(rq), rf->cookie);
+	lockdep_repin_قفل(__rq_lockp(rq), rf->cookie);
 
 	/*
 	 * Restore the value we stashed in @rf for this pin context.
@@ -1962,194 +1962,194 @@ static inline void rq_repin_lock(struct rq *rq, struct rq_flags *rf)
 	rq->clock_update_flags |= rf->clock_update_flags;
 }
 
-#define __task_rq_lock(...) __acquire_ret(___task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
-extern struct rq *___task_rq_lock(struct task_struct *p, struct rq_flags *rf) __acquires_ret;
+#تعریف_کن __task_rq_lock(...) __acquire_ret(___task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
+خارجي بنية rq *___task_rq_lock(بنية task_struct *p, بنية rq_flags *rf) __acquires_ret;
 
-#define task_rq_lock(...) __acquire_ret(_task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
-extern struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
-	__acquires(&p->pi_lock) __acquires_ret;
+#تعریف_کن task_rq_قفل_2(...) __acquire_ret(task_rq_قفل(__VA_ARGS__), __rq_lockp(__ret))
+خارجي بنية rq *task_rq_قفل(بنية task_struct *p, بنية rq_flags *rf)
+	__acquires(&p->pi_قفل) __acquires_ret;
 
-static inline void
-__task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
+ساكن مضمن فراغ
+__task_rq_unlock(بنية rq *rq, بنية task_struct *p, بنية rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_قفل(rq, rf);
 	raw_spin_rq_unlock(rq);
 }
 
-static inline void
-task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
-	__releases(__rq_lockp(rq), &p->pi_lock)
+ساكن مضمن فراغ
+task_rq_unlock(بنية rq *rq, بنية task_struct *p, بنية rq_flags *rf)
+	__releases(__rq_lockp(rq), &p->pi_قفل)
 {
 	__task_rq_unlock(rq, p, rf);
-	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
+	raw_spin_unlock_irqrestore(&p->pi_قفل, rf->flags);
 }
 
-DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
-		    _T->rq = task_rq_lock(_T->lock, &_T->rf),
-		    task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-		    struct rq *rq; struct rq_flags rf)
-DECLARE_LOCK_GUARD_1_ATTRS(task_rq_lock, __acquires(_T->pi_lock), __releases((*(struct task_struct **)_T)->pi_lock))
-#define class_task_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(task_rq_lock, _T)
+DEFINE_قفل_GUARD_1(task_rq_قفل_2, بنية task_struct,
+		    _T->rq = task_rq_قفل_2(_T->قفل, &_T->rf),
+		    task_rq_unlock(_T->rq, _T->قفل, &_T->rf),
+		    بنية rq *rq; بنية rq_flags rf)
+DECLARE_قفل_GUARD_1_ATTRS(task_rq_قفل_2, __acquires(_T->pi_قفل), __releases((*(بنية task_struct **)_T)->pi_قفل))
+#تعریف_کن class_task_rq_قفل_constructor(_T) WITH_قفل_GUARD_1_ATTRS(task_rq_قفل_2, _T)
 
-DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
-		    _T->rq = __task_rq_lock(_T->lock, &_T->rf),
-		    __task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-		    struct rq *rq; struct rq_flags rf)
+DEFINE_قفل_GUARD_1(__task_rq_lock, بنية task_struct,
+		    _T->rq = __task_rq_lock(_T->قفل, &_T->rf),
+		    __task_rq_unlock(_T->rq, _T->قفل, &_T->rf),
+		    بنية rq *rq; بنية rq_flags rf)
 
-static inline void rq_lock_irqsave(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ rq_قفل_irqsave(بنية rq *rq, بنية rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock_irqsave(rq, rf->flags);
-	rq_pin_lock(rq, rf);
+	raw_spin_rq_قفل_irqsave(rq, rf->flags);
+	rq_pin_قفل(rq, rf);
 }
 
-static inline void rq_lock_irq(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ rq_قفل_irq(بنية rq *rq, بنية rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock_irq(rq);
-	rq_pin_lock(rq, rf);
+	raw_spin_rq_قفل_irq(rq);
+	rq_pin_قفل(rq, rf);
 }
 
-static inline void rq_lock(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ rq_قفل(بنية rq *rq, بنية rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock(rq);
-	rq_pin_lock(rq, rf);
+	raw_spin_rq_قفل(rq);
+	rq_pin_قفل(rq, rf);
 }
 
-static inline void rq_unlock_irqrestore(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ rq_unlock_irqrestore(بنية rq *rq, بنية rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_قفل(rq, rf);
 	raw_spin_rq_unlock_irqrestore(rq, rf->flags);
 }
 
-static inline void rq_unlock_irq(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ rq_unlock_irq(بنية rq *rq, بنية rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_قفل(rq, rf);
 	raw_spin_rq_unlock_irq(rq);
 }
 
-static inline void rq_unlock(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ rq_unlock(بنية rq *rq, بنية rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_قفل(rq, rf);
 	raw_spin_rq_unlock(rq);
 }
 
-DEFINE_LOCK_GUARD_1(rq_lock, struct rq,
-		    rq_lock(_T->lock, &_T->rf),
-		    rq_unlock(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+DEFINE_قفل_GUARD_1(rq_قفل, بنية rq,
+		    rq_قفل(_T->قفل, &_T->rf),
+		    rq_unlock(_T->قفل, &_T->rf),
+		    بنية rq_flags rf)
 
-DECLARE_LOCK_GUARD_1_ATTRS(rq_lock, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock, _T)
+DECLARE_قفل_GUARD_1_ATTRS(rq_قفل, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(بنية rq **)_T)));
+#تعریف_کن class_rq_قفل_constructor(_T) WITH_قفل_GUARD_1_ATTRS(rq_قفل, _T)
 
-DEFINE_LOCK_GUARD_1(rq_lock_irq, struct rq,
-		    rq_lock_irq(_T->lock, &_T->rf),
-		    rq_unlock_irq(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+DEFINE_قفل_GUARD_1(rq_قفل_irq, بنية rq,
+		    rq_قفل_irq(_T->قفل, &_T->rf),
+		    rq_unlock_irq(_T->قفل, &_T->rf),
+		    بنية rq_flags rf)
 
-DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irq, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_rq_lock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irq, _T)
+DECLARE_قفل_GUARD_1_ATTRS(rq_قفل_irq, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(بنية rq **)_T)));
+#تعریف_کن class_rq_قفل_irq_constructor(_T) WITH_قفل_GUARD_1_ATTRS(rq_قفل_irq, _T)
 
-DEFINE_LOCK_GUARD_1(rq_lock_irqsave, struct rq,
-		    rq_lock_irqsave(_T->lock, &_T->rf),
-		    rq_unlock_irqrestore(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+DEFINE_قفل_GUARD_1(rq_قفل_irqsave, بنية rq,
+		    rq_قفل_irqsave(_T->قفل, &_T->rf),
+		    rq_unlock_irqrestore(_T->قفل, &_T->rf),
+		    بنية rq_flags rf)
 
-DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_rq_lock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, _T)
+DECLARE_قفل_GUARD_1_ATTRS(rq_قفل_irqsave, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(بنية rq **)_T)));
+#تعریف_کن class_rq_قفل_irqsave_constructor(_T) WITH_قفل_GUARD_1_ATTRS(rq_قفل_irqsave, _T)
 
-DEFINE_LOCK_GUARD_1(raw_spin_rq_lock_irqsave, struct rq,
-		    raw_spin_rq_lock_irqsave(_T->lock, _T->flags),
-		    raw_spin_rq_unlock_irqrestore(_T->lock, _T->flags),
-		    unsigned long flags)
+DEFINE_قفل_GUARD_1(raw_spin_rq_قفل_irqsave, بنية rq,
+		    raw_spin_rq_قفل_irqsave(_T->قفل, _T->flags),
+		    raw_spin_rq_unlock_irqrestore(_T->قفل, _T->flags),
+		    بیعلامت دراز flags)
 
-DECLARE_LOCK_GUARD_1_ATTRS(raw_spin_rq_lock_irqsave, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_raw_spin_rq_lock_irqsave_constructor(_T) \
-	WITH_LOCK_GUARD_1_ATTRS(raw_spin_rq_lock_irqsave, _T)
+DECLARE_قفل_GUARD_1_ATTRS(raw_spin_rq_قفل_irqsave, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(بنية rq **)_T)));
+#تعریف_کن class_raw_spin_rq_قفل_irqsave_constructor(_T) \
+	WITH_قفل_GUARD_1_ATTRS(raw_spin_rq_قفل_irqsave, _T)
 
-#define this_rq_lock_irq(...) __acquire_ret(_this_rq_lock_irq(__VA_ARGS__), __rq_lockp(__ret))
-static inline struct rq *_this_rq_lock_irq(struct rq_flags *rf) __acquires_ret
+#تعریف_کن this_rq_قفل_irq(...) __acquire_ret(this_rq_قفل_irq_2(__VA_ARGS__), __rq_lockp(__ret))
+ساكن مضمن بنية rq *this_rq_قفل_irq_2(بنية rq_flags *rf) __acquires_ret
 {
-	struct rq *rq;
+	بنية rq *rq;
 
 	local_irq_disable();
 	rq = this_rq();
-	rq_lock(rq, rf);
+	rq_قفل(rq, rf);
 
-	return rq;
+	أرجع rq;
 }
 
-#ifdef CONFIG_NUMA
+#اگر_تعریف_شده CONFIG_NUMA
 
-enum numa_topology_type {
-	NUMA_DIRECT,
+تعداد numa_topology_type {
+	NUMA_مستقیم,
 	NUMA_GLUELESS_MESH,
 	NUMA_BACKPLANE,
 };
 
-extern enum numa_topology_type sched_numa_topology_type;
-extern int sched_max_numa_distance;
-extern bool find_numa_distance(int distance);
-extern void sched_init_numa(int offline_node);
-extern void sched_update_numa(int cpu, bool online);
-extern void sched_domains_numa_masks_set(unsigned int cpu);
-extern void sched_domains_numa_masks_clear(unsigned int cpu);
-extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
+خارجي تعداد numa_topology_type sched_numa_topology_type;
+خارجي صحيح sched_max_numa_فاصله;
+خارجي bool پیدا_کن_numa_فاصله(صحيح فاصله);
+خارجي فراغ sched_init_numa(صحيح offline_گره);
+خارجي فراغ sched_update_numa(صحيح cpu, bool online);
+خارجي فراغ sched_domains_numa_masks_مجموعه(بیعلامت صحيح cpu);
+خارجي فراغ sched_domains_numa_masks_clear(بیعلامت صحيح cpu);
+خارجي صحيح sched_numa_پیدا_کن_closest(ثابت بنية cpumask *cpus, صحيح cpu);
 
-#else /* !CONFIG_NUMA: */
+#وإلا /* !CONFIG_NUMA: */
 
-static inline void sched_init_numa(int offline_node) { }
-static inline void sched_update_numa(int cpu, bool online) { }
-static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
-static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
+ساكن مضمن فراغ sched_init_numa(صحيح offline_گره) { }
+ساكن مضمن فراغ sched_update_numa(صحيح cpu, bool online) { }
+ساكن مضمن فراغ sched_domains_numa_masks_مجموعه(بیعلامت صحيح cpu) { }
+ساكن مضمن فراغ sched_domains_numa_masks_clear(بیعلامت صحيح cpu) { }
 
-static inline int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
+ساكن مضمن صحيح sched_numa_پیدا_کن_closest(ثابت بنية cpumask *cpus, صحيح cpu)
 {
-	return nr_cpu_ids;
+	أرجع nr_cpu_ids;
 }
 
-#endif /* !CONFIG_NUMA */
+#پایان_اگر /* !CONFIG_NUMA */
 
-#ifdef CONFIG_NUMA_BALANCING
+#اگر_تعریف_شده CONFIG_NUMA_BALANCING
 
 /* The regions in numa_faults array from task_struct */
-enum numa_faults_stats {
+تعداد numa_خطاها_stats {
 	NUMA_MEM = 0,
 	NUMA_CPU,
 	NUMA_MEMBUF,
 	NUMA_CPUBUF
 };
 
-extern void sched_setnuma(struct task_struct *p, int node);
-extern int migrate_task_to(struct task_struct *p, int cpu);
-extern int migrate_swap(struct task_struct *p, struct task_struct *t,
-			int cpu, int scpu);
-extern void init_numa_balancing(u64 clone_flags, struct task_struct *p);
+خارجي فراغ sched_setnuma(بنية task_struct *p, صحيح گره);
+خارجي صحيح migrate_task_مقصد(بنية task_struct *p, صحيح cpu);
+خارجي صحيح migrate_جابجا(بنية task_struct *p, بنية task_struct *t,
+			صحيح cpu, صحيح scpu);
+خارجي فراغ init_numa_balancing(u64 clone_flags, بنية task_struct *p);
 
-#else /* !CONFIG_NUMA_BALANCING: */
+#وإلا /* !CONFIG_NUMA_BALANCING: */
 
-static inline void
-init_numa_balancing(u64 clone_flags, struct task_struct *p)
+ساكن مضمن فراغ
+init_numa_balancing(u64 clone_flags, بنية task_struct *p)
 {
 }
 
-#endif /* !CONFIG_NUMA_BALANCING */
+#پایان_اگر /* !CONFIG_NUMA_BALANCING */
 
-int task_llc(const struct task_struct *p);
+صحيح task_llc(ثابت بنية task_struct *p);
 
-static inline void
-queue_balance_callback(struct rq *rq,
-		       struct balance_callback *head,
-		       void (*func)(struct rq *rq))
+ساكن مضمن فراغ
+صف_balance_callback(بنية rq *rq,
+		       بنية balance_callback *سر,
+		       فراغ (*func)(بنية rq *rq))
 {
 	lockdep_assert_rq_held(rq);
 
@@ -2158,15 +2158,15 @@ queue_balance_callback(struct rq *rq,
 	 * balance_push() is active, see the comment with
 	 * balance_push_callback.
 	 */
-	if (unlikely(head->next || rq->balance_callback == &balance_push_callback))
-		return;
+	إذا (unlikely(سر->بعدی || rq->balance_callback == &balance_افزودن_callback))
+		أرجع;
 
-	head->func = func;
-	head->next = rq->balance_callback;
-	rq->balance_callback = head;
+	سر->func = func;
+	سر->بعدی = rq->balance_callback;
+	rq->balance_callback = سر;
 }
 
-#define rcu_dereference_sched_domain(p) \
+#تعریف_کن rcu_dereference_sched_domain(p) \
 	rcu_dereference_all_check((p), lockdep_is_held(&sched_domains_mutex))
 
 /*
@@ -2176,16 +2176,16 @@ queue_balance_callback(struct rq *rq,
  * The domain tree of any CPU may only be accessed from within
  * preempt-disabled sections.
  */
-#define for_each_domain(cpu, __sd) \
-	for (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
-			__sd; __sd = __sd->parent)
+#تعریف_کن for_each_domain(cpu, __sd) \
+	لكل (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
+			__sd; __sd = __sd->والد)
 
 /* A mask of all the SD flags that have the SDF_SHARED_CHILD metaflag */
-#define SD_FLAG(name, mflags) (name * !!((mflags) & SDF_SHARED_CHILD)) |
-static const unsigned int SD_SHARED_CHILD_MASK =
-#include <linux/sched/sd_flags.h>
+#تعریف_کن SD_FLAG(name, mflags) (name * !!((mflags) & SDF_SHARED_فرزند)) |
+ساكن ثابت بیعلامت صحيح SD_SHARED_فرزند_ماسک =
+#ضمن <linux/sched/sd_flags.h>
 0;
-#undef SD_FLAG
+#لغو_تعریف SD_FLAG
 
 /**
  * highest_flag_domain - Return highest sched_domain containing flag.
@@ -2197,83 +2197,83 @@ static const unsigned int SD_SHARED_CHILD_MASK =
  * Returns the highest sched_domain of a CPU which contains @flag. If @flag has
  * the SDF_SHARED_CHILD metaflag, all the children domains also have @flag.
  */
-static inline struct sched_domain *highest_flag_domain(int cpu, int flag)
+ساكن مضمن بنية sched_domain *highest_flag_domain(صحيح cpu, صحيح flag)
 {
-	struct sched_domain *sd, *hsd = NULL;
+	بنية sched_domain *sd, *hsd = عدم;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag) {
+		إذا (sd->flags & flag) {
 			hsd = sd;
-			continue;
+			استمر;
 		}
 
 		/*
 		 * Stop the search if @flag is known to be shared at lower
 		 * levels. It will not be found further up.
 		 */
-		if (flag & SD_SHARED_CHILD_MASK)
-			break;
+		إذا (flag & SD_SHARED_فرزند_ماسک)
+			اكسر;
 	}
 
-	return hsd;
+	أرجع hsd;
 }
 
-static inline struct sched_domain *lowest_flag_domain(int cpu, int flag)
+ساكن مضمن بنية sched_domain *پایینترین_flag_domain(صحيح cpu, صحيح flag)
 {
-	struct sched_domain *sd;
+	بنية sched_domain *sd;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag)
-			break;
+		إذا (sd->flags & flag)
+			اكسر;
 	}
 
-	return sd;
+	أرجع sd;
 }
 
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_llc);
-DECLARE_PER_CPU(int, sd_llc_size);
-DECLARE_PER_CPU(int, sd_llc_id);
-DECLARE_PER_CPU(int, sd_share_id);
-DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
-DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_balance_shared);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
+DECLARE_در_هر_CPU(بنية sched_domain __rcu *, sd_llc);
+DECLARE_در_هر_CPU(صحيح, sd_llc_اندازه);
+DECLARE_در_هر_CPU(صحيح, sd_llc_id);
+DECLARE_در_هر_CPU(صحيح, sd_share_id);
+DECLARE_در_هر_CPU(بنية sched_domain_shared __rcu *, sd_llc_shared);
+DECLARE_در_هر_CPU(بنية sched_domain_shared __rcu *, sd_balance_shared);
+DECLARE_در_هر_CPU(بنية sched_domain __rcu *, sd_numa);
+DECLARE_در_هر_CPU(بنية sched_domain __rcu *, sd_asym_packing);
+DECLARE_در_هر_CPU(بنية sched_domain __rcu *, sd_asym_cpucapacity);
 
-extern struct static_key_false sched_asym_cpucapacity;
-extern struct static_key_false sched_cluster_active;
+خارجي بنية static_کلید_false sched_asym_cpucapacity;
+خارجي بنية static_کلید_false sched_cluster_فعال;
 
-static __always_inline bool sched_asym_cpucap_active(void)
+ساكن __always_inline bool sched_asym_cpucap_فعال(فراغ)
 {
-	return static_branch_unlikely(&sched_asym_cpucapacity);
+	أرجع static_branch_unlikely(&sched_asym_cpucapacity);
 }
 
-struct sched_group_capacity {
+بنية sched_گروه_ظرفیت {
 	atomic_t		ref;
 	/*
 	 * CPU capacity of this group, SCHED_CAPACITY_SCALE being max capacity
 	 * for a single CPU.
 	 */
-	unsigned long		capacity;
-	unsigned long		min_capacity;		/* Min per-CPU capacity in group */
-	unsigned long		max_capacity;		/* Max per-CPU capacity in group */
-	unsigned long		next_update;
-	int			imbalance;		/* XXX unrelated to capacity but shared group state */
+	بیعلامت دراز		ظرفیت;
+	بیعلامت دراز		min_ظرفیت;		/* Min per-CPU capacity in group */
+	بیعلامت دراز		max_ظرفیت;		/* Max per-CPU capacity in group */
+	بیعلامت دراز		بعدی_update;
+	صحيح			imbalance;		/* XXX unrelated to capacity but shared group state */
 
-	int			id;
+	صحيح			id;
 
-	unsigned long		cpumask[];		/* Balance mask */
+	بیعلامت دراز		cpumask[];		/* Balance mask */
 };
 
-struct sched_group {
-	struct sched_group	*next;			/* Must be a circular list */
+بنية sched_گروه {
+	بنية sched_گروه	*بعدی;			/* Must be a circular list */
 	atomic_t		ref;
 
-	unsigned int		group_weight;
-	unsigned int		cores;
-	struct sched_group_capacity *sgc;
-	int			asym_prefer_cpu;	/* CPU of highest priority in group */
-	int			flags;
+	بیعلامت صحيح		گروه_وزن;
+	بیعلامت صحيح		cores;
+	بنية sched_گروه_ظرفیت *sgc;
+	صحيح			asym_prefer_cpu;	/* CPU of highest priority in group */
+	صحيح			flags;
 
 	/*
 	 * The CPUs this group covers.
@@ -2282,37 +2282,37 @@ struct sched_group {
 	 * by attaching extra space to the end of the structure,
 	 * depending on how many CPUs the kernel has booted up with)
 	 */
-	unsigned long		cpumask[];
+	بیعلامت دراز		cpumask[];
 };
 
-static inline struct cpumask *sched_group_span(struct sched_group *sg)
+ساكن مضمن بنية cpumask *sched_گروه_بازه(بنية sched_گروه *sg)
 {
-	return to_cpumask(sg->cpumask);
+	أرجع مقصد_cpumask(sg->cpumask);
 }
 
 /*
  * See build_balance_mask().
  */
-static inline struct cpumask *group_balance_mask(struct sched_group *sg)
+ساكن مضمن بنية cpumask *گروه_balance_ماسک(بنية sched_گروه *sg)
 {
-	return to_cpumask(sg->sgc->cpumask);
+	أرجع مقصد_cpumask(sg->sgc->cpumask);
 }
 
-extern int group_balance_cpu(struct sched_group *sg);
+خارجي صحيح گروه_balance_cpu(بنية sched_گروه *sg);
 
-extern void update_sched_domain_debugfs(void);
-extern void dirty_sched_domain_sysctl(int cpu);
+خارجي فراغ update_sched_domain_debugfs(فراغ);
+خارجي فراغ dirty_sched_domain_sysctl(صحيح cpu);
 
-extern int sched_update_scaling(void);
+خارجي صحيح sched_update_scaling(فراغ);
 
-static inline const struct cpumask *task_user_cpus(struct task_struct *p)
+ساكن مضمن ثابت بنية cpumask *task_user_cpus(بنية task_struct *p)
 {
-	if (!p->user_cpus_ptr)
-		return cpu_possible_mask; /* &init_task.cpus_mask */
-	return p->user_cpus_ptr;
+	إذا (!p->user_cpus_ptr)
+		أرجع cpu_possible_ماسک; /* &init_task.cpus_mask */
+	أرجع p->user_cpus_ptr;
 }
 
-#ifdef CONFIG_CGROUP_SCHED
+#اگر_تعریف_شده CONFIG_CGROUP_SCHED
 
 /*
  * Return the group to which this tasks belongs.
@@ -2327,93 +2327,93 @@ static inline const struct cpumask *task_user_cpus(struct task_struct *p)
  * Instead we use a 'copy' which is updated from sched_move_task() while
  * holding both task_struct::pi_lock and rq::lock.
  */
-static inline struct task_group *task_group(struct task_struct *p)
+ساكن مضمن بنية task_گروه *task_گروه(بنية task_struct *p)
 {
-	return p->sched_task_group;
+	أرجع p->sched_task_گروه;
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
 /*
  * Defined here to be available before stats.h is included, since
  * stats.h has dependencies on things defined later in this file.
  */
-struct cfs_tg_state {
-	struct cfs_rq		cfs_rq;
-	struct sched_entity	se;
-	struct sched_statistics	stats;
+بنية cfs_tg_state {
+	بنية cfs_rq		cfs_rq;
+	بنية sched_entity	se;
+	بنية sched_statistics	stats;
 } __no_randomize_layout;
 
 /* Access a specific CPU's cfs_rq from a task group */
-static inline struct cfs_rq *tg_cfs_rq(struct task_group *tg, int cpu)
+ساكن مضمن بنية cfs_rq *tg_cfs_rq(بنية task_گروه *tg, صحيح cpu)
 {
-	return per_cpu_ptr(tg->cfs_rq, cpu);
+	أرجع در_هر_cpu_ptr(tg->cfs_rq, cpu);
 }
 
-static inline struct sched_entity *tg_se(struct task_group *tg, int cpu)
+ساكن مضمن بنية sched_entity *tg_se(بنية task_گروه *tg, صحيح cpu)
 {
-	struct cfs_tg_state *state;
+	بنية cfs_tg_state *state;
 
-	if (is_root_task_group(tg))
-		return NULL;
+	إذا (is_ریشه_task_گروه(tg))
+		أرجع عدم;
 
-	state = container_of(tg_cfs_rq(tg, cpu), struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	state = container_از(tg_cfs_rq(tg, cpu), بنية cfs_tg_state, cfs_rq);
+	أرجع &state->se;
 }
 
-static inline struct sched_entity *cfs_rq_se(struct cfs_rq *cfs_rq)
+ساكن مضمن بنية sched_entity *cfs_rq_se(بنية cfs_rq *cfs_rq)
 {
-	struct cfs_tg_state *state;
+	بنية cfs_tg_state *state;
 
-	if (is_root_task_group(cfs_rq->tg))
-		return NULL;
+	إذا (is_ریشه_task_گروه(cfs_rq->tg))
+		أرجع عدم;
 
-	state = container_of(cfs_rq, struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	state = container_از(cfs_rq, بنية cfs_tg_state, cfs_rq);
+	أرجع &state->se;
 }
-#endif
+#پایان_اگر
 
 /* Change a task's cfs_rq and parent entity if it moves across CPUs/groups */
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
+ساكن مضمن فراغ مجموعه_task_rq(بنية task_struct *p, بیعلامت صحيح cpu)
 {
-#if defined(CONFIG_FAIR_GROUP_SCHED) || defined(CONFIG_RT_GROUP_SCHED)
-	struct task_group *tg = task_group(p);
-#endif
+#إذا defined(CONFIG_FAIR_گروه_SCHED) || defined(CONFIG_RT_گروه_SCHED)
+	بنية task_گروه *tg = task_گروه(p);
+#پایان_اگر
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	set_task_rq_fair(&p->se, p->se.cfs_rq, tg_cfs_rq(tg, cpu));
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
+	مجموعه_task_rq_fair(&p->se, p->se.cfs_rq, tg_cfs_rq(tg, cpu));
 	p->se.cfs_rq = tg_cfs_rq(tg, cpu);
-	p->se.parent = tg_se(tg, cpu);
-	p->se.depth = p->se.parent ? p->se.parent->depth + 1 : 0;
-#endif
+	p->se.والد = tg_se(tg, cpu);
+	p->se.عمق = p->se.والد ? p->se.والد->عمق + 1 : 0;
+#پایان_اگر
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#اگر_تعریف_شده CONFIG_RT_گروه_SCHED
 	/*
 	 * p->rt.rt_rq is NULL initially and it is easier to assign
 	 * root_task_group's rt_rq than switching in rt_rq_of_se()
 	 * Clobbers tg(!)
 	 */
-	if (!rt_group_sched_enabled())
-		tg = &root_task_group;
+	إذا (!rt_گروه_sched_enabled())
+		tg = &ریشه_task_گروه;
 	p->rt.rt_rq  = tg->rt_rq[cpu];
-	p->rt.parent = tg->rt_se[cpu];
-#endif /* CONFIG_RT_GROUP_SCHED */
+	p->rt.والد = tg->rt_se[cpu];
+#پایان_اگر /* CONFIG_RT_GROUP_SCHED */
 }
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#وإلا /* !CONFIG_CGROUP_SCHED: */
 
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu) { }
+ساكن مضمن فراغ مجموعه_task_rq(بنية task_struct *p, بیعلامت صحيح cpu) { }
 
-static inline struct task_group *task_group(struct task_struct *p)
+ساكن مضمن بنية task_گروه *task_گروه(بنية task_struct *p)
 {
-	return NULL;
+	أرجع عدم;
 }
 
-#endif /* !CONFIG_CGROUP_SCHED */
+#پایان_اگر /* !CONFIG_CGROUP_SCHED */
 
-static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
+ساكن مضمن فراغ __set_task_cpu(بنية task_struct *p, بیعلامت صحيح cpu)
 {
-	set_task_rq(p, cpu);
-#ifdef CONFIG_SMP
+	مجموعه_task_rq(p, cpu);
+#اگر_تعریف_شده CONFIG_SMP
 	/*
 	 * After ->cpu is set up to a new value, task_rq_lock(p, ...) can be
 	 * successfully executed on another CPU. We must ensure that updates of
@@ -2422,81 +2422,81 @@ static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
 	smp_wmb();
 	WRITE_ONCE(task_thread_info(p)->cpu, cpu);
 	p->wake_cpu = cpu;
-	rseq_sched_set_ids_changed(p);
-#endif /* CONFIG_SMP */
+	rseq_sched_مجموعه_ids_تغییریافته(p);
+#پایان_اگر /* CONFIG_SMP */
 }
 
 /*
  * Tunables:
  */
 
-#define SCHED_FEAT(name, enabled)	\
+#تعریف_کن SCHED_FEAT(name, enabled)	\
 	__SCHED_FEAT_##name ,
 
-enum {
-#include "features.h"
+تعداد {
+#ضمن "features.h"
 	__SCHED_FEAT_NR,
 };
 
-#undef SCHED_FEAT
+#لغو_تعریف SCHED_FEAT
 
 /*
  * To support run-time toggling of sched features, all the translation units
  * (but core.c) reference the sysctl_sched_features defined in core.c.
  */
-extern __read_mostly unsigned int sysctl_sched_features;
+خارجي __read_mostly بیعلامت صحيح sysctl_sched_features;
 
-#ifdef CONFIG_JUMP_LABEL
+#اگر_تعریف_شده CONFIG_JUMP_LABEL
 
-union sched_feat_key {
-	struct static_key_true	key_true;
-	struct static_key_false	key_false;
+اتحاد sched_feat_کلید {
+	بنية static_کلید_true	کلید_true;
+	بنية static_کلید_false	کلید_false;
 };
 
-#define sched_feat_branch_true(key)	static_branch_likely(&(key)->key_true)
-#define sched_feat_branch_false(key)	static_branch_unlikely(&(key)->key_false)
+#تعریف_کن sched_feat_branch_true(کلید)	static_branch_likely(&(کلید)->کلید_true)
+#تعریف_کن sched_feat_branch_false(کلید)	static_branch_unlikely(&(کلید)->کلید_false)
 
-#define SCHED_FEAT(name, enabled)			\
-static __always_inline bool				\
-static_branch_##name(union sched_feat_key *key) 	\
+#تعریف_کن SCHED_FEAT(name, enabled)			\
+ساكن __always_inline bool				\
+static_branch_##name(اتحاد sched_feat_کلید *کلید) 	\
 {							\
-	return sched_feat_branch_##enabled(key);	\
+	أرجع sched_feat_branch_##enabled(کلید);	\
 }
 
-#include "features.h"
-#undef SCHED_FEAT
+#ضمن "features.h"
+#لغو_تعریف SCHED_FEAT
 
-extern union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR];
-#define sched_feat(x) (static_branch_##x(&sched_feat_keys[__SCHED_FEAT_##x]))
+خارجي اتحاد sched_feat_کلید sched_feat_کلیدها[__SCHED_FEAT_NR];
+#تعریف_کن sched_feat(x) (static_branch_##x(&sched_feat_کلیدها[__SCHED_FEAT_##x]))
 
-#else /* !CONFIG_JUMP_LABEL: */
+#وإلا /* !CONFIG_JUMP_LABEL: */
 
-#define sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
+#تعریف_کن sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
 
-#endif /* !CONFIG_JUMP_LABEL */
+#پایان_اگر /* !CONFIG_JUMP_LABEL */
 
-extern struct static_key_false sched_numa_balancing;
-extern struct static_key_false sched_schedstats;
+خارجي بنية static_کلید_false sched_numa_balancing;
+خارجي بنية static_کلید_false sched_schedstats;
 
-static inline u64 global_rt_period(void)
+ساكن مضمن u64 global_rt_period(فراغ)
 {
-	return (u64)sysctl_sched_rt_period * NSEC_PER_USEC;
+	أرجع (u64)sysctl_sched_rt_period * NSEC_در_هر_USEC;
 }
 
-static inline u64 global_rt_runtime(void)
+ساكن مضمن u64 global_rt_runtime(فراغ)
 {
-	if (sysctl_sched_rt_runtime < 0)
-		return RUNTIME_INF;
+	إذا (sysctl_sched_rt_runtime < 0)
+		أرجع RUNTIME_INF;
 
-	return (u64)sysctl_sched_rt_runtime * NSEC_PER_USEC;
+	أرجع (u64)sysctl_sched_rt_runtime * NSEC_در_هر_USEC;
 }
 
 /*
  * Is p the current execution context?
  */
-static inline int task_current(struct rq *rq, struct task_struct *p)
+ساكن مضمن صحيح task_current(بنية rq *rq, بنية task_struct *p)
 {
-	return rq->curr == p;
+	أرجع rq->curr == p;
 }
 
 /*
@@ -2505,55 +2505,55 @@ static inline int task_current(struct rq *rq, struct task_struct *p)
  * Note that it might be the current execution context at the same time if
  * rq->curr == rq->donor == p.
  */
-static inline int task_current_donor(struct rq *rq, struct task_struct *p)
+ساكن مضمن صحيح task_current_donor(بنية rq *rq, بنية task_struct *p)
 {
-	return rq->donor == p;
+	أرجع rq->donor == p;
 }
 
-static inline bool task_is_blocked(struct task_struct *p)
+ساكن مضمن bool task_is_blocked(بنية task_struct *p)
 {
-	if (!sched_proxy_exec())
-		return false;
+	إذا (!sched_proxy_exec())
+		أرجع false;
 
-	return !!p->blocked_on;
+	أرجع !!p->blocked_on;
 }
 
-#ifdef CONFIG_SCHED_PROXY_EXEC
-void sched_proxy_block_task(struct rq *rq, struct task_struct *p);
-#else
-static inline void sched_proxy_block_task(struct rq *rq, struct task_struct *p) {}
-#endif
+#اگر_تعریف_شده CONFIG_SCHED_PROXY_EXEC
+فراغ sched_proxy_بلوک_task(بنية rq *rq, بنية task_struct *p);
+#وإلا
+ساكن مضمن فراغ sched_proxy_بلوک_task(بنية rq *rq, بنية task_struct *p) {}
+#پایان_اگر
 
-static inline int task_on_cpu(struct rq *rq, struct task_struct *p)
+ساكن مضمن صحيح task_on_cpu(بنية rq *rq, بنية task_struct *p)
 {
-	return p->on_cpu;
+	أرجع p->on_cpu;
 }
 
-static inline int task_on_rq_queued(struct task_struct *p)
+ساكن مضمن صحيح task_on_rq_queued(بنية task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
+	أرجع READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
 }
 
-static inline int task_on_rq_migrating(struct task_struct *p)
+ساكن مضمن صحيح task_on_rq_migrating(بنية task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
+	أرجع READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
 }
 
 /* Wake flags. The first three directly map to some SD flag value */
-#define WF_EXEC			0x02 /* Wakeup after exec; maps to SD_BALANCE_EXEC */
-#define WF_FORK			0x04 /* Wakeup after fork; maps to SD_BALANCE_FORK */
-#define WF_TTWU			0x08 /* Wakeup;            maps to SD_BALANCE_WAKE */
+#تعریف_کن WF_EXEC			0x02 /* Wakeup after exec; maps to SD_BALANCE_EXEC */
+#تعریف_کن WF_FORK			0x04 /* Wakeup after fork; maps to SD_BALANCE_FORK */
+#تعریف_کن WF_TTWU			0x08 /* Wakeup;            maps to SD_BALANCE_WAKE */
 /*
  * Hint that the caller expects the waker to sleep soon.
  * Scheduler classes may use it for placement or preemption.
  * Callers must not rely on it to prevent migration,
  * preserve CPU locality or make the wakee run next.
  */
-#define WF_SYNC			0x10
-#define WF_MIGRATED		0x20 /* Internal use, task got migrated */
-#define WF_CURRENT_CPU		0x40 /* Prefer to move the wakee to the current CPU. */
-#define WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
-#define WF_TTWU_RQ		0x100 /* Wakeup completed through ttwu_runnable() */
+#تعریف_کن WF_SYNC			0x10
+#تعریف_کن WF_MIGRATED		0x20 /* Internal use, task got migrated */
+#تعریف_کن WF_CURRENT_CPU		0x40 /* Prefer to move the wakee to the current CPU. */
+#تعریف_کن WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
+#تعریف_کن WF_TTWU_RQ		0x100 /* Wakeup completed through ttwu_runnable() */
 
 static_assert(WF_EXEC == SD_BALANCE_EXEC);
 static_assert(WF_FORK == SD_BALANCE_FORK);
@@ -2568,11 +2568,11 @@ static_assert(WF_TTWU == SD_BALANCE_WAKE);
  * slice expiry etc.
  */
 
-#define WEIGHT_IDLEPRIO		3
-#define WMULT_IDLEPRIO		1431655765
+#تعریف_کن وزن_IDLEPRIO		3
+#تعریف_کن WMULT_IDLEPRIO		1431655765
 
-extern const int		sched_prio_to_weight[40];
-extern const u32		sched_prio_to_wmult[40];
+خارجي ثابت صحيح		sched_prio_مقصد_وزن[40];
+خارجي ثابت u32		sched_prio_مقصد_wmult[40];
 
 /*
  * {de,en}queue flags:
@@ -2605,55 +2605,55 @@ extern const u32		sched_prio_to_wmult[40];
  * SCHED_DEADLINE seems to rely on this for now.
  */
 
-#define DEQUEUE_SLEEP		0x0001 /* Matches ENQUEUE_WAKEUP */
-#define DEQUEUE_SAVE		0x0002 /* Matches ENQUEUE_RESTORE */
-#define DEQUEUE_MOVE		0x0004 /* Matches ENQUEUE_MOVE */
-#define DEQUEUE_NOCLOCK		0x0008 /* Matches ENQUEUE_NOCLOCK */
+#تعریف_کن خارج_از_صف_SLEEP		0x0001 /* Matches ENQUEUE_WAKEUP */
+#تعریف_کن خارج_از_صف_SAVE		0x0002 /* Matches ENQUEUE_RESTORE */
+#تعریف_کن خارج_از_صف_MOVE		0x0004 /* Matches ENQUEUE_MOVE */
+#تعریف_کن خارج_از_صف_NOCLOCK		0x0008 /* Matches ENQUEUE_NOCLOCK */
 
-#define DEQUEUE_MIGRATING	0x0010 /* Matches ENQUEUE_MIGRATING */
-#define DEQUEUE_DELAYED		0x0020 /* Matches ENQUEUE_DELAYED */
-#define DEQUEUE_CLASS		0x0040 /* Matches ENQUEUE_CLASS */
+#تعریف_کن خارج_از_صف_MIGRATING	0x0010 /* Matches ENQUEUE_MIGRATING */
+#تعریف_کن خارج_از_صف_DELAYED		0x0020 /* Matches ENQUEUE_DELAYED */
+#تعریف_کن خارج_از_صف_CLASS		0x0040 /* Matches ENQUEUE_CLASS */
 
-#define DEQUEUE_SPECIAL		0x00010000
-#define DEQUEUE_THROTTLE	0x00020000
+#تعریف_کن خارج_از_صف_SPECIAL		0x00010000
+#تعریف_کن خارج_از_صف_THROTTLE	0x00020000
 
-#define ENQUEUE_WAKEUP		0x0001
-#define ENQUEUE_RESTORE		0x0002
-#define ENQUEUE_MOVE		0x0004
-#define ENQUEUE_NOCLOCK		0x0008
+#تعریف_کن افزودن_به_صف_WAKEUP		0x0001
+#تعریف_کن افزودن_به_صف_RESTORE		0x0002
+#تعریف_کن افزودن_به_صف_MOVE		0x0004
+#تعریف_کن افزودن_به_صف_NOCLOCK		0x0008
 
-#define ENQUEUE_MIGRATING	0x0010
-#define ENQUEUE_DELAYED		0x0020
-#define ENQUEUE_CLASS		0x0040
+#تعریف_کن افزودن_به_صف_MIGRATING	0x0010
+#تعریف_کن افزودن_به_صف_DELAYED		0x0020
+#تعریف_کن افزودن_به_صف_CLASS		0x0040
 
-#define ENQUEUE_HEAD		0x00010000
-#define ENQUEUE_REPLENISH	0x00020000
-#define ENQUEUE_MIGRATED	0x00040000
-#define ENQUEUE_INITIAL		0x00080000
-#define ENQUEUE_RQ_SELECTED	0x00100000
-#define ENQUEUE_QUEUED		0x00200000
+#تعریف_کن افزودن_به_صف_سر		0x00010000
+#تعریف_کن افزودن_به_صف_REPLENISH	0x00020000
+#تعریف_کن افزودن_به_صف_MIGRATED	0x00040000
+#تعریف_کن افزودن_به_صف_INITIAL		0x00080000
+#تعریف_کن افزودن_به_صف_RQ_SELECTED	0x00100000
+#تعریف_کن افزودن_به_صف_QUEUED		0x00200000
 
-#define RETRY_TASK		((void *)-1UL)
+#تعریف_کن RETRY_TASK		((فراغ *)-1UL)
 
-struct affinity_context {
-	const struct cpumask	*new_mask;
-	struct cpumask		*user_mask;
-	unsigned int		flags;
+بنية affinity_context {
+	ثابت بنية cpumask	*new_ماسک;
+	بنية cpumask		*user_ماسک;
+	بیعلامت صحيح		flags;
 };
 
-extern s64 update_curr_common(struct rq *rq);
+خارجي s64 update_curr_common(بنية rq *rq);
 
-enum snt_e {
-	SNT_NORMAL,	/* set_next_task() */
+تعداد snt_e {
+	SNT_نرمال,	/* set_next_task() */
 	SNT_PICK,	/* put_prev_set_next_task(): prev != next */
 	SNT_REPICK,	/* put_prev_set_next_task(): prev == next */
 };
 
-struct sched_class {
+بنية sched_class {
 
-#ifdef CONFIG_UCLAMP_TASK
-	int uclamp_enabled;
-#endif
+#اگر_تعریف_شده CONFIG_UCLAMP_TASK
+	صحيح uclamp_enabled;
+#پایان_اگر
 
 	/*
 	 * move_queued_task/activate_task/enqueue_task: rq->lock
@@ -2663,7 +2663,7 @@ struct sched_class {
 	 * proxy_task_current: rq->lock
 	 * sched_change_end
 	 */
-	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
+	فراغ (*افزودن_به_صف_task) (بنية rq *rq, بنية task_struct *p, صحيح flags);
 	/*
 	 * move_queued_task/deactivate_task/dequeue_task: rq->lock
 	 * __schedule/block_task/dequeue_task: rq->lock
@@ -2671,16 +2671,16 @@ struct sched_class {
 	 * wait_task_inactive: task_rq_lock
 	 * sched_change_begin
 	 */
-	bool (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
+	bool (*خارج_از_صف_task) (بنية rq *rq, بنية task_struct *p, صحيح flags);
 
 	/*
 	 * do_sched_yield: rq->lock
 	 */
-	void (*yield_task)   (struct rq *rq);
+	فراغ (*yield_task)   (بنية rq *rq);
 	/*
 	 * yield_to: rq->lock (double)
 	 */
-	bool (*yield_to_task)(struct rq *rq, struct task_struct *p);
+	bool (*yield_مقصد_task)(بنية rq *rq, بنية task_struct *p);
 
 	/*
 	 * move_queued_task: rq->lock
@@ -2689,154 +2689,154 @@ struct sched_class {
 	 * ttwu_runnable: task_rq_lock
 	 * wake_up_new_task: task_rq_lock
 	 */
-	void (*wakeup_preempt)(struct rq *rq, struct task_struct *p, int flags);
+	فراغ (*wakeup_preempt)(بنية rq *rq, بنية task_struct *p, صحيح flags);
 
 	/*
 	 * schedule/pick_next_task/prev_balance: rq->lock
 	 */
-	int (*balance)(struct rq *rq, struct rq_flags *rf);
+	صحيح (*balance)(بنية rq *rq, بنية rq_flags *rf);
 
 	/*
 	 * schedule/pick_next_task: rq->lock
 	 */
-	struct task_struct *(*pick_task)(struct rq *rq, struct rq_flags *rf);
+	بنية task_struct *(*pick_task)(بنية rq *rq, بنية rq_flags *rf);
 
 	/*
 	 * sched_change:
 	 * __schedule: rq->lock
 	 */
-	void (*put_prev_task)(struct rq *rq, struct task_struct *p, struct task_struct *next);
-	void (*set_next_task)(struct rq *rq, struct task_struct *p, enum snt_e type);
+	فراغ (*put_prev_task)(بنية rq *rq, بنية task_struct *p, بنية task_struct *بعدی);
+	فراغ (*مجموعه_بعدی_task)(بنية rq *rq, بنية task_struct *p, تعداد snt_e type);
 
 	/*
 	 * select_task_rq: p->pi_lock
 	 * sched_exec: p->pi_lock
 	 */
-	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int flags);
+	صحيح  (*select_task_rq)(بنية task_struct *p, صحيح task_cpu, صحيح flags);
 
 	/*
 	 * set_task_cpu: p->pi_lock || rq->lock (ttwu like)
 	 */
-	void (*migrate_task_rq)(struct task_struct *p, int new_cpu);
+	فراغ (*migrate_task_rq)(بنية task_struct *p, صحيح new_cpu);
 
 	/*
 	 * ttwu_do_activate: rq->lock
 	 * wake_up_new_task: task_rq_lock
 	 */
-	void (*task_woken)(struct rq *this_rq, struct task_struct *task);
+	فراغ (*task_woken)(بنية rq *this_rq, بنية task_struct *task);
 
 	/*
 	 * do_set_cpus_allowed: task_rq_lock + sched_change
 	 */
-	void (*set_cpus_allowed)(struct task_struct *p, struct affinity_context *ctx);
+	فراغ (*مجموعه_cpus_allowed)(بنية task_struct *p, بنية affinity_context *ctx);
 
 	/*
 	 * sched_set_rq_{on,off}line: rq->lock
 	 */
-	void (*rq_online)(struct rq *rq);
-	void (*rq_offline)(struct rq *rq);
+	فراغ (*rq_online)(بنية rq *rq);
+	فراغ (*rq_offline)(بنية rq *rq);
 
 	/*
 	 * push_cpu_stop: p->pi_lock && rq->lock
 	 */
-	struct rq *(*find_lock_rq)(struct task_struct *p, struct rq *rq);
+	بنية rq *(*پیدا_کن_قفل_rq)(بنية task_struct *p, بنية rq *rq);
 
 	/*
 	 * hrtick: rq->lock
 	 * sched_tick: rq->lock
 	 * sched_tick_remote: rq->lock
 	 */
-	void (*task_tick)(struct rq *rq, struct task_struct *p, int queued);
+	فراغ (*task_tick)(بنية rq *rq, بنية task_struct *p, صحيح queued);
 	/*
 	 * sched_cgroup_fork: p->pi_lock
 	 */
-	void (*task_fork)(struct task_struct *p);
+	فراغ (*task_fork)(بنية task_struct *p);
 	/*
 	 * finish_task_switch: no locks
 	 */
-	void (*task_dead)(struct task_struct *p);
+	فراغ (*task_dead)(بنية task_struct *p);
 
 	/*
 	 * sched_change
 	 */
-	void (*switching_from)(struct rq *this_rq, struct task_struct *task);
-	void (*switched_from) (struct rq *this_rq, struct task_struct *task);
-	void (*switching_to)  (struct rq *this_rq, struct task_struct *task);
-	void (*switched_to)   (struct rq *this_rq, struct task_struct *task);
-	u64  (*get_prio)     (struct rq *this_rq, struct task_struct *task);
-	void (*prio_changed) (struct rq *this_rq, struct task_struct *task,
+	فراغ (*switching_from)(بنية rq *this_rq, بنية task_struct *task);
+	فراغ (*switched_from) (بنية rq *this_rq, بنية task_struct *task);
+	فراغ (*switching_مقصد)  (بنية rq *this_rq, بنية task_struct *task);
+	فراغ (*switched_مقصد)   (بنية rq *this_rq, بنية task_struct *task);
+	u64  (*get_prio)     (بنية rq *this_rq, بنية task_struct *task);
+	فراغ (*prio_تغییریافته) (بنية rq *this_rq, بنية task_struct *task,
 			      u64 oldprio);
 
 	/*
 	 * set_load_weight: task_rq_lock + sched_change
 	 * __setscheduler_parms: task_rq_lock + sched_change
 	 */
-	void (*reweight_task)(struct rq *this_rq, struct task_struct *task,
-			      const struct load_weight *lw);
+	فراغ (*reweight_task)(بنية rq *this_rq, بنية task_struct *task,
+			      ثابت بنية بارگیری_وزن *lw);
 
 	/*
 	 * sched_rr_get_interval: task_rq_lock
 	 */
-	unsigned int (*get_rr_interval)(struct rq *rq,
-					struct task_struct *task);
+	بیعلامت صحيح (*get_rr_interval)(بنية rq *rq,
+					بنية task_struct *task);
 
 	/*
 	 * task_sched_runtime: task_rq_lock
 	 */
-	void (*update_curr)(struct rq *rq);
+	فراغ (*update_curr)(بنية rq *rq);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#اگر_تعریف_شده CONFIG_FAIR_گروه_SCHED
 	/*
 	 * sched_change_group: task_rq_lock + sched_change
 	 */
-	void (*task_change_group)(struct task_struct *p);
-#endif
+	فراغ (*task_change_گروه)(بنية task_struct *p);
+#پایان_اگر
 
-#ifdef CONFIG_SCHED_CORE
+#اگر_تعریف_شده CONFIG_SCHED_CORE
 	/*
 	 * pick_next_task: rq->lock
 	 * try_steal_cookie: rq->lock (double)
 	 */
-	int (*task_is_throttled)(struct task_struct *p, int cpu);
-#endif
+	صحيح (*task_is_throttled)(بنية task_struct *p, صحيح cpu);
+#پایان_اگر
 };
 
-static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
+ساكن مضمن فراغ put_prev_task(بنية rq *rq, بنية task_struct *prev)
 {
 	WARN_ON_ONCE(rq->donor != prev);
-	prev->sched_class->put_prev_task(rq, prev, NULL);
+	prev->sched_class->put_prev_task(rq, prev, عدم);
 }
 
-static inline void set_next_task(struct rq *rq, struct task_struct *next)
+ساكن مضمن فراغ مجموعه_بعدی_task(بنية rq *rq, بنية task_struct *بعدی)
 {
-	next->sched_class->set_next_task(rq, next, SNT_NORMAL);
+	بعدی->sched_class->مجموعه_بعدی_task(rq, بعدی, SNT_نرمال);
 }
 
-static inline void
-__put_prev_set_next_dl_server(struct rq *rq,
-			      struct task_struct *prev,
-			      struct task_struct *next)
+ساكن مضمن فراغ
+__put_prev_set_next_dl_server(بنية rq *rq,
+			      بنية task_struct *prev,
+			      بنية task_struct *بعدی)
 {
-	prev->dl_server = NULL;
-	next->dl_server = rq->dl_server;
-	rq->dl_server = NULL;
+	prev->dl_server = عدم;
+	بعدی->dl_server = rq->dl_server;
+	rq->dl_server = عدم;
 }
 
-static inline void put_prev_set_next_task(struct rq *rq,
-					  struct task_struct *prev,
-					  struct task_struct *next)
+ساكن مضمن فراغ put_prev_مجموعه_بعدی_task(بنية rq *rq,
+					  بنية task_struct *prev,
+					  بنية task_struct *بعدی)
 {
 	WARN_ON_ONCE(rq->donor != prev);
 
-	__put_prev_set_next_dl_server(rq, prev, next);
+	__put_prev_set_next_dl_server(rq, prev, بعدی);
 
-	if (next == prev) {
-		next->sched_class->set_next_task(rq, next, SNT_REPICK);
-		return;
+	إذا (بعدی == prev) {
+		بعدی->sched_class->مجموعه_بعدی_task(rq, بعدی, SNT_REPICK);
+		أرجع;
 	}
 
-	prev->sched_class->put_prev_task(rq, prev, next);
-	next->sched_class->set_next_task(rq, next, SNT_PICK);
+	prev->sched_class->put_prev_task(rq, prev, بعدی);
+	بعدی->sched_class->مجموعه_بعدی_task(rq, بعدی, SNT_PICK);
 }
 
 /*
@@ -2849,263 +2849,263 @@ static inline void put_prev_set_next_task(struct rq *rq,
  *
  * Also enforce alignment on the instance, not the type, to guarantee layout.
  */
-#define DEFINE_SCHED_CLASS(name) \
-const struct sched_class name##_sched_class \
-	__aligned(__alignof__(struct sched_class)) \
+#تعریف_کن DEFINE_SCHED_CLASS(name) \
+ثابت بنية sched_class name##_sched_class \
+	__aligned(__alignof__(بنية sched_class)) \
 	__section("__" #name "_sched_class")
 
 /* Defined in include/asm-generic/vmlinux.lds.h */
-extern struct sched_class __sched_class_highest[];
-extern struct sched_class __sched_class_lowest[];
+خارجي بنية sched_class __sched_class_highest[];
+خارجي بنية sched_class __sched_class_lowest[];
 
-extern const struct sched_class stop_sched_class;
-extern const struct sched_class dl_sched_class;
-extern const struct sched_class rt_sched_class;
-extern const struct sched_class fair_sched_class;
-extern const struct sched_class idle_sched_class;
+خارجي ثابت بنية sched_class stop_sched_class;
+خارجي ثابت بنية sched_class dl_sched_class;
+خارجي ثابت بنية sched_class rt_sched_class;
+خارجي ثابت بنية sched_class fair_sched_class;
+خارجي ثابت بنية sched_class idle_sched_class;
 
 /*
  * Iterate only active classes. SCX can take over all fair tasks or be
  * completely disabled. If the former, skip fair. If the latter, skip SCX.
  */
-static inline const struct sched_class *next_active_class(const struct sched_class *class)
+ساكن مضمن ثابت بنية sched_class *بعدی_فعال_class(ثابت بنية sched_class *class)
 {
 	class++;
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (scx_switched_all() && class == &fair_sched_class)
+#اگر_تعریف_شده CONFIG_SCHED_CLASS_EXT
+	إذا (scx_switched_all() && class == &fair_sched_class)
 		class++;
-	if (!scx_enabled() && class == &ext_sched_class)
+	إذا (!scx_enabled() && class == &ext_sched_class)
 		class++;
-#endif
-	return class;
+#پایان_اگر
+	أرجع class;
 }
 
-#define for_class_range(class, _from, _to) \
-	for (class = (_from); class < (_to); class++)
+#تعریف_کن for_class_range(class, _from, مقصد_2) \
+	لكل (class = (_from); class < (مقصد_2); class++)
 
-#define for_each_class(class) \
+#تعریف_کن for_each_class(class) \
 	for_class_range(class, __sched_class_highest, __sched_class_lowest)
 
-#define for_active_class_range(class, _from, _to)				\
-	for (class = (_from); class != (_to); class = next_active_class(class))
+#تعریف_کن for_فعال_class_range(class, _from, مقصد_2)				\
+	لكل (class = (_from); class != (مقصد_2); class = بعدی_فعال_class(class))
 
-#define for_each_active_class(class)						\
-	for_active_class_range(class, __sched_class_highest, __sched_class_lowest)
+#تعریف_کن for_each_فعال_class(class)						\
+	for_فعال_class_range(class, __sched_class_highest, __sched_class_lowest)
 
-#define sched_class_above(_a, _b)	((_a) < (_b))
+#تعریف_کن sched_class_above(_a, _b)	((_a) < (_b))
 
-static inline void rq_modified_begin(struct rq *rq, const struct sched_class *class)
+ساكن مضمن فراغ rq_modified_begin(بنية rq *rq, ثابت بنية sched_class *class)
 {
-	if (sched_class_above(rq->next_class, class))
-		rq->next_class = class;
+	إذا (sched_class_above(rq->بعدی_class, class))
+		rq->بعدی_class = class;
 }
 
-static inline bool rq_modified_above(struct rq *rq, const struct sched_class *class)
+ساكن مضمن bool rq_modified_above(بنية rq *rq, ثابت بنية sched_class *class)
 {
-	return sched_class_above(rq->next_class, class);
+	أرجع sched_class_above(rq->بعدی_class, class);
 }
 
-static inline bool sched_stop_runnable(struct rq *rq)
+ساكن مضمن bool sched_stop_runnable(بنية rq *rq)
 {
-	return rq->stop && task_on_rq_queued(rq->stop);
+	أرجع rq->stop && task_on_rq_queued(rq->stop);
 }
 
-static inline bool sched_dl_runnable(struct rq *rq)
+ساكن مضمن bool sched_dl_runnable(بنية rq *rq)
 {
-	return rq->dl.dl_nr_running > 0;
+	أرجع rq->dl.dl_nr_running > 0;
 }
 
-static inline bool sched_rt_runnable(struct rq *rq)
+ساكن مضمن bool sched_rt_runnable(بنية rq *rq)
 {
-	return rq->rt.rt_queued > 0;
+	أرجع rq->rt.rt_queued > 0;
 }
 
-static inline bool sched_fair_runnable(struct rq *rq)
+ساكن مضمن bool sched_fair_runnable(بنية rq *rq)
 {
-	return rq->cfs.nr_queued > 0;
+	أرجع rq->cfs.nr_queued > 0;
 }
 
-extern struct task_struct *pick_task_fair(struct rq *rq, struct rq_flags *rf);
-extern struct task_struct *pick_task_idle(struct rq *rq, struct rq_flags *rf);
+خارجي بنية task_struct *pick_task_fair(بنية rq *rq, بنية rq_flags *rf);
+خارجي بنية task_struct *pick_task_idle(بنية rq *rq, بنية rq_flags *rf);
 
-#define SCA_CHECK		0x01
-#define SCA_MIGRATE_DISABLE	0x02
-#define SCA_MIGRATE_ENABLE	0x04
-#define SCA_USER		0x08
+#تعریف_کن SCA_CHECK		0x01
+#تعریف_کن SCA_MIGRATE_DISABLE	0x02
+#تعریف_کن SCA_MIGRATE_ENABLE	0x04
+#تعریف_کن SCA_USER		0x08
 
-extern void update_group_capacity(struct sched_domain *sd, int cpu);
+خارجي فراغ update_گروه_ظرفیت(بنية sched_domain *sd, صحيح cpu);
 
-extern void sched_balance_trigger(struct rq *rq);
+خارجي فراغ sched_balance_trigger(بنية rq *rq);
 
-extern int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx);
-extern void set_cpus_allowed_common(struct task_struct *p, struct affinity_context *ctx);
+خارجي صحيح __set_cpus_allowed_ptr(بنية task_struct *p, بنية affinity_context *ctx);
+خارجي فراغ مجموعه_cpus_allowed_common(بنية task_struct *p, بنية affinity_context *ctx);
 
-static inline bool task_allowed_on_cpu(struct task_struct *p, int cpu)
+ساكن مضمن bool task_allowed_on_cpu(بنية task_struct *p, صحيح cpu)
 {
 	/* When not in the task's cpumask, no point in looking further. */
-	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-		return false;
+	إذا (!cpumask_test_cpu(cpu, p->cpus_ptr))
+		أرجع false;
 
 	/* Can @cpu run a user thread? */
-	if (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
-		return false;
+	إذا (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
+		أرجع false;
 
-	return true;
+	أرجع true;
 }
 
-static inline cpumask_t *alloc_user_cpus_ptr(int node)
+ساكن مضمن cpumask_t *alloc_user_cpus_ptr(صحيح گره)
 {
 	/*
 	 * See set_cpus_allowed_force() above for the rcu_head usage.
 	 */
-	int size = max_t(int, cpumask_size(), sizeof(struct rcu_head));
+	صحيح اندازه = max_t(صحيح, cpumask_اندازه(), حجم(بنية rcu_سر));
 
-	return kmalloc_node(size, GFP_KERNEL, node);
+	أرجع kmalloc_گره(اندازه, GFP_KERNEL, گره);
 }
 
-static inline struct task_struct *get_push_task(struct rq *rq)
+ساكن مضمن بنية task_struct *get_افزودن_task(بنية rq *rq)
 {
-	struct task_struct *p = rq->donor;
+	بنية task_struct *p = rq->donor;
 
 	lockdep_assert_rq_held(rq);
 
-	if (rq->push_busy)
-		return NULL;
+	إذا (rq->افزودن_busy)
+		أرجع عدم;
 
-	if (p->nr_cpus_allowed == 1)
-		return NULL;
+	إذا (p->nr_cpus_allowed == 1)
+		أرجع عدم;
 
-	if (p->migration_disabled)
-		return NULL;
+	إذا (p->migration_disabled)
+		أرجع عدم;
 
-	rq->push_busy = true;
-	return get_task_struct(p);
+	rq->افزودن_busy = true;
+	أرجع get_task_struct(p);
 }
 
-extern int push_cpu_stop(void *arg);
+خارجي صحيح افزودن_cpu_stop(فراغ *arg);
 
-#ifdef CONFIG_CPU_IDLE
+#اگر_تعریف_شده CONFIG_CPU_IDLE
 
-static inline void idle_set_state(struct rq *rq,
-				  struct cpuidle_state *idle_state)
+ساكن مضمن فراغ idle_مجموعه_state(بنية rq *rq,
+				  بنية cpuidle_state *idle_state)
 {
 	rq->idle_state = idle_state;
 }
 
-static inline struct cpuidle_state *idle_get_state(struct rq *rq)
+ساكن مضمن بنية cpuidle_state *idle_get_state(بنية rq *rq)
 {
-	lockdep_assert(rcu_read_lock_any_held());
+	lockdep_assert(rcu_read_قفل_any_held());
 
-	return rq->idle_state;
+	أرجع rq->idle_state;
 }
 
-#else /* !CONFIG_CPU_IDLE: */
+#وإلا /* !CONFIG_CPU_IDLE: */
 
-static inline void idle_set_state(struct rq *rq,
-				  struct cpuidle_state *idle_state)
+ساكن مضمن فراغ idle_مجموعه_state(بنية rq *rq,
+				  بنية cpuidle_state *idle_state)
 {
 }
 
-static inline struct cpuidle_state *idle_get_state(struct rq *rq)
+ساكن مضمن بنية cpuidle_state *idle_get_state(بنية rq *rq)
 {
-	return NULL;
+	أرجع عدم;
 }
 
-#endif /* !CONFIG_CPU_IDLE */
+#پایان_اگر /* !CONFIG_CPU_IDLE */
 
-extern void schedule_idle(void);
-asmlinkage void schedule_user(void);
+خارجي فراغ زمانبندی_idle(فراغ);
+asmlinkage فراغ زمانبندی_user(فراغ);
 
-extern void sysrq_sched_debug_show(void);
-extern void sched_init_granularity(void);
-extern void update_max_interval(void);
+خارجي فراغ sysrq_sched_debug_show(فراغ);
+خارجي فراغ sched_init_granularity(فراغ);
+خارجي فراغ update_max_interval(فراغ);
 
-extern void init_sched_dl_class(void);
-extern void init_sched_rt_class(void);
-extern void init_sched_fair_class(void);
+خارجي فراغ init_sched_dl_class(فراغ);
+خارجي فراغ init_sched_rt_class(فراغ);
+خارجي فراغ init_sched_fair_class(فراغ);
 
-extern void resched_curr(struct rq *rq);
-extern void resched_curr_lazy(struct rq *rq);
-extern void resched_cpu(int cpu);
+خارجي فراغ resched_curr(بنية rq *rq);
+خارجي فراغ resched_curr_lazy(بنية rq *rq);
+خارجي فراغ resched_cpu(صحيح cpu);
 
-extern void init_rt_bandwidth(struct rt_bandwidth *rt_b, u64 period, u64 runtime);
-extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
+خارجي فراغ init_rt_bandwidth(بنية rt_bandwidth *rt_b, u64 period, u64 runtime);
+خارجي bool sched_rt_bandwidth_account(بنية rt_rq *rt_rq);
 
-extern void init_dl_entity(struct sched_dl_entity *dl_se);
+خارجي فراغ init_dl_entity(بنية sched_dl_entity *dl_se);
 
-extern void init_cfs_throttle_work(struct task_struct *p);
+خارجي فراغ init_cfs_throttle_work(بنية task_struct *p);
 
-#define BW_SHIFT		20
-#define BW_UNIT			(1 << BW_SHIFT)
-#define RATIO_SHIFT		8
-#define MAX_BW_BITS		(64 - BW_SHIFT)
-#define MAX_BW			((1ULL << MAX_BW_BITS) - 1)
+#تعریف_کن BW_لغزش		20
+#تعریف_کن BW_UNIT			(1 << BW_لغزش)
+#تعریف_کن نسبت_لغزش		8
+#تعریف_کن MAX_BW_بیتها		(64 - BW_لغزش)
+#تعریف_کن MAX_BW			((1ULL << MAX_BW_بیتها) - 1)
 
-extern u64 to_ratio(u64 period, u64 runtime);
+خارجي u64 مقصد_نسبت(u64 period, u64 runtime);
 
-extern void init_entity_runnable_average(struct sched_entity *se);
-extern void post_init_entity_util_avg(struct task_struct *p);
+خارجي فراغ init_entity_runnable_معدل(بنية sched_entity *se);
+خارجي فراغ post_init_entity_util_avg(بنية task_struct *p);
 
-#ifdef CONFIG_NO_HZ_FULL
-extern bool sched_can_stop_tick(struct rq *rq);
-extern int __init sched_tick_offload_init(void);
+#اگر_تعریف_شده CONFIG_NO_HZ_پر
+خارجي bool sched_can_stop_tick(بنية rq *rq);
+خارجي صحيح __init sched_tick_offload_init(فراغ);
 
 /*
  * Tick may be needed by tasks in the runqueue depending on their policy and
  * requirements. If tick is needed, lets send the target an IPI to kick it out of
  * nohz mode if necessary.
  */
-static inline void sched_update_tick_dependency(struct rq *rq)
+ساكن مضمن فراغ sched_update_tick_dependency(بنية rq *rq)
 {
-	int cpu = cpu_of(rq);
+	صحيح cpu = cpu_از(rq);
 
-	if (!tick_nohz_full_cpu(cpu))
-		return;
+	إذا (!tick_nohz_پر_cpu(cpu))
+		أرجع;
 
-	if (sched_can_stop_tick(rq))
-		tick_nohz_dep_clear_cpu(cpu, TICK_DEP_BIT_SCHED);
-	else
-		tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
+	إذا (sched_can_stop_tick(rq))
+		tick_nohz_dep_clear_cpu(cpu, TICK_DEP_بیت_SCHED);
+	وإلا
+		tick_nohz_dep_مجموعه_cpu(cpu, TICK_DEP_بیت_SCHED);
 }
-#else /* !CONFIG_NO_HZ_FULL: */
-static inline int sched_tick_offload_init(void) { return 0; }
-static inline void sched_update_tick_dependency(struct rq *rq) { }
-#endif /* !CONFIG_NO_HZ_FULL */
+#وإلا /* !CONFIG_NO_HZ_FULL: */
+ساكن مضمن صحيح sched_tick_offload_init(فراغ) { أرجع 0; }
+ساكن مضمن فراغ sched_update_tick_dependency(بنية rq *rq) { }
+#پایان_اگر /* !CONFIG_NO_HZ_FULL */
 
-static inline void add_nr_running(struct rq *rq, unsigned count)
+ساكن مضمن فراغ جمع_کن_nr_running(بنية rq *rq, بیعلامت شمار)
 {
-	unsigned prev_nr = rq->nr_running;
+	بیعلامت prev_nr = rq->nr_running;
 
-	rq->nr_running = prev_nr + count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, count);
+	rq->nr_running = prev_nr + شمار;
+	إذا (trace_sched_update_nr_running_tp_enabled()) {
+		call_trace_sched_update_nr_running(rq, شمار);
 	}
 
-	if (prev_nr < 2 && rq->nr_running >= 2)
-		set_rd_overloaded(rq->rd, 1);
+	إذا (prev_nr < 2 && rq->nr_running >= 2)
+		مجموعه_rd_overloaded(rq->rd, 1);
 
 	sched_update_tick_dependency(rq);
 }
 
-static inline void sub_nr_running(struct rq *rq, unsigned count)
+ساكن مضمن فراغ sub_nr_running(بنية rq *rq, بیعلامت شمار)
 {
-	rq->nr_running -= count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, -count);
+	rq->nr_running -= شمار;
+	إذا (trace_sched_update_nr_running_tp_enabled()) {
+		call_trace_sched_update_nr_running(rq, -شمار);
 	}
 
 	/* Check if we still need preemption */
 	sched_update_tick_dependency(rq);
 }
 
-static inline void __block_task(struct rq *rq, struct task_struct *p)
+ساكن مضمن فراغ __block_task(بنية rq *rq, بنية task_struct *p)
 {
-	if (p->sched_contributes_to_load)
+	إذا (p->sched_contributes_مقصد_بارگیری)
 		rq->nr_uninterruptible++;
 
-	if (p->in_iowait) {
+	إذا (p->درون_iowait) {
 		atomic_inc(&rq->nr_iowait);
-		delayacct_blkio_start();
+		delayacct_blkio_شروع();
 	}
 
 	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
@@ -3141,20 +3141,20 @@ static inline void __block_task(struct rq *rq, struct task_struct *p)
 	smp_store_release(&p->on_rq, 0);
 }
 
-extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
-extern void deactivate_task(struct rq *rq, struct task_struct *p, int flags);
+خارجي فراغ activate_task(بنية rq *rq, بنية task_struct *p, صحيح flags);
+خارجي فراغ deactivate_task(بنية rq *rq, بنية task_struct *p, صحيح flags);
 
-extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
+خارجي فراغ wakeup_preempt(بنية rq *rq, بنية task_struct *p, صحيح flags);
 
 /*
  * attach_task() -- attach the task detached by detach_task() to its new rq.
  */
-static inline void attach_task(struct rq *rq, struct task_struct *p)
+ساكن مضمن فراغ attach_task(بنية rq *rq, بنية task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
 
 	WARN_ON_ONCE(task_rq(p) != rq);
-	activate_task(rq, p, ENQUEUE_NOCLOCK);
+	activate_task(rq, p, افزودن_به_صف_NOCLOCK);
 	wakeup_preempt(rq, p, 0);
 }
 
@@ -3162,9 +3162,9 @@ static inline void attach_task(struct rq *rq, struct task_struct *p)
  * attach_one_task() -- attaches the task returned from detach_one_task() to
  * its new rq.
  */
-static inline void attach_one_task(struct rq *rq, struct task_struct *p)
+ساكن مضمن فراغ attach_one_task(بنية rq *rq, بنية task_struct *p)
 {
-	guard(rq_lock)(rq);
+	guard(rq_قفل)(rq);
 	update_rq_clock(rq);
 	attach_task(rq, p);
 }
@@ -3173,82 +3173,82 @@ static inline void attach_one_task(struct rq *rq, struct task_struct *p)
  * __attach_tasks() - attaches a list of tasks (using se.group_node) to
  * the new rq
  */
-static inline void __attach_tasks(struct rq *rq, struct list_head *tasks)
+ساكن مضمن فراغ __attach_tasks(بنية rq *rq, بنية list_سر *tasks)
 {
-	guard(rq_lock)(rq);
+	guard(rq_قفل)(rq);
 	update_rq_clock(rq);
 
-	while (!list_empty(tasks)) {
-		struct task_struct *p;
+	طالما (!list_خالی(tasks)) {
+		بنية task_struct *p;
 
-		p = list_first_entry(tasks, struct task_struct, se.group_node);
-		list_del_init(&p->se.group_node);
+		p = list_اولی_مدخل(tasks, بنية task_struct, se.گروه_گره);
+		list_del_init(&p->se.گروه_گره);
 
 		attach_task(rq, p);
 	}
 }
 
-#ifdef CONFIG_PREEMPT_RT
+#اگر_تعریف_شده CONFIG_PREEMPT_RT
 # define SCHED_NR_MIGRATE_BREAK 8
-#else
+#وإلا
 # define SCHED_NR_MIGRATE_BREAK 32
-#endif
+#پایان_اگر
 
-extern __read_mostly unsigned int sysctl_sched_nr_migrate;
-extern __read_mostly unsigned int sysctl_sched_migration_cost;
+خارجي __read_mostly بیعلامت صحيح sysctl_sched_nr_migrate;
+خارجي __read_mostly بیعلامت صحيح sysctl_sched_migration_هزینه;
 
-extern unsigned int sysctl_sched_base_slice;
+خارجي بیعلامت صحيح sysctl_sched_پایه_برش;
 
-extern int sysctl_resched_latency_warn_ms;
-extern int sysctl_resched_latency_warn_once;
+خارجي صحيح sysctl_resched_latency_warn_ms;
+خارجي صحيح sysctl_resched_latency_warn_once;
 
-extern unsigned int sysctl_sched_tunable_scaling;
+خارجي بیعلامت صحيح sysctl_sched_tunable_scaling;
 
-extern unsigned int sysctl_numa_balancing_scan_delay;
-extern unsigned int sysctl_numa_balancing_scan_period_min;
-extern unsigned int sysctl_numa_balancing_scan_period_max;
-extern unsigned int sysctl_numa_balancing_scan_size;
-extern unsigned int sysctl_numa_balancing_hot_threshold;
+خارجي بیعلامت صحيح sysctl_numa_balancing_پیمایش_delay;
+خارجي بیعلامت صحيح sysctl_numa_balancing_پیمایش_period_min;
+خارجي بیعلامت صحيح sysctl_numa_balancing_پیمایش_period_max;
+خارجي بیعلامت صحيح sysctl_numa_balancing_پیمایش_اندازه;
+خارجي بیعلامت صحيح sysctl_numa_balancing_hot_آستانه;
 
-#ifdef CONFIG_SCHED_HRTICK
+#اگر_تعریف_شده CONFIG_SCHED_HRTICK
 
 /*
  * Use hrtick when:
  *  - enabled by features
  *  - hrtimer is actually high res
  */
-static inline bool hrtick_enabled(struct rq *rq)
+ساكن مضمن bool hrtick_enabled(بنية rq *rq)
 {
-	return cpu_active(cpu_of(rq)) && hrtimer_highres_enabled();
+	أرجع cpu_فعال(cpu_از(rq)) && hrtimer_highres_enabled();
 }
 
-static inline bool hrtick_enabled_fair(struct rq *rq)
+ساكن مضمن bool hrtick_enabled_fair(بنية rq *rq)
 {
-	return sched_feat(HRTICK) && hrtick_enabled(rq);
+	أرجع sched_feat(HRTICK) && hrtick_enabled(rq);
 }
 
-static inline bool hrtick_enabled_dl(struct rq *rq)
+ساكن مضمن bool hrtick_enabled_dl(بنية rq *rq)
 {
-	return sched_feat(HRTICK_DL) && hrtick_enabled(rq);
+	أرجع sched_feat(HRTICK_DL) && hrtick_enabled(rq);
 }
 
-extern void hrtick_start(struct rq *rq, u64 delay);
-static inline bool hrtick_active(struct rq *rq)
+خارجي فراغ hrtick_شروع(بنية rq *rq, u64 delay);
+ساكن مضمن bool hrtick_فعال(بنية rq *rq)
 {
-	return hrtimer_active(&rq->hrtick_timer);
+	أرجع hrtimer_فعال(&rq->hrtick_timer);
 }
 
-#else /* !CONFIG_SCHED_HRTICK: */
-static inline bool hrtick_enabled_fair(struct rq *rq) { return false; }
-static inline bool hrtick_enabled_dl(struct rq *rq) { return false; }
-static inline bool hrtick_enabled(struct rq *rq) { return false; }
-#endif /* !CONFIG_SCHED_HRTICK */
+#وإلا /* !CONFIG_SCHED_HRTICK: */
+ساكن مضمن bool hrtick_enabled_fair(بنية rq *rq) { أرجع false; }
+ساكن مضمن bool hrtick_enabled_dl(بنية rq *rq) { أرجع false; }
+ساكن مضمن bool hrtick_enabled(بنية rq *rq) { أرجع false; }
+#پایان_اگر /* !CONFIG_SCHED_HRTICK */
 
-#ifndef arch_scale_freq_tick
-static __always_inline void arch_scale_freq_tick(void) { }
-#endif
+#اگر_تعریف_نشده arch_scale_freq_tick
+ساكن __always_inline فراغ arch_scale_freq_tick(فراغ) { }
+#پایان_اگر
 
-#ifndef arch_scale_freq_capacity
+#اگر_تعریف_نشده arch_scale_freq_ظرفیت
 /**
  * arch_scale_freq_capacity - get the frequency scale factor of a given CPU.
  * @cpu: the CPU in question.
@@ -3259,12 +3259,12 @@ static __always_inline void arch_scale_freq_tick(void) { }
  *     ------ * SCHED_CAPACITY_SCALE
  *     f_max
  */
-static __always_inline
-unsigned long arch_scale_freq_capacity(int cpu)
+ساكن __always_inline
+بیعلامت دراز arch_scale_freq_ظرفیت(صحيح cpu)
 {
-	return SCHED_CAPACITY_SCALE;
+	أرجع SCHED_ظرفیت_SCALE;
 }
-#endif
+#پایان_اگر
 
 /*
  * In double_lock_balance()/double_rq_lock(), we use raw_spin_rq_lock() to
@@ -3272,33 +3272,33 @@ unsigned long arch_scale_freq_capacity(int cpu)
  * we need to call double_rq_clock_clear_update() to clear RQCF_UPDATED of
  * rq->clock_update_flags to avoid the WARN_DOUBLE_CLOCK warning.
  */
-static inline void double_rq_clock_clear_update(struct rq *rq1, struct rq *rq2)
+ساكن مضمن فراغ double_rq_clock_clear_update(بنية rq *rq1, بنية rq *rq2)
 {
 	rq1->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 	rq2->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 }
 
-#define DEFINE_LOCK_GUARD_2(name, type, _lock, _unlock, ...)				\
+#تعریف_کن DEFINE_قفل_GUARD_2(name, type, قفل_2, _unlock, ...)				\
 __DEFINE_UNLOCK_GUARD(name, type, _unlock, type *lock2; __VA_ARGS__)			\
-static inline class_##name##_t class_##name##_constructor(type *lock, type *lock2)	\
+ساكن مضمن class_##name##_t class_##name##_constructor(type *قفل, type *lock2)	\
 	__no_context_analysis								\
-{ class_##name##_t _t = { .lock = lock, .lock2 = lock2 }, *_T = &_t;			\
-  _lock; return _t; }
-#define DECLARE_LOCK_GUARD_2_ATTRS(_name, _lock, _unlock1, _unlock2)			\
-static inline class_##_name##_t class_##_name##_constructor(lock_##_name##_t *_T1,	\
-							    lock_##_name##_t *_T2) _lock; \
-static __always_inline void __class_##_name##_cleanup_ctx1(class_##_name##_t **_T1)	\
+{ class_##name##_t _t = { .قفل = قفل, .lock2 = lock2 }, *_T = &_t;			\
+  قفل_2; أرجع _t; }
+#تعریف_کن DECLARE_قفل_GUARD_2_ATTRS(_name, قفل_2, _unlock1, _unlock2)			\
+ساكن مضمن class_##_name##_t class_##_name##_constructor(قفل_3##_name##_t *_T1,	\
+							    قفل_3##_name##_t *_T2) قفل_2; \
+ساكن __always_inline فراغ __class_##_name##_cleanup_ctx1(class_##_name##_t **_T1)	\
 	__no_context_analysis _unlock1 { }						\
-static __always_inline void __class_##_name##_cleanup_ctx2(class_##_name##_t **_T2)	\
+ساكن __always_inline فراغ __class_##_name##_cleanup_ctx2(class_##_name##_t **_T2)	\
 	__no_context_analysis _unlock2 { }
-#define WITH_LOCK_GUARD_2_ATTRS(_name, _T1, _T2)					\
+#تعریف_کن WITH_قفل_GUARD_2_ATTRS(_name, _T1, _T2)					\
 	class_##_name##_constructor(_T1, _T2),						\
-	*__UNIQUE_ID(unlock1) __cleanup(__class_##_name##_cleanup_ctx1) = (void *)(_T1),\
-	*__UNIQUE_ID(unlock2) __cleanup(__class_##_name##_cleanup_ctx2) = (void *)(_T2)
+	*__UNIQUE_ID(unlock1) __cleanup(__class_##_name##_cleanup_ctx1) = (فراغ *)(_T1),\
+	*__UNIQUE_ID(unlock2) __cleanup(__class_##_name##_cleanup_ctx2) = (فراغ *)(_T2)
 
-static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
+ساكن مضمن bool rq_ترتیب_less(بنية rq *rq1, بنية rq *rq2)
 {
-#ifdef CONFIG_SCHED_CORE
+#اگر_تعریف_شده CONFIG_SCHED_CORE
 	/*
 	 * In order to not have {0,2},{1,3} turn into into an AB-BA,
 	 * order by core-id first and cpu-id second.
@@ -3310,22 +3310,22 @@ static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
 	 *
 	 * when only cpu-id is considered.
 	 */
-	if (rq1->core->cpu < rq2->core->cpu)
-		return true;
-	if (rq1->core->cpu > rq2->core->cpu)
-		return false;
+	إذا (rq1->core->cpu < rq2->core->cpu)
+		أرجع true;
+	إذا (rq1->core->cpu > rq2->core->cpu)
+		أرجع false;
 
 	/*
 	 * __sched_core_flip() relies on SMT having cpu-id lock order.
 	 */
-#endif /* CONFIG_SCHED_CORE */
-	return rq1->cpu < rq2->cpu;
+#پایان_اگر /* CONFIG_SCHED_CORE */
+	أرجع rq1->cpu < rq2->cpu;
 }
 
-extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
+خارجي فراغ double_rq_قفل(بنية rq *rq1, بنية rq *rq2)
 	__acquires(__rq_lockp(rq1), __rq_lockp(rq2));
 
-#ifdef CONFIG_PREEMPTION
+#اگر_تعریف_شده CONFIG_PREEMPTION
 
 /*
  * fair double_lock_balance: Safely acquires both rq->locks in a fair
@@ -3335,17 +3335,17 @@ extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
  * reduces latency compared to the unfair variant below.  However, it
  * also adds more overhead and therefore may reduce throughput.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+ساكن مضمن صحيح double_قفل_balance_2(بنية rq *this_rq, بنية rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	raw_spin_rq_unlock(this_rq);
-	double_rq_lock(this_rq, busiest);
+	double_rq_قفل(this_rq, busiest);
 
-	return 1;
+	أرجع 1;
 }
 
-#else /* !CONFIG_PREEMPTION: */
+#وإلا /* !CONFIG_PREEMPTION: */
 /*
  * Unfair double_lock_balance: Optimizes throughput at the expense of
  * latency by eliminating extra atomic operations when the locks are
@@ -3353,104 +3353,104 @@ static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
  * grant the double lock to lower CPUs over higher ids under contention,
  * regardless of entry order into the function.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+ساكن مضمن صحيح double_قفل_balance_2(بنية rq *this_rq, بنية rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
+	إذا (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
 		__acquire(__rq_lockp(busiest)); /* already held */
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		أرجع 0;
 	}
 
-	if (likely(raw_spin_rq_trylock(busiest))) {
+	إذا (likely(raw_spin_rq_trylock(busiest))) {
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		أرجع 0;
 	}
 
-	if (rq_order_less(this_rq, busiest)) {
-		raw_spin_rq_lock_nested(busiest, SINGLE_DEPTH_NESTING);
+	إذا (rq_ترتیب_less(this_rq, busiest)) {
+		raw_spin_rq_قفل_nested(busiest, SINGLE_عمق_NESTING);
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		أرجع 0;
 	}
 
 	raw_spin_rq_unlock(this_rq);
-	double_rq_lock(this_rq, busiest);
+	double_rq_قفل(this_rq, busiest);
 
-	return 1;
+	أرجع 1;
 }
 
-#endif /* !CONFIG_PREEMPTION */
+#پایان_اگر /* !CONFIG_PREEMPTION */
 
 /*
  * double_lock_balance - lock the busiest runqueue, this_rq is locked already.
  */
-static inline int double_lock_balance(struct rq *this_rq, struct rq *busiest)
+ساكن مضمن صحيح double_قفل_balance(بنية rq *this_rq, بنية rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	lockdep_assert_irqs_disabled();
 
-	return _double_lock_balance(this_rq, busiest);
+	أرجع double_قفل_balance_2(this_rq, busiest);
 }
 
-static inline void double_unlock_balance(struct rq *this_rq, struct rq *busiest)
+ساكن مضمن فراغ double_unlock_balance(بنية rq *this_rq, بنية rq *busiest)
 	__releases(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) != __rq_lockp(busiest))
+	إذا (__rq_lockp(this_rq) != __rq_lockp(busiest))
 		raw_spin_rq_unlock(busiest);
-	else
+	وإلا
 		__release(__rq_lockp(busiest)); /* fake release */
-	lock_set_subclass(&__rq_lockp(this_rq)->dep_map, 0, _RET_IP_);
+	قفل_مجموعه_subclass(&__rq_lockp(this_rq)->dep_map, 0, _RET_IP_);
 }
 
-static inline void double_lock(spinlock_t *l1, spinlock_t *l2)
+ساكن مضمن فراغ double_قفل(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
-		swap(l1, l2);
+	إذا (l1 > l2)
+		جابجا(l1, l2);
 
-	spin_lock(l1);
-	spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
+	spin_قفل(l1);
+	spin_قفل_nested(l2, SINGLE_عمق_NESTING);
 }
 
-static inline void double_lock_irq(spinlock_t *l1, spinlock_t *l2)
+ساكن مضمن فراغ double_قفل_irq(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
-		swap(l1, l2);
+	إذا (l1 > l2)
+		جابجا(l1, l2);
 
-	spin_lock_irq(l1);
-	spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
+	spin_قفل_irq(l1);
+	spin_قفل_nested(l2, SINGLE_عمق_NESTING);
 }
 
-static inline void double_raw_lock(raw_spinlock_t *l1, raw_spinlock_t *l2)
+ساكن مضمن فراغ double_raw_قفل(raw_spinlock_t *l1, raw_spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
-		swap(l1, l2);
+	إذا (l1 > l2)
+		جابجا(l1, l2);
 
-	raw_spin_lock(l1);
-	raw_spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
+	raw_spin_قفل(l1);
+	raw_spin_قفل_nested(l2, SINGLE_عمق_NESTING);
 }
 
-static inline void double_raw_unlock(raw_spinlock_t *l1, raw_spinlock_t *l2)
+ساكن مضمن فراغ double_raw_unlock(raw_spinlock_t *l1, raw_spinlock_t *l2)
 	__releases(l1, l2)
 {
 	raw_spin_unlock(l1);
 	raw_spin_unlock(l2);
 }
 
-DEFINE_LOCK_GUARD_2(double_raw_spinlock, raw_spinlock_t,
-		    double_raw_lock(_T->lock, _T->lock2),
-		    double_raw_unlock(_T->lock, _T->lock2))
+DEFINE_قفل_GUARD_2(double_raw_spinlock, raw_spinlock_t,
+		    double_raw_قفل(_T->قفل, _T->lock2),
+		    double_raw_unlock(_T->قفل, _T->lock2))
 
-DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock,
+DECLARE_قفل_GUARD_2_ATTRS(double_raw_spinlock,
 			   __acquires(_T1, _T2),
 			   __releases(*(raw_spinlock_t **)_T1),
 			   __releases(*(raw_spinlock_t **)_T2));
-#define class_double_raw_spinlock_constructor(_T1, _T2) \
-	WITH_LOCK_GUARD_2_ATTRS(double_raw_spinlock, _T1, _T2)
+#تعریف_کن class_double_raw_spinlock_constructor(_T1, _T2) \
+	WITH_قفل_GUARD_2_ATTRS(double_raw_spinlock, _T1, _T2)
 
 /*
  * double_rq_unlock - safely unlock two runqueues
@@ -3458,128 +3458,128 @@ DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock,
  * Note this does not restore interrupts like task_rq_unlock,
  * you need to do so manually after calling.
  */
-static inline void double_rq_unlock(struct rq *rq1, struct rq *rq2)
+ساكن مضمن فراغ double_rq_unlock(بنية rq *rq1, بنية rq *rq2)
 	__releases(__rq_lockp(rq1), __rq_lockp(rq2))
 {
-	if (__rq_lockp(rq1) != __rq_lockp(rq2))
+	إذا (__rq_lockp(rq1) != __rq_lockp(rq2))
 		raw_spin_rq_unlock(rq2);
-	else
+	وإلا
 		__release(__rq_lockp(rq2)); /* fake release */
 	raw_spin_rq_unlock(rq1);
 }
 
-extern void set_rq_online (struct rq *rq);
-extern void set_rq_offline(struct rq *rq);
+خارجي فراغ مجموعه_rq_online (بنية rq *rq);
+خارجي فراغ مجموعه_rq_offline(بنية rq *rq);
 
-extern bool sched_smp_initialized;
+خارجي bool sched_smp_initialized;
 
-DEFINE_LOCK_GUARD_2(double_rq_lock, struct rq,
-		    double_rq_lock(_T->lock, _T->lock2),
-		    double_rq_unlock(_T->lock, _T->lock2))
+DEFINE_قفل_GUARD_2(double_rq_قفل, بنية rq,
+		    double_rq_قفل(_T->قفل, _T->lock2),
+		    double_rq_unlock(_T->قفل, _T->lock2))
 
-extern struct sched_entity *__pick_root_entity(struct cfs_rq *cfs_rq);
-extern struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq);
-extern struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq);
+خارجي بنية sched_entity *__pick_root_entity(بنية cfs_rq *cfs_rq);
+خارجي بنية sched_entity *__pick_first_entity(بنية cfs_rq *cfs_rq);
+خارجي بنية sched_entity *__pick_last_entity(بنية cfs_rq *cfs_rq);
 
-extern bool sched_debug_verbose;
+خارجي bool sched_debug_verbose;
 
-extern void print_cfs_stats(struct seq_file *m, int cpu);
-extern void print_rt_stats(struct seq_file *m, int cpu);
-extern void print_dl_stats(struct seq_file *m, int cpu);
-extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
-extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
-extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+خارجي فراغ print_cfs_stats(بنية seq_file *m, صحيح cpu);
+خارجي فراغ print_rt_stats(بنية seq_file *m, صحيح cpu);
+خارجي فراغ print_dl_stats(بنية seq_file *m, صحيح cpu);
+خارجي فراغ print_cfs_rq(بنية seq_file *m, صحيح cpu, بنية cfs_rq *cfs_rq);
+خارجي فراغ print_rt_rq(بنية seq_file *m, صحيح cpu, بنية rt_rq *rt_rq);
+خارجي فراغ print_dl_rq(بنية seq_file *m, صحيح cpu, بنية dl_rq *dl_rq);
 
-extern void resched_latency_warn(int cpu, u64 latency);
+خارجي فراغ resched_latency_warn(صحيح cpu, u64 latency);
 
-#ifdef CONFIG_NUMA_BALANCING
-extern void show_numa_stats(struct task_struct *p, struct seq_file *m);
-extern void
-print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
-		 unsigned long tpf, unsigned long gsf, unsigned long gpf);
-#endif /* CONFIG_NUMA_BALANCING */
+#اگر_تعریف_شده CONFIG_NUMA_BALANCING
+خارجي فراغ show_numa_stats(بنية task_struct *p, بنية seq_file *m);
+خارجي فراغ
+print_numa_stats(بنية seq_file *m, صحيح گره, بیعلامت دراز tsf,
+		 بیعلامت دراز tpf, بیعلامت دراز gsf, بیعلامت دراز gpf);
+#پایان_اگر /* CONFIG_NUMA_BALANCING */
 
-extern void init_cfs_rq(struct cfs_rq *cfs_rq);
-extern void init_rt_rq(struct rt_rq *rt_rq);
-extern void init_dl_rq(struct dl_rq *dl_rq);
+خارجي فراغ init_cfs_rq(بنية cfs_rq *cfs_rq);
+خارجي فراغ init_rt_rq(بنية rt_rq *rt_rq);
+خارجي فراغ init_dl_rq(بنية dl_rq *dl_rq);
 
-extern void cfs_bandwidth_usage_inc(void);
-extern void cfs_bandwidth_usage_dec(void);
+خارجي فراغ cfs_bandwidth_usage_inc(فراغ);
+خارجي فراغ cfs_bandwidth_usage_dec(فراغ);
 
-#ifdef CONFIG_NO_HZ_COMMON
+#اگر_تعریف_شده CONFIG_NO_HZ_COMMON
 
-#define NOHZ_BALANCE_KICK_BIT	0
-#define NOHZ_STATS_KICK_BIT	1
-#define NOHZ_NEWILB_KICK_BIT	2
-#define NOHZ_NEXT_KICK_BIT	3
+#تعریف_کن NOHZ_BALANCE_KICK_بیت	0
+#تعریف_کن NOHZ_STATS_KICK_بیت	1
+#تعریف_کن NOHZ_NEWILB_KICK_بیت	2
+#تعریف_کن NOHZ_بعدی_KICK_بیت	3
 
 /* Run sched_balance_domains() */
-#define NOHZ_BALANCE_KICK	BIT(NOHZ_BALANCE_KICK_BIT)
+#تعریف_کن NOHZ_BALANCE_KICK	بیت(NOHZ_BALANCE_KICK_بیت)
 /* Update blocked load */
-#define NOHZ_STATS_KICK		BIT(NOHZ_STATS_KICK_BIT)
+#تعریف_کن NOHZ_STATS_KICK		بیت(NOHZ_STATS_KICK_بیت)
 /* Update blocked load when entering idle */
-#define NOHZ_NEWILB_KICK	BIT(NOHZ_NEWILB_KICK_BIT)
+#تعریف_کن NOHZ_NEWILB_KICK	بیت(NOHZ_NEWILB_KICK_بیت)
 /* Update nohz.next_balance */
-#define NOHZ_NEXT_KICK		BIT(NOHZ_NEXT_KICK_BIT)
+#تعریف_کن NOHZ_بعدی_KICK		بیت(NOHZ_بعدی_KICK_بیت)
 
-#define NOHZ_KICK_MASK		(NOHZ_BALANCE_KICK | NOHZ_STATS_KICK | NOHZ_NEXT_KICK)
+#تعریف_کن NOHZ_KICK_ماسک		(NOHZ_BALANCE_KICK | NOHZ_STATS_KICK | NOHZ_بعدی_KICK)
 
-#define nohz_flags(cpu)		(&cpu_rq(cpu)->nohz_flags)
+#تعریف_کن nohz_flags(cpu)		(&cpu_rq(cpu)->nohz_flags)
 
-extern void nohz_balance_exit_idle(struct rq *rq);
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline void nohz_balance_exit_idle(struct rq *rq) { }
-#endif /* !CONFIG_NO_HZ_COMMON */
+خارجي فراغ nohz_balance_exit_idle(بنية rq *rq);
+#وإلا /* !CONFIG_NO_HZ_COMMON: */
+ساكن مضمن فراغ nohz_balance_exit_idle(بنية rq *rq) { }
+#پایان_اگر /* !CONFIG_NO_HZ_COMMON */
 
-#ifdef CONFIG_NO_HZ_COMMON
-extern void nohz_run_idle_balance(int cpu);
-#else
-static inline void nohz_run_idle_balance(int cpu) { }
-#endif
+#اگر_تعریف_شده CONFIG_NO_HZ_COMMON
+خارجي فراغ nohz_پیاپی_idle_balance(صحيح cpu);
+#وإلا
+ساكن مضمن فراغ nohz_پیاپی_idle_balance(صحيح cpu) { }
+#پایان_اگر
 
-#include "stats.h"
+#ضمن "stats.h"
 
-#if defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
+#إذا defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
 
-extern void __sched_core_account_forceidle(struct rq *rq);
+خارجي فراغ __sched_core_account_forceidle(بنية rq *rq);
 
-static inline void sched_core_account_forceidle(struct rq *rq)
+ساكن مضمن فراغ sched_core_account_forceidle(بنية rq *rq)
 {
-	if (schedstat_enabled())
+	إذا (schedstat_enabled())
 		__sched_core_account_forceidle(rq);
 }
 
-extern void __sched_core_tick(struct rq *rq);
+خارجي فراغ __sched_core_tick(بنية rq *rq);
 
-static inline void sched_core_tick(struct rq *rq)
+ساكن مضمن فراغ sched_core_tick(بنية rq *rq)
 {
-	if (sched_core_enabled(rq) && schedstat_enabled())
+	إذا (sched_core_enabled(rq) && schedstat_enabled())
 		__sched_core_tick(rq);
 }
 
-#else /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
+#وإلا /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
 
-static inline void sched_core_account_forceidle(struct rq *rq) { }
+ساكن مضمن فراغ sched_core_account_forceidle(بنية rq *rq) { }
 
-static inline void sched_core_tick(struct rq *rq) { }
+ساكن مضمن فراغ sched_core_tick(بنية rq *rq) { }
 
-#endif /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS) */
+#پایان_اگر /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS) */
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+#اگر_تعریف_شده CONFIG_IRQ_زمان_ACCOUNTING
 
-struct irqtime {
-	u64			total;
+بنية irqtime {
+	u64			مجموع;
 	u64			tick_delta;
-	u64			irq_start_time;
-	struct u64_stats_sync	sync;
+	u64			irq_شروع_زمان;
+	بنية u64_stats_sync	sync;
 };
 
-DECLARE_PER_CPU(struct irqtime, cpu_irqtime);
-DECLARE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DECLARE_در_هر_CPU(بنية irqtime, cpu_irqtime);
+DECLARE_STATIC_کلید_FALSE(sched_clock_irqtime);
 
-static inline int irqtime_enabled(void)
+ساكن مضمن صحيح irqtime_enabled(فراغ)
 {
-	return static_branch_likely(&sched_clock_irqtime);
+	أرجع static_branch_likely(&sched_clock_irqtime);
 }
 
 /*
@@ -3587,32 +3587,32 @@ static inline int irqtime_enabled(void)
  * Otherwise ksoftirqd's sum_exec_runtime is subtracted its own runtime
  * and never move forward.
  */
-static inline u64 irq_time_read(int cpu)
+ساكن مضمن u64 irq_زمان_read(صحيح cpu)
 {
-	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
-	unsigned int seq;
-	u64 total;
+	بنية irqtime *irqtime = &در_هر_cpu(cpu_irqtime, cpu);
+	بیعلامت صحيح seq;
+	u64 مجموع;
 
-	do {
+	افعل {
 		seq = __u64_stats_fetch_begin(&irqtime->sync);
-		total = irqtime->total;
-	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
+		مجموع = irqtime->مجموع;
+	} طالما (__u64_stats_fetch_retry(&irqtime->sync, seq));
 
-	return total;
+	أرجع مجموع;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#وإلا /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
-static inline int irqtime_enabled(void)
+ساكن مضمن صحيح irqtime_enabled(فراغ)
 {
-	return 0;
+	أرجع 0;
 }
 
-#endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
+#پایان_اگر /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-#ifdef CONFIG_CPU_FREQ
+#اگر_تعریف_شده CONFIG_CPU_FREQ
 
-DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
+DECLARE_در_هر_CPU(بنية update_util_داده __rcu *, cpufreq_update_util_داده);
 
 /**
  * cpufreq_update_util - Take a note about CPU utilization changes.
@@ -3636,34 +3636,34 @@ DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
  * but that really is a band-aid.  Going forward it should be replaced with
  * solutions targeted more specifically at RT tasks.
  */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags)
+ساكن مضمن فراغ cpufreq_update_util(بنية rq *rq, بیعلامت صحيح flags)
 {
-	struct update_util_data *data;
+	بنية update_util_داده *داده;
 
-	data = rcu_dereference_sched(*per_cpu_ptr(&cpufreq_update_util_data,
-						  cpu_of(rq)));
-	if (data)
-		data->func(data, rq_clock(rq), flags);
+	داده = rcu_dereference_sched(*در_هر_cpu_ptr(&cpufreq_update_util_داده,
+						  cpu_از(rq)));
+	إذا (داده)
+		داده->func(داده, rq_clock(rq), flags);
 }
-#else /* !CONFIG_CPU_FREQ: */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) { }
-#endif /* !CONFIG_CPU_FREQ */
+#وإلا /* !CONFIG_CPU_FREQ: */
+ساكن مضمن فراغ cpufreq_update_util(بنية rq *rq, بیعلامت صحيح flags) { }
+#پایان_اگر /* !CONFIG_CPU_FREQ */
 
-#ifdef arch_scale_freq_capacity
+#اگر_تعریف_شده arch_scale_freq_ظرفیت
 # ifndef arch_scale_freq_invariant
 #  define arch_scale_freq_invariant()	true
 # endif
-#else
+#وإلا
 # define arch_scale_freq_invariant()	false
-#endif
+#پایان_اگر
 
-unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
-				 unsigned long *min,
-				 unsigned long *max);
+بیعلامت دراز effective_cpu_util(صحيح cpu, بیعلامت دراز util_cfs,
+				 بیعلامت دراز *min,
+				 بیعلامت دراز *max);
 
-unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
-				 unsigned long min,
-				 unsigned long max);
+بیعلامت دراز sugov_effective_cpu_perf(صحيح cpu, بیعلامت دراز actual,
+				 بیعلامت دراز min,
+				 بیعلامت دراز max);
 
 
 /*
@@ -3674,35 +3674,35 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
  * greater than or equal to task's deadline density right shifted by
  * (BW_SHIFT - SCHED_CAPACITY_SHIFT) and false otherwise.
  */
-static inline bool dl_task_fits_capacity(struct task_struct *p, int cpu)
+ساكن مضمن bool dl_task_میگنجد_ظرفیت(بنية task_struct *p, صحيح cpu)
 {
-	unsigned long cap = arch_scale_cpu_capacity(cpu);
+	بیعلامت دراز cap = arch_scale_cpu_ظرفیت(cpu);
 
-	return cap >= p->dl.dl_density >> (BW_SHIFT - SCHED_CAPACITY_SHIFT);
+	أرجع cap >= p->dl.dl_density >> (BW_لغزش - SCHED_ظرفیت_لغزش);
 }
 
-static inline unsigned long cpu_bw_dl(struct rq *rq)
+ساكن مضمن بیعلامت دراز cpu_bw_dl(بنية rq *rq)
 {
-	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+	أرجع (rq->dl.running_bw * SCHED_ظرفیت_SCALE) >> BW_لغزش;
 }
 
-static inline unsigned long cpu_util_dl(struct rq *rq)
+ساكن مضمن بیعلامت دراز cpu_util_dl(بنية rq *rq)
 {
-	return READ_ONCE(rq->avg_dl.util_avg);
+	أرجع READ_ONCE(rq->avg_dl.util_avg);
 }
 
 
-extern unsigned long cpu_util_cfs(int cpu);
-extern unsigned long cpu_util_cfs_boost(int cpu);
+خارجي بیعلامت دراز cpu_util_cfs(صحيح cpu);
+خارجي بیعلامت دراز cpu_util_cfs_boost(صحيح cpu);
 
-static inline unsigned long cpu_util_rt(struct rq *rq)
+ساكن مضمن بیعلامت دراز cpu_util_rt(بنية rq *rq)
 {
-	return READ_ONCE(rq->avg_rt.util_avg);
+	أرجع READ_ONCE(rq->avg_rt.util_avg);
 }
 
-#ifdef CONFIG_UCLAMP_TASK
+#اگر_تعریف_شده CONFIG_UCLAMP_TASK
 
-unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
+بیعلامت دراز uclamp_eff_مقدار(بنية task_struct *p, تعداد uclamp_id clamp_id);
 
 /*
  * When uclamp is compiled in, the aggregation at rq level is 'turned off'
@@ -3712,9 +3712,9 @@ unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
  * Returns true if userspace opted-in to use uclamp and aggregation at rq level
  * hence is active.
  */
-static inline bool uclamp_is_used(void)
+ساكن مضمن bool uclamp_is_استفاده_شده(فراغ)
 {
-	return static_branch_likely(&sched_uclamp_used);
+	أرجع static_branch_likely(&sched_uclamp_استفاده_شده);
 }
 
 /*
@@ -3723,168 +3723,168 @@ static inline bool uclamp_is_used(void)
  * calling cpus_read_lock(). Because we never disable this
  * static key once enable it.
  */
-static inline void sched_uclamp_enable(void)
+ساكن مضمن فراغ sched_uclamp_enable(فراغ)
 {
-	if (!uclamp_is_used())
-		static_branch_enable(&sched_uclamp_used);
+	إذا (!uclamp_is_استفاده_شده())
+		static_branch_enable(&sched_uclamp_استفاده_شده);
 }
 
-static inline unsigned long uclamp_rq_get(struct rq *rq,
-					  enum uclamp_id clamp_id)
+ساكن مضمن بیعلامت دراز uclamp_rq_get(بنية rq *rq,
+					  تعداد uclamp_id clamp_id)
 {
-	return READ_ONCE(rq->uclamp[clamp_id].value);
+	أرجع READ_ONCE(rq->uclamp[clamp_id].مقدار);
 }
 
-static inline void uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id,
-				 unsigned int value)
+ساكن مضمن فراغ uclamp_rq_مجموعه(بنية rq *rq, تعداد uclamp_id clamp_id,
+				 بیعلامت صحيح مقدار)
 {
-	WRITE_ONCE(rq->uclamp[clamp_id].value, value);
+	WRITE_ONCE(rq->uclamp[clamp_id].مقدار, مقدار);
 }
 
-static inline bool uclamp_rq_is_idle(struct rq *rq)
+ساكن مضمن bool uclamp_rq_is_idle(بنية rq *rq)
 {
-	return rq->uclamp_flags & UCLAMP_FLAG_IDLE;
+	أرجع rq->uclamp_flags & UCLAMP_FLAG_IDLE;
 }
 
 /* Is the rq being capped/throttled by uclamp_max? */
-static inline bool uclamp_rq_is_capped(struct rq *rq)
+ساكن مضمن bool uclamp_rq_is_capped(بنية rq *rq)
 {
-	unsigned long rq_util;
-	unsigned long max_util;
+	بیعلامت دراز rq_util;
+	بیعلامت دراز max_util;
 
-	if (!uclamp_is_used())
-		return false;
+	إذا (!uclamp_is_استفاده_شده())
+		أرجع false;
 
-	rq_util = cpu_util_cfs(cpu_of(rq)) + cpu_util_rt(rq);
-	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
+	rq_util = cpu_util_cfs(cpu_از(rq)) + cpu_util_rt(rq);
+	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].مقدار);
 
-	return max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
+	أرجع max_util != SCHED_ظرفیت_SCALE && rq_util >= max_util;
 }
 
-#define for_each_clamp_id(clamp_id) \
-	for ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
+#تعریف_کن for_each_clamp_id(clamp_id) \
+	لكل ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
 
-extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+خارجي بیعلامت صحيح sysctl_sched_uclamp_util_min_rt_default;
 
 
-static inline unsigned int uclamp_none(enum uclamp_id clamp_id)
+ساكن مضمن بیعلامت صحيح uclamp_none(تعداد uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
-	return SCHED_CAPACITY_SCALE;
+	إذا (clamp_id == UCLAMP_MIN)
+		أرجع 0;
+	أرجع SCHED_ظرفیت_SCALE;
 }
 
 /* Integer rounded range for each bucket */
-#define UCLAMP_BUCKET_DELTA DIV_ROUND_CLOSEST(SCHED_CAPACITY_SCALE, UCLAMP_BUCKETS)
+#تعریف_کن UCLAMP_سطل_DELTA DIV_دور_CLOSEST(SCHED_ظرفیت_SCALE, UCLAMP_BUCKETS)
 
-static inline unsigned int uclamp_bucket_id(unsigned int clamp_value)
+ساكن مضمن بیعلامت صحيح uclamp_سطل_id(بیعلامت صحيح clamp_مقدار)
 {
-	return min_t(unsigned int, clamp_value / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
+	أرجع min_t(بیعلامت صحيح, clamp_مقدار / UCLAMP_سطل_DELTA, UCLAMP_BUCKETS - 1);
 }
 
-static inline void
-uclamp_se_set(struct uclamp_se *uc_se, unsigned int value, bool user_defined)
+ساكن مضمن فراغ
+uclamp_se_مجموعه(بنية uclamp_se *uc_se, بیعلامت صحيح مقدار, bool user_defined)
 {
-	uc_se->value = value;
-	uc_se->bucket_id = uclamp_bucket_id(value);
+	uc_se->مقدار = مقدار;
+	uc_se->سطل_id = uclamp_سطل_id(مقدار);
 	uc_se->user_defined = user_defined;
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
+#وإلا /* !CONFIG_UCLAMP_TASK: */
 
-static inline unsigned long
-uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+ساكن مضمن بیعلامت دراز
+uclamp_eff_مقدار(بنية task_struct *p, تعداد uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	إذا (clamp_id == UCLAMP_MIN)
+		أرجع 0;
 
-	return SCHED_CAPACITY_SCALE;
+	أرجع SCHED_ظرفیت_SCALE;
 }
 
-static inline bool uclamp_rq_is_capped(struct rq *rq) { return false; }
+ساكن مضمن bool uclamp_rq_is_capped(بنية rq *rq) { أرجع false; }
 
-static inline bool uclamp_is_used(void)
+ساكن مضمن bool uclamp_is_استفاده_شده(فراغ)
 {
-	return false;
+	أرجع false;
 }
 
-static inline void sched_uclamp_enable(void) {}
+ساكن مضمن فراغ sched_uclamp_enable(فراغ) {}
 
-static inline unsigned long
-uclamp_rq_get(struct rq *rq, enum uclamp_id clamp_id)
+ساكن مضمن بیعلامت دراز
+uclamp_rq_get(بنية rq *rq, تعداد uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	إذا (clamp_id == UCLAMP_MIN)
+		أرجع 0;
 
-	return SCHED_CAPACITY_SCALE;
+	أرجع SCHED_ظرفیت_SCALE;
 }
 
-static inline void
-uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id, unsigned int value)
+ساكن مضمن فراغ
+uclamp_rq_مجموعه(بنية rq *rq, تعداد uclamp_id clamp_id, بیعلامت صحيح مقدار)
 {
 }
 
-static inline bool uclamp_rq_is_idle(struct rq *rq)
+ساكن مضمن bool uclamp_rq_is_idle(بنية rq *rq)
 {
-	return false;
+	أرجع false;
 }
 
-#endif /* !CONFIG_UCLAMP_TASK */
+#پایان_اگر /* !CONFIG_UCLAMP_TASK */
 
-#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+#اگر_تعریف_شده CONFIG_HAVE_SCHED_AVG_IRQ
 
-static inline unsigned long cpu_util_irq(struct rq *rq)
+ساكن مضمن بیعلامت دراز cpu_util_irq(بنية rq *rq)
 {
-	return READ_ONCE(rq->avg_irq.util_avg);
+	أرجع READ_ONCE(rq->avg_irq.util_avg);
 }
 
-static inline
-unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
+ساكن مضمن
+بیعلامت دراز scale_irq_ظرفیت(بیعلامت دراز util, بیعلامت دراز irq, بیعلامت دراز max)
 {
 	util *= (max - irq);
 	util /= max;
 
-	return util;
+	أرجع util;
 
 }
 
-#else /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
+#وإلا /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
 
-static inline unsigned long cpu_util_irq(struct rq *rq)
+ساكن مضمن بیعلامت دراز cpu_util_irq(بنية rq *rq)
 {
-	return 0;
+	أرجع 0;
 }
 
-static inline
-unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
+ساكن مضمن
+بیعلامت دراز scale_irq_ظرفیت(بیعلامت دراز util, بیعلامت دراز irq, بیعلامت دراز max)
 {
-	return util;
+	أرجع util;
 }
 
-#endif /* !CONFIG_HAVE_SCHED_AVG_IRQ */
+#پایان_اگر /* !CONFIG_HAVE_SCHED_AVG_IRQ */
 
-extern void __setparam_fair(struct task_struct *p, const struct sched_attr *attr);
+خارجي فراغ __setparam_fair(بنية task_struct *p, ثابت بنية sched_attr *attr);
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+#إذا defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
 
-#define perf_domain_span(pd) (to_cpumask(((pd)->em_pd->cpus)))
+#تعریف_کن perf_domain_بازه(pd) (مقصد_cpumask(((pd)->em_pd->cpus)))
 
-DECLARE_STATIC_KEY_FALSE(sched_energy_present);
+DECLARE_STATIC_کلید_FALSE(sched_energy_present);
 
-static inline bool sched_energy_enabled(void)
+ساكن مضمن bool sched_energy_enabled(فراغ)
 {
-	return static_branch_unlikely(&sched_energy_present);
+	أرجع static_branch_unlikely(&sched_energy_present);
 }
 
-#else /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
+#وإلا /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
 
-#define perf_domain_span(pd) NULL
+#تعریف_کن perf_domain_بازه(pd) عدم
 
-static inline bool sched_energy_enabled(void) { return false; }
+ساكن مضمن bool sched_energy_enabled(فراغ) { أرجع false; }
 
-#endif /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
+#پایان_اگر /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
 
-#ifdef CONFIG_MEMBARRIER
+#اگر_تعریف_شده CONFIG_MEMBARRIER
 
 /*
  * The scheduler provides memory barriers required by membarrier between:
@@ -3892,377 +3892,377 @@ static inline bool sched_energy_enabled(void) { return false; }
  * - store to rq->membarrier_state and following user-space memory accesses.
  * In the same way it provides those guarantees around store to rq->curr.
  */
-static inline void membarrier_switch_mm(struct rq *rq,
-					struct mm_struct *prev_mm,
-					struct mm_struct *next_mm)
+ساكن مضمن فراغ membarrier_switch_mm(بنية rq *rq,
+					بنية mm_struct *prev_mm,
+					بنية mm_struct *بعدی_mm)
 {
-	int membarrier_state;
+	صحيح membarrier_state;
 
-	if (prev_mm == next_mm)
-		return;
+	إذا (prev_mm == بعدی_mm)
+		أرجع;
 
-	membarrier_state = atomic_read(&next_mm->membarrier_state);
-	if (READ_ONCE(rq->membarrier_state) == membarrier_state)
-		return;
+	membarrier_state = atomic_read(&بعدی_mm->membarrier_state);
+	إذا (READ_ONCE(rq->membarrier_state) == membarrier_state)
+		أرجع;
 
 	WRITE_ONCE(rq->membarrier_state, membarrier_state);
 }
 
-#else /* !CONFIG_MEMBARRIER: */
+#وإلا /* !CONFIG_MEMBARRIER: */
 
-static inline void membarrier_switch_mm(struct rq *rq,
-					struct mm_struct *prev_mm,
-					struct mm_struct *next_mm)
+ساكن مضمن فراغ membarrier_switch_mm(بنية rq *rq,
+					بنية mm_struct *prev_mm,
+					بنية mm_struct *بعدی_mm)
 {
 }
 
-#endif /* !CONFIG_MEMBARRIER */
+#پایان_اگر /* !CONFIG_MEMBARRIER */
 
-static inline bool is_per_cpu_kthread(struct task_struct *p)
+ساكن مضمن bool is_در_هر_cpu_kthread(بنية task_struct *p)
 {
-	if (!(p->flags & PF_KTHREAD))
-		return false;
+	إذا (!(p->flags & PF_KTHREAD))
+		أرجع false;
 
-	if (p->nr_cpus_allowed != 1)
-		return false;
+	إذا (p->nr_cpus_allowed != 1)
+		أرجع false;
 
-	return true;
+	أرجع true;
 }
 
-extern void swake_up_all_locked(struct swait_queue_head *q);
-extern void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait);
+خارجي فراغ swake_به_بالا_all_locked(بنية swait_صف_سر *q);
+خارجي فراغ __prepare_to_swait(بنية swait_صف_سر *q, بنية swait_صف *wait);
 
-extern int try_to_wake_up(struct task_struct *tsk, unsigned int state, int wake_flags);
+خارجي صحيح try_مقصد_wake_به_بالا(بنية task_struct *tsk, بیعلامت صحيح state, صحيح wake_flags);
 
-#ifdef CONFIG_PREEMPT_DYNAMIC
-extern int preempt_dynamic_mode;
-extern int sched_dynamic_mode(const char *str);
-extern void sched_dynamic_update(int mode);
-#endif
-extern const char *preempt_modes[];
+#اگر_تعریف_شده CONFIG_PREEMPT_DYNAMIC
+خارجي صحيح preempt_dynamic_نما;
+خارجي صحيح sched_dynamic_نما(ثابت حرف *str);
+خارجي فراغ sched_dynamic_update(صحيح نما);
+#پایان_اگر
+خارجي ثابت حرف *preempt_modes[];
 
-#ifdef CONFIG_SCHED_MM_CID
+#اگر_تعریف_شده CONFIG_SCHED_MM_CID
 
-static __always_inline bool cid_on_cpu(unsigned int cid)
+ساكن __always_inline bool cid_on_cpu(بیعلامت صحيح cid)
 {
-	return cid & MM_CID_ONCPU;
+	أرجع cid & MM_CID_ONCPU;
 }
 
-static __always_inline bool cid_in_transit(unsigned int cid)
+ساكن __always_inline bool cid_درون_transit(بیعلامت صحيح cid)
 {
-	return cid & MM_CID_TRANSIT;
+	أرجع cid & MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cpu_cid_to_cid(unsigned int cid)
+ساكن __always_inline بیعلامت صحيح cpu_cid_مقصد_cid(بیعلامت صحيح cid)
 {
-	return cid & ~MM_CID_ONCPU;
+	أرجع cid & ~MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_cpu_cid(unsigned int cid)
+ساكن __always_inline بیعلامت صحيح cid_مقصد_cpu_cid(بیعلامت صحيح cid)
 {
-	return cid | MM_CID_ONCPU;
+	أرجع cid | MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_transit_cid(unsigned int cid)
+ساكن __always_inline بیعلامت صحيح cid_مقصد_transit_cid(بیعلامت صحيح cid)
 {
-	return cid | MM_CID_TRANSIT;
+	أرجع cid | MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cid_from_transit_cid(unsigned int cid)
+ساكن __always_inline بیعلامت صحيح cid_from_transit_cid(بیعلامت صحيح cid)
 {
-	return cid & ~MM_CID_TRANSIT;
+	أرجع cid & ~MM_CID_TRANSIT;
 }
 
-static __always_inline bool cid_on_task(unsigned int cid)
+ساكن __always_inline bool cid_on_task(بیعلامت صحيح cid)
 {
 	/* True if none of the MM_CID_ONCPU, MM_CID_TRANSIT, MM_CID_UNSET bits is set */
-	return cid < MM_CID_TRANSIT;
+	أرجع cid < MM_CID_TRANSIT;
 }
 
-static __always_inline void mm_drop_cid(struct mm_struct *mm, unsigned int cid)
+ساكن __always_inline فراغ mm_drop_cid(بنية mm_struct *mm, بیعلامت صحيح cid)
 {
-	clear_bit(cid, mm_cidmask(mm));
+	clear_بیت(cid, mm_cidmask(mm));
 }
 
-static __always_inline void mm_unset_cid_on_task(struct task_struct *t)
+ساكن __always_inline فراغ mm_unset_cid_on_task(بنية task_struct *t)
 {
-	unsigned int cid = t->mm_cid.cid;
+	بیعلامت صحيح cid = t->mm_cid.cid;
 
 	t->mm_cid.cid = MM_CID_UNSET;
-	if (cid_on_task(cid))
+	إذا (cid_on_task(cid))
 		mm_drop_cid(t->mm, cid);
 }
 
-static __always_inline void mm_drop_cid_on_cpu(struct mm_struct *mm, struct mm_cid_pcpu *pcp)
+ساكن __always_inline فراغ mm_drop_cid_on_cpu(بنية mm_struct *mm, بنية mm_cid_pcpu *pcp)
 {
 	/* Clear the ONCPU bit, but do not set UNSET in the per CPU storage */
-	if (cid_on_cpu(pcp->cid)) {
-		pcp->cid = cpu_cid_to_cid(pcp->cid);
+	إذا (cid_on_cpu(pcp->cid)) {
+		pcp->cid = cpu_cid_مقصد_cid(pcp->cid);
 		mm_drop_cid(mm, pcp->cid);
 	}
 }
 
-static inline unsigned int __mm_get_cid(struct mm_struct *mm, unsigned int max_cids)
+ساكن مضمن بیعلامت صحيح __mm_get_cid(بنية mm_struct *mm, بیعلامت صحيح max_cids)
 {
-	unsigned int cid = find_first_zero_bit(mm_cidmask(mm), max_cids);
+	بیعلامت صحيح cid = پیدا_کن_اولی_zero_بیت(mm_cidmask(mm), max_cids);
 
-	if (cid >= max_cids)
-		return MM_CID_UNSET;
-	if (test_and_set_bit(cid, mm_cidmask(mm)))
-		return MM_CID_UNSET;
-	return cid;
+	إذا (cid >= max_cids)
+		أرجع MM_CID_UNSET;
+	إذا (test_and_مجموعه_بیت(cid, mm_cidmask(mm)))
+		أرجع MM_CID_UNSET;
+	أرجع cid;
 }
 
-static inline unsigned int mm_get_cid(struct mm_struct *mm)
+ساكن مضمن بیعلامت صحيح mm_get_cid(بنية mm_struct *mm)
 {
-	unsigned int cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
+	بیعلامت صحيح cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
 
-	while (cid == MM_CID_UNSET) {
+	طالما (cid == MM_CID_UNSET) {
 		cpu_relax();
-		cid = __mm_get_cid(mm, num_possible_cpus());
+		cid = __mm_get_cid(mm, رقم_possible_cpus());
 	}
-	return cid;
+	أرجع cid;
 }
 
-static inline unsigned int mm_cid_converge(struct mm_struct *mm, unsigned int orig_cid,
-					   unsigned int max_cids)
+ساكن مضمن بیعلامت صحيح mm_cid_converge(بنية mm_struct *mm, بیعلامت صحيح orig_cid,
+					   بیعلامت صحيح max_cids)
 {
-	unsigned int new_cid, cid = cpu_cid_to_cid(orig_cid);
+	بیعلامت صحيح new_cid, cid = cpu_cid_مقصد_cid(orig_cid);
 
 	/* Is it in the optimal CID space? */
-	if (likely(cid < max_cids))
-		return orig_cid;
+	إذا (likely(cid < max_cids))
+		أرجع orig_cid;
 
 	/* Try to find one in the optimal space. Otherwise keep the provided. */
 	new_cid = __mm_get_cid(mm, max_cids);
-	if (new_cid != MM_CID_UNSET) {
+	إذا (new_cid != MM_CID_UNSET) {
 		mm_drop_cid(mm, cid);
 		/* Preserve the ONCPU mode of the original CID */
-		return new_cid | (orig_cid & MM_CID_ONCPU);
+		أرجع new_cid | (orig_cid & MM_CID_ONCPU);
 	}
-	return orig_cid;
+	أرجع orig_cid;
 }
 
-static __always_inline void mm_cid_update_task_cid(struct task_struct *t, unsigned int cid)
+ساكن __always_inline فراغ mm_cid_update_task_cid(بنية task_struct *t, بیعلامت صحيح cid)
 {
-	if (t->mm_cid.cid != cid) {
+	إذا (t->mm_cid.cid != cid) {
 		t->mm_cid.cid = cid;
-		rseq_sched_set_ids_changed(t);
+		rseq_sched_مجموعه_ids_تغییریافته(t);
 	}
 }
 
-static __always_inline void mm_cid_update_pcpu_cid(struct mm_struct *mm, unsigned int cid)
+ساكن __always_inline فراغ mm_cid_update_pcpu_cid(بنية mm_struct *mm, بیعلامت صحيح cid)
 {
 	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
 }
 
-static __always_inline void mm_cid_from_cpu(struct task_struct *t, unsigned int cpu_cid,
-					    unsigned int mode)
+ساكن __always_inline فراغ mm_cid_from_cpu(بنية task_struct *t, بیعلامت صحيح cpu_cid,
+					    بیعلامت صحيح نما)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
-	struct mm_struct *mm = t->mm;
+	بیعلامت صحيح max_cids, tcid = t->mm_cid.cid;
+	بنية mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case where both have the ONCPU bit set */
-	if (likely(cid_on_cpu(cpu_cid & tcid))) {
-		if (likely(cpu_cid_to_cid(cpu_cid) < max_cids)) {
+	إذا (likely(cid_on_cpu(cpu_cid & tcid))) {
+		إذا (likely(cpu_cid_مقصد_cid(cpu_cid) < max_cids)) {
 			mm_cid_update_task_cid(t, cpu_cid);
-			return;
+			أرجع;
 		}
 		/* Try to converge into the optimal CID space */
 		cpu_cid = mm_cid_converge(mm, cpu_cid, max_cids);
-	} else {
+	} وإلا {
 		/* Hand over or drop the task owned CID */
-		if (cid_on_task(tcid)) {
-			if (cid_on_cpu(cpu_cid))
+		إذا (cid_on_task(tcid)) {
+			إذا (cid_on_cpu(cpu_cid))
 				mm_unset_cid_on_task(t);
-			else
-				cpu_cid = cid_to_cpu_cid(tcid);
+			وإلا
+				cpu_cid = cid_مقصد_cpu_cid(tcid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_cpu(cpu_cid))
-			cpu_cid = cid_to_cpu_cid(mm_get_cid(mm));
+		إذا (!cid_on_cpu(cpu_cid))
+			cpu_cid = cid_مقصد_cpu_cid(mm_get_cid(mm));
 
 		/* Handle the transition mode flag if required */
-		if (mode & MM_CID_TRANSIT)
-			cpu_cid = cpu_cid_to_cid(cpu_cid) | MM_CID_TRANSIT;
+		إذا (نما & MM_CID_TRANSIT)
+			cpu_cid = cpu_cid_مقصد_cid(cpu_cid) | MM_CID_TRANSIT;
 	}
 	mm_cid_update_pcpu_cid(mm, cpu_cid);
 	mm_cid_update_task_cid(t, cpu_cid);
 }
 
-static __always_inline void mm_cid_from_task(struct task_struct *t, unsigned int cpu_cid,
-					     unsigned int mode)
+ساكن __always_inline فراغ mm_cid_from_task(بنية task_struct *t, بیعلامت صحيح cpu_cid,
+					     بیعلامت صحيح نما)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
-	struct mm_struct *mm = t->mm;
+	بیعلامت صحيح max_cids, tcid = t->mm_cid.cid;
+	بنية mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case, where both have the ONCPU bit clear */
-	if (likely(cid_on_task(tcid | cpu_cid))) {
-		if (likely(tcid < max_cids)) {
+	إذا (likely(cid_on_task(tcid | cpu_cid))) {
+		إذا (likely(tcid < max_cids)) {
 			mm_cid_update_pcpu_cid(mm, tcid);
-			return;
+			أرجع;
 		}
 		/* Try to converge into the optimal CID space */
 		tcid = mm_cid_converge(mm, tcid, max_cids);
-	} else {
+	} وإلا {
 		/* Hand over or drop the CPU owned CID */
-		if (cid_on_cpu(cpu_cid)) {
-			if (cid_on_task(tcid))
+		إذا (cid_on_cpu(cpu_cid)) {
+			إذا (cid_on_task(tcid))
 				mm_drop_cid_on_cpu(mm, this_cpu_ptr(mm->mm_cid.pcpu));
-			else
-				tcid = cpu_cid_to_cid(cpu_cid);
+			وإلا
+				tcid = cpu_cid_مقصد_cid(cpu_cid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_task(tcid))
+		إذا (!cid_on_task(tcid))
 			tcid = mm_get_cid(mm);
 		/* Set the transition mode flag if required */
-		tcid |= mode & MM_CID_TRANSIT;
+		tcid |= نما & MM_CID_TRANSIT;
 	}
 	mm_cid_update_pcpu_cid(mm, tcid);
 	mm_cid_update_task_cid(t, tcid);
 }
 
-static __always_inline void mm_cid_schedin(struct task_struct *next)
+ساكن __always_inline فراغ mm_cid_schedin(بنية task_struct *بعدی)
 {
-	struct mm_struct *mm = next->mm;
-	unsigned int cpu_cid, mode;
+	بنية mm_struct *mm = بعدی->mm;
+	بیعلامت صحيح cpu_cid, نما;
 
-	if (!next->mm_cid.active)
-		return;
+	إذا (!بعدی->mm_cid.فعال)
+		أرجع;
 
 	cpu_cid = __this_cpu_read(mm->mm_cid.pcpu->cid);
-	mode = READ_ONCE(mm->mm_cid.mode);
-	if (likely(!cid_on_cpu(mode)))
-		mm_cid_from_task(next, cpu_cid, mode);
-	else
-		mm_cid_from_cpu(next, cpu_cid, mode);
+	نما = READ_ONCE(mm->mm_cid.نما);
+	إذا (likely(!cid_on_cpu(نما)))
+		mm_cid_from_task(بعدی, cpu_cid, نما);
+	وإلا
+		mm_cid_from_cpu(بعدی, cpu_cid, نما);
 }
 
-static __always_inline void mm_cid_schedout(struct task_struct *prev)
+ساكن __always_inline فراغ mm_cid_schedout(بنية task_struct *prev)
 {
-	struct mm_struct *mm = prev->mm;
-	unsigned int mode, cid;
+	بنية mm_struct *mm = prev->mm;
+	بیعلامت صحيح نما, cid;
 
 	/* During mode transitions CIDs are temporary and need to be dropped */
-	if (likely(!cid_in_transit(prev->mm_cid.cid)))
-		return;
+	إذا (likely(!cid_درون_transit(prev->mm_cid.cid)))
+		أرجع;
 
-	mode = READ_ONCE(mm->mm_cid.mode);
+	نما = READ_ONCE(mm->mm_cid.نما);
 	cid = cid_from_transit_cid(prev->mm_cid.cid);
 
 	/*
 	 * If transition mode is done, transfer ownership when the CID is
 	 * within the convergence range to optimize the next schedule in.
 	 */
-	if (!cid_in_transit(mode) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
-		if (cid_on_cpu(mode))
-			cid = cid_to_cpu_cid(cid);
+	إذا (!cid_درون_transit(نما) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
+		إذا (cid_on_cpu(نما))
+			cid = cid_مقصد_cpu_cid(cid);
 
 		/* Update both so that the next schedule in goes into the fast path */
 		mm_cid_update_pcpu_cid(mm, cid);
 		prev->mm_cid.cid = cid;
-	} else {
+	} وإلا {
 		mm_drop_cid(mm, cid);
 		prev->mm_cid.cid = MM_CID_UNSET;
 	}
 }
 
-static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next)
+ساكن مضمن فراغ mm_cid_switch_مقصد(بنية task_struct *prev, بنية task_struct *بعدی)
 {
 	mm_cid_schedout(prev);
-	mm_cid_schedin(next);
+	mm_cid_schedin(بعدی);
 }
 
-#else /* !CONFIG_SCHED_MM_CID: */
-static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next) { }
-#endif /* !CONFIG_SCHED_MM_CID */
+#وإلا /* !CONFIG_SCHED_MM_CID: */
+ساكن مضمن فراغ mm_cid_switch_مقصد(بنية task_struct *prev, بنية task_struct *بعدی) { }
+#پایان_اگر /* !CONFIG_SCHED_MM_CID */
 
-#ifdef CONFIG_SCHED_CACHE
-DECLARE_STATIC_KEY_FALSE(sched_cache_present);
-DECLARE_STATIC_KEY_FALSE(sched_cache_active);
-extern int sysctl_sched_cache_user;
-extern unsigned int llc_aggr_tolerance;
-extern unsigned int llc_epoch_period;
-extern unsigned int llc_epoch_affinity_timeout;
-extern unsigned int llc_imb_pct;
-extern unsigned int llc_overaggr_pct;
+#اگر_تعریف_شده CONFIG_SCHED_CACHE
+DECLARE_STATIC_کلید_FALSE(sched_cache_present);
+DECLARE_STATIC_کلید_FALSE(sched_cache_فعال);
+خارجي صحيح sysctl_sched_cache_user;
+خارجي بیعلامت صحيح llc_aggr_tolerance;
+خارجي بیعلامت صحيح llc_epoch_period;
+خارجي بیعلامت صحيح llc_epoch_affinity_timeout;
+خارجي بیعلامت صحيح llc_imb_pct;
+خارجي بیعلامت صحيح llc_overaggr_pct;
 
-static inline bool sched_cache_enabled(void)
+ساكن مضمن bool sched_cache_enabled(فراغ)
 {
-	return static_branch_unlikely(&sched_cache_active);
+	أرجع static_branch_unlikely(&sched_cache_فعال);
 }
 
-extern void sched_cache_active_set(void);
+خارجي فراغ sched_cache_فعال_مجموعه(فراغ);
 
-#endif
+#پایان_اگر
 
-void sched_domains_free_llc_id(int cpu);
+فراغ sched_domains_free_llc_id(صحيح cpu);
 
-extern void init_sched_mm(struct task_struct *p);
+خارجي فراغ init_sched_mm(بنية task_struct *p);
 
-extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
-extern int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se);
-static inline
-void move_queued_task_locked(struct rq *src_rq, struct rq *dst_rq, struct task_struct *task)
+خارجي u64 avg_vruntime(بنية cfs_rq *cfs_rq);
+خارجي صحيح entity_eligible(بنية cfs_rq *cfs_rq, بنية sched_entity *se);
+ساكن مضمن
+فراغ move_queued_task_locked(بنية rq *src_rq, بنية rq *dst_rq, بنية task_struct *task)
 {
 	lockdep_assert_rq_held(src_rq);
 	lockdep_assert_rq_held(dst_rq);
 
 	deactivate_task(src_rq, task, 0);
-	set_task_cpu(task, dst_rq->cpu);
+	مجموعه_task_cpu(task, dst_rq->cpu);
 	activate_task(dst_rq, task, 0);
 	wakeup_preempt(dst_rq, task, 0);
 }
 
-static inline
-bool task_is_pushable(struct rq *rq, struct task_struct *p, int cpu)
+ساكن مضمن
+bool task_is_pushable(بنية rq *rq, بنية task_struct *p, صحيح cpu)
 {
-	if (!task_on_cpu(rq, p) &&
-	    cpumask_test_cpu(cpu, &p->cpus_mask))
-		return true;
+	إذا (!task_on_cpu(rq, p) &&
+	    cpumask_test_cpu(cpu, &p->cpus_ماسک))
+		أرجع true;
 
-	return false;
+	أرجع false;
 }
 
-#ifdef CONFIG_RT_MUTEXES
+#اگر_تعریف_شده CONFIG_RT_MUTEXES
 
-static inline int __rt_effective_prio(struct task_struct *pi_task, int prio)
+ساكن مضمن صحيح __rt_effective_prio(بنية task_struct *pi_task, صحيح prio)
 {
-	if (pi_task)
+	إذا (pi_task)
 		prio = min(prio, pi_task->prio);
 
-	return prio;
+	أرجع prio;
 }
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+ساكن مضمن صحيح rt_effective_prio(بنية task_struct *p, صحيح prio)
 {
-	struct task_struct *pi_task = rt_mutex_get_top_task(p);
+	بنية task_struct *pi_task = rt_mutex_get_بالاترین_task(p);
 
-	return __rt_effective_prio(pi_task, prio);
+	أرجع __rt_effective_prio(pi_task, prio);
 }
 
-#else /* !CONFIG_RT_MUTEXES: */
+#وإلا /* !CONFIG_RT_MUTEXES: */
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+ساكن مضمن صحيح rt_effective_prio(بنية task_struct *p, صحيح prio)
 {
-	return prio;
+	أرجع prio;
 }
 
-#endif /* !CONFIG_RT_MUTEXES */
+#پایان_اگر /* !CONFIG_RT_MUTEXES */
 
-extern int __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
-extern int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
-extern const struct sched_class *__setscheduler_class(int policy, int prio);
-extern void set_load_weight(struct task_struct *p, bool update_load);
-extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
-extern bool dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+خارجي صحيح __sched_setscheduler(بنية task_struct *p, ثابت بنية sched_attr *attr, bool user, bool pi);
+خارجي صحيح __sched_setaffinity(بنية task_struct *p, بنية affinity_context *ctx);
+خارجي ثابت بنية sched_class *__setscheduler_class(صحيح policy, صحيح prio);
+خارجي فراغ مجموعه_بارگیری_وزن(بنية task_struct *p, bool update_بارگیری);
+خارجي فراغ افزودن_به_صف_task(بنية rq *rq, بنية task_struct *p, صحيح flags);
+خارجي bool خارج_از_صف_task(بنية rq *rq, بنية task_struct *p, صحيح flags);
 
-extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
+خارجي بنية balance_callback *splice_balance_callbacks(بنية rq *rq);
 
-extern void __balance_callbacks(struct rq *rq, struct rq_flags *rf);
-extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
+خارجي فراغ __balance_callbacks(بنية rq *rq, بنية rq_flags *rf);
+خارجي فراغ balance_callbacks(بنية rq *rq, بنية balance_callback *سر);
 
 /*
  * The 'sched_change' pattern is the safe, easy and slow way of changing a
@@ -4281,31 +4281,31 @@ extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
  * of the task between sched_change_begin() and sched_change_end(). Ensuring
  * the task's queueing state is idempotent across the operation.
  */
-struct sched_change_ctx {
+بنية sched_change_ctx {
 	u64			prio;
-	struct task_struct	*p;
-	const struct sched_class *class;
-	int			flags;
+	بنية task_struct	*p;
+	ثابت بنية sched_class *class;
+	صحيح			flags;
 	bool			queued;
 	bool			running;
 };
 
-struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags);
-void sched_change_end(struct sched_change_ctx *ctx);
+بنية sched_change_ctx *sched_change_begin(بنية task_struct *p, بیعلامت صحيح flags);
+فراغ sched_change_انتها(بنية sched_change_ctx *ctx);
 
-DEFINE_CLASS(sched_change, struct sched_change_ctx *,
-	     sched_change_end(_T),
+DEFINE_CLASS(sched_change, بنية sched_change_ctx *,
+	     sched_change_انتها(_T),
 	     sched_change_begin(p, flags),
-	     struct task_struct *p, unsigned int flags)
+	     بنية task_struct *p, بیعلامت صحيح flags)
 
 DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
 
-#include "ext/ext.h"
+#ضمن "ext/ext.h"
 
-#ifdef CONFIG_PREFERRED_CPU
-void sched_push_current_non_preferred_cpu(struct rq *rq);
-#else	/* !CONFIG_PREFERRED_CPU */
-static inline void sched_push_current_non_preferred_cpu(struct rq *rq) { }
-#endif
+#اگر_تعریف_شده CONFIG_PREFERRED_CPU
+فراغ sched_افزودن_current_non_preferred_cpu(بنية rq *rq);
+#وإلا	/* !CONFIG_PREFERRED_CPU */
+ساكن مضمن فراغ sched_افزودن_current_non_preferred_cpu(بنية rq *rq) { }
+#پایان_اگر
 
-#endif /* _KERNEL_SCHED_SCHED_H */
+#پایان_اگر /* _KERNEL_SCHED_SCHED_H */

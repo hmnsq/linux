@@ -13,51 +13,51 @@
  */
 
 /* Headers: */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/hotplug.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/posix-timers.h>
-#include <linux/sched/rt.h>
+#ضمن <linux/sched/clock.h>
+#ضمن <linux/sched/cputime.h>
+#ضمن <linux/sched/hotplug.h>
+#ضمن <linux/sched/isolation.h>
+#ضمن <linux/sched/posix-timers.h>
+#ضمن <linux/sched/rt.h>
 
-#include <linux/cpuidle.h>
-#include <linux/jiffies.h>
-#include <linux/kobject.h>
-#include <linux/livepatch.h>
-#include <linux/pm.h>
-#include <linux/psi.h>
-#include <linux/rhashtable.h>
-#include <linux/seq_buf.h>
-#include <linux/seqlock_api.h>
-#include <linux/slab.h>
-#include <linux/suspend.h>
-#include <linux/tsacct_kern.h>
-#include <linux/vtime.h>
-#include <linux/sysrq.h>
-#include <linux/percpu-rwsem.h>
+#ضمن <linux/cpuidle.h>
+#ضمن <linux/jiffies.h>
+#ضمن <linux/kobject.h>
+#ضمن <linux/livepatch.h>
+#ضمن <linux/pm.h>
+#ضمن <linux/psi.h>
+#ضمن <linux/rhashtable.h>
+#ضمن <linux/seq_buf.h>
+#ضمن <linux/seqlock_api.h>
+#ضمن <linux/slab.h>
+#ضمن <linux/suspend.h>
+#ضمن <linux/tsacct_kern.h>
+#ضمن <linux/vtime.h>
+#ضمن <linux/sysrq.h>
+#ضمن <linux/percpu-rwsem.h>
 
-#include <uapi/linux/sched/types.h>
+#ضمن <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "smp.h"
+#ضمن "sched.h"
+#ضمن "smp.h"
 
-#include "autogroup.h"
-#include "stats.h"
-#include "pelt.h"
+#ضمن "autogroup.h"
+#ضمن "stats.h"
+#ضمن "pelt.h"
 
 /* Source code modules: */
 
-#include "idle.c"
+#ضمن "idle.c"
 
-#include "rt.c"
-#include "cpudeadline.c"
+#ضمن "rt.c"
+#ضمن "cpudeadline.c"
 
-#include "pelt.c"
+#ضمن "pelt.c"
 
-#include "cputime.c"
-#include "deadline.c"
+#ضمن "cputime.c"
+#ضمن "deadline.c"
 
-#ifdef CONFIG_SCHED_CLASS_EXT
+#اگر_تعریف_شده CONFIG_SCHED_CLASS_EXT
 # include <linux/btf_ids.h>
 # include <linux/find.h>
 # include <linux/genalloc.h>
@@ -73,6 +73,6 @@
 # include "ext/arena.c"
 # include "ext/idle.c"
 # include "ext/sub.c"
-#endif
+#پایان_اگر
 
-#include "syscalls.c"
+#ضمن "syscalls.c"

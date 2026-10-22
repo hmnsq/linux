@@ -6,59 +6,59 @@
  *
  *  Author: Juri Lelli <j.lelli@sssup.it>
  */
-#include "sched.h"
+#ضمن "sched.h"
 
-static inline int parent(int i)
+ساكن مضمن صحيح والد(صحيح i)
 {
-	return (i - 1) >> 1;
+	أرجع (i - 1) >> 1;
 }
 
-static inline int left_child(int i)
+ساكن مضمن صحيح چپ_فرزند(صحيح i)
 {
-	return (i << 1) + 1;
+	أرجع (i << 1) + 1;
 }
 
-static inline int right_child(int i)
+ساكن مضمن صحيح راست_فرزند(صحيح i)
 {
-	return (i << 1) + 2;
+	أرجع (i << 1) + 2;
 }
 
-static void cpudl_heapify_down(struct cpudl *cp, int idx)
+ساكن فراغ cpudl_heapify_پایین(بنية cpudl *cp, صحيح idx)
 {
-	int l, r, largest;
+	صحيح l, r, بزرگترین;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	صحيح orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (left_child(idx) >= cp->size)
-		return;
+	إذا (چپ_فرزند(idx) >= cp->اندازه)
+		أرجع;
 
 	/* adapted from lib/prio_heap.c */
-	while (1) {
-		u64 largest_dl;
+	طالما (1) {
+		u64 بزرگترین_dl;
 
-		l = left_child(idx);
-		r = right_child(idx);
-		largest = idx;
-		largest_dl = orig_dl;
+		l = چپ_فرزند(idx);
+		r = راست_فرزند(idx);
+		بزرگترین = idx;
+		بزرگترین_dl = orig_dl;
 
-		if ((l < cp->size) && dl_time_before(orig_dl,
+		إذا ((l < cp->اندازه) && dl_زمان_before(orig_dl,
 						cp->elements[l].dl)) {
-			largest = l;
-			largest_dl = cp->elements[l].dl;
+			بزرگترین = l;
+			بزرگترین_dl = cp->elements[l].dl;
 		}
-		if ((r < cp->size) && dl_time_before(largest_dl,
+		إذا ((r < cp->اندازه) && dl_زمان_before(بزرگترین_dl,
 						cp->elements[r].dl))
-			largest = r;
+			بزرگترین = r;
 
-		if (largest == idx)
-			break;
+		إذا (بزرگترین == idx)
+			اكسر;
 
 		/* pull largest child onto idx */
-		cp->elements[idx].cpu = cp->elements[largest].cpu;
-		cp->elements[idx].dl = cp->elements[largest].dl;
+		cp->elements[idx].cpu = cp->elements[بزرگترین].cpu;
+		cp->elements[idx].dl = cp->elements[بزرگترین].dl;
 		cp->elements[cp->elements[idx].cpu].idx = idx;
-		idx = largest;
+		idx = بزرگترین;
 	}
 	/* actual push down of saved original values orig_* */
 	cp->elements[idx].cpu = orig_cpu;
@@ -66,44 +66,44 @@ static void cpudl_heapify_down(struct cpudl *cp, int idx)
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify_up(struct cpudl *cp, int idx)
+ساكن فراغ cpudl_heapify_به_بالا(بنية cpudl *cp, صحيح idx)
 {
-	int p;
+	صحيح p;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	صحيح orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (idx == 0)
-		return;
+	إذا (idx == 0)
+		أرجع;
 
-	do {
-		p = parent(idx);
-		if (dl_time_before(orig_dl, cp->elements[p].dl))
-			break;
+	افعل {
+		p = والد(idx);
+		إذا (dl_زمان_before(orig_dl, cp->elements[p].dl))
+			اكسر;
 		/* pull parent onto idx */
 		cp->elements[idx].cpu = cp->elements[p].cpu;
 		cp->elements[idx].dl = cp->elements[p].dl;
 		cp->elements[cp->elements[idx].cpu].idx = idx;
 		idx = p;
-	} while (idx != 0);
+	} طالما (idx != 0);
 	/* actual push up of saved original values orig_* */
 	cp->elements[idx].cpu = orig_cpu;
 	cp->elements[idx].dl = orig_dl;
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify(struct cpudl *cp, int idx)
+ساكن فراغ cpudl_heapify(بنية cpudl *cp, صحيح idx)
 {
-	if (idx > 0 && dl_time_before(cp->elements[parent(idx)].dl,
+	إذا (idx > 0 && dl_زمان_before(cp->elements[والد(idx)].dl,
 				cp->elements[idx].dl))
-		cpudl_heapify_up(cp, idx);
-	else
-		cpudl_heapify_down(cp, idx);
+		cpudl_heapify_به_بالا(cp, idx);
+	وإلا
+		cpudl_heapify_پایین(cp, idx);
 }
 
-static inline int cpudl_maximum(struct cpudl *cp)
+ساكن مضمن صحيح cpudl_بیشینه(بنية cpudl *cp)
 {
-	return cp->elements[0].cpu;
+	أرجع cp->elements[0].cpu;
 }
 
 /*
@@ -114,27 +114,27 @@ static inline int cpudl_maximum(struct cpudl *cp)
  *
  * Returns: int - CPUs were found
  */
-int cpudl_find(struct cpudl *cp, struct task_struct *p,
-	       struct cpumask *later_mask)
+صحيح cpudl_پیدا_کن(بنية cpudl *cp, بنية task_struct *p,
+	       بنية cpumask *later_ماسک)
 {
-	const struct sched_dl_entity *dl_se = &p->dl;
+	ثابت بنية sched_dl_entity *dl_se = &p->dl;
 
-	if (later_mask &&
-	    cpumask_and(later_mask, cp->free_cpus, &p->cpus_mask)) {
-		unsigned long cap, max_cap = 0;
-		int cpu, max_cpu = -1;
+	إذا (later_ماسک &&
+	    cpumask_and(later_ماسک, cp->free_cpus, &p->cpus_ماسک)) {
+		بیعلامت دراز cap, max_cap = 0;
+		صحيح cpu, max_cpu = -1;
 
-		if (!sched_asym_cpucap_active())
-			return 1;
+		إذا (!sched_asym_cpucap_فعال())
+			أرجع 1;
 
 		/* Ensure the capacity of the CPUs fits the task. */
-		for_each_cpu(cpu, later_mask) {
-			if (!dl_task_fits_capacity(p, cpu)) {
-				cpumask_clear_cpu(cpu, later_mask);
+		for_each_cpu(cpu, later_ماسک) {
+			إذا (!dl_task_میگنجد_ظرفیت(p, cpu)) {
+				cpumask_clear_cpu(cpu, later_ماسک);
 
-				cap = arch_scale_cpu_capacity(cpu);
+				cap = arch_scale_cpu_ظرفیت(cpu);
 
-				if (cap > max_cap ||
+				إذا (cap > max_cap ||
 				    (cpu == task_cpu(p) && cap == max_cap)) {
 					max_cap = cap;
 					max_cpu = cpu;
@@ -142,24 +142,24 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
 			}
 		}
 
-		if (cpumask_empty(later_mask))
-			cpumask_set_cpu(max_cpu, later_mask);
+		إذا (cpumask_خالی(later_ماسک))
+			cpumask_مجموعه_cpu(max_cpu, later_ماسک);
 
-		return 1;
-	} else {
-		int best_cpu = cpudl_maximum(cp);
+		أرجع 1;
+	} وإلا {
+		صحيح بهترین_cpu = cpudl_بیشینه(cp);
 
-		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
+		WARN_ON(بهترین_cpu != -1 && !cpu_present(بهترین_cpu));
 
-		if (cpumask_test_cpu(best_cpu, &p->cpus_mask) &&
-		    dl_time_before(dl_se->deadline, cp->elements[0].dl)) {
-			if (later_mask)
-				cpumask_set_cpu(best_cpu, later_mask);
+		إذا (cpumask_test_cpu(بهترین_cpu, &p->cpus_ماسک) &&
+		    dl_زمان_before(dl_se->deadline, cp->elements[0].dl)) {
+			إذا (later_ماسک)
+				cpumask_مجموعه_cpu(بهترین_cpu, later_ماسک);
 
-			return 1;
+			أرجع 1;
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 
 /*
@@ -172,37 +172,37 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpudl_clear(struct cpudl *cp, int cpu, bool online)
+فراغ cpudl_clear(بنية cpudl *cp, صحيح cpu, bool online)
 {
-	int old_idx, new_cpu;
-	unsigned long flags;
+	صحيح old_idx, new_cpu;
+	بیعلامت دراز flags;
 
 	WARN_ON(!cpu_present(cpu));
 
-	raw_spin_lock_irqsave(&cp->lock, flags);
+	raw_spin_قفل_irqsave(&cp->قفل, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
+	إذا (old_idx == IDX_INVALID) {
 		/*
 		 * Nothing to remove if old_idx was invalid.
 		 * This could happen if rq_online_dl or rq_offline_dl is
 		 * called for a CPU without -dl tasks running.
 		 */
-	} else {
-		new_cpu = cp->elements[cp->size - 1].cpu;
-		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
+	} وإلا {
+		new_cpu = cp->elements[cp->اندازه - 1].cpu;
+		cp->elements[old_idx].dl = cp->elements[cp->اندازه - 1].dl;
 		cp->elements[old_idx].cpu = new_cpu;
-		cp->size--;
+		cp->اندازه--;
 		cp->elements[new_cpu].idx = old_idx;
 		cp->elements[cpu].idx = IDX_INVALID;
 		cpudl_heapify(cp, old_idx);
 	}
-	if (likely(online))
+	إذا (likely(online))
 		__cpumask_set_cpu(cpu, cp->free_cpus);
-	else
+	وإلا
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
 
-	raw_spin_unlock_irqrestore(&cp->lock, flags);
+	raw_spin_unlock_irqrestore(&cp->قفل, flags);
 }
 
 /*
@@ -215,63 +215,63 @@ void cpudl_clear(struct cpudl *cp, int cpu, bool online)
  *
  * Returns: (void)
  */
-void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
+فراغ cpudl_مجموعه(بنية cpudl *cp, صحيح cpu, u64 dl)
 {
-	int old_idx;
-	unsigned long flags;
+	صحيح old_idx;
+	بیعلامت دراز flags;
 
 	WARN_ON(!cpu_present(cpu));
 
-	raw_spin_lock_irqsave(&cp->lock, flags);
+	raw_spin_قفل_irqsave(&cp->قفل, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
-		int new_idx = cp->size++;
+	إذا (old_idx == IDX_INVALID) {
+		صحيح new_idx = cp->اندازه++;
 
 		cp->elements[new_idx].dl = dl;
 		cp->elements[new_idx].cpu = cpu;
 		cp->elements[cpu].idx = new_idx;
-		cpudl_heapify_up(cp, new_idx);
+		cpudl_heapify_به_بالا(cp, new_idx);
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
-	} else {
+	} وإلا {
 		cp->elements[old_idx].dl = dl;
 		cpudl_heapify(cp, old_idx);
 	}
 
-	raw_spin_unlock_irqrestore(&cp->lock, flags);
+	raw_spin_unlock_irqrestore(&cp->قفل, flags);
 }
 
 /*
  * cpudl_init - initialize the cpudl structure
  * @cp: the cpudl max-heap context
  */
-int cpudl_init(struct cpudl *cp)
+صحيح cpudl_init(بنية cpudl *cp)
 {
-	int i;
+	صحيح i;
 
-	raw_spin_lock_init(&cp->lock);
-	cp->size = 0;
+	raw_spin_قفل_init(&cp->قفل);
+	cp->اندازه = 0;
 
-	cp->elements = kzalloc_objs(struct cpudl_item, nr_cpu_ids);
-	if (!cp->elements)
-		return -ENOMEM;
+	cp->elements = kzalloc_objs(بنية cpudl_قلم, nr_cpu_ids);
+	إذا (!cp->elements)
+		أرجع -ENOMEM;
 
-	if (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
+	إذا (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
 		kfree(cp->elements);
-		return -ENOMEM;
+		أرجع -ENOMEM;
 	}
 
 	for_each_possible_cpu(i)
 		cp->elements[i].idx = IDX_INVALID;
 
-	return 0;
+	أرجع 0;
 }
 
 /*
  * cpudl_cleanup - clean up the cpudl structure
  * @cp: the cpudl max-heap context
  */
-void cpudl_cleanup(struct cpudl *cp)
+فراغ cpudl_cleanup(بنية cpudl *cp)
 {
 	free_cpumask_var(cp->free_cpus);
 	kfree(cp->elements);

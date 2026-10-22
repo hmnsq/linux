@@ -2,37 +2,37 @@
 /*
  * /proc/schedstat implementation
  */
-#include "sched.h"
+#ضمن "sched.h"
 
-void __update_stats_wait_start(struct rq *rq, struct task_struct *p,
-			       struct sched_statistics *stats)
+فراغ __update_stats_wait_start(بنية rq *rq, بنية task_struct *p,
+			       بنية sched_statistics *stats)
 {
-	u64 wait_start, prev_wait_start;
+	u64 wait_شروع, prev_wait_شروع;
 
-	wait_start = rq_clock(rq);
-	prev_wait_start = schedstat_val(stats->wait_start);
+	wait_شروع = rq_clock(rq);
+	prev_wait_شروع = schedstat_val(stats->wait_شروع);
 
-	if (p && likely(wait_start > prev_wait_start))
-		wait_start -= prev_wait_start;
+	إذا (p && likely(wait_شروع > prev_wait_شروع))
+		wait_شروع -= prev_wait_شروع;
 
-	__schedstat_set(stats->wait_start, wait_start);
+	__schedstat_set(stats->wait_شروع, wait_شروع);
 }
 
-void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
-			     struct sched_statistics *stats)
+فراغ __update_stats_wait_end(بنية rq *rq, بنية task_struct *p,
+			     بنية sched_statistics *stats)
 {
-	u64 delta = rq_clock(rq) - schedstat_val(stats->wait_start);
+	u64 delta = rq_clock(rq) - schedstat_val(stats->wait_شروع);
 
-	if (p) {
-		if (task_on_rq_migrating(p)) {
+	إذا (p) {
+		إذا (task_on_rq_migrating(p)) {
 			/*
 			 * Preserve migrating task's wait time so wait_start
 			 * time stamp can be adjusted to accumulate wait time
 			 * prior to migration.
 			 */
-			__schedstat_set(stats->wait_start, delta);
+			__schedstat_set(stats->wait_شروع, delta);
 
-			return;
+			أرجع;
 		}
 
 		trace_sched_stat_wait(p, delta);
@@ -40,54 +40,54 @@ void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
 
 	__schedstat_set(stats->wait_max,
 			max(schedstat_val(stats->wait_max), delta));
-	__schedstat_inc(stats->wait_count);
-	__schedstat_add(stats->wait_sum, delta);
-	__schedstat_set(stats->wait_start, 0);
+	__schedstat_inc(stats->wait_شمار);
+	__schedstat_add(stats->wait_جمع, delta);
+	__schedstat_set(stats->wait_شروع, 0);
 }
 
-void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
-				    struct sched_statistics *stats)
+فراغ __update_stats_enqueue_sleeper(بنية rq *rq, بنية task_struct *p,
+				    بنية sched_statistics *stats)
 {
-	u64 sleep_start, block_start;
+	u64 sleep_شروع, بلوک_شروع;
 
-	sleep_start = schedstat_val(stats->sleep_start);
-	block_start = schedstat_val(stats->block_start);
+	sleep_شروع = schedstat_val(stats->sleep_شروع);
+	بلوک_شروع = schedstat_val(stats->بلوک_شروع);
 
-	if (sleep_start) {
-		u64 delta = rq_clock(rq) - sleep_start;
+	إذا (sleep_شروع) {
+		u64 delta = rq_clock(rq) - sleep_شروع;
 
-		if ((s64)delta < 0)
+		إذا ((s64)delta < 0)
 			delta = 0;
 
-		if (unlikely(delta > schedstat_val(stats->sleep_max)))
+		إذا (unlikely(delta > schedstat_val(stats->sleep_max)))
 			__schedstat_set(stats->sleep_max, delta);
 
-		__schedstat_set(stats->sleep_start, 0);
-		__schedstat_add(stats->sum_sleep_runtime, delta);
+		__schedstat_set(stats->sleep_شروع, 0);
+		__schedstat_add(stats->جمع_sleep_runtime, delta);
 
-		if (p) {
+		إذا (p) {
 			account_scheduler_latency(p, delta >> 10, 1);
 			trace_sched_stat_sleep(p, delta);
 		}
 	}
 
-	if (block_start) {
-		u64 delta = rq_clock(rq) - block_start;
+	إذا (بلوک_شروع) {
+		u64 delta = rq_clock(rq) - بلوک_شروع;
 
-		if ((s64)delta < 0)
+		إذا ((s64)delta < 0)
 			delta = 0;
 
-		if (unlikely(delta > schedstat_val(stats->block_max)))
-			__schedstat_set(stats->block_max, delta);
+		إذا (unlikely(delta > schedstat_val(stats->بلوک_max)))
+			__schedstat_set(stats->بلوک_max, delta);
 
-		__schedstat_set(stats->block_start, 0);
-		__schedstat_add(stats->sum_sleep_runtime, delta);
-		__schedstat_add(stats->sum_block_runtime, delta);
+		__schedstat_set(stats->بلوک_شروع, 0);
+		__schedstat_add(stats->جمع_sleep_runtime, delta);
+		__schedstat_add(stats->جمع_بلوک_runtime, delta);
 
-		if (p) {
-			if (p->in_iowait) {
-				__schedstat_add(stats->iowait_sum, delta);
-				__schedstat_inc(stats->iowait_count);
+		إذا (p) {
+			إذا (p->درون_iowait) {
+				__schedstat_add(stats->iowait_جمع, delta);
+				__schedstat_inc(stats->iowait_شمار);
 				trace_sched_stat_iowait(p, delta);
 			}
 
@@ -104,46 +104,46 @@ void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
  * Bump this up when changing the output format or the meaning of an existing
  * format, so that tools can adapt (or abort)
  */
-#define SCHEDSTAT_VERSION 17
+#تعریف_کن SCHEDSTAT_نسخه 17
 
-static int show_schedstat(struct seq_file *seq, void *v)
+ساكن صحيح show_schedstat(بنية seq_file *seq, فراغ *v)
 {
-	int cpu;
+	صحيح cpu;
 
-	if (v == (void *)1) {
-		seq_printf(seq, "version %d\n", SCHEDSTAT_VERSION);
+	إذا (v == (فراغ *)1) {
+		seq_printf(seq, "version %d\n", SCHEDSTAT_نسخه);
 		seq_printf(seq, "timestamp %lu\n", jiffies);
-	} else {
-		struct rq *rq;
-		struct sched_domain *sd;
-		int dcount = 0;
-		cpu = (unsigned long)(v - 2);
+	} وإلا {
+		بنية rq *rq;
+		بنية sched_domain *sd;
+		صحيح dcount = 0;
+		cpu = (بیعلامت دراز)(v - 2);
 		rq = cpu_rq(cpu);
 
 		/* runqueue-specific stats */
 		seq_printf(seq,
 		    "cpu%d %u 0 %u %u %u %u %llu %llu %lu",
-		    cpu, rq->yld_count,
-		    rq->sched_count, rq->sched_goidle,
-		    rq->ttwu_count, rq->ttwu_local,
-		    rq->rq_cpu_time,
-		    rq->rq_sched_info.run_delay, rq->rq_sched_info.pcount);
+		    cpu, rq->yld_شمار,
+		    rq->sched_شمار, rq->sched_goidle,
+		    rq->ttwu_شمار, rq->ttwu_local,
+		    rq->rq_cpu_زمان,
+		    rq->rq_sched_info.پیاپی_delay, rq->rq_sched_info.pcount);
 
 		seq_printf(seq, "\n");
 
 		/* domain-specific stats */
-		rcu_read_lock();
+		rcu_read_قفل();
 		for_each_domain(cpu, sd) {
-			enum cpu_idle_type itype;
+			تعداد cpu_idle_type itype;
 
 			seq_printf(seq, "domain%d %s %*pb", dcount++, sd->name,
-				   cpumask_pr_args(sched_domain_span(sd)));
-			for (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
+				   cpumask_pr_آرگومانها(sched_domain_بازه(sd)));
+			لكل (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
 				seq_printf(seq, " %u %u %u %u %u %u %u %u %u %u %u",
-				    sd->lb_count[itype],
-				    sd->lb_balanced[itype],
+				    sd->lb_شمار[itype],
+				    sd->lb_متوازن[itype],
 				    sd->lb_failed[itype],
-				    sd->lb_imbalance_load[itype],
+				    sd->lb_imbalance_بارگیری[itype],
 				    sd->lb_imbalance_util[itype],
 				    sd->lb_imbalance_task[itype],
 				    sd->lb_imbalance_misfit[itype],
@@ -154,15 +154,15 @@ static int show_schedstat(struct seq_file *seq, void *v)
 			}
 			seq_printf(seq,
 				   " %u %u %u %u %u %u %u %u %u %u %u %u\n",
-			    sd->alb_count, sd->alb_failed, sd->alb_pushed,
-			    sd->sbe_count, sd->sbe_balanced, sd->sbe_pushed,
-			    sd->sbf_count, sd->sbf_balanced, sd->sbf_pushed,
+			    sd->alb_شمار, sd->alb_failed, sd->alb_pushed,
+			    sd->sbe_شمار, sd->sbe_متوازن, sd->sbe_pushed,
+			    sd->sbf_شمار, sd->sbf_متوازن, sd->sbf_pushed,
 			    sd->ttwu_wake_remote, sd->ttwu_move_affine,
 			    sd->ttwu_move_balance);
 		}
 		rcu_read_unlock();
 	}
-	return 0;
+	أرجع 0;
 }
 
 /*
@@ -172,49 +172,49 @@ static int show_schedstat(struct seq_file *seq, void *v)
  * In a hotplugged system some CPUs, including cpu 0, may be missing so we have
  * to use cpumask_* to iterate over the CPUs.
  */
-static void *schedstat_start(struct seq_file *file, loff_t *offset)
+ساكن فراغ *schedstat_شروع(بنية seq_file *file, loff_t *جابه_جایی)
 {
-	unsigned long n = *offset;
+	بیعلامت دراز n = *جابه_جایی;
 
-	if (n == 0)
-		return (void *) 1;
+	إذا (n == 0)
+		أرجع (فراغ *) 1;
 
 	n--;
 
-	if (n > 0)
-		n = cpumask_next(n - 1, cpu_online_mask);
-	else
-		n = cpumask_first(cpu_online_mask);
+	إذا (n > 0)
+		n = cpumask_بعدی(n - 1, cpu_online_ماسک);
+	وإلا
+		n = cpumask_اولی(cpu_online_ماسک);
 
-	*offset = n + 1;
+	*جابه_جایی = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	إذا (n < nr_cpu_ids)
+		أرجع (فراغ *)(بیعلامت دراز)(n + 2);
 
-	return NULL;
+	أرجع عدم;
 }
 
-static void *schedstat_next(struct seq_file *file, void *data, loff_t *offset)
+ساكن فراغ *schedstat_بعدی(بنية seq_file *file, فراغ *داده, loff_t *جابه_جایی)
 {
-	(*offset)++;
+	(*جابه_جایی)++;
 
-	return schedstat_start(file, offset);
+	أرجع schedstat_شروع(file, جابه_جایی);
 }
 
-static void schedstat_stop(struct seq_file *file, void *data)
+ساكن فراغ schedstat_stop(بنية seq_file *file, فراغ *داده)
 {
 }
 
-static const struct seq_operations schedstat_sops = {
-	.start = schedstat_start,
-	.next  = schedstat_next,
+ساكن ثابت بنية seq_operations schedstat_sops = {
+	.شروع = schedstat_شروع,
+	.بعدی  = schedstat_بعدی,
 	.stop  = schedstat_stop,
 	.show  = show_schedstat,
 };
 
-static int __init proc_schedstat_init(void)
+ساكن صحيح __init proc_schedstat_init(فراغ)
 {
-	proc_create_seq("schedstat", 0, NULL, &schedstat_sops);
-	return 0;
+	proc_create_seq("schedstat", 0, عدم, &schedstat_sops);
+	أرجع 0;
 }
 subsys_initcall(proc_schedstat_init);
