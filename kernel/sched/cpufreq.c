@@ -5,9 +5,9 @@
  * Copyright (C) 2016, Intel Corporation
  * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
  */
-#include "sched.h"
+#अन्तर्भाव "sched.h"
 
-DEFINE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
+DEFINE_प्रत्येकम्_CPU(संरचना update_util_दत्त __rcu *, cpufreq_update_util_दत्त);
 
 /**
  * cpufreq_add_update_util_hook - Populate the CPU's update_util_data pointer.
@@ -27,20 +27,20 @@ DEFINE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
  * The update_util_data pointer of @cpu must be NULL when this function is
  * called or it will WARN() and return with no effect.
  */
-void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
-			void (*func)(struct update_util_data *data, u64 time,
-				     unsigned int flags))
+शून्य cpufreq_सङ्कलय_update_util_hook(पूर्णाङ्क cpu, संरचना update_util_दत्त *दत्त,
+			शून्य (*func)(संरचना update_util_दत्त *दत्त, u64 time,
+				     अचिह्नित पूर्णाङ्क flags))
 {
-	if (WARN_ON(!data || !func))
-		return;
+	यदि (WARN_ON(!दत्त || !func))
+		प्रत्यागम;
 
-	if (WARN_ON(per_cpu(cpufreq_update_util_data, cpu)))
-		return;
+	यदि (WARN_ON(प्रत्येकम्_cpu(cpufreq_update_util_दत्त, cpu)))
+		प्रत्यागम;
 
-	data->func = func;
-	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), data);
+	दत्त->func = func;
+	rcu_नियोजय_pointer(प्रत्येकम्_cpu(cpufreq_update_util_दत्त, cpu), दत्त);
 }
-EXPORT_SYMBOL_GPL(cpufreq_add_update_util_hook);
+EXPORT_चिह्नम्_GPL(cpufreq_सङ्कलय_update_util_hook);
 
 /**
  * cpufreq_remove_update_util_hook - Clear the CPU's update_util_data pointer.
@@ -52,11 +52,11 @@ EXPORT_SYMBOL_GPL(cpufreq_add_update_util_hook);
  * accessed via the old update_util_data pointer or invoke synchronize_rcu()
  * right after this function to avoid use-after-free.
  */
-void cpufreq_remove_update_util_hook(int cpu)
+शून्य cpufreq_remove_update_util_hook(पूर्णाङ्क cpu)
 {
-	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), NULL);
+	rcu_नियोजय_pointer(प्रत्येकम्_cpu(cpufreq_update_util_दत्त, cpu), रिक्त);
 }
-EXPORT_SYMBOL_GPL(cpufreq_remove_update_util_hook);
+EXPORT_चिह्नम्_GPL(cpufreq_remove_update_util_hook);
 
 /**
  * cpufreq_this_cpu_can_update - Check if cpufreq policy can be updated.
@@ -67,9 +67,9 @@ EXPORT_SYMBOL_GPL(cpufreq_remove_update_util_hook);
  * - dvfs_possible_from_any_cpu is set in @policy and the local CPU is not going
  *   offline (in which case it is not expected to run cpufreq updates any more).
  */
-bool cpufreq_this_cpu_can_update(struct cpufreq_policy *policy)
+bool cpufreq_this_cpu_can_update(संरचना cpufreq_policy *policy)
 {
-	return cpumask_test_cpu(smp_processor_id(), policy->cpus) ||
+	प्रत्यागम cpumask_test_cpu(smp_processor_id(), policy->cpus) ||
 		(policy->dvfs_possible_from_any_cpu &&
-		 rcu_dereference_sched(*this_cpu_ptr(&cpufreq_update_util_data)));
+		 rcu_dereference_sched(*this_cpu_ptr(&cpufreq_update_util_दत्त)));
 }

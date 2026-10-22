@@ -7,89 +7,89 @@
  * Copyright (C) 2017-2018 SUSE, Frederic Weisbecker
  *
  */
-#include <linux/sched/isolation.h>
-#include <linux/llist.h>
-#include <linux/pci.h>
-#include "sched.h"
+#अन्तर्भाव <linux/sched/isolation.h>
+#अन्तर्भाव <linux/llist.h>
+#अन्तर्भाव <linux/pci.h>
+#अन्तर्भाव "sched.h"
 
-enum hk_flags {
+गणना hk_flags {
 	HK_FLAG_DOMAIN_BOOT	= BIT(HK_TYPE_DOMAIN_BOOT),
 	HK_FLAG_DOMAIN		= BIT(HK_TYPE_DOMAIN),
 	HK_FLAG_MANAGED_IRQ	= BIT(HK_TYPE_MANAGED_IRQ),
 	HK_FLAG_KERNEL_NOISE	= BIT(HK_TYPE_KERNEL_NOISE),
 };
 
-DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
-EXPORT_SYMBOL_GPL(housekeeping_overridden);
+DEFINE_STATIC_कुञ्चिका_FALSE(housekeeping_overridden);
+EXPORT_चिह्नम्_GPL(housekeeping_overridden);
 
-struct housekeeping {
-	struct cpumask __rcu *cpumasks[HK_TYPE_MAX];
-	unsigned long flags;
+संरचना housekeeping {
+	संरचना cpumask __rcu *cpumasks[HK_TYPE_MAX];
+	अचिह्नित दीर्घ flags;
 };
 
-static struct housekeeping housekeeping;
-static __initdata LLIST_HEAD(memblock_freelist);
+स्थिर संरचना housekeeping housekeeping;
+स्थिर __initdata LLIST_शीर्ष(memblock_freelist);
 
-bool housekeeping_enabled(enum hk_type type)
+bool housekeeping_enabled(गणना hk_type type)
 {
-	return !!(READ_ONCE(housekeeping.flags) & BIT(type));
+	प्रत्यागम !!(READ_ONCE(housekeeping.flags) & BIT(type));
 }
-EXPORT_SYMBOL_GPL(housekeeping_enabled);
+EXPORT_चिह्नम्_GPL(housekeeping_enabled);
 
-static bool housekeeping_dereference_check(enum hk_type type)
+स्थिर bool housekeeping_dereference_check(गणना hk_type type)
 {
-	if (IS_ENABLED(CONFIG_LOCKDEP) && type == HK_TYPE_DOMAIN) {
+	यदि (IS_ENABLED(CONFIG_LOCKDEP) && type == HK_TYPE_DOMAIN) {
 		/* Cpuset isn't even writable yet? */
-		if (system_state <= SYSTEM_SCHEDULING)
-			return true;
+		यदि (system_state <= SYSTEM_SCHEDULING)
+			प्रत्यागम true;
 
 		/* CPU hotplug write locked, so cpuset partition can't be overwritten */
-		if (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_write_held())
-			return true;
+		यदि (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_write_held())
+			प्रत्यागम true;
 
 		/* Cpuset lock held, partitions not writable */
-		if (IS_ENABLED(CONFIG_CPUSETS) && lockdep_is_cpuset_held())
-			return true;
+		यदि (IS_ENABLED(CONFIG_CPUSETS) && lockdep_is_cpuset_held())
+			प्रत्यागम true;
 
-		return false;
+		प्रत्यागम false;
 	}
 
-	return true;
+	प्रत्यागम true;
 }
 
-static inline struct cpumask *housekeeping_cpumask_dereference(enum hk_type type)
+स्थिर अन्तःस्थ संरचना cpumask *housekeeping_cpumask_dereference(गणना hk_type type)
 {
-	return rcu_dereference_all_check(housekeeping.cpumasks[type],
+	प्रत्यागम rcu_dereference_all_check(housekeeping.cpumasks[type],
 					 housekeeping_dereference_check(type));
 }
 
-const struct cpumask *housekeeping_cpumask(enum hk_type type)
+ध्रुव संरचना cpumask *housekeeping_cpumask(गणना hk_type type)
 {
-	const struct cpumask *mask = NULL;
+	ध्रुव संरचना cpumask *आवरणम् = रिक्त;
 
-	if (static_branch_unlikely(&housekeeping_overridden)) {
-		if (READ_ONCE(housekeeping.flags) & BIT(type))
-			mask = housekeeping_cpumask_dereference(type);
+	यदि (static_branch_unlikely(&housekeeping_overridden)) {
+		यदि (READ_ONCE(housekeeping.flags) & BIT(type))
+			आवरणम् = housekeeping_cpumask_dereference(type);
 	}
-	if (!mask)
-		mask = cpu_possible_mask;
-	return mask;
+	यदि (!आवरणम्)
+		आवरणम् = cpu_possible_आवरणम्;
+	प्रत्यागम आवरणम्;
 }
-EXPORT_SYMBOL_GPL(housekeeping_cpumask);
+EXPORT_चिह्नम्_GPL(housekeeping_cpumask);
 
-int housekeeping_any_cpu(enum hk_type type)
+पूर्णाङ्क housekeeping_any_cpu(गणना hk_type type)
 {
-	int cpu;
+	पूर्णाङ्क cpu;
 
-	if (static_branch_unlikely(&housekeeping_overridden)) {
-		if (housekeeping.flags & BIT(type)) {
+	यदि (static_branch_unlikely(&housekeeping_overridden)) {
+		यदि (housekeeping.flags & BIT(type)) {
 			cpu = sched_numa_find_closest(housekeeping_cpumask(type), smp_processor_id());
-			if (cpu < nr_cpu_ids)
-				return cpu;
+			यदि (cpu < nr_cpu_ids)
+				प्रत्यागम cpu;
 
-			cpu = cpumask_any_and_distribute(housekeeping_cpumask(type), cpu_online_mask);
-			if (likely(cpu < nr_cpu_ids))
-				return cpu;
+			cpu = cpumask_any_and_distribute(housekeeping_cpumask(type), cpu_online_आवरणम्);
+			यदि (likely(cpu < nr_cpu_ids))
+				प्रत्यागम cpu;
 			/*
 			 * Unless we have another problem this can only happen
 			 * at boot time before start_secondary() brings the 1st
@@ -99,50 +99,50 @@ int housekeeping_any_cpu(enum hk_type type)
 				     type != HK_TYPE_TIMER);
 		}
 	}
-	return smp_processor_id();
+	प्रत्यागम smp_processor_id();
 }
-EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
+EXPORT_चिह्नम्_GPL(housekeeping_any_cpu);
 
-void housekeeping_affine(struct task_struct *t, enum hk_type type)
+शून्य housekeeping_affine(संरचना task_struct *t, गणना hk_type type)
 {
-	if (static_branch_unlikely(&housekeeping_overridden))
-		if (housekeeping.flags & BIT(type))
-			set_cpus_allowed_ptr(t, housekeeping_cpumask(type));
+	यदि (static_branch_unlikely(&housekeeping_overridden))
+		यदि (housekeeping.flags & BIT(type))
+			समुच्चयः_cpus_allowed_ptr(t, housekeeping_cpumask(type));
 }
-EXPORT_SYMBOL_GPL(housekeeping_affine);
+EXPORT_चिह्नम्_GPL(housekeeping_affine);
 
-bool housekeeping_test_cpu(int cpu, enum hk_type type)
+bool housekeeping_test_cpu(पूर्णाङ्क cpu, गणना hk_type type)
 {
-	if (static_branch_unlikely(&housekeeping_overridden) &&
+	यदि (static_branch_unlikely(&housekeeping_overridden) &&
 	    READ_ONCE(housekeeping.flags) & BIT(type))
-		return cpumask_test_cpu(cpu, housekeeping_cpumask(type));
-	return true;
+		प्रत्यागम cpumask_test_cpu(cpu, housekeeping_cpumask(type));
+	प्रत्यागम true;
 }
-EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
+EXPORT_चिह्नम्_GPL(housekeeping_test_cpu);
 
-int housekeeping_update(struct cpumask *isol_mask)
+पूर्णाङ्क housekeeping_update(संरचना cpumask *isol_आवरणम्)
 {
-	struct cpumask *trial, *old = NULL;
-	int err;
+	संरचना cpumask *trial, *old = रिक्त;
+	पूर्णाङ्क err;
 
-	trial = kmalloc(cpumask_size(), GFP_KERNEL);
-	if (!trial)
-		return -ENOMEM;
+	trial = kmalloc(cpumask_आकार(), GFP_KERNEL);
+	यदि (!trial)
+		प्रत्यागम -ENOMEM;
 
-	cpumask_andnot(trial, housekeeping_cpumask(HK_TYPE_DOMAIN_BOOT), isol_mask);
-	if (!cpumask_intersects(trial, cpu_online_mask)) {
+	cpumask_andnot(trial, housekeeping_cpumask(HK_TYPE_DOMAIN_BOOT), isol_आवरणम्);
+	यदि (!cpumask_intersects(trial, cpu_online_आवरणम्)) {
 		kfree(trial);
-		return -EINVAL;
+		प्रत्यागम -EINVAL;
 	}
 
-	if (!housekeeping.flags)
+	यदि (!housekeeping.flags)
 		static_branch_enable(&housekeeping_overridden);
 
-	if (housekeeping.flags & HK_FLAG_DOMAIN)
+	यदि (housekeeping.flags & HK_FLAG_DOMAIN)
 		old = housekeeping_cpumask_dereference(HK_TYPE_DOMAIN);
-	else
+	अन्यथा
 		WRITE_ONCE(housekeeping.flags, housekeeping.flags | HK_FLAG_DOMAIN);
-	rcu_assign_pointer(housekeeping.cpumasks[HK_TYPE_DOMAIN], trial);
+	rcu_नियोजय_pointer(housekeeping.cpumasks[HK_TYPE_DOMAIN], trial);
 
 	synchronize_rcu();
 
@@ -153,7 +153,7 @@ int housekeeping_update(struct cpumask *isol_mask)
 	err = workqueue_unbound_housekeeping_update(housekeeping_cpumask(HK_TYPE_DOMAIN));
 	WARN_ON_ONCE(err < 0);
 
-	err = tmigr_isolated_exclude_cpumask(isol_mask);
+	err = tmigr_isolated_exclude_cpumask(isol_आवरणम्);
 	WARN_ON_ONCE(err < 0);
 
 	err = kthreads_update_housekeeping();
@@ -161,114 +161,114 @@ int housekeeping_update(struct cpumask *isol_mask)
 
 	kfree(old);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-void __init housekeeping_init(void)
+शून्य __init housekeeping_init(शून्य)
 {
-	enum hk_type type;
+	गणना hk_type type;
 
-	if (!housekeeping.flags)
-		return;
+	यदि (!housekeeping.flags)
+		प्रत्यागम;
 
 	static_branch_enable(&housekeeping_overridden);
 
-	if (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
+	यदि (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
 		sched_tick_offload_init();
 	/*
 	 * Realloc with a proper allocator so that any cpumask update
 	 * can indifferently free the old version with kfree().
 	 */
-	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
-		struct cpumask *omask, *nmask = kmalloc(cpumask_size(), GFP_KERNEL);
+	for_each_समुच्चयः_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
+		संरचना cpumask *omask, *nmask = kmalloc(cpumask_आकार(), GFP_KERNEL);
 
-		if (WARN_ON_ONCE(!nmask))
-			return;
+		यदि (WARN_ON_ONCE(!nmask))
+			प्रत्यागम;
 
 		omask = rcu_dereference(housekeeping.cpumasks[type]);
 
 		/* We need at least one CPU to handle housekeeping work */
-		WARN_ON_ONCE(cpumask_empty(omask));
+		WARN_ON_ONCE(cpumask_रिक्तानि(omask));
 		cpumask_copy(nmask, omask);
 		RCU_INIT_POINTER(housekeeping.cpumasks[type], nmask);
-		__llist_add((struct llist_node *)omask, &memblock_freelist);
+		__llist_add((संरचना llist_ग्रन्थिः *)omask, &memblock_freelist);
 	}
 }
 
-static int __init housekeeping_late_init(void)
+स्थिर पूर्णाङ्क __init housekeeping_late_init(शून्य)
 {
-	struct llist_node *llnode, *pos, *t;
+	संरचना llist_ग्रन्थिः *llnode, *pos, *t;
 
 	/* Free allocated memblock memory, if any */
 	llnode = __llist_del_all(&memblock_freelist);
 	llist_for_each_safe(pos, t, llnode)
-		memblock_free(pos, cpumask_size());
-	return 0;
+		memblock_free(pos, cpumask_आकार());
+	प्रत्यागम 0;
 }
-pure_initcall(housekeeping_late_init);
+विशुद्धम्_initcall(housekeeping_late_init);
 
-static void __init housekeeping_setup_type(enum hk_type type,
+स्थिर शून्य __init housekeeping_सज्जता_type(गणना hk_type type,
 					   cpumask_var_t housekeeping_staging)
 {
-	struct cpumask *mask = memblock_alloc_or_panic(cpumask_size(), SMP_CACHE_BYTES);
+	संरचना cpumask *आवरणम् = memblock_alloc_or_panic(cpumask_आकार(), SMP_CACHE_अष्टकानि);
 
-	cpumask_copy(mask, housekeeping_staging);
-	RCU_INIT_POINTER(housekeeping.cpumasks[type], mask);
+	cpumask_copy(आवरणम्, housekeeping_staging);
+	RCU_INIT_POINTER(housekeeping.cpumasks[type], आवरणम्);
 }
 
-static int __init housekeeping_setup(char *str, unsigned long flags)
+स्थिर पूर्णाङ्क __init housekeeping_सज्जता(वर्ण *str, अचिह्नित दीर्घ flags)
 {
-	cpumask_var_t non_housekeeping_mask, housekeeping_staging;
-	unsigned int first_cpu;
-	int err = 0;
+	cpumask_var_t non_housekeeping_आवरणम्, housekeeping_staging;
+	अचिह्नित पूर्णाङ्क first_cpu;
+	पूर्णाङ्क err = 0;
 
-	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE)) {
-		if (!IS_ENABLED(CONFIG_NO_HZ_FULL)) {
+	यदि ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE)) {
+		यदि (!IS_ENABLED(CONFIG_NO_HZ_पूर्णम्)) {
 			pr_warn("Housekeeping: nohz unsupported."
 				" Build with CONFIG_NO_HZ_FULL\n");
-			return 0;
+			प्रत्यागम 0;
 		}
 	}
 
-	alloc_bootmem_cpumask_var(&non_housekeeping_mask);
-	if (cpulist_parse(str, non_housekeeping_mask) < 0) {
+	alloc_bootmem_cpumask_var(&non_housekeeping_आवरणम्);
+	यदि (cpulist_parse(str, non_housekeeping_आवरणम्) < 0) {
 		pr_warn("Housekeeping: nohz_full= or isolcpus= incorrect CPU range\n");
-		goto free_non_housekeeping_mask;
+		गच्छ free_non_housekeeping_आवरणम्;
 	}
 
 	alloc_bootmem_cpumask_var(&housekeeping_staging);
 	cpumask_andnot(housekeeping_staging,
-		       cpu_possible_mask, non_housekeeping_mask);
+		       cpu_possible_आवरणम्, non_housekeeping_आवरणम्);
 
-	first_cpu = cpumask_first_and(cpu_present_mask, housekeeping_staging);
-	if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
+	first_cpu = cpumask_first_and(cpu_present_आवरणम्, housekeeping_staging);
+	यदि (first_cpu >= nr_cpu_ids || first_cpu >= सज्जता_max_cpus) {
 		__cpumask_set_cpu(smp_processor_id(), housekeeping_staging);
-		__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
-		if (!housekeeping.flags) {
+		__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_आवरणम्);
+		यदि (!housekeeping.flags) {
 			pr_warn("Housekeeping: must include one present CPU, "
 				"using boot CPU:%d\n", smp_processor_id());
 		}
 	}
 
-	if (cpumask_empty(non_housekeeping_mask))
-		goto free_housekeeping_staging;
+	यदि (cpumask_रिक्तानि(non_housekeeping_आवरणम्))
+		गच्छ free_housekeeping_staging;
 
-	if (!housekeeping.flags) {
+	यदि (!housekeeping.flags) {
 		/* First setup call ("nohz_full=" or "isolcpus=") */
-		enum hk_type type;
+		गणना hk_type type;
 
-		for_each_set_bit(type, &flags, HK_TYPE_MAX)
-			housekeeping_setup_type(type, housekeeping_staging);
-	} else {
+		for_each_समुच्चयः_bit(type, &flags, HK_TYPE_MAX)
+			housekeeping_सज्जता_type(type, housekeeping_staging);
+	} अन्यथा {
 		/* Second setup call ("nohz_full=" after "isolcpus=" or the reverse) */
-		enum hk_type type;
-		unsigned long iter_flags = flags & housekeeping.flags;
+		गणना hk_type type;
+		अचिह्नित दीर्घ iter_flags = flags & housekeeping.flags;
 
-		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX) {
-			if (!cpumask_equal(housekeeping_staging,
+		for_each_समुच्चयः_bit(type, &iter_flags, HK_TYPE_MAX) {
+			यदि (!cpumask_equal(housekeeping_staging,
 					   housekeeping_cpumask(type))) {
 				pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
-				goto free_housekeeping_staging;
+				गच्छ free_housekeeping_staging;
 			}
 		}
 
@@ -286,86 +286,86 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
 		 */
 		iter_flags = flags & (HK_FLAG_KERNEL_NOISE | HK_FLAG_DOMAIN);
 		first_cpu = (type == HK_TYPE_MAX || !iter_flags) ? 0 :
-			    cpumask_first_and_and(cpu_present_mask,
+			    cpumask_first_and_and(cpu_present_आवरणम्,
 						  housekeeping_staging, housekeeping_cpumask(type));
-		if (first_cpu >= min(nr_cpu_ids, setup_max_cpus)) {
+		यदि (first_cpu >= min(nr_cpu_ids, सज्जता_max_cpus)) {
 			pr_warn("Housekeeping: must include one present CPU "
 				"neither in nohz_full= nor in isolcpus=domain, "
 				"ignoring setting %s\n", str);
-			goto free_housekeeping_staging;
+			गच्छ free_housekeeping_staging;
 		}
 
 		iter_flags = flags & ~housekeeping.flags;
 
-		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX)
-			housekeeping_setup_type(type, housekeeping_staging);
+		for_each_समुच्चयः_bit(type, &iter_flags, HK_TYPE_MAX)
+			housekeeping_सज्जता_type(type, housekeeping_staging);
 	}
 
-	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE))
-		tick_nohz_full_setup(non_housekeeping_mask);
+	यदि ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE))
+		tick_nohz_पूर्णम्_सज्जता(non_housekeeping_आवरणम्);
 
 	housekeeping.flags |= flags;
 	err = 1;
 
 free_housekeeping_staging:
 	free_bootmem_cpumask_var(housekeeping_staging);
-free_non_housekeeping_mask:
-	free_bootmem_cpumask_var(non_housekeeping_mask);
+free_non_housekeeping_आवरणम्:
+	free_bootmem_cpumask_var(non_housekeeping_आवरणम्);
 
-	return err;
+	प्रत्यागम err;
 }
 
-static int __init housekeeping_nohz_full_setup(char *str)
+स्थिर पूर्णाङ्क __init housekeeping_nohz_पूर्णम्_सज्जता(वर्ण *str)
 {
-	unsigned long flags;
+	अचिह्नित दीर्घ flags;
 
 	flags = HK_FLAG_KERNEL_NOISE;
 
-	return housekeeping_setup(str, flags);
+	प्रत्यागम housekeeping_सज्जता(str, flags);
 }
-__setup("nohz_full=", housekeeping_nohz_full_setup);
+__setup("nohz_full=", housekeeping_nohz_पूर्णम्_सज्जता);
 
-static int __init housekeeping_isolcpus_setup(char *str)
+स्थिर पूर्णाङ्क __init housekeeping_isolcpus_सज्जता(वर्ण *str)
 {
-	unsigned long flags = 0;
+	अचिह्नित दीर्घ flags = 0;
 	bool illegal = false;
-	char *par;
-	int len;
+	वर्ण *par;
+	पूर्णाङ्क len;
 
-	while (isalpha(*str)) {
+	यावत् (अक्षरम्_वा(*str)) {
 		/*
 		 * isolcpus=nohz is equivalent to nohz_full.
 		 */
-		if (!strncmp(str, "nohz,", 5)) {
+		यदि (!वाक्ये_तुलय(str, "nohz,", 5)) {
 			str += 5;
 			flags |= HK_FLAG_KERNEL_NOISE;
-			continue;
+			अनुवर्त;
 		}
 
-		if (!strncmp(str, "domain,", 7)) {
+		यदि (!वाक्ये_तुलय(str, "domain,", 7)) {
 			str += 7;
 			flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
-			continue;
+			अनुवर्त;
 		}
 
-		if (!strncmp(str, "managed_irq,", 12)) {
+		यदि (!वाक्ये_तुलय(str, "managed_irq,", 12)) {
 			str += 12;
 			flags |= HK_FLAG_MANAGED_IRQ;
-			continue;
+			अनुवर्त;
 		}
 
 		/*
 		 * Skip unknown sub-parameter and validate that it is not
 		 * containing an invalid character.
 		 */
-		for (par = str, len = 0; *str && *str != ','; str++, len++) {
-			if (!isalpha(*str) && *str != '_')
+		प्रति (par = str, len = 0; *str && *str != ','; str++, len++) {
+			यदि (!अक्षरम्_वा(*str) && *str != '_')
 				illegal = true;
 		}
 
-		if (illegal) {
+		यदि (illegal) {
 			pr_warn("isolcpus: Invalid flag %.*s\n", len, par);
-			return 0;
+			प्रत्यागम 0;
 		}
 
 		pr_info("isolcpus: Skipped unknown flag %.*s\n", len, par);
@@ -373,9 +373,9 @@ static int __init housekeeping_isolcpus_setup(char *str)
 	}
 
 	/* Default behaviour for isolcpus without flags */
-	if (!flags)
+	यदि (!flags)
 		flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
 
-	return housekeeping_setup(str, flags);
+	प्रत्यागम housekeeping_सज्जता(str, flags);
 }
-__setup("isolcpus=", housekeeping_isolcpus_setup);
+__setup("isolcpus=", housekeeping_isolcpus_सज्जता);

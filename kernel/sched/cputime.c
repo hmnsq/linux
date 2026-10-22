@@ -2,18 +2,18 @@
 /*
  * Simple CPU accounting cgroup controller
  */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/tsacct_kern.h>
-#include "sched.h"
+#अन्तर्भाव <linux/sched/clock.h>
+#अन्तर्भाव <linux/sched/cputime.h>
+#अन्तर्भाव <linux/tsacct_kern.h>
+#अन्तर्भाव "sched.h"
 
-#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
- #include <asm/cputime.h>
-#endif
+#यदि_परिभाषितम् CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+ #अन्तर्भाव <asm/cputime.h>
+#यदि_अन्तः
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+#यदि_परिभाषितम् CONFIG_IRQ_TIME_ACCOUNTING
 
-DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DEFINE_STATIC_कुञ्चिका_FALSE(sched_clock_irqtime);
 
 /*
  * There are no locks covering percpu hardirq/softirq time.
@@ -26,50 +26,50 @@ DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
  * task when IRQ is in progress while we read rq->clock. That is a worthy
  * compromise in place of having locks on each IRQ in account_system_time.
  */
-DEFINE_PER_CPU(struct irqtime, cpu_irqtime);
+DEFINE_प्रत्येकम्_CPU(संरचना irqtime, cpu_irqtime);
 
-void enable_sched_clock_irqtime(void)
+शून्य enable_sched_clock_irqtime(शून्य)
 {
 	static_branch_enable(&sched_clock_irqtime);
 }
 
-void disable_sched_clock_irqtime(void)
+शून्य disable_sched_clock_irqtime(शून्य)
 {
-	if (irqtime_enabled())
+	यदि (irqtime_enabled())
 		static_branch_disable(&sched_clock_irqtime);
 }
 
-static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
-				  enum cpu_usage_stat idx)
+स्थिर शून्य irqtime_account_delta(संरचना irqtime *irqtime, u64 delta,
+				  गणना cpu_usage_stat idx)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
 	u64_stats_update_begin(&irqtime->sync);
 	cpustat[idx] += delta;
-	irqtime->total += delta;
-	if (!kcpustat_idle_dyntick())
+	irqtime->योग_2 += delta;
+	यदि (!kcpustat_idle_dyntick())
 		irqtime->tick_delta += delta;
-	u64_stats_update_end(&irqtime->sync);
+	u64_stats_update_अन्तः(&irqtime->sync);
 }
 
 /*
  * Called after incrementing preempt_count on {soft,}irq_enter
  * and before decrementing preempt_count on {soft,}irq_exit.
  */
-void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
+शून्य irqtime_account_irq(संरचना task_struct *curr, अचिह्नित पूर्णाङ्क विस्थापनम्)
 {
-	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
-	unsigned int pc;
+	संरचना irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
+	अचिह्नित पूर्णाङ्क pc;
 	s64 delta;
-	int cpu;
+	पूर्णाङ्क cpu;
 
-	if (!irqtime_enabled())
-		return;
+	यदि (!irqtime_enabled())
+		प्रत्यागम;
 
 	cpu = smp_processor_id();
 	delta = sched_clock_cpu(cpu) - irqtime->irq_start_time;
 	irqtime->irq_start_time += delta;
-	pc = irq_count() - offset;
+	pc = irq_गणनम्() - विस्थापनम्;
 
 	/*
 	 * We do not account for softirq time from ksoftirqd here.
@@ -77,33 +77,33 @@ void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
 	 * in that case, so as not to confuse scheduler with a special task
 	 * that do not consume any time, but still wants to run.
 	 */
-	if (pc & HARDIRQ_MASK)
+	यदि (pc & HARDIRQ_आवरणम्)
 		irqtime_account_delta(irqtime, delta, CPUTIME_IRQ);
-	else if ((pc & SOFTIRQ_OFFSET) && curr != this_cpu_ksoftirqd())
+	अन्यथा यदि ((pc & SOFTIRQ_विस्थापनम्) && curr != this_cpu_ksoftirqd())
 		irqtime_account_delta(irqtime, delta, CPUTIME_SOFTIRQ);
 }
 
-static u64 irqtime_tick_accounted(u64 maxtime)
+स्थिर u64 irqtime_tick_accounted(u64 maxtime)
 {
-	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
+	संरचना irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
 	u64 delta;
 
 	delta = min(irqtime->tick_delta, maxtime);
 	irqtime->tick_delta -= delta;
 
-	return delta;
+	प्रत्यागम delta;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#अन्यथा /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
-static u64 irqtime_tick_accounted(u64 dummy)
+स्थिर u64 irqtime_tick_accounted(u64 dummy)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-#endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
+#यदि_अन्तः /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-static inline void task_group_account_field(struct task_struct *p, int index,
+स्थिर अन्तःस्थ शून्य task_गणः_account_क्षेत्रम्(संरचना task_struct *p, पूर्णाङ्क सूचकांक,
 					    u64 tmp)
 {
 	/*
@@ -112,9 +112,9 @@ static inline void task_group_account_field(struct task_struct *p, int index,
 	 * is the only cgroup, then nothing else should be necessary.
 	 *
 	 */
-	__this_cpu_add(kernel_cpustat.cpustat[index], tmp);
+	__this_cpu_add(kernel_cpustat.cpustat[सूचकांक], tmp);
 
-	cgroup_account_cputime_field(p, index, tmp);
+	cgroup_account_cputime_क्षेत्रम्(p, सूचकांक, tmp);
 }
 
 /*
@@ -122,18 +122,18 @@ static inline void task_group_account_field(struct task_struct *p, int index,
  * @p: the process that the CPU time gets accounted to
  * @cputime: the CPU time spent in user space since the last update
  */
-void account_user_time(struct task_struct *p, u64 cputime)
+शून्य account_user_time(संरचना task_struct *p, u64 cputime)
 {
-	int index;
+	पूर्णाङ्क सूचकांक;
 
 	/* Add user time to process. */
 	p->utime += cputime;
-	account_group_user_time(p, cputime);
+	account_गणः_user_time(p, cputime);
 
-	index = (task_nice(p) > 0) ? CPUTIME_NICE : CPUTIME_USER;
+	सूचकांक = (task_nice(p) > 0) ? CPUTIME_NICE : CPUTIME_USER;
 
 	/* Add user time to cpustat. */
-	task_group_account_field(p, index, cputime);
+	task_गणः_account_क्षेत्रम्(p, सूचकांक, cputime);
 
 	/* Account for user time used */
 	acct_account_cputime(p);
@@ -144,21 +144,21 @@ void account_user_time(struct task_struct *p, u64 cputime)
  * @p: the process that the CPU time gets accounted to
  * @cputime: the CPU time spent in virtual machine since the last update
  */
-void account_guest_time(struct task_struct *p, u64 cputime)
+शून्य account_guest_time(संरचना task_struct *p, u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
 	/* Add guest time to process. */
 	p->utime += cputime;
-	account_group_user_time(p, cputime);
+	account_गणः_user_time(p, cputime);
 	p->gtime += cputime;
 
 	/* Add guest time to cpustat. */
-	if (task_nice(p) > 0) {
-		task_group_account_field(p, CPUTIME_NICE, cputime);
+	यदि (task_nice(p) > 0) {
+		task_गणः_account_क्षेत्रम्(p, CPUTIME_NICE, cputime);
 		cpustat[CPUTIME_GUEST_NICE] += cputime;
-	} else {
-		task_group_account_field(p, CPUTIME_USER, cputime);
+	} अन्यथा {
+		task_गणः_account_क्षेत्रम्(p, CPUTIME_USER, cputime);
 		cpustat[CPUTIME_GUEST] += cputime;
 	}
 }
@@ -169,15 +169,15 @@ void account_guest_time(struct task_struct *p, u64 cputime)
  * @cputime: the CPU time spent in kernel space since the last update
  * @index: pointer to cpustat field that has to be updated
  */
-void account_system_index_time(struct task_struct *p,
-			       u64 cputime, enum cpu_usage_stat index)
+शून्य account_system_सूचकांक_time(संरचना task_struct *p,
+			       u64 cputime, गणना cpu_usage_stat सूचकांक)
 {
 	/* Add system time to process. */
 	p->stime += cputime;
-	account_group_system_time(p, cputime);
+	account_गणः_system_time(p, cputime);
 
 	/* Add system time to cpustat. */
-	task_group_account_field(p, index, cputime);
+	task_गणः_account_क्षेत्रम्(p, सूचकांक, cputime);
 
 	/* Account for system time used */
 	acct_account_cputime(p);
@@ -189,30 +189,30 @@ void account_system_index_time(struct task_struct *p,
  * @hardirq_offset: the offset to subtract from hardirq_count()
  * @cputime: the CPU time spent in kernel space since the last update
  */
-void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
+शून्य account_system_time(संरचना task_struct *p, पूर्णाङ्क hardirq_विस्थापनम्, u64 cputime)
 {
-	int index;
+	पूर्णाङ्क सूचकांक;
 
-	if ((p->flags & PF_VCPU) && (irq_count() - hardirq_offset == 0)) {
+	यदि ((p->flags & PF_VCPU) && (irq_गणनम्() - hardirq_विस्थापनम् == 0)) {
 		account_guest_time(p, cputime);
-		return;
+		प्रत्यागम;
 	}
 
-	if (hardirq_count() - hardirq_offset)
-		index = CPUTIME_IRQ;
-	else if (in_serving_softirq())
-		index = CPUTIME_SOFTIRQ;
-	else
-		index = CPUTIME_SYSTEM;
+	यदि (hardirq_गणनम्() - hardirq_विस्थापनम्)
+		सूचकांक = CPUTIME_IRQ;
+	अन्यथा यदि (अन्तर्_serving_softirq())
+		सूचकांक = CPUTIME_SOFTIRQ;
+	अन्यथा
+		सूचकांक = CPUTIME_SYSTEM;
 
-	account_system_index_time(p, cputime, index);
+	account_system_सूचकांक_time(p, cputime, सूचकांक);
 }
 
 /*
  * Account for involuntary wait time.
  * @cputime: the CPU time spent in involuntary wait
  */
-void account_steal_time(u64 cputime)
+शून्य account_steal_time(u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
@@ -223,71 +223,71 @@ void account_steal_time(u64 cputime)
  * Account for idle time.
  * @cputime: the CPU time spent in idle wait
  */
-void account_idle_time(u64 cputime)
+शून्य account_idle_time(u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
-	if (cpu_has_iowait(smp_processor_id()))
+	यदि (cpu_has_iowait(smp_processor_id()))
 		cpustat[CPUTIME_IOWAIT] += cputime;
-	else
+	अन्यथा
 		cpustat[CPUTIME_IDLE] += cputime;
 }
 
 
-#ifdef CONFIG_SCHED_CORE
+#यदि_परिभाषितम् CONFIG_SCHED_CORE
 /*
  * Account for forceidle time due to core scheduling.
  *
  * REQUIRES: schedstat is enabled.
  */
-void __account_forceidle_time(struct task_struct *p, u64 delta)
+शून्य __account_forceidle_time(संरचना task_struct *p, u64 delta)
 {
-	__schedstat_add(p->stats.core_forceidle_sum, delta);
+	__schedstat_add(p->stats.core_forceidle_योग, delta);
 
-	task_group_account_field(p, CPUTIME_FORCEIDLE, delta);
+	task_गणः_account_क्षेत्रम्(p, CPUTIME_FORCEIDLE, delta);
 }
-#endif /* CONFIG_SCHED_CORE */
+#यदि_अन्तः /* CONFIG_SCHED_CORE */
 
 /*
  * When a guest is interrupted for a longer amount of time, missed clock
  * ticks are not redelivered later. Due to that, this function may on
  * occasion account more time than the calling functions think elapsed.
  */
-#ifdef CONFIG_PARAVIRT
-DEFINE_STATIC_KEY_FALSE(paravirt_steal_enabled);
+#यदि_परिभाषितम् CONFIG_PARAVIRT
+DEFINE_STATIC_कुञ्चिका_FALSE(paravirt_steal_enabled);
 
-#ifdef CONFIG_HAVE_PV_STEAL_CLOCK_GEN
-static u64 native_steal_clock(int cpu)
+#यदि_परिभाषितम् CONFIG_HAVE_PV_STEAL_CLOCK_GEN
+स्थिर u64 native_steal_clock(पूर्णाङ्क cpu)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
 DEFINE_STATIC_CALL(pv_steal_clock, native_steal_clock);
-#endif
-#endif
+#यदि_अन्तः
+#यदि_अन्तः
 
-static __always_inline u64 steal_account_process_time(u64 maxtime)
+स्थिर __always_inline u64 steal_account_process_time(u64 maxtime)
 {
-#ifdef CONFIG_PARAVIRT
-	if (static_branch_unlikely(&paravirt_steal_enabled)) {
+#यदि_परिभाषितम् CONFIG_PARAVIRT
+	यदि (static_branch_unlikely(&paravirt_steal_enabled)) {
 		u64 steal;
 
 		steal = paravirt_steal_clock(smp_processor_id());
-		steal -= this_rq()->prev_steal_time;
+		steal -= this_rq()->पूर्व_steal_time;
 		steal = min(steal, maxtime);
 		account_steal_time(steal);
-		this_rq()->prev_steal_time += steal;
+		this_rq()->पूर्व_steal_time += steal;
 
-		return steal;
+		प्रत्यागम steal;
 	}
-#endif /* CONFIG_PARAVIRT */
-	return 0;
+#यदि_अन्तः /* CONFIG_PARAVIRT */
+	प्रत्यागम 0;
 }
 
 /*
  * Account how much elapsed time was spent in steal, IRQ, or softirq time.
  */
-static inline u64 account_other_time(u64 max)
+स्थिर अन्तःस्थ u64 account_other_time(u64 max)
 {
 	u64 accounted;
 
@@ -295,40 +295,40 @@ static inline u64 account_other_time(u64 max)
 
 	accounted = steal_account_process_time(max);
 
-	if (accounted < max)
+	यदि (accounted < max)
 		accounted += irqtime_tick_accounted(max - accounted);
 
-	return accounted;
+	प्रत्यागम accounted;
 }
 
-#ifdef CONFIG_64BIT
-static inline u64 read_sum_exec_runtime(struct task_struct *t)
+#यदि_परिभाषितम् CONFIG_64BIT
+स्थिर अन्तःस्थ u64 read_योग_exec_runtime(संरचना task_struct *t)
 {
-	return t->se.sum_exec_runtime;
+	प्रत्यागम t->se.योग_exec_runtime;
 }
-#else /* !CONFIG_64BIT: */
-static u64 read_sum_exec_runtime(struct task_struct *t)
+#अन्यथा /* !CONFIG_64BIT: */
+स्थिर u64 read_योग_exec_runtime(संरचना task_struct *t)
 {
 	u64 ns;
-	struct rq_flags rf;
-	struct rq *rq;
+	संरचना rq_flags rf;
+	संरचना rq *rq;
 
-	rq = task_rq_lock(t, &rf);
-	ns = t->se.sum_exec_runtime;
+	rq = task_rq_तालकम्_2(t, &rf);
+	ns = t->se.योग_exec_runtime;
 	task_rq_unlock(rq, t, &rf);
 
-	return ns;
+	प्रत्यागम ns;
 }
-#endif /* !CONFIG_64BIT */
+#यदि_अन्तः /* !CONFIG_64BIT */
 
 /*
  * Accumulate raw cputime values of dead tasks (sig->[us]time) and live
  * tasks (sum on group iteration) belonging to @tsk's group.
  */
-void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+शून्य thread_गणः_cputime(संरचना task_struct *tsk, संरचना task_cputime *times)
 {
-	struct signal_struct *sig = tsk->signal;
-	struct task_struct *t;
+	संरचना signal_struct *sig = tsk->सङ्केत;
+	संरचना task_struct *t;
 	u64 utime, stime;
 
 	/*
@@ -339,25 +339,25 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
 	 * those pending times and rely only on values updated on tick or
 	 * other scheduler action.
 	 */
-	if (same_thread_group(current, tsk))
-		(void) task_sched_runtime(current);
+	यदि (same_thread_गणः(current, tsk))
+		(शून्य) task_sched_runtime(current);
 
 	guard(rcu)();
-	scoped_seqlock_read (&sig->stats_lock, ss_lock_irqsave) {
+	scoped_seqlock_read (&sig->stats_तालकम्, ss_तालकम्_irqsave) {
 		times->utime = sig->utime;
 		times->stime = sig->stime;
-		times->sum_exec_runtime = sig->sum_sched_runtime;
+		times->योग_exec_runtime = sig->योग_sched_runtime;
 
 		__for_each_thread(sig, t) {
 			task_cputime(t, &utime, &stime);
 			times->utime += utime;
 			times->stime += stime;
-			times->sum_exec_runtime += read_sum_exec_runtime(t);
+			times->योग_exec_runtime += read_योग_exec_runtime(t);
 		}
 	}
 }
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+#यदि_परिभाषितम् CONFIG_IRQ_TIME_ACCOUNTING
 /*
  * Account a tick to a process and cpustat
  * @p: the process that the CPU time gets accounted to
@@ -379,7 +379,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
  * p->stime and friends are only updated on system time and not on IRQ
  * softirq as those do not count in task exec_runtime any more.
  */
-static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+स्थिर शून्य irqtime_account_process_tick(संरचना task_struct *p, पूर्णाङ्क user_tick,
 					 u64 cputime)
 {
 	u64 other;
@@ -392,43 +392,43 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
 	 * other time can exceed ticks occasionally.
 	 */
 	other = account_other_time(ULONG_MAX);
-	if (other >= cputime)
-		return;
+	यदि (other >= cputime)
+		प्रत्यागम;
 
 	cputime -= other;
 
-	if (this_cpu_ksoftirqd() == p) {
+	यदि (this_cpu_ksoftirqd() == p) {
 		/*
 		 * ksoftirqd time do not get accounted in cpu_softirq_time.
 		 * So, we have to handle it separately here.
 		 * Also, p->stime needs to be updated for ksoftirqd.
 		 */
-		account_system_index_time(p, cputime, CPUTIME_SOFTIRQ);
-	} else if (user_tick) {
+		account_system_सूचकांक_time(p, cputime, CPUTIME_SOFTIRQ);
+	} अन्यथा यदि (user_tick) {
 		account_user_time(p, cputime);
-	} else if (p == this_rq()->idle) {
+	} अन्यथा यदि (p == this_rq()->idle) {
 		account_idle_time(cputime);
-	} else if (p->flags & PF_VCPU) { /* System time or guest time */
+	} अन्यथा यदि (p->flags & PF_VCPU) { /* System time or guest time */
 		account_guest_time(p, cputime);
-	} else {
-		account_system_index_time(p, cputime, CPUTIME_SYSTEM);
+	} अन्यथा {
+		account_system_सूचकांक_time(p, cputime, CPUTIME_SYSTEM);
 	}
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
-static inline void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+#अन्यथा /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+स्थिर अन्तःस्थ शून्य irqtime_account_process_tick(संरचना task_struct *p, पूर्णाङ्क user_tick,
 						u64 cputime) { }
-#endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
+#यदि_अन्तः /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-#if defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
-static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
+#यदि defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
+स्थिर शून्य kcpustat_idle_stop(संरचना kernel_cpustat *kc, u64 now)
 {
 	u64 *cpustat = kc->cpustat;
 	u64 delta, steal, steal_delta;
-	int iowait;
+	पूर्णाङ्क iowait;
 
-	if (!kc->idle_elapse)
-		return;
+	यदि (!kc->idle_elapse)
+		प्रत्यागम;
 
 	iowait = cpu_has_iowait(smp_processor_id());
 	delta = now - kc->idle_entrytime;
@@ -444,41 +444,41 @@ static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
 	delta -= steal_delta;
 	kc->idle_stealtime[iowait] -= steal_delta;
 
-	if (iowait)
+	यदि (iowait)
 		cpustat[CPUTIME_IOWAIT] += delta;
-	else
+	अन्यथा
 		cpustat[CPUTIME_IDLE] += delta;
 
 	kc->idle_stealtime[iowait] += steal;
 	kc->idle_entrytime = now;
 	kc->idle_elapse = false;
-	write_seqcount_end(&kc->idle_sleeptime_seq);
+	write_seqcount_अन्तः(&kc->idle_sleeptime_seq);
 }
 
-static void kcpustat_idle_start(struct kernel_cpustat *kc, u64 now)
+स्थिर शून्य kcpustat_idle_start(संरचना kernel_cpustat *kc, u64 now)
 {
 	/* Irqtime accounting might have been enabled in the middle of the IRQ */
-	if (kc->idle_elapse)
-		return;
+	यदि (kc->idle_elapse)
+		प्रत्यागम;
 
 	write_seqcount_begin(&kc->idle_sleeptime_seq);
 	kc->idle_entrytime = now;
 	kc->idle_elapse = true;
-	write_seqcount_end(&kc->idle_sleeptime_seq);
+	write_seqcount_अन्तः(&kc->idle_sleeptime_seq);
 }
 
-void kcpustat_dyntick_stop(u64 now, u64 tick_start)
+शून्य kcpustat_dyntick_stop(u64 now, u64 tick_start)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	संरचना kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
+	यदि (!vtime_generic_enabled_this_cpu()) {
 		WARN_ON_ONCE(!kc->idle_dyntick);
-		if (kc->idle_tick_period != tick_start) {
+		यदि (kc->idle_tick_period != tick_start) {
 			kc->idle_tick_period = tick_start;
 			kc->idle_tick_overlap = 0;
 		}
-		tick_start = max(tick_start, kc->idle_dyntick_entry);
-		if (!WARN_ON_ONCE(now < tick_start))
+		tick_start = max(tick_start, kc->idle_dyntick_प्रविष्टिः);
+		यदि (!WARN_ON_ONCE(now < tick_start))
 			kc->idle_tick_overlap += now - tick_start;
 		kcpustat_idle_stop(kc, now);
 		kc->idle_dyntick = false;
@@ -490,39 +490,39 @@ void kcpustat_dyntick_stop(u64 now, u64 tick_start)
  * The first tick after dyntick-idle covers a period that the dyntick-idle
  * accounting may already have accounted in part.
  */
-static inline u64 kcpustat_tick_overlap(void)
+स्थिर अन्तःस्थ u64 kcpustat_tick_overlap(शून्य)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	संरचना kernel_cpustat *kc = kcpustat_this_cpu;
 	u64 overlap = kc->idle_tick_overlap;
 
 	kc->idle_tick_overlap = 0;
-	return overlap;
+	प्रत्यागम overlap;
 }
 
-void kcpustat_dyntick_start(u64 now)
+शून्य kcpustat_dyntick_start(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	संरचना kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
+	यदि (!vtime_generic_enabled_this_cpu()) {
 		vtime_dyntick_start();
 		kc->idle_dyntick = true;
-		kc->idle_dyntick_entry = now;
+		kc->idle_dyntick_प्रविष्टिः = now;
 		kcpustat_idle_start(kc, now);
 	}
 }
 
-void kcpustat_irq_enter(u64 now)
+शून्य kcpustat_irq_enter(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	संरचना kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu() &&
+	यदि (!vtime_generic_enabled_this_cpu() &&
 	    (irqtime_enabled() || vtime_accounting_enabled_this_cpu()))
 		kcpustat_idle_stop(kc, now);
 }
 
-void kcpustat_irq_exit(u64 now)
+शून्य kcpustat_irq_exit(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	संरचना kernel_cpustat *kc = kcpustat_this_cpu;
 
 	/*
 	 * Generic vtime already does its own idle accounting.
@@ -531,79 +531,79 @@ void kcpustat_irq_exit(u64 now)
 	 * as the irqtime config is enabled to handle case where irqtime
 	 * accounting got runtime disabled in the middle of an IRQ.
 	 */
-	if (!vtime_generic_enabled_this_cpu() &&
+	यदि (!vtime_generic_enabled_this_cpu() &&
 	    (IS_ENABLED(CONFIG_IRQ_TIME_ACCOUNTING) || vtime_accounting_enabled_this_cpu()))
 		kcpustat_idle_start(kc, now);
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+स्थिर u64 kcpustat_क्षेत्रम्_dyntick(पूर्णाङ्क cpu, गणना cpu_usage_stat idx,
 				  bool compute_delta, u64 now)
 {
-	struct kernel_cpustat *kc = &kcpustat_cpu(cpu);
-	int iowait = idx == CPUTIME_IOWAIT;
+	संरचना kernel_cpustat *kc = &kcpustat_cpu(cpu);
+	पूर्णाङ्क iowait = idx == CPUTIME_IOWAIT;
 	u64 *cpustat = kc->cpustat;
-	unsigned int seq;
+	अचिह्नित पूर्णाङ्क seq;
 	u64 idle;
 
-	do {
+	कुरु {
 		seq = read_seqcount_begin(&kc->idle_sleeptime_seq);
 
 		idle = cpustat[idx];
 
-		if (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
+		यदि (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
 			u64 delta = now - kc->idle_entrytime;
 
 			delta -= min_t(u64, kc->idle_stealtime[iowait], delta);
 			idle += delta;
 		}
-	} while (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
+	} यावत् (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
 
-	return idle;
+	प्रत्यागम idle;
 }
 
-u64 kcpustat_field_idle(int cpu)
+u64 kcpustat_क्षेत्रम्_idle(पूर्णाङ्क cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IDLE,
+	प्रत्यागम kcpustat_क्षेत्रम्_dyntick(cpu, CPUTIME_IDLE,
 				      !cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_idle);
+EXPORT_चिह्नम्_GPL(kcpustat_क्षेत्रम्_idle);
 
-u64 kcpustat_field_iowait(int cpu)
+u64 kcpustat_क्षेत्रम्_iowait(पूर्णाङ्क cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IOWAIT,
+	प्रत्यागम kcpustat_क्षेत्रम्_dyntick(cpu, CPUTIME_IOWAIT,
 				      cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_iowait);
-#else
-static inline u64 kcpustat_tick_overlap(void)
+EXPORT_चिह्नम्_GPL(kcpustat_क्षेत्रम्_iowait);
+#अन्यथा
+स्थिर अन्तःस्थ u64 kcpustat_tick_overlap(शून्य)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+स्थिर u64 kcpustat_क्षेत्रम्_dyntick(पूर्णाङ्क cpu, गणना cpu_usage_stat idx,
 				  bool compute_delta, ktime_t now)
 {
-	return kcpustat_cpu(cpu).cpustat[idx];
+	प्रत्यागम kcpustat_cpu(cpu).cpustat[idx];
 }
-#endif /* CONFIG_NO_HZ_COMMON && !CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE */
+#यदि_अन्तः /* CONFIG_NO_HZ_COMMON && !CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE */
 
-static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
-				 bool compute_delta, u64 *last_update_time)
+स्थिर u64 get_cpu_sleep_time_us(पूर्णाङ्क cpu, गणना cpu_usage_stat idx,
+				 bool compute_delta, u64 *चरमः_update_time)
 {
 	ktime_t now = ktime_get();
 	u64 res;
 
-	if (vtime_generic_enabled_cpu(cpu))
-		res = kcpustat_field(idx, cpu);
-	else
-		res = kcpustat_field_dyntick(cpu, idx, compute_delta, now);
+	यदि (vtime_generic_enabled_cpu(cpu))
+		res = kcpustat_क्षेत्रम्(idx, cpu);
+	अन्यथा
+		res = kcpustat_क्षेत्रम्_dyntick(cpu, idx, compute_delta, now);
 
-	do_div(res, NSEC_PER_USEC);
+	do_div(res, NSEC_प्रत्येकम्_USEC);
 
-	if (last_update_time)
-		*last_update_time = ktime_to_us(now);
+	यदि (चरमः_update_time)
+		*चरमः_update_time = ktime_गन्तव्यम्_us(now);
 
-	return res;
+	प्रत्यागम res;
 }
 
 /**
@@ -623,12 +623,12 @@ static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
  *
  * Return: total idle time of the @cpu
  */
-u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_idle_time_us(पूर्णाङ्क cpu, u64 *चरमः_update_time)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
-				     !cpu_has_iowait(cpu), last_update_time);
+	प्रत्यागम get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
+				     !cpu_has_iowait(cpu), चरमः_update_time);
 }
-EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
+EXPORT_चिह्नम्_GPL(get_cpu_idle_time_us);
 
 /**
  * get_cpu_iowait_time_us - get the total iowait time of a CPU
@@ -647,98 +647,98 @@ EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
  *
  * Return: total iowait time of @cpu
  */
-u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_iowait_time_us(पूर्णाङ्क cpu, u64 *चरमः_update_time)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
-				     cpu_has_iowait(cpu), last_update_time);
+	प्रत्यागम get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
+				     cpu_has_iowait(cpu), चरमः_update_time);
 }
-EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
+EXPORT_चिह्नम्_GPL(get_cpu_iowait_time_us);
 
 /*
  * Use precise platform statistics if available:
  */
-#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+#यदि_परिभाषितम् CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
 
-void vtime_account_irq(struct task_struct *tsk, unsigned int offset)
+शून्य vtime_account_irq(संरचना task_struct *tsk, अचिह्नित पूर्णाङ्क विस्थापनम्)
 {
-	unsigned int pc = irq_count() - offset;
+	अचिह्नित पूर्णाङ्क pc = irq_गणनम्() - विस्थापनम्;
 
-	if (pc & HARDIRQ_OFFSET) {
+	यदि (pc & HARDIRQ_विस्थापनम्) {
 		vtime_account_hardirq(tsk);
-	} else if (pc & SOFTIRQ_OFFSET) {
+	} अन्यथा यदि (pc & SOFTIRQ_विस्थापनम्) {
 		vtime_account_softirq(tsk);
-	} else if (!kcpustat_idle_dyntick()) {
-		if (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
+	} अन्यथा यदि (!kcpustat_idle_dyntick()) {
+		यदि (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
 		    is_idle_task(tsk)) {
 			vtime_account_idle(tsk);
-		} else {
+		} अन्यथा {
 			vtime_account_kernel(tsk);
 		}
-	} else {
+	} अन्यथा {
 		vtime_reset();
 	}
 }
 
-void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+शून्य cputime_adjust(संरचना task_cputime *curr, संरचना पूर्व_cputime *पूर्व,
 		    u64 *ut, u64 *st)
 {
 	*ut = curr->utime;
 	*st = curr->stime;
 }
 
-void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+शून्य task_cputime_adjusted(संरचना task_struct *p, u64 *ut, u64 *st)
 {
 	*ut = p->utime;
 	*st = p->stime;
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_चिह्नम्_GPL(task_cputime_adjusted);
 
-void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+शून्य thread_गणः_cputime_adjusted(संरचना task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime;
+	संरचना task_cputime cputime;
 
-	thread_group_cputime(p, &cputime);
+	thread_गणः_cputime(p, &cputime);
 
 	*ut = cputime.utime;
 	*st = cputime.stime;
 }
 
-#else /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
+#अन्यथा /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
 
 /*
  * Account a single tick of CPU time.
  * @p: the process that the CPU time gets accounted to
  * @user_tick: indicates if the tick is a user or a system tick
  */
-void account_process_tick(struct task_struct *p, int user_tick)
+शून्य account_process_tick(संरचना task_struct *p, पूर्णाङ्क user_tick)
 {
 	u64 cputime, steal;
 
-	if (vtime_accounting_enabled_this_cpu())
-		return;
+	यदि (vtime_accounting_enabled_this_cpu())
+		प्रत्यागम;
 
-	if (kcpustat_idle_dyntick())
-		return;
+	यदि (kcpustat_idle_dyntick())
+		प्रत्यागम;
 
 	cputime = TICK_NSEC - kcpustat_tick_overlap();
 
-	if (irqtime_enabled()) {
+	यदि (irqtime_enabled()) {
 		irqtime_account_process_tick(p, user_tick, cputime);
-		return;
+		प्रत्यागम;
 	}
 
 	steal = steal_account_process_time(ULONG_MAX);
 
-	if (steal >= cputime)
-		return;
+	यदि (steal >= cputime)
+		प्रत्यागम;
 
 	cputime -= steal;
 
-	if (user_tick)
+	यदि (user_tick)
 		account_user_time(p, cputime);
-	else if ((p != this_rq()->idle) || (irq_count() != HARDIRQ_OFFSET))
-		account_system_time(p, HARDIRQ_OFFSET, cputime);
-	else
+	अन्यथा यदि ((p != this_rq()->idle) || (irq_गणनम्() != HARDIRQ_विस्थापनम्))
+		account_system_time(p, HARDIRQ_विस्थापनम्, cputime);
+	अन्यथा
 		account_idle_time(cputime);
 }
 
@@ -762,15 +762,15 @@ void account_process_tick(struct task_struct *p, int user_tick)
  *
  * Assuming that rtime_i+1 >= rtime_i.
  */
-void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+शून्य cputime_adjust(संरचना task_cputime *curr, संरचना पूर्व_cputime *पूर्व,
 		    u64 *ut, u64 *st)
 {
 	u64 rtime, stime, utime;
-	unsigned long flags;
+	अचिह्नित दीर्घ flags;
 
 	/* Serialize concurrent callers such that we can honour our guarantees */
-	raw_spin_lock_irqsave(&prev->lock, flags);
-	rtime = curr->sum_exec_runtime;
+	raw_spin_तालकम्_irqsave(&पूर्व->तालकम्, flags);
+	rtime = curr->योग_exec_runtime;
 
 	/*
 	 * This is possible under two circumstances:
@@ -780,8 +780,8 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * In both cases this acts as a filter such that the rest of the code
 	 * can assume it is monotonic regardless of anything else.
 	 */
-	if (prev->stime + prev->utime >= rtime)
-		goto out;
+	यदि (पूर्व->stime + पूर्व->utime >= rtime)
+		गच्छ बहिर्गमनम्;
 
 	stime = curr->stime;
 	utime = curr->utime;
@@ -791,14 +791,14 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * Once a task gets some ticks, the monotonicity code at 'update:'
 	 * will ensure things converge to the observed ratio.
 	 */
-	if (stime == 0) {
+	यदि (stime == 0) {
 		utime = rtime;
-		goto update;
+		गच्छ update;
 	}
 
-	if (utime == 0) {
+	यदि (utime == 0) {
 		stime = rtime;
-		goto update;
+		गच्छ update;
 	}
 
 	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
@@ -813,61 +813,61 @@ update:
 	 *            = (rtime_i+1 - rtime_i) + utime_i
 	 *            >= utime_i
 	 */
-	if (stime < prev->stime)
-		stime = prev->stime;
+	यदि (stime < पूर्व->stime)
+		stime = पूर्व->stime;
 	utime = rtime - stime;
 
 	/*
 	 * Make sure utime doesn't go backwards; this still preserves
 	 * monotonicity for stime, analogous argument to above.
 	 */
-	if (utime < prev->utime) {
-		utime = prev->utime;
+	यदि (utime < पूर्व->utime) {
+		utime = पूर्व->utime;
 		stime = rtime - utime;
 	}
 
-	prev->stime = stime;
-	prev->utime = utime;
-out:
-	*ut = prev->utime;
-	*st = prev->stime;
-	raw_spin_unlock_irqrestore(&prev->lock, flags);
+	पूर्व->stime = stime;
+	पूर्व->utime = utime;
+बहिर्गमनम्:
+	*ut = पूर्व->utime;
+	*st = पूर्व->stime;
+	raw_spin_unlock_irqrestore(&पूर्व->तालकम्, flags);
 }
 
-void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+शून्य task_cputime_adjusted(संरचना task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime = {
-		.sum_exec_runtime = p->se.sum_exec_runtime,
+	संरचना task_cputime cputime = {
+		.योग_exec_runtime = p->se.योग_exec_runtime,
 	};
 
-	if (task_cputime(p, &cputime.utime, &cputime.stime))
-		cputime.sum_exec_runtime = task_sched_runtime(p);
-	cputime_adjust(&cputime, &p->prev_cputime, ut, st);
+	यदि (task_cputime(p, &cputime.utime, &cputime.stime))
+		cputime.योग_exec_runtime = task_sched_runtime(p);
+	cputime_adjust(&cputime, &p->पूर्व_cputime, ut, st);
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_चिह्नम्_GPL(task_cputime_adjusted);
 
-void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+शून्य thread_गणः_cputime_adjusted(संरचना task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime;
+	संरचना task_cputime cputime;
 
-	thread_group_cputime(p, &cputime);
-	cputime_adjust(&cputime, &p->signal->prev_cputime, ut, st);
+	thread_गणः_cputime(p, &cputime);
+	cputime_adjust(&cputime, &p->सङ्केत->पूर्व_cputime, ut, st);
 }
-#endif /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
+#यदि_अन्तः /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
 
-#ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
-static u64 vtime_delta(struct vtime *vtime)
+#यदि_परिभाषितम् CONFIG_VIRT_CPU_ACCOUNTING_GEN
+स्थिर u64 vtime_delta(संरचना vtime *vtime)
 {
-	unsigned long long clock;
+	अचिह्नित दीर्घ दीर्घ clock;
 
 	clock = sched_clock();
-	if (clock < vtime->starttime)
-		return 0;
+	यदि (clock < vtime->starttime)
+		प्रत्यागम 0;
 
-	return clock - vtime->starttime;
+	प्रत्यागम clock - vtime->starttime;
 }
 
-static u64 get_vtime_delta(struct vtime *vtime)
+स्थिर u64 get_vtime_delta(संरचना vtime *vtime)
 {
 	u64 delta = vtime_delta(vtime);
 	u64 other;
@@ -883,78 +883,78 @@ static u64 get_vtime_delta(struct vtime *vtime)
 	WARN_ON_ONCE(vtime->state == VTIME_INACTIVE);
 	vtime->starttime += delta;
 
-	return delta - other;
+	प्रत्यागम delta - other;
 }
 
-static void vtime_account_system(struct task_struct *tsk,
-				 struct vtime *vtime)
+स्थिर शून्य vtime_account_system(संरचना task_struct *tsk,
+				 संरचना vtime *vtime)
 {
 	vtime->stime += get_vtime_delta(vtime);
-	if (vtime->stime >= TICK_NSEC) {
-		account_system_time(tsk, irq_count(), vtime->stime);
+	यदि (vtime->stime >= TICK_NSEC) {
+		account_system_time(tsk, irq_गणनम्(), vtime->stime);
 		vtime->stime = 0;
 	}
 }
 
-static void vtime_account_guest(struct task_struct *tsk,
-				struct vtime *vtime)
+स्थिर शून्य vtime_account_guest(संरचना task_struct *tsk,
+				संरचना vtime *vtime)
 {
 	vtime->gtime += get_vtime_delta(vtime);
-	if (vtime->gtime >= TICK_NSEC) {
+	यदि (vtime->gtime >= TICK_NSEC) {
 		account_guest_time(tsk, vtime->gtime);
 		vtime->gtime = 0;
 	}
 }
 
-static void __vtime_account_kernel(struct task_struct *tsk,
-				   struct vtime *vtime)
+स्थिर शून्य __vtime_account_kernel(संरचना task_struct *tsk,
+				   संरचना vtime *vtime)
 {
 	/* We might have scheduled out from guest path */
-	if (vtime->state == VTIME_GUEST)
+	यदि (vtime->state == VTIME_GUEST)
 		vtime_account_guest(tsk, vtime);
-	else
+	अन्यथा
 		vtime_account_system(tsk, vtime);
 }
 
-void vtime_account_kernel(struct task_struct *tsk)
+शून्य vtime_account_kernel(संरचना task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	संरचना vtime *vtime = &tsk->vtime;
 
-	if (!vtime_delta(vtime))
-		return;
+	यदि (!vtime_delta(vtime))
+		प्रत्यागम;
 
 	write_seqcount_begin(&vtime->seqcount);
 	__vtime_account_kernel(tsk, vtime);
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_अन्तः(&vtime->seqcount);
 }
 
-void vtime_user_enter(struct task_struct *tsk)
+शून्य vtime_user_enter(संरचना task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	संरचना vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime_account_system(tsk, vtime);
 	vtime->state = VTIME_USER;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_अन्तः(&vtime->seqcount);
 }
 
-void vtime_user_exit(struct task_struct *tsk)
+शून्य vtime_user_exit(संरचना task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	संरचना vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime->utime += get_vtime_delta(vtime);
-	if (vtime->utime >= TICK_NSEC) {
+	यदि (vtime->utime >= TICK_NSEC) {
 		account_user_time(tsk, vtime->utime);
 		vtime->utime = 0;
 	}
 	vtime->state = VTIME_SYS;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_अन्तः(&vtime->seqcount);
 }
 
-void vtime_guest_enter(struct task_struct *tsk)
+शून्य vtime_guest_enter(संरचना task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	संरचना vtime *vtime = &tsk->vtime;
 	/*
 	 * The flags must be updated under the lock with
 	 * the vtime_starttime flush and update.
@@ -966,87 +966,87 @@ void vtime_guest_enter(struct task_struct *tsk)
 	vtime_account_system(tsk, vtime);
 	tsk->flags |= PF_VCPU;
 	vtime->state = VTIME_GUEST;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_अन्तः(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_enter);
+EXPORT_चिह्नम्_GPL(vtime_guest_enter);
 
-void vtime_guest_exit(struct task_struct *tsk)
+शून्य vtime_guest_exit(संरचना task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	संरचना vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime_account_guest(tsk, vtime);
 	tsk->flags &= ~PF_VCPU;
 	vtime->state = VTIME_SYS;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_अन्तः(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_exit);
+EXPORT_चिह्नम्_GPL(vtime_guest_exit);
 
-static void __vtime_account_idle(struct vtime *vtime)
+स्थिर शून्य __vtime_account_idle(संरचना vtime *vtime)
 {
 	account_idle_time(get_vtime_delta(vtime));
 }
 
-void vtime_task_switch_generic(struct task_struct *prev)
+शून्य vtime_task_switch_generic(संरचना task_struct *पूर्व)
 {
-	struct vtime *vtime = &prev->vtime;
+	संरचना vtime *vtime = &पूर्व->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (vtime->state == VTIME_IDLE)
+	यदि (vtime->state == VTIME_IDLE)
 		__vtime_account_idle(vtime);
-	else
-		__vtime_account_kernel(prev, vtime);
+	अन्यथा
+		__vtime_account_kernel(पूर्व, vtime);
 	vtime->state = VTIME_INACTIVE;
 	vtime->cpu = -1;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_अन्तः(&vtime->seqcount);
 
 	vtime = &current->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (is_idle_task(current))
+	यदि (is_idle_task(current))
 		vtime->state = VTIME_IDLE;
-	else if (current->flags & PF_VCPU)
+	अन्यथा यदि (current->flags & PF_VCPU)
 		vtime->state = VTIME_GUEST;
-	else
+	अन्यथा
 		vtime->state = VTIME_SYS;
 	vtime->starttime = sched_clock();
 	vtime->cpu = smp_processor_id();
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_अन्तः(&vtime->seqcount);
 }
 
-void vtime_init_idle(struct task_struct *t, int cpu)
+शून्य vtime_init_idle(संरचना task_struct *t, पूर्णाङ्क cpu)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned long flags;
+	संरचना vtime *vtime = &t->vtime;
+	अचिह्नित दीर्घ flags;
 
 	local_irq_save(flags);
 	write_seqcount_begin(&vtime->seqcount);
 	vtime->state = VTIME_IDLE;
 	vtime->starttime = sched_clock();
 	vtime->cpu = cpu;
-	write_seqcount_end(&vtime->seqcount);
+	write_seqcount_अन्तः(&vtime->seqcount);
 	local_irq_restore(flags);
 }
 
-u64 task_gtime(struct task_struct *t)
+u64 task_gtime(संरचना task_struct *t)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	संरचना vtime *vtime = &t->vtime;
+	अचिह्नित पूर्णाङ्क seq;
 	u64 gtime;
 
-	if (!vtime_accounting_enabled())
-		return t->gtime;
+	यदि (!vtime_accounting_enabled())
+		प्रत्यागम t->gtime;
 
-	do {
+	कुरु {
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		gtime = t->gtime;
-		if (vtime->state == VTIME_GUEST)
+		यदि (vtime->state == VTIME_GUEST)
 			gtime += vtime->gtime + vtime_delta(vtime);
 
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} यावत् (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return gtime;
+	प्रत्यागम gtime;
 }
 
 /*
@@ -1054,20 +1054,20 @@ u64 task_gtime(struct task_struct *t)
  * add up the pending nohz execution time since the last
  * cputime snapshot.
  */
-bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
+bool task_cputime(संरचना task_struct *t, u64 *utime, u64 *stime)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	संरचना vtime *vtime = &t->vtime;
+	अचिह्नित पूर्णाङ्क seq;
 	u64 delta;
-	int ret;
+	पूर्णाङ्क ret;
 
-	if (!vtime_accounting_enabled()) {
+	यदि (!vtime_accounting_enabled()) {
 		*utime = t->utime;
 		*stime = t->stime;
-		return false;
+		प्रत्यागम false;
 	}
 
-	do {
+	कुरु {
 		ret = false;
 		seq = read_seqcount_begin(&vtime->seqcount);
 
@@ -1075,8 +1075,8 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		*stime = t->stime;
 
 		/* Task is sleeping or idle, nothing to add */
-		if (vtime->state < VTIME_SYS)
-			continue;
+		यदि (vtime->state < VTIME_SYS)
+			अनुवर्त;
 
 		ret = true;
 		delta = vtime_delta(vtime);
@@ -1085,25 +1085,25 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		 * Task runs either in user (including guest) or kernel space,
 		 * add pending nohz time to the right place.
 		 */
-		if (vtime->state == VTIME_SYS)
+		यदि (vtime->state == VTIME_SYS)
 			*stime += vtime->stime + delta;
-		else
+		अन्यथा
 			*utime += vtime->utime + delta;
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} यावत् (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return ret;
+	प्रत्यागम ret;
 }
 
-static int vtime_state_fetch(struct vtime *vtime, int cpu)
+स्थिर पूर्णाङ्क vtime_state_fetch(संरचना vtime *vtime, पूर्णाङ्क cpu)
 {
-	int state = READ_ONCE(vtime->state);
+	पूर्णाङ्क state = READ_ONCE(vtime->state);
 
 	/*
 	 * We raced against a context switch, fetch the
 	 * kcpustat task again.
 	 */
-	if (vtime->cpu != cpu && vtime->cpu != -1)
-		return -EAGAIN;
+	यदि (vtime->cpu != cpu && vtime->cpu != -1)
+		प्रत्यागम -EAGAIN;
 
 	/*
 	 * Two possible things here:
@@ -1114,37 +1114,37 @@ static int vtime_state_fetch(struct vtime *vtime, int cpu)
 	 *
 	 * Case 1) is ok but 2) is not. So wait for a safe VTIME state.
 	 */
-	if (state == VTIME_INACTIVE)
-		return -EAGAIN;
+	यदि (state == VTIME_INACTIVE)
+		प्रत्यागम -EAGAIN;
 
-	return state;
+	प्रत्यागम state;
 }
 
-static u64 kcpustat_user_vtime(struct vtime *vtime)
+स्थिर u64 kcpustat_user_vtime(संरचना vtime *vtime)
 {
-	if (vtime->state == VTIME_USER)
-		return vtime->utime + vtime_delta(vtime);
-	else if (vtime->state == VTIME_GUEST)
-		return vtime->gtime + vtime_delta(vtime);
-	return 0;
+	यदि (vtime->state == VTIME_USER)
+		प्रत्यागम vtime->utime + vtime_delta(vtime);
+	अन्यथा यदि (vtime->state == VTIME_GUEST)
+		प्रत्यागम vtime->gtime + vtime_delta(vtime);
+	प्रत्यागम 0;
 }
 
-static int kcpustat_field_vtime(u64 *cpustat,
-				struct task_struct *tsk,
-				enum cpu_usage_stat usage,
-				int cpu, u64 *val)
+स्थिर पूर्णाङ्क kcpustat_क्षेत्रम्_vtime(u64 *cpustat,
+				संरचना task_struct *tsk,
+				गणना cpu_usage_stat usage,
+				पूर्णाङ्क cpu, u64 *val)
 {
-	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	संरचना vtime *vtime = &tsk->vtime;
+	अचिह्नित पूर्णाङ्क seq;
 
-	do {
-		int state;
+	कुरु {
+		पूर्णाङ्क state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		यदि (state < 0)
+			प्रत्यागम state;
 
 		*val = cpustat[usage];
 
@@ -1155,100 +1155,100 @@ static int kcpustat_field_vtime(u64 *cpustat,
 		 * updates which is a no go on nohz_full (although the scheduler
 		 * may still interrupt the target if rescheduling is needed...)
 		 */
-		switch (usage) {
-		case CPUTIME_SYSTEM:
-			if (state == VTIME_SYS)
+		विकल्प (usage) {
+		पक्ष CPUTIME_SYSTEM:
+			यदि (state == VTIME_SYS)
 				*val += vtime->stime + vtime_delta(vtime);
-			break;
-		case CPUTIME_USER:
-			if (task_nice(tsk) <= 0)
+			भङ्ग;
+		पक्ष CPUTIME_USER:
+			यदि (task_nice(tsk) <= 0)
 				*val += kcpustat_user_vtime(vtime);
-			break;
-		case CPUTIME_NICE:
-			if (task_nice(tsk) > 0)
+			भङ्ग;
+		पक्ष CPUTIME_NICE:
+			यदि (task_nice(tsk) > 0)
 				*val += kcpustat_user_vtime(vtime);
-			break;
-		case CPUTIME_GUEST:
-			if (state == VTIME_GUEST && task_nice(tsk) <= 0)
+			भङ्ग;
+		पक्ष CPUTIME_GUEST:
+			यदि (state == VTIME_GUEST && task_nice(tsk) <= 0)
 				*val += vtime->gtime + vtime_delta(vtime);
-			break;
-		case CPUTIME_GUEST_NICE:
-			if (state == VTIME_GUEST && task_nice(tsk) > 0)
+			भङ्ग;
+		पक्ष CPUTIME_GUEST_NICE:
+			यदि (state == VTIME_GUEST && task_nice(tsk) > 0)
 				*val += vtime->gtime + vtime_delta(vtime);
-			break;
-		case CPUTIME_IDLE:
-			if (state == VTIME_IDLE && !cpu_has_iowait(cpu))
+			भङ्ग;
+		पक्ष CPUTIME_IDLE:
+			यदि (state == VTIME_IDLE && !cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
-			break;
-		case CPUTIME_IOWAIT:
-			if (state == VTIME_IDLE && cpu_has_iowait(cpu))
+			भङ्ग;
+		पक्ष CPUTIME_IOWAIT:
+			यदि (state == VTIME_IDLE && cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
-			break;
-		default:
-			break;
+			भङ्ग;
+		स्वभाव:
+			भङ्ग;
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} यावत् (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-u64 kcpustat_field(enum cpu_usage_stat usage, int cpu)
+u64 kcpustat_क्षेत्रम्(गणना cpu_usage_stat usage, पूर्णाङ्क cpu)
 {
 	u64 *cpustat = kcpustat_cpu(cpu).cpustat;
 	u64 val = cpustat[usage];
-	struct rq *rq;
-	int err;
+	संरचना rq *rq;
+	पूर्णाङ्क err;
 
-	if (!vtime_generic_enabled_cpu(cpu))
-		return kcpustat_field_default(usage, cpu);
+	यदि (!vtime_generic_enabled_cpu(cpu))
+		प्रत्यागम kcpustat_क्षेत्रम्_default(usage, cpu);
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
-		struct task_struct *curr;
+	प्रति (;;) {
+		संरचना task_struct *curr;
 
-		rcu_read_lock();
+		rcu_read_तालकम्();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		यदि (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
-			return cpustat[usage];
+			प्रत्यागम cpustat[usage];
 		}
 
-		err = kcpustat_field_vtime(cpustat, curr, usage, cpu, &val);
+		err = kcpustat_क्षेत्रम्_vtime(cpustat, curr, usage, cpu, &val);
 		rcu_read_unlock();
 
-		if (!err)
-			return val;
+		यदि (!err)
+			प्रत्यागम val;
 
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_field);
+EXPORT_चिह्नम्_GPL(kcpustat_क्षेत्रम्);
 
-static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
-				    const struct kernel_cpustat *src,
-				    struct task_struct *tsk, int cpu)
+स्थिर पूर्णाङ्क kcpustat_cpu_fetch_vtime(संरचना kernel_cpustat *dst,
+				    ध्रुव संरचना kernel_cpustat *src,
+				    संरचना task_struct *tsk, पूर्णाङ्क cpu)
 {
-	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	संरचना vtime *vtime = &tsk->vtime;
+	अचिह्नित पूर्णाङ्क seq;
 
-	do {
+	कुरु {
 		u64 *cpustat;
 		u64 delta;
-		int state;
+		पूर्णाङ्क state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		यदि (state < 0)
+			प्रत्यागम state;
 
 		*dst = *src;
 		cpustat = dst->cpustat;
 
 		/* Task is sleeping or dead, nothing to add */
-		if (state < VTIME_IDLE)
-			continue;
+		यदि (state < VTIME_IDLE)
+			अनुवर्त;
 
 		delta = vtime_delta(vtime);
 
@@ -1256,72 +1256,72 @@ static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
 		 * Task runs either in user (including guest) or kernel space,
 		 * add pending nohz time to the right place.
 		 */
-		switch (state) {
-		case VTIME_SYS:
+		विकल्प (state) {
+		पक्ष VTIME_SYS:
 			cpustat[CPUTIME_SYSTEM] += vtime->stime + delta;
-			break;
-		case VTIME_USER:
-			if (task_nice(tsk) > 0)
+			भङ्ग;
+		पक्ष VTIME_USER:
+			यदि (task_nice(tsk) > 0)
 				cpustat[CPUTIME_NICE] += vtime->utime + delta;
-			else
+			अन्यथा
 				cpustat[CPUTIME_USER] += vtime->utime + delta;
-			break;
-		case VTIME_GUEST:
-			if (task_nice(tsk) > 0) {
+			भङ्ग;
+		पक्ष VTIME_GUEST:
+			यदि (task_nice(tsk) > 0) {
 				cpustat[CPUTIME_GUEST_NICE] += vtime->gtime + delta;
 				cpustat[CPUTIME_NICE] += vtime->gtime + delta;
-			} else {
+			} अन्यथा {
 				cpustat[CPUTIME_GUEST] += vtime->gtime + delta;
 				cpustat[CPUTIME_USER] += vtime->gtime + delta;
 			}
-			break;
-		case VTIME_IDLE:
-			if (cpu_has_iowait(cpu))
+			भङ्ग;
+		पक्ष VTIME_IDLE:
+			यदि (cpu_has_iowait(cpu))
 				cpustat[CPUTIME_IOWAIT] += delta;
-			else
+			अन्यथा
 				cpustat[CPUTIME_IDLE] += delta;
-			break;
-		default:
+			भङ्ग;
+		स्वभाव:
 			WARN_ON_ONCE(1);
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} यावत् (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
+शून्य kcpustat_cpu_fetch(संरचना kernel_cpustat *dst, पूर्णाङ्क cpu)
 {
-	const struct kernel_cpustat *src = &kcpustat_cpu(cpu);
-	struct rq *rq;
-	int err;
+	ध्रुव संरचना kernel_cpustat *src = &kcpustat_cpu(cpu);
+	संरचना rq *rq;
+	पूर्णाङ्क err;
 
-	if (!vtime_generic_enabled_cpu(cpu)) {
+	यदि (!vtime_generic_enabled_cpu(cpu)) {
 		kcpustat_cpu_fetch_default(dst, cpu);
-		return;
+		प्रत्यागम;
 	}
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
-		struct task_struct *curr;
+	प्रति (;;) {
+		संरचना task_struct *curr;
 
-		rcu_read_lock();
+		rcu_read_तालकम्();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		यदि (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
 			kcpustat_cpu_fetch_default(dst, cpu);
-			return;
+			प्रत्यागम;
 		}
 
 		err = kcpustat_cpu_fetch_vtime(dst, src, curr, cpu);
 		rcu_read_unlock();
 
-		if (!err)
-			return;
+		यदि (!err)
+			प्रत्यागम;
 
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_cpu_fetch);
+EXPORT_चिह्नम्_GPL(kcpustat_cpu_fetch);
 
-#endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */
+#यदि_अन्तः /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */

@@ -1,68 +1,68 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#ifndef _KERNEL_SCHED_AUTOGROUP_H
-#define _KERNEL_SCHED_AUTOGROUP_H
+#यदि_अपरिभाषितम् _KERNEL_SCHED_AUTOGROUP_H
+#परिभाषय _KERNEL_SCHED_AUTOGROUP_H
 
-#include "sched.h"
+#अन्तर्भाव "sched.h"
 
-#ifdef CONFIG_SCHED_AUTOGROUP
+#यदि_परिभाषितम् CONFIG_SCHED_AUTOGROUP
 
-struct autogroup {
+संरचना autogroup {
 	/*
 	 * Reference doesn't mean how many threads attach to this
 	 * autogroup now. It just stands for the number of tasks
 	 * which could use this autogroup.
 	 */
-	struct kref		kref;
-	struct task_group	*tg;
-	struct rw_semaphore	lock;
-	unsigned long		id;
-	int			nice;
+	संरचना kref		kref;
+	संरचना task_गणः	*tg;
+	संरचना rw_semaphore	तालकम्;
+	अचिह्नित दीर्घ		id;
+	पूर्णाङ्क			nice;
 };
 
-extern void autogroup_init(struct task_struct *init_task);
-extern void autogroup_free(struct task_group *tg);
+बाह्य शून्य autogroup_init(संरचना task_struct *init_task);
+बाह्य शून्य autogroup_free(संरचना task_गणः *tg);
 
-static inline bool task_group_is_autogroup(struct task_group *tg)
+स्थिर अन्तःस्थ bool task_गणः_is_autogroup(संरचना task_गणः *tg)
 {
-	return !!tg->autogroup;
+	प्रत्यागम !!tg->autogroup;
 }
 
-extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
+बाह्य bool task_इच्छति_autogroup(संरचना task_struct *p, संरचना task_गणः *tg);
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+स्थिर अन्तःस्थ संरचना task_गणः *
+autogroup_task_गणः(संरचना task_struct *p, संरचना task_गणः *tg)
 {
-	extern unsigned int sysctl_sched_autogroup_enabled;
-	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+	बाह्य अचिह्नित पूर्णाङ्क sysctl_sched_autogroup_enabled;
+	पूर्णाङ्क enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
 
-	if (enabled && task_wants_autogroup(p, tg))
-		return p->signal->autogroup->tg;
+	यदि (enabled && task_इच्छति_autogroup(p, tg))
+		प्रत्यागम p->सङ्केत->autogroup->tg;
 
-	return tg;
+	प्रत्यागम tg;
 }
 
-extern int autogroup_path(struct task_group *tg, char *buf, int buflen);
+बाह्य पूर्णाङ्क autogroup_मार्गः(संरचना task_गणः *tg, वर्ण *buf, पूर्णाङ्क buflen);
 
-#else /* !CONFIG_SCHED_AUTOGROUP: */
+#अन्यथा /* !CONFIG_SCHED_AUTOGROUP: */
 
-static inline void autogroup_init(struct task_struct *init_task) {  }
-static inline void autogroup_free(struct task_group *tg) { }
-static inline bool task_group_is_autogroup(struct task_group *tg)
+स्थिर अन्तःस्थ शून्य autogroup_init(संरचना task_struct *init_task) {  }
+स्थिर अन्तःस्थ शून्य autogroup_free(संरचना task_गणः *tg) { }
+स्थिर अन्तःस्थ bool task_गणः_is_autogroup(संरचना task_गणः *tg)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+स्थिर अन्तःस्थ संरचना task_गणः *
+autogroup_task_गणः(संरचना task_struct *p, संरचना task_गणः *tg)
 {
-	return tg;
+	प्रत्यागम tg;
 }
 
-static inline int autogroup_path(struct task_group *tg, char *buf, int buflen)
+स्थिर अन्तःस्थ पूर्णाङ्क autogroup_मार्गः(संरचना task_गणः *tg, वर्ण *buf, पूर्णाङ्क buflen)
 {
-	return 0;
+	प्रत्यागम 0;
 }
 
-#endif /* !CONFIG_SCHED_AUTOGROUP */
+#यदि_अन्तः /* !CONFIG_SCHED_AUTOGROUP */
 
-#endif /* _KERNEL_SCHED_AUTOGROUP_H */
+#यदि_अन्तः /* _KERNEL_SCHED_AUTOGROUP_H */
