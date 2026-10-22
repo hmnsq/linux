@@ -52,14 +52,14 @@ struct scx_sched *scx_skip_subtree_pre(struct scx_sched *pos, struct scx_sched *
 		       lockdep_is_held(&scx_sched_lock) ||
 		       rcu_read_lock_any_held());
 
-	while (pos != root) {
+	ながら (pos != root) {
 		next = list_next_or_null_rcu(&scx_parent(pos)->children, &pos->sibling,
 					     struct scx_sched, sibling);
-		if (next)
-			return next;
+		もし (next)
+			戻る next;
 		pos = scx_parent(pos);
 	}
-	return NULL;
+	戻る NULL;
 }
 
 /**
@@ -80,21 +80,21 @@ struct scx_sched *scx_next_descendant_pre(struct scx_sched *pos, struct scx_sche
 		       rcu_read_lock_any_held());
 
 	/* if first iteration, visit @root */
-	if (!pos)
-		return root;
+	もし (!pos)
+		戻る root;
 
 	/* visit the first child if exists */
 	next = list_first_or_null_rcu(&pos->children, struct scx_sched, sibling);
-	if (next)
-		return next;
+	もし (next)
+		戻る next;
 
 	/* no child, visit my or the closest ancestor's next sibling */
-	return scx_skip_subtree_pre(pos, root);
+	戻る scx_skip_subtree_pre(pos, root);
 }
 
 static struct scx_sched *scx_find_sub_sched(u64 cgroup_id)
 {
-	return rhashtable_lookup(&scx_sched_hash, &cgroup_id,
+	戻る rhashtable_lookup(&scx_sched_hash, &cgroup_id,
 				 scx_sched_hash_params);
 }
 
@@ -105,7 +105,7 @@ void scx_set_task_sched(struct task_struct *p, struct scx_sched *sch)
 
 struct cgroup *sch_cgroup(struct scx_sched *sch)
 {
-	return sch->cgrp;
+	戻る sch->cgrp;
 }
 
 /* for each descendant of @cgrp including self, set ->scx_sched to @sch */
@@ -122,10 +122,10 @@ static void free_pshard(struct scx_pshard *pshard)
 {
 	struct scx_caps_updated *cu;
 
-	if (!pshard)
-		return;
+	もし (!pshard)
+		戻る;
 	cu = &pshard->caps_updated;
-	if (cu->cmask_arena_out)
+	もし (cu->cmask_arena_out)
 		scx_arena_free(pshard->sch, cu->cmask_arena_out,
 			       struct_size_t(struct scx_cmask, bits,
 					     SCX_CMASK_NR_WORDS(pshard->nr_cids)));
@@ -136,9 +136,9 @@ void scx_free_pshards(struct scx_sched *sch)
 {
 	s32 si;
 
-	if (!sch->pshard)
-		return;
-	for (si = 0; si < sch->nr_pshards; si++)
+	もし (!sch->pshard)
+		戻る;
+	ために (si = 0; si < sch->nr_pshards; si++)
 		free_pshard(sch->pshard[si]);
 	kfree(sch->pshard);
 }
@@ -155,15 +155,15 @@ static struct scx_pshard *alloc_pshard(struct scx_sched *sch, s32 shard_idx, s32
 	s32 i;
 
 	pshard = kzalloc_node(sizeof(*pshard), GFP_KERNEL, node);
-	if (!pshard)
-		return NULL;
+	もし (!pshard)
+		戻る NULL;
 
 	raw_spin_lock_init(&pshard->lock);
 	pshard->sch = sch;
 	pshard->base = shard->base_cid;
 	pshard->nr_cids = shard->nr_cids;
 
-	for (i = 0; i < __SCX_NR_CAPS; i++)
+	ために (i = 0; i < __SCX_NR_CAPS; i++)
 		scx_cmask_init(&pshard->caps[i].cmask, shard->base_cid, shard->nr_cids);
 
 	cu = &pshard->caps_updated;
@@ -172,14 +172,14 @@ static struct scx_pshard *alloc_pshard(struct scx_sched *sch, s32 shard_idx, s32
 	__scx_cmask_init(&cu->cmask, shard->base_cid, shard->nr_cids, SCX_CID_SHARD_MAX_CPUS);
 
 	cu->cmask_arena_out = scx_arena_alloc(sch, cmask_size);
-	if (!cu->cmask_arena_out) {
+	もし (!cu->cmask_arena_out) {
 		free_pshard(pshard);
-		return NULL;
+		戻る NULL;
 	}
 
 	scx_cmask_init(cu->cmask_arena_out, shard->base_cid, shard->nr_cids);
 
-	return pshard;
+	戻る pshard;
 }
 
 s32 scx_alloc_pshards(struct scx_sched *sch)
@@ -188,23 +188,23 @@ s32 scx_alloc_pshards(struct scx_sched *sch)
 	s32 *shard_node;
 	s32 si;
 
-	if (!sch->is_cid_type || !sch->arena_pool)
-		return 0;
+	もし (!sch->is_cid_type || !sch->arena_pool)
+		戻る 0;
 
 	shard_node = rcu_dereference_protected(scx_shard_node,
 					       lockdep_is_held(&scx_enable_mutex));
 
 	pshard = kzalloc_objs(pshard[0], scx_nr_cid_shards);
-	if (!pshard)
-		return -ENOMEM;
+	もし (!pshard)
+		戻る -ENOMEM;
 
-	for (si = 0; si < scx_nr_cid_shards; si++) {
+	ために (si = 0; si < scx_nr_cid_shards; si++) {
 		pshard[si] = alloc_pshard(sch, si, shard_node[si]);
-		if (!pshard[si]) {
-			while (--si >= 0)
+		もし (!pshard[si]) {
+			ながら (--si >= 0)
 				free_pshard(pshard[si]);
 			kfree(pshard);
-			return -ENOMEM;
+			戻る -ENOMEM;
 		}
 	}
 
@@ -217,7 +217,7 @@ s32 scx_alloc_pshards(struct scx_sched *sch)
 	 */
 	smp_wmb();
 	WRITE_ONCE(sch->pshard, pshard);
-	return 0;
+	戻る 0;
 }
 
 /*
@@ -228,10 +228,10 @@ void scx_init_root_caps(struct scx_sched *sch)
 {
 	s32 si, i;
 
-	for (si = 0; si < sch->nr_pshards; si++) {
+	ために (si = 0; si < sch->nr_pshards; si++) {
 		struct scx_pshard *ps = sch->pshard[si];
 
-		for (i = 0; i < __SCX_NR_CAPS; i++)
+		ために (i = 0; i < __SCX_NR_CAPS; i++)
 			scx_cmask_fill(&ps->caps[i].cmask);
 	}
 }
@@ -241,7 +241,7 @@ static s64 scx_rescue_slice_remaining(struct rq *rq)
 {
 	s64 served = rq->scx.rescue.curr->se.sum_exec_runtime - rq->scx.rescue.exec_snap;
 
-	return max(rq->scx.rescue.slice - served, 0);
+	戻る max(rq->scx.rescue.slice - served, 0);
 }
 
 /*
@@ -254,11 +254,11 @@ static u64 scx_rescue_decay_avg(struct scx_sched_pcpu *pcpu)
 	unsigned long halflife = scx_rescue_decay_halflife;
 	u64 n = div_u64(get_jiffies_64() - pcpu->rescue_avg_at, halflife);
 
-	if (n) {
+	もし (n) {
 		pcpu->rescue_avg = n < 64 ? pcpu->rescue_avg >> n : 0;
 		pcpu->rescue_avg_at += n * halflife;
 	}
-	return pcpu->rescue_avg;
+	戻る pcpu->rescue_avg;
 }
 
 /**
@@ -288,7 +288,7 @@ void scx_rescue_charge(struct rq *rq, s64 delta_exec)
 	pcpu = per_cpu_ptr(scx_task_sched(rq->curr)->pcpu, cpu_of(rq));
 	pcpu->rescue_avg = scx_rescue_decay_avg(pcpu) + delta_exec;
 
-	if (!scx_rescue_slice_remaining(rq))
+	もし (!scx_rescue_slice_remaining(rq))
 		scx_task_slice_ended(rq, rq->scx.rescue.curr);
 }
 
@@ -306,7 +306,7 @@ void scx_rescue_end(struct rq *rq)
 	lockdep_assert_rq_held(rq);
 
 	rq->scx.rescue.curr = NULL;
-	if (list_empty(&rq->scx.rescue.dsq.list))
+	もし (list_empty(&rq->scx.rescue.dsq.list))
 		rq->scx.rescue.budget = min(rq->scx.rescue.budget, scx_rescue_quantum_ns);
 }
 
@@ -331,12 +331,12 @@ bool scx_rescue_keep(struct rq *rq, struct task_struct *p)
 
 	lockdep_assert_rq_held(rq);
 
-	if (!remaining || !(p->scx.flags & SCX_TASK_QUEUED) ||
+	もし (!remaining || !(p->scx.flags & SCX_TASK_QUEUED) ||
 	    scx_bypassing(scx_task_sched(p), cpu_of(rq)))
-		return false;
+		戻る false;
 
 	scx_set_task_slice(p, remaining);
-	return true;
+	戻る true;
 }
 
 /**
@@ -367,9 +367,9 @@ static void scx_rescue_accrue(struct rq *rq)
 	 * Avoid multiplication overflows by taking a shortcut when the gap is
 	 * large enough to fill the budget.
 	 */
-	if (delta >= scx_rescue_sat_delta_ns)
+	もし (delta >= scx_rescue_sat_delta_ns)
 		rq->scx.rescue.budget = cap;
-	else
+	否则
 		rq->scx.rescue.budget =
 			min(cap, rq->scx.rescue.budget +
 			    ((delta * scx_rescue_bw_1024) >> SCHED_CAPACITY_SHIFT));
@@ -384,7 +384,7 @@ static s64 scx_rescue_next_slice(struct rq *rq)
 	s64 min_slice = max_t(s64, SCX_RESCUE_MIN_SLICE_US * NSEC_PER_USEC, TICK_NSEC);
 	u32 depth = rq->scx.rescue.dsq.nr ?: 1;
 
-	return clamp(div_s64(scx_rescue_quantum_ns, depth), min_slice, scx_rescue_quantum_ns);
+	戻る clamp(div_s64(scx_rescue_quantum_ns, depth), min_slice, scx_rescue_quantum_ns);
 }
 
 static void scx_rescue_timer_arm(struct rq *rq)
@@ -392,14 +392,14 @@ static void scx_rescue_timer_arm(struct rq *rq)
 	struct timer_list *timer = &rq->scx.rescue.timer;
 	s64 delay = scx_rescue_quantum_ns / 4;	/* should be granular enough */
 
-	if (timer_pending(timer))
-		return;
+	もし (timer_pending(timer))
+		戻る;
 
 	/*
 	 * While the head waiter can't be admitted because the bucket is short
 	 * of a full quantum, stretch to the full funding delay.
 	 */
-	if (!rq->scx.rescue.curr && rq->scx.rescue.budget < scx_rescue_quantum_ns) {
+	もし (!rq->scx.rescue.curr && rq->scx.rescue.budget < scx_rescue_quantum_ns) {
 		s64 deficit = scx_rescue_quantum_ns - rq->scx.rescue.budget;
 
 		delay = max(delay,
@@ -449,14 +449,14 @@ static bool scx_rescue_try_admit(struct rq *rq, struct task_struct *p)
 {
 	scx_rescue_accrue(rq);
 
-	if (!rq->scx.rescue.curr && list_empty(&rq->scx.rescue.dsq.list) &&
+	もし (!rq->scx.rescue.curr && list_empty(&rq->scx.rescue.dsq.list) &&
 	    rq->scx.rescue.budget >= scx_rescue_quantum_ns) {
 		scx_rescue_admit(rq, p, scx_rescue_quantum_ns);
-		return true;
+		戻る true;
 	}
 
 	scx_rescue_timer_arm(rq);
-	return false;
+	戻る false;
 }
 
 /**
@@ -472,7 +472,7 @@ static void scx_rescue_check_overload(struct rq *rq)
 {
 	struct scx_sched *victim = NULL, *pos;
 	struct task_struct *p;
-	int cpu = cpu_of(rq);
+	整数 cpu = cpu_of(rq);
 	u64 max_avg = 0;
 	u32 dur_ms;
 
@@ -480,34 +480,34 @@ static void scx_rescue_check_overload(struct rq *rq)
 
 	p = list_first_entry_or_null(&rq->scx.rescue.dsq.list, struct task_struct,
 				     scx.dsq_list.node);
-	if (!p)
-		return;
+	もし (!p)
+		戻る;
 
 	/* has the head waiter been queued for longer than the threshold? */
-	if (time_before(jiffies, p->scx.rescue_at + scx_rescue_overload_after))
-		return;
+	もし (time_before(jiffies, p->scx.rescue_at + scx_rescue_overload_after))
+		戻る;
 
 	/*
 	 * Grace period after the last ejection on this cpu - the freed
 	 * bandwidth gets one threshold's worth of time to drain the backlog
 	 * before another sub is judged.
 	 */
-	if (time_before64(get_jiffies_64(), rq->scx.rescue.kill_at +
+	もし (time_before64(get_jiffies_64(), rq->scx.rescue.kill_at +
 			  scx_rescue_overload_after))
-		return;
+		戻る;
 
 	list_for_each_entry_rcu(pos, &scx_sched_all, all) {
 		u64 avg = scx_rescue_decay_avg(per_cpu_ptr(pos->pcpu, cpu));
 
 		/* skip an already-exiting sub, else the ejection is wasted */
-		if (pos->level && avg > max_avg &&
+		もし (pos->level && avg > max_avg &&
 		    atomic_read(&pos->exit_kind) == SCX_EXIT_NONE) {
 			max_avg = avg;
 			victim = pos;
 		}
 	}
-	if (!victim)
-		return;
+	もし (!victim)
+		戻る;
 
 	rq->scx.rescue.kill_at = get_jiffies_64();
 	dur_ms = jiffies_to_msecs(jiffies - p->scx.rescue_at);
@@ -537,17 +537,17 @@ static void scx_rescue_timerfn(struct timer_list *timer)
 	guard(rq_lock_irqsave)(rq);
 
 	p = rq->scx.rescue.curr;
-	if (!p && list_empty(&rq->scx.rescue.dsq.list))
-		return;
+	もし (!p && list_empty(&rq->scx.rescue.dsq.list))
+		戻る;
 
 	scx_rescue_accrue(rq);
 	scx_rescue_check_overload(rq);
 
-	if (!p) {
+	もし (!p) {
 		s64 slice = scx_rescue_next_slice(rq);
 
 		/* no rescue in progress */
-		if (rq->scx.rescue.budget < scx_rescue_quantum_ns)
+		もし (rq->scx.rescue.budget < scx_rescue_quantum_ns)
 			goto out_arm;
 
 		/* there's enough budget to start rescuing the next one */
@@ -557,9 +557,9 @@ static void scx_rescue_timerfn(struct timer_list *timer)
 		scx_rescue_admit(rq, p, slice);
 		scx_move_local_task_to_local_dsq(scx_task_sched(p), p,
 						 SCX_ENQ_IGNORE_CAPS, rq);
-		if (sched_class_above(&ext_sched_class, rq->curr->sched_class))
+		もし (sched_class_above(&ext_sched_class, rq->curr->sched_class))
 			resched_curr(rq);
-	} else if (p->scx.dsq && rq->scx.rescue.budget > 2 * scx_rescue_quantum_ns) {
+	} 否则 もし (p->scx.dsq && rq->scx.rescue.budget > 2 * scx_rescue_quantum_ns) {
 		/*
 		 * The rescuee waited for the CPU for too long. Escalate - grant
 		 * the unserved remainder, protect it from the schedulers and
@@ -586,7 +586,7 @@ void scx_rescue_flush(struct rq *rq)
 	lockdep_assert_rq_held(rq);
 
 	/* end the current rescue */
-	if (rq->scx.rescue.curr)
+	もし (rq->scx.rescue.curr)
 		scx_task_slice_ended(rq, rq->scx.rescue.curr);
 
 	/* and flush out all pending ones */
@@ -617,8 +617,8 @@ void scx_rescue_dump(struct seq_buf *s, struct rq *rq)
  */
 static void scx_rescue_check_timeout(struct scx_sched *sch)
 {
-	if (!scx_rescue_bw_1024 || sch->watchdog_timeout > scx_rescue_overload_after)
-		return;
+	もし (!scx_rescue_bw_1024 || sch->watchdog_timeout > scx_rescue_overload_after)
+		戻る;
 
 	pr_warn("sched_ext: %s: watchdog timeout %ums <= rescue overload threshold %ums\n",
 		sch->ops.name, jiffies_to_msecs(sch->watchdog_timeout),
@@ -632,9 +632,9 @@ void scx_rescue_set_knobs(struct scx_sched *sch)
 	s64 quantum_us = sch->ops.rescue_quantum_us ?: SCX_RESCUE_DFL_QUANTUM_US;
 	s64 period_ns;
 
-	if (sch->ops.rescue_bandwidth_ppt == SCX_RESCUE_DISABLE) {
+	もし (sch->ops.rescue_bandwidth_ppt == SCX_RESCUE_DISABLE) {
 		scx_rescue_bw_1024 = 0;
-		return;
+		戻る;
 	}
 
 	scx_rescue_bw_1024 = bw_ppt * SCHED_CAPACITY_SCALE / 1000;
@@ -655,7 +655,7 @@ void scx_rescue_set_knobs(struct scx_sched *sch)
 	scx_rescue_decay_halflife = scx_rescue_overload_after / 4;
 
 	/* a single in-budget wait must not cross the overload trigger */
-	if (nsecs_to_jiffies(period_ns) > scx_rescue_overload_after / 2)
+	もし (nsecs_to_jiffies(period_ns) > scx_rescue_overload_after / 2)
 		pr_warn("sched_ext: %s: rescue funding period %lldms > overload threshold %ums / 2\n",
 			sch->ops.name, div_s64(period_ns, NSEC_PER_MSEC),
 			jiffies_to_msecs(scx_rescue_overload_after));
@@ -693,8 +693,8 @@ void scx_rescue_init(struct rq *rq)
 struct scx_dispatch_q *scx_resolve_local_dsq(struct scx_sched *sch, struct rq *rq,
 					     struct task_struct *p, u64 *enq_flags)
 {
-	if (!scx_has_subs())
-		return &rq->scx.local_dsq;
+	もし (!scx_has_subs())
+		戻る &rq->scx.local_dsq;
 
 	s32 cid = __scx_cpu_to_cid(cpu_of(rq));
 	struct scx_sched *asch = rq->scx.remote_activate_sch ?: sch;
@@ -705,13 +705,13 @@ struct scx_dispatch_q *scx_resolve_local_dsq(struct scx_sched *sch, struct rq *r
 	 * On a remote activation the scheduling sched (@asch) differs from
 	 * @p's owner (@sch). Check caps against the scheduling sched.
 	 */
-	if (*enq_flags & SCX_ENQ_PREEMPT)
+	もし (*enq_flags & SCX_ENQ_PREEMPT)
 		needed |= scx_caps_for_preempt(asch, rq, *enq_flags);
 	missing = scx_missing_caps(asch, cpu_of(rq), needed);
 
 	/* requirements met */
-	if (likely(!missing))
-		return &rq->scx.local_dsq;
+	もし (likely(!missing))
+		戻る &rq->scx.local_dsq;
 
 	/*
 	 * The task must run on this CPU regardless of caps: the rq is draining
@@ -719,11 +719,11 @@ struct scx_dispatch_q *scx_resolve_local_dsq(struct scx_sched *sch, struct rq *r
 	 * migration is pending. Admit despite the missing caps and count it.
 	 * Refuse preemptions.
 	 */
-	if (unlikely(!scx_rq_online(rq) || is_migration_disabled(p) ||
+	もし (unlikely(!scx_rq_online(rq) || is_migration_disabled(p) ||
 		     p->migration_pending)) {
 		__scx_add_event(sch, SCX_EV_SUB_FORCED_ADMIT, 1);
 		*enq_flags &= ~SCX_ENQ_PREEMPT;
-		return &rq->scx.local_dsq;
+		戻る &rq->scx.local_dsq;
 	}
 
 	/*
@@ -736,20 +736,20 @@ struct scx_dispatch_q *scx_resolve_local_dsq(struct scx_sched *sch, struct rq *r
 	p->scx.flags &= ~SCX_TASK_IMMED;
 
 	/* the enqueuer opted for rescue instead of rejection and reenqueue */
-	if ((*enq_flags & SCX_ENQ_RESCUE) && likely(scx_rescue_bw_1024)) {
+	もし ((*enq_flags & SCX_ENQ_RESCUE) && likely(scx_rescue_bw_1024)) {
 		__scx_add_event(sch, SCX_EV_SUB_RESCUE, 1);
-		if (scx_rescue_try_admit(rq, p))
-			return &rq->scx.local_dsq;
+		もし (scx_rescue_try_admit(rq, p))
+			戻る &rq->scx.local_dsq;
 
 		/* queueing, the overload trigger measures the wait from here */
 		p->scx.rescue_at = jiffies;
-		return &rq->scx.rescue.dsq;
+		戻る &rq->scx.rescue.dsq;
 	}
 
 	p->scx.reenq_reason_caps = missing;
 	p->scx.reenq_reason_cid = cid;
 
-	return &rq->scx.reject_dsq;
+	戻る &rq->scx.reject_dsq;
 }
 
 /* @p lost the caps needed to stay on @rq's local DSQ? Record reason if so. */
@@ -758,16 +758,16 @@ bool scx_task_reenq_on_cap_revoke(struct rq *rq, struct task_struct *p)
 	u64 missing;
 
 	/* migration-disabled tasks and the rescuee are admitted capless */
-	if (is_migration_disabled(p) || p == scx_rescuee(rq))
-		return false;
+	もし (is_migration_disabled(p) || p == scx_rescuee(rq))
+		戻る false;
 
 	missing = scx_missing_caps(scx_task_sched(p), cpu_of(rq), scx_caps_for_task(p));
-	if (likely(!missing))
-		return false;
+	もし (likely(!missing))
+		戻る false;
 
 	p->scx.reenq_reason_caps = missing;
 	p->scx.reenq_reason_cid = __scx_cpu_to_cid(cpu_of(rq));
-	return true;
+	戻る true;
 }
 
 /*
@@ -785,8 +785,8 @@ void scx_reenq_reject(struct rq *rq)
 
 	lockdep_assert_rq_held(rq);
 
-	if (!scx_has_subs() || list_empty(&rq->scx.reject_dsq.list))
-		return;
+	もし (!scx_has_subs() || list_empty(&rq->scx.reject_dsq.list))
+		戻る;
 
 	/*
 	 * Move to a private list so a task re-rejected by the
@@ -794,13 +794,13 @@ void scx_reenq_reject(struct rq *rq)
 	 */
 	list_for_each_entry_safe(p, n, &rq->scx.reject_dsq.list, scx.dsq_list.node) {
 		/* migration_pending tasks should have bypassed to local DSQ */
-		if (WARN_ON_ONCE(p->migration_pending))
+		もし (WARN_ON_ONCE(p->migration_pending))
 			continue;
 
 		scx_wait_dispatching(p);
 		scx_dispatch_dequeue(rq, p);
 
-		if (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_MASK))
+		もし (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_MASK))
 			p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
 		p->scx.flags |= SCX_TASK_REENQ_CAP;
 
@@ -825,7 +825,7 @@ static void caps_updated_record(struct scx_pshard *ps, const struct scx_cmask *c
 	guard(raw_spinlock)(&cu->lock);
 	scx_cmask_or(&cu->cmask, cids);
 	cu->caps |= caps;
-	if (list_empty(&cu->node_in_flight))
+	もし (list_empty(&cu->node_in_flight))
 		list_add_tail(&cu->node_in_flight, to_deliver);
 }
 
@@ -838,7 +838,7 @@ static void caps_updated_deliver(struct list_head *to_deliver)
 		struct scx_pshard *ps = container_of(cu, struct scx_pshard, caps_updated);
 		struct scx_sched *sch = ps->sch;
 
-		while (true) {
+		ながら (true) {
 			u64 caps = 0;
 
 			/*
@@ -849,7 +849,7 @@ static void caps_updated_deliver(struct list_head *to_deliver)
 			 * scx_sub_seed_caps() to deliver once live.
 			 */
 			scoped_guard (raw_spinlock, &cu->lock) {
-				if (cu->caps && SCX_HAS_OP(sch, sub_caps_updated) &&
+				もし (cu->caps && SCX_HAS_OP(sch, sub_caps_updated) &&
 				    likely(!READ_ONCE(sch->aborting))) {
 					struct scx_cmask_ref ref;
 
@@ -859,11 +859,11 @@ static void caps_updated_deliver(struct list_head *to_deliver)
 					scx_cmask_ref_copy(&ref, &cu->cmask);
 					scx_cmask_clear(&cu->cmask);
 					cu->caps = 0;
-				} else {
+				} 否则 {
 					list_del_init(&cu->node_in_flight);
 				}
 			}
-			if (!caps)
+			もし (!caps)
 				break;
 
 			/* caps != 0 only when deliverable (has_op, above) */
@@ -884,12 +884,12 @@ static void scx_sub_seed_caps(struct scx_sched *sch)
 
 	guard(irqsave)();
 
-	for (si = 0; si < sch->nr_pshards; si++) {
+	ために (si = 0; si < sch->nr_pshards; si++) {
 		struct scx_pshard *ps = sch->pshard[si];
 		struct scx_caps_updated *cu = &ps->caps_updated;
 
 		scoped_guard (raw_spinlock, &cu->lock) {
-			if (cu->caps && list_empty(&cu->node_in_flight))
+			もし (cu->caps && list_empty(&cu->node_in_flight))
 				list_add_tail(&cu->node_in_flight, &to_deliver);
 		}
 	}
@@ -901,10 +901,10 @@ static u64 calc_effective_caps(struct scx_pshard *ps, s32 cid)
 	u64 ecaps = 0;
 	u32 cap_bit;
 
-	for (cap_bit = 0; cap_bit < __SCX_NR_CAPS; cap_bit++)
-		if (scx_cmask_test(cid, &ps->caps[cap_bit].cmask))
+	ために (cap_bit = 0; cap_bit < __SCX_NR_CAPS; cap_bit++)
+		もし (scx_cmask_test(cid, &ps->caps[cap_bit].cmask))
 			ecaps |= BIT_U64(cap_bit) | scx_caps_implied(BIT_U64(cap_bit));
-	return ecaps;
+	戻る ecaps;
 }
 
 /**
@@ -928,9 +928,9 @@ static void queue_sync_ecaps(struct scx_sched *sch, s32 cid)
 	smp_mb();
 
 	/* @cid's pshard->lock excludes concurrent queueing attempts */
-	if (llist_on_list(&pcpu->ecaps_to_sync_node))
-		return;
-	if (llist_add(&pcpu->ecaps_to_sync_node, &cpu_rq(cpu)->scx.ecaps_to_sync))
+	もし (llist_on_list(&pcpu->ecaps_to_sync_node))
+		戻る;
+	もし (llist_add(&pcpu->ecaps_to_sync_node, &cpu_rq(cpu)->scx.ecaps_to_sync))
 		scx_kick_cpu(sch->ancestors[0], cpu, 0);
 }
 
@@ -967,8 +967,8 @@ void scx_process_sync_ecaps(struct rq *rq, struct task_struct *prev)
 
 	lockdep_assert_rq_held(rq);
 
-	if (!scx_has_subs() || likely(llist_empty(&rq->scx.ecaps_to_sync)))
-		return;
+	もし (!scx_has_subs() || likely(llist_empty(&rq->scx.ecaps_to_sync)))
+		戻る;
 
 	/*
 	 * ecaps are zeroed while the cpu is inactive and must stay zero.
@@ -978,9 +978,9 @@ void scx_process_sync_ecaps(struct rq *rq, struct task_struct *prev)
 	 * reseed is queued, so this test can neither miss a racing sync nor
 	 * eat the reseed.
 	 */
-	if (unlikely(!cpu_active(cpu))) {
+	もし (unlikely(!cpu_active(cpu))) {
 		discard_queued_syncs(rq);
-		return;
+		戻る;
 	}
 
 	/* @cid is valid here: the cpu is active with queued syncs */
@@ -1017,7 +1017,7 @@ void scx_process_sync_ecaps(struct rq *rq, struct task_struct *prev)
 		 * so the context is set up there. The rq recorded in it keeps
 		 * the dispatches targeting @rq.
 		 */
-		if (ecaps != pcpu->reported_ecaps &&
+		もし (ecaps != pcpu->reported_ecaps &&
 		    SCX_HAS_OP(pcpu->sch, sub_ecaps_updated) &&
 		    !scx_bypassing(pcpu->sch, cpu)) {
 			struct scx_dsp_ctx *dspc = &this_cpu_ptr(pcpu->sch->pcpu)->dsp_ctx;
@@ -1037,10 +1037,10 @@ void scx_process_sync_ecaps(struct rq *rq, struct task_struct *prev)
 		 * learns the cpu's idle state. Arm the per-rq gate so the next
 		 * idle pick flushes it. Losing access drops any pending notify.
 		 */
-		if (gained & SCX_CAP_BASE) {
+		もし (gained & SCX_CAP_BASE) {
 			pcpu->idle_renotify = true;
 			rq->scx.flags |= SCX_RQ_SUB_IDLE_RENOTIFY;
-		} else if (lost & SCX_CAP_BASE) {
+		} 否则 もし (lost & SCX_CAP_BASE) {
 			pcpu->idle_renotify = false;
 		}
 	}
@@ -1050,7 +1050,7 @@ void scx_process_sync_ecaps(struct rq *rq, struct task_struct *prev)
 	 * to move the now-capless ones off the local DSQ. The scan tests
 	 * against the effective caps and thus must come after the ecaps sync.
 	 */
-	if (lost_all & SCX_CAPS_REENQ_ON_LOSS)
+	もし (lost_all & SCX_CAPS_REENQ_ON_LOSS)
 		scx_schedule_reenq_local(rq, SCX_REENQ_CAP_REVOKE);
 }
 
@@ -1076,11 +1076,11 @@ void scx_unbypass_replay_ecaps(struct rq *rq, struct scx_sched *sch)
 	lockdep_assert_rq_held(rq);
 
 	/* root holds every cap and never uses ecaps */
-	if (!sch->level)
-		return;
+	もし (!sch->level)
+		戻る;
 
-	if (READ_ONCE(pcpu->ecaps) == pcpu->reported_ecaps)
-		return;
+	もし (READ_ONCE(pcpu->ecaps) == pcpu->reported_ecaps)
+		戻る;
 
 	cid = __scx_cpu_to_cid(cpu);
 	ps = sch->pshard[rcu_dereference_all(scx_cid_to_shard)[cid]];
@@ -1105,8 +1105,8 @@ void scx_online_ecaps(struct rq *rq)
 	 * the tables. A concurrent disable can't retire them, see
 	 * handle_hotplug().
 	 */
-	if (!scx_enabled())
-		return;
+	もし (!scx_enabled())
+		戻る;
 
 	guard(rq_lock_irqsave)(rq);
 
@@ -1118,7 +1118,7 @@ void scx_online_ecaps(struct rq *rq)
 		struct scx_pshard *ps;
 
 		/* root holds every cap and never uses ecaps */
-		if (!pos->level)
+		もし (!pos->level)
 			continue;
 
 		ps = pos->pshard[shard];
@@ -1146,7 +1146,7 @@ void scx_offline_ecaps(struct rq *rq)
 
 	scx_for_each_descendant_pre(pos, root) {
 		/* root holds every cap and never uses ecaps */
-		if (!pos->level)
+		もし (!pos->level)
 			continue;
 
 		WRITE_ONCE(per_cpu_ptr(pos->pcpu, cpu)->ecaps, 0);
@@ -1168,19 +1168,19 @@ void scx_discard_ecaps_to_sync(s32 cpu, struct scx_sched_pcpu *pcpu)
 	 * and resplice the rest. Nodes in the taken batch read as on-list
 	 * throughout, so queue_sync_ecaps() stays correct.
 	 */
-	if (llist_on_list(&pcpu->ecaps_to_sync_node)) {
+	もし (llist_on_list(&pcpu->ecaps_to_sync_node)) {
 		scoped_guard (rq_lock_irqsave, rq) {
 			llist_for_each_safe(pos, tmp, llist_del_all(&rq->scx.ecaps_to_sync)) {
-				if (pos == &pcpu->ecaps_to_sync_node) {
+				もし (pos == &pcpu->ecaps_to_sync_node) {
 					init_llist_node(pos);
-				} else {
+				} 否则 {
 					pos->next = head;
 					head = pos;
-					if (!tail)
+					もし (!tail)
 						tail = pos;
 				}
 			}
-			if (head)
+			もし (head)
 				llist_add_batch(head, tail, &rq->scx.ecaps_to_sync);
 		}
 	}
@@ -1193,10 +1193,10 @@ void scx_discard_ecaps_to_sync(s32 cpu, struct scx_sched_pcpu *pcpu)
 	 * @pcpu accesses share one contiguous lock hold, off-list under the rq
 	 * lock means @pcpu won't be accessed again.
 	 */
-	while (true) {
+	ながら (true) {
 		scoped_guard (rq_lock_irqsave, rq) {
-			if (!llist_on_list(&pcpu->ecaps_to_sync_node))
-				return;
+			もし (!llist_on_list(&pcpu->ecaps_to_sync_node))
+				戻る;
 		}
 		cpu_relax();
 	}
@@ -1258,7 +1258,7 @@ static void scx_rehome_task(struct scx_sched *to, struct task_struct *p)
 		scx_set_task_state(p, SCX_TASK_INIT);
 		scx_set_task_sched(p, to);
 		scx_set_task_state(p, SCX_TASK_READY);
-		if (p->sched_class == &ext_sched_class)
+		もし (p->sched_class == &ext_sched_class)
 			scx_enable_task(to, p);
 	}
 }
@@ -1306,8 +1306,8 @@ static void scx_fail_parent(struct scx_sched *sch,
 	scx_bypass(parent, true);
 
 	scx_task_iter_start(&sti, sch->cgrp);
-	while ((p = scx_task_iter_next_locked(&sti))) {
-		if (scx_task_on_sched(parent, p))
+	ながら ((p = scx_task_iter_next_locked(&sti))) {
+		もし (scx_task_on_sched(parent, p))
 			continue;
 
 		scx_punt_task(parent, p);
@@ -1349,7 +1349,7 @@ static s32 scx_cgroup_claim_subtree(struct scx_sched *sch)
 	struct cgroup_subsys_state *ecss = cgroup_e_css(sub_cgrp, &cpu_cgrp_subsys);
 	struct scx_sched *parent = scx_parent(sch);
 	struct cgroup_subsys_state *css;
-	int ret;
+	整数 ret;
 
 	css_for_each_descendant_pre(css, ecss) {
 		struct task_group *tg = css_tg(css);
@@ -1361,13 +1361,13 @@ static s32 scx_cgroup_claim_subtree(struct scx_sched *sch)
 			.sched_idle = tg->scx.idle,
 		};
 
-		if (tg->scx.sched != parent ||
+		もし (tg->scx.sched != parent ||
 		    !cgroup_is_descendant(css->cgroup, sub_cgrp))
 			continue;
 
-		if (SCX_HAS_OP(sch, cgroup_init)) {
+		もし (SCX_HAS_OP(sch, cgroup_init)) {
 			ret = SCX_CALL_OP_RET(sch, cgroup_init, NULL, css->cgroup, &args);
-			if (ret) {
+			もし (ret) {
 				scx_error(sch, "ops.cgroup_init() failed (%d)", ret);
 				goto err;
 			}
@@ -1382,31 +1382,31 @@ static s32 scx_cgroup_claim_subtree(struct scx_sched *sch)
 		 * SUB_INIT is pass 1's progress mark: pass 2 and the err path
 		 * must visit exactly the tgs pass 1 inited.
 		 */
-		if (!(tg->scx.flags & SCX_TG_SUB_INIT))
+		もし (!(tg->scx.flags & SCX_TG_SUB_INIT))
 			continue;
 
 		/* skip the exit if the parent's ops.cgroup_init() failed */
-		if ((tg->scx.flags & SCX_TG_INITED) && SCX_HAS_OP(parent, cgroup_exit))
+		もし ((tg->scx.flags & SCX_TG_INITED) && SCX_HAS_OP(parent, cgroup_exit))
 			SCX_CALL_OP(parent, cgroup_exit, NULL, css->cgroup);
 		tg->scx.sched = sch;
 		tg->scx.flags |= SCX_TG_INITED;
 		tg->scx.flags &= ~SCX_TG_SUB_INIT;
 	}
 
-	return 0;
+	戻る 0;
 
 err:
 	css_for_each_descendant_post(css, ecss) {
 		struct task_group *tg = css_tg(css);
 
-		if (!(tg->scx.flags & SCX_TG_SUB_INIT))
+		もし (!(tg->scx.flags & SCX_TG_SUB_INIT))
 			continue;
 
-		if (SCX_HAS_OP(sch, cgroup_exit))
+		もし (SCX_HAS_OP(sch, cgroup_exit))
 			SCX_CALL_OP(sch, cgroup_exit, NULL, css->cgroup);
 		tg->scx.flags &= ~SCX_TG_SUB_INIT;
 	}
-	return ret;
+	戻る ret;
 }
 
 /**
@@ -1439,17 +1439,17 @@ static void scx_cgroup_return_subtree(struct scx_sched *sch)
 	struct scx_sched *parent = scx_parent(sch);
 	struct cgroup_subsys_state *css;
 	bool parent_failed = false;
-	int ret;
+	整数 ret;
 
 	css_for_each_descendant_post(css, ecss) {
 		struct task_group *tg = css_tg(css);
 
-		if (tg->scx.sched != sch ||
+		もし (tg->scx.sched != sch ||
 		    !cgroup_is_descendant(css->cgroup, sub_cgrp))
 			continue;
 
 		/* skip the exit if @sch's ops.cgroup_init() failed for the tg */
-		if ((tg->scx.flags & SCX_TG_INITED) && SCX_HAS_OP(sch, cgroup_exit))
+		もし ((tg->scx.flags & SCX_TG_INITED) && SCX_HAS_OP(sch, cgroup_exit))
 			SCX_CALL_OP(sch, cgroup_exit, NULL, css->cgroup);
 		tg->scx.sched = parent;
 		tg->scx.flags |= SCX_TG_SUB_INIT;
@@ -1473,7 +1473,7 @@ static void scx_cgroup_return_subtree(struct scx_sched *sch)
 		 * can't: a tg punted to the parent by an earlier failure would
 		 * also match.
 		 */
-		if (!(tg->scx.flags & SCX_TG_SUB_INIT))
+		もし (!(tg->scx.flags & SCX_TG_SUB_INIT))
 			continue;
 		tg->scx.flags &= ~(SCX_TG_SUB_INIT | SCX_TG_INITED);
 
@@ -1482,12 +1482,12 @@ static void scx_cgroup_return_subtree(struct scx_sched *sch)
 		 * punted: they stay on the dying $parent with INITED clear and
 		 * move onward when it disables.
 		 */
-		if (parent_failed)
+		もし (parent_failed)
 			continue;
 
-		if (SCX_HAS_OP(parent, cgroup_init)) {
+		もし (SCX_HAS_OP(parent, cgroup_init)) {
 			ret = SCX_CALL_OP_RET(parent, cgroup_init, NULL, css->cgroup, &args);
-			if (ret) {
+			もし (ret) {
 				scx_error(parent, "ops.cgroup_init() failed (%d) while disabling a sub-scheduler",
 					  ret);
 				parent_failed = true;
@@ -1497,8 +1497,8 @@ static void scx_cgroup_return_subtree(struct scx_sched *sch)
 		tg->scx.flags |= SCX_TG_INITED;
 	}
 }
-#else
-static inline s32 scx_cgroup_claim_subtree(struct scx_sched *sch) { return 0; }
+#否则
+static inline s32 scx_cgroup_claim_subtree(struct scx_sched *sch) { 戻る 0; }
 static inline void scx_cgroup_return_subtree(struct scx_sched *sch) {}
 #endif
 
@@ -1507,7 +1507,7 @@ void scx_sub_disable(struct scx_sched *sch)
 	struct scx_sched *parent = scx_parent(sch);
 	struct scx_task_iter sti;
 	struct task_struct *p;
-	int ret;
+	整数 ret;
 
 	/*
 	 * Guarantee forward progress and wait for descendants to be disabled.
@@ -1534,7 +1534,7 @@ void scx_sub_disable(struct scx_sched *sch)
 	 * parent) does not hold. ->sibling can't identify this case - an undone
 	 * link leaves it non-empty.
 	 */
-	if (!sch->linked)
+	もし (!sch->linked)
 		goto dump;
 
 	set_cgroup_sched(sch_cgroup(sch), parent);
@@ -1546,12 +1546,12 @@ void scx_sub_disable(struct scx_sched *sch)
 	scx_cgroup_return_subtree(sch);
 
 	scx_task_iter_start(&sti, sch->cgrp);
-	while ((p = scx_task_iter_next_locked(&sti))) {
+	ながら ((p = scx_task_iter_next_locked(&sti))) {
 		struct rq *rq;
 		struct rq_flags rf;
 
 		/* filter out duplicate visits */
-		if (scx_task_on_sched(parent, p))
+		もし (scx_task_on_sched(parent, p))
 			continue;
 
 		/*
@@ -1581,7 +1581,7 @@ void scx_sub_disable(struct scx_sched *sch)
 		 * own failures.
 		 */
 		ret = __scx_init_task(parent, p, NULL, false);
-		if (ret) {
+		もし (ret) {
 			scx_fail_parent(sch, p, ret);
 			put_task_struct(p);
 			break;
@@ -1589,7 +1589,7 @@ void scx_sub_disable(struct scx_sched *sch)
 
 		rq = task_rq_lock(p, &rf);
 
-		if (scx_get_task_state(p) == SCX_TASK_DEAD) {
+		もし (scx_get_task_state(p) == SCX_TASK_DEAD) {
 			/*
 			 * sched_ext_dead() raced us between __scx_init_task()
 			 * and this rq lock and ran exit_task() on @sch (the
@@ -1637,7 +1637,7 @@ dump:
 	 */
 	wake_up_all(&scx_unlink_waitq);
 
-	if (parent->ops.sub_detach && sch->sub_attached) {
+	もし (parent->ops.sub_detach && sch->sub_attached) {
 		struct scx_sub_detach_args sub_detach_args = {
 			.ops = &sch->ops,
 			.cgroup_path = sch->cgrp_path,
@@ -1648,7 +1648,7 @@ dump:
 
 	scx_log_sched_disable(sch);
 
-	if (sch->ops.exit)
+	もし (sch->ops.exit)
 		SCX_CALL_OP(sch, exit, NULL, sch->exit_info);
 
 	/*
@@ -1659,10 +1659,10 @@ dump:
 	WRITE_ONCE(sch->dead, true);
 	synchronize_rcu();
 
-	if (sch->sub_kset)
+	もし (sch->sub_kset)
 		kobject_del(&sch->sub_kset->kobj);
 	/* not added if enable failed before scx_sched_sysfs_add() */
-	if (sch->kobj.state_in_sysfs)
+	もし (sch->kobj.state_in_sysfs)
 		kobject_del(&sch->kobj);
 }
 
@@ -1675,19 +1675,19 @@ static struct scx_sched *find_parent_sched(struct cgroup *cgrp)
 	lockdep_assert_held(&scx_sched_lock);
 
 	/* can't attach twice to the same cgroup */
-	if (parent->cgrp == cgrp)
-		return ERR_PTR(-EBUSY);
+	もし (parent->cgrp == cgrp)
+		戻る ERR_PTR(-EBUSY);
 
 	/* does $parent allow sub-scheds? */
-	if (!parent->ops.sub_attach)
-		return ERR_PTR(-EOPNOTSUPP);
+	もし (!parent->ops.sub_attach)
+		戻る ERR_PTR(-EOPNOTSUPP);
 
 	/* can't insert between $parent and its exiting children */
 	list_for_each_entry(pos, &parent->children, sibling)
-		if (cgroup_is_descendant(pos->cgrp, cgrp))
-			return ERR_PTR(-EBUSY);
+		もし (cgroup_is_descendant(pos->cgrp, cgrp))
+			戻る ERR_PTR(-EBUSY);
 
-	return parent;
+	戻る parent;
 }
 
 static bool assert_task_ready_or_enabled(struct task_struct *p)
@@ -1697,11 +1697,11 @@ static bool assert_task_ready_or_enabled(struct task_struct *p)
 	switch (state) {
 	case SCX_TASK_READY:
 	case SCX_TASK_ENABLED:
-		return true;
+		戻る true;
 	default:
 		WARN_ONCE(true, "sched_ext: Invalid task state %d for %s[%d] during enabling sub sched",
 			  state, p->comm, p->pid);
-		return false;
+		戻る false;
 	}
 }
 
@@ -1717,26 +1717,26 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 
 	mutex_lock(&scx_enable_mutex);
 
-	if (!scx_enabled()) {
+	もし (!scx_enabled()) {
 		ret = -ENODEV;
 		goto out_unlock;
 	}
 
 	/* See scx_root_enable_workfn() for the @ops->priv check. */
-	if (rcu_access_pointer(ops->priv)) {
+	もし (rcu_access_pointer(ops->priv)) {
 		ret = -EBUSY;
 		goto out_unlock;
 	}
 
 	cgrp = cgroup_get_from_id(ops->sub_cgroup_id);
-	if (IS_ERR(cgrp)) {
+	もし (IS_ERR(cgrp)) {
 		ret = PTR_ERR(cgrp);
 		goto out_unlock;
 	}
 
 	raw_spin_lock_irq(&scx_sched_lock);
 	parent = find_parent_sched(cgrp);
-	if (IS_ERR(parent)) {
+	もし (IS_ERR(parent)) {
 		raw_spin_unlock_irq(&scx_sched_lock);
 		ret = PTR_ERR(parent);
 		goto out_put_cgrp;
@@ -1754,7 +1754,7 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 	/* scx_alloc_and_add_sched() consumes @cgrp whether it succeeds or not */
 	sch = scx_alloc_and_add_sched(cmd, cgrp, parent);
 	kobject_put(&parent->kobj);
-	if (IS_ERR(sch)) {
+	もし (IS_ERR(sch)) {
 		static_branch_dec(&__scx_has_subs);
 		ret = PTR_ERR(sch);
 		goto out_unlock;
@@ -1765,7 +1765,7 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 	 * never becomes visible with an unallocated pshard.
 	 */
 	ret = scx_validate_ops(sch, ops);
-	if (ret)
+	もし (ret)
 		goto err_disable;
 
 	scx_rescue_check_timeout(sch);
@@ -1780,22 +1780,22 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 	 * initialized, so scx_arena_pool_init() must run first.
 	 */
 	ret = scx_arena_pool_init(sch);
-	if (ret)
+	もし (ret)
 		goto err_disable;
 
 	ret = scx_alloc_pshards(sch);
-	if (ret)
+	もし (ret)
 		goto err_disable;
 
 	ret = scx_link_sched(sch);
-	if (ret)
+	もし (ret)
 		goto err_disable;
 
 	ret = scx_sched_sysfs_add(sch);
-	if (ret)
+	もし (ret)
 		goto err_disable;
 
-	if (sch->level >= SCX_SUB_MAX_DEPTH) {
+	もし (sch->level >= SCX_SUB_MAX_DEPTH) {
 		scx_error(sch, "max nesting depth %d violated",
 			  SCX_SUB_MAX_DEPTH);
 		ret = -EINVAL;
@@ -1804,13 +1804,13 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 
 	scoped_guard(cpus_read_lock) {
 		ret = scx_alloc_kern_arena_objs(sch);
-		if (ret)
+		もし (ret)
 			goto err_disable;
 	}
 
-	if (sch->ops.init) {
+	もし (sch->ops.init) {
 		ret = SCX_CALL_OP_RET(sch, init, NULL);
-		if (ret) {
+		もし (ret) {
 			ret = scx_ops_sanitize_err(sch, "init", ret);
 			scx_error(sch, "ops.init() failed (%d)", ret);
 			goto err_disable;
@@ -1825,7 +1825,7 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 
 	ret = SCX_CALL_OP_RET(parent, sub_attach, NULL,
 			      &sub_attach_args);
-	if (ret) {
+	もし (ret) {
 		ret = scx_ops_sanitize_err(sch, "sub_attach", ret);
 		scx_error(sch, "parent rejected (%d)", ret);
 		goto err_disable;
@@ -1834,8 +1834,8 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 
 	scx_bypass(sch, true);
 
-	for (i = SCX_OPI_BEGIN; i < SCX_OPI_END; i++)
-		if (((void (**)(void))ops)[i])
+	ために (i = SCX_OPI_BEGIN; i < SCX_OPI_END; i++)
+		もし (((void (**)(void))ops)[i])
 			set_bit(i, sch->has_op);
 
 	percpu_down_write(&scx_fork_rwsem);
@@ -1846,7 +1846,7 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 	 * !CSS_ONLINE or scx_cgroup_lifetime_notify() sees and shoots us down.
 	 */
 	set_cgroup_sched(sch_cgroup(sch), sch);
-	if (!(cgrp->self.flags & CSS_ONLINE)) {
+	もし (!(cgrp->self.flags & CSS_ONLINE)) {
 		scx_error(sch, "cgroup is not online");
 		ret = -ENODEV;
 		goto err_unlock_and_disable;
@@ -1857,7 +1857,7 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 	 * mirroring root enable's cgroups-before-tasks order.
 	 */
 	ret = scx_cgroup_claim_subtree(sch);
-	if (ret)
+	もし (ret)
 		goto err_unlock_and_disable;
 
 	/*
@@ -1869,7 +1869,7 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 	scx_enabling_sub_sched = sch;
 
 	scx_task_iter_start(&sti, sch->cgrp);
-	while ((p = scx_task_iter_next_locked(&sti))) {
+	ながら ((p = scx_task_iter_next_locked(&sti))) {
 		struct rq *rq;
 		struct rq_flags rf;
 
@@ -1883,13 +1883,13 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 		 * scx_disable_and_exit_task() must exit the task for both the
 		 * parent and child scheds.
 		 */
-		if (p->scx.flags & SCX_TASK_SUB_INIT)
+		もし (p->scx.flags & SCX_TASK_SUB_INIT)
 			continue;
 
 		/* @p is pinned by the iter; see scx_sub_disable() */
 		get_task_struct(p);
 
-		if (!assert_task_ready_or_enabled(p)) {
+		もし (!assert_task_ready_or_enabled(p)) {
 			ret = -EINVAL;
 			goto abort;
 		}
@@ -1901,12 +1901,12 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 		 * Let's worry about task state later. Use __scx_init_task().
 		 */
 		ret = __scx_init_task(sch, p, NULL, false);
-		if (ret)
+		もし (ret)
 			goto abort;
 
 		rq = task_rq_lock(p, &rf);
 
-		if (scx_get_task_state(p) == SCX_TASK_DEAD) {
+		もし (scx_get_task_state(p) == SCX_TASK_DEAD) {
 			/*
 			 * sched_ext_dead() raced us between __scx_init_task()
 			 * and this rq lock and ran exit_task() on $parent (the
@@ -1932,12 +1932,12 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 	 * the new @sch.
 	 */
 	scx_task_iter_start(&sti, sch->cgrp);
-	while ((p = scx_task_iter_next_locked(&sti))) {
+	ながら ((p = scx_task_iter_next_locked(&sti))) {
 		/*
 		 * Use clearing of %SCX_TASK_SUB_INIT to detect and skip
 		 * duplicate iterations.
 		 */
-		if (!(p->scx.flags & SCX_TASK_SUB_INIT))
+		もし (!(p->scx.flags & SCX_TASK_SUB_INIT))
 			continue;
 
 		scoped_guard (sched_change, p, DEQUEUE_SAVE | DEQUEUE_MOVE) {
@@ -1958,7 +1958,7 @@ void scx_sub_enable_workfn(struct kthread_work *work)
 			 * enabled by switching_to_scx() if it switches over.
 			 */
 			scx_set_task_sched(p, sch);
-			if (p->sched_class == &ext_sched_class)
+			もし (p->sched_class == &ext_sched_class)
 				scx_enable_task(sch, p);
 
 			p->scx.flags &= ~SCX_TASK_SUB_INIT;
@@ -1986,7 +1986,7 @@ out_put_cgrp:
 out_unlock:
 	mutex_unlock(&scx_enable_mutex);
 	cmd->ret = ret;
-	return;
+	戻る;
 
 abort:
 	put_task_struct(p);
@@ -2000,8 +2000,8 @@ abort:
 	 * scx_disable_and_exit_task() reads it when a task exits concurrently.
 	 */
 	scx_task_iter_start(&sti, sch->cgrp);
-	while ((p = scx_task_iter_next_locked(&sti))) {
-		if (p->scx.flags & SCX_TASK_SUB_INIT) {
+	ながら ((p = scx_task_iter_next_locked(&sti))) {
+		もし (p->scx.flags & SCX_TASK_SUB_INIT) {
 			scx_sub_init_cancel_task(sch, p);
 			p->scx.flags &= ~SCX_TASK_SUB_INIT;
 		}
@@ -2037,25 +2037,25 @@ static s32 scx_cgroup_task_migrating(struct cgroup_task_migrate_ctx *ctx)
 {
 	struct task_struct *p = ctx->task;
 	struct scx_sched *to;
-	int ret;
+	整数 ret;
 
 	/*
 	 * Cleared under scx_cgroup_lock() before root disable starts tearing
 	 * down tasks. As cgroup_mutex is held, a set flag guarantees that the
 	 * teardown loop is not running concurrently.
 	 */
-	if (!scx_cgroup_enabled)
-		return NOTIFY_OK;
+	もし (!scx_cgroup_enabled)
+		戻る NOTIFY_OK;
 
 	to = scx_cgroup_sched(ctx->dst_dcgrp);
-	if (scx_task_on_sched(to, p))
-		return NOTIFY_OK;
+	もし (scx_task_on_sched(to, p))
+		戻る NOTIFY_OK;
 
 	ret = __scx_init_task(to, p, ctx->dst_dcgrp, false);
-	if (ret)
-		return notifier_from_errno(ret);
+	もし (ret)
+		戻る notifier_from_errno(ret);
 
-	return NOTIFY_OK;
+	戻る NOTIFY_OK;
 }
 
 /**
@@ -2078,12 +2078,12 @@ static void scx_cgroup_task_migrated(struct cgroup_task_migrate_ctx *ctx)
 	struct rq *rq;
 	struct rq_flags rf;
 
-	if (!scx_cgroup_enabled)
-		return;
+	もし (!scx_cgroup_enabled)
+		戻る;
 
 	to = scx_cgroup_sched(ctx->dst_dcgrp);
-	if (scx_task_on_sched(to, p))
-		return;
+	もし (scx_task_on_sched(to, p))
+		戻る;
 
 	rq = task_rq_lock(p, &rf);
 	scx_rehome_task(to, p);
@@ -2105,12 +2105,12 @@ static void scx_cgroup_task_migrate_canceled(struct cgroup_task_migrate_ctx *ctx
 	struct rq *rq;
 	struct rq_flags rf;
 
-	if (!scx_cgroup_enabled)
-		return;
+	もし (!scx_cgroup_enabled)
+		戻る;
 
 	to = scx_cgroup_sched(ctx->dst_dcgrp);
-	if (scx_task_on_sched(to, p))
-		return;
+	もし (scx_task_on_sched(to, p))
+		戻る;
 
 	rq = task_rq_lock(p, &rf);
 	scx_sub_init_cancel_task(to, p);
@@ -2124,26 +2124,26 @@ static s32 scx_cgroup_lifetime_notify(struct notifier_block *nb,
 	struct cgroup *parent = cgroup_parent(cgrp);
 	struct scx_sched *sch;
 
-	if (!cgroup_on_dfl(cgrp))
-		return NOTIFY_OK;
+	もし (!cgroup_on_dfl(cgrp))
+		戻る NOTIFY_OK;
 
 	switch (action) {
 	case CGROUP_LIFETIME_ONLINE:
 		/* inherit ->scx_sched from $parent */
-		if (parent)
+		もし (parent)
 			rcu_assign_pointer(cgrp->scx_sched, scx_cgroup_sched(parent));
 		break;
 	case CGROUP_LIFETIME_OFFLINE:
 		/* if there is a sched attached, shoot it down */
 		sch = scx_cgroup_sched(cgrp);
-		if (sch && sch->cgrp == cgrp)
+		もし (sch && sch->cgrp == cgrp)
 			scx_exit(sch, SCX_EXIT_UNREG_KERN,
 				 SCX_ECODE_RSN_CGROUP_OFFLINE,
 				 "cgroup %llu going offline", cgroup_id(cgrp));
 		break;
 	}
 
-	return NOTIFY_OK;
+	戻る NOTIFY_OK;
 }
 
 static struct notifier_block scx_cgroup_lifetime_nb = {
@@ -2157,7 +2157,7 @@ static s32 scx_cgroup_task_notify(struct notifier_block *nb,
 
 	switch (action) {
 	case CGROUP_TASK_MIGRATING:
-		return scx_cgroup_task_migrating(ctx);
+		戻る scx_cgroup_task_migrating(ctx);
 	case CGROUP_TASK_MIGRATED:
 		scx_cgroup_task_migrated(ctx);
 		break;
@@ -2166,7 +2166,7 @@ static s32 scx_cgroup_task_notify(struct notifier_block *nb,
 		break;
 	}
 
-	return NOTIFY_OK;
+	戻る NOTIFY_OK;
 }
 
 static struct notifier_block scx_cgroup_task_nb = {
@@ -2179,10 +2179,10 @@ static s32 __init scx_cgroup_notifier_init(void)
 
 	ret = blocking_notifier_chain_register(&cgroup_lifetime_notifier,
 					       &scx_cgroup_lifetime_nb);
-	if (ret)
-		return ret;
+	もし (ret)
+		戻る ret;
 
-	return blocking_notifier_chain_register(&cgroup_task_notifier,
+	戻る blocking_notifier_chain_register(&cgroup_task_notifier,
 						&scx_cgroup_task_nb);
 }
 core_initcall(scx_cgroup_notifier_init);
@@ -2193,8 +2193,8 @@ static void scx_pstack_recursion(struct bpf_prog *prog, const char *op)
 
 	guard(rcu)();
 	sch = scx_prog_sched(prog->aux);
-	if (unlikely(!sch))
-		return;
+	もし (unlikely(!sch))
+		戻る;
 
 	scx_error(sch, "%s recursion detected", op);
 }
@@ -2230,18 +2230,18 @@ __bpf_kfunc bool scx_bpf_sub_dispatch(u64 cgroup_id, const struct bpf_prog_aux *
 
 	guard(rcu)();
 	parent = scx_prog_sched(aux);
-	if (unlikely(!parent))
-		return false;
+	もし (unlikely(!parent))
+		戻る false;
 
 	child = scx_find_sub_sched(cgroup_id);
 
-	if (unlikely(!child))
-		return false;
+	もし (unlikely(!child))
+		戻る false;
 
-	if (unlikely(scx_parent(child) != parent)) {
+	もし (unlikely(scx_parent(child) != parent)) {
 		scx_error(parent, "trying to dispatch a distant sub-sched on cgroup %llu",
 			  cgroup_id);
-		return false;
+		戻る false;
 	}
 
 	/*
@@ -2249,10 +2249,10 @@ __bpf_kfunc bool scx_bpf_sub_dispatch(u64 cgroup_id, const struct bpf_prog_aux *
 	 * its inserts would only be rejected. ecaps are synced at the top of
 	 * dispatch_one() before dispatch, so this reflects the in-effect state.
 	 */
-	if (scx_missing_caps(child, cpu_of(rq), SCX_CAP_BASE))
-		return false;
+	もし (scx_missing_caps(child, cpu_of(rq), SCX_CAP_BASE))
+		戻る false;
 
-	return scx_dispatch_sched(child, rq, rq->scx.sub_dispatch_prev, true) !=
+	戻る scx_dispatch_sched(child, rq, rq->scx.sub_dispatch_prev, true) !=
 		SCX_DSP_NONE;
 }
 
@@ -2263,32 +2263,32 @@ static s32 sub_cap_preamble(u64 cgroup_id, u64 caps, const struct bpf_prog_aux *
 	struct scx_sched *parent, *child;
 
 	parent = scx_prog_sched(aux);
-	if (unlikely(!parent))
-		return -ENODEV;
+	もし (unlikely(!parent))
+		戻る -ENODEV;
 
-	if (!scx_is_cid_type()) {
+	もし (!scx_is_cid_type()) {
 		scx_error(parent, "sub-cap kfuncs require a cid-form scheduler");
-		return -EOPNOTSUPP;
+		戻る -EOPNOTSUPP;
 	}
 
 	child = scx_find_sub_sched(cgroup_id);
-	if (unlikely(!child))
-		return -ENODEV;
+	もし (unlikely(!child))
+		戻る -ENODEV;
 
-	if (unlikely(scx_parent(child) != parent)) {
+	もし (unlikely(scx_parent(child) != parent)) {
 		scx_error(parent, "%s: sub-%llu is not a direct child",
 			  parent->cgrp_path, cgroup_id);
-		return -EINVAL;
+		戻る -EINVAL;
 	}
 
-	if (unlikely(caps & ~__SCX_CAP_ALL)) {
+	もし (unlikely(caps & ~__SCX_CAP_ALL)) {
 		scx_error(parent, "invalid caps 0x%llx", caps);
-		return -EINVAL;
+		戻る -EINVAL;
 	}
 
 	*parent_out = parent;
 	*child_out = child;
-	return 0;
+	戻る 0;
 }
 
 /**
@@ -2323,25 +2323,25 @@ __bpf_kfunc s32 scx_bpf_sub_grant(u64 cgroup_id, u64 caps,
 	guard(irqsave)();
 
 	ret = sub_cap_preamble(cgroup_id, caps, aux, &parent, &child);
-	if (ret)
-		return ret;
+	もし (ret)
+		戻る ret;
 
 	ret = scx_cmask_ref_init(parent, cmask__arena, &ref);
-	if (ret) {
+	もし (ret) {
 		scx_error(parent, "invalid cmask (%d)", ret);
-		return ret;
+		戻る ret;
 	}
 
-	if (denied_out__arena__nullable) {
+	もし (denied_out__arena__nullable) {
 		ret = scx_cmask_ref_init(parent, denied_out__arena__nullable, &denied_ref);
-		if (ret) {
+		もし (ret) {
 			scx_error(parent, "invalid denied_out (%d)", ret);
-			return ret;
+			戻る ret;
 		}
 	}
 
 	/* apply the grant one shard at a time */
-	for (si = ref.shard_first; si < ref.shard_end; si++) {
+	ために (si = ref.shard_first; si < ref.shard_end; si++) {
 		SCX_CMASK_DEFINE_SHARD(slice, 0, SCX_CID_SHARD_MAX_CPUS);
 		struct scx_pshard *pps = parent->pshard[si];
 		struct scx_pshard *cps = child->pshard[si];
@@ -2349,7 +2349,7 @@ __bpf_kfunc s32 scx_bpf_sub_grant(u64 cgroup_id, u64 caps,
 		u32 cap_bit;
 
 		scx_cmask_ref_shard(&ref, si, slice);
-		if (scx_cmask_empty(slice))
+		もし (scx_cmask_empty(slice))
 			continue;
 
 		SCX_CMASK_DEFINE_SHARD(granted_cids, slice->base, slice->nr_cids);
@@ -2377,7 +2377,7 @@ __bpf_kfunc s32 scx_bpf_sub_grant(u64 cgroup_id, u64 caps,
 
 				scx_cmask_copy(delta, granted_cids);
 				scx_cmask_andnot(delta, ccm);
-				if (scx_cmask_empty(delta))
+				もし (scx_cmask_empty(delta))
 					continue;
 
 				scx_cmask_or(ccm, delta);
@@ -2385,7 +2385,7 @@ __bpf_kfunc s32 scx_bpf_sub_grant(u64 cgroup_id, u64 caps,
 				granted_caps |= BIT_U64(cap_bit);
 			}
 
-			if (granted_caps) {
+			もし (granted_caps) {
 				s32 cid;
 
 				caps_updated_record(cps, changed_cids, granted_caps,
@@ -2401,9 +2401,9 @@ __bpf_kfunc s32 scx_bpf_sub_grant(u64 cgroup_id, u64 caps,
 		}
 
 		/* record cids that didn't make it into the denied mask */
-		if (!scx_cmask_subset(slice, granted_cids)) {
+		もし (!scx_cmask_subset(slice, granted_cids)) {
 			any_denied = true;
-			if (denied_out__arena__nullable) {
+			もし (denied_out__arena__nullable) {
 				SCX_CMASK_DEFINE_SHARD(denied, slice->base, slice->nr_cids);
 
 				scx_cmask_copy(denied, slice);
@@ -2415,7 +2415,7 @@ __bpf_kfunc s32 scx_bpf_sub_grant(u64 cgroup_id, u64 caps,
 
 	caps_updated_deliver(&to_deliver);
 
-	return any_denied ? -EPERM : 0;
+	戻る any_denied ? -EPERM : 0;
 }
 
 /**
@@ -2440,21 +2440,21 @@ __bpf_kfunc void scx_bpf_sub_revoke(u64 cgroup_id, u64 caps,
 
 	guard(irqsave)();
 
-	if (sub_cap_preamble(cgroup_id, caps, aux, &parent, &child))
-		return;
+	もし (sub_cap_preamble(cgroup_id, caps, aux, &parent, &child))
+		戻る;
 
 	ret = scx_cmask_ref_init(parent, cmask__arena, &ref);
-	if (ret) {
+	もし (ret) {
 		scx_error(parent, "invalid cmask (%d)", ret);
-		return;
+		戻る;
 	}
 
 	/* per-shard, walk child's subtree and clear @caps */
-	for (si = ref.shard_first; si < ref.shard_end; si++) {
+	ために (si = ref.shard_first; si < ref.shard_end; si++) {
 		SCX_CMASK_DEFINE_SHARD(slice, 0, SCX_CID_SHARD_MAX_CPUS);
 
 		scx_cmask_ref_shard(&ref, si, slice);
-		if (scx_cmask_empty(slice))
+		もし (scx_cmask_empty(slice))
 			continue;
 
 		/*
@@ -2464,7 +2464,7 @@ __bpf_kfunc void scx_bpf_sub_revoke(u64 cgroup_id, u64 caps,
 		 */
 		guard(raw_spinlock)(&parent->pshard[si]->lock);
 		pos = scx_next_descendant_pre(NULL, child);
-		while (pos) {
+		ながら (pos) {
 			struct scx_pshard *ps = pos->pshard[si];
 			SCX_CMASK_DEFINE_SHARD(changed_cids, slice->base, slice->nr_cids);
 			SCX_CMASK_DEFINE_SHARD(delta, slice->base, slice->nr_cids);
@@ -2481,7 +2481,7 @@ __bpf_kfunc void scx_bpf_sub_revoke(u64 cgroup_id, u64 caps,
 
 					scx_cmask_copy(delta, cm);
 					scx_cmask_and(delta, slice);
-					if (scx_cmask_empty(delta))
+					もし (scx_cmask_empty(delta))
 						continue;
 
 					scx_cmask_andnot(cm, delta);
@@ -2489,7 +2489,7 @@ __bpf_kfunc void scx_bpf_sub_revoke(u64 cgroup_id, u64 caps,
 					revoked_caps |= BIT_U64(cap_bit);
 				}
 
-				if (revoked_caps) {
+				もし (revoked_caps) {
 					s32 cid;
 
 					caps_updated_record(ps, changed_cids, revoked_caps,
@@ -2499,9 +2499,9 @@ __bpf_kfunc void scx_bpf_sub_revoke(u64 cgroup_id, u64 caps,
 				}
 			}
 
-			if (revoked_caps)
+			もし (revoked_caps)
 				pos = scx_next_descendant_pre(pos, child);
-			else
+			否则
 				pos = scx_skip_subtree_pre(pos, child);
 		}
 	}
@@ -2534,30 +2534,30 @@ __bpf_kfunc s32 scx_bpf_sub_caps(u64 cgroup_id, u64 caps, struct scx_cmask *out_
 	guard(irqsave)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	もし (unlikely(!sch))
+		戻る -ENODEV;
 
-	if (!scx_is_cid_type()) {
+	もし (!scx_is_cid_type()) {
 		scx_error(sch, "sub-cap kfuncs require a cid-form scheduler");
-		return -EOPNOTSUPP;
+		戻る -EOPNOTSUPP;
 	}
 
-	if (unlikely(caps & ~__SCX_CAP_ALL)) {
+	もし (unlikely(caps & ~__SCX_CAP_ALL)) {
 		scx_error(sch, "invalid caps 0x%llx", caps);
-		return -EINVAL;
+		戻る -EINVAL;
 	}
 
 	/* @cgroup_id 0 reads self, otherwise a direct child */
-	if (cgroup_id) {
+	もし (cgroup_id) {
 		target = scx_find_sub_sched(cgroup_id);
-		if (unlikely(!target))
-			return -ENODEV;
-		if (unlikely(scx_parent(target) != sch)) {
+		もし (unlikely(!target))
+			戻る -ENODEV;
+		もし (unlikely(scx_parent(target) != sch)) {
 			scx_error(sch, "%s: sub-%llu is not a direct child",
 				  sch->cgrp_path, cgroup_id);
-			return -EINVAL;
+			戻る -EINVAL;
 		}
-	} else {
+	} 否则 {
 		target = sch;
 	}
 
@@ -2568,18 +2568,18 @@ __bpf_kfunc s32 scx_bpf_sub_caps(u64 cgroup_id, u64 caps, struct scx_cmask *out_
 	 * acquire also orders the cid table reads below against it.
 	 */
 	pshard = smp_load_acquire(&target->pshard);
-	if (unlikely(!pshard)) {
+	もし (unlikely(!pshard)) {
 		scx_error(sch, "scx_bpf_sub_caps() called before caps storage is initialized");
-		return -ENODEV;
+		戻る -ENODEV;
 	}
 
 	ret = scx_cmask_ref_init(sch, out__arena, &ref);
-	if (ret) {
+	もし (ret) {
 		scx_error(sch, "invalid out (%d)", ret);
-		return ret;
+		戻る ret;
 	}
 
-	for (si = ref.shard_first; si < ref.shard_end; si++) {
+	ために (si = ref.shard_first; si < ref.shard_end; si++) {
 		const struct scx_cid_shard *shard =
 			&rcu_dereference_all(scx_cid_shard_ranges)[si];
 		SCX_CMASK_DEFINE_SHARD(local_out, shard->base_cid, shard->nr_cids);
@@ -2589,7 +2589,7 @@ __bpf_kfunc s32 scx_bpf_sub_caps(u64 cgroup_id, u64 caps, struct scx_cmask *out_
 			scx_cmask_or(local_out, &pshard[si]->caps[cap_bit].cmask);
 		scx_cmask_ref_copy(&ref, local_out);
 	}
-	return 0;
+	戻る 0;
 }
 
 /**
@@ -2622,31 +2622,31 @@ __bpf_kfunc s32 scx_bpf_sub_kill_bstr(u64 cgroup_id, char *fmt,
 	guard(rcu)();
 
 	parent = scx_prog_sched(aux);
-	if (unlikely(!parent))
-		return -ENODEV;
+	もし (unlikely(!parent))
+		戻る -ENODEV;
 
-	if (!scx_is_cid_type()) {
+	もし (!scx_is_cid_type()) {
 		scx_error(parent, "sub-cap kfuncs require a cid-form scheduler");
-		return -EOPNOTSUPP;
+		戻る -EOPNOTSUPP;
 	}
 
 	child = scx_find_sub_sched(cgroup_id);
-	if (unlikely(!child))
-		return -ENODEV;
+	もし (unlikely(!child))
+		戻る -ENODEV;
 
-	if (unlikely(scx_parent(child) != parent)) {
+	もし (unlikely(scx_parent(child) != parent)) {
 		scx_error(parent, "%s: sub-%llu is not a direct child",
 			  parent->cgrp_path, cgroup_id);
-		return -EINVAL;
+		戻る -EINVAL;
 	}
 
 	scx_exit_bstr(child, SCX_EXIT_PARENT_KILL, 0, parent, fmt, data, data__sz);
-	return 0;
+	戻る 0;
 }
 
 __bpf_kfunc_end_defs();
 
-#else	/* !CONFIG_EXT_SUB_SCHED */
+#否则	/* !CONFIG_EXT_SUB_SCHED */
 
 __bpf_kfunc_start_defs();
 
@@ -2655,7 +2655,7 @@ __bpf_kfunc s32 scx_bpf_sub_grant(u64 cgroup_id, u64 caps,
 				  struct scx_cmask *denied_out__arena__nullable,
 				  const struct bpf_prog_aux *aux)
 {
-	return -EOPNOTSUPP;
+	戻る -EOPNOTSUPP;
 }
 
 __bpf_kfunc void scx_bpf_sub_revoke(u64 cgroup_id, u64 caps,
@@ -2667,14 +2667,14 @@ __bpf_kfunc void scx_bpf_sub_revoke(u64 cgroup_id, u64 caps,
 __bpf_kfunc s32 scx_bpf_sub_caps(u64 cgroup_id, u64 caps, struct scx_cmask *out__arena,
 				 const struct bpf_prog_aux *aux)
 {
-	return -EOPNOTSUPP;
+	戻る -EOPNOTSUPP;
 }
 
 __bpf_kfunc s32 scx_bpf_sub_kill_bstr(u64 cgroup_id, char *fmt,
 				      unsigned long long *data, u32 data__sz,
 				      const struct bpf_prog_aux *aux)
 {
-	return -EOPNOTSUPP;
+	戻る -EOPNOTSUPP;
 }
 
 __bpf_kfunc_end_defs();

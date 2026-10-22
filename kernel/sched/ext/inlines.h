@@ -31,20 +31,20 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 		   struct task_struct *prev, bool nested)
 {
 	struct scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
-	int nr_loops = SCX_DSP_MAX_LOOPS;
+	整数 nr_loops = SCX_DSP_MAX_LOOPS;
 	s32 cpu = cpu_of(rq);
 	bool prev_on_sch = (prev->sched_class == &ext_sched_class) &&
 		scx_task_on_sched(sch, prev);
 
-	if (scx_consume_global_dsq(sch, rq))
-		return SCX_DSP_LOCAL;
+	もし (scx_consume_global_dsq(sch, rq))
+		戻る SCX_DSP_LOCAL;
 
-	if (scx_bypass_dsp_enabled(sch)) {
+	もし (scx_bypass_dsp_enabled(sch)) {
 		/* if @sch is bypassing, only the bypass DSQs are active */
-		if (scx_bypassing(sch, cpu)) {
-			if (scx_consume_dispatch_q(sch, rq, scx_bypass_dsq(sch, cpu), 0))
-				return SCX_DSP_LOCAL;
-			return SCX_DSP_NONE;
+		もし (scx_bypassing(sch, cpu)) {
+			もし (scx_consume_dispatch_q(sch, rq, scx_bypass_dsq(sch, cpu), 0))
+				戻る SCX_DSP_LOCAL;
+			戻る SCX_DSP_NONE;
 		}
 
 #ifdef CONFIG_EXT_SUB_SCHED
@@ -62,10 +62,10 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 		 */
 		struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
 
-		if (!(pcpu->bypass_host_seq++ % SCX_BYPASS_HOST_NTH) &&
+		もし (!(pcpu->bypass_host_seq++ % SCX_BYPASS_HOST_NTH) &&
 		    scx_consume_dispatch_q(sch, rq, scx_bypass_dsq(sch, cpu), 0)) {
 			__scx_add_event(sch, SCX_EV_SUB_BYPASS_DISPATCH, 1);
-			return SCX_DSP_LOCAL;
+			戻る SCX_DSP_LOCAL;
 		}
 #endif	/* CONFIG_EXT_SUB_SCHED */
 	}
@@ -76,8 +76,8 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 	 * rq_offline_scx() moves this CPU's tasks to the local DSQ only after
 	 * the wait. The grace period can depend on those tasks running.
 	 */
-	if (unlikely(!SCX_HAS_OP(sch, dispatch)) || !(rq->scx.flags & SCX_RQ_ONLINE))
-		return SCX_DSP_NONE;
+	もし (unlikely(!SCX_HAS_OP(sch, dispatch)) || !(rq->scx.flags & SCX_RQ_ONLINE))
+		戻る SCX_DSP_NONE;
 
 	dspc->rq = rq;
 
@@ -93,7 +93,7 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 
 #ifdef CONFIG_EXT_SUB_SCHED
 		/* stash @prev so that nested invocations can access it */
-		if (!nested)
+		もし (!nested)
 			rq->scx.sub_dispatch_prev = prev;
 #endif
 
@@ -101,18 +101,18 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 			    prev_on_sch ? prev : NULL);
 
 #ifdef CONFIG_EXT_SUB_SCHED
-		if (!nested)
+		もし (!nested)
 			rq->scx.sub_dispatch_prev = NULL;
 #endif
 
 		scx_flush_dispatch_buf(sch, rq);
 
-		if ((prev->scx.flags & SCX_TASK_QUEUED) && prev->scx.slice)
-			return SCX_DSP_PREV;
-		if (rq->scx.local_dsq.nr)
-			return SCX_DSP_LOCAL;
-		if (scx_consume_global_dsq(sch, rq))
-			return SCX_DSP_LOCAL;
+		もし ((prev->scx.flags & SCX_TASK_QUEUED) && prev->scx.slice)
+			戻る SCX_DSP_PREV;
+		もし (rq->scx.local_dsq.nr)
+			戻る SCX_DSP_LOCAL;
+		もし (scx_consume_global_dsq(sch, rq))
+			戻る SCX_DSP_LOCAL;
 
 		/*
 		 * ops.dispatch() can trap us in this loop by repeatedly
@@ -123,24 +123,24 @@ scx_dispatch_sched(struct scx_sched *sch, struct rq *rq,
 		 * next, most likely idle, task, not the current one. Use
 		 * __scx_bpf_kick_cpu() for deferred kicking.
 		 */
-		if (unlikely(!--nr_loops)) {
+		もし (unlikely(!--nr_loops)) {
 			scx_kick_cpu(sch, cpu, 0);
 			break;
 		}
-	} while (dspc->nr_tasks);
+	} ながら (dspc->nr_tasks);
 
 	/*
 	 * Prevent the CPU from going idle while bypassed descendants have tasks
 	 * queued. Without this fallback, bypassed tasks could stall if the host
 	 * scheduler's ops.dispatch() doesn't yield any tasks.
 	 */
-	if (scx_bypass_dsp_enabled(sch) &&
+	もし (scx_bypass_dsp_enabled(sch) &&
 	    scx_consume_dispatch_q(sch, rq, scx_bypass_dsq(sch, cpu), 0)) {
 		__scx_add_event(sch, SCX_EV_SUB_BYPASS_DISPATCH, 1);
-		return SCX_DSP_LOCAL;
+		戻る SCX_DSP_LOCAL;
 	}
 
-	return SCX_DSP_NONE;
+	戻る SCX_DSP_NONE;
 }
 
 #endif /* _KERNEL_SCHED_EXT_INLINES_H */
