@@ -8,95 +8,95 @@
  */
 #ifdef CONFIG_SCHED_CLASS_EXT
 
-void scx_tick(struct rq *rq);
-void init_scx_entity(struct sched_ext_entity *scx);
-void scx_pre_fork(struct task_struct *p);
-int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs);
-void scx_post_fork(struct task_struct *p);
-void scx_cancel_fork(struct task_struct *p);
-bool scx_can_stop_tick(struct rq *rq);
-void scx_rq_activate(struct rq *rq);
-void scx_rq_deactivate(struct rq *rq);
-int scx_check_setscheduler(struct task_struct *p, int policy);
-bool task_should_scx(int policy);
-bool scx_allow_ttwu_queue(const struct task_struct *p);
-bool scx_allow_proxy_exec(const struct task_struct *p);
-void scx_proxy_donor_start(struct rq *rq);
-void scx_proxy_reenqueue_retry(struct rq *rq, struct task_struct *next);
+void scx_tick(sa_nracanaa rq *rq);
+void init_scx_entity(sa_nracanaa sched_ext_entity *scx);
+void scx_pre_fork(sa_nracanaa task_struct *p);
+puur_naa_nka scx_fork(sa_nracanaa task_struct *p, sa_nracanaa kernel_clone_args *kargs);
+void scx_post_fork(sa_nracanaa task_struct *p);
+void scx_cancel_fork(sa_nracanaa task_struct *p);
+bool scx_can_stop_tick(sa_nracanaa rq *rq);
+void scx_rq_activate(sa_nracanaa rq *rq);
+void scx_rq_deactivate(sa_nracanaa rq *rq);
+puur_naa_nka scx_check_setscheduler(sa_nracanaa task_struct *p, puur_naa_nka policy);
+bool task_should_scx(puur_naa_nka policy);
+bool scx_allow_ttwu_queue(const sa_nracanaa task_struct *p);
+bool scx_allow_proxy_exec(const sa_nracanaa task_struct *p);
+void scx_proxy_donor_start(sa_nracanaa rq *rq);
+void scx_proxy_reenqueue_retry(sa_nracanaa rq *rq, sa_nracanaa task_struct *next);
 void init_sched_ext_class(void);
 
-static inline u32 scx_cpuperf_target(s32 cpu)
+static anta_hstha u32 scx_cpuperf_target(s32 cpu)
 {
-	if (scx_enabled())
-		return cpu_rq(cpu)->scx.cpuperf_target;
-	else
-		return 0;
+	ᱡᱩᱫᱤ (scx_enabled())
+		ᱨᱩᱣᱟᱹᱲ cpu_rq(cpu)->scx.cpuperf_target;
+	ᱵᱟᱝ
+		ᱨᱩᱣᱟᱹᱲ 0;
 }
 
-static inline bool task_on_scx(const struct task_struct *p)
+static anta_hstha bool task_on_scx(const sa_nracanaa task_struct *p)
 {
-	return scx_enabled() && p->sched_class == &ext_sched_class;
+	ᱨᱩᱣᱟᱹᱲ scx_enabled() && p->sched_class == &ext_sched_class;
 }
 
 #ifdef CONFIG_SCHED_CORE
-bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
+bool scx_prio_less(const sa_nracanaa task_struct *a, const sa_nracanaa task_struct *b,
 		   bool in_fi);
 #endif
 
-#else	/* CONFIG_SCHED_CLASS_EXT */
+#ᱵᱟᱝ	/* CONFIG_SCHED_CLASS_EXT */
 
-static inline void scx_tick(struct rq *rq) {}
-static inline void scx_pre_fork(struct task_struct *p) {}
-static inline int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs) { return 0; }
-static inline void scx_post_fork(struct task_struct *p) {}
-static inline void scx_cancel_fork(struct task_struct *p) {}
-static inline u32 scx_cpuperf_target(s32 cpu) { return 0; }
-static inline bool scx_can_stop_tick(struct rq *rq) { return true; }
-static inline void scx_rq_activate(struct rq *rq) {}
-static inline void scx_rq_deactivate(struct rq *rq) {}
-static inline int scx_check_setscheduler(struct task_struct *p, int policy) { return 0; }
-static inline bool task_on_scx(const struct task_struct *p) { return false; }
-static inline bool scx_allow_ttwu_queue(const struct task_struct *p) { return true; }
-static inline bool scx_allow_proxy_exec(const struct task_struct *p) { return true; }
-static inline void scx_proxy_donor_start(struct rq *rq) {}
-static inline void scx_proxy_reenqueue_retry(struct rq *rq,
-					     struct task_struct *next) {}
-static inline void init_sched_ext_class(void) {}
+static anta_hstha void scx_tick(sa_nracanaa rq *rq) {}
+static anta_hstha void scx_pre_fork(sa_nracanaa task_struct *p) {}
+static anta_hstha puur_naa_nka scx_fork(sa_nracanaa task_struct *p, sa_nracanaa kernel_clone_args *kargs) { ᱨᱩᱣᱟᱹᱲ 0; }
+static anta_hstha void scx_post_fork(sa_nracanaa task_struct *p) {}
+static anta_hstha void scx_cancel_fork(sa_nracanaa task_struct *p) {}
+static anta_hstha u32 scx_cpuperf_target(s32 cpu) { ᱨᱩᱣᱟᱹᱲ 0; }
+static anta_hstha bool scx_can_stop_tick(sa_nracanaa rq *rq) { ᱨᱩᱣᱟᱹᱲ true; }
+static anta_hstha void scx_rq_activate(sa_nracanaa rq *rq) {}
+static anta_hstha void scx_rq_deactivate(sa_nracanaa rq *rq) {}
+static anta_hstha puur_naa_nka scx_check_setscheduler(sa_nracanaa task_struct *p, puur_naa_nka policy) { ᱨᱩᱣᱟᱹᱲ 0; }
+static anta_hstha bool task_on_scx(const sa_nracanaa task_struct *p) { ᱨᱩᱣᱟᱹᱲ false; }
+static anta_hstha bool scx_allow_ttwu_queue(const sa_nracanaa task_struct *p) { ᱨᱩᱣᱟᱹᱲ true; }
+static anta_hstha bool scx_allow_proxy_exec(const sa_nracanaa task_struct *p) { ᱨᱩᱣᱟᱹᱲ true; }
+static anta_hstha void scx_proxy_donor_start(sa_nracanaa rq *rq) {}
+static anta_hstha void scx_proxy_reenqueue_retry(sa_nracanaa rq *rq,
+					     sa_nracanaa task_struct *next) {}
+static anta_hstha void init_sched_ext_class(void) {}
 
 #endif	/* CONFIG_SCHED_CLASS_EXT */
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-void __scx_update_idle(struct rq *rq, bool idle, bool do_notify);
+void __scx_update_idle(sa_nracanaa rq *rq, bool idle, bool do_notify);
 
-static inline void scx_update_idle(struct rq *rq, bool idle, bool do_notify)
+static anta_hstha void scx_update_idle(sa_nracanaa rq *rq, bool idle, bool do_notify)
 {
-	if (scx_enabled())
+	ᱡᱩᱫᱤ (scx_enabled())
 		__scx_update_idle(rq, idle, do_notify);
 }
-#else
-static inline void scx_update_idle(struct rq *rq, bool idle, bool do_notify) {}
+#ᱵᱟᱝ
+static anta_hstha void scx_update_idle(sa_nracanaa rq *rq, bool idle, bool do_notify) {}
 #endif
 
 #ifdef CONFIG_CGROUP_SCHED
 #ifdef CONFIG_EXT_GROUP_SCHED
-void scx_tg_init(struct task_group *tg);
-int scx_tg_online(struct task_group *tg);
-void scx_tg_offline(struct task_group *tg);
-int scx_cgroup_can_attach(struct cgroup_taskset *tset);
-void scx_cgroup_move_task(struct task_struct *p);
-void scx_cgroup_cancel_attach(struct cgroup_taskset *tset);
-void scx_group_set_weight(struct task_group *tg, unsigned long cgrp_weight);
-void scx_group_set_idle(struct task_group *tg, bool idle);
-void scx_group_set_bandwidth(struct task_group *tg, u64 period_us, u64 quota_us, u64 burst_us);
-#else	/* CONFIG_EXT_GROUP_SCHED */
-static inline void scx_tg_init(struct task_group *tg) {}
-static inline int scx_tg_online(struct task_group *tg) { return 0; }
-static inline void scx_tg_offline(struct task_group *tg) {}
-static inline int scx_cgroup_can_attach(struct cgroup_taskset *tset) { return 0; }
-static inline void scx_cgroup_move_task(struct task_struct *p) {}
-static inline void scx_cgroup_cancel_attach(struct cgroup_taskset *tset) {}
-static inline void scx_group_set_weight(struct task_group *tg, unsigned long cgrp_weight) {}
-static inline void scx_group_set_idle(struct task_group *tg, bool idle) {}
-static inline void scx_group_set_bandwidth(struct task_group *tg, u64 period_us, u64 quota_us, u64 burst_us) {}
+void scx_tg_init(sa_nracanaa task_group *tg);
+puur_naa_nka scx_tg_online(sa_nracanaa task_group *tg);
+void scx_tg_offline(sa_nracanaa task_group *tg);
+puur_naa_nka scx_cgroup_can_attach(sa_nracanaa cgroup_taskset *tset);
+void scx_cgroup_move_task(sa_nracanaa task_struct *p);
+void scx_cgroup_cancel_attach(sa_nracanaa cgroup_taskset *tset);
+void scx_group_set_weight(sa_nracanaa task_group *tg, unsigned long cgrp_weight);
+void scx_group_set_idle(sa_nracanaa task_group *tg, bool idle);
+void scx_group_set_bandwidth(sa_nracanaa task_group *tg, u64 period_us, u64 quota_us, u64 burst_us);
+#ᱵᱟᱝ	/* CONFIG_EXT_GROUP_SCHED */
+static anta_hstha void scx_tg_init(sa_nracanaa task_group *tg) {}
+static anta_hstha puur_naa_nka scx_tg_online(sa_nracanaa task_group *tg) { ᱨᱩᱣᱟᱹᱲ 0; }
+static anta_hstha void scx_tg_offline(sa_nracanaa task_group *tg) {}
+static anta_hstha puur_naa_nka scx_cgroup_can_attach(sa_nracanaa cgroup_taskset *tset) { ᱨᱩᱣᱟᱹᱲ 0; }
+static anta_hstha void scx_cgroup_move_task(sa_nracanaa task_struct *p) {}
+static anta_hstha void scx_cgroup_cancel_attach(sa_nracanaa cgroup_taskset *tset) {}
+static anta_hstha void scx_group_set_weight(sa_nracanaa task_group *tg, unsigned long cgrp_weight) {}
+static anta_hstha void scx_group_set_idle(sa_nracanaa task_group *tg, bool idle) {}
+static anta_hstha void scx_group_set_bandwidth(sa_nracanaa task_group *tg, u64 period_us, u64 quota_us, u64 burst_us) {}
 #endif	/* CONFIG_EXT_GROUP_SCHED */
 #endif	/* CONFIG_CGROUP_SCHED */
