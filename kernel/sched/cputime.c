@@ -2,18 +2,18 @@
 /*
  * Simple CPU accounting cgroup controller
  */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/tsacct_kern.h>
-#include "sched.h"
+#ضمن <linux/sched/clock.h>
+#ضمن <linux/sched/cputime.h>
+#ضمن <linux/tsacct_kern.h>
+#ضمن "sched.h"
 
 #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
- #include <asm/cputime.h>
+ #ضمن <asm/cputime.h>
 #endif
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
 
-DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DEFINE_STATIC_مفتاح_FALSE(sched_clock_irqtime);
 
 /*
  * There are no locks covering percpu hardirq/softirq time.
@@ -26,28 +26,28 @@ DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
  * task when IRQ is in progress while we read rq->clock. That is a worthy
  * compromise in place of having locks on each IRQ in account_system_time.
  */
-DEFINE_PER_CPU(struct irqtime, cpu_irqtime);
+DEFINE_PER_CPU(بنية irqtime, cpu_irqtime);
 
-void enable_sched_clock_irqtime(void)
+فراغ enable_sched_clock_irqtime(فراغ)
 {
 	static_branch_enable(&sched_clock_irqtime);
 }
 
-void disable_sched_clock_irqtime(void)
+فراغ disable_sched_clock_irqtime(فراغ)
 {
-	if (irqtime_enabled())
+	إذا (irqtime_enabled())
 		static_branch_disable(&sched_clock_irqtime);
 }
 
-static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
-				  enum cpu_usage_stat idx)
+ساكن فراغ irqtime_account_delta(بنية irqtime *irqtime, u64 delta,
+				  تعداد cpu_usage_stat idx)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
 	u64_stats_update_begin(&irqtime->sync);
 	cpustat[idx] += delta;
 	irqtime->total += delta;
-	if (!kcpustat_idle_dyntick())
+	إذا (!kcpustat_idle_dyntick())
 		irqtime->tick_delta += delta;
 	u64_stats_update_end(&irqtime->sync);
 }
@@ -56,20 +56,20 @@ static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
  * Called after incrementing preempt_count on {soft,}irq_enter
  * and before decrementing preempt_count on {soft,}irq_exit.
  */
-void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
+فراغ irqtime_account_irq(بنية task_struct *curr, unsigned صحيح offset)
 {
-	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
-	unsigned int pc;
+	بنية irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
+	unsigned صحيح pc;
 	s64 delta;
-	int cpu;
+	صحيح cpu;
 
-	if (!irqtime_enabled())
-		return;
+	إذا (!irqtime_enabled())
+		أرجع;
 
 	cpu = smp_processor_id();
 	delta = sched_clock_cpu(cpu) - irqtime->irq_start_time;
 	irqtime->irq_start_time += delta;
-	pc = irq_count() - offset;
+	pc = irq_عدد() - offset;
 
 	/*
 	 * We do not account for softirq time from ksoftirqd here.
@@ -77,33 +77,33 @@ void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
 	 * in that case, so as not to confuse scheduler with a special task
 	 * that do not consume any time, but still wants to run.
 	 */
-	if (pc & HARDIRQ_MASK)
+	إذا (pc & HARDIRQ_MASK)
 		irqtime_account_delta(irqtime, delta, CPUTIME_IRQ);
-	else if ((pc & SOFTIRQ_OFFSET) && curr != this_cpu_ksoftirqd())
+	وإلا إذا ((pc & SOFTIRQ_OFFSET) && curr != this_cpu_ksoftirqd())
 		irqtime_account_delta(irqtime, delta, CPUTIME_SOFTIRQ);
 }
 
-static u64 irqtime_tick_accounted(u64 maxtime)
+ساكن u64 irqtime_tick_accounted(u64 maxtime)
 {
-	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
+	بنية irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
 	u64 delta;
 
 	delta = min(irqtime->tick_delta, maxtime);
 	irqtime->tick_delta -= delta;
 
-	return delta;
+	أرجع delta;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#وإلا /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
-static u64 irqtime_tick_accounted(u64 dummy)
+ساكن u64 irqtime_tick_accounted(u64 dummy)
 {
-	return 0;
+	أرجع 0;
 }
 
 #endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-static inline void task_group_account_field(struct task_struct *p, int index,
+ساكن مضمن فراغ task_group_account_field(بنية task_struct *p, صحيح index,
 					    u64 tmp)
 {
 	/*
@@ -122,9 +122,9 @@ static inline void task_group_account_field(struct task_struct *p, int index,
  * @p: the process that the CPU time gets accounted to
  * @cputime: the CPU time spent in user space since the last update
  */
-void account_user_time(struct task_struct *p, u64 cputime)
+فراغ account_user_time(بنية task_struct *p, u64 cputime)
 {
-	int index;
+	صحيح index;
 
 	/* Add user time to process. */
 	p->utime += cputime;
@@ -144,7 +144,7 @@ void account_user_time(struct task_struct *p, u64 cputime)
  * @p: the process that the CPU time gets accounted to
  * @cputime: the CPU time spent in virtual machine since the last update
  */
-void account_guest_time(struct task_struct *p, u64 cputime)
+فراغ account_guest_time(بنية task_struct *p, u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
@@ -154,10 +154,10 @@ void account_guest_time(struct task_struct *p, u64 cputime)
 	p->gtime += cputime;
 
 	/* Add guest time to cpustat. */
-	if (task_nice(p) > 0) {
+	إذا (task_nice(p) > 0) {
 		task_group_account_field(p, CPUTIME_NICE, cputime);
 		cpustat[CPUTIME_GUEST_NICE] += cputime;
-	} else {
+	} وإلا {
 		task_group_account_field(p, CPUTIME_USER, cputime);
 		cpustat[CPUTIME_GUEST] += cputime;
 	}
@@ -169,8 +169,8 @@ void account_guest_time(struct task_struct *p, u64 cputime)
  * @cputime: the CPU time spent in kernel space since the last update
  * @index: pointer to cpustat field that has to be updated
  */
-void account_system_index_time(struct task_struct *p,
-			       u64 cputime, enum cpu_usage_stat index)
+فراغ account_system_index_time(بنية task_struct *p,
+			       u64 cputime, تعداد cpu_usage_stat index)
 {
 	/* Add system time to process. */
 	p->stime += cputime;
@@ -189,20 +189,20 @@ void account_system_index_time(struct task_struct *p,
  * @hardirq_offset: the offset to subtract from hardirq_count()
  * @cputime: the CPU time spent in kernel space since the last update
  */
-void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
+فراغ account_system_time(بنية task_struct *p, صحيح hardirq_offset, u64 cputime)
 {
-	int index;
+	صحيح index;
 
-	if ((p->flags & PF_VCPU) && (irq_count() - hardirq_offset == 0)) {
+	إذا ((p->flags & PF_VCPU) && (irq_عدد() - hardirq_offset == 0)) {
 		account_guest_time(p, cputime);
-		return;
+		أرجع;
 	}
 
-	if (hardirq_count() - hardirq_offset)
+	إذا (hardirq_عدد() - hardirq_offset)
 		index = CPUTIME_IRQ;
-	else if (in_serving_softirq())
+	وإلا إذا (in_serving_softirq())
 		index = CPUTIME_SOFTIRQ;
-	else
+	وإلا
 		index = CPUTIME_SYSTEM;
 
 	account_system_index_time(p, cputime, index);
@@ -212,7 +212,7 @@ void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
  * Account for involuntary wait time.
  * @cputime: the CPU time spent in involuntary wait
  */
-void account_steal_time(u64 cputime)
+فراغ account_steal_time(u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
@@ -223,13 +223,13 @@ void account_steal_time(u64 cputime)
  * Account for idle time.
  * @cputime: the CPU time spent in idle wait
  */
-void account_idle_time(u64 cputime)
+فراغ account_idle_time(u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
-	if (cpu_has_iowait(smp_processor_id()))
+	إذا (cpu_has_iowait(smp_processor_id()))
 		cpustat[CPUTIME_IOWAIT] += cputime;
-	else
+	وإلا
 		cpustat[CPUTIME_IDLE] += cputime;
 }
 
@@ -240,7 +240,7 @@ void account_idle_time(u64 cputime)
  *
  * REQUIRES: schedstat is enabled.
  */
-void __account_forceidle_time(struct task_struct *p, u64 delta)
+فراغ __account_forceidle_time(بنية task_struct *p, u64 delta)
 {
 	__schedstat_add(p->stats.core_forceidle_sum, delta);
 
@@ -254,22 +254,22 @@ void __account_forceidle_time(struct task_struct *p, u64 delta)
  * occasion account more time than the calling functions think elapsed.
  */
 #ifdef CONFIG_PARAVIRT
-DEFINE_STATIC_KEY_FALSE(paravirt_steal_enabled);
+DEFINE_STATIC_مفتاح_FALSE(paravirt_steal_enabled);
 
 #ifdef CONFIG_HAVE_PV_STEAL_CLOCK_GEN
-static u64 native_steal_clock(int cpu)
+ساكن u64 native_steal_clock(صحيح cpu)
 {
-	return 0;
+	أرجع 0;
 }
 
 DEFINE_STATIC_CALL(pv_steal_clock, native_steal_clock);
 #endif
 #endif
 
-static __always_inline u64 steal_account_process_time(u64 maxtime)
+ساكن __always_inline u64 steal_account_process_time(u64 maxtime)
 {
 #ifdef CONFIG_PARAVIRT
-	if (static_branch_unlikely(&paravirt_steal_enabled)) {
+	إذا (static_branch_unlikely(&paravirt_steal_enabled)) {
 		u64 steal;
 
 		steal = paravirt_steal_clock(smp_processor_id());
@@ -278,16 +278,16 @@ static __always_inline u64 steal_account_process_time(u64 maxtime)
 		account_steal_time(steal);
 		this_rq()->prev_steal_time += steal;
 
-		return steal;
+		أرجع steal;
 	}
 #endif /* CONFIG_PARAVIRT */
-	return 0;
+	أرجع 0;
 }
 
 /*
  * Account how much elapsed time was spent in steal, IRQ, or softirq time.
  */
-static inline u64 account_other_time(u64 max)
+ساكن مضمن u64 account_other_time(u64 max)
 {
 	u64 accounted;
 
@@ -295,29 +295,29 @@ static inline u64 account_other_time(u64 max)
 
 	accounted = steal_account_process_time(max);
 
-	if (accounted < max)
+	إذا (accounted < max)
 		accounted += irqtime_tick_accounted(max - accounted);
 
-	return accounted;
+	أرجع accounted;
 }
 
 #ifdef CONFIG_64BIT
-static inline u64 read_sum_exec_runtime(struct task_struct *t)
+ساكن مضمن u64 read_sum_exec_runtime(بنية task_struct *t)
 {
-	return t->se.sum_exec_runtime;
+	أرجع t->se.sum_exec_runtime;
 }
-#else /* !CONFIG_64BIT: */
-static u64 read_sum_exec_runtime(struct task_struct *t)
+#وإلا /* !CONFIG_64BIT: */
+ساكن u64 read_sum_exec_runtime(بنية task_struct *t)
 {
 	u64 ns;
-	struct rq_flags rf;
-	struct rq *rq;
+	بنية rq_flags rf;
+	بنية rq *rq;
 
 	rq = task_rq_lock(t, &rf);
 	ns = t->se.sum_exec_runtime;
 	task_rq_unlock(rq, t, &rf);
 
-	return ns;
+	أرجع ns;
 }
 #endif /* !CONFIG_64BIT */
 
@@ -325,10 +325,10 @@ static u64 read_sum_exec_runtime(struct task_struct *t)
  * Accumulate raw cputime values of dead tasks (sig->[us]time) and live
  * tasks (sum on group iteration) belonging to @tsk's group.
  */
-void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+فراغ thread_group_cputime(بنية task_struct *tsk, بنية task_cputime *times)
 {
-	struct signal_struct *sig = tsk->signal;
-	struct task_struct *t;
+	بنية signal_struct *sig = tsk->إشارة;
+	بنية task_struct *t;
 	u64 utime, stime;
 
 	/*
@@ -339,8 +339,8 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
 	 * those pending times and rely only on values updated on tick or
 	 * other scheduler action.
 	 */
-	if (same_thread_group(current, tsk))
-		(void) task_sched_runtime(current);
+	إذا (same_thread_group(current, tsk))
+		(فراغ) task_sched_runtime(current);
 
 	guard(rcu)();
 	scoped_seqlock_read (&sig->stats_lock, ss_lock_irqsave) {
@@ -379,7 +379,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
  * p->stime and friends are only updated on system time and not on IRQ
  * softirq as those do not count in task exec_runtime any more.
  */
-static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+ساكن فراغ irqtime_account_process_tick(بنية task_struct *p, صحيح user_tick,
 					 u64 cputime)
 {
 	u64 other;
@@ -392,43 +392,43 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
 	 * other time can exceed ticks occasionally.
 	 */
 	other = account_other_time(ULONG_MAX);
-	if (other >= cputime)
-		return;
+	إذا (other >= cputime)
+		أرجع;
 
 	cputime -= other;
 
-	if (this_cpu_ksoftirqd() == p) {
+	إذا (this_cpu_ksoftirqd() == p) {
 		/*
 		 * ksoftirqd time do not get accounted in cpu_softirq_time.
 		 * So, we have to handle it separately here.
 		 * Also, p->stime needs to be updated for ksoftirqd.
 		 */
 		account_system_index_time(p, cputime, CPUTIME_SOFTIRQ);
-	} else if (user_tick) {
+	} وإلا إذا (user_tick) {
 		account_user_time(p, cputime);
-	} else if (p == this_rq()->idle) {
+	} وإلا إذا (p == this_rq()->idle) {
 		account_idle_time(cputime);
-	} else if (p->flags & PF_VCPU) { /* System time or guest time */
+	} وإلا إذا (p->flags & PF_VCPU) { /* System time or guest time */
 		account_guest_time(p, cputime);
-	} else {
+	} وإلا {
 		account_system_index_time(p, cputime, CPUTIME_SYSTEM);
 	}
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
-static inline void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+#وإلا /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+ساكن مضمن فراغ irqtime_account_process_tick(بنية task_struct *p, صحيح user_tick,
 						u64 cputime) { }
 #endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-#if defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
-static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
+#إذا defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
+ساكن فراغ kcpustat_idle_stop(بنية kernel_cpustat *kc, u64 now)
 {
 	u64 *cpustat = kc->cpustat;
 	u64 delta, steal, steal_delta;
-	int iowait;
+	صحيح iowait;
 
-	if (!kc->idle_elapse)
-		return;
+	إذا (!kc->idle_elapse)
+		أرجع;
 
 	iowait = cpu_has_iowait(smp_processor_id());
 	delta = now - kc->idle_entrytime;
@@ -444,9 +444,9 @@ static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
 	delta -= steal_delta;
 	kc->idle_stealtime[iowait] -= steal_delta;
 
-	if (iowait)
+	إذا (iowait)
 		cpustat[CPUTIME_IOWAIT] += delta;
-	else
+	وإلا
 		cpustat[CPUTIME_IDLE] += delta;
 
 	kc->idle_stealtime[iowait] += steal;
@@ -455,11 +455,11 @@ static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
 	write_seqcount_end(&kc->idle_sleeptime_seq);
 }
 
-static void kcpustat_idle_start(struct kernel_cpustat *kc, u64 now)
+ساكن فراغ kcpustat_idle_start(بنية kernel_cpustat *kc, u64 now)
 {
 	/* Irqtime accounting might have been enabled in the middle of the IRQ */
-	if (kc->idle_elapse)
-		return;
+	إذا (kc->idle_elapse)
+		أرجع;
 
 	write_seqcount_begin(&kc->idle_sleeptime_seq);
 	kc->idle_entrytime = now;
@@ -467,18 +467,18 @@ static void kcpustat_idle_start(struct kernel_cpustat *kc, u64 now)
 	write_seqcount_end(&kc->idle_sleeptime_seq);
 }
 
-void kcpustat_dyntick_stop(u64 now, u64 tick_start)
+فراغ kcpustat_dyntick_stop(u64 now, u64 tick_start)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	بنية kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
+	إذا (!vtime_generic_enabled_this_cpu()) {
 		WARN_ON_ONCE(!kc->idle_dyntick);
-		if (kc->idle_tick_period != tick_start) {
+		إذا (kc->idle_tick_period != tick_start) {
 			kc->idle_tick_period = tick_start;
 			kc->idle_tick_overlap = 0;
 		}
 		tick_start = max(tick_start, kc->idle_dyntick_entry);
-		if (!WARN_ON_ONCE(now < tick_start))
+		إذا (!WARN_ON_ONCE(now < tick_start))
 			kc->idle_tick_overlap += now - tick_start;
 		kcpustat_idle_stop(kc, now);
 		kc->idle_dyntick = false;
@@ -490,20 +490,20 @@ void kcpustat_dyntick_stop(u64 now, u64 tick_start)
  * The first tick after dyntick-idle covers a period that the dyntick-idle
  * accounting may already have accounted in part.
  */
-static inline u64 kcpustat_tick_overlap(void)
+ساكن مضمن u64 kcpustat_tick_overlap(فراغ)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	بنية kernel_cpustat *kc = kcpustat_this_cpu;
 	u64 overlap = kc->idle_tick_overlap;
 
 	kc->idle_tick_overlap = 0;
-	return overlap;
+	أرجع overlap;
 }
 
-void kcpustat_dyntick_start(u64 now)
+فراغ kcpustat_dyntick_start(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	بنية kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
+	إذا (!vtime_generic_enabled_this_cpu()) {
 		vtime_dyntick_start();
 		kc->idle_dyntick = true;
 		kc->idle_dyntick_entry = now;
@@ -511,18 +511,18 @@ void kcpustat_dyntick_start(u64 now)
 	}
 }
 
-void kcpustat_irq_enter(u64 now)
+فراغ kcpustat_irq_enter(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	بنية kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu() &&
+	إذا (!vtime_generic_enabled_this_cpu() &&
 	    (irqtime_enabled() || vtime_accounting_enabled_this_cpu()))
 		kcpustat_idle_stop(kc, now);
 }
 
-void kcpustat_irq_exit(u64 now)
+فراغ kcpustat_irq_exit(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	بنية kernel_cpustat *kc = kcpustat_this_cpu;
 
 	/*
 	 * Generic vtime already does its own idle accounting.
@@ -531,79 +531,79 @@ void kcpustat_irq_exit(u64 now)
 	 * as the irqtime config is enabled to handle case where irqtime
 	 * accounting got runtime disabled in the middle of an IRQ.
 	 */
-	if (!vtime_generic_enabled_this_cpu() &&
+	إذا (!vtime_generic_enabled_this_cpu() &&
 	    (IS_ENABLED(CONFIG_IRQ_TIME_ACCOUNTING) || vtime_accounting_enabled_this_cpu()))
 		kcpustat_idle_start(kc, now);
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+ساكن u64 kcpustat_field_dyntick(صحيح cpu, تعداد cpu_usage_stat idx,
 				  bool compute_delta, u64 now)
 {
-	struct kernel_cpustat *kc = &kcpustat_cpu(cpu);
-	int iowait = idx == CPUTIME_IOWAIT;
+	بنية kernel_cpustat *kc = &kcpustat_cpu(cpu);
+	صحيح iowait = idx == CPUTIME_IOWAIT;
 	u64 *cpustat = kc->cpustat;
-	unsigned int seq;
+	unsigned صحيح seq;
 	u64 idle;
 
-	do {
+	افعل {
 		seq = read_seqcount_begin(&kc->idle_sleeptime_seq);
 
 		idle = cpustat[idx];
 
-		if (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
+		إذا (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
 			u64 delta = now - kc->idle_entrytime;
 
 			delta -= min_t(u64, kc->idle_stealtime[iowait], delta);
 			idle += delta;
 		}
-	} while (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
+	} طالما (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
 
-	return idle;
+	أرجع idle;
 }
 
-u64 kcpustat_field_idle(int cpu)
+u64 kcpustat_field_idle(صحيح cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IDLE,
+	أرجع kcpustat_field_dyntick(cpu, CPUTIME_IDLE,
 				      !cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_idle);
+EXPORT_رمز_GPL(kcpustat_field_idle);
 
-u64 kcpustat_field_iowait(int cpu)
+u64 kcpustat_field_iowait(صحيح cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IOWAIT,
+	أرجع kcpustat_field_dyntick(cpu, CPUTIME_IOWAIT,
 				      cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_iowait);
-#else
-static inline u64 kcpustat_tick_overlap(void)
+EXPORT_رمز_GPL(kcpustat_field_iowait);
+#وإلا
+ساكن مضمن u64 kcpustat_tick_overlap(فراغ)
 {
-	return 0;
+	أرجع 0;
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+ساكن u64 kcpustat_field_dyntick(صحيح cpu, تعداد cpu_usage_stat idx,
 				  bool compute_delta, ktime_t now)
 {
-	return kcpustat_cpu(cpu).cpustat[idx];
+	أرجع kcpustat_cpu(cpu).cpustat[idx];
 }
 #endif /* CONFIG_NO_HZ_COMMON && !CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE */
 
-static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
+ساكن u64 get_cpu_sleep_time_us(صحيح cpu, تعداد cpu_usage_stat idx,
 				 bool compute_delta, u64 *last_update_time)
 {
 	ktime_t now = ktime_get();
 	u64 res;
 
-	if (vtime_generic_enabled_cpu(cpu))
+	إذا (vtime_generic_enabled_cpu(cpu))
 		res = kcpustat_field(idx, cpu);
-	else
+	وإلا
 		res = kcpustat_field_dyntick(cpu, idx, compute_delta, now);
 
 	do_div(res, NSEC_PER_USEC);
 
-	if (last_update_time)
+	إذا (last_update_time)
 		*last_update_time = ktime_to_us(now);
 
-	return res;
+	أرجع res;
 }
 
 /**
@@ -623,12 +623,12 @@ static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
  *
  * Return: total idle time of the @cpu
  */
-u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_idle_time_us(صحيح cpu, u64 *last_update_time)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
+	أرجع get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
 				     !cpu_has_iowait(cpu), last_update_time);
 }
-EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
+EXPORT_رمز_GPL(get_cpu_idle_time_us);
 
 /**
  * get_cpu_iowait_time_us - get the total iowait time of a CPU
@@ -647,55 +647,55 @@ EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
  *
  * Return: total iowait time of @cpu
  */
-u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_iowait_time_us(صحيح cpu, u64 *last_update_time)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
+	أرجع get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
 				     cpu_has_iowait(cpu), last_update_time);
 }
-EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
+EXPORT_رمز_GPL(get_cpu_iowait_time_us);
 
 /*
  * Use precise platform statistics if available:
  */
 #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
 
-void vtime_account_irq(struct task_struct *tsk, unsigned int offset)
+فراغ vtime_account_irq(بنية task_struct *tsk, unsigned صحيح offset)
 {
-	unsigned int pc = irq_count() - offset;
+	unsigned صحيح pc = irq_عدد() - offset;
 
-	if (pc & HARDIRQ_OFFSET) {
+	إذا (pc & HARDIRQ_OFFSET) {
 		vtime_account_hardirq(tsk);
-	} else if (pc & SOFTIRQ_OFFSET) {
+	} وإلا إذا (pc & SOFTIRQ_OFFSET) {
 		vtime_account_softirq(tsk);
-	} else if (!kcpustat_idle_dyntick()) {
-		if (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
+	} وإلا إذا (!kcpustat_idle_dyntick()) {
+		إذا (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
 		    is_idle_task(tsk)) {
 			vtime_account_idle(tsk);
-		} else {
+		} وإلا {
 			vtime_account_kernel(tsk);
 		}
-	} else {
+	} وإلا {
 		vtime_reset();
 	}
 }
 
-void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+فراغ cputime_adjust(بنية task_cputime *curr, بنية prev_cputime *prev,
 		    u64 *ut, u64 *st)
 {
 	*ut = curr->utime;
 	*st = curr->stime;
 }
 
-void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+فراغ task_cputime_adjusted(بنية task_struct *p, u64 *ut, u64 *st)
 {
 	*ut = p->utime;
 	*st = p->stime;
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_رمز_GPL(task_cputime_adjusted);
 
-void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+فراغ thread_group_cputime_adjusted(بنية task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime;
+	بنية task_cputime cputime;
 
 	thread_group_cputime(p, &cputime);
 
@@ -703,42 +703,42 @@ void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
 	*st = cputime.stime;
 }
 
-#else /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
+#وإلا /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
 
 /*
  * Account a single tick of CPU time.
  * @p: the process that the CPU time gets accounted to
  * @user_tick: indicates if the tick is a user or a system tick
  */
-void account_process_tick(struct task_struct *p, int user_tick)
+فراغ account_process_tick(بنية task_struct *p, صحيح user_tick)
 {
 	u64 cputime, steal;
 
-	if (vtime_accounting_enabled_this_cpu())
-		return;
+	إذا (vtime_accounting_enabled_this_cpu())
+		أرجع;
 
-	if (kcpustat_idle_dyntick())
-		return;
+	إذا (kcpustat_idle_dyntick())
+		أرجع;
 
 	cputime = TICK_NSEC - kcpustat_tick_overlap();
 
-	if (irqtime_enabled()) {
+	إذا (irqtime_enabled()) {
 		irqtime_account_process_tick(p, user_tick, cputime);
-		return;
+		أرجع;
 	}
 
 	steal = steal_account_process_time(ULONG_MAX);
 
-	if (steal >= cputime)
-		return;
+	إذا (steal >= cputime)
+		أرجع;
 
 	cputime -= steal;
 
-	if (user_tick)
+	إذا (user_tick)
 		account_user_time(p, cputime);
-	else if ((p != this_rq()->idle) || (irq_count() != HARDIRQ_OFFSET))
+	وإلا إذا ((p != this_rq()->idle) || (irq_عدد() != HARDIRQ_OFFSET))
 		account_system_time(p, HARDIRQ_OFFSET, cputime);
-	else
+	وإلا
 		account_idle_time(cputime);
 }
 
@@ -762,7 +762,7 @@ void account_process_tick(struct task_struct *p, int user_tick)
  *
  * Assuming that rtime_i+1 >= rtime_i.
  */
-void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+فراغ cputime_adjust(بنية task_cputime *curr, بنية prev_cputime *prev,
 		    u64 *ut, u64 *st)
 {
 	u64 rtime, stime, utime;
@@ -780,8 +780,8 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * In both cases this acts as a filter such that the rest of the code
 	 * can assume it is monotonic regardless of anything else.
 	 */
-	if (prev->stime + prev->utime >= rtime)
-		goto out;
+	إذا (prev->stime + prev->utime >= rtime)
+		اذهب out;
 
 	stime = curr->stime;
 	utime = curr->utime;
@@ -791,14 +791,14 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * Once a task gets some ticks, the monotonicity code at 'update:'
 	 * will ensure things converge to the observed ratio.
 	 */
-	if (stime == 0) {
+	إذا (stime == 0) {
 		utime = rtime;
-		goto update;
+		اذهب update;
 	}
 
-	if (utime == 0) {
+	إذا (utime == 0) {
 		stime = rtime;
-		goto update;
+		اذهب update;
 	}
 
 	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
@@ -813,7 +813,7 @@ update:
 	 *            = (rtime_i+1 - rtime_i) + utime_i
 	 *            >= utime_i
 	 */
-	if (stime < prev->stime)
+	إذا (stime < prev->stime)
 		stime = prev->stime;
 	utime = rtime - stime;
 
@@ -821,7 +821,7 @@ update:
 	 * Make sure utime doesn't go backwards; this still preserves
 	 * monotonicity for stime, analogous argument to above.
 	 */
-	if (utime < prev->utime) {
+	إذا (utime < prev->utime) {
 		utime = prev->utime;
 		stime = rtime - utime;
 	}
@@ -834,40 +834,40 @@ out:
 	raw_spin_unlock_irqrestore(&prev->lock, flags);
 }
 
-void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+فراغ task_cputime_adjusted(بنية task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime = {
+	بنية task_cputime cputime = {
 		.sum_exec_runtime = p->se.sum_exec_runtime,
 	};
 
-	if (task_cputime(p, &cputime.utime, &cputime.stime))
+	إذا (task_cputime(p, &cputime.utime, &cputime.stime))
 		cputime.sum_exec_runtime = task_sched_runtime(p);
 	cputime_adjust(&cputime, &p->prev_cputime, ut, st);
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_رمز_GPL(task_cputime_adjusted);
 
-void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+فراغ thread_group_cputime_adjusted(بنية task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime;
+	بنية task_cputime cputime;
 
 	thread_group_cputime(p, &cputime);
-	cputime_adjust(&cputime, &p->signal->prev_cputime, ut, st);
+	cputime_adjust(&cputime, &p->إشارة->prev_cputime, ut, st);
 }
 #endif /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
 
 #ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
-static u64 vtime_delta(struct vtime *vtime)
+ساكن u64 vtime_delta(بنية vtime *vtime)
 {
 	unsigned long long clock;
 
 	clock = sched_clock();
-	if (clock < vtime->starttime)
-		return 0;
+	إذا (clock < vtime->starttime)
+		أرجع 0;
 
-	return clock - vtime->starttime;
+	أرجع clock - vtime->starttime;
 }
 
-static u64 get_vtime_delta(struct vtime *vtime)
+ساكن u64 get_vtime_delta(بنية vtime *vtime)
 {
 	u64 delta = vtime_delta(vtime);
 	u64 other;
@@ -883,54 +883,54 @@ static u64 get_vtime_delta(struct vtime *vtime)
 	WARN_ON_ONCE(vtime->state == VTIME_INACTIVE);
 	vtime->starttime += delta;
 
-	return delta - other;
+	أرجع delta - other;
 }
 
-static void vtime_account_system(struct task_struct *tsk,
-				 struct vtime *vtime)
+ساكن فراغ vtime_account_system(بنية task_struct *tsk,
+				 بنية vtime *vtime)
 {
 	vtime->stime += get_vtime_delta(vtime);
-	if (vtime->stime >= TICK_NSEC) {
-		account_system_time(tsk, irq_count(), vtime->stime);
+	إذا (vtime->stime >= TICK_NSEC) {
+		account_system_time(tsk, irq_عدد(), vtime->stime);
 		vtime->stime = 0;
 	}
 }
 
-static void vtime_account_guest(struct task_struct *tsk,
-				struct vtime *vtime)
+ساكن فراغ vtime_account_guest(بنية task_struct *tsk,
+				بنية vtime *vtime)
 {
 	vtime->gtime += get_vtime_delta(vtime);
-	if (vtime->gtime >= TICK_NSEC) {
+	إذا (vtime->gtime >= TICK_NSEC) {
 		account_guest_time(tsk, vtime->gtime);
 		vtime->gtime = 0;
 	}
 }
 
-static void __vtime_account_kernel(struct task_struct *tsk,
-				   struct vtime *vtime)
+ساكن فراغ __vtime_account_kernel(بنية task_struct *tsk,
+				   بنية vtime *vtime)
 {
 	/* We might have scheduled out from guest path */
-	if (vtime->state == VTIME_GUEST)
+	إذا (vtime->state == VTIME_GUEST)
 		vtime_account_guest(tsk, vtime);
-	else
+	وإلا
 		vtime_account_system(tsk, vtime);
 }
 
-void vtime_account_kernel(struct task_struct *tsk)
+فراغ vtime_account_kernel(بنية task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	بنية vtime *vtime = &tsk->vtime;
 
-	if (!vtime_delta(vtime))
-		return;
+	إذا (!vtime_delta(vtime))
+		أرجع;
 
 	write_seqcount_begin(&vtime->seqcount);
 	__vtime_account_kernel(tsk, vtime);
 	write_seqcount_end(&vtime->seqcount);
 }
 
-void vtime_user_enter(struct task_struct *tsk)
+فراغ vtime_user_enter(بنية task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	بنية vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime_account_system(tsk, vtime);
@@ -938,13 +938,13 @@ void vtime_user_enter(struct task_struct *tsk)
 	write_seqcount_end(&vtime->seqcount);
 }
 
-void vtime_user_exit(struct task_struct *tsk)
+فراغ vtime_user_exit(بنية task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	بنية vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime->utime += get_vtime_delta(vtime);
-	if (vtime->utime >= TICK_NSEC) {
+	إذا (vtime->utime >= TICK_NSEC) {
 		account_user_time(tsk, vtime->utime);
 		vtime->utime = 0;
 	}
@@ -952,9 +952,9 @@ void vtime_user_exit(struct task_struct *tsk)
 	write_seqcount_end(&vtime->seqcount);
 }
 
-void vtime_guest_enter(struct task_struct *tsk)
+فراغ vtime_guest_enter(بنية task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	بنية vtime *vtime = &tsk->vtime;
 	/*
 	 * The flags must be updated under the lock with
 	 * the vtime_starttime flush and update.
@@ -968,11 +968,11 @@ void vtime_guest_enter(struct task_struct *tsk)
 	vtime->state = VTIME_GUEST;
 	write_seqcount_end(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_enter);
+EXPORT_رمز_GPL(vtime_guest_enter);
 
-void vtime_guest_exit(struct task_struct *tsk)
+فراغ vtime_guest_exit(بنية task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	بنية vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime_account_guest(tsk, vtime);
@@ -980,21 +980,21 @@ void vtime_guest_exit(struct task_struct *tsk)
 	vtime->state = VTIME_SYS;
 	write_seqcount_end(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_exit);
+EXPORT_رمز_GPL(vtime_guest_exit);
 
-static void __vtime_account_idle(struct vtime *vtime)
+ساكن فراغ __vtime_account_idle(بنية vtime *vtime)
 {
 	account_idle_time(get_vtime_delta(vtime));
 }
 
-void vtime_task_switch_generic(struct task_struct *prev)
+فراغ vtime_task_switch_generic(بنية task_struct *prev)
 {
-	struct vtime *vtime = &prev->vtime;
+	بنية vtime *vtime = &prev->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (vtime->state == VTIME_IDLE)
+	إذا (vtime->state == VTIME_IDLE)
 		__vtime_account_idle(vtime);
-	else
+	وإلا
 		__vtime_account_kernel(prev, vtime);
 	vtime->state = VTIME_INACTIVE;
 	vtime->cpu = -1;
@@ -1003,20 +1003,20 @@ void vtime_task_switch_generic(struct task_struct *prev)
 	vtime = &current->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (is_idle_task(current))
+	إذا (is_idle_task(current))
 		vtime->state = VTIME_IDLE;
-	else if (current->flags & PF_VCPU)
+	وإلا إذا (current->flags & PF_VCPU)
 		vtime->state = VTIME_GUEST;
-	else
+	وإلا
 		vtime->state = VTIME_SYS;
 	vtime->starttime = sched_clock();
 	vtime->cpu = smp_processor_id();
 	write_seqcount_end(&vtime->seqcount);
 }
 
-void vtime_init_idle(struct task_struct *t, int cpu)
+فراغ vtime_init_idle(بنية task_struct *t, صحيح cpu)
 {
-	struct vtime *vtime = &t->vtime;
+	بنية vtime *vtime = &t->vtime;
 	unsigned long flags;
 
 	local_irq_save(flags);
@@ -1028,25 +1028,25 @@ void vtime_init_idle(struct task_struct *t, int cpu)
 	local_irq_restore(flags);
 }
 
-u64 task_gtime(struct task_struct *t)
+u64 task_gtime(بنية task_struct *t)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	بنية vtime *vtime = &t->vtime;
+	unsigned صحيح seq;
 	u64 gtime;
 
-	if (!vtime_accounting_enabled())
-		return t->gtime;
+	إذا (!vtime_accounting_enabled())
+		أرجع t->gtime;
 
-	do {
+	افعل {
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		gtime = t->gtime;
-		if (vtime->state == VTIME_GUEST)
+		إذا (vtime->state == VTIME_GUEST)
 			gtime += vtime->gtime + vtime_delta(vtime);
 
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} طالما (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return gtime;
+	أرجع gtime;
 }
 
 /*
@@ -1054,20 +1054,20 @@ u64 task_gtime(struct task_struct *t)
  * add up the pending nohz execution time since the last
  * cputime snapshot.
  */
-bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
+bool task_cputime(بنية task_struct *t, u64 *utime, u64 *stime)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	بنية vtime *vtime = &t->vtime;
+	unsigned صحيح seq;
 	u64 delta;
-	int ret;
+	صحيح ret;
 
-	if (!vtime_accounting_enabled()) {
+	إذا (!vtime_accounting_enabled()) {
 		*utime = t->utime;
 		*stime = t->stime;
-		return false;
+		أرجع false;
 	}
 
-	do {
+	افعل {
 		ret = false;
 		seq = read_seqcount_begin(&vtime->seqcount);
 
@@ -1075,8 +1075,8 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		*stime = t->stime;
 
 		/* Task is sleeping or idle, nothing to add */
-		if (vtime->state < VTIME_SYS)
-			continue;
+		إذا (vtime->state < VTIME_SYS)
+			استمر;
 
 		ret = true;
 		delta = vtime_delta(vtime);
@@ -1085,25 +1085,25 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		 * Task runs either in user (including guest) or kernel space,
 		 * add pending nohz time to the right place.
 		 */
-		if (vtime->state == VTIME_SYS)
+		إذا (vtime->state == VTIME_SYS)
 			*stime += vtime->stime + delta;
-		else
+		وإلا
 			*utime += vtime->utime + delta;
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} طالما (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return ret;
+	أرجع ret;
 }
 
-static int vtime_state_fetch(struct vtime *vtime, int cpu)
+ساكن صحيح vtime_state_fetch(بنية vtime *vtime, صحيح cpu)
 {
-	int state = READ_ONCE(vtime->state);
+	صحيح state = READ_ONCE(vtime->state);
 
 	/*
 	 * We raced against a context switch, fetch the
 	 * kcpustat task again.
 	 */
-	if (vtime->cpu != cpu && vtime->cpu != -1)
-		return -EAGAIN;
+	إذا (vtime->cpu != cpu && vtime->cpu != -1)
+		أرجع -EAGAIN;
 
 	/*
 	 * Two possible things here:
@@ -1114,37 +1114,37 @@ static int vtime_state_fetch(struct vtime *vtime, int cpu)
 	 *
 	 * Case 1) is ok but 2) is not. So wait for a safe VTIME state.
 	 */
-	if (state == VTIME_INACTIVE)
-		return -EAGAIN;
+	إذا (state == VTIME_INACTIVE)
+		أرجع -EAGAIN;
 
-	return state;
+	أرجع state;
 }
 
-static u64 kcpustat_user_vtime(struct vtime *vtime)
+ساكن u64 kcpustat_user_vtime(بنية vtime *vtime)
 {
-	if (vtime->state == VTIME_USER)
-		return vtime->utime + vtime_delta(vtime);
-	else if (vtime->state == VTIME_GUEST)
-		return vtime->gtime + vtime_delta(vtime);
-	return 0;
+	إذا (vtime->state == VTIME_USER)
+		أرجع vtime->utime + vtime_delta(vtime);
+	وإلا إذا (vtime->state == VTIME_GUEST)
+		أرجع vtime->gtime + vtime_delta(vtime);
+	أرجع 0;
 }
 
-static int kcpustat_field_vtime(u64 *cpustat,
-				struct task_struct *tsk,
-				enum cpu_usage_stat usage,
-				int cpu, u64 *val)
+ساكن صحيح kcpustat_field_vtime(u64 *cpustat,
+				بنية task_struct *tsk,
+				تعداد cpu_usage_stat usage,
+				صحيح cpu, u64 *val)
 {
-	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	بنية vtime *vtime = &tsk->vtime;
+	unsigned صحيح seq;
 
-	do {
-		int state;
+	افعل {
+		صحيح state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		إذا (state < 0)
+			أرجع state;
 
 		*val = cpustat[usage];
 
@@ -1155,100 +1155,100 @@ static int kcpustat_field_vtime(u64 *cpustat,
 		 * updates which is a no go on nohz_full (although the scheduler
 		 * may still interrupt the target if rescheduling is needed...)
 		 */
-		switch (usage) {
-		case CPUTIME_SYSTEM:
-			if (state == VTIME_SYS)
+		بدل (usage) {
+		حالة CPUTIME_SYSTEM:
+			إذا (state == VTIME_SYS)
 				*val += vtime->stime + vtime_delta(vtime);
-			break;
-		case CPUTIME_USER:
-			if (task_nice(tsk) <= 0)
+			اكسر;
+		حالة CPUTIME_USER:
+			إذا (task_nice(tsk) <= 0)
 				*val += kcpustat_user_vtime(vtime);
-			break;
-		case CPUTIME_NICE:
-			if (task_nice(tsk) > 0)
+			اكسر;
+		حالة CPUTIME_NICE:
+			إذا (task_nice(tsk) > 0)
 				*val += kcpustat_user_vtime(vtime);
-			break;
-		case CPUTIME_GUEST:
-			if (state == VTIME_GUEST && task_nice(tsk) <= 0)
+			اكسر;
+		حالة CPUTIME_GUEST:
+			إذا (state == VTIME_GUEST && task_nice(tsk) <= 0)
 				*val += vtime->gtime + vtime_delta(vtime);
-			break;
-		case CPUTIME_GUEST_NICE:
-			if (state == VTIME_GUEST && task_nice(tsk) > 0)
+			اكسر;
+		حالة CPUTIME_GUEST_NICE:
+			إذا (state == VTIME_GUEST && task_nice(tsk) > 0)
 				*val += vtime->gtime + vtime_delta(vtime);
-			break;
-		case CPUTIME_IDLE:
-			if (state == VTIME_IDLE && !cpu_has_iowait(cpu))
+			اكسر;
+		حالة CPUTIME_IDLE:
+			إذا (state == VTIME_IDLE && !cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
-			break;
-		case CPUTIME_IOWAIT:
-			if (state == VTIME_IDLE && cpu_has_iowait(cpu))
+			اكسر;
+		حالة CPUTIME_IOWAIT:
+			إذا (state == VTIME_IDLE && cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
-			break;
-		default:
-			break;
+			اكسر;
+		افتراضي:
+			اكسر;
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} طالما (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	أرجع 0;
 }
 
-u64 kcpustat_field(enum cpu_usage_stat usage, int cpu)
+u64 kcpustat_field(تعداد cpu_usage_stat usage, صحيح cpu)
 {
 	u64 *cpustat = kcpustat_cpu(cpu).cpustat;
 	u64 val = cpustat[usage];
-	struct rq *rq;
-	int err;
+	بنية rq *rq;
+	صحيح err;
 
-	if (!vtime_generic_enabled_cpu(cpu))
-		return kcpustat_field_default(usage, cpu);
+	إذا (!vtime_generic_enabled_cpu(cpu))
+		أرجع kcpustat_field_default(usage, cpu);
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
-		struct task_struct *curr;
+	لكل (;;) {
+		بنية task_struct *curr;
 
 		rcu_read_lock();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		إذا (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
-			return cpustat[usage];
+			أرجع cpustat[usage];
 		}
 
 		err = kcpustat_field_vtime(cpustat, curr, usage, cpu, &val);
 		rcu_read_unlock();
 
-		if (!err)
-			return val;
+		إذا (!err)
+			أرجع val;
 
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_field);
+EXPORT_رمز_GPL(kcpustat_field);
 
-static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
-				    const struct kernel_cpustat *src,
-				    struct task_struct *tsk, int cpu)
+ساكن صحيح kcpustat_cpu_fetch_vtime(بنية kernel_cpustat *dst,
+				    ثابت بنية kernel_cpustat *src,
+				    بنية task_struct *tsk, صحيح cpu)
 {
-	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	بنية vtime *vtime = &tsk->vtime;
+	unsigned صحيح seq;
 
-	do {
+	افعل {
 		u64 *cpustat;
 		u64 delta;
-		int state;
+		صحيح state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		إذا (state < 0)
+			أرجع state;
 
 		*dst = *src;
 		cpustat = dst->cpustat;
 
 		/* Task is sleeping or dead, nothing to add */
-		if (state < VTIME_IDLE)
-			continue;
+		إذا (state < VTIME_IDLE)
+			استمر;
 
 		delta = vtime_delta(vtime);
 
@@ -1256,72 +1256,72 @@ static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
 		 * Task runs either in user (including guest) or kernel space,
 		 * add pending nohz time to the right place.
 		 */
-		switch (state) {
-		case VTIME_SYS:
+		بدل (state) {
+		حالة VTIME_SYS:
 			cpustat[CPUTIME_SYSTEM] += vtime->stime + delta;
-			break;
-		case VTIME_USER:
-			if (task_nice(tsk) > 0)
+			اكسر;
+		حالة VTIME_USER:
+			إذا (task_nice(tsk) > 0)
 				cpustat[CPUTIME_NICE] += vtime->utime + delta;
-			else
+			وإلا
 				cpustat[CPUTIME_USER] += vtime->utime + delta;
-			break;
-		case VTIME_GUEST:
-			if (task_nice(tsk) > 0) {
+			اكسر;
+		حالة VTIME_GUEST:
+			إذا (task_nice(tsk) > 0) {
 				cpustat[CPUTIME_GUEST_NICE] += vtime->gtime + delta;
 				cpustat[CPUTIME_NICE] += vtime->gtime + delta;
-			} else {
+			} وإلا {
 				cpustat[CPUTIME_GUEST] += vtime->gtime + delta;
 				cpustat[CPUTIME_USER] += vtime->gtime + delta;
 			}
-			break;
-		case VTIME_IDLE:
-			if (cpu_has_iowait(cpu))
+			اكسر;
+		حالة VTIME_IDLE:
+			إذا (cpu_has_iowait(cpu))
 				cpustat[CPUTIME_IOWAIT] += delta;
-			else
+			وإلا
 				cpustat[CPUTIME_IDLE] += delta;
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			WARN_ON_ONCE(1);
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} طالما (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	أرجع 0;
 }
 
-void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
+فراغ kcpustat_cpu_fetch(بنية kernel_cpustat *dst, صحيح cpu)
 {
-	const struct kernel_cpustat *src = &kcpustat_cpu(cpu);
-	struct rq *rq;
-	int err;
+	ثابت بنية kernel_cpustat *src = &kcpustat_cpu(cpu);
+	بنية rq *rq;
+	صحيح err;
 
-	if (!vtime_generic_enabled_cpu(cpu)) {
+	إذا (!vtime_generic_enabled_cpu(cpu)) {
 		kcpustat_cpu_fetch_default(dst, cpu);
-		return;
+		أرجع;
 	}
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
-		struct task_struct *curr;
+	لكل (;;) {
+		بنية task_struct *curr;
 
 		rcu_read_lock();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		إذا (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
 			kcpustat_cpu_fetch_default(dst, cpu);
-			return;
+			أرجع;
 		}
 
 		err = kcpustat_cpu_fetch_vtime(dst, src, curr, cpu);
 		rcu_read_unlock();
 
-		if (!err)
-			return;
+		إذا (!err)
+			أرجع;
 
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_cpu_fetch);
+EXPORT_رمز_GPL(kcpustat_cpu_fetch);
 
 #endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */
