@@ -6,632 +6,632 @@
  *
  * Copyright(C) 2007, Red Hat, Inc., Ingo Molnar
  */
-#include <linux/debugfs.h>
-#include <linux/nmi.h>
-#include <linux/log2.h>
-#include "sched.h"
+#ضمن <linux/debugfs.h>
+#ضمن <linux/nmi.h>
+#ضمن <linux/log2.h>
+#ضمن "sched.h"
 
 /*
  * This allows printing both to /sys/kernel/debug/sched/debug and
  * to the console
  */
-#define SEQ_printf(m, x...)			\
- do {						\
-	if (m)					\
+#تعریف_کړه SEQ_printf(m, x...)			\
+ افعل {						\
+	إذا (m)					\
 		seq_printf(m, x);		\
-	else					\
+	وإلا					\
 		pr_cont(x);			\
- } while (0)
+ } طالما (0)
 
 /*
  * Ease the printing of nsec fields:
  */
-static long long nsec_high(unsigned long long nsec)
+ساكن اوږد اوږد nsec_لوړ(بینښه اوږد اوږد nsec)
 {
-	if ((long long)nsec < 0) {
+	إذا ((اوږد اوږد)nsec < 0) {
 		nsec = -nsec;
 		do_div(nsec, 1000000);
-		return -nsec;
+		أرجع -nsec;
 	}
 	do_div(nsec, 1000000);
 
-	return nsec;
+	أرجع nsec;
 }
 
-static unsigned long nsec_low(unsigned long long nsec)
+ساكن بینښه اوږد nsec_ټیټ(بینښه اوږد اوږد nsec)
 {
-	if ((long long)nsec < 0)
+	إذا ((اوږد اوږد)nsec < 0)
 		nsec = -nsec;
 
-	return do_div(nsec, 1000000);
+	أرجع do_div(nsec, 1000000);
 }
 
-#define SPLIT_NS(x) nsec_high(x), nsec_low(x)
+#تعریف_کړه وېشل_NS(x) nsec_لوړ(x), nsec_ټیټ(x)
 
-#define SCHED_FEAT(name, enabled)	\
+#تعریف_کړه SCHED_FEAT(name, enabled)	\
 	#name ,
 
-static const char * const sched_feat_names[] = {
-#include "features.h"
+ساكن ثابت حرف * ثابت sched_feat_نومونه[] = {
+#ضمن "features.h"
 };
 
-#undef SCHED_FEAT
+#تعریف_لغوه SCHED_FEAT
 
-static int sched_feat_show(struct seq_file *m, void *v)
+ساكن صحيح sched_feat_show(بنية seq_file *m, فراغ *v)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < __SCHED_FEAT_NR; i++) {
-		if (!(sysctl_sched_features & (1UL << i)))
+	لكل (i = 0; i < __SCHED_FEAT_NR; i++) {
+		إذا (!(sysctl_sched_features & (1UL << i)))
 			seq_puts(m, "NO_");
-		seq_printf(m, "%s ", sched_feat_names[i]);
+		seq_printf(m, "%s ", sched_feat_نومونه[i]);
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	أرجع 0;
 }
 
-#ifdef CONFIG_JUMP_LABEL
+#که_تعریف_شوی CONFIG_JUMP_LABEL
 
-#define jump_label_key__true  { .key_true  = STATIC_KEY_TRUE_INIT  }
-#define jump_label_key__false { .key_false = STATIC_KEY_FALSE_INIT }
+#تعریف_کړه jump_label_کلی_true  { .کلی_true  = STATIC_کلی_TRUE_INIT  }
+#تعریف_کړه jump_label_کلی_false { .کلی_false = STATIC_کلی_FALSE_INIT }
 
-#define SCHED_FEAT(name, enabled)	\
-	jump_label_key__##enabled ,
+#تعریف_کړه SCHED_FEAT(name, enabled)	\
+	jump_label_کلی##enabled ,
 
-union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR] = {
-#include "features.h"
+اتحاد sched_feat_کلی sched_feat_کلیګانې[__SCHED_FEAT_NR] = {
+#ضمن "features.h"
 };
 
-#undef SCHED_FEAT
+#تعریف_لغوه SCHED_FEAT
 
-static void sched_feat_disable(int i)
+ساكن فراغ sched_feat_disable(صحيح i)
 {
-	static_branch_disable_cpuslocked(&sched_feat_keys[i].key_true);
+	static_branch_disable_cpuslocked(&sched_feat_کلیګانې[i].کلی_true);
 }
 
-static void sched_feat_enable(int i)
+ساكن فراغ sched_feat_enable(صحيح i)
 {
-	static_branch_enable_cpuslocked(&sched_feat_keys[i].key_false);
+	static_branch_enable_cpuslocked(&sched_feat_کلیګانې[i].کلی_false);
 }
-#else /* !CONFIG_JUMP_LABEL: */
-static void sched_feat_disable(int i) { };
-static void sched_feat_enable(int i) { };
-#endif /* !CONFIG_JUMP_LABEL */
+#وإلا /* !CONFIG_JUMP_LABEL: */
+ساكن فراغ sched_feat_disable(صحيح i) { };
+ساكن فراغ sched_feat_enable(صحيح i) { };
+#د_که_پای /* !CONFIG_JUMP_LABEL */
 
-static int sched_feat_set(char *cmp)
+ساكن صحيح sched_feat_سېټ(حرف *cmp)
 {
-	int i;
-	int neg = 0;
+	صحيح i;
+	صحيح neg = 0;
 
-	if (strncmp(cmp, "NO_", 3) == 0) {
+	إذا (مزي_پرتله(cmp, "NO_", 3) == 0) {
 		neg = 1;
 		cmp += 3;
 	}
 
-	i = match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
-	if (i < 0)
-		return i;
+	i = سمون_string(sched_feat_نومونه, __SCHED_FEAT_NR, cmp);
+	إذا (i < 0)
+		أرجع i;
 
-	if (neg) {
+	إذا (neg) {
 		sysctl_sched_features &= ~(1UL << i);
 		sched_feat_disable(i);
-	} else {
+	} وإلا {
 		sysctl_sched_features |= (1UL << i);
 		sched_feat_enable(i);
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-static ssize_t
-sched_feat_write(struct file *filp, const char __user *ubuf,
-		size_t cnt, loff_t *ppos)
+ساكن ssize_t
+sched_feat_write(بنية file *filp, ثابت حرف __user *ubuf,
+		اندازه_t cnt, loff_t *ppos)
 {
-	char buf[64];
-	char *cmp;
-	int ret;
-	struct inode *inode;
+	حرف buf[64];
+	حرف *cmp;
+	صحيح ret;
+	بنية inode *inode;
 
-	if (cnt > 63)
+	إذا (cnt > 63)
 		cnt = 63;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	إذا (copy_from_user(buf, ubuf, cnt))
+		أرجع -EFAULT;
 
 	buf[cnt] = 0;
 	cmp = strstrip(buf);
 
 	/* Ensure the static_key remains in a consistent state */
 	inode = file_inode(filp);
-	cpus_read_lock();
-	inode_lock(inode);
-	ret = sched_feat_set(cmp);
+	cpus_read_قلف();
+	inode_قلف(inode);
+	ret = sched_feat_سېټ(cmp);
 	inode_unlock(inode);
 	cpus_read_unlock();
-	if (ret < 0)
-		return ret;
+	إذا (ret < 0)
+		أرجع ret;
 
 	*ppos += cnt;
 
-	return cnt;
+	أرجع cnt;
 }
 
-static int sched_feat_open(struct inode *inode, struct file *filp)
+ساكن صحيح sched_feat_open(بنية inode *inode, بنية file *filp)
 {
-	return single_open(filp, sched_feat_show, NULL);
+	أرجع single_open(filp, sched_feat_show, عدم);
 }
 
-static const struct file_operations sched_feat_fops = {
+ساكن ثابت بنية file_operations sched_feat_fops = {
 	.open		= sched_feat_open,
-	.write		= sched_feat_write,
-	.read		= seq_read,
+	.اكتب		= sched_feat_write,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static ssize_t sched_scaling_write(struct file *filp, const char __user *ubuf,
-				   size_t cnt, loff_t *ppos)
+ساكن ssize_t sched_scaling_write(بنية file *filp, ثابت حرف __user *ubuf,
+				   اندازه_t cnt, loff_t *ppos)
 {
-	unsigned int scaling;
-	int ret;
+	بینښه صحيح scaling;
+	صحيح ret;
 
 	ret = kstrtouint_from_user(ubuf, cnt, 10, &scaling);
-	if (ret)
-		return ret;
+	إذا (ret)
+		أرجع ret;
 
-	if (scaling >= SCHED_TUNABLESCALING_END)
-		return -EINVAL;
+	إذا (scaling >= SCHED_TUNABLESCALING_پای_ټکی)
+		أرجع -EINVAL;
 
 	sysctl_sched_tunable_scaling = scaling;
-	if (sched_update_scaling())
-		return -EINVAL;
+	إذا (sched_update_scaling())
+		أرجع -EINVAL;
 
 	*ppos += cnt;
-	return cnt;
+	أرجع cnt;
 }
 
-static int sched_scaling_show(struct seq_file *m, void *v)
+ساكن صحيح sched_scaling_show(بنية seq_file *m, فراغ *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_tunable_scaling);
-	return 0;
+	أرجع 0;
 }
 
-static int sched_scaling_open(struct inode *inode, struct file *filp)
+ساكن صحيح sched_scaling_open(بنية inode *inode, بنية file *filp)
 {
-	return single_open(filp, sched_scaling_show, NULL);
+	أرجع single_open(filp, sched_scaling_show, عدم);
 }
 
-static const struct file_operations sched_scaling_fops = {
+ساكن ثابت بنية file_operations sched_scaling_fops = {
 	.open		= sched_scaling_open,
-	.write		= sched_scaling_write,
-	.read		= seq_read,
+	.اكتب		= sched_scaling_write,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-#ifdef CONFIG_SCHED_CACHE
-static ssize_t
-sched_cache_enable_write(struct file *filp, const char __user *ubuf,
-			 size_t cnt, loff_t *ppos)
+#که_تعریف_شوی CONFIG_SCHED_CACHE
+ساكن ssize_t
+sched_cache_enable_write(بنية file *filp, ثابت حرف __user *ubuf,
+			 اندازه_t cnt, loff_t *ppos)
 {
 	bool val;
-	int ret;
+	صحيح ret;
 
 	ret = kstrtobool_from_user(ubuf, cnt, &val);
-	if (ret)
-		return ret;
+	إذا (ret)
+		أرجع ret;
 
 	sysctl_sched_cache_user = val;
 
-	sched_cache_active_set();
+	sched_cache_فعال_سېټ();
 
 	*ppos += cnt;
 
-	return cnt;
+	أرجع cnt;
 }
 
-static int sched_cache_enable_show(struct seq_file *m, void *v)
+ساكن صحيح sched_cache_enable_show(بنية seq_file *m, فراغ *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_cache_user);
-	return 0;
+	أرجع 0;
 }
 
-static int sched_cache_enable_open(struct inode *inode,
-				   struct file *filp)
+ساكن صحيح sched_cache_enable_open(بنية inode *inode,
+				   بنية file *filp)
 {
-	return single_open(filp, sched_cache_enable_show, NULL);
+	أرجع single_open(filp, sched_cache_enable_show, عدم);
 }
 
-static const struct file_operations sched_cache_enable_fops = {
+ساكن ثابت بنية file_operations sched_cache_enable_fops = {
 	.open           = sched_cache_enable_open,
-	.write          = sched_cache_enable_write,
-	.read           = seq_read,
+	.اكتب          = sched_cache_enable_write,
+	.اقرأ           = seq_read,
 	.llseek         = seq_lseek,
 	.release        = single_release,
 };
-#endif
+#د_که_پای
 
-#ifdef CONFIG_PREEMPT_DYNAMIC
+#که_تعریف_شوی CONFIG_PREEMPT_DYNAMIC
 
-static ssize_t sched_dynamic_write(struct file *filp, const char __user *ubuf,
-				   size_t cnt, loff_t *ppos)
+ساكن ssize_t sched_dynamic_write(بنية file *filp, ثابت حرف __user *ubuf,
+				   اندازه_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	حرف buf[16];
+	صحيح ډېرپېښ;
 
-	if (cnt > 15)
+	إذا (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	إذا (copy_from_user(buf, ubuf, cnt))
+		أرجع -EFAULT;
 
 	buf[cnt] = 0;
-	mode = sched_dynamic_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	ډېرپېښ = sched_dynamic_ډېرپېښ(strstrip(buf));
+	إذا (ډېرپېښ < 0)
+		أرجع ډېرپېښ;
 
-	sched_dynamic_update(mode);
+	sched_dynamic_update(ډېرپېښ);
 
 	*ppos += cnt;
 
-	return cnt;
+	أرجع cnt;
 }
 
-static int sched_dynamic_show(struct seq_file *m, void *v)
+ساكن صحيح sched_dynamic_show(بنية seq_file *m, فراغ *v)
 {
-	int mode = READ_ONCE(preempt_dynamic_mode);
+	صحيح ډېرپېښ = READ_ONCE(preempt_dynamic_ډېرپېښ);
 
 	/* Stop at NULL terminator */
-	for (int i = 0; preempt_modes[i]; i++) {
-		if (mode == i)
+	لكل (صحيح i = 0; preempt_modes[i]; i++) {
+		إذا (ډېرپېښ == i)
 			seq_puts(m, "(");
 		seq_puts(m, preempt_modes[i]);
-		if (mode == i)
+		إذا (ډېرپېښ == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 
 	seq_puts(m, "\n");
-	return 0;
+	أرجع 0;
 }
 
-static int sched_dynamic_open(struct inode *inode, struct file *filp)
+ساكن صحيح sched_dynamic_open(بنية inode *inode, بنية file *filp)
 {
-	return single_open(filp, sched_dynamic_show, NULL);
+	أرجع single_open(filp, sched_dynamic_show, عدم);
 }
 
-static const struct file_operations sched_dynamic_fops = {
+ساكن ثابت بنية file_operations sched_dynamic_fops = {
 	.open		= sched_dynamic_open,
-	.write		= sched_dynamic_write,
-	.read		= seq_read,
+	.اكتب		= sched_dynamic_write,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-#endif /* CONFIG_PREEMPT_DYNAMIC */
+#د_که_پای /* CONFIG_PREEMPT_DYNAMIC */
 
 __read_mostly bool sched_debug_verbose;
 
-static struct dentry           *sd_dentry;
+ساكن بنية dentry           *sd_dentry;
 
 
-static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
-				  size_t cnt, loff_t *ppos)
+ساكن ssize_t sched_verbose_write(بنية file *filp, ثابت حرف __user *ubuf,
+				  اندازه_t cnt, loff_t *ppos)
 {
-	ssize_t result;
+	ssize_t پایله;
 	bool orig;
 
-	cpus_read_lock();
-	sched_domains_mutex_lock();
+	cpus_read_قلف();
+	sched_domains_mutex_قلف();
 
 	orig = sched_debug_verbose;
-	result = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
+	پایله = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
 
-	if (sched_debug_verbose && !orig)
+	إذا (sched_debug_verbose && !orig)
 		update_sched_domain_debugfs();
-	else if (!sched_debug_verbose && orig) {
+	وإلا إذا (!sched_debug_verbose && orig) {
 		debugfs_remove(sd_dentry);
-		sd_dentry = NULL;
+		sd_dentry = عدم;
 	}
 
 	sched_domains_mutex_unlock();
 	cpus_read_unlock();
 
-	return result;
+	أرجع پایله;
 }
 
-static const struct file_operations sched_verbose_fops = {
-	.read =         debugfs_read_file_bool,
-	.write =        sched_verbose_write,
+ساكن ثابت بنية file_operations sched_verbose_fops = {
+	.اقرأ =         debugfs_read_file_bool,
+	.اكتب =        sched_verbose_write,
 	.open =         simple_open,
 	.llseek =       default_llseek,
 };
 
-static const struct seq_operations sched_debug_sops;
+ساكن ثابت بنية seq_operations sched_debug_sops;
 
-static int sched_debug_open(struct inode *inode, struct file *filp)
+ساكن صحيح sched_debug_open(بنية inode *inode, بنية file *filp)
 {
-	return seq_open(filp, &sched_debug_sops);
+	أرجع seq_open(filp, &sched_debug_sops);
 }
 
-static const struct file_operations sched_debug_fops = {
+ساكن ثابت بنية file_operations sched_debug_fops = {
 	.open		= sched_debug_open,
-	.read		= seq_read,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= seq_release,
 };
 
-enum dl_param {
+تعداد dl_param {
 	DL_RUNTIME = 0,
 	DL_PERIOD,
 };
 
-static unsigned long dl_server_period_max = (1UL << 22) * NSEC_PER_USEC; /* ~4 seconds */
-static unsigned long dl_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
+ساكن بینښه اوږد dl_server_period_max = (1UL << 22) * NSEC_فی_USEC; /* ~4 seconds */
+ساكن بینښه اوږد dl_server_period_min = (100) * NSEC_فی_USEC;     /* 100 us */
 
-static ssize_t sched_server_write_common(struct file *filp, const char __user *ubuf,
-					 size_t cnt, loff_t *ppos, enum dl_param param,
-					 void *server)
+ساكن ssize_t sched_server_write_common(بنية file *filp, ثابت حرف __user *ubuf,
+					 اندازه_t cnt, loff_t *ppos, تعداد dl_param param,
+					 فراغ *server)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
+	اوږد cpu = (اوږد) ((بنية seq_file *) filp->شخصي_معلومات)->خاص;
+	بنية sched_dl_entity *dl_se = (بنية sched_dl_entity *)server;
 	u64 old_runtime, runtime, period;
-	struct rq *rq = cpu_rq(cpu);
-	int retval = 0;
-	size_t err;
-	u64 value;
+	بنية rq *rq = cpu_rq(cpu);
+	صحيح retval = 0;
+	اندازه_t err;
+	u64 ارزښت;
 
-	err = kstrtoull_from_user(ubuf, cnt, 10, &value);
-	if (err)
-		return err;
+	err = kstrtoull_from_user(ubuf, cnt, 10, &ارزښت);
+	إذا (err)
+		أرجع err;
 
-	scoped_guard (rq_lock_irqsave, rq) {
+	scoped_guard (rq_قلف_irqsave, rq) {
 		old_runtime = runtime = dl_se->dl_runtime;
 		period = dl_se->dl_period;
 
-		switch (param) {
-		case DL_RUNTIME:
-			if (runtime == value)
-				break;
-			runtime = value;
-			break;
-		case DL_PERIOD:
-			if (value == period)
-				break;
-			period = value;
-			break;
+		بدل (param) {
+		حالة DL_RUNTIME:
+			إذا (runtime == ارزښت)
+				اكسر;
+			runtime = ارزښت;
+			اكسر;
+		حالة DL_PERIOD:
+			إذا (ارزښت == period)
+				اكسر;
+			period = ارزښت;
+			اكسر;
 		}
 
-		if (runtime > period ||
+		إذا (runtime > period ||
 		    period > dl_server_period_max ||
 		    period < dl_server_period_min) {
-			return  -EINVAL;
+			أرجع  -EINVAL;
 		}
 
-		if (!cpu_online(cpu_of(rq)))
-			return -EBUSY;
+		إذا (!cpu_online(cpu_د(rq)))
+			أرجع -EBUSY;
 
 		update_rq_clock(rq);
 		dl_server_stop(dl_se);
 		retval = dl_server_apply_params(dl_se, runtime, period, 0);
-		dl_server_start(dl_se);
+		dl_server_پیل(dl_se);
 
-		if (retval < 0)
-			return retval;
+		إذا (retval < 0)
+			أرجع retval;
 	}
 
-	if (!!old_runtime ^ !!runtime) {
+	إذا (!!old_runtime ^ !!runtime) {
 		pr_info("%s server %sabled on CPU %d%s.\n",
 			server == &rq->fair_server ? "Fair" : "Ext",
 			runtime ? "en" : "dis",
-			cpu_of(rq),
+			cpu_د(rq),
 			runtime ? "" : ", system may malfunction due to starvation");
 	}
 
 	*ppos += cnt;
-	return cnt;
+	أرجع cnt;
 }
 
-static size_t sched_server_show_common(struct seq_file *m, void *v, enum dl_param param,
-				       void *server)
+ساكن اندازه_t sched_server_show_common(بنية seq_file *m, فراغ *v, تعداد dl_param param,
+				       فراغ *server)
 {
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
-	u64 value;
+	بنية sched_dl_entity *dl_se = (بنية sched_dl_entity *)server;
+	u64 ارزښت;
 
-	switch (param) {
-	case DL_RUNTIME:
-		value = dl_se->dl_runtime;
-		break;
-	case DL_PERIOD:
-		value = dl_se->dl_period;
-		break;
+	بدل (param) {
+	حالة DL_RUNTIME:
+		ارزښت = dl_se->dl_runtime;
+		اكسر;
+	حالة DL_PERIOD:
+		ارزښت = dl_se->dl_period;
+		اكسر;
 	}
 
-	seq_printf(m, "%llu\n", value);
-	return 0;
+	seq_printf(m, "%llu\n", ارزښت);
+	أرجع 0;
 }
 
-static ssize_t
-sched_fair_server_runtime_write(struct file *filp, const char __user *ubuf,
-				size_t cnt, loff_t *ppos)
+ساكن ssize_t
+sched_fair_server_runtime_write(بنية file *filp, ثابت حرف __user *ubuf,
+				اندازه_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	اوږد cpu = (اوږد) ((بنية seq_file *) filp->شخصي_معلومات)->خاص;
+	بنية rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	أرجع sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_runtime_show(struct seq_file *m, void *v)
+ساكن صحيح sched_fair_server_runtime_show(بنية seq_file *m, فراغ *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	بینښه اوږد cpu = (بینښه اوږد) m->خاص;
+	بنية rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
+	أرجع sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
 }
 
-static int sched_fair_server_runtime_open(struct inode *inode, struct file *filp)
+ساكن صحيح sched_fair_server_runtime_open(بنية inode *inode, بنية file *filp)
 {
-	return single_open(filp, sched_fair_server_runtime_show, inode->i_private);
+	أرجع single_open(filp, sched_fair_server_runtime_show, inode->i_شخصي);
 }
 
-static const struct file_operations fair_server_runtime_fops = {
+ساكن ثابت بنية file_operations fair_server_runtime_fops = {
 	.open		= sched_fair_server_runtime_open,
-	.write		= sched_fair_server_runtime_write,
-	.read		= seq_read,
+	.اكتب		= sched_fair_server_runtime_write,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static struct dentry *debugfs_sched;
+ساكن بنية dentry *debugfs_sched;
 
-#ifdef CONFIG_SCHED_CLASS_EXT
-static ssize_t
-sched_ext_server_runtime_write(struct file *filp, const char __user *ubuf,
-			       size_t cnt, loff_t *ppos)
+#که_تعریف_شوی CONFIG_SCHED_CLASS_EXT
+ساكن ssize_t
+sched_ext_server_runtime_write(بنية file *filp, ثابت حرف __user *ubuf,
+			       اندازه_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	اوږد cpu = (اوږد) ((بنية seq_file *) filp->شخصي_معلومات)->خاص;
+	بنية rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	أرجع sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_runtime_show(struct seq_file *m, void *v)
+ساكن صحيح sched_ext_server_runtime_show(بنية seq_file *m, فراغ *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	بینښه اوږد cpu = (بینښه اوږد) m->خاص;
+	بنية rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
+	أرجع sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
 }
 
-static int sched_ext_server_runtime_open(struct inode *inode, struct file *filp)
+ساكن صحيح sched_ext_server_runtime_open(بنية inode *inode, بنية file *filp)
 {
-	return single_open(filp, sched_ext_server_runtime_show, inode->i_private);
+	أرجع single_open(filp, sched_ext_server_runtime_show, inode->i_شخصي);
 }
 
-static const struct file_operations ext_server_runtime_fops = {
+ساكن ثابت بنية file_operations ext_server_runtime_fops = {
 	.open		= sched_ext_server_runtime_open,
-	.write		= sched_ext_server_runtime_write,
-	.read		= seq_read,
+	.اكتب		= sched_ext_server_runtime_write,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static ssize_t
-sched_ext_server_period_write(struct file *filp, const char __user *ubuf,
-			      size_t cnt, loff_t *ppos)
+ساكن ssize_t
+sched_ext_server_period_write(بنية file *filp, ثابت حرف __user *ubuf,
+			      اندازه_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	اوږد cpu = (اوږد) ((بنية seq_file *) filp->شخصي_معلومات)->خاص;
+	بنية rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	أرجع sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_period_show(struct seq_file *m, void *v)
+ساكن صحيح sched_ext_server_period_show(بنية seq_file *m, فراغ *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	بینښه اوږد cpu = (بینښه اوږد) m->خاص;
+	بنية rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
+	أرجع sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
 }
 
-static int sched_ext_server_period_open(struct inode *inode, struct file *filp)
+ساكن صحيح sched_ext_server_period_open(بنية inode *inode, بنية file *filp)
 {
-	return single_open(filp, sched_ext_server_period_show, inode->i_private);
+	أرجع single_open(filp, sched_ext_server_period_show, inode->i_شخصي);
 }
 
-static const struct file_operations ext_server_period_fops = {
+ساكن ثابت بنية file_operations ext_server_period_fops = {
 	.open		= sched_ext_server_period_open,
-	.write		= sched_ext_server_period_write,
-	.read		= seq_read,
+	.اكتب		= sched_ext_server_period_write,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void debugfs_ext_server_init(void)
+ساكن فراغ debugfs_ext_server_init(فراغ)
 {
-	struct dentry *d_ext;
-	unsigned long cpu;
+	بنية dentry *d_ext;
+	بینښه اوږد cpu;
 
 	d_ext = debugfs_create_dir("ext_server", debugfs_sched);
-	if (!d_ext)
-		return;
+	إذا (!d_ext)
+		أرجع;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		بنية dentry *d_cpu;
+		حرف buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, حجم(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_ext);
 
-		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &ext_server_runtime_fops);
-		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &ext_server_period_fops);
+		debugfs_create_file("runtime", 0644, d_cpu, (فراغ *) cpu, &ext_server_runtime_fops);
+		debugfs_create_file("period", 0644, d_cpu, (فراغ *) cpu, &ext_server_period_fops);
 	}
 }
-#endif /* CONFIG_SCHED_CLASS_EXT */
+#د_که_پای /* CONFIG_SCHED_CLASS_EXT */
 
-static ssize_t
-sched_fair_server_period_write(struct file *filp, const char __user *ubuf,
-			       size_t cnt, loff_t *ppos)
+ساكن ssize_t
+sched_fair_server_period_write(بنية file *filp, ثابت حرف __user *ubuf,
+			       اندازه_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	اوږد cpu = (اوږد) ((بنية seq_file *) filp->شخصي_معلومات)->خاص;
+	بنية rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	أرجع sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_period_show(struct seq_file *m, void *v)
+ساكن صحيح sched_fair_server_period_show(بنية seq_file *m, فراغ *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	بینښه اوږد cpu = (بینښه اوږد) m->خاص;
+	بنية rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
+	أرجع sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
 }
 
-static int sched_fair_server_period_open(struct inode *inode, struct file *filp)
+ساكن صحيح sched_fair_server_period_open(بنية inode *inode, بنية file *filp)
 {
-	return single_open(filp, sched_fair_server_period_show, inode->i_private);
+	أرجع single_open(filp, sched_fair_server_period_show, inode->i_شخصي);
 }
 
-static const struct file_operations fair_server_period_fops = {
+ساكن ثابت بنية file_operations fair_server_period_fops = {
 	.open		= sched_fair_server_period_open,
-	.write		= sched_fair_server_period_write,
-	.read		= seq_read,
+	.اكتب		= sched_fair_server_period_write,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void debugfs_fair_server_init(void)
+ساكن فراغ debugfs_fair_server_init(فراغ)
 {
-	struct dentry *d_fair;
-	unsigned long cpu;
+	بنية dentry *d_fair;
+	بینښه اوږد cpu;
 
 	d_fair = debugfs_create_dir("fair_server", debugfs_sched);
-	if (!d_fair)
-		return;
+	إذا (!d_fair)
+		أرجع;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		بنية dentry *d_cpu;
+		حرف buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, حجم(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_fair);
 
-		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &fair_server_runtime_fops);
-		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &fair_server_period_fops);
+		debugfs_create_file("runtime", 0644, d_cpu, (فراغ *) cpu, &fair_server_runtime_fops);
+		debugfs_create_file("period", 0644, d_cpu, (فراغ *) cpu, &fair_server_period_fops);
 	}
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-static int cgroup_mode = 2;
+#که_تعریف_شوی CONFIG_FAIR_ډله_SCHED
+ساكن صحيح cgroup_ډېرپېښ = 2;
 
 /* See __sched_cgroup_mode_update(). */
-static const char *cgroup_mode_str[] = {
+ساكن ثابت حرف *cgroup_ډېرپېښ_str[] = {
 	"up",
 	"smp",
 	"concur",
@@ -639,108 +639,108 @@ static const char *cgroup_mode_str[] = {
 	"tasks",
 };
 
-static int sched_cgroup_mode(const char *str)
+ساكن صحيح sched_cgroup_ډېرپېښ(ثابت حرف *str)
 {
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (!strcmp(str, cgroup_mode_str[i]))
-			return i;
+	لكل (صحيح i = 0; i < ARRAY_اندازه(cgroup_ډېرپېښ_str); i++) {
+		إذا (!strcmp(str, cgroup_ډېرپېښ_str[i]))
+			أرجع i;
 	}
-	return -EINVAL;
+	أرجع -EINVAL;
 }
 
-static ssize_t sched_cgroup_write(struct file *filp, const char __user *ubuf,
-				   size_t cnt, loff_t *ppos)
+ساكن ssize_t sched_cgroup_write(بنية file *filp, ثابت حرف __user *ubuf,
+				   اندازه_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	حرف buf[16];
+	صحيح ډېرپېښ;
 
-	if (cnt > 15)
+	إذا (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	إذا (copy_from_user(buf, ubuf, cnt))
+		أرجع -EFAULT;
 
 	buf[cnt] = 0;
-	mode = sched_cgroup_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	ډېرپېښ = sched_cgroup_ډېرپېښ(strstrip(buf));
+	إذا (ډېرپېښ < 0)
+		أرجع ډېرپېښ;
 
-	__sched_cgroup_mode_update(mode);
-	WRITE_ONCE(cgroup_mode, mode);
+	__sched_cgroup_mode_update(ډېرپېښ);
+	WRITE_ONCE(cgroup_ډېرپېښ, ډېرپېښ);
 
 	*ppos += cnt;
-	return cnt;
+	أرجع cnt;
 }
 
-static int sched_cgroup_show(struct seq_file *m, void *v)
+ساكن صحيح sched_cgroup_show(بنية seq_file *m, فراغ *v)
 {
-	int mode = READ_ONCE(cgroup_mode);
+	صحيح ډېرپېښ = READ_ONCE(cgroup_ډېرپېښ);
 
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (mode == i)
+	لكل (صحيح i = 0; i < ARRAY_اندازه(cgroup_ډېرپېښ_str); i++) {
+		إذا (ډېرپېښ == i)
 			seq_puts(m, "(");
-		seq_puts(m, cgroup_mode_str[i]);
-		if (mode == i)
+		seq_puts(m, cgroup_ډېرپېښ_str[i]);
+		إذا (ډېرپېښ == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 	seq_puts(m, "\n");
-	return 0;
+	أرجع 0;
 }
 
-static int sched_cgroup_open(struct inode *inode, struct file *filp)
+ساكن صحيح sched_cgroup_open(بنية inode *inode, بنية file *filp)
 {
-	return single_open(filp, sched_cgroup_show, NULL);
+	أرجع single_open(filp, sched_cgroup_show, عدم);
 }
 
-static const struct file_operations sched_cgroup_fops = {
+ساكن ثابت بنية file_operations sched_cgroup_fops = {
 	.open		= sched_cgroup_open,
-	.write		= sched_cgroup_write,
-	.read		= seq_read,
+	.اكتب		= sched_cgroup_write,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
-#endif
+#د_که_پای
 
-static __init int sched_init_debug(void)
+ساكن __init صحيح sched_init_debug(فراغ)
 {
-	struct dentry __maybe_unused *numa, *llc;
+	بنية dentry __maybe_unused *numa, *llc;
 
-	debugfs_sched = debugfs_create_dir("sched", NULL);
+	debugfs_sched = debugfs_create_dir("sched", عدم);
 
-	debugfs_create_file("features", 0644, debugfs_sched, NULL, &sched_feat_fops);
+	debugfs_create_file("features", 0644, debugfs_sched, عدم, &sched_feat_fops);
 	debugfs_create_file_unsafe("verbose", 0644, debugfs_sched, &sched_debug_verbose, &sched_verbose_fops);
-#ifdef CONFIG_PREEMPT_DYNAMIC
-	debugfs_create_file("preempt", 0644, debugfs_sched, NULL, &sched_dynamic_fops);
-#endif
+#که_تعریف_شوی CONFIG_PREEMPT_DYNAMIC
+	debugfs_create_file("preempt", 0644, debugfs_sched, عدم, &sched_dynamic_fops);
+#د_که_پای
 
-	debugfs_create_u32("base_slice_ns", 0644, debugfs_sched, &sysctl_sched_base_slice);
+	debugfs_create_u32("base_slice_ns", 0644, debugfs_sched, &sysctl_sched_بنسټ_ټوټه);
 
 	debugfs_create_u32("latency_warn_ms", 0644, debugfs_sched, &sysctl_resched_latency_warn_ms);
 	debugfs_create_u32("latency_warn_once", 0644, debugfs_sched, &sysctl_resched_latency_warn_once);
 
-	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, NULL, &sched_scaling_fops);
-	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
+	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, عدم, &sched_scaling_fops);
+	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_لګښت);
 	debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
 
-	sched_domains_mutex_lock();
+	sched_domains_mutex_قلف();
 	update_sched_domain_debugfs();
 	sched_domains_mutex_unlock();
 
-#ifdef CONFIG_NUMA_BALANCING
+#که_تعریف_شوی CONFIG_NUMA_BALANCING
 	numa = debugfs_create_dir("numa_balancing", debugfs_sched);
 
-	debugfs_create_u32("scan_delay_ms", 0644, numa, &sysctl_numa_balancing_scan_delay);
-	debugfs_create_u32("scan_period_min_ms", 0644, numa, &sysctl_numa_balancing_scan_period_min);
-	debugfs_create_u32("scan_period_max_ms", 0644, numa, &sysctl_numa_balancing_scan_period_max);
-	debugfs_create_u32("scan_size_mb", 0644, numa, &sysctl_numa_balancing_scan_size);
-	debugfs_create_u32("hot_threshold_ms", 0644, numa, &sysctl_numa_balancing_hot_threshold);
-#endif /* CONFIG_NUMA_BALANCING */
+	debugfs_create_u32("scan_delay_ms", 0644, numa, &sysctl_numa_balancing_لټون_delay);
+	debugfs_create_u32("scan_period_min_ms", 0644, numa, &sysctl_numa_balancing_لټون_period_min);
+	debugfs_create_u32("scan_period_max_ms", 0644, numa, &sysctl_numa_balancing_لټون_period_max);
+	debugfs_create_u32("scan_size_mb", 0644, numa, &sysctl_numa_balancing_لټون_اندازه);
+	debugfs_create_u32("hot_threshold_ms", 0644, numa, &sysctl_numa_balancing_hot_پوله);
+#د_که_پای /* CONFIG_NUMA_BALANCING */
 
-#ifdef CONFIG_SCHED_CACHE
+#که_تعریف_شوی CONFIG_SCHED_CACHE
 	llc = debugfs_create_dir("llc_balancing", debugfs_sched);
-	debugfs_create_file("enabled", 0644, llc, NULL,
+	debugfs_create_file("enabled", 0644, llc, عدم,
 			    &sched_cache_enable_fops);
 	debugfs_create_u32("aggr_tolerance", 0644, llc,
 			   &llc_aggr_tolerance);
@@ -752,120 +752,120 @@ static __init int sched_init_debug(void)
 			   &llc_overaggr_pct);
 	debugfs_create_u32("imb_pct", 0644, llc,
 			   &llc_imb_pct);
-#endif
+#د_که_پای
 
-	debugfs_create_file("debug", 0444, debugfs_sched, NULL, &sched_debug_fops);
+	debugfs_create_file("debug", 0444, debugfs_sched, عدم, &sched_debug_fops);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	debugfs_create_file("cgroup_mode", 0644, debugfs_sched, NULL, &sched_cgroup_fops);
-#endif
+#که_تعریف_شوی CONFIG_FAIR_ډله_SCHED
+	debugfs_create_file("cgroup_mode", 0644, debugfs_sched, عدم, &sched_cgroup_fops);
+#د_که_پای
 
 	debugfs_fair_server_init();
-#ifdef CONFIG_SCHED_CLASS_EXT
+#که_تعریف_شوی CONFIG_SCHED_CLASS_EXT
 	debugfs_ext_server_init();
-#endif
+#د_که_پای
 
-	return 0;
+	أرجع 0;
 }
 late_initcall(sched_init_debug);
 
-static cpumask_var_t		sd_sysctl_cpus;
+ساكن cpumask_var_t		sd_sysctl_cpus;
 
-static int sd_flags_show(struct seq_file *m, void *v)
+ساكن صحيح sd_flags_show(بنية seq_file *m, فراغ *v)
 {
-	unsigned long flags = *(unsigned int *)m->private;
-	int idx;
+	بینښه اوږد flags = *(بینښه صحيح *)m->خاص;
+	صحيح idx;
 
-	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
+	for_each_سېټ_بټ(idx, &flags, __SD_FLAG_CNT) {
 		seq_puts(m, sd_flag_debug[idx].name);
 		seq_puts(m, " ");
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	أرجع 0;
 }
 
-static int sd_flags_open(struct inode *inode, struct file *file)
+ساكن صحيح sd_flags_open(بنية inode *inode, بنية file *file)
 {
-	return single_open(file, sd_flags_show, inode->i_private);
+	أرجع single_open(file, sd_flags_show, inode->i_شخصي);
 }
 
-static const struct file_operations sd_flags_fops = {
+ساكن ثابت بنية file_operations sd_flags_fops = {
 	.open		= sd_flags_open,
-	.read		= seq_read,
+	.اقرأ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void register_sd(struct sched_domain *sd, struct dentry *parent)
+ساكن فراغ ثبتوونکی_sd(بنية sched_domain *sd, بنية dentry *پلار)
 {
-#define SDM(type, mode, member)	\
-	debugfs_create_##type(#member, mode, parent, &sd->member)
+#تعریف_کړه SDM(type, ډېرپېښ, member)	\
+	debugfs_create_##type(#member, ډېرپېښ, پلار, &sd->member)
 
 	SDM(ulong, 0644, min_interval);
 	SDM(ulong, 0644, max_interval);
-	SDM(u64,   0644, max_newidle_lb_cost);
-	SDM(u32,   0644, busy_factor);
+	SDM(u64,   0644, max_newidle_lb_لګښت);
+	SDM(u32,   0644, busy_ضریب);
 	SDM(u32,   0644, imbalance_pct);
 	SDM(u32,   0644, cache_nice_tries);
 	SDM(str,   0444, name);
 
-#undef SDM
+#تعریف_لغوه SDM
 
-	debugfs_create_file("flags", 0444, parent, &sd->flags, &sd_flags_fops);
-	debugfs_create_file("groups_flags", 0444, parent, &sd->groups->flags, &sd_flags_fops);
-	debugfs_create_u32("level", 0444, parent, (u32 *)&sd->level);
+	debugfs_create_file("flags", 0444, پلار, &sd->flags, &sd_flags_fops);
+	debugfs_create_file("groups_flags", 0444, پلار, &sd->groups->flags, &sd_flags_fops);
+	debugfs_create_u32("level", 0444, پلار, (u32 *)&sd->level);
 
-	if (sd->flags & SD_ASYM_PACKING)
-		debugfs_create_u32("group_asym_prefer_cpu", 0444, parent,
+	إذا (sd->flags & SD_ASYM_PACKING)
+		debugfs_create_u32("group_asym_prefer_cpu", 0444, پلار,
 				   (u32 *)&sd->groups->asym_prefer_cpu);
 }
 
-void update_sched_domain_debugfs(void)
+فراغ update_sched_domain_debugfs(فراغ)
 {
-	int cpu, i;
+	صحيح cpu, i;
 
 	/*
 	 * This can unfortunately be invoked before sched_debug_init() creates
 	 * the debug directory. Don't touch sd_sysctl_cpus until then.
 	 */
-	if (!debugfs_sched)
-		return;
+	إذا (!debugfs_sched)
+		أرجع;
 
-	if (!sched_debug_verbose)
-		return;
+	إذا (!sched_debug_verbose)
+		أرجع;
 
-	if (!cpumask_available(sd_sysctl_cpus)) {
-		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
-			return;
-		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
+	إذا (!cpumask_شته(sd_sysctl_cpus)) {
+		إذا (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
+			أرجع;
+		cpumask_copy(sd_sysctl_cpus, cpu_possible_ماسک);
 	}
 
-	if (!sd_dentry) {
+	إذا (!sd_dentry) {
 		sd_dentry = debugfs_create_dir("domains", debugfs_sched);
 
 		/* rebuild sd_sysctl_cpus if empty since it gets cleared below */
-		if (cpumask_empty(sd_sysctl_cpus))
-			cpumask_copy(sd_sysctl_cpus, cpu_online_mask);
+		إذا (cpumask_تشه(sd_sysctl_cpus))
+			cpumask_copy(sd_sysctl_cpus, cpu_online_ماسک);
 	}
 
 	for_each_cpu(cpu, sd_sysctl_cpus) {
-		struct sched_domain *sd;
-		struct dentry *d_cpu;
-		char buf[32];
+		بنية sched_domain *sd;
+		بنية dentry *d_cpu;
+		حرف buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%d", cpu);
+		snprintf(buf, حجم(buf), "cpu%d", cpu);
 		debugfs_lookup_and_remove(buf, sd_dentry);
 		d_cpu = debugfs_create_dir(buf, sd_dentry);
 
 		i = 0;
 		for_each_domain(cpu, sd) {
-			struct dentry *d_sd;
+			بنية dentry *d_sd;
 
-			snprintf(buf, sizeof(buf), "domain%d", i);
+			snprintf(buf, حجم(buf), "domain%d", i);
 			d_sd = debugfs_create_dir(buf, d_cpu);
 
-			register_sd(sd, d_sd);
+			ثبتوونکی_sd(sd, d_sd);
 			i++;
 		}
 
@@ -873,69 +873,69 @@ void update_sched_domain_debugfs(void)
 	}
 }
 
-void dirty_sched_domain_sysctl(int cpu)
+فراغ dirty_sched_domain_sysctl(صحيح cpu)
 {
-	if (cpumask_available(sd_sysctl_cpus))
+	إذا (cpumask_شته(sd_sysctl_cpus))
 		__cpumask_set_cpu(cpu, sd_sysctl_cpus);
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group *tg)
+#که_تعریف_شوی CONFIG_FAIR_ډله_SCHED
+ساكن فراغ print_cfs_ډله_stats(بنية seq_file *m, صحيح cpu, بنية task_ډله *tg)
 {
-	struct sched_entity *se = tg_se(tg, cpu);
+	بنية sched_entity *se = tg_se(tg, cpu);
 
-#define P(F)		SEQ_printf(m, "  .%-30s: %lld\n",	#F, (long long)F)
-#define P_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld\n",	\
-		#F, (long long)schedstat_val(stats->F))
-#define PN(F)		SEQ_printf(m, "  .%-30s: %lld.%06ld\n", #F, SPLIT_NS((long long)F))
-#define PN_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld.%06ld\n", \
-		#F, SPLIT_NS((long long)schedstat_val(stats->F)))
+#تعریف_کړه P(F)		SEQ_printf(m, "  .%-30s: %lld\n",	#F, (اوږد اوږد)F)
+#تعریف_کړه P_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld\n",	\
+		#F, (اوږد اوږد)schedstat_val(stats->F))
+#تعریف_کړه PN(F)		SEQ_printf(m, "  .%-30s: %lld.%06ld\n", #F, وېشل_NS((اوږد اوږد)F))
+#تعریف_کړه PN_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld.%06ld\n", \
+		#F, وېشل_NS((اوږد اوږد)schedstat_val(stats->F)))
 
-	if (!se)
-		return;
+	إذا (!se)
+		أرجع;
 
-	PN(se->exec_start);
+	PN(se->exec_پیل);
 	PN(se->vruntime);
-	PN(se->sum_exec_runtime);
+	PN(se->مجموعه_exec_runtime);
 
-	if (schedstat_enabled()) {
-		struct sched_statistics *stats;
+	إذا (schedstat_enabled()) {
+		بنية sched_statistics *stats;
 		stats = __schedstats_from_se(se);
 
-		PN_SCHEDSTAT(wait_start);
-		PN_SCHEDSTAT(sleep_start);
-		PN_SCHEDSTAT(block_start);
+		PN_SCHEDSTAT(wait_پیل);
+		PN_SCHEDSTAT(sleep_پیل);
+		PN_SCHEDSTAT(بلاک_پیل);
 		PN_SCHEDSTAT(sleep_max);
-		PN_SCHEDSTAT(block_max);
+		PN_SCHEDSTAT(بلاک_max);
 		PN_SCHEDSTAT(exec_max);
-		PN_SCHEDSTAT(slice_max);
+		PN_SCHEDSTAT(ټوټه_max);
 		PN_SCHEDSTAT(wait_max);
-		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
+		PN_SCHEDSTAT(wait_مجموعه);
+		P_SCHEDSTAT(wait_شمېر);
 	}
 
-	P(se->load.weight);
-	P(se->avg.load_avg);
+	P(se->بارول.وزن);
+	P(se->avg.بارول_avg);
 	P(se->avg.util_avg);
 	P(se->avg.runnable_avg);
 
-#undef PN_SCHEDSTAT
-#undef PN
-#undef P_SCHEDSTAT
-#undef P
+#تعریف_لغوه PN_SCHEDSTAT
+#تعریف_لغوه PN
+#تعریف_لغوه P_SCHEDSTAT
+#تعریف_لغوه P
 }
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+#د_که_پای /* CONFIG_FAIR_GROUP_SCHED */
 
-#ifdef CONFIG_CGROUP_SCHED
-static DEFINE_SPINLOCK(sched_debug_lock);
-static char group_path[PATH_MAX];
+#که_تعریف_شوی CONFIG_CGROUP_SCHED
+ساكن DEFINE_SPINLOCK(sched_debug_قلف);
+ساكن حرف ډله_لار[لار_MAX];
 
-static void task_group_path(struct task_group *tg, char *path, int plen)
+ساكن فراغ task_ډله_لار(بنية task_ډله *tg, حرف *لار, صحيح plen)
 {
-	if (autogroup_path(tg, path, plen))
-		return;
+	إذا (autogroup_لار(tg, لار, plen))
+		أرجع;
 
-	cgroup_path(tg->css.cgroup, path, plen);
+	cgroup_لار(tg->css.cgroup, لار, plen);
 }
 
 /*
@@ -945,154 +945,154 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
  * of the stack buffer so that it will show up in case the output length
  * matches the given buffer size to indicate possible path name truncation.
  */
-#define SEQ_printf_task_group_path(m, tg, fmt...)			\
+#تعریف_کړه SEQ_printf_task_ډله_لار(m, tg, fmt...)			\
 {									\
-	if (spin_trylock(&sched_debug_lock)) {				\
-		task_group_path(tg, group_path, sizeof(group_path));	\
-		SEQ_printf(m, fmt, group_path);				\
-		spin_unlock(&sched_debug_lock);				\
-	} else {							\
-		char buf[128];						\
-		char *bufend = buf + sizeof(buf) - 3;			\
-		task_group_path(tg, buf, bufend - buf);			\
+	إذا (spin_trylock(&sched_debug_قلف)) {				\
+		task_ډله_لار(tg, ډله_لار, حجم(ډله_لار));	\
+		SEQ_printf(m, fmt, ډله_لار);				\
+		spin_unlock(&sched_debug_قلف);				\
+	} وإلا {							\
+		حرف buf[128];						\
+		حرف *bufend = buf + حجم(buf) - 3;			\
+		task_ډله_لار(tg, buf, bufend - buf);			\
 		strcpy(bufend - 1, "...");				\
 		SEQ_printf(m, fmt, buf);				\
 	}								\
 }
-#endif
+#د_که_پای
 
-static void
-print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
+ساكن فراغ
+print_task(بنية seq_file *m, بنية rq *rq, بنية task_struct *p)
 {
-	if (task_current(rq, p))
+	إذا (task_current(rq, p))
 		SEQ_printf(m, ">R");
-	else
-		SEQ_printf(m, " %c", task_state_to_char(p));
+	وإلا
+		SEQ_printf(m, " %c", task_state_منزل_char(p));
 
 	SEQ_printf(m, " %15s %5d %10ld %9Ld.%06ld   %c   %9Ld.%06ld %c %9Ld.%06ld %9Ld.%06ld %9Ld   %5d ",
 		p->comm, task_pid_nr(p),
-		p->se.h_load.weight,
-		SPLIT_NS(p->se.vruntime),
+		p->se.h_بارول.وزن,
+		وېشل_NS(p->se.vruntime),
 		entity_eligible(&rq->cfs, &p->se) ? 'E' : 'N',
-		SPLIT_NS(p->se.deadline),
-		p->se.custom_slice ? 'S' : ' ',
-		SPLIT_NS(p->se.slice),
-		SPLIT_NS(p->se.sum_exec_runtime),
-		(long long)(p->nvcsw + p->nivcsw),
+		وېشل_NS(p->se.deadline),
+		p->se.custom_ټوټه ? 'S' : ' ',
+		وېشل_NS(p->se.ټوټه),
+		وېشل_NS(p->se.مجموعه_exec_runtime),
+		(اوږد اوږد)(p->nvcsw + p->nivcsw),
 		p->prio);
 
 	SEQ_printf(m, "%9lld.%06ld %9lld.%06ld %9lld.%06ld",
-		SPLIT_NS(schedstat_val_or_zero(p->stats.wait_sum)),
-		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_sleep_runtime)),
-		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_block_runtime)));
+		وېشل_NS(schedstat_val_or_zero(p->stats.wait_مجموعه)),
+		وېشل_NS(schedstat_val_or_zero(p->stats.مجموعه_sleep_runtime)),
+		وېشل_NS(schedstat_val_or_zero(p->stats.مجموعه_بلاک_runtime)));
 
-#ifdef CONFIG_NUMA_BALANCING
-	SEQ_printf(m, "   %d      %d", task_node(p), task_numa_group_id(p));
-#endif
-#ifdef CONFIG_CGROUP_SCHED
-	SEQ_printf_task_group_path(m, task_group(p), "        %s")
-#endif
+#که_تعریف_شوی CONFIG_NUMA_BALANCING
+	SEQ_printf(m, "   %d      %d", task_غوټه(p), task_numa_ډله_id(p));
+#د_که_پای
+#که_تعریف_شوی CONFIG_CGROUP_SCHED
+	SEQ_printf_task_ډله_لار(m, task_ډله(p), "        %s")
+#د_که_پای
 
 	SEQ_printf(m, "\n");
 }
 
-static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
+ساكن فراغ print_rq(بنية seq_file *m, بنية rq *rq, صحيح rq_cpu)
 {
-	struct task_struct *g, *p;
+	بنية task_struct *g, *p;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "runnable tasks:\n");
 	SEQ_printf(m, " S            task   PID     weight       vruntime   eligible    "
 		   "deadline             slice          sum-exec      switches  "
 		   "prio         wait-time        sum-sleep       sum-block"
-#ifdef CONFIG_NUMA_BALANCING
+#که_تعریف_شوی CONFIG_NUMA_BALANCING
 		   "  node   group-id"
-#endif
-#ifdef CONFIG_CGROUP_SCHED
+#د_که_پای
+#که_تعریف_شوی CONFIG_CGROUP_SCHED
 		   "  group-path"
-#endif
+#د_که_پای
 		   "\n");
 	SEQ_printf(m, "-------------------------------------------------------"
 		   "------------------------------------------------------"
 		   "------------------------------------------------------"
-#ifdef CONFIG_NUMA_BALANCING
+#که_تعریف_شوی CONFIG_NUMA_BALANCING
 		   "--------------"
-#endif
-#ifdef CONFIG_CGROUP_SCHED
+#د_که_پای
+#که_تعریف_شوی CONFIG_CGROUP_SCHED
 		   "--------------"
-#endif
+#د_که_پای
 		   "\n");
 
-	rcu_read_lock();
+	rcu_read_قلف();
 	for_each_process_thread(g, p) {
-		if (task_cpu(p) != rq_cpu)
-			continue;
+		إذا (task_cpu(p) != rq_cpu)
+			استمر;
 
 		print_task(m, rq, p);
 	}
 	rcu_read_unlock();
 }
 
-void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+فراغ print_cfs_rq(بنية seq_file *m, صحيح cpu, بنية cfs_rq *cfs_rq)
 {
-	s64 left_vruntime = -1, right_vruntime = -1, left_deadline = -1, spread;
-	s64 zero_vruntime = -1, sum_w_vruntime = -1;
+	s64 کیڼ_vruntime = -1, ښی_vruntime = -1, کیڼ_deadline = -1, خپرېدنه;
+	s64 zero_vruntime = -1, مجموعه_w_vruntime = -1;
 	u64 avruntime;
-	struct sched_entity *last, *first, *root;
-	struct rq *rq = cpu_rq(cpu);
-	unsigned int sum_shift;
-	unsigned long flags;
-	u64 sum_weight;
+	بنية sched_entity *وروستی, *لومړی, *ریښه;
+	بنية rq *rq = cpu_rq(cpu);
+	بینښه صحيح مجموعه_ښويدنه;
+	بینښه اوږد flags;
+	u64 مجموعه_وزن;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#که_تعریف_شوی CONFIG_FAIR_ډله_SCHED
 	SEQ_printf(m, "\n");
-	SEQ_printf_task_group_path(m, cfs_rq->tg, "cfs_rq[%d]:%s\n", cpu);
-#else
+	SEQ_printf_task_ډله_لار(m, cfs_rq->tg, "cfs_rq[%d]:%s\n", cpu);
+#وإلا
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
-#endif
+#د_که_پای
 
-	raw_spin_rq_lock_irqsave(rq, flags);
-	root = __pick_root_entity(cfs_rq);
-	if (root)
-		left_vruntime = root->min_vruntime;
-	first = __pick_first_entity(cfs_rq);
-	if (first)
-		left_deadline = first->deadline;
-	last = __pick_last_entity(cfs_rq);
-	if (last)
-		right_vruntime = last->vruntime;
+	raw_spin_rq_قلف_irqsave(rq, flags);
+	ریښه = __pick_root_entity(cfs_rq);
+	إذا (ریښه)
+		کیڼ_vruntime = ریښه->min_vruntime;
+	لومړی = __pick_first_entity(cfs_rq);
+	إذا (لومړی)
+		کیڼ_deadline = لومړی->deadline;
+	وروستی = __pick_last_entity(cfs_rq);
+	إذا (وروستی)
+		ښی_vruntime = وروستی->vruntime;
 	zero_vruntime = cfs_rq->zero_vruntime;
-	sum_w_vruntime = cfs_rq->sum_w_vruntime;
-	sum_weight = cfs_rq->sum_weight;
-	sum_shift = cfs_rq->sum_shift;
+	مجموعه_w_vruntime = cfs_rq->مجموعه_w_vruntime;
+	مجموعه_وزن = cfs_rq->مجموعه_وزن;
+	مجموعه_ښويدنه = cfs_rq->مجموعه_ښويدنه;
 	avruntime = avg_vruntime(cfs_rq);
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_deadline",
-			SPLIT_NS(left_deadline));
+			وېشل_NS(کیڼ_deadline));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_vruntime",
-			SPLIT_NS(left_vruntime));
+			وېشل_NS(کیڼ_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "zero_vruntime",
-			SPLIT_NS(zero_vruntime));
+			وېشل_NS(zero_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld (%d bits)\n", "sum_w_vruntime",
-		   sum_w_vruntime, ilog2(abs(sum_w_vruntime)));
+		   مجموعه_w_vruntime, ilog2(مطلق_قیمت(مجموعه_w_vruntime)));
 	SEQ_printf(m, "  .%-30s: %Lu\n", "sum_weight",
-		   sum_weight);
-	SEQ_printf(m, "  .%-30s: %u\n", "sum_shift", sum_shift);
+		   مجموعه_وزن);
+	SEQ_printf(m, "  .%-30s: %u\n", "sum_shift", مجموعه_ښويدنه);
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "avg_vruntime",
-			SPLIT_NS(avruntime));
+			وېشل_NS(avruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "right_vruntime",
-			SPLIT_NS(right_vruntime));
-	spread = right_vruntime - left_vruntime;
-	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
+			وېشل_NS(ښی_vruntime));
+	خپرېدنه = ښی_vruntime - کیڼ_vruntime;
+	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", وېشل_NS(خپرېدنه));
 	SEQ_printf(m, "  .%-30s: %d\n", "nr_queued", cfs_rq->nr_queued);
 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_runnable", cfs_rq->h_nr_runnable);
 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_queued", cfs_rq->h_nr_queued);
 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_idle", cfs_rq->h_nr_idle);
-	SEQ_printf(m, "  .%-30s: %ld\n", "load", cfs_rq->load.weight);
+	SEQ_printf(m, "  .%-30s: %ld\n", "load", cfs_rq->بارول.وزن);
 	SEQ_printf(m, "  .%-30s: %lu\n", "load_avg",
-			cfs_rq->avg.load_avg);
+			cfs_rq->avg.بارول_avg);
 	SEQ_printf(m, "  .%-30s: %lu\n", "runnable_avg",
 			cfs_rq->avg.runnable_avg);
 	SEQ_printf(m, "  .%-30s: %lu\n", "util_avg",
@@ -1100,129 +1100,129 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	SEQ_printf(m, "  .%-30s: %u\n", "util_est",
 			cfs_rq->avg.util_est);
 	SEQ_printf(m, "  .%-30s: %ld\n", "removed.load_avg",
-			cfs_rq->removed.load_avg);
+			cfs_rq->removed.بارول_avg);
 	SEQ_printf(m, "  .%-30s: %ld\n", "removed.util_avg",
 			cfs_rq->removed.util_avg);
 	SEQ_printf(m, "  .%-30s: %ld\n", "removed.runnable_avg",
 			cfs_rq->removed.runnable_avg);
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#که_تعریف_شوی CONFIG_FAIR_ډله_SCHED
 	SEQ_printf(m, "  .%-30s: %lu\n", "tg_load_avg_contrib",
-			cfs_rq->tg_load_avg_contrib);
+			cfs_rq->tg_بارول_avg_contrib);
 	SEQ_printf(m, "  .%-30s: %ld\n", "tg_load_avg",
-			atomic_long_read(&cfs_rq->tg->load_avg));
+			atomic_long_read(&cfs_rq->tg->بارول_avg));
 	SEQ_printf(m, "  .%-30s: %lu\n", "h_load",
-			cfs_rq->h_load);
-#endif /* CONFIG_FAIR_GROUP_SCHED */
-#ifdef CONFIG_CFS_BANDWIDTH
+			cfs_rq->h_بارول);
+#د_که_پای /* CONFIG_FAIR_GROUP_SCHED */
+#که_تعریف_شوی CONFIG_CFS_BANDWIDTH
 	SEQ_printf(m, "  .%-30s: %d\n", "throttled",
 			cfs_rq->throttled);
 	SEQ_printf(m, "  .%-30s: %d\n", "throttle_count",
-			cfs_rq->throttle_count);
-#endif
+			cfs_rq->throttle_شمېر);
+#د_که_پای
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	print_cfs_group_stats(m, cpu, cfs_rq->tg);
-#endif
+#که_تعریف_شوی CONFIG_FAIR_ډله_SCHED
+	print_cfs_ډله_stats(m, cpu, cfs_rq->tg);
+#د_که_پای
 }
 
-void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
+فراغ print_rt_rq(بنية seq_file *m, صحيح cpu, بنية rt_rq *rt_rq)
 {
-#ifdef CONFIG_RT_GROUP_SCHED
+#که_تعریف_شوی CONFIG_RT_ډله_SCHED
 	SEQ_printf(m, "\n");
-	SEQ_printf_task_group_path(m, rt_rq->tg, "rt_rq[%d]:%s\n", cpu);
-#else
+	SEQ_printf_task_ډله_لار(m, rt_rq->tg, "rt_rq[%d]:%s\n", cpu);
+#وإلا
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "rt_rq[%d]:\n", cpu);
-#endif
+#د_که_پای
 
-#define P(x) \
-	SEQ_printf(m, "  .%-30s: %Ld\n", #x, (long long)(rt_rq->x))
-#define PU(x) \
-	SEQ_printf(m, "  .%-30s: %lu\n", #x, (unsigned long)(rt_rq->x))
-#define PN(x) \
-	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, SPLIT_NS(rt_rq->x))
+#تعریف_کړه P(x) \
+	SEQ_printf(m, "  .%-30s: %Ld\n", #x, (اوږد اوږد)(rt_rq->x))
+#تعریف_کړه PU(x) \
+	SEQ_printf(m, "  .%-30s: %lu\n", #x, (بینښه اوږد)(rt_rq->x))
+#تعریف_کړه PN(x) \
+	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, وېشل_NS(rt_rq->x))
 
 	PU(rt_nr_running);
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#که_تعریف_شوی CONFIG_RT_ډله_SCHED
 	P(rt_throttled);
-	PN(rt_time);
+	PN(rt_وخت);
 	PN(rt_runtime);
-#endif
+#د_که_پای
 
-#undef PN
-#undef PU
-#undef P
+#تعریف_لغوه PN
+#تعریف_لغوه PU
+#تعریف_لغوه P
 }
 
-void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
+فراغ print_dl_rq(بنية seq_file *m, صحيح cpu, بنية dl_rq *dl_rq)
 {
-	struct dl_bw *dl_bw;
+	بنية dl_bw *dl_bw;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "dl_rq[%d]:\n", cpu);
 
-#define PU(x) \
-	SEQ_printf(m, "  .%-30s: %lu\n", #x, (unsigned long)(dl_rq->x))
+#تعریف_کړه PU(x) \
+	SEQ_printf(m, "  .%-30s: %lu\n", #x, (بینښه اوږد)(dl_rq->x))
 
 	PU(dl_nr_running);
 	dl_bw = &cpu_rq(cpu)->rd->dl_bw;
 	SEQ_printf(m, "  .%-30s: %lld\n", "dl_bw->bw", dl_bw->bw);
-	SEQ_printf(m, "  .%-30s: %lld\n", "dl_bw->total_bw", dl_bw->total_bw);
+	SEQ_printf(m, "  .%-30s: %lld\n", "dl_bw->total_bw", dl_bw->ټول_bw);
 
-#undef PU
+#تعریف_لغوه PU
 }
 
-static void print_cpu(struct seq_file *m, int cpu)
+ساكن فراغ print_cpu(بنية seq_file *m, صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
-#ifdef CONFIG_X86
+#که_تعریف_شوی CONFIG_X86
 	{
-		unsigned int freq = cpu_khz ? : 1;
+		بینښه صحيح freq = cpu_khz ? : 1;
 
 		SEQ_printf(m, "cpu#%d, %u.%03u MHz\n",
 			   cpu, freq / 1000, (freq % 1000));
 	}
-#else /* !CONFIG_X86: */
+#وإلا /* !CONFIG_X86: */
 	SEQ_printf(m, "cpu#%d\n", cpu);
-#endif /* !CONFIG_X86 */
+#د_که_پای /* !CONFIG_X86 */
 
-#define P(x)								\
-do {									\
-	if (sizeof(rq->x) == 4)						\
-		SEQ_printf(m, "  .%-30s: %d\n", #x, (int)(rq->x));	\
-	else								\
-		SEQ_printf(m, "  .%-30s: %Ld\n", #x, (long long)(rq->x));\
-} while (0)
+#تعریف_کړه P(x)								\
+افعل {									\
+	إذا (حجم(rq->x) == 4)						\
+		SEQ_printf(m, "  .%-30s: %d\n", #x, (صحيح)(rq->x));	\
+	وإلا								\
+		SEQ_printf(m, "  .%-30s: %Ld\n", #x, (اوږد اوږد)(rq->x));\
+} طالما (0)
 
-#define PN(x) \
-	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, SPLIT_NS(rq->x))
+#تعریف_کړه PN(x) \
+	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, وېشل_NS(rq->x))
 
 	P(nr_running);
 	P(nr_switches);
 	P(nr_uninterruptible);
-	PN(next_balance);
-	SEQ_printf(m, "  .%-30s: %ld\n", "curr->pid", (long)(task_pid_nr(rq->curr)));
+	PN(بل_balance);
+	SEQ_printf(m, "  .%-30s: %ld\n", "curr->pid", (اوږد)(task_pid_nr(rq->curr)));
 	PN(clock);
 	PN(clock_task);
-#undef P
-#undef PN
+#تعریف_لغوه P
+#تعریف_لغوه PN
 
-#define P64(n) SEQ_printf(m, "  .%-30s: %Ld\n", #n, rq->n);
+#تعریف_کړه P64(n) SEQ_printf(m, "  .%-30s: %Ld\n", #n, rq->n);
 	P64(avg_idle);
-	P64(max_idle_balance_cost);
-#undef P64
+	P64(max_idle_balance_لګښت);
+#تعریف_لغوه P64
 
-#define P(n) SEQ_printf(m, "  .%-30s: %d\n", #n, schedstat_val(rq->n));
-	if (schedstat_enabled()) {
-		P(yld_count);
-		P(sched_count);
+#تعریف_کړه P(n) SEQ_printf(m, "  .%-30s: %d\n", #n, schedstat_val(rq->n));
+	إذا (schedstat_enabled()) {
+		P(yld_شمېر);
+		P(sched_شمېر);
 		P(sched_goidle);
-		P(ttwu_count);
+		P(ttwu_شمېر);
 		P(ttwu_local);
 	}
-#undef P
+#تعریف_لغوه P
 
 	print_cfs_stats(m, cpu);
 	print_rt_stats(m, cpu);
@@ -1232,78 +1232,78 @@ do {									\
 	SEQ_printf(m, "\n");
 }
 
-static const char *sched_tunable_scaling_names[] = {
+ساكن ثابت حرف *sched_tunable_scaling_نومونه[] = {
 	"none",
 	"logarithmic",
 	"linear"
 };
 
-static void sched_debug_header(struct seq_file *m)
+ساكن فراغ sched_debug_سرلیک(بنية seq_file *m)
 {
 	u64 ktime, sched_clk, cpu_clk;
-	unsigned long flags;
+	بینښه اوږد flags;
 
 	local_irq_save(flags);
-	ktime = ktime_to_ns(ktime_get());
+	ktime = ktime_منزل_ns(ktime_get());
 	sched_clk = sched_clock();
 	cpu_clk = local_clock();
 	local_irq_restore(flags);
 
 	SEQ_printf(m, "Sched Debug Version: v0.11, %s %.*s\n",
 		init_utsname()->release,
-		(int)strcspn(init_utsname()->version, " "),
-		init_utsname()->version);
+		(صحيح)strcspn(init_utsname()->نسخه, " "),
+		init_utsname()->نسخه);
 
-#define P(x) \
-	SEQ_printf(m, "%-40s: %Ld\n", #x, (long long)(x))
-#define PN(x) \
-	SEQ_printf(m, "%-40s: %Ld.%06ld\n", #x, SPLIT_NS(x))
+#تعریف_کړه P(x) \
+	SEQ_printf(m, "%-40s: %Ld\n", #x, (اوږد اوږد)(x))
+#تعریف_کړه PN(x) \
+	SEQ_printf(m, "%-40s: %Ld.%06ld\n", #x, وېشل_NS(x))
 	PN(ktime);
 	PN(sched_clk);
 	PN(cpu_clk);
 	P(jiffies);
-#ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
+#که_تعریف_شوی CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
 	P(sched_clock_stable());
-#endif
-#undef PN
-#undef P
+#د_که_پای
+#تعریف_لغوه PN
+#تعریف_لغوه P
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "sysctl_sched\n");
 
-#define P(x) \
-	SEQ_printf(m, "  .%-40s: %Ld\n", #x, (long long)(x))
-#define PN(x) \
-	SEQ_printf(m, "  .%-40s: %Ld.%06ld\n", #x, SPLIT_NS(x))
-	PN(sysctl_sched_base_slice);
+#تعریف_کړه P(x) \
+	SEQ_printf(m, "  .%-40s: %Ld\n", #x, (اوږد اوږد)(x))
+#تعریف_کړه PN(x) \
+	SEQ_printf(m, "  .%-40s: %Ld.%06ld\n", #x, وېشل_NS(x))
+	PN(sysctl_sched_بنسټ_ټوټه);
 	P(sysctl_sched_features);
-#undef PN
-#undef P
+#تعریف_لغوه PN
+#تعریف_لغوه P
 
 	SEQ_printf(m, "  .%-40s: %d (%s)\n",
 		"sysctl_sched_tunable_scaling",
 		sysctl_sched_tunable_scaling,
-		sched_tunable_scaling_names[sysctl_sched_tunable_scaling]);
+		sched_tunable_scaling_نومونه[sysctl_sched_tunable_scaling]);
 	SEQ_printf(m, "\n");
 }
 
-static int sched_debug_show(struct seq_file *m, void *v)
+ساكن صحيح sched_debug_show(بنية seq_file *m, فراغ *v)
 {
-	int cpu = (unsigned long)(v - 2);
+	صحيح cpu = (بینښه اوږد)(v - 2);
 
-	if (cpu != -1)
+	إذا (cpu != -1)
 		print_cpu(m, cpu);
-	else
-		sched_debug_header(m);
+	وإلا
+		sched_debug_سرلیک(m);
 
-	return 0;
+	أرجع 0;
 }
 
-void sysrq_sched_debug_show(void)
+فراغ sysrq_sched_debug_show(فراغ)
 {
-	int cpu;
+	صحيح cpu;
 
-	sched_debug_header(NULL);
+	sched_debug_سرلیک(عدم);
 	for_each_online_cpu(cpu) {
 		/*
 		 * Need to reset softlockup watchdogs on all CPUs, because
@@ -1312,7 +1312,7 @@ void sysrq_sched_debug_show(void)
 		 */
 		touch_nmi_watchdog();
 		touch_all_softlockup_watchdogs();
-		print_cpu(NULL, cpu);
+		print_cpu(عدم, cpu);
 	}
 }
 
@@ -1323,119 +1323,119 @@ void sysrq_sched_debug_show(void)
  * In a hotplugged system some CPUs, including CPU 0, may be missing so we have
  * to use cpumask_* to iterate over the CPUs.
  */
-static void *sched_debug_start(struct seq_file *file, loff_t *offset)
+ساكن فراغ *sched_debug_پیل(بنية seq_file *file, loff_t *دننه_واټن)
 {
-	unsigned long n = *offset;
+	بینښه اوږد n = *دننه_واټن;
 
-	if (n == 0)
-		return (void *) 1;
+	إذا (n == 0)
+		أرجع (فراغ *) 1;
 
 	n--;
 
-	if (n > 0)
-		n = cpumask_next(n - 1, cpu_online_mask);
-	else
-		n = cpumask_first(cpu_online_mask);
+	إذا (n > 0)
+		n = cpumask_بل(n - 1, cpu_online_ماسک);
+	وإلا
+		n = cpumask_لومړی(cpu_online_ماسک);
 
-	*offset = n + 1;
+	*دننه_واټن = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	إذا (n < nr_cpu_ids)
+		أرجع (فراغ *)(بینښه اوږد)(n + 2);
 
-	return NULL;
+	أرجع عدم;
 }
 
-static void *sched_debug_next(struct seq_file *file, void *data, loff_t *offset)
+ساكن فراغ *sched_debug_بل(بنية seq_file *file, فراغ *معلومات, loff_t *دننه_واټن)
 {
-	(*offset)++;
-	return sched_debug_start(file, offset);
+	(*دننه_واټن)++;
+	أرجع sched_debug_پیل(file, دننه_واټن);
 }
 
-static void sched_debug_stop(struct seq_file *file, void *data)
+ساكن فراغ sched_debug_stop(بنية seq_file *file, فراغ *معلومات)
 {
 }
 
-static const struct seq_operations sched_debug_sops = {
-	.start		= sched_debug_start,
-	.next		= sched_debug_next,
+ساكن ثابت بنية seq_operations sched_debug_sops = {
+	.پیل		= sched_debug_پیل,
+	.بل		= sched_debug_بل,
 	.stop		= sched_debug_stop,
 	.show		= sched_debug_show,
 };
 
-#define __PS(S, F) SEQ_printf(m, "%-45s:%21Ld\n", S, (long long)(F))
-#define __P(F) __PS(#F, F)
-#define   P(F) __PS(#F, p->F)
-#define   PM(F, M) __PS(#F, p->F & (M))
-#define __PSN(S, F) SEQ_printf(m, "%-45s:%14Ld.%06ld\n", S, SPLIT_NS((long long)(F)))
-#define __PN(F) __PSN(#F, F)
-#define   PN(F) __PSN(#F, p->F)
+#تعریف_کړه __PS(S, F) SEQ_printf(m, "%-45s:%21Ld\n", S, (اوږد اوږد)(F))
+#تعریف_کړه __P(F) __PS(#F, F)
+#تعریف_کړه   P(F) __PS(#F, p->F)
+#تعریف_کړه   PM(F, M) __PS(#F, p->F & (M))
+#تعریف_کړه __PSN(S, F) SEQ_printf(m, "%-45s:%14Ld.%06ld\n", S, وېشل_NS((اوږد اوږد)(F)))
+#تعریف_کړه __PN(F) __PSN(#F, F)
+#تعریف_کړه   PN(F) __PSN(#F, p->F)
 
 
-#ifdef CONFIG_NUMA_BALANCING
-void print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
-		unsigned long tpf, unsigned long gsf, unsigned long gpf)
+#که_تعریف_شوی CONFIG_NUMA_BALANCING
+فراغ print_numa_stats(بنية seq_file *m, صحيح غوټه, بینښه اوږد tsf,
+		بینښه اوږد tpf, بینښه اوږد gsf, بینښه اوږد gpf)
 {
-	SEQ_printf(m, "numa_faults node=%d ", node);
+	SEQ_printf(m, "numa_faults node=%d ", غوټه);
 	SEQ_printf(m, "task_private=%lu task_shared=%lu ", tpf, tsf);
 	SEQ_printf(m, "group_private=%lu group_shared=%lu\n", gpf, gsf);
 }
-#endif
+#د_که_پای
 
 
-static void sched_show_numa(struct task_struct *p, struct seq_file *m)
+ساكن فراغ sched_show_numa(بنية task_struct *p, بنية seq_file *m)
 {
-#ifdef CONFIG_NUMA_BALANCING
-	if (p->mm)
-		P(mm->numa_scan_seq);
+#که_تعریف_شوی CONFIG_NUMA_BALANCING
+	إذا (p->mm)
+		P(mm->numa_لټون_seq);
 
-	P(numa_pages_migrated);
+	P(numa_پاڼې_migrated);
 	P(numa_preferred_nid);
-	P(total_numa_faults);
+	P(ټول_numa_تېروتنې);
 	SEQ_printf(m, "current_node=%d, numa_group_id=%d\n",
-			task_node(p), task_numa_group_id(p));
+			task_غوټه(p), task_numa_ډله_id(p));
 	show_numa_stats(p, m);
-#endif /* CONFIG_NUMA_BALANCING */
+#د_که_پای /* CONFIG_NUMA_BALANCING */
 }
 
-void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
-						  struct seq_file *m)
+فراغ proc_sched_show_task(بنية task_struct *p, بنية pid_namespace *ns,
+						  بنية seq_file *m)
 {
-	unsigned long nr_switches;
+	بینښه اوږد nr_switches;
 
 	SEQ_printf(m, "%s (%d, #threads: %d)\n", p->comm, task_pid_nr_ns(p, ns),
-						get_nr_threads(p));
+						get_nr_تارونه(p));
 	SEQ_printf(m,
 		"---------------------------------------------------------"
 		"----------\n");
 
-#define P_SCHEDSTAT(F)  __PS(#F, schedstat_val(p->stats.F))
-#define PN_SCHEDSTAT(F) __PSN(#F, schedstat_val(p->stats.F))
+#تعریف_کړه P_SCHEDSTAT(F)  __PS(#F, schedstat_val(p->stats.F))
+#تعریف_کړه PN_SCHEDSTAT(F) __PSN(#F, schedstat_val(p->stats.F))
 
-	PN(se.exec_start);
+	PN(se.exec_پیل);
 	PN(se.vruntime);
-	PN(se.sum_exec_runtime);
+	PN(se.مجموعه_exec_runtime);
 
 	nr_switches = p->nvcsw + p->nivcsw;
 
 	P(se.nr_migrations);
 
-	if (schedstat_enabled()) {
-		u64 avg_atom, avg_per_cpu;
+	إذا (schedstat_enabled()) {
+		u64 avg_atom, avg_فی_cpu;
 
-		PN_SCHEDSTAT(sum_sleep_runtime);
-		PN_SCHEDSTAT(sum_block_runtime);
-		PN_SCHEDSTAT(wait_start);
-		PN_SCHEDSTAT(sleep_start);
-		PN_SCHEDSTAT(block_start);
+		PN_SCHEDSTAT(مجموعه_sleep_runtime);
+		PN_SCHEDSTAT(مجموعه_بلاک_runtime);
+		PN_SCHEDSTAT(wait_پیل);
+		PN_SCHEDSTAT(sleep_پیل);
+		PN_SCHEDSTAT(بلاک_پیل);
 		PN_SCHEDSTAT(sleep_max);
-		PN_SCHEDSTAT(block_max);
+		PN_SCHEDSTAT(بلاک_max);
 		PN_SCHEDSTAT(exec_max);
-		PN_SCHEDSTAT(slice_max);
+		PN_SCHEDSTAT(ټوټه_max);
 		PN_SCHEDSTAT(wait_max);
-		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
-		PN_SCHEDSTAT(iowait_sum);
-		P_SCHEDSTAT(iowait_count);
+		PN_SCHEDSTAT(wait_مجموعه);
+		P_SCHEDSTAT(wait_شمېر);
+		PN_SCHEDSTAT(iowait_مجموعه);
+		P_SCHEDSTAT(iowait_شمېر);
 		P_SCHEDSTAT(nr_failed_migrations_affine);
 		P_SCHEDSTAT(nr_failed_migrations_running);
 		P_SCHEDSTAT(nr_failed_migrations_hot);
@@ -1449,63 +1449,63 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		P_SCHEDSTAT(nr_wakeups_affine);
 		P_SCHEDSTAT(nr_wakeups_affine_attempts);
 
-		avg_atom = p->se.sum_exec_runtime;
-		if (nr_switches)
+		avg_atom = p->se.مجموعه_exec_runtime;
+		إذا (nr_switches)
 			avg_atom = div64_ul(avg_atom, nr_switches);
-		else
+		وإلا
 			avg_atom = -1LL;
 
-		avg_per_cpu = p->se.sum_exec_runtime;
-		if (p->se.nr_migrations) {
-			avg_per_cpu = div64_u64(avg_per_cpu,
+		avg_فی_cpu = p->se.مجموعه_exec_runtime;
+		إذا (p->se.nr_migrations) {
+			avg_فی_cpu = div64_u64(avg_فی_cpu,
 						p->se.nr_migrations);
-		} else {
-			avg_per_cpu = -1LL;
+		} وإلا {
+			avg_فی_cpu = -1LL;
 		}
 
 		__PN(avg_atom);
-		__PN(avg_per_cpu);
+		__PN(avg_فی_cpu);
 
-#ifdef CONFIG_SCHED_CORE
-		PN_SCHEDSTAT(core_forceidle_sum);
-#endif
+#که_تعریف_شوی CONFIG_SCHED_CORE
+		PN_SCHEDSTAT(core_forceidle_مجموعه);
+#د_که_پای
 	}
 
 	__P(nr_switches);
 	__PS("nr_voluntary_switches", p->nvcsw);
 	__PS("nr_involuntary_switches", p->nivcsw);
 
-	P(se.load.weight);
-	P(se.avg.load_sum);
-	P(se.avg.runnable_sum);
-	P(se.avg.util_sum);
-	P(se.avg.load_avg);
+	P(se.بارول.وزن);
+	P(se.avg.بارول_مجموعه);
+	P(se.avg.runnable_مجموعه);
+	P(se.avg.util_مجموعه);
+	P(se.avg.بارول_avg);
 	P(se.avg.runnable_avg);
 	P(se.avg.util_avg);
-	P(se.avg.last_update_time);
+	P(se.avg.وروستی_update_وخت);
 	PM(se.avg.util_est, ~UTIL_AVG_UNCHANGED);
-#ifdef CONFIG_UCLAMP_TASK
-	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].value);
-	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].value);
-	__PS("effective uclamp.min", uclamp_eff_value(p, UCLAMP_MIN));
-	__PS("effective uclamp.max", uclamp_eff_value(p, UCLAMP_MAX));
-#endif /* CONFIG_UCLAMP_TASK */
+#که_تعریف_شوی CONFIG_UCLAMP_TASK
+	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].ارزښت);
+	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].ارزښت);
+	__PS("effective uclamp.min", uclamp_eff_ارزښت(p, UCLAMP_MIN));
+	__PS("effective uclamp.max", uclamp_eff_ارزښت(p, UCLAMP_MAX));
+#د_که_پای /* CONFIG_UCLAMP_TASK */
 	P(policy);
 	P(prio);
-	if (task_has_dl_policy(p)) {
+	إذا (task_has_dl_policy(p)) {
 		P(dl.runtime);
 		P(dl.deadline);
-	} else if (fair_policy(p->policy)) {
-		P(se.slice);
+	} وإلا إذا (fair_policy(p->policy)) {
+		P(se.ټوټه);
 	}
-#ifdef CONFIG_SCHED_CLASS_EXT
+#که_تعریف_شوی CONFIG_SCHED_CLASS_EXT
 	__PS("ext.enabled", task_on_scx(p));
-#endif
-#undef PN_SCHEDSTAT
-#undef P_SCHEDSTAT
+#د_که_پای
+#تعریف_لغوه PN_SCHEDSTAT
+#تعریف_لغوه P_SCHEDSTAT
 
 	{
-		unsigned int this_cpu = raw_smp_processor_id();
+		بینښه صحيح this_cpu = raw_smp_processor_id();
 		u64 t0, t1;
 
 		t0 = cpu_clock(this_cpu);
@@ -1516,21 +1516,21 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	sched_show_numa(p, m);
 }
 
-void proc_sched_set_task(struct task_struct *p)
+فراغ proc_sched_سېټ_task(بنية task_struct *p)
 {
-#ifdef CONFIG_SCHEDSTATS
-	memset(&p->stats, 0, sizeof(p->stats));
-#endif
+#که_تعریف_شوی CONFIG_SCHEDSTATS
+	memset(&p->stats, 0, حجم(p->stats));
+#د_که_پای
 }
 
-void resched_latency_warn(int cpu, u64 latency)
+فراغ resched_latency_warn(صحيح cpu, u64 latency)
 {
-	static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
+	ساكن DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
 
-	if (likely(!__ratelimit(&latency_check_ratelimit)))
-		return;
+	إذا (likely(!__ratelimit(&latency_check_ratelimit)))
+		أرجع;
 
 	pr_err("sched: CPU %d need_resched set for > %llu ns (%d ticks) without schedule\n",
 	       cpu, latency, cpu_rq(cpu)->ticks_without_resched);
-	dump_stack();
+	dump_ډېری();
 }

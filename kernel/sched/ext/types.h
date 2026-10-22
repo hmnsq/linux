@@ -5,16 +5,16 @@
  * Copyright (c) 2026 Meta Platforms, Inc. and affiliates.
  * Copyright (c) 2026 Tejun Heo <tj@kernel.org>
  */
-#ifndef _KERNEL_SCHED_EXT_TYPES_H
-#define _KERNEL_SCHED_EXT_TYPES_H
+#که_نه_تعریف_شوی _KERNEL_SCHED_EXT_TYPES_H
+#تعریف_کړه _KERNEL_SCHED_EXT_TYPES_H
 
-#include <linux/types.h>
-#include <linux/jiffies.h>
-#include <linux/overflow.h>
-#include <linux/time64.h>
-#include <linux/sched/topology.h>
+#ضمن <linux/types.h>
+#ضمن <linux/jiffies.h>
+#ضمن <linux/overflow.h>
+#ضمن <linux/time64.h>
+#ضمن <linux/sched/topology.h>
 
-enum scx_consts {
+تعداد scx_consts {
 	SCX_DSP_DFL_MAX_BATCH		= 32,
 	SCX_DSP_MAX_LOOPS		= 32,
 	SCX_WATCHDOG_MAX_TIMEOUT	= 30 * HZ,
@@ -23,10 +23,10 @@ enum scx_consts {
 	SCX_RESCUE_DFL_BW_PPT		= 20,		/* parts per thousand, 2% */
 	SCX_RESCUE_MAX_BW_PPT		= 250,		/* 25% */
 	SCX_RESCUE_DISABLE		= U32_MAX,	/* disables rescue */
-	SCX_RESCUE_DFL_QUANTUM_US	= 5000,
-	SCX_RESCUE_MIN_QUANTUM_US	= 1000,
-	SCX_RESCUE_MAX_QUANTUM_US	= 100000,
-	SCX_RESCUE_MIN_SLICE_US		= 1000,		/* floor of the divided slice */
+	SCX_RESCUE_DFL_وخت_ټوټه_US	= 5000,
+	SCX_RESCUE_MIN_وخت_ټوټه_US	= 1000,
+	SCX_RESCUE_MAX_وخت_ټوټه_US	= 100000,
+	SCX_RESCUE_MIN_ټوټه_US		= 1000,		/* floor of the divided slice */
 	SCX_RESCUE_OVERLOAD_MULT	= 16,		/* overload threshold in funding periods */
 	SCX_RESCUE_MIN_OVERLOAD_MS	= 1000,
 	SCX_RESCUE_MAX_OVERLOAD_MS	= 15000,
@@ -35,10 +35,10 @@ enum scx_consts {
 	SCX_TID_CHUNK			= 1024,
 
 	SCX_EXIT_BT_LEN			= 64,
-	SCX_EXIT_MSG_LEN		= 1024,
+	SCX_EXIT_پیغام_LEN		= 1024,
 	SCX_EXIT_DUMP_DFL_LEN		= 32768,
 
-	SCX_CPUPERF_ONE			= SCHED_CAPACITY_SCALE,
+	SCX_CPUPERF_ONE			= SCHED_ظرفیت_SCALE,
 
 	/*
 	 * Iterating all tasks may take a while. Periodically drop
@@ -48,14 +48,14 @@ enum scx_consts {
 
 	SCX_BYPASS_HOST_NTH		= 2,
 
-	SCX_BYPASS_LB_DFL_INTV_US	= 500 * USEC_PER_MSEC,
+	SCX_BYPASS_LB_DFL_INTV_US	= 500 * USEC_فی_MSEC,
 	SCX_BYPASS_LB_DONOR_PCT		= 125,
 	SCX_BYPASS_LB_MIN_DELTA_DIV	= 4,
 	SCX_BYPASS_LB_BATCH		= 256,
 
 	SCX_REENQ_MAX_REPEAT		= 256,
 
-	SCX_SUB_MAX_DEPTH		= 4,
+	SCX_SUB_MAX_ژوروالی		= 4,
 };
 
 /*
@@ -83,19 +83,19 @@ enum scx_consts {
  * @shard_cid: first cid of this cid's shard
  * @shard_idx: global index of that shard, in [0, scx_nr_cid_shards)
  */
-struct scx_cid_topo {
+بنية scx_cid_topo {
 	s32 core_cid;
 	s32 core_idx;
 	s32 llc_cid;
 	s32 llc_idx;
-	s32 node_cid;
-	s32 node_idx;
+	s32 غوټه_cid;
+	s32 غوټه_idx;
 	s32 shard_cid;
 	s32 shard_idx;
 };
 
-enum scx_cid_consts {
-	SCX_CID_SHARD_SIZE_DFL		= 24,
+تعداد scx_cid_consts {
+	SCX_CID_SHARD_اندازه_DFL		= 24,
 	SCX_CID_SHARD_MAX_CPUS		= 512,
 };
 
@@ -105,8 +105,8 @@ enum scx_cid_consts {
  * @base_cid: first cid of the shard
  * @nr_cids: number of cids in the shard
  */
-struct scx_cid_shard {
-	s32			base_cid;
+بنية scx_cid_shard {
+	s32			بنسټ_cid;
 	s32			nr_cids;
 };
 
@@ -128,11 +128,11 @@ struct scx_cid_shard {
  *
  * with no bit-shifting, regardless of how the two bases relate mod 64.
  */
-struct scx_cmask {
-	u32 base;
+بنية scx_cmask {
+	u32 بنسټ;
 	u32 nr_cids;
-	u32 alloc_words;
-	u64 bits[];
+	u32 alloc_ټکي;
+	u64 بټونه[];
 };
 
 /*
@@ -143,7 +143,7 @@ struct scx_cmask {
  * is near U32_MAX, so callers bounds-checking the result against @alloc_words
  * catch the overflow instead of seeing a small value.
  */
-#define SCX_CMASK_NR_WORDS(nr_cids)	((u32)(((u64)(nr_cids) + 63) / 64 + 1))
+#تعریف_کړه SCX_CMASK_NR_ټکي(nr_cids)	((u32)(((u64)(nr_cids) + 63) / 64 + 1))
 
 /**
  * __SCX_CMASK_DEFINE - Define an on-stack cmask with explicit storage capacity
@@ -156,11 +156,11 @@ struct scx_cmask {
  * [BASE, BASE + NR_CIDS). Use scx_cmask_reframe() to reshape later, up to
  * @ALLOC_CIDS.
  */
-#define __SCX_CMASK_DEFINE(NAME, BASE, NR_CIDS, ALLOC_CIDS)			\
-	_DEFINE_FLEX(struct scx_cmask, NAME, bits, SCX_CMASK_NR_WORDS(ALLOC_CIDS), \
-		     = { .base = (BASE),					\
+#تعریف_کړه __SCX_CMASK_DEFINE(NAME, بنسټ_2, NR_CIDS, ALLOC_CIDS)			\
+	_DEFINE_FLEX(بنية scx_cmask, NAME, بټونه, SCX_CMASK_NR_ټکي(ALLOC_CIDS), \
+		     = { .بنسټ = (بنسټ_2),					\
 			 .nr_cids = (NR_CIDS),					\
-			 .alloc_words = SCX_CMASK_NR_WORDS(ALLOC_CIDS) })
+			 .alloc_ټکي = SCX_CMASK_NR_ټکي(ALLOC_CIDS) })
 
 /**
  * SCX_CMASK_DEFINE - Define an on-stack cmask on tight storage
@@ -171,8 +171,8 @@ struct scx_cmask {
  * @NAME aliases zero-initialized storage with the active range and storage
  * both [BASE, BASE + NR_CIDS).
  */
-#define SCX_CMASK_DEFINE(NAME, BASE, NR_CIDS)					\
-	__SCX_CMASK_DEFINE(NAME, BASE, NR_CIDS, NR_CIDS)
+#تعریف_کړه SCX_CMASK_DEFINE(NAME, بنسټ_2, NR_CIDS)					\
+	__SCX_CMASK_DEFINE(NAME, بنسټ_2, NR_CIDS, NR_CIDS)
 
 /**
  * SCX_CMASK_DEFINE_SHARD - Define an on-stack cmask sized to one shard
@@ -185,8 +185,8 @@ struct scx_cmask {
  * cmask claiming more bits than storage holds and subsequent cmask
  * operations will overrun.
  */
-#define SCX_CMASK_DEFINE_SHARD(NAME, BASE, NR_CIDS)				\
-	__SCX_CMASK_DEFINE(NAME, BASE, NR_CIDS, SCX_CID_SHARD_MAX_CPUS)
+#تعریف_کړه SCX_CMASK_DEFINE_SHARD(NAME, بنسټ_2, NR_CIDS)				\
+	__SCX_CMASK_DEFINE(NAME, بنسټ_2, NR_CIDS, SCX_CID_SHARD_MAX_CPUS)
 
 /*
  * scx_cmask_ref: validated reference to a BPF-arena cmask.
@@ -216,13 +216,13 @@ struct scx_cmask {
  *		... use idx and shard ...
  *	}
  */
-struct scx_cmask_ref {
-	struct scx_sched	*sch;
-	struct scx_cmask	*src;
-	u32			base;
+بنية scx_cmask_ref {
+	بنية scx_sched	*sch;
+	بنية scx_cmask	*src;
+	u32			بنسټ;
 	u32			nr_cids;
-	s32			shard_first;
-	s32			shard_end;
+	s32			shard_لومړی;
+	s32			shard_پای_ټکی;
 };
 
-#endif /* _KERNEL_SCHED_EXT_TYPES_H */
+#د_که_پای /* _KERNEL_SCHED_EXT_TYPES_H */
