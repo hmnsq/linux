@@ -143,7 +143,7 @@
 #define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK			\
 	(MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE			\
 	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE)
-#else
+#དེ་མིན
 #define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK	0
 #endif
 
@@ -151,7 +151,7 @@
 #define MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK		\
 	(MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ			\
 	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ)
-#else
+#དེ་མིན
 #define MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK	0
 #endif
 
@@ -170,18 +170,18 @@
  */
 DEFINE_LOCK_GUARD_0(mb, smp_mb(), smp_mb())
 static DEFINE_MUTEX(membarrier_ipi_mutex);
-static DEFINE_PER_CPU(struct mutex, membarrier_cpu_mutexes);
+static DEFINE_PER_CPU(sa_nracanaa mutex, membarrier_cpu_mutexes);
 
 #define SERIALIZE_IPI() guard(mutex)(&membarrier_ipi_mutex)
 #define SERIALIZE_IPI_CPU(cpu_id) guard(mutex)(&per_cpu(membarrier_cpu_mutexes, cpu_id))
 
-static int __init membarrier_init(void)
+static ཧྲིལ __init membarrier_init(void)
 {
-	int i;
+	ཧྲིལ i;
 
 	for_each_possible_cpu(i)
 		mutex_init(&per_cpu(membarrier_cpu_mutexes, i));
-	return 0;
+	ཕྱིར 0;
 }
 core_initcall(membarrier_init);
 
@@ -223,18 +223,18 @@ static void ipi_rseq(void *info)
 	 * only updated if they change as a consequence of preemption after
 	 * return from this IPI.
 	 */
-	if (rseq_v2(current))
+	གལ་ཏེ (rseq_v2(current))
 		rseq_sched_switch_event(current);
-	else
+	དེ་མིན
 		rseq_force_update();
 }
 
 static void ipi_sync_rq_state(void *info)
 {
-	struct mm_struct *mm = (struct mm_struct *) info;
+	sa_nracanaa mm_struct *mm = (sa_nracanaa mm_struct *) info;
 
-	if (current->mm != mm)
-		return;
+	གལ་ཏེ (current->mm != mm)
+		ཕྱིར;
 	this_cpu_write(runqueues.membarrier_state,
 		       atomic_read(&mm->membarrier_state));
 	/*
@@ -246,7 +246,7 @@ static void ipi_sync_rq_state(void *info)
 	smp_mb();
 }
 
-void membarrier_exec_mmap(struct mm_struct *mm)
+void membarrier_exec_mmap(sa_nracanaa mm_struct *mm)
 {
 	/*
 	 * Issue a memory barrier before clearing membarrier_state to
@@ -262,28 +262,28 @@ void membarrier_exec_mmap(struct mm_struct *mm)
 	this_cpu_write(runqueues.membarrier_state, 0);
 }
 
-void membarrier_update_current_mm(struct mm_struct *next_mm)
+void membarrier_update_current_mm(sa_nracanaa mm_struct *next_mm)
 {
-	struct rq *rq = this_rq();
-	int membarrier_state = 0;
+	sa_nracanaa rq *rq = this_rq();
+	ཧྲིལ membarrier_state = 0;
 
-	if (next_mm)
+	གལ་ཏེ (next_mm)
 		membarrier_state = atomic_read(&next_mm->membarrier_state);
-	if (READ_ONCE(rq->membarrier_state) == membarrier_state)
-		return;
+	གལ་ཏེ (READ_ONCE(rq->membarrier_state) == membarrier_state)
+		ཕྱིར;
 	WRITE_ONCE(rq->membarrier_state, membarrier_state);
 }
 
-static int membarrier_global_expedited(void)
+static ཧྲིལ membarrier_global_expedited(void)
 {
 	cpumask_var_t __free(free_cpumask_var) tmpmask = CPUMASK_VAR_NULL;
-	int cpu;
+	ཧྲིལ cpu;
 
-	if (num_online_cpus() == 1)
-		return 0;
+	གལ་ཏེ (num_online_cpus() == 1)
+		ཕྱིར 0;
 
-	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-		return -ENOMEM;
+	གལ་ཏེ (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+		ཕྱིར -ENOMEM;
 
 	guard(mb)();
 	SERIALIZE_IPI();
@@ -291,7 +291,7 @@ static int membarrier_global_expedited(void)
 
 	rcu_read_lock();
 	for_each_online_cpu(cpu) {
-		struct task_struct *p;
+		sa_nracanaa task_struct *p;
 
 		/*
 		 * Skipping the current CPU is OK even through we can be
@@ -301,10 +301,10 @@ static int membarrier_global_expedited(void)
 		 * thread. Therefore, we can skip this CPU from the
 		 * iteration.
 		 */
-		if (cpu == raw_smp_processor_id())
+		གལ་ཏེ (cpu == raw_smp_processor_id())
 			continue;
 
-		if (!(READ_ONCE(cpu_rq(cpu)->membarrier_state) &
+		གལ་ཏེ (!(READ_ONCE(cpu_rq(cpu)->membarrier_state) &
 		    MEMBARRIER_STATE_GLOBAL_EXPEDITED))
 			continue;
 
@@ -313,7 +313,7 @@ static int membarrier_global_expedited(void)
 		 * a task mm.
 		 */
 		p = rcu_dereference(cpu_rq(cpu)->curr);
-		if (!p->mm)
+		གལ་ཏེ (!p->mm)
 			continue;
 
 		__cpumask_set_cpu(cpu, tmpmask);
@@ -324,39 +324,39 @@ static int membarrier_global_expedited(void)
 	smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
 	preempt_enable();
 
-	return 0;
+	ཕྱིར 0;
 }
 
-static int membarrier_private_expedited(int flags, int cpu_id)
+static ཧྲིལ membarrier_private_expedited(ཧྲིལ flags, ཧྲིལ cpu_id)
 {
-	struct mm_struct *mm = current->mm;
+	sa_nracanaa mm_struct *mm = current->mm;
 	smp_call_func_t ipi_func = ipi_mb;
 
-	if (flags == MEMBARRIER_FLAG_SYNC_CORE) {
-		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
-			return -EINVAL;
-		if (!(atomic_read(&mm->membarrier_state) &
+	གལ་ཏེ (flags == MEMBARRIER_FLAG_SYNC_CORE) {
+		གལ་ཏེ (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
+			ཕྱིར -EINVAL;
+		གལ་ཏེ (!(atomic_read(&mm->membarrier_state) &
 		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY))
-			return -EPERM;
+			ཕྱིར -EPERM;
 		ipi_func = ipi_sync_core;
 		prepare_sync_core_cmd(mm);
-	} else if (flags == MEMBARRIER_FLAG_RSEQ) {
-		if (!IS_ENABLED(CONFIG_RSEQ))
-			return -EINVAL;
-		if (!(atomic_read(&mm->membarrier_state) &
+	} དེ་མིན གལ་ཏེ (flags == MEMBARRIER_FLAG_RSEQ) {
+		གལ་ཏེ (!IS_ENABLED(CONFIG_RSEQ))
+			ཕྱིར -EINVAL;
+		གལ་ཏེ (!(atomic_read(&mm->membarrier_state) &
 		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY))
-			return -EPERM;
+			ཕྱིར -EPERM;
 		ipi_func = ipi_rseq;
-	} else {
+	} དེ་མིན {
 		WARN_ON_ONCE(flags);
-		if (!(atomic_read(&mm->membarrier_state) &
+		གལ་ཏེ (!(atomic_read(&mm->membarrier_state) &
 		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY))
-			return -EPERM;
+			ཕྱིར -EPERM;
 	}
 
-	if (flags != MEMBARRIER_FLAG_SYNC_CORE &&
+	གལ་ཏེ (flags != MEMBARRIER_FLAG_SYNC_CORE &&
 	    (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1))
-		return 0;
+		ཕྱིར 0;
 
 	/*
 	 * Matches memory barriers after rq->curr modification in
@@ -371,22 +371,22 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 	 * rq->curr modification in scheduler.
 	 */
 	guard(mb)();
-	if (cpu_id >= 0) {
-		if (cpu_id >= nr_cpu_ids || !cpu_possible(cpu_id))
-			return 0;
+	གལ་ཏེ (cpu_id >= 0) {
+		གལ་ཏེ (cpu_id >= nr_cpu_ids || !cpu_possible(cpu_id))
+			ཕྱིར 0;
 
 		SERIALIZE_IPI_CPU(cpu_id);
 		guard(cpus_read_lock)();
-		struct task_struct *p;
+		sa_nracanaa task_struct *p;
 
-		if (!cpu_online(cpu_id))
-			return 0;
+		གལ་ཏེ (!cpu_online(cpu_id))
+			ཕྱིར 0;
 
 		rcu_read_lock();
 		p = rcu_dereference(cpu_rq(cpu_id)->curr);
-		if (!p || p->mm != mm) {
+		གལ་ཏེ (!p || p->mm != mm) {
 			rcu_read_unlock();
-			return 0;
+			ཕྱིར 0;
 		}
 		rcu_read_unlock();
 		/*
@@ -394,22 +394,22 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 		 * is the calling CPU.
 		 */
 		smp_call_function_single(cpu_id, ipi_func, NULL, 1);
-	} else {
+	} དེ་མིན {
 		cpumask_var_t __free(free_cpumask_var) tmpmask = CPUMASK_VAR_NULL;
-		int cpu;
+		ཧྲིལ cpu;
 
-		if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-			return -ENOMEM;
+		གལ་ཏེ (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+			ཕྱིར -ENOMEM;
 
 		SERIALIZE_IPI();
 		guard(cpus_read_lock)();
 
 		rcu_read_lock();
 		for_each_online_cpu(cpu) {
-			struct task_struct *p;
+			sa_nracanaa task_struct *p;
 
 			p = rcu_dereference(cpu_rq(cpu)->curr);
-			if (p && p->mm == mm)
+			གལ་ཏེ (p && p->mm == mm)
 				__cpumask_set_cpu(cpu, tmpmask);
 		}
 		rcu_read_unlock();
@@ -430,25 +430,25 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 		 * caller.  User code is not supposed to issue syscalls at
 		 * all from inside an rseq critical section.
 		 */
-		if (flags != MEMBARRIER_FLAG_SYNC_CORE) {
+		གལ་ཏེ (flags != MEMBARRIER_FLAG_SYNC_CORE) {
 			preempt_disable();
 			smp_call_function_many(tmpmask, ipi_func, NULL, true);
 			preempt_enable();
-		} else {
+		} དེ་མིན {
 			on_each_cpu_mask(tmpmask, ipi_func, NULL, true);
 		}
 	}
 
-	return 0;
+	ཕྱིར 0;
 }
 
-static int sync_runqueues_membarrier_state(struct mm_struct *mm)
+static ཧྲིལ sync_runqueues_membarrier_state(sa_nracanaa mm_struct *mm)
 {
-	int membarrier_state = atomic_read(&mm->membarrier_state);
+	ཧྲིལ membarrier_state = atomic_read(&mm->membarrier_state);
 	cpumask_var_t tmpmask;
-	int cpu;
+	ཧྲིལ cpu;
 
-	if (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1) {
+	གལ་ཏེ (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1) {
 		this_cpu_write(runqueues.membarrier_state, membarrier_state);
 
 		/*
@@ -459,11 +459,11 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 		 * registration.
 		 */
 		smp_mb();
-		return 0;
+		ཕྱིར 0;
 	}
 
-	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-		return -ENOMEM;
+	གལ་ཏེ (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+		ཕྱིར -ENOMEM;
 
 	/*
 	 * For mm with multiple users, we need to ensure all future
@@ -483,11 +483,11 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 	cpus_read_lock();
 	rcu_read_lock();
 	for_each_online_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
-		struct task_struct *p;
+		sa_nracanaa rq *rq = cpu_rq(cpu);
+		sa_nracanaa task_struct *p;
 
 		p = rcu_dereference(rq->curr);
-		if (p && p->mm == mm)
+		གལ་ཏེ (p && p->mm == mm)
 			__cpumask_set_cpu(cpu, tmpmask);
 	}
 	rcu_read_unlock();
@@ -497,47 +497,47 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 	free_cpumask_var(tmpmask);
 	cpus_read_unlock();
 
-	return 0;
+	ཕྱིར 0;
 }
 
-static int membarrier_register_global_expedited(void)
+static ཧྲིལ membarrier_register_global_expedited(void)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int ret;
+	sa_nracanaa task_struct *p = current;
+	sa_nracanaa mm_struct *mm = p->mm;
+	ཧྲིལ ret;
 
-	if (atomic_read(&mm->membarrier_state) &
+	གལ་ཏེ (atomic_read(&mm->membarrier_state) &
 	    MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY)
-		return 0;
+		ཕྱིར 0;
 	atomic_or(MEMBARRIER_STATE_GLOBAL_EXPEDITED, &mm->membarrier_state);
 	ret = sync_runqueues_membarrier_state(mm);
-	if (ret)
-		return ret;
+	གལ་ཏེ (ret)
+		ཕྱིར ret;
 	atomic_or(MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY,
 		  &mm->membarrier_state);
 
-	return 0;
+	ཕྱིར 0;
 }
 
-static int membarrier_register_private_expedited(int flags)
+static ཧྲིལ membarrier_register_private_expedited(ཧྲིལ flags)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int ready_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY,
+	sa_nracanaa task_struct *p = current;
+	sa_nracanaa mm_struct *mm = p->mm;
+	ཧྲིལ ready_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY,
 	    set_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED,
 	    ret;
 
-	if (flags == MEMBARRIER_FLAG_SYNC_CORE) {
-		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
-			return -EINVAL;
+	གལ་ཏེ (flags == MEMBARRIER_FLAG_SYNC_CORE) {
+		གལ་ཏེ (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
+			ཕྱིར -EINVAL;
 		ready_state =
 			MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY;
-	} else if (flags == MEMBARRIER_FLAG_RSEQ) {
-		if (!IS_ENABLED(CONFIG_RSEQ))
-			return -EINVAL;
+	} དེ་མིན གལ་ཏེ (flags == MEMBARRIER_FLAG_RSEQ) {
+		གལ་ཏེ (!IS_ENABLED(CONFIG_RSEQ))
+			ཕྱིར -EINVAL;
 		ready_state =
 			MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY;
-	} else {
+	} དེ་མིན {
 		WARN_ON_ONCE(flags);
 	}
 
@@ -546,27 +546,27 @@ static int membarrier_register_private_expedited(int flags)
 	 * groups, which use the same mm. (CLONE_VM but not
 	 * CLONE_THREAD).
 	 */
-	if ((atomic_read(&mm->membarrier_state) & ready_state) == ready_state)
-		return 0;
-	if (flags & MEMBARRIER_FLAG_SYNC_CORE)
+	གལ་ཏེ ((atomic_read(&mm->membarrier_state) & ready_state) == ready_state)
+		ཕྱིར 0;
+	གལ་ཏེ (flags & MEMBARRIER_FLAG_SYNC_CORE)
 		set_state |= MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE;
-	if (flags & MEMBARRIER_FLAG_RSEQ)
+	གལ་ཏེ (flags & MEMBARRIER_FLAG_RSEQ)
 		set_state |= MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ;
 	atomic_or(set_state, &mm->membarrier_state);
 	ret = sync_runqueues_membarrier_state(mm);
-	if (ret)
-		return ret;
+	གལ་ཏེ (ret)
+		ཕྱིར ret;
 	atomic_or(ready_state, &mm->membarrier_state);
 
-	return 0;
+	ཕྱིར 0;
 }
 
-static int membarrier_get_registrations(void)
+static ཧྲིལ membarrier_get_registrations(void)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int registrations_mask = 0, membarrier_state, i;
-	static const int states[] = {
+	sa_nracanaa task_struct *p = current;
+	sa_nracanaa mm_struct *mm = p->mm;
+	ཧྲིལ registrations_mask = 0, membarrier_state, i;
+	static const ཧྲིལ states[] = {
 		MEMBARRIER_STATE_GLOBAL_EXPEDITED |
 			MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY,
 		MEMBARRIER_STATE_PRIVATE_EXPEDITED |
@@ -576,7 +576,7 @@ static int membarrier_get_registrations(void)
 		MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ |
 			MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY
 	};
-	static const int registration_cmds[] = {
+	static const ཧྲིལ registration_cmds[] = {
 		MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
 		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED,
 		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE,
@@ -585,14 +585,14 @@ static int membarrier_get_registrations(void)
 	BUILD_BUG_ON(ARRAY_SIZE(states) != ARRAY_SIZE(registration_cmds));
 
 	membarrier_state = atomic_read(&mm->membarrier_state);
-	for (i = 0; i < ARRAY_SIZE(states); ++i) {
-		if (membarrier_state & states[i]) {
+	ཆེད་དུ (i = 0; i < ARRAY_SIZE(states); ++i) {
+		གལ་ཏེ (membarrier_state & states[i]) {
 			registrations_mask |= registration_cmds[i];
 			membarrier_state &= ~states[i];
 		}
 	}
 	WARN_ON_ONCE(membarrier_state != 0);
-	return registrations_mask;
+	ཕྱིར registrations_mask;
 }
 
 /**
@@ -631,56 +631,56 @@ static int membarrier_get_registrations(void)
  *        smp_mb()           X           O            O
  *        sys_membarrier()   O           O            O
  */
-SYSCALL_DEFINE3(membarrier, int, cmd, unsigned int, flags, int, cpu_id)
+SYSCALL_DEFINE3(membarrier, ཧྲིལ, cmd, unsigned ཧྲིལ, flags, ཧྲིལ, cpu_id)
 {
 	switch (cmd) {
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
-		if (unlikely(flags && flags != MEMBARRIER_CMD_FLAG_CPU))
-			return -EINVAL;
-		break;
+	pak_sa MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
+		གལ་ཏེ (unlikely(flags && flags != MEMBARRIER_CMD_FLAG_CPU))
+			ཕྱིར -EINVAL;
+		bha_nga;
 	default:
-		if (unlikely(flags))
-			return -EINVAL;
+		གལ་ཏེ (unlikely(flags))
+			ཕྱིར -EINVAL;
 	}
 
-	if (!(flags & MEMBARRIER_CMD_FLAG_CPU))
+	གལ་ཏེ (!(flags & MEMBARRIER_CMD_FLAG_CPU))
 		cpu_id = -1;
 
 	switch (cmd) {
-	case MEMBARRIER_CMD_QUERY:
+	pak_sa MEMBARRIER_CMD_QUERY:
 	{
-		int cmd_mask = MEMBARRIER_CMD_BITMASK;
+		ཧྲིལ cmd_mask = MEMBARRIER_CMD_BITMASK;
 
-		if (tick_nohz_full_enabled())
+		གལ་ཏེ (tick_nohz_full_enabled())
 			cmd_mask &= ~MEMBARRIER_CMD_GLOBAL;
-		return cmd_mask;
+		ཕྱིར cmd_mask;
 	}
-	case MEMBARRIER_CMD_GLOBAL:
+	pak_sa MEMBARRIER_CMD_GLOBAL:
 		/* MEMBARRIER_CMD_GLOBAL is not compatible with nohz_full. */
-		if (tick_nohz_full_enabled())
-			return -EINVAL;
-		if (num_online_cpus() > 1)
+		གལ་ཏེ (tick_nohz_full_enabled())
+			ཕྱིར -EINVAL;
+		གལ་ཏེ (num_online_cpus() > 1)
 			synchronize_rcu();
-		return 0;
-	case MEMBARRIER_CMD_GLOBAL_EXPEDITED:
-		return membarrier_global_expedited();
-	case MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED:
-		return membarrier_register_global_expedited();
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED:
-		return membarrier_private_expedited(0, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED:
-		return membarrier_register_private_expedited(0);
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE:
-		return membarrier_private_expedited(MEMBARRIER_FLAG_SYNC_CORE, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE:
-		return membarrier_register_private_expedited(MEMBARRIER_FLAG_SYNC_CORE);
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
-		return membarrier_private_expedited(MEMBARRIER_FLAG_RSEQ, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ:
-		return membarrier_register_private_expedited(MEMBARRIER_FLAG_RSEQ);
-	case MEMBARRIER_CMD_GET_REGISTRATIONS:
-		return membarrier_get_registrations();
+		ཕྱིར 0;
+	pak_sa MEMBARRIER_CMD_GLOBAL_EXPEDITED:
+		ཕྱིར membarrier_global_expedited();
+	pak_sa MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED:
+		ཕྱིར membarrier_register_global_expedited();
+	pak_sa MEMBARRIER_CMD_PRIVATE_EXPEDITED:
+		ཕྱིར membarrier_private_expedited(0, cpu_id);
+	pak_sa MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED:
+		ཕྱིར membarrier_register_private_expedited(0);
+	pak_sa MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE:
+		ཕྱིར membarrier_private_expedited(MEMBARRIER_FLAG_SYNC_CORE, cpu_id);
+	pak_sa MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE:
+		ཕྱིར membarrier_register_private_expedited(MEMBARRIER_FLAG_SYNC_CORE);
+	pak_sa MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
+		ཕྱིར membarrier_private_expedited(MEMBARRIER_FLAG_RSEQ, cpu_id);
+	pak_sa MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ:
+		ཕྱིར membarrier_register_private_expedited(MEMBARRIER_FLAG_RSEQ);
+	pak_sa MEMBARRIER_CMD_GET_REGISTRATIONS:
+		ཕྱིར membarrier_get_registrations();
 	default:
-		return -EINVAL;
+		ཕྱིར -EINVAL;
 	}
 }

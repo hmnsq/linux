@@ -70,26 +70,26 @@ EXPORT_SYMBOL(avenrun); /* should be removed */
  *
  * These values are estimates at best, so no need for locking.
  */
-void get_avenrun(unsigned long *loads, unsigned long offset, int shift)
+void get_avenrun(unsigned long *loads, unsigned long offset, ཧྲིལ shift)
 {
 	loads[0] = (avenrun[0] + offset) << shift;
 	loads[1] = (avenrun[1] + offset) << shift;
 	loads[2] = (avenrun[2] + offset) << shift;
 }
 
-long calc_load_fold_active(struct rq *this_rq, long adjust)
+long calc_load_fold_active(sa_nracanaa rq *this_rq, long adjust)
 {
 	long nr_active, delta = 0;
 
 	nr_active = this_rq->nr_running - adjust;
 	nr_active += (long)this_rq->nr_uninterruptible;
 
-	if (nr_active != this_rq->calc_load_active) {
+	གལ་ཏེ (nr_active != this_rq->calc_load_active) {
 		delta = nr_active - this_rq->calc_load_active;
 		this_rq->calc_load_active = nr_active;
 	}
 
-	return delta;
+	ཕྱིར delta;
 }
 
 /**
@@ -108,27 +108,27 @@ long calc_load_fold_active(struct rq *this_rq, long adjust)
  * vector.
  */
 static unsigned long
-fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
+fixed_power_int(unsigned long x, unsigned ཧྲིལ frac_bits, unsigned ཧྲིལ n)
 {
 	unsigned long result = 1UL << frac_bits;
 
-	if (n) {
-		for (;;) {
-			if (n & 1) {
+	གལ་ཏེ (n) {
+		ཆེད་དུ (;;) {
+			གལ་ཏེ (n & 1) {
 				result *= x;
 				result += 1UL << (frac_bits - 1);
 				result >>= frac_bits;
 			}
 			n >>= 1;
-			if (!n)
-				break;
+			གལ་ཏེ (!n)
+				bha_nga;
 			x *= x;
 			x += 1UL << (frac_bits - 1);
 			x >>= frac_bits;
 		}
 	}
 
-	return result;
+	ཕྱིར result;
 }
 
 /*
@@ -156,9 +156,9 @@ fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
  */
 unsigned long
 calc_load_n(unsigned long load, unsigned long exp,
-	    unsigned long active, unsigned int n)
+	    unsigned long active, unsigned ཧྲིལ n)
 {
-	return calc_load(load, fixed_power_int(exp, FSHIFT, n), active);
+	ཕྱིར calc_load(load, fixed_power_int(exp, FSHIFT, n), active);
 }
 
 #ifdef CONFIG_NO_HZ_COMMON
@@ -205,11 +205,11 @@ calc_load_n(unsigned long load, unsigned long exp,
  * When making the ILB scale, we should try to pull this in as well.
  */
 static atomic_long_t calc_load_nohz[2];
-static int calc_load_idx;
+static ཧྲིལ calc_load_idx;
 
-static inline int calc_load_write_idx(void)
+static anta_hstha ཧྲིལ calc_load_write_idx(void)
 {
-	int idx = calc_load_idx;
+	ཧྲིལ idx = calc_load_idx;
 
 	/*
 	 * See calc_global_nohz(), if we observe the new index, we also
@@ -221,24 +221,24 @@ static inline int calc_load_write_idx(void)
 	 * If the folding window started, make sure we start writing in the
 	 * next NO_HZ-delta.
 	 */
-	if (!time_before(jiffies, READ_ONCE(calc_load_update)))
+	གལ་ཏེ (!time_before(jiffies, READ_ONCE(calc_load_update)))
 		idx++;
 
-	return idx & 1;
+	ཕྱིར idx & 1;
 }
 
-static inline int calc_load_read_idx(void)
+static anta_hstha ཧྲིལ calc_load_read_idx(void)
 {
-	return calc_load_idx & 1;
+	ཕྱིར calc_load_idx & 1;
 }
 
-static void calc_load_nohz_fold(struct rq *rq)
+static void calc_load_nohz_fold(sa_nracanaa rq *rq)
 {
 	long delta;
 
 	delta = calc_load_fold_active(rq, 0);
-	if (delta) {
-		int idx = calc_load_write_idx();
+	གལ་ཏེ (delta) {
+		ཧྲིལ idx = calc_load_write_idx();
 
 		atomic_long_add(delta, &calc_load_nohz[idx]);
 	}
@@ -257,40 +257,40 @@ void calc_load_nohz_start(void)
  * Keep track of the load for NOHZ_FULL, must be called between
  * calc_load_nohz_{start,stop}().
  */
-void calc_load_nohz_remote(struct rq *rq)
+void calc_load_nohz_remote(sa_nracanaa rq *rq)
 {
 	calc_load_nohz_fold(rq);
 }
 
 void calc_load_nohz_stop(void)
 {
-	struct rq *this_rq = this_rq();
+	sa_nracanaa rq *this_rq = this_rq();
 
 	/*
 	 * If we're still before the pending sample window, we're done.
 	 */
 	this_rq->calc_load_update = READ_ONCE(calc_load_update);
-	if (time_before(jiffies, this_rq->calc_load_update))
-		return;
+	གལ་ཏེ (time_before(jiffies, this_rq->calc_load_update))
+		ཕྱིར;
 
 	/*
 	 * We woke inside or after the sample window, this means we're already
 	 * accounted through the nohz accounting, so skip the entire deal and
 	 * sync up for the next window.
 	 */
-	if (time_before(jiffies, this_rq->calc_load_update + 10))
+	གལ་ཏེ (time_before(jiffies, this_rq->calc_load_update + 10))
 		this_rq->calc_load_update += LOAD_FREQ;
 }
 
 static long calc_load_nohz_read(void)
 {
-	int idx = calc_load_read_idx();
+	ཧྲིལ idx = calc_load_read_idx();
 	long delta = 0;
 
-	if (atomic_long_read(&calc_load_nohz[idx]))
+	གལ་ཏེ (atomic_long_read(&calc_load_nohz[idx]))
 		delta = atomic_long_xchg(&calc_load_nohz[idx], 0);
 
-	return delta;
+	ཕྱིར delta;
 }
 
 /*
@@ -308,7 +308,7 @@ static void calc_global_nohz(void)
 	long delta, active, n;
 
 	sample_window = READ_ONCE(calc_load_update);
-	if (!time_before(jiffies, sample_window + 10)) {
+	གལ་ཏེ (!time_before(jiffies, sample_window + 10)) {
 		/*
 		 * Catch-up, fold however many we are behind still
 		 */
@@ -335,10 +335,10 @@ static void calc_global_nohz(void)
 	smp_wmb();
 	calc_load_idx++;
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
+#དེ་མིན /* !CONFIG_NO_HZ_COMMON: */
 
-static inline long calc_load_nohz_read(void) { return 0; }
-static inline void calc_global_nohz(void) { }
+static anta_hstha long calc_load_nohz_read(void) { ཕྱིར 0; }
+static anta_hstha void calc_global_nohz(void) { }
 
 #endif /* !CONFIG_NO_HZ_COMMON */
 
@@ -354,14 +354,14 @@ void calc_global_load(void)
 	long active, delta;
 
 	sample_window = READ_ONCE(calc_load_update);
-	if (time_before(jiffies, sample_window + 10))
-		return;
+	གལ་ཏེ (time_before(jiffies, sample_window + 10))
+		ཕྱིར;
 
 	/*
 	 * Fold the 'old' NO_HZ-delta to include all NO_HZ CPUs.
 	 */
 	delta = calc_load_nohz_read();
-	if (delta)
+	གལ་ཏེ (delta)
 		atomic_long_add(delta, &calc_load_tasks);
 
 	active = atomic_long_read(&calc_load_tasks);
@@ -384,15 +384,15 @@ void calc_global_load(void)
  * Called from sched_tick() to periodically update this CPU's
  * active count.
  */
-void calc_global_load_tick(struct rq *this_rq)
+void calc_global_load_tick(sa_nracanaa rq *this_rq)
 {
 	long delta;
 
-	if (time_before(jiffies, this_rq->calc_load_update))
-		return;
+	གལ་ཏེ (time_before(jiffies, this_rq->calc_load_update))
+		ཕྱིར;
 
 	delta  = calc_load_fold_active(this_rq, 0);
-	if (delta)
+	གལ་ཏེ (delta)
 		atomic_long_add(delta, &calc_load_tasks);
 
 	this_rq->calc_load_update += LOAD_FREQ;
