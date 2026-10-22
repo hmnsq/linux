@@ -2,18 +2,18 @@
 /*
  * Simple CPU accounting cgroup controller
  */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/tsacct_kern.h>
-#include "sched.h"
+#অন্তর্ভাব <linux/sched/clock.h>
+#অন্তর্ভাব <linux/sched/cputime.h>
+#অন্তর্ভাব <linux/tsacct_kern.h>
+#অন্তর্ভাব "sched.h"
 
 #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
- #include <asm/cputime.h>
+ #অন্তর্ভাব <asm/cputime.h>
 #endif
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
 
-DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DEFINE_STATIC_চাবি_FALSE(sched_clock_irqtime);
 
 /*
  * There are no locks covering percpu hardirq/softirq time.
@@ -26,28 +26,28 @@ DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
  * task when IRQ is in progress while we read rq->clock. That is a worthy
  * compromise in place of having locks on each IRQ in account_system_time.
  */
-DEFINE_PER_CPU(struct irqtime, cpu_irqtime);
+DEFINE_PER_CPU(সংরচনা irqtime, cpu_irqtime);
 
-void enable_sched_clock_irqtime(void)
+শূন্য enable_sched_clock_irqtime(শূন্য)
 {
 	static_branch_enable(&sched_clock_irqtime);
 }
 
-void disable_sched_clock_irqtime(void)
+শূন্য disable_sched_clock_irqtime(শূন্য)
 {
-	if (irqtime_enabled())
+	যদি (irqtime_enabled())
 		static_branch_disable(&sched_clock_irqtime);
 }
 
-static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
-				  enum cpu_usage_stat idx)
+স্থির শূন্য irqtime_account_delta(সংরচনা irqtime *irqtime, u64 delta,
+				  গণনা cpu_usage_stat idx)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
 	u64_stats_update_begin(&irqtime->sync);
 	cpustat[idx] += delta;
 	irqtime->total += delta;
-	if (!kcpustat_idle_dyntick())
+	যদি (!kcpustat_idle_dyntick())
 		irqtime->tick_delta += delta;
 	u64_stats_update_end(&irqtime->sync);
 }
@@ -56,20 +56,20 @@ static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
  * Called after incrementing preempt_count on {soft,}irq_enter
  * and before decrementing preempt_count on {soft,}irq_exit.
  */
-void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
+শূন্য irqtime_account_irq(সংরচনা task_struct *curr, unsigned পূর্ণাঙ্ক offset)
 {
-	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
-	unsigned int pc;
+	সংরচনা irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
+	unsigned পূর্ণাঙ্ক pc;
 	s64 delta;
-	int cpu;
+	পূর্ণাঙ্ক cpu;
 
-	if (!irqtime_enabled())
-		return;
+	যদি (!irqtime_enabled())
+		প্রত্যাগম;
 
 	cpu = smp_processor_id();
 	delta = sched_clock_cpu(cpu) - irqtime->irq_start_time;
 	irqtime->irq_start_time += delta;
-	pc = irq_count() - offset;
+	pc = irq_গুনতি() - offset;
 
 	/*
 	 * We do not account for softirq time from ksoftirqd here.
@@ -77,33 +77,33 @@ void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
 	 * in that case, so as not to confuse scheduler with a special task
 	 * that do not consume any time, but still wants to run.
 	 */
-	if (pc & HARDIRQ_MASK)
+	যদি (pc & HARDIRQ_MASK)
 		irqtime_account_delta(irqtime, delta, CPUTIME_IRQ);
-	else if ((pc & SOFTIRQ_OFFSET) && curr != this_cpu_ksoftirqd())
+	অন্যথা যদি ((pc & SOFTIRQ_OFFSET) && curr != this_cpu_ksoftirqd())
 		irqtime_account_delta(irqtime, delta, CPUTIME_SOFTIRQ);
 }
 
-static u64 irqtime_tick_accounted(u64 maxtime)
+স্থির u64 irqtime_tick_accounted(u64 maxtime)
 {
-	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
+	সংরচনা irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
 	u64 delta;
 
 	delta = min(irqtime->tick_delta, maxtime);
 	irqtime->tick_delta -= delta;
 
-	return delta;
+	প্রত্যাগম delta;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#অন্যথা /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
-static u64 irqtime_tick_accounted(u64 dummy)
+স্থির u64 irqtime_tick_accounted(u64 dummy)
 {
-	return 0;
+	প্রত্যাগম 0;
 }
 
 #endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-static inline void task_group_account_field(struct task_struct *p, int index,
+স্থির অন্তঃস্থ শূন্য task_group_account_field(সংরচনা task_struct *p, পূর্ণাঙ্ক index,
 					    u64 tmp)
 {
 	/*
@@ -122,9 +122,9 @@ static inline void task_group_account_field(struct task_struct *p, int index,
  * @p: the process that the CPU time gets accounted to
  * @cputime: the CPU time spent in user space since the last update
  */
-void account_user_time(struct task_struct *p, u64 cputime)
+শূন্য account_user_time(সংরচনা task_struct *p, u64 cputime)
 {
-	int index;
+	পূর্ণাঙ্ক index;
 
 	/* Add user time to process. */
 	p->utime += cputime;
@@ -144,7 +144,7 @@ void account_user_time(struct task_struct *p, u64 cputime)
  * @p: the process that the CPU time gets accounted to
  * @cputime: the CPU time spent in virtual machine since the last update
  */
-void account_guest_time(struct task_struct *p, u64 cputime)
+শূন্য account_guest_time(সংরচনা task_struct *p, u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
@@ -154,10 +154,10 @@ void account_guest_time(struct task_struct *p, u64 cputime)
 	p->gtime += cputime;
 
 	/* Add guest time to cpustat. */
-	if (task_nice(p) > 0) {
+	যদি (task_nice(p) > 0) {
 		task_group_account_field(p, CPUTIME_NICE, cputime);
 		cpustat[CPUTIME_GUEST_NICE] += cputime;
-	} else {
+	} অন্যথা {
 		task_group_account_field(p, CPUTIME_USER, cputime);
 		cpustat[CPUTIME_GUEST] += cputime;
 	}
@@ -169,8 +169,8 @@ void account_guest_time(struct task_struct *p, u64 cputime)
  * @cputime: the CPU time spent in kernel space since the last update
  * @index: pointer to cpustat field that has to be updated
  */
-void account_system_index_time(struct task_struct *p,
-			       u64 cputime, enum cpu_usage_stat index)
+শূন্য account_system_index_time(সংরচনা task_struct *p,
+			       u64 cputime, গণনা cpu_usage_stat index)
 {
 	/* Add system time to process. */
 	p->stime += cputime;
@@ -189,20 +189,20 @@ void account_system_index_time(struct task_struct *p,
  * @hardirq_offset: the offset to subtract from hardirq_count()
  * @cputime: the CPU time spent in kernel space since the last update
  */
-void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
+শূন্য account_system_time(সংরচনা task_struct *p, পূর্ণাঙ্ক hardirq_offset, u64 cputime)
 {
-	int index;
+	পূর্ণাঙ্ক index;
 
-	if ((p->flags & PF_VCPU) && (irq_count() - hardirq_offset == 0)) {
+	যদি ((p->flags & PF_VCPU) && (irq_গুনতি() - hardirq_offset == 0)) {
 		account_guest_time(p, cputime);
-		return;
+		প্রত্যাগম;
 	}
 
-	if (hardirq_count() - hardirq_offset)
+	যদি (hardirq_গুনতি() - hardirq_offset)
 		index = CPUTIME_IRQ;
-	else if (in_serving_softirq())
+	অন্যথা যদি (in_serving_softirq())
 		index = CPUTIME_SOFTIRQ;
-	else
+	অন্যথা
 		index = CPUTIME_SYSTEM;
 
 	account_system_index_time(p, cputime, index);
@@ -212,7 +212,7 @@ void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
  * Account for involuntary wait time.
  * @cputime: the CPU time spent in involuntary wait
  */
-void account_steal_time(u64 cputime)
+শূন্য account_steal_time(u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
@@ -223,13 +223,13 @@ void account_steal_time(u64 cputime)
  * Account for idle time.
  * @cputime: the CPU time spent in idle wait
  */
-void account_idle_time(u64 cputime)
+শূন্য account_idle_time(u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
-	if (cpu_has_iowait(smp_processor_id()))
+	যদি (cpu_has_iowait(smp_processor_id()))
 		cpustat[CPUTIME_IOWAIT] += cputime;
-	else
+	অন্যথা
 		cpustat[CPUTIME_IDLE] += cputime;
 }
 
@@ -240,7 +240,7 @@ void account_idle_time(u64 cputime)
  *
  * REQUIRES: schedstat is enabled.
  */
-void __account_forceidle_time(struct task_struct *p, u64 delta)
+শূন্য __account_forceidle_time(সংরচনা task_struct *p, u64 delta)
 {
 	__schedstat_add(p->stats.core_forceidle_sum, delta);
 
@@ -254,22 +254,22 @@ void __account_forceidle_time(struct task_struct *p, u64 delta)
  * occasion account more time than the calling functions think elapsed.
  */
 #ifdef CONFIG_PARAVIRT
-DEFINE_STATIC_KEY_FALSE(paravirt_steal_enabled);
+DEFINE_STATIC_চাবি_FALSE(paravirt_steal_enabled);
 
 #ifdef CONFIG_HAVE_PV_STEAL_CLOCK_GEN
-static u64 native_steal_clock(int cpu)
+স্থির u64 native_steal_clock(পূর্ণাঙ্ক cpu)
 {
-	return 0;
+	প্রত্যাগম 0;
 }
 
 DEFINE_STATIC_CALL(pv_steal_clock, native_steal_clock);
 #endif
 #endif
 
-static __always_inline u64 steal_account_process_time(u64 maxtime)
+স্থির __always_inline u64 steal_account_process_time(u64 maxtime)
 {
 #ifdef CONFIG_PARAVIRT
-	if (static_branch_unlikely(&paravirt_steal_enabled)) {
+	যদি (static_branch_unlikely(&paravirt_steal_enabled)) {
 		u64 steal;
 
 		steal = paravirt_steal_clock(smp_processor_id());
@@ -278,16 +278,16 @@ static __always_inline u64 steal_account_process_time(u64 maxtime)
 		account_steal_time(steal);
 		this_rq()->prev_steal_time += steal;
 
-		return steal;
+		প্রত্যাগম steal;
 	}
 #endif /* CONFIG_PARAVIRT */
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /*
  * Account how much elapsed time was spent in steal, IRQ, or softirq time.
  */
-static inline u64 account_other_time(u64 max)
+স্থির অন্তঃস্থ u64 account_other_time(u64 max)
 {
 	u64 accounted;
 
@@ -295,29 +295,29 @@ static inline u64 account_other_time(u64 max)
 
 	accounted = steal_account_process_time(max);
 
-	if (accounted < max)
+	যদি (accounted < max)
 		accounted += irqtime_tick_accounted(max - accounted);
 
-	return accounted;
+	প্রত্যাগম accounted;
 }
 
 #ifdef CONFIG_64BIT
-static inline u64 read_sum_exec_runtime(struct task_struct *t)
+স্থির অন্তঃস্থ u64 read_sum_exec_runtime(সংরচনা task_struct *t)
 {
-	return t->se.sum_exec_runtime;
+	প্রত্যাগম t->se.sum_exec_runtime;
 }
-#else /* !CONFIG_64BIT: */
-static u64 read_sum_exec_runtime(struct task_struct *t)
+#অন্যথা /* !CONFIG_64BIT: */
+স্থির u64 read_sum_exec_runtime(সংরচনা task_struct *t)
 {
 	u64 ns;
-	struct rq_flags rf;
-	struct rq *rq;
+	সংরচনা rq_flags rf;
+	সংরচনা rq *rq;
 
 	rq = task_rq_lock(t, &rf);
 	ns = t->se.sum_exec_runtime;
 	task_rq_unlock(rq, t, &rf);
 
-	return ns;
+	প্রত্যাগম ns;
 }
 #endif /* !CONFIG_64BIT */
 
@@ -325,10 +325,10 @@ static u64 read_sum_exec_runtime(struct task_struct *t)
  * Accumulate raw cputime values of dead tasks (sig->[us]time) and live
  * tasks (sum on group iteration) belonging to @tsk's group.
  */
-void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+শূন্য thread_group_cputime(সংরচনা task_struct *tsk, সংরচনা task_cputime *times)
 {
-	struct signal_struct *sig = tsk->signal;
-	struct task_struct *t;
+	সংরচনা signal_struct *sig = tsk->সঙ্কেত;
+	সংরচনা task_struct *t;
 	u64 utime, stime;
 
 	/*
@@ -339,8 +339,8 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
 	 * those pending times and rely only on values updated on tick or
 	 * other scheduler action.
 	 */
-	if (same_thread_group(current, tsk))
-		(void) task_sched_runtime(current);
+	যদি (same_thread_group(current, tsk))
+		(শূন্য) task_sched_runtime(current);
 
 	guard(rcu)();
 	scoped_seqlock_read (&sig->stats_lock, ss_lock_irqsave) {
@@ -379,7 +379,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
  * p->stime and friends are only updated on system time and not on IRQ
  * softirq as those do not count in task exec_runtime any more.
  */
-static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+স্থির শূন্য irqtime_account_process_tick(সংরচনা task_struct *p, পূর্ণাঙ্ক user_tick,
 					 u64 cputime)
 {
 	u64 other;
@@ -392,43 +392,43 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
 	 * other time can exceed ticks occasionally.
 	 */
 	other = account_other_time(ULONG_MAX);
-	if (other >= cputime)
-		return;
+	যদি (other >= cputime)
+		প্রত্যাগম;
 
 	cputime -= other;
 
-	if (this_cpu_ksoftirqd() == p) {
+	যদি (this_cpu_ksoftirqd() == p) {
 		/*
 		 * ksoftirqd time do not get accounted in cpu_softirq_time.
 		 * So, we have to handle it separately here.
 		 * Also, p->stime needs to be updated for ksoftirqd.
 		 */
 		account_system_index_time(p, cputime, CPUTIME_SOFTIRQ);
-	} else if (user_tick) {
+	} অন্যথা যদি (user_tick) {
 		account_user_time(p, cputime);
-	} else if (p == this_rq()->idle) {
+	} অন্যথা যদি (p == this_rq()->idle) {
 		account_idle_time(cputime);
-	} else if (p->flags & PF_VCPU) { /* System time or guest time */
+	} অন্যথা যদি (p->flags & PF_VCPU) { /* System time or guest time */
 		account_guest_time(p, cputime);
-	} else {
+	} অন্যথা {
 		account_system_index_time(p, cputime, CPUTIME_SYSTEM);
 	}
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
-static inline void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+#অন্যথা /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+স্থির অন্তঃস্থ শূন্য irqtime_account_process_tick(সংরচনা task_struct *p, পূর্ণাঙ্ক user_tick,
 						u64 cputime) { }
 #endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-#if defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
-static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
+#যদি defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
+স্থির শূন্য kcpustat_idle_stop(সংরচনা kernel_cpustat *kc, u64 now)
 {
 	u64 *cpustat = kc->cpustat;
 	u64 delta, steal, steal_delta;
-	int iowait;
+	পূর্ণাঙ্ক iowait;
 
-	if (!kc->idle_elapse)
-		return;
+	যদি (!kc->idle_elapse)
+		প্রত্যাগম;
 
 	iowait = cpu_has_iowait(smp_processor_id());
 	delta = now - kc->idle_entrytime;
@@ -444,9 +444,9 @@ static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
 	delta -= steal_delta;
 	kc->idle_stealtime[iowait] -= steal_delta;
 
-	if (iowait)
+	যদি (iowait)
 		cpustat[CPUTIME_IOWAIT] += delta;
-	else
+	অন্যথা
 		cpustat[CPUTIME_IDLE] += delta;
 
 	kc->idle_stealtime[iowait] += steal;
@@ -455,11 +455,11 @@ static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
 	write_seqcount_end(&kc->idle_sleeptime_seq);
 }
 
-static void kcpustat_idle_start(struct kernel_cpustat *kc, u64 now)
+স্থির শূন্য kcpustat_idle_start(সংরচনা kernel_cpustat *kc, u64 now)
 {
 	/* Irqtime accounting might have been enabled in the middle of the IRQ */
-	if (kc->idle_elapse)
-		return;
+	যদি (kc->idle_elapse)
+		প্রত্যাগম;
 
 	write_seqcount_begin(&kc->idle_sleeptime_seq);
 	kc->idle_entrytime = now;
@@ -467,18 +467,18 @@ static void kcpustat_idle_start(struct kernel_cpustat *kc, u64 now)
 	write_seqcount_end(&kc->idle_sleeptime_seq);
 }
 
-void kcpustat_dyntick_stop(u64 now, u64 tick_start)
+শূন্য kcpustat_dyntick_stop(u64 now, u64 tick_start)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	সংরচনা kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
+	যদি (!vtime_generic_enabled_this_cpu()) {
 		WARN_ON_ONCE(!kc->idle_dyntick);
-		if (kc->idle_tick_period != tick_start) {
+		যদি (kc->idle_tick_period != tick_start) {
 			kc->idle_tick_period = tick_start;
 			kc->idle_tick_overlap = 0;
 		}
 		tick_start = max(tick_start, kc->idle_dyntick_entry);
-		if (!WARN_ON_ONCE(now < tick_start))
+		যদি (!WARN_ON_ONCE(now < tick_start))
 			kc->idle_tick_overlap += now - tick_start;
 		kcpustat_idle_stop(kc, now);
 		kc->idle_dyntick = false;
@@ -490,20 +490,20 @@ void kcpustat_dyntick_stop(u64 now, u64 tick_start)
  * The first tick after dyntick-idle covers a period that the dyntick-idle
  * accounting may already have accounted in part.
  */
-static inline u64 kcpustat_tick_overlap(void)
+স্থির অন্তঃস্থ u64 kcpustat_tick_overlap(শূন্য)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	সংরচনা kernel_cpustat *kc = kcpustat_this_cpu;
 	u64 overlap = kc->idle_tick_overlap;
 
 	kc->idle_tick_overlap = 0;
-	return overlap;
+	প্রত্যাগম overlap;
 }
 
-void kcpustat_dyntick_start(u64 now)
+শূন্য kcpustat_dyntick_start(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	সংরচনা kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
+	যদি (!vtime_generic_enabled_this_cpu()) {
 		vtime_dyntick_start();
 		kc->idle_dyntick = true;
 		kc->idle_dyntick_entry = now;
@@ -511,18 +511,18 @@ void kcpustat_dyntick_start(u64 now)
 	}
 }
 
-void kcpustat_irq_enter(u64 now)
+শূন্য kcpustat_irq_enter(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	সংরচনা kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu() &&
+	যদি (!vtime_generic_enabled_this_cpu() &&
 	    (irqtime_enabled() || vtime_accounting_enabled_this_cpu()))
 		kcpustat_idle_stop(kc, now);
 }
 
-void kcpustat_irq_exit(u64 now)
+শূন্য kcpustat_irq_exit(u64 now)
 {
-	struct kernel_cpustat *kc = kcpustat_this_cpu;
+	সংরচনা kernel_cpustat *kc = kcpustat_this_cpu;
 
 	/*
 	 * Generic vtime already does its own idle accounting.
@@ -531,79 +531,79 @@ void kcpustat_irq_exit(u64 now)
 	 * as the irqtime config is enabled to handle case where irqtime
 	 * accounting got runtime disabled in the middle of an IRQ.
 	 */
-	if (!vtime_generic_enabled_this_cpu() &&
+	যদি (!vtime_generic_enabled_this_cpu() &&
 	    (IS_ENABLED(CONFIG_IRQ_TIME_ACCOUNTING) || vtime_accounting_enabled_this_cpu()))
 		kcpustat_idle_start(kc, now);
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+স্থির u64 kcpustat_field_dyntick(পূর্ণাঙ্ক cpu, গণনা cpu_usage_stat idx,
 				  bool compute_delta, u64 now)
 {
-	struct kernel_cpustat *kc = &kcpustat_cpu(cpu);
-	int iowait = idx == CPUTIME_IOWAIT;
+	সংরচনা kernel_cpustat *kc = &kcpustat_cpu(cpu);
+	পূর্ণাঙ্ক iowait = idx == CPUTIME_IOWAIT;
 	u64 *cpustat = kc->cpustat;
-	unsigned int seq;
+	unsigned পূর্ণাঙ্ক seq;
 	u64 idle;
 
-	do {
+	কুরু {
 		seq = read_seqcount_begin(&kc->idle_sleeptime_seq);
 
 		idle = cpustat[idx];
 
-		if (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
+		যদি (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
 			u64 delta = now - kc->idle_entrytime;
 
 			delta -= min_t(u64, kc->idle_stealtime[iowait], delta);
 			idle += delta;
 		}
-	} while (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
+	} যাবত্ (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
 
-	return idle;
+	প্রত্যাগম idle;
 }
 
-u64 kcpustat_field_idle(int cpu)
+u64 kcpustat_field_idle(পূর্ণাঙ্ক cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IDLE,
+	প্রত্যাগম kcpustat_field_dyntick(cpu, CPUTIME_IDLE,
 				      !cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_idle);
+EXPORT_প্রতীক_GPL(kcpustat_field_idle);
 
-u64 kcpustat_field_iowait(int cpu)
+u64 kcpustat_field_iowait(পূর্ণাঙ্ক cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IOWAIT,
+	প্রত্যাগম kcpustat_field_dyntick(cpu, CPUTIME_IOWAIT,
 				      cpu_has_iowait(cpu), ktime_get());
 }
-EXPORT_SYMBOL_GPL(kcpustat_field_iowait);
-#else
-static inline u64 kcpustat_tick_overlap(void)
+EXPORT_প্রতীক_GPL(kcpustat_field_iowait);
+#অন্যথা
+স্থির অন্তঃস্থ u64 kcpustat_tick_overlap(শূন্য)
 {
-	return 0;
+	প্রত্যাগম 0;
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+স্থির u64 kcpustat_field_dyntick(পূর্ণাঙ্ক cpu, গণনা cpu_usage_stat idx,
 				  bool compute_delta, ktime_t now)
 {
-	return kcpustat_cpu(cpu).cpustat[idx];
+	প্রত্যাগম kcpustat_cpu(cpu).cpustat[idx];
 }
 #endif /* CONFIG_NO_HZ_COMMON && !CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE */
 
-static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
+স্থির u64 get_cpu_sleep_time_us(পূর্ণাঙ্ক cpu, গণনা cpu_usage_stat idx,
 				 bool compute_delta, u64 *last_update_time)
 {
 	ktime_t now = ktime_get();
 	u64 res;
 
-	if (vtime_generic_enabled_cpu(cpu))
+	যদি (vtime_generic_enabled_cpu(cpu))
 		res = kcpustat_field(idx, cpu);
-	else
+	অন্যথা
 		res = kcpustat_field_dyntick(cpu, idx, compute_delta, now);
 
 	do_div(res, NSEC_PER_USEC);
 
-	if (last_update_time)
+	যদি (last_update_time)
 		*last_update_time = ktime_to_us(now);
 
-	return res;
+	প্রত্যাগম res;
 }
 
 /**
@@ -623,12 +623,12 @@ static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
  *
  * Return: total idle time of the @cpu
  */
-u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_idle_time_us(পূর্ণাঙ্ক cpu, u64 *last_update_time)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
+	প্রত্যাগম get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
 				     !cpu_has_iowait(cpu), last_update_time);
 }
-EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
+EXPORT_প্রতীক_GPL(get_cpu_idle_time_us);
 
 /**
  * get_cpu_iowait_time_us - get the total iowait time of a CPU
@@ -647,55 +647,55 @@ EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
  *
  * Return: total iowait time of @cpu
  */
-u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_iowait_time_us(পূর্ণাঙ্ক cpu, u64 *last_update_time)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
+	প্রত্যাগম get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
 				     cpu_has_iowait(cpu), last_update_time);
 }
-EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
+EXPORT_প্রতীক_GPL(get_cpu_iowait_time_us);
 
 /*
  * Use precise platform statistics if available:
  */
 #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
 
-void vtime_account_irq(struct task_struct *tsk, unsigned int offset)
+শূন্য vtime_account_irq(সংরচনা task_struct *tsk, unsigned পূর্ণাঙ্ক offset)
 {
-	unsigned int pc = irq_count() - offset;
+	unsigned পূর্ণাঙ্ক pc = irq_গুনতি() - offset;
 
-	if (pc & HARDIRQ_OFFSET) {
+	যদি (pc & HARDIRQ_OFFSET) {
 		vtime_account_hardirq(tsk);
-	} else if (pc & SOFTIRQ_OFFSET) {
+	} অন্যথা যদি (pc & SOFTIRQ_OFFSET) {
 		vtime_account_softirq(tsk);
-	} else if (!kcpustat_idle_dyntick()) {
-		if (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
+	} অন্যথা যদি (!kcpustat_idle_dyntick()) {
+		যদি (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
 		    is_idle_task(tsk)) {
 			vtime_account_idle(tsk);
-		} else {
+		} অন্যথা {
 			vtime_account_kernel(tsk);
 		}
-	} else {
+	} অন্যথা {
 		vtime_reset();
 	}
 }
 
-void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+শূন্য cputime_adjust(সংরচনা task_cputime *curr, সংরচনা prev_cputime *prev,
 		    u64 *ut, u64 *st)
 {
 	*ut = curr->utime;
 	*st = curr->stime;
 }
 
-void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+শূন্য task_cputime_adjusted(সংরচনা task_struct *p, u64 *ut, u64 *st)
 {
 	*ut = p->utime;
 	*st = p->stime;
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_প্রতীক_GPL(task_cputime_adjusted);
 
-void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+শূন্য thread_group_cputime_adjusted(সংরচনা task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime;
+	সংরচনা task_cputime cputime;
 
 	thread_group_cputime(p, &cputime);
 
@@ -703,42 +703,42 @@ void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
 	*st = cputime.stime;
 }
 
-#else /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
+#অন্যথা /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
 
 /*
  * Account a single tick of CPU time.
  * @p: the process that the CPU time gets accounted to
  * @user_tick: indicates if the tick is a user or a system tick
  */
-void account_process_tick(struct task_struct *p, int user_tick)
+শূন্য account_process_tick(সংরচনা task_struct *p, পূর্ণাঙ্ক user_tick)
 {
 	u64 cputime, steal;
 
-	if (vtime_accounting_enabled_this_cpu())
-		return;
+	যদি (vtime_accounting_enabled_this_cpu())
+		প্রত্যাগম;
 
-	if (kcpustat_idle_dyntick())
-		return;
+	যদি (kcpustat_idle_dyntick())
+		প্রত্যাগম;
 
 	cputime = TICK_NSEC - kcpustat_tick_overlap();
 
-	if (irqtime_enabled()) {
+	যদি (irqtime_enabled()) {
 		irqtime_account_process_tick(p, user_tick, cputime);
-		return;
+		প্রত্যাগম;
 	}
 
 	steal = steal_account_process_time(ULONG_MAX);
 
-	if (steal >= cputime)
-		return;
+	যদি (steal >= cputime)
+		প্রত্যাগম;
 
 	cputime -= steal;
 
-	if (user_tick)
+	যদি (user_tick)
 		account_user_time(p, cputime);
-	else if ((p != this_rq()->idle) || (irq_count() != HARDIRQ_OFFSET))
+	অন্যথা যদি ((p != this_rq()->idle) || (irq_গুনতি() != HARDIRQ_OFFSET))
 		account_system_time(p, HARDIRQ_OFFSET, cputime);
-	else
+	অন্যথা
 		account_idle_time(cputime);
 }
 
@@ -762,7 +762,7 @@ void account_process_tick(struct task_struct *p, int user_tick)
  *
  * Assuming that rtime_i+1 >= rtime_i.
  */
-void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+শূন্য cputime_adjust(সংরচনা task_cputime *curr, সংরচনা prev_cputime *prev,
 		    u64 *ut, u64 *st)
 {
 	u64 rtime, stime, utime;
@@ -780,8 +780,8 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * In both cases this acts as a filter such that the rest of the code
 	 * can assume it is monotonic regardless of anything else.
 	 */
-	if (prev->stime + prev->utime >= rtime)
-		goto out;
+	যদি (prev->stime + prev->utime >= rtime)
+		গচ্ছ out;
 
 	stime = curr->stime;
 	utime = curr->utime;
@@ -791,14 +791,14 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * Once a task gets some ticks, the monotonicity code at 'update:'
 	 * will ensure things converge to the observed ratio.
 	 */
-	if (stime == 0) {
+	যদি (stime == 0) {
 		utime = rtime;
-		goto update;
+		গচ্ছ update;
 	}
 
-	if (utime == 0) {
+	যদি (utime == 0) {
 		stime = rtime;
-		goto update;
+		গচ্ছ update;
 	}
 
 	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
@@ -813,7 +813,7 @@ update:
 	 *            = (rtime_i+1 - rtime_i) + utime_i
 	 *            >= utime_i
 	 */
-	if (stime < prev->stime)
+	যদি (stime < prev->stime)
 		stime = prev->stime;
 	utime = rtime - stime;
 
@@ -821,7 +821,7 @@ update:
 	 * Make sure utime doesn't go backwards; this still preserves
 	 * monotonicity for stime, analogous argument to above.
 	 */
-	if (utime < prev->utime) {
+	যদি (utime < prev->utime) {
 		utime = prev->utime;
 		stime = rtime - utime;
 	}
@@ -834,40 +834,40 @@ out:
 	raw_spin_unlock_irqrestore(&prev->lock, flags);
 }
 
-void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+শূন্য task_cputime_adjusted(সংরচনা task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime = {
+	সংরচনা task_cputime cputime = {
 		.sum_exec_runtime = p->se.sum_exec_runtime,
 	};
 
-	if (task_cputime(p, &cputime.utime, &cputime.stime))
+	যদি (task_cputime(p, &cputime.utime, &cputime.stime))
 		cputime.sum_exec_runtime = task_sched_runtime(p);
 	cputime_adjust(&cputime, &p->prev_cputime, ut, st);
 }
-EXPORT_SYMBOL_GPL(task_cputime_adjusted);
+EXPORT_প্রতীক_GPL(task_cputime_adjusted);
 
-void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+শূন্য thread_group_cputime_adjusted(সংরচনা task_struct *p, u64 *ut, u64 *st)
 {
-	struct task_cputime cputime;
+	সংরচনা task_cputime cputime;
 
 	thread_group_cputime(p, &cputime);
-	cputime_adjust(&cputime, &p->signal->prev_cputime, ut, st);
+	cputime_adjust(&cputime, &p->সঙ্কেত->prev_cputime, ut, st);
 }
 #endif /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
 
 #ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
-static u64 vtime_delta(struct vtime *vtime)
+স্থির u64 vtime_delta(সংরচনা vtime *vtime)
 {
 	unsigned long long clock;
 
 	clock = sched_clock();
-	if (clock < vtime->starttime)
-		return 0;
+	যদি (clock < vtime->starttime)
+		প্রত্যাগম 0;
 
-	return clock - vtime->starttime;
+	প্রত্যাগম clock - vtime->starttime;
 }
 
-static u64 get_vtime_delta(struct vtime *vtime)
+স্থির u64 get_vtime_delta(সংরচনা vtime *vtime)
 {
 	u64 delta = vtime_delta(vtime);
 	u64 other;
@@ -883,54 +883,54 @@ static u64 get_vtime_delta(struct vtime *vtime)
 	WARN_ON_ONCE(vtime->state == VTIME_INACTIVE);
 	vtime->starttime += delta;
 
-	return delta - other;
+	প্রত্যাগম delta - other;
 }
 
-static void vtime_account_system(struct task_struct *tsk,
-				 struct vtime *vtime)
+স্থির শূন্য vtime_account_system(সংরচনা task_struct *tsk,
+				 সংরচনা vtime *vtime)
 {
 	vtime->stime += get_vtime_delta(vtime);
-	if (vtime->stime >= TICK_NSEC) {
-		account_system_time(tsk, irq_count(), vtime->stime);
+	যদি (vtime->stime >= TICK_NSEC) {
+		account_system_time(tsk, irq_গুনতি(), vtime->stime);
 		vtime->stime = 0;
 	}
 }
 
-static void vtime_account_guest(struct task_struct *tsk,
-				struct vtime *vtime)
+স্থির শূন্য vtime_account_guest(সংরচনা task_struct *tsk,
+				সংরচনা vtime *vtime)
 {
 	vtime->gtime += get_vtime_delta(vtime);
-	if (vtime->gtime >= TICK_NSEC) {
+	যদি (vtime->gtime >= TICK_NSEC) {
 		account_guest_time(tsk, vtime->gtime);
 		vtime->gtime = 0;
 	}
 }
 
-static void __vtime_account_kernel(struct task_struct *tsk,
-				   struct vtime *vtime)
+স্থির শূন্য __vtime_account_kernel(সংরচনা task_struct *tsk,
+				   সংরচনা vtime *vtime)
 {
 	/* We might have scheduled out from guest path */
-	if (vtime->state == VTIME_GUEST)
+	যদি (vtime->state == VTIME_GUEST)
 		vtime_account_guest(tsk, vtime);
-	else
+	অন্যথা
 		vtime_account_system(tsk, vtime);
 }
 
-void vtime_account_kernel(struct task_struct *tsk)
+শূন্য vtime_account_kernel(সংরচনা task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	সংরচনা vtime *vtime = &tsk->vtime;
 
-	if (!vtime_delta(vtime))
-		return;
+	যদি (!vtime_delta(vtime))
+		প্রত্যাগম;
 
 	write_seqcount_begin(&vtime->seqcount);
 	__vtime_account_kernel(tsk, vtime);
 	write_seqcount_end(&vtime->seqcount);
 }
 
-void vtime_user_enter(struct task_struct *tsk)
+শূন্য vtime_user_enter(সংরচনা task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	সংরচনা vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime_account_system(tsk, vtime);
@@ -938,13 +938,13 @@ void vtime_user_enter(struct task_struct *tsk)
 	write_seqcount_end(&vtime->seqcount);
 }
 
-void vtime_user_exit(struct task_struct *tsk)
+শূন্য vtime_user_exit(সংরচনা task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	সংরচনা vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime->utime += get_vtime_delta(vtime);
-	if (vtime->utime >= TICK_NSEC) {
+	যদি (vtime->utime >= TICK_NSEC) {
 		account_user_time(tsk, vtime->utime);
 		vtime->utime = 0;
 	}
@@ -952,9 +952,9 @@ void vtime_user_exit(struct task_struct *tsk)
 	write_seqcount_end(&vtime->seqcount);
 }
 
-void vtime_guest_enter(struct task_struct *tsk)
+শূন্য vtime_guest_enter(সংরচনা task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	সংরচনা vtime *vtime = &tsk->vtime;
 	/*
 	 * The flags must be updated under the lock with
 	 * the vtime_starttime flush and update.
@@ -968,11 +968,11 @@ void vtime_guest_enter(struct task_struct *tsk)
 	vtime->state = VTIME_GUEST;
 	write_seqcount_end(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_enter);
+EXPORT_প্রতীক_GPL(vtime_guest_enter);
 
-void vtime_guest_exit(struct task_struct *tsk)
+শূন্য vtime_guest_exit(সংরচনা task_struct *tsk)
 {
-	struct vtime *vtime = &tsk->vtime;
+	সংরচনা vtime *vtime = &tsk->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime_account_guest(tsk, vtime);
@@ -980,21 +980,21 @@ void vtime_guest_exit(struct task_struct *tsk)
 	vtime->state = VTIME_SYS;
 	write_seqcount_end(&vtime->seqcount);
 }
-EXPORT_SYMBOL_GPL(vtime_guest_exit);
+EXPORT_প্রতীক_GPL(vtime_guest_exit);
 
-static void __vtime_account_idle(struct vtime *vtime)
+স্থির শূন্য __vtime_account_idle(সংরচনা vtime *vtime)
 {
 	account_idle_time(get_vtime_delta(vtime));
 }
 
-void vtime_task_switch_generic(struct task_struct *prev)
+শূন্য vtime_task_switch_generic(সংরচনা task_struct *prev)
 {
-	struct vtime *vtime = &prev->vtime;
+	সংরচনা vtime *vtime = &prev->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (vtime->state == VTIME_IDLE)
+	যদি (vtime->state == VTIME_IDLE)
 		__vtime_account_idle(vtime);
-	else
+	অন্যথা
 		__vtime_account_kernel(prev, vtime);
 	vtime->state = VTIME_INACTIVE;
 	vtime->cpu = -1;
@@ -1003,20 +1003,20 @@ void vtime_task_switch_generic(struct task_struct *prev)
 	vtime = &current->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (is_idle_task(current))
+	যদি (is_idle_task(current))
 		vtime->state = VTIME_IDLE;
-	else if (current->flags & PF_VCPU)
+	অন্যথা যদি (current->flags & PF_VCPU)
 		vtime->state = VTIME_GUEST;
-	else
+	অন্যথা
 		vtime->state = VTIME_SYS;
 	vtime->starttime = sched_clock();
 	vtime->cpu = smp_processor_id();
 	write_seqcount_end(&vtime->seqcount);
 }
 
-void vtime_init_idle(struct task_struct *t, int cpu)
+শূন্য vtime_init_idle(সংরচনা task_struct *t, পূর্ণাঙ্ক cpu)
 {
-	struct vtime *vtime = &t->vtime;
+	সংরচনা vtime *vtime = &t->vtime;
 	unsigned long flags;
 
 	local_irq_save(flags);
@@ -1028,25 +1028,25 @@ void vtime_init_idle(struct task_struct *t, int cpu)
 	local_irq_restore(flags);
 }
 
-u64 task_gtime(struct task_struct *t)
+u64 task_gtime(সংরচনা task_struct *t)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	সংরচনা vtime *vtime = &t->vtime;
+	unsigned পূর্ণাঙ্ক seq;
 	u64 gtime;
 
-	if (!vtime_accounting_enabled())
-		return t->gtime;
+	যদি (!vtime_accounting_enabled())
+		প্রত্যাগম t->gtime;
 
-	do {
+	কুরু {
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		gtime = t->gtime;
-		if (vtime->state == VTIME_GUEST)
+		যদি (vtime->state == VTIME_GUEST)
 			gtime += vtime->gtime + vtime_delta(vtime);
 
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} যাবত্ (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return gtime;
+	প্রত্যাগম gtime;
 }
 
 /*
@@ -1054,20 +1054,20 @@ u64 task_gtime(struct task_struct *t)
  * add up the pending nohz execution time since the last
  * cputime snapshot.
  */
-bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
+bool task_cputime(সংরচনা task_struct *t, u64 *utime, u64 *stime)
 {
-	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	সংরচনা vtime *vtime = &t->vtime;
+	unsigned পূর্ণাঙ্ক seq;
 	u64 delta;
-	int ret;
+	পূর্ণাঙ্ক ret;
 
-	if (!vtime_accounting_enabled()) {
+	যদি (!vtime_accounting_enabled()) {
 		*utime = t->utime;
 		*stime = t->stime;
-		return false;
+		প্রত্যাগম false;
 	}
 
-	do {
+	কুরু {
 		ret = false;
 		seq = read_seqcount_begin(&vtime->seqcount);
 
@@ -1075,8 +1075,8 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		*stime = t->stime;
 
 		/* Task is sleeping or idle, nothing to add */
-		if (vtime->state < VTIME_SYS)
-			continue;
+		যদি (vtime->state < VTIME_SYS)
+			অনুবর্ত;
 
 		ret = true;
 		delta = vtime_delta(vtime);
@@ -1085,25 +1085,25 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		 * Task runs either in user (including guest) or kernel space,
 		 * add pending nohz time to the right place.
 		 */
-		if (vtime->state == VTIME_SYS)
+		যদি (vtime->state == VTIME_SYS)
 			*stime += vtime->stime + delta;
-		else
+		অন্যথা
 			*utime += vtime->utime + delta;
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} যাবত্ (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return ret;
+	প্রত্যাগম ret;
 }
 
-static int vtime_state_fetch(struct vtime *vtime, int cpu)
+স্থির পূর্ণাঙ্ক vtime_state_fetch(সংরচনা vtime *vtime, পূর্ণাঙ্ক cpu)
 {
-	int state = READ_ONCE(vtime->state);
+	পূর্ণাঙ্ক state = READ_ONCE(vtime->state);
 
 	/*
 	 * We raced against a context switch, fetch the
 	 * kcpustat task again.
 	 */
-	if (vtime->cpu != cpu && vtime->cpu != -1)
-		return -EAGAIN;
+	যদি (vtime->cpu != cpu && vtime->cpu != -1)
+		প্রত্যাগম -EAGAIN;
 
 	/*
 	 * Two possible things here:
@@ -1114,37 +1114,37 @@ static int vtime_state_fetch(struct vtime *vtime, int cpu)
 	 *
 	 * Case 1) is ok but 2) is not. So wait for a safe VTIME state.
 	 */
-	if (state == VTIME_INACTIVE)
-		return -EAGAIN;
+	যদি (state == VTIME_INACTIVE)
+		প্রত্যাগম -EAGAIN;
 
-	return state;
+	প্রত্যাগম state;
 }
 
-static u64 kcpustat_user_vtime(struct vtime *vtime)
+স্থির u64 kcpustat_user_vtime(সংরচনা vtime *vtime)
 {
-	if (vtime->state == VTIME_USER)
-		return vtime->utime + vtime_delta(vtime);
-	else if (vtime->state == VTIME_GUEST)
-		return vtime->gtime + vtime_delta(vtime);
-	return 0;
+	যদি (vtime->state == VTIME_USER)
+		প্রত্যাগম vtime->utime + vtime_delta(vtime);
+	অন্যথা যদি (vtime->state == VTIME_GUEST)
+		প্রত্যাগম vtime->gtime + vtime_delta(vtime);
+	প্রত্যাগম 0;
 }
 
-static int kcpustat_field_vtime(u64 *cpustat,
-				struct task_struct *tsk,
-				enum cpu_usage_stat usage,
-				int cpu, u64 *val)
+স্থির পূর্ণাঙ্ক kcpustat_field_vtime(u64 *cpustat,
+				সংরচনা task_struct *tsk,
+				গণনা cpu_usage_stat usage,
+				পূর্ণাঙ্ক cpu, u64 *val)
 {
-	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	সংরচনা vtime *vtime = &tsk->vtime;
+	unsigned পূর্ণাঙ্ক seq;
 
-	do {
-		int state;
+	কুরু {
+		পূর্ণাঙ্ক state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		যদি (state < 0)
+			প্রত্যাগম state;
 
 		*val = cpustat[usage];
 
@@ -1155,100 +1155,100 @@ static int kcpustat_field_vtime(u64 *cpustat,
 		 * updates which is a no go on nohz_full (although the scheduler
 		 * may still interrupt the target if rescheduling is needed...)
 		 */
-		switch (usage) {
-		case CPUTIME_SYSTEM:
-			if (state == VTIME_SYS)
+		বিকল্প (usage) {
+		পক্ষ CPUTIME_SYSTEM:
+			যদি (state == VTIME_SYS)
 				*val += vtime->stime + vtime_delta(vtime);
-			break;
-		case CPUTIME_USER:
-			if (task_nice(tsk) <= 0)
+			ভঙ্গ;
+		পক্ষ CPUTIME_USER:
+			যদি (task_nice(tsk) <= 0)
 				*val += kcpustat_user_vtime(vtime);
-			break;
-		case CPUTIME_NICE:
-			if (task_nice(tsk) > 0)
+			ভঙ্গ;
+		পক্ষ CPUTIME_NICE:
+			যদি (task_nice(tsk) > 0)
 				*val += kcpustat_user_vtime(vtime);
-			break;
-		case CPUTIME_GUEST:
-			if (state == VTIME_GUEST && task_nice(tsk) <= 0)
+			ভঙ্গ;
+		পক্ষ CPUTIME_GUEST:
+			যদি (state == VTIME_GUEST && task_nice(tsk) <= 0)
 				*val += vtime->gtime + vtime_delta(vtime);
-			break;
-		case CPUTIME_GUEST_NICE:
-			if (state == VTIME_GUEST && task_nice(tsk) > 0)
+			ভঙ্গ;
+		পক্ষ CPUTIME_GUEST_NICE:
+			যদি (state == VTIME_GUEST && task_nice(tsk) > 0)
 				*val += vtime->gtime + vtime_delta(vtime);
-			break;
-		case CPUTIME_IDLE:
-			if (state == VTIME_IDLE && !cpu_has_iowait(cpu))
+			ভঙ্গ;
+		পক্ষ CPUTIME_IDLE:
+			যদি (state == VTIME_IDLE && !cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
-			break;
-		case CPUTIME_IOWAIT:
-			if (state == VTIME_IDLE && cpu_has_iowait(cpu))
+			ভঙ্গ;
+		পক্ষ CPUTIME_IOWAIT:
+			যদি (state == VTIME_IDLE && cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
-			break;
-		default:
-			break;
+			ভঙ্গ;
+		স্বভাব:
+			ভঙ্গ;
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} যাবত্ (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	প্রত্যাগম 0;
 }
 
-u64 kcpustat_field(enum cpu_usage_stat usage, int cpu)
+u64 kcpustat_field(গণনা cpu_usage_stat usage, পূর্ণাঙ্ক cpu)
 {
 	u64 *cpustat = kcpustat_cpu(cpu).cpustat;
 	u64 val = cpustat[usage];
-	struct rq *rq;
-	int err;
+	সংরচনা rq *rq;
+	পূর্ণাঙ্ক err;
 
-	if (!vtime_generic_enabled_cpu(cpu))
-		return kcpustat_field_default(usage, cpu);
+	যদি (!vtime_generic_enabled_cpu(cpu))
+		প্রত্যাগম kcpustat_field_default(usage, cpu);
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
-		struct task_struct *curr;
+	প্রতি (;;) {
+		সংরচনা task_struct *curr;
 
 		rcu_read_lock();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		যদি (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
-			return cpustat[usage];
+			প্রত্যাগম cpustat[usage];
 		}
 
 		err = kcpustat_field_vtime(cpustat, curr, usage, cpu, &val);
 		rcu_read_unlock();
 
-		if (!err)
-			return val;
+		যদি (!err)
+			প্রত্যাগম val;
 
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_field);
+EXPORT_প্রতীক_GPL(kcpustat_field);
 
-static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
-				    const struct kernel_cpustat *src,
-				    struct task_struct *tsk, int cpu)
+স্থির পূর্ণাঙ্ক kcpustat_cpu_fetch_vtime(সংরচনা kernel_cpustat *dst,
+				    ধ্রুব সংরচনা kernel_cpustat *src,
+				    সংরচনা task_struct *tsk, পূর্ণাঙ্ক cpu)
 {
-	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	সংরচনা vtime *vtime = &tsk->vtime;
+	unsigned পূর্ণাঙ্ক seq;
 
-	do {
+	কুরু {
 		u64 *cpustat;
 		u64 delta;
-		int state;
+		পূর্ণাঙ্ক state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		যদি (state < 0)
+			প্রত্যাগম state;
 
 		*dst = *src;
 		cpustat = dst->cpustat;
 
 		/* Task is sleeping or dead, nothing to add */
-		if (state < VTIME_IDLE)
-			continue;
+		যদি (state < VTIME_IDLE)
+			অনুবর্ত;
 
 		delta = vtime_delta(vtime);
 
@@ -1256,72 +1256,72 @@ static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
 		 * Task runs either in user (including guest) or kernel space,
 		 * add pending nohz time to the right place.
 		 */
-		switch (state) {
-		case VTIME_SYS:
+		বিকল্প (state) {
+		পক্ষ VTIME_SYS:
 			cpustat[CPUTIME_SYSTEM] += vtime->stime + delta;
-			break;
-		case VTIME_USER:
-			if (task_nice(tsk) > 0)
+			ভঙ্গ;
+		পক্ষ VTIME_USER:
+			যদি (task_nice(tsk) > 0)
 				cpustat[CPUTIME_NICE] += vtime->utime + delta;
-			else
+			অন্যথা
 				cpustat[CPUTIME_USER] += vtime->utime + delta;
-			break;
-		case VTIME_GUEST:
-			if (task_nice(tsk) > 0) {
+			ভঙ্গ;
+		পক্ষ VTIME_GUEST:
+			যদি (task_nice(tsk) > 0) {
 				cpustat[CPUTIME_GUEST_NICE] += vtime->gtime + delta;
 				cpustat[CPUTIME_NICE] += vtime->gtime + delta;
-			} else {
+			} অন্যথা {
 				cpustat[CPUTIME_GUEST] += vtime->gtime + delta;
 				cpustat[CPUTIME_USER] += vtime->gtime + delta;
 			}
-			break;
-		case VTIME_IDLE:
-			if (cpu_has_iowait(cpu))
+			ভঙ্গ;
+		পক্ষ VTIME_IDLE:
+			যদি (cpu_has_iowait(cpu))
 				cpustat[CPUTIME_IOWAIT] += delta;
-			else
+			অন্যথা
 				cpustat[CPUTIME_IDLE] += delta;
-			break;
-		default:
+			ভঙ্গ;
+		স্বভাব:
 			WARN_ON_ONCE(1);
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} যাবত্ (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	প্রত্যাগম 0;
 }
 
-void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
+শূন্য kcpustat_cpu_fetch(সংরচনা kernel_cpustat *dst, পূর্ণাঙ্ক cpu)
 {
-	const struct kernel_cpustat *src = &kcpustat_cpu(cpu);
-	struct rq *rq;
-	int err;
+	ধ্রুব সংরচনা kernel_cpustat *src = &kcpustat_cpu(cpu);
+	সংরচনা rq *rq;
+	পূর্ণাঙ্ক err;
 
-	if (!vtime_generic_enabled_cpu(cpu)) {
+	যদি (!vtime_generic_enabled_cpu(cpu)) {
 		kcpustat_cpu_fetch_default(dst, cpu);
-		return;
+		প্রত্যাগম;
 	}
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
-		struct task_struct *curr;
+	প্রতি (;;) {
+		সংরচনা task_struct *curr;
 
 		rcu_read_lock();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		যদি (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
 			kcpustat_cpu_fetch_default(dst, cpu);
-			return;
+			প্রত্যাগম;
 		}
 
 		err = kcpustat_cpu_fetch_vtime(dst, src, curr, cpu);
 		rcu_read_unlock();
 
-		if (!err)
-			return;
+		যদি (!err)
+			প্রত্যাগম;
 
 		cpu_relax();
 	}
 }
-EXPORT_SYMBOL_GPL(kcpustat_cpu_fetch);
+EXPORT_প্রতীক_GPL(kcpustat_cpu_fetch);
 
 #endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */

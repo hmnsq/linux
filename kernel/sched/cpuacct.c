@@ -6,95 +6,95 @@
  * Based on the work by Paul Menage (menage@google.com) and Balbir Singh
  * (balbir@in.ibm.com).
  */
-#include <linux/sched/cputime.h>
-#include "sched.h"
+#অন্তর্ভাব <linux/sched/cputime.h>
+#অন্তর্ভাব "sched.h"
 
 /* Time spent by the tasks of the CPU accounting group executing in ... */
-enum cpuacct_stat_index {
+গণনা cpuacct_stat_index {
 	CPUACCT_STAT_USER,	/* ... user mode */
 	CPUACCT_STAT_SYSTEM,	/* ... kernel mode */
 
 	CPUACCT_STAT_NSTATS,
 };
 
-static const char * const cpuacct_stat_desc[] = {
+স্থির ধ্রুব বর্ণ * ধ্রুব cpuacct_stat_desc[] = {
 	[CPUACCT_STAT_USER] = "user",
 	[CPUACCT_STAT_SYSTEM] = "system",
 };
 
 /* track CPU usage of a group of tasks and its child groups */
-struct cpuacct {
-	struct cgroup_subsys_state	css;
+সংরচনা cpuacct {
+	সংরচনা cgroup_subsys_state	css;
 	/* cpuusage holds pointer to a u64-type object on every CPU */
 	u64 __percpu	*cpuusage;
-	struct kernel_cpustat __percpu	*cpustat;
+	সংরচনা kernel_cpustat __percpu	*cpustat;
 };
 
-static inline struct cpuacct *css_ca(struct cgroup_subsys_state *css)
+স্থির অন্তঃস্থ সংরচনা cpuacct *css_ca(সংরচনা cgroup_subsys_state *css)
 {
-	return css ? container_of(css, struct cpuacct, css) : NULL;
+	প্রত্যাগম css ? container_of(css, সংরচনা cpuacct, css) : রিক্ত;
 }
 
 /* Return CPU accounting group to which this task belongs */
-static inline struct cpuacct *task_ca(struct task_struct *tsk)
+স্থির অন্তঃস্থ সংরচনা cpuacct *task_ca(সংরচনা task_struct *tsk)
 {
-	return css_ca(task_css(tsk, cpuacct_cgrp_id));
+	প্রত্যাগম css_ca(task_css(tsk, cpuacct_cgrp_id));
 }
 
-static inline struct cpuacct *parent_ca(struct cpuacct *ca)
+স্থির অন্তঃস্থ সংরচনা cpuacct *parent_ca(সংরচনা cpuacct *ca)
 {
-	return css_ca(ca->css.parent);
+	প্রত্যাগম css_ca(ca->css.parent);
 }
 
-static DEFINE_PER_CPU(u64, root_cpuacct_cpuusage);
-static struct cpuacct root_cpuacct = {
+স্থির DEFINE_PER_CPU(u64, মূল_cpuacct_cpuusage);
+স্থির সংরচনা cpuacct মূল_cpuacct = {
 	.cpustat	= &kernel_cpustat,
-	.cpuusage	= &root_cpuacct_cpuusage,
+	.cpuusage	= &মূল_cpuacct_cpuusage,
 };
 
 /* Create a new CPU accounting group */
-static struct cgroup_subsys_state *
-cpuacct_css_alloc(struct cgroup_subsys_state *parent_css)
+স্থির সংরচনা cgroup_subsys_state *
+cpuacct_css_alloc(সংরচনা cgroup_subsys_state *parent_css)
 {
-	struct cpuacct *ca;
+	সংরচনা cpuacct *ca;
 
-	if (!parent_css)
-		return &root_cpuacct.css;
+	যদি (!parent_css)
+		প্রত্যাগম &মূল_cpuacct.css;
 
 	ca = kzalloc_obj(*ca);
-	if (!ca)
-		goto out;
+	যদি (!ca)
+		গচ্ছ out;
 
 	ca->cpuusage = alloc_percpu(u64);
-	if (!ca->cpuusage)
-		goto out_free_ca;
+	যদি (!ca->cpuusage)
+		গচ্ছ out_free_ca;
 
-	ca->cpustat = alloc_percpu(struct kernel_cpustat);
-	if (!ca->cpustat)
-		goto out_free_cpuusage;
+	ca->cpustat = alloc_percpu(সংরচনা kernel_cpustat);
+	যদি (!ca->cpustat)
+		গচ্ছ out_free_cpuusage;
 
-	return &ca->css;
+	প্রত্যাগম &ca->css;
 
 out_free_cpuusage:
 	free_percpu(ca->cpuusage);
 out_free_ca:
 	kfree(ca);
 out:
-	return ERR_PTR(-ENOMEM);
+	প্রত্যাগম ERR_PTR(-ENOMEM);
 }
 
 /* Destroy an existing CPU accounting group */
-static void cpuacct_css_free(struct cgroup_subsys_state *css)
+স্থির শূন্য cpuacct_css_free(সংরচনা cgroup_subsys_state *css)
 {
-	struct cpuacct *ca = css_ca(css);
+	সংরচনা cpuacct *ca = css_ca(css);
 
 	free_percpu(ca->cpustat);
 	free_percpu(ca->cpuusage);
 	kfree(ca);
 }
 
-static u64 cpuacct_cpuusage_read(struct cpuacct *ca, int cpu,
-				 enum cpuacct_stat_index index)
+স্থির u64 cpuacct_cpuusage_read(সংরচনা cpuacct *ca, পূর্ণাঙ্ক cpu,
+				 গণনা cpuacct_stat_index index)
 {
 	u64 *cpuusage = per_cpu_ptr(ca->cpuusage, cpu);
 	u64 *cpustat = per_cpu_ptr(ca->cpustat, cpu)->cpustat;
@@ -104,8 +104,8 @@ static u64 cpuacct_cpuusage_read(struct cpuacct *ca, int cpu,
 	 * We allow index == CPUACCT_STAT_NSTATS here to read
 	 * the sum of usages.
 	 */
-	if (WARN_ON_ONCE(index > CPUACCT_STAT_NSTATS))
-		return 0;
+	যদি (WARN_ON_ONCE(index > CPUACCT_STAT_NSTATS))
+		প্রত্যাগম 0;
 
 #ifndef CONFIG_64BIT
 	/*
@@ -114,34 +114,34 @@ static u64 cpuacct_cpuusage_read(struct cpuacct *ca, int cpu,
 	raw_spin_rq_lock_irq(cpu_rq(cpu));
 #endif
 
-	switch (index) {
-	case CPUACCT_STAT_USER:
+	বিকল্প (index) {
+	পক্ষ CPUACCT_STAT_USER:
 		data = cpustat[CPUTIME_USER] + cpustat[CPUTIME_NICE];
-		break;
-	case CPUACCT_STAT_SYSTEM:
+		ভঙ্গ;
+	পক্ষ CPUACCT_STAT_SYSTEM:
 		data = cpustat[CPUTIME_SYSTEM] + cpustat[CPUTIME_IRQ] +
 			cpustat[CPUTIME_SOFTIRQ];
-		break;
-	case CPUACCT_STAT_NSTATS:
+		ভঙ্গ;
+	পক্ষ CPUACCT_STAT_NSTATS:
 		data = *cpuusage;
-		break;
+		ভঙ্গ;
 	}
 
 #ifndef CONFIG_64BIT
 	raw_spin_rq_unlock_irq(cpu_rq(cpu));
 #endif
 
-	return data;
+	প্রত্যাগম data;
 }
 
-static void cpuacct_cpuusage_write(struct cpuacct *ca, int cpu)
+স্থির শূন্য cpuacct_cpuusage_write(সংরচনা cpuacct *ca, পূর্ণাঙ্ক cpu)
 {
 	u64 *cpuusage = per_cpu_ptr(ca->cpuusage, cpu);
 	u64 *cpustat = per_cpu_ptr(ca->cpustat, cpu)->cpustat;
 
 	/* Don't allow to reset global kernel_cpustat */
-	if (ca == &root_cpuacct)
-		return;
+	যদি (ca == &মূল_cpuacct)
+		প্রত্যাগম;
 
 #ifndef CONFIG_64BIT
 	/*
@@ -160,114 +160,114 @@ static void cpuacct_cpuusage_write(struct cpuacct *ca, int cpu)
 }
 
 /* Return total CPU usage (in nanoseconds) of a group */
-static u64 __cpuusage_read(struct cgroup_subsys_state *css,
-			   enum cpuacct_stat_index index)
+স্থির u64 __cpuusage_read(সংরচনা cgroup_subsys_state *css,
+			   গণনা cpuacct_stat_index index)
 {
-	struct cpuacct *ca = css_ca(css);
+	সংরচনা cpuacct *ca = css_ca(css);
 	u64 totalcpuusage = 0;
-	int i;
+	পূর্ণাঙ্ক i;
 
 	for_each_possible_cpu(i)
 		totalcpuusage += cpuacct_cpuusage_read(ca, i, index);
 
-	return totalcpuusage;
+	প্রত্যাগম totalcpuusage;
 }
 
-static u64 cpuusage_user_read(struct cgroup_subsys_state *css,
-			      struct cftype *cft)
+স্থির u64 cpuusage_user_read(সংরচনা cgroup_subsys_state *css,
+			      সংরচনা cftype *cft)
 {
-	return __cpuusage_read(css, CPUACCT_STAT_USER);
+	প্রত্যাগম __cpuusage_read(css, CPUACCT_STAT_USER);
 }
 
-static u64 cpuusage_sys_read(struct cgroup_subsys_state *css,
-			     struct cftype *cft)
+স্থির u64 cpuusage_sys_read(সংরচনা cgroup_subsys_state *css,
+			     সংরচনা cftype *cft)
 {
-	return __cpuusage_read(css, CPUACCT_STAT_SYSTEM);
+	প্রত্যাগম __cpuusage_read(css, CPUACCT_STAT_SYSTEM);
 }
 
-static u64 cpuusage_read(struct cgroup_subsys_state *css, struct cftype *cft)
+স্থির u64 cpuusage_read(সংরচনা cgroup_subsys_state *css, সংরচনা cftype *cft)
 {
-	return __cpuusage_read(css, CPUACCT_STAT_NSTATS);
+	প্রত্যাগম __cpuusage_read(css, CPUACCT_STAT_NSTATS);
 }
 
-static int cpuusage_write(struct cgroup_subsys_state *css, struct cftype *cft,
+স্থির পূর্ণাঙ্ক cpuusage_write(সংরচনা cgroup_subsys_state *css, সংরচনা cftype *cft,
 			  u64 val)
 {
-	struct cpuacct *ca = css_ca(css);
-	int cpu;
+	সংরচনা cpuacct *ca = css_ca(css);
+	পূর্ণাঙ্ক cpu;
 
 	/*
 	 * Only allow '0' here to do a reset.
 	 */
-	if (val)
-		return -EINVAL;
+	যদি (val)
+		প্রত্যাগম -EINVAL;
 
 	for_each_possible_cpu(cpu)
 		cpuacct_cpuusage_write(ca, cpu);
 
-	return 0;
+	প্রত্যাগম 0;
 }
 
-static int __cpuacct_percpu_seq_show(struct seq_file *m,
-				     enum cpuacct_stat_index index)
+স্থির পূর্ণাঙ্ক __cpuacct_percpu_seq_show(সংরচনা seq_file *m,
+				     গণনা cpuacct_stat_index index)
 {
-	struct cpuacct *ca = css_ca(seq_css(m));
+	সংরচনা cpuacct *ca = css_ca(seq_css(m));
 	u64 percpu;
-	int i;
+	পূর্ণাঙ্ক i;
 
 	for_each_possible_cpu(i) {
 		percpu = cpuacct_cpuusage_read(ca, i, index);
 		seq_printf(m, "%llu ", (unsigned long long) percpu);
 	}
 	seq_printf(m, "\n");
-	return 0;
+	প্রত্যাগম 0;
 }
 
-static int cpuacct_percpu_user_seq_show(struct seq_file *m, void *V)
+স্থির পূর্ণাঙ্ক cpuacct_percpu_user_seq_show(সংরচনা seq_file *m, শূন্য *V)
 {
-	return __cpuacct_percpu_seq_show(m, CPUACCT_STAT_USER);
+	প্রত্যাগম __cpuacct_percpu_seq_show(m, CPUACCT_STAT_USER);
 }
 
-static int cpuacct_percpu_sys_seq_show(struct seq_file *m, void *V)
+স্থির পূর্ণাঙ্ক cpuacct_percpu_sys_seq_show(সংরচনা seq_file *m, শূন্য *V)
 {
-	return __cpuacct_percpu_seq_show(m, CPUACCT_STAT_SYSTEM);
+	প্রত্যাগম __cpuacct_percpu_seq_show(m, CPUACCT_STAT_SYSTEM);
 }
 
-static int cpuacct_percpu_seq_show(struct seq_file *m, void *V)
+স্থির পূর্ণাঙ্ক cpuacct_percpu_seq_show(সংরচনা seq_file *m, শূন্য *V)
 {
-	return __cpuacct_percpu_seq_show(m, CPUACCT_STAT_NSTATS);
+	প্রত্যাগম __cpuacct_percpu_seq_show(m, CPUACCT_STAT_NSTATS);
 }
 
-static int cpuacct_all_seq_show(struct seq_file *m, void *V)
+স্থির পূর্ণাঙ্ক cpuacct_all_seq_show(সংরচনা seq_file *m, শূন্য *V)
 {
-	struct cpuacct *ca = css_ca(seq_css(m));
-	int index;
-	int cpu;
+	সংরচনা cpuacct *ca = css_ca(seq_css(m));
+	পূর্ণাঙ্ক index;
+	পূর্ণাঙ্ক cpu;
 
 	seq_puts(m, "cpu");
-	for (index = 0; index < CPUACCT_STAT_NSTATS; index++)
+	প্রতি (index = 0; index < CPUACCT_STAT_NSTATS; index++)
 		seq_printf(m, " %s", cpuacct_stat_desc[index]);
 	seq_puts(m, "\n");
 
 	for_each_possible_cpu(cpu) {
 		seq_printf(m, "%d", cpu);
-		for (index = 0; index < CPUACCT_STAT_NSTATS; index++)
+		প্রতি (index = 0; index < CPUACCT_STAT_NSTATS; index++)
 			seq_printf(m, " %llu",
 				   cpuacct_cpuusage_read(ca, cpu, index));
 		seq_puts(m, "\n");
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
-static int cpuacct_stats_show(struct seq_file *sf, void *v)
+স্থির পূর্ণাঙ্ক cpuacct_stats_show(সংরচনা seq_file *sf, শূন্য *v)
 {
-	struct cpuacct *ca = css_ca(seq_css(sf));
-	struct task_cputime cputime;
+	সংরচনা cpuacct *ca = css_ca(seq_css(sf));
+	সংরচনা task_cputime cputime;
 	u64 val[CPUACCT_STAT_NSTATS];
-	int cpu;
-	int stat;
+	পূর্ণাঙ্ক cpu;
+	পূর্ণাঙ্ক stat;
 
-	memset(&cputime, 0, sizeof(cputime));
+	memset(&cputime, 0, পরিমাণ(cputime));
 	for_each_possible_cpu(cpu) {
 		u64 *cpustat = per_cpu_ptr(ca->cpustat, cpu)->cpustat;
 
@@ -283,15 +283,15 @@ static int cpuacct_stats_show(struct seq_file *sf, void *v)
 	cputime_adjust(&cputime, &seq_css(sf)->cgroup->prev_cputime,
 		&val[CPUACCT_STAT_USER], &val[CPUACCT_STAT_SYSTEM]);
 
-	for (stat = 0; stat < CPUACCT_STAT_NSTATS; stat++) {
+	প্রতি (stat = 0; stat < CPUACCT_STAT_NSTATS; stat++) {
 		seq_printf(sf, "%s %llu\n", cpuacct_stat_desc[stat],
 			nsec_to_clock_t(val[stat]));
 	}
 
-	return 0;
+	প্রত্যাগম 0;
 }
 
-static struct cftype files[] = {
+স্থির সংরচনা cftype files[] = {
 	{
 		.name = "usage",
 		.read_u64 = cpuusage_read,
@@ -333,14 +333,14 @@ static struct cftype files[] = {
  *
  * called with rq->lock held.
  */
-void cpuacct_charge(struct task_struct *tsk, u64 cputime)
+শূন্য cpuacct_charge(সংরচনা task_struct *tsk, u64 cputime)
 {
-	unsigned int cpu = task_cpu(tsk);
-	struct cpuacct *ca;
+	unsigned পূর্ণাঙ্ক cpu = task_cpu(tsk);
+	সংরচনা cpuacct *ca;
 
 	lockdep_assert_rq_held(cpu_rq(cpu));
 
-	for (ca = task_ca(tsk); ca; ca = parent_ca(ca))
+	প্রতি (ca = task_ca(tsk); ca; ca = parent_ca(ca))
 		*per_cpu_ptr(ca->cpuusage, cpu) += cputime;
 }
 
@@ -349,15 +349,15 @@ void cpuacct_charge(struct task_struct *tsk, u64 cputime)
  *
  * Note: it's the caller that updates the account of the root cgroup.
  */
-void cpuacct_account_field(struct task_struct *tsk, int index, u64 val)
+শূন্য cpuacct_account_field(সংরচনা task_struct *tsk, পূর্ণাঙ্ক index, u64 val)
 {
-	struct cpuacct *ca;
+	সংরচনা cpuacct *ca;
 
-	for (ca = task_ca(tsk); ca != &root_cpuacct; ca = parent_ca(ca))
+	প্রতি (ca = task_ca(tsk); ca != &মূল_cpuacct; ca = parent_ca(ca))
 		__this_cpu_add(ca->cpustat->cpustat[index], val);
 }
 
-struct cgroup_subsys cpuacct_cgrp_subsys = {
+সংরচনা cgroup_subsys cpuacct_cgrp_subsys = {
 	.css_alloc	= cpuacct_css_alloc,
 	.css_free	= cpuacct_css_free,
 	.legacy_cftypes	= files,
