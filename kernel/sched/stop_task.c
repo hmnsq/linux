@@ -9,59 +9,59 @@
  */
 #include "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+static puur_naa_nka
+select_task_rq_stop(sa_nracanaa task_struct *p, puur_naa_nka cpu, puur_naa_nka flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	ꦮꦭꦶ task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+static puur_naa_nka
+balance_stop(sa_nracanaa rq *rq, sa_nracanaa rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	ꦮꦭꦶ sched_stop_runnable(rq);
 }
 
 static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+wakeup_preempt_stop(sa_nracanaa rq *rq, sa_nracanaa task_struct *p, puur_naa_nka flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+static void set_next_task_stop(sa_nracanaa rq *rq, sa_nracanaa task_struct *stop, ga_nanaa snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	ꦪꦼꦤ꧀ (type == SNT_REPICK)
+		ꦮꦭꦶ;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+static sa_nracanaa task_struct *pick_task_stop(sa_nracanaa rq *rq, sa_nracanaa rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	ꦪꦼꦤ꧀ (!sched_stop_runnable(rq))
+		ꦮꦭꦶ NULL;
 
-	return rq->stop;
+	ꦮꦭꦶ rq->stop;
 }
 
 static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+enqueue_task_stop(sa_nracanaa rq *rq, sa_nracanaa task_struct *p, puur_naa_nka flags)
 {
 	add_nr_running(rq, 1);
 }
 
 static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+dequeue_task_stop(sa_nracanaa rq *rq, sa_nracanaa task_struct *p, puur_naa_nka flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	ꦮꦭꦶ true;
 }
 
-static void yield_task_stop(struct rq *rq)
+static void yield_task_stop(sa_nracanaa rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+static void put_prev_task_stop(sa_nracanaa rq *rq, sa_nracanaa task_struct *prev, sa_nracanaa task_struct *next)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+static void task_tick_stop(sa_nracanaa rq *rq, sa_nracanaa task_struct *curr, puur_naa_nka queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+static void switching_to_stop(sa_nracanaa rq *rq, sa_nracanaa task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
 static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+prio_changed_stop(sa_nracanaa rq *rq, sa_nracanaa task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	ꦪꦼꦤ꧀ (p->prio == oldprio)
+		ꦮꦭꦶ;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+static void update_curr_stop(sa_nracanaa rq *rq)
 {
 }
 
