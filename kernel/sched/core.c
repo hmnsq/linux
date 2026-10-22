@@ -8,66 +8,66 @@
  *  Copyright (C) 1998-2024  Ingo Molnar, Red Hat
  */
 #define INSTANTIATE_EXPORTED_MIGRATE_DISABLE
-#include <linux/sched.h>
-#include <linux/highmem.h>
-#include <linux/hrtimer_api.h>
-#include <linux/ktime_api.h>
-#include <linux/sched/signal.h>
-#include <linux/syscalls_api.h>
-#include <linux/debug_locks.h>
-#include <linux/prefetch.h>
-#include <linux/capability.h>
-#include <linux/pgtable_api.h>
-#include <linux/wait_bit.h>
-#include <linux/jiffies.h>
-#include <linux/spinlock_api.h>
-#include <linux/cpumask_api.h>
-#include <linux/lockdep_api.h>
-#include <linux/hardirq.h>
-#include <linux/softirq.h>
-#include <linux/refcount_api.h>
-#include <linux/topology.h>
-#include <linux/sched/clock.h>
-#include <linux/sched/cond_resched.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/debug.h>
-#include <linux/sched/hotplug.h>
-#include <linux/sched/init.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/loadavg.h>
-#include <linux/sched/mm.h>
-#include <linux/sched/nohz.h>
-#include <linux/sched/rseq_api.h>
-#include <linux/sched/rt.h>
+#ضمن <linux/sched.h>
+#ضمن <linux/highmem.h>
+#ضمن <linux/hrtimer_api.h>
+#ضمن <linux/ktime_api.h>
+#ضمن <linux/sched/signal.h>
+#ضمن <linux/syscalls_api.h>
+#ضمن <linux/debug_locks.h>
+#ضمن <linux/prefetch.h>
+#ضمن <linux/capability.h>
+#ضمن <linux/pgtable_api.h>
+#ضمن <linux/wait_bit.h>
+#ضمن <linux/jiffies.h>
+#ضمن <linux/spinlock_api.h>
+#ضمن <linux/cpumask_api.h>
+#ضمن <linux/lockdep_api.h>
+#ضمن <linux/hardirq.h>
+#ضمن <linux/softirq.h>
+#ضمن <linux/refcount_api.h>
+#ضمن <linux/topology.h>
+#ضمن <linux/sched/clock.h>
+#ضمن <linux/sched/cond_resched.h>
+#ضمن <linux/sched/cputime.h>
+#ضمن <linux/sched/debug.h>
+#ضمن <linux/sched/hotplug.h>
+#ضمن <linux/sched/init.h>
+#ضمن <linux/sched/isolation.h>
+#ضمن <linux/sched/loadavg.h>
+#ضمن <linux/sched/mm.h>
+#ضمن <linux/sched/nohz.h>
+#ضمن <linux/sched/rseq_api.h>
+#ضمن <linux/sched/rt.h>
 
-#include <linux/context_tracking.h>
-#include <linux/cpuset.h>
-#include <linux/delayacct.h>
-#include <linux/init_task.h>
-#include <linux/interrupt.h>
-#include <linux/ioprio.h>
-#include <linux/kallsyms.h>
-#include <linux/kcov.h>
-#include <linux/kprobes.h>
-#include <linux/llist_api.h>
-#include <linux/mmu_context.h>
-#include <linux/mmzone.h>
-#include <linux/mutex_api.h>
-#include <linux/nmi.h>
-#include <linux/nospec.h>
-#include <linux/perf_event_api.h>
-#include <linux/profile.h>
-#include <linux/psi.h>
-#include <linux/rcuwait_api.h>
-#include <linux/rseq.h>
-#include <linux/sched/wake_q.h>
-#include <linux/scs.h>
-#include <linux/slab.h>
-#include <linux/syscalls.h>
-#include <linux/vtime.h>
-#include <linux/wait_api.h>
-#include <linux/workqueue_api.h>
-#include <linux/livepatch_sched.h>
+#ضمن <linux/context_tracking.h>
+#ضمن <linux/cpuset.h>
+#ضمن <linux/delayacct.h>
+#ضمن <linux/init_task.h>
+#ضمن <linux/interrupt.h>
+#ضمن <linux/ioprio.h>
+#ضمن <linux/kallsyms.h>
+#ضمن <linux/kcov.h>
+#ضمن <linux/kprobes.h>
+#ضمن <linux/llist_api.h>
+#ضمن <linux/mmu_context.h>
+#ضمن <linux/mmzone.h>
+#ضمن <linux/mutex_api.h>
+#ضمن <linux/nmi.h>
+#ضمن <linux/nospec.h>
+#ضمن <linux/perf_event_api.h>
+#ضمن <linux/profile.h>
+#ضمن <linux/psi.h>
+#ضمن <linux/rcuwait_api.h>
+#ضمن <linux/rseq.h>
+#ضمن <linux/sched/wake_q.h>
+#ضمن <linux/scs.h>
+#ضمن <linux/slab.h>
+#ضمن <linux/syscalls.h>
+#ضمن <linux/vtime.h>
+#ضمن <linux/wait_api.h>
+#ضمن <linux/workqueue_api.h>
+#ضمن <linux/livepatch_sched.h>
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
 # ifdef CONFIG_GENERIC_IRQ_ENTRY
@@ -75,29 +75,29 @@
 # endif
 #endif
 
-#include <uapi/linux/sched/types.h>
+#ضمن <uapi/linux/sched/types.h>
 
-#include <asm/irq_regs.h>
-#include <asm/switch_to.h>
-#include <asm/tlb.h>
+#ضمن <asm/irq_regs.h>
+#ضمن <asm/switch_to.h>
+#ضمن <asm/tlb.h>
 
 #define CREATE_TRACE_POINTS
-#include <linux/sched/rseq_api.h>
-#include <trace/events/sched.h>
-#include <trace/events/ipi.h>
+#ضمن <linux/sched/rseq_api.h>
+#ضمن <trace/events/sched.h>
+#ضمن <trace/events/ipi.h>
 #undef CREATE_TRACE_POINTS
 
-#include "sched.h"
-#include "stats.h"
+#ضمن "sched.h"
+#ضمن "stats.h"
 
-#include "autogroup.h"
-#include "pelt.h"
-#include "smp.h"
+#ضمن "autogroup.h"
+#ضمن "pelt.h"
+#ضمن "smp.h"
 
-#include "../workqueue_internal.h"
-#include "../../io_uring/io-wq.h"
-#include "../smpboot.h"
-#include "../locking/mutex.h"
+#ضمن "../workqueue_internal.h"
+#ضمن "../../io_uring/io-wq.h"
+#ضمن "../smpboot.h"
+#ضمن "../locking/mutex.h"
 
 EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpu);
 EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpumask);
@@ -127,34 +127,34 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_dl_update_tp);
 EXPORT_TRACEPOINT_SYMBOL_GPL(sched_dl_server_start_tp);
 EXPORT_TRACEPOINT_SYMBOL_GPL(sched_dl_server_stop_tp);
 
-DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
-DEFINE_PER_CPU(struct rnd_state, sched_rnd_state);
+DEFINE_PER_CPU_SHARED_ALIGNED(بنية rq, runqueues);
+DEFINE_PER_CPU(بنية rnd_state, sched_rnd_state);
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
 DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
-static int __init setup_proxy_exec(char *str)
+ساكن صحيح __init setup_proxy_exec(حرف *str)
 {
 	bool proxy_enable = true;
 
-	if (*str && kstrtobool(str + 1, &proxy_enable)) {
+	ܐܢ (*str && kstrtobool(str + 1, &proxy_enable)) {
 		pr_warn("Unable to parse sched_proxy_exec=\n");
-		return 0;
+		ܦܢܐ 0;
 	}
 
-	if (proxy_enable) {
+	ܐܢ (proxy_enable) {
 		pr_info("sched_proxy_exec enabled via boot arg\n");
 		static_branch_enable(&__sched_proxy_exec);
-	} else {
+	} ܐܚܪܢܐ {
 		pr_info("sched_proxy_exec disabled via boot arg\n");
 		static_branch_disable(&__sched_proxy_exec);
 	}
-	return 1;
+	ܦܢܐ 1;
 }
-#else
-static int __init setup_proxy_exec(char *str)
+#ܐܚܪܢܐ
+ساكن صحيح __init setup_proxy_exec(حرف *str)
 {
 	pr_warn("CONFIG_SCHED_PROXY_EXEC=n, so it cannot be enabled or disabled at boot time\n");
-	return 0;
+	ܦܢܐ 0;
 }
 #endif
 __setup("sched_proxy_exec", setup_proxy_exec);
@@ -168,8 +168,8 @@ __setup("sched_proxy_exec", setup_proxy_exec);
  */
 #define SCHED_FEAT(name, enabled)	\
 	(1UL << __SCHED_FEAT_##name) * enabled |
-__read_mostly unsigned int sysctl_sched_features =
-#include "features.h"
+__read_mostly unsigned صحيح sysctl_sched_features =
+#ضمن "features.h"
 	0;
 #undef SCHED_FEAT
 
@@ -180,40 +180,40 @@ __read_mostly unsigned int sysctl_sched_features =
  * If sysctl_resched_latency_warn_once is set, only one warning will be shown
  * per boot.
  */
-__read_mostly int sysctl_resched_latency_warn_ms = 100;
-__read_mostly int sysctl_resched_latency_warn_once = 1;
+__read_mostly صحيح sysctl_resched_latency_warn_ms = 100;
+__read_mostly صحيح sysctl_resched_latency_warn_once = 1;
 
 /*
  * Number of tasks to iterate in a single balance run.
  * Limited because this is done with IRQs disabled.
  */
-__read_mostly unsigned int sysctl_sched_nr_migrate = SCHED_NR_MIGRATE_BREAK;
+__read_mostly unsigned صحيح sysctl_sched_nr_migrate = SCHED_NR_MIGRATE_BREAK;
 
-__read_mostly int scheduler_running;
+__read_mostly صحيح scheduler_running;
 
 #ifdef CONFIG_SCHED_CORE
 
 DEFINE_STATIC_KEY_FALSE(__sched_core_enabled);
 
 /* kernel prio, less is more */
-static inline int __task_prio(const struct task_struct *p)
+ساكن مضمن صحيح __task_prio(ثابت بنية task_struct *p)
 {
-	if (p->sched_class == &stop_sched_class) /* trumps deadline */
-		return -2;
+	ܐܢ (p->sched_class == &stop_sched_class) /* trumps deadline */
+		ܦܢܐ -2;
 
-	if (p->dl_server)
-		return -1; /* deadline */
+	ܐܢ (p->dl_server)
+		ܦܢܐ -1; /* deadline */
 
-	if (rt_or_dl_prio(p->prio))
-		return p->prio; /* [-1, 99] */
+	ܐܢ (rt_or_dl_prio(p->prio))
+		ܦܢܐ p->prio; /* [-1, 99] */
 
-	if (p->sched_class == &idle_sched_class)
-		return MAX_RT_PRIO + NICE_WIDTH; /* 140 */
+	ܐܢ (p->sched_class == &idle_sched_class)
+		ܦܢܐ MAX_RT_PRIO + NICE_WIDTH; /* 140 */
 
-	if (task_on_scx(p))
-		return MAX_RT_PRIO + MAX_NICE + 1; /* 120, squash ext */
+	ܐܢ (task_on_scx(p))
+		ܦܢܐ MAX_RT_PRIO + MAX_NICE + 1; /* 120, squash ext */
 
-	return MAX_RT_PRIO + MAX_NICE; /* 119, squash fair */
+	ܦܢܐ MAX_RT_PRIO + MAX_NICE; /* 119, squash fair */
 }
 
 /*
@@ -224,20 +224,20 @@ static inline int __task_prio(const struct task_struct *p)
  */
 
 /* real prio, less is less */
-static inline bool prio_less(const struct task_struct *a,
-			     const struct task_struct *b, bool in_fi)
+ساكن مضمن bool prio_less(ثابت بنية task_struct *a,
+			     ثابت بنية task_struct *b, bool in_fi)
 {
 
-	int pa = __task_prio(a), pb = __task_prio(b);
+	صحيح pa = __task_prio(a), pb = __task_prio(b);
 
-	if (-pa < -pb)
-		return true;
+	ܐܢ (-pa < -pb)
+		ܦܢܐ true;
 
-	if (-pb < -pa)
-		return false;
+	ܐܢ (-pb < -pa)
+		ܦܢܐ false;
 
-	if (pa == -1) { /* dl_prio() doesn't work because of stop_class above */
-		const struct sched_dl_entity *a_dl, *b_dl;
+	ܐܢ (pa == -1) { /* dl_prio() doesn't work because of stop_class above */
+		ثابت بنية sched_dl_entity *a_dl, *b_dl;
 
 		a_dl = &a->dl;
 		/*
@@ -245,85 +245,85 @@ static inline bool prio_less(const struct task_struct *a,
 		 * __task_prio() can return -1 (for DL) even for those. In that
 		 * case, get to the dl_server's DL entity.
 		 */
-		if (a->dl_server)
+		ܐܢ (a->dl_server)
 			a_dl = a->dl_server;
 
 		b_dl = &b->dl;
-		if (b->dl_server)
+		ܐܢ (b->dl_server)
 			b_dl = b->dl_server;
 
-		return !dl_time_before(a_dl->deadline, b_dl->deadline);
+		ܦܢܐ !dl_time_before(a_dl->deadline, b_dl->deadline);
 	}
 
-	if (pa == MAX_RT_PRIO + MAX_NICE)	/* fair */
-		return cfs_prio_less(a, b, in_fi);
+	ܐܢ (pa == MAX_RT_PRIO + MAX_NICE)	/* fair */
+		ܦܢܐ cfs_prio_less(a, b, in_fi);
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (pa == MAX_RT_PRIO + MAX_NICE + 1)	/* ext */
-		return scx_prio_less(a, b, in_fi);
+	ܐܢ (pa == MAX_RT_PRIO + MAX_NICE + 1)	/* ext */
+		ܦܢܐ scx_prio_less(a, b, in_fi);
 #endif
 
-	return false;
+	ܦܢܐ false;
 }
 
-static inline bool __sched_core_less(const struct task_struct *a,
-				     const struct task_struct *b)
+ساكن مضمن bool __sched_core_less(ثابت بنية task_struct *a,
+				     ثابت بنية task_struct *b)
 {
-	if (a->core_cookie < b->core_cookie)
-		return true;
+	ܐܢ (a->core_cookie < b->core_cookie)
+		ܦܢܐ true;
 
-	if (a->core_cookie > b->core_cookie)
-		return false;
+	ܐܢ (a->core_cookie > b->core_cookie)
+		ܦܢܐ false;
 
 	/* flip prio, so high prio is leftmost */
-	if (prio_less(b, a, !!task_rq(a)->core->core_forceidle_count))
-		return true;
+	ܐܢ (prio_less(b, a, !!task_rq(a)->core->core_forceidle_count))
+		ܦܢܐ true;
 
-	return false;
+	ܦܢܐ false;
 }
 
-#define __node_2_sc(node) rb_entry((node), struct task_struct, core_node)
+#define __node_2_sc(node) rb_entry((node), بنية task_struct, core_node)
 
-static inline bool rb_sched_core_less(struct rb_node *a, const struct rb_node *b)
+ساكن مضمن bool rb_sched_core_less(بنية rb_node *a, ثابت بنية rb_node *b)
 {
-	return __sched_core_less(__node_2_sc(a), __node_2_sc(b));
+	ܦܢܐ __sched_core_less(__node_2_sc(a), __node_2_sc(b));
 }
 
-static inline int rb_sched_core_cmp(const void *key, const struct rb_node *node)
+ساكن مضمن صحيح rb_sched_core_cmp(ثابت فراغ *key, ثابت بنية rb_node *node)
 {
-	const struct task_struct *p = __node_2_sc(node);
+	ثابت بنية task_struct *p = __node_2_sc(node);
 	unsigned long cookie = (unsigned long)key;
 
-	if (cookie < p->core_cookie)
-		return -1;
+	ܐܢ (cookie < p->core_cookie)
+		ܦܢܐ -1;
 
-	if (cookie > p->core_cookie)
-		return 1;
+	ܐܢ (cookie > p->core_cookie)
+		ܦܢܐ 1;
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-void sched_core_enqueue(struct rq *rq, struct task_struct *p)
+فراغ sched_core_enqueue(بنية rq *rq, بنية task_struct *p)
 {
-	if (p->se.sched_delayed)
-		return;
+	ܐܢ (p->se.sched_delayed)
+		ܦܢܐ;
 
 	rq->core->core_task_seq++;
 
-	if (!p->core_cookie)
-		return;
+	ܐܢ (!p->core_cookie)
+		ܦܢܐ;
 
 	rb_add(&p->core_node, &rq->core_tree, rb_sched_core_less);
 }
 
-void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags)
+فراغ sched_core_dequeue(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
-	if (p->se.sched_delayed)
-		return;
+	ܐܢ (p->se.sched_delayed)
+		ܦܢܐ;
 
 	rq->core->core_task_seq++;
 
-	if (sched_core_enqueued(p)) {
+	ܐܢ (sched_core_enqueued(p)) {
 		rb_erase(&p->core_node, &rq->core_tree);
 		RB_CLEAR_NODE(&p->core_node);
 	}
@@ -333,56 +333,56 @@ void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags)
 	 * state. Reschedule to create an accounting edge for forced idle,
 	 * and re-examine whether the core is still in forced idle state.
 	 */
-	if (!(flags & DEQUEUE_SAVE) && rq->nr_running == 1 &&
+	ܐܢ (!(flags & DEQUEUE_SAVE) && rq->nr_running == 1 &&
 	    rq->core->core_forceidle_count && rq->curr == rq->idle)
 		resched_curr(rq);
 }
 
-static int sched_task_is_throttled(struct task_struct *p, int cpu)
+ساكن صحيح sched_task_is_throttled(بنية task_struct *p, صحيح cpu)
 {
-	if (p->sched_class->task_is_throttled)
-		return p->sched_class->task_is_throttled(p, cpu);
+	ܐܢ (p->sched_class->task_is_throttled)
+		ܦܢܐ p->sched_class->task_is_throttled(p, cpu);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-static struct task_struct *sched_core_next(struct task_struct *p, unsigned long cookie)
+ساكن بنية task_struct *sched_core_next(بنية task_struct *p, unsigned long cookie)
 {
-	struct rb_node *node = &p->core_node;
-	int cpu = task_cpu(p);
+	بنية rb_node *node = &p->core_node;
+	صحيح cpu = task_cpu(p);
 
-	do {
+	ܥܒܕ {
 		node = rb_next(node);
-		if (!node)
-			return NULL;
+		ܐܢ (!node)
+			ܦܢܐ عدم;
 
 		p = __node_2_sc(node);
-		if (p->core_cookie != cookie)
-			return NULL;
+		ܐܢ (p->core_cookie != cookie)
+			ܦܢܐ عدم;
 
-	} while (sched_task_is_throttled(p, cpu));
+	} ܟܡܐ (sched_task_is_throttled(p, cpu));
 
-	return p;
+	ܦܢܐ p;
 }
 
 /*
  * Find left-most (aka, highest priority) and unthrottled task matching @cookie.
  * If no suitable task is found, NULL will be returned.
  */
-static struct task_struct *sched_core_find(struct rq *rq, unsigned long cookie)
+ساكن بنية task_struct *sched_core_find(بنية rq *rq, unsigned long cookie)
 {
-	struct task_struct *p;
-	struct rb_node *node;
+	بنية task_struct *p;
+	بنية rb_node *node;
 
-	node = rb_find_first((void *)cookie, &rq->core_tree, rb_sched_core_cmp);
-	if (!node)
-		return NULL;
+	node = rb_find_first((فراغ *)cookie, &rq->core_tree, rb_sched_core_cmp);
+	ܐܢ (!node)
+		ܦܢܐ عدم;
 
 	p = __node_2_sc(node);
-	if (!sched_task_is_throttled(p, rq->cpu))
-		return p;
+	ܐܢ (!sched_task_is_throttled(p, rq->cpu))
+		ܦܢܐ p;
 
-	return sched_core_next(p, cookie);
+	ܦܢܐ sched_core_next(p, cookie);
 }
 
 /*
@@ -398,38 +398,38 @@ static struct task_struct *sched_core_find(struct rq *rq, unsigned long cookie)
  * XXX entirely possible to selectively enable cores, don't bother for now.
  */
 
-static DEFINE_MUTEX(sched_core_mutex);
-static atomic_t sched_core_count;
-static struct cpumask sched_core_mask;
+ساكن DEFINE_MUTEX(sched_core_mutex);
+ساكن atomic_t sched_core_count;
+ساكن بنية cpumask sched_core_mask;
 
-static void sched_core_lock(int cpu, unsigned long *flags)
+ساكن فراغ sched_core_lock(صحيح cpu, unsigned long *flags)
 	__context_unsafe(/* acquires multiple */)
 	__acquires(&runqueues.__lock) /* overapproximation */
 {
-	const struct cpumask *smt_mask = cpu_smt_mask(cpu);
-	int t, i = 0;
+	ثابت بنية cpumask *smt_mask = cpu_smt_mask(cpu);
+	صحيح t, i = 0;
 
 	local_irq_save(*flags);
 	for_each_cpu(t, smt_mask)
 		raw_spin_lock_nested(&cpu_rq(t)->__lock, i++);
 }
 
-static void sched_core_unlock(int cpu, unsigned long *flags)
+ساكن فراغ sched_core_unlock(صحيح cpu, unsigned long *flags)
 	__context_unsafe(/* releases multiple */)
 	__releases(&runqueues.__lock) /* overapproximation */
 {
-	const struct cpumask *smt_mask = cpu_smt_mask(cpu);
-	int t;
+	ثابت بنية cpumask *smt_mask = cpu_smt_mask(cpu);
+	صحيح t;
 
 	for_each_cpu(t, smt_mask)
 		raw_spin_unlock(&cpu_rq(t)->__lock);
 	local_irq_restore(*flags);
 }
 
-static void __sched_core_flip(bool enabled)
+ساكن فراغ __sched_core_flip(bool enabled)
 {
 	unsigned long flags;
-	int cpu, t;
+	صحيح cpu, t;
 
 	cpus_read_lock();
 
@@ -438,7 +438,7 @@ static void __sched_core_flip(bool enabled)
 	 */
 	cpumask_copy(&sched_core_mask, cpu_online_mask);
 	for_each_cpu(cpu, &sched_core_mask) {
-		const struct cpumask *smt_mask = cpu_smt_mask(cpu);
+		ثابت بنية cpumask *smt_mask = cpu_smt_mask(cpu);
 
 		sched_core_lock(cpu, &flags);
 
@@ -447,7 +447,7 @@ static void __sched_core_flip(bool enabled)
 		 * released by a lock-dropping ->pick_task(). Flipping would
 		 * rebind rq_lockp() under it. Wait it out.
 		 */
-		while (cpu_rq(cpu)->core->core_pick_in_flight) {
+		ܟܡܐ (cpu_rq(cpu)->core->core_pick_in_flight) {
 			sched_core_unlock(cpu, &flags);
 			cpu_relax();
 			sched_core_lock(cpu, &flags);
@@ -472,15 +472,15 @@ static void __sched_core_flip(bool enabled)
 	cpus_read_unlock();
 }
 
-static void sched_core_assert_empty(void)
+ساكن فراغ sched_core_assert_empty(فراغ)
 {
-	int cpu;
+	صحيح cpu;
 
 	for_each_possible_cpu(cpu)
 		WARN_ON_ONCE(!RB_EMPTY_ROOT(&cpu_rq(cpu)->core_tree));
 }
 
-static void __sched_core_enable(void)
+ساكن فراغ __sched_core_enable(فراغ)
 {
 	static_branch_enable(&__sched_core_enabled);
 	/*
@@ -492,20 +492,20 @@ static void __sched_core_enable(void)
 	sched_core_assert_empty();
 }
 
-static void __sched_core_disable(void)
+ساكن فراغ __sched_core_disable(فراغ)
 {
 	sched_core_assert_empty();
 	__sched_core_flip(false);
 	static_branch_disable(&__sched_core_enabled);
 }
 
-void sched_core_get(void)
+فراغ sched_core_get(فراغ)
 {
-	if (atomic_inc_not_zero(&sched_core_count))
-		return;
+	ܐܢ (atomic_inc_not_zero(&sched_core_count))
+		ܦܢܐ;
 
 	mutex_lock(&sched_core_mutex);
-	if (!atomic_read(&sched_core_count))
+	ܐܢ (!atomic_read(&sched_core_count))
 		__sched_core_enable();
 
 	smp_mb__before_atomic();
@@ -513,17 +513,17 @@ void sched_core_get(void)
 	mutex_unlock(&sched_core_mutex);
 }
 
-static void __sched_core_put(struct work_struct *work)
+ساكن فراغ __sched_core_put(بنية work_struct *work)
 {
-	if (atomic_dec_and_mutex_lock(&sched_core_count, &sched_core_mutex)) {
+	ܐܢ (atomic_dec_and_mutex_lock(&sched_core_count, &sched_core_mutex)) {
 		__sched_core_disable();
 		mutex_unlock(&sched_core_mutex);
 	}
 }
 
-void sched_core_put(void)
+فراغ sched_core_put(فراغ)
 {
-	static DECLARE_WORK(_work, __sched_core_put);
+	ساكن DECLARE_WORK(_work, __sched_core_put);
 
 	/*
 	 * "There can be only one"
@@ -532,15 +532,15 @@ void sched_core_put(void)
 	 * 'work'. If it is the last *again*, we rely on
 	 * WORK_STRUCT_PENDING_BIT.
 	 */
-	if (!atomic_add_unless(&sched_core_count, -1, 1))
+	ܐܢ (!atomic_add_unless(&sched_core_count, -1, 1))
 		schedule_work(&_work);
 }
 
-#else /* !CONFIG_SCHED_CORE: */
+#ܐܚܪܢܐ /* !CONFIG_SCHED_CORE: */
 
-static inline void sched_core_enqueue(struct rq *rq, struct task_struct *p) { }
-static inline void
-sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags) { }
+ساكن مضمن فراغ sched_core_enqueue(بنية rq *rq, بنية task_struct *p) { }
+ساكن مضمن فراغ
+sched_core_dequeue(بنية rq *rq, بنية task_struct *p, صحيح flags) { }
 
 #endif /* !CONFIG_SCHED_CORE */
 
@@ -552,15 +552,15 @@ EXPORT_TRACEPOINT_SYMBOL(sched_set_state_tp);
  * Calls to this function MUST be guarded by a
  * tracepoint_enabled(sched_set_state_tp)
  */
-void __trace_set_current_state(int state_value)
+فراغ __trace_set_current_state(صحيح state_value)
 {
 	trace_call__sched_set_state_tp(current, state_value);
 }
 EXPORT_SYMBOL(__trace_set_current_state);
 
-int task_llc(const struct task_struct *p)
+صحيح task_llc(ثابت بنية task_struct *p)
 {
-	return per_cpu(sd_llc_id, task_cpu(p));
+	ܦܢܐ per_cpu(sd_llc_id, task_cpu(p));
 }
 
 /*
@@ -666,33 +666,33 @@ int task_llc(const struct task_struct *p)
  *
  */
 
-void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
+فراغ raw_spin_rq_lock_nested(بنية rq *rq, صحيح subclass)
 	__context_unsafe()
 {
 	raw_spinlock_t *lock;
 
 	/* Matches synchronize_rcu() in __sched_core_enable() */
 	preempt_disable();
-	if (sched_core_disabled()) {
+	ܐܢ (sched_core_disabled()) {
 		raw_spin_lock_nested(&rq->__lock, subclass);
 		/* preempt_count *MUST* be > 1 */
 		preempt_enable_no_resched();
-		return;
+		ܦܢܐ;
 	}
 
-	for (;;) {
+	لكل (;;) {
 		lock = __rq_lockp(rq);
 		raw_spin_lock_nested(lock, subclass);
-		if (likely(lock == __rq_lockp(rq))) {
+		ܐܢ (likely(lock == __rq_lockp(rq))) {
 			/* preempt_count *MUST* be > 1 */
 			preempt_enable_no_resched();
-			return;
+			ܦܢܐ;
 		}
 		raw_spin_unlock(lock);
 	}
 }
 
-bool raw_spin_rq_trylock(struct rq *rq)
+bool raw_spin_rq_trylock(بنية rq *rq)
 	__context_unsafe()
 {
 	raw_spinlock_t *lock;
@@ -700,18 +700,18 @@ bool raw_spin_rq_trylock(struct rq *rq)
 
 	/* Matches synchronize_rcu() in __sched_core_enable() */
 	preempt_disable();
-	if (sched_core_disabled()) {
+	ܐܢ (sched_core_disabled()) {
 		ret = raw_spin_trylock(&rq->__lock);
 		preempt_enable();
-		return ret;
+		ܦܢܐ ret;
 	}
 
-	for (;;) {
+	لكل (;;) {
 		lock = __rq_lockp(rq);
 		ret = raw_spin_trylock(lock);
-		if (!ret || (likely(lock == __rq_lockp(rq)))) {
+		ܐܢ (!ret || (likely(lock == __rq_lockp(rq)))) {
 			preempt_enable();
-			return ret;
+			ܦܢܐ ret;
 		}
 		raw_spin_unlock(lock);
 	}
@@ -720,17 +720,17 @@ bool raw_spin_rq_trylock(struct rq *rq)
 /*
  * double_rq_lock - safely lock two runqueues
  */
-void double_rq_lock(struct rq *rq1, struct rq *rq2)
+فراغ double_rq_lock(بنية rq *rq1, بنية rq *rq2)
 {
 	lockdep_assert_irqs_disabled();
 
-	if (rq_order_less(rq2, rq1))
+	ܐܢ (rq_order_less(rq2, rq1))
 		swap(rq1, rq2);
 
 	raw_spin_rq_lock(rq1);
-	if (__rq_lockp(rq1) != __rq_lockp(rq2))
+	ܐܢ (__rq_lockp(rq1) != __rq_lockp(rq2))
 		raw_spin_rq_lock_nested(rq2, SINGLE_DEPTH_NESTING);
-	else
+	ܐܚܪܢܐ
 		__acquire_ctx_lock(__rq_lockp(rq2)); /* fake acquire */
 
 	double_rq_clock_clear_update(rq1, rq2);
@@ -739,22 +739,22 @@ void double_rq_lock(struct rq *rq1, struct rq *rq2)
 /*
  * ___task_rq_lock - lock the rq @p resides on.
  */
-struct rq *___task_rq_lock(struct task_struct *p, struct rq_flags *rf)
+بنية rq *___task_rq_lock(بنية task_struct *p, بنية rq_flags *rf)
 {
-	struct rq *rq;
+	بنية rq *rq;
 
 	lockdep_assert_held(&p->pi_lock);
 
-	for (;;) {
+	لكل (;;) {
 		rq = task_rq(p);
 		raw_spin_rq_lock(rq);
-		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
+		ܐܢ (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
 			rq_pin_lock(rq, rf);
-			return rq;
+			ܦܢܐ rq;
 		}
 		raw_spin_rq_unlock(rq);
 
-		while (unlikely(task_on_rq_migrating(p)))
+		ܟܡܐ (unlikely(task_on_rq_migrating(p)))
 			cpu_relax();
 	}
 }
@@ -762,11 +762,11 @@ struct rq *___task_rq_lock(struct task_struct *p, struct rq_flags *rf)
 /*
  * task_rq_lock - lock p->pi_lock and lock the rq @p resides on.
  */
-struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
+بنية rq *_task_rq_lock(بنية task_struct *p, بنية rq_flags *rf)
 {
-	struct rq *rq;
+	بنية rq *rq;
 
-	for (;;) {
+	لكل (;;) {
 		raw_spin_lock_irqsave(&p->pi_lock, rf->flags);
 		rq = task_rq(p);
 		raw_spin_rq_lock(rq);
@@ -787,14 +787,14 @@ struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
 		 * dependency headed by '[L] rq = task_rq()' and the acquire
 		 * will pair with the WMB to ensure we then also see migrating.
 		 */
-		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
+		ܐܢ (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
 			rq_pin_lock(rq, rf);
-			return rq;
+			ܦܢܐ rq;
 		}
 		raw_spin_rq_unlock(rq);
 		raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
 
-		while (unlikely(task_on_rq_migrating(p)))
+		ܟܡܐ (unlikely(task_on_rq_migrating(p)))
 			cpu_relax();
 	}
 }
@@ -808,7 +808,7 @@ struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
 DEFINE_STATIC_KEY_FALSE(paravirt_steal_rq_enabled);
 #endif
 
-static void update_rq_clock_task(struct rq *rq, s64 delta)
+ساكن فراغ update_rq_clock_task(بنية rq *rq, s64 delta)
 {
 /*
  * In theory, the compile should just see 0 here, and optimize out the call
@@ -817,7 +817,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
 	s64 __maybe_unused steal = 0, irq_delta = 0;
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (irqtime_enabled()) {
+	ܐܢ (irqtime_enabled()) {
 		irq_delta = irq_time_read(cpu_of(rq)) - rq->prev_irq_time;
 
 		/*
@@ -835,7 +835,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
 		 * the current rq->clock timestamp, except that would require using
 		 * atomic ops.
 		 */
-		if (irq_delta > delta)
+		ܐܢ (irq_delta > delta)
 			irq_delta = delta;
 
 		rq->prev_irq_time += irq_delta;
@@ -844,13 +844,13 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
 	}
 #endif
 #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-	if (static_branch_unlikely(&paravirt_steal_rq_enabled)) {
+	ܐܢ (static_branch_unlikely(&paravirt_steal_rq_enabled)) {
 		u64 prev_steal;
 
 		steal = prev_steal = paravirt_steal_clock(cpu_of(rq));
 		steal -= rq->prev_steal_time_rq;
 
-		if (unlikely(steal > delta))
+		ܐܢ (unlikely(steal > delta))
 			steal = delta;
 
 		rq->prev_steal_time_rq = prev_steal;
@@ -861,23 +861,23 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
 	rq->clock_task += delta;
 
 #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-	if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
+	ܐܢ ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
 		update_irq_load_avg(rq, irq_delta + steal);
 #endif
 	update_rq_clock_pelt(rq, delta);
 }
 
-void update_rq_clock(struct rq *rq)
+فراغ update_rq_clock(بنية rq *rq)
 {
 	s64 delta;
 	u64 clock;
 
 	lockdep_assert_rq_held(rq);
 
-	if (rq->clock_update_flags & RQCF_ACT_SKIP)
-		return;
+	ܐܢ (rq->clock_update_flags & RQCF_ACT_SKIP)
+		ܦܢܐ;
 
-	if (sched_feat(WARN_DOUBLE_CLOCK))
+	ܐܢ (sched_feat(WARN_DOUBLE_CLOCK))
 		WARN_ON_ONCE(rq->clock_update_flags & RQCF_UPDATED);
 	rq->clock_update_flags |= RQCF_UPDATED;
 
@@ -885,8 +885,8 @@ void update_rq_clock(struct rq *rq)
 	scx_rq_clock_update(rq, clock);
 
 	delta = clock - rq->clock;
-	if (delta < 0)
-		return;
+	ܐܢ (delta < 0)
+		ܦܢܐ;
 	rq->clock += delta;
 
 	update_rq_clock_task(rq, delta);
@@ -897,16 +897,16 @@ void update_rq_clock(struct rq *rq)
  * Use HR-timers to deliver accurate preemption points.
  */
 
-enum {
+تعداد {
 	HRTICK_SCHED_NONE		= 0,
 	HRTICK_SCHED_DEFER		= BIT(1),
 	HRTICK_SCHED_START		= BIT(2),
 	HRTICK_SCHED_REARM_HRTIMER	= BIT(3)
 };
 
-static void __used hrtick_clear(struct rq *rq)
+ساكن فراغ __used hrtick_clear(بنية rq *rq)
 {
-	if (hrtimer_active(&rq->hrtick_timer))
+	ܐܢ (hrtimer_active(&rq->hrtick_timer))
 		hrtimer_cancel(&rq->hrtick_timer);
 }
 
@@ -914,10 +914,10 @@ static void __used hrtick_clear(struct rq *rq)
  * High-resolution timer tick.
  * Runs from hardirq context with interrupts disabled.
  */
-static enum hrtimer_restart hrtick(struct hrtimer *timer)
+ساكن تعداد hrtimer_restart hrtick(بنية hrtimer *timer)
 {
-	struct rq *rq = container_of(timer, struct rq, hrtick_timer);
-	struct rq_flags rf;
+	بنية rq *rq = container_of(timer, بنية rq, hrtick_timer);
+	بنية rq_flags rf;
 
 	WARN_ON_ONCE(cpu_of(rq) != smp_processor_id());
 
@@ -926,36 +926,36 @@ static enum hrtimer_restart hrtick(struct hrtimer *timer)
 	rq->donor->sched_class->task_tick(rq, rq->donor, 1);
 	rq_unlock(rq, &rf);
 
-	return HRTIMER_NORESTART;
+	ܦܢܐ HRTIMER_NORESTART;
 }
 
-static inline bool hrtick_needs_rearm(struct hrtimer *timer, ktime_t expires)
+ساكن مضمن bool hrtick_needs_rearm(بنية hrtimer *timer, ktime_t expires)
 {
 	/*
 	 * Queued is false when the timer is not started or currently
 	 * running the callback. In both cases, restart. If queued check
 	 * whether the expiry time actually changes substantially.
 	 */
-	return !hrtimer_is_queued(timer) ||
+	ܦܢܐ !hrtimer_is_queued(timer) ||
 		abs(expires - hrtimer_get_expires(timer)) > 5000;
 }
 
-static void hrtick_cond_restart(struct rq *rq)
+ساكن فراغ hrtick_cond_restart(بنية rq *rq)
 {
-	struct hrtimer *timer = &rq->hrtick_timer;
+	بنية hrtimer *timer = &rq->hrtick_timer;
 	ktime_t time = rq->hrtick_time;
 
-	if (hrtick_needs_rearm(timer, time))
+	ܐܢ (hrtick_needs_rearm(timer, time))
 		hrtimer_start(timer, time, HRTIMER_MODE_ABS_PINNED_HARD);
 }
 
 /*
  * called from hardirq (IPI) context
  */
-static void __hrtick_start(void *arg)
+ساكن فراغ __hrtick_start(فراغ *arg)
 {
-	struct rq *rq = arg;
-	struct rq_flags rf;
+	بنية rq *rq = arg;
+	بنية rq_flags rf;
 
 	rq_lock(rq, &rf);
 	hrtick_cond_restart(rq);
@@ -967,7 +967,7 @@ static void __hrtick_start(void *arg)
  *
  * called with rq->lock held and IRQs disabled
  */
-void hrtick_start(struct rq *rq, u64 delay)
+فراغ hrtick_start(بنية rq *rq, u64 delay)
 {
 	s64 delta;
 
@@ -981,62 +981,62 @@ void hrtick_start(struct rq *rq, u64 delay)
 	 * If this is in the middle of schedule() only note the delay
 	 * and let hrtick_schedule_exit() deal with it.
 	 */
-	if (rq->hrtick_sched) {
+	ܐܢ (rq->hrtick_sched) {
 		rq->hrtick_sched |= HRTICK_SCHED_START;
 		rq->hrtick_delay = delta;
-		return;
+		ܦܢܐ;
 	}
 
 	rq->hrtick_time = ktime_add_ns(ktime_get(), delta);
-	if (!hrtick_needs_rearm(&rq->hrtick_timer, rq->hrtick_time))
-		return;
+	ܐܢ (!hrtick_needs_rearm(&rq->hrtick_timer, rq->hrtick_time))
+		ܦܢܐ;
 
-	if (rq == this_rq())
+	ܐܢ (rq == this_rq())
 		hrtimer_start(&rq->hrtick_timer, rq->hrtick_time, HRTIMER_MODE_ABS_PINNED_HARD);
-	else
+	ܐܚܪܢܐ
 		smp_call_function_single_async(cpu_of(rq), &rq->hrtick_csd);
 }
 
-static inline void hrtick_schedule_enter(struct rq *rq)
+ساكن مضمن فراغ hrtick_schedule_enter(بنية rq *rq)
 {
 	rq->hrtick_sched = HRTICK_SCHED_DEFER;
-	if (hrtimer_test_and_clear_rearm_deferred())
+	ܐܢ (hrtimer_test_and_clear_rearm_deferred())
 		rq->hrtick_sched |= HRTICK_SCHED_REARM_HRTIMER;
 }
 
-static inline void hrtick_schedule_exit(struct rq *rq)
+ساكن مضمن فراغ hrtick_schedule_exit(بنية rq *rq)
 {
-	if (rq->hrtick_sched & HRTICK_SCHED_START) {
+	ܐܢ (rq->hrtick_sched & HRTICK_SCHED_START) {
 		rq->hrtick_time = ktime_add_ns(ktime_get(), rq->hrtick_delay);
 		hrtick_cond_restart(rq);
-	} else if (idle_rq(rq)) {
+	} ܐܚܪܢܐ ܐܢ (idle_rq(rq)) {
 		/*
 		 * No need for using hrtimer_is_active(). The timer is CPU local
 		 * and interrupts are disabled, so the callback cannot be
 		 * running and the queued state is valid.
 		 */
-		if (hrtimer_is_queued(&rq->hrtick_timer))
+		ܐܢ (hrtimer_is_queued(&rq->hrtick_timer))
 			hrtimer_cancel(&rq->hrtick_timer);
 	}
 
-	if (rq->hrtick_sched & HRTICK_SCHED_REARM_HRTIMER)
+	ܐܢ (rq->hrtick_sched & HRTICK_SCHED_REARM_HRTIMER)
 		__hrtimer_rearm_deferred();
 
 	rq->hrtick_sched = HRTICK_SCHED_NONE;
 }
 
-static void hrtick_rq_init(struct rq *rq)
+ساكن فراغ hrtick_rq_init(بنية rq *rq)
 {
 	INIT_CSD(&rq->hrtick_csd, __hrtick_start, rq);
 	rq->hrtick_sched = HRTICK_SCHED_NONE;
 	hrtimer_setup(&rq->hrtick_timer, hrtick, CLOCK_MONOTONIC,
 		      HRTIMER_MODE_REL_HARD | HRTIMER_MODE_LAZY_REARM);
 }
-#else /* !CONFIG_SCHED_HRTICK: */
-static inline void hrtick_clear(struct rq *rq) { }
-static inline void hrtick_rq_init(struct rq *rq) { }
-static inline void hrtick_schedule_enter(struct rq *rq) { }
-static inline void hrtick_schedule_exit(struct rq *rq) { }
+#ܐܚܪܢܐ /* !CONFIG_SCHED_HRTICK: */
+ساكن مضمن فراغ hrtick_clear(بنية rq *rq) { }
+ساكن مضمن فراغ hrtick_rq_init(بنية rq *rq) { }
+ساكن مضمن فراغ hrtick_schedule_enter(بنية rq *rq) { }
+ساكن مضمن فراغ hrtick_schedule_exit(بنية rq *rq) { }
 #endif /* !CONFIG_SCHED_HRTICK */
 
 /*
@@ -1048,8 +1048,8 @@ static inline void hrtick_schedule_exit(struct rq *rq) { }
 		typeof(mask) _mask = (mask);				\
 		typeof(*_ptr) _val = *_ptr;				\
 									\
-		do {							\
-		} while (!try_cmpxchg(_ptr, &_val, _val | _mask));	\
+		ܥܒܕ {							\
+		} ܟܡܐ (!try_cmpxchg(_ptr, &_val, _val | _mask));	\
 	_val;								\
 })
 
@@ -1059,9 +1059,9 @@ static inline void hrtick_schedule_exit(struct rq *rq) { }
  * this avoids any races wrt polling state changes and thereby avoids
  * spurious IPIs.
  */
-static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
+ساكن مضمن bool set_nr_and_not_polling(بنية thread_info *ti, صحيح tif)
 {
-	return !(fetch_or(&ti->flags, 1 << tif) & _TIF_POLLING_NRFLAG);
+	ܦܢܐ !(fetch_or(&ti->flags, 1 << tif) & _TIF_POLLING_NRFLAG);
 }
 
 /*
@@ -1070,37 +1070,37 @@ static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
  * If this returns true, then the idle task promises to call
  * sched_ttwu_pending() and reschedule soon.
  */
-static bool set_nr_if_polling(struct task_struct *p)
+ساكن bool set_nr_if_polling(بنية task_struct *p)
 {
-	struct thread_info *ti = task_thread_info(p);
+	بنية thread_info *ti = task_thread_info(p);
 	typeof(ti->flags) val = READ_ONCE(ti->flags);
 
-	do {
-		if (!(val & _TIF_POLLING_NRFLAG))
-			return false;
-		if (val & _TIF_NEED_RESCHED)
-			return true;
-	} while (!try_cmpxchg(&ti->flags, &val, val | _TIF_NEED_RESCHED));
+	ܥܒܕ {
+		ܐܢ (!(val & _TIF_POLLING_NRFLAG))
+			ܦܢܐ false;
+		ܐܢ (val & _TIF_NEED_RESCHED)
+			ܦܢܐ true;
+	} ܟܡܐ (!try_cmpxchg(&ti->flags, &val, val | _TIF_NEED_RESCHED));
 
-	return true;
+	ܦܢܐ true;
 }
 
-#else
-static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
+#ܐܚܪܢܐ
+ساكن مضمن bool set_nr_and_not_polling(بنية thread_info *ti, صحيح tif)
 {
 	set_ti_thread_flag(ti, tif);
-	return true;
+	ܦܢܐ true;
 }
 
-static inline bool set_nr_if_polling(struct task_struct *p)
+ساكن مضمن bool set_nr_if_polling(بنية task_struct *p)
 {
-	return false;
+	ܦܢܐ false;
 }
 #endif
 
-static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
+ساكن bool __wake_q_add(بنية wake_q_head *head, بنية task_struct *task)
 {
-	struct wake_q_node *node = &task->wake_q;
+	بنية wake_q_node *node = &task->wake_q;
 
 	/*
 	 * Atomically grab the task, if ->wake_q is !nil already it means
@@ -1111,15 +1111,15 @@ static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
 	 * state, even in the failed case, an explicit smp_mb() must be used.
 	 */
 	smp_mb__before_atomic();
-	if (unlikely(cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL)))
-		return false;
+	ܐܢ (unlikely(cmpxchg_relaxed(&node->next, عدم, WAKE_Q_TAIL)))
+		ܦܢܐ false;
 
 	/*
 	 * The head is context local, there can be no concurrency.
 	 */
 	*head->lastp = node;
 	head->lastp = &node->next;
-	return true;
+	ܦܢܐ true;
 }
 
 /**
@@ -1134,9 +1134,9 @@ static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
  * This function must be used as-if it were wake_up_process(); IOW the task
  * must be ready to be woken at this location.
  */
-void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+فراغ wake_q_add(بنية wake_q_head *head, بنية task_struct *task)
 {
-	if (__wake_q_add(head, task))
+	ܐܢ (__wake_q_add(head, task))
 		get_task_struct(task);
 }
 
@@ -1157,23 +1157,23 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
  * wake_q to do the right thing depending whether or not the @task is already
  * queued for wakeup.
  */
-void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task)
+فراغ wake_q_add_safe(بنية wake_q_head *head, بنية task_struct *task)
 {
-	if (!__wake_q_add(head, task))
+	ܐܢ (!__wake_q_add(head, task))
 		put_task_struct(task);
 }
 
-void wake_up_q(struct wake_q_head *head)
+فراغ wake_up_q(بنية wake_q_head *head)
 {
-	struct wake_q_node *node = head->first;
+	بنية wake_q_node *node = head->first;
 
-	while (node != WAKE_Q_TAIL) {
-		struct task_struct *task;
+	ܟܡܐ (node != WAKE_Q_TAIL) {
+		بنية task_struct *task;
 
-		task = container_of(node, struct task_struct, wake_q);
+		task = container_of(node, بنية task_struct, wake_q);
 		node = node->next;
 		/* pairs with cmpxchg_relaxed() in __wake_q_add() */
-		WRITE_ONCE(task->wake_q.next, NULL);
+		WRITE_ONCE(task->wake_q.next, عدم);
 		/* Task can safely be re-inserted now. */
 
 		/*
@@ -1192,12 +1192,12 @@ void wake_up_q(struct wake_q_head *head)
  * might also involve a cross-CPU call to trigger the scheduler on
  * the target CPU.
  */
-static void __resched_curr(struct rq *rq, int tif)
+ساكن فراغ __resched_curr(بنية rq *rq, صحيح tif)
 {
-	struct task_struct *curr = rq->curr;
-	struct thread_info *cti = task_thread_info(curr);
+	بنية task_struct *curr = rq->curr;
+	بنية thread_info *cti = task_thread_info(curr);
 	bool need_ipi;
-	int cpu;
+	صحيح cpu;
 
 	lockdep_assert_rq_held(rq);
 
@@ -1205,28 +1205,28 @@ static void __resched_curr(struct rq *rq, int tif)
 	 * Always immediately preempt the idle task; no point in delaying doing
 	 * actual work.
 	 */
-	if (is_idle_task(curr) && tif == TIF_NEED_RESCHED_LAZY)
+	ܐܢ (is_idle_task(curr) && tif == TIF_NEED_RESCHED_LAZY)
 		tif = TIF_NEED_RESCHED;
 
-	if (cti->flags & ((1 << tif) | _TIF_NEED_RESCHED))
-		return;
+	ܐܢ (cti->flags & ((1 << tif) | _TIF_NEED_RESCHED))
+		ܦܢܐ;
 
 	cpu = cpu_of(rq);
 
-	if (cpu == smp_processor_id()) {
+	ܐܢ (cpu == smp_processor_id()) {
 		set_ti_thread_flag(cti, tif);
-		if (tif == TIF_NEED_RESCHED)
+		ܐܢ (tif == TIF_NEED_RESCHED)
 			set_preempt_need_resched();
 		trace_sched_set_need_resched_tp(curr, cpu, tif);
-		return;
+		ܦܢܐ;
 	}
 
 	need_ipi = set_nr_and_not_polling(cti, tif);
 	trace_sched_set_need_resched_tp(curr, cpu, tif);
-	if (need_ipi) {
-		if (tif == TIF_NEED_RESCHED)
+	ܐܢ (need_ipi) {
+		ܐܢ (tif == TIF_NEED_RESCHED)
 			smp_send_reschedule(cpu);
-	} else {
+	} ܐܚܪܢܐ {
 		trace_sched_wake_idle_without_ipi(cpu);
 	}
 }
@@ -1235,50 +1235,50 @@ static void __resched_curr(struct rq *rq, int tif)
  * Calls to this function MUST be guarded by a
  * tracepoint_enabled(sched_set_need_resched_tp)
  */
-void __trace_set_need_resched(struct task_struct *curr, int tif)
+فراغ __trace_set_need_resched(بنية task_struct *curr, صحيح tif)
 {
 	trace_call__sched_set_need_resched_tp(curr, smp_processor_id(), tif);
 }
 EXPORT_SYMBOL_GPL(__trace_set_need_resched);
 
-void resched_curr(struct rq *rq)
+فراغ resched_curr(بنية rq *rq)
 {
 	__resched_curr(rq, TIF_NEED_RESCHED);
 }
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
-static DEFINE_STATIC_KEY_FALSE(sk_dynamic_preempt_lazy);
-static __always_inline bool dynamic_preempt_lazy(void)
+ساكن DEFINE_STATIC_KEY_FALSE(sk_dynamic_preempt_lazy);
+ساكن __always_inline bool dynamic_preempt_lazy(فراغ)
 {
-	return static_branch_unlikely(&sk_dynamic_preempt_lazy);
+	ܦܢܐ static_branch_unlikely(&sk_dynamic_preempt_lazy);
 }
-#else
-static __always_inline bool dynamic_preempt_lazy(void)
+#ܐܚܪܢܐ
+ساكن __always_inline bool dynamic_preempt_lazy(فراغ)
 {
-	return IS_ENABLED(CONFIG_PREEMPT_LAZY);
+	ܦܢܐ IS_ENABLED(CONFIG_PREEMPT_LAZY);
 }
 #endif
 
-static __always_inline int get_lazy_tif_bit(void)
+ساكن __always_inline صحيح get_lazy_tif_bit(فراغ)
 {
-	if (dynamic_preempt_lazy())
-		return TIF_NEED_RESCHED_LAZY;
+	ܐܢ (dynamic_preempt_lazy())
+		ܦܢܐ TIF_NEED_RESCHED_LAZY;
 
-	return TIF_NEED_RESCHED;
+	ܦܢܐ TIF_NEED_RESCHED;
 }
 
-void resched_curr_lazy(struct rq *rq)
+فراغ resched_curr_lazy(بنية rq *rq)
 {
 	__resched_curr(rq, get_lazy_tif_bit());
 }
 
-void resched_cpu(int cpu)
+فراغ resched_cpu(صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 	unsigned long flags;
 
 	raw_spin_rq_lock_irqsave(rq, flags);
-	if (cpu_online(cpu) || cpu == smp_processor_id())
+	ܐܢ (cpu_online(cpu) || cpu == smp_processor_id())
 		resched_curr(rq);
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 }
@@ -1292,15 +1292,15 @@ void resched_cpu(int cpu)
  * selecting an idle CPU will add more delays to the timers than intended
  * (as that CPU's timer base may not be up to date wrt jiffies etc).
  */
-int get_nohz_timer_target(void)
+صحيح get_nohz_timer_target(فراغ)
 {
-	int i, cpu = smp_processor_id(), default_cpu = -1;
-	struct sched_domain *sd;
-	const struct cpumask *hk_mask;
+	صحيح i, cpu = smp_processor_id(), default_cpu = -1;
+	بنية sched_domain *sd;
+	ثابت بنية cpumask *hk_mask;
 
-	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE)) {
-		if (!idle_cpu(cpu))
-			return cpu;
+	ܐܢ (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE)) {
+		ܐܢ (!idle_cpu(cpu))
+			ܦܢܐ cpu;
 		default_cpu = cpu;
 	}
 
@@ -1310,18 +1310,18 @@ int get_nohz_timer_target(void)
 
 	for_each_domain(cpu, sd) {
 		for_each_cpu_and(i, sched_domain_span(sd), hk_mask) {
-			if (cpu == i)
-				continue;
+			ܐܢ (cpu == i)
+				استمر;
 
-			if (!idle_cpu(i))
-				return i;
+			ܐܢ (!idle_cpu(i))
+				ܦܢܐ i;
 		}
 	}
 
-	if (default_cpu == -1)
+	ܐܢ (default_cpu == -1)
 		default_cpu = housekeeping_any_cpu(HK_TYPE_KERNEL_NOISE);
 
-	return default_cpu;
+	ܦܢܐ default_cpu;
 }
 
 /*
@@ -1334,12 +1334,12 @@ int get_nohz_timer_target(void)
  * account when the CPU goes back to idle and evaluates the timer
  * wheel for the next timer event.
  */
-static void wake_up_idle_cpu(int cpu)
+ساكن فراغ wake_up_idle_cpu(صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
-	if (cpu == smp_processor_id())
-		return;
+	ܐܢ (cpu == smp_processor_id())
+		ܦܢܐ;
 
 	/*
 	 * Set TIF_NEED_RESCHED and send an IPI if in the non-polling
@@ -1363,13 +1363,13 @@ static void wake_up_idle_cpu(int cpu)
 	 * and testing of the above solutions didn't appear to report
 	 * much benefits.
 	 */
-	if (set_nr_and_not_polling(task_thread_info(rq->idle), TIF_NEED_RESCHED))
+	ܐܢ (set_nr_and_not_polling(task_thread_info(rq->idle), TIF_NEED_RESCHED))
 		smp_send_reschedule(cpu);
-	else
+	ܐܚܪܢܐ
 		trace_sched_wake_idle_without_ipi(cpu);
 }
 
-static bool wake_up_full_nohz_cpu(int cpu)
+ساكن bool wake_up_full_nohz_cpu(صحيح cpu)
 {
 	/*
 	 * We just need the target to call irq_exit() and re-evaluate
@@ -1377,16 +1377,16 @@ static bool wake_up_full_nohz_cpu(int cpu)
 	 * If needed we can still optimize that later with an
 	 * empty IRQ.
 	 */
-	if (cpu_is_offline(cpu))
-		return true;  /* Don't try to wake offline CPUs. */
-	if (tick_nohz_full_cpu(cpu)) {
-		if (cpu != smp_processor_id() ||
+	ܐܢ (cpu_is_offline(cpu))
+		ܦܢܐ true;  /* Don't try to wake offline CPUs. */
+	ܐܢ (tick_nohz_full_cpu(cpu)) {
+		ܐܢ (cpu != smp_processor_id() ||
 		    tick_nohz_tick_stopped())
 			tick_nohz_full_kick_cpu(cpu);
-		return true;
+		ܦܢܐ true;
 	}
 
-	return false;
+	ܦܢܐ false;
 }
 
 /*
@@ -1394,17 +1394,17 @@ static bool wake_up_full_nohz_cpu(int cpu)
  * caller's responsibility to deal with the lost wakeup, for example,
  * by hooking into the CPU_DEAD notifier like timers and hrtimers do.
  */
-void wake_up_nohz_cpu(int cpu)
+فراغ wake_up_nohz_cpu(صحيح cpu)
 {
-	if (!wake_up_full_nohz_cpu(cpu))
+	ܐܢ (!wake_up_full_nohz_cpu(cpu))
 		wake_up_idle_cpu(cpu);
 }
 
-static void nohz_csd_func(void *info)
+ساكن فراغ nohz_csd_func(فراغ *info)
 {
-	struct rq *rq = info;
-	int cpu = cpu_of(rq);
-	unsigned int flags;
+	بنية rq *rq = info;
+	صحيح cpu = cpu_of(rq);
+	unsigned صحيح flags;
 
 	/*
 	 * Release the rq::nohz_csd.
@@ -1413,7 +1413,7 @@ static void nohz_csd_func(void *info)
 	WARN_ON(!(flags & NOHZ_KICK_MASK));
 
 	rq->idle_balance = idle_cpu(cpu);
-	if (rq->idle_balance) {
+	ܐܢ (rq->idle_balance) {
 		rq->nohz_idle_balance = flags;
 		__raise_softirq_irqoff(SCHED_SOFTIRQ);
 	}
@@ -1422,37 +1422,37 @@ static void nohz_csd_func(void *info)
 #endif /* CONFIG_NO_HZ_COMMON */
 
 #ifdef CONFIG_NO_HZ_FULL
-static inline bool __need_bw_check(struct rq *rq, struct task_struct *p)
+ساكن مضمن bool __need_bw_check(بنية rq *rq, بنية task_struct *p)
 {
-	if (rq->nr_running != 1)
-		return false;
+	ܐܢ (rq->nr_running != 1)
+		ܦܢܐ false;
 
-	if (p->sched_class != &fair_sched_class)
-		return false;
+	ܐܢ (p->sched_class != &fair_sched_class)
+		ܦܢܐ false;
 
-	if (!task_on_rq_queued(p))
-		return false;
+	ܐܢ (!task_on_rq_queued(p))
+		ܦܢܐ false;
 
-	return true;
+	ܦܢܐ true;
 }
 
-bool sched_can_stop_tick(struct rq *rq)
+bool sched_can_stop_tick(بنية rq *rq)
 {
-	int fifo_nr_running;
+	صحيح fifo_nr_running;
 
 	/* Deadline tasks, even if single, need the tick */
-	if (rq->dl.dl_nr_running)
-		return false;
+	ܐܢ (rq->dl.dl_nr_running)
+		ܦܢܐ false;
 
 	/*
 	 * If there are more than one RR tasks, we need the tick to affect the
 	 * actual RR behaviour.
 	 */
-	if (rq->rt.rr_nr_running) {
-		if (rq->rt.rr_nr_running == 1)
-			return true;
-		else
-			return false;
+	ܐܢ (rq->rt.rr_nr_running) {
+		ܐܢ (rq->rt.rr_nr_running == 1)
+			ܦܢܐ true;
+		ܐܚܪܢܐ
+			ܦܢܐ false;
 	}
 
 	/*
@@ -1460,19 +1460,19 @@ bool sched_can_stop_tick(struct rq *rq)
 	 * forced preemption between FIFO tasks.
 	 */
 	fifo_nr_running = rq->rt.rt_nr_running - rq->rt.rr_nr_running;
-	if (fifo_nr_running)
-		return true;
+	ܐܢ (fifo_nr_running)
+		ܦܢܐ true;
 
 	/*
 	 * If there are no DL,RR/FIFO tasks, there must only be CFS or SCX tasks
 	 * left. For CFS, if there's more than one we need the tick for
 	 * involuntary preemption. For SCX, ask.
 	 */
-	if (scx_enabled() && !scx_can_stop_tick(rq))
-		return false;
+	ܐܢ (scx_enabled() && !scx_can_stop_tick(rq))
+		ܦܢܐ false;
 
-	if (rq->cfs.h_nr_queued > 1)
-		return false;
+	ܐܢ (rq->cfs.h_nr_queued > 1)
+		ܦܢܐ false;
 
 	/*
 	 * If there is one task and it has CFS runtime bandwidth constraints
@@ -1481,68 +1481,68 @@ bool sched_can_stop_tick(struct rq *rq)
 	 * dequeued by migrating while the constrained task continues to run.
 	 * E.g. going from 2->1 without going through pick_next_task().
 	 */
-	if (__need_bw_check(rq, rq->curr)) {
-		if (cfs_task_bw_constrained(rq->curr))
-			return false;
+	ܐܢ (__need_bw_check(rq, rq->curr)) {
+		ܐܢ (cfs_task_bw_constrained(rq->curr))
+			ܦܢܐ false;
 	}
 
-	return true;
+	ܦܢܐ true;
 }
 #endif /* CONFIG_NO_HZ_FULL */
 
-#if defined(CONFIG_RT_GROUP_SCHED) || defined(CONFIG_FAIR_GROUP_SCHED)
+#ܐܢ defined(CONFIG_RT_GROUP_SCHED) || defined(CONFIG_FAIR_GROUP_SCHED)
 /*
  * Iterate task_group tree rooted at *from, calling @down when first entering a
  * node and @up when leaving it for the final time.
  *
  * Caller must hold rcu_lock or sufficient equivalent.
  */
-int walk_tg_tree_from(struct task_group *from,
-			     tg_visitor down, tg_visitor up, void *data)
+صحيح walk_tg_tree_from(بنية task_group *from,
+			     tg_visitor down, tg_visitor up, فراغ *data)
 {
-	struct task_group *parent, *child;
-	int ret;
+	بنية task_group *parent, *child;
+	صحيح ret;
 
 	parent = from;
 
 down:
 	ret = (*down)(parent, data);
-	if (ret)
-		goto out;
+	ܐܢ (ret)
+		اذهب out;
 	list_for_each_entry_rcu(child, &parent->children, siblings) {
 		parent = child;
-		goto down;
+		اذهب down;
 
 up:
-		continue;
+		استمر;
 	}
 	ret = (*up)(parent, data);
-	if (ret || parent == from)
-		goto out;
+	ܐܢ (ret || parent == from)
+		اذهب out;
 
 	child = parent;
 	parent = parent->parent;
-	if (parent)
-		goto up;
+	ܐܢ (parent)
+		اذهب up;
 out:
-	return ret;
+	ܦܢܐ ret;
 }
 
-int tg_nop(struct task_group *tg, void *data)
+صحيح tg_nop(بنية task_group *tg, فراغ *data)
 {
-	return 0;
+	ܦܢܐ 0;
 }
 #endif
 
-void set_load_weight(struct task_struct *p, bool update_load)
+فراغ set_load_weight(بنية task_struct *p, bool update_load)
 {
-	int prio = p->static_prio - MAX_RT_PRIO;
-	struct load_weight lw;
+	صحيح prio = p->static_prio - MAX_RT_PRIO;
+	بنية load_weight lw;
 
-	if (task_has_idle_policy(p)) {
+	ܐܢ (task_has_idle_policy(p)) {
 		lw.weight = scale_load(WEIGHT_IDLEPRIO);
 		lw.inv_weight = WMULT_IDLEPRIO;
-	} else {
+	} ܐܚܪܢܐ {
 		lw.weight = scale_load(sched_prio_to_weight[prio]);
 		lw.inv_weight = sched_prio_to_wmult[prio];
 	}
@@ -1551,9 +1551,9 @@ void set_load_weight(struct task_struct *p, bool update_load)
 	 * SCHED_OTHER tasks have to update their load when changing their
 	 * weight
 	 */
-	if (update_load && p->sched_class->reweight_task)
+	ܐܢ (update_load && p->sched_class->reweight_task)
 		p->sched_class->reweight_task(task_rq(p), p, &lw);
-	else
+	ܐܚܪܢܐ
 		p->se.load = lw;
 }
 
@@ -1568,13 +1568,13 @@ void set_load_weight(struct task_struct *p, bool update_load)
  * requests are serialized using a mutex to reduce the risk of conflicting
  * updates or API abuses.
  */
-static __maybe_unused DEFINE_MUTEX(uclamp_mutex);
+ساكن __maybe_unused DEFINE_MUTEX(uclamp_mutex);
 
 /* Max allowed minimum utilization */
-static unsigned int __maybe_unused sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
+ساكن unsigned صحيح __maybe_unused sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
 
 /* Max allowed maximum utilization */
-static unsigned int __maybe_unused sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
+ساكن unsigned صحيح __maybe_unused sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
 
 /*
  * By default RT tasks run at the maximum performance point/capacity of the
@@ -1591,10 +1591,10 @@ static unsigned int __maybe_unused sysctl_sched_uclamp_util_max = SCHED_CAPACITY
  * This knob will not override the system default sched_util_clamp_min defined
  * above.
  */
-unsigned int sysctl_sched_uclamp_util_min_rt_default = SCHED_CAPACITY_SCALE;
+unsigned صحيح sysctl_sched_uclamp_util_min_rt_default = SCHED_CAPACITY_SCALE;
 
 /* All clamps are required to be less or equal than these values */
-static struct uclamp_se uclamp_default[UCLAMP_CNT];
+ساكن بنية uclamp_se uclamp_default[UCLAMP_CNT];
 
 /*
  * This static key is used to reduce the uclamp overhead in the fast path. It
@@ -1616,97 +1616,97 @@ static struct uclamp_se uclamp_default[UCLAMP_CNT];
  */
 DEFINE_STATIC_KEY_FALSE(sched_uclamp_used);
 
-static inline unsigned int
-uclamp_idle_value(struct rq *rq, enum uclamp_id clamp_id,
-		  unsigned int clamp_value)
+ساكن مضمن unsigned صحيح
+uclamp_idle_value(بنية rq *rq, تعداد uclamp_id clamp_id,
+		  unsigned صحيح clamp_value)
 {
 	/*
 	 * Avoid blocked utilization pushing up the frequency when we go
 	 * idle (which drops the max-clamp) by retaining the last known
 	 * max-clamp.
 	 */
-	if (clamp_id == UCLAMP_MAX) {
+	ܐܢ (clamp_id == UCLAMP_MAX) {
 		rq->uclamp_flags |= UCLAMP_FLAG_IDLE;
-		return clamp_value;
+		ܦܢܐ clamp_value;
 	}
 
-	return uclamp_none(UCLAMP_MIN);
+	ܦܢܐ uclamp_none(UCLAMP_MIN);
 }
 
-static inline void uclamp_idle_reset(struct rq *rq, enum uclamp_id clamp_id,
-				     unsigned int clamp_value)
+ساكن مضمن فراغ uclamp_idle_reset(بنية rq *rq, تعداد uclamp_id clamp_id,
+				     unsigned صحيح clamp_value)
 {
 	/* Reset max-clamp retention only on idle exit */
-	if (!(rq->uclamp_flags & UCLAMP_FLAG_IDLE))
-		return;
+	ܐܢ (!(rq->uclamp_flags & UCLAMP_FLAG_IDLE))
+		ܦܢܐ;
 
 	uclamp_rq_set(rq, clamp_id, clamp_value);
 }
 
-static inline
-unsigned int uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
-				   unsigned int clamp_value)
+ساكن مضمن
+unsigned صحيح uclamp_rq_max_value(بنية rq *rq, تعداد uclamp_id clamp_id,
+				   unsigned صحيح clamp_value)
 {
-	struct uclamp_bucket *bucket = rq->uclamp[clamp_id].bucket;
-	int bucket_id = UCLAMP_BUCKETS - 1;
+	بنية uclamp_bucket *bucket = rq->uclamp[clamp_id].bucket;
+	صحيح bucket_id = UCLAMP_BUCKETS - 1;
 
 	/*
 	 * Since both min and max clamps are max aggregated, find the
 	 * top most bucket with tasks in.
 	 */
-	for ( ; bucket_id >= 0; bucket_id--) {
-		if (!bucket[bucket_id].tasks)
-			continue;
-		return bucket[bucket_id].value;
+	لكل ( ; bucket_id >= 0; bucket_id--) {
+		ܐܢ (!bucket[bucket_id].tasks)
+			استمر;
+		ܦܢܐ bucket[bucket_id].value;
 	}
 
 	/* No tasks -- default clamp values */
-	return uclamp_idle_value(rq, clamp_id, clamp_value);
+	ܦܢܐ uclamp_idle_value(rq, clamp_id, clamp_value);
 }
 
-static void __uclamp_update_util_min_rt_default(struct task_struct *p)
+ساكن فراغ __uclamp_update_util_min_rt_default(بنية task_struct *p)
 {
-	unsigned int default_util_min;
-	struct uclamp_se *uc_se;
+	unsigned صحيح default_util_min;
+	بنية uclamp_se *uc_se;
 
 	lockdep_assert_held(&p->pi_lock);
 
 	uc_se = &p->uclamp_req[UCLAMP_MIN];
 
 	/* Only sync if user didn't override the default */
-	if (uc_se->user_defined)
-		return;
+	ܐܢ (uc_se->user_defined)
+		ܦܢܐ;
 
 	default_util_min = sysctl_sched_uclamp_util_min_rt_default;
 	uclamp_se_set(uc_se, default_util_min, false);
 }
 
-static void uclamp_update_util_min_rt_default(struct task_struct *p)
+ساكن فراغ uclamp_update_util_min_rt_default(بنية task_struct *p)
 {
-	if (!rt_task(p))
-		return;
+	ܐܢ (!rt_task(p))
+		ܦܢܐ;
 
 	/* Protect updates to p->uclamp_* */
 	guard(task_rq_lock)(p);
 	__uclamp_update_util_min_rt_default(p);
 }
 
-static inline struct uclamp_se
-uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
+ساكن مضمن بنية uclamp_se
+uclamp_tg_restrict(بنية task_struct *p, تعداد uclamp_id clamp_id)
 {
 	/* Copy by value as we could modify it */
-	struct uclamp_se uc_req = p->uclamp_req[clamp_id];
+	بنية uclamp_se uc_req = p->uclamp_req[clamp_id];
 #ifdef CONFIG_UCLAMP_TASK_GROUP
-	unsigned int tg_min, tg_max, value;
+	unsigned صحيح tg_min, tg_max, value;
 
 	/*
 	 * Tasks in autogroups or root task group will be
 	 * restricted by system defaults.
 	 */
-	if (task_group_is_autogroup(task_group(p)))
-		return uc_req;
-	if (task_group(p) == &root_task_group)
-		return uc_req;
+	ܐܢ (task_group_is_autogroup(task_group(p)))
+		ܦܢܐ uc_req;
+	ܐܢ (task_group(p) == &root_task_group)
+		ܦܢܐ uc_req;
 
 	tg_min = task_group(p)->uclamp[UCLAMP_MIN].value;
 	tg_max = task_group(p)->uclamp[UCLAMP_MAX].value;
@@ -1715,7 +1715,7 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
 	uclamp_se_set(&uc_req, value, false);
 #endif
 
-	return uc_req;
+	ܦܢܐ uc_req;
 }
 
 /*
@@ -1726,30 +1726,30 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
  *   group or in an autogroup
  * - the system default clamp value, defined by the sysadmin
  */
-static inline struct uclamp_se
-uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
+ساكن مضمن بنية uclamp_se
+uclamp_eff_get(بنية task_struct *p, تعداد uclamp_id clamp_id)
 {
-	struct uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
-	struct uclamp_se uc_max = uclamp_default[clamp_id];
+	بنية uclamp_se uc_req = uclamp_tg_restrict(p, clamp_id);
+	بنية uclamp_se uc_max = uclamp_default[clamp_id];
 
 	/* System default restrictions always apply */
-	if (unlikely(uc_req.value > uc_max.value))
-		return uc_max;
+	ܐܢ (unlikely(uc_req.value > uc_max.value))
+		ܦܢܐ uc_max;
 
-	return uc_req;
+	ܦܢܐ uc_req;
 }
 
-unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+unsigned long uclamp_eff_value(بنية task_struct *p, تعداد uclamp_id clamp_id)
 {
-	struct uclamp_se uc_eff;
+	بنية uclamp_se uc_eff;
 
 	/* Task currently refcounted: use back-annotated (effective) value */
-	if (p->uclamp[clamp_id].active)
-		return (unsigned long)p->uclamp[clamp_id].value;
+	ܐܢ (p->uclamp[clamp_id].active)
+		ܦܢܐ (unsigned long)p->uclamp[clamp_id].value;
 
 	uc_eff = uclamp_eff_get(p, clamp_id);
 
-	return (unsigned long)uc_eff.value;
+	ܦܢܐ (unsigned long)uc_eff.value;
 }
 
 /*
@@ -1762,12 +1762,12 @@ unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
  * This "local max aggregation" allows to track the exact "requested" value
  * for each bucket when all its RUNNABLE tasks require the same clamp.
  */
-static inline void uclamp_rq_inc_id(struct rq *rq, struct task_struct *p,
-				    enum uclamp_id clamp_id)
+ساكن مضمن فراغ uclamp_rq_inc_id(بنية rq *rq, بنية task_struct *p,
+				    تعداد uclamp_id clamp_id)
 {
-	struct uclamp_rq *uc_rq = &rq->uclamp[clamp_id];
-	struct uclamp_se *uc_se = &p->uclamp[clamp_id];
-	struct uclamp_bucket *bucket;
+	بنية uclamp_rq *uc_rq = &rq->uclamp[clamp_id];
+	بنية uclamp_se *uc_se = &p->uclamp[clamp_id];
+	بنية uclamp_bucket *bucket;
 
 	lockdep_assert_rq_held(rq);
 
@@ -1784,10 +1784,10 @@ static inline void uclamp_rq_inc_id(struct rq *rq, struct task_struct *p,
 	 * Local max aggregation: rq buckets always track the max
 	 * "requested" clamp value of its RUNNABLE tasks.
 	 */
-	if (bucket->tasks == 1 || uc_se->value > bucket->value)
+	ܐܢ (bucket->tasks == 1 || uc_se->value > bucket->value)
 		bucket->value = uc_se->value;
 
-	if (uc_se->value > uclamp_rq_get(rq, clamp_id))
+	ܐܢ (uc_se->value > uclamp_rq_get(rq, clamp_id))
 		uclamp_rq_set(rq, clamp_id, uc_se->value);
 }
 
@@ -1800,14 +1800,14 @@ static inline void uclamp_rq_inc_id(struct rq *rq, struct task_struct *p,
  * always valid. If it's detected they are not, as defensive programming,
  * enforce the expected state and warn.
  */
-static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
-				    enum uclamp_id clamp_id)
+ساكن مضمن فراغ uclamp_rq_dec_id(بنية rq *rq, بنية task_struct *p,
+				    تعداد uclamp_id clamp_id)
 {
-	struct uclamp_rq *uc_rq = &rq->uclamp[clamp_id];
-	struct uclamp_se *uc_se = &p->uclamp[clamp_id];
-	struct uclamp_bucket *bucket;
-	unsigned int bkt_clamp;
-	unsigned int rq_clamp;
+	بنية uclamp_rq *uc_rq = &rq->uclamp[clamp_id];
+	بنية uclamp_se *uc_se = &p->uclamp[clamp_id];
+	بنية uclamp_bucket *bucket;
+	unsigned صحيح bkt_clamp;
+	unsigned صحيح rq_clamp;
 
 	lockdep_assert_rq_held(rq);
 
@@ -1834,13 +1834,13 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
 	 *
 	 * The following check here eliminates the possibility of such race.
 	 */
-	if (unlikely(!uc_se->active))
-		return;
+	ܐܢ (unlikely(!uc_se->active))
+		ܦܢܐ;
 
 	bucket = &uc_rq->bucket[uc_se->bucket_id];
 
 	WARN_ON_ONCE(!bucket->tasks);
-	if (likely(bucket->tasks))
+	ܐܢ (likely(bucket->tasks))
 		bucket->tasks--;
 
 	uc_se->active = false;
@@ -1851,8 +1851,8 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
 	 * The rq clamp bucket value is reset to its base value whenever
 	 * there are no more RUNNABLE tasks refcounting it.
 	 */
-	if (likely(bucket->tasks))
-		return;
+	ܐܢ (likely(bucket->tasks))
+		ܦܢܐ;
 
 	rq_clamp = uclamp_rq_get(rq, clamp_id);
 	/*
@@ -1860,15 +1860,15 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
 	 * e.g. due to future modification, warn and fix up the expected value.
 	 */
 	WARN_ON_ONCE(bucket->value > rq_clamp);
-	if (bucket->value >= rq_clamp) {
+	ܐܢ (bucket->value >= rq_clamp) {
 		bkt_clamp = uclamp_rq_max_value(rq, clamp_id, uc_se->value);
 		uclamp_rq_set(rq, clamp_id, bkt_clamp);
 	}
 }
 
-static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, int flags)
+ساكن مضمن فراغ uclamp_rq_inc(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
-	enum uclamp_id clamp_id;
+	تعداد uclamp_id clamp_id;
 
 	/*
 	 * Avoid any overhead until uclamp is actually used by the userspace.
@@ -1876,27 +1876,27 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, int flags
 	 * The condition is constructed such that a NOP is generated when
 	 * sched_uclamp_used is disabled.
 	 */
-	if (!uclamp_is_used())
-		return;
+	ܐܢ (!uclamp_is_used())
+		ܦܢܐ;
 
-	if (unlikely(!p->sched_class->uclamp_enabled))
-		return;
+	ܐܢ (unlikely(!p->sched_class->uclamp_enabled))
+		ܦܢܐ;
 
 	/* Only inc the delayed task which being woken up. */
-	if (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
-		return;
+	ܐܢ (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
+		ܦܢܐ;
 
 	for_each_clamp_id(clamp_id)
 		uclamp_rq_inc_id(rq, p, clamp_id);
 
 	/* Reset clamp idle holding when there is one RUNNABLE task */
-	if (rq->uclamp_flags & UCLAMP_FLAG_IDLE)
+	ܐܢ (rq->uclamp_flags & UCLAMP_FLAG_IDLE)
 		rq->uclamp_flags &= ~UCLAMP_FLAG_IDLE;
 }
 
-static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+ساكن مضمن فراغ uclamp_rq_dec(بنية rq *rq, بنية task_struct *p)
 {
-	enum uclamp_id clamp_id;
+	تعداد uclamp_id clamp_id;
 
 	/*
 	 * Avoid any overhead until uclamp is actually used by the userspace.
@@ -1904,24 +1904,24 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
 	 * The condition is constructed such that a NOP is generated when
 	 * sched_uclamp_used is disabled.
 	 */
-	if (!uclamp_is_used())
-		return;
+	ܐܢ (!uclamp_is_used())
+		ܦܢܐ;
 
-	if (unlikely(!p->sched_class->uclamp_enabled))
-		return;
+	ܐܢ (unlikely(!p->sched_class->uclamp_enabled))
+		ܦܢܐ;
 
-	if (p->se.sched_delayed)
-		return;
+	ܐܢ (p->se.sched_delayed)
+		ܦܢܐ;
 
 	for_each_clamp_id(clamp_id)
 		uclamp_rq_dec_id(rq, p, clamp_id);
 }
 
-static inline void uclamp_rq_reinc_id(struct rq *rq, struct task_struct *p,
-				      enum uclamp_id clamp_id)
+ساكن مضمن فراغ uclamp_rq_reinc_id(بنية rq *rq, بنية task_struct *p,
+				      تعداد uclamp_id clamp_id)
 {
-	if (!p->uclamp[clamp_id].active)
-		return;
+	ܐܢ (!p->uclamp[clamp_id].active)
+		ܦܢܐ;
 
 	uclamp_rq_dec_id(rq, p, clamp_id);
 	uclamp_rq_inc_id(rq, p, clamp_id);
@@ -1930,16 +1930,16 @@ static inline void uclamp_rq_reinc_id(struct rq *rq, struct task_struct *p,
 	 * Make sure to clear the idle flag if we've transiently reached 0
 	 * active tasks on rq.
 	 */
-	if (clamp_id == UCLAMP_MAX && (rq->uclamp_flags & UCLAMP_FLAG_IDLE))
+	ܐܢ (clamp_id == UCLAMP_MAX && (rq->uclamp_flags & UCLAMP_FLAG_IDLE))
 		rq->uclamp_flags &= ~UCLAMP_FLAG_IDLE;
 }
 
-static inline void
-uclamp_update_active(struct task_struct *p)
+ساكن مضمن فراغ
+uclamp_update_active(بنية task_struct *p)
 {
-	enum uclamp_id clamp_id;
-	struct rq_flags rf;
-	struct rq *rq;
+	تعداد uclamp_id clamp_id;
+	بنية rq_flags rf;
+	بنية rq *rq;
 
 	/*
 	 * Lock the task and the rq where the task is (or was) queued.
@@ -1964,26 +1964,26 @@ uclamp_update_active(struct task_struct *p)
 }
 
 #ifdef CONFIG_UCLAMP_TASK_GROUP
-static inline void
-uclamp_update_active_tasks(struct cgroup_subsys_state *css)
+ساكن مضمن فراغ
+uclamp_update_active_tasks(بنية cgroup_subsys_state *css)
 {
-	struct css_task_iter it;
-	struct task_struct *p;
+	بنية css_task_iter it;
+	بنية task_struct *p;
 
 	css_task_iter_start(css, 0, &it);
-	while ((p = css_task_iter_next(&it)))
+	ܟܡܐ ((p = css_task_iter_next(&it)))
 		uclamp_update_active(p);
 	css_task_iter_end(&it);
 }
 
-static void cpu_util_update_eff(struct cgroup_subsys_state *css);
+ساكن فراغ cpu_util_update_eff(بنية cgroup_subsys_state *css);
 #endif
 
 #ifdef CONFIG_SYSCTL
 #ifdef CONFIG_UCLAMP_TASK_GROUP
-static void uclamp_update_root_tg(void)
+ساكن فراغ uclamp_update_root_tg(فراغ)
 {
-	struct task_group *tg = &root_task_group;
+	بنية task_group *tg = &root_task_group;
 
 	uclamp_se_set(&tg->uclamp_req[UCLAMP_MIN],
 		      sysctl_sched_uclamp_util_min, false);
@@ -1993,13 +1993,13 @@ static void uclamp_update_root_tg(void)
 	guard(rcu)();
 	cpu_util_update_eff(&root_task_group.css);
 }
-#else
-static void uclamp_update_root_tg(void) { }
+#ܐܚܪܢܐ
+ساكن فراغ uclamp_update_root_tg(فراغ) { }
 #endif
 
-static void uclamp_sync_util_min_rt_default(void)
+ساكن فراغ uclamp_sync_util_min_rt_default(فراغ)
 {
-	struct task_struct *g, *p;
+	بنية task_struct *g, *p;
 
 	/*
 	 * copy_process()			sysctl_uclamp
@@ -2023,12 +2023,12 @@ static void uclamp_sync_util_min_rt_default(void)
 		uclamp_update_util_min_rt_default(p);
 }
 
-static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
-				void *buffer, size_t *lenp, loff_t *ppos)
+ساكن صحيح sysctl_sched_uclamp_handler(ثابت بنية ctl_table *table, صحيح اكتب,
+				فراغ *buffer, size_t *lenp, loff_t *ppos)
 {
 	bool update_root_tg = false;
-	int old_min, old_max, old_min_rt;
-	int result;
+	صحيح old_min, old_max, old_min_rt;
+	صحيح result;
 
 	guard(mutex)(&uclamp_mutex);
 
@@ -2036,37 +2036,37 @@ static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
 	old_max = sysctl_sched_uclamp_util_max;
 	old_min_rt = sysctl_sched_uclamp_util_min_rt_default;
 
-	result = proc_dointvec(table, write, buffer, lenp, ppos);
-	if (result)
-		goto undo;
-	if (!write)
-		return 0;
+	result = proc_dointvec(table, اكتب, buffer, lenp, ppos);
+	ܐܢ (result)
+		اذهب undo;
+	ܐܢ (!اكتب)
+		ܦܢܐ 0;
 
-	if (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
+	ܐܢ (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
 	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE	||
 	    sysctl_sched_uclamp_util_min_rt_default > SCHED_CAPACITY_SCALE) {
 
 		result = -EINVAL;
-		goto undo;
+		اذهب undo;
 	}
 
-	if (old_min != sysctl_sched_uclamp_util_min) {
+	ܐܢ (old_min != sysctl_sched_uclamp_util_min) {
 		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
 			      sysctl_sched_uclamp_util_min, false);
 		update_root_tg = true;
 	}
-	if (old_max != sysctl_sched_uclamp_util_max) {
+	ܐܢ (old_max != sysctl_sched_uclamp_util_max) {
 		uclamp_se_set(&uclamp_default[UCLAMP_MAX],
 			      sysctl_sched_uclamp_util_max, false);
 		update_root_tg = true;
 	}
 
-	if (update_root_tg) {
+	ܐܢ (update_root_tg) {
 		sched_uclamp_enable();
 		uclamp_update_root_tg();
 	}
 
-	if (old_min_rt != sysctl_sched_uclamp_util_min_rt_default) {
+	ܐܢ (old_min_rt != sysctl_sched_uclamp_util_min_rt_default) {
 		sched_uclamp_enable();
 		uclamp_sync_util_min_rt_default();
 	}
@@ -2076,19 +2076,19 @@ static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
 	 * Otherwise, keep it simple and do just a lazy update at each next
 	 * task enqueue time.
 	 */
-	return 0;
+	ܦܢܐ 0;
 
 undo:
 	sysctl_sched_uclamp_util_min = old_min;
 	sysctl_sched_uclamp_util_max = old_max;
 	sysctl_sched_uclamp_util_min_rt_default = old_min_rt;
-	return result;
+	ܦܢܐ result;
 }
 #endif /* CONFIG_SYSCTL */
 
-static void uclamp_fork(struct task_struct *p)
+ساكن فراغ uclamp_fork(بنية task_struct *p)
 {
-	enum uclamp_id clamp_id;
+	تعداد uclamp_id clamp_id;
 
 	/*
 	 * We don't need to hold task_rq_lock() when updating p->uclamp_* here
@@ -2097,8 +2097,8 @@ static void uclamp_fork(struct task_struct *p)
 	for_each_clamp_id(clamp_id)
 		p->uclamp[clamp_id].active = false;
 
-	if (likely(!p->sched_reset_on_fork))
-		return;
+	ܐܢ (likely(!p->sched_reset_on_fork))
+		ܦܢܐ;
 
 	for_each_clamp_id(clamp_id) {
 		uclamp_se_set(&p->uclamp_req[clamp_id],
@@ -2106,18 +2106,18 @@ static void uclamp_fork(struct task_struct *p)
 	}
 }
 
-static void uclamp_post_fork(struct task_struct *p)
+ساكن فراغ uclamp_post_fork(بنية task_struct *p)
 {
 	uclamp_update_util_min_rt_default(p);
 }
 
-static void __init init_uclamp_rq(struct rq *rq)
+ساكن فراغ __init init_uclamp_rq(بنية rq *rq)
 {
-	enum uclamp_id clamp_id;
-	struct uclamp_rq *uc_rq = rq->uclamp;
+	تعداد uclamp_id clamp_id;
+	بنية uclamp_rq *uc_rq = rq->uclamp;
 
 	for_each_clamp_id(clamp_id) {
-		uc_rq[clamp_id] = (struct uclamp_rq) {
+		uc_rq[clamp_id] = (بنية uclamp_rq) {
 			.value = uclamp_none(clamp_id)
 		};
 	}
@@ -2125,11 +2125,11 @@ static void __init init_uclamp_rq(struct rq *rq)
 	rq->uclamp_flags = UCLAMP_FLAG_IDLE;
 }
 
-static void __init init_uclamp(void)
+ساكن فراغ __init init_uclamp(فراغ)
 {
-	struct uclamp_se uc_max = {};
-	enum uclamp_id clamp_id;
-	int cpu;
+	بنية uclamp_se uc_max = {};
+	تعداد uclamp_id clamp_id;
+	صحيح cpu;
 
 	for_each_possible_cpu(cpu)
 		init_uclamp_rq(cpu_rq(cpu));
@@ -2150,41 +2150,41 @@ static void __init init_uclamp(void)
 	}
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
-static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, int flags) { }
-static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) { }
-static inline void uclamp_fork(struct task_struct *p) { }
-static inline void uclamp_post_fork(struct task_struct *p) { }
-static inline void init_uclamp(void) { }
+#ܐܚܪܢܐ /* !CONFIG_UCLAMP_TASK: */
+ساكن مضمن فراغ uclamp_rq_inc(بنية rq *rq, بنية task_struct *p, صحيح flags) { }
+ساكن مضمن فراغ uclamp_rq_dec(بنية rq *rq, بنية task_struct *p) { }
+ساكن مضمن فراغ uclamp_fork(بنية task_struct *p) { }
+ساكن مضمن فراغ uclamp_post_fork(بنية task_struct *p) { }
+ساكن مضمن فراغ init_uclamp(فراغ) { }
 #endif /* !CONFIG_UCLAMP_TASK */
 
-bool sched_task_on_rq(struct task_struct *p)
+bool sched_task_on_rq(بنية task_struct *p)
 {
-	return task_on_rq_queued(p);
+	ܦܢܐ task_on_rq_queued(p);
 }
 
-unsigned long get_wchan(struct task_struct *p)
+unsigned long get_wchan(بنية task_struct *p)
 {
 	unsigned long ip = 0;
-	unsigned int state;
+	unsigned صحيح state;
 
-	if (!p || p == current)
-		return 0;
+	ܐܢ (!p || p == current)
+		ܦܢܐ 0;
 
 	/* Only get wchan if task is blocked and we can keep it that way. */
 	raw_spin_lock_irq(&p->pi_lock);
 	state = READ_ONCE(p->__state);
 	smp_rmb(); /* see try_to_wake_up() */
-	if (state != TASK_RUNNING && state != TASK_WAKING && !p->on_rq)
+	ܐܢ (state != TASK_RUNNING && state != TASK_WAKING && !p->on_rq)
 		ip = __get_wchan(p);
 	raw_spin_unlock_irq(&p->pi_lock);
 
-	return ip;
+	ܦܢܐ ip;
 }
 
-void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+فراغ enqueue_task(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
-	if (!(flags & ENQUEUE_NOCLOCK))
+	ܐܢ (!(flags & ENQUEUE_NOCLOCK))
 		update_rq_clock(rq);
 
 	/*
@@ -2198,25 +2198,25 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
 
 	psi_enqueue(p, flags);
 
-	if (!(flags & ENQUEUE_RESTORE))
+	ܐܢ (!(flags & ENQUEUE_RESTORE))
 		sched_info_enqueue(rq, p);
 
-	if (sched_core_enabled(rq))
+	ܐܢ (sched_core_enabled(rq))
 		sched_core_enqueue(rq, p);
 }
 
 /*
  * Must only return false when DEQUEUE_SLEEP.
  */
-inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+مضمن bool dequeue_task(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
-	if (sched_core_enabled(rq))
+	ܐܢ (sched_core_enabled(rq))
 		sched_core_dequeue(rq, p, flags);
 
-	if (!(flags & DEQUEUE_NOCLOCK))
+	ܐܢ (!(flags & DEQUEUE_NOCLOCK))
 		update_rq_clock(rq);
 
-	if (!(flags & DEQUEUE_SAVE))
+	ܐܢ (!(flags & DEQUEUE_SAVE))
 		sched_info_dequeue(rq, p);
 
 	psi_dequeue(p, flags);
@@ -2226,12 +2226,12 @@ inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
 	 * and mark the task ->sched_delayed.
 	 */
 	uclamp_rq_dec(rq, p);
-	return p->sched_class->dequeue_task(rq, p, flags);
+	ܦܢܐ p->sched_class->dequeue_task(rq, p, flags);
 }
 
-void activate_task(struct rq *rq, struct task_struct *p, int flags)
+فراغ activate_task(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
-	if (task_on_rq_migrating(p))
+	ܐܢ (task_on_rq_migrating(p))
 		flags |= ENQUEUE_MIGRATED;
 
 	enqueue_task(rq, p, flags);
@@ -2240,7 +2240,7 @@ void activate_task(struct rq *rq, struct task_struct *p, int flags)
 	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
 }
 
-void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
+فراغ deactivate_task(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
 	WARN_ON_ONCE(flags & DEQUEUE_SLEEP);
 
@@ -2255,17 +2255,17 @@ void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
 	dequeue_task(rq, p, flags);
 }
 
-static bool dequeue_block_task(struct rq *rq, struct task_struct *p,
+ساكن bool dequeue_block_task(بنية rq *rq, بنية task_struct *p,
 			       unsigned long task_state)
 {
-	int flags = DEQUEUE_NOCLOCK;
+	صحيح flags = DEQUEUE_NOCLOCK;
 
 	p->sched_contributes_to_load =
 		(task_state & TASK_UNINTERRUPTIBLE) &&
 		!(task_state & TASK_NOLOAD) &&
 		!(task_state & TASK_FROZEN);
 
-	if (unlikely(is_special_task_state(task_state)))
+	ܐܢ (unlikely(is_special_task_state(task_state)))
 		flags |= DEQUEUE_SPECIAL;
 
 	/*
@@ -2280,12 +2280,12 @@ static bool dequeue_block_task(struct rq *rq, struct task_struct *p,
 	 * Once the caller invokes __block_task(), schedule() must not care about
 	 * p->state any more.
 	 */
-	return dequeue_task(rq, p, DEQUEUE_SLEEP | flags);
+	ܦܢܐ dequeue_task(rq, p, DEQUEUE_SLEEP | flags);
 }
 
-static void block_task(struct rq *rq, struct task_struct *p, unsigned long task_state)
+ساكن فراغ block_task(بنية rq *rq, بنية task_struct *p, unsigned long task_state)
 {
-	if (dequeue_block_task(rq, p, task_state))
+	ܐܢ (dequeue_block_task(rq, p, task_state))
 		__block_task(rq, p);
 }
 
@@ -2295,19 +2295,19 @@ static void block_task(struct rq *rq, struct task_struct *p, unsigned long task_
  *
  * Return: 1 if the task is currently executing. 0 otherwise.
  */
-inline int task_curr(const struct task_struct *p)
+مضمن صحيح task_curr(ثابت بنية task_struct *p)
 {
-	return cpu_curr(task_cpu(p)) == p;
+	ܦܢܐ cpu_curr(task_cpu(p)) == p;
 }
 
-void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
+فراغ wakeup_preempt(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
-	struct task_struct *donor = rq->donor;
+	بنية task_struct *donor = rq->donor;
 
-	if (p->sched_class == rq->next_class) {
+	ܐܢ (p->sched_class == rq->next_class) {
 		rq->next_class->wakeup_preempt(rq, p, flags);
 
-	} else if (sched_class_above(p->sched_class, rq->next_class)) {
+	} ܐܚܪܢܐ ܐܢ (sched_class_above(p->sched_class, rq->next_class)) {
 		rq->next_class->wakeup_preempt(rq, p, flags);
 		resched_curr(rq);
 		rq->next_class = p->sched_class;
@@ -2317,31 +2317,31 @@ void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
 	 * A queue event has occurred, and we're going to schedule.  In
 	 * this case, we can save a useless back to back clock update.
 	 */
-	if (task_on_rq_queued(donor) && test_tsk_need_resched(rq->curr))
+	ܐܢ (task_on_rq_queued(donor) && test_tsk_need_resched(rq->curr))
 		rq_clock_skip_update(rq);
 }
 
-static __always_inline
-int __task_state_match(struct task_struct *p, unsigned int state)
+ساكن __always_inline
+صحيح __task_state_match(بنية task_struct *p, unsigned صحيح state)
 {
-	if (READ_ONCE(p->__state) & state)
-		return 1;
+	ܐܢ (READ_ONCE(p->__state) & state)
+		ܦܢܐ 1;
 
-	if (READ_ONCE(p->saved_state) & state)
-		return -1;
+	ܐܢ (READ_ONCE(p->saved_state) & state)
+		ܦܢܐ -1;
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-static __always_inline
-int task_state_match(struct task_struct *p, unsigned int state)
+ساكن __always_inline
+صحيح task_state_match(بنية task_struct *p, unsigned صحيح state)
 {
 	/*
 	 * Serialize against current_save_and_set_rtlock_wait_state(),
 	 * current_restore_rtlock_saved_state(), and __refrigerator().
 	 */
 	guard(raw_spinlock_irq)(&p->pi_lock);
-	return __task_state_match(p, state);
+	ܦܢܐ __task_state_match(p, state);
 }
 
 /*
@@ -2360,14 +2360,14 @@ int task_state_match(struct task_struct *p, unsigned int state)
  * smp_call_function() if an IPI is sent by the same process we are
  * waiting to become inactive.
  */
-unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state)
+unsigned long wait_task_inactive(بنية task_struct *p, unsigned صحيح match_state)
 {
-	int running, queued, match;
-	struct rq_flags rf;
+	صحيح running, queued, match;
+	بنية rq_flags rf;
 	unsigned long ncsw;
-	struct rq *rq;
+	بنية rq *rq;
 
-	for (;;) {
+	لكل (;;) {
 		/*
 		 * We do the initial early heuristics without holding
 		 * any task-queue locks at all. We'll only try to get
@@ -2387,9 +2387,9 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 * return false if the runqueue has changed and p
 		 * is actually now running somewhere else!
 		 */
-		while (task_on_cpu(rq, p)) {
-			if (!task_state_match(p, match_state))
-				return 0;
+		ܟܡܐ (task_on_cpu(rq, p)) {
+			ܐܢ (!task_state_match(p, match_state))
+				ܦܢܐ 0;
 			cpu_relax();
 		}
 
@@ -2403,18 +2403,18 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 * If task is sched_delayed, force dequeue it, to avoid always
 		 * hitting the tick timeout in the queued case
 		 */
-		if (p->se.sched_delayed)
+		ܐܢ (p->se.sched_delayed)
 			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
 		trace_sched_wait_task(p);
 		running = task_on_cpu(rq, p);
 		queued = task_on_rq_queued(p);
 		ncsw = 0;
-		if ((match = __task_state_match(p, match_state))) {
+		ܐܢ ((match = __task_state_match(p, match_state))) {
 			/*
 			 * When matching on p->saved_state, consider this task
 			 * still queued so it will wait.
 			 */
-			if (match < 0)
+			ܐܢ (match < 0)
 				queued = 1;
 			ncsw = p->nvcsw | LONG_MIN; /* sets MSB */
 		}
@@ -2423,8 +2423,8 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		/*
 		 * If it changed from the expected state, bail out now.
 		 */
-		if (unlikely(!ncsw))
-			break;
+		ܐܢ (unlikely(!ncsw))
+			اكسر;
 
 		/*
 		 * Was it really running after all now that we
@@ -2432,9 +2432,9 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 *
 		 * Oops. Go back and try again..
 		 */
-		if (unlikely(running)) {
+		ܐܢ (unlikely(running)) {
 			cpu_relax();
-			continue;
+			استمر;
 		}
 
 		/*
@@ -2446,12 +2446,12 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 * running right now), it's preempted, and we should
 		 * yield - it could be a while.
 		 */
-		if (unlikely(queued)) {
+		ܐܢ (unlikely(queued)) {
 			ktime_t to = NSEC_PER_SEC / HZ;
 
 			set_current_state(TASK_UNINTERRUPTIBLE);
 			schedule_hrtimeout(&to, HRTIMER_MODE_REL_HARD);
-			continue;
+			استمر;
 		}
 
 		/*
@@ -2459,36 +2459,36 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 * runnable, which means that it will never become
 		 * running in the future either. We're all done!
 		 */
-		break;
+		اكسر;
 	}
 
-	return ncsw;
+	ܦܢܐ ncsw;
 }
 
-static void
-do_set_cpus_allowed(struct task_struct *p, struct affinity_context *ctx);
+ساكن فراغ
+do_set_cpus_allowed(بنية task_struct *p, بنية affinity_context *ctx);
 
-static void migrate_disable_switch(struct rq *rq, struct task_struct *p)
+ساكن فراغ migrate_disable_switch(بنية rq *rq, بنية task_struct *p)
 {
-	struct affinity_context ac = {
+	بنية affinity_context ac = {
 		.new_mask  = cpumask_of(rq->cpu),
 		.flags     = SCA_MIGRATE_DISABLE,
 	};
 
-	if (likely(!p->migration_disabled))
-		return;
+	ܐܢ (likely(!p->migration_disabled))
+		ܦܢܐ;
 
-	if (p->cpus_ptr != &p->cpus_mask)
-		return;
+	ܐܢ (p->cpus_ptr != &p->cpus_mask)
+		ܦܢܐ;
 
 	scoped_guard (task_rq_lock, p)
 		do_set_cpus_allowed(p, &ac);
 }
 
-void ___migrate_enable(void)
+فراغ ___migrate_enable(فراغ)
 {
-	struct task_struct *p = current;
-	struct affinity_context ac = {
+	بنية task_struct *p = current;
+	بنية affinity_context ac = {
 		.new_mask  = &p->cpus_mask,
 		.flags     = SCA_MIGRATE_ENABLE,
 	};
@@ -2497,38 +2497,38 @@ void ___migrate_enable(void)
 }
 EXPORT_SYMBOL_GPL(___migrate_enable);
 
-void migrate_disable(void)
+فراغ migrate_disable(فراغ)
 {
 	__migrate_disable();
 }
 EXPORT_SYMBOL_GPL(migrate_disable);
 
-void migrate_enable(void)
+فراغ migrate_enable(فراغ)
 {
 	__migrate_enable();
 }
 EXPORT_SYMBOL_GPL(migrate_enable);
 
-static inline bool rq_has_pinned_tasks(struct rq *rq)
+ساكن مضمن bool rq_has_pinned_tasks(بنية rq *rq)
 {
-	return rq->nr_pinned;
+	ܦܢܐ rq->nr_pinned;
 }
 
-static inline bool task_can_migrate_to_preferred(struct task_struct *p, int cpu)
+ساكن مضمن bool task_can_migrate_to_preferred(بنية task_struct *p, صحيح cpu)
 {
 	/* No need to migrate from a preferred CPU */
-	if (cpu_preferred(cpu))
-		return false;
+	ܐܢ (cpu_preferred(cpu))
+		ܦܢܐ false;
 
 	/* Only FAIR tasks honor preferred CPU state */
-	if (unlikely(p->sched_class != &fair_sched_class))
-		return false;
+	ܐܢ (unlikely(p->sched_class != &fair_sched_class))
+		ܦܢܐ false;
 
 	/* Ignore preferred state if task affinity is changing */
-	if (unlikely(!cpumask_test_cpu(task_cpu(p), p->cpus_ptr)))
-		return false;
+	ܐܢ (unlikely(!cpumask_test_cpu(task_cpu(p), p->cpus_ptr)))
+		ܦܢܐ false;
 
-	return cpumask_intersects_and(p->cpus_ptr, cpu_preferred_mask,
+	ܦܢܐ cpumask_intersects_and(p->cpus_ptr, cpu_preferred_mask,
 				      task_cpu_possible_mask(p));
 }
 
@@ -2536,38 +2536,38 @@ static inline bool task_can_migrate_to_preferred(struct task_struct *p, int cpu)
  * Per-CPU kthreads are allowed to run on !active && online CPUs, see
  * __set_cpus_allowed_ptr() and select_fallback_rq().
  */
-static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
+ساكن مضمن bool is_cpu_allowed(بنية task_struct *p, صحيح cpu)
 {
 	/* When not in the task's cpumask, no point in looking further. */
-	if (!task_allowed_on_cpu(p, cpu))
-		return false;
+	ܐܢ (!task_allowed_on_cpu(p, cpu))
+		ܦܢܐ false;
 
 	/* migrate_disabled() must be allowed to finish. */
-	if (is_migration_disabled(p))
-		return cpu_online(cpu);
+	ܐܢ (is_migration_disabled(p))
+		ܦܢܐ cpu_online(cpu);
 
 	/* Non kernel threads are not allowed during either online or offline. */
-	if (!(p->flags & PF_KTHREAD)) {
+	ܐܢ (!(p->flags & PF_KTHREAD)) {
 		/* Try to use preferred CPU if task's affinity allows */
-		if (task_can_migrate_to_preferred(p, cpu))
-			return false;
-		return cpu_active(cpu);
+		ܐܢ (task_can_migrate_to_preferred(p, cpu))
+			ܦܢܐ false;
+		ܦܢܐ cpu_active(cpu);
 	}
 
 	/* KTHREAD_IS_PER_CPU is always allowed. */
-	if (kthread_is_per_cpu(p))
-		return cpu_online(cpu);
+	ܐܢ (kthread_is_per_cpu(p))
+		ܦܢܐ cpu_online(cpu);
 
 	/* Regular kernel threads don't get to stay during offline. */
-	if (cpu_dying(cpu))
-		return false;
+	ܐܢ (cpu_dying(cpu))
+		ܦܢܐ false;
 
 	/* Try to keep unbound kthreads on a preferred CPU if possible. */
-	if (task_can_migrate_to_preferred(p, cpu))
-		return false;
+	ܐܢ (task_can_migrate_to_preferred(p, cpu))
+		ܦܢܐ false;
 
 	/* Otherwise, they are allowed to run on online CPU. */
-	return cpu_online(cpu);
+	ܦܢܐ cpu_online(cpu);
 }
 
 /*
@@ -2589,8 +2589,8 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
  *
  * Returns (locked) new rq. Old rq's lock is released.
  */
-static struct rq *move_queued_task(struct rq *rq, struct rq_flags *rf,
-				   struct task_struct *p, int new_cpu)
+ساكن بنية rq *move_queued_task(بنية rq *rq, بنية rq_flags *rf,
+				   بنية task_struct *p, صحيح new_cpu)
 	__must_hold(__rq_lockp(rq))
 {
 	lockdep_assert_rq_held(rq);
@@ -2606,25 +2606,25 @@ static struct rq *move_queued_task(struct rq *rq, struct rq_flags *rf,
 	activate_task(rq, p, 0);
 	wakeup_preempt(rq, p, 0);
 
-	return rq;
+	ܦܢܐ rq;
 }
 
-struct migration_arg {
-	struct task_struct		*task;
-	int				dest_cpu;
-	struct set_affinity_pending	*pending;
+بنية migration_arg {
+	بنية task_struct		*task;
+	صحيح				dest_cpu;
+	بنية set_affinity_pending	*pending;
 };
 
 /*
  * @refs: number of wait_for_completion()
  * @stop_pending: is @stop_work in use
  */
-struct set_affinity_pending {
+بنية set_affinity_pending {
 	refcount_t		refs;
-	unsigned int		stop_pending;
-	struct completion	done;
-	struct cpu_stop_work	stop_work;
-	struct migration_arg	arg;
+	unsigned صحيح		stop_pending;
+	بنية completion	done;
+	بنية cpu_stop_work	stop_work;
+	بنية migration_arg	arg;
 };
 
 /*
@@ -2636,17 +2636,17 @@ struct set_affinity_pending {
  * So we race with normal scheduler movements, but that's OK, as long
  * as the task is no longer on this CPU.
  */
-static struct rq *__migrate_task(struct rq *rq, struct rq_flags *rf,
-				 struct task_struct *p, int dest_cpu)
+ساكن بنية rq *__migrate_task(بنية rq *rq, بنية rq_flags *rf,
+				 بنية task_struct *p, صحيح dest_cpu)
 	__must_hold(__rq_lockp(rq))
 {
 	/* Affinity changed (again). */
-	if (!is_cpu_allowed(p, dest_cpu))
-		return rq;
+	ܐܢ (!is_cpu_allowed(p, dest_cpu))
+		ܦܢܐ rq;
 
 	rq = move_queued_task(rq, rf, p, dest_cpu);
 
-	return rq;
+	ܦܢܐ rq;
 }
 
 /*
@@ -2654,14 +2654,14 @@ static struct rq *__migrate_task(struct rq *rq, struct rq_flags *rf,
  * and performs thread migration by bumping thread off CPU then
  * 'pushing' onto another runqueue.
  */
-static int migration_cpu_stop(void *data)
+ساكن صحيح migration_cpu_stop(فراغ *data)
 {
-	struct migration_arg *arg = data;
-	struct set_affinity_pending *pending = arg->pending;
-	struct task_struct *p = arg->task;
-	struct rq *rq = this_rq();
+	بنية migration_arg *arg = data;
+	بنية set_affinity_pending *pending = arg->pending;
+	بنية task_struct *p = arg->task;
+	بنية rq *rq = this_rq();
 	bool complete = false;
-	struct rq_flags rf;
+	بنية rq_flags rf;
 
 	/*
 	 * The original target CPU might have gone down and we might
@@ -2695,22 +2695,22 @@ static int migration_cpu_stop(void *data)
 	 * holding rq->lock, if p->on_rq == 0 it cannot get enqueued because
 	 * we're holding p->pi_lock.
 	 */
-	if (task_rq(p) == rq) {
-		if (is_migration_disabled(p))
-			goto out;
+	ܐܢ (task_rq(p) == rq) {
+		ܐܢ (is_migration_disabled(p))
+			اذهب out;
 
-		if (pending) {
-			p->migration_pending = NULL;
+		ܐܢ (pending) {
+			p->migration_pending = عدم;
 			complete = true;
 
-			if (cpumask_test_cpu(task_cpu(p), &p->cpus_mask))
-				goto out;
+			ܐܢ (cpumask_test_cpu(task_cpu(p), &p->cpus_mask))
+				اذهب out;
 		}
 
-		if (task_on_rq_queued(p)) {
+		ܐܢ (task_on_rq_queued(p)) {
 			update_rq_clock(rq);
 			rq = __migrate_task(rq, &rf, p, arg->dest_cpu);
-		} else {
+		} ܐܚܪܢܐ {
 			p->wake_cpu = arg->dest_cpu;
 		}
 
@@ -2721,7 +2721,7 @@ static int migration_cpu_stop(void *data)
 		 * anyway, so it's probably not a big deal.
 		 */
 
-	} else if (pending) {
+	} ܐܚܪܢܐ ܐܢ (pending) {
 		/*
 		 * This happens when we get migrated between migrate_enable()'s
 		 * preempt_enable() and scheduling the stopper task. At that
@@ -2736,10 +2736,10 @@ static int migration_cpu_stop(void *data)
 		 * ->pi_lock, so the allowed mask is stable - if it got
 		 * somewhere allowed, we're done.
 		 */
-		if (cpumask_test_cpu(task_cpu(p), p->cpus_ptr)) {
-			p->migration_pending = NULL;
+		ܐܢ (cpumask_test_cpu(task_cpu(p), p->cpus_ptr)) {
+			p->migration_pending = عدم;
 			complete = true;
-			goto out;
+			اذهب out;
 		}
 
 		/*
@@ -2754,48 +2754,48 @@ static int migration_cpu_stop(void *data)
 		stop_one_cpu_nowait(task_cpu(p), migration_cpu_stop,
 				    &pending->arg, &pending->stop_work);
 		preempt_enable();
-		return 0;
+		ܦܢܐ 0;
 	}
 out:
-	if (pending)
+	ܐܢ (pending)
 		pending->stop_pending = false;
 	rq_unlock(rq, &rf);
 	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
 
-	if (complete)
+	ܐܢ (complete)
 		complete_all(&pending->done);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-int push_cpu_stop(void *arg)
+صحيح push_cpu_stop(فراغ *arg)
 {
-	struct rq *lowest_rq = NULL, *rq = this_rq();
-	struct task_struct *p = arg;
+	بنية rq *lowest_rq = عدم, *rq = this_rq();
+	بنية task_struct *p = arg;
 
 	raw_spin_lock_irq(&p->pi_lock);
 	raw_spin_rq_lock(rq);
 
-	if (task_rq(p) != rq)
-		goto out_unlock;
+	ܐܢ (task_rq(p) != rq)
+		اذهب out_unlock;
 
-	if (is_migration_disabled(p)) {
+	ܐܢ (is_migration_disabled(p)) {
 		p->migration_flags |= MDF_PUSH;
-		goto out_unlock;
+		اذهب out_unlock;
 	}
 
 	p->migration_flags &= ~MDF_PUSH;
 
-	if (p->sched_class->find_lock_rq)
+	ܐܢ (p->sched_class->find_lock_rq)
 		lowest_rq = p->sched_class->find_lock_rq(p, rq);
 
-	if (!lowest_rq)
-		goto out_unlock;
+	ܐܢ (!lowest_rq)
+		اذهب out_unlock;
 
 	lockdep_assert_rq_held(lowest_rq);
 
 	// XXX validate p is still the highest prio task
-	if (task_rq(p) == rq) {
+	ܐܢ (task_rq(p) == rq) {
 		move_queued_task_locked(rq, lowest_rq, p);
 		resched_curr(lowest_rq);
 	}
@@ -2808,20 +2808,20 @@ out_unlock:
 	raw_spin_unlock_irq(&p->pi_lock);
 
 	put_task_struct(p);
-	return 0;
+	ܦܢܐ 0;
 }
 
-static inline void mm_update_cpus_allowed(struct mm_struct *mm, const cpumask_t *affmask);
+ساكن مضمن فراغ mm_update_cpus_allowed(بنية mm_struct *mm, ثابت cpumask_t *affmask);
 
 /*
  * sched_class::set_cpus_allowed must do the below, but is not required to
  * actually call this function.
  */
-void set_cpus_allowed_common(struct task_struct *p, struct affinity_context *ctx)
+فراغ set_cpus_allowed_common(بنية task_struct *p, بنية affinity_context *ctx)
 {
-	if (ctx->flags & (SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) {
+	ܐܢ (ctx->flags & (SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) {
 		p->cpus_ptr = ctx->new_mask;
-		return;
+		ܦܢܐ;
 	}
 
 	cpumask_copy(&p->cpus_mask, ctx->new_mask);
@@ -2831,12 +2831,12 @@ void set_cpus_allowed_common(struct task_struct *p, struct affinity_context *ctx
 	/*
 	 * Swap in a new user_cpus_ptr if SCA_USER flag set
 	 */
-	if (ctx->flags & SCA_USER)
+	ܐܢ (ctx->flags & SCA_USER)
 		swap(p->user_cpus_ptr, ctx->user_mask);
 }
 
-static void
-do_set_cpus_allowed(struct task_struct *p, struct affinity_context *ctx)
+ساكن فراغ
+do_set_cpus_allowed(بنية task_struct *p, بنية affinity_context *ctx)
 {
 	scoped_guard (sched_change, p, DEQUEUE_SAVE)
 		p->sched_class->set_cpus_allowed(p, ctx);
@@ -2846,16 +2846,16 @@ do_set_cpus_allowed(struct task_struct *p, struct affinity_context *ctx)
  * Used for kthread_bind() and select_fallback_rq(), in both cases the user
  * affinity (if any) should be destroyed too.
  */
-void set_cpus_allowed_force(struct task_struct *p, const struct cpumask *new_mask)
+فراغ set_cpus_allowed_force(بنية task_struct *p, ثابت بنية cpumask *new_mask)
 {
-	struct affinity_context ac = {
+	بنية affinity_context ac = {
 		.new_mask  = new_mask,
-		.user_mask = NULL,
+		.user_mask = عدم,
 		.flags     = SCA_USER,	/* clear the user requested mask */
 	};
-	union cpumask_rcuhead {
+	اتحاد cpumask_rcuhead {
 		cpumask_t cpumask;
-		struct rcu_head rcu;
+		بنية rcu_head rcu;
 	};
 
 	scoped_guard (__task_rq_lock, p)
@@ -2866,11 +2866,11 @@ void set_cpus_allowed_force(struct task_struct *p, const struct cpumask *new_mas
 	 * to use kfree() here (when PREEMPT_RT=y), therefore punt to using
 	 * kfree_rcu().
 	 */
-	kfree_rcu((union cpumask_rcuhead *)ac.user_mask, rcu);
+	kfree_rcu((اتحاد cpumask_rcuhead *)ac.user_mask, rcu);
 }
 
-int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
-		      int node)
+صحيح dup_user_cpus_ptr(بنية task_struct *dst, بنية task_struct *src,
+		      صحيح node)
 {
 	cpumask_t *user_mask;
 	unsigned long flags;
@@ -2879,19 +2879,19 @@ int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
 	 * Always clear dst->user_cpus_ptr first as their user_cpus_ptr's
 	 * may differ by now due to racing.
 	 */
-	dst->user_cpus_ptr = NULL;
+	dst->user_cpus_ptr = عدم;
 
 	/*
 	 * This check is racy and losing the race is a valid situation.
 	 * It is not worth the extra overhead of taking the pi_lock on
 	 * every fork/clone.
 	 */
-	if (data_race(!src->user_cpus_ptr))
-		return 0;
+	ܐܢ (data_race(!src->user_cpus_ptr))
+		ܦܢܐ 0;
 
 	user_mask = alloc_user_cpus_ptr(node);
-	if (!user_mask)
-		return -ENOMEM;
+	ܐܢ (!user_mask)
+		ܦܢܐ -ENOMEM;
 
 	/*
 	 * Use pi_lock to protect content of user_cpus_ptr
@@ -2900,28 +2900,28 @@ int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
 	 * set_cpus_allowed_force().
 	 */
 	raw_spin_lock_irqsave(&src->pi_lock, flags);
-	if (src->user_cpus_ptr) {
+	ܐܢ (src->user_cpus_ptr) {
 		swap(dst->user_cpus_ptr, user_mask);
 		cpumask_copy(dst->user_cpus_ptr, src->user_cpus_ptr);
 	}
 	raw_spin_unlock_irqrestore(&src->pi_lock, flags);
 
-	if (unlikely(user_mask))
+	ܐܢ (unlikely(user_mask))
 		kfree(user_mask);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-static inline struct cpumask *clear_user_cpus_ptr(struct task_struct *p)
+ساكن مضمن بنية cpumask *clear_user_cpus_ptr(بنية task_struct *p)
 {
-	struct cpumask *user_mask = NULL;
+	بنية cpumask *user_mask = عدم;
 
 	swap(p->user_cpus_ptr, user_mask);
 
-	return user_mask;
+	ܦܢܐ user_mask;
 }
 
-void release_user_cpus_ptr(struct task_struct *p)
+فراغ release_user_cpus_ptr(بنية task_struct *p)
 {
 	kfree(clear_user_cpus_ptr(p));
 }
@@ -3002,11 +3002,11 @@ void release_user_cpus_ptr(struct task_struct *p)
  * pending affinity completion is preceded by an uninstallation of
  * p->migration_pending done with p->pi_lock held.
  */
-static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flags *rf,
-			    int dest_cpu, unsigned int flags)
+ساكن صحيح affine_move_task(بنية rq *rq, بنية task_struct *p, بنية rq_flags *rf,
+			    صحيح dest_cpu, unsigned صحيح flags)
 	__releases(__rq_lockp(rq), &p->pi_lock)
 {
-	struct set_affinity_pending my_pending = { }, *pending = NULL;
+	بنية set_affinity_pending my_pending = { }, *pending = عدم;
 	bool stop_pending, complete = false;
 
 	/*
@@ -3016,11 +3016,11 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 	 * holding proxy, (and potentially has been migrated outside its
 	 * current or previous affinity mask)
 	 */
-	if (cpumask_test_cpu(task_cpu(p), &p->cpus_mask) ||
+	ܐܢ (cpumask_test_cpu(task_cpu(p), &p->cpus_mask) ||
 	    (task_current_donor(rq, p) && !task_current(rq, p))) {
-		struct task_struct *push_task = NULL;
+		بنية task_struct *push_task = عدم;
 
-		if ((flags & SCA_MIGRATE_ENABLE) &&
+		ܐܢ ((flags & SCA_MIGRATE_ENABLE) &&
 		    (p->migration_flags & MDF_PUSH) && !rq->push_busy) {
 			rq->push_busy = true;
 			push_task = get_task_struct(p);
@@ -3031,39 +3031,39 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 		 * then complete now.
 		 */
 		pending = p->migration_pending;
-		if (pending && !pending->stop_pending) {
-			p->migration_pending = NULL;
+		ܐܢ (pending && !pending->stop_pending) {
+			p->migration_pending = عدم;
 			complete = true;
 		}
 
 		preempt_disable();
 		task_rq_unlock(rq, p, rf);
-		if (push_task) {
+		ܐܢ (push_task) {
 			stop_one_cpu_nowait(rq->cpu, push_cpu_stop,
 					    p, &rq->push_work);
 		}
 		preempt_enable();
 
-		if (complete)
+		ܐܢ (complete)
 			complete_all(&pending->done);
 
-		return 0;
+		ܦܢܐ 0;
 	}
 
-	if (!(flags & SCA_MIGRATE_ENABLE)) {
+	ܐܢ (!(flags & SCA_MIGRATE_ENABLE)) {
 		/* serialized by p->pi_lock */
-		if (!p->migration_pending) {
+		ܐܢ (!p->migration_pending) {
 			/* Install the request */
 			refcount_set(&my_pending.refs, 1);
 			init_completion(&my_pending.done);
-			my_pending.arg = (struct migration_arg) {
+			my_pending.arg = (بنية migration_arg) {
 				.task = p,
 				.dest_cpu = dest_cpu,
 				.pending = &my_pending,
 			};
 
 			p->migration_pending = &my_pending;
-		} else {
+		} ܐܚܪܢܐ {
 			pending = p->migration_pending;
 			refcount_inc(&pending->refs);
 			/*
@@ -3090,54 +3090,54 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 	 *
 	 * Either way, we really should have a @pending here.
 	 */
-	if (WARN_ON_ONCE(!pending)) {
+	ܐܢ (WARN_ON_ONCE(!pending)) {
 		task_rq_unlock(rq, p, rf);
-		return -EINVAL;
+		ܦܢܐ -EINVAL;
 	}
 
-	if (task_on_cpu(rq, p) || READ_ONCE(p->__state) == TASK_WAKING) {
+	ܐܢ (task_on_cpu(rq, p) || READ_ONCE(p->__state) == TASK_WAKING) {
 		/*
 		 * MIGRATE_ENABLE gets here because 'p == current', but for
 		 * anything else we cannot do is_migration_disabled(), punt
 		 * and have the stopper function handle it all race-free.
 		 */
 		stop_pending = pending->stop_pending;
-		if (!stop_pending)
+		ܐܢ (!stop_pending)
 			pending->stop_pending = true;
 
-		if (flags & SCA_MIGRATE_ENABLE)
+		ܐܢ (flags & SCA_MIGRATE_ENABLE)
 			p->migration_flags &= ~MDF_PUSH;
 
 		preempt_disable();
 		task_rq_unlock(rq, p, rf);
-		if (!stop_pending) {
+		ܐܢ (!stop_pending) {
 			stop_one_cpu_nowait(cpu_of(rq), migration_cpu_stop,
 					    &pending->arg, &pending->stop_work);
 		}
 		preempt_enable();
 
-		if (flags & SCA_MIGRATE_ENABLE)
-			return 0;
-	} else {
+		ܐܢ (flags & SCA_MIGRATE_ENABLE)
+			ܦܢܐ 0;
+	} ܐܚܪܢܐ {
 
-		if (!is_migration_disabled(p)) {
-			if (task_on_rq_queued(p))
+		ܐܢ (!is_migration_disabled(p)) {
+			ܐܢ (task_on_rq_queued(p))
 				rq = move_queued_task(rq, rf, p, dest_cpu);
 
-			if (!pending->stop_pending) {
-				p->migration_pending = NULL;
+			ܐܢ (!pending->stop_pending) {
+				p->migration_pending = عدم;
 				complete = true;
 			}
 		}
 		task_rq_unlock(rq, p, rf);
 
-		if (complete)
+		ܐܢ (complete)
 			complete_all(&pending->done);
 	}
 
 	wait_for_completion(&pending->done);
 
-	if (refcount_dec_and_test(&pending->refs))
+	ܐܢ (refcount_dec_and_test(&pending->refs))
 		wake_up_var(&pending->refs); /* No UaF, just an address */
 
 	/*
@@ -3149,25 +3149,25 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 	/* ARGH */
 	WARN_ON_ONCE(my_pending.stop_pending);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
 /*
  * Called with both p->pi_lock and rq->lock held; drops both before returning.
  */
-static int __set_cpus_allowed_ptr_locked(struct task_struct *p,
-					 struct affinity_context *ctx,
-					 struct rq *rq,
-					 struct rq_flags *rf)
+ساكن صحيح __set_cpus_allowed_ptr_locked(بنية task_struct *p,
+					 بنية affinity_context *ctx,
+					 بنية rq *rq,
+					 بنية rq_flags *rf)
 	__releases(__rq_lockp(rq), &p->pi_lock)
 {
-	const struct cpumask *cpu_allowed_mask = task_cpu_possible_mask(p);
-	const struct cpumask *cpu_valid_mask = cpu_active_mask;
+	ثابت بنية cpumask *cpu_allowed_mask = task_cpu_possible_mask(p);
+	ثابت بنية cpumask *cpu_valid_mask = cpu_active_mask;
 	bool kthread = p->flags & PF_KTHREAD;
-	unsigned int dest_cpu;
-	int ret = 0;
+	unsigned صحيح dest_cpu;
+	صحيح ret = 0;
 
-	if (kthread || is_migration_disabled(p)) {
+	ܐܢ (kthread || is_migration_disabled(p)) {
 		/*
 		 * Kernel threads are allowed on online && !active CPUs,
 		 * however, during cpu-hot-unplug, even these might get pushed
@@ -3181,32 +3181,32 @@ static int __set_cpus_allowed_ptr_locked(struct task_struct *p,
 		cpu_valid_mask = cpu_online_mask;
 	}
 
-	if (!kthread && !cpumask_subset(ctx->new_mask, cpu_allowed_mask)) {
+	ܐܢ (!kthread && !cpumask_subset(ctx->new_mask, cpu_allowed_mask)) {
 		ret = -EINVAL;
-		goto out;
+		اذهب out;
 	}
 
 	/*
 	 * Must re-check here, to close a race against __kthread_bind(),
 	 * sched_setaffinity() is not guaranteed to observe the flag.
 	 */
-	if ((ctx->flags & SCA_CHECK) && (p->flags & PF_NO_SETAFFINITY)) {
+	ܐܢ ((ctx->flags & SCA_CHECK) && (p->flags & PF_NO_SETAFFINITY)) {
 		ret = -EINVAL;
-		goto out;
+		اذهب out;
 	}
 
-	if (!(ctx->flags & SCA_MIGRATE_ENABLE)) {
-		if (cpumask_equal(&p->cpus_mask, ctx->new_mask)) {
-			if (ctx->flags & SCA_USER)
+	ܐܢ (!(ctx->flags & SCA_MIGRATE_ENABLE)) {
+		ܐܢ (cpumask_equal(&p->cpus_mask, ctx->new_mask)) {
+			ܐܢ (ctx->flags & SCA_USER)
 				swap(p->user_cpus_ptr, ctx->user_mask);
-			goto out;
+			اذهب out;
 		}
 
-		if (WARN_ON_ONCE(p == current &&
+		ܐܢ (WARN_ON_ONCE(p == current &&
 				 is_migration_disabled(p) &&
 				 !cpumask_test_cpu(task_cpu(p), ctx->new_mask))) {
 			ret = -EBUSY;
-			goto out;
+			اذهب out;
 		}
 	}
 
@@ -3216,19 +3216,19 @@ static int __set_cpus_allowed_ptr_locked(struct task_struct *p,
 	 * immediately required to distribute the tasks within their new mask.
 	 */
 	dest_cpu = cpumask_any_and_distribute(cpu_valid_mask, ctx->new_mask);
-	if (dest_cpu >= nr_cpu_ids) {
+	ܐܢ (dest_cpu >= nr_cpu_ids) {
 		ret = -EINVAL;
-		goto out;
+		اذهب out;
 	}
 
 	do_set_cpus_allowed(p, ctx);
 
-	return affine_move_task(rq, p, rf, dest_cpu, ctx->flags);
+	ܦܢܐ affine_move_task(rq, p, rf, dest_cpu, ctx->flags);
 
 out:
 	task_rq_unlock(rq, p, rf);
 
-	return ret;
+	ܦܢܐ ret;
 }
 
 /*
@@ -3240,32 +3240,32 @@ out:
  * task must not exit() & deallocate itself prematurely. The
  * call is not atomic; no spinlocks may be held.
  */
-int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx)
+صحيح __set_cpus_allowed_ptr(بنية task_struct *p, بنية affinity_context *ctx)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	بنية rq_flags rf;
+	بنية rq *rq;
 
 	rq = task_rq_lock(p, &rf);
 	/*
 	 * Masking should be skipped if SCA_USER or any of the SCA_MIGRATE_*
 	 * flags are set.
 	 */
-	if (p->user_cpus_ptr &&
+	ܐܢ (p->user_cpus_ptr &&
 	    !(ctx->flags & (SCA_USER | SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) &&
 	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr))
 		ctx->new_mask = rq->scratch_mask;
 
-	return __set_cpus_allowed_ptr_locked(p, ctx, rq, &rf);
+	ܦܢܐ __set_cpus_allowed_ptr_locked(p, ctx, rq, &rf);
 }
 
-int set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask)
+صحيح set_cpus_allowed_ptr(بنية task_struct *p, ثابت بنية cpumask *new_mask)
 {
-	struct affinity_context ac = {
+	بنية affinity_context ac = {
 		.new_mask  = new_mask,
 		.flags     = 0,
 	};
 
-	return __set_cpus_allowed_ptr(p, &ac);
+	ܦܢܐ __set_cpus_allowed_ptr(p, &ac);
 }
 EXPORT_SYMBOL_GPL(set_cpus_allowed_ptr);
 
@@ -3278,17 +3278,17 @@ EXPORT_SYMBOL_GPL(set_cpus_allowed_ptr);
  * If the resulting mask is empty, leave the affinity unchanged and return
  * -EINVAL.
  */
-static int restrict_cpus_allowed_ptr(struct task_struct *p,
-				     struct cpumask *new_mask,
-				     const struct cpumask *subset_mask)
+ساكن صحيح restrict_cpus_allowed_ptr(بنية task_struct *p,
+				     بنية cpumask *new_mask,
+				     ثابت بنية cpumask *subset_mask)
 {
-	struct affinity_context ac = {
+	بنية affinity_context ac = {
 		.new_mask  = new_mask,
 		.flags     = 0,
 	};
-	struct rq_flags rf;
-	struct rq *rq;
-	int err;
+	بنية rq_flags rf;
+	بنية rq *rq;
+	صحيح err;
 
 	rq = task_rq_lock(p, &rf);
 
@@ -3297,21 +3297,21 @@ static int restrict_cpus_allowed_ptr(struct task_struct *p,
 	 * likely to cause problems, so fail and noisily override the
 	 * mask entirely.
 	 */
-	if (task_has_dl_policy(p) && dl_bandwidth_enabled()) {
+	ܐܢ (task_has_dl_policy(p) && dl_bandwidth_enabled()) {
 		err = -EPERM;
-		goto err_unlock;
+		اذهب err_unlock;
 	}
 
-	if (!cpumask_and(new_mask, task_user_cpus(p), subset_mask)) {
+	ܐܢ (!cpumask_and(new_mask, task_user_cpus(p), subset_mask)) {
 		err = -EINVAL;
-		goto err_unlock;
+		اذهب err_unlock;
 	}
 
-	return __set_cpus_allowed_ptr_locked(p, &ac, rq, &rf);
+	ܦܢܐ __set_cpus_allowed_ptr_locked(p, &ac, rq, &rf);
 
 err_unlock:
 	task_rq_unlock(rq, p, &rf);
-	return err;
+	ܦܢܐ err;
 }
 
 /*
@@ -3320,10 +3320,10 @@ err_unlock:
  * old affinity mask. If the resulting mask is empty, we warn and walk
  * up the cpuset hierarchy until we find a suitable mask.
  */
-void force_compatible_cpus_allowed_ptr(struct task_struct *p)
+فراغ force_compatible_cpus_allowed_ptr(بنية task_struct *p)
 {
 	cpumask_var_t new_mask;
-	const struct cpumask *override_mask = task_cpu_possible_mask(p);
+	ثابت بنية cpumask *override_mask = task_cpu_possible_mask(p);
 
 	alloc_cpumask_var(&new_mask, GFP_KERNEL);
 
@@ -3333,11 +3333,11 @@ void force_compatible_cpus_allowed_ptr(struct task_struct *p)
 	 * lock to ensure that the migration succeeds.
 	 */
 	cpus_read_lock();
-	if (!cpumask_available(new_mask))
-		goto out_set_mask;
+	ܐܢ (!cpumask_available(new_mask))
+		اذهب out_set_mask;
 
-	if (!restrict_cpus_allowed_ptr(p, new_mask, override_mask))
-		goto out_free_mask;
+	ܐܢ (!restrict_cpus_allowed_ptr(p, new_mask, override_mask))
+		اذهب out_free_mask;
 
 	/*
 	 * We failed to find a valid subset of the affinity mask for the
@@ -3347,7 +3347,7 @@ void force_compatible_cpus_allowed_ptr(struct task_struct *p)
 	override_mask = new_mask;
 
 out_set_mask:
-	if (printk_ratelimit()) {
+	ܐܢ (printk_ratelimit()) {
 		printk_deferred("Overriding affinity for process %d (%s) to CPUs %*pbl\n",
 				task_pid_nr(p), p->comm,
 				cpumask_pr_args(override_mask));
@@ -3366,13 +3366,13 @@ out_free_mask:
  * It is the caller's responsibility to serialise this with any calls to
  * force_compatible_cpus_allowed_ptr(@p).
  */
-void relax_compatible_cpus_allowed_ptr(struct task_struct *p)
+فراغ relax_compatible_cpus_allowed_ptr(بنية task_struct *p)
 {
-	struct affinity_context ac = {
+	بنية affinity_context ac = {
 		.new_mask  = task_user_cpus(p),
 		.flags     = 0,
 	};
-	int ret;
+	صحيح ret;
 
 	/*
 	 * Try to restore the old affinity mask with __sched_setaffinity().
@@ -3384,9 +3384,9 @@ void relax_compatible_cpus_allowed_ptr(struct task_struct *p)
 
 #ifdef CONFIG_SMP
 
-void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
+فراغ set_task_cpu(بنية task_struct *p, unsigned صحيح new_cpu)
 {
-	unsigned int state = READ_ONCE(p->__state);
+	unsigned صحيح state = READ_ONCE(p->__state);
 	bool proxy_migrated = sched_proxy_exec() && p->is_blocked &&
 			      task_cpu(p) != p->wake_cpu;
 
@@ -3433,8 +3433,8 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
 
 	trace_sched_migrate_task(p, new_cpu);
 
-	if (task_cpu(p) != new_cpu) {
-		if (p->sched_class->migrate_task_rq)
+	ܐܢ (task_cpu(p) != new_cpu) {
+		ܐܢ (p->sched_class->migrate_task_rq)
 			p->sched_class->migrate_task_rq(p, new_cpu);
 		p->se.nr_migrations++;
 		perf_event_task_migrate(p);
@@ -3445,11 +3445,11 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
 #endif /* CONFIG_SMP */
 
 #ifdef CONFIG_NUMA_BALANCING
-static void __migrate_swap_task(struct task_struct *p, int cpu)
+ساكن فراغ __migrate_swap_task(بنية task_struct *p, صحيح cpu)
 {
-	if (task_on_rq_queued(p)) {
-		struct rq *src_rq, *dst_rq;
-		struct rq_flags srf, drf;
+	ܐܢ (task_on_rq_queued(p)) {
+		بنية rq *src_rq, *dst_rq;
+		بنية rq_flags srf, drf;
 
 		src_rq = task_rq(p);
 		dst_rq = cpu_rq(cpu);
@@ -3463,7 +3463,7 @@ static void __migrate_swap_task(struct task_struct *p, int cpu)
 		rq_unpin_lock(dst_rq, &drf);
 		rq_unpin_lock(src_rq, &srf);
 
-	} else {
+	} ܐܚܪܢܐ {
 		/*
 		 * Task isn't running anymore; make it appear like we migrated
 		 * it before it went to sleep. This means on wakeup we make the
@@ -3473,18 +3473,18 @@ static void __migrate_swap_task(struct task_struct *p, int cpu)
 	}
 }
 
-struct migration_swap_arg {
-	struct task_struct *src_task, *dst_task;
-	int src_cpu, dst_cpu;
+بنية migration_swap_arg {
+	بنية task_struct *src_task, *dst_task;
+	صحيح src_cpu, dst_cpu;
 };
 
-static int migrate_swap_stop(void *data)
+ساكن صحيح migrate_swap_stop(فراغ *data)
 {
-	struct migration_swap_arg *arg = data;
-	struct rq *src_rq, *dst_rq;
+	بنية migration_swap_arg *arg = data;
+	بنية rq *src_rq, *dst_rq;
 
-	if (!cpu_active(arg->src_cpu) || !cpu_active(arg->dst_cpu))
-		return -EAGAIN;
+	ܐܢ (!cpu_active(arg->src_cpu) || !cpu_active(arg->dst_cpu))
+		ܦܢܐ -EAGAIN;
 
 	src_rq = cpu_rq(arg->src_cpu);
 	dst_rq = cpu_rq(arg->dst_cpu);
@@ -3492,61 +3492,61 @@ static int migrate_swap_stop(void *data)
 	guard(double_raw_spinlock)(&arg->src_task->pi_lock, &arg->dst_task->pi_lock);
 	guard(double_rq_lock)(src_rq, dst_rq);
 
-	if (task_cpu(arg->dst_task) != arg->dst_cpu)
-		return -EAGAIN;
+	ܐܢ (task_cpu(arg->dst_task) != arg->dst_cpu)
+		ܦܢܐ -EAGAIN;
 
-	if (task_cpu(arg->src_task) != arg->src_cpu)
-		return -EAGAIN;
+	ܐܢ (task_cpu(arg->src_task) != arg->src_cpu)
+		ܦܢܐ -EAGAIN;
 
-	if (!cpumask_test_cpu(arg->dst_cpu, arg->src_task->cpus_ptr))
-		return -EAGAIN;
+	ܐܢ (!cpumask_test_cpu(arg->dst_cpu, arg->src_task->cpus_ptr))
+		ܦܢܐ -EAGAIN;
 
-	if (!cpumask_test_cpu(arg->src_cpu, arg->dst_task->cpus_ptr))
-		return -EAGAIN;
+	ܐܢ (!cpumask_test_cpu(arg->src_cpu, arg->dst_task->cpus_ptr))
+		ܦܢܐ -EAGAIN;
 
 	__migrate_swap_task(arg->src_task, arg->dst_cpu);
 	__migrate_swap_task(arg->dst_task, arg->src_cpu);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
 /*
  * Cross migrate two tasks
  */
-int migrate_swap(struct task_struct *cur, struct task_struct *p,
-		int target_cpu, int curr_cpu)
+صحيح migrate_swap(بنية task_struct *cur, بنية task_struct *p,
+		صحيح target_cpu, صحيح curr_cpu)
 {
-	struct migration_swap_arg arg;
-	int ret = -EINVAL;
+	بنية migration_swap_arg arg;
+	صحيح ret = -EINVAL;
 
-	arg = (struct migration_swap_arg){
+	arg = (بنية migration_swap_arg){
 		.src_task = cur,
 		.src_cpu = curr_cpu,
 		.dst_task = p,
 		.dst_cpu = target_cpu,
 	};
 
-	if (arg.src_cpu == arg.dst_cpu)
-		goto out;
+	ܐܢ (arg.src_cpu == arg.dst_cpu)
+		اذهب out;
 
 	/*
 	 * These three tests are all lockless; this is OK since all of them
 	 * will be re-checked with proper locks held further down the line.
 	 */
-	if (!cpu_active(arg.src_cpu) || !cpu_active(arg.dst_cpu))
-		goto out;
+	ܐܢ (!cpu_active(arg.src_cpu) || !cpu_active(arg.dst_cpu))
+		اذهب out;
 
-	if (!cpumask_test_cpu(arg.dst_cpu, arg.src_task->cpus_ptr))
-		goto out;
+	ܐܢ (!cpumask_test_cpu(arg.dst_cpu, arg.src_task->cpus_ptr))
+		اذهب out;
 
-	if (!cpumask_test_cpu(arg.src_cpu, arg.dst_task->cpus_ptr))
-		goto out;
+	ܐܢ (!cpumask_test_cpu(arg.src_cpu, arg.dst_task->cpus_ptr))
+		اذهب out;
 
 	trace_sched_swap_numa(cur, arg.src_cpu, p, arg.dst_cpu);
 	ret = stop_two_cpus(arg.dst_cpu, arg.src_cpu, migrate_swap_stop, &arg);
 
 out:
-	return ret;
+	ܦܢܐ ret;
 }
 #endif /* CONFIG_NUMA_BALANCING */
 
@@ -3563,12 +3563,12 @@ out:
  * to another CPU then no harm is done and the purpose has been
  * achieved as well.
  */
-void kick_process(struct task_struct *p)
+فراغ kick_process(بنية task_struct *p)
 {
 	guard(preempt)();
-	int cpu = task_cpu(p);
+	صحيح cpu = task_cpu(p);
 
-	if ((cpu != smp_processor_id()) && task_curr(p))
+	ܐܢ ((cpu != smp_processor_id()) && task_curr(p))
 		smp_send_reschedule(cpu);
 }
 EXPORT_SYMBOL_GPL(kick_process);
@@ -3595,83 +3595,83 @@ EXPORT_SYMBOL_GPL(kick_process);
  * select_task_rq() below may allow selection of !active CPUs in order
  * to satisfy the above rules.
  */
-static int select_fallback_rq(int cpu, struct task_struct *p)
+ساكن صحيح select_fallback_rq(صحيح cpu, بنية task_struct *p)
 {
-	int nid = cpu_to_node(cpu);
-	const struct cpumask *nodemask = NULL;
-	enum { cpuset, possible, fail } state = cpuset;
-	int dest_cpu;
+	صحيح nid = cpu_to_node(cpu);
+	ثابت بنية cpumask *nodemask = عدم;
+	تعداد { cpuset, possible, fail } state = cpuset;
+	صحيح dest_cpu;
 
 	/*
 	 * If the node that the CPU is on has been offlined, cpu_to_node()
 	 * will return -1. There is no CPU on the node, and we should
 	 * select the CPU on the other node.
 	 */
-	if (nid != -1) {
+	ܐܢ (nid != -1) {
 		nodemask = cpumask_of_node(nid);
 
 		/* Look for allowed, online CPU in same node. */
 		for_each_cpu(dest_cpu, nodemask) {
-			if (is_cpu_allowed(p, dest_cpu))
-				return dest_cpu;
+			ܐܢ (is_cpu_allowed(p, dest_cpu))
+				ܦܢܐ dest_cpu;
 		}
 	}
 
-	for (;;) {
+	لكل (;;) {
 		/* Any allowed, online CPU? */
 		for_each_cpu(dest_cpu, p->cpus_ptr) {
-			if (!is_cpu_allowed(p, dest_cpu))
-				continue;
+			ܐܢ (!is_cpu_allowed(p, dest_cpu))
+				استمر;
 
-			goto out;
+			اذهب out;
 		}
 
 		/* No more Mr. Nice Guy. */
-		switch (state) {
-		case cpuset:
-			if (cpuset_cpus_allowed_fallback(p)) {
+		بدل (state) {
+		حالة cpuset:
+			ܐܢ (cpuset_cpus_allowed_fallback(p)) {
 				state = possible;
-				break;
+				اكسر;
 			}
 			fallthrough;
-		case possible:
+		حالة possible:
 			set_cpus_allowed_force(p, task_cpu_fallback_mask(p));
 			state = fail;
-			break;
-		case fail:
+			اكسر;
+		حالة fail:
 			BUG();
-			break;
+			اكسر;
 		}
 	}
 
 out:
-	if (state != cpuset) {
+	ܐܢ (state != cpuset) {
 		/*
 		 * Don't tell them about moving exiting tasks or
 		 * kernel threads (both mm NULL), since they never
 		 * leave kernel.
 		 */
-		if (p->mm && printk_ratelimit()) {
+		ܐܢ (p->mm && printk_ratelimit()) {
 			printk_deferred("process %d (%s) no longer affine to cpu%d\n",
 					task_pid_nr(p), p->comm, cpu);
 		}
 	}
 
-	return dest_cpu;
+	ܦܢܐ dest_cpu;
 }
 
 /*
  * The caller (fork, wakeup) owns p->pi_lock, ->cpus_ptr is stable.
  */
-static inline
-int select_task_rq(struct task_struct *p, int cpu, int *wake_flags)
+ساكن مضمن
+صحيح select_task_rq(بنية task_struct *p, صحيح cpu, صحيح *wake_flags)
 {
 	lockdep_assert_held(&p->pi_lock);
 
-	if (p->nr_cpus_allowed > 1 && !is_migration_disabled(p)) {
+	ܐܢ (p->nr_cpus_allowed > 1 && !is_migration_disabled(p)) {
 		cpu = p->sched_class->select_task_rq(p, cpu, *wake_flags);
 		*wake_flags |= WF_RQ_SELECTED;
-	} else {
+	} ܐܚܪܢܐ {
 		cpu = cpumask_any(p->cpus_ptr);
 	}
 
@@ -3685,19 +3685,19 @@ int select_task_rq(struct task_struct *p, int cpu, int *wake_flags)
 	 * [ this allows ->select_task() to simply return task_cpu(p) and
 	 *   not worry about this generic constraint ]
 	 */
-	if (unlikely(!is_cpu_allowed(p, cpu)))
+	ܐܢ (unlikely(!is_cpu_allowed(p, cpu)))
 		cpu = select_fallback_rq(task_cpu(p), p);
 
-	return cpu;
+	ܦܢܐ cpu;
 }
 
-void sched_set_stop_task(int cpu, struct task_struct *stop)
+فراغ sched_set_stop_task(صحيح cpu, بنية task_struct *stop)
 {
-	static struct lock_class_key stop_pi_lock;
-	struct sched_param param = { .sched_priority = MAX_RT_PRIO - 1 };
-	struct task_struct *old_stop = cpu_rq(cpu)->stop;
+	ساكن بنية lock_class_key stop_pi_lock;
+	بنية sched_param param = { .sched_priority = MAX_RT_PRIO - 1 };
+	بنية task_struct *old_stop = cpu_rq(cpu)->stop;
 
-	if (stop) {
+	ܐܢ (stop) {
 		/*
 		 * Make it appear like a SCHED_FIFO task, its something
 		 * userspace knows about and won't get confused about.
@@ -3727,7 +3727,7 @@ void sched_set_stop_task(int cpu, struct task_struct *stop)
 
 	cpu_rq(cpu)->stop = stop;
 
-	if (old_stop) {
+	ܐܢ (old_stop) {
 		/*
 		 * Reset it back to a normal scheduling class so that
 		 * it can die in pieces.
@@ -3736,75 +3736,75 @@ void sched_set_stop_task(int cpu, struct task_struct *stop)
 	}
 }
 
-static void
-ttwu_stat(struct task_struct *p, int cpu, int wake_flags)
+ساكن فراغ
+ttwu_stat(بنية task_struct *p, صحيح cpu, صحيح wake_flags)
 {
-	struct rq *rq;
+	بنية rq *rq;
 
-	if (!schedstat_enabled())
-		return;
+	ܐܢ (!schedstat_enabled())
+		ܦܢܐ;
 
 	rq = this_rq();
 
-	if (cpu == rq->cpu) {
+	ܐܢ (cpu == rq->cpu) {
 		__schedstat_inc(rq->ttwu_local);
 		__schedstat_inc(p->stats.nr_wakeups_local);
-	} else {
-		struct sched_domain *sd;
+	} ܐܚܪܢܐ {
+		بنية sched_domain *sd;
 
 		__schedstat_inc(p->stats.nr_wakeups_remote);
 
 		guard(rcu)();
 		for_each_domain(rq->cpu, sd) {
-			if (cpumask_test_cpu(cpu, sched_domain_span(sd))) {
+			ܐܢ (cpumask_test_cpu(cpu, sched_domain_span(sd))) {
 				__schedstat_inc(sd->ttwu_wake_remote);
-				break;
+				اكسر;
 			}
 		}
 	}
 
-	if (wake_flags & WF_MIGRATED)
+	ܐܢ (wake_flags & WF_MIGRATED)
 		__schedstat_inc(p->stats.nr_wakeups_migrate);
 
 	__schedstat_inc(rq->ttwu_count);
 	__schedstat_inc(p->stats.nr_wakeups);
 
-	if (wake_flags & WF_SYNC)
+	ܐܢ (wake_flags & WF_SYNC)
 		__schedstat_inc(p->stats.nr_wakeups_sync);
 }
 
 /*
  * Mark the task runnable.
  */
-static inline void ttwu_do_wakeup(struct task_struct *p)
+ساكن مضمن فراغ ttwu_do_wakeup(بنية task_struct *p)
 {
 	p->is_blocked = 0;
 	WRITE_ONCE(p->__state, TASK_RUNNING);
 	trace_sched_wakeup(p);
 }
 
-void update_rq_avg_idle(struct rq *rq)
+فراغ update_rq_avg_idle(بنية rq *rq)
 {
 	u64 idle_stamp = rq->idle_stamp;
 	u64 delta, max;
 
-	if (!idle_stamp)
-		return;
+	ܐܢ (!idle_stamp)
+		ܦܢܐ;
 
 	delta = rq_clock(rq) - idle_stamp;
 
 	update_avg(&rq->avg_idle, delta);
 
 	max = 2 * rq->max_idle_balance_cost;
-	if (rq->avg_idle > max)
+	ܐܢ (rq->avg_idle > max)
 		rq->avg_idle = max;
 	rq->idle_stamp = 0;
 }
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
-static void zap_balance_callbacks(struct rq *rq);
+ساكن فراغ zap_balance_callbacks(بنية rq *rq);
 
-static inline void proxy_reset_donor(struct rq *rq)
+ساكن مضمن فراغ proxy_reset_donor(بنية rq *rq)
 {
 	WARN_ON_ONCE(rq->donor == rq->curr);
 
@@ -3822,7 +3822,7 @@ static inline void proxy_reset_donor(struct rq *rq)
  * (or whichever cpu select_task_rq() picks at the bottom of
  * try_to_wake_up()
  */
-static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
+ساكن مضمن bool proxy_needs_return(بنية rq *rq, بنية task_struct *p)
 {
 	bool dequeued;
 
@@ -3838,16 +3838,16 @@ static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
 	 * will not apply. But if it did, this check is the safe way around
 	 * and would migrate.
 	 */
-	if (task_cpu(p) == p->wake_cpu)
-		return false;
+	ܐܢ (task_cpu(p) == p->wake_cpu)
+		ܦܢܐ false;
 
 	scoped_guard(raw_spinlock, &p->blocked_lock) {
 		/* Task is waking up; clear any blocked_on relationship */
-		__clear_task_blocked_on(p, NULL);
+		__clear_task_blocked_on(p, عدم);
 
 		/* If already current, don't need to return migrate */
-		if (task_current(rq, p))
-			return false;
+		ܐܢ (task_current(rq, p))
+			ܦܢܐ false;
 	}
 
 	dequeued = dequeue_block_task(rq, p, TASK_WAKING);
@@ -3860,36 +3860,36 @@ static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
 	 *
 	 * Keep on_rq set until all donor references have been replaced.
 	 */
-	if (task_current_donor(rq, p))
+	ܐܢ (task_current_donor(rq, p))
 		proxy_reset_donor(rq);
 
-	if (dequeued)
+	ܐܢ (dequeued)
 		__block_task(rq, p);
-	return true;
+	ܦܢܐ true;
 }
-#else /* !CONFIG_SCHED_PROXY_EXEC */
-static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
+#ܐܚܪܢܐ /* !CONFIG_SCHED_PROXY_EXEC */
+ساكن مضمن bool proxy_needs_return(بنية rq *rq, بنية task_struct *p)
 {
-	return false;
+	ܦܢܐ false;
 }
 #endif /* CONFIG_SCHED_PROXY_EXEC */
 
-static void
-ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
-		 struct rq_flags *rf)
+ساكن فراغ
+ttwu_do_activate(بنية rq *rq, بنية task_struct *p, صحيح wake_flags,
+		 بنية rq_flags *rf)
 {
-	int en_flags = ENQUEUE_WAKEUP | ENQUEUE_NOCLOCK;
+	صحيح en_flags = ENQUEUE_WAKEUP | ENQUEUE_NOCLOCK;
 
 	lockdep_assert_rq_held(rq);
 
-	if (p->sched_contributes_to_load)
+	ܐܢ (p->sched_contributes_to_load)
 		rq->nr_uninterruptible--;
 
-	if (wake_flags & WF_RQ_SELECTED)
+	ܐܢ (wake_flags & WF_RQ_SELECTED)
 		en_flags |= ENQUEUE_RQ_SELECTED;
-	if (wake_flags & WF_MIGRATED)
+	ܐܢ (wake_flags & WF_MIGRATED)
 		en_flags |= ENQUEUE_MIGRATED;
-	else if (p->in_iowait) {
+	ܐܚܪܢܐ ܐܢ (p->in_iowait) {
 		delayacct_blkio_end(p);
 		atomic_dec(&task_rq(p)->nr_iowait);
 	}
@@ -3899,7 +3899,7 @@ ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
 
 	ttwu_do_wakeup(p);
 
-	if (p->sched_class->task_woken) {
+	ܐܢ (p->sched_class->task_woken) {
 		/*
 		 * Our task @p is fully woken up and running; so it's safe to
 		 * drop the rq->lock, hereafter rq is only used for statistics.
@@ -3935,22 +3935,22 @@ ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
  * Returns: %true when the wakeup is done,
  *          %false otherwise.
  */
-static int ttwu_runnable(struct task_struct *p, int wake_flags)
+ساكن صحيح ttwu_runnable(بنية task_struct *p, صحيح wake_flags)
 {
 	ACQUIRE(__task_rq_lock, guard)(p);
-	struct rq *rq = guard.rq;
+	بنية rq *rq = guard.rq;
 
-	if (!task_on_rq_queued(p))
-		return 0;
+	ܐܢ (!task_on_rq_queued(p))
+		ܦܢܐ 0;
 
 	update_rq_clock(rq);
-	if (p->is_blocked) {
-		if (p->se.sched_delayed)
+	ܐܢ (p->is_blocked) {
+		ܐܢ (p->se.sched_delayed)
 			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
-		if (proxy_needs_return(rq, p))
-			return 0;
+		ܐܢ (proxy_needs_return(rq, p))
+			ܦܢܐ 0;
 	}
-	if (!task_on_cpu(rq, p)) {
+	ܐܢ (!task_on_cpu(rq, p)) {
 		/*
 		 * When on_rq && !on_cpu the task is preempted, see if
 		 * it should preempt the task that is current now.
@@ -3958,27 +3958,27 @@ static int ttwu_runnable(struct task_struct *p, int wake_flags)
 		wakeup_preempt(rq, p, wake_flags | WF_TTWU_RQ);
 	}
 	ttwu_do_wakeup(p);
-	return 1;
+	ܦܢܐ 1;
 }
 
-void sched_ttwu_pending(void *arg)
+فراغ sched_ttwu_pending(فراغ *arg)
 {
-	struct llist_node *llist = arg;
-	struct rq *rq = this_rq();
-	struct task_struct *p, *t;
-	struct rq_flags rf;
+	بنية llist_node *llist = arg;
+	بنية rq *rq = this_rq();
+	بنية task_struct *p, *t;
+	بنية rq_flags rf;
 
-	if (!llist)
-		return;
+	ܐܢ (!llist)
+		ܦܢܐ;
 
 	rq_lock_irqsave(rq, &rf);
 	update_rq_clock(rq);
 
 	llist_for_each_entry_safe(p, t, llist, wake_entry.llist) {
-		if (WARN_ON_ONCE(p->on_cpu))
+		ܐܢ (WARN_ON_ONCE(p->on_cpu))
 			smp_cond_load_acquire(&p->on_cpu, !VAL);
 
-		if (WARN_ON_ONCE(task_cpu(p) != cpu_of(rq)))
+		ܐܢ (WARN_ON_ONCE(task_cpu(p) != cpu_of(rq)))
 			set_task_cpu(p, cpu_of(rq));
 
 		ttwu_do_activate(rq, p, p->sched_remote_wakeup ? WF_MIGRATED : 0, &rf);
@@ -4004,14 +4004,14 @@ void sched_ttwu_pending(void *arg)
  * Returns true if the caller can proceed with sending the IPI.
  * Returns false otherwise.
  */
-bool call_function_single_prep_ipi(int cpu)
+bool call_function_single_prep_ipi(صحيح cpu)
 {
-	if (set_nr_if_polling(cpu_rq(cpu)->idle)) {
+	ܐܢ (set_nr_if_polling(cpu_rq(cpu)->idle)) {
 		trace_sched_wake_idle_without_ipi(cpu);
-		return false;
+		ܦܢܐ false;
 	}
 
-	return true;
+	ܦܢܐ true;
 }
 
 /*
@@ -4020,9 +4020,9 @@ bool call_function_single_prep_ipi(int cpu)
  * via sched_ttwu_wakeup() for activation so the wakee incurs the cost
  * of the wakeup instead of the waker.
  */
-static void __ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
+ساكن فراغ __ttwu_queue_wakelist(بنية task_struct *p, صحيح cpu, صحيح wake_flags)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
 	p->sched_remote_wakeup = !!(wake_flags & WF_MIGRATED);
 
@@ -4032,82 +4032,82 @@ static void __ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags
 #endif
 }
 
-void wake_up_if_idle(int cpu)
+فراغ wake_up_if_idle(صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
 	guard(rcu)();
-	if (is_idle_task(rcu_dereference(rq->curr))) {
+	ܐܢ (is_idle_task(rcu_dereference(rq->curr))) {
 		guard(rq_lock_irqsave)(rq);
-		if (is_idle_task(rq->curr))
+		ܐܢ (is_idle_task(rq->curr))
 			resched_curr(rq);
 	}
 }
 
-bool cpus_equal_capacity(int this_cpu, int that_cpu)
+bool cpus_equal_capacity(صحيح this_cpu, صحيح that_cpu)
 {
-	if (!sched_asym_cpucap_active())
-		return true;
+	ܐܢ (!sched_asym_cpucap_active())
+		ܦܢܐ true;
 
-	if (this_cpu == that_cpu)
-		return true;
+	ܐܢ (this_cpu == that_cpu)
+		ܦܢܐ true;
 
-	return arch_scale_cpu_capacity(this_cpu) == arch_scale_cpu_capacity(that_cpu);
+	ܦܢܐ arch_scale_cpu_capacity(this_cpu) == arch_scale_cpu_capacity(that_cpu);
 }
 
-bool cpus_share_cache(int this_cpu, int that_cpu)
+bool cpus_share_cache(صحيح this_cpu, صحيح that_cpu)
 {
-	if (this_cpu == that_cpu)
-		return true;
+	ܐܢ (this_cpu == that_cpu)
+		ܦܢܐ true;
 
-	return per_cpu(sd_llc_id, this_cpu) == per_cpu(sd_llc_id, that_cpu);
+	ܦܢܐ per_cpu(sd_llc_id, this_cpu) == per_cpu(sd_llc_id, that_cpu);
 }
 
 /*
  * Whether CPUs are share cache resources, which means LLC on non-cluster
  * machines and LLC tag or L2 on machines with clusters.
  */
-bool cpus_share_resources(int this_cpu, int that_cpu)
+bool cpus_share_resources(صحيح this_cpu, صحيح that_cpu)
 {
-	if (this_cpu == that_cpu)
-		return true;
+	ܐܢ (this_cpu == that_cpu)
+		ܦܢܐ true;
 
-	return per_cpu(sd_share_id, this_cpu) == per_cpu(sd_share_id, that_cpu);
+	ܦܢܐ per_cpu(sd_share_id, this_cpu) == per_cpu(sd_share_id, that_cpu);
 }
 
-static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
+ساكن مضمن bool ttwu_queue_cond(بنية task_struct *p, صحيح cpu)
 {
-	int this_cpu = smp_processor_id();
+	صحيح this_cpu = smp_processor_id();
 
 	/* See SCX_OPS_ALLOW_QUEUED_WAKEUP. */
-	if (!scx_allow_ttwu_queue(p))
-		return false;
+	ܐܢ (!scx_allow_ttwu_queue(p))
+		ܦܢܐ false;
 
 #ifdef CONFIG_SMP
-	if (p->sched_class == &stop_sched_class)
-		return false;
+	ܐܢ (p->sched_class == &stop_sched_class)
+		ܦܢܐ false;
 #endif
 
 	/*
 	 * Do not complicate things with the async wake_list while the CPU is
 	 * in hotplug state.
 	 */
-	if (!cpu_active(cpu))
-		return false;
+	ܐܢ (!cpu_active(cpu))
+		ܦܢܐ false;
 
 	/* Ensure the task will still be allowed to run on the CPU. */
-	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-		return false;
+	ܐܢ (!cpumask_test_cpu(cpu, p->cpus_ptr))
+		ܦܢܐ false;
 
 	/*
 	 * If the CPU does not share cache, then queue the task on the
 	 * remote rqs wakelist to avoid accessing remote data.
 	 */
-	if (!cpus_share_cache(this_cpu, cpu))
-		return true;
+	ܐܢ (!cpus_share_cache(this_cpu, cpu))
+		ܦܢܐ true;
 
-	if (cpu == this_cpu)
-		return false;
+	ܐܢ (cpu == this_cpu)
+		ܦܢܐ false;
 
 	/*
 	 * If the wakee cpu is idle, or the task is descheduling and the
@@ -4120,30 +4120,30 @@ static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
 	 * p->on_cpu can be whatever, we've done the dequeue, so
 	 * the wakee has been accounted out of ->nr_running.
 	 */
-	if (!cpu_rq(cpu)->nr_running)
-		return true;
+	ܐܢ (!cpu_rq(cpu)->nr_running)
+		ܦܢܐ true;
 
-	return false;
+	ܦܢܐ false;
 }
 
-static bool ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
+ساكن bool ttwu_queue_wakelist(بنية task_struct *p, صحيح cpu, صحيح wake_flags)
 {
-	if (sched_feat(TTWU_QUEUE) && ttwu_queue_cond(p, cpu)) {
+	ܐܢ (sched_feat(TTWU_QUEUE) && ttwu_queue_cond(p, cpu)) {
 		sched_clock_cpu(cpu); /* Sync clocks across CPUs */
 		__ttwu_queue_wakelist(p, cpu, wake_flags);
-		return true;
+		ܦܢܐ true;
 	}
 
-	return false;
+	ܦܢܐ false;
 }
 
-static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
+ساكن فراغ ttwu_queue(بنية task_struct *p, صحيح cpu, صحيح wake_flags)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct rq_flags rf;
+	بنية rq *rq = cpu_rq(cpu);
+	بنية rq_flags rf;
 
-	if (ttwu_queue_wakelist(p, cpu, wake_flags))
-		return;
+	ܐܢ (ttwu_queue_wakelist(p, cpu, wake_flags))
+		ܦܢܐ;
 
 	rq_lock(rq, &rf);
 	update_rq_clock(rq);
@@ -4169,12 +4169,12 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
  *   allows us to prevent early wakeup of tasks before they can be run on
  *   asymmetric ISA architectures (eg ARMv9).
  */
-static __always_inline
-bool ttwu_state_match(struct task_struct *p, unsigned int state, int *success)
+ساكن __always_inline
+bool ttwu_state_match(بنية task_struct *p, unsigned صحيح state, صحيح *success)
 {
-	int match;
+	صحيح match;
 
-	if (IS_ENABLED(CONFIG_DEBUG_PREEMPT)) {
+	ܐܢ (IS_ENABLED(CONFIG_DEBUG_PREEMPT)) {
 		WARN_ON_ONCE((state & TASK_RTLOCK_WAIT) &&
 			     state != TASK_RTLOCK_WAIT);
 	}
@@ -4195,10 +4195,10 @@ bool ttwu_state_match(struct task_struct *p, unsigned int state, int *success)
 	 * p::saved_state to TASK_RUNNING so any further tests will
 	 * not result in false positives vs. @success
 	 */
-	if (match < 0)
+	ܐܢ (match < 0)
 		p->saved_state = TASK_RUNNING;
 
-	return match > 0;
+	ܦܢܐ match > 0;
 }
 
 /*
@@ -4321,14 +4321,14 @@ bool ttwu_state_match(struct task_struct *p, unsigned int state, int *success)
  * Return: %true if @p->state changes (an actual wakeup was done),
  *	   %false otherwise.
  */
-int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+صحيح try_to_wake_up(بنية task_struct *p, unsigned صحيح state, صحيح wake_flags)
 {
 	guard(preempt)();
-	int cpu, success = 0;
+	صحيح cpu, success = 0;
 
 	wake_flags |= WF_TTWU;
 
-	if (p == current) {
+	ܐܢ (p == current) {
 		/*
 		 * We're waking current, this means 'p->on_rq' and 'task_cpu(p)
 		 * == smp_processor_id()'. Together this means we can special
@@ -4347,13 +4347,13 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		WARN_ON_ONCE(p->se.sched_delayed);
 		WARN_ON_ONCE(p->is_blocked);
 		/* If p is current, we know we can run here, so clear blocked_on */
-		clear_task_blocked_on(p, NULL);
-		if (!ttwu_state_match(p, state, &success))
-			goto out;
+		clear_task_blocked_on(p, عدم);
+		ܐܢ (!ttwu_state_match(p, state, &success))
+			اذهب out;
 
 		trace_sched_waking(p);
 		ttwu_do_wakeup(p);
-		goto out;
+		اذهب out;
 	}
 
 	/*
@@ -4365,8 +4365,8 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
 		smp_mb__after_spinlock();
 
-		if (!ttwu_state_match(p, state, &success))
-			break;
+		ܐܢ (!ttwu_state_match(p, state, &success))
+			اكسر;
 
 		trace_sched_waking(p);
 
@@ -4393,8 +4393,8 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		 * A similar smp_rmb() lives in __task_needs_rq_lock().
 		 */
 		smp_rmb();
-		if (READ_ONCE(p->on_rq) && ttwu_runnable(p, wake_flags))
-			break;
+		ܐܢ (READ_ONCE(p->on_rq) && ttwu_runnable(p, wake_flags))
+			اكسر;
 
 		/*
 		 * Ensure we load p->on_cpu _after_ p->on_rq, otherwise it would be
@@ -4448,9 +4448,9 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		 * to ensure we observe the correct CPU on which the task is currently
 		 * scheduling.
 		 */
-		if (smp_load_acquire(&p->on_cpu) &&
+		ܐܢ (smp_load_acquire(&p->on_cpu) &&
 		    ttwu_queue_wakelist(p, task_cpu(p), wake_flags))
-			break;
+			اكسر;
 
 		/*
 		 * If the owning (remote) CPU is still in the middle of schedule() with
@@ -4464,8 +4464,8 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		smp_cond_load_acquire(&p->on_cpu, !VAL);
 
 		cpu = select_task_rq(p, p->wake_cpu, &wake_flags);
-		if (task_cpu(p) != cpu) {
-			if (p->in_iowait) {
+		ܐܢ (task_cpu(p) != cpu) {
+			ܐܢ (p->in_iowait) {
 				delayacct_blkio_end(p);
 				atomic_dec(&task_rq(p)->nr_iowait);
 			}
@@ -4473,7 +4473,7 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 			wake_flags |= WF_MIGRATED;
 			psi_ttwu_dequeue(p);
 			set_task_cpu(p, cpu);
-		} else if (cpu != p->wake_cpu) {
+		} ܐܚܪܢܐ ܐܢ (cpu != p->wake_cpu) {
 			/*
 			 * If we were proxy-migrated to cpu, then
 			 * select_task_rq() picks cpu instead of wake_cpu
@@ -4488,23 +4488,23 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		ttwu_queue(p, cpu, wake_flags);
 	}
 out:
-	if (success)
+	ܐܢ (success)
 		ttwu_stat(p, task_cpu(p), wake_flags);
 
-	return success;
+	ܦܢܐ success;
 }
 
-static bool __task_needs_rq_lock(struct task_struct *p)
+ساكن bool __task_needs_rq_lock(بنية task_struct *p)
 {
-	unsigned int state = READ_ONCE(p->__state);
+	unsigned صحيح state = READ_ONCE(p->__state);
 
 	/*
 	 * Since pi->lock blocks try_to_wake_up(), we don't need rq->lock when
 	 * the task is blocked. Make sure to check @state since ttwu() can drop
 	 * locks at the end, see ttwu_queue_wakelist().
 	 */
-	if (state == TASK_RUNNING || state == TASK_WAKING)
-		return true;
+	ܐܢ (state == TASK_RUNNING || state == TASK_WAKING)
+		ܦܢܐ true;
 
 	/*
 	 * Ensure we load p->on_rq after p->__state, otherwise it would be
@@ -4513,8 +4513,8 @@ static bool __task_needs_rq_lock(struct task_struct *p)
 	 * See try_to_wake_up() for a longer comment.
 	 */
 	smp_rmb();
-	if (p->on_rq)
-		return true;
+	ܐܢ (p->on_rq)
+		ܦܢܐ true;
 
 	/*
 	 * Ensure the task has finished __schedule() and will not be referenced
@@ -4523,7 +4523,7 @@ static bool __task_needs_rq_lock(struct task_struct *p)
 	smp_rmb();
 	smp_cond_load_acquire(&p->on_cpu, !VAL);
 
-	return false;
+	ܦܢܐ false;
 }
 
 /**
@@ -4541,15 +4541,15 @@ static bool __task_needs_rq_lock(struct task_struct *p)
  * Returns:
  *   Whatever @func returns
  */
-int task_call_func(struct task_struct *p, task_call_f func, void *arg)
+صحيح task_call_func(بنية task_struct *p, task_call_f func, فراغ *arg)
 {
-	struct rq_flags rf;
-	int ret;
+	بنية rq_flags rf;
+	صحيح ret;
 
 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
 
-	if (__task_needs_rq_lock(p)) {
-		struct rq *rq = __task_rq_lock(p, &rf);
+	ܐܢ (__task_needs_rq_lock(p)) {
+		بنية rq *rq = __task_rq_lock(p, &rf);
 
 		/*
 		 * At this point the task is pinned; either:
@@ -4564,12 +4564,12 @@ int task_call_func(struct task_struct *p, task_call_f func, void *arg)
 		ret = func(p, arg);
 
 		__task_rq_unlock(rq, p, &rf);
-	} else {
+	} ܐܚܪܢܐ {
 		ret = func(p, arg);
 	}
 
 	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
-	return ret;
+	ܦܢܐ ret;
 }
 
 /**
@@ -4589,11 +4589,11 @@ int task_call_func(struct task_struct *p, task_call_f func, void *arg)
  * the pointer, which permits the caller to confine this function's fetch
  * with respect to the caller's accesses to other shared variables.
  */
-struct task_struct *cpu_curr_snapshot(int cpu)
+بنية task_struct *cpu_curr_snapshot(صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct task_struct *t;
-	struct rq_flags rf;
+	بنية rq *rq = cpu_rq(cpu);
+	بنية task_struct *t;
+	بنية rq_flags rf;
 
 	rq_lock_irqsave(rq, &rf);
 	smp_mb__after_spinlock(); /* Pairing determined by caller's synchronization design. */
@@ -4601,7 +4601,7 @@ struct task_struct *cpu_curr_snapshot(int cpu)
 	rq_unlock_irqrestore(rq, &rf);
 	smp_mb(); /* Pairing determined by caller's synchronization design. */
 
-	return t;
+	ܦܢܐ t;
 }
 
 /**
@@ -4615,15 +4615,15 @@ struct task_struct *cpu_curr_snapshot(int cpu)
  *
  * This function executes a full memory barrier before accessing the task state.
  */
-int wake_up_process(struct task_struct *p)
+صحيح wake_up_process(بنية task_struct *p)
 {
-	return try_to_wake_up(p, TASK_NORMAL, 0);
+	ܦܢܐ try_to_wake_up(p, TASK_NORMAL, 0);
 }
 EXPORT_SYMBOL(wake_up_process);
 
-int wake_up_state(struct task_struct *p, unsigned int state)
+صحيح wake_up_state(بنية task_struct *p, unsigned صحيح state)
 {
-	return try_to_wake_up(p, state, 0);
+	ܦܢܐ try_to_wake_up(p, state, 0);
 }
 
 /*
@@ -4633,7 +4633,7 @@ int wake_up_state(struct task_struct *p, unsigned int state)
  * __sched_fork() is basic setup which is also used by sched_init() to
  * initialize the boot CPU's idle task.
  */
-static void __sched_fork(u64 clone_flags, struct task_struct *p)
+ساكن فراغ __sched_fork(u64 clone_flags, بنية task_struct *p)
 {
 	p->on_rq			= 0;
 
@@ -4652,7 +4652,7 @@ static void __sched_fork(u64 clone_flags, struct task_struct *p)
 	WARN_ON_ONCE(p->is_blocked);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	p->se.cfs_rq			= NULL;
+	p->se.cfs_rq			= عدم;
 #ifdef CONFIG_CFS_BANDWIDTH
 	init_cfs_throttle_work(p);
 #endif
@@ -4660,7 +4660,7 @@ static void __sched_fork(u64 clone_flags, struct task_struct *p)
 
 #ifdef CONFIG_SCHEDSTATS
 	/* Even if schedstat is disabled, there should not be garbage */
-	memset(&p->stats, 0, sizeof(p->stats));
+	memset(&p->stats, 0, حجم(p->stats));
 #endif
 
 	init_dl_entity(&p->dl);
@@ -4680,11 +4680,11 @@ static void __sched_fork(u64 clone_flags, struct task_struct *p)
 #endif
 
 #ifdef CONFIG_COMPACTION
-	p->capture_control = NULL;
+	p->capture_control = عدم;
 #endif
 	init_numa_balancing(clone_flags, p);
 	p->wake_entry.u_flags = CSD_TYPE_TTWU;
-	p->migration_pending = NULL;
+	p->migration_pending = عدم;
 	init_sched_mm(p);
 }
 
@@ -4692,29 +4692,29 @@ DEFINE_STATIC_KEY_FALSE(sched_numa_balancing);
 
 #ifdef CONFIG_NUMA_BALANCING
 
-int sysctl_numa_balancing_mode;
+صحيح sysctl_numa_balancing_mode;
 
-static void __set_numabalancing_state(bool enabled)
+ساكن فراغ __set_numabalancing_state(bool enabled)
 {
-	if (enabled)
+	ܐܢ (enabled)
 		static_branch_enable(&sched_numa_balancing);
-	else
+	ܐܚܪܢܐ
 		static_branch_disable(&sched_numa_balancing);
 }
 
-void set_numabalancing_state(bool enabled)
+فراغ set_numabalancing_state(bool enabled)
 {
-	if (enabled)
+	ܐܢ (enabled)
 		sysctl_numa_balancing_mode = NUMA_BALANCING_NORMAL;
-	else
+	ܐܚܪܢܐ
 		sysctl_numa_balancing_mode = NUMA_BALANCING_DISABLED;
 	__set_numabalancing_state(enabled);
 }
 
 #ifdef CONFIG_SYSCTL
-static void reset_memory_tiering(void)
+ساكن فراغ reset_memory_tiering(فراغ)
 {
-	struct pglist_data *pgdat;
+	بنية pglist_data *pgdat;
 
 	for_each_online_pgdat(pgdat) {
 		pgdat->nbp_threshold = 0;
@@ -4723,29 +4723,29 @@ static void reset_memory_tiering(void)
 	}
 }
 
-static int sysctl_numa_balancing(const struct ctl_table *table, int write,
-			  void *buffer, size_t *lenp, loff_t *ppos)
+ساكن صحيح sysctl_numa_balancing(ثابت بنية ctl_table *table, صحيح اكتب,
+			  فراغ *buffer, size_t *lenp, loff_t *ppos)
 {
-	struct ctl_table t;
-	int err;
-	int state = sysctl_numa_balancing_mode;
+	بنية ctl_table t;
+	صحيح err;
+	صحيح state = sysctl_numa_balancing_mode;
 
-	if (write && !capable(CAP_SYS_ADMIN))
-		return -EPERM;
+	ܐܢ (اكتب && !capable(CAP_SYS_ADMIN))
+		ܦܢܐ -EPERM;
 
 	t = *table;
 	t.data = &state;
-	err = proc_dointvec_minmax(&t, write, buffer, lenp, ppos);
-	if (err < 0)
-		return err;
-	if (write) {
-		if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
+	err = proc_dointvec_minmax(&t, اكتب, buffer, lenp, ppos);
+	ܐܢ (err < 0)
+		ܦܢܐ err;
+	ܐܢ (اكتب) {
+		ܐܢ (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
 		    (state & NUMA_BALANCING_MEMORY_TIERING))
 			reset_memory_tiering();
 		sysctl_numa_balancing_mode = state;
 		__set_numabalancing_state(state);
 	}
-	return err;
+	ܦܢܐ err;
 }
 #endif /* CONFIG_SYSCTL */
 #endif /* CONFIG_NUMA_BALANCING */
@@ -4754,73 +4754,73 @@ static int sysctl_numa_balancing(const struct ctl_table *table, int write,
 
 DEFINE_STATIC_KEY_FALSE(sched_schedstats);
 
-static void set_schedstats(bool enabled)
+ساكن فراغ set_schedstats(bool enabled)
 {
-	if (enabled)
+	ܐܢ (enabled)
 		static_branch_enable(&sched_schedstats);
-	else
+	ܐܚܪܢܐ
 		static_branch_disable(&sched_schedstats);
 }
 
-void force_schedstat_enabled(void)
+فراغ force_schedstat_enabled(فراغ)
 {
-	if (!schedstat_enabled()) {
+	ܐܢ (!schedstat_enabled()) {
 		pr_info("kernel profiling enabled schedstats, disable via kernel.sched_schedstats.\n");
 		static_branch_enable(&sched_schedstats);
 	}
 }
 
-static int __init setup_schedstats(char *str)
+ساكن صحيح __init setup_schedstats(حرف *str)
 {
-	int ret = 0;
-	if (!str)
-		goto out;
+	صحيح ret = 0;
+	ܐܢ (!str)
+		اذهب out;
 
-	if (!strcmp(str, "enable")) {
+	ܐܢ (!strcmp(str, "enable")) {
 		set_schedstats(true);
 		ret = 1;
-	} else if (!strcmp(str, "disable")) {
+	} ܐܚܪܢܐ ܐܢ (!strcmp(str, "disable")) {
 		set_schedstats(false);
 		ret = 1;
 	}
 out:
-	if (!ret)
+	ܐܢ (!ret)
 		pr_warn("Unable to parse schedstats=\n");
 
-	return ret;
+	ܦܢܐ ret;
 }
 __setup("schedstats=", setup_schedstats);
 
 #ifdef CONFIG_SYSCTL
-static int sysctl_schedstats(const struct ctl_table *table, int write, void *buffer,
+ساكن صحيح sysctl_schedstats(ثابت بنية ctl_table *table, صحيح اكتب, فراغ *buffer,
 		size_t *lenp, loff_t *ppos)
 {
-	struct ctl_table t;
-	int err;
-	int state = static_branch_likely(&sched_schedstats);
+	بنية ctl_table t;
+	صحيح err;
+	صحيح state = static_branch_likely(&sched_schedstats);
 
-	if (write && !capable(CAP_SYS_ADMIN))
-		return -EPERM;
+	ܐܢ (اكتب && !capable(CAP_SYS_ADMIN))
+		ܦܢܐ -EPERM;
 
 	t = *table;
 	t.data = &state;
-	err = proc_dointvec_minmax(&t, write, buffer, lenp, ppos);
-	if (err < 0)
-		return err;
-	if (write)
+	err = proc_dointvec_minmax(&t, اكتب, buffer, lenp, ppos);
+	ܐܢ (err < 0)
+		ܦܢܐ err;
+	ܐܢ (اكتب)
 		set_schedstats(state);
-	return err;
+	ܦܢܐ err;
 }
 #endif /* CONFIG_SYSCTL */
 #endif /* CONFIG_SCHEDSTATS */
 
 #ifdef CONFIG_SYSCTL
-static const struct ctl_table sched_core_sysctls[] = {
+ساكن ثابت بنية ctl_table sched_core_sysctls[] = {
 #ifdef CONFIG_SCHEDSTATS
 	{
 		.procname       = "sched_schedstats",
-		.data           = NULL,
-		.maxlen         = sizeof(unsigned int),
+		.data           = عدم,
+		.maxlen         = حجم(unsigned صحيح),
 		.mode           = 0644,
 		.proc_handler   = sysctl_schedstats,
 		.extra1         = SYSCTL_ZERO,
@@ -4831,21 +4831,21 @@ static const struct ctl_table sched_core_sysctls[] = {
 	{
 		.procname       = "sched_util_clamp_min",
 		.data           = &sysctl_sched_uclamp_util_min,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = حجم(unsigned صحيح),
 		.mode           = 0644,
 		.proc_handler   = sysctl_sched_uclamp_handler,
 	},
 	{
 		.procname       = "sched_util_clamp_max",
 		.data           = &sysctl_sched_uclamp_util_max,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = حجم(unsigned صحيح),
 		.mode           = 0644,
 		.proc_handler   = sysctl_sched_uclamp_handler,
 	},
 	{
 		.procname       = "sched_util_clamp_min_rt_default",
 		.data           = &sysctl_sched_uclamp_util_min_rt_default,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = حجم(unsigned صحيح),
 		.mode           = 0644,
 		.proc_handler   = sysctl_sched_uclamp_handler,
 	},
@@ -4853,8 +4853,8 @@ static const struct ctl_table sched_core_sysctls[] = {
 #ifdef CONFIG_NUMA_BALANCING
 	{
 		.procname	= "numa_balancing",
-		.data		= NULL, /* filled in by handler */
-		.maxlen		= sizeof(unsigned int),
+		.data		= عدم, /* filled in by handler */
+		.maxlen		= حجم(unsigned صحيح),
 		.mode		= 0644,
 		.proc_handler	= sysctl_numa_balancing,
 		.extra1		= SYSCTL_ZERO,
@@ -4862,10 +4862,10 @@ static const struct ctl_table sched_core_sysctls[] = {
 	},
 #endif /* CONFIG_NUMA_BALANCING */
 };
-static int __init sched_core_sysctl_init(void)
+ساكن صحيح __init sched_core_sysctl_init(فراغ)
 {
 	register_sysctl_init("kernel", sched_core_sysctls);
-	return 0;
+	ܦܢܐ 0;
 }
 late_initcall(sched_core_sysctl_init);
 #endif /* CONFIG_SYSCTL */
@@ -4873,7 +4873,7 @@ late_initcall(sched_core_sysctl_init);
 /*
  * fork()/clone()-time setup:
  */
-int sched_fork(u64 clone_flags, struct task_struct *p)
+صحيح sched_fork(u64 clone_flags, بنية task_struct *p)
 {
 	__sched_fork(clone_flags, p);
 	/*
@@ -4893,13 +4893,13 @@ int sched_fork(u64 clone_flags, struct task_struct *p)
 	/*
 	 * Revert to default priority/policy on fork if requested.
 	 */
-	if (unlikely(p->sched_reset_on_fork)) {
-		if (task_has_dl_policy(p) || task_has_rt_policy(p)) {
+	ܐܢ (unlikely(p->sched_reset_on_fork)) {
+		ܐܢ (task_has_dl_policy(p) || task_has_rt_policy(p)) {
 			p->policy = SCHED_NORMAL;
 			p->static_prio = NICE_TO_PRIO(0);
 			p->rt_priority = 0;
 			p->timer_slack_ns = p->default_timer_slack_ns;
-		} else if (PRIO_TO_NICE(p->static_prio) < 0)
+		} ܐܚܪܢܐ ܐܢ (PRIO_TO_NICE(p->static_prio) < 0)
 			p->static_prio = NICE_TO_PRIO(0);
 
 		p->prio = p->normal_prio = p->static_prio;
@@ -4914,18 +4914,18 @@ int sched_fork(u64 clone_flags, struct task_struct *p)
 		p->sched_reset_on_fork = 0;
 	}
 
-	if (dl_prio(p->prio))
-		return -EAGAIN;
+	ܐܢ (dl_prio(p->prio))
+		ܦܢܐ -EAGAIN;
 
 	scx_pre_fork(p);
 
-	if (rt_prio(p->prio)) {
+	ܐܢ (rt_prio(p->prio)) {
 		p->sched_class = &rt_sched_class;
 #ifdef CONFIG_SCHED_CLASS_EXT
-	} else if (task_should_scx(p->policy)) {
+	} ܐܚܪܢܐ ܐܢ (task_should_scx(p->policy)) {
 		p->sched_class = &ext_sched_class;
 #endif
-	} else {
+	} ܐܚܪܢܐ {
 		p->sched_class = &fair_sched_class;
 	}
 
@@ -4933,18 +4933,18 @@ int sched_fork(u64 clone_flags, struct task_struct *p)
 
 
 #ifdef CONFIG_SCHED_INFO
-	if (likely(sched_info_on()))
-		memset(&p->sched_info, 0, sizeof(p->sched_info));
+	ܐܢ (likely(sched_info_on()))
+		memset(&p->sched_info, 0, حجم(p->sched_info));
 #endif
 	p->on_cpu = 0;
 	init_task_preempt_count(p);
 	plist_node_init(&p->pushable_tasks, MAX_PRIO);
 	RB_CLEAR_NODE(&p->pushable_dl_tasks);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-int sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs)
+صحيح sched_cgroup_fork(بنية task_struct *p, بنية kernel_clone_args *kargs)
 {
 	unsigned long flags;
 
@@ -4954,10 +4954,10 @@ int sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs)
 	 */
 	raw_spin_lock_irqsave(&p->pi_lock, flags);
 #ifdef CONFIG_CGROUP_SCHED
-	if (1) {
-		struct task_group *tg;
+	ܐܢ (1) {
+		بنية task_group *tg;
 		tg = container_of(kargs->cset->subsys[cpu_cgrp_id],
-				  struct task_group, css);
+				  بنية task_group, css);
 		tg = autogroup_task_group(p, tg);
 		p->sched_task_group = tg;
 	}
@@ -4967,21 +4967,21 @@ int sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs)
 	 * so use __set_task_cpu().
 	 */
 	__set_task_cpu(p, smp_processor_id());
-	if (p->sched_class->task_fork)
+	ܐܢ (p->sched_class->task_fork)
 		p->sched_class->task_fork(p);
 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 
-	return scx_fork(p, kargs);
+	ܦܢܐ scx_fork(p, kargs);
 }
 
-void sched_cancel_fork(struct task_struct *p)
+فراغ sched_cancel_fork(بنية task_struct *p)
 {
 	scx_cancel_fork(p);
 }
 
-static void sched_mm_cid_fork(struct task_struct *t);
+ساكن فراغ sched_mm_cid_fork(بنية task_struct *t);
 
-void sched_post_fork(struct task_struct *p)
+فراغ sched_post_fork(بنية task_struct *p)
 {
 	sched_mm_cid_fork(p);
 	uclamp_post_fork(p);
@@ -4990,18 +4990,18 @@ void sched_post_fork(struct task_struct *p)
 
 u64 to_ratio(u64 period, u64 runtime)
 {
-	if (runtime == RUNTIME_INF)
-		return BW_UNIT;
+	ܐܢ (runtime == RUNTIME_INF)
+		ܦܢܐ BW_UNIT;
 
 	/*
 	 * Doing this here saves a lot of checks in all
 	 * the calling paths, and returning zero seems
 	 * safe for them anyway.
 	 */
-	if (period == 0)
-		return 0;
+	ܐܢ (period == 0)
+		ܦܢܐ 0;
 
-	return div64_u64(runtime << BW_SHIFT, period);
+	ܦܢܐ div64_u64(runtime << BW_SHIFT, period);
 }
 
 /*
@@ -5011,11 +5011,11 @@ u64 to_ratio(u64 period, u64 runtime)
  * that must be done for every newly created context, then puts the task
  * on the runqueue and wakes it.
  */
-void wake_up_new_task(struct task_struct *p)
+فراغ wake_up_new_task(بنية task_struct *p)
 {
-	struct rq_flags rf;
-	struct rq *rq;
-	int wake_flags = WF_FORK;
+	بنية rq_flags rf;
+	بنية rq *rq;
+	صحيح wake_flags = WF_FORK;
 
 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
 	WRITE_ONCE(p->__state, TASK_RUNNING);
@@ -5036,7 +5036,7 @@ void wake_up_new_task(struct task_struct *p)
 	activate_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_INITIAL);
 	trace_sched_wakeup_new(p);
 	wakeup_preempt(rq, p, wake_flags);
-	if (p->sched_class->task_woken) {
+	ܐܢ (p->sched_class->task_woken) {
 		/*
 		 * Nothing relies on rq->lock after this, so it's fine to
 		 * drop it.
@@ -5050,15 +5050,15 @@ void wake_up_new_task(struct task_struct *p)
 
 #ifdef CONFIG_PREEMPT_NOTIFIERS
 
-static DEFINE_STATIC_KEY_FALSE(preempt_notifier_key);
+ساكن DEFINE_STATIC_KEY_FALSE(preempt_notifier_key);
 
-void preempt_notifier_inc(void)
+فراغ preempt_notifier_inc(فراغ)
 {
 	static_branch_inc(&preempt_notifier_key);
 }
 EXPORT_SYMBOL_GPL(preempt_notifier_inc);
 
-void preempt_notifier_dec(void)
+فراغ preempt_notifier_dec(فراغ)
 {
 	static_branch_dec(&preempt_notifier_key);
 }
@@ -5068,9 +5068,9 @@ EXPORT_SYMBOL_GPL(preempt_notifier_dec);
  * preempt_notifier_register - tell me when current is being preempted & rescheduled
  * @notifier: notifier struct to register
  */
-void preempt_notifier_register(struct preempt_notifier *notifier)
+فراغ preempt_notifier_register(بنية preempt_notifier *notifier)
 {
-	if (!static_branch_unlikely(&preempt_notifier_key))
+	ܐܢ (!static_branch_unlikely(&preempt_notifier_key))
 		WARN(1, "registering preempt_notifier while notifiers disabled\n");
 
 	hlist_add_head(&notifier->link, &current->preempt_notifiers);
@@ -5083,59 +5083,59 @@ EXPORT_SYMBOL_GPL(preempt_notifier_register);
  *
  * This is *not* safe to call from within a preemption notifier.
  */
-void preempt_notifier_unregister(struct preempt_notifier *notifier)
+فراغ preempt_notifier_unregister(بنية preempt_notifier *notifier)
 {
 	hlist_del(&notifier->link);
 }
 EXPORT_SYMBOL_GPL(preempt_notifier_unregister);
 
-static void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
+ساكن فراغ __fire_sched_in_preempt_notifiers(بنية task_struct *curr)
 {
-	struct preempt_notifier *notifier;
+	بنية preempt_notifier *notifier;
 
 	hlist_for_each_entry(notifier, &curr->preempt_notifiers, link)
 		notifier->ops->sched_in(notifier, raw_smp_processor_id());
 }
 
-static __always_inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
+ساكن __always_inline فراغ fire_sched_in_preempt_notifiers(بنية task_struct *curr)
 {
-	if (static_branch_unlikely(&preempt_notifier_key))
+	ܐܢ (static_branch_unlikely(&preempt_notifier_key))
 		__fire_sched_in_preempt_notifiers(curr);
 }
 
-static void
-__fire_sched_out_preempt_notifiers(struct task_struct *curr,
-				   struct task_struct *next)
+ساكن فراغ
+__fire_sched_out_preempt_notifiers(بنية task_struct *curr,
+				   بنية task_struct *next)
 {
-	struct preempt_notifier *notifier;
+	بنية preempt_notifier *notifier;
 
 	hlist_for_each_entry(notifier, &curr->preempt_notifiers, link)
 		notifier->ops->sched_out(notifier, next);
 }
 
-static __always_inline void
-fire_sched_out_preempt_notifiers(struct task_struct *curr,
-				 struct task_struct *next)
+ساكن __always_inline فراغ
+fire_sched_out_preempt_notifiers(بنية task_struct *curr,
+				 بنية task_struct *next)
 {
-	if (static_branch_unlikely(&preempt_notifier_key))
+	ܐܢ (static_branch_unlikely(&preempt_notifier_key))
 		__fire_sched_out_preempt_notifiers(curr, next);
 }
 
-#else /* !CONFIG_PREEMPT_NOTIFIERS: */
+#ܐܚܪܢܐ /* !CONFIG_PREEMPT_NOTIFIERS: */
 
-static inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
+ساكن مضمن فراغ fire_sched_in_preempt_notifiers(بنية task_struct *curr)
 {
 }
 
-static inline void
-fire_sched_out_preempt_notifiers(struct task_struct *curr,
-				 struct task_struct *next)
+ساكن مضمن فراغ
+fire_sched_out_preempt_notifiers(بنية task_struct *curr,
+				 بنية task_struct *next)
 {
 }
 
 #endif /* !CONFIG_PREEMPT_NOTIFIERS */
 
-static inline void prepare_task(struct task_struct *next)
+ساكن مضمن فراغ prepare_task(بنية task_struct *next)
 {
 	/*
 	 * Claim the task as running, we do this before switching to it
@@ -5147,7 +5147,7 @@ static inline void prepare_task(struct task_struct *next)
 	WRITE_ONCE(next->on_cpu, 1);
 }
 
-static inline void finish_task(struct task_struct *prev)
+ساكن مضمن فراغ finish_task(بنية task_struct *prev)
 {
 	/*
 	 * This must be the very last reference to @prev from this CPU. After
@@ -5173,42 +5173,42 @@ static inline void finish_task(struct task_struct *prev)
  * handling to running the callbacks, except we just don't call
  * them.
  */
-static void zap_balance_callbacks(struct rq *rq)
+ساكن فراغ zap_balance_callbacks(بنية rq *rq)
 {
-	struct balance_callback *next, *head;
+	بنية balance_callback *next, *head;
 	bool found = false;
 
 	lockdep_assert_rq_held(rq);
 
 	head = rq->balance_callback;
-	while (head) {
-		if (head == &balance_push_callback)
+	ܟܡܐ (head) {
+		ܐܢ (head == &balance_push_callback)
 			found = true;
 		next = head->next;
-		head->next = NULL;
+		head->next = عدم;
 		head = next;
 	}
-	rq->balance_callback = found ? &balance_push_callback : NULL;
+	rq->balance_callback = found ? &balance_push_callback : عدم;
 }
 
-static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
+ساكن فراغ do_balance_callbacks(بنية rq *rq, بنية balance_callback *head)
 {
-	void (*func)(struct rq *rq);
-	struct balance_callback *next;
+	فراغ (*func)(بنية rq *rq);
+	بنية balance_callback *next;
 
 	lockdep_assert_rq_held(rq);
 
-	while (head) {
+	ܟܡܐ (head) {
 		func = head->func;
 		next = head->next;
-		head->next = NULL;
+		head->next = عدم;
 		head = next;
 
 		func(rq);
 	}
 }
 
-static void balance_push(struct rq *rq);
+ساكن فراغ balance_push(بنية rq *rq);
 
 /*
  * balance_push_callback is a right abuse of the callback interface and plays
@@ -5221,18 +5221,18 @@ static void balance_push(struct rq *rq);
  * This abuse is tolerated because it places all the unlikely/odd cases behind
  * a single test, namely: rq->balance_callback == NULL.
  */
-struct balance_callback balance_push_callback = {
-	.next = NULL,
+بنية balance_callback balance_push_callback = {
+	.next = عدم,
 	.func = balance_push,
 };
 
-static inline struct balance_callback *
-__splice_balance_callbacks(struct rq *rq, bool split)
+ساكن مضمن بنية balance_callback *
+__splice_balance_callbacks(بنية rq *rq, bool split)
 {
-	struct balance_callback *head = rq->balance_callback;
+	بنية balance_callback *head = rq->balance_callback;
 
-	if (likely(!head))
-		return NULL;
+	ܐܢ (likely(!head))
+		ܦܢܐ عدم;
 
 	lockdep_assert_rq_held(rq);
 	/*
@@ -5243,41 +5243,41 @@ __splice_balance_callbacks(struct rq *rq, bool split)
 	 * In that case it would be possible for __schedule() to interleave
 	 * and observe the list empty.
 	 */
-	if (split && head == &balance_push_callback)
-		head = NULL;
-	else
-		rq->balance_callback = NULL;
+	ܐܢ (split && head == &balance_push_callback)
+		head = عدم;
+	ܐܚܪܢܐ
+		rq->balance_callback = عدم;
 
-	return head;
+	ܦܢܐ head;
 }
 
-struct balance_callback *splice_balance_callbacks(struct rq *rq)
+بنية balance_callback *splice_balance_callbacks(بنية rq *rq)
 {
-	return __splice_balance_callbacks(rq, true);
+	ܦܢܐ __splice_balance_callbacks(rq, true);
 }
 
-void __balance_callbacks(struct rq *rq, struct rq_flags *rf)
+فراغ __balance_callbacks(بنية rq *rq, بنية rq_flags *rf)
 {
-	if (rf)
+	ܐܢ (rf)
 		rq_unpin_lock(rq, rf);
 	do_balance_callbacks(rq, __splice_balance_callbacks(rq, false));
-	if (rf)
+	ܐܢ (rf)
 		rq_repin_lock(rq, rf);
 }
 
-void balance_callbacks(struct rq *rq, struct balance_callback *head)
+فراغ balance_callbacks(بنية rq *rq, بنية balance_callback *head)
 {
 	unsigned long flags;
 
-	if (unlikely(head)) {
+	ܐܢ (unlikely(head)) {
 		raw_spin_rq_lock_irqsave(rq, flags);
 		do_balance_callbacks(rq, head);
 		raw_spin_rq_unlock_irqrestore(rq, flags);
 	}
 }
 
-static inline void
-prepare_lock_switch(struct rq *rq, struct task_struct *next, struct rq_flags *rf)
+ساكن مضمن فراغ
+prepare_lock_switch(بنية rq *rq, بنية task_struct *next, بنية rq_flags *rf)
 	__releases(__rq_lockp(rq))
 	__acquires(__rq_lockp(this_rq()))
 {
@@ -5300,7 +5300,7 @@ prepare_lock_switch(struct rq *rq, struct task_struct *next, struct rq_flags *rf
 	__acquire(__rq_lockp(this_rq()));
 }
 
-static inline void finish_lock_switch(struct rq *rq)
+ساكن مضمن فراغ finish_lock_switch(بنية rq *rq)
 	__releases(__rq_lockp(rq))
 {
 	/*
@@ -5309,7 +5309,7 @@ static inline void finish_lock_switch(struct rq *rq)
 	 * prev into current:
 	 */
 	spin_acquire(&__rq_lockp(rq)->dep_map, 0, 0, _THIS_IP_);
-	__balance_callbacks(rq, NULL);
+	__balance_callbacks(rq, عدم);
 	hrtick_schedule_exit(rq);
 	raw_spin_rq_unlock_irq(rq);
 }
@@ -5319,25 +5319,25 @@ static inline void finish_lock_switch(struct rq *rq)
  */
 
 #ifndef prepare_arch_switch
-# define prepare_arch_switch(next)	do { } while (0)
+# define prepare_arch_switch(next)	ܥܒܕ { } ܟܡܐ (0)
 #endif
 
 #ifndef finish_arch_post_lock_switch
-# define finish_arch_post_lock_switch()	do { } while (0)
+# define finish_arch_post_lock_switch()	ܥܒܕ { } ܟܡܐ (0)
 #endif
 
-static inline void kmap_local_sched_out(void)
+ساكن مضمن فراغ kmap_local_sched_out(فراغ)
 {
 #ifdef CONFIG_KMAP_LOCAL
-	if (unlikely(current->kmap_ctrl.idx))
+	ܐܢ (unlikely(current->kmap_ctrl.idx))
 		__kmap_local_sched_out();
 #endif
 }
 
-static inline void kmap_local_sched_in(void)
+ساكن مضمن فراغ kmap_local_sched_in(فراغ)
 {
 #ifdef CONFIG_KMAP_LOCAL
-	if (unlikely(current->kmap_ctrl.idx))
+	ܐܢ (unlikely(current->kmap_ctrl.idx))
 		__kmap_local_sched_in();
 #endif
 }
@@ -5355,9 +5355,9 @@ static inline void kmap_local_sched_in(void)
  * prepare_task_switch sets up locking and calls architecture specific
  * hooks.
  */
-static inline void
-prepare_task_switch(struct rq *rq, struct task_struct *prev,
-		    struct task_struct *next)
+ساكن مضمن فراغ
+prepare_task_switch(بنية rq *rq, بنية task_struct *prev,
+		    بنية task_struct *next)
 	__must_hold(__rq_lockp(rq))
 {
 	kcov_prepare_switch(prev);
@@ -5388,12 +5388,12 @@ prepare_task_switch(struct rq *rq, struct task_struct *prev,
  * past. 'prev == current' is still correct but we need to recalculate this_rq
  * because prev may have moved to another CPU.
  */
-static struct rq *finish_task_switch(struct task_struct *prev)
+ساكن بنية rq *finish_task_switch(بنية task_struct *prev)
 	__releases(__rq_lockp(this_rq()))
 {
-	struct rq *rq = this_rq();
-	struct mm_struct *mm = rq->prev_mm;
-	unsigned int prev_state;
+	بنية rq *rq = this_rq();
+	بنية mm_struct *mm = rq->prev_mm;
+	unsigned صحيح prev_state;
 
 	/*
 	 * The previous task will have left us with a preempt_count of 2
@@ -5406,12 +5406,12 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	 *
 	 * Also, see FORK_PREEMPT_COUNT.
 	 */
-	if (WARN_ONCE(preempt_count() != 2*PREEMPT_DISABLE_OFFSET,
+	ܐܢ (WARN_ONCE(preempt_count() != 2*PREEMPT_DISABLE_OFFSET,
 		      "corrupted preempt_count: %s/%d/0x%x\n",
 		      current->comm, current->pid, preempt_count()))
 		preempt_count_set(FORK_PREEMPT_COUNT);
 
-	rq->prev_mm = NULL;
+	rq->prev_mm = عدم;
 
 	/*
 	 * A task struct has one reference for the use as "current".
@@ -5460,13 +5460,13 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	 *   provided by mmdrop_lazy_tlb(),
 	 * - a sync_core for SYNC_CORE.
 	 */
-	if (mm) {
+	ܐܢ (mm) {
 		membarrier_mm_sync_core_before_usermode(mm);
 		mmdrop_lazy_tlb_sched(mm);
 	}
 
-	if (unlikely(prev_state == TASK_DEAD)) {
-		if (prev->sched_class->task_dead)
+	ܐܢ (unlikely(prev_state == TASK_DEAD)) {
+		ܐܢ (prev->sched_class->task_dead)
 			prev->sched_class->task_dead(prev);
 
 		/*
@@ -5483,14 +5483,14 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 		put_task_struct_rcu_user(prev);
 	}
 
-	return rq;
+	ܦܢܐ rq;
 }
 
 /**
  * schedule_tail - first thing a freshly forked thread must call.
  * @prev: the thread we just switched away from.
  */
-asmlinkage __visible void schedule_tail(struct task_struct *prev)
+asmlinkage __visible فراغ schedule_tail(بنية task_struct *prev)
 	__releases(__rq_lockp(this_rq()))
 {
 	/*
@@ -5511,7 +5511,7 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
 	trace_sched_exit_tp(true);
 	preempt_enable();
 
-	if (current->set_child_tid)
+	ܐܢ (current->set_child_tid)
 		put_user(task_pid_vnr(current), current->set_child_tid);
 
 	calculate_sigpending();
@@ -5520,9 +5520,9 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
 /*
  * context_switch - switch to the new MM and the new thread's register state.
  */
-static __always_inline struct rq *
-context_switch(struct rq *rq, struct task_struct *prev,
-	       struct task_struct *next, struct rq_flags *rf)
+ساكن __always_inline بنية rq *
+context_switch(بنية rq *rq, بنية task_struct *prev,
+	       بنية task_struct *next, بنية rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
 	prepare_task_switch(rq, prev, next);
@@ -5541,15 +5541,15 @@ context_switch(struct rq *rq, struct task_struct *prev,
 	 * kernel ->   user   switch + mmdrop_lazy_tlb() active
 	 *   user ->   user   switch
 	 */
-	if (!next->mm) {				// to kernel
+	ܐܢ (!next->mm) {				// to kernel
 		enter_lazy_tlb(prev->active_mm, next);
 
 		next->active_mm = prev->active_mm;
-		if (prev->mm)				// from user
+		ܐܢ (prev->mm)				// from user
 			mmgrab_lazy_tlb(prev->active_mm);
-		else
-			prev->active_mm = NULL;
-	} else {					// to user
+		ܐܚܪܢܐ
+			prev->active_mm = عدم;
+	} ܐܚܪܢܐ {					// to user
 		membarrier_switch_mm(rq, prev->active_mm, next->mm);
 		/*
 		 * sys_membarrier() requires an smp_mb() between setting
@@ -5562,10 +5562,10 @@ context_switch(struct rq *rq, struct task_struct *prev,
 		switch_mm_irqs_off(prev->active_mm, next->mm, next);
 		lru_gen_use_mm(next->mm);
 
-		if (!prev->mm) {			// from kernel
+		ܐܢ (!prev->mm) {			// from kernel
 			/* will mmdrop_lazy_tlb() in finish_task_switch(). */
 			rq->prev_mm = prev->active_mm;
-			prev->active_mm = NULL;
+			prev->active_mm = عدم;
 		}
 	}
 
@@ -5583,7 +5583,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
 	switch_to(prev, next, prev);
 	barrier();
 
-	return finish_task_switch(prev);
+	ܦܢܐ finish_task_switch(prev);
 }
 
 /*
@@ -5592,14 +5592,14 @@ context_switch(struct rq *rq, struct task_struct *prev,
  * externally visible scheduler statistics: current number of runnable
  * threads, total number of context switches performed since bootup.
  */
-unsigned int nr_running(void)
+unsigned صحيح nr_running(فراغ)
 {
-	unsigned int i, sum = 0;
+	unsigned صحيح i, sum = 0;
 
 	for_each_online_cpu(i)
 		sum += cpu_rq(i)->nr_running;
 
-	return sum;
+	ܦܢܐ sum;
 }
 
 /*
@@ -5615,35 +5615,35 @@ unsigned int nr_running(void)
  *
  * - in a loop with very short iterations (e.g. a polling loop)
  */
-bool single_task_running(void)
+bool single_task_running(فراغ)
 {
-	return raw_rq()->nr_running == 1;
+	ܦܢܐ raw_rq()->nr_running == 1;
 }
 EXPORT_SYMBOL(single_task_running);
 
-unsigned long long nr_context_switches_cpu(int cpu)
+unsigned long long nr_context_switches_cpu(صحيح cpu)
 {
-	return cpu_rq(cpu)->nr_switches;
+	ܦܢܐ cpu_rq(cpu)->nr_switches;
 }
 
-unsigned long long nr_context_switches(void)
+unsigned long long nr_context_switches(فراغ)
 {
-	int i;
+	صحيح i;
 	unsigned long long sum = 0;
 
 	for_each_possible_cpu(i)
 		sum += cpu_rq(i)->nr_switches;
 
-	return sum;
+	ܦܢܐ sum;
 }
 
 /*
  * Return whether any tasks are accounted as I/O waiters on this CPU.
  * They may wake up on a different CPU.
  */
-bool cpu_has_iowait(int cpu)
+bool cpu_has_iowait(صحيح cpu)
 {
-	return atomic_read(&cpu_rq(cpu)->nr_iowait) != 0;
+	ܦܢܐ atomic_read(&cpu_rq(cpu)->nr_iowait) != 0;
 }
 
 /*
@@ -5676,41 +5676,41 @@ bool cpu_has_iowait(int cpu)
  * Task CPU affinities can make all that even more 'interesting'.
  */
 
-unsigned int nr_iowait(void)
+unsigned صحيح nr_iowait(فراغ)
 {
-	unsigned int i, sum = 0;
+	unsigned صحيح i, sum = 0;
 
 	for_each_possible_cpu(i)
 		sum += atomic_read(&cpu_rq(i)->nr_iowait);
 
-	return sum;
+	ܦܢܐ sum;
 }
 
 /*
  * sched_exec - execve() is a valuable balancing opportunity, because at
  * this point the task has the smallest effective memory and cache footprint.
  */
-void sched_exec(void)
+فراغ sched_exec(فراغ)
 {
-	struct task_struct *p = current;
-	struct migration_arg arg;
-	int dest_cpu;
+	بنية task_struct *p = current;
+	بنية migration_arg arg;
+	صحيح dest_cpu;
 
 	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
 		dest_cpu = p->sched_class->select_task_rq(p, task_cpu(p), WF_EXEC);
-		if (dest_cpu == smp_processor_id())
-			return;
+		ܐܢ (dest_cpu == smp_processor_id())
+			ܦܢܐ;
 
-		if (unlikely(!cpu_active(dest_cpu)))
-			return;
+		ܐܢ (unlikely(!cpu_active(dest_cpu)))
+			ܦܢܐ;
 
-		arg = (struct migration_arg){ p, dest_cpu };
+		arg = (بنية migration_arg){ p, dest_cpu };
 	}
 	stop_one_cpu(task_cpu(p), migration_cpu_stop, &arg);
 }
 
-DEFINE_PER_CPU(struct kernel_stat, kstat);
-DEFINE_PER_CPU(struct kernel_cpustat, kernel_cpustat) = {
+DEFINE_PER_CPU(بنية kernel_stat, kstat);
+DEFINE_PER_CPU(بنية kernel_cpustat, kernel_cpustat) = {
 #ifdef CONFIG_NO_HZ_COMMON
 	.idle_sleeptime_seq = SEQCNT_ZERO(kernel_cpustat.idle_sleeptime_seq)
 #endif
@@ -5725,9 +5725,9 @@ EXPORT_PER_CPU_SYMBOL(kernel_cpustat);
  * we observe a high rate of cache misses in practice.
  * Prefetching this data results in improved performance.
  */
-static inline void prefetch_curr_exec_start(struct task_struct *p)
+ساكن مضمن فراغ prefetch_curr_exec_start(بنية task_struct *p)
 {
-	struct sched_entity *curr = task_rq(p)->cfs.curr;
+	بنية sched_entity *curr = task_rq(p)->cfs.curr;
 
 	prefetch(curr);
 	prefetch(&curr->exec_start);
@@ -5738,10 +5738,10 @@ static inline void prefetch_curr_exec_start(struct task_struct *p)
  * In case the task is currently running, return the runtime plus current's
  * pending runtime that have not been accounted yet.
  */
-unsigned long long task_sched_runtime(struct task_struct *p)
+unsigned long long task_sched_runtime(بنية task_struct *p)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	بنية rq_flags rf;
+	بنية rq *rq;
 	u64 ns;
 
 #ifdef CONFIG_64BIT
@@ -5756,8 +5756,8 @@ unsigned long long task_sched_runtime(struct task_struct *p)
 	 * If we see ->on_cpu without ->on_rq, the task is leaving, and has
 	 * been accounted, so we're correct here as well.
 	 */
-	if (!p->on_cpu || !task_on_rq_queued(p))
-		return p->se.sum_exec_runtime;
+	ܐܢ (!p->on_cpu || !task_on_rq_queued(p))
+		ܦܢܐ p->se.sum_exec_runtime;
 #endif
 
 	rq = task_rq_lock(p, &rf);
@@ -5766,7 +5766,7 @@ unsigned long long task_sched_runtime(struct task_struct *p)
 	 * project cycles that may never be accounted to this
 	 * thread, breaking clock_gettime().
 	 */
-	if (task_current_donor(rq, p) && task_on_rq_queued(p)) {
+	ܐܢ (task_current_donor(rq, p) && task_on_rq_queued(p)) {
 		prefetch_curr_exec_start(p);
 		update_rq_clock(rq);
 		p->sched_class->update_curr(rq);
@@ -5774,51 +5774,51 @@ unsigned long long task_sched_runtime(struct task_struct *p)
 	ns = p->se.sum_exec_runtime;
 	task_rq_unlock(rq, p, &rf);
 
-	return ns;
+	ܦܢܐ ns;
 }
 
-static u64 cpu_resched_latency(struct rq *rq)
+ساكن u64 cpu_resched_latency(بنية rq *rq)
 {
-	int latency_warn_ms = READ_ONCE(sysctl_resched_latency_warn_ms);
+	صحيح latency_warn_ms = READ_ONCE(sysctl_resched_latency_warn_ms);
 	u64 resched_latency, now = rq_clock(rq);
-	static bool warned_once;
+	ساكن bool warned_once;
 
-	if (sysctl_resched_latency_warn_once && warned_once)
-		return 0;
+	ܐܢ (sysctl_resched_latency_warn_once && warned_once)
+		ܦܢܐ 0;
 
-	if (!need_resched() || !latency_warn_ms)
-		return 0;
+	ܐܢ (!need_resched() || !latency_warn_ms)
+		ܦܢܐ 0;
 
-	if (system_state == SYSTEM_BOOTING)
-		return 0;
+	ܐܢ (system_state == SYSTEM_BOOTING)
+		ܦܢܐ 0;
 
-	if (!rq->last_seen_need_resched_ns) {
+	ܐܢ (!rq->last_seen_need_resched_ns) {
 		rq->last_seen_need_resched_ns = now;
 		rq->ticks_without_resched = 0;
-		return 0;
+		ܦܢܐ 0;
 	}
 
 	rq->ticks_without_resched++;
 	resched_latency = now - rq->last_seen_need_resched_ns;
-	if (resched_latency <= latency_warn_ms * NSEC_PER_MSEC)
-		return 0;
+	ܐܢ (resched_latency <= latency_warn_ms * NSEC_PER_MSEC)
+		ܦܢܐ 0;
 
 	warned_once = true;
 
-	return resched_latency;
+	ܦܢܐ resched_latency;
 }
 
-static int __init setup_resched_latency_warn_ms(char *str)
+ساكن صحيح __init setup_resched_latency_warn_ms(حرف *str)
 {
 	long val;
 
-	if ((kstrtol(str, 0, &val))) {
+	ܐܢ ((kstrtol(str, 0, &val))) {
 		pr_warn("Unable to set resched_latency_warn_ms\n");
-		return 1;
+		ܦܢܐ 1;
 	}
 
 	sysctl_resched_latency_warn_ms = val;
-	return 1;
+	ܦܢܐ 1;
 }
 __setup("resched_latency_warn_ms=", setup_resched_latency_warn_ms);
 
@@ -5826,20 +5826,20 @@ __setup("resched_latency_warn_ms=", setup_resched_latency_warn_ms);
  * This function gets called by the timer code, with HZ frequency.
  * We call it with interrupts disabled.
  */
-void sched_tick(void)
+فراغ sched_tick(فراغ)
 {
-	int cpu = smp_processor_id();
-	struct rq *rq = cpu_rq(cpu);
+	صحيح cpu = smp_processor_id();
+	بنية rq *rq = cpu_rq(cpu);
 	/* scheduler accounting goes to the donor task */
-	struct task_struct *curr, *donor;
-	struct rq_flags rf;
+	بنية task_struct *curr, *donor;
+	بنية rq_flags rf;
 	unsigned long hw_pressure;
 	u64 resched_latency;
 
-	if (!cpu_preferred(cpu))
+	ܐܢ (!cpu_preferred(cpu))
 		sched_push_current_non_preferred_cpu(rq);
 
-	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+	ܐܢ (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
 		arch_scale_freq_tick();
 
 	sched_clock_tick();
@@ -5848,17 +5848,17 @@ void sched_tick(void)
 	curr = rq->curr;
 	donor = rq->donor;
 
-	psi_account_irqtime(rq, curr, NULL);
+	psi_account_irqtime(rq, curr, عدم);
 
 	update_rq_clock(rq);
 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
 	update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure);
 
-	if (dynamic_preempt_lazy() && tif_test_bit(TIF_NEED_RESCHED_LAZY))
+	ܐܢ (dynamic_preempt_lazy() && tif_test_bit(TIF_NEED_RESCHED_LAZY))
 		resched_curr(rq);
 
 	donor->sched_class->task_tick(rq, donor, 0);
-	if (sched_feat(LATENCY_WARN))
+	ܐܢ (sched_feat(LATENCY_WARN))
 		resched_latency = cpu_resched_latency(rq);
 	calc_global_load_tick(rq);
 	sched_core_tick(rq);
@@ -5866,15 +5866,15 @@ void sched_tick(void)
 
 	rq_unlock(rq, &rf);
 
-	if (sched_feat(LATENCY_WARN) && resched_latency)
+	ܐܢ (sched_feat(LATENCY_WARN) && resched_latency)
 		resched_latency_warn(cpu, resched_latency);
 
 	perf_event_task_tick();
 
-	if (curr->flags & PF_WQ_WORKER)
+	ܐܢ (curr->flags & PF_WQ_WORKER)
 		wq_worker_tick(curr);
 
-	if (!scx_switched_all()) {
+	ܐܢ (!scx_switched_all()) {
 		rq->idle_balance = idle_cpu(cpu);
 		sched_balance_trigger(rq);
 	}
@@ -5882,10 +5882,10 @@ void sched_tick(void)
 
 #ifdef CONFIG_NO_HZ_FULL
 
-struct tick_work {
-	int			cpu;
+بنية tick_work {
+	صحيح			cpu;
 	atomic_t		state;
-	struct delayed_work	work;
+	بنية delayed_work	work;
 };
 /* Values for ->state, see diagram below. */
 #define TICK_SCHED_REMOTE_OFFLINE	0
@@ -5915,15 +5915,15 @@ struct tick_work {
  * and sched_tick_start() are happy to leave the state in RUNNING.
  */
 
-static struct tick_work __percpu *tick_work_cpu;
+ساكن بنية tick_work __percpu *tick_work_cpu;
 
-static void sched_tick_remote(struct work_struct *work)
+ساكن فراغ sched_tick_remote(بنية work_struct *work)
 {
-	struct delayed_work *dwork = to_delayed_work(work);
-	struct tick_work *twork = container_of(dwork, struct tick_work, work);
-	int cpu = twork->cpu;
-	struct rq *rq = cpu_rq(cpu);
-	int os;
+	بنية delayed_work *dwork = to_delayed_work(work);
+	بنية tick_work *twork = container_of(dwork, بنية tick_work, work);
+	صحيح cpu = twork->cpu;
+	بنية rq *rq = cpu_rq(cpu);
+	صحيح os;
 
 	/*
 	 * Handle the tick only if it appears the remote CPU is running in full
@@ -5932,11 +5932,11 @@ static void sched_tick_remote(struct work_struct *work)
 	 * statistics and checks timeslices in a time-independent way, regardless
 	 * of when exactly it is running.
 	 */
-	if (tick_nohz_tick_stopped_cpu(cpu)) {
+	ܐܢ (tick_nohz_tick_stopped_cpu(cpu)) {
 		guard(rq_lock_irq)(rq);
-		struct task_struct *curr = rq->curr;
+		بنية task_struct *curr = rq->curr;
 
-		if (cpu_online(cpu)) {
+		ܐܢ (cpu_online(cpu)) {
 			/*
 			 * Since this is a remote tick for full dynticks mode,
 			 * we are always sure that there is no proxy (only a
@@ -5945,7 +5945,7 @@ static void sched_tick_remote(struct work_struct *work)
 			WARN_ON_ONCE(rq->curr != rq->donor);
 			update_rq_clock(rq);
 
-			if (!is_idle_task(curr)) {
+			ܐܢ (!is_idle_task(curr)) {
 				/*
 				 * Make sure the next tick runs within a
 				 * reasonable amount of time.
@@ -5967,24 +5967,24 @@ static void sched_tick_remote(struct work_struct *work)
 	 */
 	os = atomic_fetch_add_unless(&twork->state, -1, TICK_SCHED_REMOTE_RUNNING);
 	WARN_ON_ONCE(os == TICK_SCHED_REMOTE_OFFLINE);
-	if (os == TICK_SCHED_REMOTE_RUNNING)
+	ܐܢ (os == TICK_SCHED_REMOTE_RUNNING)
 		queue_delayed_work(system_dfl_wq, dwork, HZ);
 }
 
-static void sched_tick_start(int cpu)
+ساكن فراغ sched_tick_start(صحيح cpu)
 {
-	int os;
-	struct tick_work *twork;
+	صحيح os;
+	بنية tick_work *twork;
 
-	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
-		return;
+	ܐܢ (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+		ܦܢܐ;
 
 	WARN_ON_ONCE(!tick_work_cpu);
 
 	twork = per_cpu_ptr(tick_work_cpu, cpu);
 	os = atomic_xchg(&twork->state, TICK_SCHED_REMOTE_RUNNING);
 	WARN_ON_ONCE(os == TICK_SCHED_REMOTE_RUNNING);
-	if (os == TICK_SCHED_REMOTE_OFFLINE) {
+	ܐܢ (os == TICK_SCHED_REMOTE_OFFLINE) {
 		twork->cpu = cpu;
 		INIT_DELAYED_WORK(&twork->work, sched_tick_remote);
 		queue_delayed_work(system_dfl_wq, &twork->work, HZ);
@@ -5992,13 +5992,13 @@ static void sched_tick_start(int cpu)
 }
 
 #ifdef CONFIG_HOTPLUG_CPU
-static void sched_tick_stop(int cpu)
+ساكن فراغ sched_tick_stop(صحيح cpu)
 {
-	struct tick_work *twork;
-	int os;
+	بنية tick_work *twork;
+	صحيح os;
 
-	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
-		return;
+	ܐܢ (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+		ܦܢܐ;
 
 	WARN_ON_ONCE(!tick_work_cpu);
 
@@ -6010,27 +6010,27 @@ static void sched_tick_stop(int cpu)
 }
 #endif /* CONFIG_HOTPLUG_CPU */
 
-int __init sched_tick_offload_init(void)
+صحيح __init sched_tick_offload_init(فراغ)
 {
-	tick_work_cpu = alloc_percpu(struct tick_work);
+	tick_work_cpu = alloc_percpu(بنية tick_work);
 	BUG_ON(!tick_work_cpu);
-	return 0;
+	ܦܢܐ 0;
 }
 
-#else /* !CONFIG_NO_HZ_FULL: */
-static inline void sched_tick_start(int cpu) { }
-static inline void sched_tick_stop(int cpu) { }
+#ܐܚܪܢܐ /* !CONFIG_NO_HZ_FULL: */
+ساكن مضمن فراغ sched_tick_start(صحيح cpu) { }
+ساكن مضمن فراغ sched_tick_stop(صحيح cpu) { }
 #endif /* !CONFIG_NO_HZ_FULL */
 
-#if defined(CONFIG_PREEMPTION) && (defined(CONFIG_DEBUG_PREEMPT) || \
+#ܐܢ defined(CONFIG_PREEMPTION) && (defined(CONFIG_DEBUG_PREEMPT) || \
 				defined(CONFIG_TRACE_PREEMPT_TOGGLE))
 /*
  * If the value passed in is equal to the current preempt count
  * then we just disabled preemption. Start timing the latency.
  */
-static inline void preempt_latency_start(int val)
+ساكن مضمن فراغ preempt_latency_start(صحيح val)
 {
-	if (preempt_count() == val) {
+	ܐܢ (preempt_count() == val) {
 		unsigned long ip = get_lock_parent_ip();
 #ifdef CONFIG_DEBUG_PREEMPT
 		current->preempt_disable_ip = ip;
@@ -6039,7 +6039,7 @@ static inline void preempt_latency_start(int val)
 	}
 }
 
-void preempt_count_add(int val)
+فراغ preempt_count_add(صحيح val)
 {
 #ifdef CONFIG_DEBUG_PREEMPT
 	/*
@@ -6049,9 +6049,9 @@ void preempt_count_add(int val)
 	 * if using HAS_SEPARATE_PREEMPT_RESCHED_BITS because preempt count takes all 32
 	 * bits.
 	 */
-	if (!IS_ENABLED(CONFIG_HAS_SEPARATE_PREEMPT_RESCHED_BITS) &&
+	ܐܢ (!IS_ENABLED(CONFIG_HAS_SEPARATE_PREEMPT_RESCHED_BITS) &&
 	    DEBUG_LOCKS_WARN_ON((preempt_count() < 0)))
-		return;
+		ܦܢܐ;
 #endif
 	__preempt_count_add(val);
 #ifdef CONFIG_DEBUG_PREEMPT
@@ -6070,29 +6070,29 @@ NOKPROBE_SYMBOL(preempt_count_add);
  * If the value passed in equals to the current preempt count
  * then we just enabled preemption. Stop timing the latency.
  */
-static inline void preempt_latency_stop(int val)
+ساكن مضمن فراغ preempt_latency_stop(صحيح val)
 {
-	if (preempt_count() == val)
+	ܐܢ (preempt_count() == val)
 		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
 }
 
-void preempt_count_sub(int val)
+فراغ preempt_count_sub(صحيح val)
 {
 #ifdef CONFIG_DEBUG_PREEMPT
 	/*
 	 * Underflow?
 	 */
-	unsigned int uval = val;
-	unsigned int pc = preempt_count();
+	unsigned صحيح uval = val;
+	unsigned صحيح pc = preempt_count();
 
-	if (DEBUG_LOCKS_WARN_ON(pc - uval > pc))
-		return;
+	ܐܢ (DEBUG_LOCKS_WARN_ON(pc - uval > pc))
+		ܦܢܐ;
 	/*
 	 * Is the spinlock portion underflowing?
 	 */
-	if (DEBUG_LOCKS_WARN_ON((val < PREEMPT_MASK) &&
+	ܐܢ (DEBUG_LOCKS_WARN_ON((val < PREEMPT_MASK) &&
 			!(preempt_count() & PREEMPT_MASK)))
-		return;
+		ܦܢܐ;
 #endif
 
 	preempt_latency_stop(val);
@@ -6101,39 +6101,39 @@ void preempt_count_sub(int val)
 EXPORT_SYMBOL(preempt_count_sub);
 NOKPROBE_SYMBOL(preempt_count_sub);
 
-#else
-static inline void preempt_latency_start(int val) { }
-static inline void preempt_latency_stop(int val) { }
+#ܐܚܪܢܐ
+ساكن مضمن فراغ preempt_latency_start(صحيح val) { }
+ساكن مضمن فراغ preempt_latency_stop(صحيح val) { }
 #endif
 
-static inline unsigned long get_preempt_disable_ip(struct task_struct *p)
+ساكن مضمن unsigned long get_preempt_disable_ip(بنية task_struct *p)
 {
 #ifdef CONFIG_DEBUG_PREEMPT
-	return p->preempt_disable_ip;
-#else
-	return 0;
+	ܦܢܐ p->preempt_disable_ip;
+#ܐܚܪܢܐ
+	ܦܢܐ 0;
 #endif
 }
 
 /*
  * Print scheduling while atomic bug:
  */
-static noinline void __schedule_bug(struct task_struct *prev)
+ساكن noinline فراغ __schedule_bug(بنية task_struct *prev)
 {
 	/* Save this before calling printk(), since that will clobber it */
 	unsigned long preempt_disable_ip = get_preempt_disable_ip(current);
 
-	if (oops_in_progress)
-		return;
+	ܐܢ (oops_in_progress)
+		ܦܢܐ;
 
 	printk(KERN_ERR "BUG: scheduling while atomic: %s/%d/0x%08x\n",
 		prev->comm, prev->pid, preempt_count());
 
 	debug_show_held_locks(prev);
 	print_modules();
-	if (irqs_disabled())
+	ܐܢ (irqs_disabled())
 		print_irqtrace_events(prev);
-	if (IS_ENABLED(CONFIG_DEBUG_PREEMPT)) {
+	ܐܢ (IS_ENABLED(CONFIG_DEBUG_PREEMPT)) {
 		pr_err("Preemption disabled at:");
 		print_ip_sym(KERN_ERR, preempt_disable_ip);
 	}
@@ -6146,18 +6146,18 @@ static noinline void __schedule_bug(struct task_struct *prev)
 /*
  * Various schedule()-time debugging checks and statistics:
  */
-static inline void schedule_debug(struct task_struct *prev, bool preempt)
+ساكن مضمن فراغ schedule_debug(بنية task_struct *prev, bool preempt)
 {
 #ifdef CONFIG_SCHED_STACK_END_CHECK
-	if (task_stack_end_corrupted(prev))
+	ܐܢ (task_stack_end_corrupted(prev))
 		panic("corrupted stack end detected inside scheduler\n");
 
-	if (task_scs_end_corrupted(prev))
+	ܐܢ (task_scs_end_corrupted(prev))
 		panic("corrupted shadow stack detected inside scheduler\n");
 #endif
 
 #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
-	if (!preempt && READ_ONCE(prev->__state) && prev->non_block_count) {
+	ܐܢ (!preempt && READ_ONCE(prev->__state) && prev->non_block_count) {
 		printk(KERN_ERR "BUG: scheduling in a non-blocking section: %s/%d/%i\n",
 			prev->comm, prev->pid, prev->non_block_count);
 		dump_stack();
@@ -6165,7 +6165,7 @@ static inline void schedule_debug(struct task_struct *prev, bool preempt)
 	}
 #endif
 
-	if (unlikely(in_atomic_preempt_off())) {
+	ܐܢ (unlikely(in_atomic_preempt_off())) {
 		__schedule_bug(prev);
 		preempt_count_set(PREEMPT_DISABLED);
 	}
@@ -6177,10 +6177,10 @@ static inline void schedule_debug(struct task_struct *prev, bool preempt)
 	schedstat_inc(this_rq()->sched_count);
 }
 
-static void prev_balance(struct rq *rq, struct rq_flags *rf)
+ساكن فراغ prev_balance(بنية rq *rq, بنية rq_flags *rf)
 {
-	const struct sched_class *start_class = rq->donor->sched_class;
-	const struct sched_class *class;
+	ثابت بنية sched_class *start_class = rq->donor->sched_class;
+	ثابت بنية sched_class *class;
 
 	/*
 	 * We must do the balancing pass before put_prev_task(), such
@@ -6191,25 +6191,25 @@ static void prev_balance(struct rq *rq, struct rq_flags *rf)
 	 * a runnable task of @class priority or higher.
 	 */
 	for_active_class_range(class, start_class, &idle_sched_class) {
-		if (class->balance && class->balance(rq, rf))
-			break;
+		ܐܢ (class->balance && class->balance(rq, rf))
+			اكسر;
 	}
 }
 
 /*
  * Pick up the highest-prio task:
  */
-static inline struct task_struct *
-__pick_next_task(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن بنية task_struct *
+__pick_next_task(بنية rq *rq, بنية rq_flags *rf)
 	__must_hold(__rq_lockp(rq))
 {
-	const struct sched_class *class;
-	struct task_struct *p;
+	ثابت بنية sched_class *class;
+	بنية task_struct *p;
 
-	rq->dl_server = NULL;
+	rq->dl_server = عدم;
 
-	if (scx_enabled())
-		goto restart;
+	ܐܢ (scx_enabled())
+		اذهب restart;
 
 	/*
 	 * Optimization: we know that if all tasks are in the fair class we can
@@ -6217,19 +6217,19 @@ __pick_next_task(struct rq *rq, struct rq_flags *rf)
 	 * higher scheduling class, because otherwise those lose the
 	 * opportunity to pull in more work from other CPUs.
 	 */
-	if (likely(!sched_class_above(rq->donor->sched_class, &fair_sched_class) &&
+	ܐܢ (likely(!sched_class_above(rq->donor->sched_class, &fair_sched_class) &&
 		   rq->nr_running == rq->cfs.h_nr_queued)) {
 
 		p = pick_task_fair(rq, rf);
-		if (unlikely(p == RETRY_TASK))
-			goto restart;
+		ܐܢ (unlikely(p == RETRY_TASK))
+			اذهب restart;
 
 		/* Assume the next prioritized class is idle_sched_class */
-		if (!p)
+		ܐܢ (!p)
 			p = pick_task_idle(rq, rf);
 
 		put_prev_set_next_task(rq, rq->donor, p);
-		return p;
+		ܦܢܐ p;
 	}
 
 restart:
@@ -6237,11 +6237,11 @@ restart:
 
 	for_each_active_class(class) {
 		p = class->pick_task(rq, rf);
-		if (unlikely(p == RETRY_TASK))
-			goto restart;
-		if (p) {
+		ܐܢ (unlikely(p == RETRY_TASK))
+			اذهب restart;
+		ܐܢ (p) {
 			put_prev_set_next_task(rq, rq->donor, p);
-			return p;
+			ܦܢܐ p;
 		}
 	}
 
@@ -6249,76 +6249,76 @@ restart:
 }
 
 #ifdef CONFIG_SCHED_CORE
-static inline bool is_task_rq_idle(struct task_struct *t)
+ساكن مضمن bool is_task_rq_idle(بنية task_struct *t)
 {
-	return (task_rq(t)->idle == t);
+	ܦܢܐ (task_rq(t)->idle == t);
 }
 
-static inline bool cookie_equals(struct task_struct *a, unsigned long cookie)
+ساكن مضمن bool cookie_equals(بنية task_struct *a, unsigned long cookie)
 {
-	return is_task_rq_idle(a) || (a->core_cookie == cookie);
+	ܦܢܐ is_task_rq_idle(a) || (a->core_cookie == cookie);
 }
 
-static inline bool cookie_match(struct task_struct *a, struct task_struct *b)
+ساكن مضمن bool cookie_match(بنية task_struct *a, بنية task_struct *b)
 {
-	if (is_task_rq_idle(a) || is_task_rq_idle(b))
-		return true;
+	ܐܢ (is_task_rq_idle(a) || is_task_rq_idle(b))
+		ܦܢܐ true;
 
-	return a->core_cookie == b->core_cookie;
+	ܦܢܐ a->core_cookie == b->core_cookie;
 }
 
 /*
  * Careful; this can return RETRY_TASK, it does not include the retry-loop
  * itself due to the whole SMT pick retry thing below.
  */
-static inline struct task_struct *pick_task(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن بنية task_struct *pick_task(بنية rq *rq, بنية rq_flags *rf)
 {
-	const struct sched_class *class;
-	struct task_struct *p;
+	ثابت بنية sched_class *class;
+	بنية task_struct *p;
 
-	rq->dl_server = NULL;
+	rq->dl_server = عدم;
 
 	for_each_active_class(class) {
 		p = class->pick_task(rq, rf);
-		if (p)
-			return p;
+		ܐܢ (p)
+			ܦܢܐ p;
 	}
 
 	BUG(); /* The idle class should always have a runnable task. */
 }
 
-extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_fi);
+خارجي فراغ task_vruntime_update(بنية rq *rq, بنية task_struct *p, bool in_fi);
 
-static void queue_core_balance(struct rq *rq);
+ساكن فراغ queue_core_balance(بنية rq *rq);
 
-static struct task_struct *
-pick_next_task(struct rq *rq, struct rq_flags *rf)
+ساكن بنية task_struct *
+pick_next_task(بنية rq *rq, بنية rq_flags *rf)
 	__must_hold(__rq_lockp(rq))
 {
-	struct task_struct *next, *p, *max;
-	const struct cpumask *smt_mask;
+	بنية task_struct *next, *p, *max;
+	ثابت بنية cpumask *smt_mask;
 	bool fi_before = false;
 	bool core_clock_updated = (rq == rq->core);
 	unsigned long cookie;
-	int i, cpu, occ = 0;
-	struct rq *rq_i;
+	صحيح i, cpu, occ = 0;
+	بنية rq *rq_i;
 	bool need_sync = false;
 
-	if (!sched_core_enabled(rq))
-		return __pick_next_task(rq, rf);
+	ܐܢ (!sched_core_enabled(rq))
+		ܦܢܐ __pick_next_task(rq, rf);
 
 	cpu = cpu_of(rq);
 
 	/* Stopper task is switching into idle, no need core-wide selection. */
-	if (cpu_is_offline(cpu)) {
+	ܐܢ (cpu_is_offline(cpu)) {
 		/*
 		 * Reset core_pick so that we don't enter the fastpath when
 		 * coming online. core_pick would already be migrated to
 		 * another cpu during offline.
 		 */
-		rq->core_pick = NULL;
-		rq->core_dl_server = NULL;
-		return __pick_next_task(rq, rf);
+		rq->core_pick = عدم;
+		rq->core_dl_server = عدم;
+		ܦܢܐ __pick_next_task(rq, rf);
 	}
 
 	rq->core->core_pick_in_flight++;
@@ -6332,13 +6332,13 @@ pick_next_task(struct rq *rq, struct rq_flags *rf)
 	 * it was either offline or went offline during a sibling's core-wide
 	 * selection. In this case, do a core-wide selection.
 	 */
-	if (rq->core->core_pick_seq == rq->core->core_task_seq &&
+	ܐܢ (rq->core->core_pick_seq == rq->core->core_task_seq &&
 	    rq->core_pick) {
 		next = rq->core_pick;
 		rq->dl_server = rq->core_dl_server;
-		rq->core_pick = NULL;
-		rq->core_dl_server = NULL;
-		goto out_set_next;
+		rq->core_pick = عدم;
+		rq->core_dl_server = عدم;
+		اذهب out_set_next;
 	}
 
 	prev_balance(rq, rf);
@@ -6350,8 +6350,8 @@ restart:
 
 	/* reset state */
 	rq->core->core_cookie = 0UL;
-	if (rq->core->core_forceidle_count) {
-		if (!core_clock_updated) {
+	ܐܢ (rq->core->core_forceidle_count) {
+		ܐܢ (!core_clock_updated) {
 			update_rq_clock(rq->core);
 			core_clock_updated = true;
 		}
@@ -6382,26 +6382,26 @@ restart:
 	 * Optimize for common case where this CPU has no cookies
 	 * and there are no cookied tasks running on siblings.
 	 */
-	if (!need_sync) {
+	ܐܢ (!need_sync) {
 		next = pick_task(rq, rf);
-		if (unlikely(next == RETRY_TASK)) {
+		ܐܢ (unlikely(next == RETRY_TASK)) {
 			/* rq lock may have been dropped, clocks invalidated */
 			core_clock_updated = false;
-			if (!(rq->clock_update_flags & RQCF_UPDATED))
+			ܐܢ (!(rq->clock_update_flags & RQCF_UPDATED))
 				update_rq_clock(rq);
-			goto restart;
+			اذهب restart;
 		}
 
-		if (!next->core_cookie) {
-			rq->core_pick = NULL;
-			rq->core_dl_server = NULL;
+		ܐܢ (!next->core_cookie) {
+			rq->core_pick = عدم;
+			rq->core_dl_server = عدم;
 			/*
 			 * For robustness, update the min_vruntime_fi for
 			 * unconstrained picks as well.
 			 */
 			WARN_ON_ONCE(fi_before);
 			task_vruntime_update(rq, next, false);
-			goto out_set_next;
+			اذهب out_set_next;
 		}
 	}
 
@@ -6411,7 +6411,7 @@ restart:
 	 *
 	 * Tie-break prio towards the current CPU
 	 */
-	max = NULL;
+	max = عدم;
 	for_each_cpu_wrap(i, smt_mask, cpu) {
 		rq_i = cpu_rq(i);
 
@@ -6420,22 +6420,22 @@ restart:
 		 * pick_next_task(). If the current cpu is not the core,
 		 * the core may also have been updated above.
 		 */
-		if (i != cpu && (rq_i != rq->core || !core_clock_updated))
+		ܐܢ (i != cpu && (rq_i != rq->core || !core_clock_updated))
 			update_rq_clock(rq_i);
 
 		p = pick_task(rq_i, rf);
-		if (unlikely(p == RETRY_TASK)) {
+		ܐܢ (unlikely(p == RETRY_TASK)) {
 			/* rq lock may have been dropped, clocks invalidated */
 			core_clock_updated = false;
-			if (!(rq->clock_update_flags & RQCF_UPDATED))
+			ܐܢ (!(rq->clock_update_flags & RQCF_UPDATED))
 				update_rq_clock(rq);
-			goto restart;
+			اذهب restart;
 		}
 
 		rq_i->core_pick = p;
 		rq_i->core_dl_server = rq_i->dl_server;
 
-		if (!max || prio_less(max, p, fi_before))
+		ܐܢ (!max || prio_less(max, p, fi_before))
 			max = p;
 	}
 
@@ -6449,29 +6449,29 @@ restart:
 		rq_i = cpu_rq(i);
 		p = rq_i->core_pick;
 
-		if (!cookie_equals(p, cookie)) {
-			p = NULL;
-			if (cookie)
+		ܐܢ (!cookie_equals(p, cookie)) {
+			p = عدم;
+			ܐܢ (cookie)
 				p = sched_core_find(rq_i, cookie);
-			if (!p)
+			ܐܢ (!p)
 				p = idle_sched_class.pick_task(rq_i, rf);
 		}
 
 		rq_i->core_pick = p;
-		rq_i->core_dl_server = NULL;
+		rq_i->core_dl_server = عدم;
 
-		if (p == rq_i->idle) {
-			if (rq_i->nr_running) {
+		ܐܢ (p == rq_i->idle) {
+			ܐܢ (rq_i->nr_running) {
 				rq->core->core_forceidle_count++;
-				if (!fi_before)
+				ܐܢ (!fi_before)
 					rq->core->core_forceidle_seq++;
 			}
-		} else {
+		} ܐܚܪܢܐ {
 			occ++;
 		}
 	}
 
-	if (schedstat_enabled() && rq->core->core_forceidle_count) {
+	ܐܢ (schedstat_enabled() && rq->core->core_forceidle_count) {
 		rq->core->core_forceidle_start = rq_clock(rq->core);
 		rq->core->core_forceidle_occupation = occ;
 	}
@@ -6500,8 +6500,8 @@ restart:
 		 * picked for it.  That's Ok - it will pick tasks for itself,
 		 * so ignore it.
 		 */
-		if (!rq_i->core_pick)
-			continue;
+		ܐܢ (!rq_i->core_pick)
+			استمر;
 
 		/*
 		 * Update for new !FI->FI transitions, or if continuing to be in !FI:
@@ -6511,24 +6511,24 @@ restart:
 		 *  1            0       1
 		 *  1            1       0
 		 */
-		if (!(fi_before && rq->core->core_forceidle_count))
+		ܐܢ (!(fi_before && rq->core->core_forceidle_count))
 			task_vruntime_update(rq_i, rq_i->core_pick, !!rq->core->core_forceidle_count);
 
 		rq_i->core_pick->core_occupation = occ;
 
-		if (i == cpu) {
-			rq_i->core_pick = NULL;
-			rq_i->core_dl_server = NULL;
-			continue;
+		ܐܢ (i == cpu) {
+			rq_i->core_pick = عدم;
+			rq_i->core_dl_server = عدم;
+			استمر;
 		}
 
 		/* Did we break L1TF mitigation requirements? */
 		WARN_ON_ONCE(!cookie_match(next, rq_i->core_pick));
 
-		if (rq_i->curr == rq_i->core_pick) {
-			rq_i->core_pick = NULL;
-			rq_i->core_dl_server = NULL;
-			continue;
+		ܐܢ (rq_i->curr == rq_i->core_pick) {
+			rq_i->core_pick = عدم;
+			rq_i->core_dl_server = عدم;
+			استمر;
 		}
 
 		resched_curr(rq_i);
@@ -6537,16 +6537,16 @@ restart:
 out_set_next:
 	rq->core->core_pick_in_flight--;
 	put_prev_set_next_task(rq, rq->donor, next);
-	if (rq->core->core_forceidle_count && next == rq->idle)
+	ܐܢ (rq->core->core_forceidle_count && next == rq->idle)
 		queue_core_balance(rq);
 
-	return next;
+	ܦܢܐ next;
 }
 
-static bool try_steal_cookie(int this, int that)
+ساكن bool try_steal_cookie(صحيح this, صحيح that)
 {
-	struct rq *dst = cpu_rq(this), *src = cpu_rq(that);
-	struct task_struct *p;
+	بنية rq *dst = cpu_rq(this), *src = cpu_rq(that);
+	بنية task_struct *p;
 	unsigned long cookie;
 	bool success = false;
 
@@ -6554,176 +6554,176 @@ static bool try_steal_cookie(int this, int that)
 	guard(double_rq_lock)(dst, src);
 
 	cookie = dst->core->core_cookie;
-	if (!cookie)
-		return false;
+	ܐܢ (!cookie)
+		ܦܢܐ false;
 
-	if (dst->curr != dst->idle)
-		return false;
+	ܐܢ (dst->curr != dst->idle)
+		ܦܢܐ false;
 
 	p = sched_core_find(src, cookie);
-	if (!p)
-		return false;
+	ܐܢ (!p)
+		ܦܢܐ false;
 
-	do {
-		if (p == src->core_pick || p == src->curr || p == src->donor)
-			goto next;
+	ܥܒܕ {
+		ܐܢ (p == src->core_pick || p == src->curr || p == src->donor)
+			اذهب next;
 
-		if (task_is_blocked(p))
-			goto next;
+		ܐܢ (task_is_blocked(p))
+			اذهب next;
 
-		if (!is_cpu_allowed(p, this))
-			goto next;
+		ܐܢ (!is_cpu_allowed(p, this))
+			اذهب next;
 
-		if (p->core_occupation > dst->idle->core_occupation)
-			goto next;
+		ܐܢ (p->core_occupation > dst->idle->core_occupation)
+			اذهب next;
 		/*
 		 * sched_core_find() and sched_core_next() will ensure
 		 * that task @p is not throttled now, we also need to
 		 * check whether the runqueue of the destination CPU is
 		 * being throttled.
 		 */
-		if (sched_task_is_throttled(p, this))
-			goto next;
+		ܐܢ (sched_task_is_throttled(p, this))
+			اذهب next;
 
 		move_queued_task_locked(src, dst, p);
 		resched_curr(dst);
 
 		success = true;
-		break;
+		اكسر;
 
 next:
 		p = sched_core_next(p, cookie);
-	} while (p);
+	} ܟܡܐ (p);
 
-	return success;
+	ܦܢܐ success;
 }
 
-static bool steal_cookie_task(int cpu, struct sched_domain *sd)
+ساكن bool steal_cookie_task(صحيح cpu, بنية sched_domain *sd)
 {
-	int i;
+	صحيح i;
 
 	for_each_cpu_wrap(i, sched_domain_span(sd), cpu + 1) {
-		if (i == cpu)
-			continue;
+		ܐܢ (i == cpu)
+			استمر;
 
-		if (need_resched())
-			break;
+		ܐܢ (need_resched())
+			اكسر;
 
-		if (try_steal_cookie(cpu, i))
-			return true;
+		ܐܢ (try_steal_cookie(cpu, i))
+			ܦܢܐ true;
 	}
 
-	return false;
+	ܦܢܐ false;
 }
 
-static void sched_core_balance(struct rq *rq)
+ساكن فراغ sched_core_balance(بنية rq *rq)
 	__must_hold(__rq_lockp(rq))
 {
-	struct sched_domain *sd;
-	int cpu = cpu_of(rq);
+	بنية sched_domain *sd;
+	صحيح cpu = cpu_of(rq);
 
 	guard(preempt)();
 	guard(rcu)();
 
 	raw_spin_rq_unlock_irq(rq);
 	for_each_domain(cpu, sd) {
-		if (need_resched())
-			break;
+		ܐܢ (need_resched())
+			اكسر;
 
-		if (steal_cookie_task(cpu, sd))
-			break;
+		ܐܢ (steal_cookie_task(cpu, sd))
+			اكسر;
 	}
 	raw_spin_rq_lock_irq(rq);
 }
 
-static DEFINE_PER_CPU(struct balance_callback, core_balance_head);
+ساكن DEFINE_PER_CPU(بنية balance_callback, core_balance_head);
 
-static void queue_core_balance(struct rq *rq)
+ساكن فراغ queue_core_balance(بنية rq *rq)
 {
-	if (!sched_core_enabled(rq))
-		return;
+	ܐܢ (!sched_core_enabled(rq))
+		ܦܢܐ;
 
-	if (!rq->core->core_cookie)
-		return;
+	ܐܢ (!rq->core->core_cookie)
+		ܦܢܐ;
 
-	if (!rq->nr_running) /* not forced idle */
-		return;
+	ܐܢ (!rq->nr_running) /* not forced idle */
+		ܦܢܐ;
 
 	queue_balance_callback(rq, &per_cpu(core_balance_head, rq->cpu), sched_core_balance);
 }
 
-DEFINE_LOCK_GUARD_1(core_lock, int,
+DEFINE_LOCK_GUARD_1(core_lock, صحيح,
 		    sched_core_lock(*_T->lock, &_T->flags),
 		    sched_core_unlock(*_T->lock, &_T->flags),
 		    unsigned long flags)
 
-static void sched_core_cpu_starting(unsigned int cpu)
+ساكن فراغ sched_core_cpu_starting(unsigned صحيح cpu)
 {
-	const struct cpumask *smt_mask = cpu_smt_mask(cpu);
-	struct rq *rq = cpu_rq(cpu), *core_rq = NULL;
-	int t;
+	ثابت بنية cpumask *smt_mask = cpu_smt_mask(cpu);
+	بنية rq *rq = cpu_rq(cpu), *core_rq = عدم;
+	صحيح t;
 
 	guard(core_lock)(&cpu);
 
 	WARN_ON_ONCE(rq->core != rq);
 
 	/* if we're the first, we'll be our own leader */
-	if (cpumask_weight(smt_mask) == 1)
-		return;
+	ܐܢ (cpumask_weight(smt_mask) == 1)
+		ܦܢܐ;
 
 	/* find the leader */
 	for_each_cpu(t, smt_mask) {
-		if (t == cpu)
-			continue;
+		ܐܢ (t == cpu)
+			استمر;
 		rq = cpu_rq(t);
-		if (rq->core == rq) {
+		ܐܢ (rq->core == rq) {
 			core_rq = rq;
-			break;
+			اكسر;
 		}
 	}
 
-	if (WARN_ON_ONCE(!core_rq)) /* whoopsie */
-		return;
+	ܐܢ (WARN_ON_ONCE(!core_rq)) /* whoopsie */
+		ܦܢܐ;
 
 	/* install and validate core_rq */
 	for_each_cpu(t, smt_mask) {
 		rq = cpu_rq(t);
 
-		if (t == cpu)
+		ܐܢ (t == cpu)
 			rq->core = core_rq;
 
 		WARN_ON_ONCE(rq->core != core_rq);
 	}
 }
 
-static void sched_core_cpu_deactivate(unsigned int cpu)
+ساكن فراغ sched_core_cpu_deactivate(unsigned صحيح cpu)
 {
-	const struct cpumask *smt_mask = cpu_smt_mask(cpu);
-	struct rq *rq = cpu_rq(cpu), *core_rq = NULL;
-	int t;
+	ثابت بنية cpumask *smt_mask = cpu_smt_mask(cpu);
+	بنية rq *rq = cpu_rq(cpu), *core_rq = عدم;
+	صحيح t;
 
 	guard(core_lock)(&cpu);
 
 	/* if we're the last man standing, nothing to do */
-	if (cpumask_weight(smt_mask) == 1) {
+	ܐܢ (cpumask_weight(smt_mask) == 1) {
 		WARN_ON_ONCE(rq->core != rq);
-		return;
+		ܦܢܐ;
 	}
 
 	/* if we're not the leader, nothing to do */
-	if (rq->core != rq)
-		return;
+	ܐܢ (rq->core != rq)
+		ܦܢܐ;
 
 	/* find a new leader */
 	for_each_cpu(t, smt_mask) {
-		if (t == cpu)
-			continue;
+		ܐܢ (t == cpu)
+			استمر;
 		core_rq = cpu_rq(t);
-		break;
+		اكسر;
 	}
 
-	if (WARN_ON_ONCE(!core_rq)) /* impossible */
-		return;
+	ܐܢ (WARN_ON_ONCE(!core_rq)) /* impossible */
+		ܦܢܐ;
 
 	/* copy the shared state to the new leader */
 	core_rq->core_task_seq             = rq->core_task_seq;
@@ -6754,25 +6754,25 @@ static void sched_core_cpu_deactivate(unsigned int cpu)
 	}
 }
 
-static inline void sched_core_cpu_dying(unsigned int cpu)
+ساكن مضمن فراغ sched_core_cpu_dying(unsigned صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
-	if (rq->core != rq)
+	ܐܢ (rq->core != rq)
 		rq->core = rq;
 }
 
-#else /* !CONFIG_SCHED_CORE: */
+#ܐܚܪܢܐ /* !CONFIG_SCHED_CORE: */
 
-static inline void sched_core_cpu_starting(unsigned int cpu) {}
-static inline void sched_core_cpu_deactivate(unsigned int cpu) {}
-static inline void sched_core_cpu_dying(unsigned int cpu) {}
+ساكن مضمن فراغ sched_core_cpu_starting(unsigned صحيح cpu) {}
+ساكن مضمن فراغ sched_core_cpu_deactivate(unsigned صحيح cpu) {}
+ساكن مضمن فراغ sched_core_cpu_dying(unsigned صحيح cpu) {}
 
-static struct task_struct *
-pick_next_task(struct rq *rq, struct rq_flags *rf)
+ساكن بنية task_struct *
+pick_next_task(بنية rq *rq, بنية rq_flags *rf)
 	__must_hold(__rq_lockp(rq))
 {
-	return __pick_next_task(rq, rf);
+	ܦܢܐ __pick_next_task(rq, rf);
 }
 
 #endif /* !CONFIG_SCHED_CORE */
@@ -6796,19 +6796,19 @@ pick_next_task(struct rq *rq, struct rq_flags *rf)
  * is pending, marks the task's __state as RUNNING (and clear
  * blocked_on).
  */
-static bool try_to_block_task(struct rq *rq, struct task_struct *p,
+ساكن bool try_to_block_task(بنية rq *rq, بنية task_struct *p,
 			      unsigned long *task_state_p, bool should_block)
 {
 	unsigned long task_state = *task_state_p;
 
 	WARN_ON_ONCE(p->is_blocked);
 
-	if (signal_pending_state(task_state, p)) {
+	ܐܢ (signal_pending_state(task_state, p)) {
 		WRITE_ONCE(p->__state, TASK_RUNNING);
 		*task_state_p = TASK_RUNNING;
-		clear_task_blocked_on(p, NULL);
+		clear_task_blocked_on(p, عدم);
 
-		return false;
+		ܦܢܐ false;
 	}
 
 	p->is_blocked = 1;
@@ -6820,17 +6820,17 @@ static bool try_to_block_task(struct rq *rq, struct task_struct *p,
 	 * blocked on a mutex, and we want to keep it on the runqueue
 	 * to be selectable for proxy-execution.
 	 */
-	if (!should_block)
-		return false;
+	ܐܢ (!should_block)
+		ܦܢܐ false;
 
 	block_task(rq, p, task_state);
-	return true;
+	ܦܢܐ true;
 }
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
-static inline void proxy_set_task_cpu(struct task_struct *p, int cpu)
+ساكن مضمن فراغ proxy_set_task_cpu(بنية task_struct *p, صحيح cpu)
 {
-	unsigned int wake_cpu;
+	unsigned صحيح wake_cpu;
 
 	/*
 	 * Since we are enqueuing a blocked task on a cpu it may
@@ -6843,16 +6843,16 @@ static inline void proxy_set_task_cpu(struct task_struct *p, int cpu)
 	p->wake_cpu = wake_cpu;
 }
 
-static inline struct task_struct *proxy_resched_idle(struct rq *rq)
+ساكن مضمن بنية task_struct *proxy_resched_idle(بنية rq *rq)
 {
 	put_prev_set_next_task(rq, rq->donor, rq->idle);
 	rq->next_class = &idle_sched_class;
 	rq_set_donor(rq, rq->idle);
 	set_tsk_need_resched(rq->idle);
-	return rq->idle;
+	ܦܢܐ rq->idle;
 }
 
-static void proxy_deactivate(struct rq *rq, struct task_struct *donor)
+ساكن فراغ proxy_deactivate(بنية rq *rq, بنية task_struct *donor)
 {
 	unsigned long state = READ_ONCE(donor->__state);
 
@@ -6878,28 +6878,28 @@ static void proxy_deactivate(struct rq *rq, struct task_struct *donor)
  * queued, switching_from_fair() completes the dequeue in the immediately
  * following sched_change_begin().
  */
-void sched_proxy_block_task(struct rq *rq, struct task_struct *p)
+فراغ sched_proxy_block_task(بنية rq *rq, بنية task_struct *p)
 {
 	unsigned long state = READ_ONCE(p->__state);
 
 	lockdep_assert_held(&p->pi_lock);
 	lockdep_assert_rq_held(rq);
 
-	if (!p->is_blocked || !task_on_rq_queued(p))
-		return;
-	if (WARN_ON_ONCE(state == TASK_RUNNING))
-		return;
+	ܐܢ (!p->is_blocked || !task_on_rq_queued(p))
+		ܦܢܐ;
+	ܐܢ (WARN_ON_ONCE(state == TASK_RUNNING))
+		ܦܢܐ;
 
-	if (task_current_donor(rq, p))
+	ܐܢ (task_current_donor(rq, p))
 		proxy_reset_donor(rq);
 
-	if (!p->se.sched_delayed)
+	ܐܢ (!p->se.sched_delayed)
 		block_task(rq, p, state);
 
 	WARN_ON_ONCE(task_on_rq_queued(p) && !p->se.sched_delayed);
 }
 
-static inline void proxy_release_rq_lock(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ proxy_release_rq_lock(بنية rq *rq, بنية rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
 	/*
@@ -6919,7 +6919,7 @@ static inline void proxy_release_rq_lock(struct rq *rq, struct rq_flags *rf)
 	raw_spin_rq_unlock(rq);
 }
 
-static inline void proxy_reacquire_rq_lock(struct rq *rq, struct rq_flags *rf)
+ساكن مضمن فراغ proxy_reacquire_rq_lock(بنية rq *rq, بنية rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
 	raw_spin_rq_lock(rq);
@@ -6939,11 +6939,11 @@ static inline void proxy_reacquire_rq_lock(struct rq *rq, struct rq_flags *rf)
  * Note: The owner can disappear, but simply migrate to @target_cpu
  * and leave that CPU to sort things out.
  */
-static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
-			       struct task_struct *p, int target_cpu)
+ساكن فراغ proxy_migrate_task(بنية rq *rq, بنية rq_flags *rf,
+			       بنية task_struct *p, صحيح target_cpu)
 	__must_hold(__rq_lockp(rq))
 {
-	struct rq *target_rq = cpu_rq(target_cpu);
+	بنية rq *target_rq = cpu_rq(target_cpu);
 	LIST_HEAD(migrate_list);
 
 	lockdep_assert_rq_held(rq);
@@ -6959,7 +6959,7 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
 	 * before we release the lock.
 	 */
 	proxy_resched_idle(rq);
-	for (; p; p = p->blocked_donor) {
+	لكل (; p; p = p->blocked_donor) {
 		WARN_ON(p == rq->curr);
 		deactivate_task(rq, p, DEQUEUE_NOCLOCK);
 		proxy_set_task_cpu(p, target_cpu);
@@ -7003,27 +7003,27 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
  * Returns the task that is going to be used as execution context (the one
  * that is actually going to be run on cpu_of(rq)).
  */
-static struct task_struct *
-find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
+ساكن بنية task_struct *
+find_proxy_task(بنية rq *rq, بنية task_struct *donor, بنية rq_flags *rf)
 	__must_hold(__rq_lockp(rq))
 {
-	struct task_struct *owner = NULL;
+	بنية task_struct *owner = عدم;
 	bool curr_in_chain = false;
-	int this_cpu = cpu_of(rq);
-	struct task_struct *p;
-	int owner_cpu;
+	صحيح this_cpu = cpu_of(rq);
+	بنية task_struct *p;
+	صحيح owner_cpu;
 
 	/* Follow blocked_on chain. */
-	for (p = donor; p->is_blocked; p = owner) {
+	لكل (p = donor; p->is_blocked; p = owner) {
 		/* if its PROXY_WAKING, do return migration or run if current */
-		struct mutex *mutex = p->blocked_on;
-		if (!mutex) {
+		بنية mutex *mutex = p->blocked_on;
+		ܐܢ (!mutex) {
 			clear_task_blocked_on(p, mutex);
-			if (task_current(rq, p)) {
+			ܐܢ (task_current(rq, p)) {
 				p->is_blocked = 0;
-				return p;
+				ܦܢܐ p;
 			}
-			goto deactivate;
+			اذهب deactivate;
 		}
 
 		/*
@@ -7034,54 +7034,54 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 		guard(raw_spinlock)(&p->blocked_lock);
 
 		/* Check again that p is blocked with blocked_lock held */
-		if (mutex != __get_task_blocked_on(p)) {
+		ܐܢ (mutex != __get_task_blocked_on(p)) {
 			/*
 			 * Something changed in the blocked_on chain and
 			 * we don't know if only at this level. So, let's
 			 * just bail out completely and let __schedule()
 			 * figure things out (pick_again loop).
 			 */
-			return NULL;
+			ܦܢܐ عدم;
 		}
 
-		if (task_current(rq, p))
+		ܐܢ (task_current(rq, p))
 			curr_in_chain = true;
 
 		owner = __mutex_owner(mutex);
-		if (!owner) {
+		ܐܢ (!owner) {
 			/*
 			 * If there is no owner, either clear blocked_on
 			 * and return p (if it is current and safe to
 			 * just run on this rq), or return-migrate the task.
 			 */
-			__clear_task_blocked_on(p, NULL);
-			if (task_current(rq, p)) {
+			__clear_task_blocked_on(p, عدم);
+			ܐܢ (task_current(rq, p)) {
 				p->is_blocked = 0;
-				return p;
+				ܦܢܐ p;
 			}
-			goto deactivate;
+			اذهب deactivate;
 		}
 
-		if (!READ_ONCE(owner->on_rq) || owner->se.sched_delayed) {
+		ܐܢ (!READ_ONCE(owner->on_rq) || owner->se.sched_delayed) {
 			/* XXX Don't handle blocked owners/delayed dequeue yet */
-			if (curr_in_chain)
-				goto resched_idle;
-			__clear_task_blocked_on(p, NULL);
-			goto deactivate;
+			ܐܢ (curr_in_chain)
+				اذهب resched_idle;
+			__clear_task_blocked_on(p, عدم);
+			اذهب deactivate;
 		}
 
 		owner_cpu = task_cpu(owner);
-		if (owner_cpu != this_cpu) {
+		ܐܢ (owner_cpu != this_cpu) {
 			/*
 			 * @owner can disappear, simply migrate to @owner_cpu
 			 * and leave that CPU to sort things out.
 			 */
-			if (curr_in_chain)
-				goto resched_idle;
-			goto migrate_task;
+			ܐܢ (curr_in_chain)
+				اذهب resched_idle;
+			اذهب migrate_task;
 		}
 
-		if (task_on_rq_migrating(owner)) {
+		ܐܢ (task_on_rq_migrating(owner)) {
 			/*
 			 * One of the chain of mutex owners is currently migrating to this
 			 * CPU, but has not yet been enqueued because we are holding the
@@ -7090,7 +7090,7 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 			 * case we should end up back in find_proxy_task(), this time
 			 * hopefully with all relevant tasks already enqueued.
 			 */
-			goto resched_idle;
+			اذهب resched_idle;
 		}
 
 		/*
@@ -7101,10 +7101,10 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 		 * we are still on this cpu and not migrating. If we get
 		 * inconsistent results, try again.
 		 */
-		if (!task_on_rq_queued(owner) || task_cpu(owner) != this_cpu)
-			return NULL;
+		ܐܢ (!task_on_rq_queued(owner) || task_cpu(owner) != this_cpu)
+			ܦܢܐ عدم;
 
-		if (owner == p) {
+		ܐܢ (owner == p) {
 			/*
 			 * It's possible we interleave with mutex_unlock like:
 			 *
@@ -7127,7 +7127,7 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 			 * So schedule rq->idle so that ttwu_runnable() can get the rq
 			 * lock and mark owner as running.
 			 */
-			goto resched_idle;
+			اذهب resched_idle;
 		}
 		/*
 		 * OK, now we're absolutely sure @owner is on this
@@ -7138,30 +7138,30 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 	}
 	WARN_ON_ONCE(owner && !owner->on_rq);
 
-	if (owner && !sched_cpu_cookie_match(rq, owner)) {
-		if (curr_in_chain)
-			return proxy_resched_idle(rq);
+	ܐܢ (owner && !sched_cpu_cookie_match(rq, owner)) {
+		ܐܢ (curr_in_chain)
+			ܦܢܐ proxy_resched_idle(rq);
 		p = donor; /* Deactivate the donor, not the runnable owner */
-		clear_task_blocked_on(p, NULL);
-		goto deactivate;
+		clear_task_blocked_on(p, عدم);
+		اذهب deactivate;
 	}
-	return owner;
+	ܦܢܐ owner;
 
 resched_idle:
-	return proxy_resched_idle(rq);
+	ܦܢܐ proxy_resched_idle(rq);
 deactivate:
 	proxy_deactivate(rq, p);
-	return NULL;
+	ܦܢܐ عدم;
 migrate_task:
 	proxy_migrate_task(rq, rf, p, owner_cpu);
-	return NULL;
+	ܦܢܐ عدم;
 }
-#else /* SCHED_PROXY_EXEC */
-static struct task_struct *
-find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
+#ܐܚܪܢܐ /* SCHED_PROXY_EXEC */
+ساكن بنية task_struct *
+find_proxy_task(بنية rq *rq, بنية task_struct *donor, بنية rq_flags *rf)
 {
 	WARN_ONCE(1, "This should never be called in the !SCHED_PROXY_EXEC case\n");
-	return donor;
+	ܦܢܐ donor;
 }
 #endif /* SCHED_PROXY_EXEC */
 
@@ -7204,9 +7204,9 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
  *
  * WARNING: must be called with preemption disabled!
  */
-static void __sched notrace __schedule(int sched_mode)
+ساكن فراغ __sched notrace __schedule(صحيح sched_mode)
 {
-	struct task_struct *prev, *next;
+	بنية task_struct *prev, *next;
 	/*
 	 * On PREEMPT_RT kernel, SM_RTLOCK_WAIT is noted
 	 * as a preemption by schedule_debug() and RCU.
@@ -7215,9 +7215,9 @@ static void __sched notrace __schedule(int sched_mode)
 	bool is_switch = false;
 	unsigned long *switch_count;
 	unsigned long prev_state;
-	struct rq_flags rf;
-	struct rq *rq;
-	int cpu;
+	بنية rq_flags rf;
+	بنية rq *rq;
+	صحيح cpu;
 
 	/* Trace preemptions consistently with task switches */
 	trace_sched_entry_tp(sched_mode == SM_PREEMPT);
@@ -7271,14 +7271,14 @@ static void __sched notrace __schedule(int sched_mode)
 	 * that we form a control dependency vs deactivate_task() below.
 	 */
 	prev_state = READ_ONCE(prev->__state);
-	if (sched_mode == SM_IDLE) {
+	ܐܢ (sched_mode == SM_IDLE) {
 		/* SCX must consult the BPF scheduler to tell if rq is empty */
-		if (!rq->nr_running && !scx_enabled()) {
+		ܐܢ (!rq->nr_running && !scx_enabled()) {
 			next = prev;
 			rq->next_class = &idle_sched_class;
-			goto picked;
+			اذهب picked;
 		}
-	} else if (!preempt && prev_state) {
+	} ܐܚܪܢܐ ܐܢ (!preempt && prev_state) {
 		/*
 		 * Keep mutex-blocked tasks on the runqueue for proxy execution
 		 * only when their scheduling class allows it. Without proxy
@@ -7293,25 +7293,25 @@ pick_again:
 	assert_balance_callbacks_empty(rq);
 	next = pick_next_task(rq, &rf);
 	rq->next_class = next->sched_class;
-	if (sched_proxy_exec()) {
-		struct task_struct *prev_donor = rq->donor;
+	ܐܢ (sched_proxy_exec()) {
+		بنية task_struct *prev_donor = rq->donor;
 
 		rq_set_donor(rq, next);
-		next->blocked_donor = NULL;
-		if (unlikely(next->is_blocked)) {
+		next->blocked_donor = عدم;
+		ܐܢ (unlikely(next->is_blocked)) {
 			next = find_proxy_task(rq, next, &rf);
-			if (!next) {
+			ܐܢ (!next) {
 				zap_balance_callbacks(rq);
-				goto pick_again;
+				اذهب pick_again;
 			}
-			if (next == rq->idle) {
+			ܐܢ (next == rq->idle) {
 				zap_balance_callbacks(rq);
 				scx_proxy_reenqueue_retry(rq, next);
-				goto keep_resched;
+				اذهب keep_resched;
 			}
 		}
-		if (rq->donor == prev_donor && prev != next) {
-			struct task_struct *donor = rq->donor;
+		ܐܢ (rq->donor == prev_donor && prev != next) {
+			بنية task_struct *donor = rq->donor;
 			/*
 			 * When transitioning like:
 			 *
@@ -7329,7 +7329,7 @@ pick_again:
 		}
 		scx_proxy_donor_start(rq);
 		scx_proxy_reenqueue_retry(rq, next);
-	} else {
+	} ܐܚܪܢܐ {
 		rq_set_donor(rq, next);
 	}
 
@@ -7340,7 +7340,7 @@ keep_resched:
 	rq->last_seen_need_resched_ns = 0;
 
 	is_switch = prev != next;
-	if (likely(is_switch)) {
+	ܐܢ (likely(is_switch)) {
 		rq->nr_switches++;
 		/*
 		 * RCU users of rcu_dereference(rq->curr) may not see
@@ -7380,16 +7380,16 @@ keep_resched:
 
 		/* Also unlocks the rq: */
 		rq = context_switch(rq, prev, next, &rf);
-	} else {
+	} ܐܚܪܢܐ {
 		rq_unpin_lock(rq, &rf);
-		__balance_callbacks(rq, NULL);
+		__balance_callbacks(rq, عدم);
 		hrtick_schedule_exit(rq);
 		raw_spin_rq_unlock_irq(rq);
 	}
 	trace_sched_exit_tp(is_switch);
 }
 
-void __noreturn do_task_dead(void)
+فراغ __noreturn do_task_dead(فراغ)
 {
 	/* Causes final put_task_struct in finish_task_switch(): */
 	set_special_state(TASK_DEAD);
@@ -7401,14 +7401,14 @@ void __noreturn do_task_dead(void)
 	BUG();
 
 	/* Avoid "noreturn function does return" - but don't continue if BUG() is a NOP: */
-	for (;;)
+	لكل (;;)
 		cpu_relax();
 }
 
-static inline void sched_submit_work(struct task_struct *tsk)
+ساكن مضمن فراغ sched_submit_work(بنية task_struct *tsk)
 {
-	static DEFINE_WAIT_OVERRIDE_MAP(sched_map, LD_WAIT_CONFIG);
-	unsigned int task_flags;
+	ساكن DEFINE_WAIT_OVERRIDE_MAP(sched_map, LD_WAIT_CONFIG);
+	unsigned صحيح task_flags;
 
 	/*
 	 * Establish LD_WAIT_CONFIG context to ensure none of the code called
@@ -7421,9 +7421,9 @@ static inline void sched_submit_work(struct task_struct *tsk)
 	 * If a worker goes to sleep, notify and ask workqueue whether it
 	 * wants to wake up a task to maintain concurrency.
 	 */
-	if (task_flags & PF_WQ_WORKER)
+	ܐܢ (task_flags & PF_WQ_WORKER)
 		wq_worker_sleeping(tsk);
-	else if (task_flags & PF_IO_WORKER)
+	ܐܚܪܢܐ ܐܢ (task_flags & PF_IO_WORKER)
 		io_wq_worker_sleeping(tsk);
 
 	/*
@@ -7442,34 +7442,34 @@ static inline void sched_submit_work(struct task_struct *tsk)
 	lock_map_release(&sched_map);
 }
 
-static void sched_update_worker(struct task_struct *tsk)
+ساكن فراغ sched_update_worker(بنية task_struct *tsk)
 {
-	if (tsk->flags & (PF_WQ_WORKER | PF_IO_WORKER)) {
-		if (tsk->flags & PF_WQ_WORKER)
+	ܐܢ (tsk->flags & (PF_WQ_WORKER | PF_IO_WORKER)) {
+		ܐܢ (tsk->flags & PF_WQ_WORKER)
 			wq_worker_running(tsk);
-		else
+		ܐܚܪܢܐ
 			io_wq_worker_running(tsk);
 	}
 }
 
-static __always_inline void __schedule_loop(int sched_mode)
+ساكن __always_inline فراغ __schedule_loop(صحيح sched_mode)
 {
-	do {
+	ܥܒܕ {
 		preempt_disable();
 		__schedule(sched_mode);
 		sched_preempt_enable_no_resched();
-	} while (need_resched());
+	} ܟܡܐ (need_resched());
 }
 
-asmlinkage __visible void __sched schedule(void)
+asmlinkage __visible فراغ __sched schedule(فراغ)
 {
-	struct task_struct *tsk = current;
+	بنية task_struct *tsk = current;
 
 #ifdef CONFIG_RT_MUTEXES
 	lockdep_assert(!tsk->sched_rt_mutex);
 #endif
 
-	if (!task_is_running(tsk))
+	ܐܢ (!task_is_running(tsk))
 		sched_submit_work(tsk);
 	__schedule_loop(SM_NONE);
 	sched_update_worker(tsk);
@@ -7486,7 +7486,7 @@ EXPORT_SYMBOL(schedule);
  * schedule_idle() is similar to schedule_preempt_disable() except that it
  * never enables preemption because it does not call sched_submit_work().
  */
-void __sched schedule_idle(void)
+فراغ __sched schedule_idle(فراغ)
 {
 	/*
 	 * As this skips calling sched_submit_work(), which the idle task does
@@ -7496,13 +7496,13 @@ void __sched schedule_idle(void)
 	 * TASK_RUNNING state.
 	 */
 	WARN_ON_ONCE(current->__state);
-	do {
+	ܥܒܕ {
 		__schedule(SM_IDLE);
-	} while (need_resched());
+	} ܟܡܐ (need_resched());
 }
 
-#if defined(CONFIG_CONTEXT_TRACKING_USER) && !defined(CONFIG_HAVE_CONTEXT_TRACKING_USER_OFFSTACK)
-asmlinkage __visible void __sched schedule_user(void)
+#ܐܢ defined(CONFIG_CONTEXT_TRACKING_USER) && !defined(CONFIG_HAVE_CONTEXT_TRACKING_USER_OFFSTACK)
+asmlinkage __visible فراغ __sched schedule_user(فراغ)
 {
 	/*
 	 * If we come here after a random call to set_need_resched(),
@@ -7514,7 +7514,7 @@ asmlinkage __visible void __sched schedule_user(void)
 	 * should warn if prev_state != CT_STATE_USER, but that will trigger
 	 * too frequently to make sense yet.
 	 */
-	enum ctx_state prev_state = exception_enter();
+	تعداد ctx_state prev_state = exception_enter();
 	schedule();
 	exception_exit(prev_state);
 }
@@ -7525,7 +7525,7 @@ asmlinkage __visible void __sched schedule_user(void)
  *
  * Returns with preemption disabled. Note: preempt_count must be 1
  */
-void __sched schedule_preempt_disabled(void)
+فراغ __sched schedule_preempt_disabled(فراغ)
 {
 	sched_preempt_enable_no_resched();
 	schedule();
@@ -7533,16 +7533,16 @@ void __sched schedule_preempt_disabled(void)
 }
 
 #ifdef CONFIG_PREEMPT_RT
-void __sched notrace schedule_rtlock(void)
+فراغ __sched notrace schedule_rtlock(فراغ)
 {
 	__schedule_loop(SM_RTLOCK_WAIT);
 }
 NOKPROBE_SYMBOL(schedule_rtlock);
 #endif
 
-static void __sched notrace preempt_schedule_common(void)
+ساكن فراغ __sched notrace preempt_schedule_common(فراغ)
 {
-	do {
+	ܥܒܕ {
 		/*
 		 * Because the function tracer can trace preempt_count_sub()
 		 * and it also uses preempt_enable/disable_notrace(), if
@@ -7566,7 +7566,7 @@ static void __sched notrace preempt_schedule_common(void)
 		 * Check again in case we missed a preemption opportunity
 		 * between schedule and now.
 		 */
-	} while (need_resched());
+	} ܟܡܐ (need_resched());
 }
 
 #ifdef CONFIG_PREEMPTION
@@ -7574,14 +7574,14 @@ static void __sched notrace preempt_schedule_common(void)
  * This is the entry point to schedule() from in-kernel preemption
  * off of preempt_enable.
  */
-asmlinkage __visible void __sched notrace preempt_schedule(void)
+asmlinkage __visible فراغ __sched notrace preempt_schedule(فراغ)
 {
 	/*
 	 * If there is a non-zero preempt_count or interrupts are disabled,
 	 * we do not want to preempt the current task. Just return..
 	 */
-	if (likely(!preemptible()))
-		return;
+	ܐܢ (likely(!preemptible()))
+		ܦܢܐ;
 	preempt_schedule_common();
 }
 NOKPROBE_SYMBOL(preempt_schedule);
@@ -7601,14 +7601,14 @@ EXPORT_SYMBOL(preempt_schedule);
  * instead of preempt_schedule() to exit user context if needed before
  * calling the scheduler.
  */
-asmlinkage __visible void __sched notrace preempt_schedule_notrace(void)
+asmlinkage __visible فراغ __sched notrace preempt_schedule_notrace(فراغ)
 {
-	enum ctx_state prev_ctx;
+	تعداد ctx_state prev_ctx;
 
-	if (likely(!preemptible()))
-		return;
+	ܐܢ (likely(!preemptible()))
+		ܦܢܐ;
 
-	do {
+	ܥܒܕ {
 		/*
 		 * Because the function tracer can trace preempt_count_sub()
 		 * and it also uses preempt_enable/disable_notrace(), if
@@ -7635,7 +7635,7 @@ asmlinkage __visible void __sched notrace preempt_schedule_notrace(void)
 
 		preempt_latency_stop(1);
 		preempt_enable_no_resched_notrace();
-	} while (need_resched());
+	} ܟܡܐ (need_resched());
 }
 EXPORT_SYMBOL_GPL(preempt_schedule_notrace);
 
@@ -7647,48 +7647,48 @@ EXPORT_SYMBOL_GPL(preempt_schedule_notrace);
  * Note, that this is called and return with IRQs disabled. This will
  * protect us against recursive calling from IRQ contexts.
  */
-asmlinkage __visible void __sched preempt_schedule_irq(void)
+asmlinkage __visible فراغ __sched preempt_schedule_irq(فراغ)
 {
-	enum ctx_state prev_state;
+	تعداد ctx_state prev_state;
 
 	/* Catch callers which need to be fixed */
 	BUG_ON(preempt_count() || !irqs_disabled());
 
 	prev_state = exception_enter();
 
-	do {
+	ܥܒܕ {
 		preempt_disable();
 		local_irq_enable();
 		__schedule(SM_PREEMPT);
 		local_irq_disable();
 		sched_preempt_enable_no_resched();
-	} while (need_resched());
+	} ܟܡܐ (need_resched());
 
 	exception_exit(prev_state);
 }
 
-int default_wake_function(wait_queue_entry_t *curr, unsigned mode, int wake_flags,
-			  void *key)
+صحيح default_wake_function(wait_queue_entry_t *curr, unsigned mode, صحيح wake_flags,
+			  فراغ *key)
 {
 	WARN_ON_ONCE(wake_flags & ~(WF_SYNC|WF_CURRENT_CPU));
-	return try_to_wake_up(curr->private, mode, wake_flags);
+	ܦܢܐ try_to_wake_up(curr->خاص, mode, wake_flags);
 }
 EXPORT_SYMBOL(default_wake_function);
 
-const struct sched_class *__setscheduler_class(int policy, int prio)
+ثابت بنية sched_class *__setscheduler_class(صحيح policy, صحيح prio)
 {
-	if (dl_prio(prio))
-		return &dl_sched_class;
+	ܐܢ (dl_prio(prio))
+		ܦܢܐ &dl_sched_class;
 
-	if (rt_prio(prio))
-		return &rt_sched_class;
+	ܐܢ (rt_prio(prio))
+		ܦܢܐ &rt_sched_class;
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (task_should_scx(policy))
-		return &ext_sched_class;
+	ܐܢ (task_should_scx(policy))
+		ܦܢܐ &ext_sched_class;
 #endif
 
-	return &fair_sched_class;
+	ܦܢܐ &fair_sched_class;
 }
 
 #ifdef CONFIG_RT_MUTEXES
@@ -7699,9 +7699,9 @@ const struct sched_class *__setscheduler_class(int policy, int prio)
  * name such that if someone were to implement this function we get to compare
  * notes.
  */
-#define fetch_and_set(x, v) ({ int _x = (x); (x) = (v); _x; })
+#define fetch_and_set(x, v) ({ صحيح _x = (x); (x) = (v); _x; })
 
-void rt_mutex_pre_schedule(void)
+فراغ rt_mutex_pre_schedule(فراغ)
 {
 	lockdep_assert(!fetch_and_set(current->sched_rt_mutex, 1));
 	sched_submit_work(current);
@@ -7711,26 +7711,26 @@ void rt_mutex_pre_schedule(void)
  * Used within the futex syscall context, skips sched_submit_work() because none
  * its work will be done. Asserts ensure that it is indeed the case.
  */
-void rt_mutex_futex_pre_schedule(void)
+فراغ rt_mutex_futex_pre_schedule(فراغ)
 {
 	lockdep_assert(!(current->flags & (PF_WQ_WORKER | PF_IO_WORKER)));
 	lockdep_assert(!current->plug);
 	lockdep_assert(!fetch_and_set(current->sched_rt_mutex, 1));
 }
 
-void rt_mutex_schedule(void)
+فراغ rt_mutex_schedule(فراغ)
 {
 	lockdep_assert(current->sched_rt_mutex);
 	__schedule_loop(SM_NONE);
 }
 
-void rt_mutex_post_schedule(void)
+فراغ rt_mutex_post_schedule(فراغ)
 {
 	sched_update_worker(current);
 	lockdep_assert(fetch_and_set(current->sched_rt_mutex, 0));
 }
 
-void rt_mutex_futex_post_schedule(void)
+فراغ rt_mutex_futex_post_schedule(فراغ)
 {
 	lockdep_assert(fetch_and_set(current->sched_rt_mutex, 0));
 }
@@ -7746,13 +7746,13 @@ void rt_mutex_futex_post_schedule(void)
  * Used by the rt_mutex code to implement priority inheritance
  * logic. Call site only calls if the priority of the task changed.
  */
-void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+فراغ rt_mutex_setprio(بنية task_struct *p, بنية task_struct *pi_task)
 {
-	int prio, oldprio, queue_flag =
+	صحيح prio, oldprio, queue_flag =
 		DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
-	const struct sched_class *prev_class, *next_class;
-	struct rq_flags rf;
-	struct rq *rq;
+	ثابت بنية sched_class *prev_class, *next_class;
+	بنية rq_flags rf;
+	بنية rq *rq;
 
 	/* XXX used to be waiter->prio, not waiter->task->prio */
 	prio = __rt_effective_prio(pi_task, p->normal_prio);
@@ -7760,8 +7760,8 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 	/*
 	 * If nothing changed; bail early.
 	 */
-	if (p->pi_top_task == pi_task && prio == p->prio && !dl_prio(prio))
-		return;
+	ܐܢ (p->pi_top_task == pi_task && prio == p->prio && !dl_prio(prio))
+		ܦܢܐ;
 
 	rq = __task_rq_lock(p, &rf);
 	update_rq_clock(rq);
@@ -7780,8 +7780,8 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 	/*
 	 * For FIFO/RR we only need to set prio, if that matches we're done.
 	 */
-	if (prio == p->prio && !dl_prio(prio))
-		goto out_unlock;
+	ܐܢ (prio == p->prio && !dl_prio(prio))
+		اذهب out_unlock;
 
 	/*
 	 * Idle task boosting is a no-no in general. There is one
@@ -7795,22 +7795,22 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 	 * protected section without being interrupted. So there is no
 	 * real need to boost.
 	 */
-	if (unlikely(p == rq->idle)) {
+	ܐܢ (unlikely(p == rq->idle)) {
 		WARN_ON(p != rq->curr);
 		WARN_ON(p->pi_blocked_on);
-		goto out_unlock;
+		اذهب out_unlock;
 	}
 
 	trace_sched_pi_setprio(p, pi_task);
 	oldprio = p->prio;
 
-	if (oldprio == prio && !dl_prio(prio))
+	ܐܢ (oldprio == prio && !dl_prio(prio))
 		queue_flag &= ~DEQUEUE_MOVE;
 
 	prev_class = p->sched_class;
 	next_class = __setscheduler_class(p->policy, prio);
 
-	if (prev_class != next_class)
+	ܐܢ (prev_class != next_class)
 		queue_flag |= DEQUEUE_CLASS;
 
 	scoped_guard (sched_change, p, queue_flag) {
@@ -7823,24 +7823,24 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 		 *      --> -dl task blocks on mutex A and could preempt the
 		 *          running task
 		 */
-		if (dl_prio(prio)) {
-			if (!dl_prio(p->normal_prio) ||
+		ܐܢ (dl_prio(prio)) {
+			ܐܢ (!dl_prio(p->normal_prio) ||
 			    (pi_task && dl_prio(pi_task->prio) &&
 			     dl_entity_preempt(&pi_task->dl, &p->dl))) {
 				p->dl.pi_se = pi_task->dl.pi_se;
 				scope->flags |= ENQUEUE_REPLENISH;
-			} else {
+			} ܐܚܪܢܐ {
 				p->dl.pi_se = &p->dl;
 			}
-		} else if (rt_prio(prio)) {
-			if (dl_prio(oldprio))
+		} ܐܚܪܢܐ ܐܢ (rt_prio(prio)) {
+			ܐܢ (dl_prio(oldprio))
 				p->dl.pi_se = &p->dl;
-			if (oldprio < prio)
+			ܐܢ (oldprio < prio)
 				scope->flags |= ENQUEUE_HEAD;
-		} else {
-			if (dl_prio(oldprio))
+		} ܐܚܪܢܐ {
+			ܐܢ (dl_prio(oldprio))
 				p->dl.pi_se = &p->dl;
-			if (rt_prio(oldprio))
+			ܐܢ (rt_prio(oldprio))
 				p->rt.timeout = 0;
 		}
 
@@ -7855,12 +7855,12 @@ out_unlock:
 }
 #endif /* CONFIG_RT_MUTEXES */
 
-#if !defined(CONFIG_PREEMPTION)
-int __sched __cond_resched(void)
+#ܐܢ !defined(CONFIG_PREEMPTION)
+صحيح __sched __cond_resched(فراغ)
 {
-	if (should_resched(0) && !irqs_disabled()) {
+	ܐܢ (should_resched(0) && !irqs_disabled()) {
 		preempt_schedule_common();
-		return 1;
+		ܦܢܐ 1;
 	}
 	/*
 	 * In PREEMPT_RCU kernels, ->rcu_read_lock_nesting tells the tick
@@ -7878,7 +7878,7 @@ int __sched __cond_resched(void)
 #ifndef CONFIG_PREEMPT_RCU
 	rcu_all_qs();
 #endif
-	return 0;
+	ܦܢܐ 0;
 }
 EXPORT_SYMBOL(__cond_resched);
 #endif
@@ -7891,57 +7891,57 @@ EXPORT_SYMBOL(__cond_resched);
  * operations here to prevent schedule() from being called twice (once via
  * spin_unlock(), once by hand).
  */
-int __cond_resched_lock(spinlock_t *lock)
+صحيح __cond_resched_lock(spinlock_t *lock)
 {
-	int resched = should_resched(PREEMPT_LOCK_OFFSET);
-	int ret = 0;
+	صحيح resched = should_resched(PREEMPT_LOCK_OFFSET);
+	صحيح ret = 0;
 
 	lockdep_assert_held(lock);
 
-	if (spin_needbreak(lock) || resched) {
+	ܐܢ (spin_needbreak(lock) || resched) {
 		spin_unlock(lock);
-		if (!_cond_resched())
+		ܐܢ (!_cond_resched())
 			cpu_relax();
 		ret = 1;
 		spin_lock(lock);
 	}
-	return ret;
+	ܦܢܐ ret;
 }
 EXPORT_SYMBOL(__cond_resched_lock);
 
-int __cond_resched_rwlock_read(rwlock_t *lock)
+صحيح __cond_resched_rwlock_read(rwlock_t *lock)
 {
-	int resched = should_resched(PREEMPT_LOCK_OFFSET);
-	int ret = 0;
+	صحيح resched = should_resched(PREEMPT_LOCK_OFFSET);
+	صحيح ret = 0;
 
 	lockdep_assert_held_read(lock);
 
-	if (rwlock_needbreak(lock) || resched) {
+	ܐܢ (rwlock_needbreak(lock) || resched) {
 		read_unlock(lock);
-		if (!_cond_resched())
+		ܐܢ (!_cond_resched())
 			cpu_relax();
 		ret = 1;
 		read_lock(lock);
 	}
-	return ret;
+	ܦܢܐ ret;
 }
 EXPORT_SYMBOL(__cond_resched_rwlock_read);
 
-int __cond_resched_rwlock_write(rwlock_t *lock)
+صحيح __cond_resched_rwlock_write(rwlock_t *lock)
 {
-	int resched = should_resched(PREEMPT_LOCK_OFFSET);
-	int ret = 0;
+	صحيح resched = should_resched(PREEMPT_LOCK_OFFSET);
+	صحيح ret = 0;
 
 	lockdep_assert_held_write(lock);
 
-	if (rwlock_needbreak(lock) || resched) {
+	ܐܢ (rwlock_needbreak(lock) || resched) {
 		write_unlock(lock);
-		if (!_cond_resched())
+		ܐܢ (!_cond_resched())
 			cpu_relax();
 		ret = 1;
 		write_lock(lock);
 	}
-	return ret;
+	ܦܢܐ ret;
 }
 EXPORT_SYMBOL(__cond_resched_rwlock_write);
 
@@ -7965,75 +7965,75 @@ EXPORT_SYMBOL(__cond_resched_rwlock_write);
  *   dynamic_preempt_lazy       <- true
  */
 
-enum {
+تعداد {
 	preempt_dynamic_undefined = -1,
 	preempt_dynamic_full,
 	preempt_dynamic_lazy,
 };
 
-int preempt_dynamic_mode = preempt_dynamic_undefined;
+صحيح preempt_dynamic_mode = preempt_dynamic_undefined;
 
-int sched_dynamic_mode(const char *str)
+صحيح sched_dynamic_mode(ثابت حرف *str)
 {
-	if (!strcmp(str, "full"))
-		return preempt_dynamic_full;
+	ܐܢ (!strcmp(str, "full"))
+		ܦܢܐ preempt_dynamic_full;
 
-	if (!strcmp(str, "lazy"))
-		return preempt_dynamic_lazy;
+	ܐܢ (!strcmp(str, "lazy"))
+		ܦܢܐ preempt_dynamic_lazy;
 
-	return -EINVAL;
+	ܦܢܐ -EINVAL;
 }
 
 # define preempt_dynamic_key_enable(f)	static_key_enable(&sk_dynamic_##f.key)
 # define preempt_dynamic_key_disable(f)	static_key_disable(&sk_dynamic_##f.key)
 
-static DEFINE_MUTEX(sched_dynamic_mutex);
+ساكن DEFINE_MUTEX(sched_dynamic_mutex);
 
-static void __sched_dynamic_update(int mode)
+ساكن فراغ __sched_dynamic_update(صحيح mode)
 {
-	switch (mode) {
-	case preempt_dynamic_full:
+	بدل (mode) {
+	حالة preempt_dynamic_full:
 		preempt_dynamic_key_disable(preempt_lazy);
-		if (mode != preempt_dynamic_mode)
+		ܐܢ (mode != preempt_dynamic_mode)
 			pr_info("Dynamic Preempt: full\n");
-		break;
+		اكسر;
 
-	case preempt_dynamic_lazy:
+	حالة preempt_dynamic_lazy:
 		preempt_dynamic_key_enable(preempt_lazy);
-		if (mode != preempt_dynamic_mode)
+		ܐܢ (mode != preempt_dynamic_mode)
 			pr_info("Dynamic Preempt: lazy\n");
-		break;
+		اكسر;
 	}
 
 	WRITE_ONCE(preempt_dynamic_mode, mode);
 }
 
-void sched_dynamic_update(int mode)
+فراغ sched_dynamic_update(صحيح mode)
 {
 	mutex_lock(&sched_dynamic_mutex);
 	__sched_dynamic_update(mode);
 	mutex_unlock(&sched_dynamic_mutex);
 }
 
-static int __init setup_preempt_mode(char *str)
+ساكن صحيح __init setup_preempt_mode(حرف *str)
 {
-	int mode = sched_dynamic_mode(str);
-	if (mode < 0) {
+	صحيح mode = sched_dynamic_mode(str);
+	ܐܢ (mode < 0) {
 		pr_warn("Dynamic Preempt: unsupported mode: %s\n", str);
-		return 0;
+		ܦܢܐ 0;
 	}
 
 	sched_dynamic_update(mode);
-	return 1;
+	ܦܢܐ 1;
 }
 __setup("preempt=", setup_preempt_mode);
 
-static void __init preempt_dynamic_init(void)
+ساكن فراغ __init preempt_dynamic_init(فراغ)
 {
-	if (preempt_dynamic_mode == preempt_dynamic_undefined) {
-		if (IS_ENABLED(CONFIG_PREEMPT_LAZY)) {
+	ܐܢ (preempt_dynamic_mode == preempt_dynamic_undefined) {
+		ܐܢ (IS_ENABLED(CONFIG_PREEMPT_LAZY)) {
 			sched_dynamic_update(preempt_dynamic_lazy);
-		} else {
+		} ܐܚܪܢܐ {
 			/* Default static call setting, nothing to do */
 			WARN_ON_ONCE(!IS_ENABLED(CONFIG_PREEMPT));
 			preempt_dynamic_mode = preempt_dynamic_full;
@@ -8043,80 +8043,80 @@ static void __init preempt_dynamic_init(void)
 }
 
 # define PREEMPT_MODEL_ACCESSOR(mode)					\
-	bool preempt_model_##mode(void)					\
+	bool preempt_model_##mode(فراغ)					\
 	{								\
-		int mode = READ_ONCE(preempt_dynamic_mode);		\
+		صحيح mode = READ_ONCE(preempt_dynamic_mode);		\
 		WARN_ON_ONCE(mode == preempt_dynamic_undefined);	\
-		return mode == preempt_dynamic_##mode;			\
+		ܦܢܐ mode == preempt_dynamic_##mode;			\
 	}								\
 	EXPORT_SYMBOL_GPL(preempt_model_##mode)
 
 PREEMPT_MODEL_ACCESSOR(full);
 PREEMPT_MODEL_ACCESSOR(lazy);
 
-#else /* !CONFIG_PREEMPT_DYNAMIC: */
+#ܐܚܪܢܐ /* !CONFIG_PREEMPT_DYNAMIC: */
 
 #define preempt_dynamic_mode -1
 
-static inline void preempt_dynamic_init(void) { }
+ساكن مضمن فراغ preempt_dynamic_init(فراغ) { }
 
 #endif /* CONFIG_PREEMPT_DYNAMIC */
 
-const char *preempt_modes[] = {
-	"full", "lazy", NULL,
+ثابت حرف *preempt_modes[] = {
+	"full", "lazy", عدم,
 };
 
-const char *preempt_model_str(void)
+ثابت حرف *preempt_model_str(فراغ)
 {
 	bool brace = IS_ENABLED(CONFIG_PREEMPT_RT) &&
 		(IS_ENABLED(CONFIG_PREEMPT_DYNAMIC) ||
 		 IS_ENABLED(CONFIG_PREEMPT_LAZY));
-	static char buf[128];
+	ساكن حرف buf[128];
 
-	if (IS_ENABLED(CONFIG_PREEMPT_BUILD)) {
-		struct seq_buf s;
+	ܐܢ (IS_ENABLED(CONFIG_PREEMPT_BUILD)) {
+		بنية seq_buf s;
 
-		seq_buf_init(&s, buf, sizeof(buf));
+		seq_buf_init(&s, buf, حجم(buf));
 		seq_buf_puts(&s, "PREEMPT");
 
-		if (IS_ENABLED(CONFIG_PREEMPT_RT))
+		ܐܢ (IS_ENABLED(CONFIG_PREEMPT_RT))
 			seq_buf_printf(&s, "%sRT%s",
 				       brace ? "_{" : "_",
 				       brace ? "," : "");
 
-		if (IS_ENABLED(CONFIG_PREEMPT_DYNAMIC)) {
+		ܐܢ (IS_ENABLED(CONFIG_PREEMPT_DYNAMIC)) {
 			seq_buf_printf(&s, "(%s)%s",
 				       preempt_dynamic_mode >= 0 ?
 				       preempt_modes[preempt_dynamic_mode] : "undef",
 				       brace ? "}" : "");
-			return seq_buf_str(&s);
+			ܦܢܐ seq_buf_str(&s);
 		}
 
-		if (IS_ENABLED(CONFIG_PREEMPT_LAZY)) {
+		ܐܢ (IS_ENABLED(CONFIG_PREEMPT_LAZY)) {
 			seq_buf_printf(&s, "LAZY%s",
 				       brace ? "}" : "");
-			return seq_buf_str(&s);
+			ܦܢܐ seq_buf_str(&s);
 		}
 
-		return seq_buf_str(&s);
+		ܦܢܐ seq_buf_str(&s);
 	}
 
-	if (IS_ENABLED(CONFIG_PREEMPT_VOLUNTARY_BUILD))
-		return "VOLUNTARY";
+	ܐܢ (IS_ENABLED(CONFIG_PREEMPT_VOLUNTARY_BUILD))
+		ܦܢܐ "VOLUNTARY";
 
-	return "NONE";
+	ܦܢܐ "NONE";
 }
 
-int io_schedule_prepare(void)
+صحيح io_schedule_prepare(فراغ)
 {
-	int old_iowait = current->in_iowait;
+	صحيح old_iowait = current->in_iowait;
 
 	current->in_iowait = 1;
 	blk_flush_plug(current->plug, true);
-	return old_iowait;
+	ܦܢܐ old_iowait;
 }
 
-void io_schedule_finish(int token)
+فراغ io_schedule_finish(صحيح token)
 {
 	current->in_iowait = token;
 }
@@ -8127,20 +8127,20 @@ void io_schedule_finish(int token)
  */
 long __sched io_schedule_timeout(long timeout)
 {
-	int token;
+	صحيح token;
 	long ret;
 
 	token = io_schedule_prepare();
 	ret = schedule_timeout(timeout);
 	io_schedule_finish(token);
 
-	return ret;
+	ܦܢܐ ret;
 }
 EXPORT_SYMBOL(io_schedule_timeout);
 
-void __sched io_schedule(void)
+فراغ __sched io_schedule(فراغ)
 {
-	int token;
+	صحيح token;
 
 	token = io_schedule_prepare();
 	schedule();
@@ -8148,63 +8148,63 @@ void __sched io_schedule(void)
 }
 EXPORT_SYMBOL(io_schedule);
 
-void sched_show_task(struct task_struct *p)
+فراغ sched_show_task(بنية task_struct *p)
 {
-	unsigned long free;
-	int ppid;
+	unsigned long حرر;
+	صحيح ppid;
 
-	if (!try_get_task_stack(p))
-		return;
+	ܐܢ (!try_get_task_stack(p))
+		ܦܢܐ;
 
 	pr_info("task:%-15.15s state:%c", p->comm, task_state_to_char(p));
 
-	if (task_is_running(p))
+	ܐܢ (task_is_running(p))
 		pr_cont("  running task    ");
-	free = stack_not_used(p);
+	حرر = stack_not_used(p);
 	ppid = 0;
 	rcu_read_lock();
-	if (pid_alive(p))
+	ܐܢ (pid_alive(p))
 		ppid = task_pid_nr(rcu_dereference(p->real_parent));
 	rcu_read_unlock();
 	pr_cont(" stack:%-5lu pid:%-5d tgid:%-5d ppid:%-6d task_flags:0x%04x flags:0x%08lx\n",
-		free, task_pid_nr(p), task_tgid_nr(p),
+		حرر, task_pid_nr(p), task_tgid_nr(p),
 		ppid, p->flags, read_task_thread_flags(p));
 
 	print_worker_info(KERN_INFO, p);
 	print_stop_info(KERN_INFO, p);
 	print_scx_info(KERN_INFO, p);
-	show_stack(p, NULL, KERN_INFO);
+	show_stack(p, عدم, KERN_INFO);
 	put_task_stack(p);
 }
 EXPORT_SYMBOL_GPL(sched_show_task);
 
-static inline bool
-state_filter_match(unsigned long state_filter, struct task_struct *p)
+ساكن مضمن bool
+state_filter_match(unsigned long state_filter, بنية task_struct *p)
 {
-	unsigned int state = READ_ONCE(p->__state);
+	unsigned صحيح state = READ_ONCE(p->__state);
 
 	/* no filter, everything matches */
-	if (!state_filter)
-		return true;
+	ܐܢ (!state_filter)
+		ܦܢܐ true;
 
 	/* filter, but doesn't match */
-	if (!(state & state_filter))
-		return false;
+	ܐܢ (!(state & state_filter))
+		ܦܢܐ false;
 
 	/*
 	 * When looking for TASK_UNINTERRUPTIBLE skip TASK_IDLE (allows
 	 * TASK_KILLABLE).
 	 */
-	if (state_filter == TASK_UNINTERRUPTIBLE && (state & TASK_NOLOAD))
-		return false;
+	ܐܢ (state_filter == TASK_UNINTERRUPTIBLE && (state & TASK_NOLOAD))
+		ܦܢܐ false;
 
-	return true;
+	ܦܢܐ true;
 }
 
 
-void show_state_filter(unsigned int state_filter)
+فراغ show_state_filter(unsigned صحيح state_filter)
 {
-	struct task_struct *g, *p;
+	بنية task_struct *g, *p;
 
 	rcu_read_lock();
 	for_each_process_thread(g, p) {
@@ -8217,18 +8217,18 @@ void show_state_filter(unsigned int state_filter)
 		 */
 		touch_nmi_watchdog();
 		touch_all_softlockup_watchdogs();
-		if (state_filter_match(state_filter, p))
+		ܐܢ (state_filter_match(state_filter, p))
 			sched_show_task(p);
 	}
 
-	if (!state_filter)
+	ܐܢ (!state_filter)
 		sysrq_sched_debug_show();
 
 	rcu_read_unlock();
 	/*
 	 * Only show locks if all tasks are dumped:
 	 */
-	if (!state_filter)
+	ܐܢ (!state_filter)
 		debug_show_all_locks();
 }
 
@@ -8240,13 +8240,13 @@ void show_state_filter(unsigned int state_filter)
  * NOTE: this function does not set the idle thread's NEED_RESCHED
  * flag, to make booting more robust.
  */
-void __init init_idle(struct task_struct *idle, int cpu)
+فراغ __init init_idle(بنية task_struct *idle, صحيح cpu)
 {
-	struct affinity_context ac = (struct affinity_context) {
+	بنية affinity_context ac = (بنية affinity_context) {
 		.new_mask  = cpumask_of(cpu),
 		.flags     = 0,
 	};
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 	unsigned long flags;
 
 	raw_spin_lock_irqsave(&idle->pi_lock, flags);
@@ -8300,22 +8300,22 @@ void __init init_idle(struct task_struct *idle, int cpu)
 	sprintf(idle->comm, "%s/%d", INIT_TASK_COMM, cpu);
 }
 
-int cpuset_cpumask_can_shrink(const struct cpumask *cur,
-			      const struct cpumask *trial)
+صحيح cpuset_cpumask_can_shrink(ثابت بنية cpumask *cur,
+			      ثابت بنية cpumask *trial)
 {
-	int ret = 1;
+	صحيح ret = 1;
 
-	if (cpumask_empty(cur))
-		return ret;
+	ܐܢ (cpumask_empty(cur))
+		ܦܢܐ ret;
 
 	ret = dl_cpuset_cpumask_can_shrink(cur, trial);
 
-	return ret;
+	ܦܢܐ ret;
 }
 
-int task_can_attach(struct task_struct *p)
+صحيح task_can_attach(بنية task_struct *p)
 {
-	int ret = 0;
+	صحيح ret = 0;
 
 	/*
 	 * Kthreads which disallow setaffinity shouldn't be moved
@@ -8326,38 +8326,38 @@ int task_can_attach(struct task_struct *p)
 	 * success of set_cpus_allowed_ptr() on all attached tasks
 	 * before cpus_mask may be changed.
 	 */
-	if (p->flags & PF_NO_SETAFFINITY)
+	ܐܢ (p->flags & PF_NO_SETAFFINITY)
 		ret = -EINVAL;
 
-	return ret;
+	ܦܢܐ ret;
 }
 
 bool sched_smp_initialized __read_mostly;
 
 #ifdef CONFIG_NUMA_BALANCING
 /* Migrate current task p to target_cpu */
-int migrate_task_to(struct task_struct *p, int target_cpu)
+صحيح migrate_task_to(بنية task_struct *p, صحيح target_cpu)
 {
-	struct migration_arg arg = { p, target_cpu };
-	int curr_cpu = task_cpu(p);
+	بنية migration_arg arg = { p, target_cpu };
+	صحيح curr_cpu = task_cpu(p);
 
-	if (curr_cpu == target_cpu)
-		return 0;
+	ܐܢ (curr_cpu == target_cpu)
+		ܦܢܐ 0;
 
-	if (!cpumask_test_cpu(target_cpu, p->cpus_ptr))
-		return -EINVAL;
+	ܐܢ (!cpumask_test_cpu(target_cpu, p->cpus_ptr))
+		ܦܢܐ -EINVAL;
 
 	/* TODO: This is not properly updating schedstats */
 
 	trace_sched_move_numa(p, curr_cpu, target_cpu);
-	return stop_one_cpu(curr_cpu, migration_cpu_stop, &arg);
+	ܦܢܐ stop_one_cpu(curr_cpu, migration_cpu_stop, &arg);
 }
 
 /*
  * Requeue a task on a given node and accurately track the number of NUMA
  * tasks on the runqueues
  */
-void sched_setnuma(struct task_struct *p, int nid)
+فراغ sched_setnuma(بنية task_struct *p, صحيح nid)
 {
 	guard(task_rq_lock)(p);
 	scoped_guard (sched_change, p, DEQUEUE_SAVE)
@@ -8375,11 +8375,11 @@ void sched_setnuma(struct task_struct *p, int nid)
  *
  * The reference count on init_mm is dropped in finish_cpu().
  */
-static void sched_force_init_mm(void)
+ساكن فراغ sched_force_init_mm(فراغ)
 {
-	struct mm_struct *mm = current->active_mm;
+	بنية mm_struct *mm = current->active_mm;
 
-	if (mm != &init_mm) {
+	ܐܢ (mm != &init_mm) {
 		mmgrab_lazy_tlb(&init_mm);
 		local_irq_disable();
 		current->active_mm = &init_mm;
@@ -8392,12 +8392,12 @@ static void sched_force_init_mm(void)
 	/* finish_cpu(), as ran on the BP, will clean up the active_mm state */
 }
 
-static int __balance_push_cpu_stop(void *arg)
+ساكن صحيح __balance_push_cpu_stop(فراغ *arg)
 {
-	struct task_struct *p = arg;
-	struct rq *rq = this_rq();
-	struct rq_flags rf;
-	int cpu;
+	بنية task_struct *p = arg;
+	بنية rq *rq = this_rq();
+	بنية rq_flags rf;
+	صحيح cpu;
 
 	scoped_guard (raw_spinlock_irq, &p->pi_lock) {
 		/*
@@ -8410,17 +8410,17 @@ static int __balance_push_cpu_stop(void *arg)
 
 		rq_lock(rq, &rf);
 		update_rq_clock(rq);
-		if (task_rq(p) == rq && task_on_rq_queued(p))
+		ܐܢ (task_rq(p) == rq && task_on_rq_queued(p))
 			rq = __migrate_task(rq, &rf, p, cpu);
 		rq_unlock(rq, &rf);
 	}
 
 	put_task_struct(p);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-static DEFINE_PER_CPU(struct cpu_stop_work, push_work);
+ساكن DEFINE_PER_CPU(بنية cpu_stop_work, push_work);
 
 /*
  * Ensure we only run per-cpu kthreads once the CPU goes !active.
@@ -8428,10 +8428,10 @@ static DEFINE_PER_CPU(struct cpu_stop_work, push_work);
  * This is enabled below SCHED_AP_ACTIVE; when !cpu_active(), but only
  * effective when the hotplug motion is down.
  */
-static void balance_push(struct rq *rq)
+ساكن فراغ balance_push(بنية rq *rq)
 	__must_hold(__rq_lockp(rq))
 {
-	struct task_struct *push_task = rq->curr;
+	بنية task_struct *push_task = rq->curr;
 
 	lockdep_assert_rq_held(rq);
 
@@ -8444,14 +8444,14 @@ static void balance_push(struct rq *rq)
 	 * Only active while going offline and when invoked on the outgoing
 	 * CPU.
 	 */
-	if (!cpu_dying(rq->cpu) || rq != this_rq())
-		return;
+	ܐܢ (!cpu_dying(rq->cpu) || rq != this_rq())
+		ܦܢܐ;
 
 	/*
 	 * Both the cpu-hotplug and stop task are in this case and are
 	 * required to complete the hotplug process.
 	 */
-	if (kthread_is_per_cpu(push_task) ||
+	ܐܢ (kthread_is_per_cpu(push_task) ||
 	    is_migration_disabled(push_task)) {
 
 		/*
@@ -8465,13 +8465,13 @@ static void balance_push(struct rq *rq)
 		 * pinned and scheduled out tasks on the runqueue. They
 		 * need to leave the migrate disabled section first.
 		 */
-		if (!rq->nr_running && !rq_has_pinned_tasks(rq) &&
+		ܐܢ (!rq->nr_running && !rq_has_pinned_tasks(rq) &&
 		    rcuwait_active(&rq->hotplug_wait)) {
 			raw_spin_rq_unlock(rq);
 			rcuwait_wake_up(&rq->hotplug_wait);
 			raw_spin_rq_lock(rq);
 		}
-		return;
+		ܦܢܐ;
 	}
 
 	get_task_struct(push_task);
@@ -8492,17 +8492,17 @@ static void balance_push(struct rq *rq)
 	raw_spin_rq_lock(rq);
 }
 
-static void balance_push_set(int cpu, bool on)
+ساكن فراغ balance_push_set(صحيح cpu, bool on)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct rq_flags rf;
+	بنية rq *rq = cpu_rq(cpu);
+	بنية rq_flags rf;
 
 	rq_lock_irqsave(rq, &rf);
-	if (on) {
+	ܐܢ (on) {
 		WARN_ON_ONCE(rq->balance_callback);
 		rq->balance_callback = &balance_push_callback;
-	} else if (rq->balance_callback == &balance_push_callback) {
-		rq->balance_callback = NULL;
+	} ܐܚܪܢܐ ܐܢ (rq->balance_callback == &balance_push_callback) {
+		rq->balance_callback = عدم;
 	}
 	rq_unlock_irqrestore(rq, &rf);
 }
@@ -8513,54 +8513,54 @@ static void balance_push_set(int cpu, bool on)
  * pushed off this CPU now via balance_push() or placed on a different CPU
  * during wakeup. Wait until the CPU is quiescent.
  */
-static void balance_hotplug_wait(void)
+ساكن فراغ balance_hotplug_wait(فراغ)
 {
-	struct rq *rq = this_rq();
+	بنية rq *rq = this_rq();
 
 	rcuwait_wait_event(&rq->hotplug_wait,
 			   rq->nr_running == 1 && !rq_has_pinned_tasks(rq),
 			   TASK_UNINTERRUPTIBLE);
 }
 
-#else /* !CONFIG_HOTPLUG_CPU: */
+#ܐܚܪܢܐ /* !CONFIG_HOTPLUG_CPU: */
 
-static inline void balance_push(struct rq *rq)
+ساكن مضمن فراغ balance_push(بنية rq *rq)
 {
 }
 
-static inline void balance_push_set(int cpu, bool on)
+ساكن مضمن فراغ balance_push_set(صحيح cpu, bool on)
 {
 }
 
-static inline void balance_hotplug_wait(void)
+ساكن مضمن فراغ balance_hotplug_wait(فراغ)
 {
 }
 
 #endif /* !CONFIG_HOTPLUG_CPU */
 
-void set_rq_online(struct rq *rq)
+فراغ set_rq_online(بنية rq *rq)
 {
-	if (!rq->online) {
-		const struct sched_class *class;
+	ܐܢ (!rq->online) {
+		ثابت بنية sched_class *class;
 
 		cpumask_set_cpu(rq->cpu, rq->rd->online);
 		rq->online = 1;
 
 		for_each_class(class) {
-			if (class->rq_online)
+			ܐܢ (class->rq_online)
 				class->rq_online(rq);
 		}
 	}
 }
 
-void set_rq_offline(struct rq *rq)
+فراغ set_rq_offline(بنية rq *rq)
 {
-	if (rq->online) {
-		const struct sched_class *class;
+	ܐܢ (rq->online) {
+		ثابت بنية sched_class *class;
 
 		update_rq_clock(rq);
 		for_each_class(class) {
-			if (class->rq_offline)
+			ܐܢ (class->rq_offline)
 				class->rq_offline(rq);
 		}
 
@@ -8569,24 +8569,24 @@ void set_rq_offline(struct rq *rq)
 	}
 }
 
-static inline void sched_set_rq_online(struct rq *rq, int cpu)
+ساكن مضمن فراغ sched_set_rq_online(بنية rq *rq, صحيح cpu)
 {
-	struct rq_flags rf;
+	بنية rq_flags rf;
 
 	rq_lock_irqsave(rq, &rf);
-	if (rq->rd) {
+	ܐܢ (rq->rd) {
 		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
 		set_rq_online(rq);
 	}
 	rq_unlock_irqrestore(rq, &rf);
 }
 
-static inline void sched_set_rq_offline(struct rq *rq, int cpu)
+ساكن مضمن فراغ sched_set_rq_offline(بنية rq *rq, صحيح cpu)
 {
-	struct rq_flags rf;
+	بنية rq_flags rf;
 
 	rq_lock_irqsave(rq, &rf);
-	if (rq->rd) {
+	ܐܢ (rq->rd) {
 		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
 		set_rq_offline(rq);
 	}
@@ -8596,7 +8596,7 @@ static inline void sched_set_rq_offline(struct rq *rq, int cpu)
 /*
  * used to mark begin/end of suspend/resume:
  */
-static int num_cpus_frozen;
+ساكن صحيح num_cpus_frozen;
 
 /*
  * Update cpusets according to cpu_active mask.  If cpusets are
@@ -8606,9 +8606,9 @@ static int num_cpus_frozen;
  * If we come here as part of a suspend/resume, don't touch cpusets because we
  * want to restore it back to its original state upon resume anyway.
  */
-static void cpuset_cpu_active(void)
+ساكن فراغ cpuset_cpu_active(فراغ)
 {
-	if (cpuhp_tasks_frozen) {
+	ܐܢ (cpuhp_tasks_frozen) {
 		/*
 		 * num_cpus_frozen tracks how many CPUs are involved in suspend
 		 * resume sequence. As long as this is not the last online
@@ -8616,8 +8616,8 @@ static void cpuset_cpu_active(void)
 		 * domain, ignoring cpusets.
 		 */
 		cpuset_reset_sched_domains();
-		if (--num_cpus_frozen)
-			return;
+		ܐܢ (--num_cpus_frozen)
+			ܦܢܐ;
 		/*
 		 * This is the last CPU online operation. So fall through and
 		 * restore the original sched domains by considering the
@@ -8628,31 +8628,31 @@ static void cpuset_cpu_active(void)
 	cpuset_update_active_cpus();
 }
 
-static void cpuset_cpu_inactive(unsigned int cpu)
+ساكن فراغ cpuset_cpu_inactive(unsigned صحيح cpu)
 {
-	if (!cpuhp_tasks_frozen) {
+	ܐܢ (!cpuhp_tasks_frozen) {
 		cpuset_update_active_cpus();
-	} else {
+	} ܐܚܪܢܐ {
 		num_cpus_frozen++;
 		cpuset_reset_sched_domains();
 	}
 }
 
-static inline void sched_smt_present_inc(int cpu)
+ساكن مضمن فراغ sched_smt_present_inc(صحيح cpu)
 {
-	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
+	ܐܢ (cpumask_weight(cpu_smt_mask(cpu)) == 2)
 		static_branch_inc_cpuslocked(&sched_smt_present);
 }
 
-static inline void sched_smt_present_dec(int cpu)
+ساكن مضمن فراغ sched_smt_present_dec(صحيح cpu)
 {
-	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
+	ܐܢ (cpumask_weight(cpu_smt_mask(cpu)) == 2)
 		static_branch_dec_cpuslocked(&sched_smt_present);
 }
 
-int sched_cpu_activate(unsigned int cpu)
+صحيح sched_cpu_activate(unsigned صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
 	/*
 	 * Clear the balance_push callback and prepare to schedule
@@ -8666,7 +8666,7 @@ int sched_cpu_activate(unsigned int cpu)
 	sched_smt_present_inc(cpu);
 	set_cpu_active(cpu, true);
 
-	if (sched_smp_initialized) {
+	ܐܢ (sched_smp_initialized) {
 		sched_update_numa(cpu, true);
 		sched_domains_numa_masks_set(cpu);
 		cpuset_cpu_active();
@@ -8688,18 +8688,18 @@ int sched_cpu_activate(unsigned int cpu)
 	/* preferred is subset of active and follows its state */
 	set_cpu_preferred(cpu, true);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-int sched_cpu_deactivate(unsigned int cpu)
+صحيح sched_cpu_deactivate(unsigned صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
-	int ret;
+	بنية rq *rq = cpu_rq(cpu);
+	صحيح ret;
 
 	ret = dl_bw_deactivate(cpu);
 
-	if (ret)
-		return ret;
+	ܐܢ (ret)
+		ܦܢܐ ret;
 
 	set_cpu_preferred(cpu, false);
 
@@ -8745,29 +8745,29 @@ int sched_cpu_deactivate(unsigned int cpu)
 
 	sched_core_cpu_deactivate(cpu);
 
-	if (!sched_smp_initialized)
-		return 0;
+	ܐܢ (!sched_smp_initialized)
+		ܦܢܐ 0;
 
 	sched_update_numa(cpu, false);
 	cpuset_cpu_inactive(cpu);
 	sched_domains_numa_masks_clear(cpu);
-	return 0;
+	ܦܢܐ 0;
 }
 
-static void sched_rq_cpu_starting(unsigned int cpu)
+ساكن فراغ sched_rq_cpu_starting(unsigned صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
 	rq->calc_load_update = calc_load_update;
 	update_max_interval();
 }
 
-int sched_cpu_starting(unsigned int cpu)
+صحيح sched_cpu_starting(unsigned صحيح cpu)
 {
 	sched_core_cpu_starting(cpu);
 	sched_rq_cpu_starting(cpu);
 	sched_tick_start(cpu);
-	return 0;
+	ܦܢܐ 0;
 }
 
 #ifdef CONFIG_HOTPLUG_CPU
@@ -8783,11 +8783,11 @@ int sched_cpu_starting(unsigned int cpu)
  * responsible hotplug callback has failed to do it's job.
  * sched_cpu_dying() will catch it with the appropriate fireworks.
  */
-int sched_cpu_wait_empty(unsigned int cpu)
+صحيح sched_cpu_wait_empty(unsigned صحيح cpu)
 {
 	balance_hotplug_wait();
 	sched_force_init_mm();
-	return 0;
+	ܦܢܐ 0;
 }
 
 /*
@@ -8799,44 +8799,44 @@ int sched_cpu_wait_empty(unsigned int cpu)
  *
  * Also see the comment "Global load-average calculations".
  */
-static void calc_load_migrate(struct rq *rq)
+ساكن فراغ calc_load_migrate(بنية rq *rq)
 {
 	long delta = calc_load_fold_active(rq, 1);
 
-	if (delta)
+	ܐܢ (delta)
 		atomic_long_add(delta, &calc_load_tasks);
 }
 
-static void dump_rq_tasks(struct rq *rq, const char *loglvl)
+ساكن فراغ dump_rq_tasks(بنية rq *rq, ثابت حرف *loglvl)
 {
-	struct task_struct *g, *p;
-	int cpu = cpu_of(rq);
+	بنية task_struct *g, *p;
+	صحيح cpu = cpu_of(rq);
 
 	lockdep_assert_rq_held(rq);
 
 	printk("%sCPU%d enqueued tasks (%u total):\n", loglvl, cpu, rq->nr_running);
 	for_each_process_thread(g, p) {
-		if (task_cpu(p) != cpu)
-			continue;
+		ܐܢ (task_cpu(p) != cpu)
+			استمر;
 
-		if (!task_on_rq_queued(p))
-			continue;
+		ܐܢ (!task_on_rq_queued(p))
+			استمر;
 
 		printk("%s\tpid: %d, name: %s\n", loglvl, p->pid, p->comm);
 	}
 }
 
-int sched_cpu_dying(unsigned int cpu)
+صحيح sched_cpu_dying(unsigned صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct rq_flags rf;
+	بنية rq *rq = cpu_rq(cpu);
+	بنية rq_flags rf;
 
 	/* Handle pending wakeups and then migrate everything off */
 	sched_tick_stop(cpu);
 
 	rq_lock_irqsave(rq, &rf);
 	update_rq_clock(rq);
-	if (rq->nr_running != 1 || rq_has_pinned_tasks(rq)) {
+	ܐܢ (rq->nr_running != 1 || rq_has_pinned_tasks(rq)) {
 		WARN(true, "Dying CPU not properly vacated!");
 		dump_rq_tasks(rq, KERN_WARNING);
 	}
@@ -8850,11 +8850,11 @@ int sched_cpu_dying(unsigned int cpu)
 	update_max_interval();
 	hrtick_clear(rq);
 	sched_core_cpu_dying(cpu);
-	return 0;
+	ܦܢܐ 0;
 }
 #endif /* CONFIG_HOTPLUG_CPU */
 
-void __init sched_init_smp(void)
+فراغ __init sched_init_smp(فراغ)
 {
 	sched_init_numa(NUMA_NO_NODE);
 
@@ -8870,7 +8870,7 @@ void __init sched_init_smp(void)
 	sched_domains_mutex_unlock();
 
 	/* Move init over to a non-isolated CPU */
-	if (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_TYPE_DOMAIN)) < 0)
+	ܐܢ (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_TYPE_DOMAIN)) < 0)
 		BUG();
 	current->flags &= ~PF_NO_SETAFFINITY;
 	sched_init_granularity();
@@ -8883,16 +8883,16 @@ void __init sched_init_smp(void)
 	sched_smp_initialized = true;
 }
 
-static int __init migration_init(void)
+ساكن صحيح __init migration_init(فراغ)
 {
 	sched_cpu_starting(smp_processor_id());
-	return 0;
+	ܦܢܐ 0;
 }
 early_initcall(migration_init);
 
-int in_sched_functions(unsigned long addr)
+صحيح in_sched_functions(unsigned long addr)
 {
-	return in_lock_functions(addr) ||
+	ܦܢܐ in_lock_functions(addr) ||
 		(addr >= (unsigned long)__sched_text_start
 		&& addr < (unsigned long)__sched_text_end);
 }
@@ -8902,17 +8902,17 @@ int in_sched_functions(unsigned long addr)
  * Default task group.
  * Every task in system belongs to this group at bootup.
  */
-struct task_group root_task_group;
+بنية task_group root_task_group;
 LIST_HEAD(task_groups);
 
 /* Cacheline aligned slab cache for task_group */
-static struct kmem_cache *task_group_cache __ro_after_init;
+ساكن بنية kmem_cache *task_group_cache __ro_after_init;
 #endif
 
-void __init sched_init(void)
+فراغ __init sched_init(فراغ)
 {
 	unsigned long __maybe_unused ptr = 0;
-	int i;
+	صحيح i;
 
 	/* Make sure the linker didn't screw up */
 	BUG_ON(!sched_class_above(&stop_sched_class, &dl_sched_class));
@@ -8930,19 +8930,19 @@ void __init sched_init(void)
 	root_task_group.cfs_rq = &runqueues.cfs;
 
 	root_task_group.shares = ROOT_TASK_GROUP_LOAD;
-	init_cfs_bandwidth(&root_task_group.cfs_bandwidth, NULL);
+	init_cfs_bandwidth(&root_task_group.cfs_bandwidth, عدم);
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 #ifdef CONFIG_EXT_GROUP_SCHED
 	scx_tg_init(&root_task_group);
 #endif /* CONFIG_EXT_GROUP_SCHED */
 #ifdef CONFIG_RT_GROUP_SCHED
-	ptr += 2 * nr_cpu_ids * sizeof(void **);
+	ptr += 2 * nr_cpu_ids * حجم(فراغ **);
 	ptr = (unsigned long)kzalloc(ptr, GFP_NOWAIT);
-	root_task_group.rt_se = (struct sched_rt_entity **)ptr;
-	ptr += nr_cpu_ids * sizeof(void **);
+	root_task_group.rt_se = (بنية sched_rt_entity **)ptr;
+	ptr += nr_cpu_ids * حجم(فراغ **);
 
-	root_task_group.rt_rq = (struct rt_rq **)ptr;
-	ptr += nr_cpu_ids * sizeof(void **);
+	root_task_group.rt_rq = (بنية rt_rq **)ptr;
+	ptr += nr_cpu_ids * حجم(فراغ **);
 
 #endif /* CONFIG_RT_GROUP_SCHED */
 
@@ -8963,7 +8963,7 @@ void __init sched_init(void)
 #endif /* CONFIG_CGROUP_SCHED */
 
 	for_each_possible_cpu(i) {
-		struct rq *rq;
+		بنية rq *rq;
 
 		rq = cpu_rq(i);
 		raw_spin_lock_init(&rq->__lock);
@@ -8995,7 +8995,7 @@ void __init sched_init(void)
 		 * We achieve this by letting root_task_group's tasks sit
 		 * directly in rq->cfs (i.e root_task_group->se[] = NULL).
 		 */
-		init_tg_cfs_entry(&root_task_group, &rq->cfs, NULL, i, NULL);
+		init_tg_cfs_entry(&root_task_group, &rq->cfs, عدم, i, عدم);
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 
 #ifdef CONFIG_RT_GROUP_SCHED
@@ -9005,12 +9005,12 @@ void __init sched_init(void)
 		 * yet.
 		 */
 		rq->rt.rt_runtime = global_rt_runtime();
-		init_tg_rt_entry(&root_task_group, &rq->rt, NULL, i, NULL);
+		init_tg_rt_entry(&root_task_group, &rq->rt, عدم, i, عدم);
 #endif
 		rq->next_class = &idle_sched_class;
 
-		rq->sd = NULL;
-		rq->rd = NULL;
+		rq->sd = عدم;
+		rq->rd = عدم;
 		rq->cpu_capacity = SCHED_CAPACITY_SCALE;
 		rq->balance_callback = &balance_push_callback;
 		rq->active_balance = 0;
@@ -9043,8 +9043,8 @@ void __init sched_init(void)
 
 #ifdef CONFIG_SCHED_CORE
 		rq->core = rq;
-		rq->core_pick = NULL;
-		rq->core_dl_server = NULL;
+		rq->core_pick = عدم;
+		rq->core_dl_server = عدم;
 		rq->core_enabled = 0;
 		rq->core_tree = RB_ROOT;
 		rq->core_forceidle_count = 0;
@@ -9107,9 +9107,9 @@ void __init sched_init(void)
 
 #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
 
-void __might_sleep(const char *file, int line)
+فراغ __might_sleep(ثابت حرف *file, صحيح line)
 {
-	unsigned int state = get_current_state();
+	unsigned صحيح state = get_current_state();
 	/*
 	 * Blocking primitives will set (and therefore destroy) current->state,
 	 * since we will exit with TASK_RUNNING make sure we enter with it,
@@ -9118,52 +9118,52 @@ void __might_sleep(const char *file, int line)
 	WARN_ONCE(state != TASK_RUNNING && current->task_state_change,
 			"do not call blocking ops when !TASK_RUNNING; "
 			"state=%x set at [<%p>] %pS\n", state,
-			(void *)current->task_state_change,
-			(void *)current->task_state_change);
+			(فراغ *)current->task_state_change,
+			(فراغ *)current->task_state_change);
 
 	__might_resched(file, line, 0);
 }
 EXPORT_SYMBOL(__might_sleep);
 
-static void print_preempt_disable_ip(int preempt_offset, unsigned long ip)
+ساكن فراغ print_preempt_disable_ip(صحيح preempt_offset, unsigned long ip)
 {
-	if (!IS_ENABLED(CONFIG_DEBUG_PREEMPT))
-		return;
+	ܐܢ (!IS_ENABLED(CONFIG_DEBUG_PREEMPT))
+		ܦܢܐ;
 
-	if (preempt_count() == preempt_offset)
-		return;
+	ܐܢ (preempt_count() == preempt_offset)
+		ܦܢܐ;
 
 	pr_err("Preemption disabled at:");
 	print_ip_sym(KERN_ERR, ip);
 }
 
-static inline bool resched_offsets_ok(unsigned int offsets)
+ساكن مضمن bool resched_offsets_ok(unsigned صحيح offsets)
 {
-	unsigned int nested = preempt_count();
+	unsigned صحيح nested = preempt_count();
 
 	nested += rcu_preempt_depth() << MIGHT_RESCHED_RCU_SHIFT;
 
-	return nested == offsets;
+	ܦܢܐ nested == offsets;
 }
 
-void __might_resched(const char *file, int line, unsigned int offsets)
+فراغ __might_resched(ثابت حرف *file, صحيح line, unsigned صحيح offsets)
 {
 	/* Ratelimiting timestamp: */
-	static unsigned long prev_jiffy;
+	ساكن unsigned long prev_jiffy;
 
 	unsigned long preempt_disable_ip;
 
 	/* WARN_ON_ONCE() by default, no rate limit required: */
 	rcu_sleep_check();
 
-	if ((resched_offsets_ok(offsets) && !irqs_disabled() &&
+	ܐܢ ((resched_offsets_ok(offsets) && !irqs_disabled() &&
 	     !is_idle_task(current) && !current->non_block_count) ||
 	    system_state == SYSTEM_BOOTING || system_state > SYSTEM_RUNNING ||
 	    oops_in_progress)
-		return;
+		ܦܢܐ;
 
-	if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
-		return;
+	ܐܢ (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
+		ܦܢܐ;
 	prev_jiffy = jiffies;
 
 	/* Save this before calling printk(), since that will clobber it: */
@@ -9177,16 +9177,16 @@ void __might_resched(const char *file, int line, unsigned int offsets)
 	pr_err("preempt_count: %x, expected: %x\n", preempt_count(),
 	       offsets & MIGHT_RESCHED_PREEMPT_MASK);
 
-	if (IS_ENABLED(CONFIG_PREEMPT_RCU)) {
+	ܐܢ (IS_ENABLED(CONFIG_PREEMPT_RCU)) {
 		pr_err("RCU nest depth: %d, expected: %u\n",
 		       rcu_preempt_depth(), offsets >> MIGHT_RESCHED_RCU_SHIFT);
 	}
 
-	if (task_stack_end_corrupted(current))
+	ܐܢ (task_stack_end_corrupted(current))
 		pr_emerg("Thread overran stack, or stack corrupted\n");
 
 	debug_show_held_locks(current);
-	if (irqs_disabled())
+	ܐܢ (irqs_disabled())
 		print_irqtrace_events(current);
 
 	print_preempt_disable_ip(offsets & MIGHT_RESCHED_PREEMPT_MASK,
@@ -9197,21 +9197,21 @@ void __might_resched(const char *file, int line, unsigned int offsets)
 }
 EXPORT_SYMBOL(__might_resched);
 
-void __cant_sleep(const char *file, int line)
+فراغ __cant_sleep(ثابت حرف *file, صحيح line)
 {
-	static unsigned long prev_jiffy;
+	ساكن unsigned long prev_jiffy;
 
-	if (irqs_disabled())
-		return;
+	ܐܢ (irqs_disabled())
+		ܦܢܐ;
 
-	if (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
-		return;
+	ܐܢ (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
+		ܦܢܐ;
 
-	if (preempt_count())
-		return;
+	ܐܢ (preempt_count())
+		ܦܢܐ;
 
-	if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
-		return;
+	ܐܢ (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
+		ܦܢܐ;
 	prev_jiffy = jiffies;
 
 	printk(KERN_ERR "BUG: assuming atomic context at %s:%d\n", file, line);
@@ -9226,24 +9226,24 @@ void __cant_sleep(const char *file, int line)
 EXPORT_SYMBOL_GPL(__cant_sleep);
 
 # ifdef CONFIG_SMP
-void __cant_migrate(const char *file, int line)
+فراغ __cant_migrate(ثابت حرف *file, صحيح line)
 {
-	static unsigned long prev_jiffy;
+	ساكن unsigned long prev_jiffy;
 
-	if (irqs_disabled())
-		return;
+	ܐܢ (irqs_disabled())
+		ܦܢܐ;
 
-	if (is_migration_disabled(current))
-		return;
+	ܐܢ (is_migration_disabled(current))
+		ܦܢܐ;
 
-	if (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
-		return;
+	ܐܢ (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
+		ܦܢܐ;
 
-	if (preempt_count())
-		return;
+	ܐܢ (preempt_count())
+		ܦܢܐ;
 
-	if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
-		return;
+	ܐܢ (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
+		ܦܢܐ;
 	prev_jiffy = jiffies;
 
 	pr_err("BUG: assuming non migratable context at %s:%d\n", file, line);
@@ -9260,10 +9260,10 @@ EXPORT_SYMBOL_GPL(__cant_migrate);
 #endif /* CONFIG_DEBUG_ATOMIC_SLEEP */
 
 #ifdef CONFIG_MAGIC_SYSRQ
-void normalize_rt_tasks(void)
+فراغ normalize_rt_tasks(فراغ)
 {
-	struct task_struct *g, *p;
-	struct sched_attr attr = {
+	بنية task_struct *g, *p;
+	بنية sched_attr attr = {
 		.sched_policy = SCHED_NORMAL,
 	};
 
@@ -9272,22 +9272,22 @@ void normalize_rt_tasks(void)
 		/*
 		 * Only normalize user tasks:
 		 */
-		if (p->flags & PF_KTHREAD)
-			continue;
+		ܐܢ (p->flags & PF_KTHREAD)
+			استمر;
 
 		p->se.exec_start = 0;
 		schedstat_set(p->stats.wait_start,  0);
 		schedstat_set(p->stats.sleep_start, 0);
 		schedstat_set(p->stats.block_start, 0);
 
-		if (!rt_or_dl_task(p)) {
+		ܐܢ (!rt_or_dl_task(p)) {
 			/*
 			 * Renice negative nice level userspace
 			 * tasks back to 0:
 			 */
-			if (task_nice(p) < 0)
+			ܐܢ (task_nice(p) < 0)
 				set_user_nice(p, 0);
-			continue;
+			استمر;
 		}
 
 		__sched_setscheduler(p, &attr, false, false);
@@ -9316,22 +9316,22 @@ void normalize_rt_tasks(void)
  *
  * Return: The current task for @cpu.
  */
-struct task_struct *curr_task(int cpu)
+بنية task_struct *curr_task(صحيح cpu)
 {
-	return cpu_curr(cpu);
+	ܦܢܐ cpu_curr(cpu);
 }
 
 #endif /* CONFIG_KGDB_KDB */
 
 #ifdef CONFIG_CGROUP_SCHED
 /* task_group_lock serializes the addition/removal of task groups */
-static DEFINE_SPINLOCK(task_group_lock);
+ساكن DEFINE_SPINLOCK(task_group_lock);
 
-static inline void alloc_uclamp_sched_group(struct task_group *tg,
-					    struct task_group *parent)
+ساكن مضمن فراغ alloc_uclamp_sched_group(بنية task_group *tg,
+					    بنية task_group *parent)
 {
 #ifdef CONFIG_UCLAMP_TASK_GROUP
-	enum uclamp_id clamp_id;
+	تعداد uclamp_id clamp_id;
 
 	for_each_clamp_id(clamp_id) {
 		uclamp_se_set(&tg->uclamp_req[clamp_id],
@@ -9341,7 +9341,7 @@ static inline void alloc_uclamp_sched_group(struct task_group *tg,
 #endif
 }
 
-static void sched_free_group(struct task_group *tg)
+ساكن فراغ sched_free_group(بنية task_group *tg)
 {
 	free_fair_sched_group(tg);
 	free_rt_sched_group(tg);
@@ -9349,12 +9349,12 @@ static void sched_free_group(struct task_group *tg)
 	kmem_cache_free(task_group_cache, tg);
 }
 
-static void sched_free_group_rcu(struct rcu_head *rcu)
+ساكن فراغ sched_free_group_rcu(بنية rcu_head *rcu)
 {
-	sched_free_group(container_of(rcu, struct task_group, rcu));
+	sched_free_group(container_of(rcu, بنية task_group, rcu));
 }
 
-static void sched_unregister_group(struct task_group *tg)
+ساكن فراغ sched_unregister_group(بنية task_group *tg)
 {
 	unregister_fair_sched_group(tg);
 	unregister_rt_sched_group(tg);
@@ -9366,31 +9366,31 @@ static void sched_unregister_group(struct task_group *tg)
 }
 
 /* allocate runqueue etc for a new task group */
-struct task_group *sched_create_group(struct task_group *parent)
+بنية task_group *sched_create_group(بنية task_group *parent)
 {
-	struct task_group *tg;
+	بنية task_group *tg;
 
 	tg = kmem_cache_alloc(task_group_cache, GFP_KERNEL | __GFP_ZERO);
-	if (!tg)
-		return ERR_PTR(-ENOMEM);
+	ܐܢ (!tg)
+		ܦܢܐ ERR_PTR(-ENOMEM);
 
-	if (!alloc_fair_sched_group(tg, parent))
-		goto err;
+	ܐܢ (!alloc_fair_sched_group(tg, parent))
+		اذهب err;
 
-	if (!alloc_rt_sched_group(tg, parent))
-		goto err;
+	ܐܢ (!alloc_rt_sched_group(tg, parent))
+		اذهب err;
 
 	scx_tg_init(tg);
 	alloc_uclamp_sched_group(tg, parent);
 
-	return tg;
+	ܦܢܐ tg;
 
 err:
 	sched_free_group(tg);
-	return ERR_PTR(-ENOMEM);
+	ܦܢܐ ERR_PTR(-ENOMEM);
 }
 
-void sched_online_group(struct task_group *tg, struct task_group *parent)
+فراغ sched_online_group(بنية task_group *tg, بنية task_group *parent)
 {
 	unsigned long flags;
 
@@ -9409,19 +9409,19 @@ void sched_online_group(struct task_group *tg, struct task_group *parent)
 }
 
 /* RCU callback to free various structures associated with a task group */
-static void sched_unregister_group_rcu(struct rcu_head *rhp)
+ساكن فراغ sched_unregister_group_rcu(بنية rcu_head *rhp)
 {
 	/* Now it should be safe to free those cfs_rqs: */
-	sched_unregister_group(container_of(rhp, struct task_group, rcu));
+	sched_unregister_group(container_of(rhp, بنية task_group, rcu));
 }
 
-void sched_destroy_group(struct task_group *tg)
+فراغ sched_destroy_group(بنية task_group *tg)
 {
 	/* Wait for possible concurrent references to cfs_rqs complete: */
 	call_rcu(&tg->rcu, sched_unregister_group_rcu);
 }
 
-void sched_release_group(struct task_group *tg)
+فراغ sched_release_group(بنية task_group *tg)
 {
 	unsigned long flags;
 
@@ -9444,9 +9444,9 @@ void sched_release_group(struct task_group *tg)
 	spin_unlock_irqrestore(&task_group_lock, flags);
 }
 
-static void sched_change_group(struct task_struct *tsk)
+ساكن فراغ sched_change_group(بنية task_struct *tsk)
 {
-	struct task_group *tg;
+	بنية task_group *tg;
 
 	/*
 	 * All callers are synchronized by task_rq_lock(); we do not use RCU
@@ -9454,14 +9454,14 @@ static void sched_change_group(struct task_struct *tsk)
 	 * to prevent lockdep warnings.
 	 */
 	tg = container_of(task_css_check(tsk, cpu_cgrp_id, true),
-			  struct task_group, css);
+			  بنية task_group, css);
 	tg = autogroup_task_group(tsk, tg);
 	tsk->sched_task_group = tg;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	if (tsk->sched_class->task_change_group)
+	ܐܢ (tsk->sched_class->task_change_group)
 		tsk->sched_class->task_change_group(tsk);
-	else
+	ܐܚܪܢܐ
 #endif
 		set_task_rq(tsk, task_cpu(tsk));
 }
@@ -9473,63 +9473,63 @@ static void sched_change_group(struct task_struct *tsk)
  * now. This function just updates tsk->se.cfs_rq and tsk->se.parent to reflect
  * its new group.
  */
-void sched_move_task(struct task_struct *tsk, bool for_autogroup)
+فراغ sched_move_task(بنية task_struct *tsk, bool for_autogroup)
 {
-	unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
+	unsigned صحيح queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
 	bool resched = false;
 	bool queued = false;
-	struct rq *rq;
+	بنية rq *rq;
 
 	CLASS(task_rq_lock, rq_guard)(tsk);
 	rq = rq_guard.rq;
 
 	scoped_guard (sched_change, tsk, queue_flags) {
 		sched_change_group(tsk);
-		if (!for_autogroup)
+		ܐܢ (!for_autogroup)
 			scx_cgroup_move_task(tsk);
-		if (scope->running)
+		ܐܢ (scope->running)
 			resched = true;
 		queued = scope->queued;
 	}
 
-	if (resched)
+	ܐܢ (resched)
 		resched_curr(rq);
-	else if (queued)
+	ܐܚܪܢܐ ܐܢ (queued)
 		wakeup_preempt(rq, tsk, 0);
 
 	__balance_callbacks(rq, &rq_guard.rf);
 }
 
-static struct cgroup_subsys_state *
-cpu_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
+ساكن بنية cgroup_subsys_state *
+cpu_cgroup_css_alloc(بنية cgroup_subsys_state *parent_css)
 {
-	struct task_group *parent = css_tg(parent_css);
-	struct task_group *tg;
+	بنية task_group *parent = css_tg(parent_css);
+	بنية task_group *tg;
 
-	if (!parent) {
+	ܐܢ (!parent) {
 		/* This is early initialization for the top cgroup */
-		return &root_task_group.css;
+		ܦܢܐ &root_task_group.css;
 	}
 
 	tg = sched_create_group(parent);
-	if (IS_ERR(tg))
-		return ERR_PTR(-ENOMEM);
+	ܐܢ (IS_ERR(tg))
+		ܦܢܐ ERR_PTR(-ENOMEM);
 
-	return &tg->css;
+	ܦܢܐ &tg->css;
 }
 
 /* Expose task group only after completing cgroup initialization */
-static int cpu_cgroup_css_online(struct cgroup_subsys_state *css)
+ساكن صحيح cpu_cgroup_css_online(بنية cgroup_subsys_state *css)
 {
-	struct task_group *tg = css_tg(css);
-	struct task_group *parent = css_tg(css->parent);
-	int ret;
+	بنية task_group *tg = css_tg(css);
+	بنية task_group *parent = css_tg(css->parent);
+	صحيح ret;
 
 	ret = scx_tg_online(tg);
-	if (ret)
-		return ret;
+	ܐܢ (ret)
+		ܦܢܐ ret;
 
-	if (parent)
+	ܐܢ (parent)
 		sched_online_group(tg, parent);
 
 #ifdef CONFIG_UCLAMP_TASK_GROUP
@@ -9539,26 +9539,26 @@ static int cpu_cgroup_css_online(struct cgroup_subsys_state *css)
 	cpu_util_update_eff(css);
 #endif
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-static void cpu_cgroup_css_offline(struct cgroup_subsys_state *css)
+ساكن فراغ cpu_cgroup_css_offline(بنية cgroup_subsys_state *css)
 {
-	struct task_group *tg = css_tg(css);
+	بنية task_group *tg = css_tg(css);
 
 	scx_tg_offline(tg);
 }
 
-static void cpu_cgroup_css_released(struct cgroup_subsys_state *css)
+ساكن فراغ cpu_cgroup_css_released(بنية cgroup_subsys_state *css)
 {
-	struct task_group *tg = css_tg(css);
+	بنية task_group *tg = css_tg(css);
 
 	sched_release_group(tg);
 }
 
-static void cpu_cgroup_css_free(struct cgroup_subsys_state *css)
+ساكن فراغ cpu_cgroup_css_free(بنية cgroup_subsys_state *css)
 {
-	struct task_group *tg = css_tg(css);
+	بنية task_group *tg = css_tg(css);
 
 	/*
 	 * Relies on the RCU grace period between css_released() and this.
@@ -9566,60 +9566,60 @@ static void cpu_cgroup_css_free(struct cgroup_subsys_state *css)
 	sched_unregister_group(tg);
 }
 
-static int cpu_cgroup_can_attach(struct cgroup_taskset *tset)
+ساكن صحيح cpu_cgroup_can_attach(بنية cgroup_taskset *tset)
 {
 #ifdef CONFIG_RT_GROUP_SCHED
-	struct task_struct *task;
-	struct cgroup_subsys_state *css;
+	بنية task_struct *task;
+	بنية cgroup_subsys_state *css;
 
-	if (!rt_group_sched_enabled())
-		goto scx_check;
+	ܐܢ (!rt_group_sched_enabled())
+		اذهب scx_check;
 
 	cgroup_taskset_for_each(task, css, tset) {
-		if (!sched_rt_can_attach(css_tg(css), task))
-			return -EINVAL;
+		ܐܢ (!sched_rt_can_attach(css_tg(css), task))
+			ܦܢܐ -EINVAL;
 	}
 scx_check:
 #endif /* CONFIG_RT_GROUP_SCHED */
-	return scx_cgroup_can_attach(tset);
+	ܦܢܐ scx_cgroup_can_attach(tset);
 }
 
-static void cpu_cgroup_attach(struct cgroup_taskset *tset)
+ساكن فراغ cpu_cgroup_attach(بنية cgroup_taskset *tset)
 {
-	struct task_struct *task;
-	struct cgroup_subsys_state *css;
+	بنية task_struct *task;
+	بنية cgroup_subsys_state *css;
 
 	cgroup_taskset_for_each(task, css, tset)
 		sched_move_task(task, false);
 }
 
-static void cpu_cgroup_cancel_attach(struct cgroup_taskset *tset)
+ساكن فراغ cpu_cgroup_cancel_attach(بنية cgroup_taskset *tset)
 {
 	scx_cgroup_cancel_attach(tset);
 }
 
 #ifdef CONFIG_UCLAMP_TASK_GROUP
-static void cpu_util_update_eff(struct cgroup_subsys_state *css)
+ساكن فراغ cpu_util_update_eff(بنية cgroup_subsys_state *css)
 {
-	struct cgroup_subsys_state *top_css = css;
-	struct uclamp_se *uc_parent = NULL;
-	struct uclamp_se *uc_se = NULL;
-	unsigned int eff[UCLAMP_CNT];
-	enum uclamp_id clamp_id;
-	unsigned int clamps;
+	بنية cgroup_subsys_state *top_css = css;
+	بنية uclamp_se *uc_parent = عدم;
+	بنية uclamp_se *uc_se = عدم;
+	unsigned صحيح eff[UCLAMP_CNT];
+	تعداد uclamp_id clamp_id;
+	unsigned صحيح clamps;
 
 	lockdep_assert_held(&uclamp_mutex);
 	WARN_ON_ONCE(!rcu_read_lock_held());
 
 	css_for_each_descendant_pre(css, top_css) {
 		uc_parent = css_tg(css)->parent
-			? css_tg(css)->parent->uclamp : NULL;
+			? css_tg(css)->parent->uclamp : عدم;
 
 		for_each_clamp_id(clamp_id) {
 			/* Assume effective clamps matches requested clamps */
 			eff[clamp_id] = css_tg(css)->uclamp_req[clamp_id].value;
 			/* Cap effective clamps with parent's effective clamps */
-			if (uc_parent &&
+			ܐܢ (uc_parent &&
 			    eff[clamp_id] > uc_parent[clamp_id].value) {
 				eff[clamp_id] = uc_parent[clamp_id].value;
 			}
@@ -9631,15 +9631,15 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
 		clamps = 0x0;
 		uc_se = css_tg(css)->uclamp;
 		for_each_clamp_id(clamp_id) {
-			if (eff[clamp_id] == uc_se[clamp_id].value)
-				continue;
+			ܐܢ (eff[clamp_id] == uc_se[clamp_id].value)
+				استمر;
 			uc_se[clamp_id].value = eff[clamp_id];
 			uc_se[clamp_id].bucket_id = uclamp_bucket_id(eff[clamp_id]);
 			clamps |= (0x1 << clamp_id);
 		}
-		if (!clamps) {
+		ܐܢ (!clamps) {
 			css = css_rightmost_descendant(css);
-			continue;
+			استمر;
 		}
 
 		/* Immediately update descendants RUNNABLE tasks */
@@ -9652,54 +9652,54 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
  * C expression. Since there is no way to convert a macro argument (N) into a
  * character constant, use two levels of macros.
  */
-#define _POW10(exp) ((unsigned int)1e##exp)
+#define _POW10(exp) ((unsigned صحيح)1e##exp)
 #define POW10(exp) _POW10(exp)
 
-struct uclamp_request {
+بنية uclamp_request {
 #define UCLAMP_PERCENT_SHIFT	2
 #define UCLAMP_PERCENT_SCALE	(100 * POW10(UCLAMP_PERCENT_SHIFT))
 	s64 percent;
 	u64 util;
-	int ret;
+	صحيح ret;
 };
 
-static inline struct uclamp_request
-capacity_from_percent(char *buf)
+ساكن مضمن بنية uclamp_request
+capacity_from_percent(حرف *buf)
 {
-	struct uclamp_request req = {
+	بنية uclamp_request req = {
 		.percent = UCLAMP_PERCENT_SCALE,
 		.util = SCHED_CAPACITY_SCALE,
 		.ret = 0,
 	};
 
 	buf = strim(buf);
-	if (strcmp(buf, "max")) {
+	ܐܢ (strcmp(buf, "max")) {
 		req.ret = cgroup_parse_float(buf, UCLAMP_PERCENT_SHIFT,
 					     &req.percent);
-		if (req.ret)
-			return req;
-		if ((u64)req.percent > UCLAMP_PERCENT_SCALE) {
+		ܐܢ (req.ret)
+			ܦܢܐ req;
+		ܐܢ ((u64)req.percent > UCLAMP_PERCENT_SCALE) {
 			req.ret = -ERANGE;
-			return req;
+			ܦܢܐ req;
 		}
 
 		req.util = req.percent << SCHED_CAPACITY_SHIFT;
 		req.util = DIV_ROUND_CLOSEST_ULL(req.util, UCLAMP_PERCENT_SCALE);
 	}
 
-	return req;
+	ܦܢܐ req;
 }
 
-static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
+ساكن ssize_t cpu_uclamp_write(بنية kernfs_open_file *of, حرف *buf,
 				size_t nbytes, loff_t off,
-				enum uclamp_id clamp_id)
+				تعداد uclamp_id clamp_id)
 {
-	struct uclamp_request req;
-	struct task_group *tg;
+	بنية uclamp_request req;
+	بنية task_group *tg;
 
 	req = capacity_from_percent(buf);
-	if (req.ret)
-		return req.ret;
+	ܐܢ (req.ret)
+		ܦܢܐ req.ret;
 
 	sched_uclamp_enable();
 
@@ -9707,7 +9707,7 @@ static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
 	guard(rcu)();
 
 	tg = css_tg(of_css(of));
-	if (tg->uclamp_req[clamp_id].value != req.util)
+	ܐܢ (tg->uclamp_req[clamp_id].value != req.util)
 		uclamp_se_set(&tg->uclamp_req[clamp_id], req.util, false);
 
 	/*
@@ -9719,27 +9719,27 @@ static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
 	/* Update effective clamps to track the most restrictive value */
 	cpu_util_update_eff(of_css(of));
 
-	return nbytes;
+	ܦܢܐ nbytes;
 }
 
-static ssize_t cpu_uclamp_min_write(struct kernfs_open_file *of,
-				    char *buf, size_t nbytes,
+ساكن ssize_t cpu_uclamp_min_write(بنية kernfs_open_file *of,
+				    حرف *buf, size_t nbytes,
 				    loff_t off)
 {
-	return cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MIN);
+	ܦܢܐ cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MIN);
 }
 
-static ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
-				    char *buf, size_t nbytes,
+ساكن ssize_t cpu_uclamp_max_write(بنية kernfs_open_file *of,
+				    حرف *buf, size_t nbytes,
 				    loff_t off)
 {
-	return cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MAX);
+	ܦܢܐ cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MAX);
 }
 
-static inline void cpu_uclamp_print(struct seq_file *sf,
-				    enum uclamp_id clamp_id)
+ساكن مضمن فراغ cpu_uclamp_print(بنية seq_file *sf,
+				    تعداد uclamp_id clamp_id)
 {
-	struct task_group *tg;
+	بنية task_group *tg;
 	u64 util_clamp;
 	u64 percent;
 	u32 rem;
@@ -9749,9 +9749,9 @@ static inline void cpu_uclamp_print(struct seq_file *sf,
 		util_clamp = tg->uclamp_req[clamp_id].value;
 	}
 
-	if (util_clamp == SCHED_CAPACITY_SCALE) {
+	ܐܢ (util_clamp == SCHED_CAPACITY_SCALE) {
 		seq_puts(sf, "max\n");
-		return;
+		ܦܢܐ;
 	}
 
 	percent = tg->uclamp_pct[clamp_id];
@@ -9759,67 +9759,67 @@ static inline void cpu_uclamp_print(struct seq_file *sf,
 	seq_printf(sf, "%llu.%0*u\n", percent, UCLAMP_PERCENT_SHIFT, rem);
 }
 
-static int cpu_uclamp_min_show(struct seq_file *sf, void *v)
+ساكن صحيح cpu_uclamp_min_show(بنية seq_file *sf, فراغ *v)
 {
 	cpu_uclamp_print(sf, UCLAMP_MIN);
-	return 0;
+	ܦܢܐ 0;
 }
 
-static int cpu_uclamp_max_show(struct seq_file *sf, void *v)
+ساكن صحيح cpu_uclamp_max_show(بنية seq_file *sf, فراغ *v)
 {
 	cpu_uclamp_print(sf, UCLAMP_MAX);
-	return 0;
+	ܦܢܐ 0;
 }
 #endif /* CONFIG_UCLAMP_TASK_GROUP */
 
 #ifdef CONFIG_GROUP_SCHED_WEIGHT
-static unsigned long tg_weight(struct task_group *tg)
+ساكن unsigned long tg_weight(بنية task_group *tg)
 {
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	return scale_load_down(tg->shares);
-#else
-	return sched_weight_from_cgroup(tg->scx.weight);
+	ܦܢܐ scale_load_down(tg->shares);
+#ܐܚܪܢܐ
+	ܦܢܐ sched_weight_from_cgroup(tg->scx.weight);
 #endif
 }
 
-static int cpu_shares_write_u64(struct cgroup_subsys_state *css,
-				struct cftype *cftype, u64 shareval)
+ساكن صحيح cpu_shares_write_u64(بنية cgroup_subsys_state *css,
+				بنية cftype *cftype, u64 shareval)
 {
-	int ret;
+	صحيح ret;
 
-	if (shareval > scale_load_down(ULONG_MAX))
+	ܐܢ (shareval > scale_load_down(ULONG_MAX))
 		shareval = MAX_SHARES;
 	ret = sched_group_set_shares(css_tg(css), scale_load(shareval));
-	if (!ret)
+	ܐܢ (!ret)
 		scx_group_set_weight(css_tg(css),
 				     sched_weight_to_cgroup(shareval));
-	return ret;
+	ܦܢܐ ret;
 }
 
-static u64 cpu_shares_read_u64(struct cgroup_subsys_state *css,
-			       struct cftype *cft)
+ساكن u64 cpu_shares_read_u64(بنية cgroup_subsys_state *css,
+			       بنية cftype *cft)
 {
-	return tg_weight(css_tg(css));
+	ܦܢܐ tg_weight(css_tg(css));
 }
 #endif /* CONFIG_GROUP_SCHED_WEIGHT */
 
 #ifdef CONFIG_CFS_BANDWIDTH
-static DEFINE_MUTEX(cfs_constraints_mutex);
+ساكن DEFINE_MUTEX(cfs_constraints_mutex);
 
-static int __cfs_schedulable(struct task_group *tg, u64 period, u64 runtime);
+ساكن صحيح __cfs_schedulable(بنية task_group *tg, u64 period, u64 runtime);
 
-static int tg_set_cfs_bandwidth(struct task_group *tg,
+ساكن صحيح tg_set_cfs_bandwidth(بنية task_group *tg,
 				u64 period_us, u64 quota_us, u64 burst_us)
 {
-	int i, ret = 0, runtime_enabled, runtime_was_enabled;
-	struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
+	صحيح i, ret = 0, runtime_enabled, runtime_was_enabled;
+	بنية cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
 	u64 period, quota, burst;
 
 	period = (u64)period_us * NSEC_PER_USEC;
 
-	if (quota_us == RUNTIME_INF)
+	ܐܢ (quota_us == RUNTIME_INF)
 		quota = RUNTIME_INF;
-	else
+	ܐܚܪܢܐ
 		quota = (u64)quota_us * NSEC_PER_USEC;
 
 	burst = (u64)burst_us * NSEC_PER_USEC;
@@ -9832,8 +9832,8 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
 	guard(mutex)(&cfs_constraints_mutex);
 
 	ret = __cfs_schedulable(tg, period, quota);
-	if (ret)
-		return ret;
+	ܐܢ (ret)
+		ܦܢܐ ret;
 
 	runtime_enabled = quota != RUNTIME_INF;
 	runtime_was_enabled = cfs_b->quota != RUNTIME_INF;
@@ -9841,7 +9841,7 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
 	 * If we need to toggle cfs_bandwidth_used, off->on must occur
 	 * before making related changes, and on->off must occur afterwards
 	 */
-	if (runtime_enabled && !runtime_was_enabled)
+	ܐܢ (runtime_enabled && !runtime_was_enabled)
 		cfs_bandwidth_usage_inc();
 
 	scoped_guard (raw_spinlock_irq, &cfs_b->lock) {
@@ -9855,66 +9855,66 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
 		 * Restart the period timer (if active) to handle new
 		 * period expiry:
 		 */
-		if (runtime_enabled)
+		ܐܢ (runtime_enabled)
 			start_cfs_bandwidth(cfs_b);
 	}
 
 	for_each_online_cpu(i) {
-		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, i);
-		struct rq *rq = cfs_rq->rq;
+		بنية cfs_rq *cfs_rq = tg_cfs_rq(tg, i);
+		بنية rq *rq = cfs_rq->rq;
 
 		guard(rq_lock_irq)(rq);
 
 		cfs_rq->runtime_enabled = runtime_enabled;
 		cfs_rq->runtime_remaining = 1;
 
-		if (cfs_rq->throttled) {
+		ܐܢ (cfs_rq->throttled) {
 			update_rq_clock(rq);
 			unthrottle_cfs_rq(cfs_rq);
 		}
 	}
 
-	if (runtime_was_enabled && !runtime_enabled)
+	ܐܢ (runtime_was_enabled && !runtime_enabled)
 		cfs_bandwidth_usage_dec();
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-static u64 tg_get_cfs_period(struct task_group *tg)
+ساكن u64 tg_get_cfs_period(بنية task_group *tg)
 {
 	u64 cfs_period_us;
 
 	cfs_period_us = ktime_to_ns(tg->cfs_bandwidth.period);
 	do_div(cfs_period_us, NSEC_PER_USEC);
 
-	return cfs_period_us;
+	ܦܢܐ cfs_period_us;
 }
 
-static u64 tg_get_cfs_quota(struct task_group *tg)
+ساكن u64 tg_get_cfs_quota(بنية task_group *tg)
 {
 	u64 quota_us;
 
-	if (tg->cfs_bandwidth.quota == RUNTIME_INF)
-		return RUNTIME_INF;
+	ܐܢ (tg->cfs_bandwidth.quota == RUNTIME_INF)
+		ܦܢܐ RUNTIME_INF;
 
 	quota_us = tg->cfs_bandwidth.quota;
 	do_div(quota_us, NSEC_PER_USEC);
 
-	return quota_us;
+	ܦܢܐ quota_us;
 }
 
-static u64 tg_get_cfs_burst(struct task_group *tg)
+ساكن u64 tg_get_cfs_burst(بنية task_group *tg)
 {
 	u64 burst_us;
 
 	burst_us = tg->cfs_bandwidth.burst;
 	do_div(burst_us, NSEC_PER_USEC);
 
-	return burst_us;
+	ܦܢܐ burst_us;
 }
 
-struct cfs_schedulable_data {
-	struct task_group *tg;
+بنية cfs_schedulable_data {
+	بنية task_group *tg;
 	u64 period, quota;
 };
 
@@ -9922,36 +9922,36 @@ struct cfs_schedulable_data {
  * normalize group quota/period to be quota/max_period
  * note: units are usecs
  */
-static u64 normalize_cfs_quota(struct task_group *tg,
-			       struct cfs_schedulable_data *d)
+ساكن u64 normalize_cfs_quota(بنية task_group *tg,
+			       بنية cfs_schedulable_data *d)
 {
 	u64 quota, period;
 
-	if (tg == d->tg) {
+	ܐܢ (tg == d->tg) {
 		period = d->period;
 		quota = d->quota;
-	} else {
+	} ܐܚܪܢܐ {
 		period = tg_get_cfs_period(tg);
 		quota = tg_get_cfs_quota(tg);
 	}
 
 	/* note: these should typically be equivalent */
-	if (quota == RUNTIME_INF || quota == -1)
-		return RUNTIME_INF;
+	ܐܢ (quota == RUNTIME_INF || quota == -1)
+		ܦܢܐ RUNTIME_INF;
 
-	return to_ratio(period, quota);
+	ܦܢܐ to_ratio(period, quota);
 }
 
-static int tg_cfs_schedulable_down(struct task_group *tg, void *data)
+ساكن صحيح tg_cfs_schedulable_down(بنية task_group *tg, فراغ *data)
 {
-	struct cfs_schedulable_data *d = data;
-	struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
+	بنية cfs_schedulable_data *d = data;
+	بنية cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
 	s64 quota = 0, parent_quota = -1;
 
-	if (!tg->parent) {
+	ܐܢ (!tg->parent) {
 		quota = RUNTIME_INF;
-	} else {
-		struct cfs_bandwidth *parent_b = &tg->parent->cfs_bandwidth;
+	} ܐܚܪܢܐ {
+		بنية cfs_bandwidth *parent_b = &tg->parent->cfs_bandwidth;
 
 		quota = normalize_cfs_quota(tg, d);
 		parent_quota = parent_b->hierarchical_quota;
@@ -9963,53 +9963,53 @@ static int tg_cfs_schedulable_down(struct task_group *tg, void *data)
 		 * by the scheduler to determine if a given CFS task has a
 		 * bandwidth constraint at some higher level.
 		 */
-		if (cgroup_subsys_on_dfl(cpu_cgrp_subsys)) {
-			if (quota == RUNTIME_INF)
+		ܐܢ (cgroup_subsys_on_dfl(cpu_cgrp_subsys)) {
+			ܐܢ (quota == RUNTIME_INF)
 				quota = parent_quota;
-			else if (parent_quota != RUNTIME_INF)
+			ܐܚܪܢܐ ܐܢ (parent_quota != RUNTIME_INF)
 				quota = min(quota, parent_quota);
-		} else {
-			if (quota == RUNTIME_INF)
+		} ܐܚܪܢܐ {
+			ܐܢ (quota == RUNTIME_INF)
 				quota = parent_quota;
-			else if (parent_quota != RUNTIME_INF && quota > parent_quota)
-				return -EINVAL;
+			ܐܚܪܢܐ ܐܢ (parent_quota != RUNTIME_INF && quota > parent_quota)
+				ܦܢܐ -EINVAL;
 		}
 	}
 	cfs_b->hierarchical_quota = quota;
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-static int __cfs_schedulable(struct task_group *tg, u64 period, u64 quota)
+ساكن صحيح __cfs_schedulable(بنية task_group *tg, u64 period, u64 quota)
 {
-	struct cfs_schedulable_data data = {
+	بنية cfs_schedulable_data data = {
 		.tg = tg,
 		.period = period,
 		.quota = quota,
 	};
 
-	if (quota != RUNTIME_INF) {
+	ܐܢ (quota != RUNTIME_INF) {
 		do_div(data.period, NSEC_PER_USEC);
 		do_div(data.quota, NSEC_PER_USEC);
 	}
 
 	guard(rcu)();
-	return walk_tg_tree(tg_cfs_schedulable_down, tg_nop, &data);
+	ܦܢܐ walk_tg_tree(tg_cfs_schedulable_down, tg_nop, &data);
 }
 
-static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
+ساكن صحيح cpu_cfs_stat_show(بنية seq_file *sf, فراغ *v)
 {
-	struct task_group *tg = css_tg(seq_css(sf));
-	struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
+	بنية task_group *tg = css_tg(seq_css(sf));
+	بنية cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
 
 	seq_printf(sf, "nr_periods %d\n", cfs_b->nr_periods);
 	seq_printf(sf, "nr_throttled %d\n", cfs_b->nr_throttled);
 	seq_printf(sf, "throttled_time %llu\n", cfs_b->throttled_time);
 
-	if (schedstat_enabled() && tg != &root_task_group) {
-		struct sched_statistics *stats;
+	ܐܢ (schedstat_enabled() && tg != &root_task_group) {
+		بنية sched_statistics *stats;
 		u64 ws = 0;
-		int i;
+		صحيح i;
 
 		for_each_possible_cpu(i) {
 			stats = __schedstats_from_se(tg_se(tg, i));
@@ -10022,214 +10022,214 @@ static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
 	seq_printf(sf, "nr_bursts %d\n", cfs_b->nr_burst);
 	seq_printf(sf, "burst_time %llu\n", cfs_b->burst_time);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-static u64 throttled_time_self(struct task_group *tg)
+ساكن u64 throttled_time_self(بنية task_group *tg)
 {
-	int i;
+	صحيح i;
 	u64 total = 0;
 
 	for_each_possible_cpu(i) {
 		total += READ_ONCE(tg_cfs_rq(tg, i)->throttled_clock_self_time);
 	}
 
-	return total;
+	ܦܢܐ total;
 }
 
-static int cpu_cfs_local_stat_show(struct seq_file *sf, void *v)
+ساكن صحيح cpu_cfs_local_stat_show(بنية seq_file *sf, فراغ *v)
 {
-	struct task_group *tg = css_tg(seq_css(sf));
+	بنية task_group *tg = css_tg(seq_css(sf));
 
 	seq_printf(sf, "throttled_time %llu\n", throttled_time_self(tg));
 
-	return 0;
+	ܦܢܐ 0;
 }
 #endif /* CONFIG_CFS_BANDWIDTH */
 
 #ifdef CONFIG_GROUP_SCHED_BANDWIDTH
-const u64 max_bw_quota_period_us = 1 * USEC_PER_SEC; /* 1s */
-static const u64 min_bw_quota_period_us = 1 * USEC_PER_MSEC; /* 1ms */
+ثابت u64 max_bw_quota_period_us = 1 * USEC_PER_SEC; /* 1s */
+ساكن ثابت u64 min_bw_quota_period_us = 1 * USEC_PER_MSEC; /* 1ms */
 /* More than 203 days if BW_SHIFT equals 20. */
-static const u64 max_bw_runtime_us = MAX_BW;
+ساكن ثابت u64 max_bw_runtime_us = MAX_BW;
 
-static void tg_bandwidth(struct task_group *tg,
+ساكن فراغ tg_bandwidth(بنية task_group *tg,
 			 u64 *period_us_p, u64 *quota_us_p, u64 *burst_us_p)
 {
 #ifdef CONFIG_CFS_BANDWIDTH
-	if (period_us_p)
+	ܐܢ (period_us_p)
 		*period_us_p = tg_get_cfs_period(tg);
-	if (quota_us_p)
+	ܐܢ (quota_us_p)
 		*quota_us_p = tg_get_cfs_quota(tg);
-	if (burst_us_p)
+	ܐܢ (burst_us_p)
 		*burst_us_p = tg_get_cfs_burst(tg);
-#else /* !CONFIG_CFS_BANDWIDTH */
-	if (period_us_p)
+#ܐܚܪܢܐ /* !CONFIG_CFS_BANDWIDTH */
+	ܐܢ (period_us_p)
 		*period_us_p = tg->scx.bw_period_us;
-	if (quota_us_p)
+	ܐܢ (quota_us_p)
 		*quota_us_p = tg->scx.bw_quota_us;
-	if (burst_us_p)
+	ܐܢ (burst_us_p)
 		*burst_us_p = tg->scx.bw_burst_us;
 #endif /* CONFIG_CFS_BANDWIDTH */
 }
 
-static u64 cpu_period_read_u64(struct cgroup_subsys_state *css,
-			       struct cftype *cft)
+ساكن u64 cpu_period_read_u64(بنية cgroup_subsys_state *css,
+			       بنية cftype *cft)
 {
 	u64 period_us;
 
-	tg_bandwidth(css_tg(css), &period_us, NULL, NULL);
-	return period_us;
+	tg_bandwidth(css_tg(css), &period_us, عدم, عدم);
+	ܦܢܐ period_us;
 }
 
-static int tg_set_bandwidth(struct task_group *tg,
+ساكن صحيح tg_set_bandwidth(بنية task_group *tg,
 			    u64 period_us, u64 quota_us, u64 burst_us)
 {
-	const u64 max_usec = U64_MAX / NSEC_PER_USEC;
-	int ret = 0;
+	ثابت u64 max_usec = U64_MAX / NSEC_PER_USEC;
+	صحيح ret = 0;
 
-	if (tg == &root_task_group)
-		return -EINVAL;
+	ܐܢ (tg == &root_task_group)
+		ܦܢܐ -EINVAL;
 
 	/* Values should survive translation to nsec */
-	if (period_us > max_usec ||
+	ܐܢ (period_us > max_usec ||
 	    (quota_us != RUNTIME_INF && quota_us > max_usec) ||
 	    burst_us > max_usec)
-		return -EINVAL;
+		ܦܢܐ -EINVAL;
 
 	/*
 	 * Ensure we have some amount of bandwidth every period. This is to
 	 * prevent reaching a state of large arrears when throttled via
 	 * entity_tick() resulting in prolonged exit starvation.
 	 */
-	if (quota_us < min_bw_quota_period_us ||
+	ܐܢ (quota_us < min_bw_quota_period_us ||
 	    period_us < min_bw_quota_period_us)
-		return -EINVAL;
+		ܦܢܐ -EINVAL;
 
 	/*
 	 * Likewise, bound things on the other side by preventing insane quota
 	 * periods.  This also allows us to normalize in computing quota
 	 * feasibility.
 	 */
-	if (period_us > max_bw_quota_period_us)
-		return -EINVAL;
+	ܐܢ (period_us > max_bw_quota_period_us)
+		ܦܢܐ -EINVAL;
 
 	/*
 	 * Bound quota to defend quota against overflow during bandwidth shift.
 	 */
-	if (quota_us != RUNTIME_INF && quota_us > max_bw_runtime_us)
-		return -EINVAL;
+	ܐܢ (quota_us != RUNTIME_INF && quota_us > max_bw_runtime_us)
+		ܦܢܐ -EINVAL;
 
-	if (quota_us != RUNTIME_INF && (burst_us > quota_us ||
+	ܐܢ (quota_us != RUNTIME_INF && (burst_us > quota_us ||
 					burst_us + quota_us > max_bw_runtime_us))
-		return -EINVAL;
+		ܦܢܐ -EINVAL;
 
 #ifdef CONFIG_CFS_BANDWIDTH
 	ret = tg_set_cfs_bandwidth(tg, period_us, quota_us, burst_us);
 #endif /* CONFIG_CFS_BANDWIDTH */
-	if (!ret)
+	ܐܢ (!ret)
 		scx_group_set_bandwidth(tg, period_us, quota_us, burst_us);
-	return ret;
+	ܦܢܐ ret;
 }
 
-static s64 cpu_quota_read_s64(struct cgroup_subsys_state *css,
-			      struct cftype *cft)
+ساكن s64 cpu_quota_read_s64(بنية cgroup_subsys_state *css,
+			      بنية cftype *cft)
 {
 	u64 quota_us;
 
-	tg_bandwidth(css_tg(css), NULL, &quota_us, NULL);
-	return quota_us;	/* (s64)RUNTIME_INF becomes -1 */
+	tg_bandwidth(css_tg(css), عدم, &quota_us, عدم);
+	ܦܢܐ quota_us;	/* (s64)RUNTIME_INF becomes -1 */
 }
 
-static u64 cpu_burst_read_u64(struct cgroup_subsys_state *css,
-			      struct cftype *cft)
+ساكن u64 cpu_burst_read_u64(بنية cgroup_subsys_state *css,
+			      بنية cftype *cft)
 {
 	u64 burst_us;
 
-	tg_bandwidth(css_tg(css), NULL, NULL, &burst_us);
-	return burst_us;
+	tg_bandwidth(css_tg(css), عدم, عدم, &burst_us);
+	ܦܢܐ burst_us;
 }
 
-static int cpu_period_write_u64(struct cgroup_subsys_state *css,
-				struct cftype *cftype, u64 period_us)
+ساكن صحيح cpu_period_write_u64(بنية cgroup_subsys_state *css,
+				بنية cftype *cftype, u64 period_us)
 {
-	struct task_group *tg = css_tg(css);
+	بنية task_group *tg = css_tg(css);
 	u64 quota_us, burst_us;
 
-	tg_bandwidth(tg, NULL, &quota_us, &burst_us);
-	return tg_set_bandwidth(tg, period_us, quota_us, burst_us);
+	tg_bandwidth(tg, عدم, &quota_us, &burst_us);
+	ܦܢܐ tg_set_bandwidth(tg, period_us, quota_us, burst_us);
 }
 
-static int cpu_quota_write_s64(struct cgroup_subsys_state *css,
-			       struct cftype *cftype, s64 quota_us)
+ساكن صحيح cpu_quota_write_s64(بنية cgroup_subsys_state *css,
+			       بنية cftype *cftype, s64 quota_us)
 {
-	struct task_group *tg = css_tg(css);
+	بنية task_group *tg = css_tg(css);
 	u64 period_us, burst_us;
 
-	if (quota_us < 0)
+	ܐܢ (quota_us < 0)
 		quota_us = RUNTIME_INF;
 
-	tg_bandwidth(tg, &period_us, NULL, &burst_us);
-	return tg_set_bandwidth(tg, period_us, quota_us, burst_us);
+	tg_bandwidth(tg, &period_us, عدم, &burst_us);
+	ܦܢܐ tg_set_bandwidth(tg, period_us, quota_us, burst_us);
 }
 
-static int cpu_burst_write_u64(struct cgroup_subsys_state *css,
-			       struct cftype *cftype, u64 burst_us)
+ساكن صحيح cpu_burst_write_u64(بنية cgroup_subsys_state *css,
+			       بنية cftype *cftype, u64 burst_us)
 {
-	struct task_group *tg = css_tg(css);
+	بنية task_group *tg = css_tg(css);
 	u64 period_us, quota_us;
 
-	tg_bandwidth(tg, &period_us, &quota_us, NULL);
-	return tg_set_bandwidth(tg, period_us, quota_us, burst_us);
+	tg_bandwidth(tg, &period_us, &quota_us, عدم);
+	ܦܢܐ tg_set_bandwidth(tg, period_us, quota_us, burst_us);
 }
 #endif /* CONFIG_GROUP_SCHED_BANDWIDTH */
 
 #ifdef CONFIG_RT_GROUP_SCHED
-static int cpu_rt_runtime_write(struct cgroup_subsys_state *css,
-				struct cftype *cft, s64 val)
+ساكن صحيح cpu_rt_runtime_write(بنية cgroup_subsys_state *css,
+				بنية cftype *cft, s64 val)
 {
-	return sched_group_set_rt_runtime(css_tg(css), val);
+	ܦܢܐ sched_group_set_rt_runtime(css_tg(css), val);
 }
 
-static s64 cpu_rt_runtime_read(struct cgroup_subsys_state *css,
-			       struct cftype *cft)
+ساكن s64 cpu_rt_runtime_read(بنية cgroup_subsys_state *css,
+			       بنية cftype *cft)
 {
-	return sched_group_rt_runtime(css_tg(css));
+	ܦܢܐ sched_group_rt_runtime(css_tg(css));
 }
 
-static int cpu_rt_period_write_uint(struct cgroup_subsys_state *css,
-				    struct cftype *cftype, u64 rt_period_us)
+ساكن صحيح cpu_rt_period_write_uint(بنية cgroup_subsys_state *css,
+				    بنية cftype *cftype, u64 rt_period_us)
 {
-	return sched_group_set_rt_period(css_tg(css), rt_period_us);
+	ܦܢܐ sched_group_set_rt_period(css_tg(css), rt_period_us);
 }
 
-static u64 cpu_rt_period_read_uint(struct cgroup_subsys_state *css,
-				   struct cftype *cft)
+ساكن u64 cpu_rt_period_read_uint(بنية cgroup_subsys_state *css,
+				   بنية cftype *cft)
 {
-	return sched_group_rt_period(css_tg(css));
+	ܦܢܐ sched_group_rt_period(css_tg(css));
 }
 #endif /* CONFIG_RT_GROUP_SCHED */
 
 #ifdef CONFIG_GROUP_SCHED_WEIGHT
-static s64 cpu_idle_read_s64(struct cgroup_subsys_state *css,
-			       struct cftype *cft)
+ساكن s64 cpu_idle_read_s64(بنية cgroup_subsys_state *css,
+			       بنية cftype *cft)
 {
-	return css_tg(css)->idle;
+	ܦܢܐ css_tg(css)->idle;
 }
 
-static int cpu_idle_write_s64(struct cgroup_subsys_state *css,
-				struct cftype *cft, s64 idle)
+ساكن صحيح cpu_idle_write_s64(بنية cgroup_subsys_state *css,
+				بنية cftype *cft, s64 idle)
 {
-	int ret;
+	صحيح ret;
 
 	ret = sched_group_set_idle(css_tg(css), idle);
-	if (!ret)
+	ܐܢ (!ret)
 		scx_group_set_idle(css_tg(css), idle);
-	return ret;
+	ܦܢܐ ret;
 }
 #endif /* CONFIG_GROUP_SCHED_WEIGHT */
 
-static struct cftype cpu_legacy_files[] = {
+ساكن بنية cftype cpu_legacy_files[] = {
 #ifdef CONFIG_GROUP_SCHED_WEIGHT
 	{
 		.name = "shares",
@@ -10274,20 +10274,20 @@ static struct cftype cpu_legacy_files[] = {
 		.name = "uclamp.min",
 		.flags = CFTYPE_NOT_ON_ROOT,
 		.seq_show = cpu_uclamp_min_show,
-		.write = cpu_uclamp_min_write,
+		.اكتب = cpu_uclamp_min_write,
 	},
 	{
 		.name = "uclamp.max",
 		.flags = CFTYPE_NOT_ON_ROOT,
 		.seq_show = cpu_uclamp_max_show,
-		.write = cpu_uclamp_max_write,
+		.اكتب = cpu_uclamp_max_write,
 	},
 #endif
 	{ }	/* Terminate */
 };
 
 #ifdef CONFIG_RT_GROUP_SCHED
-static struct cftype rt_group_files[] = {
+ساكن بنية cftype rt_group_files[] = {
 	{
 		.name = "rt_runtime_us",
 		.read_s64 = cpu_rt_runtime_read,
@@ -10303,45 +10303,45 @@ static struct cftype rt_group_files[] = {
 
 # ifdef CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED
 DEFINE_STATIC_KEY_FALSE(rt_group_sched);
-# else
+# ܐܚܪܢܐ
 DEFINE_STATIC_KEY_TRUE(rt_group_sched);
 # endif
 
-static int __init setup_rt_group_sched(char *str)
+ساكن صحيح __init setup_rt_group_sched(حرف *str)
 {
 	long val;
 
-	if (kstrtol(str, 0, &val) || val < 0 || val > 1) {
+	ܐܢ (kstrtol(str, 0, &val) || val < 0 || val > 1) {
 		pr_warn("Unable to set rt_group_sched\n");
-		return 1;
+		ܦܢܐ 1;
 	}
-	if (val)
+	ܐܢ (val)
 		static_branch_enable(&rt_group_sched);
-	else
+	ܐܚܪܢܐ
 		static_branch_disable(&rt_group_sched);
 
-	return 1;
+	ܦܢܐ 1;
 }
 __setup("rt_group_sched=", setup_rt_group_sched);
 
-static int __init cpu_rt_group_init(void)
+ساكن صحيح __init cpu_rt_group_init(فراغ)
 {
-	if (!rt_group_sched_enabled())
-		return 0;
+	ܐܢ (!rt_group_sched_enabled())
+		ܦܢܐ 0;
 
 	WARN_ON(cgroup_add_legacy_cftypes(&cpu_cgrp_subsys, rt_group_files));
-	return 0;
+	ܦܢܐ 0;
 }
 subsys_initcall(cpu_rt_group_init);
 #endif /* CONFIG_RT_GROUP_SCHED */
 
-static int cpu_extra_stat_show(struct seq_file *sf,
-			       struct cgroup_subsys_state *css)
+ساكن صحيح cpu_extra_stat_show(بنية seq_file *sf,
+			       بنية cgroup_subsys_state *css)
 {
 #ifdef CONFIG_CFS_BANDWIDTH
 	{
-		struct task_group *tg = css_tg(css);
-		struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
+		بنية task_group *tg = css_tg(css);
+		بنية cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
 		u64 throttled_usec, burst_usec;
 
 		throttled_usec = cfs_b->throttled_time;
@@ -10358,15 +10358,15 @@ static int cpu_extra_stat_show(struct seq_file *sf,
 			   throttled_usec, cfs_b->nr_burst, burst_usec);
 	}
 #endif /* CONFIG_CFS_BANDWIDTH */
-	return 0;
+	ܦܢܐ 0;
 }
 
-static int cpu_local_stat_show(struct seq_file *sf,
-			       struct cgroup_subsys_state *css)
+ساكن صحيح cpu_local_stat_show(بنية seq_file *sf,
+			       بنية cgroup_subsys_state *css)
 {
 #ifdef CONFIG_CFS_BANDWIDTH
 	{
-		struct task_group *tg = css_tg(css);
+		بنية task_group *tg = css_tg(css);
 		u64 throttled_self_usec;
 
 		throttled_self_usec = throttled_time_self(tg);
@@ -10376,130 +10376,130 @@ static int cpu_local_stat_show(struct seq_file *sf,
 			   throttled_self_usec);
 	}
 #endif
-	return 0;
+	ܦܢܐ 0;
 }
 
 #ifdef CONFIG_GROUP_SCHED_WEIGHT
 
-static u64 cpu_weight_read_u64(struct cgroup_subsys_state *css,
-			       struct cftype *cft)
+ساكن u64 cpu_weight_read_u64(بنية cgroup_subsys_state *css,
+			       بنية cftype *cft)
 {
-	return sched_weight_to_cgroup(tg_weight(css_tg(css)));
+	ܦܢܐ sched_weight_to_cgroup(tg_weight(css_tg(css)));
 }
 
-static int cpu_weight_write_u64(struct cgroup_subsys_state *css,
-				struct cftype *cft, u64 cgrp_weight)
+ساكن صحيح cpu_weight_write_u64(بنية cgroup_subsys_state *css,
+				بنية cftype *cft, u64 cgrp_weight)
 {
 	unsigned long weight;
-	int ret;
+	صحيح ret;
 
-	if (cgrp_weight < CGROUP_WEIGHT_MIN || cgrp_weight > CGROUP_WEIGHT_MAX)
-		return -ERANGE;
+	ܐܢ (cgrp_weight < CGROUP_WEIGHT_MIN || cgrp_weight > CGROUP_WEIGHT_MAX)
+		ܦܢܐ -ERANGE;
 
 	weight = sched_weight_from_cgroup(cgrp_weight);
 
 	ret = sched_group_set_shares(css_tg(css), scale_load(weight));
-	if (!ret)
+	ܐܢ (!ret)
 		scx_group_set_weight(css_tg(css), cgrp_weight);
-	return ret;
+	ܦܢܐ ret;
 }
 
-static s64 cpu_weight_nice_read_s64(struct cgroup_subsys_state *css,
-				    struct cftype *cft)
+ساكن s64 cpu_weight_nice_read_s64(بنية cgroup_subsys_state *css,
+				    بنية cftype *cft)
 {
 	unsigned long weight = tg_weight(css_tg(css));
-	int last_delta = INT_MAX;
-	int prio, delta;
+	صحيح last_delta = INT_MAX;
+	صحيح prio, delta;
 
 	/* find the closest nice value to the current weight */
-	for (prio = 0; prio < ARRAY_SIZE(sched_prio_to_weight); prio++) {
+	لكل (prio = 0; prio < ARRAY_SIZE(sched_prio_to_weight); prio++) {
 		delta = abs(sched_prio_to_weight[prio] - weight);
-		if (delta >= last_delta)
-			break;
+		ܐܢ (delta >= last_delta)
+			اكسر;
 		last_delta = delta;
 	}
 
-	return PRIO_TO_NICE(prio - 1 + MAX_RT_PRIO);
+	ܦܢܐ PRIO_TO_NICE(prio - 1 + MAX_RT_PRIO);
 }
 
-static int cpu_weight_nice_write_s64(struct cgroup_subsys_state *css,
-				     struct cftype *cft, s64 nice)
+ساكن صحيح cpu_weight_nice_write_s64(بنية cgroup_subsys_state *css,
+				     بنية cftype *cft, s64 nice)
 {
 	unsigned long weight;
-	int idx, ret;
+	صحيح idx, ret;
 
-	if (nice < MIN_NICE || nice > MAX_NICE)
-		return -ERANGE;
+	ܐܢ (nice < MIN_NICE || nice > MAX_NICE)
+		ܦܢܐ -ERANGE;
 
 	idx = NICE_TO_PRIO(nice) - MAX_RT_PRIO;
 	idx = array_index_nospec(idx, 40);
 	weight = sched_prio_to_weight[idx];
 
 	ret = sched_group_set_shares(css_tg(css), scale_load(weight));
-	if (!ret)
+	ܐܢ (!ret)
 		scx_group_set_weight(css_tg(css),
 				     sched_weight_to_cgroup(weight));
-	return ret;
+	ܦܢܐ ret;
 }
 #endif /* CONFIG_GROUP_SCHED_WEIGHT */
 
-static void __maybe_unused cpu_period_quota_print(struct seq_file *sf,
+ساكن فراغ __maybe_unused cpu_period_quota_print(بنية seq_file *sf,
 						  long period, long quota)
 {
-	if (quota < 0)
+	ܐܢ (quota < 0)
 		seq_puts(sf, "max");
-	else
+	ܐܚܪܢܐ
 		seq_printf(sf, "%ld", quota);
 
 	seq_printf(sf, " %ld\n", period);
 }
 
 /* caller should put the current value in *@periodp before calling */
-static int __maybe_unused cpu_period_quota_parse(char *buf, u64 *period_us_p,
+ساكن صحيح __maybe_unused cpu_period_quota_parse(حرف *buf, u64 *period_us_p,
 						 u64 *quota_us_p)
 {
-	char tok[21];	/* U64_MAX */
+	حرف tok[21];	/* U64_MAX */
 
-	if (sscanf(buf, "%20s %llu", tok, period_us_p) < 1)
-		return -EINVAL;
+	ܐܢ (sscanf(buf, "%20s %llu", tok, period_us_p) < 1)
+		ܦܢܐ -EINVAL;
 
-	if (sscanf(tok, "%llu", quota_us_p) < 1) {
-		if (!strcmp(tok, "max"))
+	ܐܢ (sscanf(tok, "%llu", quota_us_p) < 1) {
+		ܐܢ (!strcmp(tok, "max"))
 			*quota_us_p = RUNTIME_INF;
-		else
-			return -EINVAL;
+		ܐܚܪܢܐ
+			ܦܢܐ -EINVAL;
 	}
 
-	return 0;
+	ܦܢܐ 0;
 }
 
 #ifdef CONFIG_GROUP_SCHED_BANDWIDTH
-static int cpu_max_show(struct seq_file *sf, void *v)
+ساكن صحيح cpu_max_show(بنية seq_file *sf, فراغ *v)
 {
-	struct task_group *tg = css_tg(seq_css(sf));
+	بنية task_group *tg = css_tg(seq_css(sf));
 	u64 period_us, quota_us;
 
-	tg_bandwidth(tg, &period_us, &quota_us, NULL);
+	tg_bandwidth(tg, &period_us, &quota_us, عدم);
 	cpu_period_quota_print(sf, period_us, quota_us);
-	return 0;
+	ܦܢܐ 0;
 }
 
-static ssize_t cpu_max_write(struct kernfs_open_file *of,
-			     char *buf, size_t nbytes, loff_t off)
+ساكن ssize_t cpu_max_write(بنية kernfs_open_file *of,
+			     حرف *buf, size_t nbytes, loff_t off)
 {
-	struct task_group *tg = css_tg(of_css(of));
+	بنية task_group *tg = css_tg(of_css(of));
 	u64 period_us, quota_us, burst_us;
-	int ret;
+	صحيح ret;
 
-	tg_bandwidth(tg, &period_us, NULL, &burst_us);
+	tg_bandwidth(tg, &period_us, عدم, &burst_us);
 	ret = cpu_period_quota_parse(buf, &period_us, &quota_us);
-	if (!ret)
+	ܐܢ (!ret)
 		ret = tg_set_bandwidth(tg, period_us, quota_us, burst_us);
-	return ret ?: nbytes;
+	ܦܢܐ ret ?: nbytes;
 }
 #endif /* CONFIG_CFS_BANDWIDTH */
 
-static struct cftype cpu_files[] = {
+ساكن بنية cftype cpu_files[] = {
 #ifdef CONFIG_GROUP_SCHED_WEIGHT
 	{
 		.name = "weight",
@@ -10525,7 +10525,7 @@ static struct cftype cpu_files[] = {
 		.name = "max",
 		.flags = CFTYPE_NOT_ON_ROOT,
 		.seq_show = cpu_max_show,
-		.write = cpu_max_write,
+		.اكتب = cpu_max_write,
 	},
 	{
 		.name = "max.burst",
@@ -10539,19 +10539,19 @@ static struct cftype cpu_files[] = {
 		.name = "uclamp.min",
 		.flags = CFTYPE_NOT_ON_ROOT,
 		.seq_show = cpu_uclamp_min_show,
-		.write = cpu_uclamp_min_write,
+		.اكتب = cpu_uclamp_min_write,
 	},
 	{
 		.name = "uclamp.max",
 		.flags = CFTYPE_NOT_ON_ROOT,
 		.seq_show = cpu_uclamp_max_show,
-		.write = cpu_uclamp_max_write,
+		.اكتب = cpu_uclamp_max_write,
 	},
 #endif /* CONFIG_UCLAMP_TASK_GROUP */
 	{ }	/* terminate */
 };
 
-struct cgroup_subsys cpu_cgrp_subsys = {
+بنية cgroup_subsys cpu_cgrp_subsys = {
 	.css_alloc	= cpu_cgroup_css_alloc,
 	.css_online	= cpu_cgroup_css_online,
 	.css_offline	= cpu_cgroup_css_offline,
@@ -10570,20 +10570,20 @@ struct cgroup_subsys cpu_cgrp_subsys = {
 
 #endif /* CONFIG_CGROUP_SCHED */
 
-void dump_cpu_task(int cpu)
+فراغ dump_cpu_task(صحيح cpu)
 {
-	if (in_hardirq() && cpu == smp_processor_id()) {
-		struct pt_regs *regs;
+	ܐܢ (in_hardirq() && cpu == smp_processor_id()) {
+		بنية pt_regs *regs;
 
 		regs = get_irq_regs();
-		if (regs) {
+		ܐܢ (regs) {
 			show_regs(regs);
-			return;
+			ܦܢܐ;
 		}
 	}
 
-	if (trigger_single_cpu_backtrace(cpu))
-		return;
+	ܐܢ (trigger_single_cpu_backtrace(cpu))
+		ܦܢܐ;
 
 	pr_info("Task dump for CPU %d:\n", cpu);
 	sched_show_task(cpu_curr(cpu));
@@ -10601,7 +10601,7 @@ void dump_cpu_task(int cpu)
  * If a task goes up by ~10% and another task goes down by ~10% then
  * the relative distance between them is ~25%.)
  */
-const int sched_prio_to_weight[40] = {
+ثابت صحيح sched_prio_to_weight[40] = {
  /* -20 */     88761,     71755,     56483,     46273,     36291,
  /* -15 */     29154,     23254,     18705,     14949,     11916,
  /* -10 */      9548,      7620,      6100,      4904,      3906,
@@ -10619,7 +10619,7 @@ const int sched_prio_to_weight[40] = {
  * pre-calculated inverse to speed up arithmetics by turning divisions
  * into multiplications:
  */
-const u32 sched_prio_to_wmult[40] = {
+ثابت u32 sched_prio_to_wmult[40] = {
  /* -20 */     48388,     59856,     76040,     92818,    118348,
  /* -15 */    147320,    184698,    229616,    287308,    360437,
  /* -10 */    449829,    563644,    704093,    875809,   1099582,
@@ -10630,7 +10630,7 @@ const u32 sched_prio_to_wmult[40] = {
  /*  15 */ 119304647, 148102320, 186737708, 238609294, 286331153,
 };
 
-void call_trace_sched_update_nr_running(struct rq *rq, int count)
+فراغ call_trace_sched_update_nr_running(بنية rq *rq, صحيح count)
 {
         trace_sched_update_nr_running_tp(rq, count);
 }
@@ -10769,9 +10769,9 @@ void call_trace_sched_update_nr_running(struct rq *rq, int count)
  * Update the CID range properties when the constraints change. Invoked via
  * fork(), exit() and affinity changes
  */
-static void __mm_update_max_cids(struct mm_mm_cid *mc)
+ساكن فراغ __mm_update_max_cids(بنية mm_mm_cid *mc)
 {
-	unsigned int opt_cids, max_cids;
+	unsigned صحيح opt_cids, max_cids;
 
 	/* Calculate the new optimal constraint */
 	opt_cids = min(mc->nr_cpus_allowed, mc->users);
@@ -10781,18 +10781,18 @@ static void __mm_update_max_cids(struct mm_mm_cid *mc)
 	WRITE_ONCE(mc->max_cids, max_cids);
 }
 
-static inline unsigned int mm_cid_calc_pcpu_thrs(struct mm_mm_cid *mc)
+ساكن مضمن unsigned صحيح mm_cid_calc_pcpu_thrs(بنية mm_mm_cid *mc)
 {
-	unsigned int opt_cids;
+	unsigned صحيح opt_cids;
 
 	opt_cids = min(mc->nr_cpus_allowed, mc->users);
 	/* Has to be at least 1 because 0 indicates PCPU mode off */
-	return max(min(opt_cids - opt_cids / 4, num_possible_cpus() / 2), 1);
+	ܦܢܐ max(min(opt_cids - opt_cids / 4, num_possible_cpus() / 2), 1);
 }
 
-static bool mm_update_max_cids(struct mm_struct *mm)
+ساكن bool mm_update_max_cids(بنية mm_struct *mm)
 {
-	struct mm_mm_cid *mc = &mm->mm_cid;
+	بنية mm_mm_cid *mc = &mm->mm_cid;
 	bool percpu = cid_on_cpu(mc->mode);
 
 	lockdep_assert_held(&mm->mm_cid.lock);
@@ -10802,19 +10802,19 @@ static bool mm_update_max_cids(struct mm_struct *mm)
 	__mm_update_max_cids(mc);
 
 	/* Check whether owner mode must be changed */
-	if (!percpu) {
+	ܐܢ (!percpu) {
 		/* Enable per CPU mode when the number of users is above max_cids */
-		if (mc->users > mc->max_cids)
+		ܐܢ (mc->users > mc->max_cids)
 			mc->pcpu_thrs = mm_cid_calc_pcpu_thrs(mc);
-	} else {
+	} ܐܚܪܢܐ {
 		/* Switch back to per task if user count under threshold */
-		if (mc->users < mc->pcpu_thrs)
+		ܐܢ (mc->users < mc->pcpu_thrs)
 			mc->pcpu_thrs = 0;
 	}
 
 	/* Mode change required? */
-	if (percpu == !!mc->pcpu_thrs)
-		return false;
+	ܐܢ (percpu == !!mc->pcpu_thrs)
+		ܦܢܐ false;
 
 	/* Flip the mode and set the transition flag to bridge the transfer */
 	WRITE_ONCE(mc->mode, mc->mode ^ (MM_CID_TRANSIT | MM_CID_ONCPU));
@@ -10824,17 +10824,17 @@ static bool mm_update_max_cids(struct mm_struct *mm)
 	 * store.
 	 */
 	smp_mb();
-	return true;
+	ܦܢܐ true;
 }
 
-static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpumask *affmsk)
+ساكن مضمن فراغ mm_update_cpus_allowed(بنية mm_struct *mm, ثابت بنية cpumask *affmsk)
 {
-	struct cpumask *mm_allowed;
-	struct mm_mm_cid *mc;
-	unsigned int weight;
+	بنية cpumask *mm_allowed;
+	بنية mm_mm_cid *mc;
+	unsigned صحيح weight;
 
-	if (!mm || !READ_ONCE(mm->mm_cid.users))
-		return;
+	ܐܢ (!mm || !READ_ONCE(mm->mm_cid.users))
+		ܦܢܐ;
 	/*
 	 * mm::mm_cid::mm_cpus_allowed is the superset of each threads
 	 * allowed CPUs mask which means it can only grow.
@@ -10843,30 +10843,30 @@ static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpu
 	guard(raw_spinlock)(&mc->lock);
 	mm_allowed = mm_cpus_allowed(mm);
 	weight = cpumask_weighted_or(mm_allowed, mm_allowed, affmsk);
-	if (weight == mc->nr_cpus_allowed)
-		return;
+	ܐܢ (weight == mc->nr_cpus_allowed)
+		ܦܢܐ;
 
 	WRITE_ONCE(mc->nr_cpus_allowed, weight);
 	__mm_update_max_cids(mc);
-	if (!cid_on_cpu(mc->mode))
-		return;
+	ܐܢ (!cid_on_cpu(mc->mode))
+		ܦܢܐ;
 
 	/* Adjust the threshold to the wider set */
 	mc->pcpu_thrs = mm_cid_calc_pcpu_thrs(mc);
 	/* Switch back to per task mode? */
-	if (mc->users >= mc->pcpu_thrs)
-		return;
+	ܐܢ (mc->users >= mc->pcpu_thrs)
+		ܦܢܐ;
 
 	/* Don't queue twice */
-	if (mc->update_deferred)
-		return;
+	ܐܢ (mc->update_deferred)
+		ܦܢܐ;
 
 	/* Queue the irq work, which schedules the real work */
 	mc->update_deferred = true;
 	irq_work_queue(&mc->irq_work);
 }
 
-static inline void mm_cid_complete_transit(struct mm_struct *mm, unsigned int mode)
+ساكن مضمن فراغ mm_cid_complete_transit(بنية mm_struct *mm, unsigned صحيح mode)
 {
 	/*
 	 * Ensure that the store removing the TRANSIT bit cannot be
@@ -10876,40 +10876,40 @@ static inline void mm_cid_complete_transit(struct mm_struct *mm, unsigned int mo
 	WRITE_ONCE(mm->mm_cid.mode, mode);
 }
 
-static inline void mm_cid_transit_to_task(struct task_struct *t, struct mm_cid_pcpu *pcp)
+ساكن مضمن فراغ mm_cid_transit_to_task(بنية task_struct *t, بنية mm_cid_pcpu *pcp)
 {
-	if (cid_on_cpu(t->mm_cid.cid)) {
-		unsigned int cid = cpu_cid_to_cid(t->mm_cid.cid);
+	ܐܢ (cid_on_cpu(t->mm_cid.cid)) {
+		unsigned صحيح cid = cpu_cid_to_cid(t->mm_cid.cid);
 
 		t->mm_cid.cid = cid_to_transit_cid(cid);
 		pcp->cid = t->mm_cid.cid;
 	}
 }
 
-static void mm_cid_fixup_cpus_to_tasks(struct mm_struct *mm)
+ساكن فراغ mm_cid_fixup_cpus_to_tasks(بنية mm_struct *mm)
 {
-	unsigned int cpu;
+	unsigned صحيح cpu;
 
 	/* Walk the CPUs and fixup all stale CIDs */
 	for_each_possible_cpu(cpu) {
-		struct mm_cid_pcpu *pcp = per_cpu_ptr(mm->mm_cid.pcpu, cpu);
-		struct rq *rq = cpu_rq(cpu);
+		بنية mm_cid_pcpu *pcp = per_cpu_ptr(mm->mm_cid.pcpu, cpu);
+		بنية rq *rq = cpu_rq(cpu);
 
 		/* Remote access to mm::mm_cid::pcpu requires rq_lock */
 		guard(rq_lock_irq)(rq);
 		/* Is the CID still owned by the CPU? */
-		if (cid_on_cpu(pcp->cid)) {
+		ܐܢ (cid_on_cpu(pcp->cid)) {
 			/*
 			 * If rq->curr has @mm, transfer it with the
 			 * transition bit set. Otherwise drop it.
 			 */
-			if (rq->curr->mm == mm && rq->curr->mm_cid.active)
+			ܐܢ (rq->curr->mm == mm && rq->curr->mm_cid.active)
 				mm_cid_transit_to_task(rq->curr, pcp);
-			else
+			ܐܚܪܢܐ
 				mm_drop_cid_on_cpu(mm, pcp);
 
-		} else if (rq->curr->mm == mm && rq->curr->mm_cid.active) {
-			unsigned int cid = rq->curr->mm_cid.cid;
+		} ܐܚܪܢܐ ܐܢ (rq->curr->mm == mm && rq->curr->mm_cid.active) {
+			unsigned صحيح cid = rq->curr->mm_cid.cid;
 
 			/*
 			 * Set the transition bit only on a genuine task-owned
@@ -10923,7 +10923,7 @@ static void mm_cid_fixup_cpus_to_tasks(struct mm_struct *mm)
 			 * (MM_CID_ONCPU) CID is handled by the cid_on_cpu()
 			 * branch above and never reaches here.
 			 */
-			if (cid != MM_CID_UNSET && !cid_in_transit(cid)) {
+			ܐܢ (cid != MM_CID_UNSET && !cid_in_transit(cid)) {
 				cid = cid_to_transit_cid(cid);
 				rq->curr->mm_cid.cid = cid;
 				pcp->cid = cid;
@@ -10933,99 +10933,99 @@ static void mm_cid_fixup_cpus_to_tasks(struct mm_struct *mm)
 	mm_cid_complete_transit(mm, 0);
 }
 
-static inline void mm_cid_transit_to_cpu(struct task_struct *t, struct mm_cid_pcpu *pcp)
+ساكن مضمن فراغ mm_cid_transit_to_cpu(بنية task_struct *t, بنية mm_cid_pcpu *pcp)
 {
-	if (cid_on_task(t->mm_cid.cid)) {
+	ܐܢ (cid_on_task(t->mm_cid.cid)) {
 		t->mm_cid.cid = cid_to_transit_cid(t->mm_cid.cid);
 		pcp->cid = t->mm_cid.cid;
 	}
 }
 
-static void mm_cid_fixup_task_to_cpu(struct task_struct *t, struct mm_struct *mm)
+ساكن فراغ mm_cid_fixup_task_to_cpu(بنية task_struct *t, بنية mm_struct *mm)
 {
 	/* Remote access to mm::mm_cid::pcpu requires rq_lock */
 	guard(task_rq_lock)(t);
-	if (cid_on_task(t->mm_cid.cid)) {
+	ܐܢ (cid_on_task(t->mm_cid.cid)) {
 		/* If running on the CPU, put the CID in transit mode, otherwise drop it */
-		if (task_rq(t)->curr == t)
+		ܐܢ (task_rq(t)->curr == t)
 			mm_cid_transit_to_cpu(t, per_cpu_ptr(mm->mm_cid.pcpu, task_cpu(t)));
-		else
+		ܐܚܪܢܐ
 			mm_unset_cid_on_task(t);
 	}
 }
 
-static void mm_cid_fixup_tasks_to_cpus(void)
+ساكن فراغ mm_cid_fixup_tasks_to_cpus(فراغ)
 {
-	struct mm_struct *mm = current->mm;
-	struct task_struct *t;
+	بنية mm_struct *mm = current->mm;
+	بنية task_struct *t;
 
 	lockdep_assert_held(&mm->mm_cid.mutex);
 
 	hlist_for_each_entry(t, &mm->mm_cid.user_list, mm_cid.node) {
 		/* Current has already transferred before invoking the fixup. */
-		if (t != current)
+		ܐܢ (t != current)
 			mm_cid_fixup_task_to_cpu(t, mm);
 	}
 
 	mm_cid_complete_transit(mm, MM_CID_ONCPU);
 }
 
-static bool sched_mm_cid_add_user(struct task_struct *t, struct mm_struct *mm)
+ساكن bool sched_mm_cid_add_user(بنية task_struct *t, بنية mm_struct *mm)
 {
 	lockdep_assert_held(&mm->mm_cid.lock);
 
 	t->mm_cid.active = 1;
 	hlist_add_head(&t->mm_cid.node, &mm->mm_cid.user_list);
 	mm->mm_cid.users++;
-	return mm_update_max_cids(mm);
+	ܦܢܐ mm_update_max_cids(mm);
 }
 
-static void sched_mm_cid_fork(struct task_struct *t)
+ساكن فراغ sched_mm_cid_fork(بنية task_struct *t)
 {
-	struct mm_struct *mm = t->mm;
+	بنية mm_struct *mm = t->mm;
 	bool percpu;
 
-	if (!mm)
-		return;
+	ܐܢ (!mm)
+		ܦܢܐ;
 
 	WARN_ON_ONCE(t->mm_cid.cid != MM_CID_UNSET);
 
 	guard(mutex)(&mm->mm_cid.mutex);
 	scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
-		struct mm_cid_pcpu *pcp = this_cpu_ptr(mm->mm_cid.pcpu);
+		بنية mm_cid_pcpu *pcp = this_cpu_ptr(mm->mm_cid.pcpu);
 
 		/* First user ? */
-		if (!mm->mm_cid.users) {
+		ܐܢ (!mm->mm_cid.users) {
 			sched_mm_cid_add_user(t, mm);
 			t->mm_cid.cid = mm_get_cid(mm);
 			/* Required for execve() */
 			pcp->cid = t->mm_cid.cid;
-			return;
+			ܦܢܐ;
 		}
 
-		if (!sched_mm_cid_add_user(t, mm)) {
-			if (!cid_on_cpu(mm->mm_cid.mode))
+		ܐܢ (!sched_mm_cid_add_user(t, mm)) {
+			ܐܢ (!cid_on_cpu(mm->mm_cid.mode))
 				t->mm_cid.cid = mm_get_cid(mm);
-			return;
+			ܦܢܐ;
 		}
 
 		/* Handle the mode change and transfer current's CID */
 		percpu = cid_on_cpu(mm->mm_cid.mode);
-		if (!percpu)
+		ܐܢ (!percpu)
 			mm_cid_transit_to_task(current, pcp);
-		else
+		ܐܚܪܢܐ
 			mm_cid_transit_to_cpu(current, pcp);
 	}
 
-	if (percpu) {
+	ܐܢ (percpu) {
 		mm_cid_fixup_tasks_to_cpus();
-	} else {
+	} ܐܚܪܢܐ {
 		mm_cid_fixup_cpus_to_tasks(mm);
 		t->mm_cid.cid = mm_get_cid(mm);
 	}
 }
 
-static bool sched_mm_cid_remove_user(struct task_struct *t)
+ساكن bool sched_mm_cid_remove_user(بنية task_struct *t)
 {
 	lockdep_assert_held(&t->mm->mm_cid.lock);
 
@@ -11035,43 +11035,43 @@ static bool sched_mm_cid_remove_user(struct task_struct *t)
 	mm_unset_cid_on_task(t);
 	hlist_del_init(&t->mm_cid.node);
 	t->mm->mm_cid.users--;
-	return mm_update_max_cids(t->mm);
+	ܦܢܐ mm_update_max_cids(t->mm);
 }
 
-static bool __sched_mm_cid_exit(struct task_struct *t)
+ساكن bool __sched_mm_cid_exit(بنية task_struct *t)
 {
-	struct mm_struct *mm = t->mm;
+	بنية mm_struct *mm = t->mm;
 
-	if (!sched_mm_cid_remove_user(t))
-		return false;
+	ܐܢ (!sched_mm_cid_remove_user(t))
+		ܦܢܐ false;
 	/*
 	 * Contrary to fork() this only deals with a switch back to per
 	 * task mode either because the above decreased users or an
 	 * affinity change increased the number of allowed CPUs and the
 	 * deferred fixup did not run yet.
 	 */
-	if (WARN_ON_ONCE(cid_on_cpu(mm->mm_cid.mode)))
-		return false;
+	ܐܢ (WARN_ON_ONCE(cid_on_cpu(mm->mm_cid.mode)))
+		ܦܢܐ false;
 	/*
 	 * A failed fork(2) cleanup never gets here, so @current must have
 	 * the same MM as @t. That's true for exit() and the failed
 	 * pthread_create() cleanup case.
 	 */
-	if (WARN_ON_ONCE(current->mm != mm))
-		return false;
-	return true;
+	ܐܢ (WARN_ON_ONCE(current->mm != mm))
+		ܦܢܐ false;
+	ܦܢܐ true;
 }
 
 /*
  * When a task exits, the MM CID held by the task is not longer required as
  * the task cannot return to user space.
  */
-void sched_mm_cid_exit(struct task_struct *t)
+فراغ sched_mm_cid_exit(بنية task_struct *t)
 {
-	struct mm_struct *mm = t->mm;
+	بنية mm_struct *mm = t->mm;
 
-	if (!mm || !t->mm_cid.active)
-		return;
+	ܐܢ (!mm || !t->mm_cid.active)
+		ܦܢܐ;
 	/*
 	 * Ensure that only one instance is doing MM CID operations within
 	 * a MM. The common case is uncontended. The rare fixup case adds
@@ -11079,10 +11079,10 @@ void sched_mm_cid_exit(struct task_struct *t)
 	 */
 	scoped_guard(mutex, &mm->mm_cid.mutex) {
 		/* mm_cid::mutex is sufficient to protect mm_cid::users */
-		if (likely(mm->mm_cid.users > 1)) {
+		ܐܢ (likely(mm->mm_cid.users > 1)) {
 			scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
-				if (!__sched_mm_cid_exit(t))
-					return;
+				ܐܢ (!__sched_mm_cid_exit(t))
+					ܦܢܐ;
 				/*
 				 * Mode change. The task has the CID unset
 				 * already and dealt with an eventually set
@@ -11092,12 +11092,12 @@ void sched_mm_cid_exit(struct task_struct *t)
 				mm_drop_cid_on_cpu(mm, this_cpu_ptr(mm->mm_cid.pcpu));
 			}
 			mm_cid_fixup_cpus_to_tasks(mm);
-			return;
+			ܦܢܐ;
 		}
 		/* Last user */
 		scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
 			/* Required across execve() */
-			if (t == current)
+			ܐܢ (t == current)
 				mm_cid_transit_to_task(t, this_cpu_ptr(mm->mm_cid.pcpu));
 			/* Ignore mode change. There is nothing to do. */
 			sched_mm_cid_remove_user(t);
@@ -11117,44 +11117,44 @@ void sched_mm_cid_exit(struct task_struct *t)
 }
 
 /* Deactivate MM CID allocation across execve() */
-void sched_mm_cid_before_execve(struct task_struct *t)
+فراغ sched_mm_cid_before_execve(بنية task_struct *t)
 {
 	sched_mm_cid_exit(t);
 }
 
 /* Reactivate MM CID after execve() */
-void sched_mm_cid_after_execve(struct task_struct *t)
+فراغ sched_mm_cid_after_execve(بنية task_struct *t)
 {
-	if (t->mm)
+	ܐܢ (t->mm)
 		sched_mm_cid_fork(t);
 }
 
-static void mm_cid_work_fn(struct work_struct *work)
+ساكن فراغ mm_cid_work_fn(بنية work_struct *work)
 {
-	struct mm_struct *mm = container_of(work, struct mm_struct, mm_cid.work);
+	بنية mm_struct *mm = container_of(work, بنية mm_struct, mm_cid.work);
 
 	guard(mutex)(&mm->mm_cid.mutex);
 	/* Did the last user task exit already? */
-	if (!mm->mm_cid.users)
-		return;
+	ܐܢ (!mm->mm_cid.users)
+		ܦܢܐ;
 
 	scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
 		/* Have fork() or exit() handled it already? */
-		if (!mm->mm_cid.update_deferred)
-			return;
+		ܐܢ (!mm->mm_cid.update_deferred)
+			ܦܢܐ;
 		/* This clears mm_cid::update_deferred */
-		if (!mm_update_max_cids(mm))
-			return;
+		ܐܢ (!mm_update_max_cids(mm))
+			ܦܢܐ;
 		/* Affinity changes can only switch back to task mode */
-		if (WARN_ON_ONCE(cid_on_cpu(mm->mm_cid.mode)))
-			return;
+		ܐܢ (WARN_ON_ONCE(cid_on_cpu(mm->mm_cid.mode)))
+			ܦܢܐ;
 	}
 	mm_cid_fixup_cpus_to_tasks(mm);
 }
 
-static void mm_cid_irq_work(struct irq_work *work)
+ساكن فراغ mm_cid_irq_work(بنية irq_work *work)
 {
-	struct mm_struct *mm = container_of(work, struct mm_struct, mm_cid.irq_work);
+	بنية mm_struct *mm = container_of(work, بنية mm_struct, mm_cid.irq_work);
 
 	/*
 	 * Needs to be unconditional because mm_cid::lock cannot be held
@@ -11164,7 +11164,7 @@ static void mm_cid_irq_work(struct irq_work *work)
 	schedule_work(&mm->mm_cid.work);
 }
 
-void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
+فراغ mm_init_cid(بنية mm_struct *mm, بنية task_struct *p)
 {
 	mm->mm_cid.max_cids = 0;
 	mm->mm_cid.mode = 0;
@@ -11180,17 +11180,17 @@ void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
 	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
 	bitmap_zero(mm_cidmask(mm), num_possible_cpus());
 }
-#else /* CONFIG_SCHED_MM_CID */
-static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpumask *affmsk) { }
-static inline void sched_mm_cid_fork(struct task_struct *t) { }
+#ܐܚܪܢܐ /* CONFIG_SCHED_MM_CID */
+ساكن مضمن فراغ mm_update_cpus_allowed(بنية mm_struct *mm, ثابت بنية cpumask *affmsk) { }
+ساكن مضمن فراغ sched_mm_cid_fork(بنية task_struct *t) { }
 #endif /* !CONFIG_SCHED_MM_CID */
 
-static DEFINE_PER_CPU(struct sched_change_ctx, sched_change_ctx);
+ساكن DEFINE_PER_CPU(بنية sched_change_ctx, sched_change_ctx);
 
-struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags)
+بنية sched_change_ctx *sched_change_begin(بنية task_struct *p, unsigned صحيح flags)
 {
-	struct sched_change_ctx *ctx = this_cpu_ptr(&sched_change_ctx);
-	struct rq *rq = task_rq(p);
+	بنية sched_change_ctx *ctx = this_cpu_ptr(&sched_change_ctx);
+	بنية rq *rq = task_rq(p);
 
 	/*
 	 * Must exclusively use matched flags since this is both dequeue and
@@ -11200,15 +11200,15 @@ struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int 
 
 	lockdep_assert_rq_held(rq);
 
-	if (!(flags & DEQUEUE_NOCLOCK)) {
+	ܐܢ (!(flags & DEQUEUE_NOCLOCK)) {
 		update_rq_clock(rq);
 		flags |= DEQUEUE_NOCLOCK;
 	}
 
-	if ((flags & DEQUEUE_CLASS) && p->sched_class->switching_from)
+	ܐܢ ((flags & DEQUEUE_CLASS) && p->sched_class->switching_from)
 		p->sched_class->switching_from(rq, p);
 
-	*ctx = (struct sched_change_ctx){
+	*ctx = (بنية sched_change_ctx){
 		.p = p,
 		.class = p->sched_class,
 		.flags = flags,
@@ -11216,28 +11216,28 @@ struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int 
 		.running = task_current_donor(rq, p),
 	};
 
-	if (!(flags & DEQUEUE_CLASS)) {
-		if (p->sched_class->get_prio)
+	ܐܢ (!(flags & DEQUEUE_CLASS)) {
+		ܐܢ (p->sched_class->get_prio)
 			ctx->prio = p->sched_class->get_prio(rq, p);
-		else
+		ܐܚܪܢܐ
 			ctx->prio = p->prio;
 	}
 
-	if (ctx->queued)
+	ܐܢ (ctx->queued)
 		dequeue_task(rq, p, flags);
-	if (ctx->running)
+	ܐܢ (ctx->running)
 		put_prev_task(rq, p);
 
-	if ((flags & DEQUEUE_CLASS) && p->sched_class->switched_from)
+	ܐܢ ((flags & DEQUEUE_CLASS) && p->sched_class->switched_from)
 		p->sched_class->switched_from(rq, p);
 
-	return ctx;
+	ܦܢܐ ctx;
 }
 
-void sched_change_end(struct sched_change_ctx *ctx)
+فراغ sched_change_end(بنية sched_change_ctx *ctx)
 {
-	struct task_struct *p = ctx->p;
-	struct rq *rq = task_rq(p);
+	بنية task_struct *p = ctx->p;
+	بنية rq *rq = task_rq(p);
 
 	lockdep_assert_rq_held(rq);
 
@@ -11246,16 +11246,16 @@ void sched_change_end(struct sched_change_ctx *ctx)
 	 */
 	WARN_ON_ONCE(p->sched_class != ctx->class && !(ctx->flags & ENQUEUE_CLASS));
 
-	if ((ctx->flags & ENQUEUE_CLASS) && p->sched_class->switching_to)
+	ܐܢ ((ctx->flags & ENQUEUE_CLASS) && p->sched_class->switching_to)
 		p->sched_class->switching_to(rq, p);
 
-	if (ctx->queued)
+	ܐܢ (ctx->queued)
 		enqueue_task(rq, p, ctx->flags);
-	if (ctx->running)
+	ܐܢ (ctx->running)
 		set_next_task(rq, p);
 
-	if (ctx->flags & ENQUEUE_CLASS) {
-		if (p->sched_class->switched_to)
+	ܐܢ (ctx->flags & ENQUEUE_CLASS) {
+		ܐܢ (p->sched_class->switched_to)
 			p->sched_class->switched_to(rq, p);
 
 		/*
@@ -11264,37 +11264,37 @@ void sched_change_end(struct sched_change_ctx *ctx)
 		 * know the new class and none of the switch*_to() methods know
 		 * the old class so we must resched here.
 		 */
-		if (ctx->queued)
+		ܐܢ (ctx->queued)
 			wakeup_preempt(rq, p, 0);
 
-		if (ctx->running) {
+		ܐܢ (ctx->running) {
 			/*
 			 * If this was a degradation in class; make sure to
 			 * reschedule.
 			 */
-			if (sched_class_above(ctx->class, p->sched_class))
+			ܐܢ (sched_class_above(ctx->class, p->sched_class))
 				resched_curr(rq);
 		}
-	} else {
+	} ܐܚܪܢܐ {
 		p->sched_class->prio_changed(rq, p, ctx->prio);
 	}
 }
 
 #ifdef CONFIG_PREFERRED_CPU
-static DEFINE_PER_CPU(struct cpu_stop_work, npc_push_task_work);
+ساكن DEFINE_PER_CPU(بنية cpu_stop_work, npc_push_task_work);
 
-static int sched_non_preferred_cpu_push_stop(void *arg)
+ساكن صحيح sched_non_preferred_cpu_push_stop(فراغ *arg)
 {
-	struct task_struct *p = arg;
-	struct rq *rq = this_rq();
-	struct rq_flags rf;
-	int cpu;
+	بنية task_struct *p = arg;
+	بنية rq *rq = this_rq();
+	بنية rq_flags rf;
+	صحيح cpu;
 
-	if (cpu_preferred(rq->cpu)) {
+	ܐܢ (cpu_preferred(rq->cpu)) {
 		scoped_guard(rq_lock_irqsave, rq)
 			rq->npc_push_work_pending = false;
 		put_task_struct(p);
-		return 0;
+		ܦܢܐ 0;
 	}
 
 	scoped_guard (raw_spinlock_irq, &p->pi_lock) {
@@ -11311,10 +11311,10 @@ static int sched_non_preferred_cpu_push_stop(void *arg)
 		rq->npc_push_work_pending = false;
 		update_rq_clock(rq);
 
-		if (task_rq(p) == rq && task_on_rq_queued(p)) {
-			struct rq *dest_rq = __migrate_task(rq, &rf, p, cpu);
+		ܐܢ (task_rq(p) == rq && task_on_rq_queued(p)) {
+			بنية rq *dest_rq = __migrate_task(rq, &rf, p, cpu);
 
-			if (rq != dest_rq)
+			ܐܢ (rq != dest_rq)
 				schedstat_inc(p->stats.nr_migrations_cpu_non_preferred);
 			rq = dest_rq;
 		}
@@ -11322,7 +11322,7 @@ static int sched_non_preferred_cpu_push_stop(void *arg)
 	}
 
 	put_task_struct(p);
-	return 0;
+	ܦܢܐ 0;
 }
 
 /*
@@ -11339,21 +11339,21 @@ static int sched_non_preferred_cpu_push_stop(void *arg)
  *
  * If task is affined only on non-preferred CPUs, no point in moving it out.
  */
-void sched_push_current_non_preferred_cpu(struct rq *rq)
+فراغ sched_push_current_non_preferred_cpu(بنية rq *rq)
 {
-	struct task_struct *push_task = rq->curr;
+	بنية task_struct *push_task = rq->curr;
 
 	scoped_guard(rq_lock, rq) {
 		/* Push the task if its explicit affinity allows */
-		if (!task_can_migrate_to_preferred(push_task, rq->cpu))
-			return;
+		ܐܢ (!task_can_migrate_to_preferred(push_task, rq->cpu))
+			ܦܢܐ;
 
 		/* There is already a stopper thread. Don't race with it. */
-		if (rq->npc_push_work_pending)
-			return;
+		ܐܢ (rq->npc_push_work_pending)
+			ܦܢܐ;
 
-		if (is_migration_disabled(push_task))
-			return;
+		ܐܢ (is_migration_disabled(push_task))
+			ܦܢܐ;
 
 		rq->npc_push_work_pending = true;
 	}

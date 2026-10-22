@@ -7,12 +7,12 @@
  * Copyright (C) 2017-2018 SUSE, Frederic Weisbecker
  *
  */
-#include <linux/sched/isolation.h>
-#include <linux/llist.h>
-#include <linux/pci.h>
-#include "sched.h"
+#ضمن <linux/sched/isolation.h>
+#ضمن <linux/llist.h>
+#ضمن <linux/pci.h>
+#ضمن "sched.h"
 
-enum hk_flags {
+تعداد hk_flags {
 	HK_FLAG_DOMAIN_BOOT	= BIT(HK_TYPE_DOMAIN_BOOT),
 	HK_FLAG_DOMAIN		= BIT(HK_TYPE_DOMAIN),
 	HK_FLAG_MANAGED_IRQ	= BIT(HK_TYPE_MANAGED_IRQ),
@@ -22,74 +22,74 @@ enum hk_flags {
 DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
 EXPORT_SYMBOL_GPL(housekeeping_overridden);
 
-struct housekeeping {
-	struct cpumask __rcu *cpumasks[HK_TYPE_MAX];
+بنية housekeeping {
+	بنية cpumask __rcu *cpumasks[HK_TYPE_MAX];
 	unsigned long flags;
 };
 
-static struct housekeeping housekeeping;
-static __initdata LLIST_HEAD(memblock_freelist);
+ساكن بنية housekeeping housekeeping;
+ساكن __initdata LLIST_HEAD(memblock_freelist);
 
-bool housekeeping_enabled(enum hk_type type)
+bool housekeeping_enabled(تعداد hk_type type)
 {
-	return !!(READ_ONCE(housekeeping.flags) & BIT(type));
+	ܦܢܐ !!(READ_ONCE(housekeeping.flags) & BIT(type));
 }
 EXPORT_SYMBOL_GPL(housekeeping_enabled);
 
-static bool housekeeping_dereference_check(enum hk_type type)
+ساكن bool housekeeping_dereference_check(تعداد hk_type type)
 {
-	if (IS_ENABLED(CONFIG_LOCKDEP) && type == HK_TYPE_DOMAIN) {
+	ܐܢ (IS_ENABLED(CONFIG_LOCKDEP) && type == HK_TYPE_DOMAIN) {
 		/* Cpuset isn't even writable yet? */
-		if (system_state <= SYSTEM_SCHEDULING)
-			return true;
+		ܐܢ (system_state <= SYSTEM_SCHEDULING)
+			ܦܢܐ true;
 
 		/* CPU hotplug write locked, so cpuset partition can't be overwritten */
-		if (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_write_held())
-			return true;
+		ܐܢ (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_write_held())
+			ܦܢܐ true;
 
 		/* Cpuset lock held, partitions not writable */
-		if (IS_ENABLED(CONFIG_CPUSETS) && lockdep_is_cpuset_held())
-			return true;
+		ܐܢ (IS_ENABLED(CONFIG_CPUSETS) && lockdep_is_cpuset_held())
+			ܦܢܐ true;
 
-		return false;
+		ܦܢܐ false;
 	}
 
-	return true;
+	ܦܢܐ true;
 }
 
-static inline struct cpumask *housekeeping_cpumask_dereference(enum hk_type type)
+ساكن مضمن بنية cpumask *housekeeping_cpumask_dereference(تعداد hk_type type)
 {
-	return rcu_dereference_all_check(housekeeping.cpumasks[type],
+	ܦܢܐ rcu_dereference_all_check(housekeeping.cpumasks[type],
 					 housekeeping_dereference_check(type));
 }
 
-const struct cpumask *housekeeping_cpumask(enum hk_type type)
+ثابت بنية cpumask *housekeeping_cpumask(تعداد hk_type type)
 {
-	const struct cpumask *mask = NULL;
+	ثابت بنية cpumask *mask = عدم;
 
-	if (static_branch_unlikely(&housekeeping_overridden)) {
-		if (READ_ONCE(housekeeping.flags) & BIT(type))
+	ܐܢ (static_branch_unlikely(&housekeeping_overridden)) {
+		ܐܢ (READ_ONCE(housekeeping.flags) & BIT(type))
 			mask = housekeeping_cpumask_dereference(type);
 	}
-	if (!mask)
+	ܐܢ (!mask)
 		mask = cpu_possible_mask;
-	return mask;
+	ܦܢܐ mask;
 }
 EXPORT_SYMBOL_GPL(housekeeping_cpumask);
 
-int housekeeping_any_cpu(enum hk_type type)
+صحيح housekeeping_any_cpu(تعداد hk_type type)
 {
-	int cpu;
+	صحيح cpu;
 
-	if (static_branch_unlikely(&housekeeping_overridden)) {
-		if (housekeeping.flags & BIT(type)) {
+	ܐܢ (static_branch_unlikely(&housekeeping_overridden)) {
+		ܐܢ (housekeeping.flags & BIT(type)) {
 			cpu = sched_numa_find_closest(housekeeping_cpumask(type), smp_processor_id());
-			if (cpu < nr_cpu_ids)
-				return cpu;
+			ܐܢ (cpu < nr_cpu_ids)
+				ܦܢܐ cpu;
 
 			cpu = cpumask_any_and_distribute(housekeeping_cpumask(type), cpu_online_mask);
-			if (likely(cpu < nr_cpu_ids))
-				return cpu;
+			ܐܢ (likely(cpu < nr_cpu_ids))
+				ܦܢܐ cpu;
 			/*
 			 * Unless we have another problem this can only happen
 			 * at boot time before start_secondary() brings the 1st
@@ -99,48 +99,48 @@ int housekeeping_any_cpu(enum hk_type type)
 				     type != HK_TYPE_TIMER);
 		}
 	}
-	return smp_processor_id();
+	ܦܢܐ smp_processor_id();
 }
 EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
 
-void housekeeping_affine(struct task_struct *t, enum hk_type type)
+فراغ housekeeping_affine(بنية task_struct *t, تعداد hk_type type)
 {
-	if (static_branch_unlikely(&housekeeping_overridden))
-		if (housekeeping.flags & BIT(type))
+	ܐܢ (static_branch_unlikely(&housekeeping_overridden))
+		ܐܢ (housekeeping.flags & BIT(type))
 			set_cpus_allowed_ptr(t, housekeeping_cpumask(type));
 }
 EXPORT_SYMBOL_GPL(housekeeping_affine);
 
-bool housekeeping_test_cpu(int cpu, enum hk_type type)
+bool housekeeping_test_cpu(صحيح cpu, تعداد hk_type type)
 {
-	if (static_branch_unlikely(&housekeeping_overridden) &&
+	ܐܢ (static_branch_unlikely(&housekeeping_overridden) &&
 	    READ_ONCE(housekeeping.flags) & BIT(type))
-		return cpumask_test_cpu(cpu, housekeeping_cpumask(type));
-	return true;
+		ܦܢܐ cpumask_test_cpu(cpu, housekeeping_cpumask(type));
+	ܦܢܐ true;
 }
 EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
 
-int housekeeping_update(struct cpumask *isol_mask)
+صحيح housekeeping_update(بنية cpumask *isol_mask)
 {
-	struct cpumask *trial, *old = NULL;
-	int err;
+	بنية cpumask *trial, *old = عدم;
+	صحيح err;
 
 	trial = kmalloc(cpumask_size(), GFP_KERNEL);
-	if (!trial)
-		return -ENOMEM;
+	ܐܢ (!trial)
+		ܦܢܐ -ENOMEM;
 
 	cpumask_andnot(trial, housekeeping_cpumask(HK_TYPE_DOMAIN_BOOT), isol_mask);
-	if (!cpumask_intersects(trial, cpu_online_mask)) {
+	ܐܢ (!cpumask_intersects(trial, cpu_online_mask)) {
 		kfree(trial);
-		return -EINVAL;
+		ܦܢܐ -EINVAL;
 	}
 
-	if (!housekeeping.flags)
+	ܐܢ (!housekeeping.flags)
 		static_branch_enable(&housekeeping_overridden);
 
-	if (housekeeping.flags & HK_FLAG_DOMAIN)
+	ܐܢ (housekeeping.flags & HK_FLAG_DOMAIN)
 		old = housekeeping_cpumask_dereference(HK_TYPE_DOMAIN);
-	else
+	ܐܚܪܢܐ
 		WRITE_ONCE(housekeeping.flags, housekeeping.flags | HK_FLAG_DOMAIN);
 	rcu_assign_pointer(housekeeping.cpumasks[HK_TYPE_DOMAIN], trial);
 
@@ -161,29 +161,29 @@ int housekeeping_update(struct cpumask *isol_mask)
 
 	kfree(old);
 
-	return 0;
+	ܦܢܐ 0;
 }
 
-void __init housekeeping_init(void)
+فراغ __init housekeeping_init(فراغ)
 {
-	enum hk_type type;
+	تعداد hk_type type;
 
-	if (!housekeeping.flags)
-		return;
+	ܐܢ (!housekeeping.flags)
+		ܦܢܐ;
 
 	static_branch_enable(&housekeeping_overridden);
 
-	if (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
+	ܐܢ (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
 		sched_tick_offload_init();
 	/*
 	 * Realloc with a proper allocator so that any cpumask update
 	 * can indifferently free the old version with kfree().
 	 */
 	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
-		struct cpumask *omask, *nmask = kmalloc(cpumask_size(), GFP_KERNEL);
+		بنية cpumask *omask, *nmask = kmalloc(cpumask_size(), GFP_KERNEL);
 
-		if (WARN_ON_ONCE(!nmask))
-			return;
+		ܐܢ (WARN_ON_ONCE(!nmask))
+			ܦܢܐ;
 
 		omask = rcu_dereference(housekeeping.cpumasks[type]);
 
@@ -191,49 +191,49 @@ void __init housekeeping_init(void)
 		WARN_ON_ONCE(cpumask_empty(omask));
 		cpumask_copy(nmask, omask);
 		RCU_INIT_POINTER(housekeeping.cpumasks[type], nmask);
-		__llist_add((struct llist_node *)omask, &memblock_freelist);
+		__llist_add((بنية llist_node *)omask, &memblock_freelist);
 	}
 }
 
-static int __init housekeeping_late_init(void)
+ساكن صحيح __init housekeeping_late_init(فراغ)
 {
-	struct llist_node *llnode, *pos, *t;
+	بنية llist_node *llnode, *pos, *t;
 
 	/* Free allocated memblock memory, if any */
 	llnode = __llist_del_all(&memblock_freelist);
 	llist_for_each_safe(pos, t, llnode)
 		memblock_free(pos, cpumask_size());
-	return 0;
+	ܦܢܐ 0;
 }
 pure_initcall(housekeeping_late_init);
 
-static void __init housekeeping_setup_type(enum hk_type type,
+ساكن فراغ __init housekeeping_setup_type(تعداد hk_type type,
 					   cpumask_var_t housekeeping_staging)
 {
-	struct cpumask *mask = memblock_alloc_or_panic(cpumask_size(), SMP_CACHE_BYTES);
+	بنية cpumask *mask = memblock_alloc_or_panic(cpumask_size(), SMP_CACHE_BYTES);
 
 	cpumask_copy(mask, housekeeping_staging);
 	RCU_INIT_POINTER(housekeeping.cpumasks[type], mask);
 }
 
-static int __init housekeeping_setup(char *str, unsigned long flags)
+ساكن صحيح __init housekeeping_setup(حرف *str, unsigned long flags)
 {
 	cpumask_var_t non_housekeeping_mask, housekeeping_staging;
-	unsigned int first_cpu;
-	int err = 0;
+	unsigned صحيح first_cpu;
+	صحيح err = 0;
 
-	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE)) {
-		if (!IS_ENABLED(CONFIG_NO_HZ_FULL)) {
+	ܐܢ ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE)) {
+		ܐܢ (!IS_ENABLED(CONFIG_NO_HZ_FULL)) {
 			pr_warn("Housekeeping: nohz unsupported."
 				" Build with CONFIG_NO_HZ_FULL\n");
-			return 0;
+			ܦܢܐ 0;
 		}
 	}
 
 	alloc_bootmem_cpumask_var(&non_housekeeping_mask);
-	if (cpulist_parse(str, non_housekeeping_mask) < 0) {
+	ܐܢ (cpulist_parse(str, non_housekeeping_mask) < 0) {
 		pr_warn("Housekeeping: nohz_full= or isolcpus= incorrect CPU range\n");
-		goto free_non_housekeeping_mask;
+		اذهب free_non_housekeeping_mask;
 	}
 
 	alloc_bootmem_cpumask_var(&housekeeping_staging);
@@ -241,34 +241,34 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
 		       cpu_possible_mask, non_housekeeping_mask);
 
 	first_cpu = cpumask_first_and(cpu_present_mask, housekeeping_staging);
-	if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
+	ܐܢ (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
 		__cpumask_set_cpu(smp_processor_id(), housekeeping_staging);
 		__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
-		if (!housekeeping.flags) {
+		ܐܢ (!housekeeping.flags) {
 			pr_warn("Housekeeping: must include one present CPU, "
 				"using boot CPU:%d\n", smp_processor_id());
 		}
 	}
 
-	if (cpumask_empty(non_housekeeping_mask))
-		goto free_housekeeping_staging;
+	ܐܢ (cpumask_empty(non_housekeeping_mask))
+		اذهب free_housekeeping_staging;
 
-	if (!housekeeping.flags) {
+	ܐܢ (!housekeeping.flags) {
 		/* First setup call ("nohz_full=" or "isolcpus=") */
-		enum hk_type type;
+		تعداد hk_type type;
 
 		for_each_set_bit(type, &flags, HK_TYPE_MAX)
 			housekeeping_setup_type(type, housekeeping_staging);
-	} else {
+	} ܐܚܪܢܐ {
 		/* Second setup call ("nohz_full=" after "isolcpus=" or the reverse) */
-		enum hk_type type;
+		تعداد hk_type type;
 		unsigned long iter_flags = flags & housekeeping.flags;
 
 		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX) {
-			if (!cpumask_equal(housekeeping_staging,
+			ܐܢ (!cpumask_equal(housekeeping_staging,
 					   housekeeping_cpumask(type))) {
 				pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
-				goto free_housekeeping_staging;
+				اذهب free_housekeeping_staging;
 			}
 		}
 
@@ -288,11 +288,11 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
 		first_cpu = (type == HK_TYPE_MAX || !iter_flags) ? 0 :
 			    cpumask_first_and_and(cpu_present_mask,
 						  housekeeping_staging, housekeeping_cpumask(type));
-		if (first_cpu >= min(nr_cpu_ids, setup_max_cpus)) {
+		ܐܢ (first_cpu >= min(nr_cpu_ids, setup_max_cpus)) {
 			pr_warn("Housekeeping: must include one present CPU "
 				"neither in nohz_full= nor in isolcpus=domain, "
 				"ignoring setting %s\n", str);
-			goto free_housekeeping_staging;
+			اذهب free_housekeeping_staging;
 		}
 
 		iter_flags = flags & ~housekeeping.flags;
@@ -301,7 +301,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
 			housekeeping_setup_type(type, housekeeping_staging);
 	}
 
-	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE))
+	ܐܢ ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE))
 		tick_nohz_full_setup(non_housekeeping_mask);
 
 	housekeeping.flags |= flags;
@@ -312,60 +312,60 @@ free_housekeeping_staging:
 free_non_housekeeping_mask:
 	free_bootmem_cpumask_var(non_housekeeping_mask);
 
-	return err;
+	ܦܢܐ err;
 }
 
-static int __init housekeeping_nohz_full_setup(char *str)
+ساكن صحيح __init housekeeping_nohz_full_setup(حرف *str)
 {
 	unsigned long flags;
 
 	flags = HK_FLAG_KERNEL_NOISE;
 
-	return housekeeping_setup(str, flags);
+	ܦܢܐ housekeeping_setup(str, flags);
 }
 __setup("nohz_full=", housekeeping_nohz_full_setup);
 
-static int __init housekeeping_isolcpus_setup(char *str)
+ساكن صحيح __init housekeeping_isolcpus_setup(حرف *str)
 {
 	unsigned long flags = 0;
 	bool illegal = false;
-	char *par;
-	int len;
+	حرف *par;
+	صحيح len;
 
-	while (isalpha(*str)) {
+	ܟܡܐ (isalpha(*str)) {
 		/*
 		 * isolcpus=nohz is equivalent to nohz_full.
 		 */
-		if (!strncmp(str, "nohz,", 5)) {
+		ܐܢ (!strncmp(str, "nohz,", 5)) {
 			str += 5;
 			flags |= HK_FLAG_KERNEL_NOISE;
-			continue;
+			استمر;
 		}
 
-		if (!strncmp(str, "domain,", 7)) {
+		ܐܢ (!strncmp(str, "domain,", 7)) {
 			str += 7;
 			flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
-			continue;
+			استمر;
 		}
 
-		if (!strncmp(str, "managed_irq,", 12)) {
+		ܐܢ (!strncmp(str, "managed_irq,", 12)) {
 			str += 12;
 			flags |= HK_FLAG_MANAGED_IRQ;
-			continue;
+			استمر;
 		}
 
 		/*
 		 * Skip unknown sub-parameter and validate that it is not
 		 * containing an invalid character.
 		 */
-		for (par = str, len = 0; *str && *str != ','; str++, len++) {
-			if (!isalpha(*str) && *str != '_')
+		لكل (par = str, len = 0; *str && *str != ','; str++, len++) {
+			ܐܢ (!isalpha(*str) && *str != '_')
 				illegal = true;
 		}
 
-		if (illegal) {
+		ܐܢ (illegal) {
 			pr_warn("isolcpus: Invalid flag %.*s\n", len, par);
-			return 0;
+			ܦܢܐ 0;
 		}
 
 		pr_info("isolcpus: Skipped unknown flag %.*s\n", len, par);
@@ -373,9 +373,9 @@ static int __init housekeeping_isolcpus_setup(char *str)
 	}
 
 	/* Default behaviour for isolcpus without flags */
-	if (!flags)
+	ܐܢ (!flags)
 		flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
 
-	return housekeeping_setup(str, flags);
+	ܦܢܐ housekeeping_setup(str, flags);
 }
 __setup("isolcpus=", housekeeping_isolcpus_setup);
