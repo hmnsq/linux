@@ -9,51 +9,51 @@
  */
 #include "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+static số_nguyên
+select_task_rq_stop(struct task_struct *p, số_nguyên cpu, số_nguyên flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	trả_về task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
+static số_nguyên
 balance_stop(struct rq *rq, struct rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	trả_về sched_stop_runnable(rq);
 }
 
 static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+wakeup_preempt_stop(struct rq *rq, struct task_struct *p, số_nguyên flags)
 {
 	/* we're never preempted */
 }
 
 static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	nếu (type == SNT_REPICK)
+		trả_về;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
 static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	nếu (!sched_stop_runnable(rq))
+		trả_về NULL;
 
-	return rq->stop;
+	trả_về rq->stop;
 }
 
 static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+enqueue_task_stop(struct rq *rq, struct task_struct *p, số_nguyên flags)
 {
 	add_nr_running(rq, 1);
 }
 
 static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+dequeue_task_stop(struct rq *rq, struct task_struct *p, số_nguyên flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	trả_về true;
 }
 
 static void yield_task_stop(struct rq *rq)
@@ -74,7 +74,7 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+static void task_tick_stop(struct rq *rq, struct task_struct *curr, số_nguyên queued)
 {
 }
 
@@ -86,8 +86,8 @@ static void switching_to_stop(struct rq *rq, struct task_struct *p)
 static void
 prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	nếu (p->prio == oldprio)
+		trả_về;
 
 	BUG(); /* how!?, what priority? */
 }

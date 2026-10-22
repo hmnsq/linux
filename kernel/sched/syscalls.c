@@ -16,18 +16,18 @@
 #include "sched.h"
 #include "autogroup.h"
 
-static inline int __normal_prio(int policy, int rt_prio, int nice)
+static inline số_nguyên __normal_prio(số_nguyên policy, số_nguyên rt_prio, số_nguyên nice)
 {
-	int prio;
+	số_nguyên prio;
 
-	if (dl_policy(policy))
+	nếu (dl_policy(policy))
 		prio = MAX_DL_PRIO - 1;
-	else if (rt_policy(policy))
+	không_thì nếu (rt_policy(policy))
 		prio = MAX_RT_PRIO - 1 - rt_prio;
-	else
+	không_thì
 		prio = NICE_TO_PRIO(nice);
 
-	return prio;
+	trả_về prio;
 }
 
 /*
@@ -37,9 +37,9 @@ static inline int __normal_prio(int policy, int rt_prio, int nice)
  * setprio syscalls, and whenever the interactivity
  * estimator recalculates.
  */
-static inline int normal_prio(struct task_struct *p)
+static inline số_nguyên normal_prio(struct task_struct *p)
 {
-	return __normal_prio(p->policy, p->rt_priority, PRIO_TO_NICE(p->static_prio));
+	trả_về __normal_prio(p->policy, p->rt_priority, PRIO_TO_NICE(p->static_prio));
 }
 
 /*
@@ -49,7 +49,7 @@ static inline int normal_prio(struct task_struct *p)
  * interactivity modifiers. Will be RT if the task got
  * RT-boosted. If not then it returns p->normal_prio.
  */
-static int effective_prio(struct task_struct *p)
+static số_nguyên effective_prio(struct task_struct *p)
 {
 	p->normal_prio = normal_prio(p);
 	/*
@@ -57,17 +57,17 @@ static int effective_prio(struct task_struct *p)
 	 * keep the priority unchanged. Otherwise, update priority
 	 * to the normal priority:
 	 */
-	if (!rt_or_dl_prio(p->prio))
-		return p->normal_prio;
-	return p->prio;
+	nếu (!rt_or_dl_prio(p->prio))
+		trả_về p->normal_prio;
+	trả_về p->prio;
 }
 
 void set_user_nice(struct task_struct *p, long nice)
 {
-	int old_prio;
+	số_nguyên old_prio;
 
-	if (task_nice(p) == nice || nice < MIN_NICE || nice > MAX_NICE)
-		return;
+	nếu (task_nice(p) == nice || nice < MIN_NICE || nice > MAX_NICE)
+		trả_về;
 	/*
 	 * We have to be careful, if called from sys_setpriority(),
 	 * the task might be in the middle of scheduling on another CPU.
@@ -80,9 +80,9 @@ void set_user_nice(struct task_struct *p, long nice)
 	 * it won't have any effect on scheduling until the task is
 	 * SCHED_DEADLINE, SCHED_FIFO or SCHED_RR:
 	 */
-	if (task_has_dl_policy(p) || task_has_rt_policy(p)) {
+	nếu (task_has_dl_policy(p) || task_has_rt_policy(p)) {
 		p->static_prio = NICE_TO_PRIO(nice);
-		return;
+		trả_về;
 	}
 
 	scoped_guard (sched_change, p, DEQUEUE_SAVE) {
@@ -102,12 +102,12 @@ EXPORT_SYMBOL(set_user_nice);
  * @p: task
  * @nice: nice value
  */
-static bool is_nice_reduction(const struct task_struct *p, const int nice)
+static bool is_nice_reduction(const struct task_struct *p, const số_nguyên nice)
 {
 	/* Convert nice value [19,-20] to rlimit style value [1,40]: */
-	int nice_rlim = nice_to_rlimit(nice);
+	số_nguyên nice_rlim = nice_to_rlimit(nice);
 
-	return (nice_rlim <= task_rlimit(p, RLIMIT_NICE));
+	trả_về (nice_rlim <= task_rlimit(p, RLIMIT_NICE));
 }
 
 /*
@@ -115,9 +115,9 @@ static bool is_nice_reduction(const struct task_struct *p, const int nice)
  * @p: task
  * @nice: nice value
  */
-int can_nice(const struct task_struct *p, const int nice)
+số_nguyên can_nice(const struct task_struct *p, const số_nguyên nice)
 {
-	return is_nice_reduction(p, nice) || capable(CAP_SYS_NICE);
+	trả_về is_nice_reduction(p, nice) || capable(CAP_SYS_NICE);
 }
 
 #ifdef __ARCH_WANT_SYS_NICE
@@ -129,7 +129,7 @@ int can_nice(const struct task_struct *p, const int nice)
  * sys_setpriority is a more generic, but much slower function that
  * does similar things.
  */
-SYSCALL_DEFINE1(nice, int, increment)
+SYSCALL_DEFINE1(nice, số_nguyên, increment)
 {
 	long nice, retval;
 
@@ -142,15 +142,15 @@ SYSCALL_DEFINE1(nice, int, increment)
 	nice = task_nice(current) + increment;
 
 	nice = clamp_val(nice, MIN_NICE, MAX_NICE);
-	if (increment < 0 && !can_nice(current, nice))
-		return -EPERM;
+	nếu (increment < 0 && !can_nice(current, nice))
+		trả_về -EPERM;
 
 	retval = security_task_setnice(current, nice);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	set_user_nice(current, nice);
-	return 0;
+	trả_về 0;
 }
 
 #endif /* __ARCH_WANT_SYS_NICE */
@@ -167,9 +167,9 @@ SYSCALL_DEFINE1(nice, int, increment)
  * fifo, rr             [-2 ... -100]     [98 ... 0]  [1 ... 99]
  * deadline                     -101             -1           0
  */
-int task_prio(const struct task_struct *p)
+số_nguyên task_prio(const struct task_struct *p)
 {
-	return p->prio - MAX_RT_PRIO;
+	trả_về p->prio - MAX_RT_PRIO;
 }
 
 /**
@@ -178,9 +178,9 @@ int task_prio(const struct task_struct *p)
  *
  * Return: 1 if the CPU is currently idle. 0 otherwise.
  */
-int idle_cpu(int cpu)
+số_nguyên idle_cpu(số_nguyên cpu)
 {
-	return idle_rq(cpu_rq(cpu));
+	trả_về idle_rq(cpu_rq(cpu));
 }
 
 /**
@@ -189,20 +189,20 @@ int idle_cpu(int cpu)
  *
  * Return: The idle task for the CPU @cpu.
  */
-struct task_struct *idle_task(int cpu)
+struct task_struct *idle_task(số_nguyên cpu)
 {
-	return cpu_rq(cpu)->idle;
+	trả_về cpu_rq(cpu)->idle;
 }
 
 #ifdef CONFIG_SCHED_CORE
-int sched_core_idle_cpu(int cpu)
+số_nguyên sched_core_idle_cpu(số_nguyên cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 
-	if (sched_core_enabled(rq) && rq->curr == rq->idle)
-		return 1;
+	nếu (sched_core_enabled(rq) && rq->curr == rq->idle)
+		trả_về 1;
 
-	return idle_cpu(cpu);
+	trả_về idle_cpu(cpu);
 }
 #endif /* CONFIG_SCHED_CORE */
 
@@ -214,7 +214,7 @@ int sched_core_idle_cpu(int cpu)
  */
 static struct task_struct *find_process_by_pid(pid_t pid)
 {
-	return pid ? find_task_by_vpid(pid) : current;
+	trả_về pid ? find_task_by_vpid(pid) : current;
 }
 
 static struct task_struct *find_get_task(pid_t pid)
@@ -223,13 +223,13 @@ static struct task_struct *find_get_task(pid_t pid)
 	guard(rcu)();
 
 	p = find_process_by_pid(pid);
-	if (likely(p))
+	nếu (likely(p))
 		get_task_struct(p);
 
-	return p;
+	trả_về p;
 }
 
-DEFINE_CLASS(find_get_task, struct task_struct *, if (_T) put_task_struct(_T),
+DEFINE_CLASS(find_get_task, struct task_struct *, nếu (_T) put_task_struct(_T),
 	     find_get_task(pid), pid_t pid)
 
 /*
@@ -241,22 +241,22 @@ DEFINE_CLASS(find_get_task, struct task_struct *, if (_T) put_task_struct(_T),
 static void __setscheduler_params(struct task_struct *p,
 		const struct sched_attr *attr)
 {
-	int policy = attr->sched_policy;
+	số_nguyên policy = attr->sched_policy;
 
-	if (policy == SETPARAM_POLICY)
+	nếu (policy == SETPARAM_POLICY)
 		policy = p->policy;
 
 	p->policy = policy;
 
-	if (dl_policy(policy))
+	nếu (dl_policy(policy))
 		__setparam_dl(p, attr);
-	else if (fair_policy(policy))
+	không_thì nếu (fair_policy(policy))
 		__setparam_fair(p, attr);
 
 	/* rt-policy tasks do not have a timerslack */
-	if (rt_or_dl_task_policy(p)) {
+	nếu (rt_or_dl_task_policy(p)) {
 		p->timer_slack_ns = 0;
-	} else if (p->timer_slack_ns == 0) {
+	} không_thì nếu (p->timer_slack_ns == 0) {
 		/* when switching back to non-rt policy, restore timerslack */
 		p->timer_slack_ns = p->default_timer_slack_ns;
 	}
@@ -280,12 +280,12 @@ static bool check_same_owner(struct task_struct *p)
 	guard(rcu)();
 
 	pcred = __task_cred(p);
-	return (uid_eq(cred->euid, pcred->euid) ||
+	trả_về (uid_eq(cred->euid, pcred->euid) ||
 		uid_eq(cred->euid, pcred->uid));
 }
 
 #ifdef CONFIG_RT_MUTEXES
-static inline void __setscheduler_dl_pi(int newprio, int policy,
+static inline void __setscheduler_dl_pi(số_nguyên newprio, số_nguyên policy,
 			      struct task_struct *p,
 			      struct sched_change_ctx *scope)
 {
@@ -296,17 +296,17 @@ static inline void __setscheduler_dl_pi(int newprio, int policy,
 	 * sure replenishment happens with the next enqueue.
 	 */
 
-	if (dl_prio(newprio) && !dl_policy(policy)) {
+	nếu (dl_prio(newprio) && !dl_policy(policy)) {
 		struct task_struct *pi_task = rt_mutex_get_top_task(p);
 
-		if (pi_task) {
+		nếu (pi_task) {
 			p->dl.pi_se = pi_task->dl.pi_se;
 			scope->flags |= ENQUEUE_REPLENISH;
 		}
 	}
 }
-#else /* !CONFIG_RT_MUTEXES */
-static inline void __setscheduler_dl_pi(int newprio, int policy,
+#không_thì /* !CONFIG_RT_MUTEXES */
+static inline void __setscheduler_dl_pi(số_nguyên newprio, số_nguyên policy,
 			      struct task_struct *p,
 			      struct sched_change_ctx *scope)
 {
@@ -315,28 +315,28 @@ static inline void __setscheduler_dl_pi(int newprio, int policy,
 
 #ifdef CONFIG_UCLAMP_TASK
 
-static int uclamp_validate(struct task_struct *p,
+static số_nguyên uclamp_validate(struct task_struct *p,
 			   const struct sched_attr *attr)
 {
-	int util_min = p->uclamp_req[UCLAMP_MIN].value;
-	int util_max = p->uclamp_req[UCLAMP_MAX].value;
+	số_nguyên util_min = p->uclamp_req[UCLAMP_MIN].value;
+	số_nguyên util_max = p->uclamp_req[UCLAMP_MAX].value;
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
+	nếu (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
 		util_min = attr->sched_util_min;
 
-		if (util_min + 1 > SCHED_CAPACITY_SCALE + 1)
-			return -EINVAL;
+		nếu (util_min + 1 > SCHED_CAPACITY_SCALE + 1)
+			trả_về -EINVAL;
 	}
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
+	nếu (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
 		util_max = attr->sched_util_max;
 
-		if (util_max + 1 > SCHED_CAPACITY_SCALE + 1)
-			return -EINVAL;
+		nếu (util_max + 1 > SCHED_CAPACITY_SCALE + 1)
+			trả_về -EINVAL;
 	}
 
-	if (util_min != -1 && util_max != -1 && util_min > util_max)
-		return -EINVAL;
+	nếu (util_min != -1 && util_max != -1 && util_min > util_max)
+		trả_về -EINVAL;
 
 	/*
 	 * We have valid uclamp attributes; make sure uclamp is enabled.
@@ -347,7 +347,7 @@ static int uclamp_validate(struct task_struct *p,
 	 */
 	sched_uclamp_enable();
 
-	return 0;
+	trả_về 0;
 }
 
 static bool uclamp_reset(const struct sched_attr *attr,
@@ -355,24 +355,24 @@ static bool uclamp_reset(const struct sched_attr *attr,
 			 struct uclamp_se *uc_se)
 {
 	/* Reset on sched class change for a non user-defined clamp value. */
-	if (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)) &&
+	nếu (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)) &&
 	    !uc_se->user_defined)
-		return true;
+		trả_về true;
 
 	/* Reset on sched_util_{min,max} == -1. */
-	if (clamp_id == UCLAMP_MIN &&
+	nếu (clamp_id == UCLAMP_MIN &&
 	    attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
 	    attr->sched_util_min == -1) {
-		return true;
+		trả_về true;
 	}
 
-	if (clamp_id == UCLAMP_MAX &&
+	nếu (clamp_id == UCLAMP_MAX &&
 	    attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
 	    attr->sched_util_max == -1) {
-		return true;
+		trả_về true;
 	}
 
-	return false;
+	trả_về false;
 }
 
 static void __setscheduler_uclamp(struct task_struct *p,
@@ -382,46 +382,46 @@ static void __setscheduler_uclamp(struct task_struct *p,
 
 	for_each_clamp_id(clamp_id) {
 		struct uclamp_se *uc_se = &p->uclamp_req[clamp_id];
-		unsigned int value;
+		unsigned số_nguyên value;
 
-		if (!uclamp_reset(attr, clamp_id, uc_se))
+		nếu (!uclamp_reset(attr, clamp_id, uc_se))
 			continue;
 
 		/*
 		 * RT by default have a 100% boost value that could be modified
 		 * at runtime.
 		 */
-		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
+		nếu (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
 			value = sysctl_sched_uclamp_util_min_rt_default;
-		else
+		không_thì
 			value = uclamp_none(clamp_id);
 
 		uclamp_se_set(uc_se, value, false);
 
 	}
 
-	if (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)))
-		return;
+	nếu (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)))
+		trả_về;
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
+	nếu (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
 	    attr->sched_util_min != -1) {
 		uclamp_se_set(&p->uclamp_req[UCLAMP_MIN],
 			      attr->sched_util_min, true);
 	}
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
+	nếu (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
 	    attr->sched_util_max != -1) {
 		uclamp_se_set(&p->uclamp_req[UCLAMP_MAX],
 			      attr->sched_util_max, true);
 	}
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
+#không_thì /* !CONFIG_UCLAMP_TASK: */
 
-static inline int uclamp_validate(struct task_struct *p,
+static inline số_nguyên uclamp_validate(struct task_struct *p,
 				  const struct sched_attr *attr)
 {
-	return -EOPNOTSUPP;
+	trả_về -EOPNOTSUPP;
 }
 static void __setscheduler_uclamp(struct task_struct *p,
 				  const struct sched_attr *attr) { }
@@ -432,25 +432,25 @@ static void __setscheduler_uclamp(struct task_struct *p,
  * Only issue a capable test if needed and only once to avoid an audit
  * event on permitted non-privileged operations:
  */
-static int user_check_sched_setscheduler(struct task_struct *p,
+static số_nguyên user_check_sched_setscheduler(struct task_struct *p,
 					 const struct sched_attr *attr,
-					 int policy, int reset_on_fork)
+					 số_nguyên policy, số_nguyên reset_on_fork)
 {
-	if (fair_policy(policy)) {
-		if (attr->sched_nice < task_nice(p) &&
+	nếu (fair_policy(policy)) {
+		nếu (attr->sched_nice < task_nice(p) &&
 		    !is_nice_reduction(p, attr->sched_nice))
 			goto req_priv;
 	}
 
-	if (rt_policy(policy)) {
+	nếu (rt_policy(policy)) {
 		unsigned long rlim_rtprio = task_rlimit(p, RLIMIT_RTPRIO);
 
 		/* Can't set/change the rt policy: */
-		if (policy != p->policy && !rlim_rtprio)
+		nếu (policy != p->policy && !rlim_rtprio)
 			goto req_priv;
 
 		/* Can't increase priority: */
-		if (attr->sched_priority > p->rt_priority &&
+		nếu (attr->sched_priority > p->rt_priority &&
 		    attr->sched_priority > rlim_rtprio)
 			goto req_priv;
 	}
@@ -461,46 +461,46 @@ static int user_check_sched_setscheduler(struct task_struct *p,
 	 * unprivileged DL tasks to increase their relative deadline
 	 * or reduce their runtime (both ways reducing utilization)
 	 */
-	if (dl_policy(policy))
+	nếu (dl_policy(policy))
 		goto req_priv;
 
 	/*
 	 * Treat SCHED_IDLE as nice 20. Only allow a switch to
 	 * SCHED_NORMAL if the RLIMIT_NICE would normally permit it.
 	 */
-	if (task_has_idle_policy(p) && !idle_policy(policy)) {
-		if (!is_nice_reduction(p, task_nice(p)))
+	nếu (task_has_idle_policy(p) && !idle_policy(policy)) {
+		nếu (!is_nice_reduction(p, task_nice(p)))
 			goto req_priv;
 	}
 
 	/* Can't change other user's priorities: */
-	if (!check_same_owner(p))
+	nếu (!check_same_owner(p))
 		goto req_priv;
 
 	/* Normal users shall not reset the sched_reset_on_fork flag: */
-	if (p->sched_reset_on_fork && !reset_on_fork)
+	nếu (p->sched_reset_on_fork && !reset_on_fork)
 		goto req_priv;
 
-	return 0;
+	trả_về 0;
 
 req_priv:
-	if (!capable(CAP_SYS_NICE))
-		return -EPERM;
+	nếu (!capable(CAP_SYS_NICE))
+		trả_về -EPERM;
 
-	return 0;
+	trả_về 0;
 }
 
-int __sched_setscheduler(struct task_struct *p,
+số_nguyên __sched_setscheduler(struct task_struct *p,
 			 const struct sched_attr *attr,
 			 bool user, bool pi)
 {
-	int oldpolicy = -1, policy = attr->sched_policy;
-	int retval, oldprio, newprio;
+	số_nguyên oldpolicy = -1, policy = attr->sched_policy;
+	số_nguyên retval, oldprio, newprio;
 	const struct sched_class *prev_class, *next_class;
 	struct balance_callback *head;
 	struct rq_flags rf;
-	int reset_on_fork;
-	int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
+	số_nguyên reset_on_fork;
+	số_nguyên queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
 	struct rq *rq;
 	bool cpuset_locked = false;
 
@@ -508,55 +508,55 @@ int __sched_setscheduler(struct task_struct *p,
 	BUG_ON(pi && in_interrupt());
 recheck:
 	/* Double check policy once rq lock held: */
-	if (policy < 0) {
+	nếu (policy < 0) {
 		reset_on_fork = p->sched_reset_on_fork;
 		policy = oldpolicy = p->policy;
-	} else {
+	} không_thì {
 		reset_on_fork = !!(attr->sched_flags & SCHED_FLAG_RESET_ON_FORK);
 
-		if (!valid_policy(policy))
-			return -EINVAL;
+		nếu (!valid_policy(policy))
+			trả_về -EINVAL;
 	}
 
-	if (attr->sched_flags & ~(SCHED_FLAG_ALL | SCHED_FLAG_SUGOV))
-		return -EINVAL;
+	nếu (attr->sched_flags & ~(SCHED_FLAG_ALL | SCHED_FLAG_SUGOV))
+		trả_về -EINVAL;
 
 	/*
 	 * Valid priorities for SCHED_FIFO and SCHED_RR are
 	 * 1..MAX_RT_PRIO-1, valid priority for SCHED_NORMAL,
 	 * SCHED_BATCH and SCHED_IDLE is 0.
 	 */
-	if (attr->sched_priority > MAX_RT_PRIO-1)
-		return -EINVAL;
-	if ((dl_policy(policy) && !__checkparam_dl(attr)) ||
+	nếu (attr->sched_priority > MAX_RT_PRIO-1)
+		trả_về -EINVAL;
+	nếu ((dl_policy(policy) && !__checkparam_dl(attr)) ||
 	    (rt_policy(policy) != (attr->sched_priority != 0)))
-		return -EINVAL;
+		trả_về -EINVAL;
 
-	if (user) {
+	nếu (user) {
 		retval = user_check_sched_setscheduler(p, attr, policy, reset_on_fork);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 
-		if (attr->sched_flags & SCHED_FLAG_SUGOV)
-			return -EINVAL;
+		nếu (attr->sched_flags & SCHED_FLAG_SUGOV)
+			trả_về -EINVAL;
 
 		retval = security_task_setscheduler(p);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 	}
 
 	/* Update task specific "requested" clamps */
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
+	nếu (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
 		retval = uclamp_validate(p, attr);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 	}
 
 	/*
 	 * SCHED_DEADLINE bandwidth accounting relies on stable cpusets
 	 * information.
 	 */
-	if (dl_policy(policy) || dl_policy(p->policy)) {
+	nếu (dl_policy(policy) || dl_policy(p->policy)) {
 		cpuset_locked = true;
 		cpuset_lock();
 	}
@@ -574,29 +574,29 @@ recheck:
 	/*
 	 * Changing the policy of the stop threads its a very bad idea:
 	 */
-	if (p == rq->stop) {
+	nếu (p == rq->stop) {
 		retval = -EINVAL;
 		goto unlock;
 	}
 
 	retval = scx_check_setscheduler(p, policy);
-	if (retval)
+	nếu (retval)
 		goto unlock;
 
 	/*
 	 * If not changing anything there's no need to proceed further,
 	 * but store a possible modification of reset_on_fork.
 	 */
-	if (unlikely(policy == p->policy)) {
-		if (fair_policy(policy) &&
+	nếu (unlikely(policy == p->policy)) {
+		nếu (fair_policy(policy) &&
 		    (attr->sched_nice != task_nice(p) ||
 		     (attr->sched_runtime != p->se.slice)))
 			goto change;
-		if (rt_policy(policy) && attr->sched_priority != p->rt_priority)
+		nếu (rt_policy(policy) && attr->sched_priority != p->rt_priority)
 			goto change;
-		if (dl_policy(policy) && dl_param_changed(p, attr))
+		nếu (dl_policy(policy) && dl_param_changed(p, attr))
 			goto change;
-		if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
+		nếu (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
 			goto change;
 
 		p->sched_reset_on_fork = reset_on_fork;
@@ -605,13 +605,13 @@ recheck:
 	}
 change:
 
-	if (user) {
+	nếu (user) {
 #ifdef CONFIG_RT_GROUP_SCHED
 		/*
 		 * Do not allow real-time tasks into groups that have no runtime
 		 * assigned.
 		 */
-		if (rt_group_sched_enabled() &&
+		nếu (rt_group_sched_enabled() &&
 				rt_bandwidth_enabled() && rt_policy(policy) &&
 				task_group(p)->rt_bandwidth.rt_runtime == 0 &&
 				!task_group_is_autogroup(task_group(p))) {
@@ -619,7 +619,7 @@ change:
 			goto unlock;
 		}
 #endif /* CONFIG_RT_GROUP_SCHED */
-		if (dl_bandwidth_enabled() && dl_policy(policy) &&
+		nếu (dl_bandwidth_enabled() && dl_policy(policy) &&
 				!(attr->sched_flags & SCHED_FLAG_SUGOV)) {
 			cpumask_t *span = rq->rd->span;
 
@@ -628,7 +628,7 @@ change:
 			 * the entire root_domain to become SCHED_DEADLINE. We
 			 * will also fail if there's no bandwidth available.
 			 */
-			if (!cpumask_subset(span, p->cpus_ptr) ||
+			nếu (!cpumask_subset(span, p->cpus_ptr) ||
 			    rq->rd->dl_bw.bw == 0) {
 				retval = -EPERM;
 				goto unlock;
@@ -637,10 +637,10 @@ change:
 	}
 
 	/* Re-check policy now with rq lock held: */
-	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
+	nếu (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
 		policy = oldpolicy = -1;
 		task_rq_unlock(rq, p, &rf);
-		if (cpuset_locked)
+		nếu (cpuset_locked)
 			cpuset_unlock();
 		goto recheck;
 	}
@@ -650,7 +650,7 @@ change:
 	 * of a SCHED_DEADLINE task) we need to check if enough bandwidth
 	 * is available.
 	 */
-	if ((dl_policy(policy) || dl_task(p)) && sched_dl_overflow(p, policy, attr)) {
+	nếu ((dl_policy(policy) || dl_task(p)) && sched_dl_overflow(p, policy, attr)) {
 		retval = -EBUSY;
 		goto unlock;
 	}
@@ -659,7 +659,7 @@ change:
 	oldprio = p->prio;
 
 	newprio = __normal_prio(policy, attr->sched_priority, attr->sched_nice);
-	if (pi) {
+	nếu (pi) {
 		/*
 		 * Take priority boosted tasks into account. If the new
 		 * effective priority is unchanged, we just store the new
@@ -668,19 +668,19 @@ change:
 		 * itself.
 		 */
 		newprio = rt_effective_prio(p, newprio);
-		if (newprio == oldprio && !dl_prio(newprio))
+		nếu (newprio == oldprio && !dl_prio(newprio))
 			queue_flags &= ~DEQUEUE_MOVE;
 	}
 
 	prev_class = p->sched_class;
 	next_class = __setscheduler_class(policy, newprio);
 
-	if (prev_class != next_class)
+	nếu (prev_class != next_class)
 		queue_flags |= DEQUEUE_CLASS;
 
 	scoped_guard (sched_change, p, queue_flags) {
 
-		if (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
+		nếu (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
 			__setscheduler_params(p, attr);
 			p->sched_class = next_class;
 			p->prio = newprio;
@@ -688,12 +688,12 @@ change:
 		}
 		__setscheduler_uclamp(p, attr);
 
-		if (scope->queued) {
+		nếu (scope->queued) {
 			/*
 			 * We enqueue to tail when the priority of a task is
 			 * increased (user space view).
 			 */
-			if (oldprio < p->prio)
+			nếu (oldprio < p->prio)
 				scope->flags |= ENQUEUE_HEAD;
 		}
 	}
@@ -703,8 +703,8 @@ change:
 	head = splice_balance_callbacks(rq);
 	task_rq_unlock(rq, p, &rf);
 
-	if (pi) {
-		if (cpuset_locked)
+	nếu (pi) {
+		nếu (cpuset_locked)
 			cpuset_unlock();
 		rt_mutex_adjust_pi(p);
 	}
@@ -713,16 +713,16 @@ change:
 	balance_callbacks(rq, head);
 	preempt_enable();
 
-	return 0;
+	trả_về 0;
 
 unlock:
 	task_rq_unlock(rq, p, &rf);
-	if (cpuset_locked)
+	nếu (cpuset_locked)
 		cpuset_unlock();
-	return retval;
+	trả_về retval;
 }
 
-static int _sched_setscheduler(struct task_struct *p, int policy,
+static số_nguyên _sched_setscheduler(struct task_struct *p, số_nguyên policy,
 			       const struct sched_param *param, bool check)
 {
 	struct sched_attr attr = {
@@ -731,17 +731,17 @@ static int _sched_setscheduler(struct task_struct *p, int policy,
 		.sched_nice	= PRIO_TO_NICE(p->static_prio),
 	};
 
-	if (p->se.custom_slice)
+	nếu (p->se.custom_slice)
 		attr.sched_runtime = p->se.slice;
 
 	/* Fixup the legacy SCHED_RESET_ON_FORK hack. */
-	if ((policy != SETPARAM_POLICY) && (policy & SCHED_RESET_ON_FORK)) {
+	nếu ((policy != SETPARAM_POLICY) && (policy & SCHED_RESET_ON_FORK)) {
 		attr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
 		policy &= ~SCHED_RESET_ON_FORK;
 		attr.sched_policy = policy;
 	}
 
-	return __sched_setscheduler(p, &attr, check, true);
+	trả_về __sched_setscheduler(p, &attr, check, true);
 }
 /**
  * sched_setscheduler - change the scheduling policy and/or RT priority of a thread.
@@ -755,20 +755,20 @@ static int _sched_setscheduler(struct task_struct *p, int policy,
  *
  * NOTE that the task may be already dead.
  */
-int sched_setscheduler(struct task_struct *p, int policy,
+số_nguyên sched_setscheduler(struct task_struct *p, số_nguyên policy,
 		       const struct sched_param *param)
 {
-	return _sched_setscheduler(p, policy, param, true);
+	trả_về _sched_setscheduler(p, policy, param, true);
 }
 
-int sched_setattr(struct task_struct *p, const struct sched_attr *attr)
+số_nguyên sched_setattr(struct task_struct *p, const struct sched_attr *attr)
 {
-	return __sched_setscheduler(p, attr, true, true);
+	trả_về __sched_setscheduler(p, attr, true, true);
 }
 
-int sched_setattr_nocheck(struct task_struct *p, const struct sched_attr *attr)
+số_nguyên sched_setattr_nocheck(struct task_struct *p, const struct sched_attr *attr)
 {
-	return __sched_setscheduler(p, attr, false, true);
+	trả_về __sched_setscheduler(p, attr, false, true);
 }
 EXPORT_SYMBOL_GPL(sched_setattr_nocheck);
 
@@ -785,10 +785,10 @@ EXPORT_SYMBOL_GPL(sched_setattr_nocheck);
  *
  * Return: 0 on success. An error code otherwise.
  */
-int sched_setscheduler_nocheck(struct task_struct *p, int policy,
+số_nguyên sched_setscheduler_nocheck(struct task_struct *p, số_nguyên policy,
 			       const struct sched_param *param)
 {
-	return _sched_setscheduler(p, policy, param, false);
+	trả_về _sched_setscheduler(p, policy, param, false);
 }
 
 /*
@@ -839,7 +839,7 @@ void sched_set_fifo_secondary(struct task_struct *p)
 	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
 }
 
-void sched_set_normal(struct task_struct *p, int nice)
+void sched_set_normal(struct task_struct *p, số_nguyên nice)
 {
 	struct sched_attr attr = {
 		.sched_policy = SCHED_NORMAL,
@@ -849,54 +849,54 @@ void sched_set_normal(struct task_struct *p, int nice)
 }
 EXPORT_SYMBOL_GPL(sched_set_normal);
 
-static int
-do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
+static số_nguyên
+do_sched_setscheduler(pid_t pid, số_nguyên policy, struct sched_param __user *param)
 {
 	struct sched_param lparam;
 
-	if (unlikely(!param || pid < 0))
-		return -EINVAL;
-	if (copy_from_user(&lparam, param, sizeof(struct sched_param)))
-		return -EFAULT;
+	nếu (unlikely(!param || pid < 0))
+		trả_về -EINVAL;
+	nếu (copy_from_user(&lparam, param, sizeof(struct sched_param)))
+		trả_về -EFAULT;
 
 	CLASS(find_get_task, p)(pid);
-	if (!p)
-		return -ESRCH;
+	nếu (!p)
+		trả_về -ESRCH;
 
-	return sched_setscheduler(p, policy, &lparam);
+	trả_về sched_setscheduler(p, policy, &lparam);
 }
 
 /*
  * Mimics kernel/events/core.c perf_copy_attr().
  */
-static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *attr)
+static số_nguyên sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *attr)
 {
 	u32 size;
-	int ret;
+	số_nguyên ret;
 
 	/* Zero the full structure, so that a short copy will be nice: */
 	memset(attr, 0, sizeof(*attr));
 
 	ret = get_user(size, &uattr->size);
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 
 	/* ABI compatibility quirk: */
-	if (!size)
+	nếu (!size)
 		size = SCHED_ATTR_SIZE_VER0;
-	if (size < SCHED_ATTR_SIZE_VER0 || size > PAGE_SIZE)
+	nếu (size < SCHED_ATTR_SIZE_VER0 || size > PAGE_SIZE)
 		goto err_size;
 
 	ret = copy_struct_from_user(attr, sizeof(*attr), uattr, size);
-	if (ret) {
-		if (ret == -E2BIG)
+	nếu (ret) {
+		nếu (ret == -E2BIG)
 			goto err_size;
-		return ret;
+		trả_về ret;
 	}
 
-	if ((attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) &&
+	nếu ((attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) &&
 	    size < SCHED_ATTR_SIZE_VER1)
-		return -EINVAL;
+		trả_về -EINVAL;
 
 	/*
 	 * XXX: Do we want to be lenient like existing syscalls; or do we want
@@ -904,20 +904,20 @@ static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *a
 	 */
 	attr->sched_nice = clamp(attr->sched_nice, MIN_NICE, MAX_NICE);
 
-	return 0;
+	trả_về 0;
 
 err_size:
 	put_user(sizeof(*attr), &uattr->size);
-	return -E2BIG;
+	trả_về -E2BIG;
 }
 
-static void get_params(struct task_struct *p, struct sched_attr *attr, unsigned int flags)
+static void get_params(struct task_struct *p, struct sched_attr *attr, unsigned số_nguyên flags)
 {
-	if (task_has_dl_policy(p)) {
+	nếu (task_has_dl_policy(p)) {
 		__getparam_dl(p, attr, flags);
-	} else if (task_has_rt_policy(p)) {
+	} không_thì nếu (task_has_rt_policy(p)) {
 		attr->sched_priority = p->rt_priority;
-	} else {
+	} không_thì {
 		attr->sched_nice = task_nice(p);
 		attr->sched_runtime = p->se.slice;
 	}
@@ -931,12 +931,12 @@ static void get_params(struct task_struct *p, struct sched_attr *attr, unsigned 
  *
  * Return: 0 on success. An error code otherwise.
  */
-SYSCALL_DEFINE3(sched_setscheduler, pid_t, pid, int, policy, struct sched_param __user *, param)
+SYSCALL_DEFINE3(sched_setscheduler, pid_t, pid, số_nguyên, policy, struct sched_param __user *, param)
 {
-	if (policy < 0)
-		return -EINVAL;
+	nếu (policy < 0)
+		trả_về -EINVAL;
 
-	return do_sched_setscheduler(pid, policy, param);
+	trả_về do_sched_setscheduler(pid, policy, param);
 }
 
 /**
@@ -948,7 +948,7 @@ SYSCALL_DEFINE3(sched_setscheduler, pid_t, pid, int, policy, struct sched_param 
  */
 SYSCALL_DEFINE2(sched_setparam, pid_t, pid, struct sched_param __user *, param)
 {
-	return do_sched_setscheduler(pid, SETPARAM_POLICY, param);
+	trả_về do_sched_setscheduler(pid, SETPARAM_POLICY, param);
 }
 
 /**
@@ -958,31 +958,31 @@ SYSCALL_DEFINE2(sched_setparam, pid_t, pid, struct sched_param __user *, param)
  * @flags: for future extension.
  */
 SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
-			       unsigned int, flags)
+			       unsigned số_nguyên, flags)
 {
 	struct sched_attr attr;
-	int retval;
+	số_nguyên retval;
 
-	if (unlikely(!uattr || pid < 0 || flags))
-		return -EINVAL;
+	nếu (unlikely(!uattr || pid < 0 || flags))
+		trả_về -EINVAL;
 
 	retval = sched_copy_attr(uattr, &attr);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
-	if ((int)attr.sched_policy < 0)
-		return -EINVAL;
-	if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
+	nếu ((số_nguyên)attr.sched_policy < 0)
+		trả_về -EINVAL;
+	nếu (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
 		attr.sched_policy = SETPARAM_POLICY;
 
 	CLASS(find_get_task, p)(pid);
-	if (!p)
-		return -ESRCH;
+	nếu (!p)
+		trả_về -ESRCH;
 
-	if (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
+	nếu (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
 		get_params(p, &attr, 0);
 
-	return sched_setattr(p, &attr);
+	trả_về sched_setattr(p, &attr);
 }
 
 /**
@@ -995,23 +995,23 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
 SYSCALL_DEFINE1(sched_getscheduler, pid_t, pid)
 {
 	struct task_struct *p;
-	int retval;
+	số_nguyên retval;
 
-	if (pid < 0)
-		return -EINVAL;
+	nếu (pid < 0)
+		trả_về -EINVAL;
 
 	guard(rcu)();
 	p = find_process_by_pid(pid);
-	if (!p)
-		return -ESRCH;
+	nếu (!p)
+		trả_về -ESRCH;
 
 	retval = security_task_getscheduler(p);
-	if (!retval) {
+	nếu (!retval) {
 		retval = p->policy;
-		if (p->sched_reset_on_fork)
+		nếu (p->sched_reset_on_fork)
 			retval |= SCHED_RESET_ON_FORK;
 	}
-	return retval;
+	trả_về retval;
 }
 
 /**
@@ -1026,28 +1026,28 @@ SYSCALL_DEFINE2(sched_getparam, pid_t, pid, struct sched_param __user *, param)
 {
 	struct sched_param lp = { .sched_priority = 0 };
 	struct task_struct *p;
-	int retval;
+	số_nguyên retval;
 
-	if (unlikely(!param || pid < 0))
-		return -EINVAL;
+	nếu (unlikely(!param || pid < 0))
+		trả_về -EINVAL;
 
 	scoped_guard (rcu) {
 		p = find_process_by_pid(pid);
-		if (!p)
-			return -ESRCH;
+		nếu (!p)
+			trả_về -ESRCH;
 
 		retval = security_task_getscheduler(p);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 
-		if (task_has_rt_policy(p))
+		nếu (task_has_rt_policy(p))
 			lp.sched_priority = p->rt_priority;
 	}
 
 	/*
 	 * This one might sleep, we cannot do it with a spinlock held ...
 	 */
-	return copy_to_user(param, &lp, sizeof(*param)) ? -EFAULT : 0;
+	trả_về copy_to_user(param, &lp, sizeof(*param)) ? -EFAULT : 0;
 }
 
 /**
@@ -1058,33 +1058,33 @@ SYSCALL_DEFINE2(sched_getparam, pid_t, pid, struct sched_param __user *, param)
  * @flags: for future extension.
  */
 SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
-		unsigned int, usize, unsigned int, flags)
+		unsigned số_nguyên, usize, unsigned số_nguyên, flags)
 {
 	struct sched_attr kattr = { };
 	struct task_struct *p;
-	int retval;
+	số_nguyên retval;
 
-	if (unlikely(!uattr || pid < 0 || usize > PAGE_SIZE ||
+	nếu (unlikely(!uattr || pid < 0 || usize > PAGE_SIZE ||
 		     usize < SCHED_ATTR_SIZE_VER0))
-		return -EINVAL;
+		trả_về -EINVAL;
 
 	scoped_guard (rcu) {
 		p = find_process_by_pid(pid);
-		if (!p)
-			return -ESRCH;
+		nếu (!p)
+			trả_về -ESRCH;
 
-		if (flags) {
-			if (!task_has_dl_policy(p) ||
+		nếu (flags) {
+			nếu (!task_has_dl_policy(p) ||
 			    flags != SCHED_GETATTR_FLAG_DL_DYNAMIC)
-				return -EINVAL;
+				trả_về -EINVAL;
 		}
 
 		retval = security_task_getscheduler(p);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 
 		kattr.sched_policy = p->policy;
-		if (p->sched_reset_on_fork)
+		nếu (p->sched_reset_on_fork)
 			kattr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
 		get_params(p, &kattr, flags);
 		kattr.sched_flags &= SCHED_FLAG_ALL;
@@ -1101,24 +1101,24 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
 	}
 
 	kattr.size = min(usize, sizeof(kattr));
-	return copy_struct_to_user(uattr, usize, &kattr, sizeof(kattr), NULL);
+	trả_về copy_struct_to_user(uattr, usize, &kattr, sizeof(kattr), NULL);
 }
 
-int dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
+số_nguyên dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
 {
 	/*
 	 * If the task isn't a deadline task or admission control is
 	 * disabled then we don't care about affinity changes.
 	 */
-	if (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
-		return 0;
+	nếu (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
+		trả_về 0;
 
 	/*
 	 * The special/sugov task isn't part of regular bandwidth/admission
 	 * control so let userspace change affinities.
 	 */
-	if (dl_entity_is_special(&p->dl))
-		return 0;
+	nếu (dl_entity_is_special(&p->dl))
+		trả_về 0;
 
 	/*
 	 * Since bandwidth control happens on root_domain basis,
@@ -1127,21 +1127,21 @@ int dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
 	 * root_domain.
 	 */
 	guard(rcu)();
-	if (!cpumask_subset(task_rq(p)->rd->span, mask))
-		return -EBUSY;
+	nếu (!cpumask_subset(task_rq(p)->rd->span, mask))
+		trả_về -EBUSY;
 
-	return 0;
+	trả_về 0;
 }
 
-int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
+số_nguyên __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
 {
-	int retval;
+	số_nguyên retval;
 	cpumask_var_t cpus_allowed, new_mask;
 
-	if (!alloc_cpumask_var(&cpus_allowed, GFP_KERNEL))
-		return -ENOMEM;
+	nếu (!alloc_cpumask_var(&cpus_allowed, GFP_KERNEL))
+		trả_về -ENOMEM;
 
-	if (!alloc_cpumask_var(&new_mask, GFP_KERNEL)) {
+	nếu (!alloc_cpumask_var(&new_mask, GFP_KERNEL)) {
 		retval = -ENOMEM;
 		goto out_free_cpus_allowed;
 	}
@@ -1153,15 +1153,15 @@ int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
 	ctx->flags |= SCA_CHECK;
 
 	retval = dl_task_check_affinity(p, new_mask);
-	if (retval)
+	nếu (retval)
 		goto out_free_new_mask;
 
 	retval = __set_cpus_allowed_ptr(p, ctx);
-	if (retval)
+	nếu (retval)
 		goto out_free_new_mask;
 
 	cpuset_cpus_allowed(p, cpus_allowed);
-	if (!cpumask_subset(new_mask, cpus_allowed)) {
+	nếu (!cpumask_subset(new_mask, cpus_allowed)) {
 		/*
 		 * We must have raced with a concurrent cpuset update.
 		 * Just reset the cpumask to the cpuset's cpus_allowed.
@@ -1176,11 +1176,11 @@ int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
 		 * we need to further restrict the mask to what is allowed
 		 * by that old user_cpus_ptr.
 		 */
-		if (unlikely((ctx->flags & SCA_USER) && ctx->user_mask)) {
+		nếu (unlikely((ctx->flags & SCA_USER) && ctx->user_mask)) {
 			bool empty = !cpumask_and(new_mask, new_mask,
 						  ctx->user_mask);
 
-			if (empty)
+			nếu (empty)
 				cpumask_copy(new_mask, cpus_allowed);
 		}
 		__set_cpus_allowed_ptr(p, ctx);
@@ -1191,41 +1191,41 @@ out_free_new_mask:
 	free_cpumask_var(new_mask);
 out_free_cpus_allowed:
 	free_cpumask_var(cpus_allowed);
-	return retval;
+	trả_về retval;
 }
 
 long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
 {
 	struct affinity_context ac;
 	struct cpumask *user_mask;
-	int retval;
+	số_nguyên retval;
 
 	CLASS(find_get_task, p)(pid);
-	if (!p)
-		return -ESRCH;
+	nếu (!p)
+		trả_về -ESRCH;
 
-	if (p->flags & PF_NO_SETAFFINITY)
-		return -EINVAL;
+	nếu (p->flags & PF_NO_SETAFFINITY)
+		trả_về -EINVAL;
 
-	if (!check_same_owner(p)) {
+	nếu (!check_same_owner(p)) {
 		guard(rcu)();
-		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE))
-			return -EPERM;
+		nếu (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE))
+			trả_về -EPERM;
 	}
 
 	retval = security_task_setscheduler(p);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	/*
 	 * With non-SMP configs, user_cpus_ptr/user_mask isn't used and
 	 * alloc_user_cpus_ptr() returns NULL.
 	 */
 	user_mask = alloc_user_cpus_ptr(NUMA_NO_NODE);
-	if (user_mask) {
+	nếu (user_mask) {
 		cpumask_copy(user_mask, in_mask);
-	} else {
-		return -ENOMEM;
+	} không_thì {
+		trả_về -ENOMEM;
 	}
 
 	ac = (struct affinity_context){
@@ -1237,18 +1237,18 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
 	retval = __sched_setaffinity(p, &ac);
 	kfree(ac.user_mask);
 
-	return retval;
+	trả_về retval;
 }
 
-static int get_user_cpu_mask(unsigned long __user *user_mask_ptr, unsigned len,
+static số_nguyên get_user_cpu_mask(unsigned long __user *user_mask_ptr, unsigned len,
 			     struct cpumask *new_mask)
 {
-	if (len < cpumask_size())
+	nếu (len < cpumask_size())
 		cpumask_clear(new_mask);
-	else if (len > cpumask_size())
+	không_thì nếu (len > cpumask_size())
 		len = cpumask_size();
 
-	return copy_from_user(new_mask, user_mask_ptr, len) ? -EFAULT : 0;
+	trả_về copy_from_user(new_mask, user_mask_ptr, len) ? -EFAULT : 0;
 }
 
 /**
@@ -1259,40 +1259,40 @@ static int get_user_cpu_mask(unsigned long __user *user_mask_ptr, unsigned len,
  *
  * Return: 0 on success. An error code otherwise.
  */
-SYSCALL_DEFINE3(sched_setaffinity, pid_t, pid, unsigned int, len,
+SYSCALL_DEFINE3(sched_setaffinity, pid_t, pid, unsigned số_nguyên, len,
 		unsigned long __user *, user_mask_ptr)
 {
 	cpumask_var_t new_mask;
-	int retval;
+	số_nguyên retval;
 
-	if (!alloc_cpumask_var(&new_mask, GFP_KERNEL))
-		return -ENOMEM;
+	nếu (!alloc_cpumask_var(&new_mask, GFP_KERNEL))
+		trả_về -ENOMEM;
 
 	retval = get_user_cpu_mask(user_mask_ptr, len, new_mask);
-	if (retval == 0)
+	nếu (retval == 0)
 		retval = sched_setaffinity(pid, new_mask);
 	free_cpumask_var(new_mask);
-	return retval;
+	trả_về retval;
 }
 
 long sched_getaffinity(pid_t pid, struct cpumask *mask)
 {
 	struct task_struct *p;
-	int retval;
+	số_nguyên retval;
 
 	guard(rcu)();
 	p = find_process_by_pid(pid);
-	if (!p)
-		return -ESRCH;
+	nếu (!p)
+		trả_về -ESRCH;
 
 	retval = security_task_getscheduler(p);
-	if (retval)
-		return retval;
+	nếu (retval)
+		trả_về retval;
 
 	guard(raw_spinlock_irqsave)(&p->pi_lock);
 	cpumask_and(mask, &p->cpus_mask, cpu_active_mask);
 
-	return 0;
+	trả_về 0;
 }
 
 /**
@@ -1304,32 +1304,32 @@ long sched_getaffinity(pid_t pid, struct cpumask *mask)
  * Return: size of CPU mask copied to user_mask_ptr on success. An
  * error code otherwise.
  */
-SYSCALL_DEFINE3(sched_getaffinity, pid_t, pid, unsigned int, len,
+SYSCALL_DEFINE3(sched_getaffinity, pid_t, pid, unsigned số_nguyên, len,
 		unsigned long __user *, user_mask_ptr)
 {
-	int ret;
+	số_nguyên ret;
 	cpumask_var_t mask;
 
-	if ((len * BITS_PER_BYTE) < nr_cpu_ids)
-		return -EINVAL;
-	if (len & (sizeof(unsigned long)-1))
-		return -EINVAL;
+	nếu ((len * BITS_PER_BYTE) < nr_cpu_ids)
+		trả_về -EINVAL;
+	nếu (len & (sizeof(unsigned long)-1))
+		trả_về -EINVAL;
 
-	if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
-		return -ENOMEM;
+	nếu (!zalloc_cpumask_var(&mask, GFP_KERNEL))
+		trả_về -ENOMEM;
 
 	ret = sched_getaffinity(pid, mask);
-	if (ret == 0) {
-		unsigned int retlen = min(len, cpumask_size());
+	nếu (ret == 0) {
+		unsigned số_nguyên retlen = min(len, cpumask_size());
 
-		if (copy_to_user(user_mask_ptr, cpumask_bits(mask), retlen))
+		nếu (copy_to_user(user_mask_ptr, cpumask_bits(mask), retlen))
 			ret = -EFAULT;
-		else
+		không_thì
 			ret = retlen;
 	}
 	free_cpumask_var(mask);
 
-	return ret;
+	trả_về ret;
 }
 
 static void do_sched_yield(void)
@@ -1360,7 +1360,7 @@ static void do_sched_yield(void)
 SYSCALL_DEFINE0(sched_yield)
 {
 	do_sched_yield();
-	return 0;
+	trả_về 0;
 }
 
 /**
@@ -1407,11 +1407,11 @@ EXPORT_SYMBOL(yield);
  *	false (0) if we failed to boost the target.
  *	-ESRCH if there's no task to yield to.
  */
-int __sched yield_to(struct task_struct *p, bool preempt)
+số_nguyên __sched yield_to(struct task_struct *p, bool preempt)
 {
 	struct task_struct *curr;
 	struct rq *rq, *p_rq;
-	int yielded = 0;
+	số_nguyên yielded = 0;
 
 	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
 		rq = this_rq();
@@ -1423,38 +1423,38 @@ again:
 		 * If we're the only runnable task on the rq and target rq also
 		 * has only one task, there's absolutely no point in yielding.
 		 */
-		if (rq->nr_running == 1 && p_rq->nr_running == 1)
-			return -ESRCH;
+		nếu (rq->nr_running == 1 && p_rq->nr_running == 1)
+			trả_về -ESRCH;
 
 		guard(double_rq_lock)(rq, p_rq);
-		if (task_rq(p) != p_rq)
+		nếu (task_rq(p) != p_rq)
 			goto again;
 
-		if (!curr->sched_class->yield_to_task)
-			return 0;
+		nếu (!curr->sched_class->yield_to_task)
+			trả_về 0;
 
-		if (curr->sched_class != p->sched_class)
-			return 0;
+		nếu (curr->sched_class != p->sched_class)
+			trả_về 0;
 
-		if (task_on_cpu(p_rq, p) || !task_is_running(p))
-			return 0;
+		nếu (task_on_cpu(p_rq, p) || !task_is_running(p))
+			trả_về 0;
 
 		yielded = curr->sched_class->yield_to_task(rq, p);
-		if (yielded) {
+		nếu (yielded) {
 			schedstat_inc(rq->yld_count);
 			/*
 			 * Make p's CPU reschedule; pick_next_entity
 			 * takes care of fairness.
 			 */
-			if (preempt && rq != p_rq)
+			nếu (preempt && rq != p_rq)
 				resched_curr(p_rq);
 		}
 	}
 
-	if (yielded)
+	nếu (yielded)
 		schedule();
 
-	return yielded;
+	trả_về yielded;
 }
 EXPORT_SYMBOL_GPL(yield_to);
 
@@ -1466,9 +1466,9 @@ EXPORT_SYMBOL_GPL(yield_to);
  * rt_priority that can be used by a given scheduling class.
  * On failure, a negative error code is returned.
  */
-SYSCALL_DEFINE1(sched_get_priority_max, int, policy)
+SYSCALL_DEFINE1(sched_get_priority_max, số_nguyên, policy)
 {
-	int ret = -EINVAL;
+	số_nguyên ret = -EINVAL;
 
 	switch (policy) {
 	case SCHED_FIFO:
@@ -1483,7 +1483,7 @@ SYSCALL_DEFINE1(sched_get_priority_max, int, policy)
 		ret = 0;
 		break;
 	}
-	return ret;
+	trả_về ret;
 }
 
 /**
@@ -1494,9 +1494,9 @@ SYSCALL_DEFINE1(sched_get_priority_max, int, policy)
  * rt_priority that can be used by a given scheduling class.
  * On failure, a negative error code is returned.
  */
-SYSCALL_DEFINE1(sched_get_priority_min, int, policy)
+SYSCALL_DEFINE1(sched_get_priority_min, số_nguyên, policy)
 {
-	int ret = -EINVAL;
+	số_nguyên ret = -EINVAL;
 
 	switch (policy) {
 	case SCHED_FIFO:
@@ -1510,35 +1510,35 @@ SYSCALL_DEFINE1(sched_get_priority_min, int, policy)
 	case SCHED_EXT:
 		ret = 0;
 	}
-	return ret;
+	trả_về ret;
 }
 
-static int sched_rr_get_interval(pid_t pid, struct timespec64 *t)
+static số_nguyên sched_rr_get_interval(pid_t pid, struct timespec64 *t)
 {
-	unsigned int time_slice = 0;
-	int retval;
+	unsigned số_nguyên time_slice = 0;
+	số_nguyên retval;
 
-	if (pid < 0)
-		return -EINVAL;
+	nếu (pid < 0)
+		trả_về -EINVAL;
 
 	scoped_guard (rcu) {
 		struct task_struct *p = find_process_by_pid(pid);
-		if (!p)
-			return -ESRCH;
+		nếu (!p)
+			trả_về -ESRCH;
 
 		retval = security_task_getscheduler(p);
-		if (retval)
-			return retval;
+		nếu (retval)
+			trả_về retval;
 
 		scoped_guard (task_rq_lock, p) {
 			struct rq *rq = scope.rq;
-			if (p->sched_class->get_rr_interval)
+			nếu (p->sched_class->get_rr_interval)
 				time_slice = p->sched_class->get_rr_interval(rq, p);
 		}
 	}
 
 	jiffies_to_timespec64(time_slice, t);
-	return 0;
+	trả_về 0;
 }
 
 /**
@@ -1556,12 +1556,12 @@ SYSCALL_DEFINE2(sched_rr_get_interval, pid_t, pid,
 		struct __kernel_timespec __user *, interval)
 {
 	struct timespec64 t;
-	int retval = sched_rr_get_interval(pid, &t);
+	số_nguyên retval = sched_rr_get_interval(pid, &t);
 
-	if (retval == 0)
+	nếu (retval == 0)
 		retval = put_timespec64(&t, interval);
 
-	return retval;
+	trả_về retval;
 }
 
 #ifdef CONFIG_COMPAT_32BIT_TIME
@@ -1569,10 +1569,10 @@ SYSCALL_DEFINE2(sched_rr_get_interval_time32, pid_t, pid,
 		struct old_timespec32 __user *, interval)
 {
 	struct timespec64 t;
-	int retval = sched_rr_get_interval(pid, &t);
+	số_nguyên retval = sched_rr_get_interval(pid, &t);
 
-	if (retval == 0)
+	nếu (retval == 0)
 		retval = put_old_timespec32(&t, interval);
-	return retval;
+	trả_về retval;
 }
 #endif

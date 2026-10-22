@@ -16,7 +16,7 @@ struct autogroup {
 	struct task_group	*tg;
 	struct rw_semaphore	lock;
 	unsigned long		id;
-	int			nice;
+	số_nguyên			nice;
 };
 
 extern void autogroup_init(struct task_struct *init_task);
@@ -24,7 +24,7 @@ extern void autogroup_free(struct task_group *tg);
 
 static inline bool task_group_is_autogroup(struct task_group *tg)
 {
-	return !!tg->autogroup;
+	trả_về !!tg->autogroup;
 }
 
 extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
@@ -32,35 +32,35 @@ extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
 static inline struct task_group *
 autogroup_task_group(struct task_struct *p, struct task_group *tg)
 {
-	extern unsigned int sysctl_sched_autogroup_enabled;
-	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+	extern unsigned số_nguyên sysctl_sched_autogroup_enabled;
+	số_nguyên enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
 
-	if (enabled && task_wants_autogroup(p, tg))
-		return p->signal->autogroup->tg;
+	nếu (enabled && task_wants_autogroup(p, tg))
+		trả_về p->signal->autogroup->tg;
 
-	return tg;
+	trả_về tg;
 }
 
-extern int autogroup_path(struct task_group *tg, char *buf, int buflen);
+extern số_nguyên autogroup_path(struct task_group *tg, char *buf, số_nguyên buflen);
 
-#else /* !CONFIG_SCHED_AUTOGROUP: */
+#không_thì /* !CONFIG_SCHED_AUTOGROUP: */
 
 static inline void autogroup_init(struct task_struct *init_task) {  }
 static inline void autogroup_free(struct task_group *tg) { }
 static inline bool task_group_is_autogroup(struct task_group *tg)
 {
-	return 0;
+	trả_về 0;
 }
 
 static inline struct task_group *
 autogroup_task_group(struct task_struct *p, struct task_group *tg)
 {
-	return tg;
+	trả_về tg;
 }
 
-static inline int autogroup_path(struct task_group *tg, char *buf, int buflen)
+static inline số_nguyên autogroup_path(struct task_group *tg, char *buf, số_nguyên buflen)
 {
-	return 0;
+	trả_về 0;
 }
 
 #endif /* !CONFIG_SCHED_AUTOGROUP */

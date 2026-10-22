@@ -35,7 +35,7 @@ void enable_sched_clock_irqtime(void)
 
 void disable_sched_clock_irqtime(void)
 {
-	if (irqtime_enabled())
+	nếu (irqtime_enabled())
 		static_branch_disable(&sched_clock_irqtime);
 }
 
@@ -47,7 +47,7 @@ static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
 	u64_stats_update_begin(&irqtime->sync);
 	cpustat[idx] += delta;
 	irqtime->total += delta;
-	if (!kcpustat_idle_dyntick())
+	nếu (!kcpustat_idle_dyntick())
 		irqtime->tick_delta += delta;
 	u64_stats_update_end(&irqtime->sync);
 }
@@ -56,15 +56,15 @@ static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
  * Called after incrementing preempt_count on {soft,}irq_enter
  * and before decrementing preempt_count on {soft,}irq_exit.
  */
-void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
+void irqtime_account_irq(struct task_struct *curr, unsigned số_nguyên offset)
 {
 	struct irqtime *irqtime = this_cpu_ptr(&cpu_irqtime);
-	unsigned int pc;
+	unsigned số_nguyên pc;
 	s64 delta;
-	int cpu;
+	số_nguyên cpu;
 
-	if (!irqtime_enabled())
-		return;
+	nếu (!irqtime_enabled())
+		trả_về;
 
 	cpu = smp_processor_id();
 	delta = sched_clock_cpu(cpu) - irqtime->irq_start_time;
@@ -77,9 +77,9 @@ void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
 	 * in that case, so as not to confuse scheduler with a special task
 	 * that do not consume any time, but still wants to run.
 	 */
-	if (pc & HARDIRQ_MASK)
+	nếu (pc & HARDIRQ_MASK)
 		irqtime_account_delta(irqtime, delta, CPUTIME_IRQ);
-	else if ((pc & SOFTIRQ_OFFSET) && curr != this_cpu_ksoftirqd())
+	không_thì nếu ((pc & SOFTIRQ_OFFSET) && curr != this_cpu_ksoftirqd())
 		irqtime_account_delta(irqtime, delta, CPUTIME_SOFTIRQ);
 }
 
@@ -91,19 +91,19 @@ static u64 irqtime_tick_accounted(u64 maxtime)
 	delta = min(irqtime->tick_delta, maxtime);
 	irqtime->tick_delta -= delta;
 
-	return delta;
+	trả_về delta;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#không_thì /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
 static u64 irqtime_tick_accounted(u64 dummy)
 {
-	return 0;
+	trả_về 0;
 }
 
 #endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-static inline void task_group_account_field(struct task_struct *p, int index,
+static inline void task_group_account_field(struct task_struct *p, số_nguyên index,
 					    u64 tmp)
 {
 	/*
@@ -124,7 +124,7 @@ static inline void task_group_account_field(struct task_struct *p, int index,
  */
 void account_user_time(struct task_struct *p, u64 cputime)
 {
-	int index;
+	số_nguyên index;
 
 	/* Add user time to process. */
 	p->utime += cputime;
@@ -154,10 +154,10 @@ void account_guest_time(struct task_struct *p, u64 cputime)
 	p->gtime += cputime;
 
 	/* Add guest time to cpustat. */
-	if (task_nice(p) > 0) {
+	nếu (task_nice(p) > 0) {
 		task_group_account_field(p, CPUTIME_NICE, cputime);
 		cpustat[CPUTIME_GUEST_NICE] += cputime;
-	} else {
+	} không_thì {
 		task_group_account_field(p, CPUTIME_USER, cputime);
 		cpustat[CPUTIME_GUEST] += cputime;
 	}
@@ -189,20 +189,20 @@ void account_system_index_time(struct task_struct *p,
  * @hardirq_offset: the offset to subtract from hardirq_count()
  * @cputime: the CPU time spent in kernel space since the last update
  */
-void account_system_time(struct task_struct *p, int hardirq_offset, u64 cputime)
+void account_system_time(struct task_struct *p, số_nguyên hardirq_offset, u64 cputime)
 {
-	int index;
+	số_nguyên index;
 
-	if ((p->flags & PF_VCPU) && (irq_count() - hardirq_offset == 0)) {
+	nếu ((p->flags & PF_VCPU) && (irq_count() - hardirq_offset == 0)) {
 		account_guest_time(p, cputime);
-		return;
+		trả_về;
 	}
 
-	if (hardirq_count() - hardirq_offset)
+	nếu (hardirq_count() - hardirq_offset)
 		index = CPUTIME_IRQ;
-	else if (in_serving_softirq())
+	không_thì nếu (in_serving_softirq())
 		index = CPUTIME_SOFTIRQ;
-	else
+	không_thì
 		index = CPUTIME_SYSTEM;
 
 	account_system_index_time(p, cputime, index);
@@ -227,9 +227,9 @@ void account_idle_time(u64 cputime)
 {
 	u64 *cpustat = kcpustat_this_cpu->cpustat;
 
-	if (cpu_has_iowait(smp_processor_id()))
+	nếu (cpu_has_iowait(smp_processor_id()))
 		cpustat[CPUTIME_IOWAIT] += cputime;
-	else
+	không_thì
 		cpustat[CPUTIME_IDLE] += cputime;
 }
 
@@ -257,9 +257,9 @@ void __account_forceidle_time(struct task_struct *p, u64 delta)
 DEFINE_STATIC_KEY_FALSE(paravirt_steal_enabled);
 
 #ifdef CONFIG_HAVE_PV_STEAL_CLOCK_GEN
-static u64 native_steal_clock(int cpu)
+static u64 native_steal_clock(số_nguyên cpu)
 {
-	return 0;
+	trả_về 0;
 }
 
 DEFINE_STATIC_CALL(pv_steal_clock, native_steal_clock);
@@ -269,7 +269,7 @@ DEFINE_STATIC_CALL(pv_steal_clock, native_steal_clock);
 static __always_inline u64 steal_account_process_time(u64 maxtime)
 {
 #ifdef CONFIG_PARAVIRT
-	if (static_branch_unlikely(&paravirt_steal_enabled)) {
+	nếu (static_branch_unlikely(&paravirt_steal_enabled)) {
 		u64 steal;
 
 		steal = paravirt_steal_clock(smp_processor_id());
@@ -278,10 +278,10 @@ static __always_inline u64 steal_account_process_time(u64 maxtime)
 		account_steal_time(steal);
 		this_rq()->prev_steal_time += steal;
 
-		return steal;
+		trả_về steal;
 	}
 #endif /* CONFIG_PARAVIRT */
-	return 0;
+	trả_về 0;
 }
 
 /*
@@ -295,18 +295,18 @@ static inline u64 account_other_time(u64 max)
 
 	accounted = steal_account_process_time(max);
 
-	if (accounted < max)
+	nếu (accounted < max)
 		accounted += irqtime_tick_accounted(max - accounted);
 
-	return accounted;
+	trả_về accounted;
 }
 
 #ifdef CONFIG_64BIT
 static inline u64 read_sum_exec_runtime(struct task_struct *t)
 {
-	return t->se.sum_exec_runtime;
+	trả_về t->se.sum_exec_runtime;
 }
-#else /* !CONFIG_64BIT: */
+#không_thì /* !CONFIG_64BIT: */
 static u64 read_sum_exec_runtime(struct task_struct *t)
 {
 	u64 ns;
@@ -317,7 +317,7 @@ static u64 read_sum_exec_runtime(struct task_struct *t)
 	ns = t->se.sum_exec_runtime;
 	task_rq_unlock(rq, t, &rf);
 
-	return ns;
+	trả_về ns;
 }
 #endif /* !CONFIG_64BIT */
 
@@ -339,7 +339,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
 	 * those pending times and rely only on values updated on tick or
 	 * other scheduler action.
 	 */
-	if (same_thread_group(current, tsk))
+	nếu (same_thread_group(current, tsk))
 		(void) task_sched_runtime(current);
 
 	guard(rcu)();
@@ -379,7 +379,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
  * p->stime and friends are only updated on system time and not on IRQ
  * softirq as those do not count in task exec_runtime any more.
  */
-static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+static void irqtime_account_process_tick(struct task_struct *p, số_nguyên user_tick,
 					 u64 cputime)
 {
 	u64 other;
@@ -392,43 +392,43 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
 	 * other time can exceed ticks occasionally.
 	 */
 	other = account_other_time(ULONG_MAX);
-	if (other >= cputime)
-		return;
+	nếu (other >= cputime)
+		trả_về;
 
 	cputime -= other;
 
-	if (this_cpu_ksoftirqd() == p) {
+	nếu (this_cpu_ksoftirqd() == p) {
 		/*
 		 * ksoftirqd time do not get accounted in cpu_softirq_time.
 		 * So, we have to handle it separately here.
 		 * Also, p->stime needs to be updated for ksoftirqd.
 		 */
 		account_system_index_time(p, cputime, CPUTIME_SOFTIRQ);
-	} else if (user_tick) {
+	} không_thì nếu (user_tick) {
 		account_user_time(p, cputime);
-	} else if (p == this_rq()->idle) {
+	} không_thì nếu (p == this_rq()->idle) {
 		account_idle_time(cputime);
-	} else if (p->flags & PF_VCPU) { /* System time or guest time */
+	} không_thì nếu (p->flags & PF_VCPU) { /* System time or guest time */
 		account_guest_time(p, cputime);
-	} else {
+	} không_thì {
 		account_system_index_time(p, cputime, CPUTIME_SYSTEM);
 	}
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
-static inline void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+#không_thì /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+static inline void irqtime_account_process_tick(struct task_struct *p, số_nguyên user_tick,
 						u64 cputime) { }
 #endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-#if defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
+#nếu defined(CONFIG_NO_HZ_COMMON) && !defined(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE)
 static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
 {
 	u64 *cpustat = kc->cpustat;
 	u64 delta, steal, steal_delta;
-	int iowait;
+	số_nguyên iowait;
 
-	if (!kc->idle_elapse)
-		return;
+	nếu (!kc->idle_elapse)
+		trả_về;
 
 	iowait = cpu_has_iowait(smp_processor_id());
 	delta = now - kc->idle_entrytime;
@@ -444,9 +444,9 @@ static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
 	delta -= steal_delta;
 	kc->idle_stealtime[iowait] -= steal_delta;
 
-	if (iowait)
+	nếu (iowait)
 		cpustat[CPUTIME_IOWAIT] += delta;
-	else
+	không_thì
 		cpustat[CPUTIME_IDLE] += delta;
 
 	kc->idle_stealtime[iowait] += steal;
@@ -458,8 +458,8 @@ static void kcpustat_idle_stop(struct kernel_cpustat *kc, u64 now)
 static void kcpustat_idle_start(struct kernel_cpustat *kc, u64 now)
 {
 	/* Irqtime accounting might have been enabled in the middle of the IRQ */
-	if (kc->idle_elapse)
-		return;
+	nếu (kc->idle_elapse)
+		trả_về;
 
 	write_seqcount_begin(&kc->idle_sleeptime_seq);
 	kc->idle_entrytime = now;
@@ -471,14 +471,14 @@ void kcpustat_dyntick_stop(u64 now, u64 tick_start)
 {
 	struct kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
+	nếu (!vtime_generic_enabled_this_cpu()) {
 		WARN_ON_ONCE(!kc->idle_dyntick);
-		if (kc->idle_tick_period != tick_start) {
+		nếu (kc->idle_tick_period != tick_start) {
 			kc->idle_tick_period = tick_start;
 			kc->idle_tick_overlap = 0;
 		}
 		tick_start = max(tick_start, kc->idle_dyntick_entry);
-		if (!WARN_ON_ONCE(now < tick_start))
+		nếu (!WARN_ON_ONCE(now < tick_start))
 			kc->idle_tick_overlap += now - tick_start;
 		kcpustat_idle_stop(kc, now);
 		kc->idle_dyntick = false;
@@ -496,14 +496,14 @@ static inline u64 kcpustat_tick_overlap(void)
 	u64 overlap = kc->idle_tick_overlap;
 
 	kc->idle_tick_overlap = 0;
-	return overlap;
+	trả_về overlap;
 }
 
 void kcpustat_dyntick_start(u64 now)
 {
 	struct kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu()) {
+	nếu (!vtime_generic_enabled_this_cpu()) {
 		vtime_dyntick_start();
 		kc->idle_dyntick = true;
 		kc->idle_dyntick_entry = now;
@@ -515,7 +515,7 @@ void kcpustat_irq_enter(u64 now)
 {
 	struct kernel_cpustat *kc = kcpustat_this_cpu;
 
-	if (!vtime_generic_enabled_this_cpu() &&
+	nếu (!vtime_generic_enabled_this_cpu() &&
 	    (irqtime_enabled() || vtime_accounting_enabled_this_cpu()))
 		kcpustat_idle_stop(kc, now);
 }
@@ -531,18 +531,18 @@ void kcpustat_irq_exit(u64 now)
 	 * as the irqtime config is enabled to handle case where irqtime
 	 * accounting got runtime disabled in the middle of an IRQ.
 	 */
-	if (!vtime_generic_enabled_this_cpu() &&
+	nếu (!vtime_generic_enabled_this_cpu() &&
 	    (IS_ENABLED(CONFIG_IRQ_TIME_ACCOUNTING) || vtime_accounting_enabled_this_cpu()))
 		kcpustat_idle_start(kc, now);
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+static u64 kcpustat_field_dyntick(số_nguyên cpu, enum cpu_usage_stat idx,
 				  bool compute_delta, u64 now)
 {
 	struct kernel_cpustat *kc = &kcpustat_cpu(cpu);
-	int iowait = idx == CPUTIME_IOWAIT;
+	số_nguyên iowait = idx == CPUTIME_IOWAIT;
 	u64 *cpustat = kc->cpustat;
-	unsigned int seq;
+	unsigned số_nguyên seq;
 	u64 idle;
 
 	do {
@@ -550,60 +550,60 @@ static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
 
 		idle = cpustat[idx];
 
-		if (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
+		nếu (kc->idle_elapse && compute_delta && now > kc->idle_entrytime) {
 			u64 delta = now - kc->idle_entrytime;
 
 			delta -= min_t(u64, kc->idle_stealtime[iowait], delta);
 			idle += delta;
 		}
-	} while (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
+	} trong_khi (read_seqcount_retry(&kc->idle_sleeptime_seq, seq));
 
-	return idle;
+	trả_về idle;
 }
 
-u64 kcpustat_field_idle(int cpu)
+u64 kcpustat_field_idle(số_nguyên cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IDLE,
+	trả_về kcpustat_field_dyntick(cpu, CPUTIME_IDLE,
 				      !cpu_has_iowait(cpu), ktime_get());
 }
 EXPORT_SYMBOL_GPL(kcpustat_field_idle);
 
-u64 kcpustat_field_iowait(int cpu)
+u64 kcpustat_field_iowait(số_nguyên cpu)
 {
-	return kcpustat_field_dyntick(cpu, CPUTIME_IOWAIT,
+	trả_về kcpustat_field_dyntick(cpu, CPUTIME_IOWAIT,
 				      cpu_has_iowait(cpu), ktime_get());
 }
 EXPORT_SYMBOL_GPL(kcpustat_field_iowait);
-#else
+#không_thì
 static inline u64 kcpustat_tick_overlap(void)
 {
-	return 0;
+	trả_về 0;
 }
 
-static u64 kcpustat_field_dyntick(int cpu, enum cpu_usage_stat idx,
+static u64 kcpustat_field_dyntick(số_nguyên cpu, enum cpu_usage_stat idx,
 				  bool compute_delta, ktime_t now)
 {
-	return kcpustat_cpu(cpu).cpustat[idx];
+	trả_về kcpustat_cpu(cpu).cpustat[idx];
 }
 #endif /* CONFIG_NO_HZ_COMMON && !CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE */
 
-static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
+static u64 get_cpu_sleep_time_us(số_nguyên cpu, enum cpu_usage_stat idx,
 				 bool compute_delta, u64 *last_update_time)
 {
 	ktime_t now = ktime_get();
 	u64 res;
 
-	if (vtime_generic_enabled_cpu(cpu))
+	nếu (vtime_generic_enabled_cpu(cpu))
 		res = kcpustat_field(idx, cpu);
-	else
+	không_thì
 		res = kcpustat_field_dyntick(cpu, idx, compute_delta, now);
 
 	do_div(res, NSEC_PER_USEC);
 
-	if (last_update_time)
+	nếu (last_update_time)
 		*last_update_time = ktime_to_us(now);
 
-	return res;
+	trả_về res;
 }
 
 /**
@@ -623,9 +623,9 @@ static u64 get_cpu_sleep_time_us(int cpu, enum cpu_usage_stat idx,
  *
  * Return: total idle time of the @cpu
  */
-u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_idle_time_us(số_nguyên cpu, u64 *last_update_time)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
+	trả_về get_cpu_sleep_time_us(cpu, CPUTIME_IDLE,
 				     !cpu_has_iowait(cpu), last_update_time);
 }
 EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
@@ -647,9 +647,9 @@ EXPORT_SYMBOL_GPL(get_cpu_idle_time_us);
  *
  * Return: total iowait time of @cpu
  */
-u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time)
+u64 get_cpu_iowait_time_us(số_nguyên cpu, u64 *last_update_time)
 {
-	return get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
+	trả_về get_cpu_sleep_time_us(cpu, CPUTIME_IOWAIT,
 				     cpu_has_iowait(cpu), last_update_time);
 }
 EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
@@ -659,22 +659,22 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
  */
 #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
 
-void vtime_account_irq(struct task_struct *tsk, unsigned int offset)
+void vtime_account_irq(struct task_struct *tsk, unsigned số_nguyên offset)
 {
-	unsigned int pc = irq_count() - offset;
+	unsigned số_nguyên pc = irq_count() - offset;
 
-	if (pc & HARDIRQ_OFFSET) {
+	nếu (pc & HARDIRQ_OFFSET) {
 		vtime_account_hardirq(tsk);
-	} else if (pc & SOFTIRQ_OFFSET) {
+	} không_thì nếu (pc & SOFTIRQ_OFFSET) {
 		vtime_account_softirq(tsk);
-	} else if (!kcpustat_idle_dyntick()) {
-		if (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
+	} không_thì nếu (!kcpustat_idle_dyntick()) {
+		nếu (!IS_ENABLED(CONFIG_HAVE_VIRT_CPU_ACCOUNTING_IDLE) &&
 		    is_idle_task(tsk)) {
 			vtime_account_idle(tsk);
-		} else {
+		} không_thì {
 			vtime_account_kernel(tsk);
 		}
-	} else {
+	} không_thì {
 		vtime_reset();
 	}
 }
@@ -703,42 +703,42 @@ void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
 	*st = cputime.stime;
 }
 
-#else /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
+#không_thì /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE: */
 
 /*
  * Account a single tick of CPU time.
  * @p: the process that the CPU time gets accounted to
  * @user_tick: indicates if the tick is a user or a system tick
  */
-void account_process_tick(struct task_struct *p, int user_tick)
+void account_process_tick(struct task_struct *p, số_nguyên user_tick)
 {
 	u64 cputime, steal;
 
-	if (vtime_accounting_enabled_this_cpu())
-		return;
+	nếu (vtime_accounting_enabled_this_cpu())
+		trả_về;
 
-	if (kcpustat_idle_dyntick())
-		return;
+	nếu (kcpustat_idle_dyntick())
+		trả_về;
 
 	cputime = TICK_NSEC - kcpustat_tick_overlap();
 
-	if (irqtime_enabled()) {
+	nếu (irqtime_enabled()) {
 		irqtime_account_process_tick(p, user_tick, cputime);
-		return;
+		trả_về;
 	}
 
 	steal = steal_account_process_time(ULONG_MAX);
 
-	if (steal >= cputime)
-		return;
+	nếu (steal >= cputime)
+		trả_về;
 
 	cputime -= steal;
 
-	if (user_tick)
+	nếu (user_tick)
 		account_user_time(p, cputime);
-	else if ((p != this_rq()->idle) || (irq_count() != HARDIRQ_OFFSET))
+	không_thì nếu ((p != this_rq()->idle) || (irq_count() != HARDIRQ_OFFSET))
 		account_system_time(p, HARDIRQ_OFFSET, cputime);
-	else
+	không_thì
 		account_idle_time(cputime);
 }
 
@@ -780,7 +780,7 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * In both cases this acts as a filter such that the rest of the code
 	 * can assume it is monotonic regardless of anything else.
 	 */
-	if (prev->stime + prev->utime >= rtime)
+	nếu (prev->stime + prev->utime >= rtime)
 		goto out;
 
 	stime = curr->stime;
@@ -791,12 +791,12 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
 	 * Once a task gets some ticks, the monotonicity code at 'update:'
 	 * will ensure things converge to the observed ratio.
 	 */
-	if (stime == 0) {
+	nếu (stime == 0) {
 		utime = rtime;
 		goto update;
 	}
 
-	if (utime == 0) {
+	nếu (utime == 0) {
 		stime = rtime;
 		goto update;
 	}
@@ -813,7 +813,7 @@ update:
 	 *            = (rtime_i+1 - rtime_i) + utime_i
 	 *            >= utime_i
 	 */
-	if (stime < prev->stime)
+	nếu (stime < prev->stime)
 		stime = prev->stime;
 	utime = rtime - stime;
 
@@ -821,7 +821,7 @@ update:
 	 * Make sure utime doesn't go backwards; this still preserves
 	 * monotonicity for stime, analogous argument to above.
 	 */
-	if (utime < prev->utime) {
+	nếu (utime < prev->utime) {
 		utime = prev->utime;
 		stime = rtime - utime;
 	}
@@ -840,7 +840,7 @@ void task_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
 		.sum_exec_runtime = p->se.sum_exec_runtime,
 	};
 
-	if (task_cputime(p, &cputime.utime, &cputime.stime))
+	nếu (task_cputime(p, &cputime.utime, &cputime.stime))
 		cputime.sum_exec_runtime = task_sched_runtime(p);
 	cputime_adjust(&cputime, &p->prev_cputime, ut, st);
 }
@@ -861,10 +861,10 @@ static u64 vtime_delta(struct vtime *vtime)
 	unsigned long long clock;
 
 	clock = sched_clock();
-	if (clock < vtime->starttime)
-		return 0;
+	nếu (clock < vtime->starttime)
+		trả_về 0;
 
-	return clock - vtime->starttime;
+	trả_về clock - vtime->starttime;
 }
 
 static u64 get_vtime_delta(struct vtime *vtime)
@@ -883,14 +883,14 @@ static u64 get_vtime_delta(struct vtime *vtime)
 	WARN_ON_ONCE(vtime->state == VTIME_INACTIVE);
 	vtime->starttime += delta;
 
-	return delta - other;
+	trả_về delta - other;
 }
 
 static void vtime_account_system(struct task_struct *tsk,
 				 struct vtime *vtime)
 {
 	vtime->stime += get_vtime_delta(vtime);
-	if (vtime->stime >= TICK_NSEC) {
+	nếu (vtime->stime >= TICK_NSEC) {
 		account_system_time(tsk, irq_count(), vtime->stime);
 		vtime->stime = 0;
 	}
@@ -900,7 +900,7 @@ static void vtime_account_guest(struct task_struct *tsk,
 				struct vtime *vtime)
 {
 	vtime->gtime += get_vtime_delta(vtime);
-	if (vtime->gtime >= TICK_NSEC) {
+	nếu (vtime->gtime >= TICK_NSEC) {
 		account_guest_time(tsk, vtime->gtime);
 		vtime->gtime = 0;
 	}
@@ -910,9 +910,9 @@ static void __vtime_account_kernel(struct task_struct *tsk,
 				   struct vtime *vtime)
 {
 	/* We might have scheduled out from guest path */
-	if (vtime->state == VTIME_GUEST)
+	nếu (vtime->state == VTIME_GUEST)
 		vtime_account_guest(tsk, vtime);
-	else
+	không_thì
 		vtime_account_system(tsk, vtime);
 }
 
@@ -920,8 +920,8 @@ void vtime_account_kernel(struct task_struct *tsk)
 {
 	struct vtime *vtime = &tsk->vtime;
 
-	if (!vtime_delta(vtime))
-		return;
+	nếu (!vtime_delta(vtime))
+		trả_về;
 
 	write_seqcount_begin(&vtime->seqcount);
 	__vtime_account_kernel(tsk, vtime);
@@ -944,7 +944,7 @@ void vtime_user_exit(struct task_struct *tsk)
 
 	write_seqcount_begin(&vtime->seqcount);
 	vtime->utime += get_vtime_delta(vtime);
-	if (vtime->utime >= TICK_NSEC) {
+	nếu (vtime->utime >= TICK_NSEC) {
 		account_user_time(tsk, vtime->utime);
 		vtime->utime = 0;
 	}
@@ -992,9 +992,9 @@ void vtime_task_switch_generic(struct task_struct *prev)
 	struct vtime *vtime = &prev->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (vtime->state == VTIME_IDLE)
+	nếu (vtime->state == VTIME_IDLE)
 		__vtime_account_idle(vtime);
-	else
+	không_thì
 		__vtime_account_kernel(prev, vtime);
 	vtime->state = VTIME_INACTIVE;
 	vtime->cpu = -1;
@@ -1003,18 +1003,18 @@ void vtime_task_switch_generic(struct task_struct *prev)
 	vtime = &current->vtime;
 
 	write_seqcount_begin(&vtime->seqcount);
-	if (is_idle_task(current))
+	nếu (is_idle_task(current))
 		vtime->state = VTIME_IDLE;
-	else if (current->flags & PF_VCPU)
+	không_thì nếu (current->flags & PF_VCPU)
 		vtime->state = VTIME_GUEST;
-	else
+	không_thì
 		vtime->state = VTIME_SYS;
 	vtime->starttime = sched_clock();
 	vtime->cpu = smp_processor_id();
 	write_seqcount_end(&vtime->seqcount);
 }
 
-void vtime_init_idle(struct task_struct *t, int cpu)
+void vtime_init_idle(struct task_struct *t, số_nguyên cpu)
 {
 	struct vtime *vtime = &t->vtime;
 	unsigned long flags;
@@ -1031,22 +1031,22 @@ void vtime_init_idle(struct task_struct *t, int cpu)
 u64 task_gtime(struct task_struct *t)
 {
 	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	unsigned số_nguyên seq;
 	u64 gtime;
 
-	if (!vtime_accounting_enabled())
-		return t->gtime;
+	nếu (!vtime_accounting_enabled())
+		trả_về t->gtime;
 
 	do {
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		gtime = t->gtime;
-		if (vtime->state == VTIME_GUEST)
+		nếu (vtime->state == VTIME_GUEST)
 			gtime += vtime->gtime + vtime_delta(vtime);
 
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} trong_khi (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return gtime;
+	trả_về gtime;
 }
 
 /*
@@ -1057,14 +1057,14 @@ u64 task_gtime(struct task_struct *t)
 bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 {
 	struct vtime *vtime = &t->vtime;
-	unsigned int seq;
+	unsigned số_nguyên seq;
 	u64 delta;
-	int ret;
+	số_nguyên ret;
 
-	if (!vtime_accounting_enabled()) {
+	nếu (!vtime_accounting_enabled()) {
 		*utime = t->utime;
 		*stime = t->stime;
-		return false;
+		trả_về false;
 	}
 
 	do {
@@ -1075,7 +1075,7 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		*stime = t->stime;
 
 		/* Task is sleeping or idle, nothing to add */
-		if (vtime->state < VTIME_SYS)
+		nếu (vtime->state < VTIME_SYS)
 			continue;
 
 		ret = true;
@@ -1085,25 +1085,25 @@ bool task_cputime(struct task_struct *t, u64 *utime, u64 *stime)
 		 * Task runs either in user (including guest) or kernel space,
 		 * add pending nohz time to the right place.
 		 */
-		if (vtime->state == VTIME_SYS)
+		nếu (vtime->state == VTIME_SYS)
 			*stime += vtime->stime + delta;
-		else
+		không_thì
 			*utime += vtime->utime + delta;
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} trong_khi (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return ret;
+	trả_về ret;
 }
 
-static int vtime_state_fetch(struct vtime *vtime, int cpu)
+static số_nguyên vtime_state_fetch(struct vtime *vtime, số_nguyên cpu)
 {
-	int state = READ_ONCE(vtime->state);
+	số_nguyên state = READ_ONCE(vtime->state);
 
 	/*
 	 * We raced against a context switch, fetch the
 	 * kcpustat task again.
 	 */
-	if (vtime->cpu != cpu && vtime->cpu != -1)
-		return -EAGAIN;
+	nếu (vtime->cpu != cpu && vtime->cpu != -1)
+		trả_về -EAGAIN;
 
 	/*
 	 * Two possible things here:
@@ -1114,37 +1114,37 @@ static int vtime_state_fetch(struct vtime *vtime, int cpu)
 	 *
 	 * Case 1) is ok but 2) is not. So wait for a safe VTIME state.
 	 */
-	if (state == VTIME_INACTIVE)
-		return -EAGAIN;
+	nếu (state == VTIME_INACTIVE)
+		trả_về -EAGAIN;
 
-	return state;
+	trả_về state;
 }
 
 static u64 kcpustat_user_vtime(struct vtime *vtime)
 {
-	if (vtime->state == VTIME_USER)
-		return vtime->utime + vtime_delta(vtime);
-	else if (vtime->state == VTIME_GUEST)
-		return vtime->gtime + vtime_delta(vtime);
-	return 0;
+	nếu (vtime->state == VTIME_USER)
+		trả_về vtime->utime + vtime_delta(vtime);
+	không_thì nếu (vtime->state == VTIME_GUEST)
+		trả_về vtime->gtime + vtime_delta(vtime);
+	trả_về 0;
 }
 
-static int kcpustat_field_vtime(u64 *cpustat,
+static số_nguyên kcpustat_field_vtime(u64 *cpustat,
 				struct task_struct *tsk,
 				enum cpu_usage_stat usage,
-				int cpu, u64 *val)
+				số_nguyên cpu, u64 *val)
 {
 	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	unsigned số_nguyên seq;
 
 	do {
-		int state;
+		số_nguyên state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		nếu (state < 0)
+			trả_về state;
 
 		*val = cpustat[usage];
 
@@ -1157,97 +1157,97 @@ static int kcpustat_field_vtime(u64 *cpustat,
 		 */
 		switch (usage) {
 		case CPUTIME_SYSTEM:
-			if (state == VTIME_SYS)
+			nếu (state == VTIME_SYS)
 				*val += vtime->stime + vtime_delta(vtime);
 			break;
 		case CPUTIME_USER:
-			if (task_nice(tsk) <= 0)
+			nếu (task_nice(tsk) <= 0)
 				*val += kcpustat_user_vtime(vtime);
 			break;
 		case CPUTIME_NICE:
-			if (task_nice(tsk) > 0)
+			nếu (task_nice(tsk) > 0)
 				*val += kcpustat_user_vtime(vtime);
 			break;
 		case CPUTIME_GUEST:
-			if (state == VTIME_GUEST && task_nice(tsk) <= 0)
+			nếu (state == VTIME_GUEST && task_nice(tsk) <= 0)
 				*val += vtime->gtime + vtime_delta(vtime);
 			break;
 		case CPUTIME_GUEST_NICE:
-			if (state == VTIME_GUEST && task_nice(tsk) > 0)
+			nếu (state == VTIME_GUEST && task_nice(tsk) > 0)
 				*val += vtime->gtime + vtime_delta(vtime);
 			break;
 		case CPUTIME_IDLE:
-			if (state == VTIME_IDLE && !cpu_has_iowait(cpu))
+			nếu (state == VTIME_IDLE && !cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
 			break;
 		case CPUTIME_IOWAIT:
-			if (state == VTIME_IDLE && cpu_has_iowait(cpu))
+			nếu (state == VTIME_IDLE && cpu_has_iowait(cpu))
 				*val += vtime_delta(vtime);
 			break;
 		default:
 			break;
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} trong_khi (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	trả_về 0;
 }
 
-u64 kcpustat_field(enum cpu_usage_stat usage, int cpu)
+u64 kcpustat_field(enum cpu_usage_stat usage, số_nguyên cpu)
 {
 	u64 *cpustat = kcpustat_cpu(cpu).cpustat;
 	u64 val = cpustat[usage];
 	struct rq *rq;
-	int err;
+	số_nguyên err;
 
-	if (!vtime_generic_enabled_cpu(cpu))
-		return kcpustat_field_default(usage, cpu);
+	nếu (!vtime_generic_enabled_cpu(cpu))
+		trả_về kcpustat_field_default(usage, cpu);
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
+	cho (;;) {
 		struct task_struct *curr;
 
 		rcu_read_lock();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		nếu (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
-			return cpustat[usage];
+			trả_về cpustat[usage];
 		}
 
 		err = kcpustat_field_vtime(cpustat, curr, usage, cpu, &val);
 		rcu_read_unlock();
 
-		if (!err)
-			return val;
+		nếu (!err)
+			trả_về val;
 
 		cpu_relax();
 	}
 }
 EXPORT_SYMBOL_GPL(kcpustat_field);
 
-static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
+static số_nguyên kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
 				    const struct kernel_cpustat *src,
-				    struct task_struct *tsk, int cpu)
+				    struct task_struct *tsk, số_nguyên cpu)
 {
 	struct vtime *vtime = &tsk->vtime;
-	unsigned int seq;
+	unsigned số_nguyên seq;
 
 	do {
 		u64 *cpustat;
 		u64 delta;
-		int state;
+		số_nguyên state;
 
 		seq = read_seqcount_begin(&vtime->seqcount);
 
 		state = vtime_state_fetch(vtime, cpu);
-		if (state < 0)
-			return state;
+		nếu (state < 0)
+			trả_về state;
 
 		*dst = *src;
 		cpustat = dst->cpustat;
 
 		/* Task is sleeping or dead, nothing to add */
-		if (state < VTIME_IDLE)
+		nếu (state < VTIME_IDLE)
 			continue;
 
 		delta = vtime_delta(vtime);
@@ -1261,63 +1261,63 @@ static int kcpustat_cpu_fetch_vtime(struct kernel_cpustat *dst,
 			cpustat[CPUTIME_SYSTEM] += vtime->stime + delta;
 			break;
 		case VTIME_USER:
-			if (task_nice(tsk) > 0)
+			nếu (task_nice(tsk) > 0)
 				cpustat[CPUTIME_NICE] += vtime->utime + delta;
-			else
+			không_thì
 				cpustat[CPUTIME_USER] += vtime->utime + delta;
 			break;
 		case VTIME_GUEST:
-			if (task_nice(tsk) > 0) {
+			nếu (task_nice(tsk) > 0) {
 				cpustat[CPUTIME_GUEST_NICE] += vtime->gtime + delta;
 				cpustat[CPUTIME_NICE] += vtime->gtime + delta;
-			} else {
+			} không_thì {
 				cpustat[CPUTIME_GUEST] += vtime->gtime + delta;
 				cpustat[CPUTIME_USER] += vtime->gtime + delta;
 			}
 			break;
 		case VTIME_IDLE:
-			if (cpu_has_iowait(cpu))
+			nếu (cpu_has_iowait(cpu))
 				cpustat[CPUTIME_IOWAIT] += delta;
-			else
+			không_thì
 				cpustat[CPUTIME_IDLE] += delta;
 			break;
 		default:
 			WARN_ON_ONCE(1);
 		}
-	} while (read_seqcount_retry(&vtime->seqcount, seq));
+	} trong_khi (read_seqcount_retry(&vtime->seqcount, seq));
 
-	return 0;
+	trả_về 0;
 }
 
-void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
+void kcpustat_cpu_fetch(struct kernel_cpustat *dst, số_nguyên cpu)
 {
 	const struct kernel_cpustat *src = &kcpustat_cpu(cpu);
 	struct rq *rq;
-	int err;
+	số_nguyên err;
 
-	if (!vtime_generic_enabled_cpu(cpu)) {
+	nếu (!vtime_generic_enabled_cpu(cpu)) {
 		kcpustat_cpu_fetch_default(dst, cpu);
-		return;
+		trả_về;
 	}
 
 	rq = cpu_rq(cpu);
 
-	for (;;) {
+	cho (;;) {
 		struct task_struct *curr;
 
 		rcu_read_lock();
 		curr = rcu_dereference(rq->curr);
-		if (WARN_ON_ONCE(!curr)) {
+		nếu (WARN_ON_ONCE(!curr)) {
 			rcu_read_unlock();
 			kcpustat_cpu_fetch_default(dst, cpu);
-			return;
+			trả_về;
 		}
 
 		err = kcpustat_cpu_fetch_vtime(dst, src, curr, cpu);
 		rcu_read_unlock();
 
-		if (!err)
-			return;
+		nếu (!err)
+			trả_về;
 
 		cpu_relax();
 	}

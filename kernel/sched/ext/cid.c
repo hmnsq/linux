@@ -38,15 +38,15 @@ static struct scx_cid_tables *scx_cid_tables;	/* used only during alloc/free */
  * !present), record @cpu in @fallbacks and return its node mask instead - the
  * worst that can happen is that the cpu's LLC becomes coarser than reality.
  */
-static const struct cpumask *cpu_llc_mask(int cpu, struct cpumask *fallbacks)
+static const struct cpumask *cpu_llc_mask(số_nguyên cpu, struct cpumask *fallbacks)
 {
 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
 
-	if (!ci || !ci->info_list || !ci->num_leaves) {
+	nếu (!ci || !ci->info_list || !ci->num_leaves) {
 		cpumask_set_cpu(cpu, fallbacks);
-		return cpumask_of_node(cpu_to_node(cpu));
+		trả_về cpumask_of_node(cpu_to_node(cpu));
 	}
-	return &ci->info_list[ci->num_leaves - 1].shared_cpu_map;
+	trả_về &ci->info_list[ci->num_leaves - 1].shared_cpu_map;
 }
 
 /*
@@ -59,11 +59,11 @@ static void calc_shard_layout(const struct cpumask *llc_cpus, u32 shard_size,
 			      u32 *cores_per_shard_p, u32 *nr_large_p)
 {
 	u32 nr_cores = 0, nr_cpus = 0, nr_shards;
-	int cpu;
+	số_nguyên cpu;
 
 	for_each_cpu(cpu, llc_cpus) {
 		nr_cpus++;
-		if (cpumask_first(topology_sibling_cpumask(cpu)) == cpu)
+		nếu (cpumask_first(topology_sibling_cpumask(cpu)) == cpu)
 			nr_cores++;
 	}
 
@@ -77,8 +77,8 @@ static void calc_shard_layout(const struct cpumask *llc_cpus, u32 shard_size,
 
 static void scx_cid_tables_free(struct scx_cid_tables *tbls)
 {
-	if (!tbls)
-		return;
+	nếu (!tbls)
+		trả_về;
 	kvfree(tbls->cid_to_cpu);
 	kvfree(tbls->cpu_to_cid);
 	kvfree(tbls->cid_to_shard);
@@ -99,8 +99,8 @@ static struct scx_cid_tables *scx_cid_alloc_tables(void)
 	struct scx_cid_tables *tbls;
 
 	tbls = kzalloc_obj(*tbls);
-	if (!tbls)
-		return NULL;
+	nếu (!tbls)
+		trả_về NULL;
 
 	tbls->cid_to_cpu = kvzalloc_objs(*tbls->cid_to_cpu, npossible);
 	tbls->cpu_to_cid = kvzalloc_objs(*tbls->cpu_to_cid, nr_cpu_ids);
@@ -109,13 +109,13 @@ static struct scx_cid_tables *scx_cid_alloc_tables(void)
 	tbls->shard_ranges = kvzalloc_objs(*tbls->shard_ranges, npossible);
 	tbls->topo = kvzalloc_objs(*tbls->topo, npossible);
 
-	if (!tbls->cid_to_cpu || !tbls->cpu_to_cid || !tbls->cid_to_shard ||
+	nếu (!tbls->cid_to_cpu || !tbls->cpu_to_cid || !tbls->cid_to_shard ||
 	    !tbls->shard_node || !tbls->shard_ranges || !tbls->topo) {
 		scx_cid_tables_free(tbls);
-		return NULL;
+		trả_về NULL;
 	}
 
-	return tbls;
+	trả_về tbls;
 }
 
 /**
@@ -151,8 +151,8 @@ void scx_cid_retire_tables(void)
 	lockdep_assert_held(&scx_enable_mutex);
 	lockdep_assert_cpus_held();
 
-	if (!tbls)
-		return;
+	nếu (!tbls)
+		trả_về;
 
 	scx_cid_tables = NULL;
 	RCU_INIT_POINTER(scx_cid_to_cpu_tbl, NULL);
@@ -204,29 +204,29 @@ s32 scx_cid_init(struct scx_sched *sch)
 	max_cids = min_t(u32, shard_size, SCX_CID_SHARD_MAX_CPUS);
 
 	tbls = scx_cid_alloc_tables();
-	if (!tbls)
-		return -ENOMEM;
+	nếu (!tbls)
+		trả_về -ENOMEM;
 
 	scx_cid_tables = tbls;
 
-	for (si = 0; si < num_possible_cpus(); si++)
+	cho (si = 0; si < num_possible_cpus(); si++)
 		tbls->shard_node[si] = NUMA_NO_NODE;
 
-	if (!zalloc_cpumask_var(&to_walk, GFP_KERNEL) ||
+	nếu (!zalloc_cpumask_var(&to_walk, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&node_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&llc_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&core_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&llc_fallback, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&online_no_topo, GFP_KERNEL))
-		return -ENOMEM;
+		trả_về -ENOMEM;
 
 	/* -1 sentinels for sparse-possible cpu id holes (0 is a valid cid) */
-	for (cpu = 0; cpu < nr_cpu_ids; cpu++)
+	cho (cpu = 0; cpu < nr_cpu_ids; cpu++)
 		tbls->cpu_to_cid[cpu] = -1;
 
 	cpumask_copy(to_walk, cpu_online_mask);
 
-	while (!cpumask_empty(to_walk)) {
+	trong_khi (!cpumask_empty(to_walk)) {
 		s32 next_cpu = cpumask_first(to_walk);
 		s32 nid = cpu_to_node(next_cpu);
 		s32 node_cid = next_cid;
@@ -236,7 +236,7 @@ s32 scx_cid_init(struct scx_sched *sch)
 		 * No NUMA info: skip and let the tail loop assign a no-topo
 		 * cid. cpumask_of_node(-1) is undefined.
 		 */
-		if (nid < 0) {
+		nếu (nid < 0) {
 			cpumask_clear_cpu(next_cpu, to_walk);
 			continue;
 		}
@@ -245,10 +245,10 @@ s32 scx_cid_init(struct scx_sched *sch)
 
 		/* node_scratch = to_walk & this node */
 		cpumask_and(node_scratch, to_walk, cpumask_of_node(nid));
-		if (WARN_ON_ONCE(!cpumask_test_cpu(next_cpu, node_scratch)))
-			return -EINVAL;
+		nếu (WARN_ON_ONCE(!cpumask_test_cpu(next_cpu, node_scratch)))
+			trả_về -EINVAL;
 
-		while (!cpumask_empty(node_scratch)) {
+		trong_khi (!cpumask_empty(node_scratch)) {
 			s32 ncpu = cpumask_first(node_scratch);
 			const struct cpumask *llc_mask = cpu_llc_mask(ncpu, llc_fallback);
 			s32 llc_cid = next_cid;
@@ -259,15 +259,15 @@ s32 scx_cid_init(struct scx_sched *sch)
 
 			/* llc_scratch = node_scratch & this llc */
 			cpumask_and(llc_scratch, node_scratch, llc_mask);
-			if (WARN_ON_ONCE(!cpumask_test_cpu(ncpu, llc_scratch)))
-				return -EINVAL;
+			nếu (WARN_ON_ONCE(!cpumask_test_cpu(ncpu, llc_scratch)))
+				trả_về -EINVAL;
 
 			calc_shard_layout(llc_scratch, shard_size, &cores_per_shard, &nr_large);
 			shard_cid = next_cid;
 			shard_idx = next_shard_idx++;
 			tbls->shard_node[shard_idx] = nid;
 
-			while (!cpumask_empty(llc_scratch)) {
+			trong_khi (!cpumask_empty(llc_scratch)) {
 				s32 lcpu = cpumask_first(llc_scratch);
 				const struct cpumask *sib = topology_sibling_cpumask(lcpu);
 				s32 core_cid = next_cid;
@@ -277,8 +277,8 @@ s32 scx_cid_init(struct scx_sched *sch)
 
 				/* core_scratch = llc_scratch & this core */
 				cpumask_and(core_scratch, llc_scratch, sib);
-				if (WARN_ON_ONCE(!cpumask_test_cpu(lcpu, core_scratch)))
-					return -EINVAL;
+				nếu (WARN_ON_ONCE(!cpumask_test_cpu(lcpu, core_scratch)))
+					trả_về -EINVAL;
 
 				/*
 				 * Advance to a new shard when either core or
@@ -288,7 +288,7 @@ s32 scx_cid_init(struct scx_sched *sch)
 				 */
 				cids_in_core = cpumask_weight(core_scratch);
 				max_cores = cores_per_shard + (shard_local < nr_large ? 1 : 0);
-				if (cores_in_shard &&
+				nếu (cores_in_shard &&
 				    (cores_in_shard >= max_cores ||
 				     cids_in_shard + cids_in_core > max_cids)) {
 					shard_local++;
@@ -339,16 +339,16 @@ s32 scx_cid_init(struct scx_sched *sch)
 	notopo_shard_idx = -1;
 
 	for_each_cpu(cpu, cpu_possible_mask) {
-		if (tbls->cpu_to_cid[cpu] != -1)
+		nếu (tbls->cpu_to_cid[cpu] != -1)
 			continue;
-		if (cpu_online(cpu))
+		nếu (cpu_online(cpu))
 			cpumask_set_cpu(cpu, online_no_topo);
 
 		cid = next_cid++;
 		tbls->cid_to_cpu[cid] = cpu;
 		tbls->cpu_to_cid[cpu] = cid;
 
-		if (notopo_in_shard >= min_t(u32, shard_size, SCX_CID_SHARD_MAX_CPUS)) {
+		nếu (notopo_in_shard >= min_t(u32, shard_size, SCX_CID_SHARD_MAX_CPUS)) {
 			notopo_shard_cid = cid;
 			notopo_shard_idx = next_shard_idx++;
 			notopo_in_shard = 0;
@@ -361,10 +361,10 @@ s32 scx_cid_init(struct scx_sched *sch)
 		tbls->topo[cid].shard_idx = notopo_shard_idx;
 	}
 
-	if (!cpumask_empty(llc_fallback))
+	nếu (!cpumask_empty(llc_fallback))
 		pr_warn("scx_cid: cpus without cacheinfo, using node mask as llc: %*pbl\n",
 			cpumask_pr_args(llc_fallback));
-	if (!cpumask_empty(online_no_topo))
+	nếu (!cpumask_empty(online_no_topo))
 		pr_warn("scx_cid: online cpus with no usable topology: %*pbl\n",
 			cpumask_pr_args(online_no_topo));
 
@@ -373,16 +373,16 @@ s32 scx_cid_init(struct scx_sched *sch)
 	 * cid ranges by construction: base_cid is the first cid landing in a
 	 * shard, nr_cids is the count.
 	 */
-	for (cid = 0; cid < next_cid; cid++) {
+	cho (cid = 0; cid < next_cid; cid++) {
 		s32 sidx = tbls->cid_to_shard[cid];
 
-		if (tbls->shard_ranges[sidx].nr_cids == 0)
+		nếu (tbls->shard_ranges[sidx].nr_cids == 0)
 			tbls->shard_ranges[sidx].base_cid = cid;
 		tbls->shard_ranges[sidx].nr_cids++;
 	}
 
 	tbls->nr_shards = next_shard_idx;
-	return 0;
+	trả_về 0;
 }
 
 /**
@@ -395,8 +395,8 @@ void scx_cmask_clear(struct scx_cmask *m)
 {
 	u32 nr_words;
 
-	if (!m->nr_cids)
-		return;
+	nếu (!m->nr_cids)
+		trả_về;
 	nr_words = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
 	memset(m->bits, 0, nr_words * sizeof(u64));
 }
@@ -411,19 +411,19 @@ void scx_cmask_fill(struct scx_cmask *m)
 {
 	u32 nr_words, head_bits, tail_bits;
 
-	if (!m->nr_cids)
-		return;
+	nếu (!m->nr_cids)
+		trả_về;
 	nr_words = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
 	memset(m->bits, 0xff, nr_words * sizeof(u64));
 
 	/* clear word-0 bits below base */
 	head_bits = m->base & 63;
-	if (head_bits)
+	nếu (head_bits)
 		m->bits[0] &= ~((1ULL << head_bits) - 1);
 
 	/* clear last-word bits at or past base + nr_cids */
 	tail_bits = (m->base + m->nr_cids) & 63;
-	if (tail_bits)
+	nếu (tail_bits)
 		m->bits[nr_words - 1] &= (1ULL << tail_bits) - 1;
 }
 
@@ -436,13 +436,13 @@ static s32 pick_max_node(const u32 *counts, u32 n)
 	s32 best = NUMA_NO_NODE;
 	u32 best_count = 0, i;
 
-	for (i = 0; i < n; i++) {
-		if (counts[i] > best_count) {
+	cho (i = 0; i < n; i++) {
+		nếu (counts[i] > best_count) {
 			best_count = counts[i];
 			best = i;
 		}
 	}
-	return best;
+	trả_về best;
 }
 
 __bpf_kfunc_start_defs();
@@ -491,80 +491,80 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	 */
 	alloced = zalloc_cpumask_var(&seen, GFP_KERNEL);
 	node_counts = kzalloc_objs(*node_counts, nr_node_ids);
-	if (cpu_to_cid_cnt == nr_cpu_ids)
+	nếu (cpu_to_cid_cnt == nr_cpu_ids)
 		cpu_to_cid = kmemdup(cpu_to_cid__arena, cpu_to_cid_cnt * sizeof(s32),
 				     GFP_KERNEL);
-	if (nr_shards && nr_shards <= npossible)
+	nếu (nr_shards && nr_shards <= npossible)
 		shard_start = kmemdup(shard_start__arena, nr_shards * sizeof(s32),
 				      GFP_KERNEL);
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	nếu (unlikely(!sch))
+		trả_về;
 
 	/* called from ops.init_cids(), so the tables exist and are unpublished */
 	lockdep_assert_held(&scx_enable_mutex);
 	tbls = scx_cid_tables;
 
-	if (cpu_to_cid_cnt != nr_cpu_ids) {
+	nếu (cpu_to_cid_cnt != nr_cpu_ids) {
 		scx_error(sch, "scx_bpf_cid_override: cpu_to_cid expected %u entries, got %u",
 			  nr_cpu_ids, cpu_to_cid_cnt);
-		return;
+		trả_về;
 	}
 
-	if (!nr_shards || nr_shards > npossible) {
+	nếu (!nr_shards || nr_shards > npossible) {
 		scx_error(sch, "scx_bpf_cid_override: invalid shard_start count %u",
 			  nr_shards);
-		return;
+		trả_về;
 	}
 
-	if (!alloced || !node_counts || !cpu_to_cid || !shard_start) {
+	nếu (!alloced || !node_counts || !cpu_to_cid || !shard_start) {
 		scx_error(sch, "scx_bpf_cid_override: allocation failed");
-		return;
+		trả_về;
 	}
 
 	/* validate shard_start[]: starts at 0, strictly increasing, in range */
-	if (shard_start[0] != 0) {
+	nếu (shard_start[0] != 0) {
 		scx_error(sch, "scx_bpf_cid_override: shard_start[0] must be 0, got %d",
 			  shard_start[0]);
-		return;
+		trả_về;
 	}
-	for (si = 1; si < nr_shards; si++) {
-		if (shard_start[si] <= shard_start[si - 1]) {
+	cho (si = 1; si < nr_shards; si++) {
+		nếu (shard_start[si] <= shard_start[si - 1]) {
 			scx_error(sch, "scx_bpf_cid_override: shard_start not increasing at [%d]",
 				  si);
-			return;
+			trả_về;
 		}
-		if (shard_start[si] >= npossible) {
+		nếu (shard_start[si] >= npossible) {
 			scx_error(sch, "scx_bpf_cid_override: shard_start[%d]=%d >= %u",
 				  si, shard_start[si], npossible);
-			return;
+			trả_về;
 		}
-		if (shard_start[si] - shard_start[si - 1] > SCX_CID_SHARD_MAX_CPUS) {
+		nếu (shard_start[si] - shard_start[si - 1] > SCX_CID_SHARD_MAX_CPUS) {
 			scx_error(sch, "scx_bpf_cid_override: shard[%d] span %d exceeds max %d",
 				  si - 1, shard_start[si] - shard_start[si - 1],
 				  SCX_CID_SHARD_MAX_CPUS);
-			return;
+			trả_về;
 		}
 	}
-	if (npossible - shard_start[nr_shards - 1] > SCX_CID_SHARD_MAX_CPUS) {
+	nếu (npossible - shard_start[nr_shards - 1] > SCX_CID_SHARD_MAX_CPUS) {
 		scx_error(sch, "scx_bpf_cid_override: shard[%d] span %d exceeds max %d",
 			  nr_shards - 1, npossible - shard_start[nr_shards - 1],
 			  SCX_CID_SHARD_MAX_CPUS);
-		return;
+		trả_về;
 	}
 
 	/* validate first so that invalid input leaves the tables untouched */
 	for_each_possible_cpu(cpu) {
 		s32 c = cpu_to_cid[cpu];
 
-		if (!cid_valid(sch, c))
-			return;
-		if (cpumask_test_and_set_cpu(c, seen)) {
+		nếu (!cid_valid(sch, c))
+			trả_về;
+		nếu (cpumask_test_and_set_cpu(c, seen)) {
 			scx_error(sch, "cid %d assigned to multiple cpus", c);
-			return;
+			trả_về;
 		}
 	}
 
@@ -579,14 +579,14 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	 * Derive shard_node[] by majority count: an overridden shard may
 	 * span NUMA nodes, so assign each to the node that owns the most cpus.
 	 */
-	for (si = 0; si < nr_shards; si++) {
+	cho (si = 0; si < nr_shards; si++) {
 		u32 end = (si + 1 < nr_shards) ? shard_start[si + 1] : npossible;
 
 		memset(node_counts, 0, nr_node_ids * sizeof(*node_counts));
-		for (cid = shard_start[si]; cid < end; cid++) {
+		cho (cid = shard_start[si]; cid < end; cid++) {
 			s32 node = cpu_to_node(tbls->cid_to_cpu[cid]);
 
-			if (numa_valid_node(node))
+			nếu (numa_valid_node(node))
 				node_counts[node]++;
 		}
 		tbls->shard_node[si] = pick_max_node(node_counts, nr_node_ids);
@@ -597,8 +597,8 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	 * @shard_start. Walk shards to derive shard_cid/shard_idx for each cid.
 	 */
 	si = 0;
-	for (cid = 0; cid < npossible; cid++) {
-		if (si + 1 < nr_shards && cid >= shard_start[si + 1])
+	cho (cid = 0; cid < npossible; cid++) {
+		nếu (si + 1 < nr_shards && cid >= shard_start[si + 1])
 			si++;
 		tbls->cid_to_shard[cid] = si;
 		tbls->topo[cid] = SCX_CID_TOPO_NEG;
@@ -608,7 +608,7 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 
 	/* Rebuild shard_ranges[] for the new layout. */
 	memset(tbls->shard_ranges, 0, npossible * sizeof(*tbls->shard_ranges));
-	for (si = 0; si < nr_shards; si++) {
+	cho (si = 0; si < nr_shards; si++) {
 		u32 end = (si + 1 < nr_shards) ? shard_start[si + 1] : npossible;
 
 		tbls->shard_ranges[si].base_cid = shard_start[si];
@@ -635,9 +635,9 @@ __bpf_kfunc s32 scx_bpf_cid_to_cpu(s32 cid, const struct bpf_prog_aux *aux)
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -EINVAL;
-	return scx_cid_to_cpu(sch, cid);
+	nếu (unlikely(!sch))
+		trả_về -EINVAL;
+	trả_về scx_cid_to_cpu(sch, cid);
 }
 
 /**
@@ -657,9 +657,9 @@ __bpf_kfunc s32 scx_bpf_cpu_to_cid(s32 cpu, const struct bpf_prog_aux *aux)
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -EINVAL;
-	return scx_cpu_to_cid(sch, cpu);
+	nếu (unlikely(!sch))
+		trả_về -EINVAL;
+	trả_về scx_cpu_to_cid(sch, cpu);
 }
 
 /*
@@ -698,7 +698,7 @@ enum cmask_op2 {
 
 static __always_inline bool cmask_op2_is_pred(const enum cmask_op2 op)
 {
-	return op == CMASK_OP2_SUBSET || op == CMASK_OP2_INTERSECTS;
+	trả_về op == CMASK_OP2_SUBSET || op == CMASK_OP2_INTERSECTS;
 }
 
 static __always_inline bool cmask_word_op2(u64 *av, const u64 *bp, u64 mask,
@@ -707,27 +707,27 @@ static __always_inline bool cmask_word_op2(u64 *av, const u64 *bp, u64 mask,
 	switch (op) {
 	case CMASK_OP2_AND:
 		WRITE_ONCE(*av, *av & (~mask | READ_ONCE(*bp)));
-		return false;
+		trả_về false;
 	case CMASK_OP2_OR:
 		WRITE_ONCE(*av, *av | (READ_ONCE(*bp) & mask));
-		return false;
+		trả_về false;
 	case CMASK_OP2_COPY:
 		WRITE_ONCE(*av, (*av & ~mask) | (READ_ONCE(*bp) & mask));
-		return false;
+		trả_về false;
 	case CMASK_OP2_ANDNOT:
 		WRITE_ONCE(*av, *av & ~(READ_ONCE(*bp) & mask));
-		return false;
+		trả_về false;
 	case CMASK_OP2_SUBSET:
 		/* stop on the first bit in @sub not set in @super */
-		return (READ_ONCE(*bp) & ~READ_ONCE(*av)) & mask;
+		trả_về (READ_ONCE(*bp) & ~READ_ONCE(*av)) & mask;
 	case CMASK_OP2_INTERSECTS:
-		return (READ_ONCE(*av) & READ_ONCE(*bp)) & mask;
+		trả_về (READ_ONCE(*av) & READ_ONCE(*bp)) & mask;
 	case CMASK_OP2_REF_OR:
 		WRITE_ONCE(*av, READ_ONCE(*av) | (READ_ONCE(*bp) & mask));
-		return false;
+		trả_về false;
 	case CMASK_OP2_REF_COPY:
 		WRITE_ONCE(*av, (READ_ONCE(*av) & ~mask) | (READ_ONCE(*bp) & mask));
-		return false;
+		trả_về false;
 	}
 	unreachable();
 }
@@ -756,26 +756,26 @@ static __always_inline bool cmask_walk_op2(u64 *a_bits, u32 a_base, u32 a_nr_cid
 	u64 tail_mask = GENMASK_U64((hi - 1) & 63, 0);
 	u32 w;
 
-	if (lo >= hi)
-		return false;
+	nếu (lo >= hi)
+		trả_về false;
 
-	if (lo_word == hi_word)
-		return cmask_word_op2(&a_bits[lo_word - a_word_off],
+	nếu (lo_word == hi_word)
+		trả_về cmask_word_op2(&a_bits[lo_word - a_word_off],
 				      &b_bits[lo_word - b_word_off],
 				      head_mask & tail_mask, op);
 
-	if (cmask_word_op2(&a_bits[lo_word - a_word_off],
+	nếu (cmask_word_op2(&a_bits[lo_word - a_word_off],
 			   &b_bits[lo_word - b_word_off], head_mask, op) &&
 	    cmask_op2_is_pred(op))
-		return true;
+		trả_về true;
 
-	for (w = lo_word + 1; w < hi_word; w++)
-		if (cmask_word_op2(&a_bits[w - a_word_off],
+	cho (w = lo_word + 1; w < hi_word; w++)
+		nếu (cmask_word_op2(&a_bits[w - a_word_off],
 				   &b_bits[w - b_word_off], ~0ULL, op) &&
 		    cmask_op2_is_pred(op))
-			return true;
+			trả_về true;
 
-	return cmask_word_op2(&a_bits[hi_word - a_word_off],
+	trả_về cmask_word_op2(&a_bits[hi_word - a_word_off],
 			      &b_bits[hi_word - b_word_off], tail_mask, op);
 }
 
@@ -788,7 +788,7 @@ static __always_inline bool cmask_word_op1(const u64 *ap, u64 mask,
 {
 	switch (op) {
 	case CMASK_OP1_ANY_SET:
-		return READ_ONCE(*ap) & mask;
+		trả_về READ_ONCE(*ap) & mask;
 	}
 	unreachable();
 }
@@ -813,19 +813,19 @@ static __always_inline bool cmask_walk_op1(const u64 *a_bits, u32 a_base,
 	u64 tail_mask = GENMASK_U64((hi - 1) & 63, 0);
 	u32 w;
 
-	if (lo >= hi)
-		return false;
+	nếu (lo >= hi)
+		trả_về false;
 
-	if (lo_word == hi_word)
-		return cmask_word_op1(&a_bits[lo_word - a_word_off],
+	nếu (lo_word == hi_word)
+		trả_về cmask_word_op1(&a_bits[lo_word - a_word_off],
 				      head_mask & tail_mask, op);
 
-	if (cmask_word_op1(&a_bits[lo_word - a_word_off], head_mask, op))
-		return true;
-	for (w = lo_word + 1; w < hi_word; w++)
-		if (cmask_word_op1(&a_bits[w - a_word_off], ~0ULL, op))
-			return true;
-	return cmask_word_op1(&a_bits[hi_word - a_word_off], tail_mask, op);
+	nếu (cmask_word_op1(&a_bits[lo_word - a_word_off], head_mask, op))
+		trả_về true;
+	cho (w = lo_word + 1; w < hi_word; w++)
+		nếu (cmask_word_op1(&a_bits[w - a_word_off], ~0ULL, op))
+			trả_về true;
+	trả_về cmask_word_op1(&a_bits[hi_word - a_word_off], tail_mask, op);
 }
 
 void scx_cmask_and(struct scx_cmask *dst, const struct scx_cmask *src)
@@ -858,9 +858,9 @@ void scx_cmask_andnot(struct scx_cmask *dst, const struct scx_cmask *src)
  */
 static bool cmask_any_set_in_range(const struct scx_cmask *cm, u32 lo, u32 hi)
 {
-	if (lo >= hi)
-		return false;
-	return cmask_walk_op1(&cm->bits[lo / 64 - cm->base / 64], lo, hi - lo,
+	nếu (lo >= hi)
+		trả_về false;
+	trả_về cmask_walk_op1(&cm->bits[lo / 64 - cm->base / 64], lo, hi - lo,
 			      CMASK_OP1_ANY_SET);
 }
 
@@ -881,20 +881,20 @@ bool scx_cmask_subset(const struct scx_cmask *sub, const struct scx_cmask *super
 	 * such bit means not a subset. The walk below only visits words
 	 * common to both ranges, so these need a separate scan.
 	 */
-	if (sub->base < super->base &&
+	nếu (sub->base < super->base &&
 	    cmask_any_set_in_range(sub, sub->base, min(super->base, sub_end)))
-		return false;
-	if (sub_end > super_end &&
+		trả_về false;
+	nếu (sub_end > super_end &&
 	    cmask_any_set_in_range(sub, max(sub->base, super_end), sub_end))
-		return false;
+		trả_về false;
 
-	return !cmask_walk_op2((u64 *)super->bits, super->base, super->nr_cids,
+	trả_về !cmask_walk_op2((u64 *)super->bits, super->base, super->nr_cids,
 			       sub->bits, sub->base, sub->nr_cids, CMASK_OP2_SUBSET);
 }
 
 bool scx_cmask_intersects(const struct scx_cmask *a, const struct scx_cmask *b)
 {
-	return cmask_walk_op2((u64 *)a->bits, a->base, a->nr_cids,
+	trả_về cmask_walk_op2((u64 *)a->bits, a->base, a->nr_cids,
 			      b->bits, b->base, b->nr_cids, CMASK_OP2_INTERSECTS);
 }
 
@@ -906,7 +906,7 @@ bool scx_cmask_intersects(const struct scx_cmask *a, const struct scx_cmask *b)
  */
 bool scx_cmask_empty(const struct scx_cmask *m)
 {
-	return !cmask_any_set_in_range(m, m->base, m->base + m->nr_cids);
+	trả_về !cmask_any_set_in_range(m, m->base, m->base + m->nr_cids);
 }
 
 /**
@@ -938,8 +938,8 @@ __bpf_kfunc void scx_bpf_cid_topo(s32 cid, struct scx_cid_topo *out, size_t out_
 
 	sch = scx_prog_sched(aux);
 	topo = rcu_dereference(scx_cid_topo);
-	if (unlikely(!sch) || !cid_valid(sch, cid) || unlikely(!topo))
-		return;
+	nếu (unlikely(!sch) || !cid_valid(sch, cid) || unlikely(!topo))
+		trả_về;
 
 	memcpy(out, &topo[cid], len);
 }
@@ -979,7 +979,7 @@ static const struct btf_kfunc_id_set scx_kfunc_set_cid = {
  * Return 0 on success, -EINVAL if the range is out of bounds or @alloc_words
  * doesn't cover it.
  */
-int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
+số_nguyên scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
 		       struct scx_cmask_ref *ref)
 {
 	u32 base, nr_cids, alloc_words, npossible = num_possible_cpus();
@@ -989,9 +989,9 @@ int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
 	nr_cids = READ_ONCE(src->nr_cids);
 	alloc_words = READ_ONCE(src->alloc_words);
 
-	if (unlikely(base >= npossible || nr_cids > npossible - base ||
+	nếu (unlikely(base >= npossible || nr_cids > npossible - base ||
 		     SCX_CMASK_NR_WORDS(nr_cids) > alloc_words))
-		return -EINVAL;
+		trả_về -EINVAL;
 
 	ref->sch = sch;
 	ref->src = (struct scx_cmask *)src;
@@ -1000,12 +1000,12 @@ int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
 
 	cid_to_shard = rcu_dereference_all(scx_cid_to_shard);
 	ref->shard_first = cid_to_shard[base];
-	if (likely(nr_cids))
+	nếu (likely(nr_cids))
 		ref->shard_end = cid_to_shard[base + nr_cids - 1] + 1;
-	else
+	không_thì
 		ref->shard_end = ref->shard_first;
 
-	return 0;
+	trả_về 0;
 }
 
 /**
@@ -1037,9 +1037,9 @@ void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
 
 	cid_to_shard = rcu_dereference_all(scx_cid_to_shard);
 	ref->shard_first = cid_to_shard[base];
-	if (likely(nr_cids))
+	nếu (likely(nr_cids))
 		ref->shard_end = cid_to_shard[base + nr_cids - 1] + 1;
-	else
+	không_thì
 		ref->shard_end = ref->shard_first;
 }
 
@@ -1067,26 +1067,26 @@ void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
 	isect_base = max(ref->base, shard_base);
 	isect_end = min(ref->base + ref->nr_cids, shard_end);
 
-	if (isect_base >= isect_end) {
+	nếu (isect_base >= isect_end) {
 		out->base = shard_base;
 		out->nr_cids = 0;
-		return;
+		trả_về;
 	}
 
 	nr_words = ((isect_end - 1) / 64) - (isect_base / 64) + 1;
-	if (nr_words > out->alloc_words) {
+	nếu (nr_words > out->alloc_words) {
 		scx_error(ref->sch, "scx_cmask_ref_shard: out alloc_words=%u < %u for shard %d",
 			  out->alloc_words, nr_words, shard_idx);
 		out->base = shard_base;
 		out->nr_cids = 0;
-		return;
+		trả_về;
 	}
 
 	out->base = isect_base;
 	out->nr_cids = isect_end - isect_base;
 	src_off = (isect_base / 64) - (ref->base / 64);
 
-	for (wi = 0; wi < nr_words; wi++)
+	cho (wi = 0; wi < nr_words; wi++)
 		out->bits[wi] = READ_ONCE(ref->src->bits[src_off + wi]);
 
 	head_mask = GENMASK_U64(63, isect_base & 63);
@@ -1142,30 +1142,30 @@ void scx_cmask_ref_from_cpumask(const struct scx_cmask_ref *ref,
 	u32 base = ref->base, nr_cids = ref->nr_cids;
 	u32 wi, nr_words;
 
-	if (!nr_cids)
-		return;
+	nếu (!nr_cids)
+		trả_về;
 
 	nr_words = (base + nr_cids - 1) / 64 - base / 64 + 1;
-	for (wi = 0; wi < nr_words; wi++) {
+	cho (wi = 0; wi < nr_words; wi++) {
 		u32 word_first_cid = (base / 64 + wi) * 64;
 		u64 word = 0;
 		u32 bit;
 
-		for (bit = 0; bit < 64; bit++) {
+		cho (bit = 0; bit < 64; bit++) {
 			u32 cid = word_first_cid + bit;
 
-			if (cid < base || cid >= base + nr_cids)
+			nếu (cid < base || cid >= base + nr_cids)
 				continue;
-			if (cpumask_test_cpu(__scx_cid_to_cpu(cid), cpumask))
+			nếu (cpumask_test_cpu(__scx_cid_to_cpu(cid), cpumask))
 				word |= BIT_U64(bit);
 		}
 		WRITE_ONCE(m->bits[wi], word);
 	}
 }
 
-int scx_cid_kfunc_init(void)
+số_nguyên scx_cid_kfunc_init(void)
 {
-	return register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_init_cids) ?:
+	trả_về register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_init_cids) ?:
 		register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_cid) ?:
 		register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &scx_kfunc_set_cid) ?:
 		register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &scx_kfunc_set_cid);

@@ -17,33 +17,33 @@
  */
 #define SEQ_printf(m, x...)			\
  do {						\
-	if (m)					\
+	nếu (m)					\
 		seq_printf(m, x);		\
-	else					\
+	không_thì					\
 		pr_cont(x);			\
- } while (0)
+ } trong_khi (0)
 
 /*
  * Ease the printing of nsec fields:
  */
 static long long nsec_high(unsigned long long nsec)
 {
-	if ((long long)nsec < 0) {
+	nếu ((long long)nsec < 0) {
 		nsec = -nsec;
 		do_div(nsec, 1000000);
-		return -nsec;
+		trả_về -nsec;
 	}
 	do_div(nsec, 1000000);
 
-	return nsec;
+	trả_về nsec;
 }
 
 static unsigned long nsec_low(unsigned long long nsec)
 {
-	if ((long long)nsec < 0)
+	nếu ((long long)nsec < 0)
 		nsec = -nsec;
 
-	return do_div(nsec, 1000000);
+	trả_về do_div(nsec, 1000000);
 }
 
 #define SPLIT_NS(x) nsec_high(x), nsec_low(x)
@@ -57,18 +57,18 @@ static const char * const sched_feat_names[] = {
 
 #undef SCHED_FEAT
 
-static int sched_feat_show(struct seq_file *m, void *v)
+static số_nguyên sched_feat_show(struct seq_file *m, void *v)
 {
-	int i;
+	số_nguyên i;
 
-	for (i = 0; i < __SCHED_FEAT_NR; i++) {
-		if (!(sysctl_sched_features & (1UL << i)))
+	cho (i = 0; i < __SCHED_FEAT_NR; i++) {
+		nếu (!(sysctl_sched_features & (1UL << i)))
 			seq_puts(m, "NO_");
 		seq_printf(m, "%s ", sched_feat_names[i]);
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	trả_về 0;
 }
 
 #ifdef CONFIG_JUMP_LABEL
@@ -85,43 +85,43 @@ union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR] = {
 
 #undef SCHED_FEAT
 
-static void sched_feat_disable(int i)
+static void sched_feat_disable(số_nguyên i)
 {
 	static_branch_disable_cpuslocked(&sched_feat_keys[i].key_true);
 }
 
-static void sched_feat_enable(int i)
+static void sched_feat_enable(số_nguyên i)
 {
 	static_branch_enable_cpuslocked(&sched_feat_keys[i].key_false);
 }
-#else /* !CONFIG_JUMP_LABEL: */
-static void sched_feat_disable(int i) { };
-static void sched_feat_enable(int i) { };
+#không_thì /* !CONFIG_JUMP_LABEL: */
+static void sched_feat_disable(số_nguyên i) { };
+static void sched_feat_enable(số_nguyên i) { };
 #endif /* !CONFIG_JUMP_LABEL */
 
-static int sched_feat_set(char *cmp)
+static số_nguyên sched_feat_set(char *cmp)
 {
-	int i;
-	int neg = 0;
+	số_nguyên i;
+	số_nguyên neg = 0;
 
-	if (strncmp(cmp, "NO_", 3) == 0) {
+	nếu (strncmp(cmp, "NO_", 3) == 0) {
 		neg = 1;
 		cmp += 3;
 	}
 
 	i = match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
-	if (i < 0)
-		return i;
+	nếu (i < 0)
+		trả_về i;
 
-	if (neg) {
+	nếu (neg) {
 		sysctl_sched_features &= ~(1UL << i);
 		sched_feat_disable(i);
-	} else {
+	} không_thì {
 		sysctl_sched_features |= (1UL << i);
 		sched_feat_enable(i);
 	}
 
-	return 0;
+	trả_về 0;
 }
 
 static ssize_t
@@ -130,14 +130,14 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
 {
 	char buf[64];
 	char *cmp;
-	int ret;
+	số_nguyên ret;
 	struct inode *inode;
 
-	if (cnt > 63)
+	nếu (cnt > 63)
 		cnt = 63;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	nếu (copy_from_user(buf, ubuf, cnt))
+		trả_về -EFAULT;
 
 	buf[cnt] = 0;
 	cmp = strstrip(buf);
@@ -149,17 +149,17 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
 	ret = sched_feat_set(cmp);
 	inode_unlock(inode);
 	cpus_read_unlock();
-	if (ret < 0)
-		return ret;
+	nếu (ret < 0)
+		trả_về ret;
 
 	*ppos += cnt;
 
-	return cnt;
+	trả_về cnt;
 }
 
-static int sched_feat_open(struct inode *inode, struct file *filp)
+static số_nguyên sched_feat_open(struct inode *inode, struct file *filp)
 {
-	return single_open(filp, sched_feat_show, NULL);
+	trả_về single_open(filp, sched_feat_show, NULL);
 }
 
 static const struct file_operations sched_feat_fops = {
@@ -173,33 +173,33 @@ static const struct file_operations sched_feat_fops = {
 static ssize_t sched_scaling_write(struct file *filp, const char __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	unsigned int scaling;
-	int ret;
+	unsigned số_nguyên scaling;
+	số_nguyên ret;
 
 	ret = kstrtouint_from_user(ubuf, cnt, 10, &scaling);
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 
-	if (scaling >= SCHED_TUNABLESCALING_END)
-		return -EINVAL;
+	nếu (scaling >= SCHED_TUNABLESCALING_END)
+		trả_về -EINVAL;
 
 	sysctl_sched_tunable_scaling = scaling;
-	if (sched_update_scaling())
-		return -EINVAL;
+	nếu (sched_update_scaling())
+		trả_về -EINVAL;
 
 	*ppos += cnt;
-	return cnt;
+	trả_về cnt;
 }
 
-static int sched_scaling_show(struct seq_file *m, void *v)
+static số_nguyên sched_scaling_show(struct seq_file *m, void *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_tunable_scaling);
-	return 0;
+	trả_về 0;
 }
 
-static int sched_scaling_open(struct inode *inode, struct file *filp)
+static số_nguyên sched_scaling_open(struct inode *inode, struct file *filp)
 {
-	return single_open(filp, sched_scaling_show, NULL);
+	trả_về single_open(filp, sched_scaling_show, NULL);
 }
 
 static const struct file_operations sched_scaling_fops = {
@@ -216,11 +216,11 @@ sched_cache_enable_write(struct file *filp, const char __user *ubuf,
 			 size_t cnt, loff_t *ppos)
 {
 	bool val;
-	int ret;
+	số_nguyên ret;
 
 	ret = kstrtobool_from_user(ubuf, cnt, &val);
-	if (ret)
-		return ret;
+	nếu (ret)
+		trả_về ret;
 
 	sysctl_sched_cache_user = val;
 
@@ -228,19 +228,19 @@ sched_cache_enable_write(struct file *filp, const char __user *ubuf,
 
 	*ppos += cnt;
 
-	return cnt;
+	trả_về cnt;
 }
 
-static int sched_cache_enable_show(struct seq_file *m, void *v)
+static số_nguyên sched_cache_enable_show(struct seq_file *m, void *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_cache_user);
-	return 0;
+	trả_về 0;
 }
 
-static int sched_cache_enable_open(struct inode *inode,
+static số_nguyên sched_cache_enable_open(struct inode *inode,
 				   struct file *filp)
 {
-	return single_open(filp, sched_cache_enable_show, NULL);
+	trả_về single_open(filp, sched_cache_enable_show, NULL);
 }
 
 static const struct file_operations sched_cache_enable_fops = {
@@ -258,48 +258,48 @@ static ssize_t sched_dynamic_write(struct file *filp, const char __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
 	char buf[16];
-	int mode;
+	số_nguyên mode;
 
-	if (cnt > 15)
+	nếu (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	nếu (copy_from_user(buf, ubuf, cnt))
+		trả_về -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_dynamic_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	nếu (mode < 0)
+		trả_về mode;
 
 	sched_dynamic_update(mode);
 
 	*ppos += cnt;
 
-	return cnt;
+	trả_về cnt;
 }
 
-static int sched_dynamic_show(struct seq_file *m, void *v)
+static số_nguyên sched_dynamic_show(struct seq_file *m, void *v)
 {
-	int mode = READ_ONCE(preempt_dynamic_mode);
+	số_nguyên mode = READ_ONCE(preempt_dynamic_mode);
 
 	/* Stop at NULL terminator */
-	for (int i = 0; preempt_modes[i]; i++) {
-		if (mode == i)
+	cho (số_nguyên i = 0; preempt_modes[i]; i++) {
+		nếu (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, preempt_modes[i]);
-		if (mode == i)
+		nếu (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 
 	seq_puts(m, "\n");
-	return 0;
+	trả_về 0;
 }
 
-static int sched_dynamic_open(struct inode *inode, struct file *filp)
+static số_nguyên sched_dynamic_open(struct inode *inode, struct file *filp)
 {
-	return single_open(filp, sched_dynamic_show, NULL);
+	trả_về single_open(filp, sched_dynamic_show, NULL);
 }
 
 static const struct file_operations sched_dynamic_fops = {
@@ -329,9 +329,9 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
 	orig = sched_debug_verbose;
 	result = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
 
-	if (sched_debug_verbose && !orig)
+	nếu (sched_debug_verbose && !orig)
 		update_sched_domain_debugfs();
-	else if (!sched_debug_verbose && orig) {
+	không_thì nếu (!sched_debug_verbose && orig) {
 		debugfs_remove(sd_dentry);
 		sd_dentry = NULL;
 	}
@@ -339,7 +339,7 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
 	sched_domains_mutex_unlock();
 	cpus_read_unlock();
 
-	return result;
+	trả_về result;
 }
 
 static const struct file_operations sched_verbose_fops = {
@@ -351,9 +351,9 @@ static const struct file_operations sched_verbose_fops = {
 
 static const struct seq_operations sched_debug_sops;
 
-static int sched_debug_open(struct inode *inode, struct file *filp)
+static số_nguyên sched_debug_open(struct inode *inode, struct file *filp)
 {
-	return seq_open(filp, &sched_debug_sops);
+	trả_về seq_open(filp, &sched_debug_sops);
 }
 
 static const struct file_operations sched_debug_fops = {
@@ -379,13 +379,13 @@ static ssize_t sched_server_write_common(struct file *filp, const char __user *u
 	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
 	u64 old_runtime, runtime, period;
 	struct rq *rq = cpu_rq(cpu);
-	int retval = 0;
+	số_nguyên retval = 0;
 	size_t err;
 	u64 value;
 
 	err = kstrtoull_from_user(ubuf, cnt, 10, &value);
-	if (err)
-		return err;
+	nếu (err)
+		trả_về err;
 
 	scoped_guard (rq_lock_irqsave, rq) {
 		old_runtime = runtime = dl_se->dl_runtime;
@@ -393,36 +393,36 @@ static ssize_t sched_server_write_common(struct file *filp, const char __user *u
 
 		switch (param) {
 		case DL_RUNTIME:
-			if (runtime == value)
+			nếu (runtime == value)
 				break;
 			runtime = value;
 			break;
 		case DL_PERIOD:
-			if (value == period)
+			nếu (value == period)
 				break;
 			period = value;
 			break;
 		}
 
-		if (runtime > period ||
+		nếu (runtime > period ||
 		    period > dl_server_period_max ||
 		    period < dl_server_period_min) {
-			return  -EINVAL;
+			trả_về  -EINVAL;
 		}
 
-		if (!cpu_online(cpu_of(rq)))
-			return -EBUSY;
+		nếu (!cpu_online(cpu_of(rq)))
+			trả_về -EBUSY;
 
 		update_rq_clock(rq);
 		dl_server_stop(dl_se);
 		retval = dl_server_apply_params(dl_se, runtime, period, 0);
 		dl_server_start(dl_se);
 
-		if (retval < 0)
-			return retval;
+		nếu (retval < 0)
+			trả_về retval;
 	}
 
-	if (!!old_runtime ^ !!runtime) {
+	nếu (!!old_runtime ^ !!runtime) {
 		pr_info("%s server %sabled on CPU %d%s.\n",
 			server == &rq->fair_server ? "Fair" : "Ext",
 			runtime ? "en" : "dis",
@@ -431,7 +431,7 @@ static ssize_t sched_server_write_common(struct file *filp, const char __user *u
 	}
 
 	*ppos += cnt;
-	return cnt;
+	trả_về cnt;
 }
 
 static size_t sched_server_show_common(struct seq_file *m, void *v, enum dl_param param,
@@ -450,7 +450,7 @@ static size_t sched_server_show_common(struct seq_file *m, void *v, enum dl_para
 	}
 
 	seq_printf(m, "%llu\n", value);
-	return 0;
+	trả_về 0;
 }
 
 static ssize_t
@@ -460,21 +460,21 @@ sched_fair_server_runtime_write(struct file *filp, const char __user *ubuf,
 	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
 	struct rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	trả_về sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_runtime_show(struct seq_file *m, void *v)
+static số_nguyên sched_fair_server_runtime_show(struct seq_file *m, void *v)
 {
 	unsigned long cpu = (unsigned long) m->private;
 	struct rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
+	trả_về sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
 }
 
-static int sched_fair_server_runtime_open(struct inode *inode, struct file *filp)
+static số_nguyên sched_fair_server_runtime_open(struct inode *inode, struct file *filp)
 {
-	return single_open(filp, sched_fair_server_runtime_show, inode->i_private);
+	trả_về single_open(filp, sched_fair_server_runtime_show, inode->i_private);
 }
 
 static const struct file_operations fair_server_runtime_fops = {
@@ -495,21 +495,21 @@ sched_ext_server_runtime_write(struct file *filp, const char __user *ubuf,
 	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
 	struct rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	trả_về sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_runtime_show(struct seq_file *m, void *v)
+static số_nguyên sched_ext_server_runtime_show(struct seq_file *m, void *v)
 {
 	unsigned long cpu = (unsigned long) m->private;
 	struct rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
+	trả_về sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
 }
 
-static int sched_ext_server_runtime_open(struct inode *inode, struct file *filp)
+static số_nguyên sched_ext_server_runtime_open(struct inode *inode, struct file *filp)
 {
-	return single_open(filp, sched_ext_server_runtime_show, inode->i_private);
+	trả_về single_open(filp, sched_ext_server_runtime_show, inode->i_private);
 }
 
 static const struct file_operations ext_server_runtime_fops = {
@@ -527,21 +527,21 @@ sched_ext_server_period_write(struct file *filp, const char __user *ubuf,
 	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
 	struct rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	trả_về sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_period_show(struct seq_file *m, void *v)
+static số_nguyên sched_ext_server_period_show(struct seq_file *m, void *v)
 {
 	unsigned long cpu = (unsigned long) m->private;
 	struct rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
+	trả_về sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
 }
 
-static int sched_ext_server_period_open(struct inode *inode, struct file *filp)
+static số_nguyên sched_ext_server_period_open(struct inode *inode, struct file *filp)
 {
-	return single_open(filp, sched_ext_server_period_show, inode->i_private);
+	trả_về single_open(filp, sched_ext_server_period_show, inode->i_private);
 }
 
 static const struct file_operations ext_server_period_fops = {
@@ -558,8 +558,8 @@ static void debugfs_ext_server_init(void)
 	unsigned long cpu;
 
 	d_ext = debugfs_create_dir("ext_server", debugfs_sched);
-	if (!d_ext)
-		return;
+	nếu (!d_ext)
+		trả_về;
 
 	for_each_possible_cpu(cpu) {
 		struct dentry *d_cpu;
@@ -581,21 +581,21 @@ sched_fair_server_period_write(struct file *filp, const char __user *ubuf,
 	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
 	struct rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	trả_về sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_period_show(struct seq_file *m, void *v)
+static số_nguyên sched_fair_server_period_show(struct seq_file *m, void *v)
 {
 	unsigned long cpu = (unsigned long) m->private;
 	struct rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
+	trả_về sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
 }
 
-static int sched_fair_server_period_open(struct inode *inode, struct file *filp)
+static số_nguyên sched_fair_server_period_open(struct inode *inode, struct file *filp)
 {
-	return single_open(filp, sched_fair_server_period_show, inode->i_private);
+	trả_về single_open(filp, sched_fair_server_period_show, inode->i_private);
 }
 
 static const struct file_operations fair_server_period_fops = {
@@ -612,8 +612,8 @@ static void debugfs_fair_server_init(void)
 	unsigned long cpu;
 
 	d_fair = debugfs_create_dir("fair_server", debugfs_sched);
-	if (!d_fair)
-		return;
+	nếu (!d_fair)
+		trả_về;
 
 	for_each_possible_cpu(cpu) {
 		struct dentry *d_cpu;
@@ -628,7 +628,7 @@ static void debugfs_fair_server_init(void)
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static int cgroup_mode = 2;
+static số_nguyên cgroup_mode = 2;
 
 /* See __sched_cgroup_mode_update(). */
 static const char *cgroup_mode_str[] = {
@@ -639,59 +639,59 @@ static const char *cgroup_mode_str[] = {
 	"tasks",
 };
 
-static int sched_cgroup_mode(const char *str)
+static số_nguyên sched_cgroup_mode(const char *str)
 {
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (!strcmp(str, cgroup_mode_str[i]))
-			return i;
+	cho (số_nguyên i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		nếu (!strcmp(str, cgroup_mode_str[i]))
+			trả_về i;
 	}
-	return -EINVAL;
+	trả_về -EINVAL;
 }
 
 static ssize_t sched_cgroup_write(struct file *filp, const char __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
 	char buf[16];
-	int mode;
+	số_nguyên mode;
 
-	if (cnt > 15)
+	nếu (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	nếu (copy_from_user(buf, ubuf, cnt))
+		trả_về -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_cgroup_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	nếu (mode < 0)
+		trả_về mode;
 
 	__sched_cgroup_mode_update(mode);
 	WRITE_ONCE(cgroup_mode, mode);
 
 	*ppos += cnt;
-	return cnt;
+	trả_về cnt;
 }
 
-static int sched_cgroup_show(struct seq_file *m, void *v)
+static số_nguyên sched_cgroup_show(struct seq_file *m, void *v)
 {
-	int mode = READ_ONCE(cgroup_mode);
+	số_nguyên mode = READ_ONCE(cgroup_mode);
 
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (mode == i)
+	cho (số_nguyên i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		nếu (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, cgroup_mode_str[i]);
-		if (mode == i)
+		nếu (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 	seq_puts(m, "\n");
-	return 0;
+	trả_về 0;
 }
 
-static int sched_cgroup_open(struct inode *inode, struct file *filp)
+static số_nguyên sched_cgroup_open(struct inode *inode, struct file *filp)
 {
-	return single_open(filp, sched_cgroup_show, NULL);
+	trả_về single_open(filp, sched_cgroup_show, NULL);
 }
 
 static const struct file_operations sched_cgroup_fops = {
@@ -703,7 +703,7 @@ static const struct file_operations sched_cgroup_fops = {
 };
 #endif
 
-static __init int sched_init_debug(void)
+static __init số_nguyên sched_init_debug(void)
 {
 	struct dentry __maybe_unused *numa, *llc;
 
@@ -765,16 +765,16 @@ static __init int sched_init_debug(void)
 	debugfs_ext_server_init();
 #endif
 
-	return 0;
+	trả_về 0;
 }
 late_initcall(sched_init_debug);
 
 static cpumask_var_t		sd_sysctl_cpus;
 
-static int sd_flags_show(struct seq_file *m, void *v)
+static số_nguyên sd_flags_show(struct seq_file *m, void *v)
 {
-	unsigned long flags = *(unsigned int *)m->private;
-	int idx;
+	unsigned long flags = *(unsigned số_nguyên *)m->private;
+	số_nguyên idx;
 
 	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
 		seq_puts(m, sd_flag_debug[idx].name);
@@ -782,12 +782,12 @@ static int sd_flags_show(struct seq_file *m, void *v)
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	trả_về 0;
 }
 
-static int sd_flags_open(struct inode *inode, struct file *file)
+static số_nguyên sd_flags_open(struct inode *inode, struct file *file)
 {
-	return single_open(file, sd_flags_show, inode->i_private);
+	trả_về single_open(file, sd_flags_show, inode->i_private);
 }
 
 static const struct file_operations sd_flags_fops = {
@@ -816,36 +816,36 @@ static void register_sd(struct sched_domain *sd, struct dentry *parent)
 	debugfs_create_file("groups_flags", 0444, parent, &sd->groups->flags, &sd_flags_fops);
 	debugfs_create_u32("level", 0444, parent, (u32 *)&sd->level);
 
-	if (sd->flags & SD_ASYM_PACKING)
+	nếu (sd->flags & SD_ASYM_PACKING)
 		debugfs_create_u32("group_asym_prefer_cpu", 0444, parent,
 				   (u32 *)&sd->groups->asym_prefer_cpu);
 }
 
 void update_sched_domain_debugfs(void)
 {
-	int cpu, i;
+	số_nguyên cpu, i;
 
 	/*
 	 * This can unfortunately be invoked before sched_debug_init() creates
 	 * the debug directory. Don't touch sd_sysctl_cpus until then.
 	 */
-	if (!debugfs_sched)
-		return;
+	nếu (!debugfs_sched)
+		trả_về;
 
-	if (!sched_debug_verbose)
-		return;
+	nếu (!sched_debug_verbose)
+		trả_về;
 
-	if (!cpumask_available(sd_sysctl_cpus)) {
-		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
-			return;
+	nếu (!cpumask_available(sd_sysctl_cpus)) {
+		nếu (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
+			trả_về;
 		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
 	}
 
-	if (!sd_dentry) {
+	nếu (!sd_dentry) {
 		sd_dentry = debugfs_create_dir("domains", debugfs_sched);
 
 		/* rebuild sd_sysctl_cpus if empty since it gets cleared below */
-		if (cpumask_empty(sd_sysctl_cpus))
+		nếu (cpumask_empty(sd_sysctl_cpus))
 			cpumask_copy(sd_sysctl_cpus, cpu_online_mask);
 	}
 
@@ -873,14 +873,14 @@ void update_sched_domain_debugfs(void)
 	}
 }
 
-void dirty_sched_domain_sysctl(int cpu)
+void dirty_sched_domain_sysctl(số_nguyên cpu)
 {
-	if (cpumask_available(sd_sysctl_cpus))
+	nếu (cpumask_available(sd_sysctl_cpus))
 		__cpumask_set_cpu(cpu, sd_sysctl_cpus);
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group *tg)
+static void print_cfs_group_stats(struct seq_file *m, số_nguyên cpu, struct task_group *tg)
 {
 	struct sched_entity *se = tg_se(tg, cpu);
 
@@ -891,14 +891,14 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 #define PN_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld.%06ld\n", \
 		#F, SPLIT_NS((long long)schedstat_val(stats->F)))
 
-	if (!se)
-		return;
+	nếu (!se)
+		trả_về;
 
 	PN(se->exec_start);
 	PN(se->vruntime);
 	PN(se->sum_exec_runtime);
 
-	if (schedstat_enabled()) {
+	nếu (schedstat_enabled()) {
 		struct sched_statistics *stats;
 		stats = __schedstats_from_se(se);
 
@@ -930,10 +930,10 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 static DEFINE_SPINLOCK(sched_debug_lock);
 static char group_path[PATH_MAX];
 
-static void task_group_path(struct task_group *tg, char *path, int plen)
+static void task_group_path(struct task_group *tg, char *path, số_nguyên plen)
 {
-	if (autogroup_path(tg, path, plen))
-		return;
+	nếu (autogroup_path(tg, path, plen))
+		trả_về;
 
 	cgroup_path(tg->css.cgroup, path, plen);
 }
@@ -947,11 +947,11 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
  */
 #define SEQ_printf_task_group_path(m, tg, fmt...)			\
 {									\
-	if (spin_trylock(&sched_debug_lock)) {				\
+	nếu (spin_trylock(&sched_debug_lock)) {				\
 		task_group_path(tg, group_path, sizeof(group_path));	\
 		SEQ_printf(m, fmt, group_path);				\
 		spin_unlock(&sched_debug_lock);				\
-	} else {							\
+	} không_thì {							\
 		char buf[128];						\
 		char *bufend = buf + sizeof(buf) - 3;			\
 		task_group_path(tg, buf, bufend - buf);			\
@@ -964,9 +964,9 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
 static void
 print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 {
-	if (task_current(rq, p))
+	nếu (task_current(rq, p))
 		SEQ_printf(m, ">R");
-	else
+	không_thì
 		SEQ_printf(m, " %c", task_state_to_char(p));
 
 	SEQ_printf(m, " %15s %5d %10ld %9Ld.%06ld   %c   %9Ld.%06ld %c %9Ld.%06ld %9Ld.%06ld %9Ld   %5d ",
@@ -996,7 +996,7 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 	SEQ_printf(m, "\n");
 }
 
-static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
+static void print_rq(struct seq_file *m, struct rq *rq, số_nguyên rq_cpu)
 {
 	struct task_struct *g, *p;
 
@@ -1025,7 +1025,7 @@ static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
 
 	rcu_read_lock();
 	for_each_process_thread(g, p) {
-		if (task_cpu(p) != rq_cpu)
+		nếu (task_cpu(p) != rq_cpu)
 			continue;
 
 		print_task(m, rq, p);
@@ -1033,34 +1033,34 @@ static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
 	rcu_read_unlock();
 }
 
-void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+void print_cfs_rq(struct seq_file *m, số_nguyên cpu, struct cfs_rq *cfs_rq)
 {
 	s64 left_vruntime = -1, right_vruntime = -1, left_deadline = -1, spread;
 	s64 zero_vruntime = -1, sum_w_vruntime = -1;
 	u64 avruntime;
 	struct sched_entity *last, *first, *root;
 	struct rq *rq = cpu_rq(cpu);
-	unsigned int sum_shift;
+	unsigned số_nguyên sum_shift;
 	unsigned long flags;
 	u64 sum_weight;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, cfs_rq->tg, "cfs_rq[%d]:%s\n", cpu);
-#else
+#không_thì
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
 #endif
 
 	raw_spin_rq_lock_irqsave(rq, flags);
 	root = __pick_root_entity(cfs_rq);
-	if (root)
+	nếu (root)
 		left_vruntime = root->min_vruntime;
 	first = __pick_first_entity(cfs_rq);
-	if (first)
+	nếu (first)
 		left_deadline = first->deadline;
 	last = __pick_last_entity(cfs_rq);
-	if (last)
+	nếu (last)
 		right_vruntime = last->vruntime;
 	zero_vruntime = cfs_rq->zero_vruntime;
 	sum_w_vruntime = cfs_rq->sum_w_vruntime;
@@ -1125,12 +1125,12 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 #endif
 }
 
-void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
+void print_rt_rq(struct seq_file *m, số_nguyên cpu, struct rt_rq *rt_rq)
 {
 #ifdef CONFIG_RT_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, rt_rq->tg, "rt_rq[%d]:%s\n", cpu);
-#else
+#không_thì
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "rt_rq[%d]:\n", cpu);
 #endif
@@ -1155,7 +1155,7 @@ void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
 #undef P
 }
 
-void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
+void print_dl_rq(struct seq_file *m, số_nguyên cpu, struct dl_rq *dl_rq)
 {
 	struct dl_bw *dl_bw;
 
@@ -1173,28 +1173,28 @@ void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
 #undef PU
 }
 
-static void print_cpu(struct seq_file *m, int cpu)
+static void print_cpu(struct seq_file *m, số_nguyên cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 
 #ifdef CONFIG_X86
 	{
-		unsigned int freq = cpu_khz ? : 1;
+		unsigned số_nguyên freq = cpu_khz ? : 1;
 
 		SEQ_printf(m, "cpu#%d, %u.%03u MHz\n",
 			   cpu, freq / 1000, (freq % 1000));
 	}
-#else /* !CONFIG_X86: */
+#không_thì /* !CONFIG_X86: */
 	SEQ_printf(m, "cpu#%d\n", cpu);
 #endif /* !CONFIG_X86 */
 
 #define P(x)								\
 do {									\
-	if (sizeof(rq->x) == 4)						\
-		SEQ_printf(m, "  .%-30s: %d\n", #x, (int)(rq->x));	\
-	else								\
+	nếu (sizeof(rq->x) == 4)						\
+		SEQ_printf(m, "  .%-30s: %d\n", #x, (số_nguyên)(rq->x));	\
+	không_thì								\
 		SEQ_printf(m, "  .%-30s: %Ld\n", #x, (long long)(rq->x));\
-} while (0)
+} trong_khi (0)
 
 #define PN(x) \
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, SPLIT_NS(rq->x))
@@ -1215,7 +1215,7 @@ do {									\
 #undef P64
 
 #define P(n) SEQ_printf(m, "  .%-30s: %d\n", #n, schedstat_val(rq->n));
-	if (schedstat_enabled()) {
+	nếu (schedstat_enabled()) {
 		P(yld_count);
 		P(sched_count);
 		P(sched_goidle);
@@ -1251,7 +1251,7 @@ static void sched_debug_header(struct seq_file *m)
 
 	SEQ_printf(m, "Sched Debug Version: v0.11, %s %.*s\n",
 		init_utsname()->release,
-		(int)strcspn(init_utsname()->version, " "),
+		(số_nguyên)strcspn(init_utsname()->version, " "),
 		init_utsname()->version);
 
 #define P(x) \
@@ -1287,21 +1287,21 @@ static void sched_debug_header(struct seq_file *m)
 	SEQ_printf(m, "\n");
 }
 
-static int sched_debug_show(struct seq_file *m, void *v)
+static số_nguyên sched_debug_show(struct seq_file *m, void *v)
 {
-	int cpu = (unsigned long)(v - 2);
+	số_nguyên cpu = (unsigned long)(v - 2);
 
-	if (cpu != -1)
+	nếu (cpu != -1)
 		print_cpu(m, cpu);
-	else
+	không_thì
 		sched_debug_header(m);
 
-	return 0;
+	trả_về 0;
 }
 
 void sysrq_sched_debug_show(void)
 {
-	int cpu;
+	số_nguyên cpu;
 
 	sched_debug_header(NULL);
 	for_each_online_cpu(cpu) {
@@ -1327,28 +1327,28 @@ static void *sched_debug_start(struct seq_file *file, loff_t *offset)
 {
 	unsigned long n = *offset;
 
-	if (n == 0)
-		return (void *) 1;
+	nếu (n == 0)
+		trả_về (void *) 1;
 
 	n--;
 
-	if (n > 0)
+	nếu (n > 0)
 		n = cpumask_next(n - 1, cpu_online_mask);
-	else
+	không_thì
 		n = cpumask_first(cpu_online_mask);
 
 	*offset = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	nếu (n < nr_cpu_ids)
+		trả_về (void *)(unsigned long)(n + 2);
 
-	return NULL;
+	trả_về NULL;
 }
 
 static void *sched_debug_next(struct seq_file *file, void *data, loff_t *offset)
 {
 	(*offset)++;
-	return sched_debug_start(file, offset);
+	trả_về sched_debug_start(file, offset);
 }
 
 static void sched_debug_stop(struct seq_file *file, void *data)
@@ -1372,7 +1372,7 @@ static const struct seq_operations sched_debug_sops = {
 
 
 #ifdef CONFIG_NUMA_BALANCING
-void print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
+void print_numa_stats(struct seq_file *m, số_nguyên node, unsigned long tsf,
 		unsigned long tpf, unsigned long gsf, unsigned long gpf)
 {
 	SEQ_printf(m, "numa_faults node=%d ", node);
@@ -1385,7 +1385,7 @@ void print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
 static void sched_show_numa(struct task_struct *p, struct seq_file *m)
 {
 #ifdef CONFIG_NUMA_BALANCING
-	if (p->mm)
+	nếu (p->mm)
 		P(mm->numa_scan_seq);
 
 	P(numa_pages_migrated);
@@ -1419,7 +1419,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 
 	P(se.nr_migrations);
 
-	if (schedstat_enabled()) {
+	nếu (schedstat_enabled()) {
 		u64 avg_atom, avg_per_cpu;
 
 		PN_SCHEDSTAT(sum_sleep_runtime);
@@ -1450,16 +1450,16 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		P_SCHEDSTAT(nr_wakeups_affine_attempts);
 
 		avg_atom = p->se.sum_exec_runtime;
-		if (nr_switches)
+		nếu (nr_switches)
 			avg_atom = div64_ul(avg_atom, nr_switches);
-		else
+		không_thì
 			avg_atom = -1LL;
 
 		avg_per_cpu = p->se.sum_exec_runtime;
-		if (p->se.nr_migrations) {
+		nếu (p->se.nr_migrations) {
 			avg_per_cpu = div64_u64(avg_per_cpu,
 						p->se.nr_migrations);
-		} else {
+		} không_thì {
 			avg_per_cpu = -1LL;
 		}
 
@@ -1492,10 +1492,10 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 #endif /* CONFIG_UCLAMP_TASK */
 	P(policy);
 	P(prio);
-	if (task_has_dl_policy(p)) {
+	nếu (task_has_dl_policy(p)) {
 		P(dl.runtime);
 		P(dl.deadline);
-	} else if (fair_policy(p->policy)) {
+	} không_thì nếu (fair_policy(p->policy)) {
 		P(se.slice);
 	}
 #ifdef CONFIG_SCHED_CLASS_EXT
@@ -1505,7 +1505,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 #undef P_SCHEDSTAT
 
 	{
-		unsigned int this_cpu = raw_smp_processor_id();
+		unsigned số_nguyên this_cpu = raw_smp_processor_id();
 		u64 t0, t1;
 
 		t0 = cpu_clock(this_cpu);
@@ -1523,12 +1523,12 @@ void proc_sched_set_task(struct task_struct *p)
 #endif
 }
 
-void resched_latency_warn(int cpu, u64 latency)
+void resched_latency_warn(số_nguyên cpu, u64 latency)
 {
 	static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
 
-	if (likely(!__ratelimit(&latency_check_ratelimit)))
-		return;
+	nếu (likely(!__ratelimit(&latency_check_ratelimit)))
+		trả_về;
 
 	pr_err("sched: CPU %d need_resched set for > %llu ns (%d ticks) without schedule\n",
 	       cpu, latency, cpu_rq(cpu)->ticks_without_resched);
