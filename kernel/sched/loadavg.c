@@ -70,7 +70,7 @@ EXPORT_SYMBOL(avenrun); /* should be removed */
  *
  * These values are estimates at best, so no need for locking.
  */
-void get_avenrun(unsigned long *loads, unsigned long offset, int shift)
+void get_avenrun(unsigned long *loads, unsigned long offset, цяло shift)
 {
 	loads[0] = (avenrun[0] + offset) << shift;
 	loads[1] = (avenrun[1] + offset) << shift;
@@ -84,12 +84,12 @@ long calc_load_fold_active(struct rq *this_rq, long adjust)
 	nr_active = this_rq->nr_running - adjust;
 	nr_active += (long)this_rq->nr_uninterruptible;
 
-	if (nr_active != this_rq->calc_load_active) {
+	ако (nr_active != this_rq->calc_load_active) {
 		delta = nr_active - this_rq->calc_load_active;
 		this_rq->calc_load_active = nr_active;
 	}
 
-	return delta;
+	върни delta;
 }
 
 /**
@@ -108,19 +108,19 @@ long calc_load_fold_active(struct rq *this_rq, long adjust)
  * vector.
  */
 static unsigned long
-fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
+fixed_power_int(unsigned long x, unsigned цяло frac_bits, unsigned цяло n)
 {
 	unsigned long result = 1UL << frac_bits;
 
-	if (n) {
-		for (;;) {
-			if (n & 1) {
+	ако (n) {
+		за (;;) {
+			ако (n & 1) {
 				result *= x;
 				result += 1UL << (frac_bits - 1);
 				result >>= frac_bits;
 			}
 			n >>= 1;
-			if (!n)
+			ако (!n)
 				break;
 			x *= x;
 			x += 1UL << (frac_bits - 1);
@@ -128,7 +128,7 @@ fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
 		}
 	}
 
-	return result;
+	върни result;
 }
 
 /*
@@ -156,9 +156,9 @@ fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
  */
 unsigned long
 calc_load_n(unsigned long load, unsigned long exp,
-	    unsigned long active, unsigned int n)
+	    unsigned long active, unsigned цяло n)
 {
-	return calc_load(load, fixed_power_int(exp, FSHIFT, n), active);
+	върни calc_load(load, fixed_power_int(exp, FSHIFT, n), active);
 }
 
 #ifdef CONFIG_NO_HZ_COMMON
@@ -205,11 +205,11 @@ calc_load_n(unsigned long load, unsigned long exp,
  * When making the ILB scale, we should try to pull this in as well.
  */
 static atomic_long_t calc_load_nohz[2];
-static int calc_load_idx;
+static цяло calc_load_idx;
 
-static inline int calc_load_write_idx(void)
+static inline цяло calc_load_write_idx(void)
 {
-	int idx = calc_load_idx;
+	цяло idx = calc_load_idx;
 
 	/*
 	 * See calc_global_nohz(), if we observe the new index, we also
@@ -221,15 +221,15 @@ static inline int calc_load_write_idx(void)
 	 * If the folding window started, make sure we start writing in the
 	 * next NO_HZ-delta.
 	 */
-	if (!time_before(jiffies, READ_ONCE(calc_load_update)))
+	ако (!time_before(jiffies, READ_ONCE(calc_load_update)))
 		idx++;
 
-	return idx & 1;
+	върни idx & 1;
 }
 
-static inline int calc_load_read_idx(void)
+static inline цяло calc_load_read_idx(void)
 {
-	return calc_load_idx & 1;
+	върни calc_load_idx & 1;
 }
 
 static void calc_load_nohz_fold(struct rq *rq)
@@ -237,8 +237,8 @@ static void calc_load_nohz_fold(struct rq *rq)
 	long delta;
 
 	delta = calc_load_fold_active(rq, 0);
-	if (delta) {
-		int idx = calc_load_write_idx();
+	ако (delta) {
+		цяло idx = calc_load_write_idx();
 
 		atomic_long_add(delta, &calc_load_nohz[idx]);
 	}
@@ -270,27 +270,27 @@ void calc_load_nohz_stop(void)
 	 * If we're still before the pending sample window, we're done.
 	 */
 	this_rq->calc_load_update = READ_ONCE(calc_load_update);
-	if (time_before(jiffies, this_rq->calc_load_update))
-		return;
+	ако (time_before(jiffies, this_rq->calc_load_update))
+		върни;
 
 	/*
 	 * We woke inside or after the sample window, this means we're already
 	 * accounted through the nohz accounting, so skip the entire deal and
 	 * sync up for the next window.
 	 */
-	if (time_before(jiffies, this_rq->calc_load_update + 10))
+	ако (time_before(jiffies, this_rq->calc_load_update + 10))
 		this_rq->calc_load_update += LOAD_FREQ;
 }
 
 static long calc_load_nohz_read(void)
 {
-	int idx = calc_load_read_idx();
+	цяло idx = calc_load_read_idx();
 	long delta = 0;
 
-	if (atomic_long_read(&calc_load_nohz[idx]))
+	ако (atomic_long_read(&calc_load_nohz[idx]))
 		delta = atomic_long_xchg(&calc_load_nohz[idx], 0);
 
-	return delta;
+	върни delta;
 }
 
 /*
@@ -308,7 +308,7 @@ static void calc_global_nohz(void)
 	long delta, active, n;
 
 	sample_window = READ_ONCE(calc_load_update);
-	if (!time_before(jiffies, sample_window + 10)) {
+	ако (!time_before(jiffies, sample_window + 10)) {
 		/*
 		 * Catch-up, fold however many we are behind still
 		 */
@@ -335,9 +335,9 @@ static void calc_global_nohz(void)
 	smp_wmb();
 	calc_load_idx++;
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
+#иначе /* !CONFIG_NO_HZ_COMMON: */
 
-static inline long calc_load_nohz_read(void) { return 0; }
+static inline long calc_load_nohz_read(void) { върни 0; }
 static inline void calc_global_nohz(void) { }
 
 #endif /* !CONFIG_NO_HZ_COMMON */
@@ -354,14 +354,14 @@ void calc_global_load(void)
 	long active, delta;
 
 	sample_window = READ_ONCE(calc_load_update);
-	if (time_before(jiffies, sample_window + 10))
-		return;
+	ако (time_before(jiffies, sample_window + 10))
+		върни;
 
 	/*
 	 * Fold the 'old' NO_HZ-delta to include all NO_HZ CPUs.
 	 */
 	delta = calc_load_nohz_read();
-	if (delta)
+	ако (delta)
 		atomic_long_add(delta, &calc_load_tasks);
 
 	active = atomic_long_read(&calc_load_tasks);
@@ -388,11 +388,11 @@ void calc_global_load_tick(struct rq *this_rq)
 {
 	long delta;
 
-	if (time_before(jiffies, this_rq->calc_load_update))
-		return;
+	ако (time_before(jiffies, this_rq->calc_load_update))
+		върни;
 
 	delta  = calc_load_fold_active(this_rq, 0);
-	if (delta)
+	ако (delta)
 		atomic_long_add(delta, &calc_load_tasks);
 
 	this_rq->calc_load_update += LOAD_FREQ;

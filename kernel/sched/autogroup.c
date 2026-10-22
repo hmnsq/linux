@@ -7,7 +7,7 @@
 #include "autogroup.h"
 #include "sched.h"
 
-unsigned int __read_mostly sysctl_sched_autogroup_enabled = 1;
+unsigned цяло __read_mostly sysctl_sched_autogroup_enabled = 1;
 static struct autogroup autogroup_default;
 static atomic_t autogroup_seq_nr;
 
@@ -16,7 +16,7 @@ static const struct ctl_table sched_autogroup_sysctls[] = {
 	{
 		.procname       = "sched_autogroup_enabled",
 		.data           = &sysctl_sched_autogroup_enabled,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = sizeof(unsigned цяло),
 		.mode           = 0644,
 		.proc_handler   = proc_dointvec_minmax,
 		.extra1         = SYSCTL_ZERO,
@@ -28,8 +28,8 @@ static void __init sched_autogroup_sysctl_init(void)
 {
 	register_sysctl_init("kernel", sched_autogroup_sysctls);
 }
-#else /* !CONFIG_SYSCTL: */
-#define sched_autogroup_sysctl_init() do { } while (0)
+#иначе /* !CONFIG_SYSCTL: */
+#define sched_autogroup_sysctl_init() do { } докато (0)
 #endif /* !CONFIG_SYSCTL */
 
 void __init autogroup_init(struct task_struct *init_task)
@@ -67,7 +67,7 @@ static inline void autogroup_kref_put(struct autogroup *ag)
 static inline struct autogroup *autogroup_kref_get(struct autogroup *ag)
 {
 	kref_get(&ag->kref);
-	return ag;
+	върни ag;
 }
 
 static inline struct autogroup *autogroup_task_get(struct task_struct *p)
@@ -75,13 +75,13 @@ static inline struct autogroup *autogroup_task_get(struct task_struct *p)
 	struct autogroup *ag;
 	unsigned long flags;
 
-	if (!lock_task_sighand(p, &flags))
-		return autogroup_kref_get(&autogroup_default);
+	ако (!lock_task_sighand(p, &flags))
+		върни autogroup_kref_get(&autogroup_default);
 
 	ag = autogroup_kref_get(p->signal->autogroup);
 	unlock_task_sighand(p, &flags);
 
-	return ag;
+	върни ag;
 }
 
 static inline struct autogroup *autogroup_create(void)
@@ -89,11 +89,11 @@ static inline struct autogroup *autogroup_create(void)
 	struct autogroup *ag = kzalloc_obj(*ag);
 	struct task_group *tg;
 
-	if (!ag)
+	ако (!ag)
 		goto out_fail;
 
 	tg = sched_create_group(&root_task_group);
-	if (IS_ERR(tg))
+	ако (IS_ERR(tg))
 		goto out_free;
 
 	kref_init(&ag->kref);
@@ -115,23 +115,23 @@ static inline struct autogroup *autogroup_create(void)
 	tg->autogroup = ag;
 
 	sched_online_group(tg, &root_task_group);
-	return ag;
+	върни ag;
 
 out_free:
 	kfree(ag);
 out_fail:
-	if (printk_ratelimit()) {
+	ако (printk_ratelimit()) {
 		printk(KERN_WARNING "autogroup_create: %s failure.\n",
 			ag ? "sched_create_group()" : "kzalloc()");
 	}
 
-	return autogroup_kref_get(&autogroup_default);
+	върни autogroup_kref_get(&autogroup_default);
 }
 
 bool task_wants_autogroup(struct task_struct *p, struct task_group *tg)
 {
-	if (tg != &root_task_group)
-		return false;
+	ако (tg != &root_task_group)
+		върни false;
 	/*
 	 * If we race with autogroup_move_group() the caller can use the old
 	 * value of signal->autogroup but in this case sched_move_task() will
@@ -140,10 +140,10 @@ bool task_wants_autogroup(struct task_struct *p, struct task_group *tg)
 	 * However, there is no way sched_autogroup_exit_task() could tell us
 	 * to avoid autogroup->tg, so we abuse PF_EXITING flag for this case.
 	 */
-	if (p->flags & PF_EXITING)
-		return false;
+	ако (p->flags & PF_EXITING)
+		върни false;
 
-	return true;
+	върни true;
 }
 
 void sched_autogroup_exit_task(struct task_struct *p)
@@ -163,13 +163,13 @@ autogroup_move_group(struct task_struct *p, struct autogroup *ag)
 	struct task_struct *t;
 	unsigned long flags;
 
-	if (WARN_ON_ONCE(!lock_task_sighand(p, &flags)))
-		return;
+	ако (WARN_ON_ONCE(!lock_task_sighand(p, &flags)))
+		върни;
 
 	prev = p->signal->autogroup;
-	if (prev == ag) {
+	ако (prev == ag) {
 		unlock_task_sighand(p, &flags);
-		return;
+		върни;
 	}
 
 	p->signal->autogroup = autogroup_kref_get(ag);
@@ -220,36 +220,36 @@ void sched_autogroup_exit(struct signal_struct *sig)
 	autogroup_kref_put(sig->autogroup);
 }
 
-static int __init setup_autogroup(char *str)
+static цяло __init setup_autogroup(char *str)
 {
 	sysctl_sched_autogroup_enabled = 0;
 
-	return 1;
+	върни 1;
 }
 __setup("noautogroup", setup_autogroup);
 
 #ifdef CONFIG_PROC_FS
 
-int proc_sched_autogroup_set_nice(struct task_struct *p, int nice)
+цяло proc_sched_autogroup_set_nice(struct task_struct *p, цяло nice)
 {
 	static unsigned long next = INITIAL_JIFFIES;
 	struct autogroup *ag;
 	unsigned long shares;
-	int err, idx;
+	цяло err, idx;
 
-	if (nice < MIN_NICE || nice > MAX_NICE)
-		return -EINVAL;
+	ако (nice < MIN_NICE || nice > MAX_NICE)
+		върни -EINVAL;
 
 	err = security_task_setnice(current, nice);
-	if (err)
-		return err;
+	ако (err)
+		върни err;
 
-	if (nice < 0 && !can_nice(current, nice))
-		return -EPERM;
+	ако (nice < 0 && !can_nice(current, nice))
+		върни -EPERM;
 
 	/* This is a heavy operation, taking global locks.. */
-	if (!capable(CAP_SYS_ADMIN) && time_before(jiffies, next))
-		return -EAGAIN;
+	ако (!capable(CAP_SYS_ADMIN) && time_before(jiffies, next))
+		върни -EAGAIN;
 
 	next = HZ / 10 + jiffies;
 	ag = autogroup_task_get(p);
@@ -259,20 +259,20 @@ int proc_sched_autogroup_set_nice(struct task_struct *p, int nice)
 
 	down_write(&ag->lock);
 	err = sched_group_set_shares(ag->tg, shares);
-	if (!err)
+	ако (!err)
 		ag->nice = nice;
 	up_write(&ag->lock);
 
 	autogroup_kref_put(ag);
 
-	return err;
+	върни err;
 }
 
 void proc_sched_autogroup_show_task(struct task_struct *p, struct seq_file *m)
 {
 	struct autogroup *ag = autogroup_task_get(p);
 
-	if (!task_group_is_autogroup(ag->tg))
+	ако (!task_group_is_autogroup(ag->tg))
 		goto out;
 
 	down_read(&ag->lock);
@@ -284,10 +284,10 @@ out:
 }
 #endif /* CONFIG_PROC_FS */
 
-int autogroup_path(struct task_group *tg, char *buf, int buflen)
+цяло autogroup_path(struct task_group *tg, char *buf, цяло buflen)
 {
-	if (!task_group_is_autogroup(tg))
-		return 0;
+	ако (!task_group_is_autogroup(tg))
+		върни 0;
 
-	return snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
+	върни snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
 }

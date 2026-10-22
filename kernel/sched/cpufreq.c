@@ -27,15 +27,15 @@ DEFINE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
  * The update_util_data pointer of @cpu must be NULL when this function is
  * called or it will WARN() and return with no effect.
  */
-void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
+void cpufreq_add_update_util_hook(цяло cpu, struct update_util_data *data,
 			void (*func)(struct update_util_data *data, u64 time,
-				     unsigned int flags))
+				     unsigned цяло flags))
 {
-	if (WARN_ON(!data || !func))
-		return;
+	ако (WARN_ON(!data || !func))
+		върни;
 
-	if (WARN_ON(per_cpu(cpufreq_update_util_data, cpu)))
-		return;
+	ако (WARN_ON(per_cpu(cpufreq_update_util_data, cpu)))
+		върни;
 
 	data->func = func;
 	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), data);
@@ -52,7 +52,7 @@ EXPORT_SYMBOL_GPL(cpufreq_add_update_util_hook);
  * accessed via the old update_util_data pointer or invoke synchronize_rcu()
  * right after this function to avoid use-after-free.
  */
-void cpufreq_remove_update_util_hook(int cpu)
+void cpufreq_remove_update_util_hook(цяло cpu)
 {
 	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), NULL);
 }
@@ -69,7 +69,7 @@ EXPORT_SYMBOL_GPL(cpufreq_remove_update_util_hook);
  */
 bool cpufreq_this_cpu_can_update(struct cpufreq_policy *policy)
 {
-	return cpumask_test_cpu(smp_processor_id(), policy->cpus) ||
+	върни cpumask_test_cpu(smp_processor_id(), policy->cpus) ||
 		(policy->dvfs_possible_from_any_cpu &&
 		 rcu_dereference_sched(*this_cpu_ptr(&cpufreq_update_util_data)));
 }

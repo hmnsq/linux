@@ -8,33 +8,33 @@
  */
 #include "sched.h"
 
-static inline int parent(int i)
+static inline цяло parent(цяло i)
 {
-	return (i - 1) >> 1;
+	върни (i - 1) >> 1;
 }
 
-static inline int left_child(int i)
+static inline цяло left_child(цяло i)
 {
-	return (i << 1) + 1;
+	върни (i << 1) + 1;
 }
 
-static inline int right_child(int i)
+static inline цяло right_child(цяло i)
 {
-	return (i << 1) + 2;
+	върни (i << 1) + 2;
 }
 
-static void cpudl_heapify_down(struct cpudl *cp, int idx)
+static void cpudl_heapify_down(struct cpudl *cp, цяло idx)
 {
-	int l, r, largest;
+	цяло l, r, largest;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	цяло orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (left_child(idx) >= cp->size)
-		return;
+	ако (left_child(idx) >= cp->size)
+		върни;
 
 	/* adapted from lib/prio_heap.c */
-	while (1) {
+	докато (1) {
 		u64 largest_dl;
 
 		l = left_child(idx);
@@ -42,16 +42,16 @@ static void cpudl_heapify_down(struct cpudl *cp, int idx)
 		largest = idx;
 		largest_dl = orig_dl;
 
-		if ((l < cp->size) && dl_time_before(orig_dl,
+		ако ((l < cp->size) && dl_time_before(orig_dl,
 						cp->elements[l].dl)) {
 			largest = l;
 			largest_dl = cp->elements[l].dl;
 		}
-		if ((r < cp->size) && dl_time_before(largest_dl,
+		ако ((r < cp->size) && dl_time_before(largest_dl,
 						cp->elements[r].dl))
 			largest = r;
 
-		if (largest == idx)
+		ако (largest == idx)
 			break;
 
 		/* pull largest child onto idx */
@@ -66,44 +66,44 @@ static void cpudl_heapify_down(struct cpudl *cp, int idx)
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify_up(struct cpudl *cp, int idx)
+static void cpudl_heapify_up(struct cpudl *cp, цяло idx)
 {
-	int p;
+	цяло p;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	цяло orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (idx == 0)
-		return;
+	ако (idx == 0)
+		върни;
 
 	do {
 		p = parent(idx);
-		if (dl_time_before(orig_dl, cp->elements[p].dl))
+		ако (dl_time_before(orig_dl, cp->elements[p].dl))
 			break;
 		/* pull parent onto idx */
 		cp->elements[idx].cpu = cp->elements[p].cpu;
 		cp->elements[idx].dl = cp->elements[p].dl;
 		cp->elements[cp->elements[idx].cpu].idx = idx;
 		idx = p;
-	} while (idx != 0);
+	} докато (idx != 0);
 	/* actual push up of saved original values orig_* */
 	cp->elements[idx].cpu = orig_cpu;
 	cp->elements[idx].dl = orig_dl;
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify(struct cpudl *cp, int idx)
+static void cpudl_heapify(struct cpudl *cp, цяло idx)
 {
-	if (idx > 0 && dl_time_before(cp->elements[parent(idx)].dl,
+	ако (idx > 0 && dl_time_before(cp->elements[parent(idx)].dl,
 				cp->elements[idx].dl))
 		cpudl_heapify_up(cp, idx);
-	else
+	иначе
 		cpudl_heapify_down(cp, idx);
 }
 
-static inline int cpudl_maximum(struct cpudl *cp)
+static inline цяло cpudl_maximum(struct cpudl *cp)
 {
-	return cp->elements[0].cpu;
+	върни cp->elements[0].cpu;
 }
 
 /*
@@ -114,27 +114,27 @@ static inline int cpudl_maximum(struct cpudl *cp)
  *
  * Returns: int - CPUs were found
  */
-int cpudl_find(struct cpudl *cp, struct task_struct *p,
+цяло cpudl_find(struct cpudl *cp, struct task_struct *p,
 	       struct cpumask *later_mask)
 {
 	const struct sched_dl_entity *dl_se = &p->dl;
 
-	if (later_mask &&
+	ако (later_mask &&
 	    cpumask_and(later_mask, cp->free_cpus, &p->cpus_mask)) {
 		unsigned long cap, max_cap = 0;
-		int cpu, max_cpu = -1;
+		цяло cpu, max_cpu = -1;
 
-		if (!sched_asym_cpucap_active())
-			return 1;
+		ако (!sched_asym_cpucap_active())
+			върни 1;
 
 		/* Ensure the capacity of the CPUs fits the task. */
 		for_each_cpu(cpu, later_mask) {
-			if (!dl_task_fits_capacity(p, cpu)) {
+			ако (!dl_task_fits_capacity(p, cpu)) {
 				cpumask_clear_cpu(cpu, later_mask);
 
 				cap = arch_scale_cpu_capacity(cpu);
 
-				if (cap > max_cap ||
+				ако (cap > max_cap ||
 				    (cpu == task_cpu(p) && cap == max_cap)) {
 					max_cap = cap;
 					max_cpu = cpu;
@@ -142,24 +142,24 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
 			}
 		}
 
-		if (cpumask_empty(later_mask))
+		ако (cpumask_empty(later_mask))
 			cpumask_set_cpu(max_cpu, later_mask);
 
-		return 1;
-	} else {
-		int best_cpu = cpudl_maximum(cp);
+		върни 1;
+	} иначе {
+		цяло best_cpu = cpudl_maximum(cp);
 
 		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
 
-		if (cpumask_test_cpu(best_cpu, &p->cpus_mask) &&
+		ако (cpumask_test_cpu(best_cpu, &p->cpus_mask) &&
 		    dl_time_before(dl_se->deadline, cp->elements[0].dl)) {
-			if (later_mask)
+			ако (later_mask)
 				cpumask_set_cpu(best_cpu, later_mask);
 
-			return 1;
+			върни 1;
 		}
 	}
-	return 0;
+	върни 0;
 }
 
 /*
@@ -172,9 +172,9 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpudl_clear(struct cpudl *cp, int cpu, bool online)
+void cpudl_clear(struct cpudl *cp, цяло cpu, bool online)
 {
-	int old_idx, new_cpu;
+	цяло old_idx, new_cpu;
 	unsigned long flags;
 
 	WARN_ON(!cpu_present(cpu));
@@ -182,13 +182,13 @@ void cpudl_clear(struct cpudl *cp, int cpu, bool online)
 	raw_spin_lock_irqsave(&cp->lock, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
+	ако (old_idx == IDX_INVALID) {
 		/*
 		 * Nothing to remove if old_idx was invalid.
 		 * This could happen if rq_online_dl or rq_offline_dl is
 		 * called for a CPU without -dl tasks running.
 		 */
-	} else {
+	} иначе {
 		new_cpu = cp->elements[cp->size - 1].cpu;
 		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
 		cp->elements[old_idx].cpu = new_cpu;
@@ -197,9 +197,9 @@ void cpudl_clear(struct cpudl *cp, int cpu, bool online)
 		cp->elements[cpu].idx = IDX_INVALID;
 		cpudl_heapify(cp, old_idx);
 	}
-	if (likely(online))
+	ако (likely(online))
 		__cpumask_set_cpu(cpu, cp->free_cpus);
-	else
+	иначе
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
 
 	raw_spin_unlock_irqrestore(&cp->lock, flags);
@@ -215,9 +215,9 @@ void cpudl_clear(struct cpudl *cp, int cpu, bool online)
  *
  * Returns: (void)
  */
-void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
+void cpudl_set(struct cpudl *cp, цяло cpu, u64 dl)
 {
-	int old_idx;
+	цяло old_idx;
 	unsigned long flags;
 
 	WARN_ON(!cpu_present(cpu));
@@ -225,15 +225,15 @@ void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
 	raw_spin_lock_irqsave(&cp->lock, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
-		int new_idx = cp->size++;
+	ако (old_idx == IDX_INVALID) {
+		цяло new_idx = cp->size++;
 
 		cp->elements[new_idx].dl = dl;
 		cp->elements[new_idx].cpu = cpu;
 		cp->elements[cpu].idx = new_idx;
 		cpudl_heapify_up(cp, new_idx);
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
-	} else {
+	} иначе {
 		cp->elements[old_idx].dl = dl;
 		cpudl_heapify(cp, old_idx);
 	}
@@ -245,26 +245,26 @@ void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
  * cpudl_init - initialize the cpudl structure
  * @cp: the cpudl max-heap context
  */
-int cpudl_init(struct cpudl *cp)
+цяло cpudl_init(struct cpudl *cp)
 {
-	int i;
+	цяло i;
 
 	raw_spin_lock_init(&cp->lock);
 	cp->size = 0;
 
 	cp->elements = kzalloc_objs(struct cpudl_item, nr_cpu_ids);
-	if (!cp->elements)
-		return -ENOMEM;
+	ако (!cp->elements)
+		върни -ENOMEM;
 
-	if (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
+	ако (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
 		kfree(cp->elements);
-		return -ENOMEM;
+		върни -ENOMEM;
 	}
 
 	for_each_possible_cpu(i)
 		cp->elements[i].idx = IDX_INVALID;
 
-	return 0;
+	върни 0;
 }
 
 /*
