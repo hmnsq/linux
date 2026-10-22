@@ -8,95 +8,95 @@
  */
 #ifdef CONFIG_SCHED_CLASS_EXT
 
-void scx_tick(struct rq *rq);
-void init_scx_entity(struct sched_ext_entity *scx);
-void scx_pre_fork(struct task_struct *p);
-int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs);
-void scx_post_fork(struct task_struct *p);
-void scx_cancel_fork(struct task_struct *p);
-bool scx_can_stop_tick(struct rq *rq);
-void scx_rq_activate(struct rq *rq);
-void scx_rq_deactivate(struct rq *rq);
-int scx_check_setscheduler(struct task_struct *p, int policy);
-bool task_should_scx(int policy);
-bool scx_allow_ttwu_queue(const struct task_struct *p);
-bool scx_allow_proxy_exec(const struct task_struct *p);
-void scx_proxy_donor_start(struct rq *rq);
-void scx_proxy_reenqueue_retry(struct rq *rq, struct task_struct *next);
-void init_sched_ext_class(void);
+تهی scx_tick(ساختار rq *rq);
+تهی init_scx_entity(ساختار sched_ext_entity *scx);
+تهی scx_pre_fork(ساختار task_struct *p);
+صحیح scx_fork(ساختار task_struct *p, ساختار kernel_clone_args *kargs);
+تهی scx_post_fork(ساختار task_struct *p);
+تهی scx_cancel_fork(ساختار task_struct *p);
+bool scx_can_stop_tick(ساختار rq *rq);
+تهی scx_rq_activate(ساختار rq *rq);
+تهی scx_rq_deactivate(ساختار rq *rq);
+صحیح scx_check_setscheduler(ساختار task_struct *p, صحیح policy);
+bool task_should_scx(صحیح policy);
+bool scx_allow_ttwu_queue(ثابت ساختار task_struct *p);
+bool scx_allow_proxy_exec(ثابت ساختار task_struct *p);
+تهی scx_proxy_donor_start(ساختار rq *rq);
+تهی scx_proxy_reenqueue_retry(ساختار rq *rq, ساختار task_struct *next);
+تهی init_sched_ext_class(تهی);
 
-static inline u32 scx_cpuperf_target(s32 cpu)
+ایستا درونخطی u32 scx_cpuperf_target(s32 cpu)
 {
-	if (scx_enabled())
-		return cpu_rq(cpu)->scx.cpuperf_target;
-	else
-		return 0;
+	اگر (scx_enabled())
+		بازگشت cpu_rq(cpu)->scx.cpuperf_target;
+	وگرنه
+		بازگشت 0;
 }
 
-static inline bool task_on_scx(const struct task_struct *p)
+ایستا درونخطی bool task_on_scx(ثابت ساختار task_struct *p)
 {
-	return scx_enabled() && p->sched_class == &ext_sched_class;
+	بازگشت scx_enabled() && p->sched_class == &ext_sched_class;
 }
 
 #ifdef CONFIG_SCHED_CORE
-bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
+bool scx_prio_less(ثابت ساختار task_struct *a, ثابت ساختار task_struct *b,
 		   bool in_fi);
 #endif
 
-#else	/* CONFIG_SCHED_CLASS_EXT */
+#وگرنه	/* CONFIG_SCHED_CLASS_EXT */
 
-static inline void scx_tick(struct rq *rq) {}
-static inline void scx_pre_fork(struct task_struct *p) {}
-static inline int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs) { return 0; }
-static inline void scx_post_fork(struct task_struct *p) {}
-static inline void scx_cancel_fork(struct task_struct *p) {}
-static inline u32 scx_cpuperf_target(s32 cpu) { return 0; }
-static inline bool scx_can_stop_tick(struct rq *rq) { return true; }
-static inline void scx_rq_activate(struct rq *rq) {}
-static inline void scx_rq_deactivate(struct rq *rq) {}
-static inline int scx_check_setscheduler(struct task_struct *p, int policy) { return 0; }
-static inline bool task_on_scx(const struct task_struct *p) { return false; }
-static inline bool scx_allow_ttwu_queue(const struct task_struct *p) { return true; }
-static inline bool scx_allow_proxy_exec(const struct task_struct *p) { return true; }
-static inline void scx_proxy_donor_start(struct rq *rq) {}
-static inline void scx_proxy_reenqueue_retry(struct rq *rq,
-					     struct task_struct *next) {}
-static inline void init_sched_ext_class(void) {}
+ایستا درونخطی تهی scx_tick(ساختار rq *rq) {}
+ایستا درونخطی تهی scx_pre_fork(ساختار task_struct *p) {}
+ایستا درونخطی صحیح scx_fork(ساختار task_struct *p, ساختار kernel_clone_args *kargs) { بازگشت 0; }
+ایستا درونخطی تهی scx_post_fork(ساختار task_struct *p) {}
+ایستا درونخطی تهی scx_cancel_fork(ساختار task_struct *p) {}
+ایستا درونخطی u32 scx_cpuperf_target(s32 cpu) { بازگشت 0; }
+ایستا درونخطی bool scx_can_stop_tick(ساختار rq *rq) { بازگشت true; }
+ایستا درونخطی تهی scx_rq_activate(ساختار rq *rq) {}
+ایستا درونخطی تهی scx_rq_deactivate(ساختار rq *rq) {}
+ایستا درونخطی صحیح scx_check_setscheduler(ساختار task_struct *p, صحیح policy) { بازگشت 0; }
+ایستا درونخطی bool task_on_scx(ثابت ساختار task_struct *p) { بازگشت false; }
+ایستا درونخطی bool scx_allow_ttwu_queue(ثابت ساختار task_struct *p) { بازگشت true; }
+ایستا درونخطی bool scx_allow_proxy_exec(ثابت ساختار task_struct *p) { بازگشت true; }
+ایستا درونخطی تهی scx_proxy_donor_start(ساختار rq *rq) {}
+ایستا درونخطی تهی scx_proxy_reenqueue_retry(ساختار rq *rq,
+					     ساختار task_struct *next) {}
+ایستا درونخطی تهی init_sched_ext_class(تهی) {}
 
 #endif	/* CONFIG_SCHED_CLASS_EXT */
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-void __scx_update_idle(struct rq *rq, bool idle, bool do_notify);
+تهی __scx_update_idle(ساختار rq *rq, bool idle, bool do_notify);
 
-static inline void scx_update_idle(struct rq *rq, bool idle, bool do_notify)
+ایستا درونخطی تهی scx_update_idle(ساختار rq *rq, bool idle, bool do_notify)
 {
-	if (scx_enabled())
+	اگر (scx_enabled())
 		__scx_update_idle(rq, idle, do_notify);
 }
-#else
-static inline void scx_update_idle(struct rq *rq, bool idle, bool do_notify) {}
+#وگرنه
+ایستا درونخطی تهی scx_update_idle(ساختار rq *rq, bool idle, bool do_notify) {}
 #endif
 
 #ifdef CONFIG_CGROUP_SCHED
 #ifdef CONFIG_EXT_GROUP_SCHED
-void scx_tg_init(struct task_group *tg);
-int scx_tg_online(struct task_group *tg);
-void scx_tg_offline(struct task_group *tg);
-int scx_cgroup_can_attach(struct cgroup_taskset *tset);
-void scx_cgroup_move_task(struct task_struct *p);
-void scx_cgroup_cancel_attach(struct cgroup_taskset *tset);
-void scx_group_set_weight(struct task_group *tg, unsigned long cgrp_weight);
-void scx_group_set_idle(struct task_group *tg, bool idle);
-void scx_group_set_bandwidth(struct task_group *tg, u64 period_us, u64 quota_us, u64 burst_us);
-#else	/* CONFIG_EXT_GROUP_SCHED */
-static inline void scx_tg_init(struct task_group *tg) {}
-static inline int scx_tg_online(struct task_group *tg) { return 0; }
-static inline void scx_tg_offline(struct task_group *tg) {}
-static inline int scx_cgroup_can_attach(struct cgroup_taskset *tset) { return 0; }
-static inline void scx_cgroup_move_task(struct task_struct *p) {}
-static inline void scx_cgroup_cancel_attach(struct cgroup_taskset *tset) {}
-static inline void scx_group_set_weight(struct task_group *tg, unsigned long cgrp_weight) {}
-static inline void scx_group_set_idle(struct task_group *tg, bool idle) {}
-static inline void scx_group_set_bandwidth(struct task_group *tg, u64 period_us, u64 quota_us, u64 burst_us) {}
+تهی scx_tg_init(ساختار task_group *tg);
+صحیح scx_tg_online(ساختار task_group *tg);
+تهی scx_tg_offline(ساختار task_group *tg);
+صحیح scx_cgroup_can_attach(ساختار cgroup_taskset *tset);
+تهی scx_cgroup_move_task(ساختار task_struct *p);
+تهی scx_cgroup_cancel_attach(ساختار cgroup_taskset *tset);
+تهی scx_group_set_weight(ساختار task_group *tg, unsigned long cgrp_weight);
+تهی scx_group_set_idle(ساختار task_group *tg, bool idle);
+تهی scx_group_set_bandwidth(ساختار task_group *tg, u64 period_us, u64 quota_us, u64 burst_us);
+#وگرنه	/* CONFIG_EXT_GROUP_SCHED */
+ایستا درونخطی تهی scx_tg_init(ساختار task_group *tg) {}
+ایستا درونخطی صحیح scx_tg_online(ساختار task_group *tg) { بازگشت 0; }
+ایستا درونخطی تهی scx_tg_offline(ساختار task_group *tg) {}
+ایستا درونخطی صحیح scx_cgroup_can_attach(ساختار cgroup_taskset *tset) { بازگشت 0; }
+ایستا درونخطی تهی scx_cgroup_move_task(ساختار task_struct *p) {}
+ایستا درونخطی تهی scx_cgroup_cancel_attach(ساختار cgroup_taskset *tset) {}
+ایستا درونخطی تهی scx_group_set_weight(ساختار task_group *tg, unsigned long cgrp_weight) {}
+ایستا درونخطی تهی scx_group_set_idle(ساختار task_group *tg, bool idle) {}
+ایستا درونخطی تهی scx_group_set_bandwidth(ساختار task_group *tg, u64 period_us, u64 quota_us, u64 burst_us) {}
 #endif	/* CONFIG_EXT_GROUP_SCHED */
 #endif	/* CONFIG_CGROUP_SCHED */

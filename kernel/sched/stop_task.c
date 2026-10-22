@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#شامل "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+ایستا صحیح
+select_task_rq_stop(ساختار task_struct *p, صحیح cpu, صحیح flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	بازگشت task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+ایستا صحیح
+balance_stop(ساختار rq *rq, ساختار rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	بازگشت sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+ایستا تهی
+wakeup_preempt_stop(ساختار rq *rq, ساختار task_struct *p, صحیح flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+ایستا تهی set_next_task_stop(ساختار rq *rq, ساختار task_struct *stop, شمارش snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	اگر (type == SNT_REPICK)
+		بازگشت;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+ایستا ساختار task_struct *pick_task_stop(ساختار rq *rq, ساختار rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	اگر (!sched_stop_runnable(rq))
+		بازگشت پوچ;
 
-	return rq->stop;
+	بازگشت rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ایستا تهی
+enqueue_task_stop(ساختار rq *rq, ساختار task_struct *p, صحیح flags)
 {
 	add_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ایستا bool
+dequeue_task_stop(ساختار rq *rq, ساختار task_struct *p, صحیح flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	بازگشت true;
 }
 
-static void yield_task_stop(struct rq *rq)
+ایستا تهی yield_task_stop(ساختار rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ایستا تهی put_prev_task_stop(ساختار rq *rq, ساختار task_struct *prev, ساختار task_struct *next)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+ایستا تهی task_tick_stop(ساختار rq *rq, ساختار task_struct *curr, صحیح queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+ایستا تهی switching_to_stop(ساختار rq *rq, ساختار task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+ایستا تهی
+prio_changed_stop(ساختار rq *rq, ساختار task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	اگر (p->prio == oldprio)
+		بازگشت;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+ایستا تهی update_curr_stop(ساختار rq *rq)
 {
 }
 

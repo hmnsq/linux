@@ -1,24 +1,24 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#include <linux/types.h>
-#include <linux/spinlock.h>
+#شامل <linux/types.h>
+#شامل <linux/spinlock.h>
 
 #define IDX_INVALID		-1
 
-struct cpudl_item {
+ساختار cpudl_item {
 	u64			dl;
-	int			cpu;
-	int			idx;
+	صحیح			cpu;
+	صحیح			idx;
 };
 
-struct cpudl {
+ساختار cpudl {
 	raw_spinlock_t		lock;
-	int			size;
+	صحیح			size;
 	cpumask_var_t		free_cpus;
-	struct cpudl_item	*elements;
+	ساختار cpudl_item	*elements;
 };
 
-int  cpudl_find(struct cpudl *cp, struct task_struct *p, struct cpumask *later_mask);
-void cpudl_set(struct cpudl *cp, int cpu, u64 dl);
-void cpudl_clear(struct cpudl *cp, int cpu, bool online);
-int  cpudl_init(struct cpudl *cp);
-void cpudl_cleanup(struct cpudl *cp);
+صحیح  cpudl_find(ساختار cpudl *cp, ساختار task_struct *p, ساختار cpumask *later_mask);
+تهی cpudl_set(ساختار cpudl *cp, صحیح cpu, u64 dl);
+تهی cpudl_clear(ساختار cpudl *cp, صحیح cpu, bool online);
+صحیح  cpudl_init(ساختار cpudl *cp);
+تهی cpudl_cleanup(ساختار cpudl *cp);
