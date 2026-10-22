@@ -12,26 +12,26 @@
 
 static wait_queue_head_t bit_wait_table[WAIT_TABLE_SIZE] __cacheline_aligned;
 
-wait_queue_head_t *bit_waitqueue(unsigned long *word, int bit)
+wait_queue_head_t *bit_waitqueue(unsigned long *word, ཧྲིལ bit)
 {
-	const int shift = BITS_PER_LONG == 32 ? 5 : 6;
+	const ཧྲིལ shift = BITS_PER_LONG == 32 ? 5 : 6;
 	unsigned long val = (unsigned long)word << shift | bit;
 
-	return bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
+	ལོག bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
 }
 EXPORT_SYMBOL(bit_waitqueue);
 
-int wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+ཧྲིལ wake_bit_function(sa_nracanaa wait_queue_entry *wq_entry, unsigned mode, ཧྲིལ sync, void *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wait_bit = container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	sa_nracanaa wait_bit_key *key = arg;
+	sa_nracanaa wait_bit_queue_entry *wait_bit = container_of(wq_entry, sa_nracanaa wait_bit_queue_entry, wq_entry);
 
-	if (wait_bit->key.flags != key->flags ||
+	གལ་སྲིད (wait_bit->key.flags != key->flags ||
 			wait_bit->key.bit_nr != key->bit_nr ||
 			test_bit(key->bit_nr, key->flags))
-		return 0;
+		ལོག 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	ལོག autoremove_wake_function(wq_entry, mode, sync, key);
 }
 EXPORT_SYMBOL(wake_bit_function);
 
@@ -40,56 +40,56 @@ EXPORT_SYMBOL(wake_bit_function);
  * waiting, the actions of __wait_on_bit() and __wait_on_bit_lock() are
  * permitted return codes. Nonzero return codes halt waiting and return.
  */
-int __sched
-__wait_on_bit(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
+ཧྲིལ __sched
+__wait_on_bit(sa_nracanaa wait_queue_head *wq_head, sa_nracanaa wait_bit_queue_entry *wbq_entry,
 	      wait_bit_action_f *action, unsigned mode)
 {
-	int ret = 0;
+	ཧྲིལ ret = 0;
 
 	do {
 		prepare_to_wait(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
+		གལ་སྲིད (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
 			ret = (*action)(&wbq_entry->key, mode);
-	} while (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
+	} སྐབས (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
 
 	finish_wait(wq_head, &wbq_entry->wq_entry);
 
-	return ret;
+	ལོག ret;
 }
 EXPORT_SYMBOL(__wait_on_bit);
 
-int __sched out_of_line_wait_on_bit(unsigned long *word, int bit,
+ཧྲིལ __sched out_of_line_wait_on_bit(unsigned long *word, ཧྲིལ bit,
 				    wait_bit_action_f *action, unsigned mode)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	sa_nracanaa wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	ལོག __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
 EXPORT_SYMBOL(out_of_line_wait_on_bit);
 
-int __sched out_of_line_wait_on_bit_timeout(
-	unsigned long *word, int bit, wait_bit_action_f *action,
+ཧྲིལ __sched out_of_line_wait_on_bit_timeout(
+	unsigned long *word, ཧྲིལ bit, wait_bit_action_f *action,
 	unsigned mode, unsigned long timeout)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	sa_nracanaa wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
 	wq_entry.key.timeout = jiffies + timeout;
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	ལོག __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
 EXPORT_SYMBOL_GPL(out_of_line_wait_on_bit_timeout);
 
-int __sched
-__wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
+ཧྲིལ __sched
+__wait_on_bit_lock(sa_nracanaa wait_queue_head *wq_head, sa_nracanaa wait_bit_queue_entry *wbq_entry,
 			wait_bit_action_f *action, unsigned mode)
 {
-	int ret = 0;
+	ཧྲིལ ret = 0;
 
-	for (;;) {
+	དོན་ལུ (;;) {
 		prepare_to_wait_exclusive(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
+		གལ་སྲིད (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
 			ret = action(&wbq_entry->key, mode);
 			/*
 			 * See the comment in prepare_to_wait_event().
@@ -97,35 +97,35 @@ __wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry 
 			 * but test_and_set_bit() implies mb() which pairs with
 			 * smp_mb__after_atomic() before wake_up_page().
 			 */
-			if (ret)
+			གལ་སྲིད (ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
 		}
-		if (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			if (!ret)
+		གལ་སྲིད (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
+			གལ་སྲིད (!ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
-			return 0;
-		} else if (ret) {
-			return ret;
+			ལོག 0;
+		} དེ་མིན གལ་སྲིད (ret) {
+			ལོག ret;
 		}
 	}
 }
 EXPORT_SYMBOL(__wait_on_bit_lock);
 
-int __sched out_of_line_wait_on_bit_lock(unsigned long *word, int bit,
+ཧྲིལ __sched out_of_line_wait_on_bit_lock(unsigned long *word, ཧྲིལ bit,
 					 wait_bit_action_f *action, unsigned mode)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	sa_nracanaa wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	return __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
+	ལོག __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
 }
 EXPORT_SYMBOL(out_of_line_wait_on_bit_lock);
 
-void __wake_up_bit(struct wait_queue_head *wq_head, unsigned long *word, int bit)
+void __wake_up_bit(sa_nracanaa wait_queue_head *wq_head, unsigned long *word, ཧྲིལ bit)
 {
-	struct wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
+	sa_nracanaa wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
 
-	if (waitqueue_active(wq_head))
+	གལ་སྲིད (waitqueue_active(wq_head))
 		__wake_up(wq_head, TASK_NORMAL, 1, &key);
 }
 EXPORT_SYMBOL(__wake_up_bit);
@@ -155,7 +155,7 @@ EXPORT_SYMBOL(__wake_up_bit);
  * cleared are guaranteed to be visible after the matching wait_on_bit()
  * completes.
  */
-void wake_up_bit(unsigned long *word, int bit)
+void wake_up_bit(unsigned long *word, ཧྲིལ bit)
 {
 	__wake_up_bit(bit_waitqueue(word, bit), word, bit);
 }
@@ -163,36 +163,36 @@ EXPORT_SYMBOL(wake_up_bit);
 
 wait_queue_head_t *__var_waitqueue(void *p)
 {
-	return bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
+	ལོག bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
 }
 EXPORT_SYMBOL(__var_waitqueue);
 
-struct wait_bit_key *__var_wake_key(struct wait_queue_entry *wq_entry, void *arg)
+sa_nracanaa wait_bit_key *__var_wake_key(sa_nracanaa wait_queue_entry *wq_entry, void *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wbq_entry =
-		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	sa_nracanaa wait_bit_key *key = arg;
+	sa_nracanaa wait_bit_queue_entry *wbq_entry =
+		container_of(wq_entry, sa_nracanaa wait_bit_queue_entry, wq_entry);
 
-	if (wbq_entry->key.flags != key->flags ||
+	གལ་སྲིད (wbq_entry->key.flags != key->flags ||
 	    wbq_entry->key.bit_nr != key->bit_nr)
-		return NULL;
+		ལོག NULL;
 
-	return key;
+	ལོག key;
 }
 
-static int var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
-			     int sync, void *arg)
+static ཧྲིལ var_wake_function(sa_nracanaa wait_queue_entry *wq_entry, unsigned ཧྲིལ mode,
+			     ཧྲིལ sync, void *arg)
 {
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
+	sa_nracanaa wait_bit_key *key = __var_wake_key(wq_entry, arg);
+	གལ་སྲིད (!key)
+		ལོག 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	ལོག autoremove_wake_function(wq_entry, mode, sync, key);
 }
 
-void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
+void init_wait_var_entry(sa_nracanaa wait_bit_queue_entry *wbq_entry, void *var, ཧྲིལ flags)
 {
-	*wbq_entry = (struct wait_bit_queue_entry){
+	*wbq_entry = (sa_nracanaa wait_bit_queue_entry){
 		.key = {
 			.flags	= (var),
 			.bit_nr = -1,
@@ -243,44 +243,44 @@ void wake_up_var(void *var)
 }
 EXPORT_SYMBOL(wake_up_var);
 
-__sched int bit_wait(struct wait_bit_key *word, int mode)
+__sched ཧྲིལ bit_wait(sa_nracanaa wait_bit_key *word, ཧྲིལ mode)
 {
 	schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	གལ་སྲིད (signal_pending_state(mode, current))
+		ལོག -EINTR;
 
-	return 0;
+	ལོག 0;
 }
 EXPORT_SYMBOL(bit_wait);
 
-__sched int bit_wait_io(struct wait_bit_key *word, int mode)
+__sched ཧྲིལ bit_wait_io(sa_nracanaa wait_bit_key *word, ཧྲིལ mode)
 {
 	io_schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	གལ་སྲིད (signal_pending_state(mode, current))
+		ལོག -EINTR;
 
-	return 0;
+	ལོག 0;
 }
 EXPORT_SYMBOL(bit_wait_io);
 
-__sched int bit_wait_timeout(struct wait_bit_key *word, int mode)
+__sched ཧྲིལ bit_wait_timeout(sa_nracanaa wait_bit_key *word, ཧྲིལ mode)
 {
 	unsigned long now = READ_ONCE(jiffies);
 
-	if (time_after_eq(now, word->timeout))
-		return -EAGAIN;
+	གལ་སྲིད (time_after_eq(now, word->timeout))
+		ལོག -EAGAIN;
 	schedule_timeout(word->timeout - now);
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	གལ་སྲིད (signal_pending_state(mode, current))
+		ལོག -EINTR;
 
-	return 0;
+	ལོག 0;
 }
 EXPORT_SYMBOL_GPL(bit_wait_timeout);
 
 void __init wait_bit_init(void)
 {
-	int i;
+	ཧྲིལ i;
 
-	for (i = 0; i < WAIT_TABLE_SIZE; i++)
+	དོན་ལུ (i = 0; i < WAIT_TABLE_SIZE; i++)
 		init_waitqueue_head(bit_wait_table + i);
 }
