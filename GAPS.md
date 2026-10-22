@@ -1,0 +1,508 @@
+# What is still missing
+
+76 languages. Each line says in how many languages it is missing.
+
+## Files in languages BURP cannot read yet
+
+
+## Keywords with no word in a language's table
+
+- guru:clock: 71
+- guru:size_t: 71
+- guru:time: 71
+- guru:offsetof: 71
+- guru:times: 71
+- guru:ULONG_MAX: 71
+- guru:UINT_MAX: 71
+- guru:fork: 71
+- guru:va_list: 71
+- guru:abort: 71
+- guru:va_start: 71
+- guru:va_end: 71
+- guru:ERANGE: 71
+- guru:floor: 71
+- guru:LONG_MIN: 71
+- guru:sprintf: 71
+- guru:LONG_MAX: 71
+- guru:strcspn: 71
+- guru:bsearch: 71
+- guru:memcmp: 71
+- guru:wait: 70
+- guru:memset: 70
+- guru:open: 70
+- guru:strcmp: 70
+- guru:strcpy: 70
+- guru:exp: 67
+- guru:log: 67
+- guru:#endif: 66
+- guru:#ifdef: 66
+- guru:#define: 66
+- guru:#undef: 66
+- guru:#ifndef: 66
+- guru:unsigned: 62
+- guru:long: 62
+- guru:exit: 62
+- guru:abs: 62
+- guru:memcpy: 62
+- guru:INT_MAX: 62
+- guru:sscanf: 62
+- guru:strncmp: 62
+- guru:isalpha: 62
+- guru:main: 54
+- guru:static: 25
+- guru:void: 25
+- guru:const: 25
+- guru:NULL: 25
+- guru:goto: 25
+- guru:extern: 25
+- guru:continue: 25
+- guru:do: 25
+- guru:switch: 25
+- guru:write: 25
+- guru:private: 25
+- guru:default: 25
+- guru:read: 25
+- guru:free: 25
+- guru:typedef: 25
+- guru:for: 9
+- guru:struct: 9
+- guru:inline: 9
+- guru:break: 9
+- guru:case: 9
+- guru:enum: 9
+- guru:char: 9
+- guru:sizeof: 9
+- guru:union: 9
+- guru:signal: 9
+- guru:if: 1
+- guru:return: 1
+- guru:int: 1
+- guru:else: 1
+- guru:while: 1
+- guru:#else: 1
+- guru:#if: 1
+
+## Names with no dictionary entry (the most common first)
+
+- `rq`: 76
+- `p`: 76
+- `cpu`: 76
+- `sch`: 76
+- `task_struct`: 76
+- `cfs_rq`: 76
+- `flags`: 76
+- `u64`: 76
+- `se`: 76
+- `sd`: 76
+- `scx`: 76
+- `dl_se`: 76
+- `ret`: 76
+- `i`: 76
+- `tg`: 76
+- `env`: 76
+- `scx_sched`: 76
+- `curr`: 76
+- `rt_rq`: 76
+- `rf`: 76
+- `s32`: 76
+- `t`: 76
+- `unlikely`: 76
+- `WARN_ON_ONCE`: 76
+- `m`: 76
+- `delta`: 76
+- `dsq`: 76
+- `u32`: 76
+- `mm`: 76
+- `cpu_rq`: 76
+- `cpumask`: 76
+- `now`: 76
+- `READ_ONCE`: 76
+- `dl`: 76
+- `rt_se`: 76
+- `cid`: 76
+- `vtime`: 76
+- `avg`: 76
+- `idle`: 76
+- `rd`: 76
+- `this_rq`: 76
+- `dl_rq`: 76
+- `policy`: 76
+- `pcpu`: 76
+- `sched_entity`: 76
+- `current`: 76
+- `state`: 76
+- `sched_class`: 76
+- `guard`: 76
+- `task`: 76
+- `s64`: 76
+- `attr`: 76
+- `css`: 76
+- `ops`: 76
+- `sgs`: 76
+- `EINVAL`: 76
+- `cfs_b`: 76
+- `sg_policy`: 76
+- `func`: 76
+- `sg`: 76
+- `enq_flags`: 76
+- `aux`: 76
+- `rcu`: 76
+- `grp`: 76
+- `sched_domain`: 76
+- `runtime`: 76
+- `pos`: 76
+- `cpus`: 76
+- `donor`: 76
+- `prio`: 76
+- `sched_dl_entity`: 76
+- `rq_flags`: 76
+- `max`: 76
+- `clamp_id`: 76
+- `x`: 76
+- `stats`: 76
+- `cp`: 76
+- `busiest`: 76
+- `s`: 76
+- `buf`: 76
+- `period`: 76
+- `BTF_ID_FLAGS`: 76
+- `tsk`: 76
+- `WRITE_ONCE`: 76
+- `name`: 76
+- `iter`: 76
+- `n`: 76
+- `scx_error`: 76
+- `idx`: 76
+- `src_rq`: 76
+- `lockdep_assert_rq_held`: 76
+- `sds`: 76
+- `dl_b`: 76
+- `nr_cids`: 76
+- `mm_cid`: 76
+- `j`: 76
+- `dl_bw`: 76
+- `util`: 76
+- `si`: 76
+- `val`: 76
+- `task_rq`: 76
+- `dst_cpu`: 76
+- `tmp`: 76
+- `scx_cmask`: 76
+- `err`: 76
+- `ctx`: 76
+- `rt`: 76
+- `pid`: 76
+- `cgrp`: 76
+- `SEQ_printf`: 76
+- `tbls`: 76
+- `jiffies`: 76
+- `GFP_KERNEL`: 76
+- `this_cpu`: 76
+- `file`: 76
+- `nr_running`: 76
+- `task_cpu`: 76
+- `sg_cpu`: 76
+- `ref`: 76
+- `dsq_id`: 76
+- `core`: 76
+- `min`: 76
+- `retval`: 76
+- `type`: 76
+- `cpumask_test_cpu`: 76
+- `ei`: 76
+- `likely`: 76
+- `wake_flags`: 76
+- `arg`: 76
+- `b`: 76
+- `cpustat`: 76
+- `delta_exec`: 76
+- `kfree`: 76
+- `deadline`: 76
+- `scoped_guard`: 76
+- `seq_file`: 76
+- `a`: 76
+- `work`: 76
+- `locked_rq`: 76
+- `dst_rq`: 76
+- `for_each_cpu`: 76
+- `nid`: 76
+- `cursor`: 76
+- `on_rq`: 76
+- `imbalance`: 76
+- `d`: 76
+- `ng`: 76
+- `_T`: 76
+- `rt_runtime`: 76
+- `cputime`: 76
+- `ENOMEM`: 76
+- `scx_dispatch_q`: 76
+- `cookie`: 76
+- `cfs`: 76
+- `bpf_prog_aux`: 76
+- `for_each_possible_cpu`: 76
+- `nr`: 76
+- `pd`: 76
+- `id`: 76
+- `src`: 76
+- `local`: 76
+- `sa`: 76
+- `sgc`: 76
+- `cpu_map`: 76
+- `resched_curr`: 76
+- `update_rq_clock`: 76
+- `sched_rt_entity`: 76
+- `cpumask_var_t`: 76
+- `rt_b`: 76
+- `str`: 76
+- `raw_spin_unlock`: 76
+- `timer`: 76
+- `cgroup_subsys_state`: 76
+- `cpus_ptr`: 76
+- `cur`: 76
+- `scx_prog_sched`: 76
+- `smp_processor_id`: 76
+- `seq`: 76
+- `dl_server`: 76
+- `tasks`: 76
+- `ns`: 76
+- `rcu_dereference_all`: 76
+- `SCX_HAS_OP`: 76
+- `rescue`: 76
+- `rcu_read_unlock`: 76
+- `css_tg`: 76
+- `cap`: 76
+- `cnt`: 76
+- `vma`: 76
+- `mm_struct`: 76
+- `quota`: 76
+- `elements`: 76
+- `w`: 76
+- `CONFIG_EXT_SUB_SCHED`: 76
+- `sched_ext_ops`: 76
+- `RUNTIME_INF`: 76
+- `cfs_bandwidth`: 76
+- `scx_task_sched`: 76
+- `dist`: 76
+- `kobj`: 76
+- `groupc`: 76
+- `tl`: 76
+- `sched_feat`: 76
+- `running`: 76
+- `nr_cpu_ids`: 76
+- `rq_clock`: 76
+- `ca`: 76
+- `P`: 76
+- `pshard`: 76
+- `printk`: 76
+- `quota_us`: 76
+- `level`: 76
+- `caps`: 76
+- `var`: 76
+- `sdd`: 76
+- `WARN_ON`: 76
+- `online`: 76
+- `rt_bandwidth`: 76
+- `stime`: 76
+- `kc`: 76
+- `ag`: 76
+- `utime`: 76
+- `op`: 76
+- `SCHED_FEAT`: 76
+- `lockdep_assert_held`: 76
+- `BUG_ON`: 76
+- `inode`: 76
+- `sibling`: 76
+- `free_cpumask_var`: 76
+- `filp`: 76
+- `task_on_rq_queued`: 76
+- `EBUSY`: 76
+- `src_cpu`: 76
+- `lb_env`: 76
+- `idle_cpu`: 76
+- `ppos`: 76
+- `vruntime`: 76
+- `v`: 76
+- `cmd`: 76
+- `fmt`: 76
+- `timeout`: 76
+- `dst`: 76
+- `comm`: 76
+- `balance_callback`: 76
+- `define`: 76
+- `unlock`: 76
+- `util_avg`: 76
+- `q`: 76
+- `membarrier_state`: 76
+- `static_branch_likely`: 76
+- `scd`: 76
+- `ptr`: 76
+- `dsq_list`: 76
+- `reenq_flags`: 76
+- `cpus_allowed`: 76
+- `nice`: 76
+- `sched_delayed`: 76
+- `nr_cpus_allowed`: 76
+- `throttled`: 76
+- `mutex_unlock`: 76
+- `new_cpu`: 76
+- `KF_RCU`: 76
+- `sched_attr`: 76
+- `period_us`: 76
+- `mc`: 76
+- `groups`: 76
+- `sti`: 76
+- `cu`: 76
+- `src_nid`: 76
+- `sg_lb_stats`: 76
+- `IS_ENABLED`: 76
+- `defined`: 76
+- `rcu_dereference`: 76
+- `rq_i`: 76
+- `list`: 76
+- `sf`: 76
+- `irq_work`: 76
+- `priv`: 76
+- `masks`: 76
+- `raw_spin_unlock_irqrestore`: 76
+- `core_cookie`: 76
+- `lw`: 76
+- `mutex`: 76
+- `pending`: 76
+- `pgdat`: 76
+- `runnable_avg`: 76
+- `runnable`: 76
+- `kit`: 76
+- `shared`: 76
+- `seq_printf`: 76
+- `raw_spin_rq_unlock`: 76
+- `static_branch_unlikely`: 76
+- `schedstat_enabled`: 76
+- `ext_sched_class`: 76
+- `ssize_t`: 76
+- `cpupri`: 76
+- `imbalance_pct`: 76
+- `local_dsq`: 76
+- `dst_nid`: 76
+- `atomic_read`: 76
+
+## Comments with no translation
+
+- CONFIG_EXT_SUB_SCHED: 76
+- CONFIG_EXT_GROUP_SCHED: 76
+- CONFIG_RT_GROUP_SCHED: 76
+- CONFIG_NUMA_BALANCING: 76
+- !CONFIG_FAIR_GROUP_SCHED:: 76
+- !CONFIG_FAIR_GROUP_SCHED: 76
+- CONFIG_SYSCTL: 76
+- CONFIG_FAIR_GROUP_SCHED: 76
+- CONFIG_CFS_BANDWIDTH: 76
+- CONFIG_SCHED_CORE: 76
+- !CONFIG_NO_HZ_COMMON:: 76
+- !CONFIG_NO_HZ_COMMON: 76
+- * scheduler tick hitting a task of our scheduling class.
+ *
+ * NOTE: This function can be called rem: 76
+- [num_possible_cpus()]: 76
+- CONFIG_NUMA: 76
+- !CONFIG_RT_GROUP_SCHED: 76
+- !CONFIG_SCHED_CORE:: 76
+- !CONFIG_SCHED_CORE: 76
+- !CONFIG_SCHED_HRTICK:: 76
+- !CONFIG_SCHED_HRTICK: 76
+- !CONFIG_UCLAMP_TASK:: 76
+- !CONFIG_UCLAMP_TASK: 76
+- CONFIG_SCHEDSTATS: 76
+- CONFIG_CGROUP_SCHED: 76
+- !CONFIG_IRQ_TIME_ACCOUNTING:: 76
+- !CONFIG_IRQ_TIME_ACCOUNTING: 76
+- !CONFIG_RT_MUTEXES: 76
+- Assumes rq->lock is held: 76
+- CONFIG_SCHED_CLASS_EXT: 76
+- !CONFIG_NUMA_BALANCING:: 76
+- !CONFIG_NUMA_BALANCING: 76
+- * cfs_rq->avg.period_contrib can be used for both cfs_rq and se.
+	 * See ___update_load_avg() for de: 76
+- Task has no contribution or is new: 76
+- !CONFIG_RT_GROUP_SCHED:: 76
+- CONFIG_NO_HZ_COMMON: 76
+- CONFIG_SMP: 76
+- CONFIG_UCLAMP_TASK: 76
+- CONFIG_GROUP_SCHED_WEIGHT: 76
+- !CONFIG_CFS_BANDWIDTH: 76
+- * If the timer handler is currently running and the
+		 * timer cannot be canceled, inactive_task_tim: 76
+- !CONFIG_JUMP_LABEL:: 76
+- !CONFIG_JUMP_LABEL: 76
+- root holds every cap and never uses ecaps: 76
+- Ignore cookie match if core scheduler is not enabled on the CPU.: 76
+- CONFIG_PROC_FS: 76
+- overapproximation: 76
+- Matches synchronize_rcu() in __sched_core_enable(): 76
+- preempt_count *MUST* be > 1: 76
+- CONFIG_NO_HZ_FULL: 76
+- * Avoid any overhead until uclamp is actually used by the userspace.
+	 *
+	 * The condition is constr: 76
+- When not in the task's cpumask, no point in looking further.: 76
+- Pairing determined by caller's synchronization design.: 76
+- CONFIG_HOTPLUG_CPU: 76
+- !CONFIG_NO_HZ_FULL:: 76
+- !CONFIG_NO_HZ_FULL: 76
+- The idle class should always have a runnable task.: 76
+- rq lock may have been dropped, clocks invalidated: 76
+- SCHED_PROXY_EXEC: 76
+- * Because the function tracer can trace preempt_count_sub()
+		 * and it also uses preempt_enable/dis: 76
+- CONFIG_PREEMPT_DYNAMIC: 76
+- CONFIG_UCLAMP_TASK_GROUP: 76
+- * Bound quota to defend quota against overflow during bandwidth shift.: 76
+- CONFIG_GROUP_SCHED_BANDWIDTH: 76
+- Terminate: 76
+- terminate: 76
+- Remote access to mm::mm_cid::pcpu requires rq_lock: 76
+- !CONFIG_SCHED_MM_CID: 76
+- Reset boost if the CPU appears to have been idle enough: 76
+- kthread only required for slow path: 76
+- * Task runs either in user (including guest) or kernel space,
+		 * add pending nohz time to the righ: 76
+- ~4 seconds: 76
+- !CONFIG_RT_MUTEXES:: 76
+- kick cpufreq (see the comment in kernel/sched/sched.h).: 76
+- underflow: 76
+- * If this is a non-deadline task that has been boosted,
+	 * do nothing: 76
+- * Tell update_rq_clock() that we've just updated,
+	 * so we don't do microscopic update in schedule(: 76
+- unlocked access: 76
+- * p is migratable, so let's not schedule it and
+	 * see if it is pushed or pulled somewhere else.: 76
+- * This is OK, because current is on_cpu, which avoids it being
+		 * picked for load-balance and pree: 76
+- Only try algorithms three times: 76
+- Make sure the mask is initialized first: 76
+- skip tasks that cannot be migrated: 76
+- We might release rq lock: 76
+- * This iterator needs some explanation.
+ * It returns 1 for the header position.
+ * This means 2 is : 76
+- task_rq couldn't have changed if we're still the holding cpu: 76
+- see SCX_EV_INSERT_NOT_OWNED definition: 76
+- see dequeue_task_scx() on why we skip when !QUEUED: 76
+- see kick_sync_wait_bal_cb(): 76
+- * Verify the task is not in BPF scheduler's custody. If flag
+	 * transitions are consistent, the fla: 76
+- see schedule_dsq_reenq(): 76
+- cgrp_moving_from implies non-NULL @sch, test it first: 76
+- CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED: 76
+- * Here, every runnable task is guaranteed to make forward progress and
+	 * we can safely use blockin: 76
+- * @sch's non-ops programs such as timers and tracers can fire after
+	 * ops.exit(). Now that exit is: 76
+- not added if enable failed before scx_sched_sysfs_add(): 76
+- @s may be zero sized and seq_buf triggers WARN if so: 76
+- protected by scx_dump_lock: 76
+- we'll soon enter disable path, keep bypass on: 76
+- *******************************************************************************
+ * Helpers that can : 76
+- * Disallow if any sub-scheds are attached. There is no way to tell
+	 * which scheduler called us, so: 76
