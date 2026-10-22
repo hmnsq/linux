@@ -6,8 +6,8 @@
  * figure. Its a silly number but people think its important. We go through
  * great pains to make it work on big machines and tickless kernels.
  */
-#include <linux/sched/nohz.h>
-#include "sched.h"
+#ضمن <linux/sched/nohz.h>
+#ضمن "sched.h"
 
 /*
  * Global load-average calculations
@@ -70,26 +70,26 @@ EXPORT_SYMBOL(avenrun); /* should be removed */
  *
  * These values are estimates at best, so no need for locking.
  */
-void get_avenrun(unsigned long *loads, unsigned long offset, int shift)
+فراغ get_avenrun(unsigned long *loads, unsigned long offset, صحيح shift)
 {
 	loads[0] = (avenrun[0] + offset) << shift;
 	loads[1] = (avenrun[1] + offset) << shift;
 	loads[2] = (avenrun[2] + offset) << shift;
 }
 
-long calc_load_fold_active(struct rq *this_rq, long adjust)
+long calc_load_fold_active(بنية rq *this_rq, long adjust)
 {
 	long nr_active, delta = 0;
 
 	nr_active = this_rq->nr_running - adjust;
 	nr_active += (long)this_rq->nr_uninterruptible;
 
-	if (nr_active != this_rq->calc_load_active) {
+	𐤀𐤌 (nr_active != this_rq->calc_load_active) {
 		delta = nr_active - this_rq->calc_load_active;
 		this_rq->calc_load_active = nr_active;
 	}
 
-	return delta;
+	أرجع delta;
 }
 
 /**
@@ -107,28 +107,28 @@ long calc_load_fold_active(struct rq *this_rq, long adjust)
  * of course trivially computable in O(log_2 n), the length of our binary
  * vector.
  */
-static unsigned long
-fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
+ساكن unsigned long
+fixed_power_int(unsigned long x, unsigned صحيح frac_bits, unsigned صحيح n)
 {
 	unsigned long result = 1UL << frac_bits;
 
-	if (n) {
-		for (;;) {
-			if (n & 1) {
+	𐤀𐤌 (n) {
+		لكل (;;) {
+			𐤀𐤌 (n & 1) {
 				result *= x;
 				result += 1UL << (frac_bits - 1);
 				result >>= frac_bits;
 			}
 			n >>= 1;
-			if (!n)
-				break;
+			𐤀𐤌 (!n)
+				اكسر;
 			x *= x;
 			x += 1UL << (frac_bits - 1);
 			x >>= frac_bits;
 		}
 	}
 
-	return result;
+	أرجع result;
 }
 
 /*
@@ -156,9 +156,9 @@ fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
  */
 unsigned long
 calc_load_n(unsigned long load, unsigned long exp,
-	    unsigned long active, unsigned int n)
+	    unsigned long active, unsigned صحيح n)
 {
-	return calc_load(load, fixed_power_int(exp, FSHIFT, n), active);
+	أرجع calc_load(load, fixed_power_int(exp, FSHIFT, n), active);
 }
 
 #ifdef CONFIG_NO_HZ_COMMON
@@ -204,12 +204,12 @@ calc_load_n(unsigned long load, unsigned long exp,
  *
  * When making the ILB scale, we should try to pull this in as well.
  */
-static atomic_long_t calc_load_nohz[2];
-static int calc_load_idx;
+ساكن atomic_long_t calc_load_nohz[2];
+ساكن صحيح calc_load_idx;
 
-static inline int calc_load_write_idx(void)
+ساكن مضمن صحيح calc_load_write_idx(فراغ)
 {
-	int idx = calc_load_idx;
+	صحيح idx = calc_load_idx;
 
 	/*
 	 * See calc_global_nohz(), if we observe the new index, we also
@@ -221,30 +221,30 @@ static inline int calc_load_write_idx(void)
 	 * If the folding window started, make sure we start writing in the
 	 * next NO_HZ-delta.
 	 */
-	if (!time_before(jiffies, READ_ONCE(calc_load_update)))
+	𐤀𐤌 (!time_before(jiffies, READ_ONCE(calc_load_update)))
 		idx++;
 
-	return idx & 1;
+	أرجع idx & 1;
 }
 
-static inline int calc_load_read_idx(void)
+ساكن مضمن صحيح calc_load_read_idx(فراغ)
 {
-	return calc_load_idx & 1;
+	أرجع calc_load_idx & 1;
 }
 
-static void calc_load_nohz_fold(struct rq *rq)
+ساكن فراغ calc_load_nohz_fold(بنية rq *rq)
 {
 	long delta;
 
 	delta = calc_load_fold_active(rq, 0);
-	if (delta) {
-		int idx = calc_load_write_idx();
+	𐤀𐤌 (delta) {
+		صحيح idx = calc_load_write_idx();
 
 		atomic_long_add(delta, &calc_load_nohz[idx]);
 	}
 }
 
-void calc_load_nohz_start(void)
+فراغ calc_load_nohz_start(فراغ)
 {
 	/*
 	 * We're going into NO_HZ mode, if there's any pending delta, fold it
@@ -257,40 +257,40 @@ void calc_load_nohz_start(void)
  * Keep track of the load for NOHZ_FULL, must be called between
  * calc_load_nohz_{start,stop}().
  */
-void calc_load_nohz_remote(struct rq *rq)
+فراغ calc_load_nohz_remote(بنية rq *rq)
 {
 	calc_load_nohz_fold(rq);
 }
 
-void calc_load_nohz_stop(void)
+فراغ calc_load_nohz_stop(فراغ)
 {
-	struct rq *this_rq = this_rq();
+	بنية rq *this_rq = this_rq();
 
 	/*
 	 * If we're still before the pending sample window, we're done.
 	 */
 	this_rq->calc_load_update = READ_ONCE(calc_load_update);
-	if (time_before(jiffies, this_rq->calc_load_update))
-		return;
+	𐤀𐤌 (time_before(jiffies, this_rq->calc_load_update))
+		أرجع;
 
 	/*
 	 * We woke inside or after the sample window, this means we're already
 	 * accounted through the nohz accounting, so skip the entire deal and
 	 * sync up for the next window.
 	 */
-	if (time_before(jiffies, this_rq->calc_load_update + 10))
+	𐤀𐤌 (time_before(jiffies, this_rq->calc_load_update + 10))
 		this_rq->calc_load_update += LOAD_FREQ;
 }
 
-static long calc_load_nohz_read(void)
+ساكن long calc_load_nohz_read(فراغ)
 {
-	int idx = calc_load_read_idx();
+	صحيح idx = calc_load_read_idx();
 	long delta = 0;
 
-	if (atomic_long_read(&calc_load_nohz[idx]))
+	𐤀𐤌 (atomic_long_read(&calc_load_nohz[idx]))
 		delta = atomic_long_xchg(&calc_load_nohz[idx], 0);
 
-	return delta;
+	أرجع delta;
 }
 
 /*
@@ -302,13 +302,13 @@ static long calc_load_nohz_read(void)
  * Once we've updated the global active value, we need to apply the exponential
  * weights adjusted to the number of cycles missed.
  */
-static void calc_global_nohz(void)
+ساكن فراغ calc_global_nohz(فراغ)
 {
 	unsigned long sample_window;
 	long delta, active, n;
 
 	sample_window = READ_ONCE(calc_load_update);
-	if (!time_before(jiffies, sample_window + 10)) {
+	𐤀𐤌 (!time_before(jiffies, sample_window + 10)) {
 		/*
 		 * Catch-up, fold however many we are behind still
 		 */
@@ -335,10 +335,10 @@ static void calc_global_nohz(void)
 	smp_wmb();
 	calc_load_idx++;
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
+#وإلا /* !CONFIG_NO_HZ_COMMON: */
 
-static inline long calc_load_nohz_read(void) { return 0; }
-static inline void calc_global_nohz(void) { }
+ساكن مضمن long calc_load_nohz_read(فراغ) { أرجع 0; }
+ساكن مضمن فراغ calc_global_nohz(فراغ) { }
 
 #endif /* !CONFIG_NO_HZ_COMMON */
 
@@ -348,20 +348,20 @@ static inline void calc_global_nohz(void) { }
  *
  * Called from the global timer code.
  */
-void calc_global_load(void)
+فراغ calc_global_load(فراغ)
 {
 	unsigned long sample_window;
 	long active, delta;
 
 	sample_window = READ_ONCE(calc_load_update);
-	if (time_before(jiffies, sample_window + 10))
-		return;
+	𐤀𐤌 (time_before(jiffies, sample_window + 10))
+		أرجع;
 
 	/*
 	 * Fold the 'old' NO_HZ-delta to include all NO_HZ CPUs.
 	 */
 	delta = calc_load_nohz_read();
-	if (delta)
+	𐤀𐤌 (delta)
 		atomic_long_add(delta, &calc_load_tasks);
 
 	active = atomic_long_read(&calc_load_tasks);
@@ -384,15 +384,15 @@ void calc_global_load(void)
  * Called from sched_tick() to periodically update this CPU's
  * active count.
  */
-void calc_global_load_tick(struct rq *this_rq)
+فراغ calc_global_load_tick(بنية rq *this_rq)
 {
 	long delta;
 
-	if (time_before(jiffies, this_rq->calc_load_update))
-		return;
+	𐤀𐤌 (time_before(jiffies, this_rq->calc_load_update))
+		أرجع;
 
 	delta  = calc_load_fold_active(this_rq, 0);
-	if (delta)
+	𐤀𐤌 (delta)
 		atomic_long_add(delta, &calc_load_tasks);
 
 	this_rq->calc_load_update += LOAD_FREQ;
