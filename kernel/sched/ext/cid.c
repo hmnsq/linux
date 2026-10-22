@@ -23,12 +23,12 @@ s16 __rcu *scx_cid_to_cpu_tbl;
 s16 __rcu *scx_cpu_to_cid_tbl;
 s32 __rcu *scx_cid_to_shard;
 s32 __rcu *scx_shard_node;
-struct scx_cid_shard __rcu *scx_cid_shard_ranges;
-struct scx_cid_topo __rcu *scx_cid_topo;
+sa_nracanaa scx_cid_shard __rcu *scx_cid_shard_ranges;
+sa_nracanaa scx_cid_topo __rcu *scx_cid_topo;
 
-static struct scx_cid_tables *scx_cid_tables;	/* used only during alloc/free */
+static sa_nracanaa scx_cid_tables *scx_cid_tables;	/* used only during alloc/free */
 
-#define SCX_CID_TOPO_NEG	(struct scx_cid_topo) {				\
+#define SCX_CID_TOPO_NEG	(sa_nracanaa scx_cid_topo) {				\
 	.core_cid = -1, .core_idx = -1, .llc_cid = -1, .llc_idx = -1,		\
 	.node_cid = -1, .node_idx = -1, .shard_cid = -1, .shard_idx = -1,	\
 }
@@ -38,15 +38,15 @@ static struct scx_cid_tables *scx_cid_tables;	/* used only during alloc/free */
  * !present), record @cpu in @fallbacks and return its node mask instead - the
  * worst that can happen is that the cpu's LLC becomes coarser than reality.
  */
-static const struct cpumask *cpu_llc_mask(int cpu, struct cpumask *fallbacks)
+static const sa_nracanaa cpumask *cpu_llc_mask(ຈຳນວນເຕັມ cpu, sa_nracanaa cpumask *fallbacks)
 {
-	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
+	sa_nracanaa cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
 
-	if (!ci || !ci->info_list || !ci->num_leaves) {
+	ຖ້າ (!ci || !ci->info_list || !ci->num_leaves) {
 		cpumask_set_cpu(cpu, fallbacks);
-		return cpumask_of_node(cpu_to_node(cpu));
+		ສົ່ງຄືນ cpumask_of_node(cpu_to_node(cpu));
 	}
-	return &ci->info_list[ci->num_leaves - 1].shared_cpu_map;
+	ສົ່ງຄືນ &ci->info_list[ci->num_leaves - 1].shared_cpu_map;
 }
 
 /*
@@ -55,15 +55,15 @@ static const struct cpumask *cpu_llc_mask(int cpu, struct cpumask *fallbacks)
  * as possible across shards so cpu count is balanced: the first *@nr_large_p
  * shards get (*@cores_per_shard_p + 1) cores, the rest get *@cores_per_shard_p.
  */
-static void calc_shard_layout(const struct cpumask *llc_cpus, u32 shard_size,
+static void calc_shard_layout(const sa_nracanaa cpumask *llc_cpus, u32 shard_size,
 			      u32 *cores_per_shard_p, u32 *nr_large_p)
 {
 	u32 nr_cores = 0, nr_cpus = 0, nr_shards;
-	int cpu;
+	ຈຳນວນເຕັມ cpu;
 
 	for_each_cpu(cpu, llc_cpus) {
 		nr_cpus++;
-		if (cpumask_first(topology_sibling_cpumask(cpu)) == cpu)
+		ຖ້າ (cpumask_first(topology_sibling_cpumask(cpu)) == cpu)
 			nr_cores++;
 	}
 
@@ -75,10 +75,10 @@ static void calc_shard_layout(const struct cpumask *llc_cpus, u32 shard_size,
 	*nr_large_p = nr_cores % nr_shards;
 }
 
-static void scx_cid_tables_free(struct scx_cid_tables *tbls)
+static void scx_cid_tables_free(sa_nracanaa scx_cid_tables *tbls)
 {
-	if (!tbls)
-		return;
+	ຖ້າ (!tbls)
+		ສົ່ງຄືນ;
 	kvfree(tbls->cid_to_cpu);
 	kvfree(tbls->cpu_to_cid);
 	kvfree(tbls->cid_to_shard);
@@ -88,19 +88,19 @@ static void scx_cid_tables_free(struct scx_cid_tables *tbls)
 	kfree(tbls);
 }
 
-static void scx_cid_tables_free_rcufn(struct rcu_head *rcu)
+static void scx_cid_tables_free_rcufn(sa_nracanaa rcu_head *rcu)
 {
-	scx_cid_tables_free(container_of(rcu, struct scx_cid_tables, rcu));
+	scx_cid_tables_free(container_of(rcu, sa_nracanaa scx_cid_tables, rcu));
 }
 
-static struct scx_cid_tables *scx_cid_alloc_tables(void)
+static sa_nracanaa scx_cid_tables *scx_cid_alloc_tables(void)
 {
 	u32 npossible = num_possible_cpus();
-	struct scx_cid_tables *tbls;
+	sa_nracanaa scx_cid_tables *tbls;
 
 	tbls = kzalloc_obj(*tbls);
-	if (!tbls)
-		return NULL;
+	ຖ້າ (!tbls)
+		ສົ່ງຄືນ NULL;
 
 	tbls->cid_to_cpu = kvzalloc_objs(*tbls->cid_to_cpu, npossible);
 	tbls->cpu_to_cid = kvzalloc_objs(*tbls->cpu_to_cid, nr_cpu_ids);
@@ -109,13 +109,13 @@ static struct scx_cid_tables *scx_cid_alloc_tables(void)
 	tbls->shard_ranges = kvzalloc_objs(*tbls->shard_ranges, npossible);
 	tbls->topo = kvzalloc_objs(*tbls->topo, npossible);
 
-	if (!tbls->cid_to_cpu || !tbls->cpu_to_cid || !tbls->cid_to_shard ||
+	ຖ້າ (!tbls->cid_to_cpu || !tbls->cpu_to_cid || !tbls->cid_to_shard ||
 	    !tbls->shard_node || !tbls->shard_ranges || !tbls->topo) {
 		scx_cid_tables_free(tbls);
-		return NULL;
+		ສົ່ງຄືນ NULL;
 	}
 
-	return tbls;
+	ສົ່ງຄືນ tbls;
 }
 
 /**
@@ -125,7 +125,7 @@ static struct scx_cid_tables *scx_cid_alloc_tables(void)
  */
 void scx_cid_publish_tables(void)
 {
-	struct scx_cid_tables *tbls = scx_cid_tables;
+	sa_nracanaa scx_cid_tables *tbls = scx_cid_tables;
 
 	lockdep_assert_held(&scx_enable_mutex);
 
@@ -146,13 +146,13 @@ void scx_cid_publish_tables(void)
  */
 void scx_cid_retire_tables(void)
 {
-	struct scx_cid_tables *tbls = scx_cid_tables;
+	sa_nracanaa scx_cid_tables *tbls = scx_cid_tables;
 
 	lockdep_assert_held(&scx_enable_mutex);
 	lockdep_assert_cpus_held();
 
-	if (!tbls)
-		return;
+	ຖ້າ (!tbls)
+		ສົ່ງຄືນ;
 
 	scx_cid_tables = NULL;
 	RCU_INIT_POINTER(scx_cid_to_cpu_tbl, NULL);
@@ -177,7 +177,7 @@ void scx_cid_retire_tables(void)
  * straddling two NUMA nodes into two LLC units. The caller must hold
  * cpus_read_lock.
  */
-s32 scx_cid_init(struct scx_sched *sch)
+s32 scx_cid_init(sa_nracanaa scx_sched *sch)
 {
 	cpumask_var_t to_walk __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t node_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
@@ -185,7 +185,7 @@ s32 scx_cid_init(struct scx_sched *sch)
 	cpumask_var_t core_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t llc_fallback __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t online_no_topo __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-	struct scx_cid_tables *tbls;
+	sa_nracanaa scx_cid_tables *tbls;
 	u32 next_cid = 0;
 	s32 next_node_idx = 0, next_llc_idx = 0, next_core_idx = 0;
 	s32 next_shard_idx = 0;
@@ -204,29 +204,29 @@ s32 scx_cid_init(struct scx_sched *sch)
 	max_cids = min_t(u32, shard_size, SCX_CID_SHARD_MAX_CPUS);
 
 	tbls = scx_cid_alloc_tables();
-	if (!tbls)
-		return -ENOMEM;
+	ຖ້າ (!tbls)
+		ສົ່ງຄືນ -ENOMEM;
 
 	scx_cid_tables = tbls;
 
-	for (si = 0; si < num_possible_cpus(); si++)
+	ສຳລັບ (si = 0; si < num_possible_cpus(); si++)
 		tbls->shard_node[si] = NUMA_NO_NODE;
 
-	if (!zalloc_cpumask_var(&to_walk, GFP_KERNEL) ||
+	ຖ້າ (!zalloc_cpumask_var(&to_walk, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&node_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&llc_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&core_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&llc_fallback, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&online_no_topo, GFP_KERNEL))
-		return -ENOMEM;
+		ສົ່ງຄືນ -ENOMEM;
 
 	/* -1 sentinels for sparse-possible cpu id holes (0 is a valid cid) */
-	for (cpu = 0; cpu < nr_cpu_ids; cpu++)
+	ສຳລັບ (cpu = 0; cpu < nr_cpu_ids; cpu++)
 		tbls->cpu_to_cid[cpu] = -1;
 
 	cpumask_copy(to_walk, cpu_online_mask);
 
-	while (!cpumask_empty(to_walk)) {
+	ໃນຂະນະທີ່ (!cpumask_empty(to_walk)) {
 		s32 next_cpu = cpumask_first(to_walk);
 		s32 nid = cpu_to_node(next_cpu);
 		s32 node_cid = next_cid;
@@ -236,7 +236,7 @@ s32 scx_cid_init(struct scx_sched *sch)
 		 * No NUMA info: skip and let the tail loop assign a no-topo
 		 * cid. cpumask_of_node(-1) is undefined.
 		 */
-		if (nid < 0) {
+		ຖ້າ (nid < 0) {
 			cpumask_clear_cpu(next_cpu, to_walk);
 			continue;
 		}
@@ -245,12 +245,12 @@ s32 scx_cid_init(struct scx_sched *sch)
 
 		/* node_scratch = to_walk & this node */
 		cpumask_and(node_scratch, to_walk, cpumask_of_node(nid));
-		if (WARN_ON_ONCE(!cpumask_test_cpu(next_cpu, node_scratch)))
-			return -EINVAL;
+		ຖ້າ (WARN_ON_ONCE(!cpumask_test_cpu(next_cpu, node_scratch)))
+			ສົ່ງຄືນ -EINVAL;
 
-		while (!cpumask_empty(node_scratch)) {
+		ໃນຂະນະທີ່ (!cpumask_empty(node_scratch)) {
 			s32 ncpu = cpumask_first(node_scratch);
-			const struct cpumask *llc_mask = cpu_llc_mask(ncpu, llc_fallback);
+			const sa_nracanaa cpumask *llc_mask = cpu_llc_mask(ncpu, llc_fallback);
 			s32 llc_cid = next_cid;
 			s32 llc_idx = next_llc_idx++;
 			u32 cores_per_shard, nr_large;
@@ -259,17 +259,17 @@ s32 scx_cid_init(struct scx_sched *sch)
 
 			/* llc_scratch = node_scratch & this llc */
 			cpumask_and(llc_scratch, node_scratch, llc_mask);
-			if (WARN_ON_ONCE(!cpumask_test_cpu(ncpu, llc_scratch)))
-				return -EINVAL;
+			ຖ້າ (WARN_ON_ONCE(!cpumask_test_cpu(ncpu, llc_scratch)))
+				ສົ່ງຄືນ -EINVAL;
 
 			calc_shard_layout(llc_scratch, shard_size, &cores_per_shard, &nr_large);
 			shard_cid = next_cid;
 			shard_idx = next_shard_idx++;
 			tbls->shard_node[shard_idx] = nid;
 
-			while (!cpumask_empty(llc_scratch)) {
+			ໃນຂະນະທີ່ (!cpumask_empty(llc_scratch)) {
 				s32 lcpu = cpumask_first(llc_scratch);
-				const struct cpumask *sib = topology_sibling_cpumask(lcpu);
+				const sa_nracanaa cpumask *sib = topology_sibling_cpumask(lcpu);
 				s32 core_cid = next_cid;
 				s32 core_idx = next_core_idx++;
 				s32 ccpu;
@@ -277,8 +277,8 @@ s32 scx_cid_init(struct scx_sched *sch)
 
 				/* core_scratch = llc_scratch & this core */
 				cpumask_and(core_scratch, llc_scratch, sib);
-				if (WARN_ON_ONCE(!cpumask_test_cpu(lcpu, core_scratch)))
-					return -EINVAL;
+				ຖ້າ (WARN_ON_ONCE(!cpumask_test_cpu(lcpu, core_scratch)))
+					ສົ່ງຄືນ -EINVAL;
 
 				/*
 				 * Advance to a new shard when either core or
@@ -288,7 +288,7 @@ s32 scx_cid_init(struct scx_sched *sch)
 				 */
 				cids_in_core = cpumask_weight(core_scratch);
 				max_cores = cores_per_shard + (shard_local < nr_large ? 1 : 0);
-				if (cores_in_shard &&
+				ຖ້າ (cores_in_shard &&
 				    (cores_in_shard >= max_cores ||
 				     cids_in_shard + cids_in_core > max_cids)) {
 					shard_local++;
@@ -307,7 +307,7 @@ s32 scx_cid_init(struct scx_sched *sch)
 					tbls->cid_to_cpu[cid] = ccpu;
 					tbls->cpu_to_cid[ccpu] = cid;
 					tbls->cid_to_shard[cid] = shard_idx;
-					tbls->topo[cid] = (struct scx_cid_topo){
+					tbls->topo[cid] = (sa_nracanaa scx_cid_topo){
 						.core_cid = core_cid,
 						.core_idx = core_idx,
 						.llc_cid = llc_cid,
@@ -339,16 +339,16 @@ s32 scx_cid_init(struct scx_sched *sch)
 	notopo_shard_idx = -1;
 
 	for_each_cpu(cpu, cpu_possible_mask) {
-		if (tbls->cpu_to_cid[cpu] != -1)
+		ຖ້າ (tbls->cpu_to_cid[cpu] != -1)
 			continue;
-		if (cpu_online(cpu))
+		ຖ້າ (cpu_online(cpu))
 			cpumask_set_cpu(cpu, online_no_topo);
 
 		cid = next_cid++;
 		tbls->cid_to_cpu[cid] = cpu;
 		tbls->cpu_to_cid[cpu] = cid;
 
-		if (notopo_in_shard >= min_t(u32, shard_size, SCX_CID_SHARD_MAX_CPUS)) {
+		ຖ້າ (notopo_in_shard >= min_t(u32, shard_size, SCX_CID_SHARD_MAX_CPUS)) {
 			notopo_shard_cid = cid;
 			notopo_shard_idx = next_shard_idx++;
 			notopo_in_shard = 0;
@@ -361,10 +361,10 @@ s32 scx_cid_init(struct scx_sched *sch)
 		tbls->topo[cid].shard_idx = notopo_shard_idx;
 	}
 
-	if (!cpumask_empty(llc_fallback))
+	ຖ້າ (!cpumask_empty(llc_fallback))
 		pr_warn("scx_cid: cpus without cacheinfo, using node mask as llc: %*pbl\n",
 			cpumask_pr_args(llc_fallback));
-	if (!cpumask_empty(online_no_topo))
+	ຖ້າ (!cpumask_empty(online_no_topo))
 		pr_warn("scx_cid: online cpus with no usable topology: %*pbl\n",
 			cpumask_pr_args(online_no_topo));
 
@@ -373,16 +373,16 @@ s32 scx_cid_init(struct scx_sched *sch)
 	 * cid ranges by construction: base_cid is the first cid landing in a
 	 * shard, nr_cids is the count.
 	 */
-	for (cid = 0; cid < next_cid; cid++) {
+	ສຳລັບ (cid = 0; cid < next_cid; cid++) {
 		s32 sidx = tbls->cid_to_shard[cid];
 
-		if (tbls->shard_ranges[sidx].nr_cids == 0)
+		ຖ້າ (tbls->shard_ranges[sidx].nr_cids == 0)
 			tbls->shard_ranges[sidx].base_cid = cid;
 		tbls->shard_ranges[sidx].nr_cids++;
 	}
 
 	tbls->nr_shards = next_shard_idx;
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /**
@@ -391,14 +391,14 @@ s32 scx_cid_init(struct scx_sched *sch)
  *
  * Storage past the active range is left as is.
  */
-void scx_cmask_clear(struct scx_cmask *m)
+void scx_cmask_clear(sa_nracanaa scx_cmask *m)
 {
 	u32 nr_words;
 
-	if (!m->nr_cids)
-		return;
+	ຖ້າ (!m->nr_cids)
+		ສົ່ງຄືນ;
 	nr_words = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
-	memset(m->bits, 0, nr_words * sizeof(u64));
+	memset(m->bits, 0, nr_words * parimaa_na(u64));
 }
 
 /**
@@ -407,23 +407,23 @@ void scx_cmask_clear(struct scx_cmask *m)
  *
  * Counterpart to scx_cmask_clear(). Storage past the active range is left as is.
  */
-void scx_cmask_fill(struct scx_cmask *m)
+void scx_cmask_fill(sa_nracanaa scx_cmask *m)
 {
 	u32 nr_words, head_bits, tail_bits;
 
-	if (!m->nr_cids)
-		return;
+	ຖ້າ (!m->nr_cids)
+		ສົ່ງຄືນ;
 	nr_words = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
-	memset(m->bits, 0xff, nr_words * sizeof(u64));
+	memset(m->bits, 0xff, nr_words * parimaa_na(u64));
 
 	/* clear word-0 bits below base */
 	head_bits = m->base & 63;
-	if (head_bits)
+	ຖ້າ (head_bits)
 		m->bits[0] &= ~((1ULL << head_bits) - 1);
 
 	/* clear last-word bits at or past base + nr_cids */
 	tail_bits = (m->base + m->nr_cids) & 63;
-	if (tail_bits)
+	ຖ້າ (tail_bits)
 		m->bits[nr_words - 1] &= (1ULL << tail_bits) - 1;
 }
 
@@ -436,13 +436,13 @@ static s32 pick_max_node(const u32 *counts, u32 n)
 	s32 best = NUMA_NO_NODE;
 	u32 best_count = 0, i;
 
-	for (i = 0; i < n; i++) {
-		if (counts[i] > best_count) {
+	ສຳລັບ (i = 0; i < n; i++) {
+		ຖ້າ (counts[i] > best_count) {
 			best_count = counts[i];
 			best = i;
 		}
 	}
-	return best;
+	ສົ່ງຄືນ best;
 }
 
 __bpf_kfunc_start_defs();
@@ -466,15 +466,15 @@ __bpf_kfunc_start_defs();
  */
 __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_cid_cnt,
 				      const s32 *shard_start__arena, u32 shard_start_cnt,
-				      const struct bpf_prog_aux *aux)
+				      const sa_nracanaa bpf_prog_aux *aux)
 {
 	cpumask_var_t seen __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	u32 *node_counts __free(kfree) = NULL;
 	s32 *cpu_to_cid __free(kfree) = NULL;
 	s32 *shard_start __free(kfree) = NULL;
 	u32 npossible = num_possible_cpus();
-	struct scx_cid_tables *tbls;
-	struct scx_sched *sch;
+	sa_nracanaa scx_cid_tables *tbls;
+	sa_nracanaa scx_sched *sch;
 	u32 nr_shards = shard_start_cnt;
 	bool alloced;
 	s32 cpu, cid, si;
@@ -491,80 +491,80 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	 */
 	alloced = zalloc_cpumask_var(&seen, GFP_KERNEL);
 	node_counts = kzalloc_objs(*node_counts, nr_node_ids);
-	if (cpu_to_cid_cnt == nr_cpu_ids)
-		cpu_to_cid = kmemdup(cpu_to_cid__arena, cpu_to_cid_cnt * sizeof(s32),
+	ຖ້າ (cpu_to_cid_cnt == nr_cpu_ids)
+		cpu_to_cid = kmemdup(cpu_to_cid__arena, cpu_to_cid_cnt * parimaa_na(s32),
 				     GFP_KERNEL);
-	if (nr_shards && nr_shards <= npossible)
-		shard_start = kmemdup(shard_start__arena, nr_shards * sizeof(s32),
+	ຖ້າ (nr_shards && nr_shards <= npossible)
+		shard_start = kmemdup(shard_start__arena, nr_shards * parimaa_na(s32),
 				      GFP_KERNEL);
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	ຖ້າ (unlikely(!sch))
+		ສົ່ງຄືນ;
 
 	/* called from ops.init_cids(), so the tables exist and are unpublished */
 	lockdep_assert_held(&scx_enable_mutex);
 	tbls = scx_cid_tables;
 
-	if (cpu_to_cid_cnt != nr_cpu_ids) {
+	ຖ້າ (cpu_to_cid_cnt != nr_cpu_ids) {
 		scx_error(sch, "scx_bpf_cid_override: cpu_to_cid expected %u entries, got %u",
 			  nr_cpu_ids, cpu_to_cid_cnt);
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	if (!nr_shards || nr_shards > npossible) {
+	ຖ້າ (!nr_shards || nr_shards > npossible) {
 		scx_error(sch, "scx_bpf_cid_override: invalid shard_start count %u",
 			  nr_shards);
-		return;
+		ສົ່ງຄືນ;
 	}
 
-	if (!alloced || !node_counts || !cpu_to_cid || !shard_start) {
+	ຖ້າ (!alloced || !node_counts || !cpu_to_cid || !shard_start) {
 		scx_error(sch, "scx_bpf_cid_override: allocation failed");
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	/* validate shard_start[]: starts at 0, strictly increasing, in range */
-	if (shard_start[0] != 0) {
+	ຖ້າ (shard_start[0] != 0) {
 		scx_error(sch, "scx_bpf_cid_override: shard_start[0] must be 0, got %d",
 			  shard_start[0]);
-		return;
+		ສົ່ງຄືນ;
 	}
-	for (si = 1; si < nr_shards; si++) {
-		if (shard_start[si] <= shard_start[si - 1]) {
+	ສຳລັບ (si = 1; si < nr_shards; si++) {
+		ຖ້າ (shard_start[si] <= shard_start[si - 1]) {
 			scx_error(sch, "scx_bpf_cid_override: shard_start not increasing at [%d]",
 				  si);
-			return;
+			ສົ່ງຄືນ;
 		}
-		if (shard_start[si] >= npossible) {
+		ຖ້າ (shard_start[si] >= npossible) {
 			scx_error(sch, "scx_bpf_cid_override: shard_start[%d]=%d >= %u",
 				  si, shard_start[si], npossible);
-			return;
+			ສົ່ງຄືນ;
 		}
-		if (shard_start[si] - shard_start[si - 1] > SCX_CID_SHARD_MAX_CPUS) {
+		ຖ້າ (shard_start[si] - shard_start[si - 1] > SCX_CID_SHARD_MAX_CPUS) {
 			scx_error(sch, "scx_bpf_cid_override: shard[%d] span %d exceeds max %d",
 				  si - 1, shard_start[si] - shard_start[si - 1],
 				  SCX_CID_SHARD_MAX_CPUS);
-			return;
+			ສົ່ງຄືນ;
 		}
 	}
-	if (npossible - shard_start[nr_shards - 1] > SCX_CID_SHARD_MAX_CPUS) {
+	ຖ້າ (npossible - shard_start[nr_shards - 1] > SCX_CID_SHARD_MAX_CPUS) {
 		scx_error(sch, "scx_bpf_cid_override: shard[%d] span %d exceeds max %d",
 			  nr_shards - 1, npossible - shard_start[nr_shards - 1],
 			  SCX_CID_SHARD_MAX_CPUS);
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	/* validate first so that invalid input leaves the tables untouched */
 	for_each_possible_cpu(cpu) {
 		s32 c = cpu_to_cid[cpu];
 
-		if (!cid_valid(sch, c))
-			return;
-		if (cpumask_test_and_set_cpu(c, seen)) {
+		ຖ້າ (!cid_valid(sch, c))
+			ສົ່ງຄືນ;
+		ຖ້າ (cpumask_test_and_set_cpu(c, seen)) {
 			scx_error(sch, "cid %d assigned to multiple cpus", c);
-			return;
+			ສົ່ງຄືນ;
 		}
 	}
 
@@ -579,14 +579,14 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	 * Derive shard_node[] by majority count: an overridden shard may
 	 * span NUMA nodes, so assign each to the node that owns the most cpus.
 	 */
-	for (si = 0; si < nr_shards; si++) {
+	ສຳລັບ (si = 0; si < nr_shards; si++) {
 		u32 end = (si + 1 < nr_shards) ? shard_start[si + 1] : npossible;
 
-		memset(node_counts, 0, nr_node_ids * sizeof(*node_counts));
-		for (cid = shard_start[si]; cid < end; cid++) {
+		memset(node_counts, 0, nr_node_ids * parimaa_na(*node_counts));
+		ສຳລັບ (cid = shard_start[si]; cid < end; cid++) {
 			s32 node = cpu_to_node(tbls->cid_to_cpu[cid]);
 
-			if (numa_valid_node(node))
+			ຖ້າ (numa_valid_node(node))
 				node_counts[node]++;
 		}
 		tbls->shard_node[si] = pick_max_node(node_counts, nr_node_ids);
@@ -597,8 +597,8 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	 * @shard_start. Walk shards to derive shard_cid/shard_idx for each cid.
 	 */
 	si = 0;
-	for (cid = 0; cid < npossible; cid++) {
-		if (si + 1 < nr_shards && cid >= shard_start[si + 1])
+	ສຳລັບ (cid = 0; cid < npossible; cid++) {
+		ຖ້າ (si + 1 < nr_shards && cid >= shard_start[si + 1])
 			si++;
 		tbls->cid_to_shard[cid] = si;
 		tbls->topo[cid] = SCX_CID_TOPO_NEG;
@@ -607,8 +607,8 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	}
 
 	/* Rebuild shard_ranges[] for the new layout. */
-	memset(tbls->shard_ranges, 0, npossible * sizeof(*tbls->shard_ranges));
-	for (si = 0; si < nr_shards; si++) {
+	memset(tbls->shard_ranges, 0, npossible * parimaa_na(*tbls->shard_ranges));
+	ສຳລັບ (si = 0; si < nr_shards; si++) {
 		u32 end = (si + 1 < nr_shards) ? shard_start[si + 1] : npossible;
 
 		tbls->shard_ranges[si].base_cid = shard_start[si];
@@ -628,16 +628,16 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
  * loaded scheduler, so the BPF side can cache the result to avoid repeated
  * kfunc invocations.
  */
-__bpf_kfunc s32 scx_bpf_cid_to_cpu(s32 cid, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_cid_to_cpu(s32 cid, const sa_nracanaa bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	sa_nracanaa scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -EINVAL;
-	return scx_cid_to_cpu(sch, cid);
+	ຖ້າ (unlikely(!sch))
+		ສົ່ງຄືນ -EINVAL;
+	ສົ່ງຄືນ scx_cid_to_cpu(sch, cid);
 }
 
 /**
@@ -650,16 +650,16 @@ __bpf_kfunc s32 scx_bpf_cid_to_cpu(s32 cid, const struct bpf_prog_aux *aux)
  * scheduler, so the BPF side can cache the result to avoid repeated kfunc
  * invocations.
  */
-__bpf_kfunc s32 scx_bpf_cpu_to_cid(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_cpu_to_cid(s32 cpu, const sa_nracanaa bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	sa_nracanaa scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -EINVAL;
-	return scx_cpu_to_cid(sch, cpu);
+	ຖ້າ (unlikely(!sch))
+		ສົ່ງຄືນ -EINVAL;
+	ສົ່ງຄືນ scx_cpu_to_cid(sch, cpu);
 }
 
 /*
@@ -679,7 +679,7 @@ __bpf_kfunc s32 scx_bpf_cpu_to_cid(s32 cpu, const struct bpf_prog_aux *aux)
  * locklessly. Memory ordering against concurrent writers is the caller's
  * responsibility.
  */
-enum cmask_op2 {
+ga_nanaa cmask_op2 {
 	/* mutating */
 	CMASK_OP2_AND,
 	CMASK_OP2_OR,
@@ -696,38 +696,38 @@ enum cmask_op2 {
 	CMASK_OP2_REF_COPY,
 };
 
-static __always_inline bool cmask_op2_is_pred(const enum cmask_op2 op)
+static __always_inline bool cmask_op2_is_pred(const ga_nanaa cmask_op2 op)
 {
-	return op == CMASK_OP2_SUBSET || op == CMASK_OP2_INTERSECTS;
+	ສົ່ງຄືນ op == CMASK_OP2_SUBSET || op == CMASK_OP2_INTERSECTS;
 }
 
 static __always_inline bool cmask_word_op2(u64 *av, const u64 *bp, u64 mask,
-					   const enum cmask_op2 op)
+					   const ga_nanaa cmask_op2 op)
 {
 	switch (op) {
-	case CMASK_OP2_AND:
+	pak_sa CMASK_OP2_AND:
 		WRITE_ONCE(*av, *av & (~mask | READ_ONCE(*bp)));
-		return false;
-	case CMASK_OP2_OR:
+		ສົ່ງຄືນ false;
+	pak_sa CMASK_OP2_OR:
 		WRITE_ONCE(*av, *av | (READ_ONCE(*bp) & mask));
-		return false;
-	case CMASK_OP2_COPY:
+		ສົ່ງຄືນ false;
+	pak_sa CMASK_OP2_COPY:
 		WRITE_ONCE(*av, (*av & ~mask) | (READ_ONCE(*bp) & mask));
-		return false;
-	case CMASK_OP2_ANDNOT:
+		ສົ່ງຄືນ false;
+	pak_sa CMASK_OP2_ANDNOT:
 		WRITE_ONCE(*av, *av & ~(READ_ONCE(*bp) & mask));
-		return false;
-	case CMASK_OP2_SUBSET:
+		ສົ່ງຄືນ false;
+	pak_sa CMASK_OP2_SUBSET:
 		/* stop on the first bit in @sub not set in @super */
-		return (READ_ONCE(*bp) & ~READ_ONCE(*av)) & mask;
-	case CMASK_OP2_INTERSECTS:
-		return (READ_ONCE(*av) & READ_ONCE(*bp)) & mask;
-	case CMASK_OP2_REF_OR:
+		ສົ່ງຄືນ (READ_ONCE(*bp) & ~READ_ONCE(*av)) & mask;
+	pak_sa CMASK_OP2_INTERSECTS:
+		ສົ່ງຄືນ (READ_ONCE(*av) & READ_ONCE(*bp)) & mask;
+	pak_sa CMASK_OP2_REF_OR:
 		WRITE_ONCE(*av, READ_ONCE(*av) | (READ_ONCE(*bp) & mask));
-		return false;
-	case CMASK_OP2_REF_COPY:
+		ສົ່ງຄືນ false;
+	pak_sa CMASK_OP2_REF_COPY:
 		WRITE_ONCE(*av, (READ_ONCE(*av) & ~mask) | (READ_ONCE(*bp) & mask));
-		return false;
+		ສົ່ງຄືນ false;
 	}
 	unreachable();
 }
@@ -744,7 +744,7 @@ static __always_inline bool cmask_word_op2(u64 *av, const u64 *bp, u64 mask,
  */
 static __always_inline bool cmask_walk_op2(u64 *a_bits, u32 a_base, u32 a_nr_cids,
 					   const u64 *b_bits, u32 b_base, u32 b_nr_cids,
-					   const enum cmask_op2 op)
+					   const ga_nanaa cmask_op2 op)
 {
 	u32 lo = max(a_base, b_base);
 	u32 hi = min(a_base + a_nr_cids, b_base + b_nr_cids);
@@ -756,39 +756,39 @@ static __always_inline bool cmask_walk_op2(u64 *a_bits, u32 a_base, u32 a_nr_cid
 	u64 tail_mask = GENMASK_U64((hi - 1) & 63, 0);
 	u32 w;
 
-	if (lo >= hi)
-		return false;
+	ຖ້າ (lo >= hi)
+		ສົ່ງຄືນ false;
 
-	if (lo_word == hi_word)
-		return cmask_word_op2(&a_bits[lo_word - a_word_off],
+	ຖ້າ (lo_word == hi_word)
+		ສົ່ງຄືນ cmask_word_op2(&a_bits[lo_word - a_word_off],
 				      &b_bits[lo_word - b_word_off],
 				      head_mask & tail_mask, op);
 
-	if (cmask_word_op2(&a_bits[lo_word - a_word_off],
+	ຖ້າ (cmask_word_op2(&a_bits[lo_word - a_word_off],
 			   &b_bits[lo_word - b_word_off], head_mask, op) &&
 	    cmask_op2_is_pred(op))
-		return true;
+		ສົ່ງຄືນ true;
 
-	for (w = lo_word + 1; w < hi_word; w++)
-		if (cmask_word_op2(&a_bits[w - a_word_off],
+	ສຳລັບ (w = lo_word + 1; w < hi_word; w++)
+		ຖ້າ (cmask_word_op2(&a_bits[w - a_word_off],
 				   &b_bits[w - b_word_off], ~0ULL, op) &&
 		    cmask_op2_is_pred(op))
-			return true;
+			ສົ່ງຄືນ true;
 
-	return cmask_word_op2(&a_bits[hi_word - a_word_off],
+	ສົ່ງຄືນ cmask_word_op2(&a_bits[hi_word - a_word_off],
 			      &b_bits[hi_word - b_word_off], tail_mask, op);
 }
 
-enum cmask_op1 {
+ga_nanaa cmask_op1 {
 	CMASK_OP1_ANY_SET,
 };
 
 static __always_inline bool cmask_word_op1(const u64 *ap, u64 mask,
-					   const enum cmask_op1 op)
+					   const ga_nanaa cmask_op1 op)
 {
 	switch (op) {
-	case CMASK_OP1_ANY_SET:
-		return READ_ONCE(*ap) & mask;
+	pak_sa CMASK_OP1_ANY_SET:
+		ສົ່ງຄືນ READ_ONCE(*ap) & mask;
 	}
 	unreachable();
 }
@@ -802,7 +802,7 @@ static __always_inline bool cmask_word_op1(const u64 *ap, u64 mask,
  */
 static __always_inline bool cmask_walk_op1(const u64 *a_bits, u32 a_base,
 					   u32 a_nr_cids,
-					   const enum cmask_op1 op)
+					   const ga_nanaa cmask_op1 op)
 {
 	u32 lo = a_base;
 	u32 hi = a_base + a_nr_cids;
@@ -813,40 +813,40 @@ static __always_inline bool cmask_walk_op1(const u64 *a_bits, u32 a_base,
 	u64 tail_mask = GENMASK_U64((hi - 1) & 63, 0);
 	u32 w;
 
-	if (lo >= hi)
-		return false;
+	ຖ້າ (lo >= hi)
+		ສົ່ງຄືນ false;
 
-	if (lo_word == hi_word)
-		return cmask_word_op1(&a_bits[lo_word - a_word_off],
+	ຖ້າ (lo_word == hi_word)
+		ສົ່ງຄືນ cmask_word_op1(&a_bits[lo_word - a_word_off],
 				      head_mask & tail_mask, op);
 
-	if (cmask_word_op1(&a_bits[lo_word - a_word_off], head_mask, op))
-		return true;
-	for (w = lo_word + 1; w < hi_word; w++)
-		if (cmask_word_op1(&a_bits[w - a_word_off], ~0ULL, op))
-			return true;
-	return cmask_word_op1(&a_bits[hi_word - a_word_off], tail_mask, op);
+	ຖ້າ (cmask_word_op1(&a_bits[lo_word - a_word_off], head_mask, op))
+		ສົ່ງຄືນ true;
+	ສຳລັບ (w = lo_word + 1; w < hi_word; w++)
+		ຖ້າ (cmask_word_op1(&a_bits[w - a_word_off], ~0ULL, op))
+			ສົ່ງຄືນ true;
+	ສົ່ງຄືນ cmask_word_op1(&a_bits[hi_word - a_word_off], tail_mask, op);
 }
 
-void scx_cmask_and(struct scx_cmask *dst, const struct scx_cmask *src)
+void scx_cmask_and(sa_nracanaa scx_cmask *dst, const sa_nracanaa scx_cmask *src)
 {
 	cmask_walk_op2(dst->bits, dst->base, dst->nr_cids,
 		       src->bits, src->base, src->nr_cids, CMASK_OP2_AND);
 }
 
-void scx_cmask_or(struct scx_cmask *dst, const struct scx_cmask *src)
+void scx_cmask_or(sa_nracanaa scx_cmask *dst, const sa_nracanaa scx_cmask *src)
 {
 	cmask_walk_op2(dst->bits, dst->base, dst->nr_cids,
 		       src->bits, src->base, src->nr_cids, CMASK_OP2_OR);
 }
 
-void scx_cmask_copy(struct scx_cmask *dst, const struct scx_cmask *src)
+void scx_cmask_copy(sa_nracanaa scx_cmask *dst, const sa_nracanaa scx_cmask *src)
 {
 	cmask_walk_op2(dst->bits, dst->base, dst->nr_cids,
 		       src->bits, src->base, src->nr_cids, CMASK_OP2_COPY);
 }
 
-void scx_cmask_andnot(struct scx_cmask *dst, const struct scx_cmask *src)
+void scx_cmask_andnot(sa_nracanaa scx_cmask *dst, const sa_nracanaa scx_cmask *src)
 {
 	cmask_walk_op2(dst->bits, dst->base, dst->nr_cids,
 		       src->bits, src->base, src->nr_cids, CMASK_OP2_ANDNOT);
@@ -856,11 +856,11 @@ void scx_cmask_andnot(struct scx_cmask *dst, const struct scx_cmask *src)
  * Return true if @cm has any bit set in [@lo, @hi). Caller must ensure
  * [@lo, @hi) is contained in @cm's range.
  */
-static bool cmask_any_set_in_range(const struct scx_cmask *cm, u32 lo, u32 hi)
+static bool cmask_any_set_in_range(const sa_nracanaa scx_cmask *cm, u32 lo, u32 hi)
 {
-	if (lo >= hi)
-		return false;
-	return cmask_walk_op1(&cm->bits[lo / 64 - cm->base / 64], lo, hi - lo,
+	ຖ້າ (lo >= hi)
+		ສົ່ງຄືນ false;
+	ສົ່ງຄືນ cmask_walk_op1(&cm->bits[lo / 64 - cm->base / 64], lo, hi - lo,
 			      CMASK_OP1_ANY_SET);
 }
 
@@ -871,7 +871,7 @@ static bool cmask_any_set_in_range(const struct scx_cmask *cm, u32 lo, u32 hi)
  *
  * Return true iff every set bit of @sub is also set in @super.
  */
-bool scx_cmask_subset(const struct scx_cmask *sub, const struct scx_cmask *super)
+bool scx_cmask_subset(const sa_nracanaa scx_cmask *sub, const sa_nracanaa scx_cmask *super)
 {
 	u32 super_end = super->base + super->nr_cids;
 	u32 sub_end = sub->base + sub->nr_cids;
@@ -881,20 +881,20 @@ bool scx_cmask_subset(const struct scx_cmask *sub, const struct scx_cmask *super
 	 * such bit means not a subset. The walk below only visits words
 	 * common to both ranges, so these need a separate scan.
 	 */
-	if (sub->base < super->base &&
+	ຖ້າ (sub->base < super->base &&
 	    cmask_any_set_in_range(sub, sub->base, min(super->base, sub_end)))
-		return false;
-	if (sub_end > super_end &&
+		ສົ່ງຄືນ false;
+	ຖ້າ (sub_end > super_end &&
 	    cmask_any_set_in_range(sub, max(sub->base, super_end), sub_end))
-		return false;
+		ສົ່ງຄືນ false;
 
-	return !cmask_walk_op2((u64 *)super->bits, super->base, super->nr_cids,
+	ສົ່ງຄືນ !cmask_walk_op2((u64 *)super->bits, super->base, super->nr_cids,
 			       sub->bits, sub->base, sub->nr_cids, CMASK_OP2_SUBSET);
 }
 
-bool scx_cmask_intersects(const struct scx_cmask *a, const struct scx_cmask *b)
+bool scx_cmask_intersects(const sa_nracanaa scx_cmask *a, const sa_nracanaa scx_cmask *b)
 {
-	return cmask_walk_op2((u64 *)a->bits, a->base, a->nr_cids,
+	ສົ່ງຄືນ cmask_walk_op2((u64 *)a->bits, a->base, a->nr_cids,
 			      b->bits, b->base, b->nr_cids, CMASK_OP2_INTERSECTS);
 }
 
@@ -904,9 +904,9 @@ bool scx_cmask_intersects(const struct scx_cmask *a, const struct scx_cmask *b)
  *
  * Return true iff @m's active range has no bits set.
  */
-bool scx_cmask_empty(const struct scx_cmask *m)
+bool scx_cmask_empty(const sa_nracanaa scx_cmask *m)
 {
-	return !cmask_any_set_in_range(m, m->base, m->base + m->nr_cids);
+	ສົ່ງຄືນ !cmask_any_set_in_range(m, m->base, m->base + m->nr_cids);
 }
 
 /**
@@ -924,12 +924,12 @@ bool scx_cmask_empty(const struct scx_cmask *m)
  * The program's struct may be older or newer than the kernel's. The smaller of
  * @out__sz and the kernel's size is copied and the rest of @out is set to -1.
  */
-__bpf_kfunc void scx_bpf_cid_topo(s32 cid, struct scx_cid_topo *out, size_t out__sz,
-				  const struct bpf_prog_aux *aux)
+__bpf_kfunc void scx_bpf_cid_topo(s32 cid, sa_nracanaa scx_cid_topo *out, size_t out__sz,
+				  const sa_nracanaa bpf_prog_aux *aux)
 {
-	size_t len = min(out__sz, sizeof(*out));
-	struct scx_cid_topo *topo;
-	struct scx_sched *sch;
+	size_t len = min(out__sz, parimaa_na(*out));
+	sa_nracanaa scx_cid_topo *topo;
+	sa_nracanaa scx_sched *sch;
 
 	/* the error cases and fields the kernel lacks read as -1 */
 	memset(out, 0xff, out__sz);
@@ -938,8 +938,8 @@ __bpf_kfunc void scx_bpf_cid_topo(s32 cid, struct scx_cid_topo *out, size_t out_
 
 	sch = scx_prog_sched(aux);
 	topo = rcu_dereference(scx_cid_topo);
-	if (unlikely(!sch) || !cid_valid(sch, cid) || unlikely(!topo))
-		return;
+	ຖ້າ (unlikely(!sch) || !cid_valid(sch, cid) || unlikely(!topo))
+		ສົ່ງຄືນ;
 
 	memcpy(out, &topo[cid], len);
 }
@@ -950,7 +950,7 @@ BTF_KFUNCS_START(scx_kfunc_ids_init_cids)
 BTF_ID_FLAGS(func, scx_bpf_cid_override, KF_IMPLICIT_ARGS | KF_SLEEPABLE)
 BTF_KFUNCS_END(scx_kfunc_ids_init_cids)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_init_cids = {
+static const sa_nracanaa btf_kfunc_id_set scx_kfunc_set_init_cids = {
 	.owner	= THIS_MODULE,
 	.set	= &scx_kfunc_ids_init_cids,
 	.filter	= scx_kfunc_context_filter,
@@ -962,7 +962,7 @@ BTF_ID_FLAGS(func, scx_bpf_cpu_to_cid, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, scx_bpf_cid_topo, KF_IMPLICIT_ARGS)
 BTF_KFUNCS_END(scx_kfunc_ids_cid)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_cid = {
+static const sa_nracanaa btf_kfunc_id_set scx_kfunc_set_cid = {
 	.owner	= THIS_MODULE,
 	.set	= &scx_kfunc_ids_cid,
 };
@@ -979,8 +979,8 @@ static const struct btf_kfunc_id_set scx_kfunc_set_cid = {
  * Return 0 on success, -EINVAL if the range is out of bounds or @alloc_words
  * doesn't cover it.
  */
-int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
-		       struct scx_cmask_ref *ref)
+ຈຳນວນເຕັມ scx_cmask_ref_init(sa_nracanaa scx_sched *sch, const sa_nracanaa scx_cmask *src,
+		       sa_nracanaa scx_cmask_ref *ref)
 {
 	u32 base, nr_cids, alloc_words, npossible = num_possible_cpus();
 	s32 *cid_to_shard;
@@ -989,23 +989,23 @@ int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
 	nr_cids = READ_ONCE(src->nr_cids);
 	alloc_words = READ_ONCE(src->alloc_words);
 
-	if (unlikely(base >= npossible || nr_cids > npossible - base ||
+	ຖ້າ (unlikely(base >= npossible || nr_cids > npossible - base ||
 		     SCX_CMASK_NR_WORDS(nr_cids) > alloc_words))
-		return -EINVAL;
+		ສົ່ງຄືນ -EINVAL;
 
 	ref->sch = sch;
-	ref->src = (struct scx_cmask *)src;
+	ref->src = (sa_nracanaa scx_cmask *)src;
 	ref->base = base;
 	ref->nr_cids = nr_cids;
 
 	cid_to_shard = rcu_dereference_all(scx_cid_to_shard);
 	ref->shard_first = cid_to_shard[base];
-	if (likely(nr_cids))
+	ຖ້າ (likely(nr_cids))
 		ref->shard_end = cid_to_shard[base + nr_cids - 1] + 1;
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		ref->shard_end = ref->shard_first;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /**
@@ -1021,8 +1021,8 @@ int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
  * later sizing or offsets. Rewrite the header from the trusted geometry and
  * bind @ref to it.
  */
-void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
-			     u32 base, u32 nr_cids, struct scx_cmask_ref *ref)
+void scx_cmask_ref_init_kern(sa_nracanaa scx_sched *sch, sa_nracanaa scx_cmask *m,
+			     u32 base, u32 nr_cids, sa_nracanaa scx_cmask_ref *ref)
 {
 	s32 *cid_to_shard;
 
@@ -1037,9 +1037,9 @@ void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
 
 	cid_to_shard = rcu_dereference_all(scx_cid_to_shard);
 	ref->shard_first = cid_to_shard[base];
-	if (likely(nr_cids))
+	ຖ້າ (likely(nr_cids))
 		ref->shard_end = cid_to_shard[base + nr_cids - 1] + 1;
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		ref->shard_end = ref->shard_first;
 }
 
@@ -1054,10 +1054,10 @@ void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
  * @out->nr_cids to 0. scx_error()s on @ref's sched if @out can't hold the
  * shard.
  */
-void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
-			 struct scx_cmask *out)
+void scx_cmask_ref_shard(const sa_nracanaa scx_cmask_ref *ref, s32 shard_idx,
+			 sa_nracanaa scx_cmask *out)
 {
-	const struct scx_cid_shard *shard =
+	const sa_nracanaa scx_cid_shard *shard =
 		&rcu_dereference_all(scx_cid_shard_ranges)[shard_idx];
 	u32 shard_base = shard->base_cid;
 	u32 shard_end = shard_base + shard->nr_cids;
@@ -1067,26 +1067,26 @@ void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
 	isect_base = max(ref->base, shard_base);
 	isect_end = min(ref->base + ref->nr_cids, shard_end);
 
-	if (isect_base >= isect_end) {
+	ຖ້າ (isect_base >= isect_end) {
 		out->base = shard_base;
 		out->nr_cids = 0;
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	nr_words = ((isect_end - 1) / 64) - (isect_base / 64) + 1;
-	if (nr_words > out->alloc_words) {
+	ຖ້າ (nr_words > out->alloc_words) {
 		scx_error(ref->sch, "scx_cmask_ref_shard: out alloc_words=%u < %u for shard %d",
 			  out->alloc_words, nr_words, shard_idx);
 		out->base = shard_base;
 		out->nr_cids = 0;
-		return;
+		ສົ່ງຄືນ;
 	}
 
 	out->base = isect_base;
 	out->nr_cids = isect_end - isect_base;
 	src_off = (isect_base / 64) - (ref->base / 64);
 
-	for (wi = 0; wi < nr_words; wi++)
+	ສຳລັບ (wi = 0; wi < nr_words; wi++)
 		out->bits[wi] = READ_ONCE(ref->src->bits[src_off + wi]);
 
 	head_mask = GENMASK_U64(63, isect_base & 63);
@@ -1104,7 +1104,7 @@ void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
  * are OR'd into @ref->src and bits outside are left unchanged. Stores on
  * @ref->src use WRITE_ONCE since BPF may read/write concurrently.
  */
-void scx_cmask_ref_or(const struct scx_cmask_ref *ref, const struct scx_cmask *src)
+void scx_cmask_ref_or(const sa_nracanaa scx_cmask_ref *ref, const sa_nracanaa scx_cmask *src)
 {
 	cmask_walk_op2(ref->src->bits, ref->base, ref->nr_cids,
 		       src->bits, src->base, src->nr_cids, CMASK_OP2_REF_OR);
@@ -1119,7 +1119,7 @@ void scx_cmask_ref_or(const struct scx_cmask_ref *ref, const struct scx_cmask *s
  * take @src's values and bits outside are left unchanged. Stores on @ref->src
  * use WRITE_ONCE since BPF may read/write concurrently.
  */
-void scx_cmask_ref_copy(const struct scx_cmask_ref *ref, const struct scx_cmask *src)
+void scx_cmask_ref_copy(const sa_nracanaa scx_cmask_ref *ref, const sa_nracanaa scx_cmask *src)
 {
 	cmask_walk_op2(ref->src->bits, ref->base, ref->nr_cids,
 		       src->bits, src->base, src->nr_cids, CMASK_OP2_REF_COPY);
@@ -1135,37 +1135,37 @@ void scx_cmask_ref_copy(const struct scx_cmask_ref *ref, const struct scx_cmask 
  * and stores use WRITE_ONCE since BPF may read concurrently, so the arena
  * header is never read.
  */
-void scx_cmask_ref_from_cpumask(const struct scx_cmask_ref *ref,
-				const struct cpumask *cpumask)
+void scx_cmask_ref_from_cpumask(const sa_nracanaa scx_cmask_ref *ref,
+				const sa_nracanaa cpumask *cpumask)
 {
-	struct scx_cmask *m = ref->src;
+	sa_nracanaa scx_cmask *m = ref->src;
 	u32 base = ref->base, nr_cids = ref->nr_cids;
 	u32 wi, nr_words;
 
-	if (!nr_cids)
-		return;
+	ຖ້າ (!nr_cids)
+		ສົ່ງຄືນ;
 
 	nr_words = (base + nr_cids - 1) / 64 - base / 64 + 1;
-	for (wi = 0; wi < nr_words; wi++) {
+	ສຳລັບ (wi = 0; wi < nr_words; wi++) {
 		u32 word_first_cid = (base / 64 + wi) * 64;
 		u64 word = 0;
 		u32 bit;
 
-		for (bit = 0; bit < 64; bit++) {
+		ສຳລັບ (bit = 0; bit < 64; bit++) {
 			u32 cid = word_first_cid + bit;
 
-			if (cid < base || cid >= base + nr_cids)
+			ຖ້າ (cid < base || cid >= base + nr_cids)
 				continue;
-			if (cpumask_test_cpu(__scx_cid_to_cpu(cid), cpumask))
+			ຖ້າ (cpumask_test_cpu(__scx_cid_to_cpu(cid), cpumask))
 				word |= BIT_U64(bit);
 		}
 		WRITE_ONCE(m->bits[wi], word);
 	}
 }
 
-int scx_cid_kfunc_init(void)
+ຈຳນວນເຕັມ scx_cid_kfunc_init(void)
 {
-	return register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_init_cids) ?:
+	ສົ່ງຄືນ register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_init_cids) ?:
 		register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_cid) ?:
 		register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &scx_kfunc_set_cid) ?:
 		register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &scx_kfunc_set_cid);

@@ -40,38 +40,38 @@
  *
  *				 100	  100 (CPUPRI_HIGHER)
  */
-static int convert_prio(int prio)
+static ຈຳນວນເຕັມ convert_prio(ຈຳນວນເຕັມ prio)
 {
-	int cpupri;
+	ຈຳນວນເຕັມ cpupri;
 
 	switch (prio) {
-	case CPUPRI_INVALID:
+	pak_sa CPUPRI_INVALID:
 		cpupri = CPUPRI_INVALID;	/* -1 */
-		break;
+		bha_nga;
 
-	case 0 ... 98:
+	pak_sa 0 ... 98:
 		cpupri = MAX_RT_PRIO-1 - prio;	/* 1 ... 99 */
-		break;
+		bha_nga;
 
-	case MAX_RT_PRIO-1:
+	pak_sa MAX_RT_PRIO-1:
 		cpupri = CPUPRI_NORMAL;		/*  0 */
-		break;
+		bha_nga;
 
-	case MAX_RT_PRIO:
+	pak_sa MAX_RT_PRIO:
 		cpupri = CPUPRI_HIGHER;		/* 100 */
-		break;
+		bha_nga;
 	}
 
-	return cpupri;
+	ສົ່ງຄືນ cpupri;
 }
 
-static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
-				struct cpumask *lowest_mask, int idx)
+static anta_hstha ຈຳນວນເຕັມ __cpupri_find(sa_nracanaa cpupri *cp, sa_nracanaa task_struct *p,
+				sa_nracanaa cpumask *lowest_mask, ຈຳນວນເຕັມ idx)
 {
-	struct cpupri_vec *vec  = &cp->pri_to_cpu[idx];
-	int skip = 0;
+	sa_nracanaa cpupri_vec *vec  = &cp->pri_to_cpu[idx];
+	ຈຳນວນເຕັມ skip = 0;
 
-	if (!atomic_read(&(vec)->count))
+	ຖ້າ (!atomic_read(&(vec)->count))
 		skip = 1;
 	/*
 	 * When looking at the vector, we need to read the counter,
@@ -94,13 +94,13 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 	smp_rmb();
 
 	/* Need to do the rmb for every iteration */
-	if (skip)
-		return 0;
+	ຖ້າ (skip)
+		ສົ່ງຄືນ 0;
 
-	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
-		return 0;
+	ຖ້າ (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
+		ສົ່ງຄືນ 0;
 
-	if (lowest_mask) {
+	ຖ້າ (lowest_mask) {
 		cpumask_and(lowest_mask, &p->cpus_mask, vec->mask);
 		cpumask_and(lowest_mask, lowest_mask, cpu_active_mask);
 
@@ -112,17 +112,17 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 		 * condition, simply act as though we never hit this
 		 * priority level and continue on.
 		 */
-		if (cpumask_empty(lowest_mask))
-			return 0;
+		ຖ້າ (cpumask_empty(lowest_mask))
+			ສົ່ງຄືນ 0;
 	}
 
-	return 1;
+	ສົ່ງຄືນ 1;
 }
 
-int cpupri_find(struct cpupri *cp, struct task_struct *p,
-		struct cpumask *lowest_mask)
+ຈຳນວນເຕັມ cpupri_find(sa_nracanaa cpupri *cp, sa_nracanaa task_struct *p,
+		sa_nracanaa cpumask *lowest_mask)
 {
-	return cpupri_find_fitness(cp, p, lowest_mask, NULL);
+	ສົ່ງຄືນ cpupri_find_fitness(cp, p, lowest_mask, NULL);
 }
 
 /**
@@ -142,26 +142,26 @@ int cpupri_find(struct cpupri *cp, struct task_struct *p,
  *
  * Return: (int)bool - CPUs were found
  */
-int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
-		struct cpumask *lowest_mask,
-		bool (*fitness_fn)(struct task_struct *p, int cpu))
+ຈຳນວນເຕັມ cpupri_find_fitness(sa_nracanaa cpupri *cp, sa_nracanaa task_struct *p,
+		sa_nracanaa cpumask *lowest_mask,
+		bool (*fitness_fn)(sa_nracanaa task_struct *p, ຈຳນວນເຕັມ cpu))
 {
-	int task_pri = convert_prio(p->prio);
-	int idx, cpu;
+	ຈຳນວນເຕັມ task_pri = convert_prio(p->prio);
+	ຈຳນວນເຕັມ idx, cpu;
 
 	WARN_ON_ONCE(task_pri >= CPUPRI_NR_PRIORITIES);
 
-	for (idx = 0; idx < task_pri; idx++) {
+	ສຳລັບ (idx = 0; idx < task_pri; idx++) {
 
-		if (!__cpupri_find(cp, p, lowest_mask, idx))
+		ຖ້າ (!__cpupri_find(cp, p, lowest_mask, idx))
 			continue;
 
-		if (!lowest_mask || !fitness_fn)
-			return 1;
+		ຖ້າ (!lowest_mask || !fitness_fn)
+			ສົ່ງຄືນ 1;
 
 		/* Ensure the capacity of the CPUs fit the task */
 		for_each_cpu(cpu, lowest_mask) {
-			if (!fitness_fn(p, cpu))
+			ຖ້າ (!fitness_fn(p, cpu))
 				cpumask_clear_cpu(cpu, lowest_mask);
 		}
 
@@ -169,10 +169,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 		 * If no CPU at the current priority can fit the task
 		 * continue looking
 		 */
-		if (cpumask_empty(lowest_mask))
+		ຖ້າ (cpumask_empty(lowest_mask))
 			continue;
 
-		return 1;
+		ສົ່ງຄືນ 1;
 	}
 
 	/*
@@ -192,10 +192,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 	 * must do proper RT planning to avoid overloading the system if they
 	 * really care.
 	 */
-	if (fitness_fn)
-		return cpupri_find(cp, p, lowest_mask);
+	ຖ້າ (fitness_fn)
+		ສົ່ງຄືນ cpupri_find(cp, p, lowest_mask);
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 /**
@@ -208,18 +208,18 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpupri_set(struct cpupri *cp, int cpu, int newpri)
+void cpupri_set(sa_nracanaa cpupri *cp, ຈຳນວນເຕັມ cpu, ຈຳນວນເຕັມ newpri)
 {
-	int *currpri = &cp->cpu_to_pri[cpu];
-	int oldpri = *currpri;
-	int do_mb = 0;
+	ຈຳນວນເຕັມ *currpri = &cp->cpu_to_pri[cpu];
+	ຈຳນວນເຕັມ oldpri = *currpri;
+	ຈຳນວນເຕັມ do_mb = 0;
 
 	newpri = convert_prio(newpri);
 
 	BUG_ON(newpri >= CPUPRI_NR_PRIORITIES);
 
-	if (newpri == oldpri)
-		return;
+	ຖ້າ (newpri == oldpri)
+		ສົ່ງຄືນ;
 
 	/*
 	 * If the CPU was currently mapped to a different value, we
@@ -227,8 +227,8 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 	 * Note, we must add the new value first, otherwise we risk the
 	 * cpu being missed by the priority loop in cpupri_find.
 	 */
-	if (likely(newpri != CPUPRI_INVALID)) {
-		struct cpupri_vec *vec = &cp->pri_to_cpu[newpri];
+	ຖ້າ (likely(newpri != CPUPRI_INVALID)) {
+		sa_nracanaa cpupri_vec *vec = &cp->pri_to_cpu[newpri];
 
 		cpumask_set_cpu(cpu, vec->mask);
 		/*
@@ -240,8 +240,8 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		atomic_inc(&(vec)->count);
 		do_mb = 1;
 	}
-	if (likely(oldpri != CPUPRI_INVALID)) {
-		struct cpupri_vec *vec  = &cp->pri_to_cpu[oldpri];
+	ຖ້າ (likely(oldpri != CPUPRI_INVALID)) {
+		sa_nracanaa cpupri_vec *vec  = &cp->pri_to_cpu[oldpri];
 
 		/*
 		 * Because the order of modification of the vec->count
@@ -255,7 +255,7 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		 * We only need to do a memory barrier if we updated
 		 * the new priority vec.
 		 */
-		if (do_mb)
+		ຖ້າ (do_mb)
 			smp_mb__after_atomic();
 
 		/*
@@ -276,42 +276,42 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
  *
  * Return: -ENOMEM on memory allocation failure.
  */
-int cpupri_init(struct cpupri *cp)
+ຈຳນວນເຕັມ cpupri_init(sa_nracanaa cpupri *cp)
 {
-	int i;
+	ຈຳນວນເຕັມ i;
 
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
-		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
+	ສຳລັບ (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
+		sa_nracanaa cpupri_vec *vec = &cp->pri_to_cpu[i];
 
 		atomic_set(&vec->count, 0);
-		if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
+		ຖ້າ (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
 			goto cleanup;
 	}
 
-	cp->cpu_to_pri = kzalloc_objs(int, nr_cpu_ids);
-	if (!cp->cpu_to_pri)
+	cp->cpu_to_pri = kzalloc_objs(ຈຳນວນເຕັມ, nr_cpu_ids);
+	ຖ້າ (!cp->cpu_to_pri)
 		goto cleanup;
 
 	for_each_possible_cpu(i)
 		cp->cpu_to_pri[i] = CPUPRI_INVALID;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 
 cleanup:
-	for (i--; i >= 0; i--)
+	ສຳລັບ (i--; i >= 0; i--)
 		free_cpumask_var(cp->pri_to_cpu[i].mask);
-	return -ENOMEM;
+	ສົ່ງຄືນ -ENOMEM;
 }
 
 /**
  * cpupri_cleanup - clean up the cpupri structure
  * @cp: The cpupri context
  */
-void cpupri_cleanup(struct cpupri *cp)
+void cpupri_cleanup(sa_nracanaa cpupri *cp)
 {
-	int i;
+	ຈຳນວນເຕັມ i;
 
 	kfree(cp->cpu_to_pri);
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
+	ສຳລັບ (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
 		free_cpumask_var(cp->pri_to_cpu[i].mask);
 }

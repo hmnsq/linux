@@ -12,26 +12,26 @@
 
 static wait_queue_head_t bit_wait_table[WAIT_TABLE_SIZE] __cacheline_aligned;
 
-wait_queue_head_t *bit_waitqueue(unsigned long *word, int bit)
+wait_queue_head_t *bit_waitqueue(unsigned long *word, ຈຳນວນເຕັມ bit)
 {
-	const int shift = BITS_PER_LONG == 32 ? 5 : 6;
+	const ຈຳນວນເຕັມ shift = BITS_PER_LONG == 32 ? 5 : 6;
 	unsigned long val = (unsigned long)word << shift | bit;
 
-	return bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
+	ສົ່ງຄືນ bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
 }
 EXPORT_SYMBOL(bit_waitqueue);
 
-int wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+ຈຳນວນເຕັມ wake_bit_function(sa_nracanaa wait_queue_entry *wq_entry, unsigned mode, ຈຳນວນເຕັມ sync, void *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wait_bit = container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	sa_nracanaa wait_bit_key *key = arg;
+	sa_nracanaa wait_bit_queue_entry *wait_bit = container_of(wq_entry, sa_nracanaa wait_bit_queue_entry, wq_entry);
 
-	if (wait_bit->key.flags != key->flags ||
+	ຖ້າ (wait_bit->key.flags != key->flags ||
 			wait_bit->key.bit_nr != key->bit_nr ||
 			test_bit(key->bit_nr, key->flags))
-		return 0;
+		ສົ່ງຄືນ 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	ສົ່ງຄືນ autoremove_wake_function(wq_entry, mode, sync, key);
 }
 EXPORT_SYMBOL(wake_bit_function);
 
@@ -40,56 +40,56 @@ EXPORT_SYMBOL(wake_bit_function);
  * waiting, the actions of __wait_on_bit() and __wait_on_bit_lock() are
  * permitted return codes. Nonzero return codes halt waiting and return.
  */
-int __sched
-__wait_on_bit(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
+ຈຳນວນເຕັມ __sched
+__wait_on_bit(sa_nracanaa wait_queue_head *wq_head, sa_nracanaa wait_bit_queue_entry *wbq_entry,
 	      wait_bit_action_f *action, unsigned mode)
 {
-	int ret = 0;
+	ຈຳນວນເຕັມ ret = 0;
 
 	do {
 		prepare_to_wait(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
+		ຖ້າ (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
 			ret = (*action)(&wbq_entry->key, mode);
-	} while (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
+	} ໃນຂະນະທີ່ (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
 
 	finish_wait(wq_head, &wbq_entry->wq_entry);
 
-	return ret;
+	ສົ່ງຄືນ ret;
 }
 EXPORT_SYMBOL(__wait_on_bit);
 
-int __sched out_of_line_wait_on_bit(unsigned long *word, int bit,
+ຈຳນວນເຕັມ __sched out_of_line_wait_on_bit(unsigned long *word, ຈຳນວນເຕັມ bit,
 				    wait_bit_action_f *action, unsigned mode)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	sa_nracanaa wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	ສົ່ງຄືນ __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
 EXPORT_SYMBOL(out_of_line_wait_on_bit);
 
-int __sched out_of_line_wait_on_bit_timeout(
-	unsigned long *word, int bit, wait_bit_action_f *action,
+ຈຳນວນເຕັມ __sched out_of_line_wait_on_bit_timeout(
+	unsigned long *word, ຈຳນວນເຕັມ bit, wait_bit_action_f *action,
 	unsigned mode, unsigned long timeout)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	sa_nracanaa wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
 	wq_entry.key.timeout = jiffies + timeout;
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	ສົ່ງຄືນ __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
 EXPORT_SYMBOL_GPL(out_of_line_wait_on_bit_timeout);
 
-int __sched
-__wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
+ຈຳນວນເຕັມ __sched
+__wait_on_bit_lock(sa_nracanaa wait_queue_head *wq_head, sa_nracanaa wait_bit_queue_entry *wbq_entry,
 			wait_bit_action_f *action, unsigned mode)
 {
-	int ret = 0;
+	ຈຳນວນເຕັມ ret = 0;
 
-	for (;;) {
+	ສຳລັບ (;;) {
 		prepare_to_wait_exclusive(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
+		ຖ້າ (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
 			ret = action(&wbq_entry->key, mode);
 			/*
 			 * See the comment in prepare_to_wait_event().
@@ -97,35 +97,35 @@ __wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry 
 			 * but test_and_set_bit() implies mb() which pairs with
 			 * smp_mb__after_atomic() before wake_up_page().
 			 */
-			if (ret)
+			ຖ້າ (ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
 		}
-		if (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			if (!ret)
+		ຖ້າ (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
+			ຖ້າ (!ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
-			return 0;
-		} else if (ret) {
-			return ret;
+			ສົ່ງຄືນ 0;
+		} ບໍ່ດັ່ງນັ້ນ ຖ້າ (ret) {
+			ສົ່ງຄືນ ret;
 		}
 	}
 }
 EXPORT_SYMBOL(__wait_on_bit_lock);
 
-int __sched out_of_line_wait_on_bit_lock(unsigned long *word, int bit,
+ຈຳນວນເຕັມ __sched out_of_line_wait_on_bit_lock(unsigned long *word, ຈຳນວນເຕັມ bit,
 					 wait_bit_action_f *action, unsigned mode)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	sa_nracanaa wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	return __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
+	ສົ່ງຄືນ __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
 }
 EXPORT_SYMBOL(out_of_line_wait_on_bit_lock);
 
-void __wake_up_bit(struct wait_queue_head *wq_head, unsigned long *word, int bit)
+void __wake_up_bit(sa_nracanaa wait_queue_head *wq_head, unsigned long *word, ຈຳນວນເຕັມ bit)
 {
-	struct wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
+	sa_nracanaa wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
 
-	if (waitqueue_active(wq_head))
+	ຖ້າ (waitqueue_active(wq_head))
 		__wake_up(wq_head, TASK_NORMAL, 1, &key);
 }
 EXPORT_SYMBOL(__wake_up_bit);
@@ -155,7 +155,7 @@ EXPORT_SYMBOL(__wake_up_bit);
  * cleared are guaranteed to be visible after the matching wait_on_bit()
  * completes.
  */
-void wake_up_bit(unsigned long *word, int bit)
+void wake_up_bit(unsigned long *word, ຈຳນວນເຕັມ bit)
 {
 	__wake_up_bit(bit_waitqueue(word, bit), word, bit);
 }
@@ -163,36 +163,36 @@ EXPORT_SYMBOL(wake_up_bit);
 
 wait_queue_head_t *__var_waitqueue(void *p)
 {
-	return bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
+	ສົ່ງຄືນ bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
 }
 EXPORT_SYMBOL(__var_waitqueue);
 
-struct wait_bit_key *__var_wake_key(struct wait_queue_entry *wq_entry, void *arg)
+sa_nracanaa wait_bit_key *__var_wake_key(sa_nracanaa wait_queue_entry *wq_entry, void *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wbq_entry =
-		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	sa_nracanaa wait_bit_key *key = arg;
+	sa_nracanaa wait_bit_queue_entry *wbq_entry =
+		container_of(wq_entry, sa_nracanaa wait_bit_queue_entry, wq_entry);
 
-	if (wbq_entry->key.flags != key->flags ||
+	ຖ້າ (wbq_entry->key.flags != key->flags ||
 	    wbq_entry->key.bit_nr != key->bit_nr)
-		return NULL;
+		ສົ່ງຄືນ NULL;
 
-	return key;
+	ສົ່ງຄືນ key;
 }
 
-static int var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
-			     int sync, void *arg)
+static ຈຳນວນເຕັມ var_wake_function(sa_nracanaa wait_queue_entry *wq_entry, unsigned ຈຳນວນເຕັມ mode,
+			     ຈຳນວນເຕັມ sync, void *arg)
 {
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
+	sa_nracanaa wait_bit_key *key = __var_wake_key(wq_entry, arg);
+	ຖ້າ (!key)
+		ສົ່ງຄືນ 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	ສົ່ງຄືນ autoremove_wake_function(wq_entry, mode, sync, key);
 }
 
-void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
+void init_wait_var_entry(sa_nracanaa wait_bit_queue_entry *wbq_entry, void *var, ຈຳນວນເຕັມ flags)
 {
-	*wbq_entry = (struct wait_bit_queue_entry){
+	*wbq_entry = (sa_nracanaa wait_bit_queue_entry){
 		.key = {
 			.flags	= (var),
 			.bit_nr = -1,
@@ -243,44 +243,44 @@ void wake_up_var(void *var)
 }
 EXPORT_SYMBOL(wake_up_var);
 
-__sched int bit_wait(struct wait_bit_key *word, int mode)
+__sched ຈຳນວນເຕັມ bit_wait(sa_nracanaa wait_bit_key *word, ຈຳນວນເຕັມ mode)
 {
 	schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	ຖ້າ (signal_pending_state(mode, current))
+		ສົ່ງຄືນ -EINTR;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 EXPORT_SYMBOL(bit_wait);
 
-__sched int bit_wait_io(struct wait_bit_key *word, int mode)
+__sched ຈຳນວນເຕັມ bit_wait_io(sa_nracanaa wait_bit_key *word, ຈຳນວນເຕັມ mode)
 {
 	io_schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	ຖ້າ (signal_pending_state(mode, current))
+		ສົ່ງຄືນ -EINTR;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 EXPORT_SYMBOL(bit_wait_io);
 
-__sched int bit_wait_timeout(struct wait_bit_key *word, int mode)
+__sched ຈຳນວນເຕັມ bit_wait_timeout(sa_nracanaa wait_bit_key *word, ຈຳນວນເຕັມ mode)
 {
 	unsigned long now = READ_ONCE(jiffies);
 
-	if (time_after_eq(now, word->timeout))
-		return -EAGAIN;
+	ຖ້າ (time_after_eq(now, word->timeout))
+		ສົ່ງຄືນ -EAGAIN;
 	schedule_timeout(word->timeout - now);
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	ຖ້າ (signal_pending_state(mode, current))
+		ສົ່ງຄືນ -EINTR;
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 EXPORT_SYMBOL_GPL(bit_wait_timeout);
 
 void __init wait_bit_init(void)
 {
-	int i;
+	ຈຳນວນເຕັມ i;
 
-	for (i = 0; i < WAIT_TABLE_SIZE; i++)
+	ສຳລັບ (i = 0; i < WAIT_TABLE_SIZE; i++)
 		init_waitqueue_head(bit_wait_table + i);
 }

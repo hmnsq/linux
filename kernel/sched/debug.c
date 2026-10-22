@@ -17,33 +17,33 @@
  */
 #define SEQ_printf(m, x...)			\
  do {						\
-	if (m)					\
+	ຖ້າ (m)					\
 		seq_printf(m, x);		\
-	else					\
+	ບໍ່ດັ່ງນັ້ນ					\
 		pr_cont(x);			\
- } while (0)
+ } ໃນຂະນະທີ່ (0)
 
 /*
  * Ease the printing of nsec fields:
  */
 static long long nsec_high(unsigned long long nsec)
 {
-	if ((long long)nsec < 0) {
+	ຖ້າ ((long long)nsec < 0) {
 		nsec = -nsec;
 		do_div(nsec, 1000000);
-		return -nsec;
+		ສົ່ງຄືນ -nsec;
 	}
 	do_div(nsec, 1000000);
 
-	return nsec;
+	ສົ່ງຄືນ nsec;
 }
 
 static unsigned long nsec_low(unsigned long long nsec)
 {
-	if ((long long)nsec < 0)
+	ຖ້າ ((long long)nsec < 0)
 		nsec = -nsec;
 
-	return do_div(nsec, 1000000);
+	ສົ່ງຄືນ do_div(nsec, 1000000);
 }
 
 #define SPLIT_NS(x) nsec_high(x), nsec_low(x)
@@ -51,24 +51,24 @@ static unsigned long nsec_low(unsigned long long nsec)
 #define SCHED_FEAT(name, enabled)	\
 	#name ,
 
-static const char * const sched_feat_names[] = {
+static const var_na * const sched_feat_names[] = {
 #include "features.h"
 };
 
 #undef SCHED_FEAT
 
-static int sched_feat_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_feat_show(sa_nracanaa seq_file *m, void *v)
 {
-	int i;
+	ຈຳນວນເຕັມ i;
 
-	for (i = 0; i < __SCHED_FEAT_NR; i++) {
-		if (!(sysctl_sched_features & (1UL << i)))
+	ສຳລັບ (i = 0; i < __SCHED_FEAT_NR; i++) {
+		ຖ້າ (!(sysctl_sched_features & (1UL << i)))
 			seq_puts(m, "NO_");
 		seq_printf(m, "%s ", sched_feat_names[i]);
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 #ifdef CONFIG_JUMP_LABEL
@@ -79,65 +79,65 @@ static int sched_feat_show(struct seq_file *m, void *v)
 #define SCHED_FEAT(name, enabled)	\
 	jump_label_key__##enabled ,
 
-union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR] = {
+sa_ngha sched_feat_key sched_feat_keys[__SCHED_FEAT_NR] = {
 #include "features.h"
 };
 
 #undef SCHED_FEAT
 
-static void sched_feat_disable(int i)
+static void sched_feat_disable(ຈຳນວນເຕັມ i)
 {
 	static_branch_disable_cpuslocked(&sched_feat_keys[i].key_true);
 }
 
-static void sched_feat_enable(int i)
+static void sched_feat_enable(ຈຳນວນເຕັມ i)
 {
 	static_branch_enable_cpuslocked(&sched_feat_keys[i].key_false);
 }
-#else /* !CONFIG_JUMP_LABEL: */
-static void sched_feat_disable(int i) { };
-static void sched_feat_enable(int i) { };
+#ບໍ່ດັ່ງນັ້ນ /* !CONFIG_JUMP_LABEL: */
+static void sched_feat_disable(ຈຳນວນເຕັມ i) { };
+static void sched_feat_enable(ຈຳນວນເຕັມ i) { };
 #endif /* !CONFIG_JUMP_LABEL */
 
-static int sched_feat_set(char *cmp)
+static ຈຳນວນເຕັມ sched_feat_set(var_na *cmp)
 {
-	int i;
-	int neg = 0;
+	ຈຳນວນເຕັມ i;
+	ຈຳນວນເຕັມ neg = 0;
 
-	if (strncmp(cmp, "NO_", 3) == 0) {
+	ຖ້າ (strncmp(cmp, "NO_", 3) == 0) {
 		neg = 1;
 		cmp += 3;
 	}
 
 	i = match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
-	if (i < 0)
-		return i;
+	ຖ້າ (i < 0)
+		ສົ່ງຄືນ i;
 
-	if (neg) {
+	ຖ້າ (neg) {
 		sysctl_sched_features &= ~(1UL << i);
 		sched_feat_disable(i);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		sysctl_sched_features |= (1UL << i);
 		sched_feat_enable(i);
 	}
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 static ssize_t
-sched_feat_write(struct file *filp, const char __user *ubuf,
+sched_feat_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 		size_t cnt, loff_t *ppos)
 {
-	char buf[64];
-	char *cmp;
-	int ret;
-	struct inode *inode;
+	var_na buf[64];
+	var_na *cmp;
+	ຈຳນວນເຕັມ ret;
+	sa_nracanaa inode *inode;
 
-	if (cnt > 63)
+	ຖ້າ (cnt > 63)
 		cnt = 63;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	ຖ້າ (copy_from_user(buf, ubuf, cnt))
+		ສົ່ງຄືນ -EFAULT;
 
 	buf[cnt] = 0;
 	cmp = strstrip(buf);
@@ -149,20 +149,20 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
 	ret = sched_feat_set(cmp);
 	inode_unlock(inode);
 	cpus_read_unlock();
-	if (ret < 0)
-		return ret;
+	ຖ້າ (ret < 0)
+		ສົ່ງຄືນ ret;
 
 	*ppos += cnt;
 
-	return cnt;
+	ສົ່ງຄືນ cnt;
 }
 
-static int sched_feat_open(struct inode *inode, struct file *filp)
+static ຈຳນວນເຕັມ sched_feat_open(sa_nracanaa inode *inode, sa_nracanaa file *filp)
 {
-	return single_open(filp, sched_feat_show, NULL);
+	ສົ່ງຄືນ single_open(filp, sched_feat_show, NULL);
 }
 
-static const struct file_operations sched_feat_fops = {
+static const sa_nracanaa file_operations sched_feat_fops = {
 	.open		= sched_feat_open,
 	.write		= sched_feat_write,
 	.read		= seq_read,
@@ -170,39 +170,39 @@ static const struct file_operations sched_feat_fops = {
 	.release	= single_release,
 };
 
-static ssize_t sched_scaling_write(struct file *filp, const char __user *ubuf,
+static ssize_t sched_scaling_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	unsigned int scaling;
-	int ret;
+	unsigned ຈຳນວນເຕັມ scaling;
+	ຈຳນວນເຕັມ ret;
 
 	ret = kstrtouint_from_user(ubuf, cnt, 10, &scaling);
-	if (ret)
-		return ret;
+	ຖ້າ (ret)
+		ສົ່ງຄືນ ret;
 
-	if (scaling >= SCHED_TUNABLESCALING_END)
-		return -EINVAL;
+	ຖ້າ (scaling >= SCHED_TUNABLESCALING_END)
+		ສົ່ງຄືນ -EINVAL;
 
 	sysctl_sched_tunable_scaling = scaling;
-	if (sched_update_scaling())
-		return -EINVAL;
+	ຖ້າ (sched_update_scaling())
+		ສົ່ງຄືນ -EINVAL;
 
 	*ppos += cnt;
-	return cnt;
+	ສົ່ງຄືນ cnt;
 }
 
-static int sched_scaling_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_scaling_show(sa_nracanaa seq_file *m, void *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_tunable_scaling);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int sched_scaling_open(struct inode *inode, struct file *filp)
+static ຈຳນວນເຕັມ sched_scaling_open(sa_nracanaa inode *inode, sa_nracanaa file *filp)
 {
-	return single_open(filp, sched_scaling_show, NULL);
+	ສົ່ງຄືນ single_open(filp, sched_scaling_show, NULL);
 }
 
-static const struct file_operations sched_scaling_fops = {
+static const sa_nracanaa file_operations sched_scaling_fops = {
 	.open		= sched_scaling_open,
 	.write		= sched_scaling_write,
 	.read		= seq_read,
@@ -212,15 +212,15 @@ static const struct file_operations sched_scaling_fops = {
 
 #ifdef CONFIG_SCHED_CACHE
 static ssize_t
-sched_cache_enable_write(struct file *filp, const char __user *ubuf,
+sched_cache_enable_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 			 size_t cnt, loff_t *ppos)
 {
 	bool val;
-	int ret;
+	ຈຳນວນເຕັມ ret;
 
 	ret = kstrtobool_from_user(ubuf, cnt, &val);
-	if (ret)
-		return ret;
+	ຖ້າ (ret)
+		ສົ່ງຄືນ ret;
 
 	sysctl_sched_cache_user = val;
 
@@ -228,22 +228,22 @@ sched_cache_enable_write(struct file *filp, const char __user *ubuf,
 
 	*ppos += cnt;
 
-	return cnt;
+	ສົ່ງຄືນ cnt;
 }
 
-static int sched_cache_enable_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_cache_enable_show(sa_nracanaa seq_file *m, void *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_cache_user);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int sched_cache_enable_open(struct inode *inode,
-				   struct file *filp)
+static ຈຳນວນເຕັມ sched_cache_enable_open(sa_nracanaa inode *inode,
+				   sa_nracanaa file *filp)
 {
-	return single_open(filp, sched_cache_enable_show, NULL);
+	ສົ່ງຄືນ single_open(filp, sched_cache_enable_show, NULL);
 }
 
-static const struct file_operations sched_cache_enable_fops = {
+static const sa_nracanaa file_operations sched_cache_enable_fops = {
 	.open           = sched_cache_enable_open,
 	.write          = sched_cache_enable_write,
 	.read           = seq_read,
@@ -254,55 +254,55 @@ static const struct file_operations sched_cache_enable_fops = {
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
 
-static ssize_t sched_dynamic_write(struct file *filp, const char __user *ubuf,
+static ssize_t sched_dynamic_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	var_na buf[16];
+	ຈຳນວນເຕັມ mode;
 
-	if (cnt > 15)
+	ຖ້າ (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	ຖ້າ (copy_from_user(buf, ubuf, cnt))
+		ສົ່ງຄືນ -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_dynamic_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	ຖ້າ (mode < 0)
+		ສົ່ງຄືນ mode;
 
 	sched_dynamic_update(mode);
 
 	*ppos += cnt;
 
-	return cnt;
+	ສົ່ງຄືນ cnt;
 }
 
-static int sched_dynamic_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_dynamic_show(sa_nracanaa seq_file *m, void *v)
 {
-	int mode = READ_ONCE(preempt_dynamic_mode);
+	ຈຳນວນເຕັມ mode = READ_ONCE(preempt_dynamic_mode);
 
 	/* Stop at NULL terminator */
-	for (int i = 0; preempt_modes[i]; i++) {
-		if (mode == i)
+	ສຳລັບ (ຈຳນວນເຕັມ i = 0; preempt_modes[i]; i++) {
+		ຖ້າ (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, preempt_modes[i]);
-		if (mode == i)
+		ຖ້າ (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 
 	seq_puts(m, "\n");
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int sched_dynamic_open(struct inode *inode, struct file *filp)
+static ຈຳນວນເຕັມ sched_dynamic_open(sa_nracanaa inode *inode, sa_nracanaa file *filp)
 {
-	return single_open(filp, sched_dynamic_show, NULL);
+	ສົ່ງຄືນ single_open(filp, sched_dynamic_show, NULL);
 }
 
-static const struct file_operations sched_dynamic_fops = {
+static const sa_nracanaa file_operations sched_dynamic_fops = {
 	.open		= sched_dynamic_open,
 	.write		= sched_dynamic_write,
 	.read		= seq_read,
@@ -314,10 +314,10 @@ static const struct file_operations sched_dynamic_fops = {
 
 __read_mostly bool sched_debug_verbose;
 
-static struct dentry           *sd_dentry;
+static sa_nracanaa dentry           *sd_dentry;
 
 
-static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
+static ssize_t sched_verbose_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 				  size_t cnt, loff_t *ppos)
 {
 	ssize_t result;
@@ -329,9 +329,9 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
 	orig = sched_debug_verbose;
 	result = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
 
-	if (sched_debug_verbose && !orig)
+	ຖ້າ (sched_debug_verbose && !orig)
 		update_sched_domain_debugfs();
-	else if (!sched_debug_verbose && orig) {
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (!sched_debug_verbose && orig) {
 		debugfs_remove(sd_dentry);
 		sd_dentry = NULL;
 	}
@@ -339,31 +339,31 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
 	sched_domains_mutex_unlock();
 	cpus_read_unlock();
 
-	return result;
+	ສົ່ງຄືນ result;
 }
 
-static const struct file_operations sched_verbose_fops = {
+static const sa_nracanaa file_operations sched_verbose_fops = {
 	.read =         debugfs_read_file_bool,
 	.write =        sched_verbose_write,
 	.open =         simple_open,
 	.llseek =       default_llseek,
 };
 
-static const struct seq_operations sched_debug_sops;
+static const sa_nracanaa seq_operations sched_debug_sops;
 
-static int sched_debug_open(struct inode *inode, struct file *filp)
+static ຈຳນວນເຕັມ sched_debug_open(sa_nracanaa inode *inode, sa_nracanaa file *filp)
 {
-	return seq_open(filp, &sched_debug_sops);
+	ສົ່ງຄືນ seq_open(filp, &sched_debug_sops);
 }
 
-static const struct file_operations sched_debug_fops = {
+static const sa_nracanaa file_operations sched_debug_fops = {
 	.open		= sched_debug_open,
 	.read		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= seq_release,
 };
 
-enum dl_param {
+ga_nanaa dl_param {
 	DL_RUNTIME = 0,
 	DL_PERIOD,
 };
@@ -371,58 +371,58 @@ enum dl_param {
 static unsigned long dl_server_period_max = (1UL << 22) * NSEC_PER_USEC; /* ~4 seconds */
 static unsigned long dl_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
 
-static ssize_t sched_server_write_common(struct file *filp, const char __user *ubuf,
-					 size_t cnt, loff_t *ppos, enum dl_param param,
+static ssize_t sched_server_write_common(sa_nracanaa file *filp, const var_na __user *ubuf,
+					 size_t cnt, loff_t *ppos, ga_nanaa dl_param param,
 					 void *server)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
+	long cpu = (long) ((sa_nracanaa seq_file *) filp->private_data)->private;
+	sa_nracanaa sched_dl_entity *dl_se = (sa_nracanaa sched_dl_entity *)server;
 	u64 old_runtime, runtime, period;
-	struct rq *rq = cpu_rq(cpu);
-	int retval = 0;
+	sa_nracanaa rq *rq = cpu_rq(cpu);
+	ຈຳນວນເຕັມ retval = 0;
 	size_t err;
 	u64 value;
 
 	err = kstrtoull_from_user(ubuf, cnt, 10, &value);
-	if (err)
-		return err;
+	ຖ້າ (err)
+		ສົ່ງຄືນ err;
 
 	scoped_guard (rq_lock_irqsave, rq) {
 		old_runtime = runtime = dl_se->dl_runtime;
 		period = dl_se->dl_period;
 
 		switch (param) {
-		case DL_RUNTIME:
-			if (runtime == value)
-				break;
+		pak_sa DL_RUNTIME:
+			ຖ້າ (runtime == value)
+				bha_nga;
 			runtime = value;
-			break;
-		case DL_PERIOD:
-			if (value == period)
-				break;
+			bha_nga;
+		pak_sa DL_PERIOD:
+			ຖ້າ (value == period)
+				bha_nga;
 			period = value;
-			break;
+			bha_nga;
 		}
 
-		if (runtime > period ||
+		ຖ້າ (runtime > period ||
 		    period > dl_server_period_max ||
 		    period < dl_server_period_min) {
-			return  -EINVAL;
+			ສົ່ງຄືນ  -EINVAL;
 		}
 
-		if (!cpu_online(cpu_of(rq)))
-			return -EBUSY;
+		ຖ້າ (!cpu_online(cpu_of(rq)))
+			ສົ່ງຄືນ -EBUSY;
 
 		update_rq_clock(rq);
 		dl_server_stop(dl_se);
 		retval = dl_server_apply_params(dl_se, runtime, period, 0);
 		dl_server_start(dl_se);
 
-		if (retval < 0)
-			return retval;
+		ຖ້າ (retval < 0)
+			ສົ່ງຄືນ retval;
 	}
 
-	if (!!old_runtime ^ !!runtime) {
+	ຖ້າ (!!old_runtime ^ !!runtime) {
 		pr_info("%s server %sabled on CPU %d%s.\n",
 			server == &rq->fair_server ? "Fair" : "Ext",
 			runtime ? "en" : "dis",
@@ -431,53 +431,53 @@ static ssize_t sched_server_write_common(struct file *filp, const char __user *u
 	}
 
 	*ppos += cnt;
-	return cnt;
+	ສົ່ງຄືນ cnt;
 }
 
-static size_t sched_server_show_common(struct seq_file *m, void *v, enum dl_param param,
+static size_t sched_server_show_common(sa_nracanaa seq_file *m, void *v, ga_nanaa dl_param param,
 				       void *server)
 {
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
+	sa_nracanaa sched_dl_entity *dl_se = (sa_nracanaa sched_dl_entity *)server;
 	u64 value;
 
 	switch (param) {
-	case DL_RUNTIME:
+	pak_sa DL_RUNTIME:
 		value = dl_se->dl_runtime;
-		break;
-	case DL_PERIOD:
+		bha_nga;
+	pak_sa DL_PERIOD:
 		value = dl_se->dl_period;
-		break;
+		bha_nga;
 	}
 
 	seq_printf(m, "%llu\n", value);
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 static ssize_t
-sched_fair_server_runtime_write(struct file *filp, const char __user *ubuf,
+sched_fair_server_runtime_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 				size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((sa_nracanaa seq_file *) filp->private_data)->private;
+	sa_nracanaa rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	ສົ່ງຄືນ sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_runtime_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_fair_server_runtime_show(sa_nracanaa seq_file *m, void *v)
 {
 	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	sa_nracanaa rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
+	ສົ່ງຄືນ sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
 }
 
-static int sched_fair_server_runtime_open(struct inode *inode, struct file *filp)
+static ຈຳນວນເຕັມ sched_fair_server_runtime_open(sa_nracanaa inode *inode, sa_nracanaa file *filp)
 {
-	return single_open(filp, sched_fair_server_runtime_show, inode->i_private);
+	ສົ່ງຄືນ single_open(filp, sched_fair_server_runtime_show, inode->i_private);
 }
 
-static const struct file_operations fair_server_runtime_fops = {
+static const sa_nracanaa file_operations fair_server_runtime_fops = {
 	.open		= sched_fair_server_runtime_open,
 	.write		= sched_fair_server_runtime_write,
 	.read		= seq_read,
@@ -485,34 +485,34 @@ static const struct file_operations fair_server_runtime_fops = {
 	.release	= single_release,
 };
 
-static struct dentry *debugfs_sched;
+static sa_nracanaa dentry *debugfs_sched;
 
 #ifdef CONFIG_SCHED_CLASS_EXT
 static ssize_t
-sched_ext_server_runtime_write(struct file *filp, const char __user *ubuf,
+sched_ext_server_runtime_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 			       size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((sa_nracanaa seq_file *) filp->private_data)->private;
+	sa_nracanaa rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	ສົ່ງຄືນ sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_runtime_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_ext_server_runtime_show(sa_nracanaa seq_file *m, void *v)
 {
 	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	sa_nracanaa rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
+	ສົ່ງຄືນ sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
 }
 
-static int sched_ext_server_runtime_open(struct inode *inode, struct file *filp)
+static ຈຳນວນເຕັມ sched_ext_server_runtime_open(sa_nracanaa inode *inode, sa_nracanaa file *filp)
 {
-	return single_open(filp, sched_ext_server_runtime_show, inode->i_private);
+	ສົ່ງຄືນ single_open(filp, sched_ext_server_runtime_show, inode->i_private);
 }
 
-static const struct file_operations ext_server_runtime_fops = {
+static const sa_nracanaa file_operations ext_server_runtime_fops = {
 	.open		= sched_ext_server_runtime_open,
 	.write		= sched_ext_server_runtime_write,
 	.read		= seq_read,
@@ -521,30 +521,30 @@ static const struct file_operations ext_server_runtime_fops = {
 };
 
 static ssize_t
-sched_ext_server_period_write(struct file *filp, const char __user *ubuf,
+sched_ext_server_period_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 			      size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((sa_nracanaa seq_file *) filp->private_data)->private;
+	sa_nracanaa rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	ສົ່ງຄືນ sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_period_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_ext_server_period_show(sa_nracanaa seq_file *m, void *v)
 {
 	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	sa_nracanaa rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
+	ສົ່ງຄືນ sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
 }
 
-static int sched_ext_server_period_open(struct inode *inode, struct file *filp)
+static ຈຳນວນເຕັມ sched_ext_server_period_open(sa_nracanaa inode *inode, sa_nracanaa file *filp)
 {
-	return single_open(filp, sched_ext_server_period_show, inode->i_private);
+	ສົ່ງຄືນ single_open(filp, sched_ext_server_period_show, inode->i_private);
 }
 
-static const struct file_operations ext_server_period_fops = {
+static const sa_nracanaa file_operations ext_server_period_fops = {
 	.open		= sched_ext_server_period_open,
 	.write		= sched_ext_server_period_write,
 	.read		= seq_read,
@@ -554,18 +554,18 @@ static const struct file_operations ext_server_period_fops = {
 
 static void debugfs_ext_server_init(void)
 {
-	struct dentry *d_ext;
+	sa_nracanaa dentry *d_ext;
 	unsigned long cpu;
 
 	d_ext = debugfs_create_dir("ext_server", debugfs_sched);
-	if (!d_ext)
-		return;
+	ຖ້າ (!d_ext)
+		ສົ່ງຄືນ;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		sa_nracanaa dentry *d_cpu;
+		var_na buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, parimaa_na(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_ext);
 
 		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &ext_server_runtime_fops);
@@ -575,30 +575,30 @@ static void debugfs_ext_server_init(void)
 #endif /* CONFIG_SCHED_CLASS_EXT */
 
 static ssize_t
-sched_fair_server_period_write(struct file *filp, const char __user *ubuf,
+sched_fair_server_period_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 			       size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((sa_nracanaa seq_file *) filp->private_data)->private;
+	sa_nracanaa rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	ສົ່ງຄືນ sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_period_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_fair_server_period_show(sa_nracanaa seq_file *m, void *v)
 {
 	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	sa_nracanaa rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
+	ສົ່ງຄືນ sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
 }
 
-static int sched_fair_server_period_open(struct inode *inode, struct file *filp)
+static ຈຳນວນເຕັມ sched_fair_server_period_open(sa_nracanaa inode *inode, sa_nracanaa file *filp)
 {
-	return single_open(filp, sched_fair_server_period_show, inode->i_private);
+	ສົ່ງຄືນ single_open(filp, sched_fair_server_period_show, inode->i_private);
 }
 
-static const struct file_operations fair_server_period_fops = {
+static const sa_nracanaa file_operations fair_server_period_fops = {
 	.open		= sched_fair_server_period_open,
 	.write		= sched_fair_server_period_write,
 	.read		= seq_read,
@@ -608,18 +608,18 @@ static const struct file_operations fair_server_period_fops = {
 
 static void debugfs_fair_server_init(void)
 {
-	struct dentry *d_fair;
+	sa_nracanaa dentry *d_fair;
 	unsigned long cpu;
 
 	d_fair = debugfs_create_dir("fair_server", debugfs_sched);
-	if (!d_fair)
-		return;
+	ຖ້າ (!d_fair)
+		ສົ່ງຄືນ;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		sa_nracanaa dentry *d_cpu;
+		var_na buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, parimaa_na(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_fair);
 
 		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &fair_server_runtime_fops);
@@ -628,10 +628,10 @@ static void debugfs_fair_server_init(void)
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static int cgroup_mode = 2;
+static ຈຳນວນເຕັມ cgroup_mode = 2;
 
 /* See __sched_cgroup_mode_update(). */
-static const char *cgroup_mode_str[] = {
+static const var_na *cgroup_mode_str[] = {
 	"up",
 	"smp",
 	"concur",
@@ -639,62 +639,62 @@ static const char *cgroup_mode_str[] = {
 	"tasks",
 };
 
-static int sched_cgroup_mode(const char *str)
+static ຈຳນວນເຕັມ sched_cgroup_mode(const var_na *str)
 {
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (!strcmp(str, cgroup_mode_str[i]))
-			return i;
+	ສຳລັບ (ຈຳນວນເຕັມ i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		ຖ້າ (!strcmp(str, cgroup_mode_str[i]))
+			ສົ່ງຄືນ i;
 	}
-	return -EINVAL;
+	ສົ່ງຄືນ -EINVAL;
 }
 
-static ssize_t sched_cgroup_write(struct file *filp, const char __user *ubuf,
+static ssize_t sched_cgroup_write(sa_nracanaa file *filp, const var_na __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	var_na buf[16];
+	ຈຳນວນເຕັມ mode;
 
-	if (cnt > 15)
+	ຖ້າ (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	ຖ້າ (copy_from_user(buf, ubuf, cnt))
+		ສົ່ງຄືນ -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_cgroup_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	ຖ້າ (mode < 0)
+		ສົ່ງຄືນ mode;
 
 	__sched_cgroup_mode_update(mode);
 	WRITE_ONCE(cgroup_mode, mode);
 
 	*ppos += cnt;
-	return cnt;
+	ສົ່ງຄືນ cnt;
 }
 
-static int sched_cgroup_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_cgroup_show(sa_nracanaa seq_file *m, void *v)
 {
-	int mode = READ_ONCE(cgroup_mode);
+	ຈຳນວນເຕັມ mode = READ_ONCE(cgroup_mode);
 
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (mode == i)
+	ສຳລັບ (ຈຳນວນເຕັມ i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		ຖ້າ (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, cgroup_mode_str[i]);
-		if (mode == i)
+		ຖ້າ (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 	seq_puts(m, "\n");
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int sched_cgroup_open(struct inode *inode, struct file *filp)
+static ຈຳນວນເຕັມ sched_cgroup_open(sa_nracanaa inode *inode, sa_nracanaa file *filp)
 {
-	return single_open(filp, sched_cgroup_show, NULL);
+	ສົ່ງຄືນ single_open(filp, sched_cgroup_show, NULL);
 }
 
-static const struct file_operations sched_cgroup_fops = {
+static const sa_nracanaa file_operations sched_cgroup_fops = {
 	.open		= sched_cgroup_open,
 	.write		= sched_cgroup_write,
 	.read		= seq_read,
@@ -703,9 +703,9 @@ static const struct file_operations sched_cgroup_fops = {
 };
 #endif
 
-static __init int sched_init_debug(void)
+static __init ຈຳນວນເຕັມ sched_init_debug(void)
 {
-	struct dentry __maybe_unused *numa, *llc;
+	sa_nracanaa dentry __maybe_unused *numa, *llc;
 
 	debugfs_sched = debugfs_create_dir("sched", NULL);
 
@@ -765,16 +765,16 @@ static __init int sched_init_debug(void)
 	debugfs_ext_server_init();
 #endif
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 late_initcall(sched_init_debug);
 
 static cpumask_var_t		sd_sysctl_cpus;
 
-static int sd_flags_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sd_flags_show(sa_nracanaa seq_file *m, void *v)
 {
-	unsigned long flags = *(unsigned int *)m->private;
-	int idx;
+	unsigned long flags = *(unsigned ຈຳນວນເຕັມ *)m->private;
+	ຈຳນວນເຕັມ idx;
 
 	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
 		seq_puts(m, sd_flag_debug[idx].name);
@@ -782,22 +782,22 @@ static int sd_flags_show(struct seq_file *m, void *v)
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-static int sd_flags_open(struct inode *inode, struct file *file)
+static ຈຳນວນເຕັມ sd_flags_open(sa_nracanaa inode *inode, sa_nracanaa file *file)
 {
-	return single_open(file, sd_flags_show, inode->i_private);
+	ສົ່ງຄືນ single_open(file, sd_flags_show, inode->i_private);
 }
 
-static const struct file_operations sd_flags_fops = {
+static const sa_nracanaa file_operations sd_flags_fops = {
 	.open		= sd_flags_open,
 	.read		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void register_sd(struct sched_domain *sd, struct dentry *parent)
+static void register_sd(sa_nracanaa sched_domain *sd, sa_nracanaa dentry *parent)
 {
 #define SDM(type, mode, member)	\
 	debugfs_create_##type(#member, mode, parent, &sd->member)
@@ -816,53 +816,53 @@ static void register_sd(struct sched_domain *sd, struct dentry *parent)
 	debugfs_create_file("groups_flags", 0444, parent, &sd->groups->flags, &sd_flags_fops);
 	debugfs_create_u32("level", 0444, parent, (u32 *)&sd->level);
 
-	if (sd->flags & SD_ASYM_PACKING)
+	ຖ້າ (sd->flags & SD_ASYM_PACKING)
 		debugfs_create_u32("group_asym_prefer_cpu", 0444, parent,
 				   (u32 *)&sd->groups->asym_prefer_cpu);
 }
 
 void update_sched_domain_debugfs(void)
 {
-	int cpu, i;
+	ຈຳນວນເຕັມ cpu, i;
 
 	/*
 	 * This can unfortunately be invoked before sched_debug_init() creates
 	 * the debug directory. Don't touch sd_sysctl_cpus until then.
 	 */
-	if (!debugfs_sched)
-		return;
+	ຖ້າ (!debugfs_sched)
+		ສົ່ງຄືນ;
 
-	if (!sched_debug_verbose)
-		return;
+	ຖ້າ (!sched_debug_verbose)
+		ສົ່ງຄືນ;
 
-	if (!cpumask_available(sd_sysctl_cpus)) {
-		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
-			return;
+	ຖ້າ (!cpumask_available(sd_sysctl_cpus)) {
+		ຖ້າ (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
+			ສົ່ງຄືນ;
 		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
 	}
 
-	if (!sd_dentry) {
+	ຖ້າ (!sd_dentry) {
 		sd_dentry = debugfs_create_dir("domains", debugfs_sched);
 
 		/* rebuild sd_sysctl_cpus if empty since it gets cleared below */
-		if (cpumask_empty(sd_sysctl_cpus))
+		ຖ້າ (cpumask_empty(sd_sysctl_cpus))
 			cpumask_copy(sd_sysctl_cpus, cpu_online_mask);
 	}
 
 	for_each_cpu(cpu, sd_sysctl_cpus) {
-		struct sched_domain *sd;
-		struct dentry *d_cpu;
-		char buf[32];
+		sa_nracanaa sched_domain *sd;
+		sa_nracanaa dentry *d_cpu;
+		var_na buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%d", cpu);
+		snprintf(buf, parimaa_na(buf), "cpu%d", cpu);
 		debugfs_lookup_and_remove(buf, sd_dentry);
 		d_cpu = debugfs_create_dir(buf, sd_dentry);
 
 		i = 0;
 		for_each_domain(cpu, sd) {
-			struct dentry *d_sd;
+			sa_nracanaa dentry *d_sd;
 
-			snprintf(buf, sizeof(buf), "domain%d", i);
+			snprintf(buf, parimaa_na(buf), "domain%d", i);
 			d_sd = debugfs_create_dir(buf, d_cpu);
 
 			register_sd(sd, d_sd);
@@ -873,16 +873,16 @@ void update_sched_domain_debugfs(void)
 	}
 }
 
-void dirty_sched_domain_sysctl(int cpu)
+void dirty_sched_domain_sysctl(ຈຳນວນເຕັມ cpu)
 {
-	if (cpumask_available(sd_sysctl_cpus))
+	ຖ້າ (cpumask_available(sd_sysctl_cpus))
 		__cpumask_set_cpu(cpu, sd_sysctl_cpus);
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group *tg)
+static void print_cfs_group_stats(sa_nracanaa seq_file *m, ຈຳນວນເຕັມ cpu, sa_nracanaa task_group *tg)
 {
-	struct sched_entity *se = tg_se(tg, cpu);
+	sa_nracanaa sched_entity *se = tg_se(tg, cpu);
 
 #define P(F)		SEQ_printf(m, "  .%-30s: %lld\n",	#F, (long long)F)
 #define P_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld\n",	\
@@ -891,15 +891,15 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 #define PN_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld.%06ld\n", \
 		#F, SPLIT_NS((long long)schedstat_val(stats->F)))
 
-	if (!se)
-		return;
+	ຖ້າ (!se)
+		ສົ່ງຄືນ;
 
 	PN(se->exec_start);
 	PN(se->vruntime);
 	PN(se->sum_exec_runtime);
 
-	if (schedstat_enabled()) {
-		struct sched_statistics *stats;
+	ຖ້າ (schedstat_enabled()) {
+		sa_nracanaa sched_statistics *stats;
 		stats = __schedstats_from_se(se);
 
 		PN_SCHEDSTAT(wait_start);
@@ -928,12 +928,12 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 
 #ifdef CONFIG_CGROUP_SCHED
 static DEFINE_SPINLOCK(sched_debug_lock);
-static char group_path[PATH_MAX];
+static var_na group_path[PATH_MAX];
 
-static void task_group_path(struct task_group *tg, char *path, int plen)
+static void task_group_path(sa_nracanaa task_group *tg, var_na *path, ຈຳນວນເຕັມ plen)
 {
-	if (autogroup_path(tg, path, plen))
-		return;
+	ຖ້າ (autogroup_path(tg, path, plen))
+		ສົ່ງຄືນ;
 
 	cgroup_path(tg->css.cgroup, path, plen);
 }
@@ -947,13 +947,13 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
  */
 #define SEQ_printf_task_group_path(m, tg, fmt...)			\
 {									\
-	if (spin_trylock(&sched_debug_lock)) {				\
-		task_group_path(tg, group_path, sizeof(group_path));	\
+	ຖ້າ (spin_trylock(&sched_debug_lock)) {				\
+		task_group_path(tg, group_path, parimaa_na(group_path));	\
 		SEQ_printf(m, fmt, group_path);				\
 		spin_unlock(&sched_debug_lock);				\
-	} else {							\
-		char buf[128];						\
-		char *bufend = buf + sizeof(buf) - 3;			\
+	} ບໍ່ດັ່ງນັ້ນ {							\
+		var_na buf[128];						\
+		var_na *bufend = buf + parimaa_na(buf) - 3;			\
 		task_group_path(tg, buf, bufend - buf);			\
 		strcpy(bufend - 1, "...");				\
 		SEQ_printf(m, fmt, buf);				\
@@ -962,11 +962,11 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
 #endif
 
 static void
-print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
+print_task(sa_nracanaa seq_file *m, sa_nracanaa rq *rq, sa_nracanaa task_struct *p)
 {
-	if (task_current(rq, p))
+	ຖ້າ (task_current(rq, p))
 		SEQ_printf(m, ">R");
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		SEQ_printf(m, " %c", task_state_to_char(p));
 
 	SEQ_printf(m, " %15s %5d %10ld %9Ld.%06ld   %c   %9Ld.%06ld %c %9Ld.%06ld %9Ld.%06ld %9Ld   %5d ",
@@ -996,9 +996,9 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 	SEQ_printf(m, "\n");
 }
 
-static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
+static void print_rq(sa_nracanaa seq_file *m, sa_nracanaa rq *rq, ຈຳນວນເຕັມ rq_cpu)
 {
-	struct task_struct *g, *p;
+	sa_nracanaa task_struct *g, *p;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "runnable tasks:\n");
@@ -1025,7 +1025,7 @@ static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
 
 	rcu_read_lock();
 	for_each_process_thread(g, p) {
-		if (task_cpu(p) != rq_cpu)
+		ຖ້າ (task_cpu(p) != rq_cpu)
 			continue;
 
 		print_task(m, rq, p);
@@ -1033,34 +1033,34 @@ static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
 	rcu_read_unlock();
 }
 
-void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+void print_cfs_rq(sa_nracanaa seq_file *m, ຈຳນວນເຕັມ cpu, sa_nracanaa cfs_rq *cfs_rq)
 {
 	s64 left_vruntime = -1, right_vruntime = -1, left_deadline = -1, spread;
 	s64 zero_vruntime = -1, sum_w_vruntime = -1;
 	u64 avruntime;
-	struct sched_entity *last, *first, *root;
-	struct rq *rq = cpu_rq(cpu);
-	unsigned int sum_shift;
+	sa_nracanaa sched_entity *last, *first, *root;
+	sa_nracanaa rq *rq = cpu_rq(cpu);
+	unsigned ຈຳນວນເຕັມ sum_shift;
 	unsigned long flags;
 	u64 sum_weight;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, cfs_rq->tg, "cfs_rq[%d]:%s\n", cpu);
-#else
+#ບໍ່ດັ່ງນັ້ນ
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
 #endif
 
 	raw_spin_rq_lock_irqsave(rq, flags);
 	root = __pick_root_entity(cfs_rq);
-	if (root)
+	ຖ້າ (root)
 		left_vruntime = root->min_vruntime;
 	first = __pick_first_entity(cfs_rq);
-	if (first)
+	ຖ້າ (first)
 		left_deadline = first->deadline;
 	last = __pick_last_entity(cfs_rq);
-	if (last)
+	ຖ້າ (last)
 		right_vruntime = last->vruntime;
 	zero_vruntime = cfs_rq->zero_vruntime;
 	sum_w_vruntime = cfs_rq->sum_w_vruntime;
@@ -1125,12 +1125,12 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 #endif
 }
 
-void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
+void print_rt_rq(sa_nracanaa seq_file *m, ຈຳນວນເຕັມ cpu, sa_nracanaa rt_rq *rt_rq)
 {
 #ifdef CONFIG_RT_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, rt_rq->tg, "rt_rq[%d]:%s\n", cpu);
-#else
+#ບໍ່ດັ່ງນັ້ນ
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "rt_rq[%d]:\n", cpu);
 #endif
@@ -1155,9 +1155,9 @@ void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
 #undef P
 }
 
-void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
+void print_dl_rq(sa_nracanaa seq_file *m, ຈຳນວນເຕັມ cpu, sa_nracanaa dl_rq *dl_rq)
 {
-	struct dl_bw *dl_bw;
+	sa_nracanaa dl_bw *dl_bw;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "dl_rq[%d]:\n", cpu);
@@ -1173,28 +1173,28 @@ void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
 #undef PU
 }
 
-static void print_cpu(struct seq_file *m, int cpu)
+static void print_cpu(sa_nracanaa seq_file *m, ຈຳນວນເຕັມ cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	sa_nracanaa rq *rq = cpu_rq(cpu);
 
 #ifdef CONFIG_X86
 	{
-		unsigned int freq = cpu_khz ? : 1;
+		unsigned ຈຳນວນເຕັມ freq = cpu_khz ? : 1;
 
 		SEQ_printf(m, "cpu#%d, %u.%03u MHz\n",
 			   cpu, freq / 1000, (freq % 1000));
 	}
-#else /* !CONFIG_X86: */
+#ບໍ່ດັ່ງນັ້ນ /* !CONFIG_X86: */
 	SEQ_printf(m, "cpu#%d\n", cpu);
 #endif /* !CONFIG_X86 */
 
 #define P(x)								\
 do {									\
-	if (sizeof(rq->x) == 4)						\
-		SEQ_printf(m, "  .%-30s: %d\n", #x, (int)(rq->x));	\
-	else								\
+	ຖ້າ (parimaa_na(rq->x) == 4)						\
+		SEQ_printf(m, "  .%-30s: %d\n", #x, (ຈຳນວນເຕັມ)(rq->x));	\
+	ບໍ່ດັ່ງນັ້ນ								\
 		SEQ_printf(m, "  .%-30s: %Ld\n", #x, (long long)(rq->x));\
-} while (0)
+} ໃນຂະນະທີ່ (0)
 
 #define PN(x) \
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, SPLIT_NS(rq->x))
@@ -1215,7 +1215,7 @@ do {									\
 #undef P64
 
 #define P(n) SEQ_printf(m, "  .%-30s: %d\n", #n, schedstat_val(rq->n));
-	if (schedstat_enabled()) {
+	ຖ້າ (schedstat_enabled()) {
 		P(yld_count);
 		P(sched_count);
 		P(sched_goidle);
@@ -1232,13 +1232,13 @@ do {									\
 	SEQ_printf(m, "\n");
 }
 
-static const char *sched_tunable_scaling_names[] = {
+static const var_na *sched_tunable_scaling_names[] = {
 	"none",
 	"logarithmic",
 	"linear"
 };
 
-static void sched_debug_header(struct seq_file *m)
+static void sched_debug_header(sa_nracanaa seq_file *m)
 {
 	u64 ktime, sched_clk, cpu_clk;
 	unsigned long flags;
@@ -1251,7 +1251,7 @@ static void sched_debug_header(struct seq_file *m)
 
 	SEQ_printf(m, "Sched Debug Version: v0.11, %s %.*s\n",
 		init_utsname()->release,
-		(int)strcspn(init_utsname()->version, " "),
+		(ຈຳນວນເຕັມ)strcspn(init_utsname()->version, " "),
 		init_utsname()->version);
 
 #define P(x) \
@@ -1287,21 +1287,21 @@ static void sched_debug_header(struct seq_file *m)
 	SEQ_printf(m, "\n");
 }
 
-static int sched_debug_show(struct seq_file *m, void *v)
+static ຈຳນວນເຕັມ sched_debug_show(sa_nracanaa seq_file *m, void *v)
 {
-	int cpu = (unsigned long)(v - 2);
+	ຈຳນວນເຕັມ cpu = (unsigned long)(v - 2);
 
-	if (cpu != -1)
+	ຖ້າ (cpu != -1)
 		print_cpu(m, cpu);
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		sched_debug_header(m);
 
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
 void sysrq_sched_debug_show(void)
 {
-	int cpu;
+	ຈຳນວນເຕັມ cpu;
 
 	sched_debug_header(NULL);
 	for_each_online_cpu(cpu) {
@@ -1323,39 +1323,39 @@ void sysrq_sched_debug_show(void)
  * In a hotplugged system some CPUs, including CPU 0, may be missing so we have
  * to use cpumask_* to iterate over the CPUs.
  */
-static void *sched_debug_start(struct seq_file *file, loff_t *offset)
+static void *sched_debug_start(sa_nracanaa seq_file *file, loff_t *offset)
 {
 	unsigned long n = *offset;
 
-	if (n == 0)
-		return (void *) 1;
+	ຖ້າ (n == 0)
+		ສົ່ງຄືນ (void *) 1;
 
 	n--;
 
-	if (n > 0)
+	ຖ້າ (n > 0)
 		n = cpumask_next(n - 1, cpu_online_mask);
-	else
+	ບໍ່ດັ່ງນັ້ນ
 		n = cpumask_first(cpu_online_mask);
 
 	*offset = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	ຖ້າ (n < nr_cpu_ids)
+		ສົ່ງຄືນ (void *)(unsigned long)(n + 2);
 
-	return NULL;
+	ສົ່ງຄືນ NULL;
 }
 
-static void *sched_debug_next(struct seq_file *file, void *data, loff_t *offset)
+static void *sched_debug_next(sa_nracanaa seq_file *file, void *data, loff_t *offset)
 {
 	(*offset)++;
-	return sched_debug_start(file, offset);
+	ສົ່ງຄືນ sched_debug_start(file, offset);
 }
 
-static void sched_debug_stop(struct seq_file *file, void *data)
+static void sched_debug_stop(sa_nracanaa seq_file *file, void *data)
 {
 }
 
-static const struct seq_operations sched_debug_sops = {
+static const sa_nracanaa seq_operations sched_debug_sops = {
 	.start		= sched_debug_start,
 	.next		= sched_debug_next,
 	.stop		= sched_debug_stop,
@@ -1372,7 +1372,7 @@ static const struct seq_operations sched_debug_sops = {
 
 
 #ifdef CONFIG_NUMA_BALANCING
-void print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
+void print_numa_stats(sa_nracanaa seq_file *m, ຈຳນວນເຕັມ node, unsigned long tsf,
 		unsigned long tpf, unsigned long gsf, unsigned long gpf)
 {
 	SEQ_printf(m, "numa_faults node=%d ", node);
@@ -1382,10 +1382,10 @@ void print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
 #endif
 
 
-static void sched_show_numa(struct task_struct *p, struct seq_file *m)
+static void sched_show_numa(sa_nracanaa task_struct *p, sa_nracanaa seq_file *m)
 {
 #ifdef CONFIG_NUMA_BALANCING
-	if (p->mm)
+	ຖ້າ (p->mm)
 		P(mm->numa_scan_seq);
 
 	P(numa_pages_migrated);
@@ -1397,8 +1397,8 @@ static void sched_show_numa(struct task_struct *p, struct seq_file *m)
 #endif /* CONFIG_NUMA_BALANCING */
 }
 
-void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
-						  struct seq_file *m)
+void proc_sched_show_task(sa_nracanaa task_struct *p, sa_nracanaa pid_namespace *ns,
+						  sa_nracanaa seq_file *m)
 {
 	unsigned long nr_switches;
 
@@ -1419,7 +1419,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 
 	P(se.nr_migrations);
 
-	if (schedstat_enabled()) {
+	ຖ້າ (schedstat_enabled()) {
 		u64 avg_atom, avg_per_cpu;
 
 		PN_SCHEDSTAT(sum_sleep_runtime);
@@ -1450,16 +1450,16 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		P_SCHEDSTAT(nr_wakeups_affine_attempts);
 
 		avg_atom = p->se.sum_exec_runtime;
-		if (nr_switches)
+		ຖ້າ (nr_switches)
 			avg_atom = div64_ul(avg_atom, nr_switches);
-		else
+		ບໍ່ດັ່ງນັ້ນ
 			avg_atom = -1LL;
 
 		avg_per_cpu = p->se.sum_exec_runtime;
-		if (p->se.nr_migrations) {
+		ຖ້າ (p->se.nr_migrations) {
 			avg_per_cpu = div64_u64(avg_per_cpu,
 						p->se.nr_migrations);
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			avg_per_cpu = -1LL;
 		}
 
@@ -1492,10 +1492,10 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 #endif /* CONFIG_UCLAMP_TASK */
 	P(policy);
 	P(prio);
-	if (task_has_dl_policy(p)) {
+	ຖ້າ (task_has_dl_policy(p)) {
 		P(dl.runtime);
 		P(dl.deadline);
-	} else if (fair_policy(p->policy)) {
+	} ບໍ່ດັ່ງນັ້ນ ຖ້າ (fair_policy(p->policy)) {
 		P(se.slice);
 	}
 #ifdef CONFIG_SCHED_CLASS_EXT
@@ -1505,7 +1505,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 #undef P_SCHEDSTAT
 
 	{
-		unsigned int this_cpu = raw_smp_processor_id();
+		unsigned ຈຳນວນເຕັມ this_cpu = raw_smp_processor_id();
 		u64 t0, t1;
 
 		t0 = cpu_clock(this_cpu);
@@ -1516,19 +1516,19 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	sched_show_numa(p, m);
 }
 
-void proc_sched_set_task(struct task_struct *p)
+void proc_sched_set_task(sa_nracanaa task_struct *p)
 {
 #ifdef CONFIG_SCHEDSTATS
-	memset(&p->stats, 0, sizeof(p->stats));
+	memset(&p->stats, 0, parimaa_na(p->stats));
 #endif
 }
 
-void resched_latency_warn(int cpu, u64 latency)
+void resched_latency_warn(ຈຳນວນເຕັມ cpu, u64 latency)
 {
 	static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
 
-	if (likely(!__ratelimit(&latency_check_ratelimit)))
-		return;
+	ຖ້າ (likely(!__ratelimit(&latency_check_ratelimit)))
+		ສົ່ງຄືນ;
 
 	pr_err("sched: CPU %d need_resched set for > %llu ns (%d ticks) without schedule\n",
 	       cpu, latency, cpu_rq(cpu)->ticks_without_resched);

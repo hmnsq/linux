@@ -10,11 +10,11 @@
 
 #include <linux/types.h>
 
-struct scx_sched;
+sa_nracanaa scx_sched;
 
-s32 scx_arena_pool_init(struct scx_sched *sch);
-void scx_arena_pool_destroy(struct scx_sched *sch);
-void *scx_arena_alloc(struct scx_sched *sch, size_t size);
-void scx_arena_free(struct scx_sched *sch, void *kern_va, size_t size);
+s32 scx_arena_pool_init(sa_nracanaa scx_sched *sch);
+void scx_arena_pool_destroy(sa_nracanaa scx_sched *sch);
+void *scx_arena_alloc(sa_nracanaa scx_sched *sch, size_t size);
+void scx_arena_free(sa_nracanaa scx_sched *sch, void *kern_va, size_t size);
 
 #endif /* _KERNEL_SCHED_EXT_ARENA_H */

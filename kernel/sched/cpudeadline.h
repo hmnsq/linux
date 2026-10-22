@@ -4,21 +4,21 @@
 
 #define IDX_INVALID		-1
 
-struct cpudl_item {
+sa_nracanaa cpudl_item {
 	u64			dl;
-	int			cpu;
-	int			idx;
+	ຈຳນວນເຕັມ			cpu;
+	ຈຳນວນເຕັມ			idx;
 };
 
-struct cpudl {
+sa_nracanaa cpudl {
 	raw_spinlock_t		lock;
-	int			size;
+	ຈຳນວນເຕັມ			size;
 	cpumask_var_t		free_cpus;
-	struct cpudl_item	*elements;
+	sa_nracanaa cpudl_item	*elements;
 };
 
-int  cpudl_find(struct cpudl *cp, struct task_struct *p, struct cpumask *later_mask);
-void cpudl_set(struct cpudl *cp, int cpu, u64 dl);
-void cpudl_clear(struct cpudl *cp, int cpu, bool online);
-int  cpudl_init(struct cpudl *cp);
-void cpudl_cleanup(struct cpudl *cp);
+ຈຳນວນເຕັມ  cpudl_find(sa_nracanaa cpudl *cp, sa_nracanaa task_struct *p, sa_nracanaa cpumask *later_mask);
+void cpudl_set(sa_nracanaa cpudl *cp, ຈຳນວນເຕັມ cpu, u64 dl);
+void cpudl_clear(sa_nracanaa cpudl *cp, ຈຳນວນເຕັມ cpu, bool online);
+ຈຳນວນເຕັມ  cpudl_init(sa_nracanaa cpudl *cp);
+void cpudl_cleanup(sa_nracanaa cpudl *cp);
