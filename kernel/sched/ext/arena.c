@@ -14,34 +14,34 @@
  * Copyright (c) 2026 Meta Platforms, Inc. and affiliates.
  * Copyright (c) 2026 Tejun Heo <tj@kernel.org>
  */
-#include <linux/genalloc.h>
+#अन्तर्भाव <linux/genalloc.h>
 
-#include "internal.h"
-#include "arena.h"
+#अन्तर्भाव "internal.h"
+#अन्तर्भाव "arena.h"
 
-enum scx_arena_consts {
+गणना scx_arena_consts {
 	SCX_ARENA_MIN_ORDER		= 3,	/* 8-byte minimum sub-allocation */
 	SCX_ARENA_GROW_PAGES		= 4,	/* per growth */
 };
 
-s32 scx_arena_pool_init(struct scx_sched *sch)
+s32 scx_arena_pool_init(संरचना scx_sched *sch)
 {
-	if (!sch->arena_map)
-		return 0;
+	जर (!sch->arena_map)
+		परत 0;
 
-	sch->arena_pool = gen_pool_create(SCX_ARENA_MIN_ORDER, NUMA_NO_NODE);
-	if (!sch->arena_pool)
-		return -ENOMEM;
-	return 0;
+	sch->arena_pool = gen_pool_create(SCX_ARENA_MIN_ORDER, NUMA_NO_गाठ);
+	जर (!sch->arena_pool)
+		परत -ENOMEM;
+	परत 0;
 }
 
-static void scx_arena_clear_chunk(struct gen_pool *pool, struct gen_pool_chunk *chunk,
-				  void *data)
+स्थिर शून्य scx_arena_clear_chunk(संरचना gen_pool *pool, संरचना gen_pool_chunk *chunk,
+				  शून्य *data)
 {
-	int order = pool->min_alloc_order;
-	size_t chunk_sz = chunk->end_addr - chunk->start_addr + 1;
-	unsigned long end_bit = chunk_sz >> order;
-	unsigned long b, e;
+	पूर्णांक order = pool->min_alloc_order;
+	माप_प्रकार chunk_sz = chunk->end_addr - chunk->start_addr + 1;
+	अचिन्हित दीर्घ end_bit = chunk_sz >> order;
+	अचिन्हित दीर्घ b, e;
 
 	for_each_set_bitrange(b, e, chunk->bits, end_bit)
 		gen_pool_free(pool, chunk->start_addr + (b << order),
@@ -53,13 +53,13 @@ static void scx_arena_clear_chunk(struct gen_pool *pool, struct gen_pool_chunk *
  * scx_arena_clear_chunk() so gen_pool_destroy() doesn't BUG. The underlying
  * arena pages are released when the arena map itself is torn down.
  */
-void scx_arena_pool_destroy(struct scx_sched *sch)
+शून्य scx_arena_pool_destroy(संरचना scx_sched *sch)
 {
-	if (!sch->arena_pool)
-		return;
-	gen_pool_for_each_chunk(sch->arena_pool, scx_arena_clear_chunk, NULL);
+	जर (!sch->arena_pool)
+		परत;
+	gen_pool_for_each_chunk(sch->arena_pool, scx_arena_clear_chunk, रिक्त);
 	gen_pool_destroy(sch->arena_pool);
-	sch->arena_pool = NULL;
+	sch->arena_pool = रिक्त;
 }
 
 /*
@@ -67,27 +67,27 @@ void scx_arena_pool_destroy(struct scx_sched *sch)
  * gen_pool_add() (which calls vzalloc(GFP_KERNEL)) require a sleepable
  * context.
  */
-static int scx_arena_grow(struct scx_sched *sch, u32 page_cnt)
+स्थिर पूर्णांक scx_arena_grow(संरचना scx_sched *sch, u32 page_cnt)
 {
-	void *p;
-	int ret;
+	शून्य *p;
+	पूर्णांक ret;
 
-	if (!sch->arena_map || !sch->arena_pool)
-		return -EINVAL;
+	जर (!sch->arena_map || !sch->arena_pool)
+		परत -EINVAL;
 
-	p = bpf_arena_alloc_pages_sleepable(sch->arena_map, NULL,
-					    page_cnt, NUMA_NO_NODE, 0);
-	if (!p)
-		return -ENOMEM;
+	p = bpf_arena_alloc_pages_sleepable(sch->arena_map, रिक्त,
+					    page_cnt, NUMA_NO_गाठ, 0);
+	जर (!p)
+		परत -ENOMEM;
 
 	ret = gen_pool_add(sch->arena_pool,
-			   (unsigned long)scx_arena_to_kaddr(sch, p),
-			   page_cnt * PAGE_SIZE, NUMA_NO_NODE);
-	if (ret) {
+			   (अचिन्हित दीर्घ)scx_arena_to_kaddr(sch, p),
+			   page_cnt * PAGE_SIZE, NUMA_NO_गाठ);
+	जर (ret) {
 		bpf_arena_free_pages_non_sleepable(sch->arena_map, p, page_cnt);
-		return ret;
+		परत ret;
 	}
-	return 0;
+	परत 0;
 }
 
 /*
@@ -95,31 +95,31 @@ static int scx_arena_grow(struct scx_sched *sch, u32 page_cnt)
  * on failure. May grow the pool via scx_arena_grow() which sleeps. Caller must
  * be in a GFP_KERNEL context.
  */
-void *scx_arena_alloc(struct scx_sched *sch, size_t size)
+शून्य *scx_arena_alloc(संरचना scx_sched *sch, माप_प्रकार size)
 {
-	unsigned long kern_va;
+	अचिन्हित दीर्घ kern_va;
 	u32 page_cnt;
 
 	might_sleep();
 
-	if (!sch->arena_pool)
-		return NULL;
+	जर (!sch->arena_pool)
+		परत रिक्त;
 
-	while (true) {
+	पर्यंत (true) {
 		kern_va = gen_pool_alloc(sch->arena_pool, size);
-		if (kern_va)
-			break;
+		जर (kern_va)
+			थांबा;
 		page_cnt = max_t(u32, SCX_ARENA_GROW_PAGES,
 				 (size + PAGE_SIZE - 1) >> PAGE_SHIFT);
-		if (scx_arena_grow(sch, page_cnt))
-			return NULL;
+		जर (scx_arena_grow(sch, page_cnt))
+			परत रिक्त;
 	}
 
-	return (void *)kern_va;
+	परत (शून्य *)kern_va;
 }
 
-void scx_arena_free(struct scx_sched *sch, void *kern_va, size_t size)
+शून्य scx_arena_free(संरचना scx_sched *sch, शून्य *kern_va, माप_प्रकार size)
 {
-	if (sch->arena_pool && kern_va)
-		gen_pool_free(sch->arena_pool, (unsigned long)kern_va, size);
+	जर (sch->arena_pool && kern_va)
+		gen_pool_free(sch->arena_pool, (अचिन्हित दीर्घ)kern_va, size);
 }
