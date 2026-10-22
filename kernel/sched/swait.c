@@ -2,16 +2,16 @@
 /*
  * <linux/swait.h> (simple wait queues ) implementation:
  */
-#include "sched.h"
+#شامل "sched.h"
 
-void __init_swait_queue_head(struct swait_queue_head *q, const char *name,
-			     struct lock_class_key *key)
+خالی __init_swait_queue_head(ساخت swait_قطار_سر *q, ثابت حرف *name,
+			     ساخت تالا_class_کلید *کلید)
 {
-	raw_spin_lock_init(&q->lock);
-	lockdep_set_class_and_name(&q->lock, key, name);
-	INIT_LIST_HEAD(&q->task_list);
+	raw_spin_تالا_init(&q->تالا);
+	lockdep_سیٹ_class_and_name(&q->تالا, کلید, name);
+	INIT_LIST_سر(&q->task_list);
 }
-EXPORT_SYMBOL(__init_swait_queue_head);
+EXPORT_علامت(__init_swait_queue_head);
 
 /*
  * The thing about the wake_up_state() return value; I think we can ignore it.
@@ -19,18 +19,18 @@ EXPORT_SYMBOL(__init_swait_queue_head);
  * If for some reason it would return 0, that means the previously waiting
  * task is already running, so it will observe condition true (or has already).
  */
-void swake_up_locked(struct swait_queue_head *q, int wake_flags)
+خالی swake_اوپر_locked(ساخت swait_قطار_سر *q, صحیح wake_flags)
 {
-	struct swait_queue *curr;
+	ساخت swait_قطار *curr;
 
-	if (list_empty(&q->task_list))
-		return;
+	اگر (list_خالی_خانے(&q->task_list))
+		واپس;
 
-	curr = list_first_entry(&q->task_list, typeof(*curr), task_list);
-	try_to_wake_up(curr->task, TASK_NORMAL, wake_flags);
+	curr = list_پہلا_اندراج(&q->task_list, typeof(*curr), task_list);
+	try_مقصد_wake_اوپر(curr->task, TASK_معمول, wake_flags);
 	list_del_init(&curr->task_list);
 }
-EXPORT_SYMBOL(swake_up_locked);
+EXPORT_علامت(swake_اوپر_locked);
 
 /*
  * Wake up all waiters. This is an interface which is solely exposed for
@@ -39,107 +39,107 @@ EXPORT_SYMBOL(swake_up_locked);
  * It is intentionally different from swake_up_all() to allow usage from
  * hard interrupt context and interrupt disabled regions.
  */
-void swake_up_all_locked(struct swait_queue_head *q)
+خالی swake_اوپر_all_locked(ساخت swait_قطار_سر *q)
 {
-	while (!list_empty(&q->task_list))
-		swake_up_locked(q, 0);
+	جب (!list_خالی_خانے(&q->task_list))
+		swake_اوپر_locked(q, 0);
 }
 
-void swake_up_one(struct swait_queue_head *q)
+خالی swake_اوپر_one(ساخت swait_قطار_سر *q)
 {
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
-	swake_up_locked(q, 0);
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	raw_spin_تالا_irqsave(&q->تالا, flags);
+	swake_اوپر_locked(q, 0);
+	raw_spin_unlock_irqrestore(&q->تالا, flags);
 }
-EXPORT_SYMBOL(swake_up_one);
+EXPORT_علامت(swake_اوپر_one);
 
 /*
  * Does not allow usage from IRQ disabled, since we must be able to
  * release IRQs to guarantee bounded hold time.
  */
-void swake_up_all(struct swait_queue_head *q)
+خالی swake_اوپر_all(ساخت swait_قطار_سر *q)
 {
-	struct swait_queue *curr;
-	LIST_HEAD(tmp);
+	ساخت swait_قطار *curr;
+	LIST_سر(tmp);
 
-	raw_spin_lock_irq(&q->lock);
+	raw_spin_تالا_irq(&q->تالا);
 	list_splice_init(&q->task_list, &tmp);
-	while (!list_empty(&tmp)) {
-		curr = list_first_entry(&tmp, typeof(*curr), task_list);
+	جب (!list_خالی_خانے(&tmp)) {
+		curr = list_پہلا_اندراج(&tmp, typeof(*curr), task_list);
 
-		wake_up_state(curr->task, TASK_NORMAL);
+		wake_اوپر_state(curr->task, TASK_معمول);
 		list_del_init(&curr->task_list);
 
-		if (list_empty(&tmp))
-			break;
+		اگر (list_خالی_خانے(&tmp))
+			توڑو;
 
-		raw_spin_unlock_irq(&q->lock);
-		raw_spin_lock_irq(&q->lock);
+		raw_spin_unlock_irq(&q->تالا);
+		raw_spin_تالا_irq(&q->تالا);
 	}
-	raw_spin_unlock_irq(&q->lock);
+	raw_spin_unlock_irq(&q->تالا);
 }
-EXPORT_SYMBOL(swake_up_all);
+EXPORT_علامت(swake_اوپر_all);
 
-void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait)
+خالی __prepare_to_swait(ساخت swait_قطار_سر *q, ساخت swait_قطار *wait)
 {
 	wait->task = current;
-	if (list_empty(&wait->task_list))
-		list_add_tail(&wait->task_list, &q->task_list);
+	اگر (list_خالی_خانے(&wait->task_list))
+		list_جوڑو_دم(&wait->task_list, &q->task_list);
 }
 
-void prepare_to_swait_exclusive(struct swait_queue_head *q, struct swait_queue *wait, int state)
+خالی prepare_مقصد_swait_exclusive(ساخت swait_قطار_سر *q, ساخت swait_قطار *wait, صحیح state)
 {
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
+	raw_spin_تالا_irqsave(&q->تالا, flags);
 	__prepare_to_swait(q, wait);
-	set_current_state(state);
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	سیٹ_current_state(state);
+	raw_spin_unlock_irqrestore(&q->تالا, flags);
 }
-EXPORT_SYMBOL(prepare_to_swait_exclusive);
+EXPORT_علامت(prepare_مقصد_swait_exclusive);
 
-long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queue *wait, int state)
+طویل prepare_مقصد_swait_event(ساخت swait_قطار_سر *q, ساخت swait_قطار *wait, صحیح state)
 {
-	unsigned long flags;
-	long ret = 0;
+	غیرعلامتی طویل flags;
+	طویل ret = 0;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
-	if (signal_pending_state(state, current)) {
+	raw_spin_تالا_irqsave(&q->تالا, flags);
+	اگر (signal_pending_state(state, current)) {
 		/*
 		 * See prepare_to_wait_event(). TL;DR, subsequent swake_up_one()
 		 * must not see us.
 		 */
 		list_del_init(&wait->task_list);
 		ret = -ERESTARTSYS;
-	} else {
+	} ورنہ {
 		__prepare_to_swait(q, wait);
-		set_current_state(state);
+		سیٹ_current_state(state);
 	}
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	raw_spin_unlock_irqrestore(&q->تالا, flags);
 
-	return ret;
+	واپس ret;
 }
-EXPORT_SYMBOL(prepare_to_swait_event);
+EXPORT_علامت(prepare_مقصد_swait_event);
 
-void __finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
+خالی __finish_swait(ساخت swait_قطار_سر *q, ساخت swait_قطار *wait)
 {
 	__set_current_state(TASK_RUNNING);
-	if (!list_empty(&wait->task_list))
+	اگر (!list_خالی_خانے(&wait->task_list))
 		list_del_init(&wait->task_list);
 }
 
-void finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
+خالی اختتام_swait(ساخت swait_قطار_سر *q, ساخت swait_قطار *wait)
 {
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
 	__set_current_state(TASK_RUNNING);
 
-	if (!list_empty_careful(&wait->task_list)) {
-		raw_spin_lock_irqsave(&q->lock, flags);
+	اگر (!list_خالی_خانے_careful(&wait->task_list)) {
+		raw_spin_تالا_irqsave(&q->تالا, flags);
 		list_del_init(&wait->task_list);
-		raw_spin_unlock_irqrestore(&q->lock, flags);
+		raw_spin_unlock_irqrestore(&q->تالا, flags);
 	}
 }
-EXPORT_SYMBOL(finish_swait);
+EXPORT_علامت(اختتام_swait);

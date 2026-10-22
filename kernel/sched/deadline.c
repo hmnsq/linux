@@ -16,281 +16,281 @@
  *                    Fabio Checconi <fchecconi@gmail.com>
  */
 
-#include <linux/cpuset.h>
-#include <linux/sched/clock.h>
-#include <linux/sched/deadline.h>
-#include <uapi/linux/sched/types.h>
-#include "sched.h"
-#include "pelt.h"
+#شامل <linux/cpuset.h>
+#شامل <linux/sched/clock.h>
+#شامل <linux/sched/deadline.h>
+#شامل <uapi/linux/sched/types.h>
+#شامل "sched.h"
+#شامل "pelt.h"
 
 /*
  * Default limits for DL period; on the top end we guard against small util
  * tasks still getting ridiculously long effective runtimes, on the bottom end we
  * guard against timer DoS.
  */
-static unsigned int sysctl_sched_dl_period_max = 1 << 22; /* ~4 seconds */
-static unsigned int sysctl_sched_dl_period_min = 100;     /* 100 us */
-#ifdef CONFIG_SYSCTL
-static const struct ctl_table sched_dl_sysctls[] = {
+ساکن غیرعلامتی صحیح sysctl_sched_dl_period_max = 1 << 22; /* ~4 seconds */
+ساکن غیرعلامتی صحیح sysctl_sched_dl_period_min = 100;     /* 100 us */
+#اگر_تعریف_شدہ CONFIG_SYSCTL
+ساکن ثابت ساخت ctl_جدول sched_dl_sysctls[] = {
 	{
 		.procname       = "sched_deadline_period_max_us",
-		.data           = &sysctl_sched_dl_period_max,
-		.maxlen         = sizeof(unsigned int),
-		.mode           = 0644,
+		.ڈیٹا           = &sysctl_sched_dl_period_max,
+		.maxlen         = حجم(غیرعلامتی صحیح),
+		.منوال           = 0644,
 		.proc_handler   = proc_douintvec_minmax,
-		.extra1         = (void *)&sysctl_sched_dl_period_min,
+		.extra1         = (خالی *)&sysctl_sched_dl_period_min,
 	},
 	{
 		.procname       = "sched_deadline_period_min_us",
-		.data           = &sysctl_sched_dl_period_min,
-		.maxlen         = sizeof(unsigned int),
-		.mode           = 0644,
+		.ڈیٹا           = &sysctl_sched_dl_period_min,
+		.maxlen         = حجم(غیرعلامتی صحیح),
+		.منوال           = 0644,
 		.proc_handler   = proc_douintvec_minmax,
-		.extra2         = (void *)&sysctl_sched_dl_period_max,
+		.extra2         = (خالی *)&sysctl_sched_dl_period_max,
 	},
 };
 
-static int __init sched_dl_sysctl_init(void)
+ساکن صحیح __init sched_dl_sysctl_init(خالی)
 {
-	register_sysctl_init("kernel", sched_dl_sysctls);
-	return 0;
+	رجسٹر_sysctl_init("kernel", sched_dl_sysctls);
+	واپس 0;
 }
 late_initcall(sched_dl_sysctl_init);
-#endif /* CONFIG_SYSCTL */
+#اگر_ختم /* CONFIG_SYSCTL */
 
-static inline struct rq *rq_of_dl_rq(struct dl_rq *dl_rq)
+ساکن اندرونی ساخت rq *rq_کا_dl_rq(ساخت dl_rq *dl_rq)
 {
-	return container_of(dl_rq, struct rq, dl);
+	واپس container_کا(dl_rq, ساخت rq, dl);
 }
 
-static inline struct rq *rq_of_dl_se(struct sched_dl_entity *dl_se)
+ساکن اندرونی ساخت rq *rq_کا_dl_se(ساخت sched_dl_entity *dl_se)
 {
-	struct rq *rq = dl_se->rq;
+	ساخت rq *rq = dl_se->rq;
 
-	if (!dl_server(dl_se))
-		rq = task_rq(dl_task_of(dl_se));
+	اگر (!dl_server(dl_se))
+		rq = task_rq(dl_task_کا(dl_se));
 
-	return rq;
+	واپس rq;
 }
 
-static inline struct dl_rq *dl_rq_of_se(struct sched_dl_entity *dl_se)
+ساکن اندرونی ساخت dl_rq *dl_rq_کا_se(ساخت sched_dl_entity *dl_se)
 {
-	return &rq_of_dl_se(dl_se)->dl;
+	واپس &rq_کا_dl_se(dl_se)->dl;
 }
 
-static inline int on_dl_rq(struct sched_dl_entity *dl_se)
+ساکن اندرونی صحیح on_dl_rq(ساخت sched_dl_entity *dl_se)
 {
-	return !RB_EMPTY_NODE(&dl_se->rb_node);
+	واپس !RB_خالی_خانے_گرہ(&dl_se->rb_گرہ);
 }
 
-#ifdef CONFIG_RT_MUTEXES
-static inline struct sched_dl_entity *pi_of(struct sched_dl_entity *dl_se)
+#اگر_تعریف_شدہ CONFIG_RT_MUTEXES
+ساکن اندرونی ساخت sched_dl_entity *pi_کا(ساخت sched_dl_entity *dl_se)
 {
-	return dl_se->pi_se;
+	واپس dl_se->pi_se;
 }
 
-static inline bool is_dl_boosted(struct sched_dl_entity *dl_se)
+ساکن اندرونی bool is_dl_boosted(ساخت sched_dl_entity *dl_se)
 {
-	return pi_of(dl_se) != dl_se;
+	واپس pi_کا(dl_se) != dl_se;
 }
-#else /* !CONFIG_RT_MUTEXES: */
-static inline struct sched_dl_entity *pi_of(struct sched_dl_entity *dl_se)
+#ورنہ /* !CONFIG_RT_MUTEXES: */
+ساکن اندرونی ساخت sched_dl_entity *pi_کا(ساخت sched_dl_entity *dl_se)
 {
-	return dl_se;
-}
-
-static inline bool is_dl_boosted(struct sched_dl_entity *dl_se)
-{
-	return false;
-}
-#endif /* !CONFIG_RT_MUTEXES */
-
-static inline u8 dl_get_type(struct sched_dl_entity *dl_se, struct rq *rq)
-{
-	if (!dl_server(dl_se))
-		return DL_TASK;
-	if (dl_se == &rq->fair_server)
-		return DL_SERVER_FAIR;
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (dl_se == &rq->ext_server)
-		return DL_SERVER_EXT;
-#endif
-	return DL_OTHER;
+	واپس dl_se;
 }
 
-static inline struct dl_bw *dl_bw_of(int i)
+ساکن اندرونی bool is_dl_boosted(ساخت sched_dl_entity *dl_se)
 {
-	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
+	واپس false;
+}
+#اگر_ختم /* !CONFIG_RT_MUTEXES */
+
+ساکن اندرونی u8 dl_get_type(ساخت sched_dl_entity *dl_se, ساخت rq *rq)
+{
+	اگر (!dl_server(dl_se))
+		واپس DL_TASK;
+	اگر (dl_se == &rq->fair_server)
+		واپس DL_SERVER_FAIR;
+#اگر_تعریف_شدہ CONFIG_SCHED_CLASS_EXT
+	اگر (dl_se == &rq->ext_server)
+		واپس DL_SERVER_EXT;
+#اگر_ختم
+	واپس DL_OTHER;
+}
+
+ساکن اندرونی ساخت dl_bw *dl_bw_کا(صحیح i)
+{
+	RCU_LOCKDEP_WARN(!rcu_read_تالا_sched_held(),
 			 "sched RCU must be held");
-	return &cpu_rq(i)->rd->dl_bw;
+	واپس &cpu_rq(i)->rd->dl_bw;
 }
 
-static inline int dl_bw_cpus(int i)
+ساکن اندرونی صحیح dl_bw_cpus(صحیح i)
 {
-	struct root_domain *rd = cpu_rq(i)->rd;
+	ساخت جڑ_domain *rd = cpu_rq(i)->rd;
 
-	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
+	RCU_LOCKDEP_WARN(!rcu_read_تالا_sched_held(),
 			 "sched RCU must be held");
 
-	return cpumask_weight_and(rd->span, cpu_active_mask);
+	واپس cpumask_وزن_and(rd->وسعت, cpu_فعال_نقاب);
 }
 
-static inline unsigned long __dl_bw_capacity(const struct cpumask *mask)
+ساکن اندرونی غیرعلامتی طویل __dl_bw_capacity(ثابت ساخت cpumask *نقاب)
 {
-	unsigned long cap = 0;
-	int i;
+	غیرعلامتی طویل cap = 0;
+	صحیح i;
 
-	for_each_cpu_and(i, mask, cpu_active_mask)
-		cap += arch_scale_cpu_capacity(i);
+	for_each_cpu_and(i, نقاب, cpu_فعال_نقاب)
+		cap += arch_scale_cpu_استعداد(i);
 
-	return cap;
+	واپس cap;
 }
 
 /*
  * XXX Fix: If 'rq->rd == def_root_domain' perform AC against capacity
  * of the CPU the task is running on rather rd's \Sum CPU capacity.
  */
-static inline unsigned long dl_bw_capacity(int i)
+ساکن اندرونی غیرعلامتی طویل dl_bw_استعداد(صحیح i)
 {
-	if (!sched_asym_cpucap_active() &&
-	    arch_scale_cpu_capacity(i) == SCHED_CAPACITY_SCALE) {
-		return dl_bw_cpus(i) << SCHED_CAPACITY_SHIFT;
-	} else {
-		RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
+	اگر (!sched_asym_cpucap_فعال() &&
+	    arch_scale_cpu_استعداد(i) == SCHED_استعداد_SCALE) {
+		واپس dl_bw_cpus(i) << SCHED_استعداد_سرکاؤ;
+	} ورنہ {
+		RCU_LOCKDEP_WARN(!rcu_read_تالا_sched_held(),
 				 "sched RCU must be held");
 
-		return __dl_bw_capacity(cpu_rq(i)->rd->span);
+		واپس __dl_bw_capacity(cpu_rq(i)->rd->وسعت);
 	}
 }
 
-bool dl_bw_visited(int cpu, u64 cookie)
+bool dl_bw_دیکھا(صحیح cpu, u64 cookie)
 {
-	struct root_domain *rd = cpu_rq(cpu)->rd;
+	ساخت جڑ_domain *rd = cpu_rq(cpu)->rd;
 
-	if (rd->visit_cookie == cookie)
-		return true;
+	اگر (rd->دورہ_cookie == cookie)
+		واپس true;
 
-	rd->visit_cookie = cookie;
-	return false;
+	rd->دورہ_cookie = cookie;
+	واپس false;
 }
 
-static inline
-void __dl_update(struct dl_bw *dl_b, s64 bw)
+ساکن اندرونی
+خالی __dl_update(ساخت dl_bw *dl_b, s64 bw)
 {
-	struct root_domain *rd = container_of(dl_b, struct root_domain, dl_bw);
-	int i;
+	ساخت جڑ_domain *rd = container_کا(dl_b, ساخت جڑ_domain, dl_bw);
+	صحیح i;
 
-	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
+	RCU_LOCKDEP_WARN(!rcu_read_تالا_sched_held(),
 			 "sched RCU must be held");
-	for_each_cpu_and(i, rd->span, cpu_active_mask) {
-		struct rq *rq = cpu_rq(i);
+	for_each_cpu_and(i, rd->وسعت, cpu_فعال_نقاب) {
+		ساخت rq *rq = cpu_rq(i);
 
 		rq->dl.extra_bw += bw;
 	}
 }
 
-static inline
-void __dl_sub(struct dl_bw *dl_b, u64 tsk_bw, int cpus)
+ساکن اندرونی
+خالی __dl_sub(ساخت dl_bw *dl_b, u64 tsk_bw, صحیح cpus)
 {
-	dl_b->total_bw -= tsk_bw;
+	dl_b->کل_bw -= tsk_bw;
 	__dl_update(dl_b, (s32)tsk_bw / cpus);
 }
 
-static inline
-void __dl_add(struct dl_bw *dl_b, u64 tsk_bw, int cpus)
+ساکن اندرونی
+خالی __dl_add(ساخت dl_bw *dl_b, u64 tsk_bw, صحیح cpus)
 {
-	dl_b->total_bw += tsk_bw;
+	dl_b->کل_bw += tsk_bw;
 	__dl_update(dl_b, -((s32)tsk_bw / cpus));
 }
 
-static inline bool
-__dl_overflow(struct dl_bw *dl_b, unsigned long cap, u64 old_bw, u64 new_bw)
+ساکن اندرونی bool
+__dl_overflow(ساخت dl_bw *dl_b, غیرعلامتی طویل cap, u64 old_bw, u64 new_bw)
 {
-	return dl_b->bw != -1 &&
-	       cap_scale(dl_b->bw, cap) < dl_b->total_bw - old_bw + new_bw;
+	واپس dl_b->bw != -1 &&
+	       cap_scale(dl_b->bw, cap) < dl_b->کل_bw - old_bw + new_bw;
 }
 
-static inline
-void __add_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی __add_running_bw(u64 dl_bw, ساخت dl_rq *dl_rq)
 {
 	u64 old = dl_rq->running_bw;
 
-	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
+	lockdep_assert_rq_held(rq_کا_dl_rq(dl_rq));
 	dl_rq->running_bw += dl_bw;
-	WARN_ON_ONCE(dl_rq->running_bw < old); /* overflow */
+	WARN_ON_ONCE(dl_rq->running_bw < old); /*حد_سے_تجاوز*/
 	WARN_ON_ONCE(dl_rq->running_bw > dl_rq->this_bw);
 	/* kick cpufreq (see the comment in kernel/sched/sched.h). */
-	cpufreq_update_util(rq_of_dl_rq(dl_rq), 0);
+	cpufreq_update_util(rq_کا_dl_rq(dl_rq), 0);
 }
 
-static inline
-void __sub_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی __sub_running_bw(u64 dl_bw, ساخت dl_rq *dl_rq)
 {
 	u64 old = dl_rq->running_bw;
 
-	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
+	lockdep_assert_rq_held(rq_کا_dl_rq(dl_rq));
 	dl_rq->running_bw -= dl_bw;
 	WARN_ON_ONCE(dl_rq->running_bw > old); /* underflow */
-	if (dl_rq->running_bw > old)
+	اگر (dl_rq->running_bw > old)
 		dl_rq->running_bw = 0;
 	/* kick cpufreq (see the comment in kernel/sched/sched.h). */
-	cpufreq_update_util(rq_of_dl_rq(dl_rq), 0);
+	cpufreq_update_util(rq_کا_dl_rq(dl_rq), 0);
 }
 
-static inline
-void __add_rq_bw(u64 dl_bw, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی __add_rq_bw(u64 dl_bw, ساخت dl_rq *dl_rq)
 {
 	u64 old = dl_rq->this_bw;
 
-	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
+	lockdep_assert_rq_held(rq_کا_dl_rq(dl_rq));
 	dl_rq->this_bw += dl_bw;
-	WARN_ON_ONCE(dl_rq->this_bw < old); /* overflow */
+	WARN_ON_ONCE(dl_rq->this_bw < old); /*حد_سے_تجاوز*/
 }
 
-static inline
-void __sub_rq_bw(u64 dl_bw, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی __sub_rq_bw(u64 dl_bw, ساخت dl_rq *dl_rq)
 {
 	u64 old = dl_rq->this_bw;
 
-	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
+	lockdep_assert_rq_held(rq_کا_dl_rq(dl_rq));
 	dl_rq->this_bw -= dl_bw;
 	WARN_ON_ONCE(dl_rq->this_bw > old); /* underflow */
-	if (dl_rq->this_bw > old)
+	اگر (dl_rq->this_bw > old)
 		dl_rq->this_bw = 0;
 	WARN_ON_ONCE(dl_rq->running_bw > dl_rq->this_bw);
 }
 
-static inline
-void add_rq_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی جوڑو_rq_bw(ساخت sched_dl_entity *dl_se, ساخت dl_rq *dl_rq)
 {
-	if (!dl_entity_is_special(dl_se))
+	اگر (!dl_entity_is_special(dl_se))
 		__add_rq_bw(dl_se->dl_bw, dl_rq);
 }
 
-static inline
-void sub_rq_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی sub_rq_bw(ساخت sched_dl_entity *dl_se, ساخت dl_rq *dl_rq)
 {
-	if (!dl_entity_is_special(dl_se))
+	اگر (!dl_entity_is_special(dl_se))
 		__sub_rq_bw(dl_se->dl_bw, dl_rq);
 }
 
-static inline
-void add_running_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی جوڑو_running_bw(ساخت sched_dl_entity *dl_se, ساخت dl_rq *dl_rq)
 {
-	if (!dl_entity_is_special(dl_se))
+	اگر (!dl_entity_is_special(dl_se))
 		__add_running_bw(dl_se->dl_bw, dl_rq);
 }
 
-static inline
-void sub_running_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی sub_running_bw(ساخت sched_dl_entity *dl_se, ساخت dl_rq *dl_rq)
 {
-	if (!dl_entity_is_special(dl_se))
+	اگر (!dl_entity_is_special(dl_se))
 		__sub_running_bw(dl_se->dl_bw, dl_rq);
 }
 
-static void dl_rq_change_utilization(struct rq *rq, struct sched_dl_entity *dl_se, u64 new_bw)
+ساکن خالی dl_rq_change_utilization(ساخت rq *rq, ساخت sched_dl_entity *dl_se, u64 new_bw)
 {
-	if (dl_se->dl_non_contending) {
+	اگر (dl_se->dl_non_contending) {
 		sub_running_bw(dl_se, &rq->dl);
 		dl_se->dl_non_contending = 0;
 
@@ -301,49 +301,49 @@ static void dl_rq_change_utilization(struct rq *rq, struct sched_dl_entity *dl_s
 		 * will not touch the rq's active utilization,
 		 * so we are still safe.
 		 */
-		if (hrtimer_try_to_cancel(&dl_se->inactive_timer) == 1) {
-			if (!dl_server(dl_se))
-				put_task_struct(dl_task_of(dl_se));
+		اگر (hrtimer_try_مقصد_cancel(&dl_se->inactive_timer) == 1) {
+			اگر (!dl_server(dl_se))
+				put_task_struct(dl_task_کا(dl_se));
 		}
 	}
 	__sub_rq_bw(dl_se->dl_bw, &rq->dl);
 	__add_rq_bw(new_bw, &rq->dl);
 }
 
-static __always_inline
-void cancel_dl_timer(struct sched_dl_entity *dl_se, struct hrtimer *timer)
+ساکن __always_inline
+خالی cancel_dl_timer(ساخت sched_dl_entity *dl_se, ساخت hrtimer *timer)
 {
 	/*
 	 * If the timer callback was running (hrtimer_try_to_cancel == -1),
 	 * it will eventually call put_task_struct().
 	 */
-	if (hrtimer_try_to_cancel(timer) == 1 && !dl_server(dl_se))
-		put_task_struct(dl_task_of(dl_se));
+	اگر (hrtimer_try_مقصد_cancel(timer) == 1 && !dl_server(dl_se))
+		put_task_struct(dl_task_کا(dl_se));
 }
 
-static __always_inline
-void cancel_replenish_timer(struct sched_dl_entity *dl_se)
+ساکن __always_inline
+خالی cancel_replenish_timer(ساخت sched_dl_entity *dl_se)
 {
 	cancel_dl_timer(dl_se, &dl_se->dl_timer);
 }
 
-static __always_inline
-void cancel_inactive_timer(struct sched_dl_entity *dl_se)
+ساکن __always_inline
+خالی cancel_inactive_timer(ساخت sched_dl_entity *dl_se)
 {
 	cancel_dl_timer(dl_se, &dl_se->inactive_timer);
 }
 
-static void dl_change_utilization(struct task_struct *p, u64 new_bw)
+ساکن خالی dl_change_utilization(ساخت task_struct *p, u64 new_bw)
 {
 	WARN_ON_ONCE(p->dl.flags & SCHED_FLAG_SUGOV);
 
-	if (task_on_rq_queued(p))
-		return;
+	اگر (task_on_rq_queued(p))
+		واپس;
 
 	dl_rq_change_utilization(task_rq(p), &p->dl, new_bw);
 }
 
-static void __dl_clear_params(struct sched_dl_entity *dl_se);
+ساکن خالی __dl_clear_params(ساخت sched_dl_entity *dl_se);
 
 /*
  * The utilization of a task cannot be immediately removed from
@@ -399,26 +399,26 @@ static void __dl_clear_params(struct sched_dl_entity *dl_se);
  * up, and checks if the task is still in the "ACTIVE non contending"
  * state or not (in the second case, it updates running_bw).
  */
-static void task_non_contending(struct sched_dl_entity *dl_se, bool dl_task)
+ساکن خالی task_non_contending(ساخت sched_dl_entity *dl_se, bool dl_task)
 {
-	struct hrtimer *timer = &dl_se->inactive_timer;
-	struct rq *rq = rq_of_dl_se(dl_se);
-	struct dl_rq *dl_rq = &rq->dl;
-	s64 zerolag_time;
+	ساخت hrtimer *timer = &dl_se->inactive_timer;
+	ساخت rq *rq = rq_کا_dl_se(dl_se);
+	ساخت dl_rq *dl_rq = &rq->dl;
+	s64 zerolag_وقت;
 
 	/*
 	 * If this is a non-deadline task that has been boosted,
 	 * do nothing
 	 */
-	if (dl_se->dl_runtime == 0)
-		return;
+	اگر (dl_se->dl_runtime == 0)
+		واپس;
 
-	if (dl_entity_is_special(dl_se))
-		return;
+	اگر (dl_entity_is_special(dl_se))
+		واپس;
 
 	WARN_ON(dl_se->dl_non_contending);
 
-	zerolag_time = dl_se->deadline -
+	zerolag_وقت = dl_se->deadline -
 		 div64_long((dl_se->runtime * dl_se->dl_period),
 			dl_se->dl_runtime);
 
@@ -426,58 +426,58 @@ static void task_non_contending(struct sched_dl_entity *dl_se, bool dl_task)
 	 * Using relative times instead of the absolute "0-lag time"
 	 * allows to simplify the code
 	 */
-	zerolag_time -= rq_clock(rq);
+	zerolag_وقت -= rq_clock(rq);
 
 	/*
 	 * If the "0-lag time" already passed, decrease the active
 	 * utilization now, instead of starting a timer
 	 */
-	if ((zerolag_time < 0) || hrtimer_active(&dl_se->inactive_timer)) {
-		if (dl_server(dl_se)) {
+	اگر ((zerolag_وقت < 0) || hrtimer_فعال(&dl_se->inactive_timer)) {
+		اگر (dl_server(dl_se)) {
 			sub_running_bw(dl_se, dl_rq);
-		} else {
-			struct task_struct *p = dl_task_of(dl_se);
+		} ورنہ {
+			ساخت task_struct *p = dl_task_کا(dl_se);
 
-			if (dl_task)
+			اگر (dl_task)
 				sub_running_bw(dl_se, dl_rq);
 
-			if (!dl_task || READ_ONCE(p->__state) == TASK_DEAD) {
-				struct dl_bw *dl_b = dl_bw_of(task_cpu(p));
+			اگر (!dl_task || READ_ONCE(p->__state) == TASK_DEAD) {
+				ساخت dl_bw *dl_b = dl_bw_کا(task_cpu(p));
 
-				if (READ_ONCE(p->__state) == TASK_DEAD)
+				اگر (READ_ONCE(p->__state) == TASK_DEAD)
 					sub_rq_bw(dl_se, &rq->dl);
-				raw_spin_lock(&dl_b->lock);
+				raw_spin_تالا(&dl_b->تالا);
 				__dl_sub(dl_b, dl_se->dl_bw, dl_bw_cpus(task_cpu(p)));
-				raw_spin_unlock(&dl_b->lock);
+				raw_spin_unlock(&dl_b->تالا);
 				__dl_clear_params(dl_se);
 			}
 		}
 
-		return;
+		واپس;
 	}
 
 	dl_se->dl_non_contending = 1;
-	if (!dl_server(dl_se))
-		get_task_struct(dl_task_of(dl_se));
+	اگر (!dl_server(dl_se))
+		get_task_struct(dl_task_کا(dl_se));
 
-	hrtimer_start(timer, ns_to_ktime(zerolag_time), HRTIMER_MODE_REL_HARD);
+	hrtimer_آغاز(timer, ns_مقصد_ktime(zerolag_وقت), HRTIMER_منوال_REL_HARD);
 }
 
-static void task_contending(struct sched_dl_entity *dl_se, int flags)
+ساکن خالی task_contending(ساخت sched_dl_entity *dl_se, صحیح flags)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	ساخت dl_rq *dl_rq = dl_rq_کا_se(dl_se);
 
 	/*
 	 * If this is a non-deadline task that has been boosted,
 	 * do nothing
 	 */
-	if (dl_se->dl_runtime == 0)
-		return;
+	اگر (dl_se->dl_runtime == 0)
+		واپس;
 
-	if (flags & ENQUEUE_MIGRATED)
-		add_rq_bw(dl_se, dl_rq);
+	اگر (flags & قطار_میں_ڈالو_MIGRATED)
+		جوڑو_rq_bw(dl_se, dl_rq);
 
-	if (dl_se->dl_non_contending) {
+	اگر (dl_se->dl_non_contending) {
 		dl_se->dl_non_contending = 0;
 		/*
 		 * If the timer handler is currently running and the
@@ -487,7 +487,7 @@ static void task_contending(struct sched_dl_entity *dl_se, int flags)
 		 * so we are still safe.
 		 */
 		cancel_inactive_timer(dl_se);
-	} else {
+	} ورنہ {
 		/*
 		 * Since "dl_non_contending" is not set, the
 		 * task's utilization has already been removed from
@@ -495,53 +495,53 @@ static void task_contending(struct sched_dl_entity *dl_se, int flags)
 		 * when the "inactive timer" fired).
 		 * So, add it back.
 		 */
-		add_running_bw(dl_se, dl_rq);
+		جوڑو_running_bw(dl_se, dl_rq);
 	}
 }
 
-static inline int is_leftmost(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+ساکن اندرونی صحیح is_leftmost(ساخت sched_dl_entity *dl_se, ساخت dl_rq *dl_rq)
 {
-	return rb_first_cached(&dl_rq->root) == &dl_se->rb_node;
+	واپس rb_پہلا_cached(&dl_rq->جڑ) == &dl_se->rb_گرہ;
 }
 
-static void init_dl_rq_bw_ratio(struct dl_rq *dl_rq);
+ساکن خالی init_dl_rq_bw_تناسب(ساخت dl_rq *dl_rq);
 
-void init_dl_bw(struct dl_bw *dl_b)
+خالی init_dl_bw(ساخت dl_bw *dl_b)
 {
-	raw_spin_lock_init(&dl_b->lock);
-	if (global_rt_runtime() == RUNTIME_INF)
+	raw_spin_تالا_init(&dl_b->تالا);
+	اگر (global_rt_runtime() == RUNTIME_INF)
 		dl_b->bw = -1;
-	else
-		dl_b->bw = to_ratio(global_rt_period(), global_rt_runtime());
-	dl_b->total_bw = 0;
+	ورنہ
+		dl_b->bw = مقصد_تناسب(global_rt_period(), global_rt_runtime());
+	dl_b->کل_bw = 0;
 }
 
-void init_dl_rq(struct dl_rq *dl_rq)
+خالی init_dl_rq(ساخت dl_rq *dl_rq)
 {
-	dl_rq->root = RB_ROOT_CACHED;
+	dl_rq->جڑ = RB_جڑ_CACHED;
 
 	/* zero means no -deadline tasks */
-	dl_rq->earliest_dl.curr = dl_rq->earliest_dl.next = 0;
+	dl_rq->earliest_dl.curr = dl_rq->earliest_dl.اگلا = 0;
 
 	dl_rq->overloaded = 0;
-	dl_rq->pushable_dl_tasks_root = RB_ROOT_CACHED;
+	dl_rq->pushable_dl_tasks_جڑ = RB_جڑ_CACHED;
 
 	dl_rq->running_bw = 0;
 	dl_rq->this_bw = 0;
-	init_dl_rq_bw_ratio(dl_rq);
+	init_dl_rq_bw_تناسب(dl_rq);
 }
 
-static inline int dl_overloaded(struct rq *rq)
+ساکن اندرونی صحیح dl_overloaded(ساخت rq *rq)
 {
-	return atomic_read(&rq->rd->dlo_count);
+	واپس atomic_read(&rq->rd->dlo_گنتی);
 }
 
-static inline void dl_set_overload(struct rq *rq)
+ساکن اندرونی خالی dl_سیٹ_overload(ساخت rq *rq)
 {
-	if (!rq->online)
-		return;
+	اگر (!rq->online)
+		واپس;
 
-	cpumask_set_cpu(rq->cpu, rq->rd->dlo_mask);
+	cpumask_سیٹ_cpu(rq->cpu, rq->rd->dlo_نقاب);
 	/*
 	 * Must be visible before the overload count is
 	 * set (as in sched_rt.c).
@@ -549,117 +549,117 @@ static inline void dl_set_overload(struct rq *rq)
 	 * Matched by the barrier in pull_dl_task().
 	 */
 	smp_wmb();
-	atomic_inc(&rq->rd->dlo_count);
+	atomic_inc(&rq->rd->dlo_گنتی);
 }
 
-static inline void dl_clear_overload(struct rq *rq)
+ساکن اندرونی خالی dl_clear_overload(ساخت rq *rq)
 {
-	if (!rq->online)
-		return;
+	اگر (!rq->online)
+		واپس;
 
-	atomic_dec(&rq->rd->dlo_count);
-	cpumask_clear_cpu(rq->cpu, rq->rd->dlo_mask);
+	atomic_dec(&rq->rd->dlo_گنتی);
+	cpumask_clear_cpu(rq->cpu, rq->rd->dlo_نقاب);
 }
 
-#define __node_2_pdl(node) \
-	rb_entry((node), struct task_struct, pushable_dl_tasks)
+#تعریف_کرو __node_2_pdl(گرہ) \
+	rb_اندراج((گرہ), ساخت task_struct, pushable_dl_tasks)
 
-static inline bool __pushable_less(struct rb_node *a, const struct rb_node *b)
+ساکن اندرونی bool __pushable_less(ساخت rb_گرہ *a, ثابت ساخت rb_گرہ *b)
 {
-	return dl_entity_preempt(&__node_2_pdl(a)->dl, &__node_2_pdl(b)->dl);
+	واپس dl_entity_preempt(&__node_2_pdl(a)->dl, &__node_2_pdl(b)->dl);
 }
 
-static inline int has_pushable_dl_tasks(struct rq *rq)
+ساکن اندرونی صحیح has_pushable_dl_tasks(ساخت rq *rq)
 {
-	return !RB_EMPTY_ROOT(&rq->dl.pushable_dl_tasks_root.rb_root);
+	واپس !RB_خالی_خانے_جڑ(&rq->dl.pushable_dl_tasks_جڑ.rb_جڑ);
 }
 
 /*
  * The list of pushable -deadline task is not a plist, like in
  * sched_rt.c, it is an rb-tree with tasks ordered by deadline.
  */
-static void enqueue_pushable_dl_task(struct rq *rq, struct task_struct *p)
+ساکن خالی قطار_میں_ڈالو_pushable_dl_task(ساخت rq *rq, ساخت task_struct *p)
 {
-	struct rb_node *leftmost;
+	ساخت rb_گرہ *leftmost;
 
-	WARN_ON_ONCE(!RB_EMPTY_NODE(&p->pushable_dl_tasks));
+	WARN_ON_ONCE(!RB_خالی_خانے_گرہ(&p->pushable_dl_tasks));
 
-	leftmost = rb_add_cached(&p->pushable_dl_tasks,
-				 &rq->dl.pushable_dl_tasks_root,
+	leftmost = rb_جوڑو_cached(&p->pushable_dl_tasks,
+				 &rq->dl.pushable_dl_tasks_جڑ,
 				 __pushable_less);
-	if (leftmost)
-		rq->dl.earliest_dl.next = p->dl.deadline;
+	اگر (leftmost)
+		rq->dl.earliest_dl.اگلا = p->dl.deadline;
 
-	if (!rq->dl.overloaded) {
-		dl_set_overload(rq);
+	اگر (!rq->dl.overloaded) {
+		dl_سیٹ_overload(rq);
 		rq->dl.overloaded = 1;
 	}
 }
 
-static void dequeue_pushable_dl_task(struct rq *rq, struct task_struct *p)
+ساکن خالی قطار_سے_نکالو_pushable_dl_task(ساخت rq *rq, ساخت task_struct *p)
 {
-	struct dl_rq *dl_rq = &rq->dl;
-	struct rb_root_cached *root = &dl_rq->pushable_dl_tasks_root;
-	struct rb_node *leftmost;
+	ساخت dl_rq *dl_rq = &rq->dl;
+	ساخت rb_جڑ_cached *جڑ = &dl_rq->pushable_dl_tasks_جڑ;
+	ساخت rb_گرہ *leftmost;
 
-	if (RB_EMPTY_NODE(&p->pushable_dl_tasks))
-		return;
+	اگر (RB_خالی_خانے_گرہ(&p->pushable_dl_tasks))
+		واپس;
 
-	leftmost = rb_erase_cached(&p->pushable_dl_tasks, root);
-	if (leftmost)
-		dl_rq->earliest_dl.next = __node_2_pdl(leftmost)->dl.deadline;
+	leftmost = rb_erase_cached(&p->pushable_dl_tasks, جڑ);
+	اگر (leftmost)
+		dl_rq->earliest_dl.اگلا = __node_2_pdl(leftmost)->dl.deadline;
 
-	RB_CLEAR_NODE(&p->pushable_dl_tasks);
+	RB_CLEAR_گرہ(&p->pushable_dl_tasks);
 
-	if (!has_pushable_dl_tasks(rq) && rq->dl.overloaded) {
+	اگر (!has_pushable_dl_tasks(rq) && rq->dl.overloaded) {
 		dl_clear_overload(rq);
 		rq->dl.overloaded = 0;
 	}
 }
 
-static int push_dl_task(struct rq *rq);
+ساکن صحیح ڈالو_dl_task(ساخت rq *rq);
 
-static inline bool need_pull_dl_task(struct rq *rq, struct task_struct *prev)
+ساکن اندرونی bool need_pull_dl_task(ساخت rq *rq, ساخت task_struct *پچھلا)
 {
-	return rq->online && dl_task(prev);
+	واپس rq->online && dl_task(پچھلا);
 }
 
-static DEFINE_PER_CPU(struct balance_callback, dl_push_head);
-static DEFINE_PER_CPU(struct balance_callback, dl_pull_head);
+ساکن DEFINE_فی_CPU(ساخت balance_callback, dl_ڈالو_سر);
+ساکن DEFINE_فی_CPU(ساخت balance_callback, dl_pull_سر);
 
-static void push_dl_tasks(struct rq *);
-static void pull_dl_task(struct rq *);
+ساکن خالی ڈالو_dl_tasks(ساخت rq *);
+ساکن خالی pull_dl_task(ساخت rq *);
 
-static inline void deadline_queue_push_tasks(struct rq *rq)
+ساکن اندرونی خالی deadline_قطار_ڈالو_tasks(ساخت rq *rq)
 {
-	if (!has_pushable_dl_tasks(rq))
-		return;
+	اگر (!has_pushable_dl_tasks(rq))
+		واپس;
 
-	queue_balance_callback(rq, &per_cpu(dl_push_head, rq->cpu), push_dl_tasks);
+	قطار_balance_callback(rq, &فی_cpu(dl_ڈالو_سر, rq->cpu), ڈالو_dl_tasks);
 }
 
-static inline void deadline_queue_pull_task(struct rq *rq)
+ساکن اندرونی خالی deadline_قطار_pull_task(ساخت rq *rq)
 {
-	queue_balance_callback(rq, &per_cpu(dl_pull_head, rq->cpu), pull_dl_task);
+	قطار_balance_callback(rq, &فی_cpu(dl_pull_سر, rq->cpu), pull_dl_task);
 }
 
-static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq);
+ساکن ساخت rq *ڈھونڈو_تالا_later_rq(ساخت task_struct *task, ساخت rq *rq);
 
-static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p)
+ساکن ساخت rq *dl_task_offline_migration(ساخت rq *rq, ساخت task_struct *p)
 {
-	struct rq *later_rq = NULL;
-	struct dl_bw *dl_b;
+	ساخت rq *later_rq = تہی;
+	ساخت dl_bw *dl_b;
 
-	later_rq = find_lock_later_rq(p, rq);
-	if (!later_rq) {
-		int cpu;
+	later_rq = ڈھونڈو_تالا_later_rq(p, rq);
+	اگر (!later_rq) {
+		صحیح cpu;
 
 		/*
 		 * If we cannot preempt any rq, fall back to pick any
 		 * online CPU:
 		 */
-		cpu = cpumask_any_and(cpu_active_mask, p->cpus_ptr);
-		if (cpu >= nr_cpu_ids) {
+		cpu = cpumask_any_and(cpu_فعال_نقاب, p->cpus_ptr);
+		اگر (cpu >= nr_cpu_ids) {
 			/*
 			 * Failed to find any suitable CPU.
 			 * The task will never come back!
@@ -671,13 +671,13 @@ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p
 			 * try a little harder to let the task
 			 * run.
 			 */
-			cpu = cpumask_any(cpu_active_mask);
+			cpu = cpumask_any(cpu_فعال_نقاب);
 		}
 		later_rq = cpu_rq(cpu);
-		double_lock_balance(rq, later_rq);
+		double_تالا_balance(rq, later_rq);
 	}
 
-	if (p->dl.dl_non_contending || p->dl.dl_throttled) {
+	اگر (p->dl.dl_non_contending || p->dl.dl_throttled) {
 		/*
 		 * Inactive timer is armed (or callback is running, but
 		 * waiting for us to release rq locks). In any case, when it
@@ -687,11 +687,11 @@ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p
 		sub_running_bw(&p->dl, &rq->dl);
 		sub_rq_bw(&p->dl, &rq->dl);
 
-		add_rq_bw(&p->dl, &later_rq->dl);
-		add_running_bw(&p->dl, &later_rq->dl);
-	} else {
+		جوڑو_rq_bw(&p->dl, &later_rq->dl);
+		جوڑو_running_bw(&p->dl, &later_rq->dl);
+	} ورنہ {
 		sub_rq_bw(&p->dl, &rq->dl);
-		add_rq_bw(&p->dl, &later_rq->dl);
+		جوڑو_rq_bw(&p->dl, &later_rq->dl);
 	}
 
 	/*
@@ -700,43 +700,43 @@ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p
 	 * domain.
 	 */
 	dl_b = &rq->rd->dl_bw;
-	raw_spin_lock(&dl_b->lock);
-	__dl_sub(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
-	raw_spin_unlock(&dl_b->lock);
+	raw_spin_تالا(&dl_b->تالا);
+	__dl_sub(dl_b, p->dl.dl_bw, cpumask_وزن(rq->rd->وسعت));
+	raw_spin_unlock(&dl_b->تالا);
 
 	dl_b = &later_rq->rd->dl_bw;
-	raw_spin_lock(&dl_b->lock);
-	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(later_rq->rd->span));
-	raw_spin_unlock(&dl_b->lock);
+	raw_spin_تالا(&dl_b->تالا);
+	__dl_add(dl_b, p->dl.dl_bw, cpumask_وزن(later_rq->rd->وسعت));
+	raw_spin_unlock(&dl_b->تالا);
 
-	set_task_cpu(p, later_rq->cpu);
+	سیٹ_task_cpu(p, later_rq->cpu);
 	double_unlock_balance(later_rq, rq);
 
-	return later_rq;
+	واپس later_rq;
 }
 
-static void
-enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags);
-static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags);
-static void dequeue_dl_entity(struct sched_dl_entity *dl_se, int flags);
-static void wakeup_preempt_dl(struct rq *rq, struct task_struct *p, int flags);
+ساکن خالی
+قطار_میں_ڈالو_dl_entity(ساخت sched_dl_entity *dl_se, صحیح flags);
+ساکن خالی قطار_میں_ڈالو_task_dl(ساخت rq *rq, ساخت task_struct *p, صحیح flags);
+ساکن خالی قطار_سے_نکالو_dl_entity(ساخت sched_dl_entity *dl_se, صحیح flags);
+ساکن خالی wakeup_preempt_dl(ساخت rq *rq, ساخت task_struct *p, صحیح flags);
 
-static inline void replenish_dl_new_period(struct sched_dl_entity *dl_se,
-					    struct rq *rq)
+ساکن اندرونی خالی replenish_dl_new_period(ساخت sched_dl_entity *dl_se,
+					    ساخت rq *rq)
 {
 	/* for non-boosted task, pi_of(dl_se) == dl_se */
-	dl_se->deadline = rq_clock(rq) + pi_of(dl_se)->dl_deadline;
-	dl_se->runtime = pi_of(dl_se)->dl_runtime;
+	dl_se->deadline = rq_clock(rq) + pi_کا(dl_se)->dl_deadline;
+	dl_se->runtime = pi_کا(dl_se)->dl_runtime;
 
 	/*
 	 * If it is a deferred reservation, and the server
 	 * is not handling an starvation case, defer it.
 	 */
-	if (dl_se->dl_defer && !dl_se->dl_defer_running) {
+	اگر (dl_se->dl_defer && !dl_se->dl_defer_running) {
 		dl_se->dl_throttled = 1;
 		dl_se->dl_defer_armed = 1;
 	}
-	trace_sched_dl_replenish_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
+	trace_sched_dl_replenish_tp(dl_se, cpu_کا(rq), dl_get_type(dl_se, rq));
 }
 
 /*
@@ -751,21 +751,21 @@ static inline void replenish_dl_new_period(struct sched_dl_entity *dl_se,
  * one, and to (try to!) reconcile itself with its own scheduling
  * parameters.
  */
-static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
+ساکن اندرونی خالی تیاری_new_dl_entity(ساخت sched_dl_entity *dl_se)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	ساخت dl_rq *dl_rq = dl_rq_کا_se(dl_se);
+	ساخت rq *rq = rq_کا_dl_rq(dl_rq);
 
 	WARN_ON(is_dl_boosted(dl_se));
-	WARN_ON(dl_time_before(rq_clock(rq), dl_se->deadline));
+	WARN_ON(dl_وقت_before(rq_clock(rq), dl_se->deadline));
 
 	/*
 	 * We are racing with the deadline timer. So, do nothing because
 	 * the deadline timer handler will take care of properly recharging
 	 * the runtime and postponing the deadline
 	 */
-	if (dl_se->dl_throttled)
-		return;
+	اگر (dl_se->dl_throttled)
+		واپس;
 
 	/*
 	 * We use the regular wall clock time to set deadlines in the
@@ -775,8 +775,8 @@ static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
 	replenish_dl_new_period(dl_se, rq);
 }
 
-static int start_dl_timer(struct sched_dl_entity *dl_se);
-static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t);
+ساکن صحیح آغاز_dl_timer(ساخت sched_dl_entity *dl_se);
+ساکن bool dl_entity_حد_سے_تجاوز(ساخت sched_dl_entity *dl_se, u64 t);
 
 /*
  * Pure Earliest Deadline First (EDF) scheduling does not deal with the
@@ -796,12 +796,12 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t);
  * could happen are, typically, a entity voluntarily trying to overcome its
  * runtime, or it just underestimated it during sched_setattr().
  */
-static void replenish_dl_entity(struct sched_dl_entity *dl_se)
+ساکن خالی replenish_dl_entity(ساخت sched_dl_entity *dl_se)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	ساخت dl_rq *dl_rq = dl_rq_کا_se(dl_se);
+	ساخت rq *rq = rq_کا_dl_rq(dl_rq);
 
-	WARN_ON_ONCE(pi_of(dl_se)->dl_runtime <= 0);
+	WARN_ON_ONCE(pi_کا(dl_se)->dl_runtime <= 0);
 
 	/*
 	 * This could be the case for a !-dl task that is boosted.
@@ -813,13 +813,13 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 	 *
 	 * In both cases, set a new period.
 	 */
-	if (dl_se->dl_deadline == 0 ||
-	    (dl_se->dl_defer_armed && dl_entity_overflow(dl_se, rq_clock(rq)))) {
-		dl_se->deadline = rq_clock(rq) + pi_of(dl_se)->dl_deadline;
-		dl_se->runtime = pi_of(dl_se)->dl_runtime;
+	اگر (dl_se->dl_deadline == 0 ||
+	    (dl_se->dl_defer_armed && dl_entity_حد_سے_تجاوز(dl_se, rq_clock(rq)))) {
+		dl_se->deadline = rq_clock(rq) + pi_کا(dl_se)->dl_deadline;
+		dl_se->runtime = pi_کا(dl_se)->dl_runtime;
 	}
 
-	if (dl_se->dl_yielded && dl_se->runtime > 0)
+	اگر (dl_se->dl_yielded && dl_se->runtime > 0)
 		dl_se->runtime = 0;
 
 	/*
@@ -828,9 +828,9 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 	 * handling of situations where the runtime overrun is
 	 * arbitrary large.
 	 */
-	while (dl_se->runtime <= 0) {
-		dl_se->deadline += pi_of(dl_se)->dl_period;
-		dl_se->runtime += pi_of(dl_se)->dl_runtime;
+	جب (dl_se->runtime <= 0) {
+		dl_se->deadline += pi_کا(dl_se)->dl_period;
+		dl_se->runtime += pi_کا(dl_se)->dl_runtime;
 	}
 
 	/*
@@ -842,25 +842,25 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 	 * resetting the deadline and the budget of the
 	 * entity.
 	 */
-	if (dl_time_before(dl_se->deadline, rq_clock(rq))) {
+	اگر (dl_وقت_before(dl_se->deadline, rq_clock(rq))) {
 		printk_deferred_once("sched: DL replenish lagged too much\n");
 		replenish_dl_new_period(dl_se, rq);
 	}
 
-	if (dl_se->dl_yielded)
+	اگر (dl_se->dl_yielded)
 		dl_se->dl_yielded = 0;
-	if (dl_se->dl_throttled)
+	اگر (dl_se->dl_throttled)
 		dl_se->dl_throttled = 0;
 
-	trace_sched_dl_replenish_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
+	trace_sched_dl_replenish_tp(dl_se, cpu_کا(rq), dl_get_type(dl_se, rq));
 
 	/*
 	 * If this is the replenishment of a deferred reservation,
 	 * clear the flag and return.
 	 */
-	if (dl_se->dl_defer_armed) {
+	اگر (dl_se->dl_defer_armed) {
 		dl_se->dl_defer_armed = 0;
-		return;
+		واپس;
 	}
 
 	/*
@@ -868,9 +868,9 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 	 * is in the future, if it is not running already, throttle the server
 	 * and arm the defer timer.
 	 */
-	if (dl_se->dl_defer && !dl_se->dl_defer_running &&
-	    dl_time_before(rq_clock(dl_se->rq), dl_se->deadline - dl_se->runtime)) {
-		if (!is_dl_boosted(dl_se)) {
+	اگر (dl_se->dl_defer && !dl_se->dl_defer_running &&
+	    dl_وقت_before(rq_clock(dl_se->rq), dl_se->deadline - dl_se->runtime)) {
+		اگر (!is_dl_boosted(dl_se)) {
 
 			/*
 			 * Set dl_se->dl_defer_armed and dl_throttled variables to
@@ -879,13 +879,13 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 			 */
 			dl_se->dl_defer_armed = 1;
 			dl_se->dl_throttled = 1;
-			if (!start_dl_timer(dl_se)) {
+			اگر (!آغاز_dl_timer(dl_se)) {
 				/*
 				 * If for whatever reason (delays), a previous timer was
 				 * queued but not serviced, cancel it and clean the
 				 * deferrable server variables intended for start_dl_timer().
 				 */
-				hrtimer_try_to_cancel(&dl_se->dl_timer);
+				hrtimer_try_مقصد_cancel(&dl_se->dl_timer);
 				dl_se->dl_defer_armed = 0;
 				dl_se->dl_throttled = 0;
 			}
@@ -917,9 +917,9 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
  * task with deadline equal to period this is the same of using
  * dl_period instead of dl_deadline in the equation above.
  */
-static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
+ساکن bool dl_entity_حد_سے_تجاوز(ساخت sched_dl_entity *dl_se, u64 t)
 {
-	u64 left, right;
+	u64 بایاں, دایاں;
 
 	/*
 	 * left and right are the two sides of the equation above,
@@ -939,11 +939,11 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
 	 * of anything below microseconds resolution is actually fiction
 	 * (but still we want to give the user that illusion >;).
 	 */
-	left = (pi_of(dl_se)->dl_deadline >> DL_SCALE) * (dl_se->runtime >> DL_SCALE);
-	right = ((dl_se->deadline - t) >> DL_SCALE) *
-		(pi_of(dl_se)->dl_runtime >> DL_SCALE);
+	بایاں = (pi_کا(dl_se)->dl_deadline >> DL_SCALE) * (dl_se->runtime >> DL_SCALE);
+	دایاں = ((dl_se->deadline - t) >> DL_SCALE) *
+		(pi_کا(dl_se)->dl_runtime >> DL_SCALE);
 
-	return dl_time_before(right, left);
+	واپس dl_وقت_before(دایاں, بایاں);
 }
 
 /*
@@ -964,8 +964,8 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
  * [1] Luca Abeni, Giuseppe Lipari, and Juri Lelli. 2015. Constant
  * bandwidth server revisited. SIGBED Rev. 11, 4 (January 2015), 19-24.
  */
-static void
-update_dl_revised_wakeup(struct sched_dl_entity *dl_se, struct rq *rq)
+ساکن خالی
+update_dl_revised_wakeup(ساخت sched_dl_entity *dl_se, ساخت rq *rq)
 {
 	u64 laxity = dl_se->deadline - rq_clock(rq);
 
@@ -975,9 +975,9 @@ update_dl_revised_wakeup(struct sched_dl_entity *dl_se, struct rq *rq)
 	 *
 	 * See update_dl_entity() comments for further details.
 	 */
-	WARN_ON(dl_time_before(dl_se->deadline, rq_clock(rq)));
+	WARN_ON(dl_وقت_before(dl_se->deadline, rq_clock(rq)));
 
-	dl_se->runtime = (dl_se->dl_density * laxity) >> BW_SHIFT;
+	dl_se->runtime = (dl_se->dl_density * laxity) >> BW_سرکاؤ;
 }
 
 /*
@@ -1010,19 +1010,19 @@ update_dl_revised_wakeup(struct sched_dl_entity *dl_se, struct rq *rq)
  * Please refer to the comments update_dl_revised_wakeup() function to find
  * more about the Revised CBS rule.
  */
-static void update_dl_entity(struct sched_dl_entity *dl_se)
+ساکن خالی update_dl_entity(ساخت sched_dl_entity *dl_se)
 {
-	struct rq *rq = rq_of_dl_se(dl_se);
+	ساخت rq *rq = rq_کا_dl_se(dl_se);
 
-	if (dl_time_before(dl_se->deadline, rq_clock(rq)) ||
-	    dl_entity_overflow(dl_se, rq_clock(rq))) {
+	اگر (dl_وقت_before(dl_se->deadline, rq_clock(rq)) ||
+	    dl_entity_حد_سے_تجاوز(dl_se, rq_clock(rq))) {
 
-		if (unlikely((!dl_is_implicit(dl_se) ||
+		اگر (unlikely((!dl_is_implicit(dl_se) ||
 			      (dl_se->dl_defer && dl_se->dl_defer_running)) &&
-			     !dl_time_before(dl_se->deadline, rq_clock(rq)) &&
+			     !dl_وقت_before(dl_se->deadline, rq_clock(rq)) &&
 			     !is_dl_boosted(dl_se))) {
 			update_dl_revised_wakeup(dl_se, rq);
-			return;
+			واپس;
 		}
 
 		/*
@@ -1032,21 +1032,21 @@ static void update_dl_entity(struct sched_dl_entity *dl_se)
 		 */
 		dl_se->dl_defer_running = 0;
 		replenish_dl_new_period(dl_se, rq);
-	} else if (dl_server(dl_se) && dl_se->dl_defer) {
+	} ورنہ اگر (dl_server(dl_se) && dl_se->dl_defer) {
 		/*
 		 * The server can still use its previous deadline, so check if
 		 * it left the dl_defer_running state.
 		 */
-		if (!dl_se->dl_defer_running) {
+		اگر (!dl_se->dl_defer_running) {
 			dl_se->dl_defer_armed = 1;
 			dl_se->dl_throttled = 1;
 		}
 	}
 }
 
-static inline u64 dl_next_period(struct sched_dl_entity *dl_se)
+ساکن اندرونی u64 dl_اگلا_period(ساخت sched_dl_entity *dl_se)
 {
-	return dl_se->deadline - dl_se->dl_deadline + dl_se->dl_period;
+	واپس dl_se->deadline - dl_se->dl_deadline + dl_se->dl_period;
 }
 
 /*
@@ -1059,11 +1059,11 @@ static inline u64 dl_next_period(struct sched_dl_entity *dl_se)
  * actually started or not (i.e., the replenishment instant is in
  * the future or in the past).
  */
-static int start_dl_timer(struct sched_dl_entity *dl_se)
+ساکن صحیح آغاز_dl_timer(ساخت sched_dl_entity *dl_se)
 {
-	struct hrtimer *timer = &dl_se->dl_timer;
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	ساخت hrtimer *timer = &dl_se->dl_timer;
+	ساخت dl_rq *dl_rq = dl_rq_کا_se(dl_se);
+	ساخت rq *rq = rq_کا_dl_rq(dl_rq);
 	ktime_t now, act;
 	s64 delta;
 
@@ -1080,25 +1080,25 @@ static int start_dl_timer(struct sched_dl_entity *dl_se)
 	 * required to avoid add too much pressure on the system
 	 * (current u > U).
 	 */
-	if (dl_se->dl_defer_armed) {
+	اگر (dl_se->dl_defer_armed) {
 		WARN_ON_ONCE(!dl_se->dl_throttled);
-		act = ns_to_ktime(dl_se->deadline - dl_se->runtime);
-	} else {
+		act = ns_مقصد_ktime(dl_se->deadline - dl_se->runtime);
+	} ورنہ {
 		/* act = deadline - rel-deadline + period */
-		act = ns_to_ktime(dl_next_period(dl_se));
+		act = ns_مقصد_ktime(dl_اگلا_period(dl_se));
 	}
 
 	now = ktime_get();
-	delta = ktime_to_ns(now) - rq_clock(rq);
-	act = ktime_add_ns(act, delta);
+	delta = ktime_مقصد_ns(now) - rq_clock(rq);
+	act = ktime_جوڑو_ns(act, delta);
 
 	/*
 	 * If the expiry time already passed, e.g., because the value
 	 * chosen as the deadline is too small, don't even try to
 	 * start the timer in the past!
 	 */
-	if (ktime_before(act, now))
-		return 0;
+	اگر (ktime_before(act, now))
+		واپس 0;
 
 	/*
 	 * !enqueued will guarantee another callback; even if one is already in
@@ -1109,45 +1109,45 @@ static int start_dl_timer(struct sched_dl_entity *dl_se)
 	 * expiring after we've done the check will wait on its task_rq_lock()
 	 * and observe our state.
 	 */
-	if (!hrtimer_is_queued(timer)) {
-		if (!dl_server(dl_se))
-			get_task_struct(dl_task_of(dl_se));
-		hrtimer_start(timer, act, HRTIMER_MODE_ABS_HARD);
+	اگر (!hrtimer_is_queued(timer)) {
+		اگر (!dl_server(dl_se))
+			get_task_struct(dl_task_کا(dl_se));
+		hrtimer_آغاز(timer, act, HRTIMER_منوال_ABS_HARD);
 	}
 
-	return 1;
+	واپس 1;
 }
 
-static void __push_dl_task(struct rq *rq, struct rq_flags *rf)
+ساکن خالی __push_dl_task(ساخت rq *rq, ساخت rq_flags *rf)
 {
 	/*
 	 * Queueing this task back might have overloaded rq, check if we need
 	 * to kick someone away.
 	 */
-	if (has_pushable_dl_tasks(rq)) {
+	اگر (has_pushable_dl_tasks(rq)) {
 		/*
 		 * Nothing relies on rq->lock after this, so its safe to drop
 		 * rq->lock.
 		 */
-		rq_unpin_lock(rq, rf);
-		push_dl_task(rq);
-		rq_repin_lock(rq, rf);
+		rq_unpin_تالا(rq, rf);
+		ڈالو_dl_task(rq);
+		rq_repin_تالا(rq, rf);
 	}
 }
 
 /* a defer timer will not be reset if the runtime consumed was < dl_server_min_res */
-static const u64 dl_server_min_res = 1 * NSEC_PER_MSEC;
+ساکن ثابت u64 dl_server_min_res = 1 * NSEC_فی_MSEC;
 
-static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_dl_entity *dl_se)
+ساکن شمار hrtimer_restart dl_server_timer(ساخت hrtimer *timer, ساخت sched_dl_entity *dl_se)
 {
-	struct rq *rq = rq_of_dl_se(dl_se);
+	ساخت rq *rq = rq_کا_dl_se(dl_se);
 	u64 fw;
 
-	scoped_guard (rq_lock, rq) {
-		struct rq_flags *rf = &scope.rf;
+	scoped_guard (rq_تالا, rq) {
+		ساخت rq_flags *rf = &scope.rf;
 
-		if (!dl_se->dl_throttled || !dl_se->dl_runtime)
-			return HRTIMER_NORESTART;
+		اگر (!dl_se->dl_throttled || !dl_se->dl_runtime)
+			واپس HRTIMER_NORESTART;
 
 		sched_clock_tick();
 		update_rq_clock(rq);
@@ -1159,40 +1159,40 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
 		 */
 		rq->donor->sched_class->update_curr(rq);
 
-		if (dl_se->dl_defer_idle) {
+		اگر (dl_se->dl_defer_idle) {
 			dl_server_stop(dl_se);
-			return HRTIMER_NORESTART;
+			واپس HRTIMER_NORESTART;
 		}
 
-		if (dl_se->dl_defer_armed) {
+		اگر (dl_se->dl_defer_armed) {
 			/*
 			 * First check if the server could consume runtime in background.
 			 * If so, it is possible to push the defer timer for this amount
 			 * of time. The dl_server_min_res serves as a limit to avoid
 			 * forwarding the timer for a too small amount of time.
 			 */
-			if (dl_time_before(rq_clock(dl_se->rq),
+			اگر (dl_وقت_before(rq_clock(dl_se->rq),
 					   (dl_se->deadline - dl_se->runtime - dl_server_min_res))) {
 
 				/* reset the defer timer */
 				fw = dl_se->deadline - rq_clock(dl_se->rq) - dl_se->runtime;
 
-				hrtimer_forward_now(timer, ns_to_ktime(fw));
-				return HRTIMER_RESTART;
+				hrtimer_forward_now(timer, ns_مقصد_ktime(fw));
+				واپس HRTIMER_RESTART;
 			}
 
 			dl_se->dl_defer_running = 1;
 		}
 
-		enqueue_dl_entity(dl_se, ENQUEUE_REPLENISH);
+		قطار_میں_ڈالو_dl_entity(dl_se, قطار_میں_ڈالو_REPLENISH);
 
-		if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &dl_se->rq->curr->dl))
+		اگر (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &dl_se->rq->curr->dl))
 			resched_curr(rq);
 
 		__push_dl_task(rq, rf);
 	}
 
-	return HRTIMER_NORESTART;
+	واپس HRTIMER_NORESTART;
 }
 
 /*
@@ -1208,41 +1208,41 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
  * updating (and the queueing back to dl_rq) will be done by the
  * next call to enqueue_task_dl().
  */
-static enum hrtimer_restart dl_task_timer(struct hrtimer *timer)
+ساکن شمار hrtimer_restart dl_task_timer(ساخت hrtimer *timer)
 {
-	struct sched_dl_entity *dl_se = container_of(timer,
-						     struct sched_dl_entity,
+	ساخت sched_dl_entity *dl_se = container_کا(timer,
+						     ساخت sched_dl_entity,
 						     dl_timer);
-	struct task_struct *p;
-	struct rq_flags rf;
-	struct rq *rq;
+	ساخت task_struct *p;
+	ساخت rq_flags rf;
+	ساخت rq *rq;
 
-	if (dl_server(dl_se))
-		return dl_server_timer(timer, dl_se);
+	اگر (dl_server(dl_se))
+		واپس dl_server_timer(timer, dl_se);
 
-	p = dl_task_of(dl_se);
-	rq = task_rq_lock(p, &rf);
+	p = dl_task_کا(dl_se);
+	rq = task_rq_تالا_2(p, &rf);
 
 	/*
 	 * The task might have changed its scheduling policy to something
 	 * different than SCHED_DEADLINE (through switched_from_dl()).
 	 */
-	if (!dl_task(p))
-		goto unlock;
+	اگر (!dl_task(p))
+		جاؤ unlock;
 
 	/*
 	 * The task might have been boosted by someone else and might be in the
 	 * boosting/deboosting path, its not throttled.
 	 */
-	if (is_dl_boosted(dl_se))
-		goto unlock;
+	اگر (is_dl_boosted(dl_se))
+		جاؤ unlock;
 
 	/*
 	 * Spurious timer due to start_dl_timer() race; or we already received
 	 * a replenishment from rt_mutex_setprio().
 	 */
-	if (!dl_se->dl_throttled)
-		goto unlock;
+	اگر (!dl_se->dl_throttled)
+		جاؤ unlock;
 
 	sched_clock_tick();
 	update_rq_clock(rq);
@@ -1261,19 +1261,19 @@ static enum hrtimer_restart dl_task_timer(struct hrtimer *timer)
 	 * We can be both throttled and !queued. Replenish the counter
 	 * but do not enqueue -- wait for our wakeup to do that.
 	 */
-	if (!task_on_rq_queued(p)) {
+	اگر (!task_on_rq_queued(p)) {
 		replenish_dl_entity(dl_se);
-		goto unlock;
+		جاؤ unlock;
 	}
 
-	if (unlikely(!rq->online)) {
+	اگر (unlikely(!rq->online)) {
 		/*
 		 * If the runqueue is no longer available, migrate the
 		 * task elsewhere. This necessarily changes rq.
 		 */
-		lockdep_unpin_lock(__rq_lockp(rq), rf.cookie);
+		lockdep_unpin_تالا(__rq_lockp(rq), rf.cookie);
 		rq = dl_task_offline_migration(rq, p);
-		rf.cookie = lockdep_pin_lock(__rq_lockp(rq));
+		rf.cookie = lockdep_pin_تالا(__rq_lockp(rq));
 		update_rq_clock(rq);
 
 		/*
@@ -1283,10 +1283,10 @@ static enum hrtimer_restart dl_task_timer(struct hrtimer *timer)
 		 */
 	}
 
-	enqueue_task_dl(rq, p, ENQUEUE_REPLENISH);
-	if (dl_task(rq->donor))
+	قطار_میں_ڈالو_task_dl(rq, p, قطار_میں_ڈالو_REPLENISH);
+	اگر (dl_task(rq->donor))
 		wakeup_preempt_dl(rq, p, 0);
-	else
+	ورنہ
 		resched_curr(rq);
 
 	__push_dl_task(rq, &rf);
@@ -1300,14 +1300,14 @@ unlock:
 	 */
 	put_task_struct(p);
 
-	return HRTIMER_NORESTART;
+	واپس HRTIMER_NORESTART;
 }
 
-static void init_dl_task_timer(struct sched_dl_entity *dl_se)
+ساکن خالی init_dl_task_timer(ساخت sched_dl_entity *dl_se)
 {
-	struct hrtimer *timer = &dl_se->dl_timer;
+	ساخت hrtimer *timer = &dl_se->dl_timer;
 
-	hrtimer_setup(timer, dl_task_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+	hrtimer_تیاری(timer, dl_task_timer, CLOCK_MONOTONIC, HRTIMER_منوال_REL_HARD);
 }
 
 /*
@@ -1328,25 +1328,25 @@ static void init_dl_task_timer(struct sched_dl_entity *dl_se)
  * task and set the replenishing timer to the begin of the next period,
  * unless it is boosted.
  */
-static inline void dl_check_constrained_dl(struct sched_dl_entity *dl_se)
+ساکن اندرونی خالی dl_check_constrained_dl(ساخت sched_dl_entity *dl_se)
 {
-	struct rq *rq = rq_of_dl_se(dl_se);
+	ساخت rq *rq = rq_کا_dl_se(dl_se);
 
-	if (dl_time_before(dl_se->deadline, rq_clock(rq)) &&
-	    dl_time_before(rq_clock(rq), dl_next_period(dl_se))) {
-		if (unlikely(is_dl_boosted(dl_se) || !start_dl_timer(dl_se)))
-			return;
-		trace_sched_dl_throttle_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
+	اگر (dl_وقت_before(dl_se->deadline, rq_clock(rq)) &&
+	    dl_وقت_before(rq_clock(rq), dl_اگلا_period(dl_se))) {
+		اگر (unlikely(is_dl_boosted(dl_se) || !آغاز_dl_timer(dl_se)))
+			واپس;
+		trace_sched_dl_throttle_tp(dl_se, cpu_کا(rq), dl_get_type(dl_se, rq));
 		dl_se->dl_throttled = 1;
-		if (dl_se->runtime > 0)
+		اگر (dl_se->runtime > 0)
 			dl_se->runtime = 0;
 	}
 }
 
-static
-int dl_runtime_exceeded(struct sched_dl_entity *dl_se)
+ساکن
+صحیح dl_runtime_exceeded(ساخت sched_dl_entity *dl_se)
 {
-	return (dl_se->runtime <= 0);
+	واپس (dl_se->runtime <= 0);
 }
 
 /*
@@ -1366,7 +1366,7 @@ int dl_runtime_exceeded(struct sched_dl_entity *dl_se)
  * larger than 2^(64 - 20 - 8), which is more than 64 seconds. So, overflow is
  * not an issue here.
  */
-static u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
+ساکن u64 grub_reclaim(u64 delta, ساخت rq *rq, ساخت sched_dl_entity *dl_se)
 {
 	u64 u_act;
 	u64 u_inact = rq->dl.this_bw - rq->dl.running_bw; /* Utot - Uact */
@@ -1377,16 +1377,16 @@ static u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
 	 * can be larger than u_max. So, u_max - u_inact - u_extra would be
 	 * negative leading to wrong results.
 	 */
-	if (u_inact + rq->dl.extra_bw > rq->dl.max_bw - dl_se->dl_bw)
+	اگر (u_inact + rq->dl.extra_bw > rq->dl.max_bw - dl_se->dl_bw)
 		u_act = dl_se->dl_bw;
-	else
+	ورنہ
 		u_act = rq->dl.max_bw - u_inact - rq->dl.extra_bw;
 
-	u_act = (u_act * rq->dl.bw_ratio) >> RATIO_SHIFT;
-	return (delta * u_act) >> BW_SHIFT;
+	u_act = (u_act * rq->dl.bw_تناسب) >> تناسب_سرکاؤ;
+	واپس (delta * u_act) >> BW_سرکاؤ;
 }
 
-s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec)
+s64 dl_scaled_delta_exec(ساخت rq *rq, ساخت sched_dl_entity *dl_se, s64 delta_exec)
 {
 	s64 scaled_delta_exec;
 
@@ -1397,47 +1397,47 @@ s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta
 	 * For the others, we still need to scale reservation parameters
 	 * according to current frequency and CPU maximum capacity.
 	 */
-	if (unlikely(dl_se->flags & SCHED_FLAG_RECLAIM)) {
+	اگر (unlikely(dl_se->flags & SCHED_FLAG_RECLAIM)) {
 		scaled_delta_exec = grub_reclaim(delta_exec, rq, dl_se);
-	} else {
-		int cpu = cpu_of(rq);
-		unsigned long scale_freq = arch_scale_freq_capacity(cpu);
-		unsigned long scale_cpu = arch_scale_cpu_capacity(cpu);
+	} ورنہ {
+		صحیح cpu = cpu_کا(rq);
+		غیرعلامتی طویل scale_freq = arch_scale_freq_استعداد(cpu);
+		غیرعلامتی طویل scale_cpu = arch_scale_cpu_استعداد(cpu);
 
 		scaled_delta_exec = cap_scale(delta_exec, scale_freq);
 		scaled_delta_exec = cap_scale(scaled_delta_exec, scale_cpu);
 	}
 
-	return scaled_delta_exec;
+	واپس scaled_delta_exec;
 }
 
-static inline void
-update_stats_dequeue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se, int flags);
+ساکن اندرونی خالی
+update_stats_قطار_سے_نکالو_dl(ساخت dl_rq *dl_rq, ساخت sched_dl_entity *dl_se, صحیح flags);
 
-static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec)
+ساکن خالی update_curr_dl_se(ساخت rq *rq, ساخت sched_dl_entity *dl_se, s64 delta_exec)
 {
 	bool idle = idle_rq(rq);
 	s64 scaled_delta_exec;
 
-	if (unlikely(delta_exec <= 0)) {
-		if (unlikely(dl_se->dl_yielded))
-			goto throttle;
-		return;
+	اگر (unlikely(delta_exec <= 0)) {
+		اگر (unlikely(dl_se->dl_yielded))
+			جاؤ throttle;
+		واپس;
 	}
 
-	if (dl_server(dl_se) && dl_se->dl_throttled && !dl_se->dl_defer)
-		return;
+	اگر (dl_server(dl_se) && dl_se->dl_throttled && !dl_se->dl_defer)
+		واپس;
 
-	if (dl_entity_is_special(dl_se))
-		return;
+	اگر (dl_entity_is_special(dl_se))
+		واپس;
 
 	scaled_delta_exec = delta_exec;
-	if (!dl_server(dl_se))
+	اگر (!dl_server(dl_se))
 		scaled_delta_exec = dl_scaled_delta_exec(rq, dl_se, delta_exec);
 
 	dl_se->runtime -= scaled_delta_exec;
 
-	if (dl_se->dl_defer_idle && !idle)
+	اگر (dl_se->dl_defer_idle && !idle)
 		dl_se->dl_defer_idle = 0;
 
 	/*
@@ -1448,7 +1448,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 	 * is not required for the current period. Thus, reset the server by
 	 * starting a new period, pushing the activation.
 	 */
-	if (dl_se->dl_defer && dl_se->dl_throttled && dl_runtime_exceeded(dl_se)) {
+	اگر (dl_se->dl_defer && dl_se->dl_throttled && dl_runtime_exceeded(dl_se)) {
 		/*
 		 * Non-servers would never get time accounted while throttled.
 		 */
@@ -1459,7 +1459,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 		 * activation further, instead wait for the period timer
 		 * to lapse and stop the server.
 		 */
-		if (dl_se->dl_defer_idle && idle) {
+		اگر (dl_se->dl_defer_idle && idle) {
 			/*
 			 * The timer is at the zero-laxity point, this means
 			 * dl_server_stop() / dl_server_start() can happen
@@ -1469,7 +1469,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 			 * runtime will not do.
 			 */
 			dl_se->runtime = 0;
-			return;
+			واپس;
 		}
 
 		/*
@@ -1480,11 +1480,11 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 		 */
 		dl_se->dl_defer_running = 0;
 
-		hrtimer_try_to_cancel(&dl_se->dl_timer);
+		hrtimer_try_مقصد_cancel(&dl_se->dl_timer);
 
 		replenish_dl_new_period(dl_se, dl_se->rq);
 
-		if (idle)
+		اگر (idle)
 			dl_se->dl_defer_idle = 1;
 
 		/*
@@ -1493,54 +1493,54 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 		 * and queue right away. Otherwise nothing might queue it. That's similar
 		 * to what enqueue_dl_entity() does on start_dl_timer==0. For now, just warn.
 		 */
-		WARN_ON_ONCE(!start_dl_timer(dl_se));
+		WARN_ON_ONCE(!آغاز_dl_timer(dl_se));
 
-		return;
+		واپس;
 	}
 
 throttle:
-	if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
-		trace_sched_dl_throttle_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
+	اگر (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
+		trace_sched_dl_throttle_tp(dl_se, cpu_کا(rq), dl_get_type(dl_se, rq));
 		dl_se->dl_throttled = 1;
 
 		/* If requested, inform the user about runtime overruns. */
-		if (dl_runtime_exceeded(dl_se) &&
+		اگر (dl_runtime_exceeded(dl_se) &&
 		    (dl_se->flags & SCHED_FLAG_DL_OVERRUN))
 			dl_se->dl_overrun = 1;
 
-		dequeue_dl_entity(dl_se, 0);
-		if (!dl_server(dl_se)) {
-			update_stats_dequeue_dl(&rq->dl, dl_se, 0);
-			dequeue_pushable_dl_task(rq, dl_task_of(dl_se));
+		قطار_سے_نکالو_dl_entity(dl_se, 0);
+		اگر (!dl_server(dl_se)) {
+			update_stats_قطار_سے_نکالو_dl(&rq->dl, dl_se, 0);
+			قطار_سے_نکالو_pushable_dl_task(rq, dl_task_کا(dl_se));
 		}
 
-		if (unlikely(is_dl_boosted(dl_se) || !start_dl_timer(dl_se))) {
-			if (dl_server(dl_se)) {
-				if (dl_se->dl_defer) {
+		اگر (unlikely(is_dl_boosted(dl_se) || !آغاز_dl_timer(dl_se))) {
+			اگر (dl_server(dl_se)) {
+				اگر (dl_se->dl_defer) {
 					replenish_dl_new_period(dl_se, rq);
-					start_dl_timer(dl_se);
-				} else {
-					enqueue_dl_entity(dl_se, ENQUEUE_REPLENISH);
+					آغاز_dl_timer(dl_se);
+				} ورنہ {
+					قطار_میں_ڈالو_dl_entity(dl_se, قطار_میں_ڈالو_REPLENISH);
 				}
-			} else {
-				enqueue_task_dl(rq, dl_task_of(dl_se), ENQUEUE_REPLENISH);
+			} ورنہ {
+				قطار_میں_ڈالو_task_dl(rq, dl_task_کا(dl_se), قطار_میں_ڈالو_REPLENISH);
 			}
 		}
 
-		if (!is_leftmost(dl_se, &rq->dl))
+		اگر (!is_leftmost(dl_se, &rq->dl))
 			resched_curr(rq);
-	} else {
-		trace_sched_dl_update_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
+	} ورنہ {
+		trace_sched_dl_update_tp(dl_se, cpu_کا(rq), dl_get_type(dl_se, rq));
 	}
 
 	/*
 	 * The dl_server does not account for real-time workload because it
 	 * is running fair work.
 	 */
-	if (dl_se->dl_server)
-		return;
+	اگر (dl_se->dl_server)
+		واپس;
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#اگر_تعریف_شدہ CONFIG_RT_گروہ_SCHED
 	/*
 	 * Because -- for now -- we share the rt bandwidth, we need to
 	 * account our runtime there too, otherwise actual rt tasks
@@ -1552,20 +1552,20 @@ throttle:
 	 * using deadline servers -- however there's a few nasties to figure
 	 * out before that can happen.
 	 */
-	if (rt_bandwidth_enabled()) {
-		struct rt_rq *rt_rq = &rq->rt;
+	اگر (rt_bandwidth_enabled()) {
+		ساخت rt_rq *rt_rq = &rq->rt;
 
-		raw_spin_lock(&rt_rq->rt_runtime_lock);
+		raw_spin_تالا(&rt_rq->rt_runtime_تالا);
 		/*
 		 * We'll let actual RT tasks worry about the overflow here, we
 		 * have our own CBS to keep us inline; only account when RT
 		 * bandwidth is relevant.
 		 */
-		if (sched_rt_bandwidth_account(rt_rq))
-			rt_rq->rt_time += delta_exec;
-		raw_spin_unlock(&rt_rq->rt_runtime_lock);
+		اگر (sched_rt_bandwidth_account(rt_rq))
+			rt_rq->rt_وقت += delta_exec;
+		raw_spin_unlock(&rt_rq->rt_runtime_تالا);
 	}
-#endif /* CONFIG_RT_GROUP_SCHED */
+#اگر_ختم /* CONFIG_RT_GROUP_SCHED */
 }
 
 /*
@@ -1576,16 +1576,16 @@ throttle:
  * time available for the dl_server, avoiding a penalty for the rt
  * scheduler that did not consumed that time.
  */
-void dl_server_update_idle(struct sched_dl_entity *dl_se, s64 delta_exec)
+خالی dl_server_update_idle(ساخت sched_dl_entity *dl_se, s64 delta_exec)
 {
-	if (dl_se->dl_server_active && dl_se->dl_runtime && dl_se->dl_defer)
+	اگر (dl_se->dl_server_فعال && dl_se->dl_runtime && dl_se->dl_defer)
 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
 }
 
-void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
+خالی dl_server_update(ساخت sched_dl_entity *dl_se, s64 delta_exec)
 {
 	/* 0 runtime = fair server disabled */
-	if (dl_se->dl_server_active && dl_se->dl_runtime)
+	اگر (dl_se->dl_server_فعال && dl_se->dl_runtime)
 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
 }
 
@@ -1793,65 +1793,65 @@ void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
  *  - When idle it will push the actication forward once, and then wait
  *    for the timer to hit or a non-idle update to restart things.
  */
-void dl_server_start(struct sched_dl_entity *dl_se)
+خالی dl_server_آغاز(ساخت sched_dl_entity *dl_se)
 {
-	struct rq *rq = dl_se->rq;
+	ساخت rq *rq = dl_se->rq;
 
 	dl_se->dl_defer_idle = 0;
-	if (!dl_server(dl_se) || dl_se->dl_server_active || !dl_se->dl_runtime ||
+	اگر (!dl_server(dl_se) || dl_se->dl_server_فعال || !dl_se->dl_runtime ||
 	    !dl_se->dl_bw_attached)
-		return;
+		واپس;
 
 	/*
 	 * Update the current task to 'now'.
 	 */
 	rq->donor->sched_class->update_curr(rq);
 
-	if (WARN_ON_ONCE(!cpu_online(cpu_of(rq))))
-		return;
+	اگر (WARN_ON_ONCE(!cpu_online(cpu_کا(rq))))
+		واپس;
 
-	trace_sched_dl_server_start_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
-	dl_se->dl_server_active = 1;
-	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
-	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
+	trace_sched_dl_server_آغاز_tp(dl_se, cpu_کا(rq), dl_get_type(dl_se, rq));
+	dl_se->dl_server_فعال = 1;
+	قطار_میں_ڈالو_dl_entity(dl_se, قطار_میں_ڈالو_WAKEUP);
+	اگر (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
 		resched_curr(dl_se->rq);
 }
 
-void dl_server_stop(struct sched_dl_entity *dl_se)
+خالی dl_server_stop(ساخت sched_dl_entity *dl_se)
 {
-	if (!dl_server(dl_se) || !dl_server_active(dl_se))
-		return;
+	اگر (!dl_server(dl_se) || !dl_server_فعال(dl_se))
+		واپس;
 
-	trace_sched_dl_server_stop_tp(dl_se, cpu_of(dl_se->rq),
+	trace_sched_dl_server_stop_tp(dl_se, cpu_کا(dl_se->rq),
 				      dl_get_type(dl_se, dl_se->rq));
-	dequeue_dl_entity(dl_se, DEQUEUE_SLEEP);
-	hrtimer_try_to_cancel(&dl_se->dl_timer);
+	قطار_سے_نکالو_dl_entity(dl_se, قطار_سے_نکالو_SLEEP);
+	hrtimer_try_مقصد_cancel(&dl_se->dl_timer);
 	dl_se->dl_defer_armed = 0;
 	dl_se->dl_throttled = 0;
 	dl_se->dl_defer_idle = 0;
-	dl_se->dl_server_active = 0;
+	dl_se->dl_server_فعال = 0;
 }
 
-void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+خالی dl_server_init(ساخت sched_dl_entity *dl_se, ساخت rq *rq,
 		    dl_server_pick_f pick_task)
 {
 	dl_se->rq = rq;
 	dl_se->server_pick_task = pick_task;
 }
 
-void sched_init_dl_servers(void)
+خالی sched_init_dl_servers(خالی)
 {
-	int cpu;
-	struct rq *rq;
-	struct sched_dl_entity *dl_se;
+	صحیح cpu;
+	ساخت rq *rq;
+	ساخت sched_dl_entity *dl_se;
 
 	for_each_online_cpu(cpu) {
-		u64 runtime =  50 * NSEC_PER_MSEC;
-		u64 period = 1000 * NSEC_PER_MSEC;
+		u64 runtime =  50 * NSEC_فی_MSEC;
+		u64 period = 1000 * NSEC_فی_MSEC;
 
 		rq = cpu_rq(cpu);
 
-		guard(rq_lock_irq)(rq);
+		guard(rq_تالا_irq)(rq);
 		update_rq_clock(rq);
 
 		dl_se = &rq->fair_server;
@@ -1862,9 +1862,9 @@ void sched_init_dl_servers(void)
 
 		dl_se->dl_server = 1;
 		dl_se->dl_defer = 1;
-		setup_new_dl_entity(dl_se);
+		تیاری_new_dl_entity(dl_se);
 
-#ifdef CONFIG_SCHED_CLASS_EXT
+#اگر_تعریف_شدہ CONFIG_SCHED_CLASS_EXT
 		dl_se = &rq->ext_server;
 
 		WARN_ON(dl_server(dl_se));
@@ -1873,7 +1873,7 @@ void sched_init_dl_servers(void)
 
 		dl_se->dl_server = 1;
 		dl_se->dl_defer = 1;
-		setup_new_dl_entity(dl_se);
+		تیاری_new_dl_entity(dl_se);
 
 		/*
 		 * No BPF scheduler is loaded at boot, so the ext_server has no
@@ -1881,53 +1881,53 @@ void sched_init_dl_servers(void)
 		 * be attached when a BPF scheduler is loaded.
 		 */
 		dl_server_detach_bw(dl_se);
-#endif
+#اگر_ختم
 	}
 }
 
-void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq)
+خالی __dl_server_attach_root(ساخت sched_dl_entity *dl_se, ساخت rq *rq)
 {
 	u64 new_bw = dl_se->dl_bw;
-	int cpu = cpu_of(rq);
-	struct dl_bw *dl_b;
+	صحیح cpu = cpu_کا(rq);
+	ساخت dl_bw *dl_b;
 
-	if (!dl_se->dl_bw_attached)
-		return;
+	اگر (!dl_se->dl_bw_attached)
+		واپس;
 
-	dl_b = dl_bw_of(cpu_of(rq));
-	guard(raw_spinlock)(&dl_b->lock);
+	dl_b = dl_bw_کا(cpu_کا(rq));
+	guard(raw_spinlock)(&dl_b->تالا);
 
-	if (!dl_bw_cpus(cpu))
-		return;
+	اگر (!dl_bw_cpus(cpu))
+		واپس;
 
 	__dl_add(dl_b, new_bw, dl_bw_cpus(cpu));
 }
 
-int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 period, bool init)
+صحیح dl_server_apply_params(ساخت sched_dl_entity *dl_se, u64 runtime, u64 period, bool init)
 {
 	u64 old_bw = (init || !dl_se->dl_bw_attached) ? 0 :
-		     to_ratio(dl_se->dl_period, dl_se->dl_runtime);
-	u64 new_bw = to_ratio(period, runtime);
-	struct rq *rq = dl_se->rq;
-	int cpu = cpu_of(rq);
-	struct dl_bw *dl_b;
-	unsigned long cap;
-	int cpus;
+		     مقصد_تناسب(dl_se->dl_period, dl_se->dl_runtime);
+	u64 new_bw = مقصد_تناسب(period, runtime);
+	ساخت rq *rq = dl_se->rq;
+	صحیح cpu = cpu_کا(rq);
+	ساخت dl_bw *dl_b;
+	غیرعلامتی طویل cap;
+	صحیح cpus;
 
-	dl_b = dl_bw_of(cpu);
-	guard(raw_spinlock)(&dl_b->lock);
+	dl_b = dl_bw_کا(cpu);
+	guard(raw_spinlock)(&dl_b->تالا);
 
 	cpus = dl_bw_cpus(cpu);
-	cap = dl_bw_capacity(cpu);
+	cap = dl_bw_استعداد(cpu);
 
-	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-		return -EBUSY;
+	اگر (__dl_overflow(dl_b, cap, old_bw, new_bw))
+		واپس -EBUSY;
 
-	if (init) {
+	اگر (init) {
 		__add_rq_bw(new_bw, &rq->dl);
 		__dl_add(dl_b, new_bw, cpus);
 		dl_se->dl_bw_attached = 1;
-	} else if (dl_se->dl_bw_attached) {
+	} ورنہ اگر (dl_se->dl_bw_attached) {
 		__dl_sub(dl_b, dl_se->dl_bw, cpus);
 		__dl_add(dl_b, new_bw, cpus);
 
@@ -1941,10 +1941,10 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
 	dl_se->runtime = 0;
 	dl_se->deadline = 0;
 
-	dl_se->dl_bw = to_ratio(dl_se->dl_period, dl_se->dl_runtime);
-	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
+	dl_se->dl_bw = مقصد_تناسب(dl_se->dl_period, dl_se->dl_runtime);
+	dl_se->dl_density = مقصد_تناسب(dl_se->dl_deadline, dl_se->dl_runtime);
 
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -1952,11 +1952,11 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
  *
  * Return -EBUSY if attaching would overflow root domain capacity.
  */
-static int __dl_server_attach_bw_locked(struct sched_dl_entity *dl_se,
-					struct dl_bw *dl_b, int cpus)
+ساکن صحیح __dl_server_attach_bw_locked(ساخت sched_dl_entity *dl_se,
+					ساخت dl_bw *dl_b, صحیح cpus)
 {
-	struct rq *rq = dl_se->rq;
-	unsigned long cap;
+	ساخت rq *rq = dl_se->rq;
+	غیرعلامتی طویل cap;
 
 	/*
 	 * Always update @rq->dl.this_bw, but only update @dl_b->total_bw
@@ -1965,25 +1965,25 @@ static int __dl_server_attach_bw_locked(struct sched_dl_entity *dl_se,
 	 * This mirrors dl_server_add_bw() during root-domain rebuilds, which
 	 * only publishes bandwidth from active CPUs into @dl_b.
 	 */
-	if (cpu_active(cpu_of(rq))) {
-		cap = dl_bw_capacity(cpu_of(rq));
-		if (__dl_overflow(dl_b, cap, 0, dl_se->dl_bw))
-			return -EBUSY;
+	اگر (cpu_فعال(cpu_کا(rq))) {
+		cap = dl_bw_استعداد(cpu_کا(rq));
+		اگر (__dl_overflow(dl_b, cap, 0, dl_se->dl_bw))
+			واپس -EBUSY;
 		__dl_add(dl_b, dl_se->dl_bw, cpus);
 	}
 	__add_rq_bw(dl_se->dl_bw, &rq->dl);
 	dl_se->dl_bw_attached = 1;
 
-	return 0;
+	واپس 0;
 }
 
 /*
  * Drain @dl_se and remove its bw from the root-domain accounting.
  */
-static void __dl_server_detach_bw_locked(struct sched_dl_entity *dl_se,
-					 struct dl_bw *dl_b, int cpus)
+ساکن خالی __dl_server_detach_bw_locked(ساخت sched_dl_entity *dl_se,
+					 ساخت dl_bw *dl_b, صحیح cpus)
 {
-	struct rq *rq = dl_se->rq;
+	ساخت rq *rq = dl_se->rq;
 
 	/*
 	 * If the server is still active (on_rq), dequeue it via
@@ -1991,7 +1991,7 @@ static void __dl_server_detach_bw_locked(struct sched_dl_entity *dl_se,
 	 * @dl_bw from running_bw immediately (0-lag passed) or set
 	 * dl_non_contending and arm the inactive_timer.
 	 */
-	if (dl_se->dl_server_active)
+	اگر (dl_se->dl_server_فعال)
 		dl_server_stop(dl_se);
 
 	/*
@@ -2012,7 +2012,7 @@ static void __dl_server_detach_bw_locked(struct sched_dl_entity *dl_se,
 	 * @dl_se->dl_bw_attached; if the CPU becomes active again, the next
 	 * rebuild will re-publish its bandwidth.
 	 */
-	if (cpu_active(cpu_of(rq)))
+	اگر (cpu_فعال(cpu_کا(rq)))
 		__dl_sub(dl_b, dl_se->dl_bw, cpus);
 	dl_se->dl_bw_attached = 0;
 }
@@ -2026,23 +2026,23 @@ static void __dl_server_detach_bw_locked(struct sched_dl_entity *dl_se,
  *
  * Returns -EBUSY if attaching would overflow the root domain capacity.
  */
-int dl_server_attach_bw(struct sched_dl_entity *dl_se)
+صحیح dl_server_attach_bw(ساخت sched_dl_entity *dl_se)
 {
-	struct rq *rq = dl_se->rq;
-	int cpu = cpu_of(rq);
-	struct dl_bw *dl_b;
-	int cpus, ret;
+	ساخت rq *rq = dl_se->rq;
+	صحیح cpu = cpu_کا(rq);
+	ساخت dl_bw *dl_b;
+	صحیح cpus, ret;
 
-	if (dl_se->dl_bw_attached)
-		return 0;
+	اگر (dl_se->dl_bw_attached)
+		واپس 0;
 
-	scoped_guard (raw_spinlock, &dl_bw_of(cpu)->lock) {
-		dl_b = dl_bw_of(cpu);
+	scoped_guard (raw_spinlock, &dl_bw_کا(cpu)->تالا) {
+		dl_b = dl_bw_کا(cpu);
 		cpus = dl_bw_cpus(cpu);
 		ret = __dl_server_attach_bw_locked(dl_se, dl_b, cpus);
 	}
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 
 	/*
 	 * The natural 0->nr_running transition that triggers dl_server_start()
@@ -2054,10 +2054,10 @@ int dl_server_attach_bw(struct sched_dl_entity *dl_se)
 	 * it's already active. Skip if @cpu is offline; the server will be
 	 * started naturally on the first enqueue once @cpu comes back.
 	 */
-	if (cpu_online(cpu))
-		dl_server_start(dl_se);
+	اگر (cpu_online(cpu))
+		dl_server_آغاز(dl_se);
 
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -2067,17 +2067,17 @@ int dl_server_attach_bw(struct sched_dl_entity *dl_se)
  * preserving its configured @dl_runtime / @dl_period. No-op if @dl_se is
  * not currently attached.
  */
-void dl_server_detach_bw(struct sched_dl_entity *dl_se)
+خالی dl_server_detach_bw(ساخت sched_dl_entity *dl_se)
 {
-	int cpu = cpu_of(dl_se->rq);
-	struct dl_bw *dl_b;
-	int cpus;
+	صحیح cpu = cpu_کا(dl_se->rq);
+	ساخت dl_bw *dl_b;
+	صحیح cpus;
 
-	if (!dl_se->dl_bw_attached)
-		return;
+	اگر (!dl_se->dl_bw_attached)
+		واپس;
 
-	dl_b = dl_bw_of(cpu);
-	guard(raw_spinlock)(&dl_b->lock);
+	dl_b = dl_bw_کا(cpu);
+	guard(raw_spinlock)(&dl_b->تالا);
 	cpus = dl_bw_cpus(cpu);
 	__dl_server_detach_bw_locked(dl_se, dl_b, cpus);
 }
@@ -2091,49 +2091,49 @@ void dl_server_detach_bw(struct sched_dl_entity *dl_se)
  * result of the attach: -EBUSY if attaching @attach_se would overflow root
  * domain capacity (in which case both servers end up detached).
  */
-int dl_server_swap_bw(struct sched_dl_entity *detach_se,
-		      struct sched_dl_entity *attach_se)
+صحیح dl_server_تبادلہ_bw(ساخت sched_dl_entity *detach_se,
+		      ساخت sched_dl_entity *attach_se)
 {
-	struct rq *rq = detach_se->rq;
-	int cpu = cpu_of(rq);
-	struct dl_bw *dl_b;
-	int cpus, ret;
+	ساخت rq *rq = detach_se->rq;
+	صحیح cpu = cpu_کا(rq);
+	ساخت dl_bw *dl_b;
+	صحیح cpus, ret;
 
 	WARN_ON_ONCE(attach_se->rq != rq);
 
-	scoped_guard (raw_spinlock, &dl_bw_of(cpu)->lock) {
-		dl_b = dl_bw_of(cpu);
+	scoped_guard (raw_spinlock, &dl_bw_کا(cpu)->تالا) {
+		dl_b = dl_bw_کا(cpu);
 		cpus = dl_bw_cpus(cpu);
 
-		if (detach_se->dl_bw_attached)
+		اگر (detach_se->dl_bw_attached)
 			__dl_server_detach_bw_locked(detach_se, dl_b, cpus);
 
-		if (attach_se->dl_bw_attached)
+		اگر (attach_se->dl_bw_attached)
 			ret = 0;
-		else
+		ورنہ
 			ret = __dl_server_attach_bw_locked(attach_se, dl_b, cpus);
 	}
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 
-	if (cpu_online(cpu))
-		dl_server_start(attach_se);
+	اگر (cpu_online(cpu))
+		dl_server_آغاز(attach_se);
 
-	return 0;
+	واپس 0;
 }
 
 /*
  * Update the current task's runtime statistics (provided it is still
  * a -deadline task and has not been removed from the dl_rq).
  */
-static void update_curr_dl(struct rq *rq)
+ساکن خالی update_curr_dl(ساخت rq *rq)
 {
-	struct task_struct *donor = rq->donor;
-	struct sched_dl_entity *dl_se = &donor->dl;
+	ساخت task_struct *donor = rq->donor;
+	ساخت sched_dl_entity *dl_se = &donor->dl;
 	s64 delta_exec;
 
-	if (!dl_task(donor) || !on_dl_rq(dl_se))
-		return;
+	اگر (!dl_task(donor) || !on_dl_rq(dl_se))
+		واپس;
 
 	/*
 	 * Consumed budget is computed considering the time as
@@ -2147,244 +2147,244 @@ static void update_curr_dl(struct rq *rq)
 	update_curr_dl_se(rq, dl_se, delta_exec);
 }
 
-static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
+ساکن شمار hrtimer_restart inactive_task_timer(ساخت hrtimer *timer)
 {
-	struct sched_dl_entity *dl_se = container_of(timer,
-						     struct sched_dl_entity,
+	ساخت sched_dl_entity *dl_se = container_کا(timer,
+						     ساخت sched_dl_entity,
 						     inactive_timer);
-	struct task_struct *p = NULL;
-	struct rq_flags rf;
-	struct rq *rq;
+	ساخت task_struct *p = تہی;
+	ساخت rq_flags rf;
+	ساخت rq *rq;
 
-	if (!dl_server(dl_se)) {
-		p = dl_task_of(dl_se);
-		rq = task_rq_lock(p, &rf);
-	} else {
+	اگر (!dl_server(dl_se)) {
+		p = dl_task_کا(dl_se);
+		rq = task_rq_تالا_2(p, &rf);
+	} ورنہ {
 		rq = dl_se->rq;
-		rq_lock(rq, &rf);
+		rq_تالا(rq, &rf);
 	}
 
 	sched_clock_tick();
 	update_rq_clock(rq);
 
-	if (dl_server(dl_se))
-		goto no_task;
+	اگر (dl_server(dl_se))
+		جاؤ no_task;
 
-	if (!dl_task(p) || READ_ONCE(p->__state) == TASK_DEAD) {
-		struct dl_bw *dl_b = dl_bw_of(task_cpu(p));
+	اگر (!dl_task(p) || READ_ONCE(p->__state) == TASK_DEAD) {
+		ساخت dl_bw *dl_b = dl_bw_کا(task_cpu(p));
 
-		if (READ_ONCE(p->__state) == TASK_DEAD && dl_se->dl_non_contending) {
-			sub_running_bw(&p->dl, dl_rq_of_se(&p->dl));
-			sub_rq_bw(&p->dl, dl_rq_of_se(&p->dl));
+		اگر (READ_ONCE(p->__state) == TASK_DEAD && dl_se->dl_non_contending) {
+			sub_running_bw(&p->dl, dl_rq_کا_se(&p->dl));
+			sub_rq_bw(&p->dl, dl_rq_کا_se(&p->dl));
 			dl_se->dl_non_contending = 0;
 		}
 
-		raw_spin_lock(&dl_b->lock);
+		raw_spin_تالا(&dl_b->تالا);
 		__dl_sub(dl_b, p->dl.dl_bw, dl_bw_cpus(task_cpu(p)));
-		raw_spin_unlock(&dl_b->lock);
+		raw_spin_unlock(&dl_b->تالا);
 		__dl_clear_params(dl_se);
 
-		goto unlock;
+		جاؤ unlock;
 	}
 
 no_task:
-	if (dl_se->dl_non_contending == 0)
-		goto unlock;
+	اگر (dl_se->dl_non_contending == 0)
+		جاؤ unlock;
 
 	sub_running_bw(dl_se, &rq->dl);
 	dl_se->dl_non_contending = 0;
 unlock:
 
-	if (!dl_server(dl_se)) {
+	اگر (!dl_server(dl_se)) {
 		task_rq_unlock(rq, p, &rf);
 		put_task_struct(p);
-	} else {
+	} ورنہ {
 		rq_unlock(rq, &rf);
 	}
 
-	return HRTIMER_NORESTART;
+	واپس HRTIMER_NORESTART;
 }
 
-static void init_dl_inactive_task_timer(struct sched_dl_entity *dl_se)
+ساکن خالی init_dl_inactive_task_timer(ساخت sched_dl_entity *dl_se)
 {
-	struct hrtimer *timer = &dl_se->inactive_timer;
+	ساخت hrtimer *timer = &dl_se->inactive_timer;
 
-	hrtimer_setup(timer, inactive_task_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+	hrtimer_تیاری(timer, inactive_task_timer, CLOCK_MONOTONIC, HRTIMER_منوال_REL_HARD);
 }
 
-#define __node_2_dle(node) \
-	rb_entry((node), struct sched_dl_entity, rb_node)
+#تعریف_کرو __node_2_dle(گرہ) \
+	rb_اندراج((گرہ), ساخت sched_dl_entity, rb_گرہ)
 
-static void inc_dl_deadline(struct dl_rq *dl_rq, u64 deadline)
+ساکن خالی inc_dl_deadline(ساخت dl_rq *dl_rq, u64 deadline)
 {
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	ساخت rq *rq = rq_کا_dl_rq(dl_rq);
 
-	if (dl_rq->earliest_dl.curr == 0 ||
-	    dl_time_before(deadline, dl_rq->earliest_dl.curr)) {
-		if (dl_rq->earliest_dl.curr == 0)
-			cpupri_set(&rq->rd->cpupri, rq->cpu, CPUPRI_HIGHER);
+	اگر (dl_rq->earliest_dl.curr == 0 ||
+	    dl_وقت_before(deadline, dl_rq->earliest_dl.curr)) {
+		اگر (dl_rq->earliest_dl.curr == 0)
+			cpupri_سیٹ(&rq->rd->cpupri, rq->cpu, CPUPRI_HIGHER);
 		dl_rq->earliest_dl.curr = deadline;
-		cpudl_set(&rq->rd->cpudl, rq->cpu, deadline);
+		cpudl_سیٹ(&rq->rd->cpudl, rq->cpu, deadline);
 	}
 }
 
-static void dec_dl_deadline(struct dl_rq *dl_rq, u64 deadline)
+ساکن خالی dec_dl_deadline(ساخت dl_rq *dl_rq, u64 deadline)
 {
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	ساخت rq *rq = rq_کا_dl_rq(dl_rq);
 
 	/*
 	 * Since we may have removed our earliest (and/or next earliest)
 	 * task we must recompute them.
 	 */
-	if (!dl_rq->dl_nr_running) {
+	اگر (!dl_rq->dl_nr_running) {
 		dl_rq->earliest_dl.curr = 0;
-		dl_rq->earliest_dl.next = 0;
+		dl_rq->earliest_dl.اگلا = 0;
 		cpudl_clear(&rq->rd->cpudl, rq->cpu, rq->online);
-		cpupri_set(&rq->rd->cpupri, rq->cpu, rq->rt.highest_prio.curr);
-	} else {
-		struct rb_node *leftmost = rb_first_cached(&dl_rq->root);
-		struct sched_dl_entity *entry = __node_2_dle(leftmost);
+		cpupri_سیٹ(&rq->rd->cpupri, rq->cpu, rq->rt.highest_prio.curr);
+	} ورنہ {
+		ساخت rb_گرہ *leftmost = rb_پہلا_cached(&dl_rq->جڑ);
+		ساخت sched_dl_entity *اندراج_2 = __node_2_dle(leftmost);
 
-		dl_rq->earliest_dl.curr = entry->deadline;
-		cpudl_set(&rq->rd->cpudl, rq->cpu, entry->deadline);
+		dl_rq->earliest_dl.curr = اندراج_2->deadline;
+		cpudl_سیٹ(&rq->rd->cpudl, rq->cpu, اندراج_2->deadline);
 	}
 }
 
-static inline
-void inc_dl_tasks(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی inc_dl_tasks(ساخت sched_dl_entity *dl_se, ساخت dl_rq *dl_rq)
 {
 	u64 deadline = dl_se->deadline;
 
 	dl_rq->dl_nr_running++;
 
-	if (!dl_server(dl_se))
-		add_nr_running(rq_of_dl_rq(dl_rq), 1);
+	اگر (!dl_server(dl_se))
+		جوڑو_nr_running(rq_کا_dl_rq(dl_rq), 1);
 
 	inc_dl_deadline(dl_rq, deadline);
 }
 
-static inline
-void dec_dl_tasks(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+ساکن اندرونی
+خالی dec_dl_tasks(ساخت sched_dl_entity *dl_se, ساخت dl_rq *dl_rq)
 {
 	WARN_ON(!dl_rq->dl_nr_running);
 	dl_rq->dl_nr_running--;
 
-	if (!dl_server(dl_se))
-		sub_nr_running(rq_of_dl_rq(dl_rq), 1);
+	اگر (!dl_server(dl_se))
+		sub_nr_running(rq_کا_dl_rq(dl_rq), 1);
 
 	dec_dl_deadline(dl_rq, dl_se->deadline);
 }
 
-static inline bool __dl_less(struct rb_node *a, const struct rb_node *b)
+ساکن اندرونی bool __dl_less(ساخت rb_گرہ *a, ثابت ساخت rb_گرہ *b)
 {
-	return dl_time_before(__node_2_dle(a)->deadline, __node_2_dle(b)->deadline);
+	واپس dl_وقت_before(__node_2_dle(a)->deadline, __node_2_dle(b)->deadline);
 }
 
-static __always_inline struct sched_statistics *
-__schedstats_from_dl_se(struct sched_dl_entity *dl_se)
+ساکن __always_inline ساخت sched_statistics *
+__schedstats_from_dl_se(ساخت sched_dl_entity *dl_se)
 {
-	if (!schedstat_enabled())
-		return NULL;
+	اگر (!schedstat_enabled())
+		واپس تہی;
 
-	if (dl_server(dl_se))
-		return NULL;
+	اگر (dl_server(dl_se))
+		واپس تہی;
 
-	return &dl_task_of(dl_se)->stats;
+	واپس &dl_task_کا(dl_se)->stats;
 }
 
-static inline void
-update_stats_wait_start_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se)
+ساکن اندرونی خالی
+update_stats_wait_آغاز_dl(ساخت dl_rq *dl_rq, ساخت sched_dl_entity *dl_se)
 {
-	struct sched_statistics *stats = __schedstats_from_dl_se(dl_se);
-	if (stats)
-		__update_stats_wait_start(rq_of_dl_rq(dl_rq), dl_task_of(dl_se), stats);
+	ساخت sched_statistics *stats = __schedstats_from_dl_se(dl_se);
+	اگر (stats)
+		__update_stats_wait_start(rq_کا_dl_rq(dl_rq), dl_task_کا(dl_se), stats);
 }
 
-static inline void
-update_stats_wait_end_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se)
+ساکن اندرونی خالی
+update_stats_wait_انتہا_dl(ساخت dl_rq *dl_rq, ساخت sched_dl_entity *dl_se)
 {
-	struct sched_statistics *stats = __schedstats_from_dl_se(dl_se);
-	if (stats)
-		__update_stats_wait_end(rq_of_dl_rq(dl_rq), dl_task_of(dl_se), stats);
+	ساخت sched_statistics *stats = __schedstats_from_dl_se(dl_se);
+	اگر (stats)
+		__update_stats_wait_end(rq_کا_dl_rq(dl_rq), dl_task_کا(dl_se), stats);
 }
 
-static inline void
-update_stats_enqueue_sleeper_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se)
+ساکن اندرونی خالی
+update_stats_قطار_میں_ڈالو_sleeper_dl(ساخت dl_rq *dl_rq, ساخت sched_dl_entity *dl_se)
 {
-	struct sched_statistics *stats = __schedstats_from_dl_se(dl_se);
-	if (stats)
-		__update_stats_enqueue_sleeper(rq_of_dl_rq(dl_rq), dl_task_of(dl_se), stats);
+	ساخت sched_statistics *stats = __schedstats_from_dl_se(dl_se);
+	اگر (stats)
+		__update_stats_enqueue_sleeper(rq_کا_dl_rq(dl_rq), dl_task_کا(dl_se), stats);
 }
 
-static inline void
-update_stats_enqueue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se,
-			int flags)
+ساکن اندرونی خالی
+update_stats_قطار_میں_ڈالو_dl(ساخت dl_rq *dl_rq, ساخت sched_dl_entity *dl_se,
+			صحیح flags)
 {
-	if (!schedstat_enabled())
-		return;
+	اگر (!schedstat_enabled())
+		واپس;
 
-	if (flags & ENQUEUE_WAKEUP)
-		update_stats_enqueue_sleeper_dl(dl_rq, dl_se);
+	اگر (flags & قطار_میں_ڈالو_WAKEUP)
+		update_stats_قطار_میں_ڈالو_sleeper_dl(dl_rq, dl_se);
 }
 
-static inline void
-update_stats_dequeue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se,
-			int flags)
+ساکن اندرونی خالی
+update_stats_قطار_سے_نکالو_dl(ساخت dl_rq *dl_rq, ساخت sched_dl_entity *dl_se,
+			صحیح flags)
 {
-	struct task_struct *p = dl_task_of(dl_se);
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	ساخت task_struct *p = dl_task_کا(dl_se);
+	ساخت rq *rq = rq_کا_dl_rq(dl_rq);
 
-	if (!schedstat_enabled())
-		return;
+	اگر (!schedstat_enabled())
+		واپس;
 
-	if (p != rq->curr)
-		update_stats_wait_end_dl(dl_rq, dl_se);
+	اگر (p != rq->curr)
+		update_stats_wait_انتہا_dl(dl_rq, dl_se);
 
-	if ((flags & DEQUEUE_SLEEP)) {
-		unsigned int state;
+	اگر ((flags & قطار_سے_نکالو_SLEEP)) {
+		غیرعلامتی صحیح state;
 
 		state = READ_ONCE(p->__state);
-		if (state & TASK_INTERRUPTIBLE)
-			__schedstat_set(p->stats.sleep_start,
-					rq_clock(rq_of_dl_rq(dl_rq)));
+		اگر (state & TASK_INTERRUPTIBLE)
+			__schedstat_set(p->stats.sleep_آغاز,
+					rq_clock(rq_کا_dl_rq(dl_rq)));
 
-		if (state & TASK_UNINTERRUPTIBLE)
-			__schedstat_set(p->stats.block_start,
-					rq_clock(rq_of_dl_rq(dl_rq)));
+		اگر (state & TASK_UNINTERRUPTIBLE)
+			__schedstat_set(p->stats.بلاک_آغاز,
+					rq_clock(rq_کا_dl_rq(dl_rq)));
 	}
 }
 
-static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
+ساکن خالی __enqueue_dl_entity(ساخت sched_dl_entity *dl_se)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	ساخت dl_rq *dl_rq = dl_rq_کا_se(dl_se);
 
-	WARN_ON_ONCE(!RB_EMPTY_NODE(&dl_se->rb_node));
+	WARN_ON_ONCE(!RB_خالی_خانے_گرہ(&dl_se->rb_گرہ));
 
-	rb_add_cached(&dl_se->rb_node, &dl_rq->root, __dl_less);
+	rb_جوڑو_cached(&dl_se->rb_گرہ, &dl_rq->جڑ, __dl_less);
 
 	inc_dl_tasks(dl_se, dl_rq);
 }
 
-static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
+ساکن خالی __dequeue_dl_entity(ساخت sched_dl_entity *dl_se)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	ساخت dl_rq *dl_rq = dl_rq_کا_se(dl_se);
 
-	if (RB_EMPTY_NODE(&dl_se->rb_node))
-		return;
+	اگر (RB_خالی_خانے_گرہ(&dl_se->rb_گرہ))
+		واپس;
 
-	rb_erase_cached(&dl_se->rb_node, &dl_rq->root);
+	rb_erase_cached(&dl_se->rb_گرہ, &dl_rq->جڑ);
 
-	RB_CLEAR_NODE(&dl_se->rb_node);
+	RB_CLEAR_گرہ(&dl_se->rb_گرہ);
 
 	dec_dl_tasks(dl_se, dl_rq);
 }
 
-static void
-enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
+ساکن خالی
+قطار_میں_ڈالو_dl_entity(ساخت sched_dl_entity *dl_se, صحیح flags)
 {
 	WARN_ON_ONCE(on_dl_rq(dl_se));
 
-	update_stats_enqueue_dl(dl_rq_of_se(dl_se), dl_se, flags);
+	update_stats_قطار_میں_ڈالو_dl(dl_rq_کا_se(dl_se), dl_se, flags);
 
 	/*
 	 * Check if a constrained deadline task was activated
@@ -2392,14 +2392,14 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * If that is the case, the task will be throttled and
 	 * the replenishment timer will be set to the next period.
 	 */
-	if (!dl_se->dl_throttled && !dl_is_implicit(dl_se))
+	اگر (!dl_se->dl_throttled && !dl_is_implicit(dl_se))
 		dl_check_constrained_dl(dl_se);
 
-	if (flags & (ENQUEUE_RESTORE|ENQUEUE_MIGRATING)) {
-		struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	اگر (flags & (قطار_میں_ڈالو_RESTORE|قطار_میں_ڈالو_MIGRATING)) {
+		ساخت dl_rq *dl_rq = dl_rq_کا_se(dl_se);
 
-		add_rq_bw(dl_se, dl_rq);
-		add_running_bw(dl_se, dl_rq);
+		جوڑو_rq_bw(dl_se, dl_rq);
+		جوڑو_running_bw(dl_se, dl_rq);
 	}
 
 	/*
@@ -2414,11 +2414,11 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * be counted in the active utilization; hence, we need to call
 	 * add_running_bw().
 	 */
-	if (!dl_se->dl_defer && dl_se->dl_throttled && !(flags & ENQUEUE_REPLENISH)) {
-		if (flags & ENQUEUE_WAKEUP)
+	اگر (!dl_se->dl_defer && dl_se->dl_throttled && !(flags & قطار_میں_ڈالو_REPLENISH)) {
+		اگر (flags & قطار_میں_ڈالو_WAKEUP)
 			task_contending(dl_se, flags);
 
-		return;
+		واپس;
 	}
 
 	/*
@@ -2426,23 +2426,23 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * parameters of the task might need updating. Otherwise,
 	 * we want a replenishment of its runtime.
 	 */
-	if (flags & ENQUEUE_WAKEUP) {
+	اگر (flags & قطار_میں_ڈالو_WAKEUP) {
 		task_contending(dl_se, flags);
 		update_dl_entity(dl_se);
-	} else if (flags & ENQUEUE_REPLENISH) {
+	} ورنہ اگر (flags & قطار_میں_ڈالو_REPLENISH) {
 		replenish_dl_entity(dl_se);
-	} else if ((flags & ENQUEUE_MOVE) &&
+	} ورنہ اگر ((flags & قطار_میں_ڈالو_MOVE) &&
 		   !is_dl_boosted(dl_se) &&
-		   dl_time_before(dl_se->deadline, rq_clock(rq_of_dl_se(dl_se)))) {
-		setup_new_dl_entity(dl_se);
+		   dl_وقت_before(dl_se->deadline, rq_clock(rq_کا_dl_se(dl_se)))) {
+		تیاری_new_dl_entity(dl_se);
 	}
 
 	/*
 	 * If the reservation is still throttled, e.g., it got replenished but is a
 	 * deferred task and still got to wait, don't enqueue.
 	 */
-	if (dl_se->dl_throttled && start_dl_timer(dl_se))
-		return;
+	اگر (dl_se->dl_throttled && آغاز_dl_timer(dl_se))
+		واپس;
 
 	/*
 	 * We're about to enqueue, make sure we're not ->dl_throttled!
@@ -2450,8 +2450,8 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * has passed, mark as not throttled and mark unarmed.
 	 * Also cancel earlier timers, since letting those run is pointless.
 	 */
-	if (dl_se->dl_throttled) {
-		hrtimer_try_to_cancel(&dl_se->dl_timer);
+	اگر (dl_se->dl_throttled) {
+		hrtimer_try_مقصد_cancel(&dl_se->dl_timer);
 		dl_se->dl_defer_armed = 0;
 		dl_se->dl_throttled = 0;
 	}
@@ -2459,12 +2459,12 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	__enqueue_dl_entity(dl_se);
 }
 
-static void dequeue_dl_entity(struct sched_dl_entity *dl_se, int flags)
+ساکن خالی قطار_سے_نکالو_dl_entity(ساخت sched_dl_entity *dl_se, صحیح flags)
 {
 	__dequeue_dl_entity(dl_se);
 
-	if (flags & (DEQUEUE_SAVE|DEQUEUE_MIGRATING)) {
-		struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	اگر (flags & (قطار_سے_نکالو_SAVE|قطار_سے_نکالو_MIGRATING)) {
+		ساخت dl_rq *dl_rq = dl_rq_کا_se(dl_se);
 
 		sub_running_bw(dl_se, dl_rq);
 		sub_rq_bw(dl_se, dl_rq);
@@ -2479,16 +2479,16 @@ static void dequeue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * (the task moves from "active contending" to "active non contending"
 	 * or "inactive")
 	 */
-	if (flags & DEQUEUE_SLEEP)
+	اگر (flags & قطار_سے_نکالو_SLEEP)
 		task_non_contending(dl_se, true);
 }
 
-static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
+ساکن خالی قطار_میں_ڈالو_task_dl(ساخت rq *rq, ساخت task_struct *p, صحیح flags)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
-	struct dl_rq *dl_rq = &rq->dl;
+	ساخت sched_dl_entity *dl_se = &p->dl;
+	ساخت dl_rq *dl_rq = &rq->dl;
 
-	if (is_dl_boosted(dl_se)) {
+	اگر (is_dl_boosted(dl_se)) {
 		/*
 		 * Because of delays in the detection of the overrun of a
 		 * thread's runtime, it might be the case that a thread
@@ -2501,7 +2501,7 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
 		 *
 		 * In this case, the boost overrides the throttle.
 		 */
-		if (dl_se->dl_throttled) {
+		اگر (dl_se->dl_throttled) {
 			/*
 			 * The replenish timer needs to be canceled. No
 			 * problem if it fires concurrently: boosted threads
@@ -2510,7 +2510,7 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
 			cancel_replenish_timer(dl_se);
 			dl_se->dl_throttled = 0;
 		}
-	} else if (!dl_prio(p->normal_prio)) {
+	} ورنہ اگر (!dl_prio(p->معمول_prio)) {
 		/*
 		 * Special case in which we have a !SCHED_DEADLINE task that is going
 		 * to be deboosted, but exceeds its runtime while doing so. No point in
@@ -2521,46 +2521,46 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
 		 * the throttle.
 		 */
 		dl_se->dl_throttled = 0;
-		if (!(flags & ENQUEUE_REPLENISH))
+		اگر (!(flags & قطار_میں_ڈالو_REPLENISH))
 			printk_deferred_once("sched: DL de-boosted task PID %d: REPLENISH flag missing\n",
 					     task_pid_nr(p));
 
-		return;
+		واپس;
 	}
 
 	check_schedstat_required();
-	update_stats_wait_start_dl(dl_rq, dl_se);
+	update_stats_wait_آغاز_dl(dl_rq, dl_se);
 
-	if (task_on_rq_migrating(p))
-		flags |= ENQUEUE_MIGRATING;
+	اگر (task_on_rq_migrating(p))
+		flags |= قطار_میں_ڈالو_MIGRATING;
 
-	enqueue_dl_entity(dl_se, flags);
+	قطار_میں_ڈالو_dl_entity(dl_se, flags);
 
-	if (dl_server(dl_se))
-		return;
+	اگر (dl_server(dl_se))
+		واپس;
 
-	if (task_is_blocked(p))
-		return;
+	اگر (task_is_blocked(p))
+		واپس;
 
-	if (dl_rq->curr == dl_se)
-		return;
+	اگر (dl_rq->curr == dl_se)
+		واپس;
 
-	if (!task_current(rq, p) && !dl_se->dl_throttled && p->nr_cpus_allowed > 1)
-		enqueue_pushable_dl_task(rq, p);
+	اگر (!task_current(rq, p) && !dl_se->dl_throttled && p->nr_cpus_allowed > 1)
+		قطار_میں_ڈالو_pushable_dl_task(rq, p);
 }
 
-static bool dequeue_task_dl(struct rq *rq, struct task_struct *p, int flags)
+ساکن bool قطار_سے_نکالو_task_dl(ساخت rq *rq, ساخت task_struct *p, صحیح flags)
 {
 	update_curr_dl(rq);
 
-	if (task_on_rq_migrating(p))
-		flags |= DEQUEUE_MIGRATING;
+	اگر (task_on_rq_migrating(p))
+		flags |= قطار_سے_نکالو_MIGRATING;
 
-	dequeue_dl_entity(&p->dl, flags);
-	if (!p->dl.dl_throttled && !dl_server(&p->dl))
-		dequeue_pushable_dl_task(rq, p);
+	قطار_سے_نکالو_dl_entity(&p->dl, flags);
+	اگر (!p->dl.dl_throttled && !dl_server(&p->dl))
+		قطار_سے_نکالو_pushable_dl_task(rq, p);
 
-	return true;
+	واپس true;
 }
 
 /*
@@ -2573,7 +2573,7 @@ static bool dequeue_task_dl(struct rq *rq, struct task_struct *p, int flags)
  *   yield_task_dl will indicate that some spare budget
  *   is available for other task instances to use it.
  */
-static void yield_task_dl(struct rq *rq)
+ساکن خالی yield_task_dl(ساخت rq *rq)
 {
 	/*
 	 * We make the task go to sleep until its current deadline by
@@ -2593,29 +2593,29 @@ static void yield_task_dl(struct rq *rq)
 	rq_clock_skip_update(rq);
 }
 
-static inline bool dl_task_is_earliest_deadline(struct task_struct *p,
-						 struct rq *rq)
+ساکن اندرونی bool dl_task_is_earliest_deadline(ساخت task_struct *p,
+						 ساخت rq *rq)
 {
-	return (!rq->dl.dl_nr_running ||
-		dl_time_before(p->dl.deadline,
+	واپس (!rq->dl.dl_nr_running ||
+		dl_وقت_before(p->dl.deadline,
 			       rq->dl.earliest_dl.curr));
 }
 
-static int find_later_rq(struct task_struct *task);
+ساکن صحیح ڈھونڈو_later_rq(ساخت task_struct *task);
 
-static int
-select_task_rq_dl(struct task_struct *p, int cpu, int flags)
+ساکن صحیح
+select_task_rq_dl(ساخت task_struct *p, صحیح cpu, صحیح flags)
 {
-	struct task_struct *curr, *donor;
+	ساخت task_struct *curr, *donor;
 	bool select_rq;
-	struct rq *rq;
+	ساخت rq *rq;
 
-	if (!(flags & WF_TTWU))
-		return cpu;
+	اگر (!(flags & WF_TTWU))
+		واپس cpu;
 
 	rq = cpu_rq(cpu);
 
-	rcu_read_lock();
+	rcu_read_تالا();
 	curr = READ_ONCE(rq->curr); /* unlocked access */
 	donor = READ_ONCE(rq->donor);
 
@@ -2637,28 +2637,28 @@ select_task_rq_dl(struct task_struct *p, int cpu, int flags)
 	 * Take the capacity of the CPU into account to
 	 * ensure it fits the requirement of the task.
 	 */
-	if (sched_asym_cpucap_active())
-		select_rq |= !dl_task_fits_capacity(p, cpu);
+	اگر (sched_asym_cpucap_فعال())
+		select_rq |= !dl_task_سماتا_استعداد(p, cpu);
 
-	if (select_rq) {
-		int target = find_later_rq(p);
+	اگر (select_rq) {
+		صحیح ہدف = ڈھونڈو_later_rq(p);
 
-		if (target != -1 &&
-		    dl_task_is_earliest_deadline(p, cpu_rq(target)))
-			cpu = target;
+		اگر (ہدف != -1 &&
+		    dl_task_is_earliest_deadline(p, cpu_rq(ہدف)))
+			cpu = ہدف;
 	}
 	rcu_read_unlock();
 
-	return cpu;
+	واپس cpu;
 }
 
-static void migrate_task_rq_dl(struct task_struct *p, int new_cpu __maybe_unused)
+ساکن خالی migrate_task_rq_dl(ساخت task_struct *p, صحیح new_cpu __maybe_unused)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	ساخت rq_flags rf;
+	ساخت rq *rq;
 
-	if (READ_ONCE(p->__state) != TASK_WAKING)
-		return;
+	اگر (READ_ONCE(p->__state) != TASK_WAKING)
+		واپس;
 
 	rq = task_rq(p);
 	/*
@@ -2666,8 +2666,8 @@ static void migrate_task_rq_dl(struct task_struct *p, int new_cpu __maybe_unused
 	 * from try_to_wake_up(). Hence, p->pi_lock is locked, but
 	 * rq->lock is not... So, lock it
 	 */
-	rq_lock(rq, &rf);
-	if (p->dl.dl_non_contending) {
+	rq_تالا(rq, &rf);
+	اگر (p->dl.dl_non_contending) {
 		update_rq_clock(rq);
 		sub_running_bw(&p->dl, &rq->dl);
 		p->dl.dl_non_contending = 0;
@@ -2684,191 +2684,191 @@ static void migrate_task_rq_dl(struct task_struct *p, int new_cpu __maybe_unused
 	rq_unlock(rq, &rf);
 }
 
-static void check_preempt_equal_dl(struct rq *rq, struct task_struct *p)
+ساکن خالی check_preempt_equal_dl(ساخت rq *rq, ساخت task_struct *p)
 {
 	/*
 	 * Current can't be migrated, useless to reschedule,
 	 * let's hope p can move out.
 	 */
-	if (rq->curr->nr_cpus_allowed == 1 ||
-	    !cpudl_find(&rq->rd->cpudl, rq->donor, NULL))
-		return;
+	اگر (rq->curr->nr_cpus_allowed == 1 ||
+	    !cpudl_ڈھونڈو(&rq->rd->cpudl, rq->donor, تہی))
+		واپس;
 
 	/*
 	 * p is migratable, so let's not schedule it and
 	 * see if it is pushed or pulled somewhere else.
 	 */
-	if (p->nr_cpus_allowed != 1 &&
-	    cpudl_find(&rq->rd->cpudl, p, NULL))
-		return;
+	اگر (p->nr_cpus_allowed != 1 &&
+	    cpudl_ڈھونڈو(&rq->rd->cpudl, p, تہی))
+		واپس;
 
 	resched_curr(rq);
 }
 
-static int balance_dl(struct rq *rq, struct rq_flags *rf)
+ساکن صحیح balance_dl(ساخت rq *rq, ساخت rq_flags *rf)
 {
 	/*
 	 * Note, rq->donor may change during rq lock drops,
 	 * so don't re-use prev across lock drops
 	 */
-	struct task_struct *p = rq->donor;
+	ساخت task_struct *p = rq->donor;
 
-	if (!on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
+	اگر (!on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
 		/*
 		 * This is OK, because current is on_cpu, which avoids it being
 		 * picked for load-balance and preemption/IRQs are still
 		 * disabled avoiding further scheduler activity on it and we've
 		 * not yet started the picking loop.
 		 */
-		rq_unpin_lock(rq, rf);
+		rq_unpin_تالا(rq, rf);
 		pull_dl_task(rq);
-		rq_repin_lock(rq, rf);
+		rq_repin_تالا(rq, rf);
 	}
 
-	return sched_stop_runnable(rq) || sched_dl_runnable(rq);
+	واپس sched_stop_runnable(rq) || sched_dl_runnable(rq);
 }
 
 /*
  * Only called when both the current and waking task are -deadline
  * tasks.
  */
-static void wakeup_preempt_dl(struct rq *rq, struct task_struct *p, int flags)
+ساکن خالی wakeup_preempt_dl(ساخت rq *rq, ساخت task_struct *p, صحیح flags)
 {
-	struct task_struct *donor = rq->donor;
+	ساخت task_struct *donor = rq->donor;
 	/*
 	 * Can only get preempted by stop-class, and those should be
 	 * few and short lived, doesn't really make sense to push
 	 * anything away for that.
 	 */
-	if (p->sched_class != &dl_sched_class ||
+	اگر (p->sched_class != &dl_sched_class ||
 	    donor->sched_class != &dl_sched_class)
-		return;
+		واپس;
 
-	if (dl_entity_preempt(&p->dl, &donor->dl)) {
+	اگر (dl_entity_preempt(&p->dl, &donor->dl)) {
 		resched_curr(rq);
-		return;
+		واپس;
 	}
 
 	/*
 	 * In the unlikely case current and p have the same deadline
 	 * let us try to decide what's the best thing to do...
 	 */
-	if ((p->dl.deadline == rq->donor->dl.deadline) &&
+	اگر ((p->dl.deadline == rq->donor->dl.deadline) &&
 	    !test_tsk_need_resched(rq->curr))
 		check_preempt_equal_dl(rq, p);
 }
 
-#ifdef CONFIG_SCHED_HRTICK
-static void start_hrtick_dl(struct rq *rq, struct sched_dl_entity *dl_se)
+#اگر_تعریف_شدہ CONFIG_SCHED_HRTICK
+ساکن خالی آغاز_hrtick_dl(ساخت rq *rq, ساخت sched_dl_entity *dl_se)
 {
-	hrtick_start(rq, dl_se->runtime);
+	hrtick_آغاز(rq, dl_se->runtime);
 }
-#else /* !CONFIG_SCHED_HRTICK: */
-static void start_hrtick_dl(struct rq *rq, struct sched_dl_entity *dl_se)
+#ورنہ /* !CONFIG_SCHED_HRTICK: */
+ساکن خالی آغاز_hrtick_dl(ساخت rq *rq, ساخت sched_dl_entity *dl_se)
 {
 }
-#endif /* !CONFIG_SCHED_HRTICK */
+#اگر_ختم /* !CONFIG_SCHED_HRTICK */
 
 /*
  * DL keeps current in tree, because ->deadline is not typically changed while
  * a task is runnable.
  */
-static void set_next_task_dl(struct rq *rq, struct task_struct *p, enum snt_e type)
+ساکن خالی سیٹ_اگلا_task_dl(ساخت rq *rq, ساخت task_struct *p, شمار snt_e type)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
-	struct dl_rq *dl_rq = &rq->dl;
+	ساخت sched_dl_entity *dl_se = &p->dl;
+	ساخت dl_rq *dl_rq = &rq->dl;
 
-	if (type == SNT_REPICK)
-		return;
+	اگر (type == SNT_REPICK)
+		واپس;
 
-	p->se.exec_start = rq_clock_task(rq);
-	if (on_dl_rq(&p->dl))
-		update_stats_wait_end_dl(dl_rq, dl_se);
+	p->se.exec_آغاز = rq_clock_task(rq);
+	اگر (on_dl_rq(&p->dl))
+		update_stats_wait_انتہا_dl(dl_rq, dl_se);
 
 	/* You can't push away the running task */
-	dequeue_pushable_dl_task(rq, p);
+	قطار_سے_نکالو_pushable_dl_task(rq, p);
 
 	WARN_ON_ONCE(dl_rq->curr);
 	dl_rq->curr = dl_se;
 
-	if (type != SNT_PICK)
-		return;
+	اگر (type != SNT_PICK)
+		واپس;
 
-	if (rq->donor->sched_class != &dl_sched_class)
-		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
+	اگر (rq->donor->sched_class != &dl_sched_class)
+		update_dl_rq_بھرو_avg(rq_clock_pelt(rq), rq, 0);
 
-	deadline_queue_push_tasks(rq);
+	deadline_قطار_ڈالو_tasks(rq);
 
-	if (hrtick_enabled_dl(rq))
-		start_hrtick_dl(rq, &p->dl);
+	اگر (hrtick_enabled_dl(rq))
+		آغاز_hrtick_dl(rq, &p->dl);
 }
 
-static struct sched_dl_entity *pick_next_dl_entity(struct dl_rq *dl_rq)
+ساکن ساخت sched_dl_entity *pick_اگلا_dl_entity(ساخت dl_rq *dl_rq)
 {
-	struct rb_node *left = rb_first_cached(&dl_rq->root);
+	ساخت rb_گرہ *بایاں = rb_پہلا_cached(&dl_rq->جڑ);
 
-	if (!left)
-		return NULL;
+	اگر (!بایاں)
+		واپس تہی;
 
-	return __node_2_dle(left);
+	واپس __node_2_dle(بایاں);
 }
 
 /*
  * __pick_next_task_dl - Helper to pick the next -deadline task to run.
  * @rq: The runqueue to pick the next task from.
  */
-static struct task_struct *__pick_task_dl(struct rq *rq, struct rq_flags *rf)
+ساکن ساخت task_struct *__pick_task_dl(ساخت rq *rq, ساخت rq_flags *rf)
 {
-	struct sched_dl_entity *dl_se;
-	struct dl_rq *dl_rq = &rq->dl;
-	struct task_struct *p;
+	ساخت sched_dl_entity *dl_se;
+	ساخت dl_rq *dl_rq = &rq->dl;
+	ساخت task_struct *p;
 
 again:
-	if (!sched_dl_runnable(rq))
-		return NULL;
+	اگر (!sched_dl_runnable(rq))
+		واپس تہی;
 
-	dl_se = pick_next_dl_entity(dl_rq);
+	dl_se = pick_اگلا_dl_entity(dl_rq);
 	WARN_ON_ONCE(!dl_se);
 
-	if (dl_server(dl_se)) {
+	اگر (dl_server(dl_se)) {
 		p = dl_se->server_pick_task(dl_se, rf);
-		if (!p) {
+		اگر (!p) {
 			dl_server_stop(dl_se);
-			goto again;
+			جاؤ again;
 		}
 		rq->dl_server = dl_se;
-	} else {
-		p = dl_task_of(dl_se);
+	} ورنہ {
+		p = dl_task_کا(dl_se);
 	}
 
-	return p;
+	واپس p;
 }
 
-static struct task_struct *pick_task_dl(struct rq *rq, struct rq_flags *rf)
+ساکن ساخت task_struct *pick_task_dl(ساخت rq *rq, ساخت rq_flags *rf)
 {
-	return __pick_task_dl(rq, rf);
+	واپس __pick_task_dl(rq, rf);
 }
 
-static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct task_struct *next)
+ساکن خالی put_پچھلا_task_dl(ساخت rq *rq, ساخت task_struct *p, ساخت task_struct *اگلا)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
-	struct dl_rq *dl_rq = &rq->dl;
+	ساخت sched_dl_entity *dl_se = &p->dl;
+	ساخت dl_rq *dl_rq = &rq->dl;
 
-	if (on_dl_rq(dl_se))
-		update_stats_wait_start_dl(dl_rq, dl_se);
+	اگر (on_dl_rq(dl_se))
+		update_stats_wait_آغاز_dl(dl_rq, dl_se);
 
 	update_curr_dl(rq);
 
-	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 1);
+	update_dl_rq_بھرو_avg(rq_clock_pelt(rq), rq, 1);
 
 	WARN_ON_ONCE(dl_rq->curr != dl_se);
-	dl_rq->curr = NULL;
+	dl_rq->curr = تہی;
 
-	if (task_is_blocked(p))
-		return;
+	اگر (task_is_blocked(p))
+		واپس;
 
-	if (on_dl_rq(dl_se) && p->nr_cpus_allowed > 1)
-		enqueue_pushable_dl_task(rq, p);
+	اگر (on_dl_rq(dl_se) && p->nr_cpus_allowed > 1)
+		قطار_میں_ڈالو_pushable_dl_task(rq, p);
 }
 
 /*
@@ -2879,22 +2879,22 @@ static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct task_s
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_dl(struct rq *rq, struct task_struct *p, int queued)
+ساکن خالی task_tick_dl(ساخت rq *rq, ساخت task_struct *p, صحیح queued)
 {
 	update_curr_dl(rq);
 
-	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 1);
+	update_dl_rq_بھرو_avg(rq_clock_pelt(rq), rq, 1);
 	/*
 	 * Even when we have runtime, update_curr_dl() might have resulted in us
 	 * not being the leftmost task anymore. In that case NEED_RESCHED will
 	 * be set and schedule() will start a new hrtick for the next task.
 	 */
-	if (hrtick_enabled_dl(rq) && queued && p->dl.runtime > 0 &&
+	اگر (hrtick_enabled_dl(rq) && queued && p->dl.runtime > 0 &&
 	    is_leftmost(&p->dl, &rq->dl))
-		start_hrtick_dl(rq, &p->dl);
+		آغاز_hrtick_dl(rq, &p->dl);
 }
 
-static void task_fork_dl(struct task_struct *p)
+ساکن خالی task_fork_dl(ساخت task_struct *p)
 {
 	/*
 	 * SCHED_DEADLINE tasks cannot fork and this is achieved through
@@ -2903,56 +2903,56 @@ static void task_fork_dl(struct task_struct *p)
 }
 
 /* Only try algorithms three times */
-#define DL_MAX_TRIES 3
+#تعریف_کرو DL_MAX_TRIES 3
 
 /*
  * Return the earliest pushable rq's task, which is suitable to be executed
  * on the CPU, NULL otherwise:
  */
-static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu)
+ساکن ساخت task_struct *pick_earliest_pushable_dl_task(ساخت rq *rq, صحیح cpu)
 {
-	struct task_struct *p = NULL;
-	struct rb_node *next_node;
+	ساخت task_struct *p = تہی;
+	ساخت rb_گرہ *اگلا_گرہ;
 
-	if (!has_pushable_dl_tasks(rq))
-		return NULL;
+	اگر (!has_pushable_dl_tasks(rq))
+		واپس تہی;
 
-	next_node = rb_first_cached(&rq->dl.pushable_dl_tasks_root);
-	while (next_node) {
-		p = __node_2_pdl(next_node);
+	اگلا_گرہ = rb_پہلا_cached(&rq->dl.pushable_dl_tasks_جڑ);
+	جب (اگلا_گرہ) {
+		p = __node_2_pdl(اگلا_گرہ);
 
-		if (task_is_pushable(rq, p, cpu))
-			return p;
+		اگر (task_is_pushable(rq, p, cpu))
+			واپس p;
 
-		next_node = rb_next(next_node);
+		اگلا_گرہ = rb_اگلا(اگلا_گرہ);
 	}
 
-	return NULL;
+	واپس تہی;
 }
 
 /* Access rule: must be called on local CPU with preemption disabled */
-static DEFINE_PER_CPU(cpumask_var_t, local_cpu_mask_dl);
+ساکن DEFINE_فی_CPU(cpumask_var_t, local_cpu_نقاب_dl);
 
-static int find_later_rq(struct task_struct *task)
+ساکن صحیح ڈھونڈو_later_rq(ساخت task_struct *task)
 {
-	struct sched_domain *sd;
-	struct cpumask *later_mask = this_cpu_cpumask_var_ptr(local_cpu_mask_dl);
-	int this_cpu = smp_processor_id();
-	int cpu = task_cpu(task);
+	ساخت sched_domain *sd;
+	ساخت cpumask *later_نقاب = this_cpu_cpumask_var_ptr(local_cpu_نقاب_dl);
+	صحیح this_cpu = smp_processor_id();
+	صحیح cpu = task_cpu(task);
 
 	/* Make sure the mask is initialized first */
-	if (unlikely(!later_mask))
-		return -1;
+	اگر (unlikely(!later_نقاب))
+		واپس -1;
 
-	if (task->nr_cpus_allowed == 1)
-		return -1;
+	اگر (task->nr_cpus_allowed == 1)
+		واپس -1;
 
 	/*
 	 * We have to consider system topology and task affinity
 	 * first, then we can look for a suitable CPU.
 	 */
-	if (!cpudl_find(&task_rq(task)->rd->cpudl, task, later_mask))
-		return -1;
+	اگر (!cpudl_ڈھونڈو(&task_rq(task)->rd->cpudl, task, later_نقاب))
+		واپس -1;
 
 	/*
 	 * If we are here, some targets have been found, including
@@ -2966,41 +2966,41 @@ static int find_later_rq(struct task_struct *task)
 	 * The last CPU where the task run is our first
 	 * guess, since it is most likely cache-hot there.
 	 */
-	if (cpumask_test_cpu(cpu, later_mask))
-		return cpu;
+	اگر (cpumask_test_cpu(cpu, later_نقاب))
+		واپس cpu;
 	/*
 	 * Check if this_cpu is to be skipped (i.e., it is
 	 * not in the mask) or not.
 	 */
-	if (!cpumask_test_cpu(this_cpu, later_mask))
+	اگر (!cpumask_test_cpu(this_cpu, later_نقاب))
 		this_cpu = -1;
 
-	rcu_read_lock();
+	rcu_read_تالا();
 	for_each_domain(cpu, sd) {
-		if (sd->flags & SD_WAKE_AFFINE) {
-			int best_cpu;
+		اگر (sd->flags & SD_WAKE_AFFINE) {
+			صحیح بہترین_cpu;
 
 			/*
 			 * If possible, preempting this_cpu is
 			 * cheaper than migrating.
 			 */
-			if (this_cpu != -1 &&
-			    cpumask_test_cpu(this_cpu, sched_domain_span(sd))) {
+			اگر (this_cpu != -1 &&
+			    cpumask_test_cpu(this_cpu, sched_domain_وسعت(sd))) {
 				rcu_read_unlock();
-				return this_cpu;
+				واپس this_cpu;
 			}
 
-			best_cpu = cpumask_any_and_distribute(later_mask,
-							      sched_domain_span(sd));
+			بہترین_cpu = cpumask_any_and_distribute(later_نقاب,
+							      sched_domain_وسعت(sd));
 			/*
 			 * Last chance: if a CPU being in both later_mask
 			 * and current sd span is valid, that becomes our
 			 * choice. Of course, the latest possible CPU is
 			 * already under consideration through later_mask.
 			 */
-			if (best_cpu < nr_cpu_ids) {
+			اگر (بہترین_cpu < nr_cpu_ids) {
 				rcu_read_unlock();
-				return best_cpu;
+				واپس بہترین_cpu;
 			}
 		}
 	}
@@ -3010,38 +3010,38 @@ static int find_later_rq(struct task_struct *task)
 	 * At this point, all our guesses failed, we just return
 	 * 'something', and let the caller sort the things out.
 	 */
-	if (this_cpu != -1)
-		return this_cpu;
+	اگر (this_cpu != -1)
+		واپس this_cpu;
 
-	cpu = cpumask_any_distribute(later_mask);
-	if (cpu < nr_cpu_ids)
-		return cpu;
+	cpu = cpumask_any_distribute(later_نقاب);
+	اگر (cpu < nr_cpu_ids)
+		واپس cpu;
 
-	return -1;
+	واپس -1;
 }
 
-static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
+ساکن ساخت task_struct *pick_اگلا_pushable_dl_task(ساخت rq *rq)
 {
-	struct task_struct *i, *p = NULL;
-	struct rb_node *next_node;
+	ساخت task_struct *i, *p = تہی;
+	ساخت rb_گرہ *اگلا_گرہ;
 
-	if (!has_pushable_dl_tasks(rq))
-		return NULL;
+	اگر (!has_pushable_dl_tasks(rq))
+		واپس تہی;
 
-	next_node = rb_first_cached(&rq->dl.pushable_dl_tasks_root);
-	while (next_node) {
-		i = __node_2_pdl(next_node);
+	اگلا_گرہ = rb_پہلا_cached(&rq->dl.pushable_dl_tasks_جڑ);
+	جب (اگلا_گرہ) {
+		i = __node_2_pdl(اگلا_گرہ);
 		/* skip tasks that cannot be migrated */
-		if (!task_on_cpu(rq, i) && !is_migration_disabled(i)) {
+		اگر (!task_on_cpu(rq, i) && !is_migration_disabled(i)) {
 			p = i;
-			break;
+			توڑو;
 		}
 
-		next_node = rb_next(next_node);
+		اگلا_گرہ = rb_اگلا(اگلا_گرہ);
 	}
 
-	if (!p)
-		return NULL;
+	اگر (!p)
+		واپس تہی;
 
 	WARN_ON_ONCE(rq->cpu != task_cpu(p));
 	WARN_ON_ONCE(task_current(rq, p));
@@ -3050,36 +3050,36 @@ static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
 	WARN_ON_ONCE(!task_on_rq_queued(p));
 	WARN_ON_ONCE(!dl_task(p));
 
-	return p;
+	واپس p;
 }
 
 /* Locks the rq it finds */
-static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
+ساکن ساخت rq *ڈھونڈو_تالا_later_rq(ساخت task_struct *task, ساخت rq *rq)
 {
-	struct rq *later_rq = NULL;
-	int tries;
-	int cpu;
+	ساخت rq *later_rq = تہی;
+	صحیح tries;
+	صحیح cpu;
 
-	for (tries = 0; tries < DL_MAX_TRIES; tries++) {
-		cpu = find_later_rq(task);
+	برائے (tries = 0; tries < DL_MAX_TRIES; tries++) {
+		cpu = ڈھونڈو_later_rq(task);
 
-		if ((cpu == -1) || (cpu == rq->cpu))
-			break;
+		اگر ((cpu == -1) || (cpu == rq->cpu))
+			توڑو;
 
 		later_rq = cpu_rq(cpu);
 
-		if (!dl_task_is_earliest_deadline(task, later_rq)) {
+		اگر (!dl_task_is_earliest_deadline(task, later_rq)) {
 			/*
 			 * Target rq has tasks of equal or earlier deadline,
 			 * retrying does not release any lock and is unlikely
 			 * to yield a different result.
 			 */
-			later_rq = NULL;
-			break;
+			later_rq = تہی;
+			توڑو;
 		}
 
 		/* Retry if something changed. */
-		if (double_lock_balance(rq, later_rq)) {
+		اگر (double_تالا_balance(rq, later_rq)) {
 			/*
 			 * double_lock_balance had to release rq->lock, in the
 			 * meantime, task may no longer be fit to be migrated.
@@ -3101,19 +3101,19 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
 			 *    check to ensure that this task is still at the
 			 *    head of the pushable tasks list is enough.
 			 */
-			if (unlikely(is_migration_disabled(task) ||
-				     !cpumask_test_cpu(later_rq->cpu, &task->cpus_mask) ||
+			اگر (unlikely(is_migration_disabled(task) ||
+				     !cpumask_test_cpu(later_rq->cpu, &task->cpus_نقاب) ||
 				     (task->dl.dl_throttled &&
 				      (task_rq(task) != rq ||
 				       task_on_cpu(rq, task) ||
 				       !dl_task(task) ||
 				       !task_on_rq_queued(task))) ||
 				     (!task->dl.dl_throttled &&
-				      task != pick_next_pushable_dl_task(rq)))) {
+				      task != pick_اگلا_pushable_dl_task(rq)))) {
 
 				double_unlock_balance(rq, later_rq);
-				later_rq = NULL;
-				break;
+				later_rq = تہی;
+				توڑو;
 			}
 		}
 
@@ -3122,15 +3122,15 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
 		 * its earliest one has a later deadline than our
 		 * task, the rq is a good one.
 		 */
-		if (dl_task_is_earliest_deadline(task, later_rq))
-			break;
+		اگر (dl_task_is_earliest_deadline(task, later_rq))
+			توڑو;
 
 		/* Otherwise we try again. */
 		double_unlock_balance(rq, later_rq);
-		later_rq = NULL;
+		later_rq = تہی;
 	}
 
-	return later_rq;
+	واپس later_rq;
 }
 
 /*
@@ -3138,15 +3138,15 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
  * can be sent to some other CPU where they can preempt
  * and start executing.
  */
-static int push_dl_task(struct rq *rq)
+ساکن صحیح ڈالو_dl_task(ساخت rq *rq)
 {
-	struct task_struct *next_task;
-	struct rq *later_rq;
-	int ret = 0;
+	ساخت task_struct *اگلا_task;
+	ساخت rq *later_rq;
+	صحیح ret = 0;
 
-	next_task = pick_next_pushable_dl_task(rq);
-	if (!next_task)
-		return 0;
+	اگلا_task = pick_اگلا_pushable_dl_task(rq);
+	اگر (!اگلا_task)
+		واپس 0;
 
 retry:
 	/*
@@ -3154,80 +3154,80 @@ retry:
 	 * can move away, it makes sense to just reschedule
 	 * without going further in pushing next_task.
 	 */
-	if (dl_task(rq->donor) &&
-	    dl_time_before(next_task->dl.deadline, rq->donor->dl.deadline) &&
+	اگر (dl_task(rq->donor) &&
+	    dl_وقت_before(اگلا_task->dl.deadline, rq->donor->dl.deadline) &&
 	    rq->curr->nr_cpus_allowed > 1) {
 		resched_curr(rq);
-		return 0;
+		واپس 0;
 	}
 
-	if (is_migration_disabled(next_task))
-		return 0;
+	اگر (is_migration_disabled(اگلا_task))
+		واپس 0;
 
-	if (WARN_ON(next_task == rq->curr))
-		return 0;
+	اگر (WARN_ON(اگلا_task == rq->curr))
+		واپس 0;
 
 	/* We might release rq lock */
-	get_task_struct(next_task);
+	get_task_struct(اگلا_task);
 
 	/* Will lock the rq it'll find */
-	later_rq = find_lock_later_rq(next_task, rq);
-	if (!later_rq) {
-		struct task_struct *task;
+	later_rq = ڈھونڈو_تالا_later_rq(اگلا_task, rq);
+	اگر (!later_rq) {
+		ساخت task_struct *task;
 
 		/*
 		 * We must check all this again, since
 		 * find_lock_later_rq releases rq->lock and it is
 		 * then possible that next_task has migrated.
 		 */
-		task = pick_next_pushable_dl_task(rq);
-		if (task == next_task) {
+		task = pick_اگلا_pushable_dl_task(rq);
+		اگر (task == اگلا_task) {
 			/*
 			 * The task is still there. We don't try
 			 * again, some other CPU will pull it when ready.
 			 */
-			goto out;
+			جاؤ برآمد;
 		}
 
-		if (!task)
+		اگر (!task)
 			/* No more tasks */
-			goto out;
+			جاؤ برآمد;
 
-		put_task_struct(next_task);
-		next_task = task;
-		goto retry;
+		put_task_struct(اگلا_task);
+		اگلا_task = task;
+		جاؤ retry;
 	}
 
-	move_queued_task_locked(rq, later_rq, next_task);
+	move_queued_task_locked(rq, later_rq, اگلا_task);
 	ret = 1;
 
 	resched_curr(later_rq);
 
 	double_unlock_balance(rq, later_rq);
 
-out:
-	put_task_struct(next_task);
+برآمد:
+	put_task_struct(اگلا_task);
 
-	return ret;
+	واپس ret;
 }
 
-static void push_dl_tasks(struct rq *rq)
+ساکن خالی ڈالو_dl_tasks(ساخت rq *rq)
 {
 	/* push_dl_task() will return true if it moved a -deadline task */
-	while (push_dl_task(rq))
+	جب (ڈالو_dl_task(rq))
 		;
 }
 
-static void pull_dl_task(struct rq *this_rq)
+ساکن خالی pull_dl_task(ساخت rq *this_rq)
 {
-	int this_cpu = this_rq->cpu, cpu;
-	struct task_struct *p, *push_task;
+	صحیح this_cpu = this_rq->cpu, cpu;
+	ساخت task_struct *p, *ڈالو_task;
 	bool resched = false;
-	struct rq *src_rq;
+	ساخت rq *src_rq;
 	u64 dmin = LONG_MAX;
 
-	if (likely(!dl_overloaded(this_rq)))
-		return;
+	اگر (likely(!dl_overloaded(this_rq)))
+		واپس;
 
 	/*
 	 * Match the barrier from dl_set_overloaded; this guarantees that if we
@@ -3235,9 +3235,9 @@ static void pull_dl_task(struct rq *this_rq)
 	 */
 	smp_rmb();
 
-	for_each_cpu(cpu, this_rq->rd->dlo_mask) {
-		if (this_cpu == cpu)
-			continue;
+	for_each_cpu(cpu, this_rq->rd->dlo_نقاب) {
+		اگر (this_cpu == cpu)
+			جاری;
 
 		src_rq = cpu_rq(cpu);
 
@@ -3245,21 +3245,21 @@ static void pull_dl_task(struct rq *this_rq)
 		 * It looks racy, and it is! However, as in sched_rt.c,
 		 * we are fine with this.
 		 */
-		if (this_rq->dl.dl_nr_running &&
-		    dl_time_before(this_rq->dl.earliest_dl.curr,
-				   src_rq->dl.earliest_dl.next))
-			continue;
+		اگر (this_rq->dl.dl_nr_running &&
+		    dl_وقت_before(this_rq->dl.earliest_dl.curr,
+				   src_rq->dl.earliest_dl.اگلا))
+			جاری;
 
 		/* Might drop this_rq->lock */
-		push_task = NULL;
-		double_lock_balance(this_rq, src_rq);
+		ڈالو_task = تہی;
+		double_تالا_balance(this_rq, src_rq);
 
 		/*
 		 * If there are no more pullable tasks on the
 		 * rq, we're done with it.
 		 */
-		if (src_rq->dl.dl_nr_running <= 1)
-			goto skip;
+		اگر (src_rq->dl.dl_nr_running <= 1)
+			جاؤ skip;
 
 		p = pick_earliest_pushable_dl_task(src_rq, this_cpu);
 
@@ -3268,7 +3268,7 @@ static void pull_dl_task(struct rq *this_rq)
 		 *  - it preempts our current (if there's one),
 		 *  - it will preempt the last one we pulled (if any).
 		 */
-		if (p && dl_time_before(p->dl.deadline, dmin) &&
+		اگر (p && dl_وقت_before(p->dl.deadline, dmin) &&
 		    dl_task_is_earliest_deadline(p, this_rq)) {
 			WARN_ON(p == src_rq->curr);
 			WARN_ON(!task_on_rq_queued(p));
@@ -3277,13 +3277,13 @@ static void pull_dl_task(struct rq *this_rq)
 			 * Then we pull iff p has actually an earlier
 			 * deadline than the current task of its runqueue.
 			 */
-			if (dl_time_before(p->dl.deadline,
+			اگر (dl_وقت_before(p->dl.deadline,
 					   src_rq->donor->dl.deadline))
-				goto skip;
+				جاؤ skip;
 
-			if (is_migration_disabled(p)) {
-				push_task = get_push_task(src_rq);
-			} else {
+			اگر (is_migration_disabled(p)) {
+				ڈالو_task = get_ڈالو_task(src_rq);
+			} ورنہ {
 				move_queued_task_locked(src_rq, this_rq, p);
 				dmin = p->dl.deadline;
 				resched = true;
@@ -3294,17 +3294,17 @@ static void pull_dl_task(struct rq *this_rq)
 skip:
 		double_unlock_balance(this_rq, src_rq);
 
-		if (push_task) {
+		اگر (ڈالو_task) {
 			preempt_disable();
 			raw_spin_rq_unlock(this_rq);
-			stop_one_cpu_nowait(src_rq->cpu, push_cpu_stop,
-					    push_task, &src_rq->push_work);
+			stop_one_cpu_nowait(src_rq->cpu, ڈالو_cpu_stop,
+					    ڈالو_task, &src_rq->ڈالو_work);
 			preempt_enable();
-			raw_spin_rq_lock(this_rq);
+			raw_spin_rq_تالا(this_rq);
 		}
 	}
 
-	if (resched)
+	اگر (resched)
 		resched_curr(this_rq);
 }
 
@@ -3312,22 +3312,22 @@ skip:
  * Since the task is not running and a reschedule is not going to happen
  * anytime soon on its runqueue, we try pushing it away now.
  */
-static void task_woken_dl(struct rq *rq, struct task_struct *p)
+ساکن خالی task_woken_dl(ساخت rq *rq, ساخت task_struct *p)
 {
-	if (!task_on_cpu(rq, p) &&
+	اگر (!task_on_cpu(rq, p) &&
 	    !test_tsk_need_resched(rq->curr) &&
 	    p->nr_cpus_allowed > 1 &&
 	    dl_task(rq->donor) &&
 	    (rq->curr->nr_cpus_allowed < 2 ||
 	     !dl_entity_preempt(&p->dl, &rq->donor->dl))) {
-		push_dl_tasks(rq);
+		ڈالو_dl_tasks(rq);
 	}
 }
 
-static void set_cpus_allowed_dl(struct task_struct *p,
-				struct affinity_context *ctx)
+ساکن خالی سیٹ_cpus_allowed_dl(ساخت task_struct *p,
+				ساخت affinity_context *ctx)
 {
-	struct rq *rq;
+	ساخت rq *rq;
 
 	WARN_ON_ONCE(!dl_task(p));
 
@@ -3338,60 +3338,60 @@ static void set_cpus_allowed_dl(struct task_struct *p,
 	 * update. We already made space for us in the destination
 	 * domain (see cpuset_can_attach()).
 	 */
-	if (dl_task_needs_bw_move(p, ctx->new_mask)) {
-		struct dl_bw *src_dl_b;
+	اگر (dl_task_needs_bw_move(p, ctx->new_نقاب)) {
+		ساخت dl_bw *src_dl_b;
 
-		src_dl_b = dl_bw_of(cpu_of(rq));
+		src_dl_b = dl_bw_کا(cpu_کا(rq));
 		/*
 		 * We now free resources of the root_domain we are migrating
 		 * off. In the worst case, sched_setattr() may temporary fail
 		 * until we complete the update.
 		 */
-		raw_spin_lock(&src_dl_b->lock);
+		raw_spin_تالا(&src_dl_b->تالا);
 		__dl_sub(src_dl_b, p->dl.dl_bw, dl_bw_cpus(task_cpu(p)));
-		raw_spin_unlock(&src_dl_b->lock);
+		raw_spin_unlock(&src_dl_b->تالا);
 	}
 
-	set_cpus_allowed_common(p, ctx);
+	سیٹ_cpus_allowed_common(p, ctx);
 }
 
-bool dl_task_needs_bw_move(struct task_struct *p,
-			   const struct cpumask *new_mask)
+bool dl_task_needs_bw_move(ساخت task_struct *p,
+			   ثابت ساخت cpumask *new_نقاب)
 {
-	if (!dl_task(p))
-		return false;
+	اگر (!dl_task(p))
+		واپس false;
 
-	return !cpumask_intersects(task_rq(p)->rd->span, new_mask);
+	واپس !cpumask_intersects(task_rq(p)->rd->وسعت, new_نقاب);
 }
 
 /* Assumes rq->lock is held */
-static void rq_online_dl(struct rq *rq)
+ساکن خالی rq_online_dl(ساخت rq *rq)
 {
-	if (rq->dl.overloaded)
-		dl_set_overload(rq);
+	اگر (rq->dl.overloaded)
+		dl_سیٹ_overload(rq);
 
-	if (rq->dl.dl_nr_running > 0)
-		cpudl_set(&rq->rd->cpudl, rq->cpu, rq->dl.earliest_dl.curr);
-	else
+	اگر (rq->dl.dl_nr_running > 0)
+		cpudl_سیٹ(&rq->rd->cpudl, rq->cpu, rq->dl.earliest_dl.curr);
+	ورنہ
 		cpudl_clear(&rq->rd->cpudl, rq->cpu, true);
 }
 
 /* Assumes rq->lock is held */
-static void rq_offline_dl(struct rq *rq)
+ساکن خالی rq_offline_dl(ساخت rq *rq)
 {
-	if (rq->dl.overloaded)
+	اگر (rq->dl.overloaded)
 		dl_clear_overload(rq);
 
 	cpudl_clear(&rq->rd->cpudl, rq->cpu, false);
 }
 
-void __init init_sched_dl_class(void)
+خالی __init init_sched_dl_class(خالی)
 {
-	unsigned int i;
+	غیرعلامتی صحیح i;
 
 	for_each_possible_cpu(i)
-		zalloc_cpumask_var_node(&per_cpu(local_cpu_mask_dl, i),
-					GFP_KERNEL, cpu_to_node(i));
+		zalloc_cpumask_var_گرہ(&فی_cpu(local_cpu_نقاب_dl, i),
+					GFP_KERNEL, cpu_مقصد_گرہ(i));
 }
 
 /*
@@ -3399,19 +3399,19 @@ void __init init_sched_dl_class(void)
  * if a root domain has reserved bandwidth for DL tasks, the DL bandwidth
  * check will prevent CPU hotplug from deactivating all CPUs in that domain.
  */
-static void dl_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
+ساکن خالی dl_get_task_effective_cpus(ساخت task_struct *p, ساخت cpumask *cpus)
 {
-	const struct cpumask *hk_msk;
+	ثابت ساخت cpumask *hk_msk;
 
 	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
+	اگر (housekeeping_enabled(HK_TYPE_DOMAIN)) {
+		اگر (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
 			/*
 			 * CPUs isolated by isolcpu="domain" always belong to
 			 * def_root_domain.
 			 */
-			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-			return;
+			cpumask_andnot(cpus, cpu_فعال_نقاب, hk_msk);
+			واپس;
 		}
 	}
 
@@ -3424,93 +3424,93 @@ static void dl_get_task_effective_cpus(struct task_struct *p, struct cpumask *cp
 }
 
 /* The caller should hold cpuset_mutex */
-void dl_add_task_root_domain(struct task_struct *p)
+خالی dl_جوڑو_task_جڑ_domain(ساخت task_struct *p)
 {
-	struct rq_flags rf;
-	struct rq *rq;
-	struct dl_bw *dl_b;
-	unsigned int cpu;
-	struct cpumask *msk;
+	ساخت rq_flags rf;
+	ساخت rq *rq;
+	ساخت dl_bw *dl_b;
+	غیرعلامتی صحیح cpu;
+	ساخت cpumask *msk;
 
-	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
-	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
-		raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
-		return;
+	raw_spin_تالا_irqsave(&p->pi_تالا, rf.flags);
+	اگر (!dl_task(p) || dl_entity_is_special(&p->dl)) {
+		raw_spin_unlock_irqrestore(&p->pi_تالا, rf.flags);
+		واپس;
 	}
 
-	msk = this_cpu_cpumask_var_ptr(local_cpu_mask_dl);
+	msk = this_cpu_cpumask_var_ptr(local_cpu_نقاب_dl);
 	dl_get_task_effective_cpus(p, msk);
-	cpu = cpumask_first_and(cpu_active_mask, msk);
+	cpu = cpumask_پہلا_and(cpu_فعال_نقاب, msk);
 	BUG_ON(cpu >= nr_cpu_ids);
 	rq = cpu_rq(cpu);
 	dl_b = &rq->rd->dl_bw;
 
-	raw_spin_lock(&dl_b->lock);
-	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
-	raw_spin_unlock(&dl_b->lock);
-	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
+	raw_spin_تالا(&dl_b->تالا);
+	__dl_add(dl_b, p->dl.dl_bw, cpumask_وزن(rq->rd->وسعت));
+	raw_spin_unlock(&dl_b->تالا);
+	raw_spin_unlock_irqrestore(&p->pi_تالا, rf.flags);
 }
 
-static void dl_server_add_bw(struct root_domain *rd, int cpu)
+ساکن خالی dl_server_جوڑو_bw(ساخت جڑ_domain *rd, صحیح cpu)
 {
-	struct sched_dl_entity *dl_se;
+	ساخت sched_dl_entity *dl_se;
 
 	dl_se = &cpu_rq(cpu)->fair_server;
-	if (dl_server(dl_se) && dl_se->dl_bw_attached && cpu_active(cpu))
+	اگر (dl_server(dl_se) && dl_se->dl_bw_attached && cpu_فعال(cpu))
 		__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(cpu));
 
-#ifdef CONFIG_SCHED_CLASS_EXT
+#اگر_تعریف_شدہ CONFIG_SCHED_CLASS_EXT
 	dl_se = &cpu_rq(cpu)->ext_server;
-	if (dl_server(dl_se) && dl_se->dl_bw_attached && cpu_active(cpu))
+	اگر (dl_server(dl_se) && dl_se->dl_bw_attached && cpu_فعال(cpu))
 		__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(cpu));
-#endif
+#اگر_ختم
 }
 
-static u64 dl_server_read_bw(int cpu)
+ساکن u64 dl_server_read_bw(صحیح cpu)
 {
 	u64 dl_bw = 0;
 
-	if (cpu_rq(cpu)->fair_server.dl_server &&
+	اگر (cpu_rq(cpu)->fair_server.dl_server &&
 	    cpu_rq(cpu)->fair_server.dl_bw_attached)
 		dl_bw += cpu_rq(cpu)->fair_server.dl_bw;
 
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (cpu_rq(cpu)->ext_server.dl_server &&
+#اگر_تعریف_شدہ CONFIG_SCHED_CLASS_EXT
+	اگر (cpu_rq(cpu)->ext_server.dl_server &&
 	    cpu_rq(cpu)->ext_server.dl_bw_attached)
 		dl_bw += cpu_rq(cpu)->ext_server.dl_bw;
-#endif
+#اگر_ختم
 
-	return dl_bw;
+	واپس dl_bw;
 }
 
-void dl_clear_root_domain(struct root_domain *rd)
+خالی dl_clear_جڑ_domain(ساخت جڑ_domain *rd)
 {
-	int i;
+	صحیح i;
 
-	guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
+	guard(raw_spinlock_irqsave)(&rd->dl_bw.تالا);
 
 	/*
 	 * Reset total_bw to zero and extra_bw to max_bw so that next
 	 * loop will add dl-servers contributions back properly,
 	 */
-	rd->dl_bw.total_bw = 0;
-	for_each_cpu(i, rd->span)
+	rd->dl_bw.کل_bw = 0;
+	for_each_cpu(i, rd->وسعت)
 		cpu_rq(i)->dl.extra_bw = cpu_rq(i)->dl.max_bw;
 
 	/*
 	 * dl_servers are not tasks. Since dl_add_task_root_domain ignores
 	 * them, we need to account for them here explicitly.
 	 */
-	for_each_cpu(i, rd->span)
-		dl_server_add_bw(rd, i);
+	for_each_cpu(i, rd->وسعت)
+		dl_server_جوڑو_bw(rd, i);
 }
 
-void dl_clear_root_domain_cpu(int cpu)
+خالی dl_clear_جڑ_domain_cpu(صحیح cpu)
 {
-	dl_clear_root_domain(cpu_rq(cpu)->rd);
+	dl_clear_جڑ_domain(cpu_rq(cpu)->rd);
 }
 
-static void switched_from_dl(struct rq *rq, struct task_struct *p)
+ساکن خالی switched_from_dl(ساخت rq *rq, ساخت task_struct *p)
 {
 	/*
 	 * task_non_contending() can start the "inactive timer" (if the 0-lag
@@ -3520,7 +3520,7 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
 	 * SCHED_DEADLINE until the 0-lag time passes, inactive_task_timer()
 	 * will reset the task parameters.
 	 */
-	if (task_on_rq_queued(p) && p->dl.dl_runtime)
+	اگر (task_on_rq_queued(p) && p->dl.dl_runtime)
 		task_non_contending(&p->dl, false);
 
 	/*
@@ -3529,14 +3529,14 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
 	 */
 	dec_dl_tasks_cs(p);
 
-	if (!task_on_rq_queued(p)) {
+	اگر (!task_on_rq_queued(p)) {
 		/*
 		 * Inactive timer is armed. However, p is leaving DEADLINE and
 		 * might migrate away from this rq while continuing to run on
 		 * some other class. We need to remove its contribution from
 		 * this rq running_bw now, or sub_rq_bw (below) will complain.
 		 */
-		if (p->dl.dl_non_contending)
+		اگر (p->dl.dl_non_contending)
 			sub_running_bw(&p->dl, &rq->dl);
 		sub_rq_bw(&p->dl, &rq->dl);
 	}
@@ -3546,7 +3546,7 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
 	 * at the 0-lag time, because the task could have been migrated
 	 * while SCHED_OTHER in the meanwhile.
 	 */
-	if (p->dl.dl_non_contending)
+	اگر (p->dl.dl_non_contending)
 		p->dl.dl_non_contending = 0;
 
 	/*
@@ -3554,17 +3554,17 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
 	 * this is the right place to try to pull some other one
 	 * from an overloaded CPU, if any.
 	 */
-	if (!task_on_rq_queued(p) || rq->dl.dl_nr_running)
-		return;
+	اگر (!task_on_rq_queued(p) || rq->dl.dl_nr_running)
+		واپس;
 
-	deadline_queue_pull_task(rq);
+	deadline_قطار_pull_task(rq);
 }
 
 /*
  * When switching to -deadline, we may overload the rq, then
  * we try to push someone off, if possible.
  */
-static void switched_to_dl(struct rq *rq, struct task_struct *p)
+ساکن خالی switched_مقصد_dl(ساخت rq *rq, ساخت task_struct *p)
 {
 	cancel_inactive_timer(&p->dl);
 
@@ -3575,110 +3575,110 @@ static void switched_to_dl(struct rq *rq, struct task_struct *p)
 	inc_dl_tasks_cs(p);
 
 	/* If p is not queued we will update its parameters at next wakeup. */
-	if (!task_on_rq_queued(p)) {
-		add_rq_bw(&p->dl, &rq->dl);
+	اگر (!task_on_rq_queued(p)) {
+		جوڑو_rq_bw(&p->dl, &rq->dl);
 
-		return;
+		واپس;
 	}
 
-	if (rq->donor != p) {
-		if (p->nr_cpus_allowed > 1 && rq->dl.overloaded)
-			deadline_queue_push_tasks(rq);
-		if (dl_task(rq->donor))
+	اگر (rq->donor != p) {
+		اگر (p->nr_cpus_allowed > 1 && rq->dl.overloaded)
+			deadline_قطار_ڈالو_tasks(rq);
+		اگر (dl_task(rq->donor))
 			wakeup_preempt_dl(rq, p, 0);
-		else
+		ورنہ
 			resched_curr(rq);
-	} else {
-		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
+	} ورنہ {
+		update_dl_rq_بھرو_avg(rq_clock_pelt(rq), rq, 0);
 	}
 }
 
-static u64 get_prio_dl(struct rq *rq, struct task_struct *p)
+ساکن u64 get_prio_dl(ساخت rq *rq, ساخت task_struct *p)
 {
 	/*
 	 * Make sure to update current so we don't return a stale value.
 	 */
-	if (task_current_donor(rq, p))
+	اگر (task_current_donor(rq, p))
 		update_curr_dl(rq);
 
-	return p->dl.deadline;
+	واپس p->dl.deadline;
 }
 
 /*
  * If the scheduling parameters of a -deadline task changed,
  * a push or pull operation might be needed.
  */
-static void prio_changed_dl(struct rq *rq, struct task_struct *p, u64 old_deadline)
+ساکن خالی prio_بدلا_dl(ساخت rq *rq, ساخت task_struct *p, u64 old_deadline)
 {
-	if (!task_on_rq_queued(p))
-		return;
+	اگر (!task_on_rq_queued(p))
+		واپس;
 
-	if (p->dl.deadline == old_deadline)
-		return;
+	اگر (p->dl.deadline == old_deadline)
+		واپس;
 
-	if (dl_time_before(old_deadline, p->dl.deadline))
-		deadline_queue_pull_task(rq);
+	اگر (dl_وقت_before(old_deadline, p->dl.deadline))
+		deadline_قطار_pull_task(rq);
 
-	if (task_current_donor(rq, p)) {
+	اگر (task_current_donor(rq, p)) {
 		/*
 		 * If we now have a earlier deadline task than p,
 		 * then reschedule, provided p is still on this
 		 * runqueue.
 		 */
-		if (dl_time_before(rq->dl.earliest_dl.curr, p->dl.deadline))
+		اگر (dl_وقت_before(rq->dl.earliest_dl.curr, p->dl.deadline))
 			resched_curr(rq);
-	} else {
+	} ورنہ {
 		/*
 		 * Current may not be deadline in case p was throttled but we
 		 * have just replenished it (e.g. rt_mutex_setprio()).
 		 *
 		 * Otherwise, if p was given an earlier deadline, reschedule.
 		 */
-		if (!dl_task(rq->curr) ||
-		    dl_time_before(p->dl.deadline, rq->curr->dl.deadline))
+		اگر (!dl_task(rq->curr) ||
+		    dl_وقت_before(p->dl.deadline, rq->curr->dl.deadline))
 			resched_curr(rq);
 	}
 }
 
-#ifdef CONFIG_SCHED_CORE
-static int task_is_throttled_dl(struct task_struct *p, int cpu)
+#اگر_تعریف_شدہ CONFIG_SCHED_CORE
+ساکن صحیح task_is_throttled_dl(ساخت task_struct *p, صحیح cpu)
 {
-	return p->dl.dl_throttled;
+	واپس p->dl.dl_throttled;
 }
-#endif
+#اگر_ختم
 
 DEFINE_SCHED_CLASS(dl) = {
-	.enqueue_task		= enqueue_task_dl,
-	.dequeue_task		= dequeue_task_dl,
+	.قطار_میں_ڈالو_task		= قطار_میں_ڈالو_task_dl,
+	.قطار_سے_نکالو_task		= قطار_سے_نکالو_task_dl,
 	.yield_task		= yield_task_dl,
 
 	.wakeup_preempt		= wakeup_preempt_dl,
 
 	.pick_task		= pick_task_dl,
-	.put_prev_task		= put_prev_task_dl,
-	.set_next_task		= set_next_task_dl,
+	.put_پچھلا_task		= put_پچھلا_task_dl,
+	.سیٹ_اگلا_task		= سیٹ_اگلا_task_dl,
 
 	.balance		= balance_dl,
 	.select_task_rq		= select_task_rq_dl,
 	.migrate_task_rq	= migrate_task_rq_dl,
-	.set_cpus_allowed       = set_cpus_allowed_dl,
+	.سیٹ_cpus_allowed       = سیٹ_cpus_allowed_dl,
 	.rq_online              = rq_online_dl,
 	.rq_offline             = rq_offline_dl,
 	.task_woken		= task_woken_dl,
-	.find_lock_rq		= find_lock_later_rq,
+	.ڈھونڈو_تالا_rq		= ڈھونڈو_تالا_later_rq,
 
 	.task_tick		= task_tick_dl,
 	.task_fork              = task_fork_dl,
 
 	.get_prio		= get_prio_dl,
-	.prio_changed           = prio_changed_dl,
+	.prio_بدلا           = prio_بدلا_dl,
 	.switched_from		= switched_from_dl,
-	.switched_to		= switched_to_dl,
+	.switched_مقصد		= switched_مقصد_dl,
 
 	.update_curr		= update_curr_dl,
-#ifdef CONFIG_SCHED_CORE
+#اگر_تعریف_شدہ CONFIG_SCHED_CORE
 	.task_is_throttled	= task_is_throttled_dl,
-#endif
+#اگر_ختم
 };
 
 /*
@@ -3687,15 +3687,15 @@ DEFINE_SCHED_CLASS(dl) = {
  */
 u64 dl_cookie;
 
-int sched_dl_global_validate(void)
+صحیح sched_dl_global_validate(خالی)
 {
 	u64 runtime = global_rt_runtime();
 	u64 period = global_rt_period();
-	u64 new_bw = to_ratio(period, runtime);
+	u64 new_bw = مقصد_تناسب(period, runtime);
 	u64 cookie = ++dl_cookie;
-	struct dl_bw *dl_b;
-	int cpu, cpus, ret = 0;
-	unsigned long flags;
+	ساخت dl_bw *dl_b;
+	صحیح cpu, cpus, ret = 0;
+	غیرعلامتی طویل flags;
 
 	/*
 	 * Here we want to check the bandwidth not being set to some
@@ -3703,69 +3703,69 @@ int sched_dl_global_validate(void)
 	 * any of the root_domains.
 	 */
 	for_each_online_cpu(cpu) {
-		rcu_read_lock_sched();
+		rcu_read_تالا_sched();
 
-		if (dl_bw_visited(cpu, cookie))
-			goto next;
+		اگر (dl_bw_دیکھا(cpu, cookie))
+			جاؤ اگلا;
 
-		dl_b = dl_bw_of(cpu);
+		dl_b = dl_bw_کا(cpu);
 		cpus = dl_bw_cpus(cpu);
 
-		raw_spin_lock_irqsave(&dl_b->lock, flags);
-		if (new_bw * cpus < dl_b->total_bw)
+		raw_spin_تالا_irqsave(&dl_b->تالا, flags);
+		اگر (new_bw * cpus < dl_b->کل_bw)
 			ret = -EBUSY;
-		raw_spin_unlock_irqrestore(&dl_b->lock, flags);
+		raw_spin_unlock_irqrestore(&dl_b->تالا, flags);
 
-next:
+اگلا:
 		rcu_read_unlock_sched();
 
-		if (ret)
-			break;
+		اگر (ret)
+			توڑو;
 	}
 
-	return ret;
+	واپس ret;
 }
 
-static void init_dl_rq_bw_ratio(struct dl_rq *dl_rq)
+ساکن خالی init_dl_rq_bw_تناسب(ساخت dl_rq *dl_rq)
 {
-	if (global_rt_runtime() == RUNTIME_INF) {
-		dl_rq->bw_ratio = 1 << RATIO_SHIFT;
-		dl_rq->max_bw = dl_rq->extra_bw = 1 << BW_SHIFT;
-	} else {
-		dl_rq->bw_ratio = to_ratio(global_rt_runtime(),
-			  global_rt_period()) >> (BW_SHIFT - RATIO_SHIFT);
+	اگر (global_rt_runtime() == RUNTIME_INF) {
+		dl_rq->bw_تناسب = 1 << تناسب_سرکاؤ;
+		dl_rq->max_bw = dl_rq->extra_bw = 1 << BW_سرکاؤ;
+	} ورنہ {
+		dl_rq->bw_تناسب = مقصد_تناسب(global_rt_runtime(),
+			  global_rt_period()) >> (BW_سرکاؤ - تناسب_سرکاؤ);
 		dl_rq->max_bw = dl_rq->extra_bw =
-			to_ratio(global_rt_period(), global_rt_runtime());
+			مقصد_تناسب(global_rt_period(), global_rt_runtime());
 	}
 }
 
-void sched_dl_do_global(void)
+خالی sched_dl_do_global(خالی)
 {
 	u64 new_bw = -1;
 	u64 cookie = ++dl_cookie;
-	struct dl_bw *dl_b;
-	int cpu;
-	unsigned long flags;
+	ساخت dl_bw *dl_b;
+	صحیح cpu;
+	غیرعلامتی طویل flags;
 
-	if (global_rt_runtime() != RUNTIME_INF)
-		new_bw = to_ratio(global_rt_period(), global_rt_runtime());
+	اگر (global_rt_runtime() != RUNTIME_INF)
+		new_bw = مقصد_تناسب(global_rt_period(), global_rt_runtime());
 
 	for_each_possible_cpu(cpu)
-		init_dl_rq_bw_ratio(&cpu_rq(cpu)->dl);
+		init_dl_rq_bw_تناسب(&cpu_rq(cpu)->dl);
 
 	for_each_possible_cpu(cpu) {
-		rcu_read_lock_sched();
+		rcu_read_تالا_sched();
 
-		if (dl_bw_visited(cpu, cookie)) {
+		اگر (dl_bw_دیکھا(cpu, cookie)) {
 			rcu_read_unlock_sched();
-			continue;
+			جاری;
 		}
 
-		dl_b = dl_bw_of(cpu);
+		dl_b = dl_bw_کا(cpu);
 
-		raw_spin_lock_irqsave(&dl_b->lock, flags);
+		raw_spin_تالا_irqsave(&dl_b->تالا, flags);
 		dl_b->bw = new_bw;
-		raw_spin_unlock_irqrestore(&dl_b->lock, flags);
+		raw_spin_unlock_irqrestore(&dl_b->تالا, flags);
 
 		rcu_read_unlock_sched();
 	}
@@ -3779,39 +3779,39 @@ void sched_dl_do_global(void)
  *
  * This function is called while holding p's rq->lock.
  */
-int sched_dl_overflow(struct task_struct *p, int policy,
-		      const struct sched_attr *attr)
+صحیح sched_dl_حد_سے_تجاوز(ساخت task_struct *p, صحیح policy,
+		      ثابت ساخت sched_attr *attr)
 {
 	u64 period = attr->sched_period ?: attr->sched_deadline;
 	u64 runtime = attr->sched_runtime;
-	u64 new_bw = dl_policy(policy) ? to_ratio(period, runtime) : 0;
-	int cpus, err = -1, cpu = task_cpu(p);
-	struct dl_bw *dl_b = dl_bw_of(cpu);
-	unsigned long cap;
+	u64 new_bw = dl_policy(policy) ? مقصد_تناسب(period, runtime) : 0;
+	صحیح cpus, err = -1, cpu = task_cpu(p);
+	ساخت dl_bw *dl_b = dl_bw_کا(cpu);
+	غیرعلامتی طویل cap;
 
-	if (attr->sched_flags & SCHED_FLAG_SUGOV)
-		return 0;
+	اگر (attr->sched_flags & SCHED_FLAG_SUGOV)
+		واپس 0;
 
 	/* !deadline task may carry old deadline bandwidth */
-	if (new_bw == p->dl.dl_bw && task_has_dl_policy(p))
-		return 0;
+	اگر (new_bw == p->dl.dl_bw && task_has_dl_policy(p))
+		واپس 0;
 
 	/*
 	 * Either if a task, enters, leave, or stays -deadline but changes
 	 * its parameters, we may need to update accordingly the total
 	 * allocated bandwidth of the container.
 	 */
-	raw_spin_lock(&dl_b->lock);
+	raw_spin_تالا(&dl_b->تالا);
 	cpus = dl_bw_cpus(cpu);
-	cap = dl_bw_capacity(cpu);
+	cap = dl_bw_استعداد(cpu);
 
-	if (dl_policy(policy) && !task_has_dl_policy(p) &&
+	اگر (dl_policy(policy) && !task_has_dl_policy(p) &&
 	    !__dl_overflow(dl_b, cap, 0, new_bw)) {
-		if (hrtimer_active(&p->dl.inactive_timer))
+		اگر (hrtimer_فعال(&p->dl.inactive_timer))
 			__dl_sub(dl_b, p->dl.dl_bw, cpus);
 		__dl_add(dl_b, new_bw, cpus);
 		err = 0;
-	} else if (dl_policy(policy) && task_has_dl_policy(p) &&
+	} ورنہ اگر (dl_policy(policy) && task_has_dl_policy(p) &&
 		   !__dl_overflow(dl_b, cap, p->dl.dl_bw, new_bw)) {
 		/*
 		 * XXX this is slightly incorrect: when the task
@@ -3824,7 +3824,7 @@ int sched_dl_overflow(struct task_struct *p, int policy,
 		__dl_add(dl_b, new_bw, cpus);
 		dl_change_utilization(p, new_bw);
 		err = 0;
-	} else if (!dl_policy(policy) && task_has_dl_policy(p)) {
+	} ورنہ اگر (!dl_policy(policy) && task_has_dl_policy(p)) {
 		/*
 		 * Do not decrease the total deadline utilization here,
 		 * switched_from_dl() will take care to do it at the correct
@@ -3832,9 +3832,9 @@ int sched_dl_overflow(struct task_struct *p, int policy,
 		 */
 		err = 0;
 	}
-	raw_spin_unlock(&dl_b->lock);
+	raw_spin_unlock(&dl_b->تالا);
 
-	return err;
+	واپس err;
 }
 
 /*
@@ -3845,35 +3845,35 @@ int sched_dl_overflow(struct task_struct *p, int policy,
  * absolute deadline will be properly calculated when the task is enqueued
  * for the first time with its new policy.
  */
-void __setparam_dl(struct task_struct *p, const struct sched_attr *attr)
+خالی __setparam_dl(ساخت task_struct *p, ثابت ساخت sched_attr *attr)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
+	ساخت sched_dl_entity *dl_se = &p->dl;
 
 	dl_se->dl_runtime = attr->sched_runtime;
 	dl_se->dl_deadline = attr->sched_deadline;
 	dl_se->dl_period = attr->sched_period ?: dl_se->dl_deadline;
 	dl_se->flags = attr->sched_flags & SCHED_DL_FLAGS;
-	dl_se->dl_bw = to_ratio(dl_se->dl_period, dl_se->dl_runtime);
-	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
+	dl_se->dl_bw = مقصد_تناسب(dl_se->dl_period, dl_se->dl_runtime);
+	dl_se->dl_density = مقصد_تناسب(dl_se->dl_deadline, dl_se->dl_runtime);
 }
 
-void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags)
+خالی __getparam_dl(ساخت task_struct *p, ساخت sched_attr *attr, غیرعلامتی صحیح flags)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
-	struct rq *rq = task_rq(p);
+	ساخت sched_dl_entity *dl_se = &p->dl;
+	ساخت rq *rq = task_rq(p);
 	u64 adj_deadline;
 
-	attr->sched_priority = p->rt_priority;
-	if (flags & SCHED_GETATTR_FLAG_DL_DYNAMIC) {
+	attr->sched_ترجیح = p->rt_ترجیح;
+	اگر (flags & SCHED_GETATTR_FLAG_DL_DYNAMIC) {
 		guard(raw_spinlock_irq)(&rq->__lock);
 		update_rq_clock(rq);
-		if (task_current(rq, p))
+		اگر (task_current(rq, p))
 			update_curr_dl(rq);
 
 		attr->sched_runtime = dl_se->runtime;
 		adj_deadline = dl_se->deadline - rq_clock(rq) + ktime_get_ns();
 		attr->sched_deadline = adj_deadline;
-	} else {
+	} ورنہ {
 		attr->sched_runtime = dl_se->dl_runtime;
 		attr->sched_deadline = dl_se->dl_deadline;
 	}
@@ -3892,55 +3892,55 @@ void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int 
  * below 2^63 ns (we have to check both sched_deadline and
  * sched_period, as the latter can be zero).
  */
-bool __checkparam_dl(const struct sched_attr *attr)
+bool __checkparam_dl(ثابت ساخت sched_attr *attr)
 {
 	u64 period, max, min;
 
 	/* special dl tasks don't actually use any parameter */
-	if (attr->sched_flags & SCHED_FLAG_SUGOV)
-		return true;
+	اگر (attr->sched_flags & SCHED_FLAG_SUGOV)
+		واپس true;
 
 	/* deadline != 0 */
-	if (attr->sched_deadline == 0)
-		return false;
+	اگر (attr->sched_deadline == 0)
+		واپس false;
 
 	/*
 	 * Since we truncate DL_SCALE bits, make sure we're at least
 	 * that big.
 	 */
-	if (attr->sched_runtime < (1ULL << DL_SCALE))
-		return false;
+	اگر (attr->sched_runtime < (1ULL << DL_SCALE))
+		واپس false;
 
 	/*
 	 * Since we use the MSB for wrap-around and sign issues, make
 	 * sure it's not set (mind that period can be equal to zero).
 	 */
-	if (attr->sched_deadline & (1ULL << 63) ||
+	اگر (attr->sched_deadline & (1ULL << 63) ||
 	    attr->sched_period & (1ULL << 63))
-		return false;
+		واپس false;
 
 	period = attr->sched_period;
-	if (!period)
+	اگر (!period)
 		period = attr->sched_deadline;
 
 	/* runtime <= deadline <= period (if period != 0) */
-	if (period < attr->sched_deadline ||
+	اگر (period < attr->sched_deadline ||
 	    attr->sched_deadline < attr->sched_runtime)
-		return false;
+		واپس false;
 
-	max = (u64)READ_ONCE(sysctl_sched_dl_period_max) * NSEC_PER_USEC;
-	min = (u64)READ_ONCE(sysctl_sched_dl_period_min) * NSEC_PER_USEC;
+	max = (u64)READ_ONCE(sysctl_sched_dl_period_max) * NSEC_فی_USEC;
+	min = (u64)READ_ONCE(sysctl_sched_dl_period_min) * NSEC_فی_USEC;
 
-	if (period < min || period > max)
-		return false;
+	اگر (period < min || period > max)
+		واپس false;
 
-	return true;
+	واپس true;
 }
 
 /*
  * This function clears the sched_dl_entity static params.
  */
-static void __dl_clear_params(struct sched_dl_entity *dl_se)
+ساکن خالی __dl_clear_params(ساخت sched_dl_entity *dl_se)
 {
 	dl_se->dl_runtime		= 0;
 	dl_se->dl_deadline		= 0;
@@ -3958,77 +3958,77 @@ static void __dl_clear_params(struct sched_dl_entity *dl_se)
 	dl_se->dl_defer_running		= 0;
 	dl_se->dl_defer_armed		= 0;
 
-#ifdef CONFIG_RT_MUTEXES
+#اگر_تعریف_شدہ CONFIG_RT_MUTEXES
 	dl_se->pi_se			= dl_se;
-#endif
+#اگر_ختم
 }
 
-void init_dl_entity(struct sched_dl_entity *dl_se)
+خالی init_dl_entity(ساخت sched_dl_entity *dl_se)
 {
-	RB_CLEAR_NODE(&dl_se->rb_node);
+	RB_CLEAR_گرہ(&dl_se->rb_گرہ);
 	init_dl_task_timer(dl_se);
 	init_dl_inactive_task_timer(dl_se);
 	__dl_clear_params(dl_se);
 }
 
-bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr)
+bool dl_param_بدلا(ساخت task_struct *p, ثابت ساخت sched_attr *attr)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
+	ساخت sched_dl_entity *dl_se = &p->dl;
 
-	if (dl_se->dl_runtime != attr->sched_runtime ||
+	اگر (dl_se->dl_runtime != attr->sched_runtime ||
 	    dl_se->dl_deadline != attr->sched_deadline ||
 	    dl_se->dl_period != attr->sched_period ||
 	    dl_se->flags != (attr->sched_flags & SCHED_DL_FLAGS))
-		return true;
+		واپس true;
 
-	return false;
+	واپس false;
 }
 
-int dl_cpuset_cpumask_can_shrink(const struct cpumask *cur,
-				 const struct cpumask *trial)
+صحیح dl_cpuset_cpumask_can_shrink(ثابت ساخت cpumask *cur,
+				 ثابت ساخت cpumask *trial)
 {
-	unsigned long flags, cap;
-	struct dl_bw *cur_dl_b;
-	int ret = 1;
+	غیرعلامتی طویل flags, cap;
+	ساخت dl_bw *cur_dl_b;
+	صحیح ret = 1;
 
-	rcu_read_lock_sched();
-	cur_dl_b = dl_bw_of(cpumask_any(cur));
+	rcu_read_تالا_sched();
+	cur_dl_b = dl_bw_کا(cpumask_any(cur));
 	cap = __dl_bw_capacity(trial);
-	raw_spin_lock_irqsave(&cur_dl_b->lock, flags);
-	if (__dl_overflow(cur_dl_b, cap, 0, 0))
+	raw_spin_تالا_irqsave(&cur_dl_b->تالا, flags);
+	اگر (__dl_overflow(cur_dl_b, cap, 0, 0))
 		ret = 0;
-	raw_spin_unlock_irqrestore(&cur_dl_b->lock, flags);
+	raw_spin_unlock_irqrestore(&cur_dl_b->تالا, flags);
 	rcu_read_unlock_sched();
 
-	return ret;
+	واپس ret;
 }
 
-enum dl_bw_request {
+شمار dl_bw_request {
 	dl_bw_req_deactivate = 0,
 	dl_bw_req_alloc,
 	dl_bw_req_free
 };
 
-static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
+ساکن صحیح dl_bw_manage(شمار dl_bw_request req, صحیح cpu, u64 dl_bw)
 {
-	unsigned long flags, cap;
-	struct dl_bw *dl_b;
-	bool overflow = 0;
+	غیرعلامتی طویل flags, cap;
+	ساخت dl_bw *dl_b;
+	bool حد_سے_تجاوز = 0;
 	u64 dl_server_bw = 0;
 
-	rcu_read_lock_sched();
-	dl_b = dl_bw_of(cpu);
-	raw_spin_lock_irqsave(&dl_b->lock, flags);
+	rcu_read_تالا_sched();
+	dl_b = dl_bw_کا(cpu);
+	raw_spin_تالا_irqsave(&dl_b->تالا, flags);
 
-	cap = dl_bw_capacity(cpu);
-	switch (req) {
-	case dl_bw_req_free:
+	cap = dl_bw_استعداد(cpu);
+	انتخاب (req) {
+	حالت dl_bw_req_free:
 		__dl_sub(dl_b, dl_bw, dl_bw_cpus(cpu));
-		break;
-	case dl_bw_req_alloc:
-		overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
+		توڑو;
+	حالت dl_bw_req_alloc:
+		حد_سے_تجاوز = __dl_overflow(dl_b, cap, 0, dl_bw);
 
-		if (!overflow) {
+		اگر (!حد_سے_تجاوز) {
 			/*
 			 * We reserve space in the destination
 			 * root_domain, as we can't fail after this point.
@@ -4037,14 +4037,14 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
 			 */
 			__dl_add(dl_b, dl_bw, dl_bw_cpus(cpu));
 		}
-		break;
-	case dl_bw_req_deactivate:
+		توڑو;
+	حالت dl_bw_req_deactivate:
 		/*
 		 * cpu is not off yet, but we need to do the math by
 		 * considering it off already (i.e., what would happen if we
 		 * turn cpu off?).
 		 */
-		cap -= arch_scale_cpu_capacity(cpu);
+		cap -= arch_scale_cpu_استعداد(cpu);
 
 		/*
 		 * cpu is going offline and NORMAL and EXT tasks will be
@@ -4059,43 +4059,43 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
 		 * dl_servers we can discount, as tasks will be moved out the
 		 * offlined CPUs anyway.
 		 */
-		if (dl_b->total_bw - dl_server_bw > 0) {
+		اگر (dl_b->کل_bw - dl_server_bw > 0) {
 			/*
 			 * Leaving at least one CPU for DEADLINE tasks seems a
 			 * wise thing to do. As said above, cpu is not offline
 			 * yet, so account for that.
 			 */
-			if (dl_bw_cpus(cpu) - 1)
-				overflow = __dl_overflow(dl_b, cap, dl_server_bw, 0);
-			else
-				overflow = 1;
+			اگر (dl_bw_cpus(cpu) - 1)
+				حد_سے_تجاوز = __dl_overflow(dl_b, cap, dl_server_bw, 0);
+			ورنہ
+				حد_سے_تجاوز = 1;
 		}
 
-		break;
+		توڑو;
 	}
 
-	raw_spin_unlock_irqrestore(&dl_b->lock, flags);
+	raw_spin_unlock_irqrestore(&dl_b->تالا, flags);
 	rcu_read_unlock_sched();
 
-	return overflow ? -EBUSY : 0;
+	واپس حد_سے_تجاوز ? -EBUSY : 0;
 }
 
-int dl_bw_deactivate(int cpu)
+صحیح dl_bw_deactivate(صحیح cpu)
 {
-	return dl_bw_manage(dl_bw_req_deactivate, cpu, 0);
+	واپس dl_bw_manage(dl_bw_req_deactivate, cpu, 0);
 }
 
-int dl_bw_alloc(int cpu, u64 dl_bw)
+صحیح dl_bw_alloc(صحیح cpu, u64 dl_bw)
 {
-	return dl_bw_manage(dl_bw_req_alloc, cpu, dl_bw);
+	واپس dl_bw_manage(dl_bw_req_alloc, cpu, dl_bw);
 }
 
-void dl_bw_free(int cpu, u64 dl_bw)
+خالی dl_bw_free(صحیح cpu, u64 dl_bw)
 {
 	dl_bw_manage(dl_bw_req_free, cpu, dl_bw);
 }
 
-void print_dl_stats(struct seq_file *m, int cpu)
+خالی print_dl_stats(ساخت seq_file *m, صحیح cpu)
 {
 	print_dl_rq(m, cpu, &cpu_rq(cpu)->dl);
 }

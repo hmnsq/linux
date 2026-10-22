@@ -6,8 +6,8 @@
  * figure. Its a silly number but people think its important. We go through
  * great pains to make it work on big machines and tickless kernels.
  */
-#include <linux/sched/nohz.h>
-#include "sched.h"
+#شامل <linux/sched/nohz.h>
+#شامل "sched.h"
 
 /*
  * Global load-average calculations
@@ -57,10 +57,10 @@
  */
 
 /* Variables and functions for calc_load */
-atomic_long_t calc_load_tasks;
-unsigned long calc_load_update;
-unsigned long avenrun[3];
-EXPORT_SYMBOL(avenrun); /* should be removed */
+atomic_long_t calc_بھرو_tasks;
+غیرعلامتی طویل calc_بھرو_update;
+غیرعلامتی طویل avenrun[3];
+EXPORT_علامت(avenrun); /* should be removed */
 
 /**
  * get_avenrun - get the load average array
@@ -70,26 +70,26 @@ EXPORT_SYMBOL(avenrun); /* should be removed */
  *
  * These values are estimates at best, so no need for locking.
  */
-void get_avenrun(unsigned long *loads, unsigned long offset, int shift)
+خالی get_avenrun(غیرعلامتی طویل *loads, غیرعلامتی طویل انحراف, صحیح سرکاؤ)
 {
-	loads[0] = (avenrun[0] + offset) << shift;
-	loads[1] = (avenrun[1] + offset) << shift;
-	loads[2] = (avenrun[2] + offset) << shift;
+	loads[0] = (avenrun[0] + انحراف) << سرکاؤ;
+	loads[1] = (avenrun[1] + انحراف) << سرکاؤ;
+	loads[2] = (avenrun[2] + انحراف) << سرکاؤ;
 }
 
-long calc_load_fold_active(struct rq *this_rq, long adjust)
+طویل calc_بھرو_fold_فعال(ساخت rq *this_rq, طویل adjust)
 {
-	long nr_active, delta = 0;
+	طویل nr_فعال, delta = 0;
 
-	nr_active = this_rq->nr_running - adjust;
-	nr_active += (long)this_rq->nr_uninterruptible;
+	nr_فعال = this_rq->nr_running - adjust;
+	nr_فعال += (طویل)this_rq->nr_uninterruptible;
 
-	if (nr_active != this_rq->calc_load_active) {
-		delta = nr_active - this_rq->calc_load_active;
-		this_rq->calc_load_active = nr_active;
+	اگر (nr_فعال != this_rq->calc_بھرو_فعال) {
+		delta = nr_فعال - this_rq->calc_بھرو_فعال;
+		this_rq->calc_بھرو_فعال = nr_فعال;
 	}
 
-	return delta;
+	واپس delta;
 }
 
 /**
@@ -107,28 +107,28 @@ long calc_load_fold_active(struct rq *this_rq, long adjust)
  * of course trivially computable in O(log_2 n), the length of our binary
  * vector.
  */
-static unsigned long
-fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
+ساکن غیرعلامتی طویل
+fixed_power_int(غیرعلامتی طویل x, غیرعلامتی صحیح frac_بٹ, غیرعلامتی صحیح n)
 {
-	unsigned long result = 1UL << frac_bits;
+	غیرعلامتی طویل نتیجہ = 1UL << frac_بٹ;
 
-	if (n) {
-		for (;;) {
-			if (n & 1) {
-				result *= x;
-				result += 1UL << (frac_bits - 1);
-				result >>= frac_bits;
+	اگر (n) {
+		برائے (;;) {
+			اگر (n & 1) {
+				نتیجہ *= x;
+				نتیجہ += 1UL << (frac_بٹ - 1);
+				نتیجہ >>= frac_بٹ;
 			}
 			n >>= 1;
-			if (!n)
-				break;
+			اگر (!n)
+				توڑو;
 			x *= x;
-			x += 1UL << (frac_bits - 1);
-			x >>= frac_bits;
+			x += 1UL << (frac_بٹ - 1);
+			x >>= frac_بٹ;
 		}
 	}
 
-	return result;
+	واپس نتیجہ;
 }
 
 /*
@@ -154,14 +154,14 @@ fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
  *     S_n := \Sum x^i = -------------
  *             i=0          1 - x
  */
-unsigned long
-calc_load_n(unsigned long load, unsigned long exp,
-	    unsigned long active, unsigned int n)
+غیرعلامتی طویل
+calc_بھرو_n(غیرعلامتی طویل بھرو, غیرعلامتی طویل قوت_نما,
+	    غیرعلامتی طویل فعال, غیرعلامتی صحیح n)
 {
-	return calc_load(load, fixed_power_int(exp, FSHIFT, n), active);
+	واپس calc_بھرو(بھرو, fixed_power_int(قوت_نما, FSHIFT, n), فعال);
 }
 
-#ifdef CONFIG_NO_HZ_COMMON
+#اگر_تعریف_شدہ CONFIG_NO_HZ_COMMON
 /*
  * Handle NO_HZ for the global load-average.
  *
@@ -204,12 +204,12 @@ calc_load_n(unsigned long load, unsigned long exp,
  *
  * When making the ILB scale, we should try to pull this in as well.
  */
-static atomic_long_t calc_load_nohz[2];
-static int calc_load_idx;
+ساکن atomic_long_t calc_بھرو_nohz[2];
+ساکن صحیح calc_بھرو_idx;
 
-static inline int calc_load_write_idx(void)
+ساکن اندرونی صحیح calc_بھرو_write_idx(خالی)
 {
-	int idx = calc_load_idx;
+	صحیح idx = calc_بھرو_idx;
 
 	/*
 	 * See calc_global_nohz(), if we observe the new index, we also
@@ -221,76 +221,76 @@ static inline int calc_load_write_idx(void)
 	 * If the folding window started, make sure we start writing in the
 	 * next NO_HZ-delta.
 	 */
-	if (!time_before(jiffies, READ_ONCE(calc_load_update)))
+	اگر (!وقت_before(jiffies, READ_ONCE(calc_بھرو_update)))
 		idx++;
 
-	return idx & 1;
+	واپس idx & 1;
 }
 
-static inline int calc_load_read_idx(void)
+ساکن اندرونی صحیح calc_بھرو_read_idx(خالی)
 {
-	return calc_load_idx & 1;
+	واپس calc_بھرو_idx & 1;
 }
 
-static void calc_load_nohz_fold(struct rq *rq)
+ساکن خالی calc_بھرو_nohz_fold(ساخت rq *rq)
 {
-	long delta;
+	طویل delta;
 
-	delta = calc_load_fold_active(rq, 0);
-	if (delta) {
-		int idx = calc_load_write_idx();
+	delta = calc_بھرو_fold_فعال(rq, 0);
+	اگر (delta) {
+		صحیح idx = calc_بھرو_write_idx();
 
-		atomic_long_add(delta, &calc_load_nohz[idx]);
+		atomic_long_جوڑو(delta, &calc_بھرو_nohz[idx]);
 	}
 }
 
-void calc_load_nohz_start(void)
+خالی calc_بھرو_nohz_آغاز(خالی)
 {
 	/*
 	 * We're going into NO_HZ mode, if there's any pending delta, fold it
 	 * into the pending NO_HZ delta.
 	 */
-	calc_load_nohz_fold(this_rq());
+	calc_بھرو_nohz_fold(this_rq());
 }
 
 /*
  * Keep track of the load for NOHZ_FULL, must be called between
  * calc_load_nohz_{start,stop}().
  */
-void calc_load_nohz_remote(struct rq *rq)
+خالی calc_بھرو_nohz_remote(ساخت rq *rq)
 {
-	calc_load_nohz_fold(rq);
+	calc_بھرو_nohz_fold(rq);
 }
 
-void calc_load_nohz_stop(void)
+خالی calc_بھرو_nohz_stop(خالی)
 {
-	struct rq *this_rq = this_rq();
+	ساخت rq *this_rq = this_rq();
 
 	/*
 	 * If we're still before the pending sample window, we're done.
 	 */
-	this_rq->calc_load_update = READ_ONCE(calc_load_update);
-	if (time_before(jiffies, this_rq->calc_load_update))
-		return;
+	this_rq->calc_بھرو_update = READ_ONCE(calc_بھرو_update);
+	اگر (وقت_before(jiffies, this_rq->calc_بھرو_update))
+		واپس;
 
 	/*
 	 * We woke inside or after the sample window, this means we're already
 	 * accounted through the nohz accounting, so skip the entire deal and
 	 * sync up for the next window.
 	 */
-	if (time_before(jiffies, this_rq->calc_load_update + 10))
-		this_rq->calc_load_update += LOAD_FREQ;
+	اگر (وقت_before(jiffies, this_rq->calc_بھرو_update + 10))
+		this_rq->calc_بھرو_update += بھرو_FREQ;
 }
 
-static long calc_load_nohz_read(void)
+ساکن طویل calc_بھرو_nohz_read(خالی)
 {
-	int idx = calc_load_read_idx();
-	long delta = 0;
+	صحیح idx = calc_بھرو_read_idx();
+	طویل delta = 0;
 
-	if (atomic_long_read(&calc_load_nohz[idx]))
-		delta = atomic_long_xchg(&calc_load_nohz[idx], 0);
+	اگر (atomic_long_read(&calc_بھرو_nohz[idx]))
+		delta = atomic_long_xchg(&calc_بھرو_nohz[idx], 0);
 
-	return delta;
+	واپس delta;
 }
 
 /*
@@ -302,27 +302,27 @@ static long calc_load_nohz_read(void)
  * Once we've updated the global active value, we need to apply the exponential
  * weights adjusted to the number of cycles missed.
  */
-static void calc_global_nohz(void)
+ساکن خالی calc_global_nohz(خالی)
 {
-	unsigned long sample_window;
-	long delta, active, n;
+	غیرعلامتی طویل sample_کھڑکی;
+	طویل delta, فعال, n;
 
-	sample_window = READ_ONCE(calc_load_update);
-	if (!time_before(jiffies, sample_window + 10)) {
+	sample_کھڑکی = READ_ONCE(calc_بھرو_update);
+	اگر (!وقت_before(jiffies, sample_کھڑکی + 10)) {
 		/*
 		 * Catch-up, fold however many we are behind still
 		 */
-		delta = jiffies - sample_window - 10;
-		n = 1 + (delta / LOAD_FREQ);
+		delta = jiffies - sample_کھڑکی - 10;
+		n = 1 + (delta / بھرو_FREQ);
 
-		active = atomic_long_read(&calc_load_tasks);
-		active = active > 0 ? active * FIXED_1 : 0;
+		فعال = atomic_long_read(&calc_بھرو_tasks);
+		فعال = فعال > 0 ? فعال * FIXED_1 : 0;
 
-		avenrun[0] = calc_load_n(avenrun[0], EXP_1, active, n);
-		avenrun[1] = calc_load_n(avenrun[1], EXP_5, active, n);
-		avenrun[2] = calc_load_n(avenrun[2], EXP_15, active, n);
+		avenrun[0] = calc_بھرو_n(avenrun[0], EXP_1, فعال, n);
+		avenrun[1] = calc_بھرو_n(avenrun[1], EXP_5, فعال, n);
+		avenrun[2] = calc_بھرو_n(avenrun[2], EXP_15, فعال, n);
 
-		WRITE_ONCE(calc_load_update, sample_window + n * LOAD_FREQ);
+		WRITE_ONCE(calc_بھرو_update, sample_کھڑکی + n * بھرو_FREQ);
 	}
 
 	/*
@@ -333,14 +333,14 @@ static void calc_global_nohz(void)
 	 * index, this avoids a double flip messing things up.
 	 */
 	smp_wmb();
-	calc_load_idx++;
+	calc_بھرو_idx++;
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
+#ورنہ /* !CONFIG_NO_HZ_COMMON: */
 
-static inline long calc_load_nohz_read(void) { return 0; }
-static inline void calc_global_nohz(void) { }
+ساکن اندرونی طویل calc_بھرو_nohz_read(خالی) { واپس 0; }
+ساکن اندرونی خالی calc_global_nohz(خالی) { }
 
-#endif /* !CONFIG_NO_HZ_COMMON */
+#اگر_ختم /* !CONFIG_NO_HZ_COMMON */
 
 /*
  * calc_load - update the avenrun load estimates 10 ticks after the
@@ -348,30 +348,30 @@ static inline void calc_global_nohz(void) { }
  *
  * Called from the global timer code.
  */
-void calc_global_load(void)
+خالی calc_global_بھرو(خالی)
 {
-	unsigned long sample_window;
-	long active, delta;
+	غیرعلامتی طویل sample_کھڑکی;
+	طویل فعال, delta;
 
-	sample_window = READ_ONCE(calc_load_update);
-	if (time_before(jiffies, sample_window + 10))
-		return;
+	sample_کھڑکی = READ_ONCE(calc_بھرو_update);
+	اگر (وقت_before(jiffies, sample_کھڑکی + 10))
+		واپس;
 
 	/*
 	 * Fold the 'old' NO_HZ-delta to include all NO_HZ CPUs.
 	 */
-	delta = calc_load_nohz_read();
-	if (delta)
-		atomic_long_add(delta, &calc_load_tasks);
+	delta = calc_بھرو_nohz_read();
+	اگر (delta)
+		atomic_long_جوڑو(delta, &calc_بھرو_tasks);
 
-	active = atomic_long_read(&calc_load_tasks);
-	active = active > 0 ? active * FIXED_1 : 0;
+	فعال = atomic_long_read(&calc_بھرو_tasks);
+	فعال = فعال > 0 ? فعال * FIXED_1 : 0;
 
-	avenrun[0] = calc_load(avenrun[0], EXP_1, active);
-	avenrun[1] = calc_load(avenrun[1], EXP_5, active);
-	avenrun[2] = calc_load(avenrun[2], EXP_15, active);
+	avenrun[0] = calc_بھرو(avenrun[0], EXP_1, فعال);
+	avenrun[1] = calc_بھرو(avenrun[1], EXP_5, فعال);
+	avenrun[2] = calc_بھرو(avenrun[2], EXP_15, فعال);
 
-	WRITE_ONCE(calc_load_update, sample_window + LOAD_FREQ);
+	WRITE_ONCE(calc_بھرو_update, sample_کھڑکی + بھرو_FREQ);
 
 	/*
 	 * In case we went to NO_HZ for multiple LOAD_FREQ intervals
@@ -384,16 +384,16 @@ void calc_global_load(void)
  * Called from sched_tick() to periodically update this CPU's
  * active count.
  */
-void calc_global_load_tick(struct rq *this_rq)
+خالی calc_global_بھرو_tick(ساخت rq *this_rq)
 {
-	long delta;
+	طویل delta;
 
-	if (time_before(jiffies, this_rq->calc_load_update))
-		return;
+	اگر (وقت_before(jiffies, this_rq->calc_بھرو_update))
+		واپس;
 
-	delta  = calc_load_fold_active(this_rq, 0);
-	if (delta)
-		atomic_long_add(delta, &calc_load_tasks);
+	delta  = calc_بھرو_fold_فعال(this_rq, 0);
+	اگر (delta)
+		atomic_long_جوڑو(delta, &calc_بھرو_tasks);
 
-	this_rq->calc_load_update += LOAD_FREQ;
+	this_rq->calc_بھرو_update += بھرو_FREQ;
 }

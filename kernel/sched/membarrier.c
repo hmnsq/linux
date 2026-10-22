@@ -4,8 +4,8 @@
  *
  * membarrier system call
  */
-#include <uapi/linux/membarrier.h>
-#include "sched.h"
+#شامل <uapi/linux/membarrier.h>
+#شامل "sched.h"
 
 /*
  * For documentation purposes, here are some membarrier ordering
@@ -139,58 +139,58 @@
  * Bitmask made from a "or" of all commands within enum membarrier_cmd,
  * except MEMBARRIER_CMD_QUERY.
  */
-#ifdef CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE
-#define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK			\
-	(MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE			\
-	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE)
-#else
-#define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK	0
-#endif
+#اگر_تعریف_شدہ CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE
+#تعریف_کرو MEMBARRIER_نجی_EXPEDITED_SYNC_CORE_BITMASK			\
+	(MEMBARRIER_CMD_نجی_EXPEDITED_SYNC_CORE			\
+	| MEMBARRIER_CMD_رجسٹر_نجی_EXPEDITED_SYNC_CORE)
+#ورنہ
+#تعریف_کرو MEMBARRIER_نجی_EXPEDITED_SYNC_CORE_BITMASK	0
+#اگر_ختم
 
-#ifdef CONFIG_RSEQ
-#define MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK		\
-	(MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ			\
-	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ)
-#else
-#define MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK	0
-#endif
+#اگر_تعریف_شدہ CONFIG_RSEQ
+#تعریف_کرو MEMBARRIER_نجی_EXPEDITED_RSEQ_BITMASK		\
+	(MEMBARRIER_CMD_نجی_EXPEDITED_RSEQ			\
+	| MEMBARRIER_CMD_رجسٹر_نجی_EXPEDITED_RSEQ)
+#ورنہ
+#تعریف_کرو MEMBARRIER_نجی_EXPEDITED_RSEQ_BITMASK	0
+#اگر_ختم
 
-#define MEMBARRIER_CMD_BITMASK						\
+#تعریف_کرو MEMBARRIER_CMD_BITMASK						\
 	(MEMBARRIER_CMD_GLOBAL | MEMBARRIER_CMD_GLOBAL_EXPEDITED	\
-	| MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED			\
-	| MEMBARRIER_CMD_PRIVATE_EXPEDITED				\
-	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED			\
-	| MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK		\
-	| MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK			\
+	| MEMBARRIER_CMD_رجسٹر_GLOBAL_EXPEDITED			\
+	| MEMBARRIER_CMD_نجی_EXPEDITED				\
+	| MEMBARRIER_CMD_رجسٹر_نجی_EXPEDITED			\
+	| MEMBARRIER_نجی_EXPEDITED_SYNC_CORE_BITMASK		\
+	| MEMBARRIER_نجی_EXPEDITED_RSEQ_BITMASK			\
 	| MEMBARRIER_CMD_GET_REGISTRATIONS)
 
 /*
  * Scoped guard for memory barriers on entry and exit.
  * Matches memory barriers before & after rq->curr modification in scheduler.
  */
-DEFINE_LOCK_GUARD_0(mb, smp_mb(), smp_mb())
-static DEFINE_MUTEX(membarrier_ipi_mutex);
-static DEFINE_PER_CPU(struct mutex, membarrier_cpu_mutexes);
+DEFINE_تالا_GUARD_0(mb, smp_mb(), smp_mb())
+ساکن DEFINE_MUTEX(membarrier_ipi_mutex);
+ساکن DEFINE_فی_CPU(ساخت mutex, membarrier_cpu_mutexes);
 
-#define SERIALIZE_IPI() guard(mutex)(&membarrier_ipi_mutex)
-#define SERIALIZE_IPI_CPU(cpu_id) guard(mutex)(&per_cpu(membarrier_cpu_mutexes, cpu_id))
+#تعریف_کرو SERIALIZE_IPI() guard(mutex)(&membarrier_ipi_mutex)
+#تعریف_کرو SERIALIZE_IPI_CPU(cpu_id) guard(mutex)(&فی_cpu(membarrier_cpu_mutexes, cpu_id))
 
-static int __init membarrier_init(void)
+ساکن صحیح __init membarrier_init(خالی)
 {
-	int i;
+	صحیح i;
 
 	for_each_possible_cpu(i)
-		mutex_init(&per_cpu(membarrier_cpu_mutexes, i));
-	return 0;
+		mutex_init(&فی_cpu(membarrier_cpu_mutexes, i));
+	واپس 0;
 }
 core_initcall(membarrier_init);
 
-static void ipi_mb(void *info)
+ساکن خالی ipi_mb(خالی *info)
 {
 	smp_mb();	/* IPIs should be serializing but paranoid. */
 }
 
-static void ipi_sync_core(void *info)
+ساکن خالی ipi_sync_core(خالی *info)
 {
 	/*
 	 * The smp_mb() in membarrier after all the IPIs is supposed to
@@ -207,7 +207,7 @@ static void ipi_sync_core(void *info)
 	sync_core_before_usermode();
 }
 
-static void ipi_rseq(void *info)
+ساکن خالی ipi_rseq(خالی *info)
 {
 	/*
 	 * Ensure that all stores done by the calling thread are visible
@@ -223,18 +223,18 @@ static void ipi_rseq(void *info)
 	 * only updated if they change as a consequence of preemption after
 	 * return from this IPI.
 	 */
-	if (rseq_v2(current))
+	اگر (rseq_v2(current))
 		rseq_sched_switch_event(current);
-	else
+	ورنہ
 		rseq_force_update();
 }
 
-static void ipi_sync_rq_state(void *info)
+ساکن خالی ipi_sync_rq_state(خالی *info)
 {
-	struct mm_struct *mm = (struct mm_struct *) info;
+	ساخت mm_struct *mm = (ساخت mm_struct *) info;
 
-	if (current->mm != mm)
-		return;
+	اگر (current->mm != mm)
+		واپس;
 	this_cpu_write(runqueues.membarrier_state,
 		       atomic_read(&mm->membarrier_state));
 	/*
@@ -246,7 +246,7 @@ static void ipi_sync_rq_state(void *info)
 	smp_mb();
 }
 
-void membarrier_exec_mmap(struct mm_struct *mm)
+خالی membarrier_exec_mmap(ساخت mm_struct *mm)
 {
 	/*
 	 * Issue a memory barrier before clearing membarrier_state to
@@ -254,7 +254,7 @@ void membarrier_exec_mmap(struct mm_struct *mm)
 	 * clearing this state.
 	 */
 	smp_mb();
-	atomic_set(&mm->membarrier_state, 0);
+	atomic_سیٹ(&mm->membarrier_state, 0);
 	/*
 	 * Keep the runqueue membarrier_state in sync with this mm
 	 * membarrier_state.
@@ -262,36 +262,36 @@ void membarrier_exec_mmap(struct mm_struct *mm)
 	this_cpu_write(runqueues.membarrier_state, 0);
 }
 
-void membarrier_update_current_mm(struct mm_struct *next_mm)
+خالی membarrier_update_current_mm(ساخت mm_struct *اگلا_mm)
 {
-	struct rq *rq = this_rq();
-	int membarrier_state = 0;
+	ساخت rq *rq = this_rq();
+	صحیح membarrier_state = 0;
 
-	if (next_mm)
-		membarrier_state = atomic_read(&next_mm->membarrier_state);
-	if (READ_ONCE(rq->membarrier_state) == membarrier_state)
-		return;
+	اگر (اگلا_mm)
+		membarrier_state = atomic_read(&اگلا_mm->membarrier_state);
+	اگر (READ_ONCE(rq->membarrier_state) == membarrier_state)
+		واپس;
 	WRITE_ONCE(rq->membarrier_state, membarrier_state);
 }
 
-static int membarrier_global_expedited(void)
+ساکن صحیح membarrier_global_expedited(خالی)
 {
 	cpumask_var_t __free(free_cpumask_var) tmpmask = CPUMASK_VAR_NULL;
-	int cpu;
+	صحیح cpu;
 
-	if (num_online_cpus() == 1)
-		return 0;
+	اگر (عدد_online_cpus() == 1)
+		واپس 0;
 
-	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-		return -ENOMEM;
+	اگر (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+		واپس -ENOMEM;
 
 	guard(mb)();
 	SERIALIZE_IPI();
-	guard(cpus_read_lock)();
+	guard(cpus_read_تالا)();
 
-	rcu_read_lock();
+	rcu_read_تالا();
 	for_each_online_cpu(cpu) {
-		struct task_struct *p;
+		ساخت task_struct *p;
 
 		/*
 		 * Skipping the current CPU is OK even through we can be
@@ -301,62 +301,62 @@ static int membarrier_global_expedited(void)
 		 * thread. Therefore, we can skip this CPU from the
 		 * iteration.
 		 */
-		if (cpu == raw_smp_processor_id())
-			continue;
+		اگر (cpu == raw_smp_processor_id())
+			جاری;
 
-		if (!(READ_ONCE(cpu_rq(cpu)->membarrier_state) &
+		اگر (!(READ_ONCE(cpu_rq(cpu)->membarrier_state) &
 		    MEMBARRIER_STATE_GLOBAL_EXPEDITED))
-			continue;
+			جاری;
 
 		/*
 		 * Skip the CPU if it runs a kernel thread which is not using
 		 * a task mm.
 		 */
 		p = rcu_dereference(cpu_rq(cpu)->curr);
-		if (!p->mm)
-			continue;
+		اگر (!p->mm)
+			جاری;
 
 		__cpumask_set_cpu(cpu, tmpmask);
 	}
 	rcu_read_unlock();
 
 	preempt_disable();
-	smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
+	smp_call_function_many(tmpmask, ipi_mb, تہی, 1);
 	preempt_enable();
 
-	return 0;
+	واپس 0;
 }
 
-static int membarrier_private_expedited(int flags, int cpu_id)
+ساکن صحیح membarrier_نجی_expedited(صحیح flags, صحیح cpu_id)
 {
-	struct mm_struct *mm = current->mm;
+	ساخت mm_struct *mm = current->mm;
 	smp_call_func_t ipi_func = ipi_mb;
 
-	if (flags == MEMBARRIER_FLAG_SYNC_CORE) {
-		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
-			return -EINVAL;
-		if (!(atomic_read(&mm->membarrier_state) &
-		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY))
-			return -EPERM;
+	اگر (flags == MEMBARRIER_FLAG_SYNC_CORE) {
+		اگر (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
+			واپس -EINVAL;
+		اگر (!(atomic_read(&mm->membarrier_state) &
+		      MEMBARRIER_STATE_نجی_EXPEDITED_SYNC_CORE_READY))
+			واپس -EPERM;
 		ipi_func = ipi_sync_core;
 		prepare_sync_core_cmd(mm);
-	} else if (flags == MEMBARRIER_FLAG_RSEQ) {
-		if (!IS_ENABLED(CONFIG_RSEQ))
-			return -EINVAL;
-		if (!(atomic_read(&mm->membarrier_state) &
-		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY))
-			return -EPERM;
+	} ورنہ اگر (flags == MEMBARRIER_FLAG_RSEQ) {
+		اگر (!IS_ENABLED(CONFIG_RSEQ))
+			واپس -EINVAL;
+		اگر (!(atomic_read(&mm->membarrier_state) &
+		      MEMBARRIER_STATE_نجی_EXPEDITED_RSEQ_READY))
+			واپس -EPERM;
 		ipi_func = ipi_rseq;
-	} else {
+	} ورنہ {
 		WARN_ON_ONCE(flags);
-		if (!(atomic_read(&mm->membarrier_state) &
-		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY))
-			return -EPERM;
+		اگر (!(atomic_read(&mm->membarrier_state) &
+		      MEMBARRIER_STATE_نجی_EXPEDITED_READY))
+			واپس -EPERM;
 	}
 
-	if (flags != MEMBARRIER_FLAG_SYNC_CORE &&
-	    (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1))
-		return 0;
+	اگر (flags != MEMBARRIER_FLAG_SYNC_CORE &&
+	    (atomic_read(&mm->mm_users) == 1 || عدد_online_cpus() == 1))
+		واپس 0;
 
 	/*
 	 * Matches memory barriers after rq->curr modification in
@@ -371,45 +371,45 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 	 * rq->curr modification in scheduler.
 	 */
 	guard(mb)();
-	if (cpu_id >= 0) {
-		if (cpu_id >= nr_cpu_ids || !cpu_possible(cpu_id))
-			return 0;
+	اگر (cpu_id >= 0) {
+		اگر (cpu_id >= nr_cpu_ids || !cpu_possible(cpu_id))
+			واپس 0;
 
 		SERIALIZE_IPI_CPU(cpu_id);
-		guard(cpus_read_lock)();
-		struct task_struct *p;
+		guard(cpus_read_تالا)();
+		ساخت task_struct *p;
 
-		if (!cpu_online(cpu_id))
-			return 0;
+		اگر (!cpu_online(cpu_id))
+			واپس 0;
 
-		rcu_read_lock();
+		rcu_read_تالا();
 		p = rcu_dereference(cpu_rq(cpu_id)->curr);
-		if (!p || p->mm != mm) {
+		اگر (!p || p->mm != mm) {
 			rcu_read_unlock();
-			return 0;
+			واپس 0;
 		}
 		rcu_read_unlock();
 		/*
 		 * smp_call_function_single() will call ipi_func() if cpu_id
 		 * is the calling CPU.
 		 */
-		smp_call_function_single(cpu_id, ipi_func, NULL, 1);
-	} else {
+		smp_call_function_single(cpu_id, ipi_func, تہی, 1);
+	} ورنہ {
 		cpumask_var_t __free(free_cpumask_var) tmpmask = CPUMASK_VAR_NULL;
-		int cpu;
+		صحیح cpu;
 
-		if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-			return -ENOMEM;
+		اگر (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+			واپس -ENOMEM;
 
 		SERIALIZE_IPI();
-		guard(cpus_read_lock)();
+		guard(cpus_read_تالا)();
 
-		rcu_read_lock();
+		rcu_read_تالا();
 		for_each_online_cpu(cpu) {
-			struct task_struct *p;
+			ساخت task_struct *p;
 
 			p = rcu_dereference(cpu_rq(cpu)->curr);
-			if (p && p->mm == mm)
+			اگر (p && p->mm == mm)
 				__cpumask_set_cpu(cpu, tmpmask);
 		}
 		rcu_read_unlock();
@@ -430,25 +430,25 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 		 * caller.  User code is not supposed to issue syscalls at
 		 * all from inside an rseq critical section.
 		 */
-		if (flags != MEMBARRIER_FLAG_SYNC_CORE) {
+		اگر (flags != MEMBARRIER_FLAG_SYNC_CORE) {
 			preempt_disable();
-			smp_call_function_many(tmpmask, ipi_func, NULL, true);
+			smp_call_function_many(tmpmask, ipi_func, تہی, true);
 			preempt_enable();
-		} else {
-			on_each_cpu_mask(tmpmask, ipi_func, NULL, true);
+		} ورنہ {
+			on_each_cpu_نقاب(tmpmask, ipi_func, تہی, true);
 		}
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int sync_runqueues_membarrier_state(struct mm_struct *mm)
+ساکن صحیح sync_runqueues_membarrier_state(ساخت mm_struct *mm)
 {
-	int membarrier_state = atomic_read(&mm->membarrier_state);
+	صحیح membarrier_state = atomic_read(&mm->membarrier_state);
 	cpumask_var_t tmpmask;
-	int cpu;
+	صحیح cpu;
 
-	if (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1) {
+	اگر (atomic_read(&mm->mm_users) == 1 || عدد_online_cpus() == 1) {
 		this_cpu_write(runqueues.membarrier_state, membarrier_state);
 
 		/*
@@ -459,11 +459,11 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 		 * registration.
 		 */
 		smp_mb();
-		return 0;
+		واپس 0;
 	}
 
-	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-		return -ENOMEM;
+	اگر (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+		واپس -ENOMEM;
 
 	/*
 	 * For mm with multiple users, we need to ensure all future
@@ -480,64 +480,64 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 	 * updated.
 	 */
 	SERIALIZE_IPI();
-	cpus_read_lock();
-	rcu_read_lock();
+	cpus_read_تالا();
+	rcu_read_تالا();
 	for_each_online_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
-		struct task_struct *p;
+		ساخت rq *rq = cpu_rq(cpu);
+		ساخت task_struct *p;
 
 		p = rcu_dereference(rq->curr);
-		if (p && p->mm == mm)
+		اگر (p && p->mm == mm)
 			__cpumask_set_cpu(cpu, tmpmask);
 	}
 	rcu_read_unlock();
 
-	on_each_cpu_mask(tmpmask, ipi_sync_rq_state, mm, true);
+	on_each_cpu_نقاب(tmpmask, ipi_sync_rq_state, mm, true);
 
 	free_cpumask_var(tmpmask);
 	cpus_read_unlock();
 
-	return 0;
+	واپس 0;
 }
 
-static int membarrier_register_global_expedited(void)
+ساکن صحیح membarrier_رجسٹر_global_expedited(خالی)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int ret;
+	ساخت task_struct *p = current;
+	ساخت mm_struct *mm = p->mm;
+	صحیح ret;
 
-	if (atomic_read(&mm->membarrier_state) &
+	اگر (atomic_read(&mm->membarrier_state) &
 	    MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY)
-		return 0;
+		واپس 0;
 	atomic_or(MEMBARRIER_STATE_GLOBAL_EXPEDITED, &mm->membarrier_state);
 	ret = sync_runqueues_membarrier_state(mm);
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 	atomic_or(MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY,
 		  &mm->membarrier_state);
 
-	return 0;
+	واپس 0;
 }
 
-static int membarrier_register_private_expedited(int flags)
+ساکن صحیح membarrier_رجسٹر_نجی_expedited(صحیح flags)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int ready_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY,
-	    set_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED,
+	ساخت task_struct *p = current;
+	ساخت mm_struct *mm = p->mm;
+	صحیح ready_state = MEMBARRIER_STATE_نجی_EXPEDITED_READY,
+	    سیٹ_state = MEMBARRIER_STATE_نجی_EXPEDITED,
 	    ret;
 
-	if (flags == MEMBARRIER_FLAG_SYNC_CORE) {
-		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
-			return -EINVAL;
+	اگر (flags == MEMBARRIER_FLAG_SYNC_CORE) {
+		اگر (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
+			واپس -EINVAL;
 		ready_state =
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY;
-	} else if (flags == MEMBARRIER_FLAG_RSEQ) {
-		if (!IS_ENABLED(CONFIG_RSEQ))
-			return -EINVAL;
+			MEMBARRIER_STATE_نجی_EXPEDITED_SYNC_CORE_READY;
+	} ورنہ اگر (flags == MEMBARRIER_FLAG_RSEQ) {
+		اگر (!IS_ENABLED(CONFIG_RSEQ))
+			واپس -EINVAL;
 		ready_state =
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY;
-	} else {
+			MEMBARRIER_STATE_نجی_EXPEDITED_RSEQ_READY;
+	} ورنہ {
 		WARN_ON_ONCE(flags);
 	}
 
@@ -546,53 +546,53 @@ static int membarrier_register_private_expedited(int flags)
 	 * groups, which use the same mm. (CLONE_VM but not
 	 * CLONE_THREAD).
 	 */
-	if ((atomic_read(&mm->membarrier_state) & ready_state) == ready_state)
-		return 0;
-	if (flags & MEMBARRIER_FLAG_SYNC_CORE)
-		set_state |= MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE;
-	if (flags & MEMBARRIER_FLAG_RSEQ)
-		set_state |= MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ;
-	atomic_or(set_state, &mm->membarrier_state);
+	اگر ((atomic_read(&mm->membarrier_state) & ready_state) == ready_state)
+		واپس 0;
+	اگر (flags & MEMBARRIER_FLAG_SYNC_CORE)
+		سیٹ_state |= MEMBARRIER_STATE_نجی_EXPEDITED_SYNC_CORE;
+	اگر (flags & MEMBARRIER_FLAG_RSEQ)
+		سیٹ_state |= MEMBARRIER_STATE_نجی_EXPEDITED_RSEQ;
+	atomic_or(سیٹ_state, &mm->membarrier_state);
 	ret = sync_runqueues_membarrier_state(mm);
-	if (ret)
-		return ret;
+	اگر (ret)
+		واپس ret;
 	atomic_or(ready_state, &mm->membarrier_state);
 
-	return 0;
+	واپس 0;
 }
 
-static int membarrier_get_registrations(void)
+ساکن صحیح membarrier_get_registrations(خالی)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int registrations_mask = 0, membarrier_state, i;
-	static const int states[] = {
+	ساخت task_struct *p = current;
+	ساخت mm_struct *mm = p->mm;
+	صحیح registrations_نقاب = 0, membarrier_state, i;
+	ساکن ثابت صحیح حالتیں[] = {
 		MEMBARRIER_STATE_GLOBAL_EXPEDITED |
 			MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY,
-		MEMBARRIER_STATE_PRIVATE_EXPEDITED |
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY,
-		MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE |
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY,
-		MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ |
-			MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY
+		MEMBARRIER_STATE_نجی_EXPEDITED |
+			MEMBARRIER_STATE_نجی_EXPEDITED_READY,
+		MEMBARRIER_STATE_نجی_EXPEDITED_SYNC_CORE |
+			MEMBARRIER_STATE_نجی_EXPEDITED_SYNC_CORE_READY,
+		MEMBARRIER_STATE_نجی_EXPEDITED_RSEQ |
+			MEMBARRIER_STATE_نجی_EXPEDITED_RSEQ_READY
 	};
-	static const int registration_cmds[] = {
-		MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
-		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED,
-		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE,
-		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ
+	ساکن ثابت صحیح registration_cmds[] = {
+		MEMBARRIER_CMD_رجسٹر_GLOBAL_EXPEDITED,
+		MEMBARRIER_CMD_رجسٹر_نجی_EXPEDITED,
+		MEMBARRIER_CMD_رجسٹر_نجی_EXPEDITED_SYNC_CORE,
+		MEMBARRIER_CMD_رجسٹر_نجی_EXPEDITED_RSEQ
 	};
-	BUILD_BUG_ON(ARRAY_SIZE(states) != ARRAY_SIZE(registration_cmds));
+	BUILD_BUG_ON(ARRAY_سائز(حالتیں) != ARRAY_سائز(registration_cmds));
 
 	membarrier_state = atomic_read(&mm->membarrier_state);
-	for (i = 0; i < ARRAY_SIZE(states); ++i) {
-		if (membarrier_state & states[i]) {
-			registrations_mask |= registration_cmds[i];
-			membarrier_state &= ~states[i];
+	برائے (i = 0; i < ARRAY_سائز(حالتیں); ++i) {
+		اگر (membarrier_state & حالتیں[i]) {
+			registrations_نقاب |= registration_cmds[i];
+			membarrier_state &= ~حالتیں[i];
 		}
 	}
 	WARN_ON_ONCE(membarrier_state != 0);
-	return registrations_mask;
+	واپس registrations_نقاب;
 }
 
 /**
@@ -631,56 +631,56 @@ static int membarrier_get_registrations(void)
  *        smp_mb()           X           O            O
  *        sys_membarrier()   O           O            O
  */
-SYSCALL_DEFINE3(membarrier, int, cmd, unsigned int, flags, int, cpu_id)
+SYSCALL_DEFINE3(membarrier, صحیح, cmd, غیرعلامتی صحیح, flags, صحیح, cpu_id)
 {
-	switch (cmd) {
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
-		if (unlikely(flags && flags != MEMBARRIER_CMD_FLAG_CPU))
-			return -EINVAL;
-		break;
-	default:
-		if (unlikely(flags))
-			return -EINVAL;
+	انتخاب (cmd) {
+	حالت MEMBARRIER_CMD_نجی_EXPEDITED_RSEQ:
+		اگر (unlikely(flags && flags != MEMBARRIER_CMD_FLAG_CPU))
+			واپس -EINVAL;
+		توڑو;
+	طےشدہ:
+		اگر (unlikely(flags))
+			واپس -EINVAL;
 	}
 
-	if (!(flags & MEMBARRIER_CMD_FLAG_CPU))
+	اگر (!(flags & MEMBARRIER_CMD_FLAG_CPU))
 		cpu_id = -1;
 
-	switch (cmd) {
-	case MEMBARRIER_CMD_QUERY:
+	انتخاب (cmd) {
+	حالت MEMBARRIER_CMD_QUERY:
 	{
-		int cmd_mask = MEMBARRIER_CMD_BITMASK;
+		صحیح cmd_نقاب = MEMBARRIER_CMD_BITMASK;
 
-		if (tick_nohz_full_enabled())
-			cmd_mask &= ~MEMBARRIER_CMD_GLOBAL;
-		return cmd_mask;
+		اگر (tick_nohz_بھرا_enabled())
+			cmd_نقاب &= ~MEMBARRIER_CMD_GLOBAL;
+		واپس cmd_نقاب;
 	}
-	case MEMBARRIER_CMD_GLOBAL:
+	حالت MEMBARRIER_CMD_GLOBAL:
 		/* MEMBARRIER_CMD_GLOBAL is not compatible with nohz_full. */
-		if (tick_nohz_full_enabled())
-			return -EINVAL;
-		if (num_online_cpus() > 1)
+		اگر (tick_nohz_بھرا_enabled())
+			واپس -EINVAL;
+		اگر (عدد_online_cpus() > 1)
 			synchronize_rcu();
-		return 0;
-	case MEMBARRIER_CMD_GLOBAL_EXPEDITED:
-		return membarrier_global_expedited();
-	case MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED:
-		return membarrier_register_global_expedited();
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED:
-		return membarrier_private_expedited(0, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED:
-		return membarrier_register_private_expedited(0);
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE:
-		return membarrier_private_expedited(MEMBARRIER_FLAG_SYNC_CORE, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE:
-		return membarrier_register_private_expedited(MEMBARRIER_FLAG_SYNC_CORE);
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
-		return membarrier_private_expedited(MEMBARRIER_FLAG_RSEQ, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ:
-		return membarrier_register_private_expedited(MEMBARRIER_FLAG_RSEQ);
-	case MEMBARRIER_CMD_GET_REGISTRATIONS:
-		return membarrier_get_registrations();
-	default:
-		return -EINVAL;
+		واپس 0;
+	حالت MEMBARRIER_CMD_GLOBAL_EXPEDITED:
+		واپس membarrier_global_expedited();
+	حالت MEMBARRIER_CMD_رجسٹر_GLOBAL_EXPEDITED:
+		واپس membarrier_رجسٹر_global_expedited();
+	حالت MEMBARRIER_CMD_نجی_EXPEDITED:
+		واپس membarrier_نجی_expedited(0, cpu_id);
+	حالت MEMBARRIER_CMD_رجسٹر_نجی_EXPEDITED:
+		واپس membarrier_رجسٹر_نجی_expedited(0);
+	حالت MEMBARRIER_CMD_نجی_EXPEDITED_SYNC_CORE:
+		واپس membarrier_نجی_expedited(MEMBARRIER_FLAG_SYNC_CORE, cpu_id);
+	حالت MEMBARRIER_CMD_رجسٹر_نجی_EXPEDITED_SYNC_CORE:
+		واپس membarrier_رجسٹر_نجی_expedited(MEMBARRIER_FLAG_SYNC_CORE);
+	حالت MEMBARRIER_CMD_نجی_EXPEDITED_RSEQ:
+		واپس membarrier_نجی_expedited(MEMBARRIER_FLAG_RSEQ, cpu_id);
+	حالت MEMBARRIER_CMD_رجسٹر_نجی_EXPEDITED_RSEQ:
+		واپس membarrier_رجسٹر_نجی_expedited(MEMBARRIER_FLAG_RSEQ);
+	حالت MEMBARRIER_CMD_GET_REGISTRATIONS:
+		واپس membarrier_get_registrations();
+	طےشدہ:
+		واپس -EINVAL;
 	}
 }

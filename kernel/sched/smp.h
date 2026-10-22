@@ -1,22 +1,22 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 
-#ifndef _KERNEL_SCHED_SMP_H
-#define _KERNEL_SCHED_SMP_H
+#اگر_غیر_تعریف_شدہ _KERNEL_SCHED_SMP_H
+#تعریف_کرو _KERNEL_SCHED_SMP_H
 
 /*
  * Scheduler internal SMP callback types and methods between the scheduler
  * and other internal parts of the core kernel:
  */
-#include <linux/types.h>
+#شامل <linux/types.h>
 
-extern void sched_ttwu_pending(void *arg);
+خارجی خالی sched_ttwu_pending(خالی *arg);
 
-extern bool call_function_single_prep_ipi(int cpu);
+خارجی bool call_function_single_prep_ipi(صحیح cpu);
 
-#ifdef CONFIG_SMP
-extern void flush_smp_call_function_queue(void);
-#else
-static inline void flush_smp_call_function_queue(void) { }
-#endif
+#اگر_تعریف_شدہ CONFIG_SMP
+خارجی خالی flush_smp_call_function_قطار(خالی);
+#ورنہ
+ساکن اندرونی خالی flush_smp_call_function_قطار(خالی) { }
+#اگر_ختم
 
-#endif /* _KERNEL_SCHED_SMP_H */
+#اگر_ختم /* _KERNEL_SCHED_SMP_H */

@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#شامل "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+ساکن صحیح
+select_task_rq_stop(ساخت task_struct *p, صحیح cpu, صحیح flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	واپس task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+ساکن صحیح
+balance_stop(ساخت rq *rq, ساخت rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	واپس sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+ساکن خالی
+wakeup_preempt_stop(ساخت rq *rq, ساخت task_struct *p, صحیح flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+ساکن خالی سیٹ_اگلا_task_stop(ساخت rq *rq, ساخت task_struct *stop, شمار snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	اگر (type == SNT_REPICK)
+		واپس;
 
-	stop->se.exec_start = rq_clock_task(rq);
+	stop->se.exec_آغاز = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+ساکن ساخت task_struct *pick_task_stop(ساخت rq *rq, ساخت rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	اگر (!sched_stop_runnable(rq))
+		واپس تہی;
 
-	return rq->stop;
+	واپس rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ساکن خالی
+قطار_میں_ڈالو_task_stop(ساخت rq *rq, ساخت task_struct *p, صحیح flags)
 {
-	add_nr_running(rq, 1);
+	جوڑو_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ساکن bool
+قطار_سے_نکالو_task_stop(ساخت rq *rq, ساخت task_struct *p, صحیح flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	واپس true;
 }
 
-static void yield_task_stop(struct rq *rq)
+ساکن خالی yield_task_stop(ساخت rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ساکن خالی put_پچھلا_task_stop(ساخت rq *rq, ساخت task_struct *پچھلا, ساخت task_struct *اگلا)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+ساکن خالی task_tick_stop(ساخت rq *rq, ساخت task_struct *curr, صحیح queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+ساکن خالی switching_مقصد_stop(ساخت rq *rq, ساخت task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+ساکن خالی
+prio_بدلا_stop(ساخت rq *rq, ساخت task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	اگر (p->prio == oldprio)
+		واپس;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+ساکن خالی update_curr_stop(ساخت rq *rq)
 {
 }
 
@@ -100,23 +100,23 @@ static void update_curr_stop(struct rq *rq)
  * Simple, special scheduling class for the per-CPU stop tasks:
  */
 DEFINE_SCHED_CLASS(stop) = {
-	.enqueue_task		= enqueue_task_stop,
-	.dequeue_task		= dequeue_task_stop,
+	.قطار_میں_ڈالو_task		= قطار_میں_ڈالو_task_stop,
+	.قطار_سے_نکالو_task		= قطار_سے_نکالو_task_stop,
 	.yield_task		= yield_task_stop,
 
 	.wakeup_preempt		= wakeup_preempt_stop,
 
 	.pick_task		= pick_task_stop,
-	.put_prev_task		= put_prev_task_stop,
-	.set_next_task          = set_next_task_stop,
+	.put_پچھلا_task		= put_پچھلا_task_stop,
+	.سیٹ_اگلا_task          = سیٹ_اگلا_task_stop,
 
 	.balance		= balance_stop,
 	.select_task_rq		= select_task_rq_stop,
-	.set_cpus_allowed	= set_cpus_allowed_common,
+	.سیٹ_cpus_allowed	= سیٹ_cpus_allowed_common,
 
 	.task_tick		= task_tick_stop,
 
-	.prio_changed		= prio_changed_stop,
-	.switching_to		= switching_to_stop,
+	.prio_بدلا		= prio_بدلا_stop,
+	.switching_مقصد		= switching_مقصد_stop,
 	.update_curr		= update_curr_stop,
 };

@@ -5,16 +5,16 @@
  * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
  * Copyright (c) 2025 Tejun Heo <tj@kernel.org>
  */
-#ifndef _KERNEL_SCHED_EXT_ARENA_H
-#define _KERNEL_SCHED_EXT_ARENA_H
+#اگر_غیر_تعریف_شدہ _KERNEL_SCHED_EXT_ARENA_H
+#تعریف_کرو _KERNEL_SCHED_EXT_ARENA_H
 
-#include <linux/types.h>
+#شامل <linux/types.h>
 
-struct scx_sched;
+ساخت scx_sched;
 
-s32 scx_arena_pool_init(struct scx_sched *sch);
-void scx_arena_pool_destroy(struct scx_sched *sch);
-void *scx_arena_alloc(struct scx_sched *sch, size_t size);
-void scx_arena_free(struct scx_sched *sch, void *kern_va, size_t size);
+s32 scx_arena_pool_init(ساخت scx_sched *sch);
+خالی scx_arena_pool_destroy(ساخت scx_sched *sch);
+خالی *scx_arena_alloc(ساخت scx_sched *sch, سائز_t سائز);
+خالی scx_arena_free(ساخت scx_sched *sch, خالی *kern_va, سائز_t سائز);
 
-#endif /* _KERNEL_SCHED_EXT_ARENA_H */
+#اگر_ختم /* _KERNEL_SCHED_EXT_ARENA_H */

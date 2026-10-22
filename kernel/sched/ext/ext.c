@@ -6,27 +6,27 @@
  * Copyright (c) 2022 Tejun Heo <tj@kernel.org>
  * Copyright (c) 2022 David Vernet <dvernet@meta.com>
  */
-#include <linux/bitmap.h>
-#include <linux/btf_ids.h>
-#include <linux/rhashtable.h>
-#include <linux/sched/clock.h>
-#include <linux/sched/isolation.h>
-#include <linux/suspend.h>
-#include <linux/sysrq.h>
+#شامل <linux/bitmap.h>
+#شامل <linux/btf_ids.h>
+#شامل <linux/rhashtable.h>
+#شامل <linux/sched/clock.h>
+#شامل <linux/sched/isolation.h>
+#شامل <linux/suspend.h>
+#شامل <linux/sysrq.h>
 
-#include "../pelt.h"
-#include "internal.h"
-#include "cid.h"
-#include "arena.h"
-#include "idle.h"
-#include "sub.h"
-#include "inlines.h"
+#شامل "../pelt.h"
+#شامل "internal.h"
+#شامل "cid.h"
+#شامل "arena.h"
+#شامل "idle.h"
+#شامل "sub.h"
+#شامل "inlines.h"
 
-DEFINE_RAW_SPINLOCK(scx_sched_lock);
+DEFINE_RAW_SPINLOCK(scx_sched_تالا);
 
-bool scx_allow_proxy_exec(const struct task_struct *p)
+bool scx_allow_proxy_exec(ثابت ساخت task_struct *p)
 {
-	return true;
+	واپس true;
 }
 
 /*
@@ -37,33 +37,33 @@ bool scx_allow_proxy_exec(const struct task_struct *p)
  * are used as temporary markers to indicate that the dereferences need to be
  * updated to point to the associated scheduler instances rather than scx_root.
  */
-struct scx_sched __rcu *scx_root;
+ساخت scx_sched __rcu *scx_جڑ;
 
 /*
  * All scheds, writers must hold both scx_enable_mutex and scx_sched_lock.
  * Readers can hold either or rcu_read_lock().
  */
-LIST_HEAD(scx_sched_all);
+LIST_سر(scx_sched_all);
 
-#ifdef CONFIG_EXT_SUB_SCHED
-const struct rhashtable_params scx_sched_hash_params = {
-	.key_len		= sizeof_field(struct scx_sched, ops.sub_cgroup_id),
-	.key_offset		= offsetof(struct scx_sched, ops.sub_cgroup_id),
-	.head_offset		= offsetof(struct scx_sched, hash_node),
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+ثابت ساخت rhashtable_params scx_sched_hash_params = {
+	.کلید_len		= sizeof_میدان(ساخت scx_sched, ops.sub_cgroup_id),
+	.کلید_انحراف		= offsetof(ساخت scx_sched, ops.sub_cgroup_id),
+	.سر_انحراف		= offsetof(ساخت scx_sched, hash_گرہ),
 	.insecure_elasticity	= true,	/* inserted under scx_sched_lock */
 };
 
-struct rhashtable scx_sched_hash;
-#endif
+ساخت rhashtable scx_sched_hash;
+#اگر_ختم
 
 /* see SCX_OPS_TID_TO_TASK */
-static const struct rhashtable_params scx_tid_hash_params = {
-	.key_len		= sizeof_field(struct sched_ext_entity, tid),
-	.key_offset		= offsetof(struct sched_ext_entity, tid),
-	.head_offset		= offsetof(struct sched_ext_entity, tid_hash_node),
+ساکن ثابت ساخت rhashtable_params scx_tid_hash_params = {
+	.کلید_len		= sizeof_میدان(ساخت sched_ext_entity, tid),
+	.کلید_انحراف		= offsetof(ساخت sched_ext_entity, tid),
+	.سر_انحراف		= offsetof(ساخت sched_ext_entity, tid_hash_گرہ),
 	.insecure_elasticity	= true,	/* inserted/removed under scx_tasks_lock */
 };
-static struct rhashtable scx_tid_hash;
+ساکن ساخت rhashtable scx_tid_hash;
 
 /*
  * During exit, a task may schedule after losing its PIDs. When disabling the
@@ -71,19 +71,19 @@ static struct rhashtable scx_tid_hash;
  * guarantee system safety. Maintain a dedicated task list which contains every
  * task between its fork and eventual free.
  */
-static DEFINE_RAW_SPINLOCK(scx_tasks_lock);
-static LIST_HEAD(scx_tasks);
+ساکن DEFINE_RAW_SPINLOCK(scx_tasks_تالا);
+ساکن LIST_سر(scx_tasks);
 
 /* ops enable/disable */
 DEFINE_MUTEX(scx_enable_mutex);
-DEFINE_STATIC_KEY_FALSE(__scx_enabled);
+DEFINE_STATIC_کلید_FALSE(__scx_enabled);
 DEFINE_PERCPU_RWSEM(scx_fork_rwsem);
-static atomic_t scx_enable_state_var = ATOMIC_INIT(SCX_DISABLED);
-static DEFINE_RAW_SPINLOCK(scx_bypass_lock);
-static bool scx_init_task_enabled;
-static bool scx_switching_all;
-DEFINE_STATIC_KEY_FALSE(__scx_switched_all);
-static DEFINE_STATIC_KEY_FALSE(__scx_tid_to_task_enabled);
+ساکن atomic_t scx_enable_state_var = ATOMIC_INIT(SCX_DISABLED);
+ساکن DEFINE_RAW_SPINLOCK(scx_bypass_تالا);
+ساکن bool scx_init_task_enabled;
+ساکن bool scx_switching_all;
+DEFINE_STATIC_کلید_FALSE(__scx_switched_all);
+ساکن DEFINE_STATIC_کلید_FALSE(__scx_tid_to_task_enabled);
 
 /*
  * Gates cgroup ops delivery. Set at the end of the cgroup init phase of root
@@ -99,56 +99,56 @@ bool scx_cgroup_enabled;
  * take the address, and hints "likely enabled" for the common case where
  * the feature is in use.
  */
-static inline bool scx_tid_to_task_enabled(void)
+ساکن اندرونی bool scx_tid_مقصد_task_enabled(خالی)
 {
-	return static_branch_likely(&__scx_tid_to_task_enabled);
+	واپس static_branch_likely(&__scx_tid_to_task_enabled);
 }
 
-static atomic_long_t scx_nr_rejected = ATOMIC_LONG_INIT(0);
-static atomic_long_t scx_hotplug_seq = ATOMIC_LONG_INIT(0);
+ساکن atomic_long_t scx_nr_rejected = ATOMIC_LONG_INIT(0);
+ساکن atomic_long_t scx_hotplug_seq = ATOMIC_LONG_INIT(0);
 
 /* Global cursor for the per-CPU tid allocator. Starts at 1; tid 0 is reserved. */
-static atomic64_t scx_tid_cursor = ATOMIC64_INIT(1);
+ساکن atomic64_t scx_tid_cursor = ATOMIC64_INIT(1);
 
 /* is @dsq synchronized by the containing rq lock instead of dsq->lock? */
-static bool dsq_is_rq_owned(struct scx_dispatch_q *dsq)
+ساکن bool dsq_is_rq_owned(ساخت scx_dispatch_q *dsq)
 {
-	switch (dsq->id) {
-	case SCX_DSQ_LOCAL:
-	case SCX_DSQ_REJECT:
-	case SCX_DSQ_RESCUE:
-		return true;
-	default:
-		return false;
+	انتخاب (dsq->id) {
+	حالت SCX_DSQ_LOCAL:
+	حالت SCX_DSQ_REJECT:
+	حالت SCX_DSQ_RESCUE:
+		واپس true;
+	طےشدہ:
+		واپس false;
 	}
 }
 
 /* Cursor for unique scx_sched instance ids. id 0 is reserved. */
-static atomic64_t scx_sched_id_cursor = ATOMIC64_INIT(0);
+ساکن atomic64_t scx_sched_id_cursor = ATOMIC64_INIT(0);
 
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 /*
  * The sub sched being enabled. Used by scx_disable_and_exit_task() to exit
  * tasks for the sub-sched being enabled. Use a global variable instead of a
  * per-task field as all enables are serialized.
  */
-struct scx_sched *scx_enabling_sub_sched;
-#else
-#define scx_enabling_sub_sched	(struct scx_sched *)NULL
-#endif	/* CONFIG_EXT_SUB_SCHED */
+ساخت scx_sched *scx_enabling_sub_sched;
+#ورنہ
+#تعریف_کرو scx_enabling_sub_sched	(ساخت scx_sched *)تہی
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 
 /*
  * A monotonically increasing sequence number that is incremented every time a
  * scheduler is enabled. This can be used to check if any custom sched_ext
  * scheduler has ever been used in the system.
  */
-static atomic_long_t scx_enable_seq = ATOMIC_LONG_INIT(0);
+ساکن atomic_long_t scx_enable_seq = ATOMIC_LONG_INIT(0);
 
 /*
  * Watchdog interval. All scx_sched's share a single watchdog timer and the
  * interval is half of the shortest sch->watchdog_timeout.
  */
-static unsigned long scx_watchdog_interval;
+ساکن غیرعلامتی طویل scx_watchdog_interval;
 
 /*
  * The last time the delayed work was run. This delayed work relies on
@@ -156,9 +156,9 @@ static unsigned long scx_watchdog_interval;
  * that this work itself could get wedged. To account for this, we check that
  * it's not stalled in the timer tick, and trigger an error if it is.
  */
-static unsigned long scx_watchdog_timestamp = INITIAL_JIFFIES;
+ساکن غیرعلامتی طویل scx_watchdog_timestamp = INITIAL_JIFFIES;
 
-static struct delayed_work scx_watchdog_work;
+ساکن ساخت delayed_work scx_watchdog_work;
 
 /*
  * For %SCX_KICK_WAIT: Each CPU has a pointer to an array of kick_sync sequence
@@ -167,23 +167,23 @@ static struct delayed_work scx_watchdog_work;
  * lazily when enabling and freed when disabling to avoid waste when sched_ext
  * isn't active.
  */
-struct scx_kick_syncs {
-	struct rcu_head		rcu;
-	unsigned long		syncs[];
+ساخت scx_kick_syncs {
+	ساخت rcu_سر		rcu;
+	غیرعلامتی طویل		syncs[];
 };
 
-static DEFINE_PER_CPU(struct scx_kick_syncs __rcu *, scx_kick_syncs);
+ساکن DEFINE_فی_CPU(ساخت scx_kick_syncs __rcu *, scx_kick_syncs);
 
 /*
  * Per-CPU buffered allocator state for p->scx.tid. Each CPU pulls a chunk of
  * SCX_TID_CHUNK ids from scx_tid_cursor and hands them out locally without
  * further synchronization. See scx_alloc_tid().
  */
-struct scx_tid_alloc {
-	u64	next;
-	u64	end;
+ساخت scx_tid_alloc {
+	u64	اگلا;
+	u64	انتہا;
 };
-static DEFINE_PER_CPU(struct scx_tid_alloc, scx_tid_alloc);
+ساکن DEFINE_فی_CPU(ساخت scx_tid_alloc, scx_tid_alloc);
 
 /*
  * Direct dispatch marker.
@@ -192,105 +192,105 @@ static DEFINE_PER_CPU(struct scx_tid_alloc, scx_tid_alloc);
  * pointer points to the task currently being enqueued. An ERR_PTR value is used
  * to indicate that direct dispatch has already happened.
  */
-static DEFINE_PER_CPU(struct task_struct *, direct_dispatch_task);
+ساکن DEFINE_فی_CPU(ساخت task_struct *, براہ_راست_dispatch_task);
 
-static const struct rhashtable_params dsq_hash_params = {
-	.key_len		= sizeof_field(struct scx_dispatch_q, id),
-	.key_offset		= offsetof(struct scx_dispatch_q, id),
-	.head_offset		= offsetof(struct scx_dispatch_q, hash_node),
+ساکن ثابت ساخت rhashtable_params dsq_hash_params = {
+	.کلید_len		= sizeof_میدان(ساخت scx_dispatch_q, id),
+	.کلید_انحراف		= offsetof(ساخت scx_dispatch_q, id),
+	.سر_انحراف		= offsetof(ساخت scx_dispatch_q, hash_گرہ),
 };
 
-static LLIST_HEAD(dsqs_to_free);
+ساکن LLIST_سر(dsqs_مقصد_free);
 
 /* ops debug dump */
-static DEFINE_RAW_SPINLOCK(scx_dump_lock);
+ساکن DEFINE_RAW_SPINLOCK(scx_dump_تالا);
 
-struct scx_dump_data {
+ساخت scx_dump_ڈیٹا {
 	s32			cpu;
-	bool			first;
+	bool			پہلا;
 	s32			cursor;
-	struct seq_buf		*s;
-	const char		*prefix;
-	struct scx_bstr_buf	buf;
+	ساخت seq_buf		*s;
+	ثابت حرف		*سابقہ;
+	ساخت scx_bstr_buf	buf;
 };
 
-static struct scx_dump_data scx_dump_data = {
+ساکن ساخت scx_dump_ڈیٹا scx_dump_ڈیٹا = {
 	.cpu			= -1,
 };
 
 /* /sys/kernel/sched_ext interface */
-static struct kset *scx_kset;
+ساکن ساخت kset *scx_kset;
 
 /*
  * Parameters that can be adjusted through /sys/module/sched_ext/parameters.
  * There usually is no reason to modify these as normal scheduler operation
  * shouldn't be affected by them. The knobs are primarily for debugging.
  */
-static unsigned int scx_slice_bypass_us = SCX_SLICE_BYPASS / NSEC_PER_USEC;
-static unsigned int scx_bypass_lb_intv_us = SCX_BYPASS_LB_DFL_INTV_US;
+ساکن غیرعلامتی صحیح scx_قاش_bypass_us = SCX_قاش_BYPASS / NSEC_فی_USEC;
+ساکن غیرعلامتی صحیح scx_bypass_lb_intv_us = SCX_BYPASS_LB_DFL_INTV_US;
 
-static int set_slice_us(const char *val, const struct kernel_param *kp)
+ساکن صحیح سیٹ_قاش_us(ثابت حرف *val, ثابت ساخت kernel_param *kp)
 {
-	return param_set_uint_minmax(val, kp, 100, 100 * USEC_PER_MSEC);
+	واپس param_سیٹ_uint_minmax(val, kp, 100, 100 * USEC_فی_MSEC);
 }
 
-static const struct kernel_param_ops slice_us_param_ops = {
-	.set = set_slice_us,
+ساکن ثابت ساخت kernel_param_ops قاش_us_param_ops = {
+	.سیٹ = سیٹ_قاش_us,
 	.get = param_get_uint,
 };
 
-static int set_bypass_lb_intv_us(const char *val, const struct kernel_param *kp)
+ساکن صحیح سیٹ_bypass_lb_intv_us(ثابت حرف *val, ثابت ساخت kernel_param *kp)
 {
-	return param_set_uint_minmax(val, kp, 0, 10 * USEC_PER_SEC);
+	واپس param_سیٹ_uint_minmax(val, kp, 0, 10 * USEC_فی_SEC);
 }
 
-static const struct kernel_param_ops bypass_lb_intv_us_param_ops = {
-	.set = set_bypass_lb_intv_us,
+ساکن ثابت ساخت kernel_param_ops bypass_lb_intv_us_param_ops = {
+	.سیٹ = سیٹ_bypass_lb_intv_us,
 	.get = param_get_uint,
 };
 
-#undef MODULE_PARAM_PREFIX
-#define MODULE_PARAM_PREFIX	"sched_ext."
+#تعریف_منسوخ MODULE_PARAM_سابقہ
+#تعریف_کرو MODULE_PARAM_سابقہ	"sched_ext."
 
-module_param_cb(slice_bypass_us, &slice_us_param_ops, &scx_slice_bypass_us, 0600);
-MODULE_PARM_DESC(slice_bypass_us, "bypass slice in microseconds, applied on [un]load (100us to 100ms)");
+module_param_cb(قاش_bypass_us, &قاش_us_param_ops, &scx_قاش_bypass_us, 0600);
+MODULE_PARM_DESC(قاش_bypass_us, "bypass slice in microseconds, applied on [un]load (100us to 100ms)");
 module_param_cb(bypass_lb_intv_us, &bypass_lb_intv_us_param_ops, &scx_bypass_lb_intv_us, 0600);
 MODULE_PARM_DESC(bypass_lb_intv_us, "bypass load balance interval in microseconds (0 (disable) to 10s)");
 
-#undef MODULE_PARAM_PREFIX
+#تعریف_منسوخ MODULE_PARAM_سابقہ
 
-#define CREATE_TRACE_POINTS
-#include <trace/events/sched_ext.h>
+#تعریف_کرو CREATE_TRACE_POINTS
+#شامل <trace/events/sched_ext.h>
 
-static void run_deferred(struct rq *rq);
-static bool task_dead_and_done(struct task_struct *p);
-static void scx_disable(struct scx_sched *sch, enum scx_exit_kind kind);
+ساکن خالی تسلسل_deferred(ساخت rq *rq);
+ساکن bool task_dead_and_مکمل(ساخت task_struct *p);
+ساکن خالی scx_disable(ساخت scx_sched *sch, شمار scx_exit_قسم قسم);
 
-__printf(5, 6) bool __scx_exit(struct scx_sched *sch,
-			       enum scx_exit_kind kind, s64 exit_code,
-			       s32 exit_cpu, const char *fmt, ...)
+__printf(5, 6) bool __scx_exit(ساخت scx_sched *sch,
+			       شمار scx_exit_قسم قسم, s64 exit_رمز,
+			       s32 exit_cpu, ثابت حرف *fmt, ...)
 {
-	va_list args;
+	va_list دلائل;
 	bool ret;
 
-	va_start(args, fmt);
-	ret = scx_vexit(sch, kind, exit_code, exit_cpu, fmt, args);
-	va_end(args);
+	va_آغاز(دلائل, fmt);
+	ret = scx_vexit(sch, قسم, exit_رمز, exit_cpu, fmt, دلائل);
+	va_انتہا(دلائل);
 
-	return ret;
+	واپس ret;
 }
 
-static long jiffies_delta_msecs(unsigned long at, unsigned long now)
+ساکن طویل jiffies_delta_msecs(غیرعلامتی طویل at, غیرعلامتی طویل now)
 {
-	if (time_after(at, now))
-		return jiffies_to_msecs(at - now);
-	else
-		return -(long)jiffies_to_msecs(now - at);
+	اگر (وقت_after(at, now))
+		واپس jiffies_مقصد_msecs(at - now);
+	ورنہ
+		واپس -(طویل)jiffies_مقصد_msecs(now - at);
 }
 
-static bool u32_before(u32 a, u32 b)
+ساکن bool u32_before(u32 a, u32 b)
 {
-	return (s32)(a - b) < 0;
+	واپس (s32)(a - b) < 0;
 }
 
 /**
@@ -300,34 +300,34 @@ static bool u32_before(u32 a, u32 b)
  *
  * Test whether @sch is a descendant of @ancestor.
  */
-bool scx_is_descendant(struct scx_sched *sch, struct scx_sched *ancestor)
+bool scx_is_descendant(ساخت scx_sched *sch, ساخت scx_sched *ancestor)
 {
-	if (sch->level < ancestor->level)
-		return false;
-	return sch->ancestors[ancestor->level] == ancestor;
+	اگر (sch->level < ancestor->level)
+		واپس false;
+	واپس sch->ancestors[ancestor->level] == ancestor;
 }
 
-static struct scx_dispatch_q *find_global_dsq(struct scx_sched *sch, s32 cpu)
+ساکن ساخت scx_dispatch_q *ڈھونڈو_global_dsq(ساخت scx_sched *sch, s32 cpu)
 {
-	return &sch->pnode[cpu_to_node(cpu)]->global_dsq;
+	واپس &sch->pnode[cpu_مقصد_گرہ(cpu)]->global_dsq;
 }
 
-static struct scx_dispatch_q *find_user_dsq(struct scx_sched *sch, u64 dsq_id)
+ساکن ساخت scx_dispatch_q *ڈھونڈو_user_dsq(ساخت scx_sched *sch, u64 dsq_id)
 {
-	return rhashtable_lookup(&sch->dsq_hash, &dsq_id, dsq_hash_params);
+	واپس rhashtable_lookup(&sch->dsq_hash, &dsq_id, dsq_hash_params);
 }
 
-static const struct sched_class *scx_setscheduler_class(struct task_struct *p)
+ساکن ثابت ساخت sched_class *scx_setscheduler_class(ساخت task_struct *p)
 {
-	if (p->sched_class == &stop_sched_class)
-		return &stop_sched_class;
+	اگر (p->sched_class == &stop_sched_class)
+		واپس &stop_sched_class;
 
-	return __setscheduler_class(p->policy, p->prio);
+	واپس __setscheduler_class(p->policy, p->prio);
 }
 
-static struct scx_dispatch_q *bypass_enq_target_dsq(struct scx_sched *sch, s32 cpu)
+ساکن ساخت scx_dispatch_q *bypass_enq_ہدف_dsq(ساخت scx_sched *sch, s32 cpu)
 {
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 	/*
 	 * If @sch is a sub-sched which is bypassing, its tasks should go into
 	 * the bypass DSQs of the nearest ancestor which is not bypassing. The
@@ -339,11 +339,11 @@ static struct scx_dispatch_q *bypass_enq_target_dsq(struct scx_sched *sch, s32 c
 	 * are re-enqueued after scx_bypassing() is turned on, guaranteeing that
 	 * all tasks are transferred to the right DSQs.
 	 */
-	while (scx_parent(sch) && scx_bypassing(sch, cpu))
-		sch = scx_parent(sch);
-#endif	/* CONFIG_EXT_SUB_SCHED */
+	جب (scx_والد(sch) && scx_bypassing(sch, cpu))
+		sch = scx_والد(sch);
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 
-	return scx_bypass_dsq(sch, cpu);
+	واپس scx_bypass_dsq(sch, cpu);
 }
 
 /**
@@ -356,7 +356,7 @@ static struct scx_dispatch_q *bypass_enq_target_dsq(struct scx_sched *sch, s32 c
  * before going to idle and not inserting a task into @rq's local DSQ after a
  * %false return doesn't cause @rq to stall.
  */
-static bool rq_is_open(struct rq *rq, u64 enq_flags)
+ساکن bool rq_is_open(ساخت rq *rq, u64 enq_flags)
 {
 	lockdep_assert_rq_held(rq);
 
@@ -364,15 +364,15 @@ static bool rq_is_open(struct rq *rq, u64 enq_flags)
 	 * A higher-priority class task is either running or in the process of
 	 * waking up on @rq.
 	 */
-	if (sched_class_above(rq->next_class, &ext_sched_class))
-		return false;
+	اگر (sched_class_above(rq->اگلا_class, &ext_sched_class))
+		واپس false;
 
 	/*
 	 * @rq is either in transition to or in idle and there is no
 	 * higher-priority class task waking up on it.
 	 */
-	if (sched_class_above(&ext_sched_class, rq->next_class))
-		return true;
+	اگر (sched_class_above(&ext_sched_class, rq->اگلا_class))
+		واپس true;
 
 	/*
 	 * @rq is either picking, in transition to, or running an SCX task.
@@ -384,22 +384,22 @@ static bool rq_is_open(struct rq *rq, u64 enq_flags)
 	 * $curr's slice. We say yes here and resolve it at the end of dispatch.
 	 * See dispatch_one().
 	 */
-	if (rq->scx.flags & SCX_RQ_IN_DISPATCH)
-		return true;
+	اگر (rq->scx.flags & SCX_RQ_اندر_DISPATCH)
+		واپس true;
 
 	/*
 	 * %SCX_ENQ_PREEMPT clears $curr's slice if on SCX and kicks dispatch,
 	 * so allow it to avoid spuriously triggering reenq on a combined
 	 * PREEMPT|IMMED insertion.
 	 */
-	if (enq_flags & SCX_ENQ_PREEMPT) {
-		struct task_struct *curr = rq->curr;
+	اگر (enq_flags & SCX_ENQ_PREEMPT) {
+		ساخت task_struct *curr = rq->curr;
 
 		/*
 		 * A protected slice refuses the preemption and the cpu stays
 		 * occupied. See rq_owned_post_enq().
 		 */
-		return curr->sched_class != &ext_sched_class ||
+		واپس curr->sched_class != &ext_sched_class ||
 			likely(!(curr->scx.flags & SCX_TASK_PROTECTED));
 	}
 
@@ -407,7 +407,7 @@ static bool rq_is_open(struct rq *rq, u64 enq_flags)
 	 * @rq is either in transition to or running an SCX task and can't go
 	 * idle without another SCX dispatch cycle.
 	 */
-	return false;
+	واپس false;
 }
 
 /*
@@ -416,40 +416,40 @@ static bool rq_is_open(struct rq *rq, u64 enq_flags)
  * This allows kfuncs to safely operate on rq from any scx ops callback,
  * knowing which rq is already locked.
  */
-DEFINE_PER_CPU(struct rq *, scx_locked_rq_state);
+DEFINE_فی_CPU(ساخت rq *, scx_locked_rq_state);
 
 /*
  * Under core scheduling, a pick that releases the rq lock invalidates the
  * core-wide selection it is part of. Count the releases so that the core-sched
  * pick can tell whether one happened across dispatch.
  */
-static void scx_rq_lock_drop(struct rq *rq)
+ساکن خالی scx_rq_تالا_drop(ساخت rq *rq)
 {
 	lockdep_assert_rq_held(rq);
-#ifdef CONFIG_SCHED_CORE
-	if (sched_core_enabled(rq))
-		rq->scx.lock_drop_seq++;
-#endif
+#اگر_تعریف_شدہ CONFIG_SCHED_CORE
+	اگر (sched_core_enabled(rq))
+		rq->scx.تالا_drop_seq++;
+#اگر_ختم
 }
 
-static void switch_rq_lock(struct rq *from, struct rq *to)
+ساکن خالی switch_rq_تالا(ساخت rq *from, ساخت rq *مقصد)
 {
 	bool tracked = scx_locked_rq() == from;
 
-	if (tracked)
-		update_locked_rq(NULL);
-	scx_rq_lock_drop(from);
+	اگر (tracked)
+		update_locked_rq(تہی);
+	scx_rq_تالا_drop(from);
 	raw_spin_rq_unlock(from);
-	raw_spin_rq_lock(to);
-	if (tracked)
-		update_locked_rq(to);
+	raw_spin_rq_تالا(مقصد);
+	اگر (tracked)
+		update_locked_rq(مقصد);
 }
 
 /*
  * Flipped on enable per sch->is_cid_type. Declared in internal.h so
  * subsystem inlines can read it.
  */
-DEFINE_STATIC_KEY_FALSE(__scx_is_cid_type);
+DEFINE_STATIC_کلید_FALSE(__scx_is_cid_type);
 
 /**
  * scx_fill_cmask_scratch - Build this cpu's arena cmask from @cpumask
@@ -461,15 +461,15 @@ DEFINE_STATIC_KEY_FALSE(__scx_is_cid_type);
  * must hold an rq lock so this cpu is the sole kernel writer for as long as the
  * returned address is in use.
  */
-static struct scx_cmask *scx_fill_cmask_scratch(struct scx_sched *sch,
-						const struct cpumask *cpumask)
+ساکن ساخت scx_cmask *scx_fill_cmask_scratch(ساخت scx_sched *sch,
+						ثابت ساخت cpumask *cpumask)
 {
-	struct scx_cmask *kern_va = *this_cpu_ptr(sch->set_cmask_scratch);
-	struct scx_cmask_ref ref;
+	ساخت scx_cmask *kern_va = *this_cpu_ptr(sch->سیٹ_cmask_scratch);
+	ساخت scx_cmask_ref ref;
 
-	scx_cmask_ref_init_kern(sch, kern_va, 0, num_possible_cpus(), &ref);
+	scx_cmask_ref_init_kern(sch, kern_va, 0, عدد_possible_cpus(), &ref);
 	scx_cmask_ref_from_cpumask(&ref, cpumask);
-	return kern_va;
+	واپس kern_va;
 }
 
 /**
@@ -482,18 +482,18 @@ static struct scx_cmask *scx_fill_cmask_scratch(struct scx_sched *sch,
  * For cid-form schedulers, translate @cpumask to a cmask in the per-cpu scratch
  * and dispatch through the ops_cid union view. Caller must hold @rq's rq lock.
  */
-static inline void scx_call_op_set_cpumask(struct scx_sched *sch, struct rq *rq,
-					   struct task_struct *task,
-					   const struct cpumask *cpumask)
+ساکن اندرونی خالی scx_call_op_سیٹ_cpumask(ساخت scx_sched *sch, ساخت rq *rq,
+					   ساخت task_struct *task,
+					   ثابت ساخت cpumask *cpumask)
 {
-	if (scx_is_cid_type())
-		SCX_CALL_CID_OP_TASK(sch, set_cmask, rq, task,
+	اگر (scx_is_cid_type())
+		SCX_CALL_CID_OP_TASK(sch, سیٹ_cmask, rq, task,
 				     scx_fill_cmask_scratch(sch, cpumask));
-	else
-		SCX_CALL_OP_TASK(sch, set_cpumask, rq, task, cpumask);
+	ورنہ
+		SCX_CALL_OP_TASK(sch, سیٹ_cpumask, rq, task, cpumask);
 }
 
-enum scx_dsq_iter_flags {
+شمار scx_dsq_iter_flags {
 	/* iterate in the reverse dispatch order */
 	SCX_DSQ_ITER_REV		= 1U << 16,
 
@@ -514,39 +514,39 @@ enum scx_dsq_iter_flags {
  *
  * Returns %NULL when iteration is finished.
  */
-static struct task_struct *nldsq_next_task(struct scx_dispatch_q *dsq,
-					   struct task_struct *cur, bool rev)
+ساکن ساخت task_struct *nldsq_اگلا_task(ساخت scx_dispatch_q *dsq,
+					   ساخت task_struct *cur, bool rev)
 {
-	struct list_head *list_node;
-	struct scx_dsq_list_node *dsq_lnode;
+	ساخت list_سر *list_گرہ;
+	ساخت scx_dsq_list_گرہ *dsq_lnode;
 
-	lockdep_assert_held(&dsq->lock);
+	lockdep_assert_held(&dsq->تالا);
 
-	if (cur)
-		list_node = &cur->scx.dsq_list.node;
-	else
-		list_node = &dsq->list;
+	اگر (cur)
+		list_گرہ = &cur->scx.dsq_list.گرہ;
+	ورنہ
+		list_گرہ = &dsq->list;
 
 	/* find the next task, need to skip BPF iteration cursors */
-	do {
-		if (rev)
-			list_node = list_node->prev;
-		else
-			list_node = list_node->next;
+	کرو {
+		اگر (rev)
+			list_گرہ = list_گرہ->پچھلا;
+		ورنہ
+			list_گرہ = list_گرہ->اگلا;
 
-		if (list_node == &dsq->list)
-			return NULL;
+		اگر (list_گرہ == &dsq->list)
+			واپس تہی;
 
-		dsq_lnode = container_of(list_node, struct scx_dsq_list_node,
-					 node);
-	} while (dsq_lnode->flags & SCX_DSQ_LNODE_ITER_CURSOR);
+		dsq_lnode = container_کا(list_گرہ, ساخت scx_dsq_list_گرہ,
+					 گرہ);
+	} جب (dsq_lnode->flags & SCX_DSQ_LNODE_ITER_CURSOR);
 
-	return container_of(dsq_lnode, struct task_struct, scx.dsq_list);
+	واپس container_کا(dsq_lnode, ساخت task_struct, scx.dsq_list);
 }
 
-#define nldsq_for_each_task(p, dsq)						\
-	for ((p) = nldsq_next_task((dsq), NULL, false); (p);			\
-	     (p) = nldsq_next_task((dsq), (p), false))
+#تعریف_کرو nldsq_for_each_task(p, dsq)						\
+	برائے ((p) = nldsq_اگلا_task((dsq), تہی, false); (p);			\
+	     (p) = nldsq_اگلا_task((dsq), (p), false))
 
 /**
  * nldsq_cursor_next_task - Iterate to the next task given a cursor in a non-local DSQ
@@ -561,35 +561,35 @@ static struct task_struct *nldsq_next_task(struct scx_dispatch_q *dsq,
  * bounds the iteration and guarantees that vtime never jumps in the other
  * direction while iterating.
  */
-static struct task_struct *nldsq_cursor_next_task(struct scx_dsq_list_node *cursor,
-						  struct scx_dispatch_q *dsq)
+ساکن ساخت task_struct *nldsq_cursor_اگلا_task(ساخت scx_dsq_list_گرہ *cursor,
+						  ساخت scx_dispatch_q *dsq)
 {
 	bool rev = cursor->flags & SCX_DSQ_ITER_REV;
-	struct task_struct *p;
+	ساخت task_struct *p;
 
-	lockdep_assert_held(&dsq->lock);
+	lockdep_assert_held(&dsq->تالا);
 	BUG_ON(!(cursor->flags & SCX_DSQ_LNODE_ITER_CURSOR));
 
-	if (list_empty(&cursor->node))
-		p = NULL;
-	else
-		p = container_of(cursor, struct task_struct, scx.dsq_list);
+	اگر (list_خالی_خانے(&cursor->گرہ))
+		p = تہی;
+	ورنہ
+		p = container_کا(cursor, ساخت task_struct, scx.dsq_list);
 
 	/* skip cursors and tasks that were queued after @cursor init */
-	do {
-		p = nldsq_next_task(dsq, p, rev);
-	} while (p && unlikely(u32_before(cursor->priv, p->scx.dsq_seq)));
+	کرو {
+		p = nldsq_اگلا_task(dsq, p, rev);
+	} جب (p && unlikely(u32_before(cursor->priv, p->scx.dsq_seq)));
 
-	if (p) {
-		if (rev)
-			list_move_tail(&cursor->node, &p->scx.dsq_list.node);
-		else
-			list_move(&cursor->node, &p->scx.dsq_list.node);
-	} else {
-		list_del_init(&cursor->node);
+	اگر (p) {
+		اگر (rev)
+			list_move_دم(&cursor->گرہ, &p->scx.dsq_list.گرہ);
+		ورنہ
+			list_move(&cursor->گرہ, &p->scx.dsq_list.گرہ);
+	} ورنہ {
+		list_del_init(&cursor->گرہ);
 	}
 
-	return p;
+	واپس p;
 }
 
 /**
@@ -605,27 +605,27 @@ static struct task_struct *nldsq_cursor_next_task(struct scx_dsq_list_node *curs
  *
  * On %false return, the caller can assume full ownership of @p.
  */
-static bool nldsq_cursor_lost_task(struct scx_dsq_list_node *cursor,
-				   struct rq *rq, struct scx_dispatch_q *dsq,
-				   struct task_struct *p)
+ساکن bool nldsq_cursor_گمشدہ_task(ساخت scx_dsq_list_گرہ *cursor,
+				   ساخت rq *rq, ساخت scx_dispatch_q *dsq,
+				   ساخت task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
-	lockdep_assert_held(&dsq->lock);
+	lockdep_assert_held(&dsq->تالا);
 
 	/*
 	 * @p could have already left $src_dsq, got re-enqueud, or be in the
 	 * process of being consumed by someone else.
 	 */
-	if (unlikely(p->scx.dsq != dsq ||
+	اگر (unlikely(p->scx.dsq != dsq ||
 		     u32_before(cursor->priv, p->scx.dsq_seq) ||
 		     p->scx.holding_cpu >= 0))
-		return true;
+		واپس true;
 
 	/* if @p has stayed on @dsq, its rq couldn't have changed */
-	if (WARN_ON_ONCE(rq != task_rq(p)))
-		return true;
+	اگر (WARN_ON_ONCE(rq != task_rq(p)))
+		واپس true;
 
-	return false;
+	واپس false;
 }
 
 /*
@@ -634,60 +634,60 @@ static bool nldsq_cursor_lost_task(struct scx_dsq_list_node *cursor,
  * changes without breaking backward compatibility. Can be used with
  * bpf_for_each(). See bpf_iter_scx_dsq_*().
  */
-struct bpf_iter_scx_dsq_kern {
-	struct scx_dsq_list_node	cursor;
-	struct scx_dispatch_q		*dsq;
-	u64				slice;
+ساخت bpf_iter_scx_dsq_kern {
+	ساخت scx_dsq_list_گرہ	cursor;
+	ساخت scx_dispatch_q		*dsq;
+	u64				قاش;
 	u64				vtime;
 } __attribute__((aligned(8)));
 
-struct bpf_iter_scx_dsq {
+ساخت bpf_iter_scx_dsq {
 	u64				__opaque[6];
 } __attribute__((aligned(8)));
 
 
-u32 scx_get_task_state(const struct task_struct *p)
+u32 scx_get_task_state(ثابت ساخت task_struct *p)
 {
-	return p->scx.flags & SCX_TASK_STATE_MASK;
+	واپس p->scx.flags & SCX_TASK_STATE_نقاب;
 }
 
-void scx_set_task_state(struct task_struct *p, u32 state)
+خالی scx_سیٹ_task_state(ساخت task_struct *p, u32 state)
 {
-	u32 prev_state = scx_get_task_state(p);
+	u32 پچھلا_state = scx_get_task_state(p);
 	bool warn = false;
 
-	switch (state) {
-	case SCX_TASK_NONE:
-		warn = prev_state == SCX_TASK_DEAD;
-		break;
-	case SCX_TASK_INIT_BEGIN:
-		warn = prev_state != SCX_TASK_NONE;
-		break;
-	case SCX_TASK_INIT:
-		warn = prev_state != SCX_TASK_INIT_BEGIN;
+	انتخاب (state) {
+	حالت SCX_TASK_NONE:
+		warn = پچھلا_state == SCX_TASK_DEAD;
+		توڑو;
+	حالت SCX_TASK_INIT_BEGIN:
+		warn = پچھلا_state != SCX_TASK_NONE;
+		توڑو;
+	حالت SCX_TASK_INIT:
+		warn = پچھلا_state != SCX_TASK_INIT_BEGIN;
 		p->scx.flags |= SCX_TASK_RESET_RUNNABLE_AT;
-		break;
-	case SCX_TASK_READY:
-		warn = !(prev_state == SCX_TASK_INIT ||
-			 prev_state == SCX_TASK_ENABLED);
-		break;
-	case SCX_TASK_ENABLED:
-		warn = prev_state != SCX_TASK_READY;
-		break;
-	case SCX_TASK_DEAD:
-		warn = !(prev_state == SCX_TASK_NONE ||
-			 prev_state == SCX_TASK_INIT_BEGIN);
-		break;
-	default:
+		توڑو;
+	حالت SCX_TASK_READY:
+		warn = !(پچھلا_state == SCX_TASK_INIT ||
+			 پچھلا_state == SCX_TASK_ENABLED);
+		توڑو;
+	حالت SCX_TASK_ENABLED:
+		warn = پچھلا_state != SCX_TASK_READY;
+		توڑو;
+	حالت SCX_TASK_DEAD:
+		warn = !(پچھلا_state == SCX_TASK_NONE ||
+			 پچھلا_state == SCX_TASK_INIT_BEGIN);
+		توڑو;
+	طےشدہ:
 		WARN_ONCE(1, "sched_ext: Invalid task state %d -> %d for %s[%d]",
-			  prev_state, state, p->comm, p->pid);
-		return;
+			  پچھلا_state, state, p->comm, p->pid);
+		واپس;
 	}
 
 	WARN_ONCE(warn, "sched_ext: Invalid task state transition 0x%x -> 0x%x for %s[%d]",
-		  prev_state, state, p->comm, p->pid);
+		  پچھلا_state, state, p->comm, p->pid);
 
-	p->scx.flags &= ~SCX_TASK_STATE_MASK;
+	p->scx.flags &= ~SCX_TASK_STATE_نقاب;
 	p->scx.flags |= state;
 }
 
@@ -719,33 +719,33 @@ void scx_set_task_state(struct task_struct *p, u32 state)
  * All tasks which existed when the iteration started are guaranteed to be
  * visited as long as they are not dead.
  */
-void scx_task_iter_start(struct scx_task_iter *iter, struct cgroup *cgrp)
+خالی scx_task_iter_آغاز(ساخت scx_task_iter *iter, ساخت cgroup *cgrp)
 {
-	memset(iter, 0, sizeof(*iter));
+	memset(iter, 0, حجم(*iter));
 
-#ifdef CONFIG_EXT_SUB_SCHED
-	if (cgrp) {
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	اگر (cgrp) {
 		lockdep_assert_held(&cgroup_mutex);
 		iter->cgrp = cgrp;
-		iter->css_pos = css_next_descendant_pre(NULL, &iter->cgrp->self);
-		css_task_iter_start(iter->css_pos, CSS_TASK_ITER_WITH_DEAD,
+		iter->css_pos = css_اگلا_descendant_pre(تہی, &iter->cgrp->self);
+		css_task_iter_آغاز(iter->css_pos, CSS_TASK_ITER_WITH_DEAD,
 				    &iter->css_iter);
-		return;
+		واپس;
 	}
-#endif
-	raw_spin_lock_irq(&scx_tasks_lock);
+#اگر_ختم
+	raw_spin_تالا_irq(&scx_tasks_تالا);
 
-	iter->cursor = (struct sched_ext_entity){ .flags = SCX_TASK_CURSOR };
-	list_add(&iter->cursor.tasks_node, &scx_tasks);
+	iter->cursor = (ساخت sched_ext_entity){ .flags = SCX_TASK_CURSOR };
+	list_جوڑو(&iter->cursor.tasks_گرہ, &scx_tasks);
 	iter->list_locked = true;
 }
 
-static void __scx_task_iter_rq_unlock(struct scx_task_iter *iter)
+ساکن خالی __scx_task_iter_rq_unlock(ساخت scx_task_iter *iter)
 {
-	if (iter->locked_task) {
+	اگر (iter->locked_task) {
 		__balance_callbacks(iter->rq, &iter->rf);
 		task_rq_unlock(iter->rq, iter->locked_task, &iter->rf);
-		iter->locked_task = NULL;
+		iter->locked_task = تہی;
 	}
 }
 
@@ -758,19 +758,19 @@ static void __scx_task_iter_rq_unlock(struct scx_task_iter *iter)
  * This function can be safely called anytime during an iteration. The next
  * iterator operation will automatically restore the necessary locking.
  */
-void scx_task_iter_unlock(struct scx_task_iter *iter)
+خالی scx_task_iter_unlock(ساخت scx_task_iter *iter)
 {
 	__scx_task_iter_rq_unlock(iter);
-	if (iter->list_locked) {
+	اگر (iter->list_locked) {
 		iter->list_locked = false;
-		raw_spin_unlock_irq(&scx_tasks_lock);
+		raw_spin_unlock_irq(&scx_tasks_تالا);
 	}
 }
 
-static void __scx_task_iter_maybe_relock(struct scx_task_iter *iter)
+ساکن خالی __scx_task_iter_maybe_relock(ساخت scx_task_iter *iter)
 {
-	if (!iter->list_locked) {
-		raw_spin_lock_irq(&scx_tasks_lock);
+	اگر (!iter->list_locked) {
+		raw_spin_تالا_irq(&scx_tasks_تالا);
 		iter->list_locked = true;
 	}
 }
@@ -783,12 +783,12 @@ static void __scx_task_iter_maybe_relock(struct scx_task_iter *iter)
  * Counterpart to scx_task_iter_unlock(). Locking @p's rq is optional. Once
  * re-acquired, both locks are managed by the iterator from here on.
  */
-static void scx_task_iter_relock(struct scx_task_iter *iter,
-				 struct task_struct *p)
+ساکن خالی scx_task_iter_relock(ساخت scx_task_iter *iter,
+				 ساخت task_struct *p)
 {
 	__scx_task_iter_maybe_relock(iter);
-	if (p) {
-		iter->rq = task_rq_lock(p, &iter->rf);
+	اگر (p) {
+		iter->rq = task_rq_تالا_2(p, &iter->rf);
 		iter->locked_task = p;
 	}
 }
@@ -801,18 +801,18 @@ static void scx_task_iter_relock(struct scx_task_iter *iter,
  * which is released on return. If the iterator holds a task's rq lock, that rq
  * lock is also released. See scx_task_iter_start() for details.
  */
-void scx_task_iter_stop(struct scx_task_iter *iter)
+خالی scx_task_iter_stop(ساخت scx_task_iter *iter)
 {
-#ifdef CONFIG_EXT_SUB_SCHED
-	if (iter->cgrp) {
-		if (iter->css_pos)
-			css_task_iter_end(&iter->css_iter);
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	اگر (iter->cgrp) {
+		اگر (iter->css_pos)
+			css_task_iter_انتہا(&iter->css_iter);
 		__scx_task_iter_rq_unlock(iter);
-		return;
+		واپس;
 	}
-#endif
+#اگر_ختم
 	__scx_task_iter_maybe_relock(iter);
-	list_del_init(&iter->cursor.tasks_node);
+	list_del_init(&iter->cursor.tasks_گرہ);
 	scx_task_iter_unlock(iter);
 }
 
@@ -824,43 +824,43 @@ void scx_task_iter_stop(struct scx_task_iter *iter)
  * and re-acquired every %SCX_TASK_ITER_BATCH iterations to avoid causing stalls
  * by holding scx_tasks_lock for too long.
  */
-static struct task_struct *scx_task_iter_next(struct scx_task_iter *iter)
+ساکن ساخت task_struct *scx_task_iter_اگلا(ساخت scx_task_iter *iter)
 {
-	struct list_head *cursor = &iter->cursor.tasks_node;
-	struct sched_ext_entity *pos;
+	ساخت list_سر *cursor = &iter->cursor.tasks_گرہ;
+	ساخت sched_ext_entity *pos;
 
-	if (!(++iter->cnt % SCX_TASK_ITER_BATCH)) {
+	اگر (!(++iter->cnt % SCX_TASK_ITER_BATCH)) {
 		scx_task_iter_unlock(iter);
 		cond_resched();
 	}
 
-#ifdef CONFIG_EXT_SUB_SCHED
-	if (iter->cgrp) {
-		while (iter->css_pos) {
-			struct task_struct *p;
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	اگر (iter->cgrp) {
+		جب (iter->css_pos) {
+			ساخت task_struct *p;
 
-			p = css_task_iter_next(&iter->css_iter);
-			if (p)
-				return p;
+			p = css_task_iter_اگلا(&iter->css_iter);
+			اگر (p)
+				واپس p;
 
-			css_task_iter_end(&iter->css_iter);
-			iter->css_pos = css_next_descendant_pre(iter->css_pos,
+			css_task_iter_انتہا(&iter->css_iter);
+			iter->css_pos = css_اگلا_descendant_pre(iter->css_pos,
 								&iter->cgrp->self);
-			if (iter->css_pos)
-				css_task_iter_start(iter->css_pos, CSS_TASK_ITER_WITH_DEAD,
+			اگر (iter->css_pos)
+				css_task_iter_آغاز(iter->css_pos, CSS_TASK_ITER_WITH_DEAD,
 						    &iter->css_iter);
 		}
-		return NULL;
+		واپس تہی;
 	}
-#endif
+#اگر_ختم
 	__scx_task_iter_maybe_relock(iter);
 
-	list_for_each_entry(pos, cursor, tasks_node) {
-		if (&pos->tasks_node == &scx_tasks)
-			return NULL;
-		if (!(pos->flags & SCX_TASK_CURSOR)) {
-			list_move(cursor, &pos->tasks_node);
-			return container_of(pos, struct task_struct, scx);
+	list_for_each_اندراج(pos, cursor, tasks_گرہ) {
+		اگر (&pos->tasks_گرہ == &scx_tasks)
+			واپس تہی;
+		اگر (!(pos->flags & SCX_TASK_CURSOR)) {
+			list_move(cursor, &pos->tasks_گرہ);
+			واپس container_کا(pos, ساخت task_struct, scx);
 		}
 	}
 
@@ -876,13 +876,13 @@ static struct task_struct *scx_task_iter_next(struct scx_task_iter *iter)
  * whether they would like to filter out dead tasks. See scx_task_iter_start()
  * for details.
  */
-struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
+ساخت task_struct *scx_task_iter_اگلا_locked(ساخت scx_task_iter *iter)
 {
-	struct task_struct *p;
+	ساخت task_struct *p;
 
 	__scx_task_iter_rq_unlock(iter);
 
-	while ((p = scx_task_iter_next(iter))) {
+	جب ((p = scx_task_iter_اگلا(iter))) {
 		/*
 		 * scx_task_iter is used to prepare and move tasks into SCX
 		 * while loading the BPF scheduler and vice-versa while
@@ -908,10 +908,10 @@ struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
 		 *
 		 * Test for idle_sched_class as only init_tasks are on it.
 		 */
-		if (p->sched_class == &idle_sched_class)
-			continue;
+		اگر (p->sched_class == &idle_sched_class)
+			جاری;
 
-		iter->rq = task_rq_lock(p, &iter->rf);
+		iter->rq = task_rq_تالا_2(p, &iter->rf);
 		iter->locked_task = p;
 
 		/*
@@ -921,14 +921,14 @@ struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
 		 * set by sched_ext_dead() under @p's rq lock. Test it to
 		 * avoid visiting tasks which are already dead from SCX POV.
 		 */
-		if (scx_get_task_state(p) == SCX_TASK_DEAD) {
+		اگر (scx_get_task_state(p) == SCX_TASK_DEAD) {
 			__scx_task_iter_rq_unlock(iter);
-			continue;
+			جاری;
 		}
 
-		return p;
+		واپس p;
 	}
-	return NULL;
+	واپس تہی;
 }
 
 /**
@@ -937,30 +937,30 @@ struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
  * @events: event stats
  * @kind: a kind of event to dump
  */
-#define scx_dump_event(s, events, kind) do {					\
-	scx_dump_line(&(s), "%40s: %16lld", #kind, (events)->kind);		\
-} while (0)
+#تعریف_کرو scx_dump_event(s, events, قسم) کرو {					\
+	scx_dump_سطر(&(s), "%40s: %16lld", #kind, (events)->قسم);		\
+} جب (0)
 
 
-static void scx_read_events(struct scx_sched *sch,
-			    struct scx_event_stats *events);
+ساکن خالی scx_read_events(ساخت scx_sched *sch,
+			    ساخت scx_event_stats *events);
 
-static enum scx_enable_state scx_enable_state(void)
+ساکن شمار scx_enable_state scx_enable_state(خالی)
 {
-	return atomic_read(&scx_enable_state_var);
+	واپس atomic_read(&scx_enable_state_var);
 }
 
-static enum scx_enable_state scx_set_enable_state(enum scx_enable_state to)
+ساکن شمار scx_enable_state scx_سیٹ_enable_state(شمار scx_enable_state مقصد)
 {
-	return atomic_xchg(&scx_enable_state_var, to);
+	واپس atomic_xchg(&scx_enable_state_var, مقصد);
 }
 
-static bool scx_tryset_enable_state(enum scx_enable_state to,
-				    enum scx_enable_state from)
+ساکن bool scx_tryset_enable_state(شمار scx_enable_state مقصد,
+				    شمار scx_enable_state from)
 {
-	int from_v = from;
+	صحیح from_v = from;
 
-	return atomic_try_cmpxchg(&scx_enable_state_var, &from_v, to);
+	واپس atomic_try_cmpxchg(&scx_enable_state_var, &from_v, مقصد);
 }
 
 /**
@@ -973,16 +973,16 @@ static bool scx_tryset_enable_state(enum scx_enable_state to,
  * has load_acquire semantics to ensure that the caller can see the updates made
  * in the enqueueing and dispatching paths.
  */
-static void wait_ops_state(struct task_struct *p, unsigned long opss)
+ساکن خالی wait_ops_state(ساخت task_struct *p, غیرعلامتی طویل opss)
 {
-	do {
+	کرو {
 		cpu_relax();
-	} while (atomic_long_read_acquire(&p->scx.ops_state) == opss);
+	} جب (atomic_long_read_acquire(&p->scx.ops_state) == opss);
 }
 
-static inline bool __cpu_valid(s32 cpu)
+ساکن اندرونی bool __cpu_valid(s32 cpu)
 {
-	return likely(cpu >= 0 && cpu < nr_cpu_ids && cpu_possible(cpu));
+	واپس likely(cpu >= 0 && cpu < nr_cpu_ids && cpu_possible(cpu));
 }
 
 /**
@@ -995,28 +995,28 @@ static inline bool __cpu_valid(s32 cpu)
  * Verify that it is in range and one of the possible cpus. If invalid, trigger
  * an ops error.
  */
-bool scx_cpu_valid(struct scx_sched *sch, s32 cpu, const char *where)
+bool scx_cpu_valid(ساخت scx_sched *sch, s32 cpu, ثابت حرف *where)
 {
-	if (__cpu_valid(cpu)) {
-		return true;
-	} else {
+	اگر (__cpu_valid(cpu)) {
+		واپس true;
+	} ورنہ {
 		scx_error(sch, "invalid CPU %d%s%s", cpu, where ? " " : "", where ?: "");
-		return false;
+		واپس false;
 	}
 }
 
-static void deferred_bal_cb_workfn(struct rq *rq)
+ساکن خالی deferred_bal_cb_workfn(ساخت rq *rq)
 {
-	run_deferred(rq);
+	تسلسل_deferred(rq);
 }
 
-static void deferred_irq_workfn(struct irq_work *irq_work)
+ساکن خالی deferred_irq_workfn(ساخت irq_work *irq_work)
 {
-	struct rq *rq = container_of(irq_work, struct rq, scx.deferred_irq_work);
+	ساخت rq *rq = container_کا(irq_work, ساخت rq, scx.deferred_irq_work);
 
-	raw_spin_rq_lock(rq);
-	run_deferred(rq);
-	scx_rq_lock_drop(rq);
+	raw_spin_rq_تالا(rq);
+	تسلسل_deferred(rq);
+	scx_rq_تالا_drop(rq);
 	raw_spin_rq_unlock(rq);
 }
 
@@ -1028,7 +1028,7 @@ static void deferred_irq_workfn(struct irq_work *irq_work)
  * with @rq locked but unpinned, and thus can unlock @rq to e.g. migrate tasks
  * to other rqs.
  */
-static void schedule_deferred(struct rq *rq)
+ساکن خالی جدول_وقت_deferred(ساخت rq *rq)
 {
 	/*
 	 * This is the fallback when schedule_deferred_locked() can't use
@@ -1042,7 +1042,7 @@ static void schedule_deferred(struct rq *rq)
 	 * without waiting for the calling CPU to re-enable IRQs and is
 	 * cheaper as the reenqueue runs locally.
 	 */
-	irq_work_queue_on(&rq->scx.deferred_irq_work, cpu_of(rq));
+	irq_work_قطار_on(&rq->scx.deferred_irq_work, cpu_کا(rq));
 }
 
 /**
@@ -1052,7 +1052,7 @@ static void schedule_deferred(struct rq *rq)
  * Schedule execution of deferred actions on @rq. Equivalent to
  * schedule_deferred() but requires @rq to be locked and can be more efficient.
  */
-static void schedule_deferred_locked(struct rq *rq)
+ساکن خالی جدول_وقت_deferred_locked(ساخت rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
@@ -1061,12 +1061,12 @@ static void schedule_deferred_locked(struct rq *rq)
 	 * afterwards which will then run the deferred actions, no need to
 	 * schedule anything.
 	 */
-	if (rq->scx.flags & SCX_RQ_IN_WAKEUP)
-		return;
+	اگر (rq->scx.flags & SCX_RQ_اندر_WAKEUP)
+		واپس;
 
 	/* Don't do anything if there already is a deferred operation. */
-	if (rq->scx.flags & SCX_RQ_BAL_CB_PENDING)
-		return;
+	اگر (rq->scx.flags & SCX_RQ_BAL_CB_PENDING)
+		واپس;
 
 	/*
 	 * If in dispatch, the balance callbacks will be called before rq lock
@@ -1079,9 +1079,9 @@ static void schedule_deferred_locked(struct rq *rq)
 	 *
 	 * Just let dispatch_one() know that it must do it itself.
 	 */
-	if (rq->scx.flags & SCX_RQ_IN_DISPATCH) {
+	اگر (rq->scx.flags & SCX_RQ_اندر_DISPATCH) {
 		rq->scx.flags |= SCX_RQ_BAL_CB_PENDING;
-		return;
+		واپس;
 	}
 
 	/*
@@ -1089,27 +1089,27 @@ static void schedule_deferred_locked(struct rq *rq)
 	 * above WAKEUP and DISPATCH paths should cover most of the cases and
 	 * the time to IRQ re-enable shouldn't be long.
 	 */
-	schedule_deferred(rq);
+	جدول_وقت_deferred(rq);
 }
 
-void scx_proxy_reenqueue_retry(struct rq *rq, struct task_struct *next)
+خالی scx_proxy_reenqueue_retry(ساخت rq *rq, ساخت task_struct *اگلا)
 {
 }
 
-void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
-			u64 reenq_flags, struct rq *locked_rq)
+خالی جدول_وقت_dsq_reenq(ساخت scx_sched *sch, ساخت scx_dispatch_q *dsq,
+			u64 reenq_flags, ساخت rq *locked_rq)
 {
-	struct rq *rq;
+	ساخت rq *rq;
 
 	/*
 	 * Allowing reenqueues doesn't make sense while bypassing. This also
 	 * blocks from new reenqueues to be scheduled on dead scheds.
 	 */
-	if (unlikely(READ_ONCE(sch->bypass_depth)))
-		return;
+	اگر (unlikely(READ_ONCE(sch->bypass_گہرائی)))
+		واپس;
 
-	if (dsq->id == SCX_DSQ_LOCAL) {
-		rq = container_of(dsq, struct rq, scx.local_dsq);
+	اگر (dsq->id == SCX_DSQ_LOCAL) {
+		rq = container_کا(dsq, ساخت rq, scx.local_dsq);
 
 		/*
 		 * A sub-sched lacking baseline access on the target cid has no
@@ -1118,13 +1118,13 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 		 * can't happen - if the caller has seen its ownership, so does
 		 * this test.
 		 */
-		if (unlikely(scx_missing_caps(sch, cpu_of(rq), SCX_CAP_BASE))) {
+		اگر (unlikely(scx_missing_caps(sch, cpu_کا(rq), SCX_CAP_بنیاد))) {
 			__scx_add_event(sch, SCX_EV_SUB_REENQ_DENIED, 1);
-			return;
+			واپس;
 		}
 
-		struct scx_sched_pcpu *sch_pcpu = per_cpu_ptr(sch->pcpu, cpu_of(rq));
-		struct scx_deferred_reenq_local *drl = &sch_pcpu->deferred_reenq_local;
+		ساخت scx_sched_pcpu *sch_pcpu = فی_cpu_ptr(sch->pcpu, cpu_کا(rq));
+		ساخت scx_deferred_reenq_local *drl = &sch_pcpu->deferred_reenq_local;
 
 		/*
 		 * Pairs with smp_mb() in process_deferred_reenq_locals() and
@@ -1132,20 +1132,20 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 		 */
 		smp_mb();
 
-		if (list_empty(&drl->node) ||
+		اگر (list_خالی_خانے(&drl->گرہ) ||
 		    (READ_ONCE(drl->flags) & reenq_flags) != reenq_flags) {
 
-			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
+			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_تالا);
 
-			if (list_empty(&drl->node))
-				list_move_tail(&drl->node, &rq->scx.deferred_reenq_locals);
+			اگر (list_خالی_خانے(&drl->گرہ))
+				list_move_دم(&drl->گرہ, &rq->scx.deferred_reenq_locals);
 			WRITE_ONCE(drl->flags, drl->flags | reenq_flags);
 		}
-	} else if (!(dsq->id & SCX_DSQ_FLAG_BUILTIN)) {
+	} ورنہ اگر (!(dsq->id & SCX_DSQ_FLAG_BUILTIN)) {
 		rq = this_rq();
 
-		struct scx_dsq_pcpu *dsq_pcpu = per_cpu_ptr(dsq->pcpu, cpu_of(rq));
-		struct scx_deferred_reenq_user *dru = &dsq_pcpu->deferred_reenq_user;
+		ساخت scx_dsq_pcpu *dsq_pcpu = فی_cpu_ptr(dsq->pcpu, cpu_کا(rq));
+		ساخت scx_deferred_reenq_user *dru = &dsq_pcpu->deferred_reenq_user;
 
 		/*
 		 * Pairs with smp_mb() in process_deferred_reenq_users() and
@@ -1153,28 +1153,28 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 		 */
 		smp_mb();
 
-		if (list_empty(&dru->node) ||
+		اگر (list_خالی_خانے(&dru->گرہ) ||
 		    (READ_ONCE(dru->flags) & reenq_flags) != reenq_flags) {
 
-			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
+			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_تالا);
 
 			/* @dsq is being destroyed, see free_dsq_irq_workfn() */
-			if (unlikely(READ_ONCE(dsq->id) == SCX_DSQ_INVALID))
-				return;
+			اگر (unlikely(READ_ONCE(dsq->id) == SCX_DSQ_INVALID))
+				واپس;
 
-			if (list_empty(&dru->node))
-				list_move_tail(&dru->node, &rq->scx.deferred_reenq_users);
+			اگر (list_خالی_خانے(&dru->گرہ))
+				list_move_دم(&dru->گرہ, &rq->scx.deferred_reenq_users);
 			WRITE_ONCE(dru->flags, dru->flags | reenq_flags);
 		}
-	} else {
+	} ورنہ {
 		scx_error(sch, "DSQ 0x%llx not allowed for reenq", dsq->id);
-		return;
+		واپس;
 	}
 
-	if (rq == locked_rq)
-		schedule_deferred_locked(rq);
-	else
-		schedule_deferred(rq);
+	اگر (rq == locked_rq)
+		جدول_وقت_deferred_locked(rq);
+	ورنہ
+		جدول_وقت_deferred(rq);
 }
 
 /*
@@ -1193,14 +1193,14 @@ void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
  * collisions practically impossible. A theoretical collision just lets a stale
  * request through once.
  */
-enum scx_slice_oob_consts {
-	SCX_SLICE_OOB_DUR_BITS	= 43,
-	SCX_SLICE_OOB_ID_BITS	= 64 - SCX_SLICE_OOB_DUR_BITS - 1,
+شمار scx_قاش_oob_consts {
+	SCX_قاش_OOB_DUR_بٹ	= 43,
+	SCX_قاش_OOB_ID_بٹ	= 64 - SCX_قاش_OOB_DUR_بٹ - 1,
 
-	SCX_SLICE_OOB_DUR_MASK	= (1LLU << SCX_SLICE_OOB_DUR_BITS) - 1,
-	SCX_SLICE_OOB_ID_SHIFT	= SCX_SLICE_OOB_DUR_BITS,
-	SCX_SLICE_OOB_ID_MASK	= (1LLU << SCX_SLICE_OOB_ID_BITS) - 1,
-	SCX_SLICE_OOB_PENDING	= 1LLU << 63,
+	SCX_قاش_OOB_DUR_نقاب	= (1LLU << SCX_قاش_OOB_DUR_بٹ) - 1,
+	SCX_قاش_OOB_ID_سرکاؤ	= SCX_قاش_OOB_DUR_بٹ,
+	SCX_قاش_OOB_ID_نقاب	= (1LLU << SCX_قاش_OOB_ID_بٹ) - 1,
+	SCX_قاش_OOB_PENDING	= 1LLU << 63,
 };
 
 /*
@@ -1233,10 +1233,10 @@ enum scx_slice_oob_consts {
  */
 
 /* clear a pending slice request */
-static void clear_task_slice_oob(struct task_struct *p)
+ساکن خالی clear_task_قاش_oob(ساخت task_struct *p)
 {
-	if (unlikely(atomic64_read(&p->scx.slice_oob)))
-		atomic64_set(&p->scx.slice_oob, 0);
+	اگر (unlikely(atomic64_read(&p->scx.قاش_oob)))
+		atomic64_سیٹ(&p->scx.قاش_oob, 0);
 }
 
 /**
@@ -1247,36 +1247,36 @@ static void clear_task_slice_oob(struct task_struct *p)
  * A HEAD insert should land behind any leading protected tasks. Return %true
  * indicates whether @p became the first entry.
  */
-static bool dsq_insert_head(struct scx_dispatch_q *dsq, struct task_struct *p)
+ساکن bool dsq_داخل_کرو_سر(ساخت scx_dispatch_q *dsq, ساخت task_struct *p)
 {
-	struct list_head *pos = &dsq->list;
-	struct scx_dsq_list_node *node;
+	ساخت list_سر *pos = &dsq->list;
+	ساخت scx_dsq_list_گرہ *گرہ;
 
 	/*
 	 * Only rq-owned DSQs can hold protected tasks and the associated rq
 	 * lock keeps their flags stable.
 	 */
-	if (!dsq_is_rq_owned(dsq)) {
-		list_add(&p->scx.dsq_list.node, &dsq->list);
-		return true;
+	اگر (!dsq_is_rq_owned(dsq)) {
+		list_جوڑو(&p->scx.dsq_list.گرہ, &dsq->list);
+		واپس true;
 	}
 
-	list_for_each_entry(node, &dsq->list, node) {
-		struct task_struct *q;
+	list_for_each_اندراج(گرہ, &dsq->list, گرہ) {
+		ساخت task_struct *q;
 
-		if (WARN_ON_ONCE(node->flags & SCX_DSQ_LNODE_ITER_CURSOR))
-			continue;
+		اگر (WARN_ON_ONCE(گرہ->flags & SCX_DSQ_LNODE_ITER_CURSOR))
+			جاری;
 
-		q = container_of(node, struct task_struct, scx.dsq_list);
-		if (!(q->scx.flags & SCX_TASK_PROTECTED))
-			break;
+		q = container_کا(گرہ, ساخت task_struct, scx.dsq_list);
+		اگر (!(q->scx.flags & SCX_TASK_PROTECTED))
+			توڑو;
 
-		pos = &node->node;
+		pos = &گرہ->گرہ;
 	}
 
-	list_add(&p->scx.dsq_list.node, pos);
+	list_جوڑو(&p->scx.dsq_list.گرہ, pos);
 
-	return pos == &dsq->list;
+	واپس pos == &dsq->list;
 }
 
 /**
@@ -1287,24 +1287,24 @@ static bool dsq_insert_head(struct scx_dispatch_q *dsq, struct task_struct *p)
  * While %SCX_TASK_PROTECTED is set, BPF schedulers may not modify the slice.
  * Refuse and return %false.
  */
-static bool set_task_slice_keep_oob(struct task_struct *p, u64 slice)
+ساکن bool سیٹ_task_قاش_keep_oob(ساخت task_struct *p, u64 قاش)
 {
 	lockdep_assert_rq_held(task_rq(p));
 
-	if (unlikely(p->scx.flags & SCX_TASK_PROTECTED))
-		return false;
+	اگر (unlikely(p->scx.flags & SCX_TASK_PROTECTED))
+		واپس false;
 
-	p->scx.slice = slice;
-	return true;
+	p->scx.قاش = قاش;
+	واپس true;
 }
 
 /* set @p's slice, superseding any pending out-of-band request */
-bool scx_set_task_slice(struct task_struct *p, u64 slice)
+bool scx_سیٹ_task_قاش(ساخت task_struct *p, u64 قاش)
 {
-	if (!set_task_slice_keep_oob(p, slice))
-		return false;
-	clear_task_slice_oob(p);
-	return true;
+	اگر (!سیٹ_task_قاش_keep_oob(p, قاش))
+		واپس false;
+	clear_task_قاش_oob(p);
+	واپس true;
 }
 
 /**
@@ -1321,31 +1321,31 @@ bool scx_set_task_slice(struct task_struct *p, u64 slice)
  * queued task instead loses its DSQ position on any dequeue and the slice ends
  * with it.
  */
-void scx_task_slice_ended(struct rq *rq, struct task_struct *p)
+خالی scx_task_قاش_ended(ساخت rq *rq, ساخت task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
 
 	p->scx.flags &= ~SCX_TASK_PROTECTED;
-	if (unlikely(p == scx_rescuee(rq)))
-		scx_rescue_end(rq);
+	اگر (unlikely(p == scx_rescuee(rq)))
+		scx_rescue_انتہا(rq);
 }
 
 /* request @p's slice to be set to @slice, see the write rules above */
-static void set_task_slice_oob(struct scx_sched *sch, struct task_struct *p, u64 slice)
+ساکن خالی سیٹ_task_قاش_oob(ساخت scx_sched *sch, ساخت task_struct *p, u64 قاش)
 {
 	u64 dur;
 
-	if (slice == SCX_SLICE_INF) {
-		dur = SCX_SLICE_OOB_DUR_MASK;
-	} else if (unlikely(slice >= SCX_SLICE_OOB_DUR_MASK)) {
-		dur = SCX_SLICE_OOB_DUR_MASK - 1;
-		scx_add_event(sch, SCX_EV_SLICE_CLAMPED, 1);
-	} else {
-		dur = slice;
+	اگر (قاش == SCX_قاش_INF) {
+		dur = SCX_قاش_OOB_DUR_نقاب;
+	} ورنہ اگر (unlikely(قاش >= SCX_قاش_OOB_DUR_نقاب)) {
+		dur = SCX_قاش_OOB_DUR_نقاب - 1;
+		scx_جوڑو_event(sch, SCX_EV_قاش_CLAMPED, 1);
+	} ورنہ {
+		dur = قاش;
 	}
 
-	atomic64_set(&p->scx.slice_oob, SCX_SLICE_OOB_PENDING |
-		     ((sch->id & SCX_SLICE_OOB_ID_MASK) << SCX_SLICE_OOB_ID_SHIFT) | dur);
+	atomic64_سیٹ(&p->scx.قاش_oob, SCX_قاش_OOB_PENDING |
+		     ((sch->id & SCX_قاش_OOB_ID_نقاب) << SCX_قاش_OOB_ID_سرکاؤ) | dur);
 }
 
 /*
@@ -1355,35 +1355,35 @@ static void set_task_slice_oob(struct scx_sched *sch, struct task_struct *p, u64
  * protected slice refuses both. %SCX_EV_SLICE_DENIED counts the denials. See
  * the write rules above.
  */
-static void apply_task_slice_oob(struct rq *rq, struct task_struct *p)
+ساکن خالی apply_task_قاش_oob(ساخت rq *rq, ساخت task_struct *p)
 {
-	u64 oob, dur, slice;
+	u64 oob, dur, قاش;
 
 	lockdep_assert_rq_held(rq);
 
-	if (likely(!atomic64_read(&p->scx.slice_oob)))
-		return;
+	اگر (likely(!atomic64_read(&p->scx.قاش_oob)))
+		واپس;
 
-	oob = atomic64_xchg(&p->scx.slice_oob, 0);
-	if (unlikely(!oob))
-		return;
+	oob = atomic64_xchg(&p->scx.قاش_oob, 0);
+	اگر (unlikely(!oob))
+		واپس;
 
 	/* the issuing scheduler no longer owns @p, drop the request */
-	if (unlikely(((oob >> SCX_SLICE_OOB_ID_SHIFT) & SCX_SLICE_OOB_ID_MASK) !=
-		     (scx_task_sched(p)->id & SCX_SLICE_OOB_ID_MASK)))
-		return;
+	اگر (unlikely(((oob >> SCX_قاش_OOB_ID_سرکاؤ) & SCX_قاش_OOB_ID_نقاب) !=
+		     (scx_task_sched(p)->id & SCX_قاش_OOB_ID_نقاب)))
+		واپس;
 
-	dur = oob & SCX_SLICE_OOB_DUR_MASK;
-	slice = dur == SCX_SLICE_OOB_DUR_MASK ? SCX_SLICE_INF : dur;
+	dur = oob & SCX_قاش_OOB_DUR_نقاب;
+	قاش = dur == SCX_قاش_OOB_DUR_نقاب ? SCX_قاش_INF : dur;
 
-	if (slice > p->scx.slice &&
-	    unlikely(scx_missing_caps(scx_task_sched(p), cpu_of(rq), SCX_CAP_BASE))) {
-		__scx_add_event(scx_task_sched(p), SCX_EV_SLICE_DENIED, 1);
-		return;
+	اگر (قاش > p->scx.قاش &&
+	    unlikely(scx_missing_caps(scx_task_sched(p), cpu_کا(rq), SCX_CAP_بنیاد))) {
+		__scx_add_event(scx_task_sched(p), SCX_EV_قاش_DENIED, 1);
+		واپس;
 	}
 
-	if (unlikely(!set_task_slice_keep_oob(p, slice)))
-		__scx_add_event(scx_task_sched(p), SCX_EV_SLICE_DENIED, 1);
+	اگر (unlikely(!سیٹ_task_قاش_keep_oob(p, قاش)))
+		__scx_add_event(scx_task_sched(p), SCX_EV_قاش_DENIED, 1);
 }
 
 /*
@@ -1391,57 +1391,57 @@ static void apply_task_slice_oob(struct rq *rq, struct task_struct *p)
  * and they are committed here, at the insertion. A zero @slice keeps the
  * current value, floored at 1 so the task isn't treated as expired.
  */
-static void apply_slice_vtime(struct task_struct *p, u64 slice, u64 vtime, u64 enq_flags)
+ساکن خالی apply_قاش_vtime(ساخت task_struct *p, u64 قاش, u64 vtime, u64 enq_flags)
 {
-	if (slice) {
-		p->scx.slice = slice;
+	اگر (قاش) {
+		p->scx.قاش = قاش;
 		/*
 		 * An explicit slice supersedes a pending oob request. A carried
 		 * default refill is not an explicit request and must keep it.
 		 */
-		if (!(enq_flags & SCX_ENQ_SLICE_DFL))
-			clear_task_slice_oob(p);
-	} else if (!p->scx.slice) {
-		p->scx.slice = 1;
+		اگر (!(enq_flags & SCX_ENQ_قاش_DFL))
+			clear_task_قاش_oob(p);
+	} ورنہ اگر (!p->scx.قاش) {
+		p->scx.قاش = 1;
 	}
 
-	if (enq_flags & SCX_ENQ_DSQ_PRIQ)
+	اگر (enq_flags & SCX_ENQ_DSQ_PRIQ)
 		p->scx.dsq_vtime = vtime;
 }
 
-static void update_curr_scx(struct rq *rq)
+ساکن خالی update_curr_scx(ساخت rq *rq)
 {
-	struct task_struct *curr = rq->curr;
+	ساخت task_struct *curr = rq->curr;
 	s64 delta_exec;
 
 	/* apply even on 0 delta_exec, callers may still act on the slice */
-	apply_task_slice_oob(rq, curr);
+	apply_task_قاش_oob(rq, curr);
 
 	delta_exec = update_curr_common(rq);
-	if (unlikely(delta_exec <= 0))
-		return;
+	اگر (unlikely(delta_exec <= 0))
+		واپس;
 
-	if (curr->scx.slice != SCX_SLICE_INF)
-		curr->scx.slice -= min_t(u64, curr->scx.slice, delta_exec);
+	اگر (curr->scx.قاش != SCX_قاش_INF)
+		curr->scx.قاش -= min_t(u64, curr->scx.قاش, delta_exec);
 
-	if (unlikely(curr == scx_rescuee(rq)))
+	اگر (unlikely(curr == scx_rescuee(rq)))
 		scx_rescue_charge(rq, delta_exec);
 
 	dl_server_update(&rq->ext_server, delta_exec);
 }
 
-static bool scx_dsq_priq_less(struct rb_node *node_a,
-			      const struct rb_node *node_b)
+ساکن bool scx_dsq_priq_less(ساخت rb_گرہ *گرہ_a,
+			      ثابت ساخت rb_گرہ *گرہ_b)
 {
-	const struct task_struct *a =
-		container_of(node_a, struct task_struct, scx.dsq_priq);
-	const struct task_struct *b =
-		container_of(node_b, struct task_struct, scx.dsq_priq);
+	ثابت ساخت task_struct *a =
+		container_کا(گرہ_a, ساخت task_struct, scx.dsq_priq);
+	ثابت ساخت task_struct *b =
+		container_کا(گرہ_b, ساخت task_struct, scx.dsq_priq);
 
-	return time_before64(a->scx.dsq_vtime, b->scx.dsq_vtime);
+	واپس وقت_before64(a->scx.dsq_vtime, b->scx.dsq_vtime);
 }
 
-static void dsq_inc_nr(struct scx_dispatch_q *dsq, struct task_struct *p, u64 enq_flags)
+ساکن خالی dsq_inc_nr(ساخت scx_dispatch_q *dsq, ساخت task_struct *p, u64 enq_flags)
 {
 	/* scx_bpf_dsq_nr_queued() reads ->nr without locking, use WRITE_ONCE() */
 	WRITE_ONCE(dsq->nr, dsq->nr + 1);
@@ -1454,19 +1454,19 @@ static void dsq_inc_nr(struct scx_dispatch_q *dsq, struct task_struct *p, u64 en
 	 * scx_do_enqueue_task() so that we can maintain IMMED protection
 	 * through e.g. SAVE/RESTORE cycles and slice extensions.
 	 */
-	if (enq_flags & SCX_ENQ_IMMED) {
-		if (unlikely(dsq->id != SCX_DSQ_LOCAL)) {
+	اگر (enq_flags & SCX_ENQ_IMMED) {
+		اگر (unlikely(dsq->id != SCX_DSQ_LOCAL)) {
 			WARN_ON_ONCE(!(enq_flags & SCX_ENQ_GDSQ_FALLBACK));
-			return;
+			واپس;
 		}
 		p->scx.flags |= SCX_TASK_IMMED;
 	}
 
-	if (p->scx.flags & SCX_TASK_IMMED) {
-		struct rq *rq = container_of(dsq, struct rq, scx.local_dsq);
+	اگر (p->scx.flags & SCX_TASK_IMMED) {
+		ساخت rq *rq = container_کا(dsq, ساخت rq, scx.local_dsq);
 
-		if (WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
-			return;
+		اگر (WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
+			واپس;
 
 		rq->scx.nr_immed++;
 
@@ -1474,42 +1474,42 @@ static void dsq_inc_nr(struct scx_dispatch_q *dsq, struct task_struct *p, u64 en
 		 * If @rq already had other tasks or the current task is not
 		 * done yet, @p can't go on the CPU immediately. Re-enqueue.
 		 */
-		if (unlikely(dsq->nr > 1 || !rq_is_open(rq, enq_flags)))
-			scx_schedule_reenq_local(rq, 0);
+		اگر (unlikely(dsq->nr > 1 || !rq_is_open(rq, enq_flags)))
+			scx_جدول_وقت_reenq_local(rq, 0);
 	}
 }
 
-static void dsq_dec_nr(struct scx_dispatch_q *dsq, struct task_struct *p)
+ساکن خالی dsq_dec_nr(ساخت scx_dispatch_q *dsq, ساخت task_struct *p)
 {
 	/* see dsq_inc_nr() */
 	WRITE_ONCE(dsq->nr, dsq->nr - 1);
 
-	if (p->scx.flags & SCX_TASK_IMMED) {
-		struct rq *rq = container_of(dsq, struct rq, scx.local_dsq);
+	اگر (p->scx.flags & SCX_TASK_IMMED) {
+		ساخت rq *rq = container_کا(dsq, ساخت rq, scx.local_dsq);
 
-		if (WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL) ||
+		اگر (WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL) ||
 		    WARN_ON_ONCE(rq->scx.nr_immed <= 0))
-			return;
+			واپس;
 
 		rq->scx.nr_immed--;
 	}
 }
 
-static void refill_task_slice_dfl(struct scx_sched *sch, struct task_struct *p)
+ساکن خالی refill_task_قاش_dfl(ساخت scx_sched *sch, ساخت task_struct *p)
 {
 	/*
 	 * A default refill is not an explicit request, so it must not drop a
 	 * pending out-of-band one, which is applied when @p next runs.
 	 */
-	set_task_slice_keep_oob(p, READ_ONCE(sch->slice_dfl));
-	__scx_add_event(sch, SCX_EV_REFILL_SLICE_DFL, 1);
+	سیٹ_task_قاش_keep_oob(p, READ_ONCE(sch->قاش_dfl));
+	__scx_add_event(sch, SCX_EV_REFILL_قاش_DFL, 1);
 }
 
 /*
  * Return true if @p is moving due to an internal SCX migration, false
  * otherwise.
  */
-static inline bool task_scx_migrating(struct task_struct *p)
+ساکن اندرونی bool task_scx_migrating(ساخت task_struct *p)
 {
 	/*
 	 * We only need to check sticky_cpu: it is set to the destination
@@ -1517,34 +1517,34 @@ static inline bool task_scx_migrating(struct task_struct *p)
 	 * and cleared when the task is enqueued on the destination, so it
 	 * is only non-negative during an internal SCX migration.
 	 */
-	return p->scx.sticky_cpu >= 0;
+	واپس p->scx.sticky_cpu >= 0;
 }
 
 /* Must be called under the lock serializing @p's custody transfers. */
-static bool task_leave_custody(struct task_struct *p)
+ساکن bool task_leave_custody(ساخت task_struct *p)
 {
-	if (!(p->scx.flags & SCX_TASK_IN_CUSTODY) || task_scx_migrating(p))
-		return false;
+	اگر (!(p->scx.flags & SCX_TASK_اندر_CUSTODY) || task_scx_migrating(p))
+		واپس false;
 
-	p->scx.flags &= ~SCX_TASK_IN_CUSTODY;
-	return true;
+	p->scx.flags &= ~SCX_TASK_اندر_CUSTODY;
+	واپس true;
 }
 
-static void rq_owned_post_enq(struct scx_sched *sch, struct rq *rq,
-			      struct scx_dispatch_q *dsq, struct task_struct *p,
+ساکن خالی rq_owned_post_enq(ساخت scx_sched *sch, ساخت rq *rq,
+			      ساخت scx_dispatch_q *dsq, ساخت task_struct *p,
 			      u64 enq_flags)
 {
-	if (task_leave_custody(p) && SCX_HAS_OP(sch, dequeue))
-		SCX_CALL_OP_TASK(sch, dequeue, rq, p, 0);
+	اگر (task_leave_custody(p) && SCX_HAS_OP(sch, قطار_سے_نکالو))
+		SCX_CALL_OP_TASK(sch, قطار_سے_نکالو, rq, p, 0);
 
 	/*
 	 * Only local inserts get the wakeup treatment below. Rejects kick the
 	 * deferred reenq and rescue parks are paced by the rescue timer.
 	 */
-	if (unlikely(dsq->id != SCX_DSQ_LOCAL)) {
-		if (dsq->id == SCX_DSQ_REJECT)
-			schedule_deferred_locked(rq);
-		return;
+	اگر (unlikely(dsq->id != SCX_DSQ_LOCAL)) {
+		اگر (dsq->id == SCX_DSQ_REJECT)
+			جدول_وقت_deferred_locked(rq);
+		واپس;
 	}
 
 	/*
@@ -1579,7 +1579,7 @@ static void rq_owned_post_enq(struct scx_sched *sch, struct rq *rq,
 	 * @rq->next_class is below &ext_sched_class, it will also
 	 * resched_curr(rq).
 	 */
-	if (sched_class_above(p->sched_class, rq->next_class))
+	اگر (sched_class_above(p->sched_class, rq->اگلا_class))
 		wakeup_preempt(rq, p, 0);
 
 	/*
@@ -1590,47 +1590,47 @@ static void rq_owned_post_enq(struct scx_sched *sch, struct rq *rq,
 	 * a resched if @rq->next_class was idle. It's harmless, since
 	 * need_resched is cleared immediately after task pick.
 	 */
-	if (rq->scx.flags & SCX_RQ_IN_DISPATCH)
-		return;
+	اگر (rq->scx.flags & SCX_RQ_اندر_DISPATCH)
+		واپس;
 
-	if ((enq_flags & SCX_ENQ_PREEMPT) && p != rq->curr &&
+	اگر ((enq_flags & SCX_ENQ_PREEMPT) && p != rq->curr &&
 	    rq->curr->sched_class == &ext_sched_class) {
-		if (likely(scx_set_task_slice(rq->curr, 0)))
+		اگر (likely(scx_سیٹ_task_قاش(rq->curr, 0)))
 			resched_curr(rq);
-		else
-			__scx_add_event(sch, SCX_EV_SLICE_DENIED, 1);
+		ورنہ
+			__scx_add_event(sch, SCX_EV_قاش_DENIED, 1);
 	}
 }
 
-static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
-				 struct scx_dispatch_q *dsq, struct task_struct *p,
-				 u64 slice, u64 vtime, u64 enq_flags)
+ساکن خالی scx_dispatch_قطار_میں_ڈالو(ساخت scx_sched *sch, ساخت rq *rq,
+				 ساخت scx_dispatch_q *dsq, ساخت task_struct *p,
+				 u64 قاش, u64 vtime, u64 enq_flags)
 {
 	bool is_rq_owned = false;
 
-	if (dsq->id == SCX_DSQ_LOCAL) {
+	اگر (dsq->id == SCX_DSQ_LOCAL) {
 		dsq = scx_resolve_local_dsq(sch, rq, p, &enq_flags);
 		is_rq_owned = true;
 	}
 
-	WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.node));
+	WARN_ON_ONCE(p->scx.dsq || !list_خالی_خانے(&p->scx.dsq_list.گرہ));
 	WARN_ON_ONCE((p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) ||
-		     !RB_EMPTY_NODE(&p->scx.dsq_priq));
+		     !RB_خالی_خانے_گرہ(&p->scx.dsq_priq));
 
-	if (!is_rq_owned) {
-		raw_spin_lock_nested(&dsq->lock,
-			(enq_flags & SCX_ENQ_NESTED) ? SINGLE_DEPTH_NESTING : 0);
+	اگر (!is_rq_owned) {
+		raw_spin_تالا_nested(&dsq->تالا,
+			(enq_flags & SCX_ENQ_NESTED) ? SINGLE_گہرائی_NESTING : 0);
 
-		if (unlikely(dsq->id == SCX_DSQ_INVALID)) {
+		اگر (unlikely(dsq->id == SCX_DSQ_INVALID)) {
 			scx_error(sch, "attempting to dispatch to a destroyed dsq");
 			/* fall back to the global dsq */
-			raw_spin_unlock(&dsq->lock);
-			dsq = find_global_dsq(sch, task_cpu(p));
-			raw_spin_lock(&dsq->lock);
+			raw_spin_unlock(&dsq->تالا);
+			dsq = ڈھونڈو_global_dsq(sch, task_cpu(p));
+			raw_spin_تالا(&dsq->تالا);
 		}
 	}
 
-	if (unlikely((dsq->id & SCX_DSQ_FLAG_BUILTIN) &&
+	اگر (unlikely((dsq->id & SCX_DSQ_FLAG_BUILTIN) &&
 		     (enq_flags & SCX_ENQ_DSQ_PRIQ))) {
 		/*
 		 * SCX_DSQ_LOCAL and SCX_DSQ_GLOBAL DSQs always consume from
@@ -1647,60 +1647,60 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 	 * @dsq is locked and @enq_flags is sanitized. Commit the carried slice
 	 * and vtime before the PRIQ insertion below reads the new dsq_vtime.
 	 */
-	if (enq_flags & SCX_ENQ_APPLY_SLICE)
-		apply_slice_vtime(p, slice, vtime, enq_flags);
+	اگر (enq_flags & SCX_ENQ_APPLY_قاش)
+		apply_قاش_vtime(p, قاش, vtime, enq_flags);
 
-	if (enq_flags & SCX_ENQ_DSQ_PRIQ) {
-		struct rb_node *rbp;
+	اگر (enq_flags & SCX_ENQ_DSQ_PRIQ) {
+		ساخت rb_گرہ *rbp;
 
 		/*
 		 * A PRIQ DSQ shouldn't be using FIFO enqueueing. As tasks are
 		 * linked to both the rbtree and list on PRIQs, this can only be
 		 * tested easily when adding the first task.
 		 */
-		if (unlikely(RB_EMPTY_ROOT(&dsq->priq) &&
-			     nldsq_next_task(dsq, NULL, false)))
+		اگر (unlikely(RB_خالی_خانے_جڑ(&dsq->priq) &&
+			     nldsq_اگلا_task(dsq, تہی, false)))
 			scx_error(sch, "DSQ ID 0x%016llx already had FIFO-enqueued tasks",
 				  dsq->id);
 
 		p->scx.dsq_flags |= SCX_TASK_DSQ_ON_PRIQ;
-		rb_add(&p->scx.dsq_priq, &dsq->priq, scx_dsq_priq_less);
+		rb_جوڑو(&p->scx.dsq_priq, &dsq->priq, scx_dsq_priq_less);
 
 		/*
 		 * Find the previous task and insert after it on the list so
 		 * that @dsq->list is vtime ordered.
 		 */
-		rbp = rb_prev(&p->scx.dsq_priq);
-		if (rbp) {
-			struct task_struct *prev =
-				container_of(rbp, struct task_struct,
+		rbp = rb_پچھلا(&p->scx.dsq_priq);
+		اگر (rbp) {
+			ساخت task_struct *پچھلا =
+				container_کا(rbp, ساخت task_struct,
 					     scx.dsq_priq);
-			list_add(&p->scx.dsq_list.node, &prev->scx.dsq_list.node);
+			list_جوڑو(&p->scx.dsq_list.گرہ, &پچھلا->scx.dsq_list.گرہ);
 			/* first task unchanged - no update needed */
-		} else {
-			list_add(&p->scx.dsq_list.node, &dsq->list);
+		} ورنہ {
+			list_جوڑو(&p->scx.dsq_list.گرہ, &dsq->list);
 			/* not builtin and new task is at head - use fastpath */
-			rcu_assign_pointer(dsq->first_task, p);
+			rcu_تفویض_اشارہ_گر(dsq->پہلا_task, p);
 		}
-	} else {
+	} ورنہ {
 		/* a FIFO DSQ shouldn't be using PRIQ enqueuing */
-		if (unlikely(!RB_EMPTY_ROOT(&dsq->priq)))
+		اگر (unlikely(!RB_خالی_خانے_جڑ(&dsq->priq)))
 			scx_error(sch, "DSQ ID 0x%016llx already had PRIQ-enqueued tasks",
 				  dsq->id);
 
-		if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT)) {
+		اگر (enq_flags & (SCX_ENQ_سر | SCX_ENQ_PREEMPT)) {
 			/* new task inserted at head - use fastpath */
-			if (dsq_insert_head(dsq, p) && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
-				rcu_assign_pointer(dsq->first_task, p);
-		} else {
+			اگر (dsq_داخل_کرو_سر(dsq, p) && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
+				rcu_تفویض_اشارہ_گر(dsq->پہلا_task, p);
+		} ورنہ {
 			/*
 			 * dsq->list can contain parked BPF iterator cursors, so
 			 * list_empty() here isn't a reliable proxy for "no real
 			 * task in the DSQ". Test dsq->first_task directly.
 			 */
-			list_add_tail(&p->scx.dsq_list.node, &dsq->list);
-			if (!dsq->first_task && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
-				rcu_assign_pointer(dsq->first_task, p);
+			list_جوڑو_دم(&p->scx.dsq_list.گرہ, &dsq->list);
+			اگر (!dsq->پہلا_task && !(dsq->id & SCX_DSQ_FLAG_BUILTIN))
+				rcu_تفویض_اشارہ_گر(dsq->پہلا_task, p);
 		}
 	}
 
@@ -1718,10 +1718,10 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 	 * ops_state first, both sides would modify p->scx.flags
 	 * concurrently in a non-atomic way.
 	 */
-	if (is_rq_owned) {
+	اگر (is_rq_owned) {
 		rq_owned_post_enq(sch, rq, dsq, p, enq_flags);
-	} else {
-		bool call_dequeue = false;
+	} ورنہ {
+		bool call_قطار_سے_نکالو = false;
 
 		/*
 		 * Global and bypass DSQs are terminal - the task leaves the
@@ -1734,60 +1734,60 @@ static void scx_dispatch_enqueue(struct scx_sched *sch, struct rq *rq,
 		 * consumers see the flag clear; the callback runs after
 		 * @dsq->lock is dropped because it may lock a DSQ itself.
 		 */
-		if (dsq->id == SCX_DSQ_GLOBAL || dsq->id == SCX_DSQ_BYPASS)
-			call_dequeue = task_leave_custody(p);
-		else
-			p->scx.flags |= SCX_TASK_IN_CUSTODY;
+		اگر (dsq->id == SCX_DSQ_GLOBAL || dsq->id == SCX_DSQ_BYPASS)
+			call_قطار_سے_نکالو = task_leave_custody(p);
+		ورنہ
+			p->scx.flags |= SCX_TASK_اندر_CUSTODY;
 
-		raw_spin_unlock(&dsq->lock);
+		raw_spin_unlock(&dsq->تالا);
 
-		if (call_dequeue && SCX_HAS_OP(sch, dequeue))
-			SCX_CALL_OP_TASK(sch, dequeue, rq, p, 0);
+		اگر (call_قطار_سے_نکالو && SCX_HAS_OP(sch, قطار_سے_نکالو))
+			SCX_CALL_OP_TASK(sch, قطار_سے_نکالو, rq, p, 0);
 	}
 
 	/*
 	 * We're transitioning out of QUEUEING or DISPATCHING. store_release to
 	 * match waiters' load_acquire.
 	 */
-	if (enq_flags & SCX_ENQ_CLEAR_OPSS)
-		atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
+	اگر (enq_flags & SCX_ENQ_CLEAR_OPSS)
+		atomic_long_سیٹ_release(&p->scx.ops_state, SCX_OPSS_NONE);
 }
 
-void scx_task_unlink_from_dsq(struct task_struct *p, struct scx_dispatch_q *dsq)
+خالی scx_task_unlink_from_dsq(ساخت task_struct *p, ساخت scx_dispatch_q *dsq)
 {
-	WARN_ON_ONCE(list_empty(&p->scx.dsq_list.node));
+	WARN_ON_ONCE(list_خالی_خانے(&p->scx.dsq_list.گرہ));
 
-	if (p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) {
+	اگر (p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) {
 		rb_erase(&p->scx.dsq_priq, &dsq->priq);
-		RB_CLEAR_NODE(&p->scx.dsq_priq);
+		RB_CLEAR_گرہ(&p->scx.dsq_priq);
 		p->scx.dsq_flags &= ~SCX_TASK_DSQ_ON_PRIQ;
 	}
 
-	list_del_init(&p->scx.dsq_list.node);
+	list_del_init(&p->scx.dsq_list.گرہ);
 	dsq_dec_nr(dsq, p);
 
-	if (!(dsq->id & SCX_DSQ_FLAG_BUILTIN) && rcu_access_pointer(dsq->first_task) == p) {
-		struct task_struct *first_task;
+	اگر (!(dsq->id & SCX_DSQ_FLAG_BUILTIN) && rcu_access_اشارہ_گر(dsq->پہلا_task) == p) {
+		ساخت task_struct *پہلا_task;
 
-		first_task = nldsq_next_task(dsq, NULL, false);
-		rcu_assign_pointer(dsq->first_task, first_task);
+		پہلا_task = nldsq_اگلا_task(dsq, تہی, false);
+		rcu_تفویض_اشارہ_گر(dsq->پہلا_task, پہلا_task);
 	}
 }
 
-void scx_dispatch_dequeue(struct rq *rq, struct task_struct *p)
+خالی scx_dispatch_قطار_سے_نکالو(ساخت rq *rq, ساخت task_struct *p)
 {
-	struct scx_dispatch_q *dsq = p->scx.dsq;
+	ساخت scx_dispatch_q *dsq = p->scx.dsq;
 	bool is_rq_owned = dsq && dsq_is_rq_owned(dsq);
 
 	lockdep_assert_rq_held(rq);
 
-	if (!dsq) {
+	اگر (!dsq) {
 		/*
 		 * If !dsq && on-list, @p is on @rq's ddsp_deferred_locals.
 		 * Unlinking is all that's needed to cancel.
 		 */
-		if (unlikely(!list_empty(&p->scx.dsq_list.node)))
-			list_del_init(&p->scx.dsq_list.node);
+		اگر (unlikely(!list_خالی_خانے(&p->scx.dsq_list.گرہ)))
+			list_del_init(&p->scx.dsq_list.گرہ);
 
 		/*
 		 * When dispatching directly from the BPF scheduler to a local
@@ -1795,115 +1795,115 @@ void scx_dispatch_dequeue(struct rq *rq, struct task_struct *p)
 		 * @p->scx.holding_cpu may be set under the protection of
 		 * %SCX_OPSS_DISPATCHING.
 		 */
-		if (p->scx.holding_cpu >= 0)
+		اگر (p->scx.holding_cpu >= 0)
 			p->scx.holding_cpu = -1;
 
-		return;
+		واپس;
 	}
 
-	if (!is_rq_owned)
-		raw_spin_lock(&dsq->lock);
+	اگر (!is_rq_owned)
+		raw_spin_تالا(&dsq->تالا);
 
 	/*
 	 * Now that we hold @dsq->lock, @p->holding_cpu and @p->scx.dsq_* can't
 	 * change underneath us.
 	*/
-	if (p->scx.holding_cpu < 0) {
+	اگر (p->scx.holding_cpu < 0) {
 		/* @p must still be on @dsq, dequeue */
 		scx_task_unlink_from_dsq(p, dsq);
-	} else {
+	} ورنہ {
 		/*
 		 * We're racing against dispatch_to_local_dsq() which already
 		 * removed @p from @dsq and set @p->scx.holding_cpu. Clear the
 		 * holding_cpu which tells dispatch_to_local_dsq() that it lost
 		 * the race.
 		 */
-		WARN_ON_ONCE(!list_empty(&p->scx.dsq_list.node));
+		WARN_ON_ONCE(!list_خالی_خانے(&p->scx.dsq_list.گرہ));
 		p->scx.holding_cpu = -1;
 	}
-	p->scx.dsq = NULL;
+	p->scx.dsq = تہی;
 
-	if (!is_rq_owned)
-		raw_spin_unlock(&dsq->lock);
+	اگر (!is_rq_owned)
+		raw_spin_unlock(&dsq->تالا);
 }
 
 /*
  * Abbreviated version of scx_dispatch_dequeue() that can be used when both
  * @p's rq and dsq are locked.
  */
-static void dispatch_dequeue_locked(struct task_struct *p,
-				    struct scx_dispatch_q *dsq)
+ساکن خالی dispatch_قطار_سے_نکالو_locked(ساخت task_struct *p,
+				    ساخت scx_dispatch_q *dsq)
 {
 	lockdep_assert_rq_held(task_rq(p));
-	lockdep_assert_held(&dsq->lock);
+	lockdep_assert_held(&dsq->تالا);
 
 	scx_task_unlink_from_dsq(p, dsq);
-	p->scx.dsq = NULL;
+	p->scx.dsq = تہی;
 }
 
-static struct scx_dispatch_q *find_dsq_for_dispatch(struct scx_sched *sch,
-						    struct rq *rq, u64 dsq_id,
+ساکن ساخت scx_dispatch_q *ڈھونڈو_dsq_for_dispatch(ساخت scx_sched *sch,
+						    ساخت rq *rq, u64 dsq_id,
 						    s32 tcpu)
 {
-	struct scx_dispatch_q *dsq;
+	ساخت scx_dispatch_q *dsq;
 
-	if (dsq_id == SCX_DSQ_LOCAL)
-		return &rq->scx.local_dsq;
+	اگر (dsq_id == SCX_DSQ_LOCAL)
+		واپس &rq->scx.local_dsq;
 
-	if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
-		s32 cpu = scx_cpu_ret(sch, dsq_id & SCX_DSQ_LOCAL_CPU_MASK);
+	اگر ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
+		s32 cpu = scx_cpu_ret(sch, dsq_id & SCX_DSQ_LOCAL_CPU_نقاب);
 
-		if (!scx_cpu_valid(sch, cpu, "in SCX_DSQ_LOCAL_ON dispatch verdict"))
-			return find_global_dsq(sch, tcpu);
+		اگر (!scx_cpu_valid(sch, cpu, "in SCX_DSQ_LOCAL_ON dispatch verdict"))
+			واپس ڈھونڈو_global_dsq(sch, tcpu);
 
-		return &cpu_rq(cpu)->scx.local_dsq;
+		واپس &cpu_rq(cpu)->scx.local_dsq;
 	}
 
-	if (dsq_id == SCX_DSQ_GLOBAL)
-		dsq = find_global_dsq(sch, tcpu);
-	else
-		dsq = find_user_dsq(sch, dsq_id);
+	اگر (dsq_id == SCX_DSQ_GLOBAL)
+		dsq = ڈھونڈو_global_dsq(sch, tcpu);
+	ورنہ
+		dsq = ڈھونڈو_user_dsq(sch, dsq_id);
 
 	/*
 	 * Built-in DSQs are never inserted into dsq_hash, so REJECT and RESCUE
 	 * hit the error below. They cannot be reached with an ID.
 	 */
-	if (unlikely(!dsq)) {
+	اگر (unlikely(!dsq)) {
 		scx_error(sch, "non-existent DSQ 0x%llx", dsq_id);
-		return find_global_dsq(sch, tcpu);
+		واپس ڈھونڈو_global_dsq(sch, tcpu);
 	}
 
-	return dsq;
+	واپس dsq;
 }
 
-static void mark_direct_dispatch(struct scx_sched *sch,
-				 struct task_struct *ddsp_task,
-				 struct task_struct *p, u64 dsq_id,
-				 u64 slice, u64 vtime, u64 enq_flags)
+ساکن خالی mark_براہ_راست_dispatch(ساخت scx_sched *sch,
+				 ساخت task_struct *ddsp_task,
+				 ساخت task_struct *p, u64 dsq_id,
+				 u64 قاش, u64 vtime, u64 enq_flags)
 {
 	/*
 	 * Mark that dispatch already happened from ops.select_cpu() or
 	 * ops.enqueue() by spoiling direct_dispatch_task with a non-NULL value
 	 * which can never match a valid task pointer.
 	 */
-	__this_cpu_write(direct_dispatch_task, ERR_PTR(-ESRCH));
+	__this_cpu_write(براہ_راست_dispatch_task, ERR_PTR(-ESRCH));
 
 	/* @p must match the task on the enqueue path */
-	if (unlikely(p != ddsp_task)) {
-		if (IS_ERR(ddsp_task))
+	اگر (unlikely(p != ddsp_task)) {
+		اگر (IS_ERR(ddsp_task))
 			scx_error(sch, "%s[%d] already direct-dispatched",
 				  p->comm, p->pid);
-		else
+		ورنہ
 			scx_error(sch, "scheduling for %s[%d] but trying to direct-dispatch %s[%d]",
 				  ddsp_task->comm, ddsp_task->pid,
 				  p->comm, p->pid);
-		return;
+		واپس;
 	}
 
 	WARN_ON_ONCE(p->scx.ddsp_dsq_id != SCX_DSQ_INVALID);
 	WARN_ON_ONCE(p->scx.ddsp_enq_flags);
 
-	p->scx.ddsp_slice = slice;
+	p->scx.ddsp_قاش = قاش;
 	p->scx.ddsp_vtime = vtime;
 	p->scx.ddsp_dsq_id = dsq_id;
 	p->scx.ddsp_enq_flags = enq_flags;
@@ -1924,19 +1924,19 @@ static void mark_direct_dispatch(struct scx_sched *sch,
  *    the scx_bypass() loop, so that stale state is not reused by a subsequent
  *    scheduler instance
  */
-static inline void clear_direct_dispatch(struct task_struct *p)
+ساکن اندرونی خالی clear_براہ_راست_dispatch(ساخت task_struct *p)
 {
 	p->scx.ddsp_dsq_id = SCX_DSQ_INVALID;
 	p->scx.ddsp_enq_flags = 0;
 }
 
-static void direct_dispatch(struct scx_sched *sch, struct task_struct *p,
+ساکن خالی براہ_راست_dispatch(ساخت scx_sched *sch, ساخت task_struct *p,
 			    u64 enq_flags)
 {
-	struct rq *rq = task_rq(p);
-	struct scx_dispatch_q *dsq =
-		find_dsq_for_dispatch(sch, rq, p->scx.ddsp_dsq_id, task_cpu(p));
-	u64 ddsp_enq_flags, slice, vtime;
+	ساخت rq *rq = task_rq(p);
+	ساخت scx_dispatch_q *dsq =
+		ڈھونڈو_dsq_for_dispatch(sch, rq, p->scx.ddsp_dsq_id, task_cpu(p));
+	u64 ddsp_enq_flags, قاش, vtime;
 
 	p->scx.ddsp_enq_flags |= enq_flags;
 
@@ -1946,45 +1946,45 @@ static void direct_dispatch(struct scx_sched *sch, struct task_struct *p,
 	 * DSQ_LOCAL_ON verdicts targeting the local DSQ of a remote CPU, defer
 	 * the enqueue so that it's executed when @rq can be unlocked.
 	 */
-	if (dsq->id == SCX_DSQ_LOCAL && dsq != &rq->scx.local_dsq) {
-		unsigned long opss;
+	اگر (dsq->id == SCX_DSQ_LOCAL && dsq != &rq->scx.local_dsq) {
+		غیرعلامتی طویل opss;
 
-		opss = atomic_long_read(&p->scx.ops_state) & SCX_OPSS_STATE_MASK;
+		opss = atomic_long_read(&p->scx.ops_state) & SCX_OPSS_STATE_نقاب;
 
-		switch (opss & SCX_OPSS_STATE_MASK) {
-		case SCX_OPSS_NONE:
-			break;
-		case SCX_OPSS_QUEUEING:
+		انتخاب (opss & SCX_OPSS_STATE_نقاب) {
+		حالت SCX_OPSS_NONE:
+			توڑو;
+		حالت SCX_OPSS_QUEUEING:
 			/*
 			 * As @p was never passed to the BPF side, _release is
 			 * not strictly necessary. Still do it for consistency.
 			 */
-			atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
-			break;
-		default:
+			atomic_long_سیٹ_release(&p->scx.ops_state, SCX_OPSS_NONE);
+			توڑو;
+		طےشدہ:
 			WARN_ONCE(true, "sched_ext: %s[%d] has invalid ops state 0x%lx in direct_dispatch()",
 				  p->comm, p->pid, opss);
-			atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
-			break;
+			atomic_long_سیٹ_release(&p->scx.ops_state, SCX_OPSS_NONE);
+			توڑو;
 		}
 
-		WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.node));
-		list_add_tail(&p->scx.dsq_list.node,
+		WARN_ON_ONCE(p->scx.dsq || !list_خالی_خانے(&p->scx.dsq_list.گرہ));
+		list_جوڑو_دم(&p->scx.dsq_list.گرہ,
 			      &rq->scx.ddsp_deferred_locals);
-		schedule_deferred_locked(rq);
-		return;
+		جدول_وقت_deferred_locked(rq);
+		واپس;
 	}
 
 	ddsp_enq_flags = p->scx.ddsp_enq_flags;
-	slice = p->scx.ddsp_slice;
+	قاش = p->scx.ddsp_قاش;
 	vtime = p->scx.ddsp_vtime;
-	clear_direct_dispatch(p);
+	clear_براہ_راست_dispatch(p);
 
-	scx_dispatch_enqueue(sch, rq, dsq, p, slice, vtime,
-			     ddsp_enq_flags | SCX_ENQ_APPLY_SLICE | SCX_ENQ_CLEAR_OPSS);
+	scx_dispatch_قطار_میں_ڈالو(sch, rq, dsq, p, قاش, vtime,
+			     ddsp_enq_flags | SCX_ENQ_APPLY_قاش | SCX_ENQ_CLEAR_OPSS);
 }
 
-bool scx_rq_online(struct rq *rq)
+bool scx_rq_online(ساخت rq *rq)
 {
 	/*
 	 * Test both cpu_active() and %SCX_RQ_ONLINE. %SCX_RQ_ONLINE indicates
@@ -1993,22 +1993,22 @@ bool scx_rq_online(struct rq *rq)
 	 * stay set until the current scheduling operation is complete even if
 	 * we aren't locking @rq.
 	 */
-	return likely((rq->scx.flags & SCX_RQ_ONLINE) && cpu_active(cpu_of(rq)));
+	واپس likely((rq->scx.flags & SCX_RQ_ONLINE) && cpu_فعال(cpu_کا(rq)));
 }
 
-void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
-			 int sticky_cpu)
+خالی scx_do_قطار_میں_ڈالو_task(ساخت rq *rq, ساخت task_struct *p, u64 enq_flags,
+			 صحیح sticky_cpu)
 {
-	struct scx_sched *sch = scx_task_sched(p);
-	struct task_struct **ddsp_taskp;
-	struct scx_dispatch_q *dsq;
-	unsigned long qseq;
+	ساخت scx_sched *sch = scx_task_sched(p);
+	ساخت task_struct **ddsp_taskp;
+	ساخت scx_dispatch_q *dsq;
+	غیرعلامتی طویل qseq;
 
 	WARN_ON_ONCE(!(p->scx.flags & SCX_TASK_QUEUED));
 
 	/* internal movements - rq migration / RESTORE */
-	if (sticky_cpu == cpu_of(rq))
-		goto local_norefill;
+	اگر (sticky_cpu == cpu_کا(rq))
+		جاؤ local_norefill;
 
 	/*
 	 * Clear persistent TASK_IMMED for fresh enqueues, see dsq_inc_nr().
@@ -2024,15 +2024,15 @@ void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
 	 * cid it lacks caps on. Eject the owning scheduler and strand the task
 	 * to be picked up during sched exit.
 	 */
-	if (enq_flags & SCX_ENQ_REENQ) {
-		if (++p->scx.reenq_cnt > 1)
+	اگر (enq_flags & SCX_ENQ_REENQ) {
+		اگر (++p->scx.reenq_cnt > 1)
 			__scx_add_event(sch, SCX_EV_REENQ_REPEAT, 1);
 
-		if (unlikely(p->scx.reenq_cnt > SCX_REENQ_MAX_REPEAT)) {
-			__scx_exit(sch, SCX_EXIT_ERROR_REENQ, 0, cpu_of(rq),
+		اگر (unlikely(p->scx.reenq_cnt > SCX_REENQ_MAX_REPEAT)) {
+			__scx_exit(sch, SCX_EXIT_ERROR_REENQ, 0, cpu_کا(rq),
 				   "%s[%d] reenqueued %u times without running",
 				   p->comm, p->pid, p->scx.reenq_cnt);
-			return;
+			واپس;
 		}
 	}
 
@@ -2041,34 +2041,34 @@ void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
 	 * is offline and are just running the hotplug path. Don't bother the
 	 * BPF scheduler.
 	 */
-	if (!scx_rq_online(rq))
-		goto local;
+	اگر (!scx_rq_online(rq))
+		جاؤ local;
 
-	if (scx_bypassing(sch, cpu_of(rq))) {
+	اگر (scx_bypassing(sch, cpu_کا(rq))) {
 		__scx_add_event(sch, SCX_EV_BYPASS_DISPATCH, 1);
-		goto bypass;
+		جاؤ bypass;
 	}
 
-	if (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
-		goto direct;
+	اگر (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
+		جاؤ براہ_راست;
 
 	/* see %SCX_OPS_ENQ_EXITING */
-	if (!(sch->ops.flags & SCX_OPS_ENQ_EXITING) &&
+	اگر (!(sch->ops.flags & SCX_OPS_ENQ_EXITING) &&
 	    unlikely(p->flags & PF_EXITING)) {
 		__scx_add_event(sch, SCX_EV_ENQ_SKIP_EXITING, 1);
 		enq_flags |= SCX_ENQ_RESCUE;	/* avoid looping on cap rejection */
-		goto local;
+		جاؤ local;
 	}
 
 	/* see %SCX_OPS_ENQ_MIGRATION_DISABLED */
-	if (!(sch->ops.flags & SCX_OPS_ENQ_MIGRATION_DISABLED) &&
+	اگر (!(sch->ops.flags & SCX_OPS_ENQ_MIGRATION_DISABLED) &&
 	    is_migration_disabled(p)) {
 		__scx_add_event(sch, SCX_EV_ENQ_SKIP_MIGRATION_DISABLED, 1);
-		goto local;
+		جاؤ local;
 	}
 
-	if (unlikely(!SCX_HAS_OP(sch, enqueue)))
-		goto global;
+	اگر (unlikely(!SCX_HAS_OP(sch, قطار_میں_ڈالو)))
+		جاؤ global;
 
 	/*
 	 * DSQ bypass didn't trigger, enqueue on the BPF scheduler. Wrap the
@@ -2076,67 +2076,67 @@ void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
 	 * what scx_bpf_dsq_insert() records for a task in NONE or DISPATCHING.
 	 */
 	p->scx.ops_qseq = ((p->scx.ops_qseq + 1) &
-			   (SCX_OPSS_QSEQ_MASK >> SCX_OPSS_QSEQ_SHIFT)) ?: 1;
-	qseq = (unsigned long)p->scx.ops_qseq << SCX_OPSS_QSEQ_SHIFT;
+			   (SCX_OPSS_QSEQ_نقاب >> SCX_OPSS_QSEQ_سرکاؤ)) ?: 1;
+	qseq = (غیرعلامتی طویل)p->scx.ops_qseq << SCX_OPSS_QSEQ_سرکاؤ;
 
 	WARN_ON_ONCE(atomic_long_read(&p->scx.ops_state) != SCX_OPSS_NONE);
-	atomic_long_set(&p->scx.ops_state, SCX_OPSS_QUEUEING | qseq);
+	atomic_long_سیٹ(&p->scx.ops_state, SCX_OPSS_QUEUEING | qseq);
 
-	ddsp_taskp = this_cpu_ptr(&direct_dispatch_task);
+	ddsp_taskp = this_cpu_ptr(&براہ_راست_dispatch_task);
 	WARN_ON_ONCE(*ddsp_taskp);
 	*ddsp_taskp = p;
 
-	SCX_CALL_OP_TASK(sch, enqueue, rq, p, enq_flags);
+	SCX_CALL_OP_TASK(sch, قطار_میں_ڈالو, rq, p, enq_flags);
 
-	*ddsp_taskp = NULL;
-	if (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
-		goto direct;
+	*ddsp_taskp = تہی;
+	اگر (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
+		جاؤ براہ_راست;
 
 	/*
 	 * Task is now in BPF scheduler's custody. Set %SCX_TASK_IN_CUSTODY
 	 * so ops.dequeue() is called when it leaves custody.
 	 */
-	p->scx.flags |= SCX_TASK_IN_CUSTODY;
+	p->scx.flags |= SCX_TASK_اندر_CUSTODY;
 
 	/*
 	 * If not directly dispatched, QUEUEING isn't clear yet and dispatch or
 	 * dequeue may be waiting. The store_release matches their load_acquire.
 	 */
-	atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_QUEUED | qseq);
-	return;
+	atomic_long_سیٹ_release(&p->scx.ops_state, SCX_OPSS_QUEUED | qseq);
+	واپس;
 
-direct:
-	direct_dispatch(sch, p, enq_flags);
-	return;
+براہ_راست:
+	براہ_راست_dispatch(sch, p, enq_flags);
+	واپس;
 local_norefill:
-	scx_dispatch_enqueue(sch, rq, &rq->scx.local_dsq, p, 0, 0, enq_flags);
-	return;
+	scx_dispatch_قطار_میں_ڈالو(sch, rq, &rq->scx.local_dsq, p, 0, 0, enq_flags);
+	واپس;
 local:
 	dsq = &rq->scx.local_dsq;
-	goto enqueue;
+	جاؤ قطار_میں_ڈالو;
 global:
-	dsq = find_global_dsq(sch, task_cpu(p));
-	goto enqueue;
+	dsq = ڈھونڈو_global_dsq(sch, task_cpu(p));
+	جاؤ قطار_میں_ڈالو;
 bypass:
-	dsq = bypass_enq_target_dsq(sch, task_cpu(p));
-	goto enqueue;
+	dsq = bypass_enq_ہدف_dsq(sch, task_cpu(p));
+	جاؤ قطار_میں_ڈالو;
 
-enqueue:
-	refill_task_slice_dfl(sch, p);
-	clear_direct_dispatch(p);
-	scx_dispatch_enqueue(sch, rq, dsq, p, 0, 0, enq_flags);
+قطار_میں_ڈالو:
+	refill_task_قاش_dfl(sch, p);
+	clear_براہ_راست_dispatch(p);
+	scx_dispatch_قطار_میں_ڈالو(sch, rq, dsq, p, 0, 0, enq_flags);
 }
 
-static bool task_runnable(const struct task_struct *p)
+ساکن bool task_runnable(ثابت ساخت task_struct *p)
 {
-	return !list_empty(&p->scx.runnable_node);
+	واپس !list_خالی_خانے(&p->scx.runnable_گرہ);
 }
 
-static void set_task_runnable(struct rq *rq, struct task_struct *p)
+ساکن خالی سیٹ_task_runnable(ساخت rq *rq, ساخت task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
 
-	if (p->scx.flags & SCX_TASK_RESET_RUNNABLE_AT) {
+	اگر (p->scx.flags & SCX_TASK_RESET_RUNNABLE_AT) {
 		p->scx.runnable_at = jiffies;
 		p->scx.flags &= ~SCX_TASK_RESET_RUNNABLE_AT;
 	}
@@ -2145,37 +2145,37 @@ static void set_task_runnable(struct rq *rq, struct task_struct *p)
 	 * list_add_tail() must be used. scx_bypass() and rq_offline_scx()
 	 * depend on tasks being appended to the runnable_list.
 	 */
-	list_add_tail(&p->scx.runnable_node, &rq->scx.runnable_list);
+	list_جوڑو_دم(&p->scx.runnable_گرہ, &rq->scx.runnable_list);
 
 	/*
 	 * Record the rq @p is runnable on, maintained under the rq lock so it
 	 * stays valid unlike task_cpu(), which a remote wakeup can move under
 	 * pi_lock alone.
 	 */
-	WRITE_ONCE(p->scx.runnable_cpu, cpu_of(rq));
+	WRITE_ONCE(p->scx.runnable_cpu, cpu_کا(rq));
 }
 
-static void clr_task_runnable(struct task_struct *p, bool reset_runnable_at)
+ساکن خالی clr_task_runnable(ساخت task_struct *p, bool reset_runnable_at)
 {
-	list_del_init(&p->scx.runnable_node);
+	list_del_init(&p->scx.runnable_گرہ);
 	WRITE_ONCE(p->scx.runnable_cpu, -1);
-	if (reset_runnable_at) {
+	اگر (reset_runnable_at) {
 		p->scx.flags |= SCX_TASK_RESET_RUNNABLE_AT;
 		p->scx.reenq_cnt = 0;
 	}
 }
 
-static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int core_enq_flags)
+ساکن خالی قطار_میں_ڈالو_task_scx(ساخت rq *rq, ساخت task_struct *p, صحیح core_enq_flags)
 {
-	struct scx_sched *sch = scx_task_sched(p);
-	int sticky_cpu = p->scx.sticky_cpu;
+	ساخت scx_sched *sch = scx_task_sched(p);
+	صحیح sticky_cpu = p->scx.sticky_cpu;
 	u64 enq_flags = core_enq_flags | rq->scx.remote_activate_enq_flags;
 
 	/*
 	 * An SCX-internal migration ends on arrival. Clear sticky_cpu so @p can
 	 * leave custody when inserted into the destination DSQ.
 	 */
-	if (sticky_cpu >= 0)
+	اگر (sticky_cpu >= 0)
 		p->scx.sticky_cpu = -1;
 
 	/*
@@ -2183,8 +2183,8 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int core_enq_
 	 * returns. Only the core's wakeup path delivers one. The flags stashed
 	 * for a remote activation may carry the wakeup bit without it.
 	 */
-	if (core_enq_flags & ENQUEUE_WAKEUP)
-		rq->scx.flags |= SCX_RQ_IN_WAKEUP;
+	اگر (core_enq_flags & قطار_میں_ڈالو_WAKEUP)
+		rq->scx.flags |= SCX_RQ_اندر_WAKEUP;
 
 	/*
 	 * Restoring a running task will be immediately followed by
@@ -2193,41 +2193,41 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int core_enq_
 	 * direct-dispatch into the local DSQ by setting the sticky_cpu. Mark
 	 * IGNORE_CAPS to force entry into the local DSQ.
 	 */
-	if (unlikely(enq_flags & ENQUEUE_RESTORE) && task_current(rq, p)) {
-		sticky_cpu = cpu_of(rq);
+	اگر (unlikely(enq_flags & قطار_میں_ڈالو_RESTORE) && task_current(rq, p)) {
+		sticky_cpu = cpu_کا(rq);
 		enq_flags |= SCX_ENQ_IGNORE_CAPS;
 	}
 
-	if (p->scx.flags & SCX_TASK_QUEUED) {
+	اگر (p->scx.flags & SCX_TASK_QUEUED) {
 		WARN_ON_ONCE(!task_runnable(p));
-		goto out;
+		جاؤ برآمد;
 	}
 
-	set_task_runnable(rq, p);
+	سیٹ_task_runnable(rq, p);
 	p->scx.flags |= SCX_TASK_QUEUED;
 	rq->scx.nr_running++;
-	add_nr_running(rq, 1);
+	جوڑو_nr_running(rq, 1);
 
-	if (SCX_HAS_OP(sch, runnable) && !task_on_rq_migrating(p))
+	اگر (SCX_HAS_OP(sch, runnable) && !task_on_rq_migrating(p))
 		SCX_CALL_OP_TASK(sch, runnable, rq, p, enq_flags);
 
 	/* Start dl_server if this is the first task being enqueued */
-	if (rq->scx.nr_running == 1)
-		dl_server_start(&rq->ext_server);
+	اگر (rq->scx.nr_running == 1)
+		dl_server_آغاز(&rq->ext_server);
 
-	scx_do_enqueue_task(rq, p, enq_flags, sticky_cpu);
-out:
-	rq->scx.flags &= ~SCX_RQ_IN_WAKEUP;
+	scx_do_قطار_میں_ڈالو_task(rq, p, enq_flags, sticky_cpu);
+برآمد:
+	rq->scx.flags &= ~SCX_RQ_اندر_WAKEUP;
 
-	if ((enq_flags & SCX_ENQ_CPU_SELECTED) &&
-	    unlikely(cpu_of(rq) != p->scx.selected_cpu))
+	اگر ((enq_flags & SCX_ENQ_CPU_SELECTED) &&
+	    unlikely(cpu_کا(rq) != p->scx.selected_cpu))
 		__scx_add_event(sch, SCX_EV_SELECT_CPU_FALLBACK, 1);
 }
 
-static void ops_dequeue(struct rq *rq, struct task_struct *p, u64 deq_flags)
+ساکن خالی ops_قطار_سے_نکالو(ساخت rq *rq, ساخت task_struct *p, u64 deq_flags)
 {
-	struct scx_sched *sch = scx_task_sched(p);
-	unsigned long opss;
+	ساخت scx_sched *sch = scx_task_sched(p);
+	غیرعلامتی طویل opss;
 
 	/* dequeue is always temporary, don't reset runnable_at */
 	clr_task_runnable(p, false);
@@ -2236,16 +2236,16 @@ retry:
 	/* acquire ensures that we see the preceding updates on QUEUED */
 	opss = atomic_long_read_acquire(&p->scx.ops_state);
 
-	switch (opss & SCX_OPSS_STATE_MASK) {
-	case SCX_OPSS_NONE:
-		break;
-	case SCX_OPSS_QUEUEING:
+	انتخاب (opss & SCX_OPSS_STATE_نقاب) {
+	حالت SCX_OPSS_NONE:
+		توڑو;
+	حالت SCX_OPSS_QUEUEING:
 		/*
 		 * QUEUEING is started and finished while holding @p's rq lock.
 		 * As we're holding the rq lock now, we shouldn't see QUEUEING.
 		 */
 		BUG();
-	case SCX_OPSS_QUEUED:
+	حالت SCX_OPSS_QUEUED:
 		/*
 		 * A queued task must always be in BPF scheduler's custody. If
 		 * SCX_TASK_IN_CUSTODY is clear, finish_dispatch() on another
@@ -2255,16 +2255,16 @@ retry:
 		 * cpu_relax() is bounded: we will observe NONE (or DISPATCHING,
 		 * handled by the fallthrough) on a subsequent iteration.
 		 */
-		if (unlikely(!(READ_ONCE(p->scx.flags) & SCX_TASK_IN_CUSTODY))) {
+		اگر (unlikely(!(READ_ONCE(p->scx.flags) & SCX_TASK_اندر_CUSTODY))) {
 			cpu_relax();
-			goto retry;
+			جاؤ retry;
 		}
 
-		if (atomic_long_try_cmpxchg(&p->scx.ops_state, &opss,
+		اگر (atomic_long_try_cmpxchg(&p->scx.ops_state, &opss,
 					    SCX_OPSS_NONE))
-			break;
+			توڑو;
 		fallthrough;
-	case SCX_OPSS_DISPATCHING:
+	حالت SCX_OPSS_DISPATCHING:
 		/*
 		 * If @p is being dispatched from the BPF scheduler to a DSQ,
 		 * wait for the transfer to complete so that @p doesn't get
@@ -2280,7 +2280,7 @@ retry:
 		 */
 		wait_ops_state(p, SCX_OPSS_DISPATCHING);
 		BUG_ON(atomic_long_read(&p->scx.ops_state) != SCX_OPSS_NONE);
-		break;
+		توڑو;
 	}
 
 	/*
@@ -2297,28 +2297,28 @@ retry:
 	 * NONE but the task may still have %SCX_TASK_IN_CUSTODY set until
 	 * it is enqueued on the destination.
 	 */
-	if (task_leave_custody(p) && SCX_HAS_OP(sch, dequeue))
-		SCX_CALL_OP_TASK(sch, dequeue, rq, p, deq_flags);
+	اگر (task_leave_custody(p) && SCX_HAS_OP(sch, قطار_سے_نکالو))
+		SCX_CALL_OP_TASK(sch, قطار_سے_نکالو, rq, p, deq_flags);
 }
 
-static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int core_deq_flags)
+ساکن bool قطار_سے_نکالو_task_scx(ساخت rq *rq, ساخت task_struct *p, صحیح core_deq_flags)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	ساخت scx_sched *sch = scx_task_sched(p);
 	u64 deq_flags = core_deq_flags;
 
 	/*
 	 * Set %SCX_DEQ_SCHED_CHANGE when the dequeue is due to a property
 	 * change (not sleep).
 	 */
-	if (!(deq_flags & DEQUEUE_SLEEP))
+	اگر (!(deq_flags & قطار_سے_نکالو_SLEEP))
 		deq_flags |= SCX_DEQ_SCHED_CHANGE;
 
-	if (!(p->scx.flags & SCX_TASK_QUEUED)) {
+	اگر (!(p->scx.flags & SCX_TASK_QUEUED)) {
 		WARN_ON_ONCE(task_runnable(p));
-		return true;
+		واپس true;
 	}
 
-	ops_dequeue(rq, p, deq_flags);
+	ops_قطار_سے_نکالو(rq, p, deq_flags);
 
 	/*
 	 * A currently running task which is going off @rq first gets dequeued
@@ -2332,72 +2332,72 @@ static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int core_deq_
 	 * information meaningful to the BPF scheduler and can be suppressed by
 	 * skipping the callbacks if the task is !QUEUED.
 	 */
-	if (task_current(rq, p) &&
+	اگر (task_current(rq, p) &&
 	    (SCX_HAS_OP(sch, stopping) || unlikely(p == scx_rescuee(rq)))) {
 		update_curr_scx(rq);
-		if (SCX_HAS_OP(sch, stopping))
+		اگر (SCX_HAS_OP(sch, stopping))
 			SCX_CALL_OP_TASK(sch, stopping, rq, p, false);
 	}
 
-	if (SCX_HAS_OP(sch, quiescent) && !task_on_rq_migrating(p))
+	اگر (SCX_HAS_OP(sch, quiescent) && !task_on_rq_migrating(p))
 		SCX_CALL_OP_TASK(sch, quiescent, rq, p, deq_flags);
 
-	if (deq_flags & SCX_DEQ_SLEEP)
+	اگر (deq_flags & SCX_DEQ_SLEEP)
 		p->scx.flags |= SCX_TASK_DEQD_FOR_SLEEP;
-	else
+	ورنہ
 		p->scx.flags &= ~SCX_TASK_DEQD_FOR_SLEEP;
 
 	p->scx.flags &= ~SCX_TASK_QUEUED;
 	rq->scx.nr_running--;
 	sub_nr_running(rq, 1);
 
-	scx_dispatch_dequeue(rq, p);
+	scx_dispatch_قطار_سے_نکالو(rq, p);
 
 	/* see scx_task_slice_ended() for the save/restore exception */
-	if (!((deq_flags & DEQUEUE_SAVE) && task_current(rq, p)))
-		scx_task_slice_ended(rq, p);
+	اگر (!((deq_flags & قطار_سے_نکالو_SAVE) && task_current(rq, p)))
+		scx_task_قاش_ended(rq, p);
 
-	clear_direct_dispatch(p);
-	return true;
+	clear_براہ_راست_dispatch(p);
+	واپس true;
 }
 
-static void yield_task_scx(struct rq *rq)
+ساکن خالی yield_task_scx(ساخت rq *rq)
 {
-	struct task_struct *p = rq->donor;
-	struct scx_sched *sch = scx_task_sched(p);
+	ساخت task_struct *p = rq->donor;
+	ساخت scx_sched *sch = scx_task_sched(p);
 
 	/* a yield gives the slice up */
-	scx_task_slice_ended(rq, p);
+	scx_task_قاش_ended(rq, p);
 
-	if (SCX_HAS_OP(sch, yield))
-		SCX_CALL_OP_2TASKS_RET(sch, yield, rq, p, NULL);
-	else
-		scx_set_task_slice(p, 0);
+	اگر (SCX_HAS_OP(sch, yield))
+		SCX_CALL_OP_2TASKS_RET(sch, yield, rq, p, تہی);
+	ورنہ
+		scx_سیٹ_task_قاش(p, 0);
 }
 
-static bool yield_to_task_scx(struct rq *rq, struct task_struct *to)
+ساکن bool yield_مقصد_task_scx(ساخت rq *rq, ساخت task_struct *مقصد)
 {
-	struct task_struct *from = rq->donor;
-	struct scx_sched *sch = scx_task_sched(from);
+	ساخت task_struct *from = rq->donor;
+	ساخت scx_sched *sch = scx_task_sched(from);
 
 	/* like a plain yield, giving the slice up ends the protection */
-	scx_task_slice_ended(rq, from);
+	scx_task_قاش_ended(rq, from);
 
-	if (SCX_HAS_OP(sch, yield) && sch == scx_task_sched(to))
-		return SCX_CALL_OP_2TASKS_RET(sch, yield, rq, from, to);
-	else
-		return false;
+	اگر (SCX_HAS_OP(sch, yield) && sch == scx_task_sched(مقصد))
+		واپس SCX_CALL_OP_2TASKS_RET(sch, yield, rq, from, مقصد);
+	ورنہ
+		واپس false;
 }
 
-static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p, int wake_flags)
+ساکن خالی wakeup_preempt_scx(ساخت rq *rq, ساخت task_struct *p, صحیح wake_flags)
 {
 	/*
 	 * Preemption between SCX tasks is implemented by resetting the victim
 	 * task's slice to 0 and triggering reschedule on the target CPU.
 	 * Nothing to do.
 	 */
-	if (p->sched_class == &ext_sched_class)
-		return;
+	اگر (p->sched_class == &ext_sched_class)
+		واپس;
 
 	/*
 	 * Getting preempted by a higher-priority class. Reenqueue IMMED tasks.
@@ -2409,14 +2409,14 @@ static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p, int wake_fl
 	 *
 	 * - A higher-priority wakes up while SCX dispatch is in progress.
 	 */
-	if (rq->scx.nr_immed)
-		scx_schedule_reenq_local(rq, 0);
+	اگر (rq->scx.nr_immed)
+		scx_جدول_وقت_reenq_local(rq, 0);
 }
 
-void scx_move_local_task_to_local_dsq(struct scx_sched *sch, struct task_struct *p,
-				      u64 enq_flags, struct rq *dst_rq)
+خالی scx_move_local_task_مقصد_local_dsq(ساخت scx_sched *sch, ساخت task_struct *p,
+				      u64 enq_flags, ساخت rq *dst_rq)
 {
-	struct scx_dispatch_q *dst_dsq;
+	ساخت scx_dispatch_q *dst_dsq;
 
 	lockdep_assert_rq_held(dst_rq);
 
@@ -2425,10 +2425,10 @@ void scx_move_local_task_to_local_dsq(struct scx_sched *sch, struct task_struct 
 
 	dst_dsq = scx_resolve_local_dsq(sch, dst_rq, p, &enq_flags);
 
-	if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT))
-		dsq_insert_head(dst_dsq, p);
-	else
-		list_add_tail(&p->scx.dsq_list.node, &dst_dsq->list);
+	اگر (enq_flags & (SCX_ENQ_سر | SCX_ENQ_PREEMPT))
+		dsq_داخل_کرو_سر(dst_dsq, p);
+	ورنہ
+		list_جوڑو_دم(&p->scx.dsq_list.گرہ, &dst_dsq->list);
 
 	dsq_inc_nr(dst_dsq, p, enq_flags);
 	p->scx.dsq = dst_dsq;
@@ -2446,9 +2446,9 @@ void scx_move_local_task_to_local_dsq(struct scx_sched *sch, struct task_struct 
  *
  * Move @p which is currently on @src_rq to @dst_rq's local DSQ.
  */
-static void move_remote_task_to_local_dsq(struct scx_sched *sch,
-					  struct task_struct *p, u64 enq_flags,
-					  struct rq *src_rq, struct rq *dst_rq)
+ساکن خالی move_remote_task_مقصد_local_dsq(ساخت scx_sched *sch,
+					  ساخت task_struct *p, u64 enq_flags,
+					  ساخت rq *src_rq, ساخت rq *dst_rq)
 {
 	lockdep_assert_rq_held(src_rq);
 
@@ -2456,11 +2456,11 @@ static void move_remote_task_to_local_dsq(struct scx_sched *sch,
 	 * Set sticky_cpu before deactivate_task() to properly mark the
 	 * beginning of an SCX-internal migration.
 	 */
-	p->scx.sticky_cpu = cpu_of(dst_rq);
+	p->scx.sticky_cpu = cpu_کا(dst_rq);
 	deactivate_task(src_rq, p, 0);
-	set_task_cpu(p, cpu_of(dst_rq));
+	سیٹ_task_cpu(p, cpu_کا(dst_rq));
 
-	switch_rq_lock(src_rq, dst_rq);
+	switch_rq_تالا(src_rq, dst_rq);
 
 	/*
 	 * activate_task() below truncates enq_flags to 32 bits and re-derives
@@ -2468,14 +2468,14 @@ static void move_remote_task_to_local_dsq(struct scx_sched *sch,
 	 * so stash both across the call. The enqueue reads them back, keeping
 	 * the scx flags and checking caps against the placer, not the owner.
 	 */
-	WARN_ON_ONCE(!cpumask_test_cpu(cpu_of(dst_rq), p->cpus_ptr));
+	WARN_ON_ONCE(!cpumask_test_cpu(cpu_کا(dst_rq), p->cpus_ptr));
 	WARN_ON_ONCE(dst_rq->scx.remote_activate_enq_flags ||
 		     dst_rq->scx.remote_activate_sch);
 	dst_rq->scx.remote_activate_enq_flags = enq_flags;
 	dst_rq->scx.remote_activate_sch = sch;
 	activate_task(dst_rq, p, 0);
 	dst_rq->scx.remote_activate_enq_flags = 0;
-	dst_rq->scx.remote_activate_sch = NULL;
+	dst_rq->scx.remote_activate_sch = تہی;
 }
 
 /*
@@ -2498,18 +2498,18 @@ static void move_remote_task_to_local_dsq(struct scx_sched *sch,
  * The caller must ensure that @p and @rq are on different CPUs.
  * If enforce == true, caller must hold @p's rq lock.
  */
-static bool task_can_run_on_remote_rq(struct scx_sched *sch,
-				      struct task_struct *p, struct rq *rq,
+ساکن bool task_can_تسلسل_on_remote_rq(ساخت scx_sched *sch,
+				      ساخت task_struct *p, ساخت rq *rq,
 				      bool enforce)
 {
-	s32 cpu = cpu_of(rq);
+	s32 cpu = cpu_کا(rq);
 
 	/*
 	 * To prevent races with @p still running on its old CPU while switching
 	 * out, make sure we're holding @p's rq lock so as not to risk
 	 * erroneously killing the BPF scheduler.
 	 */
-	if (enforce)
+	اگر (enforce)
 		lockdep_assert_rq_held(task_rq(p));
 
 	WARN_ON_ONCE(task_cpu(p) == cpu);
@@ -2526,11 +2526,11 @@ static bool task_can_run_on_remote_rq(struct scx_sched *sch,
 	 * and the BPF scheduler failing to check migration disabled state can
 	 * easily be masked if task_allowed_on_cpu() is done first.
 	 */
-	if (unlikely(is_migration_disabled(p))) {
-		if (enforce)
+	اگر (unlikely(is_migration_disabled(p))) {
+		اگر (enforce)
 			scx_error(sch, "SCX_DSQ_LOCAL[_ON] cannot move migration disabled %s[%d] from CPU %d to %d",
 				  p->comm, p->pid, task_cpu(p), cpu);
-		return false;
+		واپس false;
 	}
 
 	/*
@@ -2539,20 +2539,20 @@ static bool task_can_run_on_remote_rq(struct scx_sched *sch,
 	 * between scx_bpf_dsq_insert() calls and here. Trigger error iff the
 	 * picked CPU is outside the allowed mask.
 	 */
-	if (!task_allowed_on_cpu(p, cpu)) {
-		if (enforce)
+	اگر (!task_allowed_on_cpu(p, cpu)) {
+		اگر (enforce)
 			scx_error(sch, "SCX_DSQ_LOCAL[_ON] target CPU %d not allowed for %s[%d]",
 				  cpu, p->comm, p->pid);
-		return false;
+		واپس false;
 	}
 
-	if (!scx_rq_online(rq)) {
-		if (enforce)
+	اگر (!scx_rq_online(rq)) {
+		اگر (enforce)
 			__scx_add_event(sch, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE, 1);
-		return false;
+		واپس false;
 	}
 
-	return true;
+	واپس true;
 }
 
 /**
@@ -2585,42 +2585,42 @@ static bool task_can_run_on_remote_rq(struct scx_sched *sch,
  * On return, @dsq is unlocked and @src_rq is locked. Returns %true if @p is
  * still valid. %false if lost to dequeue.
  */
-static bool unlink_dsq_and_switch_rq_lock(struct task_struct *p,
-					  struct scx_dispatch_q *dsq,
-					  struct rq *locked_rq,
-					  struct rq *src_rq)
+ساکن bool unlink_dsq_and_switch_rq_تالا(ساخت task_struct *p,
+					  ساخت scx_dispatch_q *dsq,
+					  ساخت rq *locked_rq,
+					  ساخت rq *src_rq)
 {
 	s32 cpu = raw_smp_processor_id();
 
-	lockdep_assert_held(&dsq->lock);
+	lockdep_assert_held(&dsq->تالا);
 	lockdep_assert_rq_held(locked_rq);
 
 	WARN_ON_ONCE(p->scx.holding_cpu >= 0);
 	scx_task_unlink_from_dsq(p, dsq);
 	p->scx.holding_cpu = cpu;
 
-	raw_spin_unlock(&dsq->lock);
-	switch_rq_lock(locked_rq, src_rq);
+	raw_spin_unlock(&dsq->تالا);
+	switch_rq_تالا(locked_rq, src_rq);
 
 	/* task_rq couldn't have changed if we're still the holding cpu */
-	if (likely(p->scx.holding_cpu == cpu) && !WARN_ON_ONCE(src_rq != task_rq(p))) {
+	اگر (likely(p->scx.holding_cpu == cpu) && !WARN_ON_ONCE(src_rq != task_rq(p))) {
 		scx_wait_dispatching(p);
-		return true;
+		واپس true;
 	}
 
-	return false;
+	واپس false;
 }
 
-static bool consume_remote_task(struct scx_sched *sch, struct rq *this_rq,
-				struct task_struct *p, u64 enq_flags,
-				struct scx_dispatch_q *dsq, struct rq *src_rq)
+ساکن bool consume_remote_task(ساخت scx_sched *sch, ساخت rq *this_rq,
+				ساخت task_struct *p, u64 enq_flags,
+				ساخت scx_dispatch_q *dsq, ساخت rq *src_rq)
 {
-	if (unlink_dsq_and_switch_rq_lock(p, dsq, this_rq, src_rq)) {
-		move_remote_task_to_local_dsq(sch, p, enq_flags, src_rq, this_rq);
-		return true;
-	} else {
-		switch_rq_lock(src_rq, this_rq);
-		return false;
+	اگر (unlink_dsq_and_switch_rq_تالا(p, dsq, this_rq, src_rq)) {
+		move_remote_task_مقصد_local_dsq(sch, p, enq_flags, src_rq, this_rq);
+		واپس true;
+	} ورنہ {
+		switch_rq_تالا(src_rq, this_rq);
+		واپس false;
 	}
 }
 
@@ -2640,28 +2640,28 @@ static bool consume_remote_task(struct scx_sched *sch, struct rq *this_rq,
  * On return, @src_dsq is unlocked and only @p's new task_rq, which is the
  * return value, is locked.
  */
-static struct rq *move_task_between_dsqs(struct scx_sched *sch,
-					 struct task_struct *p, u64 enq_flags,
-					 struct scx_dispatch_q *src_dsq,
-					 struct scx_dispatch_q *dst_dsq)
+ساکن ساخت rq *move_task_between_dsqs(ساخت scx_sched *sch,
+					 ساخت task_struct *p, u64 enq_flags,
+					 ساخت scx_dispatch_q *src_dsq,
+					 ساخت scx_dispatch_q *dst_dsq)
 {
-	struct rq *src_rq = task_rq(p), *dst_rq;
+	ساخت rq *src_rq = task_rq(p), *dst_rq;
 
 	BUG_ON(src_dsq->id == SCX_DSQ_LOCAL);
-	lockdep_assert_held(&src_dsq->lock);
+	lockdep_assert_held(&src_dsq->تالا);
 	lockdep_assert_rq_held(src_rq);
 
 	scx_wait_dispatching(p);
 
-	if (dst_dsq->id == SCX_DSQ_LOCAL) {
-		dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
-		if (src_rq != dst_rq &&
-		    unlikely(!task_can_run_on_remote_rq(sch, p, dst_rq, true))) {
-			dst_dsq = find_global_dsq(sch, task_cpu(p));
+	اگر (dst_dsq->id == SCX_DSQ_LOCAL) {
+		dst_rq = container_کا(dst_dsq, ساخت rq, scx.local_dsq);
+		اگر (src_rq != dst_rq &&
+		    unlikely(!task_can_تسلسل_on_remote_rq(sch, p, dst_rq, true))) {
+			dst_dsq = ڈھونڈو_global_dsq(sch, task_cpu(p));
 			dst_rq = src_rq;
 			enq_flags |= SCX_ENQ_GDSQ_FALLBACK;
 		}
-	} else {
+	} ورنہ {
 		/* no need to migrate if destination is a non-local DSQ */
 		dst_rq = src_rq;
 	}
@@ -2670,47 +2670,47 @@ static struct rq *move_task_between_dsqs(struct scx_sched *sch,
 	 * Move @p into $dst_dsq. If $dst_dsq is the local DSQ of a different
 	 * CPU, @p will be migrated.
 	 */
-	if (dst_dsq->id == SCX_DSQ_LOCAL) {
+	اگر (dst_dsq->id == SCX_DSQ_LOCAL) {
 		/* @p is going from a non-local DSQ to a local DSQ */
-		if (src_rq == dst_rq) {
+		اگر (src_rq == dst_rq) {
 			scx_task_unlink_from_dsq(p, src_dsq);
-			raw_spin_unlock(&src_dsq->lock);
-			scx_move_local_task_to_local_dsq(sch, p, enq_flags, dst_rq);
-		} else {
-			raw_spin_unlock(&src_dsq->lock);
-			move_remote_task_to_local_dsq(sch, p, enq_flags, src_rq, dst_rq);
+			raw_spin_unlock(&src_dsq->تالا);
+			scx_move_local_task_مقصد_local_dsq(sch, p, enq_flags, dst_rq);
+		} ورنہ {
+			raw_spin_unlock(&src_dsq->تالا);
+			move_remote_task_مقصد_local_dsq(sch, p, enq_flags, src_rq, dst_rq);
 		}
-	} else {
+	} ورنہ {
 		/*
 		 * @p is going from a non-local DSQ to a non-local DSQ. As
 		 * $src_dsq is already locked, do an abbreviated dequeue.
 		 */
-		dispatch_dequeue_locked(p, src_dsq);
-		raw_spin_unlock(&src_dsq->lock);
+		dispatch_قطار_سے_نکالو_locked(p, src_dsq);
+		raw_spin_unlock(&src_dsq->تالا);
 
-		scx_dispatch_enqueue(sch, dst_rq, dst_dsq, p, 0, 0, enq_flags);
+		scx_dispatch_قطار_میں_ڈالو(sch, dst_rq, dst_dsq, p, 0, 0, enq_flags);
 	}
 
-	return dst_rq;
+	واپس dst_rq;
 }
 
-bool scx_consume_dispatch_q(struct scx_sched *sch, struct rq *rq,
-			    struct scx_dispatch_q *dsq, u64 enq_flags)
+bool scx_consume_dispatch_q(ساخت scx_sched *sch, ساخت rq *rq,
+			    ساخت scx_dispatch_q *dsq, u64 enq_flags)
 {
-	struct task_struct *p;
+	ساخت task_struct *p;
 retry:
 	/*
 	 * The caller can't expect to successfully consume a task if the task's
 	 * addition to @dsq isn't guaranteed to be visible somehow. Test
 	 * @dsq->list without locking and skip if it seems empty.
 	 */
-	if (list_empty(&dsq->list))
-		return false;
+	اگر (list_خالی_خانے(&dsq->list))
+		واپس false;
 
-	raw_spin_lock(&dsq->lock);
+	raw_spin_تالا(&dsq->تالا);
 
 	nldsq_for_each_task(p, dsq) {
-		struct rq *task_rq = task_rq(p);
+		ساخت rq *task_rq = task_rq(p);
 
 		/*
 		 * This loop can lead to multiple lockup scenarios, e.g. the BPF
@@ -2720,32 +2720,32 @@ retry:
 		 * the system into the bypass mode. This can easily live-lock the
 		 * machine. If aborting, exit from all non-bypass DSQs.
 		 */
-		if (unlikely(READ_ONCE(sch->aborting)) && dsq->id != SCX_DSQ_BYPASS)
-			break;
+		اگر (unlikely(READ_ONCE(sch->aborting)) && dsq->id != SCX_DSQ_BYPASS)
+			توڑو;
 
-		if (rq == task_rq) {
+		اگر (rq == task_rq) {
 			scx_task_unlink_from_dsq(p, dsq);
-			raw_spin_unlock(&dsq->lock);
-			scx_move_local_task_to_local_dsq(sch, p, enq_flags, rq);
-			return true;
+			raw_spin_unlock(&dsq->تالا);
+			scx_move_local_task_مقصد_local_dsq(sch, p, enq_flags, rq);
+			واپس true;
 		}
 
-		if (task_can_run_on_remote_rq(sch, p, rq, false)) {
-			if (likely(consume_remote_task(sch, rq, p, enq_flags, dsq, task_rq)))
-				return true;
-			goto retry;
+		اگر (task_can_تسلسل_on_remote_rq(sch, p, rq, false)) {
+			اگر (likely(consume_remote_task(sch, rq, p, enq_flags, dsq, task_rq)))
+				واپس true;
+			جاؤ retry;
 		}
 	}
 
-	raw_spin_unlock(&dsq->lock);
-	return false;
+	raw_spin_unlock(&dsq->تالا);
+	واپس false;
 }
 
-bool scx_consume_global_dsq(struct scx_sched *sch, struct rq *rq)
+bool scx_consume_global_dsq(ساخت scx_sched *sch, ساخت rq *rq)
 {
-	int node = cpu_to_node(cpu_of(rq));
+	صحیح گرہ = cpu_مقصد_گرہ(cpu_کا(rq));
 
-	return scx_consume_dispatch_q(sch, rq, &sch->pnode[node]->global_dsq, 0);
+	واپس scx_consume_dispatch_q(sch, rq, &sch->pnode[گرہ]->global_dsq, 0);
 }
 
 /**
@@ -2765,13 +2765,13 @@ bool scx_consume_global_dsq(struct scx_sched *sch, struct rq *rq)
  * The caller must have exclusive ownership of @p (e.g. through
  * %SCX_OPSS_DISPATCHING).
  */
-static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
-				  struct scx_dispatch_q *dst_dsq, struct task_struct *p,
-				  u64 slice, u64 vtime, u64 enq_flags)
+ساکن خالی dispatch_مقصد_local_dsq(ساخت scx_sched *sch, ساخت rq *rq,
+				  ساخت scx_dispatch_q *dst_dsq, ساخت task_struct *p,
+				  u64 قاش, u64 vtime, u64 enq_flags)
 {
-	struct rq *src_rq = task_rq(p);
-	struct rq *dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
-	struct rq *locked_rq = rq;
+	ساخت rq *src_rq = task_rq(p);
+	ساخت rq *dst_rq = container_کا(dst_dsq, ساخت rq, scx.local_dsq);
+	ساخت rq *locked_rq = rq;
 
 	/*
 	 * We're synchronized against dequeue through DISPATCHING. As @p can't
@@ -2779,10 +2779,10 @@ static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
 	 *
 	 * If dispatching to @rq that @p is already on, no lock dancing needed.
 	 */
-	if (rq == src_rq && rq == dst_rq) {
-		scx_dispatch_enqueue(sch, rq, dst_dsq, p, slice, vtime,
-				     enq_flags | SCX_ENQ_APPLY_SLICE | SCX_ENQ_CLEAR_OPSS);
-		return;
+	اگر (rq == src_rq && rq == dst_rq) {
+		scx_dispatch_قطار_میں_ڈالو(sch, rq, dst_dsq, p, قاش, vtime,
+				     enq_flags | SCX_ENQ_APPLY_قاش | SCX_ENQ_CLEAR_OPSS);
+		واپس;
 	}
 
 	/*
@@ -2799,16 +2799,16 @@ static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
 	p->scx.holding_cpu = raw_smp_processor_id();
 
 	/* store_release ensures that dequeue sees the above */
-	atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
+	atomic_long_سیٹ_release(&p->scx.ops_state, SCX_OPSS_NONE);
 
 	/* switch to @src_rq lock */
-	if (locked_rq != src_rq) {
-		switch_rq_lock(locked_rq, src_rq);
+	اگر (locked_rq != src_rq) {
+		switch_rq_تالا(locked_rq, src_rq);
 		locked_rq = src_rq;
 	}
 
 	/* task_rq couldn't have changed if we're still the holding cpu */
-	if (likely(p->scx.holding_cpu == raw_smp_processor_id()) &&
+	اگر (likely(p->scx.holding_cpu == raw_smp_processor_id()) &&
 	    !WARN_ON_ONCE(src_rq != task_rq(p))) {
 		bool fallback = false;
 		/*
@@ -2816,32 +2816,32 @@ static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
 		 * through the full deactivate/activate cycle. Optimize by
 		 * abbreviating move_remote_task_to_local_dsq().
 		 */
-		if (src_rq == dst_rq) {
+		اگر (src_rq == dst_rq) {
 			p->scx.holding_cpu = -1;
-			scx_dispatch_enqueue(sch, dst_rq, &dst_rq->scx.local_dsq, p,
-					     slice, vtime, enq_flags | SCX_ENQ_APPLY_SLICE);
-		} else if (unlikely(!task_can_run_on_remote_rq(sch, p, dst_rq, true))) {
+			scx_dispatch_قطار_میں_ڈالو(sch, dst_rq, &dst_rq->scx.local_dsq, p,
+					     قاش, vtime, enq_flags | SCX_ENQ_APPLY_قاش);
+		} ورنہ اگر (unlikely(!task_can_تسلسل_on_remote_rq(sch, p, dst_rq, true))) {
 			p->scx.holding_cpu = -1;
 			fallback = true;
-			scx_dispatch_enqueue(sch, src_rq, find_global_dsq(sch, task_cpu(p)),
-					     p, slice, vtime,
-					     enq_flags | SCX_ENQ_APPLY_SLICE |
+			scx_dispatch_قطار_میں_ڈالو(sch, src_rq, ڈھونڈو_global_dsq(sch, task_cpu(p)),
+					     p, قاش, vtime,
+					     enq_flags | SCX_ENQ_APPLY_قاش |
 					     SCX_ENQ_GDSQ_FALLBACK);
-		} else {
-			apply_slice_vtime(p, slice, vtime, enq_flags);
-			move_remote_task_to_local_dsq(sch, p, enq_flags, src_rq, dst_rq);
+		} ورنہ {
+			apply_قاش_vtime(p, قاش, vtime, enq_flags);
+			move_remote_task_مقصد_local_dsq(sch, p, enq_flags, src_rq, dst_rq);
 			/* task has been moved to dst_rq, which is now locked */
 			locked_rq = dst_rq;
 		}
 
 		/* if the destination CPU is idle, wake it up */
-		if (!fallback && sched_class_above(p->sched_class, dst_rq->curr->sched_class))
+		اگر (!fallback && sched_class_above(p->sched_class, dst_rq->curr->sched_class))
 			resched_curr(dst_rq);
 	}
 
 	/* switch back to @rq lock */
-	if (locked_rq != rq)
-		switch_rq_lock(locked_rq, rq);
+	اگر (locked_rq != rq)
+		switch_rq_تالا(locked_rq, rq);
 }
 
 /**
@@ -2866,12 +2866,12 @@ static void dispatch_to_local_dsq(struct scx_sched *sch, struct rq *rq,
  * was valid in the first place. Make sure that the task is still owned by the
  * BPF scheduler and claim the ownership before dispatching.
  */
-static void finish_dispatch(struct scx_sched *sch, struct rq *rq, struct task_struct *p,
-			    unsigned long qseq_at_dispatch, u64 dsq_id,
-			    u64 slice, u64 vtime, u64 enq_flags)
+ساکن خالی اختتام_dispatch(ساخت scx_sched *sch, ساخت rq *rq, ساخت task_struct *p,
+			    غیرعلامتی طویل qseq_at_dispatch, u64 dsq_id,
+			    u64 قاش, u64 vtime, u64 enq_flags)
 {
-	struct scx_dispatch_q *dsq;
-	unsigned long opss;
+	ساخت scx_dispatch_q *dsq;
+	غیرعلامتی طویل opss;
 
 retry:
 	/*
@@ -2880,24 +2880,24 @@ retry:
 	 */
 	opss = atomic_long_read(&p->scx.ops_state);
 
-	switch (opss & SCX_OPSS_STATE_MASK) {
-	case SCX_OPSS_DISPATCHING:
-	case SCX_OPSS_NONE:
+	انتخاب (opss & SCX_OPSS_STATE_نقاب) {
+	حالت SCX_OPSS_DISPATCHING:
+	حالت SCX_OPSS_NONE:
 		/* someone else already got to it */
-		return;
-	case SCX_OPSS_QUEUED:
+		واپس;
+	حالت SCX_OPSS_QUEUED:
 		/*
 		 * If qseq doesn't match, @p has gone through at least one
 		 * dispatch/dequeue and re-enqueue cycle between
 		 * scx_bpf_dsq_insert() and here and we have no claim on it.
 		 */
-		if ((opss & SCX_OPSS_QSEQ_MASK) != qseq_at_dispatch)
-			return;
+		اگر ((opss & SCX_OPSS_QSEQ_نقاب) != qseq_at_dispatch)
+			واپس;
 
 		/* see SCX_EV_INSERT_NOT_OWNED definition */
-		if (unlikely(!scx_task_on_sched(sch, p))) {
-			__scx_add_event(sch, SCX_EV_INSERT_NOT_OWNED, 1);
-			return;
+		اگر (unlikely(!scx_task_on_sched(sch, p))) {
+			__scx_add_event(sch, SCX_EV_داخل_کرو_NOT_OWNED, 1);
+			واپس;
 		}
 
 		/*
@@ -2907,11 +2907,11 @@ retry:
 		 * claim @p by atomically transitioning it from QUEUED to
 		 * DISPATCHING.
 		 */
-		if (likely(atomic_long_try_cmpxchg(&p->scx.ops_state, &opss,
+		اگر (likely(atomic_long_try_cmpxchg(&p->scx.ops_state, &opss,
 						   SCX_OPSS_DISPATCHING)))
-			break;
-		goto retry;
-	case SCX_OPSS_QUEUEING:
+			توڑو;
+		جاؤ retry;
+	حالت SCX_OPSS_QUEUEING:
 		/*
 		 * scx_do_enqueue_task() is in the process of transferring the
 		 * task to the BPF scheduler while holding @p's rq lock. As we
@@ -2919,61 +2919,61 @@ retry:
 		 * path may depend upon, it's safe to wait.
 		 */
 		wait_ops_state(p, opss);
-		goto retry;
+		جاؤ retry;
 	}
 
 	BUG_ON(!(p->scx.flags & SCX_TASK_QUEUED));
 
-	dsq = find_dsq_for_dispatch(sch, rq, dsq_id, task_cpu(p));
+	dsq = ڈھونڈو_dsq_for_dispatch(sch, rq, dsq_id, task_cpu(p));
 
-	if (dsq->id == SCX_DSQ_LOCAL)
-		dispatch_to_local_dsq(sch, rq, dsq, p, slice, vtime, enq_flags);
-	else
-		scx_dispatch_enqueue(sch, rq, dsq, p, slice, vtime,
-				     enq_flags | SCX_ENQ_APPLY_SLICE | SCX_ENQ_CLEAR_OPSS);
+	اگر (dsq->id == SCX_DSQ_LOCAL)
+		dispatch_مقصد_local_dsq(sch, rq, dsq, p, قاش, vtime, enq_flags);
+	ورنہ
+		scx_dispatch_قطار_میں_ڈالو(sch, rq, dsq, p, قاش, vtime,
+				     enq_flags | SCX_ENQ_APPLY_قاش | SCX_ENQ_CLEAR_OPSS);
 }
 
-void scx_flush_dispatch_buf(struct scx_sched *sch, struct rq *rq)
+خالی scx_flush_dispatch_buf(ساخت scx_sched *sch, ساخت rq *rq)
 {
-	struct scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
+	ساخت scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
 	u32 u;
 
-	for (u = 0; u < dspc->cursor; u++) {
-		struct scx_dsp_buf_ent *ent = &dspc->buf[u];
+	برائے (u = 0; u < dspc->cursor; u++) {
+		ساخت scx_dsp_buf_ent *ent = &dspc->buf[u];
 
-		finish_dispatch(sch, rq, ent->task, ent->qseq, ent->dsq_id,
-				ent->slice, ent->vtime, ent->enq_flags);
+		اختتام_dispatch(sch, rq, ent->task, ent->qseq, ent->dsq_id,
+				ent->قاش, ent->vtime, ent->enq_flags);
 	}
 
 	dspc->nr_tasks += dspc->cursor;
 	dspc->cursor = 0;
 }
 
-static inline void maybe_queue_balance_callback(struct rq *rq)
+ساکن اندرونی خالی maybe_قطار_balance_callback(ساخت rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
-	if (!(rq->scx.flags & SCX_RQ_BAL_CB_PENDING))
-		return;
+	اگر (!(rq->scx.flags & SCX_RQ_BAL_CB_PENDING))
+		واپس;
 
-	queue_balance_callback(rq, &rq->scx.deferred_bal_cb,
+	قطار_balance_callback(rq, &rq->scx.deferred_bal_cb,
 				deferred_bal_cb_workfn);
 
 	rq->scx.flags &= ~SCX_RQ_BAL_CB_PENDING;
 }
 
-static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev)
+ساکن شمار scx_dsp_verdict dispatch_one(ساخت rq *rq, ساخت task_struct *پچھلا)
 {
-	struct scx_sched *root_sch = scx_root_protected_live();
-	enum scx_dsp_verdict verdict;
-	s32 cpu = cpu_of(rq);
+	ساخت scx_sched *جڑ_sch = scx_جڑ_protected_زندہ();
+	شمار scx_dsp_verdict verdict;
+	s32 cpu = cpu_کا(rq);
 
 	lockdep_assert_rq_held(rq);
-	rq->scx.flags |= SCX_RQ_IN_DISPATCH;
+	rq->scx.flags |= SCX_RQ_اندر_DISPATCH;
 
-	scx_process_sync_ecaps(rq, prev);
+	scx_process_sync_ecaps(rq, پچھلا);
 
-	if ((root_sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT) &&
+	اگر ((جڑ_sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT) &&
 	    unlikely(rq->scx.cpu_released)) {
 		/*
 		 * If the previous sched_class for the current CPU was not SCX,
@@ -2981,12 +2981,12 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 		 * core. This callback complements ->cpu_release(), which is
 		 * emitted in switch_class().
 		 */
-		if (root_sch->ops.cpu_acquire)
-			SCX_CALL_OP(root_sch, cpu_acquire, rq, cpu, NULL);
+		اگر (جڑ_sch->ops.cpu_acquire)
+			SCX_CALL_OP(جڑ_sch, cpu_acquire, rq, cpu, تہی);
 		rq->scx.cpu_released = false;
 	}
 
-	if (prev->sched_class == &ext_sched_class) {
+	اگر (پچھلا->sched_class == &ext_sched_class) {
 		update_curr_scx(rq);
 
 		/*
@@ -2999,22 +2999,22 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 		 * See scx_disable_workfn() for the explanation on the bypassing
 		 * test.
 		 */
-		if ((prev->scx.flags & SCX_TASK_QUEUED) && prev->scx.slice &&
-		    !scx_bypassing(scx_task_sched(prev), cpu)) {
-			verdict = SCX_DSP_PREV;
-			goto has_tasks;
+		اگر ((پچھلا->scx.flags & SCX_TASK_QUEUED) && پچھلا->scx.قاش &&
+		    !scx_bypassing(scx_task_sched(پچھلا), cpu)) {
+			verdict = SCX_DSP_پچھلا;
+			جاؤ has_tasks;
 		}
 	}
 
 	/* if there already are tasks to run, nothing to do */
-	if (rq->scx.local_dsq.nr) {
+	اگر (rq->scx.local_dsq.nr) {
 		verdict = SCX_DSP_LOCAL;
-		goto has_tasks;
+		جاؤ has_tasks;
 	}
 
-	verdict = scx_dispatch_sched(root_sch, rq, prev, false);
-	if (verdict != SCX_DSP_NONE)
-		goto has_tasks;
+	verdict = scx_dispatch_sched(جڑ_sch, rq, پچھلا, false);
+	اگر (verdict != SCX_DSP_NONE)
+		جاؤ has_tasks;
 
 	/*
 	 * Didn't find another task to run. Keep running @prev unless its own
@@ -3022,18 +3022,18 @@ static enum scx_dsp_verdict dispatch_one(struct rq *rq, struct task_struct *prev
 	 * put_prev_task_scx(). Read the scheduler here as the dispatch above
 	 * may have dropped the rq lock while @prev changed class or scheduler.
 	 */
-	if (prev->scx.flags & SCX_TASK_QUEUED) {
-		struct scx_sched *prev_sch = scx_task_sched(prev);
+	اگر (پچھلا->scx.flags & SCX_TASK_QUEUED) {
+		ساخت scx_sched *پچھلا_sch = scx_task_sched(پچھلا);
 
-		if ((!(prev_sch->ops.flags & SCX_OPS_ENQ_LAST) ||
-		     scx_bypassing(prev_sch, cpu)) && scx_task_can_stay_on_cpu(rq, prev)) {
-			__scx_add_event(prev_sch, SCX_EV_DISPATCH_KEEP_LAST, 1);
-			verdict = SCX_DSP_PREV;
-			goto has_tasks;
+		اگر ((!(پچھلا_sch->ops.flags & SCX_OPS_ENQ_آخری) ||
+		     scx_bypassing(پچھلا_sch, cpu)) && scx_task_can_stay_on_cpu(rq, پچھلا)) {
+			__scx_add_event(پچھلا_sch, SCX_EV_DISPATCH_KEEP_آخری, 1);
+			verdict = SCX_DSP_پچھلا;
+			جاؤ has_tasks;
 		}
 	}
-	rq->scx.flags &= ~SCX_RQ_IN_DISPATCH;
-	return SCX_DSP_NONE;
+	rq->scx.flags &= ~SCX_RQ_اندر_DISPATCH;
+	واپس SCX_DSP_NONE;
 
 has_tasks:
 	/*
@@ -3046,39 +3046,39 @@ has_tasks:
 	 * - A non-IMMED HEAD task can get queued in front of an IMMED task
 	 *   between the IMMED queueing and the subsequent scheduling event.
 	 */
-	if (unlikely(rq->scx.local_dsq.nr > 1 && rq->scx.nr_immed))
-		scx_schedule_reenq_local(rq, 0);
+	اگر (unlikely(rq->scx.local_dsq.nr > 1 && rq->scx.nr_immed))
+		scx_جدول_وقت_reenq_local(rq, 0);
 
-	rq->scx.flags &= ~SCX_RQ_IN_DISPATCH;
-	return verdict;
+	rq->scx.flags &= ~SCX_RQ_اندر_DISPATCH;
+	واپس verdict;
 }
 
-static void set_next_task_scx(struct rq *rq, struct task_struct *p, enum snt_e type)
+ساکن خالی سیٹ_اگلا_task_scx(ساخت rq *rq, ساخت task_struct *p, شمار snt_e type)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	ساخت scx_sched *sch = scx_task_sched(p);
 
-	if (type == SNT_REPICK)
-		return;
+	اگر (type == SNT_REPICK)
+		واپس;
 
-	if (p->scx.flags & SCX_TASK_QUEUED) {
+	اگر (p->scx.flags & SCX_TASK_QUEUED) {
 		/*
 		 * Core-sched might decide to execute @p before it is
 		 * dispatched. Call ops_dequeue() to notify the BPF scheduler.
 		 */
-		ops_dequeue(rq, p, SCX_DEQ_CORE_SCHED_EXEC);
-		scx_dispatch_dequeue(rq, p);
+		ops_قطار_سے_نکالو(rq, p, SCX_DEQ_CORE_SCHED_EXEC);
+		scx_dispatch_قطار_سے_نکالو(rq, p);
 	}
 
-	p->se.exec_start = rq_clock_task(rq);
+	p->se.exec_آغاز = rq_clock_task(rq);
 
 	/* see dequeue_task_scx() on why we skip when !QUEUED */
-	if (SCX_HAS_OP(sch, running) && (p->scx.flags & SCX_TASK_QUEUED))
+	اگر (SCX_HAS_OP(sch, running) && (p->scx.flags & SCX_TASK_QUEUED))
 		SCX_CALL_OP_TASK(sch, running, rq, p);
 
 	clr_task_runnable(p, true);
 
 	/* apply any pending out-of-band slice request before the tick decision */
-	apply_task_slice_oob(rq, p);
+	apply_task_قاش_oob(rq, p);
 
 	/*
 	 * @p is getting newly scheduled or got kicked after someone updated its
@@ -3089,8 +3089,8 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, enum snt_e t
 	 * nohz. In the future, we might want to add a mechanism to update
 	 * load_avgs periodically on tick-stopped CPUs.
 	 */
-	if (p->scx.slice == SCX_SLICE_INF) {
-		if (!(rq->scx.flags & SCX_RQ_CAN_STOP_TICK)) {
+	اگر (p->scx.قاش == SCX_قاش_INF) {
+		اگر (!(rq->scx.flags & SCX_RQ_CAN_STOP_TICK)) {
 			/*
 			 * Bypass mode always assigns finite slices, so @p
 			 * can't have an infinite slice while bypassing.
@@ -3100,46 +3100,46 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, enum snt_e t
 			rq->scx.flags |= SCX_RQ_CAN_STOP_TICK;
 			sched_update_tick_dependency(rq);
 
-			update_other_load_avgs(rq);
+			update_other_بھرو_avgs(rq);
 		}
-	} else {
-		if (rq->scx.flags & SCX_RQ_CAN_STOP_TICK) {
+	} ورنہ {
+		اگر (rq->scx.flags & SCX_RQ_CAN_STOP_TICK) {
 			rq->scx.flags &= ~SCX_RQ_CAN_STOP_TICK;
-			update_other_load_avgs(rq);
+			update_other_بھرو_avgs(rq);
 		}
 
 		/*
 		 * @rq still references the outgoing scheduling context. A finite
 		 * slice is sufficient by itself to require the tick.
 		 */
-		if (tick_nohz_full_cpu(cpu_of(rq)))
-			tick_nohz_dep_set_cpu(cpu_of(rq), TICK_DEP_BIT_SCHED);
+		اگر (tick_nohz_بھرا_cpu(cpu_کا(rq)))
+			tick_nohz_dep_سیٹ_cpu(cpu_کا(rq), TICK_DEP_ثنائی_ہندسہ_SCHED);
 	}
 }
 
-void scx_proxy_donor_start(struct rq *rq)
+خالی scx_proxy_donor_آغاز(ساخت rq *rq)
 {
 }
 
-static enum scx_cpu_preempt_reason
-preempt_reason_from_class(const struct sched_class *class)
+ساکن شمار scx_cpu_preempt_reason
+preempt_reason_from_class(ثابت ساخت sched_class *class)
 {
-	if (class == &stop_sched_class)
-		return SCX_CPU_PREEMPT_STOP;
-	if (class == &dl_sched_class)
-		return SCX_CPU_PREEMPT_DL;
-	if (class == &rt_sched_class)
-		return SCX_CPU_PREEMPT_RT;
-	return SCX_CPU_PREEMPT_UNKNOWN;
+	اگر (class == &stop_sched_class)
+		واپس SCX_CPU_PREEMPT_STOP;
+	اگر (class == &dl_sched_class)
+		واپس SCX_CPU_PREEMPT_DL;
+	اگر (class == &rt_sched_class)
+		واپس SCX_CPU_PREEMPT_RT;
+	واپس SCX_CPU_PREEMPT_UNKNOWN;
 }
 
-static void switch_class(struct rq *rq, struct task_struct *next)
+ساکن خالی switch_class(ساخت rq *rq, ساخت task_struct *اگلا)
 {
-	struct scx_sched *sch = scx_root_protected_live();
-	const struct sched_class *next_class = next->sched_class;
+	ساخت scx_sched *sch = scx_جڑ_protected_زندہ();
+	ثابت ساخت sched_class *اگلا_class = اگلا->sched_class;
 
-	if (!(sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT))
-		return;
+	اگر (!(sch->ops.flags & SCX_OPS_HAS_CPU_PREEMPT))
+		واپس;
 
 	/*
 	 * The callback is conceptually meant to convey that the CPU is no
@@ -3147,8 +3147,8 @@ static void switch_class(struct rq *rq, struct task_struct *next)
 	 * if the next class is below SCX (in which case the BPF scheduler has
 	 * actively decided not to schedule any tasks on the CPU).
 	 */
-	if (sched_class_above(&ext_sched_class, next_class))
-		return;
+	اگر (sched_class_above(&ext_sched_class, اگلا_class))
+		واپس;
 
 	/*
 	 * At this point we know that SCX was preempted by a higher priority
@@ -3159,23 +3159,23 @@ static void switch_class(struct rq *rq, struct task_struct *next)
 	 * ->cpu_release() complements ->cpu_acquire(), which is emitted the
 	 *  next time that dispatch_one() is invoked.
 	 */
-	if (!rq->scx.cpu_released) {
-		if (sch->ops.cpu_release) {
-			struct scx_cpu_release_args args = {
-				.reason = preempt_reason_from_class(next_class),
-				.task = next,
+	اگر (!rq->scx.cpu_released) {
+		اگر (sch->ops.cpu_release) {
+			ساخت scx_cpu_release_دلائل دلائل = {
+				.reason = preempt_reason_from_class(اگلا_class),
+				.task = اگلا,
 			};
 
-			SCX_CALL_OP(sch, cpu_release, rq, cpu_of(rq), &args);
+			SCX_CALL_OP(sch, cpu_release, rq, cpu_کا(rq), &دلائل);
 		}
 		rq->scx.cpu_released = true;
 	}
 }
 
-static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
-			      struct task_struct *next)
+ساکن خالی put_پچھلا_task_scx(ساخت rq *rq, ساخت task_struct *p,
+			      ساخت task_struct *اگلا)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	ساخت scx_sched *sch = scx_task_sched(p);
 	bool rescue_keep = false;
 
 	/* see kick_sync_wait_bal_cb() */
@@ -3187,19 +3187,19 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 	 * If the slice is consumed, protection ends with it. A rescuee
 	 * preempted beforehand keeps going, see scx_rescue_keep().
 	 */
-	if (!p->scx.slice) {
-		if (unlikely(p == scx_rescuee(rq)))
+	اگر (!p->scx.قاش) {
+		اگر (unlikely(p == scx_rescuee(rq)))
 			rescue_keep = scx_rescue_keep(rq, p);
-		if (!rescue_keep)
-			scx_task_slice_ended(rq, p);
+		اگر (!rescue_keep)
+			scx_task_قاش_ended(rq, p);
 	}
 
 	/* see dequeue_task_scx() on why we skip when !QUEUED */
-	if (SCX_HAS_OP(sch, stopping) && (p->scx.flags & SCX_TASK_QUEUED))
+	اگر (SCX_HAS_OP(sch, stopping) && (p->scx.flags & SCX_TASK_QUEUED))
 		SCX_CALL_OP_TASK(sch, stopping, rq, p, true);
 
-	if (p->scx.flags & SCX_TASK_QUEUED) {
-		set_task_runnable(rq, p);
+	اگر (p->scx.flags & SCX_TASK_QUEUED) {
+		سیٹ_task_runnable(rq, p);
 
 		/*
 		 * If @p has slice left and is being put, @p is getting
@@ -3211,13 +3211,13 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 		 * An open rescue must keep @p on the local DSQ even if the
 		 * scheduler zeroed the slice in ops.stopping() above.
 		 */
-		if ((p->scx.slice || unlikely(p == scx_rescuee(rq))) &&
-		    !scx_bypassing(sch, cpu_of(rq))) {
-			if (p->scx.flags & SCX_TASK_IMMED) {
+		اگر ((p->scx.قاش || unlikely(p == scx_rescuee(rq))) &&
+		    !scx_bypassing(sch, cpu_کا(rq))) {
+			اگر (p->scx.flags & SCX_TASK_IMMED) {
 				p->scx.flags |= SCX_TASK_REENQ_PREEMPTED;
-				scx_do_enqueue_task(rq, p, SCX_ENQ_REENQ, -1);
-				p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
-			} else {
+				scx_do_قطار_میں_ڈالو_task(rq, p, SCX_ENQ_REENQ, -1);
+				p->scx.flags &= ~SCX_TASK_REENQ_REASON_نقاب;
+			} ورنہ {
 				u64 enq_flags = 0;
 
 				/*
@@ -3225,18 +3225,18 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 				 * by another SCX task, append to the local DSQ,
 				 * see scx_rescue_keep().
 				 */
-				if (unlikely(p == scx_rescuee(rq))) {
+				اگر (unlikely(p == scx_rescuee(rq))) {
 					enq_flags |= SCX_ENQ_IGNORE_CAPS;
-					if (!rescue_keep)
-						enq_flags |= SCX_ENQ_HEAD;
-				} else {
-					enq_flags |= SCX_ENQ_HEAD;
+					اگر (!rescue_keep)
+						enq_flags |= SCX_ENQ_سر;
+				} ورنہ {
+					enq_flags |= SCX_ENQ_سر;
 				}
 
-				scx_dispatch_enqueue(sch, rq, &rq->scx.local_dsq, p, 0, 0,
+				scx_dispatch_قطار_میں_ڈالو(sch, rq, &rq->scx.local_dsq, p, 0, 0,
 						     enq_flags);
 			}
-			goto switch_class;
+			جاؤ switch_class;
 		}
 
 		/*
@@ -3249,11 +3249,11 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 		 * locally runnable and can legitimately go idle with @p still
 		 * runnable (see do_pick_task_scx()).
 		 */
-		if (next && sched_class_above(&ext_sched_class, next->sched_class) &&
+		اگر (اگلا && sched_class_above(&ext_sched_class, اگلا->sched_class) &&
 		    scx_task_can_stay_on_cpu(rq, p)) {
 			WARN_ON_ONCE(!sched_core_enabled(rq) &&
-				     !(sch->ops.flags & SCX_OPS_ENQ_LAST));
-			scx_do_enqueue_task(rq, p, SCX_ENQ_LAST, -1);
+				     !(sch->ops.flags & SCX_OPS_ENQ_آخری));
+			scx_do_قطار_میں_ڈالو_task(rq, p, SCX_ENQ_آخری, -1);
 
 			/*
 			 * A task put on the local DSQ runs, as anywhere else.
@@ -3262,22 +3262,22 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
 			 * resched_curr() would flag @p and __schedule() clears
 			 * that right after the pick. Flag @next instead.
 			 */
-			if (p->scx.dsq == &rq->scx.local_dsq)
-				set_tsk_need_resched(next);
-		} else {
-			scx_do_enqueue_task(rq, p, 0, -1);
+			اگر (p->scx.dsq == &rq->scx.local_dsq)
+				سیٹ_tsk_need_resched(اگلا);
+		} ورنہ {
+			scx_do_قطار_میں_ڈالو_task(rq, p, 0, -1);
 		}
 	}
 
 switch_class:
-	if (next && next->sched_class != &ext_sched_class)
-		switch_class(rq, next);
+	اگر (اگلا && اگلا->sched_class != &ext_sched_class)
+		switch_class(rq, اگلا);
 }
 
-static void kick_sync_wait_bal_cb(struct rq *rq)
+ساکن خالی kick_sync_wait_bal_cb(ساخت rq *rq)
 {
-	struct scx_kick_syncs __rcu *ks;
-	unsigned long *ksyncs;
+	ساخت scx_kick_syncs __rcu *ks;
+	غیرعلامتی طویل *ksyncs;
 	bool waited;
 	s32 cpu;
 
@@ -3290,8 +3290,8 @@ static void kick_sync_wait_bal_cb(struct rq *rq)
 	 * kicked CPUs are already on their way to advance the kick_syncs being
 	 * waited on. Don't get in the way.
 	 */
-	if (unlikely(cpu_of(rq) != smp_processor_id()))
-		return;
+	اگر (unlikely(cpu_کا(rq) != smp_processor_id()))
+		واپس;
 
 	ks = __this_cpu_read(scx_kick_syncs);
 	ksyncs = rcu_dereference_sched(ks)->syncs;
@@ -3307,65 +3307,65 @@ static void kick_sync_wait_bal_cb(struct rq *rq)
 	 */
 retry:
 	waited = false;
-	for_each_cpu(cpu, rq->scx.cpus_to_sync) {
+	for_each_cpu(cpu, rq->scx.cpus_مقصد_sync) {
 		/*
 		 * smp_load_acquire() pairs with smp_store_release() on
 		 * kick_sync updates on the target CPUs.
 		 */
-		if (cpu == cpu_of(rq) ||
-		    smp_load_acquire(&cpu_rq(cpu)->scx.kick_sync) != ksyncs[cpu]) {
-			cpumask_clear_cpu(cpu, rq->scx.cpus_to_sync);
-			continue;
+		اگر (cpu == cpu_کا(rq) ||
+		    smp_بھرو_acquire(&cpu_rq(cpu)->scx.kick_sync) != ksyncs[cpu]) {
+			cpumask_clear_cpu(cpu, rq->scx.cpus_مقصد_sync);
+			جاری;
 		}
 
-		scx_rq_lock_drop(rq);
+		scx_rq_تالا_drop(rq);
 		raw_spin_rq_unlock_irq(rq);
-		while (READ_ONCE(cpu_rq(cpu)->scx.kick_sync) == ksyncs[cpu]) {
+		جب (READ_ONCE(cpu_rq(cpu)->scx.kick_sync) == ksyncs[cpu]) {
 			smp_store_release(&rq->scx.kick_sync, rq->scx.kick_sync + 1);
 			cpu_relax();
 		}
-		raw_spin_rq_lock_irq(rq);
+		raw_spin_rq_تالا_irq(rq);
 		waited = true;
 	}
 
-	if (waited)
-		goto retry;
+	اگر (waited)
+		جاؤ retry;
 }
 
-static struct task_struct *first_local_task(struct rq *rq)
+ساکن ساخت task_struct *پہلا_local_task(ساخت rq *rq)
 {
-	return list_first_entry_or_null(&rq->scx.local_dsq.list,
-					struct task_struct, scx.dsq_list.node);
+	واپس list_پہلا_اندراج_or_null(&rq->scx.local_dsq.list,
+					ساخت task_struct, scx.dsq_list.گرہ);
 }
 
 /*
  * Run dispatch and queue the follow-up work for a pick.
  */
-static enum scx_dsp_verdict dispatch_pick(struct rq *rq, struct rq_flags *rf,
-					  struct task_struct *prev)
+ساکن شمار scx_dsp_verdict dispatch_pick(ساخت rq *rq, ساخت rq_flags *rf,
+					  ساخت task_struct *پچھلا)
 {
-	enum scx_dsp_verdict verdict;
+	شمار scx_dsp_verdict verdict;
 
-	rq_unpin_lock(rq, rf);
-	verdict = dispatch_one(rq, prev);
-	rq_repin_lock(rq, rf);
-	maybe_queue_balance_callback(rq);
+	rq_unpin_تالا(rq, rf);
+	verdict = dispatch_one(rq, پچھلا);
+	rq_repin_تالا(rq, rf);
+	maybe_قطار_balance_callback(rq);
 
 	/*
 	 * Defer to a balance callback which can drop rq lock and enable IRQs.
 	 * Waiting directly in the pick path would deadlock against CPUs sending
 	 * us IPIs (e.g. TLB flushes) while we wait for them.
 	 */
-	if (unlikely(rq->scx.kick_sync_pending)) {
+	اگر (unlikely(rq->scx.kick_sync_pending)) {
 		rq->scx.kick_sync_pending = false;
-		queue_balance_callback(rq, &rq->scx.kick_sync_bal_cb,
+		قطار_balance_callback(rq, &rq->scx.kick_sync_bal_cb,
 				       kick_sync_wait_bal_cb);
 	}
 
-	return verdict;
+	واپس verdict;
 }
 
-#ifdef CONFIG_SCHED_CORE
+#اگر_تعریف_شدہ CONFIG_SCHED_CORE
 /*
  * Dispatch for a pick when core scheduling is enabled. The selection picks for
  * all SMT siblings and the rq_i->core_pick state it builds must stay atomic
@@ -3373,74 +3373,74 @@ static enum scx_dsp_verdict dispatch_pick(struct rq *rq, struct rq_flags *rf,
  * in between - return %SCX_DSP_RETRY to restart the selection against current
  * state.
  */
-static enum scx_dsp_verdict dispatch_core_pick(struct rq *rq, struct rq_flags *rf,
-					       struct task_struct *prev)
+ساکن شمار scx_dsp_verdict dispatch_core_pick(ساخت rq *rq, ساخت rq_flags *rf,
+					       ساخت task_struct *پچھلا)
 {
-	enum scx_dsp_verdict verdict;
-	u32 seq = rq->scx.lock_drop_seq;
+	شمار scx_dsp_verdict verdict;
+	u32 seq = rq->scx.تالا_drop_seq;
 
 	/* another dispatch is in flight on @rq, let that handle it */
-	if (rq->scx.flags & SCX_RQ_IN_DISPATCH)
-		return SCX_DSP_NONE;
+	اگر (rq->scx.flags & SCX_RQ_اندر_DISPATCH)
+		واپس SCX_DSP_NONE;
 
-	rq_unpin_lock(rq, rf);
+	rq_unpin_تالا(rq, rf);
 
-	verdict = dispatch_one(rq, prev);
+	verdict = dispatch_one(rq, پچھلا);
 
-	if (cpu_of(rq) == smp_processor_id()) {
-		maybe_queue_balance_callback(rq);
+	اگر (cpu_کا(rq) == smp_processor_id()) {
+		maybe_قطار_balance_callback(rq);
 
 		/* see dispatch_pick() */
-		if (unlikely(rq->scx.kick_sync_pending)) {
+		اگر (unlikely(rq->scx.kick_sync_pending)) {
 			rq->scx.kick_sync_pending = false;
-			queue_balance_callback(rq, &rq->scx.kick_sync_bal_cb,
+			قطار_balance_callback(rq, &rq->scx.kick_sync_bal_cb,
 					       kick_sync_wait_bal_cb);
 		}
-	} else if (unlikely(rq->scx.flags & SCX_RQ_BAL_CB_PENDING)) {
+	} ورنہ اگر (unlikely(rq->scx.flags & SCX_RQ_BAL_CB_PENDING)) {
 		/*
 		 * Balance callbacks must run in the context that queued them,
 		 * so they can't be queued on another CPU's rq. Run the deferred
 		 * work directly instead.
 		 */
 		rq->scx.flags &= ~SCX_RQ_BAL_CB_PENDING;
-		run_deferred(rq);
+		تسلسل_deferred(rq);
 	}
 
-	rq_repin_lock(rq, rf);
+	rq_repin_تالا(rq, rf);
 
 	/* if dispatch_one() released the rq lock, restart the selection */
-	if (rq->scx.lock_drop_seq != seq)
-		return SCX_DSP_RETRY;
+	اگر (rq->scx.تالا_drop_seq != seq)
+		واپس SCX_DSP_RETRY;
 
-	return verdict;
+	واپس verdict;
 }
-#else	/* CONFIG_SCHED_CORE */
-static enum scx_dsp_verdict dispatch_core_pick(struct rq *rq, struct rq_flags *rf,
-					       struct task_struct *prev)
+#ورنہ	/* CONFIG_SCHED_CORE */
+ساکن شمار scx_dsp_verdict dispatch_core_pick(ساخت rq *rq, ساخت rq_flags *rf,
+					       ساخت task_struct *پچھلا)
 {
-	return SCX_DSP_NONE;
+	واپس SCX_DSP_NONE;
 }
-#endif	/* CONFIG_SCHED_CORE */
+#اگر_ختم	/* CONFIG_SCHED_CORE */
 
-static struct task_struct *
-do_pick_task_scx(struct rq *rq, struct rq_flags *rf, bool force_scx)
+ساکن ساخت task_struct *
+do_pick_task_scx(ساخت rq *rq, ساخت rq_flags *rf, bool force_scx)
 {
-	struct task_struct *prev = rq->curr;
-	enum scx_dsp_verdict verdict;
-	struct task_struct *p;
+	ساخت task_struct *پچھلا = rq->curr;
+	شمار scx_dsp_verdict verdict;
+	ساخت task_struct *p;
 
 	/* see kick_sync_wait_bal_cb() */
 	smp_store_release(&rq->scx.kick_sync, rq->scx.kick_sync + 1);
 
 	rq_modified_begin(rq, &ext_sched_class);
 
-	if (sched_core_enabled(rq))
-		verdict = dispatch_core_pick(rq, rf, prev);
-	else
-		verdict = dispatch_pick(rq, rf, prev);
+	اگر (sched_core_enabled(rq))
+		verdict = dispatch_core_pick(rq, rf, پچھلا);
+	ورنہ
+		verdict = dispatch_pick(rq, rf, پچھلا);
 
-	if (verdict == SCX_DSP_RETRY)
-		return RETRY_TASK;
+	اگر (verdict == SCX_DSP_RETRY)
+		واپس RETRY_TASK;
 
 	/*
 	 * If any higher-priority sched class enqueued a runnable task on this
@@ -3450,44 +3450,44 @@ do_pick_task_scx(struct rq *rq, struct rq_flags *rf, bool force_scx)
 	 * If @force_scx is true, always try to pick a SCHED_EXT task,
 	 * regardless of any higher-priority sched classes activity.
 	 */
-	if (!force_scx && rq_modified_above(rq, &ext_sched_class))
-		return RETRY_TASK;
+	اگر (!force_scx && rq_modified_above(rq, &ext_sched_class))
+		واپس RETRY_TASK;
 
 	/*
 	 * If we're keeping @prev, replenish slice if necessary and keep running
 	 * @prev. Otherwise, pop the first one from the local DSQ.
 	 */
-	if (verdict == SCX_DSP_PREV) {
-		p = prev;
-		if (!p->scx.slice) {
+	اگر (verdict == SCX_DSP_پچھلا) {
+		p = پچھلا;
+		اگر (!p->scx.قاش) {
 			/* the slice is consumed, protection ends */
-			scx_task_slice_ended(rq, p);
-			refill_task_slice_dfl(scx_task_sched(p), p);
+			scx_task_قاش_ended(rq, p);
+			refill_task_قاش_dfl(scx_task_sched(p), p);
 		}
-	} else {
-		p = first_local_task(rq);
-		if (!p)
-			return NULL;
+	} ورنہ {
+		p = پہلا_local_task(rq);
+		اگر (!p)
+			واپس تہی;
 
-		if (unlikely(!p->scx.slice) && scx_task_can_stay_on_cpu(rq, p)) {
-			struct scx_sched *sch = scx_task_sched(p);
+		اگر (unlikely(!p->scx.قاش) && scx_task_can_stay_on_cpu(rq, p)) {
+			ساخت scx_sched *sch = scx_task_sched(p);
 
-			if (!scx_bypassing(sch, cpu_of(rq)) &&
-			    !sch->warned_zero_slice) {
+			اگر (!scx_bypassing(sch, cpu_کا(rq)) &&
+			    !sch->warned_zero_قاش) {
 				printk_deferred(KERN_WARNING "sched_ext: %s[%d] has zero slice in %s()\n",
 						p->comm, p->pid, __func__);
-				sch->warned_zero_slice = true;
+				sch->warned_zero_قاش = true;
 			}
-			refill_task_slice_dfl(sch, p);
+			refill_task_قاش_dfl(sch, p);
 		}
 	}
 
-	return p;
+	واپس p;
 }
 
-static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
+ساکن ساخت task_struct *pick_task_scx(ساخت rq *rq, ساخت rq_flags *rf)
 {
-	return do_pick_task_scx(rq, rf, false);
+	واپس do_pick_task_scx(rq, rf, false);
 }
 
 /*
@@ -3496,28 +3496,28 @@ static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *rf)
  * Use do_pick_task_scx() directly with @force_scx enabled, since the
  * dl_server must always select a sched_ext task.
  */
-static struct task_struct *
-ext_server_pick_task(struct sched_dl_entity *dl_se, struct rq_flags *rf)
+ساکن ساخت task_struct *
+ext_server_pick_task(ساخت sched_dl_entity *dl_se, ساخت rq_flags *rf)
 {
-	if (!scx_enabled())
-		return NULL;
+	اگر (!scx_enabled())
+		واپس تہی;
 
-	return do_pick_task_scx(dl_se->rq, rf, true);
+	واپس do_pick_task_scx(dl_se->rq, rf, true);
 }
 
 /*
  * Initialize the ext server deadline entity.
  */
-void ext_server_init(struct rq *rq)
+خالی ext_server_init(ساخت rq *rq)
 {
-	struct sched_dl_entity *dl_se = &rq->ext_server;
+	ساخت sched_dl_entity *dl_se = &rq->ext_server;
 
 	init_dl_entity(dl_se);
 
 	dl_server_init(dl_se, rq, ext_server_pick_task);
 }
 
-#ifdef CONFIG_SCHED_CORE
+#اگر_تعریف_شدہ CONFIG_SCHED_CORE
 /**
  * scx_prio_less - Task ordering for core-sched
  * @a: task A
@@ -3541,27 +3541,27 @@ void ext_server_init(struct rq *rq)
  *
  * Return: %true if @a should run after @b.
  */
-bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
-		   bool in_fi)
+bool scx_prio_less(ثابت ساخت task_struct *a, ثابت ساخت task_struct *b,
+		   bool اندر_fi)
 {
-	struct scx_sched *sch_a = scx_task_sched(a);
-	struct scx_sched *sch_b = scx_task_sched(b);
-	struct scx_sched *sch = NULL;
+	ساخت scx_sched *sch_a = scx_task_sched(a);
+	ساخت scx_sched *sch_b = scx_task_sched(b);
+	ساخت scx_sched *sch = تہی;
 	bool a_running, b_running;
 
-	if (sch_a == sch_b) {
-		if (SCX_HAS_OP(sch_a, core_sched_before))
+	اگر (sch_a == sch_b) {
+		اگر (SCX_HAS_OP(sch_a, core_sched_before))
 			sch = sch_a;
-	} else {
+	} ورنہ {
 		s32 level;
 
-		for (level = min(sch_a->level, sch_b->level); level >= 0; level--) {
-			struct scx_sched *anc = sch_a->ancestors[level];
+		برائے (level = min(sch_a->level, sch_b->level); level >= 0; level--) {
+			ساخت scx_sched *anc = sch_a->ancestors[level];
 
-			if (anc == sch_b->ancestors[level] &&
+			اگر (anc == sch_b->ancestors[level] &&
 			    SCX_HAS_OP(anc, core_sched_before)) {
 				sch = anc;
-				break;
+				توڑو;
 			}
 		}
 	}
@@ -3575,10 +3575,10 @@ bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
 	 * calling ops.core_sched_before(). Accesses are controlled by the
 	 * verifier.
 	 */
-	if (sch && !scx_bypassing(sch, task_cpu(a)) && !scx_bypassing(sch, task_cpu(b)))
-		return SCX_CALL_OP_2TASKS_RET(sch, core_sched_before, task_rq(a),
-					      (struct task_struct *)b,
-					      (struct task_struct *)a);
+	اگر (sch && !scx_bypassing(sch, task_cpu(a)) && !scx_bypassing(sch, task_cpu(b)))
+		واپس SCX_CALL_OP_2TASKS_RET(sch, core_sched_before, task_rq(a),
+					      (ساخت task_struct *)b,
+					      (ساخت task_struct *)a);
 
 	/*
 	 * runnable_at is refreshed only on enqueue, so a task which keeps
@@ -3588,16 +3588,16 @@ bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
 	 */
 	a_running = a->on_cpu;
 	b_running = b->on_cpu;
-	if (a_running != b_running)
-		return a_running;
+	اگر (a_running != b_running)
+		واپس a_running;
 
-	return time_after(a->scx.runnable_at, b->scx.runnable_at);
+	واپس وقت_after(a->scx.runnable_at, b->scx.runnable_at);
 }
-#endif	/* CONFIG_SCHED_CORE */
+#اگر_ختم	/* CONFIG_SCHED_CORE */
 
-static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flags)
+ساکن صحیح select_task_rq_scx(ساخت task_struct *p, صحیح پچھلا_cpu, صحیح wake_flags)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	ساخت scx_sched *sch = scx_task_sched(p);
 	bool bypassing;
 
 	/*
@@ -3610,30 +3610,30 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
 	 * which can decide to preempt self to force it through the regular
 	 * scheduling path.
 	 */
-	if (unlikely(wake_flags & WF_EXEC))
-		return prev_cpu;
+	اگر (unlikely(wake_flags & WF_EXEC))
+		واپس پچھلا_cpu;
 
 	bypassing = scx_bypassing(sch, task_cpu(p));
-	if (likely(SCX_HAS_OP(sch, select_cpu)) && !bypassing) {
+	اگر (likely(SCX_HAS_OP(sch, select_cpu)) && !bypassing) {
 		s32 cpu;
-		struct task_struct **ddsp_taskp;
+		ساخت task_struct **ddsp_taskp;
 
-		ddsp_taskp = this_cpu_ptr(&direct_dispatch_task);
+		ddsp_taskp = this_cpu_ptr(&براہ_راست_dispatch_task);
 		WARN_ON_ONCE(*ddsp_taskp);
 		*ddsp_taskp = p;
 
-		this_rq()->scx.in_select_cpu = true;
-		cpu = SCX_CALL_OP_TASK_RET(sch, select_cpu, NULL, p,
-					   scx_cpu_arg(prev_cpu), wake_flags);
+		this_rq()->scx.اندر_select_cpu = true;
+		cpu = SCX_CALL_OP_TASK_RET(sch, select_cpu, تہی, p,
+					   scx_cpu_arg(پچھلا_cpu), wake_flags);
 		cpu = scx_cpu_ret(sch, cpu);
-		this_rq()->scx.in_select_cpu = false;
+		this_rq()->scx.اندر_select_cpu = false;
 		p->scx.selected_cpu = cpu;
-		*ddsp_taskp = NULL;
-		if (scx_cpu_valid(sch, cpu, "from ops.select_cpu()"))
-			return cpu;
-		else
-			return prev_cpu;
-	} else {
+		*ddsp_taskp = تہی;
+		اگر (scx_cpu_valid(sch, cpu, "from ops.select_cpu()"))
+			واپس cpu;
+		ورنہ
+			واپس پچھلا_cpu;
+	} ورنہ {
 		s32 cpu;
 
 		/*
@@ -3643,45 +3643,45 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
 		 * scheduler does its own idle tracking and the built-in idle
 		 * cpumasks are not updated. Leave @p on @prev_cpu.
 		 */
-		if (bypassing) {
+		اگر (bypassing) {
 			__scx_add_event(sch, SCX_EV_BYPASS_DISPATCH, 1);
-			p->scx.selected_cpu = prev_cpu;
-			return prev_cpu;
+			p->scx.selected_cpu = پچھلا_cpu;
+			واپس پچھلا_cpu;
 		}
 
-		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, NULL, 0);
-		if (cpu >= 0) {
+		cpu = scx_select_cpu_dfl(p, پچھلا_cpu, wake_flags, تہی, 0);
+		اگر (cpu >= 0) {
 			/*
 			 * Carry the slice refill and let the insertion commit
 			 * it under rq lock. See the write rules.
 			 */
-			__scx_add_event(sch, SCX_EV_REFILL_SLICE_DFL, 1);
-			p->scx.ddsp_slice = READ_ONCE(sch->slice_dfl);
-			p->scx.ddsp_enq_flags = SCX_ENQ_SLICE_DFL;
+			__scx_add_event(sch, SCX_EV_REFILL_قاش_DFL, 1);
+			p->scx.ddsp_قاش = READ_ONCE(sch->قاش_dfl);
+			p->scx.ddsp_enq_flags = SCX_ENQ_قاش_DFL;
 			p->scx.ddsp_dsq_id = SCX_DSQ_LOCAL;
-		} else {
-			cpu = prev_cpu;
+		} ورنہ {
+			cpu = پچھلا_cpu;
 		}
 		p->scx.selected_cpu = cpu;
 
-		return cpu;
+		واپس cpu;
 	}
 }
 
-static void task_woken_scx(struct rq *rq, struct task_struct *p)
+ساکن خالی task_woken_scx(ساخت rq *rq, ساخت task_struct *p)
 {
-	run_deferred(rq);
+	تسلسل_deferred(rq);
 }
 
-static void set_cpus_allowed_scx(struct task_struct *p,
-				 struct affinity_context *ac)
+ساکن خالی سیٹ_cpus_allowed_scx(ساخت task_struct *p,
+				 ساخت affinity_context *ac)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	ساخت scx_sched *sch = scx_task_sched(p);
 
-	set_cpus_allowed_common(p, ac);
+	سیٹ_cpus_allowed_common(p, ac);
 
-	if (task_dead_and_done(p))
-		return;
+	اگر (task_dead_and_مکمل(p))
+		واپس;
 
 	/*
 	 * The effective cpumask is stored in @p->cpus_ptr which may temporarily
@@ -3694,15 +3694,15 @@ static void set_cpus_allowed_scx(struct task_struct *p,
 	 * The cid form receives the initial mask when the task is enabled and
 	 * hears about changes only afterwards, see struct scx_enable_args.
 	 */
-	if (SCX_HAS_OP(sch, set_cpumask) &&
+	اگر (SCX_HAS_OP(sch, سیٹ_cpumask) &&
 	    (!scx_is_cid_type() || scx_get_task_state(p) == SCX_TASK_ENABLED))
-		scx_call_op_set_cpumask(sch, task_rq(p), p, (struct cpumask *)p->cpus_ptr);
+		scx_call_op_سیٹ_cpumask(sch, task_rq(p), p, (ساخت cpumask *)p->cpus_ptr);
 }
 
-static void handle_hotplug(struct rq *rq, bool online)
+ساکن خالی handle_hotplug(ساخت rq *rq, bool online)
 {
-	struct scx_sched *sch = scx_root_protected();
-	s32 cpu = cpu_of(rq);
+	ساخت scx_sched *sch = scx_جڑ_protected();
+	s32 cpu = cpu_کا(rq);
 	s32 cpu_or_cid = cpu;
 
 	atomic_long_inc(&scx_hotplug_seq);
@@ -3712,15 +3712,15 @@ static void handle_hotplug(struct rq *rq, bool online)
 	 * stable here. Note that we can't depend on scx_enabled() test as the
 	 * hotplug ops need to be enabled before __scx_enabled is set.
 	 */
-	if (unlikely(!sch))
-		return;
+	اگر (unlikely(!sch))
+		واپس;
 
-	if (scx_enabled())
+	اگر (scx_enabled())
 		scx_idle_update_selcpu_topology(&sch->ops);
 
-	if (online)
+	اگر (online)
 		scx_online_ecaps(rq);
-	else
+	ورنہ
 		scx_offline_ecaps(rq);
 
 	/*
@@ -3731,61 +3731,61 @@ static void handle_hotplug(struct rq *rq, bool online)
 	 * the translation. If the table is NULL, the ops are also cleared and
 	 * @cpu_or_cid goes unused.
 	 */
-	if (scx_is_cid_type()) {
-		s16 *tbl = rcu_dereference_check(scx_cpu_to_cid_tbl,
+	اگر (scx_is_cid_type()) {
+		s16 *tbl = rcu_dereference_check(scx_cpu_مقصد_cid_tbl,
 						 lockdep_is_cpus_held());
 
-		if (tbl) {
-			struct scx_sched *pos;
+		اگر (tbl) {
+			ساخت scx_sched *pos;
 
 			cpu_or_cid = tbl[cpu];
 
-			guard(raw_spinlock_irqsave)(&scx_sched_lock);
-			list_for_each_entry(pos, &scx_sched_all, all) {
-				struct scx_cmask *mask = pos->online_cmask;
+			guard(raw_spinlock_irqsave)(&scx_sched_تالا);
+			list_for_each_اندراج(pos, &scx_sched_all, all) {
+				ساخت scx_cmask *نقاب = pos->online_cmask;
 
-				if (mask)
-					__assign_bit(cpu_or_cid, (unsigned long *)mask->bits,
+				اگر (نقاب)
+					__assign_bit(cpu_or_cid, (غیرعلامتی طویل *)نقاب->بٹ,
 						     online);
 			}
 		}
 	}
 
-	if (online && SCX_HAS_OP(sch, cpu_online))
-		SCX_CALL_OP(sch, cpu_online, NULL, cpu_or_cid);
-	else if (!online && SCX_HAS_OP(sch, cpu_offline))
-		SCX_CALL_OP(sch, cpu_offline, NULL, cpu_or_cid);
-	else
+	اگر (online && SCX_HAS_OP(sch, cpu_online))
+		SCX_CALL_OP(sch, cpu_online, تہی, cpu_or_cid);
+	ورنہ اگر (!online && SCX_HAS_OP(sch, cpu_offline))
+		SCX_CALL_OP(sch, cpu_offline, تہی, cpu_or_cid);
+	ورنہ
 		scx_exit(sch, SCX_EXIT_UNREG_KERN,
 			 SCX_ECODE_ACT_RESTART | SCX_ECODE_RSN_HOTPLUG,
 			 "cpu %d going %s, exiting scheduler", cpu,
 			 online ? "online" : "offline");
 }
 
-void scx_rq_activate(struct rq *rq)
+خالی scx_rq_activate(ساخت rq *rq)
 {
 	handle_hotplug(rq, true);
 }
 
-void scx_rq_deactivate(struct rq *rq)
+خالی scx_rq_deactivate(ساخت rq *rq)
 {
 	handle_hotplug(rq, false);
 }
 
-static void rq_online_scx(struct rq *rq)
+ساکن خالی rq_online_scx(ساخت rq *rq)
 {
 	rq->scx.flags |= SCX_RQ_ONLINE;
 }
 
-static void rq_offline_scx(struct rq *rq)
+ساکن خالی rq_offline_scx(ساخت rq *rq)
 {
-	struct task_struct *p, *n;
+	ساخت task_struct *p, *n;
 
 	rq->scx.flags &= ~SCX_RQ_ONLINE;
 
 	/* sched domain rebuilds call rq_offline with the CPU staying alive */
-	if (cpu_active(cpu_of(rq)))
-		return;
+	اگر (cpu_فعال(cpu_کا(rq)))
+		واپس;
 
 	scx_rescue_flush(rq);
 
@@ -3794,33 +3794,33 @@ static void rq_offline_scx(struct rq *rq)
 	 * onto the local DSQ so that they run here and balance_push() moves
 	 * them off.
 	 */
-	list_for_each_entry_safe_reverse(p, n, &rq->scx.runnable_list, scx.runnable_node) {
-		if (p->scx.dsq == &rq->scx.local_dsq)
-			continue;
-		guard(sched_change)(p, DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK);
+	list_for_each_اندراج_محفوظ_الٹ(p, n, &rq->scx.runnable_list, scx.runnable_گرہ) {
+		اگر (p->scx.dsq == &rq->scx.local_dsq)
+			جاری;
+		guard(sched_change)(p, قطار_سے_نکالو_SAVE | قطار_سے_نکالو_MOVE | قطار_سے_نکالو_NOCLOCK);
 	}
 }
 
-static bool check_rq_for_timeouts(struct rq *rq)
+ساکن bool check_rq_for_timeouts(ساخت rq *rq)
 {
-	struct scx_sched *sch;
-	struct task_struct *p;
-	struct rq_flags rf;
-	bool timed_out = false;
+	ساخت scx_sched *sch;
+	ساخت task_struct *p;
+	ساخت rq_flags rf;
+	bool timed_برآمد = false;
 
-	rq_lock_irqsave(rq, &rf);
-	sch = rcu_dereference_bh(scx_root);
-	if (unlikely(!sch))
-		goto out_unlock;
+	rq_تالا_irqsave(rq, &rf);
+	sch = rcu_dereference_bh(scx_جڑ);
+	اگر (unlikely(!sch))
+		جاؤ برآمد_unlock;
 
-	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_node) {
-		struct scx_sched *sch = scx_task_sched(p);
-		unsigned long last_runnable = p->scx.runnable_at;
+	list_for_each_اندراج(p, &rq->scx.runnable_list, scx.runnable_گرہ) {
+		ساخت scx_sched *sch = scx_task_sched(p);
+		غیرعلامتی طویل آخری_runnable = p->scx.runnable_at;
 
-		if (unlikely(time_after(jiffies,
-					last_runnable + READ_ONCE(sch->watchdog_timeout)))) {
-			struct scx_dispatch_q *dsq = READ_ONCE(p->scx.dsq);
-			u32 dur_ms = jiffies_to_msecs(jiffies - last_runnable);
+		اگر (unlikely(وقت_after(jiffies,
+					آخری_runnable + READ_ONCE(sch->watchdog_timeout)))) {
+			ساخت scx_dispatch_q *dsq = READ_ONCE(p->scx.dsq);
+			u32 dur_ms = jiffies_مقصد_msecs(jiffies - آخری_runnable);
 
 			/*
 			 * A task can be stuck on a DSQ that a sched other than
@@ -3829,69 +3829,69 @@ static bool check_rq_for_timeouts(struct rq *rq)
 			 * Blame the drainer. The local DSQ is consumed by the
 			 * cpu itself and keeps blame on the owner.
 			 */
-			if (dsq && dsq->sched && dsq->id != SCX_DSQ_LOCAL)
+			اگر (dsq && dsq->sched && dsq->id != SCX_DSQ_LOCAL)
 				sch = dsq->sched;
 
-			__scx_exit(sch, SCX_EXIT_ERROR_STALL, 0, cpu_of(rq),
+			__scx_exit(sch, SCX_EXIT_ERROR_STALL, 0, cpu_کا(rq),
 				   "%s[%d] failed to run for %u.%03us",
 				   p->comm, p->pid, dur_ms / 1000,
 				   dur_ms % 1000);
-			timed_out = true;
-			break;
+			timed_برآمد = true;
+			توڑو;
 		}
 	}
-out_unlock:
+برآمد_unlock:
 	rq_unlock_irqrestore(rq, &rf);
-	return timed_out;
+	واپس timed_برآمد;
 }
 
-static void scx_watchdog_workfn(struct work_struct *work)
+ساکن خالی scx_watchdog_workfn(ساخت work_struct *work)
 {
-	unsigned long intv;
-	int cpu;
+	غیرعلامتی طویل intv;
+	صحیح cpu;
 
 	WRITE_ONCE(scx_watchdog_timestamp, jiffies);
 
 	for_each_online_cpu(cpu) {
-		if (unlikely(check_rq_for_timeouts(cpu_rq(cpu))))
-			break;
+		اگر (unlikely(check_rq_for_timeouts(cpu_rq(cpu))))
+			توڑو;
 
 		cond_resched();
 	}
 
 	intv = READ_ONCE(scx_watchdog_interval);
-	if (intv < ULONG_MAX)
-		queue_delayed_work(system_dfl_wq, to_delayed_work(work), intv);
+	اگر (intv < ULONG_MAX)
+		قطار_delayed_work(system_dfl_wq, مقصد_delayed_work(work), intv);
 }
 
-void scx_tick(struct rq *rq)
+خالی scx_tick(ساخت rq *rq)
 {
-	struct scx_sched *root;
-	unsigned long last_check;
+	ساخت scx_sched *جڑ;
+	غیرعلامتی طویل آخری_check;
 
-	if (!scx_enabled())
-		return;
+	اگر (!scx_enabled())
+		واپس;
 
-	root = rcu_dereference_bh(scx_root);
-	if (unlikely(!root))
-		return;
+	جڑ = rcu_dereference_bh(scx_جڑ);
+	اگر (unlikely(!جڑ))
+		واپس;
 
-	last_check = READ_ONCE(scx_watchdog_timestamp);
-	if (unlikely(time_after(jiffies,
-				last_check + READ_ONCE(root->watchdog_timeout)))) {
-		u32 dur_ms = jiffies_to_msecs(jiffies - last_check);
+	آخری_check = READ_ONCE(scx_watchdog_timestamp);
+	اگر (unlikely(وقت_after(jiffies,
+				آخری_check + READ_ONCE(جڑ->watchdog_timeout)))) {
+		u32 dur_ms = jiffies_مقصد_msecs(jiffies - آخری_check);
 
-		scx_exit(root, SCX_EXIT_ERROR_STALL, 0,
+		scx_exit(جڑ, SCX_EXIT_ERROR_STALL, 0,
 			 "watchdog failed to check in for %u.%03us",
 			 dur_ms / 1000, dur_ms % 1000);
 	}
 
-	update_other_load_avgs(rq);
+	update_other_بھرو_avgs(rq);
 }
 
-static void task_tick_scx(struct rq *rq, struct task_struct *curr, int queued)
+ساکن خالی task_tick_scx(ساخت rq *rq, ساخت task_struct *curr, صحیح queued)
 {
-	struct scx_sched *sch = scx_task_sched(curr);
+	ساخت scx_sched *sch = scx_task_sched(curr);
 
 	update_curr_scx(rq);
 
@@ -3899,36 +3899,36 @@ static void task_tick_scx(struct rq *rq, struct task_struct *curr, int queued)
 	 * While disabling, always resched as we can't trust the slice
 	 * management.
 	 */
-	if (scx_bypassing(sch, cpu_of(rq)))
-		scx_set_task_slice(curr, 0);
-	else if (SCX_HAS_OP(sch, tick))
+	اگر (scx_bypassing(sch, cpu_کا(rq)))
+		scx_سیٹ_task_قاش(curr, 0);
+	ورنہ اگر (SCX_HAS_OP(sch, tick))
 		SCX_CALL_OP_TASK(sch, tick, rq, curr);
 
-	if (!curr->scx.slice)
+	اگر (!curr->scx.قاش)
 		resched_curr(rq);
 }
 
-#ifdef CONFIG_EXT_GROUP_SCHED
-static struct cgroup *tg_cgrp(struct task_group *tg)
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
+ساکن ساخت cgroup *tg_cgrp(ساخت task_گروہ *tg)
 {
 	/*
 	 * If CGROUP_SCHED is disabled, @tg is NULL. If @tg is an autogroup,
 	 * @tg->css.cgroup is NULL. In both cases, @tg can be treated as the
 	 * root cgroup.
 	 */
-	if (tg && tg->css.cgroup)
-		return tg->css.cgroup;
-	else
-		return &cgrp_dfl_root.cgrp;
+	اگر (tg && tg->css.cgroup)
+		واپس tg->css.cgroup;
+	ورنہ
+		واپس &cgrp_dfl_جڑ.cgrp;
 }
 
-#define SCX_INIT_TASK_ARGS_CGROUP(cgrp)		.cgroup = (cgrp),
+#تعریف_کرو SCX_INIT_TASK_دلائل_CGROUP(cgrp)		.cgroup = (cgrp),
 
-#else	/* CONFIG_EXT_GROUP_SCHED */
+#ورنہ	/* CONFIG_EXT_GROUP_SCHED */
 
-#define SCX_INIT_TASK_ARGS_CGROUP(cgrp)
+#تعریف_کرو SCX_INIT_TASK_دلائل_CGROUP(cgrp)
 
-#endif	/* CONFIG_EXT_GROUP_SCHED */
+#اگر_ختم	/* CONFIG_EXT_GROUP_SCHED */
 
 /**
  * __scx_init_task - Initialize a task for a sched
@@ -3942,41 +3942,41 @@ static struct cgroup *tg_cgrp(struct task_group *tg)
  *
  * Return 0 on success, -errno on failure.
  */
-int __scx_init_task(struct scx_sched *sch, struct task_struct *p,
-		    struct cgroup *cgrp, bool fork)
+صحیح __scx_init_task(ساخت scx_sched *sch, ساخت task_struct *p,
+		    ساخت cgroup *cgrp, bool fork)
 {
-	int ret;
+	صحیح ret;
 
 	p->scx.disallow = false;
 
-	if (SCX_HAS_OP(sch, init_task)) {
-		struct scx_init_task_args args = {
-			SCX_INIT_TASK_ARGS_CGROUP(cgrp ?: tg_cgrp(task_group(p)))
+	اگر (SCX_HAS_OP(sch, init_task)) {
+		ساخت scx_init_task_دلائل دلائل = {
+			SCX_INIT_TASK_دلائل_CGROUP(cgrp ?: tg_cgrp(task_گروہ(p)))
 			.fork = fork,
 		};
 
-		ret = SCX_CALL_OP_RET(sch, init_task, NULL, p, &args);
-		if (unlikely(ret)) {
+		ret = SCX_CALL_OP_RET(sch, init_task, تہی, p, &دلائل);
+		اگر (unlikely(ret)) {
 			ret = scx_ops_sanitize_err(sch, "init_task", ret);
-			return ret;
+			واپس ret;
 		}
 	}
 
-	if (p->scx.disallow) {
-		if (unlikely(scx_parent(sch))) {
+	اگر (p->scx.disallow) {
+		اگر (unlikely(scx_والد(sch))) {
 			scx_error(sch, "non-root ops.init_task() set task->scx.disallow for %s[%d]",
 				  p->comm, p->pid);
-		} else if (unlikely(fork)) {
+		} ورنہ اگر (unlikely(fork)) {
 			scx_error(sch, "ops.init_task() set task->scx.disallow for %s[%d] during fork",
 				  p->comm, p->pid);
-		} else if (unlikely(scx_enable_state() != SCX_ENABLING)) {
+		} ورنہ اگر (unlikely(scx_enable_state() != SCX_ENABLING)) {
 			scx_error(sch, "ops.init_task() set task->scx.disallow for %s[%d] outside the enable path",
 				  p->comm, p->pid);
-		} else {
-			struct rq *rq;
-			struct rq_flags rf;
+		} ورنہ {
+			ساخت rq *rq;
+			ساخت rq_flags rf;
 
-			rq = task_rq_lock(p, &rf);
+			rq = task_rq_تالا_2(p, &rf);
 
 			/*
 			 * We're in the load path and @p->policy will be applied
@@ -3985,8 +3985,8 @@ int __scx_init_task(struct scx_sched *sch, struct task_struct *p,
 			 * guarantees that if ops.init_task() sets @p->disallow,
 			 * @p can never be in SCX.
 			 */
-			if (p->policy == SCHED_EXT) {
-				p->policy = SCHED_NORMAL;
+			اگر (p->policy == SCHED_EXT) {
+				p->policy = SCHED_معمول;
 				atomic_long_inc(&scx_nr_rejected);
 			}
 
@@ -3994,13 +3994,13 @@ int __scx_init_task(struct scx_sched *sch, struct task_struct *p,
 		}
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static void __scx_enable_task(struct scx_sched *sch, struct task_struct *p)
+ساکن خالی __scx_enable_task(ساخت scx_sched *sch, ساخت task_struct *p)
 {
-	struct rq *rq = task_rq(p);
-	u32 weight;
+	ساخت rq *rq = task_rq(p);
+	u32 وزن;
 
 	lockdep_assert_rq_held(rq);
 
@@ -4009,28 +4009,28 @@ static void __scx_enable_task(struct scx_sched *sch, struct task_struct *p)
 	 * transitions are consistent, the flag should always be clear
 	 * here.
 	 */
-	WARN_ON_ONCE(p->scx.flags & SCX_TASK_IN_CUSTODY);
+	WARN_ON_ONCE(p->scx.flags & SCX_TASK_اندر_CUSTODY);
 
 	/*
 	 * Set the weight before calling ops.enable() so that the scheduler
 	 * doesn't see a stale value if they inspect the task struct.
 	 */
-	if (task_has_idle_policy(p))
-		weight = WEIGHT_IDLEPRIO;
-	else
-		weight = sched_prio_to_weight[p->static_prio - MAX_RT_PRIO];
+	اگر (task_has_idle_policy(p))
+		وزن = وزن_IDLEPRIO;
+	ورنہ
+		وزن = sched_prio_مقصد_وزن[p->static_prio - MAX_RT_PRIO];
 
-	p->scx.weight = sched_weight_to_cgroup(weight);
+	p->scx.وزن = sched_وزن_مقصد_cgroup(وزن);
 
-	if (SCX_HAS_OP(sch, enable)) {
-		if (scx_is_cid_type()) {
-			struct scx_cmask *cmask = scx_fill_cmask_scratch(sch, p->cpus_ptr);
-			struct scx_enable_args args = {
-				.cmask_arena_addr = scx_kaddr_to_arena(sch, cmask),
+	اگر (SCX_HAS_OP(sch, enable)) {
+		اگر (scx_is_cid_type()) {
+			ساخت scx_cmask *cmask = scx_fill_cmask_scratch(sch, p->cpus_ptr);
+			ساخت scx_enable_دلائل دلائل = {
+				.cmask_arena_addr = scx_kaddr_مقصد_arena(sch, cmask),
 			};
 
-			SCX_CALL_CID_OP_TASK(sch, enable, rq, p, &args);
-		} else {
+			SCX_CALL_CID_OP_TASK(sch, enable, rq, p, &دلائل);
+		} ورنہ {
 			SCX_CALL_OP_TASK(sch, enable, rq, p);
 		}
 	}
@@ -4041,39 +4041,39 @@ static void __scx_enable_task(struct scx_sched *sch, struct task_struct *p)
 	 * is in place when weight-dependent state is derived, see struct
 	 * scx_enable_args.
 	 */
-	if (scx_is_cid_type() && SCX_HAS_OP(sch, set_cpumask))
-		scx_call_op_set_cpumask(sch, rq, p, p->cpus_ptr);
+	اگر (scx_is_cid_type() && SCX_HAS_OP(sch, سیٹ_cpumask))
+		scx_call_op_سیٹ_cpumask(sch, rq, p, p->cpus_ptr);
 
-	if (SCX_HAS_OP(sch, set_weight))
-		SCX_CALL_OP_TASK(sch, set_weight, rq, p, p->scx.weight);
+	اگر (SCX_HAS_OP(sch, سیٹ_وزن))
+		SCX_CALL_OP_TASK(sch, سیٹ_وزن, rq, p, p->scx.وزن);
 }
 
-void scx_enable_task(struct scx_sched *sch, struct task_struct *p)
+خالی scx_enable_task(ساخت scx_sched *sch, ساخت task_struct *p)
 {
 	__scx_enable_task(sch, p);
-	scx_set_task_state(p, SCX_TASK_ENABLED);
+	scx_سیٹ_task_state(p, SCX_TASK_ENABLED);
 }
 
-static void scx_disable_task(struct scx_sched *sch, struct task_struct *p)
+ساکن خالی scx_disable_task(ساخت scx_sched *sch, ساخت task_struct *p)
 {
-	struct rq *rq = task_rq(p);
+	ساخت rq *rq = task_rq(p);
 
 	lockdep_assert_rq_held(rq);
 	WARN_ON_ONCE(scx_get_task_state(p) != SCX_TASK_ENABLED);
 
-	clear_direct_dispatch(p);
+	clear_براہ_راست_dispatch(p);
 
-	if (SCX_HAS_OP(sch, disable))
+	اگر (SCX_HAS_OP(sch, disable))
 		SCX_CALL_OP_TASK(sch, disable, rq, p);
-	scx_set_task_state(p, SCX_TASK_READY);
+	scx_سیٹ_task_state(p, SCX_TASK_READY);
 
 	/*
 	 * Reset the SCX-managed fields when @p leaves the BPF scheduler's
 	 * control, after ops.disable() has observed their final values.
 	 */
 	p->scx.dsq_vtime = 0;
-	scx_task_slice_ended(rq, p);
-	scx_set_task_slice(p, 0);
+	scx_task_قاش_ended(rq, p);
+	scx_سیٹ_task_قاش(p, 0);
 	p->scx.reenq_cnt = 0;
 
 	/*
@@ -4081,36 +4081,36 @@ static void scx_disable_task(struct scx_sched *sch, struct task_struct *p)
 	 * transitions are consistent, the flag should always be clear
 	 * here.
 	 */
-	WARN_ON_ONCE(p->scx.flags & SCX_TASK_IN_CUSTODY);
+	WARN_ON_ONCE(p->scx.flags & SCX_TASK_اندر_CUSTODY);
 }
 
-void __scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
+خالی __scx_disable_and_exit_task(ساخت scx_sched *sch, ساخت task_struct *p)
 {
-	struct scx_exit_task_args args = {
+	ساخت scx_exit_task_دلائل دلائل = {
 		.cancelled = false,
 	};
 
-	lockdep_assert_held(&p->pi_lock);
+	lockdep_assert_held(&p->pi_تالا);
 	lockdep_assert_rq_held(task_rq(p));
 
-	switch (scx_get_task_state(p)) {
-	case SCX_TASK_NONE:
-		return;
-	case SCX_TASK_INIT:
-		args.cancelled = true;
-		break;
-	case SCX_TASK_READY:
-		break;
-	case SCX_TASK_ENABLED:
+	انتخاب (scx_get_task_state(p)) {
+	حالت SCX_TASK_NONE:
+		واپس;
+	حالت SCX_TASK_INIT:
+		دلائل.cancelled = true;
+		توڑو;
+	حالت SCX_TASK_READY:
+		توڑو;
+	حالت SCX_TASK_ENABLED:
 		scx_disable_task(sch, p);
-		break;
-	default:
+		توڑو;
+	طےشدہ:
 		WARN_ON_ONCE(true);
-		return;
+		واپس;
 	}
 
-	if (SCX_HAS_OP(sch, exit_task))
-		SCX_CALL_OP_TASK(sch, exit_task, task_rq(p), p, &args);
+	اگر (SCX_HAS_OP(sch, exit_task))
+		SCX_CALL_OP_TASK(sch, exit_task, task_rq(p), p, &دلائل);
 }
 
 /*
@@ -4118,19 +4118,19 @@ void __scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
  * ran. The task state has not been transitioned, so this mirrors the
  * SCX_TASK_INIT branch in __scx_disable_and_exit_task().
  */
-void scx_sub_init_cancel_task(struct scx_sched *sch, struct task_struct *p)
+خالی scx_sub_init_cancel_task(ساخت scx_sched *sch, ساخت task_struct *p)
 {
-	struct scx_exit_task_args args = { .cancelled = true };
+	ساخت scx_exit_task_دلائل دلائل = { .cancelled = true };
 
-	lockdep_assert_held(&p->pi_lock);
+	lockdep_assert_held(&p->pi_تالا);
 	lockdep_assert_rq_held(task_rq(p));
 
 	/* @p was never associated with @sch, dispatch on the explicit @sch */
-	if (SCX_HAS_OP(sch, exit_task))
-		__SCX_CALL_OP_TASK(sch, ops, exit_task, task_rq(p), p, &args);
+	اگر (SCX_HAS_OP(sch, exit_task))
+		__SCX_CALL_OP_TASK(sch, ops, exit_task, task_rq(p), p, &دلائل);
 }
 
-void scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
+خالی scx_disable_and_exit_task(ساخت scx_sched *sch, ساخت task_struct *p)
 {
 	__scx_disable_and_exit_task(sch, p);
 
@@ -4141,58 +4141,58 @@ void scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p)
 	 * it, so undo only init_task. The flag is only set on the sub-enable
 	 * path, so it's always clear when @p arrives here in %SCX_TASK_NONE.
 	 */
-	if (p->scx.flags & SCX_TASK_SUB_INIT) {
-		if (!WARN_ON_ONCE(!scx_enabling_sub_sched))
+	اگر (p->scx.flags & SCX_TASK_SUB_INIT) {
+		اگر (!WARN_ON_ONCE(!scx_enabling_sub_sched))
 			scx_sub_init_cancel_task(scx_enabling_sub_sched, p);
 		p->scx.flags &= ~SCX_TASK_SUB_INIT;
 	}
 
-	scx_set_task_sched(p, NULL);
-	scx_set_task_state(p, SCX_TASK_NONE);
+	scx_سیٹ_task_sched(p, تہی);
+	scx_سیٹ_task_state(p, SCX_TASK_NONE);
 }
 
-void init_scx_entity(struct sched_ext_entity *scx)
+خالی init_scx_entity(ساخت sched_ext_entity *scx)
 {
-	memset(scx, 0, sizeof(*scx));
-	INIT_LIST_HEAD(&scx->dsq_list.node);
-	RB_CLEAR_NODE(&scx->dsq_priq);
+	memset(scx, 0, حجم(*scx));
+	INIT_LIST_سر(&scx->dsq_list.گرہ);
+	RB_CLEAR_گرہ(&scx->dsq_priq);
 	scx->sticky_cpu = -1;
 	scx->holding_cpu = -1;
 	scx->runnable_cpu = -1;
-	INIT_LIST_HEAD(&scx->runnable_node);
+	INIT_LIST_سر(&scx->runnable_گرہ);
 	scx->runnable_at = jiffies;
 	scx->ddsp_dsq_id = SCX_DSQ_INVALID;
-	scx->slice = SCX_SLICE_DFL;
+	scx->قاش = SCX_قاش_DFL;
 }
 
 /* See scx_tid_alloc / scx_tid_cursor. */
-static u64 scx_alloc_tid(void)
+ساکن u64 scx_alloc_tid(خالی)
 {
-	struct scx_tid_alloc *ta;
+	ساخت scx_tid_alloc *ta;
 
 	guard(preempt)();
 	ta = this_cpu_ptr(&scx_tid_alloc);
 
-	if (unlikely(ta->next >= ta->end)) {
-		ta->next = atomic64_fetch_add(SCX_TID_CHUNK, &scx_tid_cursor);
-		ta->end = ta->next + SCX_TID_CHUNK;
+	اگر (unlikely(ta->اگلا >= ta->انتہا)) {
+		ta->اگلا = atomic64_fetch_جوڑو(SCX_TID_CHUNK, &scx_tid_cursor);
+		ta->انتہا = ta->اگلا + SCX_TID_CHUNK;
 	}
-	return ta->next++;
+	واپس ta->اگلا++;
 }
 
-static void scx_tid_hash_insert(struct task_struct *p)
+ساکن خالی scx_tid_hash_داخل_کرو(ساخت task_struct *p)
 {
-	int ret;
+	صحیح ret;
 
-	lockdep_assert_held(&scx_tasks_lock);
+	lockdep_assert_held(&scx_tasks_تالا);
 
-	ret = rhashtable_lookup_insert_fast(&scx_tid_hash,
-					    &p->scx.tid_hash_node,
+	ret = rhashtable_lookup_داخل_کرو_fast(&scx_tid_hash,
+					    &p->scx.tid_hash_گرہ,
 					    scx_tid_hash_params);
 	WARN_ON_ONCE(ret);
 }
 
-void scx_pre_fork(struct task_struct *p)
+خالی scx_pre_fork(ساخت task_struct *p)
 {
 	/*
 	 * BPF scheduler enable/disable paths want to be able to iterate and
@@ -4200,10 +4200,10 @@ void scx_pre_fork(struct task_struct *p)
 	 * enable/disable are very cold paths, let's use a percpu_rwsem to
 	 * exclude forks.
 	 */
-	percpu_down_read(&scx_fork_rwsem);
+	percpu_نیچے_کو_read(&scx_fork_rwsem);
 }
 
-int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs)
+صحیح scx_fork(ساخت task_struct *p, ساخت kernel_clone_دلائل *kargs)
 {
 	s32 ret;
 
@@ -4211,67 +4211,67 @@ int scx_fork(struct task_struct *p, struct kernel_clone_args *kargs)
 
 	p->scx.tid = scx_alloc_tid();
 
-	if (scx_init_task_enabled) {
-#ifdef CONFIG_EXT_SUB_SCHED
-		struct scx_sched *sch = scx_cgroup_sched(kargs->cset->dfl_cgrp);
-#else
-		struct scx_sched *sch = scx_root_protected_live();
-#endif
-		scx_set_task_state(p, SCX_TASK_INIT_BEGIN);
-		ret = __scx_init_task(sch, p, NULL, true);
-		if (unlikely(ret)) {
-			scx_set_task_state(p, SCX_TASK_NONE);
-			return ret;
+	اگر (scx_init_task_enabled) {
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+		ساخت scx_sched *sch = scx_cgroup_sched(kargs->cset->dfl_cgrp);
+#ورنہ
+		ساخت scx_sched *sch = scx_جڑ_protected_زندہ();
+#اگر_ختم
+		scx_سیٹ_task_state(p, SCX_TASK_INIT_BEGIN);
+		ret = __scx_init_task(sch, p, تہی, true);
+		اگر (unlikely(ret)) {
+			scx_سیٹ_task_state(p, SCX_TASK_NONE);
+			واپس ret;
 		}
-		scx_set_task_state(p, SCX_TASK_INIT);
-		scx_set_task_sched(p, sch);
+		scx_سیٹ_task_state(p, SCX_TASK_INIT);
+		scx_سیٹ_task_sched(p, sch);
 	}
 
-	return 0;
+	واپس 0;
 }
 
-void scx_post_fork(struct task_struct *p)
+خالی scx_post_fork(ساخت task_struct *p)
 {
-	if (scx_init_task_enabled) {
-		scx_set_task_state(p, SCX_TASK_READY);
+	اگر (scx_init_task_enabled) {
+		scx_سیٹ_task_state(p, SCX_TASK_READY);
 
 		/*
 		 * Enable the task immediately if it's running on sched_ext.
 		 * Otherwise, it'll be enabled in switching_to_scx() if and
 		 * when it's ever configured to run with a SCHED_EXT policy.
 		 */
-		if (p->sched_class == &ext_sched_class) {
-			struct rq_flags rf;
-			struct rq *rq;
+		اگر (p->sched_class == &ext_sched_class) {
+			ساخت rq_flags rf;
+			ساخت rq *rq;
 
-			rq = task_rq_lock(p, &rf);
+			rq = task_rq_تالا_2(p, &rf);
 			scx_enable_task(scx_task_sched(p), p);
 			task_rq_unlock(rq, p, &rf);
 		}
 	}
 
-	scoped_guard(raw_spinlock_irq, &scx_tasks_lock) {
-		list_add_tail(&p->scx.tasks_node, &scx_tasks);
-		if (scx_tid_to_task_enabled())
-			scx_tid_hash_insert(p);
+	scoped_guard(raw_spinlock_irq, &scx_tasks_تالا) {
+		list_جوڑو_دم(&p->scx.tasks_گرہ, &scx_tasks);
+		اگر (scx_tid_مقصد_task_enabled())
+			scx_tid_hash_داخل_کرو(p);
 	}
 
-	percpu_up_read(&scx_fork_rwsem);
+	percpu_اوپر_read(&scx_fork_rwsem);
 }
 
-void scx_cancel_fork(struct task_struct *p)
+خالی scx_cancel_fork(ساخت task_struct *p)
 {
-	if (scx_init_task_enabled) {
-		struct rq *rq;
-		struct rq_flags rf;
+	اگر (scx_init_task_enabled) {
+		ساخت rq *rq;
+		ساخت rq_flags rf;
 
-		rq = task_rq_lock(p, &rf);
+		rq = task_rq_تالا_2(p, &rf);
 		WARN_ON_ONCE(scx_get_task_state(p) >= SCX_TASK_READY);
 		scx_disable_and_exit_task(scx_task_sched(p), p);
 		task_rq_unlock(rq, p, &rf);
 	}
 
-	percpu_up_read(&scx_fork_rwsem);
+	percpu_اوپر_read(&scx_fork_rwsem);
 }
 
 /**
@@ -4288,9 +4288,9 @@ void scx_cancel_fork(struct task_struct *p)
  * that needs to happen on the task. Use this test to short-circuit sched_class
  * operations which may be called on dead tasks.
  */
-static bool task_dead_and_done(struct task_struct *p)
+ساکن bool task_dead_and_مکمل(ساخت task_struct *p)
 {
-	struct rq *rq = task_rq(p);
+	ساخت rq *rq = task_rq(p);
 
 	lockdep_assert_rq_held(rq);
 
@@ -4299,11 +4299,11 @@ static bool task_dead_and_done(struct task_struct *p)
 	 * disabled and __schedule(). If @p has %TASK_DEAD set and off CPU, @p
 	 * won't ever run again.
 	 */
-	return unlikely(READ_ONCE(p->__state) == TASK_DEAD) &&
+	واپس unlikely(READ_ONCE(p->__state) == TASK_DEAD) &&
 		!task_on_cpu(rq, p);
 }
 
-void sched_ext_dead(struct task_struct *p)
+خالی sched_ext_dead(ساخت task_struct *p)
 {
 	/*
 	 * By the time control reaches here, @p has %TASK_DEAD set, switched out
@@ -4311,11 +4311,11 @@ void sched_ext_dead(struct task_struct *p)
 	 * should be returning %true nullifying the straggling sched_class ops.
 	 * Remove from scx_tasks and exit @p.
 	 */
-	scoped_guard(raw_spinlock_irqsave, &scx_tasks_lock) {
-		list_del_init(&p->scx.tasks_node);
-		if (scx_tid_to_task_enabled())
+	scoped_guard(raw_spinlock_irqsave, &scx_tasks_تالا) {
+		list_del_init(&p->scx.tasks_گرہ);
+		اگر (scx_tid_مقصد_task_enabled())
 			rhashtable_remove_fast(&scx_tid_hash,
-					       &p->scx.tid_hash_node,
+					       &p->scx.tid_hash_گرہ,
 					       scx_tid_hash_params);
 	}
 
@@ -4332,27 +4332,27 @@ void sched_ext_dead(struct task_struct *p)
 	 * into ops; transition to %DEAD so the post-init recheck unwinds
 	 * via scx_sub_init_cancel_task().
 	 */
-	if (scx_get_task_state(p) != SCX_TASK_NONE) {
-		struct rq_flags rf;
-		struct rq *rq;
+	اگر (scx_get_task_state(p) != SCX_TASK_NONE) {
+		ساخت rq_flags rf;
+		ساخت rq *rq;
 
-		rq = task_rq_lock(p, &rf);
-		if (scx_get_task_state(p) != SCX_TASK_INIT_BEGIN)
+		rq = task_rq_تالا_2(p, &rf);
+		اگر (scx_get_task_state(p) != SCX_TASK_INIT_BEGIN)
 			scx_disable_and_exit_task(scx_task_sched(p), p);
-		scx_set_task_state(p, SCX_TASK_DEAD);
+		scx_سیٹ_task_state(p, SCX_TASK_DEAD);
 		task_rq_unlock(rq, p, &rf);
 	}
 }
 
-static void reweight_task_scx(struct rq *rq, struct task_struct *p,
-			      const struct load_weight *lw)
+ساکن خالی reweight_task_scx(ساخت rq *rq, ساخت task_struct *p,
+			      ثابت ساخت بھرو_وزن *lw)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	ساخت scx_sched *sch = scx_task_sched(p);
 
 	lockdep_assert_rq_held(task_rq(p));
 
-	if (task_dead_and_done(p))
-		return;
+	اگر (task_dead_and_مکمل(p))
+		واپس;
 
 	/*
 	 * When switching sched_class away from SCX, reweight_task_scx()
@@ -4362,24 +4362,24 @@ static void reweight_task_scx(struct rq *rq, struct task_struct *p,
 	 * p->scx.weight will be recalculated in scx_enable_task() if the task
 	 * ever returns to SCX class.
 	 */
-	if (scx_get_task_state(p) != SCX_TASK_ENABLED)
-		return;
+	اگر (scx_get_task_state(p) != SCX_TASK_ENABLED)
+		واپس;
 
-	p->scx.weight = sched_weight_to_cgroup(scale_load_down(lw->weight));
-	if (SCX_HAS_OP(sch, set_weight))
-		SCX_CALL_OP_TASK(sch, set_weight, rq, p, p->scx.weight);
+	p->scx.وزن = sched_وزن_مقصد_cgroup(scale_بھرو_نیچے_کو(lw->وزن));
+	اگر (SCX_HAS_OP(sch, سیٹ_وزن))
+		SCX_CALL_OP_TASK(sch, سیٹ_وزن, rq, p, p->scx.وزن);
 }
 
-static void prio_changed_scx(struct rq *rq, struct task_struct *p, u64 oldprio)
+ساکن خالی prio_بدلا_scx(ساخت rq *rq, ساخت task_struct *p, u64 oldprio)
 {
 }
 
-static void switching_to_scx(struct rq *rq, struct task_struct *p)
+ساکن خالی switching_مقصد_scx(ساخت rq *rq, ساخت task_struct *p)
 {
-	struct scx_sched *sch = scx_task_sched(p);
+	ساخت scx_sched *sch = scx_task_sched(p);
 
-	if (task_dead_and_done(p))
-		return;
+	اگر (task_dead_and_مکمل(p))
+		واپس;
 
 	scx_enable_task(sch, p);
 
@@ -4388,14 +4388,14 @@ static void switching_to_scx(struct rq *rq, struct task_struct *p)
 	 * different scheduler class. Keep the BPF scheduler up-to-date. The cid
 	 * form gets its mask from scx_enable_task().
 	 */
-	if (!scx_is_cid_type() && SCX_HAS_OP(sch, set_cpumask))
-		scx_call_op_set_cpumask(sch, rq, p, (struct cpumask *)p->cpus_ptr);
+	اگر (!scx_is_cid_type() && SCX_HAS_OP(sch, سیٹ_cpumask))
+		scx_call_op_سیٹ_cpumask(sch, rq, p, (ساخت cpumask *)p->cpus_ptr);
 }
 
-static void switched_from_scx(struct rq *rq, struct task_struct *p)
+ساکن خالی switched_from_scx(ساخت rq *rq, ساخت task_struct *p)
 {
-	if (task_dead_and_done(p))
-		return;
+	اگر (task_dead_and_مکمل(p))
+		واپس;
 
 	/*
 	 * %NONE means SCX is no longer tracking @p at the task level (e.g.
@@ -4404,29 +4404,29 @@ static void switched_from_scx(struct rq *rq, struct task_struct *p)
 	 * scx_disable_task() would WARN on the non-%ENABLED state and trigger a
 	 * NONE -> READY validation failure.
 	 */
-	if (scx_get_task_state(p) == SCX_TASK_NONE)
-		return;
+	اگر (scx_get_task_state(p) == SCX_TASK_NONE)
+		واپس;
 
 	scx_disable_task(scx_task_sched(p), p);
 }
 
-static void switched_to_scx(struct rq *rq, struct task_struct *p) {}
+ساکن خالی switched_مقصد_scx(ساخت rq *rq, ساخت task_struct *p) {}
 
-int scx_check_setscheduler(struct task_struct *p, int policy)
+صحیح scx_check_setscheduler(ساخت task_struct *p, صحیح policy)
 {
 	lockdep_assert_rq_held(task_rq(p));
 
 	/* if disallow, reject transitioning into SCX */
-	if (scx_enabled() && READ_ONCE(p->scx.disallow) &&
+	اگر (scx_enabled() && READ_ONCE(p->scx.disallow) &&
 	    p->policy != policy && policy == SCHED_EXT)
-		return -EACCES;
+		واپس -EACCES;
 
-	return 0;
+	واپس 0;
 }
 
-static void process_ddsp_deferred_locals(struct rq *rq)
+ساکن خالی process_ddsp_deferred_locals(ساخت rq *rq)
 {
-	struct task_struct *p;
+	ساخت task_struct *p;
 
 	lockdep_assert_rq_held(rq);
 
@@ -4437,21 +4437,21 @@ static void process_ddsp_deferred_locals(struct rq *rq)
 	 * list_for_each_entry_safe() as dispatch_local_dsq() may unlock @rq
 	 * temporarily.
 	 */
-	while ((p = list_first_entry_or_null(&rq->scx.ddsp_deferred_locals,
-				struct task_struct, scx.dsq_list.node))) {
-		struct scx_sched *sch = scx_task_sched(p);
-		struct scx_dispatch_q *dsq;
+	جب ((p = list_پہلا_اندراج_or_null(&rq->scx.ddsp_deferred_locals,
+				ساخت task_struct, scx.dsq_list.گرہ))) {
+		ساخت scx_sched *sch = scx_task_sched(p);
+		ساخت scx_dispatch_q *dsq;
 		u64 dsq_id = p->scx.ddsp_dsq_id;
 		u64 enq_flags = p->scx.ddsp_enq_flags;
-		u64 slice = p->scx.ddsp_slice;
+		u64 قاش = p->scx.ddsp_قاش;
 		u64 vtime = p->scx.ddsp_vtime;
 
-		list_del_init(&p->scx.dsq_list.node);
-		clear_direct_dispatch(p);
+		list_del_init(&p->scx.dsq_list.گرہ);
+		clear_براہ_راست_dispatch(p);
 
-		dsq = find_dsq_for_dispatch(sch, rq, dsq_id, task_cpu(p));
-		if (!WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
-			dispatch_to_local_dsq(sch, rq, dsq, p, slice, vtime, enq_flags);
+		dsq = ڈھونڈو_dsq_for_dispatch(sch, rq, dsq_id, task_cpu(p));
+		اگر (!WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
+			dispatch_مقصد_local_dsq(sch, rq, dsq, p, قاش, vtime, enq_flags);
 	}
 }
 
@@ -4478,33 +4478,33 @@ static void process_ddsp_deferred_locals(struct rq *rq)
  * another reenq cycle. Repetitions are bounded by %SCX_REENQ_MAX_REPEAT in
  * scx_do_enqueue_task(), which ejects the task's owning scheduler.
  */
-static bool local_task_should_reenq(struct rq *rq, struct task_struct *p,
+ساکن bool local_task_should_reenq(ساخت rq *rq, ساخت task_struct *p,
 				    u64 *reenq_flags, u32 *reason)
 {
-	bool first;
+	bool پہلا;
 
-	first = !(*reenq_flags & SCX_REENQ_TSR_NOT_FIRST);
-	*reenq_flags |= SCX_REENQ_TSR_NOT_FIRST;
+	پہلا = !(*reenq_flags & SCX_REENQ_TSR_NOT_پہلا);
+	*reenq_flags |= SCX_REENQ_TSR_NOT_پہلا;
 
-	if (unlikely((p->scx.flags & SCX_TASK_PROTECTED) || p == scx_rescuee(rq)))
-		return false;
+	اگر (unlikely((p->scx.flags & SCX_TASK_PROTECTED) || p == scx_rescuee(rq)))
+		واپس false;
 
 	*reason = SCX_TASK_REENQ_KFUNC;
 
-	if ((p->scx.flags & SCX_TASK_IMMED) &&
-	    (!first || !(*reenq_flags & SCX_REENQ_TSR_RQ_OPEN))) {
+	اگر ((p->scx.flags & SCX_TASK_IMMED) &&
+	    (!پہلا || !(*reenq_flags & SCX_REENQ_TSR_RQ_OPEN))) {
 		__scx_add_event(scx_task_sched(p), SCX_EV_REENQ_IMMED, 1);
 		*reason = SCX_TASK_REENQ_IMMED;
-		return true;
+		واپس true;
 	}
 
-	if ((*reenq_flags & SCX_REENQ_CAP_REVOKE) &&
+	اگر ((*reenq_flags & SCX_REENQ_CAP_REVOKE) &&
 	    scx_task_reenq_on_cap_revoke(rq, p)) {
 		*reason = SCX_TASK_REENQ_CAP;
-		return true;
+		واپس true;
 	}
 
-	return *reenq_flags & SCX_REENQ_ANY;
+	واپس *reenq_flags & SCX_REENQ_ANY;
 }
 
 /*
@@ -4513,23 +4513,23 @@ static bool local_task_should_reenq(struct rq *rq, struct task_struct *p,
  * %SCX_OPSS_DISPATCHING. Wait for the dispatch to finish before operating on
  * @p.
  */
-void scx_wait_dispatching(struct task_struct *p)
+خالی scx_wait_dispatching(ساخت task_struct *p)
 {
-	if (unlikely(atomic_long_read_acquire(&p->scx.ops_state) == SCX_OPSS_DISPATCHING))
+	اگر (unlikely(atomic_long_read_acquire(&p->scx.ops_state) == SCX_OPSS_DISPATCHING))
 		wait_ops_state(p, SCX_OPSS_DISPATCHING);
 }
 
-static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
+ساکن u32 reenq_local(ساخت scx_sched *sch, ساخت rq *rq, u64 reenq_flags)
 {
-	LIST_HEAD(tasks);
+	LIST_سر(tasks);
 	u32 nr_enqueued = 0;
-	struct task_struct *p, *n;
+	ساخت task_struct *p, *n;
 
 	lockdep_assert_rq_held(rq);
 
-	if (WARN_ON_ONCE(reenq_flags & __SCX_REENQ_TSR_MASK))
+	اگر (WARN_ON_ONCE(reenq_flags & __SCX_REENQ_TSR_MASK))
 		reenq_flags &= ~__SCX_REENQ_TSR_MASK;
-	if (rq_is_open(rq, 0))
+	اگر (rq_is_open(rq, 0))
 		reenq_flags |= SCX_REENQ_TSR_RQ_OPEN;
 
 	/*
@@ -4537,9 +4537,9 @@ static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
 	 * @rq->scx.local_dsq. Move all candidate tasks off to a private list
 	 * first to avoid processing the same tasks repeatedly.
 	 */
-	list_for_each_entry_safe(p, n, &rq->scx.local_dsq.list,
-				 scx.dsq_list.node) {
-		struct scx_sched *task_sch = scx_task_sched(p);
+	list_for_each_اندراج_محفوظ(p, n, &rq->scx.local_dsq.list,
+				 scx.dsq_list.گرہ) {
+		ساخت scx_sched *task_sch = scx_task_sched(p);
 		u32 reason;
 
 		/*
@@ -4553,31 +4553,31 @@ static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
 		 * the current local DSQ for running tasks and thus are not
 		 * visible to the BPF scheduler.
 		 */
-		if (p->migration_pending)
-			continue;
+		اگر (p->migration_pending)
+			جاری;
 
-		if (!scx_is_descendant(task_sch, sch))
-			continue;
+		اگر (!scx_is_descendant(task_sch, sch))
+			جاری;
 
-		if (!local_task_should_reenq(rq, p, &reenq_flags, &reason))
-			continue;
+		اگر (!local_task_should_reenq(rq, p, &reenq_flags, &reason))
+			جاری;
 
 		scx_wait_dispatching(p);
-		scx_dispatch_dequeue(rq, p);
+		scx_dispatch_قطار_سے_نکالو(rq, p);
 
-		if (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_MASK))
-			p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
+		اگر (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_نقاب))
+			p->scx.flags &= ~SCX_TASK_REENQ_REASON_نقاب;
 		p->scx.flags |= reason;
 
-		list_add_tail(&p->scx.dsq_list.node, &tasks);
+		list_جوڑو_دم(&p->scx.dsq_list.گرہ, &tasks);
 	}
 
-	list_for_each_entry_safe(p, n, &tasks, scx.dsq_list.node) {
-		list_del_init(&p->scx.dsq_list.node);
+	list_for_each_اندراج_محفوظ(p, n, &tasks, scx.dsq_list.گرہ) {
+		list_del_init(&p->scx.dsq_list.گرہ);
 
-		scx_do_enqueue_task(rq, p, SCX_ENQ_REENQ, -1);
+		scx_do_قطار_میں_ڈالو_task(rq, p, SCX_ENQ_REENQ, -1);
 
-		p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
+		p->scx.flags &= ~SCX_TASK_REENQ_REASON_نقاب;
 		nr_enqueued++;
 	}
 
@@ -4588,17 +4588,17 @@ static u32 reenq_local(struct scx_sched *sch, struct rq *rq, u64 reenq_flags)
 	 * Zero the slice to evict it. The enqueue gate blocks new capless
 	 * inserts, so no later pick can slip through after the scan.
 	 */
-	if ((reenq_flags & SCX_REENQ_CAP_REVOKE) &&
+	اگر ((reenq_flags & SCX_REENQ_CAP_REVOKE) &&
 	    rq->curr->sched_class == &ext_sched_class &&
 	    scx_task_reenq_on_cap_revoke(rq, rq->curr)) {
-		scx_set_task_slice(rq->curr, 0);
+		scx_سیٹ_task_قاش(rq->curr, 0);
 		resched_curr(rq);
 	}
 
-	return nr_enqueued;
+	واپس nr_enqueued;
 }
 
-static void process_deferred_reenq_locals(struct rq *rq)
+ساکن خالی process_deferred_reenq_locals(ساخت rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
@@ -4607,27 +4607,27 @@ static void process_deferred_reenq_locals(struct rq *rq)
 	 * bounces straight back to the local DSQ. That recursion is bounded by
 	 * the per-task reenqueue cap in scx_do_enqueue_task().
 	 */
-	while (true) {
-		struct scx_sched *sch;
+	جب (true) {
+		ساخت scx_sched *sch;
 		u64 reenq_flags;
 
-		scoped_guard (raw_spinlock, &rq->scx.deferred_reenq_lock) {
-			struct scx_deferred_reenq_local *drl =
-				list_first_entry_or_null(&rq->scx.deferred_reenq_locals,
-							 struct scx_deferred_reenq_local,
-							 node);
-			struct scx_sched_pcpu *sch_pcpu;
+		scoped_guard (raw_spinlock, &rq->scx.deferred_reenq_تالا) {
+			ساخت scx_deferred_reenq_local *drl =
+				list_پہلا_اندراج_or_null(&rq->scx.deferred_reenq_locals,
+							 ساخت scx_deferred_reenq_local,
+							 گرہ);
+			ساخت scx_sched_pcpu *sch_pcpu;
 
-			if (!drl)
-				return;
+			اگر (!drl)
+				واپس;
 
-			sch_pcpu = container_of(drl, struct scx_sched_pcpu,
+			sch_pcpu = container_کا(drl, ساخت scx_sched_pcpu,
 						deferred_reenq_local);
 			sch = sch_pcpu->sch;
 
 			reenq_flags = drl->flags;
 			WRITE_ONCE(drl->flags, 0);
-			list_del_init(&drl->node);
+			list_del_init(&drl->گرہ);
 		}
 
 		/* see schedule_dsq_reenq() */
@@ -4637,113 +4637,113 @@ static void process_deferred_reenq_locals(struct rq *rq)
 	}
 }
 
-static bool user_task_should_reenq(struct task_struct *p, u64 reenq_flags, u32 *reason)
+ساکن bool user_task_should_reenq(ساخت task_struct *p, u64 reenq_flags, u32 *reason)
 {
 	*reason = SCX_TASK_REENQ_KFUNC;
-	return reenq_flags & SCX_REENQ_ANY;
+	واپس reenq_flags & SCX_REENQ_ANY;
 }
 
-static void reenq_user(struct rq *rq, struct scx_dispatch_q *dsq, u64 reenq_flags)
+ساکن خالی reenq_user(ساخت rq *rq, ساخت scx_dispatch_q *dsq, u64 reenq_flags)
 {
-	struct rq *locked_rq = rq;
-	struct scx_sched *sch = dsq->sched;
-	struct scx_dsq_list_node cursor = INIT_DSQ_LIST_CURSOR(cursor, dsq, 0);
-	struct task_struct *p;
+	ساخت rq *locked_rq = rq;
+	ساخت scx_sched *sch = dsq->sched;
+	ساخت scx_dsq_list_گرہ cursor = INIT_DSQ_LIST_CURSOR(cursor, dsq, 0);
+	ساخت task_struct *p;
 	s32 nr_enqueued = 0;
 
 	lockdep_assert_rq_held(rq);
 
-	raw_spin_lock(&dsq->lock);
+	raw_spin_تالا(&dsq->تالا);
 
-	while (likely(!READ_ONCE(sch->bypass_depth))) {
-		struct rq *task_rq;
+	جب (likely(!READ_ONCE(sch->bypass_گہرائی))) {
+		ساخت rq *task_rq;
 		u32 reason;
 
-		p = nldsq_cursor_next_task(&cursor, dsq);
-		if (!p)
-			break;
+		p = nldsq_cursor_اگلا_task(&cursor, dsq);
+		اگر (!p)
+			توڑو;
 
-		if (!user_task_should_reenq(p, reenq_flags, &reason))
-			continue;
+		اگر (!user_task_should_reenq(p, reenq_flags, &reason))
+			جاری;
 
 		task_rq = task_rq(p);
 
-		if (locked_rq != task_rq) {
-			if (locked_rq) {
-				scx_rq_lock_drop(locked_rq);
+		اگر (locked_rq != task_rq) {
+			اگر (locked_rq) {
+				scx_rq_تالا_drop(locked_rq);
 				raw_spin_rq_unlock(locked_rq);
 			}
-			if (unlikely(!raw_spin_rq_trylock(task_rq))) {
-				raw_spin_unlock(&dsq->lock);
-				raw_spin_rq_lock(task_rq);
-				raw_spin_lock(&dsq->lock);
+			اگر (unlikely(!raw_spin_rq_trylock(task_rq))) {
+				raw_spin_unlock(&dsq->تالا);
+				raw_spin_rq_تالا(task_rq);
+				raw_spin_تالا(&dsq->تالا);
 			}
 			locked_rq = task_rq;
 
 			/* did we lose @p while switching locks? */
-			if (nldsq_cursor_lost_task(&cursor, task_rq, dsq, p))
-				continue;
+			اگر (nldsq_cursor_گمشدہ_task(&cursor, task_rq, dsq, p))
+				جاری;
 		}
 
 		/* @p is on @dsq, its rq and @dsq are locked */
 		scx_wait_dispatching(p);
-		dispatch_dequeue_locked(p, dsq);
-		raw_spin_unlock(&dsq->lock);
+		dispatch_قطار_سے_نکالو_locked(p, dsq);
+		raw_spin_unlock(&dsq->تالا);
 
-		if (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_MASK))
-			p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
+		اگر (WARN_ON_ONCE(p->scx.flags & SCX_TASK_REENQ_REASON_نقاب))
+			p->scx.flags &= ~SCX_TASK_REENQ_REASON_نقاب;
 		p->scx.flags |= reason;
 
-		scx_do_enqueue_task(task_rq, p, SCX_ENQ_REENQ, -1);
+		scx_do_قطار_میں_ڈالو_task(task_rq, p, SCX_ENQ_REENQ, -1);
 
-		p->scx.flags &= ~SCX_TASK_REENQ_REASON_MASK;
+		p->scx.flags &= ~SCX_TASK_REENQ_REASON_نقاب;
 
-		if (!(++nr_enqueued % SCX_TASK_ITER_BATCH)) {
-			scx_rq_lock_drop(locked_rq);
+		اگر (!(++nr_enqueued % SCX_TASK_ITER_BATCH)) {
+			scx_rq_تالا_drop(locked_rq);
 			raw_spin_rq_unlock(locked_rq);
-			locked_rq = NULL;
+			locked_rq = تہی;
 			cpu_relax();
 		}
 
-		raw_spin_lock(&dsq->lock);
+		raw_spin_تالا(&dsq->تالا);
 	}
 
-	list_del_init(&cursor.node);
-	raw_spin_unlock(&dsq->lock);
+	list_del_init(&cursor.گرہ);
+	raw_spin_unlock(&dsq->تالا);
 
-	if (locked_rq != rq) {
-		if (locked_rq) {
-			scx_rq_lock_drop(locked_rq);
+	اگر (locked_rq != rq) {
+		اگر (locked_rq) {
+			scx_rq_تالا_drop(locked_rq);
 			raw_spin_rq_unlock(locked_rq);
 		}
-		raw_spin_rq_lock(rq);
+		raw_spin_rq_تالا(rq);
 	}
 }
 
-static void process_deferred_reenq_users(struct rq *rq)
+ساکن خالی process_deferred_reenq_users(ساخت rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
-	while (true) {
-		struct scx_dispatch_q *dsq;
+	جب (true) {
+		ساخت scx_dispatch_q *dsq;
 		u64 dsq_id, reenq_flags;
 
-		scoped_guard (raw_spinlock, &rq->scx.deferred_reenq_lock) {
-			struct scx_deferred_reenq_user *dru =
-				list_first_entry_or_null(&rq->scx.deferred_reenq_users,
-							 struct scx_deferred_reenq_user,
-							 node);
-			struct scx_dsq_pcpu *dsq_pcpu;
+		scoped_guard (raw_spinlock, &rq->scx.deferred_reenq_تالا) {
+			ساخت scx_deferred_reenq_user *dru =
+				list_پہلا_اندراج_or_null(&rq->scx.deferred_reenq_users,
+							 ساخت scx_deferred_reenq_user,
+							 گرہ);
+			ساخت scx_dsq_pcpu *dsq_pcpu;
 
-			if (!dru)
-				return;
+			اگر (!dru)
+				واپس;
 
-			dsq_pcpu = container_of(dru, struct scx_dsq_pcpu,
+			dsq_pcpu = container_کا(dru, ساخت scx_dsq_pcpu,
 						deferred_reenq_user);
 			dsq = dsq_pcpu->dsq;
 			reenq_flags = dru->flags;
 			WRITE_ONCE(dru->flags, 0);
-			list_del_init(&dru->node);
+			list_del_init(&dru->گرہ);
 		}
 
 		/* see schedule_dsq_reenq() */
@@ -4751,35 +4751,35 @@ static void process_deferred_reenq_users(struct rq *rq)
 
 		/* destroy_dsq() may have raced and invalidated @dsq, nothing to reenq */
 		dsq_id = READ_ONCE(dsq->id);
-		if (unlikely(dsq_id == SCX_DSQ_INVALID))
-			continue;
+		اگر (unlikely(dsq_id == SCX_DSQ_INVALID))
+			جاری;
 
 		BUG_ON(dsq_id & SCX_DSQ_FLAG_BUILTIN);
 		reenq_user(rq, dsq, reenq_flags);
 	}
 }
 
-static void run_deferred(struct rq *rq)
+ساکن خالی تسلسل_deferred(ساخت rq *rq)
 {
 	process_ddsp_deferred_locals(rq);
 
-	if (!list_empty(&rq->scx.deferred_reenq_locals))
+	اگر (!list_خالی_خانے(&rq->scx.deferred_reenq_locals))
 		process_deferred_reenq_locals(rq);
 
-	if (!list_empty(&rq->scx.deferred_reenq_users))
+	اگر (!list_خالی_خانے(&rq->scx.deferred_reenq_users))
 		process_deferred_reenq_users(rq);
 
 	scx_reenq_reject(rq);
 }
 
-#ifdef CONFIG_NO_HZ_FULL
-bool scx_can_stop_tick(struct rq *rq)
+#اگر_تعریف_شدہ CONFIG_NO_HZ_بھرا
+bool scx_can_stop_tick(ساخت rq *rq)
 {
-	struct task_struct *p = rq->curr;
-	struct scx_sched *sch = scx_task_sched(p);
+	ساخت task_struct *p = rq->curr;
+	ساخت scx_sched *sch = scx_task_sched(p);
 
-	if (p->sched_class != &ext_sched_class)
-		return true;
+	اگر (p->sched_class != &ext_sched_class)
+		واپس true;
 
 	/*
 	 * @rq->curr may still reference an outgoing EXT task after it has been
@@ -4787,35 +4787,35 @@ bool scx_can_stop_tick(struct rq *rq)
 	 * slice state. If another task is dispatched from a DSQ,
 	 * set_next_task_scx() will update the dependency for the incoming task.
 	 */
-	if (!rq->scx.nr_running)
-		return true;
+	اگر (!rq->scx.nr_running)
+		واپس true;
 
-	if (scx_bypassing(sch, cpu_of(rq)))
-		return false;
+	اگر (scx_bypassing(sch, cpu_کا(rq)))
+		واپس false;
 
 	/*
 	 * A running rescuee's charging and expiry are tick-driven, see
 	 * scx_rescue_charge(). Keep the tick while rescue is in progress.
 	 */
-	if (unlikely(p == scx_rescuee(rq)))
-		return false;
+	اگر (unlikely(p == scx_rescuee(rq)))
+		واپس false;
 
 	/*
 	 * @rq can dispatch from different DSQs, so we can't tell whether it
 	 * needs the tick or not by looking at nr_running. Allow stopping ticks
 	 * iff the BPF scheduler indicated so. See set_next_task_scx().
 	 */
-	return rq->scx.flags & SCX_RQ_CAN_STOP_TICK;
+	واپس rq->scx.flags & SCX_RQ_CAN_STOP_TICK;
 }
-#endif
+#اگر_ختم
 
-#ifdef CONFIG_EXT_GROUP_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
 
 DEFINE_STATIC_PERCPU_RWSEM(scx_cgroup_ops_rwsem);
 
-void scx_tg_init(struct task_group *tg)
+خالی scx_tg_init(ساخت task_گروہ *tg)
 {
-	tg->scx.weight = CGROUP_WEIGHT_DFL;
+	tg->scx.وزن = CGROUP_وزن_DFL;
 	tg->scx.bw_period_us = default_bw_period_us();
 	tg->scx.bw_quota_us = RUNTIME_INF;
 	tg->scx.idle = false;
@@ -4838,15 +4838,15 @@ void scx_tg_init(struct task_group *tg)
  * write-lock it, and tg on/offline can't overlap such callers as a css's files
  * are created after online and drained before offline.
  */
-static struct scx_sched *scx_tg_sched(struct task_group *tg)
+ساکن ساخت scx_sched *scx_tg_sched(ساخت task_گروہ *tg)
 {
 	lockdep_assert(lockdep_is_held(&cgroup_mutex) ||
 		       lockdep_is_held(&scx_cgroup_ops_rwsem));
 
-	if (!tg->css.cgroup)
-		tg = &root_task_group;
+	اگر (!tg->css.cgroup)
+		tg = &جڑ_task_گروہ;
 	/* INITED means ops.cgroup_init() succeeded on @tg->scx.sched */
-	return (tg->scx.flags & SCX_TG_INITED) ? tg->scx.sched : NULL;
+	واپس (tg->scx.flags & SCX_TG_INITED) ? tg->scx.sched : تہی;
 }
 
 /**
@@ -4865,24 +4865,24 @@ static struct scx_sched *scx_tg_sched(struct task_group *tg)
  * side. That extends scx_tg_sched()'s file-write argument to the parent's
  * sched read: a parent css outlives its children's files.
  */
-static struct scx_sched *scx_tg_knob_sched(struct task_group *tg)
+ساکن ساخت scx_sched *scx_tg_knob_sched(ساخت task_گروہ *tg)
 {
 	lockdep_assert(lockdep_is_held(&cgroup_mutex) ||
 		       lockdep_is_held(&scx_cgroup_ops_rwsem));
 
-	if (!tg->css.cgroup || !tg->css.parent)
-		return scx_tg_sched(&root_task_group);
-	return scx_tg_sched(css_tg(tg->css.parent));
+	اگر (!tg->css.cgroup || !tg->css.والد)
+		واپس scx_tg_sched(&جڑ_task_گروہ);
+	واپس scx_tg_sched(css_tg(tg->css.والد));
 }
 
-int scx_tg_online(struct task_group *tg)
+صحیح scx_tg_online(ساخت task_گروہ *tg)
 {
-	int ret = 0;
+	صحیح ret = 0;
 
 	WARN_ON_ONCE(tg->scx.flags & (SCX_TG_ONLINE | SCX_TG_INITED));
 
-	if (scx_cgroup_enabled) {
-		struct scx_sched *sch;
+	اگر (scx_cgroup_enabled) {
+		ساخت scx_sched *sch;
 
 		/*
 		 * The cgroup lifetime notifier populates cgrp->scx_sched before
@@ -4890,46 +4890,46 @@ int scx_tg_online(struct task_group *tg)
 		 * attached to the cgroup2 hierarchy, so a cgroup1 task_group
 		 * always belongs to the root sched.
 		 */
-		if (cgroup_on_dfl(tg->css.cgroup))
+		اگر (cgroup_on_dfl(tg->css.cgroup))
 			sch = scx_cgroup_sched(tg->css.cgroup);
-		else
-			sch = scx_tg_sched(&root_task_group);
+		ورنہ
+			sch = scx_tg_sched(&جڑ_task_گروہ);
 
-		if (SCX_HAS_OP(sch, cgroup_init)) {
-			struct scx_cgroup_init_args args =
-				{ .weight = tg->scx.weight,
+		اگر (SCX_HAS_OP(sch, cgroup_init)) {
+			ساخت scx_cgroup_init_دلائل دلائل =
+				{ .وزن = tg->scx.وزن,
 				  .bw_period_us = tg->scx.bw_period_us,
 				  .bw_quota_us = tg->scx.bw_quota_us,
-				  .bw_burst_us = tg->scx.bw_burst_us,
+				  .bw_مدت_us = tg->scx.bw_مدت_us,
 				  .sched_idle = tg->scx.idle };
 
 			ret = SCX_CALL_OP_RET(sch, cgroup_init,
-					      NULL, tg->css.cgroup, &args);
-			if (ret)
+					      تہی, tg->css.cgroup, &دلائل);
+			اگر (ret)
 				ret = scx_ops_sanitize_err(sch, "cgroup_init", ret);
 		}
-		if (ret == 0) {
+		اگر (ret == 0) {
 			tg->scx.sched = sch;
 			tg->scx.flags |= SCX_TG_ONLINE | SCX_TG_INITED;
 		}
-	} else {
+	} ورنہ {
 		tg->scx.flags |= SCX_TG_ONLINE;
 	}
 
-	return ret;
+	واپس ret;
 }
 
-void scx_tg_offline(struct task_group *tg)
+خالی scx_tg_offline(ساخت task_گروہ *tg)
 {
-	struct scx_sched *sch = tg->scx.sched;
+	ساخت scx_sched *sch = tg->scx.sched;
 
 	WARN_ON_ONCE(!(tg->scx.flags & SCX_TG_ONLINE));
 
 	/* INITED implies non-NULL @sch, test before SCX_HAS_OP() derefs */
-	if (scx_cgroup_enabled && (tg->scx.flags & SCX_TG_INITED) &&
+	اگر (scx_cgroup_enabled && (tg->scx.flags & SCX_TG_INITED) &&
 	    SCX_HAS_OP(sch, cgroup_exit))
-		SCX_CALL_OP(sch, cgroup_exit, NULL, tg->css.cgroup);
-	tg->scx.sched = NULL;
+		SCX_CALL_OP(sch, cgroup_exit, تہی, tg->css.cgroup);
+	tg->scx.sched = تہی;
 	tg->scx.flags &= ~(SCX_TG_ONLINE | SCX_TG_INITED);
 }
 
@@ -4938,24 +4938,24 @@ void scx_tg_offline(struct task_group *tg)
  * at CGROUP_TASK_MIGRATED of the same migration or under scx_cgroup_lock(),
  * both while holding cgroup_mutex.
  */
-static struct scx_sched *scx_cgroup_task_sched(struct task_struct *p)
+ساکن ساخت scx_sched *scx_cgroup_task_sched(ساخت task_struct *p)
 {
-	return rcu_dereference_protected(p->scx.sched, lockdep_is_held(&cgroup_mutex));
+	واپس rcu_dereference_protected(p->scx.sched, lockdep_is_held(&cgroup_mutex));
 }
 
-int scx_cgroup_can_attach(struct cgroup_taskset *tset)
+صحیح scx_cgroup_can_attach(ساخت cgroup_taskset *tset)
 {
-	struct cgroup_subsys_state *css;
-	struct task_struct *p;
-	int ret;
+	ساخت cgroup_subsys_state *css;
+	ساخت task_struct *p;
+	صحیح ret;
 
-	if (!scx_cgroup_enabled)
-		return 0;
+	اگر (!scx_cgroup_enabled)
+		واپس 0;
 
 	cgroup_taskset_for_each(p, css, tset) {
-		struct scx_sched *sch = scx_cgroup_task_sched(p);
-		struct cgroup *from = tg_cgrp(task_group(p));
-		struct cgroup *to = tg_cgrp(css_tg(css));
+		ساخت scx_sched *sch = scx_cgroup_task_sched(p);
+		ساخت cgroup *from = tg_cgrp(task_گروہ(p));
+		ساخت cgroup *مقصد = tg_cgrp(css_tg(css));
 
 		WARN_ON_ONCE(p->scx.cgrp_moving_from);
 
@@ -4964,8 +4964,8 @@ int scx_cgroup_can_attach(struct cgroup_taskset *tset)
 		 * behavior so that ops.cgroup_prep_move() and ops.cgroup_move()
 		 * always match one-to-one.
 		 */
-		if (from == to)
-			continue;
+		اگر (from == مقصد)
+			جاری;
 
 		/*
 		 * The cgroup_move ops are delivered to @p's sched, and only for
@@ -4973,43 +4973,43 @@ int scx_cgroup_can_attach(struct cgroup_taskset *tset)
 		 * cgroup's sched and is reported through the
 		 * exit_task/init_task pair that the re-homing generates.
 		 */
-		if (!sch || sch != scx_cgroup_sched(task_css_set(p)->mg_dst_cset->dfl_cgrp))
-			continue;
+		اگر (!sch || sch != scx_cgroup_sched(task_css_سیٹ(p)->mg_dst_cset->dfl_cgrp))
+			جاری;
 
-		if (SCX_HAS_OP(sch, cgroup_prep_move)) {
-			ret = SCX_CALL_OP_RET(sch, cgroup_prep_move, NULL,
+		اگر (SCX_HAS_OP(sch, cgroup_prep_move)) {
+			ret = SCX_CALL_OP_RET(sch, cgroup_prep_move, تہی,
 					      p, from, css->cgroup);
-			if (ret) {
+			اگر (ret) {
 				ret = scx_ops_sanitize_err(sch, "cgroup_prep_move", ret);
-				goto err;
+				جاؤ err;
 			}
 		}
 
 		p->scx.cgrp_moving_from = from;
 	}
 
-	return 0;
+	واپس 0;
 
 err:
 	cgroup_taskset_for_each(p, css, tset) {
-		struct scx_sched *sch = scx_cgroup_task_sched(p);
+		ساخت scx_sched *sch = scx_cgroup_task_sched(p);
 
 		/* cgrp_moving_from implies non-NULL @sch, test it first */
-		if (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_cancel_move))
-			SCX_CALL_OP(sch, cgroup_cancel_move, NULL,
+		اگر (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_cancel_move))
+			SCX_CALL_OP(sch, cgroup_cancel_move, تہی,
 				    p, p->scx.cgrp_moving_from, css->cgroup);
-		p->scx.cgrp_moving_from = NULL;
+		p->scx.cgrp_moving_from = تہی;
 	}
 
-	return ret;
+	واپس ret;
 }
 
-void scx_cgroup_move_task(struct task_struct *p)
+خالی scx_cgroup_move_task(ساخت task_struct *p)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
-	if (!scx_cgroup_enabled)
-		return;
+	اگر (!scx_cgroup_enabled)
+		واپس;
 
 	/*
 	 * Migration keys off css rather than cgroup identity, so it can hand an
@@ -5018,92 +5018,92 @@ void scx_cgroup_move_task(struct task_struct *p)
 	 * move paired.
 	 */
 	sch = scx_cgroup_task_sched(p);
-	if (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_move))
+	اگر (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_move))
 		SCX_CALL_OP_TASK(sch, cgroup_move, task_rq(p),
 				 p, p->scx.cgrp_moving_from,
-				 tg_cgrp(task_group(p)));
-	p->scx.cgrp_moving_from = NULL;
+				 tg_cgrp(task_گروہ(p)));
+	p->scx.cgrp_moving_from = تہی;
 }
 
-void scx_cgroup_cancel_attach(struct cgroup_taskset *tset)
+خالی scx_cgroup_cancel_attach(ساخت cgroup_taskset *tset)
 {
-	struct cgroup_subsys_state *css;
-	struct task_struct *p;
+	ساخت cgroup_subsys_state *css;
+	ساخت task_struct *p;
 
-	if (!scx_cgroup_enabled)
-		return;
+	اگر (!scx_cgroup_enabled)
+		واپس;
 
 	cgroup_taskset_for_each(p, css, tset) {
-		struct scx_sched *sch = scx_cgroup_task_sched(p);
+		ساخت scx_sched *sch = scx_cgroup_task_sched(p);
 
 		/* cgrp_moving_from implies non-NULL @sch, test it first */
-		if (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_cancel_move))
-			SCX_CALL_OP(sch, cgroup_cancel_move, NULL,
+		اگر (p->scx.cgrp_moving_from && SCX_HAS_OP(sch, cgroup_cancel_move))
+			SCX_CALL_OP(sch, cgroup_cancel_move, تہی,
 				    p, p->scx.cgrp_moving_from, css->cgroup);
-		p->scx.cgrp_moving_from = NULL;
+		p->scx.cgrp_moving_from = تہی;
 	}
 }
 
-void scx_group_set_weight(struct task_group *tg, unsigned long weight)
+خالی scx_گروہ_سیٹ_وزن(ساخت task_گروہ *tg, غیرعلامتی طویل وزن)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
-	percpu_down_read(&scx_cgroup_ops_rwsem);
+	percpu_نیچے_کو_read(&scx_cgroup_ops_rwsem);
 	sch = scx_tg_knob_sched(tg);
 
-	if (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_set_weight) &&
-	    tg->scx.weight != weight)
-		SCX_CALL_OP(sch, cgroup_set_weight, NULL, tg_cgrp(tg), weight);
+	اگر (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_سیٹ_وزن) &&
+	    tg->scx.وزن != وزن)
+		SCX_CALL_OP(sch, cgroup_سیٹ_وزن, تہی, tg_cgrp(tg), وزن);
 
-	tg->scx.weight = weight;
+	tg->scx.وزن = وزن;
 
-	percpu_up_read(&scx_cgroup_ops_rwsem);
+	percpu_اوپر_read(&scx_cgroup_ops_rwsem);
 }
 
-void scx_group_set_idle(struct task_group *tg, bool idle)
+خالی scx_گروہ_سیٹ_idle(ساخت task_گروہ *tg, bool idle)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
-	percpu_down_read(&scx_cgroup_ops_rwsem);
+	percpu_نیچے_کو_read(&scx_cgroup_ops_rwsem);
 	sch = scx_tg_knob_sched(tg);
 
-	if (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_set_idle) &&
+	اگر (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_سیٹ_idle) &&
 	    tg->scx.idle != idle)
-		SCX_CALL_OP(sch, cgroup_set_idle, NULL, tg_cgrp(tg), idle);
+		SCX_CALL_OP(sch, cgroup_سیٹ_idle, تہی, tg_cgrp(tg), idle);
 
 	/* Update the task group's idle state */
 	tg->scx.idle = idle;
 
-	percpu_up_read(&scx_cgroup_ops_rwsem);
+	percpu_اوپر_read(&scx_cgroup_ops_rwsem);
 }
 
-void scx_group_set_bandwidth(struct task_group *tg,
-			     u64 period_us, u64 quota_us, u64 burst_us)
+خالی scx_گروہ_سیٹ_bandwidth(ساخت task_گروہ *tg,
+			     u64 period_us, u64 quota_us, u64 مدت_us)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
-	percpu_down_read(&scx_cgroup_ops_rwsem);
+	percpu_نیچے_کو_read(&scx_cgroup_ops_rwsem);
 	sch = scx_tg_knob_sched(tg);
 
-	if (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_set_bandwidth) &&
+	اگر (scx_cgroup_enabled && sch && SCX_HAS_OP(sch, cgroup_سیٹ_bandwidth) &&
 	    (tg->scx.bw_period_us != period_us ||
 	     tg->scx.bw_quota_us != quota_us ||
-	     tg->scx.bw_burst_us != burst_us))
-		SCX_CALL_OP(sch, cgroup_set_bandwidth, NULL,
-			    tg_cgrp(tg), period_us, quota_us, burst_us);
+	     tg->scx.bw_مدت_us != مدت_us))
+		SCX_CALL_OP(sch, cgroup_سیٹ_bandwidth, تہی,
+			    tg_cgrp(tg), period_us, quota_us, مدت_us);
 
 	tg->scx.bw_period_us = period_us;
 	tg->scx.bw_quota_us = quota_us;
-	tg->scx.bw_burst_us = burst_us;
+	tg->scx.bw_مدت_us = مدت_us;
 
-	percpu_up_read(&scx_cgroup_ops_rwsem);
+	percpu_اوپر_read(&scx_cgroup_ops_rwsem);
 }
-#endif	/* CONFIG_EXT_GROUP_SCHED */
+#اگر_ختم	/* CONFIG_EXT_GROUP_SCHED */
 
-#if defined(CONFIG_EXT_GROUP_SCHED) || defined(CONFIG_EXT_SUB_SCHED)
-static struct cgroup *root_cgroup(void)
+#اگر defined(CONFIG_EXT_گروہ_SCHED) || defined(CONFIG_EXT_SUB_SCHED)
+ساکن ساخت cgroup *جڑ_cgroup(خالی)
 {
-	return &cgrp_dfl_root.cgrp;
+	واپس &cgrp_dfl_جڑ.cgrp;
 }
 
 /*
@@ -5111,26 +5111,26 @@ static struct cgroup *root_cgroup(void)
  * for cgroup_mutex deadlocks with cgroup teardown, which holds it while
  * draining a set_* file write blocked on the rwsem behind the writer.
  */
-void scx_cgroup_lock(void)
+خالی scx_cgroup_تالا(خالی)
 {
-	cgroup_lock();
-#ifdef CONFIG_EXT_GROUP_SCHED
-	percpu_down_write(&scx_cgroup_ops_rwsem);
-#endif
+	cgroup_تالا();
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
+	percpu_نیچے_کو_write(&scx_cgroup_ops_rwsem);
+#اگر_ختم
 }
 
-void scx_cgroup_unlock(void)
+خالی scx_cgroup_unlock(خالی)
 {
-#ifdef CONFIG_EXT_GROUP_SCHED
-	percpu_up_write(&scx_cgroup_ops_rwsem);
-#endif
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
+	percpu_اوپر_write(&scx_cgroup_ops_rwsem);
+#اگر_ختم
 	cgroup_unlock();
 }
-#else	/* CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED */
-static inline struct cgroup *root_cgroup(void) { return NULL; }
-static inline void scx_cgroup_lock(void) {}
-static inline void scx_cgroup_unlock(void) {}
-#endif	/* CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED */
+#ورنہ	/* CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED */
+ساکن اندرونی ساخت cgroup *جڑ_cgroup(خالی) { واپس تہی; }
+ساکن اندرونی خالی scx_cgroup_تالا(خالی) {}
+ساکن اندرونی خالی scx_cgroup_unlock(خالی) {}
+#اگر_ختم	/* CONFIG_EXT_GROUP_SCHED || CONFIG_EXT_SUB_SCHED */
 
 /*
  * Omitted operations:
@@ -5141,101 +5141,101 @@ static inline void scx_cgroup_unlock(void) {}
  *   their current sched_class. Call them directly from sched core instead.
  */
 DEFINE_SCHED_CLASS(ext) = {
-	.enqueue_task		= enqueue_task_scx,
-	.dequeue_task		= dequeue_task_scx,
+	.قطار_میں_ڈالو_task		= قطار_میں_ڈالو_task_scx,
+	.قطار_سے_نکالو_task		= قطار_سے_نکالو_task_scx,
 	.yield_task		= yield_task_scx,
-	.yield_to_task		= yield_to_task_scx,
+	.yield_مقصد_task		= yield_مقصد_task_scx,
 
 	.wakeup_preempt		= wakeup_preempt_scx,
 
 	.pick_task		= pick_task_scx,
 
-	.put_prev_task		= put_prev_task_scx,
-	.set_next_task		= set_next_task_scx,
+	.put_پچھلا_task		= put_پچھلا_task_scx,
+	.سیٹ_اگلا_task		= سیٹ_اگلا_task_scx,
 
 	.select_task_rq		= select_task_rq_scx,
 	.task_woken		= task_woken_scx,
-	.set_cpus_allowed	= set_cpus_allowed_scx,
+	.سیٹ_cpus_allowed	= سیٹ_cpus_allowed_scx,
 
 	.rq_online		= rq_online_scx,
 	.rq_offline		= rq_offline_scx,
 
 	.task_tick		= task_tick_scx,
 
-	.switching_to		= switching_to_scx,
+	.switching_مقصد		= switching_مقصد_scx,
 	.switched_from		= switched_from_scx,
-	.switched_to		= switched_to_scx,
+	.switched_مقصد		= switched_مقصد_scx,
 	.reweight_task		= reweight_task_scx,
-	.prio_changed		= prio_changed_scx,
+	.prio_بدلا		= prio_بدلا_scx,
 
 	.update_curr		= update_curr_scx,
 
-#ifdef CONFIG_UCLAMP_TASK
+#اگر_تعریف_شدہ CONFIG_UCLAMP_TASK
 	.uclamp_enabled		= 1,
-#endif
+#اگر_ختم
 };
 
-s32 scx_init_dsq(struct scx_dispatch_q *dsq, u64 dsq_id, struct scx_sched *sch)
+s32 scx_init_dsq(ساخت scx_dispatch_q *dsq, u64 dsq_id, ساخت scx_sched *sch)
 {
 	s32 cpu;
 
-	memset(dsq, 0, sizeof(*dsq));
+	memset(dsq, 0, حجم(*dsq));
 
-	raw_spin_lock_init(&dsq->lock);
-	INIT_LIST_HEAD(&dsq->list);
+	raw_spin_تالا_init(&dsq->تالا);
+	INIT_LIST_سر(&dsq->list);
 	dsq->id = dsq_id;
 	dsq->sched = sch;
 
-	dsq->pcpu = alloc_percpu(struct scx_dsq_pcpu);
-	if (!dsq->pcpu)
-		return -ENOMEM;
+	dsq->pcpu = alloc_percpu(ساخت scx_dsq_pcpu);
+	اگر (!dsq->pcpu)
+		واپس -ENOMEM;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
+		ساخت scx_dsq_pcpu *pcpu = فی_cpu_ptr(dsq->pcpu, cpu);
 
 		pcpu->dsq = dsq;
-		INIT_LIST_HEAD(&pcpu->deferred_reenq_user.node);
+		INIT_LIST_سر(&pcpu->deferred_reenq_user.گرہ);
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static void exit_dsq(struct scx_dispatch_q *dsq)
+ساکن خالی exit_dsq(ساخت scx_dispatch_q *dsq)
 {
 	s32 cpu;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
-		struct scx_deferred_reenq_user *dru = &pcpu->deferred_reenq_user;
-		struct rq *rq = cpu_rq(cpu);
+		ساخت scx_dsq_pcpu *pcpu = فی_cpu_ptr(dsq->pcpu, cpu);
+		ساخت scx_deferred_reenq_user *dru = &pcpu->deferred_reenq_user;
+		ساخت rq *rq = cpu_rq(cpu);
 
 		/*
 		 * free_dsq_irq_workfn() cancelled the reenqs before the grace
 		 * period and schedule_dsq_reenq() queues nothing after that.
 		 */
-		if (WARN_ON_ONCE(!list_empty(&dru->node))) {
-			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
-			list_del_init(&dru->node);
+		اگر (WARN_ON_ONCE(!list_خالی_خانے(&dru->گرہ))) {
+			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_تالا);
+			list_del_init(&dru->گرہ);
 		}
 	}
 
 	free_percpu(dsq->pcpu);
 }
 
-static void free_dsq_rcufn(struct rcu_head *rcu)
+ساکن خالی free_dsq_rcufn(ساخت rcu_سر *rcu)
 {
-	struct scx_dispatch_q *dsq = container_of(rcu, struct scx_dispatch_q, rcu);
+	ساخت scx_dispatch_q *dsq = container_کا(rcu, ساخت scx_dispatch_q, rcu);
 
 	exit_dsq(dsq);
 	kfree(dsq);
 }
 
-static void free_dsq_irq_workfn(struct irq_work *irq_work)
+ساکن خالی free_dsq_irq_workfn(ساخت irq_work *irq_work)
 {
-	struct llist_node *to_free = llist_del_all(&dsqs_to_free);
-	struct scx_dispatch_q *dsq, *tmp_dsq;
+	ساخت llist_گرہ *مقصد_free = llist_del_all(&dsqs_مقصد_free);
+	ساخت scx_dispatch_q *dsq, *tmp_dsq;
 
-	llist_for_each_entry_safe(dsq, tmp_dsq, to_free, free_node) {
+	llist_for_each_اندراج_محفوظ(dsq, tmp_dsq, مقصد_free, free_گرہ) {
 		s32 cpu;
 
 		/*
@@ -5246,41 +5246,41 @@ static void free_dsq_irq_workfn(struct irq_work *irq_work)
 		 * and queues nothing.
 		 */
 		for_each_possible_cpu(cpu) {
-			struct scx_dsq_pcpu *pcpu = per_cpu_ptr(dsq->pcpu, cpu);
-			struct rq *rq = cpu_rq(cpu);
+			ساخت scx_dsq_pcpu *pcpu = فی_cpu_ptr(dsq->pcpu, cpu);
+			ساخت rq *rq = cpu_rq(cpu);
 
-			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_lock);
-			list_del_init(&pcpu->deferred_reenq_user.node);
+			guard(raw_spinlock_irqsave)(&rq->scx.deferred_reenq_تالا);
+			list_del_init(&pcpu->deferred_reenq_user.گرہ);
 		}
 
 		call_rcu(&dsq->rcu, free_dsq_rcufn);
 	}
 }
 
-static DEFINE_IRQ_WORK(free_dsq_irq_work, free_dsq_irq_workfn);
+ساکن DEFINE_IRQ_WORK(free_dsq_irq_work, free_dsq_irq_workfn);
 
-static void destroy_dsq(struct scx_sched *sch, u64 dsq_id)
+ساکن خالی destroy_dsq(ساخت scx_sched *sch, u64 dsq_id)
 {
-	struct scx_dispatch_q *dsq;
-	unsigned long flags;
+	ساخت scx_dispatch_q *dsq;
+	غیرعلامتی طویل flags;
 
-	rcu_read_lock();
+	rcu_read_تالا();
 
-	dsq = find_user_dsq(sch, dsq_id);
-	if (!dsq)
-		goto out_unlock_rcu;
+	dsq = ڈھونڈو_user_dsq(sch, dsq_id);
+	اگر (!dsq)
+		جاؤ برآمد_unlock_rcu;
 
-	raw_spin_lock_irqsave(&dsq->lock, flags);
+	raw_spin_تالا_irqsave(&dsq->تالا, flags);
 
-	if (dsq->nr) {
+	اگر (dsq->nr) {
 		scx_error(sch, "attempting to destroy in-use dsq 0x%016llx (nr=%u)",
 			  dsq->id, dsq->nr);
-		goto out_unlock_dsq;
+		جاؤ برآمد_unlock_dsq;
 	}
 
-	if (rhashtable_remove_fast(&sch->dsq_hash, &dsq->hash_node,
+	اگر (rhashtable_remove_fast(&sch->dsq_hash, &dsq->hash_گرہ,
 				   dsq_hash_params))
-		goto out_unlock_dsq;
+		جاؤ برآمد_unlock_dsq;
 
 	/*
 	 * Mark dead by invalidating ->id to prevent scx_dispatch_enqueue() from
@@ -5289,65 +5289,65 @@ static void destroy_dsq(struct scx_sched *sch, u64 dsq_id)
 	 * operations inside scheduler locks.
 	 */
 	dsq->id = SCX_DSQ_INVALID;
-	if (llist_add(&dsq->free_node, &dsqs_to_free))
-		irq_work_queue(&free_dsq_irq_work);
+	اگر (llist_جوڑو(&dsq->free_گرہ, &dsqs_مقصد_free))
+		irq_work_قطار(&free_dsq_irq_work);
 
-out_unlock_dsq:
-	raw_spin_unlock_irqrestore(&dsq->lock, flags);
-out_unlock_rcu:
+برآمد_unlock_dsq:
+	raw_spin_unlock_irqrestore(&dsq->تالا, flags);
+برآمد_unlock_rcu:
 	rcu_read_unlock();
 }
 
-#ifdef CONFIG_EXT_GROUP_SCHED
-static void scx_cgroup_exit(struct scx_sched *sch)
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
+ساکن خالی scx_cgroup_exit(ساخت scx_sched *sch)
 {
-	struct cgroup_subsys_state *css;
+	ساخت cgroup_subsys_state *css;
 
 	/*
 	 * scx_tg_on/offline() are excluded through cgroup_lock(). If we walk
 	 * cgroups and exit all the inited ones, all online cgroups are exited.
 	 */
-	css_for_each_descendant_post(css, &root_task_group.css) {
-		struct task_group *tg = css_tg(css);
+	css_for_each_descendant_post(css, &جڑ_task_گروہ.css) {
+		ساخت task_گروہ *tg = css_tg(css);
 
 		/* also clear the sched of tgs whose ops.cgroup_init() failed */
-		tg->scx.sched = NULL;
-		if (tg->scx.flags & SCX_TG_INITED) {
+		tg->scx.sched = تہی;
+		اگر (tg->scx.flags & SCX_TG_INITED) {
 			tg->scx.flags &= ~SCX_TG_INITED;
-			if (sch->ops.cgroup_exit)
-				SCX_CALL_OP(sch, cgroup_exit, NULL, css->cgroup);
+			اگر (sch->ops.cgroup_exit)
+				SCX_CALL_OP(sch, cgroup_exit, تہی, css->cgroup);
 		}
 	}
 }
 
-static int scx_cgroup_init(struct scx_sched *sch)
+ساکن صحیح scx_cgroup_init(ساخت scx_sched *sch)
 {
-	struct cgroup_subsys_state *css;
-	int ret;
+	ساخت cgroup_subsys_state *css;
+	صحیح ret;
 
 	/*
 	 * scx_tg_on/offline() are excluded through cgroup_lock(). If we walk
 	 * cgroups and init, all online cgroups are initialized.
 	 */
-	css_for_each_descendant_pre(css, &root_task_group.css) {
-		struct task_group *tg = css_tg(css);
+	css_for_each_descendant_pre(css, &جڑ_task_گروہ.css) {
+		ساخت task_گروہ *tg = css_tg(css);
 
-		if ((tg->scx.flags & (SCX_TG_ONLINE | SCX_TG_INITED)) != SCX_TG_ONLINE)
-			continue;
+		اگر ((tg->scx.flags & (SCX_TG_ONLINE | SCX_TG_INITED)) != SCX_TG_ONLINE)
+			جاری;
 
-		if (sch->ops.cgroup_init) {
-			struct scx_cgroup_init_args args = {
-				.weight = tg->scx.weight,
+		اگر (sch->ops.cgroup_init) {
+			ساخت scx_cgroup_init_دلائل دلائل = {
+				.وزن = tg->scx.وزن,
 				.bw_period_us = tg->scx.bw_period_us,
 				.bw_quota_us = tg->scx.bw_quota_us,
-				.bw_burst_us = tg->scx.bw_burst_us,
+				.bw_مدت_us = tg->scx.bw_مدت_us,
 				.sched_idle = tg->scx.idle,
 			};
 
-			ret = SCX_CALL_OP_RET(sch, cgroup_init, NULL, css->cgroup, &args);
-			if (ret) {
+			ret = SCX_CALL_OP_RET(sch, cgroup_init, تہی, css->cgroup, &دلائل);
+			اگر (ret) {
 				scx_error(sch, "ops.cgroup_init() failed (%d)", ret);
-				return ret;
+				واپس ret;
 			}
 		}
 
@@ -5355,215 +5355,215 @@ static int scx_cgroup_init(struct scx_sched *sch)
 		tg->scx.flags |= SCX_TG_INITED;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-#else
-static void scx_cgroup_exit(struct scx_sched *sch) {}
-static int scx_cgroup_init(struct scx_sched *sch) { return 0; }
-#endif
+#ورنہ
+ساکن خالی scx_cgroup_exit(ساخت scx_sched *sch) {}
+ساکن صحیح scx_cgroup_init(ساخت scx_sched *sch) { واپس 0; }
+#اگر_ختم
 
 
 /********************************************************************************
  * Sysfs interface and ops enable/disable.
  */
 
-#define SCX_ATTR(_name)								\
-	static struct kobj_attribute scx_attr_##_name = {			\
-		.attr = { .name = __stringify(_name), .mode = 0444 },		\
+#تعریف_کرو SCX_ATTR(_name)								\
+	ساکن ساخت kobj_attribute scx_attr_##_name = {			\
+		.attr = { .name = __stringify(_name), .منوال = 0444 },		\
 		.show = scx_attr_##_name##_show,				\
 	}
 
-static ssize_t scx_attr_state_show(struct kobject *kobj,
-				   struct kobj_attribute *ka, char *buf)
+ساکن ssize_t scx_attr_state_show(ساخت kobject *kobj,
+				   ساخت kobj_attribute *ka, حرف *buf)
 {
-	return sysfs_emit(buf, "%s\n", scx_enable_state_str[scx_enable_state()]);
+	واپس sysfs_emit(buf, "%s\n", scx_enable_state_str[scx_enable_state()]);
 }
 SCX_ATTR(state);
 
-static ssize_t scx_attr_switch_all_show(struct kobject *kobj,
-					struct kobj_attribute *ka, char *buf)
+ساکن ssize_t scx_attr_switch_all_show(ساخت kobject *kobj,
+					ساخت kobj_attribute *ka, حرف *buf)
 {
-	return sysfs_emit(buf, "%d\n", READ_ONCE(scx_switching_all));
+	واپس sysfs_emit(buf, "%d\n", READ_ONCE(scx_switching_all));
 }
 SCX_ATTR(switch_all);
 
-static ssize_t scx_attr_nr_rejected_show(struct kobject *kobj,
-					 struct kobj_attribute *ka, char *buf)
+ساکن ssize_t scx_attr_nr_rejected_show(ساخت kobject *kobj,
+					 ساخت kobj_attribute *ka, حرف *buf)
 {
-	return sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_nr_rejected));
+	واپس sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_nr_rejected));
 }
 SCX_ATTR(nr_rejected);
 
-static ssize_t scx_attr_hotplug_seq_show(struct kobject *kobj,
-					 struct kobj_attribute *ka, char *buf)
+ساکن ssize_t scx_attr_hotplug_seq_show(ساخت kobject *kobj,
+					 ساخت kobj_attribute *ka, حرف *buf)
 {
-	return sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_hotplug_seq));
+	واپس sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_hotplug_seq));
 }
 SCX_ATTR(hotplug_seq);
 
-static ssize_t scx_attr_enable_seq_show(struct kobject *kobj,
-					struct kobj_attribute *ka, char *buf)
+ساکن ssize_t scx_attr_enable_seq_show(ساخت kobject *kobj,
+					ساخت kobj_attribute *ka, حرف *buf)
 {
-	return sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_enable_seq));
+	واپس sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_enable_seq));
 }
 SCX_ATTR(enable_seq);
 
-static struct attribute *scx_global_attrs[] = {
+ساکن ساخت attribute *scx_global_attrs[] = {
 	&scx_attr_state.attr,
 	&scx_attr_switch_all.attr,
 	&scx_attr_nr_rejected.attr,
 	&scx_attr_hotplug_seq.attr,
 	&scx_attr_enable_seq.attr,
-	NULL,
+	تہی,
 };
 
-static const struct attribute_group scx_global_attr_group = {
+ساکن ثابت ساخت attribute_گروہ scx_global_attr_گروہ = {
 	.attrs = scx_global_attrs,
 };
 
-static void free_pnode(struct scx_sched_pnode *pnode);
-static void free_exit_info(struct scx_exit_info *ei);
-static const char *scx_exit_reason(enum scx_exit_kind kind);
-static bool scx_claim_exit(struct scx_sched *sch, enum scx_exit_kind kind);
+ساکن خالی free_pnode(ساخت scx_sched_pnode *pnode);
+ساکن خالی free_exit_info(ساخت scx_exit_info *ei);
+ساکن ثابت حرف *scx_exit_reason(شمار scx_exit_قسم قسم);
+ساکن bool scx_claim_exit(ساخت scx_sched *sch, شمار scx_exit_قسم قسم);
 
-s32 scx_alloc_kern_arena_objs(struct scx_sched *sch)
+s32 scx_alloc_kern_arena_objs(ساخت scx_sched *sch)
 {
-	size_t size = struct_size_t(struct scx_cmask, bits,
-				    SCX_CMASK_NR_WORDS(num_possible_cpus()));
-	struct scx_cmask *online;
-	struct scx_cmask_ref ref;
-	int cpu;
+	سائز_t سائز = struct_سائز_t(ساخت scx_cmask, بٹ,
+				    SCX_CMASK_NR_الفاظ(عدد_possible_cpus()));
+	ساخت scx_cmask *online;
+	ساخت scx_cmask_ref ref;
+	صحیح cpu;
 
 	/* hotplug stays excluded until the online mask is published */
 	lockdep_assert_cpus_held();
 
-	if (!sch->is_cid_type || !sch->arena_pool)
-		return 0;
+	اگر (!sch->is_cid_type || !sch->arena_pool)
+		واپس 0;
 
-	sch->set_cmask_scratch = alloc_percpu(struct scx_cmask *);
-	if (!sch->set_cmask_scratch)
-		return -ENOMEM;
+	sch->سیٹ_cmask_scratch = alloc_percpu(ساخت scx_cmask *);
+	اگر (!sch->سیٹ_cmask_scratch)
+		واپس -ENOMEM;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_cmask **slot = per_cpu_ptr(sch->set_cmask_scratch, cpu);
+		ساخت scx_cmask **خانہ = فی_cpu_ptr(sch->سیٹ_cmask_scratch, cpu);
 
-		*slot = scx_arena_alloc(sch, size);
-		if (!*slot)
-			return -ENOMEM;
-		scx_cmask_init(*slot, 0, num_possible_cpus());
+		*خانہ = scx_arena_alloc(sch, سائز);
+		اگر (!*خانہ)
+			واپس -ENOMEM;
+		scx_cmask_init(*خانہ, 0, عدد_possible_cpus());
 	}
 
 	/* pack the online mask alongside the scratch masks */
-	online = scx_arena_alloc(sch, size);
-	if (!online)
-		return -ENOMEM;
+	online = scx_arena_alloc(sch, سائز);
+	اگر (!online)
+		واپس -ENOMEM;
 
 	scoped_guard(rcu) {
-		scx_cmask_ref_init_kern(sch, online, 0, num_possible_cpus(), &ref);
-		scx_cmask_ref_from_cpumask(&ref, cpu_active_mask);
+		scx_cmask_ref_init_kern(sch, online, 0, عدد_possible_cpus(), &ref);
+		scx_cmask_ref_from_cpumask(&ref, cpu_فعال_نقاب);
 	}
 	sch->online_cmask = online;
 
-	return 0;
+	واپس 0;
 }
 
-static void scx_free_kern_arena_objs(struct scx_sched *sch)
+ساکن خالی scx_free_kern_arena_objs(ساخت scx_sched *sch)
 {
-	size_t size = struct_size_t(struct scx_cmask, bits,
-				    SCX_CMASK_NR_WORDS(num_possible_cpus()));
-	int cpu;
+	سائز_t سائز = struct_سائز_t(ساخت scx_cmask, بٹ,
+				    SCX_CMASK_NR_الفاظ(عدد_possible_cpus()));
+	صحیح cpu;
 
-	scx_arena_free(sch, sch->online_cmask, size);
-	if (!sch->set_cmask_scratch)
-		return;
+	scx_arena_free(sch, sch->online_cmask, سائز);
+	اگر (!sch->سیٹ_cmask_scratch)
+		واپس;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_cmask **slot = per_cpu_ptr(sch->set_cmask_scratch, cpu);
+		ساخت scx_cmask **خانہ = فی_cpu_ptr(sch->سیٹ_cmask_scratch, cpu);
 
-		scx_arena_free(sch, *slot, size);
+		scx_arena_free(sch, *خانہ, سائز);
 	}
-	free_percpu(sch->set_cmask_scratch);
-	sch->set_cmask_scratch = NULL;
+	free_percpu(sch->سیٹ_cmask_scratch);
+	sch->سیٹ_cmask_scratch = تہی;
 }
 
-static void scx_sched_free_rcu_work(struct work_struct *work)
+ساکن خالی scx_sched_free_rcu_work(ساخت work_struct *work)
 {
-	struct rcu_work *rcu_work = to_rcu_work(work);
-	struct scx_sched *sch = container_of(rcu_work, struct scx_sched, rcu_work);
-	struct rhashtable_iter rht_iter;
-	struct scx_dispatch_q *dsq;
-	int cpu, node;
+	ساخت rcu_work *rcu_work = مقصد_rcu_work(work);
+	ساخت scx_sched *sch = container_کا(rcu_work, ساخت scx_sched, rcu_work);
+	ساخت rhashtable_iter rht_iter;
+	ساخت scx_dispatch_q *dsq;
+	صحیح cpu, گرہ;
 
 	irq_work_sync(&sch->propagate_exit_irq_work);
 	irq_work_sync(&sch->disable_irq_work);
-	kthread_destroy_worker(sch->helper);
+	kthread_destroy_کارکن(sch->helper);
 	timer_shutdown_sync(&sch->bypass_lb_timer);
 	free_cpumask_var(sch->bypass_lb_donee_cpumask);
 	free_cpumask_var(sch->bypass_lb_resched_cpumask);
 	free_cpumask_var(sch->stall_cpus);
 
-#ifdef CONFIG_EXT_SUB_SCHED
-	kfree(sch->cgrp_path);
-	if (sch_cgroup(sch))
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	kfree(sch->cgrp_راستہ);
+	اگر (sch_cgroup(sch))
 		cgroup_put(sch_cgroup(sch));
-	if (sch->sub_kset)
+	اگر (sch->sub_kset)
 		kobject_put(&sch->sub_kset->kobj);
-	if (scx_parent(sch))
-		kobject_put(&scx_parent(sch)->kobj);
-#endif	/* CONFIG_EXT_SUB_SCHED */
+	اگر (scx_والد(sch))
+		kobject_put(&scx_والد(sch)->kobj);
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 
 	for_each_possible_cpu(cpu) {
-		struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
+		ساخت scx_sched_pcpu *pcpu = فی_cpu_ptr(sch->pcpu, cpu);
 
 		/*
 		 * $sch would have entered bypass mode before the RCU grace
 		 * period. As that blocks new deferrals, all
 		 * deferred_reenq_local_node's must be off-list by now.
 		 */
-		WARN_ON_ONCE(!list_empty(&pcpu->deferred_reenq_local.node));
+		WARN_ON_ONCE(!list_خالی_خانے(&pcpu->deferred_reenq_local.گرہ));
 
 		/* remove the queued ecaps sync so the pcpu can be freed */
-		scx_discard_ecaps_to_sync(cpu, pcpu);
+		scx_discard_ecaps_مقصد_sync(cpu, pcpu);
 
 		/*
 		 * Bypass blocks new kicks. Flush the kick irq_work so this
 		 * pcpu's to_kick_node is off the list before it is freed.
 		 */
 		irq_work_sync(&cpu_rq(cpu)->scx.kick_cpus_irq_work);
-		WARN_ON_ONCE(!list_empty(&pcpu->to_kick_node));
-		free_cpumask_var(pcpu->cpus_to_kick);
-		free_cpumask_var(pcpu->cpus_to_kick_if_idle);
-		free_cpumask_var(pcpu->cpus_to_preempt);
-		free_cpumask_var(pcpu->cpus_to_wait);
+		WARN_ON_ONCE(!list_خالی_خانے(&pcpu->مقصد_kick_گرہ));
+		free_cpumask_var(pcpu->cpus_مقصد_kick);
+		free_cpumask_var(pcpu->cpus_مقصد_kick_if_idle);
+		free_cpumask_var(pcpu->cpus_مقصد_preempt);
+		free_cpumask_var(pcpu->cpus_مقصد_wait);
 
 		exit_dsq(scx_bypass_dsq(sch, cpu));
 	}
 
 	free_percpu(sch->pcpu);
 
-	for_each_node_state(node, N_POSSIBLE)
-		free_pnode(sch->pnode[node]);
+	for_each_گرہ_state(گرہ, N_POSSIBLE)
+		free_pnode(sch->pnode[گرہ]);
 	kfree(sch->pnode);
 
 	scx_free_pshards(sch);
 
 	rhashtable_walk_enter(&sch->dsq_hash, &rht_iter);
-	do {
-		rhashtable_walk_start(&rht_iter);
+	کرو {
+		rhashtable_walk_آغاز(&rht_iter);
 
-		while (!IS_ERR_OR_NULL((dsq = rhashtable_walk_next(&rht_iter))))
+		جب (!IS_ERR_OR_NULL((dsq = rhashtable_walk_اگلا(&rht_iter))))
 			destroy_dsq(sch, dsq->id);
 
 		rhashtable_walk_stop(&rht_iter);
-	} while (dsq == ERR_PTR(-EAGAIN));
+	} جب (dsq == ERR_PTR(-EAGAIN));
 	rhashtable_walk_exit(&rht_iter);
 
-	rhashtable_free_and_destroy(&sch->dsq_hash, NULL, NULL);
+	rhashtable_free_and_destroy(&sch->dsq_hash, تہی, تہی);
 	free_exit_info(sch->exit_info);
 	scx_free_kern_arena_objs(sch);
 	scx_arena_pool_destroy(sch);
-	if (sch->arena_map)
+	اگر (sch->arena_map)
 		bpf_map_put(sch->arena_map);
 
 	/* @sch is completely inactive by now */
@@ -5572,119 +5572,119 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
 	kfree(sch);
 }
 
-static void scx_kobj_release(struct kobject *kobj)
+ساکن خالی scx_kobj_release(ساخت kobject *kobj)
 {
-	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
+	ساخت scx_sched *sch = container_کا(kobj, ساخت scx_sched, kobj);
 
 	INIT_RCU_WORK(&sch->rcu_work, scx_sched_free_rcu_work);
-	queue_rcu_work(system_dfl_wq, &sch->rcu_work);
+	قطار_rcu_work(system_dfl_wq, &sch->rcu_work);
 }
 
-static ssize_t scx_attr_ops_show(struct kobject *kobj,
-				 struct kobj_attribute *ka, char *buf)
+ساکن ssize_t scx_attr_ops_show(ساخت kobject *kobj,
+				 ساخت kobj_attribute *ka, حرف *buf)
 {
-	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
+	ساخت scx_sched *sch = container_کا(kobj, ساخت scx_sched, kobj);
 
-	return sysfs_emit(buf, "%s\n", sch->ops.name);
+	واپس sysfs_emit(buf, "%s\n", sch->ops.name);
 }
 SCX_ATTR(ops);
 
-#define scx_attr_event_show(buf, at, events, kind) ({				\
-	sysfs_emit_at(buf, at, "%s %llu\n", #kind, (events)->kind);		\
+#تعریف_کرو scx_attr_event_show(buf, at, events, قسم) ({				\
+	sysfs_emit_at(buf, at, "%s %llu\n", #kind, (events)->قسم);		\
 })
 
-static ssize_t scx_attr_events_show(struct kobject *kobj,
-				    struct kobj_attribute *ka, char *buf)
+ساکن ssize_t scx_attr_events_show(ساخت kobject *kobj,
+				    ساخت kobj_attribute *ka, حرف *buf)
 {
-	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
-	struct scx_event_stats events;
-	int at = 0;
+	ساخت scx_sched *sch = container_کا(kobj, ساخت scx_sched, kobj);
+	ساخت scx_event_stats events;
+	صحیح at = 0;
 
 	scx_read_events(sch, &events);
-#define SCX_EVENT(name)	(at += scx_attr_event_show(buf, at, &events, name))
+#تعریف_کرو SCX_EVENT(name)	(at += scx_attr_event_show(buf, at, &events, name))
 	SCX_EVENTS_LIST(SCX_EVENT);
-#undef SCX_EVENT
-	return at;
+#تعریف_منسوخ SCX_EVENT
+	واپس at;
 }
 SCX_ATTR(events);
 
-#ifdef CONFIG_EXT_SUB_SCHED
-static const char *scx_cap_names[__SCX_NR_CAPS] = {
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+ساکن ثابت حرف *scx_cap_نام[__SCX_NR_CAPS] = {
 	[__SCX_CAP_ENQ_IMMED]	= "enq_immed",
 	[__SCX_CAP_ENQ]		= "enq",
 	[__SCX_CAP_PREEMPT]	= "preempt",
 	[__SCX_CAP_PERF]	= "perf",
 };
 
-static ssize_t scx_attr_caps_show(struct kobject *kobj,
-				  struct kobj_attribute *ka, char *buf)
+ساکن ssize_t scx_attr_caps_show(ساخت kobject *kobj,
+				  ساخت kobj_attribute *ka, حرف *buf)
 {
-	struct scx_sched *sch = container_of(kobj, struct scx_sched, kobj);
-	u32 npossible = num_possible_cpus();
-	struct scx_cmask *agg __free(kfree) =
-		kzalloc_flex(*agg, bits, SCX_CMASK_NR_WORDS(npossible));
-	unsigned long *agg_bm __free(bitmap) = bitmap_zalloc(npossible, GFP_KERNEL);
-	ssize_t count = 0;
+	ساخت scx_sched *sch = container_کا(kobj, ساخت scx_sched, kobj);
+	u32 npossible = عدد_possible_cpus();
+	ساخت scx_cmask *agg __free(kfree) =
+		kzalloc_flex(*agg, بٹ, SCX_CMASK_NR_الفاظ(npossible));
+	غیرعلامتی طویل *agg_bm __free(bitmap) = bitmap_zalloc(npossible, GFP_KERNEL);
+	ssize_t گنتی = 0;
 	s32 cap, si;
 
-	if (!agg || !agg_bm)
-		return -ENOMEM;
+	اگر (!agg || !agg_bm)
+		واپس -ENOMEM;
 
-	for (cap = 0; cap < __SCX_NR_CAPS; cap++) {
+	برائے (cap = 0; cap < __SCX_NR_CAPS; cap++) {
 		SCX_CMASK_DEFINE(snap, 0, SCX_CID_SHARD_MAX_CPUS);
 
 		scx_cmask_init(agg, 0, npossible);
-		for (si = 0; si < sch->nr_pshards; si++) {
-			struct scx_cmask *cm = &sch->pshard[si]->caps[cap].cmask;
+		برائے (si = 0; si < sch->nr_pshards; si++) {
+			ساخت scx_cmask *cm = &sch->pshard[si]->caps[cap].cmask;
 
-			scx_cmask_reframe(snap, cm->base, cm->nr_cids);
+			scx_cmask_reframe(snap, cm->بنیاد, cm->nr_cids);
 			scx_cmask_copy(snap, cm);
 			scx_cmask_or(agg, snap);
 		}
 		/* %*pbl takes unsigned long bitmap layout, convert from u64 */
-		bitmap_from_arr64(agg_bm, agg->bits, npossible);
-		count += sysfs_emit_at(buf, count, "%s: %*pbl\n",
-				       scx_cap_names[cap], npossible, agg_bm);
+		bitmap_from_arr64(agg_bm, agg->بٹ, npossible);
+		گنتی += sysfs_emit_at(buf, گنتی, "%s: %*pbl\n",
+				       scx_cap_نام[cap], npossible, agg_bm);
 	}
-	return count;
+	واپس گنتی;
 }
 SCX_ATTR(caps);
-#endif	/* CONFIG_EXT_SUB_SCHED */
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 
-static struct attribute *scx_sched_attrs[] = {
+ساکن ساخت attribute *scx_sched_attrs[] = {
 	&scx_attr_ops.attr,
 	&scx_attr_events.attr,
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 	&scx_attr_caps.attr,
-#endif
-	NULL,
+#اگر_ختم
+	تہی,
 };
 ATTRIBUTE_GROUPS(scx_sched);
 
-static const struct kobj_type scx_ktype = {
+ساکن ثابت ساخت kobj_type scx_ktype = {
 	.release = scx_kobj_release,
 	.sysfs_ops = &kobj_sysfs_ops,
 	.default_groups = scx_sched_groups,
 };
 
-static int scx_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
+ساکن صحیح scx_uevent(ثابت ساخت kobject *kobj, ساخت kobj_uevent_env *env)
 {
-	const struct scx_sched *sch;
+	ثابت ساخت scx_sched *sch;
 
 	/*
 	 * scx_uevent() can be reached by both scx_sched kobjects (scx_ktype)
 	 * and sub-scheduler kset kobjects (kset_ktype) through the parent
 	 * chain walk. Filter out the latter to avoid invalid casts.
 	 */
-	if (kobj->ktype != &scx_ktype)
-		return 0;
+	اگر (kobj->ktype != &scx_ktype)
+		واپس 0;
 
-	sch = container_of(kobj, struct scx_sched, kobj);
+	sch = container_کا(kobj, ساخت scx_sched, kobj);
 
-	return add_uevent_var(env, "SCXOPS=%s", sch->ops.name);
+	واپس جوڑو_uevent_var(env, "SCXOPS=%s", sch->ops.name);
 }
 
-static const struct kset_uevent_ops scx_uevent_ops = {
+ساکن ثابت ساخت kset_uevent_ops scx_uevent_ops = {
 	.uevent = scx_uevent,
 };
 
@@ -5692,15 +5692,15 @@ static const struct kset_uevent_ops scx_uevent_ops = {
  * Used by sched_fork() and __setscheduler_class() to pick the matching
  * sched_class. dl/rt are already handled.
  */
-bool task_should_scx(int policy)
+bool task_should_scx(صحیح policy)
 {
 	/* if disabled, nothing should be on it */
-	if (!scx_enabled())
-		return false;
+	اگر (!scx_enabled())
+		واپس false;
 
 	/* scx is taking over all SCHED_OTHER and SCHED_EXT tasks */
-	if (READ_ONCE(scx_switching_all))
-		return true;
+	اگر (READ_ONCE(scx_switching_all))
+		واپس true;
 
 	/*
 	 * scx is tearing down - keep new SCHED_EXT tasks out.
@@ -5715,30 +5715,30 @@ bool task_should_scx(int policy)
 	 * the stalled task, the disable path can never grab the mutex to clear
 	 * scx_switching_all.
 	 */
-	if (unlikely(scx_enable_state() == SCX_DISABLING))
-		return false;
+	اگر (unlikely(scx_enable_state() == SCX_DISABLING))
+		واپس false;
 
-	return policy == SCHED_EXT;
+	واپس policy == SCHED_EXT;
 }
 
-bool scx_allow_ttwu_queue(const struct task_struct *p)
+bool scx_allow_ttwu_قطار(ثابت ساخت task_struct *p)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
-	if (!scx_enabled())
-		return true;
+	اگر (!scx_enabled())
+		واپس true;
 
 	sch = scx_task_sched(p);
-	if (unlikely(!sch))
-		return true;
+	اگر (unlikely(!sch))
+		واپس true;
 
-	if (sch->ops.flags & SCX_OPS_ALLOW_QUEUED_WAKEUP)
-		return true;
+	اگر (sch->ops.flags & SCX_OPS_ALLOW_QUEUED_WAKEUP)
+		واپس true;
 
-	if (unlikely(p->sched_class != &ext_sched_class))
-		return true;
+	اگر (unlikely(p->sched_class != &ext_sched_class))
+		واپس true;
 
-	return false;
+	واپس false;
 }
 
 /**
@@ -5753,27 +5753,27 @@ bool scx_allow_ttwu_queue(const struct task_struct *p)
  * resolve the lockup. %false if sched_ext is not enabled or abort was already
  * initiated by someone else.
  */
-static __printf(2, 3) bool handle_lockup(int exit_cpu, const char *fmt, ...)
+ساکن __printf(2, 3) bool handle_lockup(صحیح exit_cpu, ثابت حرف *fmt, ...)
 {
-	struct scx_sched *sch;
-	va_list args;
+	ساخت scx_sched *sch;
+	va_list دلائل;
 	bool ret;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
-	if (unlikely(!sch))
-		return false;
+	sch = rcu_dereference(scx_جڑ);
+	اگر (unlikely(!sch))
+		واپس false;
 
-	switch (scx_enable_state()) {
-	case SCX_ENABLING:
-	case SCX_ENABLED:
-		va_start(args, fmt);
-		ret = scx_vexit(sch, SCX_EXIT_ERROR, 0, exit_cpu, fmt, args);
-		va_end(args);
-		return ret;
-	default:
-		return false;
+	انتخاب (scx_enable_state()) {
+	حالت SCX_ENABLING:
+	حالت SCX_ENABLED:
+		va_آغاز(دلائل, fmt);
+		ret = scx_vexit(sch, SCX_EXIT_ERROR, 0, exit_cpu, fmt, دلائل);
+		va_انتہا(دلائل);
+		واپس ret;
+	طےشدہ:
+		واپس false;
 	}
 }
 
@@ -5790,46 +5790,46 @@ static __printf(2, 3) bool handle_lockup(int exit_cpu, const char *fmt, ...)
  * resolve the reported RCU stall. %false if sched_ext is not enabled or someone
  * else already initiated abort.
  */
-bool scx_rcu_cpu_stall(const struct cpumask *stalled_mask)
+bool scx_rcu_cpu_stall(ثابت ساخت cpumask *stalled_نقاب)
 {
-	struct scx_sched *sch;
-	struct scx_exit_info *ei;
-	int exit_cpu;
+	ساخت scx_sched *sch;
+	ساخت scx_exit_info *ei;
+	صحیح exit_cpu;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
-	if (unlikely(!sch))
-		return false;
+	sch = rcu_dereference(scx_جڑ);
+	اگر (unlikely(!sch))
+		واپس false;
 
-	switch (scx_enable_state()) {
-	case SCX_ENABLING:
-	case SCX_ENABLED:
-		break;
-	default:
-		return false;
+	انتخاب (scx_enable_state()) {
+	حالت SCX_ENABLING:
+	حالت SCX_ENABLED:
+		توڑو;
+	طےشدہ:
+		واپس false;
 	}
 
-	exit_cpu = cpumask_empty(stalled_mask) ? -1 : (int)cpumask_first(stalled_mask);
+	exit_cpu = cpumask_خالی_خانے(stalled_نقاب) ? -1 : (صحیح)cpumask_پہلا(stalled_نقاب);
 	ei = sch->exit_info;
 
 	guard(preempt)();
 
-	if (!scx_claim_exit(sch, SCX_EXIT_ERROR))
-		return false;
+	اگر (!scx_claim_exit(sch, SCX_EXIT_ERROR))
+		واپس false;
 
-#ifdef CONFIG_STACKTRACE
-	ei->bt_len = stack_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
-#endif
-	scnprintf(ei->msg, SCX_EXIT_MSG_LEN, "RCU CPU stall on CPUs (%*pbl)",
-		  cpumask_pr_args(stalled_mask));
-	ei->kind = SCX_EXIT_ERROR;
+#اگر_تعریف_شدہ CONFIG_STACKTRACE
+	ei->bt_len = ڈھیر_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
+#اگر_ختم
+	scnprintf(ei->پیغام, SCX_EXIT_پیغام_LEN, "RCU CPU stall on CPUs (%*pbl)",
+		  cpumask_pr_دلائل(stalled_نقاب));
+	ei->قسم = SCX_EXIT_ERROR;
 	ei->reason = scx_exit_reason(SCX_EXIT_ERROR);
 	ei->exit_cpu = exit_cpu;
-	cpumask_copy(sch->stall_cpus, stalled_mask);
+	cpumask_copy(sch->stall_cpus, stalled_نقاب);
 
-	irq_work_queue(&sch->disable_irq_work);
-	return true;
+	irq_work_قطار(&sch->disable_irq_work);
+	واپس true;
 }
 
 /**
@@ -5842,12 +5842,12 @@ bool scx_rcu_cpu_stall(const struct cpumask *stalled_mask)
  * soft-lockup watchdog when the triggering point is close and tries to unjam
  * the system and aborting the BPF scheduler.
  */
-void scx_softlockup(u32 dur_s)
+خالی scx_softlockup(u32 dur_s)
 {
-	int cpu = smp_processor_id();
+	صحیح cpu = smp_processor_id();
 
-	if (!handle_lockup(cpu, "soft lockup - CPU %d stuck for %us", cpu, dur_s))
-		return;
+	اگر (!handle_lockup(cpu, "soft lockup - CPU %d stuck for %us", cpu, dur_s))
+		واپس;
 
 	printk_deferred(KERN_ERR "sched_ext: Soft lockup - CPU %d stuck for %us, disabling BPF scheduler\n",
 			cpu, dur_s);
@@ -5870,26 +5870,26 @@ void scx_softlockup(u32 dur_s)
  * resolve the lockup. %false if sched_ext is not enabled or abort was already
  * initiated by someone else.
  */
-bool scx_hardlockup(int cpu)
+bool scx_hardlockup(صحیح cpu)
 {
-	if (!handle_lockup(cpu, "hard lockup - CPU %d", cpu))
-		return false;
+	اگر (!handle_lockup(cpu, "hard lockup - CPU %d", cpu))
+		واپس false;
 
 	printk_deferred(KERN_ERR "sched_ext: Hard lockup - CPU %d, disabling BPF scheduler\n",
 			cpu);
-	return true;
+	واپس true;
 }
 
-static u32 bypass_lb_cpu(struct scx_sched *sch, s32 donor,
-			 struct cpumask *donee_mask, struct cpumask *resched_mask,
-			 u32 nr_donor_target, u32 nr_donee_target)
+ساکن u32 bypass_lb_cpu(ساخت scx_sched *sch, s32 donor,
+			 ساخت cpumask *donee_نقاب, ساخت cpumask *resched_نقاب,
+			 u32 nr_donor_ہدف, u32 nr_donee_ہدف)
 {
-	struct rq *donor_rq = cpu_rq(donor);
-	struct scx_dispatch_q *donor_dsq = scx_bypass_dsq(sch, donor);
-	struct task_struct *p, *n;
-	struct scx_dsq_list_node cursor = INIT_DSQ_LIST_CURSOR(cursor, donor_dsq, 0);
-	s32 delta = READ_ONCE(donor_dsq->nr) - nr_donor_target;
-	u32 nr_balanced = 0, min_delta_us;
+	ساخت rq *donor_rq = cpu_rq(donor);
+	ساخت scx_dispatch_q *donor_dsq = scx_bypass_dsq(sch, donor);
+	ساخت task_struct *p, *n;
+	ساخت scx_dsq_list_گرہ cursor = INIT_DSQ_LIST_CURSOR(cursor, donor_dsq, 0);
+	s32 delta = READ_ONCE(donor_dsq->nr) - nr_donor_ہدف;
+	u32 nr_متوازن = 0, min_delta_us;
 
 	/*
 	 * All we want to guarantee is reasonable forward progress. No reason to
@@ -5898,27 +5898,27 @@ static u32 bypass_lb_cpu(struct scx_sched *sch, s32 donor,
 	 * threshold.
 	 */
 	min_delta_us = READ_ONCE(scx_bypass_lb_intv_us) / SCX_BYPASS_LB_MIN_DELTA_DIV;
-	if (delta < DIV_ROUND_UP(min_delta_us, READ_ONCE(scx_slice_bypass_us)))
-		return 0;
+	اگر (delta < DIV_باری_اوپر(min_delta_us, READ_ONCE(scx_قاش_bypass_us)))
+		واپس 0;
 
-	raw_spin_rq_lock_irq(donor_rq);
-	raw_spin_lock(&donor_dsq->lock);
-	list_add(&cursor.node, &donor_dsq->list);
+	raw_spin_rq_تالا_irq(donor_rq);
+	raw_spin_تالا(&donor_dsq->تالا);
+	list_جوڑو(&cursor.گرہ, &donor_dsq->list);
 resume:
-	n = container_of(&cursor, struct task_struct, scx.dsq_list);
-	n = nldsq_next_task(donor_dsq, n, false);
+	n = container_کا(&cursor, ساخت task_struct, scx.dsq_list);
+	n = nldsq_اگلا_task(donor_dsq, n, false);
 
-	while ((p = n)) {
-		struct scx_dispatch_q *donee_dsq;
-		int donee;
+	جب ((p = n)) {
+		ساخت scx_dispatch_q *donee_dsq;
+		صحیح donee;
 
-		n = nldsq_next_task(donor_dsq, n, false);
+		n = nldsq_اگلا_task(donor_dsq, n, false);
 
-		if (donor_dsq->nr <= nr_donor_target)
-			break;
+		اگر (donor_dsq->nr <= nr_donor_ہدف)
+			توڑو;
 
-		if (cpumask_empty(donee_mask))
-			break;
+		اگر (cpumask_خالی_خانے(donee_نقاب))
+			توڑو;
 
 		/*
 		 * If an earlier pass placed @p on @donor_dsq from a different
@@ -5926,12 +5926,12 @@ resume:
 		 * previous CPU and task_rq(@p) != @donor_rq. @p can't be moved
 		 * without its rq locked. Skip.
 		 */
-		if (task_rq(p) != donor_rq)
-			continue;
+		اگر (task_rq(p) != donor_rq)
+			جاری;
 
-		donee = cpumask_any_and_distribute(donee_mask, p->cpus_ptr);
-		if (donee >= nr_cpu_ids)
-			continue;
+		donee = cpumask_any_and_distribute(donee_نقاب, p->cpus_ptr);
+		اگر (donee >= nr_cpu_ids)
+			جاری;
 
 		donee_dsq = scx_bypass_dsq(sch, donee);
 
@@ -5939,8 +5939,8 @@ resume:
 		 * $p's rq is not locked but $p's DSQ lock protects its
 		 * scheduling properties making this test safe.
 		 */
-		if (!task_can_run_on_remote_rq(sch, p, cpu_rq(donee), false))
-			continue;
+		اگر (!task_can_تسلسل_on_remote_rq(sch, p, cpu_rq(donee), false))
+			جاری;
 
 		/*
 		 * Moving $p from one non-local DSQ to another. The source rq
@@ -5953,52 +5953,52 @@ resume:
 		 * The nested locking is safe as only this LB moves tasks
 		 * between bypass DSQs.
 		 */
-		dispatch_dequeue_locked(p, donor_dsq);
-		scx_dispatch_enqueue(sch, cpu_rq(donee), donee_dsq, p, 0, 0, SCX_ENQ_NESTED);
+		dispatch_قطار_سے_نکالو_locked(p, donor_dsq);
+		scx_dispatch_قطار_میں_ڈالو(sch, cpu_rq(donee), donee_dsq, p, 0, 0, SCX_ENQ_NESTED);
 
 		/*
 		 * $donee might have been idle and need to be woken up. No need
 		 * to be clever. Kick every CPU that receives tasks.
 		 */
-		cpumask_set_cpu(donee, resched_mask);
+		cpumask_سیٹ_cpu(donee, resched_نقاب);
 
-		if (READ_ONCE(donee_dsq->nr) >= nr_donee_target)
-			cpumask_clear_cpu(donee, donee_mask);
+		اگر (READ_ONCE(donee_dsq->nr) >= nr_donee_ہدف)
+			cpumask_clear_cpu(donee, donee_نقاب);
 
-		nr_balanced++;
-		if (!(nr_balanced % SCX_BYPASS_LB_BATCH) && n) {
-			list_move_tail(&cursor.node, &n->scx.dsq_list.node);
-			raw_spin_unlock(&donor_dsq->lock);
-			scx_rq_lock_drop(donor_rq);
+		nr_متوازن++;
+		اگر (!(nr_متوازن % SCX_BYPASS_LB_BATCH) && n) {
+			list_move_دم(&cursor.گرہ, &n->scx.dsq_list.گرہ);
+			raw_spin_unlock(&donor_dsq->تالا);
+			scx_rq_تالا_drop(donor_rq);
 			raw_spin_rq_unlock_irq(donor_rq);
 			cpu_relax();
-			raw_spin_rq_lock_irq(donor_rq);
-			raw_spin_lock(&donor_dsq->lock);
-			goto resume;
+			raw_spin_rq_تالا_irq(donor_rq);
+			raw_spin_تالا(&donor_dsq->تالا);
+			جاؤ resume;
 		}
 	}
 
-	list_del_init(&cursor.node);
-	raw_spin_unlock(&donor_dsq->lock);
-	scx_rq_lock_drop(donor_rq);
+	list_del_init(&cursor.گرہ);
+	raw_spin_unlock(&donor_dsq->تالا);
+	scx_rq_تالا_drop(donor_rq);
 	raw_spin_rq_unlock_irq(donor_rq);
 
-	return nr_balanced;
+	واپس nr_متوازن;
 }
 
-static void bypass_lb_node(struct scx_sched *sch, int node)
+ساکن خالی bypass_lb_گرہ(ساخت scx_sched *sch, صحیح گرہ)
 {
-	const struct cpumask *node_mask = cpumask_of_node(node);
-	struct cpumask *donee_mask = sch->bypass_lb_donee_cpumask;
-	struct cpumask *resched_mask = sch->bypass_lb_resched_cpumask;
-	u32 nr_tasks = 0, nr_cpus = 0, nr_balanced = 0;
-	u32 nr_target, nr_donor_target;
+	ثابت ساخت cpumask *گرہ_نقاب = cpumask_کا_گرہ(گرہ);
+	ساخت cpumask *donee_نقاب = sch->bypass_lb_donee_cpumask;
+	ساخت cpumask *resched_نقاب = sch->bypass_lb_resched_cpumask;
+	u32 nr_tasks = 0, nr_cpus = 0, nr_متوازن = 0;
+	u32 nr_ہدف, nr_donor_ہدف;
 	u32 before_min = U32_MAX, before_max = 0;
 	u32 after_min = U32_MAX, after_max = 0;
-	int cpu;
+	صحیح cpu;
 
 	/* count the target tasks and CPUs */
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
+	for_each_cpu_and(cpu, cpu_online_نقاب, گرہ_نقاب) {
 		u32 nr = READ_ONCE(scx_bypass_dsq(sch, cpu)->nr);
 
 		nr_tasks += nr;
@@ -6008,41 +6008,41 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 		before_max = max(nr, before_max);
 	}
 
-	if (!nr_cpus)
-		return;
+	اگر (!nr_cpus)
+		واپس;
 
 	/*
 	 * We don't want CPUs to have more than $nr_donor_target tasks and
 	 * balancing to fill donee CPUs upto $nr_target. Once targets are
 	 * calculated, find the donee CPUs.
 	 */
-	nr_target = DIV_ROUND_UP(nr_tasks, nr_cpus);
-	nr_donor_target = DIV_ROUND_UP(nr_target * SCX_BYPASS_LB_DONOR_PCT, 100);
+	nr_ہدف = DIV_باری_اوپر(nr_tasks, nr_cpus);
+	nr_donor_ہدف = DIV_باری_اوپر(nr_ہدف * SCX_BYPASS_LB_DONOR_PCT, 100);
 
-	cpumask_clear(donee_mask);
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
-		if (READ_ONCE(scx_bypass_dsq(sch, cpu)->nr) < nr_target)
-			cpumask_set_cpu(cpu, donee_mask);
+	cpumask_clear(donee_نقاب);
+	for_each_cpu_and(cpu, cpu_online_نقاب, گرہ_نقاب) {
+		اگر (READ_ONCE(scx_bypass_dsq(sch, cpu)->nr) < nr_ہدف)
+			cpumask_سیٹ_cpu(cpu, donee_نقاب);
 	}
 
 	/* iterate !donee CPUs and see if they should be offloaded */
-	cpumask_clear(resched_mask);
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
-		if (cpumask_empty(donee_mask))
-			break;
-		if (cpumask_test_cpu(cpu, donee_mask))
-			continue;
-		if (READ_ONCE(scx_bypass_dsq(sch, cpu)->nr) <= nr_donor_target)
-			continue;
+	cpumask_clear(resched_نقاب);
+	for_each_cpu_and(cpu, cpu_online_نقاب, گرہ_نقاب) {
+		اگر (cpumask_خالی_خانے(donee_نقاب))
+			توڑو;
+		اگر (cpumask_test_cpu(cpu, donee_نقاب))
+			جاری;
+		اگر (READ_ONCE(scx_bypass_dsq(sch, cpu)->nr) <= nr_donor_ہدف)
+			جاری;
 
-		nr_balanced += bypass_lb_cpu(sch, cpu, donee_mask, resched_mask,
-					     nr_donor_target, nr_target);
+		nr_متوازن += bypass_lb_cpu(sch, cpu, donee_نقاب, resched_نقاب,
+					     nr_donor_ہدف, nr_ہدف);
 	}
 
-	for_each_cpu(cpu, resched_mask)
+	for_each_cpu(cpu, resched_نقاب)
 		resched_cpu(cpu);
 
-	for_each_cpu_and(cpu, cpu_online_mask, node_mask) {
+	for_each_cpu_and(cpu, cpu_online_نقاب, گرہ_نقاب) {
 		u32 nr = READ_ONCE(scx_bypass_dsq(sch, cpu)->nr);
 
 		after_min = min(nr, after_min);
@@ -6050,7 +6050,7 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
 
 	}
 
-	trace_sched_ext_bypass_lb(node, nr_cpus, nr_tasks, nr_balanced,
+	trace_sched_ext_bypass_lb(گرہ, nr_cpus, nr_tasks, nr_متوازن,
 				  before_min, before_max, after_min, after_max);
 }
 
@@ -6063,56 +6063,56 @@ static void bypass_lb_node(struct scx_sched *sch, int node)
  * outcomes, a simple load balancing mechanism is implemented by the following
  * timer which runs periodically while bypass mode is in effect.
  */
-static void scx_bypass_lb_timerfn(struct timer_list *timer)
+ساکن خالی scx_bypass_lb_timerfn(ساخت timer_list *timer)
 {
-	struct scx_sched *sch = container_of(timer, struct scx_sched, bypass_lb_timer);
-	int node;
+	ساخت scx_sched *sch = container_کا(timer, ساخت scx_sched, bypass_lb_timer);
+	صحیح گرہ;
 	u32 intv_us;
 
-	if (!scx_bypass_dsp_enabled(sch))
-		return;
+	اگر (!scx_bypass_dsp_enabled(sch))
+		واپس;
 
-	for_each_node_with_cpus(node)
-		bypass_lb_node(sch, node);
+	for_each_گرہ_with_cpus(گرہ)
+		bypass_lb_گرہ(sch, گرہ);
 
 	intv_us = READ_ONCE(scx_bypass_lb_intv_us);
-	if (intv_us)
-		mod_timer(timer, jiffies + usecs_to_jiffies(intv_us));
+	اگر (intv_us)
+		mod_timer(timer, jiffies + usecs_مقصد_jiffies(intv_us));
 }
 
-static bool inc_bypass_depth(struct scx_sched *sch)
+ساکن bool inc_bypass_گہرائی(ساخت scx_sched *sch)
 {
-	lockdep_assert_held(&scx_bypass_lock);
+	lockdep_assert_held(&scx_bypass_تالا);
 
-	WARN_ON_ONCE(sch->bypass_depth < 0);
-	WRITE_ONCE(sch->bypass_depth, sch->bypass_depth + 1);
-	if (sch->bypass_depth != 1)
-		return false;
+	WARN_ON_ONCE(sch->bypass_گہرائی < 0);
+	WRITE_ONCE(sch->bypass_گہرائی, sch->bypass_گہرائی + 1);
+	اگر (sch->bypass_گہرائی != 1)
+		واپس false;
 
-	WRITE_ONCE(sch->slice_dfl, READ_ONCE(scx_slice_bypass_us) * NSEC_PER_USEC);
+	WRITE_ONCE(sch->قاش_dfl, READ_ONCE(scx_قاش_bypass_us) * NSEC_فی_USEC);
 	sch->bypass_timestamp = ktime_get_ns();
-	scx_add_event(sch, SCX_EV_BYPASS_ACTIVATE, 1);
-	return true;
+	scx_جوڑو_event(sch, SCX_EV_BYPASS_ACTIVATE, 1);
+	واپس true;
 }
 
-static bool dec_bypass_depth(struct scx_sched *sch)
+ساکن bool dec_bypass_گہرائی(ساخت scx_sched *sch)
 {
-	lockdep_assert_held(&scx_bypass_lock);
+	lockdep_assert_held(&scx_bypass_تالا);
 
-	WARN_ON_ONCE(sch->bypass_depth < 1);
-	WRITE_ONCE(sch->bypass_depth, sch->bypass_depth - 1);
-	if (sch->bypass_depth != 0)
-		return false;
+	WARN_ON_ONCE(sch->bypass_گہرائی < 1);
+	WRITE_ONCE(sch->bypass_گہرائی, sch->bypass_گہرائی - 1);
+	اگر (sch->bypass_گہرائی != 0)
+		واپس false;
 
-	WRITE_ONCE(sch->slice_dfl, SCX_SLICE_DFL);
-	scx_add_event(sch, SCX_EV_BYPASS_DURATION,
+	WRITE_ONCE(sch->قاش_dfl, SCX_قاش_DFL);
+	scx_جوڑو_event(sch, SCX_EV_BYPASS_DURATION,
 		      ktime_get_ns() - sch->bypass_timestamp);
-	return true;
+	واپس true;
 }
 
-static void enable_bypass_dsp(struct scx_sched *sch)
+ساکن خالی enable_bypass_dsp(ساخت scx_sched *sch)
 {
-	struct scx_sched *host = scx_parent(sch) ?: sch;
+	ساخت scx_sched *host = scx_والد(sch) ?: sch;
 	u32 intv_us = READ_ONCE(scx_bypass_lb_intv_us);
 	s32 ret;
 
@@ -6120,8 +6120,8 @@ static void enable_bypass_dsp(struct scx_sched *sch)
 	 * @sch->bypass_depth transitioning from 0 to 1 triggers enabling.
 	 * Shouldn't stagger.
 	 */
-	if (WARN_ON_ONCE(test_and_set_bit(0, &sch->bypass_dsp_claim)))
-		return;
+	اگر (WARN_ON_ONCE(test_and_سیٹ_ثنائی_ہندسہ(0, &sch->bypass_dsp_claim)))
+		واپس;
 
 	/*
 	 * When a sub-sched bypasses, its tasks are queued on the bypass DSQs of
@@ -6136,11 +6136,11 @@ static void enable_bypass_dsp(struct scx_sched *sch)
 	 * the bypass dispatch handling path from both bypassing and hosting
 	 * scheds. Bump enable depth on both @sch and bypass dispatch host.
 	 */
-	ret = atomic_inc_return(&sch->bypass_dsp_enable_depth);
+	ret = atomic_inc_return(&sch->bypass_dsp_enable_گہرائی);
 	WARN_ON_ONCE(ret <= 0);
 
-	if (host != sch) {
-		ret = atomic_inc_return(&host->bypass_dsp_enable_depth);
+	اگر (host != sch) {
+		ret = atomic_inc_return(&host->bypass_dsp_enable_گہرائی);
 		WARN_ON_ONCE(ret <= 0);
 	}
 
@@ -6148,24 +6148,24 @@ static void enable_bypass_dsp(struct scx_sched *sch)
 	 * The LB timer will stop running if bypass dispatch is disabled. Start
 	 * after enabling bypass dispatch.
 	 */
-	if (intv_us && !timer_pending(&host->bypass_lb_timer))
+	اگر (intv_us && !timer_pending(&host->bypass_lb_timer))
 		mod_timer(&host->bypass_lb_timer,
-			  jiffies + usecs_to_jiffies(intv_us));
+			  jiffies + usecs_مقصد_jiffies(intv_us));
 }
 
 /* may be called without holding scx_bypass_lock */
-void scx_disable_bypass_dsp(struct scx_sched *sch)
+خالی scx_disable_bypass_dsp(ساخت scx_sched *sch)
 {
 	s32 ret;
 
-	if (!test_and_clear_bit(0, &sch->bypass_dsp_claim))
-		return;
+	اگر (!test_and_clear_ثنائی_ہندسہ(0, &sch->bypass_dsp_claim))
+		واپس;
 
-	ret = atomic_dec_return(&sch->bypass_dsp_enable_depth);
+	ret = atomic_dec_return(&sch->bypass_dsp_enable_گہرائی);
 	WARN_ON_ONCE(ret < 0);
 
-	if (scx_parent(sch)) {
-		ret = atomic_dec_return(&scx_parent(sch)->bypass_dsp_enable_depth);
+	اگر (scx_والد(sch)) {
+		ret = atomic_dec_return(&scx_والد(sch)->bypass_dsp_enable_گہرائی);
 		WARN_ON_ONCE(ret < 0);
 	}
 }
@@ -6189,17 +6189,17 @@ void scx_disable_bypass_dsp(struct scx_sched *sch)
  * However, the root uses a separate per-rq flag so its re-notify keeps working
  * even when !CONFIG_EXT_SUB_SCHED.
  */
-static void unbypass_renotify_idle(struct rq *rq, struct scx_sched *pos,
-				   struct scx_sched_pcpu *pcpu)
+ساکن خالی unbypass_renotify_idle(ساخت rq *rq, ساخت scx_sched *pos,
+				   ساخت scx_sched_pcpu *pcpu)
 {
-	if (!pos->level) {
-		rq->scx.flags |= SCX_RQ_ROOT_IDLE_RENOTIFY;
-		return;
+	اگر (!pos->level) {
+		rq->scx.flags |= SCX_RQ_جڑ_IDLE_RENOTIFY;
+		واپس;
 	}
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 	pcpu->idle_renotify = true;
 	rq->scx.flags |= SCX_RQ_SUB_IDLE_RENOTIFY;
-#endif
+#اگر_ختم
 }
 
 /**
@@ -6234,21 +6234,21 @@ static void unbypass_renotify_idle(struct rq *rq, struct scx_sched *pos,
  *
  * - scx_prio_less() reverts to the default runnable_at order.
  */
-void scx_bypass(struct scx_sched *sch, bool bypass)
+خالی scx_bypass(ساخت scx_sched *sch, bool bypass)
 {
-	struct scx_sched *pos;
-	unsigned long flags;
-	int cpu;
-	bool changed;
+	ساخت scx_sched *pos;
+	غیرعلامتی طویل flags;
+	صحیح cpu;
+	bool بدلا;
 
-	raw_spin_lock_irqsave(&scx_bypass_lock, flags);
+	raw_spin_تالا_irqsave(&scx_bypass_تالا, flags);
 
-	if (bypass) {
-		changed = inc_bypass_depth(sch);
-		if (changed)
+	اگر (bypass) {
+		بدلا = inc_bypass_گہرائی(sch);
+		اگر (بدلا)
 			enable_bypass_dsp(sch);
-	} else {
-		changed = dec_bypass_depth(sch);
+	} ورنہ {
+		بدلا = dec_bypass_گہرائی(sch);
 	}
 
 	/*
@@ -6258,25 +6258,25 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 	 * call propagates whether or not @sch changed state. The descendants'
 	 * claims are released below with @sch's, after their tasks have moved.
 	 */
-	raw_spin_lock(&scx_sched_lock);
+	raw_spin_تالا(&scx_sched_تالا);
 	scx_for_each_descendant_pre(pos, sch) {
-		if (pos == sch)
-			continue;
-		if (bypass) {
-			if (inc_bypass_depth(pos))
+		اگر (pos == sch)
+			جاری;
+		اگر (bypass) {
+			اگر (inc_bypass_گہرائی(pos))
 				enable_bypass_dsp(pos);
-		} else {
-			dec_bypass_depth(pos);
+		} ورنہ {
+			dec_bypass_گہرائی(pos);
 		}
 	}
-	raw_spin_unlock(&scx_sched_lock);
+	raw_spin_unlock(&scx_sched_تالا);
 
 	/*
 	 * A descendant's depth is at least @sch's, so no bypass state changed
 	 * unless @sch's did.
 	 */
-	if (!changed)
-		goto unlock;
+	اگر (!بدلا)
+		جاؤ unlock;
 
 	/*
 	 * No task property is changing. We just need to make sure all currently
@@ -6288,38 +6288,38 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 	 * cpus_read_lock(). Walk all possible CPUs instead of online.
 	 */
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
-		struct task_struct *p, *n;
+		ساخت rq *rq = cpu_rq(cpu);
+		ساخت task_struct *p, *n;
 
-		raw_spin_rq_lock(rq);
-		raw_spin_lock(&scx_sched_lock);
+		raw_spin_rq_تالا(rq);
+		raw_spin_تالا(&scx_sched_تالا);
 
 		scx_for_each_descendant_pre(pos, sch) {
-			struct scx_sched_pcpu *pcpu = per_cpu_ptr(pos->pcpu, cpu);
+			ساخت scx_sched_pcpu *pcpu = فی_cpu_ptr(pos->pcpu, cpu);
 			bool was_bypassing = pcpu->flags & SCX_SCHED_PCPU_BYPASSING;
 
-			if (pos->bypass_depth) {
+			اگر (pos->bypass_گہرائی) {
 				pcpu->flags |= SCX_SCHED_PCPU_BYPASSING;
-			} else {
+			} ورنہ {
 				pcpu->flags &= ~SCX_SCHED_PCPU_BYPASSING;
-				if (was_bypassing) {
+				اگر (was_bypassing) {
 					unbypass_renotify_idle(rq, pos, pcpu);
 					scx_unbypass_replay_ecaps(rq, pos);
 				}
 			}
 		}
 
-		raw_spin_unlock(&scx_sched_lock);
+		raw_spin_unlock(&scx_sched_تالا);
 
 		/*
 		 * We need to guarantee that no tasks are on the BPF scheduler
 		 * while bypassing. Either we see enabled or the enable path
 		 * sees scx_bypassing() before moving tasks to SCX.
 		 */
-		if (!scx_enabled()) {
-			scx_rq_lock_drop(rq);
+		اگر (!scx_enabled()) {
+			scx_rq_تالا_drop(rq);
 			raw_spin_rq_unlock(rq);
-			continue;
+			جاری;
 		}
 
 		/*
@@ -6329,146 +6329,146 @@ void scx_bypass(struct scx_sched *sch, bool bypass)
 		 * to the tail of the list, safe reverse iteration can still
 		 * visit all nodes.
 		 */
-		list_for_each_entry_safe_reverse(p, n, &rq->scx.runnable_list,
-						 scx.runnable_node) {
-			if (!scx_is_descendant(scx_task_sched(p), sch))
-				continue;
+		list_for_each_اندراج_محفوظ_الٹ(p, n, &rq->scx.runnable_list,
+						 scx.runnable_گرہ) {
+			اگر (!scx_is_descendant(scx_task_sched(p), sch))
+				جاری;
 
 			/*
 			 * Bypass trumps protection. Cycling clears for queued
 			 * tasks but current task needs explicit stripping.
 			 */
-			if (bypass && task_current(rq, p))
-				scx_task_slice_ended(rq, p);
+			اگر (bypass && task_current(rq, p))
+				scx_task_قاش_ended(rq, p);
 
 			/* cycling deq/enq is enough, see the function comment */
-			scoped_guard (sched_change, p, DEQUEUE_SAVE | DEQUEUE_MOVE) {
+			scoped_guard (sched_change, p, قطار_سے_نکالو_SAVE | قطار_سے_نکالو_MOVE) {
 				/* nothing */ ;
 			}
 		}
 
 		/* resched to restore ticks and idle state */
-		if (cpu_online(cpu) || cpu == smp_processor_id())
+		اگر (cpu_online(cpu) || cpu == smp_processor_id())
 			resched_curr(rq);
 
-		scx_rq_lock_drop(rq);
+		scx_rq_تالا_drop(rq);
 		raw_spin_rq_unlock(rq);
 	}
 
 	/* disarming must come after moving all tasks out of the bypass DSQs */
-	if (!bypass) {
-		guard(raw_spinlock)(&scx_sched_lock);
+	اگر (!bypass) {
+		guard(raw_spinlock)(&scx_sched_تالا);
 		scx_for_each_descendant_pre(pos, sch)
-			if (!pos->bypass_depth)
+			اگر (!pos->bypass_گہرائی)
 				scx_disable_bypass_dsp(pos);
 	}
 unlock:
-	raw_spin_unlock_irqrestore(&scx_bypass_lock, flags);
+	raw_spin_unlock_irqrestore(&scx_bypass_تالا, flags);
 }
 
-static void free_exit_info(struct scx_exit_info *ei)
+ساکن خالی free_exit_info(ساخت scx_exit_info *ei)
 {
 	kvfree(ei->dump);
-	kfree(ei->msg);
+	kfree(ei->پیغام);
 	kfree(ei->bt);
 	kfree(ei);
 }
 
-static struct scx_exit_info *alloc_exit_info(size_t exit_dump_len)
+ساکن ساخت scx_exit_info *alloc_exit_info(سائز_t exit_dump_len)
 {
-	struct scx_exit_info *ei;
+	ساخت scx_exit_info *ei;
 
 	ei = kzalloc_obj(*ei);
-	if (!ei)
-		return NULL;
+	اگر (!ei)
+		واپس تہی;
 
 	ei->exit_cpu = -1;
 	ei->bt = kzalloc_objs(ei->bt[0], SCX_EXIT_BT_LEN);
-	ei->msg = kzalloc(SCX_EXIT_MSG_LEN, GFP_KERNEL);
+	ei->پیغام = kzalloc(SCX_EXIT_پیغام_LEN, GFP_KERNEL);
 	ei->dump = kvzalloc(exit_dump_len, GFP_KERNEL);
 
-	if (!ei->bt || !ei->msg || !ei->dump) {
+	اگر (!ei->bt || !ei->پیغام || !ei->dump) {
 		free_exit_info(ei);
-		return NULL;
+		واپس تہی;
 	}
 
-	return ei;
+	واپس ei;
 }
 
-static const char *scx_exit_reason(enum scx_exit_kind kind)
+ساکن ثابت حرف *scx_exit_reason(شمار scx_exit_قسم قسم)
 {
-	switch (kind) {
-	case SCX_EXIT_UNREG:
-		return "unregistered from user space";
-	case SCX_EXIT_UNREG_BPF:
-		return "unregistered from BPF";
-	case SCX_EXIT_UNREG_KERN:
-		return "unregistered from the main kernel";
-	case SCX_EXIT_SYSRQ:
-		return "disabled by sysrq-S";
-	case SCX_EXIT_PARENT:
-		return "parent exiting";
-	case SCX_EXIT_PARENT_KILL:
-		return "killed by parent scheduler";
-	case SCX_EXIT_ERROR:
-		return "runtime error";
-	case SCX_EXIT_ERROR_BPF:
-		return "scx_bpf_error";
-	case SCX_EXIT_ERROR_STALL:
-		return "runnable task stall";
-	case SCX_EXIT_ERROR_REENQ:
-		return "reenqueue limit";
-	case SCX_EXIT_ERROR_RESCUE:
-		return "rescue bandwidth overload";
-	default:
-		return "<UNKNOWN>";
+	انتخاب (قسم) {
+	حالت SCX_EXIT_UNREG:
+		واپس "unregistered from user space";
+	حالت SCX_EXIT_UNREG_BPF:
+		واپس "unregistered from BPF";
+	حالت SCX_EXIT_UNREG_KERN:
+		واپس "unregistered from the main kernel";
+	حالت SCX_EXIT_SYSRQ:
+		واپس "disabled by sysrq-S";
+	حالت SCX_EXIT_والد:
+		واپس "parent exiting";
+	حالت SCX_EXIT_والد_KILL:
+		واپس "killed by parent scheduler";
+	حالت SCX_EXIT_ERROR:
+		واپس "runtime error";
+	حالت SCX_EXIT_ERROR_BPF:
+		واپس "scx_bpf_error";
+	حالت SCX_EXIT_ERROR_STALL:
+		واپس "runnable task stall";
+	حالت SCX_EXIT_ERROR_REENQ:
+		واپس "reenqueue limit";
+	حالت SCX_EXIT_ERROR_RESCUE:
+		واپس "rescue bandwidth overload";
+	طےشدہ:
+		واپس "<UNKNOWN>";
 	}
 }
 
-static void free_kick_syncs(void)
+ساکن خالی free_kick_syncs(خالی)
 {
-	int cpu;
+	صحیح cpu;
 
 	for_each_possible_cpu(cpu) {
-		struct scx_kick_syncs __rcu **ksyncs = per_cpu_ptr(&scx_kick_syncs, cpu);
-		struct scx_kick_syncs *to_free;
+		ساخت scx_kick_syncs __rcu **ksyncs = فی_cpu_ptr(&scx_kick_syncs, cpu);
+		ساخت scx_kick_syncs *مقصد_free;
 
 		/* flush the pending kick before freeing @ksyncs */
 		irq_work_sync(&cpu_rq(cpu)->scx.kick_cpus_irq_work);
-		to_free = rcu_replace_pointer(*ksyncs, NULL, true);
-		if (to_free)
-			kvfree_rcu(to_free, rcu);
+		مقصد_free = rcu_replace_اشارہ_گر(*ksyncs, تہی, true);
+		اگر (مقصد_free)
+			kvfree_rcu(مقصد_free, rcu);
 	}
 }
 
-static void refresh_watchdog(void)
+ساکن خالی refresh_watchdog(خالی)
 {
-	struct scx_sched *sch;
-	unsigned long intv = ULONG_MAX;
+	ساخت scx_sched *sch;
+	غیرعلامتی طویل intv = ULONG_MAX;
 
 	/* take the shortest timeout and use its half for watchdog interval */
-	rcu_read_lock();
-	list_for_each_entry_rcu(sch, &scx_sched_all, all)
+	rcu_read_تالا();
+	list_for_each_اندراج_rcu(sch, &scx_sched_all, all)
 		intv = max(min(intv, sch->watchdog_timeout / 2), 1);
 	rcu_read_unlock();
 
 	WRITE_ONCE(scx_watchdog_timestamp, jiffies);
 	WRITE_ONCE(scx_watchdog_interval, intv);
 
-	if (intv < ULONG_MAX)
+	اگر (intv < ULONG_MAX)
 		mod_delayed_work(system_dfl_wq, &scx_watchdog_work, intv);
-	else
+	ورنہ
 		cancel_delayed_work_sync(&scx_watchdog_work);
 }
 
-s32 scx_link_sched(struct scx_sched *sch)
+s32 scx_link_sched(ساخت scx_sched *sch)
 {
-	scoped_guard(raw_spinlock_irqsave, &scx_bypass_lock)	/* for the parent bypass check */
-	scoped_guard(raw_spinlock, &scx_sched_lock) {
-#ifdef CONFIG_EXT_SUB_SCHED
-		struct scx_sched *parent = scx_parent(sch);
+	scoped_guard(raw_spinlock_irqsave, &scx_bypass_تالا)	/* for the parent bypass check */
+	scoped_guard(raw_spinlock, &scx_sched_تالا) {
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+		ساخت scx_sched *والد = scx_والد(sch);
 
-		if (parent) {
+		اگر (والد) {
 			s32 ret;
 
 			/*
@@ -6476,20 +6476,20 @@ s32 scx_link_sched(struct scx_sched *sch)
 			 * depth count, so inheriting it is tricky and has no
 			 * valid use case. Refuse it.
 			 */
-			if (READ_ONCE(parent->bypass_depth)) {
+			اگر (READ_ONCE(والد->bypass_گہرائی)) {
 				scx_error(sch, "parent bypassing (%d)", -EBUSY);
-				return -EBUSY;
+				واپس -EBUSY;
 			}
 
-			ret = rhashtable_lookup_insert_fast(&scx_sched_hash,
-					&sch->hash_node, scx_sched_hash_params);
-			if (ret) {
+			ret = rhashtable_lookup_داخل_کرو_fast(&scx_sched_hash,
+					&sch->hash_گرہ, scx_sched_hash_params);
+			اگر (ret) {
 				scx_error(sch, "failed to insert into scx_sched_hash (%d)",
 					  ret);
-				return ret;
+				واپس ret;
 			}
 
-			list_add_tail_rcu(&sch->sibling, &parent->children);
+			list_جوڑو_دم_rcu(&sch->sibling, &والد->children);
 
 			/*
 			 * Pairs with the mb after the ->aborting assertion in
@@ -6497,36 +6497,36 @@ s32 scx_link_sched(struct scx_sched *sch)
 			 * out, or the exit path sees us and exits us.
 			 */
 			smp_mb();
-			if (unlikely(READ_ONCE(parent->aborting))) {
-				rhashtable_remove_fast(&scx_sched_hash, &sch->hash_node,
+			اگر (unlikely(READ_ONCE(والد->aborting))) {
+				rhashtable_remove_fast(&scx_sched_hash, &sch->hash_گرہ,
 						       scx_sched_hash_params);
 				list_del_rcu(&sch->sibling);
 				scx_error(sch, "parent disabled (%d)", -ENOENT);
-				return -ENOENT;
+				واپس -ENOENT;
 			}
 
 			sch->linked = true;
 		}
-#endif	/* CONFIG_EXT_SUB_SCHED */
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 
-		list_add_tail_rcu(&sch->all, &scx_sched_all);
+		list_جوڑو_دم_rcu(&sch->all, &scx_sched_all);
 	}
 
 	refresh_watchdog();
-	return 0;
+	واپس 0;
 }
 
-void scx_unlink_sched(struct scx_sched *sch)
+خالی scx_unlink_sched(ساخت scx_sched *sch)
 {
-	scoped_guard(raw_spinlock_irq, &scx_sched_lock) {
-#ifdef CONFIG_EXT_SUB_SCHED
-		if (sch->linked) {
-			rhashtable_remove_fast(&scx_sched_hash, &sch->hash_node,
+	scoped_guard(raw_spinlock_irq, &scx_sched_تالا) {
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+		اگر (sch->linked) {
+			rhashtable_remove_fast(&scx_sched_hash, &sch->hash_گرہ,
 					       scx_sched_hash_params);
 			list_del_rcu(&sch->sibling);
 			sch->linked = false;
 		}
-#endif	/* CONFIG_EXT_SUB_SCHED */
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 		list_del_rcu(&sch->all);
 	}
 
@@ -6538,54 +6538,54 @@ void scx_unlink_sched(struct scx_sched *sch)
  * @sch. Once @sch becomes empty during disable, there's no point in dumping it.
  * This prevents calling dump ops on a dead sch.
  */
-void scx_disable_dump(struct scx_sched *sch)
+خالی scx_disable_dump(ساخت scx_sched *sch)
 {
-	guard(raw_spinlock_irqsave)(&scx_dump_lock);
+	guard(raw_spinlock_irqsave)(&scx_dump_تالا);
 	sch->dump_disabled = true;
 }
 
-void scx_log_sched_disable(struct scx_sched *sch)
+خالی scx_log_sched_disable(ساخت scx_sched *sch)
 {
-	struct scx_exit_info *ei = sch->exit_info;
-	const char *type = scx_parent(sch) ? "sub-scheduler" : "scheduler";
+	ساخت scx_exit_info *ei = sch->exit_info;
+	ثابت حرف *type = scx_والد(sch) ? "sub-scheduler" : "scheduler";
 
-	if (ei->kind >= SCX_EXIT_ERROR) {
+	اگر (ei->قسم >= SCX_EXIT_ERROR) {
 		pr_err("sched_ext: BPF %s \"%s\" disabled (%s)\n", type,
 		       sch->ops.name, ei->reason);
 
-		if (ei->msg[0] != '\0')
-			pr_err("sched_ext: %s: %s\n", sch->ops.name, ei->msg);
-#ifdef CONFIG_STACKTRACE
-		stack_trace_print(ei->bt, ei->bt_len, 2);
-#endif
-	} else {
+		اگر (ei->پیغام[0] != '\0')
+			pr_err("sched_ext: %s: %s\n", sch->ops.name, ei->پیغام);
+#اگر_تعریف_شدہ CONFIG_STACKTRACE
+		ڈھیر_trace_print(ei->bt, ei->bt_len, 2);
+#اگر_ختم
+	} ورنہ {
 		pr_info("sched_ext: BPF %s \"%s\" disabled (%s)\n", type,
 			sch->ops.name, ei->reason);
 	}
 }
 
-static void scx_root_disable(struct scx_sched *sch)
+ساکن خالی scx_جڑ_disable(ساخت scx_sched *sch)
 {
-	struct scx_task_iter sti;
-	struct task_struct *p;
+	ساخت scx_task_iter sti;
+	ساخت task_struct *p;
 	bool was_switched_all;
-	int cpu;
+	صحیح cpu;
 
 	/* guarantee forward progress and wait for descendants to be disabled */
 	scx_bypass(sch, true);
 	drain_descendants(sch);
 
-	switch (scx_set_enable_state(SCX_DISABLING)) {
-	case SCX_DISABLING:
+	انتخاب (scx_سیٹ_enable_state(SCX_DISABLING)) {
+	حالت SCX_DISABLING:
 		WARN_ONCE(true, "sched_ext: duplicate disabling instance?");
-		break;
-	case SCX_DISABLED:
+		توڑو;
+	حالت SCX_DISABLED:
 		pr_warn("sched_ext: ops error detected without ops (%s)\n",
-			sch->exit_info->msg);
-		WARN_ON_ONCE(scx_set_enable_state(SCX_DISABLED) != SCX_DISABLING);
-		goto done;
-	default:
-		break;
+			sch->exit_info->پیغام);
+		WARN_ON_ONCE(scx_سیٹ_enable_state(SCX_DISABLED) != SCX_DISABLING);
+		جاؤ مکمل;
+	طےشدہ:
+		توڑو;
 	}
 
 	/*
@@ -6593,7 +6593,7 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * we can safely use blocking synchronization constructs. Actually
 	 * disable ops.
 	 */
-	mutex_lock(&scx_enable_mutex);
+	mutex_تالا(&scx_enable_mutex);
 
 	was_switched_all = scx_switched_all();
 
@@ -6604,7 +6604,7 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * Shut down cgroup support before tasks so that the cgroup attach and
 	 * migration paths don't race against scx_disable_and_exit_task().
 	 */
-	scx_cgroup_lock();
+	scx_cgroup_تالا();
 	scx_cgroup_enabled = false;
 	scx_cgroup_exit(sch);
 	scx_cgroup_unlock();
@@ -6613,22 +6613,22 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * The BPF scheduler is going away. All tasks including %TASK_DEAD ones
 	 * must be switched out and exited synchronously.
 	 */
-	percpu_down_write(&scx_fork_rwsem);
+	percpu_نیچے_کو_write(&scx_fork_rwsem);
 
 	scx_init_task_enabled = false;
 
-	scx_task_iter_start(&sti, NULL);
-	while ((p = scx_task_iter_next_locked(&sti))) {
-		unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
-		const struct sched_class *old_class = p->sched_class;
-		const struct sched_class *new_class = scx_setscheduler_class(p);
+	scx_task_iter_آغاز(&sti, تہی);
+	جب ((p = scx_task_iter_اگلا_locked(&sti))) {
+		غیرعلامتی صحیح قطار_flags = قطار_سے_نکالو_SAVE | قطار_سے_نکالو_MOVE | قطار_سے_نکالو_NOCLOCK;
+		ثابت ساخت sched_class *old_class = p->sched_class;
+		ثابت ساخت sched_class *new_class = scx_setscheduler_class(p);
 
 		update_rq_clock(task_rq(p));
 
-		if (old_class != new_class)
-			queue_flags |= DEQUEUE_CLASS;
+		اگر (old_class != new_class)
+			قطار_flags |= قطار_سے_نکالو_CLASS;
 
-		scoped_guard (sched_change, p, queue_flags) {
+		scoped_guard (sched_change, p, قطار_flags) {
 			p->sched_class = new_class;
 		}
 
@@ -6638,11 +6638,11 @@ static void scx_root_disable(struct scx_sched *sch)
 
 	scx_disable_dump(sch);
 
-	scx_cgroup_lock();
-	set_cgroup_sched(sch_cgroup(sch), NULL);
+	scx_cgroup_تالا();
+	سیٹ_cgroup_sched(sch_cgroup(sch), تہی);
 	scx_cgroup_unlock();
 
-	percpu_up_write(&scx_fork_rwsem);
+	percpu_اوپر_write(&scx_fork_rwsem);
 
 	/*
 	 * Re-balance the dl_server bandwidth reservations: detach ext_server
@@ -6658,15 +6658,15 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * both servers end up detached and we just WARN.
 	 */
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
+		ساخت rq *rq = cpu_rq(cpu);
 
-		scoped_guard(rq_lock_irqsave, rq) {
+		scoped_guard(rq_تالا_irqsave, rq) {
 			update_rq_clock(rq);
-			if (was_switched_all) {
-				if (WARN_ON_ONCE(dl_server_swap_bw(&rq->ext_server,
+			اگر (was_switched_all) {
+				اگر (WARN_ON_ONCE(dl_server_تبادلہ_bw(&rq->ext_server,
 								   &rq->fair_server)))
 					pr_warn("failed to re-attach fair_server on CPU %d\n", cpu);
-			} else {
+			} ورنہ {
 				dl_server_detach_bw(&rq->ext_server);
 			}
 		}
@@ -6675,18 +6675,18 @@ static void scx_root_disable(struct scx_sched *sch)
 	/* no task is on scx, turn off all the switches and flush in-progress calls */
 	static_branch_disable(&__scx_enabled);
 	static_branch_disable(&__scx_is_cid_type);
-	if (sch->ops.flags & SCX_OPS_TID_TO_TASK)
+	اگر (sch->ops.flags & SCX_OPS_TID_مقصد_TASK)
 		static_branch_disable(&__scx_tid_to_task_enabled);
-	bitmap_zero(sch->has_op, SCX_OPI_END);
+	bitmap_zero(sch->has_op, SCX_OPI_انتہا);
 	scx_idle_disable();
 	synchronize_rcu();
-	if (sch->ops.flags & SCX_OPS_TID_TO_TASK)
-		rhashtable_free_and_destroy(&scx_tid_hash, NULL, NULL);
+	اگر (sch->ops.flags & SCX_OPS_TID_مقصد_TASK)
+		rhashtable_free_and_destroy(&scx_tid_hash, تہی, تہی);
 
 	scx_log_sched_disable(sch);
 
-	if (sch->ops.exit)
-		SCX_CALL_OP(sch, exit, NULL, sch->exit_info);
+	اگر (sch->ops.باہر_نکلو)
+		SCX_CALL_OP(sch, باہر_نکلو, تہی, sch->exit_info);
 
 	/*
 	 * @sch's non-ops programs such as timers and tracers can fire after
@@ -6702,8 +6702,8 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * scx_root clearing and cid table retirement must be inside
 	 * cpus_read_lock(). See handle_hotplug().
 	 */
-	cpus_read_lock();
-	RCU_INIT_POINTER(scx_root, NULL);
+	cpus_read_تالا();
+	RCU_INIT_اشارہ_گر(scx_جڑ, تہی);
 	scx_cid_retire_tables();
 	cpus_read_unlock();
 
@@ -6712,20 +6712,20 @@ static void scx_root_disable(struct scx_sched *sch)
 	 * could observe an object of the same name still in the hierarchy when
 	 * the next scheduler is loaded.
 	 */
-#ifdef CONFIG_EXT_SUB_SCHED
-	if (sch->sub_kset)
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	اگر (sch->sub_kset)
 		kobject_del(&sch->sub_kset->kobj);
-#endif
+#اگر_ختم
 	/* not added if enable failed before scx_sched_sysfs_add() */
-	if (sch->kobj.state_in_sysfs)
+	اگر (sch->kobj.state_اندر_sysfs)
 		kobject_del(&sch->kobj);
 
 	free_kick_syncs();
 
 	mutex_unlock(&scx_enable_mutex);
 
-	WARN_ON_ONCE(scx_set_enable_state(SCX_DISABLED) != SCX_DISABLING);
-done:
+	WARN_ON_ONCE(scx_سیٹ_enable_state(SCX_DISABLED) != SCX_DISABLING);
+مکمل:
 	scx_bypass(sch, false);
 }
 
@@ -6739,15 +6739,15 @@ done:
  * separate helper kthreads parallelizes it. No recursion as only non-PARENT
  * claims propagate.
  */
-static void scx_propagate_exit_irq_workfn(struct irq_work *irq_work)
+ساکن خالی scx_propagate_exit_irq_workfn(ساخت irq_work *irq_work)
 {
-	struct scx_sched *sch = container_of(irq_work, struct scx_sched,
+	ساخت scx_sched *sch = container_کا(irq_work, ساخت scx_sched,
 					     propagate_exit_irq_work);
-	struct scx_sched *pos;
+	ساخت scx_sched *pos;
 
-	scoped_guard (raw_spinlock_irqsave, &scx_sched_lock) {
+	scoped_guard (raw_spinlock_irqsave, &scx_sched_تالا) {
 		scx_for_each_descendant_pre(pos, sch)
-			scx_disable(pos, SCX_EXIT_PARENT);
+			scx_disable(pos, SCX_EXIT_والد);
 	}
 }
 
@@ -6760,23 +6760,23 @@ static void scx_propagate_exit_irq_workfn(struct irq_work *irq_work)
  *
  * Lock-free and safe to call from any context including NMI.
  */
-static bool scx_claim_exit(struct scx_sched *sch, enum scx_exit_kind kind)
+ساکن bool scx_claim_exit(ساخت scx_sched *sch, شمار scx_exit_قسم قسم)
 {
-	int none = SCX_EXIT_NONE;
+	صحیح none = SCX_EXIT_NONE;
 
 	lockdep_assert_preemption_disabled();
 
-	if (WARN_ON_ONCE(kind == SCX_EXIT_NONE || kind == SCX_EXIT_DONE))
-		kind = SCX_EXIT_ERROR;
+	اگر (WARN_ON_ONCE(قسم == SCX_EXIT_NONE || قسم == SCX_EXIT_مکمل))
+		قسم = SCX_EXIT_ERROR;
 
-	if (!atomic_try_cmpxchg(&sch->exit_kind, &none, kind))
-		return false;
+	اگر (!atomic_try_cmpxchg(&sch->exit_قسم, &none, قسم))
+		واپس false;
 
-	if (kind == SCX_EXIT_PARENT) {
+	اگر (قسم == SCX_EXIT_والد) {
 		/* an ancestor is already sweeping the subtree */
 		WRITE_ONCE(sch->aborting, true);
-	} else {
-		struct scx_sched *pos;
+	} ورنہ {
+		ساخت scx_sched *pos;
 
 		/*
 		 * CPUs may be live-locked in the dispatch paths of @sch or its
@@ -6791,43 +6791,43 @@ static bool scx_claim_exit(struct scx_sched *sch, enum scx_exit_kind kind)
 				smp_store_mb(pos->aborting, true);
 		}
 
-		irq_work_queue(&sch->propagate_exit_irq_work);
+		irq_work_قطار(&sch->propagate_exit_irq_work);
 	}
 
 	/* fired after ->aborting is set so callbacks can't delay recovery */
-	trace_sched_ext_exit(sch, kind);
+	trace_sched_ext_exit(sch, قسم);
 
-	return true;
+	واپس true;
 }
 
-static void scx_disable_workfn(struct kthread_work *work)
+ساکن خالی scx_disable_workfn(ساخت kthread_work *work)
 {
-	struct scx_sched *sch = container_of(work, struct scx_sched, disable_work);
-	struct scx_exit_info *ei = sch->exit_info;
-	int kind;
+	ساخت scx_sched *sch = container_کا(work, ساخت scx_sched, disable_work);
+	ساخت scx_exit_info *ei = sch->exit_info;
+	صحیح قسم;
 
-	kind = atomic_read(&sch->exit_kind);
-	while (true) {
-		if (kind == SCX_EXIT_DONE)	/* already disabled? */
-			return;
-		WARN_ON_ONCE(kind == SCX_EXIT_NONE);
-		if (atomic_try_cmpxchg(&sch->exit_kind, &kind, SCX_EXIT_DONE))
-			break;
+	قسم = atomic_read(&sch->exit_قسم);
+	جب (true) {
+		اگر (قسم == SCX_EXIT_مکمل)	/* already disabled? */
+			واپس;
+		WARN_ON_ONCE(قسم == SCX_EXIT_NONE);
+		اگر (atomic_try_cmpxchg(&sch->exit_قسم, &قسم, SCX_EXIT_مکمل))
+			توڑو;
 	}
-	ei->kind = kind;
-	ei->reason = scx_exit_reason(ei->kind);
+	ei->قسم = قسم;
+	ei->reason = scx_exit_reason(ei->قسم);
 
-	if (scx_parent(sch))
+	اگر (scx_والد(sch))
 		scx_sub_disable(sch);
-	else
-		scx_root_disable(sch);
+	ورنہ
+		scx_جڑ_disable(sch);
 }
 
-static void scx_disable(struct scx_sched *sch, enum scx_exit_kind kind)
+ساکن خالی scx_disable(ساخت scx_sched *sch, شمار scx_exit_قسم قسم)
 {
 	guard(preempt)();
-	if (scx_claim_exit(sch, kind))
-		irq_work_queue(&sch->disable_irq_work);
+	اگر (scx_claim_exit(sch, قسم))
+		irq_work_قطار(&sch->disable_irq_work);
 }
 
 /**
@@ -6838,201 +6838,201 @@ static void scx_disable(struct scx_sched *sch, enum scx_exit_kind kind)
  * as a noop. Syncing the irq_work first is required to guarantee the
  * kthread work has been queued before waiting for it.
  */
-void scx_flush_disable_work(struct scx_sched *sch)
+خالی scx_flush_disable_work(ساخت scx_sched *sch)
 {
-	int kind;
+	صحیح قسم;
 
-	do {
+	کرو {
 		irq_work_sync(&sch->disable_irq_work);
 		kthread_flush_work(&sch->disable_work);
-		kind = atomic_read(&sch->exit_kind);
-	} while (kind != SCX_EXIT_NONE && kind != SCX_EXIT_DONE);
+		قسم = atomic_read(&sch->exit_قسم);
+	} جب (قسم != SCX_EXIT_NONE && قسم != SCX_EXIT_مکمل);
 }
 
-static void dump_newline(struct seq_buf *s)
+ساکن خالی dump_newline(ساخت seq_buf *s)
 {
 	trace_sched_ext_dump("");
 
 	/* @s may be zero sized and seq_buf triggers WARN if so */
-	if (s->size)
+	اگر (s->سائز)
 		seq_buf_putc(s, '\n');
 }
 
-__printf(2, 3) void scx_dump_line(struct seq_buf *s, const char *fmt, ...)
+__printf(2, 3) خالی scx_dump_سطر(ساخت seq_buf *s, ثابت حرف *fmt, ...)
 {
-	va_list args;
+	va_list دلائل;
 
-#ifdef CONFIG_TRACEPOINTS
-	if (trace_sched_ext_dump_enabled()) {
+#اگر_تعریف_شدہ CONFIG_TRACEPOINTS
+	اگر (trace_sched_ext_dump_enabled()) {
 		/* protected by scx_dump_lock */
-		static char line_buf[SCX_EXIT_MSG_LEN];
+		ساکن حرف سطر_buf[SCX_EXIT_پیغام_LEN];
 
-		va_start(args, fmt);
-		vscnprintf(line_buf, sizeof(line_buf), fmt, args);
-		va_end(args);
+		va_آغاز(دلائل, fmt);
+		vscnprintf(سطر_buf, حجم(سطر_buf), fmt, دلائل);
+		va_انتہا(دلائل);
 
-		trace_call__sched_ext_dump(line_buf);
+		trace_call__sched_ext_dump(سطر_buf);
 	}
-#endif
+#اگر_ختم
 	/* @s may be zero sized and seq_buf triggers WARN if so */
-	if (s->size) {
-		va_start(args, fmt);
-		seq_buf_vprintf(s, fmt, args);
-		va_end(args);
+	اگر (s->سائز) {
+		va_آغاز(دلائل, fmt);
+		seq_buf_vprintf(s, fmt, دلائل);
+		va_انتہا(دلائل);
 
 		seq_buf_putc(s, '\n');
 	}
 }
 
-static void dump_stack_trace(struct seq_buf *s, const char *prefix,
-			     const unsigned long *bt, unsigned int len)
+ساکن خالی dump_ڈھیر_trace(ساخت seq_buf *s, ثابت حرف *سابقہ,
+			     ثابت غیرعلامتی طویل *bt, غیرعلامتی صحیح len)
 {
-	unsigned int i;
+	غیرعلامتی صحیح i;
 
-	for (i = 0; i < len; i++)
-		scx_dump_line(s, "%s%pS", prefix, (void *)bt[i]);
+	برائے (i = 0; i < len; i++)
+		scx_dump_سطر(s, "%s%pS", سابقہ, (خالی *)bt[i]);
 }
 
-static void ops_dump_init(struct seq_buf *s, const char *prefix)
+ساکن خالی ops_dump_init(ساخت seq_buf *s, ثابت حرف *سابقہ)
 {
-	struct scx_dump_data *dd = &scx_dump_data;
+	ساخت scx_dump_ڈیٹا *dd = &scx_dump_ڈیٹا;
 
 	lockdep_assert_irqs_disabled();
 
 	dd->cpu = smp_processor_id();		/* allow scx_bpf_dump() */
-	dd->first = true;
+	dd->پہلا = true;
 	dd->cursor = 0;
 	dd->s = s;
-	dd->prefix = prefix;
+	dd->سابقہ = سابقہ;
 }
 
-static void ops_dump_flush(void)
+ساکن خالی ops_dump_flush(خالی)
 {
-	struct scx_dump_data *dd = &scx_dump_data;
-	char *line = dd->buf.line;
+	ساخت scx_dump_ڈیٹا *dd = &scx_dump_ڈیٹا;
+	حرف *سطر = dd->buf.سطر;
 
-	if (!dd->cursor)
-		return;
+	اگر (!dd->cursor)
+		واپس;
 
 	/*
 	 * There's something to flush and this is the first line. Insert a blank
 	 * line to distinguish ops dump.
 	 */
-	if (dd->first) {
+	اگر (dd->پہلا) {
 		dump_newline(dd->s);
-		dd->first = false;
+		dd->پہلا = false;
 	}
 
 	/*
 	 * There may be multiple lines in $line. Scan and emit each line
 	 * separately.
 	 */
-	while (true) {
-		char *end = line;
-		char c;
+	جب (true) {
+		حرف *انتہا = سطر;
+		حرف c;
 
-		while (*end != '\n' && *end != '\0')
-			end++;
+		جب (*انتہا != '\n' && *انتہا != '\0')
+			انتہا++;
 
 		/*
 		 * If $line overflowed, it may not have newline at the end.
 		 * Always emit with a newline.
 		 */
-		c = *end;
-		*end = '\0';
-		scx_dump_line(dd->s, "%s%s", dd->prefix, line);
-		if (c == '\0')
-			break;
+		c = *انتہا;
+		*انتہا = '\0';
+		scx_dump_سطر(dd->s, "%s%s", dd->سابقہ, سطر);
+		اگر (c == '\0')
+			توڑو;
 
 		/* move to the next line */
-		end++;
-		if (*end == '\0')
-			break;
-		line = end;
+		انتہا++;
+		اگر (*انتہا == '\0')
+			توڑو;
+		سطر = انتہا;
 	}
 
 	dd->cursor = 0;
 }
 
-static void ops_dump_exit(void)
+ساکن خالی ops_dump_exit(خالی)
 {
 	ops_dump_flush();
-	scx_dump_data.cpu = -1;
+	scx_dump_ڈیٹا.cpu = -1;
 }
 
-static void scx_dump_task(struct scx_sched *sch, struct seq_buf *s, struct scx_dump_ctx *dctx,
-			  struct rq *rq, struct task_struct *p, char marker)
+ساکن خالی scx_dump_task(ساخت scx_sched *sch, ساخت seq_buf *s, ساخت scx_dump_ctx *dctx,
+			  ساخت rq *rq, ساخت task_struct *p, حرف marker)
 {
-	static unsigned long bt[SCX_EXIT_BT_LEN];
-	struct scx_sched *task_sch = scx_task_sched(p);
-	const char *own_marker;
-	char sch_id_buf[32];
-	char dsq_id_buf[19] = "(n/a)";
-	unsigned long ops_state = atomic_long_read(&p->scx.ops_state);
-	unsigned int bt_len = 0;
+	ساکن غیرعلامتی طویل bt[SCX_EXIT_BT_LEN];
+	ساخت scx_sched *task_sch = scx_task_sched(p);
+	ثابت حرف *own_marker;
+	حرف sch_id_buf[32];
+	حرف dsq_id_buf[19] = "(n/a)";
+	غیرعلامتی طویل ops_state = atomic_long_read(&p->scx.ops_state);
+	غیرعلامتی صحیح bt_len = 0;
 
 	own_marker = task_sch == sch ? "*" : "";
 
-	if (task_sch->level == 0)
-		scnprintf(sch_id_buf, sizeof(sch_id_buf), "root");
-	else
-		scnprintf(sch_id_buf, sizeof(sch_id_buf), "sub%d-%llu",
+	اگر (task_sch->level == 0)
+		scnprintf(sch_id_buf, حجم(sch_id_buf), "root");
+	ورنہ
+		scnprintf(sch_id_buf, حجم(sch_id_buf), "sub%d-%llu",
 			  task_sch->level, task_sch->ops.sub_cgroup_id);
 
-	if (p->scx.dsq)
-		scnprintf(dsq_id_buf, sizeof(dsq_id_buf), "0x%llx",
-			  (unsigned long long)p->scx.dsq->id);
+	اگر (p->scx.dsq)
+		scnprintf(dsq_id_buf, حجم(dsq_id_buf), "0x%llx",
+			  (غیرعلامتی طویل طویل)p->scx.dsq->id);
 
 	dump_newline(s);
-	scx_dump_line(s, " %c%c %s[%d] %s%s %+ldms",
-		      marker, task_state_to_char(p), p->comm, p->pid, own_marker, sch_id_buf,
+	scx_dump_سطر(s, " %c%c %s[%d] %s%s %+ldms",
+		      marker, task_state_مقصد_char(p), p->comm, p->pid, own_marker, sch_id_buf,
 		      jiffies_delta_msecs(p->scx.runnable_at, dctx->at_jiffies));
-	scx_dump_line(s, "      scx_state/flags=%u/0x%x dsq_flags=0x%x ops_state/qseq=%lu/%lu",
-		      scx_get_task_state(p) >> SCX_TASK_STATE_SHIFT,
-		      p->scx.flags & ~SCX_TASK_STATE_MASK, p->scx.dsq_flags,
-		      ops_state & SCX_OPSS_STATE_MASK, ops_state >> SCX_OPSS_QSEQ_SHIFT);
-	scx_dump_line(s, "      sticky/holding_cpu=%d/%d dsq_id=%s",
+	scx_dump_سطر(s, "      scx_state/flags=%u/0x%x dsq_flags=0x%x ops_state/qseq=%lu/%lu",
+		      scx_get_task_state(p) >> SCX_TASK_STATE_سرکاؤ,
+		      p->scx.flags & ~SCX_TASK_STATE_نقاب, p->scx.dsq_flags,
+		      ops_state & SCX_OPSS_STATE_نقاب, ops_state >> SCX_OPSS_QSEQ_سرکاؤ);
+	scx_dump_سطر(s, "      sticky/holding_cpu=%d/%d dsq_id=%s",
 		      p->scx.sticky_cpu, p->scx.holding_cpu, dsq_id_buf);
-	scx_dump_line(s, "      dsq_vtime=%llu slice=%llu weight=%u",
-		      p->scx.dsq_vtime, p->scx.slice, p->scx.weight);
-	scx_dump_line(s, "      cpus=%*pb no_mig=%u", cpumask_pr_args(p->cpus_ptr),
+	scx_dump_سطر(s, "      dsq_vtime=%llu slice=%llu weight=%u",
+		      p->scx.dsq_vtime, p->scx.قاش, p->scx.وزن);
+	scx_dump_سطر(s, "      cpus=%*pb no_mig=%u", cpumask_pr_دلائل(p->cpus_ptr),
 		      p->migration_disabled);
 
-	if (SCX_HAS_OP(sch, dump_task)) {
+	اگر (SCX_HAS_OP(sch, dump_task)) {
 		ops_dump_init(s, "    ");
 		SCX_CALL_OP(sch, dump_task, rq, dctx, p);
 		ops_dump_exit();
 	}
 
-#ifdef CONFIG_STACKTRACE
-	bt_len = stack_trace_save_tsk(p, bt, SCX_EXIT_BT_LEN, 1);
-#endif
-	if (bt_len) {
+#اگر_تعریف_شدہ CONFIG_STACKTRACE
+	bt_len = ڈھیر_trace_save_tsk(p, bt, SCX_EXIT_BT_LEN, 1);
+#اگر_ختم
+	اگر (bt_len) {
 		dump_newline(s);
-		dump_stack_trace(s, "    ", bt, bt_len);
+		dump_ڈھیر_trace(s, "    ", bt, bt_len);
 	}
 }
 
-static void scx_dump_cpu(struct scx_sched *sch, struct seq_buf *s,
-			 struct scx_dump_ctx *dctx, int cpu,
+ساکن خالی scx_dump_cpu(ساخت scx_sched *sch, ساخت seq_buf *s,
+			 ساخت scx_dump_ctx *dctx, صحیح cpu,
 			 bool dump_all_tasks)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
-	struct rq_flags rf;
-	struct task_struct *p;
-	struct seq_buf ns;
-	size_t avail, used;
-	char *buf;
+	ساخت rq *rq = cpu_rq(cpu);
+	ساخت scx_sched_pcpu *pcpu = فی_cpu_ptr(sch->pcpu, cpu);
+	ساخت rq_flags rf;
+	ساخت task_struct *p;
+	ساخت seq_buf ns;
+	سائز_t avail, مستعمل;
+	حرف *buf;
 	bool idle;
 
-	rq_lock_irqsave(rq, &rf);
+	rq_تالا_irqsave(rq, &rf);
 
-	idle = list_empty(&rq->scx.runnable_list) &&
+	idle = list_خالی_خانے(&rq->scx.runnable_list) &&
 		rq->curr->sched_class == &idle_sched_class;
 
-	if (idle && !SCX_HAS_OP(sch, dump_cpu))
-		goto next;
+	اگر (idle && !SCX_HAS_OP(sch, dump_cpu))
+		جاؤ اگلا;
 
 	/*
 	 * We don't yet know whether ops.dump_cpu() will produce output
@@ -7044,30 +7044,30 @@ static void scx_dump_cpu(struct scx_sched *sch, struct seq_buf *s,
 	seq_buf_init(&ns, buf, avail);
 
 	dump_newline(&ns);
-	scx_dump_line(&ns, "CPU %-4d: nr_run=%u flags=0x%x cpu_rel=%d ksync=%lu",
+	scx_dump_سطر(&ns, "CPU %-4d: nr_run=%u flags=0x%x cpu_rel=%d ksync=%lu",
 		      cpu, rq->scx.nr_running, rq->scx.flags, rq->scx.cpu_released,
 		      rq->scx.kick_sync);
 	scx_rescue_dump(&ns, rq);
-	scx_dump_line(&ns, "          curr=%s[%d] class=%ps",
+	scx_dump_سطر(&ns, "          curr=%s[%d] class=%ps",
 		      rq->curr->comm, rq->curr->pid, rq->curr->sched_class);
-	if (!cpumask_empty(pcpu->cpus_to_kick))
-		scx_dump_line(&ns, "  cpus_to_kick   : %*pb",
-			      cpumask_pr_args(pcpu->cpus_to_kick));
-	if (!cpumask_empty(pcpu->cpus_to_kick_if_idle))
-		scx_dump_line(&ns, "  idle_to_kick   : %*pb",
-			      cpumask_pr_args(pcpu->cpus_to_kick_if_idle));
-	if (!cpumask_empty(pcpu->cpus_to_preempt))
-		scx_dump_line(&ns, "  cpus_to_preempt: %*pb",
-			      cpumask_pr_args(pcpu->cpus_to_preempt));
-	if (!cpumask_empty(pcpu->cpus_to_wait))
-		scx_dump_line(&ns, "  cpus_to_wait   : %*pb",
-			      cpumask_pr_args(pcpu->cpus_to_wait));
-	if (!cpumask_empty(rq->scx.cpus_to_sync))
-		scx_dump_line(&ns, "  cpus_to_sync   : %*pb",
-			      cpumask_pr_args(rq->scx.cpus_to_sync));
+	اگر (!cpumask_خالی_خانے(pcpu->cpus_مقصد_kick))
+		scx_dump_سطر(&ns, "  cpus_to_kick   : %*pb",
+			      cpumask_pr_دلائل(pcpu->cpus_مقصد_kick));
+	اگر (!cpumask_خالی_خانے(pcpu->cpus_مقصد_kick_if_idle))
+		scx_dump_سطر(&ns, "  idle_to_kick   : %*pb",
+			      cpumask_pr_دلائل(pcpu->cpus_مقصد_kick_if_idle));
+	اگر (!cpumask_خالی_خانے(pcpu->cpus_مقصد_preempt))
+		scx_dump_سطر(&ns, "  cpus_to_preempt: %*pb",
+			      cpumask_pr_دلائل(pcpu->cpus_مقصد_preempt));
+	اگر (!cpumask_خالی_خانے(pcpu->cpus_مقصد_wait))
+		scx_dump_سطر(&ns, "  cpus_to_wait   : %*pb",
+			      cpumask_pr_دلائل(pcpu->cpus_مقصد_wait));
+	اگر (!cpumask_خالی_خانے(rq->scx.cpus_مقصد_sync))
+		scx_dump_سطر(&ns, "  cpus_to_sync   : %*pb",
+			      cpumask_pr_دلائل(rq->scx.cpus_مقصد_sync));
 
-	used = seq_buf_used(&ns);
-	if (SCX_HAS_OP(sch, dump_cpu)) {
+	مستعمل = seq_buf_مستعمل(&ns);
+	اگر (SCX_HAS_OP(sch, dump_cpu)) {
 		ops_dump_init(&ns, "  ");
 		SCX_CALL_OP(sch, dump_cpu, rq, dctx, scx_cpu_arg(cpu), idle);
 		ops_dump_exit();
@@ -7077,27 +7077,27 @@ static void scx_dump_cpu(struct scx_sched *sch, struct seq_buf *s,
 	 * If idle && nothing generated by ops.dump_cpu(), there's
 	 * nothing interesting. Skip.
 	 */
-	if (idle && used == seq_buf_used(&ns))
-		goto next;
+	اگر (idle && مستعمل == seq_buf_مستعمل(&ns))
+		جاؤ اگلا;
 
 	/*
 	 * $s may already have overflowed when $ns was created. If so,
 	 * calling commit on it will trigger BUG.
 	 */
-	if (avail) {
-		seq_buf_commit(s, seq_buf_used(&ns));
-		if (seq_buf_has_overflowed(&ns))
-			seq_buf_set_overflow(s);
+	اگر (avail) {
+		seq_buf_commit(s, seq_buf_مستعمل(&ns));
+		اگر (seq_buf_has_overflowed(&ns))
+			seq_buf_سیٹ_حد_سے_تجاوز(s);
 	}
 
-	if (rq->curr->sched_class == &ext_sched_class &&
+	اگر (rq->curr->sched_class == &ext_sched_class &&
 	    (dump_all_tasks || scx_task_on_sched(sch, rq->curr)))
 		scx_dump_task(sch, s, dctx, rq, rq->curr, '*');
 
-	list_for_each_entry(p, &rq->scx.runnable_list, scx.runnable_node)
-		if (dump_all_tasks || scx_task_on_sched(sch, p))
+	list_for_each_اندراج(p, &rq->scx.runnable_list, scx.runnable_گرہ)
+		اگر (dump_all_tasks || scx_task_on_sched(sch, p))
 			scx_dump_task(sch, s, dctx, rq, p, ' ');
-next:
+اگلا:
 	rq_unlock_irqrestore(rq, &rf);
 }
 
@@ -7108,370 +7108,370 @@ next:
  * separately. For error dumps, @dump_all_tasks=true since only the failing
  * scheduler is dumped.
  */
-static void scx_dump_state(struct scx_sched *sch, struct scx_exit_info *ei,
-			   size_t dump_len, bool dump_all_tasks)
+ساکن خالی scx_dump_state(ساخت scx_sched *sch, ساخت scx_exit_info *ei,
+			   سائز_t dump_len, bool dump_all_tasks)
 {
-	static const char trunc_marker[] = "\n\n~~~~ TRUNCATED ~~~~\n";
-	struct scx_dump_ctx dctx = {
-		.kind = ei->kind,
-		.exit_code = ei->exit_code,
+	ساکن ثابت حرف trunc_marker[] = "\n\n~~~~ TRUNCATED ~~~~\n";
+	ساخت scx_dump_ctx dctx = {
+		.قسم = ei->قسم,
+		.exit_رمز = ei->exit_رمز,
 		.reason = ei->reason,
 		.at_ns = ktime_get_ns(),
 		.at_jiffies = jiffies,
 	};
-	struct seq_buf s;
-	struct scx_event_stats events;
-	int cpu;
+	ساخت seq_buf s;
+	ساخت scx_event_stats events;
+	صحیح cpu;
 
-	guard(raw_spinlock_irqsave)(&scx_dump_lock);
+	guard(raw_spinlock_irqsave)(&scx_dump_تالا);
 
-	if (sch->dump_disabled)
-		return;
+	اگر (sch->dump_disabled)
+		واپس;
 
 	seq_buf_init(&s, ei->dump, dump_len);
 
-#ifdef CONFIG_EXT_SUB_SCHED
-	if (sch->level == 0)
-		scx_dump_line(&s, "%s: root", sch->ops.name);
-	else
-		scx_dump_line(&s, "%s: sub%d-%llu %s",
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	اگر (sch->level == 0)
+		scx_dump_سطر(&s, "%s: root", sch->ops.name);
+	ورنہ
+		scx_dump_سطر(&s, "%s: sub%d-%llu %s",
 			      sch->ops.name, sch->level, sch->ops.sub_cgroup_id,
-			      sch->cgrp_path);
-#endif
-	if (ei->kind == SCX_EXIT_NONE) {
-		scx_dump_line(&s, "Debug dump triggered by %s", ei->reason);
-	} else {
-		if (ei->exit_cpu >= 0)
-			scx_dump_line(&s, "%s[%d] triggered exit kind %d on CPU %d:",
-				      current->comm, current->pid, ei->kind,
+			      sch->cgrp_راستہ);
+#اگر_ختم
+	اگر (ei->قسم == SCX_EXIT_NONE) {
+		scx_dump_سطر(&s, "Debug dump triggered by %s", ei->reason);
+	} ورنہ {
+		اگر (ei->exit_cpu >= 0)
+			scx_dump_سطر(&s, "%s[%d] triggered exit kind %d on CPU %d:",
+				      current->comm, current->pid, ei->قسم,
 				      ei->exit_cpu);
-		else
-			scx_dump_line(&s, "%s[%d] triggered exit kind %d:",
-				      current->comm, current->pid, ei->kind);
-		scx_dump_line(&s, "  %s (%s)", ei->reason, ei->msg);
+		ورنہ
+			scx_dump_سطر(&s, "%s[%d] triggered exit kind %d:",
+				      current->comm, current->pid, ei->قسم);
+		scx_dump_سطر(&s, "  %s (%s)", ei->reason, ei->پیغام);
 		dump_newline(&s);
-		scx_dump_line(&s, "Backtrace:");
-		dump_stack_trace(&s, "  ", ei->bt, ei->bt_len);
+		scx_dump_سطر(&s, "Backtrace:");
+		dump_ڈھیر_trace(&s, "  ", ei->bt, ei->bt_len);
 	}
 
-	if (SCX_HAS_OP(sch, dump)) {
+	اگر (SCX_HAS_OP(sch, dump)) {
 		ops_dump_init(&s, "");
-		SCX_CALL_OP(sch, dump, NULL, &dctx);
+		SCX_CALL_OP(sch, dump, تہی, &dctx);
 		ops_dump_exit();
 	}
 
 	dump_newline(&s);
-	scx_dump_line(&s, "CPU states");
-	scx_dump_line(&s, "----------");
+	scx_dump_سطر(&s, "CPU states");
+	scx_dump_سطر(&s, "----------");
 
 	/*
 	 * Dump stalled CPUs first so they aren't lost to dump truncation, then
 	 * walk the rest in order. Fall back to exit_cpu if no stall mask set.
 	 */
-	if (!cpumask_empty(sch->stall_cpus)) {
+	اگر (!cpumask_خالی_خانے(sch->stall_cpus)) {
 		for_each_cpu(cpu, sch->stall_cpus)
 			scx_dump_cpu(sch, &s, &dctx, cpu, dump_all_tasks);
 		for_each_possible_cpu(cpu) {
-			if (!cpumask_test_cpu(cpu, sch->stall_cpus))
+			اگر (!cpumask_test_cpu(cpu, sch->stall_cpus))
 				scx_dump_cpu(sch, &s, &dctx, cpu, dump_all_tasks);
 		}
-	} else {
-		if (ei->exit_cpu >= 0)
+	} ورنہ {
+		اگر (ei->exit_cpu >= 0)
 			scx_dump_cpu(sch, &s, &dctx, ei->exit_cpu, dump_all_tasks);
 		for_each_possible_cpu(cpu) {
-			if (cpu != ei->exit_cpu)
+			اگر (cpu != ei->exit_cpu)
 				scx_dump_cpu(sch, &s, &dctx, cpu, dump_all_tasks);
 		}
 	}
 
 	dump_newline(&s);
-	scx_dump_line(&s, "Event counters");
-	scx_dump_line(&s, "--------------");
+	scx_dump_سطر(&s, "Event counters");
+	scx_dump_سطر(&s, "--------------");
 
 	scx_read_events(sch, &events);
-#define SCX_EVENT(name)	scx_dump_event(s, &events, name)
+#تعریف_کرو SCX_EVENT(name)	scx_dump_event(s, &events, name)
 	SCX_EVENTS_LIST(SCX_EVENT);
-#undef SCX_EVENT
+#تعریف_منسوخ SCX_EVENT
 
-	if (seq_buf_has_overflowed(&s) && dump_len >= sizeof(trunc_marker))
-		memcpy(ei->dump + dump_len - sizeof(trunc_marker),
-		       trunc_marker, sizeof(trunc_marker));
+	اگر (seq_buf_has_overflowed(&s) && dump_len >= حجم(trunc_marker))
+		حافظہ_نقل(ei->dump + dump_len - حجم(trunc_marker),
+		       trunc_marker, حجم(trunc_marker));
 }
 
-static void scx_disable_irq_workfn(struct irq_work *irq_work)
+ساکن خالی scx_disable_irq_workfn(ساخت irq_work *irq_work)
 {
-	struct scx_sched *sch = container_of(irq_work, struct scx_sched, disable_irq_work);
-	struct scx_exit_info *ei = sch->exit_info;
+	ساخت scx_sched *sch = container_کا(irq_work, ساخت scx_sched, disable_irq_work);
+	ساخت scx_exit_info *ei = sch->exit_info;
 
-	if (ei->kind >= SCX_EXIT_ERROR)
+	اگر (ei->قسم >= SCX_EXIT_ERROR)
 		scx_dump_state(sch, ei, sch->ops.exit_dump_len, true);
 
-	kthread_queue_work(sch->helper, &sch->disable_work);
+	kthread_قطار_work(sch->helper, &sch->disable_work);
 }
 
 /* finish exit_info and kick the disable work, ei->msg must already be set */
-static void scx_finish_exit(struct scx_sched *sch, enum scx_exit_kind kind,
-			    s64 exit_code, s32 exit_cpu)
+ساکن خالی scx_اختتام_exit(ساخت scx_sched *sch, شمار scx_exit_قسم قسم,
+			    s64 exit_رمز, s32 exit_cpu)
 {
-	struct scx_exit_info *ei = sch->exit_info;
+	ساخت scx_exit_info *ei = sch->exit_info;
 
-	ei->exit_code = exit_code;
-#ifdef CONFIG_STACKTRACE
+	ei->exit_رمز = exit_رمز;
+#اگر_تعریف_شدہ CONFIG_STACKTRACE
 	/*
 	 * stack_trace_save()'s NMI-safety is arch-dependent and undocumented.
 	 * Skip the backtrace when exiting from NMI.
 	 */
-	if (kind >= SCX_EXIT_ERROR && !in_nmi())
-		ei->bt_len = stack_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
-#endif
+	اگر (قسم >= SCX_EXIT_ERROR && !اندر_nmi())
+		ei->bt_len = ڈھیر_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
+#اگر_ختم
 	/*
 	 * Set ei->kind and ->reason for scx_dump_state(). They'll be set again
 	 * in scx_disable_workfn().
 	 */
-	ei->kind = kind;
-	ei->reason = scx_exit_reason(ei->kind);
+	ei->قسم = قسم;
+	ei->reason = scx_exit_reason(ei->قسم);
 	ei->exit_cpu = exit_cpu;
 
-	irq_work_queue(&sch->disable_irq_work);
+	irq_work_قطار(&sch->disable_irq_work);
 }
 
-bool scx_vexit(struct scx_sched *sch,
-	       enum scx_exit_kind kind, s64 exit_code, s32 exit_cpu,
-	       const char *fmt, va_list args)
+bool scx_vexit(ساخت scx_sched *sch,
+	       شمار scx_exit_قسم قسم, s64 exit_رمز, s32 exit_cpu,
+	       ثابت حرف *fmt, va_list دلائل)
 {
-	struct scx_exit_info *ei = sch->exit_info;
+	ساخت scx_exit_info *ei = sch->exit_info;
 
 	guard(preempt)();
 
-	if (!scx_claim_exit(sch, kind))
-		return false;
+	اگر (!scx_claim_exit(sch, قسم))
+		واپس false;
 
-	vscnprintf(ei->msg, SCX_EXIT_MSG_LEN, fmt, args);
+	vscnprintf(ei->پیغام, SCX_EXIT_پیغام_LEN, fmt, دلائل);
 
-	scx_finish_exit(sch, kind, exit_code, exit_cpu);
-	return true;
+	scx_اختتام_exit(sch, قسم, exit_رمز, exit_cpu);
+	واپس true;
 }
 
-static int alloc_kick_syncs(void)
+ساکن صحیح alloc_kick_syncs(خالی)
 {
-	int cpu;
+	صحیح cpu;
 
 	/*
 	 * Allocate per-CPU arrays sized by nr_cpu_ids. Use kvzalloc as size
 	 * can exceed percpu allocator limits on large machines.
 	 */
 	for_each_possible_cpu(cpu) {
-		struct scx_kick_syncs __rcu **ksyncs = per_cpu_ptr(&scx_kick_syncs, cpu);
-		struct scx_kick_syncs *new_ksyncs;
+		ساخت scx_kick_syncs __rcu **ksyncs = فی_cpu_ptr(&scx_kick_syncs, cpu);
+		ساخت scx_kick_syncs *new_ksyncs;
 
-		WARN_ON_ONCE(rcu_access_pointer(*ksyncs));
+		WARN_ON_ONCE(rcu_access_اشارہ_گر(*ksyncs));
 
-		new_ksyncs = kvzalloc_node(struct_size(new_ksyncs, syncs, nr_cpu_ids),
-					   GFP_KERNEL, cpu_to_node(cpu));
-		if (!new_ksyncs) {
+		new_ksyncs = kvzalloc_گرہ(struct_سائز(new_ksyncs, syncs, nr_cpu_ids),
+					   GFP_KERNEL, cpu_مقصد_گرہ(cpu));
+		اگر (!new_ksyncs) {
 			free_kick_syncs();
-			return -ENOMEM;
+			واپس -ENOMEM;
 		}
 
-		rcu_assign_pointer(*ksyncs, new_ksyncs);
+		rcu_تفویض_اشارہ_گر(*ksyncs, new_ksyncs);
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static void free_pnode(struct scx_sched_pnode *pnode)
+ساکن خالی free_pnode(ساخت scx_sched_pnode *pnode)
 {
-	if (!pnode)
-		return;
+	اگر (!pnode)
+		واپس;
 	exit_dsq(&pnode->global_dsq);
 	kfree(pnode);
 }
 
-static struct scx_sched_pnode *alloc_pnode(struct scx_sched *sch, int node)
+ساکن ساخت scx_sched_pnode *alloc_pnode(ساخت scx_sched *sch, صحیح گرہ)
 {
-	struct scx_sched_pnode *pnode;
+	ساخت scx_sched_pnode *pnode;
 
-	pnode = kzalloc_node(sizeof(*pnode), GFP_KERNEL, node);
-	if (!pnode)
-		return NULL;
+	pnode = kzalloc_گرہ(حجم(*pnode), GFP_KERNEL, گرہ);
+	اگر (!pnode)
+		واپس تہی;
 
-	if (scx_init_dsq(&pnode->global_dsq, SCX_DSQ_GLOBAL, sch)) {
+	اگر (scx_init_dsq(&pnode->global_dsq, SCX_DSQ_GLOBAL, sch)) {
 		kfree(pnode);
-		return NULL;
+		واپس تہی;
 	}
 
-	return pnode;
+	واپس pnode;
 }
 
 /*
  * Allocate and initialize a new scx_sched. @cgrp's reference is always
  * consumed whether the function succeeds or fails.
  */
-struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
-					  struct cgroup *cgrp,
-					  struct scx_sched *parent)
+ساخت scx_sched *scx_alloc_and_جوڑو_sched(ساخت scx_enable_cmd *cmd,
+					  ساخت cgroup *cgrp,
+					  ساخت scx_sched *والد)
 {
-	struct sched_ext_ops *ops = cmd->ops;
-	struct scx_sched *sch;
-	s32 level = parent ? parent->level + 1 : 0;
-	s32 node, cpu, ret, bypass_fail_cpu = nr_cpu_ids;
+	ساخت sched_ext_ops *ops = cmd->ops;
+	ساخت scx_sched *sch;
+	s32 level = والد ? والد->level + 1 : 0;
+	s32 گرہ, cpu, ret, bypass_fail_cpu = nr_cpu_ids;
 
 	sch = kzalloc_flex(*sch, ancestors, level + 1);
-	if (!sch) {
+	اگر (!sch) {
 		ret = -ENOMEM;
-		goto err_put_cgrp;
+		جاؤ err_put_cgrp;
 	}
 
 	sch->exit_info = alloc_exit_info(ops->exit_dump_len);
-	if (!sch->exit_info) {
+	اگر (!sch->exit_info) {
 		ret = -ENOMEM;
-		goto err_free_sch;
+		جاؤ err_free_sch;
 	}
 
 	ret = rhashtable_init(&sch->dsq_hash, &dsq_hash_params);
-	if (ret < 0)
-		goto err_free_ei;
+	اگر (ret < 0)
+		جاؤ err_free_ei;
 
-	sch->pnode = kzalloc_objs(sch->pnode[0], nr_node_ids);
-	if (!sch->pnode) {
+	sch->pnode = kzalloc_objs(sch->pnode[0], nr_گرہ_ids);
+	اگر (!sch->pnode) {
 		ret = -ENOMEM;
-		goto err_free_hash;
+		جاؤ err_free_hash;
 	}
 
-	for_each_node_state(node, N_POSSIBLE) {
-		sch->pnode[node] = alloc_pnode(sch, node);
-		if (!sch->pnode[node]) {
+	for_each_گرہ_state(گرہ, N_POSSIBLE) {
+		sch->pnode[گرہ] = alloc_pnode(sch, گرہ);
+		اگر (!sch->pnode[گرہ]) {
 			ret = -ENOMEM;
-			goto err_free_pnode;
+			جاؤ err_free_pnode;
 		}
 	}
 
 	sch->dsp_max_batch = ops->dispatch_max_batch ?: SCX_DSP_DFL_MAX_BATCH;
-	sch->pcpu = __alloc_percpu(struct_size_t(struct scx_sched_pcpu,
+	sch->pcpu = __alloc_percpu(struct_سائز_t(ساخت scx_sched_pcpu,
 						 dsp_ctx.buf, sch->dsp_max_batch),
-				   __alignof__(struct scx_sched_pcpu));
-	if (!sch->pcpu) {
+				   __alignof__(ساخت scx_sched_pcpu));
+	اگر (!sch->pcpu) {
 		ret = -ENOMEM;
-		goto err_free_pnode;
+		جاؤ err_free_pnode;
 	}
 
 	for_each_possible_cpu(cpu) {
 		ret = scx_init_dsq(scx_bypass_dsq(sch, cpu), SCX_DSQ_BYPASS, sch);
-		if (ret) {
+		اگر (ret) {
 			bypass_fail_cpu = cpu;
-			goto err_free_pcpu;
+			جاؤ err_free_pcpu;
 		}
 	}
 
 	for_each_possible_cpu(cpu) {
-		struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
+		ساخت scx_sched_pcpu *pcpu = فی_cpu_ptr(sch->pcpu, cpu);
 
-		node = cpu_to_node(cpu);
+		گرہ = cpu_مقصد_گرہ(cpu);
 		pcpu->sch = sch;
-		INIT_LIST_HEAD(&pcpu->deferred_reenq_local.node);
-#ifdef CONFIG_EXT_SUB_SCHED
-		init_llist_node(&pcpu->ecaps_to_sync_node);
-#endif
-		INIT_LIST_HEAD(&pcpu->to_kick_node);
-		if (!zalloc_cpumask_var_node(&pcpu->cpus_to_kick, GFP_KERNEL, node) ||
-		    !zalloc_cpumask_var_node(&pcpu->cpus_to_kick_if_idle, GFP_KERNEL, node) ||
-		    !zalloc_cpumask_var_node(&pcpu->cpus_to_preempt, GFP_KERNEL, node) ||
-		    !zalloc_cpumask_var_node(&pcpu->cpus_to_wait, GFP_KERNEL, node)) {
+		INIT_LIST_سر(&pcpu->deferred_reenq_local.گرہ);
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+		init_llist_گرہ(&pcpu->ecaps_مقصد_sync_گرہ);
+#اگر_ختم
+		INIT_LIST_سر(&pcpu->مقصد_kick_گرہ);
+		اگر (!zalloc_cpumask_var_گرہ(&pcpu->cpus_مقصد_kick, GFP_KERNEL, گرہ) ||
+		    !zalloc_cpumask_var_گرہ(&pcpu->cpus_مقصد_kick_if_idle, GFP_KERNEL, گرہ) ||
+		    !zalloc_cpumask_var_گرہ(&pcpu->cpus_مقصد_preempt, GFP_KERNEL, گرہ) ||
+		    !zalloc_cpumask_var_گرہ(&pcpu->cpus_مقصد_wait, GFP_KERNEL, گرہ)) {
 			ret = -ENOMEM;
-			goto err_free_pcpu;
+			جاؤ err_free_pcpu;
 		}
 	}
 
-	sch->helper = kthread_run_worker(0, "sched_ext_helper");
-	if (IS_ERR(sch->helper)) {
+	sch->helper = kthread_تسلسل_کارکن(0, "sched_ext_helper");
+	اگر (IS_ERR(sch->helper)) {
 		ret = PTR_ERR(sch->helper);
-		goto err_free_pcpu;
+		جاؤ err_free_pcpu;
 	}
 
-	sched_set_fifo(sch->helper->task);
+	sched_سیٹ_fifo(sch->helper->task);
 
-	if (parent)
-		memcpy(sch->ancestors, parent->ancestors,
-		       level * sizeof(parent->ancestors[0]));
+	اگر (والد)
+		حافظہ_نقل(sch->ancestors, والد->ancestors,
+		       level * حجم(والد->ancestors[0]));
 	sch->ancestors[level] = sch;
 	sch->level = level;
 	sch->id = atomic64_inc_return(&scx_sched_id_cursor);
 
-	if (ops->timeout_ms)
-		sch->watchdog_timeout = msecs_to_jiffies(ops->timeout_ms);
-	else
+	اگر (ops->timeout_ms)
+		sch->watchdog_timeout = msecs_مقصد_jiffies(ops->timeout_ms);
+	ورنہ
 		sch->watchdog_timeout = SCX_WATCHDOG_MAX_TIMEOUT;
 
-	sch->slice_dfl = SCX_SLICE_DFL;
-	atomic_set(&sch->exit_kind, SCX_EXIT_NONE);
+	sch->قاش_dfl = SCX_قاش_DFL;
+	atomic_سیٹ(&sch->exit_قسم, SCX_EXIT_NONE);
 	sch->disable_irq_work = IRQ_WORK_INIT_HARD(scx_disable_irq_workfn);
 	sch->propagate_exit_irq_work = IRQ_WORK_INIT_HARD(scx_propagate_exit_irq_workfn);
 	kthread_init_work(&sch->disable_work, scx_disable_workfn);
-	timer_setup(&sch->bypass_lb_timer, scx_bypass_lb_timerfn, 0);
+	timer_تیاری(&sch->bypass_lb_timer, scx_bypass_lb_timerfn, 0);
 
-	if (!alloc_cpumask_var(&sch->bypass_lb_donee_cpumask, GFP_KERNEL)) {
+	اگر (!alloc_cpumask_var(&sch->bypass_lb_donee_cpumask, GFP_KERNEL)) {
 		ret = -ENOMEM;
-		goto err_stop_helper;
+		جاؤ err_stop_helper;
 	}
-	if (!alloc_cpumask_var(&sch->bypass_lb_resched_cpumask, GFP_KERNEL)) {
+	اگر (!alloc_cpumask_var(&sch->bypass_lb_resched_cpumask, GFP_KERNEL)) {
 		ret = -ENOMEM;
-		goto err_free_lb_cpumask;
+		جاؤ err_free_lb_cpumask;
 	}
-	if (!zalloc_cpumask_var(&sch->stall_cpus, GFP_KERNEL)) {
+	اگر (!zalloc_cpumask_var(&sch->stall_cpus, GFP_KERNEL)) {
 		ret = -ENOMEM;
-		goto err_free_lb_resched_cpumask;
+		جاؤ err_free_lb_resched_cpumask;
 	}
 	/*
 	 * Copy ops through the right union view. For cid-form the source is
 	 * struct sched_ext_ops_cid which lacks the trailing cpu_acquire/
 	 * cpu_release; those stay zero from kzalloc.
 	 */
-	if (cmd->is_cid_type) {
+	اگر (cmd->is_cid_type) {
 		sch->ops_cid = *cmd->ops_cid;
 		sch->is_cid_type = true;
-	} else {
+	} ورنہ {
 		sch->ops = *cmd->ops;
 	}
 
-#ifdef CONFIG_EXT_SUB_SCHED
-	char *buf = kzalloc(PATH_MAX, GFP_KERNEL);
-	if (!buf) {
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	حرف *buf = kzalloc(راستہ_MAX, GFP_KERNEL);
+	اگر (!buf) {
 		ret = -ENOMEM;
-		goto err_free_lb_resched;
+		جاؤ err_free_lb_resched;
 	}
-	cgroup_path(cgrp, buf, PATH_MAX);
-	sch->cgrp_path = kstrdup(buf, GFP_KERNEL);
+	cgroup_راستہ(cgrp, buf, راستہ_MAX);
+	sch->cgrp_راستہ = kstrdup(buf, GFP_KERNEL);
 	kfree(buf);
-	if (!sch->cgrp_path) {
+	اگر (!sch->cgrp_راستہ) {
 		ret = -ENOMEM;
-		goto err_free_lb_resched;
+		جاؤ err_free_lb_resched;
 	}
 
 	sch->cgrp = cgrp;
-	INIT_LIST_HEAD(&sch->children);
-	INIT_LIST_HEAD(&sch->sibling);
-#endif	/* CONFIG_EXT_SUB_SCHED */
+	INIT_LIST_سر(&sch->children);
+	INIT_LIST_سر(&sch->sibling);
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 
 	/*
 	 * Publishing makes @sch visible to scx_prog_sched() readers. Failure
 	 * paths after this point must free @sch through kobject_put() whose
 	 * release path defers the actual freeing by an RCU grace period.
 	 */
-	rcu_assign_pointer(ops->priv, sch);
+	rcu_تفویض_اشارہ_گر(ops->priv, sch);
 
 	sch->kobj.kset = scx_kset;
-	INIT_LIST_HEAD(&sch->all);
+	INIT_LIST_سر(&sch->all);
 
-#ifdef CONFIG_EXT_SUB_SCHED
-	if (parent) {
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	اگر (والد) {
 		/*
 		 * Pin @parent for @sch's lifetime. The kobject hierarchy pins
 		 * it only via @parent->sub_kset, which is dropped during
 		 * disable. Released in scx_sched_free_rcu_work().
 		 */
-		kobject_get(&parent->kobj);
+		kobject_get(&والد->kobj);
 	}
-#endif	/* CONFIG_EXT_SUB_SCHED */
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 
 	/*
 	 * Init the kobj but don't add to sysfs yet. The enable path calls
@@ -7487,53 +7487,53 @@ struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
 	 */
 	sch->arena_map = cmd->arena_map;
 	/* BPF arena is only available on MMU && 64BIT */
-#if defined(CONFIG_MMU) && defined(CONFIG_64BIT)
-	if (sch->arena_map)
-		sch->arena_kern_base = bpf_arena_map_kern_vm_start(sch->arena_map);
-#endif
-	cmd->arena_map = NULL;
-	return sch;
+#اگر defined(CONFIG_MMU) && defined(CONFIG_64_ثنائی_ہندسہ)
+	اگر (sch->arena_map)
+		sch->arena_kern_بنیاد = bpf_arena_map_kern_vm_آغاز(sch->arena_map);
+#اگر_ختم
+	cmd->arena_map = تہی;
+	واپس sch;
 
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 err_free_lb_resched:
 	free_cpumask_var(sch->stall_cpus);
-#endif
+#اگر_ختم
 err_free_lb_resched_cpumask:
 	free_cpumask_var(sch->bypass_lb_resched_cpumask);
 err_free_lb_cpumask:
 	free_cpumask_var(sch->bypass_lb_donee_cpumask);
 err_stop_helper:
-	kthread_destroy_worker(sch->helper);
+	kthread_destroy_کارکن(sch->helper);
 err_free_pcpu:
 	for_each_possible_cpu(cpu) {
-		struct scx_sched_pcpu *pcpu = per_cpu_ptr(sch->pcpu, cpu);
+		ساخت scx_sched_pcpu *pcpu = فی_cpu_ptr(sch->pcpu, cpu);
 
-		free_cpumask_var(pcpu->cpus_to_kick);
-		free_cpumask_var(pcpu->cpus_to_kick_if_idle);
-		free_cpumask_var(pcpu->cpus_to_preempt);
-		free_cpumask_var(pcpu->cpus_to_wait);
+		free_cpumask_var(pcpu->cpus_مقصد_kick);
+		free_cpumask_var(pcpu->cpus_مقصد_kick_if_idle);
+		free_cpumask_var(pcpu->cpus_مقصد_preempt);
+		free_cpumask_var(pcpu->cpus_مقصد_wait);
 	}
 	for_each_possible_cpu(cpu) {
-		if (cpu == bypass_fail_cpu)
-			break;
+		اگر (cpu == bypass_fail_cpu)
+			توڑو;
 		exit_dsq(scx_bypass_dsq(sch, cpu));
 	}
 	free_percpu(sch->pcpu);
 err_free_pnode:
-	for_each_node_state(node, N_POSSIBLE)
-		free_pnode(sch->pnode[node]);
+	for_each_گرہ_state(گرہ, N_POSSIBLE)
+		free_pnode(sch->pnode[گرہ]);
 	kfree(sch->pnode);
 err_free_hash:
-	rhashtable_free_and_destroy(&sch->dsq_hash, NULL, NULL);
+	rhashtable_free_and_destroy(&sch->dsq_hash, تہی, تہی);
 err_free_ei:
 	free_exit_info(sch->exit_info);
 err_free_sch:
 	kfree(sch);
 err_put_cgrp:
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 	cgroup_put(cgrp);
-#endif
-	return ERR_PTR(ret);
+#اگر_ختم
+	واپس ERR_PTR(ret);
 }
 
 /*
@@ -7541,64 +7541,64 @@ err_put_cgrp:
  * implements ops.sub_attach. Called by the enable workfns once @sch's
  * sysfs-visible state is initialized.
  */
-int scx_sched_sysfs_add(struct scx_sched *sch)
+صحیح scx_sched_sysfs_جوڑو(ساخت scx_sched *sch)
 {
-#ifdef CONFIG_EXT_SUB_SCHED
-	struct scx_sched *parent = scx_parent(sch);
-	int ret;
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	ساخت scx_sched *والد = scx_والد(sch);
+	صحیح ret;
 
-	if (parent)
-		ret = kobject_add(&sch->kobj, &parent->sub_kset->kobj,
+	اگر (والد)
+		ret = kobject_جوڑو(&sch->kobj, &والد->sub_kset->kobj,
 				  "sub-%llu", cgroup_id(sch_cgroup(sch)));
-	else
-		ret = kobject_add(&sch->kobj, NULL, "root");
-	if (ret < 0)
-		return ret;
+	ورنہ
+		ret = kobject_جوڑو(&sch->kobj, تہی, "root");
+	اگر (ret < 0)
+		واپس ret;
 
-	if (sch->ops.sub_attach) {
-		sch->sub_kset = kset_create_and_add("sub", NULL, &sch->kobj);
-		if (!sch->sub_kset)
-			return -ENOMEM;
+	اگر (sch->ops.sub_attach) {
+		sch->sub_kset = kset_create_and_جوڑو("sub", تہی, &sch->kobj);
+		اگر (!sch->sub_kset)
+			واپس -ENOMEM;
 	}
-	return 0;
-#else
-	return kobject_add(&sch->kobj, NULL, "root");
-#endif
+	واپس 0;
+#ورنہ
+	واپس kobject_جوڑو(&sch->kobj, تہی, "root");
+#اگر_ختم
 }
 
-static int check_hotplug_seq(struct scx_sched *sch,
-			      const struct sched_ext_ops *ops)
+ساکن صحیح check_hotplug_seq(ساخت scx_sched *sch,
+			      ثابت ساخت sched_ext_ops *ops)
 {
-	unsigned long long global_hotplug_seq;
+	غیرعلامتی طویل طویل global_hotplug_seq;
 
 	/*
 	 * If a hotplug event has occurred between when a scheduler was
 	 * initialized, and when we were able to attach, exit and notify user
 	 * space about it.
 	 */
-	if (ops->hotplug_seq) {
+	اگر (ops->hotplug_seq) {
 		global_hotplug_seq = atomic_long_read(&scx_hotplug_seq);
-		if (ops->hotplug_seq != global_hotplug_seq) {
+		اگر (ops->hotplug_seq != global_hotplug_seq) {
 			scx_exit(sch, SCX_EXIT_UNREG_KERN,
 				 SCX_ECODE_ACT_RESTART | SCX_ECODE_RSN_HOTPLUG,
 				 "expected hotplug seq %llu did not match actual %llu",
 				 ops->hotplug_seq, global_hotplug_seq);
-			return -EBUSY;
+			واپس -EBUSY;
 		}
 	}
 
-	return 0;
+	واپس 0;
 }
 
-int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
+صحیح scx_validate_ops(ساخت scx_sched *sch, ثابت ساخت sched_ext_ops *ops)
 {
 	/*
 	 * It doesn't make sense to specify the SCX_OPS_ENQ_LAST flag if the
 	 * ops.enqueue() callback isn't implemented.
 	 */
-	if ((ops->flags & SCX_OPS_ENQ_LAST) && !ops->enqueue) {
+	اگر ((ops->flags & SCX_OPS_ENQ_آخری) && !ops->قطار_میں_ڈالو) {
 		scx_error(sch, "SCX_OPS_ENQ_LAST requires ops.enqueue() to be implemented");
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
 	/*
@@ -7606,20 +7606,20 @@ int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
 	 * may set it to declare a dependency; reject if the root hasn't
 	 * enabled it.
 	 */
-	if ((ops->flags & SCX_OPS_TID_TO_TASK) && scx_parent(sch) &&
-	    !(sch->ancestors[0]->ops.flags & SCX_OPS_TID_TO_TASK)) {
+	اگر ((ops->flags & SCX_OPS_TID_مقصد_TASK) && scx_والد(sch) &&
+	    !(sch->ancestors[0]->ops.flags & SCX_OPS_TID_مقصد_TASK)) {
 		scx_error(sch, "SCX_OPS_TID_TO_TASK requires root scheduler to enable it");
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
 	/*
 	 * SCX_OPS_BUILTIN_IDLE_PER_NODE requires built-in CPU idle
 	 * selection policy to be enabled.
 	 */
-	if ((ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE) &&
+	اگر ((ops->flags & SCX_OPS_BUILTIN_IDLE_فی_گرہ) &&
 	    (ops->update_idle && !(ops->flags & SCX_OPS_KEEP_BUILTIN_IDLE))) {
 		scx_error(sch, "SCX_OPS_BUILTIN_IDLE_PER_NODE requires CPU idle selection enabled");
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
 	/*
@@ -7627,7 +7627,7 @@ int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
 	 * cpu_release tail; reading those fields off a cid-form @ops would
 	 * run past the BPF allocation. Skip for cid-form.
 	 */
-	if (!sch->is_cid_type && (ops->cpu_acquire || ops->cpu_release))
+	اگر (!sch->is_cid_type && (ops->cpu_acquire || ops->cpu_release))
 		pr_warn_ratelimited("ops->cpu_acquire/release() are deprecated, use sched_switch TP instead\n");
 
 	/*
@@ -7636,35 +7636,35 @@ int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
 	 * and a root that accepts sub-scheds must expose cid-form state to
 	 * them. Reject cpu-form schedulers on either side.
 	 */
-	if (!sch->is_cid_type) {
-		if (scx_parent(sch)) {
+	اگر (!sch->is_cid_type) {
+		اگر (scx_والد(sch)) {
 			scx_error(sch, "sub-sched requires cid-form struct_ops");
-			return -EINVAL;
+			واپس -EINVAL;
 		}
-		if (ops->sub_attach || ops->sub_detach) {
+		اگر (ops->sub_attach || ops->sub_detach) {
 			scx_error(sch, "sub_attach/sub_detach requires cid-form struct_ops");
-			return -EINVAL;
+			واپس -EINVAL;
 		}
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static void scx_root_enable_workfn(struct kthread_work *work)
+ساکن خالی scx_جڑ_enable_workfn(ساخت kthread_work *work)
 {
-	struct scx_enable_cmd *cmd = container_of(work, struct scx_enable_cmd, work);
-	struct sched_ext_ops *ops = cmd->ops;
-	struct cgroup *cgrp = root_cgroup();
-	struct scx_sched *sch;
-	struct scx_task_iter sti;
-	struct task_struct *p;
-	int i, cpu, ret;
+	ساخت scx_enable_cmd *cmd = container_کا(work, ساخت scx_enable_cmd, work);
+	ساخت sched_ext_ops *ops = cmd->ops;
+	ساخت cgroup *cgrp = جڑ_cgroup();
+	ساخت scx_sched *sch;
+	ساخت scx_task_iter sti;
+	ساخت task_struct *p;
+	صحیح i, cpu, ret;
 
-	mutex_lock(&scx_enable_mutex);
+	mutex_تالا(&scx_enable_mutex);
 
-	if (scx_enable_state() != SCX_DISABLED) {
+	اگر (scx_enable_state() != SCX_DISABLED) {
 		ret = -EBUSY;
-		goto err_unlock;
+		جاؤ err_unlock;
 	}
 
 	/*
@@ -7675,59 +7675,59 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * finished tearing down; proceeding would let the in-flight unreg's
 	 * RCU_INIT_POINTER(NULL) clobber the @ops->priv we are about to assign.
 	 */
-	if (rcu_access_pointer(ops->priv)) {
+	اگر (rcu_access_اشارہ_گر(ops->priv)) {
 		ret = -EBUSY;
-		goto err_unlock;
+		جاؤ err_unlock;
 	}
 
 	ret = alloc_kick_syncs();
-	if (ret)
-		goto err_unlock;
+	اگر (ret)
+		جاؤ err_unlock;
 
-	if (ops->flags & SCX_OPS_TID_TO_TASK) {
+	اگر (ops->flags & SCX_OPS_TID_مقصد_TASK) {
 		ret = rhashtable_init(&scx_tid_hash, &scx_tid_hash_params);
-		if (ret)
-			goto err_free_ksyncs;
+		اگر (ret)
+			جاؤ err_free_ksyncs;
 	}
 
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 	cgroup_get(cgrp);
-#endif
+#اگر_ختم
 	/*
 	 * Transition to ENABLING to arm the disable path. Allocation failure
 	 * still unwinds locally. Full disabling on failure applies only after
 	 * scx_alloc_and_add_sched() succeeds.
 	 */
-	WARN_ON_ONCE(scx_set_enable_state(SCX_ENABLING) != SCX_DISABLED);
-	WARN_ON_ONCE(scx_root);
+	WARN_ON_ONCE(scx_سیٹ_enable_state(SCX_ENABLING) != SCX_DISABLED);
+	WARN_ON_ONCE(scx_جڑ);
 
-	sch = scx_alloc_and_add_sched(cmd, cgrp, NULL);
-	if (IS_ERR(sch)) {
+	sch = scx_alloc_and_جوڑو_sched(cmd, cgrp, تہی);
+	اگر (IS_ERR(sch)) {
 		ret = PTR_ERR(sch);
-		WARN_ON_ONCE(scx_set_enable_state(SCX_DISABLED) != SCX_ENABLING);
-		goto err_free_tid_hash;
+		WARN_ON_ONCE(scx_سیٹ_enable_state(SCX_DISABLED) != SCX_ENABLING);
+		جاؤ err_free_tid_hash;
 	}
 
-	if (sch->is_cid_type)
+	اگر (sch->is_cid_type)
 		static_branch_enable(&__scx_is_cid_type);
 
-	atomic_long_set(&scx_nr_rejected, 0);
+	atomic_long_سیٹ(&scx_nr_rejected, 0);
 
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
+		ساخت rq *rq = cpu_rq(cpu);
 
 		rq->scx.local_dsq.sched = sch;
-		rq->scx.cpuperf_target = SCX_CPUPERF_ONE;
+		rq->scx.cpuperf_ہدف = SCX_CPUPERF_ONE;
 	}
 
 	scx_discard_stale_ecaps_syncs();
-	scx_rescue_set_knobs(sch);
+	scx_rescue_سیٹ_knobs(sch);
 
 	/*
 	 * Keep CPUs stable during enable so that the BPF scheduler can track
 	 * online CPUs by watching ->on/offline_cpu() after ->init().
 	 */
-	cpus_read_lock();
+	cpus_read_تالا();
 
 	/*
 	 * Build the cid mapping into a private under-construction set. It
@@ -7735,21 +7735,21 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * ops.init_cids() has finalized the layout.
 	 */
 	ret = scx_cid_init(sch);
-	if (ret) {
+	اگر (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		جاؤ err_disable;
 	}
 
 	/*
 	 * Make the scheduler instance visible. Must be inside cpus_read_lock().
 	 * See handle_hotplug().
 	 */
-	rcu_assign_pointer(scx_root, sch);
+	rcu_تفویض_اشارہ_گر(scx_جڑ, sch);
 
 	ret = scx_link_sched(sch);
-	if (ret) {
+	اگر (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		جاؤ err_disable;
 	}
 
 	scx_idle_enable(ops);
@@ -7759,13 +7759,13 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * which may call scx_bpf_cid_override(). Run it before the caps and
 	 * shard state are built so the final layout is in effect.
 	 */
-	if (sch->is_cid_type && sch->ops_cid.init_cids) {
-		ret = SCX_CALL_OP_RET(sch, init_cids, NULL);
-		if (ret) {
+	اگر (sch->is_cid_type && sch->ops_cid.init_cids) {
+		ret = SCX_CALL_OP_RET(sch, init_cids, تہی);
+		اگر (ret) {
 			ret = scx_ops_sanitize_err(sch, "init_cids", ret);
 			cpus_read_unlock();
 			scx_error(sch, "ops.init_cids() failed (%d)", ret);
-			goto err_disable;
+			جاؤ err_disable;
 		}
 	}
 
@@ -7773,59 +7773,59 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	scx_cid_publish_tables();
 
 	ret = scx_arena_pool_init(sch);
-	if (ret) {
+	اگر (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		جاؤ err_disable;
 	}
 
 	ret = scx_alloc_kern_arena_objs(sch);
-	if (ret) {
+	اگر (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		جاؤ err_disable;
 	}
 
 	ret = scx_alloc_pshards(sch);
-	if (ret) {
+	اگر (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		جاؤ err_disable;
 	}
 
-	scx_init_root_caps(sch);
+	scx_init_جڑ_caps(sch);
 
 	/* the cid caps and shards are live now, so ops.init() can query them */
-	if (sch->ops.init) {
-		ret = SCX_CALL_OP_RET(sch, init, NULL);
-		if (ret) {
+	اگر (sch->ops.init) {
+		ret = SCX_CALL_OP_RET(sch, init, تہی);
+		اگر (ret) {
 			ret = scx_ops_sanitize_err(sch, "init", ret);
 			cpus_read_unlock();
 			scx_error(sch, "ops.init() failed (%d)", ret);
-			goto err_disable;
+			جاؤ err_disable;
 		}
 		sch->exit_info->flags |= SCX_EFLAG_INITIALIZED;
 	}
 
-	ret = scx_sched_sysfs_add(sch);
-	if (ret) {
+	ret = scx_sched_sysfs_جوڑو(sch);
+	اگر (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		جاؤ err_disable;
 	}
 
-	for (i = SCX_OPI_CPU_HOTPLUG_BEGIN; i < SCX_OPI_CPU_HOTPLUG_END; i++)
-		if (((void (**)(void))ops)[i])
-			set_bit(i, sch->has_op);
+	برائے (i = SCX_OPI_CPU_HOTPLUG_BEGIN; i < SCX_OPI_CPU_HOTPLUG_انتہا; i++)
+		اگر (((خالی (**)(خالی))ops)[i])
+			سیٹ_ثنائی_ہندسہ(i, sch->has_op);
 
 	ret = check_hotplug_seq(sch, ops);
-	if (ret) {
+	اگر (ret) {
 		cpus_read_unlock();
-		goto err_disable;
+		جاؤ err_disable;
 	}
 	scx_idle_update_selcpu_topology(ops);
 
 	cpus_read_unlock();
 
 	ret = scx_validate_ops(sch, ops);
-	if (ret)
-		goto err_disable;
+	اگر (ret)
+		جاؤ err_disable;
 
 	/*
 	 * Attach the ext_server bandwidth reservation before anything is
@@ -7839,16 +7839,16 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * automatically.
 	 */
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
+		ساخت rq *rq = cpu_rq(cpu);
 
-		scoped_guard(rq_lock_irqsave, rq) {
+		scoped_guard(rq_تالا_irqsave, rq) {
 			update_rq_clock(rq);
 			ret = dl_server_attach_bw(&rq->ext_server);
 		}
-		if (ret) {
+		اگر (ret) {
 			pr_warn("sched_ext: failed to attach ext_server on CPU %d (%d)\n",
 				cpu, ret);
-			goto err_disable;
+			جاؤ err_disable;
 		}
 	}
 
@@ -7860,24 +7860,24 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 */
 	scx_bypass(sch, true);
 
-	for (i = SCX_OPI_NORMAL_BEGIN; i < SCX_OPI_NORMAL_END; i++)
-		if (((void (**)(void))ops)[i])
-			set_bit(i, sch->has_op);
+	برائے (i = SCX_OPI_معمول_BEGIN; i < SCX_OPI_معمول_انتہا; i++)
+		اگر (((خالی (**)(خالی))ops)[i])
+			سیٹ_ثنائی_ہندسہ(i, sch->has_op);
 
-	if (sch->ops.cpu_acquire || sch->ops.cpu_release)
+	اگر (sch->ops.cpu_acquire || sch->ops.cpu_release)
 		sch->ops.flags |= SCX_OPS_HAS_CPU_PREEMPT;
 
 	/*
 	 * Lock out forks, cgroup on/offlining and moves before opening the
 	 * floodgate so that they don't wander into the operations prematurely.
 	 */
-	percpu_down_write(&scx_fork_rwsem);
+	percpu_نیچے_کو_write(&scx_fork_rwsem);
 
 	WARN_ON_ONCE(scx_init_task_enabled);
 	scx_init_task_enabled = true;
 
 	/* flip under fork_rwsem; the iter below covers existing tasks */
-	if (ops->flags & SCX_OPS_TID_TO_TASK)
+	اگر (ops->flags & SCX_OPS_TID_مقصد_TASK)
 		static_branch_enable(&__scx_tid_to_task_enabled);
 
 	/*
@@ -7893,17 +7893,17 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * while tasks are being initialized so that scx_cgroup_can_attach()
 	 * never sees uninitialized tasks.
 	 */
-	scx_cgroup_lock();
-	set_cgroup_sched(sch_cgroup(sch), sch);
+	scx_cgroup_تالا();
+	سیٹ_cgroup_sched(sch_cgroup(sch), sch);
 	ret = scx_cgroup_init(sch);
-	if (ret)
-		goto err_disable_unlock_all;
+	اگر (ret)
+		جاؤ err_disable_unlock_all;
 
 	WARN_ON_ONCE(scx_cgroup_enabled);
 	scx_cgroup_enabled = true;
 
-	scx_task_iter_start(&sti, NULL);
-	while ((p = scx_task_iter_next_locked(&sti))) {
+	scx_task_iter_آغاز(&sti, تہی);
+	جب ((p = scx_task_iter_اگلا_locked(&sti))) {
 		/*
 		 * @p is in scx_tasks under scx_tasks_lock, and SCX_TASK_DEAD
 		 * tasks are filtered by scx_task_iter_next_locked().
@@ -7922,34 +7922,34 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 		 * %INIT_BEGIN and transitions to %DEAD without calling ops,
 		 * leaving the post-init recheck below to unwind.
 		 */
-		scx_set_task_state(p, SCX_TASK_INIT_BEGIN);
+		scx_سیٹ_task_state(p, SCX_TASK_INIT_BEGIN);
 		scx_task_iter_unlock(&sti);
 
-		ret = __scx_init_task(sch, p, NULL, false);
+		ret = __scx_init_task(sch, p, تہی, false);
 
 		scx_task_iter_relock(&sti, p);
 
-		if (unlikely(ret)) {
-			if (scx_get_task_state(p) != SCX_TASK_DEAD)
-				scx_set_task_state(p, SCX_TASK_NONE);
+		اگر (unlikely(ret)) {
+			اگر (scx_get_task_state(p) != SCX_TASK_DEAD)
+				scx_سیٹ_task_state(p, SCX_TASK_NONE);
 			scx_task_iter_stop(&sti);
 			scx_error(sch, "ops.init_task() failed (%d) for %s[%d]",
 				  ret, p->comm, p->pid);
 			put_task_struct(p);
-			goto err_disable_unlock_all;
+			جاؤ err_disable_unlock_all;
 		}
 
-		if (scx_get_task_state(p) == SCX_TASK_DEAD) {
+		اگر (scx_get_task_state(p) == SCX_TASK_DEAD) {
 			/*
 			 * sched_ext_dead() observed %INIT_BEGIN and set %DEAD.
 			 * ops.exit_task() is owed to the sched __scx_init_task()
 			 * ran against; call it now.
 			 */
 			scx_sub_init_cancel_task(sch, p);
-		} else {
-			scx_set_task_state(p, SCX_TASK_INIT);
-			scx_set_task_sched(p, sch);
-			scx_set_task_state(p, SCX_TASK_READY);
+		} ورنہ {
+			scx_سیٹ_task_state(p, SCX_TASK_INIT);
+			scx_سیٹ_task_sched(p, sch);
+			scx_سیٹ_task_state(p, SCX_TASK_READY);
 		}
 
 		/*
@@ -7957,14 +7957,14 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 		 * list_empty() guards against sched_ext_dead() having taken @p
 		 * off the list while init ran unlocked.
 		 */
-		if (scx_tid_to_task_enabled() && !list_empty(&p->scx.tasks_node))
-			scx_tid_hash_insert(p);
+		اگر (scx_tid_مقصد_task_enabled() && !list_خالی_خانے(&p->scx.tasks_گرہ))
+			scx_tid_hash_داخل_کرو(p);
 
 		put_task_struct(p);
 	}
 	scx_task_iter_stop(&sti);
 	scx_cgroup_unlock();
-	percpu_up_write(&scx_fork_rwsem);
+	percpu_اوپر_write(&scx_fork_rwsem);
 
 	/*
 	 * All tasks are READY. It's safe to turn on scx_enabled() and switch
@@ -7978,36 +7978,36 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 * transitions here are synchronized against sched_ext_dead() through
 	 * scx_tasks_lock.
 	 */
-	percpu_down_write(&scx_fork_rwsem);
-	scx_task_iter_start(&sti, NULL);
-	while ((p = scx_task_iter_next_locked(&sti))) {
-		unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
-		const struct sched_class *old_class = p->sched_class;
-		const struct sched_class *new_class = scx_setscheduler_class(p);
+	percpu_نیچے_کو_write(&scx_fork_rwsem);
+	scx_task_iter_آغاز(&sti, تہی);
+	جب ((p = scx_task_iter_اگلا_locked(&sti))) {
+		غیرعلامتی صحیح قطار_flags = قطار_سے_نکالو_SAVE | قطار_سے_نکالو_MOVE;
+		ثابت ساخت sched_class *old_class = p->sched_class;
+		ثابت ساخت sched_class *new_class = scx_setscheduler_class(p);
 
-		if (scx_get_task_state(p) != SCX_TASK_READY)
-			continue;
+		اگر (scx_get_task_state(p) != SCX_TASK_READY)
+			جاری;
 
-		if (old_class != new_class)
-			queue_flags |= DEQUEUE_CLASS;
+		اگر (old_class != new_class)
+			قطار_flags |= قطار_سے_نکالو_CLASS;
 
-		scoped_guard (sched_change, p, queue_flags) {
-			scx_set_task_slice(p, READ_ONCE(sch->slice_dfl));
+		scoped_guard (sched_change, p, قطار_flags) {
+			scx_سیٹ_task_قاش(p, READ_ONCE(sch->قاش_dfl));
 			p->sched_class = new_class;
 		}
 	}
 	scx_task_iter_stop(&sti);
-	percpu_up_write(&scx_fork_rwsem);
+	percpu_اوپر_write(&scx_fork_rwsem);
 
 	scx_bypass(sch, false);
 
-	if (!scx_tryset_enable_state(SCX_ENABLED, SCX_ENABLING)) {
-		WARN_ON_ONCE(atomic_read(&sch->exit_kind) == SCX_EXIT_NONE);
+	اگر (!scx_tryset_enable_state(SCX_ENABLED, SCX_ENABLING)) {
+		WARN_ON_ONCE(atomic_read(&sch->exit_قسم) == SCX_EXIT_NONE);
 		ret = -EBUSY;
-		goto err_disable;
+		جاؤ err_disable;
 	}
 
-	if (!(ops->flags & SCX_OPS_SWITCH_PARTIAL))
+	اگر (!(ops->flags & SCX_OPS_SWITCH_PARTIAL))
 		static_branch_enable(&__scx_switched_all);
 
 	/*
@@ -8019,11 +8019,11 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 	 *
 	 * In partial mode keep fair_server attached.
 	 */
-	if (scx_switched_all()) {
+	اگر (scx_switched_all()) {
 		for_each_possible_cpu(cpu) {
-			struct rq *rq = cpu_rq(cpu);
+			ساخت rq *rq = cpu_rq(cpu);
 
-			guard(rq_lock_irqsave)(rq);
+			guard(rq_تالا_irqsave)(rq);
 			update_rq_clock(rq);
 			dl_server_detach_bw(&rq->fair_server);
 		}
@@ -8031,27 +8031,27 @@ static void scx_root_enable_workfn(struct kthread_work *work)
 
 	pr_info("sched_ext: BPF scheduler \"%s\" enabled%s\n",
 		sch->ops.name, scx_switched_all() ? "" : " (partial)");
-	kobject_uevent(&sch->kobj, KOBJ_ADD);
+	kobject_uevent(&sch->kobj, KOBJ_جوڑو);
 	mutex_unlock(&scx_enable_mutex);
 
 	atomic_long_inc(&scx_enable_seq);
 
 	cmd->ret = 0;
-	return;
+	واپس;
 
 err_free_tid_hash:
-	if (ops->flags & SCX_OPS_TID_TO_TASK)
-		rhashtable_free_and_destroy(&scx_tid_hash, NULL, NULL);
+	اگر (ops->flags & SCX_OPS_TID_مقصد_TASK)
+		rhashtable_free_and_destroy(&scx_tid_hash, تہی, تہی);
 err_free_ksyncs:
 	free_kick_syncs();
 err_unlock:
 	mutex_unlock(&scx_enable_mutex);
 	cmd->ret = ret;
-	return;
+	واپس;
 
 err_disable_unlock_all:
 	scx_cgroup_unlock();
-	percpu_up_write(&scx_fork_rwsem);
+	percpu_اوپر_write(&scx_fork_rwsem);
 	/* we'll soon enter disable path, keep bypass on */
 err_disable:
 	mutex_unlock(&scx_enable_mutex);
@@ -8069,221 +8069,221 @@ err_disable:
 	cmd->ret = 0;
 }
 
-static s32 scx_enable(struct scx_enable_cmd *cmd, struct bpf_link *link)
+ساکن s32 scx_enable(ساخت scx_enable_cmd *cmd, ساخت bpf_link *link)
 {
-	static struct kthread_worker *helper;
-	static DEFINE_MUTEX(helper_mutex);
+	ساکن ساخت kthread_کارکن *helper;
+	ساکن DEFINE_MUTEX(helper_mutex);
 
-	if (housekeeping_enabled(HK_TYPE_DOMAIN_BOOT)) {
+	اگر (housekeeping_enabled(HK_TYPE_DOMAIN_BOOT)) {
 		pr_err("sched_ext: Not compatible with \"isolcpus=\" domain isolation\n");
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
-	if (!READ_ONCE(helper)) {
-		mutex_lock(&helper_mutex);
-		if (!helper) {
-			struct kthread_worker *w =
-				kthread_run_worker(0, "scx_enable_helper");
-			if (IS_ERR_OR_NULL(w)) {
+	اگر (!READ_ONCE(helper)) {
+		mutex_تالا(&helper_mutex);
+		اگر (!helper) {
+			ساخت kthread_کارکن *w =
+				kthread_تسلسل_کارکن(0, "scx_enable_helper");
+			اگر (IS_ERR_OR_NULL(w)) {
 				mutex_unlock(&helper_mutex);
-				return -ENOMEM;
+				واپس -ENOMEM;
 			}
-			sched_set_fifo(w->task);
+			sched_سیٹ_fifo(w->task);
 			WRITE_ONCE(helper, w);
 		}
 		mutex_unlock(&helper_mutex);
 	}
 
-#ifdef CONFIG_EXT_SUB_SCHED
-	if (cmd->ops->sub_cgroup_id > 1)
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	اگر (cmd->ops->sub_cgroup_id > 1)
 		kthread_init_work(&cmd->work, scx_sub_enable_workfn);
-	else
-#endif	/* CONFIG_EXT_SUB_SCHED */
-		kthread_init_work(&cmd->work, scx_root_enable_workfn);
+	ورنہ
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
+		kthread_init_work(&cmd->work, scx_جڑ_enable_workfn);
 
-	kthread_queue_work(READ_ONCE(helper), &cmd->work);
+	kthread_قطار_work(READ_ONCE(helper), &cmd->work);
 	kthread_flush_work(&cmd->work);
-	return cmd->ret;
+	واپس cmd->ret;
 }
 
 
 /********************************************************************************
  * bpf_struct_ops plumbing.
  */
-#include <linux/bpf_verifier.h>
-#include <linux/bpf.h>
-#include <linux/btf.h>
+#شامل <linux/bpf_verifier.h>
+#شامل <linux/bpf.h>
+#شامل <linux/btf.h>
 
-static const struct btf_type *task_struct_type;
+ساکن ثابت ساخت btf_type *task_struct_type;
 
-static bool bpf_scx_is_valid_access(int off, int size,
-				    enum bpf_access_type type,
-				    const struct bpf_prog *prog,
-				    struct bpf_insn_access_aux *info)
+ساکن bool bpf_scx_is_valid_access(صحیح off, صحیح سائز,
+				    شمار bpf_access_type type,
+				    ثابت ساخت bpf_prog *prog,
+				    ساخت bpf_insn_access_aux *info)
 {
-	if (type != BPF_READ)
-		return false;
-	if (off < 0 || off >= sizeof(__u64) * MAX_BPF_FUNC_ARGS)
-		return false;
-	if (off % size != 0)
-		return false;
+	اگر (type != BPF_READ)
+		واپس false;
+	اگر (off < 0 || off >= حجم(__u64) * MAX_BPF_FUNC_دلائل)
+		واپس false;
+	اگر (off % سائز != 0)
+		واپس false;
 
-	return btf_ctx_access(off, size, type, prog, info);
+	واپس btf_ctx_access(off, سائز, type, prog, info);
 }
 
 /* common to both forms: only scx.disallow is writable */
-static int bpf_scx_btf_struct_access_common(const struct bpf_reg_state *reg,
-					    int off, int size)
+ساکن صحیح bpf_scx_btf_struct_access_common(ثابت ساخت bpf_reg_state *reg,
+					    صحیح off, صحیح سائز)
 {
-	const struct btf_type *t;
+	ثابت ساخت btf_type *t;
 
 	t = btf_type_by_id(reg->btf, reg->btf_id);
-	if (t == task_struct_type &&
-	    off >= offsetof(struct task_struct, scx.disallow) &&
-	    off + size <= offsetofend(struct task_struct, scx.disallow))
-		return SCALAR_VALUE;
+	اگر (t == task_struct_type &&
+	    off >= offsetof(ساخت task_struct, scx.disallow) &&
+	    off + سائز <= offsetofend(ساخت task_struct, scx.disallow))
+		واپس SCALAR_قدر;
 
-	return -EACCES;
+	واپس -EACCES;
 }
 
-static int bpf_scx_btf_struct_access(struct bpf_verifier_log *log,
-				     const struct bpf_reg_state *reg, int off,
-				     int size)
+ساکن صحیح bpf_scx_btf_struct_access(ساخت bpf_verifier_log *لوگارتھم,
+				     ثابت ساخت bpf_reg_state *reg, صحیح off,
+				     صحیح سائز)
 {
-	const struct btf_type *t;
+	ثابت ساخت btf_type *t;
 
 	t = btf_type_by_id(reg->btf, reg->btf_id);
-	if (t == task_struct_type) {
-		if ((off >= offsetof(struct task_struct, scx.slice) &&
-		     off + size <= offsetofend(struct task_struct, scx.slice)) ||
-		    (off >= offsetof(struct task_struct, scx.dsq_vtime) &&
-		     off + size <= offsetofend(struct task_struct, scx.dsq_vtime)))
-			return SCALAR_VALUE;
+	اگر (t == task_struct_type) {
+		اگر ((off >= offsetof(ساخت task_struct, scx.قاش) &&
+		     off + سائز <= offsetofend(ساخت task_struct, scx.قاش)) ||
+		    (off >= offsetof(ساخت task_struct, scx.dsq_vtime) &&
+		     off + سائز <= offsetofend(ساخت task_struct, scx.dsq_vtime)))
+			واپس SCALAR_قدر;
 	}
 
-	return bpf_scx_btf_struct_access_common(reg, off, size);
+	واپس bpf_scx_btf_struct_access_common(reg, off, سائز);
 }
 
 /* cid-form rejects direct slice and dsq_vtime writes in favor of the kfuncs */
-static int bpf_scx_cid_btf_struct_access(struct bpf_verifier_log *log,
-					 const struct bpf_reg_state *reg, int off,
-					 int size)
+ساکن صحیح bpf_scx_cid_btf_struct_access(ساخت bpf_verifier_log *لوگارتھم,
+					 ثابت ساخت bpf_reg_state *reg, صحیح off,
+					 صحیح سائز)
 {
-	return bpf_scx_btf_struct_access_common(reg, off, size);
+	واپس bpf_scx_btf_struct_access_common(reg, off, سائز);
 }
 
-static const struct bpf_verifier_ops bpf_scx_verifier_ops = {
-	.get_func_proto = bpf_base_func_proto,
+ساکن ثابت ساخت bpf_verifier_ops bpf_scx_verifier_ops = {
+	.get_func_proto = bpf_بنیاد_func_proto,
 	.is_valid_access = bpf_scx_is_valid_access,
 	.btf_struct_access = bpf_scx_btf_struct_access,
 };
 
-static const struct bpf_verifier_ops bpf_scx_cid_verifier_ops = {
-	.get_func_proto = bpf_base_func_proto,
+ساکن ثابت ساخت bpf_verifier_ops bpf_scx_cid_verifier_ops = {
+	.get_func_proto = bpf_بنیاد_func_proto,
 	.is_valid_access = bpf_scx_is_valid_access,
 	.btf_struct_access = bpf_scx_cid_btf_struct_access,
 };
 
-static int bpf_scx_init_member(const struct btf_type *t,
-			       const struct btf_member *member,
-			       void *kdata, const void *udata)
+ساکن صحیح bpf_scx_init_member(ثابت ساخت btf_type *t,
+			       ثابت ساخت btf_member *member,
+			       خالی *kdata, ثابت خالی *udata)
 {
-	const struct sched_ext_ops *uops = udata;
-	struct sched_ext_ops *ops = kdata;
+	ثابت ساخت sched_ext_ops *uops = udata;
+	ساخت sched_ext_ops *ops = kdata;
 	u32 moff = __btf_member_bit_offset(t, member) / 8;
-	int ret;
+	صحیح ret;
 
-	switch (moff) {
-	case offsetof(struct sched_ext_ops, dispatch_max_batch):
-		if (*(u32 *)(udata + moff) > INT_MAX)
-			return -E2BIG;
+	انتخاب (moff) {
+	حالت offsetof(ساخت sched_ext_ops, dispatch_max_batch):
+		اگر (*(u32 *)(udata + moff) > زیادہ_سے_زیادہ_عدد)
+			واپس -E2BIG;
 		ops->dispatch_max_batch = *(u32 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, flags):
-		if (*(u64 *)(udata + moff) & ~SCX_OPS_ALL_FLAGS)
-			return -EINVAL;
+		واپس 1;
+	حالت offsetof(ساخت sched_ext_ops, flags):
+		اگر (*(u64 *)(udata + moff) & ~SCX_OPS_ALL_FLAGS)
+			واپس -EINVAL;
 		ops->flags = *(u64 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, name):
+		واپس 1;
+	حالت offsetof(ساخت sched_ext_ops, name):
 		ret = bpf_obj_name_cpy(ops->name, uops->name,
-				       sizeof(ops->name));
-		if (ret < 0)
-			return ret;
-		if (ret == 0)
-			return -EINVAL;
-		return 1;
-	case offsetof(struct sched_ext_ops, timeout_ms):
-		if (msecs_to_jiffies(*(u32 *)(udata + moff)) >
+				       حجم(ops->name));
+		اگر (ret < 0)
+			واپس ret;
+		اگر (ret == 0)
+			واپس -EINVAL;
+		واپس 1;
+	حالت offsetof(ساخت sched_ext_ops, timeout_ms):
+		اگر (msecs_مقصد_jiffies(*(u32 *)(udata + moff)) >
 		    SCX_WATCHDOG_MAX_TIMEOUT)
-			return -E2BIG;
+			واپس -E2BIG;
 		ops->timeout_ms = *(u32 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, exit_dump_len):
+		واپس 1;
+	حالت offsetof(ساخت sched_ext_ops, exit_dump_len):
 		ops->exit_dump_len =
 			*(u32 *)(udata + moff) ?: SCX_EXIT_DUMP_DFL_LEN;
-		return 1;
-	case offsetof(struct sched_ext_ops, hotplug_seq):
+		واپس 1;
+	حالت offsetof(ساخت sched_ext_ops, hotplug_seq):
 		ops->hotplug_seq = *(u64 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, cid_shard_size):
-		ops->cid_shard_size = *(u32 *)(udata + moff);
-		return 1;
-	case offsetof(struct sched_ext_ops, rescue_bandwidth_ppt): {
+		واپس 1;
+	حالت offsetof(ساخت sched_ext_ops, cid_shard_سائز):
+		ops->cid_shard_سائز = *(u32 *)(udata + moff);
+		واپس 1;
+	حالت offsetof(ساخت sched_ext_ops, rescue_bandwidth_ppt): {
 		u32 bw_ppt = *(u32 *)(udata + moff);
 
-		if (bw_ppt > SCX_RESCUE_MAX_BW_PPT && bw_ppt != SCX_RESCUE_DISABLE)
-			return -E2BIG;
+		اگر (bw_ppt > SCX_RESCUE_MAX_BW_PPT && bw_ppt != SCX_RESCUE_DISABLE)
+			واپس -E2BIG;
 		ops->rescue_bandwidth_ppt = bw_ppt;
-		return 1;
+		واپس 1;
 	}
-	case offsetof(struct sched_ext_ops, rescue_quantum_us): {
-		u32 quantum_us = *(u32 *)(udata + moff);
+	حالت offsetof(ساخت sched_ext_ops, rescue_وقتی_حصہ_us): {
+		u32 وقتی_حصہ_us = *(u32 *)(udata + moff);
 
-		if (quantum_us > SCX_RESCUE_MAX_QUANTUM_US)
-			return -E2BIG;
-		if (quantum_us && quantum_us < SCX_RESCUE_MIN_QUANTUM_US)
-			return -EINVAL;
-		ops->rescue_quantum_us = quantum_us;
-		return 1;
+		اگر (وقتی_حصہ_us > SCX_RESCUE_MAX_وقتی_حصہ_US)
+			واپس -E2BIG;
+		اگر (وقتی_حصہ_us && وقتی_حصہ_us < SCX_RESCUE_MIN_وقتی_حصہ_US)
+			واپس -EINVAL;
+		ops->rescue_وقتی_حصہ_us = وقتی_حصہ_us;
+		واپس 1;
 	}
-#ifdef CONFIG_EXT_SUB_SCHED
-	case offsetof(struct sched_ext_ops, sub_cgroup_id):
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+	حالت offsetof(ساخت sched_ext_ops, sub_cgroup_id):
 		ops->sub_cgroup_id = *(u64 *)(udata + moff);
-		return 1;
-#endif	/* CONFIG_EXT_SUB_SCHED */
+		واپس 1;
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static int bpf_scx_check_member(const struct btf_type *t,
-				const struct btf_member *member,
-				const struct bpf_prog *prog)
+ساکن صحیح bpf_scx_check_member(ثابت ساخت btf_type *t,
+				ثابت ساخت btf_member *member,
+				ثابت ساخت bpf_prog *prog)
 {
 	u32 moff = __btf_member_bit_offset(t, member) / 8;
 
-	switch (moff) {
-	case offsetof(struct sched_ext_ops, init_task):
-#ifdef CONFIG_EXT_GROUP_SCHED
-	case offsetof(struct sched_ext_ops, cgroup_init):
-	case offsetof(struct sched_ext_ops, cgroup_exit):
-	case offsetof(struct sched_ext_ops, cgroup_prep_move):
-	case offsetof(struct sched_ext_ops, cgroup_set_bandwidth):
-#endif
-	case offsetof(struct sched_ext_ops, cpu_online):
-	case offsetof(struct sched_ext_ops, cpu_offline):
-	case offsetof(struct sched_ext_ops, init_cids):
-	case offsetof(struct sched_ext_ops, init):
-	case offsetof(struct sched_ext_ops, exit):
-	case offsetof(struct sched_ext_ops, sub_attach):
-	case offsetof(struct sched_ext_ops, sub_detach):
-		break;
-	default:
-		if (prog->sleepable)
-			return -EINVAL;
+	انتخاب (moff) {
+	حالت offsetof(ساخت sched_ext_ops, init_task):
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
+	حالت offsetof(ساخت sched_ext_ops, cgroup_init):
+	حالت offsetof(ساخت sched_ext_ops, cgroup_exit):
+	حالت offsetof(ساخت sched_ext_ops, cgroup_prep_move):
+	حالت offsetof(ساخت sched_ext_ops, cgroup_سیٹ_bandwidth):
+#اگر_ختم
+	حالت offsetof(ساخت sched_ext_ops, cpu_online):
+	حالت offsetof(ساخت sched_ext_ops, cpu_offline):
+	حالت offsetof(ساخت sched_ext_ops, init_cids):
+	حالت offsetof(ساخت sched_ext_ops, init):
+	حالت offsetof(ساخت sched_ext_ops, باہر_نکلو):
+	حالت offsetof(ساخت sched_ext_ops, sub_attach):
+	حالت offsetof(ساخت sched_ext_ops, sub_detach):
+		توڑو;
+	طےشدہ:
+		اگر (prog->sleepable)
+			واپس -EINVAL;
 	}
 
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 	/*
 	 * Enable private stack for operations that can nest along the
 	 * hierarchy.
@@ -8292,31 +8292,31 @@ static int bpf_scx_check_member(const struct btf_type *t,
 	 * sub-scheds and sub-scheds themselves but I don't know how to access
 	 * struct_ops from here.
 	 */
-	switch (moff) {
-	case offsetof(struct sched_ext_ops, dispatch):
-		prog->aux->priv_stack_requested = true;
+	انتخاب (moff) {
+	حالت offsetof(ساخت sched_ext_ops, dispatch):
+		prog->aux->priv_ڈھیر_requested = true;
 		prog->aux->recursion_detected = scx_pstack_recursion_on_dispatch;
-		break;
-	case offsetof(struct sched_ext_ops, sub_caps_updated):
-		prog->aux->priv_stack_requested = true;
+		توڑو;
+	حالت offsetof(ساخت sched_ext_ops, sub_caps_updated):
+		prog->aux->priv_ڈھیر_requested = true;
 		prog->aux->recursion_detected = scx_pstack_recursion_on_caps_updated;
-		break;
+		توڑو;
 	}
-#endif	/* CONFIG_EXT_SUB_SCHED */
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 
-	return 0;
+	واپس 0;
 }
 
-static int bpf_scx_reg(void *kdata, struct bpf_link *link)
+ساکن صحیح bpf_scx_reg(خالی *kdata, ساخت bpf_link *link)
 {
-	struct scx_enable_cmd cmd = { .ops = kdata };
+	ساخت scx_enable_cmd cmd = { .ops = kdata };
 
-	return scx_enable(&cmd, link);
+	واپس scx_enable(&cmd, link);
 }
 
-struct scx_arena_scan {
-	struct bpf_map	*arena;
-	int		err;
+ساخت scx_arena_جائزہ {
+	ساخت bpf_map	*arena;
+	صحیح		err;
 };
 
 /*
@@ -8324,68 +8324,68 @@ struct scx_arena_scan {
  * member prog contributes at most one arena via bpf_prog_arena().
  * Require all non-NULL contributions to match.
  */
-static int scx_arena_scan_prog(struct bpf_prog *prog, void *data)
+ساکن صحیح scx_arena_جائزہ_prog(ساخت bpf_prog *prog, خالی *ڈیٹا)
 {
-	struct scx_arena_scan *s = data;
-	struct bpf_map *arena = NULL;
+	ساخت scx_arena_جائزہ *s = ڈیٹا;
+	ساخت bpf_map *arena = تہی;
 
 	/* arena.o, which defines these, is built only on MMU && 64BIT */
-#if defined(CONFIG_MMU) && defined(CONFIG_64BIT)
+#اگر defined(CONFIG_MMU) && defined(CONFIG_64_ثنائی_ہندسہ)
 	arena = bpf_prog_arena(prog);
-#endif
-	if (!arena)
-		return 0;
-	if (s->arena && s->arena != arena) {
+#اگر_ختم
+	اگر (!arena)
+		واپس 0;
+	اگر (s->arena && s->arena != arena) {
 		s->err = -EINVAL;
-		return 1;
+		واپس 1;
 	}
 	s->arena = arena;
-	return 0;
+	واپس 0;
 }
 
-static int bpf_scx_reg_cid(void *kdata, struct bpf_link *link)
+ساکن صحیح bpf_scx_reg_cid(خالی *kdata, ساخت bpf_link *link)
 {
-	struct scx_enable_cmd cmd = { .ops_cid = kdata, .is_cid_type = true };
-	struct scx_arena_scan scan = {};
-	int ret;
+	ساخت scx_enable_cmd cmd = { .ops_cid = kdata, .is_cid_type = true };
+	ساخت scx_arena_جائزہ جائزہ = {};
+	صحیح ret;
 
-	bpf_struct_ops_for_each_prog(kdata, scx_arena_scan_prog, &scan);
-	if (scan.err) {
+	bpf_struct_ops_for_each_prog(kdata, scx_arena_جائزہ_prog, &جائزہ);
+	اگر (جائزہ.err) {
 		pr_err("sched_ext: cid-form scheduler uses multiple arena maps\n");
-		return scan.err;
+		واپس جائزہ.err;
 	}
-	if (!scan.arena) {
+	اگر (!جائزہ.arena) {
 		pr_err("sched_ext: cid-form scheduler must use a BPF arena map\n");
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
-	bpf_map_inc(scan.arena);
-	cmd.arena_map = scan.arena;
+	bpf_map_inc(جائزہ.arena);
+	cmd.arena_map = جائزہ.arena;
 	ret = scx_enable(&cmd, link);
-	if (cmd.arena_map)		/* not consumed by scx_alloc_and_add_sched() */
+	اگر (cmd.arena_map)		/* not consumed by scx_alloc_and_add_sched() */
 		bpf_map_put(cmd.arena_map);
-	return ret;
+	واپس ret;
 }
 
-static void bpf_scx_unreg(void *kdata, struct bpf_link *link)
+ساکن خالی bpf_scx_unreg(خالی *kdata, ساخت bpf_link *link)
 {
-	struct sched_ext_ops *ops = kdata;
-	struct scx_sched *sch = rcu_dereference_protected(ops->priv, true);
+	ساخت sched_ext_ops *ops = kdata;
+	ساخت scx_sched *sch = rcu_dereference_protected(ops->priv, true);
 
 	scx_disable(sch, SCX_EXIT_UNREG);
 	scx_flush_disable_work(sch);
-	RCU_INIT_POINTER(ops->priv, NULL);
+	RCU_INIT_اشارہ_گر(ops->priv, تہی);
 	kobject_put(&sch->kobj);
 }
 
-static int bpf_scx_init(struct btf *btf)
+ساکن صحیح bpf_scx_init(ساخت btf *btf)
 {
 	task_struct_type = btf_type_by_id(btf, btf_tracing_ids[BTF_TRACING_TYPE_TASK]);
 
-	return 0;
+	واپس 0;
 }
 
-static int bpf_scx_update(void *kdata, void *old_kdata, struct bpf_link *link)
+ساکن صحیح bpf_scx_update(خالی *kdata, خالی *old_kdata, ساخت bpf_link *link)
 {
 	/*
 	 * sched_ext does not support updating the actively-loaded BPF
@@ -8394,59 +8394,59 @@ static int bpf_scx_update(void *kdata, void *old_kdata, struct bpf_link *link)
 	 * etc. Similarly, we can always race with unregistration happening
 	 * elsewhere, such as with sysrq.
 	 */
-	return -EOPNOTSUPP;
+	واپس -EOPNOTSUPP;
 }
 
-static int bpf_scx_validate(void *kdata)
+ساکن صحیح bpf_scx_validate(خالی *kdata)
 {
-	return 0;
+	واپس 0;
 }
 
-static s32 sched_ext_ops__select_cpu(struct task_struct *p, s32 prev_cpu, u64 wake_flags) { return -EINVAL; }
-static void sched_ext_ops__enqueue(struct task_struct *p, u64 enq_flags) {}
-static void sched_ext_ops__dequeue(struct task_struct *p, u64 enq_flags) {}
-static void sched_ext_ops__dispatch(s32 prev_cpu, struct task_struct *prev__nullable) {}
-static void sched_ext_ops__tick(struct task_struct *p) {}
-static void sched_ext_ops__runnable(struct task_struct *p, u64 enq_flags) {}
-static void sched_ext_ops__running(struct task_struct *p) {}
-static void sched_ext_ops__stopping(struct task_struct *p, bool runnable) {}
-static void sched_ext_ops__quiescent(struct task_struct *p, u64 deq_flags) {}
-static bool sched_ext_ops__yield(struct task_struct *from, struct task_struct *to__nullable) { return false; }
-static bool sched_ext_ops__core_sched_before(struct task_struct *a, struct task_struct *b) { return false; }
-static void sched_ext_ops__set_weight(struct task_struct *p, u32 weight) {}
-static void sched_ext_ops__set_cpumask(struct task_struct *p, const struct cpumask *mask) {}
-static void sched_ext_ops__update_idle(s32 cpu, bool idle) {}
-static void sched_ext_ops__cpu_acquire(s32 cpu, struct scx_cpu_acquire_args *args) {}
-static void sched_ext_ops__cpu_release(s32 cpu, struct scx_cpu_release_args *args) {}
-static s32 sched_ext_ops__init_task(struct task_struct *p, struct scx_init_task_args *args) { return -EINVAL; }
-static void sched_ext_ops__exit_task(struct task_struct *p, struct scx_exit_task_args *args) {}
-static void sched_ext_ops__enable(struct task_struct *p) {}
-static void sched_ext_ops__disable(struct task_struct *p) {}
-#ifdef CONFIG_EXT_GROUP_SCHED
-static s32 sched_ext_ops__cgroup_init(struct cgroup *cgrp, struct scx_cgroup_init_args *args) { return -EINVAL; }
-static void sched_ext_ops__cgroup_exit(struct cgroup *cgrp) {}
-static s32 sched_ext_ops__cgroup_prep_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) { return -EINVAL; }
-static void sched_ext_ops__cgroup_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) {}
-static void sched_ext_ops__cgroup_cancel_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) {}
-static void sched_ext_ops__cgroup_set_weight(struct cgroup *cgrp, u32 weight) {}
-static void sched_ext_ops__cgroup_set_bandwidth(struct cgroup *cgrp, u64 period_us, u64 quota_us, u64 burst_us) {}
-static void sched_ext_ops__cgroup_set_idle(struct cgroup *cgrp, bool idle) {}
-#endif	/* CONFIG_EXT_GROUP_SCHED */
-static s32 sched_ext_ops__sub_attach(struct scx_sub_attach_args *args) { return -EINVAL; }
-static void sched_ext_ops__sub_detach(struct scx_sub_detach_args *args) {}
-static void sched_ext_ops__cpu_online(s32 cpu) {}
-static void sched_ext_ops__cpu_offline(s32 cpu) {}
-static s32 sched_ext_ops__init_cids(void) { return -EINVAL; }
-static s32 sched_ext_ops__init(void) { return -EINVAL; }
-static void sched_ext_ops__exit(struct scx_exit_info *info) {}
-static void sched_ext_ops__dump(struct scx_dump_ctx *ctx) {}
-static void sched_ext_ops__dump_cpu(struct scx_dump_ctx *ctx, s32 cpu, bool idle) {}
-static void sched_ext_ops__dump_task(struct scx_dump_ctx *ctx, struct task_struct *p) {}
+ساکن s32 sched_ext_ops__select_cpu(ساخت task_struct *p, s32 پچھلا_cpu, u64 wake_flags) { واپس -EINVAL; }
+ساکن خالی sched_ext_ops_قطار_میں_ڈالو(ساخت task_struct *p, u64 enq_flags) {}
+ساکن خالی sched_ext_ops_قطار_سے_نکالو(ساخت task_struct *p, u64 enq_flags) {}
+ساکن خالی sched_ext_ops__dispatch(s32 پچھلا_cpu, ساخت task_struct *پچھلا_nullable) {}
+ساکن خالی sched_ext_ops__tick(ساخت task_struct *p) {}
+ساکن خالی sched_ext_ops__runnable(ساخت task_struct *p, u64 enq_flags) {}
+ساکن خالی sched_ext_ops__running(ساخت task_struct *p) {}
+ساکن خالی sched_ext_ops__stopping(ساخت task_struct *p, bool runnable) {}
+ساکن خالی sched_ext_ops__quiescent(ساخت task_struct *p, u64 deq_flags) {}
+ساکن bool sched_ext_ops__yield(ساخت task_struct *from, ساخت task_struct *مقصد_nullable) { واپس false; }
+ساکن bool sched_ext_ops__core_sched_before(ساخت task_struct *a, ساخت task_struct *b) { واپس false; }
+ساکن خالی sched_ext_ops_سیٹ_وزن(ساخت task_struct *p, u32 وزن) {}
+ساکن خالی sched_ext_ops_سیٹ_cpumask(ساخت task_struct *p, ثابت ساخت cpumask *نقاب) {}
+ساکن خالی sched_ext_ops__update_idle(s32 cpu, bool idle) {}
+ساکن خالی sched_ext_ops__cpu_acquire(s32 cpu, ساخت scx_cpu_acquire_دلائل *دلائل) {}
+ساکن خالی sched_ext_ops__cpu_release(s32 cpu, ساخت scx_cpu_release_دلائل *دلائل) {}
+ساکن s32 sched_ext_ops__init_task(ساخت task_struct *p, ساخت scx_init_task_دلائل *دلائل) { واپس -EINVAL; }
+ساکن خالی sched_ext_ops__exit_task(ساخت task_struct *p, ساخت scx_exit_task_دلائل *دلائل) {}
+ساکن خالی sched_ext_ops__enable(ساخت task_struct *p) {}
+ساکن خالی sched_ext_ops__disable(ساخت task_struct *p) {}
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
+ساکن s32 sched_ext_ops__cgroup_init(ساخت cgroup *cgrp, ساخت scx_cgroup_init_دلائل *دلائل) { واپس -EINVAL; }
+ساکن خالی sched_ext_ops__cgroup_exit(ساخت cgroup *cgrp) {}
+ساکن s32 sched_ext_ops__cgroup_prep_move(ساخت task_struct *p, ساخت cgroup *from, ساخت cgroup *مقصد) { واپس -EINVAL; }
+ساکن خالی sched_ext_ops__cgroup_move(ساخت task_struct *p, ساخت cgroup *from, ساخت cgroup *مقصد) {}
+ساکن خالی sched_ext_ops__cgroup_cancel_move(ساخت task_struct *p, ساخت cgroup *from, ساخت cgroup *مقصد) {}
+ساکن خالی sched_ext_ops_cgroup_سیٹ_وزن(ساخت cgroup *cgrp, u32 وزن) {}
+ساکن خالی sched_ext_ops_cgroup_سیٹ_bandwidth(ساخت cgroup *cgrp, u64 period_us, u64 quota_us, u64 مدت_us) {}
+ساکن خالی sched_ext_ops_cgroup_سیٹ_idle(ساخت cgroup *cgrp, bool idle) {}
+#اگر_ختم	/* CONFIG_EXT_GROUP_SCHED */
+ساکن s32 sched_ext_ops__sub_attach(ساخت scx_sub_attach_دلائل *دلائل) { واپس -EINVAL; }
+ساکن خالی sched_ext_ops__sub_detach(ساخت scx_sub_detach_دلائل *دلائل) {}
+ساکن خالی sched_ext_ops__cpu_online(s32 cpu) {}
+ساکن خالی sched_ext_ops__cpu_offline(s32 cpu) {}
+ساکن s32 sched_ext_ops__init_cids(خالی) { واپس -EINVAL; }
+ساکن s32 sched_ext_ops__init(خالی) { واپس -EINVAL; }
+ساکن خالی sched_ext_ops__exit(ساخت scx_exit_info *info) {}
+ساکن خالی sched_ext_ops__dump(ساخت scx_dump_ctx *ctx) {}
+ساکن خالی sched_ext_ops__dump_cpu(ساخت scx_dump_ctx *ctx, s32 cpu, bool idle) {}
+ساکن خالی sched_ext_ops__dump_task(ساخت scx_dump_ctx *ctx, ساخت task_struct *p) {}
 
-static struct sched_ext_ops __bpf_ops_sched_ext_ops = {
+ساکن ساخت sched_ext_ops __bpf_ops_sched_ext_ops = {
 	.select_cpu		= sched_ext_ops__select_cpu,
-	.enqueue		= sched_ext_ops__enqueue,
-	.dequeue		= sched_ext_ops__dequeue,
+	.قطار_میں_ڈالو		= sched_ext_ops_قطار_میں_ڈالو,
+	.قطار_سے_نکالو		= sched_ext_ops_قطار_سے_نکالو,
 	.dispatch		= sched_ext_ops__dispatch,
 	.tick			= sched_ext_ops__tick,
 	.runnable		= sched_ext_ops__runnable,
@@ -8455,8 +8455,8 @@ static struct sched_ext_ops __bpf_ops_sched_ext_ops = {
 	.quiescent		= sched_ext_ops__quiescent,
 	.yield			= sched_ext_ops__yield,
 	.core_sched_before	= sched_ext_ops__core_sched_before,
-	.set_weight		= sched_ext_ops__set_weight,
-	.set_cpumask		= sched_ext_ops__set_cpumask,
+	.سیٹ_وزن		= sched_ext_ops_سیٹ_وزن,
+	.سیٹ_cpumask		= sched_ext_ops_سیٹ_cpumask,
 	.update_idle		= sched_ext_ops__update_idle,
 	.cpu_acquire		= sched_ext_ops__cpu_acquire,
 	.cpu_release		= sched_ext_ops__cpu_release,
@@ -8464,29 +8464,29 @@ static struct sched_ext_ops __bpf_ops_sched_ext_ops = {
 	.exit_task		= sched_ext_ops__exit_task,
 	.enable			= sched_ext_ops__enable,
 	.disable		= sched_ext_ops__disable,
-#ifdef CONFIG_EXT_GROUP_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
 	.cgroup_init		= sched_ext_ops__cgroup_init,
 	.cgroup_exit		= sched_ext_ops__cgroup_exit,
 	.cgroup_prep_move	= sched_ext_ops__cgroup_prep_move,
 	.cgroup_move		= sched_ext_ops__cgroup_move,
 	.cgroup_cancel_move	= sched_ext_ops__cgroup_cancel_move,
-	.cgroup_set_weight	= sched_ext_ops__cgroup_set_weight,
-	.cgroup_set_bandwidth	= sched_ext_ops__cgroup_set_bandwidth,
-	.cgroup_set_idle	= sched_ext_ops__cgroup_set_idle,
-#endif
+	.cgroup_سیٹ_وزن	= sched_ext_ops_cgroup_سیٹ_وزن,
+	.cgroup_سیٹ_bandwidth	= sched_ext_ops_cgroup_سیٹ_bandwidth,
+	.cgroup_سیٹ_idle	= sched_ext_ops_cgroup_سیٹ_idle,
+#اگر_ختم
 	.sub_attach		= sched_ext_ops__sub_attach,
 	.sub_detach		= sched_ext_ops__sub_detach,
 	.cpu_online		= sched_ext_ops__cpu_online,
 	.cpu_offline		= sched_ext_ops__cpu_offline,
 	.init_cids		= sched_ext_ops__init_cids,
 	.init			= sched_ext_ops__init,
-	.exit			= sched_ext_ops__exit,
+	.باہر_نکلو			= sched_ext_ops__exit,
 	.dump			= sched_ext_ops__dump,
 	.dump_cpu		= sched_ext_ops__dump_cpu,
 	.dump_task		= sched_ext_ops__dump_task,
 };
 
-static struct bpf_struct_ops bpf_sched_ext_ops = {
+ساکن ساخت bpf_struct_ops bpf_sched_ext_ops = {
 	.verifier_ops = &bpf_scx_verifier_ops,
 	.reg = bpf_scx_reg,
 	.unreg = bpf_scx_unreg,
@@ -8506,15 +8506,15 @@ static struct bpf_struct_ops bpf_sched_ext_ops = {
  * fresh stubs, set_cmask and enable due to argument differences and the
  * sub-sched notifiers because no cpu-form stub exists to reuse.
  */
-static void sched_ext_ops_cid__set_cmask(struct task_struct *p, const struct scx_cmask *cmask__arena) {}
-static void sched_ext_ops_cid__enable(struct task_struct *p, struct scx_enable_args *args) {}
-static void sched_ext_ops__sub_caps_updated(const struct scx_cmask *cmask__arena, u64 caps) {}
-static void sched_ext_ops__sub_ecaps_updated(s32 cid, u64 before, u64 after) {}
+ساکن خالی sched_ext_ops_cid_سیٹ_cmask(ساخت task_struct *p, ثابت ساخت scx_cmask *cmask__arena) {}
+ساکن خالی sched_ext_ops_cid__enable(ساخت task_struct *p, ساخت scx_enable_دلائل *دلائل) {}
+ساکن خالی sched_ext_ops__sub_caps_updated(ثابت ساخت scx_cmask *cmask__arena, u64 caps) {}
+ساکن خالی sched_ext_ops__sub_ecaps_updated(s32 cid, u64 before, u64 after) {}
 
-static struct sched_ext_ops_cid __bpf_ops_sched_ext_ops_cid = {
+ساکن ساخت sched_ext_ops_cid __bpf_ops_sched_ext_ops_cid = {
 	.select_cid		= sched_ext_ops__select_cpu,
-	.enqueue		= sched_ext_ops__enqueue,
-	.dequeue		= sched_ext_ops__dequeue,
+	.قطار_میں_ڈالو		= sched_ext_ops_قطار_میں_ڈالو,
+	.قطار_سے_نکالو		= sched_ext_ops_قطار_سے_نکالو,
 	.dispatch		= sched_ext_ops__dispatch,
 	.tick			= sched_ext_ops__tick,
 	.runnable		= sched_ext_ops__runnable,
@@ -8523,23 +8523,23 @@ static struct sched_ext_ops_cid __bpf_ops_sched_ext_ops_cid = {
 	.quiescent		= sched_ext_ops__quiescent,
 	.yield			= sched_ext_ops__yield,
 	.core_sched_before	= sched_ext_ops__core_sched_before,
-	.set_weight		= sched_ext_ops__set_weight,
-	.set_cmask		= sched_ext_ops_cid__set_cmask,
+	.سیٹ_وزن		= sched_ext_ops_سیٹ_وزن,
+	.سیٹ_cmask		= sched_ext_ops_cid_سیٹ_cmask,
 	.update_idle		= sched_ext_ops__update_idle,
 	.init_task		= sched_ext_ops__init_task,
 	.exit_task		= sched_ext_ops__exit_task,
 	.enable			= sched_ext_ops_cid__enable,
 	.disable		= sched_ext_ops__disable,
-#ifdef CONFIG_EXT_GROUP_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
 	.cpuctl_init		= sched_ext_ops__cgroup_init,
 	.cpuctl_exit		= sched_ext_ops__cgroup_exit,
 	.cpuctl_prep_move	= sched_ext_ops__cgroup_prep_move,
 	.cpuctl_move		= sched_ext_ops__cgroup_move,
 	.cpuctl_cancel_move	= sched_ext_ops__cgroup_cancel_move,
-	.cpuctl_set_weight	= sched_ext_ops__cgroup_set_weight,
-	.cpuctl_set_bandwidth	= sched_ext_ops__cgroup_set_bandwidth,
-	.cpuctl_set_idle	= sched_ext_ops__cgroup_set_idle,
-#endif
+	.cpuctl_سیٹ_وزن	= sched_ext_ops_cgroup_سیٹ_وزن,
+	.cpuctl_سیٹ_bandwidth	= sched_ext_ops_cgroup_سیٹ_bandwidth,
+	.cpuctl_سیٹ_idle	= sched_ext_ops_cgroup_سیٹ_idle,
+#اگر_ختم
 	.sub_attach		= sched_ext_ops__sub_attach,
 	.sub_detach		= sched_ext_ops__sub_detach,
 	.sub_caps_updated	= sched_ext_ops__sub_caps_updated,
@@ -8548,7 +8548,7 @@ static struct sched_ext_ops_cid __bpf_ops_sched_ext_ops_cid = {
 	.cid_offline		= sched_ext_ops__cpu_offline,
 	.init_cids		= sched_ext_ops__init_cids,
 	.init			= sched_ext_ops__init,
-	.exit			= sched_ext_ops__exit,
+	.باہر_نکلو			= sched_ext_ops__exit,
 	.dump			= sched_ext_ops__dump,
 	.dump_cid		= sched_ext_ops__dump_cpu,
 	.dump_task		= sched_ext_ops__dump_task,
@@ -8559,7 +8559,7 @@ static struct sched_ext_ops_cid __bpf_ops_sched_ext_ops_cid = {
  * init_member, check_member, reg, unreg, etc. process kdata as the byte block
  * verified to match by the BUILD_BUG_ON checks in scx_init().
  */
-static struct bpf_struct_ops bpf_sched_ext_ops_cid = {
+ساکن ساخت bpf_struct_ops bpf_sched_ext_ops_cid = {
 	.verifier_ops = &bpf_scx_cid_verifier_ops,
 	.reg = bpf_scx_reg_cid,
 	.unreg = bpf_scx_unreg,
@@ -8578,45 +8578,45 @@ static struct bpf_struct_ops bpf_sched_ext_ops_cid = {
  * System integration and init.
  */
 
-static void sysrq_handle_sched_ext_reset(u8 key)
+ساکن خالی sysrq_handle_sched_ext_reset(u8 کلید)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
-	sch = rcu_dereference(scx_root);
-	if (likely(sch))
+	sch = rcu_dereference(scx_جڑ);
+	اگر (likely(sch))
 		scx_disable(sch, SCX_EXIT_SYSRQ);
-	else
+	ورنہ
 		pr_info("sched_ext: BPF schedulers not loaded\n");
 }
 
-static const struct sysrq_key_op sysrq_sched_ext_reset_op = {
+ساکن ثابت ساخت sysrq_کلید_op sysrq_sched_ext_reset_op = {
 	.handler	= sysrq_handle_sched_ext_reset,
-	.help_msg	= "reset-sched-ext(S)",
-	.action_msg	= "Disable sched_ext and revert all tasks to CFS",
-	.enable_mask	= SYSRQ_ENABLE_RTNICE,
+	.help_پیغام	= "reset-sched-ext(S)",
+	.action_پیغام	= "Disable sched_ext and revert all tasks to CFS",
+	.enable_نقاب	= SYSRQ_ENABLE_RTNICE,
 };
 
-static void sysrq_handle_sched_ext_dump(u8 key)
+ساکن خالی sysrq_handle_sched_ext_dump(u8 کلید)
 {
-	struct scx_exit_info ei = {
-		.kind		= SCX_EXIT_NONE,
+	ساخت scx_exit_info ei = {
+		.قسم		= SCX_EXIT_NONE,
 		.exit_cpu	= -1,
 		.reason		= "SysRq-D",
 	};
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
-	list_for_each_entry_rcu(sch, &scx_sched_all, all)
+	list_for_each_اندراج_rcu(sch, &scx_sched_all, all)
 		scx_dump_state(sch, &ei, 0, false);
 }
 
-static const struct sysrq_key_op sysrq_sched_ext_dump_op = {
+ساکن ثابت ساخت sysrq_کلید_op sysrq_sched_ext_dump_op = {
 	.handler	= sysrq_handle_sched_ext_dump,
-	.help_msg	= "dump-sched-ext(D)",
-	.action_msg	= "Trigger sched_ext debug dump",
-	.enable_mask	= SYSRQ_ENABLE_RTNICE,
+	.help_پیغام	= "dump-sched-ext(D)",
+	.action_پیغام	= "Trigger sched_ext debug dump",
+	.enable_نقاب	= SYSRQ_ENABLE_RTNICE,
 };
 
-static bool can_skip_idle_kick(struct rq *rq)
+ساکن bool can_skip_idle_kick(ساخت rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 
@@ -8630,20 +8630,20 @@ static bool can_skip_idle_kick(struct rq *rq)
 	 * The race window is small and we don't and can't guarantee that @rq is
 	 * only kicked while idle anyway. Skip only when sure.
 	 */
-	return !is_idle_task(rq->curr) && !(rq->scx.flags & SCX_RQ_IN_DISPATCH);
+	واپس !is_idle_task(rq->curr) && !(rq->scx.flags & SCX_RQ_اندر_DISPATCH);
 }
 
-static bool kick_one_cpu(s32 cpu, struct scx_sched_pcpu *pcpu, struct rq *this_rq,
-			 unsigned long *ksyncs)
+ساکن bool kick_one_cpu(s32 cpu, ساخت scx_sched_pcpu *pcpu, ساخت rq *this_rq,
+			 غیرعلامتی طویل *ksyncs)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct scx_rq *this_scx = &this_rq->scx;
-	const struct sched_class *cur_class;
+	ساخت rq *rq = cpu_rq(cpu);
+	ساخت scx_rq *this_scx = &this_rq->scx;
+	ثابت ساخت sched_class *cur_class;
 	bool should_wait = false;
 	bool kickable;
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
-	raw_spin_rq_lock_irqsave(rq, flags);
+	raw_spin_rq_تالا_irqsave(rq, flags);
 	cur_class = rq->curr->sched_class;
 
 	/*
@@ -8654,80 +8654,80 @@ static bool kick_one_cpu(s32 cpu, struct scx_sched_pcpu *pcpu, struct rq *this_r
 	 * business forcing a reschedule there - skip. This is the authoritative
 	 * cap check: ecaps is read here under @rq's lock.
 	 */
-	kickable = (cpu_online(cpu) || cpu == cpu_of(this_rq)) &&
+	kickable = (cpu_online(cpu) || cpu == cpu_کا(this_rq)) &&
 		   !sched_class_above(cur_class, &ext_sched_class);
 
-	if (kickable && !scx_missing_caps(pcpu->sch, cpu, SCX_CAP_BASE)) {
-		if (cpumask_test_cpu(cpu, pcpu->cpus_to_preempt)) {
-			if (cur_class == &ext_sched_class) {
+	اگر (kickable && !scx_missing_caps(pcpu->sch, cpu, SCX_CAP_بنیاد)) {
+		اگر (cpumask_test_cpu(cpu, pcpu->cpus_مقصد_preempt)) {
+			اگر (cur_class == &ext_sched_class) {
 				u64 caps = scx_caps_for_preempt(pcpu->sch, rq, 0);
 
-				if (unlikely(scx_missing_caps(pcpu->sch, cpu, caps)))
+				اگر (unlikely(scx_missing_caps(pcpu->sch, cpu, caps)))
 					__scx_add_event(pcpu->sch, SCX_EV_SUB_PREEMPT_DENIED, 1);
-				else if (unlikely(!scx_set_task_slice(rq->curr, 0)))
-					__scx_add_event(pcpu->sch, SCX_EV_SLICE_DENIED, 1);
+				ورنہ اگر (unlikely(!scx_سیٹ_task_قاش(rq->curr, 0)))
+					__scx_add_event(pcpu->sch, SCX_EV_قاش_DENIED, 1);
 			}
-			cpumask_clear_cpu(cpu, pcpu->cpus_to_preempt);
+			cpumask_clear_cpu(cpu, pcpu->cpus_مقصد_preempt);
 		}
 
-		if (cpumask_test_cpu(cpu, pcpu->cpus_to_wait)) {
-			if (cur_class == &ext_sched_class) {
-				cpumask_set_cpu(cpu, this_scx->cpus_to_sync);
+		اگر (cpumask_test_cpu(cpu, pcpu->cpus_مقصد_wait)) {
+			اگر (cur_class == &ext_sched_class) {
+				cpumask_سیٹ_cpu(cpu, this_scx->cpus_مقصد_sync);
 				ksyncs[cpu] = rq->scx.kick_sync;
 				should_wait = true;
 			}
-			cpumask_clear_cpu(cpu, pcpu->cpus_to_wait);
+			cpumask_clear_cpu(cpu, pcpu->cpus_مقصد_wait);
 		}
 
 		resched_curr(rq);
-	} else {
+	} ورنہ {
 		/* a kickable cpu was skipped solely for the missing caps */
-		if (kickable)
+		اگر (kickable)
 			__scx_add_event(pcpu->sch, SCX_EV_SUB_KICK_DENIED, 1);
-		cpumask_clear_cpu(cpu, pcpu->cpus_to_preempt);
-		cpumask_clear_cpu(cpu, pcpu->cpus_to_wait);
+		cpumask_clear_cpu(cpu, pcpu->cpus_مقصد_preempt);
+		cpumask_clear_cpu(cpu, pcpu->cpus_مقصد_wait);
 	}
 
-	scx_rq_lock_drop(rq);
+	scx_rq_تالا_drop(rq);
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 
-	return should_wait;
+	واپس should_wait;
 }
 
-static void kick_one_cpu_if_idle(s32 cpu, struct scx_sched_pcpu *pcpu,
-				 struct rq *this_rq)
+ساکن خالی kick_one_cpu_if_idle(s32 cpu, ساخت scx_sched_pcpu *pcpu,
+				 ساخت rq *this_rq)
 {
-	struct rq *rq = cpu_rq(cpu);
-	unsigned long flags;
+	ساخت rq *rq = cpu_rq(cpu);
+	غیرعلامتی طویل flags;
 
-	raw_spin_rq_lock_irqsave(rq, flags);
+	raw_spin_rq_تالا_irqsave(rq, flags);
 
 	/* idle kicks need baseline access too, see kick_one_cpu() */
-	if (!can_skip_idle_kick(rq) &&
-	    (cpu_online(cpu) || cpu == cpu_of(this_rq))) {
-		if (likely(!scx_missing_caps(pcpu->sch, cpu, SCX_CAP_BASE)))
+	اگر (!can_skip_idle_kick(rq) &&
+	    (cpu_online(cpu) || cpu == cpu_کا(this_rq))) {
+		اگر (likely(!scx_missing_caps(pcpu->sch, cpu, SCX_CAP_بنیاد)))
 			resched_curr(rq);
-		else
+		ورنہ
 			__scx_add_event(pcpu->sch, SCX_EV_SUB_KICK_DENIED, 1);
 	}
 
-	scx_rq_lock_drop(rq);
+	scx_rq_تالا_drop(rq);
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 }
 
-static void kick_cpus_irq_workfn(struct irq_work *irq_work)
+ساکن خالی kick_cpus_irq_workfn(ساخت irq_work *irq_work)
 {
-	struct rq *this_rq = this_rq();
-	struct scx_rq *this_scx = &this_rq->scx;
-	struct scx_kick_syncs __rcu *ksyncs_pcpu = __this_cpu_read(scx_kick_syncs);
-	struct scx_sched_pcpu *pcpu, *tmp;
+	ساخت rq *this_rq = this_rq();
+	ساخت scx_rq *this_scx = &this_rq->scx;
+	ساخت scx_kick_syncs __rcu *ksyncs_pcpu = __this_cpu_read(scx_kick_syncs);
+	ساخت scx_sched_pcpu *pcpu, *tmp;
 	bool should_wait = false;
-	unsigned long *ksyncs;
+	غیرعلامتی طویل *ksyncs;
 	s32 cpu;
 
 	/* can race with free_kick_syncs() during scheduler disable */
-	if (unlikely(!ksyncs_pcpu))
-		return;
+	اگر (unlikely(!ksyncs_pcpu))
+		واپس;
 
 	ksyncs = rcu_dereference_bh(ksyncs_pcpu)->syncs;
 
@@ -8736,18 +8736,18 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
 	 * the list under local_irq_save() and only this irq_work consumes it.
 	 * A plain list without locking is sufficient.
 	 */
-	list_for_each_entry_safe(pcpu, tmp, &this_scx->sched_pcpus_to_kick, to_kick_node) {
-		list_del_init(&pcpu->to_kick_node);
+	list_for_each_اندراج_محفوظ(pcpu, tmp, &this_scx->sched_pcpus_مقصد_kick, مقصد_kick_گرہ) {
+		list_del_init(&pcpu->مقصد_kick_گرہ);
 
-		for_each_cpu(cpu, pcpu->cpus_to_kick) {
+		for_each_cpu(cpu, pcpu->cpus_مقصد_kick) {
 			should_wait |= kick_one_cpu(cpu, pcpu, this_rq, ksyncs);
-			cpumask_clear_cpu(cpu, pcpu->cpus_to_kick);
-			cpumask_clear_cpu(cpu, pcpu->cpus_to_kick_if_idle);
+			cpumask_clear_cpu(cpu, pcpu->cpus_مقصد_kick);
+			cpumask_clear_cpu(cpu, pcpu->cpus_مقصد_kick_if_idle);
 		}
 
-		for_each_cpu(cpu, pcpu->cpus_to_kick_if_idle) {
+		for_each_cpu(cpu, pcpu->cpus_مقصد_kick_if_idle) {
 			kick_one_cpu_if_idle(cpu, pcpu, this_rq);
-			cpumask_clear_cpu(cpu, pcpu->cpus_to_kick_if_idle);
+			cpumask_clear_cpu(cpu, pcpu->cpus_مقصد_kick_if_idle);
 		}
 	}
 
@@ -8755,11 +8755,11 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
 	 * Can't wait in hardirq — kick_sync can't advance, deadlocking if
 	 * CPUs wait for each other. Defer to kick_sync_wait_bal_cb().
 	 */
-	if (should_wait) {
-		raw_spin_rq_lock(this_rq);
+	اگر (should_wait) {
+		raw_spin_rq_تالا(this_rq);
 		this_scx->kick_sync_pending = true;
 		resched_curr(this_rq);
-		scx_rq_lock_drop(this_rq);
+		scx_rq_تالا_drop(this_rq);
 		raw_spin_rq_unlock(this_rq);
 	}
 }
@@ -8776,36 +8776,36 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
  * itself is accessible. While safe, this function isn't synchronized and may
  * print out mixups or garbages of limited length.
  */
-void print_scx_info(const char *log_lvl, struct task_struct *p)
+خالی print_scx_info(ثابت حرف *log_lvl, ساخت task_struct *p)
 {
-	struct scx_sched *sch;
-	enum scx_enable_state state = scx_enable_state();
-	const char *all = READ_ONCE(scx_switching_all) ? "+all" : "";
-	char runnable_at_buf[22] = "?";
-	struct sched_class *class;
-	unsigned long runnable_at;
+	ساخت scx_sched *sch;
+	شمار scx_enable_state state = scx_enable_state();
+	ثابت حرف *all = READ_ONCE(scx_switching_all) ? "+all" : "";
+	حرف runnable_at_buf[22] = "?";
+	ساخت sched_class *class;
+	غیرعلامتی طویل runnable_at;
 
 	guard(rcu)();
 
 	sch = scx_task_sched_rcu(p);
 
-	if (!sch)
-		return;
+	اگر (!sch)
+		واپس;
 
 	/*
 	 * Carefully check if the task was running on sched_ext, and then
 	 * carefully copy the time it's been runnable, and its state.
 	 */
-	if (copy_from_kernel_nofault(&class, &p->sched_class, sizeof(class)) ||
+	اگر (copy_from_kernel_nofault(&class, &p->sched_class, حجم(class)) ||
 	    class != &ext_sched_class) {
 		printk("%sSched_ext: %s (%s%s)", log_lvl, sch->ops.name,
 		       scx_enable_state_str[state], all);
-		return;
+		واپس;
 	}
 
-	if (!copy_from_kernel_nofault(&runnable_at, &p->scx.runnable_at,
-				      sizeof(runnable_at)))
-		scnprintf(runnable_at_buf, sizeof(runnable_at_buf), "%+ldms",
+	اگر (!copy_from_kernel_nofault(&runnable_at, &p->scx.runnable_at,
+				      حجم(runnable_at)))
+		scnprintf(runnable_at_buf, حجم(runnable_at_buf), "%+ldms",
 			  jiffies_delta_msecs(runnable_at, jiffies));
 
 	/* print everything onto one line to conserve console space */
@@ -8814,15 +8814,15 @@ void print_scx_info(const char *log_lvl, struct task_struct *p)
 	       runnable_at_buf);
 }
 
-static int scx_pm_handler(struct notifier_block *nb, unsigned long event, void *ptr)
+ساکن صحیح scx_pm_handler(ساخت notifier_بلاک *nb, غیرعلامتی طویل event, خالی *ptr)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
-	if (!sch)
-		return NOTIFY_OK;
+	sch = rcu_dereference(scx_جڑ);
+	اگر (!sch)
+		واپس NOTIFY_OK;
 
 	/*
 	 * SCX schedulers often have userspace components which are sometimes
@@ -8830,27 +8830,27 @@ static int scx_pm_handler(struct notifier_block *nb, unsigned long event, void *
 	 * userspace which can lead to scheduling misbehaviors including stalls.
 	 * Let's bypass while PM operations are in progress.
 	 */
-	switch (event) {
-	case PM_HIBERNATION_PREPARE:
-	case PM_SUSPEND_PREPARE:
-	case PM_RESTORE_PREPARE:
+	انتخاب (event) {
+	حالت PM_HIBERNATION_PREPARE:
+	حالت PM_SUSPEND_PREPARE:
+	حالت PM_RESTORE_PREPARE:
 		scx_bypass(sch, true);
-		break;
-	case PM_POST_HIBERNATION:
-	case PM_POST_SUSPEND:
-	case PM_POST_RESTORE:
+		توڑو;
+	حالت PM_POST_HIBERNATION:
+	حالت PM_POST_SUSPEND:
+	حالت PM_POST_RESTORE:
 		scx_bypass(sch, false);
-		break;
+		توڑو;
 	}
 
-	return NOTIFY_OK;
+	واپس NOTIFY_OK;
 }
 
-static struct notifier_block scx_pm_notifier = {
+ساکن ساخت notifier_بلاک scx_pm_notifier = {
 	.notifier_call = scx_pm_handler,
 };
 
-void __init init_sched_ext_class(void)
+خالی __init init_sched_ext_class(خالی)
 {
 	s32 cpu, v;
 
@@ -8865,115 +8865,115 @@ void __init init_sched_ext_class(void)
 	scx_idle_init_masks();
 
 	for_each_possible_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
-		int  n = cpu_to_node(cpu);
+		ساخت rq *rq = cpu_rq(cpu);
+		صحیح  n = cpu_مقصد_گرہ(cpu);
 
 		/* local_dsq's sch will be set during scx_root_enable() */
-		BUG_ON(scx_init_dsq(&rq->scx.local_dsq, SCX_DSQ_LOCAL, NULL));
-#ifdef CONFIG_EXT_SUB_SCHED
-		BUG_ON(scx_init_dsq(&rq->scx.reject_dsq, SCX_DSQ_REJECT, NULL));
+		BUG_ON(scx_init_dsq(&rq->scx.local_dsq, SCX_DSQ_LOCAL, تہی));
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+		BUG_ON(scx_init_dsq(&rq->scx.reject_dsq, SCX_DSQ_REJECT, تہی));
 		scx_rescue_init(rq);
-#endif
+#اگر_ختم
 
-		INIT_LIST_HEAD(&rq->scx.runnable_list);
-		INIT_LIST_HEAD(&rq->scx.ddsp_deferred_locals);
+		INIT_LIST_سر(&rq->scx.runnable_list);
+		INIT_LIST_سر(&rq->scx.ddsp_deferred_locals);
 
-		BUG_ON(!zalloc_cpumask_var_node(&rq->scx.cpus_to_sync, GFP_KERNEL, n));
-		INIT_LIST_HEAD(&rq->scx.sched_pcpus_to_kick);
-		raw_spin_lock_init(&rq->scx.deferred_reenq_lock);
-		INIT_LIST_HEAD(&rq->scx.deferred_reenq_locals);
-		INIT_LIST_HEAD(&rq->scx.deferred_reenq_users);
+		BUG_ON(!zalloc_cpumask_var_گرہ(&rq->scx.cpus_مقصد_sync, GFP_KERNEL, n));
+		INIT_LIST_سر(&rq->scx.sched_pcpus_مقصد_kick);
+		raw_spin_تالا_init(&rq->scx.deferred_reenq_تالا);
+		INIT_LIST_سر(&rq->scx.deferred_reenq_locals);
+		INIT_LIST_سر(&rq->scx.deferred_reenq_users);
 		rq->scx.deferred_irq_work = IRQ_WORK_INIT_HARD(deferred_irq_workfn);
 		rq->scx.kick_cpus_irq_work = IRQ_WORK_INIT_HARD(kick_cpus_irq_workfn);
 
-		if (cpu_online(cpu))
+		اگر (cpu_online(cpu))
 			cpu_rq(cpu)->scx.flags |= SCX_RQ_ONLINE;
 	}
 
-	register_sysrq_key('S', &sysrq_sched_ext_reset_op);
-	register_sysrq_key('D', &sysrq_sched_ext_dump_op);
+	رجسٹر_sysrq_کلید('S', &sysrq_sched_ext_reset_op);
+	رجسٹر_sysrq_کلید('D', &sysrq_sched_ext_dump_op);
 	INIT_DELAYED_WORK(&scx_watchdog_work, scx_watchdog_workfn);
 
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 	BUG_ON(rhashtable_init(&scx_sched_hash, &scx_sched_hash_params));
-#endif	/* CONFIG_EXT_SUB_SCHED */
+#اگر_ختم	/* CONFIG_EXT_SUB_SCHED */
 }
 
 
 /********************************************************************************
  * Helpers that can be called from the BPF scheduler.
  */
-static bool scx_vet_enq_flags(struct scx_sched *sch, u64 dsq_id, u64 *enq_flags)
+ساکن bool scx_vet_enq_flags(ساخت scx_sched *sch, u64 dsq_id, u64 *enq_flags)
 {
 	bool is_local = dsq_id == SCX_DSQ_LOCAL ||
 		(dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON;
 
-	if (unlikely(*enq_flags & __SCX_ENQ_INTERNAL_MASK)) {
+	اگر (unlikely(*enq_flags & __SCX_ENQ_INTERNAL_MASK)) {
 		scx_error(sch, "invalid enq_flags 0x%llx", *enq_flags);
-		return false;
+		واپس false;
 	}
 
-	if (*enq_flags & SCX_ENQ_IMMED) {
-		if (unlikely(!is_local)) {
+	اگر (*enq_flags & SCX_ENQ_IMMED) {
+		اگر (unlikely(!is_local)) {
 			scx_error(sch, "SCX_ENQ_IMMED on a non-local DSQ 0x%llx", dsq_id);
-			return false;
+			واپس false;
 		}
-	} else if ((sch->ops.flags & SCX_OPS_ALWAYS_ENQ_IMMED) && is_local) {
+	} ورنہ اگر ((sch->ops.flags & SCX_OPS_ALWAYS_ENQ_IMMED) && is_local) {
 		*enq_flags |= SCX_ENQ_IMMED;
 	}
 
-	if (unlikely((*enq_flags & SCX_ENQ_RESCUE) && !is_local)) {
+	اگر (unlikely((*enq_flags & SCX_ENQ_RESCUE) && !is_local)) {
 		scx_error(sch, "SCX_ENQ_RESCUE on a non-local DSQ 0x%llx", dsq_id);
-		return false;
+		واپس false;
 	}
 
-	return true;
+	واپس true;
 }
 
-static bool scx_dsq_insert_preamble(struct scx_sched *sch, struct task_struct *p,
+ساکن bool scx_dsq_داخل_کرو_preamble(ساخت scx_sched *sch, ساخت task_struct *p,
 				    u64 dsq_id, u64 *enq_flags)
 {
 	lockdep_assert_irqs_disabled();
 
-	if (unlikely(!p)) {
+	اگر (unlikely(!p)) {
 		scx_error(sch, "called with NULL task");
-		return false;
+		واپس false;
 	}
 
 	/* see SCX_EV_INSERT_NOT_OWNED definition */
-	if (unlikely(!scx_task_on_sched(sch, p))) {
-		__scx_add_event(sch, SCX_EV_INSERT_NOT_OWNED, 1);
-		return false;
+	اگر (unlikely(!scx_task_on_sched(sch, p))) {
+		__scx_add_event(sch, SCX_EV_داخل_کرو_NOT_OWNED, 1);
+		واپس false;
 	}
 
-	if (!scx_vet_enq_flags(sch, dsq_id, enq_flags))
-		return false;
+	اگر (!scx_vet_enq_flags(sch, dsq_id, enq_flags))
+		واپس false;
 
-	return true;
+	واپس true;
 }
 
-static void scx_dsq_insert_commit(struct scx_sched *sch, struct task_struct *p,
-				  u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags)
+ساکن خالی scx_dsq_داخل_کرو_commit(ساخت scx_sched *sch, ساخت task_struct *p,
+				  u64 dsq_id, u64 قاش, u64 vtime, u64 enq_flags)
 {
-	struct scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
-	struct task_struct *ddsp_task;
+	ساخت scx_dsp_ctx *dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
+	ساخت task_struct *ddsp_task;
 
-	ddsp_task = __this_cpu_read(direct_dispatch_task);
-	if (ddsp_task) {
-		mark_direct_dispatch(sch, ddsp_task, p, dsq_id, slice, vtime, enq_flags);
-		return;
+	ddsp_task = __this_cpu_read(براہ_راست_dispatch_task);
+	اگر (ddsp_task) {
+		mark_براہ_راست_dispatch(sch, ddsp_task, p, dsq_id, قاش, vtime, enq_flags);
+		واپس;
 	}
 
-	if (unlikely(dspc->cursor >= sch->dsp_max_batch)) {
+	اگر (unlikely(dspc->cursor >= sch->dsp_max_batch)) {
 		scx_error(sch, "dispatch buffer overflow");
-		return;
+		واپس;
 	}
 
-	dspc->buf[dspc->cursor++] = (struct scx_dsp_buf_ent){
+	dspc->buf[dspc->cursor++] = (ساخت scx_dsp_buf_ent){
 		.task = p,
-		.qseq = atomic_long_read(&p->scx.ops_state) & SCX_OPSS_QSEQ_MASK,
+		.qseq = atomic_long_read(&p->scx.ops_state) & SCX_OPSS_QSEQ_نقاب,
 		.dsq_id = dsq_id,
-		.slice = slice,
+		.قاش = قاش,
 		.vtime = vtime,
 		.enq_flags = enq_flags,
 	};
@@ -9021,50 +9021,50 @@ __bpf_kfunc_start_defs();
  * scheduler, %false return triggers scheduler abort and the caller doesn't need
  * to check the return value.
  */
-__bpf_kfunc bool scx_bpf_dsq_insert___v2(struct task_struct *p, u64 dsq_id,
-					 u64 slice, u64 enq_flags,
-					 const struct bpf_prog_aux *aux)
+__bpf_kfunc bool scx_bpf_dsq_داخل_کرو_v2(ساخت task_struct *p, u64 dsq_id,
+					 u64 قاش, u64 enq_flags,
+					 ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return false;
+	اگر (unlikely(!sch))
+		واپس false;
 
-	if (!scx_dsq_insert_preamble(sch, p, dsq_id, &enq_flags))
-		return false;
+	اگر (!scx_dsq_داخل_کرو_preamble(sch, p, dsq_id, &enq_flags))
+		واپس false;
 
-	scx_dsq_insert_commit(sch, p, dsq_id, slice, 0, enq_flags);
+	scx_dsq_داخل_کرو_commit(sch, p, dsq_id, قاش, 0, enq_flags);
 
-	return true;
+	واپس true;
 }
 
 /*
  * COMPAT: Will be removed in v6.23 along with the ___v2 suffix.
  */
-__bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id,
-				    u64 slice, u64 enq_flags,
-				    const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_dsq_داخل_کرو(ساخت task_struct *p, u64 dsq_id,
+				    u64 قاش, u64 enq_flags,
+				    ثابت ساخت bpf_prog_aux *aux)
 {
-	scx_bpf_dsq_insert___v2(p, dsq_id, slice, enq_flags, aux);
+	scx_bpf_dsq_داخل_کرو_v2(p, dsq_id, قاش, enq_flags, aux);
 }
 
-static bool scx_dsq_insert_vtime(struct scx_sched *sch, struct task_struct *p,
-				 u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags)
+ساکن bool scx_dsq_داخل_کرو_vtime(ساخت scx_sched *sch, ساخت task_struct *p,
+				 u64 dsq_id, u64 قاش, u64 vtime, u64 enq_flags)
 {
-	if (!scx_dsq_insert_preamble(sch, p, dsq_id, &enq_flags))
-		return false;
+	اگر (!scx_dsq_داخل_کرو_preamble(sch, p, dsq_id, &enq_flags))
+		واپس false;
 
-	scx_dsq_insert_commit(sch, p, dsq_id, slice, vtime, enq_flags | SCX_ENQ_DSQ_PRIQ);
+	scx_dsq_داخل_کرو_commit(sch, p, dsq_id, قاش, vtime, enq_flags | SCX_ENQ_DSQ_PRIQ);
 
-	return true;
+	واپس true;
 }
 
-struct scx_bpf_dsq_insert_vtime_args {
+ساخت scx_bpf_dsq_داخل_کرو_vtime_دلائل {
 	/* @p can't be packed together as KF_RCU is not transitive */
 	u64			dsq_id;
-	u64			slice;
+	u64			قاش;
 	u64			vtime;
 	u64			enq_flags;
 };
@@ -9101,37 +9101,37 @@ struct scx_bpf_dsq_insert_vtime_args {
  * to check the return value.
  */
 __bpf_kfunc bool
-__scx_bpf_dsq_insert_vtime(struct task_struct *p,
-			   struct scx_bpf_dsq_insert_vtime_args *args,
-			   const struct bpf_prog_aux *aux)
+__scx_bpf_dsq_insert_vtime(ساخت task_struct *p,
+			   ساخت scx_bpf_dsq_داخل_کرو_vtime_دلائل *دلائل,
+			   ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return false;
+	اگر (unlikely(!sch))
+		واپس false;
 
-	return scx_dsq_insert_vtime(sch, p, args->dsq_id, args->slice,
-				    args->vtime, args->enq_flags);
+	واپس scx_dsq_داخل_کرو_vtime(sch, p, دلائل->dsq_id, دلائل->قاش,
+				    دلائل->vtime, دلائل->enq_flags);
 }
 
 /*
  * COMPAT: Will be removed in v6.23.
  */
-__bpf_kfunc void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id,
-					  u64 slice, u64 vtime, u64 enq_flags)
+__bpf_kfunc خالی scx_bpf_dsq_داخل_کرو_vtime(ساخت task_struct *p, u64 dsq_id,
+					  u64 قاش, u64 vtime, u64 enq_flags)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
-	if (unlikely(!sch))
-		return;
+	sch = rcu_dereference(scx_جڑ);
+	اگر (unlikely(!sch))
+		واپس;
 
-#ifdef CONFIG_EXT_SUB_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
 	/*
 	 * Disallow if any sub-scheds are attached. There is no way to tell
 	 * which scheduler called us, so error out @p's scheduler -- read it
@@ -9140,66 +9140,66 @@ __bpf_kfunc void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id,
 	 * scheduler can't be determined and there is nothing obviously wrong
 	 * to report; just refuse the call.
 	 */
-	if (unlikely(!list_empty(&sch->children))) {
-		struct scx_sched *tsch = scx_task_sched_rcu(p);
+	اگر (unlikely(!list_خالی_خانے(&sch->children))) {
+		ساخت scx_sched *tsch = scx_task_sched_rcu(p);
 
-		if (tsch)
+		اگر (tsch)
 			scx_error(tsch, "__scx_bpf_dsq_insert_vtime() must be used");
-		return;
+		واپس;
 	}
-#endif
+#اگر_ختم
 
-	scx_dsq_insert_vtime(sch, p, dsq_id, slice, vtime, enq_flags);
+	scx_dsq_داخل_کرو_vtime(sch, p, dsq_id, قاش, vtime, enq_flags);
 }
 
 __bpf_kfunc_end_defs();
 
-BTF_KFUNCS_START(scx_kfunc_ids_enqueue_dispatch)
-BTF_ID_FLAGS(func, scx_bpf_dsq_insert, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_dsq_insert___v2, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime, KF_RCU)
-BTF_KFUNCS_END(scx_kfunc_ids_enqueue_dispatch)
+BTF_KFUNCS_آغاز(scx_kfunc_ids_قطار_میں_ڈالو_dispatch)
+BTF_ID_FLAGS(func, scx_bpf_dsq_داخل_کرو, KF_IMPLICIT_دلائل | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_داخل_کرو_v2, KF_IMPLICIT_دلائل | KF_RCU)
+BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_IMPLICIT_دلائل | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_داخل_کرو_vtime, KF_RCU)
+BTF_KFUNCS_انتہا(scx_kfunc_ids_قطار_میں_ڈالو_dispatch)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_enqueue_dispatch = {
+ساکن ثابت ساخت btf_kfunc_id_سیٹ scx_kfunc_سیٹ_قطار_میں_ڈالو_dispatch = {
 	.owner			= THIS_MODULE,
-	.set			= &scx_kfunc_ids_enqueue_dispatch,
+	.سیٹ			= &scx_kfunc_ids_قطار_میں_ڈالو_dispatch,
 	.filter			= scx_kfunc_context_filter,
 };
 
-static bool scx_dsq_move(struct bpf_iter_scx_dsq_kern *kit,
-			 struct task_struct *p, u64 dsq_id, u64 enq_flags,
+ساکن bool scx_dsq_move(ساخت bpf_iter_scx_dsq_kern *kit,
+			 ساخت task_struct *p, u64 dsq_id, u64 enq_flags,
 			 bool priq)
 {
-	struct scx_dispatch_q *src_dsq = kit->dsq, *dst_dsq;
-	struct scx_sched *sch;
-	struct rq *p_rq, *src_rq, *locked_rq;
+	ساخت scx_dispatch_q *src_dsq = kit->dsq, *dst_dsq;
+	ساخت scx_sched *sch;
+	ساخت rq *p_rq, *src_rq, *locked_rq;
 	bool dispatched = false;
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
 	/*
 	 * The verifier considers an iterator slot initialized on any
 	 * KF_ITER_NEW return, so a BPF program may legally reach here after
 	 * bpf_iter_scx_dsq_new() failed and left @kit->dsq NULL.
 	 */
-	if (unlikely(!src_dsq))
-		return false;
+	اگر (unlikely(!src_dsq))
+		واپس false;
 
 	sch = src_dsq->sched;
 
-	if (!scx_vet_enq_flags(sch, dsq_id, &enq_flags))
-		return false;
+	اگر (!scx_vet_enq_flags(sch, dsq_id, &enq_flags))
+		واپس false;
 
 	/* internal bit, can only go in after @enq_flags is vetted */
-	if (priq)
+	اگر (priq)
 		enq_flags |= SCX_ENQ_DSQ_PRIQ;
 
 	/*
 	 * If the BPF scheduler keeps calling this function repeatedly, it can
 	 * cause similar live-lock conditions as scx_consume_dispatch_q().
 	 */
-	if (unlikely(READ_ONCE(sch->aborting)))
-		return false;
+	اگر (unlikely(READ_ONCE(sch->aborting)))
+		واپس false;
 
 	/*
 	 * Can be called from either ops.dispatch() holding the dispatched rq's
@@ -9216,61 +9216,61 @@ static bool scx_dsq_move(struct bpf_iter_scx_dsq_kern *kit,
 	 */
 	locked_rq = scx_locked_rq();
 
-	if (locked_rq) {
-		if (locked_rq != src_rq)
-			switch_rq_lock(locked_rq, src_rq);
-	} else {
-		raw_spin_rq_lock(src_rq);
+	اگر (locked_rq) {
+		اگر (locked_rq != src_rq)
+			switch_rq_تالا(locked_rq, src_rq);
+	} ورنہ {
+		raw_spin_rq_تالا(src_rq);
 	}
 
 	p_rq = src_rq;
-	raw_spin_lock(&src_dsq->lock);
+	raw_spin_تالا(&src_dsq->تالا);
 
 	/* did someone else get to it while we dropped the locks? */
-	if (nldsq_cursor_lost_task(&kit->cursor, src_rq, src_dsq, p)) {
-		raw_spin_unlock(&src_dsq->lock);
-		goto out;
+	اگر (nldsq_cursor_گمشدہ_task(&kit->cursor, src_rq, src_dsq, p)) {
+		raw_spin_unlock(&src_dsq->تالا);
+		جاؤ برآمد;
 	}
 
 	/*
 	 * @p has been on $src_dsq and can't move anymore. If @p is not on @sch,
 	 * the caller didn't have authority over @p at the time of the call.
 	 */
-	if (unlikely(!scx_task_on_sched(sch, p))) {
+	اگر (unlikely(!scx_task_on_sched(sch, p))) {
 		scx_error(sch, "scx_bpf_dsq_move[_vtime]() on %s[%d] but the task belongs to a different scheduler",
 			  p->comm, p->pid);
-		raw_spin_unlock(&src_dsq->lock);
-		goto out;
+		raw_spin_unlock(&src_dsq->تالا);
+		جاؤ برآمد;
 	}
 
 	/* @p is still on $src_dsq and stable, determine the destination */
-	dst_dsq = find_dsq_for_dispatch(sch, locked_rq ?: this_rq(), dsq_id, task_cpu(p));
+	dst_dsq = ڈھونڈو_dsq_for_dispatch(sch, locked_rq ?: this_rq(), dsq_id, task_cpu(p));
 
 	/*
 	 * Apply vtime and slice updates before moving. @p is still on $src_dsq
 	 * with both $src_dsq and its task_rq locked, satisfying the write
 	 * rules, and the PRIQ insertion into $dst_dsq reads the new vtime.
 	 */
-	if (kit->cursor.flags & __SCX_DSQ_ITER_HAS_VTIME)
+	اگر (kit->cursor.flags & __SCX_DSQ_ITER_HAS_VTIME)
 		p->scx.dsq_vtime = kit->vtime;
-	if (kit->cursor.flags & __SCX_DSQ_ITER_HAS_SLICE)
-		scx_set_task_slice(p, kit->slice);
+	اگر (kit->cursor.flags & __SCX_DSQ_ITER_HAS_SLICE)
+		scx_سیٹ_task_قاش(p, kit->قاش);
 
 	/* execute move */
 	p_rq = move_task_between_dsqs(sch, p, enq_flags, src_dsq, dst_dsq);
 	dispatched = true;
-out:
-	if (locked_rq) {
-		if (locked_rq != p_rq)
-			switch_rq_lock(p_rq, locked_rq);
-	} else {
-		scx_rq_lock_drop(p_rq);
+برآمد:
+	اگر (locked_rq) {
+		اگر (locked_rq != p_rq)
+			switch_rq_تالا(p_rq, locked_rq);
+	} ورنہ {
+		scx_rq_تالا_drop(p_rq);
 		raw_spin_rq_unlock_irqrestore(p_rq, flags);
 	}
 
 	kit->cursor.flags &= ~(__SCX_DSQ_ITER_HAS_SLICE |
 			       __SCX_DSQ_ITER_HAS_VTIME);
-	return dispatched;
+	واپس dispatched;
 }
 
 __bpf_kfunc_start_defs();
@@ -9281,17 +9281,17 @@ __bpf_kfunc_start_defs();
  *
  * Can only be called from ops.dispatch().
  */
-__bpf_kfunc u32 scx_bpf_dispatch_nr_slots(const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_dispatch_nr_slots(ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return 0;
+	اگر (unlikely(!sch))
+		واپس 0;
 
-	return sch->dsp_max_batch - __this_cpu_read(sch->pcpu->dsp_ctx.cursor);
+	واپس sch->dsp_max_batch - __this_cpu_read(sch->pcpu->dsp_ctx.cursor);
 }
 
 /**
@@ -9301,22 +9301,22 @@ __bpf_kfunc u32 scx_bpf_dispatch_nr_slots(const struct bpf_prog_aux *aux)
  * Cancel the latest dispatch. Can be called multiple times to cancel further
  * dispatches. Can only be called from ops.dispatch().
  */
-__bpf_kfunc void scx_bpf_dispatch_cancel(const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_dispatch_cancel(ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_dsp_ctx *dspc;
+	ساخت scx_sched *sch;
+	ساخت scx_dsp_ctx *dspc;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	اگر (unlikely(!sch))
+		واپس;
 
 	dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
 
-	if (dspc->cursor > 0)
+	اگر (dspc->cursor > 0)
 		dspc->cursor--;
-	else
+	ورنہ
 		scx_error(sch, "dispatch buffer underflow");
 }
 
@@ -9345,33 +9345,33 @@ __bpf_kfunc void scx_bpf_dispatch_cancel(const struct bpf_prog_aux *aux)
  * Returns %true if a task has been moved, %false if there isn't any task to
  * move.
  */
-__bpf_kfunc bool scx_bpf_dsq_move_to_local___v2(u64 dsq_id, u64 enq_flags,
-						const struct bpf_prog_aux *aux)
+__bpf_kfunc bool scx_bpf_dsq_move_مقصد_local_v2(u64 dsq_id, u64 enq_flags,
+						ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_dispatch_q *dsq;
-	struct scx_sched *sch;
-	struct scx_dsp_ctx *dspc;
+	ساخت scx_dispatch_q *dsq;
+	ساخت scx_sched *sch;
+	ساخت scx_dsp_ctx *dspc;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return false;
+	اگر (unlikely(!sch))
+		واپس false;
 
-	if (!scx_vet_enq_flags(sch, SCX_DSQ_LOCAL, &enq_flags))
-		return false;
+	اگر (!scx_vet_enq_flags(sch, SCX_DSQ_LOCAL, &enq_flags))
+		واپس false;
 
 	dspc = &this_cpu_ptr(sch->pcpu)->dsp_ctx;
 
 	scx_flush_dispatch_buf(sch, dspc->rq);
 
-	dsq = find_user_dsq(sch, dsq_id);
-	if (unlikely(!dsq)) {
+	dsq = ڈھونڈو_user_dsq(sch, dsq_id);
+	اگر (unlikely(!dsq)) {
 		scx_error(sch, "invalid DSQ ID 0x%016llx", dsq_id);
-		return false;
+		واپس false;
 	}
 
-	if (scx_consume_dispatch_q(sch, dspc->rq, dsq, enq_flags)) {
+	اگر (scx_consume_dispatch_q(sch, dspc->rq, dsq, enq_flags)) {
 		/*
 		 * A successfully consumed task can be dequeued before it starts
 		 * running while the CPU is trying to migrate other dispatched
@@ -9379,18 +9379,18 @@ __bpf_kfunc bool scx_bpf_dsq_move_to_local___v2(u64 dsq_id, u64 enq_flags,
 		 * local DSQ.
 		 */
 		dspc->nr_tasks++;
-		return true;
-	} else {
-		return false;
+		واپس true;
+	} ورنہ {
+		واپس false;
 	}
 }
 
 /*
  * COMPAT: ___v2 was introduced in v7.1. Remove this and ___v2 tag in the future.
  */
-__bpf_kfunc bool scx_bpf_dsq_move_to_local(u64 dsq_id, const struct bpf_prog_aux *aux)
+__bpf_kfunc bool scx_bpf_dsq_move_مقصد_local(u64 dsq_id, ثابت ساخت bpf_prog_aux *aux)
 {
-	return scx_bpf_dsq_move_to_local___v2(dsq_id, 0, aux);
+	واپس scx_bpf_dsq_move_مقصد_local_v2(dsq_id, 0, aux);
 }
 
 /**
@@ -9402,12 +9402,12 @@ __bpf_kfunc bool scx_bpf_dsq_move_to_local(u64 dsq_id, const struct bpf_prog_aux
  * scx_bpf_dsq_move[_vtime](). If this function is not called, the previous
  * slice duration is kept.
  */
-__bpf_kfunc void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter,
-					    u64 slice)
+__bpf_kfunc خالی scx_bpf_dsq_move_سیٹ_قاش(ساخت bpf_iter_scx_dsq *it__iter,
+					    u64 قاش)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it__iter;
+	ساخت bpf_iter_scx_dsq_kern *kit = (خالی *)it__iter;
 
-	kit->slice = slice;
+	kit->قاش = قاش;
 	kit->cursor.flags |= __SCX_DSQ_ITER_HAS_SLICE;
 }
 
@@ -9421,10 +9421,10 @@ __bpf_kfunc void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter,
  * vtime is kept. If scx_bpf_dsq_move() is used to dispatch the next task, the
  * override is ignored and cleared.
  */
-__bpf_kfunc void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter,
+__bpf_kfunc خالی scx_bpf_dsq_move_سیٹ_vtime(ساخت bpf_iter_scx_dsq *it__iter,
 					    u64 vtime)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it__iter;
+	ساخت bpf_iter_scx_dsq_kern *kit = (خالی *)it__iter;
 
 	kit->vtime = vtime;
 	kit->cursor.flags |= __SCX_DSQ_ITER_HAS_VTIME;
@@ -9455,11 +9455,11 @@ __bpf_kfunc void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter,
  * consumed, dequeued, or, for sub-scheds, @dsq_id points to a disallowed local
  * DSQ.
  */
-__bpf_kfunc bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter,
-				  struct task_struct *p, u64 dsq_id,
+__bpf_kfunc bool scx_bpf_dsq_move(ساخت bpf_iter_scx_dsq *it__iter,
+				  ساخت task_struct *p, u64 dsq_id,
 				  u64 enq_flags)
 {
-	return scx_dsq_move((struct bpf_iter_scx_dsq_kern *)it__iter,
+	واپس scx_dsq_move((ساخت bpf_iter_scx_dsq_kern *)it__iter,
 			    p, dsq_id, enq_flags, false);
 }
 
@@ -9480,34 +9480,34 @@ __bpf_kfunc bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter,
  * All other aspects are identical to scx_bpf_dsq_move(). See
  * scx_bpf_dsq_insert_vtime() for more information on @vtime.
  */
-__bpf_kfunc bool scx_bpf_dsq_move_vtime(struct bpf_iter_scx_dsq *it__iter,
-					struct task_struct *p, u64 dsq_id,
+__bpf_kfunc bool scx_bpf_dsq_move_vtime(ساخت bpf_iter_scx_dsq *it__iter,
+					ساخت task_struct *p, u64 dsq_id,
 					u64 enq_flags)
 {
-	return scx_dsq_move((struct bpf_iter_scx_dsq_kern *)it__iter,
+	واپس scx_dsq_move((ساخت bpf_iter_scx_dsq_kern *)it__iter,
 			    p, dsq_id, enq_flags, true);
 }
 
 __bpf_kfunc_end_defs();
 
-BTF_KFUNCS_START(scx_kfunc_ids_dispatch)
-BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dsq_move_to_local, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dsq_move_to_local___v2, KF_IMPLICIT_ARGS)
+BTF_KFUNCS_آغاز(scx_kfunc_ids_dispatch)
+BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_dsq_move_مقصد_local, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_dsq_move_مقصد_local_v2, KF_IMPLICIT_دلائل)
 /* scx_bpf_dsq_move*() also in scx_kfunc_ids_unlocked: callable from unlocked contexts */
-BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime, KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_move_سیٹ_قاش, KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_move_سیٹ_vtime, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move_vtime, KF_RCU)
-#ifdef CONFIG_EXT_SUB_SCHED
-BTF_ID_FLAGS(func, scx_bpf_sub_dispatch, KF_IMPLICIT_ARGS)
-#endif
-BTF_KFUNCS_END(scx_kfunc_ids_dispatch)
+#اگر_تعریف_شدہ CONFIG_EXT_SUB_SCHED
+BTF_ID_FLAGS(func, scx_bpf_sub_dispatch, KF_IMPLICIT_دلائل)
+#اگر_ختم
+BTF_KFUNCS_انتہا(scx_kfunc_ids_dispatch)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_dispatch = {
+ساکن ثابت ساخت btf_kfunc_id_سیٹ scx_kfunc_سیٹ_dispatch = {
 	.owner			= THIS_MODULE,
-	.set			= &scx_kfunc_ids_dispatch,
+	.سیٹ			= &scx_kfunc_ids_dispatch,
 	.filter			= scx_kfunc_context_filter,
 };
 
@@ -9521,31 +9521,31 @@ __bpf_kfunc_start_defs();
  * caller's CPU, and re-enqueue them in the BPF scheduler. Returns the number of
  * processed tasks. Can only be called from ops.cpu_release().
  */
-__bpf_kfunc u32 scx_bpf_reenqueue_local(const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_reenqueue_local(ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct rq *rq;
+	ساخت scx_sched *sch;
+	ساخت rq *rq;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return 0;
+	اگر (unlikely(!sch))
+		واپس 0;
 
 	rq = cpu_rq(smp_processor_id());
 	lockdep_assert_rq_held(rq);
 
-	return reenq_local(sch, rq, SCX_REENQ_ANY);
+	واپس reenq_local(sch, rq, SCX_REENQ_ANY);
 }
 
 __bpf_kfunc_end_defs();
 
-BTF_KFUNCS_START(scx_kfunc_ids_cpu_release)
-BTF_ID_FLAGS(func, scx_bpf_reenqueue_local, KF_IMPLICIT_ARGS)
-BTF_KFUNCS_END(scx_kfunc_ids_cpu_release)
+BTF_KFUNCS_آغاز(scx_kfunc_ids_cpu_release)
+BTF_ID_FLAGS(func, scx_bpf_reenqueue_local, KF_IMPLICIT_دلائل)
+BTF_KFUNCS_انتہا(scx_kfunc_ids_cpu_release)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_cpu_release = {
+ساکن ثابت ساخت btf_kfunc_id_سیٹ scx_kfunc_سیٹ_cpu_release = {
 	.owner			= THIS_MODULE,
-	.set			= &scx_kfunc_ids_cpu_release,
+	.سیٹ			= &scx_kfunc_ids_cpu_release,
 	.filter			= scx_kfunc_context_filter,
 };
 
@@ -9560,70 +9560,70 @@ __bpf_kfunc_start_defs();
  * Create a custom DSQ identified by @dsq_id. Can be called from any sleepable
  * scx callback, and any BPF_PROG_TYPE_SYSCALL prog.
  */
-__bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 node, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 گرہ, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_dispatch_q *dsq;
-	struct scx_sched *sch;
+	ساخت scx_dispatch_q *dsq;
+	ساخت scx_sched *sch;
 	s32 ret;
 
-	if (unlikely(node >= (int)nr_node_ids ||
-		     (node < 0 && node != NUMA_NO_NODE)))
-		return -EINVAL;
+	اگر (unlikely(گرہ >= (صحیح)nr_گرہ_ids ||
+		     (گرہ < 0 && گرہ != NUMA_NO_گرہ)))
+		واپس -EINVAL;
 
-	if (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN))
-		return -EINVAL;
+	اگر (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN))
+		واپس -EINVAL;
 
-	dsq = kmalloc_node(sizeof(*dsq), GFP_KERNEL, node);
-	if (!dsq)
-		return -ENOMEM;
+	dsq = kmalloc_گرہ(حجم(*dsq), GFP_KERNEL, گرہ);
+	اگر (!dsq)
+		واپس -ENOMEM;
 
 	/*
 	 * scx_init_dsq() must be called in GFP_KERNEL context. Init it with
 	 * NULL @sch and update afterwards.
 	 */
-	ret = scx_init_dsq(dsq, dsq_id, NULL);
-	if (ret) {
+	ret = scx_init_dsq(dsq, dsq_id, تہی);
+	اگر (ret) {
 		kfree(dsq);
-		return ret;
+		واپس ret;
 	}
 
-	rcu_read_lock();
+	rcu_read_تالا();
 
 	sch = scx_prog_sched(aux);
-	if (sch) {
+	اگر (sch) {
 		dsq->sched = sch;
-		ret = rhashtable_lookup_insert_fast(&sch->dsq_hash, &dsq->hash_node,
+		ret = rhashtable_lookup_داخل_کرو_fast(&sch->dsq_hash, &dsq->hash_گرہ,
 						    dsq_hash_params);
-	} else {
+	} ورنہ {
 		ret = -ENODEV;
 	}
 
 	rcu_read_unlock();
-	if (ret) {
+	اگر (ret) {
 		exit_dsq(dsq);
 		kfree(dsq);
 	}
-	return ret;
+	واپس ret;
 }
 
 __bpf_kfunc_end_defs();
 
-BTF_KFUNCS_START(scx_kfunc_ids_unlocked)
-BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_IMPLICIT_ARGS | KF_SLEEPABLE)
+BTF_KFUNCS_آغاز(scx_kfunc_ids_unlocked)
+BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_IMPLICIT_دلائل | KF_SLEEPABLE)
 /* also in scx_kfunc_ids_dispatch: also callable from ops.dispatch() */
-BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime, KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_move_سیٹ_قاش, KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_dsq_move_سیٹ_vtime, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_dsq_move_vtime, KF_RCU)
 /* also in scx_kfunc_ids_select_cpu: also callable from ops.select_cpu()/ops.enqueue() */
-BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_دلائل | KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_KFUNCS_END(scx_kfunc_ids_unlocked)
+BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_دلائل | KF_RCU)
+BTF_KFUNCS_انتہا(scx_kfunc_ids_unlocked)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_unlocked = {
+ساکن ثابت ساخت btf_kfunc_id_سیٹ scx_kfunc_سیٹ_unlocked = {
 	.owner			= THIS_MODULE,
-	.set			= &scx_kfunc_ids_unlocked,
+	.سیٹ			= &scx_kfunc_ids_unlocked,
 	.filter			= scx_kfunc_context_filter,
 };
 
@@ -9647,16 +9647,16 @@ __bpf_kfunc_start_defs();
  *
  * Return %true on success, %false if @p is not on the calling scheduler.
  */
-__bpf_kfunc bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice,
-					const struct bpf_prog_aux *aux)
+__bpf_kfunc bool scx_bpf_task_سیٹ_قاش(ساخت task_struct *p, u64 قاش,
+					ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct rq *locked_rq;
+	ساخت scx_sched *sch;
+	ساخت rq *locked_rq;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch || !scx_task_on_sched(sch, p)))
-		return false;
+	اگر (unlikely(!sch || !scx_task_on_sched(sch, p)))
+		واپس false;
 
 	/*
 	 * Directly write only when we hold the lock of the rq @p is queued or
@@ -9672,24 +9672,24 @@ __bpf_kfunc bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice,
 	 * and the tick-time expiry check.
 	 */
 	locked_rq = scx_locked_rq();
-	if (!locked_rq ||
-	    (READ_ONCE(p->scx.runnable_cpu) != cpu_of(locked_rq) &&
+	اگر (!locked_rq ||
+	    (READ_ONCE(p->scx.runnable_cpu) != cpu_کا(locked_rq) &&
 	     !task_current(locked_rq, p))) {
-		set_task_slice_oob(sch, p, slice);
-		return true;
+		سیٹ_task_قاش_oob(sch, p, قاش);
+		واپس true;
 	}
 
 	/* under the rq lock: apply now, extensions gated on baseline access */
-	if (slice > p->scx.slice &&
-	    unlikely(scx_missing_caps(sch, cpu_of(locked_rq), SCX_CAP_BASE))) {
-		__scx_add_event(sch, SCX_EV_SLICE_DENIED, 1);
-		return true;
+	اگر (قاش > p->scx.قاش &&
+	    unlikely(scx_missing_caps(sch, cpu_کا(locked_rq), SCX_CAP_بنیاد))) {
+		__scx_add_event(sch, SCX_EV_قاش_DENIED, 1);
+		واپس true;
 	}
 
-	if (unlikely(!scx_set_task_slice(p, slice)))
-		__scx_add_event(sch, SCX_EV_SLICE_DENIED, 1);
+	اگر (unlikely(!scx_سیٹ_task_قاش(p, قاش)))
+		__scx_add_event(sch, SCX_EV_قاش_DENIED, 1);
 
-	return true;
+	واپس true;
 }
 
 /**
@@ -9701,33 +9701,33 @@ __bpf_kfunc bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice,
  * Set @p's virtual time to @vtime. Returns %true on success, %false if the
  * calling scheduler doesn't have authority over @p.
  */
-__bpf_kfunc bool scx_bpf_task_set_dsq_vtime(struct task_struct *p, u64 vtime,
-					    const struct bpf_prog_aux *aux)
+__bpf_kfunc bool scx_bpf_task_سیٹ_dsq_vtime(ساخت task_struct *p, u64 vtime,
+					    ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch || !scx_task_on_sched(sch, p)))
-		return false;
+	اگر (unlikely(!sch || !scx_task_on_sched(sch, p)))
+		واپس false;
 
 	p->scx.dsq_vtime = vtime;
-	return true;
+	واپس true;
 }
 
-void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags)
+خالی scx_kick_cpu(ساخت scx_sched *sch, s32 cpu, u64 flags)
 {
-	struct scx_sched_pcpu *pcpu;
-	struct rq *this_rq;
-	unsigned long irq_flags;
+	ساخت scx_sched_pcpu *pcpu;
+	ساخت rq *this_rq;
+	غیرعلامتی طویل irq_flags;
 
 	/*
 	 * The per-cpu kick list is guarded only by local_irq_save(), which does
 	 * not mask NMIs, so kicking from NMI could corrupt it and is unsupported.
 	 */
-	if (unlikely(in_nmi())) {
+	اگر (unlikely(اندر_nmi())) {
 		scx_error(sch, "scx_bpf_kick_cpu() called from NMI");
-		return;
+		واپس;
 	}
 
 	local_irq_save(irq_flags);
@@ -9740,8 +9740,8 @@ void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags)
 	 * lead to irq_work_queue() malfunction such as infinite busy wait for
 	 * IRQ status update. Suppress kicking.
 	 */
-	if (scx_bypassing(sch, cpu_of(this_rq)))
-		goto out;
+	اگر (scx_bypassing(sch, cpu_کا(this_rq)))
+		جاؤ برآمد;
 
 	/*
 	 * Actual kicking is bounced to kick_cpus_irq_workfn() to avoid nesting
@@ -9751,35 +9751,35 @@ void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags)
 	 * The kick masks are owned by @sch->pcpu, so that a preempt kick can be
 	 * attributed to @sch.
 	 */
-	if (flags & SCX_KICK_IDLE) {
-		struct rq *target_rq = cpu_rq(cpu);
+	اگر (flags & SCX_KICK_IDLE) {
+		ساخت rq *ہدف_rq = cpu_rq(cpu);
 
-		if (unlikely(flags & (SCX_KICK_PREEMPT | SCX_KICK_WAIT)))
+		اگر (unlikely(flags & (SCX_KICK_PREEMPT | SCX_KICK_WAIT)))
 			scx_error(sch, "PREEMPT/WAIT cannot be used with SCX_KICK_IDLE");
 
-		if (raw_spin_rq_trylock(target_rq)) {
-			if (can_skip_idle_kick(target_rq)) {
-				scx_rq_lock_drop(target_rq);
-				raw_spin_rq_unlock(target_rq);
-				goto out;
+		اگر (raw_spin_rq_trylock(ہدف_rq)) {
+			اگر (can_skip_idle_kick(ہدف_rq)) {
+				scx_rq_تالا_drop(ہدف_rq);
+				raw_spin_rq_unlock(ہدف_rq);
+				جاؤ برآمد;
 			}
-			scx_rq_lock_drop(target_rq);
-			raw_spin_rq_unlock(target_rq);
+			scx_rq_تالا_drop(ہدف_rq);
+			raw_spin_rq_unlock(ہدف_rq);
 		}
-		cpumask_set_cpu(cpu, pcpu->cpus_to_kick_if_idle);
-	} else {
-		cpumask_set_cpu(cpu, pcpu->cpus_to_kick);
+		cpumask_سیٹ_cpu(cpu, pcpu->cpus_مقصد_kick_if_idle);
+	} ورنہ {
+		cpumask_سیٹ_cpu(cpu, pcpu->cpus_مقصد_kick);
 
-		if (flags & SCX_KICK_PREEMPT)
-			cpumask_set_cpu(cpu, pcpu->cpus_to_preempt);
-		if (flags & SCX_KICK_WAIT)
-			cpumask_set_cpu(cpu, pcpu->cpus_to_wait);
+		اگر (flags & SCX_KICK_PREEMPT)
+			cpumask_سیٹ_cpu(cpu, pcpu->cpus_مقصد_preempt);
+		اگر (flags & SCX_KICK_WAIT)
+			cpumask_سیٹ_cpu(cpu, pcpu->cpus_مقصد_wait);
 	}
 
-	if (list_empty(&pcpu->to_kick_node))
-		list_add_tail(&pcpu->to_kick_node, &this_rq->scx.sched_pcpus_to_kick);
-	irq_work_queue(&this_rq->scx.kick_cpus_irq_work);
-out:
+	اگر (list_خالی_خانے(&pcpu->مقصد_kick_گرہ))
+		list_جوڑو_دم(&pcpu->مقصد_kick_گرہ, &this_rq->scx.sched_pcpus_مقصد_kick);
+	irq_work_قطار(&this_rq->scx.kick_cpus_irq_work);
+برآمد:
 	local_irq_restore(irq_flags);
 }
 
@@ -9794,13 +9794,13 @@ out:
  * scx_ops operation and the actual kicking is performed asynchronously through
  * an irq work.
  */
-__bpf_kfunc void scx_bpf_kick_cpu(s32 cpu, u64 flags, const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_kick_cpu(s32 cpu, u64 flags, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (likely(sch) && scx_cpu_valid(sch, cpu, NULL))
+	اگر (likely(sch) && scx_cpu_valid(sch, cpu, تہی))
 		scx_kick_cpu(sch, cpu, flags);
 }
 
@@ -9816,18 +9816,18 @@ __bpf_kfunc void scx_bpf_kick_cpu(s32 cpu, u64 flags, const struct bpf_prog_aux 
  * %SCX_KICK_PREEMPT degrades to a plain reschedule if the caller lacks
  * %SCX_CAP_PREEMPT for a task outside its subtree.
  */
-__bpf_kfunc void scx_bpf_kick_cid(s32 cid, u64 flags, const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_kick_cid(s32 cid, u64 flags, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
-	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return;
+	اگر (unlikely(!sch))
+		واپس;
+	cpu = scx_cid_مقصد_cpu(sch, cid);
+	اگر (cpu < 0)
+		واپس;
 	scx_kick_cpu(sch, cpu, flags);
 }
 
@@ -9843,41 +9843,41 @@ __bpf_kfunc void scx_bpf_kick_cid(s32 cid, u64 flags, const struct bpf_prog_aux 
  * operation is locked to - e.g. the rq being dispatched for in ops.dispatch() -
  * or the calling CPU's when no rq is locked.
  */
-__bpf_kfunc s32 scx_bpf_dsq_nr_queued(u64 dsq_id, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_dsq_nr_queued(u64 dsq_id, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_dispatch_q *dsq;
+	ساخت scx_sched *sch;
+	ساخت scx_dispatch_q *dsq;
 	s32 ret;
 
 	preempt_disable();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch)) {
+	اگر (unlikely(!sch)) {
 		ret = -ENODEV;
-		goto out;
+		جاؤ برآمد;
 	}
 
-	if (dsq_id == SCX_DSQ_LOCAL) {
+	اگر (dsq_id == SCX_DSQ_LOCAL) {
 		ret = READ_ONCE((scx_locked_rq() ?: this_rq())->scx.local_dsq.nr);
-		goto out;
-	} else if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
-		s32 cpu = scx_cpu_ret(sch, dsq_id & SCX_DSQ_LOCAL_CPU_MASK);
+		جاؤ برآمد;
+	} ورنہ اگر ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
+		s32 cpu = scx_cpu_ret(sch, dsq_id & SCX_DSQ_LOCAL_CPU_نقاب);
 
-		if (scx_cpu_valid(sch, cpu, NULL)) {
+		اگر (scx_cpu_valid(sch, cpu, تہی)) {
 			ret = READ_ONCE(cpu_rq(cpu)->scx.local_dsq.nr);
-			goto out;
+			جاؤ برآمد;
 		}
-	} else {
-		dsq = find_user_dsq(sch, dsq_id);
-		if (dsq) {
+	} ورنہ {
+		dsq = ڈھونڈو_user_dsq(sch, dsq_id);
+		اگر (dsq) {
 			ret = READ_ONCE(dsq->nr);
-			goto out;
+			جاؤ برآمد;
 		}
 	}
 	ret = -ENOENT;
-out:
+برآمد:
 	preempt_enable();
-	return ret;
+	واپس ret;
 }
 
 /**
@@ -9890,13 +9890,13 @@ out:
  * empty and no further tasks are dispatched to it. Ignored if called on a DSQ
  * which doesn't exist. Can be called from any online scx_ops operations.
  */
-__bpf_kfunc void scx_bpf_destroy_dsq(u64 dsq_id, const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_destroy_dsq(u64 dsq_id, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 	sch = scx_prog_sched(aux);
-	if (sch)
+	اگر (sch)
 		destroy_dsq(sch, dsq_id);
 }
 
@@ -9911,16 +9911,16 @@ __bpf_kfunc void scx_bpf_destroy_dsq(u64 dsq_id, const struct bpf_prog_aux *aux)
  * tasks in the DSQ specified by @dsq_id. Iteration using @it only includes
  * tasks which are already queued when this function is invoked.
  */
-__bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
-				     u64 flags, const struct bpf_prog_aux *aux)
+__bpf_kfunc صحیح bpf_iter_scx_dsq_new(ساخت bpf_iter_scx_dsq *it, u64 dsq_id,
+				     u64 flags, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
-	struct scx_sched *sch;
+	ساخت bpf_iter_scx_dsq_kern *kit = (خالی *)it;
+	ساخت scx_sched *sch;
 
-	BUILD_BUG_ON(sizeof(struct bpf_iter_scx_dsq_kern) >
-		     sizeof(struct bpf_iter_scx_dsq));
-	BUILD_BUG_ON(__alignof__(struct bpf_iter_scx_dsq_kern) !=
-		     __alignof__(struct bpf_iter_scx_dsq));
+	BUILD_BUG_ON(حجم(ساخت bpf_iter_scx_dsq_kern) >
+		     حجم(ساخت bpf_iter_scx_dsq));
+	BUILD_BUG_ON(__alignof__(ساخت bpf_iter_scx_dsq_kern) !=
+		     __alignof__(ساخت bpf_iter_scx_dsq));
 	BUILD_BUG_ON(__SCX_DSQ_ITER_ALL_FLAGS &
 		     ((1U << __SCX_DSQ_LNODE_PRIV_SHIFT) - 1));
 
@@ -9928,22 +9928,22 @@ __bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
 	 * next() and destroy() will be called regardless of the return value.
 	 * Always clear $kit->dsq.
 	 */
-	kit->dsq = NULL;
+	kit->dsq = تہی;
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	اگر (unlikely(!sch))
+		واپس -ENODEV;
 
-	if (flags & ~__SCX_DSQ_ITER_USER_FLAGS)
-		return -EINVAL;
+	اگر (flags & ~__SCX_DSQ_ITER_USER_FLAGS)
+		واپس -EINVAL;
 
-	kit->dsq = find_user_dsq(sch, dsq_id);
-	if (!kit->dsq)
-		return -ENOENT;
+	kit->dsq = ڈھونڈو_user_dsq(sch, dsq_id);
+	اگر (!kit->dsq)
+		واپس -ENOENT;
 
 	kit->cursor = INIT_DSQ_LIST_CURSOR(kit->cursor, kit->dsq, flags);
 
-	return 0;
+	واپس 0;
 }
 
 /**
@@ -9952,16 +9952,16 @@ __bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
  *
  * Return the next task. See bpf_iter_scx_dsq_new().
  */
-__bpf_kfunc struct task_struct *bpf_iter_scx_dsq_next(struct bpf_iter_scx_dsq *it)
+__bpf_kfunc ساخت task_struct *bpf_iter_scx_dsq_اگلا(ساخت bpf_iter_scx_dsq *it)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
+	ساخت bpf_iter_scx_dsq_kern *kit = (خالی *)it;
 
-	if (!kit->dsq)
-		return NULL;
+	اگر (!kit->dsq)
+		واپس تہی;
 
-	guard(raw_spinlock_irqsave)(&kit->dsq->lock);
+	guard(raw_spinlock_irqsave)(&kit->dsq->تالا);
 
-	return nldsq_cursor_next_task(&kit->cursor, kit->dsq);
+	واپس nldsq_cursor_اگلا_task(&kit->cursor, kit->dsq);
 }
 
 /**
@@ -9970,21 +9970,21 @@ __bpf_kfunc struct task_struct *bpf_iter_scx_dsq_next(struct bpf_iter_scx_dsq *i
  *
  * Undo bpf_iter_scx_dsq_new().
  */
-__bpf_kfunc void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it)
+__bpf_kfunc خالی bpf_iter_scx_dsq_destroy(ساخت bpf_iter_scx_dsq *it)
 {
-	struct bpf_iter_scx_dsq_kern *kit = (void *)it;
+	ساخت bpf_iter_scx_dsq_kern *kit = (خالی *)it;
 
-	if (!kit->dsq)
-		return;
+	اگر (!kit->dsq)
+		واپس;
 
-	if (!list_empty(&kit->cursor.node)) {
-		unsigned long flags;
+	اگر (!list_خالی_خانے(&kit->cursor.گرہ)) {
+		غیرعلامتی طویل flags;
 
-		raw_spin_lock_irqsave(&kit->dsq->lock, flags);
-		list_del_init(&kit->cursor.node);
-		raw_spin_unlock_irqrestore(&kit->dsq->lock, flags);
+		raw_spin_تالا_irqsave(&kit->dsq->تالا, flags);
+		list_del_init(&kit->cursor.گرہ);
+		raw_spin_unlock_irqrestore(&kit->dsq->تالا, flags);
 	}
-	kit->dsq = NULL;
+	kit->dsq = تہی;
 }
 
 /**
@@ -9999,28 +9999,28 @@ __bpf_kfunc void bpf_iter_scx_dsq_destroy(struct bpf_iter_scx_dsq *it)
  *
  * Returns the pointer, or NULL indicates an empty queue OR internal error.
  */
-__bpf_kfunc struct task_struct *scx_bpf_dsq_peek(u64 dsq_id,
-						 const struct bpf_prog_aux *aux)
+__bpf_kfunc ساخت task_struct *scx_bpf_dsq_peek(u64 dsq_id,
+						 ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_dispatch_q *dsq;
+	ساخت scx_sched *sch;
+	ساخت scx_dispatch_q *dsq;
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
+	اگر (unlikely(!sch))
+		واپس تہی;
 
-	if (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN)) {
+	اگر (unlikely(dsq_id & SCX_DSQ_FLAG_BUILTIN)) {
 		scx_error(sch, "peek disallowed on builtin DSQ 0x%llx", dsq_id);
-		return NULL;
+		واپس تہی;
 	}
 
-	dsq = find_user_dsq(sch, dsq_id);
-	if (unlikely(!dsq)) {
+	dsq = ڈھونڈو_user_dsq(sch, dsq_id);
+	اگر (unlikely(!dsq)) {
 		scx_error(sch, "peek on non-existent DSQ 0x%llx", dsq_id);
-		return NULL;
+		واپس تہی;
 	}
 
-	return rcu_dereference(dsq->first_task);
+	واپس rcu_dereference(dsq->پہلا_task);
 }
 
 /**
@@ -10042,30 +10042,30 @@ __bpf_kfunc struct task_struct *scx_bpf_dsq_peek(u64 dsq_id,
  * operation is locked to - e.g. the rq being dispatched for in ops.dispatch() -
  * or the calling CPU's when no rq is locked.
  */
-__bpf_kfunc void scx_bpf_dsq_reenq(u64 dsq_id, u64 reenq_flags,
-				   const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_dsq_reenq(u64 dsq_id, u64 reenq_flags,
+				   ثابت ساخت bpf_prog_aux *aux)
 {
-	struct rq *locked_rq = scx_locked_rq();
-	struct scx_sched *sch;
-	struct scx_dispatch_q *dsq;
+	ساخت rq *locked_rq = scx_locked_rq();
+	ساخت scx_sched *sch;
+	ساخت scx_dispatch_q *dsq;
 
 	guard(preempt)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	اگر (unlikely(!sch))
+		واپس;
 
-	if (unlikely(reenq_flags & ~__SCX_REENQ_USER_MASK)) {
+	اگر (unlikely(reenq_flags & ~__SCX_REENQ_USER_MASK)) {
 		scx_error(sch, "invalid SCX_REENQ flags 0x%llx", reenq_flags);
-		return;
+		واپس;
 	}
 
 	/* not specifying any filter bits is the same as %SCX_REENQ_ANY */
-	if (!(reenq_flags & __SCX_REENQ_FILTER_MASK))
+	اگر (!(reenq_flags & __SCX_REENQ_FILTER_MASK))
 		reenq_flags |= SCX_REENQ_ANY;
 
-	dsq = find_dsq_for_dispatch(sch, locked_rq ?: this_rq(), dsq_id, smp_processor_id());
-	schedule_dsq_reenq(sch, dsq, reenq_flags, locked_rq);
+	dsq = ڈھونڈو_dsq_for_dispatch(sch, locked_rq ?: this_rq(), dsq_id, smp_processor_id());
+	جدول_وقت_dsq_reenq(sch, dsq, reenq_flags, locked_rq);
 }
 
 /**
@@ -10079,7 +10079,7 @@ __bpf_kfunc void scx_bpf_dsq_reenq(u64 dsq_id, u64 reenq_flags,
  * This is now a special case of scx_bpf_dsq_reenq() and may be removed in the
  * future.
  */
-__bpf_kfunc void scx_bpf_reenqueue_local___v2(const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_reenqueue_local___v2(ثابت ساخت bpf_prog_aux *aux)
 {
 	scx_bpf_dsq_reenq(SCX_DSQ_LOCAL, 0, aux);
 }
@@ -10087,41 +10087,41 @@ __bpf_kfunc void scx_bpf_reenqueue_local___v2(const struct bpf_prog_aux *aux)
 __bpf_kfunc_end_defs();
 
 __printf(5, 0)
-static s32 __bstr_format(struct scx_sched *sch, u64 *data_buf, char *line_buf,
-			 size_t line_size, char *fmt, unsigned long long *data,
-			 u32 data__sz)
+ساکن s32 __bstr_format(ساخت scx_sched *sch, u64 *ڈیٹا_buf, حرف *سطر_buf,
+			 سائز_t سطر_سائز, حرف *fmt, غیرعلامتی طویل طویل *ڈیٹا,
+			 u32 ڈیٹا_sz)
 {
-	struct bpf_bprintf_data bprintf_data = { .get_bin_args = true };
+	ساخت bpf_bprintf_ڈیٹا bprintf_ڈیٹا = { .get_bin_دلائل = true };
 	s32 ret;
 
-	if (data__sz % 8 || data__sz > MAX_BPRINTF_VARARGS * 8 ||
-	    (data__sz && !data)) {
-		scx_error(sch, "invalid data=%p and data__sz=%u", (void *)data, data__sz);
-		return -EINVAL;
+	اگر (ڈیٹا_sz % 8 || ڈیٹا_sz > MAX_BPRINTF_VARARGS * 8 ||
+	    (ڈیٹا_sz && !ڈیٹا)) {
+		scx_error(sch, "invalid data=%p and data__sz=%u", (خالی *)ڈیٹا, ڈیٹا_sz);
+		واپس -EINVAL;
 	}
 
-	ret = copy_from_kernel_nofault(data_buf, data, data__sz);
-	if (ret < 0) {
+	ret = copy_from_kernel_nofault(ڈیٹا_buf, ڈیٹا, ڈیٹا_sz);
+	اگر (ret < 0) {
 		scx_error(sch, "failed to read data fields (%d)", ret);
-		return ret;
+		واپس ret;
 	}
 
-	ret = bpf_bprintf_prepare(fmt, UINT_MAX, data_buf, data__sz / 8,
-				  &bprintf_data);
-	if (ret < 0) {
+	ret = bpf_bprintf_prepare(fmt, UINT_MAX, ڈیٹا_buf, ڈیٹا_sz / 8,
+				  &bprintf_ڈیٹا);
+	اگر (ret < 0) {
 		scx_error(sch, "format preparation failed (%d)", ret);
-		return ret;
+		واپس ret;
 	}
 
-	ret = bstr_printf(line_buf, line_size, fmt,
-			  bprintf_data.bin_args);
-	bpf_bprintf_cleanup(&bprintf_data);
-	if (ret < 0) {
-		scx_error(sch, "(\"%s\", %p, %u) failed to format", fmt, data, data__sz);
-		return ret;
+	ret = bstr_printf(سطر_buf, سطر_سائز, fmt,
+			  bprintf_ڈیٹا.bin_دلائل);
+	bpf_bprintf_cleanup(&bprintf_ڈیٹا);
+	اگر (ret < 0) {
+		scx_error(sch, "(\"%s\", %p, %u) failed to format", fmt, ڈیٹا, ڈیٹا_sz);
+		واپس ret;
 	}
 
-	return ret;
+	واپس ret;
 }
 
 /*
@@ -10135,27 +10135,27 @@ static s32 __bstr_format(struct scx_sched *sch, u64 *data_buf, char *line_buf,
  * claim - @sch still exits with the claimed kind and a fallback message.
  */
 __printf(5, 0)
-bool scx_exit_bstr(struct scx_sched *sch, enum scx_exit_kind kind,
-		   s64 exit_code, struct scx_sched *fmt_blame, char *fmt,
-		   unsigned long long *data, u32 data__sz)
+bool scx_exit_bstr(ساخت scx_sched *sch, شمار scx_exit_قسم قسم,
+		   s64 exit_رمز, ساخت scx_sched *fmt_blame, حرف *fmt,
+		   غیرعلامتی طویل طویل *ڈیٹا, u32 ڈیٹا_sz)
 {
-	struct scx_exit_info *ei = sch->exit_info;
-	u64 data_buf[MAX_BPRINTF_VARARGS];
+	ساخت scx_exit_info *ei = sch->exit_info;
+	u64 ڈیٹا_buf[MAX_BPRINTF_VARARGS];
 	s32 ret;
 
 	guard(preempt)();
 
-	if (!scx_claim_exit(sch, kind))
-		return false;
+	اگر (!scx_claim_exit(sch, قسم))
+		واپس false;
 
-	ret = __bstr_format(fmt_blame, data_buf, ei->msg, SCX_EXIT_MSG_LEN,
-			    fmt, data, data__sz);
-	if (ret < 0)
-		scnprintf(ei->msg, SCX_EXIT_MSG_LEN,
+	ret = __bstr_format(fmt_blame, ڈیٹا_buf, ei->پیغام, SCX_EXIT_پیغام_LEN,
+			    fmt, ڈیٹا, ڈیٹا_sz);
+	اگر (ret < 0)
+		scnprintf(ei->پیغام, SCX_EXIT_پیغام_LEN,
 			  "exit message formatting failed (%d)", ret);
 
-	scx_finish_exit(sch, kind, exit_code, raw_smp_processor_id());
-	return true;
+	scx_اختتام_exit(sch, قسم, exit_رمز, raw_smp_processor_id());
+	واپس true;
 }
 
 __bpf_kfunc_start_defs();
@@ -10172,18 +10172,18 @@ __bpf_kfunc_start_defs();
  * disabling.
  */
 __printf(2, 0)
-__bpf_kfunc void scx_bpf_exit_bstr(s64 exit_code, char *fmt,
-				   unsigned long long *data, u32 data__sz,
-				   const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_exit_bstr(s64 exit_رمز, حرف *fmt,
+				   غیرعلامتی طویل طویل *ڈیٹا, u32 ڈیٹا_sz,
+				   ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (likely(sch))
-		scx_exit_bstr(sch, SCX_EXIT_UNREG_BPF, exit_code, sch, fmt,
-			      data, data__sz);
+	اگر (likely(sch))
+		scx_exit_bstr(sch, SCX_EXIT_UNREG_BPF, exit_رمز, sch, fmt,
+			      ڈیٹا, ڈیٹا_sz);
 }
 
 /**
@@ -10197,17 +10197,17 @@ __bpf_kfunc void scx_bpf_exit_bstr(s64 exit_code, char *fmt,
  * disabling.
  */
 __printf(1, 0)
-__bpf_kfunc void scx_bpf_error_bstr(char *fmt, unsigned long long *data,
-				    u32 data__sz, const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_error_bstr(حرف *fmt, غیرعلامتی طویل طویل *ڈیٹا,
+				    u32 ڈیٹا_sz, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (likely(sch))
-		scx_exit_bstr(sch, SCX_EXIT_ERROR_BPF, 0, sch, fmt, data,
-			      data__sz);
+	اگر (likely(sch))
+		scx_exit_bstr(sch, SCX_EXIT_ERROR_BPF, 0, sch, fmt, ڈیٹا,
+			      ڈیٹا_sz);
 }
 
 /**
@@ -10224,39 +10224,39 @@ __bpf_kfunc void scx_bpf_error_bstr(char *fmt, unsigned long long *data,
  * multiple calls. The last line is automatically terminated.
  */
 __printf(1, 0)
-__bpf_kfunc void scx_bpf_dump_bstr(char *fmt, unsigned long long *data,
-				   u32 data__sz, const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_dump_bstr(حرف *fmt, غیرعلامتی طویل طویل *ڈیٹا,
+				   u32 ڈیٹا_sz, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_dump_data *dd = &scx_dump_data;
-	struct scx_bstr_buf *buf = &dd->buf;
+	ساخت scx_sched *sch;
+	ساخت scx_dump_ڈیٹا *dd = &scx_dump_ڈیٹا;
+	ساخت scx_bstr_buf *buf = &dd->buf;
 	s32 ret;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	اگر (unlikely(!sch))
+		واپس;
 
-	if (raw_smp_processor_id() != dd->cpu) {
+	اگر (raw_smp_processor_id() != dd->cpu) {
 		scx_error(sch, "scx_bpf_dump() must only be called from ops.dump() and friends");
-		return;
+		واپس;
 	}
 
 	/* append the formatted string to the line buf */
-	ret = __bstr_format(sch, buf->data, buf->line + dd->cursor,
-			    sizeof(buf->line) - dd->cursor, fmt, data, data__sz);
-	if (ret < 0) {
-		scx_dump_line(dd->s, "%s[!] (\"%s\", %p, %u) failed to format (%d)",
-			      dd->prefix, fmt, data, data__sz, ret);
-		return;
+	ret = __bstr_format(sch, buf->ڈیٹا, buf->سطر + dd->cursor,
+			    حجم(buf->سطر) - dd->cursor, fmt, ڈیٹا, ڈیٹا_sz);
+	اگر (ret < 0) {
+		scx_dump_سطر(dd->s, "%s[!] (\"%s\", %p, %u) failed to format (%d)",
+			      dd->سابقہ, fmt, ڈیٹا, ڈیٹا_sz, ret);
+		واپس;
 	}
 
 	dd->cursor += ret;
-	dd->cursor = min_t(s32, dd->cursor, sizeof(buf->line));
+	dd->cursor = min_t(s32, dd->cursor, حجم(buf->سطر));
 
-	if (!dd->cursor)
-		return;
+	اگر (!dd->cursor)
+		واپس;
 
 	/*
 	 * If the line buf overflowed or ends in a newline, flush it into the
@@ -10266,7 +10266,7 @@ __bpf_kfunc void scx_bpf_dump_bstr(char *fmt, unsigned long long *data,
 	 * truncation is when the caller keeps generating newlines in the middle
 	 * instead of the end consecutively. Don't do that.
 	 */
-	if (dd->cursor >= sizeof(buf->line) || buf->line[dd->cursor - 1] == '\n')
+	اگر (dd->cursor >= حجم(buf->سطر) || buf->سطر[dd->cursor - 1] == '\n')
 		ops_dump_flush();
 }
 
@@ -10279,17 +10279,17 @@ __bpf_kfunc void scx_bpf_dump_bstr(char *fmt, unsigned long long *data,
  * performant CPU in the system. The return value is in the range [1,
  * %SCX_CPUPERF_ONE]. See scx_bpf_cpuperf_cur().
  */
-__bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (likely(sch) && scx_cpu_valid(sch, cpu, NULL))
-		return arch_scale_cpu_capacity(cpu);
-	else
-		return SCX_CPUPERF_ONE;
+	اگر (likely(sch) && scx_cpu_valid(sch, cpu, تہی))
+		واپس arch_scale_cpu_استعداد(cpu);
+	ورنہ
+		واپس SCX_CPUPERF_ONE;
 }
 
 /**
@@ -10299,20 +10299,20 @@ __bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu, const struct bpf_prog_aux *aux)
  *
  * cid-addressed equivalent of scx_bpf_cpuperf_cap().
  */
-__bpf_kfunc u32 scx_bpf_cidperf_cap(s32 cid, const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_cidperf_cap(s32 cid, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return SCX_CPUPERF_ONE;
-	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return SCX_CPUPERF_ONE;
-	return arch_scale_cpu_capacity(cpu);
+	اگر (unlikely(!sch))
+		واپس SCX_CPUPERF_ONE;
+	cpu = scx_cid_مقصد_cpu(sch, cid);
+	اگر (cpu < 0)
+		واپس SCX_CPUPERF_ONE;
+	واپس arch_scale_cpu_استعداد(cpu);
 }
 
 /**
@@ -10330,17 +10330,17 @@ __bpf_kfunc u32 scx_bpf_cidperf_cap(s32 cid, const struct bpf_prog_aux *aux)
  *
  * The result is in the range [1, %SCX_CPUPERF_ONE].
  */
-__bpf_kfunc u32 scx_bpf_cpuperf_cur(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_cpuperf_cur(s32 cpu, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (likely(sch) && scx_cpu_valid(sch, cpu, NULL))
-		return arch_scale_freq_capacity(cpu);
-	else
-		return SCX_CPUPERF_ONE;
+	اگر (likely(sch) && scx_cpu_valid(sch, cpu, تہی))
+		واپس arch_scale_freq_استعداد(cpu);
+	ورنہ
+		واپس SCX_CPUPERF_ONE;
 }
 
 /**
@@ -10350,36 +10350,36 @@ __bpf_kfunc u32 scx_bpf_cpuperf_cur(s32 cpu, const struct bpf_prog_aux *aux)
  *
  * cid-addressed equivalent of scx_bpf_cpuperf_cur().
  */
-__bpf_kfunc u32 scx_bpf_cidperf_cur(s32 cid, const struct bpf_prog_aux *aux)
+__bpf_kfunc u32 scx_bpf_cidperf_cur(s32 cid, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return SCX_CPUPERF_ONE;
-	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return SCX_CPUPERF_ONE;
-	return arch_scale_freq_capacity(cpu);
+	اگر (unlikely(!sch))
+		واپس SCX_CPUPERF_ONE;
+	cpu = scx_cid_مقصد_cpu(sch, cid);
+	اگر (cpu < 0)
+		واپس SCX_CPUPERF_ONE;
+	واپس arch_scale_freq_استعداد(cpu);
 }
 
 /* validate and apply a cpuperf target, see scx_bpf_cpuperf_set() */
-static s32 scx_cpuperf_set(struct scx_sched *sch, s32 cpu, u32 perf)
+ساکن s32 scx_cpuperf_سیٹ(ساخت scx_sched *sch, s32 cpu, u32 perf)
 {
-	struct rq *rq, *locked_rq;
-	struct rq_flags rf;
+	ساخت rq *rq, *locked_rq;
+	ساخت rq_flags rf;
 	s32 ret;
 
-	if (unlikely(perf > SCX_CPUPERF_ONE)) {
+	اگر (unlikely(perf > SCX_CPUPERF_ONE)) {
 		scx_error(sch, "Invalid cpuperf target %u for CPU %d", perf, cpu);
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
-	if (!scx_cpu_valid(sch, cpu, NULL))
-		return -EINVAL;
+	اگر (!scx_cpu_valid(sch, cpu, تہی))
+		واپس -EINVAL;
 
 	rq = cpu_rq(cpu);
 	locked_rq = scx_locked_rq();
@@ -10388,17 +10388,17 @@ static s32 scx_cpuperf_set(struct scx_sched *sch, s32 cpu, u32 perf)
 	 * When called with an rq lock held, restrict the operation to the
 	 * corresponding CPU to prevent ABBA deadlocks.
 	 */
-	if (locked_rq && rq != locked_rq) {
+	اگر (locked_rq && rq != locked_rq) {
 		scx_error(sch, "Invalid target CPU %d", cpu);
-		return -EINVAL;
+		واپس -EINVAL;
 	}
 
 	/*
 	 * If no rq lock is held, allow to operate on any CPU by acquiring
 	 * the corresponding rq lock.
 	 */
-	if (!locked_rq) {
-		rq_lock_irqsave(rq, &rf);
+	اگر (!locked_rq) {
+		rq_تالا_irqsave(rq, &rf);
 		update_rq_clock(rq);
 	}
 
@@ -10407,19 +10407,19 @@ static s32 scx_cpuperf_set(struct scx_sched *sch, s32 cpu, u32 perf)
 	 * authoritative: a write can never land after a revoke has taken
 	 * effect on @cpu.
 	 */
-	if (likely(!scx_missing_caps(sch, cpu, SCX_CAP_PERF))) {
-		rq->scx.cpuperf_target = perf;
+	اگر (likely(!scx_missing_caps(sch, cpu, SCX_CAP_PERF))) {
+		rq->scx.cpuperf_ہدف = perf;
 		cpufreq_update_util(rq, 0);
 		ret = 0;
-	} else {
+	} ورنہ {
 		__scx_add_event(sch, SCX_EV_SUB_CIDPERF_DENIED, 1);
 		ret = -EACCES;
 	}
 
-	if (!locked_rq)
+	اگر (!locked_rq)
 		rq_unlock_irqrestore(rq, &rf);
 
-	return ret;
+	واپس ret;
 }
 
 /**
@@ -10437,17 +10437,17 @@ static s32 scx_cpuperf_set(struct scx_sched *sch, s32 cpu, u32 perf)
  * use. Consult hardware and cpufreq documentation for more information. The
  * current performance level can be monitored using scx_bpf_cpuperf_cur().
  */
-__bpf_kfunc void scx_bpf_cpuperf_set(s32 cpu, u32 perf, const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_cpuperf_سیٹ(s32 cpu, u32 perf, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	اگر (unlikely(!sch))
+		واپس;
 
-	scx_cpuperf_set(sch, cpu, perf);
+	scx_cpuperf_سیٹ(sch, cpu, perf);
 }
 
 /**
@@ -10461,22 +10461,22 @@ __bpf_kfunc void scx_bpf_cpuperf_set(s32 cpu, u32 perf, const struct bpf_prog_au
  * the write was denied for missing caps, other -errnos if @cid didn't
  * resolve.
  */
-__bpf_kfunc s32 scx_bpf_cidperf_set(s32 cid, u32 perf,
-				    const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_cidperf_سیٹ(s32 cid, u32 perf,
+				    ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
-	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return cpu;
+	اگر (unlikely(!sch))
+		واپس -ENODEV;
+	cpu = scx_cid_مقصد_cpu(sch, cid);
+	اگر (cpu < 0)
+		واپس cpu;
 
-	return scx_cpuperf_set(sch, cpu, perf);
+	واپس scx_cpuperf_سیٹ(sch, cpu, perf);
 }
 
 /**
@@ -10484,9 +10484,9 @@ __bpf_kfunc s32 scx_bpf_cidperf_set(s32 cid, u32 perf,
  *
  * All valid node IDs in the system are smaller than the returned value.
  */
-__bpf_kfunc u32 scx_bpf_nr_node_ids(void)
+__bpf_kfunc u32 scx_bpf_nr_گرہ_ids(خالی)
 {
-	return nr_node_ids;
+	واپس nr_گرہ_ids;
 }
 
 /**
@@ -10494,9 +10494,9 @@ __bpf_kfunc u32 scx_bpf_nr_node_ids(void)
  *
  * All valid CPU IDs in the system are smaller than the returned value.
  */
-__bpf_kfunc u32 scx_bpf_nr_cpu_ids(void)
+__bpf_kfunc u32 scx_bpf_nr_cpu_ids(خالی)
 {
-	return nr_cpu_ids;
+	واپس nr_cpu_ids;
 }
 
 /**
@@ -10504,9 +10504,9 @@ __bpf_kfunc u32 scx_bpf_nr_cpu_ids(void)
  *
  * Equals num_possible_cpus(). All valid cids are in [0, return value).
  */
-__bpf_kfunc u32 scx_bpf_nr_cids(void)
+__bpf_kfunc u32 scx_bpf_nr_cids(خالی)
 {
-	return num_possible_cpus();
+	واپس عدد_possible_cpus();
 }
 
 /**
@@ -10519,9 +10519,9 @@ __bpf_kfunc u32 scx_bpf_nr_cids(void)
  * through the ops.cid_online / ops.cid_offline callbacks, starting from the
  * mask scx_bpf_online_cmask() returns.
  */
-__bpf_kfunc u32 scx_bpf_nr_online_cids(void)
+__bpf_kfunc u32 scx_bpf_nr_online_cids(خالی)
 {
-	return num_online_cpus();
+	واپس عدد_online_cpus();
 }
 
 /**
@@ -10537,21 +10537,21 @@ __bpf_kfunc u32 scx_bpf_nr_online_cids(void)
  * through ops.exit(). Root ops.init() runs with hotplug excluded. Other
  * contexts can observe concurrent updates.
  */
-__bpf_kfunc const void *scx_bpf_online_cmask(const struct bpf_prog_aux *aux)
+__bpf_kfunc ثابت خالی *scx_bpf_online_cmask(ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_cmask *online;
+	ساخت scx_sched *sch;
+	ساخت scx_cmask *online;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
+	اگر (unlikely(!sch))
+		واپس تہی;
 	online = sch->online_cmask;
-	if (unlikely(!online))
-		return NULL;
+	اگر (unlikely(!online))
+		واپس تہی;
 
-	return (void *)scx_kaddr_to_arena(sch, online);
+	واپس (خالی *)scx_kaddr_مقصد_arena(sch, online);
 }
 
 /**
@@ -10561,39 +10561,39 @@ __bpf_kfunc const void *scx_bpf_online_cmask(const struct bpf_prog_aux *aux)
  * The current cpu is trivially valid, so this is just a table lookup. Return
  * -EINVAL if called before any scheduler has ever published its cid tables.
  */
-__bpf_kfunc s32 scx_bpf_this_cid(void)
+__bpf_kfunc s32 scx_bpf_this_cid(خالی)
 {
 	s16 *tbl;
 
 	guard(rcu)();
 
-	tbl = rcu_dereference(scx_cpu_to_cid_tbl);
-	if (!tbl)
-		return -EINVAL;
-	return tbl[raw_smp_processor_id()];
+	tbl = rcu_dereference(scx_cpu_مقصد_cid_tbl);
+	اگر (!tbl)
+		واپس -EINVAL;
+	واپس tbl[raw_smp_processor_id()];
 }
 
 /**
  * scx_bpf_get_possible_cpumask - Get a referenced kptr to cpu_possible_mask
  */
-__bpf_kfunc const struct cpumask *scx_bpf_get_possible_cpumask(void)
+__bpf_kfunc ثابت ساخت cpumask *scx_bpf_get_possible_cpumask(خالی)
 {
-	return cpu_possible_mask;
+	واپس cpu_possible_نقاب;
 }
 
 /**
  * scx_bpf_get_online_cpumask - Get a referenced kptr to cpu_online_mask
  */
-__bpf_kfunc const struct cpumask *scx_bpf_get_online_cpumask(void)
+__bpf_kfunc ثابت ساخت cpumask *scx_bpf_get_online_cpumask(خالی)
 {
-	return cpu_online_mask;
+	واپس cpu_online_نقاب;
 }
 
 /**
  * scx_bpf_put_cpumask - Release a possible/online cpumask
  * @cpumask: cpumask to release
  */
-__bpf_kfunc void scx_bpf_put_cpumask(const struct cpumask *cpumask)
+__bpf_kfunc خالی scx_bpf_put_cpumask(ثابت ساخت cpumask *cpumask)
 {
 	/*
 	 * Empty function body because we aren't actually acquiring or releasing
@@ -10607,18 +10607,18 @@ __bpf_kfunc void scx_bpf_put_cpumask(const struct cpumask *cpumask)
  * scx_bpf_task_running - Is task currently running?
  * @p: task of interest
  */
-__bpf_kfunc bool scx_bpf_task_running(const struct task_struct *p)
+__bpf_kfunc bool scx_bpf_task_running(ثابت ساخت task_struct *p)
 {
-	return task_rq(p)->curr == p;
+	واپس task_rq(p)->curr == p;
 }
 
 /**
  * scx_bpf_task_cpu - CPU a task is currently associated with
  * @p: task of interest
  */
-__bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
+__bpf_kfunc s32 scx_bpf_task_cpu(ثابت ساخت task_struct *p)
 {
-	return task_cpu(p);
+	واپس task_cpu(p);
 }
 
 /**
@@ -10629,17 +10629,17 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
  * valid cpu, so this is just a table lookup. Return -EINVAL if called before
  * any scheduler has ever published its cid tables.
  */
-__bpf_kfunc s32 scx_bpf_task_cid(const struct task_struct *p)
+__bpf_kfunc s32 scx_bpf_task_cid(ثابت ساخت task_struct *p)
 {
 	s16 *tbl;
 
 	/* KF_RCU covers only @p - a sleepable program holds no RCU lock */
 	guard(rcu)();
 
-	tbl = rcu_dereference(scx_cpu_to_cid_tbl);
-	if (!tbl)
-		return -EINVAL;
-	return tbl[task_cpu(p)];
+	tbl = rcu_dereference(scx_cpu_مقصد_cid_tbl);
+	اگر (!tbl)
+		واپس -EINVAL;
+	واپس tbl[task_cpu(p)];
 }
 
 /**
@@ -10649,24 +10649,24 @@ __bpf_kfunc s32 scx_bpf_task_cid(const struct task_struct *p)
  * Returns the rq if a rq lock is currently held by SCX.
  * Otherwise emits an error and returns NULL.
  */
-__bpf_kfunc struct rq *scx_bpf_locked_rq(const struct bpf_prog_aux *aux)
+__bpf_kfunc ساخت rq *scx_bpf_locked_rq(ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct rq *rq;
+	ساخت scx_sched *sch;
+	ساخت rq *rq;
 
 	guard(preempt)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
+	اگر (unlikely(!sch))
+		واپس تہی;
 
 	rq = scx_locked_rq();
-	if (!rq) {
+	اگر (!rq) {
 		scx_error(sch, "accessing rq without holding rq lock");
-		return NULL;
+		واپس تہی;
 	}
 
-	return rq;
+	واپس rq;
 }
 
 /**
@@ -10676,20 +10676,20 @@ __bpf_kfunc struct rq *scx_bpf_locked_rq(const struct bpf_prog_aux *aux)
  *
  * Callers must hold RCU read lock (KF_RCU).
  */
-__bpf_kfunc struct task_struct *scx_bpf_cpu_curr(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc ساخت task_struct *scx_bpf_cpu_curr(s32 cpu, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
+	اگر (unlikely(!sch))
+		واپس تہی;
 
-	if (!scx_cpu_valid(sch, cpu, NULL))
-		return NULL;
+	اگر (!scx_cpu_valid(sch, cpu, تہی))
+		واپس تہی;
 
-	return rcu_dereference(cpu_rq(cpu)->curr);
+	واپس rcu_dereference(cpu_rq(cpu)->curr);
 }
 
 /**
@@ -10700,20 +10700,20 @@ __bpf_kfunc struct task_struct *scx_bpf_cpu_curr(s32 cpu, const struct bpf_prog_
  * cid-addressed equivalent of scx_bpf_cpu_curr(). Callers must hold RCU
  * read lock (KF_RCU).
  */
-__bpf_kfunc struct task_struct *scx_bpf_cid_curr(s32 cid, const struct bpf_prog_aux *aux)
+__bpf_kfunc ساخت task_struct *scx_bpf_cid_curr(s32 cid, ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ساخت scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return NULL;
-	cpu = scx_cid_to_cpu(sch, cid);
-	if (cpu < 0)
-		return NULL;
-	return rcu_dereference(cpu_rq(cpu)->curr);
+	اگر (unlikely(!sch))
+		واپس تہی;
+	cpu = scx_cid_مقصد_cpu(sch, cid);
+	اگر (cpu < 0)
+		واپس تہی;
+	واپس rcu_dereference(cpu_rq(cpu)->curr);
 }
 
 /**
@@ -10725,35 +10725,35 @@ __bpf_kfunc struct task_struct *scx_bpf_cid_curr(s32 cid, const struct bpf_prog_
  * (KF_RCU_PROTECTED). Requires SCX_OPS_TID_TO_TASK to be set on the root
  * scheduler; otherwise an error is raised and NULL returned.
  */
-__bpf_kfunc struct task_struct *scx_bpf_tid_to_task(u64 tid)
+__bpf_kfunc ساخت task_struct *scx_bpf_tid_مقصد_task(u64 tid)
 {
-	struct sched_ext_entity *scx;
+	ساخت sched_ext_entity *scx;
 
-	if (!scx_tid_to_task_enabled()) {
-		struct scx_sched *sch = rcu_dereference(scx_root);
+	اگر (!scx_tid_مقصد_task_enabled()) {
+		ساخت scx_sched *sch = rcu_dereference(scx_جڑ);
 
-		if (sch)
+		اگر (sch)
 			scx_error(sch, "scx_bpf_tid_to_task() called without SCX_OPS_TID_TO_TASK");
-		return NULL;
+		واپس تہی;
 	}
 
 	scx = rhashtable_lookup(&scx_tid_hash, &tid, scx_tid_hash_params);
-	if (!scx)
-		return NULL;
+	اگر (!scx)
+		واپس تہی;
 
-	return container_of(scx, struct task_struct, scx);
+	واپس container_کا(scx, ساخت task_struct, scx);
 }
 
-u64 __scx_bpf_now(struct rq *rq)
+u64 __scx_bpf_now(ساخت rq *rq)
 {
 	/* the caller must be on @rq's cpu or hold its lock */
 	lockdep_assert((rq == this_rq() && !preemptible()) ||
 		       lockdep_is_held(__rq_lockp(rq)));
 
-	if (smp_load_acquire(&rq->scx.flags) & SCX_RQ_CLK_VALID) {
+	اگر (smp_بھرو_acquire(&rq->scx.flags) & SCX_RQ_CLK_VALID) {
 		/* if the rq clock is valid, use the cached rq clock */
-		return READ_ONCE(rq->scx.clock);
-	} else {
+		واپس READ_ONCE(rq->scx.clock);
+	} ورنہ {
 		/*
 		 * Otherwise, return a fresh rq clock.
 		 *
@@ -10761,7 +10761,7 @@ u64 __scx_bpf_now(struct rq *rq)
 		 * In this case, keep the updated rq clock invalid so the next
 		 * read outside the rq lock gets a fresh rq clock.
 		 */
-		return sched_clock_cpu(cpu_of(rq));
+		واپس sched_clock_cpu(cpu_کا(rq));
 	}
 }
 
@@ -10793,7 +10793,7 @@ u64 __scx_bpf_now(struct rq *rq)
  *  clock values in two different scx_bpf_now() calls in the same CPU
  *  during the same period of when the rq clock is valid.
  */
-__bpf_kfunc u64 scx_bpf_now(void)
+__bpf_kfunc u64 scx_bpf_now(خالی)
 {
 	/*
 	 * Note that scx_bpf_now() is re-entrant between a process context and
@@ -10802,20 +10802,20 @@ __bpf_kfunc u64 scx_bpf_now(void)
 	 * from a caller.
 	 */
 	guard(preempt)();
-	return __scx_bpf_now(this_rq());
+	واپس __scx_bpf_now(this_rq());
 }
 
-static void scx_read_events(struct scx_sched *sch, struct scx_event_stats *events)
+ساکن خالی scx_read_events(ساخت scx_sched *sch, ساخت scx_event_stats *events)
 {
-	int cpu;
+	صحیح cpu;
 
 	/* Aggregate per-CPU event counters into @events. */
-	memset(events, 0, sizeof(*events));
+	memset(events, 0, حجم(*events));
 	for_each_possible_cpu(cpu) {
-		struct scx_event_stats *e_cpu = &per_cpu_ptr(sch->pcpu, cpu)->event_stats;
-#define SCX_EVENT(name)	(events->name += READ_ONCE(e_cpu->name))
+		ساخت scx_event_stats *e_cpu = &فی_cpu_ptr(sch->pcpu, cpu)->event_stats;
+#تعریف_کرو SCX_EVENT(name)	(events->name += READ_ONCE(e_cpu->name))
 		SCX_EVENTS_LIST(SCX_EVENT);
-#undef SCX_EVENT
+#تعریف_منسوخ SCX_EVENT
 	}
 }
 
@@ -10828,18 +10828,18 @@ static void scx_read_events(struct scx_sched *sch, struct scx_event_stats *event
  * Read the event counters of the scheduler associated with the calling program.
  * @events is zeroed when no scheduler can be resolved.
  */
-__bpf_kfunc void scx_bpf_events(struct scx_event_stats *events, size_t events__sz,
-				const struct bpf_prog_aux *aux)
+__bpf_kfunc خالی scx_bpf_events(ساخت scx_event_stats *events, سائز_t events__sz,
+				ثابت ساخت bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
-	struct scx_event_stats e_sys;
+	ساخت scx_sched *sch;
+	ساخت scx_event_stats e_sys;
 
-	rcu_read_lock();
+	rcu_read_تالا();
 	sch = scx_prog_sched(aux);
-	if (sch)
+	اگر (sch)
 		scx_read_events(sch, &e_sys);
-	else
-		memset(&e_sys, 0, sizeof(e_sys));
+	ورنہ
+		memset(&e_sys, 0, حجم(e_sys));
 	rcu_read_unlock();
 
 	/*
@@ -10849,11 +10849,11 @@ __bpf_kfunc void scx_bpf_events(struct scx_event_stats *events, size_t events__s
 	 * (an older vmlinux.h). Hence, we use the smaller size to avoid
 	 * memory corruption.
 	 */
-	events__sz = min(events__sz, sizeof(*events));
-	memcpy(events, &e_sys, events__sz);
+	events__sz = min(events__sz, حجم(*events));
+	حافظہ_نقل(events, &e_sys, events__sz);
 }
 
-#ifdef CONFIG_CGROUP_SCHED
+#اگر_تعریف_شدہ CONFIG_CGROUP_SCHED
 /**
  * scx_bpf_task_cgroup - Return the sched cgroup of a task
  * @p: task of interest
@@ -10865,59 +10865,59 @@ __bpf_kfunc void scx_bpf_events(struct scx_event_stats *events, size_t events__s
  * @p->sched_task_group is stable for the duration of the SCX op. See
  * SCX_CALL_OP_TASK() for details.
  */
-__bpf_kfunc struct cgroup *scx_bpf_task_cgroup(struct task_struct *p,
-					       const struct bpf_prog_aux *aux)
+__bpf_kfunc ساخت cgroup *scx_bpf_task_cgroup(ساخت task_struct *p,
+					       ثابت ساخت bpf_prog_aux *aux)
 {
-	struct task_group *tg = p->sched_task_group;
-	struct cgroup *cgrp = &cgrp_dfl_root.cgrp;
-	struct scx_sched *sch;
+	ساخت task_گروہ *tg = p->sched_task_گروہ;
+	ساخت cgroup *cgrp = &cgrp_dfl_جڑ.cgrp;
+	ساخت scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		goto out;
+	اگر (unlikely(!sch))
+		جاؤ برآمد;
 
-	if (!scx_kf_arg_task_ok(sch, p))
-		goto out;
+	اگر (!scx_kf_arg_task_ok(sch, p))
+		جاؤ برآمد;
 
 	cgrp = tg_cgrp(tg);
 
-out:
+برآمد:
 	cgroup_get(cgrp);
-	return cgrp;
+	واپس cgrp;
 }
-#endif	/* CONFIG_CGROUP_SCHED */
+#اگر_ختم	/* CONFIG_CGROUP_SCHED */
 
 __bpf_kfunc_end_defs();
 
-BTF_KFUNCS_START(scx_kfunc_ids_any)
-BTF_ID_FLAGS(func, scx_bpf_task_set_slice, KF_IMPLICIT_ARGS | KF_RCU);
-BTF_ID_FLAGS(func, scx_bpf_task_set_dsq_vtime, KF_IMPLICIT_ARGS | KF_RCU);
-BTF_ID_FLAGS(func, scx_bpf_kick_cpu, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_kick_cid, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dsq_nr_queued, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_destroy_dsq, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dsq_peek, KF_IMPLICIT_ARGS | KF_RCU_PROTECTED | KF_RET_NULL)
-BTF_ID_FLAGS(func, scx_bpf_dsq_reenq, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_reenqueue_local___v2, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, bpf_iter_scx_dsq_new, KF_IMPLICIT_ARGS | KF_ITER_NEW | KF_RCU_PROTECTED)
-BTF_ID_FLAGS(func, bpf_iter_scx_dsq_next, KF_ITER_NEXT | KF_RET_NULL)
+BTF_KFUNCS_آغاز(scx_kfunc_ids_any)
+BTF_ID_FLAGS(func, scx_bpf_task_سیٹ_قاش, KF_IMPLICIT_دلائل | KF_RCU);
+BTF_ID_FLAGS(func, scx_bpf_task_سیٹ_dsq_vtime, KF_IMPLICIT_دلائل | KF_RCU);
+BTF_ID_FLAGS(func, scx_bpf_kick_cpu, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_kick_cid, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_dsq_nr_queued, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_destroy_dsq, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_dsq_peek, KF_IMPLICIT_دلائل | KF_RCU_PROTECTED | KF_RET_NULL)
+BTF_ID_FLAGS(func, scx_bpf_dsq_reenq, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_reenqueue_local___v2, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, bpf_iter_scx_dsq_new, KF_IMPLICIT_دلائل | KF_ITER_NEW | KF_RCU_PROTECTED)
+BTF_ID_FLAGS(func, bpf_iter_scx_dsq_اگلا, KF_ITER_اگلا | KF_RET_NULL)
 BTF_ID_FLAGS(func, bpf_iter_scx_dsq_destroy, KF_ITER_DESTROY)
-BTF_ID_FLAGS(func, scx_bpf_exit_bstr, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_error_bstr, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_dump_bstr, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_set, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cidperf_cap, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cidperf_cur, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cidperf_set, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_nr_node_ids)
+BTF_ID_FLAGS(func, scx_bpf_exit_bstr, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_error_bstr, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_dump_bstr, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_سیٹ, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_cidperf_cap, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_cidperf_cur, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_cidperf_سیٹ, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_nr_گرہ_ids)
 BTF_ID_FLAGS(func, scx_bpf_nr_cpu_ids)
 BTF_ID_FLAGS(func, scx_bpf_nr_cids)
 BTF_ID_FLAGS(func, scx_bpf_nr_online_cids)
-BTF_ID_FLAGS(func, scx_bpf_online_cmask, KF_IMPLICIT_ARGS | KF_ARENA_RET)
+BTF_ID_FLAGS(func, scx_bpf_online_cmask, KF_IMPLICIT_دلائل | KF_ARENA_RET)
 BTF_ID_FLAGS(func, scx_bpf_this_cid)
 BTF_ID_FLAGS(func, scx_bpf_get_possible_cpumask, KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_get_online_cpumask, KF_ACQUIRE)
@@ -10925,24 +10925,24 @@ BTF_ID_FLAGS(func, scx_bpf_put_cpumask, KF_RELEASE)
 BTF_ID_FLAGS(func, scx_bpf_task_running, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_task_cid, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_locked_rq, KF_IMPLICIT_ARGS | KF_RET_NULL)
-BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_IMPLICIT_ARGS | KF_RET_NULL | KF_RCU_PROTECTED)
-BTF_ID_FLAGS(func, scx_bpf_cid_curr, KF_IMPLICIT_ARGS | KF_RET_NULL | KF_RCU_PROTECTED)
-BTF_ID_FLAGS(func, scx_bpf_tid_to_task, KF_RET_NULL | KF_RCU_PROTECTED)
+BTF_ID_FLAGS(func, scx_bpf_locked_rq, KF_IMPLICIT_دلائل | KF_RET_NULL)
+BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_IMPLICIT_دلائل | KF_RET_NULL | KF_RCU_PROTECTED)
+BTF_ID_FLAGS(func, scx_bpf_cid_curr, KF_IMPLICIT_دلائل | KF_RET_NULL | KF_RCU_PROTECTED)
+BTF_ID_FLAGS(func, scx_bpf_tid_مقصد_task, KF_RET_NULL | KF_RCU_PROTECTED)
 BTF_ID_FLAGS(func, scx_bpf_now)
-BTF_ID_FLAGS(func, scx_bpf_events, KF_IMPLICIT_ARGS)
-#ifdef CONFIG_CGROUP_SCHED
-BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_IMPLICIT_ARGS | KF_RCU | KF_ACQUIRE)
-#endif
-BTF_ID_FLAGS(func, scx_bpf_sub_grant, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_sub_revoke, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_sub_caps, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_sub_kill_bstr, KF_IMPLICIT_ARGS)
-BTF_KFUNCS_END(scx_kfunc_ids_any)
+BTF_ID_FLAGS(func, scx_bpf_events, KF_IMPLICIT_دلائل)
+#اگر_تعریف_شدہ CONFIG_CGROUP_SCHED
+BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_IMPLICIT_دلائل | KF_RCU | KF_ACQUIRE)
+#اگر_ختم
+BTF_ID_FLAGS(func, scx_bpf_sub_grant, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_sub_revoke, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_sub_caps, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_sub_kill_bstr, KF_IMPLICIT_دلائل)
+BTF_KFUNCS_انتہا(scx_kfunc_ids_any)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_any = {
+ساکن ثابت ساخت btf_kfunc_id_سیٹ scx_kfunc_سیٹ_any = {
 	.owner			= THIS_MODULE,
-	.set			= &scx_kfunc_ids_any,
+	.سیٹ			= &scx_kfunc_ids_any,
 	.filter			= scx_kfunc_context_filter,
 };
 
@@ -10960,31 +10960,31 @@ static const struct btf_kfunc_id_set scx_kfunc_set_any = {
  * same flags as the kfunc's primary declaration; otherwise the flags get
  * dropped globally.
  */
-BTF_KFUNCS_START(scx_kfunc_ids_cpu_only)
-BTF_ID_FLAGS(func, scx_bpf_kick_cpu, KF_IMPLICIT_ARGS)
+BTF_KFUNCS_آغاز(scx_kfunc_ids_cpu_only)
+BTF_ID_FLAGS(func, scx_bpf_kick_cpu, KF_IMPLICIT_دلائل)
 BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_IMPLICIT_ARGS | KF_RET_NULL | KF_RCU_PROTECTED)
-BTF_ID_FLAGS(func, scx_bpf_cpu_node, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpuperf_set, KF_IMPLICIT_ARGS)
+BTF_ID_FLAGS(func, scx_bpf_cpu_curr, KF_IMPLICIT_دلائل | KF_RET_NULL | KF_RCU_PROTECTED)
+BTF_ID_FLAGS(func, scx_bpf_cpu_گرہ, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_cap, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_cur, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_cpuperf_سیٹ, KF_IMPLICIT_دلائل)
 BTF_ID_FLAGS(func, scx_bpf_get_possible_cpumask, KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_get_online_cpumask, KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_put_cpumask, KF_RELEASE)
-BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_دلائل | KF_RCU)
+BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_دلائل | KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask_node, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask_node, KF_IMPLICIT_ARGS | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask, KF_IMPLICIT_دلائل | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask_گرہ, KF_IMPLICIT_دلائل | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask, KF_IMPLICIT_دلائل | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask_گرہ, KF_IMPLICIT_دلائل | KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_put_idle_cpumask, KF_RELEASE)
-BTF_ID_FLAGS(func, scx_bpf_test_and_clear_cpu_idle, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_node, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_node, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_KFUNCS_END(scx_kfunc_ids_cpu_only)
+BTF_ID_FLAGS(func, scx_bpf_test_and_clear_cpu_idle, KF_IMPLICIT_دلائل)
+BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_IMPLICIT_دلائل | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_گرہ, KF_IMPLICIT_دلائل | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_IMPLICIT_دلائل | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_گرہ, KF_IMPLICIT_دلائل | KF_RCU)
+BTF_KFUNCS_انتہا(scx_kfunc_ids_cpu_only)
 
 /*
  * Per-op kfunc allow flags. Each bit corresponds to a context-sensitive kfunc
@@ -10993,12 +10993,12 @@ BTF_KFUNCS_END(scx_kfunc_ids_cpu_only)
  * consults this table to decide whether a context-sensitive kfunc is callable
  * from a given SCX op.
  */
-enum scx_kf_allow_flags {
+شمار scx_kf_allow_flags {
 	SCX_KF_ALLOW_UNLOCKED		= 1 << 0,
 	SCX_KF_ALLOW_INIT_CIDS		= 1 << 1,
 	SCX_KF_ALLOW_CPU_RELEASE	= 1 << 2,
 	SCX_KF_ALLOW_DISPATCH		= 1 << 3,
-	SCX_KF_ALLOW_ENQUEUE		= 1 << 4,
+	SCX_KF_ALLOW_قطار_میں_ڈالو		= 1 << 4,
 	SCX_KF_ALLOW_SELECT_CPU		= 1 << 5,
 };
 
@@ -11007,30 +11007,30 @@ enum scx_kf_allow_flags {
  * SCX_OP_IDX(op). Ops not listed only permit kfuncs that are not
  * context-sensitive.
  */
-static const u32 scx_kf_allow_flags[] = {
-	[SCX_OP_IDX(select_cpu)]	= SCX_KF_ALLOW_SELECT_CPU | SCX_KF_ALLOW_ENQUEUE,
-	[SCX_OP_IDX(enqueue)]		= SCX_KF_ALLOW_SELECT_CPU | SCX_KF_ALLOW_ENQUEUE,
-	[SCX_OP_IDX(dispatch)]		= SCX_KF_ALLOW_ENQUEUE | SCX_KF_ALLOW_DISPATCH,
+ساکن ثابت u32 scx_kf_allow_flags[] = {
+	[SCX_OP_IDX(select_cpu)]	= SCX_KF_ALLOW_SELECT_CPU | SCX_KF_ALLOW_قطار_میں_ڈالو,
+	[SCX_OP_IDX(قطار_میں_ڈالو)]		= SCX_KF_ALLOW_SELECT_CPU | SCX_KF_ALLOW_قطار_میں_ڈالو,
+	[SCX_OP_IDX(dispatch)]		= SCX_KF_ALLOW_قطار_میں_ڈالو | SCX_KF_ALLOW_DISPATCH,
 	[SCX_OP_IDX(cpu_release)]	= SCX_KF_ALLOW_CPU_RELEASE,
 	[SCX_OP_IDX(init_task)]		= SCX_KF_ALLOW_UNLOCKED,
 	[SCX_OP_IDX(dump)]		= SCX_KF_ALLOW_UNLOCKED,
-#ifdef CONFIG_EXT_GROUP_SCHED
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
 	[SCX_OP_IDX(cgroup_init)]	= SCX_KF_ALLOW_UNLOCKED,
 	[SCX_OP_IDX(cgroup_exit)]	= SCX_KF_ALLOW_UNLOCKED,
 	[SCX_OP_IDX(cgroup_prep_move)]	= SCX_KF_ALLOW_UNLOCKED,
 	[SCX_OP_IDX(cgroup_cancel_move)] = SCX_KF_ALLOW_UNLOCKED,
-	[SCX_OP_IDX(cgroup_set_weight)]	= SCX_KF_ALLOW_UNLOCKED,
-	[SCX_OP_IDX(cgroup_set_bandwidth)] = SCX_KF_ALLOW_UNLOCKED,
-	[SCX_OP_IDX(cgroup_set_idle)]	= SCX_KF_ALLOW_UNLOCKED,
-#endif	/* CONFIG_EXT_GROUP_SCHED */
+	[SCX_OP_IDX(cgroup_سیٹ_وزن)]	= SCX_KF_ALLOW_UNLOCKED,
+	[SCX_OP_IDX(cgroup_سیٹ_bandwidth)] = SCX_KF_ALLOW_UNLOCKED,
+	[SCX_OP_IDX(cgroup_سیٹ_idle)]	= SCX_KF_ALLOW_UNLOCKED,
+#اگر_ختم	/* CONFIG_EXT_GROUP_SCHED */
 	[SCX_OP_IDX(sub_attach)]	= SCX_KF_ALLOW_UNLOCKED,
 	[SCX_OP_IDX(sub_detach)]	= SCX_KF_ALLOW_UNLOCKED,
-	[SCX_OP_IDX(sub_ecaps_updated)]	= SCX_KF_ALLOW_ENQUEUE | SCX_KF_ALLOW_DISPATCH,
+	[SCX_OP_IDX(sub_ecaps_updated)]	= SCX_KF_ALLOW_قطار_میں_ڈالو | SCX_KF_ALLOW_DISPATCH,
 	[SCX_OP_IDX(cpu_online)]	= SCX_KF_ALLOW_UNLOCKED,
 	[SCX_OP_IDX(cpu_offline)]	= SCX_KF_ALLOW_UNLOCKED,
 	[SCX_OP_IDX(init_cids)]		= SCX_KF_ALLOW_UNLOCKED | SCX_KF_ALLOW_INIT_CIDS,
 	[SCX_OP_IDX(init)]		= SCX_KF_ALLOW_UNLOCKED,
-	[SCX_OP_IDX(exit)]		= SCX_KF_ALLOW_UNLOCKED,
+	[SCX_OP_IDX(باہر_نکلو)]		= SCX_KF_ALLOW_UNLOCKED,
 };
 
 /*
@@ -11041,31 +11041,31 @@ static const u32 scx_kf_allow_flags[] = {
  * kfunc - so the filter must short-circuit on kfuncs it doesn't govern by
  * falling through to "allow" when none of the SCX sets contain the kfunc.
  */
-int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id)
+صحیح scx_kfunc_context_filter(ثابت ساخت bpf_prog *prog, u32 kfunc_id)
 {
-	bool in_unlocked = btf_id_set8_contains(&scx_kfunc_ids_unlocked, kfunc_id);
-	bool in_init_cids = btf_id_set8_contains(&scx_kfunc_ids_init_cids, kfunc_id);
-	bool in_select_cpu = btf_id_set8_contains(&scx_kfunc_ids_select_cpu, kfunc_id);
-	bool in_enqueue = btf_id_set8_contains(&scx_kfunc_ids_enqueue_dispatch, kfunc_id);
-	bool in_dispatch = btf_id_set8_contains(&scx_kfunc_ids_dispatch, kfunc_id);
-	bool in_cpu_release = btf_id_set8_contains(&scx_kfunc_ids_cpu_release, kfunc_id);
-	bool in_idle = btf_id_set8_contains(&scx_kfunc_ids_idle, kfunc_id);
-	bool in_any = btf_id_set8_contains(&scx_kfunc_ids_any, kfunc_id);
-	bool in_cpu_only = btf_id_set8_contains(&scx_kfunc_ids_cpu_only, kfunc_id);
-	bool in_cid = btf_id_set8_contains(&scx_kfunc_ids_cid, kfunc_id);
+	bool اندر_unlocked = btf_id_set8_شامل_ہے(&scx_kfunc_ids_unlocked, kfunc_id);
+	bool اندر_init_cids = btf_id_set8_شامل_ہے(&scx_kfunc_ids_init_cids, kfunc_id);
+	bool اندر_select_cpu = btf_id_set8_شامل_ہے(&scx_kfunc_ids_select_cpu, kfunc_id);
+	bool اندر_قطار_میں_ڈالو = btf_id_set8_شامل_ہے(&scx_kfunc_ids_قطار_میں_ڈالو_dispatch, kfunc_id);
+	bool اندر_dispatch = btf_id_set8_شامل_ہے(&scx_kfunc_ids_dispatch, kfunc_id);
+	bool اندر_cpu_release = btf_id_set8_شامل_ہے(&scx_kfunc_ids_cpu_release, kfunc_id);
+	bool اندر_idle = btf_id_set8_شامل_ہے(&scx_kfunc_ids_idle, kfunc_id);
+	bool اندر_any = btf_id_set8_شامل_ہے(&scx_kfunc_ids_any, kfunc_id);
+	bool اندر_cpu_only = btf_id_set8_شامل_ہے(&scx_kfunc_ids_cpu_only, kfunc_id);
+	bool اندر_cid = btf_id_set8_شامل_ہے(&scx_kfunc_ids_cid, kfunc_id);
 	u32 moff, flags;
 
 	/* Not an SCX kfunc - allow. */
-	if (!(in_unlocked || in_init_cids || in_select_cpu || in_enqueue || in_dispatch ||
-	      in_cpu_release || in_idle || in_any || in_cid))
-		return 0;
+	اگر (!(اندر_unlocked || اندر_init_cids || اندر_select_cpu || اندر_قطار_میں_ڈالو || اندر_dispatch ||
+	      اندر_cpu_release || اندر_idle || اندر_any || اندر_cid))
+		واپس 0;
 
 	/* SYSCALL progs (e.g. BPF test_run()) may call unlocked and select_cpu kfuncs. */
-	if (prog->type == BPF_PROG_TYPE_SYSCALL)
-		return (in_unlocked || in_select_cpu || in_idle || in_any || in_cid) ? 0 : -EACCES;
+	اگر (prog->type == BPF_PROG_TYPE_SYSCALL)
+		واپس (اندر_unlocked || اندر_select_cpu || اندر_idle || اندر_any || اندر_cid) ? 0 : -EACCES;
 
-	if (prog->type != BPF_PROG_TYPE_STRUCT_OPS)
-		return (in_any || in_idle || in_cid) ? 0 : -EACCES;
+	اگر (prog->type != BPF_PROG_TYPE_STRUCT_OPS)
+		واپس (اندر_any || اندر_idle || اندر_cid) ? 0 : -EACCES;
 
 	/*
 	 * add_subprog_and_kfunc() collects all kfunc calls, including dead code
@@ -11074,8 +11074,8 @@ int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id)
 	 * do_check_main() re-runs the filter with st_ops set and enforces the
 	 * actual restrictions.
 	 */
-	if (!prog->aux->st_ops)
-		return 0;
+	اگر (!prog->aux->st_ops)
+		واپس 0;
 
 	/*
 	 * Non-SCX struct_ops: SCX kfuncs are not permitted.
@@ -11086,9 +11086,9 @@ int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id)
 	 * scx_kf_allow_flags[] table indexed by SCX_MOFF_IDX(moff) applies to
 	 * both.
 	 */
-	if (prog->aux->st_ops != &bpf_sched_ext_ops &&
+	اگر (prog->aux->st_ops != &bpf_sched_ext_ops &&
 	    prog->aux->st_ops != &bpf_sched_ext_ops_cid)
-		return -EACCES;
+		واپس -EACCES;
 
 	/*
 	 * cid-form schedulers must use cid/cmask kfuncs. cid and cpu are both
@@ -11096,35 +11096,35 @@ int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id)
 	 * load time. The reverse (cpu-form calling cid-form kfuncs) is
 	 * intentionally permissive to ease gradual cpumask -> cid migration.
 	 */
-	if (prog->aux->st_ops == &bpf_sched_ext_ops_cid && in_cpu_only)
-		return -EACCES;
+	اگر (prog->aux->st_ops == &bpf_sched_ext_ops_cid && اندر_cpu_only)
+		واپس -EACCES;
 
 	/* SCX struct_ops: check the per-op allow list. */
-	if (in_any || in_idle || in_cid)
-		return 0;
+	اگر (اندر_any || اندر_idle || اندر_cid)
+		واپس 0;
 
 	moff = prog->aux->attach_st_ops_member_off;
 	flags = scx_kf_allow_flags[SCX_MOFF_IDX(moff)];
 
-	if ((flags & SCX_KF_ALLOW_UNLOCKED) && in_unlocked)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_INIT_CIDS) && in_init_cids)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_CPU_RELEASE) && in_cpu_release)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_DISPATCH) && in_dispatch)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_ENQUEUE) && in_enqueue)
-		return 0;
-	if ((flags & SCX_KF_ALLOW_SELECT_CPU) && in_select_cpu)
-		return 0;
+	اگر ((flags & SCX_KF_ALLOW_UNLOCKED) && اندر_unlocked)
+		واپس 0;
+	اگر ((flags & SCX_KF_ALLOW_INIT_CIDS) && اندر_init_cids)
+		واپس 0;
+	اگر ((flags & SCX_KF_ALLOW_CPU_RELEASE) && اندر_cpu_release)
+		واپس 0;
+	اگر ((flags & SCX_KF_ALLOW_DISPATCH) && اندر_dispatch)
+		واپس 0;
+	اگر ((flags & SCX_KF_ALLOW_قطار_میں_ڈالو) && اندر_قطار_میں_ڈالو)
+		واپس 0;
+	اگر ((flags & SCX_KF_ALLOW_SELECT_CPU) && اندر_select_cpu)
+		واپس 0;
 
-	return -EACCES;
+	واپس -EACCES;
 }
 
-static int __init scx_init(void)
+ساکن صحیح __init scx_init(خالی)
 {
-	int ret;
+	صحیح ret;
 
 	/*
 	 * sched_ext_ops_cid mirrors sched_ext_ops up to and including @priv.
@@ -11132,72 +11132,72 @@ static int __init scx_init(void)
 	 * from struct sched_ext_ops; sched_ext_ops_cid relies on those offsets
 	 * matching for the shared fields. Catch any drift at boot.
 	 */
-#define CID_OFFSET_MATCH(cpu_field, cid_field)					\
-	BUILD_BUG_ON(offsetof(struct sched_ext_ops, cpu_field) !=		\
-		     offsetof(struct sched_ext_ops_cid, cid_field))
+#تعریف_کرو CID_انحراف_مطابقت(cpu_میدان, cid_میدان)					\
+	BUILD_BUG_ON(offsetof(ساخت sched_ext_ops, cpu_میدان) !=		\
+		     offsetof(ساخت sched_ext_ops_cid, cid_میدان))
 	/* data fields used by bpf_scx_init_member() */
-	CID_OFFSET_MATCH(dispatch_max_batch, dispatch_max_batch);
-	CID_OFFSET_MATCH(flags, flags);
-	CID_OFFSET_MATCH(name, name);
-	CID_OFFSET_MATCH(timeout_ms, timeout_ms);
-	CID_OFFSET_MATCH(exit_dump_len, exit_dump_len);
-	CID_OFFSET_MATCH(hotplug_seq, hotplug_seq);
-	CID_OFFSET_MATCH(cid_shard_size, cid_shard_size);
-	CID_OFFSET_MATCH(rescue_bandwidth_ppt, rescue_bandwidth_ppt);
-	CID_OFFSET_MATCH(rescue_quantum_us, rescue_quantum_us);
-	CID_OFFSET_MATCH(sub_cgroup_id, sub_cgroup_id);
+	CID_انحراف_مطابقت(dispatch_max_batch, dispatch_max_batch);
+	CID_انحراف_مطابقت(flags, flags);
+	CID_انحراف_مطابقت(name, name);
+	CID_انحراف_مطابقت(timeout_ms, timeout_ms);
+	CID_انحراف_مطابقت(exit_dump_len, exit_dump_len);
+	CID_انحراف_مطابقت(hotplug_seq, hotplug_seq);
+	CID_انحراف_مطابقت(cid_shard_سائز, cid_shard_سائز);
+	CID_انحراف_مطابقت(rescue_bandwidth_ppt, rescue_bandwidth_ppt);
+	CID_انحراف_مطابقت(rescue_وقتی_حصہ_us, rescue_وقتی_حصہ_us);
+	CID_انحراف_مطابقت(sub_cgroup_id, sub_cgroup_id);
 	/* shared callbacks: the union view requires byte-for-byte offset match */
-	CID_OFFSET_MATCH(enqueue, enqueue);
-	CID_OFFSET_MATCH(dequeue, dequeue);
-	CID_OFFSET_MATCH(dispatch, dispatch);
-	CID_OFFSET_MATCH(tick, tick);
-	CID_OFFSET_MATCH(runnable, runnable);
-	CID_OFFSET_MATCH(running, running);
-	CID_OFFSET_MATCH(stopping, stopping);
-	CID_OFFSET_MATCH(quiescent, quiescent);
-	CID_OFFSET_MATCH(yield, yield);
-	CID_OFFSET_MATCH(core_sched_before, core_sched_before);
-	CID_OFFSET_MATCH(set_weight, set_weight);
-	CID_OFFSET_MATCH(update_idle, update_idle);
-	CID_OFFSET_MATCH(init_task, init_task);
-	CID_OFFSET_MATCH(exit_task, exit_task);
-	CID_OFFSET_MATCH(enable, enable);
-	CID_OFFSET_MATCH(disable, disable);
-	CID_OFFSET_MATCH(dump, dump);
-	CID_OFFSET_MATCH(dump_task, dump_task);
-	CID_OFFSET_MATCH(sub_attach, sub_attach);
-	CID_OFFSET_MATCH(sub_detach, sub_detach);
-	CID_OFFSET_MATCH(sub_caps_updated, sub_caps_updated);
-	CID_OFFSET_MATCH(sub_ecaps_updated, sub_ecaps_updated);
-	CID_OFFSET_MATCH(init_cids, init_cids);
-	CID_OFFSET_MATCH(init, init);
-	CID_OFFSET_MATCH(exit, exit);
+	CID_انحراف_مطابقت(قطار_میں_ڈالو, قطار_میں_ڈالو);
+	CID_انحراف_مطابقت(قطار_سے_نکالو, قطار_سے_نکالو);
+	CID_انحراف_مطابقت(dispatch, dispatch);
+	CID_انحراف_مطابقت(tick, tick);
+	CID_انحراف_مطابقت(runnable, runnable);
+	CID_انحراف_مطابقت(running, running);
+	CID_انحراف_مطابقت(stopping, stopping);
+	CID_انحراف_مطابقت(quiescent, quiescent);
+	CID_انحراف_مطابقت(yield, yield);
+	CID_انحراف_مطابقت(core_sched_before, core_sched_before);
+	CID_انحراف_مطابقت(سیٹ_وزن, سیٹ_وزن);
+	CID_انحراف_مطابقت(update_idle, update_idle);
+	CID_انحراف_مطابقت(init_task, init_task);
+	CID_انحراف_مطابقت(exit_task, exit_task);
+	CID_انحراف_مطابقت(enable, enable);
+	CID_انحراف_مطابقت(disable, disable);
+	CID_انحراف_مطابقت(dump, dump);
+	CID_انحراف_مطابقت(dump_task, dump_task);
+	CID_انحراف_مطابقت(sub_attach, sub_attach);
+	CID_انحراف_مطابقت(sub_detach, sub_detach);
+	CID_انحراف_مطابقت(sub_caps_updated, sub_caps_updated);
+	CID_انحراف_مطابقت(sub_ecaps_updated, sub_ecaps_updated);
+	CID_انحراف_مطابقت(init_cids, init_cids);
+	CID_انحراف_مطابقت(init, init);
+	CID_انحراف_مطابقت(باہر_نکلو, باہر_نکلو);
 	/* renamed callbacks must occupy the same slot as their cpu-form sibling */
-	CID_OFFSET_MATCH(select_cpu, select_cid);
-	CID_OFFSET_MATCH(set_cpumask, set_cmask);
-	CID_OFFSET_MATCH(cpu_online, cid_online);
-	CID_OFFSET_MATCH(cpu_offline, cid_offline);
-	CID_OFFSET_MATCH(dump_cpu, dump_cid);
-#ifdef CONFIG_EXT_GROUP_SCHED
-	CID_OFFSET_MATCH(cgroup_init, cpuctl_init);
-	CID_OFFSET_MATCH(cgroup_exit, cpuctl_exit);
-	CID_OFFSET_MATCH(cgroup_prep_move, cpuctl_prep_move);
-	CID_OFFSET_MATCH(cgroup_move, cpuctl_move);
-	CID_OFFSET_MATCH(cgroup_cancel_move, cpuctl_cancel_move);
-	CID_OFFSET_MATCH(cgroup_set_weight, cpuctl_set_weight);
-	CID_OFFSET_MATCH(cgroup_set_bandwidth, cpuctl_set_bandwidth);
-	CID_OFFSET_MATCH(cgroup_set_idle, cpuctl_set_idle);
-#endif
+	CID_انحراف_مطابقت(select_cpu, select_cid);
+	CID_انحراف_مطابقت(سیٹ_cpumask, سیٹ_cmask);
+	CID_انحراف_مطابقت(cpu_online, cid_online);
+	CID_انحراف_مطابقت(cpu_offline, cid_offline);
+	CID_انحراف_مطابقت(dump_cpu, dump_cid);
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
+	CID_انحراف_مطابقت(cgroup_init, cpuctl_init);
+	CID_انحراف_مطابقت(cgroup_exit, cpuctl_exit);
+	CID_انحراف_مطابقت(cgroup_prep_move, cpuctl_prep_move);
+	CID_انحراف_مطابقت(cgroup_move, cpuctl_move);
+	CID_انحراف_مطابقت(cgroup_cancel_move, cpuctl_cancel_move);
+	CID_انحراف_مطابقت(cgroup_سیٹ_وزن, cpuctl_سیٹ_وزن);
+	CID_انحراف_مطابقت(cgroup_سیٹ_bandwidth, cpuctl_سیٹ_bandwidth);
+	CID_انحراف_مطابقت(cgroup_سیٹ_idle, cpuctl_سیٹ_idle);
+#اگر_ختم
 	/* @priv tail must align since both share the same data block */
-	CID_OFFSET_MATCH(priv, priv);
+	CID_انحراف_مطابقت(priv, priv);
 	/*
 	 * cid-form must end exactly at @priv - scx_validate_ops() skips
 	 * cpu_acquire/cpu_release for cid-form because reading those fields
 	 * past the BPF allocation would be UB.
 	 */
-	BUILD_BUG_ON(offsetof(struct sched_ext_ops_cid, __end) !=
-		     offsetofend(struct sched_ext_ops, priv));
-#undef CID_OFFSET_MATCH
+	BUILD_BUG_ON(offsetof(ساخت sched_ext_ops_cid, __end) !=
+		     offsetofend(ساخت sched_ext_ops, priv));
+#تعریف_منسوخ CID_انحراف_مطابقت
 
 	/*
 	 * kfunc registration can't be done from init_sched_ext_class() as
@@ -11211,69 +11211,69 @@ static int __init scx_init(void)
 	 * kfunc lookup; it consults scx_kf_allow_flags[] to enforce per-op
 	 * restrictions at verify time.
 	 */
-	if ((ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
-					     &scx_kfunc_set_enqueue_dispatch)) ||
-	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
-					     &scx_kfunc_set_dispatch)) ||
-	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
-					     &scx_kfunc_set_cpu_release)) ||
-	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
-					     &scx_kfunc_set_unlocked)) ||
-	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL,
-					     &scx_kfunc_set_unlocked)) ||
-	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
-					     &scx_kfunc_set_any)) ||
-	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING,
-					     &scx_kfunc_set_any)) ||
-	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL,
-					     &scx_kfunc_set_any))) {
+	اگر ((ret = رجسٹر_btf_kfunc_id_سیٹ(BPF_PROG_TYPE_STRUCT_OPS,
+					     &scx_kfunc_سیٹ_قطار_میں_ڈالو_dispatch)) ||
+	    (ret = رجسٹر_btf_kfunc_id_سیٹ(BPF_PROG_TYPE_STRUCT_OPS,
+					     &scx_kfunc_سیٹ_dispatch)) ||
+	    (ret = رجسٹر_btf_kfunc_id_سیٹ(BPF_PROG_TYPE_STRUCT_OPS,
+					     &scx_kfunc_سیٹ_cpu_release)) ||
+	    (ret = رجسٹر_btf_kfunc_id_سیٹ(BPF_PROG_TYPE_STRUCT_OPS,
+					     &scx_kfunc_سیٹ_unlocked)) ||
+	    (ret = رجسٹر_btf_kfunc_id_سیٹ(BPF_PROG_TYPE_SYSCALL,
+					     &scx_kfunc_سیٹ_unlocked)) ||
+	    (ret = رجسٹر_btf_kfunc_id_سیٹ(BPF_PROG_TYPE_STRUCT_OPS,
+					     &scx_kfunc_سیٹ_any)) ||
+	    (ret = رجسٹر_btf_kfunc_id_سیٹ(BPF_PROG_TYPE_TRACING,
+					     &scx_kfunc_سیٹ_any)) ||
+	    (ret = رجسٹر_btf_kfunc_id_سیٹ(BPF_PROG_TYPE_SYSCALL,
+					     &scx_kfunc_سیٹ_any))) {
 		pr_err("sched_ext: Failed to register kfunc sets (%d)\n", ret);
-		return ret;
+		واپس ret;
 	}
 
 	ret = scx_idle_init();
-	if (ret) {
+	اگر (ret) {
 		pr_err("sched_ext: Failed to initialize idle tracking (%d)\n", ret);
-		return ret;
+		واپس ret;
 	}
 
 	ret = scx_cid_kfunc_init();
-	if (ret) {
+	اگر (ret) {
 		pr_err("sched_ext: Failed to register cid kfuncs (%d)\n", ret);
-		return ret;
+		واپس ret;
 	}
 
-	ret = register_bpf_struct_ops(&bpf_sched_ext_ops, sched_ext_ops);
-	if (ret) {
+	ret = رجسٹر_bpf_struct_ops(&bpf_sched_ext_ops, sched_ext_ops);
+	اگر (ret) {
 		pr_err("sched_ext: Failed to register struct_ops (%d)\n", ret);
-		return ret;
+		واپس ret;
 	}
 
-	ret = register_bpf_struct_ops(&bpf_sched_ext_ops_cid, sched_ext_ops_cid);
-	if (ret) {
+	ret = رجسٹر_bpf_struct_ops(&bpf_sched_ext_ops_cid, sched_ext_ops_cid);
+	اگر (ret) {
 		pr_err("sched_ext: Failed to register cid struct_ops (%d)\n", ret);
-		return ret;
+		واپس ret;
 	}
 
-	ret = register_pm_notifier(&scx_pm_notifier);
-	if (ret) {
+	ret = رجسٹر_pm_notifier(&scx_pm_notifier);
+	اگر (ret) {
 		pr_err("sched_ext: Failed to register PM notifier (%d)\n", ret);
-		return ret;
+		واپس ret;
 	}
 
-	scx_kset = kset_create_and_add("sched_ext", &scx_uevent_ops, kernel_kobj);
-	if (!scx_kset) {
+	scx_kset = kset_create_and_جوڑو("sched_ext", &scx_uevent_ops, kernel_kobj);
+	اگر (!scx_kset) {
 		pr_err("sched_ext: Failed to create /sys/kernel/sched_ext\n");
-		return -ENOMEM;
+		واپس -ENOMEM;
 	}
 
-	ret = sysfs_create_group(&scx_kset->kobj, &scx_global_attr_group);
-	if (ret < 0) {
+	ret = sysfs_create_گروہ(&scx_kset->kobj, &scx_global_attr_گروہ);
+	اگر (ret < 0) {
 		pr_err("sched_ext: Failed to add global attributes\n");
-		return ret;
+		واپس ret;
 	}
 
-	return 0;
+	واپس 0;
 }
 __initcall(scx_init);
 
@@ -11286,6 +11286,6 @@ __initcall(scx_init);
  * scx_compat_marker_cgroup_set_bandwidth_may_sleep: advertises that
  * ops.cgroup_set_bandwidth() may be implemented as a sleepable callback.
  */
-#ifdef CONFIG_EXT_GROUP_SCHED
-DEFINE_SCX_COMPAT_MARKER(cgroup_set_bandwidth_may_sleep);
-#endif	/* CONFIG_EXT_GROUP_SCHED */
+#اگر_تعریف_شدہ CONFIG_EXT_گروہ_SCHED
+DEFINE_SCX_COMPAT_MARKER(cgroup_سیٹ_bandwidth_may_sleep);
+#اگر_ختم	/* CONFIG_EXT_GROUP_SCHED */

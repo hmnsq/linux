@@ -1,134 +1,134 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
-#include <linux/sched/debug.h>
-#include "sched.h"
+#شامل <linux/sched/debug.h>
+#شامل "sched.h"
 
 /*
  * The implementation of the wait_bit*() and related waiting APIs:
  */
 
-#define WAIT_TABLE_BITS 8
-#define WAIT_TABLE_SIZE (1 << WAIT_TABLE_BITS)
+#تعریف_کرو WAIT_جدول_بٹ 8
+#تعریف_کرو WAIT_جدول_سائز (1 << WAIT_جدول_بٹ)
 
-static wait_queue_head_t bit_wait_table[WAIT_TABLE_SIZE] __cacheline_aligned;
+ساکن wait_قطار_سر_t ثنائی_ہندسہ_wait_جدول[WAIT_جدول_سائز] __cacheline_aligned;
 
-wait_queue_head_t *bit_waitqueue(unsigned long *word, int bit)
+wait_قطار_سر_t *ثنائی_ہندسہ_waitqueue(غیرعلامتی طویل *لفظ, صحیح ثنائی_ہندسہ_2)
 {
-	const int shift = BITS_PER_LONG == 32 ? 5 : 6;
-	unsigned long val = (unsigned long)word << shift | bit;
+	ثابت صحیح سرکاؤ = بٹ_فی_LONG == 32 ? 5 : 6;
+	غیرعلامتی طویل val = (غیرعلامتی طویل)لفظ << سرکاؤ | ثنائی_ہندسہ_2;
 
-	return bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
+	واپس ثنائی_ہندسہ_wait_جدول + hash_long(val, WAIT_جدول_بٹ);
 }
-EXPORT_SYMBOL(bit_waitqueue);
+EXPORT_علامت(ثنائی_ہندسہ_waitqueue);
 
-int wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+صحیح wake_ثنائی_ہندسہ_function(ساخت wait_قطار_اندراج *wq_اندراج, غیرعلامتی منوال, صحیح sync, خالی *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wait_bit = container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	ساخت wait_ثنائی_ہندسہ_کلید *کلید = arg;
+	ساخت wait_ثنائی_ہندسہ_قطار_اندراج *wait_ثنائی_ہندسہ = container_کا(wq_اندراج, ساخت wait_ثنائی_ہندسہ_قطار_اندراج, wq_اندراج);
 
-	if (wait_bit->key.flags != key->flags ||
-			wait_bit->key.bit_nr != key->bit_nr ||
-			test_bit(key->bit_nr, key->flags))
-		return 0;
+	اگر (wait_ثنائی_ہندسہ->کلید.flags != کلید->flags ||
+			wait_ثنائی_ہندسہ->کلید.ثنائی_ہندسہ_nr != کلید->ثنائی_ہندسہ_nr ||
+			test_ثنائی_ہندسہ(کلید->ثنائی_ہندسہ_nr, کلید->flags))
+		واپس 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	واپس autoremove_wake_function(wq_اندراج, منوال, sync, کلید);
 }
-EXPORT_SYMBOL(wake_bit_function);
+EXPORT_علامت(wake_ثنائی_ہندسہ_function);
 
 /*
  * To allow interruptible waiting and asynchronous (i.e. non-blocking)
  * waiting, the actions of __wait_on_bit() and __wait_on_bit_lock() are
  * permitted return codes. Nonzero return codes halt waiting and return.
  */
-int __sched
-__wait_on_bit(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
-	      wait_bit_action_f *action, unsigned mode)
+صحیح __sched
+__wait_on_bit(ساخت wait_قطار_سر *wq_سر, ساخت wait_ثنائی_ہندسہ_قطار_اندراج *wbq_اندراج,
+	      wait_ثنائی_ہندسہ_action_f *action, غیرعلامتی منوال)
 {
-	int ret = 0;
+	صحیح ret = 0;
 
-	do {
-		prepare_to_wait(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
-			ret = (*action)(&wbq_entry->key, mode);
-	} while (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
+	کرو {
+		prepare_مقصد_wait(wq_سر, &wbq_اندراج->wq_اندراج, منوال);
+		اگر (test_ثنائی_ہندسہ(wbq_اندراج->کلید.ثنائی_ہندسہ_nr, wbq_اندراج->کلید.flags))
+			ret = (*action)(&wbq_اندراج->کلید, منوال);
+	} جب (test_ثنائی_ہندسہ_acquire(wbq_اندراج->کلید.ثنائی_ہندسہ_nr, wbq_اندراج->کلید.flags) && !ret);
 
-	finish_wait(wq_head, &wbq_entry->wq_entry);
+	اختتام_wait(wq_سر, &wbq_اندراج->wq_اندراج);
 
-	return ret;
+	واپس ret;
 }
-EXPORT_SYMBOL(__wait_on_bit);
+EXPORT_علامت(__wait_on_bit);
 
-int __sched out_of_line_wait_on_bit(unsigned long *word, int bit,
-				    wait_bit_action_f *action, unsigned mode)
+صحیح __sched برآمد_کا_سطر_wait_on_ثنائی_ہندسہ(غیرعلامتی طویل *لفظ, صحیح ثنائی_ہندسہ_2,
+				    wait_ثنائی_ہندسہ_action_f *action, غیرعلامتی منوال)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
-	DEFINE_WAIT_BIT(wq_entry, word, bit);
+	ساخت wait_قطار_سر *wq_سر = ثنائی_ہندسہ_waitqueue(لفظ, ثنائی_ہندسہ_2);
+	DEFINE_WAIT_ثنائی_ہندسہ(wq_اندراج, لفظ, ثنائی_ہندسہ_2);
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	واپس __wait_on_bit(wq_سر, &wq_اندراج, action, منوال);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit);
+EXPORT_علامت(برآمد_کا_سطر_wait_on_ثنائی_ہندسہ);
 
-int __sched out_of_line_wait_on_bit_timeout(
-	unsigned long *word, int bit, wait_bit_action_f *action,
-	unsigned mode, unsigned long timeout)
+صحیح __sched برآمد_کا_سطر_wait_on_ثنائی_ہندسہ_timeout(
+	غیرعلامتی طویل *لفظ, صحیح ثنائی_ہندسہ_2, wait_ثنائی_ہندسہ_action_f *action,
+	غیرعلامتی منوال, غیرعلامتی طویل timeout)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
-	DEFINE_WAIT_BIT(wq_entry, word, bit);
+	ساخت wait_قطار_سر *wq_سر = ثنائی_ہندسہ_waitqueue(لفظ, ثنائی_ہندسہ_2);
+	DEFINE_WAIT_ثنائی_ہندسہ(wq_اندراج, لفظ, ثنائی_ہندسہ_2);
 
-	wq_entry.key.timeout = jiffies + timeout;
+	wq_اندراج.کلید.timeout = jiffies + timeout;
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	واپس __wait_on_bit(wq_سر, &wq_اندراج, action, منوال);
 }
-EXPORT_SYMBOL_GPL(out_of_line_wait_on_bit_timeout);
+EXPORT_علامت_GPL(برآمد_کا_سطر_wait_on_ثنائی_ہندسہ_timeout);
 
-int __sched
-__wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
-			wait_bit_action_f *action, unsigned mode)
+صحیح __sched
+__wait_on_bit_lock(ساخت wait_قطار_سر *wq_سر, ساخت wait_ثنائی_ہندسہ_قطار_اندراج *wbq_اندراج,
+			wait_ثنائی_ہندسہ_action_f *action, غیرعلامتی منوال)
 {
-	int ret = 0;
+	صحیح ret = 0;
 
-	for (;;) {
-		prepare_to_wait_exclusive(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			ret = action(&wbq_entry->key, mode);
+	برائے (;;) {
+		prepare_مقصد_wait_exclusive(wq_سر, &wbq_اندراج->wq_اندراج, منوال);
+		اگر (test_ثنائی_ہندسہ(wbq_اندراج->کلید.ثنائی_ہندسہ_nr, wbq_اندراج->کلید.flags)) {
+			ret = action(&wbq_اندراج->کلید, منوال);
 			/*
 			 * See the comment in prepare_to_wait_event().
 			 * finish_wait() does not necessarily takes wwq_head->lock,
 			 * but test_and_set_bit() implies mb() which pairs with
 			 * smp_mb__after_atomic() before wake_up_page().
 			 */
-			if (ret)
-				finish_wait(wq_head, &wbq_entry->wq_entry);
+			اگر (ret)
+				اختتام_wait(wq_سر, &wbq_اندراج->wq_اندراج);
 		}
-		if (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			if (!ret)
-				finish_wait(wq_head, &wbq_entry->wq_entry);
-			return 0;
-		} else if (ret) {
-			return ret;
+		اگر (!test_and_سیٹ_ثنائی_ہندسہ(wbq_اندراج->کلید.ثنائی_ہندسہ_nr, wbq_اندراج->کلید.flags)) {
+			اگر (!ret)
+				اختتام_wait(wq_سر, &wbq_اندراج->wq_اندراج);
+			واپس 0;
+		} ورنہ اگر (ret) {
+			واپس ret;
 		}
 	}
 }
-EXPORT_SYMBOL(__wait_on_bit_lock);
+EXPORT_علامت(__wait_on_bit_lock);
 
-int __sched out_of_line_wait_on_bit_lock(unsigned long *word, int bit,
-					 wait_bit_action_f *action, unsigned mode)
+صحیح __sched برآمد_کا_سطر_wait_on_ثنائی_ہندسہ_تالا(غیرعلامتی طویل *لفظ, صحیح ثنائی_ہندسہ_2,
+					 wait_ثنائی_ہندسہ_action_f *action, غیرعلامتی منوال)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
-	DEFINE_WAIT_BIT(wq_entry, word, bit);
+	ساخت wait_قطار_سر *wq_سر = ثنائی_ہندسہ_waitqueue(لفظ, ثنائی_ہندسہ_2);
+	DEFINE_WAIT_ثنائی_ہندسہ(wq_اندراج, لفظ, ثنائی_ہندسہ_2);
 
-	return __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
+	واپس __wait_on_bit_lock(wq_سر, &wq_اندراج, action, منوال);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit_lock);
+EXPORT_علامت(برآمد_کا_سطر_wait_on_ثنائی_ہندسہ_تالا);
 
-void __wake_up_bit(struct wait_queue_head *wq_head, unsigned long *word, int bit)
+خالی __wake_up_bit(ساخت wait_قطار_سر *wq_سر, غیرعلامتی طویل *لفظ, صحیح ثنائی_ہندسہ_2)
 {
-	struct wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
+	ساخت wait_ثنائی_ہندسہ_کلید کلید = __WAIT_BIT_KEY_INITIALIZER(لفظ, ثنائی_ہندسہ_2);
 
-	if (waitqueue_active(wq_head))
-		__wake_up(wq_head, TASK_NORMAL, 1, &key);
+	اگر (waitqueue_فعال(wq_سر))
+		__wake_up(wq_سر, TASK_معمول, 1, &کلید);
 }
-EXPORT_SYMBOL(__wake_up_bit);
+EXPORT_علامت(__wake_up_bit);
 
 /**
  * wake_up_bit - wake up waiters on a bit
@@ -155,57 +155,57 @@ EXPORT_SYMBOL(__wake_up_bit);
  * cleared are guaranteed to be visible after the matching wait_on_bit()
  * completes.
  */
-void wake_up_bit(unsigned long *word, int bit)
+خالی wake_اوپر_ثنائی_ہندسہ(غیرعلامتی طویل *لفظ, صحیح ثنائی_ہندسہ_2)
 {
-	__wake_up_bit(bit_waitqueue(word, bit), word, bit);
+	__wake_up_bit(ثنائی_ہندسہ_waitqueue(لفظ, ثنائی_ہندسہ_2), لفظ, ثنائی_ہندسہ_2);
 }
-EXPORT_SYMBOL(wake_up_bit);
+EXPORT_علامت(wake_اوپر_ثنائی_ہندسہ);
 
-wait_queue_head_t *__var_waitqueue(void *p)
+wait_قطار_سر_t *__var_waitqueue(خالی *p)
 {
-	return bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
+	واپس ثنائی_ہندسہ_wait_جدول + hash_ptr(p, WAIT_جدول_بٹ);
 }
-EXPORT_SYMBOL(__var_waitqueue);
+EXPORT_علامت(__var_waitqueue);
 
-struct wait_bit_key *__var_wake_key(struct wait_queue_entry *wq_entry, void *arg)
+ساخت wait_ثنائی_ہندسہ_کلید *__var_wake_key(ساخت wait_قطار_اندراج *wq_اندراج, خالی *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wbq_entry =
-		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	ساخت wait_ثنائی_ہندسہ_کلید *کلید = arg;
+	ساخت wait_ثنائی_ہندسہ_قطار_اندراج *wbq_اندراج =
+		container_کا(wq_اندراج, ساخت wait_ثنائی_ہندسہ_قطار_اندراج, wq_اندراج);
 
-	if (wbq_entry->key.flags != key->flags ||
-	    wbq_entry->key.bit_nr != key->bit_nr)
-		return NULL;
+	اگر (wbq_اندراج->کلید.flags != کلید->flags ||
+	    wbq_اندراج->کلید.ثنائی_ہندسہ_nr != کلید->ثنائی_ہندسہ_nr)
+		واپس تہی;
 
-	return key;
-}
-
-static int var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
-			     int sync, void *arg)
-{
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
-
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	واپس کلید;
 }
 
-void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
+ساکن صحیح var_wake_function(ساخت wait_قطار_اندراج *wq_اندراج, غیرعلامتی صحیح منوال,
+			     صحیح sync, خالی *arg)
 {
-	*wbq_entry = (struct wait_bit_queue_entry){
-		.key = {
+	ساخت wait_ثنائی_ہندسہ_کلید *کلید = __var_wake_key(wq_اندراج, arg);
+	اگر (!کلید)
+		واپس 0;
+
+	واپس autoremove_wake_function(wq_اندراج, منوال, sync, کلید);
+}
+
+خالی init_wait_var_اندراج(ساخت wait_ثنائی_ہندسہ_قطار_اندراج *wbq_اندراج, خالی *var, صحیح flags)
+{
+	*wbq_اندراج = (ساخت wait_ثنائی_ہندسہ_قطار_اندراج){
+		.کلید = {
 			.flags	= (var),
-			.bit_nr = -1,
+			.ثنائی_ہندسہ_nr = -1,
 		},
-		.wq_entry = {
+		.wq_اندراج = {
 			.flags	 = flags,
-			.private = current,
+			.نجی = current,
 			.func	 = var_wake_function,
-			.entry	 = LIST_HEAD_INIT(wbq_entry->wq_entry.entry),
+			.اندراج_2	 = LIST_سر_INIT(wbq_اندراج->wq_اندراج.اندراج_2),
 		},
 	};
 }
-EXPORT_SYMBOL(init_wait_var_entry);
+EXPORT_علامت(init_wait_var_اندراج);
 
 /**
  * wake_up_var - wake up waiters on a variable (kernel address)
@@ -237,50 +237,50 @@ EXPORT_SYMBOL(init_wait_var_entry);
  * variable was updated are guaranteed to be visible after the matching
  * wait_var_event() completes.
  */
-void wake_up_var(void *var)
+خالی wake_اوپر_var(خالی *var)
 {
 	__wake_up_bit(__var_waitqueue(var), var, -1);
 }
-EXPORT_SYMBOL(wake_up_var);
+EXPORT_علامت(wake_اوپر_var);
 
-__sched int bit_wait(struct wait_bit_key *word, int mode)
+__sched صحیح ثنائی_ہندسہ_wait(ساخت wait_ثنائی_ہندسہ_کلید *لفظ, صحیح منوال)
 {
-	schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	جدول_وقت();
+	اگر (signal_pending_state(منوال, current))
+		واپس -EINTR;
 
-	return 0;
+	واپس 0;
 }
-EXPORT_SYMBOL(bit_wait);
+EXPORT_علامت(ثنائی_ہندسہ_wait);
 
-__sched int bit_wait_io(struct wait_bit_key *word, int mode)
+__sched صحیح ثنائی_ہندسہ_wait_io(ساخت wait_ثنائی_ہندسہ_کلید *لفظ, صحیح منوال)
 {
-	io_schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	io_جدول_وقت();
+	اگر (signal_pending_state(منوال, current))
+		واپس -EINTR;
 
-	return 0;
+	واپس 0;
 }
-EXPORT_SYMBOL(bit_wait_io);
+EXPORT_علامت(ثنائی_ہندسہ_wait_io);
 
-__sched int bit_wait_timeout(struct wait_bit_key *word, int mode)
+__sched صحیح ثنائی_ہندسہ_wait_timeout(ساخت wait_ثنائی_ہندسہ_کلید *لفظ, صحیح منوال)
 {
-	unsigned long now = READ_ONCE(jiffies);
+	غیرعلامتی طویل now = READ_ONCE(jiffies);
 
-	if (time_after_eq(now, word->timeout))
-		return -EAGAIN;
-	schedule_timeout(word->timeout - now);
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	اگر (وقت_after_eq(now, لفظ->timeout))
+		واپس -EAGAIN;
+	جدول_وقت_timeout(لفظ->timeout - now);
+	اگر (signal_pending_state(منوال, current))
+		واپس -EINTR;
 
-	return 0;
+	واپس 0;
 }
-EXPORT_SYMBOL_GPL(bit_wait_timeout);
+EXPORT_علامت_GPL(ثنائی_ہندسہ_wait_timeout);
 
-void __init wait_bit_init(void)
+خالی __init wait_ثنائی_ہندسہ_init(خالی)
 {
-	int i;
+	صحیح i;
 
-	for (i = 0; i < WAIT_TABLE_SIZE; i++)
-		init_waitqueue_head(bit_wait_table + i);
+	برائے (i = 0; i < WAIT_جدول_سائز; i++)
+		init_waitqueue_سر(ثنائی_ہندسہ_wait_جدول + i);
 }

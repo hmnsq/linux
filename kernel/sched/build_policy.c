@@ -13,51 +13,51 @@
  */
 
 /* Headers: */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/hotplug.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/posix-timers.h>
-#include <linux/sched/rt.h>
+#شامل <linux/sched/clock.h>
+#شامل <linux/sched/cputime.h>
+#شامل <linux/sched/hotplug.h>
+#شامل <linux/sched/isolation.h>
+#شامل <linux/sched/posix-timers.h>
+#شامل <linux/sched/rt.h>
 
-#include <linux/cpuidle.h>
-#include <linux/jiffies.h>
-#include <linux/kobject.h>
-#include <linux/livepatch.h>
-#include <linux/pm.h>
-#include <linux/psi.h>
-#include <linux/rhashtable.h>
-#include <linux/seq_buf.h>
-#include <linux/seqlock_api.h>
-#include <linux/slab.h>
-#include <linux/suspend.h>
-#include <linux/tsacct_kern.h>
-#include <linux/vtime.h>
-#include <linux/sysrq.h>
-#include <linux/percpu-rwsem.h>
+#شامل <linux/cpuidle.h>
+#شامل <linux/jiffies.h>
+#شامل <linux/kobject.h>
+#شامل <linux/livepatch.h>
+#شامل <linux/pm.h>
+#شامل <linux/psi.h>
+#شامل <linux/rhashtable.h>
+#شامل <linux/seq_buf.h>
+#شامل <linux/seqlock_api.h>
+#شامل <linux/slab.h>
+#شامل <linux/suspend.h>
+#شامل <linux/tsacct_kern.h>
+#شامل <linux/vtime.h>
+#شامل <linux/sysrq.h>
+#شامل <linux/percpu-rwsem.h>
 
-#include <uapi/linux/sched/types.h>
+#شامل <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "smp.h"
+#شامل "sched.h"
+#شامل "smp.h"
 
-#include "autogroup.h"
-#include "stats.h"
-#include "pelt.h"
+#شامل "autogroup.h"
+#شامل "stats.h"
+#شامل "pelt.h"
 
 /* Source code modules: */
 
-#include "idle.c"
+#شامل "idle.c"
 
-#include "rt.c"
-#include "cpudeadline.c"
+#شامل "rt.c"
+#شامل "cpudeadline.c"
 
-#include "pelt.c"
+#شامل "pelt.c"
 
-#include "cputime.c"
-#include "deadline.c"
+#شامل "cputime.c"
+#شامل "deadline.c"
 
-#ifdef CONFIG_SCHED_CLASS_EXT
+#اگر_تعریف_شدہ CONFIG_SCHED_CLASS_EXT
 # include <linux/btf_ids.h>
 # include <linux/find.h>
 # include <linux/genalloc.h>
@@ -73,6 +73,6 @@
 # include "ext/arena.c"
 # include "ext/idle.c"
 # include "ext/sub.c"
-#endif
+#اگر_ختم
 
-#include "syscalls.c"
+#شامل "syscalls.c"

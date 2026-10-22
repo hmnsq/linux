@@ -3,412 +3,412 @@
  * Scheduler topology setup/handling methods
  */
 
-#include <linux/sched/isolation.h>
-#include <linux/sched/clock.h>
-#include <linux/bsearch.h>
-#include "sched.h"
+#شامل <linux/sched/isolation.h>
+#شامل <linux/sched/clock.h>
+#شامل <linux/bsearch.h>
+#شامل "sched.h"
 
 DEFINE_MUTEX(sched_domains_mutex);
-void sched_domains_mutex_lock(void)
+خالی sched_domains_mutex_تالا(خالی)
 {
-	mutex_lock(&sched_domains_mutex);
+	mutex_تالا(&sched_domains_mutex);
 }
-void sched_domains_mutex_unlock(void)
+خالی sched_domains_mutex_unlock(خالی)
 {
 	mutex_unlock(&sched_domains_mutex);
 }
 
 /* Protected by sched_domains_mutex: */
-static cpumask_var_t sched_domains_llc_id_allocmask;
-static cpumask_var_t sched_domains_tmpmask;
-static cpumask_var_t sched_domains_tmpmask2;
-int max_lid;
+ساکن cpumask_var_t sched_domains_llc_id_allocmask;
+ساکن cpumask_var_t sched_domains_tmpmask;
+ساکن cpumask_var_t sched_domains_tmpmask2;
+صحیح max_lid;
 
-static int __init sched_debug_setup(char *str)
+ساکن صحیح __init sched_debug_تیاری(حرف *str)
 {
 	sched_debug_verbose = true;
 
-	return 0;
+	واپس 0;
 }
-early_param("sched_verbose", sched_debug_setup);
+early_param("sched_verbose", sched_debug_تیاری);
 
-#ifdef CONFIG_SCHED_SMT
-static bool sched_smt_asym_packing __read_mostly;
+#اگر_تعریف_شدہ CONFIG_SCHED_SMT
+ساکن bool sched_smt_asym_packing __read_mostly;
 
-static int __init setup_sched_smt_asym_packing(char *str)
+ساکن صحیح __init تیاری_sched_smt_asym_packing(حرف *str)
 {
-	if (strcmp(str, "on"))
-		return 0;
+	اگر (strcmp(str, "on"))
+		واپس 0;
 
 	sched_smt_asym_packing = true;
-	return 1;
+	واپس 1;
 }
-__setup("sched_smt_asym_packing=", setup_sched_smt_asym_packing);
-#endif
+__setup("sched_smt_asym_packing=", تیاری_sched_smt_asym_packing);
+#اگر_ختم
 
-static inline bool sched_debug(void)
+ساکن اندرونی bool sched_debug(خالی)
 {
-	return sched_debug_verbose;
+	واپس sched_debug_verbose;
 }
 
-#define SD_FLAG(_name, mflags) [__##_name] = { .meta_flags = mflags, .name = #_name },
-const struct sd_flag_debug sd_flag_debug[] = {
-#include <linux/sched/sd_flags.h>
+#تعریف_کرو SD_FLAG(_name, mflags) [__##_name] = { .meta_flags = mflags, .name = #_name },
+ثابت ساخت sd_flag_debug sd_flag_debug[] = {
+#شامل <linux/sched/sd_flags.h>
 };
-#undef SD_FLAG
+#تعریف_منسوخ SD_FLAG
 
-static int sched_domain_debug_one(struct sched_domain *sd, int cpu, int level,
-				  struct cpumask *groupmask)
+ساکن صحیح sched_domain_debug_one(ساخت sched_domain *sd, صحیح cpu, صحیح level,
+				  ساخت cpumask *groupmask)
 {
-	struct sched_group *group = sd->groups;
-	unsigned long flags = sd->flags;
-	unsigned int idx;
+	ساخت sched_گروہ *گروہ = sd->groups;
+	غیرعلامتی طویل flags = sd->flags;
+	غیرعلامتی صحیح idx;
 
 	cpumask_clear(groupmask);
 
 	printk(KERN_DEBUG "%*s domain-%d: ", level, "", level);
 	printk(KERN_CONT "span=%*pbl level=%s\n",
-	       cpumask_pr_args(sched_domain_span(sd)), sd->name);
+	       cpumask_pr_دلائل(sched_domain_وسعت(sd)), sd->name);
 
-	if (!cpumask_test_cpu(cpu, sched_domain_span(sd))) {
+	اگر (!cpumask_test_cpu(cpu, sched_domain_وسعت(sd))) {
 		printk(KERN_ERR "ERROR: domain->span does not contain CPU%d\n", cpu);
 	}
-	if (group && !cpumask_test_cpu(cpu, sched_group_span(group))) {
+	اگر (گروہ && !cpumask_test_cpu(cpu, sched_گروہ_وسعت(گروہ))) {
 		printk(KERN_ERR "ERROR: domain->groups does not contain CPU%d\n", cpu);
 	}
 
-	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
-		unsigned int flag = BIT(idx);
-		unsigned int meta_flags = sd_flag_debug[idx].meta_flags;
+	for_each_سیٹ_ثنائی_ہندسہ(idx, &flags, __SD_FLAG_CNT) {
+		غیرعلامتی صحیح flag = ثنائی_ہندسہ(idx);
+		غیرعلامتی صحیح meta_flags = sd_flag_debug[idx].meta_flags;
 
-		if ((meta_flags & SDF_SHARED_CHILD) && sd->child &&
-		    !(sd->child->flags & flag))
+		اگر ((meta_flags & SDF_SHARED_بچہ) && sd->بچہ &&
+		    !(sd->بچہ->flags & flag))
 			printk(KERN_ERR "ERROR: flag %s set here but not in child\n",
 			       sd_flag_debug[idx].name);
 
-		if ((meta_flags & SDF_SHARED_PARENT) && sd->parent &&
-		    !(sd->parent->flags & flag))
+		اگر ((meta_flags & SDF_SHARED_والد) && sd->والد &&
+		    !(sd->والد->flags & flag))
 			printk(KERN_ERR "ERROR: flag %s set here but not in parent\n",
 			       sd_flag_debug[idx].name);
 	}
 
 	printk(KERN_DEBUG "%*s groups:", level + 1, "");
-	do {
-		if (!group) {
+	کرو {
+		اگر (!گروہ) {
 			printk("\n");
 			printk(KERN_ERR "ERROR: group is NULL\n");
-			break;
+			توڑو;
 		}
 
-		if (cpumask_empty(sched_group_span(group))) {
+		اگر (cpumask_خالی_خانے(sched_گروہ_وسعت(گروہ))) {
 			printk(KERN_CONT "\n");
 			printk(KERN_ERR "ERROR: empty group\n");
-			break;
+			توڑو;
 		}
 
-		if (!(sd->flags & SD_NUMA) &&
-		    cpumask_intersects(groupmask, sched_group_span(group))) {
+		اگر (!(sd->flags & SD_NUMA) &&
+		    cpumask_intersects(groupmask, sched_گروہ_وسعت(گروہ))) {
 			printk(KERN_CONT "\n");
 			printk(KERN_ERR "ERROR: repeated CPUs\n");
-			break;
+			توڑو;
 		}
 
-		cpumask_or(groupmask, groupmask, sched_group_span(group));
+		cpumask_or(groupmask, groupmask, sched_گروہ_وسعت(گروہ));
 
 		printk(KERN_CONT " %d:{ span=%*pbl",
-				group->sgc->id,
-				cpumask_pr_args(sched_group_span(group)));
+				گروہ->sgc->id,
+				cpumask_pr_دلائل(sched_گروہ_وسعت(گروہ)));
 
-		if ((sd->flags & SD_NUMA) &&
-		    !cpumask_equal(group_balance_mask(group), sched_group_span(group))) {
+		اگر ((sd->flags & SD_NUMA) &&
+		    !cpumask_equal(گروہ_balance_نقاب(گروہ), sched_گروہ_وسعت(گروہ))) {
 			printk(KERN_CONT " mask=%*pbl",
-				cpumask_pr_args(group_balance_mask(group)));
+				cpumask_pr_دلائل(گروہ_balance_نقاب(گروہ)));
 		}
 
-		if (group->sgc->capacity != SCHED_CAPACITY_SCALE)
-			printk(KERN_CONT " cap=%lu", group->sgc->capacity);
+		اگر (گروہ->sgc->استعداد != SCHED_استعداد_SCALE)
+			printk(KERN_CONT " cap=%lu", گروہ->sgc->استعداد);
 
-		if (group == sd->groups && sd->child &&
-		    !cpumask_equal(sched_domain_span(sd->child),
-				   sched_group_span(group))) {
+		اگر (گروہ == sd->groups && sd->بچہ &&
+		    !cpumask_equal(sched_domain_وسعت(sd->بچہ),
+				   sched_گروہ_وسعت(گروہ))) {
 			printk(KERN_ERR "ERROR: domain->groups does not match domain->child\n");
 		}
 
 		printk(KERN_CONT " }");
 
-		group = group->next;
+		گروہ = گروہ->اگلا;
 
-		if (group != sd->groups)
+		اگر (گروہ != sd->groups)
 			printk(KERN_CONT ",");
 
-	} while (group != sd->groups);
+	} جب (گروہ != sd->groups);
 	printk(KERN_CONT "\n");
 
-	if (!cpumask_equal(sched_domain_span(sd), groupmask))
+	اگر (!cpumask_equal(sched_domain_وسعت(sd), groupmask))
 		printk(KERN_ERR "ERROR: groups don't span domain->span\n");
 
-	if (sd->parent &&
-	    !cpumask_subset(groupmask, sched_domain_span(sd->parent)))
+	اگر (sd->والد &&
+	    !cpumask_subset(groupmask, sched_domain_وسعت(sd->والد)))
 		printk(KERN_ERR "ERROR: parent span is not a superset of domain->span\n");
-	return 0;
+	واپس 0;
 }
 
-static void sched_domain_debug(struct sched_domain *sd, int cpu)
+ساکن خالی sched_domain_debug(ساخت sched_domain *sd, صحیح cpu)
 {
-	int level = 0;
+	صحیح level = 0;
 
-	if (!sched_debug_verbose)
-		return;
+	اگر (!sched_debug_verbose)
+		واپس;
 
-	if (!sd) {
+	اگر (!sd) {
 		printk(KERN_DEBUG "CPU%d attaching NULL sched-domain.\n", cpu);
-		return;
+		واپس;
 	}
 
 	printk(KERN_DEBUG "CPU%d attaching sched-domain(s):\n", cpu);
 
-	for (;;) {
-		if (sched_domain_debug_one(sd, cpu, level, sched_domains_tmpmask))
-			break;
+	برائے (;;) {
+		اگر (sched_domain_debug_one(sd, cpu, level, sched_domains_tmpmask))
+			توڑو;
 		level++;
-		sd = sd->parent;
-		if (!sd)
-			break;
+		sd = sd->والد;
+		اگر (!sd)
+			توڑو;
 	}
 }
 
 /* Generate a mask of SD flags with the SDF_NEEDS_GROUPS metaflag */
-#define SD_FLAG(name, mflags) (name * !!((mflags) & SDF_NEEDS_GROUPS)) |
-static const unsigned int SD_DEGENERATE_GROUPS_MASK =
-#include <linux/sched/sd_flags.h>
+#تعریف_کرو SD_FLAG(name, mflags) (name * !!((mflags) & SDF_NEEDS_GROUPS)) |
+ساکن ثابت غیرعلامتی صحیح SD_DEGENERATE_GROUPS_نقاب =
+#شامل <linux/sched/sd_flags.h>
 0;
-#undef SD_FLAG
+#تعریف_منسوخ SD_FLAG
 
-static int sd_degenerate(struct sched_domain *sd)
+ساکن صحیح sd_degenerate(ساخت sched_domain *sd)
 {
-	if (cpumask_weight(sched_domain_span(sd)) == 1)
-		return 1;
+	اگر (cpumask_وزن(sched_domain_وسعت(sd)) == 1)
+		واپس 1;
 
 	/* Following flags need at least 2 groups */
-	if ((sd->flags & SD_DEGENERATE_GROUPS_MASK) &&
-	    (sd->groups != sd->groups->next))
-		return 0;
+	اگر ((sd->flags & SD_DEGENERATE_GROUPS_نقاب) &&
+	    (sd->groups != sd->groups->اگلا))
+		واپس 0;
 
 	/* Following flags don't use groups */
-	if (sd->flags & (SD_WAKE_AFFINE))
-		return 0;
+	اگر (sd->flags & (SD_WAKE_AFFINE))
+		واپس 0;
 
-	return 1;
+	واپس 1;
 }
 
-static int
-sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
+ساکن صحیح
+sd_والد_degenerate(ساخت sched_domain *sd, ساخت sched_domain *والد)
 {
-	unsigned long cflags = sd->flags, pflags = parent->flags;
+	غیرعلامتی طویل cflags = sd->flags, pflags = والد->flags;
 
-	if (sd_degenerate(parent))
-		return 1;
+	اگر (sd_degenerate(والد))
+		واپس 1;
 
-	if (!cpumask_equal(sched_domain_span(sd), sched_domain_span(parent)))
-		return 0;
+	اگر (!cpumask_equal(sched_domain_وسعت(sd), sched_domain_وسعت(والد)))
+		واپس 0;
 
 	/* Flags needing groups don't count if only 1 group in parent */
-	if (parent->groups == parent->groups->next)
-		pflags &= ~SD_DEGENERATE_GROUPS_MASK;
+	اگر (والد->groups == والد->groups->اگلا)
+		pflags &= ~SD_DEGENERATE_GROUPS_نقاب;
 
-	if (~cflags & pflags)
-		return 0;
+	اگر (~cflags & pflags)
+		واپس 0;
 
-	return 1;
+	واپس 1;
 }
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-DEFINE_STATIC_KEY_FALSE(sched_energy_present);
-static unsigned int sysctl_sched_energy_aware = 1;
-static DEFINE_MUTEX(sched_energy_mutex);
-static bool sched_energy_update;
+#اگر defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+DEFINE_STATIC_کلید_FALSE(sched_energy_present);
+ساکن غیرعلامتی صحیح sysctl_sched_energy_aware = 1;
+ساکن DEFINE_MUTEX(sched_energy_mutex);
+ساکن bool sched_energy_update;
 
-static bool sched_is_eas_possible(const struct cpumask *cpu_mask)
+ساکن bool sched_is_eas_possible(ثابت ساخت cpumask *cpu_نقاب)
 {
-	bool any_asym_capacity = false;
-	int i;
+	bool any_asym_استعداد = false;
+	صحیح i;
 
 	/* EAS is enabled for asymmetric CPU capacity topologies. */
-	for_each_cpu(i, cpu_mask) {
-		if (rcu_access_pointer(per_cpu(sd_asym_cpucapacity, i))) {
-			any_asym_capacity = true;
-			break;
+	for_each_cpu(i, cpu_نقاب) {
+		اگر (rcu_access_اشارہ_گر(فی_cpu(sd_asym_cpucapacity, i))) {
+			any_asym_استعداد = true;
+			توڑو;
 		}
 	}
-	if (!any_asym_capacity) {
-		if (sched_debug()) {
+	اگر (!any_asym_استعداد) {
+		اگر (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS, CPUs do not have asymmetric capacities\n",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_دلائل(cpu_نقاب));
 		}
-		return false;
+		واپس false;
 	}
 
 	/* EAS definitely does *not* handle SMT */
-	if (sched_smt_active()) {
-		if (sched_debug()) {
+	اگر (sched_smt_فعال()) {
+		اگر (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS, SMT is not supported\n",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_دلائل(cpu_نقاب));
 		}
-		return false;
+		واپس false;
 	}
 
-	if (!arch_scale_freq_invariant()) {
-		if (sched_debug()) {
+	اگر (!arch_scale_freq_invariant()) {
+		اگر (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS: frequency-invariant load tracking not yet supported",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_دلائل(cpu_نقاب));
 		}
-		return false;
+		واپس false;
 	}
 
-	if (!cpufreq_ready_for_eas(cpu_mask)) {
-		if (sched_debug()) {
+	اگر (!cpufreq_ready_for_eas(cpu_نقاب)) {
+		اگر (sched_debug()) {
 			pr_info("rd %*pbl: Checking EAS: cpufreq is not ready\n",
-				cpumask_pr_args(cpu_mask));
+				cpumask_pr_دلائل(cpu_نقاب));
 		}
-		return false;
+		واپس false;
 	}
 
-	return true;
+	واپس true;
 }
 
-void rebuild_sched_domains_energy(void)
+خالی rebuild_sched_domains_energy(خالی)
 {
-	mutex_lock(&sched_energy_mutex);
+	mutex_تالا(&sched_energy_mutex);
 	sched_energy_update = true;
 	rebuild_sched_domains();
 	sched_energy_update = false;
 	mutex_unlock(&sched_energy_mutex);
 }
 
-#ifdef CONFIG_SYSCTL
-static int sched_energy_aware_handler(const struct ctl_table *table, int write,
-		void *buffer, size_t *lenp, loff_t *ppos)
+#اگر_تعریف_شدہ CONFIG_SYSCTL
+ساکن صحیح sched_energy_aware_handler(ثابت ساخت ctl_جدول *جدول, صحیح اكتب,
+		خالی *بفر, سائز_t *lenp, loff_t *ppos)
 {
-	int ret;
+	صحیح ret;
 
-	if (write && !capable(CAP_SYS_ADMIN))
-		return -EPERM;
+	اگر (اكتب && !capable(CAP_SYS_ADMIN))
+		واپس -EPERM;
 
-	if (!sched_is_eas_possible(cpu_active_mask)) {
-		if (write) {
-			return -EOPNOTSUPP;
-		} else {
+	اگر (!sched_is_eas_possible(cpu_فعال_نقاب)) {
+		اگر (اكتب) {
+			واپس -EOPNOTSUPP;
+		} ورنہ {
 			*lenp = 0;
-			return 0;
+			واپس 0;
 		}
 	}
 
-	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-	if (!ret && write) {
-		if (sysctl_sched_energy_aware != sched_energy_enabled())
+	ret = proc_dointvec_minmax(جدول, اكتب, بفر, lenp, ppos);
+	اگر (!ret && اكتب) {
+		اگر (sysctl_sched_energy_aware != sched_energy_enabled())
 			rebuild_sched_domains_energy();
 	}
 
-	return ret;
+	واپس ret;
 }
 
-static const struct ctl_table sched_energy_aware_sysctls[] = {
+ساکن ثابت ساخت ctl_جدول sched_energy_aware_sysctls[] = {
 	{
 		.procname       = "sched_energy_aware",
-		.data           = &sysctl_sched_energy_aware,
-		.maxlen         = sizeof(unsigned int),
-		.mode           = 0644,
+		.ڈیٹا           = &sysctl_sched_energy_aware,
+		.maxlen         = حجم(غیرعلامتی صحیح),
+		.منوال           = 0644,
 		.proc_handler   = sched_energy_aware_handler,
 		.extra1         = SYSCTL_ZERO,
 		.extra2         = SYSCTL_ONE,
 	},
 };
 
-static int __init sched_energy_aware_sysctl_init(void)
+ساکن صحیح __init sched_energy_aware_sysctl_init(خالی)
 {
-	register_sysctl_init("kernel", sched_energy_aware_sysctls);
-	return 0;
+	رجسٹر_sysctl_init("kernel", sched_energy_aware_sysctls);
+	واپس 0;
 }
 
 late_initcall(sched_energy_aware_sysctl_init);
-#endif /* CONFIG_SYSCTL */
+#اگر_ختم /* CONFIG_SYSCTL */
 
-static void free_pd(struct perf_domain *pd)
+ساکن خالی free_pd(ساخت perf_domain *pd)
 {
-	struct perf_domain *tmp;
+	ساخت perf_domain *tmp;
 
-	while (pd) {
-		tmp = pd->next;
+	جب (pd) {
+		tmp = pd->اگلا;
 		kfree(pd);
 		pd = tmp;
 	}
 }
 
-static struct perf_domain *find_pd(struct perf_domain *pd, int cpu)
+ساکن ساخت perf_domain *ڈھونڈو_pd(ساخت perf_domain *pd, صحیح cpu)
 {
-	while (pd) {
-		if (cpumask_test_cpu(cpu, perf_domain_span(pd)))
-			return pd;
-		pd = pd->next;
+	جب (pd) {
+		اگر (cpumask_test_cpu(cpu, perf_domain_وسعت(pd)))
+			واپس pd;
+		pd = pd->اگلا;
 	}
 
-	return NULL;
+	واپس تہی;
 }
 
-static struct perf_domain *pd_init(int cpu)
+ساکن ساخت perf_domain *pd_init(صحیح cpu)
 {
-	struct em_perf_domain *obj = em_cpu_get(cpu);
-	struct perf_domain *pd;
+	ساخت em_perf_domain *obj = em_cpu_get(cpu);
+	ساخت perf_domain *pd;
 
-	if (!obj) {
-		if (sched_debug())
+	اگر (!obj) {
+		اگر (sched_debug())
 			pr_info("%s: no EM found for CPU%d\n", __func__, cpu);
-		return NULL;
+		واپس تہی;
 	}
 
 	pd = kzalloc_obj(*pd);
-	if (!pd)
-		return NULL;
+	اگر (!pd)
+		واپس تہی;
 	pd->em_pd = obj;
 
-	return pd;
+	واپس pd;
 }
 
-static void perf_domain_debug(const struct cpumask *cpu_map,
-						struct perf_domain *pd)
+ساکن خالی perf_domain_debug(ثابت ساخت cpumask *cpu_map,
+						ساخت perf_domain *pd)
 {
-	if (!sched_debug() || !pd)
-		return;
+	اگر (!sched_debug() || !pd)
+		واپس;
 
-	printk(KERN_DEBUG "root_domain %*pbl:", cpumask_pr_args(cpu_map));
+	printk(KERN_DEBUG "root_domain %*pbl:", cpumask_pr_دلائل(cpu_map));
 
-	while (pd) {
+	جب (pd) {
 		printk(KERN_CONT " pd%d:{ cpus=%*pbl nr_pstate=%d }",
-				cpumask_first(perf_domain_span(pd)),
-				cpumask_pr_args(perf_domain_span(pd)),
-				em_pd_nr_perf_states(pd->em_pd));
-		pd = pd->next;
+				cpumask_پہلا(perf_domain_وسعت(pd)),
+				cpumask_pr_دلائل(perf_domain_وسعت(pd)),
+				em_pd_nr_perf_حالتیں(pd->em_pd));
+		pd = pd->اگلا;
 	}
 
 	printk(KERN_CONT "\n");
 }
 
-static void destroy_perf_domain_rcu(struct rcu_head *rp)
+ساکن خالی destroy_perf_domain_rcu(ساخت rcu_سر *rp)
 {
-	struct perf_domain *pd;
+	ساخت perf_domain *pd;
 
-	pd = container_of(rp, struct perf_domain, rcu);
+	pd = container_کا(rp, ساخت perf_domain, rcu);
 	free_pd(pd);
 }
 
-static void sched_energy_set(bool has_eas)
+ساکن خالی sched_energy_سیٹ(bool has_eas)
 {
-	if (!has_eas && sched_energy_enabled()) {
-		if (sched_debug())
+	اگر (!has_eas && sched_energy_enabled()) {
+		اگر (sched_debug())
 			pr_info("%s: stopping EAS\n", __func__);
 		static_branch_disable_cpuslocked(&sched_energy_present);
-	} else if (has_eas && !sched_energy_enabled()) {
-		if (sched_debug())
+	} ورنہ اگر (has_eas && !sched_energy_enabled()) {
+		اگر (sched_debug())
 			pr_info("%s: starting EAS\n", __func__);
 		static_branch_enable_cpuslocked(&sched_energy_present);
 	}
@@ -422,29 +422,29 @@ static void sched_energy_set(bool has_eas)
  *    4. schedutil is driving the frequency of all CPUs of the rd;
  *    5. frequency invariance support is present;
  */
-static bool build_perf_domains(const struct cpumask *cpu_map)
+ساکن bool build_perf_domains(ثابت ساخت cpumask *cpu_map)
 {
-	int i;
-	struct perf_domain *pd = NULL, *tmp;
-	int cpu = cpumask_first(cpu_map);
-	struct root_domain *rd = cpu_rq(cpu)->rd;
+	صحیح i;
+	ساخت perf_domain *pd = تہی, *tmp;
+	صحیح cpu = cpumask_پہلا(cpu_map);
+	ساخت جڑ_domain *rd = cpu_rq(cpu)->rd;
 
-	if (!sysctl_sched_energy_aware)
-		goto free;
+	اگر (!sysctl_sched_energy_aware)
+		جاؤ آزاد;
 
-	if (!sched_is_eas_possible(cpu_map))
-		goto free;
+	اگر (!sched_is_eas_possible(cpu_map))
+		جاؤ آزاد;
 
 	for_each_cpu(i, cpu_map) {
 		/* Skip already covered CPUs. */
-		if (find_pd(pd, i))
-			continue;
+		اگر (ڈھونڈو_pd(pd, i))
+			جاری;
 
 		/* Create the new pd and add it to the local list. */
 		tmp = pd_init(i);
-		if (!tmp)
-			goto free;
-		tmp->next = pd;
+		اگر (!tmp)
+			جاؤ آزاد;
+		tmp->اگلا = pd;
 		pd = tmp;
 	}
 
@@ -452,198 +452,198 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
 
 	/* Attach the new list of performance domains to the root domain. */
 	tmp = rd->pd;
-	rcu_assign_pointer(rd->pd, pd);
-	if (tmp)
+	rcu_تفویض_اشارہ_گر(rd->pd, pd);
+	اگر (tmp)
 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
 
-	return !!pd;
+	واپس !!pd;
 
-free:
+آزاد:
 	free_pd(pd);
 	tmp = rd->pd;
-	rcu_assign_pointer(rd->pd, NULL);
-	if (tmp)
+	rcu_تفویض_اشارہ_گر(rd->pd, تہی);
+	اگر (tmp)
 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
 
-	return false;
+	واپس false;
 }
-#else /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
-static void free_pd(struct perf_domain *pd) { }
-#endif /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
+#ورنہ /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
+ساکن خالی free_pd(ساخت perf_domain *pd) { }
+#اگر_ختم /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
 
-static void free_rootdomain(struct rcu_head *rcu)
+ساکن خالی free_rootdomain(ساخت rcu_سر *rcu)
 {
-	struct root_domain *rd = container_of(rcu, struct root_domain, rcu);
+	ساخت جڑ_domain *rd = container_کا(rcu, ساخت جڑ_domain, rcu);
 
 	cpupri_cleanup(&rd->cpupri);
 	cpudl_cleanup(&rd->cpudl);
-	free_cpumask_var(rd->dlo_mask);
-	free_cpumask_var(rd->rto_mask);
+	free_cpumask_var(rd->dlo_نقاب);
+	free_cpumask_var(rd->rto_نقاب);
 	free_cpumask_var(rd->online);
-	free_cpumask_var(rd->span);
+	free_cpumask_var(rd->وسعت);
 	free_pd(rd->pd);
 	kfree(rd);
 }
 
-void rq_attach_root(struct rq *rq, struct root_domain *rd)
+خالی rq_attach_جڑ(ساخت rq *rq, ساخت جڑ_domain *rd)
 {
-	struct root_domain *old_rd = NULL;
-	struct rq_flags rf;
+	ساخت جڑ_domain *old_rd = تہی;
+	ساخت rq_flags rf;
 
-	rq_lock_irqsave(rq, &rf);
+	rq_تالا_irqsave(rq, &rf);
 
-	if (rq->rd) {
+	اگر (rq->rd) {
 		old_rd = rq->rd;
 
-		if (cpumask_test_cpu(rq->cpu, old_rd->online))
-			set_rq_offline(rq);
+		اگر (cpumask_test_cpu(rq->cpu, old_rd->online))
+			سیٹ_rq_offline(rq);
 
-		cpumask_clear_cpu(rq->cpu, old_rd->span);
+		cpumask_clear_cpu(rq->cpu, old_rd->وسعت);
 
 		/*
 		 * If we don't want to free the old_rd yet then
 		 * set old_rd to NULL to skip the freeing later
 		 * in this function:
 		 */
-		if (!atomic_dec_and_test(&old_rd->refcount))
-			old_rd = NULL;
+		اگر (!atomic_dec_and_test(&old_rd->refcount))
+			old_rd = تہی;
 	}
 
 	atomic_inc(&rd->refcount);
 	rq->rd = rd;
 
-	cpumask_set_cpu(rq->cpu, rd->span);
-	if (cpumask_test_cpu(rq->cpu, cpu_active_mask))
-		set_rq_online(rq);
+	cpumask_سیٹ_cpu(rq->cpu, rd->وسعت);
+	اگر (cpumask_test_cpu(rq->cpu, cpu_فعال_نقاب))
+		سیٹ_rq_online(rq);
 
 	/*
 	 * Because the rq is not a task, dl_add_task_root_domain() did not
 	 * move the fair server bw to the rd if it already started.
 	 * Add it now.
 	 */
-	if (rq->fair_server.dl_server)
+	اگر (rq->fair_server.dl_server)
 		__dl_server_attach_root(&rq->fair_server, rq);
 
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (rq->ext_server.dl_server)
+#اگر_تعریف_شدہ CONFIG_SCHED_CLASS_EXT
+	اگر (rq->ext_server.dl_server)
 		__dl_server_attach_root(&rq->ext_server, rq);
-#endif
+#اگر_ختم
 
 	rq_unlock_irqrestore(rq, &rf);
 
-	if (old_rd)
+	اگر (old_rd)
 		call_rcu(&old_rd->rcu, free_rootdomain);
 }
 
-void sched_get_rd(struct root_domain *rd)
+خالی sched_get_rd(ساخت جڑ_domain *rd)
 {
 	atomic_inc(&rd->refcount);
 }
 
-void sched_put_rd(struct root_domain *rd)
+خالی sched_put_rd(ساخت جڑ_domain *rd)
 {
-	if (!atomic_dec_and_test(&rd->refcount))
-		return;
+	اگر (!atomic_dec_and_test(&rd->refcount))
+		واپس;
 
 	call_rcu(&rd->rcu, free_rootdomain);
 }
 
-static int init_rootdomain(struct root_domain *rd)
+ساکن صحیح init_rootdomain(ساخت جڑ_domain *rd)
 {
-	if (!zalloc_cpumask_var(&rd->span, GFP_KERNEL))
-		goto out;
-	if (!zalloc_cpumask_var(&rd->online, GFP_KERNEL))
-		goto free_span;
-	if (!zalloc_cpumask_var(&rd->dlo_mask, GFP_KERNEL))
-		goto free_online;
-	if (!zalloc_cpumask_var(&rd->rto_mask, GFP_KERNEL))
-		goto free_dlo_mask;
+	اگر (!zalloc_cpumask_var(&rd->وسعت, GFP_KERNEL))
+		جاؤ برآمد;
+	اگر (!zalloc_cpumask_var(&rd->online, GFP_KERNEL))
+		جاؤ free_وسعت;
+	اگر (!zalloc_cpumask_var(&rd->dlo_نقاب, GFP_KERNEL))
+		جاؤ free_online;
+	اگر (!zalloc_cpumask_var(&rd->rto_نقاب, GFP_KERNEL))
+		جاؤ free_dlo_نقاب;
 
-#ifdef HAVE_RT_PUSH_IPI
+#اگر_تعریف_شدہ HAVE_RT_ڈالو_IPI
 	rd->rto_cpu = -1;
-	raw_spin_lock_init(&rd->rto_lock);
-	rd->rto_push_work = IRQ_WORK_INIT_HARD(rto_push_irq_work_func);
-#endif
+	raw_spin_تالا_init(&rd->rto_تالا);
+	rd->rto_ڈالو_work = IRQ_WORK_INIT_HARD(rto_ڈالو_irq_work_func);
+#اگر_ختم
 
-	rd->visit_cookie = 0;
+	rd->دورہ_cookie = 0;
 	init_dl_bw(&rd->dl_bw);
-	if (cpudl_init(&rd->cpudl) != 0)
-		goto free_rto_mask;
+	اگر (cpudl_init(&rd->cpudl) != 0)
+		جاؤ free_rto_نقاب;
 
-	if (cpupri_init(&rd->cpupri) != 0)
-		goto free_cpudl;
-	return 0;
+	اگر (cpupri_init(&rd->cpupri) != 0)
+		جاؤ free_cpudl;
+	واپس 0;
 
 free_cpudl:
 	cpudl_cleanup(&rd->cpudl);
-free_rto_mask:
-	free_cpumask_var(rd->rto_mask);
-free_dlo_mask:
-	free_cpumask_var(rd->dlo_mask);
+free_rto_نقاب:
+	free_cpumask_var(rd->rto_نقاب);
+free_dlo_نقاب:
+	free_cpumask_var(rd->dlo_نقاب);
 free_online:
 	free_cpumask_var(rd->online);
-free_span:
-	free_cpumask_var(rd->span);
-out:
-	return -ENOMEM;
+free_وسعت:
+	free_cpumask_var(rd->وسعت);
+برآمد:
+	واپس -ENOMEM;
 }
 
 /*
  * By default the system creates a single root-domain with all CPUs as
  * members (mimicking the global state we have today).
  */
-struct root_domain def_root_domain;
+ساخت جڑ_domain def_جڑ_domain;
 
-void __init init_defrootdomain(void)
+خالی __init init_defrootdomain(خالی)
 {
-	init_rootdomain(&def_root_domain);
+	init_rootdomain(&def_جڑ_domain);
 
-	atomic_set(&def_root_domain.refcount, 1);
+	atomic_سیٹ(&def_جڑ_domain.refcount, 1);
 }
 
-static struct root_domain *alloc_rootdomain(void)
+ساکن ساخت جڑ_domain *alloc_rootdomain(خالی)
 {
-	struct root_domain *rd;
+	ساخت جڑ_domain *rd;
 
 	rd = kzalloc_obj(*rd);
-	if (!rd)
-		return NULL;
+	اگر (!rd)
+		واپس تہی;
 
-	if (init_rootdomain(rd) != 0) {
+	اگر (init_rootdomain(rd) != 0) {
 		kfree(rd);
-		return NULL;
+		واپس تہی;
 	}
 
-	return rd;
+	واپس rd;
 }
 
-static void free_sched_groups(struct sched_group *sg, int free_sgc)
+ساکن خالی free_sched_groups(ساخت sched_گروہ *sg, صحیح free_sgc)
 {
-	struct sched_group *tmp, *first;
+	ساخت sched_گروہ *tmp, *پہلا;
 
-	if (!sg)
-		return;
+	اگر (!sg)
+		واپس;
 
-	first = sg;
-	do {
-		tmp = sg->next;
+	پہلا = sg;
+	کرو {
+		tmp = sg->اگلا;
 
-		if (free_sgc && atomic_dec_and_test(&sg->sgc->ref))
+		اگر (free_sgc && atomic_dec_and_test(&sg->sgc->ref))
 			kfree(sg->sgc);
 
-		if (atomic_dec_and_test(&sg->ref))
+		اگر (atomic_dec_and_test(&sg->ref))
 			kfree(sg);
 		sg = tmp;
-	} while (sg != first);
+	} جب (sg != پہلا);
 }
 
-static void free_sched_domain_shared(struct sched_domain_shared *sds)
+ساکن خالی free_sched_domain_shared(ساخت sched_domain_shared *sds)
 {
-	if (sds && atomic_dec_and_test(&sds->ref))
+	اگر (sds && atomic_dec_and_test(&sds->ref))
 		kfree(sds);
 }
 
-static void destroy_sched_domain(struct sched_domain *sd)
+ساکن خالی destroy_sched_domain(ساخت sched_domain *sd)
 {
 	/*
 	 * A normal sched domain may have multiple group references, an
@@ -653,27 +653,27 @@ static void destroy_sched_domain(struct sched_domain *sd)
 	free_sched_groups(sd->groups, 1);
 	free_sched_domain_shared(sd->shared);
 
-#ifdef CONFIG_SCHED_CACHE
+#اگر_تعریف_شدہ CONFIG_SCHED_CACHE
 	/* only the bottom sd has llc_counts array */
 	kfree(sd->llc_counts);
-#endif
+#اگر_ختم
 	kfree(sd);
 }
 
-static void destroy_sched_domains_rcu(struct rcu_head *rcu)
+ساکن خالی destroy_sched_domains_rcu(ساخت rcu_سر *rcu)
 {
-	struct sched_domain *sd = container_of(rcu, struct sched_domain, rcu);
+	ساخت sched_domain *sd = container_کا(rcu, ساخت sched_domain, rcu);
 
-	while (sd) {
-		struct sched_domain *parent = sd->parent;
+	جب (sd) {
+		ساخت sched_domain *والد = sd->والد;
 		destroy_sched_domain(sd);
-		sd = parent;
+		sd = والد;
 	}
 }
 
-static void destroy_sched_domains(struct sched_domain *sd)
+ساکن خالی destroy_sched_domains(ساخت sched_domain *sd)
 {
-	if (sd)
+	اگر (sd)
 		call_rcu(&sd->rcu, destroy_sched_domains_rcu);
 }
 
@@ -686,58 +686,58 @@ static void destroy_sched_domains(struct sched_domain *sd)
  * of the domain), this allows us to quickly tell if two CPUs are in the same
  * cache domain, see cpus_share_cache().
  */
-DEFINE_PER_CPU(struct sched_domain __rcu *, sd_llc);
-DEFINE_PER_CPU(int, sd_llc_size);
-DEFINE_PER_CPU(int, sd_llc_id) = -1;
-DEFINE_PER_CPU(int, sd_share_id);
-DEFINE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
-DEFINE_PER_CPU(struct sched_domain_shared __rcu *, sd_balance_shared);
-DEFINE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
-DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
+DEFINE_فی_CPU(ساخت sched_domain __rcu *, sd_llc);
+DEFINE_فی_CPU(صحیح, sd_llc_سائز);
+DEFINE_فی_CPU(صحیح, sd_llc_id) = -1;
+DEFINE_فی_CPU(صحیح, sd_share_id);
+DEFINE_فی_CPU(ساخت sched_domain_shared __rcu *, sd_llc_shared);
+DEFINE_فی_CPU(ساخت sched_domain_shared __rcu *, sd_balance_shared);
+DEFINE_فی_CPU(ساخت sched_domain __rcu *, sd_numa);
+DEFINE_فی_CPU(ساخت sched_domain __rcu *, sd_asym_packing);
+DEFINE_فی_CPU(ساخت sched_domain __rcu *, sd_asym_cpucapacity);
 
-DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
-DEFINE_STATIC_KEY_FALSE(sched_cluster_active);
+DEFINE_STATIC_کلید_FALSE(sched_asym_cpucapacity);
+DEFINE_STATIC_کلید_FALSE(sched_cluster_فعال);
 
-static void update_top_cache_domain(int cpu)
+ساکن خالی update_چوٹی_cache_domain(صحیح cpu)
 {
-	struct sched_domain_shared *sds = NULL;
-	struct sched_domain *sd;
-	int id = cpu;
-	int size = 1;
+	ساخت sched_domain_shared *sds = تہی;
+	ساخت sched_domain *sd;
+	صحیح id = cpu;
+	صحیح سائز = 1;
 
 	sd = highest_flag_domain(cpu, SD_SHARE_LLC);
-	if (sd) {
-		id = cpumask_first(sched_domain_span(sd));
-		size = cpumask_weight(sched_domain_span(sd));
+	اگر (sd) {
+		id = cpumask_پہلا(sched_domain_وسعت(sd));
+		سائز = cpumask_وزن(sched_domain_وسعت(sd));
 
 		/* If sd_llc exists, sd_llc_shared should exist too. */
 		WARN_ON_ONCE(!sd->shared);
 		sds = sd->shared;
 	}
 
-	rcu_assign_pointer(per_cpu(sd_llc, cpu), sd);
-	per_cpu(sd_llc_size, cpu) = size;
-	rcu_assign_pointer(per_cpu(sd_llc_shared, cpu), sds);
+	rcu_تفویض_اشارہ_گر(فی_cpu(sd_llc, cpu), sd);
+	فی_cpu(sd_llc_سائز, cpu) = سائز;
+	rcu_تفویض_اشارہ_گر(فی_cpu(sd_llc_shared, cpu), sds);
 
-	sd = lowest_flag_domain(cpu, SD_CLUSTER);
-	if (sd)
-		id = cpumask_first(sched_domain_span(sd));
+	sd = سب_سے_نیچا_flag_domain(cpu, SD_CLUSTER);
+	اگر (sd)
+		id = cpumask_پہلا(sched_domain_وسعت(sd));
 
 	/*
 	 * This assignment should be placed after the sd_llc_id as
 	 * we want this id equals to cluster id on cluster machines
 	 * but equals to LLC id on non-Cluster machines.
 	 */
-	per_cpu(sd_share_id, cpu) = id;
+	فی_cpu(sd_share_id, cpu) = id;
 
-	sd = lowest_flag_domain(cpu, SD_NUMA);
-	rcu_assign_pointer(per_cpu(sd_numa, cpu), sd);
+	sd = سب_سے_نیچا_flag_domain(cpu, SD_NUMA);
+	rcu_تفویض_اشارہ_گر(فی_cpu(sd_numa, cpu), sd);
 
 	sd = highest_flag_domain(cpu, SD_ASYM_PACKING);
-	rcu_assign_pointer(per_cpu(sd_asym_packing, cpu), sd);
+	rcu_تفویض_اشارہ_گر(فی_cpu(sd_asym_packing, cpu), sd);
 
-	sd = lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY_FULL);
+	sd = سب_سے_نیچا_flag_domain(cpu, SD_ASYM_CPUCAPACITY_بھرا);
 	/*
 	 * The shared object is attached to sd_asym_cpucapacity only when the
 	 * asym domain is non-overlapping (i.e., not built from SD_NUMA).
@@ -745,34 +745,34 @@ static void update_top_cache_domain(int cpu)
 	 * SD_SHARE_LLC path own the shared object, so sd->shared may be NULL
 	 * here.
 	 */
-	if (sd && sd->shared)
+	اگر (sd && sd->shared)
 		sds = sd->shared;
 
-	rcu_assign_pointer(per_cpu(sd_asym_cpucapacity, cpu), sd);
-	rcu_assign_pointer(per_cpu(sd_balance_shared, cpu), sds);
+	rcu_تفویض_اشارہ_گر(فی_cpu(sd_asym_cpucapacity, cpu), sd);
+	rcu_تفویض_اشارہ_گر(فی_cpu(sd_balance_shared, cpu), sds);
 }
 
 /*
  * Attach the domain 'sd' to 'cpu' as its base domain. Callers must
  * hold the hotplug lock.
  */
-static void
-cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
+ساکن خالی
+cpu_attach_domain(ساخت sched_domain *sd, ساخت جڑ_domain *rd, صحیح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
-	struct sched_domain *tmp;
+	ساخت rq *rq = cpu_rq(cpu);
+	ساخت sched_domain *tmp;
 
 	/* Remove the sched domains which do not contribute to scheduling. */
-	for (tmp = sd; tmp; ) {
-		struct sched_domain *parent = tmp->parent;
-		if (!parent)
-			break;
+	برائے (tmp = sd; tmp; ) {
+		ساخت sched_domain *والد = tmp->والد;
+		اگر (!والد)
+			توڑو;
 
-		if (sd_parent_degenerate(tmp, parent)) {
-			tmp->parent = parent->parent;
+		اگر (sd_والد_degenerate(tmp, والد)) {
+			tmp->والد = والد->والد;
 
 			/* Pick reference to parent->shared. */
-			if (parent->shared) {
+			اگر (والد->shared) {
 				/*
 				 * It is safe to free a sd->shared that
 				 * has not been published yet. If a
@@ -781,13 +781,13 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
 				 * not be freed here.
 				 */
 				free_sched_domain_shared(tmp->shared);
-				tmp->shared = parent->shared;
-				parent->shared = NULL;
+				tmp->shared = والد->shared;
+				والد->shared = تہی;
 			}
 
-			if (parent->parent) {
-				parent->parent->child = tmp;
-				parent->parent->groups->flags = tmp->flags;
+			اگر (والد->والد) {
+				والد->والد->بچہ = tmp;
+				والد->والد->groups->flags = tmp->flags;
 			}
 
 			/*
@@ -795,40 +795,40 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
 			 * degenerate parent; the spans match for this
 			 * so the property transfers.
 			 */
-			if (parent->flags & SD_PREFER_SIBLING)
+			اگر (والد->flags & SD_PREFER_SIBLING)
 				tmp->flags |= SD_PREFER_SIBLING;
-			destroy_sched_domain(parent);
-		} else
-			tmp = tmp->parent;
+			destroy_sched_domain(والد);
+		} ورنہ
+			tmp = tmp->والد;
 	}
 
-	if (sd && sd_degenerate(sd)) {
+	اگر (sd && sd_degenerate(sd)) {
 		tmp = sd;
-		sd = sd->parent;
+		sd = sd->والد;
 
-		if (sd) {
-			struct sched_group *sg = sd->groups;
+		اگر (sd) {
+			ساخت sched_گروہ *sg = sd->groups;
 
-#ifdef CONFIG_SCHED_CACHE
+#اگر_تعریف_شدہ CONFIG_SCHED_CACHE
 			/* move buffer to parent as child is being destroyed */
 			sd->llc_counts = tmp->llc_counts;
 			sd->llc_max = tmp->llc_max;
-			sd->llc_bytes = tmp->llc_bytes;
+			sd->llc_بائٹیں = tmp->llc_بائٹیں;
 			/* make sure destroy_sched_domain() does not free it */
-			tmp->llc_counts = NULL;
+			tmp->llc_counts = تہی;
 			tmp->llc_max = 0;
-			tmp->llc_bytes = 0;
-#endif
+			tmp->llc_بائٹیں = 0;
+#اگر_ختم
 			/*
 			 * sched groups hold the flags of the child sched
 			 * domain for convenience. Clear such flags since
 			 * the child is being destroyed.
 			 */
-			do {
+			کرو {
 				sg->flags = 0;
-			} while (sg != sd->groups);
+			} جب (sg != sd->groups);
 
-			sd->child = NULL;
+			sd->بچہ = تہی;
 		}
 
 		destroy_sched_domain(tmp);
@@ -836,22 +836,22 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
 
 	sched_domain_debug(sd, cpu);
 
-	rq_attach_root(rq, rd);
+	rq_attach_جڑ(rq, rd);
 	tmp = rq->sd;
-	rcu_assign_pointer(rq->sd, sd);
+	rcu_تفویض_اشارہ_گر(rq->sd, sd);
 	dirty_sched_domain_sysctl(cpu);
 	destroy_sched_domains(tmp);
 
-	update_top_cache_domain(cpu);
+	update_چوٹی_cache_domain(cpu);
 }
 
-struct s_data {
-	struct sched_domain_shared * __percpu *sds;
-	struct sched_domain * __percpu *sd;
-	struct root_domain	*rd;
+ساخت s_ڈیٹا {
+	ساخت sched_domain_shared * __percpu *sds;
+	ساخت sched_domain * __percpu *sd;
+	ساخت جڑ_domain	*rd;
 };
 
-enum s_alloc {
+شمار s_alloc {
 	sa_rootdomain,
 	sa_sd,
 	sa_sd_shared,
@@ -859,16 +859,16 @@ enum s_alloc {
 	sa_none,
 };
 
-#ifdef CONFIG_SCHED_CACHE
+#اگر_تعریف_شدہ CONFIG_SCHED_CACHE
 /* hardware support for cache aware scheduling */
-DEFINE_STATIC_KEY_FALSE(sched_cache_present);
+DEFINE_STATIC_کلید_FALSE(sched_cache_present);
 /*
  * Indicator of whether cache aware scheduling
  * is active, used by the scheduler.
  */
-DEFINE_STATIC_KEY_FALSE(sched_cache_active);
+DEFINE_STATIC_کلید_FALSE(sched_cache_فعال);
 /* user wants cache aware scheduling [0 or 1] */
-int sysctl_sched_cache_user = 1;
+صحیح sysctl_sched_cache_user = 1;
 
 /*
  * Get the effective LLC size in bytes that @cpu's bottom sched_domain
@@ -885,90 +885,90 @@ int sysctl_sched_cache_user = 1;
  * to fill in the bottom domain's llc_bytes once the cache attributes
  * are available.
  */
-static unsigned long get_effective_llc_bytes(int cpu,
-					     struct sched_domain *sd)
+ساکن غیرعلامتی طویل get_effective_llc_بائٹیں(صحیح cpu,
+					     ساخت sched_domain *sd)
 {
-	struct cacheinfo *ci;
-	unsigned int hw_weight;
+	ساخت cacheinfo *ci;
+	غیرعلامتی صحیح hw_وزن;
 
 	ci = get_cpu_cacheinfo_llc(cpu);
-	if (!ci)
-		return 0;
+	اگر (!ci)
+		واپس 0;
 
-	hw_weight = cpumask_weight(&ci->shared_cpu_map);
-	if (!hw_weight)
-		return 0;
+	hw_وزن = cpumask_وزن(&ci->shared_cpu_map);
+	اگر (!hw_وزن)
+		واپس 0;
 
-	return div_u64((u64)ci->size * sd->span_weight, hw_weight);
+	واپس div_u64((u64)ci->سائز * sd->وسعت_وزن, hw_وزن);
 }
 
-static bool alloc_sd_llc(const struct cpumask *cpu_map,
-			 struct s_data *d)
+ساکن bool alloc_sd_llc(ثابت ساخت cpumask *cpu_map,
+			 ساخت s_ڈیٹا *d)
 {
-	struct sched_domain *sd, *top_llc, *parent;
-	unsigned int *p;
-	int i;
+	ساخت sched_domain *sd, *چوٹی_llc, *والد;
+	غیرعلامتی صحیح *p;
+	صحیح i;
 
 	for_each_cpu(i, cpu_map) {
-		sd = *per_cpu_ptr(d->sd, i);
-		if (!sd)
-			goto err;
+		sd = *فی_cpu_ptr(d->sd, i);
+		اگر (!sd)
+			جاؤ err;
 
-		p = kcalloc_node(max_lid + 1, sizeof(unsigned int),
-				 GFP_KERNEL, cpu_to_node(i));
-		if (!p)
-			goto err;
+		p = kcalloc_گرہ(max_lid + 1, حجم(غیرعلامتی صحیح),
+				 GFP_KERNEL, cpu_مقصد_گرہ(i));
+		اگر (!p)
+			جاؤ err;
 
-		top_llc = sd;
+		چوٹی_llc = sd;
 		/*
 		 * Find the topmost SD_SHARE_LLC domain.
 		 * Not yet attached to the CPU, so per_cpu(sd_llc, i)
 		 * can not be used.
 		 */
-		while ((parent = rcu_dereference_protected(top_llc->parent, true)) &&
-		       (parent->flags & SD_SHARE_LLC))
-			top_llc = parent;
+		جب ((والد = rcu_dereference_protected(چوٹی_llc->والد, true)) &&
+		       (والد->flags & SD_SHARE_LLC))
+			چوٹی_llc = والد;
 
-		if (top_llc->flags & SD_SHARE_LLC) {
+		اگر (چوٹی_llc->flags & SD_SHARE_LLC) {
 			sd->llc_max = max_lid + 1;
 			sd->llc_counts = p;
-			sd->llc_bytes = get_effective_llc_bytes(i, top_llc);
-		} else {
+			sd->llc_بائٹیں = get_effective_llc_بائٹیں(i, چوٹی_llc);
+		} ورنہ {
 			/* avoid memory leak */
 			kfree(p);
 		}
 	}
 
-	return true;
+	واپس true;
 err:
 	for_each_cpu(i, cpu_map) {
-		sd = *per_cpu_ptr(d->sd, i);
-		if (sd) {
+		sd = *فی_cpu_ptr(d->sd, i);
+		اگر (sd) {
 			kfree(sd->llc_counts);
-			sd->llc_counts = NULL;
+			sd->llc_counts = تہی;
 			sd->llc_max = 0;
-			sd->llc_bytes = 0;
+			sd->llc_بائٹیں = 0;
 		}
 	}
 
-	return false;
+	واپس false;
 }
 
 /*
  * Enable/disable cache aware scheduling according to
  * user input and the presence of hardware support.
  */
-static void _sched_cache_active_set(void)
+ساکن خالی sched_cache_فعال_سیٹ_2(خالی)
 {
 	lockdep_assert_cpus_held();
 	lockdep_assert_held(&sched_domains_mutex);
 
 	/* hardware does not support */
-	if (!static_branch_likely(&sched_cache_present)) {
-		static_branch_disable_cpuslocked(&sched_cache_active);
-		if (sched_debug())
+	اگر (!static_branch_likely(&sched_cache_present)) {
+		static_branch_disable_cpuslocked(&sched_cache_فعال);
+		اگر (sched_debug())
 			pr_info("%s: cache aware scheduling not supported on this platform\n", __func__);
-		return;
+		واپس;
 	}
 
 	/*
@@ -977,23 +977,23 @@ static void _sched_cache_active_set(void)
 	 * It is not in the critical path, leave as-is
 	 * for now.
 	 */
-	if (sysctl_sched_cache_user) {
-		static_branch_enable_cpuslocked(&sched_cache_active);
-		if (sched_debug())
+	اگر (sysctl_sched_cache_user) {
+		static_branch_enable_cpuslocked(&sched_cache_فعال);
+		اگر (sched_debug())
 			pr_info("%s: enabling cache aware scheduling\n", __func__);
-	} else {
-		static_branch_disable_cpuslocked(&sched_cache_active);
-		if (sched_debug())
+	} ورنہ {
+		static_branch_disable_cpuslocked(&sched_cache_فعال);
+		اگر (sched_debug())
 			pr_info("%s: disabling cache aware scheduling\n", __func__);
 	}
 }
 
 /* used by debugfs */
-void sched_cache_active_set(void)
+خالی sched_cache_فعال_سیٹ(خالی)
 {
-	cpus_read_lock();
-	sched_domains_mutex_lock();
-	_sched_cache_active_set();
+	cpus_read_تالا();
+	sched_domains_mutex_تالا();
+	sched_cache_فعال_سیٹ_2();
 	sched_domains_mutex_unlock();
 	cpus_read_unlock();
 }
@@ -1010,12 +1010,12 @@ void sched_cache_active_set(void)
  * and does not populates the per-CPU struct cpu_cacheinfo array
  * that get_cpu_cacheinfo_llc() reads.
  */
-void sched_update_llc_bytes(const struct cpumask *cpus)
+خالی sched_update_llc_بائٹیں(ثابت ساخت cpumask *cpus)
 {
-	struct sched_domain *sd, *sdp;
-	unsigned int i;
+	ساخت sched_domain *sd, *sdp;
+	غیرعلامتی صحیح i;
 
-	sched_domains_mutex_lock();
+	sched_domains_mutex_تالا();
 
 	/*
 	 * ci->shared_cpu_map is built incrementally as CPUs come
@@ -1031,39 +1031,39 @@ void sched_update_llc_bytes(const struct cpumask *cpus)
 	 * own LLC domain to scale its share of the physical cache.
 	 */
 	for_each_cpu(i, cpus) {
-		sdp = rcu_dereference_sched_domain(per_cpu(sd_llc, i));
-		if (!sdp)
-			continue;
+		sdp = rcu_dereference_sched_domain(فی_cpu(sd_llc, i));
+		اگر (!sdp)
+			جاری;
 
 		sd = rcu_dereference_sched_domain(cpu_rq(i)->sd);
-		if (sd)
-			sd->llc_bytes = get_effective_llc_bytes(i, sdp);
+		اگر (sd)
+			sd->llc_بائٹیں = get_effective_llc_بائٹیں(i, sdp);
 	}
 
 	sched_domains_mutex_unlock();
 }
 
-static void sched_cache_set(bool has_multi_llcs)
+ساکن خالی sched_cache_سیٹ(bool has_multi_llcs)
 {
 	/*
 	 * TBD: check before writing to it. sched domain rebuild
 	 * is not in the critical path, leave as-is for now.
 	 */
-	if (has_multi_llcs)
+	اگر (has_multi_llcs)
 		static_branch_enable_cpuslocked(&sched_cache_present);
-	else
+	ورنہ
 		static_branch_disable_cpuslocked(&sched_cache_present);
 
-	_sched_cache_active_set();
+	sched_cache_فعال_سیٹ_2();
 }
-#else
-static bool alloc_sd_llc(const struct cpumask *cpu_map,
-			 struct s_data *d)
+#ورنہ
+ساکن bool alloc_sd_llc(ثابت ساخت cpumask *cpu_map,
+			 ساخت s_ڈیٹا *d)
 {
-	return false;
+	واپس false;
 }
-static inline void sched_cache_set(bool has_multi_llcs) { }
-#endif
+ساکن اندرونی خالی sched_cache_سیٹ(bool has_multi_llcs) { }
+#اگر_ختم
 
 /*
  * Return true if @sd belongs to an LLC group whose enclosing
@@ -1082,18 +1082,18 @@ static inline void sched_cache_set(bool has_multi_llcs) { }
  * cache-aware scheduling. Conversely, if there is only one
  * LLC per partition, cache-aware scheduling should be disabled.
  */
-static bool sd_in_multi_llcs(struct sched_domain *sd)
+ساکن bool sd_اندر_multi_llcs(ساخت sched_domain *sd)
 {
-	struct sched_domain *sdp = sd->parent;
+	ساخت sched_domain *sdp = sd->والد;
 
 	/* it does not make sense to aggregate to 1 CPU */
-	if (sd->span_weight == 1)
-		return false;
+	اگر (sd->وسعت_وزن == 1)
+		واپس false;
 
-	while (sdp && sdp->span_weight == sd->span_weight)
-		sdp = sdp->parent;
+	جب (sdp && sdp->وسعت_وزن == sd->وسعت_وزن)
+		sdp = sdp->والد;
 
-	return !!sdp;
+	واپس !!sdp;
 }
 
 /*
@@ -1105,9 +1105,9 @@ static bool sd_in_multi_llcs(struct sched_domain *sd)
  *
  * Also see should_we_balance().
  */
-int group_balance_cpu(struct sched_group *sg)
+صحیح گروہ_balance_cpu(ساخت sched_گروہ *sg)
 {
-	return cpumask_first(group_balance_mask(sg));
+	واپس cpumask_پہلا(گروہ_balance_نقاب(sg));
 }
 
 
@@ -1216,36 +1216,36 @@ int group_balance_cpu(struct sched_group *sg)
  * can fully construct this using the sched_domain bits (which are already
  * complete).
  */
-static void
-build_balance_mask(struct sched_domain *sd, struct sched_group *sg, struct cpumask *mask)
+ساکن خالی
+build_balance_نقاب(ساخت sched_domain *sd, ساخت sched_گروہ *sg, ساخت cpumask *نقاب)
 {
-	const struct cpumask *sg_span = sched_group_span(sg);
-	struct sd_data *sdd = sd->private;
-	struct sched_domain *sibling;
-	int i;
+	ثابت ساخت cpumask *sg_وسعت = sched_گروہ_وسعت(sg);
+	ساخت sd_ڈیٹا *sdd = sd->نجی;
+	ساخت sched_domain *sibling;
+	صحیح i;
 
-	cpumask_clear(mask);
+	cpumask_clear(نقاب);
 
-	for_each_cpu(i, sg_span) {
-		sibling = *per_cpu_ptr(sdd->sd, i);
+	for_each_cpu(i, sg_وسعت) {
+		sibling = *فی_cpu_ptr(sdd->sd, i);
 
 		/*
 		 * Can happen in the asymmetric case, where these siblings are
 		 * unused. The mask will not be empty because those CPUs that
 		 * do have the top domain _should_ span the domain.
 		 */
-		if (!sibling->child)
-			continue;
+		اگر (!sibling->بچہ)
+			جاری;
 
 		/* If we would not end up here, we can't continue from here */
-		if (!cpumask_equal(sg_span, sched_domain_span(sibling->child)))
-			continue;
+		اگر (!cpumask_equal(sg_وسعت, sched_domain_وسعت(sibling->بچہ)))
+			جاری;
 
-		cpumask_set_cpu(i, mask);
+		cpumask_سیٹ_cpu(i, نقاب);
 	}
 
 	/* We must not have empty masks here */
-	WARN_ON_ONCE(cpumask_empty(mask));
+	WARN_ON_ONCE(cpumask_خالی_خانے(نقاب));
 }
 
 /*
@@ -1253,102 +1253,102 @@ build_balance_mask(struct sched_domain *sd, struct sched_group *sg, struct cpuma
  * immediately access remote memory to construct this group's load-balance
  * statistics having the groups node local is of dubious benefit.
  */
-static struct sched_group *
-build_group_from_child_sched_domain(struct sched_domain *sd, int cpu)
+ساکن ساخت sched_گروہ *
+build_گروہ_from_بچہ_sched_domain(ساخت sched_domain *sd, صحیح cpu)
 {
-	struct sched_group *sg;
-	struct cpumask *sg_span;
+	ساخت sched_گروہ *sg;
+	ساخت cpumask *sg_وسعت;
 
-	sg = kzalloc_node(sizeof(struct sched_group) + cpumask_size(),
-			GFP_KERNEL, cpu_to_node(cpu));
+	sg = kzalloc_گرہ(حجم(ساخت sched_گروہ) + cpumask_سائز(),
+			GFP_KERNEL, cpu_مقصد_گرہ(cpu));
 
-	if (!sg)
-		return NULL;
+	اگر (!sg)
+		واپس تہی;
 
-	sg_span = sched_group_span(sg);
-	if (sd->child) {
-		cpumask_copy(sg_span, sched_domain_span(sd->child));
-		sg->flags = sd->child->flags;
-	} else {
-		cpumask_copy(sg_span, sched_domain_span(sd));
+	sg_وسعت = sched_گروہ_وسعت(sg);
+	اگر (sd->بچہ) {
+		cpumask_copy(sg_وسعت, sched_domain_وسعت(sd->بچہ));
+		sg->flags = sd->بچہ->flags;
+	} ورنہ {
+		cpumask_copy(sg_وسعت, sched_domain_وسعت(sd));
 	}
 
 	atomic_inc(&sg->ref);
-	return sg;
+	واپس sg;
 }
 
-static void init_overlap_sched_group(struct sched_domain *sd,
-				     struct sched_group *sg)
+ساکن خالی init_overlap_sched_گروہ(ساخت sched_domain *sd,
+				     ساخت sched_گروہ *sg)
 {
-	struct cpumask *mask = sched_domains_tmpmask2;
-	struct sd_data *sdd = sd->private;
-	struct cpumask *sg_span;
-	int cpu;
+	ساخت cpumask *نقاب = sched_domains_tmpmask2;
+	ساخت sd_ڈیٹا *sdd = sd->نجی;
+	ساخت cpumask *sg_وسعت;
+	صحیح cpu;
 
-	build_balance_mask(sd, sg, mask);
-	cpu = cpumask_first(mask);
+	build_balance_نقاب(sd, sg, نقاب);
+	cpu = cpumask_پہلا(نقاب);
 
-	sg->sgc = *per_cpu_ptr(sdd->sgc, cpu);
-	if (atomic_inc_return(&sg->sgc->ref) == 1)
-		cpumask_copy(group_balance_mask(sg), mask);
-	else
-		WARN_ON_ONCE(!cpumask_equal(group_balance_mask(sg), mask));
+	sg->sgc = *فی_cpu_ptr(sdd->sgc, cpu);
+	اگر (atomic_inc_return(&sg->sgc->ref) == 1)
+		cpumask_copy(گروہ_balance_نقاب(sg), نقاب);
+	ورنہ
+		WARN_ON_ONCE(!cpumask_equal(گروہ_balance_نقاب(sg), نقاب));
 
 	/*
 	 * Initialize sgc->capacity such that even if we mess up the
 	 * domains and no possible iteration will get us here, we won't
 	 * die on a /0 trap.
 	 */
-	sg_span = sched_group_span(sg);
-	sg->sgc->capacity = SCHED_CAPACITY_SCALE * cpumask_weight(sg_span);
-	sg->sgc->min_capacity = SCHED_CAPACITY_SCALE;
-	sg->sgc->max_capacity = SCHED_CAPACITY_SCALE;
+	sg_وسعت = sched_گروہ_وسعت(sg);
+	sg->sgc->استعداد = SCHED_استعداد_SCALE * cpumask_وزن(sg_وسعت);
+	sg->sgc->min_استعداد = SCHED_استعداد_SCALE;
+	sg->sgc->max_استعداد = SCHED_استعداد_SCALE;
 }
 
-static struct sched_domain *
-find_descended_sibling(struct sched_domain *sd, struct sched_domain *sibling)
+ساکن ساخت sched_domain *
+ڈھونڈو_descended_sibling(ساخت sched_domain *sd, ساخت sched_domain *sibling)
 {
 	/*
 	 * The proper descendant would be the one whose child won't span out
 	 * of sd
 	 */
-	while (sibling->child &&
-	       !cpumask_subset(sched_domain_span(sibling->child),
-			       sched_domain_span(sd)))
-		sibling = sibling->child;
+	جب (sibling->بچہ &&
+	       !cpumask_subset(sched_domain_وسعت(sibling->بچہ),
+			       sched_domain_وسعت(sd)))
+		sibling = sibling->بچہ;
 
 	/*
 	 * As we are referencing sgc across different topology level, we need
 	 * to go down to skip those sched_domains which don't contribute to
 	 * scheduling because they will be degenerated in cpu_attach_domain
 	 */
-	while (sibling->child &&
-	       cpumask_equal(sched_domain_span(sibling->child),
-			     sched_domain_span(sibling)))
-		sibling = sibling->child;
+	جب (sibling->بچہ &&
+	       cpumask_equal(sched_domain_وسعت(sibling->بچہ),
+			     sched_domain_وسعت(sibling)))
+		sibling = sibling->بچہ;
 
-	return sibling;
+	واپس sibling;
 }
 
-static int
-build_overlap_sched_groups(struct sched_domain *sd, int cpu)
+ساکن صحیح
+build_overlap_sched_groups(ساخت sched_domain *sd, صحیح cpu)
 {
-	struct sched_group *first = NULL, *last = NULL, *sg;
-	const struct cpumask *span = sched_domain_span(sd);
-	struct cpumask *covered = sched_domains_tmpmask;
-	struct sd_data *sdd = sd->private;
-	struct sched_domain *sibling;
-	int i;
+	ساخت sched_گروہ *پہلا = تہی, *آخری = تہی, *sg;
+	ثابت ساخت cpumask *وسعت = sched_domain_وسعت(sd);
+	ساخت cpumask *covered = sched_domains_tmpmask;
+	ساخت sd_ڈیٹا *sdd = sd->نجی;
+	ساخت sched_domain *sibling;
+	صحیح i;
 
 	cpumask_clear(covered);
 
-	for_each_cpu_wrap(i, span, cpu) {
-		struct cpumask *sg_span;
+	for_each_cpu_wrap(i, وسعت, cpu) {
+		ساخت cpumask *sg_وسعت;
 
-		if (cpumask_test_cpu(i, covered))
-			continue;
+		اگر (cpumask_test_cpu(i, covered))
+			جاری;
 
-		sibling = *per_cpu_ptr(sdd->sd, i);
+		sibling = *فی_cpu_ptr(sdd->sd, i);
 
 		/*
 		 * Asymmetric node setups can result in situations where the
@@ -1360,8 +1360,8 @@ build_overlap_sched_groups(struct sched_domain *sd, int cpu)
 		 * Domains should always include the CPU they're built on, so
 		 * check that.
 		 */
-		if (!cpumask_test_cpu(i, sched_domain_span(sibling)))
-			continue;
+		اگر (!cpumask_test_cpu(i, sched_domain_وسعت(sibling)))
+			جاری;
 
 		/*
 		 * Usually we build sched_group by sibling's child sched_domain
@@ -1394,34 +1394,34 @@ build_overlap_sched_groups(struct sched_domain *sd, int cpu)
 		 * The NUMA-2 groups for nodes 0 and 3 are obviously buggered, as the
 		 * group span isn't a subset of the domain span.
 		 */
-		if (sibling->child &&
-		    !cpumask_subset(sched_domain_span(sibling->child), span))
-			sibling = find_descended_sibling(sd, sibling);
+		اگر (sibling->بچہ &&
+		    !cpumask_subset(sched_domain_وسعت(sibling->بچہ), وسعت))
+			sibling = ڈھونڈو_descended_sibling(sd, sibling);
 
-		sg = build_group_from_child_sched_domain(sibling, cpu);
-		if (!sg)
-			goto fail;
+		sg = build_گروہ_from_بچہ_sched_domain(sibling, cpu);
+		اگر (!sg)
+			جاؤ fail;
 
-		sg_span = sched_group_span(sg);
-		cpumask_or(covered, covered, sg_span);
+		sg_وسعت = sched_گروہ_وسعت(sg);
+		cpumask_or(covered, covered, sg_وسعت);
 
-		init_overlap_sched_group(sibling, sg);
+		init_overlap_sched_گروہ(sibling, sg);
 
-		if (!first)
-			first = sg;
-		if (last)
-			last->next = sg;
-		last = sg;
-		last->next = first;
+		اگر (!پہلا)
+			پہلا = sg;
+		اگر (آخری)
+			آخری->اگلا = sg;
+		آخری = sg;
+		آخری->اگلا = پہلا;
 	}
-	sd->groups = first;
+	sd->groups = پہلا;
 
-	return 0;
+	واپس 0;
 
 fail:
-	free_sched_groups(first, 0);
+	free_sched_groups(پہلا, 0);
 
-	return -ENOMEM;
+	واپس -ENOMEM;
 }
 
 
@@ -1496,42 +1496,42 @@ fail:
  * [*] in other words, the first group of each domain is its child domain.
  */
 
-static struct sched_group *get_group(int cpu, struct sd_data *sdd)
+ساکن ساخت sched_گروہ *get_گروہ(صحیح cpu, ساخت sd_ڈیٹا *sdd)
 {
-	struct sched_domain *sd = *per_cpu_ptr(sdd->sd, cpu);
-	struct sched_domain *child = sd->child;
-	struct sched_group *sg;
-	bool already_visited;
+	ساخت sched_domain *sd = *فی_cpu_ptr(sdd->sd, cpu);
+	ساخت sched_domain *بچہ = sd->بچہ;
+	ساخت sched_گروہ *sg;
+	bool already_دیکھا;
 
-	if (child)
-		cpu = cpumask_first(sched_domain_span(child));
+	اگر (بچہ)
+		cpu = cpumask_پہلا(sched_domain_وسعت(بچہ));
 
-	sg = *per_cpu_ptr(sdd->sg, cpu);
-	sg->sgc = *per_cpu_ptr(sdd->sgc, cpu);
+	sg = *فی_cpu_ptr(sdd->sg, cpu);
+	sg->sgc = *فی_cpu_ptr(sdd->sgc, cpu);
 
 	/* Increase refcounts for claim_allocations: */
-	already_visited = atomic_inc_return(&sg->ref) > 1;
+	already_دیکھا = atomic_inc_return(&sg->ref) > 1;
 	/* sgc visits should follow a similar trend as sg */
-	WARN_ON(already_visited != (atomic_inc_return(&sg->sgc->ref) > 1));
+	WARN_ON(already_دیکھا != (atomic_inc_return(&sg->sgc->ref) > 1));
 
 	/* If we have already visited that group, it's already initialized. */
-	if (already_visited)
-		return sg;
+	اگر (already_دیکھا)
+		واپس sg;
 
-	if (child) {
-		cpumask_copy(sched_group_span(sg), sched_domain_span(child));
-		cpumask_copy(group_balance_mask(sg), sched_group_span(sg));
-		sg->flags = child->flags;
-	} else {
-		cpumask_set_cpu(cpu, sched_group_span(sg));
-		cpumask_set_cpu(cpu, group_balance_mask(sg));
+	اگر (بچہ) {
+		cpumask_copy(sched_گروہ_وسعت(sg), sched_domain_وسعت(بچہ));
+		cpumask_copy(گروہ_balance_نقاب(sg), sched_گروہ_وسعت(sg));
+		sg->flags = بچہ->flags;
+	} ورنہ {
+		cpumask_سیٹ_cpu(cpu, sched_گروہ_وسعت(sg));
+		cpumask_سیٹ_cpu(cpu, گروہ_balance_نقاب(sg));
 	}
 
-	sg->sgc->capacity = SCHED_CAPACITY_SCALE * cpumask_weight(sched_group_span(sg));
-	sg->sgc->min_capacity = SCHED_CAPACITY_SCALE;
-	sg->sgc->max_capacity = SCHED_CAPACITY_SCALE;
+	sg->sgc->استعداد = SCHED_استعداد_SCALE * cpumask_وزن(sched_گروہ_وسعت(sg));
+	sg->sgc->min_استعداد = SCHED_استعداد_SCALE;
+	sg->sgc->max_استعداد = SCHED_استعداد_SCALE;
 
-	return sg;
+	واپس sg;
 }
 
 /*
@@ -1541,40 +1541,40 @@ static struct sched_group *get_group(int cpu, struct sd_data *sdd)
  *
  * Assumes the sched_domain tree is fully constructed
  */
-static int
-build_sched_groups(struct sched_domain *sd, int cpu)
+ساکن صحیح
+build_sched_groups(ساخت sched_domain *sd, صحیح cpu)
 {
-	struct sched_group *first = NULL, *last = NULL;
-	struct sd_data *sdd = sd->private;
-	const struct cpumask *span = sched_domain_span(sd);
-	struct cpumask *covered;
-	int i;
+	ساخت sched_گروہ *پہلا = تہی, *آخری = تہی;
+	ساخت sd_ڈیٹا *sdd = sd->نجی;
+	ثابت ساخت cpumask *وسعت = sched_domain_وسعت(sd);
+	ساخت cpumask *covered;
+	صحیح i;
 
 	lockdep_assert_held(&sched_domains_mutex);
 	covered = sched_domains_tmpmask;
 
 	cpumask_clear(covered);
 
-	for_each_cpu_wrap(i, span, cpu) {
-		struct sched_group *sg;
+	for_each_cpu_wrap(i, وسعت, cpu) {
+		ساخت sched_گروہ *sg;
 
-		if (cpumask_test_cpu(i, covered))
-			continue;
+		اگر (cpumask_test_cpu(i, covered))
+			جاری;
 
-		sg = get_group(i, sdd);
+		sg = get_گروہ(i, sdd);
 
-		cpumask_or(covered, covered, sched_group_span(sg));
+		cpumask_or(covered, covered, sched_گروہ_وسعت(sg));
 
-		if (!first)
-			first = sg;
-		if (last)
-			last->next = sg;
-		last = sg;
+		اگر (!پہلا)
+			پہلا = sg;
+		اگر (آخری)
+			آخری->اگلا = sg;
+		آخری = sg;
 	}
-	last->next = first;
-	sd->groups = first;
+	آخری->اگلا = پہلا;
+	sd->groups = پہلا;
 
-	return 0;
+	واپس 0;
 }
 
 /*
@@ -1587,60 +1587,60 @@ build_sched_groups(struct sched_domain *sd, int cpu)
  * group having more cpu_capacity will pickup more load compared to the
  * group having less cpu_capacity.
  */
-static void init_sched_groups_capacity(int cpu, struct sched_domain *sd)
+ساکن خالی init_sched_groups_استعداد(صحیح cpu, ساخت sched_domain *sd)
 {
-	struct sched_group *sg = sd->groups;
-	struct cpumask *mask = sched_domains_tmpmask2;
+	ساخت sched_گروہ *sg = sd->groups;
+	ساخت cpumask *نقاب = sched_domains_tmpmask2;
 
 	WARN_ON(!sg);
 
-	do {
-		int cpu, cores = 0, max_cpu = -1;
+	کرو {
+		صحیح cpu, cores = 0, max_cpu = -1;
 
-		sg->group_weight = cpumask_weight(sched_group_span(sg));
+		sg->گروہ_وزن = cpumask_وزن(sched_گروہ_وسعت(sg));
 
-		cpumask_copy(mask, sched_group_span(sg));
-		for_each_cpu(cpu, mask) {
+		cpumask_copy(نقاب, sched_گروہ_وسعت(sg));
+		for_each_cpu(cpu, نقاب) {
 			cores++;
-			cpumask_andnot(mask, mask, cpu_smt_mask(cpu));
+			cpumask_andnot(نقاب, نقاب, cpu_smt_نقاب(cpu));
 		}
 		sg->cores = cores;
 
-		if (!(sd->flags & SD_ASYM_PACKING))
-			goto next;
+		اگر (!(sd->flags & SD_ASYM_PACKING))
+			جاؤ اگلا;
 
-		for_each_cpu(cpu, sched_group_span(sg)) {
-			if (max_cpu < 0)
+		for_each_cpu(cpu, sched_گروہ_وسعت(sg)) {
+			اگر (max_cpu < 0)
 				max_cpu = cpu;
-			else if (sched_asym_prefer(cpu, max_cpu))
+			ورنہ اگر (sched_asym_prefer(cpu, max_cpu))
 				max_cpu = cpu;
 		}
 		sg->asym_prefer_cpu = max_cpu;
 
-next:
-		sg = sg->next;
-	} while (sg != sd->groups);
+اگلا:
+		sg = sg->اگلا;
+	} جب (sg != sd->groups);
 
-	if (cpu != group_balance_cpu(sg))
-		return;
+	اگر (cpu != گروہ_balance_cpu(sg))
+		واپس;
 
-	update_group_capacity(sd, cpu);
+	update_گروہ_استعداد(sd, cpu);
 }
 
 /* Update the "asym_prefer_cpu" when arch_asym_cpu_priority() changes. */
-void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
+خالی sched_update_asym_prefer_cpu(صحیح cpu, صحیح old_prio, صحیح new_prio)
 {
-	int asym_prefer_cpu = cpu;
-	struct sched_domain *sd;
+	صحیح asym_prefer_cpu = cpu;
+	ساخت sched_domain *sd;
 
 	guard(rcu)();
 
 	for_each_domain(cpu, sd) {
-		struct sched_group *sg;
-		int group_cpu;
+		ساخت sched_گروہ *sg;
+		صحیح گروہ_cpu;
 
-		if (!(sd->flags & SD_ASYM_PACKING))
-			continue;
+		اگر (!(sd->flags & SD_ASYM_PACKING))
+			جاری;
 
 		/*
 		 * Groups of overlapping domain are replicated per NUMA
@@ -1654,27 +1654,27 @@ void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
 		WARN_ON_ONCE(sd->flags & SD_NUMA);
 
 		sg = sd->groups;
-		if (cpu != sg->asym_prefer_cpu) {
+		اگر (cpu != sg->asym_prefer_cpu) {
 			/*
 			 * Since the parent is a superset of the current group,
 			 * if the cpu is not the "asym_prefer_cpu" at the
 			 * current level, it cannot be the preferred CPU at a
 			 * higher levels either.
 			 */
-			if (!sched_asym_prefer(cpu, sg->asym_prefer_cpu))
-				return;
+			اگر (!sched_asym_prefer(cpu, sg->asym_prefer_cpu))
+				واپس;
 
 			WRITE_ONCE(sg->asym_prefer_cpu, cpu);
-			continue;
+			جاری;
 		}
 
 		/* Ranking has improved; CPU is still the preferred one. */
-		if (new_prio >= old_prio)
-			continue;
+		اگر (new_prio >= old_prio)
+			جاری;
 
-		for_each_cpu(group_cpu, sched_group_span(sg)) {
-			if (sched_asym_prefer(group_cpu, asym_prefer_cpu))
-				asym_prefer_cpu = group_cpu;
+		for_each_cpu(گروہ_cpu, sched_گروہ_وسعت(sg)) {
+			اگر (sched_asym_prefer(گروہ_cpu, asym_prefer_cpu))
+				asym_prefer_cpu = گروہ_cpu;
 		}
 
 		WRITE_ONCE(sg->asym_prefer_cpu, asym_prefer_cpu);
@@ -1687,18 +1687,18 @@ void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
  * capacity.
  * The lifespan of data is unlimited.
  */
-LIST_HEAD(asym_cap_list);
+LIST_سر(asym_cap_list);
 
 /*
  * Verify whether there is any CPU capacity asymmetry in a given sched domain.
  * Provides sd_flags reflecting the asymmetry scope.
  */
-static inline int
-asym_cpu_capacity_classify(const struct cpumask *sd_span,
-			   const struct cpumask *cpu_map)
+ساکن اندرونی صحیح
+asym_cpu_استعداد_classify(ثابت ساخت cpumask *sd_وسعت,
+			   ثابت ساخت cpumask *cpu_map)
 {
-	struct asym_cap_data *entry;
-	int count = 0, miss = 0;
+	ساخت asym_cap_ڈیٹا *اندراج_2;
+	صحیح گنتی = 0, ناکامی = 0;
 
 	/*
 	 * Count how many unique CPU capacities this domain spans across
@@ -1706,62 +1706,62 @@ asym_cpu_capacity_classify(const struct cpumask *sd_span,
 	 * CPUs capacities). Take into account CPUs that might be offline:
 	 * skip those.
 	 */
-	list_for_each_entry(entry, &asym_cap_list, link) {
-		if (cpumask_intersects(sd_span, cpu_capacity_span(entry)))
-			++count;
-		else if (cpumask_intersects(cpu_map, cpu_capacity_span(entry)))
-			++miss;
+	list_for_each_اندراج(اندراج_2, &asym_cap_list, link) {
+		اگر (cpumask_intersects(sd_وسعت, cpu_استعداد_وسعت(اندراج_2)))
+			++گنتی;
+		ورنہ اگر (cpumask_intersects(cpu_map, cpu_استعداد_وسعت(اندراج_2)))
+			++ناکامی;
 	}
 
-	WARN_ON_ONCE(!count && !list_empty(&asym_cap_list));
+	WARN_ON_ONCE(!گنتی && !list_خالی_خانے(&asym_cap_list));
 
 	/* No asymmetry detected */
-	if (count < 2)
-		return 0;
+	اگر (گنتی < 2)
+		واپس 0;
 	/* Some of the available CPU capacity values have not been detected */
-	if (miss)
-		return SD_ASYM_CPUCAPACITY;
+	اگر (ناکامی)
+		واپس SD_ASYM_CPUCAPACITY;
 
 	/* Full asymmetry */
-	return SD_ASYM_CPUCAPACITY | SD_ASYM_CPUCAPACITY_FULL;
+	واپس SD_ASYM_CPUCAPACITY | SD_ASYM_CPUCAPACITY_بھرا;
 
 }
 
-static void free_asym_cap_entry(struct rcu_head *head)
+ساکن خالی free_asym_cap_اندراج(ساخت rcu_سر *سر)
 {
-	struct asym_cap_data *entry = container_of(head, struct asym_cap_data, rcu);
-	kfree(entry);
+	ساخت asym_cap_ڈیٹا *اندراج_2 = container_کا(سر, ساخت asym_cap_ڈیٹا, rcu);
+	kfree(اندراج_2);
 }
 
-static inline void asym_cpu_capacity_update_data(int cpu)
+ساکن اندرونی خالی asym_cpu_استعداد_update_ڈیٹا(صحیح cpu)
 {
-	unsigned long capacity = arch_scale_cpu_capacity(cpu);
-	struct asym_cap_data *insert_entry = NULL;
-	struct asym_cap_data *entry;
+	غیرعلامتی طویل استعداد = arch_scale_cpu_استعداد(cpu);
+	ساخت asym_cap_ڈیٹا *داخل_کرو_اندراج = تہی;
+	ساخت asym_cap_ڈیٹا *اندراج_2;
 
 	/*
 	 * Search if capacity already exits. If not, track which the entry
 	 * where we should insert to keep the list ordered descending.
 	 */
-	list_for_each_entry(entry, &asym_cap_list, link) {
-		if (capacity == entry->capacity)
-			goto done;
-		else if (!insert_entry && capacity > entry->capacity)
-			insert_entry = list_prev_entry(entry, link);
+	list_for_each_اندراج(اندراج_2, &asym_cap_list, link) {
+		اگر (استعداد == اندراج_2->استعداد)
+			جاؤ مکمل;
+		ورنہ اگر (!داخل_کرو_اندراج && استعداد > اندراج_2->استعداد)
+			داخل_کرو_اندراج = list_پچھلا_اندراج(اندراج_2, link);
 	}
 
-	entry = kzalloc(sizeof(*entry) + cpumask_size(), GFP_KERNEL);
-	if (WARN_ONCE(!entry, "Failed to allocate memory for asymmetry data\n"))
-		return;
-	entry->capacity = capacity;
+	اندراج_2 = kzalloc(حجم(*اندراج_2) + cpumask_سائز(), GFP_KERNEL);
+	اگر (WARN_ONCE(!اندراج_2, "Failed to allocate memory for asymmetry data\n"))
+		واپس;
+	اندراج_2->استعداد = استعداد;
 
 	/* If NULL then the new capacity is the smallest, add last. */
-	if (!insert_entry)
-		list_add_tail_rcu(&entry->link, &asym_cap_list);
-	else
-		list_add_rcu(&entry->link, &insert_entry->link);
-done:
-	__cpumask_set_cpu(cpu, cpu_capacity_span(entry));
+	اگر (!داخل_کرو_اندراج)
+		list_جوڑو_دم_rcu(&اندراج_2->link, &asym_cap_list);
+	ورنہ
+		list_جوڑو_rcu(&اندراج_2->link, &داخل_کرو_اندراج->link);
+مکمل:
+	__cpumask_set_cpu(cpu, cpu_استعداد_وسعت(اندراج_2));
 }
 
 /*
@@ -1769,21 +1769,21 @@ done:
  * An update requires explicit request to rebuild sched domains
  * with state indicating CPU topology changes.
  */
-static void asym_cpu_capacity_scan(void)
+ساکن خالی asym_cpu_استعداد_جائزہ(خالی)
 {
-	struct asym_cap_data *entry, *next;
-	int cpu;
+	ساخت asym_cap_ڈیٹا *اندراج_2, *اگلا;
+	صحیح cpu;
 
-	list_for_each_entry(entry, &asym_cap_list, link)
-		cpumask_clear(cpu_capacity_span(entry));
+	list_for_each_اندراج(اندراج_2, &asym_cap_list, link)
+		cpumask_clear(cpu_استعداد_وسعت(اندراج_2));
 
-	for_each_cpu_and(cpu, cpu_possible_mask, housekeeping_cpumask(HK_TYPE_DOMAIN))
-		asym_cpu_capacity_update_data(cpu);
+	for_each_cpu_and(cpu, cpu_possible_نقاب, housekeeping_cpumask(HK_TYPE_DOMAIN))
+		asym_cpu_استعداد_update_ڈیٹا(cpu);
 
-	list_for_each_entry_safe(entry, next, &asym_cap_list, link) {
-		if (cpumask_empty(cpu_capacity_span(entry))) {
-			list_del_rcu(&entry->link);
-			call_rcu(&entry->rcu, free_asym_cap_entry);
+	list_for_each_اندراج_محفوظ(اندراج_2, اگلا, &asym_cap_list, link) {
+		اگر (cpumask_خالی_خانے(cpu_استعداد_وسعت(اندراج_2))) {
+			list_del_rcu(&اندراج_2->link);
+			call_rcu(&اندراج_2->rcu, free_asym_cap_اندراج);
 		}
 	}
 
@@ -1791,10 +1791,10 @@ static void asym_cpu_capacity_scan(void)
 	 * Only one capacity value has been detected i.e. this system is symmetric.
 	 * No need to keep this data around.
 	 */
-	if (list_is_singular(&asym_cap_list)) {
-		entry = list_first_entry(&asym_cap_list, typeof(*entry), link);
-		list_del_rcu(&entry->link);
-		call_rcu(&entry->rcu, free_asym_cap_entry);
+	اگر (list_is_singular(&asym_cap_list)) {
+		اندراج_2 = list_پہلا_اندراج(&asym_cap_list, typeof(*اندراج_2), link);
+		list_del_rcu(&اندراج_2->link);
+		call_rcu(&اندراج_2->rcu, free_asym_cap_اندراج);
 	}
 }
 
@@ -1803,81 +1803,81 @@ static void asym_cpu_capacity_scan(void)
  * Non-inlined to reduce accumulated stack pressure in build_sched_domains()
  */
 
-static int default_relax_domain_level = -1;
-int sched_domain_level_max;
+ساکن صحیح default_relax_domain_level = -1;
+صحیح sched_domain_level_max;
 
-static int __init setup_relax_domain_level(char *str)
+ساکن صحیح __init تیاری_relax_domain_level(حرف *str)
 {
-	if (kstrtoint(str, 0, &default_relax_domain_level))
+	اگر (kstrtoint(str, 0, &default_relax_domain_level))
 		pr_warn("Unable to set relax_domain_level\n");
 
-	return 1;
+	واپس 1;
 }
-__setup("relax_domain_level=", setup_relax_domain_level);
+__setup("relax_domain_level=", تیاری_relax_domain_level);
 
-static void set_domain_attribute(struct sched_domain *sd,
-				 struct sched_domain_attr *attr)
+ساکن خالی سیٹ_domain_attribute(ساخت sched_domain *sd,
+				 ساخت sched_domain_attr *attr)
 {
-	int request;
+	صحیح request;
 
-	if (!attr || attr->relax_domain_level < 0) {
-		if (default_relax_domain_level < 0)
-			return;
+	اگر (!attr || attr->relax_domain_level < 0) {
+		اگر (default_relax_domain_level < 0)
+			واپس;
 		request = default_relax_domain_level;
-	} else
+	} ورنہ
 		request = attr->relax_domain_level;
 
-	if (sd->level >= request) {
+	اگر (sd->level >= request) {
 		/* Turn off idle balance on this domain: */
 		sd->flags &= ~(SD_BALANCE_WAKE|SD_BALANCE_NEWIDLE);
 	}
 }
 
-static void __sdt_free(const struct cpumask *cpu_map);
-static int __sdt_alloc(const struct cpumask *cpu_map);
+ساکن خالی __sdt_free(ثابت ساخت cpumask *cpu_map);
+ساکن صحیح __sdt_alloc(ثابت ساخت cpumask *cpu_map);
 
-static void __sds_free(struct s_data *d, const struct cpumask *cpu_map);
-static int __sds_alloc(struct s_data *d, const struct cpumask *cpu_map);
+ساکن خالی __sds_free(ساخت s_ڈیٹا *d, ثابت ساخت cpumask *cpu_map);
+ساکن صحیح __sds_alloc(ساخت s_ڈیٹا *d, ثابت ساخت cpumask *cpu_map);
 
-static void __free_domain_allocs(struct s_data *d, enum s_alloc what,
-				 const struct cpumask *cpu_map)
+ساکن خالی __free_domain_allocs(ساخت s_ڈیٹا *d, شمار s_alloc what,
+				 ثابت ساخت cpumask *cpu_map)
 {
-	switch (what) {
-	case sa_rootdomain:
-		if (!atomic_read(&d->rd->refcount))
+	انتخاب (what) {
+	حالت sa_rootdomain:
+		اگر (!atomic_read(&d->rd->refcount))
 			free_rootdomain(&d->rd->rcu);
 		fallthrough;
-	case sa_sd:
+	حالت sa_sd:
 		free_percpu(d->sd);
 		fallthrough;
-	case sa_sd_shared:
+	حالت sa_sd_shared:
 		__sds_free(d, cpu_map);
 		fallthrough;
-	case sa_sd_storage:
+	حالت sa_sd_storage:
 		__sdt_free(cpu_map);
 		fallthrough;
-	case sa_none:
-		break;
+	حالت sa_none:
+		توڑو;
 	}
 }
 
-static enum s_alloc
-__visit_domain_allocation_hell(struct s_data *d, const struct cpumask *cpu_map)
+ساکن شمار s_alloc
+__visit_domain_allocation_hell(ساخت s_ڈیٹا *d, ثابت ساخت cpumask *cpu_map)
 {
-	memset(d, 0, sizeof(*d));
+	memset(d, 0, حجم(*d));
 
-	if (__sdt_alloc(cpu_map))
-		return sa_sd_storage;
-	if (__sds_alloc(d, cpu_map))
-		return sa_sd_shared;
-	d->sd = alloc_percpu(struct sched_domain *);
-	if (!d->sd)
-		return sa_sd_shared;
+	اگر (__sdt_alloc(cpu_map))
+		واپس sa_sd_storage;
+	اگر (__sds_alloc(d, cpu_map))
+		واپس sa_sd_shared;
+	d->sd = alloc_percpu(ساخت sched_domain *);
+	اگر (!d->sd)
+		واپس sa_sd_shared;
 	d->rd = alloc_rootdomain();
-	if (!d->rd)
-		return sa_sd;
+	اگر (!d->rd)
+		واپس sa_sd;
 
-	return sa_rootdomain;
+	واپس sa_rootdomain;
 }
 
 /*
@@ -1885,43 +1885,43 @@ __visit_domain_allocation_hell(struct s_data *d, const struct cpumask *cpu_map)
  * sched_group structure so that the subsequent __free_domain_allocs()
  * will not free the data we're using.
  */
-static void claim_allocations(int cpu, struct s_data *d)
+ساکن خالی claim_allocations(صحیح cpu, ساخت s_ڈیٹا *d)
 {
-	struct sched_domain *sd;
+	ساخت sched_domain *sd;
 
-	if (atomic_read(&(*per_cpu_ptr(d->sds, cpu))->ref))
-		*per_cpu_ptr(d->sds, cpu) = NULL;
+	اگر (atomic_read(&(*فی_cpu_ptr(d->sds, cpu))->ref))
+		*فی_cpu_ptr(d->sds, cpu) = تہی;
 
-	for (sd = *per_cpu_ptr(d->sd, cpu); sd; sd = sd->parent) {
-		struct sd_data *sdd = sd->private;
+	برائے (sd = *فی_cpu_ptr(d->sd, cpu); sd; sd = sd->والد) {
+		ساخت sd_ڈیٹا *sdd = sd->نجی;
 
-		WARN_ON_ONCE(*per_cpu_ptr(sdd->sd, cpu) != sd);
-		*per_cpu_ptr(sdd->sd, cpu) = NULL;
+		WARN_ON_ONCE(*فی_cpu_ptr(sdd->sd, cpu) != sd);
+		*فی_cpu_ptr(sdd->sd, cpu) = تہی;
 
-		if (atomic_read(&(*per_cpu_ptr(sdd->sg, cpu))->ref))
-			*per_cpu_ptr(sdd->sg, cpu) = NULL;
+		اگر (atomic_read(&(*فی_cpu_ptr(sdd->sg, cpu))->ref))
+			*فی_cpu_ptr(sdd->sg, cpu) = تہی;
 
-		if (atomic_read(&(*per_cpu_ptr(sdd->sgc, cpu))->ref))
-			*per_cpu_ptr(sdd->sgc, cpu) = NULL;
+		اگر (atomic_read(&(*فی_cpu_ptr(sdd->sgc, cpu))->ref))
+			*فی_cpu_ptr(sdd->sgc, cpu) = تہی;
 	}
 }
 
-#ifdef CONFIG_NUMA
-enum numa_topology_type sched_numa_topology_type;
+#اگر_تعریف_شدہ CONFIG_NUMA
+شمار numa_topology_type sched_numa_topology_type;
 
 /*
  * sched_domains_numa_distance is derived from sched_numa_node_distance
  * and provides a simplified view of NUMA distances used specifically
  * for building NUMA scheduling domains.
  */
-static int			sched_domains_numa_levels;
-static int			sched_numa_node_levels;
+ساکن صحیح			sched_domains_numa_سطحیں;
+ساکن صحیح			sched_numa_گرہ_سطحیں;
 
-int				sched_max_numa_distance;
-static int			*sched_domains_numa_distance;
-static int			*sched_numa_node_distance;
-static struct cpumask		***sched_domains_numa_masks;
-#endif /* CONFIG_NUMA */
+صحیح				sched_max_numa_فاصلہ;
+ساکن صحیح			*sched_domains_numa_فاصلہ;
+ساکن صحیح			*sched_numa_گرہ_فاصلہ;
+ساکن ساخت cpumask		***sched_domains_numa_masks;
+#اگر_ختم /* CONFIG_NUMA */
 
 /*
  * SD_flags allowed in topology descriptions.
@@ -1940,44 +1940,44 @@ static struct cpumask		***sched_domains_numa_masks;
  *
  *   SD_ASYM_PACKING        - describes SMT quirks
  */
-#define TOPOLOGY_SD_FLAGS		\
+#تعریف_کرو TOPOLOGY_SD_FLAGS		\
 	(SD_SHARE_CPUCAPACITY	|	\
 	 SD_CLUSTER		|	\
 	 SD_SHARE_LLC		|	\
 	 SD_NUMA		|	\
 	 SD_ASYM_PACKING)
 
-static struct sched_domain *
-sd_init(struct sched_domain_topology_level *tl,
-	const struct cpumask *cpu_map,
-	struct sched_domain *child, int cpu)
+ساکن ساخت sched_domain *
+sd_init(ساخت sched_domain_topology_level *tl,
+	ثابت ساخت cpumask *cpu_map,
+	ساخت sched_domain *بچہ, صحیح cpu)
 {
-	struct sd_data *sdd = &tl->data;
-	struct sched_domain *sd = *per_cpu_ptr(sdd->sd, cpu);
-	int sd_id, sd_weight, sd_flags = 0;
-	struct cpumask *sd_span;
+	ساخت sd_ڈیٹا *sdd = &tl->ڈیٹا;
+	ساخت sched_domain *sd = *فی_cpu_ptr(sdd->sd, cpu);
+	صحیح sd_id, sd_وزن, sd_flags = 0;
+	ساخت cpumask *sd_وسعت;
 	u64 now = sched_clock();
 
-	sd_span = sched_domain_span(sd);
-	cpumask_and(sd_span, cpu_map, tl->mask(tl, cpu));
-	sd_weight = cpumask_weight(sd_span);
-	sd_id = cpumask_first(sd_span);
+	sd_وسعت = sched_domain_وسعت(sd);
+	cpumask_and(sd_وسعت, cpu_map, tl->نقاب(tl, cpu));
+	sd_وزن = cpumask_وزن(sd_وسعت);
+	sd_id = cpumask_پہلا(sd_وسعت);
 
-	if (tl->sd_flags)
+	اگر (tl->sd_flags)
 		sd_flags = (*tl->sd_flags)();
-	if (WARN_ONCE(sd_flags & ~TOPOLOGY_SD_FLAGS,
+	اگر (WARN_ONCE(sd_flags & ~TOPOLOGY_SD_FLAGS,
 		      "wrong sd_flags in topology description\n"))
 		sd_flags &= TOPOLOGY_SD_FLAGS;
-#ifdef CONFIG_SCHED_SMT
-	if (sched_smt_asym_packing && (sd_flags & SD_SHARE_CPUCAPACITY))
+#اگر_تعریف_شدہ CONFIG_SCHED_SMT
+	اگر (sched_smt_asym_packing && (sd_flags & SD_SHARE_CPUCAPACITY))
 		sd_flags |= SD_ASYM_PACKING;
-#endif
-	sd_flags |= asym_cpu_capacity_classify(sd_span, cpu_map);
+#اگر_ختم
+	sd_flags |= asym_cpu_استعداد_classify(sd_وسعت, cpu_map);
 
-	*sd = (struct sched_domain){
-		.min_interval		= sd_weight,
-		.max_interval		= 2*sd_weight,
-		.busy_factor		= 16,
+	*sd = (ساخت sched_domain){
+		.min_interval		= sd_وزن,
+		.max_interval		= 2*sd_وزن,
+		.busy_ضربی_عدد		= 16,
 		.imbalance_pct		= 117,
 
 		.cache_nice_tries	= 0,
@@ -1995,18 +1995,18 @@ sd_init(struct sched_domain_topology_level *tl,
 					| sd_flags
 					,
 
-		.last_balance		= jiffies,
-		.balance_interval	= sd_weight,
+		.آخری_balance		= jiffies,
+		.balance_interval	= sd_وزن,
 
 		/* 50% success rate */
 		.newidle_call		= 512,
 		.newidle_success	= 256,
-		.newidle_ratio		= 512,
+		.newidle_تناسب		= 512,
 		.newidle_stamp		= now,
 
-		.max_newidle_lb_cost	= 0,
-		.last_decay_max_lb_cost	= jiffies,
-		.child			= child,
+		.max_newidle_lb_لاگت	= 0,
+		.آخری_decay_max_lb_لاگت	= jiffies,
+		.بچہ			= بچہ,
 		.name			= tl->name,
 	};
 
@@ -2017,68 +2017,68 @@ sd_init(struct sched_domain_topology_level *tl,
 	/*
 	 * Convert topological properties into behaviour.
 	 */
-	if (sd->flags & SD_SHARE_CPUCAPACITY) {
+	اگر (sd->flags & SD_SHARE_CPUCAPACITY) {
 		sd->imbalance_pct = 110;
 
-	} else if (sd->flags & SD_SHARE_LLC) {
+	} ورنہ اگر (sd->flags & SD_SHARE_LLC) {
 		sd->imbalance_pct = 117;
 		sd->cache_nice_tries = 1;
 
-#ifdef CONFIG_NUMA
-	} else if (sd->flags & SD_NUMA) {
+#اگر_تعریف_شدہ CONFIG_NUMA
+	} ورنہ اگر (sd->flags & SD_NUMA) {
 		sd->cache_nice_tries = 2;
 
 		sd->flags &= ~SD_PREFER_SIBLING;
 		sd->flags |= SD_SERIALIZE;
-		if (sched_domains_numa_distance[tl->numa_level] > node_reclaim_distance) {
+		اگر (sched_domains_numa_فاصلہ[tl->numa_level] > گرہ_reclaim_فاصلہ) {
 			sd->flags &= ~(SD_BALANCE_EXEC |
 				       SD_BALANCE_FORK |
 				       SD_WAKE_AFFINE);
 		}
 
-#endif /* CONFIG_NUMA */
-	} else {
+#اگر_ختم /* CONFIG_NUMA */
+	} ورنہ {
 		sd->cache_nice_tries = 1;
 	}
 
-	sd->private = sdd;
+	sd->نجی = sdd;
 
-	return sd;
+	واپس sd;
 }
 
-#ifdef CONFIG_SCHED_SMT
-int cpu_smt_flags(void)
+#اگر_تعریف_شدہ CONFIG_SCHED_SMT
+صحیح cpu_smt_flags(خالی)
 {
-	return SD_SHARE_CPUCAPACITY | SD_SHARE_LLC;
+	واپس SD_SHARE_CPUCAPACITY | SD_SHARE_LLC;
 }
 
-const struct cpumask *tl_smt_mask(struct sched_domain_topology_level *tl, int cpu)
+ثابت ساخت cpumask *tl_smt_نقاب(ساخت sched_domain_topology_level *tl, صحیح cpu)
 {
-	return cpu_smt_mask(cpu);
+	واپس cpu_smt_نقاب(cpu);
 }
-#endif
+#اگر_ختم
 
-#ifdef CONFIG_SCHED_CLUSTER
-int cpu_cluster_flags(void)
+#اگر_تعریف_شدہ CONFIG_SCHED_CLUSTER
+صحیح cpu_cluster_flags(خالی)
 {
-	return SD_CLUSTER | SD_SHARE_LLC;
-}
-
-const struct cpumask *tl_cls_mask(struct sched_domain_topology_level *tl, int cpu)
-{
-	return cpu_clustergroup_mask(cpu);
-}
-#endif
-
-#ifdef CONFIG_SCHED_MC
-int cpu_core_flags(void)
-{
-	return SD_SHARE_LLC;
+	واپس SD_CLUSTER | SD_SHARE_LLC;
 }
 
-const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
+ثابت ساخت cpumask *tl_cls_نقاب(ساخت sched_domain_topology_level *tl, صحیح cpu)
 {
-	return cpu_coregroup_mask(cpu);
+	واپس cpu_clustergroup_نقاب(cpu);
+}
+#اگر_ختم
+
+#اگر_تعریف_شدہ CONFIG_SCHED_MC
+صحیح cpu_core_flags(خالی)
+{
+	واپس SD_SHARE_LLC;
+}
+
+ثابت ساخت cpumask *tl_mc_نقاب(ساخت sched_domain_topology_level *tl, صحیح cpu)
+{
+	واپس cpu_coregroup_نقاب(cpu);
 }
 
 /*
@@ -2086,121 +2086,121 @@ const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu
  * such as powerpc. Provide a way for arch to specify where its LLC is
  * if it falls in exception category
  */
-# ifndef arch_llc_mask
-#define arch_llc_mask(cpu) cpu_coregroup_mask(cpu)
+# ifndef arch_llc_نقاب
+#تعریف_کرو arch_llc_نقاب(cpu) cpu_coregroup_نقاب(cpu)
 # endif
 
-#else
-#define arch_llc_mask(cpu) cpumask_of(cpu)
-#endif
+#ورنہ
+#تعریف_کرو arch_llc_نقاب(cpu) cpumask_کا(cpu)
+#اگر_ختم
 
-#define llc_mask(cpu) arch_llc_mask(cpu)
+#تعریف_کرو llc_نقاب(cpu) arch_llc_نقاب(cpu)
 
-const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+ثابت ساخت cpumask *tl_pkg_نقاب(ساخت sched_domain_topology_level *tl, صحیح cpu)
 {
-	return cpu_node_mask(cpu);
+	واپس cpu_گرہ_نقاب(cpu);
 }
 
 /*
  * Topology list, bottom-up.
  */
-static struct sched_domain_topology_level default_topology[] = {
-#ifdef CONFIG_SCHED_SMT
-	SDTL_INIT(tl_smt_mask, cpu_smt_flags, SMT),
-#endif
+ساکن ساخت sched_domain_topology_level default_topology[] = {
+#اگر_تعریف_شدہ CONFIG_SCHED_SMT
+	SDTL_INIT(tl_smt_نقاب, cpu_smt_flags, SMT),
+#اگر_ختم
 
-#ifdef CONFIG_SCHED_CLUSTER
-	SDTL_INIT(tl_cls_mask, cpu_cluster_flags, CLS),
-#endif
+#اگر_تعریف_شدہ CONFIG_SCHED_CLUSTER
+	SDTL_INIT(tl_cls_نقاب, cpu_cluster_flags, CLS),
+#اگر_ختم
 
-#ifdef CONFIG_SCHED_MC
-	SDTL_INIT(tl_mc_mask, cpu_core_flags, MC),
-#endif
-	SDTL_INIT(tl_pkg_mask, NULL, PKG),
-	{ NULL, },
+#اگر_تعریف_شدہ CONFIG_SCHED_MC
+	SDTL_INIT(tl_mc_نقاب, cpu_core_flags, MC),
+#اگر_ختم
+	SDTL_INIT(tl_pkg_نقاب, تہی, PKG),
+	{ تہی, },
 };
 
-static struct sched_domain_topology_level *sched_domain_topology =
+ساکن ساخت sched_domain_topology_level *sched_domain_topology =
 	default_topology;
-static struct sched_domain_topology_level *sched_domain_topology_saved;
+ساکن ساخت sched_domain_topology_level *sched_domain_topology_saved;
 
-#define for_each_sd_topology(tl)			\
-	for (tl = sched_domain_topology; tl->mask; tl++)
+#تعریف_کرو for_each_sd_topology(tl)			\
+	برائے (tl = sched_domain_topology; tl->نقاب; tl++)
 
-void __init set_sched_topology(struct sched_domain_topology_level *tl)
+خالی __init سیٹ_sched_topology(ساخت sched_domain_topology_level *tl)
 {
-	if (WARN_ON_ONCE(sched_smp_initialized))
-		return;
+	اگر (WARN_ON_ONCE(sched_smp_initialized))
+		واپس;
 
 	sched_domain_topology = tl;
-	sched_domain_topology_saved = NULL;
+	sched_domain_topology_saved = تہی;
 }
 
-#ifdef CONFIG_NUMA
-static int cpu_numa_flags(void)
+#اگر_تعریف_شدہ CONFIG_NUMA
+ساکن صحیح cpu_numa_flags(خالی)
 {
-	return SD_NUMA;
+	واپس SD_NUMA;
 }
 
-static const struct cpumask *sd_numa_mask(struct sched_domain_topology_level *tl, int cpu)
+ساکن ثابت ساخت cpumask *sd_numa_نقاب(ساخت sched_domain_topology_level *tl, صحیح cpu)
 {
-	return sched_domains_numa_masks[tl->numa_level][cpu_to_node(cpu)];
+	واپس sched_domains_numa_masks[tl->numa_level][cpu_مقصد_گرہ(cpu)];
 }
 
-static void sched_numa_warn(const char *str)
+ساکن خالی sched_numa_warn(ثابت حرف *str)
 {
-	static int done = false;
-	int i,j;
+	ساکن صحیح مکمل = false;
+	صحیح i,j;
 
-	if (done)
-		return;
+	اگر (مکمل)
+		واپس;
 
-	done = true;
+	مکمل = true;
 
 	printk(KERN_WARNING "ERROR: %s\n\n", str);
 
-	for (i = 0; i < nr_node_ids; i++) {
+	برائے (i = 0; i < nr_گرہ_ids; i++) {
 		printk(KERN_WARNING "  ");
-		for (j = 0; j < nr_node_ids; j++) {
-			if (!node_state(i, N_CPU) || !node_state(j, N_CPU))
-				printk(KERN_CONT "(%02d) ", node_distance(i,j));
-			else
-				printk(KERN_CONT " %02d  ", node_distance(i,j));
+		برائے (j = 0; j < nr_گرہ_ids; j++) {
+			اگر (!گرہ_state(i, N_CPU) || !گرہ_state(j, N_CPU))
+				printk(KERN_CONT "(%02d) ", گرہ_فاصلہ(i,j));
+			ورنہ
+				printk(KERN_CONT " %02d  ", گرہ_فاصلہ(i,j));
 		}
 		printk(KERN_CONT "\n");
 	}
 	printk(KERN_WARNING "\n");
 }
 
-bool find_numa_distance(int distance)
+bool ڈھونڈو_numa_فاصلہ(صحیح فاصلہ)
 {
-	bool found = false;
-	int i, *distances;
+	bool ملا = false;
+	صحیح i, *distances;
 
-	if (distance == node_distance(0, 0))
-		return true;
+	اگر (فاصلہ == گرہ_فاصلہ(0, 0))
+		واپس true;
 
-	rcu_read_lock();
-	distances = rcu_dereference(sched_numa_node_distance);
-	if (!distances)
-		goto unlock;
-	for (i = 0; i < sched_numa_node_levels; i++) {
-		if (distances[i] == distance) {
-			found = true;
-			break;
+	rcu_read_تالا();
+	distances = rcu_dereference(sched_numa_گرہ_فاصلہ);
+	اگر (!distances)
+		جاؤ unlock;
+	برائے (i = 0; i < sched_numa_گرہ_سطحیں; i++) {
+		اگر (distances[i] == فاصلہ) {
+			ملا = true;
+			توڑو;
 		}
 	}
 unlock:
 	rcu_read_unlock();
 
-	return found;
+	واپس ملا;
 }
 
-#define for_each_cpu_node_but(n, nbut)		\
-	for_each_node_state(n, N_CPU)		\
-		if (n == nbut)			\
-			continue;		\
-		else
+#تعریف_کرو for_each_cpu_گرہ_but(n, nbut)		\
+	for_each_گرہ_state(n, N_CPU)		\
+		اگر (n == nbut)			\
+			جاری;		\
+		ورنہ
 
 /*
  * A system can have three types of NUMA topology:
@@ -2221,44 +2221,44 @@ unlock:
  *   there is an intermediary node C, which is < N hops away from both
  *   nodes A and B, the system is a glueless mesh.
  */
-static void init_numa_topology_type(int offline_node)
+ساکن خالی init_numa_topology_type(صحیح offline_گرہ)
 {
-	int a, b, c, n;
+	صحیح a, b, c, n;
 
-	n = sched_max_numa_distance;
+	n = sched_max_numa_فاصلہ;
 
-	if (sched_domains_numa_levels <= 2) {
-		sched_numa_topology_type = NUMA_DIRECT;
-		return;
+	اگر (sched_domains_numa_سطحیں <= 2) {
+		sched_numa_topology_type = NUMA_براہ_راست;
+		واپس;
 	}
 
-	for_each_cpu_node_but(a, offline_node) {
-		for_each_cpu_node_but(b, offline_node) {
+	for_each_cpu_گرہ_but(a, offline_گرہ) {
+		for_each_cpu_گرہ_but(b, offline_گرہ) {
 			/* Find two nodes furthest removed from each other. */
-			if (node_distance(a, b) < n)
-				continue;
+			اگر (گرہ_فاصلہ(a, b) < n)
+				جاری;
 
 			/* Is there an intermediary node between a and b? */
-			for_each_cpu_node_but(c, offline_node) {
-				if (node_distance(a, c) < n &&
-				    node_distance(b, c) < n) {
+			for_each_cpu_گرہ_but(c, offline_گرہ) {
+				اگر (گرہ_فاصلہ(a, c) < n &&
+				    گرہ_فاصلہ(b, c) < n) {
 					sched_numa_topology_type =
 							NUMA_GLUELESS_MESH;
-					return;
+					واپس;
 				}
 			}
 
 			sched_numa_topology_type = NUMA_BACKPLANE;
-			return;
+			واپس;
 		}
 	}
 
 	pr_err("Failed to find a NUMA topology type, defaulting to DIRECT\n");
-	sched_numa_topology_type = NUMA_DIRECT;
+	sched_numa_topology_type = NUMA_براہ_راست;
 }
 
 
-#define NR_DISTANCE_VALUES (1 << DISTANCE_BITS)
+#تعریف_کرو NR_فاصلہ_اقدار (1 << فاصلہ_بٹ)
 
 /*
  * An architecture could modify its NUMA distance, to change
@@ -2268,95 +2268,95 @@ static void init_numa_topology_type(int offline_node)
  * A NUMA level is created for each unique
  * arch_sched_node_distance.
  */
-static int numa_node_dist(int i, int j)
+ساکن صحیح numa_گرہ_dist(صحیح i, صحیح j)
 {
-	return node_distance(i, j);
+	واپس گرہ_فاصلہ(i, j);
 }
 
-int arch_sched_node_distance(int from, int to)
-			     __weak __alias(numa_node_dist);
+صحیح arch_sched_گرہ_فاصلہ(صحیح from, صحیح مقصد)
+			     __weak __alias(numa_گرہ_dist);
 
-static bool modified_sched_node_distance(void)
+ساکن bool modified_sched_گرہ_فاصلہ(خالی)
 {
-	return numa_node_dist != arch_sched_node_distance;
+	واپس numa_گرہ_dist != arch_sched_گرہ_فاصلہ;
 }
 
-static int sched_record_numa_dist(int offline_node, int (*n_dist)(int, int),
-				  int **dist, int *levels)
+ساکن صحیح sched_ریکارڈ_numa_dist(صحیح offline_گرہ, صحیح (*n_dist)(صحیح, صحیح),
+				  صحیح **dist, صحیح *سطحیں)
 {
-	unsigned long *distance_map __free(bitmap) = NULL;
-	int nr_levels = 0;
-	int i, j;
-	int *distances;
+	غیرعلامتی طویل *فاصلہ_map __free(bitmap) = تہی;
+	صحیح nr_سطحیں = 0;
+	صحیح i, j;
+	صحیح *distances;
 
 	/*
 	 * O(nr_nodes^2) de-duplicating selection sort -- in order to find the
 	 * unique distances in the node_distance() table.
 	 */
-	distance_map = bitmap_alloc(NR_DISTANCE_VALUES, GFP_KERNEL);
-	if (!distance_map)
-		return -ENOMEM;
+	فاصلہ_map = bitmap_alloc(NR_فاصلہ_اقدار, GFP_KERNEL);
+	اگر (!فاصلہ_map)
+		واپس -ENOMEM;
 
-	bitmap_zero(distance_map, NR_DISTANCE_VALUES);
-	for_each_cpu_node_but(i, offline_node) {
-		for_each_cpu_node_but(j, offline_node) {
-			int distance = n_dist(i, j);
+	bitmap_zero(فاصلہ_map, NR_فاصلہ_اقدار);
+	for_each_cpu_گرہ_but(i, offline_گرہ) {
+		for_each_cpu_گرہ_but(j, offline_گرہ) {
+			صحیح فاصلہ = n_dist(i, j);
 
-			if (distance < LOCAL_DISTANCE || distance >= NR_DISTANCE_VALUES) {
+			اگر (فاصلہ < LOCAL_فاصلہ || فاصلہ >= NR_فاصلہ_اقدار) {
 				sched_numa_warn("Invalid distance value range");
-				return -EINVAL;
+				واپس -EINVAL;
 			}
 
-			bitmap_set(distance_map, distance, 1);
+			bitmap_سیٹ(فاصلہ_map, فاصلہ, 1);
 		}
 	}
 	/*
 	 * We can now figure out how many unique distance values there are and
 	 * allocate memory accordingly.
 	 */
-	nr_levels = bitmap_weight(distance_map, NR_DISTANCE_VALUES);
+	nr_سطحیں = bitmap_وزن(فاصلہ_map, NR_فاصلہ_اقدار);
 
-	distances = kzalloc_objs(int, nr_levels);
-	if (!distances)
-		return -ENOMEM;
+	distances = kzalloc_objs(صحیح, nr_سطحیں);
+	اگر (!distances)
+		واپس -ENOMEM;
 
-	for (i = 0, j = 0; i < nr_levels; i++, j++) {
-		j = find_next_bit(distance_map, NR_DISTANCE_VALUES, j);
+	برائے (i = 0, j = 0; i < nr_سطحیں; i++, j++) {
+		j = ڈھونڈو_اگلا_ثنائی_ہندسہ(فاصلہ_map, NR_فاصلہ_اقدار, j);
 		distances[i] = j;
 	}
 	*dist = distances;
-	*levels = nr_levels;
+	*سطحیں = nr_سطحیں;
 
-	return 0;
+	واپس 0;
 }
 
-void sched_init_numa(int offline_node)
+خالی sched_init_numa(صحیح offline_گرہ)
 {
-	struct sched_domain_topology_level *tl;
-	int nr_levels, nr_node_levels;
-	int i, j;
-	int *distances, *domain_distances;
-	struct cpumask ***masks;
+	ساخت sched_domain_topology_level *tl;
+	صحیح nr_سطحیں, nr_گرہ_سطحیں;
+	صحیح i, j;
+	صحیح *distances, *domain_distances;
+	ساخت cpumask ***masks;
 
 	/* Record the NUMA distances from SLIT table */
-	if (sched_record_numa_dist(offline_node, numa_node_dist, &distances,
-				   &nr_node_levels))
-		return;
+	اگر (sched_ریکارڈ_numa_dist(offline_گرہ, numa_گرہ_dist, &distances,
+				   &nr_گرہ_سطحیں))
+		واپس;
 
 	/* Record modified NUMA distances for building sched domains */
-	if (modified_sched_node_distance()) {
-		if (sched_record_numa_dist(offline_node, arch_sched_node_distance,
-					   &domain_distances, &nr_levels)) {
+	اگر (modified_sched_گرہ_فاصلہ()) {
+		اگر (sched_ریکارڈ_numa_dist(offline_گرہ, arch_sched_گرہ_فاصلہ,
+					   &domain_distances, &nr_سطحیں)) {
 			kfree(distances);
-			return;
+			واپس;
 		}
-	} else {
+	} ورنہ {
 		domain_distances = distances;
-		nr_levels = nr_node_levels;
+		nr_سطحیں = nr_گرہ_سطحیں;
 	}
-	rcu_assign_pointer(sched_numa_node_distance, distances);
-	WRITE_ONCE(sched_max_numa_distance, distances[nr_node_levels - 1]);
-	WRITE_ONCE(sched_numa_node_levels, nr_node_levels);
+	rcu_تفویض_اشارہ_گر(sched_numa_گرہ_فاصلہ, distances);
+	WRITE_ONCE(sched_max_numa_فاصلہ, distances[nr_گرہ_سطحیں - 1]);
+	WRITE_ONCE(sched_numa_گرہ_سطحیں, nr_گرہ_سطحیں);
 
 	/*
 	 * 'nr_levels' contains the number of unique distances
@@ -2374,167 +2374,167 @@ void sched_init_numa(int offline_node)
 	 *
 	 * We reset it to 'nr_levels' at the end of this function.
 	 */
-	rcu_assign_pointer(sched_domains_numa_distance, domain_distances);
+	rcu_تفویض_اشارہ_گر(sched_domains_numa_فاصلہ, domain_distances);
 
-	sched_domains_numa_levels = 0;
+	sched_domains_numa_سطحیں = 0;
 
-	masks = kzalloc(sizeof(void *) * nr_levels, GFP_KERNEL);
-	if (!masks)
-		return;
+	masks = kzalloc(حجم(خالی *) * nr_سطحیں, GFP_KERNEL);
+	اگر (!masks)
+		واپس;
 
 	/*
 	 * Now for each level, construct a mask per node which contains all
 	 * CPUs of nodes that are that many hops away from us.
 	 */
-	for (i = 0; i < nr_levels; i++) {
-		masks[i] = kzalloc(nr_node_ids * sizeof(void *), GFP_KERNEL);
-		if (!masks[i])
-			return;
+	برائے (i = 0; i < nr_سطحیں; i++) {
+		masks[i] = kzalloc(nr_گرہ_ids * حجم(خالی *), GFP_KERNEL);
+		اگر (!masks[i])
+			واپس;
 
-		for_each_cpu_node_but(j, offline_node) {
-			struct cpumask *mask = kzalloc(cpumask_size(), GFP_KERNEL);
-			int k;
+		for_each_cpu_گرہ_but(j, offline_گرہ) {
+			ساخت cpumask *نقاب = kzalloc(cpumask_سائز(), GFP_KERNEL);
+			صحیح k;
 
-			if (!mask)
-				return;
+			اگر (!نقاب)
+				واپس;
 
-			masks[i][j] = mask;
+			masks[i][j] = نقاب;
 
-			for_each_cpu_node_but(k, offline_node) {
-				if (sched_debug() &&
-				    (arch_sched_node_distance(j, k) !=
-				     arch_sched_node_distance(k, j)))
+			for_each_cpu_گرہ_but(k, offline_گرہ) {
+				اگر (sched_debug() &&
+				    (arch_sched_گرہ_فاصلہ(j, k) !=
+				     arch_sched_گرہ_فاصلہ(k, j)))
 					sched_numa_warn("Node-distance not symmetric");
 
-				if (arch_sched_node_distance(j, k) >
-				    sched_domains_numa_distance[i])
-					continue;
+				اگر (arch_sched_گرہ_فاصلہ(j, k) >
+				    sched_domains_numa_فاصلہ[i])
+					جاری;
 
-				cpumask_or(mask, mask, cpumask_of_node(k));
+				cpumask_or(نقاب, نقاب, cpumask_کا_گرہ(k));
 			}
 		}
 	}
-	rcu_assign_pointer(sched_domains_numa_masks, masks);
+	rcu_تفویض_اشارہ_گر(sched_domains_numa_masks, masks);
 
 	/* Compute default topology size */
-	for (i = 0; sched_domain_topology[i].mask; i++);
+	برائے (i = 0; sched_domain_topology[i].نقاب; i++);
 
-	tl = kzalloc((i + nr_levels + 1) *
-			sizeof(struct sched_domain_topology_level), GFP_KERNEL);
-	if (!tl)
-		return;
+	tl = kzalloc((i + nr_سطحیں + 1) *
+			حجم(ساخت sched_domain_topology_level), GFP_KERNEL);
+	اگر (!tl)
+		واپس;
 
 	/*
 	 * Copy the default topology bits..
 	 */
-	for (i = 0; sched_domain_topology[i].mask; i++)
+	برائے (i = 0; sched_domain_topology[i].نقاب; i++)
 		tl[i] = sched_domain_topology[i];
 
 	/*
 	 * Add the NUMA identity distance, aka single NODE.
 	 */
-	tl[i++] = SDTL_INIT(sd_numa_mask, NULL, NODE);
+	tl[i++] = SDTL_INIT(sd_numa_نقاب, تہی, گرہ_2);
 
 	/*
 	 * .. and append 'j' levels of NUMA goodness.
 	 */
-	for (j = 1; j < nr_levels; i++, j++) {
-		tl[i] = SDTL_INIT(sd_numa_mask, cpu_numa_flags, NUMA);
+	برائے (j = 1; j < nr_سطحیں; i++, j++) {
+		tl[i] = SDTL_INIT(sd_numa_نقاب, cpu_numa_flags, NUMA);
 		tl[i].numa_level = j;
 	}
 
 	sched_domain_topology_saved = sched_domain_topology;
 	sched_domain_topology = tl;
 
-	sched_domains_numa_levels = nr_levels;
+	sched_domains_numa_سطحیں = nr_سطحیں;
 
-	init_numa_topology_type(offline_node);
+	init_numa_topology_type(offline_گرہ);
 }
 
 
-static void sched_reset_numa(void)
+ساکن خالی sched_reset_numa(خالی)
 {
-	int nr_levels, *distances, *dom_distances = NULL;
-	struct cpumask ***masks;
+	صحیح nr_سطحیں, *distances, *dom_distances = تہی;
+	ساخت cpumask ***masks;
 
-	nr_levels = sched_domains_numa_levels;
-	sched_numa_node_levels = 0;
-	sched_domains_numa_levels = 0;
-	sched_max_numa_distance = 0;
-	sched_numa_topology_type = NUMA_DIRECT;
-	distances = sched_numa_node_distance;
-	if (sched_numa_node_distance != sched_domains_numa_distance)
-		dom_distances = sched_domains_numa_distance;
-	rcu_assign_pointer(sched_numa_node_distance, NULL);
-	rcu_assign_pointer(sched_domains_numa_distance, NULL);
+	nr_سطحیں = sched_domains_numa_سطحیں;
+	sched_numa_گرہ_سطحیں = 0;
+	sched_domains_numa_سطحیں = 0;
+	sched_max_numa_فاصلہ = 0;
+	sched_numa_topology_type = NUMA_براہ_راست;
+	distances = sched_numa_گرہ_فاصلہ;
+	اگر (sched_numa_گرہ_فاصلہ != sched_domains_numa_فاصلہ)
+		dom_distances = sched_domains_numa_فاصلہ;
+	rcu_تفویض_اشارہ_گر(sched_numa_گرہ_فاصلہ, تہی);
+	rcu_تفویض_اشارہ_گر(sched_domains_numa_فاصلہ, تہی);
 	masks = sched_domains_numa_masks;
-	rcu_assign_pointer(sched_domains_numa_masks, NULL);
-	if (distances || masks) {
-		int i, j;
+	rcu_تفویض_اشارہ_گر(sched_domains_numa_masks, تہی);
+	اگر (distances || masks) {
+		صحیح i, j;
 
 		synchronize_rcu();
 		kfree(distances);
 		kfree(dom_distances);
-		for (i = 0; i < nr_levels && masks; i++) {
-			if (!masks[i])
-				continue;
-			for_each_node(j)
+		برائے (i = 0; i < nr_سطحیں && masks; i++) {
+			اگر (!masks[i])
+				جاری;
+			for_each_گرہ(j)
 				kfree(masks[i][j]);
 			kfree(masks[i]);
 		}
 		kfree(masks);
 	}
-	if (sched_domain_topology_saved) {
+	اگر (sched_domain_topology_saved) {
 		kfree(sched_domain_topology);
 		sched_domain_topology = sched_domain_topology_saved;
-		sched_domain_topology_saved = NULL;
+		sched_domain_topology_saved = تہی;
 	}
 }
 
 /*
  * Call with hotplug lock held
  */
-void sched_update_numa(int cpu, bool online)
+خالی sched_update_numa(صحیح cpu, bool online)
 {
-	int node;
+	صحیح گرہ;
 
-	node = cpu_to_node(cpu);
+	گرہ = cpu_مقصد_گرہ(cpu);
 	/*
 	 * Scheduler NUMA topology is updated when the first CPU of a
 	 * node is onlined or the last CPU of a node is offlined.
 	 */
-	if (cpumask_weight(cpumask_of_node(node)) != 1)
-		return;
+	اگر (cpumask_وزن(cpumask_کا_گرہ(گرہ)) != 1)
+		واپس;
 
 	sched_reset_numa();
-	sched_init_numa(online ? NUMA_NO_NODE : node);
+	sched_init_numa(online ? NUMA_NO_گرہ : گرہ);
 }
 
-void sched_domains_numa_masks_set(unsigned int cpu)
+خالی sched_domains_numa_masks_سیٹ(غیرعلامتی صحیح cpu)
 {
-	int node = cpu_to_node(cpu);
-	int i, j;
+	صحیح گرہ = cpu_مقصد_گرہ(cpu);
+	صحیح i, j;
 
-	for (i = 0; i < sched_domains_numa_levels; i++) {
-		for (j = 0; j < nr_node_ids; j++) {
-			if (!node_state(j, N_CPU))
-				continue;
+	برائے (i = 0; i < sched_domains_numa_سطحیں; i++) {
+		برائے (j = 0; j < nr_گرہ_ids; j++) {
+			اگر (!گرہ_state(j, N_CPU))
+				جاری;
 
 			/* Set ourselves in the remote node's masks */
-			if (arch_sched_node_distance(j, node) <=
-			    sched_domains_numa_distance[i])
-				cpumask_set_cpu(cpu, sched_domains_numa_masks[i][j]);
+			اگر (arch_sched_گرہ_فاصلہ(j, گرہ) <=
+			    sched_domains_numa_فاصلہ[i])
+				cpumask_سیٹ_cpu(cpu, sched_domains_numa_masks[i][j]);
 		}
 	}
 }
 
-void sched_domains_numa_masks_clear(unsigned int cpu)
+خالی sched_domains_numa_masks_clear(غیرعلامتی صحیح cpu)
 {
-	int i, j;
+	صحیح i, j;
 
-	for (i = 0; i < sched_domains_numa_levels; i++) {
-		for (j = 0; j < nr_node_ids; j++) {
-			if (sched_domains_numa_masks[i][j])
+	برائے (i = 0; i < sched_domains_numa_سطحیں; i++) {
+		برائے (j = 0; j < nr_گرہ_ids; j++) {
+			اگر (sched_domains_numa_masks[i][j])
 				cpumask_clear_cpu(cpu, sched_domains_numa_masks[i][j]);
 		}
 	}
@@ -2548,57 +2548,57 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
  *
  * returns: cpu, or nr_cpu_ids when nothing found.
  */
-int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
+صحیح sched_numa_ڈھونڈو_closest(ثابت ساخت cpumask *cpus, صحیح cpu)
 {
-	int i, j = cpu_to_node(cpu), found = nr_cpu_ids;
-	struct cpumask ***masks;
+	صحیح i, j = cpu_مقصد_گرہ(cpu), ملا = nr_cpu_ids;
+	ساخت cpumask ***masks;
 
-	rcu_read_lock();
+	rcu_read_تالا();
 	masks = rcu_dereference(sched_domains_numa_masks);
-	if (!masks)
-		goto unlock;
-	for (i = 0; i < sched_domains_numa_levels; i++) {
-		if (!masks[i][j])
-			break;
+	اگر (!masks)
+		جاؤ unlock;
+	برائے (i = 0; i < sched_domains_numa_سطحیں; i++) {
+		اگر (!masks[i][j])
+			توڑو;
 		cpu = cpumask_any_and_distribute(cpus, masks[i][j]);
-		if (cpu < nr_cpu_ids) {
-			found = cpu;
-			break;
+		اگر (cpu < nr_cpu_ids) {
+			ملا = cpu;
+			توڑو;
 		}
 	}
 unlock:
 	rcu_read_unlock();
 
-	return found;
+	واپس ملا;
 }
 
-struct __cmp_key {
-	const struct cpumask *cpus;
-	struct cpumask ***masks;
-	int node;
-	int cpu;
-	int w;
+ساخت __cmp_key {
+	ثابت ساخت cpumask *cpus;
+	ساخت cpumask ***masks;
+	صحیح گرہ;
+	صحیح cpu;
+	صحیح w;
 };
 
-static int hop_cmp(const void *a, const void *b)
+ساکن صحیح hop_cmp(ثابت خالی *a, ثابت خالی *b)
 {
-	struct cpumask **prev_hop, **cur_hop = *(struct cpumask ***)b;
-	struct __cmp_key *k = (struct __cmp_key *)a;
+	ساخت cpumask **پچھلا_hop, **cur_hop = *(ساخت cpumask ***)b;
+	ساخت __cmp_key *k = (ساخت __cmp_key *)a;
 
-	if (cpumask_weight_and(k->cpus, cur_hop[k->node]) <= k->cpu)
-		return 1;
+	اگر (cpumask_وزن_and(k->cpus, cur_hop[k->گرہ]) <= k->cpu)
+		واپس 1;
 
-	if (b == k->masks) {
+	اگر (b == k->masks) {
 		k->w = 0;
-		return 0;
+		واپس 0;
 	}
 
-	prev_hop = *((struct cpumask ***)b - 1);
-	k->w = cpumask_weight_and(k->cpus, prev_hop[k->node]);
-	if (k->w <= k->cpu)
-		return 0;
+	پچھلا_hop = *((ساخت cpumask ***)b - 1);
+	k->w = cpumask_وزن_and(k->cpus, پچھلا_hop[k->گرہ]);
+	اگر (k->w <= k->cpu)
+		واپس 0;
 
-	return -1;
+	واپس -1;
 }
 
 /**
@@ -2611,38 +2611,38 @@ static int hop_cmp(const void *a, const void *b)
  *
  * Return: cpu, or nr_cpu_ids when nothing found.
  */
-int sched_numa_find_nth_cpu(const struct cpumask *cpus, int cpu, int node)
+صحیح sched_numa_ڈھونڈو_nth_cpu(ثابت ساخت cpumask *cpus, صحیح cpu, صحیح گرہ)
 {
-	struct __cmp_key k = { .cpus = cpus, .cpu = cpu };
-	struct cpumask ***hop_masks;
-	int hop, ret = nr_cpu_ids;
+	ساخت __cmp_key k = { .cpus = cpus, .cpu = cpu };
+	ساخت cpumask ***hop_masks;
+	صحیح hop, ret = nr_cpu_ids;
 
-	if (node == NUMA_NO_NODE)
-		return cpumask_nth_and(cpu, cpus, cpu_online_mask);
+	اگر (گرہ == NUMA_NO_گرہ)
+		واپس cpumask_nth_and(cpu, cpus, cpu_online_نقاب);
 
-	rcu_read_lock();
+	rcu_read_تالا();
 
 	/* CPU-less node entries are uninitialized in sched_domains_numa_masks */
-	node = numa_nearest_node(node, N_CPU);
-	k.node = node;
+	گرہ = numa_قریب_ترین_گرہ(گرہ, N_CPU);
+	k.گرہ = گرہ;
 
 	k.masks = rcu_dereference(sched_domains_numa_masks);
-	if (!k.masks)
-		goto unlock;
+	اگر (!k.masks)
+		جاؤ unlock;
 
-	hop_masks = bsearch(&k, k.masks, sched_domains_numa_levels, sizeof(k.masks[0]), hop_cmp);
-	if (!hop_masks)
-		goto unlock;
+	hop_masks = bsearch(&k, k.masks, sched_domains_numa_سطحیں, حجم(k.masks[0]), hop_cmp);
+	اگر (!hop_masks)
+		جاؤ unlock;
 	hop = hop_masks	- k.masks;
 
 	ret = hop ?
-		cpumask_nth_and_andnot(cpu - k.w, cpus, k.masks[hop][node], k.masks[hop-1][node]) :
-		cpumask_nth_and(cpu, cpus, k.masks[0][node]);
+		cpumask_nth_and_andnot(cpu - k.w, cpus, k.masks[hop][گرہ], k.masks[hop-1][گرہ]) :
+		cpumask_nth_and(cpu, cpus, k.masks[0][گرہ]);
 unlock:
 	rcu_read_unlock();
-	return ret;
+	واپس ret;
 }
-EXPORT_SYMBOL_GPL(sched_numa_find_nth_cpu);
+EXPORT_علامت_GPL(sched_numa_ڈھونڈو_nth_cpu);
 
 /**
  * sched_numa_hop_mask() - Get the cpumask of CPUs at most @hops hops away from
@@ -2661,200 +2661,200 @@ EXPORT_SYMBOL_GPL(sched_numa_find_nth_cpu);
  * Also note that this is a reflection of sched_domains_numa_masks, which may change
  * during the lifetime of the system (offline nodes are taken out of the masks).
  */
-const struct cpumask *sched_numa_hop_mask(unsigned int node, unsigned int hops)
+ثابت ساخت cpumask *sched_numa_hop_نقاب(غیرعلامتی صحیح گرہ, غیرعلامتی صحیح hops)
 {
-	struct cpumask ***masks;
+	ساخت cpumask ***masks;
 
-	if (node >= nr_node_ids || hops >= sched_domains_numa_levels)
-		return ERR_PTR(-EINVAL);
+	اگر (گرہ >= nr_گرہ_ids || hops >= sched_domains_numa_سطحیں)
+		واپس ERR_PTR(-EINVAL);
 
 	masks = rcu_dereference(sched_domains_numa_masks);
-	if (!masks)
-		return ERR_PTR(-EBUSY);
+	اگر (!masks)
+		واپس ERR_PTR(-EBUSY);
 
-	return masks[hops][node];
+	واپس masks[hops][گرہ];
 }
-EXPORT_SYMBOL_GPL(sched_numa_hop_mask);
+EXPORT_علامت_GPL(sched_numa_hop_نقاب);
 
-#endif /* CONFIG_NUMA */
+#اگر_ختم /* CONFIG_NUMA */
 
-static int __sdt_alloc(const struct cpumask *cpu_map)
+ساکن صحیح __sdt_alloc(ثابت ساخت cpumask *cpu_map)
 {
-	struct sched_domain_topology_level *tl;
-	int j;
+	ساخت sched_domain_topology_level *tl;
+	صحیح j;
 
 	for_each_sd_topology(tl) {
-		struct sd_data *sdd = &tl->data;
+		ساخت sd_ڈیٹا *sdd = &tl->ڈیٹا;
 
-		sdd->sd = alloc_percpu(struct sched_domain *);
-		if (!sdd->sd)
-			return -ENOMEM;
+		sdd->sd = alloc_percpu(ساخت sched_domain *);
+		اگر (!sdd->sd)
+			واپس -ENOMEM;
 
-		sdd->sg = alloc_percpu(struct sched_group *);
-		if (!sdd->sg)
-			return -ENOMEM;
+		sdd->sg = alloc_percpu(ساخت sched_گروہ *);
+		اگر (!sdd->sg)
+			واپس -ENOMEM;
 
-		sdd->sgc = alloc_percpu(struct sched_group_capacity *);
-		if (!sdd->sgc)
-			return -ENOMEM;
+		sdd->sgc = alloc_percpu(ساخت sched_گروہ_استعداد *);
+		اگر (!sdd->sgc)
+			واپس -ENOMEM;
 
 		for_each_cpu(j, cpu_map) {
-			struct sched_domain *sd;
-			struct sched_group *sg;
-			struct sched_group_capacity *sgc;
+			ساخت sched_domain *sd;
+			ساخت sched_گروہ *sg;
+			ساخت sched_گروہ_استعداد *sgc;
 
-			sd = kzalloc_node(sizeof(struct sched_domain) + cpumask_size(),
-					GFP_KERNEL, cpu_to_node(j));
-			if (!sd)
-				return -ENOMEM;
+			sd = kzalloc_گرہ(حجم(ساخت sched_domain) + cpumask_سائز(),
+					GFP_KERNEL, cpu_مقصد_گرہ(j));
+			اگر (!sd)
+				واپس -ENOMEM;
 
-			*per_cpu_ptr(sdd->sd, j) = sd;
+			*فی_cpu_ptr(sdd->sd, j) = sd;
 
-			sg = kzalloc_node(sizeof(struct sched_group) + cpumask_size(),
-					GFP_KERNEL, cpu_to_node(j));
-			if (!sg)
-				return -ENOMEM;
+			sg = kzalloc_گرہ(حجم(ساخت sched_گروہ) + cpumask_سائز(),
+					GFP_KERNEL, cpu_مقصد_گرہ(j));
+			اگر (!sg)
+				واپس -ENOMEM;
 
-			sg->next = sg;
+			sg->اگلا = sg;
 
-			*per_cpu_ptr(sdd->sg, j) = sg;
+			*فی_cpu_ptr(sdd->sg, j) = sg;
 
-			sgc = kzalloc_node(sizeof(struct sched_group_capacity) + cpumask_size(),
-					GFP_KERNEL, cpu_to_node(j));
-			if (!sgc)
-				return -ENOMEM;
+			sgc = kzalloc_گرہ(حجم(ساخت sched_گروہ_استعداد) + cpumask_سائز(),
+					GFP_KERNEL, cpu_مقصد_گرہ(j));
+			اگر (!sgc)
+				واپس -ENOMEM;
 
 			sgc->id = j;
 
-			*per_cpu_ptr(sdd->sgc, j) = sgc;
+			*فی_cpu_ptr(sdd->sgc, j) = sgc;
 		}
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static void __sdt_free(const struct cpumask *cpu_map)
+ساکن خالی __sdt_free(ثابت ساخت cpumask *cpu_map)
 {
-	struct sched_domain_topology_level *tl;
-	int j;
+	ساخت sched_domain_topology_level *tl;
+	صحیح j;
 
 	for_each_sd_topology(tl) {
-		struct sd_data *sdd = &tl->data;
+		ساخت sd_ڈیٹا *sdd = &tl->ڈیٹا;
 
 		for_each_cpu(j, cpu_map) {
-			struct sched_domain *sd;
+			ساخت sched_domain *sd;
 
-			if (sdd->sd) {
-				sd = *per_cpu_ptr(sdd->sd, j);
-				if (sd && (sd->flags & SD_NUMA))
+			اگر (sdd->sd) {
+				sd = *فی_cpu_ptr(sdd->sd, j);
+				اگر (sd && (sd->flags & SD_NUMA))
 					free_sched_groups(sd->groups, 0);
-				kfree(*per_cpu_ptr(sdd->sd, j));
+				kfree(*فی_cpu_ptr(sdd->sd, j));
 			}
 
-			if (sdd->sg)
-				kfree(*per_cpu_ptr(sdd->sg, j));
-			if (sdd->sgc)
-				kfree(*per_cpu_ptr(sdd->sgc, j));
+			اگر (sdd->sg)
+				kfree(*فی_cpu_ptr(sdd->sg, j));
+			اگر (sdd->sgc)
+				kfree(*فی_cpu_ptr(sdd->sgc, j));
 		}
 		free_percpu(sdd->sd);
-		sdd->sd = NULL;
+		sdd->sd = تہی;
 		free_percpu(sdd->sg);
-		sdd->sg = NULL;
+		sdd->sg = تہی;
 		free_percpu(sdd->sgc);
-		sdd->sgc = NULL;
+		sdd->sgc = تہی;
 	}
 }
 
-static int __sds_alloc(struct s_data *d, const struct cpumask *cpu_map)
+ساکن صحیح __sds_alloc(ساخت s_ڈیٹا *d, ثابت ساخت cpumask *cpu_map)
 {
-	int j;
+	صحیح j;
 
-	d->sds = alloc_percpu(struct sched_domain_shared *);
-	if (!d->sds)
-		return -ENOMEM;
+	d->sds = alloc_percpu(ساخت sched_domain_shared *);
+	اگر (!d->sds)
+		واپس -ENOMEM;
 
 	for_each_cpu(j, cpu_map) {
-		struct sched_domain_shared *sds;
+		ساخت sched_domain_shared *sds;
 
-		sds = kzalloc_node(sizeof(struct sched_domain_shared),
-				GFP_KERNEL, cpu_to_node(j));
-		if (!sds)
-			return -ENOMEM;
+		sds = kzalloc_گرہ(حجم(ساخت sched_domain_shared),
+				GFP_KERNEL, cpu_مقصد_گرہ(j));
+		اگر (!sds)
+			واپس -ENOMEM;
 
-		*per_cpu_ptr(d->sds, j) = sds;
+		*فی_cpu_ptr(d->sds, j) = sds;
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static void __sds_free(struct s_data *d, const struct cpumask *cpu_map)
+ساکن خالی __sds_free(ساخت s_ڈیٹا *d, ثابت ساخت cpumask *cpu_map)
 {
-	int j;
+	صحیح j;
 
-	if (!d->sds)
-		return;
+	اگر (!d->sds)
+		واپس;
 
 	for_each_cpu(j, cpu_map)
-		kfree(*per_cpu_ptr(d->sds, j));
+		kfree(*فی_cpu_ptr(d->sds, j));
 
 	free_percpu(d->sds);
-	d->sds = NULL;
+	d->sds = تہی;
 }
 
-static struct sched_domain *build_sched_domain(struct sched_domain_topology_level *tl,
-		const struct cpumask *cpu_map, struct sched_domain_attr *attr,
-		struct sched_domain *child, int cpu)
+ساکن ساخت sched_domain *build_sched_domain(ساخت sched_domain_topology_level *tl,
+		ثابت ساخت cpumask *cpu_map, ساخت sched_domain_attr *attr,
+		ساخت sched_domain *بچہ, صحیح cpu)
 {
-	struct sched_domain *sd = sd_init(tl, cpu_map, child, cpu);
+	ساخت sched_domain *sd = sd_init(tl, cpu_map, بچہ, cpu);
 
-	if (child) {
-		sd->level = child->level + 1;
+	اگر (بچہ) {
+		sd->level = بچہ->level + 1;
 		sched_domain_level_max = max(sched_domain_level_max, sd->level);
-		child->parent = sd;
+		بچہ->والد = sd;
 
-		if (!cpumask_subset(sched_domain_span(child),
-				    sched_domain_span(sd))) {
+		اگر (!cpumask_subset(sched_domain_وسعت(بچہ),
+				    sched_domain_وسعت(sd))) {
 			pr_err("BUG: arch topology borken\n");
 			pr_err("     the %s domain not a subset of the %s domain\n",
-					child->name, sd->name);
+					بچہ->name, sd->name);
 			/* Fixup, ensure @sd has at least @child CPUs. */
-			cpumask_or(sched_domain_span(sd),
-				   sched_domain_span(sd),
-				   sched_domain_span(child));
+			cpumask_or(sched_domain_وسعت(sd),
+				   sched_domain_وسعت(sd),
+				   sched_domain_وسعت(بچہ));
 		}
 
 	}
-	set_domain_attribute(sd, attr);
+	سیٹ_domain_attribute(sd, attr);
 
-	return sd;
+	واپس sd;
 }
 
 /*
  * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
  * any two given CPUs on non-NUMA topology levels.
  */
-static bool topology_span_sane(const struct cpumask *cpu_map)
+ساکن bool topology_وسعت_sane(ثابت ساخت cpumask *cpu_map)
 {
-	struct sched_domain_topology_level *tl;
-	struct cpumask *covered, *id_seen;
-	int cpu;
+	ساخت sched_domain_topology_level *tl;
+	ساخت cpumask *covered, *id_نظر_آیا;
+	صحیح cpu;
 
 	lockdep_assert_held(&sched_domains_mutex);
 	covered = sched_domains_tmpmask;
-	id_seen = sched_domains_tmpmask2;
+	id_نظر_آیا = sched_domains_tmpmask2;
 
 	for_each_sd_topology(tl) {
-		int tl_common_flags = 0;
+		صحیح tl_common_flags = 0;
 
-		if (tl->sd_flags)
+		اگر (tl->sd_flags)
 			tl_common_flags = (*tl->sd_flags)();
 
 		/* NUMA levels are allowed to overlap */
-		if (tl_common_flags & SD_NUMA)
-			continue;
+		اگر (tl_common_flags & SD_NUMA)
+			جاری;
 
 		cpumask_clear(covered);
-		cpumask_clear(id_seen);
+		cpumask_clear(id_نظر_آیا);
 
 		/*
 		 * Non-NUMA levels cannot partially overlap - they must be either
@@ -2863,42 +2863,42 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
 		 * breaks the linking done for an earlier span.
 		 */
 		for_each_cpu(cpu, cpu_map) {
-			const struct cpumask *tl_cpu_mask = tl->mask(tl, cpu);
-			int id;
+			ثابت ساخت cpumask *tl_cpu_نقاب = tl->نقاب(tl, cpu);
+			صحیح id;
 
 			/* lowest bit set in this mask is used as a unique id */
-			id = cpumask_first(tl_cpu_mask);
+			id = cpumask_پہلا(tl_cpu_نقاب);
 
-			if (cpumask_test_cpu(id, id_seen)) {
+			اگر (cpumask_test_cpu(id, id_نظر_آیا)) {
 				/* First CPU has already been seen, ensure identical spans */
-				if (!cpumask_equal(tl->mask(tl, id), tl_cpu_mask))
-					return false;
-			} else {
+				اگر (!cpumask_equal(tl->نقاب(tl, id), tl_cpu_نقاب))
+					واپس false;
+			} ورنہ {
 				/* First CPU hasn't been seen before, ensure it's a completely new span */
-				if (cpumask_intersects(tl_cpu_mask, covered))
-					return false;
+				اگر (cpumask_intersects(tl_cpu_نقاب, covered))
+					واپس false;
 
-				cpumask_or(covered, covered, tl_cpu_mask);
-				cpumask_set_cpu(id, id_seen);
+				cpumask_or(covered, covered, tl_cpu_نقاب);
+				cpumask_سیٹ_cpu(id, id_نظر_آیا);
 			}
 		}
 	}
-	return true;
+	واپس true;
 }
 
 /*
  * Calculate an allowed NUMA imbalance such that LLCs do not get
  * imbalanced.
  */
-static void adjust_numa_imbalance(struct sched_domain *sd_llc)
+ساکن خالی adjust_numa_imbalance(ساخت sched_domain *sd_llc)
 {
-	struct sched_domain *parent;
-	unsigned int imb_span = 1;
-	unsigned int imb = 0;
-	unsigned int nr_llcs;
+	ساخت sched_domain *والد;
+	غیرعلامتی صحیح imb_وسعت = 1;
+	غیرعلامتی صحیح imb = 0;
+	غیرعلامتی صحیح nr_llcs;
 
 	WARN_ON(!(sd_llc->flags & SD_SHARE_LLC));
-	WARN_ON(!sd_llc->parent);
+	WARN_ON(!sd_llc->والد);
 
 	/*
 	 * For a single LLC per node, allow an
@@ -2920,14 +2920,14 @@ static void adjust_numa_imbalance(struct sched_domain *sd_llc)
 	 * factors and that there is a correlation
 	 * between LLCs and memory channels.
 	 */
-	nr_llcs = sd_llc->parent->span_weight / sd_llc->span_weight;
-	if (nr_llcs == 1)
-		imb = sd_llc->parent->span_weight >> 3;
-	else
+	nr_llcs = sd_llc->والد->وسعت_وزن / sd_llc->وسعت_وزن;
+	اگر (nr_llcs == 1)
+		imb = sd_llc->والد->وسعت_وزن >> 3;
+	ورنہ
 		imb = nr_llcs;
 
 	imb = max(1U, imb);
-	sd_llc->parent->imb_numa_nr = imb;
+	sd_llc->والد->imb_numa_nr = imb;
 
 	/*
 	 * Set span based on the first NUMA domain.
@@ -2938,27 +2938,27 @@ static void adjust_numa_imbalance(struct sched_domain *sd_llc)
 	 * parent which is the lowest an SD_NUMA domain can
 	 * be relative to sd_llc.
 	 */
-	parent = sd_llc->parent->parent;
-	while (parent && !(parent->flags & SD_NUMA))
-		parent = parent->parent;
+	والد = sd_llc->والد->والد;
+	جب (والد && !(والد->flags & SD_NUMA))
+		والد = والد->والد;
 
-	imb_span = parent ? parent->span_weight : sd_llc->parent->span_weight;
+	imb_وسعت = والد ? والد->وسعت_وزن : sd_llc->والد->وسعت_وزن;
 
 	/* Update the upper remainder of the topology */
-	parent = sd_llc->parent;
-	while (parent) {
-		int factor = max(1U, (parent->span_weight / imb_span));
+	والد = sd_llc->والد;
+	جب (والد) {
+		صحیح ضربی_عدد = max(1U, (والد->وسعت_وزن / imb_وسعت));
 
-		parent->imb_numa_nr = imb * factor;
-		parent = parent->parent;
+		والد->imb_numa_nr = imb * ضربی_عدد;
+		والد = والد->والد;
 	}
 }
 
-static void
-init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
+ساکن خالی
+init_sched_domain_shared(ساخت s_ڈیٹا *d, ساخت sched_domain *sd, صحیح flags)
 {
-	struct sched_domain_shared *sds = NULL;
-	int cpu;
+	ساخت sched_domain_shared *sds = تہی;
+	صحیح cpu;
 
 	/*
 	 * Multiple domains can try to claim a shared object like
@@ -2974,15 +2974,15 @@ init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
 	 * If the domain only has single CPU, allow temporary overlap
 	 * in allocation since the domains will be degenerated later.
 	 */
-	for_each_cpu(cpu, sched_domain_span(sd)) {
-		sds = *per_cpu_ptr(d->sds, cpu);
+	for_each_cpu(cpu, sched_domain_وسعت(sd)) {
+		sds = *فی_cpu_ptr(d->sds, cpu);
 
-		if (!sds->alloc_flags ||
-		    sd->span_weight == 1 ||
+		اگر (!sds->alloc_flags ||
+		    sd->وسعت_وزن == 1 ||
 		    sds->alloc_flags == flags) {
 			sds->alloc_flags = flags;
 			sd->shared = sds;
-			break;
+			توڑو;
 		}
 	}
 
@@ -2990,7 +2990,7 @@ init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
 	 * Use the sd_shared corresponding to the last
 	 * CPU in the span if none are avaialable.
 	 */
-	if (WARN_ON_ONCE(!sd->shared))
+	اگر (WARN_ON_ONCE(!sd->shared))
 		sd->shared = sds;
 
 	/*
@@ -2998,7 +2998,7 @@ init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
 	 * sd_balance_shared; on the asym-capacity path it is initialized but
 	 * never read.
 	 */
-	atomic_set(&sd->shared->nr_busy_cpus, sd->span_weight);
+	atomic_سیٹ(&sd->shared->nr_busy_cpus, sd->وسعت_وزن);
 	atomic_inc(&sd->shared->ref);
 }
 
@@ -3017,76 +3017,76 @@ init_sched_domain_shared(struct s_data *d, struct sched_domain *sd, int flags)
  *
  * Return true if this CPU's asym path claimed sd->shared, false otherwise.
  */
-static bool claim_asym_sched_domain_shared(struct s_data *d, int cpu)
+ساکن bool claim_asym_sched_domain_shared(ساخت s_ڈیٹا *d, صحیح cpu)
 {
-	struct sched_domain *sd = *per_cpu_ptr(d->sd, cpu);
-	struct sched_domain *sd_asym;
+	ساخت sched_domain *sd = *فی_cpu_ptr(d->sd, cpu);
+	ساخت sched_domain *sd_asym;
 
-	if (!sd)
-		return false;
+	اگر (!sd)
+		واپس false;
 
 	sd_asym = sd;
-	while (sd_asym && !(sd_asym->flags & SD_ASYM_CPUCAPACITY_FULL))
-		sd_asym = sd_asym->parent;
+	جب (sd_asym && !(sd_asym->flags & SD_ASYM_CPUCAPACITY_بھرا))
+		sd_asym = sd_asym->والد;
 
-	if (!sd_asym || (sd_asym->flags & SD_NUMA))
-		return false;
+	اگر (!sd_asym || (sd_asym->flags & SD_NUMA))
+		واپس false;
 
 	init_sched_domain_shared(d, sd_asym, SD_ASYM_CPUCAPACITY);
-	return true;
+	واپس true;
 }
 
-static int __sched_domains_alloc_llc_id(void)
+ساکن صحیح __sched_domains_alloc_llc_id(خالی)
 {
-	int lid, max;
+	صحیح lid, max;
 
 	lockdep_assert_held(&sched_domains_mutex);
 
-	lid = cpumask_first_zero(sched_domains_llc_id_allocmask);
+	lid = cpumask_پہلا_zero(sched_domains_llc_id_allocmask);
 	/*
 	 * llc_id space should never grow larger than the
 	 * possible number of CPUs in the system.
 	 */
-	if (lid >= nr_cpu_ids)
-		return -1;
+	اگر (lid >= nr_cpu_ids)
+		واپس -1;
 
 	__cpumask_set_cpu(lid, sched_domains_llc_id_allocmask);
-	max = cpumask_last(sched_domains_llc_id_allocmask);
-	if (max > max_lid)
+	max = cpumask_آخری(sched_domains_llc_id_allocmask);
+	اگر (max > max_lid)
 		max_lid = max;
 
-	return lid;
+	واپس lid;
 }
 
-static void __sched_domains_free_llc_id(int cpu)
+ساکن خالی __sched_domains_free_llc_id(صحیح cpu)
 {
-	int i, lid, max;
+	صحیح i, lid, max;
 
 	lockdep_assert_held(&sched_domains_mutex);
 
-	lid = per_cpu(sd_llc_id, cpu);
-	if (lid == -1 || lid >= nr_cpu_ids)
-		return;
+	lid = فی_cpu(sd_llc_id, cpu);
+	اگر (lid == -1 || lid >= nr_cpu_ids)
+		واپس;
 
-	per_cpu(sd_llc_id, cpu) = -1;
+	فی_cpu(sd_llc_id, cpu) = -1;
 
-	for_each_cpu(i, llc_mask(cpu)) {
+	for_each_cpu(i, llc_نقاب(cpu)) {
 		/* An online CPU owns the llc_id. */
-		if (per_cpu(sd_llc_id, i) == lid)
-			return;
+		اگر (فی_cpu(sd_llc_id, i) == lid)
+			واپس;
 	}
 
 	__cpumask_clear_cpu(lid, sched_domains_llc_id_allocmask);
 
-	max = cpumask_last(sched_domains_llc_id_allocmask);
+	max = cpumask_آخری(sched_domains_llc_id_allocmask);
 	/* shrink max lid to save memory */
-	if (max < max_lid)
+	اگر (max < max_lid)
 		max_lid = max;
 }
 
-void sched_domains_free_llc_id(int cpu)
+خالی sched_domains_free_llc_id(صحیح cpu)
 {
-	sched_domains_mutex_lock();
+	sched_domains_mutex_تالا();
 	__sched_domains_free_llc_id(cpu);
 	sched_domains_mutex_unlock();
 }
@@ -3095,204 +3095,204 @@ void sched_domains_free_llc_id(int cpu)
  * Build sched domains for a given set of CPUs and attach the sched domains
  * to the individual CPUs
  */
-static int
-build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *attr,
+ساکن صحیح
+build_sched_domains(ثابت ساخت cpumask *cpu_map, ساخت sched_domain_attr *attr,
 		    bool *multi_llcs)
 {
-	enum s_alloc alloc_state = sa_none;
+	شمار s_alloc alloc_state = sa_none;
 	bool has_multi_llcs = false;
-	struct sched_domain *sd;
-	struct s_data d;
-	struct rq *rq = NULL;
-	int i, ret = -ENOMEM;
+	ساخت sched_domain *sd;
+	ساخت s_ڈیٹا d;
+	ساخت rq *rq = تہی;
+	صحیح i, ret = -ENOMEM;
 	bool has_asym = false;
 	bool has_cluster = false;
 
-	if (WARN_ON(cpumask_empty(cpu_map)))
-		goto error;
+	اگر (WARN_ON(cpumask_خالی_خانے(cpu_map)))
+		جاؤ error;
 
 	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
-	if (alloc_state != sa_rootdomain)
-		goto error;
+	اگر (alloc_state != sa_rootdomain)
+		جاؤ error;
 
 	/* Set up domains for CPUs specified by the cpu_map: */
 	for_each_cpu(i, cpu_map) {
-		struct sched_domain_topology_level *tl;
-		int lid;
+		ساخت sched_domain_topology_level *tl;
+		صحیح lid;
 
-		sd = NULL;
+		sd = تہی;
 		for_each_sd_topology(tl) {
 
 			sd = build_sched_domain(tl, cpu_map, attr, sd, i);
 
 			has_asym |= sd->flags & SD_ASYM_CPUCAPACITY;
 
-			if (tl == sched_domain_topology)
-				*per_cpu_ptr(d.sd, i) = sd;
-			if (cpumask_equal(cpu_map, sched_domain_span(sd)))
-				break;
+			اگر (tl == sched_domain_topology)
+				*فی_cpu_ptr(d.sd, i) = sd;
+			اگر (cpumask_equal(cpu_map, sched_domain_وسعت(sd)))
+				توڑو;
 		}
 
-		lid = per_cpu(sd_llc_id, i);
-		if (lid == -1) {
+		lid = فی_cpu(sd_llc_id, i);
+		اگر (lid == -1) {
 			/* try to reuse the llc_id of its siblings */
-			for (int j = cpumask_first(llc_mask(i));
+			برائے (صحیح j = cpumask_پہلا(llc_نقاب(i));
 			     j < nr_cpu_ids;
-			     j = cpumask_next(j, llc_mask(i))) {
-				if (i == j)
-					continue;
+			     j = cpumask_اگلا(j, llc_نقاب(i))) {
+				اگر (i == j)
+					جاری;
 
-				lid = per_cpu(sd_llc_id, j);
+				lid = فی_cpu(sd_llc_id, j);
 
-				if (lid != -1) {
-					per_cpu(sd_llc_id, i) = lid;
+				اگر (lid != -1) {
+					فی_cpu(sd_llc_id, i) = lid;
 
-					break;
+					توڑو;
 				}
 			}
 
 			/* a new LLC is detected */
-			if (lid == -1)
-				per_cpu(sd_llc_id, i) = __sched_domains_alloc_llc_id();
+			اگر (lid == -1)
+				فی_cpu(sd_llc_id, i) = __sched_domains_alloc_llc_id();
 		}
 	}
 
-	if (WARN_ON(!topology_span_sane(cpu_map)))
-		goto error;
+	اگر (WARN_ON(!topology_وسعت_sane(cpu_map)))
+		جاؤ error;
 
 	/* Build the groups for the domains */
 	for_each_cpu(i, cpu_map) {
-		for (sd = *per_cpu_ptr(d.sd, i); sd; sd = sd->parent) {
-			sd->span_weight = cpumask_weight(sched_domain_span(sd));
-			if (sd->flags & SD_NUMA) {
-				if (build_overlap_sched_groups(sd, i))
-					goto error;
-			} else {
-				if (build_sched_groups(sd, i))
-					goto error;
+		برائے (sd = *فی_cpu_ptr(d.sd, i); sd; sd = sd->والد) {
+			sd->وسعت_وزن = cpumask_وزن(sched_domain_وسعت(sd));
+			اگر (sd->flags & SD_NUMA) {
+				اگر (build_overlap_sched_groups(sd, i))
+					جاؤ error;
+			} ورنہ {
+				اگر (build_sched_groups(sd, i))
+					جاؤ error;
 			}
 		}
 	}
 
 	for_each_cpu(i, cpu_map) {
-		sd = *per_cpu_ptr(d.sd, i);
-		if (!sd)
-			continue;
+		sd = *فی_cpu_ptr(d.sd, i);
+		اگر (!sd)
+			جاری;
 
-		if (has_asym)
+		اگر (has_asym)
 			claim_asym_sched_domain_shared(&d, i);
 
 		/* First, find the topmost SD_SHARE_LLC domain */
-		while (sd->parent && (sd->parent->flags & SD_SHARE_LLC))
-			sd = sd->parent;
+		جب (sd->والد && (sd->والد->flags & SD_SHARE_LLC))
+			sd = sd->والد;
 
-		if (sd->flags & SD_SHARE_LLC) {
+		اگر (sd->flags & SD_SHARE_LLC) {
 			init_sched_domain_shared(&d, sd, SD_SHARE_LLC);
 
 			/*
 			 * In presence of higher domains, adjust the
 			 * NUMA imbalance stats for the hierarchy.
 			 */
-			if (sd->parent) {
-				if (IS_ENABLED(CONFIG_NUMA))
+			اگر (sd->والد) {
+				اگر (IS_ENABLED(CONFIG_NUMA))
 					adjust_numa_imbalance(sd);
 
-				if (sd_in_multi_llcs(sd))
+				اگر (sd_اندر_multi_llcs(sd))
 					has_multi_llcs = true;
 			}
 		}
 	}
 
 	/* Calculate CPU capacity for physical packages and nodes */
-	for (i = nr_cpumask_bits-1; i >= 0; i--) {
-		if (!cpumask_test_cpu(i, cpu_map))
-			continue;
+	برائے (i = nr_cpumask_بٹ-1; i >= 0; i--) {
+		اگر (!cpumask_test_cpu(i, cpu_map))
+			جاری;
 
 		claim_allocations(i, &d);
 
-		for (sd = *per_cpu_ptr(d.sd, i); sd; sd = sd->parent)
-			init_sched_groups_capacity(i, sd);
+		برائے (sd = *فی_cpu_ptr(d.sd, i); sd; sd = sd->والد)
+			init_sched_groups_استعداد(i, sd);
 	}
 
 	alloc_sd_llc(cpu_map, &d);
 
 	/* Attach the domains */
-	rcu_read_lock();
+	rcu_read_تالا();
 	for_each_cpu(i, cpu_map) {
 		rq = cpu_rq(i);
-		sd = *per_cpu_ptr(d.sd, i);
+		sd = *فی_cpu_ptr(d.sd, i);
 
 		cpu_attach_domain(sd, d.rd, i);
 
-		if (lowest_flag_domain(i, SD_CLUSTER))
+		اگر (سب_سے_نیچا_flag_domain(i, SD_CLUSTER))
 			has_cluster = true;
 	}
 	rcu_read_unlock();
 
-	if (has_asym)
+	اگر (has_asym)
 		static_branch_inc_cpuslocked(&sched_asym_cpucapacity);
 
-	if (has_cluster)
-		static_branch_inc_cpuslocked(&sched_cluster_active);
+	اگر (has_cluster)
+		static_branch_inc_cpuslocked(&sched_cluster_فعال);
 
-	if (rq && sched_debug_verbose)
-		pr_info("root domain span: %*pbl\n", cpumask_pr_args(cpu_map));
+	اگر (rq && sched_debug_verbose)
+		pr_info("root domain span: %*pbl\n", cpumask_pr_دلائل(cpu_map));
 
 	ret = 0;
 error:
 	*multi_llcs = has_multi_llcs;
 	__free_domain_allocs(&d, alloc_state, cpu_map);
 
-	return ret;
+	واپس ret;
 }
 
 /* Current sched domains: */
-static cpumask_var_t			*doms_cur;
+ساکن cpumask_var_t			*doms_cur;
 
 /* Number of sched domains in 'doms_cur': */
-static int				ndoms_cur;
+ساکن صحیح				ndoms_cur;
 
 /* Attributes of custom domains in 'doms_cur' */
-static struct sched_domain_attr		*dattr_cur;
+ساکن ساخت sched_domain_attr		*dattr_cur;
 
 /*
  * Special case: If a kmalloc() of a doms_cur partition (array of
  * cpumask) fails, then fallback to a single sched domain,
  * as determined by the single cpumask fallback_doms.
  */
-static cpumask_var_t			fallback_doms;
+ساکن cpumask_var_t			fallback_doms;
 
 /*
  * arch_update_cpu_topology lets virtualized architectures update the
  * CPU core maps. It is supposed to return 1 if the topology changed
  * or 0 if it stayed the same.
  */
-int __weak arch_update_cpu_topology(void)
+صحیح __weak arch_update_cpu_topology(خالی)
 {
-	return 0;
+	واپس 0;
 }
 
-cpumask_var_t *alloc_sched_domains(unsigned int ndoms)
+cpumask_var_t *alloc_sched_domains(غیرعلامتی صحیح ndoms)
 {
-	int i;
+	صحیح i;
 	cpumask_var_t *doms;
 
 	doms = kmalloc_objs(*doms, ndoms);
-	if (!doms)
-		return NULL;
-	for (i = 0; i < ndoms; i++) {
-		if (!alloc_cpumask_var(&doms[i], GFP_KERNEL)) {
+	اگر (!doms)
+		واپس تہی;
+	برائے (i = 0; i < ndoms; i++) {
+		اگر (!alloc_cpumask_var(&doms[i], GFP_KERNEL)) {
 			free_sched_domains(doms, i);
-			return NULL;
+			واپس تہی;
 		}
 	}
-	return doms;
+	واپس doms;
 }
 
-void free_sched_domains(cpumask_var_t doms[], unsigned int ndoms)
+خالی free_sched_domains(cpumask_var_t doms[], غیرعلامتی صحیح ndoms)
 {
-	unsigned int i;
-	for (i = 0; i < ndoms; i++)
+	غیرعلامتی صحیح i;
+	برائے (i = 0; i < ndoms; i++)
 		free_cpumask_var(doms[i]);
 	kfree(doms);
 }
@@ -3301,10 +3301,10 @@ void free_sched_domains(cpumask_var_t doms[], unsigned int ndoms)
  * Set up scheduler domains and groups.  For now this just excludes isolated
  * CPUs, but could be used to exclude other special cases in the future.
  */
-int __init sched_init_domains(const struct cpumask *cpu_map)
+صحیح __init sched_init_domains(ثابت ساخت cpumask *cpu_map)
 {
 	bool multi_llcs;
-	int err;
+	صحیح err;
 
 	zalloc_cpumask_var(&sched_domains_llc_id_allocmask, GFP_KERNEL);
 	zalloc_cpumask_var(&sched_domains_tmpmask, GFP_KERNEL);
@@ -3312,55 +3312,55 @@ int __init sched_init_domains(const struct cpumask *cpu_map)
 	zalloc_cpumask_var(&fallback_doms, GFP_KERNEL);
 
 	arch_update_cpu_topology();
-	asym_cpu_capacity_scan();
+	asym_cpu_استعداد_جائزہ();
 	ndoms_cur = 1;
 	doms_cur = alloc_sched_domains(ndoms_cur);
-	if (!doms_cur)
+	اگر (!doms_cur)
 		doms_cur = &fallback_doms;
 	cpumask_and(doms_cur[0], cpu_map, housekeeping_cpumask(HK_TYPE_DOMAIN));
-	err = build_sched_domains(doms_cur[0], NULL, &multi_llcs);
-	if (!err)
-		sched_cache_set(multi_llcs);
+	err = build_sched_domains(doms_cur[0], تہی, &multi_llcs);
+	اگر (!err)
+		sched_cache_سیٹ(multi_llcs);
 
-	return err;
+	واپس err;
 }
 
 /*
  * Detach sched domains from a group of CPUs specified in cpu_map
  * These CPUs will now be attached to the NULL domain
  */
-static void detach_destroy_domains(const struct cpumask *cpu_map)
+ساکن خالی detach_destroy_domains(ثابت ساخت cpumask *cpu_map)
 {
-	unsigned int cpu = cpumask_any(cpu_map);
-	int i;
+	غیرعلامتی صحیح cpu = cpumask_any(cpu_map);
+	صحیح i;
 
-	if (rcu_access_pointer(per_cpu(sd_asym_cpucapacity, cpu)))
+	اگر (rcu_access_اشارہ_گر(فی_cpu(sd_asym_cpucapacity, cpu)))
 		static_branch_dec_cpuslocked(&sched_asym_cpucapacity);
 
-	if (static_branch_unlikely(&sched_cluster_active))
-		static_branch_dec_cpuslocked(&sched_cluster_active);
+	اگر (static_branch_unlikely(&sched_cluster_فعال))
+		static_branch_dec_cpuslocked(&sched_cluster_فعال);
 
-	rcu_read_lock();
+	rcu_read_تالا();
 	for_each_cpu(i, cpu_map)
-		cpu_attach_domain(NULL, &def_root_domain, i);
+		cpu_attach_domain(تہی, &def_جڑ_domain, i);
 	rcu_read_unlock();
 }
 
 /* handle null as "default" */
-static int dattrs_equal(struct sched_domain_attr *cur, int idx_cur,
-			struct sched_domain_attr *new, int idx_new)
+ساکن صحیح dattrs_equal(ساخت sched_domain_attr *cur, صحیح idx_cur,
+			ساخت sched_domain_attr *new, صحیح idx_new)
 {
-	struct sched_domain_attr tmp;
+	ساخت sched_domain_attr tmp;
 
 	/* Fast path: */
-	if (!new && !cur)
-		return 1;
+	اگر (!new && !cur)
+		واپس 1;
 
 	tmp = SD_ATTR_INIT;
 
-	return !memcmp(cur ? (cur + idx_cur) : &tmp,
+	واپس !memcmp(cur ? (cur + idx_cur) : &tmp,
 			new ? (new + idx_new) : &tmp,
-			sizeof(struct sched_domain_attr));
+			حجم(ساخت sched_domain_attr));
 }
 
 /*
@@ -3389,41 +3389,41 @@ static int dattrs_equal(struct sched_domain_attr *cur, int idx_cur,
  *
  * Call with hotplug lock and sched_domains_mutex held
  */
-static void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-				    struct sched_domain_attr *dattr_new)
+ساکن خالی تقسیم_sched_domains_locked(صحیح ndoms_new, cpumask_var_t doms_new[],
+				    ساخت sched_domain_attr *dattr_new)
 {
 	bool __maybe_unused has_eas = false;
 	bool has_multi_llcs = false, multi_llcs;
-	int i, j, n;
-	int new_topology;
+	صحیح i, j, n;
+	صحیح new_topology;
 
 	lockdep_assert_held(&sched_domains_mutex);
 
 	/* Let the architecture update CPU core mappings: */
 	new_topology = arch_update_cpu_topology();
 	/* Trigger rebuilding CPU capacity asymmetry data */
-	if (new_topology)
-		asym_cpu_capacity_scan();
+	اگر (new_topology)
+		asym_cpu_استعداد_جائزہ();
 
-	if (!doms_new) {
+	اگر (!doms_new) {
 		WARN_ON_ONCE(dattr_new);
 		n = 0;
 		doms_new = alloc_sched_domains(1);
-		if (doms_new) {
+		اگر (doms_new) {
 			n = 1;
-			cpumask_and(doms_new[0], cpu_active_mask,
+			cpumask_and(doms_new[0], cpu_فعال_نقاب,
 				    housekeeping_cpumask(HK_TYPE_DOMAIN));
 		}
-	} else {
+	} ورنہ {
 		n = ndoms_new;
 	}
 
 	/* Destroy deleted domains: */
-	for (i = 0; i < ndoms_cur; i++) {
-		for (j = 0; j < n && !new_topology; j++) {
-			if (cpumask_equal(doms_cur[i], doms_new[j]) &&
+	برائے (i = 0; i < ndoms_cur; i++) {
+		برائے (j = 0; j < n && !new_topology; j++) {
+			اگر (cpumask_equal(doms_cur[i], doms_new[j]) &&
 			    dattrs_equal(dattr_cur, i, dattr_new, j))
-				goto match1;
+				جاؤ match1;
 		}
 		/* No match - a current sched domain not in new doms_new[] */
 		detach_destroy_domains(doms_cur[i]);
@@ -3432,17 +3432,17 @@ match1:
 	}
 
 	n = ndoms_cur;
-	if (!doms_new) {
+	اگر (!doms_new) {
 		n = 0;
 		doms_new = &fallback_doms;
-		cpumask_and(doms_new[0], cpu_active_mask,
+		cpumask_and(doms_new[0], cpu_فعال_نقاب,
 			    housekeeping_cpumask(HK_TYPE_DOMAIN));
 	}
 
 	/* Build new domains: */
-	for (i = 0; i < ndoms_new; i++) {
-		for (j = 0; j < n && !new_topology; j++) {
-			if (cpumask_equal(doms_new[i], doms_cur[j]) &&
+	برائے (i = 0; i < ndoms_new; i++) {
+		برائے (j = 0; j < n && !new_topology; j++) {
+			اگر (cpumask_equal(doms_new[i], doms_cur[j]) &&
 			    dattrs_equal(dattr_new, i, dattr_cur, j)) {
 				/*
 				 * Reused partition has to be taken care
@@ -3457,36 +3457,36 @@ match1:
 				 * scheduling globally despite the reused
 				 * multi-LLC partition still being active.
 				 */
-				struct sched_domain *sd;
-				int cpu = cpumask_first(doms_cur[j]);
+				ساخت sched_domain *sd;
+				صحیح cpu = cpumask_پہلا(doms_cur[j]);
 
 				guard(rcu)();
 				sd = rcu_dereference(cpu_rq(cpu)->sd);
-				while (sd && sd->parent && (sd->parent->flags & SD_SHARE_LLC))
-					sd = sd->parent;
-				if (sd && (sd->flags & SD_SHARE_LLC) && sd->parent &&
-				    sd_in_multi_llcs(sd))
+				جب (sd && sd->والد && (sd->والد->flags & SD_SHARE_LLC))
+					sd = sd->والد;
+				اگر (sd && (sd->flags & SD_SHARE_LLC) && sd->والد &&
+				    sd_اندر_multi_llcs(sd))
 					has_multi_llcs = true;
-				goto match2;
+				جاؤ match2;
 			}
 		}
 		/* No match - add a new doms_new */
-		build_sched_domains(doms_new[i], dattr_new ? dattr_new + i : NULL,
+		build_sched_domains(doms_new[i], dattr_new ? dattr_new + i : تہی,
 				    &multi_llcs);
 		has_multi_llcs |= multi_llcs;
 match2:
 		;
 	}
-	sched_cache_set(has_multi_llcs);
+	sched_cache_سیٹ(has_multi_llcs);
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+#اگر defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
 	/* Build perf domains: */
-	for (i = 0; i < ndoms_new; i++) {
-		for (j = 0; j < n && !sched_energy_update; j++) {
-			if (cpumask_equal(doms_new[i], doms_cur[j]) &&
-			    cpu_rq(cpumask_first(doms_cur[j]))->rd->pd) {
+	برائے (i = 0; i < ndoms_new; i++) {
+		برائے (j = 0; j < n && !sched_energy_update; j++) {
+			اگر (cpumask_equal(doms_new[i], doms_cur[j]) &&
+			    cpu_rq(cpumask_پہلا(doms_cur[j]))->rd->pd) {
 				has_eas = true;
-				goto match3;
+				جاؤ match3;
 			}
 		}
 		/* No match - add perf domains for a new rd */
@@ -3494,11 +3494,11 @@ match2:
 match3:
 		;
 	}
-	sched_energy_set(has_eas);
-#endif
+	sched_energy_سیٹ(has_eas);
+#اگر_ختم
 
 	/* Remember the new sched domains: */
-	if (doms_cur != &fallback_doms)
+	اگر (doms_cur != &fallback_doms)
 		free_sched_domains(doms_cur, ndoms_cur);
 
 	kfree(dattr_cur);
@@ -3513,10 +3513,10 @@ match3:
 /*
  * Call with hotplug lock held
  */
-void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-			     struct sched_domain_attr *dattr_new)
+خالی تقسیم_sched_domains(صحیح ndoms_new, cpumask_var_t doms_new[],
+			     ساخت sched_domain_attr *dattr_new)
 {
-	sched_domains_mutex_lock();
-	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+	sched_domains_mutex_تالا();
+	تقسیم_sched_domains_locked(ndoms_new, doms_new, dattr_new);
 	sched_domains_mutex_unlock();
 }

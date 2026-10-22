@@ -4,77 +4,77 @@
  *
  * (C) 2004 Nadia Yvette Chambers, Oracle
  */
-#include "sched.h"
-#include <linux/wait_bit.h>
+#شامل "sched.h"
+#شامل <linux/wait_bit.h>
 
-void __init_waitqueue_head(struct wait_queue_head *wq_head, const char *name, struct lock_class_key *key)
+خالی __init_waitqueue_head(ساخت wait_قطار_سر *wq_سر, ثابت حرف *name, ساخت تالا_class_کلید *کلید)
 {
-	spin_lock_init(&wq_head->lock);
-	lockdep_set_class_and_name(&wq_head->lock, key, name);
-	INIT_LIST_HEAD(&wq_head->head);
+	spin_تالا_init(&wq_سر->تالا);
+	lockdep_سیٹ_class_and_name(&wq_سر->تالا, کلید, name);
+	INIT_LIST_سر(&wq_سر->سر);
 }
 
-EXPORT_SYMBOL(__init_waitqueue_head);
+EXPORT_علامت(__init_waitqueue_head);
 
-void add_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+خالی جوڑو_wait_قطار(ساخت wait_قطار_سر *wq_سر, ساخت wait_قطار_اندراج *wq_اندراج)
 {
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
-	wq_entry->flags &= ~WQ_FLAG_EXCLUSIVE;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	__add_wait_queue(wq_head, wq_entry);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	wq_اندراج->flags &= ~WQ_FLAG_EXCLUSIVE;
+	spin_تالا_irqsave(&wq_سر->تالا, flags);
+	__add_wait_queue(wq_سر, wq_اندراج);
+	spin_unlock_irqrestore(&wq_سر->تالا, flags);
 }
-EXPORT_SYMBOL(add_wait_queue);
+EXPORT_علامت(جوڑو_wait_قطار);
 
-void add_wait_queue_exclusive(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+خالی جوڑو_wait_قطار_exclusive(ساخت wait_قطار_سر *wq_سر, ساخت wait_قطار_اندراج *wq_اندراج)
 {
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
-	wq_entry->flags |= WQ_FLAG_EXCLUSIVE;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	__add_wait_queue_entry_tail(wq_head, wq_entry);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	wq_اندراج->flags |= WQ_FLAG_EXCLUSIVE;
+	spin_تالا_irqsave(&wq_سر->تالا, flags);
+	__add_wait_queue_entry_tail(wq_سر, wq_اندراج);
+	spin_unlock_irqrestore(&wq_سر->تالا, flags);
 }
-EXPORT_SYMBOL(add_wait_queue_exclusive);
+EXPORT_علامت(جوڑو_wait_قطار_exclusive);
 
-void add_wait_queue_priority(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+خالی جوڑو_wait_قطار_ترجیح(ساخت wait_قطار_سر *wq_سر, ساخت wait_قطار_اندراج *wq_اندراج)
 {
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
-	wq_entry->flags |= WQ_FLAG_PRIORITY;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	__add_wait_queue(wq_head, wq_entry);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	wq_اندراج->flags |= WQ_FLAG_ترجیح;
+	spin_تالا_irqsave(&wq_سر->تالا, flags);
+	__add_wait_queue(wq_سر, wq_اندراج);
+	spin_unlock_irqrestore(&wq_سر->تالا, flags);
 }
-EXPORT_SYMBOL_GPL(add_wait_queue_priority);
+EXPORT_علامت_GPL(جوڑو_wait_قطار_ترجیح);
 
-int add_wait_queue_priority_exclusive(struct wait_queue_head *wq_head,
-				      struct wait_queue_entry *wq_entry)
+صحیح جوڑو_wait_قطار_ترجیح_exclusive(ساخت wait_قطار_سر *wq_سر,
+				      ساخت wait_قطار_اندراج *wq_اندراج)
 {
-	struct list_head *head = &wq_head->head;
+	ساخت list_سر *سر = &wq_سر->سر;
 
-	guard(spinlock_irqsave)(&wq_head->lock);
+	guard(spinlock_irqsave)(&wq_سر->تالا);
 
-	if (!list_empty(head) &&
-	    (list_first_entry(head, typeof(*wq_entry), entry)->flags & WQ_FLAG_PRIORITY))
-		return -EBUSY;
+	اگر (!list_خالی_خانے(سر) &&
+	    (list_پہلا_اندراج(سر, typeof(*wq_اندراج), اندراج_2)->flags & WQ_FLAG_ترجیح))
+		واپس -EBUSY;
 
-	wq_entry->flags |= WQ_FLAG_EXCLUSIVE | WQ_FLAG_PRIORITY;
-	list_add(&wq_entry->entry, head);
-	return 0;
+	wq_اندراج->flags |= WQ_FLAG_EXCLUSIVE | WQ_FLAG_ترجیح;
+	list_جوڑو(&wq_اندراج->اندراج_2, سر);
+	واپس 0;
 }
-EXPORT_SYMBOL_GPL(add_wait_queue_priority_exclusive);
+EXPORT_علامت_GPL(جوڑو_wait_قطار_ترجیح_exclusive);
 
-void remove_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+خالی remove_wait_قطار(ساخت wait_قطار_سر *wq_سر, ساخت wait_قطار_اندراج *wq_اندراج)
 {
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
-	spin_lock_irqsave(&wq_head->lock, flags);
-	__remove_wait_queue(wq_head, wq_entry);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	spin_تالا_irqsave(&wq_سر->تالا, flags);
+	__remove_wait_queue(wq_سر, wq_اندراج);
+	spin_unlock_irqrestore(&wq_سر->تالا, flags);
 }
-EXPORT_SYMBOL(remove_wait_queue);
+EXPORT_علامت(remove_wait_قطار);
 
 /*
  * The core wakeup function. Non-exclusive wakeups (nr_exclusive == 0) just
@@ -89,44 +89,44 @@ EXPORT_SYMBOL(remove_wait_queue);
  * started to run but is not in state TASK_RUNNING. try_to_wake_up() returns
  * zero in this (rare) case, and we handle it by continuing to scan the queue.
  */
-static int __wake_up_common(struct wait_queue_head *wq_head, unsigned int mode,
-			int nr_exclusive, int wake_flags, void *key)
+ساکن صحیح __wake_up_common(ساخت wait_قطار_سر *wq_سر, غیرعلامتی صحیح منوال,
+			صحیح nr_exclusive, صحیح wake_flags, خالی *کلید)
 {
-	wait_queue_entry_t *curr, *next;
+	wait_قطار_اندراج_t *curr, *اگلا;
 
-	lockdep_assert_held(&wq_head->lock);
+	lockdep_assert_held(&wq_سر->تالا);
 
-	curr = list_first_entry(&wq_head->head, wait_queue_entry_t, entry);
+	curr = list_پہلا_اندراج(&wq_سر->سر, wait_قطار_اندراج_t, اندراج_2);
 
-	if (&curr->entry == &wq_head->head)
-		return nr_exclusive;
+	اگر (&curr->اندراج_2 == &wq_سر->سر)
+		واپس nr_exclusive;
 
-	list_for_each_entry_safe_from(curr, next, &wq_head->head, entry) {
-		unsigned flags = curr->flags;
-		int ret;
+	list_for_each_اندراج_محفوظ_from(curr, اگلا, &wq_سر->سر, اندراج_2) {
+		غیرعلامتی flags = curr->flags;
+		صحیح ret;
 
-		ret = curr->func(curr, mode, wake_flags, key);
-		if (ret < 0)
-			break;
-		if (ret && (flags & WQ_FLAG_EXCLUSIVE) && !--nr_exclusive)
-			break;
+		ret = curr->func(curr, منوال, wake_flags, کلید);
+		اگر (ret < 0)
+			توڑو;
+		اگر (ret && (flags & WQ_FLAG_EXCLUSIVE) && !--nr_exclusive)
+			توڑو;
 	}
 
-	return nr_exclusive;
+	واپس nr_exclusive;
 }
 
-static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int mode,
-			int nr_exclusive, int wake_flags, void *key)
+ساکن صحیح __wake_up_common_lock(ساخت wait_قطار_سر *wq_سر, غیرعلامتی صحیح منوال,
+			صحیح nr_exclusive, صحیح wake_flags, خالی *کلید)
 {
-	unsigned long flags;
-	int remaining;
+	غیرعلامتی طویل flags;
+	صحیح بقایا;
 
-	spin_lock_irqsave(&wq_head->lock, flags);
-	remaining = __wake_up_common(wq_head, mode, nr_exclusive, wake_flags,
-			key);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	spin_تالا_irqsave(&wq_سر->تالا, flags);
+	بقایا = __wake_up_common(wq_سر, منوال, nr_exclusive, wake_flags,
+			کلید);
+	spin_unlock_irqrestore(&wq_سر->تالا, flags);
 
-	return nr_exclusive - remaining;
+	واپس nr_exclusive - بقایا;
 }
 
 /**
@@ -140,32 +140,32 @@ static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int m
  * before accessing the task state.  Returns the number of exclusive
  * tasks that were awaken.
  */
-int __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
-	      int nr_exclusive, void *key)
+صحیح __wake_up(ساخت wait_قطار_سر *wq_سر, غیرعلامتی صحیح منوال,
+	      صحیح nr_exclusive, خالی *کلید)
 {
-	return __wake_up_common_lock(wq_head, mode, nr_exclusive, 0, key);
+	واپس __wake_up_common_lock(wq_سر, منوال, nr_exclusive, 0, کلید);
 }
-EXPORT_SYMBOL(__wake_up);
+EXPORT_علامت(__wake_up);
 
-void __wake_up_on_current_cpu(struct wait_queue_head *wq_head, unsigned int mode, void *key)
+خالی __wake_up_on_current_cpu(ساخت wait_قطار_سر *wq_سر, غیرعلامتی صحیح منوال, خالی *کلید)
 {
-	__wake_up_common_lock(wq_head, mode, 1, WF_CURRENT_CPU, key);
+	__wake_up_common_lock(wq_سر, منوال, 1, WF_CURRENT_CPU, کلید);
 }
 
 /*
  * Same as __wake_up but called with the spinlock in wait_queue_head_t held.
  */
-void __wake_up_locked(struct wait_queue_head *wq_head, unsigned int mode, int nr)
+خالی __wake_up_locked(ساخت wait_قطار_سر *wq_سر, غیرعلامتی صحیح منوال, صحیح nr)
 {
-	__wake_up_common(wq_head, mode, nr, 0, NULL);
+	__wake_up_common(wq_سر, منوال, nr, 0, تہی);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked);
+EXPORT_علامت_GPL(__wake_up_locked);
 
-void __wake_up_locked_key(struct wait_queue_head *wq_head, unsigned int mode, void *key)
+خالی __wake_up_locked_key(ساخت wait_قطار_سر *wq_سر, غیرعلامتی صحیح منوال, خالی *کلید)
 {
-	__wake_up_common(wq_head, mode, 1, 0, key);
+	__wake_up_common(wq_سر, منوال, 1, 0, کلید);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked_key);
+EXPORT_علامت_GPL(__wake_up_locked_key);
 
 /**
  * __wake_up_sync_key - wake up threads blocked on a waitqueue.
@@ -179,15 +179,15 @@ EXPORT_SYMBOL_GPL(__wake_up_locked_key);
  * If this function wakes up a task, it executes a full memory barrier
  * before accessing the task state.
  */
-void __wake_up_sync_key(struct wait_queue_head *wq_head, unsigned int mode,
-			void *key)
+خالی __wake_up_sync_key(ساخت wait_قطار_سر *wq_سر, غیرعلامتی صحیح منوال,
+			خالی *کلید)
 {
-	if (unlikely(!wq_head))
-		return;
+	اگر (unlikely(!wq_سر))
+		واپس;
 
-	__wake_up_common_lock(wq_head, mode, 1, WF_SYNC, key);
+	__wake_up_common_lock(wq_سر, منوال, 1, WF_SYNC, کلید);
 }
-EXPORT_SYMBOL_GPL(__wake_up_sync_key);
+EXPORT_علامت_GPL(__wake_up_sync_key);
 
 /**
  * __wake_up_locked_sync_key - wake up a thread blocked on a locked waitqueue.
@@ -197,27 +197,27 @@ EXPORT_SYMBOL_GPL(__wake_up_sync_key);
  *
  * Same as __wake_up_sync_key(), but called with @wq_head->lock held.
  */
-void __wake_up_locked_sync_key(struct wait_queue_head *wq_head,
-			       unsigned int mode, void *key)
+خالی __wake_up_locked_sync_key(ساخت wait_قطار_سر *wq_سر,
+			       غیرعلامتی صحیح منوال, خالی *کلید)
 {
-        __wake_up_common(wq_head, mode, 1, WF_SYNC, key);
+        __wake_up_common(wq_سر, منوال, 1, WF_SYNC, کلید);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked_sync_key);
+EXPORT_علامت_GPL(__wake_up_locked_sync_key);
 
 /*
  * __wake_up_sync - see __wake_up_sync_key()
  */
-void __wake_up_sync(struct wait_queue_head *wq_head, unsigned int mode)
+خالی __wake_up_sync(ساخت wait_قطار_سر *wq_سر, غیرعلامتی صحیح منوال)
 {
-	__wake_up_sync_key(wq_head, mode, NULL);
+	__wake_up_sync_key(wq_سر, منوال, تہی);
 }
-EXPORT_SYMBOL_GPL(__wake_up_sync);	/* For internal use only */
+EXPORT_علامت_GPL(__wake_up_sync);	/* For internal use only */
 
-void __wake_up_pollfree(struct wait_queue_head *wq_head)
+خالی __wake_up_pollfree(ساخت wait_قطار_سر *wq_سر)
 {
-	__wake_up(wq_head, TASK_NORMAL, 0, poll_to_key(EPOLLHUP | POLLFREE));
+	__wake_up(wq_سر, TASK_معمول, 0, poll_مقصد_کلید(EPOLLHUP | POLLFREE));
 	/* POLLFREE must have cleared the queue. */
-	WARN_ON_ONCE(waitqueue_active(wq_head));
+	WARN_ON_ONCE(waitqueue_فعال(wq_سر));
 }
 
 /*
@@ -232,55 +232,55 @@ void __wake_up_pollfree(struct wait_queue_head *wq_head)
  * stops them from bleeding out - it would still allow subsequent
  * loads to move into the critical region).
  */
-void
-prepare_to_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
+خالی
+prepare_مقصد_wait(ساخت wait_قطار_سر *wq_سر, ساخت wait_قطار_اندراج *wq_اندراج, صحیح state)
 {
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
-	wq_entry->flags &= ~WQ_FLAG_EXCLUSIVE;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	if (list_empty(&wq_entry->entry))
-		__add_wait_queue(wq_head, wq_entry);
-	set_current_state(state);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	wq_اندراج->flags &= ~WQ_FLAG_EXCLUSIVE;
+	spin_تالا_irqsave(&wq_سر->تالا, flags);
+	اگر (list_خالی_خانے(&wq_اندراج->اندراج_2))
+		__add_wait_queue(wq_سر, wq_اندراج);
+	سیٹ_current_state(state);
+	spin_unlock_irqrestore(&wq_سر->تالا, flags);
 }
-EXPORT_SYMBOL(prepare_to_wait);
+EXPORT_علامت(prepare_مقصد_wait);
 
 /* Returns true if we are the first waiter in the queue, false otherwise. */
 bool
-prepare_to_wait_exclusive(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
+prepare_مقصد_wait_exclusive(ساخت wait_قطار_سر *wq_سر, ساخت wait_قطار_اندراج *wq_اندراج, صحیح state)
 {
-	unsigned long flags;
-	bool was_empty = false;
+	غیرعلامتی طویل flags;
+	bool was_خالی_خانے = false;
 
-	wq_entry->flags |= WQ_FLAG_EXCLUSIVE;
-	spin_lock_irqsave(&wq_head->lock, flags);
-	if (list_empty(&wq_entry->entry)) {
-		was_empty = list_empty(&wq_head->head);
-		__add_wait_queue_entry_tail(wq_head, wq_entry);
+	wq_اندراج->flags |= WQ_FLAG_EXCLUSIVE;
+	spin_تالا_irqsave(&wq_سر->تالا, flags);
+	اگر (list_خالی_خانے(&wq_اندراج->اندراج_2)) {
+		was_خالی_خانے = list_خالی_خانے(&wq_سر->سر);
+		__add_wait_queue_entry_tail(wq_سر, wq_اندراج);
 	}
-	set_current_state(state);
-	spin_unlock_irqrestore(&wq_head->lock, flags);
-	return was_empty;
+	سیٹ_current_state(state);
+	spin_unlock_irqrestore(&wq_سر->تالا, flags);
+	واپس was_خالی_خانے;
 }
-EXPORT_SYMBOL(prepare_to_wait_exclusive);
+EXPORT_علامت(prepare_مقصد_wait_exclusive);
 
-void init_wait_entry(struct wait_queue_entry *wq_entry, int flags)
+خالی init_wait_اندراج(ساخت wait_قطار_اندراج *wq_اندراج, صحیح flags)
 {
-	wq_entry->flags = flags;
-	wq_entry->private = current;
-	wq_entry->func = autoremove_wake_function;
-	INIT_LIST_HEAD(&wq_entry->entry);
+	wq_اندراج->flags = flags;
+	wq_اندراج->نجی = current;
+	wq_اندراج->func = autoremove_wake_function;
+	INIT_LIST_سر(&wq_اندراج->اندراج_2);
 }
-EXPORT_SYMBOL(init_wait_entry);
+EXPORT_علامت(init_wait_اندراج);
 
-long prepare_to_wait_event(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
+طویل prepare_مقصد_wait_event(ساخت wait_قطار_سر *wq_سر, ساخت wait_قطار_اندراج *wq_اندراج, صحیح state)
 {
-	unsigned long flags;
-	long ret = 0;
+	غیرعلامتی طویل flags;
+	طویل ret = 0;
 
-	spin_lock_irqsave(&wq_head->lock, flags);
-	if (signal_pending_state(state, current)) {
+	spin_تالا_irqsave(&wq_سر->تالا, flags);
+	اگر (signal_pending_state(state, current)) {
 		/*
 		 * Exclusive waiter must not fail if it was selected by wakeup,
 		 * it should "consume" the condition we were waiting for.
@@ -293,22 +293,22 @@ long prepare_to_wait_event(struct wait_queue_head *wq_head, struct wait_queue_en
 		 * can't see us, it should wake up another exclusive waiter if
 		 * we fail.
 		 */
-		list_del_init(&wq_entry->entry);
+		list_del_init(&wq_اندراج->اندراج_2);
 		ret = -ERESTARTSYS;
-	} else {
-		if (list_empty(&wq_entry->entry)) {
-			if (wq_entry->flags & WQ_FLAG_EXCLUSIVE)
-				__add_wait_queue_entry_tail(wq_head, wq_entry);
-			else
-				__add_wait_queue(wq_head, wq_entry);
+	} ورنہ {
+		اگر (list_خالی_خانے(&wq_اندراج->اندراج_2)) {
+			اگر (wq_اندراج->flags & WQ_FLAG_EXCLUSIVE)
+				__add_wait_queue_entry_tail(wq_سر, wq_اندراج);
+			ورنہ
+				__add_wait_queue(wq_سر, wq_اندراج);
 		}
-		set_current_state(state);
+		سیٹ_current_state(state);
 	}
-	spin_unlock_irqrestore(&wq_head->lock, flags);
+	spin_unlock_irqrestore(&wq_سر->تالا, flags);
 
-	return ret;
+	واپس ret;
 }
-EXPORT_SYMBOL(prepare_to_wait_event);
+EXPORT_علامت(prepare_مقصد_wait_event);
 
 /*
  * Note! These two wait functions are entered with the
@@ -317,39 +317,39 @@ EXPORT_SYMBOL(prepare_to_wait_event);
  * condition in the caller before they add the wait
  * entry to the wake queue.
  */
-int do_wait_intr(wait_queue_head_t *wq, wait_queue_entry_t *wait)
+صحیح do_wait_intr(wait_قطار_سر_t *wq, wait_قطار_اندراج_t *wait)
 {
-	if (likely(list_empty(&wait->entry)))
+	اگر (likely(list_خالی_خانے(&wait->اندراج_2)))
 		__add_wait_queue_entry_tail(wq, wait);
 
-	set_current_state(TASK_INTERRUPTIBLE);
-	if (signal_pending(current))
-		return -ERESTARTSYS;
+	سیٹ_current_state(TASK_INTERRUPTIBLE);
+	اگر (signal_pending(current))
+		واپس -ERESTARTSYS;
 
-	spin_unlock(&wq->lock);
-	schedule();
-	spin_lock(&wq->lock);
+	spin_unlock(&wq->تالا);
+	جدول_وقت();
+	spin_تالا(&wq->تالا);
 
-	return 0;
+	واپس 0;
 }
-EXPORT_SYMBOL(do_wait_intr);
+EXPORT_علامت(do_wait_intr);
 
-int do_wait_intr_irq(wait_queue_head_t *wq, wait_queue_entry_t *wait)
+صحیح do_wait_intr_irq(wait_قطار_سر_t *wq, wait_قطار_اندراج_t *wait)
 {
-	if (likely(list_empty(&wait->entry)))
+	اگر (likely(list_خالی_خانے(&wait->اندراج_2)))
 		__add_wait_queue_entry_tail(wq, wait);
 
-	set_current_state(TASK_INTERRUPTIBLE);
-	if (signal_pending(current))
-		return -ERESTARTSYS;
+	سیٹ_current_state(TASK_INTERRUPTIBLE);
+	اگر (signal_pending(current))
+		واپس -ERESTARTSYS;
 
-	spin_unlock_irq(&wq->lock);
-	schedule();
-	spin_lock_irq(&wq->lock);
+	spin_unlock_irq(&wq->تالا);
+	جدول_وقت();
+	spin_تالا_irq(&wq->تالا);
 
-	return 0;
+	واپس 0;
 }
-EXPORT_SYMBOL(do_wait_intr_irq);
+EXPORT_علامت(do_wait_intr_irq);
 
 /**
  * finish_wait - clean up after waiting in a queue
@@ -360,9 +360,9 @@ EXPORT_SYMBOL(do_wait_intr_irq);
  * the wait descriptor from the given waitqueue if still
  * queued.
  */
-void finish_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+خالی اختتام_wait(ساخت wait_قطار_سر *wq_سر, ساخت wait_قطار_اندراج *wq_اندراج)
 {
-	unsigned long flags;
+	غیرعلامتی طویل flags;
 
 	__set_current_state(TASK_RUNNING);
 	/*
@@ -378,24 +378,24 @@ void finish_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_en
 	 *    have _one_ other CPU that looks at or modifies
 	 *    the list).
 	 */
-	if (!list_empty_careful(&wq_entry->entry)) {
-		spin_lock_irqsave(&wq_head->lock, flags);
-		list_del_init(&wq_entry->entry);
-		spin_unlock_irqrestore(&wq_head->lock, flags);
+	اگر (!list_خالی_خانے_careful(&wq_اندراج->اندراج_2)) {
+		spin_تالا_irqsave(&wq_سر->تالا, flags);
+		list_del_init(&wq_اندراج->اندراج_2);
+		spin_unlock_irqrestore(&wq_سر->تالا, flags);
 	}
 }
-EXPORT_SYMBOL(finish_wait);
+EXPORT_علامت(اختتام_wait);
 
-int autoremove_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
+صحیح autoremove_wake_function(ساخت wait_قطار_اندراج *wq_اندراج, غیرعلامتی منوال, صحیح sync, خالی *کلید)
 {
-	int ret = default_wake_function(wq_entry, mode, sync, key);
+	صحیح ret = default_wake_function(wq_اندراج, منوال, sync, کلید);
 
-	if (ret)
-		list_del_init_careful(&wq_entry->entry);
+	اگر (ret)
+		list_del_init_careful(&wq_اندراج->اندراج_2);
 
-	return ret;
+	واپس ret;
 }
-EXPORT_SYMBOL(autoremove_wake_function);
+EXPORT_علامت(autoremove_wake_function);
 
 /*
  * DEFINE_WAIT_FUNC(wait, woken_wake_func);
@@ -417,7 +417,7 @@ EXPORT_SYMBOL(autoremove_wake_function);
  * }						smp_mb(); // C
  * remove_wait_queue(&wq_head, &wait);		wq_entry->flags |= WQ_FLAG_WOKEN;
  */
-long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
+طویل wait_woken(ساخت wait_قطار_اندراج *wq_اندراج, غیرعلامتی منوال, طویل timeout)
 {
 	/*
 	 * The below executes an smp_mb(), which matches with the full barrier
@@ -425,9 +425,9 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
 	 * either we see the store to wq_entry->flags in woken_wake_function()
 	 * or woken_wake_function() sees our store to current->state.
 	 */
-	set_current_state(mode); /* A */
-	if (!(wq_entry->flags & WQ_FLAG_WOKEN) && !kthread_should_stop_or_park())
-		timeout = schedule_timeout(timeout);
+	سیٹ_current_state(منوال); /* A */
+	اگر (!(wq_اندراج->flags & WQ_FLAG_WOKEN) && !kthread_should_stop_or_park())
+		timeout = جدول_وقت_timeout(timeout);
 	__set_current_state(TASK_RUNNING);
 
 	/*
@@ -436,32 +436,32 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
 	 * being true or the store to wq_entry->flags in woken_wake_function()
 	 * follows ours in the coherence order.
 	 */
-	smp_store_mb(wq_entry->flags, wq_entry->flags & ~WQ_FLAG_WOKEN); /* B */
+	smp_store_mb(wq_اندراج->flags, wq_اندراج->flags & ~WQ_FLAG_WOKEN); /* B */
 
-	return timeout;
+	واپس timeout;
 }
-EXPORT_SYMBOL(wait_woken);
+EXPORT_علامت(wait_woken);
 
-int woken_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
+صحیح woken_wake_function(ساخت wait_قطار_اندراج *wq_اندراج, غیرعلامتی منوال, صحیح sync, خالی *کلید)
 {
 	/* Pairs with the smp_store_mb() in wait_woken(). */
 	smp_mb(); /* C */
-	wq_entry->flags |= WQ_FLAG_WOKEN;
+	wq_اندراج->flags |= WQ_FLAG_WOKEN;
 
-	return default_wake_function(wq_entry, mode, sync, key);
+	واپس default_wake_function(wq_اندراج, منوال, sync, کلید);
 }
-EXPORT_SYMBOL(woken_wake_function);
+EXPORT_علامت(woken_wake_function);
 
-int woken_wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+صحیح woken_wake_ثنائی_ہندسہ_function(ساخت wait_قطار_اندراج *wq_اندراج, غیرعلامتی منوال, صحیح sync, خالی *arg)
 {
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
+	ساخت wait_ثنائی_ہندسہ_کلید *کلید = __var_wake_key(wq_اندراج, arg);
+	اگر (!کلید)
+		واپس 0;
 
 	/* Pairs with the smp_store_mb() in wait_woken(). */
 	smp_mb(); /* C */
-	wq_entry->flags |= WQ_FLAG_WOKEN;
+	wq_اندراج->flags |= WQ_FLAG_WOKEN;
 
-	return default_wake_function(wq_entry, mode, sync, key);
+	واپس default_wake_function(wq_اندراج, منوال, sync, کلید);
 }
-EXPORT_SYMBOL(woken_wake_bit_function);
+EXPORT_علامت(woken_wake_ثنائی_ہندسہ_function);
