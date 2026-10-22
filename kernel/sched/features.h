@@ -29,7 +29,7 @@ SCHED_FEAT(PREEMPT_SHORT, true)
  * wakeup-preemption), since its likely going to consume data we
  * touched, increases cache locality.
  */
-SCHED_FEAT(NEXT_BUDDY, false)
+SCHED_FEAT(अग्र_BUDDY, false)
 
 /*
  * Allow completely ignoring cfs_rq->next; which can be set from various
@@ -65,29 +65,29 @@ SCHED_FEAT(PARANOID_AVG, false)
  */
 SCHED_FEAT(WAKEUP_PREEMPTION, true)
 
-#ifdef CONFIG_HRTIMER_REARM_DEFERRED
+#अगर_घोषित CONFIG_HRTIMER_REARM_DEFERRED
 SCHED_FEAT(HRTICK, true)
 SCHED_FEAT(HRTICK_DL, true)
-#else
+#अन्यथा
 SCHED_FEAT(HRTICK, false)
 SCHED_FEAT(HRTICK_DL, false)
-#endif
+#पूर्ण_अगर
 
 /*
  * Decrement CPU capacity based on time not spent running tasks
  */
 SCHED_FEAT(NONTASK_CAPACITY, true)
 
-#ifdef CONFIG_PREEMPT_RT
+#अगर_घोषित CONFIG_PREEMPT_RT
 SCHED_FEAT(TTWU_QUEUE, false)
-#else
+#अन्यथा
 
 /*
  * Queue remote wakeups on the target CPU and process them
  * using the scheduler IPI. Reduces rq->lock contention/bounces.
  */
 SCHED_FEAT(TTWU_QUEUE, true)
-#endif
+#पूर्ण_अगर
 
 /*
  * When doing wakeups, attempt to limit superfluous scans of the LLC domain.
@@ -101,7 +101,7 @@ SCHED_FEAT(SIS_UTIL, true)
  */
 SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
 
-#ifdef HAVE_RT_PUSH_IPI
+#अगर_घोषित HAVE_RT_धकेलो_IPI
 /*
  * In order to avoid a thundering herd attack of CPUs that are
  * lowering their priorities at the same time, and there being
@@ -116,11 +116,11 @@ SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
  * it only default enabled for PREEMPT_RT.
  */
 # ifdef CONFIG_PREEMPT_RT
-SCHED_FEAT(RT_PUSH_IPI, true)
-# else
-SCHED_FEAT(RT_PUSH_IPI, false)
+SCHED_FEAT(RT_धकेलो_IPI, true)
+# अन्यथा
+SCHED_FEAT(RT_धकेलो_IPI, false)
 # endif
-#endif
+#पूर्ण_अगर
 
 SCHED_FEAT(RT_RUNTIME_SHARE, false)
 SCHED_FEAT(LB_MIN, false)

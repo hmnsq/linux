@@ -1,18 +1,18 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#ifndef _KERNEL_STATS_H
-#define _KERNEL_STATS_H
+#अगर_अघोषित _KERNEL_STATS_H
+#घोषणा _KERNEL_STATS_H
 
-#ifdef CONFIG_SCHEDSTATS
+#अगर_घोषित CONFIG_SCHEDSTATS
 
-extern struct static_key_false sched_schedstats;
+बाह्य काष्ठा static_कुंजी_false sched_schedstats;
 
 /*
  * Expects runqueue lock to be held for atomicity of update
  */
-static inline void
-rq_sched_info_arrive(struct rq *rq, unsigned long long delta)
+अटल अंतरभूत व्योम
+rq_sched_info_arrive(काष्ठा rq *rq, अचिन्हित दीर्घ दीर्घ delta)
 {
-	if (rq) {
+	अगर (rq) {
 		rq->rq_sched_info.run_delay += delta;
 		rq->rq_sched_info.pcount++;
 	}
@@ -21,45 +21,45 @@ rq_sched_info_arrive(struct rq *rq, unsigned long long delta)
 /*
  * Expects runqueue lock to be held for atomicity of update
  */
-static inline void
-rq_sched_info_depart(struct rq *rq, unsigned long long delta)
+अटल अंतरभूत व्योम
+rq_sched_info_depart(काष्ठा rq *rq, अचिन्हित दीर्घ दीर्घ delta)
 {
-	if (rq)
+	अगर (rq)
 		rq->rq_cpu_time += delta;
 }
 
-static inline void
-rq_sched_info_dequeue(struct rq *rq, unsigned long long delta)
+अटल अंतरभूत व्योम
+rq_sched_info_dequeue(काष्ठा rq *rq, अचिन्हित दीर्घ दीर्घ delta)
 {
-	if (rq)
+	अगर (rq)
 		rq->rq_sched_info.run_delay += delta;
 }
-#define   schedstat_enabled()		static_branch_unlikely(&sched_schedstats)
-#define __schedstat_inc(var)		do { var++; } while (0)
-#define   schedstat_inc(var)		do { if (schedstat_enabled()) { var++; } } while (0)
-#define __schedstat_add(var, amt)	do { var += (amt); } while (0)
-#define   schedstat_add(var, amt)	do { if (schedstat_enabled()) { var += (amt); } } while (0)
-#define __schedstat_set(var, val)	do { var = (val); } while (0)
-#define   schedstat_set(var, val)	do { if (schedstat_enabled()) { var = (val); } } while (0)
-#define   schedstat_val(var)		(var)
-#define   schedstat_val_or_zero(var)	((schedstat_enabled()) ? (var) : 0)
+#घोषणा   schedstat_enabled()		static_branch_unlikely(&sched_schedstats)
+#घोषणा __schedstat_inc(var)		करो { var++; } जबतक (0)
+#घोषणा   schedstat_inc(var)		करो { अगर (schedstat_enabled()) { var++; } } जबतक (0)
+#घोषणा __schedstat_add(var, amt)	करो { var += (amt); } जबतक (0)
+#घोषणा   schedstat_add(var, amt)	करो { अगर (schedstat_enabled()) { var += (amt); } } जबतक (0)
+#घोषणा __schedstat_set(var, val)	करो { var = (val); } जबतक (0)
+#घोषणा   schedstat_set(var, val)	करो { अगर (schedstat_enabled()) { var = (val); } } जबतक (0)
+#घोषणा   schedstat_val(var)		(var)
+#घोषणा   schedstat_val_or_zero(var)	((schedstat_enabled()) ? (var) : 0)
 
-void __update_stats_wait_start(struct rq *rq, struct task_struct *p,
-			       struct sched_statistics *stats);
+व्योम __update_stats_wait_start(काष्ठा rq *rq, काष्ठा task_struct *p,
+			       काष्ठा sched_statistics *stats);
 
-void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
-			     struct sched_statistics *stats);
-void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
-				    struct sched_statistics *stats);
+व्योम __update_stats_wait_end(काष्ठा rq *rq, काष्ठा task_struct *p,
+			     काष्ठा sched_statistics *stats);
+व्योम __update_stats_enqueue_sleeper(काष्ठा rq *rq, काष्ठा task_struct *p,
+				    काष्ठा sched_statistics *stats);
 
-static inline void
-check_schedstat_required(void)
+अटल अंतरभूत व्योम
+check_schedstat_required(व्योम)
 {
-	if (schedstat_enabled())
-		return;
+	अगर (schedstat_enabled())
+		वापस;
 
 	/* Force schedstat enabled if a dependent tracepoint is active */
-	if (trace_sched_stat_wait_enabled()    ||
+	अगर (trace_sched_stat_wait_enabled()    ||
 	    trace_sched_stat_sleep_enabled()   ||
 	    trace_sched_stat_iowait_enabled()  ||
 	    trace_sched_stat_blocked_enabled() ||
@@ -67,48 +67,48 @@ check_schedstat_required(void)
 		printk_deferred_once("Scheduler tracepoints stat_sleep, stat_iowait, stat_blocked and stat_runtime require the kernel parameter schedstats=enable or kernel.sched_schedstats=1\n");
 }
 
-#else /* !CONFIG_SCHEDSTATS: */
+#अन्यथा /* !CONFIG_SCHEDSTATS: */
 
-static inline void rq_sched_info_arrive  (struct rq *rq, unsigned long long delta) { }
-static inline void rq_sched_info_dequeue(struct rq *rq, unsigned long long delta) { }
-static inline void rq_sched_info_depart  (struct rq *rq, unsigned long long delta) { }
+अटल अंतरभूत व्योम rq_sched_info_arrive  (काष्ठा rq *rq, अचिन्हित दीर्घ दीर्घ delta) { }
+अटल अंतरभूत व्योम rq_sched_info_dequeue(काष्ठा rq *rq, अचिन्हित दीर्घ दीर्घ delta) { }
+अटल अंतरभूत व्योम rq_sched_info_depart  (काष्ठा rq *rq, अचिन्हित दीर्घ दीर्घ delta) { }
 # define   schedstat_enabled()		0
-# define __schedstat_inc(var)		do { } while (0)
-# define   schedstat_inc(var)		do { } while (0)
-# define __schedstat_add(var, amt)	do { } while (0)
-# define   schedstat_add(var, amt)	do { } while (0)
-# define __schedstat_set(var, val)	do { } while (0)
-# define   schedstat_set(var, val)	do { } while (0)
+# define __schedstat_inc(var)		करो { } जबतक (0)
+# define   schedstat_inc(var)		करो { } जबतक (0)
+# define __schedstat_add(var, amt)	करो { } जबतक (0)
+# define   schedstat_add(var, amt)	करो { } जबतक (0)
+# define __schedstat_set(var, val)	करो { } जबतक (0)
+# define   schedstat_set(var, val)	करो { } जबतक (0)
 # define   schedstat_val(var)		0
 # define   schedstat_val_or_zero(var)	0
 
-# define __update_stats_wait_start(rq, p, stats)       do { } while (0)
-# define __update_stats_wait_end(rq, p, stats)         do { } while (0)
-# define __update_stats_enqueue_sleeper(rq, p, stats)  do { } while (0)
-# define check_schedstat_required()                    do { } while (0)
+# define __update_stats_wait_start(rq, p, stats)       करो { } जबतक (0)
+# define __update_stats_wait_end(rq, p, stats)         करो { } जबतक (0)
+# define __update_stats_enqueue_sleeper(rq, p, stats)  करो { } जबतक (0)
+# define check_schedstat_required()                    करो { } जबतक (0)
 
-#endif /* CONFIG_SCHEDSTATS */
+#पूर्ण_अगर /* CONFIG_SCHEDSTATS */
 
-static inline struct sched_statistics *
-__schedstats_from_se(struct sched_entity *se)
+अटल अंतरभूत काष्ठा sched_statistics *
+__schedstats_from_se(काष्ठा sched_entity *se)
 {
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	if (!entity_is_task(se))
-		return &container_of(se, struct cfs_tg_state, se)->stats;
-#endif
-	return &task_of(se)->stats;
+#अगर_घोषित CONFIG_FAIR_GROUP_SCHED
+	अगर (!entity_is_task(se))
+		वापस &container_of(se, काष्ठा cfs_tg_state, se)->stats;
+#पूर्ण_अगर
+	वापस &task_of(se)->stats;
 }
 
-#ifdef CONFIG_PSI
-void psi_task_change(struct task_struct *task, int clear, int set);
-void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+#अगर_घोषित CONFIG_PSI
+व्योम psi_task_change(काष्ठा task_struct *task, पूर्णांक clear, पूर्णांक set);
+व्योम psi_task_switch(काष्ठा task_struct *पूर्व, काष्ठा task_struct *अग्र,
 		     bool sleep);
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev);
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
-static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
-				       struct task_struct *prev) {}
-#endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
+#अगर_घोषित CONFIG_IRQ_TIME_ACCOUNTING
+व्योम psi_account_irqtime(काष्ठा rq *rq, काष्ठा task_struct *curr, काष्ठा task_struct *पूर्व);
+#अन्यथा /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+अटल अंतरभूत व्योम psi_account_irqtime(काष्ठा rq *rq, काष्ठा task_struct *curr,
+				       काष्ठा task_struct *पूर्व) {}
+#पूर्ण_अगर /* !CONFIG_IRQ_TIME_ACCOUNTING */
 /*
  * PSI tracks state that persists across sleeps, such as iowaits and
  * memory stalls. As a result, it has to distinguish between sleeps,
@@ -120,53 +120,53 @@ static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
  * go through migration requeues. In this case, *sleeping* states need
  * to be transferred.
  */
-static inline void psi_enqueue(struct task_struct *p, int flags)
+अटल अंतरभूत व्योम psi_enqueue(काष्ठा task_struct *p, पूर्णांक flags)
 {
-	int clear = 0, set = 0;
+	पूर्णांक clear = 0, set = 0;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	अगर (static_branch_likely(&psi_disabled))
+		वापस;
 
 	/* Same runqueue, nothing changed for psi */
-	if (flags & ENQUEUE_RESTORE)
-		return;
+	अगर (flags & ENQUEUE_RESTORE)
+		वापस;
 
 	/* psi_sched_switch() will handle the flags */
-	if (task_on_cpu(task_rq(p), p))
-		return;
+	अगर (task_on_cpu(task_rq(p), p))
+		वापस;
 
-	if (p->se.sched_delayed) {
+	अगर (p->se.sched_delayed) {
 		/* CPU migration of "sleeping" task */
 		WARN_ON_ONCE(!(flags & ENQUEUE_MIGRATED));
-		if (p->in_memstall)
+		अगर (p->in_memstall)
 			set |= TSK_MEMSTALL;
-		if (p->in_iowait)
+		अगर (p->in_iowait)
 			set |= TSK_IOWAIT;
-	} else if (flags & ENQUEUE_MIGRATED) {
+	} अन्यथा अगर (flags & ENQUEUE_MIGRATED) {
 		/* CPU migration of runnable task */
 		set = TSK_RUNNING;
-		if (p->in_memstall)
+		अगर (p->in_memstall)
 			set |= TSK_MEMSTALL | TSK_MEMSTALL_RUNNING;
-	} else {
+	} अन्यथा {
 		/* Wakeup of new or sleeping task */
-		if (p->in_iowait)
+		अगर (p->in_iowait)
 			clear |= TSK_IOWAIT;
 		set = TSK_RUNNING;
-		if (p->in_memstall)
+		अगर (p->in_memstall)
 			set |= TSK_MEMSTALL_RUNNING;
 	}
 
 	psi_task_change(p, clear, set);
 }
 
-static inline void psi_dequeue(struct task_struct *p, int flags)
+अटल अंतरभूत व्योम psi_dequeue(काष्ठा task_struct *p, पूर्णांक flags)
 {
-	if (static_branch_likely(&psi_disabled))
-		return;
+	अगर (static_branch_likely(&psi_disabled))
+		वापस;
 
 	/* Same runqueue, nothing changed for psi */
-	if (flags & DEQUEUE_SAVE)
-		return;
+	अगर (flags & DEQUEUE_SAVE)
+		वापस;
 
 	/*
 	 * A voluntary sleep is a dequeue followed by a task switch. To
@@ -179,8 +179,8 @@ static inline void psi_dequeue(struct task_struct *p, int flags)
 	 * TSK_ONCPU is set to ensure the task switch is imminent.
 	 * Otherwise clear the flags as usual.
 	 */
-	if ((flags & DEQUEUE_SLEEP) && (p->psi_flags & TSK_ONCPU))
-		return;
+	अगर ((flags & DEQUEUE_SLEEP) && (p->psi_flags & TSK_ONCPU))
+		वापस;
 
 	/*
 	 * When migrating a task to another CPU, clear all psi
@@ -189,18 +189,18 @@ static inline void psi_dequeue(struct task_struct *p, int flags)
 	psi_task_change(p, p->psi_flags, 0);
 }
 
-static inline void psi_ttwu_dequeue(struct task_struct *p)
+अटल अंतरभूत व्योम psi_ttwu_dequeue(काष्ठा task_struct *p)
 {
-	if (static_branch_likely(&psi_disabled))
-		return;
+	अगर (static_branch_likely(&psi_disabled))
+		वापस;
 	/*
 	 * Is the task being migrated during a wakeup? Make sure to
 	 * deregister its sleep-persistent psi states from the old
 	 * queue, and let psi_enqueue() know it has to requeue.
 	 */
-	if (unlikely(p->psi_flags)) {
-		struct rq_flags rf;
-		struct rq *rq;
+	अगर (unlikely(p->psi_flags)) {
+		काष्ठा rq_flags rf;
+		काष्ठा rq *rq;
 
 		rq = __task_rq_lock(p, &rf);
 		psi_task_change(p, p->psi_flags, 0);
@@ -208,49 +208,49 @@ static inline void psi_ttwu_dequeue(struct task_struct *p)
 	}
 }
 
-static inline void psi_sched_switch(struct task_struct *prev,
-				    struct task_struct *next,
+अटल अंतरभूत व्योम psi_sched_switch(काष्ठा task_struct *पूर्व,
+				    काष्ठा task_struct *अग्र,
 				    bool sleep)
 {
-	if (static_branch_likely(&psi_disabled))
-		return;
+	अगर (static_branch_likely(&psi_disabled))
+		वापस;
 
-	psi_task_switch(prev, next, sleep);
+	psi_task_switch(पूर्व, अग्र, sleep);
 }
 
-#else /* !CONFIG_PSI: */
-static inline void psi_enqueue(struct task_struct *p, bool migrate) {}
-static inline void psi_dequeue(struct task_struct *p, bool migrate) {}
-static inline void psi_ttwu_dequeue(struct task_struct *p) {}
-static inline void psi_sched_switch(struct task_struct *prev,
-				    struct task_struct *next,
+#अन्यथा /* !CONFIG_PSI: */
+अटल अंतरभूत व्योम psi_enqueue(काष्ठा task_struct *p, bool migrate) {}
+अटल अंतरभूत व्योम psi_dequeue(काष्ठा task_struct *p, bool migrate) {}
+अटल अंतरभूत व्योम psi_ttwu_dequeue(काष्ठा task_struct *p) {}
+अटल अंतरभूत व्योम psi_sched_switch(काष्ठा task_struct *पूर्व,
+				    काष्ठा task_struct *अग्र,
 				    bool sleep) {}
-static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
-				       struct task_struct *prev) {}
-#endif /* !CONFIG_PSI */
+अटल अंतरभूत व्योम psi_account_irqtime(काष्ठा rq *rq, काष्ठा task_struct *curr,
+				       काष्ठा task_struct *पूर्व) {}
+#पूर्ण_अगर /* !CONFIG_PSI */
 
-#ifdef CONFIG_SCHED_INFO
+#अगर_घोषित CONFIG_SCHED_INFO
 /*
  * We are interested in knowing how long it was from the *first* time a
  * task was queued to the time that it finally hit a CPU, we call this routine
  * from dequeue_task() to account for possible rq->clock skew across CPUs. The
  * delta taken on each CPU would annul the skew.
  */
-static inline void sched_info_dequeue(struct rq *rq, struct task_struct *t)
+अटल अंतरभूत व्योम sched_info_dequeue(काष्ठा rq *rq, काष्ठा task_struct *t)
 {
-	unsigned long long delta = 0;
+	अचिन्हित दीर्घ दीर्घ delta = 0;
 
-	if (!t->sched_info.last_queued)
-		return;
+	अगर (!t->sched_info.last_queued)
+		वापस;
 
 	delta = rq_clock(rq) - t->sched_info.last_queued;
 	t->sched_info.last_queued = 0;
 	t->sched_info.run_delay += delta;
-	if (delta > t->sched_info.max_run_delay) {
+	अगर (delta > t->sched_info.max_run_delay) {
 		t->sched_info.max_run_delay = delta;
 		ktime_get_real_ts64(&t->sched_info.max_run_delay_ts);
 	}
-	if (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
+	अगर (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
 		t->sched_info.min_run_delay = delta;
 	rq_sched_info_dequeue(rq, delta);
 }
@@ -260,12 +260,12 @@ static inline void sched_info_dequeue(struct rq *rq, struct task_struct *t)
  * long it was waiting to run.  We also note when it began so that we
  * can keep stats on how long its time-slice is.
  */
-static void sched_info_arrive(struct rq *rq, struct task_struct *t)
+अटल व्योम sched_info_arrive(काष्ठा rq *rq, काष्ठा task_struct *t)
 {
-	unsigned long long now, delta = 0;
+	अचिन्हित दीर्घ दीर्घ now, delta = 0;
 
-	if (!t->sched_info.last_queued)
-		return;
+	अगर (!t->sched_info.last_queued)
+		वापस;
 
 	now = rq_clock(rq);
 	delta = now - t->sched_info.last_queued;
@@ -273,11 +273,11 @@ static void sched_info_arrive(struct rq *rq, struct task_struct *t)
 	t->sched_info.run_delay += delta;
 	t->sched_info.last_arrival = now;
 	t->sched_info.pcount++;
-	if (delta > t->sched_info.max_run_delay) {
+	अगर (delta > t->sched_info.max_run_delay) {
 		t->sched_info.max_run_delay = delta;
 		ktime_get_real_ts64(&t->sched_info.max_run_delay_ts);
 	}
-	if (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
+	अगर (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
 		t->sched_info.min_run_delay = delta;
 
 	rq_sched_info_arrive(rq, delta);
@@ -288,9 +288,9 @@ static void sched_info_arrive(struct rq *rq, struct task_struct *t)
  * the timestamp if it is already not set.  It's assumed that
  * sched_info_dequeue() will clear that stamp when appropriate.
  */
-static inline void sched_info_enqueue(struct rq *rq, struct task_struct *t)
+अटल अंतरभूत व्योम sched_info_enqueue(काष्ठा rq *rq, काष्ठा task_struct *t)
 {
-	if (!t->sched_info.last_queued)
+	अगर (!t->sched_info.last_queued)
 		t->sched_info.last_queued = rq_clock(rq);
 }
 
@@ -302,13 +302,13 @@ static inline void sched_info_enqueue(struct rq *rq, struct task_struct *t)
  * sched_info_enqueue() to mark that it has now again started waiting on
  * the runqueue.
  */
-static inline void sched_info_depart(struct rq *rq, struct task_struct *t)
+अटल अंतरभूत व्योम sched_info_depart(काष्ठा rq *rq, काष्ठा task_struct *t)
 {
-	unsigned long long delta = rq_clock(rq) - t->sched_info.last_arrival;
+	अचिन्हित दीर्घ दीर्घ delta = rq_clock(rq) - t->sched_info.last_arrival;
 
 	rq_sched_info_depart(rq, delta);
 
-	if (task_is_running(t))
+	अगर (task_is_running(t))
 		sched_info_enqueue(rq, t);
 }
 
@@ -317,25 +317,25 @@ static inline void sched_info_depart(struct rq *rq, struct task_struct *t)
  * their time slice.  (This may also be called when switching to or from
  * the idle task.)  We are only called when prev != next.
  */
-static inline void
-sched_info_switch(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+अटल अंतरभूत व्योम
+sched_info_switch(काष्ठा rq *rq, काष्ठा task_struct *पूर्व, काष्ठा task_struct *अग्र)
 {
 	/*
 	 * prev now departs the CPU.  It's not interesting to record
 	 * stats about how efficient we were at scheduling the idle
 	 * process, however.
 	 */
-	if (prev != rq->idle)
-		sched_info_depart(rq, prev);
+	अगर (पूर्व != rq->idle)
+		sched_info_depart(rq, पूर्व);
 
-	if (next != rq->idle)
-		sched_info_arrive(rq, next);
+	अगर (अग्र != rq->idle)
+		sched_info_arrive(rq, अग्र);
 }
 
-#else /* !CONFIG_SCHED_INFO: */
-# define sched_info_enqueue(rq, t)	do { } while (0)
-# define sched_info_dequeue(rq, t)	do { } while (0)
-# define sched_info_switch(rq, t, next)	do { } while (0)
-#endif /* !CONFIG_SCHED_INFO */
+#अन्यथा /* !CONFIG_SCHED_INFO: */
+# define sched_info_enqueue(rq, t)	करो { } जबतक (0)
+# define sched_info_dequeue(rq, t)	करो { } जबतक (0)
+# define sched_info_switch(rq, t, अग्र)	करो { } जबतक (0)
+#पूर्ण_अगर /* !CONFIG_SCHED_INFO */
 
-#endif /* _KERNEL_STATS_H */
+#पूर्ण_अगर /* _KERNEL_STATS_H */

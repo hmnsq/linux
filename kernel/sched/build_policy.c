@@ -13,51 +13,51 @@
  */
 
 /* Headers: */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/hotplug.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/posix-timers.h>
-#include <linux/sched/rt.h>
+#समावेश <linux/sched/clock.h>
+#समावेश <linux/sched/cputime.h>
+#समावेश <linux/sched/hotplug.h>
+#समावेश <linux/sched/isolation.h>
+#समावेश <linux/sched/posix-timers.h>
+#समावेश <linux/sched/rt.h>
 
-#include <linux/cpuidle.h>
-#include <linux/jiffies.h>
-#include <linux/kobject.h>
-#include <linux/livepatch.h>
-#include <linux/pm.h>
-#include <linux/psi.h>
-#include <linux/rhashtable.h>
-#include <linux/seq_buf.h>
-#include <linux/seqlock_api.h>
-#include <linux/slab.h>
-#include <linux/suspend.h>
-#include <linux/tsacct_kern.h>
-#include <linux/vtime.h>
-#include <linux/sysrq.h>
-#include <linux/percpu-rwsem.h>
+#समावेश <linux/cpuidle.h>
+#समावेश <linux/jiffies.h>
+#समावेश <linux/kobject.h>
+#समावेश <linux/livepatch.h>
+#समावेश <linux/pm.h>
+#समावेश <linux/psi.h>
+#समावेश <linux/rhashtable.h>
+#समावेश <linux/seq_buf.h>
+#समावेश <linux/seqlock_api.h>
+#समावेश <linux/slab.h>
+#समावेश <linux/suspend.h>
+#समावेश <linux/tsacct_kern.h>
+#समावेश <linux/vtime.h>
+#समावेश <linux/sysrq.h>
+#समावेश <linux/percpu-rwsem.h>
 
-#include <uapi/linux/sched/types.h>
+#समावेश <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "smp.h"
+#समावेश "sched.h"
+#समावेश "smp.h"
 
-#include "autogroup.h"
-#include "stats.h"
-#include "pelt.h"
+#समावेश "autogroup.h"
+#समावेश "stats.h"
+#समावेश "pelt.h"
 
 /* Source code modules: */
 
-#include "idle.c"
+#समावेश "idle.c"
 
-#include "rt.c"
-#include "cpudeadline.c"
+#समावेश "rt.c"
+#समावेश "cpudeadline.c"
 
-#include "pelt.c"
+#समावेश "pelt.c"
 
-#include "cputime.c"
-#include "deadline.c"
+#समावेश "cputime.c"
+#समावेश "deadline.c"
 
-#ifdef CONFIG_SCHED_CLASS_EXT
+#अगर_घोषित CONFIG_SCHED_CLASS_EXT
 # include <linux/btf_ids.h>
 # include <linux/find.h>
 # include <linux/genalloc.h>
@@ -73,6 +73,6 @@
 # include "ext/arena.c"
 # include "ext/idle.c"
 # include "ext/sub.c"
-#endif
+#पूर्ण_अगर
 
-#include "syscalls.c"
+#समावेश "syscalls.c"

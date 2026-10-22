@@ -1,81 +1,81 @@
 // SPDX-License-Identifier: GPL-2.0
-#ifndef _KERNEL_SCHED_PELT_H
-#define _KERNEL_SCHED_PELT_H
-#include "sched.h"
+#अगर_अघोषित _KERNEL_SCHED_PELT_H
+#घोषणा _KERNEL_SCHED_PELT_H
+#समावेश "sched.h"
 
-#include "sched-pelt.h"
+#समावेश "sched-pelt.h"
 
-int __update_load_avg_blocked_se(u64 now, struct sched_entity *se);
-int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se);
-int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
-int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
-int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
-bool update_other_load_avgs(struct rq *rq);
+पूर्णांक __update_load_avg_blocked_se(u64 now, काष्ठा sched_entity *se);
+पूर्णांक __update_load_avg_se(u64 now, काष्ठा cfs_rq *cfs_rq, काष्ठा sched_entity *se);
+पूर्णांक __update_load_avg_cfs_rq(u64 now, काष्ठा cfs_rq *cfs_rq);
+पूर्णांक update_rt_rq_load_avg(u64 now, काष्ठा rq *rq, पूर्णांक running);
+पूर्णांक update_dl_rq_load_avg(u64 now, काष्ठा rq *rq, पूर्णांक running);
+bool update_other_load_avgs(काष्ठा rq *rq);
 
-#ifdef CONFIG_SCHED_HW_PRESSURE
-int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity);
+#अगर_घोषित CONFIG_SCHED_HW_PRESSURE
+पूर्णांक update_hw_load_avg(u64 now, काष्ठा rq *rq, u64 capacity);
 
-static inline u64 hw_load_avg(struct rq *rq)
+अटल अंतरभूत u64 hw_load_avg(काष्ठा rq *rq)
 {
-	return READ_ONCE(rq->avg_hw.load_avg);
+	वापस READ_ONCE(rq->avg_hw.load_avg);
 }
-#else /* !CONFIG_SCHED_HW_PRESSURE: */
-static inline int
-update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+#अन्यथा /* !CONFIG_SCHED_HW_PRESSURE: */
+अटल अंतरभूत पूर्णांक
+update_hw_load_avg(u64 now, काष्ठा rq *rq, u64 capacity)
 {
-	return 0;
-}
-
-static inline u64 hw_load_avg(struct rq *rq)
-{
-	return 0;
-}
-#endif /* !CONFIG_SCHED_HW_PRESSURE */
-
-#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-int update_irq_load_avg(struct rq *rq, u64 running);
-#else
-static inline int
-update_irq_load_avg(struct rq *rq, u64 running)
-{
-	return 0;
-}
-#endif
-
-#define PELT_MIN_DIVIDER	(LOAD_AVG_MAX - 1024)
-
-static inline u32 get_pelt_divider(struct sched_avg *avg)
-{
-	return PELT_MIN_DIVIDER + avg->period_contrib;
+	वापस 0;
 }
 
-static inline void cfs_se_util_change(struct sched_avg *avg)
+अटल अंतरभूत u64 hw_load_avg(काष्ठा rq *rq)
 {
-	unsigned int enqueued;
+	वापस 0;
+}
+#पूर्ण_अगर /* !CONFIG_SCHED_HW_PRESSURE */
 
-	if (!sched_feat(UTIL_EST))
-		return;
+#अगर_घोषित CONFIG_HAVE_SCHED_AVG_IRQ
+पूर्णांक update_irq_load_avg(काष्ठा rq *rq, u64 running);
+#अन्यथा
+अटल अंतरभूत पूर्णांक
+update_irq_load_avg(काष्ठा rq *rq, u64 running)
+{
+	वापस 0;
+}
+#पूर्ण_अगर
+
+#घोषणा PELT_MIN_DIVIDER	(LOAD_AVG_MAX - 1024)
+
+अटल अंतरभूत u32 get_pelt_divider(काष्ठा sched_avg *avg)
+{
+	वापस PELT_MIN_DIVIDER + avg->period_contrib;
+}
+
+अटल अंतरभूत व्योम cfs_se_util_change(काष्ठा sched_avg *avg)
+{
+	अचिन्हित पूर्णांक enqueued;
+
+	अगर (!sched_feat(UTIL_EST))
+		वापस;
 
 	/* Avoid store if the flag has been already reset */
 	enqueued = avg->util_est;
-	if (!(enqueued & UTIL_AVG_UNCHANGED))
-		return;
+	अगर (!(enqueued & UTIL_AVG_UNCHANGED))
+		वापस;
 
 	/* Reset flag to report util_avg has been updated */
 	enqueued &= ~UTIL_AVG_UNCHANGED;
 	WRITE_ONCE(avg->util_est, enqueued);
 }
 
-static inline u64 rq_clock_pelt(struct rq *rq)
+अटल अंतरभूत u64 rq_clock_pelt(काष्ठा rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_pelt - rq->lost_idle_time;
+	वापस rq->clock_pelt - rq->lost_idle_time;
 }
 
 /* The rq is idle, we can sync to clock_task */
-static inline void _update_idle_rq_clock_pelt(struct rq *rq)
+अटल अंतरभूत व्योम _update_idle_rq_clock_pelt(काष्ठा rq *rq)
 {
 	rq->clock_pelt  = rq_clock_task(rq);
 
@@ -97,11 +97,11 @@ static inline void _update_idle_rq_clock_pelt(struct rq *rq)
  * clock pelt      | 1| 2|    3|    4| 7| 8| 9|   10|   11|14|15|16
  *
  */
-static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
+अटल अंतरभूत व्योम update_rq_clock_pelt(काष्ठा rq *rq, s64 delta)
 {
-	if (unlikely(is_idle_task(rq->curr))) {
+	अगर (unlikely(is_idle_task(rq->curr))) {
 		_update_idle_rq_clock_pelt(rq);
-		return;
+		वापस;
 	}
 
 	/*
@@ -135,12 +135,12 @@ static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
  * the position in the current window (period_contrib) and we use the higher
  * bound of util_sum to decide.
  */
-static inline void update_idle_rq_clock_pelt(struct rq *rq)
+अटल अंतरभूत व्योम update_idle_rq_clock_pelt(काष्ठा rq *rq)
 {
 	u32 divider = ((LOAD_AVG_MAX - 1024) << SCHED_CAPACITY_SHIFT) - LOAD_AVG_MAX;
-	u32 util_sum = rq->cfs.avg.util_sum;
-	util_sum += rq->avg_rt.util_sum;
-	util_sum += rq->avg_dl.util_sum;
+	u32 util_योग = rq->cfs.avg.util_योग;
+	util_योग += rq->avg_rt.util_योग;
+	util_योग += rq->avg_dl.util_योग;
 
 	/*
 	 * Reflecting stolen time makes sense only if the idle
@@ -151,39 +151,39 @@ static inline void update_idle_rq_clock_pelt(struct rq *rq)
 	 * this case. We keep track of this lost idle time compare to
 	 * rq's clock_task.
 	 */
-	if (util_sum >= divider)
+	अगर (util_योग >= divider)
 		rq->lost_idle_time += rq_clock_task(rq) - rq->clock_pelt;
 
 	_update_idle_rq_clock_pelt(rq);
 }
 
-#ifdef CONFIG_CFS_BANDWIDTH
-static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+#अगर_घोषित CONFIG_CFS_BANDWIDTH
+अटल अंतरभूत व्योम update_idle_cfs_rq_clock_pelt(काष्ठा cfs_rq *cfs_rq)
 {
 	u64 throttled;
 
-	if (unlikely(cfs_rq->pelt_clock_throttled))
+	अगर (unlikely(cfs_rq->pelt_clock_throttled))
 		throttled = U64_MAX;
-	else
+	अन्यथा
 		throttled = cfs_rq->throttled_clock_pelt_time;
 
 	u64_u32_store(cfs_rq->throttled_pelt_idle, throttled);
 }
 
 /* rq->task_clock normalized against any time this cfs_rq has spent throttled */
-static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+अटल अंतरभूत u64 cfs_rq_clock_pelt(काष्ठा cfs_rq *cfs_rq)
 {
-	if (unlikely(cfs_rq->pelt_clock_throttled))
-		return cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_time;
+	अगर (unlikely(cfs_rq->pelt_clock_throttled))
+		वापस cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_time;
 
-	return rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
+	वापस rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
 }
-#else /* !CONFIG_CFS_BANDWIDTH: */
-static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq) { }
-static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+#अन्यथा /* !CONFIG_CFS_BANDWIDTH: */
+अटल अंतरभूत व्योम update_idle_cfs_rq_clock_pelt(काष्ठा cfs_rq *cfs_rq) { }
+अटल अंतरभूत u64 cfs_rq_clock_pelt(काष्ठा cfs_rq *cfs_rq)
 {
-	return rq_clock_pelt(rq_of(cfs_rq));
+	वापस rq_clock_pelt(rq_of(cfs_rq));
 }
-#endif /* !CONFIG_CFS_BANDWIDTH */
+#पूर्ण_अगर /* !CONFIG_CFS_BANDWIDTH */
 
-#endif /* _KERNEL_SCHED_PELT_H */
+#पूर्ण_अगर /* _KERNEL_SCHED_PELT_H */

@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#समावेश "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+अटल पूर्णांक
+select_task_rq_stop(काष्ठा task_struct *p, पूर्णांक cpu, पूर्णांक flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	वापस task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+अटल पूर्णांक
+balance_stop(काष्ठा rq *rq, काष्ठा rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	वापस sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+अटल व्योम
+wakeup_preempt_stop(काष्ठा rq *rq, काष्ठा task_struct *p, पूर्णांक flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+अटल व्योम set_अग्र_task_stop(काष्ठा rq *rq, काष्ठा task_struct *stop, क्रमागत snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	अगर (type == SNT_REPICK)
+		वापस;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+अटल काष्ठा task_struct *pick_task_stop(काष्ठा rq *rq, काष्ठा rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	अगर (!sched_stop_runnable(rq))
+		वापस शून्य;
 
-	return rq->stop;
+	वापस rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+अटल व्योम
+enqueue_task_stop(काष्ठा rq *rq, काष्ठा task_struct *p, पूर्णांक flags)
 {
 	add_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+अटल bool
+dequeue_task_stop(काष्ठा rq *rq, काष्ठा task_struct *p, पूर्णांक flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	वापस true;
 }
 
-static void yield_task_stop(struct rq *rq)
+अटल व्योम yield_task_stop(काष्ठा rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+अटल व्योम put_पूर्व_task_stop(काष्ठा rq *rq, काष्ठा task_struct *पूर्व, काष्ठा task_struct *अग्र)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+अटल व्योम task_tick_stop(काष्ठा rq *rq, काष्ठा task_struct *curr, पूर्णांक queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+अटल व्योम switching_to_stop(काष्ठा rq *rq, काष्ठा task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+अटल व्योम
+prio_changed_stop(काष्ठा rq *rq, काष्ठा task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	अगर (p->prio == oldprio)
+		वापस;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+अटल व्योम update_curr_stop(काष्ठा rq *rq)
 {
 }
 
@@ -107,8 +107,8 @@ DEFINE_SCHED_CLASS(stop) = {
 	.wakeup_preempt		= wakeup_preempt_stop,
 
 	.pick_task		= pick_task_stop,
-	.put_prev_task		= put_prev_task_stop,
-	.set_next_task          = set_next_task_stop,
+	.put_पूर्व_task		= put_पूर्व_task_stop,
+	.set_अग्र_task          = set_अग्र_task_stop,
 
 	.balance		= balance_stop,
 	.select_task_rq		= select_task_rq_stop,
