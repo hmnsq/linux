@@ -5,47 +5,47 @@
  * Copyright (C) 2016, Intel Corporation
  * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
  */
-#include <uapi/linux/sched/types.h>
-#include "sched.h"
+#அந்தர்பாவ <uapi/linux/sched/types.h>
+#அந்தர்பாவ "sched.h"
 
 #define IOWAIT_BOOST_MIN	(SCHED_CAPACITY_SCALE / 8)
 
-struct sugov_tunables {
-	struct gov_attr_set	attr_set;
-	unsigned int		rate_limit_us;
+கட்டமைப்பு sugov_tunables {
+	கட்டமைப்பு gov_attr_set	attr_set;
+	unsigned முழு		rate_limit_us;
 };
 
-struct sugov_policy {
-	struct cpufreq_policy	*policy;
+கட்டமைப்பு sugov_policy {
+	கட்டமைப்பு cpufreq_policy	*policy;
 
-	struct sugov_tunables	*tunables;
-	struct list_head	tunables_hook;
+	கட்டமைப்பு sugov_tunables	*tunables;
+	கட்டமைப்பு list_head	tunables_hook;
 
 	raw_spinlock_t		update_lock;
 	u64			last_freq_update_time;
 	s64			freq_update_delay_ns;
-	unsigned int		next_freq;
-	unsigned int		cached_raw_freq;
+	unsigned முழு		next_freq;
+	unsigned முழு		cached_raw_freq;
 
 	/* The next fields are only needed if fast switch cannot be used: */
-	struct			irq_work irq_work;
-	struct			kthread_work work;
-	struct			mutex work_lock;
-	struct			kthread_worker worker;
-	struct task_struct	*thread;
+	கட்டமைப்பு			irq_work irq_work;
+	கட்டமைப்பு			kthread_work work;
+	கட்டமைப்பு			mutex work_lock;
+	கட்டமைப்பு			kthread_worker worker;
+	கட்டமைப்பு task_struct	*thread;
 	bool			work_in_progress;
 
 	bool			limits_changed;
 	bool			need_freq_update;
 };
 
-struct sugov_cpu {
-	struct update_util_data	update_util;
-	struct sugov_policy	*sg_policy;
-	unsigned int		cpu;
+கட்டமைப்பு sugov_cpu {
+	கட்டமைப்பு update_util_data	update_util;
+	கட்டமைப்பு sugov_policy	*sg_policy;
+	unsigned முழு		cpu;
 
 	bool			iowait_boost_pending;
-	unsigned int		iowait_boost;
+	unsigned முழு		iowait_boost;
 	u64			last_update;
 
 	unsigned long		util;
@@ -58,11 +58,11 @@ struct sugov_cpu {
 #endif
 };
 
-static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
+நிலையான DEFINE_PER_CPU(கட்டமைப்பு sugov_cpu, sugov_cpu);
 
 /************************ Governor internals ***********************/
 
-static void sugov_update_rate_limit_us(struct sugov_policy *sg_policy)
+நிலையான வெறுமை sugov_update_rate_limit_us(கட்டமைப்பு sugov_policy *sg_policy)
 {
 	/*
 	 * Cast rate_limit_us before multiplication to force 64-bit arithmetic.
@@ -73,7 +73,7 @@ static void sugov_update_rate_limit_us(struct sugov_policy *sg_policy)
 		(s64)sg_policy->tunables->rate_limit_us * NSEC_PER_USEC;
 }
 
-static void sugov_update_rate_limit_us_sync(struct sugov_policy *sg_policy)
+நிலையான வெறுமை sugov_update_rate_limit_us_sync(கட்டமைப்பு sugov_policy *sg_policy)
 {
 	/*
 	 * Serialize with rate_limit_us_store() to prevent this path from using
@@ -85,7 +85,7 @@ static void sugov_update_rate_limit_us_sync(struct sugov_policy *sg_policy)
 	sugov_update_rate_limit_us(sg_policy);
 }
 
-static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+நிலையான bool sugov_should_update_freq(கட்டமைப்பு sugov_policy *sg_policy, u64 time)
 {
 	s64 delta_ns;
 
@@ -104,10 +104,10 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
 	 * This is needed on the slow switching platforms too to prevent CPUs
 	 * going offline from leaving stale IRQ work items behind.
 	 */
-	if (!cpufreq_this_cpu_can_update(sg_policy->policy))
-		return false;
+	எனில் (!cpufreq_this_cpu_can_update(sg_policy->policy))
+		திரும்பு false;
 
-	if (unlikely(READ_ONCE(sg_policy->limits_changed))) {
+	எனில் (unlikely(READ_ONCE(sg_policy->limits_changed))) {
 		WRITE_ONCE(sg_policy->limits_changed, false);
 		sg_policy->need_freq_update = true;
 
@@ -121,21 +121,21 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
 		 */
 		smp_mb();
 
-		return true;
-	} else if (sg_policy->need_freq_update) {
+		திரும்பு true;
+	} இல்லையெனில் எனில் (sg_policy->need_freq_update) {
 		/* ignore_dl_rate_limit() wants a new frequency to be found. */
-		return true;
+		திரும்பு true;
 	}
 
 	delta_ns = time - sg_policy->last_freq_update_time;
 
-	return delta_ns >= sg_policy->freq_update_delay_ns;
+	திரும்பு delta_ns >= sg_policy->freq_update_delay_ns;
 }
 
-static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
-				   unsigned int next_freq)
+நிலையான bool sugov_update_next_freq(கட்டமைப்பு sugov_policy *sg_policy, u64 time,
+				   unsigned முழு next_freq)
 {
-	if (sg_policy->need_freq_update) {
+	எனில் (sg_policy->need_freq_update) {
 		sg_policy->need_freq_update = false;
 		/*
 		 * The policy limits have changed, but if the return value of
@@ -145,22 +145,22 @@ static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
 		 * specifically wants that to happen on every update of the
 		 * policy limits.
 		 */
-		if (sg_policy->next_freq == next_freq &&
+		எனில் (sg_policy->next_freq == next_freq &&
 		    !cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS))
-			return false;
-	} else if (sg_policy->next_freq == next_freq) {
-		return false;
+			திரும்பு false;
+	} இல்லையெனில் எனில் (sg_policy->next_freq == next_freq) {
+		திரும்பு false;
 	}
 
 	sg_policy->next_freq = next_freq;
 	sg_policy->last_freq_update_time = time;
 
-	return true;
+	திரும்பு true;
 }
 
-static void sugov_deferred_update(struct sugov_policy *sg_policy)
+நிலையான வெறுமை sugov_deferred_update(கட்டமைப்பு sugov_policy *sg_policy)
 {
-	if (!sg_policy->work_in_progress) {
+	எனில் (!sg_policy->work_in_progress) {
 		sg_policy->work_in_progress = true;
 		irq_work_queue(&sg_policy->irq_work);
 	}
@@ -174,22 +174,22 @@ static void sugov_deferred_update(struct sugov_policy *sg_policy)
  *
  * Return: the reference CPU frequency to compute a capacity.
  */
-static __always_inline
-unsigned long get_capacity_ref_freq(struct cpufreq_policy *policy)
+நிலையான __always_inline
+unsigned long get_capacity_ref_freq(கட்டமைப்பு cpufreq_policy *policy)
 {
-	unsigned int freq = arch_scale_freq_ref(policy->cpu);
+	unsigned முழு freq = arch_scale_freq_ref(policy->cpu);
 
-	if (freq)
-		return freq;
+	எனில் (freq)
+		திரும்பு freq;
 
-	if (arch_scale_freq_invariant())
-		return policy->cpuinfo.max_freq;
+	எனில் (arch_scale_freq_invariant())
+		திரும்பு policy->cpuinfo.max_freq;
 
 	/*
 	 * Apply a 25% margin so that we select a higher frequency than
 	 * the current one before the CPU is fully busy:
 	 */
-	return policy->cur + (policy->cur >> 2);
+	திரும்பு policy->cur + (policy->cur >> 2);
 }
 
 /**
@@ -214,44 +214,44 @@ unsigned long get_capacity_ref_freq(struct cpufreq_policy *policy)
  * next_freq (as calculated above) is returned, subject to policy min/max and
  * cpufreq driver limitations.
  */
-static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+நிலையான unsigned முழு get_next_freq(கட்டமைப்பு sugov_policy *sg_policy,
 				  unsigned long util, unsigned long max)
 {
-	struct cpufreq_policy *policy = sg_policy->policy;
-	unsigned int freq;
+	கட்டமைப்பு cpufreq_policy *policy = sg_policy->policy;
+	unsigned முழு freq;
 
 	freq = get_capacity_ref_freq(policy);
 	freq = map_util_freq(util, freq, max);
 
-	if (freq == sg_policy->cached_raw_freq && !sg_policy->need_freq_update)
-		return sg_policy->next_freq;
+	எனில் (freq == sg_policy->cached_raw_freq && !sg_policy->need_freq_update)
+		திரும்பு sg_policy->next_freq;
 
 	sg_policy->cached_raw_freq = freq;
-	return cpufreq_driver_resolve_freq(policy, freq);
+	திரும்பு cpufreq_driver_resolve_freq(policy, freq);
 }
 
-unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
+unsigned long sugov_effective_cpu_perf(முழு cpu, unsigned long actual,
 				 unsigned long min,
 				 unsigned long max)
 {
 	/* Add dvfs headroom to actual utilization */
 	actual = map_util_perf(actual);
 	/* Actually we don't need to target the max performance */
-	if (actual < max)
+	எனில் (actual < max)
 		max = actual;
 
 	/*
 	 * Ensure at least minimum performance while providing more compute
 	 * capacity when possible.
 	 */
-	return max(min, max);
+	திரும்பு max(min, max);
 }
 
-static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
+நிலையான வெறுமை sugov_get_util(கட்டமைப்பு sugov_cpu *sg_cpu, unsigned long boost)
 {
 	unsigned long min, max, util = scx_cpuperf_target(sg_cpu->cpu);
 
-	if (!scx_switched_all())
+	எனில் (!scx_switched_all())
 		util += cpu_util_cfs_boost(sg_cpu->cpu);
 	util = effective_cpu_util(sg_cpu->cpu, util, &min, &max);
 	util = max(util, boost);
@@ -271,19 +271,19 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
  * we enable the boost starting from IOWAIT_BOOST_MIN, which improves energy
  * efficiency by ignoring sporadic wakeups from IO.
  */
-static bool sugov_iowait_reset(struct sugov_cpu *sg_cpu, u64 time,
+நிலையான bool sugov_iowait_reset(கட்டமைப்பு sugov_cpu *sg_cpu, u64 time,
 			       bool set_iowait_boost)
 {
 	s64 delta_ns = time - sg_cpu->last_update;
 
 	/* Reset boost only if a tick has elapsed since last request */
-	if (delta_ns <= TICK_NSEC)
-		return false;
+	எனில் (delta_ns <= TICK_NSEC)
+		திரும்பு false;
 
 	sg_cpu->iowait_boost = set_iowait_boost ? IOWAIT_BOOST_MIN : 0;
 	sg_cpu->iowait_boost_pending = set_iowait_boost;
 
-	return true;
+	திரும்பு true;
 }
 
 /**
@@ -300,30 +300,30 @@ static bool sugov_iowait_reset(struct sugov_cpu *sg_cpu, u64 time,
  * To keep doubling, an IO boost has to be requested at least once per tick,
  * otherwise we restart from the utilization of the minimum OPP.
  */
-static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
-			       unsigned int flags)
+நிலையான வெறுமை sugov_iowait_boost(கட்டமைப்பு sugov_cpu *sg_cpu, u64 time,
+			       unsigned முழு flags)
 {
 	bool set_iowait_boost = flags & SCHED_CPUFREQ_IOWAIT;
 
 	/* Reset boost if the CPU appears to have been idle enough */
-	if (sg_cpu->iowait_boost &&
+	எனில் (sg_cpu->iowait_boost &&
 	    sugov_iowait_reset(sg_cpu, time, set_iowait_boost))
-		return;
+		திரும்பு;
 
 	/* Boost only tasks waking up after IO */
-	if (!set_iowait_boost)
-		return;
+	எனில் (!set_iowait_boost)
+		திரும்பு;
 
 	/* Ensure boost doubles only one time at each request */
-	if (sg_cpu->iowait_boost_pending)
-		return;
+	எனில் (sg_cpu->iowait_boost_pending)
+		திரும்பு;
 	sg_cpu->iowait_boost_pending = true;
 
 	/* Double the boost at each request */
-	if (sg_cpu->iowait_boost) {
+	எனில் (sg_cpu->iowait_boost) {
 		sg_cpu->iowait_boost =
-			min_t(unsigned int, sg_cpu->iowait_boost << 1, SCHED_CAPACITY_SCALE);
-		return;
+			min_t(unsigned முழு, sg_cpu->iowait_boost << 1, SCHED_CAPACITY_SCALE);
+		திரும்பு;
 	}
 
 	/* First wakeup after IO: start with minimum boost */
@@ -348,25 +348,25 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
  * This mechanism is designed to boost high frequently IO waiting tasks, while
  * being more conservative on tasks which does sporadic IO operations.
  */
-static unsigned long sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
+நிலையான unsigned long sugov_iowait_apply(கட்டமைப்பு sugov_cpu *sg_cpu, u64 time,
 			       unsigned long max_cap)
 {
 	/* No boost currently required */
-	if (!sg_cpu->iowait_boost)
-		return 0;
+	எனில் (!sg_cpu->iowait_boost)
+		திரும்பு 0;
 
 	/* Reset boost if the CPU appears to have been idle enough */
-	if (sugov_iowait_reset(sg_cpu, time, false))
-		return 0;
+	எனில் (sugov_iowait_reset(sg_cpu, time, false))
+		திரும்பு 0;
 
-	if (!sg_cpu->iowait_boost_pending) {
+	எனில் (!sg_cpu->iowait_boost_pending) {
 		/*
 		 * No boost pending; reduce the boost value.
 		 */
 		sg_cpu->iowait_boost >>= 1;
-		if (sg_cpu->iowait_boost < IOWAIT_BOOST_MIN) {
+		எனில் (sg_cpu->iowait_boost < IOWAIT_BOOST_MIN) {
 			sg_cpu->iowait_boost = 0;
-			return 0;
+			திரும்பு 0;
 		}
 	}
 
@@ -376,11 +376,11 @@ static unsigned long sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
 	 * sg_cpu->util is already in capacity scale; convert iowait_boost
 	 * into the same scale so we can compare.
 	 */
-	return (sg_cpu->iowait_boost * max_cap) >> SCHED_CAPACITY_SHIFT;
+	திரும்பு (sg_cpu->iowait_boost * max_cap) >> SCHED_CAPACITY_SHIFT;
 }
 
 #ifdef CONFIG_NO_HZ_COMMON
-static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
+நிலையான bool sugov_hold_freq(கட்டமைப்பு sugov_cpu *sg_cpu)
 {
 	unsigned long idle_calls;
 	bool ret;
@@ -390,12 +390,12 @@ static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
 	 * performance target comes directly from the BPF scheduler. Let's just
 	 * follow it.
 	 */
-	if (scx_switched_all())
-		return false;
+	எனில் (scx_switched_all())
+		திரும்பு false;
 
 	/* if capped by uclamp_max, always update to be in compliance */
-	if (uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)))
-		return false;
+	எனில் (uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)))
+		திரும்பு false;
 
 	/*
 	 * Maintain the frequency if the CPU has not been idle recently, as
@@ -405,25 +405,25 @@ static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
 	ret = idle_calls == sg_cpu->saved_idle_calls;
 
 	sg_cpu->saved_idle_calls = idle_calls;
-	return ret;
+	திரும்பு ret;
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline bool sugov_hold_freq(struct sugov_cpu *sg_cpu) { return false; }
+#இல்லையெனில் /* !CONFIG_NO_HZ_COMMON: */
+நிலையான உள்வரி bool sugov_hold_freq(கட்டமைப்பு sugov_cpu *sg_cpu) { திரும்பு false; }
 #endif /* !CONFIG_NO_HZ_COMMON */
 
 /*
  * Make sugov_should_update_freq() ignore the rate limit when DL
  * has increased the utilization.
  */
-static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu)
+நிலையான உள்வரி வெறுமை ignore_dl_rate_limit(கட்டமைப்பு sugov_cpu *sg_cpu)
 {
-	if (cpu_bw_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->bw_min)
+	எனில் (cpu_bw_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->bw_min)
 		sg_cpu->sg_policy->need_freq_update = true;
 }
 
-static inline bool sugov_update_single_common(struct sugov_cpu *sg_cpu,
+நிலையான உள்வரி bool sugov_update_single_common(கட்டமைப்பு sugov_cpu *sg_cpu,
 					      u64 time, unsigned long max_cap,
-					      unsigned int flags)
+					      unsigned முழு flags)
 {
 	unsigned long boost;
 
@@ -432,32 +432,32 @@ static inline bool sugov_update_single_common(struct sugov_cpu *sg_cpu,
 
 	ignore_dl_rate_limit(sg_cpu);
 
-	if (!sugov_should_update_freq(sg_cpu->sg_policy, time))
-		return false;
+	எனில் (!sugov_should_update_freq(sg_cpu->sg_policy, time))
+		திரும்பு false;
 
 	boost = sugov_iowait_apply(sg_cpu, time, max_cap);
 	sugov_get_util(sg_cpu, boost);
 
-	return true;
+	திரும்பு true;
 }
 
-static void sugov_update_single_freq(struct update_util_data *hook, u64 time,
-				     unsigned int flags)
+நிலையான வெறுமை sugov_update_single_freq(கட்டமைப்பு update_util_data *hook, u64 time,
+				     unsigned முழு flags)
 {
-	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
-	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
-	unsigned int cached_freq = sg_policy->cached_raw_freq;
+	கட்டமைப்பு sugov_cpu *sg_cpu = container_of(hook, கட்டமைப்பு sugov_cpu, update_util);
+	கட்டமைப்பு sugov_policy *sg_policy = sg_cpu->sg_policy;
+	unsigned முழு cached_freq = sg_policy->cached_raw_freq;
 	unsigned long max_cap;
-	unsigned int next_f;
+	unsigned முழு next_f;
 
 	max_cap = arch_scale_cpu_capacity(sg_cpu->cpu);
 
-	if (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
-		return;
+	எனில் (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
+		திரும்பு;
 
 	next_f = get_next_freq(sg_policy, sg_cpu->util, max_cap);
 
-	if (sugov_hold_freq(sg_cpu) && next_f < sg_policy->next_freq &&
+	எனில் (sugov_hold_freq(sg_cpu) && next_f < sg_policy->next_freq &&
 	    !sg_policy->need_freq_update) {
 		next_f = sg_policy->next_freq;
 
@@ -465,28 +465,28 @@ static void sugov_update_single_freq(struct update_util_data *hook, u64 time,
 		sg_policy->cached_raw_freq = cached_freq;
 	}
 
-	if (!sugov_update_next_freq(sg_policy, time, next_f))
-		return;
+	எனில் (!sugov_update_next_freq(sg_policy, time, next_f))
+		திரும்பு;
 
 	/*
 	 * This code runs under rq->lock for the target CPU, so it won't run
 	 * concurrently on two different CPUs for the same target and it is not
 	 * necessary to acquire the lock in the fast switch case.
 	 */
-	if (sg_policy->policy->fast_switch_enabled) {
+	எனில் (sg_policy->policy->fast_switch_enabled) {
 		cpufreq_driver_fast_switch(sg_policy->policy, next_f);
-	} else {
+	} இல்லையெனில் {
 		raw_spin_lock(&sg_policy->update_lock);
 		sugov_deferred_update(sg_policy);
 		raw_spin_unlock(&sg_policy->update_lock);
 	}
 }
 
-static void sugov_update_single_perf(struct update_util_data *hook, u64 time,
-				     unsigned int flags)
+நிலையான வெறுமை sugov_update_single_perf(கட்டமைப்பு update_util_data *hook, u64 time,
+				     unsigned முழு flags)
 {
-	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
-	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
+	கட்டமைப்பு sugov_cpu *sg_cpu = container_of(hook, கட்டமைப்பு sugov_cpu, update_util);
+	கட்டமைப்பு sugov_policy *sg_policy = sg_cpu->sg_policy;
 	unsigned long prev_util = sg_cpu->util;
 	unsigned long max_cap;
 
@@ -495,17 +495,17 @@ static void sugov_update_single_perf(struct update_util_data *hook, u64 time,
 	 * supported, because the direct mapping between the utilization and
 	 * the performance levels depends on the frequency invariance.
 	 */
-	if (!arch_scale_freq_invariant()) {
+	எனில் (!arch_scale_freq_invariant()) {
 		sugov_update_single_freq(hook, time, flags);
-		return;
+		திரும்பு;
 	}
 
 	max_cap = arch_scale_cpu_capacity(sg_cpu->cpu);
 
-	if (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
-		return;
+	எனில் (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
+		திரும்பு;
 
-	if (sugov_hold_freq(sg_cpu) && sg_cpu->util < prev_util)
+	எனில் (sugov_hold_freq(sg_cpu) && sg_cpu->util < prev_util)
 		sg_cpu->util = prev_util;
 
 	cpufreq_driver_adjust_perf(sg_policy->policy, sg_cpu->bw_min,
@@ -515,17 +515,17 @@ static void sugov_update_single_perf(struct update_util_data *hook, u64 time,
 	sg_policy->last_freq_update_time = time;
 }
 
-static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
+நிலையான unsigned முழு sugov_next_freq_shared(கட்டமைப்பு sugov_cpu *sg_cpu, u64 time)
 {
-	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
-	struct cpufreq_policy *policy = sg_policy->policy;
+	கட்டமைப்பு sugov_policy *sg_policy = sg_cpu->sg_policy;
+	கட்டமைப்பு cpufreq_policy *policy = sg_policy->policy;
 	unsigned long util = 0, max_cap;
-	unsigned int j;
+	unsigned முழு j;
 
 	max_cap = arch_scale_cpu_capacity(sg_cpu->cpu);
 
 	for_each_cpu(j, policy->cpus) {
-		struct sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
+		கட்டமைப்பு sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
 		unsigned long boost;
 
 		boost = sugov_iowait_apply(j_sg_cpu, time, max_cap);
@@ -534,15 +534,15 @@ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
 		util = max(j_sg_cpu->util, util);
 	}
 
-	return get_next_freq(sg_policy, util, max_cap);
+	திரும்பு get_next_freq(sg_policy, util, max_cap);
 }
 
-static void
-sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+நிலையான வெறுமை
+sugov_update_shared(கட்டமைப்பு update_util_data *hook, u64 time, unsigned முழு flags)
 {
-	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
-	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
-	unsigned int next_f;
+	கட்டமைப்பு sugov_cpu *sg_cpu = container_of(hook, கட்டமைப்பு sugov_cpu, update_util);
+	கட்டமைப்பு sugov_policy *sg_policy = sg_cpu->sg_policy;
+	unsigned முழு next_f;
 
 	raw_spin_lock(&sg_policy->update_lock);
 
@@ -551,25 +551,25 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
 
 	ignore_dl_rate_limit(sg_cpu);
 
-	if (sugov_should_update_freq(sg_policy, time)) {
+	எனில் (sugov_should_update_freq(sg_policy, time)) {
 		next_f = sugov_next_freq_shared(sg_cpu, time);
 
-		if (!sugov_update_next_freq(sg_policy, time, next_f))
-			goto unlock;
+		எனில் (!sugov_update_next_freq(sg_policy, time, next_f))
+			செல் unlock;
 
-		if (sg_policy->policy->fast_switch_enabled)
+		எனில் (sg_policy->policy->fast_switch_enabled)
 			cpufreq_driver_fast_switch(sg_policy->policy, next_f);
-		else
+		இல்லையெனில்
 			sugov_deferred_update(sg_policy);
 	}
 unlock:
 	raw_spin_unlock(&sg_policy->update_lock);
 }
 
-static void sugov_work(struct kthread_work *work)
+நிலையான வெறுமை sugov_work(கட்டமைப்பு kthread_work *work)
 {
-	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-	unsigned int freq;
+	கட்டமைப்பு sugov_policy *sg_policy = container_of(work, கட்டமைப்பு sugov_policy, work);
+	unsigned முழு freq;
 	unsigned long flags;
 
 	/*
@@ -592,66 +592,66 @@ static void sugov_work(struct kthread_work *work)
 	mutex_unlock(&sg_policy->work_lock);
 }
 
-static void sugov_irq_work(struct irq_work *irq_work)
+நிலையான வெறுமை sugov_irq_work(கட்டமைப்பு irq_work *irq_work)
 {
-	struct sugov_policy *sg_policy;
+	கட்டமைப்பு sugov_policy *sg_policy;
 
-	sg_policy = container_of(irq_work, struct sugov_policy, irq_work);
+	sg_policy = container_of(irq_work, கட்டமைப்பு sugov_policy, irq_work);
 
 	kthread_queue_work(&sg_policy->worker, &sg_policy->work);
 }
 
 /************************** sysfs interface ************************/
 
-static struct sugov_tunables *global_tunables;
-static DEFINE_MUTEX(global_tunables_lock);
+நிலையான கட்டமைப்பு sugov_tunables *global_tunables;
+நிலையான DEFINE_MUTEX(global_tunables_lock);
 
-static inline struct sugov_tunables *to_sugov_tunables(struct gov_attr_set *attr_set)
+நிலையான உள்வரி கட்டமைப்பு sugov_tunables *to_sugov_tunables(கட்டமைப்பு gov_attr_set *attr_set)
 {
-	return container_of(attr_set, struct sugov_tunables, attr_set);
+	திரும்பு container_of(attr_set, கட்டமைப்பு sugov_tunables, attr_set);
 }
 
-static ssize_t rate_limit_us_show(struct gov_attr_set *attr_set, char *buf)
+நிலையான ssize_t rate_limit_us_show(கட்டமைப்பு gov_attr_set *attr_set, எழுத்து *buf)
 {
-	struct sugov_tunables *tunables = to_sugov_tunables(attr_set);
+	கட்டமைப்பு sugov_tunables *tunables = to_sugov_tunables(attr_set);
 
-	return sysfs_emit(buf, "%u\n", tunables->rate_limit_us);
+	திரும்பு sysfs_emit(buf, "%u\n", tunables->rate_limit_us);
 }
 
-static ssize_t
-rate_limit_us_store(struct gov_attr_set *attr_set, const char *buf, size_t count)
+நிலையான ssize_t
+rate_limit_us_store(கட்டமைப்பு gov_attr_set *attr_set, மாறிலி எழுத்து *buf, size_t மொத்தம்)
 {
-	struct sugov_tunables *tunables = to_sugov_tunables(attr_set);
-	struct sugov_policy *sg_policy;
-	unsigned int rate_limit_us;
+	கட்டமைப்பு sugov_tunables *tunables = to_sugov_tunables(attr_set);
+	கட்டமைப்பு sugov_policy *sg_policy;
+	unsigned முழு rate_limit_us;
 
-	if (kstrtouint(buf, 10, &rate_limit_us))
-		return -EINVAL;
+	எனில் (kstrtouint(buf, 10, &rate_limit_us))
+		திரும்பு -EINVAL;
 
 	tunables->rate_limit_us = rate_limit_us;
 
 	list_for_each_entry(sg_policy, &attr_set->policy_list, tunables_hook)
 		sugov_update_rate_limit_us(sg_policy);
 
-	return count;
+	திரும்பு மொத்தம்;
 }
 
-static struct governor_attr rate_limit_us = __ATTR_RW(rate_limit_us);
+நிலையான கட்டமைப்பு governor_attr rate_limit_us = __ATTR_RW(rate_limit_us);
 
-static struct attribute *sugov_attrs[] = {
+நிலையான கட்டமைப்பு attribute *sugov_attrs[] = {
 	&rate_limit_us.attr,
-	NULL
+	வெற்று
 };
 ATTRIBUTE_GROUPS(sugov);
 
-static void sugov_tunables_free(struct kobject *kobj)
+நிலையான வெறுமை sugov_tunables_free(கட்டமைப்பு kobject *kobj)
 {
-	struct gov_attr_set *attr_set = to_gov_attr_set(kobj);
+	கட்டமைப்பு gov_attr_set *attr_set = to_gov_attr_set(kobj);
 
 	kfree(to_sugov_tunables(attr_set));
 }
 
-static const struct kobj_type sugov_tunables_ktype = {
+நிலையான மாறிலி கட்டமைப்பு kobj_type sugov_tunables_ktype = {
 	.default_groups = sugov_groups,
 	.sysfs_ops = &governor_sysfs_ops,
 	.release = &sugov_tunables_free,
@@ -659,31 +659,31 @@ static const struct kobj_type sugov_tunables_ktype = {
 
 /********************** cpufreq governor interface *********************/
 
-static struct cpufreq_governor schedutil_gov;
+நிலையான கட்டமைப்பு cpufreq_governor schedutil_gov;
 
-static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
+நிலையான கட்டமைப்பு sugov_policy *sugov_policy_alloc(கட்டமைப்பு cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy;
+	கட்டமைப்பு sugov_policy *sg_policy;
 
 	sg_policy = kzalloc_obj(*sg_policy);
-	if (!sg_policy)
-		return NULL;
+	எனில் (!sg_policy)
+		திரும்பு வெற்று;
 
 	sg_policy->policy = policy;
 	raw_spin_lock_init(&sg_policy->update_lock);
-	return sg_policy;
+	திரும்பு sg_policy;
 }
 
-static void sugov_policy_free(struct sugov_policy *sg_policy)
+நிலையான வெறுமை sugov_policy_free(கட்டமைப்பு sugov_policy *sg_policy)
 {
 	kfree(sg_policy);
 }
 
-static int sugov_kthread_create(struct sugov_policy *sg_policy)
+நிலையான முழு sugov_kthread_create(கட்டமைப்பு sugov_policy *sg_policy)
 {
-	struct task_struct *thread;
-	struct sched_attr attr = {
-		.size		= sizeof(struct sched_attr),
+	கட்டமைப்பு task_struct *thread;
+	கட்டமைப்பு sched_attr attr = {
+		.size		= அளவு(கட்டமைப்பு sched_attr),
 		.sched_policy	= SCHED_DEADLINE,
 		.sched_flags	= SCHED_FLAG_SUGOV,
 		.sched_nice	= 0,
@@ -696,34 +696,34 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
 		.sched_deadline = 10 * NSEC_PER_MSEC,
 		.sched_period	= 10 * NSEC_PER_MSEC,
 	};
-	struct cpufreq_policy *policy = sg_policy->policy;
-	int ret;
+	கட்டமைப்பு cpufreq_policy *policy = sg_policy->policy;
+	முழு ret;
 
 	/* kthread only required for slow path */
-	if (policy->fast_switch_enabled)
-		return 0;
+	எனில் (policy->fast_switch_enabled)
+		திரும்பு 0;
 
 	kthread_init_work(&sg_policy->work, sugov_work);
 	kthread_init_worker(&sg_policy->worker);
 	thread = kthread_create(kthread_worker_fn, &sg_policy->worker,
 				"sugov:%d",
 				cpumask_first(policy->related_cpus));
-	if (IS_ERR(thread)) {
+	எனில் (IS_ERR(thread)) {
 		pr_err("failed to create sugov thread: %pe\n", thread);
-		return PTR_ERR(thread);
+		திரும்பு PTR_ERR(thread);
 	}
 
 	ret = sched_setattr_nocheck(thread, &attr);
-	if (ret) {
+	எனில் (ret) {
 		kthread_stop(thread);
 		pr_warn("%s: failed to set SCHED_DEADLINE\n", __func__);
-		return ret;
+		திரும்பு ret;
 	}
 
 	sg_policy->thread = thread;
-	if (policy->dvfs_possible_from_any_cpu)
+	எனில் (policy->dvfs_possible_from_any_cpu)
 		set_cpus_allowed_ptr(thread, policy->related_cpus);
-	else
+	இல்லையெனில்
 		kthread_bind_mask(thread, policy->related_cpus);
 
 	init_irq_work(&sg_policy->irq_work, sugov_irq_work);
@@ -731,79 +731,79 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
 
 	wake_up_process(thread);
 
-	return 0;
+	திரும்பு 0;
 }
 
-static void sugov_kthread_stop(struct sugov_policy *sg_policy)
+நிலையான வெறுமை sugov_kthread_stop(கட்டமைப்பு sugov_policy *sg_policy)
 {
 	/* kthread only required for slow path */
-	if (sg_policy->policy->fast_switch_enabled)
-		return;
+	எனில் (sg_policy->policy->fast_switch_enabled)
+		திரும்பு;
 
 	kthread_flush_worker(&sg_policy->worker);
 	kthread_stop(sg_policy->thread);
 	mutex_destroy(&sg_policy->work_lock);
 }
 
-static struct sugov_tunables *sugov_tunables_alloc(struct sugov_policy *sg_policy)
+நிலையான கட்டமைப்பு sugov_tunables *sugov_tunables_alloc(கட்டமைப்பு sugov_policy *sg_policy)
 {
-	struct sugov_tunables *tunables;
+	கட்டமைப்பு sugov_tunables *tunables;
 
 	tunables = kzalloc_obj(*tunables);
-	if (tunables) {
+	எனில் (tunables) {
 		gov_attr_set_init(&tunables->attr_set, &sg_policy->tunables_hook);
-		if (!have_governor_per_policy())
+		எனில் (!have_governor_per_policy())
 			global_tunables = tunables;
 	}
-	return tunables;
+	திரும்பு tunables;
 }
 
-static void sugov_clear_global_tunables(void)
+நிலையான வெறுமை sugov_clear_global_tunables(வெறுமை)
 {
-	if (!have_governor_per_policy())
-		global_tunables = NULL;
+	எனில் (!have_governor_per_policy())
+		global_tunables = வெற்று;
 }
 
-static int sugov_init(struct cpufreq_policy *policy)
+நிலையான முழு sugov_init(கட்டமைப்பு cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy;
-	struct sugov_tunables *tunables;
-	int ret = 0;
+	கட்டமைப்பு sugov_policy *sg_policy;
+	கட்டமைப்பு sugov_tunables *tunables;
+	முழு ret = 0;
 
 	/* State should be equivalent to EXIT */
-	if (policy->governor_data)
-		return -EBUSY;
+	எனில் (policy->governor_data)
+		திரும்பு -EBUSY;
 
 	cpufreq_enable_fast_switch(policy);
 
 	sg_policy = sugov_policy_alloc(policy);
-	if (!sg_policy) {
+	எனில் (!sg_policy) {
 		ret = -ENOMEM;
-		goto disable_fast_switch;
+		செல் disable_fast_switch;
 	}
 
 	ret = sugov_kthread_create(sg_policy);
-	if (ret)
-		goto free_sg_policy;
+	எனில் (ret)
+		செல் free_sg_policy;
 
 	mutex_lock(&global_tunables_lock);
 
-	if (global_tunables) {
-		if (WARN_ON(have_governor_per_policy())) {
+	எனில் (global_tunables) {
+		எனில் (WARN_ON(have_governor_per_policy())) {
 			ret = -EINVAL;
-			goto stop_kthread;
+			செல் stop_kthread;
 		}
 		policy->governor_data = sg_policy;
 		sg_policy->tunables = global_tunables;
 
 		gov_attr_set_get(&global_tunables->attr_set, &sg_policy->tunables_hook);
-		goto out;
+		செல் out;
 	}
 
 	tunables = sugov_tunables_alloc(sg_policy);
-	if (!tunables) {
+	எனில் (!tunables) {
 		ret = -ENOMEM;
-		goto stop_kthread;
+		செல் stop_kthread;
 	}
 
 	tunables->rate_limit_us = cpufreq_policy_transition_delay_us(policy);
@@ -814,8 +814,8 @@ static int sugov_init(struct cpufreq_policy *policy)
 	ret = kobject_init_and_add(&tunables->attr_set.kobj, &sugov_tunables_ktype,
 				   get_governor_parent_kobj(policy), "%s",
 				   schedutil_gov.name);
-	if (ret)
-		goto fail;
+	எனில் (ret)
+		செல் fail;
 
 out:
 	/*
@@ -824,11 +824,11 @@ out:
 	 */
 	em_rebuild_sched_domains();
 	mutex_unlock(&global_tunables_lock);
-	return 0;
+	திரும்பு 0;
 
 fail:
 	kobject_put(&tunables->attr_set.kobj);
-	policy->governor_data = NULL;
+	policy->governor_data = வெற்று;
 	sugov_clear_global_tunables();
 
 stop_kthread:
@@ -842,20 +842,20 @@ disable_fast_switch:
 	cpufreq_disable_fast_switch(policy);
 
 	pr_err("initialization failed (error %d)\n", ret);
-	return ret;
+	திரும்பு ret;
 }
 
-static void sugov_exit(struct cpufreq_policy *policy)
+நிலையான வெறுமை sugov_exit(கட்டமைப்பு cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy = policy->governor_data;
-	struct sugov_tunables *tunables = sg_policy->tunables;
-	unsigned int count;
+	கட்டமைப்பு sugov_policy *sg_policy = policy->governor_data;
+	கட்டமைப்பு sugov_tunables *tunables = sg_policy->tunables;
+	unsigned முழு மொத்தம்;
 
 	mutex_lock(&global_tunables_lock);
 
-	count = gov_attr_set_put(&tunables->attr_set, &sg_policy->tunables_hook);
-	policy->governor_data = NULL;
-	if (!count)
+	மொத்தம் = gov_attr_set_put(&tunables->attr_set, &sg_policy->tunables_hook);
+	policy->governor_data = வெற்று;
+	எனில் (!மொத்தம்)
 		sugov_clear_global_tunables();
 
 	mutex_unlock(&global_tunables_lock);
@@ -867,11 +867,11 @@ static void sugov_exit(struct cpufreq_policy *policy)
 	em_rebuild_sched_domains();
 }
 
-static int sugov_start(struct cpufreq_policy *policy)
+நிலையான முழு sugov_start(கட்டமைப்பு cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy = policy->governor_data;
-	void (*uu)(struct update_util_data *data, u64 time, unsigned int flags);
-	unsigned int cpu;
+	கட்டமைப்பு sugov_policy *sg_policy = policy->governor_data;
+	வெறுமை (*uu)(கட்டமைப்பு update_util_data *data, u64 time, unsigned முழு flags);
+	unsigned முழு cpu;
 
 	sugov_update_rate_limit_us_sync(sg_policy);
 	sg_policy->last_freq_update_time	= 0;
@@ -882,17 +882,17 @@ static int sugov_start(struct cpufreq_policy *policy)
 
 	sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
 
-	if (policy_is_shared(policy))
+	எனில் (policy_is_shared(policy))
 		uu = sugov_update_shared;
-	else if (policy->fast_switch_enabled && cpufreq_driver_has_adjust_perf())
+	இல்லையெனில் எனில் (policy->fast_switch_enabled && cpufreq_driver_has_adjust_perf())
 		uu = sugov_update_single_perf;
-	else
+	இல்லையெனில்
 		uu = sugov_update_single_freq;
 
 	for_each_cpu(cpu, policy->cpus) {
-		struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
+		கட்டமைப்பு sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
 
-		memset(sg_cpu, 0, sizeof(*sg_cpu));
+		memset(sg_cpu, 0, அளவு(*sg_cpu));
 		sg_cpu->cpu = cpu;
 		sg_cpu->sg_policy = sg_policy;
 	}
@@ -903,35 +903,35 @@ static int sugov_start(struct cpufreq_policy *policy)
 	 * sibling sugov_cpu.
 	 */
 	for_each_cpu(cpu, policy->cpus) {
-		struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
+		கட்டமைப்பு sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
 
 		cpufreq_add_update_util_hook(cpu, &sg_cpu->update_util, uu);
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static void sugov_stop(struct cpufreq_policy *policy)
+நிலையான வெறுமை sugov_stop(கட்டமைப்பு cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy = policy->governor_data;
-	unsigned int cpu;
+	கட்டமைப்பு sugov_policy *sg_policy = policy->governor_data;
+	unsigned முழு cpu;
 
 	for_each_cpu(cpu, policy->cpus)
 		cpufreq_remove_update_util_hook(cpu);
 
 	synchronize_rcu();
 
-	if (!policy->fast_switch_enabled) {
+	எனில் (!policy->fast_switch_enabled) {
 		irq_work_sync(&sg_policy->irq_work);
 		kthread_cancel_work_sync(&sg_policy->work);
 	}
 }
 
-static void sugov_limits(struct cpufreq_policy *policy)
+நிலையான வெறுமை sugov_limits(கட்டமைப்பு cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy = policy->governor_data;
+	கட்டமைப்பு sugov_policy *sg_policy = policy->governor_data;
 
-	if (!policy->fast_switch_enabled) {
+	எனில் (!policy->fast_switch_enabled) {
 		mutex_lock(&sg_policy->work_lock);
 		cpufreq_policy_apply_limits(policy);
 		mutex_unlock(&sg_policy->work_lock);
@@ -949,7 +949,7 @@ static void sugov_limits(struct cpufreq_policy *policy)
 	WRITE_ONCE(sg_policy->limits_changed, true);
 }
 
-static struct cpufreq_governor schedutil_gov = {
+நிலையான கட்டமைப்பு cpufreq_governor schedutil_gov = {
 	.name			= "schedutil",
 	.owner			= THIS_MODULE,
 	.flags			= CPUFREQ_GOV_DYNAMIC_SWITCHING,
@@ -961,15 +961,15 @@ static struct cpufreq_governor schedutil_gov = {
 };
 
 #ifdef CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
-struct cpufreq_governor *cpufreq_default_governor(void)
+கட்டமைப்பு cpufreq_governor *cpufreq_default_governor(வெறுமை)
 {
-	return &schedutil_gov;
+	திரும்பு &schedutil_gov;
 }
 #endif
 
-bool sugov_is_governor(struct cpufreq_policy *policy)
+bool sugov_is_governor(கட்டமைப்பு cpufreq_policy *policy)
 {
-	return policy->governor == &schedutil_gov;
+	திரும்பு policy->governor == &schedutil_gov;
 }
 
 cpufreq_governor_init(schedutil_gov);

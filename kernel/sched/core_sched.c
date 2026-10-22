@@ -4,42 +4,42 @@
  * A simple wrapper around refcount. An allocated sched_core_cookie's
  * address is used to compute the cookie of the task.
  */
-#include "sched.h"
+#அந்தர்பாவ "sched.h"
 
-struct sched_core_cookie {
+கட்டமைப்பு sched_core_cookie {
 	refcount_t refcnt;
 };
 
-static unsigned long sched_core_alloc_cookie(void)
+நிலையான unsigned long sched_core_alloc_cookie(வெறுமை)
 {
-	struct sched_core_cookie *ck = kmalloc_obj(*ck);
-	if (!ck)
-		return 0;
+	கட்டமைப்பு sched_core_cookie *ck = kmalloc_obj(*ck);
+	எனில் (!ck)
+		திரும்பு 0;
 
 	refcount_set(&ck->refcnt, 1);
 	sched_core_get();
 
-	return (unsigned long)ck;
+	திரும்பு (unsigned long)ck;
 }
 
-static void sched_core_put_cookie(unsigned long cookie)
+நிலையான வெறுமை sched_core_put_cookie(unsigned long cookie)
 {
-	struct sched_core_cookie *ptr = (void *)cookie;
+	கட்டமைப்பு sched_core_cookie *ptr = (வெறுமை *)cookie;
 
-	if (ptr && refcount_dec_and_test(&ptr->refcnt)) {
+	எனில் (ptr && refcount_dec_and_test(&ptr->refcnt)) {
 		kfree(ptr);
 		sched_core_put();
 	}
 }
 
-static unsigned long sched_core_get_cookie(unsigned long cookie)
+நிலையான unsigned long sched_core_get_cookie(unsigned long cookie)
 {
-	struct sched_core_cookie *ptr = (void *)cookie;
+	கட்டமைப்பு sched_core_cookie *ptr = (வெறுமை *)cookie;
 
-	if (ptr)
+	எனில் (ptr)
 		refcount_inc(&ptr->refcnt);
 
-	return cookie;
+	திரும்பு cookie;
 }
 
 /*
@@ -52,12 +52,12 @@ static unsigned long sched_core_get_cookie(unsigned long cookie)
  *
  * Returns: the old cookie
  */
-static unsigned long sched_core_update_cookie(struct task_struct *p,
+நிலையான unsigned long sched_core_update_cookie(கட்டமைப்பு task_struct *p,
 					      unsigned long cookie)
 {
 	unsigned long old_cookie;
-	struct rq_flags rf;
-	struct rq *rq;
+	கட்டமைப்பு rq_flags rf;
+	கட்டமைப்பு rq *rq;
 
 	rq = task_rq_lock(p, &rf);
 
@@ -69,7 +69,7 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	 */
 	WARN_ON_ONCE((p->core_cookie || cookie) && !sched_core_enabled(rq));
 
-	if (sched_core_enqueued(p))
+	எனில் (sched_core_enqueued(p))
 		sched_core_dequeue(rq, p, DEQUEUE_SAVE);
 
 	old_cookie = p->core_cookie;
@@ -78,7 +78,7 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	/*
 	 * Consider the cases: !prev_cookie and !cookie.
 	 */
-	if (cookie && task_on_rq_queued(p))
+	எனில் (cookie && task_on_rq_queued(p))
 		sched_core_enqueue(rq, p);
 
 	/*
@@ -90,15 +90,15 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	 * core has now entered/left forced idle state. Defer accounting to the
 	 * next scheduling edge, rather than always forcing a reschedule here.
 	 */
-	if (task_on_cpu(rq, p))
+	எனில் (task_on_cpu(rq, p))
 		resched_curr(rq);
 
 	task_rq_unlock(rq, p, &rf);
 
-	return old_cookie;
+	திரும்பு old_cookie;
 }
 
-static unsigned long sched_core_clone_cookie(struct task_struct *p)
+நிலையான unsigned long sched_core_clone_cookie(கட்டமைப்பு task_struct *p)
 {
 	unsigned long cookie, flags;
 
@@ -106,21 +106,21 @@ static unsigned long sched_core_clone_cookie(struct task_struct *p)
 	cookie = sched_core_get_cookie(p->core_cookie);
 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 
-	return cookie;
+	திரும்பு cookie;
 }
 
-void sched_core_fork(struct task_struct *p)
+வெறுமை sched_core_fork(கட்டமைப்பு task_struct *p)
 {
-	RB_CLEAR_NODE(&p->core_node);
+	RB_CLEAR_முனை(&p->core_முனை);
 	p->core_cookie = sched_core_clone_cookie(current);
 }
 
-void sched_core_free(struct task_struct *p)
+வெறுமை sched_core_free(கட்டமைப்பு task_struct *p)
 {
 	sched_core_put_cookie(p->core_cookie);
 }
 
-static void __sched_core_set(struct task_struct *p, unsigned long cookie)
+நிலையான வெறுமை __sched_core_set(கட்டமைப்பு task_struct *p, unsigned long cookie)
 {
 	cookie = sched_core_get_cookie(cookie);
 	cookie = sched_core_update_cookie(p, cookie);
@@ -128,33 +128,33 @@ static void __sched_core_set(struct task_struct *p, unsigned long cookie)
 }
 
 /* Called from prctl interface: PR_SCHED_CORE */
-int sched_core_share_pid(unsigned int cmd, pid_t pid, enum pid_type type,
+முழு sched_core_share_pid(unsigned முழு cmd, pid_t pid, எண்ணிக்கை pid_type type,
 			 unsigned long uaddr)
 {
 	unsigned long cookie = 0, id = 0;
-	struct task_struct *task, *p;
-	struct pid *grp;
-	int err = 0;
+	கட்டமைப்பு task_struct *task, *p;
+	கட்டமைப்பு pid *grp;
+	முழு err = 0;
 
-	if (!sched_smt_active())
-		return -ENODEV;
+	எனில் (!sched_smt_active())
+		திரும்பு -ENODEV;
 
 	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD != PIDTYPE_PID);
 	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD_GROUP != PIDTYPE_TGID);
 	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_PROCESS_GROUP != PIDTYPE_PGID);
 
-	if (type > PIDTYPE_PGID || cmd >= PR_SCHED_CORE_MAX || pid < 0 ||
+	எனில் (type > PIDTYPE_PGID || cmd >= PR_SCHED_CORE_MAX || pid < 0 ||
 	    (cmd != PR_SCHED_CORE_GET && uaddr))
-		return -EINVAL;
+		திரும்பு -EINVAL;
 
 	rcu_read_lock();
-	if (pid == 0) {
+	எனில் (pid == 0) {
 		task = current;
-	} else {
+	} இல்லையெனில் {
 		task = find_task_by_vpid(pid);
-		if (!task) {
+		எனில் (!task) {
 			rcu_read_unlock();
-			return -ESRCH;
+			திரும்பு -ESRCH;
 		}
 	}
 	get_task_struct(task);
@@ -164,63 +164,63 @@ int sched_core_share_pid(unsigned int cmd, pid_t pid, enum pid_type type,
 	 * Check if this process has the right to modify the specified
 	 * process. Use the regular "ptrace_may_access()" checks.
 	 */
-	if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
+	எனில் (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
 		err = -EPERM;
-		goto out;
+		செல் out;
 	}
 
-	switch (cmd) {
-	case PR_SCHED_CORE_GET:
-		if (type != PIDTYPE_PID || uaddr & 7) {
+	தேர்வு (cmd) {
+	நிலை PR_SCHED_CORE_GET:
+		எனில் (type != PIDTYPE_PID || uaddr & 7) {
 			err = -EINVAL;
-			goto out;
+			செல் out;
 		}
 		cookie = sched_core_clone_cookie(task);
-		if (cookie) {
+		எனில் (cookie) {
 			/* XXX improve ? */
-			ptr_to_hashval((void *)cookie, &id);
+			ptr_to_hashval((வெறுமை *)cookie, &id);
 		}
 		err = put_user(id, (u64 __user *)uaddr);
-		goto out;
+		செல் out;
 
-	case PR_SCHED_CORE_CREATE:
+	நிலை PR_SCHED_CORE_CREATE:
 		cookie = sched_core_alloc_cookie();
-		if (!cookie) {
+		எனில் (!cookie) {
 			err = -ENOMEM;
-			goto out;
+			செல் out;
 		}
-		break;
+		நிறுத்து;
 
-	case PR_SCHED_CORE_SHARE_TO:
+	நிலை PR_SCHED_CORE_SHARE_TO:
 		cookie = sched_core_clone_cookie(current);
-		break;
+		நிறுத்து;
 
-	case PR_SCHED_CORE_SHARE_FROM:
-		if (type != PIDTYPE_PID) {
+	நிலை PR_SCHED_CORE_SHARE_FROM:
+		எனில் (type != PIDTYPE_PID) {
 			err = -EINVAL;
-			goto out;
+			செல் out;
 		}
 		cookie = sched_core_clone_cookie(task);
 		__sched_core_set(current, cookie);
-		goto out;
+		செல் out;
 
-	default:
+	இயல்பு:
 		err = -EINVAL;
-		goto out;
+		செல் out;
 	}
 
-	if (type == PIDTYPE_PID) {
+	எனில் (type == PIDTYPE_PID) {
 		__sched_core_set(task, cookie);
-		goto out;
+		செல் out;
 	}
 
 	read_lock(&tasklist_lock);
 	grp = task_pid_type(task, type);
 
 	do_each_pid_thread(grp, type, p) {
-		if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS)) {
+		எனில் (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS)) {
 			err = -EPERM;
-			goto out_tasklist;
+			செல் out_tasklist;
 		}
 	} while_each_pid_thread(grp, type, p);
 
@@ -233,43 +233,43 @@ out_tasklist:
 out:
 	sched_core_put_cookie(cookie);
 	put_task_struct(task);
-	return err;
+	திரும்பு err;
 }
 
 #ifdef CONFIG_SCHEDSTATS
 
 /* REQUIRES: rq->core's clock recently updated. */
-void __sched_core_account_forceidle(struct rq *rq)
+வெறுமை __sched_core_account_forceidle(கட்டமைப்பு rq *rq)
 {
-	const struct cpumask *smt_mask = cpu_smt_mask(cpu_of(rq));
+	மாறிலி கட்டமைப்பு cpumask *smt_mask = cpu_smt_mask(cpu_of(rq));
 	u64 delta, now = rq_clock(rq->core);
-	struct rq *rq_i;
-	struct task_struct *p;
-	int i;
+	கட்டமைப்பு rq *rq_i;
+	கட்டமைப்பு task_struct *p;
+	முழு i;
 
 	lockdep_assert_rq_held(rq);
 
-	WARN_ON_ONCE(!rq->core->core_forceidle_count);
+	WARN_ON_ONCE(!rq->core->core_forceidle_மொத்தம்);
 
-	if (rq->core->core_forceidle_start == 0)
-		return;
+	எனில் (rq->core->core_forceidle_start == 0)
+		திரும்பு;
 
 	delta = now - rq->core->core_forceidle_start;
-	if (unlikely((s64)delta <= 0))
-		return;
+	எனில் (unlikely((s64)delta <= 0))
+		திரும்பு;
 
 	rq->core->core_forceidle_start = now;
 
-	if (WARN_ON_ONCE(!rq->core->core_forceidle_occupation)) {
+	எனில் (WARN_ON_ONCE(!rq->core->core_forceidle_occupation)) {
 		/* can't be forced idle without a running task */
-	} else if (rq->core->core_forceidle_count > 1 ||
+	} இல்லையெனில் எனில் (rq->core->core_forceidle_மொத்தம் > 1 ||
 		   rq->core->core_forceidle_occupation > 1) {
 		/*
 		 * For larger SMT configurations, we need to scale the charged
 		 * forced idle amount since there can be more than one forced
 		 * idle sibling and more than one running cookied task.
 		 */
-		delta *= rq->core->core_forceidle_count;
+		delta *= rq->core->core_forceidle_மொத்தம்;
 		delta = div_u64(delta, rq->core->core_forceidle_occupation);
 	}
 
@@ -277,8 +277,8 @@ void __sched_core_account_forceidle(struct rq *rq)
 		rq_i = cpu_rq(i);
 		p = rq_i->core_pick ?: rq_i->curr;
 
-		if (p == rq_i->idle)
-			continue;
+		எனில் (p == rq_i->idle)
+			தொடர்;
 
 		/*
 		 * Note: this will account forceidle to the current CPU, even
@@ -288,12 +288,12 @@ void __sched_core_account_forceidle(struct rq *rq)
 	}
 }
 
-void __sched_core_tick(struct rq *rq)
+வெறுமை __sched_core_tick(கட்டமைப்பு rq *rq)
 {
-	if (!rq->core->core_forceidle_count)
-		return;
+	எனில் (!rq->core->core_forceidle_மொத்தம்)
+		திரும்பு;
 
-	if (rq != rq->core)
+	எனில் (rq != rq->core)
 		update_rq_clock(rq->core);
 
 	__sched_core_account_forceidle(rq);

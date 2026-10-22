@@ -1,81 +1,81 @@
 // SPDX-License-Identifier: GPL-2.0
 #ifndef _KERNEL_SCHED_PELT_H
 #define _KERNEL_SCHED_PELT_H
-#include "sched.h"
+#அந்தர்பாவ "sched.h"
 
-#include "sched-pelt.h"
+#அந்தர்பாவ "sched-pelt.h"
 
-int __update_load_avg_blocked_se(u64 now, struct sched_entity *se);
-int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se);
-int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
-int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
-int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
-bool update_other_load_avgs(struct rq *rq);
+முழு __update_load_avg_blocked_se(u64 now, கட்டமைப்பு sched_entity *se);
+முழு __update_load_avg_se(u64 now, கட்டமைப்பு cfs_rq *cfs_rq, கட்டமைப்பு sched_entity *se);
+முழு __update_load_avg_cfs_rq(u64 now, கட்டமைப்பு cfs_rq *cfs_rq);
+முழு update_rt_rq_load_avg(u64 now, கட்டமைப்பு rq *rq, முழு running);
+முழு update_dl_rq_load_avg(u64 now, கட்டமைப்பு rq *rq, முழு running);
+bool update_other_load_avgs(கட்டமைப்பு rq *rq);
 
 #ifdef CONFIG_SCHED_HW_PRESSURE
-int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity);
+முழு update_hw_load_avg(u64 now, கட்டமைப்பு rq *rq, u64 capacity);
 
-static inline u64 hw_load_avg(struct rq *rq)
+நிலையான உள்வரி u64 hw_load_avg(கட்டமைப்பு rq *rq)
 {
-	return READ_ONCE(rq->avg_hw.load_avg);
+	திரும்பு READ_ONCE(rq->avg_hw.load_avg);
 }
-#else /* !CONFIG_SCHED_HW_PRESSURE: */
-static inline int
-update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+#இல்லையெனில் /* !CONFIG_SCHED_HW_PRESSURE: */
+நிலையான உள்வரி முழு
+update_hw_load_avg(u64 now, கட்டமைப்பு rq *rq, u64 capacity)
 {
-	return 0;
+	திரும்பு 0;
 }
 
-static inline u64 hw_load_avg(struct rq *rq)
+நிலையான உள்வரி u64 hw_load_avg(கட்டமைப்பு rq *rq)
 {
-	return 0;
+	திரும்பு 0;
 }
 #endif /* !CONFIG_SCHED_HW_PRESSURE */
 
 #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-int update_irq_load_avg(struct rq *rq, u64 running);
-#else
-static inline int
-update_irq_load_avg(struct rq *rq, u64 running)
+முழு update_irq_load_avg(கட்டமைப்பு rq *rq, u64 running);
+#இல்லையெனில்
+நிலையான உள்வரி முழு
+update_irq_load_avg(கட்டமைப்பு rq *rq, u64 running)
 {
-	return 0;
+	திரும்பு 0;
 }
 #endif
 
 #define PELT_MIN_DIVIDER	(LOAD_AVG_MAX - 1024)
 
-static inline u32 get_pelt_divider(struct sched_avg *avg)
+நிலையான உள்வரி u32 get_pelt_divider(கட்டமைப்பு sched_avg *avg)
 {
-	return PELT_MIN_DIVIDER + avg->period_contrib;
+	திரும்பு PELT_MIN_DIVIDER + avg->period_contrib;
 }
 
-static inline void cfs_se_util_change(struct sched_avg *avg)
+நிலையான உள்வரி வெறுமை cfs_se_util_change(கட்டமைப்பு sched_avg *avg)
 {
-	unsigned int enqueued;
+	unsigned முழு enqueued;
 
-	if (!sched_feat(UTIL_EST))
-		return;
+	எனில் (!sched_feat(UTIL_EST))
+		திரும்பு;
 
 	/* Avoid store if the flag has been already reset */
 	enqueued = avg->util_est;
-	if (!(enqueued & UTIL_AVG_UNCHANGED))
-		return;
+	எனில் (!(enqueued & UTIL_AVG_UNCHANGED))
+		திரும்பு;
 
 	/* Reset flag to report util_avg has been updated */
 	enqueued &= ~UTIL_AVG_UNCHANGED;
 	WRITE_ONCE(avg->util_est, enqueued);
 }
 
-static inline u64 rq_clock_pelt(struct rq *rq)
+நிலையான உள்வரி u64 rq_clock_pelt(கட்டமைப்பு rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_pelt - rq->lost_idle_time;
+	திரும்பு rq->clock_pelt - rq->lost_idle_time;
 }
 
 /* The rq is idle, we can sync to clock_task */
-static inline void _update_idle_rq_clock_pelt(struct rq *rq)
+நிலையான உள்வரி வெறுமை _update_idle_rq_clock_pelt(கட்டமைப்பு rq *rq)
 {
 	rq->clock_pelt  = rq_clock_task(rq);
 
@@ -97,11 +97,11 @@ static inline void _update_idle_rq_clock_pelt(struct rq *rq)
  * clock pelt      | 1| 2|    3|    4| 7| 8| 9|   10|   11|14|15|16
  *
  */
-static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
+நிலையான உள்வரி வெறுமை update_rq_clock_pelt(கட்டமைப்பு rq *rq, s64 delta)
 {
-	if (unlikely(is_idle_task(rq->curr))) {
+	எனில் (unlikely(is_idle_task(rq->curr))) {
 		_update_idle_rq_clock_pelt(rq);
-		return;
+		திரும்பு;
 	}
 
 	/*
@@ -135,7 +135,7 @@ static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
  * the position in the current window (period_contrib) and we use the higher
  * bound of util_sum to decide.
  */
-static inline void update_idle_rq_clock_pelt(struct rq *rq)
+நிலையான உள்வரி வெறுமை update_idle_rq_clock_pelt(கட்டமைப்பு rq *rq)
 {
 	u32 divider = ((LOAD_AVG_MAX - 1024) << SCHED_CAPACITY_SHIFT) - LOAD_AVG_MAX;
 	u32 util_sum = rq->cfs.avg.util_sum;
@@ -151,38 +151,38 @@ static inline void update_idle_rq_clock_pelt(struct rq *rq)
 	 * this case. We keep track of this lost idle time compare to
 	 * rq's clock_task.
 	 */
-	if (util_sum >= divider)
+	எனில் (util_sum >= divider)
 		rq->lost_idle_time += rq_clock_task(rq) - rq->clock_pelt;
 
 	_update_idle_rq_clock_pelt(rq);
 }
 
 #ifdef CONFIG_CFS_BANDWIDTH
-static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+நிலையான உள்வரி வெறுமை update_idle_cfs_rq_clock_pelt(கட்டமைப்பு cfs_rq *cfs_rq)
 {
 	u64 throttled;
 
-	if (unlikely(cfs_rq->pelt_clock_throttled))
+	எனில் (unlikely(cfs_rq->pelt_clock_throttled))
 		throttled = U64_MAX;
-	else
+	இல்லையெனில்
 		throttled = cfs_rq->throttled_clock_pelt_time;
 
 	u64_u32_store(cfs_rq->throttled_pelt_idle, throttled);
 }
 
 /* rq->task_clock normalized against any time this cfs_rq has spent throttled */
-static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+நிலையான உள்வரி u64 cfs_rq_clock_pelt(கட்டமைப்பு cfs_rq *cfs_rq)
 {
-	if (unlikely(cfs_rq->pelt_clock_throttled))
-		return cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_time;
+	எனில் (unlikely(cfs_rq->pelt_clock_throttled))
+		திரும்பு cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_time;
 
-	return rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
+	திரும்பு rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
 }
-#else /* !CONFIG_CFS_BANDWIDTH: */
-static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq) { }
-static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+#இல்லையெனில் /* !CONFIG_CFS_BANDWIDTH: */
+நிலையான உள்வரி வெறுமை update_idle_cfs_rq_clock_pelt(கட்டமைப்பு cfs_rq *cfs_rq) { }
+நிலையான உள்வரி u64 cfs_rq_clock_pelt(கட்டமைப்பு cfs_rq *cfs_rq)
 {
-	return rq_clock_pelt(rq_of(cfs_rq));
+	திரும்பு rq_clock_pelt(rq_of(cfs_rq));
 }
 #endif /* !CONFIG_CFS_BANDWIDTH */
 

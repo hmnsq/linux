@@ -2,29 +2,29 @@
 /*
  * /proc/schedstat implementation
  */
-#include "sched.h"
+#அந்தர்பாவ "sched.h"
 
-void __update_stats_wait_start(struct rq *rq, struct task_struct *p,
-			       struct sched_statistics *stats)
+வெறுமை __update_stats_wait_start(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p,
+			       கட்டமைப்பு sched_statistics *stats)
 {
 	u64 wait_start, prev_wait_start;
 
 	wait_start = rq_clock(rq);
 	prev_wait_start = schedstat_val(stats->wait_start);
 
-	if (p && likely(wait_start > prev_wait_start))
+	எனில் (p && likely(wait_start > prev_wait_start))
 		wait_start -= prev_wait_start;
 
 	__schedstat_set(stats->wait_start, wait_start);
 }
 
-void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
-			     struct sched_statistics *stats)
+வெறுமை __update_stats_wait_end(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p,
+			     கட்டமைப்பு sched_statistics *stats)
 {
 	u64 delta = rq_clock(rq) - schedstat_val(stats->wait_start);
 
-	if (p) {
-		if (task_on_rq_migrating(p)) {
+	எனில் (p) {
+		எனில் (task_on_rq_migrating(p)) {
 			/*
 			 * Preserve migrating task's wait time so wait_start
 			 * time stamp can be adjusted to accumulate wait time
@@ -32,7 +32,7 @@ void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
 			 */
 			__schedstat_set(stats->wait_start, delta);
 
-			return;
+			திரும்பு;
 		}
 
 		trace_sched_stat_wait(p, delta);
@@ -40,54 +40,54 @@ void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
 
 	__schedstat_set(stats->wait_max,
 			max(schedstat_val(stats->wait_max), delta));
-	__schedstat_inc(stats->wait_count);
+	__schedstat_inc(stats->wait_மொத்தம்);
 	__schedstat_add(stats->wait_sum, delta);
 	__schedstat_set(stats->wait_start, 0);
 }
 
-void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
-				    struct sched_statistics *stats)
+வெறுமை __update_stats_enqueue_sleeper(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p,
+				    கட்டமைப்பு sched_statistics *stats)
 {
 	u64 sleep_start, block_start;
 
 	sleep_start = schedstat_val(stats->sleep_start);
 	block_start = schedstat_val(stats->block_start);
 
-	if (sleep_start) {
+	எனில் (sleep_start) {
 		u64 delta = rq_clock(rq) - sleep_start;
 
-		if ((s64)delta < 0)
+		எனில் ((s64)delta < 0)
 			delta = 0;
 
-		if (unlikely(delta > schedstat_val(stats->sleep_max)))
+		எனில் (unlikely(delta > schedstat_val(stats->sleep_max)))
 			__schedstat_set(stats->sleep_max, delta);
 
 		__schedstat_set(stats->sleep_start, 0);
 		__schedstat_add(stats->sum_sleep_runtime, delta);
 
-		if (p) {
+		எனில் (p) {
 			account_scheduler_latency(p, delta >> 10, 1);
 			trace_sched_stat_sleep(p, delta);
 		}
 	}
 
-	if (block_start) {
+	எனில் (block_start) {
 		u64 delta = rq_clock(rq) - block_start;
 
-		if ((s64)delta < 0)
+		எனில் ((s64)delta < 0)
 			delta = 0;
 
-		if (unlikely(delta > schedstat_val(stats->block_max)))
+		எனில் (unlikely(delta > schedstat_val(stats->block_max)))
 			__schedstat_set(stats->block_max, delta);
 
 		__schedstat_set(stats->block_start, 0);
 		__schedstat_add(stats->sum_sleep_runtime, delta);
 		__schedstat_add(stats->sum_block_runtime, delta);
 
-		if (p) {
-			if (p->in_iowait) {
+		எனில் (p) {
+			எனில் (p->in_iowait) {
 				__schedstat_add(stats->iowait_sum, delta);
-				__schedstat_inc(stats->iowait_count);
+				__schedstat_inc(stats->iowait_மொத்தம்);
 				trace_sched_stat_iowait(p, delta);
 			}
 
@@ -106,26 +106,26 @@ void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
  */
 #define SCHEDSTAT_VERSION 17
 
-static int show_schedstat(struct seq_file *seq, void *v)
+நிலையான முழு show_schedstat(கட்டமைப்பு seq_file *seq, வெறுமை *v)
 {
-	int cpu;
+	முழு cpu;
 
-	if (v == (void *)1) {
+	எனில் (v == (வெறுமை *)1) {
 		seq_printf(seq, "version %d\n", SCHEDSTAT_VERSION);
 		seq_printf(seq, "timestamp %lu\n", jiffies);
-	} else {
-		struct rq *rq;
-		struct sched_domain *sd;
-		int dcount = 0;
+	} இல்லையெனில் {
+		கட்டமைப்பு rq *rq;
+		கட்டமைப்பு sched_domain *sd;
+		முழு dcount = 0;
 		cpu = (unsigned long)(v - 2);
 		rq = cpu_rq(cpu);
 
 		/* runqueue-specific stats */
 		seq_printf(seq,
 		    "cpu%d %u 0 %u %u %u %u %llu %llu %lu",
-		    cpu, rq->yld_count,
-		    rq->sched_count, rq->sched_goidle,
-		    rq->ttwu_count, rq->ttwu_local,
+		    cpu, rq->yld_மொத்தம்,
+		    rq->sched_மொத்தம், rq->sched_goidle,
+		    rq->ttwu_மொத்தம், rq->ttwu_local,
 		    rq->rq_cpu_time,
 		    rq->rq_sched_info.run_delay, rq->rq_sched_info.pcount);
 
@@ -134,13 +134,13 @@ static int show_schedstat(struct seq_file *seq, void *v)
 		/* domain-specific stats */
 		rcu_read_lock();
 		for_each_domain(cpu, sd) {
-			enum cpu_idle_type itype;
+			எண்ணிக்கை cpu_idle_type itype;
 
 			seq_printf(seq, "domain%d %s %*pb", dcount++, sd->name,
 				   cpumask_pr_args(sched_domain_span(sd)));
-			for (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
+			க்கு (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
 				seq_printf(seq, " %u %u %u %u %u %u %u %u %u %u %u",
-				    sd->lb_count[itype],
+				    sd->lb_மொத்தம்[itype],
 				    sd->lb_balanced[itype],
 				    sd->lb_failed[itype],
 				    sd->lb_imbalance_load[itype],
@@ -154,15 +154,15 @@ static int show_schedstat(struct seq_file *seq, void *v)
 			}
 			seq_printf(seq,
 				   " %u %u %u %u %u %u %u %u %u %u %u %u\n",
-			    sd->alb_count, sd->alb_failed, sd->alb_pushed,
-			    sd->sbe_count, sd->sbe_balanced, sd->sbe_pushed,
-			    sd->sbf_count, sd->sbf_balanced, sd->sbf_pushed,
+			    sd->alb_மொத்தம், sd->alb_failed, sd->alb_pushed,
+			    sd->sbe_மொத்தம், sd->sbe_balanced, sd->sbe_pushed,
+			    sd->sbf_மொத்தம், sd->sbf_balanced, sd->sbf_pushed,
 			    sd->ttwu_wake_remote, sd->ttwu_move_affine,
 			    sd->ttwu_move_balance);
 		}
 		rcu_read_unlock();
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -172,49 +172,49 @@ static int show_schedstat(struct seq_file *seq, void *v)
  * In a hotplugged system some CPUs, including cpu 0, may be missing so we have
  * to use cpumask_* to iterate over the CPUs.
  */
-static void *schedstat_start(struct seq_file *file, loff_t *offset)
+நிலையான வெறுமை *schedstat_start(கட்டமைப்பு seq_file *file, loff_t *offset)
 {
 	unsigned long n = *offset;
 
-	if (n == 0)
-		return (void *) 1;
+	எனில் (n == 0)
+		திரும்பு (வெறுமை *) 1;
 
 	n--;
 
-	if (n > 0)
+	எனில் (n > 0)
 		n = cpumask_next(n - 1, cpu_online_mask);
-	else
+	இல்லையெனில்
 		n = cpumask_first(cpu_online_mask);
 
 	*offset = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	எனில் (n < nr_cpu_ids)
+		திரும்பு (வெறுமை *)(unsigned long)(n + 2);
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
-static void *schedstat_next(struct seq_file *file, void *data, loff_t *offset)
+நிலையான வெறுமை *schedstat_next(கட்டமைப்பு seq_file *file, வெறுமை *data, loff_t *offset)
 {
 	(*offset)++;
 
-	return schedstat_start(file, offset);
+	திரும்பு schedstat_start(file, offset);
 }
 
-static void schedstat_stop(struct seq_file *file, void *data)
+நிலையான வெறுமை schedstat_stop(கட்டமைப்பு seq_file *file, வெறுமை *data)
 {
 }
 
-static const struct seq_operations schedstat_sops = {
+நிலையான மாறிலி கட்டமைப்பு seq_operations schedstat_sops = {
 	.start = schedstat_start,
 	.next  = schedstat_next,
 	.stop  = schedstat_stop,
 	.show  = show_schedstat,
 };
 
-static int __init proc_schedstat_init(void)
+நிலையான முழு __init proc_schedstat_init(வெறுமை)
 {
-	proc_create_seq("schedstat", 0, NULL, &schedstat_sops);
-	return 0;
+	proc_create_seq("schedstat", 0, வெற்று, &schedstat_sops);
+	திரும்பு 0;
 }
 subsys_initcall(proc_schedstat_init);

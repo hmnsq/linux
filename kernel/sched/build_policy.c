@@ -13,49 +13,49 @@
  */
 
 /* Headers: */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/hotplug.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/posix-timers.h>
-#include <linux/sched/rt.h>
+#அந்தர்பாவ <linux/sched/clock.h>
+#அந்தர்பாவ <linux/sched/cputime.h>
+#அந்தர்பாவ <linux/sched/hotplug.h>
+#அந்தர்பாவ <linux/sched/isolation.h>
+#அந்தர்பாவ <linux/sched/posix-timers.h>
+#அந்தர்பாவ <linux/sched/rt.h>
 
-#include <linux/cpuidle.h>
-#include <linux/jiffies.h>
-#include <linux/kobject.h>
-#include <linux/livepatch.h>
-#include <linux/pm.h>
-#include <linux/psi.h>
-#include <linux/rhashtable.h>
-#include <linux/seq_buf.h>
-#include <linux/seqlock_api.h>
-#include <linux/slab.h>
-#include <linux/suspend.h>
-#include <linux/tsacct_kern.h>
-#include <linux/vtime.h>
-#include <linux/sysrq.h>
-#include <linux/percpu-rwsem.h>
+#அந்தர்பாவ <linux/cpuidle.h>
+#அந்தர்பாவ <linux/jiffies.h>
+#அந்தர்பாவ <linux/kobject.h>
+#அந்தர்பாவ <linux/livepatch.h>
+#அந்தர்பாவ <linux/pm.h>
+#அந்தர்பாவ <linux/psi.h>
+#அந்தர்பாவ <linux/rhashtable.h>
+#அந்தர்பாவ <linux/seq_buf.h>
+#அந்தர்பாவ <linux/seqlock_api.h>
+#அந்தர்பாவ <linux/slab.h>
+#அந்தர்பாவ <linux/suspend.h>
+#அந்தர்பாவ <linux/tsacct_kern.h>
+#அந்தர்பாவ <linux/vtime.h>
+#அந்தர்பாவ <linux/sysrq.h>
+#அந்தர்பாவ <linux/percpu-rwsem.h>
 
-#include <uapi/linux/sched/types.h>
+#அந்தர்பாவ <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "smp.h"
+#அந்தர்பாவ "sched.h"
+#அந்தர்பாவ "smp.h"
 
-#include "autogroup.h"
-#include "stats.h"
-#include "pelt.h"
+#அந்தர்பாவ "autogroup.h"
+#அந்தர்பாவ "stats.h"
+#அந்தர்பாவ "pelt.h"
 
 /* Source code modules: */
 
-#include "idle.c"
+#அந்தர்பாவ "idle.c"
 
-#include "rt.c"
-#include "cpudeadline.c"
+#அந்தர்பாவ "rt.c"
+#அந்தர்பாவ "cpudeadline.c"
 
-#include "pelt.c"
+#அந்தர்பாவ "pelt.c"
 
-#include "cputime.c"
-#include "deadline.c"
+#அந்தர்பாவ "cputime.c"
+#அந்தர்பாவ "deadline.c"
 
 #ifdef CONFIG_SCHED_CLASS_EXT
 # include <linux/btf_ids.h>
@@ -75,4 +75,4 @@
 # include "ext/sub.c"
 #endif
 
-#include "syscalls.c"
+#அந்தர்பாவ "syscalls.c"

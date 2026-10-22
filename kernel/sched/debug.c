@@ -6,138 +6,138 @@
  *
  * Copyright(C) 2007, Red Hat, Inc., Ingo Molnar
  */
-#include <linux/debugfs.h>
-#include <linux/nmi.h>
-#include <linux/log2.h>
-#include "sched.h"
+#அந்தர்பாவ <linux/debugfs.h>
+#அந்தர்பாவ <linux/nmi.h>
+#அந்தர்பாவ <linux/log2.h>
+#அந்தர்பாவ "sched.h"
 
 /*
  * This allows printing both to /sys/kernel/debug/sched/debug and
  * to the console
  */
 #define SEQ_printf(m, x...)			\
- do {						\
-	if (m)					\
+ செய் {						\
+	எனில் (m)					\
 		seq_printf(m, x);		\
-	else					\
+	இல்லையெனில்					\
 		pr_cont(x);			\
- } while (0)
+ } போது (0)
 
 /*
  * Ease the printing of nsec fields:
  */
-static long long nsec_high(unsigned long long nsec)
+நிலையான long long nsec_உயர்வு(unsigned long long nsec)
 {
-	if ((long long)nsec < 0) {
+	எனில் ((long long)nsec < 0) {
 		nsec = -nsec;
 		do_div(nsec, 1000000);
-		return -nsec;
+		திரும்பு -nsec;
 	}
 	do_div(nsec, 1000000);
 
-	return nsec;
+	திரும்பு nsec;
 }
 
-static unsigned long nsec_low(unsigned long long nsec)
+நிலையான unsigned long nsec_கீழ்(unsigned long long nsec)
 {
-	if ((long long)nsec < 0)
+	எனில் ((long long)nsec < 0)
 		nsec = -nsec;
 
-	return do_div(nsec, 1000000);
+	திரும்பு do_div(nsec, 1000000);
 }
 
-#define SPLIT_NS(x) nsec_high(x), nsec_low(x)
+#define SPLIT_NS(x) nsec_உயர்வு(x), nsec_கீழ்(x)
 
 #define SCHED_FEAT(name, enabled)	\
 	#name ,
 
-static const char * const sched_feat_names[] = {
-#include "features.h"
+நிலையான மாறிலி எழுத்து * மாறிலி sched_feat_names[] = {
+#அந்தர்பாவ "features.h"
 };
 
 #undef SCHED_FEAT
 
-static int sched_feat_show(struct seq_file *m, void *v)
+நிலையான முழு sched_feat_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
-	int i;
+	முழு i;
 
-	for (i = 0; i < __SCHED_FEAT_NR; i++) {
-		if (!(sysctl_sched_features & (1UL << i)))
+	க்கு (i = 0; i < __SCHED_FEAT_NR; i++) {
+		எனில் (!(sysctl_sched_features & (1UL << i)))
 			seq_puts(m, "NO_");
 		seq_printf(m, "%s ", sched_feat_names[i]);
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	திரும்பு 0;
 }
 
 #ifdef CONFIG_JUMP_LABEL
 
-#define jump_label_key__true  { .key_true  = STATIC_KEY_TRUE_INIT  }
-#define jump_label_key__false { .key_false = STATIC_KEY_FALSE_INIT }
+#define jump_label_சாவி_true  { .சாவி_true  = STATIC_சாவி_TRUE_INIT  }
+#define jump_label_சாவி_false { .சாவி_false = STATIC_சாவி_FALSE_INIT }
 
 #define SCHED_FEAT(name, enabled)	\
-	jump_label_key__##enabled ,
+	jump_label_சாவி##enabled ,
 
-union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR] = {
-#include "features.h"
+ஒன்றிப்பு sched_feat_சாவி sched_feat_சாவிகள்[__SCHED_FEAT_NR] = {
+#அந்தர்பாவ "features.h"
 };
 
 #undef SCHED_FEAT
 
-static void sched_feat_disable(int i)
+நிலையான வெறுமை sched_feat_disable(முழு i)
 {
-	static_branch_disable_cpuslocked(&sched_feat_keys[i].key_true);
+	static_branch_disable_cpuslocked(&sched_feat_சாவிகள்[i].சாவி_true);
 }
 
-static void sched_feat_enable(int i)
+நிலையான வெறுமை sched_feat_enable(முழு i)
 {
-	static_branch_enable_cpuslocked(&sched_feat_keys[i].key_false);
+	static_branch_enable_cpuslocked(&sched_feat_சாவிகள்[i].சாவி_false);
 }
-#else /* !CONFIG_JUMP_LABEL: */
-static void sched_feat_disable(int i) { };
-static void sched_feat_enable(int i) { };
+#இல்லையெனில் /* !CONFIG_JUMP_LABEL: */
+நிலையான வெறுமை sched_feat_disable(முழு i) { };
+நிலையான வெறுமை sched_feat_enable(முழு i) { };
 #endif /* !CONFIG_JUMP_LABEL */
 
-static int sched_feat_set(char *cmp)
+நிலையான முழு sched_feat_set(எழுத்து *cmp)
 {
-	int i;
-	int neg = 0;
+	முழு i;
+	முழு neg = 0;
 
-	if (strncmp(cmp, "NO_", 3) == 0) {
+	எனில் (strncmp(cmp, "NO_", 3) == 0) {
 		neg = 1;
 		cmp += 3;
 	}
 
 	i = match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
-	if (i < 0)
-		return i;
+	எனில் (i < 0)
+		திரும்பு i;
 
-	if (neg) {
+	எனில் (neg) {
 		sysctl_sched_features &= ~(1UL << i);
 		sched_feat_disable(i);
-	} else {
+	} இல்லையெனில் {
 		sysctl_sched_features |= (1UL << i);
 		sched_feat_enable(i);
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static ssize_t
-sched_feat_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t
+sched_feat_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 		size_t cnt, loff_t *ppos)
 {
-	char buf[64];
-	char *cmp;
-	int ret;
-	struct inode *inode;
+	எழுத்து buf[64];
+	எழுத்து *cmp;
+	முழு ret;
+	கட்டமைப்பு inode *inode;
 
-	if (cnt > 63)
+	எனில் (cnt > 63)
 		cnt = 63;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	எனில் (copy_from_user(buf, ubuf, cnt))
+		திரும்பு -EFAULT;
 
 	buf[cnt] = 0;
 	cmp = strstrip(buf);
@@ -149,78 +149,78 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
 	ret = sched_feat_set(cmp);
 	inode_unlock(inode);
 	cpus_read_unlock();
-	if (ret < 0)
-		return ret;
+	எனில் (ret < 0)
+		திரும்பு ret;
 
 	*ppos += cnt;
 
-	return cnt;
+	திரும்பு cnt;
 }
 
-static int sched_feat_open(struct inode *inode, struct file *filp)
+நிலையான முழு sched_feat_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *filp)
 {
-	return single_open(filp, sched_feat_show, NULL);
+	திரும்பு single_open(filp, sched_feat_show, வெற்று);
 }
 
-static const struct file_operations sched_feat_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations sched_feat_fops = {
 	.open		= sched_feat_open,
-	.write		= sched_feat_write,
-	.read		= seq_read,
+	.லிக		= sched_feat_write,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static ssize_t sched_scaling_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t sched_scaling_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	unsigned int scaling;
-	int ret;
+	unsigned முழு scaling;
+	முழு ret;
 
 	ret = kstrtouint_from_user(ubuf, cnt, 10, &scaling);
-	if (ret)
-		return ret;
+	எனில் (ret)
+		திரும்பு ret;
 
-	if (scaling >= SCHED_TUNABLESCALING_END)
-		return -EINVAL;
+	எனில் (scaling >= SCHED_TUNABLESCALING_END)
+		திரும்பு -EINVAL;
 
 	sysctl_sched_tunable_scaling = scaling;
-	if (sched_update_scaling())
-		return -EINVAL;
+	எனில் (sched_update_scaling())
+		திரும்பு -EINVAL;
 
 	*ppos += cnt;
-	return cnt;
+	திரும்பு cnt;
 }
 
-static int sched_scaling_show(struct seq_file *m, void *v)
+நிலையான முழு sched_scaling_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_tunable_scaling);
-	return 0;
+	திரும்பு 0;
 }
 
-static int sched_scaling_open(struct inode *inode, struct file *filp)
+நிலையான முழு sched_scaling_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *filp)
 {
-	return single_open(filp, sched_scaling_show, NULL);
+	திரும்பு single_open(filp, sched_scaling_show, வெற்று);
 }
 
-static const struct file_operations sched_scaling_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations sched_scaling_fops = {
 	.open		= sched_scaling_open,
-	.write		= sched_scaling_write,
-	.read		= seq_read,
+	.லிக		= sched_scaling_write,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
 #ifdef CONFIG_SCHED_CACHE
-static ssize_t
-sched_cache_enable_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t
+sched_cache_enable_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 			 size_t cnt, loff_t *ppos)
 {
 	bool val;
-	int ret;
+	முழு ret;
 
 	ret = kstrtobool_from_user(ubuf, cnt, &val);
-	if (ret)
-		return ret;
+	எனில் (ret)
+		திரும்பு ret;
 
 	sysctl_sched_cache_user = val;
 
@@ -228,25 +228,25 @@ sched_cache_enable_write(struct file *filp, const char __user *ubuf,
 
 	*ppos += cnt;
 
-	return cnt;
+	திரும்பு cnt;
 }
 
-static int sched_cache_enable_show(struct seq_file *m, void *v)
+நிலையான முழு sched_cache_enable_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_cache_user);
-	return 0;
+	திரும்பு 0;
 }
 
-static int sched_cache_enable_open(struct inode *inode,
-				   struct file *filp)
+நிலையான முழு sched_cache_enable_open(கட்டமைப்பு inode *inode,
+				   கட்டமைப்பு file *filp)
 {
-	return single_open(filp, sched_cache_enable_show, NULL);
+	திரும்பு single_open(filp, sched_cache_enable_show, வெற்று);
 }
 
-static const struct file_operations sched_cache_enable_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations sched_cache_enable_fops = {
 	.open           = sched_cache_enable_open,
-	.write          = sched_cache_enable_write,
-	.read           = seq_read,
+	.லிக          = sched_cache_enable_write,
+	.பட           = seq_read,
 	.llseek         = seq_lseek,
 	.release        = single_release,
 };
@@ -254,58 +254,58 @@ static const struct file_operations sched_cache_enable_fops = {
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
 
-static ssize_t sched_dynamic_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t sched_dynamic_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	எழுத்து buf[16];
+	முழு mode;
 
-	if (cnt > 15)
+	எனில் (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	எனில் (copy_from_user(buf, ubuf, cnt))
+		திரும்பு -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_dynamic_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	எனில் (mode < 0)
+		திரும்பு mode;
 
 	sched_dynamic_update(mode);
 
 	*ppos += cnt;
 
-	return cnt;
+	திரும்பு cnt;
 }
 
-static int sched_dynamic_show(struct seq_file *m, void *v)
+நிலையான முழு sched_dynamic_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
-	int mode = READ_ONCE(preempt_dynamic_mode);
+	முழு mode = READ_ONCE(preempt_dynamic_mode);
 
 	/* Stop at NULL terminator */
-	for (int i = 0; preempt_modes[i]; i++) {
-		if (mode == i)
+	க்கு (முழு i = 0; preempt_modes[i]; i++) {
+		எனில் (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, preempt_modes[i]);
-		if (mode == i)
+		எனில் (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 
 	seq_puts(m, "\n");
-	return 0;
+	திரும்பு 0;
 }
 
-static int sched_dynamic_open(struct inode *inode, struct file *filp)
+நிலையான முழு sched_dynamic_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *filp)
 {
-	return single_open(filp, sched_dynamic_show, NULL);
+	திரும்பு single_open(filp, sched_dynamic_show, வெற்று);
 }
 
-static const struct file_operations sched_dynamic_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations sched_dynamic_fops = {
 	.open		= sched_dynamic_open,
-	.write		= sched_dynamic_write,
-	.read		= seq_read,
+	.லிக		= sched_dynamic_write,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
@@ -314,10 +314,10 @@ static const struct file_operations sched_dynamic_fops = {
 
 __read_mostly bool sched_debug_verbose;
 
-static struct dentry           *sd_dentry;
+நிலையான கட்டமைப்பு dentry           *sd_dentry;
 
 
-static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t sched_verbose_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 				  size_t cnt, loff_t *ppos)
 {
 	ssize_t result;
@@ -329,100 +329,100 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
 	orig = sched_debug_verbose;
 	result = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
 
-	if (sched_debug_verbose && !orig)
+	எனில் (sched_debug_verbose && !orig)
 		update_sched_domain_debugfs();
-	else if (!sched_debug_verbose && orig) {
+	இல்லையெனில் எனில் (!sched_debug_verbose && orig) {
 		debugfs_remove(sd_dentry);
-		sd_dentry = NULL;
+		sd_dentry = வெற்று;
 	}
 
 	sched_domains_mutex_unlock();
 	cpus_read_unlock();
 
-	return result;
+	திரும்பு result;
 }
 
-static const struct file_operations sched_verbose_fops = {
-	.read =         debugfs_read_file_bool,
-	.write =        sched_verbose_write,
+நிலையான மாறிலி கட்டமைப்பு file_operations sched_verbose_fops = {
+	.பட =         debugfs_read_file_bool,
+	.லிக =        sched_verbose_write,
 	.open =         simple_open,
 	.llseek =       default_llseek,
 };
 
-static const struct seq_operations sched_debug_sops;
+நிலையான மாறிலி கட்டமைப்பு seq_operations sched_debug_sops;
 
-static int sched_debug_open(struct inode *inode, struct file *filp)
+நிலையான முழு sched_debug_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *filp)
 {
-	return seq_open(filp, &sched_debug_sops);
+	திரும்பு seq_open(filp, &sched_debug_sops);
 }
 
-static const struct file_operations sched_debug_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations sched_debug_fops = {
 	.open		= sched_debug_open,
-	.read		= seq_read,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= seq_release,
 };
 
-enum dl_param {
+எண்ணிக்கை dl_param {
 	DL_RUNTIME = 0,
 	DL_PERIOD,
 };
 
-static unsigned long dl_server_period_max = (1UL << 22) * NSEC_PER_USEC; /* ~4 seconds */
-static unsigned long dl_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
+நிலையான unsigned long dl_server_period_max = (1UL << 22) * NSEC_PER_USEC; /* ~4 seconds */
+நிலையான unsigned long dl_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
 
-static ssize_t sched_server_write_common(struct file *filp, const char __user *ubuf,
-					 size_t cnt, loff_t *ppos, enum dl_param param,
-					 void *server)
+நிலையான ssize_t sched_server_write_common(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
+					 size_t cnt, loff_t *ppos, எண்ணிக்கை dl_param param,
+					 வெறுமை *server)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
+	long cpu = (long) ((கட்டமைப்பு seq_file *) filp->private_data)->தனிப்பட்ட;
+	கட்டமைப்பு sched_dl_entity *dl_se = (கட்டமைப்பு sched_dl_entity *)server;
 	u64 old_runtime, runtime, period;
-	struct rq *rq = cpu_rq(cpu);
-	int retval = 0;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
+	முழு retval = 0;
 	size_t err;
-	u64 value;
+	u64 மதிப்பு;
 
-	err = kstrtoull_from_user(ubuf, cnt, 10, &value);
-	if (err)
-		return err;
+	err = kstrtoull_from_user(ubuf, cnt, 10, &மதிப்பு);
+	எனில் (err)
+		திரும்பு err;
 
 	scoped_guard (rq_lock_irqsave, rq) {
 		old_runtime = runtime = dl_se->dl_runtime;
 		period = dl_se->dl_period;
 
-		switch (param) {
-		case DL_RUNTIME:
-			if (runtime == value)
-				break;
-			runtime = value;
-			break;
-		case DL_PERIOD:
-			if (value == period)
-				break;
-			period = value;
-			break;
+		தேர்வு (param) {
+		நிலை DL_RUNTIME:
+			எனில் (runtime == மதிப்பு)
+				நிறுத்து;
+			runtime = மதிப்பு;
+			நிறுத்து;
+		நிலை DL_PERIOD:
+			எனில் (மதிப்பு == period)
+				நிறுத்து;
+			period = மதிப்பு;
+			நிறுத்து;
 		}
 
-		if (runtime > period ||
+		எனில் (runtime > period ||
 		    period > dl_server_period_max ||
 		    period < dl_server_period_min) {
-			return  -EINVAL;
+			திரும்பு  -EINVAL;
 		}
 
-		if (!cpu_online(cpu_of(rq)))
-			return -EBUSY;
+		எனில் (!cpu_online(cpu_of(rq)))
+			திரும்பு -EBUSY;
 
 		update_rq_clock(rq);
 		dl_server_stop(dl_se);
 		retval = dl_server_apply_params(dl_se, runtime, period, 0);
 		dl_server_start(dl_se);
 
-		if (retval < 0)
-			return retval;
+		எனில் (retval < 0)
+			திரும்பு retval;
 	}
 
-	if (!!old_runtime ^ !!runtime) {
+	எனில் (!!old_runtime ^ !!runtime) {
 		pr_info("%s server %sabled on CPU %d%s.\n",
 			server == &rq->fair_server ? "Fair" : "Ext",
 			runtime ? "en" : "dis",
@@ -431,207 +431,207 @@ static ssize_t sched_server_write_common(struct file *filp, const char __user *u
 	}
 
 	*ppos += cnt;
-	return cnt;
+	திரும்பு cnt;
 }
 
-static size_t sched_server_show_common(struct seq_file *m, void *v, enum dl_param param,
-				       void *server)
+நிலையான size_t sched_server_show_common(கட்டமைப்பு seq_file *m, வெறுமை *v, எண்ணிக்கை dl_param param,
+				       வெறுமை *server)
 {
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
-	u64 value;
+	கட்டமைப்பு sched_dl_entity *dl_se = (கட்டமைப்பு sched_dl_entity *)server;
+	u64 மதிப்பு;
 
-	switch (param) {
-	case DL_RUNTIME:
-		value = dl_se->dl_runtime;
-		break;
-	case DL_PERIOD:
-		value = dl_se->dl_period;
-		break;
+	தேர்வு (param) {
+	நிலை DL_RUNTIME:
+		மதிப்பு = dl_se->dl_runtime;
+		நிறுத்து;
+	நிலை DL_PERIOD:
+		மதிப்பு = dl_se->dl_period;
+		நிறுத்து;
 	}
 
-	seq_printf(m, "%llu\n", value);
-	return 0;
+	seq_printf(m, "%llu\n", மதிப்பு);
+	திரும்பு 0;
 }
 
-static ssize_t
-sched_fair_server_runtime_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t
+sched_fair_server_runtime_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 				size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((கட்டமைப்பு seq_file *) filp->private_data)->தனிப்பட்ட;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	திரும்பு sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_runtime_show(struct seq_file *m, void *v)
+நிலையான முழு sched_fair_server_runtime_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->தனிப்பட்ட;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
+	திரும்பு sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
 }
 
-static int sched_fair_server_runtime_open(struct inode *inode, struct file *filp)
+நிலையான முழு sched_fair_server_runtime_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *filp)
 {
-	return single_open(filp, sched_fair_server_runtime_show, inode->i_private);
+	திரும்பு single_open(filp, sched_fair_server_runtime_show, inode->i_private);
 }
 
-static const struct file_operations fair_server_runtime_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations fair_server_runtime_fops = {
 	.open		= sched_fair_server_runtime_open,
-	.write		= sched_fair_server_runtime_write,
-	.read		= seq_read,
+	.லிக		= sched_fair_server_runtime_write,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static struct dentry *debugfs_sched;
+நிலையான கட்டமைப்பு dentry *debugfs_sched;
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-static ssize_t
-sched_ext_server_runtime_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t
+sched_ext_server_runtime_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 			       size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((கட்டமைப்பு seq_file *) filp->private_data)->தனிப்பட்ட;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	திரும்பு sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_runtime_show(struct seq_file *m, void *v)
+நிலையான முழு sched_ext_server_runtime_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->தனிப்பட்ட;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
+	திரும்பு sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
 }
 
-static int sched_ext_server_runtime_open(struct inode *inode, struct file *filp)
+நிலையான முழு sched_ext_server_runtime_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *filp)
 {
-	return single_open(filp, sched_ext_server_runtime_show, inode->i_private);
+	திரும்பு single_open(filp, sched_ext_server_runtime_show, inode->i_private);
 }
 
-static const struct file_operations ext_server_runtime_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations ext_server_runtime_fops = {
 	.open		= sched_ext_server_runtime_open,
-	.write		= sched_ext_server_runtime_write,
-	.read		= seq_read,
+	.லிக		= sched_ext_server_runtime_write,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static ssize_t
-sched_ext_server_period_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t
+sched_ext_server_period_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 			      size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((கட்டமைப்பு seq_file *) filp->private_data)->தனிப்பட்ட;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	திரும்பு sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_period_show(struct seq_file *m, void *v)
+நிலையான முழு sched_ext_server_period_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->தனிப்பட்ட;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
+	திரும்பு sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
 }
 
-static int sched_ext_server_period_open(struct inode *inode, struct file *filp)
+நிலையான முழு sched_ext_server_period_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *filp)
 {
-	return single_open(filp, sched_ext_server_period_show, inode->i_private);
+	திரும்பு single_open(filp, sched_ext_server_period_show, inode->i_private);
 }
 
-static const struct file_operations ext_server_period_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations ext_server_period_fops = {
 	.open		= sched_ext_server_period_open,
-	.write		= sched_ext_server_period_write,
-	.read		= seq_read,
+	.லிக		= sched_ext_server_period_write,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void debugfs_ext_server_init(void)
+நிலையான வெறுமை debugfs_ext_server_init(வெறுமை)
 {
-	struct dentry *d_ext;
+	கட்டமைப்பு dentry *d_ext;
 	unsigned long cpu;
 
 	d_ext = debugfs_create_dir("ext_server", debugfs_sched);
-	if (!d_ext)
-		return;
+	எனில் (!d_ext)
+		திரும்பு;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		கட்டமைப்பு dentry *d_cpu;
+		எழுத்து buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, அளவு(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_ext);
 
-		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &ext_server_runtime_fops);
-		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &ext_server_period_fops);
+		debugfs_create_file("runtime", 0644, d_cpu, (வெறுமை *) cpu, &ext_server_runtime_fops);
+		debugfs_create_file("period", 0644, d_cpu, (வெறுமை *) cpu, &ext_server_period_fops);
 	}
 }
 #endif /* CONFIG_SCHED_CLASS_EXT */
 
-static ssize_t
-sched_fair_server_period_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t
+sched_fair_server_period_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 			       size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((கட்டமைப்பு seq_file *) filp->private_data)->தனிப்பட்ட;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	திரும்பு sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_period_show(struct seq_file *m, void *v)
+நிலையான முழு sched_fair_server_period_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->தனிப்பட்ட;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
+	திரும்பு sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
 }
 
-static int sched_fair_server_period_open(struct inode *inode, struct file *filp)
+நிலையான முழு sched_fair_server_period_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *filp)
 {
-	return single_open(filp, sched_fair_server_period_show, inode->i_private);
+	திரும்பு single_open(filp, sched_fair_server_period_show, inode->i_private);
 }
 
-static const struct file_operations fair_server_period_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations fair_server_period_fops = {
 	.open		= sched_fair_server_period_open,
-	.write		= sched_fair_server_period_write,
-	.read		= seq_read,
+	.லிக		= sched_fair_server_period_write,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void debugfs_fair_server_init(void)
+நிலையான வெறுமை debugfs_fair_server_init(வெறுமை)
 {
-	struct dentry *d_fair;
+	கட்டமைப்பு dentry *d_fair;
 	unsigned long cpu;
 
 	d_fair = debugfs_create_dir("fair_server", debugfs_sched);
-	if (!d_fair)
-		return;
+	எனில் (!d_fair)
+		திரும்பு;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		கட்டமைப்பு dentry *d_cpu;
+		எழுத்து buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, அளவு(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_fair);
 
-		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &fair_server_runtime_fops);
-		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &fair_server_period_fops);
+		debugfs_create_file("runtime", 0644, d_cpu, (வெறுமை *) cpu, &fair_server_runtime_fops);
+		debugfs_create_file("period", 0644, d_cpu, (வெறுமை *) cpu, &fair_server_period_fops);
 	}
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static int cgroup_mode = 2;
+நிலையான முழு cgroup_mode = 2;
 
 /* See __sched_cgroup_mode_update(). */
-static const char *cgroup_mode_str[] = {
+நிலையான மாறிலி எழுத்து *cgroup_mode_str[] = {
 	"up",
 	"smp",
 	"concur",
@@ -639,80 +639,80 @@ static const char *cgroup_mode_str[] = {
 	"tasks",
 };
 
-static int sched_cgroup_mode(const char *str)
+நிலையான முழு sched_cgroup_mode(மாறிலி எழுத்து *str)
 {
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (!strcmp(str, cgroup_mode_str[i]))
-			return i;
+	க்கு (முழு i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		எனில் (!strcmp(str, cgroup_mode_str[i]))
+			திரும்பு i;
 	}
-	return -EINVAL;
+	திரும்பு -EINVAL;
 }
 
-static ssize_t sched_cgroup_write(struct file *filp, const char __user *ubuf,
+நிலையான ssize_t sched_cgroup_write(கட்டமைப்பு file *filp, மாறிலி எழுத்து __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	எழுத்து buf[16];
+	முழு mode;
 
-	if (cnt > 15)
+	எனில் (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	எனில் (copy_from_user(buf, ubuf, cnt))
+		திரும்பு -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_cgroup_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	எனில் (mode < 0)
+		திரும்பு mode;
 
 	__sched_cgroup_mode_update(mode);
 	WRITE_ONCE(cgroup_mode, mode);
 
 	*ppos += cnt;
-	return cnt;
+	திரும்பு cnt;
 }
 
-static int sched_cgroup_show(struct seq_file *m, void *v)
+நிலையான முழு sched_cgroup_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
-	int mode = READ_ONCE(cgroup_mode);
+	முழு mode = READ_ONCE(cgroup_mode);
 
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (mode == i)
+	க்கு (முழு i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		எனில் (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, cgroup_mode_str[i]);
-		if (mode == i)
+		எனில் (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 	seq_puts(m, "\n");
-	return 0;
+	திரும்பு 0;
 }
 
-static int sched_cgroup_open(struct inode *inode, struct file *filp)
+நிலையான முழு sched_cgroup_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *filp)
 {
-	return single_open(filp, sched_cgroup_show, NULL);
+	திரும்பு single_open(filp, sched_cgroup_show, வெற்று);
 }
 
-static const struct file_operations sched_cgroup_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations sched_cgroup_fops = {
 	.open		= sched_cgroup_open,
-	.write		= sched_cgroup_write,
-	.read		= seq_read,
+	.லிக		= sched_cgroup_write,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 #endif
 
-static __init int sched_init_debug(void)
+நிலையான __init முழு sched_init_debug(வெறுமை)
 {
-	struct dentry __maybe_unused *numa, *llc;
+	கட்டமைப்பு dentry __maybe_unused *numa, *llc;
 
-	debugfs_sched = debugfs_create_dir("sched", NULL);
+	debugfs_sched = debugfs_create_dir("sched", வெற்று);
 
-	debugfs_create_file("features", 0644, debugfs_sched, NULL, &sched_feat_fops);
+	debugfs_create_file("features", 0644, debugfs_sched, வெற்று, &sched_feat_fops);
 	debugfs_create_file_unsafe("verbose", 0644, debugfs_sched, &sched_debug_verbose, &sched_verbose_fops);
 #ifdef CONFIG_PREEMPT_DYNAMIC
-	debugfs_create_file("preempt", 0644, debugfs_sched, NULL, &sched_dynamic_fops);
+	debugfs_create_file("preempt", 0644, debugfs_sched, வெற்று, &sched_dynamic_fops);
 #endif
 
 	debugfs_create_u32("base_slice_ns", 0644, debugfs_sched, &sysctl_sched_base_slice);
@@ -720,7 +720,7 @@ static __init int sched_init_debug(void)
 	debugfs_create_u32("latency_warn_ms", 0644, debugfs_sched, &sysctl_resched_latency_warn_ms);
 	debugfs_create_u32("latency_warn_once", 0644, debugfs_sched, &sysctl_resched_latency_warn_once);
 
-	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, NULL, &sched_scaling_fops);
+	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, வெற்று, &sched_scaling_fops);
 	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
 	debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
 
@@ -740,7 +740,7 @@ static __init int sched_init_debug(void)
 
 #ifdef CONFIG_SCHED_CACHE
 	llc = debugfs_create_dir("llc_balancing", debugfs_sched);
-	debugfs_create_file("enabled", 0644, llc, NULL,
+	debugfs_create_file("enabled", 0644, llc, வெற்று,
 			    &sched_cache_enable_fops);
 	debugfs_create_u32("aggr_tolerance", 0644, llc,
 			   &llc_aggr_tolerance);
@@ -754,10 +754,10 @@ static __init int sched_init_debug(void)
 			   &llc_imb_pct);
 #endif
 
-	debugfs_create_file("debug", 0444, debugfs_sched, NULL, &sched_debug_fops);
+	debugfs_create_file("debug", 0444, debugfs_sched, வெற்று, &sched_debug_fops);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	debugfs_create_file("cgroup_mode", 0644, debugfs_sched, NULL, &sched_cgroup_fops);
+	debugfs_create_file("cgroup_mode", 0644, debugfs_sched, வெற்று, &sched_cgroup_fops);
 #endif
 
 	debugfs_fair_server_init();
@@ -765,16 +765,16 @@ static __init int sched_init_debug(void)
 	debugfs_ext_server_init();
 #endif
 
-	return 0;
+	திரும்பு 0;
 }
 late_initcall(sched_init_debug);
 
-static cpumask_var_t		sd_sysctl_cpus;
+நிலையான cpumask_var_t		sd_sysctl_cpus;
 
-static int sd_flags_show(struct seq_file *m, void *v)
+நிலையான முழு sd_flags_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
-	unsigned long flags = *(unsigned int *)m->private;
-	int idx;
+	unsigned long flags = *(unsigned முழு *)m->தனிப்பட்ட;
+	முழு idx;
 
 	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
 		seq_puts(m, sd_flag_debug[idx].name);
@@ -782,22 +782,22 @@ static int sd_flags_show(struct seq_file *m, void *v)
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int sd_flags_open(struct inode *inode, struct file *file)
+நிலையான முழு sd_flags_open(கட்டமைப்பு inode *inode, கட்டமைப்பு file *file)
 {
-	return single_open(file, sd_flags_show, inode->i_private);
+	திரும்பு single_open(file, sd_flags_show, inode->i_private);
 }
 
-static const struct file_operations sd_flags_fops = {
+நிலையான மாறிலி கட்டமைப்பு file_operations sd_flags_fops = {
 	.open		= sd_flags_open,
-	.read		= seq_read,
+	.பட		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void register_sd(struct sched_domain *sd, struct dentry *parent)
+நிலையான வெறுமை register_sd(கட்டமைப்பு sched_domain *sd, கட்டமைப்பு dentry *parent)
 {
 #define SDM(type, mode, member)	\
 	debugfs_create_##type(#member, mode, parent, &sd->member)
@@ -816,53 +816,53 @@ static void register_sd(struct sched_domain *sd, struct dentry *parent)
 	debugfs_create_file("groups_flags", 0444, parent, &sd->groups->flags, &sd_flags_fops);
 	debugfs_create_u32("level", 0444, parent, (u32 *)&sd->level);
 
-	if (sd->flags & SD_ASYM_PACKING)
+	எனில் (sd->flags & SD_ASYM_PACKING)
 		debugfs_create_u32("group_asym_prefer_cpu", 0444, parent,
 				   (u32 *)&sd->groups->asym_prefer_cpu);
 }
 
-void update_sched_domain_debugfs(void)
+வெறுமை update_sched_domain_debugfs(வெறுமை)
 {
-	int cpu, i;
+	முழு cpu, i;
 
 	/*
 	 * This can unfortunately be invoked before sched_debug_init() creates
 	 * the debug directory. Don't touch sd_sysctl_cpus until then.
 	 */
-	if (!debugfs_sched)
-		return;
+	எனில் (!debugfs_sched)
+		திரும்பு;
 
-	if (!sched_debug_verbose)
-		return;
+	எனில் (!sched_debug_verbose)
+		திரும்பு;
 
-	if (!cpumask_available(sd_sysctl_cpus)) {
-		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
-			return;
+	எனில் (!cpumask_available(sd_sysctl_cpus)) {
+		எனில் (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
+			திரும்பு;
 		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
 	}
 
-	if (!sd_dentry) {
+	எனில் (!sd_dentry) {
 		sd_dentry = debugfs_create_dir("domains", debugfs_sched);
 
 		/* rebuild sd_sysctl_cpus if empty since it gets cleared below */
-		if (cpumask_empty(sd_sysctl_cpus))
+		எனில் (cpumask_empty(sd_sysctl_cpus))
 			cpumask_copy(sd_sysctl_cpus, cpu_online_mask);
 	}
 
 	for_each_cpu(cpu, sd_sysctl_cpus) {
-		struct sched_domain *sd;
-		struct dentry *d_cpu;
-		char buf[32];
+		கட்டமைப்பு sched_domain *sd;
+		கட்டமைப்பு dentry *d_cpu;
+		எழுத்து buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%d", cpu);
+		snprintf(buf, அளவு(buf), "cpu%d", cpu);
 		debugfs_lookup_and_remove(buf, sd_dentry);
 		d_cpu = debugfs_create_dir(buf, sd_dentry);
 
 		i = 0;
 		for_each_domain(cpu, sd) {
-			struct dentry *d_sd;
+			கட்டமைப்பு dentry *d_sd;
 
-			snprintf(buf, sizeof(buf), "domain%d", i);
+			snprintf(buf, அளவு(buf), "domain%d", i);
 			d_sd = debugfs_create_dir(buf, d_cpu);
 
 			register_sd(sd, d_sd);
@@ -873,16 +873,16 @@ void update_sched_domain_debugfs(void)
 	}
 }
 
-void dirty_sched_domain_sysctl(int cpu)
+வெறுமை dirty_sched_domain_sysctl(முழு cpu)
 {
-	if (cpumask_available(sd_sysctl_cpus))
+	எனில் (cpumask_available(sd_sysctl_cpus))
 		__cpumask_set_cpu(cpu, sd_sysctl_cpus);
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group *tg)
+நிலையான வெறுமை print_cfs_group_stats(கட்டமைப்பு seq_file *m, முழு cpu, கட்டமைப்பு task_group *tg)
 {
-	struct sched_entity *se = tg_se(tg, cpu);
+	கட்டமைப்பு sched_entity *se = tg_se(tg, cpu);
 
 #define P(F)		SEQ_printf(m, "  .%-30s: %lld\n",	#F, (long long)F)
 #define P_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld\n",	\
@@ -891,15 +891,15 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 #define PN_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld.%06ld\n", \
 		#F, SPLIT_NS((long long)schedstat_val(stats->F)))
 
-	if (!se)
-		return;
+	எனில் (!se)
+		திரும்பு;
 
 	PN(se->exec_start);
 	PN(se->vruntime);
 	PN(se->sum_exec_runtime);
 
-	if (schedstat_enabled()) {
-		struct sched_statistics *stats;
+	எனில் (schedstat_enabled()) {
+		கட்டமைப்பு sched_statistics *stats;
 		stats = __schedstats_from_se(se);
 
 		PN_SCHEDSTAT(wait_start);
@@ -911,7 +911,7 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 		PN_SCHEDSTAT(slice_max);
 		PN_SCHEDSTAT(wait_max);
 		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
+		P_SCHEDSTAT(wait_மொத்தம்);
 	}
 
 	P(se->load.weight);
@@ -927,13 +927,13 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 
 #ifdef CONFIG_CGROUP_SCHED
-static DEFINE_SPINLOCK(sched_debug_lock);
-static char group_path[PATH_MAX];
+நிலையான DEFINE_SPINLOCK(sched_debug_lock);
+நிலையான எழுத்து group_path[PATH_MAX];
 
-static void task_group_path(struct task_group *tg, char *path, int plen)
+நிலையான வெறுமை task_group_path(கட்டமைப்பு task_group *tg, எழுத்து *path, முழு plen)
 {
-	if (autogroup_path(tg, path, plen))
-		return;
+	எனில் (autogroup_path(tg, path, plen))
+		திரும்பு;
 
 	cgroup_path(tg->css.cgroup, path, plen);
 }
@@ -947,13 +947,13 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
  */
 #define SEQ_printf_task_group_path(m, tg, fmt...)			\
 {									\
-	if (spin_trylock(&sched_debug_lock)) {				\
-		task_group_path(tg, group_path, sizeof(group_path));	\
+	எனில் (spin_trylock(&sched_debug_lock)) {				\
+		task_group_path(tg, group_path, அளவு(group_path));	\
 		SEQ_printf(m, fmt, group_path);				\
 		spin_unlock(&sched_debug_lock);				\
-	} else {							\
-		char buf[128];						\
-		char *bufend = buf + sizeof(buf) - 3;			\
+	} இல்லையெனில் {							\
+		எழுத்து buf[128];						\
+		எழுத்து *bufend = buf + அளவு(buf) - 3;			\
 		task_group_path(tg, buf, bufend - buf);			\
 		strcpy(bufend - 1, "...");				\
 		SEQ_printf(m, fmt, buf);				\
@@ -961,12 +961,12 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
 }
 #endif
 
-static void
-print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
+நிலையான வெறுமை
+print_task(கட்டமைப்பு seq_file *m, கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
-	if (task_current(rq, p))
+	எனில் (task_current(rq, p))
 		SEQ_printf(m, ">R");
-	else
+	இல்லையெனில்
 		SEQ_printf(m, " %c", task_state_to_char(p));
 
 	SEQ_printf(m, " %15s %5d %10ld %9Ld.%06ld   %c   %9Ld.%06ld %c %9Ld.%06ld %9Ld.%06ld %9Ld   %5d ",
@@ -987,7 +987,7 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_block_runtime)));
 
 #ifdef CONFIG_NUMA_BALANCING
-	SEQ_printf(m, "   %d      %d", task_node(p), task_numa_group_id(p));
+	SEQ_printf(m, "   %d      %d", task_முனை(p), task_numa_group_id(p));
 #endif
 #ifdef CONFIG_CGROUP_SCHED
 	SEQ_printf_task_group_path(m, task_group(p), "        %s")
@@ -996,9 +996,9 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 	SEQ_printf(m, "\n");
 }
 
-static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
+நிலையான வெறுமை print_rq(கட்டமைப்பு seq_file *m, கட்டமைப்பு rq *rq, முழு rq_cpu)
 {
-	struct task_struct *g, *p;
+	கட்டமைப்பு task_struct *g, *p;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "runnable tasks:\n");
@@ -1025,43 +1025,43 @@ static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
 
 	rcu_read_lock();
 	for_each_process_thread(g, p) {
-		if (task_cpu(p) != rq_cpu)
-			continue;
+		எனில் (task_cpu(p) != rq_cpu)
+			தொடர்;
 
 		print_task(m, rq, p);
 	}
 	rcu_read_unlock();
 }
 
-void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+வெறுமை print_cfs_rq(கட்டமைப்பு seq_file *m, முழு cpu, கட்டமைப்பு cfs_rq *cfs_rq)
 {
-	s64 left_vruntime = -1, right_vruntime = -1, left_deadline = -1, spread;
+	s64 இடது_vruntime = -1, வலது_vruntime = -1, இடது_deadline = -1, spread;
 	s64 zero_vruntime = -1, sum_w_vruntime = -1;
 	u64 avruntime;
-	struct sched_entity *last, *first, *root;
-	struct rq *rq = cpu_rq(cpu);
-	unsigned int sum_shift;
+	கட்டமைப்பு sched_entity *last, *first, *வேர்;
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
+	unsigned முழு sum_shift;
 	unsigned long flags;
 	u64 sum_weight;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, cfs_rq->tg, "cfs_rq[%d]:%s\n", cpu);
-#else
+#இல்லையெனில்
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
 #endif
 
 	raw_spin_rq_lock_irqsave(rq, flags);
-	root = __pick_root_entity(cfs_rq);
-	if (root)
-		left_vruntime = root->min_vruntime;
+	வேர் = __pick_root_entity(cfs_rq);
+	எனில் (வேர்)
+		இடது_vruntime = வேர்->min_vruntime;
 	first = __pick_first_entity(cfs_rq);
-	if (first)
-		left_deadline = first->deadline;
+	எனில் (first)
+		இடது_deadline = first->deadline;
 	last = __pick_last_entity(cfs_rq);
-	if (last)
-		right_vruntime = last->vruntime;
+	எனில் (last)
+		வலது_vruntime = last->vruntime;
 	zero_vruntime = cfs_rq->zero_vruntime;
 	sum_w_vruntime = cfs_rq->sum_w_vruntime;
 	sum_weight = cfs_rq->sum_weight;
@@ -1070,9 +1070,9 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_deadline",
-			SPLIT_NS(left_deadline));
+			SPLIT_NS(இடது_deadline));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_vruntime",
-			SPLIT_NS(left_vruntime));
+			SPLIT_NS(இடது_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "zero_vruntime",
 			SPLIT_NS(zero_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld (%d bits)\n", "sum_w_vruntime",
@@ -1083,8 +1083,8 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "avg_vruntime",
 			SPLIT_NS(avruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "right_vruntime",
-			SPLIT_NS(right_vruntime));
-	spread = right_vruntime - left_vruntime;
+			SPLIT_NS(வலது_vruntime));
+	spread = வலது_vruntime - இடது_vruntime;
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
 	SEQ_printf(m, "  .%-30s: %d\n", "nr_queued", cfs_rq->nr_queued);
 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_runnable", cfs_rq->h_nr_runnable);
@@ -1117,7 +1117,7 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	SEQ_printf(m, "  .%-30s: %d\n", "throttled",
 			cfs_rq->throttled);
 	SEQ_printf(m, "  .%-30s: %d\n", "throttle_count",
-			cfs_rq->throttle_count);
+			cfs_rq->throttle_மொத்தம்);
 #endif
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -1125,12 +1125,12 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 #endif
 }
 
-void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
+வெறுமை print_rt_rq(கட்டமைப்பு seq_file *m, முழு cpu, கட்டமைப்பு rt_rq *rt_rq)
 {
 #ifdef CONFIG_RT_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, rt_rq->tg, "rt_rq[%d]:%s\n", cpu);
-#else
+#இல்லையெனில்
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "rt_rq[%d]:\n", cpu);
 #endif
@@ -1155,9 +1155,9 @@ void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
 #undef P
 }
 
-void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
+வெறுமை print_dl_rq(கட்டமைப்பு seq_file *m, முழு cpu, கட்டமைப்பு dl_rq *dl_rq)
 {
-	struct dl_bw *dl_bw;
+	கட்டமைப்பு dl_bw *dl_bw;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "dl_rq[%d]:\n", cpu);
@@ -1173,28 +1173,28 @@ void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
 #undef PU
 }
 
-static void print_cpu(struct seq_file *m, int cpu)
+நிலையான வெறுமை print_cpu(கட்டமைப்பு seq_file *m, முழு cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	கட்டமைப்பு rq *rq = cpu_rq(cpu);
 
 #ifdef CONFIG_X86
 	{
-		unsigned int freq = cpu_khz ? : 1;
+		unsigned முழு freq = cpu_khz ? : 1;
 
 		SEQ_printf(m, "cpu#%d, %u.%03u MHz\n",
 			   cpu, freq / 1000, (freq % 1000));
 	}
-#else /* !CONFIG_X86: */
+#இல்லையெனில் /* !CONFIG_X86: */
 	SEQ_printf(m, "cpu#%d\n", cpu);
 #endif /* !CONFIG_X86 */
 
 #define P(x)								\
-do {									\
-	if (sizeof(rq->x) == 4)						\
-		SEQ_printf(m, "  .%-30s: %d\n", #x, (int)(rq->x));	\
-	else								\
+செய் {									\
+	எனில் (அளவு(rq->x) == 4)						\
+		SEQ_printf(m, "  .%-30s: %d\n", #x, (முழு)(rq->x));	\
+	இல்லையெனில்								\
 		SEQ_printf(m, "  .%-30s: %Ld\n", #x, (long long)(rq->x));\
-} while (0)
+} போது (0)
 
 #define PN(x) \
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, SPLIT_NS(rq->x))
@@ -1215,11 +1215,11 @@ do {									\
 #undef P64
 
 #define P(n) SEQ_printf(m, "  .%-30s: %d\n", #n, schedstat_val(rq->n));
-	if (schedstat_enabled()) {
-		P(yld_count);
-		P(sched_count);
+	எனில் (schedstat_enabled()) {
+		P(yld_மொத்தம்);
+		P(sched_மொத்தம்);
 		P(sched_goidle);
-		P(ttwu_count);
+		P(ttwu_மொத்தம்);
 		P(ttwu_local);
 	}
 #undef P
@@ -1232,13 +1232,13 @@ do {									\
 	SEQ_printf(m, "\n");
 }
 
-static const char *sched_tunable_scaling_names[] = {
+நிலையான மாறிலி எழுத்து *sched_tunable_scaling_names[] = {
 	"none",
 	"logarithmic",
 	"linear"
 };
 
-static void sched_debug_header(struct seq_file *m)
+நிலையான வெறுமை sched_debug_header(கட்டமைப்பு seq_file *m)
 {
 	u64 ktime, sched_clk, cpu_clk;
 	unsigned long flags;
@@ -1251,7 +1251,7 @@ static void sched_debug_header(struct seq_file *m)
 
 	SEQ_printf(m, "Sched Debug Version: v0.11, %s %.*s\n",
 		init_utsname()->release,
-		(int)strcspn(init_utsname()->version, " "),
+		(முழு)strcspn(init_utsname()->version, " "),
 		init_utsname()->version);
 
 #define P(x) \
@@ -1287,23 +1287,23 @@ static void sched_debug_header(struct seq_file *m)
 	SEQ_printf(m, "\n");
 }
 
-static int sched_debug_show(struct seq_file *m, void *v)
+நிலையான முழு sched_debug_show(கட்டமைப்பு seq_file *m, வெறுமை *v)
 {
-	int cpu = (unsigned long)(v - 2);
+	முழு cpu = (unsigned long)(v - 2);
 
-	if (cpu != -1)
+	எனில் (cpu != -1)
 		print_cpu(m, cpu);
-	else
+	இல்லையெனில்
 		sched_debug_header(m);
 
-	return 0;
+	திரும்பு 0;
 }
 
-void sysrq_sched_debug_show(void)
+வெறுமை sysrq_sched_debug_show(வெறுமை)
 {
-	int cpu;
+	முழு cpu;
 
-	sched_debug_header(NULL);
+	sched_debug_header(வெற்று);
 	for_each_online_cpu(cpu) {
 		/*
 		 * Need to reset softlockup watchdogs on all CPUs, because
@@ -1312,7 +1312,7 @@ void sysrq_sched_debug_show(void)
 		 */
 		touch_nmi_watchdog();
 		touch_all_softlockup_watchdogs();
-		print_cpu(NULL, cpu);
+		print_cpu(வெற்று, cpu);
 	}
 }
 
@@ -1323,39 +1323,39 @@ void sysrq_sched_debug_show(void)
  * In a hotplugged system some CPUs, including CPU 0, may be missing so we have
  * to use cpumask_* to iterate over the CPUs.
  */
-static void *sched_debug_start(struct seq_file *file, loff_t *offset)
+நிலையான வெறுமை *sched_debug_start(கட்டமைப்பு seq_file *file, loff_t *offset)
 {
 	unsigned long n = *offset;
 
-	if (n == 0)
-		return (void *) 1;
+	எனில் (n == 0)
+		திரும்பு (வெறுமை *) 1;
 
 	n--;
 
-	if (n > 0)
+	எனில் (n > 0)
 		n = cpumask_next(n - 1, cpu_online_mask);
-	else
+	இல்லையெனில்
 		n = cpumask_first(cpu_online_mask);
 
 	*offset = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	எனில் (n < nr_cpu_ids)
+		திரும்பு (வெறுமை *)(unsigned long)(n + 2);
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
-static void *sched_debug_next(struct seq_file *file, void *data, loff_t *offset)
+நிலையான வெறுமை *sched_debug_next(கட்டமைப்பு seq_file *file, வெறுமை *data, loff_t *offset)
 {
 	(*offset)++;
-	return sched_debug_start(file, offset);
+	திரும்பு sched_debug_start(file, offset);
 }
 
-static void sched_debug_stop(struct seq_file *file, void *data)
+நிலையான வெறுமை sched_debug_stop(கட்டமைப்பு seq_file *file, வெறுமை *data)
 {
 }
 
-static const struct seq_operations sched_debug_sops = {
+நிலையான மாறிலி கட்டமைப்பு seq_operations sched_debug_sops = {
 	.start		= sched_debug_start,
 	.next		= sched_debug_next,
 	.stop		= sched_debug_stop,
@@ -1372,33 +1372,33 @@ static const struct seq_operations sched_debug_sops = {
 
 
 #ifdef CONFIG_NUMA_BALANCING
-void print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
+வெறுமை print_numa_stats(கட்டமைப்பு seq_file *m, முழு முனை, unsigned long tsf,
 		unsigned long tpf, unsigned long gsf, unsigned long gpf)
 {
-	SEQ_printf(m, "numa_faults node=%d ", node);
+	SEQ_printf(m, "numa_faults node=%d ", முனை);
 	SEQ_printf(m, "task_private=%lu task_shared=%lu ", tpf, tsf);
 	SEQ_printf(m, "group_private=%lu group_shared=%lu\n", gpf, gsf);
 }
 #endif
 
 
-static void sched_show_numa(struct task_struct *p, struct seq_file *m)
+நிலையான வெறுமை sched_show_numa(கட்டமைப்பு task_struct *p, கட்டமைப்பு seq_file *m)
 {
 #ifdef CONFIG_NUMA_BALANCING
-	if (p->mm)
+	எனில் (p->mm)
 		P(mm->numa_scan_seq);
 
 	P(numa_pages_migrated);
 	P(numa_preferred_nid);
 	P(total_numa_faults);
 	SEQ_printf(m, "current_node=%d, numa_group_id=%d\n",
-			task_node(p), task_numa_group_id(p));
+			task_முனை(p), task_numa_group_id(p));
 	show_numa_stats(p, m);
 #endif /* CONFIG_NUMA_BALANCING */
 }
 
-void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
-						  struct seq_file *m)
+வெறுமை proc_sched_show_task(கட்டமைப்பு task_struct *p, கட்டமைப்பு pid_namespace *ns,
+						  கட்டமைப்பு seq_file *m)
 {
 	unsigned long nr_switches;
 
@@ -1419,7 +1419,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 
 	P(se.nr_migrations);
 
-	if (schedstat_enabled()) {
+	எனில் (schedstat_enabled()) {
 		u64 avg_atom, avg_per_cpu;
 
 		PN_SCHEDSTAT(sum_sleep_runtime);
@@ -1433,9 +1433,9 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		PN_SCHEDSTAT(slice_max);
 		PN_SCHEDSTAT(wait_max);
 		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
+		P_SCHEDSTAT(wait_மொத்தம்);
 		PN_SCHEDSTAT(iowait_sum);
-		P_SCHEDSTAT(iowait_count);
+		P_SCHEDSTAT(iowait_மொத்தம்);
 		P_SCHEDSTAT(nr_failed_migrations_affine);
 		P_SCHEDSTAT(nr_failed_migrations_running);
 		P_SCHEDSTAT(nr_failed_migrations_hot);
@@ -1450,16 +1450,16 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		P_SCHEDSTAT(nr_wakeups_affine_attempts);
 
 		avg_atom = p->se.sum_exec_runtime;
-		if (nr_switches)
+		எனில் (nr_switches)
 			avg_atom = div64_ul(avg_atom, nr_switches);
-		else
+		இல்லையெனில்
 			avg_atom = -1LL;
 
 		avg_per_cpu = p->se.sum_exec_runtime;
-		if (p->se.nr_migrations) {
+		எனில் (p->se.nr_migrations) {
 			avg_per_cpu = div64_u64(avg_per_cpu,
 						p->se.nr_migrations);
-		} else {
+		} இல்லையெனில் {
 			avg_per_cpu = -1LL;
 		}
 
@@ -1485,17 +1485,17 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	P(se.avg.last_update_time);
 	PM(se.avg.util_est, ~UTIL_AVG_UNCHANGED);
 #ifdef CONFIG_UCLAMP_TASK
-	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].value);
-	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].value);
-	__PS("effective uclamp.min", uclamp_eff_value(p, UCLAMP_MIN));
-	__PS("effective uclamp.max", uclamp_eff_value(p, UCLAMP_MAX));
+	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].மதிப்பு);
+	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].மதிப்பு);
+	__PS("effective uclamp.min", uclamp_eff_மதிப்பு(p, UCLAMP_MIN));
+	__PS("effective uclamp.max", uclamp_eff_மதிப்பு(p, UCLAMP_MAX));
 #endif /* CONFIG_UCLAMP_TASK */
 	P(policy);
 	P(prio);
-	if (task_has_dl_policy(p)) {
+	எனில் (task_has_dl_policy(p)) {
 		P(dl.runtime);
 		P(dl.deadline);
-	} else if (fair_policy(p->policy)) {
+	} இல்லையெனில் எனில் (fair_policy(p->policy)) {
 		P(se.slice);
 	}
 #ifdef CONFIG_SCHED_CLASS_EXT
@@ -1505,7 +1505,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 #undef P_SCHEDSTAT
 
 	{
-		unsigned int this_cpu = raw_smp_processor_id();
+		unsigned முழு this_cpu = raw_smp_processor_id();
 		u64 t0, t1;
 
 		t0 = cpu_clock(this_cpu);
@@ -1516,21 +1516,21 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	sched_show_numa(p, m);
 }
 
-void proc_sched_set_task(struct task_struct *p)
+வெறுமை proc_sched_set_task(கட்டமைப்பு task_struct *p)
 {
 #ifdef CONFIG_SCHEDSTATS
-	memset(&p->stats, 0, sizeof(p->stats));
+	memset(&p->stats, 0, அளவு(p->stats));
 #endif
 }
 
-void resched_latency_warn(int cpu, u64 latency)
+வெறுமை resched_latency_warn(முழு cpu, u64 latency)
 {
-	static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
+	நிலையான DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
 
-	if (likely(!__ratelimit(&latency_check_ratelimit)))
-		return;
+	எனில் (likely(!__ratelimit(&latency_check_ratelimit)))
+		திரும்பு;
 
 	pr_err("sched: CPU %d need_resched set for > %llu ns (%d ticks) without schedule\n",
 	       cpu, latency, cpu_rq(cpu)->ticks_without_resched);
-	dump_stack();
+	dump_அடுக்கு();
 }

@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#அந்தர்பாவ "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+நிலையான முழு
+select_task_rq_stop(கட்டமைப்பு task_struct *p, முழு cpu, முழு flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	திரும்பு task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+நிலையான முழு
+balance_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	திரும்பு sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+நிலையான வெறுமை
+wakeup_preempt_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, முழு flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+நிலையான வெறுமை set_next_task_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *stop, எண்ணிக்கை snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	எனில் (type == SNT_REPICK)
+		திரும்பு;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+நிலையான கட்டமைப்பு task_struct *pick_task_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	எனில் (!sched_stop_runnable(rq))
+		திரும்பு வெற்று;
 
-	return rq->stop;
+	திரும்பு rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+நிலையான வெறுமை
+enqueue_task_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, முழு flags)
 {
 	add_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+நிலையான bool
+dequeue_task_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, முழு flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	திரும்பு true;
 }
 
-static void yield_task_stop(struct rq *rq)
+நிலையான வெறுமை yield_task_stop(கட்டமைப்பு rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+நிலையான வெறுமை put_prev_task_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *prev, கட்டமைப்பு task_struct *next)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+நிலையான வெறுமை task_tick_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *curr, முழு queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+நிலையான வெறுமை switching_to_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+நிலையான வெறுமை
+prio_changed_stop(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	எனில் (p->prio == oldprio)
+		திரும்பு;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+நிலையான வெறுமை update_curr_stop(கட்டமைப்பு rq *rq)
 {
 }
 

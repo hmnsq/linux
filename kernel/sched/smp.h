@@ -7,16 +7,16 @@
  * Scheduler internal SMP callback types and methods between the scheduler
  * and other internal parts of the core kernel:
  */
-#include <linux/types.h>
+#அந்தர்பாவ <linux/types.h>
 
-extern void sched_ttwu_pending(void *arg);
+வெளி வெறுமை sched_ttwu_pending(வெறுமை *arg);
 
-extern bool call_function_single_prep_ipi(int cpu);
+வெளி bool call_function_single_prep_ipi(முழு cpu);
 
 #ifdef CONFIG_SMP
-extern void flush_smp_call_function_queue(void);
-#else
-static inline void flush_smp_call_function_queue(void) { }
+வெளி வெறுமை flush_smp_call_function_queue(வெறுமை);
+#இல்லையெனில்
+நிலையான உள்வரி வெறுமை flush_smp_call_function_queue(வெறுமை) { }
 #endif
 
 #endif /* _KERNEL_SCHED_SMP_H */

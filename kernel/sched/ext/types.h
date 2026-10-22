@@ -8,13 +8,13 @@
 #ifndef _KERNEL_SCHED_EXT_TYPES_H
 #define _KERNEL_SCHED_EXT_TYPES_H
 
-#include <linux/types.h>
-#include <linux/jiffies.h>
-#include <linux/overflow.h>
-#include <linux/time64.h>
-#include <linux/sched/topology.h>
+#அந்தர்பாவ <linux/types.h>
+#அந்தர்பாவ <linux/jiffies.h>
+#அந்தர்பாவ <linux/overflow.h>
+#அந்தர்பாவ <linux/time64.h>
+#அந்தர்பாவ <linux/sched/topology.h>
 
-enum scx_consts {
+எண்ணிக்கை scx_consts {
 	SCX_DSP_DFL_MAX_BATCH		= 32,
 	SCX_DSP_MAX_LOOPS		= 32,
 	SCX_WATCHDOG_MAX_TIMEOUT	= 30 * HZ,
@@ -35,7 +35,7 @@ enum scx_consts {
 	SCX_TID_CHUNK			= 1024,
 
 	SCX_EXIT_BT_LEN			= 64,
-	SCX_EXIT_MSG_LEN		= 1024,
+	SCX_EXIT_செய்தி_LEN		= 1024,
 	SCX_EXIT_DUMP_DFL_LEN		= 32768,
 
 	SCX_CPUPERF_ONE			= SCHED_CAPACITY_SCALE,
@@ -83,18 +83,18 @@ enum scx_consts {
  * @shard_cid: first cid of this cid's shard
  * @shard_idx: global index of that shard, in [0, scx_nr_cid_shards)
  */
-struct scx_cid_topo {
+கட்டமைப்பு scx_cid_topo {
 	s32 core_cid;
 	s32 core_idx;
 	s32 llc_cid;
 	s32 llc_idx;
-	s32 node_cid;
-	s32 node_idx;
+	s32 முனை_cid;
+	s32 முனை_idx;
 	s32 shard_cid;
 	s32 shard_idx;
 };
 
-enum scx_cid_consts {
+எண்ணிக்கை scx_cid_consts {
 	SCX_CID_SHARD_SIZE_DFL		= 24,
 	SCX_CID_SHARD_MAX_CPUS		= 512,
 };
@@ -105,7 +105,7 @@ enum scx_cid_consts {
  * @base_cid: first cid of the shard
  * @nr_cids: number of cids in the shard
  */
-struct scx_cid_shard {
+கட்டமைப்பு scx_cid_shard {
 	s32			base_cid;
 	s32			nr_cids;
 };
@@ -128,10 +128,10 @@ struct scx_cid_shard {
  *
  * with no bit-shifting, regardless of how the two bases relate mod 64.
  */
-struct scx_cmask {
+கட்டமைப்பு scx_cmask {
 	u32 base;
 	u32 nr_cids;
-	u32 alloc_words;
+	u32 alloc_சொற்கள்;
 	u64 bits[];
 };
 
@@ -143,7 +143,7 @@ struct scx_cmask {
  * is near U32_MAX, so callers bounds-checking the result against @alloc_words
  * catch the overflow instead of seeing a small value.
  */
-#define SCX_CMASK_NR_WORDS(nr_cids)	((u32)(((u64)(nr_cids) + 63) / 64 + 1))
+#define SCX_CMASK_NR_சொற்கள்(nr_cids)	((u32)(((u64)(nr_cids) + 63) / 64 + 1))
 
 /**
  * __SCX_CMASK_DEFINE - Define an on-stack cmask with explicit storage capacity
@@ -157,10 +157,10 @@ struct scx_cmask {
  * @ALLOC_CIDS.
  */
 #define __SCX_CMASK_DEFINE(NAME, BASE, NR_CIDS, ALLOC_CIDS)			\
-	_DEFINE_FLEX(struct scx_cmask, NAME, bits, SCX_CMASK_NR_WORDS(ALLOC_CIDS), \
+	_DEFINE_FLEX(கட்டமைப்பு scx_cmask, NAME, bits, SCX_CMASK_NR_சொற்கள்(ALLOC_CIDS), \
 		     = { .base = (BASE),					\
 			 .nr_cids = (NR_CIDS),					\
-			 .alloc_words = SCX_CMASK_NR_WORDS(ALLOC_CIDS) })
+			 .alloc_சொற்கள் = SCX_CMASK_NR_சொற்கள்(ALLOC_CIDS) })
 
 /**
  * SCX_CMASK_DEFINE - Define an on-stack cmask on tight storage
@@ -216,9 +216,9 @@ struct scx_cmask {
  *		... use idx and shard ...
  *	}
  */
-struct scx_cmask_ref {
-	struct scx_sched	*sch;
-	struct scx_cmask	*src;
+கட்டமைப்பு scx_cmask_ref {
+	கட்டமைப்பு scx_sched	*sch;
+	கட்டமைப்பு scx_cmask	*src;
 	u32			base;
 	u32			nr_cids;
 	s32			shard_first;

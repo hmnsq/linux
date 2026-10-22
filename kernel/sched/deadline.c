@@ -16,202 +16,202 @@
  *                    Fabio Checconi <fchecconi@gmail.com>
  */
 
-#include <linux/cpuset.h>
-#include <linux/sched/clock.h>
-#include <linux/sched/deadline.h>
-#include <uapi/linux/sched/types.h>
-#include "sched.h"
-#include "pelt.h"
+#அந்தர்பாவ <linux/cpuset.h>
+#அந்தர்பாவ <linux/sched/clock.h>
+#அந்தர்பாவ <linux/sched/deadline.h>
+#அந்தர்பாவ <uapi/linux/sched/types.h>
+#அந்தர்பாவ "sched.h"
+#அந்தர்பாவ "pelt.h"
 
 /*
  * Default limits for DL period; on the top end we guard against small util
  * tasks still getting ridiculously long effective runtimes, on the bottom end we
  * guard against timer DoS.
  */
-static unsigned int sysctl_sched_dl_period_max = 1 << 22; /* ~4 seconds */
-static unsigned int sysctl_sched_dl_period_min = 100;     /* 100 us */
+நிலையான unsigned முழு sysctl_sched_dl_period_max = 1 << 22; /* ~4 seconds */
+நிலையான unsigned முழு sysctl_sched_dl_period_min = 100;     /* 100 us */
 #ifdef CONFIG_SYSCTL
-static const struct ctl_table sched_dl_sysctls[] = {
+நிலையான மாறிலி கட்டமைப்பு ctl_table sched_dl_sysctls[] = {
 	{
 		.procname       = "sched_deadline_period_max_us",
 		.data           = &sysctl_sched_dl_period_max,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = அளவு(unsigned முழு),
 		.mode           = 0644,
 		.proc_handler   = proc_douintvec_minmax,
-		.extra1         = (void *)&sysctl_sched_dl_period_min,
+		.extra1         = (வெறுமை *)&sysctl_sched_dl_period_min,
 	},
 	{
 		.procname       = "sched_deadline_period_min_us",
 		.data           = &sysctl_sched_dl_period_min,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = அளவு(unsigned முழு),
 		.mode           = 0644,
 		.proc_handler   = proc_douintvec_minmax,
-		.extra2         = (void *)&sysctl_sched_dl_period_max,
+		.extra2         = (வெறுமை *)&sysctl_sched_dl_period_max,
 	},
 };
 
-static int __init sched_dl_sysctl_init(void)
+நிலையான முழு __init sched_dl_sysctl_init(வெறுமை)
 {
 	register_sysctl_init("kernel", sched_dl_sysctls);
-	return 0;
+	திரும்பு 0;
 }
 late_initcall(sched_dl_sysctl_init);
 #endif /* CONFIG_SYSCTL */
 
-static inline struct rq *rq_of_dl_rq(struct dl_rq *dl_rq)
+நிலையான உள்வரி கட்டமைப்பு rq *rq_of_dl_rq(கட்டமைப்பு dl_rq *dl_rq)
 {
-	return container_of(dl_rq, struct rq, dl);
+	திரும்பு container_of(dl_rq, கட்டமைப்பு rq, dl);
 }
 
-static inline struct rq *rq_of_dl_se(struct sched_dl_entity *dl_se)
+நிலையான உள்வரி கட்டமைப்பு rq *rq_of_dl_se(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct rq *rq = dl_se->rq;
+	கட்டமைப்பு rq *rq = dl_se->rq;
 
-	if (!dl_server(dl_se))
+	எனில் (!dl_server(dl_se))
 		rq = task_rq(dl_task_of(dl_se));
 
-	return rq;
+	திரும்பு rq;
 }
 
-static inline struct dl_rq *dl_rq_of_se(struct sched_dl_entity *dl_se)
+நிலையான உள்வரி கட்டமைப்பு dl_rq *dl_rq_of_se(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	return &rq_of_dl_se(dl_se)->dl;
+	திரும்பு &rq_of_dl_se(dl_se)->dl;
 }
 
-static inline int on_dl_rq(struct sched_dl_entity *dl_se)
+நிலையான உள்வரி முழு on_dl_rq(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	return !RB_EMPTY_NODE(&dl_se->rb_node);
+	திரும்பு !RB_EMPTY_முனை(&dl_se->rb_முனை);
 }
 
 #ifdef CONFIG_RT_MUTEXES
-static inline struct sched_dl_entity *pi_of(struct sched_dl_entity *dl_se)
+நிலையான உள்வரி கட்டமைப்பு sched_dl_entity *pi_of(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	return dl_se->pi_se;
+	திரும்பு dl_se->pi_se;
 }
 
-static inline bool is_dl_boosted(struct sched_dl_entity *dl_se)
+நிலையான உள்வரி bool is_dl_boosted(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	return pi_of(dl_se) != dl_se;
+	திரும்பு pi_of(dl_se) != dl_se;
 }
-#else /* !CONFIG_RT_MUTEXES: */
-static inline struct sched_dl_entity *pi_of(struct sched_dl_entity *dl_se)
+#இல்லையெனில் /* !CONFIG_RT_MUTEXES: */
+நிலையான உள்வரி கட்டமைப்பு sched_dl_entity *pi_of(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	return dl_se;
+	திரும்பு dl_se;
 }
 
-static inline bool is_dl_boosted(struct sched_dl_entity *dl_se)
+நிலையான உள்வரி bool is_dl_boosted(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	return false;
+	திரும்பு false;
 }
 #endif /* !CONFIG_RT_MUTEXES */
 
-static inline u8 dl_get_type(struct sched_dl_entity *dl_se, struct rq *rq)
+நிலையான உள்வரி u8 dl_get_type(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு rq *rq)
 {
-	if (!dl_server(dl_se))
-		return DL_TASK;
-	if (dl_se == &rq->fair_server)
-		return DL_SERVER_FAIR;
+	எனில் (!dl_server(dl_se))
+		திரும்பு DL_TASK;
+	எனில் (dl_se == &rq->fair_server)
+		திரும்பு DL_SERVER_FAIR;
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (dl_se == &rq->ext_server)
-		return DL_SERVER_EXT;
+	எனில் (dl_se == &rq->ext_server)
+		திரும்பு DL_SERVER_EXT;
 #endif
-	return DL_OTHER;
+	திரும்பு DL_OTHER;
 }
 
-static inline struct dl_bw *dl_bw_of(int i)
+நிலையான உள்வரி கட்டமைப்பு dl_bw *dl_bw_of(முழு i)
 {
 	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
 			 "sched RCU must be held");
-	return &cpu_rq(i)->rd->dl_bw;
+	திரும்பு &cpu_rq(i)->rd->dl_bw;
 }
 
-static inline int dl_bw_cpus(int i)
+நிலையான உள்வரி முழு dl_bw_cpus(முழு i)
 {
-	struct root_domain *rd = cpu_rq(i)->rd;
+	கட்டமைப்பு வேர்_domain *rd = cpu_rq(i)->rd;
 
 	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
 			 "sched RCU must be held");
 
-	return cpumask_weight_and(rd->span, cpu_active_mask);
+	திரும்பு cpumask_weight_and(rd->span, cpu_active_mask);
 }
 
-static inline unsigned long __dl_bw_capacity(const struct cpumask *mask)
+நிலையான உள்வரி unsigned long __dl_bw_capacity(மாறிலி கட்டமைப்பு cpumask *mask)
 {
 	unsigned long cap = 0;
-	int i;
+	முழு i;
 
 	for_each_cpu_and(i, mask, cpu_active_mask)
 		cap += arch_scale_cpu_capacity(i);
 
-	return cap;
+	திரும்பு cap;
 }
 
 /*
  * XXX Fix: If 'rq->rd == def_root_domain' perform AC against capacity
  * of the CPU the task is running on rather rd's \Sum CPU capacity.
  */
-static inline unsigned long dl_bw_capacity(int i)
+நிலையான உள்வரி unsigned long dl_bw_capacity(முழு i)
 {
-	if (!sched_asym_cpucap_active() &&
+	எனில் (!sched_asym_cpucap_active() &&
 	    arch_scale_cpu_capacity(i) == SCHED_CAPACITY_SCALE) {
-		return dl_bw_cpus(i) << SCHED_CAPACITY_SHIFT;
-	} else {
+		திரும்பு dl_bw_cpus(i) << SCHED_CAPACITY_SHIFT;
+	} இல்லையெனில் {
 		RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
 				 "sched RCU must be held");
 
-		return __dl_bw_capacity(cpu_rq(i)->rd->span);
+		திரும்பு __dl_bw_capacity(cpu_rq(i)->rd->span);
 	}
 }
 
-bool dl_bw_visited(int cpu, u64 cookie)
+bool dl_bw_visited(முழு cpu, u64 cookie)
 {
-	struct root_domain *rd = cpu_rq(cpu)->rd;
+	கட்டமைப்பு வேர்_domain *rd = cpu_rq(cpu)->rd;
 
-	if (rd->visit_cookie == cookie)
-		return true;
+	எனில் (rd->visit_cookie == cookie)
+		திரும்பு true;
 
 	rd->visit_cookie = cookie;
-	return false;
+	திரும்பு false;
 }
 
-static inline
-void __dl_update(struct dl_bw *dl_b, s64 bw)
+நிலையான உள்வரி
+வெறுமை __dl_update(கட்டமைப்பு dl_bw *dl_b, s64 bw)
 {
-	struct root_domain *rd = container_of(dl_b, struct root_domain, dl_bw);
-	int i;
+	கட்டமைப்பு வேர்_domain *rd = container_of(dl_b, கட்டமைப்பு வேர்_domain, dl_bw);
+	முழு i;
 
 	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
 			 "sched RCU must be held");
 	for_each_cpu_and(i, rd->span, cpu_active_mask) {
-		struct rq *rq = cpu_rq(i);
+		கட்டமைப்பு rq *rq = cpu_rq(i);
 
 		rq->dl.extra_bw += bw;
 	}
 }
 
-static inline
-void __dl_sub(struct dl_bw *dl_b, u64 tsk_bw, int cpus)
+நிலையான உள்வரி
+வெறுமை __dl_sub(கட்டமைப்பு dl_bw *dl_b, u64 tsk_bw, முழு cpus)
 {
 	dl_b->total_bw -= tsk_bw;
 	__dl_update(dl_b, (s32)tsk_bw / cpus);
 }
 
-static inline
-void __dl_add(struct dl_bw *dl_b, u64 tsk_bw, int cpus)
+நிலையான உள்வரி
+வெறுமை __dl_add(கட்டமைப்பு dl_bw *dl_b, u64 tsk_bw, முழு cpus)
 {
 	dl_b->total_bw += tsk_bw;
 	__dl_update(dl_b, -((s32)tsk_bw / cpus));
 }
 
-static inline bool
-__dl_overflow(struct dl_bw *dl_b, unsigned long cap, u64 old_bw, u64 new_bw)
+நிலையான உள்வரி bool
+__dl_overflow(கட்டமைப்பு dl_bw *dl_b, unsigned long cap, u64 old_bw, u64 new_bw)
 {
-	return dl_b->bw != -1 &&
+	திரும்பு dl_b->bw != -1 &&
 	       cap_scale(dl_b->bw, cap) < dl_b->total_bw - old_bw + new_bw;
 }
 
-static inline
-void __add_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை __add_running_bw(u64 dl_bw, கட்டமைப்பு dl_rq *dl_rq)
 {
 	u64 old = dl_rq->running_bw;
 
@@ -223,22 +223,22 @@ void __add_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
 	cpufreq_update_util(rq_of_dl_rq(dl_rq), 0);
 }
 
-static inline
-void __sub_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை __sub_running_bw(u64 dl_bw, கட்டமைப்பு dl_rq *dl_rq)
 {
 	u64 old = dl_rq->running_bw;
 
 	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
 	dl_rq->running_bw -= dl_bw;
 	WARN_ON_ONCE(dl_rq->running_bw > old); /* underflow */
-	if (dl_rq->running_bw > old)
+	எனில் (dl_rq->running_bw > old)
 		dl_rq->running_bw = 0;
 	/* kick cpufreq (see the comment in kernel/sched/sched.h). */
 	cpufreq_update_util(rq_of_dl_rq(dl_rq), 0);
 }
 
-static inline
-void __add_rq_bw(u64 dl_bw, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை __add_rq_bw(u64 dl_bw, கட்டமைப்பு dl_rq *dl_rq)
 {
 	u64 old = dl_rq->this_bw;
 
@@ -247,50 +247,50 @@ void __add_rq_bw(u64 dl_bw, struct dl_rq *dl_rq)
 	WARN_ON_ONCE(dl_rq->this_bw < old); /* overflow */
 }
 
-static inline
-void __sub_rq_bw(u64 dl_bw, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை __sub_rq_bw(u64 dl_bw, கட்டமைப்பு dl_rq *dl_rq)
 {
 	u64 old = dl_rq->this_bw;
 
 	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
 	dl_rq->this_bw -= dl_bw;
 	WARN_ON_ONCE(dl_rq->this_bw > old); /* underflow */
-	if (dl_rq->this_bw > old)
+	எனில் (dl_rq->this_bw > old)
 		dl_rq->this_bw = 0;
 	WARN_ON_ONCE(dl_rq->running_bw > dl_rq->this_bw);
 }
 
-static inline
-void add_rq_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை add_rq_bw(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு dl_rq *dl_rq)
 {
-	if (!dl_entity_is_special(dl_se))
+	எனில் (!dl_entity_is_special(dl_se))
 		__add_rq_bw(dl_se->dl_bw, dl_rq);
 }
 
-static inline
-void sub_rq_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை sub_rq_bw(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு dl_rq *dl_rq)
 {
-	if (!dl_entity_is_special(dl_se))
+	எனில் (!dl_entity_is_special(dl_se))
 		__sub_rq_bw(dl_se->dl_bw, dl_rq);
 }
 
-static inline
-void add_running_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை add_running_bw(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு dl_rq *dl_rq)
 {
-	if (!dl_entity_is_special(dl_se))
+	எனில் (!dl_entity_is_special(dl_se))
 		__add_running_bw(dl_se->dl_bw, dl_rq);
 }
 
-static inline
-void sub_running_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை sub_running_bw(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு dl_rq *dl_rq)
 {
-	if (!dl_entity_is_special(dl_se))
+	எனில் (!dl_entity_is_special(dl_se))
 		__sub_running_bw(dl_se->dl_bw, dl_rq);
 }
 
-static void dl_rq_change_utilization(struct rq *rq, struct sched_dl_entity *dl_se, u64 new_bw)
+நிலையான வெறுமை dl_rq_change_utilization(கட்டமைப்பு rq *rq, கட்டமைப்பு sched_dl_entity *dl_se, u64 new_bw)
 {
-	if (dl_se->dl_non_contending) {
+	எனில் (dl_se->dl_non_contending) {
 		sub_running_bw(dl_se, &rq->dl);
 		dl_se->dl_non_contending = 0;
 
@@ -301,8 +301,8 @@ static void dl_rq_change_utilization(struct rq *rq, struct sched_dl_entity *dl_s
 		 * will not touch the rq's active utilization,
 		 * so we are still safe.
 		 */
-		if (hrtimer_try_to_cancel(&dl_se->inactive_timer) == 1) {
-			if (!dl_server(dl_se))
+		எனில் (hrtimer_try_to_cancel(&dl_se->inactive_timer) == 1) {
+			எனில் (!dl_server(dl_se))
 				put_task_struct(dl_task_of(dl_se));
 		}
 	}
@@ -310,40 +310,40 @@ static void dl_rq_change_utilization(struct rq *rq, struct sched_dl_entity *dl_s
 	__add_rq_bw(new_bw, &rq->dl);
 }
 
-static __always_inline
-void cancel_dl_timer(struct sched_dl_entity *dl_se, struct hrtimer *timer)
+நிலையான __always_inline
+வெறுமை cancel_dl_timer(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு hrtimer *timer)
 {
 	/*
 	 * If the timer callback was running (hrtimer_try_to_cancel == -1),
 	 * it will eventually call put_task_struct().
 	 */
-	if (hrtimer_try_to_cancel(timer) == 1 && !dl_server(dl_se))
+	எனில் (hrtimer_try_to_cancel(timer) == 1 && !dl_server(dl_se))
 		put_task_struct(dl_task_of(dl_se));
 }
 
-static __always_inline
-void cancel_replenish_timer(struct sched_dl_entity *dl_se)
+நிலையான __always_inline
+வெறுமை cancel_replenish_timer(கட்டமைப்பு sched_dl_entity *dl_se)
 {
 	cancel_dl_timer(dl_se, &dl_se->dl_timer);
 }
 
-static __always_inline
-void cancel_inactive_timer(struct sched_dl_entity *dl_se)
+நிலையான __always_inline
+வெறுமை cancel_inactive_timer(கட்டமைப்பு sched_dl_entity *dl_se)
 {
 	cancel_dl_timer(dl_se, &dl_se->inactive_timer);
 }
 
-static void dl_change_utilization(struct task_struct *p, u64 new_bw)
+நிலையான வெறுமை dl_change_utilization(கட்டமைப்பு task_struct *p, u64 new_bw)
 {
 	WARN_ON_ONCE(p->dl.flags & SCHED_FLAG_SUGOV);
 
-	if (task_on_rq_queued(p))
-		return;
+	எனில் (task_on_rq_queued(p))
+		திரும்பு;
 
 	dl_rq_change_utilization(task_rq(p), &p->dl, new_bw);
 }
 
-static void __dl_clear_params(struct sched_dl_entity *dl_se);
+நிலையான வெறுமை __dl_clear_params(கட்டமைப்பு sched_dl_entity *dl_se);
 
 /*
  * The utilization of a task cannot be immediately removed from
@@ -399,22 +399,22 @@ static void __dl_clear_params(struct sched_dl_entity *dl_se);
  * up, and checks if the task is still in the "ACTIVE non contending"
  * state or not (in the second case, it updates running_bw).
  */
-static void task_non_contending(struct sched_dl_entity *dl_se, bool dl_task)
+நிலையான வெறுமை task_non_contending(கட்டமைப்பு sched_dl_entity *dl_se, bool dl_task)
 {
-	struct hrtimer *timer = &dl_se->inactive_timer;
-	struct rq *rq = rq_of_dl_se(dl_se);
-	struct dl_rq *dl_rq = &rq->dl;
+	கட்டமைப்பு hrtimer *timer = &dl_se->inactive_timer;
+	கட்டமைப்பு rq *rq = rq_of_dl_se(dl_se);
+	கட்டமைப்பு dl_rq *dl_rq = &rq->dl;
 	s64 zerolag_time;
 
 	/*
 	 * If this is a non-deadline task that has been boosted,
 	 * do nothing
 	 */
-	if (dl_se->dl_runtime == 0)
-		return;
+	எனில் (dl_se->dl_runtime == 0)
+		திரும்பு;
 
-	if (dl_entity_is_special(dl_se))
-		return;
+	எனில் (dl_entity_is_special(dl_se))
+		திரும்பு;
 
 	WARN_ON(dl_se->dl_non_contending);
 
@@ -432,19 +432,19 @@ static void task_non_contending(struct sched_dl_entity *dl_se, bool dl_task)
 	 * If the "0-lag time" already passed, decrease the active
 	 * utilization now, instead of starting a timer
 	 */
-	if ((zerolag_time < 0) || hrtimer_active(&dl_se->inactive_timer)) {
-		if (dl_server(dl_se)) {
+	எனில் ((zerolag_time < 0) || hrtimer_active(&dl_se->inactive_timer)) {
+		எனில் (dl_server(dl_se)) {
 			sub_running_bw(dl_se, dl_rq);
-		} else {
-			struct task_struct *p = dl_task_of(dl_se);
+		} இல்லையெனில் {
+			கட்டமைப்பு task_struct *p = dl_task_of(dl_se);
 
-			if (dl_task)
+			எனில் (dl_task)
 				sub_running_bw(dl_se, dl_rq);
 
-			if (!dl_task || READ_ONCE(p->__state) == TASK_DEAD) {
-				struct dl_bw *dl_b = dl_bw_of(task_cpu(p));
+			எனில் (!dl_task || READ_ONCE(p->__state) == TASK_DEAD) {
+				கட்டமைப்பு dl_bw *dl_b = dl_bw_of(task_cpu(p));
 
-				if (READ_ONCE(p->__state) == TASK_DEAD)
+				எனில் (READ_ONCE(p->__state) == TASK_DEAD)
 					sub_rq_bw(dl_se, &rq->dl);
 				raw_spin_lock(&dl_b->lock);
 				__dl_sub(dl_b, dl_se->dl_bw, dl_bw_cpus(task_cpu(p)));
@@ -453,31 +453,31 @@ static void task_non_contending(struct sched_dl_entity *dl_se, bool dl_task)
 			}
 		}
 
-		return;
+		திரும்பு;
 	}
 
 	dl_se->dl_non_contending = 1;
-	if (!dl_server(dl_se))
+	எனில் (!dl_server(dl_se))
 		get_task_struct(dl_task_of(dl_se));
 
 	hrtimer_start(timer, ns_to_ktime(zerolag_time), HRTIMER_MODE_REL_HARD);
 }
 
-static void task_contending(struct sched_dl_entity *dl_se, int flags)
+நிலையான வெறுமை task_contending(கட்டமைப்பு sched_dl_entity *dl_se, முழு flags)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	கட்டமைப்பு dl_rq *dl_rq = dl_rq_of_se(dl_se);
 
 	/*
 	 * If this is a non-deadline task that has been boosted,
 	 * do nothing
 	 */
-	if (dl_se->dl_runtime == 0)
-		return;
+	எனில் (dl_se->dl_runtime == 0)
+		திரும்பு;
 
-	if (flags & ENQUEUE_MIGRATED)
+	எனில் (flags & ENQUEUE_MIGRATED)
 		add_rq_bw(dl_se, dl_rq);
 
-	if (dl_se->dl_non_contending) {
+	எனில் (dl_se->dl_non_contending) {
 		dl_se->dl_non_contending = 0;
 		/*
 		 * If the timer handler is currently running and the
@@ -487,7 +487,7 @@ static void task_contending(struct sched_dl_entity *dl_se, int flags)
 		 * so we are still safe.
 		 */
 		cancel_inactive_timer(dl_se);
-	} else {
+	} இல்லையெனில் {
 		/*
 		 * Since "dl_non_contending" is not set, the
 		 * task's utilization has already been removed from
@@ -499,47 +499,47 @@ static void task_contending(struct sched_dl_entity *dl_se, int flags)
 	}
 }
 
-static inline int is_leftmost(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+நிலையான உள்வரி முழு is_leftmost(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு dl_rq *dl_rq)
 {
-	return rb_first_cached(&dl_rq->root) == &dl_se->rb_node;
+	திரும்பு rb_first_cached(&dl_rq->வேர்) == &dl_se->rb_முனை;
 }
 
-static void init_dl_rq_bw_ratio(struct dl_rq *dl_rq);
+நிலையான வெறுமை init_dl_rq_bw_ratio(கட்டமைப்பு dl_rq *dl_rq);
 
-void init_dl_bw(struct dl_bw *dl_b)
+வெறுமை init_dl_bw(கட்டமைப்பு dl_bw *dl_b)
 {
 	raw_spin_lock_init(&dl_b->lock);
-	if (global_rt_runtime() == RUNTIME_INF)
+	எனில் (global_rt_runtime() == RUNTIME_INF)
 		dl_b->bw = -1;
-	else
+	இல்லையெனில்
 		dl_b->bw = to_ratio(global_rt_period(), global_rt_runtime());
 	dl_b->total_bw = 0;
 }
 
-void init_dl_rq(struct dl_rq *dl_rq)
+வெறுமை init_dl_rq(கட்டமைப்பு dl_rq *dl_rq)
 {
-	dl_rq->root = RB_ROOT_CACHED;
+	dl_rq->வேர் = RB_வேர்_CACHED;
 
 	/* zero means no -deadline tasks */
 	dl_rq->earliest_dl.curr = dl_rq->earliest_dl.next = 0;
 
 	dl_rq->overloaded = 0;
-	dl_rq->pushable_dl_tasks_root = RB_ROOT_CACHED;
+	dl_rq->pushable_dl_tasks_வேர் = RB_வேர்_CACHED;
 
 	dl_rq->running_bw = 0;
 	dl_rq->this_bw = 0;
 	init_dl_rq_bw_ratio(dl_rq);
 }
 
-static inline int dl_overloaded(struct rq *rq)
+நிலையான உள்வரி முழு dl_overloaded(கட்டமைப்பு rq *rq)
 {
-	return atomic_read(&rq->rd->dlo_count);
+	திரும்பு atomic_read(&rq->rd->dlo_மொத்தம்);
 }
 
-static inline void dl_set_overload(struct rq *rq)
+நிலையான உள்வரி வெறுமை dl_set_overload(கட்டமைப்பு rq *rq)
 {
-	if (!rq->online)
-		return;
+	எனில் (!rq->online)
+		திரும்பு;
 
 	cpumask_set_cpu(rq->cpu, rq->rd->dlo_mask);
 	/*
@@ -549,117 +549,117 @@ static inline void dl_set_overload(struct rq *rq)
 	 * Matched by the barrier in pull_dl_task().
 	 */
 	smp_wmb();
-	atomic_inc(&rq->rd->dlo_count);
+	atomic_inc(&rq->rd->dlo_மொத்தம்);
 }
 
-static inline void dl_clear_overload(struct rq *rq)
+நிலையான உள்வரி வெறுமை dl_clear_overload(கட்டமைப்பு rq *rq)
 {
-	if (!rq->online)
-		return;
+	எனில் (!rq->online)
+		திரும்பு;
 
-	atomic_dec(&rq->rd->dlo_count);
+	atomic_dec(&rq->rd->dlo_மொத்தம்);
 	cpumask_clear_cpu(rq->cpu, rq->rd->dlo_mask);
 }
 
-#define __node_2_pdl(node) \
-	rb_entry((node), struct task_struct, pushable_dl_tasks)
+#define __node_2_pdl(முனை) \
+	rb_entry((முனை), கட்டமைப்பு task_struct, pushable_dl_tasks)
 
-static inline bool __pushable_less(struct rb_node *a, const struct rb_node *b)
+நிலையான உள்வரி bool __pushable_less(கட்டமைப்பு rb_முனை *a, மாறிலி கட்டமைப்பு rb_முனை *b)
 {
-	return dl_entity_preempt(&__node_2_pdl(a)->dl, &__node_2_pdl(b)->dl);
+	திரும்பு dl_entity_preempt(&__node_2_pdl(a)->dl, &__node_2_pdl(b)->dl);
 }
 
-static inline int has_pushable_dl_tasks(struct rq *rq)
+நிலையான உள்வரி முழு has_pushable_dl_tasks(கட்டமைப்பு rq *rq)
 {
-	return !RB_EMPTY_ROOT(&rq->dl.pushable_dl_tasks_root.rb_root);
+	திரும்பு !RB_EMPTY_வேர்(&rq->dl.pushable_dl_tasks_வேர்.rb_வேர்);
 }
 
 /*
  * The list of pushable -deadline task is not a plist, like in
  * sched_rt.c, it is an rb-tree with tasks ordered by deadline.
  */
-static void enqueue_pushable_dl_task(struct rq *rq, struct task_struct *p)
+நிலையான வெறுமை enqueue_pushable_dl_task(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
-	struct rb_node *leftmost;
+	கட்டமைப்பு rb_முனை *leftmost;
 
-	WARN_ON_ONCE(!RB_EMPTY_NODE(&p->pushable_dl_tasks));
+	WARN_ON_ONCE(!RB_EMPTY_முனை(&p->pushable_dl_tasks));
 
 	leftmost = rb_add_cached(&p->pushable_dl_tasks,
-				 &rq->dl.pushable_dl_tasks_root,
+				 &rq->dl.pushable_dl_tasks_வேர்,
 				 __pushable_less);
-	if (leftmost)
+	எனில் (leftmost)
 		rq->dl.earliest_dl.next = p->dl.deadline;
 
-	if (!rq->dl.overloaded) {
+	எனில் (!rq->dl.overloaded) {
 		dl_set_overload(rq);
 		rq->dl.overloaded = 1;
 	}
 }
 
-static void dequeue_pushable_dl_task(struct rq *rq, struct task_struct *p)
+நிலையான வெறுமை dequeue_pushable_dl_task(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
-	struct dl_rq *dl_rq = &rq->dl;
-	struct rb_root_cached *root = &dl_rq->pushable_dl_tasks_root;
-	struct rb_node *leftmost;
+	கட்டமைப்பு dl_rq *dl_rq = &rq->dl;
+	கட்டமைப்பு rb_வேர்_cached *வேர் = &dl_rq->pushable_dl_tasks_வேர்;
+	கட்டமைப்பு rb_முனை *leftmost;
 
-	if (RB_EMPTY_NODE(&p->pushable_dl_tasks))
-		return;
+	எனில் (RB_EMPTY_முனை(&p->pushable_dl_tasks))
+		திரும்பு;
 
-	leftmost = rb_erase_cached(&p->pushable_dl_tasks, root);
-	if (leftmost)
+	leftmost = rb_erase_cached(&p->pushable_dl_tasks, வேர்);
+	எனில் (leftmost)
 		dl_rq->earliest_dl.next = __node_2_pdl(leftmost)->dl.deadline;
 
-	RB_CLEAR_NODE(&p->pushable_dl_tasks);
+	RB_CLEAR_முனை(&p->pushable_dl_tasks);
 
-	if (!has_pushable_dl_tasks(rq) && rq->dl.overloaded) {
+	எனில் (!has_pushable_dl_tasks(rq) && rq->dl.overloaded) {
 		dl_clear_overload(rq);
 		rq->dl.overloaded = 0;
 	}
 }
 
-static int push_dl_task(struct rq *rq);
+நிலையான முழு தள்ளு_dl_task(கட்டமைப்பு rq *rq);
 
-static inline bool need_pull_dl_task(struct rq *rq, struct task_struct *prev)
+நிலையான உள்வரி bool need_pull_dl_task(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *prev)
 {
-	return rq->online && dl_task(prev);
+	திரும்பு rq->online && dl_task(prev);
 }
 
-static DEFINE_PER_CPU(struct balance_callback, dl_push_head);
-static DEFINE_PER_CPU(struct balance_callback, dl_pull_head);
+நிலையான DEFINE_PER_CPU(கட்டமைப்பு balance_callback, dl_தள்ளு_head);
+நிலையான DEFINE_PER_CPU(கட்டமைப்பு balance_callback, dl_pull_head);
 
-static void push_dl_tasks(struct rq *);
-static void pull_dl_task(struct rq *);
+நிலையான வெறுமை தள்ளு_dl_tasks(கட்டமைப்பு rq *);
+நிலையான வெறுமை pull_dl_task(கட்டமைப்பு rq *);
 
-static inline void deadline_queue_push_tasks(struct rq *rq)
+நிலையான உள்வரி வெறுமை deadline_queue_தள்ளு_tasks(கட்டமைப்பு rq *rq)
 {
-	if (!has_pushable_dl_tasks(rq))
-		return;
+	எனில் (!has_pushable_dl_tasks(rq))
+		திரும்பு;
 
-	queue_balance_callback(rq, &per_cpu(dl_push_head, rq->cpu), push_dl_tasks);
+	queue_balance_callback(rq, &per_cpu(dl_தள்ளு_head, rq->cpu), தள்ளு_dl_tasks);
 }
 
-static inline void deadline_queue_pull_task(struct rq *rq)
+நிலையான உள்வரி வெறுமை deadline_queue_pull_task(கட்டமைப்பு rq *rq)
 {
 	queue_balance_callback(rq, &per_cpu(dl_pull_head, rq->cpu), pull_dl_task);
 }
 
-static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq);
+நிலையான கட்டமைப்பு rq *find_lock_later_rq(கட்டமைப்பு task_struct *task, கட்டமைப்பு rq *rq);
 
-static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p)
+நிலையான கட்டமைப்பு rq *dl_task_offline_migration(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
-	struct rq *later_rq = NULL;
-	struct dl_bw *dl_b;
+	கட்டமைப்பு rq *later_rq = வெற்று;
+	கட்டமைப்பு dl_bw *dl_b;
 
 	later_rq = find_lock_later_rq(p, rq);
-	if (!later_rq) {
-		int cpu;
+	எனில் (!later_rq) {
+		முழு cpu;
 
 		/*
 		 * If we cannot preempt any rq, fall back to pick any
 		 * online CPU:
 		 */
 		cpu = cpumask_any_and(cpu_active_mask, p->cpus_ptr);
-		if (cpu >= nr_cpu_ids) {
+		எனில் (cpu >= nr_cpu_ids) {
 			/*
 			 * Failed to find any suitable CPU.
 			 * The task will never come back!
@@ -677,7 +677,7 @@ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p
 		double_lock_balance(rq, later_rq);
 	}
 
-	if (p->dl.dl_non_contending || p->dl.dl_throttled) {
+	எனில் (p->dl.dl_non_contending || p->dl.dl_throttled) {
 		/*
 		 * Inactive timer is armed (or callback is running, but
 		 * waiting for us to release rq locks). In any case, when it
@@ -689,7 +689,7 @@ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p
 
 		add_rq_bw(&p->dl, &later_rq->dl);
 		add_running_bw(&p->dl, &later_rq->dl);
-	} else {
+	} இல்லையெனில் {
 		sub_rq_bw(&p->dl, &rq->dl);
 		add_rq_bw(&p->dl, &later_rq->dl);
 	}
@@ -712,17 +712,17 @@ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p
 	set_task_cpu(p, later_rq->cpu);
 	double_unlock_balance(later_rq, rq);
 
-	return later_rq;
+	திரும்பு later_rq;
 }
 
-static void
-enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags);
-static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags);
-static void dequeue_dl_entity(struct sched_dl_entity *dl_se, int flags);
-static void wakeup_preempt_dl(struct rq *rq, struct task_struct *p, int flags);
+நிலையான வெறுமை
+enqueue_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se, முழு flags);
+நிலையான வெறுமை enqueue_task_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, முழு flags);
+நிலையான வெறுமை dequeue_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se, முழு flags);
+நிலையான வெறுமை wakeup_preempt_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, முழு flags);
 
-static inline void replenish_dl_new_period(struct sched_dl_entity *dl_se,
-					    struct rq *rq)
+நிலையான உள்வரி வெறுமை replenish_dl_new_period(கட்டமைப்பு sched_dl_entity *dl_se,
+					    கட்டமைப்பு rq *rq)
 {
 	/* for non-boosted task, pi_of(dl_se) == dl_se */
 	dl_se->deadline = rq_clock(rq) + pi_of(dl_se)->dl_deadline;
@@ -732,7 +732,7 @@ static inline void replenish_dl_new_period(struct sched_dl_entity *dl_se,
 	 * If it is a deferred reservation, and the server
 	 * is not handling an starvation case, defer it.
 	 */
-	if (dl_se->dl_defer && !dl_se->dl_defer_running) {
+	எனில் (dl_se->dl_defer && !dl_se->dl_defer_running) {
 		dl_se->dl_throttled = 1;
 		dl_se->dl_defer_armed = 1;
 	}
@@ -751,10 +751,10 @@ static inline void replenish_dl_new_period(struct sched_dl_entity *dl_se,
  * one, and to (try to!) reconcile itself with its own scheduling
  * parameters.
  */
-static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
+நிலையான உள்வரி வெறுமை setup_new_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	கட்டமைப்பு dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	கட்டமைப்பு rq *rq = rq_of_dl_rq(dl_rq);
 
 	WARN_ON(is_dl_boosted(dl_se));
 	WARN_ON(dl_time_before(rq_clock(rq), dl_se->deadline));
@@ -764,8 +764,8 @@ static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
 	 * the deadline timer handler will take care of properly recharging
 	 * the runtime and postponing the deadline
 	 */
-	if (dl_se->dl_throttled)
-		return;
+	எனில் (dl_se->dl_throttled)
+		திரும்பு;
 
 	/*
 	 * We use the regular wall clock time to set deadlines in the
@@ -775,8 +775,8 @@ static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
 	replenish_dl_new_period(dl_se, rq);
 }
 
-static int start_dl_timer(struct sched_dl_entity *dl_se);
-static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t);
+நிலையான முழு start_dl_timer(கட்டமைப்பு sched_dl_entity *dl_se);
+நிலையான bool dl_entity_overflow(கட்டமைப்பு sched_dl_entity *dl_se, u64 t);
 
 /*
  * Pure Earliest Deadline First (EDF) scheduling does not deal with the
@@ -796,10 +796,10 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t);
  * could happen are, typically, a entity voluntarily trying to overcome its
  * runtime, or it just underestimated it during sched_setattr().
  */
-static void replenish_dl_entity(struct sched_dl_entity *dl_se)
+நிலையான வெறுமை replenish_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	கட்டமைப்பு dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	கட்டமைப்பு rq *rq = rq_of_dl_rq(dl_rq);
 
 	WARN_ON_ONCE(pi_of(dl_se)->dl_runtime <= 0);
 
@@ -813,13 +813,13 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 	 *
 	 * In both cases, set a new period.
 	 */
-	if (dl_se->dl_deadline == 0 ||
+	எனில் (dl_se->dl_deadline == 0 ||
 	    (dl_se->dl_defer_armed && dl_entity_overflow(dl_se, rq_clock(rq)))) {
 		dl_se->deadline = rq_clock(rq) + pi_of(dl_se)->dl_deadline;
 		dl_se->runtime = pi_of(dl_se)->dl_runtime;
 	}
 
-	if (dl_se->dl_yielded && dl_se->runtime > 0)
+	எனில் (dl_se->dl_yielded && dl_se->runtime > 0)
 		dl_se->runtime = 0;
 
 	/*
@@ -828,7 +828,7 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 	 * handling of situations where the runtime overrun is
 	 * arbitrary large.
 	 */
-	while (dl_se->runtime <= 0) {
+	போது (dl_se->runtime <= 0) {
 		dl_se->deadline += pi_of(dl_se)->dl_period;
 		dl_se->runtime += pi_of(dl_se)->dl_runtime;
 	}
@@ -842,14 +842,14 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 	 * resetting the deadline and the budget of the
 	 * entity.
 	 */
-	if (dl_time_before(dl_se->deadline, rq_clock(rq))) {
+	எனில் (dl_time_before(dl_se->deadline, rq_clock(rq))) {
 		printk_deferred_once("sched: DL replenish lagged too much\n");
 		replenish_dl_new_period(dl_se, rq);
 	}
 
-	if (dl_se->dl_yielded)
+	எனில் (dl_se->dl_yielded)
 		dl_se->dl_yielded = 0;
-	if (dl_se->dl_throttled)
+	எனில் (dl_se->dl_throttled)
 		dl_se->dl_throttled = 0;
 
 	trace_sched_dl_replenish_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
@@ -858,9 +858,9 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 	 * If this is the replenishment of a deferred reservation,
 	 * clear the flag and return.
 	 */
-	if (dl_se->dl_defer_armed) {
+	எனில் (dl_se->dl_defer_armed) {
 		dl_se->dl_defer_armed = 0;
-		return;
+		திரும்பு;
 	}
 
 	/*
@@ -868,9 +868,9 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 	 * is in the future, if it is not running already, throttle the server
 	 * and arm the defer timer.
 	 */
-	if (dl_se->dl_defer && !dl_se->dl_defer_running &&
+	எனில் (dl_se->dl_defer && !dl_se->dl_defer_running &&
 	    dl_time_before(rq_clock(dl_se->rq), dl_se->deadline - dl_se->runtime)) {
-		if (!is_dl_boosted(dl_se)) {
+		எனில் (!is_dl_boosted(dl_se)) {
 
 			/*
 			 * Set dl_se->dl_defer_armed and dl_throttled variables to
@@ -879,7 +879,7 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
 			 */
 			dl_se->dl_defer_armed = 1;
 			dl_se->dl_throttled = 1;
-			if (!start_dl_timer(dl_se)) {
+			எனில் (!start_dl_timer(dl_se)) {
 				/*
 				 * If for whatever reason (delays), a previous timer was
 				 * queued but not serviced, cancel it and clean the
@@ -917,9 +917,9 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
  * task with deadline equal to period this is the same of using
  * dl_period instead of dl_deadline in the equation above.
  */
-static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
+நிலையான bool dl_entity_overflow(கட்டமைப்பு sched_dl_entity *dl_se, u64 t)
 {
-	u64 left, right;
+	u64 இடது, வலது;
 
 	/*
 	 * left and right are the two sides of the equation above,
@@ -939,11 +939,11 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
 	 * of anything below microseconds resolution is actually fiction
 	 * (but still we want to give the user that illusion >;).
 	 */
-	left = (pi_of(dl_se)->dl_deadline >> DL_SCALE) * (dl_se->runtime >> DL_SCALE);
-	right = ((dl_se->deadline - t) >> DL_SCALE) *
+	இடது = (pi_of(dl_se)->dl_deadline >> DL_SCALE) * (dl_se->runtime >> DL_SCALE);
+	வலது = ((dl_se->deadline - t) >> DL_SCALE) *
 		(pi_of(dl_se)->dl_runtime >> DL_SCALE);
 
-	return dl_time_before(right, left);
+	திரும்பு dl_time_before(வலது, இடது);
 }
 
 /*
@@ -964,8 +964,8 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
  * [1] Luca Abeni, Giuseppe Lipari, and Juri Lelli. 2015. Constant
  * bandwidth server revisited. SIGBED Rev. 11, 4 (January 2015), 19-24.
  */
-static void
-update_dl_revised_wakeup(struct sched_dl_entity *dl_se, struct rq *rq)
+நிலையான வெறுமை
+update_dl_revised_wakeup(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு rq *rq)
 {
 	u64 laxity = dl_se->deadline - rq_clock(rq);
 
@@ -1010,19 +1010,19 @@ update_dl_revised_wakeup(struct sched_dl_entity *dl_se, struct rq *rq)
  * Please refer to the comments update_dl_revised_wakeup() function to find
  * more about the Revised CBS rule.
  */
-static void update_dl_entity(struct sched_dl_entity *dl_se)
+நிலையான வெறுமை update_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct rq *rq = rq_of_dl_se(dl_se);
+	கட்டமைப்பு rq *rq = rq_of_dl_se(dl_se);
 
-	if (dl_time_before(dl_se->deadline, rq_clock(rq)) ||
+	எனில் (dl_time_before(dl_se->deadline, rq_clock(rq)) ||
 	    dl_entity_overflow(dl_se, rq_clock(rq))) {
 
-		if (unlikely((!dl_is_implicit(dl_se) ||
+		எனில் (unlikely((!dl_is_implicit(dl_se) ||
 			      (dl_se->dl_defer && dl_se->dl_defer_running)) &&
 			     !dl_time_before(dl_se->deadline, rq_clock(rq)) &&
 			     !is_dl_boosted(dl_se))) {
 			update_dl_revised_wakeup(dl_se, rq);
-			return;
+			திரும்பு;
 		}
 
 		/*
@@ -1032,21 +1032,21 @@ static void update_dl_entity(struct sched_dl_entity *dl_se)
 		 */
 		dl_se->dl_defer_running = 0;
 		replenish_dl_new_period(dl_se, rq);
-	} else if (dl_server(dl_se) && dl_se->dl_defer) {
+	} இல்லையெனில் எனில் (dl_server(dl_se) && dl_se->dl_defer) {
 		/*
 		 * The server can still use its previous deadline, so check if
 		 * it left the dl_defer_running state.
 		 */
-		if (!dl_se->dl_defer_running) {
+		எனில் (!dl_se->dl_defer_running) {
 			dl_se->dl_defer_armed = 1;
 			dl_se->dl_throttled = 1;
 		}
 	}
 }
 
-static inline u64 dl_next_period(struct sched_dl_entity *dl_se)
+நிலையான உள்வரி u64 dl_next_period(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	return dl_se->deadline - dl_se->dl_deadline + dl_se->dl_period;
+	திரும்பு dl_se->deadline - dl_se->dl_deadline + dl_se->dl_period;
 }
 
 /*
@@ -1059,11 +1059,11 @@ static inline u64 dl_next_period(struct sched_dl_entity *dl_se)
  * actually started or not (i.e., the replenishment instant is in
  * the future or in the past).
  */
-static int start_dl_timer(struct sched_dl_entity *dl_se)
+நிலையான முழு start_dl_timer(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct hrtimer *timer = &dl_se->dl_timer;
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	கட்டமைப்பு hrtimer *timer = &dl_se->dl_timer;
+	கட்டமைப்பு dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	கட்டமைப்பு rq *rq = rq_of_dl_rq(dl_rq);
 	ktime_t now, act;
 	s64 delta;
 
@@ -1080,10 +1080,10 @@ static int start_dl_timer(struct sched_dl_entity *dl_se)
 	 * required to avoid add too much pressure on the system
 	 * (current u > U).
 	 */
-	if (dl_se->dl_defer_armed) {
+	எனில் (dl_se->dl_defer_armed) {
 		WARN_ON_ONCE(!dl_se->dl_throttled);
 		act = ns_to_ktime(dl_se->deadline - dl_se->runtime);
-	} else {
+	} இல்லையெனில் {
 		/* act = deadline - rel-deadline + period */
 		act = ns_to_ktime(dl_next_period(dl_se));
 	}
@@ -1097,8 +1097,8 @@ static int start_dl_timer(struct sched_dl_entity *dl_se)
 	 * chosen as the deadline is too small, don't even try to
 	 * start the timer in the past!
 	 */
-	if (ktime_before(act, now))
-		return 0;
+	எனில் (ktime_before(act, now))
+		திரும்பு 0;
 
 	/*
 	 * !enqueued will guarantee another callback; even if one is already in
@@ -1109,45 +1109,45 @@ static int start_dl_timer(struct sched_dl_entity *dl_se)
 	 * expiring after we've done the check will wait on its task_rq_lock()
 	 * and observe our state.
 	 */
-	if (!hrtimer_is_queued(timer)) {
-		if (!dl_server(dl_se))
+	எனில் (!hrtimer_is_queued(timer)) {
+		எனில் (!dl_server(dl_se))
 			get_task_struct(dl_task_of(dl_se));
 		hrtimer_start(timer, act, HRTIMER_MODE_ABS_HARD);
 	}
 
-	return 1;
+	திரும்பு 1;
 }
 
-static void __push_dl_task(struct rq *rq, struct rq_flags *rf)
+நிலையான வெறுமை __push_dl_task(கட்டமைப்பு rq *rq, கட்டமைப்பு rq_flags *rf)
 {
 	/*
 	 * Queueing this task back might have overloaded rq, check if we need
 	 * to kick someone away.
 	 */
-	if (has_pushable_dl_tasks(rq)) {
+	எனில் (has_pushable_dl_tasks(rq)) {
 		/*
 		 * Nothing relies on rq->lock after this, so its safe to drop
 		 * rq->lock.
 		 */
 		rq_unpin_lock(rq, rf);
-		push_dl_task(rq);
+		தள்ளு_dl_task(rq);
 		rq_repin_lock(rq, rf);
 	}
 }
 
 /* a defer timer will not be reset if the runtime consumed was < dl_server_min_res */
-static const u64 dl_server_min_res = 1 * NSEC_PER_MSEC;
+நிலையான மாறிலி u64 dl_server_min_res = 1 * NSEC_PER_MSEC;
 
-static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_dl_entity *dl_se)
+நிலையான எண்ணிக்கை hrtimer_restart dl_server_timer(கட்டமைப்பு hrtimer *timer, கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct rq *rq = rq_of_dl_se(dl_se);
+	கட்டமைப்பு rq *rq = rq_of_dl_se(dl_se);
 	u64 fw;
 
 	scoped_guard (rq_lock, rq) {
-		struct rq_flags *rf = &scope.rf;
+		கட்டமைப்பு rq_flags *rf = &scope.rf;
 
-		if (!dl_se->dl_throttled || !dl_se->dl_runtime)
-			return HRTIMER_NORESTART;
+		எனில் (!dl_se->dl_throttled || !dl_se->dl_runtime)
+			திரும்பு HRTIMER_NORESTART;
 
 		sched_clock_tick();
 		update_rq_clock(rq);
@@ -1159,26 +1159,26 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
 		 */
 		rq->donor->sched_class->update_curr(rq);
 
-		if (dl_se->dl_defer_idle) {
+		எனில் (dl_se->dl_defer_idle) {
 			dl_server_stop(dl_se);
-			return HRTIMER_NORESTART;
+			திரும்பு HRTIMER_NORESTART;
 		}
 
-		if (dl_se->dl_defer_armed) {
+		எனில் (dl_se->dl_defer_armed) {
 			/*
 			 * First check if the server could consume runtime in background.
 			 * If so, it is possible to push the defer timer for this amount
 			 * of time. The dl_server_min_res serves as a limit to avoid
 			 * forwarding the timer for a too small amount of time.
 			 */
-			if (dl_time_before(rq_clock(dl_se->rq),
+			எனில் (dl_time_before(rq_clock(dl_se->rq),
 					   (dl_se->deadline - dl_se->runtime - dl_server_min_res))) {
 
 				/* reset the defer timer */
 				fw = dl_se->deadline - rq_clock(dl_se->rq) - dl_se->runtime;
 
 				hrtimer_forward_now(timer, ns_to_ktime(fw));
-				return HRTIMER_RESTART;
+				திரும்பு HRTIMER_RESTART;
 			}
 
 			dl_se->dl_defer_running = 1;
@@ -1186,13 +1186,13 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
 
 		enqueue_dl_entity(dl_se, ENQUEUE_REPLENISH);
 
-		if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &dl_se->rq->curr->dl))
+		எனில் (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &dl_se->rq->curr->dl))
 			resched_curr(rq);
 
 		__push_dl_task(rq, rf);
 	}
 
-	return HRTIMER_NORESTART;
+	திரும்பு HRTIMER_NORESTART;
 }
 
 /*
@@ -1208,17 +1208,17 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
  * updating (and the queueing back to dl_rq) will be done by the
  * next call to enqueue_task_dl().
  */
-static enum hrtimer_restart dl_task_timer(struct hrtimer *timer)
+நிலையான எண்ணிக்கை hrtimer_restart dl_task_timer(கட்டமைப்பு hrtimer *timer)
 {
-	struct sched_dl_entity *dl_se = container_of(timer,
-						     struct sched_dl_entity,
+	கட்டமைப்பு sched_dl_entity *dl_se = container_of(timer,
+						     கட்டமைப்பு sched_dl_entity,
 						     dl_timer);
-	struct task_struct *p;
-	struct rq_flags rf;
-	struct rq *rq;
+	கட்டமைப்பு task_struct *p;
+	கட்டமைப்பு rq_flags rf;
+	கட்டமைப்பு rq *rq;
 
-	if (dl_server(dl_se))
-		return dl_server_timer(timer, dl_se);
+	எனில் (dl_server(dl_se))
+		திரும்பு dl_server_timer(timer, dl_se);
 
 	p = dl_task_of(dl_se);
 	rq = task_rq_lock(p, &rf);
@@ -1227,22 +1227,22 @@ static enum hrtimer_restart dl_task_timer(struct hrtimer *timer)
 	 * The task might have changed its scheduling policy to something
 	 * different than SCHED_DEADLINE (through switched_from_dl()).
 	 */
-	if (!dl_task(p))
-		goto unlock;
+	எனில் (!dl_task(p))
+		செல் unlock;
 
 	/*
 	 * The task might have been boosted by someone else and might be in the
 	 * boosting/deboosting path, its not throttled.
 	 */
-	if (is_dl_boosted(dl_se))
-		goto unlock;
+	எனில் (is_dl_boosted(dl_se))
+		செல் unlock;
 
 	/*
 	 * Spurious timer due to start_dl_timer() race; or we already received
 	 * a replenishment from rt_mutex_setprio().
 	 */
-	if (!dl_se->dl_throttled)
-		goto unlock;
+	எனில் (!dl_se->dl_throttled)
+		செல் unlock;
 
 	sched_clock_tick();
 	update_rq_clock(rq);
@@ -1261,12 +1261,12 @@ static enum hrtimer_restart dl_task_timer(struct hrtimer *timer)
 	 * We can be both throttled and !queued. Replenish the counter
 	 * but do not enqueue -- wait for our wakeup to do that.
 	 */
-	if (!task_on_rq_queued(p)) {
+	எனில் (!task_on_rq_queued(p)) {
 		replenish_dl_entity(dl_se);
-		goto unlock;
+		செல் unlock;
 	}
 
-	if (unlikely(!rq->online)) {
+	எனில் (unlikely(!rq->online)) {
 		/*
 		 * If the runqueue is no longer available, migrate the
 		 * task elsewhere. This necessarily changes rq.
@@ -1284,9 +1284,9 @@ static enum hrtimer_restart dl_task_timer(struct hrtimer *timer)
 	}
 
 	enqueue_task_dl(rq, p, ENQUEUE_REPLENISH);
-	if (dl_task(rq->donor))
+	எனில் (dl_task(rq->donor))
 		wakeup_preempt_dl(rq, p, 0);
-	else
+	இல்லையெனில்
 		resched_curr(rq);
 
 	__push_dl_task(rq, &rf);
@@ -1300,12 +1300,12 @@ unlock:
 	 */
 	put_task_struct(p);
 
-	return HRTIMER_NORESTART;
+	திரும்பு HRTIMER_NORESTART;
 }
 
-static void init_dl_task_timer(struct sched_dl_entity *dl_se)
+நிலையான வெறுமை init_dl_task_timer(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct hrtimer *timer = &dl_se->dl_timer;
+	கட்டமைப்பு hrtimer *timer = &dl_se->dl_timer;
 
 	hrtimer_setup(timer, dl_task_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
 }
@@ -1328,25 +1328,25 @@ static void init_dl_task_timer(struct sched_dl_entity *dl_se)
  * task and set the replenishing timer to the begin of the next period,
  * unless it is boosted.
  */
-static inline void dl_check_constrained_dl(struct sched_dl_entity *dl_se)
+நிலையான உள்வரி வெறுமை dl_check_constrained_dl(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct rq *rq = rq_of_dl_se(dl_se);
+	கட்டமைப்பு rq *rq = rq_of_dl_se(dl_se);
 
-	if (dl_time_before(dl_se->deadline, rq_clock(rq)) &&
+	எனில் (dl_time_before(dl_se->deadline, rq_clock(rq)) &&
 	    dl_time_before(rq_clock(rq), dl_next_period(dl_se))) {
-		if (unlikely(is_dl_boosted(dl_se) || !start_dl_timer(dl_se)))
-			return;
+		எனில் (unlikely(is_dl_boosted(dl_se) || !start_dl_timer(dl_se)))
+			திரும்பு;
 		trace_sched_dl_throttle_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
 		dl_se->dl_throttled = 1;
-		if (dl_se->runtime > 0)
+		எனில் (dl_se->runtime > 0)
 			dl_se->runtime = 0;
 	}
 }
 
-static
-int dl_runtime_exceeded(struct sched_dl_entity *dl_se)
+நிலையான
+முழு dl_runtime_exceeded(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	return (dl_se->runtime <= 0);
+	திரும்பு (dl_se->runtime <= 0);
 }
 
 /*
@@ -1366,7 +1366,7 @@ int dl_runtime_exceeded(struct sched_dl_entity *dl_se)
  * larger than 2^(64 - 20 - 8), which is more than 64 seconds. So, overflow is
  * not an issue here.
  */
-static u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
+நிலையான u64 grub_reclaim(u64 delta, கட்டமைப்பு rq *rq, கட்டமைப்பு sched_dl_entity *dl_se)
 {
 	u64 u_act;
 	u64 u_inact = rq->dl.this_bw - rq->dl.running_bw; /* Utot - Uact */
@@ -1377,16 +1377,16 @@ static u64 grub_reclaim(u64 delta, struct rq *rq, struct sched_dl_entity *dl_se)
 	 * can be larger than u_max. So, u_max - u_inact - u_extra would be
 	 * negative leading to wrong results.
 	 */
-	if (u_inact + rq->dl.extra_bw > rq->dl.max_bw - dl_se->dl_bw)
+	எனில் (u_inact + rq->dl.extra_bw > rq->dl.max_bw - dl_se->dl_bw)
 		u_act = dl_se->dl_bw;
-	else
+	இல்லையெனில்
 		u_act = rq->dl.max_bw - u_inact - rq->dl.extra_bw;
 
 	u_act = (u_act * rq->dl.bw_ratio) >> RATIO_SHIFT;
-	return (delta * u_act) >> BW_SHIFT;
+	திரும்பு (delta * u_act) >> BW_SHIFT;
 }
 
-s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec)
+s64 dl_scaled_delta_exec(கட்டமைப்பு rq *rq, கட்டமைப்பு sched_dl_entity *dl_se, s64 delta_exec)
 {
 	s64 scaled_delta_exec;
 
@@ -1397,10 +1397,10 @@ s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta
 	 * For the others, we still need to scale reservation parameters
 	 * according to current frequency and CPU maximum capacity.
 	 */
-	if (unlikely(dl_se->flags & SCHED_FLAG_RECLAIM)) {
+	எனில் (unlikely(dl_se->flags & SCHED_FLAG_RECLAIM)) {
 		scaled_delta_exec = grub_reclaim(delta_exec, rq, dl_se);
-	} else {
-		int cpu = cpu_of(rq);
+	} இல்லையெனில் {
+		முழு cpu = cpu_of(rq);
 		unsigned long scale_freq = arch_scale_freq_capacity(cpu);
 		unsigned long scale_cpu = arch_scale_cpu_capacity(cpu);
 
@@ -1408,36 +1408,36 @@ s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta
 		scaled_delta_exec = cap_scale(scaled_delta_exec, scale_cpu);
 	}
 
-	return scaled_delta_exec;
+	திரும்பு scaled_delta_exec;
 }
 
-static inline void
-update_stats_dequeue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se, int flags);
+நிலையான உள்வரி வெறுமை
+update_stats_dequeue_dl(கட்டமைப்பு dl_rq *dl_rq, கட்டமைப்பு sched_dl_entity *dl_se, முழு flags);
 
-static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec)
+நிலையான வெறுமை update_curr_dl_se(கட்டமைப்பு rq *rq, கட்டமைப்பு sched_dl_entity *dl_se, s64 delta_exec)
 {
 	bool idle = idle_rq(rq);
 	s64 scaled_delta_exec;
 
-	if (unlikely(delta_exec <= 0)) {
-		if (unlikely(dl_se->dl_yielded))
-			goto throttle;
-		return;
+	எனில் (unlikely(delta_exec <= 0)) {
+		எனில் (unlikely(dl_se->dl_yielded))
+			செல் throttle;
+		திரும்பு;
 	}
 
-	if (dl_server(dl_se) && dl_se->dl_throttled && !dl_se->dl_defer)
-		return;
+	எனில் (dl_server(dl_se) && dl_se->dl_throttled && !dl_se->dl_defer)
+		திரும்பு;
 
-	if (dl_entity_is_special(dl_se))
-		return;
+	எனில் (dl_entity_is_special(dl_se))
+		திரும்பு;
 
 	scaled_delta_exec = delta_exec;
-	if (!dl_server(dl_se))
+	எனில் (!dl_server(dl_se))
 		scaled_delta_exec = dl_scaled_delta_exec(rq, dl_se, delta_exec);
 
 	dl_se->runtime -= scaled_delta_exec;
 
-	if (dl_se->dl_defer_idle && !idle)
+	எனில் (dl_se->dl_defer_idle && !idle)
 		dl_se->dl_defer_idle = 0;
 
 	/*
@@ -1448,7 +1448,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 	 * is not required for the current period. Thus, reset the server by
 	 * starting a new period, pushing the activation.
 	 */
-	if (dl_se->dl_defer && dl_se->dl_throttled && dl_runtime_exceeded(dl_se)) {
+	எனில் (dl_se->dl_defer && dl_se->dl_throttled && dl_runtime_exceeded(dl_se)) {
 		/*
 		 * Non-servers would never get time accounted while throttled.
 		 */
@@ -1459,7 +1459,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 		 * activation further, instead wait for the period timer
 		 * to lapse and stop the server.
 		 */
-		if (dl_se->dl_defer_idle && idle) {
+		எனில் (dl_se->dl_defer_idle && idle) {
 			/*
 			 * The timer is at the zero-laxity point, this means
 			 * dl_server_stop() / dl_server_start() can happen
@@ -1469,7 +1469,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 			 * runtime will not do.
 			 */
 			dl_se->runtime = 0;
-			return;
+			திரும்பு;
 		}
 
 		/*
@@ -1484,7 +1484,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 
 		replenish_dl_new_period(dl_se, dl_se->rq);
 
-		if (idle)
+		எனில் (idle)
 			dl_se->dl_defer_idle = 1;
 
 		/*
@@ -1495,41 +1495,41 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 
 		 */
 		WARN_ON_ONCE(!start_dl_timer(dl_se));
 
-		return;
+		திரும்பு;
 	}
 
 throttle:
-	if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
+	எனில் (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
 		trace_sched_dl_throttle_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
 		dl_se->dl_throttled = 1;
 
 		/* If requested, inform the user about runtime overruns. */
-		if (dl_runtime_exceeded(dl_se) &&
+		எனில் (dl_runtime_exceeded(dl_se) &&
 		    (dl_se->flags & SCHED_FLAG_DL_OVERRUN))
 			dl_se->dl_overrun = 1;
 
 		dequeue_dl_entity(dl_se, 0);
-		if (!dl_server(dl_se)) {
+		எனில் (!dl_server(dl_se)) {
 			update_stats_dequeue_dl(&rq->dl, dl_se, 0);
 			dequeue_pushable_dl_task(rq, dl_task_of(dl_se));
 		}
 
-		if (unlikely(is_dl_boosted(dl_se) || !start_dl_timer(dl_se))) {
-			if (dl_server(dl_se)) {
-				if (dl_se->dl_defer) {
+		எனில் (unlikely(is_dl_boosted(dl_se) || !start_dl_timer(dl_se))) {
+			எனில் (dl_server(dl_se)) {
+				எனில் (dl_se->dl_defer) {
 					replenish_dl_new_period(dl_se, rq);
 					start_dl_timer(dl_se);
-				} else {
+				} இல்லையெனில் {
 					enqueue_dl_entity(dl_se, ENQUEUE_REPLENISH);
 				}
-			} else {
+			} இல்லையெனில் {
 				enqueue_task_dl(rq, dl_task_of(dl_se), ENQUEUE_REPLENISH);
 			}
 		}
 
-		if (!is_leftmost(dl_se, &rq->dl))
+		எனில் (!is_leftmost(dl_se, &rq->dl))
 			resched_curr(rq);
-	} else {
+	} இல்லையெனில் {
 		trace_sched_dl_update_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
 	}
 
@@ -1537,8 +1537,8 @@ throttle:
 	 * The dl_server does not account for real-time workload because it
 	 * is running fair work.
 	 */
-	if (dl_se->dl_server)
-		return;
+	எனில் (dl_se->dl_server)
+		திரும்பு;
 
 #ifdef CONFIG_RT_GROUP_SCHED
 	/*
@@ -1552,8 +1552,8 @@ throttle:
 	 * using deadline servers -- however there's a few nasties to figure
 	 * out before that can happen.
 	 */
-	if (rt_bandwidth_enabled()) {
-		struct rt_rq *rt_rq = &rq->rt;
+	எனில் (rt_bandwidth_enabled()) {
+		கட்டமைப்பு rt_rq *rt_rq = &rq->rt;
 
 		raw_spin_lock(&rt_rq->rt_runtime_lock);
 		/*
@@ -1561,7 +1561,7 @@ throttle:
 		 * have our own CBS to keep us inline; only account when RT
 		 * bandwidth is relevant.
 		 */
-		if (sched_rt_bandwidth_account(rt_rq))
+		எனில் (sched_rt_bandwidth_account(rt_rq))
 			rt_rq->rt_time += delta_exec;
 		raw_spin_unlock(&rt_rq->rt_runtime_lock);
 	}
@@ -1576,16 +1576,16 @@ throttle:
  * time available for the dl_server, avoiding a penalty for the rt
  * scheduler that did not consumed that time.
  */
-void dl_server_update_idle(struct sched_dl_entity *dl_se, s64 delta_exec)
+வெறுமை dl_server_update_idle(கட்டமைப்பு sched_dl_entity *dl_se, s64 delta_exec)
 {
-	if (dl_se->dl_server_active && dl_se->dl_runtime && dl_se->dl_defer)
+	எனில் (dl_se->dl_server_active && dl_se->dl_runtime && dl_se->dl_defer)
 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
 }
 
-void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
+வெறுமை dl_server_update(கட்டமைப்பு sched_dl_entity *dl_se, s64 delta_exec)
 {
 	/* 0 runtime = fair server disabled */
-	if (dl_se->dl_server_active && dl_se->dl_runtime)
+	எனில் (dl_se->dl_server_active && dl_se->dl_runtime)
 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
 }
 
@@ -1793,34 +1793,34 @@ void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
  *  - When idle it will push the actication forward once, and then wait
  *    for the timer to hit or a non-idle update to restart things.
  */
-void dl_server_start(struct sched_dl_entity *dl_se)
+வெறுமை dl_server_start(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct rq *rq = dl_se->rq;
+	கட்டமைப்பு rq *rq = dl_se->rq;
 
 	dl_se->dl_defer_idle = 0;
-	if (!dl_server(dl_se) || dl_se->dl_server_active || !dl_se->dl_runtime ||
+	எனில் (!dl_server(dl_se) || dl_se->dl_server_active || !dl_se->dl_runtime ||
 	    !dl_se->dl_bw_attached)
-		return;
+		திரும்பு;
 
 	/*
 	 * Update the current task to 'now'.
 	 */
 	rq->donor->sched_class->update_curr(rq);
 
-	if (WARN_ON_ONCE(!cpu_online(cpu_of(rq))))
-		return;
+	எனில் (WARN_ON_ONCE(!cpu_online(cpu_of(rq))))
+		திரும்பு;
 
 	trace_sched_dl_server_start_tp(dl_se, cpu_of(rq), dl_get_type(dl_se, rq));
 	dl_se->dl_server_active = 1;
 	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
-	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
+	எனில் (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
 		resched_curr(dl_se->rq);
 }
 
-void dl_server_stop(struct sched_dl_entity *dl_se)
+வெறுமை dl_server_stop(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	if (!dl_server(dl_se) || !dl_server_active(dl_se))
-		return;
+	எனில் (!dl_server(dl_se) || !dl_server_active(dl_se))
+		திரும்பு;
 
 	trace_sched_dl_server_stop_tp(dl_se, cpu_of(dl_se->rq),
 				      dl_get_type(dl_se, dl_se->rq));
@@ -1832,18 +1832,18 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
 	dl_se->dl_server_active = 0;
 }
 
-void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+வெறுமை dl_server_init(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு rq *rq,
 		    dl_server_pick_f pick_task)
 {
 	dl_se->rq = rq;
 	dl_se->server_pick_task = pick_task;
 }
 
-void sched_init_dl_servers(void)
+வெறுமை sched_init_dl_servers(வெறுமை)
 {
-	int cpu;
-	struct rq *rq;
-	struct sched_dl_entity *dl_se;
+	முழு cpu;
+	கட்டமைப்பு rq *rq;
+	கட்டமைப்பு sched_dl_entity *dl_se;
 
 	for_each_online_cpu(cpu) {
 		u64 runtime =  50 * NSEC_PER_MSEC;
@@ -1885,34 +1885,34 @@ void sched_init_dl_servers(void)
 	}
 }
 
-void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq)
+வெறுமை __dl_server_attach_root(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு rq *rq)
 {
 	u64 new_bw = dl_se->dl_bw;
-	int cpu = cpu_of(rq);
-	struct dl_bw *dl_b;
+	முழு cpu = cpu_of(rq);
+	கட்டமைப்பு dl_bw *dl_b;
 
-	if (!dl_se->dl_bw_attached)
-		return;
+	எனில் (!dl_se->dl_bw_attached)
+		திரும்பு;
 
 	dl_b = dl_bw_of(cpu_of(rq));
 	guard(raw_spinlock)(&dl_b->lock);
 
-	if (!dl_bw_cpus(cpu))
-		return;
+	எனில் (!dl_bw_cpus(cpu))
+		திரும்பு;
 
 	__dl_add(dl_b, new_bw, dl_bw_cpus(cpu));
 }
 
-int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 period, bool init)
+முழு dl_server_apply_params(கட்டமைப்பு sched_dl_entity *dl_se, u64 runtime, u64 period, bool init)
 {
 	u64 old_bw = (init || !dl_se->dl_bw_attached) ? 0 :
 		     to_ratio(dl_se->dl_period, dl_se->dl_runtime);
 	u64 new_bw = to_ratio(period, runtime);
-	struct rq *rq = dl_se->rq;
-	int cpu = cpu_of(rq);
-	struct dl_bw *dl_b;
+	கட்டமைப்பு rq *rq = dl_se->rq;
+	முழு cpu = cpu_of(rq);
+	கட்டமைப்பு dl_bw *dl_b;
 	unsigned long cap;
-	int cpus;
+	முழு cpus;
 
 	dl_b = dl_bw_of(cpu);
 	guard(raw_spinlock)(&dl_b->lock);
@@ -1920,14 +1920,14 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
 	cpus = dl_bw_cpus(cpu);
 	cap = dl_bw_capacity(cpu);
 
-	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-		return -EBUSY;
+	எனில் (__dl_overflow(dl_b, cap, old_bw, new_bw))
+		திரும்பு -EBUSY;
 
-	if (init) {
+	எனில் (init) {
 		__add_rq_bw(new_bw, &rq->dl);
 		__dl_add(dl_b, new_bw, cpus);
 		dl_se->dl_bw_attached = 1;
-	} else if (dl_se->dl_bw_attached) {
+	} இல்லையெனில் எனில் (dl_se->dl_bw_attached) {
 		__dl_sub(dl_b, dl_se->dl_bw, cpus);
 		__dl_add(dl_b, new_bw, cpus);
 
@@ -1944,7 +1944,7 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
 	dl_se->dl_bw = to_ratio(dl_se->dl_period, dl_se->dl_runtime);
 	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
 
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -1952,10 +1952,10 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
  *
  * Return -EBUSY if attaching would overflow root domain capacity.
  */
-static int __dl_server_attach_bw_locked(struct sched_dl_entity *dl_se,
-					struct dl_bw *dl_b, int cpus)
+நிலையான முழு __dl_server_attach_bw_locked(கட்டமைப்பு sched_dl_entity *dl_se,
+					கட்டமைப்பு dl_bw *dl_b, முழு cpus)
 {
-	struct rq *rq = dl_se->rq;
+	கட்டமைப்பு rq *rq = dl_se->rq;
 	unsigned long cap;
 
 	/*
@@ -1965,25 +1965,25 @@ static int __dl_server_attach_bw_locked(struct sched_dl_entity *dl_se,
 	 * This mirrors dl_server_add_bw() during root-domain rebuilds, which
 	 * only publishes bandwidth from active CPUs into @dl_b.
 	 */
-	if (cpu_active(cpu_of(rq))) {
+	எனில் (cpu_active(cpu_of(rq))) {
 		cap = dl_bw_capacity(cpu_of(rq));
-		if (__dl_overflow(dl_b, cap, 0, dl_se->dl_bw))
-			return -EBUSY;
+		எனில் (__dl_overflow(dl_b, cap, 0, dl_se->dl_bw))
+			திரும்பு -EBUSY;
 		__dl_add(dl_b, dl_se->dl_bw, cpus);
 	}
 	__add_rq_bw(dl_se->dl_bw, &rq->dl);
 	dl_se->dl_bw_attached = 1;
 
-	return 0;
+	திரும்பு 0;
 }
 
 /*
  * Drain @dl_se and remove its bw from the root-domain accounting.
  */
-static void __dl_server_detach_bw_locked(struct sched_dl_entity *dl_se,
-					 struct dl_bw *dl_b, int cpus)
+நிலையான வெறுமை __dl_server_detach_bw_locked(கட்டமைப்பு sched_dl_entity *dl_se,
+					 கட்டமைப்பு dl_bw *dl_b, முழு cpus)
 {
-	struct rq *rq = dl_se->rq;
+	கட்டமைப்பு rq *rq = dl_se->rq;
 
 	/*
 	 * If the server is still active (on_rq), dequeue it via
@@ -1991,7 +1991,7 @@ static void __dl_server_detach_bw_locked(struct sched_dl_entity *dl_se,
 	 * @dl_bw from running_bw immediately (0-lag passed) or set
 	 * dl_non_contending and arm the inactive_timer.
 	 */
-	if (dl_se->dl_server_active)
+	எனில் (dl_se->dl_server_active)
 		dl_server_stop(dl_se);
 
 	/*
@@ -2012,7 +2012,7 @@ static void __dl_server_detach_bw_locked(struct sched_dl_entity *dl_se,
 	 * @dl_se->dl_bw_attached; if the CPU becomes active again, the next
 	 * rebuild will re-publish its bandwidth.
 	 */
-	if (cpu_active(cpu_of(rq)))
+	எனில் (cpu_active(cpu_of(rq)))
 		__dl_sub(dl_b, dl_se->dl_bw, cpus);
 	dl_se->dl_bw_attached = 0;
 }
@@ -2026,23 +2026,23 @@ static void __dl_server_detach_bw_locked(struct sched_dl_entity *dl_se,
  *
  * Returns -EBUSY if attaching would overflow the root domain capacity.
  */
-int dl_server_attach_bw(struct sched_dl_entity *dl_se)
+முழு dl_server_attach_bw(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct rq *rq = dl_se->rq;
-	int cpu = cpu_of(rq);
-	struct dl_bw *dl_b;
-	int cpus, ret;
+	கட்டமைப்பு rq *rq = dl_se->rq;
+	முழு cpu = cpu_of(rq);
+	கட்டமைப்பு dl_bw *dl_b;
+	முழு cpus, ret;
 
-	if (dl_se->dl_bw_attached)
-		return 0;
+	எனில் (dl_se->dl_bw_attached)
+		திரும்பு 0;
 
 	scoped_guard (raw_spinlock, &dl_bw_of(cpu)->lock) {
 		dl_b = dl_bw_of(cpu);
 		cpus = dl_bw_cpus(cpu);
 		ret = __dl_server_attach_bw_locked(dl_se, dl_b, cpus);
 	}
-	if (ret)
-		return ret;
+	எனில் (ret)
+		திரும்பு ret;
 
 	/*
 	 * The natural 0->nr_running transition that triggers dl_server_start()
@@ -2054,10 +2054,10 @@ int dl_server_attach_bw(struct sched_dl_entity *dl_se)
 	 * it's already active. Skip if @cpu is offline; the server will be
 	 * started naturally on the first enqueue once @cpu comes back.
 	 */
-	if (cpu_online(cpu))
+	எனில் (cpu_online(cpu))
 		dl_server_start(dl_se);
 
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -2067,14 +2067,14 @@ int dl_server_attach_bw(struct sched_dl_entity *dl_se)
  * preserving its configured @dl_runtime / @dl_period. No-op if @dl_se is
  * not currently attached.
  */
-void dl_server_detach_bw(struct sched_dl_entity *dl_se)
+வெறுமை dl_server_detach_bw(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	int cpu = cpu_of(dl_se->rq);
-	struct dl_bw *dl_b;
-	int cpus;
+	முழு cpu = cpu_of(dl_se->rq);
+	கட்டமைப்பு dl_bw *dl_b;
+	முழு cpus;
 
-	if (!dl_se->dl_bw_attached)
-		return;
+	எனில் (!dl_se->dl_bw_attached)
+		திரும்பு;
 
 	dl_b = dl_bw_of(cpu);
 	guard(raw_spinlock)(&dl_b->lock);
@@ -2091,13 +2091,13 @@ void dl_server_detach_bw(struct sched_dl_entity *dl_se)
  * result of the attach: -EBUSY if attaching @attach_se would overflow root
  * domain capacity (in which case both servers end up detached).
  */
-int dl_server_swap_bw(struct sched_dl_entity *detach_se,
-		      struct sched_dl_entity *attach_se)
+முழு dl_server_swap_bw(கட்டமைப்பு sched_dl_entity *detach_se,
+		      கட்டமைப்பு sched_dl_entity *attach_se)
 {
-	struct rq *rq = detach_se->rq;
-	int cpu = cpu_of(rq);
-	struct dl_bw *dl_b;
-	int cpus, ret;
+	கட்டமைப்பு rq *rq = detach_se->rq;
+	முழு cpu = cpu_of(rq);
+	கட்டமைப்பு dl_bw *dl_b;
+	முழு cpus, ret;
 
 	WARN_ON_ONCE(attach_se->rq != rq);
 
@@ -2105,35 +2105,35 @@ int dl_server_swap_bw(struct sched_dl_entity *detach_se,
 		dl_b = dl_bw_of(cpu);
 		cpus = dl_bw_cpus(cpu);
 
-		if (detach_se->dl_bw_attached)
+		எனில் (detach_se->dl_bw_attached)
 			__dl_server_detach_bw_locked(detach_se, dl_b, cpus);
 
-		if (attach_se->dl_bw_attached)
+		எனில் (attach_se->dl_bw_attached)
 			ret = 0;
-		else
+		இல்லையெனில்
 			ret = __dl_server_attach_bw_locked(attach_se, dl_b, cpus);
 	}
-	if (ret)
-		return ret;
+	எனில் (ret)
+		திரும்பு ret;
 
-	if (cpu_online(cpu))
+	எனில் (cpu_online(cpu))
 		dl_server_start(attach_se);
 
-	return 0;
+	திரும்பு 0;
 }
 
 /*
  * Update the current task's runtime statistics (provided it is still
  * a -deadline task and has not been removed from the dl_rq).
  */
-static void update_curr_dl(struct rq *rq)
+நிலையான வெறுமை update_curr_dl(கட்டமைப்பு rq *rq)
 {
-	struct task_struct *donor = rq->donor;
-	struct sched_dl_entity *dl_se = &donor->dl;
+	கட்டமைப்பு task_struct *donor = rq->donor;
+	கட்டமைப்பு sched_dl_entity *dl_se = &donor->dl;
 	s64 delta_exec;
 
-	if (!dl_task(donor) || !on_dl_rq(dl_se))
-		return;
+	எனில் (!dl_task(donor) || !on_dl_rq(dl_se))
+		திரும்பு;
 
 	/*
 	 * Consumed budget is computed considering the time as
@@ -2147,19 +2147,19 @@ static void update_curr_dl(struct rq *rq)
 	update_curr_dl_se(rq, dl_se, delta_exec);
 }
 
-static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
+நிலையான எண்ணிக்கை hrtimer_restart inactive_task_timer(கட்டமைப்பு hrtimer *timer)
 {
-	struct sched_dl_entity *dl_se = container_of(timer,
-						     struct sched_dl_entity,
+	கட்டமைப்பு sched_dl_entity *dl_se = container_of(timer,
+						     கட்டமைப்பு sched_dl_entity,
 						     inactive_timer);
-	struct task_struct *p = NULL;
-	struct rq_flags rf;
-	struct rq *rq;
+	கட்டமைப்பு task_struct *p = வெற்று;
+	கட்டமைப்பு rq_flags rf;
+	கட்டமைப்பு rq *rq;
 
-	if (!dl_server(dl_se)) {
+	எனில் (!dl_server(dl_se)) {
 		p = dl_task_of(dl_se);
 		rq = task_rq_lock(p, &rf);
-	} else {
+	} இல்லையெனில் {
 		rq = dl_se->rq;
 		rq_lock(rq, &rf);
 	}
@@ -2167,13 +2167,13 @@ static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
 	sched_clock_tick();
 	update_rq_clock(rq);
 
-	if (dl_server(dl_se))
-		goto no_task;
+	எனில் (dl_server(dl_se))
+		செல் no_task;
 
-	if (!dl_task(p) || READ_ONCE(p->__state) == TASK_DEAD) {
-		struct dl_bw *dl_b = dl_bw_of(task_cpu(p));
+	எனில் (!dl_task(p) || READ_ONCE(p->__state) == TASK_DEAD) {
+		கட்டமைப்பு dl_bw *dl_b = dl_bw_of(task_cpu(p));
 
-		if (READ_ONCE(p->__state) == TASK_DEAD && dl_se->dl_non_contending) {
+		எனில் (READ_ONCE(p->__state) == TASK_DEAD && dl_se->dl_non_contending) {
 			sub_running_bw(&p->dl, dl_rq_of_se(&p->dl));
 			sub_rq_bw(&p->dl, dl_rq_of_se(&p->dl));
 			dl_se->dl_non_contending = 0;
@@ -2184,203 +2184,203 @@ static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
 		raw_spin_unlock(&dl_b->lock);
 		__dl_clear_params(dl_se);
 
-		goto unlock;
+		செல் unlock;
 	}
 
 no_task:
-	if (dl_se->dl_non_contending == 0)
-		goto unlock;
+	எனில் (dl_se->dl_non_contending == 0)
+		செல் unlock;
 
 	sub_running_bw(dl_se, &rq->dl);
 	dl_se->dl_non_contending = 0;
 unlock:
 
-	if (!dl_server(dl_se)) {
+	எனில் (!dl_server(dl_se)) {
 		task_rq_unlock(rq, p, &rf);
 		put_task_struct(p);
-	} else {
+	} இல்லையெனில் {
 		rq_unlock(rq, &rf);
 	}
 
-	return HRTIMER_NORESTART;
+	திரும்பு HRTIMER_NORESTART;
 }
 
-static void init_dl_inactive_task_timer(struct sched_dl_entity *dl_se)
+நிலையான வெறுமை init_dl_inactive_task_timer(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct hrtimer *timer = &dl_se->inactive_timer;
+	கட்டமைப்பு hrtimer *timer = &dl_se->inactive_timer;
 
 	hrtimer_setup(timer, inactive_task_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
 }
 
-#define __node_2_dle(node) \
-	rb_entry((node), struct sched_dl_entity, rb_node)
+#define __node_2_dle(முனை) \
+	rb_entry((முனை), கட்டமைப்பு sched_dl_entity, rb_முனை)
 
-static void inc_dl_deadline(struct dl_rq *dl_rq, u64 deadline)
+நிலையான வெறுமை inc_dl_deadline(கட்டமைப்பு dl_rq *dl_rq, u64 deadline)
 {
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	கட்டமைப்பு rq *rq = rq_of_dl_rq(dl_rq);
 
-	if (dl_rq->earliest_dl.curr == 0 ||
+	எனில் (dl_rq->earliest_dl.curr == 0 ||
 	    dl_time_before(deadline, dl_rq->earliest_dl.curr)) {
-		if (dl_rq->earliest_dl.curr == 0)
+		எனில் (dl_rq->earliest_dl.curr == 0)
 			cpupri_set(&rq->rd->cpupri, rq->cpu, CPUPRI_HIGHER);
 		dl_rq->earliest_dl.curr = deadline;
 		cpudl_set(&rq->rd->cpudl, rq->cpu, deadline);
 	}
 }
 
-static void dec_dl_deadline(struct dl_rq *dl_rq, u64 deadline)
+நிலையான வெறுமை dec_dl_deadline(கட்டமைப்பு dl_rq *dl_rq, u64 deadline)
 {
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	கட்டமைப்பு rq *rq = rq_of_dl_rq(dl_rq);
 
 	/*
 	 * Since we may have removed our earliest (and/or next earliest)
 	 * task we must recompute them.
 	 */
-	if (!dl_rq->dl_nr_running) {
+	எனில் (!dl_rq->dl_nr_running) {
 		dl_rq->earliest_dl.curr = 0;
 		dl_rq->earliest_dl.next = 0;
 		cpudl_clear(&rq->rd->cpudl, rq->cpu, rq->online);
 		cpupri_set(&rq->rd->cpupri, rq->cpu, rq->rt.highest_prio.curr);
-	} else {
-		struct rb_node *leftmost = rb_first_cached(&dl_rq->root);
-		struct sched_dl_entity *entry = __node_2_dle(leftmost);
+	} இல்லையெனில் {
+		கட்டமைப்பு rb_முனை *leftmost = rb_first_cached(&dl_rq->வேர்);
+		கட்டமைப்பு sched_dl_entity *entry = __node_2_dle(leftmost);
 
 		dl_rq->earliest_dl.curr = entry->deadline;
 		cpudl_set(&rq->rd->cpudl, rq->cpu, entry->deadline);
 	}
 }
 
-static inline
-void inc_dl_tasks(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை inc_dl_tasks(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு dl_rq *dl_rq)
 {
 	u64 deadline = dl_se->deadline;
 
 	dl_rq->dl_nr_running++;
 
-	if (!dl_server(dl_se))
+	எனில் (!dl_server(dl_se))
 		add_nr_running(rq_of_dl_rq(dl_rq), 1);
 
 	inc_dl_deadline(dl_rq, deadline);
 }
 
-static inline
-void dec_dl_tasks(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+நிலையான உள்வரி
+வெறுமை dec_dl_tasks(கட்டமைப்பு sched_dl_entity *dl_se, கட்டமைப்பு dl_rq *dl_rq)
 {
 	WARN_ON(!dl_rq->dl_nr_running);
 	dl_rq->dl_nr_running--;
 
-	if (!dl_server(dl_se))
+	எனில் (!dl_server(dl_se))
 		sub_nr_running(rq_of_dl_rq(dl_rq), 1);
 
 	dec_dl_deadline(dl_rq, dl_se->deadline);
 }
 
-static inline bool __dl_less(struct rb_node *a, const struct rb_node *b)
+நிலையான உள்வரி bool __dl_less(கட்டமைப்பு rb_முனை *a, மாறிலி கட்டமைப்பு rb_முனை *b)
 {
-	return dl_time_before(__node_2_dle(a)->deadline, __node_2_dle(b)->deadline);
+	திரும்பு dl_time_before(__node_2_dle(a)->deadline, __node_2_dle(b)->deadline);
 }
 
-static __always_inline struct sched_statistics *
-__schedstats_from_dl_se(struct sched_dl_entity *dl_se)
+நிலையான __always_inline கட்டமைப்பு sched_statistics *
+__schedstats_from_dl_se(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	if (!schedstat_enabled())
-		return NULL;
+	எனில் (!schedstat_enabled())
+		திரும்பு வெற்று;
 
-	if (dl_server(dl_se))
-		return NULL;
+	எனில் (dl_server(dl_se))
+		திரும்பு வெற்று;
 
-	return &dl_task_of(dl_se)->stats;
+	திரும்பு &dl_task_of(dl_se)->stats;
 }
 
-static inline void
-update_stats_wait_start_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se)
+நிலையான உள்வரி வெறுமை
+update_stats_wait_start_dl(கட்டமைப்பு dl_rq *dl_rq, கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct sched_statistics *stats = __schedstats_from_dl_se(dl_se);
-	if (stats)
+	கட்டமைப்பு sched_statistics *stats = __schedstats_from_dl_se(dl_se);
+	எனில் (stats)
 		__update_stats_wait_start(rq_of_dl_rq(dl_rq), dl_task_of(dl_se), stats);
 }
 
-static inline void
-update_stats_wait_end_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se)
+நிலையான உள்வரி வெறுமை
+update_stats_wait_end_dl(கட்டமைப்பு dl_rq *dl_rq, கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct sched_statistics *stats = __schedstats_from_dl_se(dl_se);
-	if (stats)
+	கட்டமைப்பு sched_statistics *stats = __schedstats_from_dl_se(dl_se);
+	எனில் (stats)
 		__update_stats_wait_end(rq_of_dl_rq(dl_rq), dl_task_of(dl_se), stats);
 }
 
-static inline void
-update_stats_enqueue_sleeper_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se)
+நிலையான உள்வரி வெறுமை
+update_stats_enqueue_sleeper_dl(கட்டமைப்பு dl_rq *dl_rq, கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct sched_statistics *stats = __schedstats_from_dl_se(dl_se);
-	if (stats)
+	கட்டமைப்பு sched_statistics *stats = __schedstats_from_dl_se(dl_se);
+	எனில் (stats)
 		__update_stats_enqueue_sleeper(rq_of_dl_rq(dl_rq), dl_task_of(dl_se), stats);
 }
 
-static inline void
-update_stats_enqueue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se,
-			int flags)
+நிலையான உள்வரி வெறுமை
+update_stats_enqueue_dl(கட்டமைப்பு dl_rq *dl_rq, கட்டமைப்பு sched_dl_entity *dl_se,
+			முழு flags)
 {
-	if (!schedstat_enabled())
-		return;
+	எனில் (!schedstat_enabled())
+		திரும்பு;
 
-	if (flags & ENQUEUE_WAKEUP)
+	எனில் (flags & ENQUEUE_WAKEUP)
 		update_stats_enqueue_sleeper_dl(dl_rq, dl_se);
 }
 
-static inline void
-update_stats_dequeue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se,
-			int flags)
+நிலையான உள்வரி வெறுமை
+update_stats_dequeue_dl(கட்டமைப்பு dl_rq *dl_rq, கட்டமைப்பு sched_dl_entity *dl_se,
+			முழு flags)
 {
-	struct task_struct *p = dl_task_of(dl_se);
-	struct rq *rq = rq_of_dl_rq(dl_rq);
+	கட்டமைப்பு task_struct *p = dl_task_of(dl_se);
+	கட்டமைப்பு rq *rq = rq_of_dl_rq(dl_rq);
 
-	if (!schedstat_enabled())
-		return;
+	எனில் (!schedstat_enabled())
+		திரும்பு;
 
-	if (p != rq->curr)
+	எனில் (p != rq->curr)
 		update_stats_wait_end_dl(dl_rq, dl_se);
 
-	if ((flags & DEQUEUE_SLEEP)) {
-		unsigned int state;
+	எனில் ((flags & DEQUEUE_SLEEP)) {
+		unsigned முழு state;
 
 		state = READ_ONCE(p->__state);
-		if (state & TASK_INTERRUPTIBLE)
+		எனில் (state & TASK_INTERRUPTIBLE)
 			__schedstat_set(p->stats.sleep_start,
 					rq_clock(rq_of_dl_rq(dl_rq)));
 
-		if (state & TASK_UNINTERRUPTIBLE)
+		எனில் (state & TASK_UNINTERRUPTIBLE)
 			__schedstat_set(p->stats.block_start,
 					rq_clock(rq_of_dl_rq(dl_rq)));
 	}
 }
 
-static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
+நிலையான வெறுமை __enqueue_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	கட்டமைப்பு dl_rq *dl_rq = dl_rq_of_se(dl_se);
 
-	WARN_ON_ONCE(!RB_EMPTY_NODE(&dl_se->rb_node));
+	WARN_ON_ONCE(!RB_EMPTY_முனை(&dl_se->rb_முனை));
 
-	rb_add_cached(&dl_se->rb_node, &dl_rq->root, __dl_less);
+	rb_add_cached(&dl_se->rb_முனை, &dl_rq->வேர், __dl_less);
 
 	inc_dl_tasks(dl_se, dl_rq);
 }
 
-static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
+நிலையான வெறுமை __dequeue_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	கட்டமைப்பு dl_rq *dl_rq = dl_rq_of_se(dl_se);
 
-	if (RB_EMPTY_NODE(&dl_se->rb_node))
-		return;
+	எனில் (RB_EMPTY_முனை(&dl_se->rb_முனை))
+		திரும்பு;
 
-	rb_erase_cached(&dl_se->rb_node, &dl_rq->root);
+	rb_erase_cached(&dl_se->rb_முனை, &dl_rq->வேர்);
 
-	RB_CLEAR_NODE(&dl_se->rb_node);
+	RB_CLEAR_முனை(&dl_se->rb_முனை);
 
 	dec_dl_tasks(dl_se, dl_rq);
 }
 
-static void
-enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
+நிலையான வெறுமை
+enqueue_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se, முழு flags)
 {
 	WARN_ON_ONCE(on_dl_rq(dl_se));
 
@@ -2392,11 +2392,11 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * If that is the case, the task will be throttled and
 	 * the replenishment timer will be set to the next period.
 	 */
-	if (!dl_se->dl_throttled && !dl_is_implicit(dl_se))
+	எனில் (!dl_se->dl_throttled && !dl_is_implicit(dl_se))
 		dl_check_constrained_dl(dl_se);
 
-	if (flags & (ENQUEUE_RESTORE|ENQUEUE_MIGRATING)) {
-		struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	எனில் (flags & (ENQUEUE_RESTORE|ENQUEUE_MIGRATING)) {
+		கட்டமைப்பு dl_rq *dl_rq = dl_rq_of_se(dl_se);
 
 		add_rq_bw(dl_se, dl_rq);
 		add_running_bw(dl_se, dl_rq);
@@ -2414,11 +2414,11 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * be counted in the active utilization; hence, we need to call
 	 * add_running_bw().
 	 */
-	if (!dl_se->dl_defer && dl_se->dl_throttled && !(flags & ENQUEUE_REPLENISH)) {
-		if (flags & ENQUEUE_WAKEUP)
+	எனில் (!dl_se->dl_defer && dl_se->dl_throttled && !(flags & ENQUEUE_REPLENISH)) {
+		எனில் (flags & ENQUEUE_WAKEUP)
 			task_contending(dl_se, flags);
 
-		return;
+		திரும்பு;
 	}
 
 	/*
@@ -2426,12 +2426,12 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * parameters of the task might need updating. Otherwise,
 	 * we want a replenishment of its runtime.
 	 */
-	if (flags & ENQUEUE_WAKEUP) {
+	எனில் (flags & ENQUEUE_WAKEUP) {
 		task_contending(dl_se, flags);
 		update_dl_entity(dl_se);
-	} else if (flags & ENQUEUE_REPLENISH) {
+	} இல்லையெனில் எனில் (flags & ENQUEUE_REPLENISH) {
 		replenish_dl_entity(dl_se);
-	} else if ((flags & ENQUEUE_MOVE) &&
+	} இல்லையெனில் எனில் ((flags & ENQUEUE_MOVE) &&
 		   !is_dl_boosted(dl_se) &&
 		   dl_time_before(dl_se->deadline, rq_clock(rq_of_dl_se(dl_se)))) {
 		setup_new_dl_entity(dl_se);
@@ -2441,8 +2441,8 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * If the reservation is still throttled, e.g., it got replenished but is a
 	 * deferred task and still got to wait, don't enqueue.
 	 */
-	if (dl_se->dl_throttled && start_dl_timer(dl_se))
-		return;
+	எனில் (dl_se->dl_throttled && start_dl_timer(dl_se))
+		திரும்பு;
 
 	/*
 	 * We're about to enqueue, make sure we're not ->dl_throttled!
@@ -2450,7 +2450,7 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * has passed, mark as not throttled and mark unarmed.
 	 * Also cancel earlier timers, since letting those run is pointless.
 	 */
-	if (dl_se->dl_throttled) {
+	எனில் (dl_se->dl_throttled) {
 		hrtimer_try_to_cancel(&dl_se->dl_timer);
 		dl_se->dl_defer_armed = 0;
 		dl_se->dl_throttled = 0;
@@ -2459,12 +2459,12 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	__enqueue_dl_entity(dl_se);
 }
 
-static void dequeue_dl_entity(struct sched_dl_entity *dl_se, int flags)
+நிலையான வெறுமை dequeue_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se, முழு flags)
 {
 	__dequeue_dl_entity(dl_se);
 
-	if (flags & (DEQUEUE_SAVE|DEQUEUE_MIGRATING)) {
-		struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+	எனில் (flags & (DEQUEUE_SAVE|DEQUEUE_MIGRATING)) {
+		கட்டமைப்பு dl_rq *dl_rq = dl_rq_of_se(dl_se);
 
 		sub_running_bw(dl_se, dl_rq);
 		sub_rq_bw(dl_se, dl_rq);
@@ -2479,16 +2479,16 @@ static void dequeue_dl_entity(struct sched_dl_entity *dl_se, int flags)
 	 * (the task moves from "active contending" to "active non contending"
 	 * or "inactive")
 	 */
-	if (flags & DEQUEUE_SLEEP)
+	எனில் (flags & DEQUEUE_SLEEP)
 		task_non_contending(dl_se, true);
 }
 
-static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
+நிலையான வெறுமை enqueue_task_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, முழு flags)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
-	struct dl_rq *dl_rq = &rq->dl;
+	கட்டமைப்பு sched_dl_entity *dl_se = &p->dl;
+	கட்டமைப்பு dl_rq *dl_rq = &rq->dl;
 
-	if (is_dl_boosted(dl_se)) {
+	எனில் (is_dl_boosted(dl_se)) {
 		/*
 		 * Because of delays in the detection of the overrun of a
 		 * thread's runtime, it might be the case that a thread
@@ -2501,7 +2501,7 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
 		 *
 		 * In this case, the boost overrides the throttle.
 		 */
-		if (dl_se->dl_throttled) {
+		எனில் (dl_se->dl_throttled) {
 			/*
 			 * The replenish timer needs to be canceled. No
 			 * problem if it fires concurrently: boosted threads
@@ -2510,7 +2510,7 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
 			cancel_replenish_timer(dl_se);
 			dl_se->dl_throttled = 0;
 		}
-	} else if (!dl_prio(p->normal_prio)) {
+	} இல்லையெனில் எனில் (!dl_prio(p->normal_prio)) {
 		/*
 		 * Special case in which we have a !SCHED_DEADLINE task that is going
 		 * to be deboosted, but exceeds its runtime while doing so. No point in
@@ -2521,46 +2521,46 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
 		 * the throttle.
 		 */
 		dl_se->dl_throttled = 0;
-		if (!(flags & ENQUEUE_REPLENISH))
+		எனில் (!(flags & ENQUEUE_REPLENISH))
 			printk_deferred_once("sched: DL de-boosted task PID %d: REPLENISH flag missing\n",
 					     task_pid_nr(p));
 
-		return;
+		திரும்பு;
 	}
 
 	check_schedstat_required();
 	update_stats_wait_start_dl(dl_rq, dl_se);
 
-	if (task_on_rq_migrating(p))
+	எனில் (task_on_rq_migrating(p))
 		flags |= ENQUEUE_MIGRATING;
 
 	enqueue_dl_entity(dl_se, flags);
 
-	if (dl_server(dl_se))
-		return;
+	எனில் (dl_server(dl_se))
+		திரும்பு;
 
-	if (task_is_blocked(p))
-		return;
+	எனில் (task_is_blocked(p))
+		திரும்பு;
 
-	if (dl_rq->curr == dl_se)
-		return;
+	எனில் (dl_rq->curr == dl_se)
+		திரும்பு;
 
-	if (!task_current(rq, p) && !dl_se->dl_throttled && p->nr_cpus_allowed > 1)
+	எனில் (!task_current(rq, p) && !dl_se->dl_throttled && p->nr_cpus_allowed > 1)
 		enqueue_pushable_dl_task(rq, p);
 }
 
-static bool dequeue_task_dl(struct rq *rq, struct task_struct *p, int flags)
+நிலையான bool dequeue_task_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, முழு flags)
 {
 	update_curr_dl(rq);
 
-	if (task_on_rq_migrating(p))
+	எனில் (task_on_rq_migrating(p))
 		flags |= DEQUEUE_MIGRATING;
 
 	dequeue_dl_entity(&p->dl, flags);
-	if (!p->dl.dl_throttled && !dl_server(&p->dl))
+	எனில் (!p->dl.dl_throttled && !dl_server(&p->dl))
 		dequeue_pushable_dl_task(rq, p);
 
-	return true;
+	திரும்பு true;
 }
 
 /*
@@ -2573,7 +2573,7 @@ static bool dequeue_task_dl(struct rq *rq, struct task_struct *p, int flags)
  *   yield_task_dl will indicate that some spare budget
  *   is available for other task instances to use it.
  */
-static void yield_task_dl(struct rq *rq)
+நிலையான வெறுமை yield_task_dl(கட்டமைப்பு rq *rq)
 {
 	/*
 	 * We make the task go to sleep until its current deadline by
@@ -2593,25 +2593,25 @@ static void yield_task_dl(struct rq *rq)
 	rq_clock_skip_update(rq);
 }
 
-static inline bool dl_task_is_earliest_deadline(struct task_struct *p,
-						 struct rq *rq)
+நிலையான உள்வரி bool dl_task_is_earliest_deadline(கட்டமைப்பு task_struct *p,
+						 கட்டமைப்பு rq *rq)
 {
-	return (!rq->dl.dl_nr_running ||
+	திரும்பு (!rq->dl.dl_nr_running ||
 		dl_time_before(p->dl.deadline,
 			       rq->dl.earliest_dl.curr));
 }
 
-static int find_later_rq(struct task_struct *task);
+நிலையான முழு find_later_rq(கட்டமைப்பு task_struct *task);
 
-static int
-select_task_rq_dl(struct task_struct *p, int cpu, int flags)
+நிலையான முழு
+select_task_rq_dl(கட்டமைப்பு task_struct *p, முழு cpu, முழு flags)
 {
-	struct task_struct *curr, *donor;
+	கட்டமைப்பு task_struct *curr, *donor;
 	bool select_rq;
-	struct rq *rq;
+	கட்டமைப்பு rq *rq;
 
-	if (!(flags & WF_TTWU))
-		return cpu;
+	எனில் (!(flags & WF_TTWU))
+		திரும்பு cpu;
 
 	rq = cpu_rq(cpu);
 
@@ -2637,28 +2637,28 @@ select_task_rq_dl(struct task_struct *p, int cpu, int flags)
 	 * Take the capacity of the CPU into account to
 	 * ensure it fits the requirement of the task.
 	 */
-	if (sched_asym_cpucap_active())
+	எனில் (sched_asym_cpucap_active())
 		select_rq |= !dl_task_fits_capacity(p, cpu);
 
-	if (select_rq) {
-		int target = find_later_rq(p);
+	எனில் (select_rq) {
+		முழு target = find_later_rq(p);
 
-		if (target != -1 &&
+		எனில் (target != -1 &&
 		    dl_task_is_earliest_deadline(p, cpu_rq(target)))
 			cpu = target;
 	}
 	rcu_read_unlock();
 
-	return cpu;
+	திரும்பு cpu;
 }
 
-static void migrate_task_rq_dl(struct task_struct *p, int new_cpu __maybe_unused)
+நிலையான வெறுமை migrate_task_rq_dl(கட்டமைப்பு task_struct *p, முழு new_cpu __maybe_unused)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	கட்டமைப்பு rq_flags rf;
+	கட்டமைப்பு rq *rq;
 
-	if (READ_ONCE(p->__state) != TASK_WAKING)
-		return;
+	எனில் (READ_ONCE(p->__state) != TASK_WAKING)
+		திரும்பு;
 
 	rq = task_rq(p);
 	/*
@@ -2667,7 +2667,7 @@ static void migrate_task_rq_dl(struct task_struct *p, int new_cpu __maybe_unused
 	 * rq->lock is not... So, lock it
 	 */
 	rq_lock(rq, &rf);
-	if (p->dl.dl_non_contending) {
+	எனில் (p->dl.dl_non_contending) {
 		update_rq_clock(rq);
 		sub_running_bw(&p->dl, &rq->dl);
 		p->dl.dl_non_contending = 0;
@@ -2684,36 +2684,36 @@ static void migrate_task_rq_dl(struct task_struct *p, int new_cpu __maybe_unused
 	rq_unlock(rq, &rf);
 }
 
-static void check_preempt_equal_dl(struct rq *rq, struct task_struct *p)
+நிலையான வெறுமை check_preempt_equal_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
 	/*
 	 * Current can't be migrated, useless to reschedule,
 	 * let's hope p can move out.
 	 */
-	if (rq->curr->nr_cpus_allowed == 1 ||
-	    !cpudl_find(&rq->rd->cpudl, rq->donor, NULL))
-		return;
+	எனில் (rq->curr->nr_cpus_allowed == 1 ||
+	    !cpudl_find(&rq->rd->cpudl, rq->donor, வெற்று))
+		திரும்பு;
 
 	/*
 	 * p is migratable, so let's not schedule it and
 	 * see if it is pushed or pulled somewhere else.
 	 */
-	if (p->nr_cpus_allowed != 1 &&
-	    cpudl_find(&rq->rd->cpudl, p, NULL))
-		return;
+	எனில் (p->nr_cpus_allowed != 1 &&
+	    cpudl_find(&rq->rd->cpudl, p, வெற்று))
+		திரும்பு;
 
 	resched_curr(rq);
 }
 
-static int balance_dl(struct rq *rq, struct rq_flags *rf)
+நிலையான முழு balance_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு rq_flags *rf)
 {
 	/*
 	 * Note, rq->donor may change during rq lock drops,
 	 * so don't re-use prev across lock drops
 	 */
-	struct task_struct *p = rq->donor;
+	கட்டமைப்பு task_struct *p = rq->donor;
 
-	if (!on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
+	எனில் (!on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
 		/*
 		 * This is OK, because current is on_cpu, which avoids it being
 		 * picked for load-balance and preemption/IRQs are still
@@ -2725,46 +2725,46 @@ static int balance_dl(struct rq *rq, struct rq_flags *rf)
 		rq_repin_lock(rq, rf);
 	}
 
-	return sched_stop_runnable(rq) || sched_dl_runnable(rq);
+	திரும்பு sched_stop_runnable(rq) || sched_dl_runnable(rq);
 }
 
 /*
  * Only called when both the current and waking task are -deadline
  * tasks.
  */
-static void wakeup_preempt_dl(struct rq *rq, struct task_struct *p, int flags)
+நிலையான வெறுமை wakeup_preempt_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, முழு flags)
 {
-	struct task_struct *donor = rq->donor;
+	கட்டமைப்பு task_struct *donor = rq->donor;
 	/*
 	 * Can only get preempted by stop-class, and those should be
 	 * few and short lived, doesn't really make sense to push
 	 * anything away for that.
 	 */
-	if (p->sched_class != &dl_sched_class ||
+	எனில் (p->sched_class != &dl_sched_class ||
 	    donor->sched_class != &dl_sched_class)
-		return;
+		திரும்பு;
 
-	if (dl_entity_preempt(&p->dl, &donor->dl)) {
+	எனில் (dl_entity_preempt(&p->dl, &donor->dl)) {
 		resched_curr(rq);
-		return;
+		திரும்பு;
 	}
 
 	/*
 	 * In the unlikely case current and p have the same deadline
 	 * let us try to decide what's the best thing to do...
 	 */
-	if ((p->dl.deadline == rq->donor->dl.deadline) &&
+	எனில் ((p->dl.deadline == rq->donor->dl.deadline) &&
 	    !test_tsk_need_resched(rq->curr))
 		check_preempt_equal_dl(rq, p);
 }
 
 #ifdef CONFIG_SCHED_HRTICK
-static void start_hrtick_dl(struct rq *rq, struct sched_dl_entity *dl_se)
+நிலையான வெறுமை start_hrtick_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு sched_dl_entity *dl_se)
 {
 	hrtick_start(rq, dl_se->runtime);
 }
-#else /* !CONFIG_SCHED_HRTICK: */
-static void start_hrtick_dl(struct rq *rq, struct sched_dl_entity *dl_se)
+#இல்லையெனில் /* !CONFIG_SCHED_HRTICK: */
+நிலையான வெறுமை start_hrtick_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு sched_dl_entity *dl_se)
 {
 }
 #endif /* !CONFIG_SCHED_HRTICK */
@@ -2773,16 +2773,16 @@ static void start_hrtick_dl(struct rq *rq, struct sched_dl_entity *dl_se)
  * DL keeps current in tree, because ->deadline is not typically changed while
  * a task is runnable.
  */
-static void set_next_task_dl(struct rq *rq, struct task_struct *p, enum snt_e type)
+நிலையான வெறுமை set_next_task_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, எண்ணிக்கை snt_e type)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
-	struct dl_rq *dl_rq = &rq->dl;
+	கட்டமைப்பு sched_dl_entity *dl_se = &p->dl;
+	கட்டமைப்பு dl_rq *dl_rq = &rq->dl;
 
-	if (type == SNT_REPICK)
-		return;
+	எனில் (type == SNT_REPICK)
+		திரும்பு;
 
 	p->se.exec_start = rq_clock_task(rq);
-	if (on_dl_rq(&p->dl))
+	எனில் (on_dl_rq(&p->dl))
 		update_stats_wait_end_dl(dl_rq, dl_se);
 
 	/* You can't push away the running task */
@@ -2791,70 +2791,70 @@ static void set_next_task_dl(struct rq *rq, struct task_struct *p, enum snt_e ty
 	WARN_ON_ONCE(dl_rq->curr);
 	dl_rq->curr = dl_se;
 
-	if (type != SNT_PICK)
-		return;
+	எனில் (type != SNT_PICK)
+		திரும்பு;
 
-	if (rq->donor->sched_class != &dl_sched_class)
+	எனில் (rq->donor->sched_class != &dl_sched_class)
 		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
 
-	deadline_queue_push_tasks(rq);
+	deadline_queue_தள்ளு_tasks(rq);
 
-	if (hrtick_enabled_dl(rq))
+	எனில் (hrtick_enabled_dl(rq))
 		start_hrtick_dl(rq, &p->dl);
 }
 
-static struct sched_dl_entity *pick_next_dl_entity(struct dl_rq *dl_rq)
+நிலையான கட்டமைப்பு sched_dl_entity *pick_next_dl_entity(கட்டமைப்பு dl_rq *dl_rq)
 {
-	struct rb_node *left = rb_first_cached(&dl_rq->root);
+	கட்டமைப்பு rb_முனை *இடது = rb_first_cached(&dl_rq->வேர்);
 
-	if (!left)
-		return NULL;
+	எனில் (!இடது)
+		திரும்பு வெற்று;
 
-	return __node_2_dle(left);
+	திரும்பு __node_2_dle(இடது);
 }
 
 /*
  * __pick_next_task_dl - Helper to pick the next -deadline task to run.
  * @rq: The runqueue to pick the next task from.
  */
-static struct task_struct *__pick_task_dl(struct rq *rq, struct rq_flags *rf)
+நிலையான கட்டமைப்பு task_struct *__pick_task_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு rq_flags *rf)
 {
-	struct sched_dl_entity *dl_se;
-	struct dl_rq *dl_rq = &rq->dl;
-	struct task_struct *p;
+	கட்டமைப்பு sched_dl_entity *dl_se;
+	கட்டமைப்பு dl_rq *dl_rq = &rq->dl;
+	கட்டமைப்பு task_struct *p;
 
 again:
-	if (!sched_dl_runnable(rq))
-		return NULL;
+	எனில் (!sched_dl_runnable(rq))
+		திரும்பு வெற்று;
 
 	dl_se = pick_next_dl_entity(dl_rq);
 	WARN_ON_ONCE(!dl_se);
 
-	if (dl_server(dl_se)) {
+	எனில் (dl_server(dl_se)) {
 		p = dl_se->server_pick_task(dl_se, rf);
-		if (!p) {
+		எனில் (!p) {
 			dl_server_stop(dl_se);
-			goto again;
+			செல் again;
 		}
 		rq->dl_server = dl_se;
-	} else {
+	} இல்லையெனில் {
 		p = dl_task_of(dl_se);
 	}
 
-	return p;
+	திரும்பு p;
 }
 
-static struct task_struct *pick_task_dl(struct rq *rq, struct rq_flags *rf)
+நிலையான கட்டமைப்பு task_struct *pick_task_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு rq_flags *rf)
 {
-	return __pick_task_dl(rq, rf);
+	திரும்பு __pick_task_dl(rq, rf);
 }
 
-static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct task_struct *next)
+நிலையான வெறுமை put_prev_task_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, கட்டமைப்பு task_struct *next)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
-	struct dl_rq *dl_rq = &rq->dl;
+	கட்டமைப்பு sched_dl_entity *dl_se = &p->dl;
+	கட்டமைப்பு dl_rq *dl_rq = &rq->dl;
 
-	if (on_dl_rq(dl_se))
+	எனில் (on_dl_rq(dl_se))
 		update_stats_wait_start_dl(dl_rq, dl_se);
 
 	update_curr_dl(rq);
@@ -2862,12 +2862,12 @@ static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct task_s
 	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 1);
 
 	WARN_ON_ONCE(dl_rq->curr != dl_se);
-	dl_rq->curr = NULL;
+	dl_rq->curr = வெற்று;
 
-	if (task_is_blocked(p))
-		return;
+	எனில் (task_is_blocked(p))
+		திரும்பு;
 
-	if (on_dl_rq(dl_se) && p->nr_cpus_allowed > 1)
+	எனில் (on_dl_rq(dl_se) && p->nr_cpus_allowed > 1)
 		enqueue_pushable_dl_task(rq, p);
 }
 
@@ -2879,7 +2879,7 @@ static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct task_s
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_dl(struct rq *rq, struct task_struct *p, int queued)
+நிலையான வெறுமை task_tick_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, முழு queued)
 {
 	update_curr_dl(rq);
 
@@ -2889,12 +2889,12 @@ static void task_tick_dl(struct rq *rq, struct task_struct *p, int queued)
 	 * not being the leftmost task anymore. In that case NEED_RESCHED will
 	 * be set and schedule() will start a new hrtick for the next task.
 	 */
-	if (hrtick_enabled_dl(rq) && queued && p->dl.runtime > 0 &&
+	எனில் (hrtick_enabled_dl(rq) && queued && p->dl.runtime > 0 &&
 	    is_leftmost(&p->dl, &rq->dl))
 		start_hrtick_dl(rq, &p->dl);
 }
 
-static void task_fork_dl(struct task_struct *p)
+நிலையான வெறுமை task_fork_dl(கட்டமைப்பு task_struct *p)
 {
 	/*
 	 * SCHED_DEADLINE tasks cannot fork and this is achieved through
@@ -2909,50 +2909,50 @@ static void task_fork_dl(struct task_struct *p)
  * Return the earliest pushable rq's task, which is suitable to be executed
  * on the CPU, NULL otherwise:
  */
-static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu)
+நிலையான கட்டமைப்பு task_struct *pick_earliest_pushable_dl_task(கட்டமைப்பு rq *rq, முழு cpu)
 {
-	struct task_struct *p = NULL;
-	struct rb_node *next_node;
+	கட்டமைப்பு task_struct *p = வெற்று;
+	கட்டமைப்பு rb_முனை *next_முனை;
 
-	if (!has_pushable_dl_tasks(rq))
-		return NULL;
+	எனில் (!has_pushable_dl_tasks(rq))
+		திரும்பு வெற்று;
 
-	next_node = rb_first_cached(&rq->dl.pushable_dl_tasks_root);
-	while (next_node) {
-		p = __node_2_pdl(next_node);
+	next_முனை = rb_first_cached(&rq->dl.pushable_dl_tasks_வேர்);
+	போது (next_முனை) {
+		p = __node_2_pdl(next_முனை);
 
-		if (task_is_pushable(rq, p, cpu))
-			return p;
+		எனில் (task_is_pushable(rq, p, cpu))
+			திரும்பு p;
 
-		next_node = rb_next(next_node);
+		next_முனை = rb_next(next_முனை);
 	}
 
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 /* Access rule: must be called on local CPU with preemption disabled */
-static DEFINE_PER_CPU(cpumask_var_t, local_cpu_mask_dl);
+நிலையான DEFINE_PER_CPU(cpumask_var_t, local_cpu_mask_dl);
 
-static int find_later_rq(struct task_struct *task)
+நிலையான முழு find_later_rq(கட்டமைப்பு task_struct *task)
 {
-	struct sched_domain *sd;
-	struct cpumask *later_mask = this_cpu_cpumask_var_ptr(local_cpu_mask_dl);
-	int this_cpu = smp_processor_id();
-	int cpu = task_cpu(task);
+	கட்டமைப்பு sched_domain *sd;
+	கட்டமைப்பு cpumask *later_mask = this_cpu_cpumask_var_ptr(local_cpu_mask_dl);
+	முழு this_cpu = smp_processor_id();
+	முழு cpu = task_cpu(task);
 
 	/* Make sure the mask is initialized first */
-	if (unlikely(!later_mask))
-		return -1;
+	எனில் (unlikely(!later_mask))
+		திரும்பு -1;
 
-	if (task->nr_cpus_allowed == 1)
-		return -1;
+	எனில் (task->nr_cpus_allowed == 1)
+		திரும்பு -1;
 
 	/*
 	 * We have to consider system topology and task affinity
 	 * first, then we can look for a suitable CPU.
 	 */
-	if (!cpudl_find(&task_rq(task)->rd->cpudl, task, later_mask))
-		return -1;
+	எனில் (!cpudl_find(&task_rq(task)->rd->cpudl, task, later_mask))
+		திரும்பு -1;
 
 	/*
 	 * If we are here, some targets have been found, including
@@ -2966,28 +2966,28 @@ static int find_later_rq(struct task_struct *task)
 	 * The last CPU where the task run is our first
 	 * guess, since it is most likely cache-hot there.
 	 */
-	if (cpumask_test_cpu(cpu, later_mask))
-		return cpu;
+	எனில் (cpumask_test_cpu(cpu, later_mask))
+		திரும்பு cpu;
 	/*
 	 * Check if this_cpu is to be skipped (i.e., it is
 	 * not in the mask) or not.
 	 */
-	if (!cpumask_test_cpu(this_cpu, later_mask))
+	எனில் (!cpumask_test_cpu(this_cpu, later_mask))
 		this_cpu = -1;
 
 	rcu_read_lock();
 	for_each_domain(cpu, sd) {
-		if (sd->flags & SD_WAKE_AFFINE) {
-			int best_cpu;
+		எனில் (sd->flags & SD_WAKE_AFFINE) {
+			முழு best_cpu;
 
 			/*
 			 * If possible, preempting this_cpu is
 			 * cheaper than migrating.
 			 */
-			if (this_cpu != -1 &&
+			எனில் (this_cpu != -1 &&
 			    cpumask_test_cpu(this_cpu, sched_domain_span(sd))) {
 				rcu_read_unlock();
-				return this_cpu;
+				திரும்பு this_cpu;
 			}
 
 			best_cpu = cpumask_any_and_distribute(later_mask,
@@ -2998,9 +2998,9 @@ static int find_later_rq(struct task_struct *task)
 			 * choice. Of course, the latest possible CPU is
 			 * already under consideration through later_mask.
 			 */
-			if (best_cpu < nr_cpu_ids) {
+			எனில் (best_cpu < nr_cpu_ids) {
 				rcu_read_unlock();
-				return best_cpu;
+				திரும்பு best_cpu;
 			}
 		}
 	}
@@ -3010,38 +3010,38 @@ static int find_later_rq(struct task_struct *task)
 	 * At this point, all our guesses failed, we just return
 	 * 'something', and let the caller sort the things out.
 	 */
-	if (this_cpu != -1)
-		return this_cpu;
+	எனில் (this_cpu != -1)
+		திரும்பு this_cpu;
 
 	cpu = cpumask_any_distribute(later_mask);
-	if (cpu < nr_cpu_ids)
-		return cpu;
+	எனில் (cpu < nr_cpu_ids)
+		திரும்பு cpu;
 
-	return -1;
+	திரும்பு -1;
 }
 
-static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
+நிலையான கட்டமைப்பு task_struct *pick_next_pushable_dl_task(கட்டமைப்பு rq *rq)
 {
-	struct task_struct *i, *p = NULL;
-	struct rb_node *next_node;
+	கட்டமைப்பு task_struct *i, *p = வெற்று;
+	கட்டமைப்பு rb_முனை *next_முனை;
 
-	if (!has_pushable_dl_tasks(rq))
-		return NULL;
+	எனில் (!has_pushable_dl_tasks(rq))
+		திரும்பு வெற்று;
 
-	next_node = rb_first_cached(&rq->dl.pushable_dl_tasks_root);
-	while (next_node) {
-		i = __node_2_pdl(next_node);
+	next_முனை = rb_first_cached(&rq->dl.pushable_dl_tasks_வேர்);
+	போது (next_முனை) {
+		i = __node_2_pdl(next_முனை);
 		/* skip tasks that cannot be migrated */
-		if (!task_on_cpu(rq, i) && !is_migration_disabled(i)) {
+		எனில் (!task_on_cpu(rq, i) && !is_migration_disabled(i)) {
 			p = i;
-			break;
+			நிறுத்து;
 		}
 
-		next_node = rb_next(next_node);
+		next_முனை = rb_next(next_முனை);
 	}
 
-	if (!p)
-		return NULL;
+	எனில் (!p)
+		திரும்பு வெற்று;
 
 	WARN_ON_ONCE(rq->cpu != task_cpu(p));
 	WARN_ON_ONCE(task_current(rq, p));
@@ -3050,36 +3050,36 @@ static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
 	WARN_ON_ONCE(!task_on_rq_queued(p));
 	WARN_ON_ONCE(!dl_task(p));
 
-	return p;
+	திரும்பு p;
 }
 
 /* Locks the rq it finds */
-static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
+நிலையான கட்டமைப்பு rq *find_lock_later_rq(கட்டமைப்பு task_struct *task, கட்டமைப்பு rq *rq)
 {
-	struct rq *later_rq = NULL;
-	int tries;
-	int cpu;
+	கட்டமைப்பு rq *later_rq = வெற்று;
+	முழு tries;
+	முழு cpu;
 
-	for (tries = 0; tries < DL_MAX_TRIES; tries++) {
+	க்கு (tries = 0; tries < DL_MAX_TRIES; tries++) {
 		cpu = find_later_rq(task);
 
-		if ((cpu == -1) || (cpu == rq->cpu))
-			break;
+		எனில் ((cpu == -1) || (cpu == rq->cpu))
+			நிறுத்து;
 
 		later_rq = cpu_rq(cpu);
 
-		if (!dl_task_is_earliest_deadline(task, later_rq)) {
+		எனில் (!dl_task_is_earliest_deadline(task, later_rq)) {
 			/*
 			 * Target rq has tasks of equal or earlier deadline,
 			 * retrying does not release any lock and is unlikely
 			 * to yield a different result.
 			 */
-			later_rq = NULL;
-			break;
+			later_rq = வெற்று;
+			நிறுத்து;
 		}
 
 		/* Retry if something changed. */
-		if (double_lock_balance(rq, later_rq)) {
+		எனில் (double_lock_balance(rq, later_rq)) {
 			/*
 			 * double_lock_balance had to release rq->lock, in the
 			 * meantime, task may no longer be fit to be migrated.
@@ -3101,7 +3101,7 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
 			 *    check to ensure that this task is still at the
 			 *    head of the pushable tasks list is enough.
 			 */
-			if (unlikely(is_migration_disabled(task) ||
+			எனில் (unlikely(is_migration_disabled(task) ||
 				     !cpumask_test_cpu(later_rq->cpu, &task->cpus_mask) ||
 				     (task->dl.dl_throttled &&
 				      (task_rq(task) != rq ||
@@ -3112,8 +3112,8 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
 				      task != pick_next_pushable_dl_task(rq)))) {
 
 				double_unlock_balance(rq, later_rq);
-				later_rq = NULL;
-				break;
+				later_rq = வெற்று;
+				நிறுத்து;
 			}
 		}
 
@@ -3122,15 +3122,15 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
 		 * its earliest one has a later deadline than our
 		 * task, the rq is a good one.
 		 */
-		if (dl_task_is_earliest_deadline(task, later_rq))
-			break;
+		எனில் (dl_task_is_earliest_deadline(task, later_rq))
+			நிறுத்து;
 
 		/* Otherwise we try again. */
 		double_unlock_balance(rq, later_rq);
-		later_rq = NULL;
+		later_rq = வெற்று;
 	}
 
-	return later_rq;
+	திரும்பு later_rq;
 }
 
 /*
@@ -3138,15 +3138,15 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
  * can be sent to some other CPU where they can preempt
  * and start executing.
  */
-static int push_dl_task(struct rq *rq)
+நிலையான முழு தள்ளு_dl_task(கட்டமைப்பு rq *rq)
 {
-	struct task_struct *next_task;
-	struct rq *later_rq;
-	int ret = 0;
+	கட்டமைப்பு task_struct *next_task;
+	கட்டமைப்பு rq *later_rq;
+	முழு ret = 0;
 
 	next_task = pick_next_pushable_dl_task(rq);
-	if (!next_task)
-		return 0;
+	எனில் (!next_task)
+		திரும்பு 0;
 
 retry:
 	/*
@@ -3154,26 +3154,26 @@ retry:
 	 * can move away, it makes sense to just reschedule
 	 * without going further in pushing next_task.
 	 */
-	if (dl_task(rq->donor) &&
+	எனில் (dl_task(rq->donor) &&
 	    dl_time_before(next_task->dl.deadline, rq->donor->dl.deadline) &&
 	    rq->curr->nr_cpus_allowed > 1) {
 		resched_curr(rq);
-		return 0;
+		திரும்பு 0;
 	}
 
-	if (is_migration_disabled(next_task))
-		return 0;
+	எனில் (is_migration_disabled(next_task))
+		திரும்பு 0;
 
-	if (WARN_ON(next_task == rq->curr))
-		return 0;
+	எனில் (WARN_ON(next_task == rq->curr))
+		திரும்பு 0;
 
 	/* We might release rq lock */
 	get_task_struct(next_task);
 
 	/* Will lock the rq it'll find */
 	later_rq = find_lock_later_rq(next_task, rq);
-	if (!later_rq) {
-		struct task_struct *task;
+	எனில் (!later_rq) {
+		கட்டமைப்பு task_struct *task;
 
 		/*
 		 * We must check all this again, since
@@ -3181,21 +3181,21 @@ retry:
 		 * then possible that next_task has migrated.
 		 */
 		task = pick_next_pushable_dl_task(rq);
-		if (task == next_task) {
+		எனில் (task == next_task) {
 			/*
 			 * The task is still there. We don't try
 			 * again, some other CPU will pull it when ready.
 			 */
-			goto out;
+			செல் out;
 		}
 
-		if (!task)
+		எனில் (!task)
 			/* No more tasks */
-			goto out;
+			செல் out;
 
 		put_task_struct(next_task);
 		next_task = task;
-		goto retry;
+		செல் retry;
 	}
 
 	move_queued_task_locked(rq, later_rq, next_task);
@@ -3208,26 +3208,26 @@ retry:
 out:
 	put_task_struct(next_task);
 
-	return ret;
+	திரும்பு ret;
 }
 
-static void push_dl_tasks(struct rq *rq)
+நிலையான வெறுமை தள்ளு_dl_tasks(கட்டமைப்பு rq *rq)
 {
 	/* push_dl_task() will return true if it moved a -deadline task */
-	while (push_dl_task(rq))
+	போது (தள்ளு_dl_task(rq))
 		;
 }
 
-static void pull_dl_task(struct rq *this_rq)
+நிலையான வெறுமை pull_dl_task(கட்டமைப்பு rq *this_rq)
 {
-	int this_cpu = this_rq->cpu, cpu;
-	struct task_struct *p, *push_task;
+	முழு this_cpu = this_rq->cpu, cpu;
+	கட்டமைப்பு task_struct *p, *தள்ளு_task;
 	bool resched = false;
-	struct rq *src_rq;
+	கட்டமைப்பு rq *src_rq;
 	u64 dmin = LONG_MAX;
 
-	if (likely(!dl_overloaded(this_rq)))
-		return;
+	எனில் (likely(!dl_overloaded(this_rq)))
+		திரும்பு;
 
 	/*
 	 * Match the barrier from dl_set_overloaded; this guarantees that if we
@@ -3236,8 +3236,8 @@ static void pull_dl_task(struct rq *this_rq)
 	smp_rmb();
 
 	for_each_cpu(cpu, this_rq->rd->dlo_mask) {
-		if (this_cpu == cpu)
-			continue;
+		எனில் (this_cpu == cpu)
+			தொடர்;
 
 		src_rq = cpu_rq(cpu);
 
@@ -3245,21 +3245,21 @@ static void pull_dl_task(struct rq *this_rq)
 		 * It looks racy, and it is! However, as in sched_rt.c,
 		 * we are fine with this.
 		 */
-		if (this_rq->dl.dl_nr_running &&
+		எனில் (this_rq->dl.dl_nr_running &&
 		    dl_time_before(this_rq->dl.earliest_dl.curr,
 				   src_rq->dl.earliest_dl.next))
-			continue;
+			தொடர்;
 
 		/* Might drop this_rq->lock */
-		push_task = NULL;
+		தள்ளு_task = வெற்று;
 		double_lock_balance(this_rq, src_rq);
 
 		/*
 		 * If there are no more pullable tasks on the
 		 * rq, we're done with it.
 		 */
-		if (src_rq->dl.dl_nr_running <= 1)
-			goto skip;
+		எனில் (src_rq->dl.dl_nr_running <= 1)
+			செல் skip;
 
 		p = pick_earliest_pushable_dl_task(src_rq, this_cpu);
 
@@ -3268,7 +3268,7 @@ static void pull_dl_task(struct rq *this_rq)
 		 *  - it preempts our current (if there's one),
 		 *  - it will preempt the last one we pulled (if any).
 		 */
-		if (p && dl_time_before(p->dl.deadline, dmin) &&
+		எனில் (p && dl_time_before(p->dl.deadline, dmin) &&
 		    dl_task_is_earliest_deadline(p, this_rq)) {
 			WARN_ON(p == src_rq->curr);
 			WARN_ON(!task_on_rq_queued(p));
@@ -3277,13 +3277,13 @@ static void pull_dl_task(struct rq *this_rq)
 			 * Then we pull iff p has actually an earlier
 			 * deadline than the current task of its runqueue.
 			 */
-			if (dl_time_before(p->dl.deadline,
+			எனில் (dl_time_before(p->dl.deadline,
 					   src_rq->donor->dl.deadline))
-				goto skip;
+				செல் skip;
 
-			if (is_migration_disabled(p)) {
-				push_task = get_push_task(src_rq);
-			} else {
+			எனில் (is_migration_disabled(p)) {
+				தள்ளு_task = get_தள்ளு_task(src_rq);
+			} இல்லையெனில் {
 				move_queued_task_locked(src_rq, this_rq, p);
 				dmin = p->dl.deadline;
 				resched = true;
@@ -3294,17 +3294,17 @@ static void pull_dl_task(struct rq *this_rq)
 skip:
 		double_unlock_balance(this_rq, src_rq);
 
-		if (push_task) {
+		எனில் (தள்ளு_task) {
 			preempt_disable();
 			raw_spin_rq_unlock(this_rq);
-			stop_one_cpu_nowait(src_rq->cpu, push_cpu_stop,
-					    push_task, &src_rq->push_work);
+			stop_one_cpu_nowait(src_rq->cpu, தள்ளு_cpu_stop,
+					    தள்ளு_task, &src_rq->தள்ளு_work);
 			preempt_enable();
 			raw_spin_rq_lock(this_rq);
 		}
 	}
 
-	if (resched)
+	எனில் (resched)
 		resched_curr(this_rq);
 }
 
@@ -3312,22 +3312,22 @@ skip:
  * Since the task is not running and a reschedule is not going to happen
  * anytime soon on its runqueue, we try pushing it away now.
  */
-static void task_woken_dl(struct rq *rq, struct task_struct *p)
+நிலையான வெறுமை task_woken_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
-	if (!task_on_cpu(rq, p) &&
+	எனில் (!task_on_cpu(rq, p) &&
 	    !test_tsk_need_resched(rq->curr) &&
 	    p->nr_cpus_allowed > 1 &&
 	    dl_task(rq->donor) &&
 	    (rq->curr->nr_cpus_allowed < 2 ||
 	     !dl_entity_preempt(&p->dl, &rq->donor->dl))) {
-		push_dl_tasks(rq);
+		தள்ளு_dl_tasks(rq);
 	}
 }
 
-static void set_cpus_allowed_dl(struct task_struct *p,
-				struct affinity_context *ctx)
+நிலையான வெறுமை set_cpus_allowed_dl(கட்டமைப்பு task_struct *p,
+				கட்டமைப்பு affinity_context *ctx)
 {
-	struct rq *rq;
+	கட்டமைப்பு rq *rq;
 
 	WARN_ON_ONCE(!dl_task(p));
 
@@ -3338,8 +3338,8 @@ static void set_cpus_allowed_dl(struct task_struct *p,
 	 * update. We already made space for us in the destination
 	 * domain (see cpuset_can_attach()).
 	 */
-	if (dl_task_needs_bw_move(p, ctx->new_mask)) {
-		struct dl_bw *src_dl_b;
+	எனில் (dl_task_needs_bw_move(p, ctx->new_mask)) {
+		கட்டமைப்பு dl_bw *src_dl_b;
 
 		src_dl_b = dl_bw_of(cpu_of(rq));
 		/*
@@ -3355,43 +3355,43 @@ static void set_cpus_allowed_dl(struct task_struct *p,
 	set_cpus_allowed_common(p, ctx);
 }
 
-bool dl_task_needs_bw_move(struct task_struct *p,
-			   const struct cpumask *new_mask)
+bool dl_task_needs_bw_move(கட்டமைப்பு task_struct *p,
+			   மாறிலி கட்டமைப்பு cpumask *new_mask)
 {
-	if (!dl_task(p))
-		return false;
+	எனில் (!dl_task(p))
+		திரும்பு false;
 
-	return !cpumask_intersects(task_rq(p)->rd->span, new_mask);
+	திரும்பு !cpumask_intersects(task_rq(p)->rd->span, new_mask);
 }
 
 /* Assumes rq->lock is held */
-static void rq_online_dl(struct rq *rq)
+நிலையான வெறுமை rq_online_dl(கட்டமைப்பு rq *rq)
 {
-	if (rq->dl.overloaded)
+	எனில் (rq->dl.overloaded)
 		dl_set_overload(rq);
 
-	if (rq->dl.dl_nr_running > 0)
+	எனில் (rq->dl.dl_nr_running > 0)
 		cpudl_set(&rq->rd->cpudl, rq->cpu, rq->dl.earliest_dl.curr);
-	else
+	இல்லையெனில்
 		cpudl_clear(&rq->rd->cpudl, rq->cpu, true);
 }
 
 /* Assumes rq->lock is held */
-static void rq_offline_dl(struct rq *rq)
+நிலையான வெறுமை rq_offline_dl(கட்டமைப்பு rq *rq)
 {
-	if (rq->dl.overloaded)
+	எனில் (rq->dl.overloaded)
 		dl_clear_overload(rq);
 
 	cpudl_clear(&rq->rd->cpudl, rq->cpu, false);
 }
 
-void __init init_sched_dl_class(void)
+வெறுமை __init init_sched_dl_class(வெறுமை)
 {
-	unsigned int i;
+	unsigned முழு i;
 
 	for_each_possible_cpu(i)
-		zalloc_cpumask_var_node(&per_cpu(local_cpu_mask_dl, i),
-					GFP_KERNEL, cpu_to_node(i));
+		zalloc_cpumask_var_முனை(&per_cpu(local_cpu_mask_dl, i),
+					GFP_KERNEL, cpu_to_முனை(i));
 }
 
 /*
@@ -3399,19 +3399,19 @@ void __init init_sched_dl_class(void)
  * if a root domain has reserved bandwidth for DL tasks, the DL bandwidth
  * check will prevent CPU hotplug from deactivating all CPUs in that domain.
  */
-static void dl_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
+நிலையான வெறுமை dl_get_task_effective_cpus(கட்டமைப்பு task_struct *p, கட்டமைப்பு cpumask *cpus)
 {
-	const struct cpumask *hk_msk;
+	மாறிலி கட்டமைப்பு cpumask *hk_msk;
 
 	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
+	எனில் (housekeeping_enabled(HK_TYPE_DOMAIN)) {
+		எனில் (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
 			/*
 			 * CPUs isolated by isolcpu="domain" always belong to
 			 * def_root_domain.
 			 */
 			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-			return;
+			திரும்பு;
 		}
 	}
 
@@ -3424,18 +3424,18 @@ static void dl_get_task_effective_cpus(struct task_struct *p, struct cpumask *cp
 }
 
 /* The caller should hold cpuset_mutex */
-void dl_add_task_root_domain(struct task_struct *p)
+வெறுமை dl_add_task_வேர்_domain(கட்டமைப்பு task_struct *p)
 {
-	struct rq_flags rf;
-	struct rq *rq;
-	struct dl_bw *dl_b;
-	unsigned int cpu;
-	struct cpumask *msk;
+	கட்டமைப்பு rq_flags rf;
+	கட்டமைப்பு rq *rq;
+	கட்டமைப்பு dl_bw *dl_b;
+	unsigned முழு cpu;
+	கட்டமைப்பு cpumask *msk;
 
 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
-	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
+	எனில் (!dl_task(p) || dl_entity_is_special(&p->dl)) {
 		raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
-		return;
+		திரும்பு;
 	}
 
 	msk = this_cpu_cpumask_var_ptr(local_cpu_mask_dl);
@@ -3451,41 +3451,41 @@ void dl_add_task_root_domain(struct task_struct *p)
 	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
 }
 
-static void dl_server_add_bw(struct root_domain *rd, int cpu)
+நிலையான வெறுமை dl_server_add_bw(கட்டமைப்பு வேர்_domain *rd, முழு cpu)
 {
-	struct sched_dl_entity *dl_se;
+	கட்டமைப்பு sched_dl_entity *dl_se;
 
 	dl_se = &cpu_rq(cpu)->fair_server;
-	if (dl_server(dl_se) && dl_se->dl_bw_attached && cpu_active(cpu))
+	எனில் (dl_server(dl_se) && dl_se->dl_bw_attached && cpu_active(cpu))
 		__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(cpu));
 
 #ifdef CONFIG_SCHED_CLASS_EXT
 	dl_se = &cpu_rq(cpu)->ext_server;
-	if (dl_server(dl_se) && dl_se->dl_bw_attached && cpu_active(cpu))
+	எனில் (dl_server(dl_se) && dl_se->dl_bw_attached && cpu_active(cpu))
 		__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(cpu));
 #endif
 }
 
-static u64 dl_server_read_bw(int cpu)
+நிலையான u64 dl_server_read_bw(முழு cpu)
 {
 	u64 dl_bw = 0;
 
-	if (cpu_rq(cpu)->fair_server.dl_server &&
+	எனில் (cpu_rq(cpu)->fair_server.dl_server &&
 	    cpu_rq(cpu)->fair_server.dl_bw_attached)
 		dl_bw += cpu_rq(cpu)->fair_server.dl_bw;
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (cpu_rq(cpu)->ext_server.dl_server &&
+	எனில் (cpu_rq(cpu)->ext_server.dl_server &&
 	    cpu_rq(cpu)->ext_server.dl_bw_attached)
 		dl_bw += cpu_rq(cpu)->ext_server.dl_bw;
 #endif
 
-	return dl_bw;
+	திரும்பு dl_bw;
 }
 
-void dl_clear_root_domain(struct root_domain *rd)
+வெறுமை dl_clear_வேர்_domain(கட்டமைப்பு வேர்_domain *rd)
 {
-	int i;
+	முழு i;
 
 	guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
 
@@ -3505,12 +3505,12 @@ void dl_clear_root_domain(struct root_domain *rd)
 		dl_server_add_bw(rd, i);
 }
 
-void dl_clear_root_domain_cpu(int cpu)
+வெறுமை dl_clear_வேர்_domain_cpu(முழு cpu)
 {
-	dl_clear_root_domain(cpu_rq(cpu)->rd);
+	dl_clear_வேர்_domain(cpu_rq(cpu)->rd);
 }
 
-static void switched_from_dl(struct rq *rq, struct task_struct *p)
+நிலையான வெறுமை switched_from_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
 	/*
 	 * task_non_contending() can start the "inactive timer" (if the 0-lag
@@ -3520,7 +3520,7 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
 	 * SCHED_DEADLINE until the 0-lag time passes, inactive_task_timer()
 	 * will reset the task parameters.
 	 */
-	if (task_on_rq_queued(p) && p->dl.dl_runtime)
+	எனில் (task_on_rq_queued(p) && p->dl.dl_runtime)
 		task_non_contending(&p->dl, false);
 
 	/*
@@ -3529,14 +3529,14 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
 	 */
 	dec_dl_tasks_cs(p);
 
-	if (!task_on_rq_queued(p)) {
+	எனில் (!task_on_rq_queued(p)) {
 		/*
 		 * Inactive timer is armed. However, p is leaving DEADLINE and
 		 * might migrate away from this rq while continuing to run on
 		 * some other class. We need to remove its contribution from
 		 * this rq running_bw now, or sub_rq_bw (below) will complain.
 		 */
-		if (p->dl.dl_non_contending)
+		எனில் (p->dl.dl_non_contending)
 			sub_running_bw(&p->dl, &rq->dl);
 		sub_rq_bw(&p->dl, &rq->dl);
 	}
@@ -3546,7 +3546,7 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
 	 * at the 0-lag time, because the task could have been migrated
 	 * while SCHED_OTHER in the meanwhile.
 	 */
-	if (p->dl.dl_non_contending)
+	எனில் (p->dl.dl_non_contending)
 		p->dl.dl_non_contending = 0;
 
 	/*
@@ -3554,8 +3554,8 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
 	 * this is the right place to try to pull some other one
 	 * from an overloaded CPU, if any.
 	 */
-	if (!task_on_rq_queued(p) || rq->dl.dl_nr_running)
-		return;
+	எனில் (!task_on_rq_queued(p) || rq->dl.dl_nr_running)
+		திரும்பு;
 
 	deadline_queue_pull_task(rq);
 }
@@ -3564,7 +3564,7 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
  * When switching to -deadline, we may overload the rq, then
  * we try to push someone off, if possible.
  */
-static void switched_to_dl(struct rq *rq, struct task_struct *p)
+நிலையான வெறுமை switched_to_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
 	cancel_inactive_timer(&p->dl);
 
@@ -3575,75 +3575,75 @@ static void switched_to_dl(struct rq *rq, struct task_struct *p)
 	inc_dl_tasks_cs(p);
 
 	/* If p is not queued we will update its parameters at next wakeup. */
-	if (!task_on_rq_queued(p)) {
+	எனில் (!task_on_rq_queued(p)) {
 		add_rq_bw(&p->dl, &rq->dl);
 
-		return;
+		திரும்பு;
 	}
 
-	if (rq->donor != p) {
-		if (p->nr_cpus_allowed > 1 && rq->dl.overloaded)
-			deadline_queue_push_tasks(rq);
-		if (dl_task(rq->donor))
+	எனில் (rq->donor != p) {
+		எனில் (p->nr_cpus_allowed > 1 && rq->dl.overloaded)
+			deadline_queue_தள்ளு_tasks(rq);
+		எனில் (dl_task(rq->donor))
 			wakeup_preempt_dl(rq, p, 0);
-		else
+		இல்லையெனில்
 			resched_curr(rq);
-	} else {
+	} இல்லையெனில் {
 		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
 	}
 }
 
-static u64 get_prio_dl(struct rq *rq, struct task_struct *p)
+நிலையான u64 get_prio_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p)
 {
 	/*
 	 * Make sure to update current so we don't return a stale value.
 	 */
-	if (task_current_donor(rq, p))
+	எனில் (task_current_donor(rq, p))
 		update_curr_dl(rq);
 
-	return p->dl.deadline;
+	திரும்பு p->dl.deadline;
 }
 
 /*
  * If the scheduling parameters of a -deadline task changed,
  * a push or pull operation might be needed.
  */
-static void prio_changed_dl(struct rq *rq, struct task_struct *p, u64 old_deadline)
+நிலையான வெறுமை prio_changed_dl(கட்டமைப்பு rq *rq, கட்டமைப்பு task_struct *p, u64 old_deadline)
 {
-	if (!task_on_rq_queued(p))
-		return;
+	எனில் (!task_on_rq_queued(p))
+		திரும்பு;
 
-	if (p->dl.deadline == old_deadline)
-		return;
+	எனில் (p->dl.deadline == old_deadline)
+		திரும்பு;
 
-	if (dl_time_before(old_deadline, p->dl.deadline))
+	எனில் (dl_time_before(old_deadline, p->dl.deadline))
 		deadline_queue_pull_task(rq);
 
-	if (task_current_donor(rq, p)) {
+	எனில் (task_current_donor(rq, p)) {
 		/*
 		 * If we now have a earlier deadline task than p,
 		 * then reschedule, provided p is still on this
 		 * runqueue.
 		 */
-		if (dl_time_before(rq->dl.earliest_dl.curr, p->dl.deadline))
+		எனில் (dl_time_before(rq->dl.earliest_dl.curr, p->dl.deadline))
 			resched_curr(rq);
-	} else {
+	} இல்லையெனில் {
 		/*
 		 * Current may not be deadline in case p was throttled but we
 		 * have just replenished it (e.g. rt_mutex_setprio()).
 		 *
 		 * Otherwise, if p was given an earlier deadline, reschedule.
 		 */
-		if (!dl_task(rq->curr) ||
+		எனில் (!dl_task(rq->curr) ||
 		    dl_time_before(p->dl.deadline, rq->curr->dl.deadline))
 			resched_curr(rq);
 	}
 }
 
 #ifdef CONFIG_SCHED_CORE
-static int task_is_throttled_dl(struct task_struct *p, int cpu)
+நிலையான முழு task_is_throttled_dl(கட்டமைப்பு task_struct *p, முழு cpu)
 {
-	return p->dl.dl_throttled;
+	திரும்பு p->dl.dl_throttled;
 }
 #endif
 
@@ -3687,14 +3687,14 @@ DEFINE_SCHED_CLASS(dl) = {
  */
 u64 dl_cookie;
 
-int sched_dl_global_validate(void)
+முழு sched_dl_global_validate(வெறுமை)
 {
 	u64 runtime = global_rt_runtime();
 	u64 period = global_rt_period();
 	u64 new_bw = to_ratio(period, runtime);
 	u64 cookie = ++dl_cookie;
-	struct dl_bw *dl_b;
-	int cpu, cpus, ret = 0;
+	கட்டமைப்பு dl_bw *dl_b;
+	முழு cpu, cpus, ret = 0;
 	unsigned long flags;
 
 	/*
@@ -3705,33 +3705,33 @@ int sched_dl_global_validate(void)
 	for_each_online_cpu(cpu) {
 		rcu_read_lock_sched();
 
-		if (dl_bw_visited(cpu, cookie))
-			goto next;
+		எனில் (dl_bw_visited(cpu, cookie))
+			செல் next;
 
 		dl_b = dl_bw_of(cpu);
 		cpus = dl_bw_cpus(cpu);
 
 		raw_spin_lock_irqsave(&dl_b->lock, flags);
-		if (new_bw * cpus < dl_b->total_bw)
+		எனில் (new_bw * cpus < dl_b->total_bw)
 			ret = -EBUSY;
 		raw_spin_unlock_irqrestore(&dl_b->lock, flags);
 
 next:
 		rcu_read_unlock_sched();
 
-		if (ret)
-			break;
+		எனில் (ret)
+			நிறுத்து;
 	}
 
-	return ret;
+	திரும்பு ret;
 }
 
-static void init_dl_rq_bw_ratio(struct dl_rq *dl_rq)
+நிலையான வெறுமை init_dl_rq_bw_ratio(கட்டமைப்பு dl_rq *dl_rq)
 {
-	if (global_rt_runtime() == RUNTIME_INF) {
+	எனில் (global_rt_runtime() == RUNTIME_INF) {
 		dl_rq->bw_ratio = 1 << RATIO_SHIFT;
 		dl_rq->max_bw = dl_rq->extra_bw = 1 << BW_SHIFT;
-	} else {
+	} இல்லையெனில் {
 		dl_rq->bw_ratio = to_ratio(global_rt_runtime(),
 			  global_rt_period()) >> (BW_SHIFT - RATIO_SHIFT);
 		dl_rq->max_bw = dl_rq->extra_bw =
@@ -3739,15 +3739,15 @@ static void init_dl_rq_bw_ratio(struct dl_rq *dl_rq)
 	}
 }
 
-void sched_dl_do_global(void)
+வெறுமை sched_dl_do_global(வெறுமை)
 {
 	u64 new_bw = -1;
 	u64 cookie = ++dl_cookie;
-	struct dl_bw *dl_b;
-	int cpu;
+	கட்டமைப்பு dl_bw *dl_b;
+	முழு cpu;
 	unsigned long flags;
 
-	if (global_rt_runtime() != RUNTIME_INF)
+	எனில் (global_rt_runtime() != RUNTIME_INF)
 		new_bw = to_ratio(global_rt_period(), global_rt_runtime());
 
 	for_each_possible_cpu(cpu)
@@ -3756,9 +3756,9 @@ void sched_dl_do_global(void)
 	for_each_possible_cpu(cpu) {
 		rcu_read_lock_sched();
 
-		if (dl_bw_visited(cpu, cookie)) {
+		எனில் (dl_bw_visited(cpu, cookie)) {
 			rcu_read_unlock_sched();
-			continue;
+			தொடர்;
 		}
 
 		dl_b = dl_bw_of(cpu);
@@ -3779,22 +3779,22 @@ void sched_dl_do_global(void)
  *
  * This function is called while holding p's rq->lock.
  */
-int sched_dl_overflow(struct task_struct *p, int policy,
-		      const struct sched_attr *attr)
+முழு sched_dl_overflow(கட்டமைப்பு task_struct *p, முழு policy,
+		      மாறிலி கட்டமைப்பு sched_attr *attr)
 {
 	u64 period = attr->sched_period ?: attr->sched_deadline;
 	u64 runtime = attr->sched_runtime;
 	u64 new_bw = dl_policy(policy) ? to_ratio(period, runtime) : 0;
-	int cpus, err = -1, cpu = task_cpu(p);
-	struct dl_bw *dl_b = dl_bw_of(cpu);
+	முழு cpus, err = -1, cpu = task_cpu(p);
+	கட்டமைப்பு dl_bw *dl_b = dl_bw_of(cpu);
 	unsigned long cap;
 
-	if (attr->sched_flags & SCHED_FLAG_SUGOV)
-		return 0;
+	எனில் (attr->sched_flags & SCHED_FLAG_SUGOV)
+		திரும்பு 0;
 
 	/* !deadline task may carry old deadline bandwidth */
-	if (new_bw == p->dl.dl_bw && task_has_dl_policy(p))
-		return 0;
+	எனில் (new_bw == p->dl.dl_bw && task_has_dl_policy(p))
+		திரும்பு 0;
 
 	/*
 	 * Either if a task, enters, leave, or stays -deadline but changes
@@ -3805,13 +3805,13 @@ int sched_dl_overflow(struct task_struct *p, int policy,
 	cpus = dl_bw_cpus(cpu);
 	cap = dl_bw_capacity(cpu);
 
-	if (dl_policy(policy) && !task_has_dl_policy(p) &&
+	எனில் (dl_policy(policy) && !task_has_dl_policy(p) &&
 	    !__dl_overflow(dl_b, cap, 0, new_bw)) {
-		if (hrtimer_active(&p->dl.inactive_timer))
+		எனில் (hrtimer_active(&p->dl.inactive_timer))
 			__dl_sub(dl_b, p->dl.dl_bw, cpus);
 		__dl_add(dl_b, new_bw, cpus);
 		err = 0;
-	} else if (dl_policy(policy) && task_has_dl_policy(p) &&
+	} இல்லையெனில் எனில் (dl_policy(policy) && task_has_dl_policy(p) &&
 		   !__dl_overflow(dl_b, cap, p->dl.dl_bw, new_bw)) {
 		/*
 		 * XXX this is slightly incorrect: when the task
@@ -3824,7 +3824,7 @@ int sched_dl_overflow(struct task_struct *p, int policy,
 		__dl_add(dl_b, new_bw, cpus);
 		dl_change_utilization(p, new_bw);
 		err = 0;
-	} else if (!dl_policy(policy) && task_has_dl_policy(p)) {
+	} இல்லையெனில் எனில் (!dl_policy(policy) && task_has_dl_policy(p)) {
 		/*
 		 * Do not decrease the total deadline utilization here,
 		 * switched_from_dl() will take care to do it at the correct
@@ -3834,7 +3834,7 @@ int sched_dl_overflow(struct task_struct *p, int policy,
 	}
 	raw_spin_unlock(&dl_b->lock);
 
-	return err;
+	திரும்பு err;
 }
 
 /*
@@ -3845,9 +3845,9 @@ int sched_dl_overflow(struct task_struct *p, int policy,
  * absolute deadline will be properly calculated when the task is enqueued
  * for the first time with its new policy.
  */
-void __setparam_dl(struct task_struct *p, const struct sched_attr *attr)
+வெறுமை __setparam_dl(கட்டமைப்பு task_struct *p, மாறிலி கட்டமைப்பு sched_attr *attr)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
+	கட்டமைப்பு sched_dl_entity *dl_se = &p->dl;
 
 	dl_se->dl_runtime = attr->sched_runtime;
 	dl_se->dl_deadline = attr->sched_deadline;
@@ -3857,23 +3857,23 @@ void __setparam_dl(struct task_struct *p, const struct sched_attr *attr)
 	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
 }
 
-void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags)
+வெறுமை __getparam_dl(கட்டமைப்பு task_struct *p, கட்டமைப்பு sched_attr *attr, unsigned முழு flags)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
-	struct rq *rq = task_rq(p);
+	கட்டமைப்பு sched_dl_entity *dl_se = &p->dl;
+	கட்டமைப்பு rq *rq = task_rq(p);
 	u64 adj_deadline;
 
 	attr->sched_priority = p->rt_priority;
-	if (flags & SCHED_GETATTR_FLAG_DL_DYNAMIC) {
+	எனில் (flags & SCHED_GETATTR_FLAG_DL_DYNAMIC) {
 		guard(raw_spinlock_irq)(&rq->__lock);
 		update_rq_clock(rq);
-		if (task_current(rq, p))
+		எனில் (task_current(rq, p))
 			update_curr_dl(rq);
 
 		attr->sched_runtime = dl_se->runtime;
 		adj_deadline = dl_se->deadline - rq_clock(rq) + ktime_get_ns();
 		attr->sched_deadline = adj_deadline;
-	} else {
+	} இல்லையெனில் {
 		attr->sched_runtime = dl_se->dl_runtime;
 		attr->sched_deadline = dl_se->dl_deadline;
 	}
@@ -3892,55 +3892,55 @@ void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int 
  * below 2^63 ns (we have to check both sched_deadline and
  * sched_period, as the latter can be zero).
  */
-bool __checkparam_dl(const struct sched_attr *attr)
+bool __checkparam_dl(மாறிலி கட்டமைப்பு sched_attr *attr)
 {
 	u64 period, max, min;
 
 	/* special dl tasks don't actually use any parameter */
-	if (attr->sched_flags & SCHED_FLAG_SUGOV)
-		return true;
+	எனில் (attr->sched_flags & SCHED_FLAG_SUGOV)
+		திரும்பு true;
 
 	/* deadline != 0 */
-	if (attr->sched_deadline == 0)
-		return false;
+	எனில் (attr->sched_deadline == 0)
+		திரும்பு false;
 
 	/*
 	 * Since we truncate DL_SCALE bits, make sure we're at least
 	 * that big.
 	 */
-	if (attr->sched_runtime < (1ULL << DL_SCALE))
-		return false;
+	எனில் (attr->sched_runtime < (1ULL << DL_SCALE))
+		திரும்பு false;
 
 	/*
 	 * Since we use the MSB for wrap-around and sign issues, make
 	 * sure it's not set (mind that period can be equal to zero).
 	 */
-	if (attr->sched_deadline & (1ULL << 63) ||
+	எனில் (attr->sched_deadline & (1ULL << 63) ||
 	    attr->sched_period & (1ULL << 63))
-		return false;
+		திரும்பு false;
 
 	period = attr->sched_period;
-	if (!period)
+	எனில் (!period)
 		period = attr->sched_deadline;
 
 	/* runtime <= deadline <= period (if period != 0) */
-	if (period < attr->sched_deadline ||
+	எனில் (period < attr->sched_deadline ||
 	    attr->sched_deadline < attr->sched_runtime)
-		return false;
+		திரும்பு false;
 
 	max = (u64)READ_ONCE(sysctl_sched_dl_period_max) * NSEC_PER_USEC;
 	min = (u64)READ_ONCE(sysctl_sched_dl_period_min) * NSEC_PER_USEC;
 
-	if (period < min || period > max)
-		return false;
+	எனில் (period < min || period > max)
+		திரும்பு false;
 
-	return true;
+	திரும்பு true;
 }
 
 /*
  * This function clears the sched_dl_entity static params.
  */
-static void __dl_clear_params(struct sched_dl_entity *dl_se)
+நிலையான வெறுமை __dl_clear_params(கட்டமைப்பு sched_dl_entity *dl_se)
 {
 	dl_se->dl_runtime		= 0;
 	dl_se->dl_deadline		= 0;
@@ -3963,56 +3963,56 @@ static void __dl_clear_params(struct sched_dl_entity *dl_se)
 #endif
 }
 
-void init_dl_entity(struct sched_dl_entity *dl_se)
+வெறுமை init_dl_entity(கட்டமைப்பு sched_dl_entity *dl_se)
 {
-	RB_CLEAR_NODE(&dl_se->rb_node);
+	RB_CLEAR_முனை(&dl_se->rb_முனை);
 	init_dl_task_timer(dl_se);
 	init_dl_inactive_task_timer(dl_se);
 	__dl_clear_params(dl_se);
 }
 
-bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr)
+bool dl_param_changed(கட்டமைப்பு task_struct *p, மாறிலி கட்டமைப்பு sched_attr *attr)
 {
-	struct sched_dl_entity *dl_se = &p->dl;
+	கட்டமைப்பு sched_dl_entity *dl_se = &p->dl;
 
-	if (dl_se->dl_runtime != attr->sched_runtime ||
+	எனில் (dl_se->dl_runtime != attr->sched_runtime ||
 	    dl_se->dl_deadline != attr->sched_deadline ||
 	    dl_se->dl_period != attr->sched_period ||
 	    dl_se->flags != (attr->sched_flags & SCHED_DL_FLAGS))
-		return true;
+		திரும்பு true;
 
-	return false;
+	திரும்பு false;
 }
 
-int dl_cpuset_cpumask_can_shrink(const struct cpumask *cur,
-				 const struct cpumask *trial)
+முழு dl_cpuset_cpumask_can_shrink(மாறிலி கட்டமைப்பு cpumask *cur,
+				 மாறிலி கட்டமைப்பு cpumask *trial)
 {
 	unsigned long flags, cap;
-	struct dl_bw *cur_dl_b;
-	int ret = 1;
+	கட்டமைப்பு dl_bw *cur_dl_b;
+	முழு ret = 1;
 
 	rcu_read_lock_sched();
 	cur_dl_b = dl_bw_of(cpumask_any(cur));
 	cap = __dl_bw_capacity(trial);
 	raw_spin_lock_irqsave(&cur_dl_b->lock, flags);
-	if (__dl_overflow(cur_dl_b, cap, 0, 0))
+	எனில் (__dl_overflow(cur_dl_b, cap, 0, 0))
 		ret = 0;
 	raw_spin_unlock_irqrestore(&cur_dl_b->lock, flags);
 	rcu_read_unlock_sched();
 
-	return ret;
+	திரும்பு ret;
 }
 
-enum dl_bw_request {
+எண்ணிக்கை dl_bw_request {
 	dl_bw_req_deactivate = 0,
 	dl_bw_req_alloc,
 	dl_bw_req_free
 };
 
-static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
+நிலையான முழு dl_bw_manage(எண்ணிக்கை dl_bw_request req, முழு cpu, u64 dl_bw)
 {
 	unsigned long flags, cap;
-	struct dl_bw *dl_b;
+	கட்டமைப்பு dl_bw *dl_b;
 	bool overflow = 0;
 	u64 dl_server_bw = 0;
 
@@ -4021,14 +4021,14 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
 	raw_spin_lock_irqsave(&dl_b->lock, flags);
 
 	cap = dl_bw_capacity(cpu);
-	switch (req) {
-	case dl_bw_req_free:
+	தேர்வு (req) {
+	நிலை dl_bw_req_free:
 		__dl_sub(dl_b, dl_bw, dl_bw_cpus(cpu));
-		break;
-	case dl_bw_req_alloc:
+		நிறுத்து;
+	நிலை dl_bw_req_alloc:
 		overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
 
-		if (!overflow) {
+		எனில் (!overflow) {
 			/*
 			 * We reserve space in the destination
 			 * root_domain, as we can't fail after this point.
@@ -4037,8 +4037,8 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
 			 */
 			__dl_add(dl_b, dl_bw, dl_bw_cpus(cpu));
 		}
-		break;
-	case dl_bw_req_deactivate:
+		நிறுத்து;
+	நிலை dl_bw_req_deactivate:
 		/*
 		 * cpu is not off yet, but we need to do the math by
 		 * considering it off already (i.e., what would happen if we
@@ -4059,43 +4059,43 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
 		 * dl_servers we can discount, as tasks will be moved out the
 		 * offlined CPUs anyway.
 		 */
-		if (dl_b->total_bw - dl_server_bw > 0) {
+		எனில் (dl_b->total_bw - dl_server_bw > 0) {
 			/*
 			 * Leaving at least one CPU for DEADLINE tasks seems a
 			 * wise thing to do. As said above, cpu is not offline
 			 * yet, so account for that.
 			 */
-			if (dl_bw_cpus(cpu) - 1)
+			எனில் (dl_bw_cpus(cpu) - 1)
 				overflow = __dl_overflow(dl_b, cap, dl_server_bw, 0);
-			else
+			இல்லையெனில்
 				overflow = 1;
 		}
 
-		break;
+		நிறுத்து;
 	}
 
 	raw_spin_unlock_irqrestore(&dl_b->lock, flags);
 	rcu_read_unlock_sched();
 
-	return overflow ? -EBUSY : 0;
+	திரும்பு overflow ? -EBUSY : 0;
 }
 
-int dl_bw_deactivate(int cpu)
+முழு dl_bw_deactivate(முழு cpu)
 {
-	return dl_bw_manage(dl_bw_req_deactivate, cpu, 0);
+	திரும்பு dl_bw_manage(dl_bw_req_deactivate, cpu, 0);
 }
 
-int dl_bw_alloc(int cpu, u64 dl_bw)
+முழு dl_bw_alloc(முழு cpu, u64 dl_bw)
 {
-	return dl_bw_manage(dl_bw_req_alloc, cpu, dl_bw);
+	திரும்பு dl_bw_manage(dl_bw_req_alloc, cpu, dl_bw);
 }
 
-void dl_bw_free(int cpu, u64 dl_bw)
+வெறுமை dl_bw_free(முழு cpu, u64 dl_bw)
 {
 	dl_bw_manage(dl_bw_req_free, cpu, dl_bw);
 }
 
-void print_dl_stats(struct seq_file *m, int cpu)
+வெறுமை print_dl_stats(கட்டமைப்பு seq_file *m, முழு cpu)
 {
 	print_dl_rq(m, cpu, &cpu_rq(cpu)->dl);
 }

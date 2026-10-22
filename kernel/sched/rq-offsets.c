@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-2.0
 #define COMPILE_OFFSETS
-#include <linux/kbuild.h>
-#include <linux/types.h>
-#include "sched.h"
+#அந்தர்பாவ <linux/kbuild.h>
+#அந்தர்பாவ <linux/types.h>
+#அந்தர்பாவ "sched.h"
 
-int main(void)
+முழு முதன்மை(வெறுமை)
 {
-	DEFINE(RQ_nr_pinned, offsetof(struct rq, nr_pinned));
+	DEFINE(RQ_nr_pinned, offsetof(கட்டமைப்பு rq, nr_pinned));
 
-	return 0;
+	திரும்பு 0;
 }
