@@ -20,47 +20,47 @@
  *  Adaptive scheduling granularity, math enhancements by Peter Zijlstra
  *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
  */
-#include <linux/energy_model.h>
-#include <linux/mmap_lock.h>
-#include <linux/hugetlb_inline.h>
-#include <linux/jiffies.h>
-#include <linux/math.h>
-#include <linux/mm_api.h>
-#include <linux/highmem.h>
-#include <linux/hrtimer.h>
-#include <linux/hrtimer_bases.h>
-#include <linux/spinlock_api.h>
-#include <linux/cpumask_api.h>
-#include <linux/lockdep_api.h>
-#include <linux/softirq.h>
-#include <linux/refcount_api.h>
-#include <linux/topology.h>
-#include <linux/sched/clock.h>
-#include <linux/sched/cond_resched.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/nohz.h>
-#include <linux/sched/prio.h>
-#include <linux/static_call.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/energy_model.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/mmap_lock.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/hugetlb_inline.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/jiffies.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/math.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/mm_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/highmem.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/hrtimer.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/hrtimer_bases.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/spinlock_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/cpumask_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/lockdep_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/softirq.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/refcount_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/topology.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/clock.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/cond_resched.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/cputime.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/isolation.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/nohz.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/prio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/static_call.h>
 
-#include <linux/cpuidle.h>
-#include <linux/interrupt.h>
-#include <linux/memory-tiers.h>
-#include <linux/mempolicy.h>
-#include <linux/mutex_api.h>
-#include <linux/profile.h>
-#include <linux/psi.h>
-#include <linux/ratelimit.h>
-#include <linux/task_work.h>
-#include <linux/rbtree_augmented.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/cpuidle.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/interrupt.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/memory-tiers.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/mempolicy.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/mutex_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/profile.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/psi.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/ratelimit.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/task_work.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/rbtree_augmented.h>
 
-#include <asm/switch_to.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/switch_to.h>
 
-#include <uapi/linux/sched/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "stats.h"
-#include "autogroup.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sched.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "stats.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "autogroup.h"
 
 /*
  * The initial- and re-scaling of tunables is configurable
@@ -73,7 +73,7 @@
  *
  * (default SCHED_TUNABLESCALING_LOG = *(1+ilog(ncpus))
  */
-unsigned int sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_LOG;
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_LOG;
 
 /*
  * Default base time slice (request size r_i) for SCHED_NORMAL/SCHED_BATCH:
@@ -83,24 +83,24 @@ unsigned int sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_LOG;
  *
  * (default: 0.70 msec * (1 + ilog(ncpus)), units: nanoseconds)
  */
-unsigned int sysctl_sched_base_slice			= 700000ULL;
-static unsigned int normalized_sysctl_sched_base_slice	= 700000ULL;
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_ਅਧਾਰ_ਟੁਕੜਾ			= 700000ULL;
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ normalized_sysctl_sched_ਅਧਾਰ_ਟੁਕੜਾ	= 700000ULL;
 
-__read_mostly unsigned int sysctl_sched_migration_cost	= 500000UL;
+__read_mostly ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_migration_ਲਾਗਤ	= 500000UL;
 
-static int __init setup_sched_thermal_decay_shift(char *str)
+ਸਥਿਰ ਪੂਰਨ __init ਤਿਆਰੀ_sched_thermal_decay_ਖਿਸਕਾਓ(ਅੱਖਰ *str)
 {
 	pr_warn("Ignoring the deprecated sched_thermal_decay_shift= option\n");
-	return 1;
+	ਵਾਪਸ 1;
 }
-__setup("sched_thermal_decay_shift=", setup_sched_thermal_decay_shift);
+__setup("sched_thermal_decay_shift=", ਤਿਆਰੀ_sched_thermal_decay_ਖਿਸਕਾਓ);
 
 /*
  * For asym packing, by default the lower numbered CPU has higher priority.
  */
-int __weak arch_asym_cpu_priority(int cpu)
+ਪੂਰਨ __weak arch_asym_cpu_ਤਰਜੀਹ(ਪੂਰਨ cpu)
 {
-	return -cpu;
+	ਵਾਪਸ -cpu;
 }
 
 /*
@@ -108,7 +108,7 @@ int __weak arch_asym_cpu_priority(int cpu)
  *
  * (default: ~20%)
  */
-#define fits_capacity(cap, max)	((cap) * 1280 < (max) * 1024)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸਮਾਉਂਦਾ_ਸਮਰੱਥਾ(cap, max)	((cap) * 1280 < (max) * 1024)
 
 /*
  * The margin used when comparing CPU capacities.
@@ -116,9 +116,9 @@ int __weak arch_asym_cpu_priority(int cpu)
  *
  * (default: ~5%)
  */
-#define capacity_greater(cap1, cap2) ((cap1) * 1024 > (cap2) * 1078)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸਮਰੱਥਾ_greater(cap1, cap2) ((cap1) * 1024 > (cap2) * 1078)
 
-#ifdef CONFIG_CFS_BANDWIDTH
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CFS_BANDWIDTH
 /*
  * Amount of runtime to allocate from global (tg) to local (per-cfs_rq) pool
  * each time a cfs_rq requests quota.
@@ -129,62 +129,62 @@ int __weak arch_asym_cpu_priority(int cpu)
  *
  * (default: 5 msec, units: microseconds)
  */
-static unsigned int sysctl_sched_cfs_bandwidth_slice		= 5000UL;
-#endif
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_cfs_bandwidth_ਟੁਕੜਾ		= 5000UL;
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_NUMA_BALANCING
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
 /* Restrict the NUMA promotion throughput (MB/s) for each target node. */
-static unsigned int sysctl_numa_balancing_promote_rate_limit = 65536;
-#endif
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_promote_ਦਰ_ਹੱਦਬੰਦੀ = 65536;
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_SYSCTL
-static const struct ctl_table sched_fair_sysctls[] = {
-#ifdef CONFIG_CFS_BANDWIDTH
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SYSCTL
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ ctl_ਸਾਰਣੀ sched_fair_sysctls[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CFS_BANDWIDTH
 	{
 		.procname       = "sched_cfs_bandwidth_slice_us",
-		.data           = &sysctl_sched_cfs_bandwidth_slice,
-		.maxlen         = sizeof(unsigned int),
-		.mode           = 0644,
+		.ਅੰਕੜੇ           = &sysctl_sched_cfs_bandwidth_ਟੁਕੜਾ,
+		.maxlen         = ਆਕਾਰ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ),
+		.ਬਹੁਲਕ           = 0644,
 		.proc_handler   = proc_dointvec_minmax,
 		.extra1         = SYSCTL_ONE,
 	},
-#endif
-#ifdef CONFIG_NUMA_BALANCING
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
 	{
 		.procname	= "numa_balancing_promote_rate_limit_MBps",
-		.data		= &sysctl_numa_balancing_promote_rate_limit,
-		.maxlen		= sizeof(unsigned int),
-		.mode		= 0644,
+		.ਅੰਕੜੇ		= &sysctl_numa_balancing_promote_ਦਰ_ਹੱਦਬੰਦੀ,
+		.maxlen		= ਆਕਾਰ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ),
+		.ਬਹੁਲਕ		= 0644,
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1		= SYSCTL_ZERO,
 	},
-#endif /* CONFIG_NUMA_BALANCING */
+#ਜੇ_ਅੰਤ /* CONFIG_NUMA_BALANCING */
 };
 
-static int __init sched_fair_sysctl_init(void)
+ਸਥਿਰ ਪੂਰਨ __init sched_fair_sysctl_init(ਖਾਲੀ)
 {
-	register_sysctl_init("kernel", sched_fair_sysctls);
-	return 0;
+	ਰਜਿਸਟਰ_sysctl_init("kernel", sched_fair_sysctls);
+	ਵਾਪਸ 0;
 }
 late_initcall(sched_fair_sysctl_init);
-#endif /* CONFIG_SYSCTL */
+#ਜੇ_ਅੰਤ /* CONFIG_SYSCTL */
 
-static inline void update_load_add(struct load_weight *lw, unsigned long inc)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_ਲੱਦੋ_ਜੋੜੋ(ਬਣਤਰ ਲੱਦੋ_ਭਾਰ *lw, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ inc)
 {
-	lw->weight += inc;
-	lw->inv_weight = 0;
+	lw->ਭਾਰ += inc;
+	lw->inv_ਭਾਰ = 0;
 }
 
-static inline void update_load_sub(struct load_weight *lw, unsigned long dec)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_ਲੱਦੋ_sub(ਬਣਤਰ ਲੱਦੋ_ਭਾਰ *lw, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ dec)
 {
-	lw->weight -= dec;
-	lw->inv_weight = 0;
+	lw->ਭਾਰ -= dec;
+	lw->inv_ਭਾਰ = 0;
 }
 
-static inline void update_load_set(struct load_weight *lw, unsigned long w)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_ਲੱਦੋ_ਸੈੱਟ(ਬਣਤਰ ਲੱਦੋ_ਭਾਰ *lw, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ w)
 {
-	lw->weight = w;
-	lw->inv_weight = 0;
+	lw->ਭਾਰ = w;
+	lw->inv_ਭਾਰ = 0;
 }
 
 /*
@@ -196,61 +196,61 @@ static inline void update_load_set(struct load_weight *lw, unsigned long w)
  *
  * This idea comes from the SD scheduler of Con Kolivas:
  */
-static unsigned int get_update_sysctl_factor(void)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ get_update_sysctl_ਗੁਣਕ(ਖਾਲੀ)
 {
-	unsigned int cpus = min_t(unsigned int, num_online_cpus(), 8);
-	unsigned int factor;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpus = min_t(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, ਅੰਕ_online_cpus(), 8);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਗੁਣਕ;
 
-	switch (sysctl_sched_tunable_scaling) {
-	case SCHED_TUNABLESCALING_NONE:
-		factor = 1;
-		break;
-	case SCHED_TUNABLESCALING_LINEAR:
-		factor = cpus;
-		break;
-	case SCHED_TUNABLESCALING_LOG:
-	default:
-		factor = 1 + ilog2(cpus);
-		break;
+	ਚੋਣ (sysctl_sched_tunable_scaling) {
+	ਹਾਲਤ SCHED_TUNABLESCALING_NONE:
+		ਗੁਣਕ = 1;
+		ਰੋਕੋ;
+	ਹਾਲਤ SCHED_TUNABLESCALING_ਰੇਖਿਕ:
+		ਗੁਣਕ = cpus;
+		ਰੋਕੋ;
+	ਹਾਲਤ SCHED_TUNABLESCALING_LOG:
+	ਮੂਲ:
+		ਗੁਣਕ = 1 + ilog2(cpus);
+		ਰੋਕੋ;
 	}
 
-	return factor;
+	ਵਾਪਸ ਗੁਣਕ;
 }
 
-static void update_sysctl(void)
+ਸਥਿਰ ਖਾਲੀ update_sysctl(ਖਾਲੀ)
 {
-	unsigned int factor = get_update_sysctl_factor();
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਗੁਣਕ = get_update_sysctl_ਗੁਣਕ();
 
-#define SET_SYSCTL(name) \
-	(sysctl_##name = (factor) * normalized_sysctl_##name)
-	SET_SYSCTL(sched_base_slice);
-#undef SET_SYSCTL
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸੈੱਟ_SYSCTL(name) \
+	(sysctl_##name = (ਗੁਣਕ) * normalized_sysctl_##name)
+	ਸੈੱਟ_SYSCTL(sched_ਅਧਾਰ_ਟੁਕੜਾ);
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ ਸੈੱਟ_SYSCTL
 }
 
-void __init sched_init_granularity(void)
+ਖਾਲੀ __init sched_init_granularity(ਖਾਲੀ)
 {
 	update_sysctl();
 }
 
-#ifndef CONFIG_64BIT
-#define WMULT_CONST	(~0U)
-#define WMULT_SHIFT	32
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CONFIG_64_ਦੋਆਧਾਰੀ_ਅੰਕ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WMULT_CONST	(~0U)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WMULT_ਖਿਸਕਾਓ	32
 
-static void __update_inv_weight(struct load_weight *lw)
+ਸਥਿਰ ਖਾਲੀ __update_inv_weight(ਬਣਤਰ ਲੱਦੋ_ਭਾਰ *lw)
 {
-	unsigned long w;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ w;
 
-	if (likely(lw->inv_weight))
-		return;
+	ਜੇ (likely(lw->inv_ਭਾਰ))
+		ਵਾਪਸ;
 
-	w = scale_load_down(lw->weight);
+	w = scale_ਲੱਦੋ_ਥੱਲੇ(lw->ਭਾਰ);
 
-	if (BITS_PER_LONG > 32 && unlikely(w >= WMULT_CONST))
-		lw->inv_weight = 1;
-	else if (unlikely(!w))
-		lw->inv_weight = WMULT_CONST;
-	else
-		lw->inv_weight = WMULT_CONST / w;
+	ਜੇ (ਬਿੱਟ_ਪ੍ਰਤੀ_LONG > 32 && unlikely(w >= WMULT_CONST))
+		lw->inv_ਭਾਰ = 1;
+	ਨਹੀਂਤਾਂ ਜੇ (unlikely(!w))
+		lw->inv_ਭਾਰ = WMULT_CONST;
+	ਨਹੀਂਤਾਂ
+		lw->inv_ਭਾਰ = WMULT_CONST / w;
 }
 
 /*
@@ -265,69 +265,69 @@ static void __update_inv_weight(struct load_weight *lw)
  * Or, weight =< lw.weight (because lw.weight is the runqueue weight), thus
  * weight/lw.weight <= 1, and therefore our shift will also be positive.
  */
-static u64 __calc_delta(u64 delta_exec, unsigned long weight, struct load_weight *lw)
+ਸਥਿਰ u64 __calc_delta(u64 delta_exec, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ, ਬਣਤਰ ਲੱਦੋ_ਭਾਰ *lw)
 {
-	u64 fact = scale_load_down(weight);
+	u64 fact = scale_ਲੱਦੋ_ਥੱਲੇ(ਭਾਰ);
 	u32 fact_hi = (u32)(fact >> 32);
-	int shift = WMULT_SHIFT;
-	int fs;
+	ਪੂਰਨ ਖਿਸਕਾਓ = WMULT_ਖਿਸਕਾਓ;
+	ਪੂਰਨ fs;
 
 	__update_inv_weight(lw);
 
-	if (unlikely(fact_hi)) {
+	ਜੇ (unlikely(fact_hi)) {
 		fs = fls(fact_hi);
-		shift -= fs;
+		ਖਿਸਕਾਓ -= fs;
 		fact >>= fs;
 	}
 
-	fact = mul_u32_u32(fact, lw->inv_weight);
+	fact = mul_u32_u32(fact, lw->inv_ਭਾਰ);
 
 	fact_hi = (u32)(fact >> 32);
-	if (fact_hi) {
+	ਜੇ (fact_hi) {
 		fs = fls(fact_hi);
-		shift -= fs;
+		ਖਿਸਕਾਓ -= fs;
 		fact >>= fs;
 	}
 
-	return mul_u64_u32_shr(delta_exec, fact, shift);
+	ਵਾਪਸ mul_u64_u32_shr(delta_exec, fact, ਖਿਸਕਾਓ);
 }
-#else
-static u64 __calc_delta(u64 delta_exec, unsigned long weight, struct load_weight *lw)
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ u64 __calc_delta(u64 delta_exec, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ, ਬਣਤਰ ਲੱਦੋ_ਭਾਰ *lw)
 {
-	return (delta_exec * weight) / lw->weight;
+	ਵਾਪਸ (delta_exec * ਭਾਰ) / lw->ਭਾਰ;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 /*
  * delta /= w
  */
-static inline u64 calc_delta_fair(u64 delta, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 calc_delta_fair(u64 delta, ਬਣਤਰ sched_entity *se)
 {
-	if (se->h_load.weight != NICE_0_LOAD)
-		delta = __calc_delta(delta, NICE_0_LOAD, &se->h_load);
+	ਜੇ (se->h_ਲੱਦੋ.ਭਾਰ != NICE_0_ਲੱਦੋ)
+		delta = __calc_delta(delta, NICE_0_ਲੱਦੋ, &se->h_ਲੱਦੋ);
 
-	return delta;
+	ਵਾਪਸ delta;
 }
 
-const struct sched_class fair_sched_class;
+ਅਚਲ ਬਣਤਰ sched_class fair_sched_class;
 
 /**************************************************************
  * CFS operations on generic schedulable entities:
  */
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 
 /* Walk up scheduling entities hierarchy */
-#define for_each_sched_entity(se) \
-		for (; se; se = se->parent)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_each_sched_entity(se) \
+		ਲਈ (; se; se = se->ਮਾਪਾ)
 
-static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool list_ਜੋੜੋ_ਪੱਤੀ_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct rq *rq = rq_of(cfs_rq);
-	int cpu = cpu_of(rq);
+	ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
+	ਪੂਰਨ cpu = cpu_ਦਾ(rq);
 
-	if (cfs_rq->on_list)
-		return rq->tmp_alone_branch == &rq->leaf_cfs_rq_list;
+	ਜੇ (cfs_rq->on_list)
+		ਵਾਪਸ rq->tmp_alone_branch == &rq->ਪੱਤੀ_cfs_rq_list;
 
 	cfs_rq->on_list = 1;
 
@@ -340,38 +340,38 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
 	 * tmp_alone_branch either when the branch is connected
 	 * to a tree or when we reach the top of the tree
 	 */
-	if (cfs_rq->tg->parent &&
-	    tg_cfs_rq(cfs_rq->tg->parent, cpu)->on_list) {
+	ਜੇ (cfs_rq->tg->ਮਾਪਾ &&
+	    tg_cfs_rq(cfs_rq->tg->ਮਾਪਾ, cpu)->on_list) {
 		/*
 		 * If parent is already on the list, we add the child
 		 * just before. Thanks to circular linked property of
 		 * the list, this means to put the child at the tail
 		 * of the list that starts by parent.
 		 */
-		list_add_tail_rcu(&cfs_rq->leaf_cfs_rq_list,
-			&(tg_cfs_rq(cfs_rq->tg->parent, cpu)->leaf_cfs_rq_list));
+		list_ਜੋੜੋ_ਪੂਛ_rcu(&cfs_rq->ਪੱਤੀ_cfs_rq_list,
+			&(tg_cfs_rq(cfs_rq->tg->ਮਾਪਾ, cpu)->ਪੱਤੀ_cfs_rq_list));
 		/*
 		 * The branch is now connected to its tree so we can
 		 * reset tmp_alone_branch to the beginning of the
 		 * list.
 		 */
-		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
-		return true;
+		rq->tmp_alone_branch = &rq->ਪੱਤੀ_cfs_rq_list;
+		ਵਾਪਸ true;
 	}
 
-	if (!cfs_rq->tg->parent) {
+	ਜੇ (!cfs_rq->tg->ਮਾਪਾ) {
 		/*
 		 * cfs rq without parent should be put
 		 * at the tail of the list.
 		 */
-		list_add_tail_rcu(&cfs_rq->leaf_cfs_rq_list,
-			&rq->leaf_cfs_rq_list);
+		list_ਜੋੜੋ_ਪੂਛ_rcu(&cfs_rq->ਪੱਤੀ_cfs_rq_list,
+			&rq->ਪੱਤੀ_cfs_rq_list);
 		/*
 		 * We have reach the top of a tree so we can reset
 		 * tmp_alone_branch to the beginning of the list.
 		 */
-		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
-		return true;
+		rq->tmp_alone_branch = &rq->ਪੱਤੀ_cfs_rq_list;
+		ਵਾਪਸ true;
 	}
 
 	/*
@@ -380,19 +380,19 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
 	 * tmp_alone_branch points to the begin of the branch
 	 * where we will add parent.
 	 */
-	list_add_rcu(&cfs_rq->leaf_cfs_rq_list, rq->tmp_alone_branch);
+	list_ਜੋੜੋ_rcu(&cfs_rq->ਪੱਤੀ_cfs_rq_list, rq->tmp_alone_branch);
 	/*
 	 * update tmp_alone_branch to points to the new begin
 	 * of the branch
 	 */
-	rq->tmp_alone_branch = &cfs_rq->leaf_cfs_rq_list;
-	return false;
+	rq->tmp_alone_branch = &cfs_rq->ਪੱਤੀ_cfs_rq_list;
+	ਵਾਪਸ false;
 }
 
-static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ list_del_ਪੱਤੀ_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	if (cfs_rq->on_list) {
-		struct rq *rq = rq_of(cfs_rq);
+	ਜੇ (cfs_rq->on_list) {
+		ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 
 		/*
 		 * With cfs_rq being unthrottled/throttled during an enqueue,
@@ -401,122 +401,122 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
 		 * to the prev element but it will point to rq->leaf_cfs_rq_list
 		 * at the end of the enqueue.
 		 */
-		if (rq->tmp_alone_branch == &cfs_rq->leaf_cfs_rq_list)
-			rq->tmp_alone_branch = cfs_rq->leaf_cfs_rq_list.prev;
+		ਜੇ (rq->tmp_alone_branch == &cfs_rq->ਪੱਤੀ_cfs_rq_list)
+			rq->tmp_alone_branch = cfs_rq->ਪੱਤੀ_cfs_rq_list.prev;
 
-		list_del_rcu(&cfs_rq->leaf_cfs_rq_list);
+		list_del_rcu(&cfs_rq->ਪੱਤੀ_cfs_rq_list);
 		cfs_rq->on_list = 0;
 	}
 }
 
-static inline void assert_list_leaf_cfs_rq(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ assert_list_ਪੱਤੀ_cfs_rq(ਬਣਤਰ rq *rq)
 {
-	WARN_ON_ONCE(rq->tmp_alone_branch != &rq->leaf_cfs_rq_list);
+	WARN_ON_ONCE(rq->tmp_alone_branch != &rq->ਪੱਤੀ_cfs_rq_list);
 }
 
 /* Iterate through all leaf cfs_rq's on a runqueue */
-#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)			\
-	list_for_each_entry_safe(cfs_rq, pos, &rq->leaf_cfs_rq_list,	\
-				 leaf_cfs_rq_list)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_each_ਪੱਤੀ_cfs_rq_ਸੁਰੱਖਿਅਤ(rq, cfs_rq, pos)			\
+	list_for_each_ਇੰਦਰਾਜ_ਸੁਰੱਖਿਅਤ(cfs_rq, pos, &rq->ਪੱਤੀ_cfs_rq_list,	\
+				 ਪੱਤੀ_cfs_rq_list)
 
 /* Do the two (enqueued) entities belong to the same group ? */
-static inline struct cfs_rq *
-is_same_group(struct sched_entity *se, struct sched_entity *pse)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_rq *
+is_same_ਸਮੂਹ(ਬਣਤਰ sched_entity *se, ਬਣਤਰ sched_entity *pse)
 {
-	if (se->cfs_rq == pse->cfs_rq)
-		return se->cfs_rq;
+	ਜੇ (se->cfs_rq == pse->cfs_rq)
+		ਵਾਪਸ se->cfs_rq;
 
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-static inline struct sched_entity *parent_entity(const struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ sched_entity *ਮਾਪਾ_entity(ਅਚਲ ਬਣਤਰ sched_entity *se)
 {
-	return se->parent;
+	ਵਾਪਸ se->ਮਾਪਾ;
 }
 
-static int tg_is_idle(struct task_group *tg)
+ਸਥਿਰ ਪੂਰਨ tg_is_idle(ਬਣਤਰ task_ਸਮੂਹ *tg)
 {
-	return tg->idle > 0;
+	ਵਾਪਸ tg->idle > 0;
 }
 
-static int cfs_rq_is_idle(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਪੂਰਨ cfs_rq_is_idle(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return cfs_rq->idle > 0;
+	ਵਾਪਸ cfs_rq->idle > 0;
 }
 
-static int se_is_idle(struct sched_entity *se)
+ਸਥਿਰ ਪੂਰਨ se_is_idle(ਬਣਤਰ sched_entity *se)
 {
-	if (entity_is_task(se))
-		return task_has_idle_policy(task_of(se));
-	return cfs_rq_is_idle(group_cfs_rq(se));
+	ਜੇ (entity_is_task(se))
+		ਵਾਪਸ task_has_idle_policy(task_ਦਾ(se));
+	ਵਾਪਸ cfs_rq_is_idle(ਸਮੂਹ_cfs_rq(se));
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
 
-#define for_each_sched_entity(se) \
-		for (; se; se = NULL)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_each_sched_entity(se) \
+		ਲਈ (; se; se = ਨਿਰਾ)
 
-static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool list_ਜੋੜੋ_ਪੱਤੀ_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
-{
-}
-
-static inline void assert_list_leaf_cfs_rq(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ list_del_ਪੱਤੀ_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq)
 {
 }
 
-#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)	\
-		for (cfs_rq = &rq->cfs, pos = NULL; cfs_rq; cfs_rq = pos)
-
-static inline struct sched_entity *parent_entity(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ assert_list_ਪੱਤੀ_cfs_rq(ਬਣਤਰ rq *rq)
 {
-	return NULL;
 }
 
-static inline int tg_is_idle(struct task_group *tg)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_each_ਪੱਤੀ_cfs_rq_ਸੁਰੱਖਿਅਤ(rq, cfs_rq, pos)	\
+		ਲਈ (cfs_rq = &rq->cfs, pos = ਨਿਰਾ; cfs_rq; cfs_rq = pos)
+
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ sched_entity *ਮਾਪਾ_entity(ਬਣਤਰ sched_entity *se)
 {
-	return 0;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-static int cfs_rq_is_idle(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ tg_is_idle(ਬਣਤਰ task_ਸਮੂਹ *tg)
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int se_is_idle(struct sched_entity *se)
+ਸਥਿਰ ਪੂਰਨ cfs_rq_is_idle(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return task_has_idle_policy(task_of(se));
+	ਵਾਪਸ 0;
 }
 
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+ਸਥਿਰ ਪੂਰਨ se_is_idle(ਬਣਤਰ sched_entity *se)
+{
+	ਵਾਪਸ task_has_idle_policy(task_ਦਾ(se));
+}
 
-static __always_inline
-bool account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec);
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
+
+ਸਥਿਰ __always_inline
+bool account_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq, u64 delta_exec);
 
 /**************************************************************
  * Scheduling class tree data structure manipulation methods:
  */
 
-extern void __BUILD_BUG_vruntime_cmp(void);
+ਬਾਹਰੀ ਖਾਲੀ __BUILD_BUG_vruntime_cmp(ਖਾਲੀ);
 
 /* Use __builtin_strcmp() because of __HAVE_ARCH_STRCMP: */
 
-#define vruntime_cmp(A, CMP_STR, B) ({				\
-	int __res = 0;						\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ vruntime_cmp(A, CMP_STR, B) ({				\
+	ਪੂਰਨ __res = 0;						\
 								\
-	if (!__builtin_strcmp(CMP_STR, "<")) {			\
+	ਜੇ (!__builtin_strcmp(CMP_STR, "<")) {			\
 		__res = ((s64)((A)-(B)) < 0);			\
-	} else if (!__builtin_strcmp(CMP_STR, "<=")) {		\
+	} ਨਹੀਂਤਾਂ ਜੇ (!__builtin_strcmp(CMP_STR, "<=")) {		\
 		__res = ((s64)((A)-(B)) <= 0);			\
-	} else if (!__builtin_strcmp(CMP_STR, ">")) {		\
+	} ਨਹੀਂਤਾਂ ਜੇ (!__builtin_strcmp(CMP_STR, ">")) {		\
 		__res = ((s64)((A)-(B)) > 0);			\
-	} else if (!__builtin_strcmp(CMP_STR, ">=")) {		\
+	} ਨਹੀਂਤਾਂ ਜੇ (!__builtin_strcmp(CMP_STR, ">=")) {		\
 		__res = ((s64)((A)-(B)) >= 0);			\
-	} else {						\
+	} ਨਹੀਂਤਾਂ {						\
 		/* Unknown operator throws linker error: */	\
 		__BUILD_BUG_vruntime_cmp();			\
 	}							\
@@ -524,14 +524,14 @@ extern void __BUILD_BUG_vruntime_cmp(void);
 	__res;							\
 })
 
-extern void __BUILD_BUG_vruntime_op(void);
+ਬਾਹਰੀ ਖਾਲੀ __BUILD_BUG_vruntime_op(ਖਾਲੀ);
 
-#define vruntime_op(A, OP_STR, B) ({				\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ vruntime_op(A, OP_STR, B) ({				\
 	s64 __res = 0;						\
 								\
-	if (!__builtin_strcmp(OP_STR, "-")) {			\
+	ਜੇ (!__builtin_strcmp(OP_STR, "-")) {			\
 		__res = (s64)((A)-(B));				\
-	} else {						\
+	} ਨਹੀਂਤਾਂ {						\
 		/* Unknown operator throws linker error: */	\
 		__BUILD_BUG_vruntime_op();			\
 	}							\
@@ -540,30 +540,30 @@ extern void __BUILD_BUG_vruntime_op(void);
 })
 
 
-static inline __maybe_unused u64 max_vruntime(u64 max_vruntime, u64 vruntime)
+ਸਥਿਰ ਸਤਰਅੰਦਰ __maybe_unused u64 max_vruntime(u64 max_vruntime, u64 vruntime)
 {
-	if (vruntime_cmp(vruntime, ">", max_vruntime))
+	ਜੇ (vruntime_cmp(vruntime, ">", max_vruntime))
 		max_vruntime = vruntime;
 
-	return max_vruntime;
+	ਵਾਪਸ max_vruntime;
 }
 
-static inline __maybe_unused u64 min_vruntime(u64 min_vruntime, u64 vruntime)
+ਸਥਿਰ ਸਤਰਅੰਦਰ __maybe_unused u64 min_vruntime(u64 min_vruntime, u64 vruntime)
 {
-	if (vruntime_cmp(vruntime, "<", min_vruntime))
+	ਜੇ (vruntime_cmp(vruntime, "<", min_vruntime))
 		min_vruntime = vruntime;
 
-	return min_vruntime;
+	ਵਾਪਸ min_vruntime;
 }
 
-static inline bool entity_before(const struct sched_entity *a,
-				 const struct sched_entity *b)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool entity_before(ਅਚਲ ਬਣਤਰ sched_entity *a,
+				 ਅਚਲ ਬਣਤਰ sched_entity *b)
 {
 	/*
 	 * Tiebreak on vruntime seems unnecessary since it can
 	 * hardly happen.
 	 */
-	return vruntime_cmp(a->deadline, "<", b->deadline);
+	ਵਾਪਸ vruntime_cmp(a->deadline, "<", b->deadline);
 }
 
 /*
@@ -581,13 +581,13 @@ static inline bool entity_before(const struct sched_entity *a,
  * weight of 2, which nicely cancels vs the fuzz in zero_vruntime not actually
  * being the zero-lag point).
  */
-static inline s64 entity_key(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ s64 entity_ਕੁੰਜੀ(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	return vruntime_op(se->vruntime, "-", cfs_rq->zero_vruntime);
+	ਵਾਪਸ vruntime_op(se->vruntime, "-", cfs_rq->zero_vruntime);
 }
 
-#define __node_2_se(node) \
-	rb_entry((node), struct sched_entity, run_node)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __node_2_se(ਗੰਢ) \
+	rb_ਇੰਦਰਾਜ((ਗੰਢ), ਬਣਤਰ sched_entity, ਲੜੀਵਾਰ_ਗੰਢ)
 
 /*
  * Compute virtual time from the per-task service numbers:
@@ -643,95 +643,95 @@ static inline s64 entity_key(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * deltas: (v_i - v0), will be in the order of the maximal (virtual) lag
  * induced in the system due to quantisation.
  */
-static inline unsigned long avg_vruntime_weight(struct cfs_rq *cfs_rq, unsigned long w)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ avg_vruntime_ਭਾਰ(ਬਣਤਰ cfs_rq *cfs_rq, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ w)
 {
-#ifdef CONFIG_64BIT
-	if (cfs_rq->sum_shift)
-		w = max(2UL, w >> cfs_rq->sum_shift);
-#endif
-	return w;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_64_ਦੋਆਧਾਰੀ_ਅੰਕ
+	ਜੇ (cfs_rq->ਜੋੜ_ਖਿਸਕਾਓ)
+		w = max(2UL, w >> cfs_rq->ਜੋੜ_ਖਿਸਕਾਓ);
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ w;
 }
 
-static inline void
-__sum_w_vruntime_add(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+__sum_w_vruntime_add(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	unsigned long weight = avg_vruntime_weight(cfs_rq, se->h_load.weight);
-	s64 w_vruntime, key = entity_key(cfs_rq, se);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ = avg_vruntime_ਭਾਰ(cfs_rq, se->h_ਲੱਦੋ.ਭਾਰ);
+	s64 w_vruntime, ਕੁੰਜੀ = entity_ਕੁੰਜੀ(cfs_rq, se);
 
-	w_vruntime = key * weight;
+	w_vruntime = ਕੁੰਜੀ * ਭਾਰ;
 	WARN_ON_ONCE((w_vruntime >> 63) != (w_vruntime >> 62));
 
-	cfs_rq->sum_w_vruntime += w_vruntime;
-	cfs_rq->sum_weight += weight;
+	cfs_rq->ਜੋੜ_w_vruntime += w_vruntime;
+	cfs_rq->ਜੋੜ_ਭਾਰ += ਭਾਰ;
 }
 
-static void
-sum_w_vruntime_add_paranoid(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ
+ਜੋੜ_w_vruntime_ਜੋੜੋ_paranoid(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	unsigned long weight;
-	s64 key, tmp;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ;
+	s64 ਕੁੰਜੀ, tmp;
 
 again:
-	weight = avg_vruntime_weight(cfs_rq, se->h_load.weight);
-	key = entity_key(cfs_rq, se);
+	ਭਾਰ = avg_vruntime_ਭਾਰ(cfs_rq, se->h_ਲੱਦੋ.ਭਾਰ);
+	ਕੁੰਜੀ = entity_ਕੁੰਜੀ(cfs_rq, se);
 
-	if (check_mul_overflow(key, weight, &key))
-		goto overflow;
+	ਜੇ (check_mul_ਉਛਾਲ(ਕੁੰਜੀ, ਭਾਰ, &ਕੁੰਜੀ))
+		ਜਾਓ ਉਛਾਲ;
 
-	if (check_add_overflow(cfs_rq->sum_w_vruntime, key, &tmp))
-		goto overflow;
+	ਜੇ (check_ਜੋੜੋ_ਉਛਾਲ(cfs_rq->ਜੋੜ_w_vruntime, ਕੁੰਜੀ, &tmp))
+		ਜਾਓ ਉਛਾਲ;
 
-	cfs_rq->sum_w_vruntime = tmp;
-	cfs_rq->sum_weight += weight;
-	return;
+	cfs_rq->ਜੋੜ_w_vruntime = tmp;
+	cfs_rq->ਜੋੜ_ਭਾਰ += ਭਾਰ;
+	ਵਾਪਸ;
 
-overflow:
+ਉਛਾਲ:
 	/*
 	 * There's gotta be a limit -- if we're still failing at this point
 	 * there's really nothing much to be done about things.
 	 */
-	BUG_ON(cfs_rq->sum_shift >= 10);
-	cfs_rq->sum_shift++;
+	BUG_ON(cfs_rq->ਜੋੜ_ਖਿਸਕਾਓ >= 10);
+	cfs_rq->ਜੋੜ_ਖਿਸਕਾਓ++;
 
 	/*
 	 * Note: \Sum (k_i * (w_i >> 1)) != (\Sum (k_i * w_i)) >> 1
 	 */
-	cfs_rq->sum_w_vruntime = 0;
-	cfs_rq->sum_weight = 0;
+	cfs_rq->ਜੋੜ_w_vruntime = 0;
+	cfs_rq->ਜੋੜ_ਭਾਰ = 0;
 
-	for (struct rb_node *node = cfs_rq->tasks_timeline.rb_leftmost;
-	     node; node = rb_next(node))
-		__sum_w_vruntime_add(cfs_rq, __node_2_se(node));
+	ਲਈ (ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ = cfs_rq->tasks_timeline.rb_leftmost;
+	     ਗੰਢ; ਗੰਢ = rb_ਅਗਲਾ(ਗੰਢ))
+		__sum_w_vruntime_add(cfs_rq, __node_2_se(ਗੰਢ));
 
-	goto again;
+	ਜਾਓ again;
 }
 
-static void
-sum_w_vruntime_add(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ
+ਜੋੜ_w_vruntime_ਜੋੜੋ(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	if (sched_feat(PARANOID_AVG))
-		return sum_w_vruntime_add_paranoid(cfs_rq, se);
+	ਜੇ (sched_feat(PARANOID_AVG))
+		ਵਾਪਸ ਜੋੜ_w_vruntime_ਜੋੜੋ_paranoid(cfs_rq, se);
 
 	__sum_w_vruntime_add(cfs_rq, se);
 }
 
-static void
-sum_w_vruntime_sub(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ
+ਜੋੜ_w_vruntime_sub(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	unsigned long weight = avg_vruntime_weight(cfs_rq, se->h_load.weight);
-	s64 key = entity_key(cfs_rq, se);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ = avg_vruntime_ਭਾਰ(cfs_rq, se->h_ਲੱਦੋ.ਭਾਰ);
+	s64 ਕੁੰਜੀ = entity_ਕੁੰਜੀ(cfs_rq, se);
 
-	cfs_rq->sum_w_vruntime -= key * weight;
-	cfs_rq->sum_weight -= weight;
+	cfs_rq->ਜੋੜ_w_vruntime -= ਕੁੰਜੀ * ਭਾਰ;
+	cfs_rq->ਜੋੜ_ਭਾਰ -= ਭਾਰ;
 }
 
-static inline
-void update_zero_vruntime(struct cfs_rq *cfs_rq, s64 delta)
+ਸਥਿਰ ਸਤਰਅੰਦਰ
+ਖਾਲੀ update_zero_vruntime(ਬਣਤਰ cfs_rq *cfs_rq, s64 delta)
 {
 	/*
 	 * v' = v + d ==> sum_w_vruntime' = sum_w_vruntime - d*sum_weight
 	 */
-	cfs_rq->sum_w_vruntime -= cfs_rq->sum_weight * delta;
+	cfs_rq->ਜੋੜ_w_vruntime -= cfs_rq->ਜੋੜ_ਭਾਰ * delta;
 	cfs_rq->zero_vruntime += delta;
 }
 
@@ -747,31 +747,31 @@ void update_zero_vruntime(struct cfs_rq *cfs_rq, s64 delta)
  * This means it is one entry 'behind' but that puts it close enough to where
  * the bound on entity_key() is at most two lag bounds.
  */
-u64 avg_vruntime(struct cfs_rq *cfs_rq)
+u64 avg_vruntime(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct sched_entity *curr = cfs_rq->curr;
-	long weight = cfs_rq->sum_weight;
+	ਬਣਤਰ sched_entity *curr = cfs_rq->curr;
+	ਲੰਮਾ ਭਾਰ = cfs_rq->ਜੋੜ_ਭਾਰ;
 	s64 delta = 0;
 
-	if (curr && !curr->on_rq)
-		curr = NULL;
+	ਜੇ (curr && !curr->on_rq)
+		curr = ਨਿਰਾ;
 
-	if (weight) {
-		s64 runtime = cfs_rq->sum_w_vruntime;
+	ਜੇ (ਭਾਰ) {
+		s64 runtime = cfs_rq->ਜੋੜ_w_vruntime;
 
-		if (curr) {
-			unsigned long w = avg_vruntime_weight(cfs_rq, curr->h_load.weight);
+		ਜੇ (curr) {
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ w = avg_vruntime_ਭਾਰ(cfs_rq, curr->h_ਲੱਦੋ.ਭਾਰ);
 
-			runtime += entity_key(cfs_rq, curr) * w;
-			weight += w;
+			runtime += entity_ਕੁੰਜੀ(cfs_rq, curr) * w;
+			ਭਾਰ += w;
 		}
 
 		/* sign flips effective floor / ceiling */
-		if (runtime < 0)
-			runtime -= (weight - 1);
+		ਜੇ (runtime < 0)
+			runtime -= (ਭਾਰ - 1);
 
-		delta = div64_long(runtime, weight);
-	} else if (curr) {
+		delta = div64_long(runtime, ਭਾਰ);
+	} ਨਹੀਂਤਾਂ ਜੇ (curr) {
 		/*
 		 * When there is but one element, it is the average.
 		 */
@@ -780,7 +780,7 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
 
 	update_zero_vruntime(cfs_rq, delta);
 
-	return cfs_rq->zero_vruntime;
+	ਵਾਪਸ cfs_rq->zero_vruntime;
 }
 
 /*
@@ -812,33 +812,33 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
  * is cfs_rq->sum_w_runtime, and 'W - w_j' is cfs_rq->sum_weight, since curr
  * is not included in the sum.
  */
-static u64 ineligible_vruntime(struct cfs_rq *cfs_rq)
+ਸਥਿਰ u64 ineligible_vruntime(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct sched_entity *curr = cfs_rq->curr;
-	long weight = cfs_rq->sum_weight;
+	ਬਣਤਰ sched_entity *curr = cfs_rq->curr;
+	ਲੰਮਾ ਭਾਰ = cfs_rq->ਜੋੜ_ਭਾਰ;
 	s64 delta = 0;
 
-	if (curr && !curr->on_rq)
-		curr = NULL;
+	ਜੇ (curr && !curr->on_rq)
+		curr = ਨਿਰਾ;
 
-	if (weight) {
-		s64 runtime = cfs_rq->sum_w_vruntime;
+	ਜੇ (ਭਾਰ) {
+		s64 runtime = cfs_rq->ਜੋੜ_w_vruntime;
 
 		/*
 		 * Do not add @curr to obtain the effective '- w_j' terms.
 		 */
 
 		/* sign flips effective floor / ceiling */
-		if (runtime < 0)
-			runtime -= (weight - 1);
+		ਜੇ (runtime < 0)
+			runtime -= (ਭਾਰ - 1);
 
-		delta = div64_long(runtime, weight);
+		delta = div64_long(runtime, ਭਾਰ);
 	}
 
-	return cfs_rq->zero_vruntime + delta + 1;
+	ਵਾਪਸ cfs_rq->zero_vruntime + delta + 1;
 }
 
-static inline u64 cfs_rq_max_slice(struct cfs_rq *cfs_rq);
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 cfs_rq_max_ਟੁਕੜਾ(ਬਣਤਰ cfs_rq *cfs_rq);
 
 /*
  * lag_i = S - s_i = w_i * (V - v_i)
@@ -854,15 +854,15 @@ static inline u64 cfs_rq_max_slice(struct cfs_rq *cfs_rq);
  *
  *   -r_max < lag < max(r_max, q)
  */
-static s64 entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se, u64 avruntime)
+ਸਥਿਰ s64 entity_lag(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, u64 avruntime)
 {
-	u64 max_slice = cfs_rq_max_slice(cfs_rq) + TICK_NSEC;
-	s64 vlag, limit;
+	u64 max_ਟੁਕੜਾ = cfs_rq_max_ਟੁਕੜਾ(cfs_rq) + TICK_NSEC;
+	s64 vlag, ਹੱਦਬੰਦੀ;
 
 	vlag = avruntime - se->vruntime;
-	limit = calc_delta_fair(max_slice, se);
+	ਹੱਦਬੰਦੀ = calc_delta_fair(max_ਟੁਕੜਾ, se);
 
-	return clamp(vlag, -limit, limit);
+	ਵਾਪਸ clamp(vlag, -ਹੱਦਬੰਦੀ, ਹੱਦਬੰਦੀ);
 }
 
 /*
@@ -880,21 +880,21 @@ static s64 entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se, u64 avrunt
  * sched_delayed. Either way, when vlag is modified and the entity is
  * retained, the tree needs to be adjusted.
  */
-static __always_inline
-bool update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ __always_inline
+bool update_entity_lag(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
 	u64 avruntime = avg_vruntime(cfs_rq);
 	s64 vlag = entity_lag(cfs_rq, se, avruntime);
 
-	if (se->sched_delayed) {
+	ਜੇ (se->sched_delayed) {
 		/* previous vlag < 0 otherwise se would not be delayed */
 		vlag = max(vlag, se->vlag);
-		if (sched_feat(DELAY_ZERO))
+		ਜੇ (sched_feat(DELAY_ZERO))
 			vlag = min(vlag, 0);
 	}
 	se->vlag = vlag;
 
-	return avruntime - vlag != se->vruntime;
+	ਵਾਪਸ avruntime - vlag != se->vruntime;
 }
 
 /*
@@ -914,20 +914,20 @@ bool update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * Note: using 'avg_vruntime() > se->vruntime' is inaccurate due
  *       to the loss in precision caused by the division.
  */
-static int vruntime_eligible(struct cfs_rq *cfs_rq, u64 vruntime)
+ਸਥਿਰ ਪੂਰਨ vruntime_eligible(ਬਣਤਰ cfs_rq *cfs_rq, u64 vruntime)
 {
-	struct sched_entity *curr = cfs_rq->curr;
-	s64 key, avg = cfs_rq->sum_w_vruntime;
-	long load = cfs_rq->sum_weight;
+	ਬਣਤਰ sched_entity *curr = cfs_rq->curr;
+	s64 ਕੁੰਜੀ, avg = cfs_rq->ਜੋੜ_w_vruntime;
+	ਲੰਮਾ ਲੱਦੋ = cfs_rq->ਜੋੜ_ਭਾਰ;
 
-	if (curr && curr->on_rq) {
-		unsigned long weight = avg_vruntime_weight(cfs_rq, curr->h_load.weight);
+	ਜੇ (curr && curr->on_rq) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ = avg_vruntime_ਭਾਰ(cfs_rq, curr->h_ਲੱਦੋ.ਭਾਰ);
 
-		avg += entity_key(cfs_rq, curr) * weight;
-		load += weight;
+		avg += entity_ਕੁੰਜੀ(cfs_rq, curr) * ਭਾਰ;
+		ਲੱਦੋ += ਭਾਰ;
 	}
 
-	key = vruntime_op(vruntime, "-", cfs_rq->zero_vruntime);
+	ਕੁੰਜੀ = vruntime_op(vruntime, "-", cfs_rq->zero_vruntime);
 
 	/*
 	 * The worst case term for @key includes 'NSEC_TICK * NICE_0_LOAD'
@@ -938,124 +938,124 @@ static int vruntime_eligible(struct cfs_rq *cfs_rq, u64 vruntime)
 	 * overflows s64, while on 32bit it will only be 44bits and should fit
 	 * comfortably.
 	 */
-#ifdef CONFIG_64BIT
-#ifdef CONFIG_ARCH_SUPPORTS_INT128
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_64_ਦੋਆਧਾਰੀ_ਅੰਕ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_ARCH_SUPPORTS_INT128
 	/* This often results in simpler code than __builtin_mul_overflow(). */
-	return avg >= (__int128)key * load;
-#else
+	ਵਾਪਸ avg >= (__int128)ਕੁੰਜੀ * ਲੱਦੋ;
+#ਨਹੀਂਤਾਂ
 	s64 rhs;
 	/*
 	 * On overflow, the sign of key tells us the correct answer: a large
 	 * positive key means vruntime >> V, so not eligible; a large negative
 	 * key means vruntime << V, so eligible.
 	 */
-	if (check_mul_overflow(key, load, &rhs))
-		return key <= 0;
+	ਜੇ (check_mul_ਉਛਾਲ(ਕੁੰਜੀ, ਲੱਦੋ, &rhs))
+		ਵਾਪਸ ਕੁੰਜੀ <= 0;
 
-	return avg >= rhs;
-#endif
-#else /* 32bit */
-	return avg >= key * load;
-#endif
+	ਵਾਪਸ avg >= rhs;
+#ਜੇ_ਅੰਤ
+#ਨਹੀਂਤਾਂ /* 32bit */
+	ਵਾਪਸ avg >= ਕੁੰਜੀ * ਲੱਦੋ;
+#ਜੇ_ਅੰਤ
 }
 
-int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਪੂਰਨ entity_eligible(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	return vruntime_eligible(cfs_rq, se->vruntime);
+	ਵਾਪਸ vruntime_eligible(cfs_rq, se->vruntime);
 }
 
-static inline u64 cfs_rq_min_slice(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 cfs_rq_min_ਟੁਕੜਾ(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct sched_entity *root = __pick_root_entity(cfs_rq);
-	struct sched_entity *curr = cfs_rq->curr;
-	u64 min_slice = ~0ULL;
+	ਬਣਤਰ sched_entity *ਜੜ੍ਹ = __pick_root_entity(cfs_rq);
+	ਬਣਤਰ sched_entity *curr = cfs_rq->curr;
+	u64 min_ਟੁਕੜਾ = ~0ULL;
 
-	if (curr && curr->on_rq)
-		min_slice = curr->slice;
+	ਜੇ (curr && curr->on_rq)
+		min_ਟੁਕੜਾ = curr->ਟੁਕੜਾ;
 
-	if (root)
-		min_slice = min(min_slice, root->min_slice);
+	ਜੇ (ਜੜ੍ਹ)
+		min_ਟੁਕੜਾ = min(min_ਟੁਕੜਾ, ਜੜ੍ਹ->min_ਟੁਕੜਾ);
 
-	return min_slice;
+	ਵਾਪਸ min_ਟੁਕੜਾ;
 }
 
-static inline u64 cfs_rq_max_slice(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 cfs_rq_max_ਟੁਕੜਾ(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct sched_entity *root = __pick_root_entity(cfs_rq);
-	struct sched_entity *curr = cfs_rq->curr;
-	u64 max_slice = 0ULL;
+	ਬਣਤਰ sched_entity *ਜੜ੍ਹ = __pick_root_entity(cfs_rq);
+	ਬਣਤਰ sched_entity *curr = cfs_rq->curr;
+	u64 max_ਟੁਕੜਾ = 0ULL;
 
-	if (curr && curr->on_rq)
-		max_slice = curr->slice;
+	ਜੇ (curr && curr->on_rq)
+		max_ਟੁਕੜਾ = curr->ਟੁਕੜਾ;
 
-	if (root)
-		max_slice = max(max_slice, root->max_slice);
+	ਜੇ (ਜੜ੍ਹ)
+		max_ਟੁਕੜਾ = max(max_ਟੁਕੜਾ, ਜੜ੍ਹ->max_ਟੁਕੜਾ);
 
-	return max_slice;
+	ਵਾਪਸ max_ਟੁਕੜਾ;
 }
 
-static inline bool __entity_less(struct rb_node *a, const struct rb_node *b)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool __entity_less(ਬਣਤਰ rb_ਗੰਢ *a, ਅਚਲ ਬਣਤਰ rb_ਗੰਢ *b)
 {
-	return entity_before(__node_2_se(a), __node_2_se(b));
+	ਵਾਪਸ entity_before(__node_2_se(a), __node_2_se(b));
 }
 
 /* min() for wrapping vruntimes */
-static inline u64 __min_vruntime(u64 a, u64 b)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 __min_vruntime(u64 a, u64 b)
 {
-	return vruntime_cmp(a, "<", b) ? a : b;
+	ਵਾਪਸ vruntime_cmp(a, "<", b) ? a : b;
 }
 
-RB_DECLARE_CALLBACKS(static, min_vruntime_cb,
-		     struct sched_entity, run_node,
+RB_DECLARE_CALLBACKS(ਸਥਿਰ, min_vruntime_cb,
+		     ਬਣਤਰ sched_entity, ਲੜੀਵਾਰ_ਗੰਢ,
 		     RB_AUG(vruntime, min_vruntime, __min_vruntime),
-		     RB_AUG(slice, min_slice, min),
-		     RB_AUG(slice, max_slice, max));
+		     RB_AUG(ਟੁਕੜਾ, min_ਟੁਕੜਾ, min),
+		     RB_AUG(ਟੁਕੜਾ, max_ਟੁਕੜਾ, max));
 
 /*
  * Enqueue an entity into the rb-tree:
  */
-static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ __enqueue_entity(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	WARN_ON_ONCE(&rq_of(cfs_rq)->cfs != cfs_rq);
+	WARN_ON_ONCE(&rq_ਦਾ(cfs_rq)->cfs != cfs_rq);
 	WARN_ON_ONCE(!entity_is_task(se));
 
-	sum_w_vruntime_add(cfs_rq, se);
+	ਜੋੜ_w_vruntime_ਜੋੜੋ(cfs_rq, se);
 	se->min_vruntime = se->vruntime;
-	se->min_slice = se->slice;
-	se->max_slice = se->slice;
+	se->min_ਟੁਕੜਾ = se->ਟੁਕੜਾ;
+	se->max_ਟੁਕੜਾ = se->ਟੁਕੜਾ;
 
-	rb_add_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
+	rb_ਜੋੜੋ_augmented_cached(&se->ਲੜੀਵਾਰ_ਗੰਢ, &cfs_rq->tasks_timeline,
 				__entity_less, &min_vruntime_cb);
 }
 
-static void __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ __dequeue_entity(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	WARN_ON_ONCE(&rq_of(cfs_rq)->cfs != cfs_rq);
+	WARN_ON_ONCE(&rq_ਦਾ(cfs_rq)->cfs != cfs_rq);
 	WARN_ON_ONCE(!entity_is_task(se));
 
-	rb_erase_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
+	rb_erase_augmented_cached(&se->ਲੜੀਵਾਰ_ਗੰਢ, &cfs_rq->tasks_timeline,
 				  &min_vruntime_cb);
-	sum_w_vruntime_sub(cfs_rq, se);
+	ਜੋੜ_w_vruntime_sub(cfs_rq, se);
 }
 
-struct sched_entity *__pick_root_entity(struct cfs_rq *cfs_rq)
+ਬਣਤਰ sched_entity *__pick_root_entity(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct rb_node *root = cfs_rq->tasks_timeline.rb_root.rb_node;
+	ਬਣਤਰ rb_ਗੰਢ *ਜੜ੍ਹ = cfs_rq->tasks_timeline.rb_ਜੜ੍ਹ.rb_ਗੰਢ;
 
-	if (!root)
-		return NULL;
+	ਜੇ (!ਜੜ੍ਹ)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return __node_2_se(root);
+	ਵਾਪਸ __node_2_se(ਜੜ੍ਹ);
 }
 
-struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
+ਬਣਤਰ sched_entity *__pick_first_entity(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct rb_node *left = rb_first_cached(&cfs_rq->tasks_timeline);
+	ਬਣਤਰ rb_ਗੰਢ *ਖੱਬਾ = rb_ਪਹਿਲਾ_cached(&cfs_rq->tasks_timeline);
 
-	if (!left)
-		return NULL;
+	ਜੇ (!ਖੱਬਾ)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return __node_2_se(left);
+	ਵਾਪਸ __node_2_se(ਖੱਬਾ);
 }
 
 /*
@@ -1066,46 +1066,46 @@ struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
  * When run to parity is disabled, we give a minimum quantum to the running
  * entity to ensure progress.
  */
-static inline void set_protect_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਸੈੱਟ_protect_ਟੁਕੜਾ(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	u64 slice = normalized_sysctl_sched_base_slice;
+	u64 ਟੁਕੜਾ = normalized_sysctl_sched_ਅਧਾਰ_ਟੁਕੜਾ;
 	u64 vprot = se->deadline;
 
-	if (sched_feat(RUN_TO_PARITY))
-		slice = cfs_rq_min_slice(cfs_rq);
+	ਜੇ (sched_feat(ਲੜੀਵਾਰ_ਮੰਜ਼ਿਲ_PARITY))
+		ਟੁਕੜਾ = cfs_rq_min_ਟੁਕੜਾ(cfs_rq);
 
-	slice = min(slice, se->slice);
+	ਟੁਕੜਾ = min(ਟੁਕੜਾ, se->ਟੁਕੜਾ);
 
 	/* If there are shorter slices than se's one */
-	if (slice != se->slice) {
-		vprot = min_vruntime(vprot, se->vruntime + calc_delta_fair(slice, se));
-		if (sched_feat(PREEMPT_SHORT))
+	ਜੇ (ਟੁਕੜਾ != se->ਟੁਕੜਾ) {
+		vprot = min_vruntime(vprot, se->vruntime + calc_delta_fair(ਟੁਕੜਾ, se));
+		ਜੇ (sched_feat(PREEMPT_SHORT))
 			vprot = min_vruntime(vprot, ineligible_vruntime(cfs_rq));
 	}
 
 	se->vprot = vprot;
 }
 
-static inline void update_protect_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_protect_ਟੁਕੜਾ(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
 	u64 vruntime = min_vruntime(se->vruntime, avg_vruntime(cfs_rq));
-	u64 slice = cfs_rq_min_slice(cfs_rq);
-	u64 vprot = min_vruntime(se->vprot, vruntime + calc_delta_fair(slice, se));
+	u64 ਟੁਕੜਾ = cfs_rq_min_ਟੁਕੜਾ(cfs_rq);
+	u64 vprot = min_vruntime(se->vprot, vruntime + calc_delta_fair(ਟੁਕੜਾ, se));
 
-	if (sched_feat(PREEMPT_SHORT) && slice != se->slice)
+	ਜੇ (sched_feat(PREEMPT_SHORT) && ਟੁਕੜਾ != se->ਟੁਕੜਾ)
 		vprot = min_vruntime(vprot, ineligible_vruntime(cfs_rq));
 
 	se->vprot = vprot;
 }
 
-static inline bool protect_slice(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool protect_ਟੁਕੜਾ(ਬਣਤਰ sched_entity *se)
 {
-	return vruntime_cmp(se->vruntime, "<", se->vprot);
+	ਵਾਪਸ vruntime_cmp(se->vruntime, "<", se->vprot);
 }
 
-static inline void cancel_protect_slice(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ cancel_protect_ਟੁਕੜਾ(ਬਣਤਰ sched_entity *se)
 {
-	if (protect_slice(se))
+	ਜੇ (protect_ਟੁਕੜਾ(se))
 		se->vprot = se->vruntime;
 }
 
@@ -1128,145 +1128,145 @@ static inline void cancel_protect_slice(struct sched_entity *se)
  *
  * Which allows tree pruning through eligibility.
  */
-static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq, bool protect)
+ਸਥਿਰ ਬਣਤਰ sched_entity *pick_eevdf(ਬਣਤਰ cfs_rq *cfs_rq, bool protect)
 {
-	struct rb_node *node = cfs_rq->tasks_timeline.rb_root.rb_node;
-	struct sched_entity *se = __pick_first_entity(cfs_rq);
-	struct sched_entity *curr = cfs_rq->curr;
-	struct sched_entity *best = NULL;
+	ਬਣਤਰ rb_ਗੰਢ *ਗੰਢ = cfs_rq->tasks_timeline.rb_ਜੜ੍ਹ.rb_ਗੰਢ;
+	ਬਣਤਰ sched_entity *se = __pick_first_entity(cfs_rq);
+	ਬਣਤਰ sched_entity *curr = cfs_rq->curr;
+	ਬਣਤਰ sched_entity *ਉੱਤਮ = ਨਿਰਾ;
 
 	/*
 	 * We can safely skip eligibility check if there is only one entity
 	 * in this cfs_rq, saving some cycles.
 	 */
-	if (cfs_rq->h_nr_queued == 1)
-		return curr && curr->on_rq ? curr : se;
+	ਜੇ (cfs_rq->h_nr_queued == 1)
+		ਵਾਪਸ curr && curr->on_rq ? curr : se;
 
 	/*
 	 * Picking the ->next buddy will affect latency but not fairness.
 	 */
-	if (sched_feat(PICK_BUDDY) && protect &&
-	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next)) {
+	ਜੇ (sched_feat(PICK_BUDDY) && protect &&
+	    cfs_rq->ਅਗਲਾ && entity_eligible(cfs_rq, cfs_rq->ਅਗਲਾ)) {
 		/* ->next will never be delayed */
-		WARN_ON_ONCE(cfs_rq->next->sched_delayed);
-		return cfs_rq->next;
+		WARN_ON_ONCE(cfs_rq->ਅਗਲਾ->sched_delayed);
+		ਵਾਪਸ cfs_rq->ਅਗਲਾ;
 	}
 
-	if (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
-		curr = NULL;
+	ਜੇ (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
+		curr = ਨਿਰਾ;
 
-	if (curr && protect && protect_slice(curr))
-		return curr;
+	ਜੇ (curr && protect && protect_ਟੁਕੜਾ(curr))
+		ਵਾਪਸ curr;
 
 	/* Pick the leftmost entity if it's eligible */
-	if (se && entity_eligible(cfs_rq, se)) {
-		best = se;
-		goto found;
+	ਜੇ (se && entity_eligible(cfs_rq, se)) {
+		ਉੱਤਮ = se;
+		ਜਾਓ ਮਿਲਿਆ;
 	}
 
 	/* Heap search for the EEVD entity */
-	while (node) {
-		struct rb_node *left = node->rb_left;
+	ਜਦੋਂ (ਗੰਢ) {
+		ਬਣਤਰ rb_ਗੰਢ *ਖੱਬਾ = ਗੰਢ->rb_ਖੱਬਾ;
 
 		/*
 		 * Eligible entities in left subtree are always better
 		 * choices, since they have earlier deadlines.
 		 */
-		if (left && vruntime_eligible(cfs_rq,
-					__node_2_se(left)->min_vruntime)) {
-			node = left;
-			continue;
+		ਜੇ (ਖੱਬਾ && vruntime_eligible(cfs_rq,
+					__node_2_se(ਖੱਬਾ)->min_vruntime)) {
+			ਗੰਢ = ਖੱਬਾ;
+			ਜਾਰੀ;
 		}
 
-		se = __node_2_se(node);
+		se = __node_2_se(ਗੰਢ);
 
 		/*
 		 * The left subtree either is empty or has no eligible
 		 * entity, so check the current node since it is the one
 		 * with earliest deadline that might be eligible.
 		 */
-		if (entity_eligible(cfs_rq, se)) {
-			best = se;
-			break;
+		ਜੇ (entity_eligible(cfs_rq, se)) {
+			ਉੱਤਮ = se;
+			ਰੋਕੋ;
 		}
 
-		node = node->rb_right;
+		ਗੰਢ = ਗੰਢ->rb_ਸੱਜਾ;
 	}
-found:
-	if (!best || (curr && entity_before(curr, best)))
-		best = curr;
+ਮਿਲਿਆ:
+	ਜੇ (!ਉੱਤਮ || (curr && entity_before(curr, ਉੱਤਮ)))
+		ਉੱਤਮ = curr;
 
-	return best;
+	ਵਾਪਸ ਉੱਤਮ;
 }
 
-struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
+ਬਣਤਰ sched_entity *__pick_last_entity(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct rb_node *last = rb_last(&cfs_rq->tasks_timeline.rb_root);
+	ਬਣਤਰ rb_ਗੰਢ *ਆਖਰੀ = rb_ਆਖਰੀ(&cfs_rq->tasks_timeline.rb_ਜੜ੍ਹ);
 
-	if (!last)
-		return NULL;
+	ਜੇ (!ਆਖਰੀ)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return __node_2_se(last);
+	ਵਾਪਸ __node_2_se(ਆਖਰੀ);
 }
 
 /**************************************************************
  * Scheduling class statistics methods:
  */
-int sched_update_scaling(void)
+ਪੂਰਨ sched_update_scaling(ਖਾਲੀ)
 {
-	unsigned int factor = get_update_sysctl_factor();
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਗੁਣਕ = get_update_sysctl_ਗੁਣਕ();
 
-#define WRT_SYSCTL(name) \
-	(normalized_sysctl_##name = sysctl_##name / (factor))
-	WRT_SYSCTL(sched_base_slice);
-#undef WRT_SYSCTL
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WRT_SYSCTL(name) \
+	(normalized_sysctl_##name = sysctl_##name / (ਗੁਣਕ))
+	WRT_SYSCTL(sched_ਅਧਾਰ_ਟੁਕੜਾ);
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ WRT_SYSCTL
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se);
+ਸਥਿਰ ਖਾਲੀ clear_buddies(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se);
 
 /*
  * XXX: strictly: vd_i += N*r_i/w_i such that: vd_i > ve_i
  * this is probably good enough.
  */
-static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ bool update_deadline(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	if (vruntime_cmp(se->vruntime, "<", se->deadline))
-		return false;
+	ਜੇ (vruntime_cmp(se->vruntime, "<", se->deadline))
+		ਵਾਪਸ false;
 
 	/*
 	 * For EEVDF the virtual time slope is determined by w_i (iow.
 	 * nice) while the request time r_i is determined by
 	 * sysctl_sched_base_slice.
 	 */
-	if (!se->custom_slice)
-		se->slice = sysctl_sched_base_slice;
+	ਜੇ (!se->custom_ਟੁਕੜਾ)
+		se->ਟੁਕੜਾ = sysctl_sched_ਅਧਾਰ_ਟੁਕੜਾ;
 
 	/*
 	 * EEVDF: vd_i = ve_i + r_i / w_i
 	 */
-	se->deadline = se->vruntime + calc_delta_fair(se->slice, se);
+	se->deadline = se->vruntime + calc_delta_fair(se->ਟੁਕੜਾ, se);
 	avg_vruntime(cfs_rq);
 
 	/*
 	 * The task has consumed its request, reschedule.
 	 */
-	return true;
+	ਵਾਪਸ true;
 }
 
-#include "pelt.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pelt.h"
 
-static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
-static unsigned long task_h_load(struct task_struct *p);
-static unsigned long capacity_of(int cpu);
+ਸਥਿਰ ਪੂਰਨ select_idle_sibling(ਬਣਤਰ task_struct *p, ਪੂਰਨ prev_cpu, ਪੂਰਨ cpu);
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_h_ਲੱਦੋ(ਬਣਤਰ task_struct *p);
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮਰੱਥਾ_ਦਾ(ਪੂਰਨ cpu);
 
 /* Give new sched_entity start runnable values to heavy its load in infant time */
-void init_entity_runnable_average(struct sched_entity *se)
+ਖਾਲੀ init_entity_runnable_ਔਸਤਨ(ਬਣਤਰ sched_entity *se)
 {
-	struct sched_avg *sa = &se->avg;
+	ਬਣਤਰ sched_avg *sa = &se->avg;
 
-	memset(sa, 0, sizeof(*sa));
+	memset(sa, 0, ਆਕਾਰ(*sa));
 
 	/*
 	 * Tasks are initialized with full load to be seen as heavy tasks until
@@ -1274,8 +1274,8 @@ void init_entity_runnable_average(struct sched_entity *se)
 	 * Group entities are initialized with zero load to reflect the fact that
 	 * nothing has been attached to the task group yet.
 	 */
-	if (entity_is_task(se))
-		sa->load_avg = scale_load_down(se->load.weight);
+	ਜੇ (entity_is_task(se))
+		sa->ਲੱਦੋ_avg = scale_ਲੱਦੋ_ਥੱਲੇ(se->ਲੱਦੋ.ਭਾਰ);
 
 	/* when this task is enqueued, it will contribute to its cfs_rq's load_avg */
 }
@@ -1307,15 +1307,15 @@ void init_entity_runnable_average(struct sched_entity *se)
  * Finally, that extrapolated util_avg is clamped to the cap (util_avg_cap)
  * if util_avg > util_avg_cap.
  */
-void post_init_entity_util_avg(struct task_struct *p)
+ਖਾਲੀ post_init_entity_util_avg(ਬਣਤਰ task_struct *p)
 {
-	struct sched_entity *se = &p->se;
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-	struct sched_avg *sa = &se->avg;
-	long cpu_scale = arch_scale_cpu_capacity(cpu_of(rq_of(cfs_rq)));
-	long cap = (long)(cpu_scale - cfs_rq->avg.util_avg) / 2;
+	ਬਣਤਰ sched_entity *se = &p->se;
+	ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
+	ਬਣਤਰ sched_avg *sa = &se->avg;
+	ਲੰਮਾ cpu_scale = arch_scale_cpu_ਸਮਰੱਥਾ(cpu_ਦਾ(rq_ਦਾ(cfs_rq)));
+	ਲੰਮਾ cap = (ਲੰਮਾ)(cpu_scale - cfs_rq->avg.util_avg) / 2;
 
-	if (p->sched_class != &fair_sched_class) {
+	ਜੇ (p->sched_class != &fair_sched_class) {
 		/*
 		 * For !fair tasks do:
 		 *
@@ -1326,18 +1326,18 @@ void post_init_entity_util_avg(struct task_struct *p)
 		 * such that the next switched_to_fair() has the
 		 * expected state.
 		 */
-		se->avg.last_update_time = cfs_rq_clock_pelt(cfs_rq);
-		return;
+		se->avg.ਆਖਰੀ_update_ਸਮਾਂ = cfs_rq_clock_pelt(cfs_rq);
+		ਵਾਪਸ;
 	}
 
-	if (cap > 0) {
-		if (cfs_rq->avg.util_avg != 0) {
-			sa->util_avg  = cfs_rq->avg.util_avg * se_weight(se);
-			sa->util_avg /= (cfs_rq->avg.load_avg + 1);
+	ਜੇ (cap > 0) {
+		ਜੇ (cfs_rq->avg.util_avg != 0) {
+			sa->util_avg  = cfs_rq->avg.util_avg * se_ਭਾਰ(se);
+			sa->util_avg /= (cfs_rq->avg.ਲੱਦੋ_avg + 1);
 
-			if (sa->util_avg > cap)
+			ਜੇ (sa->util_avg > cap)
 				sa->util_avg = cap;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			sa->util_avg = cap;
 		}
 	}
@@ -1345,102 +1345,102 @@ void post_init_entity_util_avg(struct task_struct *p)
 	sa->runnable_avg = sa->util_avg;
 }
 
-static inline void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ account_mm_sched(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, s64 delta_exec);
 
-static s64 update_se(struct rq *rq, struct sched_entity *se)
+ਸਥਿਰ s64 update_se(ਬਣਤਰ rq *rq, ਬਣਤਰ sched_entity *se)
 {
 	u64 now = rq_clock_task(rq);
 	s64 delta_exec;
 
-	delta_exec = now - se->exec_start;
-	if (unlikely(delta_exec <= 0))
-		return delta_exec;
+	delta_exec = now - se->exec_ਸ਼ੁਰੂ;
+	ਜੇ (unlikely(delta_exec <= 0))
+		ਵਾਪਸ delta_exec;
 
-	se->exec_start = now;
-	if (entity_is_task(se)) {
-		struct task_struct *running = rq->curr;
+	se->exec_ਸ਼ੁਰੂ = now;
+	ਜੇ (entity_is_task(se)) {
+		ਬਣਤਰ task_struct *running = rq->curr;
 		/*
 		 * If se is a task, we account the time against the running
 		 * task, as w/ proxy-exec they may not be the same.
 		 */
-		running->se.exec_start = now;
-		running->se.sum_exec_runtime += delta_exec;
+		running->se.exec_ਸ਼ੁਰੂ = now;
+		running->se.ਜੋੜ_exec_runtime += delta_exec;
 
 		trace_sched_stat_runtime(running, delta_exec);
-		account_group_exec_runtime(running, delta_exec);
+		account_ਸਮੂਹ_exec_runtime(running, delta_exec);
 		account_mm_sched(rq, running, delta_exec);
 
 		cgroup_account_cputime(running, delta_exec);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* If not task, account the time against donor se  */
-		se->sum_exec_runtime += delta_exec;
+		se->ਜੋੜ_exec_runtime += delta_exec;
 	}
 
-	if (schedstat_enabled()) {
-		struct sched_statistics *stats;
+	ਜੇ (schedstat_enabled()) {
+		ਬਣਤਰ sched_statistics *stats;
 
 		stats = __schedstats_from_se(se);
 		__schedstat_set(stats->exec_max,
 				max(delta_exec, stats->exec_max));
 	}
 
-	return delta_exec;
+	ਵਾਪਸ delta_exec;
 }
 
-#ifdef CONFIG_SCHED_CACHE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
 
 /*
  * XXX numbers come from a place the sun don't shine -- probably wants to be SD
  * tunable or so.
  */
-#define EPOCH_PERIOD	(HZ / 100)	/* 10 ms */
-#define EPOCH_LLC_AFFINITY_TIMEOUT	5	/* 50 ms */
-__read_mostly unsigned int llc_aggr_tolerance	= 1;
-__read_mostly unsigned int llc_epoch_period	= EPOCH_PERIOD;
-__read_mostly unsigned int llc_epoch_affinity_timeout = EPOCH_LLC_AFFINITY_TIMEOUT;
-__read_mostly unsigned int llc_imb_pct		= 20;
-__read_mostly unsigned int llc_overaggr_pct	= 50;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EPOCH_PERIOD	(HZ / 100)	/* 10 ms */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EPOCH_LLC_AFFINITY_TIMEOUT	5	/* 50 ms */
+__read_mostly ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_aggr_tolerance	= 1;
+__read_mostly ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_epoch_period	= EPOCH_PERIOD;
+__read_mostly ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_epoch_affinity_timeout = EPOCH_LLC_AFFINITY_TIMEOUT;
+__read_mostly ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_imb_pct		= 20;
+__read_mostly ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_overaggr_pct	= 50;
 
-static int llc_id(int cpu)
+ਸਥਿਰ ਪੂਰਨ llc_id(ਪੂਰਨ cpu)
 {
-	if (cpu < 0)
-		return -1;
+	ਜੇ (cpu < 0)
+		ਵਾਪਸ -1;
 
-	return per_cpu(sd_llc_id, cpu);
+	ਵਾਪਸ ਪ੍ਰਤੀ_cpu(sd_llc_id, cpu);
 }
 
-static inline int get_sched_cache_scale(int mul)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ get_sched_cache_scale(ਪੂਰਨ mul)
 {
-	unsigned int tol = READ_ONCE(llc_aggr_tolerance);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ tol = READ_ONCE(llc_aggr_tolerance);
 
-	if (!tol)
-		return 0;
+	ਜੇ (!tol)
+		ਵਾਪਸ 0;
 
-	if (tol >= 100)
-		return INT_MAX;
+	ਜੇ (tol >= 100)
+		ਵਾਪਸ ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ;
 
-	return (1 + (tol - 1) * mul);
+	ਵਾਪਸ (1 + (tol - 1) * mul);
 }
 
-static bool exceed_llc_capacity(struct sched_cache_group *grp, int cpu)
+ਸਥਿਰ bool exceed_llc_ਸਮਰੱਥਾ(ਬਣਤਰ sched_cache_ਸਮੂਹ *grp, ਪੂਰਨ cpu)
 {
-#ifdef CONFIG_NUMA_BALANCING
-	unsigned long llc, footprint;
-	struct sched_domain *sd;
-	int scale;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ llc, footprint;
+	ਬਣਤਰ sched_domain *sd;
+	ਪੂਰਨ scale;
 
 	guard(rcu)();
 
 	sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd);
-	if (!sd)
-		return true;
+	ਜੇ (!sd)
+		ਵਾਪਸ true;
 
-	if (static_branch_likely(&sched_numa_balancing)) {
+	ਜੇ (static_branch_likely(&sched_numa_balancing)) {
 		/*
 		 * TBD: RDT exclusive LLC ways reserved should be
 		 * excluded.
 		 */
-		llc = sd->llc_bytes;
+		llc = sd->llc_ਬਾਈਟਾਂ;
 		footprint = READ_ONCE(grp->footprint);
 
 		/*
@@ -1461,33 +1461,33 @@ static bool exceed_llc_capacity(struct sched_cache_group *grp, int cpu)
 		 * anyway.
 		 */
 		scale = get_sched_cache_scale(256);
-		if (scale == INT_MAX)
-			return false;
+		ਜੇ (scale == ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ)
+			ਵਾਪਸ false;
 
-		return ((llc * (u64)scale) < (footprint * PAGE_SIZE));
+		ਵਾਪਸ ((llc * (u64)scale) < (footprint * ਪੰਨਾ_ਮਾਪ));
 	}
-#endif
-	return false;
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ false;
 }
 
-static bool invalid_llc_nr(struct sched_cache_group *grp, struct task_struct *p,
-			   int cpu)
+ਸਥਿਰ bool invalid_llc_nr(ਬਣਤਰ sched_cache_ਸਮੂਹ *grp, ਬਣਤਰ task_struct *p,
+			   ਪੂਰਨ cpu)
 {
-	int scale;
+	ਪੂਰਨ scale;
 
-	if (get_nr_threads(p) <= 1)
-		return true;
+	ਜੇ (get_nr_ਧਾਗੇ(p) <= 1)
+		ਵਾਪਸ true;
 
 	/*
 	 * Scale the number of 'cores' in a LLC by llc_aggr_tolerance
 	 * and compare it to the task's active threads.
 	 */
 	scale = get_sched_cache_scale(1);
-	if (scale == INT_MAX)
-		return false;
+	ਜੇ (scale == ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ)
+		ਵਾਪਸ false;
 
-	return !fits_capacity((READ_ONCE(grp->nr_running_avg) * cpu_smt_num_threads),
-			(scale * per_cpu(sd_llc_size, cpu)));
+	ਵਾਪਸ !ਸਮਾਉਂਦਾ_ਸਮਰੱਥਾ((READ_ONCE(grp->nr_running_avg) * cpu_smt_ਅੰਕ_ਧਾਗੇ),
+			(scale * ਪ੍ਰਤੀ_cpu(sd_llc_ਮਾਪ, cpu)));
 }
 
 /*
@@ -1495,31 +1495,31 @@ static bool invalid_llc_nr(struct sched_cache_group *grp, struct task_struct *p,
  * LLC (pref_llc_queued) and runnable (!sched_delayed), keeping the counter in
  * the runnable domain so alb_break_llc() can compare it with h_nr_runnable.
  */
-static bool task_pref_llc_runnable(struct task_struct *p)
+ਸਥਿਰ bool task_pref_llc_runnable(ਬਣਤਰ task_struct *p)
 {
-	return p->pref_llc_queued && !p->se.sched_delayed;
+	ਵਾਪਸ p->pref_llc_queued && !p->se.sched_delayed;
 }
 
-static void pref_llc_running_inc(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ pref_llc_running_inc(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	if (task_pref_llc_runnable(p))
+	ਜੇ (task_pref_llc_runnable(p))
 		rq->nr_pref_llc_running++;
 }
 
-static void pref_llc_running_dec(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ pref_llc_running_dec(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	if (task_pref_llc_runnable(p))
+	ਜੇ (task_pref_llc_runnable(p))
 		rq->nr_pref_llc_running--;
 }
 
-static void account_llc_enqueue(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ account_llc_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	int pref_llc, pref_llc_queued;
-	struct sched_domain *sd;
+	ਪੂਰਨ pref_llc, pref_llc_queued;
+	ਬਣਤਰ sched_domain *sd;
 
 	pref_llc = p->preferred_llc;
-	if (pref_llc < 0)
-		return;
+	ਜੇ (pref_llc < 0)
+		ਵਾਪਸ;
 
 	pref_llc_queued = (pref_llc == task_llc(p));
 	rq->nr_llc_running++;
@@ -1544,21 +1544,21 @@ static void account_llc_enqueue(struct rq *rq, struct task_struct *p)
 	pref_llc_running_inc(rq, p);
 
 	sd = rcu_dereference_all(rq->sd);
-	if (sd && (unsigned int)pref_llc < sd->llc_max)
+	ਜੇ (sd && (ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)pref_llc < sd->llc_max)
 		sd->llc_counts[pref_llc]++;
 }
 
-static void account_llc_dequeue(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ account_llc_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	struct sched_domain *sd;
-	int pref_llc;
+	ਬਣਤਰ sched_domain *sd;
+	ਪੂਰਨ pref_llc;
 
 	pref_llc = p->preferred_llc;
-	if (pref_llc < 0)
-		return;
+	ਜੇ (pref_llc < 0)
+		ਵਾਪਸ;
 
 	rq->nr_llc_running--;
-	if (p->pref_llc_queued) {
+	ਜੇ (p->pref_llc_queued) {
 		/*
 		 * Skipped if still delayed (set_delayed() already removed it);
 		 * clearing pref_llc_queued below also stops clear_delayed()
@@ -1574,7 +1574,7 @@ static void account_llc_dequeue(struct rq *rq, struct task_struct *p)
 	}
 
 	sd = rcu_dereference_all(rq->sd);
-	if (sd && (unsigned int)pref_llc < sd->llc_max) {
+	ਜੇ (sd && (ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)pref_llc < sd->llc_max) {
 		/*
 		 * There is a race condition between dequeue
 		 * and CPU hotplug. After a task has been enqueued
@@ -1587,28 +1587,28 @@ static void account_llc_dequeue(struct rq *rq, struct task_struct *p)
 		 * This undercount is temporary and accurate accounting
 		 * will resume once the rq has a chance to be idle.
 		 */
-		if (sd->llc_counts[pref_llc])
+		ਜੇ (sd->llc_counts[pref_llc])
 			sd->llc_counts[pref_llc]--;
 	}
 }
 
-int mm_init_sched(struct mm_struct *mm,
-		  struct sched_cache_time __percpu *_pcpu_sched)
+ਪੂਰਨ mm_init_sched(ਬਣਤਰ mm_struct *mm,
+		  ਬਣਤਰ sched_cache_ਸਮਾਂ __percpu *_pcpu_sched)
 {
-	struct sched_cache_group *grp;
-	unsigned long epoch = 0;
-	int i;
+	ਬਣਤਰ sched_cache_ਸਮੂਹ *grp;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ epoch = 0;
+	ਪੂਰਨ i;
 
 	grp = kzalloc_obj(*grp);
-	if (!grp) {
+	ਜੇ (!grp) {
 		free_percpu(_pcpu_sched);
-		mm->sched_cache_grp = NULL;
-		return -ENOMEM;
+		mm->sched_cache_grp = ਨਿਰਾ;
+		ਵਾਪਸ -ENOMEM;
 	}
 
 	for_each_possible_cpu(i) {
-		struct sched_cache_time *pcpu_sched = per_cpu_ptr(_pcpu_sched, i);
-		struct rq *rq = cpu_rq(i);
+		ਬਣਤਰ sched_cache_ਸਮਾਂ *pcpu_sched = ਪ੍ਰਤੀ_cpu_ptr(_pcpu_sched, i);
+		ਬਣਤਰ rq *rq = cpu_rq(i);
 
 		pcpu_sched->runtime = 0;
 		/* a slightly stale cpu epoch is acceptible */
@@ -1616,13 +1616,13 @@ int mm_init_sched(struct mm_struct *mm,
 		epoch = rq->cpu_epoch;
 	}
 
-	raw_spin_lock_init(&grp->lock);
+	raw_spin_ਤਾਲਾ_init(&grp->ਤਾਲਾ);
 	grp->epoch = epoch;
 	grp->cpu = -1;
-	grp->next_scan = jiffies;
+	grp->ਅਗਲਾ_ਜਾਂਚ = jiffies;
 	grp->nr_running_avg = 0;
 	grp->footprint = 0;
-	refcount_set(&grp->refcnt, 1);
+	refcount_ਸੈੱਟ(&grp->refcnt, 1);
 	/*
 	 * The update to grp->pcpu_sched should not be reordered
 	 * before initialization to grp's other fields, in case
@@ -1637,159 +1637,159 @@ int mm_init_sched(struct mm_struct *mm,
 	 * fully initialized.
 	 */
 	smp_store_release(&mm->sched_cache_grp, grp);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void sched_cache_group_free_rcu(struct rcu_head *rcu)
+ਸਥਿਰ ਖਾਲੀ sched_cache_ਸਮੂਹ_free_rcu(ਬਣਤਰ rcu_ਸਿਰ *rcu)
 {
-	struct sched_cache_group *grp =
-		container_of(rcu, struct sched_cache_group, rcu);
+	ਬਣਤਰ sched_cache_ਸਮੂਹ *grp =
+		container_ਦਾ(rcu, ਬਣਤਰ sched_cache_ਸਮੂਹ, rcu);
 
 	free_percpu(grp->pcpu_sched);
 	kfree(grp);
 }
 
-static void sched_cache_group_put(struct sched_cache_group *grp)
+ਸਥਿਰ ਖਾਲੀ sched_cache_ਸਮੂਹ_put(ਬਣਤਰ sched_cache_ਸਮੂਹ *grp)
 {
-	if (!grp || !refcount_dec_and_test(&grp->refcnt))
-		return;
+	ਜੇ (!grp || !refcount_dec_and_test(&grp->refcnt))
+		ਵਾਪਸ;
 
-	call_rcu(&grp->rcu, sched_cache_group_free_rcu);
+	call_rcu(&grp->rcu, sched_cache_ਸਮੂਹ_free_rcu);
 }
 
-DEFINE_FREE(sched_cache_group_put, struct sched_cache_group *,
-	    sched_cache_group_put(_T));
+DEFINE_FREE(sched_cache_ਸਮੂਹ_put, ਬਣਤਰ sched_cache_ਸਮੂਹ *,
+	    sched_cache_ਸਮੂਹ_put(_T));
 
-#define rcu_deref_sched_cache_grp(tsk) \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ rcu_deref_sched_cache_grp(tsk) \
 	rcu_dereference_check((tsk)->sched_cache_grp, (tsk) == current)
 
-static struct sched_cache_group *sched_cache_replace_grp(struct task_struct *p,
-							 struct sched_cache_group *new)
+ਸਥਿਰ ਬਣਤਰ sched_cache_ਸਮੂਹ *sched_cache_replace_grp(ਬਣਤਰ task_struct *p,
+							 ਬਣਤਰ sched_cache_ਸਮੂਹ *new)
 {
-	struct sched_cache_group *old;
+	ਬਣਤਰ sched_cache_ਸਮੂਹ *old;
 
 	old = rcu_deref_sched_cache_grp(p);
-	rcu_assign_pointer(p->sched_cache_grp, new);
+	rcu_ਸੌਂਪੋ_ਸੂਚਕ(p->sched_cache_grp, new);
 
-	return old;
+	ਵਾਪਸ old;
 }
 
-struct sched_cache_group *sched_cache_group_get(struct sched_cache_group *grp)
+ਬਣਤਰ sched_cache_ਸਮੂਹ *sched_cache_ਸਮੂਹ_get(ਬਣਤਰ sched_cache_ਸਮੂਹ *grp)
 {
 	/*
 	 * refcount_inc_not_zero() is the acquire primitive for lockless
 	 * (RCU) lookups; plain refcount_inc() would scribble the count if
 	 * it already reached zero. Return NULL in that case.
 	 */
-	if (grp && !refcount_inc_not_zero(&grp->refcnt))
-		grp = NULL;
+	ਜੇ (grp && !refcount_inc_not_zero(&grp->refcnt))
+		grp = ਨਿਰਾ;
 
-	return grp;
+	ਵਾਪਸ grp;
 }
 
-struct sched_cache_group *task_cache_group_get(struct task_struct *p)
+ਬਣਤਰ sched_cache_ਸਮੂਹ *task_cache_ਸਮੂਹ_get(ਬਣਤਰ task_struct *p)
 {
 	guard(rcu)();
-	return sched_cache_group_get(rcu_dereference(p->sched_cache_grp));
+	ਵਾਪਸ sched_cache_ਸਮੂਹ_get(rcu_dereference(p->sched_cache_grp));
 }
 
-void sched_cache_fork(struct task_struct *p)
+ਖਾਲੀ sched_cache_fork(ਬਣਤਰ task_struct *p)
 {
 	/*
 	 * The child takes its own reference on the mm's cache group, separate
 	 * from the reference held by the mm. @p is not yet visible to readers,
 	 * so a plain initializing store is enough.
 	 */
-	RCU_INIT_POINTER(p->sched_cache_grp,
-			 sched_cache_group_get(p->mm->sched_cache_grp));
+	RCU_INIT_ਸੂਚਕ(p->sched_cache_grp,
+			 sched_cache_ਸਮੂਹ_get(p->mm->sched_cache_grp));
 }
 
-void sched_cache_fork_cleanup(struct task_struct *p)
+ਖਾਲੀ sched_cache_fork_cleanup(ਬਣਤਰ task_struct *p)
 {
 	/*
 	 * A fork that fails after sched_cache_fork() never reaches exit_mm(),
 	 * so drop the reference here. @p never became visible, so there are no
 	 * concurrent readers and the reference we hold keeps the group alive.
 	 */
-	sched_cache_group_put(rcu_access_pointer(p->sched_cache_grp));
-	RCU_INIT_POINTER(p->sched_cache_grp, NULL);
+	sched_cache_ਸਮੂਹ_put(rcu_access_ਸੂਚਕ(p->sched_cache_grp));
+	RCU_INIT_ਸੂਚਕ(p->sched_cache_grp, ਨਿਰਾ);
 }
 
-void sched_cache_exec_mmap(struct task_struct *p, struct mm_struct *mm)
+ਖਾਲੀ sched_cache_exec_mmap(ਬਣਤਰ task_struct *p, ਬਣਤਰ mm_struct *mm)
 {
-	struct sched_cache_group *old;
+	ਬਣਤਰ sched_cache_ਸਮੂਹ *old;
 
 	/*
 	 * Acquire the new reference before publishing the pointer, then drop
 	 * the old one. @p is current and the only writer of its own pointer.
 	 */
-	old = sched_cache_replace_grp(p, sched_cache_group_get(mm->sched_cache_grp));
-	sched_cache_group_put(old);
+	old = sched_cache_replace_grp(p, sched_cache_ਸਮੂਹ_get(mm->sched_cache_grp));
+	sched_cache_ਸਮੂਹ_put(old);
 }
 
-void sched_cache_exit_mm(struct task_struct *p)
+ਖਾਲੀ sched_cache_exit_mm(ਬਣਤਰ task_struct *p)
 {
-	struct sched_cache_group *grp = sched_cache_replace_grp(p, NULL);
+	ਬਣਤਰ sched_cache_ਸਮੂਹ *grp = sched_cache_replace_grp(p, ਨਿਰਾ);
 
-#ifdef CONFIG_NUMA_BALANCING
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
 	/*
 	 * Subtract this task's footprint from the group before dropping the
 	 * reference, so the group footprint converges as its threads exit.
 	 * Unlocked for performance; clamp to avoid underflow.
 	 */
-	if (grp && p->total_numa_faults) {
-		unsigned long fp = READ_ONCE(grp->footprint);
-		unsigned long sub = min(fp, p->total_numa_faults);
+	ਜੇ (grp && p->ਕੁੱਲ_numa_ਨੁਕਸ) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ fp = READ_ONCE(grp->footprint);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sub = min(fp, p->ਕੁੱਲ_numa_ਨੁਕਸ);
 
 		WRITE_ONCE(grp->footprint, fp - sub);
 	}
-#endif
-	sched_cache_group_put(grp);
+#ਜੇ_ਅੰਤ
+	sched_cache_ਸਮੂਹ_put(grp);
 }
 
-void mm_destroy_sched(struct mm_struct *mm)
+ਖਾਲੀ mm_destroy_sched(ਬਣਤਰ mm_struct *mm)
 {
-	sched_cache_group_put(mm->sched_cache_grp);
-	mm->sched_cache_grp = NULL;
+	sched_cache_ਸਮੂਹ_put(mm->sched_cache_grp);
+	mm->sched_cache_grp = ਨਿਰਾ;
 }
 
 /* because why would C be fully specified */
-static __always_inline void __shr_u64(u64 *val, unsigned int n)
+ਸਥਿਰ __always_inline ਖਾਲੀ __shr_u64(u64 *val, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ n)
 {
-	if (n >= 64) {
+	ਜੇ (n >= 64) {
 		*val = 0;
-		return;
+		ਵਾਪਸ;
 	}
 	*val >>= n;
 }
 
-static inline void __update_mm_sched(struct rq *rq,
-				     struct sched_cache_time *pcpu_sched)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ __update_mm_sched(ਬਣਤਰ rq *rq,
+				     ਬਣਤਰ sched_cache_ਸਮਾਂ *pcpu_sched)
 {
-	lockdep_assert_held(&rq->cpu_epoch_lock);
+	lockdep_assert_held(&rq->cpu_epoch_ਤਾਲਾ);
 
-	unsigned int period = max(READ_ONCE(llc_epoch_period), 1U);
-	unsigned long n, now = jiffies;
-	long delta = now - rq->cpu_epoch_next;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ period = max(READ_ONCE(llc_epoch_period), 1U);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ n, now = jiffies;
+	ਲੰਮਾ delta = now - rq->cpu_epoch_ਅਗਲਾ;
 
-	if (delta > 0) {
+	ਜੇ (delta > 0) {
 		n = (delta + period - 1) / period;
 		rq->cpu_epoch += n;
-		rq->cpu_epoch_next += n * period;
+		rq->cpu_epoch_ਅਗਲਾ += n * period;
 		__shr_u64(&rq->cpu_runtime, n);
 	}
 
 	n = rq->cpu_epoch - pcpu_sched->epoch;
-	if (n) {
+	ਜੇ (n) {
 		pcpu_sched->epoch += n;
 		__shr_u64(&pcpu_sched->runtime, n);
 	}
 }
 
-static unsigned long fraction_mm_sched(struct rq *rq,
-				       struct sched_cache_time *pcpu_sched)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ fraction_mm_sched(ਬਣਤਰ rq *rq,
+				       ਬਣਤਰ sched_cache_ਸਮਾਂ *pcpu_sched)
 {
-	guard(raw_spinlock_irqsave)(&rq->cpu_epoch_lock);
+	guard(raw_spinlock_irqsave)(&rq->cpu_epoch_ਤਾਲਾ);
 
 	__update_mm_sched(rq, pcpu_sched);
 
@@ -1798,21 +1798,21 @@ static unsigned long fraction_mm_sched(struct rq *rq,
 	 * the accumulation period, this means the multiplcation here should
 	 * not overflow.
 	 */
-	return div64_u64(NICE_0_LOAD * pcpu_sched->runtime, rq->cpu_runtime + 1);
+	ਵਾਪਸ div64_u64(NICE_0_ਲੱਦੋ * pcpu_sched->runtime, rq->cpu_runtime + 1);
 }
 
-static int get_pref_llc(struct task_struct *p, struct sched_cache_group *grp)
+ਸਥਿਰ ਪੂਰਨ get_pref_llc(ਬਣਤਰ task_struct *p, ਬਣਤਰ sched_cache_ਸਮੂਹ *grp)
 {
-	int mm_sched_llc = -1, mm_sched_cpu;
+	ਪੂਰਨ mm_sched_llc = -1, mm_sched_cpu;
 
-	if (!grp)
-		return -1;
+	ਜੇ (!grp)
+		ਵਾਪਸ -1;
 
 	mm_sched_cpu = READ_ONCE(grp->cpu);
-	if (mm_sched_cpu != -1) {
+	ਜੇ (mm_sched_cpu != -1) {
 		mm_sched_llc = llc_id(mm_sched_cpu);
 
-#ifdef CONFIG_NUMA_BALANCING
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
 		/*
 		 * Don't assign preferred LLC if it
 		 * conflicts with NUMA balancing.
@@ -1823,31 +1823,31 @@ static int get_pref_llc(struct task_struct *p, struct sched_cache_group *grp)
 		 * than sched_setnuma() at least -- and thus the
 		 * conflict only exists for a short period of time.
 		 */
-		if (static_branch_likely(&sched_numa_balancing) &&
+		ਜੇ (static_branch_likely(&sched_numa_balancing) &&
 		    p->numa_preferred_nid >= 0 &&
-		    cpu_to_node(mm_sched_cpu) != p->numa_preferred_nid)
+		    cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(mm_sched_cpu) != p->numa_preferred_nid)
 			mm_sched_llc = -1;
-#endif
+#ਜੇ_ਅੰਤ
 	}
 
-	return mm_sched_llc;
+	ਵਾਪਸ mm_sched_llc;
 }
 
-static unsigned int task_running_on_cpu(int cpu, struct task_struct *p);
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ task_running_on_cpu(ਪੂਰਨ cpu, ਬਣਤਰ task_struct *p);
 
-static inline
-void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
+ਸਥਿਰ ਸਤਰਅੰਦਰ
+ਖਾਲੀ account_mm_sched(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, s64 delta_exec)
 {
-	struct sched_cache_group *grp = rcu_dereference_all(p->sched_cache_grp);
-	struct sched_cache_time *pcpu_sched;
-	int mm_sched_llc = -1;
-	unsigned long epoch;
+	ਬਣਤਰ sched_cache_ਸਮੂਹ *grp = rcu_dereference_all(p->sched_cache_grp);
+	ਬਣਤਰ sched_cache_ਸਮਾਂ *pcpu_sched;
+	ਪੂਰਨ mm_sched_llc = -1;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ epoch;
 
-	if (!sched_cache_enabled())
-		return;
+	ਜੇ (!sched_cache_enabled())
+		ਵਾਪਸ;
 
-	if (p->sched_class != &fair_sched_class)
-		return;
+	ਜੇ (p->sched_class != &fair_sched_class)
+		ਵਾਪਸ;
 	/*
 	 * init_task, kthreads and user thread created
 	 * by user_mode_thread() don't have a cache group.
@@ -1858,12 +1858,12 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
 	 * here for safety reasons, to guard against future
 	 * modifications and to pair with task_tick_cache().
 	 */
-	if (p->flags & PF_KTHREAD || !grp || !grp->pcpu_sched)
-		return;
+	ਜੇ (p->flags & PF_KTHREAD || !grp || !grp->pcpu_sched)
+		ਵਾਪਸ;
 
-	pcpu_sched = per_cpu_ptr(grp->pcpu_sched, cpu_of(rq));
+	pcpu_sched = ਪ੍ਰਤੀ_cpu_ptr(grp->pcpu_sched, cpu_ਦਾ(rq));
 
-	scoped_guard (raw_spinlock, &rq->cpu_epoch_lock) {
+	scoped_guard (raw_spinlock, &rq->cpu_epoch_ਤਾਲਾ) {
 		__update_mm_sched(rq, pcpu_sched);
 		pcpu_sched->runtime += delta_exec;
 		rq->cpu_runtime += delta_exec;
@@ -1874,62 +1874,62 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
 	 * If this process hasn't hit task_cache_work() for a while invalidate
 	 * its preferred state.
 	 */
-	if ((long)(epoch - READ_ONCE(grp->epoch)) > llc_epoch_affinity_timeout ||
-	    invalid_llc_nr(grp, p, cpu_of(rq)) ||
-	    exceed_llc_capacity(grp, cpu_of(rq))) {
-		if (READ_ONCE(grp->cpu) != -1)
+	ਜੇ ((ਲੰਮਾ)(epoch - READ_ONCE(grp->epoch)) > llc_epoch_affinity_timeout ||
+	    invalid_llc_nr(grp, p, cpu_ਦਾ(rq)) ||
+	    exceed_llc_ਸਮਰੱਥਾ(grp, cpu_ਦਾ(rq))) {
+		ਜੇ (READ_ONCE(grp->cpu) != -1)
 			WRITE_ONCE(grp->cpu, -1);
 	}
 
 	mm_sched_llc = get_pref_llc(p, grp);
 
 	/* task not on rq accounted later in account_entity_enqueue() */
-	if (task_running_on_cpu(rq->cpu, p) &&
+	ਜੇ (task_running_on_cpu(rq->cpu, p) &&
 	    READ_ONCE(p->preferred_llc) != mm_sched_llc) {
-		account_llc_dequeue(rq, p);
+		account_llc_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(rq, p);
 		WRITE_ONCE(p->preferred_llc, mm_sched_llc);
-		account_llc_enqueue(rq, p);
+		account_llc_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(rq, p);
 	}
 }
 
-static void task_tick_cache(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ task_tick_cache(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	struct sched_cache_group *grp = rcu_dereference_all(p->sched_cache_grp);
-	struct callback_head *work = &p->cache_work;
-	unsigned long epoch;
+	ਬਣਤਰ sched_cache_ਸਮੂਹ *grp = rcu_dereference_all(p->sched_cache_grp);
+	ਬਣਤਰ callback_ਸਿਰ *work = &p->cache_work;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ epoch;
 
-	if (!sched_cache_enabled())
-		return;
+	ਜੇ (!sched_cache_enabled())
+		ਵਾਪਸ;
 
-	if (!grp || p->flags & PF_KTHREAD ||
+	ਜੇ (!grp || p->flags & PF_KTHREAD ||
 	    !grp->pcpu_sched)
-		return;
+		ਵਾਪਸ;
 
 	epoch = rq->cpu_epoch;
 	/* avoid moving backwards */
-	if (time_after_eq(grp->epoch, epoch))
-		return;
+	ਜੇ (ਸਮਾਂ_after_eq(grp->epoch, epoch))
+		ਵਾਪਸ;
 
-	guard(raw_spinlock)(&grp->lock);
+	guard(raw_spinlock)(&grp->ਤਾਲਾ);
 
-	if (work->next == work) {
-		task_work_add(p, work, TWA_RESUME);
+	ਜੇ (work->ਅਗਲਾ == work) {
+		task_work_ਜੋੜੋ(p, work, TWA_RESUME);
 		WRITE_ONCE(grp->epoch, epoch);
 	}
 }
 
-static void get_scan_cpumasks(cpumask_var_t cpus, struct task_struct *p,
-			      struct sched_cache_group *grp)
+ਸਥਿਰ ਖਾਲੀ get_ਜਾਂਚ_cpumasks(cpumask_var_t cpus, ਬਣਤਰ task_struct *p,
+			      ਬਣਤਰ sched_cache_ਸਮੂਹ *grp)
 {
-#ifdef CONFIG_NUMA_BALANCING
-	int cpu, curr_cpu, nid, pref_nid;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
+	ਪੂਰਨ cpu, curr_cpu, nid, pref_nid;
 
-	if (!static_branch_likely(&sched_numa_balancing))
-		goto out;
+	ਜੇ (!static_branch_likely(&sched_numa_balancing))
+		ਜਾਓ ਬਾਹਰਲਾ;
 
 	cpu = READ_ONCE(grp->cpu);
-	if (cpu != -1)
-		nid = cpu_to_node(cpu);
+	ਜੇ (cpu != -1)
+		nid = cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(cpu);
 	curr_cpu = task_cpu(p);
 
 	/*
@@ -1944,31 +1944,31 @@ static void get_scan_cpumasks(cpumask_var_t cpus, struct task_struct *p,
 	 */
 	pref_nid = p->numa_preferred_nid;
 	/* honor the task's preferred node */
-	if (pref_nid == NUMA_NO_NODE)
-		goto out;
+	ਜੇ (pref_nid == NUMA_NO_ਗੰਢ)
+		ਜਾਓ ਬਾਹਰਲਾ;
 
-	cpumask_or(cpus, cpus, cpumask_of_node(pref_nid));
+	cpumask_or(cpus, cpus, cpumask_ਦਾ_ਗੰਢ(pref_nid));
 
 	/* honor the task's preferred LLC CPU */
-	if (cpu != -1 && !cpumask_test_cpu(cpu, cpus) && nid != NUMA_NO_NODE)
-		cpumask_or(cpus, cpus, cpumask_of_node(nid));
+	ਜੇ (cpu != -1 && !cpumask_test_cpu(cpu, cpus) && nid != NUMA_NO_ਗੰਢ)
+		cpumask_or(cpus, cpus, cpumask_ਦਾ_ਗੰਢ(nid));
 
 	/* make sure the task's current running node is included */
-	if (!cpumask_test_cpu(curr_cpu, cpus))
-		cpumask_or(cpus, cpus, cpumask_of_node(cpu_to_node(curr_cpu)));
+	ਜੇ (!cpumask_test_cpu(curr_cpu, cpus))
+		cpumask_or(cpus, cpus, cpumask_ਦਾ_ਗੰਢ(cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(curr_cpu)));
 
-	return;
+	ਵਾਪਸ;
 
-out:
-#endif
-	cpumask_copy(cpus, cpu_online_mask);
+ਬਾਹਰਲਾ:
+#ਜੇ_ਅੰਤ
+	cpumask_copy(cpus, cpu_online_ਨਕਾਬ);
 }
 
-static inline void update_avg_scale(u64 *avg, u64 sample)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_avg_scale(u64 *avg, u64 sample)
 {
-	int factor = per_cpu(sd_llc_size, raw_smp_processor_id());
+	ਪੂਰਨ ਗੁਣਕ = ਪ੍ਰਤੀ_cpu(sd_llc_ਮਾਪ, raw_smp_processor_id());
 	s64 diff = sample - *avg;
-	u32 divisor;
+	u32 ਭਾਜਕ;
 
 	/*
 	 * Scale the divisor based on the number of CPUs contained
@@ -1978,77 +1978,77 @@ static inline void update_avg_scale(u64 *avg, u64 sample)
 	 * at a maximum divisor of 8 which is the default smoothing
 	 * factor of EWMA in update_avg().
 	 */
-	divisor = clamp_t(u32, (factor >> 2), 2, 8);
-	*avg += div64_s64(diff, divisor);
+	ਭਾਜਕ = clamp_t(u32, (ਗੁਣਕ >> 2), 2, 8);
+	*avg += div64_s64(diff, ਭਾਜਕ);
 }
 
-static void task_cache_work(struct callback_head *work)
+ਸਥਿਰ ਖਾਲੀ task_cache_work(ਬਣਤਰ callback_ਸਿਰ *work)
 {
-	struct sched_cache_group *grp __free(sched_cache_group_put) = NULL;
+	ਬਣਤਰ sched_cache_ਸਮੂਹ *grp __free(sched_cache_ਸਮੂਹ_put) = ਨਿਰਾ;
 	cpumask_var_t cpus __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-	int cpu, m_a_cpu = -1, nr_running = 0, curr_cpu;
-	unsigned long next_scan, now = jiffies;
-	struct task_struct *p = current, *cur;
-	unsigned long curr_m_a_occ = 0;
-	unsigned long m_a_occ = 0;
+	ਪੂਰਨ cpu, m_a_cpu = -1, nr_running = 0, curr_cpu;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਅਗਲਾ_ਜਾਂਚ, now = jiffies;
+	ਬਣਤਰ task_struct *p = current, *cur;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ curr_m_a_occ = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ m_a_occ = 0;
 
 	WARN_ON_ONCE(work != &p->cache_work);
 
-	work->next = work;
+	work->ਅਗਲਾ = work;
 
-	if (p->flags & PF_EXITING)
-		return;
+	ਜੇ (p->flags & PF_EXITING)
+		ਵਾਪਸ;
 
 	/*
 	 * A reference makes sure grp is not released by others. The rcu
 	 * lock can not be held till after zalloc_cpumask_var() below,
 	 * because the latter might sleep.
 	 */
-	grp = task_cache_group_get(p);
-	if (!grp)
-		return;
+	grp = task_cache_ਸਮੂਹ_get(p);
+	ਜੇ (!grp)
+		ਵਾਪਸ;
 
-	next_scan = READ_ONCE(grp->next_scan);
-	if (time_before(now, next_scan))
-		return;
+	ਅਗਲਾ_ਜਾਂਚ = READ_ONCE(grp->ਅਗਲਾ_ਜਾਂਚ);
+	ਜੇ (ਸਮਾਂ_before(now, ਅਗਲਾ_ਜਾਂਚ))
+		ਵਾਪਸ;
 
 	/* only 1 thread is allowed to scan */
-	if (!try_cmpxchg(&grp->next_scan, &next_scan,
-			 now + max_t(unsigned long,
+	ਜੇ (!try_cmpxchg(&grp->ਅਗਲਾ_ਜਾਂਚ, &ਅਗਲਾ_ਜਾਂਚ,
+			 now + max_t(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ,
 				     READ_ONCE(llc_epoch_period), 1)))
-		return;
+		ਵਾਪਸ;
 
 	curr_cpu = task_cpu(p);
-	if (invalid_llc_nr(grp, p, curr_cpu) ||
-	    exceed_llc_capacity(grp, curr_cpu)) {
-		if (READ_ONCE(grp->cpu) != -1)
+	ਜੇ (invalid_llc_nr(grp, p, curr_cpu) ||
+	    exceed_llc_ਸਮਰੱਥਾ(grp, curr_cpu)) {
+		ਜੇ (READ_ONCE(grp->cpu) != -1)
 			WRITE_ONCE(grp->cpu, -1);
 
-		return;
+		ਵਾਪਸ;
 	}
 
-	if (!zalloc_cpumask_var(&cpus, GFP_KERNEL))
-		return;
+	ਜੇ (!zalloc_cpumask_var(&cpus, GFP_KERNEL))
+		ਵਾਪਸ;
 
-	scoped_guard (cpus_read_lock) {
+	scoped_guard (cpus_read_ਤਾਲਾ) {
 		guard(rcu)();
 
-		get_scan_cpumasks(cpus, p, grp);
+		get_ਜਾਂਚ_cpumasks(cpus, p, grp);
 
 		for_each_cpu(cpu, cpus) {
 			/* XXX sched_cluster_active */
-			struct sched_domain *sd = rcu_dereference_all(per_cpu(sd_llc, cpu));
-			unsigned long occ, m_occ = 0, a_occ = 0;
-			int m_cpu = -1, i;
+			ਬਣਤਰ sched_domain *sd = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_llc, cpu));
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ occ, m_occ = 0, a_occ = 0;
+			ਪੂਰਨ m_cpu = -1, i;
 
-			if (!sd)
-				continue;
+			ਜੇ (!sd)
+				ਜਾਰੀ;
 
-			for_each_cpu(i, sched_domain_span(sd)) {
+			for_each_cpu(i, sched_domain_ਵਿਸਤਾਰ(sd)) {
 				occ = fraction_mm_sched(cpu_rq(i),
-							per_cpu_ptr(grp->pcpu_sched, i));
+							ਪ੍ਰਤੀ_cpu_ptr(grp->pcpu_sched, i));
 				a_occ += occ;
-				if (occ > m_occ) {
+				ਜੇ (occ > m_occ) {
 					m_occ = occ;
 					m_cpu = i;
 				}
@@ -2058,8 +2058,8 @@ static void task_cache_work(struct callback_head *work)
 				 * pointer is only compared, never dereferenced.
 				 */
 				cur = rcu_dereference_all(cpu_rq(i)->curr);
-				if (cur && !(cur->flags & (PF_EXITING | PF_KTHREAD)) &&
-				    rcu_access_pointer(cur->sched_cache_grp) == grp)
+				ਜੇ (cur && !(cur->flags & (PF_EXITING | PF_KTHREAD)) &&
+				    rcu_access_ਸੂਚਕ(cur->sched_cache_grp) == grp)
 					nr_running++;
 			}
 
@@ -2078,19 +2078,19 @@ static void task_cache_work(struct callback_head *work)
 			 * the average number of faults per CPU. This strategy is also
 			 * followed here.
 			 */
-			if (a_occ > m_a_occ) {
+			ਜੇ (a_occ > m_a_occ) {
 				m_a_occ = a_occ;
 				m_a_cpu = m_cpu;
 			}
 
-			if (llc_id(cpu) == llc_id(READ_ONCE(grp->cpu)))
+			ਜੇ (llc_id(cpu) == llc_id(READ_ONCE(grp->cpu)))
 				curr_m_a_occ = a_occ;
 
-			cpumask_andnot(cpus, cpus, sched_domain_span(sd));
+			cpumask_andnot(cpus, cpus, sched_domain_ਵਿਸਤਾਰ(sd));
 		}
 	}
 
-	if (m_a_occ > (2 * curr_m_a_occ)) {
+	ਜੇ (m_a_occ > (2 * curr_m_a_occ)) {
 		/*
 		 * Avoid switching sched_cache_grp->cpu too fast.
 		 * The reason to choose 2X is because:
@@ -2107,19 +2107,19 @@ static void task_cache_work(struct callback_head *work)
 	update_avg_scale(&grp->nr_running_avg, nr_running);
 }
 
-void init_sched_mm(struct task_struct *p)
+ਖਾਲੀ init_sched_mm(ਬਣਤਰ task_struct *p)
 {
-	struct callback_head *work = &p->cache_work;
+	ਬਣਤਰ callback_ਸਿਰ *work = &p->cache_work;
 
 	init_task_work(work, task_cache_work);
-	work->next = work;
+	work->ਅਗਲਾ = work;
 	/*
 	 * dup_task_struct() copies the parent's task_struct, including its
 	 * sched_cache_grp, for which the child holds no reference.  Clear it
 	 * here - before copy_mm() runs - so the child never carries a
 	 * borrowed pointer that the fork error path would put.
 	 */
-	RCU_INIT_POINTER(p->sched_cache_grp, NULL);
+	RCU_INIT_ਸੂਚਕ(p->sched_cache_grp, ਨਿਰਾ);
 	/*
 	 * Reset new task's preference to avoid
 	 * polluting account_llc_enqueue().
@@ -2128,43 +2128,43 @@ void init_sched_mm(struct task_struct *p)
 	p->pref_llc_queued = 0;
 }
 
-#else /* CONFIG_SCHED_CACHE */
+#ਨਹੀਂਤਾਂ /* CONFIG_SCHED_CACHE */
 
-static inline void account_mm_sched(struct rq *rq, struct task_struct *p,
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ account_mm_sched(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p,
 				    s64 delta_exec) { }
 
-void init_sched_mm(struct task_struct *p) { }
+ਖਾਲੀ init_sched_mm(ਬਣਤਰ task_struct *p) { }
 
-static void task_tick_cache(struct rq *rq, struct task_struct *p) { }
+ਸਥਿਰ ਖਾਲੀ task_tick_cache(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p) { }
 
-static inline int get_pref_llc(struct task_struct *p,
-			       struct mm_struct *mm)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ get_pref_llc(ਬਣਤਰ task_struct *p,
+			       ਬਣਤਰ mm_struct *mm)
 {
-	return -1;
+	ਵਾਪਸ -1;
 }
 
-static void account_llc_enqueue(struct rq *rq, struct task_struct *p) {}
+ਸਥਿਰ ਖਾਲੀ account_llc_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p) {}
 
-static void account_llc_dequeue(struct rq *rq, struct task_struct *p) {}
+ਸਥਿਰ ਖਾਲੀ account_llc_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p) {}
 
-static void pref_llc_running_inc(struct rq *rq, struct task_struct *p) {}
+ਸਥਿਰ ਖਾਲੀ pref_llc_running_inc(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p) {}
 
-static void pref_llc_running_dec(struct rq *rq, struct task_struct *p) {}
+ਸਥਿਰ ਖਾਲੀ pref_llc_running_dec(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p) {}
 
-#endif /* CONFIG_SCHED_CACHE */
+#ਜੇ_ਅੰਤ /* CONFIG_SCHED_CACHE */
 
 /*
  * Used by other classes to account runtime.
  */
-s64 update_curr_common(struct rq *rq)
+s64 update_curr_common(ਬਣਤਰ rq *rq)
 {
-	return update_se(rq, &rq->donor->se);
+	ਵਾਪਸ update_se(rq, &rq->donor->se);
 }
 
 /*
  * Update the current task's runtime statistics.
  */
-static void update_curr(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਖਾਲੀ update_curr(ਬਣਤਰ cfs_rq *cfs_rq)
 {
 	/*
 	 * Note: cfs_rq->curr corresponds to the task picked to
@@ -2172,22 +2172,22 @@ static void update_curr(struct cfs_rq *cfs_rq)
 	 * not necessarily be the actual task running
 	 * (rq->curr.se). This is easy to confuse!
 	 */
-	struct sched_entity *curr = cfs_rq->h_curr;
-	struct rq *rq = rq_of(cfs_rq);
+	ਬਣਤਰ sched_entity *curr = cfs_rq->h_curr;
+	ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 	s64 delta_exec;
 	bool resched;
 
-	if (unlikely(!curr))
-		return;
+	ਜੇ (unlikely(!curr))
+		ਵਾਪਸ;
 
 	delta_exec = update_se(rq, curr);
-	if (unlikely(delta_exec <= 0))
-		return;
+	ਜੇ (unlikely(delta_exec <= 0))
+		ਵਾਪਸ;
 
 	account_cfs_rq_runtime(cfs_rq, delta_exec);
 
-	if (!entity_is_task(curr))
-		return;
+	ਜੇ (!entity_is_task(curr))
+		ਵਾਪਸ;
 
 	cfs_rq = &rq->cfs;
 
@@ -2206,48 +2206,48 @@ static void update_curr(struct cfs_rq *cfs_rq)
 	 */
 	dl_server_update(&rq->fair_server, delta_exec);
 
-	if (cfs_rq->h_nr_queued == 1)
-		return;
+	ਜੇ (cfs_rq->h_nr_queued == 1)
+		ਵਾਪਸ;
 
-	if (resched || !protect_slice(curr)) {
+	ਜੇ (resched || !protect_ਟੁਕੜਾ(curr)) {
 		resched_curr_lazy(rq);
 		clear_buddies(cfs_rq, curr);
 	}
 }
 
-static void update_curr_fair(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ update_curr_fair(ਬਣਤਰ rq *rq)
 {
-	struct sched_entity *se = &rq->donor->se;
+	ਬਣਤਰ sched_entity *se = &rq->donor->se;
 
 	for_each_sched_entity(se)
-		update_curr(cfs_rq_of(se));
+		update_curr(cfs_rq_ਦਾ(se));
 }
 
-static inline void
-update_stats_wait_start_fair(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_stats_wait_ਸ਼ੁਰੂ_fair(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	struct sched_statistics *stats;
-	struct task_struct *p = NULL;
+	ਬਣਤਰ sched_statistics *stats;
+	ਬਣਤਰ task_struct *p = ਨਿਰਾ;
 
-	if (!schedstat_enabled())
-		return;
+	ਜੇ (!schedstat_enabled())
+		ਵਾਪਸ;
 
 	stats = __schedstats_from_se(se);
 
-	if (entity_is_task(se))
-		p = task_of(se);
+	ਜੇ (entity_is_task(se))
+		p = task_ਦਾ(se);
 
-	__update_stats_wait_start(rq_of(cfs_rq), p, stats);
+	__update_stats_wait_start(rq_ਦਾ(cfs_rq), p, stats);
 }
 
-static inline void
-update_stats_wait_end_fair(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_stats_wait_ਸਿਰਾ_fair(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	struct sched_statistics *stats;
-	struct task_struct *p = NULL;
+	ਬਣਤਰ sched_statistics *stats;
+	ਬਣਤਰ task_struct *p = ਨਿਰਾ;
 
-	if (!schedstat_enabled())
-		return;
+	ਜੇ (!schedstat_enabled())
+		ਵਾਪਸ;
 
 	stats = __schedstats_from_se(se);
 
@@ -2257,114 +2257,114 @@ update_stats_wait_end_fair(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	 * will be 0.So it will let the delta wrong. We need to avoid this
 	 * scenario.
 	 */
-	if (unlikely(!schedstat_val(stats->wait_start)))
-		return;
+	ਜੇ (unlikely(!schedstat_val(stats->wait_ਸ਼ੁਰੂ)))
+		ਵਾਪਸ;
 
-	if (entity_is_task(se))
-		p = task_of(se);
+	ਜੇ (entity_is_task(se))
+		p = task_ਦਾ(se);
 
-	__update_stats_wait_end(rq_of(cfs_rq), p, stats);
+	__update_stats_wait_end(rq_ਦਾ(cfs_rq), p, stats);
 }
 
-static inline void
-update_stats_enqueue_sleeper_fair(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_stats_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_sleeper_fair(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	struct sched_statistics *stats;
-	struct task_struct *tsk = NULL;
+	ਬਣਤਰ sched_statistics *stats;
+	ਬਣਤਰ task_struct *tsk = ਨਿਰਾ;
 
-	if (!schedstat_enabled())
-		return;
+	ਜੇ (!schedstat_enabled())
+		ਵਾਪਸ;
 
 	stats = __schedstats_from_se(se);
 
-	if (entity_is_task(se))
-		tsk = task_of(se);
+	ਜੇ (entity_is_task(se))
+		tsk = task_ਦਾ(se);
 
-	__update_stats_enqueue_sleeper(rq_of(cfs_rq), tsk, stats);
+	__update_stats_enqueue_sleeper(rq_ਦਾ(cfs_rq), tsk, stats);
 }
 
 /*
  * Task is being enqueued - update stats:
  */
-static inline void
-update_stats_enqueue_fair(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_stats_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_fair(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, ਪੂਰਨ flags)
 {
-	if (!schedstat_enabled())
-		return;
+	ਜੇ (!schedstat_enabled())
+		ਵਾਪਸ;
 
 	/*
 	 * Are we enqueueing a waiting task? (for current tasks
 	 * a dequeue/enqueue event is a NOP)
 	 */
-	if (se != cfs_rq->h_curr)
-		update_stats_wait_start_fair(cfs_rq, se);
+	ਜੇ (se != cfs_rq->h_curr)
+		update_stats_wait_ਸ਼ੁਰੂ_fair(cfs_rq, se);
 
-	if (flags & ENQUEUE_WAKEUP)
-		update_stats_enqueue_sleeper_fair(cfs_rq, se);
+	ਜੇ (flags & ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_WAKEUP)
+		update_stats_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_sleeper_fair(cfs_rq, se);
 }
 
-static inline void
-update_stats_dequeue_fair(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_stats_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_fair(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, ਪੂਰਨ flags)
 {
 
-	if (!schedstat_enabled())
-		return;
+	ਜੇ (!schedstat_enabled())
+		ਵਾਪਸ;
 
 	/*
 	 * Mark the end of the wait period if dequeueing a
 	 * waiting task:
 	 */
-	if (se != cfs_rq->h_curr)
-		update_stats_wait_end_fair(cfs_rq, se);
+	ਜੇ (se != cfs_rq->h_curr)
+		update_stats_wait_ਸਿਰਾ_fair(cfs_rq, se);
 
-	if ((flags & DEQUEUE_SLEEP) && entity_is_task(se)) {
-		struct task_struct *tsk = task_of(se);
-		unsigned int state;
+	ਜੇ ((flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP) && entity_is_task(se)) {
+		ਬਣਤਰ task_struct *tsk = task_ਦਾ(se);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ state;
 
 		/* XXX racy against TTWU */
 		state = READ_ONCE(tsk->__state);
-		if (state & TASK_INTERRUPTIBLE)
-			__schedstat_set(tsk->stats.sleep_start,
-				      rq_clock(rq_of(cfs_rq)));
-		if (state & TASK_UNINTERRUPTIBLE)
-			__schedstat_set(tsk->stats.block_start,
-				      rq_clock(rq_of(cfs_rq)));
+		ਜੇ (state & TASK_INTERRUPTIBLE)
+			__schedstat_set(tsk->stats.sleep_ਸ਼ੁਰੂ,
+				      rq_clock(rq_ਦਾ(cfs_rq)));
+		ਜੇ (state & TASK_UNINTERRUPTIBLE)
+			__schedstat_set(tsk->stats.ਖੰਡ_ਸ਼ੁਰੂ,
+				      rq_clock(rq_ਦਾ(cfs_rq)));
 	}
 }
 
 /*
  * We are picking a new current task - update its stats:
  */
-static inline void
-update_stats_curr_start(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_stats_curr_ਸ਼ੁਰੂ(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
 	/*
 	 * We are starting a new run period:
 	 */
-	se->exec_start = rq_clock_task(rq_of(cfs_rq));
+	se->exec_ਸ਼ੁਰੂ = rq_clock_task(rq_ਦਾ(cfs_rq));
 }
 
 /* Check sched_smt_active before calling this to avoid overheads in fastpaths */
-static inline bool is_core_idle(int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool is_core_idle(ਪੂਰਨ cpu)
 {
-	int sibling;
+	ਪੂਰਨ sibling;
 
-	for_each_cpu(sibling, cpu_smt_mask(cpu)) {
-		if (cpu == sibling)
-			continue;
+	for_each_cpu(sibling, cpu_smt_ਨਕਾਬ(cpu)) {
+		ਜੇ (cpu == sibling)
+			ਜਾਰੀ;
 
-		if (!idle_cpu(sibling))
-			return false;
+		ਜੇ (!idle_cpu(sibling))
+			ਵਾਪਸ false;
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-#ifdef CONFIG_NUMA
-#define NUMA_IMBALANCE_MIN 2
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NUMA_IMBALANCE_MIN 2
 
-static inline long
-adjust_numa_imbalance(int imbalance, int dst_running, int imb_numa_nr)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਲੰਮਾ
+adjust_numa_imbalance(ਪੂਰਨ imbalance, ਪੂਰਨ dst_running, ਪੂਰਨ imb_numa_nr)
 {
 	/*
 	 * Allow a NUMA imbalance if busy CPUs is less than the maximum
@@ -2373,49 +2373,49 @@ adjust_numa_imbalance(int imbalance, int dst_running, int imb_numa_nr)
 	 * approximation as the number of running tasks may not be related to
 	 * the number of busy CPUs due to sched_setaffinity.
 	 */
-	if (dst_running > imb_numa_nr)
-		return imbalance;
+	ਜੇ (dst_running > imb_numa_nr)
+		ਵਾਪਸ imbalance;
 
 	/*
 	 * Allow a small imbalance based on a simple pair of communicating
 	 * tasks that remain local when the destination is lightly loaded.
 	 */
-	if (imbalance <= NUMA_IMBALANCE_MIN)
-		return 0;
+	ਜੇ (imbalance <= NUMA_IMBALANCE_MIN)
+		ਵਾਪਸ 0;
 
-	return imbalance;
+	ਵਾਪਸ imbalance;
 }
-#endif /* CONFIG_NUMA */
+#ਜੇ_ਅੰਤ /* CONFIG_NUMA */
 
-#ifdef CONFIG_NUMA_BALANCING
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
 /*
  * Approximate time to scan a full NUMA task in ms. The task scan period is
  * calculated based on the tasks virtual memory size and
  * numa_balancing_scan_size.
  */
-unsigned int sysctl_numa_balancing_scan_period_min = 1000;
-unsigned int sysctl_numa_balancing_scan_period_max = 60000;
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_ਜਾਂਚ_period_min = 1000;
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_ਜਾਂਚ_period_max = 60000;
 
 /* Portion of address space to scan in MB */
-unsigned int sysctl_numa_balancing_scan_size = 256;
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_ਜਾਂਚ_ਮਾਪ = 256;
 
 /* Scan @scan_size MB every @scan_period after an initial @scan_delay in ms */
-unsigned int sysctl_numa_balancing_scan_delay = 1000;
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_ਜਾਂਚ_delay = 1000;
 
 /* The page with hint page fault latency < threshold in ms is considered hot */
-unsigned int sysctl_numa_balancing_hot_threshold = MSEC_PER_SEC;
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_hot_ਹੱਦ = MSEC_ਪ੍ਰਤੀ_SEC;
 
-struct numa_group {
+ਬਣਤਰ numa_ਸਮੂਹ {
 	refcount_t refcount;
 
-	spinlock_t lock; /* nr_tasks, tasks */
-	int nr_tasks;
+	spinlock_t ਤਾਲਾ; /* nr_tasks, tasks */
+	ਪੂਰਨ nr_tasks;
 	pid_t gid;
-	int active_nodes;
+	ਪੂਰਨ ਸਰਗਰਮ_nodes;
 
-	struct rcu_head rcu;
-	unsigned long total_faults;
-	unsigned long max_faults_cpu;
+	ਬਣਤਰ rcu_ਸਿਰ rcu;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਕੁੱਲ_ਨੁਕਸ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max_ਨੁਕਸ_cpu;
 	/*
 	 * faults[] array is split into two regions: faults_mem and faults_cpu.
 	 *
@@ -2423,144 +2423,144 @@ struct numa_group {
 	 * towards the CPU. As a consequence, these stats are weighted
 	 * more by CPU use than by memory faults.
 	 */
-	unsigned long faults[];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨੁਕਸ[];
 };
 
 /*
  * For functions that can be called in multiple contexts that permit reading
  * ->numa_group (see struct task_struct for locking rules).
  */
-static struct numa_group *deref_task_numa_group(struct task_struct *p)
+ਸਥਿਰ ਬਣਤਰ numa_ਸਮੂਹ *deref_task_numa_ਸਮੂਹ(ਬਣਤਰ task_struct *p)
 {
-	return rcu_dereference_check(p->numa_group, p == current ||
+	ਵਾਪਸ rcu_dereference_check(p->numa_ਸਮੂਹ, p == current ||
 		(lockdep_is_held(__rq_lockp(task_rq(p))) && !READ_ONCE(p->on_cpu)));
 }
 
-static struct numa_group *deref_curr_numa_group(struct task_struct *p)
+ਸਥਿਰ ਬਣਤਰ numa_ਸਮੂਹ *deref_curr_numa_ਸਮੂਹ(ਬਣਤਰ task_struct *p)
 {
-	return rcu_dereference_protected(p->numa_group, p == current);
+	ਵਾਪਸ rcu_dereference_protected(p->numa_ਸਮੂਹ, p == current);
 }
 
-static inline unsigned long group_faults_priv(struct numa_group *ng);
-static inline unsigned long group_faults_shared(struct numa_group *ng);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_ਨੁਕਸ_priv(ਬਣਤਰ numa_ਸਮੂਹ *ng);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_ਨੁਕਸ_shared(ਬਣਤਰ numa_ਸਮੂਹ *ng);
 
-static unsigned int task_nr_scan_windows(struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ task_nr_ਜਾਂਚ_windows(ਬਣਤਰ task_struct *p)
 {
-	unsigned long rss = 0;
-	unsigned long nr_scan_pages;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ rss = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ nr_ਜਾਂਚ_ਪੰਨੇ;
 
 	/*
 	 * Calculations based on RSS as non-present and empty pages are skipped
 	 * by the PTE scanner and NUMA hinting faults should be trapped based
 	 * on resident pages
 	 */
-	nr_scan_pages = MB_TO_PAGES(sysctl_numa_balancing_scan_size);
+	nr_ਜਾਂਚ_ਪੰਨੇ = MB_ਮੰਜ਼ਿਲ_ਪੰਨੇ(sysctl_numa_balancing_ਜਾਂਚ_ਮਾਪ);
 	rss = get_mm_rss(p->mm);
-	if (!rss)
-		rss = nr_scan_pages;
+	ਜੇ (!rss)
+		rss = nr_ਜਾਂਚ_ਪੰਨੇ;
 
-	rss = round_up(rss, nr_scan_pages);
-	return rss / nr_scan_pages;
+	rss = ਗੇੜਾ_ਉੱਪਰ(rss, nr_ਜਾਂਚ_ਪੰਨੇ);
+	ਵਾਪਸ rss / nr_ਜਾਂਚ_ਪੰਨੇ;
 }
 
 /* For sanity's sake, never scan more PTEs than MAX_SCAN_WINDOW MB/sec. */
-#define MAX_SCAN_WINDOW 2560
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_ਜਾਂਚ_ਖਿੜਕੀ 2560
 
-static unsigned int task_scan_min(struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ task_ਜਾਂਚ_min(ਬਣਤਰ task_struct *p)
 {
-	unsigned int scan_size = READ_ONCE(sysctl_numa_balancing_scan_size);
-	unsigned int scan, floor;
-	unsigned int windows = 1;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਜਾਂਚ_ਮਾਪ = READ_ONCE(sysctl_numa_balancing_ਜਾਂਚ_ਮਾਪ);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਜਾਂਚ, floor;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ windows = 1;
 
-	if (scan_size < MAX_SCAN_WINDOW)
-		windows = MAX_SCAN_WINDOW / scan_size;
+	ਜੇ (ਜਾਂਚ_ਮਾਪ < MAX_ਜਾਂਚ_ਖਿੜਕੀ)
+		windows = MAX_ਜਾਂਚ_ਖਿੜਕੀ / ਜਾਂਚ_ਮਾਪ;
 	floor = 1000 / windows;
 
-	scan = sysctl_numa_balancing_scan_period_min / task_nr_scan_windows(p);
-	return max_t(unsigned int, floor, scan);
+	ਜਾਂਚ = sysctl_numa_balancing_ਜਾਂਚ_period_min / task_nr_ਜਾਂਚ_windows(p);
+	ਵਾਪਸ max_t(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, floor, ਜਾਂਚ);
 }
 
-static unsigned int task_scan_start(struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ task_ਜਾਂਚ_ਸ਼ੁਰੂ(ਬਣਤਰ task_struct *p)
 {
-	unsigned long smin = task_scan_min(p);
-	unsigned long period = smin;
-	struct numa_group *ng;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ smin = task_ਜਾਂਚ_min(p);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ period = smin;
+	ਬਣਤਰ numa_ਸਮੂਹ *ng;
 
 	/* Scale the maximum scan period with the amount of shared memory. */
-	rcu_read_lock();
-	ng = rcu_dereference_all(p->numa_group);
-	if (ng) {
-		unsigned long shared = group_faults_shared(ng);
-		unsigned long private = group_faults_priv(ng);
+	rcu_read_ਤਾਲਾ();
+	ng = rcu_dereference_all(p->numa_ਸਮੂਹ);
+	ਜੇ (ng) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ shared = ਸਮੂਹ_ਨੁਕਸ_shared(ng);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨਿਜੀ = ਸਮੂਹ_ਨੁਕਸ_priv(ng);
 
 		period *= refcount_read(&ng->refcount);
 		period *= shared + 1;
-		period /= private + shared + 1;
+		period /= ਨਿਜੀ + shared + 1;
 	}
 	rcu_read_unlock();
 
-	return max(smin, period);
+	ਵਾਪਸ max(smin, period);
 }
 
-static unsigned int task_scan_max(struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ task_ਜਾਂਚ_max(ਬਣਤਰ task_struct *p)
 {
-	unsigned long smin = task_scan_min(p);
-	unsigned long smax;
-	struct numa_group *ng;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ smin = task_ਜਾਂਚ_min(p);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ smax;
+	ਬਣਤਰ numa_ਸਮੂਹ *ng;
 
 	/* Watch for min being lower than max due to floor calculations */
-	smax = sysctl_numa_balancing_scan_period_max / task_nr_scan_windows(p);
+	smax = sysctl_numa_balancing_ਜਾਂਚ_period_max / task_nr_ਜਾਂਚ_windows(p);
 
 	/* Scale the maximum scan period with the amount of shared memory. */
-	ng = deref_curr_numa_group(p);
-	if (ng) {
-		unsigned long shared = group_faults_shared(ng);
-		unsigned long private = group_faults_priv(ng);
-		unsigned long period = smax;
+	ng = deref_curr_numa_ਸਮੂਹ(p);
+	ਜੇ (ng) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ shared = ਸਮੂਹ_ਨੁਕਸ_shared(ng);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨਿਜੀ = ਸਮੂਹ_ਨੁਕਸ_priv(ng);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ period = smax;
 
 		period *= refcount_read(&ng->refcount);
 		period *= shared + 1;
-		period /= private + shared + 1;
+		period /= ਨਿਜੀ + shared + 1;
 
 		smax = max(smax, period);
 	}
 
-	return max(smin, smax);
+	ਵਾਪਸ max(smin, smax);
 }
 
-static void account_numa_enqueue(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ account_numa_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	rq->nr_numa_running += (p->numa_preferred_nid != NUMA_NO_NODE);
-	rq->nr_preferred_running += (p->numa_preferred_nid == task_node(p));
+	rq->nr_numa_running += (p->numa_preferred_nid != NUMA_NO_ਗੰਢ);
+	rq->nr_preferred_running += (p->numa_preferred_nid == task_ਗੰਢ(p));
 }
 
-static void account_numa_dequeue(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ account_numa_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	rq->nr_numa_running -= (p->numa_preferred_nid != NUMA_NO_NODE);
-	rq->nr_preferred_running -= (p->numa_preferred_nid == task_node(p));
+	rq->nr_numa_running -= (p->numa_preferred_nid != NUMA_NO_ਗੰਢ);
+	rq->nr_preferred_running -= (p->numa_preferred_nid == task_ਗੰਢ(p));
 }
 
 /* Shared or private faults. */
-#define NR_NUMA_HINT_FAULT_TYPES 2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NR_NUMA_HINT_FAULT_TYPES 2
 
 /* Memory and CPU locality */
-#define NR_NUMA_HINT_FAULT_STATS (NR_NUMA_HINT_FAULT_TYPES * 2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NR_NUMA_HINT_FAULT_STATS (NR_NUMA_HINT_FAULT_TYPES * 2)
 
 /* Averaged statistics, and temporary buffers. */
-#define NR_NUMA_HINT_FAULT_BUCKETS (NR_NUMA_HINT_FAULT_STATS * 2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NR_NUMA_HINT_FAULT_BUCKETS (NR_NUMA_HINT_FAULT_STATS * 2)
 
-pid_t task_numa_group_id(struct task_struct *p)
+pid_t task_numa_ਸਮੂਹ_id(ਬਣਤਰ task_struct *p)
 {
-	struct numa_group *ng;
+	ਬਣਤਰ numa_ਸਮੂਹ *ng;
 	pid_t gid = 0;
 
-	rcu_read_lock();
-	ng = rcu_dereference_all(p->numa_group);
-	if (ng)
+	rcu_read_ਤਾਲਾ();
+	ng = rcu_dereference_all(p->numa_ਸਮੂਹ);
+	ਜੇ (ng)
 		gid = ng->gid;
 	rcu_read_unlock();
 
-	return gid;
+	ਵਾਪਸ gid;
 }
 
 /*
@@ -2569,59 +2569,59 @@ pid_t task_numa_group_id(struct task_struct *p)
  * array is for current counters, which are averaged into the
  * first set by task_numa_placement.
  */
-static inline int task_faults_idx(enum numa_faults_stats s, int nid, int priv)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_ਨੁਕਸ_idx(ਗਿਣਤੀ numa_ਨੁਕਸ_stats s, ਪੂਰਨ nid, ਪੂਰਨ priv)
 {
-	return NR_NUMA_HINT_FAULT_TYPES * (s * nr_node_ids + nid) + priv;
+	ਵਾਪਸ NR_NUMA_HINT_FAULT_TYPES * (s * nr_ਗੰਢ_ids + nid) + priv;
 }
 
-static inline unsigned long task_faults(struct task_struct *p, int nid)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_ਨੁਕਸ(ਬਣਤਰ task_struct *p, ਪੂਰਨ nid)
 {
-	if (!p->numa_faults)
-		return 0;
+	ਜੇ (!p->numa_ਨੁਕਸ)
+		ਵਾਪਸ 0;
 
-	return p->numa_faults[task_faults_idx(NUMA_MEM, nid, 0)] +
-		p->numa_faults[task_faults_idx(NUMA_MEM, nid, 1)];
+	ਵਾਪਸ p->numa_ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, nid, 0)] +
+		p->numa_ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, nid, 1)];
 }
 
-static inline unsigned long group_faults(struct task_struct *p, int nid)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_ਨੁਕਸ(ਬਣਤਰ task_struct *p, ਪੂਰਨ nid)
 {
-	struct numa_group *ng = deref_task_numa_group(p);
+	ਬਣਤਰ numa_ਸਮੂਹ *ng = deref_task_numa_ਸਮੂਹ(p);
 
-	if (!ng)
-		return 0;
+	ਜੇ (!ng)
+		ਵਾਪਸ 0;
 
-	return ng->faults[task_faults_idx(NUMA_MEM, nid, 0)] +
-		ng->faults[task_faults_idx(NUMA_MEM, nid, 1)];
+	ਵਾਪਸ ng->ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, nid, 0)] +
+		ng->ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, nid, 1)];
 }
 
-static inline unsigned long group_faults_cpu(struct numa_group *group, int nid)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_ਨੁਕਸ_cpu(ਬਣਤਰ numa_ਸਮੂਹ *ਸਮੂਹ, ਪੂਰਨ nid)
 {
-	return group->faults[task_faults_idx(NUMA_CPU, nid, 0)] +
-		group->faults[task_faults_idx(NUMA_CPU, nid, 1)];
+	ਵਾਪਸ ਸਮੂਹ->ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_CPU, nid, 0)] +
+		ਸਮੂਹ->ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_CPU, nid, 1)];
 }
 
-static inline unsigned long group_faults_priv(struct numa_group *ng)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_ਨੁਕਸ_priv(ਬਣਤਰ numa_ਸਮੂਹ *ng)
 {
-	unsigned long faults = 0;
-	int node;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨੁਕਸ = 0;
+	ਪੂਰਨ ਗੰਢ;
 
-	for_each_online_node(node) {
-		faults += ng->faults[task_faults_idx(NUMA_MEM, node, 1)];
+	for_each_online_ਗੰਢ(ਗੰਢ) {
+		ਨੁਕਸ += ng->ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, ਗੰਢ, 1)];
 	}
 
-	return faults;
+	ਵਾਪਸ ਨੁਕਸ;
 }
 
-static inline unsigned long group_faults_shared(struct numa_group *ng)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_ਨੁਕਸ_shared(ਬਣਤਰ numa_ਸਮੂਹ *ng)
 {
-	unsigned long faults = 0;
-	int node;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨੁਕਸ = 0;
+	ਪੂਰਨ ਗੰਢ;
 
-	for_each_online_node(node) {
-		faults += ng->faults[task_faults_idx(NUMA_MEM, node, 0)];
+	for_each_online_ਗੰਢ(ਗੰਢ) {
+		ਨੁਕਸ += ng->ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, ਗੰਢ, 0)];
 	}
 
-	return faults;
+	ਵਾਪਸ ਨੁਕਸ;
 }
 
 /*
@@ -2629,43 +2629,43 @@ static inline unsigned long group_faults_shared(struct numa_group *ng)
  * considered part of a numa group's pseudo-interleaving set. Migrations
  * between these nodes are slowed down, to allow things to settle down.
  */
-#define ACTIVE_NODE_FRACTION 3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸਰਗਰਮ_ਗੰਢ_FRACTION 3
 
-static bool numa_is_active_node(int nid, struct numa_group *ng)
+ਸਥਿਰ bool numa_is_ਸਰਗਰਮ_ਗੰਢ(ਪੂਰਨ nid, ਬਣਤਰ numa_ਸਮੂਹ *ng)
 {
-	return group_faults_cpu(ng, nid) * ACTIVE_NODE_FRACTION > ng->max_faults_cpu;
+	ਵਾਪਸ ਸਮੂਹ_ਨੁਕਸ_cpu(ng, nid) * ਸਰਗਰਮ_ਗੰਢ_FRACTION > ng->max_ਨੁਕਸ_cpu;
 }
 
 /* Handle placement on systems where not all nodes are directly connected. */
-static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
-					int lim_dist, bool task)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ score_nearby_nodes(ਬਣਤਰ task_struct *p, ਪੂਰਨ nid,
+					ਪੂਰਨ lim_dist, bool task)
 {
-	unsigned long score = 0;
-	int node, max_dist;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ score = 0;
+	ਪੂਰਨ ਗੰਢ, max_dist;
 
 	/*
 	 * All nodes are directly connected, and the same distance
 	 * from each other. No need for fancy placement algorithms.
 	 */
-	if (sched_numa_topology_type == NUMA_DIRECT)
-		return 0;
+	ਜੇ (sched_numa_topology_type == NUMA_ਸਿੱਧਾ)
+		ਵਾਪਸ 0;
 
 	/* sched_max_numa_distance may be changed in parallel. */
-	max_dist = READ_ONCE(sched_max_numa_distance);
+	max_dist = READ_ONCE(sched_max_numa_ਦੂਰੀ);
 	/*
 	 * This code is called for each node, introducing N^2 complexity,
 	 * which should be OK given the number of nodes rarely exceeds 8.
 	 */
-	for_each_online_node(node) {
-		unsigned long faults;
-		int dist = node_distance(nid, node);
+	for_each_online_ਗੰਢ(ਗੰਢ) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨੁਕਸ;
+		ਪੂਰਨ dist = ਗੰਢ_ਦੂਰੀ(nid, ਗੰਢ);
 
 		/*
 		 * The furthest away nodes in the system are not interesting
 		 * for placement; nid was already counted.
 		 */
-		if (dist >= max_dist || node == nid)
-			continue;
+		ਜੇ (dist >= max_dist || ਗੰਢ == nid)
+			ਜਾਰੀ;
 
 		/*
 		 * On systems with a backplane NUMA topology, compare groups
@@ -2674,14 +2674,14 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
 		 * "hoplimit", only nodes closer by than "hoplimit" are part
 		 * of each group. Skip other nodes.
 		 */
-		if (sched_numa_topology_type == NUMA_BACKPLANE && dist >= lim_dist)
-			continue;
+		ਜੇ (sched_numa_topology_type == NUMA_BACKPLANE && dist >= lim_dist)
+			ਜਾਰੀ;
 
 		/* Add up the faults from nearby nodes. */
-		if (task)
-			faults = task_faults(p, node);
-		else
-			faults = group_faults(p, node);
+		ਜੇ (task)
+			ਨੁਕਸ = task_ਨੁਕਸ(p, ਗੰਢ);
+		ਨਹੀਂਤਾਂ
+			ਨੁਕਸ = ਸਮੂਹ_ਨੁਕਸ(p, ਗੰਢ);
 
 		/*
 		 * On systems with a glueless mesh NUMA topology, there are
@@ -2691,15 +2691,15 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
 		 * The further away a node is, the less the faults count.
 		 * This seems to result in good task placement.
 		 */
-		if (sched_numa_topology_type == NUMA_GLUELESS_MESH) {
-			faults *= (max_dist - dist);
-			faults /= (max_dist - LOCAL_DISTANCE);
+		ਜੇ (sched_numa_topology_type == NUMA_GLUELESS_MESH) {
+			ਨੁਕਸ *= (max_dist - dist);
+			ਨੁਕਸ /= (max_dist - LOCAL_ਦੂਰੀ);
 		}
 
-		score += faults;
+		score += ਨੁਕਸ;
 	}
 
-	return score;
+	ਵਾਪਸ score;
 }
 
 /*
@@ -2708,43 +2708,43 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
  * larger multiplier, in order to group tasks together that are almost
  * evenly spread out between numa nodes.
  */
-static inline unsigned long task_weight(struct task_struct *p, int nid,
-					int dist)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_ਭਾਰ(ਬਣਤਰ task_struct *p, ਪੂਰਨ nid,
+					ਪੂਰਨ dist)
 {
-	unsigned long faults, total_faults;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨੁਕਸ, ਕੁੱਲ_ਨੁਕਸ;
 
-	if (!p->numa_faults)
-		return 0;
+	ਜੇ (!p->numa_ਨੁਕਸ)
+		ਵਾਪਸ 0;
 
-	total_faults = p->total_numa_faults;
+	ਕੁੱਲ_ਨੁਕਸ = p->ਕੁੱਲ_numa_ਨੁਕਸ;
 
-	if (!total_faults)
-		return 0;
+	ਜੇ (!ਕੁੱਲ_ਨੁਕਸ)
+		ਵਾਪਸ 0;
 
-	faults = task_faults(p, nid);
-	faults += score_nearby_nodes(p, nid, dist, true);
+	ਨੁਕਸ = task_ਨੁਕਸ(p, nid);
+	ਨੁਕਸ += score_nearby_nodes(p, nid, dist, true);
 
-	return 1000 * faults / total_faults;
+	ਵਾਪਸ 1000 * ਨੁਕਸ / ਕੁੱਲ_ਨੁਕਸ;
 }
 
-static inline unsigned long group_weight(struct task_struct *p, int nid,
-					 int dist)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_ਭਾਰ(ਬਣਤਰ task_struct *p, ਪੂਰਨ nid,
+					 ਪੂਰਨ dist)
 {
-	struct numa_group *ng = deref_task_numa_group(p);
-	unsigned long faults, total_faults;
+	ਬਣਤਰ numa_ਸਮੂਹ *ng = deref_task_numa_ਸਮੂਹ(p);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨੁਕਸ, ਕੁੱਲ_ਨੁਕਸ;
 
-	if (!ng)
-		return 0;
+	ਜੇ (!ng)
+		ਵਾਪਸ 0;
 
-	total_faults = ng->total_faults;
+	ਕੁੱਲ_ਨੁਕਸ = ng->ਕੁੱਲ_ਨੁਕਸ;
 
-	if (!total_faults)
-		return 0;
+	ਜੇ (!ਕੁੱਲ_ਨੁਕਸ)
+		ਵਾਪਸ 0;
 
-	faults = group_faults(p, nid);
-	faults += score_nearby_nodes(p, nid, dist, false);
+	ਨੁਕਸ = ਸਮੂਹ_ਨੁਕਸ(p, nid);
+	ਨੁਕਸ += score_nearby_nodes(p, nid, dist, false);
 
-	return 1000 * faults / total_faults;
+	ਵਾਪਸ 1000 * ਨੁਕਸ / ਕੁੱਲ_ਨੁਕਸ;
 }
 
 /*
@@ -2754,9 +2754,9 @@ static inline unsigned long group_weight(struct task_struct *p, int nid,
  * interpreted as CPU and PID.  So CPU needs to be checked to avoid to
  * access out of array bound.
  */
-static inline bool cpupid_valid(int cpupid)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool cpupid_valid(ਪੂਰਨ cpupid)
 {
-	return cpupid_to_cpu(cpupid) < nr_cpu_ids;
+	ਵਾਪਸ cpupid_ਮੰਜ਼ਿਲ_cpu(cpupid) < nr_cpu_ids;
 }
 
 /*
@@ -2766,25 +2766,25 @@ static inline bool cpupid_valid(int cpupid)
  * memory pages will be migrated to fast memory node without
  * considering hot threshold.
  */
-static bool pgdat_free_space_enough(struct pglist_data *pgdat)
+ਸਥਿਰ bool pgdat_free_space_enough(ਬਣਤਰ pglist_ਅੰਕੜੇ *pgdat)
 {
-	int z;
-	unsigned long enough_wmark;
+	ਪੂਰਨ z;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ enough_wmark;
 
-	enough_wmark = max(1UL * 1024 * 1024 * 1024 >> PAGE_SHIFT,
-			   pgdat->node_present_pages >> 4);
-	for (z = pgdat->nr_zones - 1; z >= 0; z--) {
-		struct zone *zone = pgdat->node_zones + z;
+	enough_wmark = max(1UL * 1024 * 1024 * 1024 >> ਪੰਨਾ_ਖਿਸਕਾਓ,
+			   pgdat->ਗੰਢ_present_ਪੰਨੇ >> 4);
+	ਲਈ (z = pgdat->nr_zones - 1; z >= 0; z--) {
+		ਬਣਤਰ zone *zone = pgdat->ਗੰਢ_zones + z;
 
-		if (!populated_zone(zone))
-			continue;
+		ਜੇ (!populated_zone(zone))
+			ਜਾਰੀ;
 
-		if (zone_watermark_ok(zone, 0,
-				      promo_wmark_pages(zone) + enough_wmark,
+		ਜੇ (zone_watermark_ok(zone, 0,
+				      promo_wmark_ਪੰਨੇ(zone) + enough_wmark,
 				      ZONE_MOVABLE, 0))
-			return true;
+			ਵਾਪਸ true;
 	}
-	return false;
+	ਵਾਪਸ false;
 }
 
 /*
@@ -2799,14 +2799,14 @@ static bool pgdat_free_space_enough(struct pglist_data *pgdat)
  * The smaller the hint page fault latency, the higher the possibility
  * for the page to be hot.
  */
-static int numa_hint_fault_latency(struct folio *folio)
+ਸਥਿਰ ਪੂਰਨ numa_hint_fault_latency(ਬਣਤਰ folio *folio)
 {
-	int last_time, time;
+	ਪੂਰਨ ਆਖਰੀ_ਸਮਾਂ, ਸਮਾਂ;
 
-	time = jiffies_to_msecs(jiffies);
-	last_time = folio_xchg_access_time(folio, time);
+	ਸਮਾਂ = jiffies_ਮੰਜ਼ਿਲ_msecs(jiffies);
+	ਆਖਰੀ_ਸਮਾਂ = folio_xchg_access_ਸਮਾਂ(folio, ਸਮਾਂ);
 
-	return (time - last_time) & PAGE_ACCESS_TIME_MASK;
+	ਵਾਪਸ (ਸਮਾਂ - ਆਖਰੀ_ਸਮਾਂ) & ਪੰਨਾ_ACCESS_ਸਮਾਂ_ਨਕਾਬ;
 }
 
 /*
@@ -2814,102 +2814,102 @@ static int numa_hint_fault_latency(struct folio *folio)
  * hurt application latency.  So we provide a mechanism to rate limit
  * the number of pages that are tried to be promoted.
  */
-static bool numa_promotion_rate_limit(struct pglist_data *pgdat,
-				      unsigned long rate_limit, int nr)
+ਸਥਿਰ bool numa_promotion_ਦਰ_ਹੱਦਬੰਦੀ(ਬਣਤਰ pglist_ਅੰਕੜੇ *pgdat,
+				      ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਦਰ_ਹੱਦਬੰਦੀ, ਪੂਰਨ nr)
 {
-	unsigned long nr_cand;
-	unsigned int now, start;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ nr_cand;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ now, ਸ਼ੁਰੂ;
 
-	now = jiffies_to_msecs(jiffies);
-	mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE, nr);
-	nr_cand = node_page_state(pgdat, PGPROMOTE_CANDIDATE);
-	start = pgdat->nbp_rl_start;
-	if (now - start > MSEC_PER_SEC &&
-	    cmpxchg(&pgdat->nbp_rl_start, start, now) == start)
+	now = jiffies_ਮੰਜ਼ਿਲ_msecs(jiffies);
+	mod_ਗੰਢ_ਪੰਨਾ_state(pgdat, PGPROMOTE_CANDIDATE, nr);
+	nr_cand = ਗੰਢ_ਪੰਨਾ_state(pgdat, PGPROMOTE_CANDIDATE);
+	ਸ਼ੁਰੂ = pgdat->nbp_rl_ਸ਼ੁਰੂ;
+	ਜੇ (now - ਸ਼ੁਰੂ > MSEC_ਪ੍ਰਤੀ_SEC &&
+	    cmpxchg(&pgdat->nbp_rl_ਸ਼ੁਰੂ, ਸ਼ੁਰੂ, now) == ਸ਼ੁਰੂ)
 		pgdat->nbp_rl_nr_cand = nr_cand;
-	if (nr_cand - pgdat->nbp_rl_nr_cand >= rate_limit)
-		return true;
-	return false;
+	ਜੇ (nr_cand - pgdat->nbp_rl_nr_cand >= ਦਰ_ਹੱਦਬੰਦੀ)
+		ਵਾਪਸ true;
+	ਵਾਪਸ false;
 }
 
-#define NUMA_MIGRATION_ADJUST_STEPS	16
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NUMA_MIGRATION_ADJUST_ਕਦਮਾਂ	16
 
-static void numa_promotion_adjust_threshold(struct pglist_data *pgdat,
-					    unsigned long rate_limit,
-					    unsigned int ref_th)
+ਸਥਿਰ ਖਾਲੀ numa_promotion_adjust_ਹੱਦ(ਬਣਤਰ pglist_ਅੰਕੜੇ *pgdat,
+					    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਦਰ_ਹੱਦਬੰਦੀ,
+					    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ref_th)
 {
-	unsigned int now, start, th_period, unit_th, th;
-	unsigned long nr_cand, ref_cand, diff_cand;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ now, ਸ਼ੁਰੂ, th_period, unit_th, th;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ nr_cand, ref_cand, diff_cand;
 
-	now = jiffies_to_msecs(jiffies);
-	th_period = sysctl_numa_balancing_scan_period_max;
-	start = pgdat->nbp_th_start;
-	if (now - start > th_period &&
-	    cmpxchg(&pgdat->nbp_th_start, start, now) == start) {
-		ref_cand = rate_limit *
-			sysctl_numa_balancing_scan_period_max / MSEC_PER_SEC;
-		nr_cand = node_page_state(pgdat, PGPROMOTE_CANDIDATE);
+	now = jiffies_ਮੰਜ਼ਿਲ_msecs(jiffies);
+	th_period = sysctl_numa_balancing_ਜਾਂਚ_period_max;
+	ਸ਼ੁਰੂ = pgdat->nbp_th_ਸ਼ੁਰੂ;
+	ਜੇ (now - ਸ਼ੁਰੂ > th_period &&
+	    cmpxchg(&pgdat->nbp_th_ਸ਼ੁਰੂ, ਸ਼ੁਰੂ, now) == ਸ਼ੁਰੂ) {
+		ref_cand = ਦਰ_ਹੱਦਬੰਦੀ *
+			sysctl_numa_balancing_ਜਾਂਚ_period_max / MSEC_ਪ੍ਰਤੀ_SEC;
+		nr_cand = ਗੰਢ_ਪੰਨਾ_state(pgdat, PGPROMOTE_CANDIDATE);
 		diff_cand = nr_cand - pgdat->nbp_th_nr_cand;
-		unit_th = ref_th * 2 / NUMA_MIGRATION_ADJUST_STEPS;
-		th = pgdat->nbp_threshold ? : ref_th;
-		if (diff_cand > ref_cand * 11 / 10)
+		unit_th = ref_th * 2 / NUMA_MIGRATION_ADJUST_ਕਦਮਾਂ;
+		th = pgdat->nbp_ਹੱਦ ? : ref_th;
+		ਜੇ (diff_cand > ref_cand * 11 / 10)
 			th = max(th - unit_th, unit_th);
-		else if (diff_cand < ref_cand * 9 / 10)
+		ਨਹੀਂਤਾਂ ਜੇ (diff_cand < ref_cand * 9 / 10)
 			th = min(th + unit_th, ref_th * 2);
 		pgdat->nbp_th_nr_cand = nr_cand;
-		pgdat->nbp_threshold = th;
+		pgdat->nbp_ਹੱਦ = th;
 	}
 }
 
-bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
-				int src_nid, int dst_cpu)
+bool should_numa_migrate_ਸਮ੍ਰਿਤੀ(ਬਣਤਰ task_struct *p, ਬਣਤਰ folio *folio,
+				ਪੂਰਨ src_nid, ਪੂਰਨ dst_cpu)
 {
-	struct numa_group *ng = deref_curr_numa_group(p);
-	int dst_nid = cpu_to_node(dst_cpu);
-	int last_cpupid, this_cpupid;
+	ਬਣਤਰ numa_ਸਮੂਹ *ng = deref_curr_numa_ਸਮੂਹ(p);
+	ਪੂਰਨ dst_nid = cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(dst_cpu);
+	ਪੂਰਨ ਆਖਰੀ_cpupid, this_cpupid;
 
 	/*
 	 * Cannot migrate to memoryless nodes.
 	 */
-	if (!node_state(dst_nid, N_MEMORY))
-		return false;
+	ਜੇ (!ਗੰਢ_state(dst_nid, N_ਸਮ੍ਰਿਤੀ))
+		ਵਾਪਸ false;
 
 	/*
 	 * The pages in slow memory node should be migrated according
 	 * to hot/cold instead of private/shared.
 	 */
-	if (folio_use_access_time(folio)) {
-		struct pglist_data *pgdat;
-		unsigned long rate_limit;
-		unsigned int latency, th, def_th;
-		long nr = folio_nr_pages(folio);
+	ਜੇ (folio_use_access_ਸਮਾਂ(folio)) {
+		ਬਣਤਰ pglist_ਅੰਕੜੇ *pgdat;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਦਰ_ਹੱਦਬੰਦੀ;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ latency, th, def_th;
+		ਲੰਮਾ nr = folio_nr_ਪੰਨੇ(folio);
 
-		pgdat = NODE_DATA(dst_nid);
-		if (pgdat_free_space_enough(pgdat)) {
+		pgdat = ਗੰਢ_ਅੰਕੜੇ(dst_nid);
+		ਜੇ (pgdat_free_space_enough(pgdat)) {
 			/* workload changed, reset hot threshold */
-			pgdat->nbp_threshold = 0;
-			mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE_NRL, nr);
-			return true;
+			pgdat->nbp_ਹੱਦ = 0;
+			mod_ਗੰਢ_ਪੰਨਾ_state(pgdat, PGPROMOTE_CANDIDATE_NRL, nr);
+			ਵਾਪਸ true;
 		}
 
-		def_th = sysctl_numa_balancing_hot_threshold;
-		rate_limit = MB_TO_PAGES(sysctl_numa_balancing_promote_rate_limit);
-		numa_promotion_adjust_threshold(pgdat, rate_limit, def_th);
+		def_th = sysctl_numa_balancing_hot_ਹੱਦ;
+		ਦਰ_ਹੱਦਬੰਦੀ = MB_ਮੰਜ਼ਿਲ_ਪੰਨੇ(sysctl_numa_balancing_promote_ਦਰ_ਹੱਦਬੰਦੀ);
+		numa_promotion_adjust_ਹੱਦ(pgdat, ਦਰ_ਹੱਦਬੰਦੀ, def_th);
 
-		th = pgdat->nbp_threshold ? : def_th;
+		th = pgdat->nbp_ਹੱਦ ? : def_th;
 		latency = numa_hint_fault_latency(folio);
-		if (latency >= th)
-			return false;
+		ਜੇ (latency >= th)
+			ਵਾਪਸ false;
 
-		return !numa_promotion_rate_limit(pgdat, rate_limit, nr);
+		ਵਾਪਸ !numa_promotion_ਦਰ_ਹੱਦਬੰਦੀ(pgdat, ਦਰ_ਹੱਦਬੰਦੀ, nr);
 	}
 
-	this_cpupid = cpu_pid_to_cpupid(dst_cpu, current->pid);
-	last_cpupid = folio_xchg_last_cpupid(folio, this_cpupid);
+	this_cpupid = cpu_pid_ਮੰਜ਼ਿਲ_cpupid(dst_cpu, current->pid);
+	ਆਖਰੀ_cpupid = folio_xchg_ਆਖਰੀ_cpupid(folio, this_cpupid);
 
-	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
-	    !node_is_toptier(src_nid) && !cpupid_valid(last_cpupid))
-		return false;
+	ਜੇ (!(sysctl_numa_balancing_ਬਹੁਲਕ & NUMA_BALANCING_ਸਮ੍ਰਿਤੀ_TIERING) &&
+	    !ਗੰਢ_is_toptier(src_nid) && !cpupid_valid(ਆਖਰੀ_cpupid))
+		ਵਾਪਸ false;
 
 	/*
 	 * Allow first faults or private faults to migrate immediately early in
@@ -2917,9 +2917,9 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
 	 * two full passes of the "multi-stage node selection" test that is
 	 * executed below.
 	 */
-	if ((p->numa_preferred_nid == NUMA_NO_NODE || p->numa_scan_seq <= 4) &&
-	    (cpupid_pid_unset(last_cpupid) || cpupid_match_pid(p, last_cpupid)))
-		return true;
+	ਜੇ ((p->numa_preferred_nid == NUMA_NO_ਗੰਢ || p->numa_ਜਾਂਚ_seq <= 4) &&
+	    (cpupid_pid_unset(ਆਖਰੀ_cpupid) || cpupid_ਮੇਲ_pid(p, ਆਖਰੀ_cpupid)))
+		ਵਾਪਸ true;
 
 	/*
 	 * Multi-stage node selection is used in conjunction with a periodic
@@ -2938,25 +2938,25 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
 	 * This quadric squishes small probabilities, making it less likely we
 	 * act on an unlikely task<->page relation.
 	 */
-	if (!cpupid_pid_unset(last_cpupid) &&
-				cpupid_to_nid(last_cpupid) != dst_nid)
-		return false;
+	ਜੇ (!cpupid_pid_unset(ਆਖਰੀ_cpupid) &&
+				cpupid_ਮੰਜ਼ਿਲ_nid(ਆਖਰੀ_cpupid) != dst_nid)
+		ਵਾਪਸ false;
 
 	/* Always allow migrate on private faults */
-	if (cpupid_match_pid(p, last_cpupid))
-		return true;
+	ਜੇ (cpupid_ਮੇਲ_pid(p, ਆਖਰੀ_cpupid))
+		ਵਾਪਸ true;
 
 	/* A shared fault, but p->numa_group has not been set up yet. */
-	if (!ng)
-		return true;
+	ਜੇ (!ng)
+		ਵਾਪਸ true;
 
 	/*
 	 * Destination node is much more heavily used than the source
 	 * node? Allow migration.
 	 */
-	if (group_faults_cpu(ng, dst_nid) > group_faults_cpu(ng, src_nid) *
-					ACTIVE_NODE_FRACTION)
-		return true;
+	ਜੇ (ਸਮੂਹ_ਨੁਕਸ_cpu(ng, dst_nid) > ਸਮੂਹ_ਨੁਕਸ_cpu(ng, src_nid) *
+					ਸਰਗਰਮ_ਗੰਢ_FRACTION)
+		ਵਾਪਸ true;
 
 	/*
 	 * Distribute memory according to CPU & memory use on each node,
@@ -2966,94 +2966,94 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
 	 * --------------- * - > ---------------
 	 * faults_mem(dst)   4   faults_mem(src)
 	 */
-	return group_faults_cpu(ng, dst_nid) * group_faults(p, src_nid) * 3 >
-	       group_faults_cpu(ng, src_nid) * group_faults(p, dst_nid) * 4;
+	ਵਾਪਸ ਸਮੂਹ_ਨੁਕਸ_cpu(ng, dst_nid) * ਸਮੂਹ_ਨੁਕਸ(p, src_nid) * 3 >
+	       ਸਮੂਹ_ਨੁਕਸ_cpu(ng, src_nid) * ਸਮੂਹ_ਨੁਕਸ(p, dst_nid) * 4;
 }
 
 /*
  * 'numa_type' describes the node at the moment of load balancing.
  */
-enum numa_type {
+ਗਿਣਤੀ numa_type {
 	/* The node has spare capacity that can be used to run more tasks.  */
-	node_has_spare = 0,
+	ਗੰਢ_has_ਵਾਧੂ = 0,
 	/*
 	 * The node is fully used and the tasks don't compete for more CPU
 	 * cycles. Nevertheless, some tasks might wait before running.
 	 */
-	node_fully_busy,
+	ਗੰਢ_fully_busy,
 	/*
 	 * The node is overloaded and can't provide expected CPU cycles to all
 	 * tasks.
 	 */
-	node_overloaded
+	ਗੰਢ_overloaded
 };
 
 /* Cached statistics for all CPUs within a node */
-struct numa_stats {
-	unsigned long load;
-	unsigned long runnable;
-	unsigned long util;
+ਬਣਤਰ numa_stats {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੱਦੋ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ runnable;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util;
 	/* Total compute capacity of CPUs on a node */
-	unsigned long compute_capacity;
-	unsigned int nr_running;
-	unsigned int weight;
-	enum numa_type node_type;
-	int idle_cpu;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ compute_ਸਮਰੱਥਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr_running;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਭਾਰ;
+	ਗਿਣਤੀ numa_type ਗੰਢ_type;
+	ਪੂਰਨ idle_cpu;
 };
 
-struct task_numa_env {
-	struct task_struct *p;
+ਬਣਤਰ task_numa_env {
+	ਬਣਤਰ task_struct *p;
 
-	int src_cpu, src_nid;
-	int dst_cpu, dst_nid;
-	int imb_numa_nr;
+	ਪੂਰਨ src_cpu, src_nid;
+	ਪੂਰਨ dst_cpu, dst_nid;
+	ਪੂਰਨ imb_numa_nr;
 
-	struct numa_stats src_stats, dst_stats;
+	ਬਣਤਰ numa_stats src_stats, dst_stats;
 
-	int imbalance_pct;
-	int dist;
+	ਪੂਰਨ imbalance_pct;
+	ਪੂਰਨ dist;
 
-	struct task_struct *best_task;
-	long best_imp;
-	int best_cpu;
+	ਬਣਤਰ task_struct *ਉੱਤਮ_task;
+	ਲੰਮਾ ਉੱਤਮ_imp;
+	ਪੂਰਨ ਉੱਤਮ_cpu;
 };
 
-static unsigned long cpu_load(struct rq *rq);
-static unsigned long cpu_runnable(struct rq *rq);
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_ਲੱਦੋ(ਬਣਤਰ rq *rq);
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_runnable(ਬਣਤਰ rq *rq);
 
-static inline enum
-numa_type numa_classify(unsigned int imbalance_pct,
-			 struct numa_stats *ns)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਗਿਣਤੀ
+numa_type numa_classify(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ imbalance_pct,
+			 ਬਣਤਰ numa_stats *ns)
 {
-	if ((ns->nr_running > ns->weight) &&
-	    (((ns->compute_capacity * 100) < (ns->util * imbalance_pct)) ||
-	     ((ns->compute_capacity * imbalance_pct) < (ns->runnable * 100))))
-		return node_overloaded;
+	ਜੇ ((ns->nr_running > ns->ਭਾਰ) &&
+	    (((ns->compute_ਸਮਰੱਥਾ * 100) < (ns->util * imbalance_pct)) ||
+	     ((ns->compute_ਸਮਰੱਥਾ * imbalance_pct) < (ns->runnable * 100))))
+		ਵਾਪਸ ਗੰਢ_overloaded;
 
-	if ((ns->nr_running < ns->weight) ||
-	    (((ns->compute_capacity * 100) > (ns->util * imbalance_pct)) &&
-	     ((ns->compute_capacity * imbalance_pct) > (ns->runnable * 100))))
-		return node_has_spare;
+	ਜੇ ((ns->nr_running < ns->ਭਾਰ) ||
+	    (((ns->compute_ਸਮਰੱਥਾ * 100) > (ns->util * imbalance_pct)) &&
+	     ((ns->compute_ਸਮਰੱਥਾ * imbalance_pct) > (ns->runnable * 100))))
+		ਵਾਪਸ ਗੰਢ_has_ਵਾਧੂ;
 
-	return node_fully_busy;
+	ਵਾਪਸ ਗੰਢ_fully_busy;
 }
 
 /* Forward declarations of select_idle_sibling helpers */
-static inline bool test_idle_cores(int cpu);
-static inline int numa_idle_core(int idle_core, int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool test_idle_cores(ਪੂਰਨ cpu);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ numa_idle_core(ਪੂਰਨ idle_core, ਪੂਰਨ cpu)
 {
-	if (!sched_smt_active() ||
+	ਜੇ (!sched_smt_ਸਰਗਰਮ() ||
 	    idle_core >= 0 || !test_idle_cores(cpu))
-		return idle_core;
+		ਵਾਪਸ idle_core;
 
 	/*
 	 * Prefer cores instead of packing HT siblings
 	 * and triggering future load balancing.
 	 */
-	if (is_core_idle(cpu))
+	ਜੇ (is_core_idle(cpu))
 		idle_core = cpu;
 
-	return idle_core;
+	ਵਾਪਸ idle_core;
 }
 
 /*
@@ -3062,31 +3062,31 @@ static inline int numa_idle_core(int idle_core, int cpu)
  * borrows code and logic from update_sg_lb_stats but sharing a
  * common implementation is impractical.
  */
-static void update_numa_stats(struct task_numa_env *env,
-			      struct numa_stats *ns, int nid,
-			      bool find_idle)
+ਸਥਿਰ ਖਾਲੀ update_numa_stats(ਬਣਤਰ task_numa_env *env,
+			      ਬਣਤਰ numa_stats *ns, ਪੂਰਨ nid,
+			      bool ਲੱਭੋ_idle)
 {
-	int cpu, idle_core = -1;
+	ਪੂਰਨ cpu, idle_core = -1;
 
-	memset(ns, 0, sizeof(*ns));
+	memset(ns, 0, ਆਕਾਰ(*ns));
 	ns->idle_cpu = -1;
 
-	rcu_read_lock();
-	for_each_cpu(cpu, cpumask_of_node(nid)) {
-		struct rq *rq = cpu_rq(cpu);
+	rcu_read_ਤਾਲਾ();
+	for_each_cpu(cpu, cpumask_ਦਾ_ਗੰਢ(nid)) {
+		ਬਣਤਰ rq *rq = cpu_rq(cpu);
 
-		ns->load += cpu_load(rq);
+		ns->ਲੱਦੋ += cpu_ਲੱਦੋ(rq);
 		ns->runnable += cpu_runnable(rq);
 		ns->util += cpu_util_cfs(cpu);
 		ns->nr_running += rq->cfs.h_nr_runnable;
-		ns->compute_capacity += capacity_of(cpu);
+		ns->compute_ਸਮਰੱਥਾ += ਸਮਰੱਥਾ_ਦਾ(cpu);
 
-		if (find_idle && idle_core < 0 && !rq->nr_running && idle_cpu(cpu)) {
-			if (READ_ONCE(rq->numa_migrate_on) ||
+		ਜੇ (ਲੱਭੋ_idle && idle_core < 0 && !rq->nr_running && idle_cpu(cpu)) {
+			ਜੇ (READ_ONCE(rq->numa_migrate_on) ||
 			    !cpumask_test_cpu(cpu, env->p->cpus_ptr))
-				continue;
+				ਜਾਰੀ;
 
-			if (ns->idle_cpu == -1)
+			ਜੇ (ns->idle_cpu == -1)
 				ns->idle_cpu = cpu;
 
 			idle_core = numa_idle_core(idle_core, cpu);
@@ -3094,67 +3094,67 @@ static void update_numa_stats(struct task_numa_env *env,
 	}
 	rcu_read_unlock();
 
-	ns->weight = cpumask_weight(cpumask_of_node(nid));
+	ns->ਭਾਰ = cpumask_ਭਾਰ(cpumask_ਦਾ_ਗੰਢ(nid));
 
-	ns->node_type = numa_classify(env->imbalance_pct, ns);
+	ns->ਗੰਢ_type = numa_classify(env->imbalance_pct, ns);
 
-	if (idle_core >= 0)
+	ਜੇ (idle_core >= 0)
 		ns->idle_cpu = idle_core;
 }
 
-static void task_numa_assign(struct task_numa_env *env,
-			     struct task_struct *p, long imp)
+ਸਥਿਰ ਖਾਲੀ task_numa_ਸੌਂਪੋ(ਬਣਤਰ task_numa_env *env,
+			     ਬਣਤਰ task_struct *p, ਲੰਮਾ imp)
 {
-	struct rq *rq = cpu_rq(env->dst_cpu);
+	ਬਣਤਰ rq *rq = cpu_rq(env->dst_cpu);
 
 	/* Check if run-queue part of active NUMA balance. */
-	if (env->best_cpu != env->dst_cpu && xchg(&rq->numa_migrate_on, 1)) {
-		int cpu;
-		int start = env->dst_cpu;
+	ਜੇ (env->ਉੱਤਮ_cpu != env->dst_cpu && xchg(&rq->numa_migrate_on, 1)) {
+		ਪੂਰਨ cpu;
+		ਪੂਰਨ ਸ਼ੁਰੂ = env->dst_cpu;
 
 		/* Find alternative idle CPU. */
-		for_each_cpu_wrap(cpu, cpumask_of_node(env->dst_nid), start + 1) {
-			if (cpu == env->best_cpu || !idle_cpu(cpu) ||
+		for_each_cpu_wrap(cpu, cpumask_ਦਾ_ਗੰਢ(env->dst_nid), ਸ਼ੁਰੂ + 1) {
+			ਜੇ (cpu == env->ਉੱਤਮ_cpu || !idle_cpu(cpu) ||
 			    !cpumask_test_cpu(cpu, env->p->cpus_ptr)) {
-				continue;
+				ਜਾਰੀ;
 			}
 
 			env->dst_cpu = cpu;
 			rq = cpu_rq(env->dst_cpu);
-			if (!xchg(&rq->numa_migrate_on, 1))
-				goto assign;
+			ਜੇ (!xchg(&rq->numa_migrate_on, 1))
+				ਜਾਓ ਸੌਂਪੋ;
 		}
 
 		/* Failed to find an alternative idle CPU */
-		return;
+		ਵਾਪਸ;
 	}
 
-assign:
+ਸੌਂਪੋ:
 	/*
 	 * Clear previous best_cpu/rq numa-migrate flag, since task now
 	 * found a better CPU to move/swap.
 	 */
-	if (env->best_cpu != -1 && env->best_cpu != env->dst_cpu) {
-		rq = cpu_rq(env->best_cpu);
+	ਜੇ (env->ਉੱਤਮ_cpu != -1 && env->ਉੱਤਮ_cpu != env->dst_cpu) {
+		rq = cpu_rq(env->ਉੱਤਮ_cpu);
 		WRITE_ONCE(rq->numa_migrate_on, 0);
 	}
 
-	if (env->best_task)
-		put_task_struct(env->best_task);
-	if (p)
+	ਜੇ (env->ਉੱਤਮ_task)
+		put_task_struct(env->ਉੱਤਮ_task);
+	ਜੇ (p)
 		get_task_struct(p);
 
-	env->best_task = p;
-	env->best_imp = imp;
-	env->best_cpu = env->dst_cpu;
+	env->ਉੱਤਮ_task = p;
+	env->ਉੱਤਮ_imp = imp;
+	env->ਉੱਤਮ_cpu = env->dst_cpu;
 }
 
-static bool load_too_imbalanced(long src_load, long dst_load,
-				struct task_numa_env *env)
+ਸਥਿਰ bool ਲੱਦੋ_too_imbalanced(ਲੰਮਾ src_ਲੱਦੋ, ਲੰਮਾ dst_ਲੱਦੋ,
+				ਬਣਤਰ task_numa_env *env)
 {
-	long imb, old_imb;
-	long orig_src_load, orig_dst_load;
-	long src_capacity, dst_capacity;
+	ਲੰਮਾ imb, old_imb;
+	ਲੰਮਾ orig_src_ਲੱਦੋ, orig_dst_ਲੱਦੋ;
+	ਲੰਮਾ src_ਸਮਰੱਥਾ, dst_ਸਮਰੱਥਾ;
 
 	/*
 	 * The load is corrected for the CPU capacity available on each node.
@@ -3163,18 +3163,18 @@ static bool load_too_imbalanced(long src_load, long dst_load,
 	 * ------------ vs ---------
 	 * src_capacity    dst_capacity
 	 */
-	src_capacity = env->src_stats.compute_capacity;
-	dst_capacity = env->dst_stats.compute_capacity;
+	src_ਸਮਰੱਥਾ = env->src_stats.compute_ਸਮਰੱਥਾ;
+	dst_ਸਮਰੱਥਾ = env->dst_stats.compute_ਸਮਰੱਥਾ;
 
-	imb = abs(dst_load * src_capacity - src_load * dst_capacity);
+	imb = ਨਿਰਪੇਖ(dst_ਲੱਦੋ * src_ਸਮਰੱਥਾ - src_ਲੱਦੋ * dst_ਸਮਰੱਥਾ);
 
-	orig_src_load = env->src_stats.load;
-	orig_dst_load = env->dst_stats.load;
+	orig_src_ਲੱਦੋ = env->src_stats.ਲੱਦੋ;
+	orig_dst_ਲੱਦੋ = env->dst_stats.ਲੱਦੋ;
 
-	old_imb = abs(orig_dst_load * src_capacity - orig_src_load * dst_capacity);
+	old_imb = ਨਿਰਪੇਖ(orig_dst_ਲੱਦੋ * src_ਸਮਰੱਥਾ - orig_src_ਲੱਦੋ * dst_ਸਮਰੱਥਾ);
 
 	/* Would this change make things worse? */
-	return (imb > old_imb);
+	ਵਾਪਸ (imb > old_imb);
 }
 
 /*
@@ -3182,7 +3182,7 @@ static bool load_too_imbalanced(long src_load, long dst_load,
  * SMALLIMP @ 30 would be close to 1998/64.
  * Used to deter task migration.
  */
-#define SMALLIMP	30
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SMALLIMP	30
 
 /*
  * This checks if the overall compute and NUMA accesses of the system would
@@ -3190,56 +3190,56 @@ static bool load_too_imbalanced(long src_load, long dst_load,
  * into account that it might be best if task running on the dst_cpu should
  * be exchanged with the source task
  */
-static bool task_numa_compare(struct task_numa_env *env,
-			      long taskimp, long groupimp, bool maymove)
+ਸਥਿਰ bool task_numa_compare(ਬਣਤਰ task_numa_env *env,
+			      ਲੰਮਾ taskimp, ਲੰਮਾ groupimp, bool maymove)
 {
-	struct numa_group *cur_ng, *p_ng = deref_curr_numa_group(env->p);
-	struct rq *dst_rq = cpu_rq(env->dst_cpu);
-	long imp = p_ng ? groupimp : taskimp;
-	struct task_struct *cur;
-	long src_load, dst_load;
-	int dist = env->dist;
-	long moveimp = imp;
-	long load;
+	ਬਣਤਰ numa_ਸਮੂਹ *cur_ng, *p_ng = deref_curr_numa_ਸਮੂਹ(env->p);
+	ਬਣਤਰ rq *dst_rq = cpu_rq(env->dst_cpu);
+	ਲੰਮਾ imp = p_ng ? groupimp : taskimp;
+	ਬਣਤਰ task_struct *cur;
+	ਲੰਮਾ src_ਲੱਦੋ, dst_ਲੱਦੋ;
+	ਪੂਰਨ dist = env->dist;
+	ਲੰਮਾ moveimp = imp;
+	ਲੰਮਾ ਲੱਦੋ;
 	bool stopsearch = false;
 
-	if (READ_ONCE(dst_rq->numa_migrate_on))
-		return false;
+	ਜੇ (READ_ONCE(dst_rq->numa_migrate_on))
+		ਵਾਪਸ false;
 
-	rcu_read_lock();
+	rcu_read_ਤਾਲਾ();
 	cur = rcu_dereference_all(dst_rq->curr);
-	if (cur && ((cur->flags & (PF_EXITING | PF_KTHREAD)) ||
+	ਜੇ (cur && ((cur->flags & (PF_EXITING | PF_KTHREAD)) ||
 		    !cur->mm))
-		cur = NULL;
+		cur = ਨਿਰਾ;
 
 	/*
 	 * Because we have preemption enabled we can get migrated around and
 	 * end try selecting ourselves (current == env->p) as a swap candidate.
 	 */
-	if (cur == env->p) {
+	ਜੇ (cur == env->p) {
 		stopsearch = true;
-		goto unlock;
+		ਜਾਓ unlock;
 	}
 
-	if (!cur) {
-		if (maymove && moveimp >= env->best_imp)
-			goto assign;
-		else
-			goto unlock;
+	ਜੇ (!cur) {
+		ਜੇ (maymove && moveimp >= env->ਉੱਤਮ_imp)
+			ਜਾਓ ਸੌਂਪੋ;
+		ਨਹੀਂਤਾਂ
+			ਜਾਓ unlock;
 	}
 
 	/* Skip this swap candidate if cannot move to the source cpu. */
-	if (!cpumask_test_cpu(env->src_cpu, cur->cpus_ptr))
-		goto unlock;
+	ਜੇ (!cpumask_test_cpu(env->src_cpu, cur->cpus_ptr))
+		ਜਾਓ unlock;
 
 	/*
 	 * Skip this swap candidate if it is not moving to its preferred
 	 * node and the best task is.
 	 */
-	if (env->best_task &&
-	    env->best_task->numa_preferred_nid == env->src_nid &&
+	ਜੇ (env->ਉੱਤਮ_task &&
+	    env->ਉੱਤਮ_task->numa_preferred_nid == env->src_nid &&
 	    cur->numa_preferred_nid != env->src_nid) {
-		goto unlock;
+		ਜਾਓ unlock;
 	}
 
 	/*
@@ -3252,40 +3252,40 @@ static bool task_numa_compare(struct task_numa_env *env,
 	 * If dst and source tasks are in the same NUMA group, or not
 	 * in any group then look only at task weights.
 	 */
-	cur_ng = rcu_dereference_all(cur->numa_group);
-	if (cur_ng == p_ng) {
+	cur_ng = rcu_dereference_all(cur->numa_ਸਮੂਹ);
+	ਜੇ (cur_ng == p_ng) {
 		/*
 		 * Do not swap within a group or between tasks that have
 		 * no group if there is spare capacity. Swapping does
 		 * not address the load imbalance and helps one task at
 		 * the cost of punishing another.
 		 */
-		if (env->dst_stats.node_type == node_has_spare)
-			goto unlock;
+		ਜੇ (env->dst_stats.ਗੰਢ_type == ਗੰਢ_has_ਵਾਧੂ)
+			ਜਾਓ unlock;
 
-		imp = taskimp + task_weight(cur, env->src_nid, dist) -
-		      task_weight(cur, env->dst_nid, dist);
+		imp = taskimp + task_ਭਾਰ(cur, env->src_nid, dist) -
+		      task_ਭਾਰ(cur, env->dst_nid, dist);
 		/*
 		 * Add some hysteresis to prevent swapping the
 		 * tasks within a group over tiny differences.
 		 */
-		if (cur_ng)
+		ਜੇ (cur_ng)
 			imp -= imp / 16;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/*
 		 * Compare the group weights. If a task is all by itself
 		 * (not part of a group), use the task weight instead.
 		 */
-		if (cur_ng && p_ng)
-			imp += group_weight(cur, env->src_nid, dist) -
-			       group_weight(cur, env->dst_nid, dist);
-		else
-			imp += task_weight(cur, env->src_nid, dist) -
-			       task_weight(cur, env->dst_nid, dist);
+		ਜੇ (cur_ng && p_ng)
+			imp += ਸਮੂਹ_ਭਾਰ(cur, env->src_nid, dist) -
+			       ਸਮੂਹ_ਭਾਰ(cur, env->dst_nid, dist);
+		ਨਹੀਂਤਾਂ
+			imp += task_ਭਾਰ(cur, env->src_nid, dist) -
+			       task_ਭਾਰ(cur, env->dst_nid, dist);
 	}
 
 	/* Discourage picking a task already on its preferred node */
-	if (cur->numa_preferred_nid == env->dst_nid)
+	ਜੇ (cur->numa_preferred_nid == env->dst_nid)
 		imp -= imp / 16;
 
 	/*
@@ -3294,22 +3294,22 @@ static bool task_numa_compare(struct task_numa_env *env,
 	 * 1998 (see SMALLIMP and task_weight for why) but in this
 	 * case, it does not matter.
 	 */
-	if (cur->numa_preferred_nid == env->src_nid)
+	ਜੇ (cur->numa_preferred_nid == env->src_nid)
 		imp += imp / 8;
 
-	if (maymove && moveimp > imp && moveimp > env->best_imp) {
+	ਜੇ (maymove && moveimp > imp && moveimp > env->ਉੱਤਮ_imp) {
 		imp = moveimp;
-		cur = NULL;
-		goto assign;
+		cur = ਨਿਰਾ;
+		ਜਾਓ ਸੌਂਪੋ;
 	}
 
 	/*
 	 * Prefer swapping with a task moving to its preferred node over a
 	 * task that is not.
 	 */
-	if (env->best_task && cur->numa_preferred_nid == env->src_nid &&
-	    env->best_task->numa_preferred_nid != env->src_nid) {
-		goto assign;
+	ਜੇ (env->ਉੱਤਮ_task && cur->numa_preferred_nid == env->src_nid &&
+	    env->ਉੱਤਮ_task->numa_preferred_nid != env->src_nid) {
+		ਜਾਓ ਸੌਂਪੋ;
 	}
 
 	/*
@@ -3318,80 +3318,80 @@ static bool task_numa_compare(struct task_numa_env *env,
 	 * of tasks and also hurt performance due to cache
 	 * misses.
 	 */
-	if (imp < SMALLIMP || imp <= env->best_imp + SMALLIMP / 2)
-		goto unlock;
+	ਜੇ (imp < SMALLIMP || imp <= env->ਉੱਤਮ_imp + SMALLIMP / 2)
+		ਜਾਓ unlock;
 
 	/*
 	 * In the overloaded case, try and keep the load balanced.
 	 */
-	load = task_h_load(env->p) - task_h_load(cur);
-	if (!load)
-		goto assign;
+	ਲੱਦੋ = task_h_ਲੱਦੋ(env->p) - task_h_ਲੱਦੋ(cur);
+	ਜੇ (!ਲੱਦੋ)
+		ਜਾਓ ਸੌਂਪੋ;
 
-	dst_load = env->dst_stats.load + load;
-	src_load = env->src_stats.load - load;
+	dst_ਲੱਦੋ = env->dst_stats.ਲੱਦੋ + ਲੱਦੋ;
+	src_ਲੱਦੋ = env->src_stats.ਲੱਦੋ - ਲੱਦੋ;
 
-	if (load_too_imbalanced(src_load, dst_load, env))
-		goto unlock;
+	ਜੇ (ਲੱਦੋ_too_imbalanced(src_ਲੱਦੋ, dst_ਲੱਦੋ, env))
+		ਜਾਓ unlock;
 
-assign:
+ਸੌਂਪੋ:
 	/* Evaluate an idle CPU for a task numa move. */
-	if (!cur) {
-		int cpu = env->dst_stats.idle_cpu;
+	ਜੇ (!cur) {
+		ਪੂਰਨ cpu = env->dst_stats.idle_cpu;
 
 		/* Nothing cached so current CPU went idle since the search. */
-		if (cpu < 0)
+		ਜੇ (cpu < 0)
 			cpu = env->dst_cpu;
 
 		/*
 		 * If the CPU is no longer truly idle and the previous best CPU
 		 * is, keep using it.
 		 */
-		if (!idle_cpu(cpu) && env->best_cpu >= 0 &&
-		    idle_cpu(env->best_cpu)) {
-			cpu = env->best_cpu;
+		ਜੇ (!idle_cpu(cpu) && env->ਉੱਤਮ_cpu >= 0 &&
+		    idle_cpu(env->ਉੱਤਮ_cpu)) {
+			cpu = env->ਉੱਤਮ_cpu;
 		}
 
 		env->dst_cpu = cpu;
 	}
 
-	task_numa_assign(env, cur, imp);
+	task_numa_ਸੌਂਪੋ(env, cur, imp);
 
 	/*
 	 * If a move to idle is allowed because there is capacity or load
 	 * balance improves then stop the search. While a better swap
 	 * candidate may exist, a search is not free.
 	 */
-	if (maymove && !cur && env->best_cpu >= 0 && idle_cpu(env->best_cpu))
+	ਜੇ (maymove && !cur && env->ਉੱਤਮ_cpu >= 0 && idle_cpu(env->ਉੱਤਮ_cpu))
 		stopsearch = true;
 
 	/*
 	 * If a swap candidate must be identified and the current best task
 	 * moves its preferred node then stop the search.
 	 */
-	if (!maymove && env->best_task &&
-	    env->best_task->numa_preferred_nid == env->src_nid) {
+	ਜੇ (!maymove && env->ਉੱਤਮ_task &&
+	    env->ਉੱਤਮ_task->numa_preferred_nid == env->src_nid) {
 		stopsearch = true;
 	}
 unlock:
 	rcu_read_unlock();
 
-	return stopsearch;
+	ਵਾਪਸ stopsearch;
 }
 
-static void task_numa_find_cpu(struct task_numa_env *env,
-				long taskimp, long groupimp)
+ਸਥਿਰ ਖਾਲੀ task_numa_ਲੱਭੋ_cpu(ਬਣਤਰ task_numa_env *env,
+				ਲੰਮਾ taskimp, ਲੰਮਾ groupimp)
 {
 	bool maymove = false;
-	int cpu;
+	ਪੂਰਨ cpu;
 
 	/*
 	 * If dst node has spare capacity, then check if there is an
 	 * imbalance that would be overruled by the load balancer.
 	 */
-	if (env->dst_stats.node_type == node_has_spare) {
-		unsigned int imbalance;
-		int src_running, dst_running;
+	ਜੇ (env->dst_stats.ਗੰਢ_type == ਗੰਢ_has_ਵਾਧੂ) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ imbalance;
+		ਪੂਰਨ src_running, dst_running;
 
 		/*
 		 * Would movement cause an imbalance? Note that if src has
@@ -3406,54 +3406,54 @@ static void task_numa_find_cpu(struct task_numa_env *env,
 						  env->imb_numa_nr);
 
 		/* Use idle CPU if there is no imbalance */
-		if (!imbalance) {
+		ਜੇ (!imbalance) {
 			maymove = true;
-			if (env->dst_stats.idle_cpu >= 0) {
+			ਜੇ (env->dst_stats.idle_cpu >= 0) {
 				env->dst_cpu = env->dst_stats.idle_cpu;
-				task_numa_assign(env, NULL, 0);
-				return;
+				task_numa_ਸੌਂਪੋ(env, ਨਿਰਾ, 0);
+				ਵਾਪਸ;
 			}
 		}
-	} else {
-		long src_load, dst_load, load;
+	} ਨਹੀਂਤਾਂ {
+		ਲੰਮਾ src_ਲੱਦੋ, dst_ਲੱਦੋ, ਲੱਦੋ;
 		/*
 		 * If the improvement from just moving env->p direction is better
 		 * than swapping tasks around, check if a move is possible.
 		 */
-		load = task_h_load(env->p);
-		dst_load = env->dst_stats.load + load;
-		src_load = env->src_stats.load - load;
-		maymove = !load_too_imbalanced(src_load, dst_load, env);
+		ਲੱਦੋ = task_h_ਲੱਦੋ(env->p);
+		dst_ਲੱਦੋ = env->dst_stats.ਲੱਦੋ + ਲੱਦੋ;
+		src_ਲੱਦੋ = env->src_stats.ਲੱਦੋ - ਲੱਦੋ;
+		maymove = !ਲੱਦੋ_too_imbalanced(src_ਲੱਦੋ, dst_ਲੱਦੋ, env);
 	}
 
 	/* Skip CPUs if the source task cannot migrate */
-	for_each_cpu_and(cpu, cpumask_of_node(env->dst_nid), env->p->cpus_ptr) {
+	for_each_cpu_and(cpu, cpumask_ਦਾ_ਗੰਢ(env->dst_nid), env->p->cpus_ptr) {
 		env->dst_cpu = cpu;
-		if (task_numa_compare(env, taskimp, groupimp, maymove))
-			break;
+		ਜੇ (task_numa_compare(env, taskimp, groupimp, maymove))
+			ਰੋਕੋ;
 	}
 }
 
-static int task_numa_migrate(struct task_struct *p)
+ਸਥਿਰ ਪੂਰਨ task_numa_migrate(ਬਣਤਰ task_struct *p)
 {
-	struct task_numa_env env = {
+	ਬਣਤਰ task_numa_env env = {
 		.p = p,
 
 		.src_cpu = task_cpu(p),
-		.src_nid = task_node(p),
+		.src_nid = task_ਗੰਢ(p),
 
 		.imbalance_pct = 112,
 
-		.best_task = NULL,
-		.best_imp = 0,
-		.best_cpu = -1,
+		.ਉੱਤਮ_task = ਨਿਰਾ,
+		.ਉੱਤਮ_imp = 0,
+		.ਉੱਤਮ_cpu = -1,
 	};
-	unsigned long taskweight, groupweight;
-	struct sched_domain *sd;
-	long taskimp, groupimp;
-	struct numa_group *ng;
-	struct rq *best_rq;
-	int nid, ret, dist;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ taskweight, groupweight;
+	ਬਣਤਰ sched_domain *sd;
+	ਲੰਮਾ taskimp, groupimp;
+	ਬਣਤਰ numa_ਸਮੂਹ *ng;
+	ਬਣਤਰ rq *ਉੱਤਮ_rq;
+	ਪੂਰਨ nid, ret, dist;
 
 	/*
 	 * Pick the lowest SD_NUMA domain, as that would have the smallest
@@ -3463,9 +3463,9 @@ static int task_numa_migrate(struct task_struct *p)
 	 * random movement of tasks -- counter the numa conditions we're trying
 	 * to satisfy here.
 	 */
-	rcu_read_lock();
-	sd = rcu_dereference_all(per_cpu(sd_numa, env.src_cpu));
-	if (sd) {
+	rcu_read_ਤਾਲਾ();
+	sd = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_numa, env.src_cpu));
+	ਜੇ (sd) {
 		env.imbalance_pct = 100 + (sd->imbalance_pct - 100) / 2;
 		env.imb_numa_nr = sd->imb_numa_nr;
 	}
@@ -3477,22 +3477,22 @@ static int task_numa_migrate(struct task_struct *p)
 	 * Tasks that are "trapped" in such domains cannot be migrated
 	 * elsewhere, so there is no point in (re)trying.
 	 */
-	if (unlikely(!sd)) {
-		sched_setnuma(p, task_node(p));
-		return -EINVAL;
+	ਜੇ (unlikely(!sd)) {
+		sched_setnuma(p, task_ਗੰਢ(p));
+		ਵਾਪਸ -EINVAL;
 	}
 
 	env.dst_nid = p->numa_preferred_nid;
-	dist = env.dist = node_distance(env.src_nid, env.dst_nid);
-	taskweight = task_weight(p, env.src_nid, dist);
-	groupweight = group_weight(p, env.src_nid, dist);
+	dist = env.dist = ਗੰਢ_ਦੂਰੀ(env.src_nid, env.dst_nid);
+	taskweight = task_ਭਾਰ(p, env.src_nid, dist);
+	groupweight = ਸਮੂਹ_ਭਾਰ(p, env.src_nid, dist);
 	update_numa_stats(&env, &env.src_stats, env.src_nid, false);
-	taskimp = task_weight(p, env.dst_nid, dist) - taskweight;
-	groupimp = group_weight(p, env.dst_nid, dist) - groupweight;
+	taskimp = task_ਭਾਰ(p, env.dst_nid, dist) - taskweight;
+	groupimp = ਸਮੂਹ_ਭਾਰ(p, env.dst_nid, dist) - groupweight;
 	update_numa_stats(&env, &env.dst_stats, env.dst_nid, true);
 
 	/* Try to find a spot on the preferred nid. */
-	task_numa_find_cpu(&env, taskimp, groupimp);
+	task_numa_ਲੱਭੋ_cpu(&env, taskimp, groupimp);
 
 	/*
 	 * Look at other nodes in these cases:
@@ -3501,29 +3501,29 @@ static int task_numa_migrate(struct task_struct *p)
 	 *   multiple NUMA nodes; in order to better consolidate the group,
 	 *   we need to check other locations.
 	 */
-	ng = deref_curr_numa_group(p);
-	if (env.best_cpu == -1 || (ng && ng->active_nodes > 1)) {
-		for_each_node_state(nid, N_CPU) {
-			if (nid == env.src_nid || nid == p->numa_preferred_nid)
-				continue;
+	ng = deref_curr_numa_ਸਮੂਹ(p);
+	ਜੇ (env.ਉੱਤਮ_cpu == -1 || (ng && ng->ਸਰਗਰਮ_nodes > 1)) {
+		for_each_ਗੰਢ_state(nid, N_CPU) {
+			ਜੇ (nid == env.src_nid || nid == p->numa_preferred_nid)
+				ਜਾਰੀ;
 
-			dist = node_distance(env.src_nid, env.dst_nid);
-			if (sched_numa_topology_type == NUMA_BACKPLANE &&
+			dist = ਗੰਢ_ਦੂਰੀ(env.src_nid, env.dst_nid);
+			ਜੇ (sched_numa_topology_type == NUMA_BACKPLANE &&
 						dist != env.dist) {
-				taskweight = task_weight(p, env.src_nid, dist);
-				groupweight = group_weight(p, env.src_nid, dist);
+				taskweight = task_ਭਾਰ(p, env.src_nid, dist);
+				groupweight = ਸਮੂਹ_ਭਾਰ(p, env.src_nid, dist);
 			}
 
 			/* Only consider nodes where both task and groups benefit */
-			taskimp = task_weight(p, nid, dist) - taskweight;
-			groupimp = group_weight(p, nid, dist) - groupweight;
-			if (taskimp < 0 && groupimp < 0)
-				continue;
+			taskimp = task_ਭਾਰ(p, nid, dist) - taskweight;
+			groupimp = ਸਮੂਹ_ਭਾਰ(p, nid, dist) - groupweight;
+			ਜੇ (taskimp < 0 && groupimp < 0)
+				ਜਾਰੀ;
 
 			env.dist = dist;
 			env.dst_nid = nid;
 			update_numa_stats(&env, &env.dst_stats, env.dst_nid, true);
-			task_numa_find_cpu(&env, taskimp, groupimp);
+			task_numa_ਲੱਭੋ_cpu(&env, taskimp, groupimp);
 		}
 	}
 
@@ -3535,56 +3535,56 @@ static int task_numa_migrate(struct task_struct *p)
 	 * A task that migrated to a second choice node will be better off
 	 * trying for a better one later. Do not set the preferred node here.
 	 */
-	if (ng) {
-		if (env.best_cpu == -1)
+	ਜੇ (ng) {
+		ਜੇ (env.ਉੱਤਮ_cpu == -1)
 			nid = env.src_nid;
-		else
-			nid = cpu_to_node(env.best_cpu);
+		ਨਹੀਂਤਾਂ
+			nid = cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(env.ਉੱਤਮ_cpu);
 
-		if (nid != p->numa_preferred_nid)
+		ਜੇ (nid != p->numa_preferred_nid)
 			sched_setnuma(p, nid);
 	}
 
 	/* No better CPU than the current one was found. */
-	if (env.best_cpu == -1) {
-		trace_sched_stick_numa(p, env.src_cpu, NULL, -1);
-		return -EAGAIN;
+	ਜੇ (env.ਉੱਤਮ_cpu == -1) {
+		trace_sched_stick_numa(p, env.src_cpu, ਨਿਰਾ, -1);
+		ਵਾਪਸ -EAGAIN;
 	}
 
-	best_rq = cpu_rq(env.best_cpu);
-	if (env.best_task == NULL) {
-		ret = migrate_task_to(p, env.best_cpu);
-		WRITE_ONCE(best_rq->numa_migrate_on, 0);
-		if (ret != 0)
-			trace_sched_stick_numa(p, env.src_cpu, NULL, env.best_cpu);
-		return ret;
+	ਉੱਤਮ_rq = cpu_rq(env.ਉੱਤਮ_cpu);
+	ਜੇ (env.ਉੱਤਮ_task == ਨਿਰਾ) {
+		ret = migrate_task_ਮੰਜ਼ਿਲ(p, env.ਉੱਤਮ_cpu);
+		WRITE_ONCE(ਉੱਤਮ_rq->numa_migrate_on, 0);
+		ਜੇ (ret != 0)
+			trace_sched_stick_numa(p, env.src_cpu, ਨਿਰਾ, env.ਉੱਤਮ_cpu);
+		ਵਾਪਸ ret;
 	}
 
-	ret = migrate_swap(p, env.best_task, env.best_cpu, env.src_cpu);
-	WRITE_ONCE(best_rq->numa_migrate_on, 0);
+	ret = migrate_ਅਦਲਾ_ਬਦਲੀ(p, env.ਉੱਤਮ_task, env.ਉੱਤਮ_cpu, env.src_cpu);
+	WRITE_ONCE(ਉੱਤਮ_rq->numa_migrate_on, 0);
 
-	if (ret != 0)
-		trace_sched_stick_numa(p, env.src_cpu, env.best_task, env.best_cpu);
-	put_task_struct(env.best_task);
-	return ret;
+	ਜੇ (ret != 0)
+		trace_sched_stick_numa(p, env.src_cpu, env.ਉੱਤਮ_task, env.ਉੱਤਮ_cpu);
+	put_task_struct(env.ਉੱਤਮ_task);
+	ਵਾਪਸ ret;
 }
 
 /* Attempt to migrate a task to a CPU on the preferred node. */
-static void numa_migrate_preferred(struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ numa_migrate_preferred(ਬਣਤਰ task_struct *p)
 {
-	unsigned long interval = HZ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ interval = HZ;
 
 	/* This task has no NUMA fault statistics yet */
-	if (unlikely(p->numa_preferred_nid == NUMA_NO_NODE || !p->numa_faults))
-		return;
+	ਜੇ (unlikely(p->numa_preferred_nid == NUMA_NO_ਗੰਢ || !p->numa_ਨੁਕਸ))
+		ਵਾਪਸ;
 
 	/* Periodically retry migrating the task to the preferred node */
-	interval = min(interval, msecs_to_jiffies(p->numa_scan_period) / 16);
+	interval = min(interval, msecs_ਮੰਜ਼ਿਲ_jiffies(p->numa_ਜਾਂਚ_period) / 16);
 	p->numa_migrate_retry = jiffies + interval;
 
 	/* Success if task is already running on preferred CPU */
-	if (task_node(p) == p->numa_preferred_nid)
-		return;
+	ਜੇ (task_ਗੰਢ(p) == p->numa_preferred_nid)
+		ਵਾਪਸ;
 
 	/* Otherwise, try migrate to a CPU on the preferred node */
 	task_numa_migrate(p);
@@ -3596,25 +3596,25 @@ static void numa_migrate_preferred(struct task_struct *p)
  * be different from the set of nodes where the workload's memory is currently
  * located.
  */
-static void numa_group_count_active_nodes(struct numa_group *numa_group)
+ਸਥਿਰ ਖਾਲੀ numa_ਸਮੂਹ_ਗਿਣਤੀ_ਸਰਗਰਮ_nodes(ਬਣਤਰ numa_ਸਮੂਹ *numa_ਸਮੂਹ)
 {
-	unsigned long faults, max_faults = 0;
-	int nid, active_nodes = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨੁਕਸ, max_ਨੁਕਸ = 0;
+	ਪੂਰਨ nid, ਸਰਗਰਮ_nodes = 0;
 
-	for_each_node_state(nid, N_CPU) {
-		faults = group_faults_cpu(numa_group, nid);
-		if (faults > max_faults)
-			max_faults = faults;
+	for_each_ਗੰਢ_state(nid, N_CPU) {
+		ਨੁਕਸ = ਸਮੂਹ_ਨੁਕਸ_cpu(numa_ਸਮੂਹ, nid);
+		ਜੇ (ਨੁਕਸ > max_ਨੁਕਸ)
+			max_ਨੁਕਸ = ਨੁਕਸ;
 	}
 
-	for_each_node_state(nid, N_CPU) {
-		faults = group_faults_cpu(numa_group, nid);
-		if (faults * ACTIVE_NODE_FRACTION > max_faults)
-			active_nodes++;
+	for_each_ਗੰਢ_state(nid, N_CPU) {
+		ਨੁਕਸ = ਸਮੂਹ_ਨੁਕਸ_cpu(numa_ਸਮੂਹ, nid);
+		ਜੇ (ਨੁਕਸ * ਸਰਗਰਮ_ਗੰਢ_FRACTION > max_ਨੁਕਸ)
+			ਸਰਗਰਮ_nodes++;
 	}
 
-	numa_group->max_faults_cpu = max_faults;
-	numa_group->active_nodes = active_nodes;
+	numa_ਸਮੂਹ->max_ਨੁਕਸ_cpu = max_ਨੁਕਸ;
+	numa_ਸਮੂਹ->ਸਰਗਰਮ_nodes = ਸਰਗਰਮ_nodes;
 }
 
 /*
@@ -3624,8 +3624,8 @@ static void numa_group_count_active_nodes(struct numa_group *numa_group)
  * below NUMA_PERIOD_THRESHOLD (where range of ratio is 1..NUMA_PERIOD_SLOTS)
  * the scan period will decrease. Aim for 70% local accesses.
  */
-#define NUMA_PERIOD_SLOTS 10
-#define NUMA_PERIOD_THRESHOLD 7
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NUMA_PERIOD_SLOTS 10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NUMA_PERIOD_ਹੱਦ 7
 
 /*
  * Increase the scan period (slow down scanning) if the majority of
@@ -3633,15 +3633,15 @@ static void numa_group_count_active_nodes(struct numa_group *numa_group)
  * the page accesses are shared with other processes.
  * Otherwise, decrease the scan period.
  */
-static void update_task_scan_period(struct task_struct *p,
-			unsigned long shared, unsigned long private)
+ਸਥਿਰ ਖਾਲੀ update_task_ਜਾਂਚ_period(ਬਣਤਰ task_struct *p,
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ shared, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨਿਜੀ)
 {
-	unsigned int period_slot;
-	int lr_ratio, ps_ratio;
-	int diff;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ period_ਥਾਂ;
+	ਪੂਰਨ lr_ਅਨੁਪਾਤ, ps_ਅਨੁਪਾਤ;
+	ਪੂਰਨ diff;
 
-	unsigned long remote = p->numa_faults_locality[0];
-	unsigned long local = p->numa_faults_locality[1];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ remote = p->numa_ਨੁਕਸ_locality[0];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ local = p->numa_ਨੁਕਸ_locality[1];
 
 	/*
 	 * If there were no record hinting faults then either the task is
@@ -3650,14 +3650,14 @@ static void update_task_scan_period(struct task_struct *p,
 	 * migration then it implies we are migrating too quickly or the local
 	 * node is overloaded. In either case, scan slower
 	 */
-	if (local + shared == 0 || p->numa_faults_locality[2]) {
-		p->numa_scan_period = min(p->numa_scan_period_max,
-			p->numa_scan_period << 1);
+	ਜੇ (local + shared == 0 || p->numa_ਨੁਕਸ_locality[2]) {
+		p->numa_ਜਾਂਚ_period = min(p->numa_ਜਾਂਚ_period_max,
+			p->numa_ਜਾਂਚ_period << 1);
 
-		p->mm->numa_next_scan = jiffies +
-			msecs_to_jiffies(p->numa_scan_period);
+		p->mm->numa_ਅਗਲਾ_ਜਾਂਚ = jiffies +
+			msecs_ਮੰਜ਼ਿਲ_jiffies(p->numa_ਜਾਂਚ_period);
 
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
 	/*
@@ -3666,45 +3666,45 @@ static void update_task_scan_period(struct task_struct *p,
 	 *       <  NUMA_PERIOD_THRESHOLD scan period decreases (scan faster)
 	 *	 >= NUMA_PERIOD_THRESHOLD scan period increases (scan slower)
 	 */
-	period_slot = DIV_ROUND_UP(p->numa_scan_period, NUMA_PERIOD_SLOTS);
-	lr_ratio = (local * NUMA_PERIOD_SLOTS) / (local + remote);
-	ps_ratio = (private * NUMA_PERIOD_SLOTS) / (private + shared);
+	period_ਥਾਂ = DIV_ਗੇੜਾ_ਉੱਪਰ(p->numa_ਜਾਂਚ_period, NUMA_PERIOD_SLOTS);
+	lr_ਅਨੁਪਾਤ = (local * NUMA_PERIOD_SLOTS) / (local + remote);
+	ps_ਅਨੁਪਾਤ = (ਨਿਜੀ * NUMA_PERIOD_SLOTS) / (ਨਿਜੀ + shared);
 
-	if (ps_ratio >= NUMA_PERIOD_THRESHOLD) {
+	ਜੇ (ps_ਅਨੁਪਾਤ >= NUMA_PERIOD_ਹੱਦ) {
 		/*
 		 * Most memory accesses are local. There is no need to
 		 * do fast NUMA scanning, since memory is already local.
 		 */
-		int slot = ps_ratio - NUMA_PERIOD_THRESHOLD;
-		if (!slot)
-			slot = 1;
-		diff = slot * period_slot;
-	} else if (lr_ratio >= NUMA_PERIOD_THRESHOLD) {
+		ਪੂਰਨ ਥਾਂ = ps_ਅਨੁਪਾਤ - NUMA_PERIOD_ਹੱਦ;
+		ਜੇ (!ਥਾਂ)
+			ਥਾਂ = 1;
+		diff = ਥਾਂ * period_ਥਾਂ;
+	} ਨਹੀਂਤਾਂ ਜੇ (lr_ਅਨੁਪਾਤ >= NUMA_PERIOD_ਹੱਦ) {
 		/*
 		 * Most memory accesses are shared with other tasks.
 		 * There is no point in continuing fast NUMA scanning,
 		 * since other tasks may just move the memory elsewhere.
 		 */
-		int slot = lr_ratio - NUMA_PERIOD_THRESHOLD;
-		if (!slot)
-			slot = 1;
-		diff = slot * period_slot;
-	} else {
+		ਪੂਰਨ ਥਾਂ = lr_ਅਨੁਪਾਤ - NUMA_PERIOD_ਹੱਦ;
+		ਜੇ (!ਥਾਂ)
+			ਥਾਂ = 1;
+		diff = ਥਾਂ * period_ਥਾਂ;
+	} ਨਹੀਂਤਾਂ {
 		/*
 		 * Private memory faults exceed (SLOTS-THRESHOLD)/SLOTS,
 		 * yet they are not on the local NUMA node. Speed up
 		 * NUMA scanning to get the memory moved over.
 		 */
-		int ratio = max(lr_ratio, ps_ratio);
-		diff = -(NUMA_PERIOD_THRESHOLD - ratio) * period_slot;
+		ਪੂਰਨ ਅਨੁਪਾਤ = max(lr_ਅਨੁਪਾਤ, ps_ਅਨੁਪਾਤ);
+		diff = -(NUMA_PERIOD_ਹੱਦ - ਅਨੁਪਾਤ) * period_ਥਾਂ;
 	}
 
-	p->numa_scan_period = clamp(p->numa_scan_period + diff,
-			task_scan_min(p), task_scan_max(p));
+	p->numa_ਜਾਂਚ_period = clamp(p->numa_ਜਾਂਚ_period + diff,
+			task_ਜਾਂਚ_min(p), task_ਜਾਂਚ_max(p));
 
-out:
-	memset(p->numa_faults_locality, 0,
-	       sizeof(p->numa_faults_locality));
+ਬਾਹਰਲਾ:
+	memset(p->numa_ਨੁਕਸ_locality, 0,
+	       ਆਕਾਰ(p->numa_ਨੁਕਸ_locality));
 }
 
 /*
@@ -3714,29 +3714,29 @@ out:
  * from the dozens-of-seconds NUMA balancing period. Use the scheduler
  * stats only if the task is so new there are no NUMA statistics yet.
  */
-static u64 numa_get_avg_runtime(struct task_struct *p, u64 *period)
+ਸਥਿਰ u64 numa_get_avg_runtime(ਬਣਤਰ task_struct *p, u64 *period)
 {
 	u64 runtime, delta, now;
 	/* Use the start of this time slice to avoid calculations. */
-	now = p->se.exec_start;
-	runtime = p->se.sum_exec_runtime;
+	now = p->se.exec_ਸ਼ੁਰੂ;
+	runtime = p->se.ਜੋੜ_exec_runtime;
 
-	if (p->last_task_numa_placement) {
-		delta = runtime - p->last_sum_exec_runtime;
-		*period = now - p->last_task_numa_placement;
+	ਜੇ (p->ਆਖਰੀ_task_numa_placement) {
+		delta = runtime - p->ਆਖਰੀ_ਜੋੜ_exec_runtime;
+		*period = now - p->ਆਖਰੀ_task_numa_placement;
 
 		/* Avoid time going backwards, prevent potential divide error: */
-		if (unlikely((s64)*period < 0))
+		ਜੇ (unlikely((s64)*period < 0))
 			*period = 0;
-	} else {
-		delta = p->se.avg.load_sum;
-		*period = LOAD_AVG_MAX;
+	} ਨਹੀਂਤਾਂ {
+		delta = p->se.avg.ਲੱਦੋ_ਜੋੜ;
+		*period = ਲੱਦੋ_AVG_MAX;
 	}
 
-	p->last_sum_exec_runtime = runtime;
-	p->last_task_numa_placement = now;
+	p->ਆਖਰੀ_ਜੋੜ_exec_runtime = runtime;
+	p->ਆਖਰੀ_task_numa_placement = now;
 
-	return delta;
+	ਵਾਪਸ delta;
 }
 
 /*
@@ -3744,34 +3744,34 @@ static u64 numa_get_avg_runtime(struct task_struct *p, u64 *period)
  * be done in a way that produces consistent results with group_weight,
  * otherwise workloads might not converge.
  */
-static int preferred_group_nid(struct task_struct *p, int nid)
+ਸਥਿਰ ਪੂਰਨ preferred_ਸਮੂਹ_nid(ਬਣਤਰ task_struct *p, ਪੂਰਨ nid)
 {
 	nodemask_t nodes;
-	int dist;
+	ਪੂਰਨ dist;
 
 	/* Direct connections between all NUMA nodes. */
-	if (sched_numa_topology_type == NUMA_DIRECT)
-		return nid;
+	ਜੇ (sched_numa_topology_type == NUMA_ਸਿੱਧਾ)
+		ਵਾਪਸ nid;
 
 	/*
 	 * On a system with glueless mesh NUMA topology, group_weight
 	 * scores nodes according to the number of NUMA hinting faults on
 	 * both the node itself, and on nearby nodes.
 	 */
-	if (sched_numa_topology_type == NUMA_GLUELESS_MESH) {
-		unsigned long score, max_score = 0;
-		int node, max_node = nid;
+	ਜੇ (sched_numa_topology_type == NUMA_GLUELESS_MESH) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ score, max_score = 0;
+		ਪੂਰਨ ਗੰਢ, max_ਗੰਢ = nid;
 
-		dist = sched_max_numa_distance;
+		dist = sched_max_numa_ਦੂਰੀ;
 
-		for_each_node_state(node, N_CPU) {
-			score = group_weight(p, node, dist);
-			if (score > max_score) {
+		for_each_ਗੰਢ_state(ਗੰਢ, N_CPU) {
+			score = ਸਮੂਹ_ਭਾਰ(p, ਗੰਢ, dist);
+			ਜੇ (score > max_score) {
 				max_score = score;
-				max_node = node;
+				max_ਗੰਢ = ਗੰਢ;
 			}
 		}
-		return max_node;
+		ਵਾਪਸ max_ਗੰਢ;
 	}
 
 	/*
@@ -3783,34 +3783,34 @@ static int preferred_group_nid(struct task_struct *p, int nid)
 	 * inside the highest scoring group of nodes. The nodemask tricks
 	 * keep the complexity of the search down.
 	 */
-	nodes = node_states[N_CPU];
-	for (dist = sched_max_numa_distance; dist > LOCAL_DISTANCE; dist--) {
-		unsigned long max_faults = 0;
-		nodemask_t max_group = NODE_MASK_NONE;
-		int a, b;
+	nodes = ਗੰਢ_ਹਾਲਤਾਂ[N_CPU];
+	ਲਈ (dist = sched_max_numa_ਦੂਰੀ; dist > LOCAL_ਦੂਰੀ; dist--) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max_ਨੁਕਸ = 0;
+		nodemask_t max_ਸਮੂਹ = ਗੰਢ_ਨਕਾਬ_NONE;
+		ਪੂਰਨ a, b;
 
 		/* Are there nodes at this distance from each other? */
-		if (!find_numa_distance(dist))
-			continue;
+		ਜੇ (!ਲੱਭੋ_numa_ਦੂਰੀ(dist))
+			ਜਾਰੀ;
 
-		for_each_node_mask(a, nodes) {
-			unsigned long faults = 0;
-			nodemask_t this_group;
-			nodes_clear(this_group);
+		for_each_ਗੰਢ_ਨਕਾਬ(a, nodes) {
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨੁਕਸ = 0;
+			nodemask_t this_ਸਮੂਹ;
+			nodes_clear(this_ਸਮੂਹ);
 
 			/* Sum group's NUMA faults; includes a==b case. */
-			for_each_node_mask(b, nodes) {
-				if (node_distance(a, b) < dist) {
-					faults += group_faults(p, b);
-					node_set(b, this_group);
-					node_clear(b, nodes);
+			for_each_ਗੰਢ_ਨਕਾਬ(b, nodes) {
+				ਜੇ (ਗੰਢ_ਦੂਰੀ(a, b) < dist) {
+					ਨੁਕਸ += ਸਮੂਹ_ਨੁਕਸ(p, b);
+					ਗੰਢ_ਸੈੱਟ(b, this_ਸਮੂਹ);
+					ਗੰਢ_clear(b, nodes);
 				}
 			}
 
 			/* Remember the top group. */
-			if (faults > max_faults) {
-				max_faults = faults;
-				max_group = this_group;
+			ਜੇ (ਨੁਕਸ > max_ਨੁਕਸ) {
+				max_ਨੁਕਸ = ਨੁਕਸ;
+				max_ਸਮੂਹ = this_ਸਮੂਹ;
 				/*
 				 * subtle: at the smallest distance there is
 				 * just one node left in each "group", the
@@ -3820,67 +3820,67 @@ static int preferred_group_nid(struct task_struct *p, int nid)
 			}
 		}
 		/* Next round, evaluate the nodes within max_group. */
-		if (!max_faults)
-			break;
-		nodes = max_group;
+		ਜੇ (!max_ਨੁਕਸ)
+			ਰੋਕੋ;
+		nodes = max_ਸਮੂਹ;
 	}
-	return nid;
+	ਵਾਪਸ nid;
 }
 
-static void task_numa_placement(struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ task_numa_placement(ਬਣਤਰ task_struct *p)
 	__context_unsafe(/* conditional locking */)
 {
-	struct sched_cache_group __maybe_unused *grp;
-	int seq, nid, max_nid = NUMA_NO_NODE;
-	unsigned long max_faults = 0;
-	unsigned long fault_types[2] = { 0, 0 };
-	unsigned long total_faults;
+	ਬਣਤਰ sched_cache_ਸਮੂਹ __maybe_unused *grp;
+	ਪੂਰਨ seq, nid, max_nid = NUMA_NO_ਗੰਢ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max_ਨੁਕਸ = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ fault_types[2] = { 0, 0 };
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਕੁੱਲ_ਨੁਕਸ;
 	u64 runtime, period;
-	spinlock_t *group_lock = NULL;
-	long __maybe_unused new_fp;
-	struct numa_group *ng;
+	spinlock_t *ਸਮੂਹ_ਤਾਲਾ = ਨਿਰਾ;
+	ਲੰਮਾ __maybe_unused new_fp;
+	ਬਣਤਰ numa_ਸਮੂਹ *ng;
 
 	/*
 	 * The p->mm->numa_scan_seq field gets updated without
 	 * exclusive access. Use READ_ONCE() here to ensure
 	 * that the field is read in a single access:
 	 */
-	seq = READ_ONCE(p->mm->numa_scan_seq);
-	if (p->numa_scan_seq == seq)
-		return;
-	p->numa_scan_seq = seq;
-	p->numa_scan_period_max = task_scan_max(p);
+	seq = READ_ONCE(p->mm->numa_ਜਾਂਚ_seq);
+	ਜੇ (p->numa_ਜਾਂਚ_seq == seq)
+		ਵਾਪਸ;
+	p->numa_ਜਾਂਚ_seq = seq;
+	p->numa_ਜਾਂਚ_period_max = task_ਜਾਂਚ_max(p);
 
-	total_faults = p->numa_faults_locality[0] +
-		       p->numa_faults_locality[1];
+	ਕੁੱਲ_ਨੁਕਸ = p->numa_ਨੁਕਸ_locality[0] +
+		       p->numa_ਨੁਕਸ_locality[1];
 	runtime = numa_get_avg_runtime(p, &period);
 
 	/* If the task is part of a group prevent parallel updates to group stats */
-	ng = deref_curr_numa_group(p);
-	if (ng) {
-		group_lock = &ng->lock;
-		spin_lock_irq(group_lock);
+	ng = deref_curr_numa_ਸਮੂਹ(p);
+	ਜੇ (ng) {
+		ਸਮੂਹ_ਤਾਲਾ = &ng->ਤਾਲਾ;
+		spin_ਤਾਲਾ_irq(ਸਮੂਹ_ਤਾਲਾ);
 	}
 
 	/* Find the node with the highest number of faults */
-	for_each_online_node(nid) {
+	for_each_online_ਗੰਢ(nid) {
 		/* Keep track of the offsets in numa_faults array */
-		int mem_idx, membuf_idx, cpu_idx, cpubuf_idx;
-		unsigned long faults = 0, group_faults = 0;
-		int priv;
+		ਪੂਰਨ mem_idx, membuf_idx, cpu_idx, cpubuf_idx;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨੁਕਸ = 0, ਸਮੂਹ_ਨੁਕਸ = 0;
+		ਪੂਰਨ priv;
 
-		for (priv = 0; priv < NR_NUMA_HINT_FAULT_TYPES; priv++) {
-			long diff, f_diff, f_weight;
+		ਲਈ (priv = 0; priv < NR_NUMA_HINT_FAULT_TYPES; priv++) {
+			ਲੰਮਾ diff, f_diff, f_ਭਾਰ;
 
-			mem_idx = task_faults_idx(NUMA_MEM, nid, priv);
-			membuf_idx = task_faults_idx(NUMA_MEMBUF, nid, priv);
-			cpu_idx = task_faults_idx(NUMA_CPU, nid, priv);
-			cpubuf_idx = task_faults_idx(NUMA_CPUBUF, nid, priv);
+			mem_idx = task_ਨੁਕਸ_idx(NUMA_MEM, nid, priv);
+			membuf_idx = task_ਨੁਕਸ_idx(NUMA_MEMBUF, nid, priv);
+			cpu_idx = task_ਨੁਕਸ_idx(NUMA_CPU, nid, priv);
+			cpubuf_idx = task_ਨੁਕਸ_idx(NUMA_CPUBUF, nid, priv);
 
 			/* Decay existing window, copy faults since last scan */
-			diff = p->numa_faults[membuf_idx] - p->numa_faults[mem_idx] / 2;
-			fault_types[priv] += p->numa_faults[membuf_idx];
-			p->numa_faults[membuf_idx] = 0;
+			diff = p->numa_ਨੁਕਸ[membuf_idx] - p->numa_ਨੁਕਸ[mem_idx] / 2;
+			fault_types[priv] += p->numa_ਨੁਕਸ[membuf_idx];
+			p->numa_ਨੁਕਸ[membuf_idx] = 0;
 
 			/*
 			 * Normalize the faults_from, so all tasks in a group
@@ -3889,17 +3889,17 @@ static void task_numa_placement(struct task_struct *p)
 			 * little over-all impact on throughput, and thus their
 			 * faults are less important.
 			 */
-			f_weight = div64_u64(runtime << 16, period + 1);
-			f_weight = (f_weight * p->numa_faults[cpubuf_idx]) /
-				   (total_faults + 1);
-			f_diff = f_weight - p->numa_faults[cpu_idx] / 2;
-			p->numa_faults[cpubuf_idx] = 0;
+			f_ਭਾਰ = div64_u64(runtime << 16, period + 1);
+			f_ਭਾਰ = (f_ਭਾਰ * p->numa_ਨੁਕਸ[cpubuf_idx]) /
+				   (ਕੁੱਲ_ਨੁਕਸ + 1);
+			f_diff = f_ਭਾਰ - p->numa_ਨੁਕਸ[cpu_idx] / 2;
+			p->numa_ਨੁਕਸ[cpubuf_idx] = 0;
 
-			p->numa_faults[mem_idx] += diff;
-			p->numa_faults[cpu_idx] += f_diff;
-			faults += p->numa_faults[mem_idx];
-			p->total_numa_faults += diff;
-			if (ng) {
+			p->numa_ਨੁਕਸ[mem_idx] += diff;
+			p->numa_ਨੁਕਸ[cpu_idx] += f_diff;
+			ਨੁਕਸ += p->numa_ਨੁਕਸ[mem_idx];
+			p->ਕੁੱਲ_numa_ਨੁਕਸ += diff;
+			ਜੇ (ng) {
 				/*
 				 * safe because we can only change our own group
 				 *
@@ -3907,12 +3907,12 @@ static void task_numa_placement(struct task_struct *p)
 				 * nid and priv in a specific region because it
 				 * is at the beginning of the numa_faults array.
 				 */
-				ng->faults[mem_idx] += diff;
-				ng->faults[cpu_idx] += f_diff;
-				ng->total_faults += diff;
-				group_faults += ng->faults[mem_idx];
+				ng->ਨੁਕਸ[mem_idx] += diff;
+				ng->ਨੁਕਸ[cpu_idx] += f_diff;
+				ng->ਕੁੱਲ_ਨੁਕਸ += diff;
+				ਸਮੂਹ_ਨੁਕਸ += ng->ਨੁਕਸ[mem_idx];
 			}
-#ifdef CONFIG_SCHED_CACHE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
 			/*
 			 * Per task p->numa_faults[mem_idx] converges,
 			 * so the accumulation of each task's faults
@@ -3936,157 +3936,157 @@ static void task_numa_placement(struct task_struct *p)
 			scoped_guard(rcu) {
 				grp = rcu_dereference(p->sched_cache_grp);
 
-				if (grp) {
-					new_fp = (long)READ_ONCE(grp->footprint) + diff;
+				ਜੇ (grp) {
+					new_fp = (ਲੰਮਾ)READ_ONCE(grp->footprint) + diff;
 					WRITE_ONCE(grp->footprint, max(new_fp, 0L));
 				}
 			}
-#endif
+#ਜੇ_ਅੰਤ
 		}
 
-		if (!ng) {
-			if (faults > max_faults) {
-				max_faults = faults;
+		ਜੇ (!ng) {
+			ਜੇ (ਨੁਕਸ > max_ਨੁਕਸ) {
+				max_ਨੁਕਸ = ਨੁਕਸ;
 				max_nid = nid;
 			}
-		} else if (group_faults > max_faults) {
-			max_faults = group_faults;
+		} ਨਹੀਂਤਾਂ ਜੇ (ਸਮੂਹ_ਨੁਕਸ > max_ਨੁਕਸ) {
+			max_ਨੁਕਸ = ਸਮੂਹ_ਨੁਕਸ;
 			max_nid = nid;
 		}
 	}
 
 	/* Cannot migrate task to CPU-less node */
-	max_nid = numa_nearest_node(max_nid, N_CPU);
+	max_nid = numa_ਸਭ_ਤੋਂ_ਨੇੜੇ_ਗੰਢ(max_nid, N_CPU);
 
-	if (ng) {
-		numa_group_count_active_nodes(ng);
-		spin_unlock_irq(group_lock);
-		max_nid = preferred_group_nid(p, max_nid);
+	ਜੇ (ng) {
+		numa_ਸਮੂਹ_ਗਿਣਤੀ_ਸਰਗਰਮ_nodes(ng);
+		spin_unlock_irq(ਸਮੂਹ_ਤਾਲਾ);
+		max_nid = preferred_ਸਮੂਹ_nid(p, max_nid);
 	}
 
-	if (max_faults) {
+	ਜੇ (max_ਨੁਕਸ) {
 		/* Set the new preferred node */
-		if (max_nid != p->numa_preferred_nid)
+		ਜੇ (max_nid != p->numa_preferred_nid)
 			sched_setnuma(p, max_nid);
 	}
 
-	update_task_scan_period(p, fault_types[0], fault_types[1]);
+	update_task_ਜਾਂਚ_period(p, fault_types[0], fault_types[1]);
 }
 
-static inline int get_numa_group(struct numa_group *grp)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ get_numa_ਸਮੂਹ(ਬਣਤਰ numa_ਸਮੂਹ *grp)
 {
-	return refcount_inc_not_zero(&grp->refcount);
+	ਵਾਪਸ refcount_inc_not_zero(&grp->refcount);
 }
 
-static inline void put_numa_group(struct numa_group *grp)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ put_numa_ਸਮੂਹ(ਬਣਤਰ numa_ਸਮੂਹ *grp)
 {
-	if (refcount_dec_and_test(&grp->refcount))
+	ਜੇ (refcount_dec_and_test(&grp->refcount))
 		kfree_rcu(grp, rcu);
 }
 
-static void task_numa_group(struct task_struct *p, int cpupid, int flags,
-			int *priv)
+ਸਥਿਰ ਖਾਲੀ task_numa_ਸਮੂਹ(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpupid, ਪੂਰਨ flags,
+			ਪੂਰਨ *priv)
 {
-	struct numa_group *grp, *my_grp;
-	struct task_struct *tsk;
+	ਬਣਤਰ numa_ਸਮੂਹ *grp, *my_grp;
+	ਬਣਤਰ task_struct *tsk;
 	bool join = false;
-	int cpu = cpupid_to_cpu(cpupid);
-	int i;
+	ਪੂਰਨ cpu = cpupid_ਮੰਜ਼ਿਲ_cpu(cpupid);
+	ਪੂਰਨ i;
 
-	if (unlikely(!deref_curr_numa_group(p))) {
-		unsigned int size = sizeof(struct numa_group) +
+	ਜੇ (unlikely(!deref_curr_numa_ਸਮੂਹ(p))) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮਾਪ = ਆਕਾਰ(ਬਣਤਰ numa_ਸਮੂਹ) +
 				    NR_NUMA_HINT_FAULT_STATS *
-				    nr_node_ids * sizeof(unsigned long);
+				    nr_ਗੰਢ_ids * ਆਕਾਰ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ);
 
-		grp = kzalloc(size, GFP_KERNEL | __GFP_NOWARN);
-		if (!grp)
-			return;
+		grp = kzalloc(ਮਾਪ, GFP_KERNEL | __GFP_NOWARN);
+		ਜੇ (!grp)
+			ਵਾਪਸ;
 
-		refcount_set(&grp->refcount, 1);
-		grp->active_nodes = 1;
-		grp->max_faults_cpu = 0;
-		spin_lock_init(&grp->lock);
+		refcount_ਸੈੱਟ(&grp->refcount, 1);
+		grp->ਸਰਗਰਮ_nodes = 1;
+		grp->max_ਨੁਕਸ_cpu = 0;
+		spin_ਤਾਲਾ_init(&grp->ਤਾਲਾ);
 		grp->gid = p->pid;
 
-		for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++)
-			grp->faults[i] = p->numa_faults[i];
+		ਲਈ (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_ਗੰਢ_ids; i++)
+			grp->ਨੁਕਸ[i] = p->numa_ਨੁਕਸ[i];
 
-		grp->total_faults = p->total_numa_faults;
+		grp->ਕੁੱਲ_ਨੁਕਸ = p->ਕੁੱਲ_numa_ਨੁਕਸ;
 
 		grp->nr_tasks++;
-		rcu_assign_pointer(p->numa_group, grp);
+		rcu_ਸੌਂਪੋ_ਸੂਚਕ(p->numa_ਸਮੂਹ, grp);
 	}
 
-	rcu_read_lock();
+	rcu_read_ਤਾਲਾ();
 	tsk = READ_ONCE(cpu_rq(cpu)->curr);
 
-	if (!cpupid_match_pid(tsk, cpupid))
-		goto no_join;
+	ਜੇ (!cpupid_ਮੇਲ_pid(tsk, cpupid))
+		ਜਾਓ no_join;
 
-	grp = rcu_dereference_all(tsk->numa_group);
-	if (!grp)
-		goto no_join;
+	grp = rcu_dereference_all(tsk->numa_ਸਮੂਹ);
+	ਜੇ (!grp)
+		ਜਾਓ no_join;
 
-	my_grp = deref_curr_numa_group(p);
-	if (grp == my_grp)
-		goto no_join;
+	my_grp = deref_curr_numa_ਸਮੂਹ(p);
+	ਜੇ (grp == my_grp)
+		ਜਾਓ no_join;
 
 	/*
 	 * Only join the other group if its bigger; if we're the bigger group,
 	 * the other task will join us.
 	 */
-	if (my_grp->nr_tasks > grp->nr_tasks)
-		goto no_join;
+	ਜੇ (my_grp->nr_tasks > grp->nr_tasks)
+		ਜਾਓ no_join;
 
 	/*
 	 * Tie-break on the grp address.
 	 */
-	if (my_grp->nr_tasks == grp->nr_tasks && my_grp > grp)
-		goto no_join;
+	ਜੇ (my_grp->nr_tasks == grp->nr_tasks && my_grp > grp)
+		ਜਾਓ no_join;
 
 	/* Always join threads in the same process. */
-	if (tsk->mm == current->mm)
+	ਜੇ (tsk->mm == current->mm)
 		join = true;
 
 	/* Simple filter to avoid false positives due to PID collisions */
-	if (flags & TNF_SHARED)
+	ਜੇ (flags & TNF_SHARED)
 		join = true;
 
 	/* Update priv based on whether false sharing was detected */
 	*priv = !join;
 
-	if (join && !get_numa_group(grp))
-		goto no_join;
+	ਜੇ (join && !get_numa_ਸਮੂਹ(grp))
+		ਜਾਓ no_join;
 
 	rcu_read_unlock();
 
-	if (!join)
-		return;
+	ਜੇ (!join)
+		ਵਾਪਸ;
 
 	WARN_ON_ONCE(irqs_disabled());
-	double_lock_irq(&my_grp->lock, &grp->lock);
+	double_ਤਾਲਾ_irq(&my_grp->ਤਾਲਾ, &grp->ਤਾਲਾ);
 
-	for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++) {
-		my_grp->faults[i] -= p->numa_faults[i];
-		grp->faults[i] += p->numa_faults[i];
+	ਲਈ (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_ਗੰਢ_ids; i++) {
+		my_grp->ਨੁਕਸ[i] -= p->numa_ਨੁਕਸ[i];
+		grp->ਨੁਕਸ[i] += p->numa_ਨੁਕਸ[i];
 	}
-	my_grp->total_faults -= p->total_numa_faults;
-	grp->total_faults += p->total_numa_faults;
+	my_grp->ਕੁੱਲ_ਨੁਕਸ -= p->ਕੁੱਲ_numa_ਨੁਕਸ;
+	grp->ਕੁੱਲ_ਨੁਕਸ += p->ਕੁੱਲ_numa_ਨੁਕਸ;
 
 	my_grp->nr_tasks--;
 	grp->nr_tasks++;
 
-	spin_unlock(&my_grp->lock);
-	spin_unlock_irq(&grp->lock);
+	spin_unlock(&my_grp->ਤਾਲਾ);
+	spin_unlock_irq(&grp->ਤਾਲਾ);
 
-	rcu_assign_pointer(p->numa_group, grp);
+	rcu_ਸੌਂਪੋ_ਸੂਚਕ(p->numa_ਸਮੂਹ, grp);
 
-	put_numa_group(my_grp);
-	return;
+	put_numa_ਸਮੂਹ(my_grp);
+	ਵਾਪਸ;
 
 no_join:
 	rcu_read_unlock();
-	return;
+	ਵਾਪਸ;
 }
 
 /*
@@ -4096,90 +4096,90 @@ no_join:
  * concurrent reads from places like load balancing and procfs, and we should
  * reset the data back to default state without freeing ->numa_faults.
  */
-void task_numa_free(struct task_struct *p, bool final)
+ਖਾਲੀ task_numa_free(ਬਣਤਰ task_struct *p, bool final)
 {
 	/* safe: p either is current or is being freed by current */
-	struct numa_group *grp = rcu_dereference_raw(p->numa_group);
-	unsigned long *numa_faults = p->numa_faults;
-	unsigned long flags;
-	int i;
+	ਬਣਤਰ numa_ਸਮੂਹ *grp = rcu_dereference_raw(p->numa_ਸਮੂਹ);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *numa_ਨੁਕਸ = p->numa_ਨੁਕਸ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
+	ਪੂਰਨ i;
 
-	if (!numa_faults)
-		return;
+	ਜੇ (!numa_ਨੁਕਸ)
+		ਵਾਪਸ;
 
-	if (grp) {
-		spin_lock_irqsave(&grp->lock, flags);
-		for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++)
-			grp->faults[i] -= p->numa_faults[i];
-		grp->total_faults -= p->total_numa_faults;
+	ਜੇ (grp) {
+		spin_ਤਾਲਾ_irqsave(&grp->ਤਾਲਾ, flags);
+		ਲਈ (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_ਗੰਢ_ids; i++)
+			grp->ਨੁਕਸ[i] -= p->numa_ਨੁਕਸ[i];
+		grp->ਕੁੱਲ_ਨੁਕਸ -= p->ਕੁੱਲ_numa_ਨੁਕਸ;
 
 		grp->nr_tasks--;
-		spin_unlock_irqrestore(&grp->lock, flags);
-		RCU_INIT_POINTER(p->numa_group, NULL);
-		put_numa_group(grp);
+		spin_unlock_irqrestore(&grp->ਤਾਲਾ, flags);
+		RCU_INIT_ਸੂਚਕ(p->numa_ਸਮੂਹ, ਨਿਰਾ);
+		put_numa_ਸਮੂਹ(grp);
 	}
 
-	if (final) {
-		p->numa_faults = NULL;
-		kfree(numa_faults);
-	} else {
-		p->total_numa_faults = 0;
-		for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++)
-			numa_faults[i] = 0;
+	ਜੇ (final) {
+		p->numa_ਨੁਕਸ = ਨਿਰਾ;
+		kfree(numa_ਨੁਕਸ);
+	} ਨਹੀਂਤਾਂ {
+		p->ਕੁੱਲ_numa_ਨੁਕਸ = 0;
+		ਲਈ (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_ਗੰਢ_ids; i++)
+			numa_ਨੁਕਸ[i] = 0;
 	}
 }
 
 /*
  * Got a PROT_NONE fault for a page on @node.
  */
-void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
+ਖਾਲੀ task_numa_fault(ਪੂਰਨ ਆਖਰੀ_cpupid, ਪੂਰਨ mem_ਗੰਢ, ਪੂਰਨ ਪੰਨੇ, ਪੂਰਨ flags)
 {
-	struct task_struct *p = current;
+	ਬਣਤਰ task_struct *p = current;
 	bool migrated = flags & TNF_MIGRATED;
-	int cpu_node = task_node(current);
-	int local = !!(flags & TNF_FAULT_LOCAL);
-	struct numa_group *ng;
-	int priv;
+	ਪੂਰਨ cpu_ਗੰਢ = task_ਗੰਢ(current);
+	ਪੂਰਨ local = !!(flags & TNF_FAULT_LOCAL);
+	ਬਣਤਰ numa_ਸਮੂਹ *ng;
+	ਪੂਰਨ priv;
 
-	if (!static_branch_likely(&sched_numa_balancing))
-		return;
+	ਜੇ (!static_branch_likely(&sched_numa_balancing))
+		ਵਾਪਸ;
 
 	/* for example, ksmd faulting in a user's mm */
-	if (!p->mm)
-		return;
+	ਜੇ (!p->mm)
+		ਵਾਪਸ;
 
 	/*
 	 * NUMA faults statistics are unnecessary for the slow memory
 	 * node for memory tiering mode.
 	 */
-	if (!node_is_toptier(mem_node) &&
-	    (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING ||
-	     !cpupid_valid(last_cpupid)))
-		return;
+	ਜੇ (!ਗੰਢ_is_toptier(mem_ਗੰਢ) &&
+	    (sysctl_numa_balancing_ਬਹੁਲਕ & NUMA_BALANCING_ਸਮ੍ਰਿਤੀ_TIERING ||
+	     !cpupid_valid(ਆਖਰੀ_cpupid)))
+		ਵਾਪਸ;
 
 	/* Allocate buffer to track faults on a per-node basis */
-	if (unlikely(!p->numa_faults)) {
-		int size = sizeof(*p->numa_faults) *
-			   NR_NUMA_HINT_FAULT_BUCKETS * nr_node_ids;
+	ਜੇ (unlikely(!p->numa_ਨੁਕਸ)) {
+		ਪੂਰਨ ਮਾਪ = ਆਕਾਰ(*p->numa_ਨੁਕਸ) *
+			   NR_NUMA_HINT_FAULT_BUCKETS * nr_ਗੰਢ_ids;
 
-		p->numa_faults = kzalloc(size, GFP_KERNEL|__GFP_NOWARN);
-		if (!p->numa_faults)
-			return;
+		p->numa_ਨੁਕਸ = kzalloc(ਮਾਪ, GFP_KERNEL|__GFP_NOWARN);
+		ਜੇ (!p->numa_ਨੁਕਸ)
+			ਵਾਪਸ;
 
-		p->total_numa_faults = 0;
-		memset(p->numa_faults_locality, 0, sizeof(p->numa_faults_locality));
+		p->ਕੁੱਲ_numa_ਨੁਕਸ = 0;
+		memset(p->numa_ਨੁਕਸ_locality, 0, ਆਕਾਰ(p->numa_ਨੁਕਸ_locality));
 	}
 
 	/*
 	 * First accesses are treated as private, otherwise consider accesses
 	 * to be private if the accessing pid has not changed
 	 */
-	if (unlikely(last_cpupid == (-1 & LAST_CPUPID_MASK))) {
+	ਜੇ (unlikely(ਆਖਰੀ_cpupid == (-1 & ਆਖਰੀ_CPUPID_ਨਕਾਬ))) {
 		priv = 1;
-	} else {
-		priv = cpupid_match_pid(p, last_cpupid);
-		if (!priv && !(flags & TNF_NO_GROUP))
-			task_numa_group(p, last_cpupid, flags, &priv);
+	} ਨਹੀਂਤਾਂ {
+		priv = cpupid_ਮੇਲ_pid(p, ਆਖਰੀ_cpupid);
+		ਜੇ (!priv && !(flags & TNF_NO_ਸਮੂਹ))
+			task_numa_ਸਮੂਹ(p, ਆਖਰੀ_cpupid, flags, &priv);
 	}
 
 	/*
@@ -4188,32 +4188,32 @@ void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
 	 * actively using should be counted as local. This allows the
 	 * scan rate to slow down when a workload has settled down.
 	 */
-	ng = deref_curr_numa_group(p);
-	if (!priv && !local && ng && ng->active_nodes > 1 &&
-				numa_is_active_node(cpu_node, ng) &&
-				numa_is_active_node(mem_node, ng))
+	ng = deref_curr_numa_ਸਮੂਹ(p);
+	ਜੇ (!priv && !local && ng && ng->ਸਰਗਰਮ_nodes > 1 &&
+				numa_is_ਸਰਗਰਮ_ਗੰਢ(cpu_ਗੰਢ, ng) &&
+				numa_is_ਸਰਗਰਮ_ਗੰਢ(mem_ਗੰਢ, ng))
 		local = 1;
 
 	/*
 	 * Retry to migrate task to preferred node periodically, in case it
 	 * previously failed, or the scheduler moved us.
 	 */
-	if (time_after(jiffies, p->numa_migrate_retry)) {
+	ਜੇ (ਸਮਾਂ_after(jiffies, p->numa_migrate_retry)) {
 		task_numa_placement(p);
 		numa_migrate_preferred(p);
 	}
 
-	if (migrated)
-		p->numa_pages_migrated += pages;
-	if (flags & TNF_MIGRATE_FAIL)
-		p->numa_faults_locality[2] += pages;
+	ਜੇ (migrated)
+		p->numa_ਪੰਨੇ_migrated += ਪੰਨੇ;
+	ਜੇ (flags & TNF_MIGRATE_FAIL)
+		p->numa_ਨੁਕਸ_locality[2] += ਪੰਨੇ;
 
-	p->numa_faults[task_faults_idx(NUMA_MEMBUF, mem_node, priv)] += pages;
-	p->numa_faults[task_faults_idx(NUMA_CPUBUF, cpu_node, priv)] += pages;
-	p->numa_faults_locality[local] += pages;
+	p->numa_ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEMBUF, mem_ਗੰਢ, priv)] += ਪੰਨੇ;
+	p->numa_ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_CPUBUF, cpu_ਗੰਢ, priv)] += ਪੰਨੇ;
+	p->numa_ਨੁਕਸ_locality[local] += ਪੰਨੇ;
 }
 
-static void reset_ptenuma_scan(struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ reset_ptenuma_ਜਾਂਚ(ਬਣਤਰ task_struct *p)
 {
 	/*
 	 * We only did a read acquisition of the mmap sem, so
@@ -4223,33 +4223,33 @@ static void reset_ptenuma_scan(struct task_struct *p)
 	 * statistical sampling. Use READ_ONCE/WRITE_ONCE, which are not
 	 * expensive, to avoid any form of compiler optimizations:
 	 */
-	WRITE_ONCE(p->mm->numa_scan_seq, READ_ONCE(p->mm->numa_scan_seq) + 1);
-	p->mm->numa_scan_offset = 0;
+	WRITE_ONCE(p->mm->numa_ਜਾਂਚ_seq, READ_ONCE(p->mm->numa_ਜਾਂਚ_seq) + 1);
+	p->mm->numa_ਜਾਂਚ_ਵਿੱਥ = 0;
 }
 
-static bool vma_is_accessed(struct mm_struct *mm, struct vm_area_struct *vma)
+ਸਥਿਰ bool vma_is_accessed(ਬਣਤਰ mm_struct *mm, ਬਣਤਰ vm_area_struct *vma)
 {
-	unsigned long pids;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ pids;
 	/*
 	 * Allow unconditional access first two times, so that all the (pages)
 	 * of VMAs get prot_none fault introduced irrespective of accesses.
 	 * This is also done to avoid any side effect of task scanning
 	 * amplifying the unfairness of disjoint set of VMAs' access.
 	 */
-	if ((READ_ONCE(current->mm->numa_scan_seq) - vma->numab_state->start_scan_seq) < 2)
-		return true;
+	ਜੇ ((READ_ONCE(current->mm->numa_ਜਾਂਚ_seq) - vma->numab_state->ਸ਼ੁਰੂ_ਜਾਂਚ_seq) < 2)
+		ਵਾਪਸ true;
 
-	pids = vma->numab_state->pids_active[0] | vma->numab_state->pids_active[1];
-	if (test_bit(hash_32(current->pid, ilog2(BITS_PER_LONG)), &pids))
-		return true;
+	pids = vma->numab_state->pids_ਸਰਗਰਮ[0] | vma->numab_state->pids_ਸਰਗਰਮ[1];
+	ਜੇ (test_ਦੋਆਧਾਰੀ_ਅੰਕ(hash_32(current->pid, ilog2(ਬਿੱਟ_ਪ੍ਰਤੀ_LONG)), &pids))
+		ਵਾਪਸ true;
 
 	/*
 	 * Complete a scan that has already started regardless of PID access, or
 	 * some VMAs may never be scanned in multi-threaded applications:
 	 */
-	if (mm->numa_scan_offset > vma->vm_start) {
+	ਜੇ (mm->numa_ਜਾਂਚ_ਵਿੱਥ > vma->vm_ਸ਼ੁਰੂ) {
 		trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_IGNORE_PID);
-		return true;
+		ਵਾਪਸ true;
 	}
 
 	/*
@@ -4257,36 +4257,36 @@ static bool vma_is_accessed(struct mm_struct *mm, struct vm_area_struct *vma)
 	 * the threads in the same process is low, which means no other
 	 * threads can help scan this vma, force a vma scan.
 	 */
-	if (READ_ONCE(mm->numa_scan_seq) >
-	   (vma->numab_state->prev_scan_seq + get_nr_threads(current)))
-		return true;
+	ਜੇ (READ_ONCE(mm->numa_ਜਾਂਚ_seq) >
+	   (vma->numab_state->prev_ਜਾਂਚ_seq + get_nr_ਧਾਗੇ(current)))
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-#define VMA_PID_RESET_PERIOD (4 * sysctl_numa_balancing_scan_delay)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ VMA_PID_RESET_PERIOD (4 * sysctl_numa_balancing_ਜਾਂਚ_delay)
 
 /*
  * The expensive part of numa migration is done from task_work context.
  * Triggered from task_tick_numa().
  */
-static void task_numa_work(struct callback_head *work)
+ਸਥਿਰ ਖਾਲੀ task_numa_work(ਬਣਤਰ callback_ਸਿਰ *work)
 {
-	unsigned long migrate, next_scan, now = jiffies;
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	u64 runtime = p->se.sum_exec_runtime;
-	struct vm_area_struct *vma;
-	unsigned long start, end;
-	unsigned long nr_pte_updates = 0;
-	long pages, virtpages;
-	struct vma_iterator vmi;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ migrate, ਅਗਲਾ_ਜਾਂਚ, now = jiffies;
+	ਬਣਤਰ task_struct *p = current;
+	ਬਣਤਰ mm_struct *mm = p->mm;
+	u64 runtime = p->se.ਜੋੜ_exec_runtime;
+	ਬਣਤਰ vm_area_struct *vma;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸ਼ੁਰੂ, ਸਿਰਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ nr_pte_updates = 0;
+	ਲੰਮਾ ਪੰਨੇ, virtpages;
+	ਬਣਤਰ vma_iterator vmi;
 	bool vma_pids_skipped;
 	bool vma_pids_forced = false;
 
-	WARN_ON_ONCE(p != container_of(work, struct task_struct, numa_work));
+	WARN_ON_ONCE(p != container_ਦਾ(work, ਬਣਤਰ task_struct, numa_work));
 
-	work->next = work;
+	work->ਅਗਲਾ = work;
 	/*
 	 * Who cares about NUMA placement when they're dying.
 	 *
@@ -4295,54 +4295,54 @@ static void task_numa_work(struct callback_head *work)
 	 * without p->mm even though we still had it when we enqueued this
 	 * work.
 	 */
-	if (p->flags & PF_EXITING)
-		return;
+	ਜੇ (p->flags & PF_EXITING)
+		ਵਾਪਸ;
 
 	/*
 	 * Memory is pinned to only one NUMA node via cpuset.mems, naturally
 	 * no page can be migrated.
 	 */
-	if (cpusets_enabled() && nodes_weight(cpuset_current_mems_allowed) == 1) {
+	ਜੇ (cpusets_enabled() && nodes_ਭਾਰ(cpuset_current_mems_allowed) == 1) {
 		trace_sched_skip_cpuset_numa(current, &cpuset_current_mems_allowed);
-		return;
+		ਵਾਪਸ;
 	}
 
-	if (!mm->numa_next_scan) {
-		mm->numa_next_scan = now +
-			msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
+	ਜੇ (!mm->numa_ਅਗਲਾ_ਜਾਂਚ) {
+		mm->numa_ਅਗਲਾ_ਜਾਂਚ = now +
+			msecs_ਮੰਜ਼ਿਲ_jiffies(sysctl_numa_balancing_ਜਾਂਚ_delay);
 	}
 
 	/*
 	 * Enforce maximal scan/migration frequency..
 	 */
-	migrate = mm->numa_next_scan;
-	if (time_before(now, migrate))
-		return;
+	migrate = mm->numa_ਅਗਲਾ_ਜਾਂਚ;
+	ਜੇ (ਸਮਾਂ_before(now, migrate))
+		ਵਾਪਸ;
 
-	if (p->numa_scan_period == 0) {
-		p->numa_scan_period_max = task_scan_max(p);
-		p->numa_scan_period = task_scan_start(p);
+	ਜੇ (p->numa_ਜਾਂਚ_period == 0) {
+		p->numa_ਜਾਂਚ_period_max = task_ਜਾਂਚ_max(p);
+		p->numa_ਜਾਂਚ_period = task_ਜਾਂਚ_ਸ਼ੁਰੂ(p);
 	}
 
-	next_scan = now + msecs_to_jiffies(p->numa_scan_period);
-	if (!try_cmpxchg(&mm->numa_next_scan, &migrate, next_scan))
-		return;
+	ਅਗਲਾ_ਜਾਂਚ = now + msecs_ਮੰਜ਼ਿਲ_jiffies(p->numa_ਜਾਂਚ_period);
+	ਜੇ (!try_cmpxchg(&mm->numa_ਅਗਲਾ_ਜਾਂਚ, &migrate, ਅਗਲਾ_ਜਾਂਚ))
+		ਵਾਪਸ;
 
 	/*
 	 * Delay this task enough that another task of this mm will likely win
 	 * the next time around.
 	 */
-	p->node_stamp += 2 * TICK_NSEC;
+	p->ਗੰਢ_stamp += 2 * TICK_NSEC;
 
-	pages = sysctl_numa_balancing_scan_size;
-	pages <<= 20 - PAGE_SHIFT; /* MB in pages */
-	virtpages = pages * 8;	   /* Scan up to this much virtual space */
-	if (!pages)
-		return;
+	ਪੰਨੇ = sysctl_numa_balancing_ਜਾਂਚ_ਮਾਪ;
+	ਪੰਨੇ <<= 20 - ਪੰਨਾ_ਖਿਸਕਾਓ; /* MB in pages */
+	virtpages = ਪੰਨੇ * 8;	   /* Scan up to this much virtual space */
+	ਜੇ (!ਪੰਨੇ)
+		ਵਾਪਸ;
 
 
-	if (!mmap_read_trylock(mm))
-		return;
+	ਜੇ (!mmap_read_trylock(mm))
+		ਵਾਪਸ;
 
 	/*
 	 * VMAs are skipped if the current PID has not trapped a fault within
@@ -4352,21 +4352,21 @@ static void task_numa_work(struct callback_head *work)
 	vma_pids_skipped = false;
 
 retry_pids:
-	start = mm->numa_scan_offset;
-	vma_iter_init(&vmi, mm, start);
-	vma = vma_next(&vmi);
-	if (!vma) {
-		reset_ptenuma_scan(p);
-		start = 0;
-		vma_iter_set(&vmi, start);
-		vma = vma_next(&vmi);
+	ਸ਼ੁਰੂ = mm->numa_ਜਾਂਚ_ਵਿੱਥ;
+	vma_iter_init(&vmi, mm, ਸ਼ੁਰੂ);
+	vma = vma_ਅਗਲਾ(&vmi);
+	ਜੇ (!vma) {
+		reset_ptenuma_ਜਾਂਚ(p);
+		ਸ਼ੁਰੂ = 0;
+		vma_iter_ਸੈੱਟ(&vmi, ਸ਼ੁਰੂ);
+		vma = vma_ਅਗਲਾ(&vmi);
 	}
 
-	for (; vma; vma = vma_next(&vmi)) {
-		if (!vma_migratable(vma) || !vma_policy_mof(vma) ||
-			is_vm_hugetlb_page(vma) || (vma->vm_flags & VM_MIXEDMAP)) {
+	ਲਈ (; vma; vma = vma_ਅਗਲਾ(&vmi)) {
+		ਜੇ (!vma_migratable(vma) || !vma_policy_mof(vma) ||
+			is_vm_hugetlb_ਪੰਨਾ(vma) || (vma->vm_flags & VM_MIXEDMAP)) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_UNSUITABLE);
-			continue;
+			ਜਾਰੀ;
 		}
 
 		/*
@@ -4375,92 +4375,92 @@ retry_pids:
 		 * hinting faults in read-only file-backed mappings or the vDSO
 		 * as migrating the pages will be of marginal benefit.
 		 */
-		if (!vma->vm_mm ||
+		ਜੇ (!vma->vm_mm ||
 		    (vma->vm_file && (vma->vm_flags & (VM_READ|VM_WRITE)) == (VM_READ))) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SHARED_RO);
-			continue;
+			ਜਾਰੀ;
 		}
 
 		/*
 		 * Skip inaccessible VMAs to avoid any confusion between
 		 * PROT_NONE and NUMA hinting PTEs
 		 */
-		if (!vma_is_accessible(vma)) {
+		ਜੇ (!vma_is_accessible(vma)) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_INACCESSIBLE);
-			continue;
+			ਜਾਰੀ;
 		}
 
 		/* Initialise new per-VMA NUMAB state. */
-		if (!vma->numab_state) {
-			struct vma_numab_state *ptr;
+		ਜੇ (!vma->numab_state) {
+			ਬਣਤਰ vma_numab_state *ptr;
 
 			ptr = kzalloc_obj(*ptr);
-			if (!ptr)
-				continue;
+			ਜੇ (!ptr)
+				ਜਾਰੀ;
 
-			if (cmpxchg(&vma->numab_state, NULL, ptr)) {
+			ਜੇ (cmpxchg(&vma->numab_state, ਨਿਰਾ, ptr)) {
 				kfree(ptr);
-				continue;
+				ਜਾਰੀ;
 			}
 
-			vma->numab_state->start_scan_seq = mm->numa_scan_seq;
+			vma->numab_state->ਸ਼ੁਰੂ_ਜਾਂਚ_seq = mm->numa_ਜਾਂਚ_seq;
 
-			vma->numab_state->next_scan = now +
-				msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
+			vma->numab_state->ਅਗਲਾ_ਜਾਂਚ = now +
+				msecs_ਮੰਜ਼ਿਲ_jiffies(sysctl_numa_balancing_ਜਾਂਚ_delay);
 
 			/* Reset happens after 4 times scan delay of scan start */
-			vma->numab_state->pids_active_reset =  vma->numab_state->next_scan +
-				msecs_to_jiffies(VMA_PID_RESET_PERIOD);
+			vma->numab_state->pids_ਸਰਗਰਮ_reset =  vma->numab_state->ਅਗਲਾ_ਜਾਂਚ +
+				msecs_ਮੰਜ਼ਿਲ_jiffies(VMA_PID_RESET_PERIOD);
 
 			/*
 			 * Ensure prev_scan_seq does not match numa_scan_seq,
 			 * to prevent VMAs being skipped prematurely on the
 			 * first scan:
 			 */
-			 vma->numab_state->prev_scan_seq = mm->numa_scan_seq - 1;
+			 vma->numab_state->prev_ਜਾਂਚ_seq = mm->numa_ਜਾਂਚ_seq - 1;
 		}
 
 		/*
 		 * Scanning the VMAs of short lived tasks add more overhead. So
 		 * delay the scan for new VMAs.
 		 */
-		if (mm->numa_scan_seq && time_before(jiffies,
-						vma->numab_state->next_scan)) {
-			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SCAN_DELAY);
-			continue;
+		ਜੇ (mm->numa_ਜਾਂਚ_seq && ਸਮਾਂ_before(jiffies,
+						vma->numab_state->ਅਗਲਾ_ਜਾਂਚ)) {
+			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_ਜਾਂਚ_DELAY);
+			ਜਾਰੀ;
 		}
 
 		/* RESET access PIDs regularly for old VMAs. */
-		if (mm->numa_scan_seq &&
-				time_after(jiffies, vma->numab_state->pids_active_reset)) {
-			vma->numab_state->pids_active_reset = vma->numab_state->pids_active_reset +
-				msecs_to_jiffies(VMA_PID_RESET_PERIOD);
-			vma->numab_state->pids_active[0] = READ_ONCE(vma->numab_state->pids_active[1]);
-			vma->numab_state->pids_active[1] = 0;
+		ਜੇ (mm->numa_ਜਾਂਚ_seq &&
+				ਸਮਾਂ_after(jiffies, vma->numab_state->pids_ਸਰਗਰਮ_reset)) {
+			vma->numab_state->pids_ਸਰਗਰਮ_reset = vma->numab_state->pids_ਸਰਗਰਮ_reset +
+				msecs_ਮੰਜ਼ਿਲ_jiffies(VMA_PID_RESET_PERIOD);
+			vma->numab_state->pids_ਸਰਗਰਮ[0] = READ_ONCE(vma->numab_state->pids_ਸਰਗਰਮ[1]);
+			vma->numab_state->pids_ਸਰਗਰਮ[1] = 0;
 		}
 
 		/* Do not rescan VMAs twice within the same sequence. */
-		if (vma->numab_state->prev_scan_seq == mm->numa_scan_seq) {
-			mm->numa_scan_offset = vma->vm_end;
+		ਜੇ (vma->numab_state->prev_ਜਾਂਚ_seq == mm->numa_ਜਾਂਚ_seq) {
+			mm->numa_ਜਾਂਚ_ਵਿੱਥ = vma->vm_ਸਿਰਾ;
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SEQ_COMPLETED);
-			continue;
+			ਜਾਰੀ;
 		}
 
 		/*
 		 * Do not scan the VMA if task has not accessed it, unless no other
 		 * VMA candidate exists.
 		 */
-		if (!vma_pids_forced && !vma_is_accessed(mm, vma)) {
+		ਜੇ (!vma_pids_forced && !vma_is_accessed(mm, vma)) {
 			vma_pids_skipped = true;
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_PID_INACTIVE);
-			continue;
+			ਜਾਰੀ;
 		}
 
-		do {
-			start = max(start, vma->vm_start);
-			end = ALIGN(start + (pages << PAGE_SHIFT), HPAGE_SIZE);
-			end = min(end, vma->vm_end);
-			nr_pte_updates = change_prot_numa(vma, start, end);
+		ਕਰੋ {
+			ਸ਼ੁਰੂ = max(ਸ਼ੁਰੂ, vma->vm_ਸ਼ੁਰੂ);
+			ਸਿਰਾ = ALIGN(ਸ਼ੁਰੂ + (ਪੰਨੇ << ਪੰਨਾ_ਖਿਸਕਾਓ), HPAGE_ਮਾਪ);
+			ਸਿਰਾ = min(ਸਿਰਾ, vma->vm_ਸਿਰਾ);
+			nr_pte_updates = change_prot_numa(vma, ਸ਼ੁਰੂ, ਸਿਰਾ);
 
 			/*
 			 * Try to scan sysctl_numa_balancing_size worth of
@@ -4470,26 +4470,26 @@ retry_pids:
 			 * PTEs, scan up to virtpages, to skip through those
 			 * areas faster.
 			 */
-			if (nr_pte_updates)
-				pages -= (end - start) >> PAGE_SHIFT;
-			virtpages -= (end - start) >> PAGE_SHIFT;
+			ਜੇ (nr_pte_updates)
+				ਪੰਨੇ -= (ਸਿਰਾ - ਸ਼ੁਰੂ) >> ਪੰਨਾ_ਖਿਸਕਾਓ;
+			virtpages -= (ਸਿਰਾ - ਸ਼ੁਰੂ) >> ਪੰਨਾ_ਖਿਸਕਾਓ;
 
-			start = end;
-			if (pages <= 0 || virtpages <= 0)
-				goto out;
+			ਸ਼ੁਰੂ = ਸਿਰਾ;
+			ਜੇ (ਪੰਨੇ <= 0 || virtpages <= 0)
+				ਜਾਓ ਬਾਹਰਲਾ;
 
 			cond_resched();
-		} while (end != vma->vm_end);
+		} ਜਦੋਂ (ਸਿਰਾ != vma->vm_ਸਿਰਾ);
 
 		/* VMA scan is complete, do not scan until next sequence. */
-		vma->numab_state->prev_scan_seq = mm->numa_scan_seq;
+		vma->numab_state->prev_ਜਾਂਚ_seq = mm->numa_ਜਾਂਚ_seq;
 
 		/*
 		 * Only force scan within one VMA at a time, to limit the
 		 * cost of scanning a potentially uninteresting VMA.
 		 */
-		if (vma_pids_forced)
-			break;
+		ਜੇ (vma_pids_forced)
+			ਰੋਕੋ;
 	}
 
 	/*
@@ -4497,22 +4497,22 @@ retry_pids:
 	 * not accessing the VMA previously, then force a scan to ensure
 	 * forward progress:
 	 */
-	if (!vma && !vma_pids_forced && vma_pids_skipped) {
+	ਜੇ (!vma && !vma_pids_forced && vma_pids_skipped) {
 		vma_pids_forced = true;
-		goto retry_pids;
+		ਜਾਓ retry_pids;
 	}
 
-out:
+ਬਾਹਰਲਾ:
 	/*
 	 * It is possible to reach the end of the VMA list but the last few
 	 * VMAs are not guaranteed to the vma_migratable. If they are not, we
 	 * would find the !migratable VMA on the next scan but not reset the
 	 * scanner to the start so check it now.
 	 */
-	if (vma)
-		mm->numa_scan_offset = start;
-	else
-		reset_ptenuma_scan(p);
+	ਜੇ (vma)
+		mm->numa_ਜਾਂਚ_ਵਿੱਥ = ਸ਼ੁਰੂ;
+	ਨਹੀਂਤਾਂ
+		reset_ptenuma_ਜਾਂਚ(p);
 	mmap_read_unlock(mm);
 
 	/*
@@ -4521,72 +4521,72 @@ out:
 	 * Usually update_task_scan_period slows down scanning enough; on an
 	 * overloaded system we need to limit overhead on a per task basis.
 	 */
-	if (unlikely(p->se.sum_exec_runtime != runtime)) {
-		u64 diff = p->se.sum_exec_runtime - runtime;
-		p->node_stamp += 32 * diff;
+	ਜੇ (unlikely(p->se.ਜੋੜ_exec_runtime != runtime)) {
+		u64 diff = p->se.ਜੋੜ_exec_runtime - runtime;
+		p->ਗੰਢ_stamp += 32 * diff;
 	}
 }
 
-void init_numa_balancing(u64 clone_flags, struct task_struct *p)
+ਖਾਲੀ init_numa_balancing(u64 clone_flags, ਬਣਤਰ task_struct *p)
 {
-	int mm_users = 0;
-	struct mm_struct *mm = p->mm;
+	ਪੂਰਨ mm_users = 0;
+	ਬਣਤਰ mm_struct *mm = p->mm;
 
-	if (mm) {
+	ਜੇ (mm) {
 		mm_users = atomic_read(&mm->mm_users);
-		if (mm_users == 1) {
-			mm->numa_next_scan = jiffies + msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
-			mm->numa_scan_seq = 0;
+		ਜੇ (mm_users == 1) {
+			mm->numa_ਅਗਲਾ_ਜਾਂਚ = jiffies + msecs_ਮੰਜ਼ਿਲ_jiffies(sysctl_numa_balancing_ਜਾਂਚ_delay);
+			mm->numa_ਜਾਂਚ_seq = 0;
 		}
 	}
-	p->node_stamp			= 0;
-	p->numa_scan_seq		= mm ? mm->numa_scan_seq : 0;
-	p->numa_scan_period		= sysctl_numa_balancing_scan_delay;
+	p->ਗੰਢ_stamp			= 0;
+	p->numa_ਜਾਂਚ_seq		= mm ? mm->numa_ਜਾਂਚ_seq : 0;
+	p->numa_ਜਾਂਚ_period		= sysctl_numa_balancing_ਜਾਂਚ_delay;
 	p->numa_migrate_retry		= 0;
 	/* Protect against double add, see task_tick_numa and task_numa_work */
-	p->numa_work.next		= &p->numa_work;
-	p->numa_faults			= NULL;
-	p->numa_pages_migrated		= 0;
-	p->total_numa_faults		= 0;
-	RCU_INIT_POINTER(p->numa_group, NULL);
-	p->last_task_numa_placement	= 0;
-	p->last_sum_exec_runtime	= 0;
+	p->numa_work.ਅਗਲਾ		= &p->numa_work;
+	p->numa_ਨੁਕਸ			= ਨਿਰਾ;
+	p->numa_ਪੰਨੇ_migrated		= 0;
+	p->ਕੁੱਲ_numa_ਨੁਕਸ		= 0;
+	RCU_INIT_ਸੂਚਕ(p->numa_ਸਮੂਹ, ਨਿਰਾ);
+	p->ਆਖਰੀ_task_numa_placement	= 0;
+	p->ਆਖਰੀ_ਜੋੜ_exec_runtime	= 0;
 
 	init_task_work(&p->numa_work, task_numa_work);
 
 	/* New address space, reset the preferred nid */
-	if (!(clone_flags & CLONE_VM)) {
-		p->numa_preferred_nid = NUMA_NO_NODE;
-		return;
+	ਜੇ (!(clone_flags & CLONE_VM)) {
+		p->numa_preferred_nid = NUMA_NO_ਗੰਢ;
+		ਵਾਪਸ;
 	}
 
 	/*
 	 * New thread, keep existing numa_preferred_nid which should be copied
 	 * already by arch_dup_task_struct but stagger when scans start.
 	 */
-	if (mm) {
-		unsigned int delay;
+	ਜੇ (mm) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ delay;
 
-		delay = min_t(unsigned int, task_scan_max(current),
-			current->numa_scan_period * mm_users * NSEC_PER_MSEC);
+		delay = min_t(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, task_ਜਾਂਚ_max(current),
+			current->numa_ਜਾਂਚ_period * mm_users * NSEC_ਪ੍ਰਤੀ_MSEC);
 		delay += 2 * TICK_NSEC;
-		p->node_stamp = delay;
+		p->ਗੰਢ_stamp = delay;
 	}
 }
 
 /*
  * Drive the periodic memory faults..
  */
-static void task_tick_numa(struct rq *rq, struct task_struct *curr)
+ਸਥਿਰ ਖਾਲੀ task_tick_numa(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *curr)
 {
-	struct callback_head *work = &curr->numa_work;
+	ਬਣਤਰ callback_ਸਿਰ *work = &curr->numa_work;
 	u64 period, now;
 
 	/*
 	 * We don't care about NUMA placement if we don't have memory.
 	 */
-	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) || work->next != work)
-		return;
+	ਜੇ (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) || work->ਅਗਲਾ != work)
+		ਵਾਪਸ;
 
 	/*
 	 * Using runtime rather than walltime has the dual advantage that
@@ -4594,101 +4594,101 @@ static void task_tick_numa(struct rq *rq, struct task_struct *curr)
 	 * task needs to have done some actual work before we bother with
 	 * NUMA placement.
 	 */
-	now = curr->se.sum_exec_runtime;
-	period = (u64)curr->numa_scan_period * NSEC_PER_MSEC;
+	now = curr->se.ਜੋੜ_exec_runtime;
+	period = (u64)curr->numa_ਜਾਂਚ_period * NSEC_ਪ੍ਰਤੀ_MSEC;
 
-	if (now > curr->node_stamp + period) {
-		if (!curr->node_stamp)
-			curr->numa_scan_period = task_scan_start(curr);
-		curr->node_stamp += period;
+	ਜੇ (now > curr->ਗੰਢ_stamp + period) {
+		ਜੇ (!curr->ਗੰਢ_stamp)
+			curr->numa_ਜਾਂਚ_period = task_ਜਾਂਚ_ਸ਼ੁਰੂ(curr);
+		curr->ਗੰਢ_stamp += period;
 
-		if (!time_before(jiffies, curr->mm->numa_next_scan))
-			task_work_add(curr, work, TWA_RESUME);
+		ਜੇ (!ਸਮਾਂ_before(jiffies, curr->mm->numa_ਅਗਲਾ_ਜਾਂਚ))
+			task_work_ਜੋੜੋ(curr, work, TWA_RESUME);
 	}
 }
 
-static void update_scan_period(struct task_struct *p, int new_cpu)
+ਸਥਿਰ ਖਾਲੀ update_ਜਾਂਚ_period(ਬਣਤਰ task_struct *p, ਪੂਰਨ new_cpu)
 {
-	int src_nid = cpu_to_node(task_cpu(p));
-	int dst_nid = cpu_to_node(new_cpu);
+	ਪੂਰਨ src_nid = cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(task_cpu(p));
+	ਪੂਰਨ dst_nid = cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(new_cpu);
 
-	if (!static_branch_likely(&sched_numa_balancing))
-		return;
+	ਜੇ (!static_branch_likely(&sched_numa_balancing))
+		ਵਾਪਸ;
 
-	if (!p->mm || !p->numa_faults || (p->flags & PF_EXITING))
-		return;
+	ਜੇ (!p->mm || !p->numa_ਨੁਕਸ || (p->flags & PF_EXITING))
+		ਵਾਪਸ;
 
-	if (src_nid == dst_nid)
-		return;
+	ਜੇ (src_nid == dst_nid)
+		ਵਾਪਸ;
 
 	/*
 	 * Allow resets if faults have been trapped before one scan
 	 * has completed. This is most likely due to a new task that
 	 * is pulled cross-node due to wakeups or load balancing.
 	 */
-	if (p->numa_scan_seq) {
+	ਜੇ (p->numa_ਜਾਂਚ_seq) {
 		/*
 		 * Avoid scan adjustments if moving to the preferred
 		 * node or if the task was not previously running on
 		 * the preferred node.
 		 */
-		if (dst_nid == p->numa_preferred_nid ||
-		    (p->numa_preferred_nid != NUMA_NO_NODE &&
+		ਜੇ (dst_nid == p->numa_preferred_nid ||
+		    (p->numa_preferred_nid != NUMA_NO_ਗੰਢ &&
 			src_nid != p->numa_preferred_nid))
-			return;
+			ਵਾਪਸ;
 	}
 
-	p->numa_scan_period = task_scan_start(p);
+	p->numa_ਜਾਂਚ_period = task_ਜਾਂਚ_ਸ਼ੁਰੂ(p);
 }
 
-#else /* !CONFIG_NUMA_BALANCING: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_NUMA_BALANCING: */
 
-static void task_tick_numa(struct rq *rq, struct task_struct *curr)
+ਸਥਿਰ ਖਾਲੀ task_tick_numa(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *curr)
 {
 }
 
-static inline void account_numa_enqueue(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ account_numa_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
 }
 
-static inline void account_numa_dequeue(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ account_numa_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
 }
 
-static inline void update_scan_period(struct task_struct *p, int new_cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_ਜਾਂਚ_period(ਬਣਤਰ task_struct *p, ਪੂਰਨ new_cpu)
 {
 }
 
-#endif /* !CONFIG_NUMA_BALANCING */
+#ਜੇ_ਅੰਤ /* !CONFIG_NUMA_BALANCING */
 
-static void
-account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ
+account_entity_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	WARN_ON_ONCE(cfs_rq != cfs_rq_of(se));
-	update_load_add(&cfs_rq->load, se->load.weight);
-	if (entity_is_task(se)) {
-		struct task_struct *p = task_of(se);
-		struct rq *rq = rq_of(cfs_rq);
+	WARN_ON_ONCE(cfs_rq != cfs_rq_ਦਾ(se));
+	update_ਲੱਦੋ_ਜੋੜੋ(&cfs_rq->ਲੱਦੋ, se->ਲੱਦੋ.ਭਾਰ);
+	ਜੇ (entity_is_task(se)) {
+		ਬਣਤਰ task_struct *p = task_ਦਾ(se);
+		ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 
-		account_numa_enqueue(rq, p);
-		account_llc_enqueue(rq, p);
-		list_add(&se->group_node, &rq->cfs_tasks);
+		account_numa_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(rq, p);
+		account_llc_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(rq, p);
+		list_ਜੋੜੋ(&se->ਸਮੂਹ_ਗੰਢ, &rq->cfs_tasks);
 	}
 	cfs_rq->nr_queued++;
 }
 
-static void
-account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ
+account_entity_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	WARN_ON_ONCE(cfs_rq != cfs_rq_of(se));
-	update_load_sub(&cfs_rq->load, se->load.weight);
-	if (entity_is_task(se)) {
-		struct task_struct *p = task_of(se);
-		struct rq *rq = rq_of(cfs_rq);
+	WARN_ON_ONCE(cfs_rq != cfs_rq_ਦਾ(se));
+	update_ਲੱਦੋ_sub(&cfs_rq->ਲੱਦੋ, se->ਲੱਦੋ.ਭਾਰ);
+	ਜੇ (entity_is_task(se)) {
+		ਬਣਤਰ task_struct *p = task_ਦਾ(se);
+		ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 
-		account_numa_dequeue(rq, p);
-		account_llc_dequeue(rq, p);
-		list_del_init(&se->group_node);
+		account_numa_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(rq, p);
+		account_llc_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(rq, p);
+		list_del_init(&se->ਸਮੂਹ_ਗੰਢ);
 	}
 	cfs_rq->nr_queued--;
 }
@@ -4700,18 +4700,18 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * memory. This allows lockless observations without ever seeing the negative
  * values.
  */
-#define add_positive(_ptr, _val) do {                           \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਜੋੜੋ_ਸਕਾਰਾਤਮਕ(_ptr, _val) ਕਰੋ {                           \
 	typeof(_ptr) ptr = (_ptr);                              \
 	__signed_scalar_typeof(*ptr) val = (_val);              \
 	typeof(*ptr) res, var = READ_ONCE(*ptr);                \
 								\
 	res = var + val;                                        \
 								\
-	if (val < 0 && res > var)                               \
+	ਜੇ (val < 0 && res > var)                               \
 		res = 0;                                        \
 								\
 	WRITE_ONCE(*ptr, res);                                  \
-} while (0)
+} ਜਦੋਂ (0)
 
 /*
  * Remove and clamp on negative, from a local variable.
@@ -4719,10 +4719,10 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * A variant of sub_positive(), which does not use explicit load-store
  * and is thus optimized for local variable updates.
  */
-#define lsub_positive(_ptr, _val) do {				\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ lsub_ਸਕਾਰਾਤਮਕ(_ptr, _val) ਕਰੋ {				\
 	typeof(_ptr) ptr = (_ptr);				\
 	*ptr -= min_t(typeof(*ptr), *ptr, _val);		\
-} while (0)
+} ਜਦੋਂ (0)
 
 
 /*
@@ -4737,32 +4737,32 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * sync, we are only sure that util_sum must be above or equal to
  *    util_avg * minimum possible divider
  */
-#define __update_sa(sa, name, delta_avg, delta_sum) do {	\
-	add_positive(&(sa)->name##_avg, delta_avg);		\
-	add_positive(&(sa)->name##_sum, delta_sum);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __update_sa(sa, name, delta_avg, delta_ਜੋੜ) ਕਰੋ {	\
+	ਜੋੜੋ_ਸਕਾਰਾਤਮਕ(&(sa)->name##_avg, delta_avg);		\
+	ਜੋੜੋ_ਸਕਾਰਾਤਮਕ(&(sa)->name##_sum, delta_ਜੋੜ);		\
 	(sa)->name##_sum = max_t(typeof((sa)->name##_sum),	\
 			       (sa)->name##_sum,		\
 			       (sa)->name##_avg * PELT_MIN_DIVIDER); \
-} while (0)
+} ਜਦੋਂ (0)
 
-static inline void
-enqueue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_ਲੱਦੋ_avg(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	__update_sa(&cfs_rq->avg, load, se->avg.load_avg,
-		    se_weight(se) * se->avg.load_sum);
+	__update_sa(&cfs_rq->avg, ਲੱਦੋ, se->avg.ਲੱਦੋ_avg,
+		    se_ਭਾਰ(se) * se->avg.ਲੱਦੋ_ਜੋੜ);
 }
 
-static inline void
-dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_ਲੱਦੋ_avg(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	__update_sa(&cfs_rq->avg, load, -se->avg.load_avg,
-		    se_weight(se) * -se->avg.load_sum);
+	__update_sa(&cfs_rq->avg, ਲੱਦੋ, -se->avg.ਲੱਦੋ_avg,
+		    se_ਭਾਰ(se) * -se->avg.ਲੱਦੋ_ਜੋੜ);
 }
 
-static void
-rescale_entity(struct sched_entity *se, unsigned long weight, bool rel_vprot)
+ਸਥਿਰ ਖਾਲੀ
+rescale_entity(ਬਣਤਰ sched_entity *se, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ, bool rel_vprot)
 {
-	long old_weight = se->h_load.weight;
+	ਲੰਮਾ old_ਭਾਰ = se->h_ਲੱਦੋ.ਭਾਰ;
 
 	/*
 	 * VRUNTIME
@@ -4841,7 +4841,7 @@ rescale_entity(struct sched_entity *se, unsigned long weight, bool rel_vprot)
 	 *	   = V  - vl * w / w'
 	 *	   = V  - vl'
 	 */
-	se->vlag = div64_long(se->vlag * old_weight, weight);
+	se->vlag = div64_long(se->vlag * old_ਭਾਰ, ਭਾਰ);
 
 	/*
 	 * DEADLINE
@@ -4855,78 +4855,78 @@ rescale_entity(struct sched_entity *se, unsigned long weight, bool rel_vprot)
 	 *	   = V  - (V - v)*w/w' + (d - v)*w/w'
 	 *	   = V  + (d - V)*w/w'
 	 */
-	if (se->rel_deadline)
-		se->deadline = div64_long(se->deadline * old_weight, weight);
+	ਜੇ (se->rel_deadline)
+		se->deadline = div64_long(se->deadline * old_ਭਾਰ, ਭਾਰ);
 
-	if (rel_vprot)
-		se->vprot = div64_long(se->vprot * old_weight, weight);
+	ਜੇ (rel_vprot)
+		se->vprot = div64_long(se->vprot * old_ਭਾਰ, ਭਾਰ);
 }
 
-static void reweight_eevdf(struct cfs_rq *cfs_rq, struct sched_entity *se,
-			   unsigned long weight, bool on_rq)
+ਸਥਿਰ ਖਾਲੀ reweight_eevdf(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se,
+			   ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ, bool on_rq)
 {
 	bool curr = cfs_rq->curr == se;
 	bool rel_vprot = false;
 	u64 avruntime = 0;
 
-	if (se->h_load.weight == weight)
-		return;
+	ਜੇ (se->h_ਲੱਦੋ.ਭਾਰ == ਭਾਰ)
+		ਵਾਪਸ;
 
-	if (on_rq) {
+	ਜੇ (on_rq) {
 		avruntime = avg_vruntime(cfs_rq);
 		se->vlag = entity_lag(cfs_rq, se, avruntime);
 		se->deadline -= avruntime;
 		se->rel_deadline = 1;
-		if (curr && protect_slice(se)) {
+		ਜੇ (curr && protect_ਟੁਕੜਾ(se)) {
 			se->vprot -= avruntime;
 			rel_vprot = true;
 		}
 
 		cfs_rq->h_nr_queued--;
-		if (!curr)
+		ਜੇ (!curr)
 			__dequeue_entity(cfs_rq, se);
 	}
 
-	rescale_entity(se, weight, rel_vprot);
+	rescale_entity(se, ਭਾਰ, rel_vprot);
 
-	update_load_set(&se->h_load, weight);
+	update_ਲੱਦੋ_ਸੈੱਟ(&se->h_ਲੱਦੋ, ਭਾਰ);
 
-	if (on_rq) {
-		if (rel_vprot)
+	ਜੇ (on_rq) {
+		ਜੇ (rel_vprot)
 			se->vprot += avruntime;
 		se->deadline += avruntime;
 		se->rel_deadline = 0;
 		se->vruntime = avruntime - se->vlag;
 
-		if (!curr)
+		ਜੇ (!curr)
 			__enqueue_entity(cfs_rq, se);
 		cfs_rq->h_nr_queued++;
 	}
 }
 
-static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
-			    unsigned long weight)
+ਸਥਿਰ ਖਾਲੀ reweight_entity(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se,
+			    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ)
 {
-	if (se->load.weight == weight)
-		return;
+	ਜੇ (se->ਲੱਦੋ.ਭਾਰ == ਭਾਰ)
+		ਵਾਪਸ;
 
-	if (se->on_rq) {
-		WARN_ON_ONCE(cfs_rq != cfs_rq_of(se));
-		update_load_sub(&cfs_rq->load, se->load.weight);
+	ਜੇ (se->on_rq) {
+		WARN_ON_ONCE(cfs_rq != cfs_rq_ਦਾ(se));
+		update_ਲੱਦੋ_sub(&cfs_rq->ਲੱਦੋ, se->ਲੱਦੋ.ਭਾਰ);
 	}
-	dequeue_load_avg(cfs_rq, se);
+	ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_ਲੱਦੋ_avg(cfs_rq, se);
 
-	update_load_set(&se->load, weight);
+	update_ਲੱਦੋ_ਸੈੱਟ(&se->ਲੱਦੋ, ਭਾਰ);
 
-	do {
+	ਕਰੋ {
 		u32 divider = get_pelt_divider(&se->avg);
-		se->avg.load_avg = div_u64(se_weight(se) * se->avg.load_sum, divider);
-	} while (0);
+		se->avg.ਲੱਦੋ_avg = div_u64(se_ਭਾਰ(se) * se->avg.ਲੱਦੋ_ਜੋੜ, divider);
+	} ਜਦੋਂ (0);
 
-	enqueue_load_avg(cfs_rq, se);
+	ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_ਲੱਦੋ_avg(cfs_rq, se);
 
-	if (se->on_rq)
-		update_load_add(&cfs_rq->load, se->load.weight);
+	ਜੇ (se->on_rq)
+		update_ਲੱਦੋ_ਜੋੜੋ(&cfs_rq->ਲੱਦੋ, se->ਲੱਦੋ.ਭਾਰ);
 }
 
 /*
@@ -4934,43 +4934,43 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
  * for_each_entity_se(se)
  *   weight = __calc_prop_weight(cfs_rq_of(se), se, weight);
  */
-static __always_inline
-unsigned long __calc_prop_weight(struct cfs_rq *cfs_rq, struct sched_entity *se,
-				 unsigned long weight)
+ਸਥਿਰ __always_inline
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ __calc_prop_weight(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ)
 {
-	weight *= se->load.weight;
-	if (parent_entity(se))
-		weight /= cfs_rq->load.weight;
-	else
-		weight /= NICE_0_LOAD;
+	ਭਾਰ *= se->ਲੱਦੋ.ਭਾਰ;
+	ਜੇ (ਮਾਪਾ_entity(se))
+		ਭਾਰ /= cfs_rq->ਲੱਦੋ.ਭਾਰ;
+	ਨਹੀਂਤਾਂ
+		ਭਾਰ /= NICE_0_ਲੱਦੋ;
 
-	return max(weight, MIN_SHARES);
+	ਵਾਪਸ max(ਭਾਰ, MIN_SHARES);
 }
 
-static void reweight_task_fair(struct rq *rq, struct task_struct *p,
-			       const struct load_weight *lw)
+ਸਥਿਰ ਖਾਲੀ reweight_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p,
+			       ਅਚਲ ਬਣਤਰ ਲੱਦੋ_ਭਾਰ *lw)
 {
-	struct sched_entity *se = &p->se;
-	unsigned long weight = NICE_0_LOAD;
+	ਬਣਤਰ sched_entity *se = &p->se;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ = NICE_0_ਲੱਦੋ;
 
-	if (se->on_rq)
+	ਜੇ (se->on_rq)
 		update_curr_fair(rq);
 
-	reweight_entity(cfs_rq_of(se), se, lw->weight);
-	se->load.inv_weight = lw->inv_weight;
+	reweight_entity(cfs_rq_ਦਾ(se), se, lw->ਭਾਰ);
+	se->ਲੱਦੋ.inv_ਭਾਰ = lw->inv_ਭਾਰ;
 
-	if (!se->on_rq)
-		return;
+	ਜੇ (!se->on_rq)
+		ਵਾਪਸ;
 
 	for_each_sched_entity(se)
-		weight = __calc_prop_weight(cfs_rq_of(se), se, weight);
+		ਭਾਰ = __calc_prop_weight(cfs_rq_ਦਾ(se), se, ਭਾਰ);
 
-	reweight_eevdf(&rq->cfs, &p->se, weight, p->se.on_rq);
+	reweight_eevdf(&rq->cfs, &p->se, ਭਾਰ, p->se.on_rq);
 }
 
-static inline int throttled_hierarchy(struct cfs_rq *cfs_rq);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ throttled_hierarchy(ਬਣਤਰ cfs_rq *cfs_rq);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 /*
  * All this does is approximate the hierarchical proportion which includes that
  * global sum we all love to hate.
@@ -5044,22 +5044,22 @@ static inline int throttled_hierarchy(struct cfs_rq *cfs_rq);
  *
  * hence icky!
  */
-static long __calc_smp_shares(struct cfs_rq *cfs_rq, long tg_shares, long shares_max)
+ਸਥਿਰ ਲੰਮਾ __calc_smp_shares(ਬਣਤਰ cfs_rq *cfs_rq, ਲੰਮਾ tg_shares, ਲੰਮਾ shares_max)
 {
-	struct task_group *tg = cfs_rq->tg;
-	long tg_weight, load, shares;
+	ਬਣਤਰ task_ਸਮੂਹ *tg = cfs_rq->tg;
+	ਲੰਮਾ tg_ਭਾਰ, ਲੱਦੋ, shares;
 
-	load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
+	ਲੱਦੋ = max(scale_ਲੱਦੋ_ਥੱਲੇ(cfs_rq->ਲੱਦੋ.ਭਾਰ), cfs_rq->avg.ਲੱਦੋ_avg);
 
-	tg_weight = atomic_long_read(&tg->load_avg);
+	tg_ਭਾਰ = atomic_long_read(&tg->ਲੱਦੋ_avg);
 
 	/* Ensure tg_weight >= load */
-	tg_weight -= cfs_rq->tg_load_avg_contrib;
-	tg_weight += load;
+	tg_ਭਾਰ -= cfs_rq->tg_ਲੱਦੋ_avg_contrib;
+	tg_ਭਾਰ += ਲੱਦੋ;
 
-	shares = (tg_shares * load);
-	if (tg_weight)
-		shares /= tg_weight;
+	shares = (tg_shares * ਲੱਦੋ);
+	ਜੇ (tg_ਭਾਰ)
+		shares /= tg_ਭਾਰ;
 
 	/*
 	 * MIN_SHARES has to be unscaled here to support per-CPU partitioning
@@ -5073,17 +5073,17 @@ static long __calc_smp_shares(struct cfs_rq *cfs_rq, long tg_shares, long shares
 	 * case no task is runnable on a CPU MIN_SHARES=2 should be returned
 	 * instead of 0.
 	 */
-	return clamp_t(long, shares, MIN_SHARES, shares_max);
+	ਵਾਪਸ clamp_t(ਲੰਮਾ, shares, MIN_SHARES, shares_max);
 }
 
-static int tg_cpus(struct task_group *tg)
+ਸਥਿਰ ਪੂਰਨ tg_cpus(ਬਣਤਰ task_ਸਮੂਹ *tg)
 {
-	int nr = num_online_cpus();
+	ਪੂਰਨ nr = ਅੰਕ_online_cpus();
 
-	if (cpusets_enabled()) {
-		struct cgroup *cgrp = tg->css.cgroup;
-		if (cgrp)
-			nr = cpuset_num_cpus(cgrp);
+	ਜੇ (cpusets_enabled()) {
+		ਬਣਤਰ cgroup *cgrp = tg->css.cgroup;
+		ਜੇ (cgrp)
+			nr = cpuset_ਅੰਕ_cpus(cgrp);
 	}
 
 	/*
@@ -5091,12 +5091,12 @@ static int tg_cpus(struct task_group *tg)
 	 * __calc_smp_shares(), where clamp() yields hi when hi < lo and so
 	 * defeats the MIN_SHARES floor. Match tg_tasks(), which floors at 1.
 	 */
-	return max(nr, 1);
+	ਵਾਪਸ max(nr, 1);
 }
 
-static inline int tg_tasks(struct task_group *tg)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ tg_tasks(ਬਣਤਰ task_ਸਮੂਹ *tg)
 {
-	return max(1, atomic_long_read(&tg->runnable_avg) >> SCHED_CAPACITY_SHIFT);
+	ਵਾਪਸ max(1, atomic_long_read(&tg->runnable_avg) >> SCHED_ਸਮਰੱਥਾ_ਖਿਸਕਾਓ);
 }
 
 /*
@@ -5104,12 +5104,12 @@ static inline int tg_tasks(struct task_group *tg)
  *
  * Scale tg->shares by the number of tasks.
  */
-static long calc_tasks_shares(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਲੰਮਾ calc_tasks_shares(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
-	int nr = tg_tasks(tg);
-	long tg_shares = READ_ONCE(tg->shares);
-	return __calc_smp_shares(cfs_rq, nr * tg_shares, nr * tg_shares);
+	ਬਣਤਰ task_ਸਮੂਹ *tg = cfs_rq->tg;
+	ਪੂਰਨ nr = tg_tasks(tg);
+	ਲੰਮਾ tg_shares = READ_ONCE(tg->shares);
+	ਵਾਪਸ __calc_smp_shares(cfs_rq, nr * tg_shares, nr * tg_shares);
 }
 
 /*
@@ -5119,13 +5119,13 @@ static long calc_tasks_shares(struct cfs_rq *cfs_rq)
  * nice -20, otherwise a single spinner on a 512 CPU machine would result in
  * 512*NICE_0_LOAD, which is also crazy.
  */
-static long calc_max_shares(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਲੰਮਾ calc_max_shares(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
-	int nr = tg_cpus(tg);
-	long tg_shares = READ_ONCE(tg->shares);
-	long max_shares = scale_load(sched_prio_to_weight[0]);
-	return __calc_smp_shares(cfs_rq, tg_shares * nr, max_shares);
+	ਬਣਤਰ task_ਸਮੂਹ *tg = cfs_rq->tg;
+	ਪੂਰਨ nr = tg_cpus(tg);
+	ਲੰਮਾ tg_shares = READ_ONCE(tg->shares);
+	ਲੰਮਾ max_shares = scale_ਲੱਦੋ(sched_prio_ਮੰਜ਼ਿਲ_ਭਾਰ[0]);
+	ਵਾਪਸ __calc_smp_shares(cfs_rq, tg_shares * nr, max_shares);
 }
 
 /*
@@ -5134,12 +5134,12 @@ static long calc_max_shares(struct cfs_rq *cfs_rq)
  * Scales between "smp" and "max" in a natural way. No longer needs clipping
  * since there are no unnatural inflations like with "max".
  */
-static long calc_concur_shares(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਲੰਮਾ calc_concur_shares(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
-	int nr = min(tg_tasks(tg), tg_cpus(tg));
-	long tg_shares = READ_ONCE(tg->shares);
-	return __calc_smp_shares(cfs_rq, nr * tg_shares, nr * tg_shares);
+	ਬਣਤਰ task_ਸਮੂਹ *tg = cfs_rq->tg;
+	ਪੂਰਨ nr = min(tg_tasks(tg), tg_cpus(tg));
+	ਲੰਮਾ tg_shares = READ_ONCE(tg->shares);
+	ਵਾਪਸ __calc_smp_shares(cfs_rq, nr * tg_shares, nr * tg_shares);
 }
 
 /*
@@ -5147,79 +5147,79 @@ static long calc_concur_shares(struct cfs_rq *cfs_rq)
  *
  * This infamously results in tiny shares when you have many CPUs.
  */
-static long calc_smp_shares(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਲੰਮਾ calc_smp_shares(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
-	long tg_shares = READ_ONCE(tg->shares);
-	return __calc_smp_shares(cfs_rq, tg_shares, tg_shares);
+	ਬਣਤਰ task_ਸਮੂਹ *tg = cfs_rq->tg;
+	ਲੰਮਾ tg_shares = READ_ONCE(tg->shares);
+	ਵਾਪਸ __calc_smp_shares(cfs_rq, tg_shares, tg_shares);
 }
 
 /*
  * Ignore this pesky SMP stuff, use (4).
  */
-static long calc_up_shares(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਲੰਮਾ calc_ਉੱਪਰ_shares(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
-	return READ_ONCE(tg->shares);
+	ਬਣਤਰ task_ਸਮੂਹ *tg = cfs_rq->tg;
+	ਵਾਪਸ READ_ONCE(tg->shares);
 }
 
-DEFINE_STATIC_CALL(calc_group_shares, calc_concur_shares);
+DEFINE_STATIC_CALL(calc_ਸਮੂਹ_shares, calc_concur_shares);
 
-void __sched_cgroup_mode_update(int mode)
+ਖਾਲੀ __sched_cgroup_mode_update(ਪੂਰਨ ਬਹੁਲਕ)
 {
-	long (*func)(struct cfs_rq *);
-	switch (mode) {
-	case 0:
-		func = &calc_up_shares;
-		break;
-	case 1:
+	ਲੰਮਾ (*func)(ਬਣਤਰ cfs_rq *);
+	ਚੋਣ (ਬਹੁਲਕ) {
+	ਹਾਲਤ 0:
+		func = &calc_ਉੱਪਰ_shares;
+		ਰੋਕੋ;
+	ਹਾਲਤ 1:
 		func = &calc_smp_shares;
-		break;
-	case 2:
-	default:
+		ਰੋਕੋ;
+	ਹਾਲਤ 2:
+	ਮੂਲ:
 		func = &calc_concur_shares;
-		break;
-	case 3:
+		ਰੋਕੋ;
+	ਹਾਲਤ 3:
 		func = &calc_max_shares;
-		break;
-	case 4:
+		ਰੋਕੋ;
+	ਹਾਲਤ 4:
 		func = &calc_tasks_shares;
-		break;
+		ਰੋਕੋ;
 	}
-	static_call_update(calc_group_shares, func);
+	static_call_update(calc_ਸਮੂਹ_shares, func);
 }
 
 /*
  * Recomputes the group entity based on the current state of its group
  * runqueue.
  */
-static void update_cfs_group(struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ update_cfs_ਸਮੂਹ(ਬਣਤਰ sched_entity *se)
 {
-	struct cfs_rq *gcfs_rq = group_cfs_rq(se);
-	long shares;
+	ਬਣਤਰ cfs_rq *gcfs_rq = ਸਮੂਹ_cfs_rq(se);
+	ਲੰਮਾ shares;
 
 	/*
 	 * When a group becomes empty, preserve its weight. This matters for
 	 * DELAY_DEQUEUE.
 	 */
-	if (!gcfs_rq || !gcfs_rq->load.weight)
-		return;
+	ਜੇ (!gcfs_rq || !gcfs_rq->ਲੱਦੋ.ਭਾਰ)
+		ਵਾਪਸ;
 
-	shares = static_call(calc_group_shares)(gcfs_rq);
-	reweight_entity(cfs_rq_of(se), se, shares);
+	shares = static_call(calc_ਸਮੂਹ_shares)(gcfs_rq);
+	reweight_entity(cfs_rq_ਦਾ(se), se, shares);
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline void update_cfs_group(struct sched_entity *se)
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_cfs_ਸਮੂਹ(ਬਣਤਰ sched_entity *se)
 {
 }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
 
-static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ cfs_rq_util_change(ਬਣਤਰ cfs_rq *cfs_rq, ਪੂਰਨ flags)
 {
-	struct rq *rq = rq_of(cfs_rq);
+	ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 
-	if (&rq->cfs == cfs_rq) {
+	ਜੇ (&rq->cfs == cfs_rq) {
 		/*
 		 * There are a few boundary cases this might miss but it should
 		 * get called often enough that that should (hopefully) not be
@@ -5238,35 +5238,35 @@ static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
 	}
 }
 
-static inline bool load_avg_is_decayed(struct sched_avg *sa)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool ਲੱਦੋ_avg_is_decayed(ਬਣਤਰ sched_avg *sa)
 {
-	if (sa->load_sum)
-		return false;
+	ਜੇ (sa->ਲੱਦੋ_ਜੋੜ)
+		ਵਾਪਸ false;
 
-	if (sa->util_sum)
-		return false;
+	ਜੇ (sa->util_ਜੋੜ)
+		ਵਾਪਸ false;
 
-	if (sa->runnable_sum)
-		return false;
+	ਜੇ (sa->runnable_ਜੋੜ)
+		ਵਾਪਸ false;
 
 	/*
 	 * _avg must be null when _sum are null because _avg = _sum / divider
 	 * Make sure that rounding and/or propagation of PELT values never
 	 * break this.
 	 */
-	WARN_ON_ONCE(sa->load_avg ||
+	WARN_ON_ONCE(sa->ਲੱਦੋ_avg ||
 		      sa->util_avg ||
 		      sa->runnable_avg);
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 cfs_rq_ਆਖਰੀ_update_ਸਮਾਂ(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return u64_u32_load_copy(cfs_rq->avg.last_update_time,
-				 cfs_rq->last_update_time_copy);
+	ਵਾਪਸ u64_u32_ਲੱਦੋ_copy(cfs_rq->avg.ਆਖਰੀ_update_ਸਮਾਂ,
+				 cfs_rq->ਆਖਰੀ_update_ਸਮਾਂ_copy);
 }
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 /*
  * Because list_add_leaf_cfs_rq always places a child cfs_rq on the list
  * immediately before a parent cfs_rq, and cfs_rqs are removed from the list
@@ -5275,41 +5275,41 @@ static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
  * If cfs_rq is not on the list, test whether a child needs its to be added to
  * connect a branch to the tree  * (see list_add_leaf_cfs_rq() for details).
  */
-static inline bool child_cfs_rq_on_list(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool ਬੱਚਾ_cfs_rq_on_list(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct cfs_rq *prev_cfs_rq;
-	struct list_head *prev;
-	struct rq *rq = rq_of(cfs_rq);
+	ਬਣਤਰ cfs_rq *prev_cfs_rq;
+	ਬਣਤਰ list_ਸਿਰ *prev;
+	ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 
-	if (cfs_rq->on_list) {
-		prev = cfs_rq->leaf_cfs_rq_list.prev;
-	} else {
+	ਜੇ (cfs_rq->on_list) {
+		prev = cfs_rq->ਪੱਤੀ_cfs_rq_list.prev;
+	} ਨਹੀਂਤਾਂ {
 		prev = rq->tmp_alone_branch;
 	}
 
-	if (prev == &rq->leaf_cfs_rq_list)
-		return false;
+	ਜੇ (prev == &rq->ਪੱਤੀ_cfs_rq_list)
+		ਵਾਪਸ false;
 
-	prev_cfs_rq = container_of(prev, struct cfs_rq, leaf_cfs_rq_list);
+	prev_cfs_rq = container_ਦਾ(prev, ਬਣਤਰ cfs_rq, ਪੱਤੀ_cfs_rq_list);
 
-	return (prev_cfs_rq->tg->parent == cfs_rq->tg);
+	ਵਾਪਸ (prev_cfs_rq->tg->ਮਾਪਾ == cfs_rq->tg);
 }
 
-static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool cfs_rq_is_decayed(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	if (cfs_rq->load.weight)
-		return false;
+	ਜੇ (cfs_rq->ਲੱਦੋ.ਭਾਰ)
+		ਵਾਪਸ false;
 
-	if (!load_avg_is_decayed(&cfs_rq->avg))
-		return false;
+	ਜੇ (!ਲੱਦੋ_avg_is_decayed(&cfs_rq->avg))
+		ਵਾਪਸ false;
 
-	if (child_cfs_rq_on_list(cfs_rq))
-		return false;
+	ਜੇ (ਬੱਚਾ_cfs_rq_on_list(cfs_rq))
+		ਵਾਪਸ false;
 
-	if (cfs_rq->tg_load_avg_contrib)
-		return false;
+	ਜੇ (cfs_rq->tg_ਲੱਦੋ_avg_contrib)
+		ਵਾਪਸ false;
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /**
@@ -5326,66 +5326,66 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
  *
  * Updating tg's load_avg is necessary before update_cfs_group().
  */
-static inline void update_tg_load_avg(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_tg_ਲੱਦੋ_avg(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	long dl, dr;
+	ਲੰਮਾ dl, dr;
 	u64 now;
 
 	/*
 	 * No need to update load_avg for root_task_group as it is not used.
 	 */
-	if (cfs_rq->tg == &root_task_group)
-		return;
+	ਜੇ (cfs_rq->tg == &ਜੜ੍ਹ_task_ਸਮੂਹ)
+		ਵਾਪਸ;
 
 	/* rq has been offline and doesn't contribute to the share anymore: */
-	if (!cpu_active(cpu_of(rq_of(cfs_rq))))
-		return;
+	ਜੇ (!cpu_ਸਰਗਰਮ(cpu_ਦਾ(rq_ਦਾ(cfs_rq))))
+		ਵਾਪਸ;
 
 	/*
 	 * For migration heavy workloads, access to tg->load_avg can be
 	 * unbound. Limit the update rate to at most once per ms.
 	 */
-	now = rq_clock(rq_of(cfs_rq));
-	if (now - cfs_rq->last_update_tg_load_avg < NSEC_PER_MSEC)
-		return;
+	now = rq_clock(rq_ਦਾ(cfs_rq));
+	ਜੇ (now - cfs_rq->ਆਖਰੀ_update_tg_ਲੱਦੋ_avg < NSEC_ਪ੍ਰਤੀ_MSEC)
+		ਵਾਪਸ;
 
-	dl = cfs_rq->avg.load_avg - cfs_rq->tg_load_avg_contrib;
+	dl = cfs_rq->avg.ਲੱਦੋ_avg - cfs_rq->tg_ਲੱਦੋ_avg_contrib;
 	dr = cfs_rq->avg.runnable_avg - cfs_rq->tg_runnable_avg_contrib;
-	if (abs(dl) > cfs_rq->tg_load_avg_contrib / 64 ||
-	    abs(dr) > cfs_rq->tg_runnable_avg_contrib / 64) {
-		atomic_long_add(dl, &cfs_rq->tg->load_avg);
-		atomic_long_add(dr, &cfs_rq->tg->runnable_avg);
-		cfs_rq->tg_load_avg_contrib = cfs_rq->avg.load_avg;
+	ਜੇ (ਨਿਰਪੇਖ(dl) > cfs_rq->tg_ਲੱਦੋ_avg_contrib / 64 ||
+	    ਨਿਰਪੇਖ(dr) > cfs_rq->tg_runnable_avg_contrib / 64) {
+		atomic_long_ਜੋੜੋ(dl, &cfs_rq->tg->ਲੱਦੋ_avg);
+		atomic_long_ਜੋੜੋ(dr, &cfs_rq->tg->runnable_avg);
+		cfs_rq->tg_ਲੱਦੋ_avg_contrib = cfs_rq->avg.ਲੱਦੋ_avg;
 		cfs_rq->tg_runnable_avg_contrib = cfs_rq->avg.runnable_avg;
-		cfs_rq->last_update_tg_load_avg = now;
+		cfs_rq->ਆਖਰੀ_update_tg_ਲੱਦੋ_avg = now;
 	}
 }
 
-static inline void clear_tg_load_avg(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ clear_tg_ਲੱਦੋ_avg(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	long dl, dr;
+	ਲੰਮਾ dl, dr;
 	u64 now;
 
 	/*
 	 * No need to update load_avg for root_task_group, as it is not used.
 	 */
-	if (cfs_rq->tg == &root_task_group)
-		return;
+	ਜੇ (cfs_rq->tg == &ਜੜ੍ਹ_task_ਸਮੂਹ)
+		ਵਾਪਸ;
 
-	now = rq_clock(rq_of(cfs_rq));
-	dl = 0 - cfs_rq->tg_load_avg_contrib;
+	now = rq_clock(rq_ਦਾ(cfs_rq));
+	dl = 0 - cfs_rq->tg_ਲੱਦੋ_avg_contrib;
 	dr = 0 - cfs_rq->tg_runnable_avg_contrib;
-	atomic_long_add(dl, &cfs_rq->tg->load_avg);
-	atomic_long_add(dr, &cfs_rq->tg->runnable_avg);
-	cfs_rq->tg_load_avg_contrib = 0;
+	atomic_long_ਜੋੜੋ(dl, &cfs_rq->tg->ਲੱਦੋ_avg);
+	atomic_long_ਜੋੜੋ(dr, &cfs_rq->tg->runnable_avg);
+	cfs_rq->tg_ਲੱਦੋ_avg_contrib = 0;
 	cfs_rq->tg_runnable_avg_contrib = 0;
-	cfs_rq->last_update_tg_load_avg = now;
+	cfs_rq->ਆਖਰੀ_update_tg_ਲੱਦੋ_avg = now;
 }
 
 /* CPU offline callback: */
-static void __maybe_unused clear_tg_offline_cfs_rqs(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ __maybe_unused clear_tg_offline_cfs_rqs(ਬਣਤਰ rq *rq)
 {
-	struct task_group *tg;
+	ਬਣਤਰ task_ਸਮੂਹ *tg;
 
 	lockdep_assert_rq_held(rq);
 
@@ -5394,14 +5394,14 @@ static void __maybe_unused clear_tg_offline_cfs_rqs(struct rq *rq)
 	 * set_rq_offline(), so we should skip updating
 	 * the rq clock again in unthrottle_cfs_rq().
 	 */
-	rq_clock_start_loop_update(rq);
+	rq_clock_ਸ਼ੁਰੂ_loop_update(rq);
 
 	guard(rcu)();
 
-	list_for_each_entry_rcu(tg, &task_groups, list) {
-		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
+	list_for_each_ਇੰਦਰਾਜ_rcu(tg, &task_groups, list) {
+		ਬਣਤਰ cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_ਦਾ(rq));
 
-		clear_tg_load_avg(cfs_rq);
+		clear_tg_ਲੱਦੋ_avg(cfs_rq);
 	}
 
 	rq_clock_stop_loop_update(rq);
@@ -5412,14 +5412,14 @@ static void __maybe_unused clear_tg_offline_cfs_rqs(struct rq *rq)
  * caller only guarantees p->pi_lock is held; no other assumptions,
  * including the state of rq->lock, should be made.
  */
-void set_task_rq_fair(struct sched_entity *se,
-		      struct cfs_rq *prev, struct cfs_rq *next)
+ਖਾਲੀ ਸੈੱਟ_task_rq_fair(ਬਣਤਰ sched_entity *se,
+		      ਬਣਤਰ cfs_rq *prev, ਬਣਤਰ cfs_rq *ਅਗਲਾ)
 {
-	u64 p_last_update_time;
-	u64 n_last_update_time;
+	u64 p_ਆਖਰੀ_update_ਸਮਾਂ;
+	u64 n_ਆਖਰੀ_update_ਸਮਾਂ;
 
-	if (!sched_feat(ATTACH_AGE_LOAD))
-		return;
+	ਜੇ (!sched_feat(ATTACH_AGE_ਲੱਦੋ))
+		ਵਾਪਸ;
 
 	/*
 	 * We are supposed to update the task to "current" time, then its up to
@@ -5428,14 +5428,14 @@ void set_task_rq_fair(struct sched_entity *se,
 	 * time. This will result in the wakee task is less decayed, but giving
 	 * the wakee more load sounds not bad.
 	 */
-	if (!(se->avg.last_update_time && prev))
-		return;
+	ਜੇ (!(se->avg.ਆਖਰੀ_update_ਸਮਾਂ && prev))
+		ਵਾਪਸ;
 
-	p_last_update_time = cfs_rq_last_update_time(prev);
-	n_last_update_time = cfs_rq_last_update_time(next);
+	p_ਆਖਰੀ_update_ਸਮਾਂ = cfs_rq_ਆਖਰੀ_update_ਸਮਾਂ(prev);
+	n_ਆਖਰੀ_update_ਸਮਾਂ = cfs_rq_ਆਖਰੀ_update_ਸਮਾਂ(ਅਗਲਾ);
 
-	__update_load_avg_blocked_se(p_last_update_time, se);
-	se->avg.last_update_time = n_last_update_time;
+	__update_load_avg_blocked_se(p_ਆਖਰੀ_update_ਸਮਾਂ, se);
+	se->avg.ਆਖਰੀ_update_ਸਮਾਂ = n_ਆਖਰੀ_update_ਸਮਾਂ;
 }
 
 /*
@@ -5505,15 +5505,15 @@ void set_task_rq_fair(struct sched_entity *se,
  * XXX: only do this for the part of runnable > running ?
  *
  */
-static inline void
-update_tg_cfs_util(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq *gcfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_tg_cfs_util(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, ਬਣਤਰ cfs_rq *gcfs_rq)
 {
-	long delta_sum, delta_avg = gcfs_rq->avg.util_avg - se->avg.util_avg;
-	u32 new_sum, divider;
+	ਲੰਮਾ delta_ਜੋੜ, delta_avg = gcfs_rq->avg.util_avg - se->avg.util_avg;
+	u32 new_ਜੋੜ, divider;
 
 	/* Nothing to update */
-	if (!delta_avg)
-		return;
+	ਜੇ (!delta_avg)
+		ਵਾਪਸ;
 
 	/*
 	 * cfs_rq->avg.period_contrib can be used for both cfs_rq and se.
@@ -5523,24 +5523,24 @@ update_tg_cfs_util(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq
 
 	/* Set new sched_entity's utilization */
 	se->avg.util_avg = gcfs_rq->avg.util_avg;
-	new_sum = se->avg.util_avg * divider;
-	delta_sum = (long)new_sum - (long)se->avg.util_sum;
-	se->avg.util_sum = new_sum;
+	new_ਜੋੜ = se->avg.util_avg * divider;
+	delta_ਜੋੜ = (ਲੰਮਾ)new_ਜੋੜ - (ਲੰਮਾ)se->avg.util_ਜੋੜ;
+	se->avg.util_ਜੋੜ = new_ਜੋੜ;
 
 	/* Update parent cfs_rq utilization */
-	__update_sa(&cfs_rq->avg, util, delta_avg, delta_sum);
+	__update_sa(&cfs_rq->avg, util, delta_avg, delta_ਜੋੜ);
 }
 
-static inline void
-update_tg_cfs_runnable(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq *gcfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_tg_cfs_runnable(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, ਬਣਤਰ cfs_rq *gcfs_rq)
 {
-	long delta_sum, delta_avg = gcfs_rq->avg.runnable_avg - se->avg.runnable_avg;
-	u64 new_sum;
+	ਲੰਮਾ delta_ਜੋੜ, delta_avg = gcfs_rq->avg.runnable_avg - se->avg.runnable_avg;
+	u64 new_ਜੋੜ;
 	u32 divider;
 
 	/* Nothing to update */
-	if (!delta_avg)
-		return;
+	ਜੇ (!delta_avg)
+		ਵਾਪਸ;
 
 	/*
 	 * cfs_rq->avg.period_contrib can be used for both cfs_rq and se.
@@ -5550,27 +5550,27 @@ update_tg_cfs_runnable(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cf
 
 	/* Set new sched_entity's runnable */
 	se->avg.runnable_avg = gcfs_rq->avg.runnable_avg;
-	new_sum = (u64)se->avg.runnable_avg * divider;
-	delta_sum = (long)new_sum - (long)se->avg.runnable_sum;
-	se->avg.runnable_sum = new_sum;
+	new_ਜੋੜ = (u64)se->avg.runnable_avg * divider;
+	delta_ਜੋੜ = (ਲੰਮਾ)new_ਜੋੜ - (ਲੰਮਾ)se->avg.runnable_ਜੋੜ;
+	se->avg.runnable_ਜੋੜ = new_ਜੋੜ;
 
 	/* Update parent cfs_rq runnable */
-	__update_sa(&cfs_rq->avg, runnable, delta_avg, delta_sum);
+	__update_sa(&cfs_rq->avg, runnable, delta_avg, delta_ਜੋੜ);
 }
 
-static inline void
-update_tg_cfs_load(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq *gcfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_tg_cfs_ਲੱਦੋ(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, ਬਣਤਰ cfs_rq *gcfs_rq)
 {
-	long delta_avg, running_sum, runnable_sum = gcfs_rq->prop_runnable_sum;
-	unsigned long load_avg;
-	u64 load_sum = 0;
-	s64 delta_sum;
+	ਲੰਮਾ delta_avg, running_ਜੋੜ, runnable_ਜੋੜ = gcfs_rq->prop_runnable_ਜੋੜ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੱਦੋ_avg;
+	u64 ਲੱਦੋ_ਜੋੜ = 0;
+	s64 delta_ਜੋੜ;
 	u32 divider;
 
-	if (!runnable_sum)
-		return;
+	ਜੇ (!runnable_ਜੋੜ)
+		ਵਾਪਸ;
 
-	gcfs_rq->prop_runnable_sum = 0;
+	gcfs_rq->prop_runnable_ਜੋੜ = 0;
 
 	/*
 	 * cfs_rq->avg.period_contrib can be used for both cfs_rq and se.
@@ -5578,25 +5578,25 @@ update_tg_cfs_load(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq
 	 */
 	divider = get_pelt_divider(&cfs_rq->avg);
 
-	if (runnable_sum >= 0) {
+	ਜੇ (runnable_ਜੋੜ >= 0) {
 		/*
 		 * Add runnable; clip at LOAD_AVG_MAX. Reflects that until
 		 * the CPU is saturated running == runnable.
 		 */
-		runnable_sum += se->avg.load_sum;
-		runnable_sum = min_t(long, runnable_sum, divider);
-	} else {
+		runnable_ਜੋੜ += se->avg.ਲੱਦੋ_ਜੋੜ;
+		runnable_ਜੋੜ = min_t(ਲੰਮਾ, runnable_ਜੋੜ, divider);
+	} ਨਹੀਂਤਾਂ {
 		/*
 		 * Estimate the new unweighted runnable_sum of the gcfs_rq by
 		 * assuming all tasks are equally runnable.
 		 */
-		if (scale_load_down(gcfs_rq->load.weight)) {
-			load_sum = div_u64(gcfs_rq->avg.load_sum,
-				scale_load_down(gcfs_rq->load.weight));
+		ਜੇ (scale_ਲੱਦੋ_ਥੱਲੇ(gcfs_rq->ਲੱਦੋ.ਭਾਰ)) {
+			ਲੱਦੋ_ਜੋੜ = div_u64(gcfs_rq->avg.ਲੱਦੋ_ਜੋੜ,
+				scale_ਲੱਦੋ_ਥੱਲੇ(gcfs_rq->ਲੱਦੋ.ਭਾਰ));
 		}
 
 		/* But make sure to not inflate se's runnable */
-		runnable_sum = min(se->avg.load_sum, load_sum);
+		runnable_ਜੋੜ = min(se->avg.ਲੱਦੋ_ਜੋੜ, ਲੱਦੋ_ਜੋੜ);
 	}
 
 	/*
@@ -5605,117 +5605,117 @@ update_tg_cfs_load(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq
 	 * running_sum is in [0 : LOAD_AVG_MAX <<  SCHED_CAPACITY_SHIFT]
 	 * runnable_sum is in [0 : LOAD_AVG_MAX]
 	 */
-	running_sum = se->avg.util_sum >> SCHED_CAPACITY_SHIFT;
-	runnable_sum = max(runnable_sum, running_sum);
+	running_ਜੋੜ = se->avg.util_ਜੋੜ >> SCHED_ਸਮਰੱਥਾ_ਖਿਸਕਾਓ;
+	runnable_ਜੋੜ = max(runnable_ਜੋੜ, running_ਜੋੜ);
 
-	load_sum = se_weight(se) * runnable_sum;
-	load_avg = div_u64(load_sum, divider);
+	ਲੱਦੋ_ਜੋੜ = se_ਭਾਰ(se) * runnable_ਜੋੜ;
+	ਲੱਦੋ_avg = div_u64(ਲੱਦੋ_ਜੋੜ, divider);
 
-	delta_avg = load_avg - se->avg.load_avg;
-	if (!delta_avg)
-		return;
+	delta_avg = ਲੱਦੋ_avg - se->avg.ਲੱਦੋ_avg;
+	ਜੇ (!delta_avg)
+		ਵਾਪਸ;
 
-	delta_sum = load_sum - (s64)se_weight(se) * se->avg.load_sum;
+	delta_ਜੋੜ = ਲੱਦੋ_ਜੋੜ - (s64)se_ਭਾਰ(se) * se->avg.ਲੱਦੋ_ਜੋੜ;
 
-	se->avg.load_sum = runnable_sum;
-	se->avg.load_avg = load_avg;
-	__update_sa(&cfs_rq->avg, load, delta_avg, delta_sum);
+	se->avg.ਲੱਦੋ_ਜੋੜ = runnable_ਜੋੜ;
+	se->avg.ਲੱਦੋ_avg = ਲੱਦੋ_avg;
+	__update_sa(&cfs_rq->avg, ਲੱਦੋ, delta_avg, delta_ਜੋੜ);
 }
 
-static inline void add_tg_cfs_propagate(struct cfs_rq *cfs_rq, long runnable_sum)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਜੋੜੋ_tg_cfs_propagate(ਬਣਤਰ cfs_rq *cfs_rq, ਲੰਮਾ runnable_ਜੋੜ)
 {
 	cfs_rq->propagate = 1;
-	cfs_rq->prop_runnable_sum += runnable_sum;
+	cfs_rq->prop_runnable_ਜੋੜ += runnable_ਜੋੜ;
 }
 
 /* Update task and its cfs_rq load average */
-static inline int propagate_entity_load_avg(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ propagate_entity_ਲੱਦੋ_avg(ਬਣਤਰ sched_entity *se)
 {
-	struct cfs_rq *cfs_rq, *gcfs_rq;
+	ਬਣਤਰ cfs_rq *cfs_rq, *gcfs_rq;
 
-	if (entity_is_task(se))
-		return 0;
+	ਜੇ (entity_is_task(se))
+		ਵਾਪਸ 0;
 
-	gcfs_rq = group_cfs_rq(se);
-	if (!gcfs_rq->propagate)
-		return 0;
+	gcfs_rq = ਸਮੂਹ_cfs_rq(se);
+	ਜੇ (!gcfs_rq->propagate)
+		ਵਾਪਸ 0;
 
 	gcfs_rq->propagate = 0;
 
-	cfs_rq = cfs_rq_of(se);
+	cfs_rq = cfs_rq_ਦਾ(se);
 
-	add_tg_cfs_propagate(cfs_rq, gcfs_rq->prop_runnable_sum);
+	ਜੋੜੋ_tg_cfs_propagate(cfs_rq, gcfs_rq->prop_runnable_ਜੋੜ);
 
 	update_tg_cfs_util(cfs_rq, se, gcfs_rq);
 	update_tg_cfs_runnable(cfs_rq, se, gcfs_rq);
-	update_tg_cfs_load(cfs_rq, se, gcfs_rq);
+	update_tg_cfs_ਲੱਦੋ(cfs_rq, se, gcfs_rq);
 
 	trace_pelt_cfs_tp(cfs_rq);
 	trace_pelt_se_tp(se);
 
-	return 1;
+	ਵਾਪਸ 1;
 }
 
 /*
  * Check if we need to update the load and the utilization of a blocked
  * group_entity:
  */
-static inline bool skip_blocked_update(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool skip_blocked_update(ਬਣਤਰ sched_entity *se)
 {
-	struct cfs_rq *gcfs_rq = group_cfs_rq(se);
+	ਬਣਤਰ cfs_rq *gcfs_rq = ਸਮੂਹ_cfs_rq(se);
 
 	/*
 	 * If sched_entity still have not zero load or utilization, we have to
 	 * decay it:
 	 */
-	if (se->avg.load_avg || se->avg.util_avg)
-		return false;
+	ਜੇ (se->avg.ਲੱਦੋ_avg || se->avg.util_avg)
+		ਵਾਪਸ false;
 
 	/*
 	 * If there is a pending propagation, we have to update the load and
 	 * the utilization of the sched_entity:
 	 */
-	if (gcfs_rq->propagate)
-		return false;
+	ਜੇ (gcfs_rq->propagate)
+		ਵਾਪਸ false;
 
 	/*
 	 * Otherwise, the load and the utilization of the sched_entity is
 	 * already zero and there is no pending propagation, so it will be a
 	 * waste of time to try to decay it:
 	 */
-	return true;
+	ਵਾਪਸ true;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
 
-static inline void update_tg_load_avg(struct cfs_rq *cfs_rq) {}
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_tg_ਲੱਦੋ_avg(ਬਣਤਰ cfs_rq *cfs_rq) {}
 
-static inline void clear_tg_offline_cfs_rqs(struct rq *rq) {}
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ clear_tg_offline_cfs_rqs(ਬਣਤਰ rq *rq) {}
 
-static inline int propagate_entity_load_avg(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ propagate_entity_ਲੱਦੋ_avg(ਬਣਤਰ sched_entity *se)
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static inline void add_tg_cfs_propagate(struct cfs_rq *cfs_rq, long runnable_sum) {}
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਜੋੜੋ_tg_cfs_propagate(ਬਣਤਰ cfs_rq *cfs_rq, ਲੰਮਾ runnable_ਜੋੜ) {}
 
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
 
-#ifdef CONFIG_NO_HZ_COMMON
-static inline void migrate_se_pelt_lag(struct sched_entity *se)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_COMMON
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ migrate_se_pelt_lag(ਬਣਤਰ sched_entity *se)
 {
 	u64 throttled = 0, now, lut;
-	struct cfs_rq *cfs_rq;
-	struct rq *rq;
+	ਬਣਤਰ cfs_rq *cfs_rq;
+	ਬਣਤਰ rq *rq;
 	bool is_idle;
 
-	if (load_avg_is_decayed(&se->avg))
-		return;
+	ਜੇ (ਲੱਦੋ_avg_is_decayed(&se->avg))
+		ਵਾਪਸ;
 
-	cfs_rq = cfs_rq_of(se);
-	rq = rq_of(cfs_rq);
+	cfs_rq = cfs_rq_ਦਾ(se);
+	rq = rq_ਦਾ(cfs_rq);
 
-	rcu_read_lock();
+	rcu_read_ਤਾਲਾ();
 	is_idle = is_idle_task(rcu_dereference_all(rq->curr));
 	rcu_read_unlock();
 
@@ -5724,8 +5724,8 @@ static inline void migrate_se_pelt_lag(struct sched_entity *se)
 	 * time. Hence, limiting to the case where the source CPU is idle and
 	 * we know we are at the greatest risk to have an outdated clock.
 	 */
-	if (!is_idle)
-		return;
+	ਜੇ (!is_idle)
+		ਵਾਪਸ;
 
 	/*
 	 * Estimated "now" is: last_update_time + cfs_idle_lag + rq_idle_lag, where:
@@ -5752,13 +5752,13 @@ static inline void migrate_se_pelt_lag(struct sched_entity *se)
 	 *                              is cfs_rq->throttled_pelt_idle
 	 */
 
-#ifdef CONFIG_CFS_BANDWIDTH
-	throttled = u64_u32_load(cfs_rq->throttled_pelt_idle);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CFS_BANDWIDTH
+	throttled = u64_u32_ਲੱਦੋ(cfs_rq->throttled_pelt_idle);
 	/* The clock has been stopped for throttling */
-	if (throttled == U64_MAX)
-		return;
-#endif
-	now = u64_u32_load(rq->clock_pelt_idle);
+	ਜੇ (throttled == U64_MAX)
+		ਵਾਪਸ;
+#ਜੇ_ਅੰਤ
+	now = u64_u32_ਲੱਦੋ(rq->clock_pelt_idle);
 	/*
 	 * Paired with _update_idle_rq_clock_pelt(). It ensures at the worst case
 	 * is observed the old clock_pelt_idle value and the new clock_idle,
@@ -5766,23 +5766,23 @@ static inline void migrate_se_pelt_lag(struct sched_entity *se)
 	 * overestimation.
 	 */
 	smp_rmb();
-	lut = cfs_rq_last_update_time(cfs_rq);
+	lut = cfs_rq_ਆਖਰੀ_update_ਸਮਾਂ(cfs_rq);
 
 	now -= throttled;
-	if (now < lut)
+	ਜੇ (now < lut)
 		/*
 		 * cfs_rq->avg.last_update_time is more recent than our
 		 * estimation, let's use it.
 		 */
 		now = lut;
-	else
-		now += sched_clock_cpu(cpu_of(rq)) - u64_u32_load(rq->clock_idle);
+	ਨਹੀਂਤਾਂ
+		now += sched_clock_cpu(cpu_ਦਾ(rq)) - u64_u32_ਲੱਦੋ(rq->clock_idle);
 
 	__update_load_avg_blocked_se(now, se);
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
-static void migrate_se_pelt_lag(struct sched_entity *se) {}
-#endif /* !CONFIG_NO_HZ_COMMON */
+#ਨਹੀਂਤਾਂ /* !CONFIG_NO_HZ_COMMON: */
+ਸਥਿਰ ਖਾਲੀ migrate_se_pelt_lag(ਬਣਤਰ sched_entity *se) {}
+#ਜੇ_ਅੰਤ /* !CONFIG_NO_HZ_COMMON */
 
 /**
  * update_cfs_rq_load_avg - update the cfs_rq's load/util averages
@@ -5799,26 +5799,26 @@ static void migrate_se_pelt_lag(struct sched_entity *se) {}
  * Since both these conditions indicate a changed cfs_rq->avg.load we should
  * call update_tg_load_avg() when this function returns true.
  */
-static inline int
-update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ
+update_cfs_rq_ਲੱਦੋ_avg(u64 now, ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	unsigned long removed_load = 0, removed_util = 0, removed_runnable = 0;
-	struct sched_avg *sa = &cfs_rq->avg;
-	int decayed = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ removed_ਲੱਦੋ = 0, removed_util = 0, removed_runnable = 0;
+	ਬਣਤਰ sched_avg *sa = &cfs_rq->avg;
+	ਪੂਰਨ decayed = 0;
 
-	if (cfs_rq->removed.nr) {
-		unsigned long r;
+	ਜੇ (cfs_rq->removed.nr) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ r;
 		u32 divider = get_pelt_divider(&cfs_rq->avg);
 
-		raw_spin_lock(&cfs_rq->removed.lock);
-		swap(cfs_rq->removed.util_avg, removed_util);
-		swap(cfs_rq->removed.load_avg, removed_load);
-		swap(cfs_rq->removed.runnable_avg, removed_runnable);
+		raw_spin_ਤਾਲਾ(&cfs_rq->removed.ਤਾਲਾ);
+		ਅਦਲਾ_ਬਦਲੀ(cfs_rq->removed.util_avg, removed_util);
+		ਅਦਲਾ_ਬਦਲੀ(cfs_rq->removed.ਲੱਦੋ_avg, removed_ਲੱਦੋ);
+		ਅਦਲਾ_ਬਦਲੀ(cfs_rq->removed.runnable_avg, removed_runnable);
 		cfs_rq->removed.nr = 0;
-		raw_spin_unlock(&cfs_rq->removed.lock);
+		raw_spin_unlock(&cfs_rq->removed.ਤਾਲਾ);
 
-		r = removed_load;
-		__update_sa(sa, load, -r, -r*divider);
+		r = removed_ਲੱਦੋ;
+		__update_sa(sa, ਲੱਦੋ, -r, -r*divider);
 
 		r = removed_util;
 		__update_sa(sa, util, -r, -r*divider);
@@ -5830,17 +5830,17 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
 		 * removed_runnable is the unweighted version of removed_load so we
 		 * can use it to estimate removed_load_sum.
 		 */
-		add_tg_cfs_propagate(cfs_rq,
-			-(long)(removed_runnable * divider) >> SCHED_CAPACITY_SHIFT);
+		ਜੋੜੋ_tg_cfs_propagate(cfs_rq,
+			-(ਲੰਮਾ)(removed_runnable * divider) >> SCHED_ਸਮਰੱਥਾ_ਖਿਸਕਾਓ);
 
 		decayed = 1;
 	}
 
 	decayed |= __update_load_avg_cfs_rq(now, cfs_rq);
-	u64_u32_store_copy(sa->last_update_time,
-			   cfs_rq->last_update_time_copy,
-			   sa->last_update_time);
-	return decayed;
+	u64_u32_store_copy(sa->ਆਖਰੀ_update_ਸਮਾਂ,
+			   cfs_rq->ਆਖਰੀ_update_ਸਮਾਂ_copy,
+			   sa->ਆਖਰੀ_update_ਸਮਾਂ);
+	ਵਾਪਸ decayed;
 }
 
 /**
@@ -5851,7 +5851,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
  * Must call update_cfs_rq_load_avg() before this, since we rely on
  * cfs_rq->avg.last_update_time being current.
  */
-static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ attach_entity_ਲੱਦੋ_avg(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
 	/*
 	 * cfs_rq->avg.period_contrib can be used for both cfs_rq and se.
@@ -5866,7 +5866,7 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
 	 *
 	 * XXX illustrate
 	 */
-	se->avg.last_update_time = cfs_rq->avg.last_update_time;
+	se->avg.ਆਖਰੀ_update_ਸਮਾਂ = cfs_rq->avg.ਆਖਰੀ_update_ਸਮਾਂ;
 	se->avg.period_contrib = cfs_rq->avg.period_contrib;
 
 	/*
@@ -5875,23 +5875,23 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
 	 * entirely outside of the PELT hierarchy, nobody cares if we truncate
 	 * _sum a little.
 	 */
-	se->avg.util_sum = se->avg.util_avg * divider;
+	se->avg.util_ਜੋੜ = se->avg.util_avg * divider;
 
-	se->avg.runnable_sum = se->avg.runnable_avg * divider;
+	se->avg.runnable_ਜੋੜ = se->avg.runnable_avg * divider;
 
-	se->avg.load_sum = se->avg.load_avg * divider;
-	if (se_weight(se) < se->avg.load_sum)
-		se->avg.load_sum = div_u64(se->avg.load_sum, se_weight(se));
-	else
-		se->avg.load_sum = 1;
+	se->avg.ਲੱਦੋ_ਜੋੜ = se->avg.ਲੱਦੋ_avg * divider;
+	ਜੇ (se_ਭਾਰ(se) < se->avg.ਲੱਦੋ_ਜੋੜ)
+		se->avg.ਲੱਦੋ_ਜੋੜ = div_u64(se->avg.ਲੱਦੋ_ਜੋੜ, se_ਭਾਰ(se));
+	ਨਹੀਂਤਾਂ
+		se->avg.ਲੱਦੋ_ਜੋੜ = 1;
 
-	enqueue_load_avg(cfs_rq, se);
+	ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_ਲੱਦੋ_avg(cfs_rq, se);
 	cfs_rq->avg.util_avg += se->avg.util_avg;
-	cfs_rq->avg.util_sum += se->avg.util_sum;
+	cfs_rq->avg.util_ਜੋੜ += se->avg.util_ਜੋੜ;
 	cfs_rq->avg.runnable_avg += se->avg.runnable_avg;
-	cfs_rq->avg.runnable_sum += se->avg.runnable_sum;
+	cfs_rq->avg.runnable_ਜੋੜ += se->avg.runnable_ਜੋੜ;
 
-	add_tg_cfs_propagate(cfs_rq, se->avg.load_sum);
+	ਜੋੜੋ_tg_cfs_propagate(cfs_rq, se->avg.ਲੱਦੋ_ਜੋੜ);
 
 	cfs_rq_util_change(cfs_rq, 0);
 
@@ -5906,27 +5906,27 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
  * Must call update_cfs_rq_load_avg() before this, since we rely on
  * cfs_rq->avg.last_update_time being current.
  */
-static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ detach_entity_ਲੱਦੋ_avg(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	dequeue_load_avg(cfs_rq, se);
-	__update_sa(&cfs_rq->avg, util, -se->avg.util_avg, -se->avg.util_sum);
-	__update_sa(&cfs_rq->avg, runnable, -se->avg.runnable_avg, -se->avg.runnable_sum);
+	ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_ਲੱਦੋ_avg(cfs_rq, se);
+	__update_sa(&cfs_rq->avg, util, -se->avg.util_avg, -se->avg.util_ਜੋੜ);
+	__update_sa(&cfs_rq->avg, runnable, -se->avg.runnable_avg, -se->avg.runnable_ਜੋੜ);
 
-	add_tg_cfs_propagate(cfs_rq, -se->avg.load_sum);
+	ਜੋੜੋ_tg_cfs_propagate(cfs_rq, -se->avg.ਲੱਦੋ_ਜੋੜ);
 
 	cfs_rq_util_change(cfs_rq, 0);
 
 	trace_pelt_cfs_tp(cfs_rq);
 }
 
-#define UTIL_EST_MARGIN (SCHED_CAPACITY_SCALE / 100)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UTIL_EST_MARGIN (SCHED_ਸਮਰੱਥਾ_SCALE / 100)
 
-static inline void util_est_update(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ util_est_update(ਬਣਤਰ sched_entity *se)
 {
-	unsigned int ewma, dequeued, last_ewma_diff;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ewma, dequeued, ਆਖਰੀ_ewma_diff;
 
-	if (!sched_feat(UTIL_EST))
-		return;
+	ਜੇ (!sched_feat(UTIL_EST))
+		ਵਾਪਸ;
 
 	/* Get current estimate of utilization */
 	ewma = READ_ONCE(se->avg.util_est);
@@ -5935,8 +5935,8 @@ static inline void util_est_update(struct sched_entity *se)
 	 * If the PELT values haven't changed since enqueue time,
 	 * skip the util_est update.
 	 */
-	if (ewma & UTIL_AVG_UNCHANGED)
-		return;
+	ਜੇ (ewma & UTIL_AVG_UNCHANGED)
+		ਵਾਪਸ;
 
 	/* Get utilization at dequeue */
 	dequeued = READ_ONCE(se->avg.util_avg);
@@ -5945,25 +5945,25 @@ static inline void util_est_update(struct sched_entity *se)
 	 * Reset EWMA on utilization increases, the moving average is used only
 	 * to smooth utilization decreases.
 	 */
-	if (ewma <= dequeued) {
+	ਜੇ (ewma <= dequeued) {
 		ewma = dequeued;
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 
 	/*
 	 * Skip update of task's estimated utilization when its members are
 	 * already ~1% close to its last activation value.
 	 */
-	last_ewma_diff = ewma - dequeued;
-	if (last_ewma_diff < UTIL_EST_MARGIN)
-		goto done;
+	ਆਖਰੀ_ewma_diff = ewma - dequeued;
+	ਜੇ (ਆਖਰੀ_ewma_diff < UTIL_EST_MARGIN)
+		ਜਾਓ ਪੂਰਾ;
 
 	/*
 	 * To avoid underestimate of task utilization, skip updates of EWMA if
 	 * we cannot grant that thread got all CPU time it wanted.
 	 */
-	if ((dequeued + UTIL_EST_MARGIN) < READ_ONCE(se->avg.runnable_avg))
-		goto done;
+	ਜੇ ((dequeued + UTIL_EST_MARGIN) < READ_ONCE(se->avg.runnable_avg))
+		ਜਾਓ ਪੂਰਾ;
 
 	/*
 	 * Update Task's estimated utilization
@@ -5981,10 +5981,10 @@ static inline void util_est_update(struct sched_entity *se)
 	 * Where 'w' is the weight of new samples, which is configured to be
 	 * 0.25, thus making w=1/4 ( >>= UTIL_EST_WEIGHT_SHIFT)
 	 */
-	ewma <<= UTIL_EST_WEIGHT_SHIFT;
-	ewma  -= last_ewma_diff;
-	ewma >>= UTIL_EST_WEIGHT_SHIFT;
-done:
+	ewma <<= UTIL_EST_ਭਾਰ_ਖਿਸਕਾਓ;
+	ewma  -= ਆਖਰੀ_ewma_diff;
+	ewma >>= UTIL_EST_ਭਾਰ_ਖਿਸਕਾਓ;
+ਪੂਰਾ:
 	ewma |= UTIL_AVG_UNCHANGED;
 	WRITE_ONCE(se->avg.util_est, ewma);
 
@@ -5994,29 +5994,29 @@ done:
 /*
  * Optional action to be done while updating the load average
  */
-#define UPDATE_TG	0x01
-#define SKIP_AGE_LOAD	0x02
-#define DO_ATTACH	0x04
-#define DO_DETACH	0x08
-#define UPDATE_UTIL_EST	0x10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UPDATE_TG	0x01
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SKIP_AGE_ਲੱਦੋ	0x02
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DO_ATTACH	0x04
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DO_DETACH	0x08
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UPDATE_UTIL_EST	0x10
 
 /* Update task and its cfs_rq load average */
-static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_ਲੱਦੋ_avg(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, ਪੂਰਨ flags)
 {
 	u64 now = cfs_rq_clock_pelt(cfs_rq);
-	int decayed;
+	ਪੂਰਨ decayed;
 
 	/*
 	 * Track task load average for carrying it to new CPU after migrated, and
 	 * track group sched_entity load average for task_h_load calculation in migration
 	 */
-	if (se->avg.last_update_time && !(flags & SKIP_AGE_LOAD))
+	ਜੇ (se->avg.ਆਖਰੀ_update_ਸਮਾਂ && !(flags & SKIP_AGE_ਲੱਦੋ))
 		__update_load_avg_se(now, cfs_rq, se);
 
-	decayed  = update_cfs_rq_load_avg(now, cfs_rq);
-	decayed |= propagate_entity_load_avg(se);
+	decayed  = update_cfs_rq_ਲੱਦੋ_avg(now, cfs_rq);
+	decayed |= propagate_entity_ਲੱਦੋ_avg(se);
 
-	if (!se->avg.last_update_time && (flags & DO_ATTACH)) {
+	ਜੇ (!se->avg.ਆਖਰੀ_update_ਸਮਾਂ && (flags & DO_ATTACH)) {
 
 		/*
 		 * DO_ATTACH means we're here from enqueue_entity().
@@ -6025,24 +6025,24 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
 		 *
 		 * IOW we're enqueueing a task on a new CPU.
 		 */
-		attach_entity_load_avg(cfs_rq, se);
-		update_tg_load_avg(cfs_rq);
+		attach_entity_ਲੱਦੋ_avg(cfs_rq, se);
+		update_tg_ਲੱਦੋ_avg(cfs_rq);
 
-	} else if (flags & DO_DETACH) {
+	} ਨਹੀਂਤਾਂ ਜੇ (flags & DO_DETACH) {
 		/*
 		 * DO_DETACH means we're here from dequeue_entity()
 		 * and we are migrating task out of the CPU.
 		 */
-		detach_entity_load_avg(cfs_rq, se);
-		update_tg_load_avg(cfs_rq);
-	} else if (decayed) {
+		detach_entity_ਲੱਦੋ_avg(cfs_rq, se);
+		update_tg_ਲੱਦੋ_avg(cfs_rq);
+	} ਨਹੀਂਤਾਂ ਜੇ (decayed) {
 		cfs_rq_util_change(cfs_rq, 0);
 
-		if (flags & UPDATE_TG)
-			update_tg_load_avg(cfs_rq);
+		ਜੇ (flags & UPDATE_TG)
+			update_tg_ਲੱਦੋ_avg(cfs_rq);
 	}
 
-	if (flags & UPDATE_UTIL_EST)
+	ਜੇ (flags & UPDATE_UTIL_EST)
 		util_est_update(se);
 }
 
@@ -6050,23 +6050,23 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
  * Synchronize entity load avg of dequeued entity without locking
  * the previous rq.
  */
-static void sync_entity_load_avg(struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ sync_entity_ਲੱਦੋ_avg(ਬਣਤਰ sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-	u64 last_update_time;
+	ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
+	u64 ਆਖਰੀ_update_ਸਮਾਂ;
 
-	last_update_time = cfs_rq_last_update_time(cfs_rq);
-	__update_load_avg_blocked_se(last_update_time, se);
+	ਆਖਰੀ_update_ਸਮਾਂ = cfs_rq_ਆਖਰੀ_update_ਸਮਾਂ(cfs_rq);
+	__update_load_avg_blocked_se(ਆਖਰੀ_update_ਸਮਾਂ, se);
 }
 
 /*
  * Task first catches up with cfs_rq, and then subtract
  * itself from the cfs_rq (task must be off the queue now).
  */
-static void remove_entity_load_avg(struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ remove_entity_ਲੱਦੋ_avg(ਬਣਤਰ sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-	unsigned long flags;
+	ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
 	/*
 	 * tasks cannot exit without having gone through wake_up_new_task() ->
@@ -6074,51 +6074,51 @@ static void remove_entity_load_avg(struct sched_entity *se)
 	 * so we can remove unconditionally.
 	 */
 
-	sync_entity_load_avg(se);
+	sync_entity_ਲੱਦੋ_avg(se);
 
-	raw_spin_lock_irqsave(&cfs_rq->removed.lock, flags);
+	raw_spin_ਤਾਲਾ_irqsave(&cfs_rq->removed.ਤਾਲਾ, flags);
 	++cfs_rq->removed.nr;
 	cfs_rq->removed.util_avg	+= se->avg.util_avg;
-	cfs_rq->removed.load_avg	+= se->avg.load_avg;
+	cfs_rq->removed.ਲੱਦੋ_avg	+= se->avg.ਲੱਦੋ_avg;
 	cfs_rq->removed.runnable_avg	+= se->avg.runnable_avg;
-	raw_spin_unlock_irqrestore(&cfs_rq->removed.lock, flags);
+	raw_spin_unlock_irqrestore(&cfs_rq->removed.ਤਾਲਾ, flags);
 }
 
-static inline unsigned long cfs_rq_runnable_avg(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cfs_rq_runnable_avg(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return cfs_rq->avg.runnable_avg;
+	ਵਾਪਸ cfs_rq->avg.runnable_avg;
 }
 
-static inline unsigned long cfs_rq_load_avg(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cfs_rq_ਲੱਦੋ_avg(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return cfs_rq->avg.load_avg;
+	ਵਾਪਸ cfs_rq->avg.ਲੱਦੋ_avg;
 }
 
-static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
+ਸਥਿਰ ਪੂਰਨ sched_balance_newidle(ਬਣਤਰ rq *this_rq, ਬਣਤਰ rq_flags *rf)
 	__must_hold(__rq_lockp(this_rq));
 
-static inline unsigned long task_util(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_util(ਬਣਤਰ task_struct *p)
 {
-	return READ_ONCE(p->se.avg.util_avg);
+	ਵਾਪਸ READ_ONCE(p->se.avg.util_avg);
 }
 
-static inline unsigned long _task_util_est(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ _task_util_est(ਬਣਤਰ task_struct *p)
 {
-	return READ_ONCE(p->se.avg.util_est) & ~UTIL_AVG_UNCHANGED;
+	ਵਾਪਸ READ_ONCE(p->se.avg.util_est) & ~UTIL_AVG_UNCHANGED;
 }
 
-static inline unsigned long task_util_est(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_util_est(ਬਣਤਰ task_struct *p)
 {
-	return max(task_util(p), _task_util_est(p));
+	ਵਾਪਸ max(task_util(p), _task_util_est(p));
 }
 
-static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
-				    struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ util_est_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(ਬਣਤਰ cfs_rq *cfs_rq,
+				    ਬਣਤਰ task_struct *p)
 {
-	unsigned int enqueued;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ enqueued;
 
-	if (!sched_feat(UTIL_EST))
-		return;
+	ਜੇ (!sched_feat(UTIL_EST))
+		ਵਾਪਸ;
 
 	/* Update root cfs_rq's estimated utilization */
 	enqueued  = cfs_rq->avg.util_est;
@@ -6128,47 +6128,47 @@ static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
 	trace_sched_util_est_cfs_tp(cfs_rq);
 }
 
-static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
-				    struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ util_est_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(ਬਣਤਰ cfs_rq *cfs_rq,
+				    ਬਣਤਰ task_struct *p)
 {
-	unsigned int enqueued;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ enqueued;
 
-	if (!sched_feat(UTIL_EST))
-		return;
+	ਜੇ (!sched_feat(UTIL_EST))
+		ਵਾਪਸ;
 
 	/* Update root cfs_rq's estimated utilization */
 	enqueued  = cfs_rq->avg.util_est;
-	enqueued -= min_t(unsigned int, enqueued, _task_util_est(p));
+	enqueued -= min_t(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, enqueued, _task_util_est(p));
 	WRITE_ONCE(cfs_rq->avg.util_est, enqueued);
 
 	trace_sched_util_est_cfs_tp(cfs_rq);
 }
 
-static inline unsigned long get_actual_cpu_capacity(int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ get_actual_cpu_ਸਮਰੱਥਾ(ਪੂਰਨ cpu)
 {
-	unsigned long capacity = arch_scale_cpu_capacity(cpu);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮਰੱਥਾ = arch_scale_cpu_ਸਮਰੱਥਾ(cpu);
 
-	capacity -= max(hw_load_avg(cpu_rq(cpu)), cpufreq_get_pressure(cpu));
+	ਸਮਰੱਥਾ -= max(hw_ਲੱਦੋ_avg(cpu_rq(cpu)), cpufreq_get_pressure(cpu));
 
-	return capacity;
+	ਵਾਪਸ ਸਮਰੱਥਾ;
 }
 
-static inline int util_fits_cpu(unsigned long util,
-				unsigned long uclamp_min,
-				unsigned long uclamp_max,
-				int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ util_ਸਮਾਉਂਦਾ_cpu(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util,
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ uclamp_min,
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ uclamp_max,
+				ਪੂਰਨ cpu)
 {
-	unsigned long capacity = capacity_of(cpu);
-	unsigned long capacity_orig;
-	bool fits, uclamp_max_fits;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮਰੱਥਾ = ਸਮਰੱਥਾ_ਦਾ(cpu);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮਰੱਥਾ_orig;
+	bool ਸਮਾਉਂਦਾ, uclamp_max_ਸਮਾਉਂਦਾ;
 
 	/*
 	 * Check if the real util fits without any uclamp boost/cap applied.
 	 */
-	fits = fits_capacity(util, capacity);
+	ਸਮਾਉਂਦਾ = ਸਮਾਉਂਦਾ_ਸਮਰੱਥਾ(util, ਸਮਰੱਥਾ);
 
-	if (!uclamp_is_used())
-		return fits;
+	ਜੇ (!uclamp_is_ਵਰਤਿਆ())
+		ਵਾਪਸ ਸਮਾਉਂਦਾ;
 
 	/*
 	 * We must use arch_scale_cpu_capacity() for comparing against uclamp_min and
@@ -6190,7 +6190,7 @@ static inline int util_fits_cpu(unsigned long util,
 	 * For uclamp_max, we can tolerate a drop in performance level as the
 	 * goal is to cap the task. So it's okay if it's getting less.
 	 */
-	capacity_orig = arch_scale_cpu_capacity(cpu);
+	ਸਮਰੱਥਾ_orig = arch_scale_cpu_ਸਮਰੱਥਾ(cpu);
 
 	/*
 	 * We want to force a task to fit a cpu as implied by uclamp_max.
@@ -6229,9 +6229,9 @@ static inline int util_fits_cpu(unsigned long util,
 	 *     2. The system is being saturated when we're operating near
 	 *        max capacity, it doesn't make sense to block overutilized.
 	 */
-	uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
-	uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
-	fits = fits || uclamp_max_fits;
+	uclamp_max_ਸਮਾਉਂਦਾ = (ਸਮਰੱਥਾ_orig == SCHED_ਸਮਰੱਥਾ_SCALE) && (uclamp_max == SCHED_ਸਮਰੱਥਾ_SCALE);
+	uclamp_max_ਸਮਾਉਂਦਾ = !uclamp_max_ਸਮਾਉਂਦਾ && (uclamp_max <= ਸਮਰੱਥਾ_orig);
+	ਸਮਾਉਂਦਾ = ਸਮਾਉਂਦਾ || uclamp_max_ਸਮਾਉਂਦਾ;
 
 	/*
 	 *
@@ -6265,80 +6265,80 @@ static inline int util_fits_cpu(unsigned long util,
 	 * handle the case uclamp_min > uclamp_max.
 	 */
 	uclamp_min = min(uclamp_min, uclamp_max);
-	if (fits && (util < uclamp_min) &&
-	    (uclamp_min > get_actual_cpu_capacity(cpu)))
-		return -1;
+	ਜੇ (ਸਮਾਉਂਦਾ && (util < uclamp_min) &&
+	    (uclamp_min > get_actual_cpu_ਸਮਰੱਥਾ(cpu)))
+		ਵਾਪਸ -1;
 
-	return fits;
+	ਵਾਪਸ ਸਮਾਉਂਦਾ;
 }
 
-static inline int task_fits_cpu(struct task_struct *p, int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_ਸਮਾਉਂਦਾ_cpu(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu)
 {
-	unsigned long uclamp_min = uclamp_eff_value(p, UCLAMP_MIN);
-	unsigned long uclamp_max = uclamp_eff_value(p, UCLAMP_MAX);
-	unsigned long util = task_util_est(p);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ uclamp_min = uclamp_eff_ਮੁੱਲ(p, UCLAMP_MIN);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ uclamp_max = uclamp_eff_ਮੁੱਲ(p, UCLAMP_MAX);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util = task_util_est(p);
 	/*
 	 * Return true only if the cpu fully fits the task requirements, which
 	 * include the utilization but also the performance hints.
 	 */
-	return (util_fits_cpu(util, uclamp_min, uclamp_max, cpu) > 0);
+	ਵਾਪਸ (util_ਸਮਾਉਂਦਾ_cpu(util, uclamp_min, uclamp_max, cpu) > 0);
 }
 
-static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_misfit_ਸਥਿਤੀ(ਬਣਤਰ task_struct *p, ਬਣਤਰ rq *rq)
 {
-	int cpu = cpu_of(rq);
+	ਪੂਰਨ cpu = cpu_ਦਾ(rq);
 
-	if (!sched_asym_cpucap_active())
-		return;
+	ਜੇ (!sched_asym_cpucap_ਸਰਗਰਮ())
+		ਵਾਪਸ;
 
 	/*
 	 * Affinity allows us to go somewhere higher?  Or are we on biggest
 	 * available CPU already? Or do we fit into this CPU ?
 	 */
-	if (!p || (p->nr_cpus_allowed == 1) ||
-	    (arch_scale_cpu_capacity(cpu) == p->max_allowed_capacity) ||
-	    task_fits_cpu(p, cpu)) {
+	ਜੇ (!p || (p->nr_cpus_allowed == 1) ||
+	    (arch_scale_cpu_ਸਮਰੱਥਾ(cpu) == p->max_allowed_ਸਮਰੱਥਾ) ||
+	    task_ਸਮਾਉਂਦਾ_cpu(p, cpu)) {
 
-		rq->misfit_task_load = 0;
-		return;
+		rq->misfit_task_ਲੱਦੋ = 0;
+		ਵਾਪਸ;
 	}
 
 	/*
 	 * Make sure that misfit_task_load will not be null even if
 	 * task_h_load() returns 0.
 	 */
-	rq->misfit_task_load = max_t(unsigned long, task_h_load(p), 1);
+	rq->misfit_task_ਲੱਦੋ = max_t(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ, task_h_ਲੱਦੋ(p), 1);
 }
 
-void __setparam_fair(struct task_struct *p, const struct sched_attr *attr)
+ਖਾਲੀ __setparam_fair(ਬਣਤਰ task_struct *p, ਅਚਲ ਬਣਤਰ sched_attr *attr)
 {
-	struct sched_entity *se = &p->se;
+	ਬਣਤਰ sched_entity *se = &p->se;
 
-	p->static_prio = NICE_TO_PRIO(attr->sched_nice);
-	if (attr->sched_runtime) {
-		se->custom_slice = 1;
-		se->slice = clamp_t(u64, attr->sched_runtime,
-				      NSEC_PER_MSEC/10,   /* HZ=1000 * 10 */
-				      NSEC_PER_MSEC*100); /* HZ=100  / 10 */
-	} else {
-		se->custom_slice = 0;
-		se->slice = sysctl_sched_base_slice;
+	p->static_prio = NICE_ਮੰਜ਼ਿਲ_PRIO(attr->sched_nice);
+	ਜੇ (attr->sched_runtime) {
+		se->custom_ਟੁਕੜਾ = 1;
+		se->ਟੁਕੜਾ = clamp_t(u64, attr->sched_runtime,
+				      NSEC_ਪ੍ਰਤੀ_MSEC/10,   /* HZ=1000 * 10 */
+				      NSEC_ਪ੍ਰਤੀ_MSEC*100); /* HZ=100  / 10 */
+	} ਨਹੀਂਤਾਂ {
+		se->custom_ਟੁਕੜਾ = 0;
+		se->ਟੁਕੜਾ = sysctl_sched_ਅਧਾਰ_ਟੁਕੜਾ;
 	}
 }
 
-static void
-place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ਸਥਿਰ ਖਾਲੀ
+ਰੱਖੋ_entity(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, ਪੂਰਨ flags)
 {
 	u64 vslice, vruntime = avg_vruntime(cfs_rq);
-	unsigned int nr_queued = cfs_rq->h_nr_queued;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr_queued = cfs_rq->h_nr_queued;
 	bool update_zero = false;
 	s64 lag = 0;
 
-	if (!se->custom_slice)
-		se->slice = sysctl_sched_base_slice;
-	vslice = calc_delta_fair(se->slice, se);
+	ਜੇ (!se->custom_ਟੁਕੜਾ)
+		se->ਟੁਕੜਾ = sysctl_sched_ਅਧਾਰ_ਟੁਕੜਾ;
+	vslice = calc_delta_fair(se->ਟੁਕੜਾ, se);
 
-	if (flags & ENQUEUE_QUEUED)
+	ਜੇ (flags & ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_QUEUED)
 		nr_queued -= 1;
 
 	/*
@@ -6349,9 +6349,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	 *
 	 * EEVDF: placement strategy #1 / #2
 	 */
-	if (sched_feat(PLACE_LAG) && nr_queued && se->vlag) {
-		struct sched_entity *curr = cfs_rq->curr;
-		long load, weight;
+	ਜੇ (sched_feat(ਰੱਖੋ_LAG) && nr_queued && se->vlag) {
+		ਬਣਤਰ sched_entity *curr = cfs_rq->curr;
+		ਲੰਮਾ ਲੱਦੋ, ਭਾਰ;
 
 		lag = se->vlag;
 
@@ -6407,13 +6407,13 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 		 *
 		 *   vl_i = (W + w_i)*vl'_i / W
 		 */
-		load = cfs_rq->sum_weight;
-		if (curr && curr->on_rq)
-			load += avg_vruntime_weight(cfs_rq, curr->h_load.weight);
-		if (WARN_ON_ONCE(!load))
-			load = 1;
+		ਲੱਦੋ = cfs_rq->ਜੋੜ_ਭਾਰ;
+		ਜੇ (curr && curr->on_rq)
+			ਲੱਦੋ += avg_vruntime_ਭਾਰ(cfs_rq, curr->h_ਲੱਦੋ.ਭਾਰ);
+		ਜੇ (WARN_ON_ONCE(!ਲੱਦੋ))
+			ਲੱਦੋ = 1;
 
-		weight = avg_vruntime_weight(cfs_rq, se->h_load.weight);
+		ਭਾਰ = avg_vruntime_ਭਾਰ(cfs_rq, se->h_ਲੱਦੋ.ਭਾਰ);
 
 		/*
 		 * Rewrite, because the product (W + w_i)*vl'_i might
@@ -6423,7 +6423,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 		 *        = (W*vl'_i + w_i*vl'_i) / W
 		 *        = vl'_i + w_i*vl'_i/W
 		 */
-		lag += div64_long(lag * weight, load);
+		lag += div64_long(lag * ਭਾਰ, ਲੱਦੋ);
 
 		/*
 		 * A heavy entity (relative to the tree) will pull the
@@ -6445,19 +6445,19 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 		 * for the heavy entity the difference is small but the factor
 		 * is large. Avoiding the multiplication overflow.
 		 */
-		if (weight > load)
+		ਜੇ (ਭਾਰ > ਲੱਦੋ)
 			update_zero = true;
 	}
 
 	se->vruntime = vruntime - lag;
 
-	if (update_zero)
+	ਜੇ (update_zero)
 		update_zero_vruntime(cfs_rq, -lag);
 
-	if (sched_feat(PLACE_REL_DEADLINE) && se->rel_deadline) {
+	ਜੇ (sched_feat(ਰੱਖੋ_REL_DEADLINE) && se->rel_deadline) {
 		se->deadline += se->vruntime;
 		se->rel_deadline = 0;
-		return;
+		ਵਾਪਸ;
 	}
 
 	/*
@@ -6465,7 +6465,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	 * on average, halfway through their slice, as such start tasks
 	 * off with half a slice to ease into the competition.
 	 */
-	if (sched_feat(PLACE_DEADLINE_INITIAL) && (flags & ENQUEUE_INITIAL))
+	ਜੇ (sched_feat(ਰੱਖੋ_DEADLINE_INITIAL) && (flags & ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_INITIAL))
 		vslice /= 2;
 
 	/*
@@ -6474,11 +6474,11 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	se->deadline = se->vruntime + vslice;
 }
 
-static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
-static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
+ਸਥਿਰ ਖਾਲੀ check_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_throttle(ਬਣਤਰ cfs_rq *cfs_rq);
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ cfs_rq_throttled(ਬਣਤਰ cfs_rq *cfs_rq);
 
-static void
-enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ਸਥਿਰ ਖਾਲੀ
+ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_entity(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, ਪੂਰਨ flags)
 {
 	/*
 	 * When enqueuing a sched_entity, we must:
@@ -6489,58 +6489,58 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	 *     its group cfs_rq
 	 *   - Add its new weight to cfs_rq->load.weight
 	 */
-	update_load_avg(cfs_rq, se, UPDATE_TG | DO_ATTACH);
+	update_ਲੱਦੋ_avg(cfs_rq, se, UPDATE_TG | DO_ATTACH);
 	se_update_runnable(se);
 	/*
 	 * XXX update_load_avg() above will have attached us to the pelt sum;
 	 * but update_cfs_group() here will re-adjust the weight and have to
 	 * undo/redo all that. Seems wasteful.
 	 */
-	update_cfs_group(se);
+	update_cfs_ਸਮੂਹ(se);
 
-	account_entity_enqueue(cfs_rq, se);
+	account_entity_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(cfs_rq, se);
 
 	/* Entity has migrated, no longer consider this task hot */
-	if (flags & ENQUEUE_MIGRATED)
-		se->exec_start = 0;
+	ਜੇ (flags & ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_MIGRATED)
+		se->exec_ਸ਼ੁਰੂ = 0;
 
 	check_schedstat_required();
-	update_stats_enqueue_fair(cfs_rq, se, flags);
+	update_stats_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_fair(cfs_rq, se, flags);
 	se->on_rq = 1;
 
-	if (cfs_rq->nr_queued == 1) {
-		check_enqueue_throttle(cfs_rq);
-		list_add_leaf_cfs_rq(cfs_rq);
-#ifdef CONFIG_CFS_BANDWIDTH
-		if (cfs_rq->pelt_clock_throttled) {
-			struct rq *rq = rq_of(cfs_rq);
+	ਜੇ (cfs_rq->nr_queued == 1) {
+		check_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_throttle(cfs_rq);
+		list_ਜੋੜੋ_ਪੱਤੀ_cfs_rq(cfs_rq);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CFS_BANDWIDTH
+		ਜੇ (cfs_rq->pelt_clock_throttled) {
+			ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 
-			cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
+			cfs_rq->throttled_clock_pelt_ਸਮਾਂ += rq_clock_pelt(rq) -
 				cfs_rq->throttled_clock_pelt;
 			cfs_rq->pelt_clock_throttled = 0;
 		}
-#endif
+#ਜੇ_ਅੰਤ
 	}
 }
 
-static void set_next_buddy(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_ਅਗਲਾ_buddy(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	if (WARN_ON_ONCE(!se->on_rq || se->sched_delayed))
-		return;
-	if (se_is_idle(se))
-		return;
-	cfs_rq->next = se;
+	ਜੇ (WARN_ON_ONCE(!se->on_rq || se->sched_delayed))
+		ਵਾਪਸ;
+	ਜੇ (se_is_idle(se))
+		ਵਾਪਸ;
+	cfs_rq->ਅਗਲਾ = se;
 }
 
-static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ clear_buddies(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	if (cfs_rq->next == se)
-		cfs_rq->next = NULL;
+	ਜੇ (cfs_rq->ਅਗਲਾ == se)
+		cfs_rq->ਅਗਲਾ = ਨਿਰਾ;
 }
 
-static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq);
+ਸਥਿਰ __always_inline ਖਾਲੀ return_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq);
 
-static void set_delayed(struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_delayed(ਬਣਤਰ sched_entity *se)
 {
 	/*
 	 * Delayed se of cfs_rq have no tasks queued on them.
@@ -6551,9 +6551,9 @@ static void set_delayed(struct sched_entity *se)
 	 * patches get merged as only task can get delayed,
 	 * same for clear_delayed().
 	 */
-	if (!entity_is_task(se)) {
+	ਜੇ (!entity_is_task(se)) {
 		se->sched_delayed = 1;
-		return;
+		ਵਾਪਸ;
 	}
 
 	/*
@@ -6561,17 +6561,17 @@ static void set_delayed(struct sched_entity *se)
 	 * Needs to be called before sched_delayed is set.
 	 * clear_delayed() mirrors this after clearing the flag.
 	 */
-	pref_llc_running_dec(rq_of(cfs_rq_of(se)), task_of(se));
+	pref_llc_running_dec(rq_ਦਾ(cfs_rq_ਦਾ(se)), task_ਦਾ(se));
 	se->sched_delayed = 1;
 
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
 
 		cfs_rq->h_nr_runnable--;
 	}
 }
 
-static void clear_delayed(struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ clear_delayed(ਬਣਤਰ sched_entity *se)
 {
 	se->sched_delayed = 0;
 
@@ -6581,33 +6581,33 @@ static void clear_delayed(struct sched_entity *se)
 	 * already accounted for it or an enqueue of a task
 	 * below it will account for it in enqueue_task_fair().
 	 */
-	if (!entity_is_task(se))
-		return;
+	ਜੇ (!entity_is_task(se))
+		ਵਾਪਸ;
 
 	/*
 	 * Re-add on wake, after sched_delayed is cleared. On a final delayed
 	 * dequeue account_llc_dequeue() already cleared pref_llc_queued, so
 	 * this does nothing.
 	 */
-	pref_llc_running_inc(rq_of(cfs_rq_of(se)), task_of(se));
+	pref_llc_running_inc(rq_ਦਾ(cfs_rq_ਦਾ(se)), task_ਦਾ(se));
 
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
 
 		cfs_rq->h_nr_runnable++;
 	}
 }
 
-static void
-dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ਸਥਿਰ ਖਾਲੀ
+ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_entity(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se, ਪੂਰਨ flags)
 {
-	int action = UPDATE_TG;
+	ਪੂਰਨ action = UPDATE_TG;
 
-	if (entity_is_task(se)) {
-		if (task_on_rq_migrating(task_of(se)))
+	ਜੇ (entity_is_task(se)) {
+		ਜੇ (task_on_rq_migrating(task_ਦਾ(se)))
 			action |= DO_DETACH;
 
-		if ((flags & DEQUEUE_SLEEP) && !(flags & DEQUEUE_DELAYED))
+		ਜੇ ((flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP) && !(flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_DELAYED))
 			action |= UPDATE_UTIL_EST;
 	}
 
@@ -6620,48 +6620,48 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	 *   - For group entity, update its weight to reflect the new share
 	 *     of its group cfs_rq.
 	 */
-	update_load_avg(cfs_rq, se, action);
+	update_ਲੱਦੋ_avg(cfs_rq, se, action);
 	se_update_runnable(se);
 
-	update_stats_dequeue_fair(cfs_rq, se, flags);
+	update_stats_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_fair(cfs_rq, se, flags);
 
 	se->on_rq = 0;
-	account_entity_dequeue(cfs_rq, se);
+	account_entity_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(cfs_rq, se);
 
 	/* return excess runtime on last dequeue */
 	return_cfs_rq_runtime(cfs_rq);
 
-	update_cfs_group(se);
+	update_cfs_ਸਮੂਹ(se);
 
-	if (cfs_rq->nr_queued == 0) {
+	ਜੇ (cfs_rq->nr_queued == 0) {
 		update_idle_cfs_rq_clock_pelt(cfs_rq);
-#ifdef CONFIG_CFS_BANDWIDTH
-		if (throttled_hierarchy(cfs_rq)) {
-			struct rq *rq = rq_of(cfs_rq);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CFS_BANDWIDTH
+		ਜੇ (throttled_hierarchy(cfs_rq)) {
+			ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 
-			list_del_leaf_cfs_rq(cfs_rq);
+			list_del_ਪੱਤੀ_cfs_rq(cfs_rq);
 			cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
 			cfs_rq->pelt_clock_throttled = 1;
 		}
-#endif
+#ਜੇ_ਅੰਤ
 	}
 }
 
-static void
-set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ
+ਸੈੱਟ_ਅਗਲਾ_entity(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
 	/* 'current' is not kept within the tree. */
-	if (se->on_rq) {
+	ਜੇ (se->on_rq) {
 		/*
 		 * Any task has to be enqueued before it get to execute on
 		 * a CPU. So account for the time it spent waiting on the
 		 * runqueue.
 		 */
-		update_stats_wait_end_fair(cfs_rq, se);
-		update_load_avg(cfs_rq, se, UPDATE_TG);
+		update_stats_wait_ਸਿਰਾ_fair(cfs_rq, se);
+		update_ਲੱਦੋ_avg(cfs_rq, se, UPDATE_TG);
 	}
 
-	update_stats_curr_start(cfs_rq, se);
+	update_stats_curr_ਸ਼ੁਰੂ(cfs_rq, se);
 	WARN_ON_ONCE(cfs_rq->h_curr);
 	cfs_rq->h_curr = se;
 
@@ -6670,58 +6670,58 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	 * least twice that of our own weight (i.e. don't track it
 	 * when there are only lesser-weight tasks around):
 	 */
-	if (schedstat_enabled() &&
-	    rq_of(cfs_rq)->cfs.load.weight >= 2*se->load.weight) {
-		struct sched_statistics *stats;
+	ਜੇ (schedstat_enabled() &&
+	    rq_ਦਾ(cfs_rq)->cfs.ਲੱਦੋ.ਭਾਰ >= 2*se->ਲੱਦੋ.ਭਾਰ) {
+		ਬਣਤਰ sched_statistics *stats;
 
 		stats = __schedstats_from_se(se);
-		__schedstat_set(stats->slice_max,
-				max((u64)stats->slice_max,
-				    se->sum_exec_runtime - se->prev_sum_exec_runtime));
+		__schedstat_set(stats->ਟੁਕੜਾ_max,
+				max((u64)stats->ਟੁਕੜਾ_max,
+				    se->ਜੋੜ_exec_runtime - se->prev_ਜੋੜ_exec_runtime));
 	}
 
-	se->prev_sum_exec_runtime = se->sum_exec_runtime;
+	se->prev_ਜੋੜ_exec_runtime = se->ਜੋੜ_exec_runtime;
 }
 
-static bool __dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+ਸਥਿਰ bool __dequeue_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
 
-static struct sched_entity *
-pick_next_entity(struct rq *rq, bool protect)
+ਸਥਿਰ ਬਣਤਰ sched_entity *
+pick_ਅਗਲਾ_entity(ਬਣਤਰ rq *rq, bool protect)
 {
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	struct sched_entity *se;
+	ਬਣਤਰ cfs_rq *cfs_rq = &rq->cfs;
+	ਬਣਤਰ sched_entity *se;
 
 	se = pick_eevdf(cfs_rq, protect);
-	if (se->sched_delayed) {
-		__dequeue_task(rq, task_of(se), DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+	ਜੇ (se->sched_delayed) {
+		__dequeue_task(rq, task_ਦਾ(se), ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP | ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_DELAYED);
 		/*
 		 * Must not reference @se again, see __block_task().
 		 */
-		return NULL;
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	return se;
+	ਵਾਪਸ se;
 }
 
-static void put_prev_entity(struct cfs_rq *cfs_rq, struct sched_entity *prev)
+ਸਥਿਰ ਖਾਲੀ put_prev_entity(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *prev)
 {
 	/*
 	 * If still on the runqueue then deactivate_task()
 	 * was not called and update_curr() has to be done:
 	 */
-	if (prev->on_rq)
+	ਜੇ (prev->on_rq)
 		update_curr(cfs_rq);
 
-	if (prev->on_rq) {
-		update_stats_wait_start_fair(cfs_rq, prev);
+	ਜੇ (prev->on_rq) {
+		update_stats_wait_ਸ਼ੁਰੂ_fair(cfs_rq, prev);
 		/* in !on_rq case, update occurred at dequeue */
-		update_load_avg(cfs_rq, prev, 0);
+		update_ਲੱਦੋ_avg(cfs_rq, prev, 0);
 	}
 	WARN_ON_ONCE(cfs_rq->h_curr != prev);
-	cfs_rq->h_curr = NULL;
+	cfs_rq->h_curr = ਨਿਰਾ;
 }
 
-static void
-entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+ਸਥਿਰ ਖਾਲੀ
+entity_tick(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *curr, ਪੂਰਨ queued)
 {
 	/*
 	 * Update run-time statistics of the 'current'.
@@ -6731,19 +6731,19 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
 	/*
 	 * Ensure that runnable average is periodically updated.
 	 */
-	update_load_avg(cfs_rq, curr, UPDATE_TG);
-	update_cfs_group(curr);
+	update_ਲੱਦੋ_avg(cfs_rq, curr, UPDATE_TG);
+	update_cfs_ਸਮੂਹ(curr);
 
-#ifdef CONFIG_SCHED_HRTICK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_HRTICK
 	/*
 	 * queued ticks are scheduled to match the slice, so don't bother
 	 * validating it and just reschedule.
 	 */
-	if (queued) {
-		resched_curr(rq_of(cfs_rq));
-		return;
+	ਜੇ (queued) {
+		resched_curr(rq_ਦਾ(cfs_rq));
+		ਵਾਪਸ;
 	}
-#endif
+#ਜੇ_ਅੰਤ
 }
 
 
@@ -6751,38 +6751,38 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
  * CFS bandwidth control machinery
  */
 
-#ifdef CONFIG_CFS_BANDWIDTH
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CFS_BANDWIDTH
 
-#ifdef CONFIG_JUMP_LABEL
-static struct static_key __cfs_bandwidth_used;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_JUMP_LABEL
+ਸਥਿਰ ਬਣਤਰ static_ਕੁੰਜੀ __cfs_bandwidth_used;
 
-static inline bool cfs_bandwidth_used(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool cfs_bandwidth_ਵਰਤਿਆ(ਖਾਲੀ)
 {
-	return static_key_false(&__cfs_bandwidth_used);
+	ਵਾਪਸ static_ਕੁੰਜੀ_false(&__cfs_bandwidth_used);
 }
 
-void cfs_bandwidth_usage_inc(void)
+ਖਾਲੀ cfs_bandwidth_usage_inc(ਖਾਲੀ)
 {
-	static_key_slow_inc_cpuslocked(&__cfs_bandwidth_used);
+	static_ਕੁੰਜੀ_slow_inc_cpuslocked(&__cfs_bandwidth_used);
 }
 
-void cfs_bandwidth_usage_dec(void)
+ਖਾਲੀ cfs_bandwidth_usage_dec(ਖਾਲੀ)
 {
-	static_key_slow_dec_cpuslocked(&__cfs_bandwidth_used);
+	static_ਕੁੰਜੀ_slow_dec_cpuslocked(&__cfs_bandwidth_used);
 }
-#else /* !CONFIG_JUMP_LABEL: */
-static bool cfs_bandwidth_used(void)
+#ਨਹੀਂਤਾਂ /* !CONFIG_JUMP_LABEL: */
+ਸਥਿਰ bool cfs_bandwidth_ਵਰਤਿਆ(ਖਾਲੀ)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-void cfs_bandwidth_usage_inc(void) {}
-void cfs_bandwidth_usage_dec(void) {}
-#endif /* !CONFIG_JUMP_LABEL */
+ਖਾਲੀ cfs_bandwidth_usage_inc(ਖਾਲੀ) {}
+ਖਾਲੀ cfs_bandwidth_usage_dec(ਖਾਲੀ) {}
+#ਜੇ_ਅੰਤ /* !CONFIG_JUMP_LABEL */
 
-static inline u64 sched_cfs_bandwidth_slice(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 sched_cfs_bandwidth_ਟੁਕੜਾ(ਖਾਲੀ)
 {
-	return (u64)sysctl_sched_cfs_bandwidth_slice * NSEC_PER_USEC;
+	ਵਾਪਸ (u64)sysctl_sched_cfs_bandwidth_ਟੁਕੜਾ * NSEC_ਪ੍ਰਤੀ_USEC;
 }
 
 /*
@@ -6792,148 +6792,148 @@ static inline u64 sched_cfs_bandwidth_slice(void)
  *
  * requires cfs_b->lock
  */
-void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
+ਖਾਲੀ __refill_cfs_bandwidth_runtime(ਬਣਤਰ cfs_bandwidth *cfs_b)
 {
 	s64 runtime;
 
-	if (unlikely(cfs_b->quota == RUNTIME_INF))
-		return;
+	ਜੇ (unlikely(cfs_b->quota == RUNTIME_INF))
+		ਵਾਪਸ;
 
 	cfs_b->runtime += cfs_b->quota;
 	runtime = cfs_b->runtime_snap - cfs_b->runtime;
-	if (runtime > 0) {
-		cfs_b->burst_time += runtime;
-		cfs_b->nr_burst++;
+	ਜੇ (runtime > 0) {
+		cfs_b->ਮਿਆਦ_ਸਮਾਂ += runtime;
+		cfs_b->nr_ਮਿਆਦ++;
 	}
 
-	cfs_b->runtime = min(cfs_b->runtime, cfs_b->quota + cfs_b->burst);
+	cfs_b->runtime = min(cfs_b->runtime, cfs_b->quota + cfs_b->ਮਿਆਦ);
 	cfs_b->runtime_snap = cfs_b->runtime;
 }
 
-static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_bandwidth *tg_cfs_bandwidth(ਬਣਤਰ task_ਸਮੂਹ *tg)
 {
-	return &tg->cfs_bandwidth;
+	ਵਾਪਸ &tg->cfs_bandwidth;
 }
 
 /* returns 0 on failure to allocate runtime */
-static int __assign_cfs_rq_runtime(struct cfs_bandwidth *cfs_b,
-				   struct cfs_rq *cfs_rq, u64 target_runtime)
+ਸਥਿਰ ਪੂਰਨ __assign_cfs_rq_runtime(ਬਣਤਰ cfs_bandwidth *cfs_b,
+				   ਬਣਤਰ cfs_rq *cfs_rq, u64 ਨਿਸ਼ਾਨਾ_runtime)
 {
 	u64 min_amount, amount = 0;
 
-	lockdep_assert_held(&cfs_b->lock);
+	lockdep_assert_held(&cfs_b->ਤਾਲਾ);
 
 	/* note: this is a positive sum as runtime_remaining <= 0 */
-	min_amount = target_runtime - cfs_rq->runtime_remaining;
+	min_amount = ਨਿਸ਼ਾਨਾ_runtime - cfs_rq->runtime_ਬਚਿਆ;
 
-	if (cfs_b->quota == RUNTIME_INF)
+	ਜੇ (cfs_b->quota == RUNTIME_INF)
 		amount = min_amount;
-	else {
-		start_cfs_bandwidth(cfs_b);
+	ਨਹੀਂਤਾਂ {
+		ਸ਼ੁਰੂ_cfs_bandwidth(cfs_b);
 
-		if (cfs_b->runtime > 0) {
+		ਜੇ (cfs_b->runtime > 0) {
 			amount = min(cfs_b->runtime, min_amount);
 			cfs_b->runtime -= amount;
 			cfs_b->idle = 0;
 		}
 	}
 
-	cfs_rq->runtime_remaining += amount;
+	cfs_rq->runtime_ਬਚਿਆ += amount;
 
-	return cfs_rq->runtime_remaining > 0;
+	ਵਾਪਸ cfs_rq->runtime_ਬਚਿਆ > 0;
 }
 
-static bool throttle_cfs_rq(struct cfs_rq *cfs_rq);
+ਸਥਿਰ bool throttle_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq);
 
-static bool __account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
+ਸਥਿਰ bool __account_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq, u64 delta_exec)
 {
 	/* dock delta_exec before expiring quota (as it could span periods) */
-	cfs_rq->runtime_remaining -= delta_exec;
+	cfs_rq->runtime_ਬਚਿਆ -= delta_exec;
 
-	if (likely(cfs_rq->runtime_remaining > 0))
-		return false;
+	ਜੇ (likely(cfs_rq->runtime_ਬਚਿਆ > 0))
+		ਵਾਪਸ false;
 
-	if (cfs_rq->throttled)
-		return true;
+	ਜੇ (cfs_rq->throttled)
+		ਵਾਪਸ true;
 	/*
 	 * throttle_cfs_rq() will try to extend the runtime first
 	 * before throttling the hierarchy.
 	 */
-	return throttle_cfs_rq(cfs_rq);
+	ਵਾਪਸ throttle_cfs_rq(cfs_rq);
 }
 
-static __always_inline
-bool account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
+ਸਥਿਰ __always_inline
+bool account_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq, u64 delta_exec)
 {
-	if (!cfs_bandwidth_used() || !cfs_rq->runtime_enabled)
-		return false;
+	ਜੇ (!cfs_bandwidth_ਵਰਤਿਆ() || !cfs_rq->runtime_enabled)
+		ਵਾਪਸ false;
 
-	return __account_cfs_rq_runtime(cfs_rq, delta_exec);
+	ਵਾਪਸ __account_cfs_rq_runtime(cfs_rq, delta_exec);
 }
 
-static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ cfs_rq_throttled(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return cfs_bandwidth_used() && cfs_rq->throttled;
+	ਵਾਪਸ cfs_bandwidth_ਵਰਤਿਆ() && cfs_rq->throttled;
 }
 
-static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool cfs_rq_pelt_clock_throttled(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return cfs_bandwidth_used() && cfs_rq->pelt_clock_throttled;
+	ਵਾਪਸ cfs_bandwidth_ਵਰਤਿਆ() && cfs_rq->pelt_clock_throttled;
 }
 
 /* check whether cfs_rq, or any parent, is throttled */
-static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ throttled_hierarchy(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return cfs_bandwidth_used() && cfs_rq->throttle_count;
+	ਵਾਪਸ cfs_bandwidth_ਵਰਤਿਆ() && cfs_rq->throttle_ਗਿਣਤੀ;
 }
 
-static inline int lb_throttled_hierarchy(struct task_struct *p, int dst_cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ lb_throttled_hierarchy(ਬਣਤਰ task_struct *p, ਪੂਰਨ dst_cpu)
 {
-	return throttled_hierarchy(tg_cfs_rq(task_group(p), dst_cpu));
+	ਵਾਪਸ throttled_hierarchy(tg_cfs_rq(task_ਸਮੂਹ(p), dst_cpu));
 }
 
-static inline bool task_is_throttled(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool task_is_throttled(ਬਣਤਰ task_struct *p)
 {
-	return cfs_bandwidth_used() && p->throttled;
+	ਵਾਪਸ cfs_bandwidth_ਵਰਤਿਆ() && p->throttled;
 }
 
-static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags);
-static void throttle_cfs_rq_work(struct callback_head *work)
+ਸਥਿਰ bool ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
+ਸਥਿਰ ਖਾਲੀ throttle_cfs_rq_work(ਬਣਤਰ callback_ਸਿਰ *work)
 {
-	struct task_struct *p = container_of(work, struct task_struct, sched_throttle_work);
-	struct sched_entity *se;
-	struct cfs_rq *cfs_rq;
-	struct rq *rq;
+	ਬਣਤਰ task_struct *p = container_ਦਾ(work, ਬਣਤਰ task_struct, sched_throttle_work);
+	ਬਣਤਰ sched_entity *se;
+	ਬਣਤਰ cfs_rq *cfs_rq;
+	ਬਣਤਰ rq *rq;
 
 	WARN_ON_ONCE(p != current);
-	p->sched_throttle_work.next = &p->sched_throttle_work;
+	p->sched_throttle_work.ਅਗਲਾ = &p->sched_throttle_work;
 
 	/*
 	 * If task is exiting, then there won't be a return to userspace, so we
 	 * don't have to bother with any of this.
 	 */
-	if ((p->flags & PF_EXITING))
-		return;
+	ਜੇ ((p->flags & PF_EXITING))
+		ਵਾਪਸ;
 
-	scoped_guard(task_rq_lock, p) {
+	scoped_guard(task_rq_ਤਾਲਾ_2, p) {
 		se = &p->se;
-		cfs_rq = cfs_rq_of(se);
+		cfs_rq = cfs_rq_ਦਾ(se);
 
 		/* Raced, forget */
-		if (p->sched_class != &fair_sched_class)
-			return;
+		ਜੇ (p->sched_class != &fair_sched_class)
+			ਵਾਪਸ;
 
 		/*
 		 * If not in limbo, then either replenish has happened or this
 		 * task got migrated out of the throttled cfs_rq, move along.
 		 */
-		if (!cfs_rq->throttle_count)
-			return;
+		ਜੇ (!cfs_rq->throttle_ਗਿਣਤੀ)
+			ਵਾਪਸ;
 		rq = scope.rq;
 		update_rq_clock(rq);
-		WARN_ON_ONCE(p->throttled || !list_empty(&p->throttle_node));
-		dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_THROTTLE);
-		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+		WARN_ON_ONCE(p->throttled || !list_ਖਾਲੀ_ਥਾਵਾਂ(&p->throttle_ਗੰਢ));
+		ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task_fair(rq, p, ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP | ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_THROTTLE);
+		list_ਜੋੜੋ(&p->throttle_ਗੰਢ, &cfs_rq->throttled_limbo_list);
 		/*
 		 * Must not set throttled before dequeue or dequeue will
 		 * mistakenly regard this task as an already throttled one.
@@ -6943,12 +6943,12 @@ static void throttle_cfs_rq_work(struct callback_head *work)
 	}
 }
 
-void init_cfs_throttle_work(struct task_struct *p)
+ਖਾਲੀ init_cfs_throttle_work(ਬਣਤਰ task_struct *p)
 {
 	init_task_work(&p->sched_throttle_work, throttle_cfs_rq_work);
 	/* Protect against double add, see throttle_cfs_rq() and throttle_cfs_rq_work() */
-	p->sched_throttle_work.next = &p->sched_throttle_work;
-	INIT_LIST_HEAD(&p->throttle_node);
+	p->sched_throttle_work.ਅਗਲਾ = &p->sched_throttle_work;
+	INIT_LIST_ਸਿਰ(&p->throttle_ਗੰਢ);
 }
 
 /*
@@ -6959,32 +6959,32 @@ void init_cfs_throttle_work(struct task_struct *p)
  * or the task is blocked after throttled due to freezer etc.
  * and in these cases, DEQUEUE_SLEEP is set.
  */
-static void detach_task_cfs_rq(struct task_struct *p);
-static void dequeue_throttled_task(struct task_struct *p, int flags)
+ਸਥਿਰ ਖਾਲੀ detach_task_cfs_rq(ਬਣਤਰ task_struct *p);
+ਸਥਿਰ ਖਾਲੀ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_throttled_task(ਬਣਤਰ task_struct *p, ਪੂਰਨ flags)
 {
 	WARN_ON_ONCE(p->se.on_rq);
-	list_del_init(&p->throttle_node);
+	list_del_init(&p->throttle_ਗੰਢ);
 
 	/* task blocked after throttled */
-	if (flags & DEQUEUE_SLEEP) {
+	ਜੇ (flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP) {
 		p->throttled = false;
-		return;
+		ਵਾਪਸ;
 	}
 
 	/*
 	 * task is migrating off its old cfs_rq, detach
 	 * the task's load from its old cfs_rq.
 	 */
-	if (task_on_rq_migrating(p))
+	ਜੇ (task_on_rq_migrating(p))
 		detach_task_cfs_rq(p);
 }
 
-static bool enqueue_throttled_task(struct task_struct *p)
+ਸਥਿਰ bool ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_throttled_task(ਬਣਤਰ task_struct *p)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(&p->se);
+	ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(&p->se);
 
 	/* @p should have gone through dequeue_throttled_task() first */
-	WARN_ON_ONCE(!list_empty(&p->throttle_node));
+	WARN_ON_ONCE(!list_ਖਾਲੀ_ਥਾਵਾਂ(&p->throttle_ਗੰਢ));
 
 	/*
 	 * If the throttled task @p is enqueued to a throttled cfs_rq,
@@ -7020,24 +7020,24 @@ static bool enqueue_throttled_task(struct task_struct *p)
 	 * to a different group from the same rq, so we can use its current
 	 * cfs_rq to derive rq and test if the task is current.
 	 */
-	if (throttled_hierarchy(cfs_rq) &&
-	    !task_current_donor(rq_of(cfs_rq), p)) {
-		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
-		return true;
+	ਜੇ (throttled_hierarchy(cfs_rq) &&
+	    !task_current_donor(rq_ਦਾ(cfs_rq), p)) {
+		list_ਜੋੜੋ(&p->throttle_ਗੰਢ, &cfs_rq->throttled_limbo_list);
+		ਵਾਪਸ true;
 	}
 
 	/* we can't take the fast path, do an actual enqueue*/
 	p->throttled = false;
-	return false;
+	ਵਾਪਸ false;
 }
 
-static void enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags);
-static int tg_unthrottle_up(struct task_group *tg, void *data)
+ਸਥਿਰ ਖਾਲੀ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
+ਸਥਿਰ ਪੂਰਨ tg_unthrottle_ਉੱਪਰ(ਬਣਤਰ task_ਸਮੂਹ *tg, ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	struct rq *rq = data;
-	struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
-	struct task_struct *p, *tmp;
-	LIST_HEAD(throttled_tasks);
+	ਬਣਤਰ rq *rq = ਅੰਕੜੇ;
+	ਬਣਤਰ cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_ਦਾ(rq));
+	ਬਣਤਰ task_struct *p, *tmp;
+	LIST_ਸਿਰ(throttled_tasks);
 
 	/*
 	 * If cfs_rq->curr is set, the cfs_rq might not have caught up
@@ -7048,24 +7048,24 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
 	 */
 	update_curr(cfs_rq);
 
-	if (--cfs_rq->throttle_count)
-		return 0;
+	ਜੇ (--cfs_rq->throttle_ਗਿਣਤੀ)
+		ਵਾਪਸ 0;
 
-	if (cfs_rq->pelt_clock_throttled) {
-		cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
+	ਜੇ (cfs_rq->pelt_clock_throttled) {
+		cfs_rq->throttled_clock_pelt_ਸਮਾਂ += rq_clock_pelt(rq) -
 					     cfs_rq->throttled_clock_pelt;
 		cfs_rq->pelt_clock_throttled = 0;
 	}
 
-	if (cfs_rq->throttled_clock_self) {
+	ਜੇ (cfs_rq->throttled_clock_self) {
 		u64 delta = rq_clock(rq) - cfs_rq->throttled_clock_self;
 
 		cfs_rq->throttled_clock_self = 0;
 
-		if (WARN_ON_ONCE((s64)delta < 0))
+		ਜੇ (WARN_ON_ONCE((s64)delta < 0))
 			delta = 0;
 
-		cfs_rq->throttled_clock_self_time += delta;
+		cfs_rq->throttled_clock_self_ਸਮਾਂ += delta;
 	}
 
 	/*
@@ -7077,91 +7077,91 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
 	list_splice_init(&cfs_rq->throttled_limbo_list, &throttled_tasks);
 
 	/* Re-enqueue the tasks that have been throttled at this level. */
-	list_for_each_entry_safe(p, tmp, &throttled_tasks, throttle_node) {
+	list_for_each_ਇੰਦਰਾਜ_ਸੁਰੱਖਿਅਤ(p, tmp, &throttled_tasks, throttle_ਗੰਢ) {
 		/*
 		 * Back to being throttled! Break out and put the remaining
 		 * tasks back onto the limbo_list to prevent running them
 		 * unnecessarily.
 		 */
-		if (cfs_rq->throttle_count)
-			break;
+		ਜੇ (cfs_rq->throttle_ਗਿਣਤੀ)
+			ਰੋਕੋ;
 
-		list_del_init(&p->throttle_node);
+		list_del_init(&p->throttle_ਗੰਢ);
 		p->throttled = false;
-		enqueue_task_fair(rq, p, ENQUEUE_WAKEUP);
+		ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task_fair(rq, p, ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_WAKEUP);
 	}
 
 	list_splice(&throttled_tasks, &cfs_rq->throttled_limbo_list);
 
 	/* Add cfs_rq with load or one or more already running entities to the list */
-	if (!cfs_rq_is_decayed(cfs_rq))
-		list_add_leaf_cfs_rq(cfs_rq);
+	ਜੇ (!cfs_rq_is_decayed(cfs_rq))
+		list_ਜੋੜੋ_ਪੱਤੀ_cfs_rq(cfs_rq);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static inline bool task_has_throttle_work(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool task_has_throttle_work(ਬਣਤਰ task_struct *p)
 {
-	return p->sched_throttle_work.next != &p->sched_throttle_work;
+	ਵਾਪਸ p->sched_throttle_work.ਅਗਲਾ != &p->sched_throttle_work;
 }
 
-static inline void task_throttle_setup_work(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ task_throttle_ਤਿਆਰੀ_work(ਬਣਤਰ task_struct *p)
 {
-	if (task_has_throttle_work(p))
-		return;
+	ਜੇ (task_has_throttle_work(p))
+		ਵਾਪਸ;
 
 	/*
 	 * Kthreads and exiting tasks don't return to userspace, so adding the
 	 * work is pointless
 	 */
-	if ((p->flags & (PF_EXITING | PF_KTHREAD)))
-		return;
+	ਜੇ ((p->flags & (PF_EXITING | PF_KTHREAD)))
+		ਵਾਪਸ;
 
-	task_work_add(p, &p->sched_throttle_work, TWA_RESUME);
+	task_work_ਜੋੜੋ(p, &p->sched_throttle_work, TWA_RESUME);
 }
 
-static void record_throttle_clock(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਖਾਲੀ ਰਿਕਾਰਡ_throttle_clock(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct rq *rq = rq_of(cfs_rq);
+	ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 
-	if (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
+	ਜੇ (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
 		cfs_rq->throttled_clock = rq_clock(rq);
 
-	if (!cfs_rq->throttled_clock_self)
+	ਜੇ (!cfs_rq->throttled_clock_self)
 		cfs_rq->throttled_clock_self = rq_clock(rq);
 }
 
-static int tg_throttle_down(struct task_group *tg, void *data)
+ਸਥਿਰ ਪੂਰਨ tg_throttle_ਥੱਲੇ(ਬਣਤਰ task_ਸਮੂਹ *tg, ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	struct rq *rq = data;
-	struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
+	ਬਣਤਰ rq *rq = ਅੰਕੜੇ;
+	ਬਣਤਰ cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_ਦਾ(rq));
 
-	if (cfs_rq->throttle_count++)
-		return 0;
+	ਜੇ (cfs_rq->throttle_ਗਿਣਤੀ++)
+		ਵਾਪਸ 0;
 
 	/*
 	 * For cfs_rqs that still have entities enqueued, PELT clock
 	 * stop happens at dequeue time when all entities are dequeued.
 	 */
-	if (!cfs_rq->nr_queued) {
-		list_del_leaf_cfs_rq(cfs_rq);
+	ਜੇ (!cfs_rq->nr_queued) {
+		list_del_ਪੱਤੀ_cfs_rq(cfs_rq);
 		cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
 		cfs_rq->pelt_clock_throttled = 1;
 	}
 
 	WARN_ON_ONCE(cfs_rq->throttled_clock_self);
-	WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_limbo_list));
-	return 0;
+	WARN_ON_ONCE(!list_ਖਾਲੀ_ਥਾਵਾਂ(&cfs_rq->throttled_limbo_list));
+	ਵਾਪਸ 0;
 }
 
-static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ਸਥਿਰ bool throttle_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
-	struct sched_entity *curr = cfs_rq->h_curr;
-	struct rq *rq = rq_of(cfs_rq);
+	ਬਣਤਰ cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+	ਬਣਤਰ sched_entity *curr = cfs_rq->h_curr;
+	ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
 
-	scoped_guard(raw_spinlock, &cfs_b->lock) {
-		u64 target_runtime = 1;
+	scoped_guard(raw_spinlock, &cfs_b->ਤਾਲਾ) {
+		u64 ਨਿਸ਼ਾਨਾ_runtime = 1;
 
 		/*
 		 * If cfs_rq->h_curr is still runnable, we are here from an
@@ -7171,8 +7171,8 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
 		 * If the curr is not runnable, just request enough bandwidth
 		 * to be runnable next time the pick selects this cfs_rq.
 		 */
-		if (curr && curr->on_rq)
-			target_runtime = sched_cfs_bandwidth_slice();
+		ਜੇ (curr && curr->on_rq)
+			ਨਿਸ਼ਾਨਾ_runtime = sched_cfs_bandwidth_ਟੁਕੜਾ();
 
 		/*
 		 * Check if We have raced with bandwidth becoming available. If
@@ -7184,20 +7184,20 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
 		 *
 		 * This will start the period timer if necessary.
 		 */
-		if (__assign_cfs_rq_runtime(cfs_b, cfs_rq, target_runtime))
-			return false;
+		ਜੇ (__assign_cfs_rq_runtime(cfs_b, cfs_rq, ਨਿਸ਼ਾਨਾ_runtime))
+			ਵਾਪਸ false;
 
 		/*
 		 * No bandwidth available; Add ourselves on the list to be
 		 * unthrottled later.
 		 */
-		list_add_tail_rcu(&cfs_rq->throttled_list,
+		list_ਜੋੜੋ_ਪੂਛ_rcu(&cfs_rq->throttled_list,
 				  &cfs_b->throttled_cfs_rq);
 	}
 
 	/* freeze hierarchy runnable averages while throttled */
 	scoped_guard(rcu)
-		walk_tg_tree_from(cfs_rq->tg, tg_throttle_down, tg_nop, (void *)rq);
+		walk_tg_ਰੁੱਖ_from(cfs_rq->tg, tg_throttle_ਥੱਲੇ, tg_nop, (ਖਾਲੀ *)rq);
 
 	/*
 	 * Note: distribution will already see us throttled via the
@@ -7213,17 +7213,17 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
 	 * and the rule of throttle deferral to only throttle the
 	 * throttled context at exit to userspace is still preserved.
 	 */
-	if (curr && curr->on_rq)
-		task_throttle_setup_work(rq->donor);
+	ਜੇ (curr && curr->on_rq)
+		task_throttle_ਤਿਆਰੀ_work(rq->donor);
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ਖਾਲੀ unthrottle_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct rq *rq = rq_of(cfs_rq);
-	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
-	struct sched_entity *se = cfs_rq_se(cfs_rq);
+	ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
+	ਬਣਤਰ cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+	ਬਣਤਰ sched_entity *se = cfs_rq_se(cfs_rq);
 
 	/*
 	 * It's possible we are called with runtime_remaining < 0 due to things
@@ -7238,50 +7238,50 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
 	 * checking runtime remaining.
 	 */
 	update_curr(cfs_rq);
-	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
-		return;
+	ਜੇ (cfs_rq->runtime_enabled && cfs_rq->runtime_ਬਚਿਆ <= 0)
+		ਵਾਪਸ;
 
 	cfs_rq->throttled = 0;
 
-	scoped_guard(raw_spinlock, &cfs_b->lock) {
+	scoped_guard(raw_spinlock, &cfs_b->ਤਾਲਾ) {
 		list_del_rcu(&cfs_rq->throttled_list);
 
-		if (!cfs_rq->throttled_clock)
-			break;
+		ਜੇ (!cfs_rq->throttled_clock)
+			ਰੋਕੋ;
 
-		cfs_b->throttled_time += rq_clock(rq) - cfs_rq->throttled_clock;
+		cfs_b->throttled_ਸਮਾਂ += rq_clock(rq) - cfs_rq->throttled_clock;
 		cfs_rq->throttled_clock = 0;
 	}
 
 	/* update hierarchical throttle state */
-	walk_tg_tree_from(cfs_rq->tg, tg_nop, tg_unthrottle_up, (void *)rq);
+	walk_tg_ਰੁੱਖ_from(cfs_rq->tg, tg_nop, tg_unthrottle_ਉੱਪਰ, (ਖਾਲੀ *)rq);
 
-	if (!cfs_rq->load.weight) {
-		if (!cfs_rq->on_list)
-			return;
+	ਜੇ (!cfs_rq->ਲੱਦੋ.ਭਾਰ) {
+		ਜੇ (!cfs_rq->on_list)
+			ਵਾਪਸ;
 		/*
 		 * Nothing to run but something to decay (on_list)?
 		 * Complete the branch.
 		 */
 		for_each_sched_entity(se) {
-			if (list_add_leaf_cfs_rq(cfs_rq_of(se)))
-				break;
+			ਜੇ (list_ਜੋੜੋ_ਪੱਤੀ_cfs_rq(cfs_rq_ਦਾ(se)))
+				ਰੋਕੋ;
 		}
 	}
 
-	assert_list_leaf_cfs_rq(rq);
+	assert_list_ਪੱਤੀ_cfs_rq(rq);
 
 	/* Determine whether we need to wake up potentially idle CPU: */
-	if (rq->curr == rq->idle && rq->cfs.h_nr_queued)
+	ਜੇ (rq->curr == rq->idle && rq->cfs.h_nr_queued)
 		resched_curr(rq);
 }
 
-static void __cfsb_csd_unthrottle(void *arg)
+ਸਥਿਰ ਖਾਲੀ __cfsb_csd_unthrottle(ਖਾਲੀ *arg)
 {
-	struct cfs_rq *cursor, *tmp;
-	struct rq *rq = arg;
+	ਬਣਤਰ cfs_rq *cursor, *tmp;
+	ਬਣਤਰ rq *rq = arg;
 
-	guard(rq_lock)(rq);
+	guard(rq_ਤਾਲਾ)(rq);
 
 	/*
 	 * Iterating over the list can trigger several call to
@@ -7289,7 +7289,7 @@ static void __cfsb_csd_unthrottle(void *arg)
 	 * Do it once and skip the potential next ones.
 	 */
 	update_rq_clock(rq);
-	rq_clock_start_loop_update(rq);
+	rq_clock_ਸ਼ੁਰੂ_loop_update(rq);
 
 	/*
 	 * Since we hold rq lock we're safe from concurrent manipulation of
@@ -7300,108 +7300,108 @@ static void __cfsb_csd_unthrottle(void *arg)
 	 */
 	guard(rcu)();
 
-	list_for_each_entry_safe(cursor, tmp, &rq->cfsb_csd_list,
+	list_for_each_ਇੰਦਰਾਜ_ਸੁਰੱਖਿਅਤ(cursor, tmp, &rq->cfsb_csd_list,
 				 throttled_csd_list) {
 		list_del_init(&cursor->throttled_csd_list);
 
-		if (cfs_rq_throttled(cursor))
+		ਜੇ (cfs_rq_throttled(cursor))
 			unthrottle_cfs_rq(cursor);
 	}
 
 	rq_clock_stop_loop_update(rq);
 }
 
-static inline void __unthrottle_cfs_rq_async(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ __unthrottle_cfs_rq_async(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct rq *rq = rq_of(cfs_rq);
-	bool first;
+	ਬਣਤਰ rq *rq = rq_ਦਾ(cfs_rq);
+	bool ਪਹਿਲਾ;
 
-	if (rq == this_rq()) {
+	ਜੇ (rq == this_rq()) {
 		update_rq_clock(rq);
 		unthrottle_cfs_rq(cfs_rq);
-		return;
+		ਵਾਪਸ;
 	}
 
 	/* Already enqueued */
-	if (WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_csd_list)))
-		return;
+	ਜੇ (WARN_ON_ONCE(!list_ਖਾਲੀ_ਥਾਵਾਂ(&cfs_rq->throttled_csd_list)))
+		ਵਾਪਸ;
 
-	first = list_empty(&rq->cfsb_csd_list);
-	list_add_tail(&cfs_rq->throttled_csd_list, &rq->cfsb_csd_list);
-	if (first)
-		smp_call_function_single_async(cpu_of(rq), &rq->cfsb_csd);
+	ਪਹਿਲਾ = list_ਖਾਲੀ_ਥਾਵਾਂ(&rq->cfsb_csd_list);
+	list_ਜੋੜੋ_ਪੂਛ(&cfs_rq->throttled_csd_list, &rq->cfsb_csd_list);
+	ਜੇ (ਪਹਿਲਾ)
+		smp_call_function_single_async(cpu_ਦਾ(rq), &rq->cfsb_csd);
 }
 
-static void unthrottle_cfs_rq_async(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਖਾਲੀ unthrottle_cfs_rq_async(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	lockdep_assert_rq_held(rq_of(cfs_rq));
+	lockdep_assert_rq_held(rq_ਦਾ(cfs_rq));
 
-	if (WARN_ON_ONCE(!cfs_rq_throttled(cfs_rq) ||
-	    cfs_rq->runtime_remaining <= 0))
-		return;
+	ਜੇ (WARN_ON_ONCE(!cfs_rq_throttled(cfs_rq) ||
+	    cfs_rq->runtime_ਬਚਿਆ <= 0))
+		ਵਾਪਸ;
 
 	__unthrottle_cfs_rq_async(cfs_rq);
 }
 
-static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
+ਸਥਿਰ bool distribute_cfs_runtime(ਬਣਤਰ cfs_bandwidth *cfs_b)
 {
 	bool throttled = false, unthrottle_local = false;
-	int this_cpu = smp_processor_id();
-	u64 runtime, remaining = 1;
-	struct cfs_rq *cfs_rq;
-	struct rq *rq;
+	ਪੂਰਨ this_cpu = smp_processor_id();
+	u64 runtime, ਬਚਿਆ = 1;
+	ਬਣਤਰ cfs_rq *cfs_rq;
+	ਬਣਤਰ rq *rq;
 
 	guard(rcu)();
 
-	list_for_each_entry_rcu(cfs_rq, &cfs_b->throttled_cfs_rq,
+	list_for_each_ਇੰਦਰਾਜ_rcu(cfs_rq, &cfs_b->throttled_cfs_rq,
 				throttled_list) {
-		rq = rq_of(cfs_rq);
+		rq = rq_ਦਾ(cfs_rq);
 
-		if (!remaining) {
+		ਜੇ (!ਬਚਿਆ) {
 			throttled = true;
-			break;
+			ਰੋਕੋ;
 		}
 
-		guard(rq_lock_irqsave)(rq);
+		guard(rq_ਤਾਲਾ_irqsave)(rq);
 
-		if (!cfs_rq_throttled(cfs_rq))
-			continue;
+		ਜੇ (!cfs_rq_throttled(cfs_rq))
+			ਜਾਰੀ;
 
 		/* Already queued for async unthrottle */
-		if (!list_empty(&cfs_rq->throttled_csd_list))
-			continue;
+		ਜੇ (!list_ਖਾਲੀ_ਥਾਵਾਂ(&cfs_rq->throttled_csd_list))
+			ਜਾਰੀ;
 
-		if (cfs_rq->h_curr) {
+		ਜੇ (cfs_rq->h_curr) {
 			update_rq_clock(rq);
 			update_curr(cfs_rq);
 		}
 
 		/* By the above checks, this should never be true */
-		WARN_ON_ONCE(cfs_rq->runtime_remaining > 0);
+		WARN_ON_ONCE(cfs_rq->runtime_ਬਚਿਆ > 0);
 
-		scoped_guard(raw_spinlock, &cfs_b->lock) {
-			runtime = -cfs_rq->runtime_remaining + 1;
-			if (runtime > cfs_b->runtime)
+		scoped_guard(raw_spinlock, &cfs_b->ਤਾਲਾ) {
+			runtime = -cfs_rq->runtime_ਬਚਿਆ + 1;
+			ਜੇ (runtime > cfs_b->runtime)
 				runtime = cfs_b->runtime;
 			cfs_b->runtime -= runtime;
-			remaining = cfs_b->runtime;
+			ਬਚਿਆ = cfs_b->runtime;
 		}
 
-		cfs_rq->runtime_remaining += runtime;
+		cfs_rq->runtime_ਬਚਿਆ += runtime;
 
 		/*
 		 * Ran out of bandwidth during distribution!
 		 * Indicate throttled entities and break early.
 		 */
-		if (cfs_rq->runtime_remaining <= 0) {
+		ਜੇ (cfs_rq->runtime_ਬਚਿਆ <= 0) {
 			throttled = true;
-			break;
+			ਰੋਕੋ;
 		}
 
 		/* we check whether we're throttled above */
-		if (cpu_of(rq) != this_cpu) {
+		ਜੇ (cpu_ਦਾ(rq) != this_cpu) {
 			unthrottle_cfs_rq_async(cfs_rq);
-			continue;
+			ਜਾਰੀ;
 		}
 
 		/*
@@ -7410,11 +7410,11 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
 		 * If we are first, do it ourselves at the end and
 		 * save on an IPI from remote CPUs.
 		 */
-		unthrottle_local = list_empty(&rq->cfsb_csd_list);
-		list_add_tail(&cfs_rq->throttled_csd_list, &rq->cfsb_csd_list);
+		unthrottle_local = list_ਖਾਲੀ_ਥਾਵਾਂ(&rq->cfsb_csd_list);
+		list_ਜੋੜੋ_ਪੂਛ(&cfs_rq->throttled_csd_list, &rq->cfsb_csd_list);
 	}
 
-	if (unthrottle_local) {
+	ਜੇ (unthrottle_local) {
 		/*
 		 * Protect against an IPI that is also trying to flush
 		 * the unthrottled cfs_rq(s) from this CPU's csd_list.
@@ -7423,7 +7423,7 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
 			__cfsb_csd_unthrottle(cpu_rq(this_cpu));
 	}
 
-	return throttled;
+	ਵਾਪਸ throttled;
 }
 
 /*
@@ -7432,16 +7432,16 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
  * period the timer is deactivated until scheduling resumes; cfs_b->idle is
  * used to track this state.
  */
-static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, unsigned long flags)
-	__must_hold(&cfs_b->lock)
+ਸਥਿਰ ਪੂਰਨ do_sched_cfs_period_timer(ਬਣਤਰ cfs_bandwidth *cfs_b, ਪੂਰਨ overrun, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags)
+	__must_hold(&cfs_b->ਤਾਲਾ)
 {
-	int throttled;
+	ਪੂਰਨ throttled;
 
 	/* no need to continue the timer with no bandwidth constraint */
-	if (cfs_b->quota == RUNTIME_INF)
-		goto out_deactivate;
+	ਜੇ (cfs_b->quota == RUNTIME_INF)
+		ਜਾਓ ਬਾਹਰਲਾ_deactivate;
 
-	throttled = !list_empty(&cfs_b->throttled_cfs_rq);
+	throttled = !list_ਖਾਲੀ_ਥਾਵਾਂ(&cfs_b->throttled_cfs_rq);
 	cfs_b->nr_periods += overrun;
 
 	/* Refill extra burst quota even if cfs_b->idle */
@@ -7451,13 +7451,13 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, u
 	 * idle depends on !throttled (for the case of a large deficit), and if
 	 * we're going inactive then everything else can be deferred
 	 */
-	if (cfs_b->idle && !throttled)
-		goto out_deactivate;
+	ਜੇ (cfs_b->idle && !throttled)
+		ਜਾਓ ਬਾਹਰਲਾ_deactivate;
 
-	if (!throttled) {
+	ਜੇ (!throttled) {
 		/* mark as potentially idle for the upcoming period */
 		cfs_b->idle = 1;
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/* account preceding periods in which throttling occurred */
@@ -7466,11 +7466,11 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, u
 	/*
 	 * This check is repeated as we release cfs_b->lock while we unthrottle.
 	 */
-	while (throttled && cfs_b->runtime > 0) {
-		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+	ਜਦੋਂ (throttled && cfs_b->runtime > 0) {
+		raw_spin_unlock_irqrestore(&cfs_b->ਤਾਲਾ, flags);
 		/* we can't nest cfs_b->lock while distributing bandwidth */
 		throttled = distribute_cfs_runtime(cfs_b);
-		raw_spin_lock_irqsave(&cfs_b->lock, flags);
+		raw_spin_ਤਾਲਾ_irqsave(&cfs_b->ਤਾਲਾ, flags);
 	}
 
 	/*
@@ -7481,18 +7481,18 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, u
 	 */
 	cfs_b->idle = 0;
 
-	return 0;
+	ਵਾਪਸ 0;
 
-out_deactivate:
-	return 1;
+ਬਾਹਰਲਾ_deactivate:
+	ਵਾਪਸ 1;
 }
 
 /* a cfs_rq won't donate quota below this amount */
-static const u64 min_cfs_rq_runtime = 1 * NSEC_PER_MSEC;
+ਸਥਿਰ ਅਚਲ u64 min_cfs_rq_runtime = 1 * NSEC_ਪ੍ਰਤੀ_MSEC;
 /* minimum remaining period time to redistribute slack quota */
-static const u64 min_bandwidth_expiration = 2 * NSEC_PER_MSEC;
+ਸਥਿਰ ਅਚਲ u64 min_bandwidth_expiration = 2 * NSEC_ਪ੍ਰਤੀ_MSEC;
 /* how long we wait to gather additional slack before distributing */
-static const u64 cfs_bandwidth_slack_period = 5 * NSEC_PER_MSEC;
+ਸਥਿਰ ਅਚਲ u64 cfs_bandwidth_slack_period = 5 * NSEC_ਪ੍ਰਤੀ_MSEC;
 
 /*
  * Are we near the end of the current quota period?
@@ -7501,72 +7501,72 @@ static const u64 cfs_bandwidth_slack_period = 5 * NSEC_PER_MSEC;
  * hrtimer base being cleared by hrtimer_start. In the case of
  * migrate_hrtimers, base is never cleared, so we are fine.
  */
-static int runtime_refresh_within(struct cfs_bandwidth *cfs_b, u64 min_expire)
+ਸਥਿਰ ਪੂਰਨ runtime_refresh_within(ਬਣਤਰ cfs_bandwidth *cfs_b, u64 min_expire)
 {
-	struct hrtimer *refresh_timer = &cfs_b->period_timer;
-	s64 remaining;
+	ਬਣਤਰ hrtimer *refresh_timer = &cfs_b->period_timer;
+	s64 ਬਚਿਆ;
 
 	/* if the call-back is running a quota refresh is already occurring */
-	if (hrtimer_callback_running(refresh_timer))
-		return 1;
+	ਜੇ (hrtimer_callback_running(refresh_timer))
+		ਵਾਪਸ 1;
 
 	/* is a quota refresh about to occur? */
-	remaining = ktime_to_ns(hrtimer_expires_remaining(refresh_timer));
-	if (remaining < (s64)min_expire)
-		return 1;
+	ਬਚਿਆ = ktime_ਮੰਜ਼ਿਲ_ns(hrtimer_expires_ਬਚਿਆ(refresh_timer));
+	ਜੇ (ਬਚਿਆ < (s64)min_expire)
+		ਵਾਪਸ 1;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void start_cfs_slack_bandwidth(struct cfs_bandwidth *cfs_b)
+ਸਥਿਰ ਖਾਲੀ ਸ਼ੁਰੂ_cfs_slack_bandwidth(ਬਣਤਰ cfs_bandwidth *cfs_b)
 {
-	u64 min_left = cfs_bandwidth_slack_period + min_bandwidth_expiration;
+	u64 min_ਖੱਬਾ = cfs_bandwidth_slack_period + min_bandwidth_expiration;
 
 	/* if there's a quota refresh soon don't bother with slack */
-	if (runtime_refresh_within(cfs_b, min_left))
-		return;
+	ਜੇ (runtime_refresh_within(cfs_b, min_ਖੱਬਾ))
+		ਵਾਪਸ;
 
 	/* don't push forwards an existing deferred unthrottle */
-	if (cfs_b->slack_started)
-		return;
+	ਜੇ (cfs_b->slack_started)
+		ਵਾਪਸ;
 	cfs_b->slack_started = true;
 
-	hrtimer_start(&cfs_b->slack_timer,
-			ns_to_ktime(cfs_bandwidth_slack_period),
-			HRTIMER_MODE_REL);
+	hrtimer_ਸ਼ੁਰੂ(&cfs_b->slack_timer,
+			ns_ਮੰਜ਼ਿਲ_ktime(cfs_bandwidth_slack_period),
+			HRTIMER_ਬਹੁਲਕ_REL);
 }
 
 /* we know any runtime found here is valid as update_curr() precedes return */
-static void __return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਖਾਲੀ __return_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
-	s64 slack_runtime = cfs_rq->runtime_remaining - min_cfs_rq_runtime;
+	ਬਣਤਰ cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+	s64 slack_runtime = cfs_rq->runtime_ਬਚਿਆ - min_cfs_rq_runtime;
 
-	if (slack_runtime <= 0)
-		return;
+	ਜੇ (slack_runtime <= 0)
+		ਵਾਪਸ;
 
-	guard(raw_spinlock)(&cfs_b->lock);
+	guard(raw_spinlock)(&cfs_b->ਤਾਲਾ);
 
-	if (cfs_b->quota != RUNTIME_INF) {
+	ਜੇ (cfs_b->quota != RUNTIME_INF) {
 		cfs_b->runtime += slack_runtime;
 
 		/* we are under rq->lock, defer unthrottling using a timer */
-		if (cfs_b->runtime > sched_cfs_bandwidth_slice() &&
-		    !list_empty(&cfs_b->throttled_cfs_rq))
-			start_cfs_slack_bandwidth(cfs_b);
+		ਜੇ (cfs_b->runtime > sched_cfs_bandwidth_ਟੁਕੜਾ() &&
+		    !list_ਖਾਲੀ_ਥਾਵਾਂ(&cfs_b->throttled_cfs_rq))
+			ਸ਼ੁਰੂ_cfs_slack_bandwidth(cfs_b);
 	}
 
 	/* even if it's not valid for return we don't want to try again */
-	cfs_rq->runtime_remaining -= slack_runtime;
+	cfs_rq->runtime_ਬਚਿਆ -= slack_runtime;
 }
 
-static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ਸਥਿਰ __always_inline ਖਾਲੀ return_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	if (!cfs_bandwidth_used())
-		return;
+	ਜੇ (!cfs_bandwidth_ਵਰਤਿਆ())
+		ਵਾਪਸ;
 
-	if (!cfs_rq->runtime_enabled || cfs_rq->nr_queued)
-		return;
+	ਜੇ (!cfs_rq->runtime_enabled || cfs_rq->nr_queued)
+		ਵਾਪਸ;
 
 	__return_cfs_rq_runtime(cfs_rq);
 }
@@ -7575,22 +7575,22 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
  * This is done with a timer (instead of inline with bandwidth return) since
  * it's necessary to juggle rq->locks to unthrottle their respective cfs_rqs.
  */
-static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+ਸਥਿਰ ਖਾਲੀ do_sched_cfs_slack_timer(ਬਣਤਰ cfs_bandwidth *cfs_b)
 {
 	/* confirm we're still not at a refresh boundary */
-	scoped_guard(raw_spinlock_irqsave, &cfs_b->lock) {
-		u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
+	scoped_guard(raw_spinlock_irqsave, &cfs_b->ਤਾਲਾ) {
+		u64 runtime = 0, ਟੁਕੜਾ = sched_cfs_bandwidth_ਟੁਕੜਾ();
 
 		cfs_b->slack_started = false;
 
-		if (runtime_refresh_within(cfs_b, min_bandwidth_expiration))
-			return;
+		ਜੇ (runtime_refresh_within(cfs_b, min_bandwidth_expiration))
+			ਵਾਪਸ;
 
-		if (cfs_b->quota != RUNTIME_INF && cfs_b->runtime > slice)
+		ਜੇ (cfs_b->quota != RUNTIME_INF && cfs_b->runtime > ਟੁਕੜਾ)
 			runtime = cfs_b->runtime;
 
-		if (!runtime)
-			return;
+		ਜੇ (!runtime)
+			ਵਾਪਸ;
 	}
 
 	distribute_cfs_runtime(cfs_b);
@@ -7601,37 +7601,37 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
  * expired/exceeded, otherwise it may be allowed to steal additional ticks of
  * runtime as update_curr() throttling can not trigger until it's on-rq.
  */
-static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਖਾਲੀ check_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_throttle(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	if (!cfs_bandwidth_used())
-		return;
+	ਜੇ (!cfs_bandwidth_ਵਰਤਿਆ())
+		ਵਾਪਸ;
 
 	/* an active group must be handled by the update_curr() path */
-	if (!cfs_rq->runtime_enabled || cfs_rq->h_curr)
-		return;
+	ਜੇ (!cfs_rq->runtime_enabled || cfs_rq->h_curr)
+		ਵਾਪਸ;
 
 	/* ensure the group is not already throttled */
-	if (cfs_rq_throttled(cfs_rq))
-		return;
+	ਜੇ (cfs_rq_throttled(cfs_rq))
+		ਵਾਪਸ;
 
 	/* update runtime allocation */
 	account_cfs_rq_runtime(cfs_rq, 0);
 }
 
-static void sync_throttle(struct task_group *tg, int cpu)
+ਸਥਿਰ ਖਾਲੀ sync_throttle(ਬਣਤਰ task_ਸਮੂਹ *tg, ਪੂਰਨ cpu)
 {
-	struct cfs_rq *pcfs_rq, *cfs_rq;
+	ਬਣਤਰ cfs_rq *pcfs_rq, *cfs_rq;
 
-	if (!cfs_bandwidth_used())
-		return;
+	ਜੇ (!cfs_bandwidth_ਵਰਤਿਆ())
+		ਵਾਪਸ;
 
-	if (!tg->parent)
-		return;
+	ਜੇ (!tg->ਮਾਪਾ)
+		ਵਾਪਸ;
 
 	cfs_rq = tg_cfs_rq(tg, cpu);
-	pcfs_rq = tg_cfs_rq(tg->parent, cpu);
+	pcfs_rq = tg_cfs_rq(tg->ਮਾਪਾ, cpu);
 
-	cfs_rq->throttle_count = pcfs_rq->throttle_count;
+	cfs_rq->throttle_ਗਿਣਤੀ = pcfs_rq->throttle_ਗਿਣਤੀ;
 	cfs_rq->throttled_clock_pelt = rq_clock_pelt(cpu_rq(cpu));
 
 	/*
@@ -7641,39 +7641,39 @@ static void sync_throttle(struct task_group *tg, int cpu)
 	 * and leaf it to the first enqueue, or distribution to
 	 * unthrottle the PELT clock.
 	 */
-	if (cfs_rq->throttle_count)
+	ਜੇ (cfs_rq->throttle_ਗਿਣਤੀ)
 		cfs_rq->pelt_clock_throttled = 1;
 }
 
-static enum hrtimer_restart sched_cfs_slack_timer(struct hrtimer *timer)
+ਸਥਿਰ ਗਿਣਤੀ hrtimer_restart sched_cfs_slack_timer(ਬਣਤਰ hrtimer *timer)
 {
-	struct cfs_bandwidth *cfs_b =
-		container_of(timer, struct cfs_bandwidth, slack_timer);
+	ਬਣਤਰ cfs_bandwidth *cfs_b =
+		container_ਦਾ(timer, ਬਣਤਰ cfs_bandwidth, slack_timer);
 
 	do_sched_cfs_slack_timer(cfs_b);
 
-	return HRTIMER_NORESTART;
+	ਵਾਪਸ HRTIMER_NORESTART;
 }
 
-static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
+ਸਥਿਰ ਗਿਣਤੀ hrtimer_restart sched_cfs_period_timer(ਬਣਤਰ hrtimer *timer)
 {
-	struct cfs_bandwidth *cfs_b =
-		container_of(timer, struct cfs_bandwidth, period_timer);
-	int overrun;
-	int idle = 0;
-	int count = 0;
+	ਬਣਤਰ cfs_bandwidth *cfs_b =
+		container_ਦਾ(timer, ਬਣਤਰ cfs_bandwidth, period_timer);
+	ਪੂਰਨ overrun;
+	ਪੂਰਨ idle = 0;
+	ਪੂਰਨ ਗਿਣਤੀ_2 = 0;
 
-	CLASS(raw_spinlock_irqsave, cfsb_guard)(&cfs_b->lock);
+	CLASS(raw_spinlock_irqsave, cfsb_guard)(&cfs_b->ਤਾਲਾ);
 
-	for (;;) {
+	ਲਈ (;;) {
 		overrun = hrtimer_forward_now(timer, cfs_b->period);
-		if (!overrun)
-			break;
+		ਜੇ (!overrun)
+			ਰੋਕੋ;
 
 		idle = do_sched_cfs_period_timer(cfs_b, overrun, cfsb_guard.flags);
 
-		if (++count > 3) {
-			u64 new, old = ktime_to_ns(cfs_b->period);
+		ਜੇ (++ਗਿਣਤੀ_2 > 3) {
+			u64 new, old = ktime_ਮੰਜ਼ਿਲ_ns(cfs_b->period);
 
 			/*
 			 * Grow period by a factor of 2 to avoid losing precision.
@@ -7681,85 +7681,85 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
 			 * to fail.
 			 */
 			new = old * 2;
-			if (new < max_bw_quota_period_us * NSEC_PER_USEC) {
-				cfs_b->period = ns_to_ktime(new);
+			ਜੇ (new < max_bw_quota_period_us * NSEC_ਪ੍ਰਤੀ_USEC) {
+				cfs_b->period = ns_ਮੰਜ਼ਿਲ_ktime(new);
 				cfs_b->quota *= 2;
-				cfs_b->burst *= 2;
+				cfs_b->ਮਿਆਦ *= 2;
 
 				pr_warn_ratelimited(
 	"cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us = %lld, cfs_quota_us = %lld)\n",
 					smp_processor_id(),
-					div_u64(new, NSEC_PER_USEC),
-					div_u64(cfs_b->quota, NSEC_PER_USEC));
-			} else {
+					div_u64(new, NSEC_ਪ੍ਰਤੀ_USEC),
+					div_u64(cfs_b->quota, NSEC_ਪ੍ਰਤੀ_USEC));
+			} ਨਹੀਂਤਾਂ {
 				pr_warn_ratelimited(
 	"cfs_period_timer[cpu%d]: period too short, but cannot scale up without losing precision (cfs_period_us = %lld, cfs_quota_us = %lld)\n",
 					smp_processor_id(),
-					div_u64(old, NSEC_PER_USEC),
-					div_u64(cfs_b->quota, NSEC_PER_USEC));
+					div_u64(old, NSEC_ਪ੍ਰਤੀ_USEC),
+					div_u64(cfs_b->quota, NSEC_ਪ੍ਰਤੀ_USEC));
 			}
 
 			/* reset count so we don't come right back in here */
-			count = 0;
+			ਗਿਣਤੀ_2 = 0;
 		}
 	}
 
-	if (idle) {
-		cfs_b->period_active = 0;
-		return HRTIMER_NORESTART;
+	ਜੇ (idle) {
+		cfs_b->period_ਸਰਗਰਮ = 0;
+		ਵਾਪਸ HRTIMER_NORESTART;
 	}
 
-	return HRTIMER_RESTART;
+	ਵਾਪਸ HRTIMER_RESTART;
 }
 
-void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent)
+ਖਾਲੀ init_cfs_bandwidth(ਬਣਤਰ cfs_bandwidth *cfs_b, ਬਣਤਰ cfs_bandwidth *ਮਾਪਾ)
 {
-	raw_spin_lock_init(&cfs_b->lock);
+	raw_spin_ਤਾਲਾ_init(&cfs_b->ਤਾਲਾ);
 	cfs_b->runtime = 0;
 	cfs_b->quota = RUNTIME_INF;
-	cfs_b->period = us_to_ktime(default_bw_period_us());
-	cfs_b->burst = 0;
-	cfs_b->hierarchical_quota = parent ? parent->hierarchical_quota : RUNTIME_INF;
+	cfs_b->period = us_ਮੰਜ਼ਿਲ_ktime(default_bw_period_us());
+	cfs_b->ਮਿਆਦ = 0;
+	cfs_b->ਦਰਜਾਵਾਰ_quota = ਮਾਪਾ ? ਮਾਪਾ->ਦਰਜਾਵਾਰ_quota : RUNTIME_INF;
 
-	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
-	hrtimer_setup(&cfs_b->period_timer, sched_cfs_period_timer, CLOCK_MONOTONIC,
-		      HRTIMER_MODE_ABS_PINNED);
+	INIT_LIST_ਸਿਰ(&cfs_b->throttled_cfs_rq);
+	hrtimer_ਤਿਆਰੀ(&cfs_b->period_timer, sched_cfs_period_timer, CLOCK_MONOTONIC,
+		      HRTIMER_ਬਹੁਲਕ_ABS_PINNED);
 
 	/* Add a random offset so that timers interleave */
-	hrtimer_set_expires(&cfs_b->period_timer,
-			    get_random_u32_below(cfs_b->period));
-	hrtimer_setup(&cfs_b->slack_timer, sched_cfs_slack_timer, CLOCK_MONOTONIC,
-		      HRTIMER_MODE_REL);
+	hrtimer_ਸੈੱਟ_expires(&cfs_b->period_timer,
+			    get_random_u32_ਹੇਠਾਂ(cfs_b->period));
+	hrtimer_ਤਿਆਰੀ(&cfs_b->slack_timer, sched_cfs_slack_timer, CLOCK_MONOTONIC,
+		      HRTIMER_ਬਹੁਲਕ_REL);
 	cfs_b->slack_started = false;
 }
 
-static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਖਾਲੀ init_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq)
 {
 	cfs_rq->runtime_enabled = 0;
-	INIT_LIST_HEAD(&cfs_rq->throttled_list);
-	INIT_LIST_HEAD(&cfs_rq->throttled_csd_list);
-	INIT_LIST_HEAD(&cfs_rq->throttled_limbo_list);
+	INIT_LIST_ਸਿਰ(&cfs_rq->throttled_list);
+	INIT_LIST_ਸਿਰ(&cfs_rq->throttled_csd_list);
+	INIT_LIST_ਸਿਰ(&cfs_rq->throttled_limbo_list);
 }
 
-void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+ਖਾਲੀ ਸ਼ੁਰੂ_cfs_bandwidth(ਬਣਤਰ cfs_bandwidth *cfs_b)
 {
-	lockdep_assert_held(&cfs_b->lock);
+	lockdep_assert_held(&cfs_b->ਤਾਲਾ);
 
-	if (cfs_b->period_active)
-		return;
+	ਜੇ (cfs_b->period_ਸਰਗਰਮ)
+		ਵਾਪਸ;
 
-	cfs_b->period_active = 1;
+	cfs_b->period_ਸਰਗਰਮ = 1;
 	hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
-	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
+	hrtimer_ਸ਼ੁਰੂ_expires(&cfs_b->period_timer, HRTIMER_ਬਹੁਲਕ_ABS_PINNED);
 }
 
-static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+ਸਥਿਰ ਖਾਲੀ destroy_cfs_bandwidth(ਬਣਤਰ cfs_bandwidth *cfs_b)
 {
-	int __maybe_unused i;
+	ਪੂਰਨ __maybe_unused i;
 
 	/* init_cfs_bandwidth() was not called */
-	if (!cfs_b->throttled_cfs_rq.next)
-		return;
+	ਜੇ (!cfs_b->throttled_cfs_rq.ਅਗਲਾ)
+		ਵਾਪਸ;
 
 	hrtimer_cancel(&cfs_b->period_timer);
 	hrtimer_cancel(&cfs_b->slack_timer);
@@ -7775,10 +7775,10 @@ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
 	 * join a CSD list.
 	 */
 	for_each_possible_cpu(i) {
-		struct rq *rq = cpu_rq(i);
+		ਬਣਤਰ rq *rq = cpu_rq(i);
 
-		if (list_empty(&rq->cfsb_csd_list))
-			continue;
+		ਜੇ (list_ਖਾਲੀ_ਥਾਵਾਂ(&rq->cfsb_csd_list))
+			ਜਾਰੀ;
 
 		scoped_guard(irqsave)
 			__cfsb_csd_unthrottle(rq);
@@ -7793,48 +7793,48 @@ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
  */
 
 /* cpu online callback */
-static void __maybe_unused update_runtime_enabled(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ __maybe_unused update_runtime_enabled(ਬਣਤਰ rq *rq)
 {
-	struct task_group *tg;
+	ਬਣਤਰ task_ਸਮੂਹ *tg;
 
 	lockdep_assert_rq_held(rq);
 
 	guard(rcu)();
 
-	list_for_each_entry_rcu(tg, &task_groups, list) {
-		struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
-		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
+	list_for_each_ਇੰਦਰਾਜ_rcu(tg, &task_groups, list) {
+		ਬਣਤਰ cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
+		ਬਣਤਰ cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_ਦਾ(rq));
 
-		scoped_guard(raw_spinlock, &cfs_b->lock)
+		scoped_guard(raw_spinlock, &cfs_b->ਤਾਲਾ)
 			cfs_rq->runtime_enabled = cfs_b->quota != RUNTIME_INF;
 	}
 }
 
 /* cpu offline callback */
-static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ __maybe_unused unthrottle_offline_cfs_rqs(ਬਣਤਰ rq *rq)
 {
-	struct task_group *tg;
+	ਬਣਤਰ task_ਸਮੂਹ *tg;
 
 	lockdep_assert_rq_held(rq);
 
 	// Do not unthrottle for an active CPU
-	if (cpumask_test_cpu(cpu_of(rq), cpu_active_mask))
-		return;
+	ਜੇ (cpumask_test_cpu(cpu_ਦਾ(rq), cpu_ਸਰਗਰਮ_ਨਕਾਬ))
+		ਵਾਪਸ;
 
 	/*
 	 * The rq clock has already been updated in the
 	 * set_rq_offline(), so we should skip updating
 	 * the rq clock again in unthrottle_cfs_rq().
 	 */
-	rq_clock_start_loop_update(rq);
+	rq_clock_ਸ਼ੁਰੂ_loop_update(rq);
 
 	guard(rcu)();
 
-	list_for_each_entry_rcu(tg, &task_groups, list) {
-		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
+	list_for_each_ਇੰਦਰਾਜ_rcu(tg, &task_groups, list) {
+		ਬਣਤਰ cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_ਦਾ(rq));
 
-		if (!cfs_rq->runtime_enabled)
-			continue;
+		ਜੇ (!cfs_rq->runtime_enabled)
+			ਜਾਰੀ;
 
 		/*
 		 * Offline rq is schedulable till CPU is completely disabled
@@ -7842,48 +7842,48 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
 		 */
 		cfs_rq->runtime_enabled = 0;
 
-		if (!cfs_rq_throttled(cfs_rq))
-			continue;
+		ਜੇ (!cfs_rq_throttled(cfs_rq))
+			ਜਾਰੀ;
 
 		/*
 		 * clock_task is not advancing so we just need to make sure
 		 * there's some valid quota amount
 		 */
-		cfs_rq->runtime_remaining = 1;
+		cfs_rq->runtime_ਬਚਿਆ = 1;
 		unthrottle_cfs_rq(cfs_rq);
 	}
 
 	rq_clock_stop_loop_update(rq);
 }
 
-bool cfs_task_bw_constrained(struct task_struct *p)
+bool cfs_task_bw_constrained(ਬਣਤਰ task_struct *p)
 {
-	struct cfs_rq *cfs_rq = task_cfs_rq(p);
+	ਬਣਤਰ cfs_rq *cfs_rq = task_cfs_rq(p);
 
-	if (!cfs_bandwidth_used())
-		return false;
+	ਜੇ (!cfs_bandwidth_ਵਰਤਿਆ())
+		ਵਾਪਸ false;
 
-	if (cfs_rq->runtime_enabled ||
-	    tg_cfs_bandwidth(cfs_rq->tg)->hierarchical_quota != RUNTIME_INF)
-		return true;
+	ਜੇ (cfs_rq->runtime_enabled ||
+	    tg_cfs_bandwidth(cfs_rq->tg)->ਦਰਜਾਵਾਰ_quota != RUNTIME_INF)
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-#ifdef CONFIG_NO_HZ_FULL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_ਭਰਿਆ
 /* called from pick_next_task_fair() */
-static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ sched_fair_update_stop_tick(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	int cpu = cpu_of(rq);
+	ਪੂਰਨ cpu = cpu_ਦਾ(rq);
 
-	if (!cfs_bandwidth_used())
-		return;
+	ਜੇ (!cfs_bandwidth_ਵਰਤਿਆ())
+		ਵਾਪਸ;
 
-	if (!tick_nohz_full_cpu(cpu))
-		return;
+	ਜੇ (!tick_nohz_ਭਰਿਆ_cpu(cpu))
+		ਵਾਪਸ;
 
-	if (rq->nr_running != 1)
-		return;
+	ਜੇ (rq->nr_running != 1)
+		ਵਾਪਸ;
 
 	/*
 	 *  We know there is only one task runnable and we've just picked it. The
@@ -7891,195 +7891,195 @@ static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
 	 *  be otherwise able to stop the tick. Just need to check if we are using
 	 *  bandwidth control.
 	 */
-	if (cfs_task_bw_constrained(p))
-		tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
+	ਜੇ (cfs_task_bw_constrained(p))
+		tick_nohz_dep_ਸੈੱਟ_cpu(cpu, TICK_DEP_ਦੋਆਧਾਰੀ_ਅੰਕ_SCHED);
 }
-#endif /* CONFIG_NO_HZ_FULL */
+#ਜੇ_ਅੰਤ /* CONFIG_NO_HZ_FULL */
 
-#else /* !CONFIG_CFS_BANDWIDTH: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_CFS_BANDWIDTH: */
 
-static bool account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec) { return false; }
-static void check_enqueue_throttle(struct cfs_rq *cfs_rq) {}
-static inline void sync_throttle(struct task_group *tg, int cpu) {}
-static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
-static void task_throttle_setup_work(struct task_struct *p) {}
-static bool task_is_throttled(struct task_struct *p) { return false; }
-static void dequeue_throttled_task(struct task_struct *p, int flags) {}
-static bool enqueue_throttled_task(struct task_struct *p) { return false; }
-static void record_throttle_clock(struct cfs_rq *cfs_rq) {}
+ਸਥਿਰ bool account_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq, u64 delta_exec) { ਵਾਪਸ false; }
+ਸਥਿਰ ਖਾਲੀ check_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_throttle(ਬਣਤਰ cfs_rq *cfs_rq) {}
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sync_throttle(ਬਣਤਰ task_ਸਮੂਹ *tg, ਪੂਰਨ cpu) {}
+ਸਥਿਰ __always_inline ਖਾਲੀ return_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq) {}
+ਸਥਿਰ ਖਾਲੀ task_throttle_ਤਿਆਰੀ_work(ਬਣਤਰ task_struct *p) {}
+ਸਥਿਰ bool task_is_throttled(ਬਣਤਰ task_struct *p) { ਵਾਪਸ false; }
+ਸਥਿਰ ਖਾਲੀ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_throttled_task(ਬਣਤਰ task_struct *p, ਪੂਰਨ flags) {}
+ਸਥਿਰ bool ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_throttled_task(ਬਣਤਰ task_struct *p) { ਵਾਪਸ false; }
+ਸਥਿਰ ਖਾਲੀ ਰਿਕਾਰਡ_throttle_clock(ਬਣਤਰ cfs_rq *cfs_rq) {}
 
-static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ cfs_rq_throttled(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool cfs_rq_pelt_clock_throttled(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ throttled_hierarchy(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static inline int lb_throttled_hierarchy(struct task_struct *p, int dst_cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ lb_throttled_hierarchy(ਬਣਤਰ task_struct *p, ਪੂਰਨ dst_cpu)
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent) {}
-static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+ਖਾਲੀ init_cfs_bandwidth(ਬਣਤਰ cfs_bandwidth *cfs_b, ਬਣਤਰ cfs_bandwidth *ਮਾਪਾ) {}
+ਸਥਿਰ ਖਾਲੀ init_cfs_rq_runtime(ਬਣਤਰ cfs_rq *cfs_rq) {}
+#ਜੇ_ਅੰਤ
 
-static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_bandwidth *tg_cfs_bandwidth(ਬਣਤਰ task_ਸਮੂਹ *tg)
 {
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
-static inline void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b) {}
-static inline void update_runtime_enabled(struct rq *rq) {}
-static inline void unthrottle_offline_cfs_rqs(struct rq *rq) {}
-#ifdef CONFIG_CGROUP_SCHED
-bool cfs_task_bw_constrained(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ destroy_cfs_bandwidth(ਬਣਤਰ cfs_bandwidth *cfs_b) {}
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_runtime_enabled(ਬਣਤਰ rq *rq) {}
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ unthrottle_offline_cfs_rqs(ਬਣਤਰ rq *rq) {}
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CGROUP_SCHED
+bool cfs_task_bw_constrained(ਬਣਤਰ task_struct *p)
 {
-	return false;
+	ਵਾਪਸ false;
 }
-#endif
-#endif /* !CONFIG_CFS_BANDWIDTH */
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ /* !CONFIG_CFS_BANDWIDTH */
 
-#if !defined(CONFIG_CFS_BANDWIDTH) || !defined(CONFIG_NO_HZ_FULL)
-static inline void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p) {}
-#endif
+#ਜੇ !defined(CONFIG_CFS_BANDWIDTH) || !defined(CONFIG_NO_HZ_ਭਰਿਆ)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_fair_update_stop_tick(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p) {}
+#ਜੇ_ਅੰਤ
 
 /**************************************************
  * CFS operations on tasks:
  */
 
-#ifdef CONFIG_SCHED_HRTICK
-static void hrtick_start_fair(struct rq *rq, struct task_struct *p)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_HRTICK
+ਸਥਿਰ ਖਾਲੀ hrtick_ਸ਼ੁਰੂ_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	struct sched_entity *se = &p->se;
-	unsigned long scale = 1024;
-	unsigned long util = 0;
+	ਬਣਤਰ sched_entity *se = &p->se;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ scale = 1024;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util = 0;
 	u64 vdelta;
 	u64 delta;
 
 	WARN_ON_ONCE(task_rq(p) != rq);
 
-	if (rq->cfs.h_nr_queued <= 1)
-		return;
+	ਜੇ (rq->cfs.h_nr_queued <= 1)
+		ਵਾਪਸ;
 
 	/*
 	 * Compute time until virtual deadline
 	 */
 	vdelta = se->deadline - se->vruntime;
-	if ((s64)vdelta < 0) {
-		if (task_current_donor(rq, p))
+	ਜੇ ((s64)vdelta < 0) {
+		ਜੇ (task_current_donor(rq, p))
 			resched_curr(rq);
-		return;
+		ਵਾਪਸ;
 	}
-	delta = (se->h_load.weight * vdelta) / NICE_0_LOAD;
+	delta = (se->h_ਲੱਦੋ.ਭਾਰ * vdelta) / NICE_0_ਲੱਦੋ;
 
 	/*
 	 * Correct for instantaneous load of other classes.
 	 */
 	util += cpu_util_irq(rq);
-	if (util && util < 1024) {
+	ਜੇ (util && util < 1024) {
 		scale *= 1024;
 		scale /= (1024 - util);
 	}
 
-	hrtick_start(rq, (scale * delta) / 1024);
+	hrtick_ਸ਼ੁਰੂ(rq, (scale * delta) / 1024);
 }
 
 /*
  * Called on enqueue to start the hrtick when h_nr_queued becomes more than 1.
  */
-static void hrtick_update(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ hrtick_update(ਬਣਤਰ rq *rq)
 {
-	struct task_struct *donor = rq->donor;
+	ਬਣਤਰ task_struct *donor = rq->donor;
 
-	if (!hrtick_enabled_fair(rq) || donor->sched_class != &fair_sched_class)
-		return;
+	ਜੇ (!hrtick_enabled_fair(rq) || donor->sched_class != &fair_sched_class)
+		ਵਾਪਸ;
 
-	if (hrtick_active(rq))
-		return;
+	ਜੇ (hrtick_ਸਰਗਰਮ(rq))
+		ਵਾਪਸ;
 
-	hrtick_start_fair(rq, donor);
+	hrtick_ਸ਼ੁਰੂ_fair(rq, donor);
 }
-#else /* !CONFIG_SCHED_HRTICK: */
-static inline void
-hrtick_start_fair(struct rq *rq, struct task_struct *p)
-{
-}
-
-static inline void hrtick_update(struct rq *rq)
+#ਨਹੀਂਤਾਂ /* !CONFIG_SCHED_HRTICK: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+hrtick_ਸ਼ੁਰੂ_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
 }
-#endif /* !CONFIG_SCHED_HRTICK */
 
-static inline bool cpu_overutilized(int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ hrtick_update(ਬਣਤਰ rq *rq)
 {
-	unsigned long rq_util_max;
+}
+#ਜੇ_ਅੰਤ /* !CONFIG_SCHED_HRTICK */
 
-	if (!sched_energy_enabled())
-		return false;
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool cpu_overutilized(ਪੂਰਨ cpu)
+{
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ rq_util_max;
+
+	ਜੇ (!sched_energy_enabled())
+		ਵਾਪਸ false;
 
 	rq_util_max = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MAX);
 
 	/* Return true only if the utilization doesn't fit CPU's capacity */
-	return !util_fits_cpu(cpu_util_cfs(cpu), 0, rq_util_max, cpu);
+	ਵਾਪਸ !util_ਸਮਾਉਂਦਾ_cpu(cpu_util_cfs(cpu), 0, rq_util_max, cpu);
 }
 
 /*
  * overutilized value make sense only if EAS is enabled
  */
-static inline bool is_rd_overutilized(struct root_domain *rd)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool is_rd_overutilized(ਬਣਤਰ ਜੜ੍ਹ_domain *rd)
 {
-	return !sched_energy_enabled() || READ_ONCE(rd->overutilized);
+	ਵਾਪਸ !sched_energy_enabled() || READ_ONCE(rd->overutilized);
 }
 
-static inline void set_rd_overutilized(struct root_domain *rd, bool flag)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਸੈੱਟ_rd_overutilized(ਬਣਤਰ ਜੜ੍ਹ_domain *rd, bool flag)
 {
-	if (!sched_energy_enabled())
-		return;
+	ਜੇ (!sched_energy_enabled())
+		ਵਾਪਸ;
 
 	WRITE_ONCE(rd->overutilized, flag);
 	trace_sched_overutilized_tp(rd, flag);
 }
 
-static inline void check_update_overutilized_status(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ check_update_overutilized_ਸਥਿਤੀ(ਬਣਤਰ rq *rq)
 {
 	/*
 	 * overutilized field is used for load balancing decisions only
 	 * if energy aware scheduler is being used
 	 */
 
-	if (!is_rd_overutilized(rq->rd) && cpu_overutilized(rq->cpu))
-		set_rd_overutilized(rq->rd, 1);
+	ਜੇ (!is_rd_overutilized(rq->rd) && cpu_overutilized(rq->cpu))
+		ਸੈੱਟ_rd_overutilized(rq->rd, 1);
 }
 
 /* Runqueue only has SCHED_IDLE tasks enqueued */
-static int sched_idle_rq(struct rq *rq)
+ਸਥਿਰ ਪੂਰਨ sched_idle_rq(ਬਣਤਰ rq *rq)
 {
-	return unlikely(rq->nr_running == rq->cfs.h_nr_idle &&
+	ਵਾਪਸ unlikely(rq->nr_running == rq->cfs.h_nr_idle &&
 			rq->nr_running);
 }
 
-static int choose_sched_idle_rq(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਪੂਰਨ ਚੁਣੋ_sched_idle_rq(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	return sched_idle_rq(rq) && !task_has_idle_policy(p);
+	ਵਾਪਸ sched_idle_rq(rq) && !task_has_idle_policy(p);
 }
 
-static int choose_idle_cpu(int cpu, struct task_struct *p)
+ਸਥਿਰ ਪੂਰਨ ਚੁਣੋ_idle_cpu(ਪੂਰਨ cpu, ਬਣਤਰ task_struct *p)
 {
-	return available_idle_cpu(cpu) ||
-	       choose_sched_idle_rq(cpu_rq(cpu), p);
+	ਵਾਪਸ ਉਪਲਬਧ_idle_cpu(cpu) ||
+	       ਚੁਣੋ_sched_idle_rq(cpu_rq(cpu), p);
 }
 
-static void
-requeue_delayed_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ
+requeue_delayed_entity(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
 	/*
 	 * se->sched_delayed should imply: se->on_rq == 1.
@@ -8089,66 +8089,66 @@ requeue_delayed_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	WARN_ON_ONCE(!se->sched_delayed);
 	WARN_ON_ONCE(!se->on_rq);
 
-	if (update_entity_lag(cfs_rq, se)) {
+	ਜੇ (update_entity_lag(cfs_rq, se)) {
 		cfs_rq->h_nr_queued--;
-		if (se != cfs_rq->curr)
+		ਜੇ (se != cfs_rq->curr)
 			__dequeue_entity(cfs_rq, se);
-		place_entity(cfs_rq, se, 0);
-		if (se != cfs_rq->curr)
+		ਰੱਖੋ_entity(cfs_rq, se, 0);
+		ਜੇ (se != cfs_rq->curr)
 			__enqueue_entity(cfs_rq, se);
 		cfs_rq->h_nr_queued++;
 	}
 
-	update_load_avg(cfs_rq, se, 0);
+	update_ਲੱਦੋ_avg(cfs_rq, se, 0);
 	clear_delayed(se);
 }
 
-static unsigned long enqueue_hierarchy(struct task_struct *p, int flags)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_hierarchy(ਬਣਤਰ task_struct *p, ਪੂਰਨ flags)
 {
-	unsigned long weight = NICE_0_LOAD;
-	int task_new = !(flags & ENQUEUE_WAKEUP);
-	struct sched_entity *se = &p->se;
-	int h_nr_idle = task_has_idle_policy(p);
-	int h_nr_runnable = 1;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ = NICE_0_ਲੱਦੋ;
+	ਪੂਰਨ task_new = !(flags & ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_WAKEUP);
+	ਬਣਤਰ sched_entity *se = &p->se;
+	ਪੂਰਨ h_nr_idle = task_has_idle_policy(p);
+	ਪੂਰਨ h_nr_runnable = 1;
 
-	if (task_new && se->sched_delayed)
+	ਜੇ (task_new && se->sched_delayed)
 		h_nr_runnable = 0;
 
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
 
 		update_curr(cfs_rq);
 
-		if (!se->on_rq) {
-			enqueue_entity(cfs_rq, se, flags);
-		} else {
-			update_load_avg(cfs_rq, se, UPDATE_TG);
+		ਜੇ (!se->on_rq) {
+			ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_entity(cfs_rq, se, flags);
+		} ਨਹੀਂਤਾਂ {
+			update_ਲੱਦੋ_avg(cfs_rq, se, UPDATE_TG);
 			se_update_runnable(se);
-			update_cfs_group(se);
+			update_cfs_ਸਮੂਹ(se);
 		}
 
 		cfs_rq->h_nr_runnable += h_nr_runnable;
 		cfs_rq->h_nr_queued++;
 		cfs_rq->h_nr_idle += h_nr_idle;
 
-		if (cfs_rq_is_idle(cfs_rq))
+		ਜੇ (cfs_rq_is_idle(cfs_rq))
 			h_nr_idle = 1;
 
-		weight = __calc_prop_weight(cfs_rq, se, weight);
+		ਭਾਰ = __calc_prop_weight(cfs_rq, se, ਭਾਰ);
 
-		flags = ENQUEUE_WAKEUP;
+		flags = ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_WAKEUP;
 	}
 
-	return weight;
+	ਵਾਪਸ ਭਾਰ;
 }
 
 /* Update curr's vruntime before placing entity or updating lag */
-static inline void update_curr_eevdf(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_curr_eevdf(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	if (!cfs_rq->curr)
-		return;
+	ਜੇ (!cfs_rq->curr)
+		ਵਾਪਸ;
 
-	update_curr(cfs_rq_of(cfs_rq->curr));
+	update_curr(cfs_rq_ਦਾ(cfs_rq->curr));
 }
 
 /*
@@ -8156,18 +8156,18 @@ static inline void update_curr_eevdf(struct cfs_rq *cfs_rq)
  * increased. Here we update the fair scheduling stats and
  * then put the task into the rbtree:
  */
-static void
-enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ਸਥਿਰ ਖਾਲੀ
+ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags)
 {
-	int rq_h_nr_queued = rq->cfs.h_nr_queued;
-	int task_new = !(flags & ENQUEUE_WAKEUP);
-	struct sched_entity *se = &p->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	unsigned long weight;
+	ਪੂਰਨ rq_h_nr_queued = rq->cfs.h_nr_queued;
+	ਪੂਰਨ task_new = !(flags & ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_WAKEUP);
+	ਬਣਤਰ sched_entity *se = &p->se;
+	ਬਣਤਰ cfs_rq *cfs_rq = &rq->cfs;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ;
 	bool curr;
 
-	if (task_is_throttled(p) && enqueue_throttled_task(p))
-		return;
+	ਜੇ (task_is_throttled(p) && ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_throttled_task(p))
+		ਵਾਪਸ;
 
 	/*
 	 * The code below (indirectly) updates schedutil which looks at
@@ -8175,14 +8175,14 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 * Let's add the task's estimated utilization to the cfs_rq's
 	 * estimated utilization, before we update schedutil.
 	 */
-	if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
-		util_est_enqueue(cfs_rq, p);
+	ਜੇ (!p->se.sched_delayed || (flags & ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_DELAYED))
+		util_est_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(cfs_rq, p);
 
 	update_curr_eevdf(cfs_rq);
 
-	if (flags & ENQUEUE_DELAYED) {
+	ਜੇ (flags & ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_DELAYED) {
 		requeue_delayed_entity(cfs_rq, se);
-		return;
+		ਵਾਪਸ;
 	}
 
 	/*
@@ -8190,7 +8190,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 * utilization updates, so do it here explicitly with the IOWAIT flag
 	 * passed.
 	 */
-	if (p->in_iowait)
+	ਜੇ (p->ਵਿੱਚ_iowait)
 		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
 
 	curr = (cfs_rq->curr == se);
@@ -8199,25 +8199,25 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 * and dequeued, unthrottled from another CPU and then enqueued again
 	 * before schedule().
 	 */
-	if (curr)
-		place_entity(cfs_rq, se, flags);
+	ਜੇ (curr)
+		ਰੱਖੋ_entity(cfs_rq, se, flags);
 
-	if (se->on_rq && se->sched_delayed)
+	ਜੇ (se->on_rq && se->sched_delayed)
 		requeue_delayed_entity(cfs_rq, se);
 
-	weight = enqueue_hierarchy(p, flags);
+	ਭਾਰ = ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_hierarchy(p, flags);
 
-	if (!curr) {
-		reweight_eevdf(cfs_rq, se, weight, false);
-		place_entity(cfs_rq, se, flags | ENQUEUE_QUEUED);
+	ਜੇ (!curr) {
+		reweight_eevdf(cfs_rq, se, ਭਾਰ, false);
+		ਰੱਖੋ_entity(cfs_rq, se, flags | ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_QUEUED);
 		__enqueue_entity(cfs_rq, se);
 	}
 
-	if (!rq_h_nr_queued && rq->cfs.h_nr_queued)
-		dl_server_start(&rq->fair_server);
+	ਜੇ (!rq_h_nr_queued && rq->cfs.h_nr_queued)
+		dl_server_ਸ਼ੁਰੂ(&rq->fair_server);
 
 	/* At this point se is NULL and we are at root level*/
-	add_nr_running(rq, 1);
+	ਜੋੜੋ_nr_running(rq, 1);
 
 	/*
 	 * Since new tasks are assigned an initial util_avg equal to
@@ -8233,55 +8233,55 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 * into account, but that is not straightforward to implement,
 	 * and the following generally works well enough in practice.
 	 */
-	if (!task_new)
-		check_update_overutilized_status(rq);
+	ਜੇ (!task_new)
+		check_update_overutilized_ਸਥਿਤੀ(rq);
 
-	assert_list_leaf_cfs_rq(rq);
+	assert_list_ਪੱਤੀ_cfs_rq(rq);
 
 	hrtick_update(rq);
 }
 
-static void dequeue_hierarchy(struct task_struct *p, int flags)
+ਸਥਿਰ ਖਾਲੀ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_hierarchy(ਬਣਤਰ task_struct *p, ਪੂਰਨ flags)
 {
-	struct sched_entity *se = &p->se;
-	bool task_sleep = flags & DEQUEUE_SLEEP;
-	bool task_delayed = flags & DEQUEUE_DELAYED;
-	bool task_throttled = flags & DEQUEUE_THROTTLE;
-	int h_nr_runnable = 0;
-	int h_nr_idle = task_has_idle_policy(p);
-	bool dequeue = true;
+	ਬਣਤਰ sched_entity *se = &p->se;
+	bool task_sleep = flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP;
+	bool task_delayed = flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_DELAYED;
+	bool task_throttled = flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_THROTTLE;
+	ਪੂਰਨ h_nr_runnable = 0;
+	ਪੂਰਨ h_nr_idle = task_has_idle_policy(p);
+	bool ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ = true;
 
-	if (task_sleep || task_delayed || !se->sched_delayed)
+	ਜੇ (task_sleep || task_delayed || !se->sched_delayed)
 		h_nr_runnable = 1;
 
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
 
 		update_curr(cfs_rq);
 
-		if (dequeue) {
-			dequeue_entity(cfs_rq, se, flags);
+		ਜੇ (ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ) {
+			ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_entity(cfs_rq, se, flags);
 			/* Don't dequeue parent if it has other entities besides us */
-			if (cfs_rq->load.weight)
-				dequeue = false;
-		} else {
-			update_load_avg(cfs_rq, se, UPDATE_TG);
+			ਜੇ (cfs_rq->ਲੱਦੋ.ਭਾਰ)
+				ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ = false;
+		} ਨਹੀਂਤਾਂ {
+			update_ਲੱਦੋ_avg(cfs_rq, se, UPDATE_TG);
 			se_update_runnable(se);
-			update_cfs_group(se);
+			update_cfs_ਸਮੂਹ(se);
 		}
 
 		cfs_rq->h_nr_runnable -= h_nr_runnable;
 		cfs_rq->h_nr_queued--;
 		cfs_rq->h_nr_idle -= h_nr_idle;
 
-		if (cfs_rq_is_idle(cfs_rq))
+		ਜੇ (cfs_rq_is_idle(cfs_rq))
 			h_nr_idle = 1;
 
-		if (throttled_hierarchy(cfs_rq) && task_throttled)
-			record_throttle_clock(cfs_rq);
+		ਜੇ (throttled_hierarchy(cfs_rq) && task_throttled)
+			ਰਿਕਾਰਡ_throttle_clock(cfs_rq);
 
-		flags |= DEQUEUE_SLEEP;
-		flags &= ~(DEQUEUE_DELAYED | DEQUEUE_SPECIAL);
+		flags |= ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP;
+		flags &= ~(ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_DELAYED | ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SPECIAL);
 	}
 }
 
@@ -8292,56 +8292,56 @@ static void dequeue_hierarchy(struct task_struct *p, int flags)
  *   true  - dequeued
  *   false - delayed
  */
-static bool __dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+ਸਥਿਰ bool __dequeue_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags)
 {
-	struct sched_entity *se = &p->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
+	ਬਣਤਰ sched_entity *se = &p->se;
+	ਬਣਤਰ cfs_rq *cfs_rq = &rq->cfs;
 	bool was_sched_idle = sched_idle_rq(rq);
-	bool task_sleep = flags & DEQUEUE_SLEEP;
-	bool task_delayed = flags & DEQUEUE_DELAYED;
+	bool task_sleep = flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP;
+	bool task_delayed = flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_DELAYED;
 
 	clear_buddies(cfs_rq, se);
 
 	update_curr_eevdf(cfs_rq);
 	update_entity_lag(cfs_rq, se);
 
-	if (flags & DEQUEUE_DELAYED) {
+	ਜੇ (flags & ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_DELAYED) {
 		WARN_ON_ONCE(!se->sched_delayed);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		bool delay = task_sleep;
 		/*
 		 * DELAY_DEQUEUE relies on spurious wakeups, special task
 		 * states must not suffer spurious wakeups, excempt them.
 		 */
-		if (flags & (DEQUEUE_SPECIAL | DEQUEUE_THROTTLE))
+		ਜੇ (flags & (ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SPECIAL | ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_THROTTLE))
 			delay = false;
 
 		WARN_ON_ONCE(delay && se->sched_delayed);
 
-		if (sched_feat(DELAY_DEQUEUE) && delay &&
+		ਜੇ (sched_feat(DELAY_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ) && delay &&
 		    !entity_eligible(cfs_rq, se)) {
-			update_load_avg(cfs_rq_of(se), se, UPDATE_UTIL_EST);
-			set_delayed(se);
-			return false;
+			update_ਲੱਦੋ_avg(cfs_rq_ਦਾ(se), se, UPDATE_UTIL_EST);
+			ਸੈੱਟ_delayed(se);
+			ਵਾਪਸ false;
 		}
 	}
 
-	dequeue_hierarchy(p, flags);
+	ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_hierarchy(p, flags);
 
-	if (sched_feat(PLACE_REL_DEADLINE) && !task_sleep) {
+	ਜੇ (sched_feat(ਰੱਖੋ_REL_DEADLINE) && !task_sleep) {
 		se->deadline -= se->vruntime;
 		se->rel_deadline = 1;
 	}
-	if (se != cfs_rq->curr)
+	ਜੇ (se != cfs_rq->curr)
 		__dequeue_entity(cfs_rq, se);
 
 	sub_nr_running(rq, 1);
 
 	/* balance early to pull high priority tasks */
-	if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
-		rq->next_balance = jiffies;
+	ਜੇ (unlikely(!was_sched_idle && sched_idle_rq(rq)))
+		rq->ਅਗਲਾ_balance = jiffies;
 
-	if (task_delayed) {
+	ਜੇ (task_delayed) {
 		clear_delayed(se);
 
 		WARN_ON_ONCE(!task_sleep);
@@ -8355,7 +8355,7 @@ static bool __dequeue_task(struct rq *rq, struct task_struct *p, int flags)
 		__block_task(rq, p);
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /*
@@ -8363,50 +8363,50 @@ static bool __dequeue_task(struct rq *rq, struct task_struct *p, int flags)
  * decreased. We remove the task from the rbtree and
  * update the fair scheduling stats:
  */
-static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ਸਥਿਰ bool ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags)
 {
-	if (task_is_throttled(p)) {
-		dequeue_throttled_task(p, flags);
-		return true;
+	ਜੇ (task_is_throttled(p)) {
+		ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_throttled_task(p, flags);
+		ਵਾਪਸ true;
 	}
 
-	if (!p->se.sched_delayed)
-		util_est_dequeue(&rq->cfs, p);
+	ਜੇ (!p->se.sched_delayed)
+		util_est_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(&rq->cfs, p);
 
-	if (!__dequeue_task(rq, p, flags))
-		return false;
+	ਜੇ (!__dequeue_task(rq, p, flags))
+		ਵਾਪਸ false;
 
 	/*
 	 * Must not reference @p after __dequeue_task(DEQUEUE_DELAYED).
 	 */
-	return true;
+	ਵਾਪਸ true;
 }
 
-static inline unsigned int cfs_h_nr_delayed(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cfs_h_nr_delayed(ਬਣਤਰ rq *rq)
 {
-	return (rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable);
+	ਵਾਪਸ (rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable);
 }
 
 /* Working cpumask for: sched_balance_rq(), sched_balance_newidle(). */
-static DEFINE_PER_CPU(cpumask_var_t, load_balance_mask);
-static DEFINE_PER_CPU(cpumask_var_t, select_rq_mask);
-static DEFINE_PER_CPU(cpumask_var_t, should_we_balance_tmpmask);
+ਸਥਿਰ DEFINE_ਪ੍ਰਤੀ_CPU(cpumask_var_t, ਲੱਦੋ_balance_ਨਕਾਬ);
+ਸਥਿਰ DEFINE_ਪ੍ਰਤੀ_CPU(cpumask_var_t, select_rq_ਨਕਾਬ);
+ਸਥਿਰ DEFINE_ਪ੍ਰਤੀ_CPU(cpumask_var_t, should_we_balance_tmpmask);
 
-#ifdef CONFIG_NO_HZ_COMMON
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_COMMON
 
-static struct {
-	cpumask_var_t idle_cpus_mask;
-	int has_blocked_load;		/* Idle CPUS has blocked load */
-	int needs_update;		/* Newly idle CPUs need their next_balance collated */
-	unsigned long next_balance;     /* in jiffy units */
-	unsigned long next_blocked;	/* Next update of blocked load in jiffies */
+ਸਥਿਰ ਬਣਤਰ {
+	cpumask_var_t idle_cpus_ਨਕਾਬ;
+	ਪੂਰਨ has_blocked_ਲੱਦੋ;		/* Idle CPUS has blocked load */
+	ਪੂਰਨ needs_update;		/* Newly idle CPUs need their next_balance collated */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਅਗਲਾ_balance;     /* in jiffy units */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਅਗਲਾ_blocked;	/* Next update of blocked load in jiffies */
 } nohz ____cacheline_aligned;
 
-#endif /* CONFIG_NO_HZ_COMMON */
+#ਜੇ_ਅੰਤ /* CONFIG_NO_HZ_COMMON */
 
-static unsigned long cpu_load(struct rq *rq)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_ਲੱਦੋ(ਬਣਤਰ rq *rq)
 {
-	return cfs_rq_load_avg(&rq->cfs);
+	ਵਾਪਸ cfs_rq_ਲੱਦੋ_avg(&rq->cfs);
 }
 
 /*
@@ -8422,65 +8422,65 @@ static unsigned long cpu_load(struct rq *rq)
  * the specified task, whenever the task is currently contributing to the CPU
  * load.
  */
-static unsigned long cpu_load_without(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_ਲੱਦੋ_without(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	struct cfs_rq *cfs_rq;
-	unsigned int load;
+	ਬਣਤਰ cfs_rq *cfs_rq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਲੱਦੋ;
 
 	/* Task has no contribution or is new */
-	if (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-		return cpu_load(rq);
+	ਜੇ (cpu_ਦਾ(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.ਆਖਰੀ_update_ਸਮਾਂ))
+		ਵਾਪਸ cpu_ਲੱਦੋ(rq);
 
 	cfs_rq = &rq->cfs;
-	load = READ_ONCE(cfs_rq->avg.load_avg);
+	ਲੱਦੋ = READ_ONCE(cfs_rq->avg.ਲੱਦੋ_avg);
 
 	/* Discount task's util from CPU's util */
-	lsub_positive(&load, task_h_load(p));
+	lsub_ਸਕਾਰਾਤਮਕ(&ਲੱਦੋ, task_h_ਲੱਦੋ(p));
 
-	return load;
+	ਵਾਪਸ ਲੱਦੋ;
 }
 
-static unsigned long cpu_runnable(struct rq *rq)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_runnable(ਬਣਤਰ rq *rq)
 {
-	return cfs_rq_runnable_avg(&rq->cfs);
+	ਵਾਪਸ cfs_rq_runnable_avg(&rq->cfs);
 }
 
-static unsigned long cpu_runnable_without(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_runnable_without(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	struct cfs_rq *cfs_rq;
-	unsigned int runnable;
+	ਬਣਤਰ cfs_rq *cfs_rq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ runnable;
 
 	/* Task has no contribution or is new */
-	if (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-		return cpu_runnable(rq);
+	ਜੇ (cpu_ਦਾ(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.ਆਖਰੀ_update_ਸਮਾਂ))
+		ਵਾਪਸ cpu_runnable(rq);
 
 	cfs_rq = &rq->cfs;
 	runnable = READ_ONCE(cfs_rq->avg.runnable_avg);
 
 	/* Discount task's runnable from CPU's runnable */
-	lsub_positive(&runnable, p->se.avg.runnable_avg);
+	lsub_ਸਕਾਰਾਤਮਕ(&runnable, p->se.avg.runnable_avg);
 
-	return runnable;
+	ਵਾਪਸ runnable;
 }
 
-static unsigned long capacity_of(int cpu)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮਰੱਥਾ_ਦਾ(ਪੂਰਨ cpu)
 {
-	return cpu_rq(cpu)->cpu_capacity;
+	ਵਾਪਸ cpu_rq(cpu)->cpu_ਸਮਰੱਥਾ;
 }
 
-static void record_wakee(struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ ਰਿਕਾਰਡ_wakee(ਬਣਤਰ task_struct *p)
 {
 	/*
 	 * Only decay a single time; tasks that have less then 1 wakeup per
 	 * jiffy will not have built up many flips.
 	 */
-	if (time_after(jiffies, current->wakee_flip_decay_ts + HZ)) {
+	ਜੇ (ਸਮਾਂ_after(jiffies, current->wakee_flip_decay_ts + HZ)) {
 		current->wakee_flips >>= 1;
 		current->wakee_flip_decay_ts = jiffies;
 	}
 
-	if (current->last_wakee != p) {
-		current->last_wakee = p;
+	ਜੇ (current->ਆਖਰੀ_wakee != p) {
+		current->ਆਖਰੀ_wakee = p;
 		current->wakee_flips++;
 	}
 }
@@ -8502,17 +8502,17 @@ static void record_wakee(struct task_struct *p)
  * whatever is irrelevant, spread criteria is apparent partner count exceeds
  * socket size.
  */
-static int wake_wide(struct task_struct *p)
+ਸਥਿਰ ਪੂਰਨ wake_wide(ਬਣਤਰ task_struct *p)
 {
-	unsigned int master = current->wakee_flips;
-	unsigned int slave = p->wakee_flips;
-	int factor = __this_cpu_read(sd_llc_size);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ master = current->wakee_flips;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ slave = p->wakee_flips;
+	ਪੂਰਨ ਗੁਣਕ = __this_cpu_read(sd_llc_ਮਾਪ);
 
-	if (master < slave)
-		swap(master, slave);
-	if (slave < factor || master < slave * factor)
-		return 0;
-	return 1;
+	ਜੇ (master < slave)
+		ਅਦਲਾ_ਬਦਲੀ(master, slave);
+	ਜੇ (slave < ਗੁਣਕ || master < slave * ਗੁਣਕ)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ 1;
 }
 
 /*
@@ -8527,8 +8527,8 @@ static int wake_wide(struct task_struct *p)
  *			  scheduling latency of the CPUs. This seems to work
  *			  for the overloaded case.
  */
-static int
-wake_affine_idle(int this_cpu, int prev_cpu, int sync)
+ਸਥਿਰ ਪੂਰਨ
+wake_affine_idle(ਪੂਰਨ this_cpu, ਪੂਰਨ prev_cpu, ਪੂਰਨ sync)
 {
 	/*
 	 * If this_cpu is idle, it implies the wakeup is from interrupt
@@ -8542,52 +8542,52 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
 	 * a cpufreq perspective, it's better to have higher utilisation
 	 * on one CPU.
 	 */
-	if (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
-		return available_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
+	ਜੇ (ਉਪਲਬਧ_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
+		ਵਾਪਸ ਉਪਲਬਧ_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
 
-	if (sync) {
-		struct rq *rq = cpu_rq(this_cpu);
+	ਜੇ (sync) {
+		ਬਣਤਰ rq *rq = cpu_rq(this_cpu);
 
-		if ((rq->nr_running - cfs_h_nr_delayed(rq)) == 1)
-			return this_cpu;
+		ਜੇ ((rq->nr_running - cfs_h_nr_delayed(rq)) == 1)
+			ਵਾਪਸ this_cpu;
 	}
 
-	if (available_idle_cpu(prev_cpu))
-		return prev_cpu;
+	ਜੇ (ਉਪਲਬਧ_idle_cpu(prev_cpu))
+		ਵਾਪਸ prev_cpu;
 
-	return nr_cpumask_bits;
+	ਵਾਪਸ nr_cpumask_ਬਿੱਟ;
 }
 
-static int
-wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
-		   int this_cpu, int prev_cpu, int sync)
+ਸਥਿਰ ਪੂਰਨ
+wake_affine_ਭਾਰ(ਬਣਤਰ sched_domain *sd, ਬਣਤਰ task_struct *p,
+		   ਪੂਰਨ this_cpu, ਪੂਰਨ prev_cpu, ਪੂਰਨ sync)
 {
-	s64 this_eff_load, prev_eff_load;
-	unsigned long task_load;
+	s64 this_eff_ਲੱਦੋ, prev_eff_ਲੱਦੋ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_ਲੱਦੋ;
 
-	this_eff_load = cpu_load(cpu_rq(this_cpu));
+	this_eff_ਲੱਦੋ = cpu_ਲੱਦੋ(cpu_rq(this_cpu));
 
-	if (sync) {
-		unsigned long current_load = task_h_load(current);
+	ਜੇ (sync) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ current_ਲੱਦੋ = task_h_ਲੱਦੋ(current);
 
-		if (current_load > this_eff_load)
-			return this_cpu;
+		ਜੇ (current_ਲੱਦੋ > this_eff_ਲੱਦੋ)
+			ਵਾਪਸ this_cpu;
 
-		this_eff_load -= current_load;
+		this_eff_ਲੱਦੋ -= current_ਲੱਦੋ;
 	}
 
-	task_load = task_h_load(p);
+	task_ਲੱਦੋ = task_h_ਲੱਦੋ(p);
 
-	this_eff_load += task_load;
-	if (sched_feat(WA_BIAS))
-		this_eff_load *= 100;
-	this_eff_load *= capacity_of(prev_cpu);
+	this_eff_ਲੱਦੋ += task_ਲੱਦੋ;
+	ਜੇ (sched_feat(WA_BIAS))
+		this_eff_ਲੱਦੋ *= 100;
+	this_eff_ਲੱਦੋ *= ਸਮਰੱਥਾ_ਦਾ(prev_cpu);
 
-	prev_eff_load = cpu_load(cpu_rq(prev_cpu));
-	prev_eff_load -= task_load;
-	if (sched_feat(WA_BIAS))
-		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
-	prev_eff_load *= capacity_of(this_cpu);
+	prev_eff_ਲੱਦੋ = cpu_ਲੱਦੋ(cpu_rq(prev_cpu));
+	prev_eff_ਲੱਦੋ -= task_ਲੱਦੋ;
+	ਜੇ (sched_feat(WA_BIAS))
+		prev_eff_ਲੱਦੋ *= 100 + (sd->imbalance_pct - 100) / 2;
+	prev_eff_ਲੱਦੋ *= ਸਮਰੱਥਾ_ਦਾ(this_cpu);
 
 	/*
 	 * If sync, adjust the weight of prev_eff_load such that if
@@ -8595,198 +8595,198 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
 	 * stacking the wakee on top of the waker if no other CPU is
 	 * idle.
 	 */
-	if (sync)
-		prev_eff_load += 1;
+	ਜੇ (sync)
+		prev_eff_ਲੱਦੋ += 1;
 
-	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
+	ਵਾਪਸ this_eff_ਲੱਦੋ < prev_eff_ਲੱਦੋ ? this_cpu : nr_cpumask_ਬਿੱਟ;
 }
 
-static int wake_affine(struct sched_domain *sd, struct task_struct *p,
-		       int this_cpu, int prev_cpu, int sync)
+ਸਥਿਰ ਪੂਰਨ wake_affine(ਬਣਤਰ sched_domain *sd, ਬਣਤਰ task_struct *p,
+		       ਪੂਰਨ this_cpu, ਪੂਰਨ prev_cpu, ਪੂਰਨ sync)
 {
-	int target = nr_cpumask_bits;
+	ਪੂਰਨ ਨਿਸ਼ਾਨਾ = nr_cpumask_ਬਿੱਟ;
 
-	if (sched_feat(WA_IDLE))
-		target = wake_affine_idle(this_cpu, prev_cpu, sync);
+	ਜੇ (sched_feat(WA_IDLE))
+		ਨਿਸ਼ਾਨਾ = wake_affine_idle(this_cpu, prev_cpu, sync);
 
-	if (sched_feat(WA_WEIGHT) && target == nr_cpumask_bits)
-		target = wake_affine_weight(sd, p, this_cpu, prev_cpu, sync);
+	ਜੇ (sched_feat(WA_ਭਾਰ) && ਨਿਸ਼ਾਨਾ == nr_cpumask_ਬਿੱਟ)
+		ਨਿਸ਼ਾਨਾ = wake_affine_ਭਾਰ(sd, p, this_cpu, prev_cpu, sync);
 
 	schedstat_inc(p->stats.nr_wakeups_affine_attempts);
-	if (target != this_cpu)
-		return prev_cpu;
+	ਜੇ (ਨਿਸ਼ਾਨਾ != this_cpu)
+		ਵਾਪਸ prev_cpu;
 
 	schedstat_inc(sd->ttwu_move_affine);
 	schedstat_inc(p->stats.nr_wakeups_affine);
-	return target;
+	ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
 }
 
-static struct sched_group *
-sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int this_cpu);
+ਸਥਿਰ ਬਣਤਰ sched_ਸਮੂਹ *
+sched_balance_ਲੱਭੋ_dst_ਸਮੂਹ(ਬਣਤਰ sched_domain *sd, ਬਣਤਰ task_struct *p, ਪੂਰਨ this_cpu);
 
 /*
  * sched_balance_find_dst_group_cpu - find the idlest CPU among the CPUs in the group.
  */
-static int
-sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *p, int this_cpu)
+ਸਥਿਰ ਪੂਰਨ
+sched_balance_ਲੱਭੋ_dst_ਸਮੂਹ_cpu(ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ, ਬਣਤਰ task_struct *p, ਪੂਰਨ this_cpu)
 {
-	unsigned long load, min_load = ULONG_MAX;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੱਦੋ, min_ਲੱਦੋ = ULONG_MAX;
 	u64 min_exit_latency = U64_MAX;
-	unsigned int nr_candidates = 0;
-	int least_loaded_cpu = this_cpu;
-	int shallowest_idle_cpu = -1;
-	int i;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr_candidates = 0;
+	ਪੂਰਨ ਘੱਟ_ਤੋਂ_ਘੱਟ_loaded_cpu = this_cpu;
+	ਪੂਰਨ shallowest_idle_cpu = -1;
+	ਪੂਰਨ i;
 
 	/* Check if we have any choice: */
-	if (group->group_weight == 1)
-		return cpumask_first(sched_group_span(group));
+	ਜੇ (ਸਮੂਹ->ਸਮੂਹ_ਭਾਰ == 1)
+		ਵਾਪਸ cpumask_ਪਹਿਲਾ(sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ));
 
 	/* Traverse only the allowed CPUs */
-	for_each_cpu_and(i, sched_group_span(group), p->cpus_ptr) {
-		struct rq *rq = cpu_rq(i);
+	for_each_cpu_and(i, sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ), p->cpus_ptr) {
+		ਬਣਤਰ rq *rq = cpu_rq(i);
 
-		if (!sched_core_cookie_match(rq, p))
-			continue;
+		ਜੇ (!sched_core_cookie_ਮੇਲ(rq, p))
+			ਜਾਰੀ;
 
-		if (choose_sched_idle_rq(rq, p))
-			return i;
+		ਜੇ (ਚੁਣੋ_sched_idle_rq(rq, p))
+			ਵਾਪਸ i;
 
-		if (available_idle_cpu(i)) {
-			struct cpuidle_state *idle = idle_get_state(rq);
+		ਜੇ (ਉਪਲਬਧ_idle_cpu(i)) {
+			ਬਣਤਰ cpuidle_state *idle = idle_get_state(rq);
 			u64 exit_latency = idle ? idle->exit_latency : U64_MAX;
 
-			if (shallowest_idle_cpu == -1 || exit_latency < min_exit_latency) {
+			ਜੇ (shallowest_idle_cpu == -1 || exit_latency < min_exit_latency) {
 				min_exit_latency = exit_latency;
 				shallowest_idle_cpu = i;
 				nr_candidates = 1;
-			} else if (exit_latency == min_exit_latency) {
+			} ਨਹੀਂਤਾਂ ਜੇ (exit_latency == min_exit_latency) {
 				nr_candidates++;
-				if (!reciprocal_scale(sched_rng(), nr_candidates))
+				ਜੇ (!reciprocal_scale(sched_rng(), nr_candidates))
 					shallowest_idle_cpu = i;
 			}
-		} else if (shallowest_idle_cpu == -1) {
-			load = cpu_load(cpu_rq(i));
-			if (load < min_load) {
-				min_load = load;
-				least_loaded_cpu = i;
+		} ਨਹੀਂਤਾਂ ਜੇ (shallowest_idle_cpu == -1) {
+			ਲੱਦੋ = cpu_ਲੱਦੋ(cpu_rq(i));
+			ਜੇ (ਲੱਦੋ < min_ਲੱਦੋ) {
+				min_ਲੱਦੋ = ਲੱਦੋ;
+				ਘੱਟ_ਤੋਂ_ਘੱਟ_loaded_cpu = i;
 			}
 		}
 	}
 
-	return shallowest_idle_cpu != -1 ? shallowest_idle_cpu : least_loaded_cpu;
+	ਵਾਪਸ shallowest_idle_cpu != -1 ? shallowest_idle_cpu : ਘੱਟ_ਤੋਂ_ਘੱਟ_loaded_cpu;
 }
 
-static inline int sched_balance_find_dst_cpu(struct sched_domain *sd, struct task_struct *p,
-				  int cpu, int prev_cpu, int sd_flag)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ sched_balance_ਲੱਭੋ_dst_cpu(ਬਣਤਰ sched_domain *sd, ਬਣਤਰ task_struct *p,
+				  ਪੂਰਨ cpu, ਪੂਰਨ prev_cpu, ਪੂਰਨ sd_flag)
 {
-	int new_cpu = cpu;
+	ਪੂਰਨ new_cpu = cpu;
 
-	if (!cpumask_intersects(sched_domain_span(sd), p->cpus_ptr))
-		return prev_cpu;
+	ਜੇ (!cpumask_intersects(sched_domain_ਵਿਸਤਾਰ(sd), p->cpus_ptr))
+		ਵਾਪਸ prev_cpu;
 
 	/*
 	 * We need task's util for cpu_util_without, sync it up to
 	 * prev_cpu's last_update_time.
 	 */
-	if (!(sd_flag & SD_BALANCE_FORK))
-		sync_entity_load_avg(&p->se);
+	ਜੇ (!(sd_flag & SD_BALANCE_FORK))
+		sync_entity_ਲੱਦੋ_avg(&p->se);
 
-	while (sd) {
-		struct sched_group *group;
-		struct sched_domain *tmp;
-		int weight;
+	ਜਦੋਂ (sd) {
+		ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ;
+		ਬਣਤਰ sched_domain *tmp;
+		ਪੂਰਨ ਭਾਰ;
 
-		if (!(sd->flags & sd_flag)) {
-			sd = sd->child;
-			continue;
+		ਜੇ (!(sd->flags & sd_flag)) {
+			sd = sd->ਬੱਚਾ;
+			ਜਾਰੀ;
 		}
 
-		group = sched_balance_find_dst_group(sd, p, cpu);
-		if (!group) {
-			sd = sd->child;
-			continue;
+		ਸਮੂਹ = sched_balance_ਲੱਭੋ_dst_ਸਮੂਹ(sd, p, cpu);
+		ਜੇ (!ਸਮੂਹ) {
+			sd = sd->ਬੱਚਾ;
+			ਜਾਰੀ;
 		}
 
-		new_cpu = sched_balance_find_dst_group_cpu(group, p, cpu);
-		if (new_cpu == cpu) {
+		new_cpu = sched_balance_ਲੱਭੋ_dst_ਸਮੂਹ_cpu(ਸਮੂਹ, p, cpu);
+		ਜੇ (new_cpu == cpu) {
 			/* Now try balancing at a lower domain level of 'cpu': */
-			sd = sd->child;
-			continue;
+			sd = sd->ਬੱਚਾ;
+			ਜਾਰੀ;
 		}
 
 		/* Now try balancing at a lower domain level of 'new_cpu': */
 		cpu = new_cpu;
-		weight = sd->span_weight;
-		sd = NULL;
+		ਭਾਰ = sd->ਵਿਸਤਾਰ_ਭਾਰ;
+		sd = ਨਿਰਾ;
 		for_each_domain(cpu, tmp) {
-			if (weight <= tmp->span_weight)
-				break;
-			if (tmp->flags & sd_flag)
+			ਜੇ (ਭਾਰ <= tmp->ਵਿਸਤਾਰ_ਭਾਰ)
+				ਰੋਕੋ;
+			ਜੇ (tmp->flags & sd_flag)
 				sd = tmp;
 		}
 	}
 
-	return new_cpu;
+	ਵਾਪਸ new_cpu;
 }
 
-static inline int __select_idle_cpu(int cpu, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ __select_idle_cpu(ਪੂਰਨ cpu, ਬਣਤਰ task_struct *p)
 {
-	if (choose_idle_cpu(cpu, p) && sched_cpu_cookie_match(cpu_rq(cpu), p))
-		return cpu;
+	ਜੇ (ਚੁਣੋ_idle_cpu(cpu, p) && sched_cpu_cookie_ਮੇਲ(cpu_rq(cpu), p))
+		ਵਾਪਸ cpu;
 
-	return -1;
+	ਵਾਪਸ -1;
 }
 
-DEFINE_STATIC_KEY_FALSE(sched_smt_present);
-EXPORT_SYMBOL_GPL(sched_smt_present);
+DEFINE_STATIC_ਕੁੰਜੀ_FALSE(sched_smt_present);
+EXPORT_ਚਿੰਨ੍ਹ_GPL(sched_smt_present);
 
-static inline void set_idle_cores(int cpu, int val)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਸੈੱਟ_idle_cores(ਪੂਰਨ cpu, ਪੂਰਨ val)
 {
-	struct sched_domain_shared *sds;
+	ਬਣਤਰ sched_domain_shared *sds;
 
-	sds = rcu_dereference_all(per_cpu(sd_balance_shared, cpu));
-	if (sds)
+	sds = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_balance_shared, cpu));
+	ਜੇ (sds)
 		WRITE_ONCE(sds->has_idle_cores, val);
 }
 
-static inline bool test_idle_cores(int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool test_idle_cores(ਪੂਰਨ cpu)
 {
-	struct sched_domain_shared *sds;
+	ਬਣਤਰ sched_domain_shared *sds;
 
-	sds = rcu_dereference_all(per_cpu(sd_balance_shared, cpu));
-	if (sds)
-		return READ_ONCE(sds->has_idle_cores);
+	sds = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_balance_shared, cpu));
+	ਜੇ (sds)
+		ਵਾਪਸ READ_ONCE(sds->has_idle_cores);
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 /*
  * Redirect a CPU to a higher-priority available sibling in its SMT domain,
  * subject to task affinity.
  */
-static inline int select_idle_smt_cpu(struct task_struct *p, int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ select_idle_smt_cpu(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu)
 {
-	struct sched_domain *sd;
-	int best = cpu;
-	int sibling;
+	ਬਣਤਰ sched_domain *sd;
+	ਪੂਰਨ ਉੱਤਮ = cpu;
+	ਪੂਰਨ sibling;
 
-	if (!sched_smt_active())
-		return cpu;
+	ਜੇ (!sched_smt_ਸਰਗਰਮ())
+		ਵਾਪਸ cpu;
 
 	sd = rcu_dereference_all(cpu_rq(cpu)->sd);
-	if (!sd || !(sd->flags & SD_SHARE_CPUCAPACITY) ||
+	ਜੇ (!sd || !(sd->flags & SD_SHARE_CPUCAPACITY) ||
 	    !(sd->flags & SD_ASYM_PACKING))
-		return cpu;
+		ਵਾਪਸ cpu;
 
-	for_each_cpu_and(sibling, sched_domain_span(sd), p->cpus_ptr) {
-		if (sibling == best || !choose_idle_cpu(sibling, p))
-			continue;
+	for_each_cpu_and(sibling, sched_domain_ਵਿਸਤਾਰ(sd), p->cpus_ptr) {
+		ਜੇ (sibling == ਉੱਤਮ || !ਚੁਣੋ_idle_cpu(sibling, p))
+			ਜਾਰੀ;
 
-		if (sched_asym_prefer(sibling, best))
-			best = sibling;
+		ਜੇ (sched_asym_prefer(sibling, ਉੱਤਮ))
+			ਉੱਤਮ = sibling;
 	}
 
-	return best;
+	ਵਾਪਸ ਉੱਤਮ;
 }
 
 /*
@@ -8796,24 +8796,24 @@ static inline int select_idle_smt_cpu(struct task_struct *p, int cpu)
  * Since SMT siblings share all cache levels, inspecting this limited remote
  * state should be fairly cheap.
  */
-void __update_idle_core(struct rq *rq)
+ਖਾਲੀ __update_idle_core(ਬਣਤਰ rq *rq)
 {
-	int core = cpu_of(rq);
-	int cpu;
+	ਪੂਰਨ core = cpu_ਦਾ(rq);
+	ਪੂਰਨ cpu;
 
-	rcu_read_lock();
-	if (test_idle_cores(core))
-		goto unlock;
+	rcu_read_ਤਾਲਾ();
+	ਜੇ (test_idle_cores(core))
+		ਜਾਓ unlock;
 
-	for_each_cpu(cpu, cpu_smt_mask(core)) {
-		if (cpu == core)
-			continue;
+	for_each_cpu(cpu, cpu_smt_ਨਕਾਬ(core)) {
+		ਜੇ (cpu == core)
+			ਜਾਰੀ;
 
-		if (!available_idle_cpu(cpu))
-			goto unlock;
+		ਜੇ (!ਉਪਲਬਧ_idle_cpu(cpu))
+			ਜਾਓ unlock;
 	}
 
-	set_idle_cores(core, 1);
+	ਸੈੱਟ_idle_cores(core, 1);
 unlock:
 	rcu_read_unlock();
 }
@@ -8824,56 +8824,56 @@ unlock:
  * sd_balance_shared->has_idle_cores and enabled through update_idle_core()
  * above.
  */
-static int select_idle_core(struct task_struct *p, int core, struct cpumask *cpus, int *idle_cpu)
+ਸਥਿਰ ਪੂਰਨ select_idle_core(ਬਣਤਰ task_struct *p, ਪੂਰਨ core, ਬਣਤਰ cpumask *cpus, ਪੂਰਨ *idle_cpu)
 {
 	bool idle = true;
-	int cpu;
+	ਪੂਰਨ cpu;
 
-	for_each_cpu(cpu, cpu_smt_mask(core)) {
-		if (!available_idle_cpu(cpu)) {
+	for_each_cpu(cpu, cpu_smt_ਨਕਾਬ(core)) {
+		ਜੇ (!ਉਪਲਬਧ_idle_cpu(cpu)) {
 			idle = false;
-			if (*idle_cpu == -1) {
-				if (choose_sched_idle_rq(cpu_rq(cpu), p) &&
+			ਜੇ (*idle_cpu == -1) {
+				ਜੇ (ਚੁਣੋ_sched_idle_rq(cpu_rq(cpu), p) &&
 				    cpumask_test_cpu(cpu, cpus)) {
 					*idle_cpu = cpu;
-					break;
+					ਰੋਕੋ;
 				}
-				continue;
+				ਜਾਰੀ;
 			}
-			break;
+			ਰੋਕੋ;
 		}
-		if (*idle_cpu == -1 && cpumask_test_cpu(cpu, cpus))
+		ਜੇ (*idle_cpu == -1 && cpumask_test_cpu(cpu, cpus))
 			*idle_cpu = cpu;
 	}
 
-	if (idle)
-		return core;
+	ਜੇ (idle)
+		ਵਾਪਸ core;
 
-	cpumask_andnot(cpus, cpus, cpu_smt_mask(core));
-	return -1;
+	cpumask_andnot(cpus, cpus, cpu_smt_ਨਕਾਬ(core));
+	ਵਾਪਸ -1;
 }
 
 /*
  * Scan the local SMT mask for idle CPUs.
  */
-static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int target)
+ਸਥਿਰ ਪੂਰਨ select_idle_smt(ਬਣਤਰ task_struct *p, ਬਣਤਰ sched_domain *sd, ਪੂਰਨ ਨਿਸ਼ਾਨਾ)
 {
-	int cpu;
+	ਪੂਰਨ cpu;
 
-	for_each_cpu_and(cpu, cpu_smt_mask(target), p->cpus_ptr) {
-		if (cpu == target)
-			continue;
+	for_each_cpu_and(cpu, cpu_smt_ਨਕਾਬ(ਨਿਸ਼ਾਨਾ), p->cpus_ptr) {
+		ਜੇ (cpu == ਨਿਸ਼ਾਨਾ)
+			ਜਾਰੀ;
 		/*
 		 * Check if the CPU is in the LLC scheduling domain of @target.
 		 * Due to isolcpus, there is no guarantee that all the siblings are in the domain.
 		 */
-		if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
-			continue;
-		if (choose_idle_cpu(cpu, p))
-			return cpu;
+		ਜੇ (!cpumask_test_cpu(cpu, sched_domain_ਵਿਸਤਾਰ(sd)))
+			ਜਾਰੀ;
+		ਜੇ (ਚੁਣੋ_idle_cpu(cpu, p))
+			ਵਾਪਸ cpu;
 	}
 
-	return -1;
+	ਵਾਪਸ -1;
 }
 
 /*
@@ -8881,12 +8881,12 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
  * comparing the average scan cost (tracked in sd->avg_scan_cost) against the
  * average idle time for this rq (as found in rq->avg_idle).
  */
-static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool has_idle_core, int target)
+ਸਥਿਰ ਪੂਰਨ select_idle_cpu(ਬਣਤਰ task_struct *p, ਬਣਤਰ sched_domain *sd, bool has_idle_core, ਪੂਰਨ ਨਿਸ਼ਾਨਾ)
 {
-	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
-	int i, cpu, idle_cpu = -1, nr = INT_MAX;
+	ਬਣਤਰ cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_ਨਕਾਬ);
+	ਪੂਰਨ i, cpu, idle_cpu = -1, nr = ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ;
 
-	if (sched_feat(SIS_UTIL) && sd->shared) {
+	ਜੇ (sched_feat(SIS_UTIL) && sd->shared) {
 		/*
 		 * Increment because !--nr is the condition to stop scan.
 		 *
@@ -8896,58 +8896,58 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool 
 		 * cannot disappear as long as we have a RCU protected
 		 * reference to one the associated "sd" here.
 		 */
-		nr = READ_ONCE(sd->shared->nr_idle_scan) + 1;
+		nr = READ_ONCE(sd->shared->nr_idle_ਜਾਂਚ) + 1;
 		/* overloaded LLC is unlikely to have idle cpu/core */
-		if (nr == 1)
-			return -1;
+		ਜੇ (nr == 1)
+			ਵਾਪਸ -1;
 	}
 
-	if (!cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr))
-		return -1;
+	ਜੇ (!cpumask_and(cpus, sched_domain_ਵਿਸਤਾਰ(sd), p->cpus_ptr))
+		ਵਾਪਸ -1;
 
-	if (static_branch_unlikely(&sched_cluster_active)) {
-		struct sched_group *sg = sd->groups;
+	ਜੇ (static_branch_unlikely(&sched_cluster_ਸਰਗਰਮ)) {
+		ਬਣਤਰ sched_ਸਮੂਹ *sg = sd->groups;
 
-		if (sg->flags & SD_CLUSTER) {
-			for_each_cpu_wrap(cpu, sched_group_span(sg), target + 1) {
-				if (!cpumask_test_cpu(cpu, cpus))
-					continue;
+		ਜੇ (sg->flags & SD_CLUSTER) {
+			for_each_cpu_wrap(cpu, sched_ਸਮੂਹ_ਵਿਸਤਾਰ(sg), ਨਿਸ਼ਾਨਾ + 1) {
+				ਜੇ (!cpumask_test_cpu(cpu, cpus))
+					ਜਾਰੀ;
 
-				if (has_idle_core) {
+				ਜੇ (has_idle_core) {
 					i = select_idle_core(p, cpu, cpus, &idle_cpu);
-					if ((unsigned int)i < nr_cpumask_bits)
-						return i;
-				} else {
-					if (--nr <= 0)
-						return -1;
+					ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)i < nr_cpumask_ਬਿੱਟ)
+						ਵਾਪਸ i;
+				} ਨਹੀਂਤਾਂ {
+					ਜੇ (--nr <= 0)
+						ਵਾਪਸ -1;
 					idle_cpu = __select_idle_cpu(cpu, p);
-					if ((unsigned int)idle_cpu < nr_cpumask_bits)
-						return idle_cpu;
+					ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)idle_cpu < nr_cpumask_ਬਿੱਟ)
+						ਵਾਪਸ idle_cpu;
 				}
 			}
-			cpumask_andnot(cpus, cpus, sched_group_span(sg));
+			cpumask_andnot(cpus, cpus, sched_ਸਮੂਹ_ਵਿਸਤਾਰ(sg));
 		}
 	}
 
-	for_each_cpu_wrap(cpu, cpus, target + 1) {
-		if (has_idle_core) {
+	for_each_cpu_wrap(cpu, cpus, ਨਿਸ਼ਾਨਾ + 1) {
+		ਜੇ (has_idle_core) {
 			i = select_idle_core(p, cpu, cpus, &idle_cpu);
-			if ((unsigned int)i < nr_cpumask_bits)
-				return i;
+			ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)i < nr_cpumask_ਬਿੱਟ)
+				ਵਾਪਸ i;
 
-		} else {
-			if (--nr <= 0)
-				return -1;
+		} ਨਹੀਂਤਾਂ {
+			ਜੇ (--nr <= 0)
+				ਵਾਪਸ -1;
 			idle_cpu = __select_idle_cpu(cpu, p);
-			if ((unsigned int)idle_cpu < nr_cpumask_bits)
-				break;
+			ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)idle_cpu < nr_cpumask_ਬਿੱਟ)
+				ਰੋਕੋ;
 		}
 	}
 
-	if (has_idle_core)
-		set_idle_cores(target, false);
+	ਜੇ (has_idle_core)
+		ਸੈੱਟ_idle_cores(ਨਿਸ਼ਾਨਾ, false);
 
-	return idle_cpu;
+	ਵਾਪਸ idle_cpu;
 }
 
 /*
@@ -8987,10 +8987,10 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool 
  * ASYM_IDLE_THREAD_FITS (-2) is never rebased because a fully-fitting idle-core
  * candidate early-returns from select_idle_capacity().
  */
-enum asym_fits_state {
+ਗਿਣਤੀ asym_ਸਮਾਉਂਦਾ_state {
 	ASYM_IDLE_UCLAMP_MISFIT = -4,
 	ASYM_IDLE_COMPLETE_MISFIT,
-	ASYM_IDLE_THREAD_FITS,
+	ASYM_IDLE_THREAD_ਸਮਾਉਂਦਾ,
 	ASYM_IDLE_THREAD_UCLAMP_MISFIT,
 	ASYM_IDLE_THREAD_MISFIT,
 
@@ -9003,54 +9003,54 @@ enum asym_fits_state {
  * the task fits. If no CPU is big enough, but there are idle ones, try to
  * maximize capacity.
  */
-static int
-select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
+ਸਥਿਰ ਪੂਰਨ
+select_idle_ਸਮਰੱਥਾ(ਬਣਤਰ task_struct *p, ਬਣਤਰ sched_domain *sd, ਪੂਰਨ ਨਿਸ਼ਾਨਾ)
 {
 	/*
 	 * On !SMT systems, has_idle_core is always false and preferred_core
 	 * is always true (CPU == core), so the SMT preference logic below
 	 * collapses to the plain capacity scan.
 	 */
-	bool has_idle_core = sched_smt_active() && test_idle_cores(target);
-	unsigned long task_util, util_min, util_max, best_cap = 0;
-	int fits, best_fits = ASYM_IDLE_THREAD_MISFIT;
-	int cpu, best_cpu = -1;
-	struct cpumask *cpus;
-	int nr = INT_MAX;
+	bool has_idle_core = sched_smt_ਸਰਗਰਮ() && test_idle_cores(ਨਿਸ਼ਾਨਾ);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_util, util_min, util_max, ਉੱਤਮ_cap = 0;
+	ਪੂਰਨ ਸਮਾਉਂਦਾ, ਉੱਤਮ_ਸਮਾਉਂਦਾ = ASYM_IDLE_THREAD_MISFIT;
+	ਪੂਰਨ cpu, ਉੱਤਮ_cpu = -1;
+	ਬਣਤਰ cpumask *cpus;
+	ਪੂਰਨ nr = ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ;
 
-	cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
-	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+	cpus = this_cpu_cpumask_var_ptr(select_rq_ਨਕਾਬ);
+	cpumask_and(cpus, sched_domain_ਵਿਸਤਾਰ(sd), p->cpus_ptr);
 
 	task_util = task_util_est(p);
-	util_min = uclamp_eff_value(p, UCLAMP_MIN);
-	util_max = uclamp_eff_value(p, UCLAMP_MAX);
+	util_min = uclamp_eff_ਮੁੱਲ(p, UCLAMP_MIN);
+	util_max = uclamp_eff_ਮੁੱਲ(p, UCLAMP_MAX);
 
-	if (sched_feat(SIS_UTIL) && sd->shared) {
+	ਜੇ (sched_feat(SIS_UTIL) && sd->shared) {
 		/*
 		 * Same nr_idle_scan hint as select_idle_cpu(), nr only limits
 		 * the scan when not preferring an idle core.
 		 */
-		nr = READ_ONCE(sd->shared->nr_idle_scan) + 1;
+		nr = READ_ONCE(sd->shared->nr_idle_ਜਾਂਚ) + 1;
 		/* overloaded domain is unlikely to have idle cpu/core */
-		if (nr == 1)
-			return -1;
+		ਜੇ (nr == 1)
+			ਵਾਪਸ -1;
 	}
 
-	for_each_cpu_wrap(cpu, cpus, target) {
+	for_each_cpu_wrap(cpu, cpus, ਨਿਸ਼ਾਨਾ) {
 		bool preferred_core = !has_idle_core || is_core_idle(cpu);
-		unsigned long cpu_cap = capacity_of(cpu);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_cap = ਸਮਰੱਥਾ_ਦਾ(cpu);
 
 		/*
 		 * Stop when the nr_idle_scan is exhausted (mirrors
 		 * select_idle_cpu() logic).
 		 */
-		if (!has_idle_core && --nr <= 0)
-			return best_cpu;
+		ਜੇ (!has_idle_core && --nr <= 0)
+			ਵਾਪਸ ਉੱਤਮ_cpu;
 
-		if (!choose_idle_cpu(cpu, p))
-			continue;
+		ਜੇ (!ਚੁਣੋ_idle_cpu(cpu, p))
+			ਜਾਰੀ;
 
-		fits = util_fits_cpu(task_util, util_min, util_max, cpu);
+		ਸਮਾਉਂਦਾ = util_ਸਮਾਉਂਦਾ_cpu(task_util, util_min, util_max, cpu);
 
 		/*
 		 * Perfect fit: capacity satisfies util + uclamp and the CPU
@@ -9059,14 +9059,14 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 		 * Short-circuit the rank-based selection and return
 		 * immediately.
 		 */
-		if (fits > 0 && preferred_core)
-			return cpu;
+		ਜੇ (ਸਮਾਉਂਦਾ > 0 && preferred_core)
+			ਵਾਪਸ cpu;
 		/*
 		 * Only the min performance hint (i.e. uclamp_min) doesn't fit.
 		 * Look for the CPU with best capacity.
 		 */
-		else if (fits < 0)
-			cpu_cap = get_actual_cpu_capacity(cpu);
+		ਨਹੀਂਤਾਂ ਜੇ (ਸਮਾਉਂਦਾ < 0)
+			cpu_cap = get_actual_cpu_ਸਮਰੱਥਾ(cpu);
 		/*
 		 * fits > 0 implies we are not on a preferred core, but the util
 		 * fits CPU capacity. Set fits to ASYM_IDLE_THREAD_FITS
@@ -9076,8 +9076,8 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 		 *    ASYM_IDLE_THREAD_UCLAMP_MISFIT - fits with the exception of UCLAMP_MIN
 		 *    ASYM_IDLE_THREAD_FITS - fits with the exception of preferred_core
 		 */
-		else if (fits > 0)
-			fits = ASYM_IDLE_THREAD_FITS;
+		ਨਹੀਂਤਾਂ ਜੇ (ਸਮਾਉਂਦਾ > 0)
+			ਸਮਾਉਂਦਾ = ASYM_IDLE_THREAD_ਸਮਾਉਂਦਾ;
 
 		/*
 		 * If we are on a preferred core, translate the range of fits
@@ -9089,18 +9089,18 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 		 * A fully fitting idle core would have returned early and hence
 		 * fits > 0 for preferred_core need not be dealt with.
 		 */
-		if (preferred_core)
-			fits += ASYM_IDLE_CORE_BIAS;
+		ਜੇ (preferred_core)
+			ਸਮਾਉਂਦਾ += ASYM_IDLE_CORE_BIAS;
 
 		/*
 		 * First, select CPU which fits better (lower is more preferred).
 		 * Then, select the one with best capacity at same level.
 		 */
-		if ((fits < best_fits) ||
-		    ((fits == best_fits) && (cpu_cap > best_cap))) {
-			best_cap = cpu_cap;
-			best_cpu = cpu;
-			best_fits = fits;
+		ਜੇ ((ਸਮਾਉਂਦਾ < ਉੱਤਮ_ਸਮਾਉਂਦਾ) ||
+		    ((ਸਮਾਉਂਦਾ == ਉੱਤਮ_ਸਮਾਉਂਦਾ) && (cpu_cap > ਉੱਤਮ_cap))) {
+			ਉੱਤਮ_cap = cpu_cap;
+			ਉੱਤਮ_cpu = cpu;
+			ਉੱਤਮ_ਸਮਾਉਂਦਾ = ਸਮਾਉਂਦਾ;
 		}
 	}
 
@@ -9114,18 +9114,18 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 	 * select_idle_cpu() tail that clears idle cores must live here when the
 	 * idle-core preference did not win.
 	 */
-	if (has_idle_core && best_fits > ASYM_IDLE_COMPLETE_MISFIT)
-		set_idle_cores(target, false);
+	ਜੇ (has_idle_core && ਉੱਤਮ_ਸਮਾਉਂਦਾ > ASYM_IDLE_COMPLETE_MISFIT)
+		ਸੈੱਟ_idle_cores(ਨਿਸ਼ਾਨਾ, false);
 
-	return best_cpu;
+	ਵਾਪਸ ਉੱਤਮ_cpu;
 }
 
-static inline bool asym_fits_cpu(unsigned long util,
-				 unsigned long util_min,
-				 unsigned long util_max,
-				 int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool asym_ਸਮਾਉਂਦਾ_cpu(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util_min,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util_max,
+				 ਪੂਰਨ cpu)
 {
-	if (sched_asym_cpucap_active()) {
+	ਜੇ (sched_asym_cpucap_ਸਰਗਰਮ()) {
 		/*
 		 * Return true only if the cpu fully fits the task requirements
 		 * which include the utilization and the performance hints.
@@ -9138,32 +9138,32 @@ static inline bool asym_fits_cpu(unsigned long util,
 		 * recent_used_cpu) idle-core-aware on ASYM+SMT, which the
 		 * NO_ASYM path does not do.
 		 */
-		return (!sched_smt_active() || is_core_idle(cpu)) &&
-		       (util_fits_cpu(util, util_min, util_max, cpu) > 0);
+		ਵਾਪਸ (!sched_smt_ਸਰਗਰਮ() || is_core_idle(cpu)) &&
+		       (util_ਸਮਾਉਂਦਾ_cpu(util, util_min, util_max, cpu) > 0);
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /*
  * Try and locate an idle core/thread in the LLC cache domain.
  */
-static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ਸਥਿਰ ਪੂਰਨ select_idle_sibling(ਬਣਤਰ task_struct *p, ਪੂਰਨ prev, ਪੂਰਨ ਨਿਸ਼ਾਨਾ)
 {
 	bool has_idle_core = false;
-	struct sched_domain *sd;
-	unsigned long task_util, util_min, util_max;
-	int i, recent_used_cpu, prev_aff = -1;
+	ਬਣਤਰ sched_domain *sd;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_util, util_min, util_max;
+	ਪੂਰਨ i, recent_ਵਰਤਿਆ_cpu, prev_aff = -1;
 
 	/*
 	 * On asymmetric system, update task utilization because we will check
 	 * that the task fits with CPU's capacity.
 	 */
-	if (sched_asym_cpucap_active()) {
-		sync_entity_load_avg(&p->se);
+	ਜੇ (sched_asym_cpucap_ਸਰਗਰਮ()) {
+		sync_entity_ਲੱਦੋ_avg(&p->se);
 		task_util = task_util_est(p);
-		util_min = uclamp_eff_value(p, UCLAMP_MIN);
-		util_max = uclamp_eff_value(p, UCLAMP_MAX);
+		util_min = uclamp_eff_ਮੁੱਲ(p, UCLAMP_MIN);
+		util_max = uclamp_eff_ਮੁੱਲ(p, UCLAMP_MAX);
 	}
 
 	/*
@@ -9171,21 +9171,21 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
 	 */
 	lockdep_assert_irqs_disabled();
 
-	if (choose_idle_cpu(target, p) &&
-	    asym_fits_cpu(task_util, util_min, util_max, target))
-		goto select_smt_priority;
+	ਜੇ (ਚੁਣੋ_idle_cpu(ਨਿਸ਼ਾਨਾ, p) &&
+	    asym_ਸਮਾਉਂਦਾ_cpu(task_util, util_min, util_max, ਨਿਸ਼ਾਨਾ))
+		ਜਾਓ select_smt_ਤਰਜੀਹ;
 
 	/*
 	 * If the previous CPU is cache affine and idle, don't be stupid:
 	 */
-	if (prev != target && cpus_share_cache(prev, target) &&
-	    choose_idle_cpu(prev, p) &&
-	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
+	ਜੇ (prev != ਨਿਸ਼ਾਨਾ && cpus_share_cache(prev, ਨਿਸ਼ਾਨਾ) &&
+	    ਚੁਣੋ_idle_cpu(prev, p) &&
+	    asym_ਸਮਾਉਂਦਾ_cpu(task_util, util_min, util_max, prev)) {
 
-		if (!static_branch_unlikely(&sched_cluster_active) ||
-		    cpus_share_resources(prev, target)) {
-			target = prev;
-			goto select_smt_priority;
+		ਜੇ (!static_branch_unlikely(&sched_cluster_ਸਰਗਰਮ) ||
+		    cpus_share_resources(prev, ਨਿਸ਼ਾਨਾ)) {
+			ਨਿਸ਼ਾਨਾ = prev;
+			ਜਾਓ select_smt_ਤਰਜੀਹ;
 		}
 
 		prev_aff = prev;
@@ -9199,41 +9199,41 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
 	 * essentially a sync wakeup. An obvious example of this
 	 * pattern is IO completions.
 	 */
-	if (is_per_cpu_kthread(current) &&
-	    in_task() &&
+	ਜੇ (is_ਪ੍ਰਤੀ_cpu_kthread(current) &&
+	    ਵਿੱਚ_task() &&
 	    prev == smp_processor_id() &&
 	    this_rq()->nr_running <= 1 &&
-	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
-		target = prev;
-		goto select_smt_priority;
+	    asym_ਸਮਾਉਂਦਾ_cpu(task_util, util_min, util_max, prev)) {
+		ਨਿਸ਼ਾਨਾ = prev;
+		ਜਾਓ select_smt_ਤਰਜੀਹ;
 	}
 
 	/* Check a recently used CPU as a potential idle candidate: */
-	recent_used_cpu = p->recent_used_cpu;
-	p->recent_used_cpu = prev;
-	if (recent_used_cpu != prev &&
-	    recent_used_cpu != target &&
-	    cpus_share_cache(recent_used_cpu, target) &&
-	    choose_idle_cpu(recent_used_cpu, p) &&
-	    cpumask_test_cpu(recent_used_cpu, p->cpus_ptr) &&
-	    asym_fits_cpu(task_util, util_min, util_max, recent_used_cpu)) {
+	recent_ਵਰਤਿਆ_cpu = p->recent_ਵਰਤਿਆ_cpu;
+	p->recent_ਵਰਤਿਆ_cpu = prev;
+	ਜੇ (recent_ਵਰਤਿਆ_cpu != prev &&
+	    recent_ਵਰਤਿਆ_cpu != ਨਿਸ਼ਾਨਾ &&
+	    cpus_share_cache(recent_ਵਰਤਿਆ_cpu, ਨਿਸ਼ਾਨਾ) &&
+	    ਚੁਣੋ_idle_cpu(recent_ਵਰਤਿਆ_cpu, p) &&
+	    cpumask_test_cpu(recent_ਵਰਤਿਆ_cpu, p->cpus_ptr) &&
+	    asym_ਸਮਾਉਂਦਾ_cpu(task_util, util_min, util_max, recent_ਵਰਤਿਆ_cpu)) {
 
-		if (!static_branch_unlikely(&sched_cluster_active) ||
-		    cpus_share_resources(recent_used_cpu, target)) {
-			target = recent_used_cpu;
-			goto select_smt_priority;
+		ਜੇ (!static_branch_unlikely(&sched_cluster_ਸਰਗਰਮ) ||
+		    cpus_share_resources(recent_ਵਰਤਿਆ_cpu, ਨਿਸ਼ਾਨਾ)) {
+			ਨਿਸ਼ਾਨਾ = recent_ਵਰਤਿਆ_cpu;
+			ਜਾਓ select_smt_ਤਰਜੀਹ;
 		}
 
-	} else {
-		recent_used_cpu = -1;
+	} ਨਹੀਂਤਾਂ {
+		recent_ਵਰਤਿਆ_cpu = -1;
 	}
 
 	/*
 	 * For asymmetric CPU capacity systems, our domain of interest is
 	 * sd_asym_cpucapacity rather than sd_llc.
 	 */
-	if (sched_asym_cpucap_active()) {
-		sd = rcu_dereference_all(per_cpu(sd_asym_cpucapacity, target));
+	ਜੇ (sched_asym_cpucap_ਸਰਗਰਮ()) {
+		sd = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_asym_cpucapacity, ਨਿਸ਼ਾਨਾ));
 		/*
 		 * On an asymmetric CPU capacity system where an exclusive
 		 * cpuset defines a symmetric island (i.e. one unique
@@ -9242,36 +9242,36 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
 		 * SD_ASYM_CPUCAPACITY. These should follow the usual symmetric
 		 * capacity path.
 		 */
-		if (sd) {
-			i = select_idle_capacity(p, sd, target);
-			if ((unsigned int)i < nr_cpumask_bits) {
-				target = i;
-				goto select_smt_priority;
+		ਜੇ (sd) {
+			i = select_idle_ਸਮਰੱਥਾ(p, sd, ਨਿਸ਼ਾਨਾ);
+			ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)i < nr_cpumask_ਬਿੱਟ) {
+				ਨਿਸ਼ਾਨਾ = i;
+				ਜਾਓ select_smt_ਤਰਜੀਹ;
 			}
-			return target;
+			ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
 		}
 	}
 
-	sd = rcu_dereference_all(per_cpu(sd_llc, target));
-	if (!sd)
-		return target;
+	sd = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_llc, ਨਿਸ਼ਾਨਾ));
+	ਜੇ (!sd)
+		ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
 
-	if (sched_smt_active()) {
-		has_idle_core = test_idle_cores(target);
+	ਜੇ (sched_smt_ਸਰਗਰਮ()) {
+		has_idle_core = test_idle_cores(ਨਿਸ਼ਾਨਾ);
 
-		if (!has_idle_core && cpus_share_cache(prev, target)) {
+		ਜੇ (!has_idle_core && cpus_share_cache(prev, ਨਿਸ਼ਾਨਾ)) {
 			i = select_idle_smt(p, sd, prev);
-			if ((unsigned int)i < nr_cpumask_bits) {
-				target = i;
-				goto select_smt_priority;
+			ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)i < nr_cpumask_ਬਿੱਟ) {
+				ਨਿਸ਼ਾਨਾ = i;
+				ਜਾਓ select_smt_ਤਰਜੀਹ;
 			}
 		}
 	}
 
-	i = select_idle_cpu(p, sd, has_idle_core, target);
-	if ((unsigned int)i < nr_cpumask_bits) {
-		target = i;
-		goto select_smt_priority;
+	i = select_idle_cpu(p, sd, has_idle_core, ਨਿਸ਼ਾਨਾ);
+	ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)i < nr_cpumask_ਬਿੱਟ) {
+		ਨਿਸ਼ਾਨਾ = i;
+		ਜਾਓ select_smt_ਤਰਜੀਹ;
 	}
 
 	/*
@@ -9280,19 +9280,19 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
 	 * first. But prev_cpu or recent_used_cpu may also be a good candidate,
 	 * use them if possible when no idle CPU found in select_idle_cpu().
 	 */
-	if ((unsigned int)prev_aff < nr_cpumask_bits) {
-		target = prev_aff;
-		goto select_smt_priority;
+	ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)prev_aff < nr_cpumask_ਬਿੱਟ) {
+		ਨਿਸ਼ਾਨਾ = prev_aff;
+		ਜਾਓ select_smt_ਤਰਜੀਹ;
 	}
-	if ((unsigned int)recent_used_cpu < nr_cpumask_bits) {
-		target = recent_used_cpu;
-		goto select_smt_priority;
+	ਜੇ ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)recent_ਵਰਤਿਆ_cpu < nr_cpumask_ਬਿੱਟ) {
+		ਨਿਸ਼ਾਨਾ = recent_ਵਰਤਿਆ_cpu;
+		ਜਾਓ select_smt_ਤਰਜੀਹ;
 	}
 
-	return target;
+	ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
 
-select_smt_priority:
-	return select_idle_smt_cpu(p, target);
+select_smt_ਤਰਜੀਹ:
+	ਵਾਪਸ select_idle_smt_cpu(p, ਨਿਸ਼ਾਨਾ);
 }
 
 /**
@@ -9336,14 +9336,14 @@ select_smt_priority:
  *
  * Return: (Boosted) (estimated) utilization for the specified CPU.
  */
-static unsigned long
-cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ
+cpu_util(ਪੂਰਨ cpu, ਬਣਤਰ task_struct *p, ਪੂਰਨ dst_cpu, ਪੂਰਨ boost)
 {
-	bool add_task = p && task_cpu(p) != cpu && dst_cpu == cpu;
+	bool ਜੋੜੋ_task = p && task_cpu(p) != cpu && dst_cpu == cpu;
 	bool sub_task = p && task_cpu(p) == cpu && dst_cpu != cpu;
-	struct cfs_rq *cfs_rq = &cpu_rq(cpu)->cfs;
-	unsigned long util = READ_ONCE(cfs_rq->avg.util_avg);
-	unsigned long runnable;
+	ਬਣਤਰ cfs_rq *cfs_rq = &cpu_rq(cpu)->cfs;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util = READ_ONCE(cfs_rq->avg.util_avg);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ runnable;
 
 	/*
 	 * If @dst_cpu is -1 or @p migrates from @cpu to @dst_cpu remove its
@@ -9351,23 +9351,23 @@ cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
 	 * contribution. In all the other cases @cpu is not impacted by the
 	 * migration so its util_avg is already correct.
 	 */
-	if (add_task)
+	ਜੇ (ਜੋੜੋ_task)
 		util += task_util(p);
-	else if (sub_task)
-		lsub_positive(&util, task_util(p));
+	ਨਹੀਂਤਾਂ ਜੇ (sub_task)
+		lsub_ਸਕਾਰਾਤਮਕ(&util, task_util(p));
 
-	if (boost) {
+	ਜੇ (boost) {
 		runnable = READ_ONCE(cfs_rq->avg.runnable_avg);
-		if (add_task)
+		ਜੇ (ਜੋੜੋ_task)
 			runnable += READ_ONCE(p->se.avg.runnable_avg);
-		else if (sub_task)
-			lsub_positive(&runnable,
+		ਨਹੀਂਤਾਂ ਜੇ (sub_task)
+			lsub_ਸਕਾਰਾਤਮਕ(&runnable,
 				      READ_ONCE(p->se.avg.runnable_avg));
 		util = max(util, runnable);
 	}
 
-	if (sched_feat(UTIL_EST)) {
-		unsigned long util_est;
+	ਜੇ (sched_feat(UTIL_EST)) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util_est;
 
 		util_est = READ_ONCE(cfs_rq->avg.util_est);
 
@@ -9397,25 +9397,25 @@ cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
 		 * The additional check "current == p" is required to further
 		 * reduce the race window.
 		 */
-		if (dst_cpu == cpu)
+		ਜੇ (dst_cpu == cpu)
 			util_est += _task_util_est(p);
-		else if (p && unlikely(task_on_rq_queued(p) || current == p))
-			lsub_positive(&util_est, _task_util_est(p));
+		ਨਹੀਂਤਾਂ ਜੇ (p && unlikely(task_on_rq_queued(p) || current == p))
+			lsub_ਸਕਾਰਾਤਮਕ(&util_est, _task_util_est(p));
 
 		util = max(util, util_est);
 	}
 
-	return min(util, arch_scale_cpu_capacity(cpu));
+	ਵਾਪਸ min(util, arch_scale_cpu_ਸਮਰੱਥਾ(cpu));
 }
 
-unsigned long cpu_util_cfs(int cpu)
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_util_cfs(ਪੂਰਨ cpu)
 {
-	return cpu_util(cpu, NULL, -1, 0);
+	ਵਾਪਸ cpu_util(cpu, ਨਿਰਾ, -1, 0);
 }
 
-unsigned long cpu_util_cfs_boost(int cpu)
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_util_cfs_boost(ਪੂਰਨ cpu)
 {
-	return cpu_util(cpu, NULL, -1, 1);
+	ਵਾਪਸ cpu_util(cpu, ਨਿਰਾ, -1, 1);
 }
 
 /*
@@ -9431,13 +9431,13 @@ unsigned long cpu_util_cfs_boost(int cpu)
  * utilization of the specified task, whenever the task is currently
  * contributing to the CPU utilization.
  */
-static unsigned long cpu_util_without(int cpu, struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_util_without(ਪੂਰਨ cpu, ਬਣਤਰ task_struct *p)
 {
 	/* Task has no contribution or is new */
-	if (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-		p = NULL;
+	ਜੇ (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.ਆਖਰੀ_update_ਸਮਾਂ))
+		p = ਨਿਰਾ;
 
-	return cpu_util(cpu, p, -1, 0);
+	ਵਾਪਸ cpu_util(cpu, p, -1, 0);
 }
 
 /*
@@ -9460,14 +9460,14 @@ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
  * based on the task model parameters and gives the minimal utilization
  * required to meet deadlines.
  */
-unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
-				 unsigned long *min,
-				 unsigned long *max)
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ effective_cpu_util(ਪੂਰਨ cpu, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util_cfs,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *min,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *max)
 {
-	unsigned long util, irq, scale;
-	struct rq *rq = cpu_rq(cpu);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util, irq, scale;
+	ਬਣਤਰ rq *rq = cpu_rq(cpu);
 
-	scale = arch_scale_cpu_capacity(cpu);
+	scale = arch_scale_cpu_ਸਮਰੱਥਾ(cpu);
 
 	/*
 	 * Early check to see if IRQ/steal time saturates the CPU, can be
@@ -9475,15 +9475,15 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
 	 * update_irq_load_avg().
 	 */
 	irq = cpu_util_irq(rq);
-	if (unlikely(irq >= scale)) {
-		if (min)
+	ਜੇ (unlikely(irq >= scale)) {
+		ਜੇ (min)
 			*min = scale;
-		if (max)
+		ਜੇ (max)
 			*max = scale;
-		return scale;
+		ਵਾਪਸ scale;
 	}
 
-	if (min) {
+	ਜੇ (min) {
 		/*
 		 * The minimum utilization returns the highest level between:
 		 * - the computed DL bandwidth needed with the IRQ pressure which
@@ -9496,7 +9496,7 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
 		 * When an RT task is runnable and uclamp is not used, we must
 		 * ensure that the task will run at maximum compute capacity.
 		 */
-		if (!uclamp_is_used() && rt_rq_is_runnable(&rq->rt))
+		ਜੇ (!uclamp_is_ਵਰਤਿਆ() && rt_rq_is_runnable(&rq->rt))
 			*min = max(*min, scale);
 	}
 
@@ -9513,11 +9513,11 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
 	 * The maximum hint is a soft bandwidth requirement, which can be lower
 	 * than the actual utilization because of uclamp_max requirements.
 	 */
-	if (max)
+	ਜੇ (max)
 		*max = min(scale, uclamp_rq_get(rq, UCLAMP_MAX));
 
-	if (util >= scale)
-		return scale;
+	ਜੇ (util >= scale)
+		ਵਾਪਸ scale;
 
 	/*
 	 * There is still idle time; further improve the number by using the
@@ -9528,15 +9528,15 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
 	 *   U' = irq + --------- * U
 	 *                 max
 	 */
-	util = scale_irq_capacity(util, irq, scale);
+	util = scale_irq_ਸਮਰੱਥਾ(util, irq, scale);
 	util += irq;
 
-	return min(scale, util);
+	ਵਾਪਸ min(scale, util);
 }
 
-unsigned long sched_cpu_util(int cpu)
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sched_cpu_util(ਪੂਰਨ cpu)
 {
-	return effective_cpu_util(cpu, cpu_util_cfs(cpu), NULL, NULL);
+	ਵਾਪਸ effective_cpu_util(cpu, cpu_util_cfs(cpu), ਨਿਰਾ, ਨਿਰਾ);
 }
 
 /*
@@ -9548,11 +9548,11 @@ unsigned long sched_cpu_util(int cpu)
  * @cpu_cap:        Maximum CPU capacity for the perf domain.
  * @pd_cap:         Entire perf domain capacity. (pd->nr_cpus * cpu_cap).
  */
-struct energy_env {
-	unsigned long task_busy_time;
-	unsigned long pd_busy_time;
-	unsigned long cpu_cap;
-	unsigned long pd_cap;
+ਬਣਤਰ energy_env {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_busy_ਸਮਾਂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ pd_busy_ਸਮਾਂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_cap;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ pd_cap;
 };
 
 /*
@@ -9561,18 +9561,18 @@ struct energy_env {
  * The latter only makes sense with the most recent CPUs where the task has
  * run.
  */
-static inline void eenv_task_busy_time(struct energy_env *eenv,
-				       struct task_struct *p, int prev_cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ eenv_task_busy_ਸਮਾਂ(ਬਣਤਰ energy_env *eenv,
+				       ਬਣਤਰ task_struct *p, ਪੂਰਨ prev_cpu)
 {
-	unsigned long busy_time, max_cap = arch_scale_cpu_capacity(prev_cpu);
-	unsigned long irq = cpu_util_irq(cpu_rq(prev_cpu));
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ busy_ਸਮਾਂ, max_cap = arch_scale_cpu_ਸਮਰੱਥਾ(prev_cpu);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ irq = cpu_util_irq(cpu_rq(prev_cpu));
 
-	if (unlikely(irq >= max_cap))
-		busy_time = max_cap;
-	else
-		busy_time = scale_irq_capacity(task_util_est(p), irq, max_cap);
+	ਜੇ (unlikely(irq >= max_cap))
+		busy_ਸਮਾਂ = max_cap;
+	ਨਹੀਂਤਾਂ
+		busy_ਸਮਾਂ = scale_irq_ਸਮਰੱਥਾ(task_util_est(p), irq, max_cap);
 
-	eenv->task_busy_time = busy_time;
+	eenv->task_busy_ਸਮਾਂ = busy_ਸਮਾਂ;
 }
 
 /*
@@ -9596,20 +9596,20 @@ static inline void eenv_task_busy_time(struct energy_env *eenv,
  * Set @eenv busy time for the PD that spans @pd_cpus. This busy time can't
  * exceed @eenv->pd_cap.
  */
-static inline void eenv_pd_busy_time(struct energy_env *eenv,
-				     struct cpumask *pd_cpus,
-				     struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ eenv_pd_busy_ਸਮਾਂ(ਬਣਤਰ energy_env *eenv,
+				     ਬਣਤਰ cpumask *pd_cpus,
+				     ਬਣਤਰ task_struct *p)
 {
-	unsigned long busy_time = 0;
-	int cpu;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ busy_ਸਮਾਂ = 0;
+	ਪੂਰਨ cpu;
 
 	for_each_cpu(cpu, pd_cpus) {
-		unsigned long util = cpu_util(cpu, p, -1, 0);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util = cpu_util(cpu, p, -1, 0);
 
-		busy_time += effective_cpu_util(cpu, util, NULL, NULL);
+		busy_ਸਮਾਂ += effective_cpu_util(cpu, util, ਨਿਰਾ, ਨਿਰਾ);
 	}
 
-	eenv->pd_busy_time = min(eenv->pd_cap, busy_time);
+	eenv->pd_busy_ਸਮਾਂ = min(eenv->pd_cap, busy_ਸਮਾਂ);
 }
 
 /*
@@ -9619,17 +9619,17 @@ static inline void eenv_pd_busy_time(struct energy_env *eenv,
  * Returns the maximum utilization among @eenv->cpus. This utilization can't
  * exceed @eenv->cpu_cap.
  */
-static inline unsigned long
-eenv_pd_max_util(struct energy_env *eenv, struct cpumask *pd_cpus,
-		 struct task_struct *p, int dst_cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ
+eenv_pd_max_util(ਬਣਤਰ energy_env *eenv, ਬਣਤਰ cpumask *pd_cpus,
+		 ਬਣਤਰ task_struct *p, ਪੂਰਨ dst_cpu)
 {
-	unsigned long max_util = 0;
-	int cpu;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max_util = 0;
+	ਪੂਰਨ cpu;
 
 	for_each_cpu(cpu, pd_cpus) {
-		struct task_struct *tsk = (cpu == dst_cpu) ? p : NULL;
-		unsigned long util = cpu_util(cpu, p, dst_cpu, 1);
-		unsigned long eff_util, min, max;
+		ਬਣਤਰ task_struct *tsk = (cpu == dst_cpu) ? p : ਨਿਰਾ;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util = cpu_util(cpu, p, dst_cpu, 1);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ eff_util, min, max;
 
 		/*
 		 * Performance domain frequency: utilization clamping
@@ -9641,24 +9641,24 @@ eenv_pd_max_util(struct energy_env *eenv, struct cpumask *pd_cpus,
 		eff_util = effective_cpu_util(cpu, util, &min, &max);
 
 		/* Task's uclamp can modify min and max value */
-		if (tsk && uclamp_is_used()) {
-			min = max(min, uclamp_eff_value(p, UCLAMP_MIN));
+		ਜੇ (tsk && uclamp_is_ਵਰਤਿਆ()) {
+			min = max(min, uclamp_eff_ਮੁੱਲ(p, UCLAMP_MIN));
 
 			/*
 			 * If there is no active max uclamp constraint,
 			 * directly use task's one, otherwise keep max.
 			 */
-			if (uclamp_rq_is_idle(cpu_rq(cpu)))
-				max = uclamp_eff_value(p, UCLAMP_MAX);
-			else
-				max = max(max, uclamp_eff_value(p, UCLAMP_MAX));
+			ਜੇ (uclamp_rq_is_idle(cpu_rq(cpu)))
+				max = uclamp_eff_ਮੁੱਲ(p, UCLAMP_MAX);
+			ਨਹੀਂਤਾਂ
+				max = max(max, uclamp_eff_ਮੁੱਲ(p, UCLAMP_MAX));
 		}
 
 		eff_util = sugov_effective_cpu_perf(cpu, eff_util, min, max);
 		max_util = max(max_util, eff_util);
 	}
 
-	return min(max_util, eenv->cpu_cap);
+	ਵਾਪਸ min(max_util, eenv->cpu_cap);
 }
 
 /*
@@ -9666,22 +9666,22 @@ eenv_pd_max_util(struct energy_env *eenv, struct cpumask *pd_cpus,
  * consume for a given utilization landscape @eenv. When @dst_cpu < 0, the task
  * contribution is ignored.
  */
-static inline unsigned long
-compute_energy(struct energy_env *eenv, struct perf_domain *pd,
-	       struct cpumask *pd_cpus, struct task_struct *p, int dst_cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ
+compute_energy(ਬਣਤਰ energy_env *eenv, ਬਣਤਰ perf_domain *pd,
+	       ਬਣਤਰ cpumask *pd_cpus, ਬਣਤਰ task_struct *p, ਪੂਰਨ dst_cpu)
 {
-	unsigned long max_util = eenv_pd_max_util(eenv, pd_cpus, p, dst_cpu);
-	unsigned long busy_time = eenv->pd_busy_time;
-	unsigned long energy;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max_util = eenv_pd_max_util(eenv, pd_cpus, p, dst_cpu);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ busy_ਸਮਾਂ = eenv->pd_busy_ਸਮਾਂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ energy;
 
-	if (dst_cpu >= 0)
-		busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
+	ਜੇ (dst_cpu >= 0)
+		busy_ਸਮਾਂ = min(eenv->pd_cap, busy_ਸਮਾਂ + eenv->task_busy_ਸਮਾਂ);
 
-	energy = em_cpu_energy(pd->em_pd, max_util, busy_time, eenv->cpu_cap);
+	energy = em_cpu_energy(pd->em_pd, max_util, busy_ਸਮਾਂ, eenv->cpu_cap);
 
-	trace_sched_compute_energy_tp(p, dst_cpu, energy, max_util, busy_time);
+	trace_sched_compute_energy_tp(p, dst_cpu, energy, max_util, busy_ਸਮਾਂ);
 
-	return energy;
+	ਵਾਪਸ energy;
 }
 
 /*
@@ -9723,75 +9723,75 @@ compute_energy(struct energy_env *eenv, struct perf_domain *pd,
  * other use-cases too. So, until someone finds a better way to solve this,
  * let's keep things simple by re-using the existing slow path.
  */
-static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+ਸਥਿਰ ਪੂਰਨ ਲੱਭੋ_energy_efficient_cpu(ਬਣਤਰ task_struct *p, ਪੂਰਨ prev_cpu)
 {
-	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
-	unsigned long prev_delta = ULONG_MAX, best_delta = ULONG_MAX;
-	unsigned long p_util_min = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MIN) : 0;
-	unsigned long p_util_max = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MAX) : 1024;
-	struct root_domain *rd = this_rq()->rd;
-	int cpu, best_energy_cpu, target = -1;
-	int prev_fits = -1, best_fits = -1;
-	unsigned long best_actual_cap = 0;
-	unsigned long prev_actual_cap = 0;
-	struct sched_domain *sd;
-	struct perf_domain *pd;
-	struct energy_env eenv;
+	ਬਣਤਰ cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_ਨਕਾਬ);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ prev_delta = ULONG_MAX, ਉੱਤਮ_delta = ULONG_MAX;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ p_util_min = uclamp_is_ਵਰਤਿਆ() ? uclamp_eff_ਮੁੱਲ(p, UCLAMP_MIN) : 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ p_util_max = uclamp_is_ਵਰਤਿਆ() ? uclamp_eff_ਮੁੱਲ(p, UCLAMP_MAX) : 1024;
+	ਬਣਤਰ ਜੜ੍ਹ_domain *rd = this_rq()->rd;
+	ਪੂਰਨ cpu, ਉੱਤਮ_energy_cpu, ਨਿਸ਼ਾਨਾ = -1;
+	ਪੂਰਨ prev_ਸਮਾਉਂਦਾ = -1, ਉੱਤਮ_ਸਮਾਉਂਦਾ = -1;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਉੱਤਮ_actual_cap = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ prev_actual_cap = 0;
+	ਬਣਤਰ sched_domain *sd;
+	ਬਣਤਰ perf_domain *pd;
+	ਬਣਤਰ energy_env eenv;
 
 	pd = rcu_dereference_all(rd->pd);
-	if (!pd)
-		return target;
+	ਜੇ (!pd)
+		ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
 
 	/*
 	 * Energy-aware wake-up happens on the lowest sched_domain starting
 	 * from sd_asym_cpucapacity spanning over this_cpu and prev_cpu.
 	 */
 	sd = rcu_dereference_all(*this_cpu_ptr(&sd_asym_cpucapacity));
-	while (sd && !cpumask_test_cpu(prev_cpu, sched_domain_span(sd)))
-		sd = sd->parent;
-	if (!sd)
-		return target;
+	ਜਦੋਂ (sd && !cpumask_test_cpu(prev_cpu, sched_domain_ਵਿਸਤਾਰ(sd)))
+		sd = sd->ਮਾਪਾ;
+	ਜੇ (!sd)
+		ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
 
-	target = prev_cpu;
+	ਨਿਸ਼ਾਨਾ = prev_cpu;
 
-	sync_entity_load_avg(&p->se);
-	if (!task_util_est(p) && p_util_min == 0)
-		return target;
+	sync_entity_ਲੱਦੋ_avg(&p->se);
+	ਜੇ (!task_util_est(p) && p_util_min == 0)
+		ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
 
-	eenv_task_busy_time(&eenv, p, prev_cpu);
+	eenv_task_busy_ਸਮਾਂ(&eenv, p, prev_cpu);
 
-	for (; pd; pd = pd->next) {
-		unsigned long util_min = p_util_min, util_max = p_util_max;
-		unsigned long cpu_cap, cpu_actual_cap, util;
-		long prev_spare_cap = -1, max_spare_cap = -1;
-		unsigned long rq_util_min, rq_util_max;
-		unsigned long cur_delta, base_energy;
-		int max_spare_cap_cpu = -1;
-		int fits, max_fits = -1;
+	ਲਈ (; pd; pd = pd->ਅਗਲਾ) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util_min = p_util_min, util_max = p_util_max;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_cap, cpu_actual_cap, util;
+		ਲੰਮਾ prev_ਵਾਧੂ_cap = -1, max_ਵਾਧੂ_cap = -1;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ rq_util_min, rq_util_max;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cur_delta, ਅਧਾਰ_energy;
+		ਪੂਰਨ max_ਵਾਧੂ_cap_cpu = -1;
+		ਪੂਰਨ ਸਮਾਉਂਦਾ, max_ਸਮਾਉਂਦਾ = -1;
 
-		if (!cpumask_and(cpus, perf_domain_span(pd), cpu_online_mask))
-			continue;
+		ਜੇ (!cpumask_and(cpus, perf_domain_ਵਿਸਤਾਰ(pd), cpu_online_ਨਕਾਬ))
+			ਜਾਰੀ;
 
 		/* Account external pressure for the energy estimation */
-		cpu = cpumask_first(cpus);
-		cpu_actual_cap = get_actual_cpu_capacity(cpu);
+		cpu = cpumask_ਪਹਿਲਾ(cpus);
+		cpu_actual_cap = get_actual_cpu_ਸਮਰੱਥਾ(cpu);
 
 		eenv.cpu_cap = cpu_actual_cap;
 		eenv.pd_cap = 0;
 
 		for_each_cpu(cpu, cpus) {
-			struct rq *rq = cpu_rq(cpu);
+			ਬਣਤਰ rq *rq = cpu_rq(cpu);
 
 			eenv.pd_cap += cpu_actual_cap;
 
-			if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
-				continue;
+			ਜੇ (!cpumask_test_cpu(cpu, sched_domain_ਵਿਸਤਾਰ(sd)))
+				ਜਾਰੀ;
 
-			if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-				continue;
+			ਜੇ (!cpumask_test_cpu(cpu, p->cpus_ptr))
+				ਜਾਰੀ;
 
 			util = cpu_util(cpu, p, cpu, 0);
-			cpu_cap = capacity_of(cpu);
+			cpu_cap = ਸਮਰੱਥਾ_ਦਾ(cpu);
 
 			/*
 			 * Skip CPUs that cannot satisfy the capacity request.
@@ -9800,7 +9800,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
 			 * much capacity we can get out of the CPU; this is
 			 * aligned with sched_cpu_util().
 			 */
-			if (uclamp_is_used() && !uclamp_rq_is_idle(rq)) {
+			ਜੇ (uclamp_is_ਵਰਤਿਆ() && !uclamp_rq_is_idle(rq)) {
 				/*
 				 * Open code uclamp_rq_util_with() except for
 				 * the clamp() part. I.e.: apply max aggregation
@@ -9815,90 +9815,90 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
 				util_max = max(rq_util_max, p_util_max);
 			}
 
-			fits = util_fits_cpu(util, util_min, util_max, cpu);
-			if (!fits)
-				continue;
+			ਸਮਾਉਂਦਾ = util_ਸਮਾਉਂਦਾ_cpu(util, util_min, util_max, cpu);
+			ਜੇ (!ਸਮਾਉਂਦਾ)
+				ਜਾਰੀ;
 
-			lsub_positive(&cpu_cap, util);
+			lsub_ਸਕਾਰਾਤਮਕ(&cpu_cap, util);
 
-			if (cpu == prev_cpu) {
+			ਜੇ (cpu == prev_cpu) {
 				/* Always use prev_cpu as a candidate. */
-				prev_spare_cap = cpu_cap;
-				prev_fits = fits;
-			} else if ((fits > max_fits) ||
-				   ((fits == max_fits) && ((long)cpu_cap > max_spare_cap))) {
+				prev_ਵਾਧੂ_cap = cpu_cap;
+				prev_ਸਮਾਉਂਦਾ = ਸਮਾਉਂਦਾ;
+			} ਨਹੀਂਤਾਂ ਜੇ ((ਸਮਾਉਂਦਾ > max_ਸਮਾਉਂਦਾ) ||
+				   ((ਸਮਾਉਂਦਾ == max_ਸਮਾਉਂਦਾ) && ((ਲੰਮਾ)cpu_cap > max_ਵਾਧੂ_cap))) {
 				/*
 				 * Find the CPU with the maximum spare capacity
 				 * among the remaining CPUs in the performance
 				 * domain.
 				 */
-				max_spare_cap = cpu_cap;
-				max_spare_cap_cpu = cpu;
-				max_fits = fits;
+				max_ਵਾਧੂ_cap = cpu_cap;
+				max_ਵਾਧੂ_cap_cpu = cpu;
+				max_ਸਮਾਉਂਦਾ = ਸਮਾਉਂਦਾ;
 			}
 		}
 
-		if (max_spare_cap_cpu < 0 && prev_spare_cap < 0)
-			continue;
+		ਜੇ (max_ਵਾਧੂ_cap_cpu < 0 && prev_ਵਾਧੂ_cap < 0)
+			ਜਾਰੀ;
 
-		eenv_pd_busy_time(&eenv, cpus, p);
+		eenv_pd_busy_ਸਮਾਂ(&eenv, cpus, p);
 		/* Compute the 'base' energy of the pd, without @p */
-		base_energy = compute_energy(&eenv, pd, cpus, p, -1);
+		ਅਧਾਰ_energy = compute_energy(&eenv, pd, cpus, p, -1);
 
 		/* Evaluate the energy impact of using prev_cpu. */
-		if (prev_spare_cap > -1) {
+		ਜੇ (prev_ਵਾਧੂ_cap > -1) {
 			prev_delta = compute_energy(&eenv, pd, cpus, p,
 						    prev_cpu);
 			/* CPU utilization has changed */
-			if (prev_delta < base_energy)
-				return target;
-			prev_delta -= base_energy;
+			ਜੇ (prev_delta < ਅਧਾਰ_energy)
+				ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
+			prev_delta -= ਅਧਾਰ_energy;
 			prev_actual_cap = cpu_actual_cap;
-			best_delta = min(best_delta, prev_delta);
+			ਉੱਤਮ_delta = min(ਉੱਤਮ_delta, prev_delta);
 		}
 
 		/* Evaluate the energy impact of using max_spare_cap_cpu. */
-		if (max_spare_cap_cpu >= 0 && max_spare_cap > prev_spare_cap) {
+		ਜੇ (max_ਵਾਧੂ_cap_cpu >= 0 && max_ਵਾਧੂ_cap > prev_ਵਾਧੂ_cap) {
 			/* Current best energy cpu fits better */
-			if (max_fits < best_fits)
-				continue;
+			ਜੇ (max_ਸਮਾਉਂਦਾ < ਉੱਤਮ_ਸਮਾਉਂਦਾ)
+				ਜਾਰੀ;
 
 			/*
 			 * Both don't fit performance hint (i.e. uclamp_min)
 			 * but best energy cpu has better capacity.
 			 */
-			if ((max_fits < 0) &&
-			    (cpu_actual_cap <= best_actual_cap))
-				continue;
+			ਜੇ ((max_ਸਮਾਉਂਦਾ < 0) &&
+			    (cpu_actual_cap <= ਉੱਤਮ_actual_cap))
+				ਜਾਰੀ;
 
 			cur_delta = compute_energy(&eenv, pd, cpus, p,
-						   max_spare_cap_cpu);
+						   max_ਵਾਧੂ_cap_cpu);
 			/* CPU utilization has changed */
-			if (cur_delta < base_energy)
-				return target;
-			cur_delta -= base_energy;
+			ਜੇ (cur_delta < ਅਧਾਰ_energy)
+				ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
+			cur_delta -= ਅਧਾਰ_energy;
 
 			/*
 			 * Both fit for the task but best energy cpu has lower
 			 * energy impact.
 			 */
-			if ((max_fits > 0) && (best_fits > 0) &&
-			    (cur_delta >= best_delta))
-				continue;
+			ਜੇ ((max_ਸਮਾਉਂਦਾ > 0) && (ਉੱਤਮ_ਸਮਾਉਂਦਾ > 0) &&
+			    (cur_delta >= ਉੱਤਮ_delta))
+				ਜਾਰੀ;
 
-			best_delta = cur_delta;
-			best_energy_cpu = max_spare_cap_cpu;
-			best_fits = max_fits;
-			best_actual_cap = cpu_actual_cap;
+			ਉੱਤਮ_delta = cur_delta;
+			ਉੱਤਮ_energy_cpu = max_ਵਾਧੂ_cap_cpu;
+			ਉੱਤਮ_ਸਮਾਉਂਦਾ = max_ਸਮਾਉਂਦਾ;
+			ਉੱਤਮ_actual_cap = cpu_actual_cap;
 		}
 	}
 
-	if ((best_fits > prev_fits) ||
-	    ((best_fits > 0) && (best_delta < prev_delta)) ||
-	    ((best_fits < 0) && (best_actual_cap > prev_actual_cap)))
-		target = best_energy_cpu;
+	ਜੇ ((ਉੱਤਮ_ਸਮਾਉਂਦਾ > prev_ਸਮਾਉਂਦਾ) ||
+	    ((ਉੱਤਮ_ਸਮਾਉਂਦਾ > 0) && (ਉੱਤਮ_delta < prev_delta)) ||
+	    ((ਉੱਤਮ_ਸਮਾਉਂਦਾ < 0) && (ਉੱਤਮ_actual_cap > prev_actual_cap)))
+		ਨਿਸ਼ਾਨਾ = ਉੱਤਮ_energy_cpu;
 
-	return target;
+	ਵਾਪਸ ਨਿਸ਼ਾਨਾ;
 }
 
 /*
@@ -9911,32 +9911,32 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
  *
  * Returns the target CPU number.
  */
-static int
-select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
+ਸਥਿਰ ਪੂਰਨ
+select_task_rq_fair(ਬਣਤਰ task_struct *p, ਪੂਰਨ prev_cpu, ਪੂਰਨ wake_flags)
 {
-	int sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
-	struct sched_domain *tmp, *sd = NULL;
-	int cpu = smp_processor_id();
-	int new_cpu = prev_cpu;
-	int want_affine = 0;
+	ਪੂਰਨ sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
+	ਬਣਤਰ sched_domain *tmp, *sd = ਨਿਰਾ;
+	ਪੂਰਨ cpu = smp_processor_id();
+	ਪੂਰਨ new_cpu = prev_cpu;
+	ਪੂਰਨ want_affine = 0;
 	/* SD_flags and WF_flags share the first nibble */
-	int sd_flag = wake_flags & 0xF;
+	ਪੂਰਨ sd_flag = wake_flags & 0xF;
 
 	/*
 	 * required for stable ->cpus_allowed
 	 */
-	lockdep_assert_held(&p->pi_lock);
-	if (wake_flags & WF_TTWU) {
-		record_wakee(p);
+	lockdep_assert_held(&p->pi_ਤਾਲਾ);
+	ਜੇ (wake_flags & WF_TTWU) {
+		ਰਿਕਾਰਡ_wakee(p);
 
-		if ((wake_flags & WF_CURRENT_CPU) &&
+		ਜੇ ((wake_flags & WF_CURRENT_CPU) &&
 		    cpumask_test_cpu(cpu, p->cpus_ptr))
-			return cpu;
+			ਵਾਪਸ cpu;
 
-		if (!is_rd_overutilized(this_rq()->rd)) {
-			new_cpu = find_energy_efficient_cpu(p, prev_cpu);
-			if (new_cpu >= 0)
-				return new_cpu;
+		ਜੇ (!is_rd_overutilized(this_rq()->rd)) {
+			new_cpu = ਲੱਭੋ_energy_efficient_cpu(p, prev_cpu);
+			ਜੇ (new_cpu >= 0)
+				ਵਾਪਸ new_cpu;
 			new_cpu = prev_cpu;
 		}
 
@@ -9948,13 +9948,13 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
 		 * If both 'cpu' and 'prev_cpu' are part of this domain,
 		 * cpu is a valid SD_WAKE_AFFINE target.
 		 */
-		if (want_affine && (tmp->flags & SD_WAKE_AFFINE) &&
-		    cpumask_test_cpu(prev_cpu, sched_domain_span(tmp))) {
-			if (cpu != prev_cpu)
+		ਜੇ (want_affine && (tmp->flags & SD_WAKE_AFFINE) &&
+		    cpumask_test_cpu(prev_cpu, sched_domain_ਵਿਸਤਾਰ(tmp))) {
+			ਜੇ (cpu != prev_cpu)
 				new_cpu = wake_affine(tmp, p, cpu, prev_cpu, sync);
 
-			sd = NULL; /* Prefer wake_affine over balance flags */
-			break;
+			sd = ਨਿਰਾ; /* Prefer wake_affine over balance flags */
+			ਰੋਕੋ;
 		}
 
 		/*
@@ -9962,23 +9962,23 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
 		 * usually do not have SD_BALANCE_WAKE set. That means wakeup
 		 * will usually go to the fast path.
 		 */
-		if (tmp->flags & sd_flag)
+		ਜੇ (tmp->flags & sd_flag)
 			sd = tmp;
-		else if (!want_affine)
-			break;
+		ਨਹੀਂਤਾਂ ਜੇ (!want_affine)
+			ਰੋਕੋ;
 	}
 
 	/* Slow path */
-	if (unlikely(sd)) {
-		new_cpu = sched_balance_find_dst_cpu(sd, p, cpu, prev_cpu, sd_flag);
-		return select_idle_smt_cpu(p, new_cpu);
+	ਜੇ (unlikely(sd)) {
+		new_cpu = sched_balance_ਲੱਭੋ_dst_cpu(sd, p, cpu, prev_cpu, sd_flag);
+		ਵਾਪਸ select_idle_smt_cpu(p, new_cpu);
 	}
 
 	/* Fast path */
-	if (wake_flags & WF_TTWU)
-		return select_idle_sibling(p, prev_cpu, new_cpu);
+	ਜੇ (wake_flags & WF_TTWU)
+		ਵਾਪਸ select_idle_sibling(p, prev_cpu, new_cpu);
 
-	return new_cpu;
+	ਵਾਪਸ new_cpu;
 }
 
 /*
@@ -9986,12 +9986,12 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
  * cfs_rq_of(p) references at time of call are still valid and identify the
  * previous CPU. The caller guarantees p->pi_lock or task_rq(p)->lock is held.
  */
-static void migrate_task_rq_fair(struct task_struct *p, int new_cpu)
+ਸਥਿਰ ਖਾਲੀ migrate_task_rq_fair(ਬਣਤਰ task_struct *p, ਪੂਰਨ new_cpu)
 {
-	struct sched_entity *se = &p->se;
+	ਬਣਤਰ sched_entity *se = &p->se;
 
-	if (!task_on_rq_migrating(p)) {
-		remove_entity_load_avg(se);
+	ਜੇ (!task_on_rq_migrating(p)) {
+		remove_entity_ਲੱਦੋ_avg(se);
 
 		/*
 		 * Here, the task's PELT values have been updated according to
@@ -10007,55 +10007,55 @@ static void migrate_task_rq_fair(struct task_struct *p, int new_cpu)
 	}
 
 	/* Tell new CPU we are migrated */
-	se->avg.last_update_time = 0;
+	se->avg.ਆਖਰੀ_update_ਸਮਾਂ = 0;
 
-	update_scan_period(p, new_cpu);
+	update_ਜਾਂਚ_period(p, new_cpu);
 }
 
-static void task_dead_fair(struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ task_dead_fair(ਬਣਤਰ task_struct *p)
 {
-	struct sched_entity *se = &p->se;
-	remove_entity_load_avg(se);
+	ਬਣਤਰ sched_entity *se = &p->se;
+	remove_entity_ਲੱਦੋ_avg(se);
 }
 
 /*
  * Set the max capacity the task is allowed to run at for misfit detection.
  */
-static void set_task_max_allowed_capacity(struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_task_max_allowed_ਸਮਰੱਥਾ(ਬਣਤਰ task_struct *p)
 {
-	struct asym_cap_data *entry;
+	ਬਣਤਰ asym_cap_ਅੰਕੜੇ *ਇੰਦਰਾਜ;
 
-	if (!sched_asym_cpucap_active())
-		return;
+	ਜੇ (!sched_asym_cpucap_ਸਰਗਰਮ())
+		ਵਾਪਸ;
 
-	rcu_read_lock();
-	list_for_each_entry_rcu(entry, &asym_cap_list, link) {
+	rcu_read_ਤਾਲਾ();
+	list_for_each_ਇੰਦਰਾਜ_rcu(ਇੰਦਰਾਜ, &asym_cap_list, link) {
 		cpumask_t *cpumask;
 
-		cpumask = cpu_capacity_span(entry);
-		if (!cpumask_intersects(p->cpus_ptr, cpumask))
-			continue;
+		cpumask = cpu_ਸਮਰੱਥਾ_ਵਿਸਤਾਰ(ਇੰਦਰਾਜ);
+		ਜੇ (!cpumask_intersects(p->cpus_ptr, cpumask))
+			ਜਾਰੀ;
 
-		p->max_allowed_capacity = entry->capacity;
-		break;
+		p->max_allowed_ਸਮਰੱਥਾ = ਇੰਦਰਾਜ->ਸਮਰੱਥਾ;
+		ਰੋਕੋ;
 	}
 	rcu_read_unlock();
 }
 
-static void set_cpus_allowed_fair(struct task_struct *p, struct affinity_context *ctx)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_cpus_allowed_fair(ਬਣਤਰ task_struct *p, ਬਣਤਰ affinity_context *ctx)
 {
-	set_cpus_allowed_common(p, ctx);
-	set_task_max_allowed_capacity(p);
+	ਸੈੱਟ_cpus_allowed_common(p, ctx);
+	ਸੈੱਟ_task_max_allowed_ਸਮਰੱਥਾ(p);
 }
 
-enum preempt_wakeup_action {
+ਗਿਣਤੀ preempt_wakeup_action {
 	PREEMPT_WAKEUP_NONE,	/* No preemption. */
 	PREEMPT_WAKEUP_SHORT,	/* Ignore slice protection. */
 	PREEMPT_WAKEUP_PICK,	/* Let pick_eevdf() decide. */
 	PREEMPT_WAKEUP_RESCHED,	/* Force reschedule. */
 };
 
-static inline bool set_preempt_buddy(struct cfs_rq *cfs_rq, struct sched_entity *pse)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool ਸੈੱਟ_preempt_buddy(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *pse)
 {
 	/*
 	 * Keep existing buddy if the deadline is sooner than pse.
@@ -10063,26 +10063,26 @@ static inline bool set_preempt_buddy(struct cfs_rq *cfs_rq, struct sched_entity 
 	 * to the current wakeup but that is unpredictable where as
 	 * obeying the deadline is more in line with EEVDF objectives.
 	 */
-	if (cfs_rq->next && entity_before(cfs_rq->next, pse))
-		return false;
+	ਜੇ (cfs_rq->ਅਗਲਾ && entity_before(cfs_rq->ਅਗਲਾ, pse))
+		ਵਾਪਸ false;
 
-	set_next_buddy(cfs_rq, pse);
-	return true;
+	ਸੈੱਟ_ਅਗਲਾ_buddy(cfs_rq, pse);
+	ਵਾਪਸ true;
 }
 
-static inline bool set_short_buddy(struct cfs_rq *cfs_rq, struct sched_entity *pse)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool ਸੈੱਟ_short_buddy(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *pse)
 {
-	if (cfs_rq->next) {
-		if (cfs_rq->next->slice < pse->slice)
-			return false;
+	ਜੇ (cfs_rq->ਅਗਲਾ) {
+		ਜੇ (cfs_rq->ਅਗਲਾ->ਟੁਕੜਾ < pse->ਟੁਕੜਾ)
+			ਵਾਪਸ false;
 
-		if (cfs_rq->next->slice == pse->slice &&
-		    entity_before(cfs_rq->next, pse))
-			return false;
+		ਜੇ (cfs_rq->ਅਗਲਾ->ਟੁਕੜਾ == pse->ਟੁਕੜਾ &&
+		    entity_before(cfs_rq->ਅਗਲਾ, pse))
+			ਵਾਪਸ false;
 	}
 
-	set_next_buddy(cfs_rq, pse);
-	return true;
+	ਸੈੱਟ_ਅਗਲਾ_buddy(cfs_rq, pse);
+	ਵਾਪਸ true;
 }
 
 /*
@@ -10090,11 +10090,11 @@ static inline bool set_short_buddy(struct cfs_rq *cfs_rq, struct sched_entity *p
  * strictly enforced because the hint is either misunderstood or
  * multiple tasks must be woken up.
  */
-static inline enum preempt_wakeup_action
-preempt_sync(struct rq *rq, int wake_flags,
-	     struct sched_entity *pse, struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਗਿਣਤੀ preempt_wakeup_action
+preempt_sync(ਬਣਤਰ rq *rq, ਪੂਰਨ wake_flags,
+	     ਬਣਤਰ sched_entity *pse, ਬਣਤਰ sched_entity *se)
 {
-	u64 threshold, delta;
+	u64 ਹੱਦ, delta;
 
 	/*
 	 * WF_SYNC without WF_TTWU is not expected so warn if it happens even
@@ -10102,9 +10102,9 @@ preempt_sync(struct rq *rq, int wake_flags,
 	 */
 	WARN_ON_ONCE(!(wake_flags & WF_TTWU));
 
-	threshold = sysctl_sched_migration_cost;
-	delta = rq_clock_task(rq) - se->exec_start;
-	if ((s64)delta < 0)
+	ਹੱਦ = sysctl_sched_migration_ਲਾਗਤ;
+	delta = rq_clock_task(rq) - se->exec_ਸ਼ੁਰੂ;
+	ਜੇ ((s64)delta < 0)
 		delta = 0;
 
 	/*
@@ -10113,39 +10113,39 @@ preempt_sync(struct rq *rq, int wake_flags,
 	 * allowed to an arbitrary lower value as it is more likely (but not
 	 * guaranteed) the waker requires the wakee to finish.
 	 */
-	if (wake_flags & WF_RQ_SELECTED)
-		threshold >>= 2;
+	ਜੇ (wake_flags & WF_RQ_SELECTED)
+		ਹੱਦ >>= 2;
 
 	/*
 	 * As WF_SYNC is not strictly obeyed, allow some runtime for batch
 	 * wakeups to be issued.
 	 */
-	if (entity_before(pse, se) && delta >= threshold)
-		return PREEMPT_WAKEUP_RESCHED;
+	ਜੇ (entity_before(pse, se) && delta >= ਹੱਦ)
+		ਵਾਪਸ PREEMPT_WAKEUP_RESCHED;
 
-	return PREEMPT_WAKEUP_NONE;
+	ਵਾਪਸ PREEMPT_WAKEUP_NONE;
 }
 
 /*
  * Preempt the current task with a newly woken task if needed:
  */
-static void wakeup_preempt_fair(struct rq *rq, struct task_struct *p, int wake_flags)
+ਸਥਿਰ ਖਾਲੀ wakeup_preempt_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ wake_flags)
 {
-	enum preempt_wakeup_action preempt_action = PREEMPT_WAKEUP_PICK;
-	struct task_struct *donor = rq->donor;
-	struct sched_entity *nse, *se = &donor->se, *pse = &p->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	int cse_is_idle, pse_is_idle;
+	ਗਿਣਤੀ preempt_wakeup_action preempt_action = PREEMPT_WAKEUP_PICK;
+	ਬਣਤਰ task_struct *donor = rq->donor;
+	ਬਣਤਰ sched_entity *nse, *se = &donor->se, *pse = &p->se;
+	ਬਣਤਰ cfs_rq *cfs_rq = &rq->cfs;
+	ਪੂਰਨ cse_is_idle, pse_is_idle;
 
 	/*
 	 * XXX Getting preempted by higher class, try and find idle CPU?
 	 */
-	if (p->sched_class != &fair_sched_class ||
+	ਜੇ (p->sched_class != &fair_sched_class ||
 	    donor->sched_class != &fair_sched_class)
-		return;
+		ਵਾਪਸ;
 
-	if (unlikely(se == pse))
-		return;
+	ਜੇ (unlikely(se == pse))
+		ਵਾਪਸ;
 
 	/*
 	 * This is possible from callers such as attach_tasks(), in which we
@@ -10153,8 +10153,8 @@ static void wakeup_preempt_fair(struct rq *rq, struct task_struct *p, int wake_f
 	 * lead to a throttle).  This both saves work and prevents false
 	 * next-buddy nomination below.
 	 */
-	if (task_is_throttled(p))
-		return;
+	ਜੇ (task_is_throttled(p))
+		ਵਾਪਸ;
 
 	/*
 	 * We can come here with TIF_NEED_RESCHED already set from new task
@@ -10166,11 +10166,11 @@ static void wakeup_preempt_fair(struct rq *rq, struct task_struct *p, int wake_f
 	 * prevents us from potentially nominating it as a false LAST_BUDDY
 	 * below.
 	 */
-	if (!sched_feat(PREEMPT_SHORT) && test_tsk_need_resched(rq->curr))
-		return;
+	ਜੇ (!sched_feat(PREEMPT_SHORT) && test_tsk_need_resched(rq->curr))
+		ਵਾਪਸ;
 
-	if (!sched_feat(WAKEUP_PREEMPTION))
-		return;
+	ਜੇ (!sched_feat(WAKEUP_PREEMPTION))
+		ਵਾਪਸ;
 
 	WARN_ON_ONCE(!pse);
 
@@ -10182,142 +10182,142 @@ static void wakeup_preempt_fair(struct rq *rq, struct task_struct *p, int wake_f
 	 * Preempt an idle entity in favor of a non-idle entity (and don't preempt
 	 * in the inverse case).
 	 */
-	if (cse_is_idle && !pse_is_idle)
-		goto preempt;
+	ਜੇ (cse_is_idle && !pse_is_idle)
+		ਜਾਓ preempt;
 
 	update_curr_fair(rq);
 
-	if (cse_is_idle != pse_is_idle)
-		goto update;
+	ਜੇ (cse_is_idle != pse_is_idle)
+		ਜਾਓ update;
 
 	/*
 	 * BATCH and IDLE tasks do not preempt others.
 	 */
-	if (unlikely(!normal_policy(p->policy)))
-		goto update;
+	ਜੇ (unlikely(!ਸਾਧਾਰਨ_policy(p->policy)))
+		ਜਾਓ update;
 
 	/*
 	 * Do not preempt for tasks that are sched_delayed as it would violate
 	 * EEVDF to forcibly queue an ineligible task.
 	 */
-	if (pse->sched_delayed)
-		goto update;
+	ਜੇ (pse->sched_delayed)
+		ਜਾਓ update;
 
 	/*
 	 * If @p has a shorter slice than current and @p is eligible, override
 	 * current's slice protection in order to allow preemption.
 	 */
-	if (sched_feat(PREEMPT_SHORT) && (pse->slice < se->slice)) {
+	ਜੇ (sched_feat(PREEMPT_SHORT) && (pse->ਟੁਕੜਾ < se->ਟੁਕੜਾ)) {
 		preempt_action = PREEMPT_WAKEUP_SHORT;
-		goto pick;
+		ਜਾਓ pick;
 	}
 
 	/*
 	 * Ignore wakee preemption on WF_FORK as it is less likely that
 	 * there is shared data as exec often follow fork.
 	 */
-	if (wake_flags & WF_FORK)
-		goto update;
+	ਜੇ (wake_flags & WF_FORK)
+		ਜਾਓ update;
 
 	/* Prefer picking wakee soon if appropriate. */
-	if (sched_feat(NEXT_BUDDY) && set_preempt_buddy(cfs_rq, pse)) {
+	ਜੇ (sched_feat(ਅਗਲਾ_BUDDY) && ਸੈੱਟ_preempt_buddy(cfs_rq, pse)) {
 		/*
 		 * Decide whether to obey WF_SYNC hint for a new buddy. Old
 		 * buddies are ignored as they may not be relevant to the
 		 * waker and less likely to be cache hot.
 		 */
-		if (wake_flags & WF_SYNC)
+		ਜੇ (wake_flags & WF_SYNC)
 			preempt_action = preempt_sync(rq, wake_flags, pse, se);
 	}
 
-	switch (preempt_action) {
-	case PREEMPT_WAKEUP_NONE:
-		return;
-	case PREEMPT_WAKEUP_RESCHED:
-		goto preempt;
-	case PREEMPT_WAKEUP_SHORT:
+	ਚੋਣ (preempt_action) {
+	ਹਾਲਤ PREEMPT_WAKEUP_NONE:
+		ਵਾਪਸ;
+	ਹਾਲਤ PREEMPT_WAKEUP_RESCHED:
+		ਜਾਓ preempt;
+	ਹਾਲਤ PREEMPT_WAKEUP_SHORT:
 		fallthrough;
-	case PREEMPT_WAKEUP_PICK:
-		break;
+	ਹਾਲਤ PREEMPT_WAKEUP_PICK:
+		ਰੋਕੋ;
 	}
 
 pick:
-	if (cfs_rq->h_nr_queued) {
-		nse = pick_next_entity(rq, preempt_action != PREEMPT_WAKEUP_SHORT);
-		if (unlikely(!nse))
-			goto pick;
+	ਜੇ (cfs_rq->h_nr_queued) {
+		nse = pick_ਅਗਲਾ_entity(rq, preempt_action != PREEMPT_WAKEUP_SHORT);
+		ਜੇ (unlikely(!nse))
+			ਜਾਓ pick;
 
 		/* If @p has become the most eligible task, force preemption */
-		if (nse == pse)
-			goto preempt;
+		ਜੇ (nse == pse)
+			ਜਾਓ preempt;
 	}
 
 	/*
 	 * If @p is eligible but not the next task to run then cancel protection
 	 * to prevent large scheduling latency
 	 */
-	if (preempt_action == PREEMPT_WAKEUP_SHORT && entity_eligible(cfs_rq, pse))
-		goto preempt;
+	ਜੇ (preempt_action == PREEMPT_WAKEUP_SHORT && entity_eligible(cfs_rq, pse))
+		ਜਾਓ preempt;
 update:
-	if (sched_feat(RUN_TO_PARITY))
-		update_protect_slice(cfs_rq, se);
+	ਜੇ (sched_feat(ਲੜੀਵਾਰ_ਮੰਜ਼ਿਲ_PARITY))
+		update_protect_ਟੁਕੜਾ(cfs_rq, se);
 
-	return;
+	ਵਾਪਸ;
 
 preempt:
-	cancel_protect_slice(se);
+	cancel_protect_ਟੁਕੜਾ(se);
 
-	if (preempt_action == PREEMPT_WAKEUP_SHORT)
-		set_short_buddy(cfs_rq, pse);
+	ਜੇ (preempt_action == PREEMPT_WAKEUP_SHORT)
+		ਸੈੱਟ_short_buddy(cfs_rq, pse);
 
 	resched_curr_lazy(rq);
 }
 
-struct task_struct *pick_task_fair(struct rq *rq, struct rq_flags *rf)
+ਬਣਤਰ task_struct *pick_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 	__must_hold(__rq_lockp(rq))
 {
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	struct sched_entity *se;
-	struct task_struct *p;
-	int new_tasks;
+	ਬਣਤਰ cfs_rq *cfs_rq = &rq->cfs;
+	ਬਣਤਰ sched_entity *se;
+	ਬਣਤਰ task_struct *p;
+	ਪੂਰਨ new_tasks;
 
 again:
-	if (!cfs_rq->h_nr_queued)
-		goto idle;
+	ਜੇ (!cfs_rq->h_nr_queued)
+		ਜਾਓ idle;
 
 	/* Might not have done put_prev_entity() */
-	if (cfs_rq->curr && cfs_rq->curr->on_rq)
+	ਜੇ (cfs_rq->curr && cfs_rq->curr->on_rq)
 		update_curr_eevdf(cfs_rq);
 
-	se = pick_next_entity(rq, true);
-	if (!se)
-		goto again;
+	se = pick_ਅਗਲਾ_entity(rq, true);
+	ਜੇ (!se)
+		ਜਾਓ again;
 
-	p = task_of(se);
-	return p;
+	p = task_ਦਾ(se);
+	ਵਾਪਸ p;
 
 idle:
-	if (sched_core_enabled(rq))
-		return NULL;
+	ਜੇ (sched_core_enabled(rq))
+		ਵਾਪਸ ਨਿਰਾ;
 
 	new_tasks = sched_balance_newidle(rq, rf);
-	if (new_tasks < 0)
-		return RETRY_TASK;
-	if (new_tasks > 0)
-		goto again;
-	return NULL;
+	ਜੇ (new_tasks < 0)
+		ਵਾਪਸ RETRY_TASK;
+	ਜੇ (new_tasks > 0)
+		ਜਾਓ again;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-static struct task_struct *
-fair_server_pick_task(struct sched_dl_entity *dl_se, struct rq_flags *rf)
+ਸਥਿਰ ਬਣਤਰ task_struct *
+fair_server_pick_task(ਬਣਤਰ sched_dl_entity *dl_se, ਬਣਤਰ rq_flags *rf)
 	__must_hold(__rq_lockp(dl_se->rq))
 {
-	return pick_task_fair(dl_se->rq, rf);
+	ਵਾਪਸ pick_task_fair(dl_se->rq, rf);
 }
 
-void fair_server_init(struct rq *rq)
+ਖਾਲੀ fair_server_init(ਬਣਤਰ rq *rq)
 {
-	struct sched_dl_entity *dl_se = &rq->fair_server;
+	ਬਣਤਰ sched_dl_entity *dl_se = &rq->fair_server;
 
 	init_dl_entity(dl_se);
 
@@ -10327,62 +10327,62 @@ void fair_server_init(struct rq *rq)
 /*
  * Account for a descheduled task:
  */
-static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ਸਥਿਰ ਖਾਲੀ put_prev_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *prev, ਬਣਤਰ task_struct *ਅਗਲਾ)
 {
-	struct sched_entity *se = &prev->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	struct sched_entity *nse = NULL;
+	ਬਣਤਰ sched_entity *se = &prev->se;
+	ਬਣਤਰ cfs_rq *cfs_rq = &rq->cfs;
+	ਬਣਤਰ sched_entity *nse = ਨਿਰਾ;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	if (next && next->sched_class == &fair_sched_class)
-		nse = &next->se;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+	ਜੇ (ਅਗਲਾ && ਅਗਲਾ->sched_class == &fair_sched_class)
+		nse = &ਅਗਲਾ->se;
+#ਜੇ_ਅੰਤ
 
-	while (se) {
-		cfs_rq = cfs_rq_of(se);
-		if (!nse || cfs_rq->h_curr)
+	ਜਦੋਂ (se) {
+		cfs_rq = cfs_rq_ਦਾ(se);
+		ਜੇ (!nse || cfs_rq->h_curr)
 			put_prev_entity(cfs_rq, se);
-#ifdef CONFIG_FAIR_GROUP_SCHED
-		if (nse) {
-			if (is_same_group(se, nse))
-				break;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+		ਜੇ (nse) {
+			ਜੇ (is_same_ਸਮੂਹ(se, nse))
+				ਰੋਕੋ;
 
-			int d = nse->depth - se->depth;
-			if (d >= 0) {
+			ਪੂਰਨ d = nse->ਡੂੰਘਾਈ - se->ਡੂੰਘਾਈ;
+			ਜੇ (d >= 0) {
 				/* nse has equal or greater depth, ascend */
-				nse = parent_entity(nse);
+				nse = ਮਾਪਾ_entity(nse);
 				/* if nse is the deeper, do not ascend se */
-				if (d > 0)
-					continue;
+				ਜੇ (d > 0)
+					ਜਾਰੀ;
 			}
 		}
-#endif
-		se = parent_entity(se);
+#ਜੇ_ਅੰਤ
+		se = ਮਾਪਾ_entity(se);
 	}
 
 	/* Put 'current' back into the tree. */
 	cfs_rq = &rq->cfs;
 	se = &prev->se;
 	WARN_ON_ONCE(cfs_rq->curr != se);
-	cfs_rq->curr = NULL;
-	if (se->on_rq)
+	cfs_rq->curr = ਨਿਰਾ;
+	ਜੇ (se->on_rq)
 		__enqueue_entity(cfs_rq, se);
 }
 
 /*
  * sched_yield() is very simple
  */
-static void yield_task_fair(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ yield_task_fair(ਬਣਤਰ rq *rq)
 {
-	struct task_struct *curr = rq->donor;
-	struct sched_entity *se = &curr->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
+	ਬਣਤਰ task_struct *curr = rq->donor;
+	ਬਣਤਰ sched_entity *se = &curr->se;
+	ਬਣਤਰ cfs_rq *cfs_rq = &rq->cfs;
 
 	/*
 	 * Are we the only task in the tree?
 	 */
-	if (unlikely(rq->nr_running == 1))
-		return;
+	ਜੇ (unlikely(rq->nr_running == 1))
+		ਵਾਪਸ;
 
 	clear_buddies(cfs_rq, se);
 
@@ -10406,26 +10406,26 @@ static void yield_task_fair(struct rq *rq)
 	 * which yields immediately again; without the condition the vruntime
 	 * ends up quickly running away.
 	 */
-	if (entity_eligible(cfs_rq, se)) {
+	ਜੇ (entity_eligible(cfs_rq, se)) {
 		se->vruntime = se->deadline;
 		update_deadline(cfs_rq, se);
 	}
 }
 
-static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ bool yield_ਮੰਜ਼ਿਲ_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	struct sched_entity *se = &p->se;
+	ਬਣਤਰ sched_entity *se = &p->se;
 
 	/* !se->on_rq also covers throttled task */
-	if (!se->on_rq || se->sched_delayed)
-		return false;
+	ਜੇ (!se->on_rq || se->sched_delayed)
+		ਵਾਪਸ false;
 
 	/* Tell the scheduler that we'd really like se to run next. */
-	set_next_buddy(&task_rq(p)->cfs, se);
+	ਸੈੱਟ_ਅਗਲਾ_buddy(&task_rq(p)->cfs, se);
 
 	yield_task_fair(rq);
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /**************************************************
@@ -10546,9 +10546,9 @@ static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
  *      rewrite all of this once again.]
  */
 
-static unsigned long __read_mostly max_load_balance_interval = HZ/10;
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ __read_mostly max_ਲੱਦੋ_balance_interval = HZ/10;
 
-enum fbq_type { regular, remote, all };
+ਗਿਣਤੀ fbq_type { regular, remote, all };
 
 /*
  * 'group_type' describes the group of CPUs at the moment of load balancing.
@@ -10557,35 +10557,35 @@ enum fbq_type { regular, remote, all };
  * first so the group_type can simply be compared when selecting the busiest
  * group. See update_sd_pick_busiest().
  */
-enum group_type {
+ਗਿਣਤੀ ਸਮੂਹ_type {
 	/* The group has spare capacity that can be used to run more tasks.  */
-	group_has_spare = 0,
+	ਸਮੂਹ_has_ਵਾਧੂ = 0,
 	/*
 	 * The group is fully used and the tasks don't compete for more CPU
 	 * cycles. Nevertheless, some tasks might wait before running.
 	 */
-	group_fully_busy,
+	ਸਮੂਹ_fully_busy,
 	/*
 	 * One task doesn't fit with CPU's capacity and must be migrated to a
 	 * more powerful CPU.
 	 */
-	group_misfit_task,
+	ਸਮੂਹ_misfit_task,
 	/*
 	 * Balance SMT group that's fully busy. Can benefit from migration
 	 * a task on SMT with busy sibling to another CPU on idle core.
 	 */
-	group_smt_balance,
+	ਸਮੂਹ_smt_balance,
 	/*
 	 * SD_ASYM_PACKING only: One local CPU with higher capacity is available,
 	 * and the task should be migrated to it instead of running on the
 	 * current CPU.
 	 */
-	group_asym_packing,
+	ਸਮੂਹ_asym_packing,
 	/*
 	 * The tasks' affinity constraints previously prevented the scheduler
 	 * from balancing the load across the system.
 	 */
-	group_imbalanced,
+	ਸਮੂਹ_imbalanced,
 	/*
 	 * There are tasks running on non-preferred LLC, possible to move
 	 * them to their preferred LLC without creating too much imbalance.
@@ -10595,161 +10595,161 @@ enum group_type {
 	 * If the LLC balancing attempt fails, the nr_balance_failed
 	 * mechanism will trigger other group types to rebalance the load.
 	 */
-	group_llc_balance,
+	ਸਮੂਹ_llc_balance,
 	/*
 	 * The CPU is overloaded and can't provide expected CPU cycles to all
 	 * tasks.
 	 */
-	group_overloaded
+	ਸਮੂਹ_overloaded
 };
 
-enum migration_type {
-	migrate_load = 0,
+ਗਿਣਤੀ migration_type {
+	migrate_ਲੱਦੋ = 0,
 	migrate_util,
 	migrate_task,
 	migrate_misfit,
 	migrate_llc_task
 };
 
-#define LBF_ALL_PINNED	0x01
-#define LBF_NEED_BREAK	0x02
-#define LBF_DST_PINNED  0x04
-#define LBF_SOME_PINNED	0x08
-#define LBF_ACTIVE_LB	0x10
-#define LBF_LLC_PINNED	0x20
-#define LBF_ACTIVE_LB_LLC	0x40
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LBF_ALL_PINNED	0x01
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LBF_NEED_BREAK	0x02
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LBF_DST_PINNED  0x04
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LBF_SOME_PINNED	0x08
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LBF_ਸਰਗਰਮ_LB	0x10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LBF_LLC_PINNED	0x20
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LBF_ਸਰਗਰਮ_LB_LLC	0x40
 
-struct lb_env {
-	struct sched_domain	*sd;
+ਬਣਤਰ lb_env {
+	ਬਣਤਰ sched_domain	*sd;
 
-	struct rq		*src_rq;
-	int			src_cpu;
+	ਬਣਤਰ rq		*src_rq;
+	ਪੂਰਨ			src_cpu;
 
-	int			dst_cpu;
-	struct rq		*dst_rq;
+	ਪੂਰਨ			dst_cpu;
+	ਬਣਤਰ rq		*dst_rq;
 	bool			dst_core_idle;
 
-	struct cpumask		*dst_grpmask;
-	int			new_dst_cpu;
-	enum cpu_idle_type	idle;
-	long			imbalance;
+	ਬਣਤਰ cpumask		*dst_grpmask;
+	ਪੂਰਨ			new_dst_cpu;
+	ਗਿਣਤੀ cpu_idle_type	idle;
+	ਲੰਮਾ			imbalance;
 	/* The set of CPUs under consideration for load-balancing */
-	struct cpumask		*cpus;
+	ਬਣਤਰ cpumask		*cpus;
 
-	unsigned int		flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		flags;
 
-	unsigned int		loop;
-	unsigned int		loop_break;
-	unsigned int		loop_max;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		loop;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		loop_break;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		loop_max;
 
-	enum fbq_type		fbq_type;
-	enum migration_type	migration_type;
-	struct list_head	tasks;
+	ਗਿਣਤੀ fbq_type		fbq_type;
+	ਗਿਣਤੀ migration_type	migration_type;
+	ਬਣਤਰ list_ਸਿਰ	tasks;
 };
 
 /*
  * Is this task likely cache-hot:
  */
-static int task_hot(struct task_struct *p, struct lb_env *env)
+ਸਥਿਰ ਪੂਰਨ task_hot(ਬਣਤਰ task_struct *p, ਬਣਤਰ lb_env *env)
 {
 	s64 delta;
 
 	lockdep_assert_rq_held(env->src_rq);
 
-	if (p->sched_class != &fair_sched_class)
-		return 0;
+	ਜੇ (p->sched_class != &fair_sched_class)
+		ਵਾਪਸ 0;
 
-	if (unlikely(task_has_idle_policy(p)))
-		return 0;
+	ਜੇ (unlikely(task_has_idle_policy(p)))
+		ਵਾਪਸ 0;
 
 	/* SMT siblings share cache */
-	if (env->sd->flags & SD_SHARE_CPUCAPACITY)
-		return 0;
+	ਜੇ (env->sd->flags & SD_SHARE_CPUCAPACITY)
+		ਵਾਪਸ 0;
 
 	/*
 	 * Buddy candidates are cache hot:
 	 */
-	if (sched_feat(CACHE_HOT_BUDDY) && env->dst_rq->nr_running &&
-	    (&p->se == cfs_rq_of(&p->se)->next))
-		return 1;
+	ਜੇ (sched_feat(CACHE_HOT_BUDDY) && env->dst_rq->nr_running &&
+	    (&p->se == cfs_rq_ਦਾ(&p->se)->ਅਗਲਾ))
+		ਵਾਪਸ 1;
 
-	if (sysctl_sched_migration_cost == -1)
-		return 1;
+	ਜੇ (sysctl_sched_migration_ਲਾਗਤ == -1)
+		ਵਾਪਸ 1;
 
 	/*
 	 * Don't migrate task if the task's cookie does not match
 	 * with the destination CPU's core cookie.
 	 */
-	if (!sched_core_cookie_match(cpu_rq(env->dst_cpu), p))
-		return 1;
+	ਜੇ (!sched_core_cookie_ਮੇਲ(cpu_rq(env->dst_cpu), p))
+		ਵਾਪਸ 1;
 
-	if (sysctl_sched_migration_cost == 0)
-		return 0;
+	ਜੇ (sysctl_sched_migration_ਲਾਗਤ == 0)
+		ਵਾਪਸ 0;
 
-	delta = rq_clock_task(env->src_rq) - p->se.exec_start;
+	delta = rq_clock_task(env->src_rq) - p->se.exec_ਸ਼ੁਰੂ;
 
-	return delta < (s64)sysctl_sched_migration_cost;
+	ਵਾਪਸ delta < (s64)sysctl_sched_migration_ਲਾਗਤ;
 }
 
-#ifdef CONFIG_NUMA_BALANCING
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
 /*
  * Returns a positive value, if task migration degrades locality.
  * Returns 0, if task migration is not affected by locality.
  * Returns a negative value, if task migration improves locality i.e migration preferred.
  */
-static long migrate_degrades_locality(struct task_struct *p, struct lb_env *env)
+ਸਥਿਰ ਲੰਮਾ migrate_degrades_locality(ਬਣਤਰ task_struct *p, ਬਣਤਰ lb_env *env)
 {
-	struct numa_group *numa_group = rcu_dereference_all(p->numa_group);
-	unsigned long src_weight, dst_weight;
-	int src_nid, dst_nid, dist;
+	ਬਣਤਰ numa_ਸਮੂਹ *numa_ਸਮੂਹ = rcu_dereference_all(p->numa_ਸਮੂਹ);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ src_ਭਾਰ, dst_ਭਾਰ;
+	ਪੂਰਨ src_nid, dst_nid, dist;
 
-	if (!static_branch_likely(&sched_numa_balancing))
-		return 0;
+	ਜੇ (!static_branch_likely(&sched_numa_balancing))
+		ਵਾਪਸ 0;
 
-	if (!p->numa_faults || !(env->sd->flags & SD_NUMA))
-		return 0;
+	ਜੇ (!p->numa_ਨੁਕਸ || !(env->sd->flags & SD_NUMA))
+		ਵਾਪਸ 0;
 
-	src_nid = cpu_to_node(env->src_cpu);
-	dst_nid = cpu_to_node(env->dst_cpu);
+	src_nid = cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(env->src_cpu);
+	dst_nid = cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(env->dst_cpu);
 
-	if (src_nid == dst_nid)
-		return 0;
+	ਜੇ (src_nid == dst_nid)
+		ਵਾਪਸ 0;
 
 	/* Migrating away from the preferred node is always bad. */
-	if (src_nid == p->numa_preferred_nid) {
-		if (env->src_rq->nr_running > env->src_rq->nr_preferred_running)
-			return 1;
-		else
-			return 0;
+	ਜੇ (src_nid == p->numa_preferred_nid) {
+		ਜੇ (env->src_rq->nr_running > env->src_rq->nr_preferred_running)
+			ਵਾਪਸ 1;
+		ਨਹੀਂਤਾਂ
+			ਵਾਪਸ 0;
 	}
 
 	/* Encourage migration to the preferred node. */
-	if (dst_nid == p->numa_preferred_nid)
-		return -1;
+	ਜੇ (dst_nid == p->numa_preferred_nid)
+		ਵਾਪਸ -1;
 
 	/* Leaving a core idle is often worse than degrading locality. */
-	if (env->idle == CPU_IDLE)
-		return 0;
+	ਜੇ (env->idle == CPU_IDLE)
+		ਵਾਪਸ 0;
 
-	dist = node_distance(src_nid, dst_nid);
-	if (numa_group) {
-		src_weight = group_weight(p, src_nid, dist);
-		dst_weight = group_weight(p, dst_nid, dist);
-	} else {
-		src_weight = task_weight(p, src_nid, dist);
-		dst_weight = task_weight(p, dst_nid, dist);
+	dist = ਗੰਢ_ਦੂਰੀ(src_nid, dst_nid);
+	ਜੇ (numa_ਸਮੂਹ) {
+		src_ਭਾਰ = ਸਮੂਹ_ਭਾਰ(p, src_nid, dist);
+		dst_ਭਾਰ = ਸਮੂਹ_ਭਾਰ(p, dst_nid, dist);
+	} ਨਹੀਂਤਾਂ {
+		src_ਭਾਰ = task_ਭਾਰ(p, src_nid, dist);
+		dst_ਭਾਰ = task_ਭਾਰ(p, dst_nid, dist);
 	}
 
-	return src_weight - dst_weight;
+	ਵਾਪਸ src_ਭਾਰ - dst_ਭਾਰ;
 }
 
-#else /* !CONFIG_NUMA_BALANCING: */
-static inline long migrate_degrades_locality(struct task_struct *p,
-					     struct lb_env *env)
+#ਨਹੀਂਤਾਂ /* !CONFIG_NUMA_BALANCING: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਲੰਮਾ migrate_degrades_locality(ਬਣਤਰ task_struct *p,
+					     ਬਣਤਰ lb_env *env)
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
-#endif /* !CONFIG_NUMA_BALANCING */
+#ਜੇ_ਅੰਤ /* !CONFIG_NUMA_BALANCING */
 
 /*
  * Check whether the task is ineligible on the destination cpu
@@ -10759,18 +10759,18 @@ static inline long migrate_degrades_locality(struct task_struct *p,
  * is ineligible, it will also be ineligible when
  * it is migrated to the destination cpu.
  */
-static inline int task_is_ineligible_on_dst_cpu(struct task_struct *p, int dest_cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_is_ineligible_on_dst_cpu(ਬਣਤਰ task_struct *p, ਪੂਰਨ dest_cpu)
 {
-	struct cfs_rq *dst_cfs_rq = &cpu_rq(dest_cpu)->cfs;
+	ਬਣਤਰ cfs_rq *dst_cfs_rq = &cpu_rq(dest_cpu)->cfs;
 
-	if (sched_feat(PLACE_LAG) && dst_cfs_rq->h_nr_queued &&
+	ਜੇ (sched_feat(ਰੱਖੋ_LAG) && dst_cfs_rq->h_nr_queued &&
 	    !entity_eligible(&task_rq(p)->cfs, &p->se))
-		return 1;
+		ਵਾਪਸ 1;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#ifdef CONFIG_SCHED_CACHE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
 /*
  * The margin used when comparing LLC utilization with CPU capacity.
  * It determines the LLC load level where active LLC aggregation is
@@ -10779,7 +10779,7 @@ static inline int task_is_ineligible_on_dst_cpu(struct task_struct *p, int dest_
  *
  * (default: ~50%, tunable via debugfs)
  */
-static bool fits_llc_capacity(unsigned long util, unsigned long max)
+ਸਥਿਰ bool ਸਮਾਉਂਦਾ_llc_ਸਮਰੱਥਾ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max)
 {
 	u32 aggr_pct = llc_overaggr_pct;
 
@@ -10787,10 +10787,10 @@ static bool fits_llc_capacity(unsigned long util, unsigned long max)
 	 * For single core systems, raise the aggregation
 	 * threshold to accommodate more tasks.
 	 */
-	if (cpu_smt_num_threads == 1)
+	ਜੇ (cpu_smt_ਅੰਕ_ਧਾਗੇ == 1)
 		aggr_pct = (aggr_pct * 3 / 2);
 
-	return util * 100 < max * aggr_pct;
+	ਵਾਪਸ util * 100 < max * aggr_pct;
 }
 
 /*
@@ -10800,22 +10800,22 @@ static bool fits_llc_capacity(unsigned long util, unsigned long max)
  * Bias is in perentage.
  */
 /* Allows dst util to be bigger than src util by up to bias percent */
-#define util_greater(util1, util2) \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ util_greater(util1, util2) \
 	((util1) * 100 > (util2) * (100 + llc_imb_pct))
 
-static __maybe_unused bool get_llc_stats(int cpu, unsigned long *util,
-					 unsigned long *cap)
+ਸਥਿਰ __maybe_unused bool get_llc_stats(ਪੂਰਨ cpu, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *util,
+					 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *cap)
 {
-	struct sched_domain_shared *sd_share;
+	ਬਣਤਰ sched_domain_shared *sd_share;
 
-	sd_share = rcu_dereference_all(per_cpu(sd_llc_shared, cpu));
-	if (!sd_share)
-		return false;
+	sd_share = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_llc_shared, cpu));
+	ਜੇ (!sd_share)
+		ਵਾਪਸ false;
 
 	*util = READ_ONCE(sd_share->util_avg);
-	*cap = READ_ONCE(sd_share->capacity);
+	*cap = READ_ONCE(sd_share->ਸਮਰੱਥਾ);
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /*
@@ -10868,7 +10868,7 @@ static __maybe_unused bool get_llc_stats(int cpu, unsigned long *util,
  */
 
 /* migration decision, 3 states are orthogonal. */
-enum llc_mig {
+ਗਿਣਤੀ llc_mig {
 	mig_forbid = 0,		/* N: Don't migrate task, respect LLC preference */
 	mig_llc,		/* Y: Do LLC preference based migration */
 	mig_unrestricted	/* G: Don't restrict generic load balance migration */
@@ -10880,34 +10880,34 @@ enum llc_mig {
  * src_cpu and dst_cpu are arbitrary CPUs within the source
  * and destination LLCs, respectively.
  */
-static enum llc_mig can_migrate_llc(int src_cpu, int dst_cpu,
-				    unsigned long tsk_util,
-				    bool to_pref)
+ਸਥਿਰ ਗਿਣਤੀ llc_mig can_migrate_llc(ਪੂਰਨ src_cpu, ਪੂਰਨ dst_cpu,
+				    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ tsk_util,
+				    bool ਮੰਜ਼ਿਲ_pref)
 {
-	unsigned long src_util, dst_util, src_cap, dst_cap;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ src_util, dst_util, src_cap, dst_cap;
 
-	if (!get_llc_stats(src_cpu, &src_util, &src_cap) ||
+	ਜੇ (!get_llc_stats(src_cpu, &src_util, &src_cap) ||
 	    !get_llc_stats(dst_cpu, &dst_util, &dst_cap))
-		return mig_unrestricted;
+		ਵਾਪਸ mig_unrestricted;
 
 	src_util = src_util < tsk_util ? 0 : src_util - tsk_util;
 	dst_util = dst_util + tsk_util;
 
-	if (!fits_llc_capacity(dst_util, dst_cap) &&
-	    !fits_llc_capacity(src_util, src_cap))
-		return mig_unrestricted;
+	ਜੇ (!ਸਮਾਉਂਦਾ_llc_ਸਮਰੱਥਾ(dst_util, dst_cap) &&
+	    !ਸਮਾਉਂਦਾ_llc_ਸਮਰੱਥਾ(src_util, src_cap))
+		ਵਾਪਸ mig_unrestricted;
 
-	if (to_pref) {
+	ਜੇ (ਮੰਜ਼ਿਲ_pref) {
 		/*
 		 * Don't migrate if we will get preferred LLC too
 		 * heavily loaded and if the dest is much busier
 		 * than the src, in which case migration will
 		 * increase the imbalance too much.
 		 */
-		if (!fits_llc_capacity(dst_util, dst_cap) &&
+		ਜੇ (!ਸਮਾਉਂਦਾ_llc_ਸਮਰੱਥਾ(dst_util, dst_cap) &&
 		    util_greater(dst_util, src_util))
-			return mig_forbid;
-	} else {
+			ਵਾਪਸ mig_forbid;
+	} ਨਹੀਂਤਾਂ {
 		/*
 		 * Don't migrate if we will leave preferred LLC
 		 * too idle, or if this migration leads to the
@@ -10915,14 +10915,14 @@ static enum llc_mig can_migrate_llc(int src_cpu, int dst_cpu,
 		 * of preferred LLC, leading to migration again
 		 * back to preferred LLC.
 		 */
-		if (fits_llc_capacity(src_util, src_cap) ||
+		ਜੇ (ਸਮਾਉਂਦਾ_llc_ਸਮਰੱਥਾ(src_util, src_cap) ||
 		    !util_greater(src_util, dst_util))
-			return mig_forbid;
+			ਵਾਪਸ mig_forbid;
 	}
-	return mig_llc;
+	ਵਾਪਸ mig_llc;
 }
 
-static inline bool task_misfits_asym_cpu(struct lb_env *env, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool task_misfits_asym_cpu(ਬਣਤਰ lb_env *env, ਬਣਤਰ task_struct *p)
 {
 	/*
 	 * On asymmetric CPU capacity domains, do not let cache-aware
@@ -10932,55 +10932,55 @@ static inline bool task_misfits_asym_cpu(struct lb_env *env, struct task_struct 
 	 * loss. If the task already does not fit its source CPU, the move
 	 * cannot make things worse, so let the LLC preference decide.
 	 */
-	if ((env->sd->flags & SD_ASYM_CPUCAPACITY) && p &&
-	    !task_fits_cpu(p, env->dst_cpu) &&
-	    task_fits_cpu(p, env->src_cpu))
-		return true;
+	ਜੇ ((env->sd->flags & SD_ASYM_CPUCAPACITY) && p &&
+	    !task_ਸਮਾਉਂਦਾ_cpu(p, env->dst_cpu) &&
+	    task_ਸਮਾਉਂਦਾ_cpu(p, env->src_cpu))
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 /*
  * Check if task p can migrate from source LLC to
  * destination LLC in terms of cache aware load balance.
  */
-static enum llc_mig can_migrate_llc_task(struct lb_env *env,
-					 struct task_struct *p)
+ਸਥਿਰ ਗਿਣਤੀ llc_mig can_migrate_llc_task(ਬਣਤਰ lb_env *env,
+					 ਬਣਤਰ task_struct *p)
 {
-	struct sched_cache_group *grp;
-	bool to_pref;
-	int cpu, src_cpu, dst_cpu;
+	ਬਣਤਰ sched_cache_ਸਮੂਹ *grp;
+	bool ਮੰਜ਼ਿਲ_pref;
+	ਪੂਰਨ cpu, src_cpu, dst_cpu;
 
-	if (task_misfits_asym_cpu(env, p))
-		return mig_forbid;
+	ਜੇ (task_misfits_asym_cpu(env, p))
+		ਵਾਪਸ mig_forbid;
 
 	src_cpu = env->src_cpu;
 	dst_cpu = env->dst_cpu;
 	grp = rcu_dereference_all(p->sched_cache_grp);
-	if (!grp)
-		return mig_unrestricted;
+	ਜੇ (!grp)
+		ਵਾਪਸ mig_unrestricted;
 
 	cpu = READ_ONCE(grp->cpu);
-	if (cpu < 0 || cpus_share_cache(src_cpu, dst_cpu))
-		return mig_unrestricted;
+	ਜੇ (cpu < 0 || cpus_share_cache(src_cpu, dst_cpu))
+		ਵਾਪਸ mig_unrestricted;
 
 	/* skip cache aware load balance for too many threads */
-	if (invalid_llc_nr(grp, p, dst_cpu) ||
-	    exceed_llc_capacity(grp, dst_cpu)) {
-		if (READ_ONCE(grp->cpu) != -1)
+	ਜੇ (invalid_llc_nr(grp, p, dst_cpu) ||
+	    exceed_llc_ਸਮਰੱਥਾ(grp, dst_cpu)) {
+		ਜੇ (READ_ONCE(grp->cpu) != -1)
 			WRITE_ONCE(grp->cpu, -1);
-		return mig_unrestricted;
+		ਵਾਪਸ mig_unrestricted;
 	}
 
-	if (cpus_share_cache(dst_cpu, cpu))
-		to_pref = true;
-	else if (cpus_share_cache(src_cpu, cpu))
-		to_pref = false;
-	else
-		return mig_unrestricted;
+	ਜੇ (cpus_share_cache(dst_cpu, cpu))
+		ਮੰਜ਼ਿਲ_pref = true;
+	ਨਹੀਂਤਾਂ ਜੇ (cpus_share_cache(src_cpu, cpu))
+		ਮੰਜ਼ਿਲ_pref = false;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ mig_unrestricted;
 
-	return can_migrate_llc(src_cpu, dst_cpu,
-			       task_util(p), to_pref);
+	ਵਾਪਸ can_migrate_llc(src_cpu, dst_cpu,
+			       task_util(p), ਮੰਜ਼ਿਲ_pref);
 }
 
 /*
@@ -10991,14 +10991,14 @@ static enum llc_mig can_migrate_llc_task(struct lb_env *env,
  * LLC locality outweighs the power efficiency gained from
  * migrating the only runnable task away.
  */
-static inline bool
-alb_break_llc(struct lb_env *env)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+alb_break_llc(ਬਣਤਰ lb_env *env)
 {
-	if (!sched_cache_enabled())
-		return false;
+	ਜੇ (!sched_cache_enabled())
+		ਵਾਪਸ false;
 
-	if (cpus_share_cache(env->src_cpu, env->dst_cpu))
-		return false;
+	ਜੇ (cpus_share_cache(env->src_cpu, env->dst_cpu))
+		ਵਾਪਸ false;
 	/*
 	 * All tasks prefer to stay on their current CPU.
 	 * Do not pull a task from its preferred CPU if:
@@ -11007,33 +11007,33 @@ alb_break_llc(struct lb_env *env)
 	 * 2. Migrating it away from its preferred LLC would violate
 	 *    the cache-aware scheduling policy.
 	 */
-	if (env->src_rq->nr_pref_llc_running &&
+	ਜੇ (env->src_rq->nr_pref_llc_running &&
 	    env->src_rq->nr_pref_llc_running == env->src_rq->cfs.h_nr_runnable) {
-		unsigned long util = 0;
-		struct task_struct *cur;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util = 0;
+		ਬਣਤਰ task_struct *cur;
 
 		/*
 		 * Migrating misfit tasks from current CPU
 		 * to CPU with a better fit.
 		 * Prioritize that over LLC preference.
 		 */
-		if (env->migration_type == migrate_misfit)
-			return false;
+		ਜੇ (env->migration_type == migrate_misfit)
+			ਵਾਪਸ false;
 
-		if (env->src_rq->nr_running <= 1)
-			return true;
+		ਜੇ (env->src_rq->nr_running <= 1)
+			ਵਾਪਸ true;
 
 		cur = rcu_dereference_all(env->src_rq->curr);
-		if (cur && cur->sched_class == &fair_sched_class)
+		ਜੇ (cur && cur->sched_class == &fair_sched_class)
 			util = task_util(cur);
 
-		if (task_misfits_asym_cpu(env, cur) ||
+		ਜੇ (task_misfits_asym_cpu(env, cur) ||
 		    can_migrate_llc(env->src_cpu, env->dst_cpu,
 				    util, false) == mig_forbid)
-			return true;
+			ਵਾਪਸ true;
 	}
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 /*
@@ -11042,12 +11042,12 @@ alb_break_llc(struct lb_env *env)
  * in env->migration_type, while active LB carries LBF_ACTIVE_LB_LLC in
  * env->flags to avoid overwriting env->migration_type.
  */
-static inline bool
-migrate_llc_task_wrong_dst(struct task_struct *p, struct lb_env *env)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+migrate_llc_task_wrong_dst(ਬਣਤਰ task_struct *p, ਬਣਤਰ lb_env *env)
 {
-	return sched_cache_enabled() &&
+	ਵਾਪਸ sched_cache_enabled() &&
 	       (env->migration_type == migrate_llc_task ||
-		env->flags & LBF_ACTIVE_LB_LLC) &&
+		env->flags & LBF_ਸਰਗਰਮ_LB_LLC) &&
 	       READ_ONCE(p->preferred_llc) != llc_id(env->dst_cpu);
 }
 
@@ -11055,13 +11055,13 @@ migrate_llc_task_wrong_dst(struct task_struct *p, struct lb_env *env)
  * Check if migrating task p from env->src_cpu to
  * env->dst_cpu breaks LLC localiy.
  */
-static bool migrate_degrades_llc(struct task_struct *p, struct lb_env *env)
+ਸਥਿਰ bool migrate_degrades_llc(ਬਣਤਰ task_struct *p, ਬਣਤਰ lb_env *env)
 {
-	if (!sched_cache_enabled())
-		return false;
+	ਜੇ (!sched_cache_enabled())
+		ਵਾਪਸ false;
 
-	if (task_has_sched_core(p))
-		return false;
+	ਜੇ (task_has_sched_core(p))
+		ਵਾਪਸ false;
 	/*
 	 * Skip over tasks that would degrade LLC locality;
 	 * only when nr_balanced_failed is sufficiently high do we
@@ -11071,58 +11071,58 @@ static bool migrate_degrades_llc(struct task_struct *p, struct lb_env *env)
 	 * than nr_balance_failed to avoid excessive task
 	 * migration at the same time.
 	 */
-	if (env->sd->nr_balance_failed >= env->sd->cache_nice_tries + 1)
-		return false;
+	ਜੇ (env->sd->nr_balance_failed >= env->sd->cache_nice_tries + 1)
+		ਵਾਪਸ false;
 
 	/*
 	 * We know the env->src_cpu has some tasks prefer to
 	 * run on env->dst_cpu, skip the tasks do not prefer
 	 * env->dst_cpu, and find the one that prefers.
 	 */
-	if (migrate_llc_task_wrong_dst(p, env))
-		return true;
+	ਜੇ (migrate_llc_task_wrong_dst(p, env))
+		ਵਾਪਸ true;
 
-	if (can_migrate_llc_task(env, p) != mig_forbid)
-		return false;
+	ਜੇ (can_migrate_llc_task(env, p) != mig_forbid)
+		ਵਾਪਸ false;
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-#else
-static inline bool get_llc_stats(int cpu, unsigned long *util,
-				 unsigned long *cap)
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool get_llc_stats(ਪੂਰਨ cpu, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *util,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *cap)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline bool
-alb_break_llc(struct lb_env *env)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+alb_break_llc(ਬਣਤਰ lb_env *env)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline bool
-migrate_llc_task_wrong_dst(struct task_struct *p, struct lb_env *env)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+migrate_llc_task_wrong_dst(ਬਣਤਰ task_struct *p, ਬਣਤਰ lb_env *env)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline bool
-migrate_degrades_llc(struct task_struct *p, struct lb_env *env)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+migrate_degrades_llc(ਬਣਤਰ task_struct *p, ਬਣਤਰ lb_env *env)
 {
-	return false;
+	ਵਾਪਸ false;
 }
-#endif
+#ਜੇ_ਅੰਤ
 /*
  * can_migrate_task - may task p from runqueue rq be migrated to this_cpu?
  */
-static
-int can_migrate_task(struct task_struct *p, struct lb_env *env)
+ਸਥਿਰ
+ਪੂਰਨ can_migrate_task(ਬਣਤਰ task_struct *p, ਬਣਤਰ lb_env *env)
 {
-	long degrades, hot;
+	ਲੰਮਾ degrades, hot;
 
 	lockdep_assert_rq_held(env->src_rq);
-	if (p->sched_task_hot)
+	ਜੇ (p->sched_task_hot)
 		p->sched_task_hot = 0;
 
 	/*
@@ -11134,11 +11134,11 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
 	 * 5) are cache-hot on their current CPU, or
 	 * 6) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
 	 */
-	if ((p->se.sched_delayed) && (env->migration_type != migrate_load))
-		return 0;
+	ਜੇ ((p->se.sched_delayed) && (env->migration_type != migrate_ਲੱਦੋ))
+		ਵਾਪਸ 0;
 
-	if (lb_throttled_hierarchy(p, env->dst_cpu))
-		return 0;
+	ਜੇ (lb_throttled_hierarchy(p, env->dst_cpu))
+		ਵਾਪਸ 0;
 
 	/*
 	 * We want to prioritize the migration of eligible tasks.
@@ -11146,19 +11146,19 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
 	 * them to migrate when nr_balance_failed is non-zero to
 	 * avoid load-balancing trying very hard to balance the load.
 	 */
-	if (!env->sd->nr_balance_failed &&
+	ਜੇ (!env->sd->nr_balance_failed &&
 	    task_is_ineligible_on_dst_cpu(p, env->dst_cpu))
-		return 0;
+		ਵਾਪਸ 0;
 
 	/* Disregard percpu kthreads; they are where they need to be. */
-	if (kthread_is_per_cpu(p))
-		return 0;
+	ਜੇ (kthread_is_ਪ੍ਰਤੀ_cpu(p))
+		ਵਾਪਸ 0;
 
-	if (task_is_blocked(p))
-		return 0;
+	ਜੇ (task_is_blocked(p))
+		ਵਾਪਸ 0;
 
-	if (!cpumask_test_cpu(env->dst_cpu, p->cpus_ptr)) {
-		int cpu;
+	ਜੇ (!cpumask_test_cpu(env->dst_cpu, p->cpus_ptr)) {
+		ਪੂਰਨ cpu;
 
 		schedstat_inc(p->stats.nr_failed_migrations_affine);
 
@@ -11174,28 +11174,28 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
 		 * - if we have already computed one in current iteration
 		 * - if it's an active balance
 		 */
-		if (env->idle == CPU_NEWLY_IDLE ||
-		    env->flags & (LBF_DST_PINNED | LBF_ACTIVE_LB))
-			return 0;
+		ਜੇ (env->idle == CPU_NEWLY_IDLE ||
+		    env->flags & (LBF_DST_PINNED | LBF_ਸਰਗਰਮ_LB))
+			ਵਾਪਸ 0;
 
 		/* Prevent to re-select dst_cpu via env's CPUs: */
-		cpu = cpumask_first_and_and(env->dst_grpmask, env->cpus, p->cpus_ptr);
+		cpu = cpumask_ਪਹਿਲਾ_and_and(env->dst_grpmask, env->cpus, p->cpus_ptr);
 
-		if (cpu < nr_cpu_ids) {
+		ਜੇ (cpu < nr_cpu_ids) {
 			env->flags |= LBF_DST_PINNED;
 			env->new_dst_cpu = cpu;
 		}
 
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/* Record that we found at least one task that could run on dst_cpu */
 	env->flags &= ~LBF_ALL_PINNED;
 
-	if (task_on_cpu(env->src_rq, p) ||
+	ਜੇ (task_on_cpu(env->src_rq, p) ||
 	    task_current_donor(env->src_rq, p)) {
 		schedstat_inc(p->stats.nr_failed_migrations_running);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/*
@@ -11205,52 +11205,52 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
 	 * 3) task is cache cold, or
 	 * 4) too many balance attempts have failed.
 	 */
-	if (env->flags & LBF_ACTIVE_LB)
-		return !migrate_llc_task_wrong_dst(p, env);
+	ਜੇ (env->flags & LBF_ਸਰਗਰਮ_LB)
+		ਵਾਪਸ !migrate_llc_task_wrong_dst(p, env);
 
 	degrades = migrate_degrades_locality(p, env);
-	if (!degrades) {
+	ਜੇ (!degrades) {
 		/*
 		 * If the NUMA locality is not broken,
 		 * further check if migration would hurt
 		 * LLC locality.
 		 */
-		if (migrate_degrades_llc(p, env)) {
+		ਜੇ (migrate_degrades_llc(p, env)) {
 			/*
 			 * If regular load balancing fails to pull a task
 			 * due to LLC locality, this is expected behavior
 			 * and we set LBF_LLC_PINNED so we don't increase
 			 * nr_balance_failed unecessarily.
 			 */
-			if (env->migration_type != migrate_llc_task)
+			ਜੇ (env->migration_type != migrate_llc_task)
 				env->flags |= LBF_LLC_PINNED;
 
-			return 0;
+			ਵਾਪਸ 0;
 		}
 
 		hot = task_hot(p, env);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		hot = degrades > 0;
 	}
 
-	if (!hot || env->sd->nr_balance_failed > env->sd->cache_nice_tries) {
-		if (hot)
+	ਜੇ (!hot || env->sd->nr_balance_failed > env->sd->cache_nice_tries) {
+		ਜੇ (hot)
 			p->sched_task_hot = 1;
-		return 1;
+		ਵਾਪਸ 1;
 	}
 
 	schedstat_inc(p->stats.nr_failed_migrations_hot);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
  * detach_task() -- detach the task for the migration specified in env
  */
-static void detach_task(struct task_struct *p, struct lb_env *env)
+ਸਥਿਰ ਖਾਲੀ detach_task(ਬਣਤਰ task_struct *p, ਬਣਤਰ lb_env *env)
 {
 	lockdep_assert_rq_held(env->src_rq);
 
-	if (p->sched_task_hot) {
+	ਜੇ (p->sched_task_hot) {
 		p->sched_task_hot = 0;
 		schedstat_inc(env->sd->lb_hot_gained[env->idle]);
 		schedstat_inc(p->stats.nr_forced_migrations);
@@ -11259,8 +11259,8 @@ static void detach_task(struct task_struct *p, struct lb_env *env)
 	WARN_ON(task_current(env->src_rq, p));
 	WARN_ON(task_current_donor(env->src_rq, p));
 
-	deactivate_task(env->src_rq, p, DEQUEUE_NOCLOCK);
-	set_task_cpu(p, env->dst_cpu);
+	deactivate_task(env->src_rq, p, ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_NOCLOCK);
+	ਸੈੱਟ_task_cpu(p, env->dst_cpu);
 }
 
 /*
@@ -11269,16 +11269,16 @@ static void detach_task(struct task_struct *p, struct lb_env *env)
  *
  * Returns a task if successful and NULL otherwise.
  */
-static struct task_struct *detach_one_task(struct lb_env *env)
+ਸਥਿਰ ਬਣਤਰ task_struct *detach_one_task(ਬਣਤਰ lb_env *env)
 {
-	struct task_struct *p;
+	ਬਣਤਰ task_struct *p;
 
 	lockdep_assert_rq_held(env->src_rq);
 
-	list_for_each_entry_reverse(p,
-			&env->src_rq->cfs_tasks, se.group_node) {
-		if (!can_migrate_task(p, env))
-			continue;
+	list_for_each_ਇੰਦਰਾਜ_ਉਲਟ(p,
+			&env->src_rq->cfs_tasks, se.ਸਮੂਹ_ਗੰਢ) {
+		ਜੇ (!can_migrate_task(p, env))
+			ਜਾਰੀ;
 
 		detach_task(p, env);
 
@@ -11289,9 +11289,9 @@ static struct task_struct *detach_one_task(struct lb_env *env)
 		 * inside detach_tasks().
 		 */
 		schedstat_inc(env->sd->lb_gained[env->idle]);
-		return p;
+		ਵਾਪਸ p;
 	}
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
 /*
@@ -11300,12 +11300,12 @@ static struct task_struct *detach_one_task(struct lb_env *env)
  *
  * Returns number of detached tasks if successful and 0 otherwise.
  */
-static int detach_tasks(struct lb_env *env)
+ਸਥਿਰ ਪੂਰਨ detach_tasks(ਬਣਤਰ lb_env *env)
 {
-	struct list_head *tasks = &env->src_rq->cfs_tasks;
-	unsigned long util, load;
-	struct task_struct *p;
-	int detached = 0;
+	ਬਣਤਰ list_ਸਿਰ *tasks = &env->src_rq->cfs_tasks;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util, ਲੱਦੋ;
+	ਬਣਤਰ task_struct *p;
+	ਪੂਰਨ detached = 0;
 
 	lockdep_assert_rq_held(env->src_rq);
 
@@ -11313,41 +11313,41 @@ static int detach_tasks(struct lb_env *env)
 	 * Source run queue has been emptied by another CPU, clear
 	 * LBF_ALL_PINNED flag as we will not test any task.
 	 */
-	if (env->src_rq->nr_running <= 1) {
+	ਜੇ (env->src_rq->nr_running <= 1) {
 		env->flags &= ~LBF_ALL_PINNED;
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	if (env->imbalance <= 0)
-		return 0;
+	ਜੇ (env->imbalance <= 0)
+		ਵਾਪਸ 0;
 
-	while (!list_empty(tasks)) {
+	ਜਦੋਂ (!list_ਖਾਲੀ_ਥਾਵਾਂ(tasks)) {
 		/*
 		 * We don't want to steal all, otherwise we may be treated likewise,
 		 * which could at worst lead to a livelock crash.
 		 */
-		if (env->idle && env->src_rq->nr_running <= 1)
-			break;
+		ਜੇ (env->idle && env->src_rq->nr_running <= 1)
+			ਰੋਕੋ;
 
 		env->loop++;
 		/* We've more or less seen every task there is, call it quits */
-		if (env->loop > env->loop_max)
-			break;
+		ਜੇ (env->loop > env->loop_max)
+			ਰੋਕੋ;
 
 		/* take a breather every nr_migrate tasks */
-		if (env->loop > env->loop_break) {
+		ਜੇ (env->loop > env->loop_break) {
 			env->loop_break += SCHED_NR_MIGRATE_BREAK;
 			env->flags |= LBF_NEED_BREAK;
-			break;
+			ਰੋਕੋ;
 		}
 
-		p = list_last_entry(tasks, struct task_struct, se.group_node);
+		p = list_ਆਖਰੀ_ਇੰਦਰਾਜ(tasks, ਬਣਤਰ task_struct, se.ਸਮੂਹ_ਗੰਢ);
 
-		if (!can_migrate_task(p, env))
-			goto next;
+		ਜੇ (!can_migrate_task(p, env))
+			ਜਾਓ ਅਗਲਾ;
 
-		switch (env->migration_type) {
-		case migrate_load:
+		ਚੋਣ (env->migration_type) {
+		ਹਾਲਤ migrate_ਲੱਦੋ:
 			/*
 			 * Depending of the number of CPUs and tasks and the
 			 * cgroup hierarchy, task_h_load() can return a null
@@ -11355,11 +11355,11 @@ static int detach_tasks(struct lb_env *env)
 			 * otherwise detach_tasks() will stop only after
 			 * detaching up to loop_max tasks.
 			 */
-			load = max_t(unsigned long, task_h_load(p), 1);
+			ਲੱਦੋ = max_t(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ, task_h_ਲੱਦੋ(p), 1);
 
-			if (sched_feat(LB_MIN) &&
-			    load < 16 && !env->sd->nr_balance_failed)
-				goto next;
+			ਜੇ (sched_feat(LB_MIN) &&
+			    ਲੱਦੋ < 16 && !env->sd->nr_balance_failed)
+				ਜਾਓ ਅਗਲਾ;
 
 			/*
 			 * Make sure that we don't migrate too much load.
@@ -11367,66 +11367,66 @@ static int detach_tasks(struct lb_env *env)
 			 * scheduler fails to find a good waiting task to
 			 * migrate.
 			 */
-			if (shr_bound(load, env->sd->nr_balance_failed) > env->imbalance)
-				goto next;
+			ਜੇ (shr_bound(ਲੱਦੋ, env->sd->nr_balance_failed) > env->imbalance)
+				ਜਾਓ ਅਗਲਾ;
 
-			env->imbalance -= load;
-			break;
+			env->imbalance -= ਲੱਦੋ;
+			ਰੋਕੋ;
 
-		case migrate_util:
+		ਹਾਲਤ migrate_util:
 			util = task_util_est(p);
 
-			if (shr_bound(util, env->sd->nr_balance_failed) > env->imbalance)
-				goto next;
+			ਜੇ (shr_bound(util, env->sd->nr_balance_failed) > env->imbalance)
+				ਜਾਓ ਅਗਲਾ;
 
 			env->imbalance -= util;
-			break;
+			ਰੋਕੋ;
 
-		case migrate_task:
+		ਹਾਲਤ migrate_task:
 			env->imbalance--;
-			break;
+			ਰੋਕੋ;
 
-		case migrate_misfit:
+		ਹਾਲਤ migrate_misfit:
 			/* This is not a misfit task */
-			if (task_fits_cpu(p, env->src_cpu))
-				goto next;
+			ਜੇ (task_ਸਮਾਉਂਦਾ_cpu(p, env->src_cpu))
+				ਜਾਓ ਅਗਲਾ;
 
 			env->imbalance = 0;
-			break;
+			ਰੋਕੋ;
 
-		case migrate_llc_task:
+		ਹਾਲਤ migrate_llc_task:
 			env->imbalance--;
-			break;
+			ਰੋਕੋ;
 		}
 
 		detach_task(p, env);
-		list_add(&p->se.group_node, &env->tasks);
+		list_ਜੋੜੋ(&p->se.ਸਮੂਹ_ਗੰਢ, &env->tasks);
 
 		detached++;
 
-#ifdef CONFIG_PREEMPTION
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_PREEMPTION
 		/*
 		 * NEWIDLE balancing is a source of latency, so preemptible
 		 * kernels will stop after the first task is detached to minimize
 		 * the critical section.
 		 */
-		if (env->idle == CPU_NEWLY_IDLE)
-			break;
-#endif
+		ਜੇ (env->idle == CPU_NEWLY_IDLE)
+			ਰੋਕੋ;
+#ਜੇ_ਅੰਤ
 
 		/*
 		 * We only want to steal up to the prescribed amount of
 		 * load/util/tasks.
 		 */
-		if (env->imbalance <= 0)
-			break;
+		ਜੇ (env->imbalance <= 0)
+			ਰੋਕੋ;
 
-		continue;
-next:
-		if (p->sched_task_hot)
+		ਜਾਰੀ;
+ਅਗਲਾ:
+		ਜੇ (p->sched_task_hot)
 			schedstat_inc(p->stats.nr_failed_migrations_hot);
 
-		list_move(&p->se.group_node, tasks);
+		list_move(&p->se.ਸਮੂਹ_ਗੰਢ, tasks);
 	}
 
 	/*
@@ -11434,67 +11434,67 @@ next:
 	 * so we can safely collect detach_one_task() stats here rather
 	 * than inside detach_one_task().
 	 */
-	schedstat_add(env->sd->lb_gained[env->idle], detached);
+	schedstat_ਜੋੜੋ(env->sd->lb_gained[env->idle], detached);
 
-	return detached;
+	ਵਾਪਸ detached;
 }
 
 /*
  * attach_tasks() -- attaches all tasks detached by detach_tasks() to their
  * new rq.
  */
-static void attach_tasks(struct lb_env *env)
+ਸਥਿਰ ਖਾਲੀ attach_tasks(ਬਣਤਰ lb_env *env)
 {
 	__attach_tasks(env->dst_rq, &env->tasks);
 }
 
-#ifdef CONFIG_NO_HZ_COMMON
-static inline bool cfs_rq_has_blocked_load(struct cfs_rq *cfs_rq)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_COMMON
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool cfs_rq_has_blocked_ਲੱਦੋ(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	if (cfs_rq->avg.load_avg)
-		return true;
+	ਜੇ (cfs_rq->avg.ਲੱਦੋ_avg)
+		ਵਾਪਸ true;
 
-	if (cfs_rq->avg.util_avg)
-		return true;
+	ਜੇ (cfs_rq->avg.util_avg)
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline bool others_have_blocked(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool others_have_blocked(ਬਣਤਰ rq *rq)
 {
-	if (cpu_util_rt(rq))
-		return true;
+	ਜੇ (cpu_util_rt(rq))
+		ਵਾਪਸ true;
 
-	if (cpu_util_dl(rq))
-		return true;
+	ਜੇ (cpu_util_dl(rq))
+		ਵਾਪਸ true;
 
-	if (hw_load_avg(rq))
-		return true;
+	ਜੇ (hw_ਲੱਦੋ_avg(rq))
+		ਵਾਪਸ true;
 
-	if (cpu_util_irq(rq))
-		return true;
+	ਜੇ (cpu_util_irq(rq))
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline void update_blocked_load_tick(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_blocked_ਲੱਦੋ_tick(ਬਣਤਰ rq *rq)
 {
-	WRITE_ONCE(rq->last_blocked_load_update_tick, jiffies);
+	WRITE_ONCE(rq->ਆਖਰੀ_blocked_ਲੱਦੋ_update_tick, jiffies);
 }
 
-static inline void update_has_blocked_load_status(struct rq *rq, bool has_blocked_load)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_has_blocked_ਲੱਦੋ_ਸਥਿਤੀ(ਬਣਤਰ rq *rq, bool has_blocked_ਲੱਦੋ)
 {
-	if (!has_blocked_load)
-		rq->has_blocked_load = 0;
+	ਜੇ (!has_blocked_ਲੱਦੋ)
+		rq->has_blocked_ਲੱਦੋ = 0;
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline bool cfs_rq_has_blocked_load(struct cfs_rq *cfs_rq) { return false; }
-static inline bool others_have_blocked(struct rq *rq) { return false; }
-static inline void update_blocked_load_tick(struct rq *rq) {}
-static inline void update_has_blocked_load_status(struct rq *rq, bool has_blocked_load) {}
-#endif /* !CONFIG_NO_HZ_COMMON */
+#ਨਹੀਂਤਾਂ /* !CONFIG_NO_HZ_COMMON: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool cfs_rq_has_blocked_ਲੱਦੋ(ਬਣਤਰ cfs_rq *cfs_rq) { ਵਾਪਸ false; }
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool others_have_blocked(ਬਣਤਰ rq *rq) { ਵਾਪਸ false; }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_blocked_ਲੱਦੋ_tick(ਬਣਤਰ rq *rq) {}
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_has_blocked_ਲੱਦੋ_ਸਥਿਤੀ(ਬਣਤਰ rq *rq, bool has_blocked_ਲੱਦੋ) {}
+#ਜੇ_ਅੰਤ /* !CONFIG_NO_HZ_COMMON */
 
-static bool __update_blocked_others(struct rq *rq, bool *done)
+ਸਥਿਰ bool __update_blocked_others(ਬਣਤਰ rq *rq, bool *ਪੂਰਾ)
 {
 	bool updated;
 
@@ -11502,56 +11502,56 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
 	 * update_load_avg() can call cpufreq_update_util(). Make sure that RT,
 	 * DL and IRQ signals have been updated before updating CFS.
 	 */
-	updated = update_other_load_avgs(rq);
+	updated = update_other_ਲੱਦੋ_avgs(rq);
 
-	if (others_have_blocked(rq))
-		*done = false;
+	ਜੇ (others_have_blocked(rq))
+		*ਪੂਰਾ = false;
 
-	return updated;
+	ਵਾਪਸ updated;
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 
-static bool __update_blocked_fair(struct rq *rq, bool *done)
+ਸਥਿਰ bool __update_blocked_fair(ਬਣਤਰ rq *rq, bool *ਪੂਰਾ)
 {
-	struct cfs_rq *cfs_rq, *pos;
+	ਬਣਤਰ cfs_rq *cfs_rq, *pos;
 	bool decayed = false;
 
 	/*
 	 * Iterates the task_group tree in a bottom up fashion, see
 	 * list_add_leaf_cfs_rq() for details.
 	 */
-	for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos) {
-		struct sched_entity *se;
+	for_each_ਪੱਤੀ_cfs_rq_ਸੁਰੱਖਿਅਤ(rq, cfs_rq, pos) {
+		ਬਣਤਰ sched_entity *se;
 
-		if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq)) {
-			update_tg_load_avg(cfs_rq);
+		ਜੇ (update_cfs_rq_ਲੱਦੋ_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq)) {
+			update_tg_ਲੱਦੋ_avg(cfs_rq);
 
-			if (cfs_rq->nr_queued == 0)
+			ਜੇ (cfs_rq->nr_queued == 0)
 				update_idle_cfs_rq_clock_pelt(cfs_rq);
 
-			if (cfs_rq == &rq->cfs)
+			ਜੇ (cfs_rq == &rq->cfs)
 				decayed = true;
 		}
 
 		/* Propagate pending load changes to the parent, if any: */
 		se = cfs_rq_se(cfs_rq);
-		if (se && !skip_blocked_update(se))
-			update_load_avg(cfs_rq_of(se), se, UPDATE_TG);
+		ਜੇ (se && !skip_blocked_update(se))
+			update_ਲੱਦੋ_avg(cfs_rq_ਦਾ(se), se, UPDATE_TG);
 
 		/*
 		 * There can be a lot of idle CPU cgroups.  Don't let fully
 		 * decayed cfs_rqs linger on the list.
 		 */
-		if (cfs_rq_is_decayed(cfs_rq))
-			list_del_leaf_cfs_rq(cfs_rq);
+		ਜੇ (cfs_rq_is_decayed(cfs_rq))
+			list_del_ਪੱਤੀ_cfs_rq(cfs_rq);
 
 		/* Don't need periodic decay once load/util_avg are null */
-		if (cfs_rq_has_blocked_load(cfs_rq))
-			*done = false;
+		ਜੇ (cfs_rq_has_blocked_ਲੱਦੋ(cfs_rq))
+			*ਪੂਰਾ = false;
 	}
 
-	return decayed;
+	ਵਾਪਸ decayed;
 }
 
 /*
@@ -11559,84 +11559,84 @@ static bool __update_blocked_fair(struct rq *rq, bool *done)
  * This needs to be done in a top-down fashion because the load of a child
  * group is a fraction of its parents load.
  */
-static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਖਾਲੀ update_cfs_rq_h_ਲੱਦੋ(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct sched_entity *se = cfs_rq_se(cfs_rq);
-	unsigned long now = jiffies;
-	unsigned long load;
+	ਬਣਤਰ sched_entity *se = cfs_rq_se(cfs_rq);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ now = jiffies;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੱਦੋ;
 
-	if (cfs_rq->last_h_load_update == now)
-		return;
+	ਜੇ (cfs_rq->ਆਖਰੀ_h_ਲੱਦੋ_update == now)
+		ਵਾਪਸ;
 
-	WRITE_ONCE(cfs_rq->h_load_next, NULL);
+	WRITE_ONCE(cfs_rq->h_ਲੱਦੋ_ਅਗਲਾ, ਨਿਰਾ);
 	for_each_sched_entity(se) {
-		cfs_rq = cfs_rq_of(se);
-		WRITE_ONCE(cfs_rq->h_load_next, se);
-		if (cfs_rq->last_h_load_update == now)
-			break;
+		cfs_rq = cfs_rq_ਦਾ(se);
+		WRITE_ONCE(cfs_rq->h_ਲੱਦੋ_ਅਗਲਾ, se);
+		ਜੇ (cfs_rq->ਆਖਰੀ_h_ਲੱਦੋ_update == now)
+			ਰੋਕੋ;
 	}
 
-	if (!se) {
-		cfs_rq->h_load = cfs_rq_load_avg(cfs_rq);
-		cfs_rq->last_h_load_update = now;
+	ਜੇ (!se) {
+		cfs_rq->h_ਲੱਦੋ = cfs_rq_ਲੱਦੋ_avg(cfs_rq);
+		cfs_rq->ਆਖਰੀ_h_ਲੱਦੋ_update = now;
 	}
 
-	while ((se = READ_ONCE(cfs_rq->h_load_next)) != NULL) {
-		load = cfs_rq->h_load;
-		load = div64_ul(load * se->avg.load_avg,
-				cfs_rq_load_avg(cfs_rq) + 1);
-		cfs_rq = group_cfs_rq(se);
-		cfs_rq->h_load = load;
-		cfs_rq->last_h_load_update = now;
+	ਜਦੋਂ ((se = READ_ONCE(cfs_rq->h_ਲੱਦੋ_ਅਗਲਾ)) != ਨਿਰਾ) {
+		ਲੱਦੋ = cfs_rq->h_ਲੱਦੋ;
+		ਲੱਦੋ = div64_ul(ਲੱਦੋ * se->avg.ਲੱਦੋ_avg,
+				cfs_rq_ਲੱਦੋ_avg(cfs_rq) + 1);
+		cfs_rq = ਸਮੂਹ_cfs_rq(se);
+		cfs_rq->h_ਲੱਦੋ = ਲੱਦੋ;
+		cfs_rq->ਆਖਰੀ_h_ਲੱਦੋ_update = now;
 	}
 }
 
-static unsigned long task_h_load(struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_h_ਲੱਦੋ(ਬਣਤਰ task_struct *p)
 {
-	struct cfs_rq *cfs_rq = task_cfs_rq(p);
+	ਬਣਤਰ cfs_rq *cfs_rq = task_cfs_rq(p);
 
-	update_cfs_rq_h_load(cfs_rq);
-	return div64_ul(p->se.avg.load_avg * cfs_rq->h_load,
-			cfs_rq_load_avg(cfs_rq) + 1);
+	update_cfs_rq_h_ਲੱਦੋ(cfs_rq);
+	ਵਾਪਸ div64_ul(p->se.avg.ਲੱਦੋ_avg * cfs_rq->h_ਲੱਦੋ,
+			cfs_rq_ਲੱਦੋ_avg(cfs_rq) + 1);
 }
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static bool __update_blocked_fair(struct rq *rq, bool *done)
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
+ਸਥਿਰ bool __update_blocked_fair(ਬਣਤਰ rq *rq, bool *ਪੂਰਾ)
 {
-	struct cfs_rq *cfs_rq = &rq->cfs;
+	ਬਣਤਰ cfs_rq *cfs_rq = &rq->cfs;
 	bool decayed;
 
-	decayed = update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq);
-	if (cfs_rq_has_blocked_load(cfs_rq))
-		*done = false;
+	decayed = update_cfs_rq_ਲੱਦੋ_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq);
+	ਜੇ (cfs_rq_has_blocked_ਲੱਦੋ(cfs_rq))
+		*ਪੂਰਾ = false;
 
-	return decayed;
+	ਵਾਪਸ decayed;
 }
 
-static unsigned long task_h_load(struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ task_h_ਲੱਦੋ(ਬਣਤਰ task_struct *p)
 {
-	return p->se.avg.load_avg;
+	ਵਾਪਸ p->se.avg.ਲੱਦੋ_avg;
 }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
 
-static void __sched_balance_update_blocked_averages(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ __sched_balance_update_blocked_averages(ਬਣਤਰ rq *rq)
 {
-	bool decayed = false, done = true;
+	bool decayed = false, ਪੂਰਾ = true;
 
-	update_blocked_load_tick(rq);
+	update_blocked_ਲੱਦੋ_tick(rq);
 
-	decayed |= __update_blocked_others(rq, &done);
-	decayed |= __update_blocked_fair(rq, &done);
+	decayed |= __update_blocked_others(rq, &ਪੂਰਾ);
+	decayed |= __update_blocked_fair(rq, &ਪੂਰਾ);
 
-	update_has_blocked_load_status(rq, !done);
-	if (decayed)
+	update_has_blocked_ਲੱਦੋ_ਸਥਿਤੀ(rq, !ਪੂਰਾ);
+	ਜੇ (decayed)
 		cpufreq_update_util(rq, 0);
 }
 
-static void sched_balance_update_blocked_averages(int cpu)
+ਸਥਿਰ ਖਾਲੀ sched_balance_update_blocked_averages(ਪੂਰਨ cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	ਬਣਤਰ rq *rq = cpu_rq(cpu);
 
-	guard(rq_lock_irqsave)(rq);
+	guard(rq_ਤਾਲਾ_irqsave)(rq);
 	update_rq_clock(rq);
 	__sched_balance_update_blocked_averages(rq);
 }
@@ -11646,47 +11646,47 @@ static void sched_balance_update_blocked_averages(int cpu)
 /*
  * sg_lb_stats - stats of a sched_group required for load-balancing:
  */
-struct sg_lb_stats {
-	unsigned long avg_load;			/* Avg load            over the CPUs of the group */
-	unsigned long group_load;		/* Total load          over the CPUs of the group */
-	unsigned long group_capacity;		/* Capacity            over the CPUs of the group */
-	unsigned long group_util;		/* Total utilization   over the CPUs of the group */
-	unsigned long group_runnable;		/* Total runnable time over the CPUs of the group */
-	unsigned int sum_nr_running;		/* Nr of all tasks running in the group */
-	unsigned int sum_h_nr_running;		/* Nr of CFS tasks running in the group */
-	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
-	unsigned int group_weight;
-	enum group_type group_type;
-	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
-	unsigned int group_smt_balance;		/* Task on busy SMT be moved */
-	unsigned int group_llc_balance;		/* Tasks should be moved to preferred LLC */
-	unsigned long group_misfit_task_load;	/* A CPU has a task too big for its capacity */
-	unsigned int group_overutilized;	/* At least one CPU is overutilized in the group */
-#ifdef CONFIG_NUMA_BALANCING
-	unsigned int nr_numa_running;
-	unsigned int nr_preferred_running;
-#endif
-#ifdef CONFIG_SCHED_CACHE
-	unsigned int nr_pref_dst_llc;
-#endif
+ਬਣਤਰ sg_lb_stats {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ avg_ਲੱਦੋ;			/* Avg load            over the CPUs of the group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_ਲੱਦੋ;		/* Total load          over the CPUs of the group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_ਸਮਰੱਥਾ;		/* Capacity            over the CPUs of the group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_util;		/* Total utilization   over the CPUs of the group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_runnable;		/* Total runnable time over the CPUs of the group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਜੋੜ_nr_running;		/* Nr of all tasks running in the group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਜੋੜ_h_nr_running;		/* Nr of CFS tasks running in the group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ idle_cpus;                 /* Nr of idle CPUs         in the group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸਮੂਹ_ਭਾਰ;
+	ਗਿਣਤੀ ਸਮੂਹ_type ਸਮੂਹ_type;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸਮੂਹ_asym_packing;	/* Tasks should be moved to preferred CPU */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸਮੂਹ_smt_balance;		/* Task on busy SMT be moved */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸਮੂਹ_llc_balance;		/* Tasks should be moved to preferred LLC */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮੂਹ_misfit_task_ਲੱਦੋ;	/* A CPU has a task too big for its capacity */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸਮੂਹ_overutilized;	/* At least one CPU is overutilized in the group */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr_numa_running;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr_preferred_running;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr_pref_dst_llc;
+#ਜੇ_ਅੰਤ
 };
 
 /*
  * sd_lb_stats - stats of a sched_domain required for load-balancing:
  */
-struct sd_lb_stats {
-	struct sched_group *busiest;		/* Busiest group in this sd */
-	struct sched_group *local;		/* Local group in this sd */
-	unsigned long total_load;		/* Total load of all groups in sd */
-	unsigned long total_capacity;		/* Total capacity of all groups in sd */
-	unsigned long avg_load;			/* Average load across all groups in sd */
-	unsigned int prefer_sibling;		/* Tasks should go to sibling first */
+ਬਣਤਰ sd_lb_stats {
+	ਬਣਤਰ sched_ਸਮੂਹ *busiest;		/* Busiest group in this sd */
+	ਬਣਤਰ sched_ਸਮੂਹ *local;		/* Local group in this sd */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਕੁੱਲ_ਲੱਦੋ;		/* Total load of all groups in sd */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਕੁੱਲ_ਸਮਰੱਥਾ;		/* Total capacity of all groups in sd */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ avg_ਲੱਦੋ;			/* Average load across all groups in sd */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ prefer_sibling;		/* Tasks should go to sibling first */
 
-	struct sg_lb_stats busiest_stat;	/* Statistics of the busiest group */
-	struct sg_lb_stats local_stat;		/* Statistics of the local group */
+	ਬਣਤਰ sg_lb_stats busiest_stat;	/* Statistics of the busiest group */
+	ਬਣਤਰ sg_lb_stats local_stat;		/* Statistics of the local group */
 };
 
-static inline void init_sd_lb_stats(struct sd_lb_stats *sds)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ init_sd_lb_stats(ਬਣਤਰ sd_lb_stats *sds)
 {
 	/*
 	 * Skimp on the clearing to avoid duplicate work. We can avoid clearing
@@ -11695,114 +11695,114 @@ static inline void init_sd_lb_stats(struct sd_lb_stats *sds)
 	 * busiest_stat::idle_cpus to the worst busiest group because
 	 * update_sd_pick_busiest() reads these before assignment.
 	 */
-	*sds = (struct sd_lb_stats){
-		.busiest = NULL,
-		.local = NULL,
-		.total_load = 0UL,
-		.total_capacity = 0UL,
+	*sds = (ਬਣਤਰ sd_lb_stats){
+		.busiest = ਨਿਰਾ,
+		.local = ਨਿਰਾ,
+		.ਕੁੱਲ_ਲੱਦੋ = 0UL,
+		.ਕੁੱਲ_ਸਮਰੱਥਾ = 0UL,
 		.busiest_stat = {
 			.idle_cpus = UINT_MAX,
-			.group_type = group_has_spare,
+			.ਸਮੂਹ_type = ਸਮੂਹ_has_ਵਾਧੂ,
 		},
 	};
 }
 
-static unsigned long scale_rt_capacity(int cpu)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ scale_rt_ਸਮਰੱਥਾ(ਪੂਰਨ cpu)
 {
-	unsigned long max = get_actual_cpu_capacity(cpu);
-	struct rq *rq = cpu_rq(cpu);
-	unsigned long used, free;
-	unsigned long irq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max = get_actual_cpu_ਸਮਰੱਥਾ(cpu);
+	ਬਣਤਰ rq *rq = cpu_rq(cpu);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਵਰਤਿਆ, ਮੁਕਤ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ irq;
 
 	irq = cpu_util_irq(rq);
 
-	if (unlikely(irq >= max))
-		return 1;
+	ਜੇ (unlikely(irq >= max))
+		ਵਾਪਸ 1;
 
 	/*
 	 * avg_rt.util_avg and avg_dl.util_avg track binary signals
 	 * (running and not running) with weights 0 and 1024 respectively.
 	 */
-	used = cpu_util_rt(rq);
-	used += cpu_util_dl(rq);
+	ਵਰਤਿਆ = cpu_util_rt(rq);
+	ਵਰਤਿਆ += cpu_util_dl(rq);
 
-	if (unlikely(used >= max))
-		return 1;
+	ਜੇ (unlikely(ਵਰਤਿਆ >= max))
+		ਵਾਪਸ 1;
 
-	free = max - used;
+	ਮੁਕਤ = max - ਵਰਤਿਆ;
 
-	return scale_irq_capacity(free, irq, max);
+	ਵਾਪਸ scale_irq_ਸਮਰੱਥਾ(ਮੁਕਤ, irq, max);
 }
 
-static void update_cpu_capacity(struct sched_domain *sd, int cpu)
+ਸਥਿਰ ਖਾਲੀ update_cpu_ਸਮਰੱਥਾ(ਬਣਤਰ sched_domain *sd, ਪੂਰਨ cpu)
 {
-	unsigned long capacity = scale_rt_capacity(cpu);
-	struct sched_group *sdg = sd->groups;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮਰੱਥਾ = scale_rt_ਸਮਰੱਥਾ(cpu);
+	ਬਣਤਰ sched_ਸਮੂਹ *sdg = sd->groups;
 
-	if (!capacity)
-		capacity = 1;
+	ਜੇ (!ਸਮਰੱਥਾ)
+		ਸਮਰੱਥਾ = 1;
 
-	cpu_rq(cpu)->cpu_capacity = capacity;
-	trace_sched_cpu_capacity_tp(cpu_rq(cpu));
+	cpu_rq(cpu)->cpu_ਸਮਰੱਥਾ = ਸਮਰੱਥਾ;
+	trace_sched_cpu_ਸਮਰੱਥਾ_tp(cpu_rq(cpu));
 
-	sdg->sgc->capacity = capacity;
-	sdg->sgc->min_capacity = capacity;
-	sdg->sgc->max_capacity = capacity;
+	sdg->sgc->ਸਮਰੱਥਾ = ਸਮਰੱਥਾ;
+	sdg->sgc->min_ਸਮਰੱਥਾ = ਸਮਰੱਥਾ;
+	sdg->sgc->max_ਸਮਰੱਥਾ = ਸਮਰੱਥਾ;
 }
 
-void update_group_capacity(struct sched_domain *sd, int cpu)
+ਖਾਲੀ update_ਸਮੂਹ_ਸਮਰੱਥਾ(ਬਣਤਰ sched_domain *sd, ਪੂਰਨ cpu)
 {
-	struct sched_domain *child = sd->child;
-	struct sched_group *group, *sdg = sd->groups;
-	unsigned long capacity, min_capacity, max_capacity;
-	unsigned long interval;
+	ਬਣਤਰ sched_domain *ਬੱਚਾ = sd->ਬੱਚਾ;
+	ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ, *sdg = sd->groups;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮਰੱਥਾ, min_ਸਮਰੱਥਾ, max_ਸਮਰੱਥਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ interval;
 
-	interval = msecs_to_jiffies(sd->balance_interval);
-	interval = clamp(interval, 1UL, max_load_balance_interval);
-	sdg->sgc->next_update = jiffies + interval;
+	interval = msecs_ਮੰਜ਼ਿਲ_jiffies(sd->balance_interval);
+	interval = clamp(interval, 1UL, max_ਲੱਦੋ_balance_interval);
+	sdg->sgc->ਅਗਲਾ_update = jiffies + interval;
 
-	if (!child) {
-		update_cpu_capacity(sd, cpu);
-		return;
+	ਜੇ (!ਬੱਚਾ) {
+		update_cpu_ਸਮਰੱਥਾ(sd, cpu);
+		ਵਾਪਸ;
 	}
 
-	capacity = 0;
-	min_capacity = ULONG_MAX;
-	max_capacity = 0;
+	ਸਮਰੱਥਾ = 0;
+	min_ਸਮਰੱਥਾ = ULONG_MAX;
+	max_ਸਮਰੱਥਾ = 0;
 
-	if (child->flags & SD_NUMA) {
+	ਜੇ (ਬੱਚਾ->flags & SD_NUMA) {
 		/*
 		 * SD_NUMA domains cannot assume that child groups
 		 * span the current group.
 		 */
 
-		for_each_cpu(cpu, sched_group_span(sdg)) {
-			unsigned long cpu_cap = capacity_of(cpu);
+		for_each_cpu(cpu, sched_ਸਮੂਹ_ਵਿਸਤਾਰ(sdg)) {
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_cap = ਸਮਰੱਥਾ_ਦਾ(cpu);
 
-			capacity += cpu_cap;
-			min_capacity = min(cpu_cap, min_capacity);
-			max_capacity = max(cpu_cap, max_capacity);
+			ਸਮਰੱਥਾ += cpu_cap;
+			min_ਸਮਰੱਥਾ = min(cpu_cap, min_ਸਮਰੱਥਾ);
+			max_ਸਮਰੱਥਾ = max(cpu_cap, max_ਸਮਰੱਥਾ);
 		}
-	} else  {
+	} ਨਹੀਂਤਾਂ  {
 		/*
 		 * !SD_NUMA domains can assume that child groups
 		 * span the current group.
 		 */
 
-		group = child->groups;
-		do {
-			struct sched_group_capacity *sgc = group->sgc;
+		ਸਮੂਹ = ਬੱਚਾ->groups;
+		ਕਰੋ {
+			ਬਣਤਰ sched_ਸਮੂਹ_ਸਮਰੱਥਾ *sgc = ਸਮੂਹ->sgc;
 
-			capacity += sgc->capacity;
-			min_capacity = min(sgc->min_capacity, min_capacity);
-			max_capacity = max(sgc->max_capacity, max_capacity);
-			group = group->next;
-		} while (group != child->groups);
+			ਸਮਰੱਥਾ += sgc->ਸਮਰੱਥਾ;
+			min_ਸਮਰੱਥਾ = min(sgc->min_ਸਮਰੱਥਾ, min_ਸਮਰੱਥਾ);
+			max_ਸਮਰੱਥਾ = max(sgc->max_ਸਮਰੱਥਾ, max_ਸਮਰੱਥਾ);
+			ਸਮੂਹ = ਸਮੂਹ->ਅਗਲਾ;
+		} ਜਦੋਂ (ਸਮੂਹ != ਬੱਚਾ->groups);
 	}
 
-	sdg->sgc->capacity = capacity;
-	sdg->sgc->min_capacity = min_capacity;
-	sdg->sgc->max_capacity = max_capacity;
+	sdg->sgc->ਸਮਰੱਥਾ = ਸਮਰੱਥਾ;
+	sdg->sgc->min_ਸਮਰੱਥਾ = min_ਸਮਰੱਥਾ;
+	sdg->sgc->max_ਸਮਰੱਥਾ = max_ਸਮਰੱਥਾ;
 }
 
 /*
@@ -11810,17 +11810,17 @@ void update_group_capacity(struct sched_domain *sd, int cpu)
  * activity. The imbalance_pct is used for the threshold.
  * Return true is the capacity is reduced
  */
-static inline int
-check_cpu_capacity(struct rq *rq, struct sched_domain *sd)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ
+check_cpu_ਸਮਰੱਥਾ(ਬਣਤਰ rq *rq, ਬਣਤਰ sched_domain *sd)
 {
-	return ((rq->cpu_capacity * sd->imbalance_pct) <
-				(arch_scale_cpu_capacity(cpu_of(rq)) * 100));
+	ਵਾਪਸ ((rq->cpu_ਸਮਰੱਥਾ * sd->imbalance_pct) <
+				(arch_scale_cpu_ਸਮਰੱਥਾ(cpu_ਦਾ(rq)) * 100));
 }
 
 /* Check if the rq has a misfit task */
-static inline bool check_misfit_status(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool check_misfit_ਸਥਿਤੀ(ਬਣਤਰ rq *rq)
 {
-	return rq->misfit_task_load;
+	ਵਾਪਸ rq->misfit_task_ਲੱਦੋ;
 }
 
 /*
@@ -11852,9 +11852,9 @@ static inline bool check_misfit_status(struct rq *rq)
  * subtle and fragile situation.
  */
 
-static inline int sg_imbalanced(struct sched_group *group)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ sg_imbalanced(ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
-	return group->sgc->imbalance;
+	ਵਾਪਸ ਸਮੂਹ->sgc->imbalance;
 }
 
 /*
@@ -11869,21 +11869,21 @@ static inline int sg_imbalanced(struct sched_group *group)
  * As an example, an available capacity of 1% can appear but it doesn't make
  * any benefit for the load balance.
  */
-static inline bool
-group_has_capacity(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+ਸਮੂਹ_has_ਸਮਰੱਥਾ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ imbalance_pct, ਬਣਤਰ sg_lb_stats *sgs)
 {
-	if (sgs->sum_nr_running < sgs->group_weight)
-		return true;
+	ਜੇ (sgs->ਜੋੜ_nr_running < sgs->ਸਮੂਹ_ਭਾਰ)
+		ਵਾਪਸ true;
 
-	if ((sgs->group_capacity * imbalance_pct) <
-			(sgs->group_runnable * 100))
-		return false;
+	ਜੇ ((sgs->ਸਮੂਹ_ਸਮਰੱਥਾ * imbalance_pct) <
+			(sgs->ਸਮੂਹ_runnable * 100))
+		ਵਾਪਸ false;
 
-	if ((sgs->group_capacity * 100) >
-			(sgs->group_util * imbalance_pct))
-		return true;
+	ਜੇ ((sgs->ਸਮੂਹ_ਸਮਰੱਥਾ * 100) >
+			(sgs->ਸਮੂਹ_util * imbalance_pct))
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 /*
@@ -11894,57 +11894,57 @@ group_has_capacity(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
  *  overloaded so both group_has_capacity and group_is_overloaded return
  *  false.
  */
-static inline bool
-group_is_overloaded(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+ਸਮੂਹ_is_overloaded(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ imbalance_pct, ਬਣਤਰ sg_lb_stats *sgs)
 {
 	/*
 	 * With EAS and uclamp, 1 CPU in the group must be overutilized to
 	 * consider the group overloaded.
 	 */
-	if (sched_energy_enabled() && !sgs->group_overutilized)
-		return false;
+	ਜੇ (sched_energy_enabled() && !sgs->ਸਮੂਹ_overutilized)
+		ਵਾਪਸ false;
 
-	if (sgs->sum_nr_running <= sgs->group_weight)
-		return false;
+	ਜੇ (sgs->ਜੋੜ_nr_running <= sgs->ਸਮੂਹ_ਭਾਰ)
+		ਵਾਪਸ false;
 
-	if ((sgs->group_capacity * 100) <
-			(sgs->group_util * imbalance_pct))
-		return true;
+	ਜੇ ((sgs->ਸਮੂਹ_ਸਮਰੱਥਾ * 100) <
+			(sgs->ਸਮੂਹ_util * imbalance_pct))
+		ਵਾਪਸ true;
 
-	if ((sgs->group_capacity * imbalance_pct) <
-			(sgs->group_runnable * 100))
-		return true;
+	ਜੇ ((sgs->ਸਮੂਹ_ਸਮਰੱਥਾ * imbalance_pct) <
+			(sgs->ਸਮੂਹ_runnable * 100))
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline enum
-group_type group_classify(unsigned int imbalance_pct,
-			  struct sched_group *group,
-			  struct sg_lb_stats *sgs)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਗਿਣਤੀ
+ਸਮੂਹ_type ਸਮੂਹ_classify(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ imbalance_pct,
+			  ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ,
+			  ਬਣਤਰ sg_lb_stats *sgs)
 {
-	if (group_is_overloaded(imbalance_pct, sgs))
-		return group_overloaded;
+	ਜੇ (ਸਮੂਹ_is_overloaded(imbalance_pct, sgs))
+		ਵਾਪਸ ਸਮੂਹ_overloaded;
 
-	if (sgs->group_llc_balance)
-		return group_llc_balance;
+	ਜੇ (sgs->ਸਮੂਹ_llc_balance)
+		ਵਾਪਸ ਸਮੂਹ_llc_balance;
 
-	if (sg_imbalanced(group))
-		return group_imbalanced;
+	ਜੇ (sg_imbalanced(ਸਮੂਹ))
+		ਵਾਪਸ ਸਮੂਹ_imbalanced;
 
-	if (sgs->group_asym_packing)
-		return group_asym_packing;
+	ਜੇ (sgs->ਸਮੂਹ_asym_packing)
+		ਵਾਪਸ ਸਮੂਹ_asym_packing;
 
-	if (sgs->group_smt_balance)
-		return group_smt_balance;
+	ਜੇ (sgs->ਸਮੂਹ_smt_balance)
+		ਵਾਪਸ ਸਮੂਹ_smt_balance;
 
-	if (sgs->group_misfit_task_load)
-		return group_misfit_task;
+	ਜੇ (sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ)
+		ਵਾਪਸ ਸਮੂਹ_misfit_task;
 
-	if (!group_has_capacity(imbalance_pct, sgs))
-		return group_fully_busy;
+	ਜੇ (!ਸਮੂਹ_has_ਸਮਰੱਥਾ(imbalance_pct, sgs))
+		ਵਾਪਸ ਸਮੂਹ_fully_busy;
 
-	return group_has_spare;
+	ਵਾਪਸ ਸਮੂਹ_has_ਵਾਧੂ;
 }
 
 /**
@@ -11958,24 +11958,24 @@ group_type group_classify(unsigned int imbalance_pct,
  *
  * Returns: True if the priority of @cpu must be followed. False otherwise.
  */
-static bool sched_use_asym_prio(struct sched_domain *sd, int cpu)
+ਸਥਿਰ bool sched_use_asym_prio(ਬਣਤਰ sched_domain *sd, ਪੂਰਨ cpu)
 {
-	if (!(sd->flags & SD_ASYM_PACKING))
-		return false;
+	ਜੇ (!(sd->flags & SD_ASYM_PACKING))
+		ਵਾਪਸ false;
 
-	if (!sched_smt_active())
-		return true;
+	ਜੇ (!sched_smt_ਸਰਗਰਮ())
+		ਵਾਪਸ true;
 
-	return sd->flags & SD_SHARE_CPUCAPACITY || is_core_idle(cpu);
+	ਵਾਪਸ sd->flags & SD_SHARE_CPUCAPACITY || is_core_idle(cpu);
 }
 
-static inline bool sched_asym(struct sched_domain *sd, int dst_cpu, int src_cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_asym(ਬਣਤਰ sched_domain *sd, ਪੂਰਨ dst_cpu, ਪੂਰਨ src_cpu)
 {
 	/*
 	 * First check if @dst_cpu can do asym_packing load balance. Only do it
 	 * if it has higher priority than @src_cpu.
 	 */
-	return sched_use_asym_prio(sd, dst_cpu) &&
+	ਵਾਪਸ sched_use_asym_prio(sd, dst_cpu) &&
 		sched_asym_prefer(dst_cpu, src_cpu);
 }
 
@@ -11991,36 +11991,36 @@ static inline bool sched_asym(struct sched_domain *sd, int dst_cpu, int src_cpu)
  * Return: true if @env::dst_cpu can do with asym_packing load balance. False
  * otherwise.
  */
-static inline bool
-sched_group_asym(struct lb_env *env, struct sg_lb_stats *sgs, struct sched_group *group)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+sched_ਸਮੂਹ_asym(ਬਣਤਰ lb_env *env, ਬਣਤਰ sg_lb_stats *sgs, ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
 	/*
 	 * CPU priorities do not make sense for SMT cores with more than one
 	 * busy sibling.
 	 */
-	if ((group->flags & SD_SHARE_CPUCAPACITY) &&
-	    (sgs->group_weight - sgs->idle_cpus != 1))
-		return false;
+	ਜੇ ((ਸਮੂਹ->flags & SD_SHARE_CPUCAPACITY) &&
+	    (sgs->ਸਮੂਹ_ਭਾਰ - sgs->idle_cpus != 1))
+		ਵਾਪਸ false;
 
-	return sched_asym(env->sd, env->dst_cpu, READ_ONCE(group->asym_prefer_cpu));
+	ਵਾਪਸ sched_asym(env->sd, env->dst_cpu, READ_ONCE(ਸਮੂਹ->asym_prefer_cpu));
 }
 
 /* One group has more than one SMT CPU while the other group does not */
-static inline bool smt_vs_nonsmt_groups(struct sched_group *sg1,
-				    struct sched_group *sg2)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool smt_vs_nonsmt_groups(ਬਣਤਰ sched_ਸਮੂਹ *sg1,
+				    ਬਣਤਰ sched_ਸਮੂਹ *sg2)
 {
-	if (!sg1 || !sg2)
-		return false;
+	ਜੇ (!sg1 || !sg2)
+		ਵਾਪਸ false;
 
-	return (sg1->flags & SD_SHARE_CPUCAPACITY) !=
+	ਵਾਪਸ (sg1->flags & SD_SHARE_CPUCAPACITY) !=
 		(sg2->flags & SD_SHARE_CPUCAPACITY);
 }
 
-static inline bool smt_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-			       struct sched_group *group)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool smt_balance(ਬਣਤਰ lb_env *env, ਬਣਤਰ sg_lb_stats *sgs,
+			       ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
-	if (!env->idle)
-		return false;
+	ਜੇ (!env->idle)
+		ਵਾਪਸ false;
 
 	/*
 	 * For SMT source group, it is better to move a task
@@ -12028,88 +12028,88 @@ static inline bool smt_balance(struct lb_env *env, struct sg_lb_stats *sgs,
 	 * Note that if a group has a single SMT, SD_SHARE_CPUCAPACITY
 	 * will not be on.
 	 */
-	if (group->flags & SD_SHARE_CPUCAPACITY &&
-	    sgs->sum_h_nr_running > 1)
-		return true;
+	ਜੇ (ਸਮੂਹ->flags & SD_SHARE_CPUCAPACITY &&
+	    sgs->ਜੋੜ_h_nr_running > 1)
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline long sibling_imbalance(struct lb_env *env,
-				    struct sd_lb_stats *sds,
-				    struct sg_lb_stats *busiest,
-				    struct sg_lb_stats *local)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਲੰਮਾ sibling_imbalance(ਬਣਤਰ lb_env *env,
+				    ਬਣਤਰ sd_lb_stats *sds,
+				    ਬਣਤਰ sg_lb_stats *busiest,
+				    ਬਣਤਰ sg_lb_stats *local)
 {
-	int ncores_busiest, ncores_local;
-	long imbalance;
+	ਪੂਰਨ ncores_busiest, ncores_local;
+	ਲੰਮਾ imbalance;
 
-	if (!env->idle || !busiest->sum_nr_running)
-		return 0;
+	ਜੇ (!env->idle || !busiest->ਜੋੜ_nr_running)
+		ਵਾਪਸ 0;
 
 	ncores_busiest = sds->busiest->cores;
 	ncores_local = sds->local->cores;
 
-	if (ncores_busiest == ncores_local) {
-		imbalance = busiest->sum_nr_running;
-		lsub_positive(&imbalance, local->sum_nr_running);
-		return imbalance;
+	ਜੇ (ncores_busiest == ncores_local) {
+		imbalance = busiest->ਜੋੜ_nr_running;
+		lsub_ਸਕਾਰਾਤਮਕ(&imbalance, local->ਜੋੜ_nr_running);
+		ਵਾਪਸ imbalance;
 	}
 
 	/* Balance such that nr_running/ncores ratio are same on both groups */
-	imbalance = ncores_local * busiest->sum_nr_running;
-	lsub_positive(&imbalance, ncores_busiest * local->sum_nr_running);
+	imbalance = ncores_local * busiest->ਜੋੜ_nr_running;
+	lsub_ਸਕਾਰਾਤਮਕ(&imbalance, ncores_busiest * local->ਜੋੜ_nr_running);
 	/* Normalize imbalance and do rounding on normalization */
 	imbalance = 2 * imbalance + ncores_local + ncores_busiest;
 	imbalance /= ncores_local + ncores_busiest;
 
 	/* Take advantage of resource in an empty sched group */
-	if (imbalance <= 1 && local->sum_nr_running == 0 &&
-	    busiest->sum_nr_running > 1)
+	ਜੇ (imbalance <= 1 && local->ਜੋੜ_nr_running == 0 &&
+	    busiest->ਜੋੜ_nr_running > 1)
 		imbalance = 2;
 
-	return imbalance;
+	ਵਾਪਸ imbalance;
 }
 
-static inline bool
-sched_reduced_capacity(struct rq *rq, struct sched_domain *sd)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+sched_reduced_ਸਮਰੱਥਾ(ਬਣਤਰ rq *rq, ਬਣਤਰ sched_domain *sd)
 {
 	/*
 	 * When there is more than 1 task, the group_overloaded case already
 	 * takes care of cpu with reduced capacity
 	 */
-	if (rq->cfs.h_nr_runnable != 1)
-		return false;
+	ਜੇ (rq->cfs.h_nr_runnable != 1)
+		ਵਾਪਸ false;
 
-	return check_cpu_capacity(rq, sd);
+	ਵਾਪਸ check_cpu_ਸਮਰੱਥਾ(rq, sd);
 }
 
-#ifdef CONFIG_SCHED_CACHE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
 /*
  * Record the statistics for this scheduler group for later
  * use. These values guide load balancing on aggregating tasks
  * to a LLC.
  */
-static void record_sg_llc_stats(struct lb_env *env,
-				struct sg_lb_stats *sgs,
-				struct sched_group *group)
+ਸਥਿਰ ਖਾਲੀ ਰਿਕਾਰਡ_sg_llc_stats(ਬਣਤਰ lb_env *env,
+				ਬਣਤਰ sg_lb_stats *sgs,
+				ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
-	struct sched_domain_shared *sd_share;
-	int cpu;
+	ਬਣਤਰ sched_domain_shared *sd_share;
+	ਪੂਰਨ cpu;
 
-	if (!sched_cache_enabled() || env->idle == CPU_NEWLY_IDLE)
-		return;
+	ਜੇ (!sched_cache_enabled() || env->idle == CPU_NEWLY_IDLE)
+		ਵਾਪਸ;
 
 	/* Only care about sched domain spanning multiple LLCs */
-	if (env->sd->child != rcu_dereference_all(per_cpu(sd_llc, env->dst_cpu)))
-		return;
+	ਜੇ (env->sd->ਬੱਚਾ != rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_llc, env->dst_cpu)))
+		ਵਾਪਸ;
 
 	/*
 	 * A redo repeats stats published on the first pass. Hotplug can
 	 * still leave env->cpus partial, so util would not match capacity.
 	 */
-	if ((env->flags & LBF_ALL_PINNED) ||
-	    !cpumask_subset(sched_group_span(group), env->cpus))
-		return;
+	ਜੇ ((env->flags & LBF_ALL_PINNED) ||
+	    !cpumask_subset(sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ), env->cpus))
+		ਵਾਪਸ;
 
 	/*
 	 * At this point we know this group spans a LLC domain.
@@ -12120,84 +12120,84 @@ static void record_sg_llc_stats(struct lb_env *env,
 	 * local group. Instead, sd_share should be located using
 	 * the first CPU of the LLC group.
 	 */
-	cpu = cpumask_first(sched_group_span(group));
-	sd_share = rcu_dereference_all(per_cpu(sd_llc_shared, cpu));
-	if (!sd_share)
-		return;
+	cpu = cpumask_ਪਹਿਲਾ(sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ));
+	sd_share = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_llc_shared, cpu));
+	ਜੇ (!sd_share)
+		ਵਾਪਸ;
 
-	if (READ_ONCE(sd_share->util_avg) != sgs->group_util)
-		WRITE_ONCE(sd_share->util_avg, sgs->group_util);
+	ਜੇ (READ_ONCE(sd_share->util_avg) != sgs->ਸਮੂਹ_util)
+		WRITE_ONCE(sd_share->util_avg, sgs->ਸਮੂਹ_util);
 
-	if (unlikely(READ_ONCE(sd_share->capacity) != sgs->group_capacity))
-		WRITE_ONCE(sd_share->capacity, sgs->group_capacity);
+	ਜੇ (unlikely(READ_ONCE(sd_share->ਸਮਰੱਥਾ) != sgs->ਸਮੂਹ_ਸਮਰੱਥਾ))
+		WRITE_ONCE(sd_share->ਸਮਰੱਥਾ, sgs->ਸਮੂਹ_ਸਮਰੱਥਾ);
 }
 
 /*
  * Do LLC balance on sched group that contains LLC, and have tasks preferring
  * to run on LLC in idle dst_cpu.
  */
-static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-			       struct sched_group *group)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool llc_balance(ਬਣਤਰ lb_env *env, ਬਣਤਰ sg_lb_stats *sgs,
+			       ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
-	if (!sched_cache_enabled())
-		return false;
+	ਜੇ (!sched_cache_enabled())
+		ਵਾਪਸ false;
 
-	if (env->sd->flags & SD_SHARE_LLC)
-		return false;
+	ਜੇ (env->sd->flags & SD_SHARE_LLC)
+		ਵਾਪਸ false;
 
 	/*
 	 * On asymmetric domains, group_misfit_task_load
 	 * should be prioritized to move tasks to CPU that fit them
 	 * over aggregating tasks to their preferred LLC.
 	 */
-	if ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
-	    sgs->group_misfit_task_load)
-		return false;
+	ਜੇ ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
+	    sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ)
+		ਵਾਪਸ false;
 
 	/*
 	 * Skip cache aware tagging if nr_balanced_failed is sufficiently high.
 	 * Threshold of cache_nice_tries is set to 1 higher than nr_balance_failed
 	 * to avoid excessive task migration at the same time.
 	 */
-	if (env->sd->nr_balance_failed >= env->sd->cache_nice_tries + 1)
-		return false;
+	ਜੇ (env->sd->nr_balance_failed >= env->sd->cache_nice_tries + 1)
+		ਵਾਪਸ false;
 
-	if (sgs->nr_pref_dst_llc &&
-	    can_migrate_llc(cpumask_first(sched_group_span(group)),
+	ਜੇ (sgs->nr_pref_dst_llc &&
+	    can_migrate_llc(cpumask_ਪਹਿਲਾ(sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ)),
 			    env->dst_cpu, 0, true) == mig_llc)
-		return true;
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-static bool update_llc_busiest(struct lb_env *env,
-			       struct sg_lb_stats *busiest,
-			       struct sg_lb_stats *sgs)
+ਸਥਿਰ bool update_llc_busiest(ਬਣਤਰ lb_env *env,
+			       ਬਣਤਰ sg_lb_stats *busiest,
+			       ਬਣਤਰ sg_lb_stats *sgs)
 {
 	/*
 	 * There are more tasks that want to run on dst_cpu's LLC.
 	 */
-	return sgs->nr_pref_dst_llc > busiest->nr_pref_dst_llc;
+	ਵਾਪਸ sgs->nr_pref_dst_llc > busiest->nr_pref_dst_llc;
 }
-#else
-static inline void record_sg_llc_stats(struct lb_env *env, struct sg_lb_stats *sgs,
-				       struct sched_group *group)
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਰਿਕਾਰਡ_sg_llc_stats(ਬਣਤਰ lb_env *env, ਬਣਤਰ sg_lb_stats *sgs,
+				       ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
 }
 
-static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-			       struct sched_group *group)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool llc_balance(ਬਣਤਰ lb_env *env, ਬਣਤਰ sg_lb_stats *sgs,
+			       ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-static bool update_llc_busiest(struct lb_env *env,
-			       struct sg_lb_stats *busiest,
-			       struct sg_lb_stats *sgs)
+ਸਥਿਰ bool update_llc_busiest(ਬਣਤਰ lb_env *env,
+			       ਬਣਤਰ sg_lb_stats *busiest,
+			       ਬਣਤਰ sg_lb_stats *sgs)
 {
-	return false;
+	ਵਾਪਸ false;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 /**
  * update_sg_lb_stats - Update sched_group's statistics for load balancing.
@@ -12207,79 +12207,79 @@ static bool update_llc_busiest(struct lb_env *env,
  * @sgs: variable to hold the statistics for this group.
  * @sg_overloaded: sched_group is overloaded
  */
-static inline void update_sg_lb_stats(struct lb_env *env,
-				      struct sd_lb_stats *sds,
-				      struct sched_group *group,
-				      struct sg_lb_stats *sgs,
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_sg_lb_stats(ਬਣਤਰ lb_env *env,
+				      ਬਣਤਰ sd_lb_stats *sds,
+				      ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ,
+				      ਬਣਤਰ sg_lb_stats *sgs,
 				      bool *sg_overloaded)
 {
-	int i, nr_running, local_group, sd_flags = env->sd->flags;
-	bool balancing_at_rd = !env->sd->parent;
+	ਪੂਰਨ i, nr_running, local_ਸਮੂਹ, sd_flags = env->sd->flags;
+	bool balancing_at_rd = !env->sd->ਮਾਪਾ;
 
-	memset(sgs, 0, sizeof(*sgs));
+	memset(sgs, 0, ਆਕਾਰ(*sgs));
 
-	local_group = group == sds->local;
+	local_ਸਮੂਹ = ਸਮੂਹ == sds->local;
 
-	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
-		struct rq *rq = cpu_rq(i);
-		unsigned long load = cpu_load(rq);
+	for_each_cpu_and(i, sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ), env->cpus) {
+		ਬਣਤਰ rq *rq = cpu_rq(i);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੱਦੋ = cpu_ਲੱਦੋ(rq);
 
-		sgs->group_load += load;
-		sgs->group_util += cpu_util_cfs(i);
-		sgs->group_runnable += cpu_runnable(rq);
-		sgs->sum_h_nr_running += rq->cfs.h_nr_runnable;
+		sgs->ਸਮੂਹ_ਲੱਦੋ += ਲੱਦੋ;
+		sgs->ਸਮੂਹ_util += cpu_util_cfs(i);
+		sgs->ਸਮੂਹ_runnable += cpu_runnable(rq);
+		sgs->ਜੋੜ_h_nr_running += rq->cfs.h_nr_runnable;
 
 		nr_running = rq->nr_running;
-		sgs->sum_nr_running += nr_running;
+		sgs->ਜੋੜ_nr_running += nr_running;
 
-		if (cpu_overutilized(i))
-			sgs->group_overutilized = 1;
+		ਜੇ (cpu_overutilized(i))
+			sgs->ਸਮੂਹ_overutilized = 1;
 
-#ifdef CONFIG_SCHED_CACHE
-		if (sched_cache_enabled()) {
-			struct sched_domain *sd_tmp;
-			int dst_llc;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
+		ਜੇ (sched_cache_enabled()) {
+			ਬਣਤਰ sched_domain *sd_tmp;
+			ਪੂਰਨ dst_llc;
 
 			dst_llc = llc_id(env->dst_cpu);
-			if (llc_id(i) != dst_llc) {
+			ਜੇ (llc_id(i) != dst_llc) {
 				sd_tmp = rcu_dereference_all(rq->sd);
-				if (sd_tmp && (unsigned int)dst_llc < sd_tmp->llc_max)
+				ਜੇ (sd_tmp && (ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)dst_llc < sd_tmp->llc_max)
 					sgs->nr_pref_dst_llc += sd_tmp->llc_counts[dst_llc];
 			}
 		}
-#endif
+#ਜੇ_ਅੰਤ
 
 		/*
 		 * No need to call idle_cpu() if nr_running is not 0
 		 */
-		if (!nr_running && idle_cpu(i)) {
+		ਜੇ (!nr_running && idle_cpu(i)) {
 			sgs->idle_cpus++;
 			/* Idle cpu can't have misfit task */
-			continue;
+			ਜਾਰੀ;
 		}
 
 		/* Overload indicator is only updated at root domain */
-		if (balancing_at_rd && nr_running > 1)
+		ਜੇ (balancing_at_rd && nr_running > 1)
 			*sg_overloaded = 1;
 
-#ifdef CONFIG_NUMA_BALANCING
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
 		/* Only fbq_classify_group() uses this to classify NUMA groups */
-		if (sd_flags & SD_NUMA) {
+		ਜੇ (sd_flags & SD_NUMA) {
 			sgs->nr_numa_running += rq->nr_numa_running;
 			sgs->nr_preferred_running += rq->nr_preferred_running;
 		}
-#endif
-		if (local_group)
-			continue;
+#ਜੇ_ਅੰਤ
+		ਜੇ (local_ਸਮੂਹ)
+			ਜਾਰੀ;
 
-		if (sd_flags & SD_ASYM_CPUCAPACITY) {
-			if (rq->misfit_task_load) {
+		ਜੇ (sd_flags & SD_ASYM_CPUCAPACITY) {
+			ਜੇ (rq->misfit_task_ਲੱਦੋ) {
 				/*
 				 * Always mark the root domain overloaded so big
 				 * CPUs can pick up misfit tasks via newly idle
 				 * balance.
 				 */
-				if (balancing_at_rd)
+				ਜੇ (balancing_at_rd)
 					*sg_overloaded = 1;
 
 				/*
@@ -12288,44 +12288,44 @@ static inline void update_sg_lb_stats(struct lb_env *env,
 				 * as misfit_task and update_sd_pick_busiest()
 				 * will skip it.
 				 */
-				if (capacity_greater(capacity_of(env->dst_cpu),
-						     group->sgc->max_capacity) &&
-				    (sgs->group_misfit_task_load < rq->misfit_task_load))
-					sgs->group_misfit_task_load = rq->misfit_task_load;
+				ਜੇ (ਸਮਰੱਥਾ_greater(ਸਮਰੱਥਾ_ਦਾ(env->dst_cpu),
+						     ਸਮੂਹ->sgc->max_ਸਮਰੱਥਾ) &&
+				    (sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ < rq->misfit_task_ਲੱਦੋ))
+					sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ = rq->misfit_task_ਲੱਦੋ;
 			}
-		} else if (env->idle && sched_reduced_capacity(rq, env->sd)) {
+		} ਨਹੀਂਤਾਂ ਜੇ (env->idle && sched_reduced_ਸਮਰੱਥਾ(rq, env->sd)) {
 			/* Check for a task running on a CPU with reduced capacity */
-			if (sgs->group_misfit_task_load < load)
-				sgs->group_misfit_task_load = load;
+			ਜੇ (sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ < ਲੱਦੋ)
+				sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ = ਲੱਦੋ;
 		}
 	}
 
-	sgs->group_capacity = group->sgc->capacity;
+	sgs->ਸਮੂਹ_ਸਮਰੱਥਾ = ਸਮੂਹ->sgc->ਸਮਰੱਥਾ;
 
-	sgs->group_weight = group->group_weight;
+	sgs->ਸਮੂਹ_ਭਾਰ = ਸਮੂਹ->ਸਮੂਹ_ਭਾਰ;
 
-	if (!local_group) {
+	ਜੇ (!local_ਸਮੂਹ) {
 		/* Check if dst CPU is idle and preferred to this group */
-		if (env->idle && sgs->sum_h_nr_running &&
-		    sched_group_asym(env, sgs, group))
-			sgs->group_asym_packing = 1;
+		ਜੇ (env->idle && sgs->ਜੋੜ_h_nr_running &&
+		    sched_ਸਮੂਹ_asym(env, sgs, ਸਮੂਹ))
+			sgs->ਸਮੂਹ_asym_packing = 1;
 
 		/* Check for loaded SMT group to be balanced to dst CPU */
-		if (smt_balance(env, sgs, group))
-			sgs->group_smt_balance = 1;
+		ਜੇ (smt_balance(env, sgs, ਸਮੂਹ))
+			sgs->ਸਮੂਹ_smt_balance = 1;
 
 		/* Check for tasks in this group can be moved to their preferred LLC */
-		if (llc_balance(env, sgs, group))
-			sgs->group_llc_balance = 1;
+		ਜੇ (llc_balance(env, sgs, ਸਮੂਹ))
+			sgs->ਸਮੂਹ_llc_balance = 1;
 	}
 
-	sgs->group_type = group_classify(env->sd->imbalance_pct, group, sgs);
+	sgs->ਸਮੂਹ_type = ਸਮੂਹ_classify(env->sd->imbalance_pct, ਸਮੂਹ, sgs);
 
-	record_sg_llc_stats(env, sgs, group);
+	ਰਿਕਾਰਡ_sg_llc_stats(env, sgs, ਸਮੂਹ);
 	/* Computing avg_load makes sense only when group is overloaded */
-	if (sgs->group_type == group_overloaded)
-		sgs->avg_load = (sgs->group_load * SCHED_CAPACITY_SCALE) /
-				sgs->group_capacity;
+	ਜੇ (sgs->ਸਮੂਹ_type == ਸਮੂਹ_overloaded)
+		sgs->avg_ਲੱਦੋ = (sgs->ਸਮੂਹ_ਲੱਦੋ * SCHED_ਸਮਰੱਥਾ_SCALE) /
+				sgs->ਸਮੂਹ_ਸਮਰੱਥਾ;
 }
 
 /**
@@ -12341,16 +12341,16 @@ static inline void update_sg_lb_stats(struct lb_env *env,
  * Return: %true if @sg is a busier group than the previously selected
  * busiest group. %false otherwise.
  */
-static bool update_sd_pick_busiest(struct lb_env *env,
-				   struct sd_lb_stats *sds,
-				   struct sched_group *sg,
-				   struct sg_lb_stats *sgs)
+ਸਥਿਰ bool update_sd_pick_busiest(ਬਣਤਰ lb_env *env,
+				   ਬਣਤਰ sd_lb_stats *sds,
+				   ਬਣਤਰ sched_ਸਮੂਹ *sg,
+				   ਬਣਤਰ sg_lb_stats *sgs)
 {
-	struct sg_lb_stats *busiest = &sds->busiest_stat;
+	ਬਣਤਰ sg_lb_stats *busiest = &sds->busiest_stat;
 
 	/* Make sure that there is at least one task to pull */
-	if (!sgs->sum_h_nr_running)
-		return false;
+	ਜੇ (!sgs->ਜੋੜ_h_nr_running)
+		ਵਾਪਸ false;
 
 	/*
 	 * Don't try to pull misfit tasks we can't help.
@@ -12363,12 +12363,12 @@ static bool update_sd_pick_busiest(struct lb_env *env,
 	 * reduced and we may not actually provide more capacity than the
 	 * source.
 	 */
-	if ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
-	    (sgs->group_type == group_misfit_task) &&
+	ਜੇ ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
+	    (sgs->ਸਮੂਹ_type == ਸਮੂਹ_misfit_task) &&
 	    (!env->dst_core_idle ||
-	     !capacity_greater(capacity_of(env->dst_cpu), sg->sgc->max_capacity) ||
-	     sds->local_stat.group_type != group_has_spare))
-		return false;
+	     !ਸਮਰੱਥਾ_greater(ਸਮਰੱਥਾ_ਦਾ(env->dst_cpu), sg->sgc->max_ਸਮਰੱਥਾ) ||
+	     sds->local_stat.ਸਮੂਹ_type != ਸਮੂਹ_has_ਵਾਧੂ))
+		ਵਾਪਸ false;
 
 	/*
 	 * Candidate sg has no more than one task per CPU and has higher
@@ -12376,61 +12376,61 @@ static bool update_sd_pick_busiest(struct lb_env *env,
 	 * throughput. Maximize throughput, power/energy consequences are not
 	 * considered.
 	 */
-	if ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
-	    (sgs->group_type <= group_fully_busy) &&
-	    (capacity_greater(sg->sgc->min_capacity, capacity_of(env->dst_cpu))))
-		return false;
+	ਜੇ ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
+	    (sgs->ਸਮੂਹ_type <= ਸਮੂਹ_fully_busy) &&
+	    (ਸਮਰੱਥਾ_greater(sg->sgc->min_ਸਮਰੱਥਾ, ਸਮਰੱਥਾ_ਦਾ(env->dst_cpu))))
+		ਵਾਪਸ false;
 
-	if (sgs->group_type > busiest->group_type)
-		return true;
+	ਜੇ (sgs->ਸਮੂਹ_type > busiest->ਸਮੂਹ_type)
+		ਵਾਪਸ true;
 
-	if (sgs->group_type < busiest->group_type)
-		return false;
+	ਜੇ (sgs->ਸਮੂਹ_type < busiest->ਸਮੂਹ_type)
+		ਵਾਪਸ false;
 
 	/*
 	 * The candidate and the current busiest group are the same type of
 	 * group. Let check which one is the busiest according to the type.
 	 */
 
-	switch (sgs->group_type) {
-	case group_overloaded:
+	ਚੋਣ (sgs->ਸਮੂਹ_type) {
+	ਹਾਲਤ ਸਮੂਹ_overloaded:
 		/* Select the overloaded group with highest avg_load. */
-		return sgs->avg_load > busiest->avg_load;
+		ਵਾਪਸ sgs->avg_ਲੱਦੋ > busiest->avg_ਲੱਦੋ;
 
-	case group_llc_balance:
+	ਹਾਲਤ ਸਮੂਹ_llc_balance:
 		/* Select the group with most tasks preferring dst LLC */
-		return update_llc_busiest(env, busiest, sgs);
+		ਵਾਪਸ update_llc_busiest(env, busiest, sgs);
 
-	case group_imbalanced:
+	ਹਾਲਤ ਸਮੂਹ_imbalanced:
 		/*
 		 * Select the 1st imbalanced group as we don't have any way to
 		 * choose one more than another.
 		 */
-		return false;
+		ਵਾਪਸ false;
 
-	case group_asym_packing:
+	ਹਾਲਤ ਸਮੂਹ_asym_packing:
 		/* Prefer to move from lowest priority CPU's work */
-		return sched_asym_prefer(READ_ONCE(sds->busiest->asym_prefer_cpu),
+		ਵਾਪਸ sched_asym_prefer(READ_ONCE(sds->busiest->asym_prefer_cpu),
 					 READ_ONCE(sg->asym_prefer_cpu));
 
-	case group_misfit_task:
+	ਹਾਲਤ ਸਮੂਹ_misfit_task:
 		/*
 		 * If we have more than one misfit sg go with the biggest
 		 * misfit.
 		 */
-		return sgs->group_misfit_task_load > busiest->group_misfit_task_load;
+		ਵਾਪਸ sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ > busiest->ਸਮੂਹ_misfit_task_ਲੱਦੋ;
 
-	case group_smt_balance:
+	ਹਾਲਤ ਸਮੂਹ_smt_balance:
 		/*
 		 * Check if we have spare CPUs on either SMT group to
 		 * choose has spare or fully busy handling.
 		 */
-		if (sgs->idle_cpus != 0 || busiest->idle_cpus != 0)
-			goto has_spare;
+		ਜੇ (sgs->idle_cpus != 0 || busiest->idle_cpus != 0)
+			ਜਾਓ has_ਵਾਧੂ;
 
 		fallthrough;
 
-	case group_fully_busy:
+	ਹਾਲਤ ਸਮੂਹ_fully_busy:
 		/*
 		 * Select the fully busy group with highest avg_load. In
 		 * theory, there is no need to pull task from such kind of
@@ -12443,33 +12443,33 @@ static bool update_sd_pick_busiest(struct lb_env *env,
 		 * siblings.
 		 */
 
-		if (sgs->avg_load < busiest->avg_load)
-			return false;
+		ਜੇ (sgs->avg_ਲੱਦੋ < busiest->avg_ਲੱਦੋ)
+			ਵਾਪਸ false;
 
-		if (sgs->avg_load == busiest->avg_load) {
+		ਜੇ (sgs->avg_ਲੱਦੋ == busiest->avg_ਲੱਦੋ) {
 			/*
 			 * SMT sched groups need more help than non-SMT groups.
 			 * If @sg happens to also be SMT, either choice is good.
 			 */
-			if (sds->busiest->flags & SD_SHARE_CPUCAPACITY)
-				return false;
+			ਜੇ (sds->busiest->flags & SD_SHARE_CPUCAPACITY)
+				ਵਾਪਸ false;
 		}
 
-		break;
+		ਰੋਕੋ;
 
-	case group_has_spare:
+	ਹਾਲਤ ਸਮੂਹ_has_ਵਾਧੂ:
 		/*
 		 * Do not pick sg with SMT CPUs over sg with pure CPUs,
 		 * as we do not want to pull task off SMT core with one task
 		 * and make the core idle.
 		 */
-		if (smt_vs_nonsmt_groups(sds->busiest, sg)) {
-			if (sg->flags & SD_SHARE_CPUCAPACITY && sgs->sum_h_nr_running <= 1)
-				return false;
-			else
-				return true;
+		ਜੇ (smt_vs_nonsmt_groups(sds->busiest, sg)) {
+			ਜੇ (sg->flags & SD_SHARE_CPUCAPACITY && sgs->ਜੋੜ_h_nr_running <= 1)
+				ਵਾਪਸ false;
+			ਨਹੀਂਤਾਂ
+				ਵਾਪਸ true;
 		}
-has_spare:
+has_ਵਾਧੂ:
 
 		/*
 		 * Select not overloaded group with lowest number of idle CPUs
@@ -12478,65 +12478,65 @@ has_spare:
 		 * that the group has less spare capacity but finally more idle
 		 * CPUs which means less opportunity to pull tasks.
 		 */
-		if (sgs->idle_cpus > busiest->idle_cpus)
-			return false;
-		else if ((sgs->idle_cpus == busiest->idle_cpus) &&
-			 (sgs->sum_nr_running <= busiest->sum_nr_running))
-			return false;
+		ਜੇ (sgs->idle_cpus > busiest->idle_cpus)
+			ਵਾਪਸ false;
+		ਨਹੀਂਤਾਂ ਜੇ ((sgs->idle_cpus == busiest->idle_cpus) &&
+			 (sgs->ਜੋੜ_nr_running <= busiest->ਜੋੜ_nr_running))
+			ਵਾਪਸ false;
 
-		break;
+		ਰੋਕੋ;
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-#ifdef CONFIG_NUMA_BALANCING
-static inline enum fbq_type fbq_classify_group(struct sg_lb_stats *sgs)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਗਿਣਤੀ fbq_type fbq_classify_ਸਮੂਹ(ਬਣਤਰ sg_lb_stats *sgs)
 {
-	if (sgs->sum_h_nr_running > sgs->nr_numa_running)
-		return regular;
-	if (sgs->sum_h_nr_running > sgs->nr_preferred_running)
-		return remote;
-	return all;
+	ਜੇ (sgs->ਜੋੜ_h_nr_running > sgs->nr_numa_running)
+		ਵਾਪਸ regular;
+	ਜੇ (sgs->ਜੋੜ_h_nr_running > sgs->nr_preferred_running)
+		ਵਾਪਸ remote;
+	ਵਾਪਸ all;
 }
 
-static inline enum fbq_type fbq_classify_rq(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਗਿਣਤੀ fbq_type fbq_classify_rq(ਬਣਤਰ rq *rq)
 {
-	if (rq->nr_running > rq->nr_numa_running)
-		return regular;
-	if (rq->nr_running > rq->nr_preferred_running)
-		return remote;
-	return all;
+	ਜੇ (rq->nr_running > rq->nr_numa_running)
+		ਵਾਪਸ regular;
+	ਜੇ (rq->nr_running > rq->nr_preferred_running)
+		ਵਾਪਸ remote;
+	ਵਾਪਸ all;
 }
-#else /* !CONFIG_NUMA_BALANCING: */
-static inline enum fbq_type fbq_classify_group(struct sg_lb_stats *sgs)
+#ਨਹੀਂਤਾਂ /* !CONFIG_NUMA_BALANCING: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਗਿਣਤੀ fbq_type fbq_classify_ਸਮੂਹ(ਬਣਤਰ sg_lb_stats *sgs)
 {
-	return all;
+	ਵਾਪਸ all;
 }
 
-static inline enum fbq_type fbq_classify_rq(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਗਿਣਤੀ fbq_type fbq_classify_rq(ਬਣਤਰ rq *rq)
 {
-	return regular;
+	ਵਾਪਸ regular;
 }
-#endif /* !CONFIG_NUMA_BALANCING */
+#ਜੇ_ਅੰਤ /* !CONFIG_NUMA_BALANCING */
 
 
-struct sg_lb_stats;
+ਬਣਤਰ sg_lb_stats;
 
 /*
  * task_running_on_cpu - return 1 if @p is running on @cpu.
  */
 
-static unsigned int task_running_on_cpu(int cpu, struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ task_running_on_cpu(ਪੂਰਨ cpu, ਬਣਤਰ task_struct *p)
 {
 	/* Task has no contribution or is new */
-	if (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-		return 0;
+	ਜੇ (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.ਆਖਰੀ_update_ਸਮਾਂ))
+		ਵਾਪਸ 0;
 
-	if (task_on_rq_queued(p))
-		return 1;
+	ਜੇ (task_on_rq_queued(p))
+		ਵਾਪਸ 1;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /**
@@ -12546,12 +12546,12 @@ static unsigned int task_running_on_cpu(int cpu, struct task_struct *p)
  *
  * Return: 1 if the CPU would be idle. 0 otherwise.
  */
-static int idle_cpu_without(int cpu, struct task_struct *p)
+ਸਥਿਰ ਪੂਰਨ idle_cpu_without(ਪੂਰਨ cpu, ਬਣਤਰ task_struct *p)
 {
-	struct rq *rq = cpu_rq(cpu);
+	ਬਣਤਰ rq *rq = cpu_rq(cpu);
 
-	if (rq->curr != rq->idle && rq->curr != p)
-		return 0;
+	ਜੇ (rq->curr != rq->idle && rq->curr != p)
+		ਵਾਪਸ 0;
 
 	/*
 	 * rq->nr_running can't be used but an updated version without the
@@ -12559,10 +12559,10 @@ static int idle_cpu_without(int cpu, struct task_struct *p)
 	 * be computed and tested before calling idle_cpu_without().
 	 */
 
-	if (rq->ttwu_pending)
-		return 0;
+	ਜੇ (rq->ttwu_pending)
+		ਵਾਪਸ 0;
 
-	return 1;
+	ਵਾਪਸ 1;
 }
 
 /*
@@ -12572,113 +12572,113 @@ static int idle_cpu_without(int cpu, struct task_struct *p)
  * @sgs: variable to hold the statistics for this group.
  * @p: The task for which we look for the idlest group/CPU.
  */
-static inline void update_sg_wakeup_stats(struct sched_domain *sd,
-					  struct sched_group *group,
-					  struct sg_lb_stats *sgs,
-					  struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_sg_wakeup_stats(ਬਣਤਰ sched_domain *sd,
+					  ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ,
+					  ਬਣਤਰ sg_lb_stats *sgs,
+					  ਬਣਤਰ task_struct *p)
 {
-	int i, nr_running;
+	ਪੂਰਨ i, nr_running;
 
-	memset(sgs, 0, sizeof(*sgs));
+	memset(sgs, 0, ਆਕਾਰ(*sgs));
 
 	/* Assume that task can't fit any CPU of the group */
-	if (sd->flags & SD_ASYM_CPUCAPACITY)
-		sgs->group_misfit_task_load = 1;
+	ਜੇ (sd->flags & SD_ASYM_CPUCAPACITY)
+		sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ = 1;
 
-	for_each_cpu_and(i, sched_group_span(group), p->cpus_ptr) {
-		struct rq *rq = cpu_rq(i);
-		unsigned int local;
+	for_each_cpu_and(i, sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ), p->cpus_ptr) {
+		ਬਣਤਰ rq *rq = cpu_rq(i);
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ local;
 
-		sgs->group_load += cpu_load_without(rq, p);
-		sgs->group_util += cpu_util_without(i, p);
-		sgs->group_runnable += cpu_runnable_without(rq, p);
+		sgs->ਸਮੂਹ_ਲੱਦੋ += cpu_ਲੱਦੋ_without(rq, p);
+		sgs->ਸਮੂਹ_util += cpu_util_without(i, p);
+		sgs->ਸਮੂਹ_runnable += cpu_runnable_without(rq, p);
 		local = task_running_on_cpu(i, p);
-		sgs->sum_h_nr_running += rq->cfs.h_nr_runnable - local;
+		sgs->ਜੋੜ_h_nr_running += rq->cfs.h_nr_runnable - local;
 
 		nr_running = rq->nr_running - local;
-		sgs->sum_nr_running += nr_running;
+		sgs->ਜੋੜ_nr_running += nr_running;
 
 		/*
 		 * No need to call idle_cpu_without() if nr_running is not 0
 		 */
-		if (!nr_running && idle_cpu_without(i, p))
+		ਜੇ (!nr_running && idle_cpu_without(i, p))
 			sgs->idle_cpus++;
 
 		/* Check if task fits in the CPU */
-		if (sd->flags & SD_ASYM_CPUCAPACITY &&
-		    sgs->group_misfit_task_load &&
-		    task_fits_cpu(p, i))
-			sgs->group_misfit_task_load = 0;
+		ਜੇ (sd->flags & SD_ASYM_CPUCAPACITY &&
+		    sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ &&
+		    task_ਸਮਾਉਂਦਾ_cpu(p, i))
+			sgs->ਸਮੂਹ_misfit_task_ਲੱਦੋ = 0;
 
 	}
 
-	sgs->group_capacity = group->sgc->capacity;
+	sgs->ਸਮੂਹ_ਸਮਰੱਥਾ = ਸਮੂਹ->sgc->ਸਮਰੱਥਾ;
 
-	sgs->group_weight = group->group_weight;
+	sgs->ਸਮੂਹ_ਭਾਰ = ਸਮੂਹ->ਸਮੂਹ_ਭਾਰ;
 
-	sgs->group_type = group_classify(sd->imbalance_pct, group, sgs);
+	sgs->ਸਮੂਹ_type = ਸਮੂਹ_classify(sd->imbalance_pct, ਸਮੂਹ, sgs);
 
 	/*
 	 * Computing avg_load makes sense only when group is fully busy or
 	 * overloaded
 	 */
-	if (sgs->group_type == group_fully_busy ||
-		sgs->group_type == group_overloaded)
-		sgs->avg_load = (sgs->group_load * SCHED_CAPACITY_SCALE) /
-				sgs->group_capacity;
+	ਜੇ (sgs->ਸਮੂਹ_type == ਸਮੂਹ_fully_busy ||
+		sgs->ਸਮੂਹ_type == ਸਮੂਹ_overloaded)
+		sgs->avg_ਲੱਦੋ = (sgs->ਸਮੂਹ_ਲੱਦੋ * SCHED_ਸਮਰੱਥਾ_SCALE) /
+				sgs->ਸਮੂਹ_ਸਮਰੱਥਾ;
 }
 
-static bool update_pick_idlest(struct sched_group *idlest,
-			       struct sg_lb_stats *idlest_sgs,
-			       struct sched_group *group,
-			       struct sg_lb_stats *sgs)
+ਸਥਿਰ bool update_pick_idlest(ਬਣਤਰ sched_ਸਮੂਹ *idlest,
+			       ਬਣਤਰ sg_lb_stats *idlest_sgs,
+			       ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ,
+			       ਬਣਤਰ sg_lb_stats *sgs)
 {
-	if (sgs->group_type < idlest_sgs->group_type)
-		return true;
+	ਜੇ (sgs->ਸਮੂਹ_type < idlest_sgs->ਸਮੂਹ_type)
+		ਵਾਪਸ true;
 
-	if (sgs->group_type > idlest_sgs->group_type)
-		return false;
+	ਜੇ (sgs->ਸਮੂਹ_type > idlest_sgs->ਸਮੂਹ_type)
+		ਵਾਪਸ false;
 
 	/*
 	 * The candidate and the current idlest group are the same type of
 	 * group. Let check which one is the idlest according to the type.
 	 */
 
-	switch (sgs->group_type) {
-	case group_overloaded:
-	case group_fully_busy:
+	ਚੋਣ (sgs->ਸਮੂਹ_type) {
+	ਹਾਲਤ ਸਮੂਹ_overloaded:
+	ਹਾਲਤ ਸਮੂਹ_fully_busy:
 		/* Select the group with lowest avg_load. */
-		if (idlest_sgs->avg_load <= sgs->avg_load)
-			return false;
-		break;
+		ਜੇ (idlest_sgs->avg_ਲੱਦੋ <= sgs->avg_ਲੱਦੋ)
+			ਵਾਪਸ false;
+		ਰੋਕੋ;
 
-	case group_llc_balance:
-	case group_imbalanced:
-	case group_asym_packing:
-	case group_smt_balance:
+	ਹਾਲਤ ਸਮੂਹ_llc_balance:
+	ਹਾਲਤ ਸਮੂਹ_imbalanced:
+	ਹਾਲਤ ਸਮੂਹ_asym_packing:
+	ਹਾਲਤ ਸਮੂਹ_smt_balance:
 		/* Those types are not used in the slow wakeup path */
-		return false;
+		ਵਾਪਸ false;
 
-	case group_misfit_task:
+	ਹਾਲਤ ਸਮੂਹ_misfit_task:
 		/* Select group with the highest max capacity */
-		if (idlest->sgc->max_capacity >= group->sgc->max_capacity)
-			return false;
-		break;
+		ਜੇ (idlest->sgc->max_ਸਮਰੱਥਾ >= ਸਮੂਹ->sgc->max_ਸਮਰੱਥਾ)
+			ਵਾਪਸ false;
+		ਰੋਕੋ;
 
-	case group_has_spare:
+	ਹਾਲਤ ਸਮੂਹ_has_ਵਾਧੂ:
 		/* Select group with most idle CPUs */
-		if (idlest_sgs->idle_cpus > sgs->idle_cpus)
-			return false;
+		ਜੇ (idlest_sgs->idle_cpus > sgs->idle_cpus)
+			ਵਾਪਸ false;
 
 		/* Select group with lowest group_util */
-		if (idlest_sgs->idle_cpus == sgs->idle_cpus &&
-			idlest_sgs->group_util <= sgs->group_util)
-			return false;
+		ਜੇ (idlest_sgs->idle_cpus == sgs->idle_cpus &&
+			idlest_sgs->ਸਮੂਹ_util <= sgs->ਸਮੂਹ_util)
+			ਵਾਪਸ false;
 
-		break;
+		ਰੋਕੋ;
 	}
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /*
@@ -12687,78 +12687,78 @@ static bool update_pick_idlest(struct sched_group *idlest,
  *
  * Assumes p is allowed on at least one CPU in sd.
  */
-static struct sched_group *
-sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int this_cpu)
+ਸਥਿਰ ਬਣਤਰ sched_ਸਮੂਹ *
+sched_balance_ਲੱਭੋ_dst_ਸਮੂਹ(ਬਣਤਰ sched_domain *sd, ਬਣਤਰ task_struct *p, ਪੂਰਨ this_cpu)
 {
-	struct sched_group *idlest = NULL, *local = NULL, *group = sd->groups;
-	struct sg_lb_stats local_sgs, tmp_sgs;
-	struct sg_lb_stats *sgs;
-	unsigned long imbalance;
-	struct sg_lb_stats idlest_sgs = {
-			.avg_load = UINT_MAX,
-			.group_type = group_overloaded,
+	ਬਣਤਰ sched_ਸਮੂਹ *idlest = ਨਿਰਾ, *local = ਨਿਰਾ, *ਸਮੂਹ = sd->groups;
+	ਬਣਤਰ sg_lb_stats local_sgs, tmp_sgs;
+	ਬਣਤਰ sg_lb_stats *sgs;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ imbalance;
+	ਬਣਤਰ sg_lb_stats idlest_sgs = {
+			.avg_ਲੱਦੋ = UINT_MAX,
+			.ਸਮੂਹ_type = ਸਮੂਹ_overloaded,
 	};
 
-	do {
-		int local_group;
+	ਕਰੋ {
+		ਪੂਰਨ local_ਸਮੂਹ;
 
 		/* Skip over this group if it has no CPUs allowed */
-		if (!cpumask_intersects(sched_group_span(group),
+		ਜੇ (!cpumask_intersects(sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ),
 					p->cpus_ptr))
-			continue;
+			ਜਾਰੀ;
 
 		/* Skip over this group if no cookie matched */
-		if (!sched_group_cookie_match(cpu_rq(this_cpu), p, group))
-			continue;
+		ਜੇ (!sched_ਸਮੂਹ_cookie_ਮੇਲ(cpu_rq(this_cpu), p, ਸਮੂਹ))
+			ਜਾਰੀ;
 
-		local_group = cpumask_test_cpu(this_cpu,
-					       sched_group_span(group));
+		local_ਸਮੂਹ = cpumask_test_cpu(this_cpu,
+					       sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ));
 
-		if (local_group) {
+		ਜੇ (local_ਸਮੂਹ) {
 			sgs = &local_sgs;
-			local = group;
-		} else {
+			local = ਸਮੂਹ;
+		} ਨਹੀਂਤਾਂ {
 			sgs = &tmp_sgs;
 		}
 
-		update_sg_wakeup_stats(sd, group, sgs, p);
+		update_sg_wakeup_stats(sd, ਸਮੂਹ, sgs, p);
 
-		if (!local_group && update_pick_idlest(idlest, &idlest_sgs, group, sgs)) {
-			idlest = group;
+		ਜੇ (!local_ਸਮੂਹ && update_pick_idlest(idlest, &idlest_sgs, ਸਮੂਹ, sgs)) {
+			idlest = ਸਮੂਹ;
 			idlest_sgs = *sgs;
 		}
 
-	} while (group = group->next, group != sd->groups);
+	} ਜਦੋਂ (ਸਮੂਹ = ਸਮੂਹ->ਅਗਲਾ, ਸਮੂਹ != sd->groups);
 
 
 	/* There is no idlest group to push tasks to */
-	if (!idlest)
-		return NULL;
+	ਜੇ (!idlest)
+		ਵਾਪਸ ਨਿਰਾ;
 
 	/* The local group has been skipped because of CPU affinity */
-	if (!local)
-		return idlest;
+	ਜੇ (!local)
+		ਵਾਪਸ idlest;
 
 	/*
 	 * If the local group is idler than the selected idlest group
 	 * don't try and push the task.
 	 */
-	if (local_sgs.group_type < idlest_sgs.group_type)
-		return NULL;
+	ਜੇ (local_sgs.ਸਮੂਹ_type < idlest_sgs.ਸਮੂਹ_type)
+		ਵਾਪਸ ਨਿਰਾ;
 
 	/*
 	 * If the local group is busier than the selected idlest group
 	 * try and push the task.
 	 */
-	if (local_sgs.group_type > idlest_sgs.group_type)
-		return idlest;
+	ਜੇ (local_sgs.ਸਮੂਹ_type > idlest_sgs.ਸਮੂਹ_type)
+		ਵਾਪਸ idlest;
 
-	switch (local_sgs.group_type) {
-	case group_overloaded:
-	case group_fully_busy:
+	ਚੋਣ (local_sgs.ਸਮੂਹ_type) {
+	ਹਾਲਤ ਸਮੂਹ_overloaded:
+	ਹਾਲਤ ਸਮੂਹ_fully_busy:
 
 		/* Calculate allowed imbalance based on load */
-		imbalance = scale_load_down(NICE_0_LOAD) *
+		imbalance = scale_ਲੱਦੋ_ਥੱਲੇ(NICE_0_ਲੱਦੋ) *
 				(sd->imbalance_pct-100) / 100;
 
 		/*
@@ -12770,51 +12770,51 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
 		 * and consider staying local.
 		 */
 
-		if ((sd->flags & SD_NUMA) &&
-		    ((idlest_sgs.avg_load + imbalance) >= local_sgs.avg_load))
-			return NULL;
+		ਜੇ ((sd->flags & SD_NUMA) &&
+		    ((idlest_sgs.avg_ਲੱਦੋ + imbalance) >= local_sgs.avg_ਲੱਦੋ))
+			ਵਾਪਸ ਨਿਰਾ;
 
 		/*
 		 * If the local group is less loaded than the selected
 		 * idlest group don't try and push any tasks.
 		 */
-		if (idlest_sgs.avg_load >= (local_sgs.avg_load + imbalance))
-			return NULL;
+		ਜੇ (idlest_sgs.avg_ਲੱਦੋ >= (local_sgs.avg_ਲੱਦੋ + imbalance))
+			ਵਾਪਸ ਨਿਰਾ;
 
-		if (100 * local_sgs.avg_load <= sd->imbalance_pct * idlest_sgs.avg_load)
-			return NULL;
-		break;
+		ਜੇ (100 * local_sgs.avg_ਲੱਦੋ <= sd->imbalance_pct * idlest_sgs.avg_ਲੱਦੋ)
+			ਵਾਪਸ ਨਿਰਾ;
+		ਰੋਕੋ;
 
-	case group_llc_balance:
-	case group_imbalanced:
-	case group_asym_packing:
-	case group_smt_balance:
+	ਹਾਲਤ ਸਮੂਹ_llc_balance:
+	ਹਾਲਤ ਸਮੂਹ_imbalanced:
+	ਹਾਲਤ ਸਮੂਹ_asym_packing:
+	ਹਾਲਤ ਸਮੂਹ_smt_balance:
 		/* Those type are not used in the slow wakeup path */
-		return NULL;
+		ਵਾਪਸ ਨਿਰਾ;
 
-	case group_misfit_task:
+	ਹਾਲਤ ਸਮੂਹ_misfit_task:
 		/* Select group with the highest max capacity */
-		if (local->sgc->max_capacity >= idlest->sgc->max_capacity)
-			return NULL;
-		break;
+		ਜੇ (local->sgc->max_ਸਮਰੱਥਾ >= idlest->sgc->max_ਸਮਰੱਥਾ)
+			ਵਾਪਸ ਨਿਰਾ;
+		ਰੋਕੋ;
 
-	case group_has_spare:
-#ifdef CONFIG_NUMA
-		if (sd->flags & SD_NUMA) {
-			int imb_numa_nr = sd->imb_numa_nr;
-#ifdef CONFIG_NUMA_BALANCING
-			int idlest_cpu;
+	ਹਾਲਤ ਸਮੂਹ_has_ਵਾਧੂ:
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA
+		ਜੇ (sd->flags & SD_NUMA) {
+			ਪੂਰਨ imb_numa_nr = sd->imb_numa_nr;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
+			ਪੂਰਨ idlest_cpu;
 			/*
 			 * If there is spare capacity at NUMA, try to select
 			 * the preferred node
 			 */
-			if (cpu_to_node(this_cpu) == p->numa_preferred_nid)
-				return NULL;
+			ਜੇ (cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(this_cpu) == p->numa_preferred_nid)
+				ਵਾਪਸ ਨਿਰਾ;
 
-			idlest_cpu = cpumask_first(sched_group_span(idlest));
-			if (cpu_to_node(idlest_cpu) == p->numa_preferred_nid)
-				return idlest;
-#endif /* CONFIG_NUMA_BALANCING */
+			idlest_cpu = cpumask_ਪਹਿਲਾ(sched_ਸਮੂਹ_ਵਿਸਤਾਰ(idlest));
+			ਜੇ (cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(idlest_cpu) == p->numa_preferred_nid)
+				ਵਾਪਸ idlest;
+#ਜੇ_ਅੰਤ /* CONFIG_NUMA_BALANCING */
 			/*
 			 * Otherwise, keep the task close to the wakeup source
 			 * and improve locality if the number of running tasks
@@ -12824,20 +12824,20 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
 			 * real need of migration, periodic load balance will
 			 * take care of it.
 			 */
-			if (p->nr_cpus_allowed != NR_CPUS) {
-				unsigned int w = cpumask_weight_and(p->cpus_ptr,
-								sched_group_span(local));
+			ਜੇ (p->nr_cpus_allowed != NR_CPUS) {
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ w = cpumask_ਭਾਰ_and(p->cpus_ptr,
+								sched_ਸਮੂਹ_ਵਿਸਤਾਰ(local));
 				imb_numa_nr = min(w, sd->imb_numa_nr);
 			}
 
-			imbalance = abs(local_sgs.idle_cpus - idlest_sgs.idle_cpus);
-			if (!adjust_numa_imbalance(imbalance,
-						   local_sgs.sum_nr_running + 1,
+			imbalance = ਨਿਰਪੇਖ(local_sgs.idle_cpus - idlest_sgs.idle_cpus);
+			ਜੇ (!adjust_numa_imbalance(imbalance,
+						   local_sgs.ਜੋੜ_nr_running + 1,
 						   imb_numa_nr)) {
-				return NULL;
+				ਵਾਪਸ ਨਿਰਾ;
 			}
 		}
-#endif /* CONFIG_NUMA */
+#ਜੇ_ਅੰਤ /* CONFIG_NUMA */
 
 		/*
 		 * Select group with highest number of idle CPUs. We could also
@@ -12845,20 +12845,20 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
 		 * up that the group has less spare capacity but finally more
 		 * idle CPUs which means more opportunity to run task.
 		 */
-		if (local_sgs.idle_cpus >= idlest_sgs.idle_cpus)
-			return NULL;
-		break;
+		ਜੇ (local_sgs.idle_cpus >= idlest_sgs.idle_cpus)
+			ਵਾਪਸ ਨਿਰਾ;
+		ਰੋਕੋ;
 	}
 
-	return idlest;
+	ਵਾਪਸ idlest;
 }
 
-static void update_idle_cpu_scan(struct lb_env *env,
-				 unsigned long sum_util)
+ਸਥਿਰ ਖਾਲੀ update_idle_cpu_ਜਾਂਚ(ਬਣਤਰ lb_env *env,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਜੋੜ_util)
 {
-	struct sched_domain_shared *sd_share;
-	struct sched_domain *sd = env->sd;
-	int llc_weight, pct;
+	ਬਣਤਰ sched_domain_shared *sd_share;
+	ਬਣਤਰ sched_domain *sd = env->sd;
+	ਪੂਰਨ llc_ਭਾਰ, pct;
 	u64 x, y, tmp;
 	/*
 	 * Update the number of CPUs to scan in LLC domain, which could
@@ -12868,12 +12868,12 @@ static void update_idle_cpu_scan(struct lb_env *env,
 	 * balancing, rather than CPU_NEWLY_IDLE, because the latter
 	 * can fire way more frequently than the former.
 	 */
-	if (!sched_feat(SIS_UTIL) || env->idle == CPU_NEWLY_IDLE)
-		return;
+	ਜੇ (!sched_feat(SIS_UTIL) || env->idle == CPU_NEWLY_IDLE)
+		ਵਾਪਸ;
 
 	sd_share = sd->shared;
-	if (!sd_share)
-		return;
+	ਜੇ (!sd_share)
+		ਵਾਪਸ;
 
 	/*
 	 * The number of CPUs to search drops as sum_util increases, when
@@ -12904,22 +12904,22 @@ static void update_idle_cpu_scan(struct lb_env *env,
 	 *
 	 */
 	/* equation [3] */
-	x = sum_util;
-	llc_weight = sd->span_weight;
-	do_div(x, llc_weight);
+	x = ਜੋੜ_util;
+	llc_ਭਾਰ = sd->ਵਿਸਤਾਰ_ਭਾਰ;
+	do_div(x, llc_ਭਾਰ);
 
 	/* equation [4] */
 	pct = sd->imbalance_pct;
 	tmp = x * x * pct * pct;
-	do_div(tmp, 10000 * SCHED_CAPACITY_SCALE);
-	tmp = min_t(long, tmp, SCHED_CAPACITY_SCALE);
-	y = SCHED_CAPACITY_SCALE - tmp;
+	do_div(tmp, 10000 * SCHED_ਸਮਰੱਥਾ_SCALE);
+	tmp = min_t(ਲੰਮਾ, tmp, SCHED_ਸਮਰੱਥਾ_SCALE);
+	y = SCHED_ਸਮਰੱਥਾ_SCALE - tmp;
 
 	/* equation [2] */
-	y *= llc_weight;
-	do_div(y, SCHED_CAPACITY_SCALE);
-	if ((int)y != sd_share->nr_idle_scan)
-		WRITE_ONCE(sd_share->nr_idle_scan, (int)y);
+	y *= llc_ਭਾਰ;
+	do_div(y, SCHED_ਸਮਰੱਥਾ_SCALE);
+	ਜੇ ((ਪੂਰਨ)y != sd_share->nr_idle_ਜਾਂਚ)
+		WRITE_ONCE(sd_share->nr_idle_ਜਾਂਚ, (ਪੂਰਨ)y);
 }
 
 /**
@@ -12928,70 +12928,70 @@ static void update_idle_cpu_scan(struct lb_env *env,
  * @sds: variable to hold the statistics for this sched_domain.
  */
 
-static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sds)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_sd_lb_stats(ਬਣਤਰ lb_env *env, ਬਣਤਰ sd_lb_stats *sds)
 {
-	struct sched_group *sg = env->sd->groups;
-	struct sg_lb_stats *local = &sds->local_stat;
-	struct sg_lb_stats tmp_sgs;
-	unsigned long sum_util = 0;
+	ਬਣਤਰ sched_ਸਮੂਹ *sg = env->sd->groups;
+	ਬਣਤਰ sg_lb_stats *local = &sds->local_stat;
+	ਬਣਤਰ sg_lb_stats tmp_sgs;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਜੋੜ_util = 0;
 	bool sg_overloaded = 0, sg_overutilized = 0;
 
-	env->dst_core_idle = !sched_smt_active() || is_core_idle(env->dst_cpu);
+	env->dst_core_idle = !sched_smt_ਸਰਗਰਮ() || is_core_idle(env->dst_cpu);
 
-	do {
-		struct sg_lb_stats *sgs = &tmp_sgs;
-		int local_group;
+	ਕਰੋ {
+		ਬਣਤਰ sg_lb_stats *sgs = &tmp_sgs;
+		ਪੂਰਨ local_ਸਮੂਹ;
 
-		local_group = cpumask_test_cpu(env->dst_cpu, sched_group_span(sg));
-		if (local_group) {
+		local_ਸਮੂਹ = cpumask_test_cpu(env->dst_cpu, sched_ਸਮੂਹ_ਵਿਸਤਾਰ(sg));
+		ਜੇ (local_ਸਮੂਹ) {
 			sds->local = sg;
 			sgs = local;
 
-			if (env->idle != CPU_NEWLY_IDLE ||
-			    time_after_eq(jiffies, sg->sgc->next_update))
-				update_group_capacity(env->sd, env->dst_cpu);
+			ਜੇ (env->idle != CPU_NEWLY_IDLE ||
+			    ਸਮਾਂ_after_eq(jiffies, sg->sgc->ਅਗਲਾ_update))
+				update_ਸਮੂਹ_ਸਮਰੱਥਾ(env->sd, env->dst_cpu);
 		}
 
 		update_sg_lb_stats(env, sds, sg, sgs, &sg_overloaded);
 
-		if (!local_group && update_sd_pick_busiest(env, sds, sg, sgs)) {
+		ਜੇ (!local_ਸਮੂਹ && update_sd_pick_busiest(env, sds, sg, sgs)) {
 			sds->busiest = sg;
 			sds->busiest_stat = *sgs;
 		}
 
-		sg_overutilized |= sgs->group_overutilized;
+		sg_overutilized |= sgs->ਸਮੂਹ_overutilized;
 
 		/* Now, start updating sd_lb_stats */
-		sds->total_load += sgs->group_load;
-		sds->total_capacity += sgs->group_capacity;
+		sds->ਕੁੱਲ_ਲੱਦੋ += sgs->ਸਮੂਹ_ਲੱਦੋ;
+		sds->ਕੁੱਲ_ਸਮਰੱਥਾ += sgs->ਸਮੂਹ_ਸਮਰੱਥਾ;
 
-		sum_util += sgs->group_util;
-		sg = sg->next;
-	} while (sg != env->sd->groups);
+		ਜੋੜ_util += sgs->ਸਮੂਹ_util;
+		sg = sg->ਅਗਲਾ;
+	} ਜਦੋਂ (sg != env->sd->groups);
 
 	/*
 	 * Indicate that the child domain of the busiest group prefers tasks
 	 * go to a child's sibling domains first. NB the flags of a sched group
 	 * are those of the child domain.
 	 */
-	if (sds->busiest)
+	ਜੇ (sds->busiest)
 		sds->prefer_sibling = !!(sds->busiest->flags & SD_PREFER_SIBLING);
 
 
-	if (env->sd->flags & SD_NUMA)
-		env->fbq_type = fbq_classify_group(&sds->busiest_stat);
+	ਜੇ (env->sd->flags & SD_NUMA)
+		env->fbq_type = fbq_classify_ਸਮੂਹ(&sds->busiest_stat);
 
-	if (!env->sd->parent) {
+	ਜੇ (!env->sd->ਮਾਪਾ) {
 		/* update overload indicator if we are at root domain */
-		set_rd_overloaded(env->dst_rq->rd, sg_overloaded);
+		ਸੈੱਟ_rd_overloaded(env->dst_rq->rd, sg_overloaded);
 
 		/* Update over-utilization (tipping point, U >= 0) indicator */
-		set_rd_overutilized(env->dst_rq->rd, sg_overutilized);
-	} else if (sg_overutilized) {
-		set_rd_overutilized(env->dst_rq->rd, sg_overutilized);
+		ਸੈੱਟ_rd_overutilized(env->dst_rq->rd, sg_overutilized);
+	} ਨਹੀਂਤਾਂ ਜੇ (sg_overutilized) {
+		ਸੈੱਟ_rd_overutilized(env->dst_rq->rd, sg_overutilized);
 	}
 
-	update_idle_cpu_scan(env, sum_util);
+	update_idle_cpu_ਜਾਂਚ(env, ਜੋੜ_util);
 }
 
 /**
@@ -13000,56 +13000,56 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
  * @env: load balance environment
  * @sds: statistics of the sched_domain whose imbalance is to be calculated.
  */
-static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *sds)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ calculate_imbalance(ਬਣਤਰ lb_env *env, ਬਣਤਰ sd_lb_stats *sds)
 {
-	struct sg_lb_stats *local, *busiest;
+	ਬਣਤਰ sg_lb_stats *local, *busiest;
 
 	local = &sds->local_stat;
 	busiest = &sds->busiest_stat;
 
-	if (busiest->group_type == group_misfit_task) {
-		if (env->sd->flags & SD_ASYM_CPUCAPACITY) {
+	ਜੇ (busiest->ਸਮੂਹ_type == ਸਮੂਹ_misfit_task) {
+		ਜੇ (env->sd->flags & SD_ASYM_CPUCAPACITY) {
 			/* Set imbalance to allow misfit tasks to be balanced. */
 			env->migration_type = migrate_misfit;
 			env->imbalance = 1;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			/*
 			 * Set load imbalance to allow moving task from cpu
 			 * with reduced capacity.
 			 */
-			env->migration_type = migrate_load;
-			env->imbalance = busiest->group_misfit_task_load;
+			env->migration_type = migrate_ਲੱਦੋ;
+			env->imbalance = busiest->ਸਮੂਹ_misfit_task_ਲੱਦੋ;
 		}
-		return;
+		ਵਾਪਸ;
 	}
 
-	if (busiest->group_type == group_asym_packing) {
+	ਜੇ (busiest->ਸਮੂਹ_type == ਸਮੂਹ_asym_packing) {
 		/*
 		 * In case of asym capacity, we will try to migrate all load to
 		 * the preferred CPU.
 		 */
 		env->migration_type = migrate_task;
-		env->imbalance = busiest->sum_h_nr_running;
-		return;
+		env->imbalance = busiest->ਜੋੜ_h_nr_running;
+		ਵਾਪਸ;
 	}
 
-	if (busiest->group_type == group_smt_balance) {
+	ਜੇ (busiest->ਸਮੂਹ_type == ਸਮੂਹ_smt_balance) {
 		/* Reduce number of tasks sharing CPU capacity */
 		env->migration_type = migrate_task;
 		env->imbalance = 1;
-		return;
+		ਵਾਪਸ;
 	}
 
-#ifdef CONFIG_SCHED_CACHE
-	if (busiest->group_type == group_llc_balance) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
+	ਜੇ (busiest->ਸਮੂਹ_type == ਸਮੂਹ_llc_balance) {
 		/* Move a task that prefer local LLC */
 		env->migration_type = migrate_llc_task;
 		env->imbalance = 1;
-		return;
+		ਵਾਪਸ;
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-	if (busiest->group_type == group_imbalanced) {
+	ਜੇ (busiest->ਸਮੂਹ_type == ਸਮੂਹ_imbalanced) {
 		/*
 		 * In the group_imb case we cannot rely on group-wide averages
 		 * to ensure CPU-load equilibrium, try to move any task to fix
@@ -13058,15 +13058,15 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 		 */
 		env->migration_type = migrate_task;
 		env->imbalance = 1;
-		return;
+		ਵਾਪਸ;
 	}
 
 	/*
 	 * Try to use spare capacity of local group without overloading it or
 	 * emptying busiest.
 	 */
-	if (local->group_type == group_has_spare) {
-		if ((busiest->group_type > group_fully_busy) &&
+	ਜੇ (local->ਸਮੂਹ_type == ਸਮੂਹ_has_ਵਾਧੂ) {
+		ਜੇ ((busiest->ਸਮੂਹ_type > ਸਮੂਹ_fully_busy) &&
 		    !(env->sd->flags & SD_SHARE_LLC)) {
 			/*
 			 * If busiest is overloaded, try to fill spare
@@ -13077,8 +13077,8 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 			 * system.
 			 */
 			env->migration_type = migrate_util;
-			env->imbalance = max(local->group_capacity, local->group_util) -
-					 local->group_util;
+			env->imbalance = max(local->ਸਮੂਹ_ਸਮਰੱਥਾ, local->ਸਮੂਹ_util) -
+					 local->ਸਮੂਹ_util;
 
 			/*
 			 * In some cases, the group's utilization is max or even
@@ -13087,79 +13087,79 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 			 * waiting task in this overloaded busiest group. Let's
 			 * try to pull it.
 			 */
-			if (env->idle && env->imbalance == 0) {
+			ਜੇ (env->idle && env->imbalance == 0) {
 				env->migration_type = migrate_task;
 				env->imbalance = 1;
 			}
 
-			return;
+			ਵਾਪਸ;
 		}
 
-		if (busiest->group_weight == 1 || sds->prefer_sibling) {
+		ਜੇ (busiest->ਸਮੂਹ_ਭਾਰ == 1 || sds->prefer_sibling) {
 			/*
 			 * When prefer sibling, evenly spread running tasks on
 			 * groups.
 			 */
 			env->migration_type = migrate_task;
 			env->imbalance = sibling_imbalance(env, sds, busiest, local);
-		} else {
+		} ਨਹੀਂਤਾਂ {
 
 			/*
 			 * If there is no overload, we just want to even the number of
 			 * idle CPUs.
 			 */
 			env->migration_type = migrate_task;
-			env->imbalance = max_t(long, 0,
+			env->imbalance = max_t(ਲੰਮਾ, 0,
 					       (local->idle_cpus - busiest->idle_cpus));
 		}
 
-#ifdef CONFIG_NUMA
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA
 		/* Consider allowing a small imbalance between NUMA groups */
-		if (env->sd->flags & SD_NUMA) {
+		ਜੇ (env->sd->flags & SD_NUMA) {
 			env->imbalance = adjust_numa_imbalance(env->imbalance,
-							       local->sum_nr_running + 1,
+							       local->ਜੋੜ_nr_running + 1,
 							       env->sd->imb_numa_nr);
 		}
-#endif
+#ਜੇ_ਅੰਤ
 
 		/* Number of tasks to move to restore balance */
 		env->imbalance >>= 1;
 
-		return;
+		ਵਾਪਸ;
 	}
 
 	/*
 	 * Local is fully busy but has to take more load to relieve the
 	 * busiest group
 	 */
-	if (local->group_type < group_overloaded) {
+	ਜੇ (local->ਸਮੂਹ_type < ਸਮੂਹ_overloaded) {
 		/*
 		 * Local will become overloaded so the avg_load metrics are
 		 * finally needed.
 		 */
 
-		local->avg_load = (local->group_load * SCHED_CAPACITY_SCALE) /
-				  local->group_capacity;
+		local->avg_ਲੱਦੋ = (local->ਸਮੂਹ_ਲੱਦੋ * SCHED_ਸਮਰੱਥਾ_SCALE) /
+				  local->ਸਮੂਹ_ਸਮਰੱਥਾ;
 
 		/*
 		 * If the local group is more loaded than the selected
 		 * busiest group don't try to pull any tasks.
 		 */
-		if (local->avg_load >= busiest->avg_load) {
+		ਜੇ (local->avg_ਲੱਦੋ >= busiest->avg_ਲੱਦੋ) {
 			env->imbalance = 0;
-			return;
+			ਵਾਪਸ;
 		}
 
-		sds->avg_load = (sds->total_load * SCHED_CAPACITY_SCALE) /
-				sds->total_capacity;
+		sds->avg_ਲੱਦੋ = (sds->ਕੁੱਲ_ਲੱਦੋ * SCHED_ਸਮਰੱਥਾ_SCALE) /
+				sds->ਕੁੱਲ_ਸਮਰੱਥਾ;
 
 		/*
 		 * If the local group is more loaded than the average system
 		 * load, don't try to pull any tasks.
 		 */
-		if (local->avg_load >= sds->avg_load) {
+		ਜੇ (local->avg_ਲੱਦੋ >= sds->avg_ਲੱਦੋ) {
 			env->imbalance = 0;
-			return;
+			ਵਾਪਸ;
 		}
 
 	}
@@ -13172,11 +13172,11 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 	 * reduce the group load below the group capacity. Thus we look for
 	 * the minimum possible imbalance.
 	 */
-	env->migration_type = migrate_load;
+	env->migration_type = migrate_ਲੱਦੋ;
 	env->imbalance = min(
-		(busiest->avg_load - sds->avg_load) * busiest->group_capacity,
-		(sds->avg_load - local->avg_load) * local->group_capacity
-	) / SCHED_CAPACITY_SCALE;
+		(busiest->avg_ਲੱਦੋ - sds->avg_ਲੱਦੋ) * busiest->ਸਮੂਹ_ਸਮਰੱਥਾ,
+		(sds->avg_ਲੱਦੋ - local->avg_ਲੱਦੋ) * local->ਸਮੂਹ_ਸਮਰੱਥਾ
+	) / SCHED_ਸਮਰੱਥਾ_SCALE;
 }
 
 /******* sched_balance_find_src_group() helpers end here *********************/
@@ -13211,10 +13211,10 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
  *
  * Return:	- The busiest group if imbalance exists.
  */
-static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
+ਸਥਿਰ ਬਣਤਰ sched_ਸਮੂਹ *sched_balance_ਲੱਭੋ_src_ਸਮੂਹ(ਬਣਤਰ lb_env *env)
 {
-	struct sg_lb_stats *local, *busiest;
-	struct sd_lb_stats sds;
+	ਬਣਤਰ sg_lb_stats *local, *busiest;
+	ਬਣਤਰ sd_lb_stats sds;
 
 	init_sd_lb_stats(&sds);
 
@@ -13225,97 +13225,97 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
 	update_sd_lb_stats(env, &sds);
 
 	/* There is no busy sibling group to pull tasks from */
-	if (!sds.busiest)
-		goto out_balanced;
+	ਜੇ (!sds.busiest)
+		ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 
 	busiest = &sds.busiest_stat;
 
 	/* Misfit tasks should be dealt with regardless of the avg load */
-	if (busiest->group_type == group_misfit_task)
-		goto force_balance;
+	ਜੇ (busiest->ਸਮੂਹ_type == ਸਮੂਹ_misfit_task)
+		ਜਾਓ force_balance;
 
-	if (!is_rd_overutilized(env->dst_rq->rd) &&
+	ਜੇ (!is_rd_overutilized(env->dst_rq->rd) &&
 	    rcu_dereference_all(env->dst_rq->rd->pd))
-		goto out_balanced;
+		ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 
 	/* ASYM feature bypasses nice load balance check */
-	if (busiest->group_type == group_asym_packing)
-		goto force_balance;
+	ਜੇ (busiest->ਸਮੂਹ_type == ਸਮੂਹ_asym_packing)
+		ਜਾਓ force_balance;
 
 	/*
 	 * If the busiest group is imbalanced the below checks don't
 	 * work because they assume all things are equal, which typically
 	 * isn't true due to cpus_ptr constraints and the like.
 	 */
-	if (busiest->group_type == group_imbalanced)
-		goto force_balance;
+	ਜੇ (busiest->ਸਮੂਹ_type == ਸਮੂਹ_imbalanced)
+		ਜਾਓ force_balance;
 
 	local = &sds.local_stat;
 	/*
 	 * If the local group is busier than the selected busiest group
 	 * don't try and pull any tasks.
 	 */
-	if (local->group_type > busiest->group_type)
-		goto out_balanced;
+	ਜੇ (local->ਸਮੂਹ_type > busiest->ਸਮੂਹ_type)
+		ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 
 	/*
 	 * When groups are overloaded, use the avg_load to ensure fairness
 	 * between tasks.
 	 */
-	if (local->group_type == group_overloaded) {
+	ਜੇ (local->ਸਮੂਹ_type == ਸਮੂਹ_overloaded) {
 		/*
 		 * If the local group is more loaded than the selected
 		 * busiest group don't try to pull any tasks.
 		 */
-		if (local->avg_load >= busiest->avg_load)
-			goto out_balanced;
+		ਜੇ (local->avg_ਲੱਦੋ >= busiest->avg_ਲੱਦੋ)
+			ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 
 		/* XXX broken for overlapping NUMA groups */
-		sds.avg_load = (sds.total_load * SCHED_CAPACITY_SCALE) /
-				sds.total_capacity;
+		sds.avg_ਲੱਦੋ = (sds.ਕੁੱਲ_ਲੱਦੋ * SCHED_ਸਮਰੱਥਾ_SCALE) /
+				sds.ਕੁੱਲ_ਸਮਰੱਥਾ;
 
 		/*
 		 * Don't pull any tasks if this group is already above the
 		 * domain average load.
 		 */
-		if (local->avg_load >= sds.avg_load)
-			goto out_balanced;
+		ਜੇ (local->avg_ਲੱਦੋ >= sds.avg_ਲੱਦੋ)
+			ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 
 		/*
 		 * If the busiest group is more loaded, use imbalance_pct to be
 		 * conservative.
 		 */
-		if (100 * busiest->avg_load <=
-				env->sd->imbalance_pct * local->avg_load)
-			goto out_balanced;
+		ਜੇ (100 * busiest->avg_ਲੱਦੋ <=
+				env->sd->imbalance_pct * local->avg_ਲੱਦੋ)
+			ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 	}
 
 	/*
 	 * Try to move all excess tasks to a sibling domain of the busiest
 	 * group's child domain.
 	 */
-	if (sds.prefer_sibling && local->group_type == group_has_spare &&
-	    (busiest->group_type == group_llc_balance ||
+	ਜੇ (sds.prefer_sibling && local->ਸਮੂਹ_type == ਸਮੂਹ_has_ਵਾਧੂ &&
+	    (busiest->ਸਮੂਹ_type == ਸਮੂਹ_llc_balance ||
 	    sibling_imbalance(env, &sds, busiest, local) > 1))
-		goto force_balance;
+		ਜਾਓ force_balance;
 
-	if (busiest->group_type != group_overloaded) {
-		if (!env->idle) {
+	ਜੇ (busiest->ਸਮੂਹ_type != ਸਮੂਹ_overloaded) {
+		ਜੇ (!env->idle) {
 			/*
 			 * If the busiest group is not overloaded (and as a
 			 * result the local one too) but this CPU is already
 			 * busy, let another idle CPU try to pull task.
 			 */
-			goto out_balanced;
+			ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 		}
 
-		if (busiest->group_type == group_smt_balance &&
+		ਜੇ (busiest->ਸਮੂਹ_type == ਸਮੂਹ_smt_balance &&
 		    smt_vs_nonsmt_groups(sds.local, sds.busiest)) {
 			/* Let non SMT CPU pull from SMT CPU sharing with sibling */
-			goto force_balance;
+			ਜਾਓ force_balance;
 		}
 
-		if (busiest->group_weight > 1 &&
+		ਜੇ (busiest->ਸਮੂਹ_ਭਾਰ > 1 &&
 		    local->idle_cpus <= (busiest->idle_cpus + 1)) {
 			/*
 			 * If the busiest group is not overloaded
@@ -13326,45 +13326,45 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
 			 * on another group. Of course this applies only if
 			 * there is more than 1 CPU per group.
 			 */
-			goto out_balanced;
+			ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 		}
 
-		if (busiest->sum_h_nr_running == 1) {
+		ਜੇ (busiest->ਜੋੜ_h_nr_running == 1) {
 			/*
 			 * busiest doesn't have any tasks waiting to run
 			 */
-			goto out_balanced;
+			ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 		}
 	}
 
 force_balance:
 	/* Looks like there is an imbalance. Compute it */
 	calculate_imbalance(env, &sds);
-	return env->imbalance ? sds.busiest : NULL;
+	ਵਾਪਸ env->imbalance ? sds.busiest : ਨਿਰਾ;
 
-out_balanced:
+ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ:
 	env->imbalance = 0;
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
 /*
  * sched_balance_find_src_rq - find the busiest runqueue among the CPUs in the group.
  */
-static struct rq *sched_balance_find_src_rq(struct lb_env *env,
-				     struct sched_group *group)
+ਸਥਿਰ ਬਣਤਰ rq *sched_balance_ਲੱਭੋ_src_rq(ਬਣਤਰ lb_env *env,
+				     ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
-	struct rq *busiest = NULL, *rq;
-	unsigned long busiest_util = 0, busiest_load = 0, busiest_capacity = 1;
-	unsigned int __maybe_unused busiest_pref_llc = 0;
-	struct sched_domain __maybe_unused *sd_tmp;
-	unsigned int busiest_nr = 0;
-	int __maybe_unused dst_llc;
-	int i;
+	ਬਣਤਰ rq *busiest = ਨਿਰਾ, *rq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ busiest_util = 0, busiest_ਲੱਦੋ = 0, busiest_ਸਮਰੱਥਾ = 1;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ __maybe_unused busiest_pref_llc = 0;
+	ਬਣਤਰ sched_domain __maybe_unused *sd_tmp;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ busiest_nr = 0;
+	ਪੂਰਨ __maybe_unused dst_llc;
+	ਪੂਰਨ i;
 
-	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
-		unsigned long capacity, load, util;
-		unsigned int nr_running;
-		enum fbq_type rt;
+	for_each_cpu_and(i, sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ), env->cpus) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮਰੱਥਾ, ਲੱਦੋ, util;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr_running;
+		ਗਿਣਤੀ fbq_type rt;
 
 		rq = cpu_rq(i);
 		rt = fbq_classify_rq(rq);
@@ -13388,14 +13388,14 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 		 *
 		 * Both cases only affect the total convergence complexity.
 		 */
-		if (rt > env->fbq_type)
-			continue;
+		ਜੇ (rt > env->fbq_type)
+			ਜਾਰੀ;
 
 		nr_running = rq->cfs.h_nr_runnable;
-		if (!nr_running)
-			continue;
+		ਜੇ (!nr_running)
+			ਜਾਰੀ;
 
-		capacity = capacity_of(i);
+		ਸਮਰੱਥਾ = ਸਮਰੱਥਾ_ਦਾ(i);
 
 		/*
 		 * For ASYM_CPUCAPACITY domains, don't pick a CPU that could
@@ -13403,12 +13403,12 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 		 * Higher per-CPU capacity is considered better than balancing
 		 * average load.
 		 */
-		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
+		ਜੇ (env->sd->flags & SD_ASYM_CPUCAPACITY &&
 		    nr_running == 1) {
-			bool cluster_equal_cap = static_branch_unlikely(&sched_cluster_active) &&
-						 (get_actual_cpu_capacity(env->dst_cpu) ==
-						  get_actual_cpu_capacity(i));
-			bool smt_degraded_cap = sched_smt_active() && !is_core_idle(i);
+			bool cluster_equal_cap = static_branch_unlikely(&sched_cluster_ਸਰਗਰਮ) &&
+						 (get_actual_cpu_ਸਮਰੱਥਾ(env->dst_cpu) ==
+						  get_actual_cpu_ਸਮਰੱਥਾ(i));
+			bool smt_degraded_cap = sched_smt_ਸਰਗਰਮ() && !is_core_idle(i);
 
 			/*
 			 * Busy SMT siblings reduce the capacity of CPU @i. Do
@@ -13418,9 +13418,9 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 			 * clusters of identical capacity, accounting for
 			 * hardware and cpufreq pressure.
 			 */
-			if (!smt_degraded_cap && !cluster_equal_cap &&
-			    !capacity_greater(capacity_of(env->dst_cpu), capacity))
-				continue;
+			ਜੇ (!smt_degraded_cap && !cluster_equal_cap &&
+			    !ਸਮਰੱਥਾ_greater(ਸਮਰੱਥਾ_ਦਾ(env->dst_cpu), ਸਮਰੱਥਾ))
+				ਜਾਰੀ;
 		}
 
 		/*
@@ -13430,20 +13430,20 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 		 * If balancing between cores, let lower priority CPUs help
 		 * SMT cores with more than one busy sibling.
 		 */
-		if (sched_asym(env->sd, i, env->dst_cpu) && nr_running == 1)
-			continue;
+		ਜੇ (sched_asym(env->sd, i, env->dst_cpu) && nr_running == 1)
+			ਜਾਰੀ;
 
-		switch (env->migration_type) {
-		case migrate_load:
+		ਚੋਣ (env->migration_type) {
+		ਹਾਲਤ migrate_ਲੱਦੋ:
 			/*
 			 * When comparing with load imbalance, use cpu_load()
 			 * which is not scaled with the CPU capacity.
 			 */
-			load = cpu_load(rq);
+			ਲੱਦੋ = cpu_ਲੱਦੋ(rq);
 
-			if (nr_running == 1 && load > env->imbalance &&
-			    !check_cpu_capacity(rq, env->sd))
-				break;
+			ਜੇ (nr_running == 1 && ਲੱਦੋ > env->imbalance &&
+			    !check_cpu_ਸਮਰੱਥਾ(rq, env->sd))
+				ਰੋਕੋ;
 
 			/*
 			 * For the load comparisons with the other CPUs,
@@ -13458,14 +13458,14 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 			 * load_i * capacity_j > load_j * capacity_i;
 			 * where j is our previous maximum.
 			 */
-			if (load * busiest_capacity > busiest_load * capacity) {
-				busiest_load = load;
-				busiest_capacity = capacity;
+			ਜੇ (ਲੱਦੋ * busiest_ਸਮਰੱਥਾ > busiest_ਲੱਦੋ * ਸਮਰੱਥਾ) {
+				busiest_ਲੱਦੋ = ਲੱਦੋ;
+				busiest_ਸਮਰੱਥਾ = ਸਮਰੱਥਾ;
 				busiest = rq;
 			}
-			break;
+			ਰੋਕੋ;
 
-		case migrate_util:
+		ਹਾਲਤ migrate_util:
 			util = cpu_util_cfs_boost(i);
 
 			/*
@@ -13473,65 +13473,65 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 			 * running task. Whatever its utilization, we will fail
 			 * detach the task.
 			 */
-			if (nr_running <= 1)
-				continue;
+			ਜੇ (nr_running <= 1)
+				ਜਾਰੀ;
 
-			if (busiest_util < util) {
+			ਜੇ (busiest_util < util) {
 				busiest_util = util;
 				busiest = rq;
 			}
-			break;
+			ਰੋਕੋ;
 
-		case migrate_task:
-			if (busiest_nr < nr_running) {
+		ਹਾਲਤ migrate_task:
+			ਜੇ (busiest_nr < nr_running) {
 				busiest_nr = nr_running;
 				busiest = rq;
 			}
-			break;
+			ਰੋਕੋ;
 
-		case migrate_misfit:
+		ਹਾਲਤ migrate_misfit:
 			/*
 			 * For ASYM_CPUCAPACITY domains with misfit tasks we
 			 * simply seek the "biggest" misfit task.
 			 */
-			if (rq->misfit_task_load > busiest_load) {
-				busiest_load = rq->misfit_task_load;
+			ਜੇ (rq->misfit_task_ਲੱਦੋ > busiest_ਲੱਦੋ) {
+				busiest_ਲੱਦੋ = rq->misfit_task_ਲੱਦੋ;
 				busiest = rq;
 			}
 
-			break;
+			ਰੋਕੋ;
 
-		case migrate_llc_task:
-#ifdef CONFIG_SCHED_CACHE
+		ਹਾਲਤ migrate_llc_task:
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
 			sd_tmp = rcu_dereference_all(rq->sd);
 			dst_llc = llc_id(env->dst_cpu);
 
-			if (sd_tmp && (unsigned)dst_llc < sd_tmp->llc_max) {
-				unsigned int this_pref_llc =
+			ਜੇ (sd_tmp && (ਬਿਨਾਨਿਸ਼ਾਨੀ)dst_llc < sd_tmp->llc_max) {
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ this_pref_llc =
 					sd_tmp->llc_counts[dst_llc];
 
-				if (busiest_pref_llc < this_pref_llc) {
+				ਜੇ (busiest_pref_llc < this_pref_llc) {
 					busiest_pref_llc = this_pref_llc;
 					busiest = rq;
 				}
 			}
-#endif
-			break;
+#ਜੇ_ਅੰਤ
+			ਰੋਕੋ;
 
 		}
 	}
 
-	return busiest;
+	ਵਾਪਸ busiest;
 }
 
 /*
  * Max backoff if we encounter pinned tasks. Pretty arbitrary value, but
  * so long as it is large enough.
  */
-#define MAX_PINNED_INTERVAL	512
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_PINNED_INTERVAL	512
 
-static inline bool
-asym_active_balance(struct lb_env *env)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+asym_ਸਰਗਰਮ_balance(ਬਣਤਰ lb_env *env)
 {
 	/*
 	 * ASYM_PACKING needs to force migrate tasks from busy but lower
@@ -13543,40 +13543,40 @@ asym_active_balance(struct lb_env *env)
 	 * the lower priority @env::dst_cpu help it. Do not follow
 	 * CPU priority.
 	 */
-	return env->idle && sched_use_asym_prio(env->sd, env->dst_cpu) &&
+	ਵਾਪਸ env->idle && sched_use_asym_prio(env->sd, env->dst_cpu) &&
 	       (sched_asym_prefer(env->dst_cpu, env->src_cpu) ||
 		!sched_use_asym_prio(env->sd, env->src_cpu));
 }
 
-static inline bool
-imbalanced_active_balance(struct lb_env *env)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+imbalanced_ਸਰਗਰਮ_balance(ਬਣਤਰ lb_env *env)
 {
-	struct sched_domain *sd = env->sd;
+	ਬਣਤਰ sched_domain *sd = env->sd;
 
 	/*
 	 * The imbalanced case includes the case of pinned tasks preventing a fair
 	 * distribution of the load on the system but also the even distribution of the
 	 * threads on a system with spare capacity
 	 */
-	if ((env->migration_type == migrate_task) &&
+	ਜੇ ((env->migration_type == migrate_task) &&
 	    (sd->nr_balance_failed > sd->cache_nice_tries+2))
-		return 1;
+		ਵਾਪਸ 1;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int need_active_balance(struct lb_env *env)
+ਸਥਿਰ ਪੂਰਨ need_ਸਰਗਰਮ_balance(ਬਣਤਰ lb_env *env)
 {
-	struct sched_domain *sd = env->sd;
+	ਬਣਤਰ sched_domain *sd = env->sd;
 
-	if (alb_break_llc(env))
-		return 0;
+	ਜੇ (alb_break_llc(env))
+		ਵਾਪਸ 0;
 
-	if (asym_active_balance(env))
-		return 1;
+	ਜੇ (asym_ਸਰਗਰਮ_balance(env))
+		ਵਾਪਸ 1;
 
-	if (imbalanced_active_balance(env))
-		return 1;
+	ਜੇ (imbalanced_ਸਰਗਰਮ_balance(env))
+		ਵਾਪਸ 1;
 
 	/*
 	 * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
@@ -13584,48 +13584,48 @@ static int need_active_balance(struct lb_env *env)
 	 * because of other sched_class or IRQs if more capacity stays
 	 * available on dst_cpu.
 	 */
-	if (env->idle &&
+	ਜੇ (env->idle &&
 	    (env->src_rq->cfs.h_nr_runnable == 1)) {
-		if ((check_cpu_capacity(env->src_rq, sd)) &&
-		    (capacity_of(env->src_cpu)*sd->imbalance_pct < capacity_of(env->dst_cpu)*100))
-			return 1;
+		ਜੇ ((check_cpu_ਸਮਰੱਥਾ(env->src_rq, sd)) &&
+		    (ਸਮਰੱਥਾ_ਦਾ(env->src_cpu)*sd->imbalance_pct < ਸਮਰੱਥਾ_ਦਾ(env->dst_cpu)*100))
+			ਵਾਪਸ 1;
 	}
 
-	if (env->migration_type == migrate_misfit ||
+	ਜੇ (env->migration_type == migrate_misfit ||
 	    env->migration_type == migrate_llc_task)
-		return 1;
+		ਵਾਪਸ 1;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int active_load_balance_cpu_stop(void *data);
-static int active_load_balance_llc_cpu_stop(void *data);
+ਸਥਿਰ ਪੂਰਨ ਸਰਗਰਮ_ਲੱਦੋ_balance_cpu_stop(ਖਾਲੀ *ਅੰਕੜੇ);
+ਸਥਿਰ ਪੂਰਨ ਸਰਗਰਮ_ਲੱਦੋ_balance_llc_cpu_stop(ਖਾਲੀ *ਅੰਕੜੇ);
 
 /*
  * migration_type is checked elsewhere to decide migration policy, so
  * it shouldn't be repurposed just to flag an LLC-directed active
  * balance across the stopper. Pick the callback here instead.
  */
-static inline cpu_stop_fn_t alb_stop_fn(struct lb_env *env)
+ਸਥਿਰ ਸਤਰਅੰਦਰ cpu_stop_fn_t alb_stop_fn(ਬਣਤਰ lb_env *env)
 {
-	if (env->migration_type == migrate_llc_task)
-		return active_load_balance_llc_cpu_stop;
+	ਜੇ (env->migration_type == migrate_llc_task)
+		ਵਾਪਸ ਸਰਗਰਮ_ਲੱਦੋ_balance_llc_cpu_stop;
 
-	return active_load_balance_cpu_stop;
+	ਵਾਪਸ ਸਰਗਰਮ_ਲੱਦੋ_balance_cpu_stop;
 }
 
-static int should_we_balance(struct lb_env *env)
+ਸਥਿਰ ਪੂਰਨ should_we_balance(ਬਣਤਰ lb_env *env)
 {
-	struct cpumask *swb_cpus = this_cpu_cpumask_var_ptr(should_we_balance_tmpmask);
-	struct sched_group *sg = env->sd->groups;
-	int cpu, idle_smt = -1;
+	ਬਣਤਰ cpumask *swb_cpus = this_cpu_cpumask_var_ptr(should_we_balance_tmpmask);
+	ਬਣਤਰ sched_ਸਮੂਹ *sg = env->sd->groups;
+	ਪੂਰਨ cpu, idle_smt = -1;
 
 	/*
 	 * Ensure the balancing environment is consistent; can happen
 	 * when the softirq triggers 'during' hotplug.
 	 */
-	if (!cpumask_test_cpu(env->dst_cpu, env->cpus))
-		return 0;
+	ਜੇ (!cpumask_test_cpu(env->dst_cpu, env->cpus))
+		ਵਾਪਸ 0;
 
 	/*
 	 * In the newly idle case, we will allow all the CPUs
@@ -13634,73 +13634,73 @@ static int should_we_balance(struct lb_env *env)
 	 * However, we bail out if we already have tasks or a wakeup pending,
 	 * to optimize wakeup latency.
 	 */
-	if (env->idle == CPU_NEWLY_IDLE) {
-		if (env->dst_rq->nr_running > 0 || env->dst_rq->ttwu_pending)
-			return 0;
-		return 1;
+	ਜੇ (env->idle == CPU_NEWLY_IDLE) {
+		ਜੇ (env->dst_rq->nr_running > 0 || env->dst_rq->ttwu_pending)
+			ਵਾਪਸ 0;
+		ਵਾਪਸ 1;
 	}
 
-	cpumask_copy(swb_cpus, group_balance_mask(sg));
+	cpumask_copy(swb_cpus, ਸਮੂਹ_balance_ਨਕਾਬ(sg));
 	/* Try to find first idle CPU */
 	for_each_cpu_and(cpu, swb_cpus, env->cpus) {
-		if (!idle_cpu(cpu))
-			continue;
+		ਜੇ (!idle_cpu(cpu))
+			ਜਾਰੀ;
 
 		/*
 		 * Don't balance to idle SMT in busy core right away when
 		 * balancing cores, but remember the first idle SMT CPU for
 		 * later consideration.  Find CPU on an idle core first.
 		 */
-		if (sched_smt_active() &&
+		ਜੇ (sched_smt_ਸਰਗਰਮ() &&
 		    !(env->sd->flags & SD_SHARE_CPUCAPACITY) &&
 		    !is_core_idle(cpu)) {
-			if (idle_smt == -1)
+			ਜੇ (idle_smt == -1)
 				idle_smt = cpu;
 			/*
 			 * If the core is not idle, and first SMT sibling which is
 			 * idle has been found, then its not needed to check other
 			 * SMT siblings for idleness:
 			 */
-			cpumask_andnot(swb_cpus, swb_cpus, cpu_smt_mask(cpu));
-			continue;
+			cpumask_andnot(swb_cpus, swb_cpus, cpu_smt_ਨਕਾਬ(cpu));
+			ਜਾਰੀ;
 		}
 
 		/*
 		 * Are we the first idle core in a non-SMT domain or higher,
 		 * or the first idle CPU in a SMT domain?
 		 */
-		return cpu == env->dst_cpu;
+		ਵਾਪਸ cpu == env->dst_cpu;
 	}
 
 	/* Are we the first idle CPU with busy siblings? */
-	if (idle_smt != -1)
-		return idle_smt == env->dst_cpu;
+	ਜੇ (idle_smt != -1)
+		ਵਾਪਸ idle_smt == env->dst_cpu;
 
 	/* Are we the first CPU of this group ? */
-	return group_balance_cpu(sg) == env->dst_cpu;
+	ਵਾਪਸ ਸਮੂਹ_balance_cpu(sg) == env->dst_cpu;
 }
 
-static void update_lb_imbalance_stat(struct lb_env *env, struct sched_domain *sd,
-				     enum cpu_idle_type idle)
+ਸਥਿਰ ਖਾਲੀ update_lb_imbalance_stat(ਬਣਤਰ lb_env *env, ਬਣਤਰ sched_domain *sd,
+				     ਗਿਣਤੀ cpu_idle_type idle)
 {
-	if (!schedstat_enabled())
-		return;
+	ਜੇ (!schedstat_enabled())
+		ਵਾਪਸ;
 
-	switch (env->migration_type) {
-	case migrate_load:
-		__schedstat_add(sd->lb_imbalance_load[idle], env->imbalance);
-		break;
-	case migrate_util:
+	ਚੋਣ (env->migration_type) {
+	ਹਾਲਤ migrate_ਲੱਦੋ:
+		__schedstat_add(sd->lb_imbalance_ਲੱਦੋ[idle], env->imbalance);
+		ਰੋਕੋ;
+	ਹਾਲਤ migrate_util:
 		__schedstat_add(sd->lb_imbalance_util[idle], env->imbalance);
-		break;
-	case migrate_task:
+		ਰੋਕੋ;
+	ਹਾਲਤ migrate_task:
 		__schedstat_add(sd->lb_imbalance_task[idle], env->imbalance);
-		break;
-	case migrate_misfit:
+		ਰੋਕੋ;
+	ਹਾਲਤ migrate_misfit:
 		__schedstat_add(sd->lb_imbalance_misfit[idle], env->imbalance);
-		break;
-	case migrate_llc_task:
-		break;
+		ਰੋਕੋ;
+	ਹਾਲਤ migrate_llc_task:
+		ਰੋਕੋ;
 	}
 }
 
@@ -13717,63 +13717,63 @@ static void update_lb_imbalance_stat(struct lb_env *env, struct sched_domain *sd
  *   execution, as non-SD_SERIALIZE domains will still be
  *   load-balanced in parallel.
  */
-static atomic_t sched_balance_running = ATOMIC_INIT(0);
+ਸਥਿਰ atomic_t sched_balance_running = ATOMIC_INIT(0);
 
 /*
  * Check this_cpu to ensure it is balanced within domain. Attempt to move
  * tasks if there is an imbalance.
  */
-static int sched_balance_rq(int this_cpu, struct rq *this_rq,
-			struct sched_domain *sd, enum cpu_idle_type idle,
-			int *continue_balancing)
+ਸਥਿਰ ਪੂਰਨ sched_balance_rq(ਪੂਰਨ this_cpu, ਬਣਤਰ rq *this_rq,
+			ਬਣਤਰ sched_domain *sd, ਗਿਣਤੀ cpu_idle_type idle,
+			ਪੂਰਨ *continue_balancing)
 {
-	int ld_moved, cur_ld_moved, active_balance = 0;
-	struct sched_domain *sd_parent = sd->parent;
-	struct sched_group *group;
-	struct rq *busiest;
-	struct rq_flags rf;
-	struct cpumask *cpus = this_cpu_cpumask_var_ptr(load_balance_mask);
-	struct lb_env env = {
+	ਪੂਰਨ ld_moved, cur_ld_moved, ਸਰਗਰਮ_balance = 0;
+	ਬਣਤਰ sched_domain *sd_ਮਾਪਾ = sd->ਮਾਪਾ;
+	ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ;
+	ਬਣਤਰ rq *busiest;
+	ਬਣਤਰ rq_flags rf;
+	ਬਣਤਰ cpumask *cpus = this_cpu_cpumask_var_ptr(ਲੱਦੋ_balance_ਨਕਾਬ);
+	ਬਣਤਰ lb_env env = {
 		.sd		= sd,
 		.dst_cpu	= this_cpu,
 		.dst_rq		= this_rq,
-		.dst_grpmask    = group_balance_mask(sd->groups),
+		.dst_grpmask    = ਸਮੂਹ_balance_ਨਕਾਬ(sd->groups),
 		.idle		= idle,
 		.loop_break	= SCHED_NR_MIGRATE_BREAK,
 		.cpus		= cpus,
 		.fbq_type	= all,
-		.tasks		= LIST_HEAD_INIT(env.tasks),
+		.tasks		= LIST_ਸਿਰ_INIT(env.tasks),
 	};
 	bool need_unlock = false;
 
-	cpumask_and(cpus, sched_domain_span(sd), cpu_preferred_mask);
+	cpumask_and(cpus, sched_domain_ਵਿਸਤਾਰ(sd), cpu_preferred_ਨਕਾਬ);
 
-	schedstat_inc(sd->lb_count[idle]);
+	schedstat_inc(sd->lb_ਗਿਣਤੀ[idle]);
 
 redo:
-	if (!should_we_balance(&env)) {
+	ਜੇ (!should_we_balance(&env)) {
 		*continue_balancing = 0;
-		goto out_balanced;
+		ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 	}
 
-	if (!need_unlock && (sd->flags & SD_SERIALIZE)) {
-		int zero = 0;
-		if (!atomic_try_cmpxchg_acquire(&sched_balance_running, &zero, 1))
-			goto out_balanced;
+	ਜੇ (!need_unlock && (sd->flags & SD_SERIALIZE)) {
+		ਪੂਰਨ zero = 0;
+		ਜੇ (!atomic_try_cmpxchg_acquire(&sched_balance_running, &zero, 1))
+			ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 
 		need_unlock = true;
 	}
 
-	group = sched_balance_find_src_group(&env);
-	if (!group) {
+	ਸਮੂਹ = sched_balance_ਲੱਭੋ_src_ਸਮੂਹ(&env);
+	ਜੇ (!ਸਮੂਹ) {
 		schedstat_inc(sd->lb_nobusyg[idle]);
-		goto out_balanced;
+		ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 	}
 
-	busiest = sched_balance_find_src_rq(&env, group);
-	if (!busiest) {
+	busiest = sched_balance_ਲੱਭੋ_src_rq(&env, ਸਮੂਹ);
+	ਜੇ (!busiest) {
 		schedstat_inc(sd->lb_nobusyq[idle]);
-		goto out_balanced;
+		ਜਾਓ ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ;
 	}
 
 	WARN_ON_ONCE(busiest == env.dst_rq);
@@ -13786,7 +13786,7 @@ redo:
 	ld_moved = 0;
 	/* Clear this flag as soon as we find a pullable task */
 	env.flags |= LBF_ALL_PINNED;
-	if (busiest->nr_running > 1) {
+	ਜੇ (busiest->nr_running > 1) {
 		/*
 		 * Attempt to move tasks. If sched_balance_find_src_group has found
 		 * an imbalance but busiest->nr_running <= 1, the group is
@@ -13795,8 +13795,8 @@ redo:
 		 */
 		env.loop_max  = min(sysctl_sched_nr_migrate, busiest->nr_running);
 
-more_balance:
-		rq_lock_irqsave(busiest, &rf);
+ਹੋਰ_balance:
+		rq_ਤਾਲਾ_irqsave(busiest, &rf);
 		update_rq_clock(busiest);
 
 		/*
@@ -13815,16 +13815,16 @@ more_balance:
 
 		rq_unlock(busiest, &rf);
 
-		if (cur_ld_moved) {
+		ਜੇ (cur_ld_moved) {
 			attach_tasks(&env);
 			ld_moved += cur_ld_moved;
 		}
 
 		local_irq_restore(rf.flags);
 
-		if (env.flags & LBF_NEED_BREAK) {
+		ਜੇ (env.flags & LBF_NEED_BREAK) {
 			env.flags &= ~LBF_NEED_BREAK;
-			goto more_balance;
+			ਜਾਓ ਹੋਰ_balance;
 		}
 
 		/*
@@ -13846,7 +13846,7 @@ more_balance:
 		 * moreover subsequent load balance cycles should correct the
 		 * excess load moved.
 		 */
-		if ((env.flags & LBF_DST_PINNED) && env.imbalance > 0) {
+		ਜੇ ((env.flags & LBF_DST_PINNED) && env.imbalance > 0) {
 
 			/* Prevent to re-select dst_cpu via env's CPUs */
 			__cpumask_clear_cpu(env.dst_cpu, env.cpus);
@@ -13861,22 +13861,22 @@ more_balance:
 			 * Go back to "more_balance" rather than "redo" since we
 			 * need to continue with same src_cpu.
 			 */
-			goto more_balance;
+			ਜਾਓ ਹੋਰ_balance;
 		}
 
 		/*
 		 * We failed to reach balance because of affinity.
 		 */
-		if (sd_parent) {
-			int *group_imbalance = &sd_parent->groups->sgc->imbalance;
+		ਜੇ (sd_ਮਾਪਾ) {
+			ਪੂਰਨ *ਸਮੂਹ_imbalance = &sd_ਮਾਪਾ->groups->sgc->imbalance;
 
-			if ((env.flags & LBF_SOME_PINNED) && env.imbalance > 0)
-				*group_imbalance = 1;
+			ਜੇ ((env.flags & LBF_SOME_PINNED) && env.imbalance > 0)
+				*ਸਮੂਹ_imbalance = 1;
 		}
 
 		/* All tasks on this runqueue were pinned by CPU affinity */
-		if (unlikely(env.flags & LBF_ALL_PINNED)) {
-			__cpumask_clear_cpu(cpu_of(busiest), cpus);
+		ਜੇ (unlikely(env.flags & LBF_ALL_PINNED)) {
+			__cpumask_clear_cpu(cpu_ਦਾ(busiest), cpus);
 			/*
 			 * Attempting to continue load balancing at the current
 			 * sched_domain level only makes sense if there are
@@ -13885,18 +13885,18 @@ more_balance:
 			 * destination group that is receiving any migrated
 			 * load.
 			 */
-			if (!cpumask_subset(cpus, env.dst_grpmask)) {
+			ਜੇ (!cpumask_subset(cpus, env.dst_grpmask)) {
 				env.loop = 0;
 				env.loop_break = SCHED_NR_MIGRATE_BREAK;
-				goto redo;
+				ਜਾਓ redo;
 			}
-			goto out_all_pinned;
+			ਜਾਓ ਬਾਹਰਲਾ_all_pinned;
 		}
 	}
 
-	if (ld_moved) {
+	ਜੇ (ld_moved) {
 		sd->nr_balance_failed = 0;
-		goto out_unbalanced;
+		ਜਾਓ ਬਾਹਰਲਾ_unbalanced;
 	}
 
 	schedstat_inc(sd->lb_failed[idle]);
@@ -13915,22 +13915,22 @@ more_balance:
 	 * behavior and don't pollute nr_balance_failed.
 	 * See can_migrate_task().
 	 */
-	if (idle != CPU_NEWLY_IDLE &&
+	ਜੇ (idle != CPU_NEWLY_IDLE &&
 	    env.migration_type != migrate_misfit &&
 	    !(env.flags & LBF_LLC_PINNED))
 		sd->nr_balance_failed++;
 
-	if (!need_active_balance(&env))
-		goto out_unbalanced;
+	ਜੇ (!need_ਸਰਗਰਮ_balance(&env))
+		ਜਾਓ ਬਾਹਰਲਾ_unbalanced;
 
-	scoped_guard (raw_spin_rq_lock_irqsave, busiest) {
+	scoped_guard (raw_spin_rq_ਤਾਲਾ_irqsave, busiest) {
 		/*
 		 * Don't kick the active_load_balance_cpu_stop,
 		 * if the curr task on busiest CPU can't be
 		 * moved to this_cpu:
 		 */
-		if (!cpumask_test_cpu(this_cpu, busiest->curr->cpus_ptr))
-			goto out_one_pinned;
+		ਜੇ (!cpumask_test_cpu(this_cpu, busiest->curr->cpus_ptr))
+			ਜਾਓ ਬਾਹਰਲਾ_one_pinned;
 
 		/* Record that we found at least one task that could run on this_cpu */
 		env.flags &= ~LBF_ALL_PINNED;
@@ -13940,58 +13940,58 @@ more_balance:
 		 * ->active_balance_work.  Once set, it's cleared
 		 * only after active load balance is finished.
 		 */
-		if (busiest->active_balance)
-			goto out_unbalanced;
+		ਜੇ (busiest->ਸਰਗਰਮ_balance)
+			ਜਾਓ ਬਾਹਰਲਾ_unbalanced;
 
 		/*
 		 * @busiest dropped its rq_lock in the middle of
 		 * scheduling out its ->curr task (->on_rq := 0), no
 		 * need to forcefully punt it away with active balance.
 		 */
-		if (!busiest->curr->on_rq)
-			goto out_unbalanced;
+		ਜੇ (!busiest->curr->on_rq)
+			ਜਾਓ ਬਾਹਰਲਾ_unbalanced;
 
-		busiest->active_balance = 1;
-		busiest->push_cpu = this_cpu;
-		active_balance = 1;
+		busiest->ਸਰਗਰਮ_balance = 1;
+		busiest->ਧੱਕੋ_cpu = this_cpu;
+		ਸਰਗਰਮ_balance = 1;
 		preempt_disable();
 	}
-	if (active_balance) {
-		stop_one_cpu_nowait(cpu_of(busiest),
+	ਜੇ (ਸਰਗਰਮ_balance) {
+		stop_one_cpu_nowait(cpu_ਦਾ(busiest),
 				    alb_stop_fn(&env), busiest,
-				    &busiest->active_balance_work);
+				    &busiest->ਸਰਗਰਮ_balance_work);
 	}
 	preempt_enable();
 
-out_unbalanced:
+ਬਾਹਰਲਾ_unbalanced:
 	/* We were unbalanced, so reset the balancing interval */
 	sd->balance_interval = sd->min_interval;
-	goto out;
+	ਜਾਓ ਬਾਹਰਲਾ;
 
-out_balanced:
+ਬਾਹਰਲਾ_ਸੰਤੁਲਿਤ:
 	/*
 	 * We reach balance although we may have faced some affinity
 	 * constraints. Clear the imbalance flag only if other tasks got
 	 * a chance to move and fix the imbalance.
 	 */
-	if (sd_parent && !(env.flags & LBF_ALL_PINNED)) {
-		int *group_imbalance = &sd_parent->groups->sgc->imbalance;
+	ਜੇ (sd_ਮਾਪਾ && !(env.flags & LBF_ALL_PINNED)) {
+		ਪੂਰਨ *ਸਮੂਹ_imbalance = &sd_ਮਾਪਾ->groups->sgc->imbalance;
 
-		if (*group_imbalance)
-			*group_imbalance = 0;
+		ਜੇ (*ਸਮੂਹ_imbalance)
+			*ਸਮੂਹ_imbalance = 0;
 	}
 
-out_all_pinned:
+ਬਾਹਰਲਾ_all_pinned:
 	/*
 	 * We reach balance because all tasks are pinned at this level so
 	 * we can't migrate them. Let the imbalance flag set so parent level
 	 * can try to migrate them.
 	 */
-	schedstat_inc(sd->lb_balanced[idle]);
+	schedstat_inc(sd->lb_ਸੰਤੁਲਿਤ[idle]);
 
 	sd->nr_balance_failed = 0;
 
-out_one_pinned:
+ਬਾਹਰਲਾ_one_pinned:
 	ld_moved = 0;
 
 	/*
@@ -14004,57 +14004,57 @@ out_one_pinned:
 	 * the system being busy and requires lb to backoff to let it settle
 	 * down.
 	 */
-	if (env.idle == CPU_NEWLY_IDLE ||
+	ਜੇ (env.idle == CPU_NEWLY_IDLE ||
 	    env.migration_type == migrate_misfit)
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 
 	/* tune up the balancing interval */
-	if ((env.flags & LBF_ALL_PINNED &&
+	ਜੇ ((env.flags & LBF_ALL_PINNED &&
 	     sd->balance_interval < MAX_PINNED_INTERVAL) ||
 	    sd->balance_interval < sd->max_interval)
 		sd->balance_interval *= 2;
-out:
-	if (need_unlock)
-		atomic_set_release(&sched_balance_running, 0);
+ਬਾਹਰਲਾ:
+	ਜੇ (need_unlock)
+		atomic_ਸੈੱਟ_release(&sched_balance_running, 0);
 
-	return ld_moved;
+	ਵਾਪਸ ld_moved;
 }
 
-static inline unsigned long
-get_sd_balance_interval(struct sched_domain *sd, int cpu_busy)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ
+get_sd_balance_interval(ਬਣਤਰ sched_domain *sd, ਪੂਰਨ cpu_busy)
 {
-	unsigned long interval = sd->balance_interval;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ interval = sd->balance_interval;
 
-	if (cpu_busy)
-		interval *= sd->busy_factor;
+	ਜੇ (cpu_busy)
+		interval *= sd->busy_ਗੁਣਕ;
 
 	/* scale ms to jiffies */
-	interval = msecs_to_jiffies(interval);
+	interval = msecs_ਮੰਜ਼ਿਲ_jiffies(interval);
 
 	/*
 	 * Reduce likelihood of busy balancing at higher domains racing with
 	 * balancing at lower domains by preventing their balancing periods
 	 * from being multiples of each other.
 	 */
-	if (cpu_busy)
+	ਜੇ (cpu_busy)
 		interval -= 1;
 
-	interval = clamp(interval, 1UL, max_load_balance_interval);
+	interval = clamp(interval, 1UL, max_ਲੱਦੋ_balance_interval);
 
-	return interval;
+	ਵਾਪਸ interval;
 }
 
-static inline void
-update_next_balance(struct sched_domain *sd, unsigned long *next_balance)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+update_ਅਗਲਾ_balance(ਬਣਤਰ sched_domain *sd, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਅਗਲਾ_balance)
 {
-	unsigned long interval, next;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ interval, ਅਗਲਾ;
 
 	/* used by idle balance, so cpu_busy = 0 */
 	interval = get_sd_balance_interval(sd, 0);
-	next = sd->last_balance + interval;
+	ਅਗਲਾ = sd->ਆਖਰੀ_balance + interval;
 
-	if (time_after(*next_balance, next))
-		*next_balance = next;
+	ਜੇ (ਸਮਾਂ_after(*ਅਗਲਾ_balance, ਅਗਲਾ))
+		*ਅਗਲਾ_balance = ਅਗਲਾ;
 }
 
 /*
@@ -14063,118 +14063,118 @@ update_next_balance(struct sched_domain *sd, unsigned long *next_balance)
  * least 1 task to be running on each physical CPU where possible, and
  * avoids physical / logical imbalances.
  */
-static int __active_load_balance_cpu_stop(void *data, unsigned int lb_flags)
+ਸਥਿਰ ਪੂਰਨ __active_load_balance_cpu_stop(ਖਾਲੀ *ਅੰਕੜੇ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ lb_flags)
 {
-	struct rq *busiest_rq = data;
-	int busiest_cpu = cpu_of(busiest_rq);
-	int target_cpu = busiest_rq->push_cpu;
-	struct rq *target_rq = cpu_rq(target_cpu);
-	struct sched_domain *sd;
-	struct task_struct *p = NULL;
-	struct rq_flags rf;
+	ਬਣਤਰ rq *busiest_rq = ਅੰਕੜੇ;
+	ਪੂਰਨ busiest_cpu = cpu_ਦਾ(busiest_rq);
+	ਪੂਰਨ ਨਿਸ਼ਾਨਾ_cpu = busiest_rq->ਧੱਕੋ_cpu;
+	ਬਣਤਰ rq *ਨਿਸ਼ਾਨਾ_rq = cpu_rq(ਨਿਸ਼ਾਨਾ_cpu);
+	ਬਣਤਰ sched_domain *sd;
+	ਬਣਤਰ task_struct *p = ਨਿਰਾ;
+	ਬਣਤਰ rq_flags rf;
 
-	rq_lock_irq(busiest_rq, &rf);
+	rq_ਤਾਲਾ_irq(busiest_rq, &rf);
 	/*
 	 * Between queueing the stop-work and running it is a hole in which
 	 * CPUs can become inactive. We should not move tasks from or to
 	 * inactive CPUs.
 	 */
-	if (!cpu_active(busiest_cpu) || !cpu_active(target_cpu))
-		goto out_unlock;
+	ਜੇ (!cpu_ਸਰਗਰਮ(busiest_cpu) || !cpu_ਸਰਗਰਮ(ਨਿਸ਼ਾਨਾ_cpu))
+		ਜਾਓ ਬਾਹਰਲਾ_unlock;
 
 	/* Make sure the requested CPU hasn't gone down in the meantime: */
-	if (unlikely(busiest_cpu != smp_processor_id() ||
-		     !busiest_rq->active_balance))
-		goto out_unlock;
+	ਜੇ (unlikely(busiest_cpu != smp_processor_id() ||
+		     !busiest_rq->ਸਰਗਰਮ_balance))
+		ਜਾਓ ਬਾਹਰਲਾ_unlock;
 
 	/* Is there any task to move? */
-	if (busiest_rq->nr_running <= 1)
-		goto out_unlock;
+	ਜੇ (busiest_rq->nr_running <= 1)
+		ਜਾਓ ਬਾਹਰਲਾ_unlock;
 
 	/*
 	 * This condition is "impossible", if it occurs
 	 * we need to fix it. Originally reported by
 	 * Bjorn Helgaas on a 128-CPU setup.
 	 */
-	WARN_ON_ONCE(busiest_rq == target_rq);
+	WARN_ON_ONCE(busiest_rq == ਨਿਸ਼ਾਨਾ_rq);
 
 	/* Search for an sd spanning us and the target CPU. */
-	rcu_read_lock();
-	for_each_domain(target_cpu, sd) {
-		if (cpumask_test_cpu(busiest_cpu, sched_domain_span(sd)))
-			break;
+	rcu_read_ਤਾਲਾ();
+	for_each_domain(ਨਿਸ਼ਾਨਾ_cpu, sd) {
+		ਜੇ (cpumask_test_cpu(busiest_cpu, sched_domain_ਵਿਸਤਾਰ(sd)))
+			ਰੋਕੋ;
 	}
 
-	if (likely(sd)) {
-		struct lb_env env = {
+	ਜੇ (likely(sd)) {
+		ਬਣਤਰ lb_env env = {
 			.sd		= sd,
-			.dst_cpu	= target_cpu,
-			.dst_rq		= target_rq,
+			.dst_cpu	= ਨਿਸ਼ਾਨਾ_cpu,
+			.dst_rq		= ਨਿਸ਼ਾਨਾ_rq,
 			.src_cpu	= busiest_rq->cpu,
 			.src_rq		= busiest_rq,
 			.idle		= CPU_IDLE,
-			.flags		= LBF_ACTIVE_LB | lb_flags,
+			.flags		= LBF_ਸਰਗਰਮ_LB | lb_flags,
 		};
 
-		schedstat_inc(sd->alb_count);
+		schedstat_inc(sd->alb_ਗਿਣਤੀ);
 		update_rq_clock(busiest_rq);
 
 		p = detach_one_task(&env);
-		if (p) {
+		ਜੇ (p) {
 			schedstat_inc(sd->alb_pushed);
 			/* Active balancing done, reset the failure counter. */
 			sd->nr_balance_failed = 0;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			schedstat_inc(sd->alb_failed);
 		}
 	}
 	rcu_read_unlock();
-out_unlock:
-	busiest_rq->active_balance = 0;
+ਬਾਹਰਲਾ_unlock:
+	busiest_rq->ਸਰਗਰਮ_balance = 0;
 	rq_unlock(busiest_rq, &rf);
 
-	if (p)
-		attach_one_task(target_rq, p);
+	ਜੇ (p)
+		attach_one_task(ਨਿਸ਼ਾਨਾ_rq, p);
 
 	local_irq_enable();
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int active_load_balance_cpu_stop(void *data)
+ਸਥਿਰ ਪੂਰਨ ਸਰਗਰਮ_ਲੱਦੋ_balance_cpu_stop(ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	return __active_load_balance_cpu_stop(data, 0);
+	ਵਾਪਸ __active_load_balance_cpu_stop(ਅੰਕੜੇ, 0);
 }
 
-static int active_load_balance_llc_cpu_stop(void *data)
+ਸਥਿਰ ਪੂਰਨ ਸਰਗਰਮ_ਲੱਦੋ_balance_llc_cpu_stop(ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	return __active_load_balance_cpu_stop(data, LBF_ACTIVE_LB_LLC);
+	ਵਾਪਸ __active_load_balance_cpu_stop(ਅੰਕੜੇ, LBF_ਸਰਗਰਮ_LB_LLC);
 }
 
 /*
  * Scale the max sched_balance_rq interval with the number of CPUs in the system.
  * This trades load-balance latency on larger machines for less cross talk.
  */
-void update_max_interval(void)
+ਖਾਲੀ update_max_interval(ਖਾਲੀ)
 {
-	max_load_balance_interval = HZ*num_online_cpus()/10;
+	max_ਲੱਦੋ_balance_interval = HZ*ਅੰਕ_online_cpus()/10;
 }
 
-static inline void update_newidle_stats(struct sched_domain *sd, unsigned int success)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_newidle_stats(ਬਣਤਰ sched_domain *sd, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ success)
 {
 	sd->newidle_call++;
 	sd->newidle_success += success;
 
-	if (sd->newidle_call >= 1024) {
+	ਜੇ (sd->newidle_call >= 1024) {
 		u64 now = sched_clock();
 		s64 delta = now - sd->newidle_stamp;
 		sd->newidle_stamp = now;
-		int ratio = 0;
+		ਪੂਰਨ ਅਨੁਪਾਤ = 0;
 
-		if (delta < 0)
+		ਜੇ (delta < 0)
 			delta = 0;
 
-		if (sched_feat(NI_RATE)) {
+		ਜੇ (sched_feat(NI_ਦਰ)) {
 			/*
 			 * ratio  delta   freq
 			 *
@@ -14184,46 +14184,46 @@ static inline void update_newidle_stats(struct sched_domain *sd, unsigned int su
 			 *  128 - .5  s - 1024 Hz
 			 *   64 - .25 s - 2048 Hz
 			 */
-			ratio = delta >> 22;
+			ਅਨੁਪਾਤ = delta >> 22;
 		}
 
-		ratio += sd->newidle_success;
+		ਅਨੁਪਾਤ += sd->newidle_success;
 
-		sd->newidle_ratio = min(1024, ratio);
+		sd->newidle_ਅਨੁਪਾਤ = min(1024, ਅਨੁਪਾਤ);
 		sd->newidle_call /= 2;
 		sd->newidle_success /= 2;
 	}
 }
 
-static inline bool
-update_newidle_cost(struct sched_domain *sd, u64 cost, unsigned int success)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+update_newidle_ਲਾਗਤ(ਬਣਤਰ sched_domain *sd, u64 ਲਾਗਤ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ success)
 {
-	unsigned long next_decay = sd->last_decay_max_lb_cost + HZ;
-	unsigned long now = jiffies;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਅਗਲਾ_decay = sd->ਆਖਰੀ_decay_max_lb_ਲਾਗਤ + HZ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ now = jiffies;
 
-	if (cost)
+	ਜੇ (ਲਾਗਤ)
 		update_newidle_stats(sd, success);
 
-	if (cost > sd->max_newidle_lb_cost) {
+	ਜੇ (ਲਾਗਤ > sd->max_newidle_lb_ਲਾਗਤ) {
 		/*
 		 * Track max cost of a domain to make sure to not delay the
 		 * next wakeup on the CPU.
 		 */
-		sd->max_newidle_lb_cost = cost;
-		sd->last_decay_max_lb_cost = now;
+		sd->max_newidle_lb_ਲਾਗਤ = ਲਾਗਤ;
+		sd->ਆਖਰੀ_decay_max_lb_ਲਾਗਤ = now;
 
-	} else if (time_after(now, next_decay)) {
+	} ਨਹੀਂਤਾਂ ਜੇ (ਸਮਾਂ_after(now, ਅਗਲਾ_decay)) {
 		/*
 		 * Decay the newidle max times by ~1% per second to ensure that
 		 * it is not outdated and the current max cost is actually
 		 * shorter.
 		 */
-		sd->max_newidle_lb_cost = (sd->max_newidle_lb_cost * 253) / 256;
-		sd->last_decay_max_lb_cost = now;
-		return true;
+		sd->max_newidle_lb_ਲਾਗਤ = (sd->max_newidle_lb_ਲਾਗਤ * 253) / 256;
+		sd->ਆਖਰੀ_decay_max_lb_ਲਾਗਤ = now;
+		ਵਾਪਸ true;
 	}
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 /*
@@ -14232,42 +14232,42 @@ update_newidle_cost(struct sched_domain *sd, u64 cost, unsigned int success)
  *
  * Balancing parameters are set up in init_sched_domains.
  */
-static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ਸਥਿਰ ਖਾਲੀ sched_balance_domains(ਬਣਤਰ rq *rq, ਗਿਣਤੀ cpu_idle_type idle)
 {
-	int continue_balancing = 1;
-	int cpu = rq->cpu;
-	int busy = idle != CPU_IDLE && !sched_idle_rq(rq);
-	unsigned long interval;
-	struct sched_domain *sd;
+	ਪੂਰਨ continue_balancing = 1;
+	ਪੂਰਨ cpu = rq->cpu;
+	ਪੂਰਨ busy = idle != CPU_IDLE && !sched_idle_rq(rq);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ interval;
+	ਬਣਤਰ sched_domain *sd;
 	/* Earliest time when we have to do rebalance again */
-	unsigned long next_balance = jiffies + 60*HZ;
-	int update_next_balance = 0;
-	int need_decay = 0;
-	u64 max_cost = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਅਗਲਾ_balance = jiffies + 60*HZ;
+	ਪੂਰਨ update_ਅਗਲਾ_balance = 0;
+	ਪੂਰਨ need_decay = 0;
+	u64 max_ਲਾਗਤ = 0;
 
-	rcu_read_lock();
+	rcu_read_ਤਾਲਾ();
 	for_each_domain(cpu, sd) {
 		/*
 		 * Decay the newidle max times here because this is a regular
 		 * visit to all the domains.
 		 */
-		need_decay = update_newidle_cost(sd, 0, 0);
-		max_cost += sd->max_newidle_lb_cost;
+		need_decay = update_newidle_ਲਾਗਤ(sd, 0, 0);
+		max_ਲਾਗਤ += sd->max_newidle_lb_ਲਾਗਤ;
 
 		/*
 		 * Stop the load balance at this level. There is another
 		 * CPU in our sched group which is doing load balancing more
 		 * actively.
 		 */
-		if (!continue_balancing) {
-			if (need_decay)
-				continue;
-			break;
+		ਜੇ (!continue_balancing) {
+			ਜੇ (need_decay)
+				ਜਾਰੀ;
+			ਰੋਕੋ;
 		}
 
 		interval = get_sd_balance_interval(sd, busy);
-		if (time_after_eq(jiffies, sd->last_balance + interval)) {
-			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+		ਜੇ (ਸਮਾਂ_after_eq(jiffies, sd->ਆਖਰੀ_balance + interval)) {
+			ਜੇ (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
 				/*
 				 * The LBF_DST_PINNED logic could have changed
 				 * env->dst_cpu, so we can't know our idle
@@ -14276,21 +14276,21 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
 				idle = idle_cpu(cpu);
 				busy = !idle && !sched_idle_rq(rq);
 			}
-			sd->last_balance = jiffies;
+			sd->ਆਖਰੀ_balance = jiffies;
 			interval = get_sd_balance_interval(sd, busy);
 		}
-		if (time_after(next_balance, sd->last_balance + interval)) {
-			next_balance = sd->last_balance + interval;
-			update_next_balance = 1;
+		ਜੇ (ਸਮਾਂ_after(ਅਗਲਾ_balance, sd->ਆਖਰੀ_balance + interval)) {
+			ਅਗਲਾ_balance = sd->ਆਖਰੀ_balance + interval;
+			update_ਅਗਲਾ_balance = 1;
 		}
 	}
-	if (need_decay) {
+	ਜੇ (need_decay) {
 		/*
 		 * Ensure the rq-wide value also decays but keep it at a
 		 * reasonable floor to avoid funnies with rq->avg_idle.
 		 */
-		rq->max_idle_balance_cost =
-			max((u64)sysctl_sched_migration_cost, max_cost);
+		rq->max_idle_balance_ਲਾਗਤ =
+			max((u64)sysctl_sched_migration_ਲਾਗਤ, max_ਲਾਗਤ);
 	}
 	rcu_read_unlock();
 
@@ -14299,17 +14299,17 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
 	 * When the cpu is attached to null domain for ex, it will not be
 	 * updated.
 	 */
-	if (likely(update_next_balance))
-		rq->next_balance = next_balance;
+	ਜੇ (likely(update_ਅਗਲਾ_balance))
+		rq->ਅਗਲਾ_balance = ਅਗਲਾ_balance;
 
 }
 
-static inline int on_null_domain(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ on_null_domain(ਬਣਤਰ rq *rq)
 {
-	return unlikely(!rcu_dereference_sched(rq->sd));
+	ਵਾਪਸ unlikely(!rcu_dereference_sched(rq->sd));
 }
 
-#ifdef CONFIG_NO_HZ_COMMON
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_COMMON
 /*
  * NOHZ idle load balancing (ILB) details:
  *
@@ -14317,10 +14317,10 @@ static inline int on_null_domain(struct rq *rq)
  *   needed, they will kick the idle load balancer, which then does idle
  *   load balancing for all the idle CPUs.
  */
-static inline int find_new_ilb(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ ਲੱਭੋ_new_ilb(ਖਾਲੀ)
 {
-	struct cpumask *ilb_cpus;
-	int ilb_cpu, fallback = -1;
+	ਬਣਤਰ cpumask *ilb_cpus;
+	ਪੂਰਨ ilb_cpu, fallback = -1;
 
 	lockdep_assert_irqs_disabled();
 
@@ -14328,19 +14328,19 @@ static inline int find_new_ilb(void)
 	 * Reuse the per-CPU select_rq_mask, which is protected from concurrent
 	 * use on this CPU by having interrupts disabled.
 	 */
-	ilb_cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
-	cpumask_and(ilb_cpus, nohz.idle_cpus_mask,
+	ilb_cpus = this_cpu_cpumask_var_ptr(select_rq_ਨਕਾਬ);
+	cpumask_and(ilb_cpus, nohz.idle_cpus_ਨਕਾਬ,
 		    housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
 
 	for_each_cpu(ilb_cpu, ilb_cpus) {
-		if (!idle_cpu(ilb_cpu)) {
+		ਜੇ (!idle_cpu(ilb_cpu)) {
 			/*
 			 * Once an idle fallback exists, a busy CPU proves that
 			 * this core cannot be fully idle. Skip its siblings.
 			 */
-			if (sched_smt_active() && fallback >= 0)
-				cpumask_andnot(ilb_cpus, ilb_cpus, cpu_smt_mask(ilb_cpu));
-			continue;
+			ਜੇ (sched_smt_ਸਰਗਰਮ() && fallback >= 0)
+				cpumask_andnot(ilb_cpus, ilb_cpus, cpu_smt_ਨਕਾਬ(ilb_cpu));
+			ਜਾਰੀ;
 		}
 
 		/*
@@ -14350,8 +14350,8 @@ static inline int find_new_ilb(void)
 		 * a fallback so idle balancing can still make progress when no fully
 		 * idle core exists.
 		 */
-		if (sched_smt_active() && !is_core_idle(ilb_cpu)) {
-			if (fallback < 0)
+		ਜੇ (sched_smt_ਸਰਗਰਮ() && !is_core_idle(ilb_cpu)) {
+			ਜੇ (fallback < 0)
 				fallback = ilb_cpu;
 
 			/*
@@ -14359,14 +14359,14 @@ static inline int find_new_ilb(void)
 			 * any of its other SMT siblings.
 			 */
 			cpumask_andnot(ilb_cpus, ilb_cpus,
-				       cpu_smt_mask(ilb_cpu));
-			continue;
+				       cpu_smt_ਨਕਾਬ(ilb_cpu));
+			ਜਾਰੀ;
 		}
 
-		return ilb_cpu;
+		ਵਾਪਸ ilb_cpu;
 	}
 
-	return fallback;
+	ਵਾਪਸ fallback;
 }
 
 /*
@@ -14376,35 +14376,35 @@ static inline int find_new_ilb(void)
  * Prefer a CPU on a fully idle core in the HK_TYPE_KERNEL_NOISE housekeeping
  * set. Fall back to the first idle CPU when no fully idle core exists.
  */
-static void kick_ilb(unsigned int flags)
+ਸਥਿਰ ਖਾਲੀ kick_ilb(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags)
 {
-	int ilb_cpu;
+	ਪੂਰਨ ilb_cpu;
 
 	/*
 	 * Increase nohz.next_balance only when if full ilb is triggered but
 	 * not if we only update stats.
 	 */
-	if (flags & NOHZ_BALANCE_KICK)
-		nohz.next_balance = jiffies+1;
+	ਜੇ (flags & NOHZ_BALANCE_KICK)
+		nohz.ਅਗਲਾ_balance = jiffies+1;
 
-	ilb_cpu = find_new_ilb();
-	if (ilb_cpu < 0)
-		return;
+	ilb_cpu = ਲੱਭੋ_new_ilb();
+	ਜੇ (ilb_cpu < 0)
+		ਵਾਪਸ;
 
 	/*
 	 * Don't bother if no new NOHZ balance work items for ilb_cpu,
 	 * i.e. all bits in flags are already set in ilb_cpu.
 	 */
-	if ((atomic_read(nohz_flags(ilb_cpu)) & flags) == flags)
-		return;
+	ਜੇ ((atomic_read(nohz_flags(ilb_cpu)) & flags) == flags)
+		ਵਾਪਸ;
 
 	/*
 	 * Access to rq::nohz_csd is serialized by NOHZ_KICK_MASK; he who sets
 	 * the first flag owns it; cleared by nohz_csd_func().
 	 */
 	flags = atomic_fetch_or(flags, nohz_flags(ilb_cpu));
-	if (flags & NOHZ_KICK_MASK)
-		return;
+	ਜੇ (flags & NOHZ_KICK_ਨਕਾਬ)
+		ਵਾਪਸ;
 
 	/*
 	 * This way we generate an IPI on the target CPU which
@@ -14418,16 +14418,16 @@ static void kick_ilb(unsigned int flags)
  * Current decision point for kicking the idle load balancer in the presence
  * of idle CPUs in the system.
  */
-static void nohz_balancer_kick(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ nohz_balancer_kick(ਬਣਤਰ rq *rq)
 {
-	unsigned long now = jiffies;
-	struct sched_domain_shared *sds;
-	struct sched_domain *sd;
-	int nr_busy, i, cpu = rq->cpu;
-	unsigned int flags = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ now = jiffies;
+	ਬਣਤਰ sched_domain_shared *sds;
+	ਬਣਤਰ sched_domain *sd;
+	ਪੂਰਨ nr_busy, i, cpu = rq->cpu;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags = 0;
 
-	if (unlikely(rq->idle_balance))
-		return;
+	ਜੇ (unlikely(rq->idle_balance))
+		ਵਾਪਸ;
 
 	/*
 	 * We may be recently in ticked or tickless idle mode. At the first
@@ -14435,8 +14435,8 @@ static void nohz_balancer_kick(struct rq *rq)
 	 */
 	nohz_balance_exit_idle(rq);
 
-	if (READ_ONCE(nohz.has_blocked_load) &&
-	    time_after(now, READ_ONCE(nohz.next_blocked)))
+	ਜੇ (READ_ONCE(nohz.has_blocked_ਲੱਦੋ) &&
+	    ਸਮਾਂ_after(now, READ_ONCE(nohz.ਅਗਲਾ_blocked)))
 		flags = NOHZ_STATS_KICK;
 
 	/*
@@ -14448,35 +14448,35 @@ static void nohz_balancer_kick(struct rq *rq)
 	 * But idle load balancing is not done as find_new_ilb fails.
 	 * That's very rare. So read nohz.nr_cpus only if time is due.
 	 */
-	if (time_before(now, nohz.next_balance))
-		goto out;
+	ਜੇ (ਸਮਾਂ_before(now, nohz.ਅਗਲਾ_balance))
+		ਜਾਓ ਬਾਹਰਲਾ;
 
 	/*
 	 * None are in tickless mode and hence no need for NOHZ idle load
 	 * balancing
 	 */
-	if (unlikely(cpumask_empty(nohz.idle_cpus_mask)))
-		return;
+	ਜੇ (unlikely(cpumask_ਖਾਲੀ_ਥਾਵਾਂ(nohz.idle_cpus_ਨਕਾਬ)))
+		ਵਾਪਸ;
 
-	if (rq->nr_running >= 2) {
+	ਜੇ (rq->nr_running >= 2) {
 		flags = NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
 	sd = rcu_dereference_all(rq->sd);
-	if (sd) {
+	ਜੇ (sd) {
 		/*
 		 * If there's a runnable CFS task and the current CPU has reduced
 		 * capacity, kick the ILB to see if there's a better CPU to run on:
 		 */
-		if (rq->cfs.h_nr_runnable >= 1 && check_cpu_capacity(rq, sd)) {
+		ਜੇ (rq->cfs.h_nr_runnable >= 1 && check_cpu_ਸਮਰੱਥਾ(rq, sd)) {
 			flags |= NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
 	}
 
-	sd = rcu_dereference_all(per_cpu(sd_asym_packing, cpu));
-	if (sd) {
+	sd = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_asym_packing, cpu));
+	ਜੇ (sd) {
 		/*
 		 * When ASYM_PACKING; see if there's a more preferred CPU
 		 * currently idle; in which case, kick the ILB to move tasks
@@ -14485,21 +14485,21 @@ static void nohz_balancer_kick(struct rq *rq)
 		 * When balancing between cores, all the SMT siblings of the
 		 * preferred CPU must be idle.
 		 */
-		for_each_cpu_and(i, sched_domain_span(sd), nohz.idle_cpus_mask) {
-			if (sched_asym(sd, i, cpu)) {
+		for_each_cpu_and(i, sched_domain_ਵਿਸਤਾਰ(sd), nohz.idle_cpus_ਨਕਾਬ) {
+			ਜੇ (sched_asym(sd, i, cpu)) {
 				flags |= NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
-				goto out;
+				ਜਾਓ ਬਾਹਰਲਾ;
 			}
 		}
 	}
 
-	sd = rcu_dereference_all(per_cpu(sd_asym_cpucapacity, cpu));
-	if (sd) {
+	sd = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_asym_cpucapacity, cpu));
+	ਜੇ (sd) {
 		/*
 		 * When ASYM_CPUCAPACITY; see if there's a higher capacity CPU
 		 * to run the misfit task on.
 		 */
-		if (check_misfit_status(rq))
+		ਜੇ (check_misfit_ਸਥਿਤੀ(rq))
 			flags |= NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
 
 		/*
@@ -14509,11 +14509,11 @@ static void nohz_balancer_kick(struct rq *rq)
 		 *
 		 * Skip the LLC logic because it's not relevant in that case.
 		 */
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
-	sds = rcu_dereference_all(per_cpu(sd_balance_shared, cpu));
-	if (sds) {
+	sds = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_balance_shared, cpu));
+	ਜੇ (sds) {
 		/*
 		 * If there is an imbalance between LLC domains (IOW we could
 		 * increase the overall cache utilization), we need a less-loaded LLC
@@ -14524,54 +14524,54 @@ static void nohz_balancer_kick(struct rq *rq)
 		 * like this LLC domain has tasks we could move.
 		 */
 		nr_busy = atomic_read(&sds->nr_busy_cpus);
-		if (nr_busy > 1)
+		ਜੇ (nr_busy > 1)
 			flags |= NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
 	}
-out:
-	if (READ_ONCE(nohz.needs_update))
-		flags |= NOHZ_NEXT_KICK;
+ਬਾਹਰਲਾ:
+	ਜੇ (READ_ONCE(nohz.needs_update))
+		flags |= NOHZ_ਅਗਲਾ_KICK;
 
-	if (flags)
+	ਜੇ (flags)
 		kick_ilb(flags);
 }
 
-static void set_cpu_sd_state_busy(int cpu)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_cpu_sd_state_busy(ਪੂਰਨ cpu)
 {
-	struct sched_domain *sd;
-	sd = rcu_dereference_all(per_cpu(sd_llc, cpu));
+	ਬਣਤਰ sched_domain *sd;
+	sd = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_llc, cpu));
 
 	/*
 	 * sd->nohz_idle only pairs with nr_busy_cpus on sd->shared; if this
 	 * domain has no shared object there is nothing to clear or account.
 	 */
-	if (!sd || !sd->shared || !sd->nohz_idle)
-		return;
+	ਜੇ (!sd || !sd->shared || !sd->nohz_idle)
+		ਵਾਪਸ;
 	sd->nohz_idle = 0;
 
 	atomic_inc(&sd->shared->nr_busy_cpus);
 }
 
-void nohz_balance_exit_idle(struct rq *rq)
+ਖਾਲੀ nohz_balance_exit_idle(ਬਣਤਰ rq *rq)
 {
 	WARN_ON_ONCE(rq != this_rq());
 
-	if (likely(!rq->nohz_tick_stopped))
-		return;
+	ਜੇ (likely(!rq->nohz_tick_stopped))
+		ਵਾਪਸ;
 
 	rq->nohz_tick_stopped = 0;
-	cpumask_clear_cpu(rq->cpu, nohz.idle_cpus_mask);
+	cpumask_clear_cpu(rq->cpu, nohz.idle_cpus_ਨਕਾਬ);
 
-	set_cpu_sd_state_busy(rq->cpu);
+	ਸੈੱਟ_cpu_sd_state_busy(rq->cpu);
 }
 
-static void set_cpu_sd_state_idle(int cpu)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_cpu_sd_state_idle(ਪੂਰਨ cpu)
 {
-	struct sched_domain *sd;
-	sd = rcu_dereference_all(per_cpu(sd_llc, cpu));
+	ਬਣਤਰ sched_domain *sd;
+	sd = rcu_dereference_all(ਪ੍ਰਤੀ_cpu(sd_llc, cpu));
 
 	/* See set_cpu_sd_state_busy(): nohz_idle is only used with sd->shared. */
-	if (!sd || !sd->shared || sd->nohz_idle)
-		return;
+	ਜੇ (!sd || !sd->shared || sd->nohz_idle)
+		ਵਾਪਸ;
 	sd->nohz_idle = 1;
 
 	atomic_dec(&sd->shared->nr_busy_cpus);
@@ -14581,22 +14581,22 @@ static void set_cpu_sd_state_idle(int cpu)
  * This routine will record that the CPU is going idle with tick stopped.
  * This info will be used in performing idle load balancing in the future.
  */
-void nohz_balance_enter_idle(int cpu)
+ਖਾਲੀ nohz_balance_enter_idle(ਪੂਰਨ cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	ਬਣਤਰ rq *rq = cpu_rq(cpu);
 
 	WARN_ON_ONCE(cpu != smp_processor_id());
 
 	/* If this CPU is going down, then nothing needs to be done: */
-	if (!cpu_active(cpu))
-		return;
+	ਜੇ (!cpu_ਸਰਗਰਮ(cpu))
+		ਵਾਪਸ;
 
 	/*
 	 * Can be set safely without rq->lock held
 	 * If a clear happens, it will have evaluated last additions because
 	 * rq->lock is held during the check and the clear
 	 */
-	rq->has_blocked_load = 1;
+	rq->has_blocked_ਲੱਦੋ = 1;
 
 	/*
 	 * The tick is still stopped but load could have been added in the
@@ -14604,16 +14604,16 @@ void nohz_balance_enter_idle(int cpu)
 	 * *_avg. The CPU is already part of nohz.idle_cpus_mask so the clear
 	 * of nohz.has_blocked_load can only happen after checking the new load
 	 */
-	if (rq->nohz_tick_stopped)
-		goto out;
+	ਜੇ (rq->nohz_tick_stopped)
+		ਜਾਓ ਬਾਹਰਲਾ;
 
 	/* If we're a completely isolated CPU, we don't play: */
-	if (on_null_domain(rq))
-		return;
+	ਜੇ (on_null_domain(rq))
+		ਵਾਪਸ;
 
 	rq->nohz_tick_stopped = 1;
 
-	cpumask_set_cpu(cpu, nohz.idle_cpus_mask);
+	cpumask_ਸੈੱਟ_cpu(cpu, nohz.idle_cpus_ਨਕਾਬ);
 
 	/*
 	 * Ensures that if nohz_idle_balance() fails to observe our
@@ -14622,33 +14622,33 @@ void nohz_balance_enter_idle(int cpu)
 	 */
 	smp_mb__after_atomic();
 
-	set_cpu_sd_state_idle(cpu);
+	ਸੈੱਟ_cpu_sd_state_idle(cpu);
 
 	WRITE_ONCE(nohz.needs_update, 1);
-out:
+ਬਾਹਰਲਾ:
 	/*
 	 * Each time a cpu enter idle, we assume that it has blocked load and
 	 * enable the periodic update of the load of idle CPUs
 	 */
-	WRITE_ONCE(nohz.has_blocked_load, 1);
+	WRITE_ONCE(nohz.has_blocked_ਲੱਦੋ, 1);
 }
 
-static bool update_nohz_stats(struct rq *rq)
+ਸਥਿਰ bool update_nohz_stats(ਬਣਤਰ rq *rq)
 {
-	unsigned int cpu = rq->cpu;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu = rq->cpu;
 
-	if (!rq->has_blocked_load)
-		return false;
+	ਜੇ (!rq->has_blocked_ਲੱਦੋ)
+		ਵਾਪਸ false;
 
-	if (!cpumask_test_cpu(cpu, nohz.idle_cpus_mask))
-		return false;
+	ਜੇ (!cpumask_test_cpu(cpu, nohz.idle_cpus_ਨਕਾਬ))
+		ਵਾਪਸ false;
 
-	if (!time_after(jiffies, READ_ONCE(rq->last_blocked_load_update_tick)))
-		return true;
+	ਜੇ (!ਸਮਾਂ_after(jiffies, READ_ONCE(rq->ਆਖਰੀ_blocked_ਲੱਦੋ_update_tick)))
+		ਵਾਪਸ true;
 
 	sched_balance_update_blocked_averages(cpu);
 
-	return rq->has_blocked_load;
+	ਵਾਪਸ rq->has_blocked_ਲੱਦੋ;
 }
 
 /*
@@ -14656,18 +14656,18 @@ static bool update_nohz_stats(struct rq *rq)
  * can be a simple update of blocked load or a complete load balance with
  * tasks movement depending of flags.
  */
-static void _nohz_idle_balance(struct rq *this_rq, unsigned int flags)
+ਸਥਿਰ ਖਾਲੀ _nohz_idle_balance(ਬਣਤਰ rq *this_rq, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags)
 {
 	/* Earliest time when we have to do rebalance again */
-	unsigned long now = jiffies;
-	unsigned long next_balance = now + 60*HZ;
-	bool has_blocked_load = false;
-	int update_next_balance = 0;
-	int this_cpu = this_rq->cpu;
-	int balance_cpu;
-	struct rq *rq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ now = jiffies;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਅਗਲਾ_balance = now + 60*HZ;
+	bool has_blocked_ਲੱਦੋ = false;
+	ਪੂਰਨ update_ਅਗਲਾ_balance = 0;
+	ਪੂਰਨ this_cpu = this_rq->cpu;
+	ਪੂਰਨ balance_cpu;
+	ਬਣਤਰ rq *rq;
 
-	WARN_ON_ONCE((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
+	WARN_ON_ONCE((flags & NOHZ_KICK_ਨਕਾਬ) == NOHZ_BALANCE_KICK);
 
 	/*
 	 * We assume there will be no idle load after this update and clear
@@ -14679,9 +14679,9 @@ static void _nohz_idle_balance(struct rq *this_rq, unsigned int flags)
 	 *
 	 * Same applies to idle_cpus_mask vs needs_update.
 	 */
-	if (flags & NOHZ_STATS_KICK)
-		WRITE_ONCE(nohz.has_blocked_load, 0);
-	if (flags & NOHZ_NEXT_KICK)
+	ਜੇ (flags & NOHZ_STATS_KICK)
+		WRITE_ONCE(nohz.has_blocked_ਲੱਦੋ, 0);
+	ਜੇ (flags & NOHZ_ਅਗਲਾ_KICK)
 		WRITE_ONCE(nohz.needs_update, 0);
 
 	/*
@@ -14694,46 +14694,46 @@ static void _nohz_idle_balance(struct rq *this_rq, unsigned int flags)
 	 * Start with the next CPU after this_cpu so we will end with this_cpu and let a
 	 * chance for other idle cpu to pull load.
 	 */
-	for_each_cpu_wrap(balance_cpu,  nohz.idle_cpus_mask, this_cpu+1) {
-		if (!idle_cpu(balance_cpu))
-			continue;
+	for_each_cpu_wrap(balance_cpu,  nohz.idle_cpus_ਨਕਾਬ, this_cpu+1) {
+		ਜੇ (!idle_cpu(balance_cpu))
+			ਜਾਰੀ;
 
 		/*
 		 * If this CPU gets work to do, stop the load balancing
 		 * work being done for other CPUs. Next load
 		 * balancing owner will pick it up.
 		 */
-		if (!idle_cpu(this_cpu) && need_resched()) {
-			if (flags & NOHZ_STATS_KICK)
-				has_blocked_load = true;
-			if (flags & NOHZ_NEXT_KICK)
+		ਜੇ (!idle_cpu(this_cpu) && need_resched()) {
+			ਜੇ (flags & NOHZ_STATS_KICK)
+				has_blocked_ਲੱਦੋ = true;
+			ਜੇ (flags & NOHZ_ਅਗਲਾ_KICK)
 				WRITE_ONCE(nohz.needs_update, 1);
-			goto abort;
+			ਜਾਓ abort;
 		}
 
 		rq = cpu_rq(balance_cpu);
 
-		if (flags & NOHZ_STATS_KICK)
-			has_blocked_load |= update_nohz_stats(rq);
+		ਜੇ (flags & NOHZ_STATS_KICK)
+			has_blocked_ਲੱਦੋ |= update_nohz_stats(rq);
 
 		/*
 		 * If time for next balance is due,
 		 * do the balance.
 		 */
-		if (time_after_eq(jiffies, rq->next_balance)) {
-			struct rq_flags rf;
+		ਜੇ (ਸਮਾਂ_after_eq(jiffies, rq->ਅਗਲਾ_balance)) {
+			ਬਣਤਰ rq_flags rf;
 
-			rq_lock_irqsave(rq, &rf);
+			rq_ਤਾਲਾ_irqsave(rq, &rf);
 			update_rq_clock(rq);
 			rq_unlock_irqrestore(rq, &rf);
 
-			if (flags & NOHZ_BALANCE_KICK)
+			ਜੇ (flags & NOHZ_BALANCE_KICK)
 				sched_balance_domains(rq, CPU_IDLE);
 		}
 
-		if (time_after(next_balance, rq->next_balance)) {
-			next_balance = rq->next_balance;
-			update_next_balance = 1;
+		ਜੇ (ਸਮਾਂ_after(ਅਗਲਾ_balance, rq->ਅਗਲਾ_balance)) {
+			ਅਗਲਾ_balance = rq->ਅਗਲਾ_balance;
+			update_ਅਗਲਾ_balance = 1;
 		}
 	}
 
@@ -14742,38 +14742,38 @@ static void _nohz_idle_balance(struct rq *this_rq, unsigned int flags)
 	 * When the CPU is attached to null domain for ex, it will not be
 	 * updated.
 	 */
-	if (likely(update_next_balance))
-		nohz.next_balance = next_balance;
+	ਜੇ (likely(update_ਅਗਲਾ_balance))
+		nohz.ਅਗਲਾ_balance = ਅਗਲਾ_balance;
 
-	if (flags & NOHZ_STATS_KICK)
-		WRITE_ONCE(nohz.next_blocked,
-			   now + msecs_to_jiffies(LOAD_AVG_PERIOD));
+	ਜੇ (flags & NOHZ_STATS_KICK)
+		WRITE_ONCE(nohz.ਅਗਲਾ_blocked,
+			   now + msecs_ਮੰਜ਼ਿਲ_jiffies(ਲੱਦੋ_AVG_PERIOD));
 
 abort:
 	/* There is still blocked load, enable periodic update */
-	if (has_blocked_load)
-		WRITE_ONCE(nohz.has_blocked_load, 1);
+	ਜੇ (has_blocked_ਲੱਦੋ)
+		WRITE_ONCE(nohz.has_blocked_ਲੱਦੋ, 1);
 }
 
 /*
  * In CONFIG_NO_HZ_COMMON case, the idle balance kickee will do the
  * rebalancing for all the CPUs for whom scheduler ticks are stopped.
  */
-static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+ਸਥਿਰ bool nohz_idle_balance(ਬਣਤਰ rq *this_rq, ਗਿਣਤੀ cpu_idle_type idle)
 {
-	unsigned int flags = this_rq->nohz_idle_balance;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags = this_rq->nohz_idle_balance;
 
-	if (!flags)
-		return false;
+	ਜੇ (!flags)
+		ਵਾਪਸ false;
 
 	this_rq->nohz_idle_balance = 0;
 
-	if (idle != CPU_IDLE)
-		return false;
+	ਜੇ (idle != CPU_IDLE)
+		ਵਾਪਸ false;
 
 	_nohz_idle_balance(this_rq, flags);
 
-	return true;
+	ਵਾਪਸ true;
 }
 
 /*
@@ -14791,9 +14791,9 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
  * those idle CPUs and outside the preempt disable / IRQ off phase of the local
  * cpu about to enter idle, because it can take a long time.
  */
-void nohz_run_idle_balance(int cpu)
+ਖਾਲੀ nohz_ਲੜੀਵਾਰ_idle_balance(ਪੂਰਨ cpu)
 {
-	unsigned int flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags;
 
 	flags = atomic_fetch_andnot(NOHZ_NEWILB_KICK, nohz_flags(cpu));
 
@@ -14801,22 +14801,22 @@ void nohz_run_idle_balance(int cpu)
 	 * Update the blocked load only if no SCHED_SOFTIRQ is about to happen
 	 * (i.e. NOHZ_STATS_KICK set) and will do the same.
 	 */
-	if ((flags == NOHZ_NEWILB_KICK) && !need_resched())
+	ਜੇ ((flags == NOHZ_NEWILB_KICK) && !need_resched())
 		_nohz_idle_balance(cpu_rq(cpu), NOHZ_STATS_KICK);
 }
 
-static void nohz_newidle_balance(struct rq *this_rq)
+ਸਥਿਰ ਖਾਲੀ nohz_newidle_balance(ਬਣਤਰ rq *this_rq)
 {
-	int this_cpu = this_rq->cpu;
+	ਪੂਰਨ this_cpu = this_rq->cpu;
 
 	/* Will wake up very soon. No time for doing anything else*/
-	if (this_rq->avg_idle < sysctl_sched_migration_cost)
-		return;
+	ਜੇ (this_rq->avg_idle < sysctl_sched_migration_ਲਾਗਤ)
+		ਵਾਪਸ;
 
 	/* Don't need to update blocked load of idle CPUs*/
-	if (!READ_ONCE(nohz.has_blocked_load) ||
-	    time_before(jiffies, READ_ONCE(nohz.next_blocked)))
-		return;
+	ਜੇ (!READ_ONCE(nohz.has_blocked_ਲੱਦੋ) ||
+	    ਸਮਾਂ_before(jiffies, READ_ONCE(nohz.ਅਗਲਾ_blocked)))
+		ਵਾਪਸ;
 
 	/*
 	 * Set the need to trigger ILB in order to update blocked load
@@ -14825,16 +14825,16 @@ static void nohz_newidle_balance(struct rq *this_rq)
 	atomic_or(NOHZ_NEWILB_KICK, nohz_flags(this_cpu));
 }
 
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline void nohz_balancer_kick(struct rq *rq) { }
+#ਨਹੀਂਤਾਂ /* !CONFIG_NO_HZ_COMMON: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ nohz_balancer_kick(ਬਣਤਰ rq *rq) { }
 
-static inline bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool nohz_idle_balance(ਬਣਤਰ rq *this_rq, ਗਿਣਤੀ cpu_idle_type idle)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline void nohz_newidle_balance(struct rq *this_rq) { }
-#endif /* !CONFIG_NO_HZ_COMMON */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ nohz_newidle_balance(ਬਣਤਰ rq *this_rq) { }
+#ਜੇ_ਅੰਤ /* !CONFIG_NO_HZ_COMMON */
 
 /*
  * sched_balance_newidle is called by schedule() if this_cpu is about to become
@@ -14845,24 +14845,24 @@ static inline void nohz_newidle_balance(struct rq *this_rq) { }
  *     0 - failed, no new tasks
  *   > 0 - success, new (fair) tasks present
  */
-static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
+ਸਥਿਰ ਪੂਰਨ sched_balance_newidle(ਬਣਤਰ rq *this_rq, ਬਣਤਰ rq_flags *rf)
 	__must_hold(__rq_lockp(this_rq))
 {
-	unsigned long next_balance = jiffies + HZ;
-	int this_cpu = this_rq->cpu;
-	int continue_balancing = 1;
-	u64 t0, t1, curr_cost = 0;
-	struct sched_domain *sd;
-	int pulled_task = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਅਗਲਾ_balance = jiffies + HZ;
+	ਪੂਰਨ this_cpu = this_rq->cpu;
+	ਪੂਰਨ continue_balancing = 1;
+	u64 t0, t1, curr_ਲਾਗਤ = 0;
+	ਬਣਤਰ sched_domain *sd;
+	ਪੂਰਨ pulled_task = 0;
 
-	update_misfit_status(NULL, this_rq);
+	update_misfit_ਸਥਿਤੀ(ਨਿਰਾ, this_rq);
 
 	/*
 	 * There is a task waiting to run. No need to search for one.
 	 * Return 0; the task will be enqueued when switching to idle.
 	 */
-	if (this_rq->ttwu_pending)
-		return 0;
+	ਜੇ (this_rq->ttwu_pending)
+		ਵਾਪਸ 0;
 
 	/*
 	 * We must set idle_stamp _before_ calling sched_balance_rq()
@@ -14872,8 +14872,8 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 	this_rq->idle_stamp = rq_clock(this_rq);
 
 	/* Do not pull tasks towards !preferred CPUs */
-	if (!cpu_preferred(this_cpu))
-		return 0;
+	ਜੇ (!cpu_preferred(this_cpu))
+		ਵਾਪਸ 0;
 
 	/*
 	 * This is OK, because current is on_cpu, which avoids it being picked
@@ -14881,17 +14881,17 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 	 * further scheduler activity on it and we're being very careful to
 	 * re-start the picking loop.
 	 */
-	rq_unpin_lock(this_rq, rf);
+	rq_unpin_ਤਾਲਾ(this_rq, rf);
 
 	sd = rcu_dereference_sched_domain(this_rq->sd);
-	if (!sd)
-		goto out;
+	ਜੇ (!sd)
+		ਜਾਓ ਬਾਹਰਲਾ;
 
-	if (!get_rd_overloaded(this_rq->rd) ||
-	    this_rq->avg_idle < sd->max_newidle_lb_cost) {
+	ਜੇ (!get_rd_overloaded(this_rq->rd) ||
+	    this_rq->avg_idle < sd->max_newidle_lb_ਲਾਗਤ) {
 
-		update_next_balance(sd, &next_balance);
-		goto out;
+		update_ਅਗਲਾ_balance(sd, &ਅਗਲਾ_balance);
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
 	/*
@@ -14906,29 +14906,29 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 	raw_spin_rq_unlock(this_rq);
 
 	for_each_domain(this_cpu, sd) {
-		u64 domain_cost;
+		u64 domain_ਲਾਗਤ;
 
-		update_next_balance(sd, &next_balance);
+		update_ਅਗਲਾ_balance(sd, &ਅਗਲਾ_balance);
 
-		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost)
-			break;
+		ਜੇ (this_rq->avg_idle < curr_ਲਾਗਤ + sd->max_newidle_lb_ਲਾਗਤ)
+			ਰੋਕੋ;
 
-		if (sd->flags & SD_BALANCE_NEWIDLE) {
-			unsigned int weight = 1;
+		ਜੇ (sd->flags & SD_BALANCE_NEWIDLE) {
+			ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਭਾਰ = 1;
 
-			if (sched_feat(NI_RANDOM) && sd->newidle_ratio < 1024) {
+			ਜੇ (sched_feat(NI_RANDOM) && sd->newidle_ਅਨੁਪਾਤ < 1024) {
 				/*
 				 * Throw a 1k sided dice; and only run
 				 * newidle_balance according to the success
 				 * rate.
 				 */
 				u32 d1k = sched_rng() % 1024;
-				weight = 1 + sd->newidle_ratio;
-				if (d1k > weight) {
+				ਭਾਰ = 1 + sd->newidle_ਅਨੁਪਾਤ;
+				ਜੇ (d1k > ਭਾਰ) {
 					update_newidle_stats(sd, 0);
-					continue;
+					ਜਾਰੀ;
 				}
-				weight = (1024 + weight/2) / weight;
+				ਭਾਰ = (1024 + ਭਾਰ/2) / ਭਾਰ;
 			}
 
 			pulled_task = sched_balance_rq(this_cpu, this_rq,
@@ -14936,55 +14936,55 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 						   &continue_balancing);
 
 			t1 = sched_clock_cpu(this_cpu);
-			domain_cost = t1 - t0;
-			curr_cost += domain_cost;
+			domain_ਲਾਗਤ = t1 - t0;
+			curr_ਲਾਗਤ += domain_ਲਾਗਤ;
 			t0 = t1;
 
 			/*
 			 * Track max cost of a domain to make sure to not delay the
 			 * next wakeup on the CPU.
 			 */
-			update_newidle_cost(sd, domain_cost, weight * !!pulled_task);
+			update_newidle_ਲਾਗਤ(sd, domain_ਲਾਗਤ, ਭਾਰ * !!pulled_task);
 		}
 
 		/*
 		 * Stop searching for tasks to pull if there are
 		 * now runnable tasks on this rq.
 		 */
-		if (pulled_task || !continue_balancing)
-			break;
+		ਜੇ (pulled_task || !continue_balancing)
+			ਰੋਕੋ;
 	}
 
-	raw_spin_rq_lock(this_rq);
+	raw_spin_rq_ਤਾਲਾ(this_rq);
 
-	if (curr_cost > this_rq->max_idle_balance_cost)
-		this_rq->max_idle_balance_cost = curr_cost;
+	ਜੇ (curr_ਲਾਗਤ > this_rq->max_idle_balance_ਲਾਗਤ)
+		this_rq->max_idle_balance_ਲਾਗਤ = curr_ਲਾਗਤ;
 
 	/*
 	 * While browsing the domains, we released the rq lock, a task could
 	 * have been enqueued in the meantime. Since we're not going idle,
 	 * pretend we pulled a task.
 	 */
-	if (this_rq->cfs.h_nr_queued && !pulled_task)
+	ਜੇ (this_rq->cfs.h_nr_queued && !pulled_task)
 		pulled_task = 1;
 
 	/* If a higher prio class was modified, restart the pick */
-	if (rq_modified_above(this_rq, &fair_sched_class))
+	ਜੇ (rq_modified_above(this_rq, &fair_sched_class))
 		pulled_task = -1;
 
-out:
+ਬਾਹਰਲਾ:
 	/* Move the next balance forward */
-	if (time_after(this_rq->next_balance, next_balance))
-		this_rq->next_balance = next_balance;
+	ਜੇ (ਸਮਾਂ_after(this_rq->ਅਗਲਾ_balance, ਅਗਲਾ_balance))
+		this_rq->ਅਗਲਾ_balance = ਅਗਲਾ_balance;
 
-	if (pulled_task)
+	ਜੇ (pulled_task)
 		this_rq->idle_stamp = 0;
-	else
+	ਨਹੀਂਤਾਂ
 		nohz_newidle_balance(this_rq);
 
-	rq_repin_lock(this_rq, rf);
+	rq_repin_ਤਾਲਾ(this_rq, rf);
 
-	return pulled_task;
+	ਵਾਪਸ pulled_task;
 }
 
 /*
@@ -14995,10 +14995,10 @@ out:
  * - indirectly from a remote sched_tick() for NOHZ idle balancing
  *   through the SMP cross-call nohz_csd_func()
  */
-static __latent_entropy void sched_balance_softirq(void)
+ਸਥਿਰ __latent_entropy ਖਾਲੀ sched_balance_softirq(ਖਾਲੀ)
 {
-	struct rq *this_rq = this_rq();
-	enum cpu_idle_type idle = this_rq->idle_balance;
+	ਬਣਤਰ rq *this_rq = this_rq();
+	ਗਿਣਤੀ cpu_idle_type idle = this_rq->idle_balance;
 	/*
 	 * If this CPU has a pending NOHZ_BALANCE_KICK, then do the
 	 * balancing on behalf of the other idle CPUs whose ticks are
@@ -15007,8 +15007,8 @@ static __latent_entropy void sched_balance_softirq(void)
 	 * load balance only within the local sched_domain hierarchy
 	 * and abort nohz_idle_balance altogether if we pull some load.
 	 */
-	if (nohz_idle_balance(this_rq, idle))
-		return;
+	ਜੇ (nohz_idle_balance(this_rq, idle))
+		ਵਾਪਸ;
 
 	/* normal load balance */
 	sched_balance_update_blocked_averages(this_rq->cpu);
@@ -15018,29 +15018,29 @@ static __latent_entropy void sched_balance_softirq(void)
 /*
  * Trigger the SCHED_SOFTIRQ if it is time to do periodic load balancing.
  */
-void sched_balance_trigger(struct rq *rq)
+ਖਾਲੀ sched_balance_trigger(ਬਣਤਰ rq *rq)
 {
 	/*
 	 * Don't need to rebalance while attached to NULL domain or
 	 * runqueue CPU is not active
 	 */
-	if (unlikely(on_null_domain(rq) || !cpu_active(cpu_of(rq))))
-		return;
+	ਜੇ (unlikely(on_null_domain(rq) || !cpu_ਸਰਗਰਮ(cpu_ਦਾ(rq))))
+		ਵਾਪਸ;
 
-	if (time_after_eq(jiffies, rq->next_balance))
+	ਜੇ (ਸਮਾਂ_after_eq(jiffies, rq->ਅਗਲਾ_balance))
 		raise_softirq(SCHED_SOFTIRQ);
 
 	nohz_balancer_kick(rq);
 }
 
-static void rq_online_fair(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ rq_online_fair(ਬਣਤਰ rq *rq)
 {
 	update_sysctl();
 
 	update_runtime_enabled(rq);
 }
 
-static void rq_offline_fair(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ rq_offline_fair(ਬਣਤਰ rq *rq)
 {
 	update_sysctl();
 
@@ -15051,21 +15051,21 @@ static void rq_offline_fair(struct rq *rq)
 	clear_tg_offline_cfs_rqs(rq);
 }
 
-#ifdef CONFIG_SCHED_CORE
-static inline bool
-__entity_slice_used(struct sched_entity *se, int min_nr_tasks)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CORE
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool
+__entity_slice_used(ਬਣਤਰ sched_entity *se, ਪੂਰਨ min_nr_tasks)
 {
-	u64 rtime = se->sum_exec_runtime - se->prev_sum_exec_runtime;
-	u64 slice = se->slice;
+	u64 rtime = se->ਜੋੜ_exec_runtime - se->prev_ਜੋੜ_exec_runtime;
+	u64 ਟੁਕੜਾ = se->ਟੁਕੜਾ;
 
-	return (rtime * min_nr_tasks > slice);
+	ਵਾਪਸ (rtime * min_nr_tasks > ਟੁਕੜਾ);
 }
 
-#define MIN_NR_TASKS_DURING_FORCEIDLE	2
-static inline void task_tick_core(struct rq *rq, struct task_struct *curr)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MIN_NR_TASKS_DURING_FORCEIDLE	2
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ task_tick_core(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *curr)
 {
-	if (!sched_core_enabled(rq))
-		return;
+	ਜੇ (!sched_core_enabled(rq))
+		ਵਾਪਸ;
 
 	/*
 	 * If runqueue has only one task which used up its slice and
@@ -15081,7 +15081,7 @@ static inline void task_tick_core(struct rq *rq, struct task_struct *curr)
 	 * MIN_NR_TASKS_DURING_FORCEIDLE - 1 tasks and use that to check
 	 * if we need to give up the CPU.
 	 */
-	if (rq->core->core_forceidle_count && rq->cfs.h_nr_queued == 1 &&
+	ਜੇ (rq->core->core_forceidle_ਗਿਣਤੀ && rq->cfs.h_nr_queued == 1 &&
 	    __entity_slice_used(&curr->se, MIN_NR_TASKS_DURING_FORCEIDLE))
 		resched_curr(rq);
 }
@@ -15252,15 +15252,15 @@ static inline void task_tick_core(struct rq *rq, struct task_struct *curr)
 /*
  * se_fi_update - Update the cfs_rq->zero_vruntime_fi in a CFS hierarchy if needed.
  */
-static void se_fi_update(const struct sched_entity *se, unsigned int fi_seq,
+ਸਥਿਰ ਖਾਲੀ se_fi_update(ਅਚਲ ਬਣਤਰ sched_entity *se, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ fi_seq,
 			 bool forceidle)
 {
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
 
-		if (forceidle) {
-			if (cfs_rq->forceidle_seq == fi_seq)
-				break;
+		ਜੇ (forceidle) {
+			ਜੇ (cfs_rq->forceidle_seq == fi_seq)
+				ਰੋਕੋ;
 			cfs_rq->forceidle_seq = fi_seq;
 		}
 
@@ -15268,24 +15268,24 @@ static void se_fi_update(const struct sched_entity *se, unsigned int fi_seq,
 	}
 }
 
-void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_fi)
+ਖਾਲੀ task_vruntime_update(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, bool ਵਿੱਚ_fi)
 {
-	struct sched_entity *se = &p->se;
+	ਬਣਤਰ sched_entity *se = &p->se;
 
-	if (p->sched_class != &fair_sched_class)
-		return;
+	ਜੇ (p->sched_class != &fair_sched_class)
+		ਵਾਪਸ;
 
-	se_fi_update(se, rq->core->core_forceidle_seq, in_fi);
+	se_fi_update(se, rq->core->core_forceidle_seq, ਵਿੱਚ_fi);
 }
 
-bool cfs_prio_less(const struct task_struct *a, const struct task_struct *b,
-			bool in_fi)
+bool cfs_prio_less(ਅਚਲ ਬਣਤਰ task_struct *a, ਅਚਲ ਬਣਤਰ task_struct *b,
+			bool ਵਿੱਚ_fi)
 {
-	struct rq *rq = task_rq(a);
-	const struct sched_entity *sea = &a->se;
-	const struct sched_entity *seb = &b->se;
-	struct cfs_rq *cfs_rqa;
-	struct cfs_rq *cfs_rqb;
+	ਬਣਤਰ rq *rq = task_rq(a);
+	ਅਚਲ ਬਣਤਰ sched_entity *sea = &a->se;
+	ਅਚਲ ਬਣਤਰ sched_entity *seb = &b->se;
+	ਬਣਤਰ cfs_rq *cfs_rqa;
+	ਬਣਤਰ cfs_rq *cfs_rqb;
 	s64 delta;
 
 	WARN_ON_ONCE(task_rq(b)->core != rq->core);
@@ -15301,23 +15301,23 @@ bool cfs_prio_less(const struct task_struct *a, const struct task_struct *b,
 	delta = vruntime_op(sea->vruntime, "-", seb->vruntime) +
 		vruntime_op(cfs_rqb->zero_vruntime_fi, "-", cfs_rqa->zero_vruntime_fi);
 
-	return delta > 0;
+	ਵਾਪਸ delta > 0;
 }
 
-static int task_is_throttled_fair(struct task_struct *p, int cpu)
+ਸਥਿਰ ਪੂਰਨ task_is_throttled_fair(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu)
 {
-	struct cfs_rq *cfs_rq;
+	ਬਣਤਰ cfs_rq *cfs_rq;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	cfs_rq = tg_cfs_rq(task_group(p), cpu);
-#else
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+	cfs_rq = tg_cfs_rq(task_ਸਮੂਹ(p), cpu);
+#ਨਹੀਂਤਾਂ
 	cfs_rq = &cpu_rq(cpu)->cfs;
-#endif
-	return throttled_hierarchy(cfs_rq);
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ throttled_hierarchy(cfs_rq);
 }
-#else /* !CONFIG_SCHED_CORE: */
-static inline void task_tick_core(struct rq *rq, struct task_struct *curr) {}
-#endif /* !CONFIG_SCHED_CORE */
+#ਨਹੀਂਤਾਂ /* !CONFIG_SCHED_CORE: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ task_tick_core(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *curr) {}
+#ਜੇ_ਅੰਤ /* !CONFIG_SCHED_CORE */
 
 /*
  * scheduler tick hitting a task of our scheduling class.
@@ -15327,35 +15327,35 @@ static inline void task_tick_core(struct rq *rq, struct task_struct *curr) {}
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ਸਥਿਰ ਖਾਲੀ task_tick_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *curr, ਪੂਰਨ queued)
 {
-	struct sched_entity *se = &curr->se;
+	ਬਣਤਰ sched_entity *se = &curr->se;
 
-	if (se->on_rq) {
-		unsigned long weight = NICE_0_LOAD;
-		struct cfs_rq *cfs_rq;
+	ਜੇ (se->on_rq) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ = NICE_0_ਲੱਦੋ;
+		ਬਣਤਰ cfs_rq *cfs_rq;
 
 		for_each_sched_entity(se) {
-			cfs_rq = cfs_rq_of(se);
+			cfs_rq = cfs_rq_ਦਾ(se);
 			entity_tick(cfs_rq, se, queued);
 
-			weight = __calc_prop_weight(cfs_rq, se, weight);
+			ਭਾਰ = __calc_prop_weight(cfs_rq, se, ਭਾਰ);
 		}
 
 		se = &curr->se;
-		reweight_eevdf(cfs_rq, se, weight, se->on_rq);
+		reweight_eevdf(cfs_rq, se, ਭਾਰ, se->on_rq);
 	}
 
-	if (queued)
-		return;
+	ਜੇ (queued)
+		ਵਾਪਸ;
 
-	if (static_branch_unlikely(&sched_numa_balancing))
+	ਜੇ (static_branch_unlikely(&sched_numa_balancing))
 		task_tick_numa(rq, curr);
 
 	task_tick_cache(rq, curr);
 
-	update_misfit_status(curr, rq);
-	check_update_overutilized_status(task_rq(curr));
+	update_misfit_ਸਥਿਤੀ(curr, rq);
+	check_update_overutilized_ਸਥਿਤੀ(task_rq(curr));
 
 	task_tick_core(rq, curr);
 }
@@ -15365,48 +15365,48 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
  *  - child not yet on the tasklist
  *  - preemption disabled
  */
-static void task_fork_fair(struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ task_fork_fair(ਬਣਤਰ task_struct *p)
 {
-	set_task_max_allowed_capacity(p);
+	ਸੈੱਟ_task_max_allowed_ਸਮਰੱਥਾ(p);
 }
 
 /*
  * Priority of the task has changed. Check to see if we preempt
  * the current task.
  */
-static void
-prio_changed_fair(struct rq *rq, struct task_struct *p, u64 oldprio)
+ਸਥਿਰ ਖਾਲੀ
+prio_ਬਦਲਿਆ_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, u64 oldprio)
 {
-	if (!task_on_rq_queued(p))
-		return;
+	ਜੇ (!task_on_rq_queued(p))
+		ਵਾਪਸ;
 
-	if (p->prio == oldprio)
-		return;
+	ਜੇ (p->prio == oldprio)
+		ਵਾਪਸ;
 
-	if (rq->cfs.h_nr_queued == 1)
-		return;
+	ਜੇ (rq->cfs.h_nr_queued == 1)
+		ਵਾਪਸ;
 
 	/*
 	 * Reschedule if we are currently running on this runqueue and
 	 * our priority decreased, or if we are not currently running on
 	 * this runqueue and our priority is higher than the current's
 	 */
-	if (task_current_donor(rq, p)) {
-		if (p->prio > oldprio)
+	ਜੇ (task_current_donor(rq, p)) {
+		ਜੇ (p->prio > oldprio)
 			resched_curr(rq);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		wakeup_preempt(rq, p, 0);
 	}
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 /*
  * Propagate the changes of the sched_entity across the tg tree to make it
  * visible to the root
  */
-static void propagate_entity_cfs_rq(struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ propagate_entity_cfs_rq(ਬਣਤਰ sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+	ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
 
 	/*
 	 * If a task gets attached to this cfs_rq and before being queued,
@@ -15414,30 +15414,30 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
 	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
 	 * that removed load decayed or it can cause faireness problem.
 	 */
-	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
-		list_add_leaf_cfs_rq(cfs_rq);
+	ਜੇ (!cfs_rq_pelt_clock_throttled(cfs_rq))
+		list_ਜੋੜੋ_ਪੱਤੀ_cfs_rq(cfs_rq);
 
 	/* Start to propagate at parent */
-	se = se->parent;
+	se = se->ਮਾਪਾ;
 
 	for_each_sched_entity(se) {
-		cfs_rq = cfs_rq_of(se);
+		cfs_rq = cfs_rq_ਦਾ(se);
 
-		update_load_avg(cfs_rq, se, UPDATE_TG);
+		update_ਲੱਦੋ_avg(cfs_rq, se, UPDATE_TG);
 
-		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
-			list_add_leaf_cfs_rq(cfs_rq);
+		ਜੇ (!cfs_rq_pelt_clock_throttled(cfs_rq))
+			list_ਜੋੜੋ_ਪੱਤੀ_cfs_rq(cfs_rq);
 	}
 
-	assert_list_leaf_cfs_rq(rq_of(cfs_rq));
+	assert_list_ਪੱਤੀ_cfs_rq(rq_ਦਾ(cfs_rq));
 }
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static void propagate_entity_cfs_rq(struct sched_entity *se) { }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
+ਸਥਿਰ ਖਾਲੀ propagate_entity_cfs_rq(ਬਣਤਰ sched_entity *se) { }
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
 
-static void detach_entity_cfs_rq(struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ detach_entity_cfs_rq(ਬਣਤਰ sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+	ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
 
 	/*
 	 * In case the task sched_avg hasn't been attached:
@@ -15445,129 +15445,129 @@ static void detach_entity_cfs_rq(struct sched_entity *se)
 	 * - A task which has been woken up by try_to_wake_up() but is
 	 *   waiting for actually being woken up by sched_ttwu_pending().
 	 */
-	if (!se->avg.last_update_time)
-		return;
+	ਜੇ (!se->avg.ਆਖਰੀ_update_ਸਮਾਂ)
+		ਵਾਪਸ;
 
 	/* Catch up with the cfs_rq and remove our load when we leave */
-	update_load_avg(cfs_rq, se, 0);
-	detach_entity_load_avg(cfs_rq, se);
-	update_tg_load_avg(cfs_rq);
+	update_ਲੱਦੋ_avg(cfs_rq, se, 0);
+	detach_entity_ਲੱਦੋ_avg(cfs_rq, se);
+	update_tg_ਲੱਦੋ_avg(cfs_rq);
 	propagate_entity_cfs_rq(se);
 }
 
-static void attach_entity_cfs_rq(struct sched_entity *se)
+ਸਥਿਰ ਖਾਲੀ attach_entity_cfs_rq(ਬਣਤਰ sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+	ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
 
 	/* Synchronize entity with its cfs_rq */
-	update_load_avg(cfs_rq, se, sched_feat(ATTACH_AGE_LOAD) ? 0 : SKIP_AGE_LOAD);
-	attach_entity_load_avg(cfs_rq, se);
-	update_tg_load_avg(cfs_rq);
+	update_ਲੱਦੋ_avg(cfs_rq, se, sched_feat(ATTACH_AGE_ਲੱਦੋ) ? 0 : SKIP_AGE_ਲੱਦੋ);
+	attach_entity_ਲੱਦੋ_avg(cfs_rq, se);
+	update_tg_ਲੱਦੋ_avg(cfs_rq);
 	propagate_entity_cfs_rq(se);
 }
 
-static void detach_task_cfs_rq(struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ detach_task_cfs_rq(ਬਣਤਰ task_struct *p)
 {
-	struct sched_entity *se = &p->se;
+	ਬਣਤਰ sched_entity *se = &p->se;
 
 	detach_entity_cfs_rq(se);
 }
 
-static void attach_task_cfs_rq(struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ attach_task_cfs_rq(ਬਣਤਰ task_struct *p)
 {
-	struct sched_entity *se = &p->se;
+	ਬਣਤਰ sched_entity *se = &p->se;
 
 	attach_entity_cfs_rq(se);
 }
 
-static void switching_from_fair(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ switching_from_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	if (p->se.sched_delayed)
-		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
+	ਜੇ (p->se.sched_delayed)
+		ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task(rq, p, ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP | ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_DELAYED | ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_NOCLOCK);
 }
 
-static void switched_from_fair(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ switched_from_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
 	detach_task_cfs_rq(p);
 }
 
-static void switched_to_fair(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ switched_ਮੰਜ਼ਿਲ_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
 	WARN_ON_ONCE(p->se.sched_delayed);
 
 	attach_task_cfs_rq(p);
 
-	set_task_max_allowed_capacity(p);
+	ਸੈੱਟ_task_max_allowed_ਸਮਰੱਥਾ(p);
 
-	if (task_on_rq_queued(p)) {
+	ਜੇ (task_on_rq_queued(p)) {
 		/*
 		 * We were most likely switched from sched_rt, so
 		 * kick off the schedule if running, otherwise just see
 		 * if we can still preempt the current task.
 		 */
-		if (task_current_donor(rq, p))
+		ਜੇ (task_current_donor(rq, p))
 			resched_curr(rq);
-		else
+		ਨਹੀਂਤਾਂ
 			wakeup_preempt(rq, p, 0);
 	}
 }
 
-static void set_next_task_fair(struct rq *rq, struct task_struct *p, enum snt_e type)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_ਅਗਲਾ_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਗਿਣਤੀ snt_e type)
 {
-	struct sched_entity *se = &p->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	unsigned long weight = NICE_0_LOAD;
-	bool first = type == SNT_PICK;
+	ਬਣਤਰ sched_entity *se = &p->se;
+	ਬਣਤਰ cfs_rq *cfs_rq = &rq->cfs;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ = NICE_0_ਲੱਦੋ;
+	bool ਪਹਿਲਾ = type == SNT_PICK;
 	bool throttled = false;
 	bool on_rq = se->on_rq;
 
-	if (type == SNT_REPICK)
-		goto repick;
+	ਜੇ (type == SNT_REPICK)
+		ਜਾਓ repick;
 
 	clear_buddies(cfs_rq, se);
 
-	if (on_rq)
+	ਜੇ (on_rq)
 		__dequeue_entity(cfs_rq, se);
 
 	for_each_sched_entity(se) {
-		cfs_rq = cfs_rq_of(se);
+		cfs_rq = cfs_rq_ਦਾ(se);
 
-		if (!IS_ENABLED(CONFIG_FAIR_GROUP_SCHED) ||
-		    !first || !cfs_rq->h_curr)
-			set_next_entity(cfs_rq, se);
+		ਜੇ (!IS_ENABLED(CONFIG_FAIR_ਸਮੂਹ_SCHED) ||
+		    !ਪਹਿਲਾ || !cfs_rq->h_curr)
+			ਸੈੱਟ_ਅਗਲਾ_entity(cfs_rq, se);
 
 		/* ensure bandwidth has been allocated on our new cfs_rq */
 		throttled |= account_cfs_rq_runtime(cfs_rq, 0);
 
-		if (on_rq)
-			weight = __calc_prop_weight(cfs_rq, se, weight);
+		ਜੇ (on_rq)
+			ਭਾਰ = __calc_prop_weight(cfs_rq, se, ਭਾਰ);
 	}
 
-	if (throttled)
-		task_throttle_setup_work(p);
+	ਜੇ (throttled)
+		task_throttle_ਤਿਆਰੀ_work(p);
 
 	se = &p->se;
 	cfs_rq->curr = se;
 
-	if (on_rq) {
-		reweight_eevdf(cfs_rq, se, weight, se->on_rq);
-		if (first)
-			set_protect_slice(cfs_rq, se);
+	ਜੇ (on_rq) {
+		reweight_eevdf(cfs_rq, se, ਭਾਰ, se->on_rq);
+		ਜੇ (ਪਹਿਲਾ)
+			ਸੈੱਟ_protect_ਟੁਕੜਾ(cfs_rq, se);
 	}
 
-	if (task_on_rq_queued(p)) {
+	ਜੇ (task_on_rq_queued(p)) {
 		/*
 		 * Move the next running task to the front of the list, so our
 		 * cfs_tasks list becomes MRU one.
 		 */
-		list_move(&se->group_node, &rq->cfs_tasks);
+		list_move(&se->ਸਮੂਹ_ਗੰਢ, &rq->cfs_tasks);
 	}
-	if (!first)
-		return;
+	ਜੇ (!ਪਹਿਲਾ)
+		ਵਾਪਸ;
 
 	WARN_ON_ONCE(se->sched_delayed);
 
-	update_misfit_status(p, rq);
+	update_misfit_ਸਥਿਤੀ(p, rq);
 	sched_fair_update_stop_tick(rq, p);
 
 repick:
@@ -15577,84 +15577,84 @@ repick:
 	 * before selecting it again. rq->cfs.curr identifies that entity,
 	 * including with group scheduling.
 	 */
-	if (hrtick_enabled_fair(rq))
-		hrtick_start_fair(rq, p);
+	ਜੇ (hrtick_enabled_fair(rq))
+		hrtick_ਸ਼ੁਰੂ_fair(rq, p);
 }
 
-void init_cfs_rq(struct cfs_rq *cfs_rq)
+ਖਾਲੀ init_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	cfs_rq->tasks_timeline = RB_ROOT_CACHED;
+	cfs_rq->tasks_timeline = RB_ਜੜ੍ਹ_CACHED;
 	cfs_rq->zero_vruntime = (u64)(-(1LL << 20));
-	raw_spin_lock_init(&cfs_rq->removed.lock);
+	raw_spin_ਤਾਲਾ_init(&cfs_rq->removed.ਤਾਲਾ);
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-static void task_change_group_fair(struct task_struct *p)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+ਸਥਿਰ ਖਾਲੀ task_change_ਸਮੂਹ_fair(ਬਣਤਰ task_struct *p)
 {
 	/*
 	 * We couldn't detach or attach a forked task which
 	 * hasn't been woken up by wake_up_new_task().
 	 */
-	if (READ_ONCE(p->__state) == TASK_NEW)
-		return;
+	ਜੇ (READ_ONCE(p->__state) == TASK_NEW)
+		ਵਾਪਸ;
 
 	detach_task_cfs_rq(p);
 
 	/* Tell se's cfs_rq has been changed -- migrated */
-	p->se.avg.last_update_time = 0;
-	set_task_rq(p, task_cpu(p));
+	p->se.avg.ਆਖਰੀ_update_ਸਮਾਂ = 0;
+	ਸੈੱਟ_task_rq(p, task_cpu(p));
 	attach_task_cfs_rq(p);
 }
 
-void free_fair_sched_group(struct task_group *tg)
+ਖਾਲੀ free_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg)
 {
 	free_percpu(tg->cfs_rq);
 }
 
-int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
+ਪੂਰਨ alloc_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਣਤਰ task_ਸਮੂਹ *ਮਾਪਾ)
 {
-	struct cfs_tg_state __percpu *state;
-	struct sched_entity *se;
-	struct cfs_rq *cfs_rq;
-	int i;
+	ਬਣਤਰ cfs_tg_state __percpu *state;
+	ਬਣਤਰ sched_entity *se;
+	ਬਣਤਰ cfs_rq *cfs_rq;
+	ਪੂਰਨ i;
 
-	state = alloc_percpu_gfp(struct cfs_tg_state, GFP_KERNEL);
-	if (!state)
-		goto err;
+	state = alloc_percpu_gfp(ਬਣਤਰ cfs_tg_state, GFP_KERNEL);
+	ਜੇ (!state)
+		ਜਾਓ err;
 
 	tg->cfs_rq = &state->cfs_rq;
-	tg->shares = NICE_0_LOAD;
+	tg->shares = NICE_0_ਲੱਦੋ;
 
-	init_cfs_bandwidth(tg_cfs_bandwidth(tg), tg_cfs_bandwidth(parent));
+	init_cfs_bandwidth(tg_cfs_bandwidth(tg), tg_cfs_bandwidth(ਮਾਪਾ));
 
 	for_each_possible_cpu(i) {
 		cfs_rq = tg_cfs_rq(tg, i);
-		if (!cfs_rq)
-			goto err;
+		ਜੇ (!cfs_rq)
+			ਜਾਓ err;
 
 		se = tg_se(tg, i);
 		init_cfs_rq(cfs_rq);
-		init_tg_cfs_entry(tg, cfs_rq, se, i, tg_se(parent, i));
-		init_entity_runnable_average(se);
+		init_tg_cfs_ਇੰਦਰਾਜ(tg, cfs_rq, se, i, tg_se(ਮਾਪਾ, i));
+		init_entity_runnable_ਔਸਤਨ(se);
 	}
 
-	return 1;
+	ਵਾਪਸ 1;
 
 err:
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-void online_fair_sched_group(struct task_group *tg)
+ਖਾਲੀ online_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg)
 {
-	struct sched_entity *se;
-	struct rq_flags rf;
-	struct rq *rq;
-	int i;
+	ਬਣਤਰ sched_entity *se;
+	ਬਣਤਰ rq_flags rf;
+	ਬਣਤਰ rq *rq;
+	ਪੂਰਨ i;
 
 	for_each_possible_cpu(i) {
 		rq = cpu_rq(i);
 		se = tg_se(tg, i);
-		rq_lock_irq(rq, &rf);
+		rq_ਤਾਲਾ_irq(rq, &rf);
 		update_rq_clock(rq);
 		attach_entity_cfs_rq(se);
 		sync_throttle(tg, i);
@@ -15662,208 +15662,208 @@ void online_fair_sched_group(struct task_group *tg)
 	}
 }
 
-void unregister_fair_sched_group(struct task_group *tg)
+ਖਾਲੀ unregister_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg)
 {
-	int cpu;
+	ਪੂਰਨ cpu;
 
 	destroy_cfs_bandwidth(tg_cfs_bandwidth(tg));
 
 	for_each_possible_cpu(cpu) {
-		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu);
-		struct sched_entity *se = tg_se(tg, cpu);
-		struct rq *rq = cpu_rq(cpu);
+		ਬਣਤਰ cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu);
+		ਬਣਤਰ sched_entity *se = tg_se(tg, cpu);
+		ਬਣਤਰ rq *rq = cpu_rq(cpu);
 
-		if (se)
-			remove_entity_load_avg(se);
+		ਜੇ (se)
+			remove_entity_ਲੱਦੋ_avg(se);
 
 		/*
 		 * Only empty task groups can be destroyed; so we can speculatively
 		 * check on_list without danger of it being re-added.
 		 */
-		if (cfs_rq->on_list) {
-			guard(rq_lock_irqsave)(rq);
-			list_del_leaf_cfs_rq(cfs_rq);
+		ਜੇ (cfs_rq->on_list) {
+			guard(rq_ਤਾਲਾ_irqsave)(rq);
+			list_del_ਪੱਤੀ_cfs_rq(cfs_rq);
 		}
 	}
 }
 
-void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
-			struct sched_entity *se, int cpu,
-			struct sched_entity *parent)
+ਖਾਲੀ init_tg_cfs_ਇੰਦਰਾਜ(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਣਤਰ cfs_rq *cfs_rq,
+			ਬਣਤਰ sched_entity *se, ਪੂਰਨ cpu,
+			ਬਣਤਰ sched_entity *ਮਾਪਾ)
 {
-	struct rq *rq = cpu_rq(cpu);
+	ਬਣਤਰ rq *rq = cpu_rq(cpu);
 
 	cfs_rq->tg = tg;
 	cfs_rq->rq = rq;
 	init_cfs_rq_runtime(cfs_rq);
 
 	/* se could be NULL for root_task_group */
-	if (!se)
-		return;
+	ਜੇ (!se)
+		ਵਾਪਸ;
 
-	if (!parent) {
+	ਜੇ (!ਮਾਪਾ) {
 		se->cfs_rq = &rq->cfs;
-		se->depth = 0;
-	} else {
-		se->cfs_rq = parent->my_q;
-		se->depth = parent->depth + 1;
+		se->ਡੂੰਘਾਈ = 0;
+	} ਨਹੀਂਤਾਂ {
+		se->cfs_rq = ਮਾਪਾ->my_q;
+		se->ਡੂੰਘਾਈ = ਮਾਪਾ->ਡੂੰਘਾਈ + 1;
 	}
 
 	se->my_q = cfs_rq;
 	/* guarantee group entities always have weight */
-	update_load_set(&se->load, NICE_0_LOAD);
-	se->parent = parent;
+	update_ਲੱਦੋ_ਸੈੱਟ(&se->ਲੱਦੋ, NICE_0_ਲੱਦੋ);
+	se->ਮਾਪਾ = ਮਾਪਾ;
 }
 
-static DEFINE_MUTEX(shares_mutex);
+ਸਥਿਰ DEFINE_MUTEX(shares_mutex);
 
-static int __sched_group_set_shares(struct task_group *tg, unsigned long shares)
+ਸਥਿਰ ਪੂਰਨ __sched_group_set_shares(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ shares)
 {
-	int i;
+	ਪੂਰਨ i;
 
 	lockdep_assert_held(&shares_mutex);
 
 	/*
 	 * We can't change the weight of the root cgroup.
 	 */
-	if (is_root_task_group(tg))
-		return -EINVAL;
+	ਜੇ (is_ਜੜ੍ਹ_task_ਸਮੂਹ(tg))
+		ਵਾਪਸ -EINVAL;
 
-	shares = clamp(shares, scale_load(MIN_SHARES), scale_load(MAX_SHARES));
+	shares = clamp(shares, scale_ਲੱਦੋ(MIN_SHARES), scale_ਲੱਦੋ(MAX_SHARES));
 
-	if (tg->shares == shares)
-		return 0;
+	ਜੇ (tg->shares == shares)
+		ਵਾਪਸ 0;
 
 	tg->shares = shares;
 	for_each_possible_cpu(i) {
-		struct rq *rq = cpu_rq(i);
-		struct sched_entity *se = tg_se(tg, i);
-		struct rq_flags rf;
+		ਬਣਤਰ rq *rq = cpu_rq(i);
+		ਬਣਤਰ sched_entity *se = tg_se(tg, i);
+		ਬਣਤਰ rq_flags rf;
 
 		/* Propagate contribution to hierarchy */
-		rq_lock_irqsave(rq, &rf);
+		rq_ਤਾਲਾ_irqsave(rq, &rf);
 		update_rq_clock(rq);
 		for_each_sched_entity(se) {
-			update_load_avg(cfs_rq_of(se), se, UPDATE_TG);
-			update_cfs_group(se);
+			update_ਲੱਦੋ_avg(cfs_rq_ਦਾ(se), se, UPDATE_TG);
+			update_cfs_ਸਮੂਹ(se);
 		}
 		rq_unlock_irqrestore(rq, &rf);
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int sched_group_set_shares(struct task_group *tg, unsigned long shares)
+ਪੂਰਨ sched_ਸਮੂਹ_ਸੈੱਟ_shares(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ shares)
 {
-	int ret;
+	ਪੂਰਨ ret;
 
-	mutex_lock(&shares_mutex);
-	if (tg_is_idle(tg))
+	mutex_ਤਾਲਾ(&shares_mutex);
+	ਜੇ (tg_is_idle(tg))
 		ret = -EINVAL;
-	else
+	ਨਹੀਂਤਾਂ
 		ret = __sched_group_set_shares(tg, shares);
 	mutex_unlock(&shares_mutex);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-int sched_group_set_idle(struct task_group *tg, long idle)
+ਪੂਰਨ sched_ਸਮੂਹ_ਸੈੱਟ_idle(ਬਣਤਰ task_ਸਮੂਹ *tg, ਲੰਮਾ idle)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	if (tg == &root_task_group)
-		return -EINVAL;
+	ਜੇ (tg == &ਜੜ੍ਹ_task_ਸਮੂਹ)
+		ਵਾਪਸ -EINVAL;
 
-	if (idle < 0 || idle > 1)
-		return -EINVAL;
+	ਜੇ (idle < 0 || idle > 1)
+		ਵਾਪਸ -EINVAL;
 
-	mutex_lock(&shares_mutex);
+	mutex_ਤਾਲਾ(&shares_mutex);
 
-	if (tg->idle == idle) {
+	ਜੇ (tg->idle == idle) {
 		mutex_unlock(&shares_mutex);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	tg->idle = idle;
 
 	for_each_possible_cpu(i) {
-		struct rq *rq = cpu_rq(i);
-		struct sched_entity *se = tg_se(tg, i);
-		struct cfs_rq *grp_cfs_rq = tg_cfs_rq(tg, i);
+		ਬਣਤਰ rq *rq = cpu_rq(i);
+		ਬਣਤਰ sched_entity *se = tg_se(tg, i);
+		ਬਣਤਰ cfs_rq *grp_cfs_rq = tg_cfs_rq(tg, i);
 		bool was_idle = cfs_rq_is_idle(grp_cfs_rq);
-		long idle_task_delta;
-		struct rq_flags rf;
+		ਲੰਮਾ idle_task_delta;
+		ਬਣਤਰ rq_flags rf;
 
-		rq_lock_irqsave(rq, &rf);
+		rq_ਤਾਲਾ_irqsave(rq, &rf);
 
 		grp_cfs_rq->idle = idle;
-		if (WARN_ON_ONCE(was_idle == cfs_rq_is_idle(grp_cfs_rq)))
-			goto next_cpu;
+		ਜੇ (WARN_ON_ONCE(was_idle == cfs_rq_is_idle(grp_cfs_rq)))
+			ਜਾਓ ਅਗਲਾ_cpu;
 
 		idle_task_delta = grp_cfs_rq->h_nr_queued -
 				  grp_cfs_rq->h_nr_idle;
-		if (!cfs_rq_is_idle(grp_cfs_rq))
+		ਜੇ (!cfs_rq_is_idle(grp_cfs_rq))
 			idle_task_delta *= -1;
 
 		for_each_sched_entity(se) {
-			struct cfs_rq *cfs_rq = cfs_rq_of(se);
+			ਬਣਤਰ cfs_rq *cfs_rq = cfs_rq_ਦਾ(se);
 
-			if (!se->on_rq)
-				break;
+			ਜੇ (!se->on_rq)
+				ਰੋਕੋ;
 
 			cfs_rq->h_nr_idle += idle_task_delta;
 
 			/* Already accounted at parent level and above. */
-			if (cfs_rq_is_idle(cfs_rq))
-				break;
+			ਜੇ (cfs_rq_is_idle(cfs_rq))
+				ਰੋਕੋ;
 		}
 
-next_cpu:
+ਅਗਲਾ_cpu:
 		rq_unlock_irqrestore(rq, &rf);
 	}
 
 	/* Idle groups have minimum weight. */
-	if (tg_is_idle(tg))
-		__sched_group_set_shares(tg, scale_load(WEIGHT_IDLEPRIO));
-	else
-		__sched_group_set_shares(tg, NICE_0_LOAD);
+	ਜੇ (tg_is_idle(tg))
+		__sched_group_set_shares(tg, scale_ਲੱਦੋ(ਭਾਰ_IDLEPRIO));
+	ਨਹੀਂਤਾਂ
+		__sched_group_set_shares(tg, NICE_0_ਲੱਦੋ);
 
 	mutex_unlock(&shares_mutex);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+#ਜੇ_ਅੰਤ /* CONFIG_FAIR_GROUP_SCHED */
 
 
-static unsigned int get_rr_interval_fair(struct rq *rq, struct task_struct *task)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ get_rr_interval_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *task)
 {
-	struct sched_entity *se = &task->se;
-	unsigned int rr_interval = 0;
+	ਬਣਤਰ sched_entity *se = &task->se;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ rr_interval = 0;
 
 	/*
 	 * Time slice is 0 for SCHED_OTHER tasks that are on an otherwise
 	 * idle runqueue:
 	 */
-	if (rq->cfs.load.weight)
-		rr_interval = NS_TO_JIFFIES(se->slice);
+	ਜੇ (rq->cfs.ਲੱਦੋ.ਭਾਰ)
+		rr_interval = NS_ਮੰਜ਼ਿਲ_JIFFIES(se->ਟੁਕੜਾ);
 
-	return rr_interval;
+	ਵਾਪਸ rr_interval;
 }
 
 /*
  * All the scheduling class methods:
  */
 DEFINE_SCHED_CLASS(fair) = {
-	.enqueue_task		= enqueue_task_fair,
-	.dequeue_task		= dequeue_task_fair,
+	.ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task		= ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task_fair,
+	.ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task		= ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task_fair,
 	.yield_task		= yield_task_fair,
-	.yield_to_task		= yield_to_task_fair,
+	.yield_ਮੰਜ਼ਿਲ_task		= yield_ਮੰਜ਼ਿਲ_task_fair,
 
 	.wakeup_preempt		= wakeup_preempt_fair,
 
 	.pick_task		= pick_task_fair,
 	.put_prev_task		= put_prev_task_fair,
-	.set_next_task          = set_next_task_fair,
+	.ਸੈੱਟ_ਅਗਲਾ_task          = ਸੈੱਟ_ਅਗਲਾ_task_fair,
 
 	.select_task_rq		= select_task_rq_fair,
 	.migrate_task_rq	= migrate_task_rq_fair,
@@ -15872,89 +15872,89 @@ DEFINE_SCHED_CLASS(fair) = {
 	.rq_offline		= rq_offline_fair,
 
 	.task_dead		= task_dead_fair,
-	.set_cpus_allowed	= set_cpus_allowed_fair,
+	.ਸੈੱਟ_cpus_allowed	= ਸੈੱਟ_cpus_allowed_fair,
 
 	.task_tick		= task_tick_fair,
 	.task_fork		= task_fork_fair,
 
 	.reweight_task		= reweight_task_fair,
-	.prio_changed		= prio_changed_fair,
+	.prio_ਬਦਲਿਆ		= prio_ਬਦਲਿਆ_fair,
 	.switching_from		= switching_from_fair,
 	.switched_from		= switched_from_fair,
-	.switched_to		= switched_to_fair,
+	.switched_ਮੰਜ਼ਿਲ		= switched_ਮੰਜ਼ਿਲ_fair,
 
 	.get_rr_interval	= get_rr_interval_fair,
 
 	.update_curr		= update_curr_fair,
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	.task_change_group	= task_change_group_fair,
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+	.task_change_ਸਮੂਹ	= task_change_ਸਮੂਹ_fair,
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_SCHED_CORE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CORE
 	.task_is_throttled	= task_is_throttled_fair,
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_UCLAMP_TASK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_UCLAMP_TASK
 	.uclamp_enabled		= 1,
-#endif
+#ਜੇ_ਅੰਤ
 };
 
-void print_cfs_stats(struct seq_file *m, int cpu)
+ਖਾਲੀ print_cfs_stats(ਬਣਤਰ seq_file *m, ਪੂਰਨ cpu)
 {
-	struct cfs_rq *cfs_rq, *pos;
+	ਬਣਤਰ cfs_rq *cfs_rq, *pos;
 
-	rcu_read_lock();
-	for_each_leaf_cfs_rq_safe(cpu_rq(cpu), cfs_rq, pos)
+	rcu_read_ਤਾਲਾ();
+	for_each_ਪੱਤੀ_cfs_rq_ਸੁਰੱਖਿਅਤ(cpu_rq(cpu), cfs_rq, pos)
 		print_cfs_rq(m, cpu, cfs_rq);
 	rcu_read_unlock();
 }
 
-#ifdef CONFIG_NUMA_BALANCING
-void show_numa_stats(struct task_struct *p, struct seq_file *m)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
+ਖਾਲੀ show_numa_stats(ਬਣਤਰ task_struct *p, ਬਣਤਰ seq_file *m)
 {
-	int node;
-	unsigned long tsf = 0, tpf = 0, gsf = 0, gpf = 0;
-	struct numa_group *ng;
+	ਪੂਰਨ ਗੰਢ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ tsf = 0, tpf = 0, gsf = 0, gpf = 0;
+	ਬਣਤਰ numa_ਸਮੂਹ *ng;
 
-	rcu_read_lock();
-	ng = rcu_dereference_all(p->numa_group);
-	for_each_online_node(node) {
-		if (p->numa_faults) {
-			tsf = p->numa_faults[task_faults_idx(NUMA_MEM, node, 0)];
-			tpf = p->numa_faults[task_faults_idx(NUMA_MEM, node, 1)];
+	rcu_read_ਤਾਲਾ();
+	ng = rcu_dereference_all(p->numa_ਸਮੂਹ);
+	for_each_online_ਗੰਢ(ਗੰਢ) {
+		ਜੇ (p->numa_ਨੁਕਸ) {
+			tsf = p->numa_ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, ਗੰਢ, 0)];
+			tpf = p->numa_ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, ਗੰਢ, 1)];
 		}
-		if (ng) {
-			gsf = ng->faults[task_faults_idx(NUMA_MEM, node, 0)];
-			gpf = ng->faults[task_faults_idx(NUMA_MEM, node, 1)];
+		ਜੇ (ng) {
+			gsf = ng->ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, ਗੰਢ, 0)];
+			gpf = ng->ਨੁਕਸ[task_ਨੁਕਸ_idx(NUMA_MEM, ਗੰਢ, 1)];
 		}
-		print_numa_stats(m, node, tsf, tpf, gsf, gpf);
+		print_numa_stats(m, ਗੰਢ, tsf, tpf, gsf, gpf);
 	}
 	rcu_read_unlock();
 }
-#endif /* CONFIG_NUMA_BALANCING */
+#ਜੇ_ਅੰਤ /* CONFIG_NUMA_BALANCING */
 
-__init void init_sched_fair_class(void)
+__init ਖਾਲੀ init_sched_fair_class(ਖਾਲੀ)
 {
-	int i;
+	ਪੂਰਨ i;
 
 	for_each_possible_cpu(i) {
-		zalloc_cpumask_var_node(&per_cpu(load_balance_mask, i), GFP_KERNEL, cpu_to_node(i));
-		zalloc_cpumask_var_node(&per_cpu(select_rq_mask,    i), GFP_KERNEL, cpu_to_node(i));
-		zalloc_cpumask_var_node(&per_cpu(should_we_balance_tmpmask, i),
-					GFP_KERNEL, cpu_to_node(i));
+		zalloc_cpumask_var_ਗੰਢ(&ਪ੍ਰਤੀ_cpu(ਲੱਦੋ_balance_ਨਕਾਬ, i), GFP_KERNEL, cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(i));
+		zalloc_cpumask_var_ਗੰਢ(&ਪ੍ਰਤੀ_cpu(select_rq_ਨਕਾਬ,    i), GFP_KERNEL, cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(i));
+		zalloc_cpumask_var_ਗੰਢ(&ਪ੍ਰਤੀ_cpu(should_we_balance_tmpmask, i),
+					GFP_KERNEL, cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(i));
 
-#ifdef CONFIG_CFS_BANDWIDTH
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CFS_BANDWIDTH
 		INIT_CSD(&cpu_rq(i)->cfsb_csd, __cfsb_csd_unthrottle, cpu_rq(i));
-		INIT_LIST_HEAD(&cpu_rq(i)->cfsb_csd_list);
-#endif
+		INIT_LIST_ਸਿਰ(&cpu_rq(i)->cfsb_csd_list);
+#ਜੇ_ਅੰਤ
 	}
 
 	open_softirq(SCHED_SOFTIRQ, sched_balance_softirq);
 
-#ifdef CONFIG_NO_HZ_COMMON
-	nohz.next_balance = jiffies;
-	nohz.next_blocked = jiffies;
-	zalloc_cpumask_var(&nohz.idle_cpus_mask, GFP_NOWAIT);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_COMMON
+	nohz.ਅਗਲਾ_balance = jiffies;
+	nohz.ਅਗਲਾ_blocked = jiffies;
+	zalloc_cpumask_var(&nohz.idle_cpus_ਨਕਾਬ, GFP_NOWAIT);
+#ਜੇ_ਅੰਤ
 }

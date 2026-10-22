@@ -4,42 +4,42 @@
  * A simple wrapper around refcount. An allocated sched_core_cookie's
  * address is used to compute the cookie of the task.
  */
-#include "sched.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sched.h"
 
-struct sched_core_cookie {
+ਬਣਤਰ sched_core_cookie {
 	refcount_t refcnt;
 };
 
-static unsigned long sched_core_alloc_cookie(void)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sched_core_alloc_cookie(ਖਾਲੀ)
 {
-	struct sched_core_cookie *ck = kmalloc_obj(*ck);
-	if (!ck)
-		return 0;
+	ਬਣਤਰ sched_core_cookie *ck = kmalloc_obj(*ck);
+	ਜੇ (!ck)
+		ਵਾਪਸ 0;
 
-	refcount_set(&ck->refcnt, 1);
+	refcount_ਸੈੱਟ(&ck->refcnt, 1);
 	sched_core_get();
 
-	return (unsigned long)ck;
+	ਵਾਪਸ (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ck;
 }
 
-static void sched_core_put_cookie(unsigned long cookie)
+ਸਥਿਰ ਖਾਲੀ sched_core_put_cookie(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cookie)
 {
-	struct sched_core_cookie *ptr = (void *)cookie;
+	ਬਣਤਰ sched_core_cookie *ptr = (ਖਾਲੀ *)cookie;
 
-	if (ptr && refcount_dec_and_test(&ptr->refcnt)) {
+	ਜੇ (ptr && refcount_dec_and_test(&ptr->refcnt)) {
 		kfree(ptr);
 		sched_core_put();
 	}
 }
 
-static unsigned long sched_core_get_cookie(unsigned long cookie)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sched_core_get_cookie(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cookie)
 {
-	struct sched_core_cookie *ptr = (void *)cookie;
+	ਬਣਤਰ sched_core_cookie *ptr = (ਖਾਲੀ *)cookie;
 
-	if (ptr)
+	ਜੇ (ptr)
 		refcount_inc(&ptr->refcnt);
 
-	return cookie;
+	ਵਾਪਸ cookie;
 }
 
 /*
@@ -52,14 +52,14 @@ static unsigned long sched_core_get_cookie(unsigned long cookie)
  *
  * Returns: the old cookie
  */
-static unsigned long sched_core_update_cookie(struct task_struct *p,
-					      unsigned long cookie)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sched_core_update_cookie(ਬਣਤਰ task_struct *p,
+					      ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cookie)
 {
-	unsigned long old_cookie;
-	struct rq_flags rf;
-	struct rq *rq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ old_cookie;
+	ਬਣਤਰ rq_flags rf;
+	ਬਣਤਰ rq *rq;
 
-	rq = task_rq_lock(p, &rf);
+	rq = task_rq_ਤਾਲਾ_2(p, &rf);
 
 	/*
 	 * Since creating a cookie implies sched_core_get(), and we cannot set
@@ -69,8 +69,8 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	 */
 	WARN_ON_ONCE((p->core_cookie || cookie) && !sched_core_enabled(rq));
 
-	if (sched_core_enqueued(p))
-		sched_core_dequeue(rq, p, DEQUEUE_SAVE);
+	ਜੇ (sched_core_enqueued(p))
+		sched_core_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(rq, p, ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SAVE);
 
 	old_cookie = p->core_cookie;
 	p->core_cookie = cookie;
@@ -78,8 +78,8 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	/*
 	 * Consider the cases: !prev_cookie and !cookie.
 	 */
-	if (cookie && task_on_rq_queued(p))
-		sched_core_enqueue(rq, p);
+	ਜੇ (cookie && task_on_rq_queued(p))
+		sched_core_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(rq, p);
 
 	/*
 	 * If task is currently running, it may not be compatible anymore after
@@ -90,37 +90,37 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	 * core has now entered/left forced idle state. Defer accounting to the
 	 * next scheduling edge, rather than always forcing a reschedule here.
 	 */
-	if (task_on_cpu(rq, p))
+	ਜੇ (task_on_cpu(rq, p))
 		resched_curr(rq);
 
 	task_rq_unlock(rq, p, &rf);
 
-	return old_cookie;
+	ਵਾਪਸ old_cookie;
 }
 
-static unsigned long sched_core_clone_cookie(struct task_struct *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sched_core_clone_cookie(ਬਣਤਰ task_struct *p)
 {
-	unsigned long cookie, flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cookie, flags;
 
-	raw_spin_lock_irqsave(&p->pi_lock, flags);
+	raw_spin_ਤਾਲਾ_irqsave(&p->pi_ਤਾਲਾ, flags);
 	cookie = sched_core_get_cookie(p->core_cookie);
-	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
+	raw_spin_unlock_irqrestore(&p->pi_ਤਾਲਾ, flags);
 
-	return cookie;
+	ਵਾਪਸ cookie;
 }
 
-void sched_core_fork(struct task_struct *p)
+ਖਾਲੀ sched_core_fork(ਬਣਤਰ task_struct *p)
 {
-	RB_CLEAR_NODE(&p->core_node);
+	RB_CLEAR_ਗੰਢ(&p->core_ਗੰਢ);
 	p->core_cookie = sched_core_clone_cookie(current);
 }
 
-void sched_core_free(struct task_struct *p)
+ਖਾਲੀ sched_core_free(ਬਣਤਰ task_struct *p)
 {
 	sched_core_put_cookie(p->core_cookie);
 }
 
-static void __sched_core_set(struct task_struct *p, unsigned long cookie)
+ਸਥਿਰ ਖਾਲੀ __sched_core_set(ਬਣਤਰ task_struct *p, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cookie)
 {
 	cookie = sched_core_get_cookie(cookie);
 	cookie = sched_core_update_cookie(p, cookie);
@@ -128,33 +128,33 @@ static void __sched_core_set(struct task_struct *p, unsigned long cookie)
 }
 
 /* Called from prctl interface: PR_SCHED_CORE */
-int sched_core_share_pid(unsigned int cmd, pid_t pid, enum pid_type type,
-			 unsigned long uaddr)
+ਪੂਰਨ sched_core_share_pid(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cmd, pid_t pid, ਗਿਣਤੀ pid_type type,
+			 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ uaddr)
 {
-	unsigned long cookie = 0, id = 0;
-	struct task_struct *task, *p;
-	struct pid *grp;
-	int err = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cookie = 0, id = 0;
+	ਬਣਤਰ task_struct *task, *p;
+	ਬਣਤਰ pid *grp;
+	ਪੂਰਨ err = 0;
 
-	if (!sched_smt_active())
-		return -ENODEV;
+	ਜੇ (!sched_smt_ਸਰਗਰਮ())
+		ਵਾਪਸ -ENODEV;
 
 	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD != PIDTYPE_PID);
-	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD_GROUP != PIDTYPE_TGID);
-	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_PROCESS_GROUP != PIDTYPE_PGID);
+	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD_ਸਮੂਹ != PIDTYPE_TGID);
+	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_PROCESS_ਸਮੂਹ != PIDTYPE_PGID);
 
-	if (type > PIDTYPE_PGID || cmd >= PR_SCHED_CORE_MAX || pid < 0 ||
+	ਜੇ (type > PIDTYPE_PGID || cmd >= PR_SCHED_CORE_MAX || pid < 0 ||
 	    (cmd != PR_SCHED_CORE_GET && uaddr))
-		return -EINVAL;
+		ਵਾਪਸ -EINVAL;
 
-	rcu_read_lock();
-	if (pid == 0) {
+	rcu_read_ਤਾਲਾ();
+	ਜੇ (pid == 0) {
 		task = current;
-	} else {
-		task = find_task_by_vpid(pid);
-		if (!task) {
+	} ਨਹੀਂਤਾਂ {
+		task = ਲੱਭੋ_task_by_vpid(pid);
+		ਜੇ (!task) {
 			rcu_read_unlock();
-			return -ESRCH;
+			ਵਾਪਸ -ESRCH;
 		}
 	}
 	get_task_struct(task);
@@ -164,121 +164,121 @@ int sched_core_share_pid(unsigned int cmd, pid_t pid, enum pid_type type,
 	 * Check if this process has the right to modify the specified
 	 * process. Use the regular "ptrace_may_access()" checks.
 	 */
-	if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
+	ਜੇ (!ptrace_may_access(task, PTRACE_ਬਹੁਲਕ_READ_REALCREDS)) {
 		err = -EPERM;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
-	switch (cmd) {
-	case PR_SCHED_CORE_GET:
-		if (type != PIDTYPE_PID || uaddr & 7) {
+	ਚੋਣ (cmd) {
+	ਹਾਲਤ PR_SCHED_CORE_GET:
+		ਜੇ (type != PIDTYPE_PID || uaddr & 7) {
 			err = -EINVAL;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
 		cookie = sched_core_clone_cookie(task);
-		if (cookie) {
+		ਜੇ (cookie) {
 			/* XXX improve ? */
-			ptr_to_hashval((void *)cookie, &id);
+			ptr_ਮੰਜ਼ਿਲ_hashval((ਖਾਲੀ *)cookie, &id);
 		}
 		err = put_user(id, (u64 __user *)uaddr);
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 
-	case PR_SCHED_CORE_CREATE:
+	ਹਾਲਤ PR_SCHED_CORE_CREATE:
 		cookie = sched_core_alloc_cookie();
-		if (!cookie) {
+		ਜੇ (!cookie) {
 			err = -ENOMEM;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
-		break;
+		ਰੋਕੋ;
 
-	case PR_SCHED_CORE_SHARE_TO:
+	ਹਾਲਤ PR_SCHED_CORE_SHARE_ਮੰਜ਼ਿਲ:
 		cookie = sched_core_clone_cookie(current);
-		break;
+		ਰੋਕੋ;
 
-	case PR_SCHED_CORE_SHARE_FROM:
-		if (type != PIDTYPE_PID) {
+	ਹਾਲਤ PR_SCHED_CORE_SHARE_FROM:
+		ਜੇ (type != PIDTYPE_PID) {
 			err = -EINVAL;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
 		cookie = sched_core_clone_cookie(task);
 		__sched_core_set(current, cookie);
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 
-	default:
+	ਮੂਲ:
 		err = -EINVAL;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
-	if (type == PIDTYPE_PID) {
+	ਜੇ (type == PIDTYPE_PID) {
 		__sched_core_set(task, cookie);
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
-	read_lock(&tasklist_lock);
+	read_ਤਾਲਾ(&tasklist_ਤਾਲਾ);
 	grp = task_pid_type(task, type);
 
 	do_each_pid_thread(grp, type, p) {
-		if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS)) {
+		ਜੇ (!ptrace_may_access(p, PTRACE_ਬਹੁਲਕ_READ_REALCREDS)) {
 			err = -EPERM;
-			goto out_tasklist;
+			ਜਾਓ ਬਾਹਰਲਾ_tasklist;
 		}
 	} while_each_pid_thread(grp, type, p);
 
 	do_each_pid_thread(grp, type, p) {
 		__sched_core_set(p, cookie);
 	} while_each_pid_thread(grp, type, p);
-out_tasklist:
-	read_unlock(&tasklist_lock);
+ਬਾਹਰਲਾ_tasklist:
+	read_unlock(&tasklist_ਤਾਲਾ);
 
-out:
+ਬਾਹਰਲਾ:
 	sched_core_put_cookie(cookie);
 	put_task_struct(task);
-	return err;
+	ਵਾਪਸ err;
 }
 
-#ifdef CONFIG_SCHEDSTATS
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHEDSTATS
 
 /* REQUIRES: rq->core's clock recently updated. */
-void __sched_core_account_forceidle(struct rq *rq)
+ਖਾਲੀ __sched_core_account_forceidle(ਬਣਤਰ rq *rq)
 {
-	const struct cpumask *smt_mask = cpu_smt_mask(cpu_of(rq));
+	ਅਚਲ ਬਣਤਰ cpumask *smt_ਨਕਾਬ = cpu_smt_ਨਕਾਬ(cpu_ਦਾ(rq));
 	u64 delta, now = rq_clock(rq->core);
-	struct rq *rq_i;
-	struct task_struct *p;
-	int i;
+	ਬਣਤਰ rq *rq_i;
+	ਬਣਤਰ task_struct *p;
+	ਪੂਰਨ i;
 
 	lockdep_assert_rq_held(rq);
 
-	WARN_ON_ONCE(!rq->core->core_forceidle_count);
+	WARN_ON_ONCE(!rq->core->core_forceidle_ਗਿਣਤੀ);
 
-	if (rq->core->core_forceidle_start == 0)
-		return;
+	ਜੇ (rq->core->core_forceidle_ਸ਼ੁਰੂ == 0)
+		ਵਾਪਸ;
 
-	delta = now - rq->core->core_forceidle_start;
-	if (unlikely((s64)delta <= 0))
-		return;
+	delta = now - rq->core->core_forceidle_ਸ਼ੁਰੂ;
+	ਜੇ (unlikely((s64)delta <= 0))
+		ਵਾਪਸ;
 
-	rq->core->core_forceidle_start = now;
+	rq->core->core_forceidle_ਸ਼ੁਰੂ = now;
 
-	if (WARN_ON_ONCE(!rq->core->core_forceidle_occupation)) {
+	ਜੇ (WARN_ON_ONCE(!rq->core->core_forceidle_occupation)) {
 		/* can't be forced idle without a running task */
-	} else if (rq->core->core_forceidle_count > 1 ||
+	} ਨਹੀਂਤਾਂ ਜੇ (rq->core->core_forceidle_ਗਿਣਤੀ > 1 ||
 		   rq->core->core_forceidle_occupation > 1) {
 		/*
 		 * For larger SMT configurations, we need to scale the charged
 		 * forced idle amount since there can be more than one forced
 		 * idle sibling and more than one running cookied task.
 		 */
-		delta *= rq->core->core_forceidle_count;
+		delta *= rq->core->core_forceidle_ਗਿਣਤੀ;
 		delta = div_u64(delta, rq->core->core_forceidle_occupation);
 	}
 
-	for_each_cpu(i, smt_mask) {
+	for_each_cpu(i, smt_ਨਕਾਬ) {
 		rq_i = cpu_rq(i);
 		p = rq_i->core_pick ?: rq_i->curr;
 
-		if (p == rq_i->idle)
-			continue;
+		ਜੇ (p == rq_i->idle)
+			ਜਾਰੀ;
 
 		/*
 		 * Note: this will account forceidle to the current CPU, even
@@ -288,15 +288,15 @@ void __sched_core_account_forceidle(struct rq *rq)
 	}
 }
 
-void __sched_core_tick(struct rq *rq)
+ਖਾਲੀ __sched_core_tick(ਬਣਤਰ rq *rq)
 {
-	if (!rq->core->core_forceidle_count)
-		return;
+	ਜੇ (!rq->core->core_forceidle_ਗਿਣਤੀ)
+		ਵਾਪਸ;
 
-	if (rq != rq->core)
+	ਜੇ (rq != rq->core)
 		update_rq_clock(rq->core);
 
 	__sched_core_account_forceidle(rq);
 }
 
-#endif /* CONFIG_SCHEDSTATS */
+#ਜੇ_ਅੰਤ /* CONFIG_SCHEDSTATS */

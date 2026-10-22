@@ -2,16 +2,16 @@
 /*
  * <linux/swait.h> (simple wait queues ) implementation:
  */
-#include "sched.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sched.h"
 
-void __init_swait_queue_head(struct swait_queue_head *q, const char *name,
-			     struct lock_class_key *key)
+ਖਾਲੀ __init_swait_queue_head(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q, ਅਚਲ ਅੱਖਰ *name,
+			     ਬਣਤਰ ਤਾਲਾ_class_ਕੁੰਜੀ *ਕੁੰਜੀ)
 {
-	raw_spin_lock_init(&q->lock);
-	lockdep_set_class_and_name(&q->lock, key, name);
-	INIT_LIST_HEAD(&q->task_list);
+	raw_spin_ਤਾਲਾ_init(&q->ਤਾਲਾ);
+	lockdep_ਸੈੱਟ_class_and_name(&q->ਤਾਲਾ, ਕੁੰਜੀ, name);
+	INIT_LIST_ਸਿਰ(&q->task_list);
 }
-EXPORT_SYMBOL(__init_swait_queue_head);
+EXPORT_ਚਿੰਨ੍ਹ(__init_swait_queue_head);
 
 /*
  * The thing about the wake_up_state() return value; I think we can ignore it.
@@ -19,18 +19,18 @@ EXPORT_SYMBOL(__init_swait_queue_head);
  * If for some reason it would return 0, that means the previously waiting
  * task is already running, so it will observe condition true (or has already).
  */
-void swake_up_locked(struct swait_queue_head *q, int wake_flags)
+ਖਾਲੀ swake_ਉੱਪਰ_locked(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q, ਪੂਰਨ wake_flags)
 {
-	struct swait_queue *curr;
+	ਬਣਤਰ swait_ਕਤਾਰ *curr;
 
-	if (list_empty(&q->task_list))
-		return;
+	ਜੇ (list_ਖਾਲੀ_ਥਾਵਾਂ(&q->task_list))
+		ਵਾਪਸ;
 
-	curr = list_first_entry(&q->task_list, typeof(*curr), task_list);
-	try_to_wake_up(curr->task, TASK_NORMAL, wake_flags);
+	curr = list_ਪਹਿਲਾ_ਇੰਦਰਾਜ(&q->task_list, typeof(*curr), task_list);
+	try_ਮੰਜ਼ਿਲ_wake_ਉੱਪਰ(curr->task, TASK_ਸਾਧਾਰਨ, wake_flags);
 	list_del_init(&curr->task_list);
 }
-EXPORT_SYMBOL(swake_up_locked);
+EXPORT_ਚਿੰਨ੍ਹ(swake_ਉੱਪਰ_locked);
 
 /*
  * Wake up all waiters. This is an interface which is solely exposed for
@@ -39,107 +39,107 @@ EXPORT_SYMBOL(swake_up_locked);
  * It is intentionally different from swake_up_all() to allow usage from
  * hard interrupt context and interrupt disabled regions.
  */
-void swake_up_all_locked(struct swait_queue_head *q)
+ਖਾਲੀ swake_ਉੱਪਰ_all_locked(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q)
 {
-	while (!list_empty(&q->task_list))
-		swake_up_locked(q, 0);
+	ਜਦੋਂ (!list_ਖਾਲੀ_ਥਾਵਾਂ(&q->task_list))
+		swake_ਉੱਪਰ_locked(q, 0);
 }
 
-void swake_up_one(struct swait_queue_head *q)
+ਖਾਲੀ swake_ਉੱਪਰ_one(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q)
 {
-	unsigned long flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
-	swake_up_locked(q, 0);
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	raw_spin_ਤਾਲਾ_irqsave(&q->ਤਾਲਾ, flags);
+	swake_ਉੱਪਰ_locked(q, 0);
+	raw_spin_unlock_irqrestore(&q->ਤਾਲਾ, flags);
 }
-EXPORT_SYMBOL(swake_up_one);
+EXPORT_ਚਿੰਨ੍ਹ(swake_ਉੱਪਰ_one);
 
 /*
  * Does not allow usage from IRQ disabled, since we must be able to
  * release IRQs to guarantee bounded hold time.
  */
-void swake_up_all(struct swait_queue_head *q)
+ਖਾਲੀ swake_ਉੱਪਰ_all(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q)
 {
-	struct swait_queue *curr;
-	LIST_HEAD(tmp);
+	ਬਣਤਰ swait_ਕਤਾਰ *curr;
+	LIST_ਸਿਰ(tmp);
 
-	raw_spin_lock_irq(&q->lock);
+	raw_spin_ਤਾਲਾ_irq(&q->ਤਾਲਾ);
 	list_splice_init(&q->task_list, &tmp);
-	while (!list_empty(&tmp)) {
-		curr = list_first_entry(&tmp, typeof(*curr), task_list);
+	ਜਦੋਂ (!list_ਖਾਲੀ_ਥਾਵਾਂ(&tmp)) {
+		curr = list_ਪਹਿਲਾ_ਇੰਦਰਾਜ(&tmp, typeof(*curr), task_list);
 
-		wake_up_state(curr->task, TASK_NORMAL);
+		wake_ਉੱਪਰ_state(curr->task, TASK_ਸਾਧਾਰਨ);
 		list_del_init(&curr->task_list);
 
-		if (list_empty(&tmp))
-			break;
+		ਜੇ (list_ਖਾਲੀ_ਥਾਵਾਂ(&tmp))
+			ਰੋਕੋ;
 
-		raw_spin_unlock_irq(&q->lock);
-		raw_spin_lock_irq(&q->lock);
+		raw_spin_unlock_irq(&q->ਤਾਲਾ);
+		raw_spin_ਤਾਲਾ_irq(&q->ਤਾਲਾ);
 	}
-	raw_spin_unlock_irq(&q->lock);
+	raw_spin_unlock_irq(&q->ਤਾਲਾ);
 }
-EXPORT_SYMBOL(swake_up_all);
+EXPORT_ਚਿੰਨ੍ਹ(swake_ਉੱਪਰ_all);
 
-void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait)
+ਖਾਲੀ __prepare_to_swait(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q, ਬਣਤਰ swait_ਕਤਾਰ *wait)
 {
 	wait->task = current;
-	if (list_empty(&wait->task_list))
-		list_add_tail(&wait->task_list, &q->task_list);
+	ਜੇ (list_ਖਾਲੀ_ਥਾਵਾਂ(&wait->task_list))
+		list_ਜੋੜੋ_ਪੂਛ(&wait->task_list, &q->task_list);
 }
 
-void prepare_to_swait_exclusive(struct swait_queue_head *q, struct swait_queue *wait, int state)
+ਖਾਲੀ prepare_ਮੰਜ਼ਿਲ_swait_exclusive(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q, ਬਣਤਰ swait_ਕਤਾਰ *wait, ਪੂਰਨ state)
 {
-	unsigned long flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
+	raw_spin_ਤਾਲਾ_irqsave(&q->ਤਾਲਾ, flags);
 	__prepare_to_swait(q, wait);
-	set_current_state(state);
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	ਸੈੱਟ_current_state(state);
+	raw_spin_unlock_irqrestore(&q->ਤਾਲਾ, flags);
 }
-EXPORT_SYMBOL(prepare_to_swait_exclusive);
+EXPORT_ਚਿੰਨ੍ਹ(prepare_ਮੰਜ਼ਿਲ_swait_exclusive);
 
-long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queue *wait, int state)
+ਲੰਮਾ prepare_ਮੰਜ਼ਿਲ_swait_event(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q, ਬਣਤਰ swait_ਕਤਾਰ *wait, ਪੂਰਨ state)
 {
-	unsigned long flags;
-	long ret = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
+	ਲੰਮਾ ret = 0;
 
-	raw_spin_lock_irqsave(&q->lock, flags);
-	if (signal_pending_state(state, current)) {
+	raw_spin_ਤਾਲਾ_irqsave(&q->ਤਾਲਾ, flags);
+	ਜੇ (signal_pending_state(state, current)) {
 		/*
 		 * See prepare_to_wait_event(). TL;DR, subsequent swake_up_one()
 		 * must not see us.
 		 */
 		list_del_init(&wait->task_list);
 		ret = -ERESTARTSYS;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		__prepare_to_swait(q, wait);
-		set_current_state(state);
+		ਸੈੱਟ_current_state(state);
 	}
-	raw_spin_unlock_irqrestore(&q->lock, flags);
+	raw_spin_unlock_irqrestore(&q->ਤਾਲਾ, flags);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
-EXPORT_SYMBOL(prepare_to_swait_event);
+EXPORT_ਚਿੰਨ੍ਹ(prepare_ਮੰਜ਼ਿਲ_swait_event);
 
-void __finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
+ਖਾਲੀ __finish_swait(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q, ਬਣਤਰ swait_ਕਤਾਰ *wait)
 {
 	__set_current_state(TASK_RUNNING);
-	if (!list_empty(&wait->task_list))
+	ਜੇ (!list_ਖਾਲੀ_ਥਾਵਾਂ(&wait->task_list))
 		list_del_init(&wait->task_list);
 }
 
-void finish_swait(struct swait_queue_head *q, struct swait_queue *wait)
+ਖਾਲੀ ਅੰਤ_swait(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q, ਬਣਤਰ swait_ਕਤਾਰ *wait)
 {
-	unsigned long flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
 	__set_current_state(TASK_RUNNING);
 
-	if (!list_empty_careful(&wait->task_list)) {
-		raw_spin_lock_irqsave(&q->lock, flags);
+	ਜੇ (!list_ਖਾਲੀ_ਥਾਵਾਂ_careful(&wait->task_list)) {
+		raw_spin_ਤਾਲਾ_irqsave(&q->ਤਾਲਾ, flags);
 		list_del_init(&wait->task_list);
-		raw_spin_unlock_irqrestore(&q->lock, flags);
+		raw_spin_unlock_irqrestore(&q->ਤਾਲਾ, flags);
 	}
 }
-EXPORT_SYMBOL(finish_swait);
+EXPORT_ਚਿੰਨ੍ਹ(ਅੰਤ_swait);

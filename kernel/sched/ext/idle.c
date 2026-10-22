@@ -9,22 +9,22 @@
  * Copyright (c) 2022 David Vernet <dvernet@meta.com>
  * Copyright (c) 2024 Andrea Righi <arighi@nvidia.com>
  */
-#include "internal.h"
-#include "cid.h"
-#include "idle.h"
-#include "sub.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "internal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "cid.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "idle.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sub.h"
 
 /* Enable/disable built-in idle CPU selection policy */
-static DEFINE_STATIC_KEY_FALSE(scx_builtin_idle_enabled);
+ਸਥਿਰ DEFINE_STATIC_ਕੁੰਜੀ_FALSE(scx_builtin_idle_enabled);
 
 /* Enable/disable per-node idle cpumasks */
-static DEFINE_STATIC_KEY_FALSE(scx_builtin_idle_per_node);
+ਸਥਿਰ DEFINE_STATIC_ਕੁੰਜੀ_FALSE(scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ);
 
 /* Enable/disable LLC aware optimizations */
-static DEFINE_STATIC_KEY_FALSE(scx_selcpu_topo_llc);
+ਸਥਿਰ DEFINE_STATIC_ਕੁੰਜੀ_FALSE(scx_selcpu_topo_llc);
 
 /* Enable/disable NUMA aware optimizations */
-static DEFINE_STATIC_KEY_FALSE(scx_selcpu_topo_numa);
+ਸਥਿਰ DEFINE_STATIC_ਕੁੰਜੀ_FALSE(scx_selcpu_topo_numa);
 
 /*
  * cpumasks to track idle CPUs within each NUMA node.
@@ -32,7 +32,7 @@ static DEFINE_STATIC_KEY_FALSE(scx_selcpu_topo_numa);
  * If SCX_OPS_BUILTIN_IDLE_PER_NODE is not enabled, a single global cpumask
  * from is used to track all the idle CPUs in the system.
  */
-struct scx_idle_cpus {
+ਬਣਤਰ scx_idle_cpus {
 	cpumask_var_t cpu;
 	cpumask_var_t smt;
 };
@@ -41,55 +41,55 @@ struct scx_idle_cpus {
  * Global host-wide idle cpumasks (used when SCX_OPS_BUILTIN_IDLE_PER_NODE
  * is not enabled).
  */
-static struct scx_idle_cpus scx_idle_global_masks;
+ਸਥਿਰ ਬਣਤਰ scx_idle_cpus scx_idle_global_masks;
 
 /*
  * Per-node idle cpumasks.
  */
-static struct scx_idle_cpus **scx_idle_node_masks;
+ਸਥਿਰ ਬਣਤਰ scx_idle_cpus **scx_idle_ਗੰਢ_masks;
 
 /*
  * Local per-CPU cpumasks (used to generate temporary idle cpumasks).
  */
-static DEFINE_PER_CPU(cpumask_var_t, local_idle_cpumask);
-static DEFINE_PER_CPU(cpumask_var_t, local_llc_idle_cpumask);
-static DEFINE_PER_CPU(cpumask_var_t, local_numa_idle_cpumask);
+ਸਥਿਰ DEFINE_ਪ੍ਰਤੀ_CPU(cpumask_var_t, local_idle_cpumask);
+ਸਥਿਰ DEFINE_ਪ੍ਰਤੀ_CPU(cpumask_var_t, local_llc_idle_cpumask);
+ਸਥਿਰ DEFINE_ਪ੍ਰਤੀ_CPU(cpumask_var_t, local_numa_idle_cpumask);
 
 /*
  * Return the idle masks associated to a target @node.
  *
  * NUMA_NO_NODE identifies the global idle cpumask.
  */
-static struct scx_idle_cpus *idle_cpumask(int node)
+ਸਥਿਰ ਬਣਤਰ scx_idle_cpus *idle_cpumask(ਪੂਰਨ ਗੰਢ)
 {
-	return node == NUMA_NO_NODE ? &scx_idle_global_masks : scx_idle_node_masks[node];
+	ਵਾਪਸ ਗੰਢ == NUMA_NO_ਗੰਢ ? &scx_idle_global_masks : scx_idle_ਗੰਢ_masks[ਗੰਢ];
 }
 
 /*
  * Returns the NUMA node ID associated with a @cpu, or NUMA_NO_NODE if
  * per-node idle cpumasks are disabled.
  */
-static int scx_cpu_node_if_enabled(int cpu)
+ਸਥਿਰ ਪੂਰਨ scx_cpu_ਗੰਢ_if_enabled(ਪੂਰਨ cpu)
 {
-	if (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node))
-		return NUMA_NO_NODE;
+	ਜੇ (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ))
+		ਵਾਪਸ NUMA_NO_ਗੰਢ;
 
-	return cpu_to_node(cpu);
+	ਵਾਪਸ cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(cpu);
 }
 
-static bool scx_idle_test_and_clear_cpu(int cpu)
+ਸਥਿਰ bool scx_idle_test_and_clear_cpu(ਪੂਰਨ cpu)
 {
-	int node = scx_cpu_node_if_enabled(cpu);
-	struct cpumask *idle_cpus = idle_cpumask(node)->cpu;
+	ਪੂਰਨ ਗੰਢ = scx_cpu_ਗੰਢ_if_enabled(cpu);
+	ਬਣਤਰ cpumask *idle_cpus = idle_cpumask(ਗੰਢ)->cpu;
 
 	/*
 	 * SMT mask should be cleared whether we can claim @cpu or not. The SMT
 	 * cluster is not wholly idle either way. This also prevents
 	 * scx_pick_idle_cpu() from getting caught in an infinite loop.
 	 */
-	if (sched_smt_active()) {
-		const struct cpumask *smt = cpu_smt_mask(cpu);
-		struct cpumask *idle_smts = idle_cpumask(node)->smt;
+	ਜੇ (sched_smt_ਸਰਗਰਮ()) {
+		ਅਚਲ ਬਣਤਰ cpumask *smt = cpu_smt_ਨਕਾਬ(cpu);
+		ਬਣਤਰ cpumask *idle_smts = idle_cpumask(ਗੰਢ)->smt;
 
 		/*
 		 * If offline, @cpu is not its own sibling and
@@ -101,67 +101,67 @@ static bool scx_idle_test_and_clear_cpu(int cpu)
 		 * reduce memory writes, which may help alleviate cache
 		 * coherence pressure.
 		 */
-		if (cpumask_intersects(smt, idle_smts))
+		ਜੇ (cpumask_intersects(smt, idle_smts))
 			cpumask_andnot(idle_smts, idle_smts, smt);
-		else if (cpumask_test_cpu(cpu, idle_smts))
+		ਨਹੀਂਤਾਂ ਜੇ (cpumask_test_cpu(cpu, idle_smts))
 			__cpumask_clear_cpu(cpu, idle_smts);
 	}
 
-	return cpumask_test_and_clear_cpu(cpu, idle_cpus);
+	ਵਾਪਸ cpumask_test_and_clear_cpu(cpu, idle_cpus);
 }
 
 /*
  * Pick an idle CPU in a specific NUMA node.
  */
-static s32 pick_idle_cpu_in_node(const struct cpumask *cpus_allowed, int node, u64 flags)
+ਸਥਿਰ s32 pick_idle_cpu_ਵਿੱਚ_ਗੰਢ(ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed, ਪੂਰਨ ਗੰਢ, u64 flags)
 {
-	int cpu;
+	ਪੂਰਨ cpu;
 
 retry:
-	if (sched_smt_active()) {
-		cpu = cpumask_any_and_distribute(idle_cpumask(node)->smt, cpus_allowed);
-		if (cpu < nr_cpu_ids)
-			goto found;
+	ਜੇ (sched_smt_ਸਰਗਰਮ()) {
+		cpu = cpumask_any_and_distribute(idle_cpumask(ਗੰਢ)->smt, cpus_allowed);
+		ਜੇ (cpu < nr_cpu_ids)
+			ਜਾਓ ਮਿਲਿਆ;
 
-		if (flags & SCX_PICK_IDLE_CORE)
-			return -EBUSY;
+		ਜੇ (flags & SCX_PICK_IDLE_CORE)
+			ਵਾਪਸ -EBUSY;
 	}
 
-	cpu = cpumask_any_and_distribute(idle_cpumask(node)->cpu, cpus_allowed);
-	if (cpu >= nr_cpu_ids)
-		return -EBUSY;
+	cpu = cpumask_any_and_distribute(idle_cpumask(ਗੰਢ)->cpu, cpus_allowed);
+	ਜੇ (cpu >= nr_cpu_ids)
+		ਵਾਪਸ -EBUSY;
 
-found:
-	if (scx_idle_test_and_clear_cpu(cpu))
-		return cpu;
-	else
-		goto retry;
+ਮਿਲਿਆ:
+	ਜੇ (scx_idle_test_and_clear_cpu(cpu))
+		ਵਾਪਸ cpu;
+	ਨਹੀਂਤਾਂ
+		ਜਾਓ retry;
 }
 
-#ifdef CONFIG_NUMA
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA
 /*
  * Tracks nodes that have not yet been visited when searching for an idle
  * CPU across all available nodes.
  */
-static DEFINE_PER_CPU(nodemask_t, per_cpu_unvisited);
+ਸਥਿਰ DEFINE_ਪ੍ਰਤੀ_CPU(nodemask_t, ਪ੍ਰਤੀ_cpu_unvisited);
 
 /*
  * Search for an idle CPU across all nodes, excluding @node.
  */
-static s32 pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, int node, u64 flags)
+ਸਥਿਰ s32 pick_idle_cpu_from_online_nodes(ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed, ਪੂਰਨ ਗੰਢ, u64 flags)
 {
 	nodemask_t *unvisited;
 	s32 cpu = -EBUSY;
 
 	preempt_disable();
-	unvisited = this_cpu_ptr(&per_cpu_unvisited);
+	unvisited = this_cpu_ptr(&ਪ੍ਰਤੀ_cpu_unvisited);
 
 	/*
 	 * Restrict the search to the online nodes (excluding the current
 	 * node that has been visited already).
 	 */
-	nodes_copy(*unvisited, node_states[N_ONLINE]);
-	node_clear(node, *unvisited);
+	nodes_copy(*unvisited, ਗੰਢ_ਹਾਲਤਾਂ[N_ONLINE]);
+	ਗੰਢ_clear(ਗੰਢ, *unvisited);
 
 	/*
 	 * Traverse all nodes in order of increasing distance, starting
@@ -178,27 +178,27 @@ static s32 pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, i
 	 * in a per-node array, instead of actually traversing them every
 	 * time.
 	 */
-	for_each_node_numadist(node, *unvisited) {
-		cpu = pick_idle_cpu_in_node(cpus_allowed, node, flags);
-		if (cpu >= 0)
-			break;
+	for_each_ਗੰਢ_numadist(ਗੰਢ, *unvisited) {
+		cpu = pick_idle_cpu_ਵਿੱਚ_ਗੰਢ(cpus_allowed, ਗੰਢ, flags);
+		ਜੇ (cpu >= 0)
+			ਰੋਕੋ;
 	}
 	preempt_enable();
 
-	return cpu;
+	ਵਾਪਸ cpu;
 }
-#else
-static inline s32
-pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, int node, u64 flags)
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਸਤਰਅੰਦਰ s32
+pick_idle_cpu_from_online_nodes(ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed, ਪੂਰਨ ਗੰਢ, u64 flags)
 {
-	return -EBUSY;
+	ਵਾਪਸ -EBUSY;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 /*
  * Find an idle CPU in the system, starting from @node.
  */
-static s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, int node, u64 flags)
+ਸਥਿਰ s32 scx_pick_idle_cpu(ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed, ਪੂਰਨ ਗੰਢ, u64 flags)
 {
 	s32 cpu;
 
@@ -207,99 +207,99 @@ static s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, int node, u64 f
 	 * optimization that can save some cycles even when the search is
 	 * not limited to a single node).
 	 */
-	cpu = pick_idle_cpu_in_node(cpus_allowed, node, flags);
-	if (cpu >= 0)
-		return cpu;
+	cpu = pick_idle_cpu_ਵਿੱਚ_ਗੰਢ(cpus_allowed, ਗੰਢ, flags);
+	ਜੇ (cpu >= 0)
+		ਵਾਪਸ cpu;
 
 	/*
 	 * Stop the search if we are using only a single global cpumask
 	 * (NUMA_NO_NODE) or if the search is restricted to the first node
 	 * only.
 	 */
-	if (node == NUMA_NO_NODE || flags & SCX_PICK_IDLE_IN_NODE)
-		return -EBUSY;
+	ਜੇ (ਗੰਢ == NUMA_NO_ਗੰਢ || flags & SCX_PICK_IDLE_ਵਿੱਚ_ਗੰਢ)
+		ਵਾਪਸ -EBUSY;
 
 	/*
 	 * Extend the search to the other online nodes.
 	 */
-	return pick_idle_cpu_from_online_nodes(cpus_allowed, node, flags);
+	ਵਾਪਸ pick_idle_cpu_from_online_nodes(cpus_allowed, ਗੰਢ, flags);
 }
 
 /*
  * Return the amount of CPUs in the same LLC domain of @cpu (or zero if the LLC
  * domain is not defined).
  */
-static unsigned int llc_weight(s32 cpu)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_ਭਾਰ(s32 cpu)
 {
-	struct sched_domain *sd;
+	ਬਣਤਰ sched_domain *sd;
 
-	sd = rcu_dereference(per_cpu(sd_llc, cpu));
-	if (!sd)
-		return 0;
+	sd = rcu_dereference(ਪ੍ਰਤੀ_cpu(sd_llc, cpu));
+	ਜੇ (!sd)
+		ਵਾਪਸ 0;
 
-	return sd->span_weight;
+	ਵਾਪਸ sd->ਵਿਸਤਾਰ_ਭਾਰ;
 }
 
 /*
  * Return the cpumask representing the LLC domain of @cpu (or NULL if the LLC
  * domain is not defined).
  */
-static struct cpumask *llc_span(s32 cpu)
+ਸਥਿਰ ਬਣਤਰ cpumask *llc_ਵਿਸਤਾਰ(s32 cpu)
 {
-	struct sched_domain *sd;
+	ਬਣਤਰ sched_domain *sd;
 
-	sd = rcu_dereference(per_cpu(sd_llc, cpu));
-	if (!sd)
-		return NULL;
+	sd = rcu_dereference(ਪ੍ਰਤੀ_cpu(sd_llc, cpu));
+	ਜੇ (!sd)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return sched_domain_span(sd);
+	ਵਾਪਸ sched_domain_ਵਿਸਤਾਰ(sd);
 }
 
 /*
  * Return the amount of CPUs in the same NUMA domain of @cpu (or zero if the
  * NUMA domain is not defined).
  */
-static unsigned int numa_weight(s32 cpu)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ numa_ਭਾਰ(s32 cpu)
 {
-	struct sched_domain *sd;
-	struct sched_group *sg;
+	ਬਣਤਰ sched_domain *sd;
+	ਬਣਤਰ sched_ਸਮੂਹ *sg;
 
-	sd = rcu_dereference(per_cpu(sd_numa, cpu));
-	if (!sd)
-		return 0;
+	sd = rcu_dereference(ਪ੍ਰਤੀ_cpu(sd_numa, cpu));
+	ਜੇ (!sd)
+		ਵਾਪਸ 0;
 	sg = sd->groups;
-	if (!sg)
-		return 0;
+	ਜੇ (!sg)
+		ਵਾਪਸ 0;
 
-	return sg->group_weight;
+	ਵਾਪਸ sg->ਸਮੂਹ_ਭਾਰ;
 }
 
 /*
  * Return the cpumask representing the NUMA domain of @cpu (or NULL if the NUMA
  * domain is not defined).
  */
-static struct cpumask *numa_span(s32 cpu)
+ਸਥਿਰ ਬਣਤਰ cpumask *numa_ਵਿਸਤਾਰ(s32 cpu)
 {
-	struct sched_domain *sd;
-	struct sched_group *sg;
+	ਬਣਤਰ sched_domain *sd;
+	ਬਣਤਰ sched_ਸਮੂਹ *sg;
 
-	sd = rcu_dereference(per_cpu(sd_numa, cpu));
-	if (!sd)
-		return NULL;
+	sd = rcu_dereference(ਪ੍ਰਤੀ_cpu(sd_numa, cpu));
+	ਜੇ (!sd)
+		ਵਾਪਸ ਨਿਰਾ;
 	sg = sd->groups;
-	if (!sg)
-		return NULL;
+	ਜੇ (!sg)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return sched_group_span(sg);
+	ਵਾਪਸ sched_ਸਮੂਹ_ਵਿਸਤਾਰ(sg);
 }
 
 /*
  * Return true if the LLC domains do not perfectly overlap with the NUMA
  * domains, false otherwise.
  */
-static bool llc_numa_mismatch(void)
+ਸਥਿਰ bool llc_numa_mismatch(ਖਾਲੀ)
 {
-	int cpu;
+	ਪੂਰਨ cpu;
 
 	/*
 	 * We need to scan all online CPUs to verify whether their scheduling
@@ -325,10 +325,10 @@ static bool llc_numa_mismatch(void)
 	 * domains).
 	 */
 	for_each_online_cpu(cpu)
-		if (llc_weight(cpu) != numa_weight(cpu))
-			return true;
+		ਜੇ (llc_ਭਾਰ(cpu) != numa_ਭਾਰ(cpu))
+			ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
 /*
@@ -342,11 +342,11 @@ static bool llc_numa_mismatch(void)
  * CPU belongs to a single LLC domain, and that each LLC domain is entirely
  * contained within a single NUMA node.
  */
-void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
+ਖਾਲੀ scx_idle_update_selcpu_topology(ਬਣਤਰ sched_ext_ops *ops)
 {
 	bool enable_llc = false, enable_numa = false;
-	unsigned int nr_cpus;
-	s32 cpu = cpumask_first(cpu_online_mask);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ nr_cpus;
+	s32 cpu = cpumask_ਪਹਿਲਾ(cpu_online_ਨਕਾਬ);
 
 	/*
 	 * Enable LLC domain optimization only when there are multiple LLC
@@ -358,13 +358,13 @@ void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
 	 * online CPU to determine whether a single LLC domain includes all
 	 * CPUs.
 	 */
-	rcu_read_lock();
-	nr_cpus = llc_weight(cpu);
-	if (nr_cpus > 0) {
-		if (nr_cpus < num_online_cpus())
+	rcu_read_ਤਾਲਾ();
+	nr_cpus = llc_ਭਾਰ(cpu);
+	ਜੇ (nr_cpus > 0) {
+		ਜੇ (nr_cpus < ਅੰਕ_online_cpus())
 			enable_llc = true;
 		pr_debug("sched_ext: LLC=%*pb weight=%u\n",
-			 cpumask_pr_args(llc_span(cpu)), llc_weight(cpu));
+			 cpumask_pr_ਦਲੀਲਾਂ(llc_ਵਿਸਤਾਰ(cpu)), llc_ਭਾਰ(cpu));
 	}
 
 	/*
@@ -380,13 +380,13 @@ void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
 	 * optimization, as we would naturally select idle CPUs within
 	 * specific NUMA nodes querying the corresponding per-node cpumask.
 	 */
-	if (!(ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE)) {
-		nr_cpus = numa_weight(cpu);
-		if (nr_cpus > 0) {
-			if (nr_cpus < num_online_cpus() && llc_numa_mismatch())
+	ਜੇ (!(ops->flags & SCX_OPS_BUILTIN_IDLE_ਪ੍ਰਤੀ_ਗੰਢ)) {
+		nr_cpus = numa_ਭਾਰ(cpu);
+		ਜੇ (nr_cpus > 0) {
+			ਜੇ (nr_cpus < ਅੰਕ_online_cpus() && llc_numa_mismatch())
 				enable_numa = true;
 			pr_debug("sched_ext: NUMA=%*pb weight=%u\n",
-				 cpumask_pr_args(numa_span(cpu)), nr_cpus);
+				 cpumask_pr_ਦਲੀਲਾਂ(numa_ਵਿਸਤਾਰ(cpu)), nr_cpus);
 		}
 	}
 	rcu_read_unlock();
@@ -396,22 +396,22 @@ void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
 	pr_debug("sched_ext: NUMA idle selection %s\n",
 		 str_enabled_disabled(enable_numa));
 
-	if (enable_llc)
+	ਜੇ (enable_llc)
 		static_branch_enable_cpuslocked(&scx_selcpu_topo_llc);
-	else
+	ਨਹੀਂਤਾਂ
 		static_branch_disable_cpuslocked(&scx_selcpu_topo_llc);
-	if (enable_numa)
+	ਜੇ (enable_numa)
 		static_branch_enable_cpuslocked(&scx_selcpu_topo_numa);
-	else
+	ਨਹੀਂਤਾਂ
 		static_branch_disable_cpuslocked(&scx_selcpu_topo_numa);
 }
 
 /*
  * Return true if @p can run on all possible CPUs, false otherwise.
  */
-static inline bool task_affinity_all(const struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool task_affinity_all(ਅਚਲ ਬਣਤਰ task_struct *p)
 {
-	return p->nr_cpus_allowed >= num_possible_cpus();
+	ਵਾਪਸ p->nr_cpus_allowed >= ਅੰਕ_possible_cpus();
 }
 
 /*
@@ -455,12 +455,12 @@ static inline bool task_affinity_all(const struct task_struct *p)
  * NOTE: tasks that can only run on 1 CPU are excluded by this logic, because
  * we never call ops.select_cpu() for them, see select_task_rq().
  */
-s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
-		       const struct cpumask *cpus_allowed, u64 flags)
+s32 scx_select_cpu_dfl(ਬਣਤਰ task_struct *p, s32 prev_cpu, u64 wake_flags,
+		       ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed, u64 flags)
 {
-	const struct cpumask *llc_cpus = NULL, *numa_cpus = NULL;
-	const struct cpumask *allowed = cpus_allowed ?: p->cpus_ptr;
-	int node = scx_cpu_node_if_enabled(prev_cpu);
+	ਅਚਲ ਬਣਤਰ cpumask *llc_cpus = ਨਿਰਾ, *numa_cpus = ਨਿਰਾ;
+	ਅਚਲ ਬਣਤਰ cpumask *allowed = cpus_allowed ?: p->cpus_ptr;
+	ਪੂਰਨ ਗੰਢ = scx_cpu_ਗੰਢ_if_enabled(prev_cpu);
 	bool is_prev_allowed;
 	s32 cpu;
 
@@ -469,16 +469,16 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	/*
 	 * Determine the subset of CPUs usable by @p within @cpus_allowed.
 	 */
-	if (allowed != p->cpus_ptr) {
-		struct cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_idle_cpumask);
+	ਜੇ (allowed != p->cpus_ptr) {
+		ਬਣਤਰ cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_idle_cpumask);
 
-		if (task_affinity_all(p)) {
+		ਜੇ (task_affinity_all(p)) {
 			allowed = cpus_allowed;
-		} else if (cpumask_and(local_cpus, cpus_allowed, p->cpus_ptr)) {
+		} ਨਹੀਂਤਾਂ ਜੇ (cpumask_and(local_cpus, cpus_allowed, p->cpus_ptr)) {
 			allowed = local_cpus;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			cpu = -EBUSY;
-			goto out_enable;
+			ਜਾਓ ਬਾਹਰਲਾ_enable;
 		}
 	}
 
@@ -491,7 +491,7 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	/*
 	 * This is necessary to protect llc_cpus.
 	 */
-	rcu_read_lock();
+	rcu_read_ਤਾਲਾ();
 
 	/*
 	 * Determine the subset of CPUs that the task can use in its
@@ -500,41 +500,41 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	 * If the task can run on all CPUs, use the node and LLC cpumasks
 	 * directly.
 	 */
-	if (static_branch_maybe(CONFIG_NUMA, &scx_selcpu_topo_numa)) {
-		struct cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_numa_idle_cpumask);
-		const struct cpumask *cpus = numa_span(prev_cpu);
+	ਜੇ (static_branch_maybe(CONFIG_NUMA, &scx_selcpu_topo_numa)) {
+		ਬਣਤਰ cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_numa_idle_cpumask);
+		ਅਚਲ ਬਣਤਰ cpumask *cpus = numa_ਵਿਸਤਾਰ(prev_cpu);
 
-		if (allowed == p->cpus_ptr && task_affinity_all(p))
+		ਜੇ (allowed == p->cpus_ptr && task_affinity_all(p))
 			numa_cpus = cpus;
-		else if (cpus && cpumask_and(local_cpus, allowed, cpus))
+		ਨਹੀਂਤਾਂ ਜੇ (cpus && cpumask_and(local_cpus, allowed, cpus))
 			numa_cpus = local_cpus;
 	}
 
-	if (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc)) {
-		struct cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_llc_idle_cpumask);
-		const struct cpumask *cpus = llc_span(prev_cpu);
+	ਜੇ (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc)) {
+		ਬਣਤਰ cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_llc_idle_cpumask);
+		ਅਚਲ ਬਣਤਰ cpumask *cpus = llc_ਵਿਸਤਾਰ(prev_cpu);
 
-		if (allowed == p->cpus_ptr && task_affinity_all(p))
+		ਜੇ (allowed == p->cpus_ptr && task_affinity_all(p))
 			llc_cpus = cpus;
-		else if (cpus && cpumask_and(local_cpus, allowed, cpus))
+		ਨਹੀਂਤਾਂ ਜੇ (cpus && cpumask_and(local_cpus, allowed, cpus))
 			llc_cpus = local_cpus;
 	}
 
 	/*
 	 * If WAKE_SYNC, try to migrate the wakee to the waker's CPU.
 	 */
-	if (wake_flags & SCX_WAKE_SYNC) {
-		int waker_node;
+	ਜੇ (wake_flags & SCX_WAKE_SYNC) {
+		ਪੂਰਨ waker_ਗੰਢ;
 
 		/*
 		 * If the waker's CPU is cache affine and prev_cpu is idle,
 		 * then avoid a migration.
 		 */
 		cpu = smp_processor_id();
-		if (is_prev_allowed && cpus_share_cache(cpu, prev_cpu) &&
+		ਜੇ (is_prev_allowed && cpus_share_cache(cpu, prev_cpu) &&
 		    scx_idle_test_and_clear_cpu(prev_cpu)) {
 			cpu = prev_cpu;
-			goto out_unlock;
+			ਜਾਓ ਬਾਹਰਲਾ_unlock;
 		}
 
 		/*
@@ -550,14 +550,14 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 		 * piled up on it even if there is an idle core elsewhere on
 		 * the system.
 		 */
-		waker_node = scx_cpu_node_if_enabled(cpu);
-		if (!(current->flags & PF_EXITING) &&
+		waker_ਗੰਢ = scx_cpu_ਗੰਢ_if_enabled(cpu);
+		ਜੇ (!(current->flags & PF_EXITING) &&
 		    cpu_rq(cpu)->scx.local_dsq.nr == 0 &&
-		    (!(flags & SCX_PICK_IDLE_IN_NODE) || (waker_node == node)) &&
-		    !cpumask_empty(idle_cpumask(waker_node)->cpu)) {
-			if (cpumask_test_cpu(cpu, allowed)) {
+		    (!(flags & SCX_PICK_IDLE_ਵਿੱਚ_ਗੰਢ) || (waker_ਗੰਢ == ਗੰਢ)) &&
+		    !cpumask_ਖਾਲੀ_ਥਾਵਾਂ(idle_cpumask(waker_ਗੰਢ)->cpu)) {
+			ਜੇ (cpumask_test_cpu(cpu, allowed)) {
 				scx_idle_test_and_clear_cpu(cpu);
-				goto out_unlock;
+				ਜਾਓ ਬਾਹਰਲਾ_unlock;
 			}
 		}
 	}
@@ -566,33 +566,33 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	 * If CPU has SMT, any wholly idle CPU is likely a better pick than
 	 * partially idle @prev_cpu.
 	 */
-	if (sched_smt_active()) {
+	ਜੇ (sched_smt_ਸਰਗਰਮ()) {
 		/*
 		 * Keep using @prev_cpu if it's part of a fully idle core.
 		 */
-		if (is_prev_allowed &&
-		    cpumask_test_cpu(prev_cpu, idle_cpumask(node)->smt) &&
+		ਜੇ (is_prev_allowed &&
+		    cpumask_test_cpu(prev_cpu, idle_cpumask(ਗੰਢ)->smt) &&
 		    scx_idle_test_and_clear_cpu(prev_cpu)) {
 			cpu = prev_cpu;
-			goto out_unlock;
+			ਜਾਓ ਬਾਹਰਲਾ_unlock;
 		}
 
 		/*
 		 * Search for any fully idle core in the same LLC domain.
 		 */
-		if (llc_cpus) {
-			cpu = pick_idle_cpu_in_node(llc_cpus, node, SCX_PICK_IDLE_CORE);
-			if (cpu >= 0)
-				goto out_unlock;
+		ਜੇ (llc_cpus) {
+			cpu = pick_idle_cpu_ਵਿੱਚ_ਗੰਢ(llc_cpus, ਗੰਢ, SCX_PICK_IDLE_CORE);
+			ਜੇ (cpu >= 0)
+				ਜਾਓ ਬਾਹਰਲਾ_unlock;
 		}
 
 		/*
 		 * Search for any fully idle core in the same NUMA node.
 		 */
-		if (numa_cpus) {
-			cpu = pick_idle_cpu_in_node(numa_cpus, node, SCX_PICK_IDLE_CORE);
-			if (cpu >= 0)
-				goto out_unlock;
+		ਜੇ (numa_cpus) {
+			cpu = pick_idle_cpu_ਵਿੱਚ_ਗੰਢ(numa_cpus, ਗੰਢ, SCX_PICK_IDLE_CORE);
+			ਜੇ (cpu >= 0)
+				ਜਾਓ ਬਾਹਰਲਾ_unlock;
 		}
 
 		/*
@@ -603,56 +603,56 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 		 * begin in prev_cpu's node and proceed to other nodes in
 		 * order of increasing distance.
 		 */
-		cpu = scx_pick_idle_cpu(allowed, node, flags | SCX_PICK_IDLE_CORE);
-		if (cpu >= 0)
-			goto out_unlock;
+		cpu = scx_pick_idle_cpu(allowed, ਗੰਢ, flags | SCX_PICK_IDLE_CORE);
+		ਜੇ (cpu >= 0)
+			ਜਾਓ ਬਾਹਰਲਾ_unlock;
 
 		/*
 		 * Give up if we're strictly looking for a full-idle SMT
 		 * core.
 		 */
-		if (flags & SCX_PICK_IDLE_CORE) {
+		ਜੇ (flags & SCX_PICK_IDLE_CORE) {
 			cpu = -EBUSY;
-			goto out_unlock;
+			ਜਾਓ ਬਾਹਰਲਾ_unlock;
 		}
 	}
 
 	/*
 	 * Use @prev_cpu if it's idle.
 	 */
-	if (is_prev_allowed && scx_idle_test_and_clear_cpu(prev_cpu)) {
+	ਜੇ (is_prev_allowed && scx_idle_test_and_clear_cpu(prev_cpu)) {
 		cpu = prev_cpu;
-		goto out_unlock;
+		ਜਾਓ ਬਾਹਰਲਾ_unlock;
 	}
 
 	/*
 	 * Use @prev_cpu's sibling if it's idle.
 	 */
-	if (sched_smt_active()) {
-		for_each_cpu_and(cpu, cpu_smt_mask(prev_cpu), allowed) {
-			if (cpu == prev_cpu)
-				continue;
-			if (scx_idle_test_and_clear_cpu(cpu))
-				goto out_unlock;
+	ਜੇ (sched_smt_ਸਰਗਰਮ()) {
+		for_each_cpu_and(cpu, cpu_smt_ਨਕਾਬ(prev_cpu), allowed) {
+			ਜੇ (cpu == prev_cpu)
+				ਜਾਰੀ;
+			ਜੇ (scx_idle_test_and_clear_cpu(cpu))
+				ਜਾਓ ਬਾਹਰਲਾ_unlock;
 		}
 	}
 
 	/*
 	 * Search for any idle CPU in the same LLC domain.
 	 */
-	if (llc_cpus) {
-		cpu = pick_idle_cpu_in_node(llc_cpus, node, 0);
-		if (cpu >= 0)
-			goto out_unlock;
+	ਜੇ (llc_cpus) {
+		cpu = pick_idle_cpu_ਵਿੱਚ_ਗੰਢ(llc_cpus, ਗੰਢ, 0);
+		ਜੇ (cpu >= 0)
+			ਜਾਓ ਬਾਹਰਲਾ_unlock;
 	}
 
 	/*
 	 * Search for any idle CPU in the same NUMA node.
 	 */
-	if (numa_cpus) {
-		cpu = pick_idle_cpu_in_node(numa_cpus, node, 0);
-		if (cpu >= 0)
-			goto out_unlock;
+	ਜੇ (numa_cpus) {
+		cpu = pick_idle_cpu_ਵਿੱਚ_ਗੰਢ(numa_cpus, ਗੰਢ, 0);
+		ਜੇ (cpu >= 0)
+			ਜਾਓ ਬਾਹਰਲਾ_unlock;
 	}
 
 	/*
@@ -663,71 +663,71 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	 * in prev_cpu's node and proceed to other nodes in order of
 	 * increasing distance.
 	 */
-	cpu = scx_pick_idle_cpu(allowed, node, flags);
+	cpu = scx_pick_idle_cpu(allowed, ਗੰਢ, flags);
 
-out_unlock:
+ਬਾਹਰਲਾ_unlock:
 	rcu_read_unlock();
-out_enable:
+ਬਾਹਰਲਾ_enable:
 	preempt_enable();
 
-	return cpu;
+	ਵਾਪਸ cpu;
 }
 
 /*
  * Initialize global and per-node idle cpumasks.
  */
-void scx_idle_init_masks(void)
+ਖਾਲੀ scx_idle_init_masks(ਖਾਲੀ)
 {
-	int i;
+	ਪੂਰਨ i;
 
 	/* Allocate global idle cpumasks */
 	BUG_ON(!alloc_cpumask_var(&scx_idle_global_masks.cpu, GFP_KERNEL));
 	BUG_ON(!alloc_cpumask_var(&scx_idle_global_masks.smt, GFP_KERNEL));
 
 	/* Allocate per-node idle cpumasks (use nr_node_ids for non-contiguous NUMA nodes) */
-	scx_idle_node_masks = kzalloc_objs(*scx_idle_node_masks, nr_node_ids);
-	BUG_ON(!scx_idle_node_masks);
+	scx_idle_ਗੰਢ_masks = kzalloc_objs(*scx_idle_ਗੰਢ_masks, nr_ਗੰਢ_ids);
+	BUG_ON(!scx_idle_ਗੰਢ_masks);
 
-	for_each_node(i) {
-		scx_idle_node_masks[i] = kzalloc_node(sizeof(**scx_idle_node_masks),
+	for_each_ਗੰਢ(i) {
+		scx_idle_ਗੰਢ_masks[i] = kzalloc_ਗੰਢ(ਆਕਾਰ(**scx_idle_ਗੰਢ_masks),
 							 GFP_KERNEL, i);
-		BUG_ON(!scx_idle_node_masks[i]);
+		BUG_ON(!scx_idle_ਗੰਢ_masks[i]);
 
-		BUG_ON(!alloc_cpumask_var_node(&scx_idle_node_masks[i]->cpu, GFP_KERNEL, i));
-		BUG_ON(!alloc_cpumask_var_node(&scx_idle_node_masks[i]->smt, GFP_KERNEL, i));
+		BUG_ON(!alloc_cpumask_var_ਗੰਢ(&scx_idle_ਗੰਢ_masks[i]->cpu, GFP_KERNEL, i));
+		BUG_ON(!alloc_cpumask_var_ਗੰਢ(&scx_idle_ਗੰਢ_masks[i]->smt, GFP_KERNEL, i));
 	}
 
 	/* Allocate local per-cpu idle cpumasks */
 	for_each_possible_cpu(i) {
-		BUG_ON(!alloc_cpumask_var_node(&per_cpu(local_idle_cpumask, i),
-					       GFP_KERNEL, cpu_to_node(i)));
-		BUG_ON(!alloc_cpumask_var_node(&per_cpu(local_llc_idle_cpumask, i),
-					       GFP_KERNEL, cpu_to_node(i)));
-		BUG_ON(!alloc_cpumask_var_node(&per_cpu(local_numa_idle_cpumask, i),
-					       GFP_KERNEL, cpu_to_node(i)));
+		BUG_ON(!alloc_cpumask_var_ਗੰਢ(&ਪ੍ਰਤੀ_cpu(local_idle_cpumask, i),
+					       GFP_KERNEL, cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(i)));
+		BUG_ON(!alloc_cpumask_var_ਗੰਢ(&ਪ੍ਰਤੀ_cpu(local_llc_idle_cpumask, i),
+					       GFP_KERNEL, cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(i)));
+		BUG_ON(!alloc_cpumask_var_ਗੰਢ(&ਪ੍ਰਤੀ_cpu(local_numa_idle_cpumask, i),
+					       GFP_KERNEL, cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(i)));
 	}
 }
 
-static void update_builtin_idle(int cpu, bool idle)
+ਸਥਿਰ ਖਾਲੀ update_builtin_idle(ਪੂਰਨ cpu, bool idle)
 {
-	int node = scx_cpu_node_if_enabled(cpu);
-	struct cpumask *idle_cpus = idle_cpumask(node)->cpu;
+	ਪੂਰਨ ਗੰਢ = scx_cpu_ਗੰਢ_if_enabled(cpu);
+	ਬਣਤਰ cpumask *idle_cpus = idle_cpumask(ਗੰਢ)->cpu;
 
-	assign_cpu(cpu, idle_cpus, idle);
+	ਸੌਂਪੋ_cpu(cpu, idle_cpus, idle);
 
-	if (sched_smt_active()) {
-		const struct cpumask *smt = cpu_smt_mask(cpu);
-		struct cpumask *idle_smts = idle_cpumask(node)->smt;
+	ਜੇ (sched_smt_ਸਰਗਰਮ()) {
+		ਅਚਲ ਬਣਤਰ cpumask *smt = cpu_smt_ਨਕਾਬ(cpu);
+		ਬਣਤਰ cpumask *idle_smts = idle_cpumask(ਗੰਢ)->smt;
 
-		if (idle) {
+		ਜੇ (idle) {
 			/*
 			 * idle_smt handling is racy but that's fine as it's
 			 * only for optimization and self-correcting.
 			 */
-			if (!cpumask_subset(smt, idle_cpus))
-				return;
+			ਜੇ (!cpumask_subset(smt, idle_cpus))
+				ਵਾਪਸ;
 			cpumask_or(idle_smts, idle_smts, smt);
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			cpumask_andnot(idle_smts, idle_smts, smt);
 		}
 	}
@@ -740,45 +740,45 @@ static void update_builtin_idle(int cpu, bool idle)
  * the root, a sub-sched's idle_renotify marker for a sub) reaches only the owed
  * scheds.
  */
-static void scx_idle_notify(struct rq *rq, bool idle, bool do_notify, bool root_renotify)
+ਸਥਿਰ ਖਾਲੀ scx_idle_notify(ਬਣਤਰ rq *rq, bool idle, bool do_notify, bool ਜੜ੍ਹ_renotify)
 {
-	s32 cpu = cpu_of(rq);
+	s32 cpu = cpu_ਦਾ(rq);
 	s32 cid = scx_cpu_arg(cpu);
-	struct scx_sched *root = scx_root_protected_live();
-	struct scx_sched *pos;
+	ਬਣਤਰ scx_sched *ਜੜ੍ਹ = scx_ਜੜ੍ਹ_protected_ਜੀਵਤ();
+	ਬਣਤਰ scx_sched *pos;
 
 	lockdep_assert_rq_held(rq);
 
 	/* with no sub-sched, only the root can be owed a notification */
-	if (!scx_has_subs()) {
-		if ((do_notify || root_renotify) &&
-		    SCX_HAS_OP(root, update_idle) && !scx_bypassing(root, cpu))
-			SCX_CALL_OP(root, update_idle, rq, cid, idle);
-		return;
+	ਜੇ (!scx_has_subs()) {
+		ਜੇ ((do_notify || ਜੜ੍ਹ_renotify) &&
+		    SCX_HAS_OP(ਜੜ੍ਹ, update_idle) && !scx_bypassing(ਜੜ੍ਹ, cpu))
+			SCX_CALL_OP(ਜੜ੍ਹ, update_idle, rq, cid, idle);
+		ਵਾਪਸ;
 	}
 
-	pos = scx_next_descendant_pre(NULL, root);
-	while (pos) {
+	pos = scx_ਅਗਲਾ_descendant_pre(ਨਿਰਾ, ਜੜ੍ਹ);
+	ਜਦੋਂ (pos) {
 		bool forced = false;
 
-		if (unlikely(scx_missing_caps(pos, cpu, SCX_CAP_BASE))) {
-			pos = scx_skip_subtree_pre(pos, root);
-			continue;
+		ਜੇ (unlikely(scx_missing_caps(pos, cpu, SCX_CAP_ਅਧਾਰ))) {
+			pos = scx_skip_subtree_pre(pos, ਜੜ੍ਹ);
+			ਜਾਰੀ;
 		}
 
-		if (!pos->level) {
-			forced = root_renotify;
+		ਜੇ (!pos->level) {
+			forced = ਜੜ੍ਹ_renotify;
 		}
-#ifdef CONFIG_EXT_SUB_SCHED
-		else if (per_cpu_ptr(pos->pcpu, cpu)->idle_renotify) {
-			per_cpu_ptr(pos->pcpu, cpu)->idle_renotify = false;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_EXT_SUB_SCHED
+		ਨਹੀਂਤਾਂ ਜੇ (ਪ੍ਰਤੀ_cpu_ptr(pos->pcpu, cpu)->idle_renotify) {
+			ਪ੍ਰਤੀ_cpu_ptr(pos->pcpu, cpu)->idle_renotify = false;
 			forced = true;
 		}
-#endif
-		if ((do_notify || forced) && SCX_HAS_OP(pos, update_idle) &&
+#ਜੇ_ਅੰਤ
+		ਜੇ ((do_notify || forced) && SCX_HAS_OP(pos, update_idle) &&
 		    !scx_bypassing(pos, cpu))
 			SCX_CALL_OP(pos, update_idle, rq, cid, idle);
-		pos = scx_next_descendant_pre(pos, root);
+		pos = scx_ਅਗਲਾ_descendant_pre(pos, ਜੜ੍ਹ);
 	}
 }
 
@@ -798,9 +798,9 @@ static void scx_idle_notify(struct rq *rq, bool idle, bool do_notify, bool root_
  * while avoiding unnecessary updates and maintaining balanced state
  * transitions.
  */
-void __scx_update_idle(struct rq *rq, bool idle, bool do_notify)
+ਖਾਲੀ __scx_update_idle(ਬਣਤਰ rq *rq, bool idle, bool do_notify)
 {
-	int cpu = cpu_of(rq);
+	ਪੂਰਨ cpu = cpu_ਦਾ(rq);
 
 	lockdep_assert_rq_held(rq);
 
@@ -809,7 +809,7 @@ void __scx_update_idle(struct rq *rq, bool idle, bool do_notify)
 	 * transitions call with @do_notify, so every reaching call updates the
 	 * masks.
 	 */
-	if (static_branch_likely(&scx_builtin_idle_enabled))
+	ਜੇ (static_branch_likely(&scx_builtin_idle_enabled))
 		update_builtin_idle(cpu, idle);
 
 	/*
@@ -825,19 +825,19 @@ void __scx_update_idle(struct rq *rq, bool idle, bool do_notify)
 	 * either enqueue() sees the idle bit or update_idle() sees the task
 	 * that enqueue() queued.
 	 */
-	if (do_notify ||
+	ਜੇ (do_notify ||
 	    (idle && (rq->scx.flags &
-		      (SCX_RQ_SUB_IDLE_RENOTIFY | SCX_RQ_ROOT_IDLE_RENOTIFY)))) {
-		bool root_renotify = rq->scx.flags & SCX_RQ_ROOT_IDLE_RENOTIFY;
+		      (SCX_RQ_SUB_IDLE_RENOTIFY | SCX_RQ_ਜੜ੍ਹ_IDLE_RENOTIFY)))) {
+		bool ਜੜ੍ਹ_renotify = rq->scx.flags & SCX_RQ_ਜੜ੍ਹ_IDLE_RENOTIFY;
 
-		rq->scx.flags &= ~(SCX_RQ_SUB_IDLE_RENOTIFY | SCX_RQ_ROOT_IDLE_RENOTIFY);
-		scx_idle_notify(rq, idle, do_notify, root_renotify);
+		rq->scx.flags &= ~(SCX_RQ_SUB_IDLE_RENOTIFY | SCX_RQ_ਜੜ੍ਹ_IDLE_RENOTIFY);
+		scx_idle_notify(rq, idle, do_notify, ਜੜ੍ਹ_renotify);
 	}
 }
 
-static void reset_idle_masks(struct sched_ext_ops *ops)
+ਸਥਿਰ ਖਾਲੀ reset_idle_masks(ਬਣਤਰ sched_ext_ops *ops)
 {
-	int node;
+	ਪੂਰਨ ਗੰਢ;
 
 	/*
 	 * Start with all CPUs marked busy. The idle masks are populated when
@@ -845,78 +845,78 @@ static void reset_idle_masks(struct sched_ext_ops *ops)
 	 * This may temporarily omit idle CPUs but never advertises a busy CPU as
 	 * idle.
 	 */
-	if (!(ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE)) {
-		cpumask_clear(idle_cpumask(NUMA_NO_NODE)->cpu);
-		cpumask_clear(idle_cpumask(NUMA_NO_NODE)->smt);
-		return;
+	ਜੇ (!(ops->flags & SCX_OPS_BUILTIN_IDLE_ਪ੍ਰਤੀ_ਗੰਢ)) {
+		cpumask_clear(idle_cpumask(NUMA_NO_ਗੰਢ)->cpu);
+		cpumask_clear(idle_cpumask(NUMA_NO_ਗੰਢ)->smt);
+		ਵਾਪਸ;
 	}
 
-	for_each_node(node) {
-		cpumask_clear(idle_cpumask(node)->cpu);
-		cpumask_clear(idle_cpumask(node)->smt);
+	for_each_ਗੰਢ(ਗੰਢ) {
+		cpumask_clear(idle_cpumask(ਗੰਢ)->cpu);
+		cpumask_clear(idle_cpumask(ਗੰਢ)->smt);
 	}
 }
 
-void scx_idle_enable(struct sched_ext_ops *ops)
+ਖਾਲੀ scx_idle_enable(ਬਣਤਰ sched_ext_ops *ops)
 {
-	if (!ops->update_idle || (ops->flags & SCX_OPS_KEEP_BUILTIN_IDLE))
+	ਜੇ (!ops->update_idle || (ops->flags & SCX_OPS_KEEP_BUILTIN_IDLE))
 		static_branch_enable_cpuslocked(&scx_builtin_idle_enabled);
-	else
+	ਨਹੀਂਤਾਂ
 		static_branch_disable_cpuslocked(&scx_builtin_idle_enabled);
 
-	if (ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE)
-		static_branch_enable_cpuslocked(&scx_builtin_idle_per_node);
-	else
-		static_branch_disable_cpuslocked(&scx_builtin_idle_per_node);
+	ਜੇ (ops->flags & SCX_OPS_BUILTIN_IDLE_ਪ੍ਰਤੀ_ਗੰਢ)
+		static_branch_enable_cpuslocked(&scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ);
+	ਨਹੀਂਤਾਂ
+		static_branch_disable_cpuslocked(&scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ);
 
 	reset_idle_masks(ops);
 }
 
-void scx_idle_disable(void)
+ਖਾਲੀ scx_idle_disable(ਖਾਲੀ)
 {
 	static_branch_disable(&scx_builtin_idle_enabled);
-	static_branch_disable(&scx_builtin_idle_per_node);
+	static_branch_disable(&scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ);
 }
 
 /********************************************************************************
  * Helpers that can be called from the BPF scheduler.
  */
 
-static int validate_node(struct scx_sched *sch, int node)
+ਸਥਿਰ ਪੂਰਨ validate_ਗੰਢ(ਬਣਤਰ scx_sched *sch, ਪੂਰਨ ਗੰਢ)
 {
-	if (!static_branch_likely(&scx_builtin_idle_per_node)) {
+	ਜੇ (!static_branch_likely(&scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ)) {
 		scx_error(sch, "per-node idle tracking is disabled");
-		return -EOPNOTSUPP;
+		ਵਾਪਸ -EOPNOTSUPP;
 	}
 
 	/* Return no entry for NUMA_NO_NODE (not a critical scx error) */
-	if (node == NUMA_NO_NODE)
-		return -ENOENT;
+	ਜੇ (ਗੰਢ == NUMA_NO_ਗੰਢ)
+		ਵਾਪਸ -ENOENT;
 
 	/* Make sure node is in a valid range */
-	if (node < 0 || node >= nr_node_ids) {
-		scx_error(sch, "invalid node %d", node);
-		return -EINVAL;
+	ਜੇ (ਗੰਢ < 0 || ਗੰਢ >= nr_ਗੰਢ_ids) {
+		scx_error(sch, "invalid node %d", ਗੰਢ);
+		ਵਾਪਸ -EINVAL;
 	}
 
 	/* Make sure the node is part of the set of possible nodes */
-	if (!node_possible(node)) {
-		scx_error(sch, "unavailable node %d", node);
-		return -EINVAL;
+	ਜੇ (!ਗੰਢ_possible(ਗੰਢ)) {
+		scx_error(sch, "unavailable node %d", ਗੰਢ);
+		ਵਾਪਸ -EINVAL;
 	}
 
-	return node;
+	ਵਾਪਸ ਗੰਢ;
 }
 
 __bpf_kfunc_start_defs();
 
-static bool check_builtin_idle_enabled(struct scx_sched *sch)
+ਸਥਿਰ bool check_builtin_idle_enabled(ਬਣਤਰ scx_sched *sch)
 {
-	if (static_branch_likely(&scx_builtin_idle_enabled))
-		return true;
+	ਜੇ (static_branch_likely(&scx_builtin_idle_enabled))
+		ਵਾਪਸ true;
 
 	scx_error(sch, "built-in idle tracking is disabled");
-	return false;
+	ਵਾਪਸ false;
 }
 
 /*
@@ -942,60 +942,60 @@ static bool check_builtin_idle_enabled(struct scx_sched *sch)
  *
  * Returns true if @p is migration-disabled, false otherwise.
  */
-static bool is_bpf_migration_disabled(const struct task_struct *p)
+ਸਥਿਰ bool is_bpf_migration_disabled(ਅਚਲ ਬਣਤਰ task_struct *p)
 {
-	if (p->migration_disabled == 1) {
-		if (IS_ENABLED(CONFIG_PREEMPT_RCU))
-			return p != current;
-		return true;
+	ਜੇ (p->migration_disabled == 1) {
+		ਜੇ (IS_ENABLED(CONFIG_PREEMPT_RCU))
+			ਵਾਪਸ p != current;
+		ਵਾਪਸ true;
 	}
-	return p->migration_disabled;
+	ਵਾਪਸ p->migration_disabled;
 }
 
-static s32 select_cpu_restricted(struct task_struct *p, s32 prev_cpu,
-				 const struct cpumask *allowed, u64 flags,
+ਸਥਿਰ s32 select_cpu_restricted(ਬਣਤਰ task_struct *p, s32 prev_cpu,
+				 ਅਚਲ ਬਣਤਰ cpumask *allowed, u64 flags,
 				 bool migration_disabled)
 {
 	s32 cpu;
 
-	if (migration_disabled)
+	ਜੇ (migration_disabled)
 		cpu = task_cpu(p);
-	else
-		cpu = cpumask_first(p->cpus_ptr);
+	ਨਹੀਂਤਾਂ
+		cpu = cpumask_ਪਹਿਲਾ(p->cpus_ptr);
 
-	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-		return -EBUSY;
+	ਜੇ (!cpumask_test_cpu(cpu, p->cpus_ptr))
+		ਵਾਪਸ -EBUSY;
 
-	if (allowed && !cpumask_test_cpu(cpu, allowed))
-		return -EBUSY;
+	ਜੇ (allowed && !cpumask_test_cpu(cpu, allowed))
+		ਵਾਪਸ -EBUSY;
 
-	if (flags & SCX_PICK_IDLE_IN_NODE) {
-		int node = scx_cpu_node_if_enabled(prev_cpu);
+	ਜੇ (flags & SCX_PICK_IDLE_ਵਿੱਚ_ਗੰਢ) {
+		ਪੂਰਨ ਗੰਢ = scx_cpu_ਗੰਢ_if_enabled(prev_cpu);
 
-		if (scx_cpu_node_if_enabled(cpu) != node)
-			return -EBUSY;
+		ਜੇ (scx_cpu_ਗੰਢ_if_enabled(cpu) != ਗੰਢ)
+			ਵਾਪਸ -EBUSY;
 	}
 
-	if (!scx_idle_test_and_clear_cpu(cpu))
-		return -EBUSY;
+	ਜੇ (!scx_idle_test_and_clear_cpu(cpu))
+		ਵਾਪਸ -EBUSY;
 
-	return cpu;
+	ਵਾਪਸ cpu;
 }
 
-static s32 select_cpu_from_kfunc(struct scx_sched *sch, struct task_struct *p,
+ਸਥਿਰ s32 select_cpu_from_kfunc(ਬਣਤਰ scx_sched *sch, ਬਣਤਰ task_struct *p,
 				 s32 prev_cpu, u64 wake_flags,
-				 const struct cpumask *allowed, u64 flags)
+				 ਅਚਲ ਬਣਤਰ cpumask *allowed, u64 flags)
 {
-	unsigned long irq_flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ irq_flags;
 	bool we_locked = false;
 	bool migration_disabled;
 	s32 cpu;
 
-	if (!scx_cpu_valid(sch, prev_cpu, NULL))
-		return -EINVAL;
+	ਜੇ (!scx_cpu_valid(sch, prev_cpu, ਨਿਰਾ))
+		ਵਾਪਸ -EINVAL;
 
-	if (!check_builtin_idle_enabled(sch))
-		return -EBUSY;
+	ਜੇ (!check_builtin_idle_enabled(sch))
+		ਵਾਪਸ -EBUSY;
 
 	/*
 	 * Accessing p->cpus_ptr / p->nr_cpus_allowed needs either @p's rq
@@ -1011,15 +1011,15 @@ static s32 select_cpu_from_kfunc(struct scx_sched *sch, struct task_struct *p,
 	 * In the first two cases, BPF schedulers may pass an arbitrary task
 	 * that the held lock doesn't cover. Refuse those.
 	 */
-	if (this_rq()->scx.in_select_cpu) {
-		if (!scx_kf_arg_task_ok(sch, p))
-			return -EINVAL;
-		lockdep_assert_held(&p->pi_lock);
-	} else if (scx_locked_rq()) {
-		if (task_rq(p) != scx_locked_rq())
-			goto cross_task;
-	} else {
-		raw_spin_lock_irqsave(&p->pi_lock, irq_flags);
+	ਜੇ (this_rq()->scx.ਵਿੱਚ_select_cpu) {
+		ਜੇ (!scx_kf_arg_task_ok(sch, p))
+			ਵਾਪਸ -EINVAL;
+		lockdep_assert_held(&p->pi_ਤਾਲਾ);
+	} ਨਹੀਂਤਾਂ ਜੇ (scx_locked_rq()) {
+		ਜੇ (task_rq(p) != scx_locked_rq())
+			ਜਾਓ cross_task;
+	} ਨਹੀਂਤਾਂ {
+		raw_spin_ਤਾਲਾ_irqsave(&p->pi_ਤਾਲਾ, irq_flags);
 		we_locked = true;
 	}
 
@@ -1030,22 +1030,22 @@ static s32 select_cpu_from_kfunc(struct scx_sched *sch, struct task_struct *p,
 	 */
 	migration_disabled = is_bpf_migration_disabled(p);
 
-	if (p->nr_cpus_allowed == 1 || migration_disabled)
+	ਜੇ (p->nr_cpus_allowed == 1 || migration_disabled)
 		cpu = select_cpu_restricted(p, prev_cpu, allowed, flags,
 					    migration_disabled);
-	else
+	ਨਹੀਂਤਾਂ
 		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags,
 					 allowed ?: p->cpus_ptr, flags);
 
-	if (we_locked)
-		raw_spin_unlock_irqrestore(&p->pi_lock, irq_flags);
+	ਜੇ (we_locked)
+		raw_spin_unlock_irqrestore(&p->pi_ਤਾਲਾ, irq_flags);
 
-	return cpu;
+	ਵਾਪਸ cpu;
 
 cross_task:
 	scx_error(sch, "select_cpu kfunc called cross-task on %s[%d]",
 		  p->comm, p->pid);
-	return -EINVAL;
+	ਵਾਪਸ -EINVAL;
 }
 
 /**
@@ -1054,16 +1054,16 @@ cross_task:
  * @cpu: target CPU
  * @aux: implicit BPF argument to access bpf_prog_aux hidden from BPF progs
  */
-__bpf_kfunc s32 scx_bpf_cpu_node(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_cpu_ਗੰਢ(s32 cpu, ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch) || !scx_cpu_valid(sch, cpu, NULL))
-		return NUMA_NO_NODE;
-	return cpu_to_node(cpu);
+	ਜੇ (unlikely(!sch) || !scx_cpu_valid(sch, cpu, ਨਿਰਾ))
+		ਵਾਪਸ NUMA_NO_ਗੰਢ;
+	ਵਾਪਸ cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(cpu);
 }
 
 /**
@@ -1082,29 +1082,29 @@ __bpf_kfunc s32 scx_bpf_cpu_node(s32 cpu, const struct bpf_prog_aux *aux)
  * Returns the picked CPU with *@is_idle indicating whether the picked CPU is
  * currently idle and thus a good candidate for direct dispatching.
  */
-__bpf_kfunc s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+__bpf_kfunc s32 scx_bpf_select_cpu_dfl(ਬਣਤਰ task_struct *p, s32 prev_cpu,
 				       u64 wake_flags, bool *is_idle,
-				       const struct bpf_prog_aux *aux)
+				       ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ -ENODEV;
 
-	cpu = select_cpu_from_kfunc(sch, p, prev_cpu, wake_flags, NULL, 0);
-	if (cpu >= 0) {
+	cpu = select_cpu_from_kfunc(sch, p, prev_cpu, wake_flags, ਨਿਰਾ, 0);
+	ਜੇ (cpu >= 0) {
 		*is_idle = true;
-		return cpu;
+		ਵਾਪਸ cpu;
 	}
 	*is_idle = false;
-	return prev_cpu;
+	ਵਾਪਸ prev_cpu;
 }
 
-struct scx_bpf_select_cpu_and_args {
+ਬਣਤਰ scx_bpf_select_cpu_and_ਦਲੀਲਾਂ {
 	/* @p and @cpus_allowed can't be packed together as KF_RCU is not transitive */
 	s32			prev_cpu;
 	u64			wake_flags;
@@ -1137,37 +1137,37 @@ struct scx_bpf_select_cpu_and_args {
  * a negative value if no idle CPU is available.
  */
 __bpf_kfunc s32
-__scx_bpf_select_cpu_and(struct task_struct *p, const struct cpumask *cpus_allowed,
-			 struct scx_bpf_select_cpu_and_args *args,
-			 const struct bpf_prog_aux *aux)
+__scx_bpf_select_cpu_and(ਬਣਤਰ task_struct *p, ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed,
+			 ਬਣਤਰ scx_bpf_select_cpu_and_ਦਲੀਲਾਂ *ਦਲੀਲਾਂ,
+			 ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ -ENODEV;
 
-	return select_cpu_from_kfunc(sch, p, args->prev_cpu, args->wake_flags,
-				     cpus_allowed, args->flags);
+	ਵਾਪਸ select_cpu_from_kfunc(sch, p, ਦਲੀਲਾਂ->prev_cpu, ਦਲੀਲਾਂ->wake_flags,
+				     cpus_allowed, ਦਲੀਲਾਂ->flags);
 }
 
 /*
  * COMPAT: Will be removed in v6.22.
  */
-__bpf_kfunc s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
-				       const struct cpumask *cpus_allowed, u64 flags)
+__bpf_kfunc s32 scx_bpf_select_cpu_and(ਬਣਤਰ task_struct *p, s32 prev_cpu, u64 wake_flags,
+				       ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed, u64 flags)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
-	sch = rcu_dereference(scx_root);
-	if (unlikely(!sch))
-		return -ENODEV;
+	sch = rcu_dereference(scx_ਜੜ੍ਹ);
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ -ENODEV;
 
-#ifdef CONFIG_EXT_SUB_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_EXT_SUB_SCHED
 	/*
 	 * Disallow if any sub-scheds are attached. There is no way to tell
 	 * which scheduler called us, so error out @p's scheduler -- read it
@@ -1176,16 +1176,16 @@ __bpf_kfunc s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 
 	 * scheduler can't be determined and there is nothing obviously wrong
 	 * to report; just refuse the call.
 	 */
-	if (unlikely(!list_empty(&sch->children))) {
-		struct scx_sched *tsch = scx_task_sched_rcu(p);
+	ਜੇ (unlikely(!list_ਖਾਲੀ_ਥਾਵਾਂ(&sch->children))) {
+		ਬਣਤਰ scx_sched *tsch = scx_task_sched_rcu(p);
 
-		if (tsch)
+		ਜੇ (tsch)
 			scx_error(tsch, "__scx_bpf_select_cpu_and() must be used");
-		return -EINVAL;
+		ਵਾਪਸ -EINVAL;
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-	return select_cpu_from_kfunc(sch, p, prev_cpu, wake_flags,
+	ਵਾਪਸ select_cpu_from_kfunc(sch, p, prev_cpu, wake_flags,
 				     cpus_allowed, flags);
 }
 
@@ -1199,22 +1199,22 @@ __bpf_kfunc s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 
  * not valid, or running on a UP kernel. In this case the actual error will
  * be reported to the BPF scheduler via scx_error().
  */
-__bpf_kfunc const struct cpumask *
-scx_bpf_get_idle_cpumask_node(s32 node, const struct bpf_prog_aux *aux)
+__bpf_kfunc ਅਚਲ ਬਣਤਰ cpumask *
+scx_bpf_get_idle_cpumask_ਗੰਢ(s32 ਗੰਢ, ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return cpu_none_mask;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 
-	node = validate_node(sch, node);
-	if (node < 0)
-		return cpu_none_mask;
+	ਗੰਢ = validate_ਗੰਢ(sch, ਗੰਢ);
+	ਜੇ (ਗੰਢ < 0)
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 
-	return idle_cpumask(node)->cpu;
+	ਵਾਪਸ idle_cpumask(ਗੰਢ)->cpu;
 }
 
 /**
@@ -1225,25 +1225,25 @@ scx_bpf_get_idle_cpumask_node(s32 node, const struct bpf_prog_aux *aux)
  * Returns an empty mask if idle tracking is not enabled, or running on a
  * UP kernel.
  */
-__bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask(const struct bpf_prog_aux *aux)
+__bpf_kfunc ਅਚਲ ਬਣਤਰ cpumask *scx_bpf_get_idle_cpumask(ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return cpu_none_mask;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 
-	if (static_branch_unlikely(&scx_builtin_idle_per_node)) {
+	ਜੇ (static_branch_unlikely(&scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ)) {
 		scx_error(sch, "SCX_OPS_BUILTIN_IDLE_PER_NODE enabled");
-		return cpu_none_mask;
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 	}
 
-	if (!check_builtin_idle_enabled(sch))
-		return cpu_none_mask;
+	ਜੇ (!check_builtin_idle_enabled(sch))
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 
-	return idle_cpumask(NUMA_NO_NODE)->cpu;
+	ਵਾਪਸ idle_cpumask(NUMA_NO_ਗੰਢ)->cpu;
 }
 
 /**
@@ -1257,25 +1257,25 @@ __bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask(const struct bpf_prog
  * not valid, or running on a UP kernel. In this case the actual error will
  * be reported to the BPF scheduler via scx_error().
  */
-__bpf_kfunc const struct cpumask *
-scx_bpf_get_idle_smtmask_node(s32 node, const struct bpf_prog_aux *aux)
+__bpf_kfunc ਅਚਲ ਬਣਤਰ cpumask *
+scx_bpf_get_idle_smtmask_ਗੰਢ(s32 ਗੰਢ, ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return cpu_none_mask;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 
-	node = validate_node(sch, node);
-	if (node < 0)
-		return cpu_none_mask;
+	ਗੰਢ = validate_ਗੰਢ(sch, ਗੰਢ);
+	ਜੇ (ਗੰਢ < 0)
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 
-	if (sched_smt_active())
-		return idle_cpumask(node)->smt;
-	else
-		return idle_cpumask(node)->cpu;
+	ਜੇ (sched_smt_ਸਰਗਰਮ())
+		ਵਾਪਸ idle_cpumask(ਗੰਢ)->smt;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ idle_cpumask(ਗੰਢ)->cpu;
 }
 
 /**
@@ -1287,28 +1287,28 @@ scx_bpf_get_idle_smtmask_node(s32 node, const struct bpf_prog_aux *aux)
  * Returns an empty mask if idle tracking is not enabled, or running on a
  * UP kernel.
  */
-__bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask(const struct bpf_prog_aux *aux)
+__bpf_kfunc ਅਚਲ ਬਣਤਰ cpumask *scx_bpf_get_idle_smtmask(ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return cpu_none_mask;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 
-	if (static_branch_unlikely(&scx_builtin_idle_per_node)) {
+	ਜੇ (static_branch_unlikely(&scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ)) {
 		scx_error(sch, "SCX_OPS_BUILTIN_IDLE_PER_NODE enabled");
-		return cpu_none_mask;
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 	}
 
-	if (!check_builtin_idle_enabled(sch))
-		return cpu_none_mask;
+	ਜੇ (!check_builtin_idle_enabled(sch))
+		ਵਾਪਸ cpu_none_ਨਕਾਬ;
 
-	if (sched_smt_active())
-		return idle_cpumask(NUMA_NO_NODE)->smt;
-	else
-		return idle_cpumask(NUMA_NO_NODE)->cpu;
+	ਜੇ (sched_smt_ਸਰਗਰਮ())
+		ਵਾਪਸ idle_cpumask(NUMA_NO_ਗੰਢ)->smt;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ idle_cpumask(NUMA_NO_ਗੰਢ)->cpu;
 }
 
 /**
@@ -1316,7 +1316,7 @@ __bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask(const struct bpf_prog
  * either the percpu, or SMT idle-tracking cpumask.
  * @idle_mask: &cpumask to use
  */
-__bpf_kfunc void scx_bpf_put_idle_cpumask(const struct cpumask *idle_mask)
+__bpf_kfunc ਖਾਲੀ scx_bpf_put_idle_cpumask(ਅਚਲ ਬਣਤਰ cpumask *idle_ਨਕਾਬ)
 {
 	/*
 	 * Empty function body because we aren't actually acquiring or releasing
@@ -1337,23 +1337,23 @@ __bpf_kfunc void scx_bpf_put_idle_cpumask(const struct cpumask *idle_mask)
  * Unavailable if ops.update_idle() is implemented and
  * %SCX_OPS_KEEP_BUILTIN_IDLE is not set.
  */
-__bpf_kfunc bool scx_bpf_test_and_clear_cpu_idle(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc bool scx_bpf_test_and_clear_cpu_idle(s32 cpu, ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return false;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ false;
 
-	if (!check_builtin_idle_enabled(sch))
-		return false;
+	ਜੇ (!check_builtin_idle_enabled(sch))
+		ਵਾਪਸ false;
 
-	if (!scx_cpu_valid(sch, cpu, NULL))
-		return false;
+	ਜੇ (!scx_cpu_valid(sch, cpu, ਨਿਰਾ))
+		ਵਾਪਸ false;
 
-	return scx_idle_test_and_clear_cpu(cpu);
+	ਵਾਪਸ scx_idle_test_and_clear_cpu(cpu);
 }
 
 /**
@@ -1376,23 +1376,23 @@ __bpf_kfunc bool scx_bpf_test_and_clear_cpu_idle(s32 cpu, const struct bpf_prog_
  * %SCX_OPS_KEEP_BUILTIN_IDLE is not set, or if
  * %SCX_OPS_BUILTIN_IDLE_PER_NODE is not set.
  */
-__bpf_kfunc s32 scx_bpf_pick_idle_cpu_node(const struct cpumask *cpus_allowed,
-					   s32 node, u64 flags,
-					   const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_pick_idle_cpu_ਗੰਢ(ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed,
+					   s32 ਗੰਢ, u64 flags,
+					   ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ -ENODEV;
 
-	node = validate_node(sch, node);
-	if (node < 0)
-		return node;
+	ਗੰਢ = validate_ਗੰਢ(sch, ਗੰਢ);
+	ਜੇ (ਗੰਢ < 0)
+		ਵਾਪਸ ਗੰਢ;
 
-	return scx_pick_idle_cpu(cpus_allowed, node, flags);
+	ਵਾਪਸ scx_pick_idle_cpu(cpus_allowed, ਗੰਢ, flags);
 }
 
 /**
@@ -1418,26 +1418,26 @@ __bpf_kfunc s32 scx_bpf_pick_idle_cpu_node(const struct cpumask *cpus_allowed,
  * Always returns an error if %SCX_OPS_BUILTIN_IDLE_PER_NODE is set, use
  * scx_bpf_pick_idle_cpu_node() instead.
  */
-__bpf_kfunc s32 scx_bpf_pick_idle_cpu(const struct cpumask *cpus_allowed,
-				      u64 flags, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_pick_idle_cpu(ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed,
+				      u64 flags, ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ -ENODEV;
 
-	if (static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node)) {
+	ਜੇ (static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ)) {
 		scx_error(sch, "per-node idle tracking is enabled");
-		return -EBUSY;
+		ਵਾਪਸ -EBUSY;
 	}
 
-	if (!check_builtin_idle_enabled(sch))
-		return -EBUSY;
+	ਜੇ (!check_builtin_idle_enabled(sch))
+		ਵਾਪਸ -EBUSY;
 
-	return scx_pick_idle_cpu(cpus_allowed, NUMA_NO_NODE, flags);
+	ਵਾਪਸ scx_pick_idle_cpu(cpus_allowed, NUMA_NO_ਗੰਢ, flags);
 }
 
 /**
@@ -1462,35 +1462,35 @@ __bpf_kfunc s32 scx_bpf_pick_idle_cpu(const struct cpumask *cpus_allowed,
  * set, this function can't tell which CPUs are idle and will always pick any
  * CPU.
  */
-__bpf_kfunc s32 scx_bpf_pick_any_cpu_node(const struct cpumask *cpus_allowed,
-					  s32 node, u64 flags,
-					  const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_pick_any_cpu_ਗੰਢ(ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed,
+					  s32 ਗੰਢ, u64 flags,
+					  ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ -ENODEV;
 
-	node = validate_node(sch, node);
-	if (node < 0)
-		return node;
+	ਗੰਢ = validate_ਗੰਢ(sch, ਗੰਢ);
+	ਜੇ (ਗੰਢ < 0)
+		ਵਾਪਸ ਗੰਢ;
 
-	cpu = scx_pick_idle_cpu(cpus_allowed, node, flags);
-	if (cpu >= 0)
-		return cpu;
+	cpu = scx_pick_idle_cpu(cpus_allowed, ਗੰਢ, flags);
+	ਜੇ (cpu >= 0)
+		ਵਾਪਸ cpu;
 
-	if (flags & SCX_PICK_IDLE_IN_NODE)
-		cpu = cpumask_any_and_distribute(cpumask_of_node(node), cpus_allowed);
-	else
+	ਜੇ (flags & SCX_PICK_IDLE_ਵਿੱਚ_ਗੰਢ)
+		cpu = cpumask_any_and_distribute(cpumask_ਦਾ_ਗੰਢ(ਗੰਢ), cpus_allowed);
+	ਨਹੀਂਤਾਂ
 		cpu = cpumask_any_distribute(cpus_allowed);
-	if (cpu < nr_cpu_ids)
-		return cpu;
-	else
-		return -EBUSY;
+	ਜੇ (cpu < nr_cpu_ids)
+		ਵਾਪਸ cpu;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ -EBUSY;
 }
 
 /**
@@ -1511,55 +1511,55 @@ __bpf_kfunc s32 scx_bpf_pick_any_cpu_node(const struct cpumask *cpus_allowed,
  * Always returns an error if %SCX_OPS_BUILTIN_IDLE_PER_NODE is set, use
  * scx_bpf_pick_any_cpu_node() instead.
  */
-__bpf_kfunc s32 scx_bpf_pick_any_cpu(const struct cpumask *cpus_allowed,
-				     u64 flags, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_pick_any_cpu(ਅਚਲ ਬਣਤਰ cpumask *cpus_allowed,
+				     u64 flags, ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 	s32 cpu;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ -ENODEV;
 
-	if (static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node)) {
+	ਜੇ (static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_ਪ੍ਰਤੀ_ਗੰਢ)) {
 		scx_error(sch, "per-node idle tracking is enabled");
-		return -EBUSY;
+		ਵਾਪਸ -EBUSY;
 	}
 
-	if (static_branch_likely(&scx_builtin_idle_enabled)) {
-		cpu = scx_pick_idle_cpu(cpus_allowed, NUMA_NO_NODE, flags);
-		if (cpu >= 0)
-			return cpu;
+	ਜੇ (static_branch_likely(&scx_builtin_idle_enabled)) {
+		cpu = scx_pick_idle_cpu(cpus_allowed, NUMA_NO_ਗੰਢ, flags);
+		ਜੇ (cpu >= 0)
+			ਵਾਪਸ cpu;
 	}
 
 	cpu = cpumask_any_distribute(cpus_allowed);
-	if (cpu < nr_cpu_ids)
-		return cpu;
-	else
-		return -EBUSY;
+	ਜੇ (cpu < nr_cpu_ids)
+		ਵਾਪਸ cpu;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ -EBUSY;
 }
 
 __bpf_kfunc_end_defs();
 
-BTF_KFUNCS_START(scx_kfunc_ids_idle)
-BTF_ID_FLAGS(func, scx_bpf_cpu_node, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask_node, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask_node, KF_IMPLICIT_ARGS | KF_ACQUIRE)
-BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask, KF_IMPLICIT_ARGS | KF_ACQUIRE)
+BTF_KFUNCS_ਸ਼ੁਰੂ(scx_kfunc_ids_idle)
+BTF_ID_FLAGS(func, scx_bpf_cpu_ਗੰਢ, KF_IMPLICIT_ਦਲੀਲਾਂ)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask_ਗੰਢ, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_cpumask, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask_ਗੰਢ, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_ACQUIRE)
+BTF_ID_FLAGS(func, scx_bpf_get_idle_smtmask, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_ACQUIRE)
 BTF_ID_FLAGS(func, scx_bpf_put_idle_cpumask, KF_RELEASE)
-BTF_ID_FLAGS(func, scx_bpf_test_and_clear_cpu_idle, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_node, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_node, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_KFUNCS_END(scx_kfunc_ids_idle)
+BTF_ID_FLAGS(func, scx_bpf_test_and_clear_cpu_idle, KF_IMPLICIT_ਦਲੀਲਾਂ)
+BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu_ਗੰਢ, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_idle_cpu, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu_ਗੰਢ, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_RCU)
+BTF_ID_FLAGS(func, scx_bpf_pick_any_cpu, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_RCU)
+BTF_KFUNCS_ਸਿਰਾ(scx_kfunc_ids_idle)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_idle = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ btf_kfunc_id_ਸੈੱਟ scx_kfunc_ਸੈੱਟ_idle = {
 	.owner			= THIS_MODULE,
-	.set			= &scx_kfunc_ids_idle,
+	.ਸੈੱਟ			= &scx_kfunc_ids_idle,
 	.filter			= scx_kfunc_context_filter,
 };
 
@@ -1574,23 +1574,23 @@ static const struct btf_kfunc_id_set scx_kfunc_set_idle = {
  * they're callable from unlocked contexts in addition to ops.select_cpu() and
  * ops.enqueue().
  */
-BTF_KFUNCS_START(scx_kfunc_ids_select_cpu)
-BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_ARGS | KF_RCU)
+BTF_KFUNCS_ਸ਼ੁਰੂ(scx_kfunc_ids_select_cpu)
+BTF_ID_FLAGS(func, __scx_bpf_select_cpu_and, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_RCU)
 BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
-BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_ARGS | KF_RCU)
-BTF_KFUNCS_END(scx_kfunc_ids_select_cpu)
+BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_RCU)
+BTF_KFUNCS_ਸਿਰਾ(scx_kfunc_ids_select_cpu)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_select_cpu = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ btf_kfunc_id_ਸੈੱਟ scx_kfunc_ਸੈੱਟ_select_cpu = {
 	.owner			= THIS_MODULE,
-	.set			= &scx_kfunc_ids_select_cpu,
+	.ਸੈੱਟ			= &scx_kfunc_ids_select_cpu,
 	.filter			= scx_kfunc_context_filter,
 };
 
-int scx_idle_init(void)
+ਪੂਰਨ scx_idle_init(ਖਾਲੀ)
 {
-	return register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_idle) ?:
-	       register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &scx_kfunc_set_idle) ?:
-	       register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &scx_kfunc_set_idle) ?:
-	       register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_select_cpu) ?:
-	       register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &scx_kfunc_set_select_cpu);
+	ਵਾਪਸ ਰਜਿਸਟਰ_btf_kfunc_id_ਸੈੱਟ(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_ਸੈੱਟ_idle) ?:
+	       ਰਜਿਸਟਰ_btf_kfunc_id_ਸੈੱਟ(BPF_PROG_TYPE_TRACING, &scx_kfunc_ਸੈੱਟ_idle) ?:
+	       ਰਜਿਸਟਰ_btf_kfunc_id_ਸੈੱਟ(BPF_PROG_TYPE_SYSCALL, &scx_kfunc_ਸੈੱਟ_idle) ?:
+	       ਰਜਿਸਟਰ_btf_kfunc_id_ਸੈੱਟ(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_ਸੈੱਟ_select_cpu) ?:
+	       ਰਜਿਸਟਰ_btf_kfunc_id_ਸੈੱਟ(BPF_PROG_TYPE_SYSCALL, &scx_kfunc_ਸੈੱਟ_select_cpu);
 }

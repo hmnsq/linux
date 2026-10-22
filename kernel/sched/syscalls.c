@@ -7,27 +7,27 @@
  *  Copyright (C) 1991-2002  Linus Torvalds
  *  Copyright (C) 1998-2024  Ingo Molnar, Red Hat
  */
-#include <linux/sched.h>
-#include <linux/cpuset.h>
-#include <linux/sched/debug.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/cpuset.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/debug.h>
 
-#include <uapi/linux/sched/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "autogroup.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sched.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "autogroup.h"
 
-static inline int __normal_prio(int policy, int rt_prio, int nice)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ __normal_prio(ਪੂਰਨ policy, ਪੂਰਨ rt_prio, ਪੂਰਨ nice)
 {
-	int prio;
+	ਪੂਰਨ prio;
 
-	if (dl_policy(policy))
+	ਜੇ (dl_policy(policy))
 		prio = MAX_DL_PRIO - 1;
-	else if (rt_policy(policy))
+	ਨਹੀਂਤਾਂ ਜੇ (rt_policy(policy))
 		prio = MAX_RT_PRIO - 1 - rt_prio;
-	else
-		prio = NICE_TO_PRIO(nice);
+	ਨਹੀਂਤਾਂ
+		prio = NICE_ਮੰਜ਼ਿਲ_PRIO(nice);
 
-	return prio;
+	ਵਾਪਸ prio;
 }
 
 /*
@@ -37,9 +37,9 @@ static inline int __normal_prio(int policy, int rt_prio, int nice)
  * setprio syscalls, and whenever the interactivity
  * estimator recalculates.
  */
-static inline int normal_prio(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ ਸਾਧਾਰਨ_prio(ਬਣਤਰ task_struct *p)
 {
-	return __normal_prio(p->policy, p->rt_priority, PRIO_TO_NICE(p->static_prio));
+	ਵਾਪਸ __normal_prio(p->policy, p->rt_ਤਰਜੀਹ, PRIO_ਮੰਜ਼ਿਲ_NICE(p->static_prio));
 }
 
 /*
@@ -49,30 +49,30 @@ static inline int normal_prio(struct task_struct *p)
  * interactivity modifiers. Will be RT if the task got
  * RT-boosted. If not then it returns p->normal_prio.
  */
-static int effective_prio(struct task_struct *p)
+ਸਥਿਰ ਪੂਰਨ effective_prio(ਬਣਤਰ task_struct *p)
 {
-	p->normal_prio = normal_prio(p);
+	p->ਸਾਧਾਰਨ_prio = ਸਾਧਾਰਨ_prio(p);
 	/*
 	 * If we are RT tasks or we were boosted to RT priority,
 	 * keep the priority unchanged. Otherwise, update priority
 	 * to the normal priority:
 	 */
-	if (!rt_or_dl_prio(p->prio))
-		return p->normal_prio;
-	return p->prio;
+	ਜੇ (!rt_or_dl_prio(p->prio))
+		ਵਾਪਸ p->ਸਾਧਾਰਨ_prio;
+	ਵਾਪਸ p->prio;
 }
 
-void set_user_nice(struct task_struct *p, long nice)
+ਖਾਲੀ ਸੈੱਟ_user_nice(ਬਣਤਰ task_struct *p, ਲੰਮਾ nice)
 {
-	int old_prio;
+	ਪੂਰਨ old_prio;
 
-	if (task_nice(p) == nice || nice < MIN_NICE || nice > MAX_NICE)
-		return;
+	ਜੇ (task_nice(p) == nice || nice < MIN_NICE || nice > MAX_NICE)
+		ਵਾਪਸ;
 	/*
 	 * We have to be careful, if called from sys_setpriority(),
 	 * the task might be in the middle of scheduling on another CPU.
 	 */
-	guard(task_rq_lock)(p);
+	guard(task_rq_ਤਾਲਾ_2)(p);
 
 	/*
 	 * The RT priorities are set via sched_setscheduler(), but we still
@@ -80,19 +80,19 @@ void set_user_nice(struct task_struct *p, long nice)
 	 * it won't have any effect on scheduling until the task is
 	 * SCHED_DEADLINE, SCHED_FIFO or SCHED_RR:
 	 */
-	if (task_has_dl_policy(p) || task_has_rt_policy(p)) {
-		p->static_prio = NICE_TO_PRIO(nice);
-		return;
+	ਜੇ (task_has_dl_policy(p) || task_has_rt_policy(p)) {
+		p->static_prio = NICE_ਮੰਜ਼ਿਲ_PRIO(nice);
+		ਵਾਪਸ;
 	}
 
-	scoped_guard (sched_change, p, DEQUEUE_SAVE) {
-		p->static_prio = NICE_TO_PRIO(nice);
-		set_load_weight(p, true);
+	scoped_guard (sched_change, p, ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SAVE) {
+		p->static_prio = NICE_ਮੰਜ਼ਿਲ_PRIO(nice);
+		ਸੈੱਟ_ਲੱਦੋ_ਭਾਰ(p, true);
 		old_prio = p->prio;
 		p->prio = effective_prio(p);
 	}
 }
-EXPORT_SYMBOL(set_user_nice);
+EXPORT_ਚਿੰਨ੍ਹ(ਸੈੱਟ_user_nice);
 
 /*
  * is_nice_reduction - check if nice value is an actual reduction
@@ -102,12 +102,12 @@ EXPORT_SYMBOL(set_user_nice);
  * @p: task
  * @nice: nice value
  */
-static bool is_nice_reduction(const struct task_struct *p, const int nice)
+ਸਥਿਰ bool is_nice_reduction(ਅਚਲ ਬਣਤਰ task_struct *p, ਅਚਲ ਪੂਰਨ nice)
 {
 	/* Convert nice value [19,-20] to rlimit style value [1,40]: */
-	int nice_rlim = nice_to_rlimit(nice);
+	ਪੂਰਨ nice_rlim = nice_ਮੰਜ਼ਿਲ_rlimit(nice);
 
-	return (nice_rlim <= task_rlimit(p, RLIMIT_NICE));
+	ਵਾਪਸ (nice_rlim <= task_rlimit(p, RLIMIT_NICE));
 }
 
 /*
@@ -115,12 +115,12 @@ static bool is_nice_reduction(const struct task_struct *p, const int nice)
  * @p: task
  * @nice: nice value
  */
-int can_nice(const struct task_struct *p, const int nice)
+ਪੂਰਨ can_nice(ਅਚਲ ਬਣਤਰ task_struct *p, ਅਚਲ ਪੂਰਨ nice)
 {
-	return is_nice_reduction(p, nice) || capable(CAP_SYS_NICE);
+	ਵਾਪਸ is_nice_reduction(p, nice) || capable(CAP_SYS_NICE);
 }
 
-#ifdef __ARCH_WANT_SYS_NICE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __ARCH_WANT_SYS_NICE
 
 /*
  * sys_nice - change the priority of the current process.
@@ -129,31 +129,31 @@ int can_nice(const struct task_struct *p, const int nice)
  * sys_setpriority is a more generic, but much slower function that
  * does similar things.
  */
-SYSCALL_DEFINE1(nice, int, increment)
+SYSCALL_DEFINE1(nice, ਪੂਰਨ, increment)
 {
-	long nice, retval;
+	ਲੰਮਾ nice, retval;
 
 	/*
 	 * Setpriority might change our priority at the same moment.
 	 * We don't have to worry. Conceptually one call occurs first
 	 * and we have a single winner.
 	 */
-	increment = clamp(increment, -NICE_WIDTH, NICE_WIDTH);
+	increment = clamp(increment, -NICE_ਚੌੜਾਈ, NICE_ਚੌੜਾਈ);
 	nice = task_nice(current) + increment;
 
 	nice = clamp_val(nice, MIN_NICE, MAX_NICE);
-	if (increment < 0 && !can_nice(current, nice))
-		return -EPERM;
+	ਜੇ (increment < 0 && !can_nice(current, nice))
+		ਵਾਪਸ -EPERM;
 
 	retval = security_task_setnice(current, nice);
-	if (retval)
-		return retval;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	set_user_nice(current, nice);
-	return 0;
+	ਸੈੱਟ_user_nice(current, nice);
+	ਵਾਪਸ 0;
 }
 
-#endif /* __ARCH_WANT_SYS_NICE */
+#ਜੇ_ਅੰਤ /* __ARCH_WANT_SYS_NICE */
 
 /**
  * task_prio - return the priority value of a given task.
@@ -167,9 +167,9 @@ SYSCALL_DEFINE1(nice, int, increment)
  * fifo, rr             [-2 ... -100]     [98 ... 0]  [1 ... 99]
  * deadline                     -101             -1           0
  */
-int task_prio(const struct task_struct *p)
+ਪੂਰਨ task_prio(ਅਚਲ ਬਣਤਰ task_struct *p)
 {
-	return p->prio - MAX_RT_PRIO;
+	ਵਾਪਸ p->prio - MAX_RT_PRIO;
 }
 
 /**
@@ -178,9 +178,9 @@ int task_prio(const struct task_struct *p)
  *
  * Return: 1 if the CPU is currently idle. 0 otherwise.
  */
-int idle_cpu(int cpu)
+ਪੂਰਨ idle_cpu(ਪੂਰਨ cpu)
 {
-	return idle_rq(cpu_rq(cpu));
+	ਵਾਪਸ idle_rq(cpu_rq(cpu));
 }
 
 /**
@@ -189,22 +189,22 @@ int idle_cpu(int cpu)
  *
  * Return: The idle task for the CPU @cpu.
  */
-struct task_struct *idle_task(int cpu)
+ਬਣਤਰ task_struct *idle_task(ਪੂਰਨ cpu)
 {
-	return cpu_rq(cpu)->idle;
+	ਵਾਪਸ cpu_rq(cpu)->idle;
 }
 
-#ifdef CONFIG_SCHED_CORE
-int sched_core_idle_cpu(int cpu)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CORE
+ਪੂਰਨ sched_core_idle_cpu(ਪੂਰਨ cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	ਬਣਤਰ rq *rq = cpu_rq(cpu);
 
-	if (sched_core_enabled(rq) && rq->curr == rq->idle)
-		return 1;
+	ਜੇ (sched_core_enabled(rq) && rq->curr == rq->idle)
+		ਵਾਪਸ 1;
 
-	return idle_cpu(cpu);
+	ਵਾਪਸ idle_cpu(cpu);
 }
-#endif /* CONFIG_SCHED_CORE */
+#ਜੇ_ਅੰਤ /* CONFIG_SCHED_CORE */
 
 /**
  * find_process_by_pid - find a process with a matching PID value.
@@ -212,51 +212,51 @@ int sched_core_idle_cpu(int cpu)
  *
  * The task of @pid, if found. %NULL otherwise.
  */
-static struct task_struct *find_process_by_pid(pid_t pid)
+ਸਥਿਰ ਬਣਤਰ task_struct *ਲੱਭੋ_process_by_pid(pid_t pid)
 {
-	return pid ? find_task_by_vpid(pid) : current;
+	ਵਾਪਸ pid ? ਲੱਭੋ_task_by_vpid(pid) : current;
 }
 
-static struct task_struct *find_get_task(pid_t pid)
+ਸਥਿਰ ਬਣਤਰ task_struct *ਲੱਭੋ_get_task(pid_t pid)
 {
-	struct task_struct *p;
+	ਬਣਤਰ task_struct *p;
 	guard(rcu)();
 
-	p = find_process_by_pid(pid);
-	if (likely(p))
+	p = ਲੱਭੋ_process_by_pid(pid);
+	ਜੇ (likely(p))
 		get_task_struct(p);
 
-	return p;
+	ਵਾਪਸ p;
 }
 
-DEFINE_CLASS(find_get_task, struct task_struct *, if (_T) put_task_struct(_T),
-	     find_get_task(pid), pid_t pid)
+DEFINE_CLASS(ਲੱਭੋ_get_task, ਬਣਤਰ task_struct *, ਜੇ (_T) put_task_struct(_T),
+	     ਲੱਭੋ_get_task(pid), pid_t pid)
 
 /*
  * sched_setparam() passes in -1 for its policy, to let the functions
  * it calls know not to change it.
  */
-#define SETPARAM_POLICY	-1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SETPARAM_POLICY	-1
 
-static void __setscheduler_params(struct task_struct *p,
-		const struct sched_attr *attr)
+ਸਥਿਰ ਖਾਲੀ __setscheduler_params(ਬਣਤਰ task_struct *p,
+		ਅਚਲ ਬਣਤਰ sched_attr *attr)
 {
-	int policy = attr->sched_policy;
+	ਪੂਰਨ policy = attr->sched_policy;
 
-	if (policy == SETPARAM_POLICY)
+	ਜੇ (policy == SETPARAM_POLICY)
 		policy = p->policy;
 
 	p->policy = policy;
 
-	if (dl_policy(policy))
+	ਜੇ (dl_policy(policy))
 		__setparam_dl(p, attr);
-	else if (fair_policy(policy))
+	ਨਹੀਂਤਾਂ ਜੇ (fair_policy(policy))
 		__setparam_fair(p, attr);
 
 	/* rt-policy tasks do not have a timerslack */
-	if (rt_or_dl_task_policy(p)) {
+	ਜੇ (rt_or_dl_task_policy(p)) {
 		p->timer_slack_ns = 0;
-	} else if (p->timer_slack_ns == 0) {
+	} ਨਹੀਂਤਾਂ ਜੇ (p->timer_slack_ns == 0) {
 		/* when switching back to non-rt policy, restore timerslack */
 		p->timer_slack_ns = p->default_timer_slack_ns;
 	}
@@ -266,28 +266,28 @@ static void __setscheduler_params(struct task_struct *p,
 	 * !rt_policy. Always setting this ensures that things like
 	 * getparam()/getattr() don't report silly values for !rt tasks.
 	 */
-	p->rt_priority = attr->sched_priority;
-	p->normal_prio = normal_prio(p);
-	set_load_weight(p, true);
+	p->rt_ਤਰਜੀਹ = attr->sched_ਤਰਜੀਹ;
+	p->ਸਾਧਾਰਨ_prio = ਸਾਧਾਰਨ_prio(p);
+	ਸੈੱਟ_ਲੱਦੋ_ਭਾਰ(p, true);
 }
 
 /*
  * Check the target process has a UID that matches the current process's:
  */
-static bool check_same_owner(struct task_struct *p)
+ਸਥਿਰ bool check_same_owner(ਬਣਤਰ task_struct *p)
 {
-	const struct cred *cred = current_cred(), *pcred;
+	ਅਚਲ ਬਣਤਰ cred *cred = current_cred(), *pcred;
 	guard(rcu)();
 
 	pcred = __task_cred(p);
-	return (uid_eq(cred->euid, pcred->euid) ||
+	ਵਾਪਸ (uid_eq(cred->euid, pcred->euid) ||
 		uid_eq(cred->euid, pcred->uid));
 }
 
-#ifdef CONFIG_RT_MUTEXES
-static inline void __setscheduler_dl_pi(int newprio, int policy,
-			      struct task_struct *p,
-			      struct sched_change_ctx *scope)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_RT_MUTEXES
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ __setscheduler_dl_pi(ਪੂਰਨ newprio, ਪੂਰਨ policy,
+			      ਬਣਤਰ task_struct *p,
+			      ਬਣਤਰ sched_change_ctx *scope)
 {
 	/*
 	 * In case a DEADLINE task (either proper or boosted) gets
@@ -296,47 +296,47 @@ static inline void __setscheduler_dl_pi(int newprio, int policy,
 	 * sure replenishment happens with the next enqueue.
 	 */
 
-	if (dl_prio(newprio) && !dl_policy(policy)) {
-		struct task_struct *pi_task = rt_mutex_get_top_task(p);
+	ਜੇ (dl_prio(newprio) && !dl_policy(policy)) {
+		ਬਣਤਰ task_struct *pi_task = rt_mutex_get_ਸਿਖਰ_task(p);
 
-		if (pi_task) {
+		ਜੇ (pi_task) {
 			p->dl.pi_se = pi_task->dl.pi_se;
-			scope->flags |= ENQUEUE_REPLENISH;
+			scope->flags |= ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_REPLENISH;
 		}
 	}
 }
-#else /* !CONFIG_RT_MUTEXES */
-static inline void __setscheduler_dl_pi(int newprio, int policy,
-			      struct task_struct *p,
-			      struct sched_change_ctx *scope)
+#ਨਹੀਂਤਾਂ /* !CONFIG_RT_MUTEXES */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ __setscheduler_dl_pi(ਪੂਰਨ newprio, ਪੂਰਨ policy,
+			      ਬਣਤਰ task_struct *p,
+			      ਬਣਤਰ sched_change_ctx *scope)
 {
 }
-#endif /* !CONFIG_RT_MUTEXES */
+#ਜੇ_ਅੰਤ /* !CONFIG_RT_MUTEXES */
 
-#ifdef CONFIG_UCLAMP_TASK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_UCLAMP_TASK
 
-static int uclamp_validate(struct task_struct *p,
-			   const struct sched_attr *attr)
+ਸਥਿਰ ਪੂਰਨ uclamp_validate(ਬਣਤਰ task_struct *p,
+			   ਅਚਲ ਬਣਤਰ sched_attr *attr)
 {
-	int util_min = p->uclamp_req[UCLAMP_MIN].value;
-	int util_max = p->uclamp_req[UCLAMP_MAX].value;
+	ਪੂਰਨ util_min = p->uclamp_req[UCLAMP_MIN].ਮੁੱਲ;
+	ਪੂਰਨ util_max = p->uclamp_req[UCLAMP_MAX].ਮੁੱਲ;
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
+	ਜੇ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
 		util_min = attr->sched_util_min;
 
-		if (util_min + 1 > SCHED_CAPACITY_SCALE + 1)
-			return -EINVAL;
+		ਜੇ (util_min + 1 > SCHED_ਸਮਰੱਥਾ_SCALE + 1)
+			ਵਾਪਸ -EINVAL;
 	}
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
+	ਜੇ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
 		util_max = attr->sched_util_max;
 
-		if (util_max + 1 > SCHED_CAPACITY_SCALE + 1)
-			return -EINVAL;
+		ਜੇ (util_max + 1 > SCHED_ਸਮਰੱਥਾ_SCALE + 1)
+			ਵਾਪਸ -EINVAL;
 	}
 
-	if (util_min != -1 && util_max != -1 && util_min > util_max)
-		return -EINVAL;
+	ਜੇ (util_min != -1 && util_max != -1 && util_min > util_max)
+		ਵਾਪਸ -EINVAL;
 
 	/*
 	 * We have valid uclamp attributes; make sure uclamp is enabled.
@@ -347,112 +347,112 @@ static int uclamp_validate(struct task_struct *p,
 	 */
 	sched_uclamp_enable();
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static bool uclamp_reset(const struct sched_attr *attr,
-			 enum uclamp_id clamp_id,
-			 struct uclamp_se *uc_se)
+ਸਥਿਰ bool uclamp_reset(ਅਚਲ ਬਣਤਰ sched_attr *attr,
+			 ਗਿਣਤੀ uclamp_id clamp_id,
+			 ਬਣਤਰ uclamp_se *uc_se)
 {
 	/* Reset on sched class change for a non user-defined clamp value. */
-	if (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)) &&
+	ਜੇ (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)) &&
 	    !uc_se->user_defined)
-		return true;
+		ਵਾਪਸ true;
 
 	/* Reset on sched_util_{min,max} == -1. */
-	if (clamp_id == UCLAMP_MIN &&
+	ਜੇ (clamp_id == UCLAMP_MIN &&
 	    attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
 	    attr->sched_util_min == -1) {
-		return true;
+		ਵਾਪਸ true;
 	}
 
-	if (clamp_id == UCLAMP_MAX &&
+	ਜੇ (clamp_id == UCLAMP_MAX &&
 	    attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
 	    attr->sched_util_max == -1) {
-		return true;
+		ਵਾਪਸ true;
 	}
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-static void __setscheduler_uclamp(struct task_struct *p,
-				  const struct sched_attr *attr)
+ਸਥਿਰ ਖਾਲੀ __setscheduler_uclamp(ਬਣਤਰ task_struct *p,
+				  ਅਚਲ ਬਣਤਰ sched_attr *attr)
 {
-	enum uclamp_id clamp_id;
+	ਗਿਣਤੀ uclamp_id clamp_id;
 
 	for_each_clamp_id(clamp_id) {
-		struct uclamp_se *uc_se = &p->uclamp_req[clamp_id];
-		unsigned int value;
+		ਬਣਤਰ uclamp_se *uc_se = &p->uclamp_req[clamp_id];
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮੁੱਲ;
 
-		if (!uclamp_reset(attr, clamp_id, uc_se))
-			continue;
+		ਜੇ (!uclamp_reset(attr, clamp_id, uc_se))
+			ਜਾਰੀ;
 
 		/*
 		 * RT by default have a 100% boost value that could be modified
 		 * at runtime.
 		 */
-		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
-			value = sysctl_sched_uclamp_util_min_rt_default;
-		else
-			value = uclamp_none(clamp_id);
+		ਜੇ (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
+			ਮੁੱਲ = sysctl_sched_uclamp_util_min_rt_default;
+		ਨਹੀਂਤਾਂ
+			ਮੁੱਲ = uclamp_none(clamp_id);
 
-		uclamp_se_set(uc_se, value, false);
+		uclamp_se_ਸੈੱਟ(uc_se, ਮੁੱਲ, false);
 
 	}
 
-	if (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)))
-		return;
+	ਜੇ (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)))
+		ਵਾਪਸ;
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
+	ਜੇ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
 	    attr->sched_util_min != -1) {
-		uclamp_se_set(&p->uclamp_req[UCLAMP_MIN],
+		uclamp_se_ਸੈੱਟ(&p->uclamp_req[UCLAMP_MIN],
 			      attr->sched_util_min, true);
 	}
 
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
+	ਜੇ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
 	    attr->sched_util_max != -1) {
-		uclamp_se_set(&p->uclamp_req[UCLAMP_MAX],
+		uclamp_se_ਸੈੱਟ(&p->uclamp_req[UCLAMP_MAX],
 			      attr->sched_util_max, true);
 	}
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_UCLAMP_TASK: */
 
-static inline int uclamp_validate(struct task_struct *p,
-				  const struct sched_attr *attr)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ uclamp_validate(ਬਣਤਰ task_struct *p,
+				  ਅਚਲ ਬਣਤਰ sched_attr *attr)
 {
-	return -EOPNOTSUPP;
+	ਵਾਪਸ -EOPNOTSUPP;
 }
-static void __setscheduler_uclamp(struct task_struct *p,
-				  const struct sched_attr *attr) { }
-#endif /* !CONFIG_UCLAMP_TASK */
+ਸਥਿਰ ਖਾਲੀ __setscheduler_uclamp(ਬਣਤਰ task_struct *p,
+				  ਅਚਲ ਬਣਤਰ sched_attr *attr) { }
+#ਜੇ_ਅੰਤ /* !CONFIG_UCLAMP_TASK */
 
 /*
  * Allow unprivileged RT tasks to decrease priority.
  * Only issue a capable test if needed and only once to avoid an audit
  * event on permitted non-privileged operations:
  */
-static int user_check_sched_setscheduler(struct task_struct *p,
-					 const struct sched_attr *attr,
-					 int policy, int reset_on_fork)
+ਸਥਿਰ ਪੂਰਨ user_check_sched_setscheduler(ਬਣਤਰ task_struct *p,
+					 ਅਚਲ ਬਣਤਰ sched_attr *attr,
+					 ਪੂਰਨ policy, ਪੂਰਨ reset_on_fork)
 {
-	if (fair_policy(policy)) {
-		if (attr->sched_nice < task_nice(p) &&
+	ਜੇ (fair_policy(policy)) {
+		ਜੇ (attr->sched_nice < task_nice(p) &&
 		    !is_nice_reduction(p, attr->sched_nice))
-			goto req_priv;
+			ਜਾਓ req_priv;
 	}
 
-	if (rt_policy(policy)) {
-		unsigned long rlim_rtprio = task_rlimit(p, RLIMIT_RTPRIO);
+	ਜੇ (rt_policy(policy)) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ rlim_rtprio = task_rlimit(p, RLIMIT_RTPRIO);
 
 		/* Can't set/change the rt policy: */
-		if (policy != p->policy && !rlim_rtprio)
-			goto req_priv;
+		ਜੇ (policy != p->policy && !rlim_rtprio)
+			ਜਾਓ req_priv;
 
 		/* Can't increase priority: */
-		if (attr->sched_priority > p->rt_priority &&
-		    attr->sched_priority > rlim_rtprio)
-			goto req_priv;
+		ਜੇ (attr->sched_ਤਰਜੀਹ > p->rt_ਤਰਜੀਹ &&
+		    attr->sched_ਤਰਜੀਹ > rlim_rtprio)
+			ਜਾਓ req_priv;
 	}
 
 	/*
@@ -461,104 +461,104 @@ static int user_check_sched_setscheduler(struct task_struct *p,
 	 * unprivileged DL tasks to increase their relative deadline
 	 * or reduce their runtime (both ways reducing utilization)
 	 */
-	if (dl_policy(policy))
-		goto req_priv;
+	ਜੇ (dl_policy(policy))
+		ਜਾਓ req_priv;
 
 	/*
 	 * Treat SCHED_IDLE as nice 20. Only allow a switch to
 	 * SCHED_NORMAL if the RLIMIT_NICE would normally permit it.
 	 */
-	if (task_has_idle_policy(p) && !idle_policy(policy)) {
-		if (!is_nice_reduction(p, task_nice(p)))
-			goto req_priv;
+	ਜੇ (task_has_idle_policy(p) && !idle_policy(policy)) {
+		ਜੇ (!is_nice_reduction(p, task_nice(p)))
+			ਜਾਓ req_priv;
 	}
 
 	/* Can't change other user's priorities: */
-	if (!check_same_owner(p))
-		goto req_priv;
+	ਜੇ (!check_same_owner(p))
+		ਜਾਓ req_priv;
 
 	/* Normal users shall not reset the sched_reset_on_fork flag: */
-	if (p->sched_reset_on_fork && !reset_on_fork)
-		goto req_priv;
+	ਜੇ (p->sched_reset_on_fork && !reset_on_fork)
+		ਜਾਓ req_priv;
 
-	return 0;
+	ਵਾਪਸ 0;
 
 req_priv:
-	if (!capable(CAP_SYS_NICE))
-		return -EPERM;
+	ਜੇ (!capable(CAP_SYS_NICE))
+		ਵਾਪਸ -EPERM;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int __sched_setscheduler(struct task_struct *p,
-			 const struct sched_attr *attr,
+ਪੂਰਨ __sched_setscheduler(ਬਣਤਰ task_struct *p,
+			 ਅਚਲ ਬਣਤਰ sched_attr *attr,
 			 bool user, bool pi)
 {
-	int oldpolicy = -1, policy = attr->sched_policy;
-	int retval, oldprio, newprio;
-	const struct sched_class *prev_class, *next_class;
-	struct balance_callback *head;
-	struct rq_flags rf;
-	int reset_on_fork;
-	int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
-	struct rq *rq;
+	ਪੂਰਨ oldpolicy = -1, policy = attr->sched_policy;
+	ਪੂਰਨ retval, oldprio, newprio;
+	ਅਚਲ ਬਣਤਰ sched_class *prev_class, *ਅਗਲਾ_class;
+	ਬਣਤਰ balance_callback *ਸਿਰ;
+	ਬਣਤਰ rq_flags rf;
+	ਪੂਰਨ reset_on_fork;
+	ਪੂਰਨ ਕਤਾਰ_flags = ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SAVE | ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_MOVE | ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_NOCLOCK;
+	ਬਣਤਰ rq *rq;
 	bool cpuset_locked = false;
 
 	/* The pi code expects interrupts enabled */
-	BUG_ON(pi && in_interrupt());
+	BUG_ON(pi && ਵਿੱਚ_ਰੁਕਾਵਟ());
 recheck:
 	/* Double check policy once rq lock held: */
-	if (policy < 0) {
+	ਜੇ (policy < 0) {
 		reset_on_fork = p->sched_reset_on_fork;
 		policy = oldpolicy = p->policy;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		reset_on_fork = !!(attr->sched_flags & SCHED_FLAG_RESET_ON_FORK);
 
-		if (!valid_policy(policy))
-			return -EINVAL;
+		ਜੇ (!valid_policy(policy))
+			ਵਾਪਸ -EINVAL;
 	}
 
-	if (attr->sched_flags & ~(SCHED_FLAG_ALL | SCHED_FLAG_SUGOV))
-		return -EINVAL;
+	ਜੇ (attr->sched_flags & ~(SCHED_FLAG_ALL | SCHED_FLAG_SUGOV))
+		ਵਾਪਸ -EINVAL;
 
 	/*
 	 * Valid priorities for SCHED_FIFO and SCHED_RR are
 	 * 1..MAX_RT_PRIO-1, valid priority for SCHED_NORMAL,
 	 * SCHED_BATCH and SCHED_IDLE is 0.
 	 */
-	if (attr->sched_priority > MAX_RT_PRIO-1)
-		return -EINVAL;
-	if ((dl_policy(policy) && !__checkparam_dl(attr)) ||
-	    (rt_policy(policy) != (attr->sched_priority != 0)))
-		return -EINVAL;
+	ਜੇ (attr->sched_ਤਰਜੀਹ > MAX_RT_PRIO-1)
+		ਵਾਪਸ -EINVAL;
+	ਜੇ ((dl_policy(policy) && !__checkparam_dl(attr)) ||
+	    (rt_policy(policy) != (attr->sched_ਤਰਜੀਹ != 0)))
+		ਵਾਪਸ -EINVAL;
 
-	if (user) {
+	ਜੇ (user) {
 		retval = user_check_sched_setscheduler(p, attr, policy, reset_on_fork);
-		if (retval)
-			return retval;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 
-		if (attr->sched_flags & SCHED_FLAG_SUGOV)
-			return -EINVAL;
+		ਜੇ (attr->sched_flags & SCHED_FLAG_SUGOV)
+			ਵਾਪਸ -EINVAL;
 
 		retval = security_task_setscheduler(p);
-		if (retval)
-			return retval;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 	}
 
 	/* Update task specific "requested" clamps */
-	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
+	ਜੇ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) {
 		retval = uclamp_validate(p, attr);
-		if (retval)
-			return retval;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 	}
 
 	/*
 	 * SCHED_DEADLINE bandwidth accounting relies on stable cpusets
 	 * information.
 	 */
-	if (dl_policy(policy) || dl_policy(p->policy)) {
+	ਜੇ (dl_policy(policy) || dl_policy(p->policy)) {
 		cpuset_locked = true;
-		cpuset_lock();
+		cpuset_ਤਾਲਾ();
 	}
 
 	/*
@@ -568,81 +568,81 @@ recheck:
 	 * To be able to change p->policy safely, the appropriate
 	 * runqueue lock must be held.
 	 */
-	rq = task_rq_lock(p, &rf);
+	rq = task_rq_ਤਾਲਾ_2(p, &rf);
 	update_rq_clock(rq);
 
 	/*
 	 * Changing the policy of the stop threads its a very bad idea:
 	 */
-	if (p == rq->stop) {
+	ਜੇ (p == rq->stop) {
 		retval = -EINVAL;
-		goto unlock;
+		ਜਾਓ unlock;
 	}
 
 	retval = scx_check_setscheduler(p, policy);
-	if (retval)
-		goto unlock;
+	ਜੇ (retval)
+		ਜਾਓ unlock;
 
 	/*
 	 * If not changing anything there's no need to proceed further,
 	 * but store a possible modification of reset_on_fork.
 	 */
-	if (unlikely(policy == p->policy)) {
-		if (fair_policy(policy) &&
+	ਜੇ (unlikely(policy == p->policy)) {
+		ਜੇ (fair_policy(policy) &&
 		    (attr->sched_nice != task_nice(p) ||
-		     (attr->sched_runtime != p->se.slice)))
-			goto change;
-		if (rt_policy(policy) && attr->sched_priority != p->rt_priority)
-			goto change;
-		if (dl_policy(policy) && dl_param_changed(p, attr))
-			goto change;
-		if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
-			goto change;
+		     (attr->sched_runtime != p->se.ਟੁਕੜਾ)))
+			ਜਾਓ change;
+		ਜੇ (rt_policy(policy) && attr->sched_ਤਰਜੀਹ != p->rt_ਤਰਜੀਹ)
+			ਜਾਓ change;
+		ਜੇ (dl_policy(policy) && dl_param_ਬਦਲਿਆ(p, attr))
+			ਜਾਓ change;
+		ਜੇ (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
+			ਜਾਓ change;
 
 		p->sched_reset_on_fork = reset_on_fork;
 		retval = 0;
-		goto unlock;
+		ਜਾਓ unlock;
 	}
 change:
 
-	if (user) {
-#ifdef CONFIG_RT_GROUP_SCHED
+	ਜੇ (user) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_RT_ਸਮੂਹ_SCHED
 		/*
 		 * Do not allow real-time tasks into groups that have no runtime
 		 * assigned.
 		 */
-		if (rt_group_sched_enabled() &&
+		ਜੇ (rt_ਸਮੂਹ_sched_enabled() &&
 				rt_bandwidth_enabled() && rt_policy(policy) &&
-				task_group(p)->rt_bandwidth.rt_runtime == 0 &&
-				!task_group_is_autogroup(task_group(p))) {
+				task_ਸਮੂਹ(p)->rt_bandwidth.rt_runtime == 0 &&
+				!task_ਸਮੂਹ_is_autogroup(task_ਸਮੂਹ(p))) {
 			retval = -EPERM;
-			goto unlock;
+			ਜਾਓ unlock;
 		}
-#endif /* CONFIG_RT_GROUP_SCHED */
-		if (dl_bandwidth_enabled() && dl_policy(policy) &&
+#ਜੇ_ਅੰਤ /* CONFIG_RT_GROUP_SCHED */
+		ਜੇ (dl_bandwidth_enabled() && dl_policy(policy) &&
 				!(attr->sched_flags & SCHED_FLAG_SUGOV)) {
-			cpumask_t *span = rq->rd->span;
+			cpumask_t *ਵਿਸਤਾਰ = rq->rd->ਵਿਸਤਾਰ;
 
 			/*
 			 * Don't allow tasks with an affinity mask smaller than
 			 * the entire root_domain to become SCHED_DEADLINE. We
 			 * will also fail if there's no bandwidth available.
 			 */
-			if (!cpumask_subset(span, p->cpus_ptr) ||
+			ਜੇ (!cpumask_subset(ਵਿਸਤਾਰ, p->cpus_ptr) ||
 			    rq->rd->dl_bw.bw == 0) {
 				retval = -EPERM;
-				goto unlock;
+				ਜਾਓ unlock;
 			}
 		}
 	}
 
 	/* Re-check policy now with rq lock held: */
-	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
+	ਜੇ (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
 		policy = oldpolicy = -1;
 		task_rq_unlock(rq, p, &rf);
-		if (cpuset_locked)
+		ਜੇ (cpuset_locked)
 			cpuset_unlock();
-		goto recheck;
+		ਜਾਓ recheck;
 	}
 
 	/*
@@ -650,16 +650,16 @@ change:
 	 * of a SCHED_DEADLINE task) we need to check if enough bandwidth
 	 * is available.
 	 */
-	if ((dl_policy(policy) || dl_task(p)) && sched_dl_overflow(p, policy, attr)) {
+	ਜੇ ((dl_policy(policy) || dl_task(p)) && sched_dl_ਉਛਾਲ(p, policy, attr)) {
 		retval = -EBUSY;
-		goto unlock;
+		ਜਾਓ unlock;
 	}
 
 	p->sched_reset_on_fork = reset_on_fork;
 	oldprio = p->prio;
 
-	newprio = __normal_prio(policy, attr->sched_priority, attr->sched_nice);
-	if (pi) {
+	newprio = __normal_prio(policy, attr->sched_ਤਰਜੀਹ, attr->sched_nice);
+	ਜੇ (pi) {
 		/*
 		 * Take priority boosted tasks into account. If the new
 		 * effective priority is unchanged, we just store the new
@@ -668,80 +668,80 @@ change:
 		 * itself.
 		 */
 		newprio = rt_effective_prio(p, newprio);
-		if (newprio == oldprio && !dl_prio(newprio))
-			queue_flags &= ~DEQUEUE_MOVE;
+		ਜੇ (newprio == oldprio && !dl_prio(newprio))
+			ਕਤਾਰ_flags &= ~ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_MOVE;
 	}
 
 	prev_class = p->sched_class;
-	next_class = __setscheduler_class(policy, newprio);
+	ਅਗਲਾ_class = __setscheduler_class(policy, newprio);
 
-	if (prev_class != next_class)
-		queue_flags |= DEQUEUE_CLASS;
+	ਜੇ (prev_class != ਅਗਲਾ_class)
+		ਕਤਾਰ_flags |= ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_CLASS;
 
-	scoped_guard (sched_change, p, queue_flags) {
+	scoped_guard (sched_change, p, ਕਤਾਰ_flags) {
 
-		if (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
+		ਜੇ (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
 			__setscheduler_params(p, attr);
-			p->sched_class = next_class;
+			p->sched_class = ਅਗਲਾ_class;
 			p->prio = newprio;
 			__setscheduler_dl_pi(newprio, policy, p, scope);
 		}
 		__setscheduler_uclamp(p, attr);
 
-		if (scope->queued) {
+		ਜੇ (scope->queued) {
 			/*
 			 * We enqueue to tail when the priority of a task is
 			 * increased (user space view).
 			 */
-			if (oldprio < p->prio)
-				scope->flags |= ENQUEUE_HEAD;
+			ਜੇ (oldprio < p->prio)
+				scope->flags |= ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_ਸਿਰ;
 		}
 	}
 
 	/* Avoid rq from going away on us: */
 	preempt_disable();
-	head = splice_balance_callbacks(rq);
+	ਸਿਰ = splice_balance_callbacks(rq);
 	task_rq_unlock(rq, p, &rf);
 
-	if (pi) {
-		if (cpuset_locked)
+	ਜੇ (pi) {
+		ਜੇ (cpuset_locked)
 			cpuset_unlock();
 		rt_mutex_adjust_pi(p);
 	}
 
 	/* Run balance callbacks after we've adjusted the PI chain: */
-	balance_callbacks(rq, head);
+	balance_callbacks(rq, ਸਿਰ);
 	preempt_enable();
 
-	return 0;
+	ਵਾਪਸ 0;
 
 unlock:
 	task_rq_unlock(rq, p, &rf);
-	if (cpuset_locked)
+	ਜੇ (cpuset_locked)
 		cpuset_unlock();
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static int _sched_setscheduler(struct task_struct *p, int policy,
-			       const struct sched_param *param, bool check)
+ਸਥਿਰ ਪੂਰਨ _sched_setscheduler(ਬਣਤਰ task_struct *p, ਪੂਰਨ policy,
+			       ਅਚਲ ਬਣਤਰ sched_param *param, bool check)
 {
-	struct sched_attr attr = {
+	ਬਣਤਰ sched_attr attr = {
 		.sched_policy   = policy,
-		.sched_priority = param->sched_priority,
-		.sched_nice	= PRIO_TO_NICE(p->static_prio),
+		.sched_ਤਰਜੀਹ = param->sched_ਤਰਜੀਹ,
+		.sched_nice	= PRIO_ਮੰਜ਼ਿਲ_NICE(p->static_prio),
 	};
 
-	if (p->se.custom_slice)
-		attr.sched_runtime = p->se.slice;
+	ਜੇ (p->se.custom_ਟੁਕੜਾ)
+		attr.sched_runtime = p->se.ਟੁਕੜਾ;
 
 	/* Fixup the legacy SCHED_RESET_ON_FORK hack. */
-	if ((policy != SETPARAM_POLICY) && (policy & SCHED_RESET_ON_FORK)) {
+	ਜੇ ((policy != SETPARAM_POLICY) && (policy & SCHED_RESET_ON_FORK)) {
 		attr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
 		policy &= ~SCHED_RESET_ON_FORK;
 		attr.sched_policy = policy;
 	}
 
-	return __sched_setscheduler(p, &attr, check, true);
+	ਵਾਪਸ __sched_setscheduler(p, &attr, check, true);
 }
 /**
  * sched_setscheduler - change the scheduling policy and/or RT priority of a thread.
@@ -755,22 +755,22 @@ static int _sched_setscheduler(struct task_struct *p, int policy,
  *
  * NOTE that the task may be already dead.
  */
-int sched_setscheduler(struct task_struct *p, int policy,
-		       const struct sched_param *param)
+ਪੂਰਨ sched_setscheduler(ਬਣਤਰ task_struct *p, ਪੂਰਨ policy,
+		       ਅਚਲ ਬਣਤਰ sched_param *param)
 {
-	return _sched_setscheduler(p, policy, param, true);
+	ਵਾਪਸ _sched_setscheduler(p, policy, param, true);
 }
 
-int sched_setattr(struct task_struct *p, const struct sched_attr *attr)
+ਪੂਰਨ sched_setattr(ਬਣਤਰ task_struct *p, ਅਚਲ ਬਣਤਰ sched_attr *attr)
 {
-	return __sched_setscheduler(p, attr, true, true);
+	ਵਾਪਸ __sched_setscheduler(p, attr, true, true);
 }
 
-int sched_setattr_nocheck(struct task_struct *p, const struct sched_attr *attr)
+ਪੂਰਨ sched_setattr_nocheck(ਬਣਤਰ task_struct *p, ਅਚਲ ਬਣਤਰ sched_attr *attr)
 {
-	return __sched_setscheduler(p, attr, false, true);
+	ਵਾਪਸ __sched_setscheduler(p, attr, false, true);
 }
-EXPORT_SYMBOL_GPL(sched_setattr_nocheck);
+EXPORT_ਚਿੰਨ੍ਹ_GPL(sched_setattr_nocheck);
 
 /**
  * sched_setscheduler_nocheck - change the scheduling policy and/or RT priority of a thread from kernel-space.
@@ -785,10 +785,10 @@ EXPORT_SYMBOL_GPL(sched_setattr_nocheck);
  *
  * Return: 0 on success. An error code otherwise.
  */
-int sched_setscheduler_nocheck(struct task_struct *p, int policy,
-			       const struct sched_param *param)
+ਪੂਰਨ sched_setscheduler_nocheck(ਬਣਤਰ task_struct *p, ਪੂਰਨ policy,
+			       ਅਚਲ ਬਣਤਰ sched_param *param)
 {
-	return _sched_setscheduler(p, policy, param, false);
+	ਵਾਪਸ _sched_setscheduler(p, policy, param, false);
 }
 
 /*
@@ -809,22 +809,22 @@ int sched_setscheduler_nocheck(struct task_struct *p, int policy,
  * The administrator _MUST_ configure the system, the kernel simply doesn't
  * know enough information to make a sensible choice.
  */
-void sched_set_fifo(struct task_struct *p)
+ਖਾਲੀ sched_ਸੈੱਟ_fifo(ਬਣਤਰ task_struct *p)
 {
-	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 };
+	ਬਣਤਰ sched_param sp = { .sched_ਤਰਜੀਹ = MAX_RT_PRIO / 2 };
 	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
 }
-EXPORT_SYMBOL_GPL(sched_set_fifo);
+EXPORT_ਚਿੰਨ੍ਹ_GPL(sched_ਸੈੱਟ_fifo);
 
 /*
  * For when you don't much care about FIFO, but want to be above SCHED_NORMAL.
  */
-void sched_set_fifo_low(struct task_struct *p)
+ਖਾਲੀ sched_ਸੈੱਟ_fifo_ਨੀਵਾਂ(ਬਣਤਰ task_struct *p)
 {
-	struct sched_param sp = { .sched_priority = 1 };
+	ਬਣਤਰ sched_param sp = { .sched_ਤਰਜੀਹ = 1 };
 	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
 }
-EXPORT_SYMBOL_GPL(sched_set_fifo_low);
+EXPORT_ਚਿੰਨ੍ਹ_GPL(sched_ਸੈੱਟ_fifo_ਨੀਵਾਂ);
 
 /*
  * Used when the primary interrupt handler is forced into a thread, in addition
@@ -833,70 +833,70 @@ EXPORT_SYMBOL_GPL(sched_set_fifo_low);
  * emulating the behavior of a non-PREEMPT_RT system where the primary handler
  * runs in hard interrupt context.
  */
-void sched_set_fifo_secondary(struct task_struct *p)
+ਖਾਲੀ sched_ਸੈੱਟ_fifo_secondary(ਬਣਤਰ task_struct *p)
 {
-	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 - 1 };
+	ਬਣਤਰ sched_param sp = { .sched_ਤਰਜੀਹ = MAX_RT_PRIO / 2 - 1 };
 	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) != 0);
 }
 
-void sched_set_normal(struct task_struct *p, int nice)
+ਖਾਲੀ sched_ਸੈੱਟ_ਸਾਧਾਰਨ(ਬਣਤਰ task_struct *p, ਪੂਰਨ nice)
 {
-	struct sched_attr attr = {
-		.sched_policy = SCHED_NORMAL,
+	ਬਣਤਰ sched_attr attr = {
+		.sched_policy = SCHED_ਸਾਧਾਰਨ,
 		.sched_nice = nice,
 	};
 	WARN_ON_ONCE(sched_setattr_nocheck(p, &attr) != 0);
 }
-EXPORT_SYMBOL_GPL(sched_set_normal);
+EXPORT_ਚਿੰਨ੍ਹ_GPL(sched_ਸੈੱਟ_ਸਾਧਾਰਨ);
 
-static int
-do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
+ਸਥਿਰ ਪੂਰਨ
+do_sched_setscheduler(pid_t pid, ਪੂਰਨ policy, ਬਣਤਰ sched_param __user *param)
 {
-	struct sched_param lparam;
+	ਬਣਤਰ sched_param lparam;
 
-	if (unlikely(!param || pid < 0))
-		return -EINVAL;
-	if (copy_from_user(&lparam, param, sizeof(struct sched_param)))
-		return -EFAULT;
+	ਜੇ (unlikely(!param || pid < 0))
+		ਵਾਪਸ -EINVAL;
+	ਜੇ (copy_from_user(&lparam, param, ਆਕਾਰ(ਬਣਤਰ sched_param)))
+		ਵਾਪਸ -EFAULT;
 
-	CLASS(find_get_task, p)(pid);
-	if (!p)
-		return -ESRCH;
+	CLASS(ਲੱਭੋ_get_task, p)(pid);
+	ਜੇ (!p)
+		ਵਾਪਸ -ESRCH;
 
-	return sched_setscheduler(p, policy, &lparam);
+	ਵਾਪਸ sched_setscheduler(p, policy, &lparam);
 }
 
 /*
  * Mimics kernel/events/core.c perf_copy_attr().
  */
-static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *attr)
+ਸਥਿਰ ਪੂਰਨ sched_copy_attr(ਬਣਤਰ sched_attr __user *uattr, ਬਣਤਰ sched_attr *attr)
 {
-	u32 size;
-	int ret;
+	u32 ਮਾਪ;
+	ਪੂਰਨ ret;
 
 	/* Zero the full structure, so that a short copy will be nice: */
-	memset(attr, 0, sizeof(*attr));
+	memset(attr, 0, ਆਕਾਰ(*attr));
 
-	ret = get_user(size, &uattr->size);
-	if (ret)
-		return ret;
+	ret = get_user(ਮਾਪ, &uattr->ਮਾਪ);
+	ਜੇ (ret)
+		ਵਾਪਸ ret;
 
 	/* ABI compatibility quirk: */
-	if (!size)
-		size = SCHED_ATTR_SIZE_VER0;
-	if (size < SCHED_ATTR_SIZE_VER0 || size > PAGE_SIZE)
-		goto err_size;
+	ਜੇ (!ਮਾਪ)
+		ਮਾਪ = SCHED_ATTR_ਮਾਪ_VER0;
+	ਜੇ (ਮਾਪ < SCHED_ATTR_ਮਾਪ_VER0 || ਮਾਪ > ਪੰਨਾ_ਮਾਪ)
+		ਜਾਓ err_ਮਾਪ;
 
-	ret = copy_struct_from_user(attr, sizeof(*attr), uattr, size);
-	if (ret) {
-		if (ret == -E2BIG)
-			goto err_size;
-		return ret;
+	ret = copy_struct_from_user(attr, ਆਕਾਰ(*attr), uattr, ਮਾਪ);
+	ਜੇ (ret) {
+		ਜੇ (ret == -E2BIG)
+			ਜਾਓ err_ਮਾਪ;
+		ਵਾਪਸ ret;
 	}
 
-	if ((attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) &&
-	    size < SCHED_ATTR_SIZE_VER1)
-		return -EINVAL;
+	ਜੇ ((attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) &&
+	    ਮਾਪ < SCHED_ATTR_ਮਾਪ_VER1)
+		ਵਾਪਸ -EINVAL;
 
 	/*
 	 * XXX: Do we want to be lenient like existing syscalls; or do we want
@@ -904,22 +904,22 @@ static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *a
 	 */
 	attr->sched_nice = clamp(attr->sched_nice, MIN_NICE, MAX_NICE);
 
-	return 0;
+	ਵਾਪਸ 0;
 
-err_size:
-	put_user(sizeof(*attr), &uattr->size);
-	return -E2BIG;
+err_ਮਾਪ:
+	put_user(ਆਕਾਰ(*attr), &uattr->ਮਾਪ);
+	ਵਾਪਸ -E2BIG;
 }
 
-static void get_params(struct task_struct *p, struct sched_attr *attr, unsigned int flags)
+ਸਥਿਰ ਖਾਲੀ get_params(ਬਣਤਰ task_struct *p, ਬਣਤਰ sched_attr *attr, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags)
 {
-	if (task_has_dl_policy(p)) {
+	ਜੇ (task_has_dl_policy(p)) {
 		__getparam_dl(p, attr, flags);
-	} else if (task_has_rt_policy(p)) {
-		attr->sched_priority = p->rt_priority;
-	} else {
+	} ਨਹੀਂਤਾਂ ਜੇ (task_has_rt_policy(p)) {
+		attr->sched_ਤਰਜੀਹ = p->rt_ਤਰਜੀਹ;
+	} ਨਹੀਂਤਾਂ {
 		attr->sched_nice = task_nice(p);
-		attr->sched_runtime = p->se.slice;
+		attr->sched_runtime = p->se.ਟੁਕੜਾ;
 	}
 }
 
@@ -931,12 +931,12 @@ static void get_params(struct task_struct *p, struct sched_attr *attr, unsigned 
  *
  * Return: 0 on success. An error code otherwise.
  */
-SYSCALL_DEFINE3(sched_setscheduler, pid_t, pid, int, policy, struct sched_param __user *, param)
+SYSCALL_DEFINE3(sched_setscheduler, pid_t, pid, ਪੂਰਨ, policy, ਬਣਤਰ sched_param __user *, param)
 {
-	if (policy < 0)
-		return -EINVAL;
+	ਜੇ (policy < 0)
+		ਵਾਪਸ -EINVAL;
 
-	return do_sched_setscheduler(pid, policy, param);
+	ਵਾਪਸ do_sched_setscheduler(pid, policy, param);
 }
 
 /**
@@ -946,9 +946,9 @@ SYSCALL_DEFINE3(sched_setscheduler, pid_t, pid, int, policy, struct sched_param 
  *
  * Return: 0 on success. An error code otherwise.
  */
-SYSCALL_DEFINE2(sched_setparam, pid_t, pid, struct sched_param __user *, param)
+SYSCALL_DEFINE2(sched_setparam, pid_t, pid, ਬਣਤਰ sched_param __user *, param)
 {
-	return do_sched_setscheduler(pid, SETPARAM_POLICY, param);
+	ਵਾਪਸ do_sched_setscheduler(pid, SETPARAM_POLICY, param);
 }
 
 /**
@@ -957,32 +957,32 @@ SYSCALL_DEFINE2(sched_setparam, pid_t, pid, struct sched_param __user *, param)
  * @uattr: structure containing the extended parameters.
  * @flags: for future extension.
  */
-SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
-			       unsigned int, flags)
+SYSCALL_DEFINE3(sched_setattr, pid_t, pid, ਬਣਤਰ sched_attr __user *, uattr,
+			       ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, flags)
 {
-	struct sched_attr attr;
-	int retval;
+	ਬਣਤਰ sched_attr attr;
+	ਪੂਰਨ retval;
 
-	if (unlikely(!uattr || pid < 0 || flags))
-		return -EINVAL;
+	ਜੇ (unlikely(!uattr || pid < 0 || flags))
+		ਵਾਪਸ -EINVAL;
 
 	retval = sched_copy_attr(uattr, &attr);
-	if (retval)
-		return retval;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	if ((int)attr.sched_policy < 0)
-		return -EINVAL;
-	if (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
+	ਜੇ ((ਪੂਰਨ)attr.sched_policy < 0)
+		ਵਾਪਸ -EINVAL;
+	ਜੇ (attr.sched_flags & SCHED_FLAG_KEEP_POLICY)
 		attr.sched_policy = SETPARAM_POLICY;
 
-	CLASS(find_get_task, p)(pid);
-	if (!p)
-		return -ESRCH;
+	CLASS(ਲੱਭੋ_get_task, p)(pid);
+	ਜੇ (!p)
+		ਵਾਪਸ -ESRCH;
 
-	if (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
+	ਜੇ (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
 		get_params(p, &attr, 0);
 
-	return sched_setattr(p, &attr);
+	ਵਾਪਸ sched_setattr(p, &attr);
 }
 
 /**
@@ -994,24 +994,24 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
  */
 SYSCALL_DEFINE1(sched_getscheduler, pid_t, pid)
 {
-	struct task_struct *p;
-	int retval;
+	ਬਣਤਰ task_struct *p;
+	ਪੂਰਨ retval;
 
-	if (pid < 0)
-		return -EINVAL;
+	ਜੇ (pid < 0)
+		ਵਾਪਸ -EINVAL;
 
 	guard(rcu)();
-	p = find_process_by_pid(pid);
-	if (!p)
-		return -ESRCH;
+	p = ਲੱਭੋ_process_by_pid(pid);
+	ਜੇ (!p)
+		ਵਾਪਸ -ESRCH;
 
 	retval = security_task_getscheduler(p);
-	if (!retval) {
+	ਜੇ (!retval) {
 		retval = p->policy;
-		if (p->sched_reset_on_fork)
+		ਜੇ (p->sched_reset_on_fork)
 			retval |= SCHED_RESET_ON_FORK;
 	}
-	return retval;
+	ਵਾਪਸ retval;
 }
 
 /**
@@ -1022,32 +1022,32 @@ SYSCALL_DEFINE1(sched_getscheduler, pid_t, pid)
  * Return: On success, 0 and the RT priority is in @param. Otherwise, an error
  * code.
  */
-SYSCALL_DEFINE2(sched_getparam, pid_t, pid, struct sched_param __user *, param)
+SYSCALL_DEFINE2(sched_getparam, pid_t, pid, ਬਣਤਰ sched_param __user *, param)
 {
-	struct sched_param lp = { .sched_priority = 0 };
-	struct task_struct *p;
-	int retval;
+	ਬਣਤਰ sched_param lp = { .sched_ਤਰਜੀਹ = 0 };
+	ਬਣਤਰ task_struct *p;
+	ਪੂਰਨ retval;
 
-	if (unlikely(!param || pid < 0))
-		return -EINVAL;
+	ਜੇ (unlikely(!param || pid < 0))
+		ਵਾਪਸ -EINVAL;
 
 	scoped_guard (rcu) {
-		p = find_process_by_pid(pid);
-		if (!p)
-			return -ESRCH;
+		p = ਲੱਭੋ_process_by_pid(pid);
+		ਜੇ (!p)
+			ਵਾਪਸ -ESRCH;
 
 		retval = security_task_getscheduler(p);
-		if (retval)
-			return retval;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 
-		if (task_has_rt_policy(p))
-			lp.sched_priority = p->rt_priority;
+		ਜੇ (task_has_rt_policy(p))
+			lp.sched_ਤਰਜੀਹ = p->rt_ਤਰਜੀਹ;
 	}
 
 	/*
 	 * This one might sleep, we cannot do it with a spinlock held ...
 	 */
-	return copy_to_user(param, &lp, sizeof(*param)) ? -EFAULT : 0;
+	ਵਾਪਸ copy_ਮੰਜ਼ਿਲ_user(param, &lp, ਆਕਾਰ(*param)) ? -EFAULT : 0;
 }
 
 /**
@@ -1057,68 +1057,68 @@ SYSCALL_DEFINE2(sched_getparam, pid_t, pid, struct sched_param __user *, param)
  * @usize: sizeof(attr) for fwd/bwd comp.
  * @flags: for future extension.
  */
-SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
-		unsigned int, usize, unsigned int, flags)
+SYSCALL_DEFINE4(sched_getattr, pid_t, pid, ਬਣਤਰ sched_attr __user *, uattr,
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, usize, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, flags)
 {
-	struct sched_attr kattr = { };
-	struct task_struct *p;
-	int retval;
+	ਬਣਤਰ sched_attr kattr = { };
+	ਬਣਤਰ task_struct *p;
+	ਪੂਰਨ retval;
 
-	if (unlikely(!uattr || pid < 0 || usize > PAGE_SIZE ||
-		     usize < SCHED_ATTR_SIZE_VER0))
-		return -EINVAL;
+	ਜੇ (unlikely(!uattr || pid < 0 || usize > ਪੰਨਾ_ਮਾਪ ||
+		     usize < SCHED_ATTR_ਮਾਪ_VER0))
+		ਵਾਪਸ -EINVAL;
 
 	scoped_guard (rcu) {
-		p = find_process_by_pid(pid);
-		if (!p)
-			return -ESRCH;
+		p = ਲੱਭੋ_process_by_pid(pid);
+		ਜੇ (!p)
+			ਵਾਪਸ -ESRCH;
 
-		if (flags) {
-			if (!task_has_dl_policy(p) ||
+		ਜੇ (flags) {
+			ਜੇ (!task_has_dl_policy(p) ||
 			    flags != SCHED_GETATTR_FLAG_DL_DYNAMIC)
-				return -EINVAL;
+				ਵਾਪਸ -EINVAL;
 		}
 
 		retval = security_task_getscheduler(p);
-		if (retval)
-			return retval;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 
 		kattr.sched_policy = p->policy;
-		if (p->sched_reset_on_fork)
+		ਜੇ (p->sched_reset_on_fork)
 			kattr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
 		get_params(p, &kattr, flags);
 		kattr.sched_flags &= SCHED_FLAG_ALL;
 
-#ifdef CONFIG_UCLAMP_TASK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_UCLAMP_TASK
 		/*
 		 * This could race with another potential updater, but this is fine
 		 * because it'll correctly read the old or the new value. We don't need
 		 * to guarantee who wins the race as long as it doesn't return garbage.
 		 */
-		kattr.sched_util_min = p->uclamp_req[UCLAMP_MIN].value;
-		kattr.sched_util_max = p->uclamp_req[UCLAMP_MAX].value;
-#endif
+		kattr.sched_util_min = p->uclamp_req[UCLAMP_MIN].ਮੁੱਲ;
+		kattr.sched_util_max = p->uclamp_req[UCLAMP_MAX].ਮੁੱਲ;
+#ਜੇ_ਅੰਤ
 	}
 
-	kattr.size = min(usize, sizeof(kattr));
-	return copy_struct_to_user(uattr, usize, &kattr, sizeof(kattr), NULL);
+	kattr.ਮਾਪ = min(usize, ਆਕਾਰ(kattr));
+	ਵਾਪਸ copy_struct_ਮੰਜ਼ਿਲ_user(uattr, usize, &kattr, ਆਕਾਰ(kattr), ਨਿਰਾ);
 }
 
-int dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
+ਪੂਰਨ dl_task_check_affinity(ਬਣਤਰ task_struct *p, ਅਚਲ ਬਣਤਰ cpumask *ਨਕਾਬ)
 {
 	/*
 	 * If the task isn't a deadline task or admission control is
 	 * disabled then we don't care about affinity changes.
 	 */
-	if (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
-		return 0;
+	ਜੇ (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
+		ਵਾਪਸ 0;
 
 	/*
 	 * The special/sugov task isn't part of regular bandwidth/admission
 	 * control so let userspace change affinities.
 	 */
-	if (dl_entity_is_special(&p->dl))
-		return 0;
+	ਜੇ (dl_entity_is_special(&p->dl))
+		ਵਾਪਸ 0;
 
 	/*
 	 * Since bandwidth control happens on root_domain basis,
@@ -1127,46 +1127,46 @@ int dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
 	 * root_domain.
 	 */
 	guard(rcu)();
-	if (!cpumask_subset(task_rq(p)->rd->span, mask))
-		return -EBUSY;
+	ਜੇ (!cpumask_subset(task_rq(p)->rd->ਵਿਸਤਾਰ, ਨਕਾਬ))
+		ਵਾਪਸ -EBUSY;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
+ਪੂਰਨ __sched_setaffinity(ਬਣਤਰ task_struct *p, ਬਣਤਰ affinity_context *ctx)
 {
-	int retval;
-	cpumask_var_t cpus_allowed, new_mask;
+	ਪੂਰਨ retval;
+	cpumask_var_t cpus_allowed, new_ਨਕਾਬ;
 
-	if (!alloc_cpumask_var(&cpus_allowed, GFP_KERNEL))
-		return -ENOMEM;
+	ਜੇ (!alloc_cpumask_var(&cpus_allowed, GFP_KERNEL))
+		ਵਾਪਸ -ENOMEM;
 
-	if (!alloc_cpumask_var(&new_mask, GFP_KERNEL)) {
+	ਜੇ (!alloc_cpumask_var(&new_ਨਕਾਬ, GFP_KERNEL)) {
 		retval = -ENOMEM;
-		goto out_free_cpus_allowed;
+		ਜਾਓ ਬਾਹਰਲਾ_free_cpus_allowed;
 	}
 
 	cpuset_cpus_allowed(p, cpus_allowed);
-	cpumask_and(new_mask, ctx->new_mask, cpus_allowed);
+	cpumask_and(new_ਨਕਾਬ, ctx->new_ਨਕਾਬ, cpus_allowed);
 
-	ctx->new_mask = new_mask;
+	ctx->new_ਨਕਾਬ = new_ਨਕਾਬ;
 	ctx->flags |= SCA_CHECK;
 
-	retval = dl_task_check_affinity(p, new_mask);
-	if (retval)
-		goto out_free_new_mask;
+	retval = dl_task_check_affinity(p, new_ਨਕਾਬ);
+	ਜੇ (retval)
+		ਜਾਓ ਬਾਹਰਲਾ_free_new_ਨਕਾਬ;
 
 	retval = __set_cpus_allowed_ptr(p, ctx);
-	if (retval)
-		goto out_free_new_mask;
+	ਜੇ (retval)
+		ਜਾਓ ਬਾਹਰਲਾ_free_new_ਨਕਾਬ;
 
 	cpuset_cpus_allowed(p, cpus_allowed);
-	if (!cpumask_subset(new_mask, cpus_allowed)) {
+	ਜੇ (!cpumask_subset(new_ਨਕਾਬ, cpus_allowed)) {
 		/*
 		 * We must have raced with a concurrent cpuset update.
 		 * Just reset the cpumask to the cpuset's cpus_allowed.
 		 */
-		cpumask_copy(new_mask, cpus_allowed);
+		cpumask_copy(new_ਨਕਾਬ, cpus_allowed);
 
 		/*
 		 * If SCA_USER is set, a 2nd call to __set_cpus_allowed_ptr()
@@ -1176,79 +1176,79 @@ int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
 		 * we need to further restrict the mask to what is allowed
 		 * by that old user_cpus_ptr.
 		 */
-		if (unlikely((ctx->flags & SCA_USER) && ctx->user_mask)) {
-			bool empty = !cpumask_and(new_mask, new_mask,
-						  ctx->user_mask);
+		ਜੇ (unlikely((ctx->flags & SCA_USER) && ctx->user_ਨਕਾਬ)) {
+			bool ਖਾਲੀ_ਥਾਵਾਂ = !cpumask_and(new_ਨਕਾਬ, new_ਨਕਾਬ,
+						  ctx->user_ਨਕਾਬ);
 
-			if (empty)
-				cpumask_copy(new_mask, cpus_allowed);
+			ਜੇ (ਖਾਲੀ_ਥਾਵਾਂ)
+				cpumask_copy(new_ਨਕਾਬ, cpus_allowed);
 		}
 		__set_cpus_allowed_ptr(p, ctx);
 		retval = -EINVAL;
 	}
 
-out_free_new_mask:
-	free_cpumask_var(new_mask);
-out_free_cpus_allowed:
+ਬਾਹਰਲਾ_free_new_ਨਕਾਬ:
+	free_cpumask_var(new_ਨਕਾਬ);
+ਬਾਹਰਲਾ_free_cpus_allowed:
 	free_cpumask_var(cpus_allowed);
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
+ਲੰਮਾ sched_setaffinity(pid_t pid, ਅਚਲ ਬਣਤਰ cpumask *ਵਿੱਚ_ਨਕਾਬ)
 {
-	struct affinity_context ac;
-	struct cpumask *user_mask;
-	int retval;
+	ਬਣਤਰ affinity_context ac;
+	ਬਣਤਰ cpumask *user_ਨਕਾਬ;
+	ਪੂਰਨ retval;
 
-	CLASS(find_get_task, p)(pid);
-	if (!p)
-		return -ESRCH;
+	CLASS(ਲੱਭੋ_get_task, p)(pid);
+	ਜੇ (!p)
+		ਵਾਪਸ -ESRCH;
 
-	if (p->flags & PF_NO_SETAFFINITY)
-		return -EINVAL;
+	ਜੇ (p->flags & PF_NO_SETAFFINITY)
+		ਵਾਪਸ -EINVAL;
 
-	if (!check_same_owner(p)) {
+	ਜੇ (!check_same_owner(p)) {
 		guard(rcu)();
-		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE))
-			return -EPERM;
+		ਜੇ (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE))
+			ਵਾਪਸ -EPERM;
 	}
 
 	retval = security_task_setscheduler(p);
-	if (retval)
-		return retval;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
 	/*
 	 * With non-SMP configs, user_cpus_ptr/user_mask isn't used and
 	 * alloc_user_cpus_ptr() returns NULL.
 	 */
-	user_mask = alloc_user_cpus_ptr(NUMA_NO_NODE);
-	if (user_mask) {
-		cpumask_copy(user_mask, in_mask);
-	} else {
-		return -ENOMEM;
+	user_ਨਕਾਬ = alloc_user_cpus_ptr(NUMA_NO_ਗੰਢ);
+	ਜੇ (user_ਨਕਾਬ) {
+		cpumask_copy(user_ਨਕਾਬ, ਵਿੱਚ_ਨਕਾਬ);
+	} ਨਹੀਂਤਾਂ {
+		ਵਾਪਸ -ENOMEM;
 	}
 
-	ac = (struct affinity_context){
-		.new_mask  = in_mask,
-		.user_mask = user_mask,
+	ac = (ਬਣਤਰ affinity_context){
+		.new_ਨਕਾਬ  = ਵਿੱਚ_ਨਕਾਬ,
+		.user_ਨਕਾਬ = user_ਨਕਾਬ,
 		.flags     = SCA_USER,
 	};
 
 	retval = __sched_setaffinity(p, &ac);
-	kfree(ac.user_mask);
+	kfree(ac.user_ਨਕਾਬ);
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-static int get_user_cpu_mask(unsigned long __user *user_mask_ptr, unsigned len,
-			     struct cpumask *new_mask)
+ਸਥਿਰ ਪੂਰਨ get_user_cpu_ਨਕਾਬ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ __user *user_ਨਕਾਬ_ptr, ਬਿਨਾਨਿਸ਼ਾਨੀ len,
+			     ਬਣਤਰ cpumask *new_ਨਕਾਬ)
 {
-	if (len < cpumask_size())
-		cpumask_clear(new_mask);
-	else if (len > cpumask_size())
-		len = cpumask_size();
+	ਜੇ (len < cpumask_ਮਾਪ())
+		cpumask_clear(new_ਨਕਾਬ);
+	ਨਹੀਂਤਾਂ ਜੇ (len > cpumask_ਮਾਪ())
+		len = cpumask_ਮਾਪ();
 
-	return copy_from_user(new_mask, user_mask_ptr, len) ? -EFAULT : 0;
+	ਵਾਪਸ copy_from_user(new_ਨਕਾਬ, user_ਨਕਾਬ_ptr, len) ? -EFAULT : 0;
 }
 
 /**
@@ -1259,40 +1259,40 @@ static int get_user_cpu_mask(unsigned long __user *user_mask_ptr, unsigned len,
  *
  * Return: 0 on success. An error code otherwise.
  */
-SYSCALL_DEFINE3(sched_setaffinity, pid_t, pid, unsigned int, len,
-		unsigned long __user *, user_mask_ptr)
+SYSCALL_DEFINE3(sched_setaffinity, pid_t, pid, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, len,
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ __user *, user_ਨਕਾਬ_ptr)
 {
-	cpumask_var_t new_mask;
-	int retval;
+	cpumask_var_t new_ਨਕਾਬ;
+	ਪੂਰਨ retval;
 
-	if (!alloc_cpumask_var(&new_mask, GFP_KERNEL))
-		return -ENOMEM;
+	ਜੇ (!alloc_cpumask_var(&new_ਨਕਾਬ, GFP_KERNEL))
+		ਵਾਪਸ -ENOMEM;
 
-	retval = get_user_cpu_mask(user_mask_ptr, len, new_mask);
-	if (retval == 0)
-		retval = sched_setaffinity(pid, new_mask);
-	free_cpumask_var(new_mask);
-	return retval;
+	retval = get_user_cpu_ਨਕਾਬ(user_ਨਕਾਬ_ptr, len, new_ਨਕਾਬ);
+	ਜੇ (retval == 0)
+		retval = sched_setaffinity(pid, new_ਨਕਾਬ);
+	free_cpumask_var(new_ਨਕਾਬ);
+	ਵਾਪਸ retval;
 }
 
-long sched_getaffinity(pid_t pid, struct cpumask *mask)
+ਲੰਮਾ sched_getaffinity(pid_t pid, ਬਣਤਰ cpumask *ਨਕਾਬ)
 {
-	struct task_struct *p;
-	int retval;
+	ਬਣਤਰ task_struct *p;
+	ਪੂਰਨ retval;
 
 	guard(rcu)();
-	p = find_process_by_pid(pid);
-	if (!p)
-		return -ESRCH;
+	p = ਲੱਭੋ_process_by_pid(pid);
+	ਜੇ (!p)
+		ਵਾਪਸ -ESRCH;
 
 	retval = security_task_getscheduler(p);
-	if (retval)
-		return retval;
+	ਜੇ (retval)
+		ਵਾਪਸ retval;
 
-	guard(raw_spinlock_irqsave)(&p->pi_lock);
-	cpumask_and(mask, &p->cpus_mask, cpu_active_mask);
+	guard(raw_spinlock_irqsave)(&p->pi_ਤਾਲਾ);
+	cpumask_and(ਨਕਾਬ, &p->cpus_ਨਕਾਬ, cpu_ਸਰਗਰਮ_ਨਕਾਬ);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /**
@@ -1304,49 +1304,49 @@ long sched_getaffinity(pid_t pid, struct cpumask *mask)
  * Return: size of CPU mask copied to user_mask_ptr on success. An
  * error code otherwise.
  */
-SYSCALL_DEFINE3(sched_getaffinity, pid_t, pid, unsigned int, len,
-		unsigned long __user *, user_mask_ptr)
+SYSCALL_DEFINE3(sched_getaffinity, pid_t, pid, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, len,
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ __user *, user_ਨਕਾਬ_ptr)
 {
-	int ret;
-	cpumask_var_t mask;
+	ਪੂਰਨ ret;
+	cpumask_var_t ਨਕਾਬ;
 
-	if ((len * BITS_PER_BYTE) < nr_cpu_ids)
-		return -EINVAL;
-	if (len & (sizeof(unsigned long)-1))
-		return -EINVAL;
+	ਜੇ ((len * ਬਿੱਟ_ਪ੍ਰਤੀ_BYTE) < nr_cpu_ids)
+		ਵਾਪਸ -EINVAL;
+	ਜੇ (len & (ਆਕਾਰ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)-1))
+		ਵਾਪਸ -EINVAL;
 
-	if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
-		return -ENOMEM;
+	ਜੇ (!zalloc_cpumask_var(&ਨਕਾਬ, GFP_KERNEL))
+		ਵਾਪਸ -ENOMEM;
 
-	ret = sched_getaffinity(pid, mask);
-	if (ret == 0) {
-		unsigned int retlen = min(len, cpumask_size());
+	ret = sched_getaffinity(pid, ਨਕਾਬ);
+	ਜੇ (ret == 0) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ retlen = min(len, cpumask_ਮਾਪ());
 
-		if (copy_to_user(user_mask_ptr, cpumask_bits(mask), retlen))
+		ਜੇ (copy_ਮੰਜ਼ਿਲ_user(user_ਨਕਾਬ_ptr, cpumask_ਬਿੱਟ(ਨਕਾਬ), retlen))
 			ret = -EFAULT;
-		else
+		ਨਹੀਂਤਾਂ
 			ret = retlen;
 	}
-	free_cpumask_var(mask);
+	free_cpumask_var(ਨਕਾਬ);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-static void do_sched_yield(void)
+ਸਥਿਰ ਖਾਲੀ do_sched_yield(ਖਾਲੀ)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	ਬਣਤਰ rq_flags rf;
+	ਬਣਤਰ rq *rq;
 
-	rq = this_rq_lock_irq(&rf);
+	rq = this_rq_ਤਾਲਾ_irq(&rf);
 
-	schedstat_inc(rq->yld_count);
+	schedstat_inc(rq->yld_ਗਿਣਤੀ);
 	rq->donor->sched_class->yield_task(rq);
 
 	preempt_disable();
 	rq_unlock_irq(rq, &rf);
 	sched_preempt_enable_no_resched();
 
-	schedule();
+	ਸਮਾਂ_ਸਾਰਣੀ();
 }
 
 /**
@@ -1360,7 +1360,7 @@ static void do_sched_yield(void)
 SYSCALL_DEFINE0(sched_yield)
 {
 	do_sched_yield();
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /**
@@ -1385,12 +1385,12 @@ SYSCALL_DEFINE0(sched_yield)
  * If you want to use yield() to be 'nice' for others, use cond_resched().
  * If you still want to use yield(), do not!
  */
-void __sched yield(void)
+ਖਾਲੀ __sched yield(ਖਾਲੀ)
 {
-	set_current_state(TASK_RUNNING);
+	ਸੈੱਟ_current_state(TASK_RUNNING);
 	do_sched_yield();
 }
-EXPORT_SYMBOL(yield);
+EXPORT_ਚਿੰਨ੍ਹ(yield);
 
 /**
  * yield_to - yield the current processor to another thread in
@@ -1407,13 +1407,13 @@ EXPORT_SYMBOL(yield);
  *	false (0) if we failed to boost the target.
  *	-ESRCH if there's no task to yield to.
  */
-int __sched yield_to(struct task_struct *p, bool preempt)
+ਪੂਰਨ __sched yield_ਮੰਜ਼ਿਲ(ਬਣਤਰ task_struct *p, bool preempt)
 {
-	struct task_struct *curr;
-	struct rq *rq, *p_rq;
-	int yielded = 0;
+	ਬਣਤਰ task_struct *curr;
+	ਬਣਤਰ rq *rq, *p_rq;
+	ਪੂਰਨ yielded = 0;
 
-	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
+	scoped_guard (raw_spinlock_irqsave, &p->pi_ਤਾਲਾ) {
 		rq = this_rq();
 		curr = rq->donor;
 
@@ -1423,40 +1423,40 @@ again:
 		 * If we're the only runnable task on the rq and target rq also
 		 * has only one task, there's absolutely no point in yielding.
 		 */
-		if (rq->nr_running == 1 && p_rq->nr_running == 1)
-			return -ESRCH;
+		ਜੇ (rq->nr_running == 1 && p_rq->nr_running == 1)
+			ਵਾਪਸ -ESRCH;
 
-		guard(double_rq_lock)(rq, p_rq);
-		if (task_rq(p) != p_rq)
-			goto again;
+		guard(double_rq_ਤਾਲਾ)(rq, p_rq);
+		ਜੇ (task_rq(p) != p_rq)
+			ਜਾਓ again;
 
-		if (!curr->sched_class->yield_to_task)
-			return 0;
+		ਜੇ (!curr->sched_class->yield_ਮੰਜ਼ਿਲ_task)
+			ਵਾਪਸ 0;
 
-		if (curr->sched_class != p->sched_class)
-			return 0;
+		ਜੇ (curr->sched_class != p->sched_class)
+			ਵਾਪਸ 0;
 
-		if (task_on_cpu(p_rq, p) || !task_is_running(p))
-			return 0;
+		ਜੇ (task_on_cpu(p_rq, p) || !task_is_running(p))
+			ਵਾਪਸ 0;
 
-		yielded = curr->sched_class->yield_to_task(rq, p);
-		if (yielded) {
-			schedstat_inc(rq->yld_count);
+		yielded = curr->sched_class->yield_ਮੰਜ਼ਿਲ_task(rq, p);
+		ਜੇ (yielded) {
+			schedstat_inc(rq->yld_ਗਿਣਤੀ);
 			/*
 			 * Make p's CPU reschedule; pick_next_entity
 			 * takes care of fairness.
 			 */
-			if (preempt && rq != p_rq)
+			ਜੇ (preempt && rq != p_rq)
 				resched_curr(p_rq);
 		}
 	}
 
-	if (yielded)
-		schedule();
+	ਜੇ (yielded)
+		ਸਮਾਂ_ਸਾਰਣੀ();
 
-	return yielded;
+	ਵਾਪਸ yielded;
 }
-EXPORT_SYMBOL_GPL(yield_to);
+EXPORT_ਚਿੰਨ੍ਹ_GPL(yield_ਮੰਜ਼ਿਲ);
 
 /**
  * sys_sched_get_priority_max - return maximum RT priority.
@@ -1466,24 +1466,24 @@ EXPORT_SYMBOL_GPL(yield_to);
  * rt_priority that can be used by a given scheduling class.
  * On failure, a negative error code is returned.
  */
-SYSCALL_DEFINE1(sched_get_priority_max, int, policy)
+SYSCALL_DEFINE1(sched_get_ਤਰਜੀਹ_max, ਪੂਰਨ, policy)
 {
-	int ret = -EINVAL;
+	ਪੂਰਨ ret = -EINVAL;
 
-	switch (policy) {
-	case SCHED_FIFO:
-	case SCHED_RR:
+	ਚੋਣ (policy) {
+	ਹਾਲਤ SCHED_FIFO:
+	ਹਾਲਤ SCHED_RR:
 		ret = MAX_RT_PRIO-1;
-		break;
-	case SCHED_DEADLINE:
-	case SCHED_NORMAL:
-	case SCHED_BATCH:
-	case SCHED_IDLE:
-	case SCHED_EXT:
+		ਰੋਕੋ;
+	ਹਾਲਤ SCHED_DEADLINE:
+	ਹਾਲਤ SCHED_ਸਾਧਾਰਨ:
+	ਹਾਲਤ SCHED_BATCH:
+	ਹਾਲਤ SCHED_IDLE:
+	ਹਾਲਤ SCHED_EXT:
 		ret = 0;
-		break;
+		ਰੋਕੋ;
 	}
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 /**
@@ -1494,51 +1494,51 @@ SYSCALL_DEFINE1(sched_get_priority_max, int, policy)
  * rt_priority that can be used by a given scheduling class.
  * On failure, a negative error code is returned.
  */
-SYSCALL_DEFINE1(sched_get_priority_min, int, policy)
+SYSCALL_DEFINE1(sched_get_ਤਰਜੀਹ_min, ਪੂਰਨ, policy)
 {
-	int ret = -EINVAL;
+	ਪੂਰਨ ret = -EINVAL;
 
-	switch (policy) {
-	case SCHED_FIFO:
-	case SCHED_RR:
+	ਚੋਣ (policy) {
+	ਹਾਲਤ SCHED_FIFO:
+	ਹਾਲਤ SCHED_RR:
 		ret = 1;
-		break;
-	case SCHED_DEADLINE:
-	case SCHED_NORMAL:
-	case SCHED_BATCH:
-	case SCHED_IDLE:
-	case SCHED_EXT:
+		ਰੋਕੋ;
+	ਹਾਲਤ SCHED_DEADLINE:
+	ਹਾਲਤ SCHED_ਸਾਧਾਰਨ:
+	ਹਾਲਤ SCHED_BATCH:
+	ਹਾਲਤ SCHED_IDLE:
+	ਹਾਲਤ SCHED_EXT:
 		ret = 0;
 	}
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-static int sched_rr_get_interval(pid_t pid, struct timespec64 *t)
+ਸਥਿਰ ਪੂਰਨ sched_rr_get_interval(pid_t pid, ਬਣਤਰ timespec64 *t)
 {
-	unsigned int time_slice = 0;
-	int retval;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਸਮਾਂ_ਟੁਕੜਾ = 0;
+	ਪੂਰਨ retval;
 
-	if (pid < 0)
-		return -EINVAL;
+	ਜੇ (pid < 0)
+		ਵਾਪਸ -EINVAL;
 
 	scoped_guard (rcu) {
-		struct task_struct *p = find_process_by_pid(pid);
-		if (!p)
-			return -ESRCH;
+		ਬਣਤਰ task_struct *p = ਲੱਭੋ_process_by_pid(pid);
+		ਜੇ (!p)
+			ਵਾਪਸ -ESRCH;
 
 		retval = security_task_getscheduler(p);
-		if (retval)
-			return retval;
+		ਜੇ (retval)
+			ਵਾਪਸ retval;
 
-		scoped_guard (task_rq_lock, p) {
-			struct rq *rq = scope.rq;
-			if (p->sched_class->get_rr_interval)
-				time_slice = p->sched_class->get_rr_interval(rq, p);
+		scoped_guard (task_rq_ਤਾਲਾ_2, p) {
+			ਬਣਤਰ rq *rq = scope.rq;
+			ਜੇ (p->sched_class->get_rr_interval)
+				ਸਮਾਂ_ਟੁਕੜਾ = p->sched_class->get_rr_interval(rq, p);
 		}
 	}
 
-	jiffies_to_timespec64(time_slice, t);
-	return 0;
+	jiffies_ਮੰਜ਼ਿਲ_timespec64(ਸਮਾਂ_ਟੁਕੜਾ, t);
+	ਵਾਪਸ 0;
 }
 
 /**
@@ -1553,26 +1553,26 @@ static int sched_rr_get_interval(pid_t pid, struct timespec64 *t)
  * an error code.
  */
 SYSCALL_DEFINE2(sched_rr_get_interval, pid_t, pid,
-		struct __kernel_timespec __user *, interval)
+		ਬਣਤਰ __kernel_timespec __user *, interval)
 {
-	struct timespec64 t;
-	int retval = sched_rr_get_interval(pid, &t);
+	ਬਣਤਰ timespec64 t;
+	ਪੂਰਨ retval = sched_rr_get_interval(pid, &t);
 
-	if (retval == 0)
+	ਜੇ (retval == 0)
 		retval = put_timespec64(&t, interval);
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
-#ifdef CONFIG_COMPAT_32BIT_TIME
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_COMPAT_32_ਦੋਆਧਾਰੀ_ਅੰਕ_ਸਮਾਂ
 SYSCALL_DEFINE2(sched_rr_get_interval_time32, pid_t, pid,
-		struct old_timespec32 __user *, interval)
+		ਬਣਤਰ old_timespec32 __user *, interval)
 {
-	struct timespec64 t;
-	int retval = sched_rr_get_interval(pid, &t);
+	ਬਣਤਰ timespec64 t;
+	ਪੂਰਨ retval = sched_rr_get_interval(pid, &t);
 
-	if (retval == 0)
+	ਜੇ (retval == 0)
 		retval = put_old_timespec32(&t, interval);
-	return retval;
+	ਵਾਪਸ retval;
 }
-#endif
+#ਜੇ_ਅੰਤ

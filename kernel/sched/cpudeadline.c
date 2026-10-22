@@ -6,59 +6,59 @@
  *
  *  Author: Juri Lelli <j.lelli@sssup.it>
  */
-#include "sched.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sched.h"
 
-static inline int parent(int i)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ ਮਾਪਾ(ਪੂਰਨ i)
 {
-	return (i - 1) >> 1;
+	ਵਾਪਸ (i - 1) >> 1;
 }
 
-static inline int left_child(int i)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ ਖੱਬਾ_ਬੱਚਾ(ਪੂਰਨ i)
 {
-	return (i << 1) + 1;
+	ਵਾਪਸ (i << 1) + 1;
 }
 
-static inline int right_child(int i)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ ਸੱਜਾ_ਬੱਚਾ(ਪੂਰਨ i)
 {
-	return (i << 1) + 2;
+	ਵਾਪਸ (i << 1) + 2;
 }
 
-static void cpudl_heapify_down(struct cpudl *cp, int idx)
+ਸਥਿਰ ਖਾਲੀ cpudl_heapify_ਥੱਲੇ(ਬਣਤਰ cpudl *cp, ਪੂਰਨ idx)
 {
-	int l, r, largest;
+	ਪੂਰਨ l, r, ਸਭ_ਤੋਂ_ਵੱਡਾ;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	ਪੂਰਨ orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (left_child(idx) >= cp->size)
-		return;
+	ਜੇ (ਖੱਬਾ_ਬੱਚਾ(idx) >= cp->ਮਾਪ)
+		ਵਾਪਸ;
 
 	/* adapted from lib/prio_heap.c */
-	while (1) {
-		u64 largest_dl;
+	ਜਦੋਂ (1) {
+		u64 ਸਭ_ਤੋਂ_ਵੱਡਾ_dl;
 
-		l = left_child(idx);
-		r = right_child(idx);
-		largest = idx;
-		largest_dl = orig_dl;
+		l = ਖੱਬਾ_ਬੱਚਾ(idx);
+		r = ਸੱਜਾ_ਬੱਚਾ(idx);
+		ਸਭ_ਤੋਂ_ਵੱਡਾ = idx;
+		ਸਭ_ਤੋਂ_ਵੱਡਾ_dl = orig_dl;
 
-		if ((l < cp->size) && dl_time_before(orig_dl,
+		ਜੇ ((l < cp->ਮਾਪ) && dl_ਸਮਾਂ_before(orig_dl,
 						cp->elements[l].dl)) {
-			largest = l;
-			largest_dl = cp->elements[l].dl;
+			ਸਭ_ਤੋਂ_ਵੱਡਾ = l;
+			ਸਭ_ਤੋਂ_ਵੱਡਾ_dl = cp->elements[l].dl;
 		}
-		if ((r < cp->size) && dl_time_before(largest_dl,
+		ਜੇ ((r < cp->ਮਾਪ) && dl_ਸਮਾਂ_before(ਸਭ_ਤੋਂ_ਵੱਡਾ_dl,
 						cp->elements[r].dl))
-			largest = r;
+			ਸਭ_ਤੋਂ_ਵੱਡਾ = r;
 
-		if (largest == idx)
-			break;
+		ਜੇ (ਸਭ_ਤੋਂ_ਵੱਡਾ == idx)
+			ਰੋਕੋ;
 
 		/* pull largest child onto idx */
-		cp->elements[idx].cpu = cp->elements[largest].cpu;
-		cp->elements[idx].dl = cp->elements[largest].dl;
+		cp->elements[idx].cpu = cp->elements[ਸਭ_ਤੋਂ_ਵੱਡਾ].cpu;
+		cp->elements[idx].dl = cp->elements[ਸਭ_ਤੋਂ_ਵੱਡਾ].dl;
 		cp->elements[cp->elements[idx].cpu].idx = idx;
-		idx = largest;
+		idx = ਸਭ_ਤੋਂ_ਵੱਡਾ;
 	}
 	/* actual push down of saved original values orig_* */
 	cp->elements[idx].cpu = orig_cpu;
@@ -66,44 +66,44 @@ static void cpudl_heapify_down(struct cpudl *cp, int idx)
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify_up(struct cpudl *cp, int idx)
+ਸਥਿਰ ਖਾਲੀ cpudl_heapify_ਉੱਪਰ(ਬਣਤਰ cpudl *cp, ਪੂਰਨ idx)
 {
-	int p;
+	ਪੂਰਨ p;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	ਪੂਰਨ orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (idx == 0)
-		return;
+	ਜੇ (idx == 0)
+		ਵਾਪਸ;
 
-	do {
-		p = parent(idx);
-		if (dl_time_before(orig_dl, cp->elements[p].dl))
-			break;
+	ਕਰੋ {
+		p = ਮਾਪਾ(idx);
+		ਜੇ (dl_ਸਮਾਂ_before(orig_dl, cp->elements[p].dl))
+			ਰੋਕੋ;
 		/* pull parent onto idx */
 		cp->elements[idx].cpu = cp->elements[p].cpu;
 		cp->elements[idx].dl = cp->elements[p].dl;
 		cp->elements[cp->elements[idx].cpu].idx = idx;
 		idx = p;
-	} while (idx != 0);
+	} ਜਦੋਂ (idx != 0);
 	/* actual push up of saved original values orig_* */
 	cp->elements[idx].cpu = orig_cpu;
 	cp->elements[idx].dl = orig_dl;
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify(struct cpudl *cp, int idx)
+ਸਥਿਰ ਖਾਲੀ cpudl_heapify(ਬਣਤਰ cpudl *cp, ਪੂਰਨ idx)
 {
-	if (idx > 0 && dl_time_before(cp->elements[parent(idx)].dl,
+	ਜੇ (idx > 0 && dl_ਸਮਾਂ_before(cp->elements[ਮਾਪਾ(idx)].dl,
 				cp->elements[idx].dl))
-		cpudl_heapify_up(cp, idx);
-	else
-		cpudl_heapify_down(cp, idx);
+		cpudl_heapify_ਉੱਪਰ(cp, idx);
+	ਨਹੀਂਤਾਂ
+		cpudl_heapify_ਥੱਲੇ(cp, idx);
 }
 
-static inline int cpudl_maximum(struct cpudl *cp)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ cpudl_ਵੱਧ_ਤੋਂ_ਵੱਧ(ਬਣਤਰ cpudl *cp)
 {
-	return cp->elements[0].cpu;
+	ਵਾਪਸ cp->elements[0].cpu;
 }
 
 /*
@@ -114,27 +114,27 @@ static inline int cpudl_maximum(struct cpudl *cp)
  *
  * Returns: int - CPUs were found
  */
-int cpudl_find(struct cpudl *cp, struct task_struct *p,
-	       struct cpumask *later_mask)
+ਪੂਰਨ cpudl_ਲੱਭੋ(ਬਣਤਰ cpudl *cp, ਬਣਤਰ task_struct *p,
+	       ਬਣਤਰ cpumask *later_ਨਕਾਬ)
 {
-	const struct sched_dl_entity *dl_se = &p->dl;
+	ਅਚਲ ਬਣਤਰ sched_dl_entity *dl_se = &p->dl;
 
-	if (later_mask &&
-	    cpumask_and(later_mask, cp->free_cpus, &p->cpus_mask)) {
-		unsigned long cap, max_cap = 0;
-		int cpu, max_cpu = -1;
+	ਜੇ (later_ਨਕਾਬ &&
+	    cpumask_and(later_ਨਕਾਬ, cp->free_cpus, &p->cpus_ਨਕਾਬ)) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cap, max_cap = 0;
+		ਪੂਰਨ cpu, max_cpu = -1;
 
-		if (!sched_asym_cpucap_active())
-			return 1;
+		ਜੇ (!sched_asym_cpucap_ਸਰਗਰਮ())
+			ਵਾਪਸ 1;
 
 		/* Ensure the capacity of the CPUs fits the task. */
-		for_each_cpu(cpu, later_mask) {
-			if (!dl_task_fits_capacity(p, cpu)) {
-				cpumask_clear_cpu(cpu, later_mask);
+		for_each_cpu(cpu, later_ਨਕਾਬ) {
+			ਜੇ (!dl_task_ਸਮਾਉਂਦਾ_ਸਮਰੱਥਾ(p, cpu)) {
+				cpumask_clear_cpu(cpu, later_ਨਕਾਬ);
 
-				cap = arch_scale_cpu_capacity(cpu);
+				cap = arch_scale_cpu_ਸਮਰੱਥਾ(cpu);
 
-				if (cap > max_cap ||
+				ਜੇ (cap > max_cap ||
 				    (cpu == task_cpu(p) && cap == max_cap)) {
 					max_cap = cap;
 					max_cpu = cpu;
@@ -142,24 +142,24 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
 			}
 		}
 
-		if (cpumask_empty(later_mask))
-			cpumask_set_cpu(max_cpu, later_mask);
+		ਜੇ (cpumask_ਖਾਲੀ_ਥਾਵਾਂ(later_ਨਕਾਬ))
+			cpumask_ਸੈੱਟ_cpu(max_cpu, later_ਨਕਾਬ);
 
-		return 1;
-	} else {
-		int best_cpu = cpudl_maximum(cp);
+		ਵਾਪਸ 1;
+	} ਨਹੀਂਤਾਂ {
+		ਪੂਰਨ ਉੱਤਮ_cpu = cpudl_ਵੱਧ_ਤੋਂ_ਵੱਧ(cp);
 
-		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
+		WARN_ON(ਉੱਤਮ_cpu != -1 && !cpu_present(ਉੱਤਮ_cpu));
 
-		if (cpumask_test_cpu(best_cpu, &p->cpus_mask) &&
-		    dl_time_before(dl_se->deadline, cp->elements[0].dl)) {
-			if (later_mask)
-				cpumask_set_cpu(best_cpu, later_mask);
+		ਜੇ (cpumask_test_cpu(ਉੱਤਮ_cpu, &p->cpus_ਨਕਾਬ) &&
+		    dl_ਸਮਾਂ_before(dl_se->deadline, cp->elements[0].dl)) {
+			ਜੇ (later_ਨਕਾਬ)
+				cpumask_ਸੈੱਟ_cpu(ਉੱਤਮ_cpu, later_ਨਕਾਬ);
 
-			return 1;
+			ਵਾਪਸ 1;
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
@@ -172,37 +172,37 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpudl_clear(struct cpudl *cp, int cpu, bool online)
+ਖਾਲੀ cpudl_clear(ਬਣਤਰ cpudl *cp, ਪੂਰਨ cpu, bool online)
 {
-	int old_idx, new_cpu;
-	unsigned long flags;
+	ਪੂਰਨ old_idx, new_cpu;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
 	WARN_ON(!cpu_present(cpu));
 
-	raw_spin_lock_irqsave(&cp->lock, flags);
+	raw_spin_ਤਾਲਾ_irqsave(&cp->ਤਾਲਾ, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
+	ਜੇ (old_idx == IDX_INVALID) {
 		/*
 		 * Nothing to remove if old_idx was invalid.
 		 * This could happen if rq_online_dl or rq_offline_dl is
 		 * called for a CPU without -dl tasks running.
 		 */
-	} else {
-		new_cpu = cp->elements[cp->size - 1].cpu;
-		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
+	} ਨਹੀਂਤਾਂ {
+		new_cpu = cp->elements[cp->ਮਾਪ - 1].cpu;
+		cp->elements[old_idx].dl = cp->elements[cp->ਮਾਪ - 1].dl;
 		cp->elements[old_idx].cpu = new_cpu;
-		cp->size--;
+		cp->ਮਾਪ--;
 		cp->elements[new_cpu].idx = old_idx;
 		cp->elements[cpu].idx = IDX_INVALID;
 		cpudl_heapify(cp, old_idx);
 	}
-	if (likely(online))
+	ਜੇ (likely(online))
 		__cpumask_set_cpu(cpu, cp->free_cpus);
-	else
+	ਨਹੀਂਤਾਂ
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
 
-	raw_spin_unlock_irqrestore(&cp->lock, flags);
+	raw_spin_unlock_irqrestore(&cp->ਤਾਲਾ, flags);
 }
 
 /*
@@ -215,63 +215,63 @@ void cpudl_clear(struct cpudl *cp, int cpu, bool online)
  *
  * Returns: (void)
  */
-void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
+ਖਾਲੀ cpudl_ਸੈੱਟ(ਬਣਤਰ cpudl *cp, ਪੂਰਨ cpu, u64 dl)
 {
-	int old_idx;
-	unsigned long flags;
+	ਪੂਰਨ old_idx;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
 	WARN_ON(!cpu_present(cpu));
 
-	raw_spin_lock_irqsave(&cp->lock, flags);
+	raw_spin_ਤਾਲਾ_irqsave(&cp->ਤਾਲਾ, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
-		int new_idx = cp->size++;
+	ਜੇ (old_idx == IDX_INVALID) {
+		ਪੂਰਨ new_idx = cp->ਮਾਪ++;
 
 		cp->elements[new_idx].dl = dl;
 		cp->elements[new_idx].cpu = cpu;
 		cp->elements[cpu].idx = new_idx;
-		cpudl_heapify_up(cp, new_idx);
+		cpudl_heapify_ਉੱਪਰ(cp, new_idx);
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		cp->elements[old_idx].dl = dl;
 		cpudl_heapify(cp, old_idx);
 	}
 
-	raw_spin_unlock_irqrestore(&cp->lock, flags);
+	raw_spin_unlock_irqrestore(&cp->ਤਾਲਾ, flags);
 }
 
 /*
  * cpudl_init - initialize the cpudl structure
  * @cp: the cpudl max-heap context
  */
-int cpudl_init(struct cpudl *cp)
+ਪੂਰਨ cpudl_init(ਬਣਤਰ cpudl *cp)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	raw_spin_lock_init(&cp->lock);
-	cp->size = 0;
+	raw_spin_ਤਾਲਾ_init(&cp->ਤਾਲਾ);
+	cp->ਮਾਪ = 0;
 
-	cp->elements = kzalloc_objs(struct cpudl_item, nr_cpu_ids);
-	if (!cp->elements)
-		return -ENOMEM;
+	cp->elements = kzalloc_objs(ਬਣਤਰ cpudl_ਵਸਤੂ, nr_cpu_ids);
+	ਜੇ (!cp->elements)
+		ਵਾਪਸ -ENOMEM;
 
-	if (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
+	ਜੇ (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
 		kfree(cp->elements);
-		return -ENOMEM;
+		ਵਾਪਸ -ENOMEM;
 	}
 
 	for_each_possible_cpu(i)
 		cp->elements[i].idx = IDX_INVALID;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
  * cpudl_cleanup - clean up the cpudl structure
  * @cp: the cpudl max-heap context
  */
-void cpudl_cleanup(struct cpudl *cp)
+ਖਾਲੀ cpudl_cleanup(ਬਣਤਰ cpudl *cp)
 {
 	free_cpumask_var(cp->free_cpus);
 	kfree(cp->elements);

@@ -5,10 +5,10 @@
  * Copyright (c) 2026 Meta Platforms, Inc. and affiliates.
  * Copyright (c) 2026 Tejun Heo <tj@kernel.org>
  */
-#include <linux/cacheinfo.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/cacheinfo.h>
 
-#include "internal.h"
-#include "cid.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "internal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "cid.h"
 
 /*
  * cid tables. The cid kfuncs are available whether the root scheduler is
@@ -19,18 +19,18 @@
  * tables are published and must check for NULL.
  */
 u32 scx_nr_cid_shards;
-s16 __rcu *scx_cid_to_cpu_tbl;
-s16 __rcu *scx_cpu_to_cid_tbl;
-s32 __rcu *scx_cid_to_shard;
-s32 __rcu *scx_shard_node;
-struct scx_cid_shard __rcu *scx_cid_shard_ranges;
-struct scx_cid_topo __rcu *scx_cid_topo;
+s16 __rcu *scx_cid_ਮੰਜ਼ਿਲ_cpu_tbl;
+s16 __rcu *scx_cpu_ਮੰਜ਼ਿਲ_cid_tbl;
+s32 __rcu *scx_cid_ਮੰਜ਼ਿਲ_shard;
+s32 __rcu *scx_shard_ਗੰਢ;
+ਬਣਤਰ scx_cid_shard __rcu *scx_cid_shard_ranges;
+ਬਣਤਰ scx_cid_topo __rcu *scx_cid_topo;
 
-static struct scx_cid_tables *scx_cid_tables;	/* used only during alloc/free */
+ਸਥਿਰ ਬਣਤਰ scx_cid_tables *scx_cid_tables;	/* used only during alloc/free */
 
-#define SCX_CID_TOPO_NEG	(struct scx_cid_topo) {				\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SCX_CID_TOPO_NEG	(ਬਣਤਰ scx_cid_topo) {				\
 	.core_cid = -1, .core_idx = -1, .llc_cid = -1, .llc_idx = -1,		\
-	.node_cid = -1, .node_idx = -1, .shard_cid = -1, .shard_idx = -1,	\
+	.ਗੰਢ_cid = -1, .ਗੰਢ_idx = -1, .shard_cid = -1, .shard_idx = -1,	\
 }
 
 /*
@@ -38,15 +38,15 @@ static struct scx_cid_tables *scx_cid_tables;	/* used only during alloc/free */
  * !present), record @cpu in @fallbacks and return its node mask instead - the
  * worst that can happen is that the cpu's LLC becomes coarser than reality.
  */
-static const struct cpumask *cpu_llc_mask(int cpu, struct cpumask *fallbacks)
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ cpumask *cpu_llc_ਨਕਾਬ(ਪੂਰਨ cpu, ਬਣਤਰ cpumask *fallbacks)
 {
-	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
+	ਬਣਤਰ cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
 
-	if (!ci || !ci->info_list || !ci->num_leaves) {
-		cpumask_set_cpu(cpu, fallbacks);
-		return cpumask_of_node(cpu_to_node(cpu));
+	ਜੇ (!ci || !ci->info_list || !ci->ਅੰਕ_leaves) {
+		cpumask_ਸੈੱਟ_cpu(cpu, fallbacks);
+		ਵਾਪਸ cpumask_ਦਾ_ਗੰਢ(cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(cpu));
 	}
-	return &ci->info_list[ci->num_leaves - 1].shared_cpu_map;
+	ਵਾਪਸ &ci->info_list[ci->ਅੰਕ_leaves - 1].shared_cpu_map;
 }
 
 /*
@@ -55,67 +55,67 @@ static const struct cpumask *cpu_llc_mask(int cpu, struct cpumask *fallbacks)
  * as possible across shards so cpu count is balanced: the first *@nr_large_p
  * shards get (*@cores_per_shard_p + 1) cores, the rest get *@cores_per_shard_p.
  */
-static void calc_shard_layout(const struct cpumask *llc_cpus, u32 shard_size,
-			      u32 *cores_per_shard_p, u32 *nr_large_p)
+ਸਥਿਰ ਖਾਲੀ calc_shard_layout(ਅਚਲ ਬਣਤਰ cpumask *llc_cpus, u32 shard_ਮਾਪ,
+			      u32 *cores_ਪ੍ਰਤੀ_shard_p, u32 *nr_large_p)
 {
 	u32 nr_cores = 0, nr_cpus = 0, nr_shards;
-	int cpu;
+	ਪੂਰਨ cpu;
 
 	for_each_cpu(cpu, llc_cpus) {
 		nr_cpus++;
-		if (cpumask_first(topology_sibling_cpumask(cpu)) == cpu)
+		ਜੇ (cpumask_ਪਹਿਲਾ(topology_sibling_cpumask(cpu)) == cpu)
 			nr_cores++;
 	}
 
-	nr_shards = max_t(u32, 1, DIV_ROUND_UP(nr_cpus, shard_size));
+	nr_shards = max_t(u32, 1, DIV_ਗੇੜਾ_ਉੱਪਰ(nr_cpus, shard_ਮਾਪ));
 	nr_shards = max_t(u32, nr_shards,
-			  DIV_ROUND_UP(nr_cpus, SCX_CID_SHARD_MAX_CPUS));
+			  DIV_ਗੇੜਾ_ਉੱਪਰ(nr_cpus, SCX_CID_SHARD_MAX_CPUS));
 
-	*cores_per_shard_p = nr_cores / nr_shards;
+	*cores_ਪ੍ਰਤੀ_shard_p = nr_cores / nr_shards;
 	*nr_large_p = nr_cores % nr_shards;
 }
 
-static void scx_cid_tables_free(struct scx_cid_tables *tbls)
+ਸਥਿਰ ਖਾਲੀ scx_cid_tables_free(ਬਣਤਰ scx_cid_tables *tbls)
 {
-	if (!tbls)
-		return;
-	kvfree(tbls->cid_to_cpu);
-	kvfree(tbls->cpu_to_cid);
-	kvfree(tbls->cid_to_shard);
-	kvfree(tbls->shard_node);
+	ਜੇ (!tbls)
+		ਵਾਪਸ;
+	kvfree(tbls->cid_ਮੰਜ਼ਿਲ_cpu);
+	kvfree(tbls->cpu_ਮੰਜ਼ਿਲ_cid);
+	kvfree(tbls->cid_ਮੰਜ਼ਿਲ_shard);
+	kvfree(tbls->shard_ਗੰਢ);
 	kvfree(tbls->shard_ranges);
 	kvfree(tbls->topo);
 	kfree(tbls);
 }
 
-static void scx_cid_tables_free_rcufn(struct rcu_head *rcu)
+ਸਥਿਰ ਖਾਲੀ scx_cid_tables_free_rcufn(ਬਣਤਰ rcu_ਸਿਰ *rcu)
 {
-	scx_cid_tables_free(container_of(rcu, struct scx_cid_tables, rcu));
+	scx_cid_tables_free(container_ਦਾ(rcu, ਬਣਤਰ scx_cid_tables, rcu));
 }
 
-static struct scx_cid_tables *scx_cid_alloc_tables(void)
+ਸਥਿਰ ਬਣਤਰ scx_cid_tables *scx_cid_alloc_tables(ਖਾਲੀ)
 {
-	u32 npossible = num_possible_cpus();
-	struct scx_cid_tables *tbls;
+	u32 npossible = ਅੰਕ_possible_cpus();
+	ਬਣਤਰ scx_cid_tables *tbls;
 
 	tbls = kzalloc_obj(*tbls);
-	if (!tbls)
-		return NULL;
+	ਜੇ (!tbls)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	tbls->cid_to_cpu = kvzalloc_objs(*tbls->cid_to_cpu, npossible);
-	tbls->cpu_to_cid = kvzalloc_objs(*tbls->cpu_to_cid, nr_cpu_ids);
-	tbls->cid_to_shard = kvzalloc_objs(*tbls->cid_to_shard, npossible);
-	tbls->shard_node = kvzalloc_objs(*tbls->shard_node, npossible);
+	tbls->cid_ਮੰਜ਼ਿਲ_cpu = kvzalloc_objs(*tbls->cid_ਮੰਜ਼ਿਲ_cpu, npossible);
+	tbls->cpu_ਮੰਜ਼ਿਲ_cid = kvzalloc_objs(*tbls->cpu_ਮੰਜ਼ਿਲ_cid, nr_cpu_ids);
+	tbls->cid_ਮੰਜ਼ਿਲ_shard = kvzalloc_objs(*tbls->cid_ਮੰਜ਼ਿਲ_shard, npossible);
+	tbls->shard_ਗੰਢ = kvzalloc_objs(*tbls->shard_ਗੰਢ, npossible);
 	tbls->shard_ranges = kvzalloc_objs(*tbls->shard_ranges, npossible);
 	tbls->topo = kvzalloc_objs(*tbls->topo, npossible);
 
-	if (!tbls->cid_to_cpu || !tbls->cpu_to_cid || !tbls->cid_to_shard ||
-	    !tbls->shard_node || !tbls->shard_ranges || !tbls->topo) {
+	ਜੇ (!tbls->cid_ਮੰਜ਼ਿਲ_cpu || !tbls->cpu_ਮੰਜ਼ਿਲ_cid || !tbls->cid_ਮੰਜ਼ਿਲ_shard ||
+	    !tbls->shard_ਗੰਢ || !tbls->shard_ranges || !tbls->topo) {
 		scx_cid_tables_free(tbls);
-		return NULL;
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	return tbls;
+	ਵਾਪਸ tbls;
 }
 
 /**
@@ -123,19 +123,19 @@ static struct scx_cid_tables *scx_cid_alloc_tables(void)
  *
  * Called after ops.init_cids() where the layout is final.
  */
-void scx_cid_publish_tables(void)
+ਖਾਲੀ scx_cid_publish_tables(ਖਾਲੀ)
 {
-	struct scx_cid_tables *tbls = scx_cid_tables;
+	ਬਣਤਰ scx_cid_tables *tbls = scx_cid_tables;
 
 	lockdep_assert_held(&scx_enable_mutex);
 
 	scx_nr_cid_shards = tbls->nr_shards;
-	rcu_assign_pointer(scx_cid_to_cpu_tbl, tbls->cid_to_cpu);
-	rcu_assign_pointer(scx_cpu_to_cid_tbl, tbls->cpu_to_cid);
-	rcu_assign_pointer(scx_cid_to_shard, tbls->cid_to_shard);
-	rcu_assign_pointer(scx_shard_node, tbls->shard_node);
-	rcu_assign_pointer(scx_cid_shard_ranges, tbls->shard_ranges);
-	rcu_assign_pointer(scx_cid_topo, tbls->topo);
+	rcu_ਸੌਂਪੋ_ਸੂਚਕ(scx_cid_ਮੰਜ਼ਿਲ_cpu_tbl, tbls->cid_ਮੰਜ਼ਿਲ_cpu);
+	rcu_ਸੌਂਪੋ_ਸੂਚਕ(scx_cpu_ਮੰਜ਼ਿਲ_cid_tbl, tbls->cpu_ਮੰਜ਼ਿਲ_cid);
+	rcu_ਸੌਂਪੋ_ਸੂਚਕ(scx_cid_ਮੰਜ਼ਿਲ_shard, tbls->cid_ਮੰਜ਼ਿਲ_shard);
+	rcu_ਸੌਂਪੋ_ਸੂਚਕ(scx_shard_ਗੰਢ, tbls->shard_ਗੰਢ);
+	rcu_ਸੌਂਪੋ_ਸੂਚਕ(scx_cid_shard_ranges, tbls->shard_ranges);
+	rcu_ਸੌਂਪੋ_ਸੂਚਕ(scx_cid_topo, tbls->topo);
 }
 
 /**
@@ -144,23 +144,23 @@ void scx_cid_publish_tables(void)
  * Called by root disable after the readers which dereference without NULL
  * checks are drained, inside cpus_read_lock() to exclude the hotplug path.
  */
-void scx_cid_retire_tables(void)
+ਖਾਲੀ scx_cid_retire_tables(ਖਾਲੀ)
 {
-	struct scx_cid_tables *tbls = scx_cid_tables;
+	ਬਣਤਰ scx_cid_tables *tbls = scx_cid_tables;
 
 	lockdep_assert_held(&scx_enable_mutex);
 	lockdep_assert_cpus_held();
 
-	if (!tbls)
-		return;
+	ਜੇ (!tbls)
+		ਵਾਪਸ;
 
-	scx_cid_tables = NULL;
-	RCU_INIT_POINTER(scx_cid_to_cpu_tbl, NULL);
-	RCU_INIT_POINTER(scx_cpu_to_cid_tbl, NULL);
-	RCU_INIT_POINTER(scx_cid_to_shard, NULL);
-	RCU_INIT_POINTER(scx_shard_node, NULL);
-	RCU_INIT_POINTER(scx_cid_shard_ranges, NULL);
-	RCU_INIT_POINTER(scx_cid_topo, NULL);
+	scx_cid_tables = ਨਿਰਾ;
+	RCU_INIT_ਸੂਚਕ(scx_cid_ਮੰਜ਼ਿਲ_cpu_tbl, ਨਿਰਾ);
+	RCU_INIT_ਸੂਚਕ(scx_cpu_ਮੰਜ਼ਿਲ_cid_tbl, ਨਿਰਾ);
+	RCU_INIT_ਸੂਚਕ(scx_cid_ਮੰਜ਼ਿਲ_shard, ਨਿਰਾ);
+	RCU_INIT_ਸੂਚਕ(scx_shard_ਗੰਢ, ਨਿਰਾ);
+	RCU_INIT_ਸੂਚਕ(scx_cid_shard_ranges, ਨਿਰਾ);
+	RCU_INIT_ਸੂਚਕ(scx_cid_topo, ਨਿਰਾ);
 	call_rcu(&tbls->rcu, scx_cid_tables_free_rcufn);
 }
 
@@ -177,20 +177,20 @@ void scx_cid_retire_tables(void)
  * straddling two NUMA nodes into two LLC units. The caller must hold
  * cpus_read_lock.
  */
-s32 scx_cid_init(struct scx_sched *sch)
+s32 scx_cid_init(ਬਣਤਰ scx_sched *sch)
 {
-	cpumask_var_t to_walk __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-	cpumask_var_t node_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
+	cpumask_var_t ਮੰਜ਼ਿਲ_walk __free(free_cpumask_var) = CPUMASK_VAR_NULL;
+	cpumask_var_t ਗੰਢ_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t llc_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t core_scratch __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t llc_fallback __free(free_cpumask_var) = CPUMASK_VAR_NULL;
 	cpumask_var_t online_no_topo __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-	struct scx_cid_tables *tbls;
-	u32 next_cid = 0;
-	s32 next_node_idx = 0, next_llc_idx = 0, next_core_idx = 0;
-	s32 next_shard_idx = 0;
-	u32 shard_size, max_cids;
-	u32 notopo_in_shard;
+	ਬਣਤਰ scx_cid_tables *tbls;
+	u32 ਅਗਲਾ_cid = 0;
+	s32 ਅਗਲਾ_ਗੰਢ_idx = 0, ਅਗਲਾ_llc_idx = 0, ਅਗਲਾ_core_idx = 0;
+	s32 ਅਗਲਾ_shard_idx = 0;
+	u32 shard_ਮਾਪ, max_cids;
+	u32 notopo_ਵਿੱਚ_shard;
 	s32 notopo_shard_cid, notopo_shard_idx;
 	s32 cpu, cid, si;
 
@@ -200,85 +200,85 @@ s32 scx_cid_init(struct scx_sched *sch)
 	lockdep_assert_cpus_held();
 	lockdep_assert_held(&scx_enable_mutex);
 
-	shard_size = sch->ops.cid_shard_size ?: SCX_CID_SHARD_SIZE_DFL;
-	max_cids = min_t(u32, shard_size, SCX_CID_SHARD_MAX_CPUS);
+	shard_ਮਾਪ = sch->ops.cid_shard_ਮਾਪ ?: SCX_CID_SHARD_ਮਾਪ_DFL;
+	max_cids = min_t(u32, shard_ਮਾਪ, SCX_CID_SHARD_MAX_CPUS);
 
 	tbls = scx_cid_alloc_tables();
-	if (!tbls)
-		return -ENOMEM;
+	ਜੇ (!tbls)
+		ਵਾਪਸ -ENOMEM;
 
 	scx_cid_tables = tbls;
 
-	for (si = 0; si < num_possible_cpus(); si++)
-		tbls->shard_node[si] = NUMA_NO_NODE;
+	ਲਈ (si = 0; si < ਅੰਕ_possible_cpus(); si++)
+		tbls->shard_ਗੰਢ[si] = NUMA_NO_ਗੰਢ;
 
-	if (!zalloc_cpumask_var(&to_walk, GFP_KERNEL) ||
-	    !zalloc_cpumask_var(&node_scratch, GFP_KERNEL) ||
+	ਜੇ (!zalloc_cpumask_var(&ਮੰਜ਼ਿਲ_walk, GFP_KERNEL) ||
+	    !zalloc_cpumask_var(&ਗੰਢ_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&llc_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&core_scratch, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&llc_fallback, GFP_KERNEL) ||
 	    !zalloc_cpumask_var(&online_no_topo, GFP_KERNEL))
-		return -ENOMEM;
+		ਵਾਪਸ -ENOMEM;
 
 	/* -1 sentinels for sparse-possible cpu id holes (0 is a valid cid) */
-	for (cpu = 0; cpu < nr_cpu_ids; cpu++)
-		tbls->cpu_to_cid[cpu] = -1;
+	ਲਈ (cpu = 0; cpu < nr_cpu_ids; cpu++)
+		tbls->cpu_ਮੰਜ਼ਿਲ_cid[cpu] = -1;
 
-	cpumask_copy(to_walk, cpu_online_mask);
+	cpumask_copy(ਮੰਜ਼ਿਲ_walk, cpu_online_ਨਕਾਬ);
 
-	while (!cpumask_empty(to_walk)) {
-		s32 next_cpu = cpumask_first(to_walk);
-		s32 nid = cpu_to_node(next_cpu);
-		s32 node_cid = next_cid;
-		s32 node_idx;
+	ਜਦੋਂ (!cpumask_ਖਾਲੀ_ਥਾਵਾਂ(ਮੰਜ਼ਿਲ_walk)) {
+		s32 ਅਗਲਾ_cpu = cpumask_ਪਹਿਲਾ(ਮੰਜ਼ਿਲ_walk);
+		s32 nid = cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(ਅਗਲਾ_cpu);
+		s32 ਗੰਢ_cid = ਅਗਲਾ_cid;
+		s32 ਗੰਢ_idx;
 
 		/*
 		 * No NUMA info: skip and let the tail loop assign a no-topo
 		 * cid. cpumask_of_node(-1) is undefined.
 		 */
-		if (nid < 0) {
-			cpumask_clear_cpu(next_cpu, to_walk);
-			continue;
+		ਜੇ (nid < 0) {
+			cpumask_clear_cpu(ਅਗਲਾ_cpu, ਮੰਜ਼ਿਲ_walk);
+			ਜਾਰੀ;
 		}
 
-		node_idx = next_node_idx++;
+		ਗੰਢ_idx = ਅਗਲਾ_ਗੰਢ_idx++;
 
 		/* node_scratch = to_walk & this node */
-		cpumask_and(node_scratch, to_walk, cpumask_of_node(nid));
-		if (WARN_ON_ONCE(!cpumask_test_cpu(next_cpu, node_scratch)))
-			return -EINVAL;
+		cpumask_and(ਗੰਢ_scratch, ਮੰਜ਼ਿਲ_walk, cpumask_ਦਾ_ਗੰਢ(nid));
+		ਜੇ (WARN_ON_ONCE(!cpumask_test_cpu(ਅਗਲਾ_cpu, ਗੰਢ_scratch)))
+			ਵਾਪਸ -EINVAL;
 
-		while (!cpumask_empty(node_scratch)) {
-			s32 ncpu = cpumask_first(node_scratch);
-			const struct cpumask *llc_mask = cpu_llc_mask(ncpu, llc_fallback);
-			s32 llc_cid = next_cid;
-			s32 llc_idx = next_llc_idx++;
-			u32 cores_per_shard, nr_large;
-			u32 shard_local = 0, cores_in_shard = 0, cids_in_shard = 0;
+		ਜਦੋਂ (!cpumask_ਖਾਲੀ_ਥਾਵਾਂ(ਗੰਢ_scratch)) {
+			s32 ncpu = cpumask_ਪਹਿਲਾ(ਗੰਢ_scratch);
+			ਅਚਲ ਬਣਤਰ cpumask *llc_ਨਕਾਬ = cpu_llc_ਨਕਾਬ(ncpu, llc_fallback);
+			s32 llc_cid = ਅਗਲਾ_cid;
+			s32 llc_idx = ਅਗਲਾ_llc_idx++;
+			u32 cores_ਪ੍ਰਤੀ_shard, nr_large;
+			u32 shard_local = 0, cores_ਵਿੱਚ_shard = 0, cids_ਵਿੱਚ_shard = 0;
 			s32 shard_cid, shard_idx;
 
 			/* llc_scratch = node_scratch & this llc */
-			cpumask_and(llc_scratch, node_scratch, llc_mask);
-			if (WARN_ON_ONCE(!cpumask_test_cpu(ncpu, llc_scratch)))
-				return -EINVAL;
+			cpumask_and(llc_scratch, ਗੰਢ_scratch, llc_ਨਕਾਬ);
+			ਜੇ (WARN_ON_ONCE(!cpumask_test_cpu(ncpu, llc_scratch)))
+				ਵਾਪਸ -EINVAL;
 
-			calc_shard_layout(llc_scratch, shard_size, &cores_per_shard, &nr_large);
-			shard_cid = next_cid;
-			shard_idx = next_shard_idx++;
-			tbls->shard_node[shard_idx] = nid;
+			calc_shard_layout(llc_scratch, shard_ਮਾਪ, &cores_ਪ੍ਰਤੀ_shard, &nr_large);
+			shard_cid = ਅਗਲਾ_cid;
+			shard_idx = ਅਗਲਾ_shard_idx++;
+			tbls->shard_ਗੰਢ[shard_idx] = nid;
 
-			while (!cpumask_empty(llc_scratch)) {
-				s32 lcpu = cpumask_first(llc_scratch);
-				const struct cpumask *sib = topology_sibling_cpumask(lcpu);
-				s32 core_cid = next_cid;
-				s32 core_idx = next_core_idx++;
+			ਜਦੋਂ (!cpumask_ਖਾਲੀ_ਥਾਵਾਂ(llc_scratch)) {
+				s32 lcpu = cpumask_ਪਹਿਲਾ(llc_scratch);
+				ਅਚਲ ਬਣਤਰ cpumask *sib = topology_sibling_cpumask(lcpu);
+				s32 core_cid = ਅਗਲਾ_cid;
+				s32 core_idx = ਅਗਲਾ_core_idx++;
 				s32 ccpu;
-				u32 max_cores, cids_in_core;
+				u32 max_cores, cids_ਵਿੱਚ_core;
 
 				/* core_scratch = llc_scratch & this core */
 				cpumask_and(core_scratch, llc_scratch, sib);
-				if (WARN_ON_ONCE(!cpumask_test_cpu(lcpu, core_scratch)))
-					return -EINVAL;
+				ਜੇ (WARN_ON_ONCE(!cpumask_test_cpu(lcpu, core_scratch)))
+					ਵਾਪਸ -EINVAL;
 
 				/*
 				 * Advance to a new shard when either core or
@@ -286,41 +286,41 @@ s32 scx_cid_init(struct scx_sched *sch)
 				 * shard sizes under uneven SMT. Never start an
 				 * empty shard.
 				 */
-				cids_in_core = cpumask_weight(core_scratch);
-				max_cores = cores_per_shard + (shard_local < nr_large ? 1 : 0);
-				if (cores_in_shard &&
-				    (cores_in_shard >= max_cores ||
-				     cids_in_shard + cids_in_core > max_cids)) {
+				cids_ਵਿੱਚ_core = cpumask_ਭਾਰ(core_scratch);
+				max_cores = cores_ਪ੍ਰਤੀ_shard + (shard_local < nr_large ? 1 : 0);
+				ਜੇ (cores_ਵਿੱਚ_shard &&
+				    (cores_ਵਿੱਚ_shard >= max_cores ||
+				     cids_ਵਿੱਚ_shard + cids_ਵਿੱਚ_core > max_cids)) {
 					shard_local++;
-					cores_in_shard = 0;
-					cids_in_shard = 0;
-					shard_cid = next_cid;
-					shard_idx = next_shard_idx++;
-					tbls->shard_node[shard_idx] = nid;
+					cores_ਵਿੱਚ_shard = 0;
+					cids_ਵਿੱਚ_shard = 0;
+					shard_cid = ਅਗਲਾ_cid;
+					shard_idx = ਅਗਲਾ_shard_idx++;
+					tbls->shard_ਗੰਢ[shard_idx] = nid;
 				}
-				cores_in_shard++;
-				cids_in_shard += cids_in_core;
+				cores_ਵਿੱਚ_shard++;
+				cids_ਵਿੱਚ_shard += cids_ਵਿੱਚ_core;
 
 				for_each_cpu(ccpu, core_scratch) {
-					s32 cid = next_cid++;
+					s32 cid = ਅਗਲਾ_cid++;
 
-					tbls->cid_to_cpu[cid] = ccpu;
-					tbls->cpu_to_cid[ccpu] = cid;
-					tbls->cid_to_shard[cid] = shard_idx;
-					tbls->topo[cid] = (struct scx_cid_topo){
+					tbls->cid_ਮੰਜ਼ਿਲ_cpu[cid] = ccpu;
+					tbls->cpu_ਮੰਜ਼ਿਲ_cid[ccpu] = cid;
+					tbls->cid_ਮੰਜ਼ਿਲ_shard[cid] = shard_idx;
+					tbls->topo[cid] = (ਬਣਤਰ scx_cid_topo){
 						.core_cid = core_cid,
 						.core_idx = core_idx,
 						.llc_cid = llc_cid,
 						.llc_idx = llc_idx,
-						.node_cid = node_cid,
-						.node_idx = node_idx,
+						.ਗੰਢ_cid = ਗੰਢ_cid,
+						.ਗੰਢ_idx = ਗੰਢ_idx,
 						.shard_cid = shard_cid,
 						.shard_idx = shard_idx,
 					};
 
 					cpumask_clear_cpu(ccpu, llc_scratch);
-					cpumask_clear_cpu(ccpu, node_scratch);
-					cpumask_clear_cpu(ccpu, to_walk);
+					cpumask_clear_cpu(ccpu, ਗੰਢ_scratch);
+					cpumask_clear_cpu(ccpu, ਮੰਜ਼ਿਲ_walk);
 				}
 			}
 		}
@@ -334,55 +334,55 @@ s32 scx_cid_init(struct scx_sched *sch)
 	 * Collect any currently-online cpus that land here in @online_no_topo
 	 * so we can warn about them at the end.
 	 */
-	notopo_in_shard = min_t(u32, shard_size, SCX_CID_SHARD_MAX_CPUS);
+	notopo_ਵਿੱਚ_shard = min_t(u32, shard_ਮਾਪ, SCX_CID_SHARD_MAX_CPUS);
 	notopo_shard_cid = -1;
 	notopo_shard_idx = -1;
 
-	for_each_cpu(cpu, cpu_possible_mask) {
-		if (tbls->cpu_to_cid[cpu] != -1)
-			continue;
-		if (cpu_online(cpu))
-			cpumask_set_cpu(cpu, online_no_topo);
+	for_each_cpu(cpu, cpu_possible_ਨਕਾਬ) {
+		ਜੇ (tbls->cpu_ਮੰਜ਼ਿਲ_cid[cpu] != -1)
+			ਜਾਰੀ;
+		ਜੇ (cpu_online(cpu))
+			cpumask_ਸੈੱਟ_cpu(cpu, online_no_topo);
 
-		cid = next_cid++;
-		tbls->cid_to_cpu[cid] = cpu;
-		tbls->cpu_to_cid[cpu] = cid;
+		cid = ਅਗਲਾ_cid++;
+		tbls->cid_ਮੰਜ਼ਿਲ_cpu[cid] = cpu;
+		tbls->cpu_ਮੰਜ਼ਿਲ_cid[cpu] = cid;
 
-		if (notopo_in_shard >= min_t(u32, shard_size, SCX_CID_SHARD_MAX_CPUS)) {
+		ਜੇ (notopo_ਵਿੱਚ_shard >= min_t(u32, shard_ਮਾਪ, SCX_CID_SHARD_MAX_CPUS)) {
 			notopo_shard_cid = cid;
-			notopo_shard_idx = next_shard_idx++;
-			notopo_in_shard = 0;
+			notopo_shard_idx = ਅਗਲਾ_shard_idx++;
+			notopo_ਵਿੱਚ_shard = 0;
 		}
-		notopo_in_shard++;
+		notopo_ਵਿੱਚ_shard++;
 
-		tbls->cid_to_shard[cid] = notopo_shard_idx;
+		tbls->cid_ਮੰਜ਼ਿਲ_shard[cid] = notopo_shard_idx;
 		tbls->topo[cid] = SCX_CID_TOPO_NEG;
 		tbls->topo[cid].shard_cid = notopo_shard_cid;
 		tbls->topo[cid].shard_idx = notopo_shard_idx;
 	}
 
-	if (!cpumask_empty(llc_fallback))
+	ਜੇ (!cpumask_ਖਾਲੀ_ਥਾਵਾਂ(llc_fallback))
 		pr_warn("scx_cid: cpus without cacheinfo, using node mask as llc: %*pbl\n",
-			cpumask_pr_args(llc_fallback));
-	if (!cpumask_empty(online_no_topo))
+			cpumask_pr_ਦਲੀਲਾਂ(llc_fallback));
+	ਜੇ (!cpumask_ਖਾਲੀ_ਥਾਵਾਂ(online_no_topo))
 		pr_warn("scx_cid: online cpus with no usable topology: %*pbl\n",
-			cpumask_pr_args(online_no_topo));
+			cpumask_pr_ਦਲੀਲਾਂ(online_no_topo));
 
 	/*
 	 * Fill cid_shard_ranges[] from cid_to_shard[]. Shards are contiguous
 	 * cid ranges by construction: base_cid is the first cid landing in a
 	 * shard, nr_cids is the count.
 	 */
-	for (cid = 0; cid < next_cid; cid++) {
-		s32 sidx = tbls->cid_to_shard[cid];
+	ਲਈ (cid = 0; cid < ਅਗਲਾ_cid; cid++) {
+		s32 sidx = tbls->cid_ਮੰਜ਼ਿਲ_shard[cid];
 
-		if (tbls->shard_ranges[sidx].nr_cids == 0)
-			tbls->shard_ranges[sidx].base_cid = cid;
+		ਜੇ (tbls->shard_ranges[sidx].nr_cids == 0)
+			tbls->shard_ranges[sidx].ਅਧਾਰ_cid = cid;
 		tbls->shard_ranges[sidx].nr_cids++;
 	}
 
-	tbls->nr_shards = next_shard_idx;
-	return 0;
+	tbls->nr_shards = ਅਗਲਾ_shard_idx;
+	ਵਾਪਸ 0;
 }
 
 /**
@@ -391,14 +391,14 @@ s32 scx_cid_init(struct scx_sched *sch)
  *
  * Storage past the active range is left as is.
  */
-void scx_cmask_clear(struct scx_cmask *m)
+ਖਾਲੀ scx_cmask_clear(ਬਣਤਰ scx_cmask *m)
 {
-	u32 nr_words;
+	u32 nr_ਸ਼ਬਦ;
 
-	if (!m->nr_cids)
-		return;
-	nr_words = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
-	memset(m->bits, 0, nr_words * sizeof(u64));
+	ਜੇ (!m->nr_cids)
+		ਵਾਪਸ;
+	nr_ਸ਼ਬਦ = (m->ਅਧਾਰ + m->nr_cids - 1) / 64 - m->ਅਧਾਰ / 64 + 1;
+	memset(m->ਬਿੱਟ, 0, nr_ਸ਼ਬਦ * ਆਕਾਰ(u64));
 }
 
 /**
@@ -407,42 +407,42 @@ void scx_cmask_clear(struct scx_cmask *m)
  *
  * Counterpart to scx_cmask_clear(). Storage past the active range is left as is.
  */
-void scx_cmask_fill(struct scx_cmask *m)
+ਖਾਲੀ scx_cmask_fill(ਬਣਤਰ scx_cmask *m)
 {
-	u32 nr_words, head_bits, tail_bits;
+	u32 nr_ਸ਼ਬਦ, ਸਿਰ_ਬਿੱਟ, ਪੂਛ_ਬਿੱਟ;
 
-	if (!m->nr_cids)
-		return;
-	nr_words = (m->base + m->nr_cids - 1) / 64 - m->base / 64 + 1;
-	memset(m->bits, 0xff, nr_words * sizeof(u64));
+	ਜੇ (!m->nr_cids)
+		ਵਾਪਸ;
+	nr_ਸ਼ਬਦ = (m->ਅਧਾਰ + m->nr_cids - 1) / 64 - m->ਅਧਾਰ / 64 + 1;
+	memset(m->ਬਿੱਟ, 0xff, nr_ਸ਼ਬਦ * ਆਕਾਰ(u64));
 
 	/* clear word-0 bits below base */
-	head_bits = m->base & 63;
-	if (head_bits)
-		m->bits[0] &= ~((1ULL << head_bits) - 1);
+	ਸਿਰ_ਬਿੱਟ = m->ਅਧਾਰ & 63;
+	ਜੇ (ਸਿਰ_ਬਿੱਟ)
+		m->ਬਿੱਟ[0] &= ~((1ULL << ਸਿਰ_ਬਿੱਟ) - 1);
 
 	/* clear last-word bits at or past base + nr_cids */
-	tail_bits = (m->base + m->nr_cids) & 63;
-	if (tail_bits)
-		m->bits[nr_words - 1] &= (1ULL << tail_bits) - 1;
+	ਪੂਛ_ਬਿੱਟ = (m->ਅਧਾਰ + m->nr_cids) & 63;
+	ਜੇ (ਪੂਛ_ਬਿੱਟ)
+		m->ਬਿੱਟ[nr_ਸ਼ਬਦ - 1] &= (1ULL << ਪੂਛ_ਬਿੱਟ) - 1;
 }
 
 /*
  * Return the index of the largest entry in @counts, or NUMA_NO_NODE if all
  * entries are zero. Ties resolve to the lowest index.
  */
-static s32 pick_max_node(const u32 *counts, u32 n)
+ਸਥਿਰ s32 pick_max_ਗੰਢ(ਅਚਲ u32 *counts, u32 n)
 {
-	s32 best = NUMA_NO_NODE;
-	u32 best_count = 0, i;
+	s32 ਉੱਤਮ = NUMA_NO_ਗੰਢ;
+	u32 ਉੱਤਮ_ਗਿਣਤੀ = 0, i;
 
-	for (i = 0; i < n; i++) {
-		if (counts[i] > best_count) {
-			best_count = counts[i];
-			best = i;
+	ਲਈ (i = 0; i < n; i++) {
+		ਜੇ (counts[i] > ਉੱਤਮ_ਗਿਣਤੀ) {
+			ਉੱਤਮ_ਗਿਣਤੀ = counts[i];
+			ਉੱਤਮ = i;
 		}
 	}
-	return best;
+	ਵਾਪਸ ਉੱਤਮ;
 }
 
 __bpf_kfunc_start_defs();
@@ -464,18 +464,18 @@ __bpf_kfunc_start_defs();
  * (core/LLC/node) is cleared and the shard layout is set from the input. On
  * invalid input, abort the scheduler.
  */
-__bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_cid_cnt,
-				      const s32 *shard_start__arena, u32 shard_start_cnt,
-				      const struct bpf_prog_aux *aux)
+__bpf_kfunc ਖਾਲੀ scx_bpf_cid_override(ਅਚਲ s32 *cpu_ਮੰਜ਼ਿਲ_cid_arena, u32 cpu_ਮੰਜ਼ਿਲ_cid_cnt,
+				      ਅਚਲ s32 *shard_ਸ਼ੁਰੂ_arena, u32 shard_ਸ਼ੁਰੂ_cnt,
+				      ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	cpumask_var_t seen __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-	u32 *node_counts __free(kfree) = NULL;
-	s32 *cpu_to_cid __free(kfree) = NULL;
-	s32 *shard_start __free(kfree) = NULL;
-	u32 npossible = num_possible_cpus();
-	struct scx_cid_tables *tbls;
-	struct scx_sched *sch;
-	u32 nr_shards = shard_start_cnt;
+	cpumask_var_t ਵੇਖਿਆ __free(free_cpumask_var) = CPUMASK_VAR_NULL;
+	u32 *ਗੰਢ_counts __free(kfree) = ਨਿਰਾ;
+	s32 *cpu_ਮੰਜ਼ਿਲ_cid __free(kfree) = ਨਿਰਾ;
+	s32 *shard_ਸ਼ੁਰੂ __free(kfree) = ਨਿਰਾ;
+	u32 npossible = ਅੰਕ_possible_cpus();
+	ਬਣਤਰ scx_cid_tables *tbls;
+	ਬਣਤਰ scx_sched *sch;
+	u32 nr_shards = shard_ਸ਼ੁਰੂ_cnt;
 	bool alloced;
 	s32 cpu, cid, si;
 
@@ -489,107 +489,107 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	 * available. The bounded reads, at most 32KB, stay within the guard
 	 * region that arena fault recovery covers.
 	 */
-	alloced = zalloc_cpumask_var(&seen, GFP_KERNEL);
-	node_counts = kzalloc_objs(*node_counts, nr_node_ids);
-	if (cpu_to_cid_cnt == nr_cpu_ids)
-		cpu_to_cid = kmemdup(cpu_to_cid__arena, cpu_to_cid_cnt * sizeof(s32),
+	alloced = zalloc_cpumask_var(&ਵੇਖਿਆ, GFP_KERNEL);
+	ਗੰਢ_counts = kzalloc_objs(*ਗੰਢ_counts, nr_ਗੰਢ_ids);
+	ਜੇ (cpu_ਮੰਜ਼ਿਲ_cid_cnt == nr_cpu_ids)
+		cpu_ਮੰਜ਼ਿਲ_cid = kmemdup(cpu_ਮੰਜ਼ਿਲ_cid_arena, cpu_ਮੰਜ਼ਿਲ_cid_cnt * ਆਕਾਰ(s32),
 				     GFP_KERNEL);
-	if (nr_shards && nr_shards <= npossible)
-		shard_start = kmemdup(shard_start__arena, nr_shards * sizeof(s32),
+	ਜੇ (nr_shards && nr_shards <= npossible)
+		shard_ਸ਼ੁਰੂ = kmemdup(shard_ਸ਼ੁਰੂ_arena, nr_shards * ਆਕਾਰ(s32),
 				      GFP_KERNEL);
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return;
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ;
 
 	/* called from ops.init_cids(), so the tables exist and are unpublished */
 	lockdep_assert_held(&scx_enable_mutex);
 	tbls = scx_cid_tables;
 
-	if (cpu_to_cid_cnt != nr_cpu_ids) {
+	ਜੇ (cpu_ਮੰਜ਼ਿਲ_cid_cnt != nr_cpu_ids) {
 		scx_error(sch, "scx_bpf_cid_override: cpu_to_cid expected %u entries, got %u",
-			  nr_cpu_ids, cpu_to_cid_cnt);
-		return;
+			  nr_cpu_ids, cpu_ਮੰਜ਼ਿਲ_cid_cnt);
+		ਵਾਪਸ;
 	}
 
-	if (!nr_shards || nr_shards > npossible) {
+	ਜੇ (!nr_shards || nr_shards > npossible) {
 		scx_error(sch, "scx_bpf_cid_override: invalid shard_start count %u",
 			  nr_shards);
-		return;
+		ਵਾਪਸ;
 	}
 
-	if (!alloced || !node_counts || !cpu_to_cid || !shard_start) {
+	ਜੇ (!alloced || !ਗੰਢ_counts || !cpu_ਮੰਜ਼ਿਲ_cid || !shard_ਸ਼ੁਰੂ) {
 		scx_error(sch, "scx_bpf_cid_override: allocation failed");
-		return;
+		ਵਾਪਸ;
 	}
 
 	/* validate shard_start[]: starts at 0, strictly increasing, in range */
-	if (shard_start[0] != 0) {
+	ਜੇ (shard_ਸ਼ੁਰੂ[0] != 0) {
 		scx_error(sch, "scx_bpf_cid_override: shard_start[0] must be 0, got %d",
-			  shard_start[0]);
-		return;
+			  shard_ਸ਼ੁਰੂ[0]);
+		ਵਾਪਸ;
 	}
-	for (si = 1; si < nr_shards; si++) {
-		if (shard_start[si] <= shard_start[si - 1]) {
+	ਲਈ (si = 1; si < nr_shards; si++) {
+		ਜੇ (shard_ਸ਼ੁਰੂ[si] <= shard_ਸ਼ੁਰੂ[si - 1]) {
 			scx_error(sch, "scx_bpf_cid_override: shard_start not increasing at [%d]",
 				  si);
-			return;
+			ਵਾਪਸ;
 		}
-		if (shard_start[si] >= npossible) {
+		ਜੇ (shard_ਸ਼ੁਰੂ[si] >= npossible) {
 			scx_error(sch, "scx_bpf_cid_override: shard_start[%d]=%d >= %u",
-				  si, shard_start[si], npossible);
-			return;
+				  si, shard_ਸ਼ੁਰੂ[si], npossible);
+			ਵਾਪਸ;
 		}
-		if (shard_start[si] - shard_start[si - 1] > SCX_CID_SHARD_MAX_CPUS) {
+		ਜੇ (shard_ਸ਼ੁਰੂ[si] - shard_ਸ਼ੁਰੂ[si - 1] > SCX_CID_SHARD_MAX_CPUS) {
 			scx_error(sch, "scx_bpf_cid_override: shard[%d] span %d exceeds max %d",
-				  si - 1, shard_start[si] - shard_start[si - 1],
+				  si - 1, shard_ਸ਼ੁਰੂ[si] - shard_ਸ਼ੁਰੂ[si - 1],
 				  SCX_CID_SHARD_MAX_CPUS);
-			return;
+			ਵਾਪਸ;
 		}
 	}
-	if (npossible - shard_start[nr_shards - 1] > SCX_CID_SHARD_MAX_CPUS) {
+	ਜੇ (npossible - shard_ਸ਼ੁਰੂ[nr_shards - 1] > SCX_CID_SHARD_MAX_CPUS) {
 		scx_error(sch, "scx_bpf_cid_override: shard[%d] span %d exceeds max %d",
-			  nr_shards - 1, npossible - shard_start[nr_shards - 1],
+			  nr_shards - 1, npossible - shard_ਸ਼ੁਰੂ[nr_shards - 1],
 			  SCX_CID_SHARD_MAX_CPUS);
-		return;
+		ਵਾਪਸ;
 	}
 
 	/* validate first so that invalid input leaves the tables untouched */
 	for_each_possible_cpu(cpu) {
-		s32 c = cpu_to_cid[cpu];
+		s32 c = cpu_ਮੰਜ਼ਿਲ_cid[cpu];
 
-		if (!cid_valid(sch, c))
-			return;
-		if (cpumask_test_and_set_cpu(c, seen)) {
+		ਜੇ (!cid_valid(sch, c))
+			ਵਾਪਸ;
+		ਜੇ (cpumask_test_and_ਸੈੱਟ_cpu(c, ਵੇਖਿਆ)) {
 			scx_error(sch, "cid %d assigned to multiple cpus", c);
-			return;
+			ਵਾਪਸ;
 		}
 	}
 
 	for_each_possible_cpu(cpu) {
-		s32 c = cpu_to_cid[cpu];
+		s32 c = cpu_ਮੰਜ਼ਿਲ_cid[cpu];
 
-		tbls->cpu_to_cid[cpu] = c;
-		tbls->cid_to_cpu[c] = cpu;
+		tbls->cpu_ਮੰਜ਼ਿਲ_cid[cpu] = c;
+		tbls->cid_ਮੰਜ਼ਿਲ_cpu[c] = cpu;
 	}
 
 	/*
 	 * Derive shard_node[] by majority count: an overridden shard may
 	 * span NUMA nodes, so assign each to the node that owns the most cpus.
 	 */
-	for (si = 0; si < nr_shards; si++) {
-		u32 end = (si + 1 < nr_shards) ? shard_start[si + 1] : npossible;
+	ਲਈ (si = 0; si < nr_shards; si++) {
+		u32 ਸਿਰਾ = (si + 1 < nr_shards) ? shard_ਸ਼ੁਰੂ[si + 1] : npossible;
 
-		memset(node_counts, 0, nr_node_ids * sizeof(*node_counts));
-		for (cid = shard_start[si]; cid < end; cid++) {
-			s32 node = cpu_to_node(tbls->cid_to_cpu[cid]);
+		memset(ਗੰਢ_counts, 0, nr_ਗੰਢ_ids * ਆਕਾਰ(*ਗੰਢ_counts));
+		ਲਈ (cid = shard_ਸ਼ੁਰੂ[si]; cid < ਸਿਰਾ; cid++) {
+			s32 ਗੰਢ = cpu_ਮੰਜ਼ਿਲ_ਗੰਢ(tbls->cid_ਮੰਜ਼ਿਲ_cpu[cid]);
 
-			if (numa_valid_node(node))
-				node_counts[node]++;
+			ਜੇ (numa_valid_ਗੰਢ(ਗੰਢ))
+				ਗੰਢ_counts[ਗੰਢ]++;
 		}
-		tbls->shard_node[si] = pick_max_node(node_counts, nr_node_ids);
+		tbls->shard_ਗੰਢ[si] = pick_max_ਗੰਢ(ਗੰਢ_counts, nr_ਗੰਢ_ids);
 	}
 
 	/*
@@ -597,22 +597,22 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
 	 * @shard_start. Walk shards to derive shard_cid/shard_idx for each cid.
 	 */
 	si = 0;
-	for (cid = 0; cid < npossible; cid++) {
-		if (si + 1 < nr_shards && cid >= shard_start[si + 1])
+	ਲਈ (cid = 0; cid < npossible; cid++) {
+		ਜੇ (si + 1 < nr_shards && cid >= shard_ਸ਼ੁਰੂ[si + 1])
 			si++;
-		tbls->cid_to_shard[cid] = si;
+		tbls->cid_ਮੰਜ਼ਿਲ_shard[cid] = si;
 		tbls->topo[cid] = SCX_CID_TOPO_NEG;
-		tbls->topo[cid].shard_cid = shard_start[si];
+		tbls->topo[cid].shard_cid = shard_ਸ਼ੁਰੂ[si];
 		tbls->topo[cid].shard_idx = si;
 	}
 
 	/* Rebuild shard_ranges[] for the new layout. */
-	memset(tbls->shard_ranges, 0, npossible * sizeof(*tbls->shard_ranges));
-	for (si = 0; si < nr_shards; si++) {
-		u32 end = (si + 1 < nr_shards) ? shard_start[si + 1] : npossible;
+	memset(tbls->shard_ranges, 0, npossible * ਆਕਾਰ(*tbls->shard_ranges));
+	ਲਈ (si = 0; si < nr_shards; si++) {
+		u32 ਸਿਰਾ = (si + 1 < nr_shards) ? shard_ਸ਼ੁਰੂ[si + 1] : npossible;
 
-		tbls->shard_ranges[si].base_cid = shard_start[si];
-		tbls->shard_ranges[si].nr_cids = end - shard_start[si];
+		tbls->shard_ranges[si].ਅਧਾਰ_cid = shard_ਸ਼ੁਰੂ[si];
+		tbls->shard_ranges[si].nr_cids = ਸਿਰਾ - shard_ਸ਼ੁਰੂ[si];
 	}
 
 	tbls->nr_shards = nr_shards;
@@ -628,16 +628,16 @@ __bpf_kfunc void scx_bpf_cid_override(const s32 *cpu_to_cid__arena, u32 cpu_to_c
  * loaded scheduler, so the BPF side can cache the result to avoid repeated
  * kfunc invocations.
  */
-__bpf_kfunc s32 scx_bpf_cid_to_cpu(s32 cid, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_cid_ਮੰਜ਼ਿਲ_cpu(s32 cid, ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -EINVAL;
-	return scx_cid_to_cpu(sch, cid);
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ -EINVAL;
+	ਵਾਪਸ scx_cid_ਮੰਜ਼ਿਲ_cpu(sch, cid);
 }
 
 /**
@@ -650,16 +650,16 @@ __bpf_kfunc s32 scx_bpf_cid_to_cpu(s32 cid, const struct bpf_prog_aux *aux)
  * scheduler, so the BPF side can cache the result to avoid repeated kfunc
  * invocations.
  */
-__bpf_kfunc s32 scx_bpf_cpu_to_cid(s32 cpu, const struct bpf_prog_aux *aux)
+__bpf_kfunc s32 scx_bpf_cpu_ਮੰਜ਼ਿਲ_cid(s32 cpu, ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	struct scx_sched *sch;
+	ਬਣਤਰ scx_sched *sch;
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -EINVAL;
-	return scx_cpu_to_cid(sch, cpu);
+	ਜੇ (unlikely(!sch))
+		ਵਾਪਸ -EINVAL;
+	ਵਾਪਸ scx_cpu_ਮੰਜ਼ਿਲ_cid(sch, cpu);
 }
 
 /*
@@ -679,7 +679,7 @@ __bpf_kfunc s32 scx_bpf_cpu_to_cid(s32 cpu, const struct bpf_prog_aux *aux)
  * locklessly. Memory ordering against concurrent writers is the caller's
  * responsibility.
  */
-enum cmask_op2 {
+ਗਿਣਤੀ cmask_op2 {
 	/* mutating */
 	CMASK_OP2_AND,
 	CMASK_OP2_OR,
@@ -696,38 +696,38 @@ enum cmask_op2 {
 	CMASK_OP2_REF_COPY,
 };
 
-static __always_inline bool cmask_op2_is_pred(const enum cmask_op2 op)
+ਸਥਿਰ __always_inline bool cmask_op2_is_pred(ਅਚਲ ਗਿਣਤੀ cmask_op2 op)
 {
-	return op == CMASK_OP2_SUBSET || op == CMASK_OP2_INTERSECTS;
+	ਵਾਪਸ op == CMASK_OP2_SUBSET || op == CMASK_OP2_INTERSECTS;
 }
 
-static __always_inline bool cmask_word_op2(u64 *av, const u64 *bp, u64 mask,
-					   const enum cmask_op2 op)
+ਸਥਿਰ __always_inline bool cmask_ਸ਼ਬਦ_op2(u64 *av, ਅਚਲ u64 *bp, u64 ਨਕਾਬ,
+					   ਅਚਲ ਗਿਣਤੀ cmask_op2 op)
 {
-	switch (op) {
-	case CMASK_OP2_AND:
-		WRITE_ONCE(*av, *av & (~mask | READ_ONCE(*bp)));
-		return false;
-	case CMASK_OP2_OR:
-		WRITE_ONCE(*av, *av | (READ_ONCE(*bp) & mask));
-		return false;
-	case CMASK_OP2_COPY:
-		WRITE_ONCE(*av, (*av & ~mask) | (READ_ONCE(*bp) & mask));
-		return false;
-	case CMASK_OP2_ANDNOT:
-		WRITE_ONCE(*av, *av & ~(READ_ONCE(*bp) & mask));
-		return false;
-	case CMASK_OP2_SUBSET:
+	ਚੋਣ (op) {
+	ਹਾਲਤ CMASK_OP2_AND:
+		WRITE_ONCE(*av, *av & (~ਨਕਾਬ | READ_ONCE(*bp)));
+		ਵਾਪਸ false;
+	ਹਾਲਤ CMASK_OP2_OR:
+		WRITE_ONCE(*av, *av | (READ_ONCE(*bp) & ਨਕਾਬ));
+		ਵਾਪਸ false;
+	ਹਾਲਤ CMASK_OP2_COPY:
+		WRITE_ONCE(*av, (*av & ~ਨਕਾਬ) | (READ_ONCE(*bp) & ਨਕਾਬ));
+		ਵਾਪਸ false;
+	ਹਾਲਤ CMASK_OP2_ANDNOT:
+		WRITE_ONCE(*av, *av & ~(READ_ONCE(*bp) & ਨਕਾਬ));
+		ਵਾਪਸ false;
+	ਹਾਲਤ CMASK_OP2_SUBSET:
 		/* stop on the first bit in @sub not set in @super */
-		return (READ_ONCE(*bp) & ~READ_ONCE(*av)) & mask;
-	case CMASK_OP2_INTERSECTS:
-		return (READ_ONCE(*av) & READ_ONCE(*bp)) & mask;
-	case CMASK_OP2_REF_OR:
-		WRITE_ONCE(*av, READ_ONCE(*av) | (READ_ONCE(*bp) & mask));
-		return false;
-	case CMASK_OP2_REF_COPY:
-		WRITE_ONCE(*av, (READ_ONCE(*av) & ~mask) | (READ_ONCE(*bp) & mask));
-		return false;
+		ਵਾਪਸ (READ_ONCE(*bp) & ~READ_ONCE(*av)) & ਨਕਾਬ;
+	ਹਾਲਤ CMASK_OP2_INTERSECTS:
+		ਵਾਪਸ (READ_ONCE(*av) & READ_ONCE(*bp)) & ਨਕਾਬ;
+	ਹਾਲਤ CMASK_OP2_REF_OR:
+		WRITE_ONCE(*av, READ_ONCE(*av) | (READ_ONCE(*bp) & ਨਕਾਬ));
+		ਵਾਪਸ false;
+	ਹਾਲਤ CMASK_OP2_REF_COPY:
+		WRITE_ONCE(*av, (READ_ONCE(*av) & ~ਨਕਾਬ) | (READ_ONCE(*bp) & ਨਕਾਬ));
+		ਵਾਪਸ false;
 	}
 	unreachable();
 }
@@ -742,53 +742,53 @@ static __always_inline bool cmask_word_op2(u64 *av, const u64 *bp, u64 mask,
  * Base/nr_cids are taken as parameters so callers with snapshotted bounds can
  * drive the walk with values independent of the cmask's header.
  */
-static __always_inline bool cmask_walk_op2(u64 *a_bits, u32 a_base, u32 a_nr_cids,
-					   const u64 *b_bits, u32 b_base, u32 b_nr_cids,
-					   const enum cmask_op2 op)
+ਸਥਿਰ __always_inline bool cmask_walk_op2(u64 *a_ਬਿੱਟ, u32 a_ਅਧਾਰ, u32 a_nr_cids,
+					   ਅਚਲ u64 *b_ਬਿੱਟ, u32 b_ਅਧਾਰ, u32 b_nr_cids,
+					   ਅਚਲ ਗਿਣਤੀ cmask_op2 op)
 {
-	u32 lo = max(a_base, b_base);
-	u32 hi = min(a_base + a_nr_cids, b_base + b_nr_cids);
-	u32 a_word_off = a_base / 64;
-	u32 b_word_off = b_base / 64;
-	u32 lo_word = lo / 64;
-	u32 hi_word = (hi - 1) / 64;
-	u64 head_mask = GENMASK_U64(63, lo & 63);
-	u64 tail_mask = GENMASK_U64((hi - 1) & 63, 0);
+	u32 lo = max(a_ਅਧਾਰ, b_ਅਧਾਰ);
+	u32 hi = min(a_ਅਧਾਰ + a_nr_cids, b_ਅਧਾਰ + b_nr_cids);
+	u32 a_ਸ਼ਬਦ_off = a_ਅਧਾਰ / 64;
+	u32 b_ਸ਼ਬਦ_off = b_ਅਧਾਰ / 64;
+	u32 lo_ਸ਼ਬਦ = lo / 64;
+	u32 hi_ਸ਼ਬਦ = (hi - 1) / 64;
+	u64 ਸਿਰ_ਨਕਾਬ = GENMASK_U64(63, lo & 63);
+	u64 ਪੂਛ_ਨਕਾਬ = GENMASK_U64((hi - 1) & 63, 0);
 	u32 w;
 
-	if (lo >= hi)
-		return false;
+	ਜੇ (lo >= hi)
+		ਵਾਪਸ false;
 
-	if (lo_word == hi_word)
-		return cmask_word_op2(&a_bits[lo_word - a_word_off],
-				      &b_bits[lo_word - b_word_off],
-				      head_mask & tail_mask, op);
+	ਜੇ (lo_ਸ਼ਬਦ == hi_ਸ਼ਬਦ)
+		ਵਾਪਸ cmask_ਸ਼ਬਦ_op2(&a_ਬਿੱਟ[lo_ਸ਼ਬਦ - a_ਸ਼ਬਦ_off],
+				      &b_ਬਿੱਟ[lo_ਸ਼ਬਦ - b_ਸ਼ਬਦ_off],
+				      ਸਿਰ_ਨਕਾਬ & ਪੂਛ_ਨਕਾਬ, op);
 
-	if (cmask_word_op2(&a_bits[lo_word - a_word_off],
-			   &b_bits[lo_word - b_word_off], head_mask, op) &&
+	ਜੇ (cmask_ਸ਼ਬਦ_op2(&a_ਬਿੱਟ[lo_ਸ਼ਬਦ - a_ਸ਼ਬਦ_off],
+			   &b_ਬਿੱਟ[lo_ਸ਼ਬਦ - b_ਸ਼ਬਦ_off], ਸਿਰ_ਨਕਾਬ, op) &&
 	    cmask_op2_is_pred(op))
-		return true;
+		ਵਾਪਸ true;
 
-	for (w = lo_word + 1; w < hi_word; w++)
-		if (cmask_word_op2(&a_bits[w - a_word_off],
-				   &b_bits[w - b_word_off], ~0ULL, op) &&
+	ਲਈ (w = lo_ਸ਼ਬਦ + 1; w < hi_ਸ਼ਬਦ; w++)
+		ਜੇ (cmask_ਸ਼ਬਦ_op2(&a_ਬਿੱਟ[w - a_ਸ਼ਬਦ_off],
+				   &b_ਬਿੱਟ[w - b_ਸ਼ਬਦ_off], ~0ULL, op) &&
 		    cmask_op2_is_pred(op))
-			return true;
+			ਵਾਪਸ true;
 
-	return cmask_word_op2(&a_bits[hi_word - a_word_off],
-			      &b_bits[hi_word - b_word_off], tail_mask, op);
+	ਵਾਪਸ cmask_ਸ਼ਬਦ_op2(&a_ਬਿੱਟ[hi_ਸ਼ਬਦ - a_ਸ਼ਬਦ_off],
+			      &b_ਬਿੱਟ[hi_ਸ਼ਬਦ - b_ਸ਼ਬਦ_off], ਪੂਛ_ਨਕਾਬ, op);
 }
 
-enum cmask_op1 {
-	CMASK_OP1_ANY_SET,
+ਗਿਣਤੀ cmask_op1 {
+	CMASK_OP1_ANY_ਸੈੱਟ,
 };
 
-static __always_inline bool cmask_word_op1(const u64 *ap, u64 mask,
-					   const enum cmask_op1 op)
+ਸਥਿਰ __always_inline bool cmask_ਸ਼ਬਦ_op1(ਅਚਲ u64 *ap, u64 ਨਕਾਬ,
+					   ਅਚਲ ਗਿਣਤੀ cmask_op1 op)
 {
-	switch (op) {
-	case CMASK_OP1_ANY_SET:
-		return READ_ONCE(*ap) & mask;
+	ਚੋਣ (op) {
+	ਹਾਲਤ CMASK_OP1_ANY_ਸੈੱਟ:
+		ਵਾਪਸ READ_ONCE(*ap) & ਨਕਾਬ;
 	}
 	unreachable();
 }
@@ -800,68 +800,68 @@ static __always_inline bool cmask_word_op1(const u64 *ap, u64 mask,
  * per-word true; if a non-predicate op1 lands here, add a cmask_op1_is_pred()
  * guard analogous to cmask_op2_is_pred().
  */
-static __always_inline bool cmask_walk_op1(const u64 *a_bits, u32 a_base,
+ਸਥਿਰ __always_inline bool cmask_walk_op1(ਅਚਲ u64 *a_ਬਿੱਟ, u32 a_ਅਧਾਰ,
 					   u32 a_nr_cids,
-					   const enum cmask_op1 op)
+					   ਅਚਲ ਗਿਣਤੀ cmask_op1 op)
 {
-	u32 lo = a_base;
-	u32 hi = a_base + a_nr_cids;
-	u32 a_word_off = a_base / 64;
-	u32 lo_word = lo / 64;
-	u32 hi_word = (hi - 1) / 64;
-	u64 head_mask = GENMASK_U64(63, lo & 63);
-	u64 tail_mask = GENMASK_U64((hi - 1) & 63, 0);
+	u32 lo = a_ਅਧਾਰ;
+	u32 hi = a_ਅਧਾਰ + a_nr_cids;
+	u32 a_ਸ਼ਬਦ_off = a_ਅਧਾਰ / 64;
+	u32 lo_ਸ਼ਬਦ = lo / 64;
+	u32 hi_ਸ਼ਬਦ = (hi - 1) / 64;
+	u64 ਸਿਰ_ਨਕਾਬ = GENMASK_U64(63, lo & 63);
+	u64 ਪੂਛ_ਨਕਾਬ = GENMASK_U64((hi - 1) & 63, 0);
 	u32 w;
 
-	if (lo >= hi)
-		return false;
+	ਜੇ (lo >= hi)
+		ਵਾਪਸ false;
 
-	if (lo_word == hi_word)
-		return cmask_word_op1(&a_bits[lo_word - a_word_off],
-				      head_mask & tail_mask, op);
+	ਜੇ (lo_ਸ਼ਬਦ == hi_ਸ਼ਬਦ)
+		ਵਾਪਸ cmask_ਸ਼ਬਦ_op1(&a_ਬਿੱਟ[lo_ਸ਼ਬਦ - a_ਸ਼ਬਦ_off],
+				      ਸਿਰ_ਨਕਾਬ & ਪੂਛ_ਨਕਾਬ, op);
 
-	if (cmask_word_op1(&a_bits[lo_word - a_word_off], head_mask, op))
-		return true;
-	for (w = lo_word + 1; w < hi_word; w++)
-		if (cmask_word_op1(&a_bits[w - a_word_off], ~0ULL, op))
-			return true;
-	return cmask_word_op1(&a_bits[hi_word - a_word_off], tail_mask, op);
+	ਜੇ (cmask_ਸ਼ਬਦ_op1(&a_ਬਿੱਟ[lo_ਸ਼ਬਦ - a_ਸ਼ਬਦ_off], ਸਿਰ_ਨਕਾਬ, op))
+		ਵਾਪਸ true;
+	ਲਈ (w = lo_ਸ਼ਬਦ + 1; w < hi_ਸ਼ਬਦ; w++)
+		ਜੇ (cmask_ਸ਼ਬਦ_op1(&a_ਬਿੱਟ[w - a_ਸ਼ਬਦ_off], ~0ULL, op))
+			ਵਾਪਸ true;
+	ਵਾਪਸ cmask_ਸ਼ਬਦ_op1(&a_ਬਿੱਟ[hi_ਸ਼ਬਦ - a_ਸ਼ਬਦ_off], ਪੂਛ_ਨਕਾਬ, op);
 }
 
-void scx_cmask_and(struct scx_cmask *dst, const struct scx_cmask *src)
+ਖਾਲੀ scx_cmask_and(ਬਣਤਰ scx_cmask *dst, ਅਚਲ ਬਣਤਰ scx_cmask *src)
 {
-	cmask_walk_op2(dst->bits, dst->base, dst->nr_cids,
-		       src->bits, src->base, src->nr_cids, CMASK_OP2_AND);
+	cmask_walk_op2(dst->ਬਿੱਟ, dst->ਅਧਾਰ, dst->nr_cids,
+		       src->ਬਿੱਟ, src->ਅਧਾਰ, src->nr_cids, CMASK_OP2_AND);
 }
 
-void scx_cmask_or(struct scx_cmask *dst, const struct scx_cmask *src)
+ਖਾਲੀ scx_cmask_or(ਬਣਤਰ scx_cmask *dst, ਅਚਲ ਬਣਤਰ scx_cmask *src)
 {
-	cmask_walk_op2(dst->bits, dst->base, dst->nr_cids,
-		       src->bits, src->base, src->nr_cids, CMASK_OP2_OR);
+	cmask_walk_op2(dst->ਬਿੱਟ, dst->ਅਧਾਰ, dst->nr_cids,
+		       src->ਬਿੱਟ, src->ਅਧਾਰ, src->nr_cids, CMASK_OP2_OR);
 }
 
-void scx_cmask_copy(struct scx_cmask *dst, const struct scx_cmask *src)
+ਖਾਲੀ scx_cmask_copy(ਬਣਤਰ scx_cmask *dst, ਅਚਲ ਬਣਤਰ scx_cmask *src)
 {
-	cmask_walk_op2(dst->bits, dst->base, dst->nr_cids,
-		       src->bits, src->base, src->nr_cids, CMASK_OP2_COPY);
+	cmask_walk_op2(dst->ਬਿੱਟ, dst->ਅਧਾਰ, dst->nr_cids,
+		       src->ਬਿੱਟ, src->ਅਧਾਰ, src->nr_cids, CMASK_OP2_COPY);
 }
 
-void scx_cmask_andnot(struct scx_cmask *dst, const struct scx_cmask *src)
+ਖਾਲੀ scx_cmask_andnot(ਬਣਤਰ scx_cmask *dst, ਅਚਲ ਬਣਤਰ scx_cmask *src)
 {
-	cmask_walk_op2(dst->bits, dst->base, dst->nr_cids,
-		       src->bits, src->base, src->nr_cids, CMASK_OP2_ANDNOT);
+	cmask_walk_op2(dst->ਬਿੱਟ, dst->ਅਧਾਰ, dst->nr_cids,
+		       src->ਬਿੱਟ, src->ਅਧਾਰ, src->nr_cids, CMASK_OP2_ANDNOT);
 }
 
 /*
  * Return true if @cm has any bit set in [@lo, @hi). Caller must ensure
  * [@lo, @hi) is contained in @cm's range.
  */
-static bool cmask_any_set_in_range(const struct scx_cmask *cm, u32 lo, u32 hi)
+ਸਥਿਰ bool cmask_any_ਸੈੱਟ_ਵਿੱਚ_range(ਅਚਲ ਬਣਤਰ scx_cmask *cm, u32 lo, u32 hi)
 {
-	if (lo >= hi)
-		return false;
-	return cmask_walk_op1(&cm->bits[lo / 64 - cm->base / 64], lo, hi - lo,
-			      CMASK_OP1_ANY_SET);
+	ਜੇ (lo >= hi)
+		ਵਾਪਸ false;
+	ਵਾਪਸ cmask_walk_op1(&cm->ਬਿੱਟ[lo / 64 - cm->ਅਧਾਰ / 64], lo, hi - lo,
+			      CMASK_OP1_ANY_ਸੈੱਟ);
 }
 
 /**
@@ -871,31 +871,31 @@ static bool cmask_any_set_in_range(const struct scx_cmask *cm, u32 lo, u32 hi)
  *
  * Return true iff every set bit of @sub is also set in @super.
  */
-bool scx_cmask_subset(const struct scx_cmask *sub, const struct scx_cmask *super)
+bool scx_cmask_subset(ਅਚਲ ਬਣਤਰ scx_cmask *sub, ਅਚਲ ਬਣਤਰ scx_cmask *super)
 {
-	u32 super_end = super->base + super->nr_cids;
-	u32 sub_end = sub->base + sub->nr_cids;
+	u32 super_ਸਿਰਾ = super->ਅਧਾਰ + super->nr_cids;
+	u32 sub_ਸਿਰਾ = sub->ਅਧਾਰ + sub->nr_cids;
 
 	/*
 	 * Set bits in @sub outside @super's range can't be in @super, so any
 	 * such bit means not a subset. The walk below only visits words
 	 * common to both ranges, so these need a separate scan.
 	 */
-	if (sub->base < super->base &&
-	    cmask_any_set_in_range(sub, sub->base, min(super->base, sub_end)))
-		return false;
-	if (sub_end > super_end &&
-	    cmask_any_set_in_range(sub, max(sub->base, super_end), sub_end))
-		return false;
+	ਜੇ (sub->ਅਧਾਰ < super->ਅਧਾਰ &&
+	    cmask_any_ਸੈੱਟ_ਵਿੱਚ_range(sub, sub->ਅਧਾਰ, min(super->ਅਧਾਰ, sub_ਸਿਰਾ)))
+		ਵਾਪਸ false;
+	ਜੇ (sub_ਸਿਰਾ > super_ਸਿਰਾ &&
+	    cmask_any_ਸੈੱਟ_ਵਿੱਚ_range(sub, max(sub->ਅਧਾਰ, super_ਸਿਰਾ), sub_ਸਿਰਾ))
+		ਵਾਪਸ false;
 
-	return !cmask_walk_op2((u64 *)super->bits, super->base, super->nr_cids,
-			       sub->bits, sub->base, sub->nr_cids, CMASK_OP2_SUBSET);
+	ਵਾਪਸ !cmask_walk_op2((u64 *)super->ਬਿੱਟ, super->ਅਧਾਰ, super->nr_cids,
+			       sub->ਬਿੱਟ, sub->ਅਧਾਰ, sub->nr_cids, CMASK_OP2_SUBSET);
 }
 
-bool scx_cmask_intersects(const struct scx_cmask *a, const struct scx_cmask *b)
+bool scx_cmask_intersects(ਅਚਲ ਬਣਤਰ scx_cmask *a, ਅਚਲ ਬਣਤਰ scx_cmask *b)
 {
-	return cmask_walk_op2((u64 *)a->bits, a->base, a->nr_cids,
-			      b->bits, b->base, b->nr_cids, CMASK_OP2_INTERSECTS);
+	ਵਾਪਸ cmask_walk_op2((u64 *)a->ਬਿੱਟ, a->ਅਧਾਰ, a->nr_cids,
+			      b->ਬਿੱਟ, b->ਅਧਾਰ, b->nr_cids, CMASK_OP2_INTERSECTS);
 }
 
 /**
@@ -904,9 +904,9 @@ bool scx_cmask_intersects(const struct scx_cmask *a, const struct scx_cmask *b)
  *
  * Return true iff @m's active range has no bits set.
  */
-bool scx_cmask_empty(const struct scx_cmask *m)
+bool scx_cmask_ਖਾਲੀ_ਥਾਵਾਂ(ਅਚਲ ਬਣਤਰ scx_cmask *m)
 {
-	return !cmask_any_set_in_range(m, m->base, m->base + m->nr_cids);
+	ਵਾਪਸ !cmask_any_ਸੈੱਟ_ਵਿੱਚ_range(m, m->ਅਧਾਰ, m->ਅਧਾਰ + m->nr_cids);
 }
 
 /**
@@ -924,47 +924,47 @@ bool scx_cmask_empty(const struct scx_cmask *m)
  * The program's struct may be older or newer than the kernel's. The smaller of
  * @out__sz and the kernel's size is copied and the rest of @out is set to -1.
  */
-__bpf_kfunc void scx_bpf_cid_topo(s32 cid, struct scx_cid_topo *out, size_t out__sz,
-				  const struct bpf_prog_aux *aux)
+__bpf_kfunc ਖਾਲੀ scx_bpf_cid_topo(s32 cid, ਬਣਤਰ scx_cid_topo *ਬਾਹਰਲਾ, ਮਾਪ_t ਬਾਹਰਲਾ_sz,
+				  ਅਚਲ ਬਣਤਰ bpf_prog_aux *aux)
 {
-	size_t len = min(out__sz, sizeof(*out));
-	struct scx_cid_topo *topo;
-	struct scx_sched *sch;
+	ਮਾਪ_t len = min(ਬਾਹਰਲਾ_sz, ਆਕਾਰ(*ਬਾਹਰਲਾ));
+	ਬਣਤਰ scx_cid_topo *topo;
+	ਬਣਤਰ scx_sched *sch;
 
 	/* the error cases and fields the kernel lacks read as -1 */
-	memset(out, 0xff, out__sz);
+	memset(ਬਾਹਰਲਾ, 0xff, ਬਾਹਰਲਾ_sz);
 
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
 	topo = rcu_dereference(scx_cid_topo);
-	if (unlikely(!sch) || !cid_valid(sch, cid) || unlikely(!topo))
-		return;
+	ਜੇ (unlikely(!sch) || !cid_valid(sch, cid) || unlikely(!topo))
+		ਵਾਪਸ;
 
-	memcpy(out, &topo[cid], len);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਬਾਹਰਲਾ, &topo[cid], len);
 }
 
 __bpf_kfunc_end_defs();
 
-BTF_KFUNCS_START(scx_kfunc_ids_init_cids)
-BTF_ID_FLAGS(func, scx_bpf_cid_override, KF_IMPLICIT_ARGS | KF_SLEEPABLE)
-BTF_KFUNCS_END(scx_kfunc_ids_init_cids)
+BTF_KFUNCS_ਸ਼ੁਰੂ(scx_kfunc_ids_init_cids)
+BTF_ID_FLAGS(func, scx_bpf_cid_override, KF_IMPLICIT_ਦਲੀਲਾਂ | KF_SLEEPABLE)
+BTF_KFUNCS_ਸਿਰਾ(scx_kfunc_ids_init_cids)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_init_cids = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ btf_kfunc_id_ਸੈੱਟ scx_kfunc_ਸੈੱਟ_init_cids = {
 	.owner	= THIS_MODULE,
-	.set	= &scx_kfunc_ids_init_cids,
+	.ਸੈੱਟ	= &scx_kfunc_ids_init_cids,
 	.filter	= scx_kfunc_context_filter,
 };
 
-BTF_KFUNCS_START(scx_kfunc_ids_cid)
-BTF_ID_FLAGS(func, scx_bpf_cid_to_cpu, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cpu_to_cid, KF_IMPLICIT_ARGS)
-BTF_ID_FLAGS(func, scx_bpf_cid_topo, KF_IMPLICIT_ARGS)
-BTF_KFUNCS_END(scx_kfunc_ids_cid)
+BTF_KFUNCS_ਸ਼ੁਰੂ(scx_kfunc_ids_cid)
+BTF_ID_FLAGS(func, scx_bpf_cid_ਮੰਜ਼ਿਲ_cpu, KF_IMPLICIT_ਦਲੀਲਾਂ)
+BTF_ID_FLAGS(func, scx_bpf_cpu_ਮੰਜ਼ਿਲ_cid, KF_IMPLICIT_ਦਲੀਲਾਂ)
+BTF_ID_FLAGS(func, scx_bpf_cid_topo, KF_IMPLICIT_ਦਲੀਲਾਂ)
+BTF_KFUNCS_ਸਿਰਾ(scx_kfunc_ids_cid)
 
-static const struct btf_kfunc_id_set scx_kfunc_set_cid = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ btf_kfunc_id_ਸੈੱਟ scx_kfunc_ਸੈੱਟ_cid = {
 	.owner	= THIS_MODULE,
-	.set	= &scx_kfunc_ids_cid,
+	.ਸੈੱਟ	= &scx_kfunc_ids_cid,
 };
 
 /**
@@ -979,33 +979,33 @@ static const struct btf_kfunc_id_set scx_kfunc_set_cid = {
  * Return 0 on success, -EINVAL if the range is out of bounds or @alloc_words
  * doesn't cover it.
  */
-int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
-		       struct scx_cmask_ref *ref)
+ਪੂਰਨ scx_cmask_ref_init(ਬਣਤਰ scx_sched *sch, ਅਚਲ ਬਣਤਰ scx_cmask *src,
+		       ਬਣਤਰ scx_cmask_ref *ref)
 {
-	u32 base, nr_cids, alloc_words, npossible = num_possible_cpus();
-	s32 *cid_to_shard;
+	u32 ਅਧਾਰ, nr_cids, alloc_ਸ਼ਬਦ, npossible = ਅੰਕ_possible_cpus();
+	s32 *cid_ਮੰਜ਼ਿਲ_shard;
 
-	base = READ_ONCE(src->base);
+	ਅਧਾਰ = READ_ONCE(src->ਅਧਾਰ);
 	nr_cids = READ_ONCE(src->nr_cids);
-	alloc_words = READ_ONCE(src->alloc_words);
+	alloc_ਸ਼ਬਦ = READ_ONCE(src->alloc_ਸ਼ਬਦ);
 
-	if (unlikely(base >= npossible || nr_cids > npossible - base ||
-		     SCX_CMASK_NR_WORDS(nr_cids) > alloc_words))
-		return -EINVAL;
+	ਜੇ (unlikely(ਅਧਾਰ >= npossible || nr_cids > npossible - ਅਧਾਰ ||
+		     SCX_CMASK_NR_ਸ਼ਬਦ(nr_cids) > alloc_ਸ਼ਬਦ))
+		ਵਾਪਸ -EINVAL;
 
 	ref->sch = sch;
-	ref->src = (struct scx_cmask *)src;
-	ref->base = base;
+	ref->src = (ਬਣਤਰ scx_cmask *)src;
+	ref->ਅਧਾਰ = ਅਧਾਰ;
 	ref->nr_cids = nr_cids;
 
-	cid_to_shard = rcu_dereference_all(scx_cid_to_shard);
-	ref->shard_first = cid_to_shard[base];
-	if (likely(nr_cids))
-		ref->shard_end = cid_to_shard[base + nr_cids - 1] + 1;
-	else
-		ref->shard_end = ref->shard_first;
+	cid_ਮੰਜ਼ਿਲ_shard = rcu_dereference_all(scx_cid_ਮੰਜ਼ਿਲ_shard);
+	ref->shard_ਪਹਿਲਾ = cid_ਮੰਜ਼ਿਲ_shard[ਅਧਾਰ];
+	ਜੇ (likely(nr_cids))
+		ref->shard_ਸਿਰਾ = cid_ਮੰਜ਼ਿਲ_shard[ਅਧਾਰ + nr_cids - 1] + 1;
+	ਨਹੀਂਤਾਂ
+		ref->shard_ਸਿਰਾ = ref->shard_ਪਹਿਲਾ;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /**
@@ -1021,26 +1021,26 @@ int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
  * later sizing or offsets. Rewrite the header from the trusted geometry and
  * bind @ref to it.
  */
-void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
-			     u32 base, u32 nr_cids, struct scx_cmask_ref *ref)
+ਖਾਲੀ scx_cmask_ref_init_kern(ਬਣਤਰ scx_sched *sch, ਬਣਤਰ scx_cmask *m,
+			     u32 ਅਧਾਰ, u32 nr_cids, ਬਣਤਰ scx_cmask_ref *ref)
 {
-	s32 *cid_to_shard;
+	s32 *cid_ਮੰਜ਼ਿਲ_shard;
 
-	WRITE_ONCE(m->base, base);
+	WRITE_ONCE(m->ਅਧਾਰ, ਅਧਾਰ);
 	WRITE_ONCE(m->nr_cids, nr_cids);
-	WRITE_ONCE(m->alloc_words, SCX_CMASK_NR_WORDS(nr_cids));
+	WRITE_ONCE(m->alloc_ਸ਼ਬਦ, SCX_CMASK_NR_ਸ਼ਬਦ(nr_cids));
 
 	ref->sch = sch;
 	ref->src = m;
-	ref->base = base;
+	ref->ਅਧਾਰ = ਅਧਾਰ;
 	ref->nr_cids = nr_cids;
 
-	cid_to_shard = rcu_dereference_all(scx_cid_to_shard);
-	ref->shard_first = cid_to_shard[base];
-	if (likely(nr_cids))
-		ref->shard_end = cid_to_shard[base + nr_cids - 1] + 1;
-	else
-		ref->shard_end = ref->shard_first;
+	cid_ਮੰਜ਼ਿਲ_shard = rcu_dereference_all(scx_cid_ਮੰਜ਼ਿਲ_shard);
+	ref->shard_ਪਹਿਲਾ = cid_ਮੰਜ਼ਿਲ_shard[ਅਧਾਰ];
+	ਜੇ (likely(nr_cids))
+		ref->shard_ਸਿਰਾ = cid_ਮੰਜ਼ਿਲ_shard[ਅਧਾਰ + nr_cids - 1] + 1;
+	ਨਹੀਂਤਾਂ
+		ref->shard_ਸਿਰਾ = ref->shard_ਪਹਿਲਾ;
 }
 
 /**
@@ -1054,45 +1054,45 @@ void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
  * @out->nr_cids to 0. scx_error()s on @ref's sched if @out can't hold the
  * shard.
  */
-void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
-			 struct scx_cmask *out)
+ਖਾਲੀ scx_cmask_ref_shard(ਅਚਲ ਬਣਤਰ scx_cmask_ref *ref, s32 shard_idx,
+			 ਬਣਤਰ scx_cmask *ਬਾਹਰਲਾ)
 {
-	const struct scx_cid_shard *shard =
+	ਅਚਲ ਬਣਤਰ scx_cid_shard *shard =
 		&rcu_dereference_all(scx_cid_shard_ranges)[shard_idx];
-	u32 shard_base = shard->base_cid;
-	u32 shard_end = shard_base + shard->nr_cids;
-	u32 isect_base, isect_end, nr_words, src_off, wi;
-	u64 head_mask, tail_mask;
+	u32 shard_ਅਧਾਰ = shard->ਅਧਾਰ_cid;
+	u32 shard_ਸਿਰਾ = shard_ਅਧਾਰ + shard->nr_cids;
+	u32 isect_ਅਧਾਰ, isect_ਸਿਰਾ, nr_ਸ਼ਬਦ, src_off, wi;
+	u64 ਸਿਰ_ਨਕਾਬ, ਪੂਛ_ਨਕਾਬ;
 
-	isect_base = max(ref->base, shard_base);
-	isect_end = min(ref->base + ref->nr_cids, shard_end);
+	isect_ਅਧਾਰ = max(ref->ਅਧਾਰ, shard_ਅਧਾਰ);
+	isect_ਸਿਰਾ = min(ref->ਅਧਾਰ + ref->nr_cids, shard_ਸਿਰਾ);
 
-	if (isect_base >= isect_end) {
-		out->base = shard_base;
-		out->nr_cids = 0;
-		return;
+	ਜੇ (isect_ਅਧਾਰ >= isect_ਸਿਰਾ) {
+		ਬਾਹਰਲਾ->ਅਧਾਰ = shard_ਅਧਾਰ;
+		ਬਾਹਰਲਾ->nr_cids = 0;
+		ਵਾਪਸ;
 	}
 
-	nr_words = ((isect_end - 1) / 64) - (isect_base / 64) + 1;
-	if (nr_words > out->alloc_words) {
+	nr_ਸ਼ਬਦ = ((isect_ਸਿਰਾ - 1) / 64) - (isect_ਅਧਾਰ / 64) + 1;
+	ਜੇ (nr_ਸ਼ਬਦ > ਬਾਹਰਲਾ->alloc_ਸ਼ਬਦ) {
 		scx_error(ref->sch, "scx_cmask_ref_shard: out alloc_words=%u < %u for shard %d",
-			  out->alloc_words, nr_words, shard_idx);
-		out->base = shard_base;
-		out->nr_cids = 0;
-		return;
+			  ਬਾਹਰਲਾ->alloc_ਸ਼ਬਦ, nr_ਸ਼ਬਦ, shard_idx);
+		ਬਾਹਰਲਾ->ਅਧਾਰ = shard_ਅਧਾਰ;
+		ਬਾਹਰਲਾ->nr_cids = 0;
+		ਵਾਪਸ;
 	}
 
-	out->base = isect_base;
-	out->nr_cids = isect_end - isect_base;
-	src_off = (isect_base / 64) - (ref->base / 64);
+	ਬਾਹਰਲਾ->ਅਧਾਰ = isect_ਅਧਾਰ;
+	ਬਾਹਰਲਾ->nr_cids = isect_ਸਿਰਾ - isect_ਅਧਾਰ;
+	src_off = (isect_ਅਧਾਰ / 64) - (ref->ਅਧਾਰ / 64);
 
-	for (wi = 0; wi < nr_words; wi++)
-		out->bits[wi] = READ_ONCE(ref->src->bits[src_off + wi]);
+	ਲਈ (wi = 0; wi < nr_ਸ਼ਬਦ; wi++)
+		ਬਾਹਰਲਾ->ਬਿੱਟ[wi] = READ_ONCE(ref->src->ਬਿੱਟ[src_off + wi]);
 
-	head_mask = GENMASK_U64(63, isect_base & 63);
-	out->bits[0] &= head_mask;
-	tail_mask = GENMASK_U64((isect_end - 1) & 63, 0);
-	out->bits[nr_words - 1] &= tail_mask;
+	ਸਿਰ_ਨਕਾਬ = GENMASK_U64(63, isect_ਅਧਾਰ & 63);
+	ਬਾਹਰਲਾ->ਬਿੱਟ[0] &= ਸਿਰ_ਨਕਾਬ;
+	ਪੂਛ_ਨਕਾਬ = GENMASK_U64((isect_ਸਿਰਾ - 1) & 63, 0);
+	ਬਾਹਰਲਾ->ਬਿੱਟ[nr_ਸ਼ਬਦ - 1] &= ਪੂਛ_ਨਕਾਬ;
 }
 
 /**
@@ -1104,10 +1104,10 @@ void scx_cmask_ref_shard(const struct scx_cmask_ref *ref, s32 shard_idx,
  * are OR'd into @ref->src and bits outside are left unchanged. Stores on
  * @ref->src use WRITE_ONCE since BPF may read/write concurrently.
  */
-void scx_cmask_ref_or(const struct scx_cmask_ref *ref, const struct scx_cmask *src)
+ਖਾਲੀ scx_cmask_ref_or(ਅਚਲ ਬਣਤਰ scx_cmask_ref *ref, ਅਚਲ ਬਣਤਰ scx_cmask *src)
 {
-	cmask_walk_op2(ref->src->bits, ref->base, ref->nr_cids,
-		       src->bits, src->base, src->nr_cids, CMASK_OP2_REF_OR);
+	cmask_walk_op2(ref->src->ਬਿੱਟ, ref->ਅਧਾਰ, ref->nr_cids,
+		       src->ਬਿੱਟ, src->ਅਧਾਰ, src->nr_cids, CMASK_OP2_REF_OR);
 }
 
 /**
@@ -1119,10 +1119,10 @@ void scx_cmask_ref_or(const struct scx_cmask_ref *ref, const struct scx_cmask *s
  * take @src's values and bits outside are left unchanged. Stores on @ref->src
  * use WRITE_ONCE since BPF may read/write concurrently.
  */
-void scx_cmask_ref_copy(const struct scx_cmask_ref *ref, const struct scx_cmask *src)
+ਖਾਲੀ scx_cmask_ref_copy(ਅਚਲ ਬਣਤਰ scx_cmask_ref *ref, ਅਚਲ ਬਣਤਰ scx_cmask *src)
 {
-	cmask_walk_op2(ref->src->bits, ref->base, ref->nr_cids,
-		       src->bits, src->base, src->nr_cids, CMASK_OP2_REF_COPY);
+	cmask_walk_op2(ref->src->ਬਿੱਟ, ref->ਅਧਾਰ, ref->nr_cids,
+		       src->ਬਿੱਟ, src->ਅਧਾਰ, src->nr_cids, CMASK_OP2_REF_COPY);
 }
 
 /**
@@ -1135,38 +1135,38 @@ void scx_cmask_ref_copy(const struct scx_cmask_ref *ref, const struct scx_cmask 
  * and stores use WRITE_ONCE since BPF may read concurrently, so the arena
  * header is never read.
  */
-void scx_cmask_ref_from_cpumask(const struct scx_cmask_ref *ref,
-				const struct cpumask *cpumask)
+ਖਾਲੀ scx_cmask_ref_from_cpumask(ਅਚਲ ਬਣਤਰ scx_cmask_ref *ref,
+				ਅਚਲ ਬਣਤਰ cpumask *cpumask)
 {
-	struct scx_cmask *m = ref->src;
-	u32 base = ref->base, nr_cids = ref->nr_cids;
-	u32 wi, nr_words;
+	ਬਣਤਰ scx_cmask *m = ref->src;
+	u32 ਅਧਾਰ = ref->ਅਧਾਰ, nr_cids = ref->nr_cids;
+	u32 wi, nr_ਸ਼ਬਦ;
 
-	if (!nr_cids)
-		return;
+	ਜੇ (!nr_cids)
+		ਵਾਪਸ;
 
-	nr_words = (base + nr_cids - 1) / 64 - base / 64 + 1;
-	for (wi = 0; wi < nr_words; wi++) {
-		u32 word_first_cid = (base / 64 + wi) * 64;
-		u64 word = 0;
-		u32 bit;
+	nr_ਸ਼ਬਦ = (ਅਧਾਰ + nr_cids - 1) / 64 - ਅਧਾਰ / 64 + 1;
+	ਲਈ (wi = 0; wi < nr_ਸ਼ਬਦ; wi++) {
+		u32 ਸ਼ਬਦ_ਪਹਿਲਾ_cid = (ਅਧਾਰ / 64 + wi) * 64;
+		u64 ਸ਼ਬਦ = 0;
+		u32 ਦੋਆਧਾਰੀ_ਅੰਕ_2;
 
-		for (bit = 0; bit < 64; bit++) {
-			u32 cid = word_first_cid + bit;
+		ਲਈ (ਦੋਆਧਾਰੀ_ਅੰਕ_2 = 0; ਦੋਆਧਾਰੀ_ਅੰਕ_2 < 64; ਦੋਆਧਾਰੀ_ਅੰਕ_2++) {
+			u32 cid = ਸ਼ਬਦ_ਪਹਿਲਾ_cid + ਦੋਆਧਾਰੀ_ਅੰਕ_2;
 
-			if (cid < base || cid >= base + nr_cids)
-				continue;
-			if (cpumask_test_cpu(__scx_cid_to_cpu(cid), cpumask))
-				word |= BIT_U64(bit);
+			ਜੇ (cid < ਅਧਾਰ || cid >= ਅਧਾਰ + nr_cids)
+				ਜਾਰੀ;
+			ਜੇ (cpumask_test_cpu(__scx_cid_to_cpu(cid), cpumask))
+				ਸ਼ਬਦ |= ਦੋਆਧਾਰੀ_ਅੰਕ_U64(ਦੋਆਧਾਰੀ_ਅੰਕ_2);
 		}
-		WRITE_ONCE(m->bits[wi], word);
+		WRITE_ONCE(m->ਬਿੱਟ[wi], ਸ਼ਬਦ);
 	}
 }
 
-int scx_cid_kfunc_init(void)
+ਪੂਰਨ scx_cid_kfunc_init(ਖਾਲੀ)
 {
-	return register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_init_cids) ?:
-		register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_cid) ?:
-		register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &scx_kfunc_set_cid) ?:
-		register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &scx_kfunc_set_cid);
+	ਵਾਪਸ ਰਜਿਸਟਰ_btf_kfunc_id_ਸੈੱਟ(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_ਸੈੱਟ_init_cids) ?:
+		ਰਜਿਸਟਰ_btf_kfunc_id_ਸੈੱਟ(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_ਸੈੱਟ_cid) ?:
+		ਰਜਿਸਟਰ_btf_kfunc_id_ਸੈੱਟ(BPF_PROG_TYPE_TRACING, &scx_kfunc_ਸੈੱਟ_cid) ?:
+		ਰਜਿਸਟਰ_btf_kfunc_id_ਸੈੱਟ(BPF_PROG_TYPE_SYSCALL, &scx_kfunc_ਸੈੱਟ_cid);
 }

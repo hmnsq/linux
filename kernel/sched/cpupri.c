@@ -22,7 +22,7 @@
  *  worst case complexity of O(min(101, nr_domcpus)), though the scenario that
  *  yields the worst case search is fairly contrived.
  */
-#include "sched.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sched.h"
 
 /*
  * p->rt_priority   p->prio   newpri   cpupri
@@ -40,38 +40,38 @@
  *
  *				 100	  100 (CPUPRI_HIGHER)
  */
-static int convert_prio(int prio)
+ਸਥਿਰ ਪੂਰਨ convert_prio(ਪੂਰਨ prio)
 {
-	int cpupri;
+	ਪੂਰਨ cpupri;
 
-	switch (prio) {
-	case CPUPRI_INVALID:
+	ਚੋਣ (prio) {
+	ਹਾਲਤ CPUPRI_INVALID:
 		cpupri = CPUPRI_INVALID;	/* -1 */
-		break;
+		ਰੋਕੋ;
 
-	case 0 ... 98:
+	ਹਾਲਤ 0 ... 98:
 		cpupri = MAX_RT_PRIO-1 - prio;	/* 1 ... 99 */
-		break;
+		ਰੋਕੋ;
 
-	case MAX_RT_PRIO-1:
-		cpupri = CPUPRI_NORMAL;		/*  0 */
-		break;
+	ਹਾਲਤ MAX_RT_PRIO-1:
+		cpupri = CPUPRI_ਸਾਧਾਰਨ;		/*  0 */
+		ਰੋਕੋ;
 
-	case MAX_RT_PRIO:
+	ਹਾਲਤ MAX_RT_PRIO:
 		cpupri = CPUPRI_HIGHER;		/* 100 */
-		break;
+		ਰੋਕੋ;
 	}
 
-	return cpupri;
+	ਵਾਪਸ cpupri;
 }
 
-static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
-				struct cpumask *lowest_mask, int idx)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ __cpupri_find(ਬਣਤਰ cpupri *cp, ਬਣਤਰ task_struct *p,
+				ਬਣਤਰ cpumask *ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ, ਪੂਰਨ idx)
 {
-	struct cpupri_vec *vec  = &cp->pri_to_cpu[idx];
-	int skip = 0;
+	ਬਣਤਰ cpupri_vec *vec  = &cp->pri_ਮੰਜ਼ਿਲ_cpu[idx];
+	ਪੂਰਨ skip = 0;
 
-	if (!atomic_read(&(vec)->count))
+	ਜੇ (!atomic_read(&(vec)->ਗਿਣਤੀ_2))
 		skip = 1;
 	/*
 	 * When looking at the vector, we need to read the counter,
@@ -94,15 +94,15 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 	smp_rmb();
 
 	/* Need to do the rmb for every iteration */
-	if (skip)
-		return 0;
+	ਜੇ (skip)
+		ਵਾਪਸ 0;
 
-	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
-		return 0;
+	ਜੇ (cpumask_any_and(&p->cpus_ਨਕਾਬ, vec->ਨਕਾਬ) >= nr_cpu_ids)
+		ਵਾਪਸ 0;
 
-	if (lowest_mask) {
-		cpumask_and(lowest_mask, &p->cpus_mask, vec->mask);
-		cpumask_and(lowest_mask, lowest_mask, cpu_active_mask);
+	ਜੇ (ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ) {
+		cpumask_and(ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ, &p->cpus_ਨਕਾਬ, vec->ਨਕਾਬ);
+		cpumask_and(ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ, ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ, cpu_ਸਰਗਰਮ_ਨਕਾਬ);
 
 		/*
 		 * We have to ensure that we have at least one bit
@@ -112,17 +112,17 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 		 * condition, simply act as though we never hit this
 		 * priority level and continue on.
 		 */
-		if (cpumask_empty(lowest_mask))
-			return 0;
+		ਜੇ (cpumask_ਖਾਲੀ_ਥਾਵਾਂ(ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ))
+			ਵਾਪਸ 0;
 	}
 
-	return 1;
+	ਵਾਪਸ 1;
 }
 
-int cpupri_find(struct cpupri *cp, struct task_struct *p,
-		struct cpumask *lowest_mask)
+ਪੂਰਨ cpupri_ਲੱਭੋ(ਬਣਤਰ cpupri *cp, ਬਣਤਰ task_struct *p,
+		ਬਣਤਰ cpumask *ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ)
 {
-	return cpupri_find_fitness(cp, p, lowest_mask, NULL);
+	ਵਾਪਸ cpupri_ਲੱਭੋ_fitness(cp, p, ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ, ਨਿਰਾ);
 }
 
 /**
@@ -142,37 +142,37 @@ int cpupri_find(struct cpupri *cp, struct task_struct *p,
  *
  * Return: (int)bool - CPUs were found
  */
-int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
-		struct cpumask *lowest_mask,
-		bool (*fitness_fn)(struct task_struct *p, int cpu))
+ਪੂਰਨ cpupri_ਲੱਭੋ_fitness(ਬਣਤਰ cpupri *cp, ਬਣਤਰ task_struct *p,
+		ਬਣਤਰ cpumask *ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ,
+		bool (*fitness_fn)(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu))
 {
-	int task_pri = convert_prio(p->prio);
-	int idx, cpu;
+	ਪੂਰਨ task_pri = convert_prio(p->prio);
+	ਪੂਰਨ idx, cpu;
 
 	WARN_ON_ONCE(task_pri >= CPUPRI_NR_PRIORITIES);
 
-	for (idx = 0; idx < task_pri; idx++) {
+	ਲਈ (idx = 0; idx < task_pri; idx++) {
 
-		if (!__cpupri_find(cp, p, lowest_mask, idx))
-			continue;
+		ਜੇ (!__cpupri_find(cp, p, ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ, idx))
+			ਜਾਰੀ;
 
-		if (!lowest_mask || !fitness_fn)
-			return 1;
+		ਜੇ (!ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ || !fitness_fn)
+			ਵਾਪਸ 1;
 
 		/* Ensure the capacity of the CPUs fit the task */
-		for_each_cpu(cpu, lowest_mask) {
-			if (!fitness_fn(p, cpu))
-				cpumask_clear_cpu(cpu, lowest_mask);
+		for_each_cpu(cpu, ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ) {
+			ਜੇ (!fitness_fn(p, cpu))
+				cpumask_clear_cpu(cpu, ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ);
 		}
 
 		/*
 		 * If no CPU at the current priority can fit the task
 		 * continue looking
 		 */
-		if (cpumask_empty(lowest_mask))
-			continue;
+		ਜੇ (cpumask_ਖਾਲੀ_ਥਾਵਾਂ(ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ))
+			ਜਾਰੀ;
 
-		return 1;
+		ਵਾਪਸ 1;
 	}
 
 	/*
@@ -192,10 +192,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 	 * must do proper RT planning to avoid overloading the system if they
 	 * really care.
 	 */
-	if (fitness_fn)
-		return cpupri_find(cp, p, lowest_mask);
+	ਜੇ (fitness_fn)
+		ਵਾਪਸ cpupri_ਲੱਭੋ(cp, p, ਸਭ_ਤੋਂ_ਨੀਵਾਂ_ਨਕਾਬ);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /**
@@ -208,18 +208,18 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpupri_set(struct cpupri *cp, int cpu, int newpri)
+ਖਾਲੀ cpupri_ਸੈੱਟ(ਬਣਤਰ cpupri *cp, ਪੂਰਨ cpu, ਪੂਰਨ newpri)
 {
-	int *currpri = &cp->cpu_to_pri[cpu];
-	int oldpri = *currpri;
-	int do_mb = 0;
+	ਪੂਰਨ *currpri = &cp->cpu_ਮੰਜ਼ਿਲ_pri[cpu];
+	ਪੂਰਨ oldpri = *currpri;
+	ਪੂਰਨ do_mb = 0;
 
 	newpri = convert_prio(newpri);
 
 	BUG_ON(newpri >= CPUPRI_NR_PRIORITIES);
 
-	if (newpri == oldpri)
-		return;
+	ਜੇ (newpri == oldpri)
+		ਵਾਪਸ;
 
 	/*
 	 * If the CPU was currently mapped to a different value, we
@@ -227,21 +227,21 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 	 * Note, we must add the new value first, otherwise we risk the
 	 * cpu being missed by the priority loop in cpupri_find.
 	 */
-	if (likely(newpri != CPUPRI_INVALID)) {
-		struct cpupri_vec *vec = &cp->pri_to_cpu[newpri];
+	ਜੇ (likely(newpri != CPUPRI_INVALID)) {
+		ਬਣਤਰ cpupri_vec *vec = &cp->pri_ਮੰਜ਼ਿਲ_cpu[newpri];
 
-		cpumask_set_cpu(cpu, vec->mask);
+		cpumask_ਸੈੱਟ_cpu(cpu, vec->ਨਕਾਬ);
 		/*
 		 * When adding a new vector, we update the mask first,
 		 * do a write memory barrier, and then update the count, to
 		 * make sure the vector is visible when count is set.
 		 */
 		smp_mb__before_atomic();
-		atomic_inc(&(vec)->count);
+		atomic_inc(&(vec)->ਗਿਣਤੀ_2);
 		do_mb = 1;
 	}
-	if (likely(oldpri != CPUPRI_INVALID)) {
-		struct cpupri_vec *vec  = &cp->pri_to_cpu[oldpri];
+	ਜੇ (likely(oldpri != CPUPRI_INVALID)) {
+		ਬਣਤਰ cpupri_vec *vec  = &cp->pri_ਮੰਜ਼ਿਲ_cpu[oldpri];
 
 		/*
 		 * Because the order of modification of the vec->count
@@ -255,16 +255,16 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		 * We only need to do a memory barrier if we updated
 		 * the new priority vec.
 		 */
-		if (do_mb)
+		ਜੇ (do_mb)
 			smp_mb__after_atomic();
 
 		/*
 		 * When removing from the vector, we decrement the counter first
 		 * do a memory barrier and then clear the mask.
 		 */
-		atomic_dec(&(vec)->count);
+		atomic_dec(&(vec)->ਗਿਣਤੀ_2);
 		smp_mb__after_atomic();
-		cpumask_clear_cpu(cpu, vec->mask);
+		cpumask_clear_cpu(cpu, vec->ਨਕਾਬ);
 	}
 
 	*currpri = newpri;
@@ -276,42 +276,42 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
  *
  * Return: -ENOMEM on memory allocation failure.
  */
-int cpupri_init(struct cpupri *cp)
+ਪੂਰਨ cpupri_init(ਬਣਤਰ cpupri *cp)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
-		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
+	ਲਈ (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
+		ਬਣਤਰ cpupri_vec *vec = &cp->pri_ਮੰਜ਼ਿਲ_cpu[i];
 
-		atomic_set(&vec->count, 0);
-		if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
-			goto cleanup;
+		atomic_ਸੈੱਟ(&vec->ਗਿਣਤੀ_2, 0);
+		ਜੇ (!zalloc_cpumask_var(&vec->ਨਕਾਬ, GFP_KERNEL))
+			ਜਾਓ cleanup;
 	}
 
-	cp->cpu_to_pri = kzalloc_objs(int, nr_cpu_ids);
-	if (!cp->cpu_to_pri)
-		goto cleanup;
+	cp->cpu_ਮੰਜ਼ਿਲ_pri = kzalloc_objs(ਪੂਰਨ, nr_cpu_ids);
+	ਜੇ (!cp->cpu_ਮੰਜ਼ਿਲ_pri)
+		ਜਾਓ cleanup;
 
 	for_each_possible_cpu(i)
-		cp->cpu_to_pri[i] = CPUPRI_INVALID;
+		cp->cpu_ਮੰਜ਼ਿਲ_pri[i] = CPUPRI_INVALID;
 
-	return 0;
+	ਵਾਪਸ 0;
 
 cleanup:
-	for (i--; i >= 0; i--)
-		free_cpumask_var(cp->pri_to_cpu[i].mask);
-	return -ENOMEM;
+	ਲਈ (i--; i >= 0; i--)
+		free_cpumask_var(cp->pri_ਮੰਜ਼ਿਲ_cpu[i].ਨਕਾਬ);
+	ਵਾਪਸ -ENOMEM;
 }
 
 /**
  * cpupri_cleanup - clean up the cpupri structure
  * @cp: The cpupri context
  */
-void cpupri_cleanup(struct cpupri *cp)
+ਖਾਲੀ cpupri_cleanup(ਬਣਤਰ cpupri *cp)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	kfree(cp->cpu_to_pri);
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
-		free_cpumask_var(cp->pri_to_cpu[i].mask);
+	kfree(cp->cpu_ਮੰਜ਼ਿਲ_pri);
+	ਲਈ (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
+		free_cpumask_var(cp->pri_ਮੰਜ਼ਿਲ_cpu[i].ਨਕਾਬ);
 }

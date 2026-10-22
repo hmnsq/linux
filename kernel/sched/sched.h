@@ -2,135 +2,135 @@
 /*
  * Scheduler internal types and methods:
  */
-#ifndef _KERNEL_SCHED_SCHED_H
-#define _KERNEL_SCHED_SCHED_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _KERNEL_SCHED_SCHED_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _KERNEL_SCHED_SCHED_H
 
-#include <linux/prandom.h>
-#include <linux/sched/affinity.h>
-#include <linux/sched/autogroup.h>
-#include <linux/sched/cpufreq.h>
-#include <linux/sched/deadline.h>
-#include <linux/sched.h>
-#include <linux/sched/loadavg.h>
-#include <linux/sched/mm.h>
-#include <linux/sched/rseq_api.h>
-#include <linux/sched/signal.h>
-#include <linux/sched/smt.h>
-#include <linux/sched/stat.h>
-#include <linux/sched/sysctl.h>
-#include <linux/sched/task_flags.h>
-#include <linux/sched/task.h>
-#include <linux/sched/topology.h>
-#include <linux/atomic.h>
-#include <linux/bitmap.h>
-#include <linux/bug.h>
-#include <linux/capability.h>
-#include <linux/cgroup_api.h>
-#include <linux/cgroup.h>
-#include <linux/context_tracking.h>
-#include <linux/cpufreq.h>
-#include <linux/cpumask_api.h>
-#include <linux/cpuset.h>
-#include <linux/ctype.h>
-#include <linux/file.h>
-#include <linux/fs_api.h>
-#include <linux/hrtimer_api.h>
-#include <linux/interrupt.h>
-#include <linux/irq_work.h>
-#include <linux/jiffies.h>
-#include <linux/kref_api.h>
-#include <linux/kthread.h>
-#include <linux/ktime_api.h>
-#include <linux/lockdep_api.h>
-#include <linux/lockdep.h>
-#include <linux/memblock.h>
-#include <linux/memcontrol.h>
-#include <linux/minmax.h>
-#include <linux/mm.h>
-#include <linux/module.h>
-#include <linux/mutex_api.h>
-#include <linux/plist.h>
-#include <linux/poll.h>
-#include <linux/proc_fs.h>
-#include <linux/profile.h>
-#include <linux/psi.h>
-#include <linux/rcupdate.h>
-#include <linux/seq_file.h>
-#include <linux/seqlock.h>
-#include <linux/softirq.h>
-#include <linux/spinlock_api.h>
-#include <linux/static_key.h>
-#include <linux/stop_machine.h>
-#include <linux/syscalls_api.h>
-#include <linux/syscalls.h>
-#include <linux/tick.h>
-#include <linux/topology.h>
-#include <linux/types.h>
-#include <linux/u64_stats_sync_api.h>
-#include <linux/uaccess.h>
-#include <linux/vmstat.h>
-#include <linux/wait_api.h>
-#include <linux/wait_bit.h>
-#include <linux/workqueue_api.h>
-#include <linux/delayacct.h>
-#include <linux/mmu_context.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/prandom.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/affinity.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/autogroup.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/cpufreq.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/deadline.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/loadavg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/mm.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/rseq_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/signal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/smt.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/sysctl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/task_flags.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/task.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/topology.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/atomic.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/bitmap.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/bug.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/capability.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/cgroup_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/cgroup.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/context_tracking.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/cpufreq.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/cpumask_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/cpuset.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/ctype.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/file.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/fs_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/hrtimer_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/interrupt.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/irq_work.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/jiffies.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/kref_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/kthread.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/ktime_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/lockdep_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/lockdep.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/memblock.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/memcontrol.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/minmax.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/mm.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/module.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/mutex_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/plist.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/poll.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/proc_fs.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/profile.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/psi.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/rcupdate.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/seq_file.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/seqlock.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/softirq.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/spinlock_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/static_key.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/stop_machine.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/syscalls_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/syscalls.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/tick.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/topology.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/u64_stats_sync_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/uaccess.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/vmstat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/wait_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/wait_bit.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/workqueue_api.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/delayacct.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/mmu_context.h>
 
-#include <trace/events/power.h>
-#include <trace/events/sched.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <trace/events/power.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <trace/events/sched.h>
 
-#include "../workqueue_internal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../workqueue_internal.h"
 
-struct rq;
-struct cfs_rq;
-struct rt_rq;
-struct sched_group;
-struct cpuidle_state;
+ਬਣਤਰ rq;
+ਬਣਤਰ cfs_rq;
+ਬਣਤਰ rt_rq;
+ਬਣਤਰ sched_ਸਮੂਹ;
+ਬਣਤਰ cpuidle_state;
 
-#if defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
+#ਜੇ defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
 # include <asm/paravirt.h>
-#endif
+#ਜੇ_ਅੰਤ
 
-#include <asm/barrier.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <asm/barrier.h>
 
-#include "cpupri.h"
-#include "cpudeadline.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "cpupri.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "cpudeadline.h"
 
 /* task_struct::on_rq states: */
-#define TASK_ON_RQ_QUEUED	1
-#define TASK_ON_RQ_MIGRATING	2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TASK_ON_RQ_QUEUED	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TASK_ON_RQ_MIGRATING	2
 
-extern __read_mostly int scheduler_running;
+ਬਾਹਰੀ __read_mostly ਪੂਰਨ scheduler_running;
 
-extern unsigned long calc_load_update;
-extern atomic_long_t calc_load_tasks;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ calc_ਲੱਦੋ_update;
+ਬਾਹਰੀ atomic_long_t calc_ਲੱਦੋ_tasks;
 
-extern void calc_global_load_tick(struct rq *this_rq);
-extern long calc_load_fold_active(struct rq *this_rq, long adjust);
+ਬਾਹਰੀ ਖਾਲੀ calc_global_ਲੱਦੋ_tick(ਬਣਤਰ rq *this_rq);
+ਬਾਹਰੀ ਲੰਮਾ calc_ਲੱਦੋ_fold_ਸਰਗਰਮ(ਬਣਤਰ rq *this_rq, ਲੰਮਾ adjust);
 
-extern void call_trace_sched_update_nr_running(struct rq *rq, int count);
+ਬਾਹਰੀ ਖਾਲੀ call_trace_sched_update_nr_running(ਬਣਤਰ rq *rq, ਪੂਰਨ ਗਿਣਤੀ_2);
 
-extern int sysctl_sched_rt_period;
-extern int sysctl_sched_rt_runtime;
-extern int sched_rr_timeslice;
+ਬਾਹਰੀ ਪੂਰਨ sysctl_sched_rt_period;
+ਬਾਹਰੀ ਪੂਰਨ sysctl_sched_rt_runtime;
+ਬਾਹਰੀ ਪੂਰਨ sched_rr_timeslice;
 
 /*
  * Asymmetric CPU capacity bits
  */
-struct asym_cap_data {
-	struct list_head link;
-	struct rcu_head rcu;
-	unsigned long capacity;
-	unsigned long cpus[];
+ਬਣਤਰ asym_cap_ਅੰਕੜੇ {
+	ਬਣਤਰ list_ਸਿਰ link;
+	ਬਣਤਰ rcu_ਸਿਰ rcu;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸਮਰੱਥਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpus[];
 };
 
-extern struct list_head asym_cap_list;
+ਬਾਹਰੀ ਬਣਤਰ list_ਸਿਰ asym_cap_list;
 
-#define cpu_capacity_span(asym_data) to_cpumask((asym_data)->cpus)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ cpu_ਸਮਰੱਥਾ_ਵਿਸਤਾਰ(asym_ਅੰਕੜੇ) ਮੰਜ਼ਿਲ_cpumask((asym_ਅੰਕੜੇ)->cpus)
 
 /*
  * Helpers for converting nanosecond timing to jiffy resolution
  */
-#define NS_TO_JIFFIES(time)	((unsigned long)(time) / (NSEC_PER_SEC/HZ))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NS_ਮੰਜ਼ਿਲ_JIFFIES(ਸਮਾਂ)	((ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)(ਸਮਾਂ) / (NSEC_ਪ੍ਰਤੀ_SEC/HZ))
 
 /*
  * Increase resolution of nice-level calculations for 64-bit architectures.
@@ -146,22 +146,22 @@ extern struct list_head asym_cap_list;
  * Really only required when CONFIG_FAIR_GROUP_SCHED=y is also set, but to
  * increase coverage and consistency always enable it on 64-bit platforms.
  */
-#ifdef CONFIG_64BIT
-# define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT + SCHED_FIXEDPOINT_SHIFT)
-# define scale_load(w)		((w) << SCHED_FIXEDPOINT_SHIFT)
-# define scale_load_down(w)					\
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_64_ਦੋਆਧਾਰੀ_ਅੰਕ
+# define NICE_0_ਲੱਦੋ_ਖਿਸਕਾਓ	(SCHED_FIXEDPOINT_ਖਿਸਕਾਓ + SCHED_FIXEDPOINT_ਖਿਸਕਾਓ)
+# define scale_ਲੱਦੋ(w)		((w) << SCHED_FIXEDPOINT_ਖਿਸਕਾਓ)
+# define scale_ਲੱਦੋ_ਥੱਲੇ(w)					\
 ({								\
-	unsigned long __w = (w);				\
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ __w = (w);				\
 								\
-	if (__w)						\
-		__w = max(2UL, __w >> SCHED_FIXEDPOINT_SHIFT);	\
+	ਜੇ (__w)						\
+		__w = max(2UL, __w >> SCHED_FIXEDPOINT_ਖਿਸਕਾਓ);	\
 	__w;							\
 })
-#else
-# define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT)
-# define scale_load(w)		(w)
-# define scale_load_down(w)	(w)
-#endif
+#ਨਹੀਂਤਾਂ
+# define NICE_0_ਲੱਦੋ_ਖਿਸਕਾਓ	(SCHED_FIXEDPOINT_ਖਿਸਕਾਓ)
+# define scale_ਲੱਦੋ(w)		(w)
+# define scale_ਲੱਦੋ_ਥੱਲੇ(w)	(w)
+#ਜੇ_ਅੰਤ
 
 /*
  * Task weight (visible to users) and its load (invisible to users) have
@@ -172,73 +172,73 @@ extern struct list_head asym_cap_list;
  *  scale_load(sched_prio_to_weight[NICE_TO_PRIO(0)-MAX_RT_PRIO]) == NICE_0_LOAD
  *
  */
-#define NICE_0_LOAD		(1L << NICE_0_LOAD_SHIFT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NICE_0_ਲੱਦੋ		(1L << NICE_0_ਲੱਦੋ_ਖਿਸਕਾਓ)
 
 /*
  * Single value that decides SCHED_DEADLINE internal math precision.
  * 10 -> just above 1us
  * 9  -> just above 0.5us
  */
-#define DL_SCALE		10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DL_SCALE		10
 
 /*
  * Single value that denotes runtime == period, ie unlimited time.
  */
-#define RUNTIME_INF		((u64)~0ULL)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RUNTIME_INF		((u64)~0ULL)
 
-static inline int idle_policy(int policy)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ idle_policy(ਪੂਰਨ policy)
 {
-	return policy == SCHED_IDLE;
+	ਵਾਪਸ policy == SCHED_IDLE;
 }
 
-static inline int normal_policy(int policy)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ ਸਾਧਾਰਨ_policy(ਪੂਰਨ policy)
 {
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (policy == SCHED_EXT)
-		return true;
-#endif
-	return policy == SCHED_NORMAL;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CLASS_EXT
+	ਜੇ (policy == SCHED_EXT)
+		ਵਾਪਸ true;
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ policy == SCHED_ਸਾਧਾਰਨ;
 }
 
-static inline int fair_policy(int policy)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ fair_policy(ਪੂਰਨ policy)
 {
-	return normal_policy(policy) || policy == SCHED_BATCH;
+	ਵਾਪਸ ਸਾਧਾਰਨ_policy(policy) || policy == SCHED_BATCH;
 }
 
-static inline int rt_policy(int policy)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ rt_policy(ਪੂਰਨ policy)
 {
-	return policy == SCHED_FIFO || policy == SCHED_RR;
+	ਵਾਪਸ policy == SCHED_FIFO || policy == SCHED_RR;
 }
 
-static inline int dl_policy(int policy)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ dl_policy(ਪੂਰਨ policy)
 {
-	return policy == SCHED_DEADLINE;
+	ਵਾਪਸ policy == SCHED_DEADLINE;
 }
 
-static inline bool valid_policy(int policy)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool valid_policy(ਪੂਰਨ policy)
 {
-	return idle_policy(policy) || fair_policy(policy) ||
+	ਵਾਪਸ idle_policy(policy) || fair_policy(policy) ||
 		rt_policy(policy) || dl_policy(policy);
 }
 
-static inline int task_has_idle_policy(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_has_idle_policy(ਬਣਤਰ task_struct *p)
 {
-	return idle_policy(p->policy);
+	ਵਾਪਸ idle_policy(p->policy);
 }
 
-static inline int task_has_rt_policy(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_has_rt_policy(ਬਣਤਰ task_struct *p)
 {
-	return rt_policy(p->policy);
+	ਵਾਪਸ rt_policy(p->policy);
 }
 
-static inline int task_has_dl_policy(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_has_dl_policy(ਬਣਤਰ task_struct *p)
 {
-	return dl_policy(p->policy);
+	ਵਾਪਸ dl_policy(p->policy);
 }
 
-#define cap_scale(v, s)		((v)*(s) >> SCHED_CAPACITY_SHIFT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ cap_scale(v, s)		((v)*(s) >> SCHED_ਸਮਰੱਥਾ_ਖਿਸਕਾਓ)
 
-static inline void update_avg(u64 *avg, u64 sample)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_avg(u64 *avg, u64 sample)
 {
 	s64 diff = sample - *avg;
 
@@ -249,8 +249,8 @@ static inline void update_avg(u64 *avg, u64 sample)
  * Shifting a value by an exponent greater *or equal* to the size of said value
  * is UB; cap at size-1.
  */
-#define shr_bound(val, shift)							\
-	(val >> min_t(typeof(shift), shift, BITS_PER_TYPE(typeof(val)) - 1))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ shr_bound(val, ਖਿਸਕਾਓ)							\
+	(val >> min_t(typeof(ਖਿਸਕਾਓ), ਖਿਸਕਾਓ, ਬਿੱਟ_ਪ੍ਰਤੀ_TYPE(typeof(val)) - 1))
 
 /*
  * cgroup weight knobs should use the common MIN, DFL and MAX values which are
@@ -258,16 +258,16 @@ static inline void update_avg(u64 *avg, u64 sample)
  * maps pretty well onto the shares value used by scheduler and the round-trip
  * conversions preserve the original value over the entire range.
  */
-static inline unsigned long sched_weight_from_cgroup(unsigned long cgrp_weight)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sched_ਭਾਰ_from_cgroup(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cgrp_ਭਾਰ)
 {
-	return DIV_ROUND_CLOSEST_ULL(cgrp_weight * 1024, CGROUP_WEIGHT_DFL);
+	ਵਾਪਸ DIV_ਗੇੜਾ_CLOSEST_ULL(cgrp_ਭਾਰ * 1024, CGROUP_ਭਾਰ_DFL);
 }
 
-static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sched_ਭਾਰ_ਮੰਜ਼ਿਲ_cgroup(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਭਾਰ)
 {
-	return clamp_t(unsigned long,
-		       DIV_ROUND_CLOSEST_ULL(weight * CGROUP_WEIGHT_DFL, 1024),
-		       CGROUP_WEIGHT_MIN, CGROUP_WEIGHT_MAX);
+	ਵਾਪਸ clamp_t(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ,
+		       DIV_ਗੇੜਾ_CLOSEST_ULL(ਭਾਰ * CGROUP_ਭਾਰ_DFL, 1024),
+		       CGROUP_ਭਾਰ_MIN, CGROUP_ਭਾਰ_MAX);
 }
 
 /*
@@ -282,49 +282,49 @@ static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
  *
  * SUGOV stands for SchedUtil GOVernor.
  */
-#define SCHED_FLAG_SUGOV	0x10000000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SCHED_FLAG_SUGOV	0x10000000
 
-#define SCHED_DL_FLAGS		(SCHED_FLAG_RECLAIM | SCHED_FLAG_DL_OVERRUN | SCHED_FLAG_SUGOV)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SCHED_DL_FLAGS		(SCHED_FLAG_RECLAIM | SCHED_FLAG_DL_OVERRUN | SCHED_FLAG_SUGOV)
 
-static inline bool dl_entity_is_special(const struct sched_dl_entity *dl_se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool dl_entity_is_special(ਅਚਲ ਬਣਤਰ sched_dl_entity *dl_se)
 {
-#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-	return unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
-#else
-	return false;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+	ਵਾਪਸ unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
+#ਨਹੀਂਤਾਂ
+	ਵਾਪਸ false;
+#ਜੇ_ਅੰਤ
 }
 
 /*
  * Tells if entity @a should preempt entity @b.
  */
-static inline bool dl_entity_preempt(const struct sched_dl_entity *a,
-				     const struct sched_dl_entity *b)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool dl_entity_preempt(ਅਚਲ ਬਣਤਰ sched_dl_entity *a,
+				     ਅਚਲ ਬਣਤਰ sched_dl_entity *b)
 {
-	return dl_entity_is_special(a) ||
-	       dl_time_before(a->deadline, b->deadline);
+	ਵਾਪਸ dl_entity_is_special(a) ||
+	       dl_ਸਮਾਂ_before(a->deadline, b->deadline);
 }
 
 /*
  * This is the priority-queue data structure of the RT scheduling class:
  */
-struct rt_prio_array {
+ਬਣਤਰ rt_prio_array {
 	DECLARE_BITMAP(bitmap, MAX_RT_PRIO+1); /* include 1 bit for delimiter */
-	struct list_head queue[MAX_RT_PRIO];
+	ਬਣਤਰ list_ਸਿਰ ਕਤਾਰ[MAX_RT_PRIO];
 };
 
-struct rt_bandwidth {
+ਬਣਤਰ rt_bandwidth {
 	/* nests inside the rq lock: */
-	raw_spinlock_t		rt_runtime_lock;
+	raw_spinlock_t		rt_runtime_ਤਾਲਾ;
 	ktime_t			rt_period;
 	u64			rt_runtime;
-	struct hrtimer		rt_period_timer;
-	unsigned int		rt_period_active;
+	ਬਣਤਰ hrtimer		rt_period_timer;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rt_period_ਸਰਗਰਮ;
 };
 
-static inline int dl_bandwidth_enabled(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ dl_bandwidth_enabled(ਖਾਲੀ)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	ਵਾਪਸ sysctl_sched_rt_runtime >= 0;
 }
 
 /*
@@ -345,23 +345,23 @@ static inline int dl_bandwidth_enabled(void)
  *  - bw (< 100%) is the deadline bandwidth of each CPU;
  *  - total_bw is the currently allocated bandwidth in each root domain;
  */
-struct dl_bw {
-	raw_spinlock_t		lock;
+ਬਣਤਰ dl_bw {
+	raw_spinlock_t		ਤਾਲਾ;
 	u64			bw;
-	u64			total_bw;
+	u64			ਕੁੱਲ_bw;
 };
 
-extern void init_dl_bw(struct dl_bw *dl_b);
-extern int  sched_dl_global_validate(void);
-extern void sched_dl_do_global(void);
-extern int  sched_dl_overflow(struct task_struct *p, int policy, const struct sched_attr *attr);
-extern void __setparam_dl(struct task_struct *p, const struct sched_attr *attr);
-extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags);
-extern bool __checkparam_dl(const struct sched_attr *attr);
-extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
-extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
-extern int  dl_bw_deactivate(int cpu);
-extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec);
+ਬਾਹਰੀ ਖਾਲੀ init_dl_bw(ਬਣਤਰ dl_bw *dl_b);
+ਬਾਹਰੀ ਪੂਰਨ  sched_dl_global_validate(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ sched_dl_do_global(ਖਾਲੀ);
+ਬਾਹਰੀ ਪੂਰਨ  sched_dl_ਉਛਾਲ(ਬਣਤਰ task_struct *p, ਪੂਰਨ policy, ਅਚਲ ਬਣਤਰ sched_attr *attr);
+ਬਾਹਰੀ ਖਾਲੀ __setparam_dl(ਬਣਤਰ task_struct *p, ਅਚਲ ਬਣਤਰ sched_attr *attr);
+ਬਾਹਰੀ ਖਾਲੀ __getparam_dl(ਬਣਤਰ task_struct *p, ਬਣਤਰ sched_attr *attr, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags);
+ਬਾਹਰੀ bool __checkparam_dl(ਅਚਲ ਬਣਤਰ sched_attr *attr);
+ਬਾਹਰੀ bool dl_param_ਬਦਲਿਆ(ਬਣਤਰ task_struct *p, ਅਚਲ ਬਣਤਰ sched_attr *attr);
+ਬਾਹਰੀ ਪੂਰਨ  dl_cpuset_cpumask_can_shrink(ਅਚਲ ਬਣਤਰ cpumask *cur, ਅਚਲ ਬਣਤਰ cpumask *trial);
+ਬਾਹਰੀ ਪੂਰਨ  dl_bw_deactivate(ਪੂਰਨ cpu);
+ਬਾਹਰੀ s64 dl_scaled_delta_exec(ਬਣਤਰ rq *rq, ਬਣਤਰ sched_dl_entity *dl_se, s64 delta_exec);
 /*
  * SCHED_DEADLINE supports servers (nested scheduling) with the following
  * interface:
@@ -408,134 +408,134 @@ extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s6
  * naturally thottled to once per period, avoiding high context switch
  * workloads from spamming the hrtimer program/cancel paths.
  */
-extern void dl_server_update_idle(struct sched_dl_entity *dl_se, s64 delta_exec);
-extern void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec);
-extern void dl_server_start(struct sched_dl_entity *dl_se);
-extern void dl_server_stop(struct sched_dl_entity *dl_se);
-extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ਬਾਹਰੀ ਖਾਲੀ dl_server_update_idle(ਬਣਤਰ sched_dl_entity *dl_se, s64 delta_exec);
+ਬਾਹਰੀ ਖਾਲੀ dl_server_update(ਬਣਤਰ sched_dl_entity *dl_se, s64 delta_exec);
+ਬਾਹਰੀ ਖਾਲੀ dl_server_ਸ਼ੁਰੂ(ਬਣਤਰ sched_dl_entity *dl_se);
+ਬਾਹਰੀ ਖਾਲੀ dl_server_stop(ਬਣਤਰ sched_dl_entity *dl_se);
+ਬਾਹਰੀ ਖਾਲੀ dl_server_init(ਬਣਤਰ sched_dl_entity *dl_se, ਬਣਤਰ rq *rq,
 		    dl_server_pick_f pick_task);
-extern void sched_init_dl_servers(void);
+ਬਾਹਰੀ ਖਾਲੀ sched_init_dl_servers(ਖਾਲੀ);
 
-extern void fair_server_init(struct rq *rq);
-extern void ext_server_init(struct rq *rq);
-extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq);
-extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
+ਬਾਹਰੀ ਖਾਲੀ fair_server_init(ਬਣਤਰ rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ ext_server_init(ਬਣਤਰ rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ __dl_server_attach_root(ਬਣਤਰ sched_dl_entity *dl_se, ਬਣਤਰ rq *rq);
+ਬਾਹਰੀ ਪੂਰਨ dl_server_apply_params(ਬਣਤਰ sched_dl_entity *dl_se,
 		    u64 runtime, u64 period, bool init);
-extern int dl_server_attach_bw(struct sched_dl_entity *dl_se);
-extern void dl_server_detach_bw(struct sched_dl_entity *dl_se);
-extern int dl_server_swap_bw(struct sched_dl_entity *detach_se,
-			     struct sched_dl_entity *attach_se);
+ਬਾਹਰੀ ਪੂਰਨ dl_server_attach_bw(ਬਣਤਰ sched_dl_entity *dl_se);
+ਬਾਹਰੀ ਖਾਲੀ dl_server_detach_bw(ਬਣਤਰ sched_dl_entity *dl_se);
+ਬਾਹਰੀ ਪੂਰਨ dl_server_ਅਦਲਾ_ਬਦਲੀ_bw(ਬਣਤਰ sched_dl_entity *detach_se,
+			     ਬਣਤਰ sched_dl_entity *attach_se);
 
-static inline bool dl_server_active(struct sched_dl_entity *dl_se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool dl_server_ਸਰਗਰਮ(ਬਣਤਰ sched_dl_entity *dl_se)
 {
-	return dl_se->dl_server_active;
+	ਵਾਪਸ dl_se->dl_server_ਸਰਗਰਮ;
 }
 
-#ifdef CONFIG_CGROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CGROUP_SCHED
 
-extern struct list_head task_groups;
+ਬਾਹਰੀ ਬਣਤਰ list_ਸਿਰ task_groups;
 
-#ifdef CONFIG_GROUP_SCHED_BANDWIDTH
-extern const u64 max_bw_quota_period_us;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_ਸਮੂਹ_SCHED_BANDWIDTH
+ਬਾਹਰੀ ਅਚਲ u64 max_bw_quota_period_us;
 
 /*
  * default period for group bandwidth.
  * default: 0.1s, units: microseconds
  */
-static inline u64 default_bw_period_us(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 default_bw_period_us(ਖਾਲੀ)
 {
-	return 100000ULL;
+	ਵਾਪਸ 100000ULL;
 }
-#endif /* CONFIG_GROUP_SCHED_BANDWIDTH */
+#ਜੇ_ਅੰਤ /* CONFIG_GROUP_SCHED_BANDWIDTH */
 
-struct cfs_bandwidth {
-#ifdef CONFIG_CFS_BANDWIDTH
-	raw_spinlock_t		lock;
+ਬਣਤਰ cfs_bandwidth {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CFS_BANDWIDTH
+	raw_spinlock_t		ਤਾਲਾ;
 	ktime_t			period;
 	u64			quota;
 	u64			runtime;
-	u64			burst;
+	u64			ਮਿਆਦ;
 	u64			runtime_snap;
-	s64			hierarchical_quota;
+	s64			ਦਰਜਾਵਾਰ_quota;
 
 	u8			idle;
-	u8			period_active;
+	u8			period_ਸਰਗਰਮ;
 	u8			slack_started;
-	struct hrtimer		period_timer;
-	struct hrtimer		slack_timer;
-	struct list_head	throttled_cfs_rq;
+	ਬਣਤਰ hrtimer		period_timer;
+	ਬਣਤਰ hrtimer		slack_timer;
+	ਬਣਤਰ list_ਸਿਰ	throttled_cfs_rq;
 
 	/* Statistics: */
-	int			nr_periods;
-	int			nr_throttled;
-	int			nr_burst;
-	u64			throttled_time;
-	u64			burst_time;
-#endif /* CONFIG_CFS_BANDWIDTH */
+	ਪੂਰਨ			nr_periods;
+	ਪੂਰਨ			nr_throttled;
+	ਪੂਰਨ			nr_ਮਿਆਦ;
+	u64			throttled_ਸਮਾਂ;
+	u64			ਮਿਆਦ_ਸਮਾਂ;
+#ਜੇ_ਅੰਤ /* CONFIG_CFS_BANDWIDTH */
 };
 
 /* Task group related information */
-struct task_group {
-	struct cgroup_subsys_state css;
+ਬਣਤਰ task_ਸਮੂਹ {
+	ਬਣਤਰ cgroup_subsys_state css;
 
-#ifdef CONFIG_GROUP_SCHED_WEIGHT
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_ਸਮੂਹ_SCHED_ਭਾਰ
 	/* A positive value indicates that this is a SCHED_IDLE group. */
-	int			idle;
-#endif
+	ਪੂਰਨ			idle;
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 	/* runqueue "owned" by this group on each CPU */
-	struct cfs_rq __percpu	*cfs_rq;
-	unsigned long		shares;
+	ਬਣਤਰ cfs_rq __percpu	*cfs_rq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		shares;
 	/*
 	 * load_avg can be heavily contended at clock tick time, so put
 	 * it in its own cache-line separated from the fields above which
 	 * will also be accessed at each tick.
 	 */
-	atomic_long_t		load_avg ____cacheline_aligned;
+	atomic_long_t		ਲੱਦੋ_avg ____cacheline_aligned;
 	atomic_long_t		runnable_avg;
 
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+#ਜੇ_ਅੰਤ /* CONFIG_FAIR_GROUP_SCHED */
 
-#ifdef CONFIG_RT_GROUP_SCHED
-	struct sched_rt_entity	**rt_se;
-	struct rt_rq		**rt_rq;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_RT_ਸਮੂਹ_SCHED
+	ਬਣਤਰ sched_rt_entity	**rt_se;
+	ਬਣਤਰ rt_rq		**rt_rq;
 
-	struct rt_bandwidth	rt_bandwidth;
-#endif
+	ਬਣਤਰ rt_bandwidth	rt_bandwidth;
+#ਜੇ_ਅੰਤ
 
-	struct scx_task_group	scx;
+	ਬਣਤਰ scx_task_ਸਮੂਹ	scx;
 
-	struct rcu_head		rcu;
-	struct list_head	list;
+	ਬਣਤਰ rcu_ਸਿਰ		rcu;
+	ਬਣਤਰ list_ਸਿਰ	list;
 
-	struct task_group	*parent;
-	struct list_head	siblings;
-	struct list_head	children;
+	ਬਣਤਰ task_ਸਮੂਹ	*ਮਾਪਾ;
+	ਬਣਤਰ list_ਸਿਰ	siblings;
+	ਬਣਤਰ list_ਸਿਰ	children;
 
-#ifdef CONFIG_SCHED_AUTOGROUP
-	struct autogroup	*autogroup;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_AUTOGROUP
+	ਬਣਤਰ autogroup	*autogroup;
+#ਜੇ_ਅੰਤ
 
-	struct cfs_bandwidth	cfs_bandwidth;
+	ਬਣਤਰ cfs_bandwidth	cfs_bandwidth;
 
-#ifdef CONFIG_UCLAMP_TASK_GROUP
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_UCLAMP_TASK_ਸਮੂਹ
 	/* The two decimal precision [%] value requested from user-space */
-	unsigned int		uclamp_pct[UCLAMP_CNT];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		uclamp_pct[UCLAMP_CNT];
 	/* Clamp values requested for a task group */
-	struct uclamp_se	uclamp_req[UCLAMP_CNT];
+	ਬਣਤਰ uclamp_se	uclamp_req[UCLAMP_CNT];
 	/* Effective clamp values used for a task group */
-	struct uclamp_se	uclamp[UCLAMP_CNT];
-#endif
+	ਬਣਤਰ uclamp_se	uclamp[UCLAMP_CNT];
+#ਜੇ_ਅੰਤ
 
 };
 
-#define ROOT_TASK_GROUP_LOAD	NICE_0_LOAD
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਜੜ੍ਹ_TASK_ਸਮੂਹ_ਲੱਦੋ	NICE_0_ਲੱਦੋ
 
-typedef int (*tg_visitor)(struct task_group *, void *);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ (*tg_visitor)(ਬਣਤਰ task_ਸਮੂਹ *, ਖਾਲੀ *);
 
-extern int walk_tg_tree_from(struct task_group *from,
-			     tg_visitor down, tg_visitor up, void *data);
+ਬਾਹਰੀ ਪੂਰਨ walk_tg_ਰੁੱਖ_from(ਬਣਤਰ task_ਸਮੂਹ *from,
+			     tg_visitor ਥੱਲੇ, tg_visitor ਉੱਪਰ, ਖਾਲੀ *ਅੰਕੜੇ);
 
 /*
  * Iterate the full tree, calling @down when first entering a node and @up when
@@ -543,80 +543,80 @@ extern int walk_tg_tree_from(struct task_group *from,
  *
  * Caller must hold rcu_lock or sufficient equivalent.
  */
-static inline int walk_tg_tree(tg_visitor down, tg_visitor up, void *data)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ walk_tg_ਰੁੱਖ(tg_visitor ਥੱਲੇ, tg_visitor ਉੱਪਰ, ਖਾਲੀ *ਅੰਕੜੇ)
 {
-	return walk_tg_tree_from(&root_task_group, down, up, data);
+	ਵਾਪਸ walk_tg_ਰੁੱਖ_from(&ਜੜ੍ਹ_task_ਸਮੂਹ, ਥੱਲੇ, ਉੱਪਰ, ਅੰਕੜੇ);
 }
 
-static inline struct task_group *css_tg(struct cgroup_subsys_state *css)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ task_ਸਮੂਹ *css_tg(ਬਣਤਰ cgroup_subsys_state *css)
 {
-	return css ? container_of(css, struct task_group, css) : NULL;
+	ਵਾਪਸ css ? container_ਦਾ(css, ਬਣਤਰ task_ਸਮੂਹ, css) : ਨਿਰਾ;
 }
 
-extern int tg_nop(struct task_group *tg, void *data);
+ਬਾਹਰੀ ਪੂਰਨ tg_nop(ਬਣਤਰ task_ਸਮੂਹ *tg, ਖਾਲੀ *ਅੰਕੜੇ);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-extern void free_fair_sched_group(struct task_group *tg);
-extern int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent);
-extern void online_fair_sched_group(struct task_group *tg);
-extern void unregister_fair_sched_group(struct task_group *tg);
-extern void __sched_cgroup_mode_update(int mode);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline void free_fair_sched_group(struct task_group *tg) { }
-static inline int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+ਬਾਹਰੀ ਖਾਲੀ free_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg);
+ਬਾਹਰੀ ਪੂਰਨ alloc_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਣਤਰ task_ਸਮੂਹ *ਮਾਪਾ);
+ਬਾਹਰੀ ਖਾਲੀ online_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg);
+ਬਾਹਰੀ ਖਾਲੀ unregister_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg);
+ਬਾਹਰੀ ਖਾਲੀ __sched_cgroup_mode_update(ਪੂਰਨ ਬਹੁਲਕ);
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ free_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ alloc_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਣਤਰ task_ਸਮੂਹ *ਮਾਪਾ)
 {
-       return 1;
+       ਵਾਪਸ 1;
 }
-static inline void online_fair_sched_group(struct task_group *tg) { }
-static inline void unregister_fair_sched_group(struct task_group *tg) { }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ online_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ unregister_fair_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg) { }
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
 
-extern void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
-			struct sched_entity *se, int cpu,
-			struct sched_entity *parent);
-extern void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent);
+ਬਾਹਰੀ ਖਾਲੀ init_tg_cfs_ਇੰਦਰਾਜ(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਣਤਰ cfs_rq *cfs_rq,
+			ਬਣਤਰ sched_entity *se, ਪੂਰਨ cpu,
+			ਬਣਤਰ sched_entity *ਮਾਪਾ);
+ਬਾਹਰੀ ਖਾਲੀ init_cfs_bandwidth(ਬਣਤਰ cfs_bandwidth *cfs_b, ਬਣਤਰ cfs_bandwidth *ਮਾਪਾ);
 
-extern void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b);
-extern void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b);
-extern void unthrottle_cfs_rq(struct cfs_rq *cfs_rq);
-extern bool cfs_task_bw_constrained(struct task_struct *p);
+ਬਾਹਰੀ ਖਾਲੀ __refill_cfs_bandwidth_runtime(ਬਣਤਰ cfs_bandwidth *cfs_b);
+ਬਾਹਰੀ ਖਾਲੀ ਸ਼ੁਰੂ_cfs_bandwidth(ਬਣਤਰ cfs_bandwidth *cfs_b);
+ਬਾਹਰੀ ਖਾਲੀ unthrottle_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq);
+ਬਾਹਰੀ bool cfs_task_bw_constrained(ਬਣਤਰ task_struct *p);
 
-extern void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
-		struct sched_rt_entity *rt_se, int cpu,
-		struct sched_rt_entity *parent);
-extern int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us);
-extern int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us);
-extern long sched_group_rt_runtime(struct task_group *tg);
-extern long sched_group_rt_period(struct task_group *tg);
-extern int sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk);
+ਬਾਹਰੀ ਖਾਲੀ init_tg_rt_ਇੰਦਰਾਜ(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਣਤਰ rt_rq *rt_rq,
+		ਬਣਤਰ sched_rt_entity *rt_se, ਪੂਰਨ cpu,
+		ਬਣਤਰ sched_rt_entity *ਮਾਪਾ);
+ਬਾਹਰੀ ਪੂਰਨ sched_ਸਮੂਹ_ਸੈੱਟ_rt_runtime(ਬਣਤਰ task_ਸਮੂਹ *tg, ਲੰਮਾ rt_runtime_us);
+ਬਾਹਰੀ ਪੂਰਨ sched_ਸਮੂਹ_ਸੈੱਟ_rt_period(ਬਣਤਰ task_ਸਮੂਹ *tg, u64 rt_period_us);
+ਬਾਹਰੀ ਲੰਮਾ sched_ਸਮੂਹ_rt_runtime(ਬਣਤਰ task_ਸਮੂਹ *tg);
+ਬਾਹਰੀ ਲੰਮਾ sched_ਸਮੂਹ_rt_period(ਬਣਤਰ task_ਸਮੂਹ *tg);
+ਬਾਹਰੀ ਪੂਰਨ sched_rt_can_attach(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਣਤਰ task_struct *tsk);
 
-extern struct task_group *sched_create_group(struct task_group *parent);
-extern void sched_online_group(struct task_group *tg,
-			       struct task_group *parent);
-extern void sched_destroy_group(struct task_group *tg);
-extern void sched_release_group(struct task_group *tg);
+ਬਾਹਰੀ ਬਣਤਰ task_ਸਮੂਹ *sched_create_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *ਮਾਪਾ);
+ਬਾਹਰੀ ਖਾਲੀ sched_online_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg,
+			       ਬਣਤਰ task_ਸਮੂਹ *ਮਾਪਾ);
+ਬਾਹਰੀ ਖਾਲੀ sched_destroy_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg);
+ਬਾਹਰੀ ਖਾਲੀ sched_release_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg);
 
-extern void sched_move_task(struct task_struct *tsk, bool for_autogroup);
+ਬਾਹਰੀ ਖਾਲੀ sched_move_task(ਬਣਤਰ task_struct *tsk, bool for_autogroup);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-extern int sched_group_set_shares(struct task_group *tg, unsigned long shares);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+ਬਾਹਰੀ ਪੂਰਨ sched_ਸਮੂਹ_ਸੈੱਟ_shares(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ shares);
 
-extern int sched_group_set_idle(struct task_group *tg, long idle);
+ਬਾਹਰੀ ਪੂਰਨ sched_ਸਮੂਹ_ਸੈੱਟ_idle(ਬਣਤਰ task_ਸਮੂਹ *tg, ਲੰਮਾ idle);
 
-extern void set_task_rq_fair(struct sched_entity *se,
-			     struct cfs_rq *prev, struct cfs_rq *next);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline int sched_group_set_shares(struct task_group *tg, unsigned long shares) { return 0; }
-static inline int sched_group_set_idle(struct task_group *tg, long idle) { return 0; }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+ਬਾਹਰੀ ਖਾਲੀ ਸੈੱਟ_task_rq_fair(ਬਣਤਰ sched_entity *se,
+			     ਬਣਤਰ cfs_rq *prev, ਬਣਤਰ cfs_rq *ਅਗਲਾ);
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ sched_ਸਮੂਹ_ਸੈੱਟ_shares(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ shares) { ਵਾਪਸ 0; }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ sched_ਸਮੂਹ_ਸੈੱਟ_idle(ਬਣਤਰ task_ਸਮੂਹ *tg, ਲੰਮਾ idle) { ਵਾਪਸ 0; }
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_CGROUP_SCHED: */
 
-struct cfs_bandwidth { };
+ਬਣਤਰ cfs_bandwidth { };
 
-static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false; }
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool cfs_task_bw_constrained(ਬਣਤਰ task_struct *p) { ਵਾਪਸ false; }
 
-#endif /* !CONFIG_CGROUP_SCHED */
+#ਜੇ_ਅੰਤ /* !CONFIG_CGROUP_SCHED */
 
 /*
  * A weight of 0 or 1 can cause arithmetics problems.
@@ -626,12 +626,12 @@ static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false
  * (The default weight is 1024 - so there's no practical
  *  limitation from this.)
  */
-#define MIN_SHARES		(1UL <<  1)
-#define MAX_SHARES		(1UL << 18)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MIN_SHARES		(1UL <<  1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_SHARES		(1UL << 18)
 
-extern void unregister_rt_sched_group(struct task_group *tg);
-extern void free_rt_sched_group(struct task_group *tg);
-extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent);
+ਬਾਹਰੀ ਖਾਲੀ unregister_rt_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg);
+ਬਾਹਰੀ ਖਾਲੀ free_rt_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg);
+ਬਾਹਰੀ ਪੂਰਨ alloc_rt_sched_ਸਮੂਹ(ਬਣਤਰ task_ਸਮੂਹ *tg, ਬਣਤਰ task_ਸਮੂਹ *ਮਾਪਾ);
 
 /*
  * u64_u32_load/u64_u32_store
@@ -639,14 +639,14 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
  * Use a copy of a u64 value to protect against data race. This is only
  * applicable for 32-bits architectures.
  */
-#ifdef CONFIG_64BIT
-# define u64_u32_load_copy(var, copy)		var
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_64_ਦੋਆਧਾਰੀ_ਅੰਕ
+# define u64_u32_ਲੱਦੋ_copy(var, copy)		var
 # define u64_u32_store_copy(var, copy, val)	(var = val)
-#else
-# define u64_u32_load_copy(var, copy)					\
+#ਨਹੀਂਤਾਂ
+# define u64_u32_ਲੱਦੋ_copy(var, copy)					\
 ({									\
 	u64 __val, __val_copy;						\
-	do {								\
+	ਕਰੋ {								\
 		__val_copy = copy;					\
 		/*							\
 		 * paired with u64_u32_store_copy(), ordering access	\
@@ -654,11 +654,11 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
 		 */							\
 		smp_rmb();						\
 		__val = var;						\
-	} while (__val != __val_copy);					\
+	} ਜਦੋਂ (__val != __val_copy);					\
 	__val;								\
 })
 # define u64_u32_store_copy(var, copy, val)				\
-do {									\
+ਕਰੋ {									\
 	typeof(val) __val = (val);					\
 	var = __val;							\
 	/*								\
@@ -667,65 +667,65 @@ do {									\
 	 */								\
 	smp_wmb();							\
 	copy = __val;							\
-} while (0)
-#endif
-# define u64_u32_load(var)		u64_u32_load_copy(var, var##_copy)
+} ਜਦੋਂ (0)
+#ਜੇ_ਅੰਤ
+# define u64_u32_ਲੱਦੋ(var)		u64_u32_ਲੱਦੋ_copy(var, var##_copy)
 # define u64_u32_store(var, val)	u64_u32_store_copy(var, var##_copy, val)
 
-struct balance_callback {
-	struct balance_callback *next;
-	void (*func)(struct rq *rq);
+ਬਣਤਰ balance_callback {
+	ਬਣਤਰ balance_callback *ਅਗਲਾ;
+	ਖਾਲੀ (*func)(ਬਣਤਰ rq *rq);
 };
 
 /* Fair scheduling SCHED_{NORMAL,BATCH,IDLE} related fields in a runqueue: */
-struct cfs_rq {
-	struct load_weight	load;
-	unsigned int		nr_queued;
-	unsigned int		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_idle;		/* SCHED_IDLE */
+ਬਣਤਰ cfs_rq {
+	ਬਣਤਰ ਲੱਦੋ_ਭਾਰ	ਲੱਦੋ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		nr_queued;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		h_nr_idle;		/* SCHED_IDLE */
 
-	s64			sum_w_vruntime;
-	u64			sum_weight;
+	s64			ਜੋੜ_w_vruntime;
+	u64			ਜੋੜ_ਭਾਰ;
 	u64			zero_vruntime;
-	unsigned int		sum_shift;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		ਜੋੜ_ਖਿਸਕਾਓ;
 
-#ifdef CONFIG_SCHED_CORE
-	unsigned int		forceidle_seq;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CORE
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		forceidle_seq;
 	u64			zero_vruntime_fi;
-#endif
+#ਜੇ_ਅੰਤ
 
-	struct rb_root_cached	tasks_timeline;
+	ਬਣਤਰ rb_ਜੜ੍ਹ_cached	tasks_timeline;
 
 	/*
 	 * 'curr' points to the currently running entity on this cfs_rq.
 	 * It is set to NULL otherwise (i.e when none are currently running).
 	 */
-	struct sched_entity	*curr;
-	struct sched_entity	*next;
+	ਬਣਤਰ sched_entity	*curr;
+	ਬਣਤਰ sched_entity	*ਅਗਲਾ;
 
 	/*
 	 * CFS load tracking
 	 */
-	struct sched_entity	*h_curr;
-	struct sched_avg	avg;
-#ifndef CONFIG_64BIT
-	u64			last_update_time_copy;
-#endif
-	struct {
-		raw_spinlock_t	lock ____cacheline_aligned;
-		int		nr;
-		unsigned long	load_avg;
-		unsigned long	util_avg;
-		unsigned long	runnable_avg;
+	ਬਣਤਰ sched_entity	*h_curr;
+	ਬਣਤਰ sched_avg	avg;
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CONFIG_64_ਦੋਆਧਾਰੀ_ਅੰਕ
+	u64			ਆਖਰੀ_update_ਸਮਾਂ_copy;
+#ਜੇ_ਅੰਤ
+	ਬਣਤਰ {
+		raw_spinlock_t	ਤਾਲਾ ____cacheline_aligned;
+		ਪੂਰਨ		nr;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ	ਲੱਦੋ_avg;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ	util_avg;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ	runnable_avg;
 	} removed;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	u64			last_update_tg_load_avg;
-	unsigned long		tg_load_avg_contrib;
-	unsigned long		tg_runnable_avg_contrib;
-	long			propagate;
-	long			prop_runnable_sum;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+	u64			ਆਖਰੀ_update_tg_ਲੱਦੋ_avg;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		tg_ਲੱਦੋ_avg_contrib;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		tg_runnable_avg_contrib;
+	ਲੰਮਾ			propagate;
+	ਲੰਮਾ			prop_runnable_ਜੋੜ;
 
 	/*
 	 *   h_load = weight * f(tg)
@@ -733,11 +733,11 @@ struct cfs_rq {
 	 * Where f(tg) is the recursive weight fraction assigned to
 	 * this group.
 	 */
-	unsigned long		h_load;
-	u64			last_h_load_update;
-	struct sched_entity	*h_load_next;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		h_ਲੱਦੋ;
+	u64			ਆਖਰੀ_h_ਲੱਦੋ_update;
+	ਬਣਤਰ sched_entity	*h_ਲੱਦੋ_ਅਗਲਾ;
 
-	struct rq		*rq;	/* CPU runqueue to which this cfs_rq is attached */
+	ਬਣਤਰ rq		*rq;	/* CPU runqueue to which this cfs_rq is attached */
 
 	/*
 	 * leaf cfs_rqs are those that hold tasks (lowest schedulable entity in
@@ -747,39 +747,39 @@ struct cfs_rq {
 	 * leaf_cfs_rq_list ties together list of leaf cfs_rq's in a CPU.
 	 * This list is used during load balance.
 	 */
-	int			on_list;
-	struct list_head	leaf_cfs_rq_list;
-	struct task_group	*tg;	/* Group that "owns" this runqueue */
+	ਪੂਰਨ			on_list;
+	ਬਣਤਰ list_ਸਿਰ	ਪੱਤੀ_cfs_rq_list;
+	ਬਣਤਰ task_ਸਮੂਹ	*tg;	/* Group that "owns" this runqueue */
 
 	/* Locally cached copy of our task_group's idle value */
-	int			idle;
+	ਪੂਰਨ			idle;
 
 # ifdef CONFIG_CFS_BANDWIDTH
-	int			runtime_enabled;
-	s64			runtime_remaining;
+	ਪੂਰਨ			runtime_enabled;
+	s64			runtime_ਬਚਿਆ;
 
 	u64			throttled_pelt_idle;
-#  ifndef CONFIG_64BIT
+#  ifndef CONFIG_64_ਦੋਆਧਾਰੀ_ਅੰਕ
 	u64                     throttled_pelt_idle_copy;
 #  endif
 	u64			throttled_clock;
 	u64			throttled_clock_pelt;
-	u64			throttled_clock_pelt_time;
+	u64			throttled_clock_pelt_ਸਮਾਂ;
 	u64			throttled_clock_self;
-	u64			throttled_clock_self_time;
+	u64			throttled_clock_self_ਸਮਾਂ;
 	bool			throttled:1;
 	bool			pelt_clock_throttled:1;
-	int			throttle_count;
-	struct list_head	throttled_list;
-	struct list_head	throttled_csd_list;
-	struct list_head        throttled_limbo_list;
+	ਪੂਰਨ			throttle_ਗਿਣਤੀ;
+	ਬਣਤਰ list_ਸਿਰ	throttled_list;
+	ਬਣਤਰ list_ਸਿਰ	throttled_csd_list;
+	ਬਣਤਰ list_ਸਿਰ        throttled_limbo_list;
 # endif /* CONFIG_CFS_BANDWIDTH */
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+#ਜੇ_ਅੰਤ /* CONFIG_FAIR_GROUP_SCHED */
 };
 
-#ifdef CONFIG_SCHED_CLASS_EXT
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CLASS_EXT
 /* scx_rq->flags, protected by the rq lock */
-enum scx_rq_flags {
+ਗਿਣਤੀ scx_rq_flags {
 	/*
 	 * A hotplugged CPU starts scheduling before rq_online_scx(). Track
 	 * ops.cpu_on/offline() state so that ops.enqueue/dispatch() are called
@@ -790,116 +790,116 @@ enum scx_rq_flags {
 	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
 	SCX_RQ_BAL_CB_PENDING	= 1 << 6, /* must queue a cb after dispatching */
 	SCX_RQ_SUB_IDLE_RENOTIFY	= 1 << 7, /* sub-scheds are owed update_idle() */
-	SCX_RQ_ROOT_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
+	SCX_RQ_ਜੜ੍ਹ_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
 
-	SCX_RQ_IN_WAKEUP	= 1 << 16,
-	SCX_RQ_IN_DISPATCH	= 1 << 17,
+	SCX_RQ_ਵਿੱਚ_WAKEUP	= 1 << 16,
+	SCX_RQ_ਵਿੱਚ_DISPATCH	= 1 << 17,
 };
 
 /* per-rq rescue execution state, see scx_rescue_timerfn() */
-struct scx_rq_rescue {
-	struct scx_dispatch_q	dsq;			/* stranded tasks awaiting rescue */
+ਬਣਤਰ scx_rq_rescue {
+	ਬਣਤਰ scx_dispatch_q	dsq;			/* stranded tasks awaiting rescue */
 	s64			budget;			/* execution token bucket, ns */
 	u64			clock;			/* last budget accrual timestamp */
-	struct task_struct	*curr;			/* task being rescued, one at a time */
-	s64			slice;			/* curr's admitted slice */
+	ਬਣਤਰ task_struct	*curr;			/* task being rescued, one at a time */
+	s64			ਟੁਕੜਾ;			/* curr's admitted slice */
 	u64			exec_snap;		/* sum_exec_runtime at admission */
-	struct timer_list	timer;			/* paces admission and escalation */
+	ਬਣਤਰ timer_list	timer;			/* paces admission and escalation */
 	u64			kill_at;		/* last ejection, init before any */
 };
 
-struct scx_rq {
-	struct scx_dispatch_q	local_dsq;
-#ifdef CONFIG_EXT_SUB_SCHED
-	struct scx_dispatch_q	reject_dsq;		/* staging for cap-rejected tasks */
-	struct scx_rq_rescue	rescue;
-#endif
-	struct list_head	runnable_list;		/* runnable tasks on this rq */
-	struct list_head	ddsp_deferred_locals;	/* deferred ddsps from enq */
+ਬਣਤਰ scx_rq {
+	ਬਣਤਰ scx_dispatch_q	local_dsq;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_EXT_SUB_SCHED
+	ਬਣਤਰ scx_dispatch_q	reject_dsq;		/* staging for cap-rejected tasks */
+	ਬਣਤਰ scx_rq_rescue	rescue;
+#ਜੇ_ਅੰਤ
+	ਬਣਤਰ list_ਸਿਰ	runnable_list;		/* runnable tasks on this rq */
+	ਬਣਤਰ list_ਸਿਰ	ddsp_deferred_locals;	/* deferred ddsps from enq */
 	/* both stashed across the activate_task() in move_remote_task_to_local_dsq() */
 	u64			remote_activate_enq_flags;
-	struct scx_sched	*remote_activate_sch;
+	ਬਣਤਰ scx_sched	*remote_activate_sch;
 	u32			nr_running;
-	u32			cpuperf_target;		/* [0, SCHED_CAPACITY_SCALE] */
-	bool			in_select_cpu;
+	u32			cpuperf_ਨਿਸ਼ਾਨਾ;		/* [0, SCHED_CAPACITY_SCALE] */
+	bool			ਵਿੱਚ_select_cpu;
 	bool			cpu_released;
 	u32			flags;
 	u32			nr_immed;		/* ENQ_IMMED tasks on local_dsq */
-#ifdef CONFIG_SCHED_CORE
-	u32			lock_drop_seq;	/* nr dispatch lock releases */
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CORE
+	u32			ਤਾਲਾ_drop_seq;	/* nr dispatch lock releases */
+#ਜੇ_ਅੰਤ
 	u64			clock;			/* current per-rq clock -- see scx_bpf_now() */
-#ifdef CONFIG_EXT_SUB_SCHED
-	struct llist_head	ecaps_to_sync;		/* pending ecaps syncs */
-	struct task_struct	*sub_dispatch_prev;
-#endif
-	cpumask_var_t		cpus_to_sync;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_EXT_SUB_SCHED
+	ਬਣਤਰ llist_ਸਿਰ	ecaps_ਮੰਜ਼ਿਲ_sync;		/* pending ecaps syncs */
+	ਬਣਤਰ task_struct	*sub_dispatch_prev;
+#ਜੇ_ਅੰਤ
+	cpumask_var_t		cpus_ਮੰਜ਼ਿਲ_sync;
 	bool			kick_sync_pending;
-	unsigned long		kick_sync;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		kick_sync;
 
-	struct list_head	sched_pcpus_to_kick;	/* see kick_cpus_irq_workfn() */
+	ਬਣਤਰ list_ਸਿਰ	sched_pcpus_ਮੰਜ਼ਿਲ_kick;	/* see kick_cpus_irq_workfn() */
 
-	raw_spinlock_t		deferred_reenq_lock;
-	struct list_head	deferred_reenq_locals;	/* scheds requesting reenq of local DSQ */
-	struct list_head	deferred_reenq_users;	/* user DSQs requesting reenq */
-	struct balance_callback	deferred_bal_cb;
-	struct balance_callback	kick_sync_bal_cb;
-	struct irq_work		deferred_irq_work;
-	struct irq_work		kick_cpus_irq_work;
+	raw_spinlock_t		deferred_reenq_ਤਾਲਾ;
+	ਬਣਤਰ list_ਸਿਰ	deferred_reenq_locals;	/* scheds requesting reenq of local DSQ */
+	ਬਣਤਰ list_ਸਿਰ	deferred_reenq_users;	/* user DSQs requesting reenq */
+	ਬਣਤਰ balance_callback	deferred_bal_cb;
+	ਬਣਤਰ balance_callback	kick_sync_bal_cb;
+	ਬਣਤਰ irq_work		deferred_irq_work;
+	ਬਣਤਰ irq_work		kick_cpus_irq_work;
 };
-#endif /* CONFIG_SCHED_CLASS_EXT */
+#ਜੇ_ਅੰਤ /* CONFIG_SCHED_CLASS_EXT */
 
-static inline int rt_bandwidth_enabled(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ rt_bandwidth_enabled(ਖਾਲੀ)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	ਵਾਪਸ sysctl_sched_rt_runtime >= 0;
 }
 
 /* RT IPI pull logic requires IRQ_WORK */
-#if defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
-# define HAVE_RT_PUSH_IPI
-#endif
+#ਜੇ defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
+# define HAVE_RT_ਧੱਕੋ_IPI
+#ਜੇ_ਅੰਤ
 
 /* Real-Time classes' related field in a runqueue: */
-struct rt_rq {
-	struct rt_prio_array	active;
-	unsigned int		rt_nr_running;
-	unsigned int		rr_nr_running;
-	struct {
-		int		curr; /* highest queued rt task prio */
-		int		next; /* next highest */
+ਬਣਤਰ rt_rq {
+	ਬਣਤਰ rt_prio_array	ਸਰਗਰਮ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rt_nr_running;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rr_nr_running;
+	ਬਣਤਰ {
+		ਪੂਰਨ		curr; /* highest queued rt task prio */
+		ਪੂਰਨ		ਅਗਲਾ; /* next highest */
 	} highest_prio;
 	bool			overloaded;
-	struct plist_head	pushable_tasks;
+	ਬਣਤਰ plist_ਸਿਰ	pushable_tasks;
 
-	int			rt_queued;
+	ਪੂਰਨ			rt_queued;
 
-#ifdef CONFIG_RT_GROUP_SCHED
-	int			rt_throttled;
-	u64			rt_time; /* consumed RT time, goes up in update_curr_rt */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_RT_ਸਮੂਹ_SCHED
+	ਪੂਰਨ			rt_throttled;
+	u64			rt_ਸਮਾਂ; /* consumed RT time, goes up in update_curr_rt */
 	u64			rt_runtime; /* allotted RT time, "slice" from rt_bandwidth, RT sharing/balancing */
 	/* Nests inside the rq lock: */
-	raw_spinlock_t		rt_runtime_lock;
+	raw_spinlock_t		rt_runtime_ਤਾਲਾ;
 
-	unsigned int		rt_nr_boosted;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rt_nr_boosted;
 
-	struct rq		*rq; /* this is always top-level rq, cache? */
-#endif
-#ifdef CONFIG_CGROUP_SCHED
-	struct task_group	*tg; /* this tg has "this" rt_rq on given CPU for runnable entities */
-#endif
+	ਬਣਤਰ rq		*rq; /* this is always top-level rq, cache? */
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CGROUP_SCHED
+	ਬਣਤਰ task_ਸਮੂਹ	*tg; /* this tg has "this" rt_rq on given CPU for runnable entities */
+#ਜੇ_ਅੰਤ
 };
 
-static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool rt_rq_is_runnable(ਬਣਤਰ rt_rq *rt_rq)
 {
-	return rt_rq->rt_queued && rt_rq->rt_nr_running;
+	ਵਾਪਸ rt_rq->rt_queued && rt_rq->rt_nr_running;
 }
 
 /* Deadline class' related fields in a runqueue */
-struct dl_rq {
+ਬਣਤਰ dl_rq {
 	/* runqueue is an rbtree, ordered by deadline */
-	struct rb_root_cached	root;
+	ਬਣਤਰ rb_ਜੜ੍ਹ_cached	ਜੜ੍ਹ;
 
-	unsigned int		dl_nr_running;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		dl_nr_running;
 
 	/*
 	 * Deadline values of the currently executing and the
@@ -907,20 +907,20 @@ struct dl_rq {
 	 * the decision whether or not a ready but not running task
 	 * should migrate somewhere else.
 	 */
-	struct {
+	ਬਣਤਰ {
 		u64		curr;
-		u64		next;
+		u64		ਅਗਲਾ;
 	} earliest_dl;
 
 	bool			overloaded;
 
-	struct sched_dl_entity	*curr;
+	ਬਣਤਰ sched_dl_entity	*curr;
 	/*
 	 * Tasks on this rq that can be pushed away. They are kept in
 	 * an rb-tree, ordered by tasks' deadlines, with caching
 	 * of the leftmost (earliest deadline) element.
 	 */
-	struct rb_root_cached	pushable_dl_tasks_root;
+	ਬਣਤਰ rb_ਜੜ੍ਹ_cached	pushable_dl_tasks_ਜੜ੍ਹ;
 
 	/*
 	 * "Active utilization" for this runqueue: increased when a
@@ -951,66 +951,66 @@ struct dl_rq {
 	 * Inverse of the fraction of CPU utilization that can be reclaimed
 	 * by the GRUB algorithm.
 	 */
-	u64			bw_ratio;
+	u64			bw_ਅਨੁਪਾਤ;
 };
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 /* Check whether a task group is root tg */
-#define is_root_task_group(tg) ((tg) == &root_task_group)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ is_ਜੜ੍ਹ_task_ਸਮੂਹ(tg) ((tg) == &ਜੜ੍ਹ_task_ਸਮੂਹ)
 /* An entity is a task if it doesn't "own" a runqueue */
-#define entity_is_task(se)	(!se->my_q)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ entity_is_task(se)	(!se->my_q)
 
-static inline void se_update_runnable(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ se_update_runnable(ਬਣਤਰ sched_entity *se)
 {
-	if (!entity_is_task(se))
-		se->runnable_weight = se->my_q->h_nr_runnable;
+	ਜੇ (!entity_is_task(se))
+		se->runnable_ਭਾਰ = se->my_q->h_nr_runnable;
 }
 
-static inline long se_runnable(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਲੰਮਾ se_runnable(ਬਣਤਰ sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	ਜੇ (se->sched_delayed)
+		ਵਾਪਸ false;
 
-	if (entity_is_task(se))
-		return !!se->on_rq;
-	else
-		return se->runnable_weight;
+	ਜੇ (entity_is_task(se))
+		ਵਾਪਸ !!se->on_rq;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ se->runnable_ਭਾਰ;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
 
-#define entity_is_task(se)	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ entity_is_task(se)	1
 
-static inline void se_update_runnable(struct sched_entity *se) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ se_update_runnable(ਬਣਤਰ sched_entity *se) { }
 
-static inline long se_runnable(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਲੰਮਾ se_runnable(ਬਣਤਰ sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	ਜੇ (se->sched_delayed)
+		ਵਾਪਸ false;
 
-	return !!se->on_rq;
+	ਵਾਪਸ !!se->on_rq;
 }
 
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
 
 /*
  * XXX we want to get rid of these helpers and use the full load resolution.
  */
-static inline long se_weight(struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਲੰਮਾ se_ਭਾਰ(ਬਣਤਰ sched_entity *se)
 {
-	return scale_load_down(se->load.weight);
+	ਵਾਪਸ scale_ਲੱਦੋ_ਥੱਲੇ(se->ਲੱਦੋ.ਭਾਰ);
 }
 
 
-static inline bool sched_asym_prefer(int a, int b)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_asym_prefer(ਪੂਰਨ a, ਪੂਰਨ b)
 {
-	return arch_asym_cpu_priority(a) > arch_asym_cpu_priority(b);
+	ਵਾਪਸ arch_asym_cpu_ਤਰਜੀਹ(a) > arch_asym_cpu_ਤਰਜੀਹ(b);
 }
 
-struct perf_domain {
-	struct em_perf_domain *em_pd;
-	struct perf_domain *next;
-	struct rcu_head rcu;
+ਬਣਤਰ perf_domain {
+	ਬਣਤਰ em_perf_domain *em_pd;
+	ਬਣਤਰ perf_domain *ਅਗਲਾ;
+	ਬਣਤਰ rcu_ਸਿਰ rcu;
 };
 
 /*
@@ -1021,11 +1021,11 @@ struct perf_domain {
  * object.
  *
  */
-struct root_domain {
+ਬਣਤਰ ਜੜ੍ਹ_domain {
 	atomic_t		refcount;
-	atomic_t		rto_count;
-	struct rcu_head		rcu;
-	cpumask_var_t		span;
+	atomic_t		rto_ਗਿਣਤੀ;
+	ਬਣਤਰ rcu_ਸਿਰ		rcu;
+	cpumask_var_t		ਵਿਸਤਾਰ;
 	cpumask_var_t		online;
 
 	/*
@@ -1042,10 +1042,10 @@ struct root_domain {
 	 * The bit corresponding to a CPU gets set here if such CPU has more
 	 * than one runnable -deadline task (as it is below for RT tasks).
 	 */
-	cpumask_var_t		dlo_mask;
-	atomic_t		dlo_count;
-	struct dl_bw		dl_bw;
-	struct cpudl		cpudl;
+	cpumask_var_t		dlo_ਨਕਾਬ;
+	atomic_t		dlo_ਗਿਣਤੀ;
+	ਬਣਤਰ dl_bw		dl_bw;
+	ਬਣਤਰ cpudl		cpudl;
 
 	/*
 	 * Indicate whether a root_domain's dl_bw has been checked or
@@ -1054,57 +1054,57 @@ struct root_domain {
 	 * Also, some corner cases, like 'wrap around' is dangerous, but given
 	 * that u64 is 'big enough'. So that shouldn't be a concern.
 	 */
-	u64 visit_cookie;
+	u64 ਦੇਖੋ_cookie;
 
-#ifdef HAVE_RT_PUSH_IPI
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_RT_ਧੱਕੋ_IPI
 	/*
 	 * For IPI pull requests, loop across the rto_mask.
 	 */
-	struct irq_work		rto_push_work;
-	raw_spinlock_t		rto_lock;
+	ਬਣਤਰ irq_work		rto_ਧੱਕੋ_work;
+	raw_spinlock_t		rto_ਤਾਲਾ;
 	/* These are only updated and read within rto_lock */
-	int			rto_loop;
-	int			rto_cpu;
+	ਪੂਰਨ			rto_loop;
+	ਪੂਰਨ			rto_cpu;
 	/* These atomics are updated outside of a lock */
-	atomic_t		rto_loop_next;
-	atomic_t		rto_loop_start;
-#endif /* HAVE_RT_PUSH_IPI */
+	atomic_t		rto_loop_ਅਗਲਾ;
+	atomic_t		rto_loop_ਸ਼ੁਰੂ;
+#ਜੇ_ਅੰਤ /* HAVE_RT_PUSH_IPI */
 	/*
 	 * The "RT overload" flag: it gets set if a CPU has more than
 	 * one runnable RT task.
 	 */
-	cpumask_var_t		rto_mask;
-	struct cpupri		cpupri;
+	cpumask_var_t		rto_ਨਕਾਬ;
+	ਬਣਤਰ cpupri		cpupri;
 
 	/*
 	 * NULL-terminated list of performance domains intersecting with the
 	 * CPUs of the rd. Protected by RCU.
 	 */
-	struct perf_domain __rcu *pd;
+	ਬਣਤਰ perf_domain __rcu *pd;
 };
 
-extern void init_defrootdomain(void);
-extern int sched_init_domains(const struct cpumask *cpu_map);
-extern void rq_attach_root(struct rq *rq, struct root_domain *rd);
-extern void sched_get_rd(struct root_domain *rd);
-extern void sched_put_rd(struct root_domain *rd);
+ਬਾਹਰੀ ਖਾਲੀ init_defrootdomain(ਖਾਲੀ);
+ਬਾਹਰੀ ਪੂਰਨ sched_init_domains(ਅਚਲ ਬਣਤਰ cpumask *cpu_map);
+ਬਾਹਰੀ ਖਾਲੀ rq_attach_ਜੜ੍ਹ(ਬਣਤਰ rq *rq, ਬਣਤਰ ਜੜ੍ਹ_domain *rd);
+ਬਾਹਰੀ ਖਾਲੀ sched_get_rd(ਬਣਤਰ ਜੜ੍ਹ_domain *rd);
+ਬਾਹਰੀ ਖਾਲੀ sched_put_rd(ਬਣਤਰ ਜੜ੍ਹ_domain *rd);
 
-static inline int get_rd_overloaded(struct root_domain *rd)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ get_rd_overloaded(ਬਣਤਰ ਜੜ੍ਹ_domain *rd)
 {
-	return READ_ONCE(rd->overloaded);
+	ਵਾਪਸ READ_ONCE(rd->overloaded);
 }
 
-static inline void set_rd_overloaded(struct root_domain *rd, int status)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਸੈੱਟ_rd_overloaded(ਬਣਤਰ ਜੜ੍ਹ_domain *rd, ਪੂਰਨ ਸਥਿਤੀ)
 {
-	if (get_rd_overloaded(rd) != status)
-		WRITE_ONCE(rd->overloaded, status);
+	ਜੇ (get_rd_overloaded(rd) != ਸਥਿਤੀ)
+		WRITE_ONCE(rd->overloaded, ਸਥਿਤੀ);
 }
 
-#ifdef HAVE_RT_PUSH_IPI
-extern void rto_push_irq_work_func(struct irq_work *work);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_RT_ਧੱਕੋ_IPI
+ਬਾਹਰੀ ਖਾਲੀ rto_ਧੱਕੋ_irq_work_func(ਬਣਤਰ irq_work *work);
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_UCLAMP_TASK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_UCLAMP_TASK
 /*
  * struct uclamp_bucket - Utilization clamp bucket
  * @value: utilization clamp value for tasks on this clamp bucket
@@ -1113,9 +1113,9 @@ extern void rto_push_irq_work_func(struct irq_work *work);
  * Keep track of how many tasks are RUNNABLE for a given utilization
  * clamp value.
  */
-struct uclamp_bucket {
-	unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
-	unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
+ਬਣਤਰ uclamp_ਬਾਲਟੀ {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਮੁੱਲ : ਬਿੱਟ_ਪ੍ਰਤੀ(SCHED_ਸਮਰੱਥਾ_SCALE);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ tasks : ਬਿੱਟ_ਪ੍ਰਤੀ_LONG - ਬਿੱਟ_ਪ੍ਰਤੀ(SCHED_ਸਮਰੱਥਾ_SCALE);
 };
 
 /*
@@ -1140,13 +1140,13 @@ struct uclamp_bucket {
  * utilization clamp values (UCLAMP_BUCKETS), use a simple array to track
  * the metrics required to compute all the per-rq utilization clamp values.
  */
-struct uclamp_rq {
-	unsigned int value;
-	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
+ਬਣਤਰ uclamp_rq {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮੁੱਲ;
+	ਬਣਤਰ uclamp_ਬਾਲਟੀ ਬਾਲਟੀ[UCLAMP_BUCKETS];
 };
 
-DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
-#endif /* CONFIG_UCLAMP_TASK */
+DECLARE_STATIC_ਕੁੰਜੀ_FALSE(sched_uclamp_ਵਰਤਿਆ);
+#ਜੇ_ਅੰਤ /* CONFIG_UCLAMP_TASK */
 
 /*
  * This is the main, per-CPU runqueue data structure.
@@ -1155,7 +1155,7 @@ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
  * (such as the load balancing or the thread migration code), lock
  * acquire operations must be ordered by ascending &runqueue.
  */
-struct rq {
+ਬਣਤਰ rq {
 	/*
 	 * The following members are loaded together, without holding the
 	 * rq->lock, in an extremely hot loop in update_sg_lb_stats()
@@ -1164,23 +1164,23 @@ struct rq {
 	 * line. Even though some of them are frequently modified, they are
 	 * loaded much more frequently than they are stored.
 	 */
-	unsigned int		nr_running;
-#ifdef CONFIG_NUMA_BALANCING
-	unsigned int		nr_numa_running;
-	unsigned int		nr_preferred_running;
-#endif
-	unsigned int		ttwu_pending;
-	unsigned long		cpu_capacity;
-#ifdef CONFIG_SCHED_PROXY_EXEC
-	struct task_struct __rcu	*donor;  /* Scheduling context */
-	struct task_struct __rcu	*curr;   /* Execution context */
-#else
-	union {
-		struct task_struct __rcu *donor; /* Scheduler context */
-		struct task_struct __rcu *curr;  /* Execution context */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		nr_running;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		nr_numa_running;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		nr_preferred_running;
+#ਜੇ_ਅੰਤ
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		ttwu_pending;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		cpu_ਸਮਰੱਥਾ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_PROXY_EXEC
+	ਬਣਤਰ task_struct __rcu	*donor;  /* Scheduling context */
+	ਬਣਤਰ task_struct __rcu	*curr;   /* Execution context */
+#ਨਹੀਂਤਾਂ
+	ਸੰਘ {
+		ਬਣਤਰ task_struct __rcu *donor; /* Scheduler context */
+		ਬਣਤਰ task_struct __rcu *curr;  /* Execution context */
 	};
-#endif
-	struct task_struct	*idle;
+#ਜੇ_ਅੰਤ
+	ਬਣਤਰ task_struct	*idle;
 	/* padding left here deliberately */
 
 	/*
@@ -1192,51 +1192,51 @@ struct rq {
 	/* runqueue lock: */
 	raw_spinlock_t		__lock;
 
-#ifdef CONFIG_NO_HZ_COMMON
-	unsigned int		nohz_tick_stopped;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_COMMON
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		nohz_tick_stopped;
 	atomic_t		nohz_flags;
-	unsigned int		has_blocked_load;
-	unsigned long		last_blocked_load_update_tick;
-	call_single_data_t	nohz_csd;
-#endif /* CONFIG_NO_HZ_COMMON */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		has_blocked_ਲੱਦੋ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		ਆਖਰੀ_blocked_ਲੱਦੋ_update_tick;
+	call_single_ਅੰਕੜੇ_t	nohz_csd;
+#ਜੇ_ਅੰਤ /* CONFIG_NO_HZ_COMMON */
 
-#ifdef CONFIG_UCLAMP_TASK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_UCLAMP_TASK
 	/* Utilization clamp values based on CPU's RUNNABLE tasks */
-	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
-	unsigned int		uclamp_flags;
-#define UCLAMP_FLAG_IDLE 0x01
-#endif
+	ਬਣਤਰ uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		uclamp_flags;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UCLAMP_FLAG_IDLE 0x01
+#ਜੇ_ਅੰਤ
 
-	struct cfs_rq		cfs;
-	struct rt_rq		rt;
-	struct dl_rq		dl;
-#ifdef CONFIG_SCHED_CLASS_EXT
-	struct scx_rq		scx;
-	struct sched_dl_entity	ext_server;
-#endif
-#ifdef CONFIG_SCHED_CACHE
-	raw_spinlock_t		cpu_epoch_lock ____cacheline_aligned;
+	ਬਣਤਰ cfs_rq		cfs;
+	ਬਣਤਰ rt_rq		rt;
+	ਬਣਤਰ dl_rq		dl;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CLASS_EXT
+	ਬਣਤਰ scx_rq		scx;
+	ਬਣਤਰ sched_dl_entity	ext_server;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
+	raw_spinlock_t		cpu_epoch_ਤਾਲਾ ____cacheline_aligned;
 	u64			cpu_runtime;
-	unsigned long		cpu_epoch;
-	unsigned long		cpu_epoch_next;
-#endif
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		cpu_epoch;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		cpu_epoch_ਅਗਲਾ;
+#ਜੇ_ਅੰਤ
 
-	struct sched_dl_entity	fair_server;
+	ਬਣਤਰ sched_dl_entity	fair_server;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 	/* list of leaf cfs_rq on this CPU: */
-	struct list_head	leaf_cfs_rq_list;
-	struct list_head	*tmp_alone_branch;
-#endif /* CONFIG_FAIR_GROUP_SCHED */
+	ਬਣਤਰ list_ਸਿਰ	ਪੱਤੀ_cfs_rq_list;
+	ਬਣਤਰ list_ਸਿਰ	*tmp_alone_branch;
+#ਜੇ_ਅੰਤ /* CONFIG_FAIR_GROUP_SCHED */
 
-#ifdef CONFIG_NUMA_BALANCING
-	unsigned int		numa_migrate_on;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		numa_migrate_on;
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_SCHED_CACHE
-	unsigned int		nr_pref_llc_running;
-	unsigned int		nr_llc_running;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		nr_pref_llc_running;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		nr_llc_running;
+#ਜੇ_ਅੰਤ
 
 	/*
 	 * This is part of a global counter where only the total sum
@@ -1244,13 +1244,13 @@ struct rq {
 	 * one CPU and if it got migrated afterwards it may decrease
 	 * it on another CPU. Always updated under the runqueue lock:
 	 */
-	unsigned long		nr_uninterruptible;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		nr_uninterruptible;
 
-	struct sched_dl_entity	*dl_server;
-	struct task_struct	*stop;
-	const struct sched_class *next_class;
-	unsigned long		next_balance;
-	struct mm_struct	*prev_mm;
+	ਬਣਤਰ sched_dl_entity	*dl_server;
+	ਬਣਤਰ task_struct	*stop;
+	ਅਚਲ ਬਣਤਰ sched_class *ਅਗਲਾ_class;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		ਅਗਲਾ_balance;
+	ਬਣਤਰ mm_struct	*prev_mm;
 
 	/*
 	 * The following fields of clock data are frequently referenced
@@ -1259,194 +1259,194 @@ struct rq {
 	u64			clock_task ____cacheline_aligned;
 	u64			clock_pelt;
 	u64			clock;
-	unsigned long		lost_idle_time;
-	unsigned int		clock_update_flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		ਗੁਆਚਾ_idle_ਸਮਾਂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		clock_update_flags;
 	u64			clock_pelt_idle;
 	u64			clock_idle;
 
-#ifndef CONFIG_64BIT
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CONFIG_64_ਦੋਆਧਾਰੀ_ਅੰਕ
 	u64			clock_pelt_idle_copy;
 	u64			clock_idle_copy;
-#endif
+#ਜੇ_ਅੰਤ
 
-	u64 last_seen_need_resched_ns;
-	int ticks_without_resched;
+	u64 ਆਖਰੀ_ਵੇਖਿਆ_need_resched_ns;
+	ਪੂਰਨ ticks_without_resched;
 
-#ifdef CONFIG_MEMBARRIER
-	int membarrier_state;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_MEMBARRIER
+	ਪੂਰਨ membarrier_state;
+#ਜੇ_ਅੰਤ
 
-	struct root_domain		*rd;
-	struct sched_domain __rcu	*sd;
+	ਬਣਤਰ ਜੜ੍ਹ_domain		*rd;
+	ਬਣਤਰ sched_domain __rcu	*sd;
 
-	struct balance_callback *balance_callback;
+	ਬਣਤਰ balance_callback *balance_callback;
 
-	unsigned char		nohz_idle_balance;
-	unsigned char		idle_balance;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ		nohz_idle_balance;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ		idle_balance;
 
-	unsigned long		misfit_task_load;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		misfit_task_ਲੱਦੋ;
 
 	/* For active balancing */
-	int			active_balance;
-	int			push_cpu;
-	struct cpu_stop_work	active_balance_work;
+	ਪੂਰਨ			ਸਰਗਰਮ_balance;
+	ਪੂਰਨ			ਧੱਕੋ_cpu;
+	ਬਣਤਰ cpu_stop_work	ਸਰਗਰਮ_balance_work;
 
 	/* CPU of this runqueue: */
-	int			cpu;
-	int			online;
+	ਪੂਰਨ			cpu;
+	ਪੂਰਨ			online;
 
-	struct list_head cfs_tasks;
+	ਬਣਤਰ list_ਸਿਰ cfs_tasks;
 
-	struct sched_avg	avg_rt;
-	struct sched_avg	avg_dl;
-#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-	struct sched_avg	avg_irq;
-#endif
-#ifdef CONFIG_SCHED_HW_PRESSURE
-	struct sched_avg	avg_hw;
-#endif
+	ਬਣਤਰ sched_avg	avg_rt;
+	ਬਣਤਰ sched_avg	avg_dl;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_HAVE_SCHED_AVG_IRQ
+	ਬਣਤਰ sched_avg	avg_irq;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_HW_PRESSURE
+	ਬਣਤਰ sched_avg	avg_hw;
+#ਜੇ_ਅੰਤ
 	u64			idle_stamp;
 	u64			avg_idle;
 
 	/* This is used to determine avg_idle's max value */
-	u64			max_idle_balance_cost;
+	u64			max_idle_balance_ਲਾਗਤ;
 
-#ifdef CONFIG_HOTPLUG_CPU
-	struct rcuwait		hotplug_wait;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_HOTPLUG_CPU
+	ਬਣਤਰ rcuwait		hotplug_wait;
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	u64			prev_irq_time;
-	u64			psi_irq_time;
-#endif
-#ifdef CONFIG_PARAVIRT
-	u64			prev_steal_time;
-#endif
-#ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-	u64			prev_steal_time_rq;
-#endif
-#ifdef CONFIG_PREFERRED_CPU
-	bool			npc_push_work_pending;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_IRQ_ਸਮਾਂ_ACCOUNTING
+	u64			prev_irq_ਸਮਾਂ;
+	u64			psi_irq_ਸਮਾਂ;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_PARAVIRT
+	u64			prev_steal_ਸਮਾਂ;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_PARAVIRT_ਸਮਾਂ_ACCOUNTING
+	u64			prev_steal_ਸਮਾਂ_rq;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_PREFERRED_CPU
+	bool			npc_ਧੱਕੋ_work_pending;
+#ਜੇ_ਅੰਤ
 
 	/* calc_load related fields */
-	unsigned long		calc_load_update;
-	long			calc_load_active;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		calc_ਲੱਦੋ_update;
+	ਲੰਮਾ			calc_ਲੱਦੋ_ਸਰਗਰਮ;
 
-#ifdef CONFIG_SCHED_HRTICK
-	call_single_data_t	hrtick_csd;
-	struct hrtimer		hrtick_timer;
-	ktime_t			hrtick_time;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_HRTICK
+	call_single_ਅੰਕੜੇ_t	hrtick_csd;
+	ਬਣਤਰ hrtimer		hrtick_timer;
+	ktime_t			hrtick_ਸਮਾਂ;
 	ktime_t			hrtick_delay;
-	unsigned int		hrtick_sched;
-#endif
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		hrtick_sched;
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_SCHEDSTATS
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHEDSTATS
 	/* latency stats */
-	struct sched_info	rq_sched_info;
-	unsigned long long	rq_cpu_time;
+	ਬਣਤਰ sched_info	rq_sched_info;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ	rq_cpu_ਸਮਾਂ;
 
 	/* sys_sched_yield() stats */
-	unsigned int		yld_count;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		yld_ਗਿਣਤੀ;
 
 	/* schedule() stats */
-	unsigned int		sched_count;
-	unsigned int		sched_goidle;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		sched_ਗਿਣਤੀ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		sched_goidle;
 
 	/* try_to_wake_up() stats */
-	unsigned int		ttwu_count;
-	unsigned int		ttwu_local;
-#endif
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		ttwu_ਗਿਣਤੀ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		ttwu_local;
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_CPU_IDLE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CPU_IDLE
 	/* Must be inspected within a RCU lock section */
-	struct cpuidle_state	*idle_state;
-#endif
+	ਬਣਤਰ cpuidle_state	*idle_state;
+#ਜੇ_ਅੰਤ
 
-	unsigned int		nr_pinned;
-	unsigned int		push_busy;
-	struct cpu_stop_work	push_work;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		nr_pinned;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		ਧੱਕੋ_busy;
+	ਬਣਤਰ cpu_stop_work	ਧੱਕੋ_work;
 
-#ifdef CONFIG_SCHED_CORE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CORE
 	/* per rq */
-	struct rq		*core;
-	struct task_struct	*core_pick;
-	struct sched_dl_entity	*core_dl_server;
-	unsigned int		core_enabled;
-	struct rb_root		core_tree;
+	ਬਣਤਰ rq		*core;
+	ਬਣਤਰ task_struct	*core_pick;
+	ਬਣਤਰ sched_dl_entity	*core_dl_server;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		core_enabled;
+	ਬਣਤਰ rb_ਜੜ੍ਹ		core_ਰੁੱਖ;
 
 	/* shared state -- careful with sched_core_cpu_deactivate() */
-	unsigned int		core_task_seq;
-	unsigned int		core_pick_seq;
-	unsigned long		core_cookie;
-	unsigned int		core_forceidle_count;
-	unsigned int		core_forceidle_seq;
-	unsigned int		core_forceidle_occupation;
-	u64			core_forceidle_start;
-	unsigned int		core_pick_in_flight;
-#endif /* CONFIG_SCHED_CORE */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		core_task_seq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		core_pick_seq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		core_cookie;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		core_forceidle_ਗਿਣਤੀ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		core_forceidle_seq;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		core_forceidle_occupation;
+	u64			core_forceidle_ਸ਼ੁਰੂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		core_pick_ਵਿੱਚ_flight;
+#ਜੇ_ਅੰਤ /* CONFIG_SCHED_CORE */
 
 	/* Scratch cpumask to be temporarily used under rq_lock */
-	cpumask_var_t		scratch_mask;
+	cpumask_var_t		scratch_ਨਕਾਬ;
 
-#ifdef CONFIG_CFS_BANDWIDTH
-	call_single_data_t	cfsb_csd;
-	struct list_head	cfsb_csd_list;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CFS_BANDWIDTH
+	call_single_ਅੰਕੜੇ_t	cfsb_csd;
+	ਬਣਤਰ list_ਸਿਰ	cfsb_csd_list;
+#ਜੇ_ਅੰਤ
 
 	atomic_t		nr_iowait;
 } __no_randomize_layout;
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 
 /* CPU runqueue to which this cfs_rq is attached */
-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ rq *rq_ਦਾ(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return cfs_rq->rq;
+	ਵਾਪਸ cfs_rq->rq;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
 
-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ rq *rq_ਦਾ(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	return container_of(cfs_rq, struct rq, cfs);
+	ਵਾਪਸ container_ਦਾ(cfs_rq, ਬਣਤਰ rq, cfs);
 }
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
 
-static inline int cpu_of(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ cpu_ਦਾ(ਬਣਤਰ rq *rq)
 {
-	return rq->cpu;
-}
-
-#define MDF_PUSH		0x01
-
-static inline bool is_migration_disabled(struct task_struct *p)
-{
-	return p->migration_disabled;
+	ਵਾਪਸ rq->cpu;
 }
 
-DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
-DECLARE_PER_CPU(struct rnd_state, sched_rnd_state);
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MDF_ਧੱਕੋ		0x01
 
-static inline u32 sched_rng(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool is_migration_disabled(ਬਣਤਰ task_struct *p)
 {
-	return prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
+	ਵਾਪਸ p->migration_disabled;
 }
 
-static __always_inline struct rq *__this_rq(void)
+DECLARE_ਪ੍ਰਤੀ_CPU_SHARED_ALIGNED(ਬਣਤਰ rq, runqueues);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਬਣਤਰ rnd_state, sched_rnd_state);
+
+ਸਥਿਰ ਸਤਰਅੰਦਰ u32 sched_rng(ਖਾਲੀ)
 {
-	return this_cpu_ptr(&runqueues);
+	ਵਾਪਸ prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
 }
 
-#define cpu_rq(cpu)		(&per_cpu(runqueues, (cpu)))
-#define this_rq()		__this_rq()
-#define task_rq(p)		cpu_rq(task_cpu(p))
-#define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
-#define raw_rq()		raw_cpu_ptr(&runqueues)
-
-static inline bool idle_rq(struct rq *rq)
+ਸਥਿਰ __always_inline ਬਣਤਰ rq *__this_rq(ਖਾਲੀ)
 {
-	return rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
+	ਵਾਪਸ this_cpu_ptr(&runqueues);
+}
+
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ cpu_rq(cpu)		(&ਪ੍ਰਤੀ_cpu(runqueues, (cpu)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ this_rq()		__this_rq()
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ task_rq(p)		cpu_rq(task_cpu(p))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ cpu_curr(cpu)		(cpu_rq(cpu)->curr)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ raw_rq()		raw_cpu_ptr(&runqueues)
+
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool idle_rq(ਬਣਤਰ rq *rq)
+{
+	ਵਾਪਸ rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
 }
 
 /**
@@ -1455,69 +1455,69 @@ static inline bool idle_rq(struct rq *rq)
  *
  * Return: 1 if the CPU is currently idle. 0 otherwise.
  */
-static inline bool available_idle_cpu(int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool ਉਪਲਬਧ_idle_cpu(ਪੂਰਨ cpu)
 {
-	if (!idle_rq(cpu_rq(cpu)))
-		return 0;
+	ਜੇ (!idle_rq(cpu_rq(cpu)))
+		ਵਾਪਸ 0;
 
-	if (vcpu_is_preempted(cpu))
-		return 0;
+	ਜੇ (vcpu_is_preempted(cpu))
+		ਵਾਪਸ 0;
 
-	return 1;
+	ਵਾਪਸ 1;
 }
 
-#ifdef CONFIG_SCHED_PROXY_EXEC
-static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_PROXY_EXEC
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_ਸੈੱਟ_donor(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *t)
 {
-	rcu_assign_pointer(rq->donor, t);
+	rcu_ਸੌਂਪੋ_ਸੂਚਕ(rq->donor, t);
 }
-#else
-static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_ਸੈੱਟ_donor(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *t)
 {
 	/* Do nothing */
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_SCHED_CORE
-static inline struct cpumask *sched_group_span(struct sched_group *sg);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CORE
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cpumask *sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਬਣਤਰ sched_ਸਮੂਹ *sg);
 
-DECLARE_STATIC_KEY_FALSE(__sched_core_enabled);
+DECLARE_STATIC_ਕੁੰਜੀ_FALSE(__sched_core_enabled);
 
-static inline bool sched_core_enabled(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_core_enabled(ਬਣਤਰ rq *rq)
 {
-	return static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
+	ਵਾਪਸ static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
 }
 
-static inline bool sched_core_disabled(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_core_disabled(ਖਾਲੀ)
 {
-	return !static_branch_unlikely(&__sched_core_enabled);
+	ਵਾਪਸ !static_branch_unlikely(&__sched_core_enabled);
 }
 
 /*
  * Be careful with this function; not for general use. The return value isn't
  * stable unless you actually hold a relevant rq->__lock.
  */
-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ raw_spinlock_t *rq_lockp(ਬਣਤਰ rq *rq)
 {
-	if (sched_core_enabled(rq))
-		return &rq->core->__lock;
+	ਜੇ (sched_core_enabled(rq))
+		ਵਾਪਸ &rq->core->__lock;
 
-	return &rq->__lock;
+	ਵਾਪਸ &rq->__lock;
 }
 
-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ raw_spinlock_t *__rq_lockp(ਬਣਤਰ rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	if (rq->core_enabled)
-		return &rq->core->__lock;
+	ਜੇ (rq->core_enabled)
+		ਵਾਪਸ &rq->core->__lock;
 
-	return &rq->__lock;
+	ਵਾਪਸ &rq->__lock;
 }
 
-extern bool
-cfs_prio_less(const struct task_struct *a, const struct task_struct *b, bool fi);
+ਬਾਹਰੀ bool
+cfs_prio_less(ਅਚਲ ਬਣਤਰ task_struct *a, ਅਚਲ ਬਣਤਰ task_struct *b, bool fi);
 
-extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_fi);
+ਬਾਹਰੀ ਖਾਲੀ task_vruntime_update(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, bool ਵਿੱਚ_fi);
 
 /*
  * Helpers to check if the CPU's core cookie matches with the task's cookie
@@ -1525,31 +1525,31 @@ extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_f
  * A special case is that the task's cookie always matches with CPU's core
  * cookie if the CPU is in an idle core.
  */
-static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_cpu_cookie_ਮੇਲ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	ਜੇ (!sched_core_enabled(rq))
+		ਵਾਪਸ true;
 
-	return rq->core->core_cookie == p->core_cookie;
+	ਵਾਪਸ rq->core->core_cookie == p->core_cookie;
 }
 
-static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_core_cookie_ਮੇਲ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
 	bool idle_core = true;
-	int cpu;
+	ਪੂਰਨ cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	ਜੇ (!sched_core_enabled(rq))
+		ਵਾਪਸ true;
 
-	if (rq->core->core_cookie == p->core_cookie)
-		return true;
+	ਜੇ (rq->core->core_cookie == p->core_cookie)
+		ਵਾਪਸ true;
 
-	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
-		if (!available_idle_cpu(cpu)) {
+	for_each_cpu(cpu, cpu_smt_ਨਕਾਬ(cpu_ਦਾ(rq))) {
+		ਜੇ (!ਉਪਲਬਧ_idle_cpu(cpu)) {
 			idle_core = false;
-			break;
+			ਰੋਕੋ;
 		}
 	}
 
@@ -1557,230 +1557,230 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
 	 * A CPU in an idle core is always the best choice for tasks with
 	 * cookies.
 	 */
-	return idle_core;
+	ਵਾਪਸ idle_core;
 }
 
-static inline bool sched_group_cookie_match(struct rq *rq,
-					    struct task_struct *p,
-					    struct sched_group *group)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_ਸਮੂਹ_cookie_ਮੇਲ(ਬਣਤਰ rq *rq,
+					    ਬਣਤਰ task_struct *p,
+					    ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
-	int cpu;
+	ਪੂਰਨ cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	ਜੇ (!sched_core_enabled(rq))
+		ਵਾਪਸ true;
 
-	for_each_cpu_and(cpu, sched_group_span(group), p->cpus_ptr) {
-		if (sched_core_cookie_match(cpu_rq(cpu), p))
-			return true;
+	for_each_cpu_and(cpu, sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਸਮੂਹ), p->cpus_ptr) {
+		ਜੇ (sched_core_cookie_ਮੇਲ(cpu_rq(cpu), p))
+			ਵਾਪਸ true;
 	}
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline bool sched_core_enqueued(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_core_enqueued(ਬਣਤਰ task_struct *p)
 {
-	return !RB_EMPTY_NODE(&p->core_node);
+	ਵਾਪਸ !RB_ਖਾਲੀ_ਥਾਵਾਂ_ਗੰਢ(&p->core_ਗੰਢ);
 }
 
-extern void sched_core_enqueue(struct rq *rq, struct task_struct *p);
-extern void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags);
+ਬਾਹਰੀ ਖਾਲੀ sched_core_ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p);
+ਬਾਹਰੀ ਖਾਲੀ sched_core_ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
 
-extern void sched_core_get(void);
-extern void sched_core_put(void);
+ਬਾਹਰੀ ਖਾਲੀ sched_core_get(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ sched_core_put(ਖਾਲੀ);
 
-static inline bool task_has_sched_core(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool task_has_sched_core(ਬਣਤਰ task_struct *p)
 {
-	if (sched_core_disabled())
-		return false;
+	ਜੇ (sched_core_disabled())
+		ਵਾਪਸ false;
 
-	return !!p->core_cookie;
+	ਵਾਪਸ !!p->core_cookie;
 }
 
-#else /* !CONFIG_SCHED_CORE: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_SCHED_CORE: */
 
-static inline bool sched_core_enabled(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_core_enabled(ਬਣਤਰ rq *rq)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline bool sched_core_disabled(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_core_disabled(ਖਾਲੀ)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ raw_spinlock_t *rq_lockp(ਬਣਤਰ rq *rq)
 {
-	return &rq->__lock;
+	ਵਾਪਸ &rq->__lock;
 }
 
-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ raw_spinlock_t *__rq_lockp(ਬਣਤਰ rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	return &rq->__lock;
+	ਵਾਪਸ &rq->__lock;
 }
 
-static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_cpu_cookie_ਮੇਲ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_core_cookie_ਮੇਲ(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-static inline bool sched_group_cookie_match(struct rq *rq,
-					    struct task_struct *p,
-					    struct sched_group *group)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_ਸਮੂਹ_cookie_ਮੇਲ(ਬਣਤਰ rq *rq,
+					    ਬਣਤਰ task_struct *p,
+					    ਬਣਤਰ sched_ਸਮੂਹ *ਸਮੂਹ)
 {
-	return true;
+	ਵਾਪਸ true;
 }
 
-static inline bool task_has_sched_core(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool task_has_sched_core(ਬਣਤਰ task_struct *p)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-#endif /* !CONFIG_SCHED_CORE */
+#ਜੇ_ਅੰਤ /* !CONFIG_SCHED_CORE */
 
-#ifdef CONFIG_RT_GROUP_SCHED
-# ifdef CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED
-DECLARE_STATIC_KEY_FALSE(rt_group_sched);
-static inline bool rt_group_sched_enabled(void)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_RT_ਸਮੂਹ_SCHED
+# ifdef CONFIG_RT_ਸਮੂਹ_SCHED_DEFAULT_DISABLED
+DECLARE_STATIC_ਕੁੰਜੀ_FALSE(rt_ਸਮੂਹ_sched);
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool rt_ਸਮੂਹ_sched_enabled(ਖਾਲੀ)
 {
-	return static_branch_unlikely(&rt_group_sched);
+	ਵਾਪਸ static_branch_unlikely(&rt_ਸਮੂਹ_sched);
 }
-# else /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
-DECLARE_STATIC_KEY_TRUE(rt_group_sched);
-static inline bool rt_group_sched_enabled(void)
+# ਨਹੀਂਤਾਂ /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
+DECLARE_STATIC_ਕੁੰਜੀ_TRUE(rt_ਸਮੂਹ_sched);
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool rt_ਸਮੂਹ_sched_enabled(ਖਾਲੀ)
 {
-	return static_branch_likely(&rt_group_sched);
+	ਵਾਪਸ static_branch_likely(&rt_ਸਮੂਹ_sched);
 }
 # endif /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED */
-#else /* !CONFIG_RT_GROUP_SCHED: */
-# define rt_group_sched_enabled()	false
-#endif /* !CONFIG_RT_GROUP_SCHED */
+#ਨਹੀਂਤਾਂ /* !CONFIG_RT_GROUP_SCHED: */
+# define rt_ਸਮੂਹ_sched_enabled()	false
+#ਜੇ_ਅੰਤ /* !CONFIG_RT_GROUP_SCHED */
 
-static inline void lockdep_assert_rq_held(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ lockdep_assert_rq_held(ਬਣਤਰ rq *rq)
 	__assumes_ctx_lock(__rq_lockp(rq))
 {
 	lockdep_assert_held(__rq_lockp(rq));
 }
 
-extern void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
+ਬਾਹਰੀ ਖਾਲੀ raw_spin_rq_ਤਾਲਾ_nested(ਬਣਤਰ rq *rq, ਪੂਰਨ subclass)
 	__acquires(__rq_lockp(rq));
 
-extern bool raw_spin_rq_trylock(struct rq *rq)
+ਬਾਹਰੀ bool raw_spin_rq_trylock(ਬਣਤਰ rq *rq)
 	__cond_acquires(true, __rq_lockp(rq));
 
-static inline void raw_spin_rq_lock(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ raw_spin_rq_ਤਾਲਾ(ਬਣਤਰ rq *rq)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock_nested(rq, 0);
+	raw_spin_rq_ਤਾਲਾ_nested(rq, 0);
 }
 
-static inline void raw_spin_rq_unlock(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ raw_spin_rq_unlock(ਬਣਤਰ rq *rq)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_unlock(rq_lockp(rq));
 }
 
-static inline void raw_spin_rq_lock_irq(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ raw_spin_rq_ਤਾਲਾ_irq(ਬਣਤਰ rq *rq)
 	__acquires(__rq_lockp(rq))
 {
 	local_irq_disable();
-	raw_spin_rq_lock(rq);
+	raw_spin_rq_ਤਾਲਾ(rq);
 }
 
-static inline void raw_spin_rq_unlock_irq(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ raw_spin_rq_unlock_irq(ਬਣਤਰ rq *rq)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_rq_unlock(rq);
 	local_irq_enable();
 }
 
-static inline unsigned long _raw_spin_rq_lock_irqsave(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ raw_spin_rq_ਤਾਲਾ_irqsave_2(ਬਣਤਰ rq *rq)
 	__acquires(__rq_lockp(rq))
 {
-	unsigned long flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
 	local_irq_save(flags);
-	raw_spin_rq_lock(rq);
+	raw_spin_rq_ਤਾਲਾ(rq);
 
-	return flags;
+	ਵਾਪਸ flags;
 }
 
-static inline void raw_spin_rq_unlock_irqrestore(struct rq *rq, unsigned long flags)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ raw_spin_rq_unlock_irqrestore(ਬਣਤਰ rq *rq, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_rq_unlock(rq);
 	local_irq_restore(flags);
 }
 
-#define raw_spin_rq_lock_irqsave(rq, flags)	\
-do {						\
-	flags = _raw_spin_rq_lock_irqsave(rq);	\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ raw_spin_rq_ਤਾਲਾ_irqsave(rq, flags)	\
+ਕਰੋ {						\
+	flags = raw_spin_rq_ਤਾਲਾ_irqsave_2(rq);	\
+} ਜਦੋਂ (0)
 
-extern void __update_idle_core(struct rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ __update_idle_core(ਬਣਤਰ rq *rq);
 
-static inline void update_idle_core(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ update_idle_core(ਬਣਤਰ rq *rq)
 {
-	if (sched_smt_active())
+	ਜੇ (sched_smt_ਸਰਗਰਮ())
 		__update_idle_core(rq);
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-static inline struct task_struct *task_of(struct sched_entity *se)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ task_struct *task_ਦਾ(ਬਣਤਰ sched_entity *se)
 {
 	WARN_ON_ONCE(!entity_is_task(se));
-	return container_of(se, struct task_struct, se);
+	ਵਾਪਸ container_ਦਾ(se, ਬਣਤਰ task_struct, se);
 }
 
-static inline struct cfs_rq *task_cfs_rq(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_rq *task_cfs_rq(ਬਣਤਰ task_struct *p)
 {
-	return p->se.cfs_rq;
+	ਵਾਪਸ p->se.cfs_rq;
 }
 
 /* runqueue on which this entity is (to be) queued */
-static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_rq *cfs_rq_ਦਾ(ਅਚਲ ਬਣਤਰ sched_entity *se)
 {
-	return se->cfs_rq;
+	ਵਾਪਸ se->cfs_rq;
 }
 
 /* runqueue "owned" by this group */
-static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_rq *ਸਮੂਹ_cfs_rq(ਬਣਤਰ sched_entity *grp)
 {
-	return grp->my_q;
+	ਵਾਪਸ grp->my_q;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_FAIR_GROUP_SCHED: */
 
-#define task_of(_se)		container_of(_se, struct task_struct, se)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ task_ਦਾ(_se)		container_ਦਾ(_se, ਬਣਤਰ task_struct, se)
 
-static inline struct cfs_rq *task_cfs_rq(const struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_rq *task_cfs_rq(ਅਚਲ ਬਣਤਰ task_struct *p)
 {
-	return &task_rq(p)->cfs;
+	ਵਾਪਸ &task_rq(p)->cfs;
 }
 
-static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_rq *cfs_rq_ਦਾ(ਅਚਲ ਬਣਤਰ sched_entity *se)
 {
-	const struct task_struct *p = task_of(se);
-	struct rq *rq = task_rq(p);
+	ਅਚਲ ਬਣਤਰ task_struct *p = task_ਦਾ(se);
+	ਬਣਤਰ rq *rq = task_rq(p);
 
-	return &rq->cfs;
+	ਵਾਪਸ &rq->cfs;
 }
 
 /* runqueue "owned" by this group */
-static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_rq *ਸਮੂਹ_cfs_rq(ਬਣਤਰ sched_entity *grp)
 {
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-#endif /* !CONFIG_FAIR_GROUP_SCHED */
+#ਜੇ_ਅੰਤ /* !CONFIG_FAIR_GROUP_SCHED */
 
-extern void update_rq_avg_idle(struct rq *rq);
-extern void update_rq_clock(struct rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ update_rq_avg_idle(ਬਣਤਰ rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ update_rq_clock(ਬਣਤਰ rq *rq);
 
 /*
  * rq::clock_update_flags bits
@@ -1805,11 +1805,11 @@ extern void update_rq_clock(struct rq *rq);
  * one position though, because the next rq_unpin_lock() will shift it
  * back.
  */
-#define RQCF_REQ_SKIP		0x01
-#define RQCF_ACT_SKIP		0x02
-#define RQCF_UPDATED		0x04
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RQCF_REQ_SKIP		0x01
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RQCF_ACT_SKIP		0x02
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RQCF_UPDATED		0x04
 
-static inline void assert_clock_updated(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ assert_clock_updated(ਬਣਤਰ rq *rq)
 {
 	/*
 	 * The only reason for not seeing a clock update since the
@@ -1818,23 +1818,23 @@ static inline void assert_clock_updated(struct rq *rq)
 	WARN_ON_ONCE(rq->clock_update_flags < RQCF_ACT_SKIP);
 }
 
-static inline u64 rq_clock(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 rq_clock(ਬਣਤਰ rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock;
+	ਵਾਪਸ rq->clock;
 }
 
-static inline u64 rq_clock_task(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 rq_clock_task(ਬਣਤਰ rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_task;
+	ਵਾਪਸ rq->clock_task;
 }
 
-static inline void rq_clock_skip_update(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_clock_skip_update(ਬਣਤਰ rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags |= RQCF_REQ_SKIP;
@@ -1844,7 +1844,7 @@ static inline void rq_clock_skip_update(struct rq *rq)
  * See rt task throttling, which is the only time a skip
  * request is canceled.
  */
-static inline void rq_clock_cancel_skipupdate(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_clock_cancel_skipupdate(ਬਣਤਰ rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags &= ~RQCF_REQ_SKIP;
@@ -1859,69 +1859,69 @@ static inline void rq_clock_cancel_skipupdate(struct rq *rq)
  * After the iterative traversal, we need to call rq_clock_stop_loop_update()
  * to clear RQCF_ACT_SKIP of rq->clock_update_flags.
  */
-static inline void rq_clock_start_loop_update(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_clock_ਸ਼ੁਰੂ_loop_update(ਬਣਤਰ rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	WARN_ON_ONCE(rq->clock_update_flags & RQCF_ACT_SKIP);
 	rq->clock_update_flags |= RQCF_ACT_SKIP;
 }
 
-static inline void rq_clock_stop_loop_update(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_clock_stop_loop_update(ਬਣਤਰ rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags &= ~RQCF_ACT_SKIP;
 }
 
-struct rq_flags {
-	unsigned long flags;
-	struct pin_cookie cookie;
+ਬਣਤਰ rq_flags {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
+	ਬਣਤਰ pin_cookie cookie;
 	/*
 	 * A copy of (rq::clock_update_flags & RQCF_UPDATED) for the
 	 * current pin context is stashed here in case it needs to be
 	 * restored in rq_repin_lock().
 	 */
-	unsigned int clock_update_flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ clock_update_flags;
 };
 
-extern struct balance_callback balance_push_callback;
+ਬਾਹਰੀ ਬਣਤਰ balance_callback balance_ਧੱਕੋ_callback;
 
-#ifdef CONFIG_SCHED_CLASS_EXT
-extern const struct sched_class ext_sched_class;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CLASS_EXT
+ਬਾਹਰੀ ਅਚਲ ਬਣਤਰ sched_class ext_sched_class;
 
-DECLARE_STATIC_KEY_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
-DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+DECLARE_STATIC_ਕੁੰਜੀ_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
+DECLARE_STATIC_ਕੁੰਜੀ_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
 
-#define scx_enabled()		static_branch_unlikely(&__scx_enabled)
-#define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ scx_enabled()		static_branch_unlikely(&__scx_enabled)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
 
-static inline void scx_rq_clock_update(struct rq *rq, u64 clock)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ scx_rq_clock_update(ਬਣਤਰ rq *rq, u64 clock)
 {
-	if (!scx_enabled())
-		return;
+	ਜੇ (!scx_enabled())
+		ਵਾਪਸ;
 	WRITE_ONCE(rq->scx.clock, clock);
 	smp_store_release(&rq->scx.flags, rq->scx.flags | SCX_RQ_CLK_VALID);
 }
 
-static inline void scx_rq_clock_invalidate(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ scx_rq_clock_invalidate(ਬਣਤਰ rq *rq)
 {
-	if (!scx_enabled())
-		return;
+	ਜੇ (!scx_enabled())
+		ਵਾਪਸ;
 	WRITE_ONCE(rq->scx.flags, rq->scx.flags & ~SCX_RQ_CLK_VALID);
 }
 
-#else /* !CONFIG_SCHED_CLASS_EXT: */
-#define scx_enabled()		false
-#define scx_switched_all()	false
+#ਨਹੀਂਤਾਂ /* !CONFIG_SCHED_CLASS_EXT: */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ scx_enabled()		false
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ scx_switched_all()	false
 
-static inline void scx_rq_clock_update(struct rq *rq, u64 clock) {}
-static inline void scx_rq_clock_invalidate(struct rq *rq) {}
-#endif /* !CONFIG_SCHED_CLASS_EXT */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ scx_rq_clock_update(ਬਣਤਰ rq *rq, u64 clock) {}
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ scx_rq_clock_invalidate(ਬਣਤਰ rq *rq) {}
+#ਜੇ_ਅੰਤ /* !CONFIG_SCHED_CLASS_EXT */
 
-static inline void assert_balance_callbacks_empty(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ assert_balance_callbacks_ਖਾਲੀ_ਥਾਵਾਂ(ਬਣਤਰ rq *rq)
 {
 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_LOCKING) &&
 		     rq->balance_callback &&
-		     rq->balance_callback != &balance_push_callback);
+		     rq->balance_callback != &balance_ਧੱਕੋ_callback);
 }
 
 /*
@@ -1934,27 +1934,27 @@ static inline void assert_balance_callbacks_empty(struct rq *rq)
  *
  * Also see Documentation/locking/lockdep-design.rst.
  */
-static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_pin_ਤਾਲਾ(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 {
-	rf->cookie = lockdep_pin_lock(__rq_lockp(rq));
+	rf->cookie = lockdep_pin_ਤਾਲਾ(__rq_lockp(rq));
 
 	rq->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 	rf->clock_update_flags = 0;
-	assert_balance_callbacks_empty(rq);
+	assert_balance_callbacks_ਖਾਲੀ_ਥਾਵਾਂ(rq);
 }
 
-static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_unpin_ਤਾਲਾ(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 {
-	if (rq->clock_update_flags > RQCF_ACT_SKIP)
+	ਜੇ (rq->clock_update_flags > RQCF_ACT_SKIP)
 		rf->clock_update_flags = RQCF_UPDATED;
 
 	scx_rq_clock_invalidate(rq);
-	lockdep_unpin_lock(__rq_lockp(rq), rf->cookie);
+	lockdep_unpin_ਤਾਲਾ(__rq_lockp(rq), rf->cookie);
 }
 
-static inline void rq_repin_lock(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_repin_ਤਾਲਾ(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 {
-	lockdep_repin_lock(__rq_lockp(rq), rf->cookie);
+	lockdep_repin_ਤਾਲਾ(__rq_lockp(rq), rf->cookie);
 
 	/*
 	 * Restore the value we stashed in @rf for this pin context.
@@ -1962,194 +1962,194 @@ static inline void rq_repin_lock(struct rq *rq, struct rq_flags *rf)
 	rq->clock_update_flags |= rf->clock_update_flags;
 }
 
-#define __task_rq_lock(...) __acquire_ret(___task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
-extern struct rq *___task_rq_lock(struct task_struct *p, struct rq_flags *rf) __acquires_ret;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ __task_rq_lock(...) __acquire_ret(___task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
+ਬਾਹਰੀ ਬਣਤਰ rq *___task_rq_lock(ਬਣਤਰ task_struct *p, ਬਣਤਰ rq_flags *rf) __acquires_ret;
 
-#define task_rq_lock(...) __acquire_ret(_task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
-extern struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
-	__acquires(&p->pi_lock) __acquires_ret;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ task_rq_ਤਾਲਾ_2(...) __acquire_ret(task_rq_ਤਾਲਾ(__VA_ARGS__), __rq_lockp(__ret))
+ਬਾਹਰੀ ਬਣਤਰ rq *task_rq_ਤਾਲਾ(ਬਣਤਰ task_struct *p, ਬਣਤਰ rq_flags *rf)
+	__acquires(&p->pi_ਤਾਲਾ) __acquires_ret;
 
-static inline void
-__task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+__task_rq_unlock(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਬਣਤਰ rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_ਤਾਲਾ(rq, rf);
 	raw_spin_rq_unlock(rq);
 }
 
-static inline void
-task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
-	__releases(__rq_lockp(rq), &p->pi_lock)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+task_rq_unlock(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਬਣਤਰ rq_flags *rf)
+	__releases(__rq_lockp(rq), &p->pi_ਤਾਲਾ)
 {
 	__task_rq_unlock(rq, p, rf);
-	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
+	raw_spin_unlock_irqrestore(&p->pi_ਤਾਲਾ, rf->flags);
 }
 
-DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
-		    _T->rq = task_rq_lock(_T->lock, &_T->rf),
-		    task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-		    struct rq *rq; struct rq_flags rf)
-DECLARE_LOCK_GUARD_1_ATTRS(task_rq_lock, __acquires(_T->pi_lock), __releases((*(struct task_struct **)_T)->pi_lock))
-#define class_task_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(task_rq_lock, _T)
+DEFINE_ਤਾਲਾ_GUARD_1(task_rq_ਤਾਲਾ_2, ਬਣਤਰ task_struct,
+		    _T->rq = task_rq_ਤਾਲਾ_2(_T->ਤਾਲਾ, &_T->rf),
+		    task_rq_unlock(_T->rq, _T->ਤਾਲਾ, &_T->rf),
+		    ਬਣਤਰ rq *rq; ਬਣਤਰ rq_flags rf)
+DECLARE_ਤਾਲਾ_GUARD_1_ATTRS(task_rq_ਤਾਲਾ_2, __acquires(_T->pi_ਤਾਲਾ), __releases((*(ਬਣਤਰ task_struct **)_T)->pi_ਤਾਲਾ))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ class_task_rq_ਤਾਲਾ_constructor(_T) WITH_ਤਾਲਾ_GUARD_1_ATTRS(task_rq_ਤਾਲਾ_2, _T)
 
-DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
-		    _T->rq = __task_rq_lock(_T->lock, &_T->rf),
-		    __task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-		    struct rq *rq; struct rq_flags rf)
+DEFINE_ਤਾਲਾ_GUARD_1(__task_rq_lock, ਬਣਤਰ task_struct,
+		    _T->rq = __task_rq_lock(_T->ਤਾਲਾ, &_T->rf),
+		    __task_rq_unlock(_T->rq, _T->ਤਾਲਾ, &_T->rf),
+		    ਬਣਤਰ rq *rq; ਬਣਤਰ rq_flags rf)
 
-static inline void rq_lock_irqsave(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_ਤਾਲਾ_irqsave(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock_irqsave(rq, rf->flags);
-	rq_pin_lock(rq, rf);
+	raw_spin_rq_ਤਾਲਾ_irqsave(rq, rf->flags);
+	rq_pin_ਤਾਲਾ(rq, rf);
 }
 
-static inline void rq_lock_irq(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_ਤਾਲਾ_irq(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock_irq(rq);
-	rq_pin_lock(rq, rf);
+	raw_spin_rq_ਤਾਲਾ_irq(rq);
+	rq_pin_ਤਾਲਾ(rq, rf);
 }
 
-static inline void rq_lock(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_ਤਾਲਾ(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
-	raw_spin_rq_lock(rq);
-	rq_pin_lock(rq, rf);
+	raw_spin_rq_ਤਾਲਾ(rq);
+	rq_pin_ਤਾਲਾ(rq, rf);
 }
 
-static inline void rq_unlock_irqrestore(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_unlock_irqrestore(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_ਤਾਲਾ(rq, rf);
 	raw_spin_rq_unlock_irqrestore(rq, rf->flags);
 }
 
-static inline void rq_unlock_irq(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_unlock_irq(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_ਤਾਲਾ(rq, rf);
 	raw_spin_rq_unlock_irq(rq);
 }
 
-static inline void rq_unlock(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_unlock(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
-	rq_unpin_lock(rq, rf);
+	rq_unpin_ਤਾਲਾ(rq, rf);
 	raw_spin_rq_unlock(rq);
 }
 
-DEFINE_LOCK_GUARD_1(rq_lock, struct rq,
-		    rq_lock(_T->lock, &_T->rf),
-		    rq_unlock(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+DEFINE_ਤਾਲਾ_GUARD_1(rq_ਤਾਲਾ, ਬਣਤਰ rq,
+		    rq_ਤਾਲਾ(_T->ਤਾਲਾ, &_T->rf),
+		    rq_unlock(_T->ਤਾਲਾ, &_T->rf),
+		    ਬਣਤਰ rq_flags rf)
 
-DECLARE_LOCK_GUARD_1_ATTRS(rq_lock, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock, _T)
+DECLARE_ਤਾਲਾ_GUARD_1_ATTRS(rq_ਤਾਲਾ, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(ਬਣਤਰ rq **)_T)));
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ class_rq_ਤਾਲਾ_constructor(_T) WITH_ਤਾਲਾ_GUARD_1_ATTRS(rq_ਤਾਲਾ, _T)
 
-DEFINE_LOCK_GUARD_1(rq_lock_irq, struct rq,
-		    rq_lock_irq(_T->lock, &_T->rf),
-		    rq_unlock_irq(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+DEFINE_ਤਾਲਾ_GUARD_1(rq_ਤਾਲਾ_irq, ਬਣਤਰ rq,
+		    rq_ਤਾਲਾ_irq(_T->ਤਾਲਾ, &_T->rf),
+		    rq_unlock_irq(_T->ਤਾਲਾ, &_T->rf),
+		    ਬਣਤਰ rq_flags rf)
 
-DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irq, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_rq_lock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irq, _T)
+DECLARE_ਤਾਲਾ_GUARD_1_ATTRS(rq_ਤਾਲਾ_irq, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(ਬਣਤਰ rq **)_T)));
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ class_rq_ਤਾਲਾ_irq_constructor(_T) WITH_ਤਾਲਾ_GUARD_1_ATTRS(rq_ਤਾਲਾ_irq, _T)
 
-DEFINE_LOCK_GUARD_1(rq_lock_irqsave, struct rq,
-		    rq_lock_irqsave(_T->lock, &_T->rf),
-		    rq_unlock_irqrestore(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+DEFINE_ਤਾਲਾ_GUARD_1(rq_ਤਾਲਾ_irqsave, ਬਣਤਰ rq,
+		    rq_ਤਾਲਾ_irqsave(_T->ਤਾਲਾ, &_T->rf),
+		    rq_unlock_irqrestore(_T->ਤਾਲਾ, &_T->rf),
+		    ਬਣਤਰ rq_flags rf)
 
-DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_rq_lock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, _T)
+DECLARE_ਤਾਲਾ_GUARD_1_ATTRS(rq_ਤਾਲਾ_irqsave, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(ਬਣਤਰ rq **)_T)));
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ class_rq_ਤਾਲਾ_irqsave_constructor(_T) WITH_ਤਾਲਾ_GUARD_1_ATTRS(rq_ਤਾਲਾ_irqsave, _T)
 
-DEFINE_LOCK_GUARD_1(raw_spin_rq_lock_irqsave, struct rq,
-		    raw_spin_rq_lock_irqsave(_T->lock, _T->flags),
-		    raw_spin_rq_unlock_irqrestore(_T->lock, _T->flags),
-		    unsigned long flags)
+DEFINE_ਤਾਲਾ_GUARD_1(raw_spin_rq_ਤਾਲਾ_irqsave, ਬਣਤਰ rq,
+		    raw_spin_rq_ਤਾਲਾ_irqsave(_T->ਤਾਲਾ, _T->flags),
+		    raw_spin_rq_unlock_irqrestore(_T->ਤਾਲਾ, _T->flags),
+		    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags)
 
-DECLARE_LOCK_GUARD_1_ATTRS(raw_spin_rq_lock_irqsave, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
-#define class_raw_spin_rq_lock_irqsave_constructor(_T) \
-	WITH_LOCK_GUARD_1_ATTRS(raw_spin_rq_lock_irqsave, _T)
+DECLARE_ਤਾਲਾ_GUARD_1_ATTRS(raw_spin_rq_ਤਾਲਾ_irqsave, __acquires(__rq_lockp(_T)),
+			   __releases(__rq_lockp(*(ਬਣਤਰ rq **)_T)));
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ class_raw_spin_rq_ਤਾਲਾ_irqsave_constructor(_T) \
+	WITH_ਤਾਲਾ_GUARD_1_ATTRS(raw_spin_rq_ਤਾਲਾ_irqsave, _T)
 
-#define this_rq_lock_irq(...) __acquire_ret(_this_rq_lock_irq(__VA_ARGS__), __rq_lockp(__ret))
-static inline struct rq *_this_rq_lock_irq(struct rq_flags *rf) __acquires_ret
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ this_rq_ਤਾਲਾ_irq(...) __acquire_ret(this_rq_ਤਾਲਾ_irq_2(__VA_ARGS__), __rq_lockp(__ret))
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ rq *this_rq_ਤਾਲਾ_irq_2(ਬਣਤਰ rq_flags *rf) __acquires_ret
 {
-	struct rq *rq;
+	ਬਣਤਰ rq *rq;
 
 	local_irq_disable();
 	rq = this_rq();
-	rq_lock(rq, rf);
+	rq_ਤਾਲਾ(rq, rf);
 
-	return rq;
+	ਵਾਪਸ rq;
 }
 
-#ifdef CONFIG_NUMA
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA
 
-enum numa_topology_type {
-	NUMA_DIRECT,
+ਗਿਣਤੀ numa_topology_type {
+	NUMA_ਸਿੱਧਾ,
 	NUMA_GLUELESS_MESH,
 	NUMA_BACKPLANE,
 };
 
-extern enum numa_topology_type sched_numa_topology_type;
-extern int sched_max_numa_distance;
-extern bool find_numa_distance(int distance);
-extern void sched_init_numa(int offline_node);
-extern void sched_update_numa(int cpu, bool online);
-extern void sched_domains_numa_masks_set(unsigned int cpu);
-extern void sched_domains_numa_masks_clear(unsigned int cpu);
-extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
+ਬਾਹਰੀ ਗਿਣਤੀ numa_topology_type sched_numa_topology_type;
+ਬਾਹਰੀ ਪੂਰਨ sched_max_numa_ਦੂਰੀ;
+ਬਾਹਰੀ bool ਲੱਭੋ_numa_ਦੂਰੀ(ਪੂਰਨ ਦੂਰੀ);
+ਬਾਹਰੀ ਖਾਲੀ sched_init_numa(ਪੂਰਨ offline_ਗੰਢ);
+ਬਾਹਰੀ ਖਾਲੀ sched_update_numa(ਪੂਰਨ cpu, bool online);
+ਬਾਹਰੀ ਖਾਲੀ sched_domains_numa_masks_ਸੈੱਟ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu);
+ਬਾਹਰੀ ਖਾਲੀ sched_domains_numa_masks_clear(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu);
+ਬਾਹਰੀ ਪੂਰਨ sched_numa_ਲੱਭੋ_closest(ਅਚਲ ਬਣਤਰ cpumask *cpus, ਪੂਰਨ cpu);
 
-#else /* !CONFIG_NUMA: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_NUMA: */
 
-static inline void sched_init_numa(int offline_node) { }
-static inline void sched_update_numa(int cpu, bool online) { }
-static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
-static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_init_numa(ਪੂਰਨ offline_ਗੰਢ) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_update_numa(ਪੂਰਨ cpu, bool online) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_domains_numa_masks_ਸੈੱਟ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_domains_numa_masks_clear(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu) { }
 
-static inline int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ sched_numa_ਲੱਭੋ_closest(ਅਚਲ ਬਣਤਰ cpumask *cpus, ਪੂਰਨ cpu)
 {
-	return nr_cpu_ids;
+	ਵਾਪਸ nr_cpu_ids;
 }
 
-#endif /* !CONFIG_NUMA */
+#ਜੇ_ਅੰਤ /* !CONFIG_NUMA */
 
-#ifdef CONFIG_NUMA_BALANCING
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
 
 /* The regions in numa_faults array from task_struct */
-enum numa_faults_stats {
+ਗਿਣਤੀ numa_ਨੁਕਸ_stats {
 	NUMA_MEM = 0,
 	NUMA_CPU,
 	NUMA_MEMBUF,
 	NUMA_CPUBUF
 };
 
-extern void sched_setnuma(struct task_struct *p, int node);
-extern int migrate_task_to(struct task_struct *p, int cpu);
-extern int migrate_swap(struct task_struct *p, struct task_struct *t,
-			int cpu, int scpu);
-extern void init_numa_balancing(u64 clone_flags, struct task_struct *p);
+ਬਾਹਰੀ ਖਾਲੀ sched_setnuma(ਬਣਤਰ task_struct *p, ਪੂਰਨ ਗੰਢ);
+ਬਾਹਰੀ ਪੂਰਨ migrate_task_ਮੰਜ਼ਿਲ(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu);
+ਬਾਹਰੀ ਪੂਰਨ migrate_ਅਦਲਾ_ਬਦਲੀ(ਬਣਤਰ task_struct *p, ਬਣਤਰ task_struct *t,
+			ਪੂਰਨ cpu, ਪੂਰਨ scpu);
+ਬਾਹਰੀ ਖਾਲੀ init_numa_balancing(u64 clone_flags, ਬਣਤਰ task_struct *p);
 
-#else /* !CONFIG_NUMA_BALANCING: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_NUMA_BALANCING: */
 
-static inline void
-init_numa_balancing(u64 clone_flags, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+init_numa_balancing(u64 clone_flags, ਬਣਤਰ task_struct *p)
 {
 }
 
-#endif /* !CONFIG_NUMA_BALANCING */
+#ਜੇ_ਅੰਤ /* !CONFIG_NUMA_BALANCING */
 
-int task_llc(const struct task_struct *p);
+ਪੂਰਨ task_llc(ਅਚਲ ਬਣਤਰ task_struct *p);
 
-static inline void
-queue_balance_callback(struct rq *rq,
-		       struct balance_callback *head,
-		       void (*func)(struct rq *rq))
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+ਕਤਾਰ_balance_callback(ਬਣਤਰ rq *rq,
+		       ਬਣਤਰ balance_callback *ਸਿਰ,
+		       ਖਾਲੀ (*func)(ਬਣਤਰ rq *rq))
 {
 	lockdep_assert_rq_held(rq);
 
@@ -2158,15 +2158,15 @@ queue_balance_callback(struct rq *rq,
 	 * balance_push() is active, see the comment with
 	 * balance_push_callback.
 	 */
-	if (unlikely(head->next || rq->balance_callback == &balance_push_callback))
-		return;
+	ਜੇ (unlikely(ਸਿਰ->ਅਗਲਾ || rq->balance_callback == &balance_ਧੱਕੋ_callback))
+		ਵਾਪਸ;
 
-	head->func = func;
-	head->next = rq->balance_callback;
-	rq->balance_callback = head;
+	ਸਿਰ->func = func;
+	ਸਿਰ->ਅਗਲਾ = rq->balance_callback;
+	rq->balance_callback = ਸਿਰ;
 }
 
-#define rcu_dereference_sched_domain(p) \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ rcu_dereference_sched_domain(p) \
 	rcu_dereference_all_check((p), lockdep_is_held(&sched_domains_mutex))
 
 /*
@@ -2176,16 +2176,16 @@ queue_balance_callback(struct rq *rq,
  * The domain tree of any CPU may only be accessed from within
  * preempt-disabled sections.
  */
-#define for_each_domain(cpu, __sd) \
-	for (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
-			__sd; __sd = __sd->parent)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_each_domain(cpu, __sd) \
+	ਲਈ (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
+			__sd; __sd = __sd->ਮਾਪਾ)
 
 /* A mask of all the SD flags that have the SDF_SHARED_CHILD metaflag */
-#define SD_FLAG(name, mflags) (name * !!((mflags) & SDF_SHARED_CHILD)) |
-static const unsigned int SD_SHARED_CHILD_MASK =
-#include <linux/sched/sd_flags.h>
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SD_FLAG(name, mflags) (name * !!((mflags) & SDF_SHARED_ਬੱਚਾ)) |
+ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ SD_SHARED_ਬੱਚਾ_ਨਕਾਬ =
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/sd_flags.h>
 0;
-#undef SD_FLAG
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SD_FLAG
 
 /**
  * highest_flag_domain - Return highest sched_domain containing flag.
@@ -2197,83 +2197,83 @@ static const unsigned int SD_SHARED_CHILD_MASK =
  * Returns the highest sched_domain of a CPU which contains @flag. If @flag has
  * the SDF_SHARED_CHILD metaflag, all the children domains also have @flag.
  */
-static inline struct sched_domain *highest_flag_domain(int cpu, int flag)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ sched_domain *highest_flag_domain(ਪੂਰਨ cpu, ਪੂਰਨ flag)
 {
-	struct sched_domain *sd, *hsd = NULL;
+	ਬਣਤਰ sched_domain *sd, *hsd = ਨਿਰਾ;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag) {
+		ਜੇ (sd->flags & flag) {
 			hsd = sd;
-			continue;
+			ਜਾਰੀ;
 		}
 
 		/*
 		 * Stop the search if @flag is known to be shared at lower
 		 * levels. It will not be found further up.
 		 */
-		if (flag & SD_SHARED_CHILD_MASK)
-			break;
+		ਜੇ (flag & SD_SHARED_ਬੱਚਾ_ਨਕਾਬ)
+			ਰੋਕੋ;
 	}
 
-	return hsd;
+	ਵਾਪਸ hsd;
 }
 
-static inline struct sched_domain *lowest_flag_domain(int cpu, int flag)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ sched_domain *ਸਭ_ਤੋਂ_ਨੀਵਾਂ_flag_domain(ਪੂਰਨ cpu, ਪੂਰਨ flag)
 {
-	struct sched_domain *sd;
+	ਬਣਤਰ sched_domain *sd;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag)
-			break;
+		ਜੇ (sd->flags & flag)
+			ਰੋਕੋ;
 	}
 
-	return sd;
+	ਵਾਪਸ sd;
 }
 
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_llc);
-DECLARE_PER_CPU(int, sd_llc_size);
-DECLARE_PER_CPU(int, sd_llc_id);
-DECLARE_PER_CPU(int, sd_share_id);
-DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
-DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_balance_shared);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਬਣਤਰ sched_domain __rcu *, sd_llc);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਪੂਰਨ, sd_llc_ਮਾਪ);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਪੂਰਨ, sd_llc_id);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਪੂਰਨ, sd_share_id);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਬਣਤਰ sched_domain_shared __rcu *, sd_llc_shared);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਬਣਤਰ sched_domain_shared __rcu *, sd_balance_shared);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਬਣਤਰ sched_domain __rcu *, sd_numa);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਬਣਤਰ sched_domain __rcu *, sd_asym_packing);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਬਣਤਰ sched_domain __rcu *, sd_asym_cpucapacity);
 
-extern struct static_key_false sched_asym_cpucapacity;
-extern struct static_key_false sched_cluster_active;
+ਬਾਹਰੀ ਬਣਤਰ static_ਕੁੰਜੀ_false sched_asym_cpucapacity;
+ਬਾਹਰੀ ਬਣਤਰ static_ਕੁੰਜੀ_false sched_cluster_ਸਰਗਰਮ;
 
-static __always_inline bool sched_asym_cpucap_active(void)
+ਸਥਿਰ __always_inline bool sched_asym_cpucap_ਸਰਗਰਮ(ਖਾਲੀ)
 {
-	return static_branch_unlikely(&sched_asym_cpucapacity);
+	ਵਾਪਸ static_branch_unlikely(&sched_asym_cpucapacity);
 }
 
-struct sched_group_capacity {
+ਬਣਤਰ sched_ਸਮੂਹ_ਸਮਰੱਥਾ {
 	atomic_t		ref;
 	/*
 	 * CPU capacity of this group, SCHED_CAPACITY_SCALE being max capacity
 	 * for a single CPU.
 	 */
-	unsigned long		capacity;
-	unsigned long		min_capacity;		/* Min per-CPU capacity in group */
-	unsigned long		max_capacity;		/* Max per-CPU capacity in group */
-	unsigned long		next_update;
-	int			imbalance;		/* XXX unrelated to capacity but shared group state */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		ਸਮਰੱਥਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		min_ਸਮਰੱਥਾ;		/* Min per-CPU capacity in group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		max_ਸਮਰੱਥਾ;		/* Max per-CPU capacity in group */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		ਅਗਲਾ_update;
+	ਪੂਰਨ			imbalance;		/* XXX unrelated to capacity but shared group state */
 
-	int			id;
+	ਪੂਰਨ			id;
 
-	unsigned long		cpumask[];		/* Balance mask */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		cpumask[];		/* Balance mask */
 };
 
-struct sched_group {
-	struct sched_group	*next;			/* Must be a circular list */
+ਬਣਤਰ sched_ਸਮੂਹ {
+	ਬਣਤਰ sched_ਸਮੂਹ	*ਅਗਲਾ;			/* Must be a circular list */
 	atomic_t		ref;
 
-	unsigned int		group_weight;
-	unsigned int		cores;
-	struct sched_group_capacity *sgc;
-	int			asym_prefer_cpu;	/* CPU of highest priority in group */
-	int			flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		ਸਮੂਹ_ਭਾਰ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		cores;
+	ਬਣਤਰ sched_ਸਮੂਹ_ਸਮਰੱਥਾ *sgc;
+	ਪੂਰਨ			asym_prefer_cpu;	/* CPU of highest priority in group */
+	ਪੂਰਨ			flags;
 
 	/*
 	 * The CPUs this group covers.
@@ -2282,37 +2282,37 @@ struct sched_group {
 	 * by attaching extra space to the end of the structure,
 	 * depending on how many CPUs the kernel has booted up with)
 	 */
-	unsigned long		cpumask[];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ		cpumask[];
 };
 
-static inline struct cpumask *sched_group_span(struct sched_group *sg)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cpumask *sched_ਸਮੂਹ_ਵਿਸਤਾਰ(ਬਣਤਰ sched_ਸਮੂਹ *sg)
 {
-	return to_cpumask(sg->cpumask);
+	ਵਾਪਸ ਮੰਜ਼ਿਲ_cpumask(sg->cpumask);
 }
 
 /*
  * See build_balance_mask().
  */
-static inline struct cpumask *group_balance_mask(struct sched_group *sg)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cpumask *ਸਮੂਹ_balance_ਨਕਾਬ(ਬਣਤਰ sched_ਸਮੂਹ *sg)
 {
-	return to_cpumask(sg->sgc->cpumask);
+	ਵਾਪਸ ਮੰਜ਼ਿਲ_cpumask(sg->sgc->cpumask);
 }
 
-extern int group_balance_cpu(struct sched_group *sg);
+ਬਾਹਰੀ ਪੂਰਨ ਸਮੂਹ_balance_cpu(ਬਣਤਰ sched_ਸਮੂਹ *sg);
 
-extern void update_sched_domain_debugfs(void);
-extern void dirty_sched_domain_sysctl(int cpu);
+ਬਾਹਰੀ ਖਾਲੀ update_sched_domain_debugfs(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ dirty_sched_domain_sysctl(ਪੂਰਨ cpu);
 
-extern int sched_update_scaling(void);
+ਬਾਹਰੀ ਪੂਰਨ sched_update_scaling(ਖਾਲੀ);
 
-static inline const struct cpumask *task_user_cpus(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅਚਲ ਬਣਤਰ cpumask *task_user_cpus(ਬਣਤਰ task_struct *p)
 {
-	if (!p->user_cpus_ptr)
-		return cpu_possible_mask; /* &init_task.cpus_mask */
-	return p->user_cpus_ptr;
+	ਜੇ (!p->user_cpus_ptr)
+		ਵਾਪਸ cpu_possible_ਨਕਾਬ; /* &init_task.cpus_mask */
+	ਵਾਪਸ p->user_cpus_ptr;
 }
 
-#ifdef CONFIG_CGROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CGROUP_SCHED
 
 /*
  * Return the group to which this tasks belongs.
@@ -2327,93 +2327,93 @@ static inline const struct cpumask *task_user_cpus(struct task_struct *p)
  * Instead we use a 'copy' which is updated from sched_move_task() while
  * holding both task_struct::pi_lock and rq::lock.
  */
-static inline struct task_group *task_group(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ task_ਸਮੂਹ *task_ਸਮੂਹ(ਬਣਤਰ task_struct *p)
 {
-	return p->sched_task_group;
+	ਵਾਪਸ p->sched_task_ਸਮੂਹ;
 }
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 /*
  * Defined here to be available before stats.h is included, since
  * stats.h has dependencies on things defined later in this file.
  */
-struct cfs_tg_state {
-	struct cfs_rq		cfs_rq;
-	struct sched_entity	se;
-	struct sched_statistics	stats;
+ਬਣਤਰ cfs_tg_state {
+	ਬਣਤਰ cfs_rq		cfs_rq;
+	ਬਣਤਰ sched_entity	se;
+	ਬਣਤਰ sched_statistics	stats;
 } __no_randomize_layout;
 
 /* Access a specific CPU's cfs_rq from a task group */
-static inline struct cfs_rq *tg_cfs_rq(struct task_group *tg, int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cfs_rq *tg_cfs_rq(ਬਣਤਰ task_ਸਮੂਹ *tg, ਪੂਰਨ cpu)
 {
-	return per_cpu_ptr(tg->cfs_rq, cpu);
+	ਵਾਪਸ ਪ੍ਰਤੀ_cpu_ptr(tg->cfs_rq, cpu);
 }
 
-static inline struct sched_entity *tg_se(struct task_group *tg, int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ sched_entity *tg_se(ਬਣਤਰ task_ਸਮੂਹ *tg, ਪੂਰਨ cpu)
 {
-	struct cfs_tg_state *state;
+	ਬਣਤਰ cfs_tg_state *state;
 
-	if (is_root_task_group(tg))
-		return NULL;
+	ਜੇ (is_ਜੜ੍ਹ_task_ਸਮੂਹ(tg))
+		ਵਾਪਸ ਨਿਰਾ;
 
-	state = container_of(tg_cfs_rq(tg, cpu), struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	state = container_ਦਾ(tg_cfs_rq(tg, cpu), ਬਣਤਰ cfs_tg_state, cfs_rq);
+	ਵਾਪਸ &state->se;
 }
 
-static inline struct sched_entity *cfs_rq_se(struct cfs_rq *cfs_rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ sched_entity *cfs_rq_se(ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	struct cfs_tg_state *state;
+	ਬਣਤਰ cfs_tg_state *state;
 
-	if (is_root_task_group(cfs_rq->tg))
-		return NULL;
+	ਜੇ (is_ਜੜ੍ਹ_task_ਸਮੂਹ(cfs_rq->tg))
+		ਵਾਪਸ ਨਿਰਾ;
 
-	state = container_of(cfs_rq, struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	state = container_ਦਾ(cfs_rq, ਬਣਤਰ cfs_tg_state, cfs_rq);
+	ਵਾਪਸ &state->se;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 /* Change a task's cfs_rq and parent entity if it moves across CPUs/groups */
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਸੈੱਟ_task_rq(ਬਣਤਰ task_struct *p, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu)
 {
-#if defined(CONFIG_FAIR_GROUP_SCHED) || defined(CONFIG_RT_GROUP_SCHED)
-	struct task_group *tg = task_group(p);
-#endif
+#ਜੇ defined(CONFIG_FAIR_ਸਮੂਹ_SCHED) || defined(CONFIG_RT_ਸਮੂਹ_SCHED)
+	ਬਣਤਰ task_ਸਮੂਹ *tg = task_ਸਮੂਹ(p);
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	set_task_rq_fair(&p->se, p->se.cfs_rq, tg_cfs_rq(tg, cpu));
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
+	ਸੈੱਟ_task_rq_fair(&p->se, p->se.cfs_rq, tg_cfs_rq(tg, cpu));
 	p->se.cfs_rq = tg_cfs_rq(tg, cpu);
-	p->se.parent = tg_se(tg, cpu);
-	p->se.depth = p->se.parent ? p->se.parent->depth + 1 : 0;
-#endif
+	p->se.ਮਾਪਾ = tg_se(tg, cpu);
+	p->se.ਡੂੰਘਾਈ = p->se.ਮਾਪਾ ? p->se.ਮਾਪਾ->ਡੂੰਘਾਈ + 1 : 0;
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_RT_ਸਮੂਹ_SCHED
 	/*
 	 * p->rt.rt_rq is NULL initially and it is easier to assign
 	 * root_task_group's rt_rq than switching in rt_rq_of_se()
 	 * Clobbers tg(!)
 	 */
-	if (!rt_group_sched_enabled())
-		tg = &root_task_group;
+	ਜੇ (!rt_ਸਮੂਹ_sched_enabled())
+		tg = &ਜੜ੍ਹ_task_ਸਮੂਹ;
 	p->rt.rt_rq  = tg->rt_rq[cpu];
-	p->rt.parent = tg->rt_se[cpu];
-#endif /* CONFIG_RT_GROUP_SCHED */
+	p->rt.ਮਾਪਾ = tg->rt_se[cpu];
+#ਜੇ_ਅੰਤ /* CONFIG_RT_GROUP_SCHED */
 }
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_CGROUP_SCHED: */
 
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਸੈੱਟ_task_rq(ਬਣਤਰ task_struct *p, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu) { }
 
-static inline struct task_group *task_group(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ task_ਸਮੂਹ *task_ਸਮੂਹ(ਬਣਤਰ task_struct *p)
 {
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-#endif /* !CONFIG_CGROUP_SCHED */
+#ਜੇ_ਅੰਤ /* !CONFIG_CGROUP_SCHED */
 
-static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ __set_task_cpu(ਬਣਤਰ task_struct *p, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu)
 {
-	set_task_rq(p, cpu);
-#ifdef CONFIG_SMP
+	ਸੈੱਟ_task_rq(p, cpu);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SMP
 	/*
 	 * After ->cpu is set up to a new value, task_rq_lock(p, ...) can be
 	 * successfully executed on another CPU. We must ensure that updates of
@@ -2422,81 +2422,81 @@ static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
 	smp_wmb();
 	WRITE_ONCE(task_thread_info(p)->cpu, cpu);
 	p->wake_cpu = cpu;
-	rseq_sched_set_ids_changed(p);
-#endif /* CONFIG_SMP */
+	rseq_sched_ਸੈੱਟ_ids_ਬਦਲਿਆ(p);
+#ਜੇ_ਅੰਤ /* CONFIG_SMP */
 }
 
 /*
  * Tunables:
  */
 
-#define SCHED_FEAT(name, enabled)	\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SCHED_FEAT(name, enabled)	\
 	__SCHED_FEAT_##name ,
 
-enum {
-#include "features.h"
+ਗਿਣਤੀ {
+#ਅਨ੍ਤਰ੍ਭਾਵ "features.h"
 	__SCHED_FEAT_NR,
 };
 
-#undef SCHED_FEAT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SCHED_FEAT
 
 /*
  * To support run-time toggling of sched features, all the translation units
  * (but core.c) reference the sysctl_sched_features defined in core.c.
  */
-extern __read_mostly unsigned int sysctl_sched_features;
+ਬਾਹਰੀ __read_mostly ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_features;
 
-#ifdef CONFIG_JUMP_LABEL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_JUMP_LABEL
 
-union sched_feat_key {
-	struct static_key_true	key_true;
-	struct static_key_false	key_false;
+ਸੰਘ sched_feat_ਕੁੰਜੀ {
+	ਬਣਤਰ static_ਕੁੰਜੀ_true	ਕੁੰਜੀ_true;
+	ਬਣਤਰ static_ਕੁੰਜੀ_false	ਕੁੰਜੀ_false;
 };
 
-#define sched_feat_branch_true(key)	static_branch_likely(&(key)->key_true)
-#define sched_feat_branch_false(key)	static_branch_unlikely(&(key)->key_false)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ sched_feat_branch_true(ਕੁੰਜੀ)	static_branch_likely(&(ਕੁੰਜੀ)->ਕੁੰਜੀ_true)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ sched_feat_branch_false(ਕੁੰਜੀ)	static_branch_unlikely(&(ਕੁੰਜੀ)->ਕੁੰਜੀ_false)
 
-#define SCHED_FEAT(name, enabled)			\
-static __always_inline bool				\
-static_branch_##name(union sched_feat_key *key) 	\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SCHED_FEAT(name, enabled)			\
+ਸਥਿਰ __always_inline bool				\
+static_branch_##name(ਸੰਘ sched_feat_ਕੁੰਜੀ *ਕੁੰਜੀ) 	\
 {							\
-	return sched_feat_branch_##enabled(key);	\
+	ਵਾਪਸ sched_feat_branch_##enabled(ਕੁੰਜੀ);	\
 }
 
-#include "features.h"
-#undef SCHED_FEAT
+#ਅਨ੍ਤਰ੍ਭਾਵ "features.h"
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SCHED_FEAT
 
-extern union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR];
-#define sched_feat(x) (static_branch_##x(&sched_feat_keys[__SCHED_FEAT_##x]))
+ਬਾਹਰੀ ਸੰਘ sched_feat_ਕੁੰਜੀ sched_feat_ਕੁੰਜੀਆਂ[__SCHED_FEAT_NR];
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ sched_feat(x) (static_branch_##x(&sched_feat_ਕੁੰਜੀਆਂ[__SCHED_FEAT_##x]))
 
-#else /* !CONFIG_JUMP_LABEL: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_JUMP_LABEL: */
 
-#define sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
 
-#endif /* !CONFIG_JUMP_LABEL */
+#ਜੇ_ਅੰਤ /* !CONFIG_JUMP_LABEL */
 
-extern struct static_key_false sched_numa_balancing;
-extern struct static_key_false sched_schedstats;
+ਬਾਹਰੀ ਬਣਤਰ static_ਕੁੰਜੀ_false sched_numa_balancing;
+ਬਾਹਰੀ ਬਣਤਰ static_ਕੁੰਜੀ_false sched_schedstats;
 
-static inline u64 global_rt_period(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 global_rt_period(ਖਾਲੀ)
 {
-	return (u64)sysctl_sched_rt_period * NSEC_PER_USEC;
+	ਵਾਪਸ (u64)sysctl_sched_rt_period * NSEC_ਪ੍ਰਤੀ_USEC;
 }
 
-static inline u64 global_rt_runtime(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 global_rt_runtime(ਖਾਲੀ)
 {
-	if (sysctl_sched_rt_runtime < 0)
-		return RUNTIME_INF;
+	ਜੇ (sysctl_sched_rt_runtime < 0)
+		ਵਾਪਸ RUNTIME_INF;
 
-	return (u64)sysctl_sched_rt_runtime * NSEC_PER_USEC;
+	ਵਾਪਸ (u64)sysctl_sched_rt_runtime * NSEC_ਪ੍ਰਤੀ_USEC;
 }
 
 /*
  * Is p the current execution context?
  */
-static inline int task_current(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_current(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	return rq->curr == p;
+	ਵਾਪਸ rq->curr == p;
 }
 
 /*
@@ -2505,55 +2505,55 @@ static inline int task_current(struct rq *rq, struct task_struct *p)
  * Note that it might be the current execution context at the same time if
  * rq->curr == rq->donor == p.
  */
-static inline int task_current_donor(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_current_donor(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	return rq->donor == p;
+	ਵਾਪਸ rq->donor == p;
 }
 
-static inline bool task_is_blocked(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool task_is_blocked(ਬਣਤਰ task_struct *p)
 {
-	if (!sched_proxy_exec())
-		return false;
+	ਜੇ (!sched_proxy_exec())
+		ਵਾਪਸ false;
 
-	return !!p->blocked_on;
+	ਵਾਪਸ !!p->blocked_on;
 }
 
-#ifdef CONFIG_SCHED_PROXY_EXEC
-void sched_proxy_block_task(struct rq *rq, struct task_struct *p);
-#else
-static inline void sched_proxy_block_task(struct rq *rq, struct task_struct *p) {}
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_PROXY_EXEC
+ਖਾਲੀ sched_proxy_ਖੰਡ_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p);
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_proxy_ਖੰਡ_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p) {}
+#ਜੇ_ਅੰਤ
 
-static inline int task_on_cpu(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_on_cpu(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	return p->on_cpu;
+	ਵਾਪਸ p->on_cpu;
 }
 
-static inline int task_on_rq_queued(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_on_rq_queued(ਬਣਤਰ task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
+	ਵਾਪਸ READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
 }
 
-static inline int task_on_rq_migrating(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ task_on_rq_migrating(ਬਣਤਰ task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
+	ਵਾਪਸ READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
 }
 
 /* Wake flags. The first three directly map to some SD flag value */
-#define WF_EXEC			0x02 /* Wakeup after exec; maps to SD_BALANCE_EXEC */
-#define WF_FORK			0x04 /* Wakeup after fork; maps to SD_BALANCE_FORK */
-#define WF_TTWU			0x08 /* Wakeup;            maps to SD_BALANCE_WAKE */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WF_EXEC			0x02 /* Wakeup after exec; maps to SD_BALANCE_EXEC */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WF_FORK			0x04 /* Wakeup after fork; maps to SD_BALANCE_FORK */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WF_TTWU			0x08 /* Wakeup;            maps to SD_BALANCE_WAKE */
 /*
  * Hint that the caller expects the waker to sleep soon.
  * Scheduler classes may use it for placement or preemption.
  * Callers must not rely on it to prevent migration,
  * preserve CPU locality or make the wakee run next.
  */
-#define WF_SYNC			0x10
-#define WF_MIGRATED		0x20 /* Internal use, task got migrated */
-#define WF_CURRENT_CPU		0x40 /* Prefer to move the wakee to the current CPU. */
-#define WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
-#define WF_TTWU_RQ		0x100 /* Wakeup completed through ttwu_runnable() */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WF_SYNC			0x10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WF_MIGRATED		0x20 /* Internal use, task got migrated */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WF_CURRENT_CPU		0x40 /* Prefer to move the wakee to the current CPU. */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WF_TTWU_RQ		0x100 /* Wakeup completed through ttwu_runnable() */
 
 static_assert(WF_EXEC == SD_BALANCE_EXEC);
 static_assert(WF_FORK == SD_BALANCE_FORK);
@@ -2568,11 +2568,11 @@ static_assert(WF_TTWU == SD_BALANCE_WAKE);
  * slice expiry etc.
  */
 
-#define WEIGHT_IDLEPRIO		3
-#define WMULT_IDLEPRIO		1431655765
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਭਾਰ_IDLEPRIO		3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WMULT_IDLEPRIO		1431655765
 
-extern const int		sched_prio_to_weight[40];
-extern const u32		sched_prio_to_wmult[40];
+ਬਾਹਰੀ ਅਚਲ ਪੂਰਨ		sched_prio_ਮੰਜ਼ਿਲ_ਭਾਰ[40];
+ਬਾਹਰੀ ਅਚਲ u32		sched_prio_ਮੰਜ਼ਿਲ_wmult[40];
 
 /*
  * {de,en}queue flags:
@@ -2605,55 +2605,55 @@ extern const u32		sched_prio_to_wmult[40];
  * SCHED_DEADLINE seems to rely on this for now.
  */
 
-#define DEQUEUE_SLEEP		0x0001 /* Matches ENQUEUE_WAKEUP */
-#define DEQUEUE_SAVE		0x0002 /* Matches ENQUEUE_RESTORE */
-#define DEQUEUE_MOVE		0x0004 /* Matches ENQUEUE_MOVE */
-#define DEQUEUE_NOCLOCK		0x0008 /* Matches ENQUEUE_NOCLOCK */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SLEEP		0x0001 /* Matches ENQUEUE_WAKEUP */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SAVE		0x0002 /* Matches ENQUEUE_RESTORE */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_MOVE		0x0004 /* Matches ENQUEUE_MOVE */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_NOCLOCK		0x0008 /* Matches ENQUEUE_NOCLOCK */
 
-#define DEQUEUE_MIGRATING	0x0010 /* Matches ENQUEUE_MIGRATING */
-#define DEQUEUE_DELAYED		0x0020 /* Matches ENQUEUE_DELAYED */
-#define DEQUEUE_CLASS		0x0040 /* Matches ENQUEUE_CLASS */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_MIGRATING	0x0010 /* Matches ENQUEUE_MIGRATING */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_DELAYED		0x0020 /* Matches ENQUEUE_DELAYED */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_CLASS		0x0040 /* Matches ENQUEUE_CLASS */
 
-#define DEQUEUE_SPECIAL		0x00010000
-#define DEQUEUE_THROTTLE	0x00020000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_SPECIAL		0x00010000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_THROTTLE	0x00020000
 
-#define ENQUEUE_WAKEUP		0x0001
-#define ENQUEUE_RESTORE		0x0002
-#define ENQUEUE_MOVE		0x0004
-#define ENQUEUE_NOCLOCK		0x0008
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_WAKEUP		0x0001
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_RESTORE		0x0002
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_MOVE		0x0004
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_NOCLOCK		0x0008
 
-#define ENQUEUE_MIGRATING	0x0010
-#define ENQUEUE_DELAYED		0x0020
-#define ENQUEUE_CLASS		0x0040
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_MIGRATING	0x0010
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_DELAYED		0x0020
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_CLASS		0x0040
 
-#define ENQUEUE_HEAD		0x00010000
-#define ENQUEUE_REPLENISH	0x00020000
-#define ENQUEUE_MIGRATED	0x00040000
-#define ENQUEUE_INITIAL		0x00080000
-#define ENQUEUE_RQ_SELECTED	0x00100000
-#define ENQUEUE_QUEUED		0x00200000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_ਸਿਰ		0x00010000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_REPLENISH	0x00020000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_MIGRATED	0x00040000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_INITIAL		0x00080000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_RQ_SELECTED	0x00100000
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_QUEUED		0x00200000
 
-#define RETRY_TASK		((void *)-1UL)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RETRY_TASK		((ਖਾਲੀ *)-1UL)
 
-struct affinity_context {
-	const struct cpumask	*new_mask;
-	struct cpumask		*user_mask;
-	unsigned int		flags;
+ਬਣਤਰ affinity_context {
+	ਅਚਲ ਬਣਤਰ cpumask	*new_ਨਕਾਬ;
+	ਬਣਤਰ cpumask		*user_ਨਕਾਬ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		flags;
 };
 
-extern s64 update_curr_common(struct rq *rq);
+ਬਾਹਰੀ s64 update_curr_common(ਬਣਤਰ rq *rq);
 
-enum snt_e {
-	SNT_NORMAL,	/* set_next_task() */
+ਗਿਣਤੀ snt_e {
+	SNT_ਸਾਧਾਰਨ,	/* set_next_task() */
 	SNT_PICK,	/* put_prev_set_next_task(): prev != next */
 	SNT_REPICK,	/* put_prev_set_next_task(): prev == next */
 };
 
-struct sched_class {
+ਬਣਤਰ sched_class {
 
-#ifdef CONFIG_UCLAMP_TASK
-	int uclamp_enabled;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_UCLAMP_TASK
+	ਪੂਰਨ uclamp_enabled;
+#ਜੇ_ਅੰਤ
 
 	/*
 	 * move_queued_task/activate_task/enqueue_task: rq->lock
@@ -2663,7 +2663,7 @@ struct sched_class {
 	 * proxy_task_current: rq->lock
 	 * sched_change_end
 	 */
-	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
+	ਖਾਲੀ (*ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task) (ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
 	/*
 	 * move_queued_task/deactivate_task/dequeue_task: rq->lock
 	 * __schedule/block_task/dequeue_task: rq->lock
@@ -2671,16 +2671,16 @@ struct sched_class {
 	 * wait_task_inactive: task_rq_lock
 	 * sched_change_begin
 	 */
-	bool (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
+	bool (*ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task) (ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
 
 	/*
 	 * do_sched_yield: rq->lock
 	 */
-	void (*yield_task)   (struct rq *rq);
+	ਖਾਲੀ (*yield_task)   (ਬਣਤਰ rq *rq);
 	/*
 	 * yield_to: rq->lock (double)
 	 */
-	bool (*yield_to_task)(struct rq *rq, struct task_struct *p);
+	bool (*yield_ਮੰਜ਼ਿਲ_task)(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p);
 
 	/*
 	 * move_queued_task: rq->lock
@@ -2689,154 +2689,154 @@ struct sched_class {
 	 * ttwu_runnable: task_rq_lock
 	 * wake_up_new_task: task_rq_lock
 	 */
-	void (*wakeup_preempt)(struct rq *rq, struct task_struct *p, int flags);
+	ਖਾਲੀ (*wakeup_preempt)(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
 
 	/*
 	 * schedule/pick_next_task/prev_balance: rq->lock
 	 */
-	int (*balance)(struct rq *rq, struct rq_flags *rf);
+	ਪੂਰਨ (*balance)(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf);
 
 	/*
 	 * schedule/pick_next_task: rq->lock
 	 */
-	struct task_struct *(*pick_task)(struct rq *rq, struct rq_flags *rf);
+	ਬਣਤਰ task_struct *(*pick_task)(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf);
 
 	/*
 	 * sched_change:
 	 * __schedule: rq->lock
 	 */
-	void (*put_prev_task)(struct rq *rq, struct task_struct *p, struct task_struct *next);
-	void (*set_next_task)(struct rq *rq, struct task_struct *p, enum snt_e type);
+	ਖਾਲੀ (*put_prev_task)(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਬਣਤਰ task_struct *ਅਗਲਾ);
+	ਖਾਲੀ (*ਸੈੱਟ_ਅਗਲਾ_task)(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਗਿਣਤੀ snt_e type);
 
 	/*
 	 * select_task_rq: p->pi_lock
 	 * sched_exec: p->pi_lock
 	 */
-	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int flags);
+	ਪੂਰਨ  (*select_task_rq)(ਬਣਤਰ task_struct *p, ਪੂਰਨ task_cpu, ਪੂਰਨ flags);
 
 	/*
 	 * set_task_cpu: p->pi_lock || rq->lock (ttwu like)
 	 */
-	void (*migrate_task_rq)(struct task_struct *p, int new_cpu);
+	ਖਾਲੀ (*migrate_task_rq)(ਬਣਤਰ task_struct *p, ਪੂਰਨ new_cpu);
 
 	/*
 	 * ttwu_do_activate: rq->lock
 	 * wake_up_new_task: task_rq_lock
 	 */
-	void (*task_woken)(struct rq *this_rq, struct task_struct *task);
+	ਖਾਲੀ (*task_woken)(ਬਣਤਰ rq *this_rq, ਬਣਤਰ task_struct *task);
 
 	/*
 	 * do_set_cpus_allowed: task_rq_lock + sched_change
 	 */
-	void (*set_cpus_allowed)(struct task_struct *p, struct affinity_context *ctx);
+	ਖਾਲੀ (*ਸੈੱਟ_cpus_allowed)(ਬਣਤਰ task_struct *p, ਬਣਤਰ affinity_context *ctx);
 
 	/*
 	 * sched_set_rq_{on,off}line: rq->lock
 	 */
-	void (*rq_online)(struct rq *rq);
-	void (*rq_offline)(struct rq *rq);
+	ਖਾਲੀ (*rq_online)(ਬਣਤਰ rq *rq);
+	ਖਾਲੀ (*rq_offline)(ਬਣਤਰ rq *rq);
 
 	/*
 	 * push_cpu_stop: p->pi_lock && rq->lock
 	 */
-	struct rq *(*find_lock_rq)(struct task_struct *p, struct rq *rq);
+	ਬਣਤਰ rq *(*ਲੱਭੋ_ਤਾਲਾ_rq)(ਬਣਤਰ task_struct *p, ਬਣਤਰ rq *rq);
 
 	/*
 	 * hrtick: rq->lock
 	 * sched_tick: rq->lock
 	 * sched_tick_remote: rq->lock
 	 */
-	void (*task_tick)(struct rq *rq, struct task_struct *p, int queued);
+	ਖਾਲੀ (*task_tick)(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ queued);
 	/*
 	 * sched_cgroup_fork: p->pi_lock
 	 */
-	void (*task_fork)(struct task_struct *p);
+	ਖਾਲੀ (*task_fork)(ਬਣਤਰ task_struct *p);
 	/*
 	 * finish_task_switch: no locks
 	 */
-	void (*task_dead)(struct task_struct *p);
+	ਖਾਲੀ (*task_dead)(ਬਣਤਰ task_struct *p);
 
 	/*
 	 * sched_change
 	 */
-	void (*switching_from)(struct rq *this_rq, struct task_struct *task);
-	void (*switched_from) (struct rq *this_rq, struct task_struct *task);
-	void (*switching_to)  (struct rq *this_rq, struct task_struct *task);
-	void (*switched_to)   (struct rq *this_rq, struct task_struct *task);
-	u64  (*get_prio)     (struct rq *this_rq, struct task_struct *task);
-	void (*prio_changed) (struct rq *this_rq, struct task_struct *task,
+	ਖਾਲੀ (*switching_from)(ਬਣਤਰ rq *this_rq, ਬਣਤਰ task_struct *task);
+	ਖਾਲੀ (*switched_from) (ਬਣਤਰ rq *this_rq, ਬਣਤਰ task_struct *task);
+	ਖਾਲੀ (*switching_ਮੰਜ਼ਿਲ)  (ਬਣਤਰ rq *this_rq, ਬਣਤਰ task_struct *task);
+	ਖਾਲੀ (*switched_ਮੰਜ਼ਿਲ)   (ਬਣਤਰ rq *this_rq, ਬਣਤਰ task_struct *task);
+	u64  (*get_prio)     (ਬਣਤਰ rq *this_rq, ਬਣਤਰ task_struct *task);
+	ਖਾਲੀ (*prio_ਬਦਲਿਆ) (ਬਣਤਰ rq *this_rq, ਬਣਤਰ task_struct *task,
 			      u64 oldprio);
 
 	/*
 	 * set_load_weight: task_rq_lock + sched_change
 	 * __setscheduler_parms: task_rq_lock + sched_change
 	 */
-	void (*reweight_task)(struct rq *this_rq, struct task_struct *task,
-			      const struct load_weight *lw);
+	ਖਾਲੀ (*reweight_task)(ਬਣਤਰ rq *this_rq, ਬਣਤਰ task_struct *task,
+			      ਅਚਲ ਬਣਤਰ ਲੱਦੋ_ਭਾਰ *lw);
 
 	/*
 	 * sched_rr_get_interval: task_rq_lock
 	 */
-	unsigned int (*get_rr_interval)(struct rq *rq,
-					struct task_struct *task);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ (*get_rr_interval)(ਬਣਤਰ rq *rq,
+					ਬਣਤਰ task_struct *task);
 
 	/*
 	 * task_sched_runtime: task_rq_lock
 	 */
-	void (*update_curr)(struct rq *rq);
+	ਖਾਲੀ (*update_curr)(ਬਣਤਰ rq *rq);
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_FAIR_ਸਮੂਹ_SCHED
 	/*
 	 * sched_change_group: task_rq_lock + sched_change
 	 */
-	void (*task_change_group)(struct task_struct *p);
-#endif
+	ਖਾਲੀ (*task_change_ਸਮੂਹ)(ਬਣਤਰ task_struct *p);
+#ਜੇ_ਅੰਤ
 
-#ifdef CONFIG_SCHED_CORE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CORE
 	/*
 	 * pick_next_task: rq->lock
 	 * try_steal_cookie: rq->lock (double)
 	 */
-	int (*task_is_throttled)(struct task_struct *p, int cpu);
-#endif
+	ਪੂਰਨ (*task_is_throttled)(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu);
+#ਜੇ_ਅੰਤ
 };
 
-static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ put_prev_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *prev)
 {
 	WARN_ON_ONCE(rq->donor != prev);
-	prev->sched_class->put_prev_task(rq, prev, NULL);
+	prev->sched_class->put_prev_task(rq, prev, ਨਿਰਾ);
 }
 
-static inline void set_next_task(struct rq *rq, struct task_struct *next)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਸੈੱਟ_ਅਗਲਾ_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *ਅਗਲਾ)
 {
-	next->sched_class->set_next_task(rq, next, SNT_NORMAL);
+	ਅਗਲਾ->sched_class->ਸੈੱਟ_ਅਗਲਾ_task(rq, ਅਗਲਾ, SNT_ਸਾਧਾਰਨ);
 }
 
-static inline void
-__put_prev_set_next_dl_server(struct rq *rq,
-			      struct task_struct *prev,
-			      struct task_struct *next)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+__put_prev_set_next_dl_server(ਬਣਤਰ rq *rq,
+			      ਬਣਤਰ task_struct *prev,
+			      ਬਣਤਰ task_struct *ਅਗਲਾ)
 {
-	prev->dl_server = NULL;
-	next->dl_server = rq->dl_server;
-	rq->dl_server = NULL;
+	prev->dl_server = ਨਿਰਾ;
+	ਅਗਲਾ->dl_server = rq->dl_server;
+	rq->dl_server = ਨਿਰਾ;
 }
 
-static inline void put_prev_set_next_task(struct rq *rq,
-					  struct task_struct *prev,
-					  struct task_struct *next)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ put_prev_ਸੈੱਟ_ਅਗਲਾ_task(ਬਣਤਰ rq *rq,
+					  ਬਣਤਰ task_struct *prev,
+					  ਬਣਤਰ task_struct *ਅਗਲਾ)
 {
 	WARN_ON_ONCE(rq->donor != prev);
 
-	__put_prev_set_next_dl_server(rq, prev, next);
+	__put_prev_set_next_dl_server(rq, prev, ਅਗਲਾ);
 
-	if (next == prev) {
-		next->sched_class->set_next_task(rq, next, SNT_REPICK);
-		return;
+	ਜੇ (ਅਗਲਾ == prev) {
+		ਅਗਲਾ->sched_class->ਸੈੱਟ_ਅਗਲਾ_task(rq, ਅਗਲਾ, SNT_REPICK);
+		ਵਾਪਸ;
 	}
 
-	prev->sched_class->put_prev_task(rq, prev, next);
-	next->sched_class->set_next_task(rq, next, SNT_PICK);
+	prev->sched_class->put_prev_task(rq, prev, ਅਗਲਾ);
+	ਅਗਲਾ->sched_class->ਸੈੱਟ_ਅਗਲਾ_task(rq, ਅਗਲਾ, SNT_PICK);
 }
 
 /*
@@ -2849,263 +2849,263 @@ static inline void put_prev_set_next_task(struct rq *rq,
  *
  * Also enforce alignment on the instance, not the type, to guarantee layout.
  */
-#define DEFINE_SCHED_CLASS(name) \
-const struct sched_class name##_sched_class \
-	__aligned(__alignof__(struct sched_class)) \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEFINE_SCHED_CLASS(name) \
+ਅਚਲ ਬਣਤਰ sched_class name##_sched_class \
+	__aligned(__alignof__(ਬਣਤਰ sched_class)) \
 	__section("__" #name "_sched_class")
 
 /* Defined in include/asm-generic/vmlinux.lds.h */
-extern struct sched_class __sched_class_highest[];
-extern struct sched_class __sched_class_lowest[];
+ਬਾਹਰੀ ਬਣਤਰ sched_class __sched_class_highest[];
+ਬਾਹਰੀ ਬਣਤਰ sched_class __sched_class_lowest[];
 
-extern const struct sched_class stop_sched_class;
-extern const struct sched_class dl_sched_class;
-extern const struct sched_class rt_sched_class;
-extern const struct sched_class fair_sched_class;
-extern const struct sched_class idle_sched_class;
+ਬਾਹਰੀ ਅਚਲ ਬਣਤਰ sched_class stop_sched_class;
+ਬਾਹਰੀ ਅਚਲ ਬਣਤਰ sched_class dl_sched_class;
+ਬਾਹਰੀ ਅਚਲ ਬਣਤਰ sched_class rt_sched_class;
+ਬਾਹਰੀ ਅਚਲ ਬਣਤਰ sched_class fair_sched_class;
+ਬਾਹਰੀ ਅਚਲ ਬਣਤਰ sched_class idle_sched_class;
 
 /*
  * Iterate only active classes. SCX can take over all fair tasks or be
  * completely disabled. If the former, skip fair. If the latter, skip SCX.
  */
-static inline const struct sched_class *next_active_class(const struct sched_class *class)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਅਚਲ ਬਣਤਰ sched_class *ਅਗਲਾ_ਸਰਗਰਮ_class(ਅਚਲ ਬਣਤਰ sched_class *class)
 {
 	class++;
-#ifdef CONFIG_SCHED_CLASS_EXT
-	if (scx_switched_all() && class == &fair_sched_class)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CLASS_EXT
+	ਜੇ (scx_switched_all() && class == &fair_sched_class)
 		class++;
-	if (!scx_enabled() && class == &ext_sched_class)
+	ਜੇ (!scx_enabled() && class == &ext_sched_class)
 		class++;
-#endif
-	return class;
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ class;
 }
 
-#define for_class_range(class, _from, _to) \
-	for (class = (_from); class < (_to); class++)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_class_range(class, _from, ਮੰਜ਼ਿਲ_2) \
+	ਲਈ (class = (_from); class < (ਮੰਜ਼ਿਲ_2); class++)
 
-#define for_each_class(class) \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_each_class(class) \
 	for_class_range(class, __sched_class_highest, __sched_class_lowest)
 
-#define for_active_class_range(class, _from, _to)				\
-	for (class = (_from); class != (_to); class = next_active_class(class))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_ਸਰਗਰਮ_class_range(class, _from, ਮੰਜ਼ਿਲ_2)				\
+	ਲਈ (class = (_from); class != (ਮੰਜ਼ਿਲ_2); class = ਅਗਲਾ_ਸਰਗਰਮ_class(class))
 
-#define for_each_active_class(class)						\
-	for_active_class_range(class, __sched_class_highest, __sched_class_lowest)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_each_ਸਰਗਰਮ_class(class)						\
+	for_ਸਰਗਰਮ_class_range(class, __sched_class_highest, __sched_class_lowest)
 
-#define sched_class_above(_a, _b)	((_a) < (_b))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ sched_class_above(_a, _b)	((_a) < (_b))
 
-static inline void rq_modified_begin(struct rq *rq, const struct sched_class *class)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ rq_modified_begin(ਬਣਤਰ rq *rq, ਅਚਲ ਬਣਤਰ sched_class *class)
 {
-	if (sched_class_above(rq->next_class, class))
-		rq->next_class = class;
+	ਜੇ (sched_class_above(rq->ਅਗਲਾ_class, class))
+		rq->ਅਗਲਾ_class = class;
 }
 
-static inline bool rq_modified_above(struct rq *rq, const struct sched_class *class)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool rq_modified_above(ਬਣਤਰ rq *rq, ਅਚਲ ਬਣਤਰ sched_class *class)
 {
-	return sched_class_above(rq->next_class, class);
+	ਵਾਪਸ sched_class_above(rq->ਅਗਲਾ_class, class);
 }
 
-static inline bool sched_stop_runnable(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_stop_runnable(ਬਣਤਰ rq *rq)
 {
-	return rq->stop && task_on_rq_queued(rq->stop);
+	ਵਾਪਸ rq->stop && task_on_rq_queued(rq->stop);
 }
 
-static inline bool sched_dl_runnable(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_dl_runnable(ਬਣਤਰ rq *rq)
 {
-	return rq->dl.dl_nr_running > 0;
+	ਵਾਪਸ rq->dl.dl_nr_running > 0;
 }
 
-static inline bool sched_rt_runnable(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_rt_runnable(ਬਣਤਰ rq *rq)
 {
-	return rq->rt.rt_queued > 0;
+	ਵਾਪਸ rq->rt.rt_queued > 0;
 }
 
-static inline bool sched_fair_runnable(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_fair_runnable(ਬਣਤਰ rq *rq)
 {
-	return rq->cfs.nr_queued > 0;
+	ਵਾਪਸ rq->cfs.nr_queued > 0;
 }
 
-extern struct task_struct *pick_task_fair(struct rq *rq, struct rq_flags *rf);
-extern struct task_struct *pick_task_idle(struct rq *rq, struct rq_flags *rf);
+ਬਾਹਰੀ ਬਣਤਰ task_struct *pick_task_fair(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf);
+ਬਾਹਰੀ ਬਣਤਰ task_struct *pick_task_idle(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf);
 
-#define SCA_CHECK		0x01
-#define SCA_MIGRATE_DISABLE	0x02
-#define SCA_MIGRATE_ENABLE	0x04
-#define SCA_USER		0x08
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SCA_CHECK		0x01
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SCA_MIGRATE_DISABLE	0x02
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SCA_MIGRATE_ENABLE	0x04
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SCA_USER		0x08
 
-extern void update_group_capacity(struct sched_domain *sd, int cpu);
+ਬਾਹਰੀ ਖਾਲੀ update_ਸਮੂਹ_ਸਮਰੱਥਾ(ਬਣਤਰ sched_domain *sd, ਪੂਰਨ cpu);
 
-extern void sched_balance_trigger(struct rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ sched_balance_trigger(ਬਣਤਰ rq *rq);
 
-extern int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx);
-extern void set_cpus_allowed_common(struct task_struct *p, struct affinity_context *ctx);
+ਬਾਹਰੀ ਪੂਰਨ __set_cpus_allowed_ptr(ਬਣਤਰ task_struct *p, ਬਣਤਰ affinity_context *ctx);
+ਬਾਹਰੀ ਖਾਲੀ ਸੈੱਟ_cpus_allowed_common(ਬਣਤਰ task_struct *p, ਬਣਤਰ affinity_context *ctx);
 
-static inline bool task_allowed_on_cpu(struct task_struct *p, int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool task_allowed_on_cpu(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu)
 {
 	/* When not in the task's cpumask, no point in looking further. */
-	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-		return false;
+	ਜੇ (!cpumask_test_cpu(cpu, p->cpus_ptr))
+		ਵਾਪਸ false;
 
 	/* Can @cpu run a user thread? */
-	if (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
-		return false;
+	ਜੇ (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
+		ਵਾਪਸ false;
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-static inline cpumask_t *alloc_user_cpus_ptr(int node)
+ਸਥਿਰ ਸਤਰਅੰਦਰ cpumask_t *alloc_user_cpus_ptr(ਪੂਰਨ ਗੰਢ)
 {
 	/*
 	 * See set_cpus_allowed_force() above for the rcu_head usage.
 	 */
-	int size = max_t(int, cpumask_size(), sizeof(struct rcu_head));
+	ਪੂਰਨ ਮਾਪ = max_t(ਪੂਰਨ, cpumask_ਮਾਪ(), ਆਕਾਰ(ਬਣਤਰ rcu_ਸਿਰ));
 
-	return kmalloc_node(size, GFP_KERNEL, node);
+	ਵਾਪਸ kmalloc_ਗੰਢ(ਮਾਪ, GFP_KERNEL, ਗੰਢ);
 }
 
-static inline struct task_struct *get_push_task(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ task_struct *get_ਧੱਕੋ_task(ਬਣਤਰ rq *rq)
 {
-	struct task_struct *p = rq->donor;
+	ਬਣਤਰ task_struct *p = rq->donor;
 
 	lockdep_assert_rq_held(rq);
 
-	if (rq->push_busy)
-		return NULL;
+	ਜੇ (rq->ਧੱਕੋ_busy)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	if (p->nr_cpus_allowed == 1)
-		return NULL;
+	ਜੇ (p->nr_cpus_allowed == 1)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	if (p->migration_disabled)
-		return NULL;
+	ਜੇ (p->migration_disabled)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	rq->push_busy = true;
-	return get_task_struct(p);
+	rq->ਧੱਕੋ_busy = true;
+	ਵਾਪਸ get_task_struct(p);
 }
 
-extern int push_cpu_stop(void *arg);
+ਬਾਹਰੀ ਪੂਰਨ ਧੱਕੋ_cpu_stop(ਖਾਲੀ *arg);
 
-#ifdef CONFIG_CPU_IDLE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CPU_IDLE
 
-static inline void idle_set_state(struct rq *rq,
-				  struct cpuidle_state *idle_state)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ idle_ਸੈੱਟ_state(ਬਣਤਰ rq *rq,
+				  ਬਣਤਰ cpuidle_state *idle_state)
 {
 	rq->idle_state = idle_state;
 }
 
-static inline struct cpuidle_state *idle_get_state(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cpuidle_state *idle_get_state(ਬਣਤਰ rq *rq)
 {
-	lockdep_assert(rcu_read_lock_any_held());
+	lockdep_assert(rcu_read_ਤਾਲਾ_any_held());
 
-	return rq->idle_state;
+	ਵਾਪਸ rq->idle_state;
 }
 
-#else /* !CONFIG_CPU_IDLE: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_CPU_IDLE: */
 
-static inline void idle_set_state(struct rq *rq,
-				  struct cpuidle_state *idle_state)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ idle_ਸੈੱਟ_state(ਬਣਤਰ rq *rq,
+				  ਬਣਤਰ cpuidle_state *idle_state)
 {
 }
 
-static inline struct cpuidle_state *idle_get_state(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਣਤਰ cpuidle_state *idle_get_state(ਬਣਤਰ rq *rq)
 {
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-#endif /* !CONFIG_CPU_IDLE */
+#ਜੇ_ਅੰਤ /* !CONFIG_CPU_IDLE */
 
-extern void schedule_idle(void);
-asmlinkage void schedule_user(void);
+ਬਾਹਰੀ ਖਾਲੀ ਸਮਾਂ_ਸਾਰਣੀ_idle(ਖਾਲੀ);
+asmlinkage ਖਾਲੀ ਸਮਾਂ_ਸਾਰਣੀ_user(ਖਾਲੀ);
 
-extern void sysrq_sched_debug_show(void);
-extern void sched_init_granularity(void);
-extern void update_max_interval(void);
+ਬਾਹਰੀ ਖਾਲੀ sysrq_sched_debug_show(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ sched_init_granularity(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ update_max_interval(ਖਾਲੀ);
 
-extern void init_sched_dl_class(void);
-extern void init_sched_rt_class(void);
-extern void init_sched_fair_class(void);
+ਬਾਹਰੀ ਖਾਲੀ init_sched_dl_class(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ init_sched_rt_class(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ init_sched_fair_class(ਖਾਲੀ);
 
-extern void resched_curr(struct rq *rq);
-extern void resched_curr_lazy(struct rq *rq);
-extern void resched_cpu(int cpu);
+ਬਾਹਰੀ ਖਾਲੀ resched_curr(ਬਣਤਰ rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ resched_curr_lazy(ਬਣਤਰ rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ resched_cpu(ਪੂਰਨ cpu);
 
-extern void init_rt_bandwidth(struct rt_bandwidth *rt_b, u64 period, u64 runtime);
-extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
+ਬਾਹਰੀ ਖਾਲੀ init_rt_bandwidth(ਬਣਤਰ rt_bandwidth *rt_b, u64 period, u64 runtime);
+ਬਾਹਰੀ bool sched_rt_bandwidth_account(ਬਣਤਰ rt_rq *rt_rq);
 
-extern void init_dl_entity(struct sched_dl_entity *dl_se);
+ਬਾਹਰੀ ਖਾਲੀ init_dl_entity(ਬਣਤਰ sched_dl_entity *dl_se);
 
-extern void init_cfs_throttle_work(struct task_struct *p);
+ਬਾਹਰੀ ਖਾਲੀ init_cfs_throttle_work(ਬਣਤਰ task_struct *p);
 
-#define BW_SHIFT		20
-#define BW_UNIT			(1 << BW_SHIFT)
-#define RATIO_SHIFT		8
-#define MAX_BW_BITS		(64 - BW_SHIFT)
-#define MAX_BW			((1ULL << MAX_BW_BITS) - 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ BW_ਖਿਸਕਾਓ		20
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ BW_UNIT			(1 << BW_ਖਿਸਕਾਓ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਅਨੁਪਾਤ_ਖਿਸਕਾਓ		8
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_BW_ਬਿੱਟ		(64 - BW_ਖਿਸਕਾਓ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_BW			((1ULL << MAX_BW_ਬਿੱਟ) - 1)
 
-extern u64 to_ratio(u64 period, u64 runtime);
+ਬਾਹਰੀ u64 ਮੰਜ਼ਿਲ_ਅਨੁਪਾਤ(u64 period, u64 runtime);
 
-extern void init_entity_runnable_average(struct sched_entity *se);
-extern void post_init_entity_util_avg(struct task_struct *p);
+ਬਾਹਰੀ ਖਾਲੀ init_entity_runnable_ਔਸਤਨ(ਬਣਤਰ sched_entity *se);
+ਬਾਹਰੀ ਖਾਲੀ post_init_entity_util_avg(ਬਣਤਰ task_struct *p);
 
-#ifdef CONFIG_NO_HZ_FULL
-extern bool sched_can_stop_tick(struct rq *rq);
-extern int __init sched_tick_offload_init(void);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_ਭਰਿਆ
+ਬਾਹਰੀ bool sched_can_stop_tick(ਬਣਤਰ rq *rq);
+ਬਾਹਰੀ ਪੂਰਨ __init sched_tick_offload_init(ਖਾਲੀ);
 
 /*
  * Tick may be needed by tasks in the runqueue depending on their policy and
  * requirements. If tick is needed, lets send the target an IPI to kick it out of
  * nohz mode if necessary.
  */
-static inline void sched_update_tick_dependency(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_update_tick_dependency(ਬਣਤਰ rq *rq)
 {
-	int cpu = cpu_of(rq);
+	ਪੂਰਨ cpu = cpu_ਦਾ(rq);
 
-	if (!tick_nohz_full_cpu(cpu))
-		return;
+	ਜੇ (!tick_nohz_ਭਰਿਆ_cpu(cpu))
+		ਵਾਪਸ;
 
-	if (sched_can_stop_tick(rq))
-		tick_nohz_dep_clear_cpu(cpu, TICK_DEP_BIT_SCHED);
-	else
-		tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
+	ਜੇ (sched_can_stop_tick(rq))
+		tick_nohz_dep_clear_cpu(cpu, TICK_DEP_ਦੋਆਧਾਰੀ_ਅੰਕ_SCHED);
+	ਨਹੀਂਤਾਂ
+		tick_nohz_dep_ਸੈੱਟ_cpu(cpu, TICK_DEP_ਦੋਆਧਾਰੀ_ਅੰਕ_SCHED);
 }
-#else /* !CONFIG_NO_HZ_FULL: */
-static inline int sched_tick_offload_init(void) { return 0; }
-static inline void sched_update_tick_dependency(struct rq *rq) { }
-#endif /* !CONFIG_NO_HZ_FULL */
+#ਨਹੀਂਤਾਂ /* !CONFIG_NO_HZ_FULL: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ sched_tick_offload_init(ਖਾਲੀ) { ਵਾਪਸ 0; }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_update_tick_dependency(ਬਣਤਰ rq *rq) { }
+#ਜੇ_ਅੰਤ /* !CONFIG_NO_HZ_FULL */
 
-static inline void add_nr_running(struct rq *rq, unsigned count)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ ਜੋੜੋ_nr_running(ਬਣਤਰ rq *rq, ਬਿਨਾਨਿਸ਼ਾਨੀ ਗਿਣਤੀ_2)
 {
-	unsigned prev_nr = rq->nr_running;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ prev_nr = rq->nr_running;
 
-	rq->nr_running = prev_nr + count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, count);
+	rq->nr_running = prev_nr + ਗਿਣਤੀ_2;
+	ਜੇ (trace_sched_update_nr_running_tp_enabled()) {
+		call_trace_sched_update_nr_running(rq, ਗਿਣਤੀ_2);
 	}
 
-	if (prev_nr < 2 && rq->nr_running >= 2)
-		set_rd_overloaded(rq->rd, 1);
+	ਜੇ (prev_nr < 2 && rq->nr_running >= 2)
+		ਸੈੱਟ_rd_overloaded(rq->rd, 1);
 
 	sched_update_tick_dependency(rq);
 }
 
-static inline void sub_nr_running(struct rq *rq, unsigned count)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sub_nr_running(ਬਣਤਰ rq *rq, ਬਿਨਾਨਿਸ਼ਾਨੀ ਗਿਣਤੀ_2)
 {
-	rq->nr_running -= count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, -count);
+	rq->nr_running -= ਗਿਣਤੀ_2;
+	ਜੇ (trace_sched_update_nr_running_tp_enabled()) {
+		call_trace_sched_update_nr_running(rq, -ਗਿਣਤੀ_2);
 	}
 
 	/* Check if we still need preemption */
 	sched_update_tick_dependency(rq);
 }
 
-static inline void __block_task(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ __block_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	if (p->sched_contributes_to_load)
+	ਜੇ (p->sched_contributes_ਮੰਜ਼ਿਲ_ਲੱਦੋ)
 		rq->nr_uninterruptible++;
 
-	if (p->in_iowait) {
+	ਜੇ (p->ਵਿੱਚ_iowait) {
 		atomic_inc(&rq->nr_iowait);
-		delayacct_blkio_start();
+		delayacct_blkio_ਸ਼ੁਰੂ();
 	}
 
 	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
@@ -3141,20 +3141,20 @@ static inline void __block_task(struct rq *rq, struct task_struct *p)
 	smp_store_release(&p->on_rq, 0);
 }
 
-extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
-extern void deactivate_task(struct rq *rq, struct task_struct *p, int flags);
+ਬਾਹਰੀ ਖਾਲੀ activate_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
+ਬਾਹਰੀ ਖਾਲੀ deactivate_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
 
-extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
+ਬਾਹਰੀ ਖਾਲੀ wakeup_preempt(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
 
 /*
  * attach_task() -- attach the task detached by detach_task() to its new rq.
  */
-static inline void attach_task(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ attach_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
 
 	WARN_ON_ONCE(task_rq(p) != rq);
-	activate_task(rq, p, ENQUEUE_NOCLOCK);
+	activate_task(rq, p, ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_NOCLOCK);
 	wakeup_preempt(rq, p, 0);
 }
 
@@ -3162,9 +3162,9 @@ static inline void attach_task(struct rq *rq, struct task_struct *p)
  * attach_one_task() -- attaches the task returned from detach_one_task() to
  * its new rq.
  */
-static inline void attach_one_task(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ attach_one_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
-	guard(rq_lock)(rq);
+	guard(rq_ਤਾਲਾ)(rq);
 	update_rq_clock(rq);
 	attach_task(rq, p);
 }
@@ -3173,82 +3173,82 @@ static inline void attach_one_task(struct rq *rq, struct task_struct *p)
  * __attach_tasks() - attaches a list of tasks (using se.group_node) to
  * the new rq
  */
-static inline void __attach_tasks(struct rq *rq, struct list_head *tasks)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ __attach_tasks(ਬਣਤਰ rq *rq, ਬਣਤਰ list_ਸਿਰ *tasks)
 {
-	guard(rq_lock)(rq);
+	guard(rq_ਤਾਲਾ)(rq);
 	update_rq_clock(rq);
 
-	while (!list_empty(tasks)) {
-		struct task_struct *p;
+	ਜਦੋਂ (!list_ਖਾਲੀ_ਥਾਵਾਂ(tasks)) {
+		ਬਣਤਰ task_struct *p;
 
-		p = list_first_entry(tasks, struct task_struct, se.group_node);
-		list_del_init(&p->se.group_node);
+		p = list_ਪਹਿਲਾ_ਇੰਦਰਾਜ(tasks, ਬਣਤਰ task_struct, se.ਸਮੂਹ_ਗੰਢ);
+		list_del_init(&p->se.ਸਮੂਹ_ਗੰਢ);
 
 		attach_task(rq, p);
 	}
 }
 
-#ifdef CONFIG_PREEMPT_RT
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_PREEMPT_RT
 # define SCHED_NR_MIGRATE_BREAK 8
-#else
+#ਨਹੀਂਤਾਂ
 # define SCHED_NR_MIGRATE_BREAK 32
-#endif
+#ਜੇ_ਅੰਤ
 
-extern __read_mostly unsigned int sysctl_sched_nr_migrate;
-extern __read_mostly unsigned int sysctl_sched_migration_cost;
+ਬਾਹਰੀ __read_mostly ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_nr_migrate;
+ਬਾਹਰੀ __read_mostly ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_migration_ਲਾਗਤ;
 
-extern unsigned int sysctl_sched_base_slice;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_ਅਧਾਰ_ਟੁਕੜਾ;
 
-extern int sysctl_resched_latency_warn_ms;
-extern int sysctl_resched_latency_warn_once;
+ਬਾਹਰੀ ਪੂਰਨ sysctl_resched_latency_warn_ms;
+ਬਾਹਰੀ ਪੂਰਨ sysctl_resched_latency_warn_once;
 
-extern unsigned int sysctl_sched_tunable_scaling;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_tunable_scaling;
 
-extern unsigned int sysctl_numa_balancing_scan_delay;
-extern unsigned int sysctl_numa_balancing_scan_period_min;
-extern unsigned int sysctl_numa_balancing_scan_period_max;
-extern unsigned int sysctl_numa_balancing_scan_size;
-extern unsigned int sysctl_numa_balancing_hot_threshold;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_ਜਾਂਚ_delay;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_ਜਾਂਚ_period_min;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_ਜਾਂਚ_period_max;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_ਜਾਂਚ_ਮਾਪ;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_numa_balancing_hot_ਹੱਦ;
 
-#ifdef CONFIG_SCHED_HRTICK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_HRTICK
 
 /*
  * Use hrtick when:
  *  - enabled by features
  *  - hrtimer is actually high res
  */
-static inline bool hrtick_enabled(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool hrtick_enabled(ਬਣਤਰ rq *rq)
 {
-	return cpu_active(cpu_of(rq)) && hrtimer_highres_enabled();
+	ਵਾਪਸ cpu_ਸਰਗਰਮ(cpu_ਦਾ(rq)) && hrtimer_highres_enabled();
 }
 
-static inline bool hrtick_enabled_fair(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool hrtick_enabled_fair(ਬਣਤਰ rq *rq)
 {
-	return sched_feat(HRTICK) && hrtick_enabled(rq);
+	ਵਾਪਸ sched_feat(HRTICK) && hrtick_enabled(rq);
 }
 
-static inline bool hrtick_enabled_dl(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool hrtick_enabled_dl(ਬਣਤਰ rq *rq)
 {
-	return sched_feat(HRTICK_DL) && hrtick_enabled(rq);
+	ਵਾਪਸ sched_feat(HRTICK_DL) && hrtick_enabled(rq);
 }
 
-extern void hrtick_start(struct rq *rq, u64 delay);
-static inline bool hrtick_active(struct rq *rq)
+ਬਾਹਰੀ ਖਾਲੀ hrtick_ਸ਼ੁਰੂ(ਬਣਤਰ rq *rq, u64 delay);
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool hrtick_ਸਰਗਰਮ(ਬਣਤਰ rq *rq)
 {
-	return hrtimer_active(&rq->hrtick_timer);
+	ਵਾਪਸ hrtimer_ਸਰਗਰਮ(&rq->hrtick_timer);
 }
 
-#else /* !CONFIG_SCHED_HRTICK: */
-static inline bool hrtick_enabled_fair(struct rq *rq) { return false; }
-static inline bool hrtick_enabled_dl(struct rq *rq) { return false; }
-static inline bool hrtick_enabled(struct rq *rq) { return false; }
-#endif /* !CONFIG_SCHED_HRTICK */
+#ਨਹੀਂਤਾਂ /* !CONFIG_SCHED_HRTICK: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool hrtick_enabled_fair(ਬਣਤਰ rq *rq) { ਵਾਪਸ false; }
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool hrtick_enabled_dl(ਬਣਤਰ rq *rq) { ਵਾਪਸ false; }
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool hrtick_enabled(ਬਣਤਰ rq *rq) { ਵਾਪਸ false; }
+#ਜੇ_ਅੰਤ /* !CONFIG_SCHED_HRTICK */
 
-#ifndef arch_scale_freq_tick
-static __always_inline void arch_scale_freq_tick(void) { }
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ arch_scale_freq_tick
+ਸਥਿਰ __always_inline ਖਾਲੀ arch_scale_freq_tick(ਖਾਲੀ) { }
+#ਜੇ_ਅੰਤ
 
-#ifndef arch_scale_freq_capacity
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ arch_scale_freq_ਸਮਰੱਥਾ
 /**
  * arch_scale_freq_capacity - get the frequency scale factor of a given CPU.
  * @cpu: the CPU in question.
@@ -3259,12 +3259,12 @@ static __always_inline void arch_scale_freq_tick(void) { }
  *     ------ * SCHED_CAPACITY_SCALE
  *     f_max
  */
-static __always_inline
-unsigned long arch_scale_freq_capacity(int cpu)
+ਸਥਿਰ __always_inline
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ arch_scale_freq_ਸਮਰੱਥਾ(ਪੂਰਨ cpu)
 {
-	return SCHED_CAPACITY_SCALE;
+	ਵਾਪਸ SCHED_ਸਮਰੱਥਾ_SCALE;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 /*
  * In double_lock_balance()/double_rq_lock(), we use raw_spin_rq_lock() to
@@ -3272,33 +3272,33 @@ unsigned long arch_scale_freq_capacity(int cpu)
  * we need to call double_rq_clock_clear_update() to clear RQCF_UPDATED of
  * rq->clock_update_flags to avoid the WARN_DOUBLE_CLOCK warning.
  */
-static inline void double_rq_clock_clear_update(struct rq *rq1, struct rq *rq2)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ double_rq_clock_clear_update(ਬਣਤਰ rq *rq1, ਬਣਤਰ rq *rq2)
 {
 	rq1->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 	rq2->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 }
 
-#define DEFINE_LOCK_GUARD_2(name, type, _lock, _unlock, ...)				\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEFINE_ਤਾਲਾ_GUARD_2(name, type, ਤਾਲਾ_2, _unlock, ...)				\
 __DEFINE_UNLOCK_GUARD(name, type, _unlock, type *lock2; __VA_ARGS__)			\
-static inline class_##name##_t class_##name##_constructor(type *lock, type *lock2)	\
+ਸਥਿਰ ਸਤਰਅੰਦਰ class_##name##_t class_##name##_constructor(type *ਤਾਲਾ, type *lock2)	\
 	__no_context_analysis								\
-{ class_##name##_t _t = { .lock = lock, .lock2 = lock2 }, *_T = &_t;			\
-  _lock; return _t; }
-#define DECLARE_LOCK_GUARD_2_ATTRS(_name, _lock, _unlock1, _unlock2)			\
-static inline class_##_name##_t class_##_name##_constructor(lock_##_name##_t *_T1,	\
-							    lock_##_name##_t *_T2) _lock; \
-static __always_inline void __class_##_name##_cleanup_ctx1(class_##_name##_t **_T1)	\
+{ class_##name##_t _t = { .ਤਾਲਾ = ਤਾਲਾ, .lock2 = lock2 }, *_T = &_t;			\
+  ਤਾਲਾ_2; ਵਾਪਸ _t; }
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DECLARE_ਤਾਲਾ_GUARD_2_ATTRS(_name, ਤਾਲਾ_2, _unlock1, _unlock2)			\
+ਸਥਿਰ ਸਤਰਅੰਦਰ class_##_name##_t class_##_name##_constructor(ਤਾਲਾ_3##_name##_t *_T1,	\
+							    ਤਾਲਾ_3##_name##_t *_T2) ਤਾਲਾ_2; \
+ਸਥਿਰ __always_inline ਖਾਲੀ __class_##_name##_cleanup_ctx1(class_##_name##_t **_T1)	\
 	__no_context_analysis _unlock1 { }						\
-static __always_inline void __class_##_name##_cleanup_ctx2(class_##_name##_t **_T2)	\
+ਸਥਿਰ __always_inline ਖਾਲੀ __class_##_name##_cleanup_ctx2(class_##_name##_t **_T2)	\
 	__no_context_analysis _unlock2 { }
-#define WITH_LOCK_GUARD_2_ATTRS(_name, _T1, _T2)					\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WITH_ਤਾਲਾ_GUARD_2_ATTRS(_name, _T1, _T2)					\
 	class_##_name##_constructor(_T1, _T2),						\
-	*__UNIQUE_ID(unlock1) __cleanup(__class_##_name##_cleanup_ctx1) = (void *)(_T1),\
-	*__UNIQUE_ID(unlock2) __cleanup(__class_##_name##_cleanup_ctx2) = (void *)(_T2)
+	*__UNIQUE_ID(unlock1) __cleanup(__class_##_name##_cleanup_ctx1) = (ਖਾਲੀ *)(_T1),\
+	*__UNIQUE_ID(unlock2) __cleanup(__class_##_name##_cleanup_ctx2) = (ਖਾਲੀ *)(_T2)
 
-static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool rq_ਕ੍ਰਮ_less(ਬਣਤਰ rq *rq1, ਬਣਤਰ rq *rq2)
 {
-#ifdef CONFIG_SCHED_CORE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CORE
 	/*
 	 * In order to not have {0,2},{1,3} turn into into an AB-BA,
 	 * order by core-id first and cpu-id second.
@@ -3310,22 +3310,22 @@ static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
 	 *
 	 * when only cpu-id is considered.
 	 */
-	if (rq1->core->cpu < rq2->core->cpu)
-		return true;
-	if (rq1->core->cpu > rq2->core->cpu)
-		return false;
+	ਜੇ (rq1->core->cpu < rq2->core->cpu)
+		ਵਾਪਸ true;
+	ਜੇ (rq1->core->cpu > rq2->core->cpu)
+		ਵਾਪਸ false;
 
 	/*
 	 * __sched_core_flip() relies on SMT having cpu-id lock order.
 	 */
-#endif /* CONFIG_SCHED_CORE */
-	return rq1->cpu < rq2->cpu;
+#ਜੇ_ਅੰਤ /* CONFIG_SCHED_CORE */
+	ਵਾਪਸ rq1->cpu < rq2->cpu;
 }
 
-extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
+ਬਾਹਰੀ ਖਾਲੀ double_rq_ਤਾਲਾ(ਬਣਤਰ rq *rq1, ਬਣਤਰ rq *rq2)
 	__acquires(__rq_lockp(rq1), __rq_lockp(rq2));
 
-#ifdef CONFIG_PREEMPTION
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_PREEMPTION
 
 /*
  * fair double_lock_balance: Safely acquires both rq->locks in a fair
@@ -3335,17 +3335,17 @@ extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
  * reduces latency compared to the unfair variant below.  However, it
  * also adds more overhead and therefore may reduce throughput.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ double_ਤਾਲਾ_balance_2(ਬਣਤਰ rq *this_rq, ਬਣਤਰ rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	raw_spin_rq_unlock(this_rq);
-	double_rq_lock(this_rq, busiest);
+	double_rq_ਤਾਲਾ(this_rq, busiest);
 
-	return 1;
+	ਵਾਪਸ 1;
 }
 
-#else /* !CONFIG_PREEMPTION: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_PREEMPTION: */
 /*
  * Unfair double_lock_balance: Optimizes throughput at the expense of
  * latency by eliminating extra atomic operations when the locks are
@@ -3353,104 +3353,104 @@ static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
  * grant the double lock to lower CPUs over higher ids under contention,
  * regardless of entry order into the function.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ double_ਤਾਲਾ_balance_2(ਬਣਤਰ rq *this_rq, ਬਣਤਰ rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
+	ਜੇ (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
 		__acquire(__rq_lockp(busiest)); /* already held */
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	if (likely(raw_spin_rq_trylock(busiest))) {
+	ਜੇ (likely(raw_spin_rq_trylock(busiest))) {
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	if (rq_order_less(this_rq, busiest)) {
-		raw_spin_rq_lock_nested(busiest, SINGLE_DEPTH_NESTING);
+	ਜੇ (rq_ਕ੍ਰਮ_less(this_rq, busiest)) {
+		raw_spin_rq_ਤਾਲਾ_nested(busiest, SINGLE_ਡੂੰਘਾਈ_NESTING);
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	raw_spin_rq_unlock(this_rq);
-	double_rq_lock(this_rq, busiest);
+	double_rq_ਤਾਲਾ(this_rq, busiest);
 
-	return 1;
+	ਵਾਪਸ 1;
 }
 
-#endif /* !CONFIG_PREEMPTION */
+#ਜੇ_ਅੰਤ /* !CONFIG_PREEMPTION */
 
 /*
  * double_lock_balance - lock the busiest runqueue, this_rq is locked already.
  */
-static inline int double_lock_balance(struct rq *this_rq, struct rq *busiest)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ double_ਤਾਲਾ_balance(ਬਣਤਰ rq *this_rq, ਬਣਤਰ rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	lockdep_assert_irqs_disabled();
 
-	return _double_lock_balance(this_rq, busiest);
+	ਵਾਪਸ double_ਤਾਲਾ_balance_2(this_rq, busiest);
 }
 
-static inline void double_unlock_balance(struct rq *this_rq, struct rq *busiest)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ double_unlock_balance(ਬਣਤਰ rq *this_rq, ਬਣਤਰ rq *busiest)
 	__releases(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) != __rq_lockp(busiest))
+	ਜੇ (__rq_lockp(this_rq) != __rq_lockp(busiest))
 		raw_spin_rq_unlock(busiest);
-	else
+	ਨਹੀਂਤਾਂ
 		__release(__rq_lockp(busiest)); /* fake release */
-	lock_set_subclass(&__rq_lockp(this_rq)->dep_map, 0, _RET_IP_);
+	ਤਾਲਾ_ਸੈੱਟ_subclass(&__rq_lockp(this_rq)->dep_map, 0, _RET_IP_);
 }
 
-static inline void double_lock(spinlock_t *l1, spinlock_t *l2)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ double_ਤਾਲਾ(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
-		swap(l1, l2);
+	ਜੇ (l1 > l2)
+		ਅਦਲਾ_ਬਦਲੀ(l1, l2);
 
-	spin_lock(l1);
-	spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
+	spin_ਤਾਲਾ(l1);
+	spin_ਤਾਲਾ_nested(l2, SINGLE_ਡੂੰਘਾਈ_NESTING);
 }
 
-static inline void double_lock_irq(spinlock_t *l1, spinlock_t *l2)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ double_ਤਾਲਾ_irq(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
-		swap(l1, l2);
+	ਜੇ (l1 > l2)
+		ਅਦਲਾ_ਬਦਲੀ(l1, l2);
 
-	spin_lock_irq(l1);
-	spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
+	spin_ਤਾਲਾ_irq(l1);
+	spin_ਤਾਲਾ_nested(l2, SINGLE_ਡੂੰਘਾਈ_NESTING);
 }
 
-static inline void double_raw_lock(raw_spinlock_t *l1, raw_spinlock_t *l2)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ double_raw_ਤਾਲਾ(raw_spinlock_t *l1, raw_spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
-		swap(l1, l2);
+	ਜੇ (l1 > l2)
+		ਅਦਲਾ_ਬਦਲੀ(l1, l2);
 
-	raw_spin_lock(l1);
-	raw_spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
+	raw_spin_ਤਾਲਾ(l1);
+	raw_spin_ਤਾਲਾ_nested(l2, SINGLE_ਡੂੰਘਾਈ_NESTING);
 }
 
-static inline void double_raw_unlock(raw_spinlock_t *l1, raw_spinlock_t *l2)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ double_raw_unlock(raw_spinlock_t *l1, raw_spinlock_t *l2)
 	__releases(l1, l2)
 {
 	raw_spin_unlock(l1);
 	raw_spin_unlock(l2);
 }
 
-DEFINE_LOCK_GUARD_2(double_raw_spinlock, raw_spinlock_t,
-		    double_raw_lock(_T->lock, _T->lock2),
-		    double_raw_unlock(_T->lock, _T->lock2))
+DEFINE_ਤਾਲਾ_GUARD_2(double_raw_spinlock, raw_spinlock_t,
+		    double_raw_ਤਾਲਾ(_T->ਤਾਲਾ, _T->lock2),
+		    double_raw_unlock(_T->ਤਾਲਾ, _T->lock2))
 
-DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock,
+DECLARE_ਤਾਲਾ_GUARD_2_ATTRS(double_raw_spinlock,
 			   __acquires(_T1, _T2),
 			   __releases(*(raw_spinlock_t **)_T1),
 			   __releases(*(raw_spinlock_t **)_T2));
-#define class_double_raw_spinlock_constructor(_T1, _T2) \
-	WITH_LOCK_GUARD_2_ATTRS(double_raw_spinlock, _T1, _T2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ class_double_raw_spinlock_constructor(_T1, _T2) \
+	WITH_ਤਾਲਾ_GUARD_2_ATTRS(double_raw_spinlock, _T1, _T2)
 
 /*
  * double_rq_unlock - safely unlock two runqueues
@@ -3458,128 +3458,128 @@ DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock,
  * Note this does not restore interrupts like task_rq_unlock,
  * you need to do so manually after calling.
  */
-static inline void double_rq_unlock(struct rq *rq1, struct rq *rq2)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ double_rq_unlock(ਬਣਤਰ rq *rq1, ਬਣਤਰ rq *rq2)
 	__releases(__rq_lockp(rq1), __rq_lockp(rq2))
 {
-	if (__rq_lockp(rq1) != __rq_lockp(rq2))
+	ਜੇ (__rq_lockp(rq1) != __rq_lockp(rq2))
 		raw_spin_rq_unlock(rq2);
-	else
+	ਨਹੀਂਤਾਂ
 		__release(__rq_lockp(rq2)); /* fake release */
 	raw_spin_rq_unlock(rq1);
 }
 
-extern void set_rq_online (struct rq *rq);
-extern void set_rq_offline(struct rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ ਸੈੱਟ_rq_online (ਬਣਤਰ rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ ਸੈੱਟ_rq_offline(ਬਣਤਰ rq *rq);
 
-extern bool sched_smp_initialized;
+ਬਾਹਰੀ bool sched_smp_initialized;
 
-DEFINE_LOCK_GUARD_2(double_rq_lock, struct rq,
-		    double_rq_lock(_T->lock, _T->lock2),
-		    double_rq_unlock(_T->lock, _T->lock2))
+DEFINE_ਤਾਲਾ_GUARD_2(double_rq_ਤਾਲਾ, ਬਣਤਰ rq,
+		    double_rq_ਤਾਲਾ(_T->ਤਾਲਾ, _T->lock2),
+		    double_rq_unlock(_T->ਤਾਲਾ, _T->lock2))
 
-extern struct sched_entity *__pick_root_entity(struct cfs_rq *cfs_rq);
-extern struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq);
-extern struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq);
+ਬਾਹਰੀ ਬਣਤਰ sched_entity *__pick_root_entity(ਬਣਤਰ cfs_rq *cfs_rq);
+ਬਾਹਰੀ ਬਣਤਰ sched_entity *__pick_first_entity(ਬਣਤਰ cfs_rq *cfs_rq);
+ਬਾਹਰੀ ਬਣਤਰ sched_entity *__pick_last_entity(ਬਣਤਰ cfs_rq *cfs_rq);
 
-extern bool sched_debug_verbose;
+ਬਾਹਰੀ bool sched_debug_verbose;
 
-extern void print_cfs_stats(struct seq_file *m, int cpu);
-extern void print_rt_stats(struct seq_file *m, int cpu);
-extern void print_dl_stats(struct seq_file *m, int cpu);
-extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
-extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
-extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+ਬਾਹਰੀ ਖਾਲੀ print_cfs_stats(ਬਣਤਰ seq_file *m, ਪੂਰਨ cpu);
+ਬਾਹਰੀ ਖਾਲੀ print_rt_stats(ਬਣਤਰ seq_file *m, ਪੂਰਨ cpu);
+ਬਾਹਰੀ ਖਾਲੀ print_dl_stats(ਬਣਤਰ seq_file *m, ਪੂਰਨ cpu);
+ਬਾਹਰੀ ਖਾਲੀ print_cfs_rq(ਬਣਤਰ seq_file *m, ਪੂਰਨ cpu, ਬਣਤਰ cfs_rq *cfs_rq);
+ਬਾਹਰੀ ਖਾਲੀ print_rt_rq(ਬਣਤਰ seq_file *m, ਪੂਰਨ cpu, ਬਣਤਰ rt_rq *rt_rq);
+ਬਾਹਰੀ ਖਾਲੀ print_dl_rq(ਬਣਤਰ seq_file *m, ਪੂਰਨ cpu, ਬਣਤਰ dl_rq *dl_rq);
 
-extern void resched_latency_warn(int cpu, u64 latency);
+ਬਾਹਰੀ ਖਾਲੀ resched_latency_warn(ਪੂਰਨ cpu, u64 latency);
 
-#ifdef CONFIG_NUMA_BALANCING
-extern void show_numa_stats(struct task_struct *p, struct seq_file *m);
-extern void
-print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
-		 unsigned long tpf, unsigned long gsf, unsigned long gpf);
-#endif /* CONFIG_NUMA_BALANCING */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NUMA_BALANCING
+ਬਾਹਰੀ ਖਾਲੀ show_numa_stats(ਬਣਤਰ task_struct *p, ਬਣਤਰ seq_file *m);
+ਬਾਹਰੀ ਖਾਲੀ
+print_numa_stats(ਬਣਤਰ seq_file *m, ਪੂਰਨ ਗੰਢ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ tsf,
+		 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ tpf, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ gsf, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ gpf);
+#ਜੇ_ਅੰਤ /* CONFIG_NUMA_BALANCING */
 
-extern void init_cfs_rq(struct cfs_rq *cfs_rq);
-extern void init_rt_rq(struct rt_rq *rt_rq);
-extern void init_dl_rq(struct dl_rq *dl_rq);
+ਬਾਹਰੀ ਖਾਲੀ init_cfs_rq(ਬਣਤਰ cfs_rq *cfs_rq);
+ਬਾਹਰੀ ਖਾਲੀ init_rt_rq(ਬਣਤਰ rt_rq *rt_rq);
+ਬਾਹਰੀ ਖਾਲੀ init_dl_rq(ਬਣਤਰ dl_rq *dl_rq);
 
-extern void cfs_bandwidth_usage_inc(void);
-extern void cfs_bandwidth_usage_dec(void);
+ਬਾਹਰੀ ਖਾਲੀ cfs_bandwidth_usage_inc(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ cfs_bandwidth_usage_dec(ਖਾਲੀ);
 
-#ifdef CONFIG_NO_HZ_COMMON
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_COMMON
 
-#define NOHZ_BALANCE_KICK_BIT	0
-#define NOHZ_STATS_KICK_BIT	1
-#define NOHZ_NEWILB_KICK_BIT	2
-#define NOHZ_NEXT_KICK_BIT	3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOHZ_BALANCE_KICK_ਦੋਆਧਾਰੀ_ਅੰਕ	0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOHZ_STATS_KICK_ਦੋਆਧਾਰੀ_ਅੰਕ	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOHZ_NEWILB_KICK_ਦੋਆਧਾਰੀ_ਅੰਕ	2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOHZ_ਅਗਲਾ_KICK_ਦੋਆਧਾਰੀ_ਅੰਕ	3
 
 /* Run sched_balance_domains() */
-#define NOHZ_BALANCE_KICK	BIT(NOHZ_BALANCE_KICK_BIT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOHZ_BALANCE_KICK	ਦੋਆਧਾਰੀ_ਅੰਕ(NOHZ_BALANCE_KICK_ਦੋਆਧਾਰੀ_ਅੰਕ)
 /* Update blocked load */
-#define NOHZ_STATS_KICK		BIT(NOHZ_STATS_KICK_BIT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOHZ_STATS_KICK		ਦੋਆਧਾਰੀ_ਅੰਕ(NOHZ_STATS_KICK_ਦੋਆਧਾਰੀ_ਅੰਕ)
 /* Update blocked load when entering idle */
-#define NOHZ_NEWILB_KICK	BIT(NOHZ_NEWILB_KICK_BIT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOHZ_NEWILB_KICK	ਦੋਆਧਾਰੀ_ਅੰਕ(NOHZ_NEWILB_KICK_ਦੋਆਧਾਰੀ_ਅੰਕ)
 /* Update nohz.next_balance */
-#define NOHZ_NEXT_KICK		BIT(NOHZ_NEXT_KICK_BIT)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOHZ_ਅਗਲਾ_KICK		ਦੋਆਧਾਰੀ_ਅੰਕ(NOHZ_ਅਗਲਾ_KICK_ਦੋਆਧਾਰੀ_ਅੰਕ)
 
-#define NOHZ_KICK_MASK		(NOHZ_BALANCE_KICK | NOHZ_STATS_KICK | NOHZ_NEXT_KICK)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NOHZ_KICK_ਨਕਾਬ		(NOHZ_BALANCE_KICK | NOHZ_STATS_KICK | NOHZ_ਅਗਲਾ_KICK)
 
-#define nohz_flags(cpu)		(&cpu_rq(cpu)->nohz_flags)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ nohz_flags(cpu)		(&cpu_rq(cpu)->nohz_flags)
 
-extern void nohz_balance_exit_idle(struct rq *rq);
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline void nohz_balance_exit_idle(struct rq *rq) { }
-#endif /* !CONFIG_NO_HZ_COMMON */
+ਬਾਹਰੀ ਖਾਲੀ nohz_balance_exit_idle(ਬਣਤਰ rq *rq);
+#ਨਹੀਂਤਾਂ /* !CONFIG_NO_HZ_COMMON: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ nohz_balance_exit_idle(ਬਣਤਰ rq *rq) { }
+#ਜੇ_ਅੰਤ /* !CONFIG_NO_HZ_COMMON */
 
-#ifdef CONFIG_NO_HZ_COMMON
-extern void nohz_run_idle_balance(int cpu);
-#else
-static inline void nohz_run_idle_balance(int cpu) { }
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_NO_HZ_COMMON
+ਬਾਹਰੀ ਖਾਲੀ nohz_ਲੜੀਵਾਰ_idle_balance(ਪੂਰਨ cpu);
+#ਨਹੀਂਤਾਂ
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ nohz_ਲੜੀਵਾਰ_idle_balance(ਪੂਰਨ cpu) { }
+#ਜੇ_ਅੰਤ
 
-#include "stats.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "stats.h"
 
-#if defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
+#ਜੇ defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
 
-extern void __sched_core_account_forceidle(struct rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ __sched_core_account_forceidle(ਬਣਤਰ rq *rq);
 
-static inline void sched_core_account_forceidle(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_core_account_forceidle(ਬਣਤਰ rq *rq)
 {
-	if (schedstat_enabled())
+	ਜੇ (schedstat_enabled())
 		__sched_core_account_forceidle(rq);
 }
 
-extern void __sched_core_tick(struct rq *rq);
+ਬਾਹਰੀ ਖਾਲੀ __sched_core_tick(ਬਣਤਰ rq *rq);
 
-static inline void sched_core_tick(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_core_tick(ਬਣਤਰ rq *rq)
 {
-	if (sched_core_enabled(rq) && schedstat_enabled())
+	ਜੇ (sched_core_enabled(rq) && schedstat_enabled())
 		__sched_core_tick(rq);
 }
 
-#else /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
+#ਨਹੀਂਤਾਂ /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
 
-static inline void sched_core_account_forceidle(struct rq *rq) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_core_account_forceidle(ਬਣਤਰ rq *rq) { }
 
-static inline void sched_core_tick(struct rq *rq) { }
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_core_tick(ਬਣਤਰ rq *rq) { }
 
-#endif /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS) */
+#ਜੇ_ਅੰਤ /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS) */
 
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_IRQ_ਸਮਾਂ_ACCOUNTING
 
-struct irqtime {
-	u64			total;
+ਬਣਤਰ irqtime {
+	u64			ਕੁੱਲ;
 	u64			tick_delta;
-	u64			irq_start_time;
-	struct u64_stats_sync	sync;
+	u64			irq_ਸ਼ੁਰੂ_ਸਮਾਂ;
+	ਬਣਤਰ u64_stats_sync	sync;
 };
 
-DECLARE_PER_CPU(struct irqtime, cpu_irqtime);
-DECLARE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਬਣਤਰ irqtime, cpu_irqtime);
+DECLARE_STATIC_ਕੁੰਜੀ_FALSE(sched_clock_irqtime);
 
-static inline int irqtime_enabled(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ irqtime_enabled(ਖਾਲੀ)
 {
-	return static_branch_likely(&sched_clock_irqtime);
+	ਵਾਪਸ static_branch_likely(&sched_clock_irqtime);
 }
 
 /*
@@ -3587,32 +3587,32 @@ static inline int irqtime_enabled(void)
  * Otherwise ksoftirqd's sum_exec_runtime is subtracted its own runtime
  * and never move forward.
  */
-static inline u64 irq_time_read(int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ u64 irq_ਸਮਾਂ_read(ਪੂਰਨ cpu)
 {
-	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
-	unsigned int seq;
-	u64 total;
+	ਬਣਤਰ irqtime *irqtime = &ਪ੍ਰਤੀ_cpu(cpu_irqtime, cpu);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ seq;
+	u64 ਕੁੱਲ;
 
-	do {
+	ਕਰੋ {
 		seq = __u64_stats_fetch_begin(&irqtime->sync);
-		total = irqtime->total;
-	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
+		ਕੁੱਲ = irqtime->ਕੁੱਲ;
+	} ਜਦੋਂ (__u64_stats_fetch_retry(&irqtime->sync, seq));
 
-	return total;
+	ਵਾਪਸ ਕੁੱਲ;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
-static inline int irqtime_enabled(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ irqtime_enabled(ਖਾਲੀ)
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
+#ਜੇ_ਅੰਤ /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
-#ifdef CONFIG_CPU_FREQ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_CPU_FREQ
 
-DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
+DECLARE_ਪ੍ਰਤੀ_CPU(ਬਣਤਰ update_util_ਅੰਕੜੇ __rcu *, cpufreq_update_util_ਅੰਕੜੇ);
 
 /**
  * cpufreq_update_util - Take a note about CPU utilization changes.
@@ -3636,34 +3636,34 @@ DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
  * but that really is a band-aid.  Going forward it should be replaced with
  * solutions targeted more specifically at RT tasks.
  */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ cpufreq_update_util(ਬਣਤਰ rq *rq, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags)
 {
-	struct update_util_data *data;
+	ਬਣਤਰ update_util_ਅੰਕੜੇ *ਅੰਕੜੇ;
 
-	data = rcu_dereference_sched(*per_cpu_ptr(&cpufreq_update_util_data,
-						  cpu_of(rq)));
-	if (data)
-		data->func(data, rq_clock(rq), flags);
+	ਅੰਕੜੇ = rcu_dereference_sched(*ਪ੍ਰਤੀ_cpu_ptr(&cpufreq_update_util_ਅੰਕੜੇ,
+						  cpu_ਦਾ(rq)));
+	ਜੇ (ਅੰਕੜੇ)
+		ਅੰਕੜੇ->func(ਅੰਕੜੇ, rq_clock(rq), flags);
 }
-#else /* !CONFIG_CPU_FREQ: */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) { }
-#endif /* !CONFIG_CPU_FREQ */
+#ਨਹੀਂਤਾਂ /* !CONFIG_CPU_FREQ: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ cpufreq_update_util(ਬਣਤਰ rq *rq, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags) { }
+#ਜੇ_ਅੰਤ /* !CONFIG_CPU_FREQ */
 
-#ifdef arch_scale_freq_capacity
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ arch_scale_freq_ਸਮਰੱਥਾ
 # ifndef arch_scale_freq_invariant
 #  define arch_scale_freq_invariant()	true
 # endif
-#else
+#ਨਹੀਂਤਾਂ
 # define arch_scale_freq_invariant()	false
-#endif
+#ਜੇ_ਅੰਤ
 
-unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
-				 unsigned long *min,
-				 unsigned long *max);
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ effective_cpu_util(ਪੂਰਨ cpu, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util_cfs,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *min,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *max);
 
-unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
-				 unsigned long min,
-				 unsigned long max);
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sugov_effective_cpu_perf(ਪੂਰਨ cpu, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ actual,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ min,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max);
 
 
 /*
@@ -3674,35 +3674,35 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
  * greater than or equal to task's deadline density right shifted by
  * (BW_SHIFT - SCHED_CAPACITY_SHIFT) and false otherwise.
  */
-static inline bool dl_task_fits_capacity(struct task_struct *p, int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool dl_task_ਸਮਾਉਂਦਾ_ਸਮਰੱਥਾ(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu)
 {
-	unsigned long cap = arch_scale_cpu_capacity(cpu);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cap = arch_scale_cpu_ਸਮਰੱਥਾ(cpu);
 
-	return cap >= p->dl.dl_density >> (BW_SHIFT - SCHED_CAPACITY_SHIFT);
+	ਵਾਪਸ cap >= p->dl.dl_density >> (BW_ਖਿਸਕਾਓ - SCHED_ਸਮਰੱਥਾ_ਖਿਸਕਾਓ);
 }
 
-static inline unsigned long cpu_bw_dl(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_bw_dl(ਬਣਤਰ rq *rq)
 {
-	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+	ਵਾਪਸ (rq->dl.running_bw * SCHED_ਸਮਰੱਥਾ_SCALE) >> BW_ਖਿਸਕਾਓ;
 }
 
-static inline unsigned long cpu_util_dl(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_util_dl(ਬਣਤਰ rq *rq)
 {
-	return READ_ONCE(rq->avg_dl.util_avg);
+	ਵਾਪਸ READ_ONCE(rq->avg_dl.util_avg);
 }
 
 
-extern unsigned long cpu_util_cfs(int cpu);
-extern unsigned long cpu_util_cfs_boost(int cpu);
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_util_cfs(ਪੂਰਨ cpu);
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_util_cfs_boost(ਪੂਰਨ cpu);
 
-static inline unsigned long cpu_util_rt(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_util_rt(ਬਣਤਰ rq *rq)
 {
-	return READ_ONCE(rq->avg_rt.util_avg);
+	ਵਾਪਸ READ_ONCE(rq->avg_rt.util_avg);
 }
 
-#ifdef CONFIG_UCLAMP_TASK
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_UCLAMP_TASK
 
-unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ uclamp_eff_ਮੁੱਲ(ਬਣਤਰ task_struct *p, ਗਿਣਤੀ uclamp_id clamp_id);
 
 /*
  * When uclamp is compiled in, the aggregation at rq level is 'turned off'
@@ -3712,9 +3712,9 @@ unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
  * Returns true if userspace opted-in to use uclamp and aggregation at rq level
  * hence is active.
  */
-static inline bool uclamp_is_used(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool uclamp_is_ਵਰਤਿਆ(ਖਾਲੀ)
 {
-	return static_branch_likely(&sched_uclamp_used);
+	ਵਾਪਸ static_branch_likely(&sched_uclamp_ਵਰਤਿਆ);
 }
 
 /*
@@ -3723,168 +3723,168 @@ static inline bool uclamp_is_used(void)
  * calling cpus_read_lock(). Because we never disable this
  * static key once enable it.
  */
-static inline void sched_uclamp_enable(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_uclamp_enable(ਖਾਲੀ)
 {
-	if (!uclamp_is_used())
-		static_branch_enable(&sched_uclamp_used);
+	ਜੇ (!uclamp_is_ਵਰਤਿਆ())
+		static_branch_enable(&sched_uclamp_ਵਰਤਿਆ);
 }
 
-static inline unsigned long uclamp_rq_get(struct rq *rq,
-					  enum uclamp_id clamp_id)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ uclamp_rq_get(ਬਣਤਰ rq *rq,
+					  ਗਿਣਤੀ uclamp_id clamp_id)
 {
-	return READ_ONCE(rq->uclamp[clamp_id].value);
+	ਵਾਪਸ READ_ONCE(rq->uclamp[clamp_id].ਮੁੱਲ);
 }
 
-static inline void uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id,
-				 unsigned int value)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ uclamp_rq_ਸੈੱਟ(ਬਣਤਰ rq *rq, ਗਿਣਤੀ uclamp_id clamp_id,
+				 ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮੁੱਲ)
 {
-	WRITE_ONCE(rq->uclamp[clamp_id].value, value);
+	WRITE_ONCE(rq->uclamp[clamp_id].ਮੁੱਲ, ਮੁੱਲ);
 }
 
-static inline bool uclamp_rq_is_idle(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool uclamp_rq_is_idle(ਬਣਤਰ rq *rq)
 {
-	return rq->uclamp_flags & UCLAMP_FLAG_IDLE;
+	ਵਾਪਸ rq->uclamp_flags & UCLAMP_FLAG_IDLE;
 }
 
 /* Is the rq being capped/throttled by uclamp_max? */
-static inline bool uclamp_rq_is_capped(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool uclamp_rq_is_capped(ਬਣਤਰ rq *rq)
 {
-	unsigned long rq_util;
-	unsigned long max_util;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ rq_util;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max_util;
 
-	if (!uclamp_is_used())
-		return false;
+	ਜੇ (!uclamp_is_ਵਰਤਿਆ())
+		ਵਾਪਸ false;
 
-	rq_util = cpu_util_cfs(cpu_of(rq)) + cpu_util_rt(rq);
-	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
+	rq_util = cpu_util_cfs(cpu_ਦਾ(rq)) + cpu_util_rt(rq);
+	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].ਮੁੱਲ);
 
-	return max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
+	ਵਾਪਸ max_util != SCHED_ਸਮਰੱਥਾ_SCALE && rq_util >= max_util;
 }
 
-#define for_each_clamp_id(clamp_id) \
-	for ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ for_each_clamp_id(clamp_id) \
+	ਲਈ ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
 
-extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sysctl_sched_uclamp_util_min_rt_default;
 
 
-static inline unsigned int uclamp_none(enum uclamp_id clamp_id)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ uclamp_none(ਗਿਣਤੀ uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
-	return SCHED_CAPACITY_SCALE;
+	ਜੇ (clamp_id == UCLAMP_MIN)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ SCHED_ਸਮਰੱਥਾ_SCALE;
 }
 
 /* Integer rounded range for each bucket */
-#define UCLAMP_BUCKET_DELTA DIV_ROUND_CLOSEST(SCHED_CAPACITY_SCALE, UCLAMP_BUCKETS)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UCLAMP_ਬਾਲਟੀ_DELTA DIV_ਗੇੜਾ_CLOSEST(SCHED_ਸਮਰੱਥਾ_SCALE, UCLAMP_BUCKETS)
 
-static inline unsigned int uclamp_bucket_id(unsigned int clamp_value)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ uclamp_ਬਾਲਟੀ_id(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ clamp_ਮੁੱਲ)
 {
-	return min_t(unsigned int, clamp_value / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
+	ਵਾਪਸ min_t(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, clamp_ਮੁੱਲ / UCLAMP_ਬਾਲਟੀ_DELTA, UCLAMP_BUCKETS - 1);
 }
 
-static inline void
-uclamp_se_set(struct uclamp_se *uc_se, unsigned int value, bool user_defined)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+uclamp_se_ਸੈੱਟ(ਬਣਤਰ uclamp_se *uc_se, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮੁੱਲ, bool user_defined)
 {
-	uc_se->value = value;
-	uc_se->bucket_id = uclamp_bucket_id(value);
+	uc_se->ਮੁੱਲ = ਮੁੱਲ;
+	uc_se->ਬਾਲਟੀ_id = uclamp_ਬਾਲਟੀ_id(ਮੁੱਲ);
 	uc_se->user_defined = user_defined;
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_UCLAMP_TASK: */
 
-static inline unsigned long
-uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ
+uclamp_eff_ਮੁੱਲ(ਬਣਤਰ task_struct *p, ਗਿਣਤੀ uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	ਜੇ (clamp_id == UCLAMP_MIN)
+		ਵਾਪਸ 0;
 
-	return SCHED_CAPACITY_SCALE;
+	ਵਾਪਸ SCHED_ਸਮਰੱਥਾ_SCALE;
 }
 
-static inline bool uclamp_rq_is_capped(struct rq *rq) { return false; }
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool uclamp_rq_is_capped(ਬਣਤਰ rq *rq) { ਵਾਪਸ false; }
 
-static inline bool uclamp_is_used(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool uclamp_is_ਵਰਤਿਆ(ਖਾਲੀ)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-static inline void sched_uclamp_enable(void) {}
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_uclamp_enable(ਖਾਲੀ) {}
 
-static inline unsigned long
-uclamp_rq_get(struct rq *rq, enum uclamp_id clamp_id)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ
+uclamp_rq_get(ਬਣਤਰ rq *rq, ਗਿਣਤੀ uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	ਜੇ (clamp_id == UCLAMP_MIN)
+		ਵਾਪਸ 0;
 
-	return SCHED_CAPACITY_SCALE;
+	ਵਾਪਸ SCHED_ਸਮਰੱਥਾ_SCALE;
 }
 
-static inline void
-uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id, unsigned int value)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+uclamp_rq_ਸੈੱਟ(ਬਣਤਰ rq *rq, ਗਿਣਤੀ uclamp_id clamp_id, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮੁੱਲ)
 {
 }
 
-static inline bool uclamp_rq_is_idle(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool uclamp_rq_is_idle(ਬਣਤਰ rq *rq)
 {
-	return false;
+	ਵਾਪਸ false;
 }
 
-#endif /* !CONFIG_UCLAMP_TASK */
+#ਜੇ_ਅੰਤ /* !CONFIG_UCLAMP_TASK */
 
-#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_HAVE_SCHED_AVG_IRQ
 
-static inline unsigned long cpu_util_irq(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_util_irq(ਬਣਤਰ rq *rq)
 {
-	return READ_ONCE(rq->avg_irq.util_avg);
+	ਵਾਪਸ READ_ONCE(rq->avg_irq.util_avg);
 }
 
-static inline
-unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
+ਸਥਿਰ ਸਤਰਅੰਦਰ
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ scale_irq_ਸਮਰੱਥਾ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ irq, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max)
 {
 	util *= (max - irq);
 	util /= max;
 
-	return util;
+	ਵਾਪਸ util;
 
 }
 
-#else /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
 
-static inline unsigned long cpu_util_irq(struct rq *rq)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ cpu_util_irq(ਬਣਤਰ rq *rq)
 {
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static inline
-unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
+ਸਥਿਰ ਸਤਰਅੰਦਰ
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ scale_irq_ਸਮਰੱਥਾ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ util, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ irq, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ max)
 {
-	return util;
+	ਵਾਪਸ util;
 }
 
-#endif /* !CONFIG_HAVE_SCHED_AVG_IRQ */
+#ਜੇ_ਅੰਤ /* !CONFIG_HAVE_SCHED_AVG_IRQ */
 
-extern void __setparam_fair(struct task_struct *p, const struct sched_attr *attr);
+ਬਾਹਰੀ ਖਾਲੀ __setparam_fair(ਬਣਤਰ task_struct *p, ਅਚਲ ਬਣਤਰ sched_attr *attr);
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+#ਜੇ defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
 
-#define perf_domain_span(pd) (to_cpumask(((pd)->em_pd->cpus)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ perf_domain_ਵਿਸਤਾਰ(pd) (ਮੰਜ਼ਿਲ_cpumask(((pd)->em_pd->cpus)))
 
-DECLARE_STATIC_KEY_FALSE(sched_energy_present);
+DECLARE_STATIC_ਕੁੰਜੀ_FALSE(sched_energy_present);
 
-static inline bool sched_energy_enabled(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_energy_enabled(ਖਾਲੀ)
 {
-	return static_branch_unlikely(&sched_energy_present);
+	ਵਾਪਸ static_branch_unlikely(&sched_energy_present);
 }
 
-#else /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
+#ਨਹੀਂਤਾਂ /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
 
-#define perf_domain_span(pd) NULL
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ perf_domain_ਵਿਸਤਾਰ(pd) ਨਿਰਾ
 
-static inline bool sched_energy_enabled(void) { return false; }
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_energy_enabled(ਖਾਲੀ) { ਵਾਪਸ false; }
 
-#endif /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
+#ਜੇ_ਅੰਤ /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
 
-#ifdef CONFIG_MEMBARRIER
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_MEMBARRIER
 
 /*
  * The scheduler provides memory barriers required by membarrier between:
@@ -3892,377 +3892,377 @@ static inline bool sched_energy_enabled(void) { return false; }
  * - store to rq->membarrier_state and following user-space memory accesses.
  * In the same way it provides those guarantees around store to rq->curr.
  */
-static inline void membarrier_switch_mm(struct rq *rq,
-					struct mm_struct *prev_mm,
-					struct mm_struct *next_mm)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ membarrier_switch_mm(ਬਣਤਰ rq *rq,
+					ਬਣਤਰ mm_struct *prev_mm,
+					ਬਣਤਰ mm_struct *ਅਗਲਾ_mm)
 {
-	int membarrier_state;
+	ਪੂਰਨ membarrier_state;
 
-	if (prev_mm == next_mm)
-		return;
+	ਜੇ (prev_mm == ਅਗਲਾ_mm)
+		ਵਾਪਸ;
 
-	membarrier_state = atomic_read(&next_mm->membarrier_state);
-	if (READ_ONCE(rq->membarrier_state) == membarrier_state)
-		return;
+	membarrier_state = atomic_read(&ਅਗਲਾ_mm->membarrier_state);
+	ਜੇ (READ_ONCE(rq->membarrier_state) == membarrier_state)
+		ਵਾਪਸ;
 
 	WRITE_ONCE(rq->membarrier_state, membarrier_state);
 }
 
-#else /* !CONFIG_MEMBARRIER: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_MEMBARRIER: */
 
-static inline void membarrier_switch_mm(struct rq *rq,
-					struct mm_struct *prev_mm,
-					struct mm_struct *next_mm)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ membarrier_switch_mm(ਬਣਤਰ rq *rq,
+					ਬਣਤਰ mm_struct *prev_mm,
+					ਬਣਤਰ mm_struct *ਅਗਲਾ_mm)
 {
 }
 
-#endif /* !CONFIG_MEMBARRIER */
+#ਜੇ_ਅੰਤ /* !CONFIG_MEMBARRIER */
 
-static inline bool is_per_cpu_kthread(struct task_struct *p)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool is_ਪ੍ਰਤੀ_cpu_kthread(ਬਣਤਰ task_struct *p)
 {
-	if (!(p->flags & PF_KTHREAD))
-		return false;
+	ਜੇ (!(p->flags & PF_KTHREAD))
+		ਵਾਪਸ false;
 
-	if (p->nr_cpus_allowed != 1)
-		return false;
+	ਜੇ (p->nr_cpus_allowed != 1)
+		ਵਾਪਸ false;
 
-	return true;
+	ਵਾਪਸ true;
 }
 
-extern void swake_up_all_locked(struct swait_queue_head *q);
-extern void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait);
+ਬਾਹਰੀ ਖਾਲੀ swake_ਉੱਪਰ_all_locked(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q);
+ਬਾਹਰੀ ਖਾਲੀ __prepare_to_swait(ਬਣਤਰ swait_ਕਤਾਰ_ਸਿਰ *q, ਬਣਤਰ swait_ਕਤਾਰ *wait);
 
-extern int try_to_wake_up(struct task_struct *tsk, unsigned int state, int wake_flags);
+ਬਾਹਰੀ ਪੂਰਨ try_ਮੰਜ਼ਿਲ_wake_ਉੱਪਰ(ਬਣਤਰ task_struct *tsk, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ state, ਪੂਰਨ wake_flags);
 
-#ifdef CONFIG_PREEMPT_DYNAMIC
-extern int preempt_dynamic_mode;
-extern int sched_dynamic_mode(const char *str);
-extern void sched_dynamic_update(int mode);
-#endif
-extern const char *preempt_modes[];
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_PREEMPT_DYNAMIC
+ਬਾਹਰੀ ਪੂਰਨ preempt_dynamic_ਬਹੁਲਕ;
+ਬਾਹਰੀ ਪੂਰਨ sched_dynamic_ਬਹੁਲਕ(ਅਚਲ ਅੱਖਰ *str);
+ਬਾਹਰੀ ਖਾਲੀ sched_dynamic_update(ਪੂਰਨ ਬਹੁਲਕ);
+#ਜੇ_ਅੰਤ
+ਬਾਹਰੀ ਅਚਲ ਅੱਖਰ *preempt_modes[];
 
-#ifdef CONFIG_SCHED_MM_CID
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_MM_CID
 
-static __always_inline bool cid_on_cpu(unsigned int cid)
+ਸਥਿਰ __always_inline bool cid_on_cpu(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
-	return cid & MM_CID_ONCPU;
+	ਵਾਪਸ cid & MM_CID_ONCPU;
 }
 
-static __always_inline bool cid_in_transit(unsigned int cid)
+ਸਥਿਰ __always_inline bool cid_ਵਿੱਚ_transit(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
-	return cid & MM_CID_TRANSIT;
+	ਵਾਪਸ cid & MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cpu_cid_to_cid(unsigned int cid)
+ਸਥਿਰ __always_inline ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu_cid_ਮੰਜ਼ਿਲ_cid(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
-	return cid & ~MM_CID_ONCPU;
+	ਵਾਪਸ cid & ~MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_cpu_cid(unsigned int cid)
+ਸਥਿਰ __always_inline ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid_ਮੰਜ਼ਿਲ_cpu_cid(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
-	return cid | MM_CID_ONCPU;
+	ਵਾਪਸ cid | MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_transit_cid(unsigned int cid)
+ਸਥਿਰ __always_inline ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid_ਮੰਜ਼ਿਲ_transit_cid(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
-	return cid | MM_CID_TRANSIT;
+	ਵਾਪਸ cid | MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cid_from_transit_cid(unsigned int cid)
+ਸਥਿਰ __always_inline ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid_from_transit_cid(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
-	return cid & ~MM_CID_TRANSIT;
+	ਵਾਪਸ cid & ~MM_CID_TRANSIT;
 }
 
-static __always_inline bool cid_on_task(unsigned int cid)
+ਸਥਿਰ __always_inline bool cid_on_task(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
 	/* True if none of the MM_CID_ONCPU, MM_CID_TRANSIT, MM_CID_UNSET bits is set */
-	return cid < MM_CID_TRANSIT;
+	ਵਾਪਸ cid < MM_CID_TRANSIT;
 }
 
-static __always_inline void mm_drop_cid(struct mm_struct *mm, unsigned int cid)
+ਸਥਿਰ __always_inline ਖਾਲੀ mm_drop_cid(ਬਣਤਰ mm_struct *mm, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
-	clear_bit(cid, mm_cidmask(mm));
+	clear_ਦੋਆਧਾਰੀ_ਅੰਕ(cid, mm_cidmask(mm));
 }
 
-static __always_inline void mm_unset_cid_on_task(struct task_struct *t)
+ਸਥਿਰ __always_inline ਖਾਲੀ mm_unset_cid_on_task(ਬਣਤਰ task_struct *t)
 {
-	unsigned int cid = t->mm_cid.cid;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid = t->mm_cid.cid;
 
 	t->mm_cid.cid = MM_CID_UNSET;
-	if (cid_on_task(cid))
+	ਜੇ (cid_on_task(cid))
 		mm_drop_cid(t->mm, cid);
 }
 
-static __always_inline void mm_drop_cid_on_cpu(struct mm_struct *mm, struct mm_cid_pcpu *pcp)
+ਸਥਿਰ __always_inline ਖਾਲੀ mm_drop_cid_on_cpu(ਬਣਤਰ mm_struct *mm, ਬਣਤਰ mm_cid_pcpu *pcp)
 {
 	/* Clear the ONCPU bit, but do not set UNSET in the per CPU storage */
-	if (cid_on_cpu(pcp->cid)) {
-		pcp->cid = cpu_cid_to_cid(pcp->cid);
+	ਜੇ (cid_on_cpu(pcp->cid)) {
+		pcp->cid = cpu_cid_ਮੰਜ਼ਿਲ_cid(pcp->cid);
 		mm_drop_cid(mm, pcp->cid);
 	}
 }
 
-static inline unsigned int __mm_get_cid(struct mm_struct *mm, unsigned int max_cids)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ __mm_get_cid(ਬਣਤਰ mm_struct *mm, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ max_cids)
 {
-	unsigned int cid = find_first_zero_bit(mm_cidmask(mm), max_cids);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid = ਲੱਭੋ_ਪਹਿਲਾ_zero_ਦੋਆਧਾਰੀ_ਅੰਕ(mm_cidmask(mm), max_cids);
 
-	if (cid >= max_cids)
-		return MM_CID_UNSET;
-	if (test_and_set_bit(cid, mm_cidmask(mm)))
-		return MM_CID_UNSET;
-	return cid;
+	ਜੇ (cid >= max_cids)
+		ਵਾਪਸ MM_CID_UNSET;
+	ਜੇ (test_and_ਸੈੱਟ_ਦੋਆਧਾਰੀ_ਅੰਕ(cid, mm_cidmask(mm)))
+		ਵਾਪਸ MM_CID_UNSET;
+	ਵਾਪਸ cid;
 }
 
-static inline unsigned int mm_get_cid(struct mm_struct *mm)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ mm_get_cid(ਬਣਤਰ mm_struct *mm)
 {
-	unsigned int cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
 
-	while (cid == MM_CID_UNSET) {
+	ਜਦੋਂ (cid == MM_CID_UNSET) {
 		cpu_relax();
-		cid = __mm_get_cid(mm, num_possible_cpus());
+		cid = __mm_get_cid(mm, ਅੰਕ_possible_cpus());
 	}
-	return cid;
+	ਵਾਪਸ cid;
 }
 
-static inline unsigned int mm_cid_converge(struct mm_struct *mm, unsigned int orig_cid,
-					   unsigned int max_cids)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ mm_cid_converge(ਬਣਤਰ mm_struct *mm, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ orig_cid,
+					   ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ max_cids)
 {
-	unsigned int new_cid, cid = cpu_cid_to_cid(orig_cid);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ new_cid, cid = cpu_cid_ਮੰਜ਼ਿਲ_cid(orig_cid);
 
 	/* Is it in the optimal CID space? */
-	if (likely(cid < max_cids))
-		return orig_cid;
+	ਜੇ (likely(cid < max_cids))
+		ਵਾਪਸ orig_cid;
 
 	/* Try to find one in the optimal space. Otherwise keep the provided. */
 	new_cid = __mm_get_cid(mm, max_cids);
-	if (new_cid != MM_CID_UNSET) {
+	ਜੇ (new_cid != MM_CID_UNSET) {
 		mm_drop_cid(mm, cid);
 		/* Preserve the ONCPU mode of the original CID */
-		return new_cid | (orig_cid & MM_CID_ONCPU);
+		ਵਾਪਸ new_cid | (orig_cid & MM_CID_ONCPU);
 	}
-	return orig_cid;
+	ਵਾਪਸ orig_cid;
 }
 
-static __always_inline void mm_cid_update_task_cid(struct task_struct *t, unsigned int cid)
+ਸਥਿਰ __always_inline ਖਾਲੀ mm_cid_update_task_cid(ਬਣਤਰ task_struct *t, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
-	if (t->mm_cid.cid != cid) {
+	ਜੇ (t->mm_cid.cid != cid) {
 		t->mm_cid.cid = cid;
-		rseq_sched_set_ids_changed(t);
+		rseq_sched_ਸੈੱਟ_ids_ਬਦਲਿਆ(t);
 	}
 }
 
-static __always_inline void mm_cid_update_pcpu_cid(struct mm_struct *mm, unsigned int cid)
+ਸਥਿਰ __always_inline ਖਾਲੀ mm_cid_update_pcpu_cid(ਬਣਤਰ mm_struct *mm, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cid)
 {
 	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
 }
 
-static __always_inline void mm_cid_from_cpu(struct task_struct *t, unsigned int cpu_cid,
-					    unsigned int mode)
+ਸਥਿਰ __always_inline ਖਾਲੀ mm_cid_from_cpu(ਬਣਤਰ task_struct *t, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu_cid,
+					    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਬਹੁਲਕ)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
-	struct mm_struct *mm = t->mm;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ max_cids, tcid = t->mm_cid.cid;
+	ਬਣਤਰ mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case where both have the ONCPU bit set */
-	if (likely(cid_on_cpu(cpu_cid & tcid))) {
-		if (likely(cpu_cid_to_cid(cpu_cid) < max_cids)) {
+	ਜੇ (likely(cid_on_cpu(cpu_cid & tcid))) {
+		ਜੇ (likely(cpu_cid_ਮੰਜ਼ਿਲ_cid(cpu_cid) < max_cids)) {
 			mm_cid_update_task_cid(t, cpu_cid);
-			return;
+			ਵਾਪਸ;
 		}
 		/* Try to converge into the optimal CID space */
 		cpu_cid = mm_cid_converge(mm, cpu_cid, max_cids);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* Hand over or drop the task owned CID */
-		if (cid_on_task(tcid)) {
-			if (cid_on_cpu(cpu_cid))
+		ਜੇ (cid_on_task(tcid)) {
+			ਜੇ (cid_on_cpu(cpu_cid))
 				mm_unset_cid_on_task(t);
-			else
-				cpu_cid = cid_to_cpu_cid(tcid);
+			ਨਹੀਂਤਾਂ
+				cpu_cid = cid_ਮੰਜ਼ਿਲ_cpu_cid(tcid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_cpu(cpu_cid))
-			cpu_cid = cid_to_cpu_cid(mm_get_cid(mm));
+		ਜੇ (!cid_on_cpu(cpu_cid))
+			cpu_cid = cid_ਮੰਜ਼ਿਲ_cpu_cid(mm_get_cid(mm));
 
 		/* Handle the transition mode flag if required */
-		if (mode & MM_CID_TRANSIT)
-			cpu_cid = cpu_cid_to_cid(cpu_cid) | MM_CID_TRANSIT;
+		ਜੇ (ਬਹੁਲਕ & MM_CID_TRANSIT)
+			cpu_cid = cpu_cid_ਮੰਜ਼ਿਲ_cid(cpu_cid) | MM_CID_TRANSIT;
 	}
 	mm_cid_update_pcpu_cid(mm, cpu_cid);
 	mm_cid_update_task_cid(t, cpu_cid);
 }
 
-static __always_inline void mm_cid_from_task(struct task_struct *t, unsigned int cpu_cid,
-					     unsigned int mode)
+ਸਥਿਰ __always_inline ਖਾਲੀ mm_cid_from_task(ਬਣਤਰ task_struct *t, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu_cid,
+					     ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਬਹੁਲਕ)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
-	struct mm_struct *mm = t->mm;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ max_cids, tcid = t->mm_cid.cid;
+	ਬਣਤਰ mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case, where both have the ONCPU bit clear */
-	if (likely(cid_on_task(tcid | cpu_cid))) {
-		if (likely(tcid < max_cids)) {
+	ਜੇ (likely(cid_on_task(tcid | cpu_cid))) {
+		ਜੇ (likely(tcid < max_cids)) {
 			mm_cid_update_pcpu_cid(mm, tcid);
-			return;
+			ਵਾਪਸ;
 		}
 		/* Try to converge into the optimal CID space */
 		tcid = mm_cid_converge(mm, tcid, max_cids);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* Hand over or drop the CPU owned CID */
-		if (cid_on_cpu(cpu_cid)) {
-			if (cid_on_task(tcid))
+		ਜੇ (cid_on_cpu(cpu_cid)) {
+			ਜੇ (cid_on_task(tcid))
 				mm_drop_cid_on_cpu(mm, this_cpu_ptr(mm->mm_cid.pcpu));
-			else
-				tcid = cpu_cid_to_cid(cpu_cid);
+			ਨਹੀਂਤਾਂ
+				tcid = cpu_cid_ਮੰਜ਼ਿਲ_cid(cpu_cid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_task(tcid))
+		ਜੇ (!cid_on_task(tcid))
 			tcid = mm_get_cid(mm);
 		/* Set the transition mode flag if required */
-		tcid |= mode & MM_CID_TRANSIT;
+		tcid |= ਬਹੁਲਕ & MM_CID_TRANSIT;
 	}
 	mm_cid_update_pcpu_cid(mm, tcid);
 	mm_cid_update_task_cid(t, tcid);
 }
 
-static __always_inline void mm_cid_schedin(struct task_struct *next)
+ਸਥਿਰ __always_inline ਖਾਲੀ mm_cid_schedin(ਬਣਤਰ task_struct *ਅਗਲਾ)
 {
-	struct mm_struct *mm = next->mm;
-	unsigned int cpu_cid, mode;
+	ਬਣਤਰ mm_struct *mm = ਅਗਲਾ->mm;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ cpu_cid, ਬਹੁਲਕ;
 
-	if (!next->mm_cid.active)
-		return;
+	ਜੇ (!ਅਗਲਾ->mm_cid.ਸਰਗਰਮ)
+		ਵਾਪਸ;
 
 	cpu_cid = __this_cpu_read(mm->mm_cid.pcpu->cid);
-	mode = READ_ONCE(mm->mm_cid.mode);
-	if (likely(!cid_on_cpu(mode)))
-		mm_cid_from_task(next, cpu_cid, mode);
-	else
-		mm_cid_from_cpu(next, cpu_cid, mode);
+	ਬਹੁਲਕ = READ_ONCE(mm->mm_cid.ਬਹੁਲਕ);
+	ਜੇ (likely(!cid_on_cpu(ਬਹੁਲਕ)))
+		mm_cid_from_task(ਅਗਲਾ, cpu_cid, ਬਹੁਲਕ);
+	ਨਹੀਂਤਾਂ
+		mm_cid_from_cpu(ਅਗਲਾ, cpu_cid, ਬਹੁਲਕ);
 }
 
-static __always_inline void mm_cid_schedout(struct task_struct *prev)
+ਸਥਿਰ __always_inline ਖਾਲੀ mm_cid_schedout(ਬਣਤਰ task_struct *prev)
 {
-	struct mm_struct *mm = prev->mm;
-	unsigned int mode, cid;
+	ਬਣਤਰ mm_struct *mm = prev->mm;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਬਹੁਲਕ, cid;
 
 	/* During mode transitions CIDs are temporary and need to be dropped */
-	if (likely(!cid_in_transit(prev->mm_cid.cid)))
-		return;
+	ਜੇ (likely(!cid_ਵਿੱਚ_transit(prev->mm_cid.cid)))
+		ਵਾਪਸ;
 
-	mode = READ_ONCE(mm->mm_cid.mode);
+	ਬਹੁਲਕ = READ_ONCE(mm->mm_cid.ਬਹੁਲਕ);
 	cid = cid_from_transit_cid(prev->mm_cid.cid);
 
 	/*
 	 * If transition mode is done, transfer ownership when the CID is
 	 * within the convergence range to optimize the next schedule in.
 	 */
-	if (!cid_in_transit(mode) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
-		if (cid_on_cpu(mode))
-			cid = cid_to_cpu_cid(cid);
+	ਜੇ (!cid_ਵਿੱਚ_transit(ਬਹੁਲਕ) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
+		ਜੇ (cid_on_cpu(ਬਹੁਲਕ))
+			cid = cid_ਮੰਜ਼ਿਲ_cpu_cid(cid);
 
 		/* Update both so that the next schedule in goes into the fast path */
 		mm_cid_update_pcpu_cid(mm, cid);
 		prev->mm_cid.cid = cid;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		mm_drop_cid(mm, cid);
 		prev->mm_cid.cid = MM_CID_UNSET;
 	}
 }
 
-static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ mm_cid_switch_ਮੰਜ਼ਿਲ(ਬਣਤਰ task_struct *prev, ਬਣਤਰ task_struct *ਅਗਲਾ)
 {
 	mm_cid_schedout(prev);
-	mm_cid_schedin(next);
+	mm_cid_schedin(ਅਗਲਾ);
 }
 
-#else /* !CONFIG_SCHED_MM_CID: */
-static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next) { }
-#endif /* !CONFIG_SCHED_MM_CID */
+#ਨਹੀਂਤਾਂ /* !CONFIG_SCHED_MM_CID: */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ mm_cid_switch_ਮੰਜ਼ਿਲ(ਬਣਤਰ task_struct *prev, ਬਣਤਰ task_struct *ਅਗਲਾ) { }
+#ਜੇ_ਅੰਤ /* !CONFIG_SCHED_MM_CID */
 
-#ifdef CONFIG_SCHED_CACHE
-DECLARE_STATIC_KEY_FALSE(sched_cache_present);
-DECLARE_STATIC_KEY_FALSE(sched_cache_active);
-extern int sysctl_sched_cache_user;
-extern unsigned int llc_aggr_tolerance;
-extern unsigned int llc_epoch_period;
-extern unsigned int llc_epoch_affinity_timeout;
-extern unsigned int llc_imb_pct;
-extern unsigned int llc_overaggr_pct;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_CACHE
+DECLARE_STATIC_ਕੁੰਜੀ_FALSE(sched_cache_present);
+DECLARE_STATIC_ਕੁੰਜੀ_FALSE(sched_cache_ਸਰਗਰਮ);
+ਬਾਹਰੀ ਪੂਰਨ sysctl_sched_cache_user;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_aggr_tolerance;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_epoch_period;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_epoch_affinity_timeout;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_imb_pct;
+ਬਾਹਰੀ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ llc_overaggr_pct;
 
-static inline bool sched_cache_enabled(void)
+ਸਥਿਰ ਸਤਰਅੰਦਰ bool sched_cache_enabled(ਖਾਲੀ)
 {
-	return static_branch_unlikely(&sched_cache_active);
+	ਵਾਪਸ static_branch_unlikely(&sched_cache_ਸਰਗਰਮ);
 }
 
-extern void sched_cache_active_set(void);
+ਬਾਹਰੀ ਖਾਲੀ sched_cache_ਸਰਗਰਮ_ਸੈੱਟ(ਖਾਲੀ);
 
-#endif
+#ਜੇ_ਅੰਤ
 
-void sched_domains_free_llc_id(int cpu);
+ਖਾਲੀ sched_domains_free_llc_id(ਪੂਰਨ cpu);
 
-extern void init_sched_mm(struct task_struct *p);
+ਬਾਹਰੀ ਖਾਲੀ init_sched_mm(ਬਣਤਰ task_struct *p);
 
-extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
-extern int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se);
-static inline
-void move_queued_task_locked(struct rq *src_rq, struct rq *dst_rq, struct task_struct *task)
+ਬਾਹਰੀ u64 avg_vruntime(ਬਣਤਰ cfs_rq *cfs_rq);
+ਬਾਹਰੀ ਪੂਰਨ entity_eligible(ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se);
+ਸਥਿਰ ਸਤਰਅੰਦਰ
+ਖਾਲੀ move_queued_task_locked(ਬਣਤਰ rq *src_rq, ਬਣਤਰ rq *dst_rq, ਬਣਤਰ task_struct *task)
 {
 	lockdep_assert_rq_held(src_rq);
 	lockdep_assert_rq_held(dst_rq);
 
 	deactivate_task(src_rq, task, 0);
-	set_task_cpu(task, dst_rq->cpu);
+	ਸੈੱਟ_task_cpu(task, dst_rq->cpu);
 	activate_task(dst_rq, task, 0);
 	wakeup_preempt(dst_rq, task, 0);
 }
 
-static inline
-bool task_is_pushable(struct rq *rq, struct task_struct *p, int cpu)
+ਸਥਿਰ ਸਤਰਅੰਦਰ
+bool task_is_pushable(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu)
 {
-	if (!task_on_cpu(rq, p) &&
-	    cpumask_test_cpu(cpu, &p->cpus_mask))
-		return true;
+	ਜੇ (!task_on_cpu(rq, p) &&
+	    cpumask_test_cpu(cpu, &p->cpus_ਨਕਾਬ))
+		ਵਾਪਸ true;
 
-	return false;
+	ਵਾਪਸ false;
 }
 
-#ifdef CONFIG_RT_MUTEXES
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_RT_MUTEXES
 
-static inline int __rt_effective_prio(struct task_struct *pi_task, int prio)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ __rt_effective_prio(ਬਣਤਰ task_struct *pi_task, ਪੂਰਨ prio)
 {
-	if (pi_task)
+	ਜੇ (pi_task)
 		prio = min(prio, pi_task->prio);
 
-	return prio;
+	ਵਾਪਸ prio;
 }
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ rt_effective_prio(ਬਣਤਰ task_struct *p, ਪੂਰਨ prio)
 {
-	struct task_struct *pi_task = rt_mutex_get_top_task(p);
+	ਬਣਤਰ task_struct *pi_task = rt_mutex_get_ਸਿਖਰ_task(p);
 
-	return __rt_effective_prio(pi_task, prio);
+	ਵਾਪਸ __rt_effective_prio(pi_task, prio);
 }
 
-#else /* !CONFIG_RT_MUTEXES: */
+#ਨਹੀਂਤਾਂ /* !CONFIG_RT_MUTEXES: */
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ rt_effective_prio(ਬਣਤਰ task_struct *p, ਪੂਰਨ prio)
 {
-	return prio;
+	ਵਾਪਸ prio;
 }
 
-#endif /* !CONFIG_RT_MUTEXES */
+#ਜੇ_ਅੰਤ /* !CONFIG_RT_MUTEXES */
 
-extern int __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
-extern int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
-extern const struct sched_class *__setscheduler_class(int policy, int prio);
-extern void set_load_weight(struct task_struct *p, bool update_load);
-extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
-extern bool dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+ਬਾਹਰੀ ਪੂਰਨ __sched_setscheduler(ਬਣਤਰ task_struct *p, ਅਚਲ ਬਣਤਰ sched_attr *attr, bool user, bool pi);
+ਬਾਹਰੀ ਪੂਰਨ __sched_setaffinity(ਬਣਤਰ task_struct *p, ਬਣਤਰ affinity_context *ctx);
+ਬਾਹਰੀ ਅਚਲ ਬਣਤਰ sched_class *__setscheduler_class(ਪੂਰਨ policy, ਪੂਰਨ prio);
+ਬਾਹਰੀ ਖਾਲੀ ਸੈੱਟ_ਲੱਦੋ_ਭਾਰ(ਬਣਤਰ task_struct *p, bool update_ਲੱਦੋ);
+ਬਾਹਰੀ ਖਾਲੀ ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
+ਬਾਹਰੀ bool ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags);
 
-extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
+ਬਾਹਰੀ ਬਣਤਰ balance_callback *splice_balance_callbacks(ਬਣਤਰ rq *rq);
 
-extern void __balance_callbacks(struct rq *rq, struct rq_flags *rf);
-extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
+ਬਾਹਰੀ ਖਾਲੀ __balance_callbacks(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf);
+ਬਾਹਰੀ ਖਾਲੀ balance_callbacks(ਬਣਤਰ rq *rq, ਬਣਤਰ balance_callback *ਸਿਰ);
 
 /*
  * The 'sched_change' pattern is the safe, easy and slow way of changing a
@@ -4281,31 +4281,31 @@ extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
  * of the task between sched_change_begin() and sched_change_end(). Ensuring
  * the task's queueing state is idempotent across the operation.
  */
-struct sched_change_ctx {
+ਬਣਤਰ sched_change_ctx {
 	u64			prio;
-	struct task_struct	*p;
-	const struct sched_class *class;
-	int			flags;
+	ਬਣਤਰ task_struct	*p;
+	ਅਚਲ ਬਣਤਰ sched_class *class;
+	ਪੂਰਨ			flags;
 	bool			queued;
 	bool			running;
 };
 
-struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags);
-void sched_change_end(struct sched_change_ctx *ctx);
+ਬਣਤਰ sched_change_ctx *sched_change_begin(ਬਣਤਰ task_struct *p, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags);
+ਖਾਲੀ sched_change_ਸਿਰਾ(ਬਣਤਰ sched_change_ctx *ctx);
 
-DEFINE_CLASS(sched_change, struct sched_change_ctx *,
-	     sched_change_end(_T),
+DEFINE_CLASS(sched_change, ਬਣਤਰ sched_change_ctx *,
+	     sched_change_ਸਿਰਾ(_T),
 	     sched_change_begin(p, flags),
-	     struct task_struct *p, unsigned int flags)
+	     ਬਣਤਰ task_struct *p, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ flags)
 
 DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
 
-#include "ext/ext.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ext/ext.h"
 
-#ifdef CONFIG_PREFERRED_CPU
-void sched_push_current_non_preferred_cpu(struct rq *rq);
-#else	/* !CONFIG_PREFERRED_CPU */
-static inline void sched_push_current_non_preferred_cpu(struct rq *rq) { }
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_PREFERRED_CPU
+ਖਾਲੀ sched_ਧੱਕੋ_current_non_preferred_cpu(ਬਣਤਰ rq *rq);
+#ਨਹੀਂਤਾਂ	/* !CONFIG_PREFERRED_CPU */
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ sched_ਧੱਕੋ_current_non_preferred_cpu(ਬਣਤਰ rq *rq) { }
+#ਜੇ_ਅੰਤ
 
-#endif /* _KERNEL_SCHED_SCHED_H */
+#ਜੇ_ਅੰਤ /* _KERNEL_SCHED_SCHED_H */

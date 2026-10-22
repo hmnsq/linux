@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+ਸਥਿਰ ਪੂਰਨ
+select_task_rq_stop(ਬਣਤਰ task_struct *p, ਪੂਰਨ cpu, ਪੂਰਨ flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	ਵਾਪਸ task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਪੂਰਨ
+balance_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	ਵਾਪਸ sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+ਸਥਿਰ ਖਾਲੀ
+wakeup_preempt_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_ਅਗਲਾ_task_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *stop, ਗਿਣਤੀ snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	ਜੇ (type == SNT_REPICK)
+		ਵਾਪਸ;
 
-	stop->se.exec_start = rq_clock_task(rq);
+	stop->se.exec_ਸ਼ੁਰੂ = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+ਸਥਿਰ ਬਣਤਰ task_struct *pick_task_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	ਜੇ (!sched_stop_runnable(rq))
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return rq->stop;
+	ਵਾਪਸ rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ਸਥਿਰ ਖਾਲੀ
+ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags)
 {
-	add_nr_running(rq, 1);
+	ਜੋੜੋ_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ਸਥਿਰ bool
+ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, ਪੂਰਨ flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	ਵਾਪਸ true;
 }
 
-static void yield_task_stop(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ yield_task_stop(ਬਣਤਰ rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ਸਥਿਰ ਖਾਲੀ put_prev_task_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *prev, ਬਣਤਰ task_struct *ਅਗਲਾ)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+ਸਥਿਰ ਖਾਲੀ task_tick_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *curr, ਪੂਰਨ queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+ਸਥਿਰ ਖਾਲੀ switching_ਮੰਜ਼ਿਲ_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+ਸਥਿਰ ਖਾਲੀ
+prio_ਬਦਲਿਆ_stop(ਬਣਤਰ rq *rq, ਬਣਤਰ task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	ਜੇ (p->prio == oldprio)
+		ਵਾਪਸ;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+ਸਥਿਰ ਖਾਲੀ update_curr_stop(ਬਣਤਰ rq *rq)
 {
 }
 
@@ -100,23 +100,23 @@ static void update_curr_stop(struct rq *rq)
  * Simple, special scheduling class for the per-CPU stop tasks:
  */
 DEFINE_SCHED_CLASS(stop) = {
-	.enqueue_task		= enqueue_task_stop,
-	.dequeue_task		= dequeue_task_stop,
+	.ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task		= ਕਤਾਰ_ਵਿੱਚ_ਪਾਓ_task_stop,
+	.ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task		= ਕਤਾਰ_ਤੋਂ_ਕੱਢੋ_task_stop,
 	.yield_task		= yield_task_stop,
 
 	.wakeup_preempt		= wakeup_preempt_stop,
 
 	.pick_task		= pick_task_stop,
 	.put_prev_task		= put_prev_task_stop,
-	.set_next_task          = set_next_task_stop,
+	.ਸੈੱਟ_ਅਗਲਾ_task          = ਸੈੱਟ_ਅਗਲਾ_task_stop,
 
 	.balance		= balance_stop,
 	.select_task_rq		= select_task_rq_stop,
-	.set_cpus_allowed	= set_cpus_allowed_common,
+	.ਸੈੱਟ_cpus_allowed	= ਸੈੱਟ_cpus_allowed_common,
 
 	.task_tick		= task_tick_stop,
 
-	.prio_changed		= prio_changed_stop,
-	.switching_to		= switching_to_stop,
+	.prio_ਬਦਲਿਆ		= prio_ਬਦਲਿਆ_stop,
+	.switching_ਮੰਜ਼ਿਲ		= switching_ਮੰਜ਼ਿਲ_stop,
 	.update_curr		= update_curr_stop,
 };

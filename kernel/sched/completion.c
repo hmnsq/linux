@@ -13,26 +13,26 @@
  * Waiting for completion is a typically sync point, but not an exclusion point.
  */
 
-#include <linux/linkage.h>
-#include <linux/sched/debug.h>
-#include <linux/completion.h>
-#include "sched.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/linkage.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/debug.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/completion.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "sched.h"
 
-static void complete_with_flags(struct completion *x, int wake_flags)
+ਸਥਿਰ ਖਾਲੀ complete_with_flags(ਬਣਤਰ completion *x, ਪੂਰਨ wake_flags)
 {
-	unsigned long flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
-	raw_spin_lock_irqsave(&x->wait.lock, flags);
+	raw_spin_ਤਾਲਾ_irqsave(&x->wait.ਤਾਲਾ, flags);
 
-	if (x->done != UINT_MAX)
-		x->done++;
-	swake_up_locked(&x->wait, wake_flags);
-	raw_spin_unlock_irqrestore(&x->wait.lock, flags);
+	ਜੇ (x->ਪੂਰਾ != UINT_MAX)
+		x->ਪੂਰਾ++;
+	swake_ਉੱਪਰ_locked(&x->wait, wake_flags);
+	raw_spin_unlock_irqrestore(&x->wait.ਤਾਲਾ, flags);
 }
 
-void complete_on_current_cpu(struct completion *x)
+ਖਾਲੀ complete_on_current_cpu(ਬਣਤਰ completion *x)
 {
-	return complete_with_flags(x, WF_CURRENT_CPU);
+	ਵਾਪਸ complete_with_flags(x, WF_CURRENT_CPU);
 }
 
 /**
@@ -47,11 +47,11 @@ void complete_on_current_cpu(struct completion *x)
  * If this function wakes up a task, it executes a full memory barrier before
  * accessing the task state.
  */
-void complete(struct completion *x)
+ਖਾਲੀ complete(ਬਣਤਰ completion *x)
 {
 	complete_with_flags(x, 0);
 }
-EXPORT_SYMBOL(complete);
+EXPORT_ਚਿੰਨ੍ਹ(complete);
 
 /**
  * complete_all: - signals all threads waiting on this completion
@@ -69,73 +69,73 @@ EXPORT_SYMBOL(complete);
  * @x. Also note that the function completion_done() can not be used
  * to know if there are still waiters after complete_all() has been called.
  */
-void complete_all(struct completion *x)
+ਖਾਲੀ complete_all(ਬਣਤਰ completion *x)
 {
-	unsigned long flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
-	lockdep_assert_RT_in_threaded_ctx();
+	lockdep_assert_RT_ਵਿੱਚ_threaded_ctx();
 
-	raw_spin_lock_irqsave(&x->wait.lock, flags);
-	x->done = UINT_MAX;
-	swake_up_all_locked(&x->wait);
-	raw_spin_unlock_irqrestore(&x->wait.lock, flags);
+	raw_spin_ਤਾਲਾ_irqsave(&x->wait.ਤਾਲਾ, flags);
+	x->ਪੂਰਾ = UINT_MAX;
+	swake_ਉੱਪਰ_all_locked(&x->wait);
+	raw_spin_unlock_irqrestore(&x->wait.ਤਾਲਾ, flags);
 }
-EXPORT_SYMBOL(complete_all);
+EXPORT_ਚਿੰਨ੍ਹ(complete_all);
 
-static inline long __sched
-do_wait_for_common(struct completion *x,
-		   long (*action)(long), long timeout, int state)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਲੰਮਾ __sched
+do_wait_for_common(ਬਣਤਰ completion *x,
+		   ਲੰਮਾ (*action)(ਲੰਮਾ), ਲੰਮਾ timeout, ਪੂਰਨ state)
 {
-	if (!x->done) {
+	ਜੇ (!x->ਪੂਰਾ) {
 		DECLARE_SWAITQUEUE(wait);
 
-		do {
-			if (signal_pending_state(state, current)) {
+		ਕਰੋ {
+			ਜੇ (signal_pending_state(state, current)) {
 				timeout = -ERESTARTSYS;
-				break;
+				ਰੋਕੋ;
 			}
 			__prepare_to_swait(&x->wait, &wait);
 			__set_current_state(state);
-			raw_spin_unlock_irq(&x->wait.lock);
+			raw_spin_unlock_irq(&x->wait.ਤਾਲਾ);
 			timeout = action(timeout);
-			raw_spin_lock_irq(&x->wait.lock);
-		} while (!x->done && timeout);
+			raw_spin_ਤਾਲਾ_irq(&x->wait.ਤਾਲਾ);
+		} ਜਦੋਂ (!x->ਪੂਰਾ && timeout);
 		__finish_swait(&x->wait, &wait);
-		if (!x->done)
-			return timeout;
+		ਜੇ (!x->ਪੂਰਾ)
+			ਵਾਪਸ timeout;
 	}
-	if (x->done != UINT_MAX)
-		x->done--;
-	return timeout ?: 1;
+	ਜੇ (x->ਪੂਰਾ != UINT_MAX)
+		x->ਪੂਰਾ--;
+	ਵਾਪਸ timeout ?: 1;
 }
 
-static inline long __sched
-__wait_for_common(struct completion *x,
-		  long (*action)(long), long timeout, int state)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਲੰਮਾ __sched
+__wait_for_common(ਬਣਤਰ completion *x,
+		  ਲੰਮਾ (*action)(ਲੰਮਾ), ਲੰਮਾ timeout, ਪੂਰਨ state)
 {
 	might_sleep();
 
 	complete_acquire(x);
 
-	raw_spin_lock_irq(&x->wait.lock);
+	raw_spin_ਤਾਲਾ_irq(&x->wait.ਤਾਲਾ);
 	timeout = do_wait_for_common(x, action, timeout, state);
-	raw_spin_unlock_irq(&x->wait.lock);
+	raw_spin_unlock_irq(&x->wait.ਤਾਲਾ);
 
 	complete_release(x);
 
-	return timeout;
+	ਵਾਪਸ timeout;
 }
 
-static long __sched
-wait_for_common(struct completion *x, long timeout, int state)
+ਸਥਿਰ ਲੰਮਾ __sched
+wait_for_common(ਬਣਤਰ completion *x, ਲੰਮਾ timeout, ਪੂਰਨ state)
 {
-	return __wait_for_common(x, schedule_timeout, timeout, state);
+	ਵਾਪਸ __wait_for_common(x, ਸਮਾਂ_ਸਾਰਣੀ_timeout, timeout, state);
 }
 
-static long __sched
-wait_for_common_io(struct completion *x, long timeout, int state)
+ਸਥਿਰ ਲੰਮਾ __sched
+wait_for_common_io(ਬਣਤਰ completion *x, ਲੰਮਾ timeout, ਪੂਰਨ state)
 {
-	return __wait_for_common(x, io_schedule_timeout, timeout, state);
+	ਵਾਪਸ __wait_for_common(x, io_ਸਮਾਂ_ਸਾਰਣੀ_timeout, timeout, state);
 }
 
 /**
@@ -148,11 +148,11 @@ wait_for_common_io(struct completion *x, long timeout, int state)
  * See also similar routines (i.e. wait_for_completion_timeout()) with timeout
  * and interrupt capability. Also see complete().
  */
-void __sched wait_for_completion(struct completion *x)
+ਖਾਲੀ __sched wait_for_completion(ਬਣਤਰ completion *x)
 {
-	wait_for_common(x, MAX_SCHEDULE_TIMEOUT, TASK_UNINTERRUPTIBLE);
+	wait_for_common(x, MAX_ਸਮਾਂ_ਸਾਰਣੀ_TIMEOUT, TASK_UNINTERRUPTIBLE);
 }
-EXPORT_SYMBOL(wait_for_completion);
+EXPORT_ਚਿੰਨ੍ਹ(wait_for_completion);
 
 /**
  * wait_for_completion_timeout: - waits for completion of a task (w/timeout)
@@ -166,12 +166,12 @@ EXPORT_SYMBOL(wait_for_completion);
  * Return: 0 if timed out, and positive (at least 1, or number of jiffies left
  * till timeout) if completed.
  */
-unsigned long __sched
-wait_for_completion_timeout(struct completion *x, unsigned long timeout)
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ __sched
+wait_for_completion_timeout(ਬਣਤਰ completion *x, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ timeout)
 {
-	return wait_for_common(x, timeout, TASK_UNINTERRUPTIBLE);
+	ਵਾਪਸ wait_for_common(x, timeout, TASK_UNINTERRUPTIBLE);
 }
-EXPORT_SYMBOL(wait_for_completion_timeout);
+EXPORT_ਚਿੰਨ੍ਹ(wait_for_completion_timeout);
 
 /**
  * wait_for_completion_io: - waits for completion of a task
@@ -181,11 +181,11 @@ EXPORT_SYMBOL(wait_for_completion_timeout);
  * interruptible and there is no timeout. The caller is accounted as waiting
  * for IO (which traditionally means blkio only).
  */
-void __sched wait_for_completion_io(struct completion *x)
+ਖਾਲੀ __sched wait_for_completion_io(ਬਣਤਰ completion *x)
 {
-	wait_for_common_io(x, MAX_SCHEDULE_TIMEOUT, TASK_UNINTERRUPTIBLE);
+	wait_for_common_io(x, MAX_ਸਮਾਂ_ਸਾਰਣੀ_TIMEOUT, TASK_UNINTERRUPTIBLE);
 }
-EXPORT_SYMBOL(wait_for_completion_io);
+EXPORT_ਚਿੰਨ੍ਹ(wait_for_completion_io);
 
 /**
  * wait_for_completion_io_timeout: - waits for completion of a task (w/timeout)
@@ -200,12 +200,12 @@ EXPORT_SYMBOL(wait_for_completion_io);
  * Return: 0 if timed out, and positive (at least 1, or number of jiffies left
  * till timeout) if completed.
  */
-unsigned long __sched
-wait_for_completion_io_timeout(struct completion *x, unsigned long timeout)
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ __sched
+wait_for_completion_io_timeout(ਬਣਤਰ completion *x, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ timeout)
 {
-	return wait_for_common_io(x, timeout, TASK_UNINTERRUPTIBLE);
+	ਵਾਪਸ wait_for_common_io(x, timeout, TASK_UNINTERRUPTIBLE);
 }
-EXPORT_SYMBOL(wait_for_completion_io_timeout);
+EXPORT_ਚਿੰਨ੍ਹ(wait_for_completion_io_timeout);
 
 /**
  * wait_for_completion_interruptible: - waits for completion of a task (w/intr)
@@ -216,15 +216,15 @@ EXPORT_SYMBOL(wait_for_completion_io_timeout);
  *
  * Return: -ERESTARTSYS if interrupted, 0 if completed.
  */
-int __sched wait_for_completion_interruptible(struct completion *x)
+ਪੂਰਨ __sched wait_for_completion_interruptible(ਬਣਤਰ completion *x)
 {
-	long t = wait_for_common(x, MAX_SCHEDULE_TIMEOUT, TASK_INTERRUPTIBLE);
+	ਲੰਮਾ t = wait_for_common(x, MAX_ਸਮਾਂ_ਸਾਰਣੀ_TIMEOUT, TASK_INTERRUPTIBLE);
 
-	if (t == -ERESTARTSYS)
-		return t;
-	return 0;
+	ਜੇ (t == -ERESTARTSYS)
+		ਵਾਪਸ t;
+	ਵਾਪਸ 0;
 }
-EXPORT_SYMBOL(wait_for_completion_interruptible);
+EXPORT_ਚਿੰਨ੍ਹ(wait_for_completion_interruptible);
 
 /**
  * wait_for_completion_interruptible_timeout: - waits for completion (w/(to,intr))
@@ -237,13 +237,13 @@ EXPORT_SYMBOL(wait_for_completion_interruptible);
  * Return: -ERESTARTSYS if interrupted, 0 if timed out, positive (at least 1,
  * or number of jiffies left till timeout) if completed.
  */
-long __sched
-wait_for_completion_interruptible_timeout(struct completion *x,
-					  unsigned long timeout)
+ਲੰਮਾ __sched
+wait_for_completion_interruptible_timeout(ਬਣਤਰ completion *x,
+					  ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ timeout)
 {
-	return wait_for_common(x, timeout, TASK_INTERRUPTIBLE);
+	ਵਾਪਸ wait_for_common(x, timeout, TASK_INTERRUPTIBLE);
 }
-EXPORT_SYMBOL(wait_for_completion_interruptible_timeout);
+EXPORT_ਚਿੰਨ੍ਹ(wait_for_completion_interruptible_timeout);
 
 /**
  * wait_for_completion_killable: - waits for completion of a task (killable)
@@ -254,25 +254,25 @@ EXPORT_SYMBOL(wait_for_completion_interruptible_timeout);
  *
  * Return: -ERESTARTSYS if interrupted, 0 if completed.
  */
-int __sched wait_for_completion_killable(struct completion *x)
+ਪੂਰਨ __sched wait_for_completion_killable(ਬਣਤਰ completion *x)
 {
-	long t = wait_for_common(x, MAX_SCHEDULE_TIMEOUT, TASK_KILLABLE);
+	ਲੰਮਾ t = wait_for_common(x, MAX_ਸਮਾਂ_ਸਾਰਣੀ_TIMEOUT, TASK_KILLABLE);
 
-	if (t == -ERESTARTSYS)
-		return t;
-	return 0;
+	ਜੇ (t == -ERESTARTSYS)
+		ਵਾਪਸ t;
+	ਵਾਪਸ 0;
 }
-EXPORT_SYMBOL(wait_for_completion_killable);
+EXPORT_ਚਿੰਨ੍ਹ(wait_for_completion_killable);
 
-int __sched wait_for_completion_state(struct completion *x, unsigned int state)
+ਪੂਰਨ __sched wait_for_completion_state(ਬਣਤਰ completion *x, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ state)
 {
-	long t = wait_for_common(x, MAX_SCHEDULE_TIMEOUT, state);
+	ਲੰਮਾ t = wait_for_common(x, MAX_ਸਮਾਂ_ਸਾਰਣੀ_TIMEOUT, state);
 
-	if (t == -ERESTARTSYS)
-		return t;
-	return 0;
+	ਜੇ (t == -ERESTARTSYS)
+		ਵਾਪਸ t;
+	ਵਾਪਸ 0;
 }
-EXPORT_SYMBOL(wait_for_completion_state);
+EXPORT_ਚਿੰਨ੍ਹ(wait_for_completion_state);
 
 /**
  * wait_for_completion_killable_timeout: - waits for completion of a task (w/(to,killable))
@@ -286,13 +286,13 @@ EXPORT_SYMBOL(wait_for_completion_state);
  * Return: -ERESTARTSYS if interrupted, 0 if timed out, positive (at least 1,
  * or number of jiffies left till timeout) if completed.
  */
-long __sched
-wait_for_completion_killable_timeout(struct completion *x,
-				     unsigned long timeout)
+ਲੰਮਾ __sched
+wait_for_completion_killable_timeout(ਬਣਤਰ completion *x,
+				     ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ timeout)
 {
-	return wait_for_common(x, timeout, TASK_KILLABLE);
+	ਵਾਪਸ wait_for_common(x, timeout, TASK_KILLABLE);
 }
-EXPORT_SYMBOL(wait_for_completion_killable_timeout);
+EXPORT_ਚਿੰਨ੍ਹ(wait_for_completion_killable_timeout);
 
 /**
  *	try_wait_for_completion - try to decrement a completion without blocking
@@ -306,9 +306,9 @@ EXPORT_SYMBOL(wait_for_completion_killable_timeout);
  *	enables us to avoid waiting if the resource the completion
  *	is protecting is not available.
  */
-bool try_wait_for_completion(struct completion *x)
+bool try_wait_for_completion(ਬਣਤਰ completion *x)
 {
-	unsigned long flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 	bool ret = true;
 
 	/*
@@ -317,18 +317,18 @@ bool try_wait_for_completion(struct completion *x)
 	 * first without taking the lock so we can
 	 * return early in the blocking case.
 	 */
-	if (!READ_ONCE(x->done))
-		return false;
+	ਜੇ (!READ_ONCE(x->ਪੂਰਾ))
+		ਵਾਪਸ false;
 
-	raw_spin_lock_irqsave(&x->wait.lock, flags);
-	if (!x->done)
+	raw_spin_ਤਾਲਾ_irqsave(&x->wait.ਤਾਲਾ, flags);
+	ਜੇ (!x->ਪੂਰਾ)
 		ret = false;
-	else if (x->done != UINT_MAX)
-		x->done--;
-	raw_spin_unlock_irqrestore(&x->wait.lock, flags);
-	return ret;
+	ਨਹੀਂਤਾਂ ਜੇ (x->ਪੂਰਾ != UINT_MAX)
+		x->ਪੂਰਾ--;
+	raw_spin_unlock_irqrestore(&x->wait.ਤਾਲਾ, flags);
+	ਵਾਪਸ ret;
 }
-EXPORT_SYMBOL(try_wait_for_completion);
+EXPORT_ਚਿੰਨ੍ਹ(try_wait_for_completion);
 
 /**
  *	completion_done - Test to see if a completion has any waiters
@@ -339,20 +339,20 @@ EXPORT_SYMBOL(try_wait_for_completion);
  *
  *	Note, this will always return true if complete_all() was called on @X.
  */
-bool completion_done(struct completion *x)
+bool completion_ਪੂਰਾ(ਬਣਤਰ completion *x)
 {
-	unsigned long flags;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ flags;
 
-	if (!READ_ONCE(x->done))
-		return false;
+	ਜੇ (!READ_ONCE(x->ਪੂਰਾ))
+		ਵਾਪਸ false;
 
 	/*
 	 * If ->done, we need to wait for complete() to release ->wait.lock
 	 * otherwise we can end up freeing the completion before complete()
 	 * is done referencing it.
 	 */
-	raw_spin_lock_irqsave(&x->wait.lock, flags);
-	raw_spin_unlock_irqrestore(&x->wait.lock, flags);
-	return true;
+	raw_spin_ਤਾਲਾ_irqsave(&x->wait.ਤਾਲਾ, flags);
+	raw_spin_unlock_irqrestore(&x->wait.ਤਾਲਾ, flags);
+	ਵਾਪਸ true;
 }
-EXPORT_SYMBOL(completion_done);
+EXPORT_ਚਿੰਨ੍ਹ(completion_ਪੂਰਾ);

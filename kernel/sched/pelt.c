@@ -23,18 +23,18 @@
  *  Move PELT related code from fair.c into this pelt.c file
  *  Author: Vincent Guittot <vincent.guittot@linaro.org>
  */
-#include "pelt.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pelt.h"
 
 /*
  * Approximate:
  *   val * y^n,    where y^32 ~= 0.5 (~1 scheduling period)
  */
-static u64 decay_load(u64 val, u64 n)
+ਸਥਿਰ u64 decay_ਲੱਦੋ(u64 val, u64 n)
 {
-	unsigned int local_n;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ local_n;
 
-	if (unlikely(n > LOAD_AVG_PERIOD * 63))
-		return 0;
+	ਜੇ (unlikely(n > ਲੱਦੋ_AVG_PERIOD * 63))
+		ਵਾਪਸ 0;
 
 	/* after bounds checking we can collapse to 32-bit */
 	local_n = n;
@@ -46,23 +46,23 @@ static u64 decay_load(u64 val, u64 n)
 	 *
 	 * To achieve constant time decay_load.
 	 */
-	if (unlikely(local_n >= LOAD_AVG_PERIOD)) {
-		val >>= local_n / LOAD_AVG_PERIOD;
-		local_n %= LOAD_AVG_PERIOD;
+	ਜੇ (unlikely(local_n >= ਲੱਦੋ_AVG_PERIOD)) {
+		val >>= local_n / ਲੱਦੋ_AVG_PERIOD;
+		local_n %= ਲੱਦੋ_AVG_PERIOD;
 	}
 
 	val = mul_u64_u32_shr(val, runnable_avg_yN_inv[local_n], 32);
-	return val;
+	ਵਾਪਸ val;
 }
 
-static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
+ਸਥਿਰ u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
 {
 	u32 c1, c2, c3 = d3; /* y^0 == 1 */
 
 	/*
 	 * c1 = d1 y^p
 	 */
-	c1 = decay_load((u64)d1, periods);
+	c1 = decay_ਲੱਦੋ((u64)d1, periods);
 
 	/*
 	 *            p-1
@@ -73,9 +73,9 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
 	 *    = 1024 ( \Sum y^n - \Sum y^n - y^0 )
 	 *              n=0        n=p
 	 */
-	c2 = LOAD_AVG_MAX - decay_load(LOAD_AVG_MAX, periods) - 1024;
+	c2 = ਲੱਦੋ_AVG_MAX - decay_ਲੱਦੋ(ਲੱਦੋ_AVG_MAX, periods) - 1024;
 
-	return c1 + c2 + c3;
+	ਵਾਪਸ c1 + c2 + c3;
 }
 
 /*
@@ -99,9 +99,9 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
  *      d1 y^p + 1024 \Sum y^n + d3 y^0		(Step 2)
  *                     n=1
  */
-static __always_inline u32
-accumulate_sum(u64 delta, struct sched_avg *sa,
-	       unsigned long load, unsigned long runnable, int running)
+ਸਥਿਰ __always_inline u32
+accumulate_ਜੋੜ(u64 delta, ਬਣਤਰ sched_avg *sa,
+	       ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੱਦੋ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ runnable, ਪੂਰਨ running)
 {
 	u32 contrib = (u32)delta; /* p == 0 -> delta < 1024 */
 	u64 periods;
@@ -112,17 +112,17 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
 	/*
 	 * Step 1: decay old *_sum if we crossed period boundaries.
 	 */
-	if (periods) {
-		sa->load_sum = decay_load(sa->load_sum, periods);
-		sa->runnable_sum =
-			decay_load(sa->runnable_sum, periods);
-		sa->util_sum = decay_load((u64)(sa->util_sum), periods);
+	ਜੇ (periods) {
+		sa->ਲੱਦੋ_ਜੋੜ = decay_ਲੱਦੋ(sa->ਲੱਦੋ_ਜੋੜ, periods);
+		sa->runnable_ਜੋੜ =
+			decay_ਲੱਦੋ(sa->runnable_ਜੋੜ, periods);
+		sa->util_ਜੋੜ = decay_ਲੱਦੋ((u64)(sa->util_ਜੋੜ), periods);
 
 		/*
 		 * Step 2
 		 */
 		delta %= 1024;
-		if (load) {
+		ਜੇ (ਲੱਦੋ) {
 			/*
 			 * This relies on the:
 			 *
@@ -139,14 +139,14 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
 	}
 	sa->period_contrib = delta;
 
-	if (load)
-		sa->load_sum += load * contrib;
-	if (runnable)
-		sa->runnable_sum += runnable * contrib << SCHED_CAPACITY_SHIFT;
-	if (running)
-		sa->util_sum += contrib << SCHED_CAPACITY_SHIFT;
+	ਜੇ (ਲੱਦੋ)
+		sa->ਲੱਦੋ_ਜੋੜ += ਲੱਦੋ * contrib;
+	ਜੇ (runnable)
+		sa->runnable_ਜੋੜ += runnable * contrib << SCHED_ਸਮਰੱਥਾ_ਖਿਸਕਾਓ;
+	ਜੇ (running)
+		sa->util_ਜੋੜ += contrib << SCHED_ਸਮਰੱਥਾ_ਖਿਸਕਾਓ;
 
-	return periods;
+	ਵਾਪਸ periods;
 }
 
 /*
@@ -177,20 +177,20 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
  *   load_avg = u_0` + y*(u_0 + u_1*y + u_2*y^2 + ... )
  *            = u_0 + u_1*y + u_2*y^2 + ... [re-labeling u_i --> u_{i+1}]
  */
-static __always_inline int
-___update_load_sum(u64 now, struct sched_avg *sa,
-		  unsigned long load, unsigned long runnable, int running)
+ਸਥਿਰ __always_inline ਪੂਰਨ
+___update_load_sum(u64 now, ਬਣਤਰ sched_avg *sa,
+		  ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੱਦੋ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ runnable, ਪੂਰਨ running)
 {
 	u64 delta;
 
-	delta = now - sa->last_update_time;
+	delta = now - sa->ਆਖਰੀ_update_ਸਮਾਂ;
 	/*
 	 * This should only happen when time goes backwards, which it
 	 * unfortunately does during sched clock init when we swap over to TSC.
 	 */
-	if ((s64)delta < 0) {
-		sa->last_update_time = now;
-		return 0;
+	ਜੇ ((s64)delta < 0) {
+		sa->ਆਖਰੀ_update_ਸਮਾਂ = now;
+		ਵਾਪਸ 0;
 	}
 
 	/*
@@ -198,10 +198,10 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 * approximation of 1us and fast to compute.
 	 */
 	delta >>= 10;
-	if (!delta)
-		return 0;
+	ਜੇ (!delta)
+		ਵਾਪਸ 0;
 
-	sa->last_update_time += delta << 10;
+	sa->ਆਖਰੀ_update_ਸਮਾਂ += delta << 10;
 
 	/*
 	 * running is a subset of runnable (weight) so running can't be set if
@@ -214,7 +214,7 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 *
 	 * Also see the comment in accumulate_sum().
 	 */
-	if (!load)
+	ਜੇ (!ਲੱਦੋ)
 		runnable = running = 0;
 
 	/*
@@ -224,10 +224,10 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 * Step 1: accumulate *_sum since last_update_time. If we haven't
 	 * crossed period boundaries, finish.
 	 */
-	if (!accumulate_sum(delta, sa, load, runnable, running))
-		return 0;
+	ਜੇ (!accumulate_ਜੋੜ(delta, sa, ਲੱਦੋ, runnable, running))
+		ਵਾਪਸ 0;
 
-	return 1;
+	ਵਾਪਸ 1;
 }
 
 /*
@@ -254,17 +254,17 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
  * the period_contrib of cfs_rq when updating the sched_avg of a sched_entity
  * if it's more convenient.
  */
-static __always_inline void
-___update_load_avg(struct sched_avg *sa, unsigned long load)
+ਸਥਿਰ __always_inline ਖਾਲੀ
+___update_load_avg(ਬਣਤਰ sched_avg *sa, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੱਦੋ)
 {
 	u32 divider = get_pelt_divider(sa);
 
 	/*
 	 * Step 2: update *_avg.
 	 */
-	sa->load_avg = div_u64(load * sa->load_sum, divider);
-	sa->runnable_avg = div_u64(sa->runnable_sum, divider);
-	WRITE_ONCE(sa->util_avg, sa->util_sum / divider);
+	sa->ਲੱਦੋ_avg = div_u64(ਲੱਦੋ * sa->ਲੱਦੋ_ਜੋੜ, divider);
+	sa->runnable_avg = div_u64(sa->runnable_ਜੋੜ, divider);
+	WRITE_ONCE(sa->util_avg, sa->util_ਜੋੜ / divider);
 }
 
 /*
@@ -293,44 +293,44 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load)
  *   load_avg = \Sum se->avg.load_avg
  */
 
-int __update_load_avg_blocked_se(u64 now, struct sched_entity *se)
+ਪੂਰਨ __update_load_avg_blocked_se(u64 now, ਬਣਤਰ sched_entity *se)
 {
-	if (___update_load_sum(now, &se->avg, 0, 0, 0)) {
-		___update_load_avg(&se->avg, se_weight(se));
+	ਜੇ (___update_load_sum(now, &se->avg, 0, 0, 0)) {
+		___update_load_avg(&se->avg, se_ਭਾਰ(se));
 		trace_pelt_se_tp(se);
-		return 1;
+		ਵਾਪਸ 1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se)
+ਪੂਰਨ __update_load_avg_se(u64 now, ਬਣਤਰ cfs_rq *cfs_rq, ਬਣਤਰ sched_entity *se)
 {
-	if (___update_load_sum(now, &se->avg, !!se->on_rq, se_runnable(se),
+	ਜੇ (___update_load_sum(now, &se->avg, !!se->on_rq, se_runnable(se),
 				cfs_rq->h_curr == se)) {
 
-		___update_load_avg(&se->avg, se_weight(se));
+		___update_load_avg(&se->avg, se_ਭਾਰ(se));
 		cfs_se_util_change(&se->avg);
 		trace_pelt_se_tp(se);
-		return 1;
+		ਵਾਪਸ 1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq)
+ਪੂਰਨ __update_load_avg_cfs_rq(u64 now, ਬਣਤਰ cfs_rq *cfs_rq)
 {
-	if (___update_load_sum(now, &cfs_rq->avg,
-				scale_load_down(cfs_rq->load.weight),
+	ਜੇ (___update_load_sum(now, &cfs_rq->avg,
+				scale_ਲੱਦੋ_ਥੱਲੇ(cfs_rq->ਲੱਦੋ.ਭਾਰ),
 				cfs_rq->h_nr_runnable,
-				cfs_rq->h_curr != NULL)) {
+				cfs_rq->h_curr != ਨਿਰਾ)) {
 
 		___update_load_avg(&cfs_rq->avg, 1);
 		trace_pelt_cfs_tp(cfs_rq);
-		return 1;
+		ਵਾਪਸ 1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
@@ -344,19 +344,19 @@ int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq)
  *
  */
 
-int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
+ਪੂਰਨ update_rt_rq_ਲੱਦੋ_avg(u64 now, ਬਣਤਰ rq *rq, ਪੂਰਨ running)
 {
-	if (___update_load_sum(now, &rq->avg_rt,
+	ਜੇ (___update_load_sum(now, &rq->avg_rt,
 				running,
 				running,
 				running)) {
 
 		___update_load_avg(&rq->avg_rt, 1);
 		trace_pelt_rt_tp(rq);
-		return 1;
+		ਵਾਪਸ 1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
@@ -370,22 +370,22 @@ int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
  *
  */
 
-int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+ਪੂਰਨ update_dl_rq_ਲੱਦੋ_avg(u64 now, ਬਣਤਰ rq *rq, ਪੂਰਨ running)
 {
-	if (___update_load_sum(now, &rq->avg_dl,
+	ਜੇ (___update_load_sum(now, &rq->avg_dl,
 				running,
 				running,
 				running)) {
 
 		___update_load_avg(&rq->avg_dl, 1);
 		trace_pelt_dl_tp(rq);
-		return 1;
+		ਵਾਪਸ 1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#ifdef CONFIG_SCHED_HW_PRESSURE
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_SCHED_HW_PRESSURE
 /*
  * hardware:
  *
@@ -401,22 +401,22 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
  *			capped capacity a cpu due to a HW event.
  */
 
-int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+ਪੂਰਨ update_hw_ਲੱਦੋ_avg(u64 now, ਬਣਤਰ rq *rq, u64 ਸਮਰੱਥਾ)
 {
-	if (___update_load_sum(now, &rq->avg_hw,
-			       capacity,
-			       capacity,
-			       capacity)) {
+	ਜੇ (___update_load_sum(now, &rq->avg_hw,
+			       ਸਮਰੱਥਾ,
+			       ਸਮਰੱਥਾ,
+			       ਸਮਰੱਥਾ)) {
 		___update_load_avg(&rq->avg_hw, 1);
 		trace_pelt_hw_tp(rq);
-		return 1;
+		ਵਾਪਸ 1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
-#endif /* CONFIG_SCHED_HW_PRESSURE */
+#ਜੇ_ਅੰਤ /* CONFIG_SCHED_HW_PRESSURE */
 
-#ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CONFIG_HAVE_SCHED_AVG_IRQ
 /*
  * IRQ:
  *
@@ -428,17 +428,17 @@ int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
  *
  */
 
-int update_irq_load_avg(struct rq *rq, u64 running)
+ਪੂਰਨ update_irq_ਲੱਦੋ_avg(ਬਣਤਰ rq *rq, u64 running)
 {
-	int ret = 0;
+	ਪੂਰਨ ret = 0;
 
 	/*
 	 * We can't use clock_pelt because IRQ time is not accounted in
 	 * clock_task. Instead we directly scale the running time to
 	 * reflect the real amount of computation
 	 */
-	running = cap_scale(running, arch_scale_freq_capacity(cpu_of(rq)));
-	running = cap_scale(running, arch_scale_cpu_capacity(cpu_of(rq)));
+	running = cap_scale(running, arch_scale_freq_ਸਮਰੱਥਾ(cpu_ਦਾ(rq)));
+	running = cap_scale(running, arch_scale_cpu_ਸਮਰੱਥਾ(cpu_ਦਾ(rq)));
 
 	/*
 	 * We know the time that has been used by interrupt since last update
@@ -460,31 +460,31 @@ int update_irq_load_avg(struct rq *rq, u64 running)
 				1,
 				1);
 
-	if (ret) {
+	ਜੇ (ret) {
 		___update_load_avg(&rq->avg_irq, 1);
 		trace_pelt_irq_tp(rq);
 	}
 
-	return ret;
+	ਵਾਪਸ ret;
 }
-#endif /* CONFIG_HAVE_SCHED_AVG_IRQ */
+#ਜੇ_ਅੰਤ /* CONFIG_HAVE_SCHED_AVG_IRQ */
 
 /*
  * Load avg and utiliztion metrics need to be updated periodically and before
  * consumption. This function updates the metrics for all subsystems except for
  * the fair class. @rq must be locked and have its clock updated.
  */
-bool update_other_load_avgs(struct rq *rq)
+bool update_other_ਲੱਦੋ_avgs(ਬਣਤਰ rq *rq)
 {
 	u64 now = rq_clock_pelt(rq);
-	const struct sched_class *curr_class = rq->donor->sched_class;
-	unsigned long hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
+	ਅਚਲ ਬਣਤਰ sched_class *curr_class = rq->donor->sched_class;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ hw_pressure = arch_scale_hw_pressure(cpu_ਦਾ(rq));
 
 	lockdep_assert_rq_held(rq);
 
 	/* hw_pressure doesn't care about invariance */
-	return update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
-		update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
-		update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure) |
-		update_irq_load_avg(rq, 0);
+	ਵਾਪਸ update_rt_rq_ਲੱਦੋ_avg(now, rq, curr_class == &rt_sched_class) |
+		update_dl_rq_ਲੱਦੋ_avg(now, rq, curr_class == &dl_sched_class) |
+		update_hw_ਲੱਦੋ_avg(rq_clock_task(rq), rq, hw_pressure) |
+		update_irq_ਲੱਦੋ_avg(rq, 0);
 }

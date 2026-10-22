@@ -1,134 +1,134 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
-#include <linux/sched/debug.h>
-#include "sched.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <linux/sched/debug.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "sched.h"
 
 /*
  * The implementation of the wait_bit*() and related waiting APIs:
  */
 
-#define WAIT_TABLE_BITS 8
-#define WAIT_TABLE_SIZE (1 << WAIT_TABLE_BITS)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WAIT_ਸਾਰਣੀ_ਬਿੱਟ 8
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WAIT_ਸਾਰਣੀ_ਮਾਪ (1 << WAIT_ਸਾਰਣੀ_ਬਿੱਟ)
 
-static wait_queue_head_t bit_wait_table[WAIT_TABLE_SIZE] __cacheline_aligned;
+ਸਥਿਰ wait_ਕਤਾਰ_ਸਿਰ_t ਦੋਆਧਾਰੀ_ਅੰਕ_wait_ਸਾਰਣੀ[WAIT_ਸਾਰਣੀ_ਮਾਪ] __cacheline_aligned;
 
-wait_queue_head_t *bit_waitqueue(unsigned long *word, int bit)
+wait_ਕਤਾਰ_ਸਿਰ_t *ਦੋਆਧਾਰੀ_ਅੰਕ_waitqueue(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਸ਼ਬਦ, ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_2)
 {
-	const int shift = BITS_PER_LONG == 32 ? 5 : 6;
-	unsigned long val = (unsigned long)word << shift | bit;
+	ਅਚਲ ਪੂਰਨ ਖਿਸਕਾਓ = ਬਿੱਟ_ਪ੍ਰਤੀ_LONG == 32 ? 5 : 6;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ val = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ਸ਼ਬਦ << ਖਿਸਕਾਓ | ਦੋਆਧਾਰੀ_ਅੰਕ_2;
 
-	return bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
+	ਵਾਪਸ ਦੋਆਧਾਰੀ_ਅੰਕ_wait_ਸਾਰਣੀ + hash_long(val, WAIT_ਸਾਰਣੀ_ਬਿੱਟ);
 }
-EXPORT_SYMBOL(bit_waitqueue);
+EXPORT_ਚਿੰਨ੍ਹ(ਦੋਆਧਾਰੀ_ਅੰਕ_waitqueue);
 
-int wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+ਪੂਰਨ wake_ਦੋਆਧਾਰੀ_ਅੰਕ_function(ਬਣਤਰ wait_ਕਤਾਰ_ਇੰਦਰਾਜ *wq_ਇੰਦਰਾਜ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਬਹੁਲਕ, ਪੂਰਨ sync, ਖਾਲੀ *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wait_bit = container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕੁੰਜੀ *ਕੁੰਜੀ = arg;
+	ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕਤਾਰ_ਇੰਦਰਾਜ *wait_ਦੋਆਧਾਰੀ_ਅੰਕ = container_ਦਾ(wq_ਇੰਦਰਾਜ, ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕਤਾਰ_ਇੰਦਰਾਜ, wq_ਇੰਦਰਾਜ);
 
-	if (wait_bit->key.flags != key->flags ||
-			wait_bit->key.bit_nr != key->bit_nr ||
-			test_bit(key->bit_nr, key->flags))
-		return 0;
+	ਜੇ (wait_ਦੋਆਧਾਰੀ_ਅੰਕ->ਕੁੰਜੀ.flags != ਕੁੰਜੀ->flags ||
+			wait_ਦੋਆਧਾਰੀ_ਅੰਕ->ਕੁੰਜੀ.ਦੋਆਧਾਰੀ_ਅੰਕ_nr != ਕੁੰਜੀ->ਦੋਆਧਾਰੀ_ਅੰਕ_nr ||
+			test_ਦੋਆਧਾਰੀ_ਅੰਕ(ਕੁੰਜੀ->ਦੋਆਧਾਰੀ_ਅੰਕ_nr, ਕੁੰਜੀ->flags))
+		ਵਾਪਸ 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	ਵਾਪਸ autoremove_wake_function(wq_ਇੰਦਰਾਜ, ਬਹੁਲਕ, sync, ਕੁੰਜੀ);
 }
-EXPORT_SYMBOL(wake_bit_function);
+EXPORT_ਚਿੰਨ੍ਹ(wake_ਦੋਆਧਾਰੀ_ਅੰਕ_function);
 
 /*
  * To allow interruptible waiting and asynchronous (i.e. non-blocking)
  * waiting, the actions of __wait_on_bit() and __wait_on_bit_lock() are
  * permitted return codes. Nonzero return codes halt waiting and return.
  */
-int __sched
-__wait_on_bit(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
-	      wait_bit_action_f *action, unsigned mode)
+ਪੂਰਨ __sched
+__wait_on_bit(ਬਣਤਰ wait_ਕਤਾਰ_ਸਿਰ *wq_ਸਿਰ, ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕਤਾਰ_ਇੰਦਰਾਜ *wbq_ਇੰਦਰਾਜ,
+	      wait_ਦੋਆਧਾਰੀ_ਅੰਕ_action_f *action, ਬਿਨਾਨਿਸ਼ਾਨੀ ਬਹੁਲਕ)
 {
-	int ret = 0;
+	ਪੂਰਨ ret = 0;
 
-	do {
-		prepare_to_wait(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
-			ret = (*action)(&wbq_entry->key, mode);
-	} while (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
+	ਕਰੋ {
+		prepare_ਮੰਜ਼ਿਲ_wait(wq_ਸਿਰ, &wbq_ਇੰਦਰਾਜ->wq_ਇੰਦਰਾਜ, ਬਹੁਲਕ);
+		ਜੇ (test_ਦੋਆਧਾਰੀ_ਅੰਕ(wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.ਦੋਆਧਾਰੀ_ਅੰਕ_nr, wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.flags))
+			ret = (*action)(&wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ, ਬਹੁਲਕ);
+	} ਜਦੋਂ (test_ਦੋਆਧਾਰੀ_ਅੰਕ_acquire(wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.ਦੋਆਧਾਰੀ_ਅੰਕ_nr, wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.flags) && !ret);
 
-	finish_wait(wq_head, &wbq_entry->wq_entry);
+	ਅੰਤ_wait(wq_ਸਿਰ, &wbq_ਇੰਦਰਾਜ->wq_ਇੰਦਰਾਜ);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
-EXPORT_SYMBOL(__wait_on_bit);
+EXPORT_ਚਿੰਨ੍ਹ(__wait_on_bit);
 
-int __sched out_of_line_wait_on_bit(unsigned long *word, int bit,
-				    wait_bit_action_f *action, unsigned mode)
+ਪੂਰਨ __sched ਬਾਹਰਲਾ_ਦਾ_ਸਤਰ_wait_on_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਸ਼ਬਦ, ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_2,
+				    wait_ਦੋਆਧਾਰੀ_ਅੰਕ_action_f *action, ਬਿਨਾਨਿਸ਼ਾਨੀ ਬਹੁਲਕ)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
-	DEFINE_WAIT_BIT(wq_entry, word, bit);
+	ਬਣਤਰ wait_ਕਤਾਰ_ਸਿਰ *wq_ਸਿਰ = ਦੋਆਧਾਰੀ_ਅੰਕ_waitqueue(ਸ਼ਬਦ, ਦੋਆਧਾਰੀ_ਅੰਕ_2);
+	DEFINE_WAIT_ਦੋਆਧਾਰੀ_ਅੰਕ(wq_ਇੰਦਰਾਜ, ਸ਼ਬਦ, ਦੋਆਧਾਰੀ_ਅੰਕ_2);
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	ਵਾਪਸ __wait_on_bit(wq_ਸਿਰ, &wq_ਇੰਦਰਾਜ, action, ਬਹੁਲਕ);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit);
+EXPORT_ਚਿੰਨ੍ਹ(ਬਾਹਰਲਾ_ਦਾ_ਸਤਰ_wait_on_ਦੋਆਧਾਰੀ_ਅੰਕ);
 
-int __sched out_of_line_wait_on_bit_timeout(
-	unsigned long *word, int bit, wait_bit_action_f *action,
-	unsigned mode, unsigned long timeout)
+ਪੂਰਨ __sched ਬਾਹਰਲਾ_ਦਾ_ਸਤਰ_wait_on_ਦੋਆਧਾਰੀ_ਅੰਕ_timeout(
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਸ਼ਬਦ, ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_2, wait_ਦੋਆਧਾਰੀ_ਅੰਕ_action_f *action,
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਬਹੁਲਕ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ timeout)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
-	DEFINE_WAIT_BIT(wq_entry, word, bit);
+	ਬਣਤਰ wait_ਕਤਾਰ_ਸਿਰ *wq_ਸਿਰ = ਦੋਆਧਾਰੀ_ਅੰਕ_waitqueue(ਸ਼ਬਦ, ਦੋਆਧਾਰੀ_ਅੰਕ_2);
+	DEFINE_WAIT_ਦੋਆਧਾਰੀ_ਅੰਕ(wq_ਇੰਦਰਾਜ, ਸ਼ਬਦ, ਦੋਆਧਾਰੀ_ਅੰਕ_2);
 
-	wq_entry.key.timeout = jiffies + timeout;
+	wq_ਇੰਦਰਾਜ.ਕੁੰਜੀ.timeout = jiffies + timeout;
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	ਵਾਪਸ __wait_on_bit(wq_ਸਿਰ, &wq_ਇੰਦਰਾਜ, action, ਬਹੁਲਕ);
 }
-EXPORT_SYMBOL_GPL(out_of_line_wait_on_bit_timeout);
+EXPORT_ਚਿੰਨ੍ਹ_GPL(ਬਾਹਰਲਾ_ਦਾ_ਸਤਰ_wait_on_ਦੋਆਧਾਰੀ_ਅੰਕ_timeout);
 
-int __sched
-__wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
-			wait_bit_action_f *action, unsigned mode)
+ਪੂਰਨ __sched
+__wait_on_bit_lock(ਬਣਤਰ wait_ਕਤਾਰ_ਸਿਰ *wq_ਸਿਰ, ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕਤਾਰ_ਇੰਦਰਾਜ *wbq_ਇੰਦਰਾਜ,
+			wait_ਦੋਆਧਾਰੀ_ਅੰਕ_action_f *action, ਬਿਨਾਨਿਸ਼ਾਨੀ ਬਹੁਲਕ)
 {
-	int ret = 0;
+	ਪੂਰਨ ret = 0;
 
-	for (;;) {
-		prepare_to_wait_exclusive(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			ret = action(&wbq_entry->key, mode);
+	ਲਈ (;;) {
+		prepare_ਮੰਜ਼ਿਲ_wait_exclusive(wq_ਸਿਰ, &wbq_ਇੰਦਰਾਜ->wq_ਇੰਦਰਾਜ, ਬਹੁਲਕ);
+		ਜੇ (test_ਦੋਆਧਾਰੀ_ਅੰਕ(wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.ਦੋਆਧਾਰੀ_ਅੰਕ_nr, wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.flags)) {
+			ret = action(&wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ, ਬਹੁਲਕ);
 			/*
 			 * See the comment in prepare_to_wait_event().
 			 * finish_wait() does not necessarily takes wwq_head->lock,
 			 * but test_and_set_bit() implies mb() which pairs with
 			 * smp_mb__after_atomic() before wake_up_page().
 			 */
-			if (ret)
-				finish_wait(wq_head, &wbq_entry->wq_entry);
+			ਜੇ (ret)
+				ਅੰਤ_wait(wq_ਸਿਰ, &wbq_ਇੰਦਰਾਜ->wq_ਇੰਦਰਾਜ);
 		}
-		if (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			if (!ret)
-				finish_wait(wq_head, &wbq_entry->wq_entry);
-			return 0;
-		} else if (ret) {
-			return ret;
+		ਜੇ (!test_and_ਸੈੱਟ_ਦੋਆਧਾਰੀ_ਅੰਕ(wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.ਦੋਆਧਾਰੀ_ਅੰਕ_nr, wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.flags)) {
+			ਜੇ (!ret)
+				ਅੰਤ_wait(wq_ਸਿਰ, &wbq_ਇੰਦਰਾਜ->wq_ਇੰਦਰਾਜ);
+			ਵਾਪਸ 0;
+		} ਨਹੀਂਤਾਂ ਜੇ (ret) {
+			ਵਾਪਸ ret;
 		}
 	}
 }
-EXPORT_SYMBOL(__wait_on_bit_lock);
+EXPORT_ਚਿੰਨ੍ਹ(__wait_on_bit_lock);
 
-int __sched out_of_line_wait_on_bit_lock(unsigned long *word, int bit,
-					 wait_bit_action_f *action, unsigned mode)
+ਪੂਰਨ __sched ਬਾਹਰਲਾ_ਦਾ_ਸਤਰ_wait_on_ਦੋਆਧਾਰੀ_ਅੰਕ_ਤਾਲਾ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਸ਼ਬਦ, ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_2,
+					 wait_ਦੋਆਧਾਰੀ_ਅੰਕ_action_f *action, ਬਿਨਾਨਿਸ਼ਾਨੀ ਬਹੁਲਕ)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
-	DEFINE_WAIT_BIT(wq_entry, word, bit);
+	ਬਣਤਰ wait_ਕਤਾਰ_ਸਿਰ *wq_ਸਿਰ = ਦੋਆਧਾਰੀ_ਅੰਕ_waitqueue(ਸ਼ਬਦ, ਦੋਆਧਾਰੀ_ਅੰਕ_2);
+	DEFINE_WAIT_ਦੋਆਧਾਰੀ_ਅੰਕ(wq_ਇੰਦਰਾਜ, ਸ਼ਬਦ, ਦੋਆਧਾਰੀ_ਅੰਕ_2);
 
-	return __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
+	ਵਾਪਸ __wait_on_bit_lock(wq_ਸਿਰ, &wq_ਇੰਦਰਾਜ, action, ਬਹੁਲਕ);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit_lock);
+EXPORT_ਚਿੰਨ੍ਹ(ਬਾਹਰਲਾ_ਦਾ_ਸਤਰ_wait_on_ਦੋਆਧਾਰੀ_ਅੰਕ_ਤਾਲਾ);
 
-void __wake_up_bit(struct wait_queue_head *wq_head, unsigned long *word, int bit)
+ਖਾਲੀ __wake_up_bit(ਬਣਤਰ wait_ਕਤਾਰ_ਸਿਰ *wq_ਸਿਰ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਸ਼ਬਦ, ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_2)
 {
-	struct wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
+	ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕੁੰਜੀ ਕੁੰਜੀ = __WAIT_BIT_KEY_INITIALIZER(ਸ਼ਬਦ, ਦੋਆਧਾਰੀ_ਅੰਕ_2);
 
-	if (waitqueue_active(wq_head))
-		__wake_up(wq_head, TASK_NORMAL, 1, &key);
+	ਜੇ (waitqueue_ਸਰਗਰਮ(wq_ਸਿਰ))
+		__wake_up(wq_ਸਿਰ, TASK_ਸਾਧਾਰਨ, 1, &ਕੁੰਜੀ);
 }
-EXPORT_SYMBOL(__wake_up_bit);
+EXPORT_ਚਿੰਨ੍ਹ(__wake_up_bit);
 
 /**
  * wake_up_bit - wake up waiters on a bit
@@ -155,57 +155,57 @@ EXPORT_SYMBOL(__wake_up_bit);
  * cleared are guaranteed to be visible after the matching wait_on_bit()
  * completes.
  */
-void wake_up_bit(unsigned long *word, int bit)
+ਖਾਲੀ wake_ਉੱਪਰ_ਦੋਆਧਾਰੀ_ਅੰਕ(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਸ਼ਬਦ, ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_2)
 {
-	__wake_up_bit(bit_waitqueue(word, bit), word, bit);
+	__wake_up_bit(ਦੋਆਧਾਰੀ_ਅੰਕ_waitqueue(ਸ਼ਬਦ, ਦੋਆਧਾਰੀ_ਅੰਕ_2), ਸ਼ਬਦ, ਦੋਆਧਾਰੀ_ਅੰਕ_2);
 }
-EXPORT_SYMBOL(wake_up_bit);
+EXPORT_ਚਿੰਨ੍ਹ(wake_ਉੱਪਰ_ਦੋਆਧਾਰੀ_ਅੰਕ);
 
-wait_queue_head_t *__var_waitqueue(void *p)
+wait_ਕਤਾਰ_ਸਿਰ_t *__var_waitqueue(ਖਾਲੀ *p)
 {
-	return bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
+	ਵਾਪਸ ਦੋਆਧਾਰੀ_ਅੰਕ_wait_ਸਾਰਣੀ + hash_ptr(p, WAIT_ਸਾਰਣੀ_ਬਿੱਟ);
 }
-EXPORT_SYMBOL(__var_waitqueue);
+EXPORT_ਚਿੰਨ੍ਹ(__var_waitqueue);
 
-struct wait_bit_key *__var_wake_key(struct wait_queue_entry *wq_entry, void *arg)
+ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕੁੰਜੀ *__var_wake_key(ਬਣਤਰ wait_ਕਤਾਰ_ਇੰਦਰਾਜ *wq_ਇੰਦਰਾਜ, ਖਾਲੀ *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wbq_entry =
-		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕੁੰਜੀ *ਕੁੰਜੀ = arg;
+	ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕਤਾਰ_ਇੰਦਰਾਜ *wbq_ਇੰਦਰਾਜ =
+		container_ਦਾ(wq_ਇੰਦਰਾਜ, ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕਤਾਰ_ਇੰਦਰਾਜ, wq_ਇੰਦਰਾਜ);
 
-	if (wbq_entry->key.flags != key->flags ||
-	    wbq_entry->key.bit_nr != key->bit_nr)
-		return NULL;
+	ਜੇ (wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.flags != ਕੁੰਜੀ->flags ||
+	    wbq_ਇੰਦਰਾਜ->ਕੁੰਜੀ.ਦੋਆਧਾਰੀ_ਅੰਕ_nr != ਕੁੰਜੀ->ਦੋਆਧਾਰੀ_ਅੰਕ_nr)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	return key;
-}
-
-static int var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
-			     int sync, void *arg)
-{
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
-
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	ਵਾਪਸ ਕੁੰਜੀ;
 }
 
-void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
+ਸਥਿਰ ਪੂਰਨ var_wake_function(ਬਣਤਰ wait_ਕਤਾਰ_ਇੰਦਰਾਜ *wq_ਇੰਦਰਾਜ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਬਹੁਲਕ,
+			     ਪੂਰਨ sync, ਖਾਲੀ *arg)
 {
-	*wbq_entry = (struct wait_bit_queue_entry){
-		.key = {
+	ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕੁੰਜੀ *ਕੁੰਜੀ = __var_wake_key(wq_ਇੰਦਰਾਜ, arg);
+	ਜੇ (!ਕੁੰਜੀ)
+		ਵਾਪਸ 0;
+
+	ਵਾਪਸ autoremove_wake_function(wq_ਇੰਦਰਾਜ, ਬਹੁਲਕ, sync, ਕੁੰਜੀ);
+}
+
+ਖਾਲੀ init_wait_var_ਇੰਦਰਾਜ(ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕਤਾਰ_ਇੰਦਰਾਜ *wbq_ਇੰਦਰਾਜ, ਖਾਲੀ *var, ਪੂਰਨ flags)
+{
+	*wbq_ਇੰਦਰਾਜ = (ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕਤਾਰ_ਇੰਦਰਾਜ){
+		.ਕੁੰਜੀ = {
 			.flags	= (var),
-			.bit_nr = -1,
+			.ਦੋਆਧਾਰੀ_ਅੰਕ_nr = -1,
 		},
-		.wq_entry = {
+		.wq_ਇੰਦਰਾਜ = {
 			.flags	 = flags,
-			.private = current,
+			.ਨਿਜੀ = current,
 			.func	 = var_wake_function,
-			.entry	 = LIST_HEAD_INIT(wbq_entry->wq_entry.entry),
+			.ਇੰਦਰਾਜ	 = LIST_ਸਿਰ_INIT(wbq_ਇੰਦਰਾਜ->wq_ਇੰਦਰਾਜ.ਇੰਦਰਾਜ),
 		},
 	};
 }
-EXPORT_SYMBOL(init_wait_var_entry);
+EXPORT_ਚਿੰਨ੍ਹ(init_wait_var_ਇੰਦਰਾਜ);
 
 /**
  * wake_up_var - wake up waiters on a variable (kernel address)
@@ -237,50 +237,50 @@ EXPORT_SYMBOL(init_wait_var_entry);
  * variable was updated are guaranteed to be visible after the matching
  * wait_var_event() completes.
  */
-void wake_up_var(void *var)
+ਖਾਲੀ wake_ਉੱਪਰ_var(ਖਾਲੀ *var)
 {
 	__wake_up_bit(__var_waitqueue(var), var, -1);
 }
-EXPORT_SYMBOL(wake_up_var);
+EXPORT_ਚਿੰਨ੍ਹ(wake_ਉੱਪਰ_var);
 
-__sched int bit_wait(struct wait_bit_key *word, int mode)
+__sched ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_wait(ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕੁੰਜੀ *ਸ਼ਬਦ, ਪੂਰਨ ਬਹੁਲਕ)
 {
-	schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	ਸਮਾਂ_ਸਾਰਣੀ();
+	ਜੇ (signal_pending_state(ਬਹੁਲਕ, current))
+		ਵਾਪਸ -EINTR;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
-EXPORT_SYMBOL(bit_wait);
+EXPORT_ਚਿੰਨ੍ਹ(ਦੋਆਧਾਰੀ_ਅੰਕ_wait);
 
-__sched int bit_wait_io(struct wait_bit_key *word, int mode)
+__sched ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_wait_io(ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕੁੰਜੀ *ਸ਼ਬਦ, ਪੂਰਨ ਬਹੁਲਕ)
 {
-	io_schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	io_ਸਮਾਂ_ਸਾਰਣੀ();
+	ਜੇ (signal_pending_state(ਬਹੁਲਕ, current))
+		ਵਾਪਸ -EINTR;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
-EXPORT_SYMBOL(bit_wait_io);
+EXPORT_ਚਿੰਨ੍ਹ(ਦੋਆਧਾਰੀ_ਅੰਕ_wait_io);
 
-__sched int bit_wait_timeout(struct wait_bit_key *word, int mode)
+__sched ਪੂਰਨ ਦੋਆਧਾਰੀ_ਅੰਕ_wait_timeout(ਬਣਤਰ wait_ਦੋਆਧਾਰੀ_ਅੰਕ_ਕੁੰਜੀ *ਸ਼ਬਦ, ਪੂਰਨ ਬਹੁਲਕ)
 {
-	unsigned long now = READ_ONCE(jiffies);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ now = READ_ONCE(jiffies);
 
-	if (time_after_eq(now, word->timeout))
-		return -EAGAIN;
-	schedule_timeout(word->timeout - now);
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	ਜੇ (ਸਮਾਂ_after_eq(now, ਸ਼ਬਦ->timeout))
+		ਵਾਪਸ -EAGAIN;
+	ਸਮਾਂ_ਸਾਰਣੀ_timeout(ਸ਼ਬਦ->timeout - now);
+	ਜੇ (signal_pending_state(ਬਹੁਲਕ, current))
+		ਵਾਪਸ -EINTR;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
-EXPORT_SYMBOL_GPL(bit_wait_timeout);
+EXPORT_ਚਿੰਨ੍ਹ_GPL(ਦੋਆਧਾਰੀ_ਅੰਕ_wait_timeout);
 
-void __init wait_bit_init(void)
+ਖਾਲੀ __init wait_ਦੋਆਧਾਰੀ_ਅੰਕ_init(ਖਾਲੀ)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	for (i = 0; i < WAIT_TABLE_SIZE; i++)
-		init_waitqueue_head(bit_wait_table + i);
+	ਲਈ (i = 0; i < WAIT_ਸਾਰਣੀ_ਮਾਪ; i++)
+		init_waitqueue_ਸਿਰ(ਦੋਆਧਾਰੀ_ਅੰਕ_wait_ਸਾਰਣੀ + i);
 }
