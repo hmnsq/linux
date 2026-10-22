@@ -6,53 +6,53 @@
  *
  *  Author: Juri Lelli <j.lelli@sssup.it>
  */
-#include "sched.h"
+#अन्तर्भाव "sched.h"
 
-static inline int parent(int i)
+स्थिर अन्तःस्थ पूर्णाङ्क parent(पूर्णाङ्क i)
 {
-	return (i - 1) >> 1;
+	प्रत्यागम (i - 1) >> 1;
 }
 
-static inline int left_child(int i)
+स्थिर अन्तःस्थ पूर्णाङ्क डावा_child(पूर्णाङ्क i)
 {
-	return (i << 1) + 1;
+	प्रत्यागम (i << 1) + 1;
 }
 
-static inline int right_child(int i)
+स्थिर अन्तःस्थ पूर्णाङ्क उजवा_child(पूर्णाङ्क i)
 {
-	return (i << 1) + 2;
+	प्रत्यागम (i << 1) + 2;
 }
 
-static void cpudl_heapify_down(struct cpudl *cp, int idx)
+स्थिर शून्य cpudl_heapify_down(संरचना cpudl *cp, पूर्णाङ्क idx)
 {
-	int l, r, largest;
+	पूर्णाङ्क l, r, largest;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	पूर्णाङ्क orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (left_child(idx) >= cp->size)
-		return;
+	यदि (डावा_child(idx) >= cp->size)
+		प्रत्यागम;
 
 	/* adapted from lib/prio_heap.c */
-	while (1) {
+	यावत् (1) {
 		u64 largest_dl;
 
-		l = left_child(idx);
-		r = right_child(idx);
+		l = डावा_child(idx);
+		r = उजवा_child(idx);
 		largest = idx;
 		largest_dl = orig_dl;
 
-		if ((l < cp->size) && dl_time_before(orig_dl,
+		यदि ((l < cp->size) && dl_time_before(orig_dl,
 						cp->elements[l].dl)) {
 			largest = l;
 			largest_dl = cp->elements[l].dl;
 		}
-		if ((r < cp->size) && dl_time_before(largest_dl,
+		यदि ((r < cp->size) && dl_time_before(largest_dl,
 						cp->elements[r].dl))
 			largest = r;
 
-		if (largest == idx)
-			break;
+		यदि (largest == idx)
+			भङ्ग;
 
 		/* pull largest child onto idx */
 		cp->elements[idx].cpu = cp->elements[largest].cpu;
@@ -66,44 +66,44 @@ static void cpudl_heapify_down(struct cpudl *cp, int idx)
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify_up(struct cpudl *cp, int idx)
+स्थिर शून्य cpudl_heapify_up(संरचना cpudl *cp, पूर्णाङ्क idx)
 {
-	int p;
+	पूर्णाङ्क p;
 
-	int orig_cpu = cp->elements[idx].cpu;
+	पूर्णाङ्क orig_cpu = cp->elements[idx].cpu;
 	u64 orig_dl = cp->elements[idx].dl;
 
-	if (idx == 0)
-		return;
+	यदि (idx == 0)
+		प्रत्यागम;
 
-	do {
+	कुरु {
 		p = parent(idx);
-		if (dl_time_before(orig_dl, cp->elements[p].dl))
-			break;
+		यदि (dl_time_before(orig_dl, cp->elements[p].dl))
+			भङ्ग;
 		/* pull parent onto idx */
 		cp->elements[idx].cpu = cp->elements[p].cpu;
 		cp->elements[idx].dl = cp->elements[p].dl;
 		cp->elements[cp->elements[idx].cpu].idx = idx;
 		idx = p;
-	} while (idx != 0);
+	} यावत् (idx != 0);
 	/* actual push up of saved original values orig_* */
 	cp->elements[idx].cpu = orig_cpu;
 	cp->elements[idx].dl = orig_dl;
 	cp->elements[cp->elements[idx].cpu].idx = idx;
 }
 
-static void cpudl_heapify(struct cpudl *cp, int idx)
+स्थिर शून्य cpudl_heapify(संरचना cpudl *cp, पूर्णाङ्क idx)
 {
-	if (idx > 0 && dl_time_before(cp->elements[parent(idx)].dl,
+	यदि (idx > 0 && dl_time_before(cp->elements[parent(idx)].dl,
 				cp->elements[idx].dl))
 		cpudl_heapify_up(cp, idx);
-	else
+	अन्यथा
 		cpudl_heapify_down(cp, idx);
 }
 
-static inline int cpudl_maximum(struct cpudl *cp)
+स्थिर अन्तःस्थ पूर्णाङ्क cpudl_maximum(संरचना cpudl *cp)
 {
-	return cp->elements[0].cpu;
+	प्रत्यागम cp->elements[0].cpu;
 }
 
 /*
@@ -114,27 +114,27 @@ static inline int cpudl_maximum(struct cpudl *cp)
  *
  * Returns: int - CPUs were found
  */
-int cpudl_find(struct cpudl *cp, struct task_struct *p,
-	       struct cpumask *later_mask)
+पूर्णाङ्क cpudl_find(संरचना cpudl *cp, संरचना task_struct *p,
+	       संरचना cpumask *later_mask)
 {
-	const struct sched_dl_entity *dl_se = &p->dl;
+	ध्रुव संरचना sched_dl_entity *dl_se = &p->dl;
 
-	if (later_mask &&
+	यदि (later_mask &&
 	    cpumask_and(later_mask, cp->free_cpus, &p->cpus_mask)) {
 		unsigned long cap, max_cap = 0;
-		int cpu, max_cpu = -1;
+		पूर्णाङ्क cpu, max_cpu = -1;
 
-		if (!sched_asym_cpucap_active())
-			return 1;
+		यदि (!sched_asym_cpucap_active())
+			प्रत्यागम 1;
 
 		/* Ensure the capacity of the CPUs fits the task. */
 		for_each_cpu(cpu, later_mask) {
-			if (!dl_task_fits_capacity(p, cpu)) {
+			यदि (!dl_task_fits_capacity(p, cpu)) {
 				cpumask_clear_cpu(cpu, later_mask);
 
 				cap = arch_scale_cpu_capacity(cpu);
 
-				if (cap > max_cap ||
+				यदि (cap > max_cap ||
 				    (cpu == task_cpu(p) && cap == max_cap)) {
 					max_cap = cap;
 					max_cpu = cpu;
@@ -142,24 +142,24 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
 			}
 		}
 
-		if (cpumask_empty(later_mask))
+		यदि (cpumask_empty(later_mask))
 			cpumask_set_cpu(max_cpu, later_mask);
 
-		return 1;
-	} else {
-		int best_cpu = cpudl_maximum(cp);
+		प्रत्यागम 1;
+	} अन्यथा {
+		पूर्णाङ्क best_cpu = cpudl_maximum(cp);
 
 		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
 
-		if (cpumask_test_cpu(best_cpu, &p->cpus_mask) &&
+		यदि (cpumask_test_cpu(best_cpu, &p->cpus_mask) &&
 		    dl_time_before(dl_se->deadline, cp->elements[0].dl)) {
-			if (later_mask)
+			यदि (later_mask)
 				cpumask_set_cpu(best_cpu, later_mask);
 
-			return 1;
+			प्रत्यागम 1;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
@@ -172,9 +172,9 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpudl_clear(struct cpudl *cp, int cpu, bool online)
+शून्य cpudl_clear(संरचना cpudl *cp, पूर्णाङ्क cpu, bool online)
 {
-	int old_idx, new_cpu;
+	पूर्णाङ्क old_idx, new_cpu;
 	unsigned long flags;
 
 	WARN_ON(!cpu_present(cpu));
@@ -182,13 +182,13 @@ void cpudl_clear(struct cpudl *cp, int cpu, bool online)
 	raw_spin_lock_irqsave(&cp->lock, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
+	यदि (old_idx == IDX_INVALID) {
 		/*
 		 * Nothing to remove if old_idx was invalid.
 		 * This could happen if rq_online_dl or rq_offline_dl is
 		 * called for a CPU without -dl tasks running.
 		 */
-	} else {
+	} अन्यथा {
 		new_cpu = cp->elements[cp->size - 1].cpu;
 		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
 		cp->elements[old_idx].cpu = new_cpu;
@@ -197,9 +197,9 @@ void cpudl_clear(struct cpudl *cp, int cpu, bool online)
 		cp->elements[cpu].idx = IDX_INVALID;
 		cpudl_heapify(cp, old_idx);
 	}
-	if (likely(online))
+	यदि (likely(online))
 		__cpumask_set_cpu(cpu, cp->free_cpus);
-	else
+	अन्यथा
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
 
 	raw_spin_unlock_irqrestore(&cp->lock, flags);
@@ -215,9 +215,9 @@ void cpudl_clear(struct cpudl *cp, int cpu, bool online)
  *
  * Returns: (void)
  */
-void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
+शून्य cpudl_set(संरचना cpudl *cp, पूर्णाङ्क cpu, u64 dl)
 {
-	int old_idx;
+	पूर्णाङ्क old_idx;
 	unsigned long flags;
 
 	WARN_ON(!cpu_present(cpu));
@@ -225,15 +225,15 @@ void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
 	raw_spin_lock_irqsave(&cp->lock, flags);
 
 	old_idx = cp->elements[cpu].idx;
-	if (old_idx == IDX_INVALID) {
-		int new_idx = cp->size++;
+	यदि (old_idx == IDX_INVALID) {
+		पूर्णाङ्क new_idx = cp->size++;
 
 		cp->elements[new_idx].dl = dl;
 		cp->elements[new_idx].cpu = cpu;
 		cp->elements[cpu].idx = new_idx;
 		cpudl_heapify_up(cp, new_idx);
 		__cpumask_clear_cpu(cpu, cp->free_cpus);
-	} else {
+	} अन्यथा {
 		cp->elements[old_idx].dl = dl;
 		cpudl_heapify(cp, old_idx);
 	}
@@ -245,33 +245,33 @@ void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
  * cpudl_init - initialize the cpudl structure
  * @cp: the cpudl max-heap context
  */
-int cpudl_init(struct cpudl *cp)
+पूर्णाङ्क cpudl_init(संरचना cpudl *cp)
 {
-	int i;
+	पूर्णाङ्क i;
 
 	raw_spin_lock_init(&cp->lock);
 	cp->size = 0;
 
-	cp->elements = kzalloc_objs(struct cpudl_item, nr_cpu_ids);
-	if (!cp->elements)
-		return -ENOMEM;
+	cp->elements = kzalloc_objs(संरचना cpudl_item, nr_cpu_ids);
+	यदि (!cp->elements)
+		प्रत्यागम -ENOMEM;
 
-	if (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
+	यदि (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
 		kfree(cp->elements);
-		return -ENOMEM;
+		प्रत्यागम -ENOMEM;
 	}
 
 	for_each_possible_cpu(i)
 		cp->elements[i].idx = IDX_INVALID;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
  * cpudl_cleanup - clean up the cpudl structure
  * @cp: the cpudl max-heap context
  */
-void cpudl_cleanup(struct cpudl *cp)
+शून्य cpudl_cleanup(संरचना cpudl *cp)
 {
 	free_cpumask_var(cp->free_cpus);
 	kfree(cp->elements);
