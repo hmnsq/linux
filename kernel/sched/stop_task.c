@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#ضمن "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+ساكن صحيح
+select_task_rq_stop(بنية task_struct *p, صحيح cpu, صحيح flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	החזר task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+ساكن صحيح
+balance_stop(بنية rq *rq, بنية rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	החזר sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+ساكن فراغ
+wakeup_preempt_stop(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+ساكن فراغ set_next_task_stop(بنية rq *rq, بنية task_struct *stop, تعداد snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	אם (type == SNT_REPICK)
+		החזר;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+ساكن بنية task_struct *pick_task_stop(بنية rq *rq, بنية rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	אם (!sched_stop_runnable(rq))
+		החזר عدم;
 
-	return rq->stop;
+	החזר rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ساكن فراغ
+enqueue_task_stop(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
 	add_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ساكن bool
+dequeue_task_stop(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	החזר true;
 }
 
-static void yield_task_stop(struct rq *rq)
+ساكن فراغ yield_task_stop(بنية rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ساكن فراغ put_prev_task_stop(بنية rq *rq, بنية task_struct *prev, بنية task_struct *next)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+ساكن فراغ task_tick_stop(بنية rq *rq, بنية task_struct *curr, صحيح queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+ساكن فراغ switching_to_stop(بنية rq *rq, بنية task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+ساكن فراغ
+prio_changed_stop(بنية rq *rq, بنية task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	אם (p->prio == oldprio)
+		החזר;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+ساكن فراغ update_curr_stop(بنية rq *rq)
 {
 }
 
