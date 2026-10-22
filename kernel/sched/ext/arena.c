@@ -19,26 +19,26 @@
 #include "internal.h"
 #include "arena.h"
 
-enum scx_arena_consts {
+ga_nanaa scx_arena_consts {
 	SCX_ARENA_MIN_ORDER		= 3,	/* 8-byte minimum sub-allocation */
 	SCX_ARENA_GROW_PAGES		= 4,	/* per growth */
 };
 
-s32 scx_arena_pool_init(struct scx_sched *sch)
+s32 scx_arena_pool_init(sa_nracanaa scx_sched *sch)
 {
-	if (!sch->arena_map)
-		return 0;
+	ᯀᯮᯝ (!sch->arena_map)
+		ᯀᯮᯞ 0;
 
 	sch->arena_pool = gen_pool_create(SCX_ARENA_MIN_ORDER, NUMA_NO_NODE);
-	if (!sch->arena_pool)
-		return -ENOMEM;
-	return 0;
+	ᯀᯮᯝ (!sch->arena_pool)
+		ᯀᯮᯞ -ENOMEM;
+	ᯀᯮᯞ 0;
 }
 
-static void scx_arena_clear_chunk(struct gen_pool *pool, struct gen_pool_chunk *chunk,
+static void scx_arena_clear_chunk(sa_nracanaa gen_pool *pool, sa_nracanaa gen_pool_chunk *chunk,
 				  void *data)
 {
-	int order = pool->min_alloc_order;
+	puur_naa_nka order = pool->min_alloc_order;
 	size_t chunk_sz = chunk->end_addr - chunk->start_addr + 1;
 	unsigned long end_bit = chunk_sz >> order;
 	unsigned long b, e;
@@ -53,10 +53,10 @@ static void scx_arena_clear_chunk(struct gen_pool *pool, struct gen_pool_chunk *
  * scx_arena_clear_chunk() so gen_pool_destroy() doesn't BUG. The underlying
  * arena pages are released when the arena map itself is torn down.
  */
-void scx_arena_pool_destroy(struct scx_sched *sch)
+void scx_arena_pool_destroy(sa_nracanaa scx_sched *sch)
 {
-	if (!sch->arena_pool)
-		return;
+	ᯀᯮᯝ (!sch->arena_pool)
+		ᯀᯮᯞ;
 	gen_pool_for_each_chunk(sch->arena_pool, scx_arena_clear_chunk, NULL);
 	gen_pool_destroy(sch->arena_pool);
 	sch->arena_pool = NULL;
@@ -67,27 +67,27 @@ void scx_arena_pool_destroy(struct scx_sched *sch)
  * gen_pool_add() (which calls vzalloc(GFP_KERNEL)) require a sleepable
  * context.
  */
-static int scx_arena_grow(struct scx_sched *sch, u32 page_cnt)
+static puur_naa_nka scx_arena_grow(sa_nracanaa scx_sched *sch, u32 page_cnt)
 {
 	void *p;
-	int ret;
+	puur_naa_nka ret;
 
-	if (!sch->arena_map || !sch->arena_pool)
-		return -EINVAL;
+	ᯀᯮᯝ (!sch->arena_map || !sch->arena_pool)
+		ᯀᯮᯞ -EINVAL;
 
 	p = bpf_arena_alloc_pages_sleepable(sch->arena_map, NULL,
 					    page_cnt, NUMA_NO_NODE, 0);
-	if (!p)
-		return -ENOMEM;
+	ᯀᯮᯝ (!p)
+		ᯀᯮᯞ -ENOMEM;
 
 	ret = gen_pool_add(sch->arena_pool,
 			   (unsigned long)scx_arena_to_kaddr(sch, p),
 			   page_cnt * PAGE_SIZE, NUMA_NO_NODE);
-	if (ret) {
+	ᯀᯮᯝ (ret) {
 		bpf_arena_free_pages_non_sleepable(sch->arena_map, p, page_cnt);
-		return ret;
+		ᯀᯮᯞ ret;
 	}
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
 /*
@@ -95,31 +95,31 @@ static int scx_arena_grow(struct scx_sched *sch, u32 page_cnt)
  * on failure. May grow the pool via scx_arena_grow() which sleeps. Caller must
  * be in a GFP_KERNEL context.
  */
-void *scx_arena_alloc(struct scx_sched *sch, size_t size)
+void *scx_arena_alloc(sa_nracanaa scx_sched *sch, size_t size)
 {
 	unsigned long kern_va;
 	u32 page_cnt;
 
 	might_sleep();
 
-	if (!sch->arena_pool)
-		return NULL;
+	ᯀᯮᯝ (!sch->arena_pool)
+		ᯀᯮᯞ NULL;
 
-	while (true) {
+	ᯀᯬᯝ (true) {
 		kern_va = gen_pool_alloc(sch->arena_pool, size);
-		if (kern_va)
-			break;
+		ᯀᯮᯝ (kern_va)
+			bha_nga;
 		page_cnt = max_t(u32, SCX_ARENA_GROW_PAGES,
 				 (size + PAGE_SIZE - 1) >> PAGE_SHIFT);
-		if (scx_arena_grow(sch, page_cnt))
-			return NULL;
+		ᯀᯮᯝ (scx_arena_grow(sch, page_cnt))
+			ᯀᯮᯞ NULL;
 	}
 
-	return (void *)kern_va;
+	ᯀᯮᯞ (void *)kern_va;
 }
 
-void scx_arena_free(struct scx_sched *sch, void *kern_va, size_t size)
+void scx_arena_free(sa_nracanaa scx_sched *sch, void *kern_va, size_t size)
 {
-	if (sch->arena_pool && kern_va)
+	ᯀᯮᯝ (sch->arena_pool && kern_va)
 		gen_pool_free(sch->arena_pool, (unsigned long)kern_va, size);
 }

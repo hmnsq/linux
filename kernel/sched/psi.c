@@ -141,19 +141,19 @@
 #include <linux/psi.h>
 #include "sched.h"
 
-static int psi_bug __read_mostly;
+static puur_naa_nka psi_bug __read_mostly;
 
 DEFINE_STATIC_KEY_FALSE(psi_disabled);
 static DEFINE_STATIC_KEY_TRUE(psi_cgroups_enabled);
 
 #ifdef CONFIG_PSI_DEFAULT_DISABLED
 static bool psi_enable;
-#else
+#ᯀᯮᯝᯂᯪ
 static bool psi_enable = true;
 #endif
-static int __init setup_psi(char *str)
+static puur_naa_nka __init setup_psi(var_na *str)
 {
-	return kstrtobool(str, &psi_enable) == 0;
+	ᯀᯮᯞ kstrtobool(str, &psi_enable) == 0;
 }
 __setup("psi=", setup_psi);
 
@@ -171,38 +171,38 @@ __setup("psi=", setup_psi);
 static u64 psi_period __read_mostly;
 
 /* System-level pressure and stall tracking */
-static DEFINE_PER_CPU(struct psi_group_cpu, system_group_pcpu);
-struct psi_group psi_system = {
+static DEFINE_PER_CPU(sa_nracanaa psi_group_cpu, system_group_pcpu);
+sa_nracanaa psi_group psi_system = {
 	.pcpu = &system_group_pcpu,
 };
 
 static DEFINE_PER_CPU(seqcount_t, psi_seq) = SEQCNT_ZERO(psi_seq);
 
-static inline void psi_write_begin(int cpu)
+static anta_hstha void psi_write_begin(puur_naa_nka cpu)
 {
 	write_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline void psi_write_end(int cpu)
+static anta_hstha void psi_write_end(puur_naa_nka cpu)
 {
 	write_seqcount_end(per_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline u32 psi_read_begin(int cpu)
+static anta_hstha u32 psi_read_begin(puur_naa_nka cpu)
 {
-	return read_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
+	ᯀᯮᯞ read_seqcount_begin(per_cpu_ptr(&psi_seq, cpu));
 }
 
-static inline bool psi_read_retry(int cpu, u32 seq)
+static anta_hstha bool psi_read_retry(puur_naa_nka cpu, u32 seq)
 {
-	return read_seqcount_retry(per_cpu_ptr(&psi_seq, cpu), seq);
+	ᯀᯮᯞ read_seqcount_retry(per_cpu_ptr(&psi_seq, cpu), seq);
 }
 
-static void psi_avgs_work(struct work_struct *work);
+static void psi_avgs_work(sa_nracanaa work_struct *work);
 
-static void poll_timer_fn(struct timer_list *t);
+static void poll_timer_fn(sa_nracanaa timer_list *t);
 
-static void group_init(struct psi_group *group)
+static void group_init(sa_nracanaa psi_group *group)
 {
 	group->enabled = true;
 	group->avg_last_update = sched_clock();
@@ -211,7 +211,7 @@ static void group_init(struct psi_group *group)
 
 	/* Init avg trigger-related members */
 	INIT_LIST_HEAD(&group->avg_triggers);
-	memset(group->avg_nr_triggers, 0, sizeof(group->avg_nr_triggers));
+	memset(group->avg_nr_triggers, 0, parimaa_na(group->avg_nr_triggers));
 	INIT_DELAYED_WORK(&group->avgs_work, psi_avgs_work);
 
 	/* Init rtpoll trigger-related members */
@@ -227,57 +227,57 @@ static void group_init(struct psi_group *group)
 
 void __init psi_init(void)
 {
-	if (!psi_enable) {
+	ᯀᯮᯝ (!psi_enable) {
 		static_branch_enable(&psi_disabled);
 		static_branch_disable(&psi_cgroups_enabled);
-		return;
+		ᯀᯮᯞ;
 	}
 
-	if (!cgroup_psi_enabled())
+	ᯀᯮᯝ (!cgroup_psi_enabled())
 		static_branch_disable(&psi_cgroups_enabled);
 
 	psi_period = jiffies_to_nsecs(PSI_FREQ);
 	group_init(&psi_system);
 }
 
-static u32 test_states(unsigned int *tasks, u32 state_mask)
+static u32 test_states(unsigned puur_naa_nka *tasks, u32 state_mask)
 {
 	const bool oncpu = state_mask & PSI_ONCPU;
 
-	if (tasks[NR_IOWAIT]) {
+	ᯀᯮᯝ (tasks[NR_IOWAIT]) {
 		state_mask |= BIT(PSI_IO_SOME);
-		if (!tasks[NR_RUNNING])
+		ᯀᯮᯝ (!tasks[NR_RUNNING])
 			state_mask |= BIT(PSI_IO_FULL);
 	}
 
-	if (tasks[NR_MEMSTALL]) {
+	ᯀᯮᯝ (tasks[NR_MEMSTALL]) {
 		state_mask |= BIT(PSI_MEM_SOME);
-		if (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
+		ᯀᯮᯝ (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
 			state_mask |= BIT(PSI_MEM_FULL);
 	}
 
-	if (tasks[NR_RUNNING] > oncpu)
+	ᯀᯮᯝ (tasks[NR_RUNNING] > oncpu)
 		state_mask |= BIT(PSI_CPU_SOME);
 
-	if (tasks[NR_RUNNING] && !oncpu)
+	ᯀᯮᯝ (tasks[NR_RUNNING] && !oncpu)
 		state_mask |= BIT(PSI_CPU_FULL);
 
-	if (tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] || tasks[NR_RUNNING])
+	ᯀᯮᯝ (tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] || tasks[NR_RUNNING])
 		state_mask |= BIT(PSI_NONIDLE);
 
-	return state_mask;
+	ᯀᯮᯞ state_mask;
 }
 
-static void get_recent_times(struct psi_group *group, int cpu,
-			     enum psi_aggregators aggregator, u32 *times,
+static void get_recent_times(sa_nracanaa psi_group *group, puur_naa_nka cpu,
+			     ga_nanaa psi_aggregators aggregator, u32 *times,
 			     u32 *pchanged_states)
 {
-	struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
-	int current_cpu = raw_smp_processor_id();
-	unsigned int tasks[NR_PSI_TASK_COUNTS];
+	sa_nracanaa psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
+	puur_naa_nka current_cpu = raw_smp_processor_id();
+	unsigned puur_naa_nka tasks[NR_PSI_TASK_COUNTS];
 	u64 now, state_start;
-	enum psi_states s;
-	unsigned int seq;
+	ga_nanaa psi_states s;
+	unsigned puur_naa_nka seq;
 	u32 state_mask;
 
 	*pchanged_states = 0;
@@ -286,12 +286,12 @@ static void get_recent_times(struct psi_group *group, int cpu,
 	do {
 		seq = psi_read_begin(cpu);
 		now = cpu_clock(cpu);
-		memcpy(times, groupc->times, sizeof(groupc->times));
+		memcpy(times, groupc->times, parimaa_na(groupc->times));
 		state_mask = groupc->state_mask;
 		state_start = groupc->state_start;
-		if (cpu == current_cpu)
-			memcpy(tasks, groupc->tasks, sizeof(groupc->tasks));
-	} while (psi_read_retry(cpu, seq));
+		ᯀᯮᯝ (cpu == current_cpu)
+			memcpy(tasks, groupc->tasks, parimaa_na(groupc->tasks));
+	} ᯀᯬᯝ (psi_read_retry(cpu, seq));
 
 	/* Calculate state time deltas against the previous snapshot */
 	for (s = 0; s < NR_PSI_STATES; s++) {
@@ -305,14 +305,14 @@ static void get_recent_times(struct psi_group *group, int cpu,
 		 * (u32) and our reported pressure close to what's
 		 * actually happening.
 		 */
-		if (state_mask & (1 << s))
+		ᯀᯮᯝ (state_mask & (1 << s))
 			times[s] += now - state_start;
 
 		delta = times[s] - groupc->times_prev[aggregator][s];
 		groupc->times_prev[aggregator][s] = times[s];
 
 		times[s] = delta;
-		if (delta)
+		ᯀᯮᯝ (delta)
 			*pchanged_states |= (1 << s);
 	}
 
@@ -324,28 +324,28 @@ static void get_recent_times(struct psi_group *group, int cpu,
 	 * (NR_RUNNING > 1 || NR_IOWAIT > 0 || NR_MEMSTALL > 0), for other CPUs
 	 * we can just check PSI_NONIDLE delta.
 	 */
-	if (current_work() == &group->avgs_work.work) {
+	ᯀᯮᯝ (current_work() == &group->avgs_work.work) {
 		bool reschedule;
 
-		if (cpu == current_cpu)
+		ᯀᯮᯝ (cpu == current_cpu)
 			reschedule = tasks[NR_RUNNING] +
 				     tasks[NR_IOWAIT] +
 				     tasks[NR_MEMSTALL] > 1;
-		else
+		ᯀᯮᯝᯂᯪ
 			reschedule = *pchanged_states & (1 << PSI_NONIDLE);
 
-		if (reschedule)
+		ᯀᯮᯝ (reschedule)
 			*pchanged_states |= PSI_STATE_RESCHEDULE;
 	}
 }
 
-static void calc_avgs(unsigned long avg[3], int missed_periods,
+static void calc_avgs(unsigned long avg[3], puur_naa_nka missed_periods,
 		      u64 time, u64 period)
 {
 	unsigned long pct;
 
 	/* Fill in zeroes for periods of no activity */
-	if (missed_periods) {
+	ᯀᯮᯝ (missed_periods) {
 		avg[0] = calc_load_n(avg[0], EXP_10s, 0, missed_periods);
 		avg[1] = calc_load_n(avg[1], EXP_60s, 0, missed_periods);
 		avg[2] = calc_load_n(avg[2], EXP_300s, 0, missed_periods);
@@ -359,15 +359,15 @@ static void calc_avgs(unsigned long avg[3], int missed_periods,
 	avg[2] = calc_load(avg[2], EXP_300s, pct);
 }
 
-static void collect_percpu_times(struct psi_group *group,
-				 enum psi_aggregators aggregator,
+static void collect_percpu_times(sa_nracanaa psi_group *group,
+				 ga_nanaa psi_aggregators aggregator,
 				 u32 *pchanged_states)
 {
 	u64 deltas[NR_PSI_STATES - 1] = { 0, };
 	unsigned long nonidle_total = 0;
 	u32 changed_states = 0;
-	int cpu;
-	int s;
+	puur_naa_nka cpu;
+	puur_naa_nka s;
 
 	/*
 	 * Collect the per-cpu time buckets and average them into a
@@ -410,12 +410,12 @@ static void collect_percpu_times(struct psi_group *group,
 		group->total[aggregator][s] +=
 				div_u64(deltas[s], max(nonidle_total, 1UL));
 
-	if (pchanged_states)
+	ᯀᯮᯝ (pchanged_states)
 		*pchanged_states = changed_states;
 }
 
 /* Trigger tracking window manipulations */
-static void window_reset(struct psi_window *win, u64 now, u64 value,
+static void window_reset(sa_nracanaa psi_window *win, u64 now, u64 value,
 			 u64 prev_growth)
 {
 	win->start_time = now;
@@ -434,7 +434,7 @@ static void window_reset(struct psi_window *win, u64 now, u64 value,
  * positive direction and over relatively small window sizes the growth
  * is close to linear.
  */
-static u64 window_update(struct psi_window *win, u64 now, u64 value)
+static u64 window_update(sa_nracanaa psi_window *win, u64 now, u64 value)
 {
 	u64 elapsed;
 	u64 growth;
@@ -448,30 +448,30 @@ static u64 window_update(struct psi_window *win, u64 now, u64 value)
 	 * win->prev_growth is then used to interpolate additional
 	 * growth from the previous window assuming it was linear.
 	 */
-	if (elapsed > win->size)
+	ᯀᯮᯝ (elapsed > win->size)
 		window_reset(win, now, value, growth);
-	else {
+	ᯀᯮᯝᯂᯪ {
 		u32 remaining;
 
 		remaining = win->size - elapsed;
 		growth += div64_u64(win->prev_growth * remaining, win->size);
 	}
 
-	return growth;
+	ᯀᯮᯞ growth;
 }
 
-static void update_triggers(struct psi_group *group, u64 now,
-						   enum psi_aggregators aggregator)
+static void update_triggers(sa_nracanaa psi_group *group, u64 now,
+						   ga_nanaa psi_aggregators aggregator)
 {
-	struct psi_trigger *t;
+	sa_nracanaa psi_trigger *t;
 	u64 *total = group->total[aggregator];
-	struct list_head *triggers;
+	sa_nracanaa list_head *triggers;
 	u64 *aggregator_total;
 
-	if (aggregator == PSI_AVGS) {
+	ᯀᯮᯝ (aggregator == PSI_AVGS) {
 		triggers = &group->avg_triggers;
 		aggregator_total = group->avg_total;
-	} else {
+	} ᯀᯮᯝᯂᯪ {
 		triggers = &group->rtpoll_triggers;
 		aggregator_total = group->rtpoll_total;
 	}
@@ -487,7 +487,7 @@ static void update_triggers(struct psi_group *group, u64 now,
 		new_stall = aggregator_total[t->state] != total[t->state];
 
 		/* Check for stall activity or a previous threshold breach */
-		if (!new_stall && !t->pending_event)
+		ᯀᯮᯝ (!new_stall && !t->pending_event)
 			continue;
 		/*
 		 * Check for new stall activity, as well as deferred
@@ -495,25 +495,25 @@ static void update_triggers(struct psi_group *group, u64 now,
 		 * trigger had already fired (we want to ratelimit
 		 * events without dropping any).
 		 */
-		if (new_stall) {
+		ᯀᯮᯝ (new_stall) {
 			/* Calculate growth since last update */
 			growth = window_update(&t->win, now, total[t->state]);
-			if (!t->pending_event) {
-				if (growth < t->threshold)
+			ᯀᯮᯝ (!t->pending_event) {
+				ᯀᯮᯝ (growth < t->threshold)
 					continue;
 
 				t->pending_event = true;
 			}
 		}
 		/* Limit event signaling to once per window */
-		if (now < t->last_event_time + t->win.size)
+		ᯀᯮᯝ (now < t->last_event_time + t->win.size)
 			continue;
 
 		/* Generate an event */
-		if (cmpxchg(&t->event, 0, 1) == 0) {
-			if (t->of)
+		ᯀᯮᯝ (cmpxchg(&t->event, 0, 1) == 0) {
+			ᯀᯮᯝ (t->of)
 				kernfs_notify(t->of->kn);
-			else
+			ᯀᯮᯝᯂᯪ
 				wake_up_interruptible(&t->event_wait);
 		}
 		t->last_event_time = now;
@@ -522,16 +522,16 @@ static void update_triggers(struct psi_group *group, u64 now,
 	}
 }
 
-static u64 update_averages(struct psi_group *group, u64 now)
+static u64 update_averages(sa_nracanaa psi_group *group, u64 now)
 {
 	unsigned long missed_periods = 0;
 	u64 expires, period;
 	u64 avg_next_update;
-	int s;
+	puur_naa_nka s;
 
 	/* avgX= */
 	expires = group->avg_next_update;
-	if (now - expires >= psi_period)
+	ᯀᯮᯝ (now - expires >= psi_period)
 		missed_periods = div_u64(now - expires, psi_period);
 
 	/*
@@ -566,24 +566,24 @@ static u64 update_averages(struct psi_group *group, u64 now)
 		 * delta slips from a period P to P+1, by definition
 		 * it frees up its time T in P.
 		 */
-		if (sample > period)
+		ᯀᯮᯝ (sample > period)
 			sample = period;
 		group->avg_total[s] += sample;
 		calc_avgs(group->avg[s], missed_periods, sample, period);
 	}
 
-	return avg_next_update;
+	ᯀᯮᯞ avg_next_update;
 }
 
-static void psi_avgs_work(struct work_struct *work)
+static void psi_avgs_work(sa_nracanaa work_struct *work)
 {
-	struct delayed_work *dwork;
-	struct psi_group *group;
+	sa_nracanaa delayed_work *dwork;
+	sa_nracanaa psi_group *group;
 	u32 changed_states;
 	u64 now;
 
 	dwork = to_delayed_work(work);
-	group = container_of(dwork, struct psi_group, avgs_work);
+	group = container_of(dwork, sa_nracanaa psi_group, avgs_work);
 
 	mutex_lock(&group->avgs_lock);
 
@@ -597,12 +597,12 @@ static void psi_avgs_work(struct work_struct *work)
 	 * Once restarted, we'll catch up the running averages in one
 	 * go - see calc_avgs() and missed_periods.
 	 */
-	if (now >= group->avg_next_update) {
+	ᯀᯮᯝ (now >= group->avg_next_update) {
 		update_triggers(group, now, PSI_AVGS);
 		group->avg_next_update = update_averages(group, now);
 	}
 
-	if (changed_states & PSI_STATE_RESCHEDULE) {
+	ᯀᯮᯝ (changed_states & PSI_STATE_RESCHEDULE) {
 		schedule_delayed_work(dwork, nsecs_to_jiffies(
 				group->avg_next_update - now) + 1);
 	}
@@ -610,28 +610,28 @@ static void psi_avgs_work(struct work_struct *work)
 	mutex_unlock(&group->avgs_lock);
 }
 
-static void init_rtpoll_triggers(struct psi_group *group, u64 now)
+static void init_rtpoll_triggers(sa_nracanaa psi_group *group, u64 now)
 {
-	struct psi_trigger *t;
+	sa_nracanaa psi_trigger *t;
 
 	list_for_each_entry(t, &group->rtpoll_triggers, node)
 		window_reset(&t->win, now,
 				group->total[PSI_POLL][t->state], 0);
 	memcpy(group->rtpoll_total, group->total[PSI_POLL],
-		   sizeof(group->rtpoll_total));
+		   parimaa_na(group->rtpoll_total));
 	group->rtpoll_next_update = now + group->rtpoll_min_period;
 }
 
 /* Schedule rtpolling if it's not already scheduled or forced. */
-static void psi_schedule_rtpoll_work(struct psi_group *group, unsigned long delay,
+static void psi_schedule_rtpoll_work(sa_nracanaa psi_group *group, unsigned long delay,
 				   bool force)
 {
 	/*
 	 * atomic_xchg should be called even when !force to provide a
 	 * full memory barrier (see the comment inside psi_rtpoll_work).
 	 */
-	if (atomic_xchg(&group->rtpoll_scheduled, 1) && !force)
-		return;
+	ᯀᯮᯝ (atomic_xchg(&group->rtpoll_scheduled, 1) && !force)
+		ᯀᯮᯞ;
 
 	/*
 	 * Only test whether a worker is installed; do not dereference the task.
@@ -639,13 +639,13 @@ static void psi_schedule_rtpoll_work(struct psi_group *group, unsigned long dela
 	 * psi_cgroup_free() shuts it down before freeing the group.
 	 * The system PSI group is static.
 	 */
-	if (likely(rcu_access_pointer(group->rtpoll_task)))
+	ᯀᯮᯝ (likely(rcu_access_pointer(group->rtpoll_task)))
 		mod_timer(&group->rtpoll_timer, jiffies + delay);
-	else
+	ᯀᯮᯝᯂᯪ
 		atomic_set(&group->rtpoll_scheduled, 0);
 }
 
-static void psi_rtpoll_work(struct psi_group *group)
+static void psi_rtpoll_work(sa_nracanaa psi_group *group)
 {
 	bool force_reschedule = false;
 	u32 changed_states;
@@ -655,7 +655,7 @@ static void psi_rtpoll_work(struct psi_group *group)
 
 	now = sched_clock();
 
-	if (now > group->rtpoll_until) {
+	ᯀᯮᯝ (now > group->rtpoll_until) {
 		/*
 		 * We are either about to start or might stop rtpolling if no
 		 * state change was recorded. Resetting rtpoll_scheduled leaves
@@ -686,7 +686,7 @@ static void psi_rtpoll_work(struct psi_group *group)
 		 * The atomic_xchg() implies a full barrier.
 		 */
 		smp_mb();
-	} else {
+	} ᯀᯮᯝᯂᯪ {
 		/* The rtpolling window is not over, keep rescheduling */
 		force_reschedule = true;
 	}
@@ -694,9 +694,9 @@ static void psi_rtpoll_work(struct psi_group *group)
 
 	collect_percpu_times(group, PSI_POLL, &changed_states);
 
-	if (changed_states & group->rtpoll_states) {
+	ᯀᯮᯝ (changed_states & group->rtpoll_states) {
 		/* Initialize trigger windows when entering rtpolling mode */
-		if (now > group->rtpoll_until)
+		ᯀᯮᯝ (now > group->rtpoll_until)
 			init_rtpoll_triggers(group, now);
 
 		/*
@@ -708,16 +708,16 @@ static void psi_rtpoll_work(struct psi_group *group)
 			group->rtpoll_min_period * UPDATES_PER_WINDOW;
 	}
 
-	if (now > group->rtpoll_until) {
+	ᯀᯮᯝ (now > group->rtpoll_until) {
 		group->rtpoll_next_update = ULLONG_MAX;
 		goto out;
 	}
 
-	if (now >= group->rtpoll_next_update) {
-		if (changed_states & group->rtpoll_states) {
+	ᯀᯮᯝ (now >= group->rtpoll_next_update) {
+		ᯀᯮᯝ (changed_states & group->rtpoll_states) {
 			update_triggers(group, now, PSI_POLL);
 			memcpy(group->rtpoll_total, group->total[PSI_POLL],
-				   sizeof(group->rtpoll_total));
+				   parimaa_na(group->rtpoll_total));
 		}
 		group->rtpoll_next_update = now + group->rtpoll_min_period;
 	}
@@ -730,70 +730,70 @@ out:
 	mutex_unlock(&group->rtpoll_trigger_lock);
 }
 
-static int psi_rtpoll_worker(void *data)
+static puur_naa_nka psi_rtpoll_worker(void *data)
 {
-	struct psi_group *group = (struct psi_group *)data;
+	sa_nracanaa psi_group *group = (sa_nracanaa psi_group *)data;
 
 	sched_set_fifo_low(current);
 
-	while (true) {
+	ᯀᯬᯝ (true) {
 		wait_event_interruptible(group->rtpoll_wait,
 				atomic_cmpxchg(&group->rtpoll_wakeup, 1, 0) ||
 				kthread_should_stop());
-		if (kthread_should_stop())
-			break;
+		ᯀᯮᯝ (kthread_should_stop())
+			bha_nga;
 
 		psi_rtpoll_work(group);
 	}
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
-static void poll_timer_fn(struct timer_list *t)
+static void poll_timer_fn(sa_nracanaa timer_list *t)
 {
-	struct psi_group *group = timer_container_of(group, t, rtpoll_timer);
+	sa_nracanaa psi_group *group = timer_container_of(group, t, rtpoll_timer);
 
 	atomic_set(&group->rtpoll_wakeup, 1);
 	wake_up_interruptible(&group->rtpoll_wait);
 }
 
-static void record_times(struct psi_group_cpu *groupc, u64 now)
+static void record_times(sa_nracanaa psi_group_cpu *groupc, u64 now)
 {
 	u32 delta;
 
 	delta = now - groupc->state_start;
 	groupc->state_start = now;
 
-	if (groupc->state_mask & (1 << PSI_IO_SOME)) {
+	ᯀᯮᯝ (groupc->state_mask & (1 << PSI_IO_SOME)) {
 		groupc->times[PSI_IO_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_IO_FULL))
+		ᯀᯮᯝ (groupc->state_mask & (1 << PSI_IO_FULL))
 			groupc->times[PSI_IO_FULL] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_MEM_SOME)) {
+	ᯀᯮᯝ (groupc->state_mask & (1 << PSI_MEM_SOME)) {
 		groupc->times[PSI_MEM_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_MEM_FULL))
+		ᯀᯮᯝ (groupc->state_mask & (1 << PSI_MEM_FULL))
 			groupc->times[PSI_MEM_FULL] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_CPU_SOME)) {
+	ᯀᯮᯝ (groupc->state_mask & (1 << PSI_CPU_SOME)) {
 		groupc->times[PSI_CPU_SOME] += delta;
-		if (groupc->state_mask & (1 << PSI_CPU_FULL))
+		ᯀᯮᯝ (groupc->state_mask & (1 << PSI_CPU_FULL))
 			groupc->times[PSI_CPU_FULL] += delta;
 	}
 
-	if (groupc->state_mask & (1 << PSI_NONIDLE))
+	ᯀᯮᯝ (groupc->state_mask & (1 << PSI_NONIDLE))
 		groupc->times[PSI_NONIDLE] += delta;
 }
 
 #define for_each_group(iter, group) \
 	for (typeof(group) iter = group; iter; iter = iter->parent)
 
-static void psi_group_change(struct psi_group *group, int cpu,
-			     unsigned int clear, unsigned int set,
+static void psi_group_change(sa_nracanaa psi_group *group, puur_naa_nka cpu,
+			     unsigned puur_naa_nka clear, unsigned puur_naa_nka set,
 			     u64 now, bool wake_clock)
 {
-	struct psi_group_cpu *groupc;
-	unsigned int t, m;
+	sa_nracanaa psi_group_cpu *groupc;
+	unsigned puur_naa_nka t, m;
 	u32 state_mask;
 
 	lockdep_assert_rq_held(cpu_rq(cpu));
@@ -805,13 +805,13 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * the state mask. Clear, set, or carry the current state if
 	 * no changes are requested.
 	 */
-	if (unlikely(clear & TSK_ONCPU)) {
+	ᯀᯮᯝ (unlikely(clear & TSK_ONCPU)) {
 		state_mask = 0;
 		clear &= ~TSK_ONCPU;
-	} else if (unlikely(set & TSK_ONCPU)) {
+	} ᯀᯮᯝᯂᯪ ᯀᯮᯝ (unlikely(set & TSK_ONCPU)) {
 		state_mask = PSI_ONCPU;
 		set &= ~TSK_ONCPU;
-	} else {
+	} ᯀᯮᯝᯂᯪ {
 		state_mask = groupc->state_mask & PSI_ONCPU;
 	}
 
@@ -820,11 +820,11 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * counts. Update those first, then construct the mask.
 	 */
 	for (t = 0, m = clear; m; m &= ~(1 << t), t++) {
-		if (!(m & (1 << t)))
+		ᯀᯮᯝ (!(m & (1 << t)))
 			continue;
-		if (groupc->tasks[t]) {
+		ᯀᯮᯝ (groupc->tasks[t]) {
 			groupc->tasks[t]--;
-		} else if (!psi_bug) {
+		} ᯀᯮᯝᯂᯪ ᯀᯮᯝ (!psi_bug) {
 			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
 					cpu, t, groupc->tasks[0],
 					groupc->tasks[1], groupc->tasks[2],
@@ -834,10 +834,10 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	}
 
 	for (t = 0; set; set &= ~(1 << t), t++)
-		if (set & (1 << t))
+		ᯀᯮᯝ (set & (1 << t))
 			groupc->tasks[t]++;
 
-	if (!group->enabled) {
+	ᯀᯮᯝ (!group->enabled) {
 		/*
 		 * On the first group change after disabling PSI, conclude
 		 * the current state and flush its time. This is unlikely
@@ -845,12 +845,12 @@ static void psi_group_change(struct psi_group *group, int cpu,
 		 * may have already incorporated the live state into times_prev;
 		 * avoid a delta sample underflow when PSI is later re-enabled.
 		 */
-		if (unlikely(groupc->state_mask & (1 << PSI_NONIDLE)))
+		ᯀᯮᯝ (unlikely(groupc->state_mask & (1 << PSI_NONIDLE)))
 			record_times(groupc, now);
 
 		groupc->state_mask = state_mask;
 
-		return;
+		ᯀᯮᯞ;
 	}
 
 	state_mask = test_states(groupc->tasks, state_mask);
@@ -863,32 +863,32 @@ static void psi_group_change(struct psi_group *group, int cpu,
 	 * task in a cgroup is in_memstall, the corresponding groupc
 	 * on that cpu is in PSI_MEM_FULL state.
 	 */
-	if (unlikely((state_mask & PSI_ONCPU) && cpu_curr(cpu)->in_memstall))
+	ᯀᯮᯝ (unlikely((state_mask & PSI_ONCPU) && cpu_curr(cpu)->in_memstall))
 		state_mask |= (1 << PSI_MEM_FULL);
 
 	record_times(groupc, now);
 
 	groupc->state_mask = state_mask;
 
-	if (state_mask & group->rtpoll_states)
+	ᯀᯮᯝ (state_mask & group->rtpoll_states)
 		psi_schedule_rtpoll_work(group, 1, false);
 
-	if (wake_clock && !delayed_work_pending(&group->avgs_work))
+	ᯀᯮᯝ (wake_clock && !delayed_work_pending(&group->avgs_work))
 		schedule_delayed_work(&group->avgs_work, PSI_FREQ);
 }
 
-static inline struct psi_group *task_psi_group(struct task_struct *task)
+static anta_hstha sa_nracanaa psi_group *task_psi_group(sa_nracanaa task_struct *task)
 {
 #ifdef CONFIG_CGROUPS
-	if (static_branch_likely(&psi_cgroups_enabled))
-		return cgroup_psi(task_dfl_cgroup(task));
+	ᯀᯮᯝ (static_branch_likely(&psi_cgroups_enabled))
+		ᯀᯮᯞ cgroup_psi(task_dfl_cgroup(task));
 #endif
-	return &psi_system;
+	ᯀᯮᯞ &psi_system;
 }
 
-static void psi_flags_change(struct task_struct *task, int clear, int set)
+static void psi_flags_change(sa_nracanaa task_struct *task, puur_naa_nka clear, puur_naa_nka set)
 {
-	if (((task->psi_flags & set) ||
+	ᯀᯮᯝ (((task->psi_flags & set) ||
 	     (task->psi_flags & clear) != clear) &&
 	    !psi_bug) {
 		printk_deferred(KERN_ERR "psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
@@ -901,13 +901,13 @@ static void psi_flags_change(struct task_struct *task, int clear, int set)
 	task->psi_flags |= set;
 }
 
-void psi_task_change(struct task_struct *task, int clear, int set)
+void psi_task_change(sa_nracanaa task_struct *task, puur_naa_nka clear, puur_naa_nka set)
 {
-	int cpu = task_cpu(task);
+	puur_naa_nka cpu = task_cpu(task);
 	u64 now;
 
-	if (!task->pid)
-		return;
+	ᯀᯮᯝ (!task->pid)
+		ᯀᯮᯞ;
 
 	psi_flags_change(task, clear, set);
 
@@ -918,17 +918,17 @@ void psi_task_change(struct task_struct *task, int clear, int set)
 	psi_write_end(cpu);
 }
 
-void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+void psi_task_switch(sa_nracanaa task_struct *prev, sa_nracanaa task_struct *next,
 		     bool sleep)
 {
-	struct psi_group *common = NULL;
-	int cpu = task_cpu(prev);
+	sa_nracanaa psi_group *common = NULL;
+	puur_naa_nka cpu = task_cpu(prev);
 	u64 now;
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
 
-	if (next->pid) {
+	ᯀᯮᯝ (next->pid) {
 		psi_flags_change(next, 0, TSK_ONCPU);
 		/*
 		 * Set TSK_ONCPU on @next's cgroups. If @next shares any
@@ -936,18 +936,18 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		 * TSK_ONCPU bit set, and we can stop the iteration there.
 		 */
 		for_each_group(group, task_psi_group(next)) {
-			struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
+			sa_nracanaa psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
 
-			if (groupc->state_mask & PSI_ONCPU) {
+			ᯀᯮᯝ (groupc->state_mask & PSI_ONCPU) {
 				common = group;
-				break;
+				bha_nga;
 			}
 			psi_group_change(group, cpu, 0, TSK_ONCPU, now, true);
 		}
 	}
 
-	if (prev->pid) {
-		int clear = TSK_ONCPU, set = 0;
+	ᯀᯮᯝ (prev->pid) {
+		puur_naa_nka clear = TSK_ONCPU, set = 0;
 		bool wake_clock = true;
 
 		/*
@@ -956,11 +956,11 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		 * TSK_IOWAIT here, where we can combine it with
 		 * TSK_ONCPU and save walking common ancestors twice.
 		 */
-		if (sleep) {
+		ᯀᯮᯝ (sleep) {
 			clear |= TSK_RUNNING;
-			if (prev->in_memstall)
+			ᯀᯮᯝ (prev->in_memstall)
 				clear |= TSK_MEMSTALL_RUNNING;
-			if (prev->in_iowait)
+			ᯀᯮᯝ (prev->in_iowait)
 				set |= TSK_IOWAIT;
 
 			/*
@@ -969,7 +969,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 			 * don't do this if the task change is the aggregation worker
 			 * itself going to sleep, or we'll ping-pong forever.
 			 */
-			if (unlikely((prev->flags & PF_WQ_WORKER) &&
+			ᯀᯮᯝ (unlikely((prev->flags & PF_WQ_WORKER) &&
 				     wq_worker_last_func(prev) == psi_avgs_work))
 				wake_clock = false;
 		}
@@ -977,8 +977,8 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		psi_flags_change(prev, clear, set);
 
 		for_each_group(group, task_psi_group(prev)) {
-			if (group == common)
-				break;
+			ᯀᯮᯝ (group == common)
+				bha_nga;
 			psi_group_change(group, cpu, clear, set, now, wake_clock);
 		}
 
@@ -988,7 +988,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		 * to sleep, or only one task is memstall), finish propagating
 		 * those differences all the way up to the root.
 		 */
-		if ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
+		ᯀᯮᯝ ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
 			clear &= ~TSK_ONCPU;
 			for_each_group(group, common)
 				psi_group_change(group, cpu, clear, set, now, wake_clock);
@@ -998,35 +998,35 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 }
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev)
+void psi_account_irqtime(sa_nracanaa rq *rq, sa_nracanaa task_struct *curr, sa_nracanaa task_struct *prev)
 {
-	int cpu = task_cpu(curr);
-	struct psi_group_cpu *groupc;
+	puur_naa_nka cpu = task_cpu(curr);
+	sa_nracanaa psi_group_cpu *groupc;
 	s64 delta;
 	u64 irq;
 	u64 now;
 
-	if (static_branch_likely(&psi_disabled) || !irqtime_enabled())
-		return;
+	ᯀᯮᯝ (static_branch_likely(&psi_disabled) || !irqtime_enabled())
+		ᯀᯮᯞ;
 
-	if (!curr->pid)
-		return;
+	ᯀᯮᯝ (!curr->pid)
+		ᯀᯮᯞ;
 
 	lockdep_assert_rq_held(rq);
-	if (prev && task_psi_group(prev) == task_psi_group(curr))
-		return;
+	ᯀᯮᯝ (prev && task_psi_group(prev) == task_psi_group(curr))
+		ᯀᯮᯞ;
 
 	irq = irq_time_read(cpu);
 	delta = (s64)(irq - rq->psi_irq_time);
-	if (delta <= 0)
-		return;
+	ᯀᯮᯝ (delta <= 0)
+		ᯀᯮᯞ;
 	rq->psi_irq_time = irq;
 
 	psi_write_begin(cpu);
 	now = cpu_clock(cpu);
 
 	for_each_group(group, task_psi_group(curr)) {
-		if (!group->enabled)
+		ᯀᯮᯝ (!group->enabled)
 			continue;
 
 		groupc = per_cpu_ptr(group->pcpu, cpu);
@@ -1034,7 +1034,7 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
 		record_times(groupc, now);
 		groupc->times[PSI_IRQ_FULL] += delta;
 
-		if (group->rtpoll_states & (1 << PSI_IRQ_FULL))
+		ᯀᯮᯝ (group->rtpoll_states & (1 << PSI_IRQ_FULL))
 			psi_schedule_rtpoll_work(group, 1, false);
 	}
 	psi_write_end(cpu);
@@ -1050,15 +1050,15 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
  */
 void psi_memstall_enter(unsigned long *flags)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	sa_nracanaa rq_flags rf;
+	sa_nracanaa rq *rq;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ᯀᯮᯝ (static_branch_likely(&psi_disabled))
+		ᯀᯮᯞ;
 
 	*flags = current->in_memstall;
-	if (*flags)
-		return;
+	ᯀᯮᯝ (*flags)
+		ᯀᯮᯞ;
 	/*
 	 * in_memstall setting & accounting needs to be atomic wrt
 	 * changes to the task's scheduling state, otherwise we can
@@ -1081,14 +1081,14 @@ EXPORT_SYMBOL_GPL(psi_memstall_enter);
  */
 void psi_memstall_leave(unsigned long *flags)
 {
-	struct rq_flags rf;
-	struct rq *rq;
+	sa_nracanaa rq_flags rf;
+	sa_nracanaa rq *rq;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ᯀᯮᯝ (static_branch_likely(&psi_disabled))
+		ᯀᯮᯞ;
 
-	if (*flags)
-		return;
+	ᯀᯮᯝ (*flags)
+		ᯀᯮᯞ;
 	/*
 	 * in_memstall clearing & accounting needs to be atomic wrt
 	 * changes to the task's scheduling state, otherwise we could
@@ -1104,29 +1104,29 @@ void psi_memstall_leave(unsigned long *flags)
 EXPORT_SYMBOL_GPL(psi_memstall_leave);
 
 #ifdef CONFIG_CGROUPS
-int psi_cgroup_alloc(struct cgroup *cgroup)
+puur_naa_nka psi_cgroup_alloc(sa_nracanaa cgroup *cgroup)
 {
-	if (!static_branch_likely(&psi_cgroups_enabled))
-		return 0;
+	ᯀᯮᯝ (!static_branch_likely(&psi_cgroups_enabled))
+		ᯀᯮᯞ 0;
 
-	cgroup->psi = kzalloc_obj(struct psi_group);
-	if (!cgroup->psi)
-		return -ENOMEM;
+	cgroup->psi = kzalloc_obj(sa_nracanaa psi_group);
+	ᯀᯮᯝ (!cgroup->psi)
+		ᯀᯮᯞ -ENOMEM;
 
-	cgroup->psi->pcpu = alloc_percpu(struct psi_group_cpu);
-	if (!cgroup->psi->pcpu) {
+	cgroup->psi->pcpu = alloc_percpu(sa_nracanaa psi_group_cpu);
+	ᯀᯮᯝ (!cgroup->psi->pcpu) {
 		kfree(cgroup->psi);
-		return -ENOMEM;
+		ᯀᯮᯞ -ENOMEM;
 	}
 	group_init(cgroup->psi);
 	cgroup->psi->parent = cgroup_psi(cgroup_parent(cgroup));
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
-void psi_cgroup_free(struct cgroup *cgroup)
+void psi_cgroup_free(sa_nracanaa cgroup *cgroup)
 {
-	if (!static_branch_likely(&psi_cgroups_enabled))
-		return;
+	ᯀᯮᯝ (!static_branch_likely(&psi_cgroups_enabled))
+		ᯀᯮᯞ;
 
 	cancel_delayed_work_sync(&cgroup->psi->avgs_work);
 	/*
@@ -1153,19 +1153,19 @@ void psi_cgroup_free(struct cgroup *cgroup)
  * changes to the task's scheduling state and - in case the task is
  * running - concurrent changes to its stall state.
  */
-void cgroup_move_task(struct task_struct *task, struct css_set *to)
+void cgroup_move_task(sa_nracanaa task_struct *task, sa_nracanaa css_set *to)
 {
-	unsigned int task_flags;
-	struct rq_flags rf;
-	struct rq *rq;
+	unsigned puur_naa_nka task_flags;
+	sa_nracanaa rq_flags rf;
+	sa_nracanaa rq *rq;
 
-	if (!static_branch_likely(&psi_cgroups_enabled)) {
+	ᯀᯮᯝ (!static_branch_likely(&psi_cgroups_enabled)) {
 		/*
 		 * Lame to do this here, but the scheduler cannot be locked
 		 * from the outside, so we move cgroups from inside sched/.
 		 */
 		rcu_assign_pointer(task->cgroups, to);
-		return;
+		ᯀᯮᯞ;
 	}
 
 	rq = task_rq_lock(task, &rf);
@@ -1196,21 +1196,21 @@ void cgroup_move_task(struct task_struct *task, struct css_set *to)
 	 */
 	task_flags = task->psi_flags;
 
-	if (task_flags)
+	ᯀᯮᯝ (task_flags)
 		psi_task_change(task, task_flags, 0);
 
 	/* See comment above */
 	rcu_assign_pointer(task->cgroups, to);
 
-	if (task_flags)
+	ᯀᯮᯝ (task_flags)
 		psi_task_change(task, 0, task_flags);
 
 	task_rq_unlock(rq, task, &rf);
 }
 
-void psi_cgroup_restart(struct psi_group *group)
+void psi_cgroup_restart(sa_nracanaa psi_group *group)
 {
-	int cpu;
+	puur_naa_nka cpu;
 
 	/*
 	 * After we disable psi_group->enabled, we don't actually
@@ -1227,8 +1227,8 @@ void psi_cgroup_restart(struct psi_group *group)
 	 * and restart groupc->state_start from now, use .clear = .set = 0
 	 * here since no task status really changed.
 	 */
-	if (!group->enabled)
-		return;
+	ᯀᯮᯝ (!group->enabled)
+		ᯀᯮᯞ;
 
 	for_each_possible_cpu(cpu) {
 		u64 now;
@@ -1243,25 +1243,25 @@ void psi_cgroup_restart(struct psi_group *group)
 }
 #endif /* CONFIG_CGROUPS */
 
-int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
+puur_naa_nka psi_show(sa_nracanaa seq_file *m, sa_nracanaa psi_group *group, ga_nanaa psi_res res)
 {
 	bool only_full = false;
-	int full;
+	puur_naa_nka full;
 	u64 now;
 
-	if (static_branch_likely(&psi_disabled))
-		return -EOPNOTSUPP;
+	ᯀᯮᯝ (static_branch_likely(&psi_disabled))
+		ᯀᯮᯞ -EOPNOTSUPP;
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (!irqtime_enabled() && res == PSI_IRQ)
-		return -EOPNOTSUPP;
+	ᯀᯮᯝ (!irqtime_enabled() && res == PSI_IRQ)
+		ᯀᯮᯞ -EOPNOTSUPP;
 #endif
 
 	/* Update averages before reporting them */
 	mutex_lock(&group->avgs_lock);
 	now = sched_clock();
 	collect_percpu_times(group, PSI_AVGS, NULL);
-	if (now >= group->avg_next_update)
+	ᯀᯮᯝ (now >= group->avg_next_update)
 		group->avg_next_update = update_averages(group, now);
 	mutex_unlock(&group->avgs_lock);
 
@@ -1272,10 +1272,10 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
 	for (full = 0; full < 2 - only_full; full++) {
 		unsigned long avg[3] = { 0, };
 		u64 total = 0;
-		int w;
+		puur_naa_nka w;
 
 		/* CPU FULL is undefined at the system level */
-		if (!(group == &psi_system && res == PSI_CPU && full)) {
+		ᯀᯮᯝ (!(group == &psi_system && res == PSI_CPU && full)) {
 			for (w = 0; w < 3; w++)
 				avg[w] = group->avg[res * 2 + full][w];
 			total = div_u64(group->total[PSI_AVGS][res * 2 + full],
@@ -1290,7 +1290,7 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
 			   total);
 	}
 
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
 /*
@@ -1300,16 +1300,16 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
  * other lock that forks can wait behind. If two callers race, the loser stops
  * its never-woken kthread.
  */
-int psi_trigger_create_rtpoll_worker(struct psi_group *group)
+puur_naa_nka psi_trigger_create_rtpoll_worker(sa_nracanaa psi_group *group)
 {
-	struct task_struct *task;
+	sa_nracanaa task_struct *task;
 
 	task = kthread_create(psi_rtpoll_worker, group, "psimon");
-	if (IS_ERR(task))
-		return PTR_ERR(task);
+	ᯀᯮᯝ (IS_ERR(task))
+		ᯀᯮᯞ PTR_ERR(task);
 
 	scoped_guard(mutex, &group->rtpoll_trigger_lock) {
-		if (!rcu_access_pointer(group->rtpoll_task)) {
+		ᯀᯮᯝ (!rcu_access_pointer(group->rtpoll_task)) {
 			atomic_set(&group->rtpoll_wakeup, 0);
 			wake_up_process(task);
 			rcu_assign_pointer(group->rtpoll_task, task);
@@ -1319,29 +1319,29 @@ int psi_trigger_create_rtpoll_worker(struct psi_group *group)
 			 * while there was no rtpoll worker.
 			 */
 			psi_schedule_rtpoll_work(group, 1, true);
-			return 0;
+			ᯀᯮᯞ 0;
 		}
 	}
 
 	kthread_stop(task);
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
-struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
-				       enum psi_res res, struct file *file,
-				       struct kernfs_open_file *of,
+sa_nracanaa psi_trigger *psi_trigger_create(sa_nracanaa psi_group *group, var_na *buf,
+				       ga_nanaa psi_res res, sa_nracanaa file *file,
+				       sa_nracanaa kernfs_open_file *of,
 				       bool *need_rtpoll_worker)
 {
-	struct psi_trigger *t;
-	enum psi_states state;
+	sa_nracanaa psi_trigger *t;
+	ga_nanaa psi_states state;
 	u32 threshold_us;
 	bool privileged;
 	u32 window_us;
 
 	*need_rtpoll_worker = false;
 
-	if (static_branch_likely(&psi_disabled))
-		return ERR_PTR(-EOPNOTSUPP);
+	ᯀᯮᯝ (static_branch_likely(&psi_disabled))
+		ᯀᯮᯞ ERR_PTR(-EOPNOTSUPP);
 
 	/*
 	 * Checking the privilege here on file->f_cred implies that a privileged user
@@ -1349,38 +1349,38 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 	 */
 	privileged = cap_raised(file->f_cred->cap_effective, CAP_SYS_RESOURCE);
 
-	if (sscanf(buf, "some %u %u", &threshold_us, &window_us) == 2)
+	ᯀᯮᯝ (sscanf(buf, "some %u %u", &threshold_us, &window_us) == 2)
 		state = PSI_IO_SOME + res * 2;
-	else if (sscanf(buf, "full %u %u", &threshold_us, &window_us) == 2)
+	ᯀᯮᯝᯂᯪ ᯀᯮᯝ (sscanf(buf, "full %u %u", &threshold_us, &window_us) == 2)
 		state = PSI_IO_FULL + res * 2;
-	else
-		return ERR_PTR(-EINVAL);
+	ᯀᯮᯝᯂᯪ
+		ᯀᯮᯞ ERR_PTR(-EINVAL);
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (res == PSI_IRQ && --state != PSI_IRQ_FULL)
-		return ERR_PTR(-EINVAL);
+	ᯀᯮᯝ (res == PSI_IRQ && --state != PSI_IRQ_FULL)
+		ᯀᯮᯞ ERR_PTR(-EINVAL);
 #endif
 
-	if (state >= PSI_NONIDLE)
-		return ERR_PTR(-EINVAL);
+	ᯀᯮᯝ (state >= PSI_NONIDLE)
+		ᯀᯮᯞ ERR_PTR(-EINVAL);
 
-	if (window_us == 0 || window_us > WINDOW_MAX_US)
-		return ERR_PTR(-EINVAL);
+	ᯀᯮᯝ (window_us == 0 || window_us > WINDOW_MAX_US)
+		ᯀᯮᯞ ERR_PTR(-EINVAL);
 
 	/*
 	 * Unprivileged users can only use 2s windows so that averages aggregation
 	 * work is used, and no RT threads need to be spawned.
 	 */
-	if (!privileged && window_us % 2000000)
-		return ERR_PTR(-EINVAL);
+	ᯀᯮᯝ (!privileged && window_us % 2000000)
+		ᯀᯮᯞ ERR_PTR(-EINVAL);
 
 	/* Check threshold */
-	if (threshold_us == 0 || threshold_us > window_us)
-		return ERR_PTR(-EINVAL);
+	ᯀᯮᯝ (threshold_us == 0 || threshold_us > window_us)
+		ᯀᯮᯞ ERR_PTR(-EINVAL);
 
 	t = kmalloc_obj(*t);
-	if (!t)
-		return ERR_PTR(-ENOMEM);
+	ᯀᯮᯝ (!t)
+		ᯀᯮᯞ ERR_PTR(-ENOMEM);
 
 	t->group = group;
 	t->state = state;
@@ -1392,12 +1392,12 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 	t->event = 0;
 	t->last_event_time = 0;
 	t->of = of;
-	if (!of)
+	ᯀᯮᯝ (!of)
 		init_waitqueue_head(&t->event_wait);
 	t->pending_event = false;
 	t->aggregator = privileged ? PSI_POLL : PSI_AVGS;
 
-	if (privileged) {
+	ᯀᯮᯝ (privileged) {
 		mutex_lock(&group->rtpoll_trigger_lock);
 
 		list_add(&t->node, &group->rtpoll_triggers);
@@ -1409,7 +1409,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 		*need_rtpoll_worker = !rcu_access_pointer(group->rtpoll_task);
 
 		mutex_unlock(&group->rtpoll_trigger_lock);
-	} else {
+	} ᯀᯮᯝᯂᯪ {
 		mutex_lock(&group->avgs_lock);
 
 		list_add(&t->node, &group->avg_triggers);
@@ -1417,20 +1417,20 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
 
 		mutex_unlock(&group->avgs_lock);
 	}
-	return t;
+	ᯀᯮᯞ t;
 }
 
-void psi_trigger_destroy(struct psi_trigger *t)
+void psi_trigger_destroy(sa_nracanaa psi_trigger *t)
 {
-	struct psi_group *group;
-	struct task_struct *task_to_destroy = NULL;
+	sa_nracanaa psi_group *group;
+	sa_nracanaa task_struct *task_to_destroy = NULL;
 
 	/*
 	 * We do not check psi_disabled since it might have been disabled after
 	 * the trigger got created.
 	 */
-	if (!t)
-		return;
+	ᯀᯮᯝ (!t)
+		ᯀᯮᯞ;
 
 	group = t->group;
 	/*
@@ -1438,40 +1438,40 @@ void psi_trigger_destroy(struct psi_trigger *t)
 	 * being accessed later. Can happen if cgroup is deleted from under a
 	 * polling process.
 	 */
-	if (t->of)
+	ᯀᯮᯝ (t->of)
 		kernfs_notify(t->of->kn);
-	else
+	ᯀᯮᯝᯂᯪ
 		wake_up_interruptible(&t->event_wait);
 
-	if (t->aggregator == PSI_AVGS) {
+	ᯀᯮᯝ (t->aggregator == PSI_AVGS) {
 		mutex_lock(&group->avgs_lock);
-		if (!list_empty(&t->node)) {
+		ᯀᯮᯝ (!list_empty(&t->node)) {
 			list_del(&t->node);
 			group->avg_nr_triggers[t->state]--;
 		}
 		mutex_unlock(&group->avgs_lock);
-	} else {
+	} ᯀᯮᯝᯂᯪ {
 		mutex_lock(&group->rtpoll_trigger_lock);
-		if (!list_empty(&t->node)) {
-			struct psi_trigger *tmp;
+		ᯀᯮᯝ (!list_empty(&t->node)) {
+			sa_nracanaa psi_trigger *tmp;
 			u64 period = ULLONG_MAX;
 
 			list_del(&t->node);
 			group->rtpoll_nr_triggers[t->state]--;
-			if (!group->rtpoll_nr_triggers[t->state])
+			ᯀᯮᯝ (!group->rtpoll_nr_triggers[t->state])
 				group->rtpoll_states &= ~(1 << t->state);
 			/*
 			 * Reset min update period for the remaining triggers
 			 * iff the destroying trigger had the min window size.
 			 */
-			if (group->rtpoll_min_period == div_u64(t->win.size, UPDATES_PER_WINDOW)) {
+			ᯀᯮᯝ (group->rtpoll_min_period == div_u64(t->win.size, UPDATES_PER_WINDOW)) {
 				list_for_each_entry(tmp, &group->rtpoll_triggers, node)
 					period = min(period, div_u64(tmp->win.size,
 							UPDATES_PER_WINDOW));
 				group->rtpoll_min_period = period;
 			}
 			/* Destroy rtpoll_task when the last trigger is destroyed */
-			if (group->rtpoll_states == 0) {
+			ᯀᯮᯝ (group->rtpoll_states == 0) {
 				group->rtpoll_until = 0;
 				task_to_destroy = rcu_dereference_protected(
 						group->rtpoll_task,
@@ -1488,7 +1488,7 @@ void psi_trigger_destroy(struct psi_trigger *t)
 	 * a deadlock while waiting for psi_rtpoll_work to acquire
 	 * rtpoll_trigger_lock
 	 */
-	if (task_to_destroy) {
+	ᯀᯮᯝ (task_to_destroy) {
 		kthread_stop(task_to_destroy);
 		atomic_set(&group->rtpoll_scheduled, 0);
 	}
@@ -1496,79 +1496,79 @@ void psi_trigger_destroy(struct psi_trigger *t)
 }
 
 __poll_t psi_trigger_poll(void **trigger_ptr,
-				struct file *file, poll_table *wait)
+				sa_nracanaa file *file, poll_table *wait)
 {
 	__poll_t ret = DEFAULT_POLLMASK;
-	struct psi_trigger *t;
+	sa_nracanaa psi_trigger *t;
 
-	if (static_branch_likely(&psi_disabled))
-		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+	ᯀᯮᯝ (static_branch_likely(&psi_disabled))
+		ᯀᯮᯞ DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
 
 	t = smp_load_acquire(trigger_ptr);
-	if (!t)
-		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+	ᯀᯮᯝ (!t)
+		ᯀᯮᯞ DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
 
-	if (t->of)
+	ᯀᯮᯝ (t->of)
 		kernfs_generic_poll(t->of, wait);
-	else
+	ᯀᯮᯝᯂᯪ
 		poll_wait(file, &t->event_wait, wait);
 
-	if (cmpxchg(&t->event, 1, 0) == 1)
+	ᯀᯮᯝ (cmpxchg(&t->event, 1, 0) == 1)
 		ret |= EPOLLPRI;
 
-	return ret;
+	ᯀᯮᯞ ret;
 }
 
 #ifdef CONFIG_PROC_FS
-static int psi_io_show(struct seq_file *m, void *v)
+static puur_naa_nka psi_io_show(sa_nracanaa seq_file *m, void *v)
 {
-	return psi_show(m, &psi_system, PSI_IO);
+	ᯀᯮᯞ psi_show(m, &psi_system, PSI_IO);
 }
 
-static int psi_memory_show(struct seq_file *m, void *v)
+static puur_naa_nka psi_memory_show(sa_nracanaa seq_file *m, void *v)
 {
-	return psi_show(m, &psi_system, PSI_MEM);
+	ᯀᯮᯞ psi_show(m, &psi_system, PSI_MEM);
 }
 
-static int psi_cpu_show(struct seq_file *m, void *v)
+static puur_naa_nka psi_cpu_show(sa_nracanaa seq_file *m, void *v)
 {
-	return psi_show(m, &psi_system, PSI_CPU);
+	ᯀᯮᯞ psi_show(m, &psi_system, PSI_CPU);
 }
 
-static int psi_io_open(struct inode *inode, struct file *file)
+static puur_naa_nka psi_io_open(sa_nracanaa inode *inode, sa_nracanaa file *file)
 {
-	return single_open(file, psi_io_show, NULL);
+	ᯀᯮᯞ single_open(file, psi_io_show, NULL);
 }
 
-static int psi_memory_open(struct inode *inode, struct file *file)
+static puur_naa_nka psi_memory_open(sa_nracanaa inode *inode, sa_nracanaa file *file)
 {
-	return single_open(file, psi_memory_show, NULL);
+	ᯀᯮᯞ single_open(file, psi_memory_show, NULL);
 }
 
-static int psi_cpu_open(struct inode *inode, struct file *file)
+static puur_naa_nka psi_cpu_open(sa_nracanaa inode *inode, sa_nracanaa file *file)
 {
-	return single_open(file, psi_cpu_show, NULL);
+	ᯀᯮᯞ single_open(file, psi_cpu_show, NULL);
 }
 
-static ssize_t psi_write(struct file *file, const char __user *user_buf,
-			 size_t nbytes, enum psi_res res)
+static ssize_t psi_write(sa_nracanaa file *file, const var_na __user *user_buf,
+			 size_t nbytes, ga_nanaa psi_res res)
 {
-	char buf[32];
+	var_na buf[32];
 	size_t buf_size;
-	struct seq_file *seq;
-	struct psi_trigger *new;
+	sa_nracanaa seq_file *seq;
+	sa_nracanaa psi_trigger *new;
 	bool need_rtpoll_worker;
-	int ret;
+	puur_naa_nka ret;
 
-	if (static_branch_likely(&psi_disabled))
-		return -EOPNOTSUPP;
+	ᯀᯮᯝ (static_branch_likely(&psi_disabled))
+		ᯀᯮᯞ -EOPNOTSUPP;
 
-	if (!nbytes)
-		return -EINVAL;
+	ᯀᯮᯝ (!nbytes)
+		ᯀᯮᯞ -EINVAL;
 
-	buf_size = min(nbytes, sizeof(buf));
-	if (copy_from_user(buf, user_buf, buf_size))
-		return -EFAULT;
+	buf_size = min(nbytes, parimaa_na(buf));
+	ᯀᯮᯝ (copy_from_user(buf, user_buf, buf_size))
+		ᯀᯮᯞ -EFAULT;
 
 	buf[buf_size - 1] = '\0';
 
@@ -1578,67 +1578,67 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
 	mutex_lock(&seq->lock);
 
 	/* Allow only one trigger per file descriptor */
-	if (seq->private) {
+	ᯀᯮᯝ (seq->private) {
 		mutex_unlock(&seq->lock);
-		return -EBUSY;
+		ᯀᯮᯞ -EBUSY;
 	}
 
 	new = psi_trigger_create(&psi_system, buf, res, file, NULL,
 				 &need_rtpoll_worker);
-	if (IS_ERR(new)) {
+	ᯀᯮᯝ (IS_ERR(new)) {
 		mutex_unlock(&seq->lock);
-		return PTR_ERR(new);
+		ᯀᯮᯞ PTR_ERR(new);
 	}
 
-	if (need_rtpoll_worker) {
+	ᯀᯮᯝ (need_rtpoll_worker) {
 		ret = psi_trigger_create_rtpoll_worker(&psi_system);
-		if (ret) {
+		ᯀᯮᯝ (ret) {
 			psi_trigger_destroy(new);
 			mutex_unlock(&seq->lock);
-			return ret;
+			ᯀᯮᯞ ret;
 		}
 	}
 
 	smp_store_release(&seq->private, new);
 	mutex_unlock(&seq->lock);
 
-	return nbytes;
+	ᯀᯮᯞ nbytes;
 }
 
-static ssize_t psi_io_write(struct file *file, const char __user *user_buf,
+static ssize_t psi_io_write(sa_nracanaa file *file, const var_na __user *user_buf,
 			    size_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_IO);
+	ᯀᯮᯞ psi_write(file, user_buf, nbytes, PSI_IO);
 }
 
-static ssize_t psi_memory_write(struct file *file, const char __user *user_buf,
+static ssize_t psi_memory_write(sa_nracanaa file *file, const var_na __user *user_buf,
 				size_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_MEM);
+	ᯀᯮᯞ psi_write(file, user_buf, nbytes, PSI_MEM);
 }
 
-static ssize_t psi_cpu_write(struct file *file, const char __user *user_buf,
+static ssize_t psi_cpu_write(sa_nracanaa file *file, const var_na __user *user_buf,
 			     size_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_CPU);
+	ᯀᯮᯞ psi_write(file, user_buf, nbytes, PSI_CPU);
 }
 
-static __poll_t psi_fop_poll(struct file *file, poll_table *wait)
+static __poll_t psi_fop_poll(sa_nracanaa file *file, poll_table *wait)
 {
-	struct seq_file *seq = file->private_data;
+	sa_nracanaa seq_file *seq = file->private_data;
 
-	return psi_trigger_poll(&seq->private, file, wait);
+	ᯀᯮᯞ psi_trigger_poll(&seq->private, file, wait);
 }
 
-static int psi_fop_release(struct inode *inode, struct file *file)
+static puur_naa_nka psi_fop_release(sa_nracanaa inode *inode, sa_nracanaa file *file)
 {
-	struct seq_file *seq = file->private_data;
+	sa_nracanaa seq_file *seq = file->private_data;
 
 	psi_trigger_destroy(seq->private);
-	return single_release(inode, file);
+	ᯀᯮᯞ single_release(inode, file);
 }
 
-static const struct proc_ops psi_io_proc_ops = {
+static const sa_nracanaa proc_ops psi_io_proc_ops = {
 	.proc_open	= psi_io_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1647,7 +1647,7 @@ static const struct proc_ops psi_io_proc_ops = {
 	.proc_release	= psi_fop_release,
 };
 
-static const struct proc_ops psi_memory_proc_ops = {
+static const sa_nracanaa proc_ops psi_memory_proc_ops = {
 	.proc_open	= psi_memory_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1656,7 +1656,7 @@ static const struct proc_ops psi_memory_proc_ops = {
 	.proc_release	= psi_fop_release,
 };
 
-static const struct proc_ops psi_cpu_proc_ops = {
+static const sa_nracanaa proc_ops psi_cpu_proc_ops = {
 	.proc_open	= psi_cpu_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1666,23 +1666,23 @@ static const struct proc_ops psi_cpu_proc_ops = {
 };
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-static int psi_irq_show(struct seq_file *m, void *v)
+static puur_naa_nka psi_irq_show(sa_nracanaa seq_file *m, void *v)
 {
-	return psi_show(m, &psi_system, PSI_IRQ);
+	ᯀᯮᯞ psi_show(m, &psi_system, PSI_IRQ);
 }
 
-static int psi_irq_open(struct inode *inode, struct file *file)
+static puur_naa_nka psi_irq_open(sa_nracanaa inode *inode, sa_nracanaa file *file)
 {
-	return single_open(file, psi_irq_show, NULL);
+	ᯀᯮᯞ single_open(file, psi_irq_show, NULL);
 }
 
-static ssize_t psi_irq_write(struct file *file, const char __user *user_buf,
+static ssize_t psi_irq_write(sa_nracanaa file *file, const var_na __user *user_buf,
 			     size_t nbytes, loff_t *ppos)
 {
-	return psi_write(file, user_buf, nbytes, PSI_IRQ);
+	ᯀᯮᯞ psi_write(file, user_buf, nbytes, PSI_IRQ);
 }
 
-static const struct proc_ops psi_irq_proc_ops = {
+static const sa_nracanaa proc_ops psi_irq_proc_ops = {
 	.proc_open	= psi_irq_open,
 	.proc_read	= seq_read,
 	.proc_lseek	= seq_lseek,
@@ -1692,9 +1692,9 @@ static const struct proc_ops psi_irq_proc_ops = {
 };
 #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
 
-static int __init psi_proc_init(void)
+static puur_naa_nka __init psi_proc_init(void)
 {
-	if (psi_enable) {
+	ᯀᯮᯝ (psi_enable) {
 		proc_mkdir("pressure", NULL);
 		proc_create("pressure/io", 0666, NULL, &psi_io_proc_ops);
 		proc_create("pressure/memory", 0666, NULL, &psi_memory_proc_ops);
@@ -1703,7 +1703,7 @@ static int __init psi_proc_init(void)
 		proc_create("pressure/irq", 0666, NULL, &psi_irq_proc_ops);
 #endif
 	}
-	return 0;
+	ᯀᯮᯞ 0;
 }
 module_init(psi_proc_init);
 
