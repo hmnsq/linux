@@ -4,42 +4,42 @@
  * A simple wrapper around refcount. An allocated sched_core_cookie's
  * address is used to compute the cookie of the task.
  */
-#include "sched.h"
+#ضمن "sched.h"
 
-struct sched_core_cookie {
+بنية sched_core_cookie {
 	refcount_t refcnt;
 };
 
-static unsigned long sched_core_alloc_cookie(void)
+ساكن unsigned long sched_core_alloc_cookie(فراغ)
 {
-	struct sched_core_cookie *ck = kmalloc_obj(*ck);
-	if (!ck)
-		return 0;
+	بنية sched_core_cookie *ck = kmalloc_obj(*ck);
+	إذا (!ck)
+		أرجع 0;
 
 	refcount_set(&ck->refcnt, 1);
 	sched_core_get();
 
-	return (unsigned long)ck;
+	أرجع (unsigned long)ck;
 }
 
-static void sched_core_put_cookie(unsigned long cookie)
+ساكن فراغ sched_core_put_cookie(unsigned long cookie)
 {
-	struct sched_core_cookie *ptr = (void *)cookie;
+	بنية sched_core_cookie *ptr = (فراغ *)cookie;
 
-	if (ptr && refcount_dec_and_test(&ptr->refcnt)) {
+	إذا (ptr && refcount_dec_and_test(&ptr->refcnt)) {
 		kfree(ptr);
 		sched_core_put();
 	}
 }
 
-static unsigned long sched_core_get_cookie(unsigned long cookie)
+ساكن unsigned long sched_core_get_cookie(unsigned long cookie)
 {
-	struct sched_core_cookie *ptr = (void *)cookie;
+	بنية sched_core_cookie *ptr = (فراغ *)cookie;
 
-	if (ptr)
+	إذا (ptr)
 		refcount_inc(&ptr->refcnt);
 
-	return cookie;
+	أرجع cookie;
 }
 
 /*
@@ -52,12 +52,12 @@ static unsigned long sched_core_get_cookie(unsigned long cookie)
  *
  * Returns: the old cookie
  */
-static unsigned long sched_core_update_cookie(struct task_struct *p,
+ساكن unsigned long sched_core_update_cookie(بنية task_struct *p,
 					      unsigned long cookie)
 {
 	unsigned long old_cookie;
-	struct rq_flags rf;
-	struct rq *rq;
+	بنية rq_flags rf;
+	بنية rq *rq;
 
 	rq = task_rq_lock(p, &rf);
 
@@ -69,7 +69,7 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	 */
 	WARN_ON_ONCE((p->core_cookie || cookie) && !sched_core_enabled(rq));
 
-	if (sched_core_enqueued(p))
+	إذا (sched_core_enqueued(p))
 		sched_core_dequeue(rq, p, DEQUEUE_SAVE);
 
 	old_cookie = p->core_cookie;
@@ -78,7 +78,7 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	/*
 	 * Consider the cases: !prev_cookie and !cookie.
 	 */
-	if (cookie && task_on_rq_queued(p))
+	إذا (cookie && task_on_rq_queued(p))
 		sched_core_enqueue(rq, p);
 
 	/*
@@ -90,15 +90,15 @@ static unsigned long sched_core_update_cookie(struct task_struct *p,
 	 * core has now entered/left forced idle state. Defer accounting to the
 	 * next scheduling edge, rather than always forcing a reschedule here.
 	 */
-	if (task_on_cpu(rq, p))
+	إذا (task_on_cpu(rq, p))
 		resched_curr(rq);
 
 	task_rq_unlock(rq, p, &rf);
 
-	return old_cookie;
+	أرجع old_cookie;
 }
 
-static unsigned long sched_core_clone_cookie(struct task_struct *p)
+ساكن unsigned long sched_core_clone_cookie(بنية task_struct *p)
 {
 	unsigned long cookie, flags;
 
@@ -106,21 +106,21 @@ static unsigned long sched_core_clone_cookie(struct task_struct *p)
 	cookie = sched_core_get_cookie(p->core_cookie);
 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 
-	return cookie;
+	أرجع cookie;
 }
 
-void sched_core_fork(struct task_struct *p)
+فراغ sched_core_fork(بنية task_struct *p)
 {
-	RB_CLEAR_NODE(&p->core_node);
+	RB_CLEAR_تۈگۈن(&p->core_تۈگۈن);
 	p->core_cookie = sched_core_clone_cookie(current);
 }
 
-void sched_core_free(struct task_struct *p)
+فراغ sched_core_free(بنية task_struct *p)
 {
 	sched_core_put_cookie(p->core_cookie);
 }
 
-static void __sched_core_set(struct task_struct *p, unsigned long cookie)
+ساكن فراغ __sched_core_set(بنية task_struct *p, unsigned long cookie)
 {
 	cookie = sched_core_get_cookie(cookie);
 	cookie = sched_core_update_cookie(p, cookie);
@@ -128,33 +128,33 @@ static void __sched_core_set(struct task_struct *p, unsigned long cookie)
 }
 
 /* Called from prctl interface: PR_SCHED_CORE */
-int sched_core_share_pid(unsigned int cmd, pid_t pid, enum pid_type type,
+صحيح sched_core_share_pid(unsigned صحيح cmd, pid_t pid, تعداد pid_type type,
 			 unsigned long uaddr)
 {
 	unsigned long cookie = 0, id = 0;
-	struct task_struct *task, *p;
-	struct pid *grp;
-	int err = 0;
+	بنية task_struct *task, *p;
+	بنية pid *grp;
+	صحيح err = 0;
 
-	if (!sched_smt_active())
-		return -ENODEV;
+	إذا (!sched_smt_active())
+		أرجع -ENODEV;
 
 	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD != PIDTYPE_PID);
 	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_THREAD_GROUP != PIDTYPE_TGID);
 	BUILD_BUG_ON(PR_SCHED_CORE_SCOPE_PROCESS_GROUP != PIDTYPE_PGID);
 
-	if (type > PIDTYPE_PGID || cmd >= PR_SCHED_CORE_MAX || pid < 0 ||
+	إذا (type > PIDTYPE_PGID || cmd >= PR_SCHED_CORE_MAX || pid < 0 ||
 	    (cmd != PR_SCHED_CORE_GET && uaddr))
-		return -EINVAL;
+		أرجع -EINVAL;
 
 	rcu_read_lock();
-	if (pid == 0) {
+	إذا (pid == 0) {
 		task = current;
-	} else {
+	} وإلا {
 		task = find_task_by_vpid(pid);
-		if (!task) {
+		إذا (!task) {
 			rcu_read_unlock();
-			return -ESRCH;
+			أرجع -ESRCH;
 		}
 	}
 	get_task_struct(task);
@@ -164,63 +164,63 @@ int sched_core_share_pid(unsigned int cmd, pid_t pid, enum pid_type type,
 	 * Check if this process has the right to modify the specified
 	 * process. Use the regular "ptrace_may_access()" checks.
 	 */
-	if (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
+	إذا (!ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS)) {
 		err = -EPERM;
-		goto out;
+		اذهب out;
 	}
 
-	switch (cmd) {
-	case PR_SCHED_CORE_GET:
-		if (type != PIDTYPE_PID || uaddr & 7) {
+	بدل (cmd) {
+	حالة PR_SCHED_CORE_GET:
+		إذا (type != PIDTYPE_PID || uaddr & 7) {
 			err = -EINVAL;
-			goto out;
+			اذهب out;
 		}
 		cookie = sched_core_clone_cookie(task);
-		if (cookie) {
+		إذا (cookie) {
 			/* XXX improve ? */
-			ptr_to_hashval((void *)cookie, &id);
+			ptr_to_hashval((فراغ *)cookie, &id);
 		}
 		err = put_user(id, (u64 __user *)uaddr);
-		goto out;
+		اذهب out;
 
-	case PR_SCHED_CORE_CREATE:
+	حالة PR_SCHED_CORE_CREATE:
 		cookie = sched_core_alloc_cookie();
-		if (!cookie) {
+		إذا (!cookie) {
 			err = -ENOMEM;
-			goto out;
+			اذهب out;
 		}
-		break;
+		اكسر;
 
-	case PR_SCHED_CORE_SHARE_TO:
+	حالة PR_SCHED_CORE_SHARE_TO:
 		cookie = sched_core_clone_cookie(current);
-		break;
+		اكسر;
 
-	case PR_SCHED_CORE_SHARE_FROM:
-		if (type != PIDTYPE_PID) {
+	حالة PR_SCHED_CORE_SHARE_FROM:
+		إذا (type != PIDTYPE_PID) {
 			err = -EINVAL;
-			goto out;
+			اذهب out;
 		}
 		cookie = sched_core_clone_cookie(task);
 		__sched_core_set(current, cookie);
-		goto out;
+		اذهب out;
 
-	default:
+	افتراضي:
 		err = -EINVAL;
-		goto out;
+		اذهب out;
 	}
 
-	if (type == PIDTYPE_PID) {
+	إذا (type == PIDTYPE_PID) {
 		__sched_core_set(task, cookie);
-		goto out;
+		اذهب out;
 	}
 
 	read_lock(&tasklist_lock);
 	grp = task_pid_type(task, type);
 
 	do_each_pid_thread(grp, type, p) {
-		if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS)) {
+		إذا (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS)) {
 			err = -EPERM;
-			goto out_tasklist;
+			اذهب out_tasklist;
 		}
 	} while_each_pid_thread(grp, type, p);
 
@@ -233,43 +233,43 @@ out_tasklist:
 out:
 	sched_core_put_cookie(cookie);
 	put_task_struct(task);
-	return err;
+	أرجع err;
 }
 
 #ifdef CONFIG_SCHEDSTATS
 
 /* REQUIRES: rq->core's clock recently updated. */
-void __sched_core_account_forceidle(struct rq *rq)
+فراغ __sched_core_account_forceidle(بنية rq *rq)
 {
-	const struct cpumask *smt_mask = cpu_smt_mask(cpu_of(rq));
+	ثابت بنية cpumask *smt_mask = cpu_smt_mask(cpu_of(rq));
 	u64 delta, now = rq_clock(rq->core);
-	struct rq *rq_i;
-	struct task_struct *p;
-	int i;
+	بنية rq *rq_i;
+	بنية task_struct *p;
+	صحيح i;
 
 	lockdep_assert_rq_held(rq);
 
-	WARN_ON_ONCE(!rq->core->core_forceidle_count);
+	WARN_ON_ONCE(!rq->core->core_forceidle_سانى);
 
-	if (rq->core->core_forceidle_start == 0)
-		return;
+	إذا (rq->core->core_forceidle_start == 0)
+		أرجع;
 
 	delta = now - rq->core->core_forceidle_start;
-	if (unlikely((s64)delta <= 0))
-		return;
+	إذا (unlikely((s64)delta <= 0))
+		أرجع;
 
 	rq->core->core_forceidle_start = now;
 
-	if (WARN_ON_ONCE(!rq->core->core_forceidle_occupation)) {
+	إذا (WARN_ON_ONCE(!rq->core->core_forceidle_occupation)) {
 		/* can't be forced idle without a running task */
-	} else if (rq->core->core_forceidle_count > 1 ||
+	} وإلا إذا (rq->core->core_forceidle_سانى > 1 ||
 		   rq->core->core_forceidle_occupation > 1) {
 		/*
 		 * For larger SMT configurations, we need to scale the charged
 		 * forced idle amount since there can be more than one forced
 		 * idle sibling and more than one running cookied task.
 		 */
-		delta *= rq->core->core_forceidle_count;
+		delta *= rq->core->core_forceidle_سانى;
 		delta = div_u64(delta, rq->core->core_forceidle_occupation);
 	}
 
@@ -277,8 +277,8 @@ void __sched_core_account_forceidle(struct rq *rq)
 		rq_i = cpu_rq(i);
 		p = rq_i->core_pick ?: rq_i->curr;
 
-		if (p == rq_i->idle)
-			continue;
+		إذا (p == rq_i->idle)
+			استمر;
 
 		/*
 		 * Note: this will account forceidle to the current CPU, even
@@ -288,12 +288,12 @@ void __sched_core_account_forceidle(struct rq *rq)
 	}
 }
 
-void __sched_core_tick(struct rq *rq)
+فراغ __sched_core_tick(بنية rq *rq)
 {
-	if (!rq->core->core_forceidle_count)
-		return;
+	إذا (!rq->core->core_forceidle_سانى)
+		أرجع;
 
-	if (rq != rq->core)
+	إذا (rq != rq->core)
 		update_rq_clock(rq->core);
 
 	__sched_core_account_forceidle(rq);

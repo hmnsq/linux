@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
-#include <linux/sched/debug.h>
-#include "sched.h"
+#ضمن <linux/sched/debug.h>
+#ضمن "sched.h"
 
 /*
  * The implementation of the wait_bit*() and related waiting APIs:
@@ -10,125 +10,125 @@
 #define WAIT_TABLE_BITS 8
 #define WAIT_TABLE_SIZE (1 << WAIT_TABLE_BITS)
 
-static wait_queue_head_t bit_wait_table[WAIT_TABLE_SIZE] __cacheline_aligned;
+ساكن wait_queue_head_t bit_wait_table[WAIT_TABLE_SIZE] __cacheline_aligned;
 
-wait_queue_head_t *bit_waitqueue(unsigned long *word, int bit)
+wait_queue_head_t *bit_waitqueue(unsigned long *word, صحيح bit)
 {
-	const int shift = BITS_PER_LONG == 32 ? 5 : 6;
+	ثابت صحيح shift = BITS_PER_LONG == 32 ? 5 : 6;
 	unsigned long val = (unsigned long)word << shift | bit;
 
-	return bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
+	أرجع bit_wait_table + hash_long(val, WAIT_TABLE_BITS);
 }
-EXPORT_SYMBOL(bit_waitqueue);
+EXPORT_بەلگە(bit_waitqueue);
 
-int wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+صحيح wake_bit_function(بنية wait_queue_entry *wq_entry, unsigned mode, صحيح sync, فراغ *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wait_bit = container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	بنية wait_bit_ئاچقۇچ *ئاچقۇچ = arg;
+	بنية wait_bit_queue_entry *wait_bit = container_of(wq_entry, بنية wait_bit_queue_entry, wq_entry);
 
-	if (wait_bit->key.flags != key->flags ||
-			wait_bit->key.bit_nr != key->bit_nr ||
-			test_bit(key->bit_nr, key->flags))
-		return 0;
+	إذا (wait_bit->ئاچقۇچ.flags != ئاچقۇچ->flags ||
+			wait_bit->ئاچقۇچ.bit_nr != ئاچقۇچ->bit_nr ||
+			test_bit(ئاچقۇچ->bit_nr, ئاچقۇچ->flags))
+		أرجع 0;
 
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	أرجع autoremove_wake_function(wq_entry, mode, sync, ئاچقۇچ);
 }
-EXPORT_SYMBOL(wake_bit_function);
+EXPORT_بەلگە(wake_bit_function);
 
 /*
  * To allow interruptible waiting and asynchronous (i.e. non-blocking)
  * waiting, the actions of __wait_on_bit() and __wait_on_bit_lock() are
  * permitted return codes. Nonzero return codes halt waiting and return.
  */
-int __sched
-__wait_on_bit(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
+صحيح __sched
+__wait_on_bit(بنية wait_queue_head *wq_head, بنية wait_bit_queue_entry *wbq_entry,
 	      wait_bit_action_f *action, unsigned mode)
 {
-	int ret = 0;
+	صحيح ret = 0;
 
-	do {
+	افعل {
 		prepare_to_wait(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags))
-			ret = (*action)(&wbq_entry->key, mode);
-	} while (test_bit_acquire(wbq_entry->key.bit_nr, wbq_entry->key.flags) && !ret);
+		إذا (test_bit(wbq_entry->ئاچقۇچ.bit_nr, wbq_entry->ئاچقۇچ.flags))
+			ret = (*action)(&wbq_entry->ئاچقۇچ, mode);
+	} طالما (test_bit_acquire(wbq_entry->ئاچقۇچ.bit_nr, wbq_entry->ئاچقۇچ.flags) && !ret);
 
 	finish_wait(wq_head, &wbq_entry->wq_entry);
 
-	return ret;
+	أرجع ret;
 }
-EXPORT_SYMBOL(__wait_on_bit);
+EXPORT_بەلگە(__wait_on_bit);
 
-int __sched out_of_line_wait_on_bit(unsigned long *word, int bit,
+صحيح __sched out_of_قۇر_wait_on_bit(unsigned long *word, صحيح bit,
 				    wait_bit_action_f *action, unsigned mode)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	بنية wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	أرجع __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit);
+EXPORT_بەلگە(out_of_قۇر_wait_on_bit);
 
-int __sched out_of_line_wait_on_bit_timeout(
-	unsigned long *word, int bit, wait_bit_action_f *action,
+صحيح __sched out_of_قۇر_wait_on_bit_timeout(
+	unsigned long *word, صحيح bit, wait_bit_action_f *action,
 	unsigned mode, unsigned long timeout)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	بنية wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	wq_entry.key.timeout = jiffies + timeout;
+	wq_entry.ئاچقۇچ.timeout = jiffies + timeout;
 
-	return __wait_on_bit(wq_head, &wq_entry, action, mode);
+	أرجع __wait_on_bit(wq_head, &wq_entry, action, mode);
 }
-EXPORT_SYMBOL_GPL(out_of_line_wait_on_bit_timeout);
+EXPORT_بەلگە_GPL(out_of_قۇر_wait_on_bit_timeout);
 
-int __sched
-__wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
+صحيح __sched
+__wait_on_bit_lock(بنية wait_queue_head *wq_head, بنية wait_bit_queue_entry *wbq_entry,
 			wait_bit_action_f *action, unsigned mode)
 {
-	int ret = 0;
+	صحيح ret = 0;
 
-	for (;;) {
+	لكل (;;) {
 		prepare_to_wait_exclusive(wq_head, &wbq_entry->wq_entry, mode);
-		if (test_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			ret = action(&wbq_entry->key, mode);
+		إذا (test_bit(wbq_entry->ئاچقۇچ.bit_nr, wbq_entry->ئاچقۇچ.flags)) {
+			ret = action(&wbq_entry->ئاچقۇچ, mode);
 			/*
 			 * See the comment in prepare_to_wait_event().
 			 * finish_wait() does not necessarily takes wwq_head->lock,
 			 * but test_and_set_bit() implies mb() which pairs with
 			 * smp_mb__after_atomic() before wake_up_page().
 			 */
-			if (ret)
+			إذا (ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
 		}
-		if (!test_and_set_bit(wbq_entry->key.bit_nr, wbq_entry->key.flags)) {
-			if (!ret)
+		إذا (!test_and_set_bit(wbq_entry->ئاچقۇچ.bit_nr, wbq_entry->ئاچقۇچ.flags)) {
+			إذا (!ret)
 				finish_wait(wq_head, &wbq_entry->wq_entry);
-			return 0;
-		} else if (ret) {
-			return ret;
+			أرجع 0;
+		} وإلا إذا (ret) {
+			أرجع ret;
 		}
 	}
 }
-EXPORT_SYMBOL(__wait_on_bit_lock);
+EXPORT_بەلگە(__wait_on_bit_lock);
 
-int __sched out_of_line_wait_on_bit_lock(unsigned long *word, int bit,
+صحيح __sched out_of_قۇر_wait_on_bit_lock(unsigned long *word, صحيح bit,
 					 wait_bit_action_f *action, unsigned mode)
 {
-	struct wait_queue_head *wq_head = bit_waitqueue(word, bit);
+	بنية wait_queue_head *wq_head = bit_waitqueue(word, bit);
 	DEFINE_WAIT_BIT(wq_entry, word, bit);
 
-	return __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
+	أرجع __wait_on_bit_lock(wq_head, &wq_entry, action, mode);
 }
-EXPORT_SYMBOL(out_of_line_wait_on_bit_lock);
+EXPORT_بەلگە(out_of_قۇر_wait_on_bit_lock);
 
-void __wake_up_bit(struct wait_queue_head *wq_head, unsigned long *word, int bit)
+فراغ __wake_up_bit(بنية wait_queue_head *wq_head, unsigned long *word, صحيح bit)
 {
-	struct wait_bit_key key = __WAIT_BIT_KEY_INITIALIZER(word, bit);
+	بنية wait_bit_ئاچقۇچ ئاچقۇچ = __WAIT_BIT_KEY_INITIALIZER(word, bit);
 
-	if (waitqueue_active(wq_head))
-		__wake_up(wq_head, TASK_NORMAL, 1, &key);
+	إذا (waitqueue_active(wq_head))
+		__wake_up(wq_head, TASK_NORMAL, 1, &ئاچقۇچ);
 }
-EXPORT_SYMBOL(__wake_up_bit);
+EXPORT_بەلگە(__wake_up_bit);
 
 /**
  * wake_up_bit - wake up waiters on a bit
@@ -155,57 +155,57 @@ EXPORT_SYMBOL(__wake_up_bit);
  * cleared are guaranteed to be visible after the matching wait_on_bit()
  * completes.
  */
-void wake_up_bit(unsigned long *word, int bit)
+فراغ wake_up_bit(unsigned long *word, صحيح bit)
 {
 	__wake_up_bit(bit_waitqueue(word, bit), word, bit);
 }
-EXPORT_SYMBOL(wake_up_bit);
+EXPORT_بەلگە(wake_up_bit);
 
-wait_queue_head_t *__var_waitqueue(void *p)
+wait_queue_head_t *__var_waitqueue(فراغ *p)
 {
-	return bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
+	أرجع bit_wait_table + hash_ptr(p, WAIT_TABLE_BITS);
 }
-EXPORT_SYMBOL(__var_waitqueue);
+EXPORT_بەلگە(__var_waitqueue);
 
-struct wait_bit_key *__var_wake_key(struct wait_queue_entry *wq_entry, void *arg)
+بنية wait_bit_ئاچقۇچ *__var_wake_key(بنية wait_queue_entry *wq_entry, فراغ *arg)
 {
-	struct wait_bit_key *key = arg;
-	struct wait_bit_queue_entry *wbq_entry =
-		container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
+	بنية wait_bit_ئاچقۇچ *ئاچقۇچ = arg;
+	بنية wait_bit_queue_entry *wbq_entry =
+		container_of(wq_entry, بنية wait_bit_queue_entry, wq_entry);
 
-	if (wbq_entry->key.flags != key->flags ||
-	    wbq_entry->key.bit_nr != key->bit_nr)
-		return NULL;
+	إذا (wbq_entry->ئاچقۇچ.flags != ئاچقۇچ->flags ||
+	    wbq_entry->ئاچقۇچ.bit_nr != ئاچقۇچ->bit_nr)
+		أرجع عدم;
 
-	return key;
-}
-
-static int var_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
-			     int sync, void *arg)
-{
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
-
-	return autoremove_wake_function(wq_entry, mode, sync, key);
+	أرجع ئاچقۇچ;
 }
 
-void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int flags)
+ساكن صحيح var_wake_function(بنية wait_queue_entry *wq_entry, unsigned صحيح mode,
+			     صحيح sync, فراغ *arg)
 {
-	*wbq_entry = (struct wait_bit_queue_entry){
-		.key = {
+	بنية wait_bit_ئاچقۇچ *ئاچقۇچ = __var_wake_key(wq_entry, arg);
+	إذا (!ئاچقۇچ)
+		أرجع 0;
+
+	أرجع autoremove_wake_function(wq_entry, mode, sync, ئاچقۇچ);
+}
+
+فراغ init_wait_var_entry(بنية wait_bit_queue_entry *wbq_entry, فراغ *var, صحيح flags)
+{
+	*wbq_entry = (بنية wait_bit_queue_entry){
+		.ئاچقۇچ = {
 			.flags	= (var),
 			.bit_nr = -1,
 		},
 		.wq_entry = {
 			.flags	 = flags,
-			.private = current,
+			.خاص = current,
 			.func	 = var_wake_function,
 			.entry	 = LIST_HEAD_INIT(wbq_entry->wq_entry.entry),
 		},
 	};
 }
-EXPORT_SYMBOL(init_wait_var_entry);
+EXPORT_بەلگە(init_wait_var_entry);
 
 /**
  * wake_up_var - wake up waiters on a variable (kernel address)
@@ -237,50 +237,50 @@ EXPORT_SYMBOL(init_wait_var_entry);
  * variable was updated are guaranteed to be visible after the matching
  * wait_var_event() completes.
  */
-void wake_up_var(void *var)
+فراغ wake_up_var(فراغ *var)
 {
 	__wake_up_bit(__var_waitqueue(var), var, -1);
 }
-EXPORT_SYMBOL(wake_up_var);
+EXPORT_بەلگە(wake_up_var);
 
-__sched int bit_wait(struct wait_bit_key *word, int mode)
+__sched صحيح bit_wait(بنية wait_bit_ئاچقۇچ *word, صحيح mode)
 {
 	schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	إذا (signal_pending_state(mode, current))
+		أرجع -EINTR;
 
-	return 0;
+	أرجع 0;
 }
-EXPORT_SYMBOL(bit_wait);
+EXPORT_بەلگە(bit_wait);
 
-__sched int bit_wait_io(struct wait_bit_key *word, int mode)
+__sched صحيح bit_wait_io(بنية wait_bit_ئاچقۇچ *word, صحيح mode)
 {
 	io_schedule();
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	إذا (signal_pending_state(mode, current))
+		أرجع -EINTR;
 
-	return 0;
+	أرجع 0;
 }
-EXPORT_SYMBOL(bit_wait_io);
+EXPORT_بەلگە(bit_wait_io);
 
-__sched int bit_wait_timeout(struct wait_bit_key *word, int mode)
+__sched صحيح bit_wait_timeout(بنية wait_bit_ئاچقۇچ *word, صحيح mode)
 {
 	unsigned long now = READ_ONCE(jiffies);
 
-	if (time_after_eq(now, word->timeout))
-		return -EAGAIN;
+	إذا (time_after_eq(now, word->timeout))
+		أرجع -EAGAIN;
 	schedule_timeout(word->timeout - now);
-	if (signal_pending_state(mode, current))
-		return -EINTR;
+	إذا (signal_pending_state(mode, current))
+		أرجع -EINTR;
 
-	return 0;
+	أرجع 0;
 }
-EXPORT_SYMBOL_GPL(bit_wait_timeout);
+EXPORT_بەلگە_GPL(bit_wait_timeout);
 
-void __init wait_bit_init(void)
+فراغ __init wait_bit_init(فراغ)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < WAIT_TABLE_SIZE; i++)
+	لكل (i = 0; i < WAIT_TABLE_SIZE; i++)
 		init_waitqueue_head(bit_wait_table + i);
 }
