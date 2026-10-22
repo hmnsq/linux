@@ -5,40 +5,40 @@
 
 #include "sched-pelt.h"
 
-int __update_load_avg_blocked_se(u64 now, struct sched_entity *se);
-int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se);
-int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
-int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
-int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
+цео __update_load_avg_blocked_se(u64 now, struct sched_entity *se);
+цео __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se);
+цео __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
+цео update_rt_rq_load_avg(u64 now, struct rq *rq, цео running);
+цео update_dl_rq_load_avg(u64 now, struct rq *rq, цео running);
 bool update_other_load_avgs(struct rq *rq);
 
 #ifdef CONFIG_SCHED_HW_PRESSURE
-int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity);
+цео update_hw_load_avg(u64 now, struct rq *rq, u64 capacity);
 
 static inline u64 hw_load_avg(struct rq *rq)
 {
-	return READ_ONCE(rq->avg_hw.load_avg);
+	врати READ_ONCE(rq->avg_hw.load_avg);
 }
-#else /* !CONFIG_SCHED_HW_PRESSURE: */
-static inline int
+#инако /* !CONFIG_SCHED_HW_PRESSURE: */
+static inline цео
 update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
 {
-	return 0;
+	врати 0;
 }
 
 static inline u64 hw_load_avg(struct rq *rq)
 {
-	return 0;
+	врати 0;
 }
 #endif /* !CONFIG_SCHED_HW_PRESSURE */
 
 #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-int update_irq_load_avg(struct rq *rq, u64 running);
-#else
-static inline int
+цео update_irq_load_avg(struct rq *rq, u64 running);
+#инако
+static inline цео
 update_irq_load_avg(struct rq *rq, u64 running)
 {
-	return 0;
+	врати 0;
 }
 #endif
 
@@ -46,20 +46,20 @@ update_irq_load_avg(struct rq *rq, u64 running)
 
 static inline u32 get_pelt_divider(struct sched_avg *avg)
 {
-	return PELT_MIN_DIVIDER + avg->period_contrib;
+	врати PELT_MIN_DIVIDER + avg->period_contrib;
 }
 
 static inline void cfs_se_util_change(struct sched_avg *avg)
 {
-	unsigned int enqueued;
+	unsigned цео enqueued;
 
-	if (!sched_feat(UTIL_EST))
-		return;
+	ако (!sched_feat(UTIL_EST))
+		врати;
 
 	/* Avoid store if the flag has been already reset */
 	enqueued = avg->util_est;
-	if (!(enqueued & UTIL_AVG_UNCHANGED))
-		return;
+	ако (!(enqueued & UTIL_AVG_UNCHANGED))
+		врати;
 
 	/* Reset flag to report util_avg has been updated */
 	enqueued &= ~UTIL_AVG_UNCHANGED;
@@ -71,7 +71,7 @@ static inline u64 rq_clock_pelt(struct rq *rq)
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_pelt - rq->lost_idle_time;
+	врати rq->clock_pelt - rq->lost_idle_time;
 }
 
 /* The rq is idle, we can sync to clock_task */
@@ -99,9 +99,9 @@ static inline void _update_idle_rq_clock_pelt(struct rq *rq)
  */
 static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
 {
-	if (unlikely(is_idle_task(rq->curr))) {
+	ако (unlikely(is_idle_task(rq->curr))) {
 		_update_idle_rq_clock_pelt(rq);
-		return;
+		врати;
 	}
 
 	/*
@@ -151,7 +151,7 @@ static inline void update_idle_rq_clock_pelt(struct rq *rq)
 	 * this case. We keep track of this lost idle time compare to
 	 * rq's clock_task.
 	 */
-	if (util_sum >= divider)
+	ако (util_sum >= divider)
 		rq->lost_idle_time += rq_clock_task(rq) - rq->clock_pelt;
 
 	_update_idle_rq_clock_pelt(rq);
@@ -162,9 +162,9 @@ static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
 {
 	u64 throttled;
 
-	if (unlikely(cfs_rq->pelt_clock_throttled))
+	ако (unlikely(cfs_rq->pelt_clock_throttled))
 		throttled = U64_MAX;
-	else
+	инако
 		throttled = cfs_rq->throttled_clock_pelt_time;
 
 	u64_u32_store(cfs_rq->throttled_pelt_idle, throttled);
@@ -173,16 +173,16 @@ static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
 /* rq->task_clock normalized against any time this cfs_rq has spent throttled */
 static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
 {
-	if (unlikely(cfs_rq->pelt_clock_throttled))
-		return cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_time;
+	ако (unlikely(cfs_rq->pelt_clock_throttled))
+		врати cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_time;
 
-	return rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
+	врати rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
 }
-#else /* !CONFIG_CFS_BANDWIDTH: */
+#инако /* !CONFIG_CFS_BANDWIDTH: */
 static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq) { }
 static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
 {
-	return rq_clock_pelt(rq_of(cfs_rq));
+	врати rq_clock_pelt(rq_of(cfs_rq));
 }
 #endif /* !CONFIG_CFS_BANDWIDTH */
 

@@ -12,7 +12,7 @@ extern struct static_key_false sched_schedstats;
 static inline void
 rq_sched_info_arrive(struct rq *rq, unsigned long long delta)
 {
-	if (rq) {
+	ако (rq) {
 		rq->rq_sched_info.run_delay += delta;
 		rq->rq_sched_info.pcount++;
 	}
@@ -24,23 +24,23 @@ rq_sched_info_arrive(struct rq *rq, unsigned long long delta)
 static inline void
 rq_sched_info_depart(struct rq *rq, unsigned long long delta)
 {
-	if (rq)
+	ако (rq)
 		rq->rq_cpu_time += delta;
 }
 
 static inline void
 rq_sched_info_dequeue(struct rq *rq, unsigned long long delta)
 {
-	if (rq)
+	ако (rq)
 		rq->rq_sched_info.run_delay += delta;
 }
 #define   schedstat_enabled()		static_branch_unlikely(&sched_schedstats)
-#define __schedstat_inc(var)		do { var++; } while (0)
-#define   schedstat_inc(var)		do { if (schedstat_enabled()) { var++; } } while (0)
-#define __schedstat_add(var, amt)	do { var += (amt); } while (0)
-#define   schedstat_add(var, amt)	do { if (schedstat_enabled()) { var += (amt); } } while (0)
-#define __schedstat_set(var, val)	do { var = (val); } while (0)
-#define   schedstat_set(var, val)	do { if (schedstat_enabled()) { var = (val); } } while (0)
+#define __schedstat_inc(var)		do { var++; } док (0)
+#define   schedstat_inc(var)		do { ако (schedstat_enabled()) { var++; } } док (0)
+#define __schedstat_add(var, amt)	do { var += (amt); } док (0)
+#define   schedstat_add(var, amt)	do { ако (schedstat_enabled()) { var += (amt); } } док (0)
+#define __schedstat_set(var, val)	do { var = (val); } док (0)
+#define   schedstat_set(var, val)	do { ако (schedstat_enabled()) { var = (val); } } док (0)
 #define   schedstat_val(var)		(var)
 #define   schedstat_val_or_zero(var)	((schedstat_enabled()) ? (var) : 0)
 
@@ -55,11 +55,11 @@ void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
 static inline void
 check_schedstat_required(void)
 {
-	if (schedstat_enabled())
-		return;
+	ако (schedstat_enabled())
+		врати;
 
 	/* Force schedstat enabled if a dependent tracepoint is active */
-	if (trace_sched_stat_wait_enabled()    ||
+	ако (trace_sched_stat_wait_enabled()    ||
 	    trace_sched_stat_sleep_enabled()   ||
 	    trace_sched_stat_iowait_enabled()  ||
 	    trace_sched_stat_blocked_enabled() ||
@@ -67,25 +67,25 @@ check_schedstat_required(void)
 		printk_deferred_once("Scheduler tracepoints stat_sleep, stat_iowait, stat_blocked and stat_runtime require the kernel parameter schedstats=enable or kernel.sched_schedstats=1\n");
 }
 
-#else /* !CONFIG_SCHEDSTATS: */
+#инако /* !CONFIG_SCHEDSTATS: */
 
 static inline void rq_sched_info_arrive  (struct rq *rq, unsigned long long delta) { }
 static inline void rq_sched_info_dequeue(struct rq *rq, unsigned long long delta) { }
 static inline void rq_sched_info_depart  (struct rq *rq, unsigned long long delta) { }
 # define   schedstat_enabled()		0
-# define __schedstat_inc(var)		do { } while (0)
-# define   schedstat_inc(var)		do { } while (0)
-# define __schedstat_add(var, amt)	do { } while (0)
-# define   schedstat_add(var, amt)	do { } while (0)
-# define __schedstat_set(var, val)	do { } while (0)
-# define   schedstat_set(var, val)	do { } while (0)
+# define __schedstat_inc(var)		do { } док (0)
+# define   schedstat_inc(var)		do { } док (0)
+# define __schedstat_add(var, amt)	do { } док (0)
+# define   schedstat_add(var, amt)	do { } док (0)
+# define __schedstat_set(var, val)	do { } док (0)
+# define   schedstat_set(var, val)	do { } док (0)
 # define   schedstat_val(var)		0
 # define   schedstat_val_or_zero(var)	0
 
-# define __update_stats_wait_start(rq, p, stats)       do { } while (0)
-# define __update_stats_wait_end(rq, p, stats)         do { } while (0)
-# define __update_stats_enqueue_sleeper(rq, p, stats)  do { } while (0)
-# define check_schedstat_required()                    do { } while (0)
+# define __update_stats_wait_start(rq, p, stats)       do { } док (0)
+# define __update_stats_wait_end(rq, p, stats)         do { } док (0)
+# define __update_stats_enqueue_sleeper(rq, p, stats)  do { } док (0)
+# define check_schedstat_required()                    do { } док (0)
 
 #endif /* CONFIG_SCHEDSTATS */
 
@@ -93,19 +93,19 @@ static inline struct sched_statistics *
 __schedstats_from_se(struct sched_entity *se)
 {
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	if (!entity_is_task(se))
-		return &container_of(se, struct cfs_tg_state, se)->stats;
+	ако (!entity_is_task(se))
+		врати &container_of(se, struct cfs_tg_state, se)->stats;
 #endif
-	return &task_of(se)->stats;
+	врати &task_of(se)->stats;
 }
 
 #ifdef CONFIG_PSI
-void psi_task_change(struct task_struct *task, int clear, int set);
+void psi_task_change(struct task_struct *task, цео clear, цео set);
 void psi_task_switch(struct task_struct *prev, struct task_struct *next,
 		     bool sleep);
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
 void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev);
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#инако /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
 				       struct task_struct *prev) {}
 #endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
@@ -120,53 +120,53 @@ static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
  * go through migration requeues. In this case, *sleeping* states need
  * to be transferred.
  */
-static inline void psi_enqueue(struct task_struct *p, int flags)
+static inline void psi_enqueue(struct task_struct *p, цео flags)
 {
-	int clear = 0, set = 0;
+	цео clear = 0, set = 0;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ако (static_branch_likely(&psi_disabled))
+		врати;
 
 	/* Same runqueue, nothing changed for psi */
-	if (flags & ENQUEUE_RESTORE)
-		return;
+	ако (flags & ENQUEUE_RESTORE)
+		врати;
 
 	/* psi_sched_switch() will handle the flags */
-	if (task_on_cpu(task_rq(p), p))
-		return;
+	ако (task_on_cpu(task_rq(p), p))
+		врати;
 
-	if (p->se.sched_delayed) {
+	ако (p->se.sched_delayed) {
 		/* CPU migration of "sleeping" task */
 		WARN_ON_ONCE(!(flags & ENQUEUE_MIGRATED));
-		if (p->in_memstall)
+		ако (p->in_memstall)
 			set |= TSK_MEMSTALL;
-		if (p->in_iowait)
+		ако (p->in_iowait)
 			set |= TSK_IOWAIT;
-	} else if (flags & ENQUEUE_MIGRATED) {
+	} инако ако (flags & ENQUEUE_MIGRATED) {
 		/* CPU migration of runnable task */
 		set = TSK_RUNNING;
-		if (p->in_memstall)
+		ако (p->in_memstall)
 			set |= TSK_MEMSTALL | TSK_MEMSTALL_RUNNING;
-	} else {
+	} инако {
 		/* Wakeup of new or sleeping task */
-		if (p->in_iowait)
+		ако (p->in_iowait)
 			clear |= TSK_IOWAIT;
 		set = TSK_RUNNING;
-		if (p->in_memstall)
+		ако (p->in_memstall)
 			set |= TSK_MEMSTALL_RUNNING;
 	}
 
 	psi_task_change(p, clear, set);
 }
 
-static inline void psi_dequeue(struct task_struct *p, int flags)
+static inline void psi_dequeue(struct task_struct *p, цео flags)
 {
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ако (static_branch_likely(&psi_disabled))
+		врати;
 
 	/* Same runqueue, nothing changed for psi */
-	if (flags & DEQUEUE_SAVE)
-		return;
+	ако (flags & DEQUEUE_SAVE)
+		врати;
 
 	/*
 	 * A voluntary sleep is a dequeue followed by a task switch. To
@@ -179,8 +179,8 @@ static inline void psi_dequeue(struct task_struct *p, int flags)
 	 * TSK_ONCPU is set to ensure the task switch is imminent.
 	 * Otherwise clear the flags as usual.
 	 */
-	if ((flags & DEQUEUE_SLEEP) && (p->psi_flags & TSK_ONCPU))
-		return;
+	ако ((flags & DEQUEUE_SLEEP) && (p->psi_flags & TSK_ONCPU))
+		врати;
 
 	/*
 	 * When migrating a task to another CPU, clear all psi
@@ -191,14 +191,14 @@ static inline void psi_dequeue(struct task_struct *p, int flags)
 
 static inline void psi_ttwu_dequeue(struct task_struct *p)
 {
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ако (static_branch_likely(&psi_disabled))
+		врати;
 	/*
 	 * Is the task being migrated during a wakeup? Make sure to
 	 * deregister its sleep-persistent psi states from the old
 	 * queue, and let psi_enqueue() know it has to requeue.
 	 */
-	if (unlikely(p->psi_flags)) {
+	ако (unlikely(p->psi_flags)) {
 		struct rq_flags rf;
 		struct rq *rq;
 
@@ -212,13 +212,13 @@ static inline void psi_sched_switch(struct task_struct *prev,
 				    struct task_struct *next,
 				    bool sleep)
 {
-	if (static_branch_likely(&psi_disabled))
-		return;
+	ако (static_branch_likely(&psi_disabled))
+		врати;
 
 	psi_task_switch(prev, next, sleep);
 }
 
-#else /* !CONFIG_PSI: */
+#инако /* !CONFIG_PSI: */
 static inline void psi_enqueue(struct task_struct *p, bool migrate) {}
 static inline void psi_dequeue(struct task_struct *p, bool migrate) {}
 static inline void psi_ttwu_dequeue(struct task_struct *p) {}
@@ -240,17 +240,17 @@ static inline void sched_info_dequeue(struct rq *rq, struct task_struct *t)
 {
 	unsigned long long delta = 0;
 
-	if (!t->sched_info.last_queued)
-		return;
+	ако (!t->sched_info.last_queued)
+		врати;
 
 	delta = rq_clock(rq) - t->sched_info.last_queued;
 	t->sched_info.last_queued = 0;
 	t->sched_info.run_delay += delta;
-	if (delta > t->sched_info.max_run_delay) {
+	ако (delta > t->sched_info.max_run_delay) {
 		t->sched_info.max_run_delay = delta;
 		ktime_get_real_ts64(&t->sched_info.max_run_delay_ts);
 	}
-	if (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
+	ако (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
 		t->sched_info.min_run_delay = delta;
 	rq_sched_info_dequeue(rq, delta);
 }
@@ -264,8 +264,8 @@ static void sched_info_arrive(struct rq *rq, struct task_struct *t)
 {
 	unsigned long long now, delta = 0;
 
-	if (!t->sched_info.last_queued)
-		return;
+	ако (!t->sched_info.last_queued)
+		врати;
 
 	now = rq_clock(rq);
 	delta = now - t->sched_info.last_queued;
@@ -273,11 +273,11 @@ static void sched_info_arrive(struct rq *rq, struct task_struct *t)
 	t->sched_info.run_delay += delta;
 	t->sched_info.last_arrival = now;
 	t->sched_info.pcount++;
-	if (delta > t->sched_info.max_run_delay) {
+	ако (delta > t->sched_info.max_run_delay) {
 		t->sched_info.max_run_delay = delta;
 		ktime_get_real_ts64(&t->sched_info.max_run_delay_ts);
 	}
-	if (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
+	ако (delta && (!t->sched_info.min_run_delay || delta < t->sched_info.min_run_delay))
 		t->sched_info.min_run_delay = delta;
 
 	rq_sched_info_arrive(rq, delta);
@@ -290,7 +290,7 @@ static void sched_info_arrive(struct rq *rq, struct task_struct *t)
  */
 static inline void sched_info_enqueue(struct rq *rq, struct task_struct *t)
 {
-	if (!t->sched_info.last_queued)
+	ако (!t->sched_info.last_queued)
 		t->sched_info.last_queued = rq_clock(rq);
 }
 
@@ -308,7 +308,7 @@ static inline void sched_info_depart(struct rq *rq, struct task_struct *t)
 
 	rq_sched_info_depart(rq, delta);
 
-	if (task_is_running(t))
+	ако (task_is_running(t))
 		sched_info_enqueue(rq, t);
 }
 
@@ -325,17 +325,17 @@ sched_info_switch(struct rq *rq, struct task_struct *prev, struct task_struct *n
 	 * stats about how efficient we were at scheduling the idle
 	 * process, however.
 	 */
-	if (prev != rq->idle)
+	ако (prev != rq->idle)
 		sched_info_depart(rq, prev);
 
-	if (next != rq->idle)
+	ако (next != rq->idle)
 		sched_info_arrive(rq, next);
 }
 
-#else /* !CONFIG_SCHED_INFO: */
-# define sched_info_enqueue(rq, t)	do { } while (0)
-# define sched_info_dequeue(rq, t)	do { } while (0)
-# define sched_info_switch(rq, t, next)	do { } while (0)
+#инако /* !CONFIG_SCHED_INFO: */
+# define sched_info_enqueue(rq, t)	do { } док (0)
+# define sched_info_dequeue(rq, t)	do { } док (0)
+# define sched_info_switch(rq, t, next)	do { } док (0)
 #endif /* !CONFIG_SCHED_INFO */
 
 #endif /* _KERNEL_STATS_H */

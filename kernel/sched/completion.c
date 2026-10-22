@@ -18,13 +18,13 @@
 #include <linux/completion.h>
 #include "sched.h"
 
-static void complete_with_flags(struct completion *x, int wake_flags)
+static void complete_with_flags(struct completion *x, цео wake_flags)
 {
 	unsigned long flags;
 
 	raw_spin_lock_irqsave(&x->wait.lock, flags);
 
-	if (x->done != UINT_MAX)
+	ако (x->done != UINT_MAX)
 		x->done++;
 	swake_up_locked(&x->wait, wake_flags);
 	raw_spin_unlock_irqrestore(&x->wait.lock, flags);
@@ -32,7 +32,7 @@ static void complete_with_flags(struct completion *x, int wake_flags)
 
 void complete_on_current_cpu(struct completion *x)
 {
-	return complete_with_flags(x, WF_CURRENT_CPU);
+	врати complete_with_flags(x, WF_CURRENT_CPU);
 }
 
 /**
@@ -84,13 +84,13 @@ EXPORT_SYMBOL(complete_all);
 
 static inline long __sched
 do_wait_for_common(struct completion *x,
-		   long (*action)(long), long timeout, int state)
+		   long (*action)(long), long timeout, цео state)
 {
-	if (!x->done) {
+	ако (!x->done) {
 		DECLARE_SWAITQUEUE(wait);
 
 		do {
-			if (signal_pending_state(state, current)) {
+			ако (signal_pending_state(state, current)) {
 				timeout = -ERESTARTSYS;
 				break;
 			}
@@ -99,19 +99,19 @@ do_wait_for_common(struct completion *x,
 			raw_spin_unlock_irq(&x->wait.lock);
 			timeout = action(timeout);
 			raw_spin_lock_irq(&x->wait.lock);
-		} while (!x->done && timeout);
+		} док (!x->done && timeout);
 		__finish_swait(&x->wait, &wait);
-		if (!x->done)
-			return timeout;
+		ако (!x->done)
+			врати timeout;
 	}
-	if (x->done != UINT_MAX)
+	ако (x->done != UINT_MAX)
 		x->done--;
-	return timeout ?: 1;
+	врати timeout ?: 1;
 }
 
 static inline long __sched
 __wait_for_common(struct completion *x,
-		  long (*action)(long), long timeout, int state)
+		  long (*action)(long), long timeout, цео state)
 {
 	might_sleep();
 
@@ -123,19 +123,19 @@ __wait_for_common(struct completion *x,
 
 	complete_release(x);
 
-	return timeout;
+	врати timeout;
 }
 
 static long __sched
-wait_for_common(struct completion *x, long timeout, int state)
+wait_for_common(struct completion *x, long timeout, цео state)
 {
-	return __wait_for_common(x, schedule_timeout, timeout, state);
+	врати __wait_for_common(x, schedule_timeout, timeout, state);
 }
 
 static long __sched
-wait_for_common_io(struct completion *x, long timeout, int state)
+wait_for_common_io(struct completion *x, long timeout, цео state)
 {
-	return __wait_for_common(x, io_schedule_timeout, timeout, state);
+	врати __wait_for_common(x, io_schedule_timeout, timeout, state);
 }
 
 /**
@@ -169,7 +169,7 @@ EXPORT_SYMBOL(wait_for_completion);
 unsigned long __sched
 wait_for_completion_timeout(struct completion *x, unsigned long timeout)
 {
-	return wait_for_common(x, timeout, TASK_UNINTERRUPTIBLE);
+	врати wait_for_common(x, timeout, TASK_UNINTERRUPTIBLE);
 }
 EXPORT_SYMBOL(wait_for_completion_timeout);
 
@@ -203,7 +203,7 @@ EXPORT_SYMBOL(wait_for_completion_io);
 unsigned long __sched
 wait_for_completion_io_timeout(struct completion *x, unsigned long timeout)
 {
-	return wait_for_common_io(x, timeout, TASK_UNINTERRUPTIBLE);
+	врати wait_for_common_io(x, timeout, TASK_UNINTERRUPTIBLE);
 }
 EXPORT_SYMBOL(wait_for_completion_io_timeout);
 
@@ -216,13 +216,13 @@ EXPORT_SYMBOL(wait_for_completion_io_timeout);
  *
  * Return: -ERESTARTSYS if interrupted, 0 if completed.
  */
-int __sched wait_for_completion_interruptible(struct completion *x)
+цео __sched wait_for_completion_interruptible(struct completion *x)
 {
 	long t = wait_for_common(x, MAX_SCHEDULE_TIMEOUT, TASK_INTERRUPTIBLE);
 
-	if (t == -ERESTARTSYS)
-		return t;
-	return 0;
+	ако (t == -ERESTARTSYS)
+		врати t;
+	врати 0;
 }
 EXPORT_SYMBOL(wait_for_completion_interruptible);
 
@@ -241,7 +241,7 @@ long __sched
 wait_for_completion_interruptible_timeout(struct completion *x,
 					  unsigned long timeout)
 {
-	return wait_for_common(x, timeout, TASK_INTERRUPTIBLE);
+	врати wait_for_common(x, timeout, TASK_INTERRUPTIBLE);
 }
 EXPORT_SYMBOL(wait_for_completion_interruptible_timeout);
 
@@ -254,23 +254,23 @@ EXPORT_SYMBOL(wait_for_completion_interruptible_timeout);
  *
  * Return: -ERESTARTSYS if interrupted, 0 if completed.
  */
-int __sched wait_for_completion_killable(struct completion *x)
+цео __sched wait_for_completion_killable(struct completion *x)
 {
 	long t = wait_for_common(x, MAX_SCHEDULE_TIMEOUT, TASK_KILLABLE);
 
-	if (t == -ERESTARTSYS)
-		return t;
-	return 0;
+	ако (t == -ERESTARTSYS)
+		врати t;
+	врати 0;
 }
 EXPORT_SYMBOL(wait_for_completion_killable);
 
-int __sched wait_for_completion_state(struct completion *x, unsigned int state)
+цео __sched wait_for_completion_state(struct completion *x, unsigned цео state)
 {
 	long t = wait_for_common(x, MAX_SCHEDULE_TIMEOUT, state);
 
-	if (t == -ERESTARTSYS)
-		return t;
-	return 0;
+	ако (t == -ERESTARTSYS)
+		врати t;
+	врати 0;
 }
 EXPORT_SYMBOL(wait_for_completion_state);
 
@@ -290,7 +290,7 @@ long __sched
 wait_for_completion_killable_timeout(struct completion *x,
 				     unsigned long timeout)
 {
-	return wait_for_common(x, timeout, TASK_KILLABLE);
+	врати wait_for_common(x, timeout, TASK_KILLABLE);
 }
 EXPORT_SYMBOL(wait_for_completion_killable_timeout);
 
@@ -317,16 +317,16 @@ bool try_wait_for_completion(struct completion *x)
 	 * first without taking the lock so we can
 	 * return early in the blocking case.
 	 */
-	if (!READ_ONCE(x->done))
-		return false;
+	ако (!READ_ONCE(x->done))
+		врати false;
 
 	raw_spin_lock_irqsave(&x->wait.lock, flags);
-	if (!x->done)
+	ако (!x->done)
 		ret = false;
-	else if (x->done != UINT_MAX)
+	инако ако (x->done != UINT_MAX)
 		x->done--;
 	raw_spin_unlock_irqrestore(&x->wait.lock, flags);
-	return ret;
+	врати ret;
 }
 EXPORT_SYMBOL(try_wait_for_completion);
 
@@ -343,8 +343,8 @@ bool completion_done(struct completion *x)
 {
 	unsigned long flags;
 
-	if (!READ_ONCE(x->done))
-		return false;
+	ако (!READ_ONCE(x->done))
+		врати false;
 
 	/*
 	 * If ->done, we need to wait for complete() to release ->wait.lock
@@ -353,6 +353,6 @@ bool completion_done(struct completion *x)
 	 */
 	raw_spin_lock_irqsave(&x->wait.lock, flags);
 	raw_spin_unlock_irqrestore(&x->wait.lock, flags);
-	return true;
+	врати true;
 }
 EXPORT_SYMBOL(completion_done);

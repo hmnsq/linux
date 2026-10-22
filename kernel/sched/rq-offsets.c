@@ -4,9 +4,9 @@
 #include <linux/types.h>
 #include "sched.h"
 
-int main(void)
+цео main(void)
 {
 	DEFINE(RQ_nr_pinned, offsetof(struct rq, nr_pinned));
 
-	return 0;
+	врати 0;
 }
