@@ -9,51 +9,51 @@
  */
 #include "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+static ціле
+select_task_rq_stop(struct task_struct *p, ціле cpu, ціле flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	повернути task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
+static ціле
 balance_stop(struct rq *rq, struct rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	повернути sched_stop_runnable(rq);
 }
 
 static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+wakeup_preempt_stop(struct rq *rq, struct task_struct *p, ціле flags)
 {
 	/* we're never preempted */
 }
 
 static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	якщо (type == SNT_REPICK)
+		повернути;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
 static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	якщо (!sched_stop_runnable(rq))
+		повернути NULL;
 
-	return rq->stop;
+	повернути rq->stop;
 }
 
 static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+enqueue_task_stop(struct rq *rq, struct task_struct *p, ціле flags)
 {
 	add_nr_running(rq, 1);
 }
 
 static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+dequeue_task_stop(struct rq *rq, struct task_struct *p, ціле flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	повернути true;
 }
 
 static void yield_task_stop(struct rq *rq)
@@ -74,7 +74,7 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+static void task_tick_stop(struct rq *rq, struct task_struct *curr, ціле queued)
 {
 }
 
@@ -86,8 +86,8 @@ static void switching_to_stop(struct rq *rq, struct task_struct *p)
 static void
 prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	якщо (p->prio == oldprio)
+		повернути;
 
 	BUG(); /* how!?, what priority? */
 }

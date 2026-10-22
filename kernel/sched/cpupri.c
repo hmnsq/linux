@@ -40,9 +40,9 @@
  *
  *				 100	  100 (CPUPRI_HIGHER)
  */
-static int convert_prio(int prio)
+static ціле convert_prio(ціле prio)
 {
-	int cpupri;
+	ціле cpupri;
 
 	switch (prio) {
 	case CPUPRI_INVALID:
@@ -62,16 +62,16 @@ static int convert_prio(int prio)
 		break;
 	}
 
-	return cpupri;
+	повернути cpupri;
 }
 
-static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
-				struct cpumask *lowest_mask, int idx)
+static inline ціле __cpupri_find(struct cpupri *cp, struct task_struct *p,
+				struct cpumask *lowest_mask, ціле idx)
 {
 	struct cpupri_vec *vec  = &cp->pri_to_cpu[idx];
-	int skip = 0;
+	ціле skip = 0;
 
-	if (!atomic_read(&(vec)->count))
+	якщо (!atomic_read(&(vec)->count))
 		skip = 1;
 	/*
 	 * When looking at the vector, we need to read the counter,
@@ -94,13 +94,13 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 	smp_rmb();
 
 	/* Need to do the rmb for every iteration */
-	if (skip)
-		return 0;
+	якщо (skip)
+		повернути 0;
 
-	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
-		return 0;
+	якщо (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
+		повернути 0;
 
-	if (lowest_mask) {
+	якщо (lowest_mask) {
 		cpumask_and(lowest_mask, &p->cpus_mask, vec->mask);
 		cpumask_and(lowest_mask, lowest_mask, cpu_active_mask);
 
@@ -112,17 +112,17 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
 		 * condition, simply act as though we never hit this
 		 * priority level and continue on.
 		 */
-		if (cpumask_empty(lowest_mask))
-			return 0;
+		якщо (cpumask_empty(lowest_mask))
+			повернути 0;
 	}
 
-	return 1;
+	повернути 1;
 }
 
-int cpupri_find(struct cpupri *cp, struct task_struct *p,
+ціле cpupri_find(struct cpupri *cp, struct task_struct *p,
 		struct cpumask *lowest_mask)
 {
-	return cpupri_find_fitness(cp, p, lowest_mask, NULL);
+	повернути cpupri_find_fitness(cp, p, lowest_mask, NULL);
 }
 
 /**
@@ -142,26 +142,26 @@ int cpupri_find(struct cpupri *cp, struct task_struct *p,
  *
  * Return: (int)bool - CPUs were found
  */
-int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
+ціле cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 		struct cpumask *lowest_mask,
-		bool (*fitness_fn)(struct task_struct *p, int cpu))
+		bool (*fitness_fn)(struct task_struct *p, ціле cpu))
 {
-	int task_pri = convert_prio(p->prio);
-	int idx, cpu;
+	ціле task_pri = convert_prio(p->prio);
+	ціле idx, cpu;
 
 	WARN_ON_ONCE(task_pri >= CPUPRI_NR_PRIORITIES);
 
-	for (idx = 0; idx < task_pri; idx++) {
+	для (idx = 0; idx < task_pri; idx++) {
 
-		if (!__cpupri_find(cp, p, lowest_mask, idx))
+		якщо (!__cpupri_find(cp, p, lowest_mask, idx))
 			continue;
 
-		if (!lowest_mask || !fitness_fn)
-			return 1;
+		якщо (!lowest_mask || !fitness_fn)
+			повернути 1;
 
 		/* Ensure the capacity of the CPUs fit the task */
 		for_each_cpu(cpu, lowest_mask) {
-			if (!fitness_fn(p, cpu))
+			якщо (!fitness_fn(p, cpu))
 				cpumask_clear_cpu(cpu, lowest_mask);
 		}
 
@@ -169,10 +169,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 		 * If no CPU at the current priority can fit the task
 		 * continue looking
 		 */
-		if (cpumask_empty(lowest_mask))
+		якщо (cpumask_empty(lowest_mask))
 			continue;
 
-		return 1;
+		повернути 1;
 	}
 
 	/*
@@ -192,10 +192,10 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
 	 * must do proper RT planning to avoid overloading the system if they
 	 * really care.
 	 */
-	if (fitness_fn)
-		return cpupri_find(cp, p, lowest_mask);
+	якщо (fitness_fn)
+		повернути cpupri_find(cp, p, lowest_mask);
 
-	return 0;
+	повернути 0;
 }
 
 /**
@@ -208,18 +208,18 @@ int cpupri_find_fitness(struct cpupri *cp, struct task_struct *p,
  *
  * Returns: (void)
  */
-void cpupri_set(struct cpupri *cp, int cpu, int newpri)
+void cpupri_set(struct cpupri *cp, ціле cpu, ціле newpri)
 {
-	int *currpri = &cp->cpu_to_pri[cpu];
-	int oldpri = *currpri;
-	int do_mb = 0;
+	ціле *currpri = &cp->cpu_to_pri[cpu];
+	ціле oldpri = *currpri;
+	ціле do_mb = 0;
 
 	newpri = convert_prio(newpri);
 
 	BUG_ON(newpri >= CPUPRI_NR_PRIORITIES);
 
-	if (newpri == oldpri)
-		return;
+	якщо (newpri == oldpri)
+		повернути;
 
 	/*
 	 * If the CPU was currently mapped to a different value, we
@@ -227,7 +227,7 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 	 * Note, we must add the new value first, otherwise we risk the
 	 * cpu being missed by the priority loop in cpupri_find.
 	 */
-	if (likely(newpri != CPUPRI_INVALID)) {
+	якщо (likely(newpri != CPUPRI_INVALID)) {
 		struct cpupri_vec *vec = &cp->pri_to_cpu[newpri];
 
 		cpumask_set_cpu(cpu, vec->mask);
@@ -240,7 +240,7 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		atomic_inc(&(vec)->count);
 		do_mb = 1;
 	}
-	if (likely(oldpri != CPUPRI_INVALID)) {
+	якщо (likely(oldpri != CPUPRI_INVALID)) {
 		struct cpupri_vec *vec  = &cp->pri_to_cpu[oldpri];
 
 		/*
@@ -255,7 +255,7 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
 		 * We only need to do a memory barrier if we updated
 		 * the new priority vec.
 		 */
-		if (do_mb)
+		якщо (do_mb)
 			smp_mb__after_atomic();
 
 		/*
@@ -276,31 +276,31 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
  *
  * Return: -ENOMEM on memory allocation failure.
  */
-int cpupri_init(struct cpupri *cp)
+ціле cpupri_init(struct cpupri *cp)
 {
-	int i;
+	ціле i;
 
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
+	для (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
 		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
 
 		atomic_set(&vec->count, 0);
-		if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
+		якщо (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
 			goto cleanup;
 	}
 
-	cp->cpu_to_pri = kzalloc_objs(int, nr_cpu_ids);
-	if (!cp->cpu_to_pri)
+	cp->cpu_to_pri = kzalloc_objs(ціле, nr_cpu_ids);
+	якщо (!cp->cpu_to_pri)
 		goto cleanup;
 
 	for_each_possible_cpu(i)
 		cp->cpu_to_pri[i] = CPUPRI_INVALID;
 
-	return 0;
+	повернути 0;
 
 cleanup:
-	for (i--; i >= 0; i--)
+	для (i--; i >= 0; i--)
 		free_cpumask_var(cp->pri_to_cpu[i].mask);
-	return -ENOMEM;
+	повернути -ENOMEM;
 }
 
 /**
@@ -309,9 +309,9 @@ cleanup:
  */
 void cpupri_cleanup(struct cpupri *cp)
 {
-	int i;
+	ціле i;
 
 	kfree(cp->cpu_to_pri);
-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
+	для (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
 		free_cpumask_var(cp->pri_to_cpu[i].mask);
 }

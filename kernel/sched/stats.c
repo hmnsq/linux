@@ -12,7 +12,7 @@ void __update_stats_wait_start(struct rq *rq, struct task_struct *p,
 	wait_start = rq_clock(rq);
 	prev_wait_start = schedstat_val(stats->wait_start);
 
-	if (p && likely(wait_start > prev_wait_start))
+	якщо (p && likely(wait_start > prev_wait_start))
 		wait_start -= prev_wait_start;
 
 	__schedstat_set(stats->wait_start, wait_start);
@@ -23,8 +23,8 @@ void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
 {
 	u64 delta = rq_clock(rq) - schedstat_val(stats->wait_start);
 
-	if (p) {
-		if (task_on_rq_migrating(p)) {
+	якщо (p) {
+		якщо (task_on_rq_migrating(p)) {
 			/*
 			 * Preserve migrating task's wait time so wait_start
 			 * time stamp can be adjusted to accumulate wait time
@@ -32,7 +32,7 @@ void __update_stats_wait_end(struct rq *rq, struct task_struct *p,
 			 */
 			__schedstat_set(stats->wait_start, delta);
 
-			return;
+			повернути;
 		}
 
 		trace_sched_stat_wait(p, delta);
@@ -53,39 +53,39 @@ void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
 	sleep_start = schedstat_val(stats->sleep_start);
 	block_start = schedstat_val(stats->block_start);
 
-	if (sleep_start) {
+	якщо (sleep_start) {
 		u64 delta = rq_clock(rq) - sleep_start;
 
-		if ((s64)delta < 0)
+		якщо ((s64)delta < 0)
 			delta = 0;
 
-		if (unlikely(delta > schedstat_val(stats->sleep_max)))
+		якщо (unlikely(delta > schedstat_val(stats->sleep_max)))
 			__schedstat_set(stats->sleep_max, delta);
 
 		__schedstat_set(stats->sleep_start, 0);
 		__schedstat_add(stats->sum_sleep_runtime, delta);
 
-		if (p) {
+		якщо (p) {
 			account_scheduler_latency(p, delta >> 10, 1);
 			trace_sched_stat_sleep(p, delta);
 		}
 	}
 
-	if (block_start) {
+	якщо (block_start) {
 		u64 delta = rq_clock(rq) - block_start;
 
-		if ((s64)delta < 0)
+		якщо ((s64)delta < 0)
 			delta = 0;
 
-		if (unlikely(delta > schedstat_val(stats->block_max)))
+		якщо (unlikely(delta > schedstat_val(stats->block_max)))
 			__schedstat_set(stats->block_max, delta);
 
 		__schedstat_set(stats->block_start, 0);
 		__schedstat_add(stats->sum_sleep_runtime, delta);
 		__schedstat_add(stats->sum_block_runtime, delta);
 
-		if (p) {
-			if (p->in_iowait) {
+		якщо (p) {
+			якщо (p->in_iowait) {
 				__schedstat_add(stats->iowait_sum, delta);
 				__schedstat_inc(stats->iowait_count);
 				trace_sched_stat_iowait(p, delta);
@@ -106,17 +106,17 @@ void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
  */
 #define SCHEDSTAT_VERSION 17
 
-static int show_schedstat(struct seq_file *seq, void *v)
+static ціле show_schedstat(struct seq_file *seq, void *v)
 {
-	int cpu;
+	ціле cpu;
 
-	if (v == (void *)1) {
+	якщо (v == (void *)1) {
 		seq_printf(seq, "version %d\n", SCHEDSTAT_VERSION);
 		seq_printf(seq, "timestamp %lu\n", jiffies);
-	} else {
+	} інакше {
 		struct rq *rq;
 		struct sched_domain *sd;
-		int dcount = 0;
+		ціле dcount = 0;
 		cpu = (unsigned long)(v - 2);
 		rq = cpu_rq(cpu);
 
@@ -138,7 +138,7 @@ static int show_schedstat(struct seq_file *seq, void *v)
 
 			seq_printf(seq, "domain%d %s %*pb", dcount++, sd->name,
 				   cpumask_pr_args(sched_domain_span(sd)));
-			for (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
+			для (itype = 0; itype < CPU_MAX_IDLE_TYPES; itype++) {
 				seq_printf(seq, " %u %u %u %u %u %u %u %u %u %u %u",
 				    sd->lb_count[itype],
 				    sd->lb_balanced[itype],
@@ -162,7 +162,7 @@ static int show_schedstat(struct seq_file *seq, void *v)
 		}
 		rcu_read_unlock();
 	}
-	return 0;
+	повернути 0;
 }
 
 /*
@@ -176,29 +176,29 @@ static void *schedstat_start(struct seq_file *file, loff_t *offset)
 {
 	unsigned long n = *offset;
 
-	if (n == 0)
-		return (void *) 1;
+	якщо (n == 0)
+		повернути (void *) 1;
 
 	n--;
 
-	if (n > 0)
+	якщо (n > 0)
 		n = cpumask_next(n - 1, cpu_online_mask);
-	else
+	інакше
 		n = cpumask_first(cpu_online_mask);
 
 	*offset = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	якщо (n < nr_cpu_ids)
+		повернути (void *)(unsigned long)(n + 2);
 
-	return NULL;
+	повернути NULL;
 }
 
 static void *schedstat_next(struct seq_file *file, void *data, loff_t *offset)
 {
 	(*offset)++;
 
-	return schedstat_start(file, offset);
+	повернути schedstat_start(file, offset);
 }
 
 static void schedstat_stop(struct seq_file *file, void *data)
@@ -212,9 +212,9 @@ static const struct seq_operations schedstat_sops = {
 	.show  = show_schedstat,
 };
 
-static int __init proc_schedstat_init(void)
+static ціле __init proc_schedstat_init(void)
 {
 	proc_create_seq("schedstat", 0, NULL, &schedstat_sops);
-	return 0;
+	повернути 0;
 }
 subsys_initcall(proc_schedstat_init);

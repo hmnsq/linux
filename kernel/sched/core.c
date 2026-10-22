@@ -132,29 +132,29 @@ DEFINE_PER_CPU(struct rnd_state, sched_rnd_state);
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
 DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
-static int __init setup_proxy_exec(char *str)
+static ціле __init setup_proxy_exec(char *str)
 {
 	bool proxy_enable = true;
 
-	if (*str && kstrtobool(str + 1, &proxy_enable)) {
+	якщо (*str && kstrtobool(str + 1, &proxy_enable)) {
 		pr_warn("Unable to parse sched_proxy_exec=\n");
-		return 0;
+		повернути 0;
 	}
 
-	if (proxy_enable) {
+	якщо (proxy_enable) {
 		pr_info("sched_proxy_exec enabled via boot arg\n");
 		static_branch_enable(&__sched_proxy_exec);
-	} else {
+	} інакше {
 		pr_info("sched_proxy_exec disabled via boot arg\n");
 		static_branch_disable(&__sched_proxy_exec);
 	}
-	return 1;
+	повернути 1;
 }
-#else
-static int __init setup_proxy_exec(char *str)
+#інакше
+static ціле __init setup_proxy_exec(char *str)
 {
 	pr_warn("CONFIG_SCHED_PROXY_EXEC=n, so it cannot be enabled or disabled at boot time\n");
-	return 0;
+	повернути 0;
 }
 #endif
 __setup("sched_proxy_exec", setup_proxy_exec);
@@ -168,7 +168,7 @@ __setup("sched_proxy_exec", setup_proxy_exec);
  */
 #define SCHED_FEAT(name, enabled)	\
 	(1UL << __SCHED_FEAT_##name) * enabled |
-__read_mostly unsigned int sysctl_sched_features =
+__read_mostly unsigned ціле sysctl_sched_features =
 #include "features.h"
 	0;
 #undef SCHED_FEAT
@@ -180,40 +180,40 @@ __read_mostly unsigned int sysctl_sched_features =
  * If sysctl_resched_latency_warn_once is set, only one warning will be shown
  * per boot.
  */
-__read_mostly int sysctl_resched_latency_warn_ms = 100;
-__read_mostly int sysctl_resched_latency_warn_once = 1;
+__read_mostly ціле sysctl_resched_latency_warn_ms = 100;
+__read_mostly ціле sysctl_resched_latency_warn_once = 1;
 
 /*
  * Number of tasks to iterate in a single balance run.
  * Limited because this is done with IRQs disabled.
  */
-__read_mostly unsigned int sysctl_sched_nr_migrate = SCHED_NR_MIGRATE_BREAK;
+__read_mostly unsigned ціле sysctl_sched_nr_migrate = SCHED_NR_MIGRATE_BREAK;
 
-__read_mostly int scheduler_running;
+__read_mostly ціле scheduler_running;
 
 #ifdef CONFIG_SCHED_CORE
 
 DEFINE_STATIC_KEY_FALSE(__sched_core_enabled);
 
 /* kernel prio, less is more */
-static inline int __task_prio(const struct task_struct *p)
+static inline ціле __task_prio(const struct task_struct *p)
 {
-	if (p->sched_class == &stop_sched_class) /* trumps deadline */
-		return -2;
+	якщо (p->sched_class == &stop_sched_class) /* trumps deadline */
+		повернути -2;
 
-	if (p->dl_server)
-		return -1; /* deadline */
+	якщо (p->dl_server)
+		повернути -1; /* deadline */
 
-	if (rt_or_dl_prio(p->prio))
-		return p->prio; /* [-1, 99] */
+	якщо (rt_or_dl_prio(p->prio))
+		повернути p->prio; /* [-1, 99] */
 
-	if (p->sched_class == &idle_sched_class)
-		return MAX_RT_PRIO + NICE_WIDTH; /* 140 */
+	якщо (p->sched_class == &idle_sched_class)
+		повернути MAX_RT_PRIO + NICE_WIDTH; /* 140 */
 
-	if (task_on_scx(p))
-		return MAX_RT_PRIO + MAX_NICE + 1; /* 120, squash ext */
+	якщо (task_on_scx(p))
+		повернути MAX_RT_PRIO + MAX_NICE + 1; /* 120, squash ext */
 
-	return MAX_RT_PRIO + MAX_NICE; /* 119, squash fair */
+	повернути MAX_RT_PRIO + MAX_NICE; /* 119, squash fair */
 }
 
 /*
@@ -228,15 +228,15 @@ static inline bool prio_less(const struct task_struct *a,
 			     const struct task_struct *b, bool in_fi)
 {
 
-	int pa = __task_prio(a), pb = __task_prio(b);
+	ціле pa = __task_prio(a), pb = __task_prio(b);
 
-	if (-pa < -pb)
-		return true;
+	якщо (-pa < -pb)
+		повернути true;
 
-	if (-pb < -pa)
-		return false;
+	якщо (-pb < -pa)
+		повернути false;
 
-	if (pa == -1) { /* dl_prio() doesn't work because of stop_class above */
+	якщо (pa == -1) { /* dl_prio() doesn't work because of stop_class above */
 		const struct sched_dl_entity *a_dl, *b_dl;
 
 		a_dl = &a->dl;
@@ -245,85 +245,85 @@ static inline bool prio_less(const struct task_struct *a,
 		 * __task_prio() can return -1 (for DL) even for those. In that
 		 * case, get to the dl_server's DL entity.
 		 */
-		if (a->dl_server)
+		якщо (a->dl_server)
 			a_dl = a->dl_server;
 
 		b_dl = &b->dl;
-		if (b->dl_server)
+		якщо (b->dl_server)
 			b_dl = b->dl_server;
 
-		return !dl_time_before(a_dl->deadline, b_dl->deadline);
+		повернути !dl_time_before(a_dl->deadline, b_dl->deadline);
 	}
 
-	if (pa == MAX_RT_PRIO + MAX_NICE)	/* fair */
-		return cfs_prio_less(a, b, in_fi);
+	якщо (pa == MAX_RT_PRIO + MAX_NICE)	/* fair */
+		повернути cfs_prio_less(a, b, in_fi);
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (pa == MAX_RT_PRIO + MAX_NICE + 1)	/* ext */
-		return scx_prio_less(a, b, in_fi);
+	якщо (pa == MAX_RT_PRIO + MAX_NICE + 1)	/* ext */
+		повернути scx_prio_less(a, b, in_fi);
 #endif
 
-	return false;
+	повернути false;
 }
 
 static inline bool __sched_core_less(const struct task_struct *a,
 				     const struct task_struct *b)
 {
-	if (a->core_cookie < b->core_cookie)
-		return true;
+	якщо (a->core_cookie < b->core_cookie)
+		повернути true;
 
-	if (a->core_cookie > b->core_cookie)
-		return false;
+	якщо (a->core_cookie > b->core_cookie)
+		повернути false;
 
 	/* flip prio, so high prio is leftmost */
-	if (prio_less(b, a, !!task_rq(a)->core->core_forceidle_count))
-		return true;
+	якщо (prio_less(b, a, !!task_rq(a)->core->core_forceidle_count))
+		повернути true;
 
-	return false;
+	повернути false;
 }
 
 #define __node_2_sc(node) rb_entry((node), struct task_struct, core_node)
 
 static inline bool rb_sched_core_less(struct rb_node *a, const struct rb_node *b)
 {
-	return __sched_core_less(__node_2_sc(a), __node_2_sc(b));
+	повернути __sched_core_less(__node_2_sc(a), __node_2_sc(b));
 }
 
-static inline int rb_sched_core_cmp(const void *key, const struct rb_node *node)
+static inline ціле rb_sched_core_cmp(const void *key, const struct rb_node *node)
 {
 	const struct task_struct *p = __node_2_sc(node);
 	unsigned long cookie = (unsigned long)key;
 
-	if (cookie < p->core_cookie)
-		return -1;
+	якщо (cookie < p->core_cookie)
+		повернути -1;
 
-	if (cookie > p->core_cookie)
-		return 1;
+	якщо (cookie > p->core_cookie)
+		повернути 1;
 
-	return 0;
+	повернути 0;
 }
 
 void sched_core_enqueue(struct rq *rq, struct task_struct *p)
 {
-	if (p->se.sched_delayed)
-		return;
+	якщо (p->se.sched_delayed)
+		повернути;
 
 	rq->core->core_task_seq++;
 
-	if (!p->core_cookie)
-		return;
+	якщо (!p->core_cookie)
+		повернути;
 
 	rb_add(&p->core_node, &rq->core_tree, rb_sched_core_less);
 }
 
-void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags)
+void sched_core_dequeue(struct rq *rq, struct task_struct *p, ціле flags)
 {
-	if (p->se.sched_delayed)
-		return;
+	якщо (p->se.sched_delayed)
+		повернути;
 
 	rq->core->core_task_seq++;
 
-	if (sched_core_enqueued(p)) {
+	якщо (sched_core_enqueued(p)) {
 		rb_erase(&p->core_node, &rq->core_tree);
 		RB_CLEAR_NODE(&p->core_node);
 	}
@@ -333,36 +333,36 @@ void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags)
 	 * state. Reschedule to create an accounting edge for forced idle,
 	 * and re-examine whether the core is still in forced idle state.
 	 */
-	if (!(flags & DEQUEUE_SAVE) && rq->nr_running == 1 &&
+	якщо (!(flags & DEQUEUE_SAVE) && rq->nr_running == 1 &&
 	    rq->core->core_forceidle_count && rq->curr == rq->idle)
 		resched_curr(rq);
 }
 
-static int sched_task_is_throttled(struct task_struct *p, int cpu)
+static ціле sched_task_is_throttled(struct task_struct *p, ціле cpu)
 {
-	if (p->sched_class->task_is_throttled)
-		return p->sched_class->task_is_throttled(p, cpu);
+	якщо (p->sched_class->task_is_throttled)
+		повернути p->sched_class->task_is_throttled(p, cpu);
 
-	return 0;
+	повернути 0;
 }
 
 static struct task_struct *sched_core_next(struct task_struct *p, unsigned long cookie)
 {
 	struct rb_node *node = &p->core_node;
-	int cpu = task_cpu(p);
+	ціле cpu = task_cpu(p);
 
 	do {
 		node = rb_next(node);
-		if (!node)
-			return NULL;
+		якщо (!node)
+			повернути NULL;
 
 		p = __node_2_sc(node);
-		if (p->core_cookie != cookie)
-			return NULL;
+		якщо (p->core_cookie != cookie)
+			повернути NULL;
 
-	} while (sched_task_is_throttled(p, cpu));
+	} поки (sched_task_is_throttled(p, cpu));
 
-	return p;
+	повернути p;
 }
 
 /*
@@ -375,14 +375,14 @@ static struct task_struct *sched_core_find(struct rq *rq, unsigned long cookie)
 	struct rb_node *node;
 
 	node = rb_find_first((void *)cookie, &rq->core_tree, rb_sched_core_cmp);
-	if (!node)
-		return NULL;
+	якщо (!node)
+		повернути NULL;
 
 	p = __node_2_sc(node);
-	if (!sched_task_is_throttled(p, rq->cpu))
-		return p;
+	якщо (!sched_task_is_throttled(p, rq->cpu))
+		повернути p;
 
-	return sched_core_next(p, cookie);
+	повернути sched_core_next(p, cookie);
 }
 
 /*
@@ -402,24 +402,24 @@ static DEFINE_MUTEX(sched_core_mutex);
 static atomic_t sched_core_count;
 static struct cpumask sched_core_mask;
 
-static void sched_core_lock(int cpu, unsigned long *flags)
+static void sched_core_lock(ціле cpu, unsigned long *flags)
 	__context_unsafe(/* acquires multiple */)
 	__acquires(&runqueues.__lock) /* overapproximation */
 {
 	const struct cpumask *smt_mask = cpu_smt_mask(cpu);
-	int t, i = 0;
+	ціле t, i = 0;
 
 	local_irq_save(*flags);
 	for_each_cpu(t, smt_mask)
 		raw_spin_lock_nested(&cpu_rq(t)->__lock, i++);
 }
 
-static void sched_core_unlock(int cpu, unsigned long *flags)
+static void sched_core_unlock(ціле cpu, unsigned long *flags)
 	__context_unsafe(/* releases multiple */)
 	__releases(&runqueues.__lock) /* overapproximation */
 {
 	const struct cpumask *smt_mask = cpu_smt_mask(cpu);
-	int t;
+	ціле t;
 
 	for_each_cpu(t, smt_mask)
 		raw_spin_unlock(&cpu_rq(t)->__lock);
@@ -429,7 +429,7 @@ static void sched_core_unlock(int cpu, unsigned long *flags)
 static void __sched_core_flip(bool enabled)
 {
 	unsigned long flags;
-	int cpu, t;
+	ціле cpu, t;
 
 	cpus_read_lock();
 
@@ -447,7 +447,7 @@ static void __sched_core_flip(bool enabled)
 		 * released by a lock-dropping ->pick_task(). Flipping would
 		 * rebind rq_lockp() under it. Wait it out.
 		 */
-		while (cpu_rq(cpu)->core->core_pick_in_flight) {
+		поки (cpu_rq(cpu)->core->core_pick_in_flight) {
 			sched_core_unlock(cpu, &flags);
 			cpu_relax();
 			sched_core_lock(cpu, &flags);
@@ -474,7 +474,7 @@ static void __sched_core_flip(bool enabled)
 
 static void sched_core_assert_empty(void)
 {
-	int cpu;
+	ціле cpu;
 
 	for_each_possible_cpu(cpu)
 		WARN_ON_ONCE(!RB_EMPTY_ROOT(&cpu_rq(cpu)->core_tree));
@@ -501,11 +501,11 @@ static void __sched_core_disable(void)
 
 void sched_core_get(void)
 {
-	if (atomic_inc_not_zero(&sched_core_count))
-		return;
+	якщо (atomic_inc_not_zero(&sched_core_count))
+		повернути;
 
 	mutex_lock(&sched_core_mutex);
-	if (!atomic_read(&sched_core_count))
+	якщо (!atomic_read(&sched_core_count))
 		__sched_core_enable();
 
 	smp_mb__before_atomic();
@@ -515,7 +515,7 @@ void sched_core_get(void)
 
 static void __sched_core_put(struct work_struct *work)
 {
-	if (atomic_dec_and_mutex_lock(&sched_core_count, &sched_core_mutex)) {
+	якщо (atomic_dec_and_mutex_lock(&sched_core_count, &sched_core_mutex)) {
 		__sched_core_disable();
 		mutex_unlock(&sched_core_mutex);
 	}
@@ -532,15 +532,15 @@ void sched_core_put(void)
 	 * 'work'. If it is the last *again*, we rely on
 	 * WORK_STRUCT_PENDING_BIT.
 	 */
-	if (!atomic_add_unless(&sched_core_count, -1, 1))
+	якщо (!atomic_add_unless(&sched_core_count, -1, 1))
 		schedule_work(&_work);
 }
 
-#else /* !CONFIG_SCHED_CORE: */
+#інакше /* !CONFIG_SCHED_CORE: */
 
 static inline void sched_core_enqueue(struct rq *rq, struct task_struct *p) { }
 static inline void
-sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags) { }
+sched_core_dequeue(struct rq *rq, struct task_struct *p, ціле flags) { }
 
 #endif /* !CONFIG_SCHED_CORE */
 
@@ -552,15 +552,15 @@ EXPORT_TRACEPOINT_SYMBOL(sched_set_state_tp);
  * Calls to this function MUST be guarded by a
  * tracepoint_enabled(sched_set_state_tp)
  */
-void __trace_set_current_state(int state_value)
+void __trace_set_current_state(ціле state_value)
 {
 	trace_call__sched_set_state_tp(current, state_value);
 }
 EXPORT_SYMBOL(__trace_set_current_state);
 
-int task_llc(const struct task_struct *p)
+ціле task_llc(const struct task_struct *p)
 {
-	return per_cpu(sd_llc_id, task_cpu(p));
+	повернути per_cpu(sd_llc_id, task_cpu(p));
 }
 
 /*
@@ -666,27 +666,27 @@ int task_llc(const struct task_struct *p)
  *
  */
 
-void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
+void raw_spin_rq_lock_nested(struct rq *rq, ціле subclass)
 	__context_unsafe()
 {
 	raw_spinlock_t *lock;
 
 	/* Matches synchronize_rcu() in __sched_core_enable() */
 	preempt_disable();
-	if (sched_core_disabled()) {
+	якщо (sched_core_disabled()) {
 		raw_spin_lock_nested(&rq->__lock, subclass);
 		/* preempt_count *MUST* be > 1 */
 		preempt_enable_no_resched();
-		return;
+		повернути;
 	}
 
-	for (;;) {
+	для (;;) {
 		lock = __rq_lockp(rq);
 		raw_spin_lock_nested(lock, subclass);
-		if (likely(lock == __rq_lockp(rq))) {
+		якщо (likely(lock == __rq_lockp(rq))) {
 			/* preempt_count *MUST* be > 1 */
 			preempt_enable_no_resched();
-			return;
+			повернути;
 		}
 		raw_spin_unlock(lock);
 	}
@@ -700,18 +700,18 @@ bool raw_spin_rq_trylock(struct rq *rq)
 
 	/* Matches synchronize_rcu() in __sched_core_enable() */
 	preempt_disable();
-	if (sched_core_disabled()) {
+	якщо (sched_core_disabled()) {
 		ret = raw_spin_trylock(&rq->__lock);
 		preempt_enable();
-		return ret;
+		повернути ret;
 	}
 
-	for (;;) {
+	для (;;) {
 		lock = __rq_lockp(rq);
 		ret = raw_spin_trylock(lock);
-		if (!ret || (likely(lock == __rq_lockp(rq)))) {
+		якщо (!ret || (likely(lock == __rq_lockp(rq)))) {
 			preempt_enable();
-			return ret;
+			повернути ret;
 		}
 		raw_spin_unlock(lock);
 	}
@@ -724,13 +724,13 @@ void double_rq_lock(struct rq *rq1, struct rq *rq2)
 {
 	lockdep_assert_irqs_disabled();
 
-	if (rq_order_less(rq2, rq1))
+	якщо (rq_order_less(rq2, rq1))
 		swap(rq1, rq2);
 
 	raw_spin_rq_lock(rq1);
-	if (__rq_lockp(rq1) != __rq_lockp(rq2))
+	якщо (__rq_lockp(rq1) != __rq_lockp(rq2))
 		raw_spin_rq_lock_nested(rq2, SINGLE_DEPTH_NESTING);
-	else
+	інакше
 		__acquire_ctx_lock(__rq_lockp(rq2)); /* fake acquire */
 
 	double_rq_clock_clear_update(rq1, rq2);
@@ -745,16 +745,16 @@ struct rq *___task_rq_lock(struct task_struct *p, struct rq_flags *rf)
 
 	lockdep_assert_held(&p->pi_lock);
 
-	for (;;) {
+	для (;;) {
 		rq = task_rq(p);
 		raw_spin_rq_lock(rq);
-		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
+		якщо (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
 			rq_pin_lock(rq, rf);
-			return rq;
+			повернути rq;
 		}
 		raw_spin_rq_unlock(rq);
 
-		while (unlikely(task_on_rq_migrating(p)))
+		поки (unlikely(task_on_rq_migrating(p)))
 			cpu_relax();
 	}
 }
@@ -766,7 +766,7 @@ struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
 {
 	struct rq *rq;
 
-	for (;;) {
+	для (;;) {
 		raw_spin_lock_irqsave(&p->pi_lock, rf->flags);
 		rq = task_rq(p);
 		raw_spin_rq_lock(rq);
@@ -787,14 +787,14 @@ struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
 		 * dependency headed by '[L] rq = task_rq()' and the acquire
 		 * will pair with the WMB to ensure we then also see migrating.
 		 */
-		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
+		якщо (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
 			rq_pin_lock(rq, rf);
-			return rq;
+			повернути rq;
 		}
 		raw_spin_rq_unlock(rq);
 		raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
 
-		while (unlikely(task_on_rq_migrating(p)))
+		поки (unlikely(task_on_rq_migrating(p)))
 			cpu_relax();
 	}
 }
@@ -817,7 +817,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
 	s64 __maybe_unused steal = 0, irq_delta = 0;
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	if (irqtime_enabled()) {
+	якщо (irqtime_enabled()) {
 		irq_delta = irq_time_read(cpu_of(rq)) - rq->prev_irq_time;
 
 		/*
@@ -835,7 +835,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
 		 * the current rq->clock timestamp, except that would require using
 		 * atomic ops.
 		 */
-		if (irq_delta > delta)
+		якщо (irq_delta > delta)
 			irq_delta = delta;
 
 		rq->prev_irq_time += irq_delta;
@@ -844,13 +844,13 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
 	}
 #endif
 #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-	if (static_branch_unlikely(&paravirt_steal_rq_enabled)) {
+	якщо (static_branch_unlikely(&paravirt_steal_rq_enabled)) {
 		u64 prev_steal;
 
 		steal = prev_steal = paravirt_steal_clock(cpu_of(rq));
 		steal -= rq->prev_steal_time_rq;
 
-		if (unlikely(steal > delta))
+		якщо (unlikely(steal > delta))
 			steal = delta;
 
 		rq->prev_steal_time_rq = prev_steal;
@@ -861,7 +861,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
 	rq->clock_task += delta;
 
 #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-	if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
+	якщо ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
 		update_irq_load_avg(rq, irq_delta + steal);
 #endif
 	update_rq_clock_pelt(rq, delta);
@@ -874,10 +874,10 @@ void update_rq_clock(struct rq *rq)
 
 	lockdep_assert_rq_held(rq);
 
-	if (rq->clock_update_flags & RQCF_ACT_SKIP)
-		return;
+	якщо (rq->clock_update_flags & RQCF_ACT_SKIP)
+		повернути;
 
-	if (sched_feat(WARN_DOUBLE_CLOCK))
+	якщо (sched_feat(WARN_DOUBLE_CLOCK))
 		WARN_ON_ONCE(rq->clock_update_flags & RQCF_UPDATED);
 	rq->clock_update_flags |= RQCF_UPDATED;
 
@@ -885,8 +885,8 @@ void update_rq_clock(struct rq *rq)
 	scx_rq_clock_update(rq, clock);
 
 	delta = clock - rq->clock;
-	if (delta < 0)
-		return;
+	якщо (delta < 0)
+		повернути;
 	rq->clock += delta;
 
 	update_rq_clock_task(rq, delta);
@@ -906,7 +906,7 @@ enum {
 
 static void __used hrtick_clear(struct rq *rq)
 {
-	if (hrtimer_active(&rq->hrtick_timer))
+	якщо (hrtimer_active(&rq->hrtick_timer))
 		hrtimer_cancel(&rq->hrtick_timer);
 }
 
@@ -926,7 +926,7 @@ static enum hrtimer_restart hrtick(struct hrtimer *timer)
 	rq->donor->sched_class->task_tick(rq, rq->donor, 1);
 	rq_unlock(rq, &rf);
 
-	return HRTIMER_NORESTART;
+	повернути HRTIMER_NORESTART;
 }
 
 static inline bool hrtick_needs_rearm(struct hrtimer *timer, ktime_t expires)
@@ -936,7 +936,7 @@ static inline bool hrtick_needs_rearm(struct hrtimer *timer, ktime_t expires)
 	 * running the callback. In both cases, restart. If queued check
 	 * whether the expiry time actually changes substantially.
 	 */
-	return !hrtimer_is_queued(timer) ||
+	повернути !hrtimer_is_queued(timer) ||
 		abs(expires - hrtimer_get_expires(timer)) > 5000;
 }
 
@@ -945,7 +945,7 @@ static void hrtick_cond_restart(struct rq *rq)
 	struct hrtimer *timer = &rq->hrtick_timer;
 	ktime_t time = rq->hrtick_time;
 
-	if (hrtick_needs_rearm(timer, time))
+	якщо (hrtick_needs_rearm(timer, time))
 		hrtimer_start(timer, time, HRTIMER_MODE_ABS_PINNED_HARD);
 }
 
@@ -981,45 +981,45 @@ void hrtick_start(struct rq *rq, u64 delay)
 	 * If this is in the middle of schedule() only note the delay
 	 * and let hrtick_schedule_exit() deal with it.
 	 */
-	if (rq->hrtick_sched) {
+	якщо (rq->hrtick_sched) {
 		rq->hrtick_sched |= HRTICK_SCHED_START;
 		rq->hrtick_delay = delta;
-		return;
+		повернути;
 	}
 
 	rq->hrtick_time = ktime_add_ns(ktime_get(), delta);
-	if (!hrtick_needs_rearm(&rq->hrtick_timer, rq->hrtick_time))
-		return;
+	якщо (!hrtick_needs_rearm(&rq->hrtick_timer, rq->hrtick_time))
+		повернути;
 
-	if (rq == this_rq())
+	якщо (rq == this_rq())
 		hrtimer_start(&rq->hrtick_timer, rq->hrtick_time, HRTIMER_MODE_ABS_PINNED_HARD);
-	else
+	інакше
 		smp_call_function_single_async(cpu_of(rq), &rq->hrtick_csd);
 }
 
 static inline void hrtick_schedule_enter(struct rq *rq)
 {
 	rq->hrtick_sched = HRTICK_SCHED_DEFER;
-	if (hrtimer_test_and_clear_rearm_deferred())
+	якщо (hrtimer_test_and_clear_rearm_deferred())
 		rq->hrtick_sched |= HRTICK_SCHED_REARM_HRTIMER;
 }
 
 static inline void hrtick_schedule_exit(struct rq *rq)
 {
-	if (rq->hrtick_sched & HRTICK_SCHED_START) {
+	якщо (rq->hrtick_sched & HRTICK_SCHED_START) {
 		rq->hrtick_time = ktime_add_ns(ktime_get(), rq->hrtick_delay);
 		hrtick_cond_restart(rq);
-	} else if (idle_rq(rq)) {
+	} інакше якщо (idle_rq(rq)) {
 		/*
 		 * No need for using hrtimer_is_active(). The timer is CPU local
 		 * and interrupts are disabled, so the callback cannot be
 		 * running and the queued state is valid.
 		 */
-		if (hrtimer_is_queued(&rq->hrtick_timer))
+		якщо (hrtimer_is_queued(&rq->hrtick_timer))
 			hrtimer_cancel(&rq->hrtick_timer);
 	}
 
-	if (rq->hrtick_sched & HRTICK_SCHED_REARM_HRTIMER)
+	якщо (rq->hrtick_sched & HRTICK_SCHED_REARM_HRTIMER)
 		__hrtimer_rearm_deferred();
 
 	rq->hrtick_sched = HRTICK_SCHED_NONE;
@@ -1032,7 +1032,7 @@ static void hrtick_rq_init(struct rq *rq)
 	hrtimer_setup(&rq->hrtick_timer, hrtick, CLOCK_MONOTONIC,
 		      HRTIMER_MODE_REL_HARD | HRTIMER_MODE_LAZY_REARM);
 }
-#else /* !CONFIG_SCHED_HRTICK: */
+#інакше /* !CONFIG_SCHED_HRTICK: */
 static inline void hrtick_clear(struct rq *rq) { }
 static inline void hrtick_rq_init(struct rq *rq) { }
 static inline void hrtick_schedule_enter(struct rq *rq) { }
@@ -1049,7 +1049,7 @@ static inline void hrtick_schedule_exit(struct rq *rq) { }
 		typeof(*_ptr) _val = *_ptr;				\
 									\
 		do {							\
-		} while (!try_cmpxchg(_ptr, &_val, _val | _mask));	\
+		} поки (!try_cmpxchg(_ptr, &_val, _val | _mask));	\
 	_val;								\
 })
 
@@ -1059,9 +1059,9 @@ static inline void hrtick_schedule_exit(struct rq *rq) { }
  * this avoids any races wrt polling state changes and thereby avoids
  * spurious IPIs.
  */
-static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
+static inline bool set_nr_and_not_polling(struct thread_info *ti, ціле tif)
 {
-	return !(fetch_or(&ti->flags, 1 << tif) & _TIF_POLLING_NRFLAG);
+	повернути !(fetch_or(&ti->flags, 1 << tif) & _TIF_POLLING_NRFLAG);
 }
 
 /*
@@ -1076,25 +1076,25 @@ static bool set_nr_if_polling(struct task_struct *p)
 	typeof(ti->flags) val = READ_ONCE(ti->flags);
 
 	do {
-		if (!(val & _TIF_POLLING_NRFLAG))
-			return false;
-		if (val & _TIF_NEED_RESCHED)
-			return true;
-	} while (!try_cmpxchg(&ti->flags, &val, val | _TIF_NEED_RESCHED));
+		якщо (!(val & _TIF_POLLING_NRFLAG))
+			повернути false;
+		якщо (val & _TIF_NEED_RESCHED)
+			повернути true;
+	} поки (!try_cmpxchg(&ti->flags, &val, val | _TIF_NEED_RESCHED));
 
-	return true;
+	повернути true;
 }
 
-#else
-static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
+#інакше
+static inline bool set_nr_and_not_polling(struct thread_info *ti, ціле tif)
 {
 	set_ti_thread_flag(ti, tif);
-	return true;
+	повернути true;
 }
 
 static inline bool set_nr_if_polling(struct task_struct *p)
 {
-	return false;
+	повернути false;
 }
 #endif
 
@@ -1111,15 +1111,15 @@ static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
 	 * state, even in the failed case, an explicit smp_mb() must be used.
 	 */
 	smp_mb__before_atomic();
-	if (unlikely(cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL)))
-		return false;
+	якщо (unlikely(cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL)))
+		повернути false;
 
 	/*
 	 * The head is context local, there can be no concurrency.
 	 */
 	*head->lastp = node;
 	head->lastp = &node->next;
-	return true;
+	повернути true;
 }
 
 /**
@@ -1136,7 +1136,7 @@ static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
  */
 void wake_q_add(struct wake_q_head *head, struct task_struct *task)
 {
-	if (__wake_q_add(head, task))
+	якщо (__wake_q_add(head, task))
 		get_task_struct(task);
 }
 
@@ -1159,7 +1159,7 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
  */
 void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task)
 {
-	if (!__wake_q_add(head, task))
+	якщо (!__wake_q_add(head, task))
 		put_task_struct(task);
 }
 
@@ -1167,7 +1167,7 @@ void wake_up_q(struct wake_q_head *head)
 {
 	struct wake_q_node *node = head->first;
 
-	while (node != WAKE_Q_TAIL) {
+	поки (node != WAKE_Q_TAIL) {
 		struct task_struct *task;
 
 		task = container_of(node, struct task_struct, wake_q);
@@ -1192,12 +1192,12 @@ void wake_up_q(struct wake_q_head *head)
  * might also involve a cross-CPU call to trigger the scheduler on
  * the target CPU.
  */
-static void __resched_curr(struct rq *rq, int tif)
+static void __resched_curr(struct rq *rq, ціле tif)
 {
 	struct task_struct *curr = rq->curr;
 	struct thread_info *cti = task_thread_info(curr);
 	bool need_ipi;
-	int cpu;
+	ціле cpu;
 
 	lockdep_assert_rq_held(rq);
 
@@ -1205,28 +1205,28 @@ static void __resched_curr(struct rq *rq, int tif)
 	 * Always immediately preempt the idle task; no point in delaying doing
 	 * actual work.
 	 */
-	if (is_idle_task(curr) && tif == TIF_NEED_RESCHED_LAZY)
+	якщо (is_idle_task(curr) && tif == TIF_NEED_RESCHED_LAZY)
 		tif = TIF_NEED_RESCHED;
 
-	if (cti->flags & ((1 << tif) | _TIF_NEED_RESCHED))
-		return;
+	якщо (cti->flags & ((1 << tif) | _TIF_NEED_RESCHED))
+		повернути;
 
 	cpu = cpu_of(rq);
 
-	if (cpu == smp_processor_id()) {
+	якщо (cpu == smp_processor_id()) {
 		set_ti_thread_flag(cti, tif);
-		if (tif == TIF_NEED_RESCHED)
+		якщо (tif == TIF_NEED_RESCHED)
 			set_preempt_need_resched();
 		trace_sched_set_need_resched_tp(curr, cpu, tif);
-		return;
+		повернути;
 	}
 
 	need_ipi = set_nr_and_not_polling(cti, tif);
 	trace_sched_set_need_resched_tp(curr, cpu, tif);
-	if (need_ipi) {
-		if (tif == TIF_NEED_RESCHED)
+	якщо (need_ipi) {
+		якщо (tif == TIF_NEED_RESCHED)
 			smp_send_reschedule(cpu);
-	} else {
+	} інакше {
 		trace_sched_wake_idle_without_ipi(cpu);
 	}
 }
@@ -1235,7 +1235,7 @@ static void __resched_curr(struct rq *rq, int tif)
  * Calls to this function MUST be guarded by a
  * tracepoint_enabled(sched_set_need_resched_tp)
  */
-void __trace_set_need_resched(struct task_struct *curr, int tif)
+void __trace_set_need_resched(struct task_struct *curr, ціле tif)
 {
 	trace_call__sched_set_need_resched_tp(curr, smp_processor_id(), tif);
 }
@@ -1250,21 +1250,21 @@ void resched_curr(struct rq *rq)
 static DEFINE_STATIC_KEY_FALSE(sk_dynamic_preempt_lazy);
 static __always_inline bool dynamic_preempt_lazy(void)
 {
-	return static_branch_unlikely(&sk_dynamic_preempt_lazy);
+	повернути static_branch_unlikely(&sk_dynamic_preempt_lazy);
 }
-#else
+#інакше
 static __always_inline bool dynamic_preempt_lazy(void)
 {
-	return IS_ENABLED(CONFIG_PREEMPT_LAZY);
+	повернути IS_ENABLED(CONFIG_PREEMPT_LAZY);
 }
 #endif
 
-static __always_inline int get_lazy_tif_bit(void)
+static __always_inline ціле get_lazy_tif_bit(void)
 {
-	if (dynamic_preempt_lazy())
-		return TIF_NEED_RESCHED_LAZY;
+	якщо (dynamic_preempt_lazy())
+		повернути TIF_NEED_RESCHED_LAZY;
 
-	return TIF_NEED_RESCHED;
+	повернути TIF_NEED_RESCHED;
 }
 
 void resched_curr_lazy(struct rq *rq)
@@ -1272,13 +1272,13 @@ void resched_curr_lazy(struct rq *rq)
 	__resched_curr(rq, get_lazy_tif_bit());
 }
 
-void resched_cpu(int cpu)
+void resched_cpu(ціле cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 	unsigned long flags;
 
 	raw_spin_rq_lock_irqsave(rq, flags);
-	if (cpu_online(cpu) || cpu == smp_processor_id())
+	якщо (cpu_online(cpu) || cpu == smp_processor_id())
 		resched_curr(rq);
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 }
@@ -1292,15 +1292,15 @@ void resched_cpu(int cpu)
  * selecting an idle CPU will add more delays to the timers than intended
  * (as that CPU's timer base may not be up to date wrt jiffies etc).
  */
-int get_nohz_timer_target(void)
+ціле get_nohz_timer_target(void)
 {
-	int i, cpu = smp_processor_id(), default_cpu = -1;
+	ціле i, cpu = smp_processor_id(), default_cpu = -1;
 	struct sched_domain *sd;
 	const struct cpumask *hk_mask;
 
-	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE)) {
-		if (!idle_cpu(cpu))
-			return cpu;
+	якщо (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE)) {
+		якщо (!idle_cpu(cpu))
+			повернути cpu;
 		default_cpu = cpu;
 	}
 
@@ -1310,18 +1310,18 @@ int get_nohz_timer_target(void)
 
 	for_each_domain(cpu, sd) {
 		for_each_cpu_and(i, sched_domain_span(sd), hk_mask) {
-			if (cpu == i)
+			якщо (cpu == i)
 				continue;
 
-			if (!idle_cpu(i))
-				return i;
+			якщо (!idle_cpu(i))
+				повернути i;
 		}
 	}
 
-	if (default_cpu == -1)
+	якщо (default_cpu == -1)
 		default_cpu = housekeeping_any_cpu(HK_TYPE_KERNEL_NOISE);
 
-	return default_cpu;
+	повернути default_cpu;
 }
 
 /*
@@ -1334,12 +1334,12 @@ int get_nohz_timer_target(void)
  * account when the CPU goes back to idle and evaluates the timer
  * wheel for the next timer event.
  */
-static void wake_up_idle_cpu(int cpu)
+static void wake_up_idle_cpu(ціле cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 
-	if (cpu == smp_processor_id())
-		return;
+	якщо (cpu == smp_processor_id())
+		повернути;
 
 	/*
 	 * Set TIF_NEED_RESCHED and send an IPI if in the non-polling
@@ -1363,13 +1363,13 @@ static void wake_up_idle_cpu(int cpu)
 	 * and testing of the above solutions didn't appear to report
 	 * much benefits.
 	 */
-	if (set_nr_and_not_polling(task_thread_info(rq->idle), TIF_NEED_RESCHED))
+	якщо (set_nr_and_not_polling(task_thread_info(rq->idle), TIF_NEED_RESCHED))
 		smp_send_reschedule(cpu);
-	else
+	інакше
 		trace_sched_wake_idle_without_ipi(cpu);
 }
 
-static bool wake_up_full_nohz_cpu(int cpu)
+static bool wake_up_full_nohz_cpu(ціле cpu)
 {
 	/*
 	 * We just need the target to call irq_exit() and re-evaluate
@@ -1377,16 +1377,16 @@ static bool wake_up_full_nohz_cpu(int cpu)
 	 * If needed we can still optimize that later with an
 	 * empty IRQ.
 	 */
-	if (cpu_is_offline(cpu))
-		return true;  /* Don't try to wake offline CPUs. */
-	if (tick_nohz_full_cpu(cpu)) {
-		if (cpu != smp_processor_id() ||
+	якщо (cpu_is_offline(cpu))
+		повернути true;  /* Don't try to wake offline CPUs. */
+	якщо (tick_nohz_full_cpu(cpu)) {
+		якщо (cpu != smp_processor_id() ||
 		    tick_nohz_tick_stopped())
 			tick_nohz_full_kick_cpu(cpu);
-		return true;
+		повернути true;
 	}
 
-	return false;
+	повернути false;
 }
 
 /*
@@ -1394,17 +1394,17 @@ static bool wake_up_full_nohz_cpu(int cpu)
  * caller's responsibility to deal with the lost wakeup, for example,
  * by hooking into the CPU_DEAD notifier like timers and hrtimers do.
  */
-void wake_up_nohz_cpu(int cpu)
+void wake_up_nohz_cpu(ціле cpu)
 {
-	if (!wake_up_full_nohz_cpu(cpu))
+	якщо (!wake_up_full_nohz_cpu(cpu))
 		wake_up_idle_cpu(cpu);
 }
 
 static void nohz_csd_func(void *info)
 {
 	struct rq *rq = info;
-	int cpu = cpu_of(rq);
-	unsigned int flags;
+	ціле cpu = cpu_of(rq);
+	unsigned ціле flags;
 
 	/*
 	 * Release the rq::nohz_csd.
@@ -1413,7 +1413,7 @@ static void nohz_csd_func(void *info)
 	WARN_ON(!(flags & NOHZ_KICK_MASK));
 
 	rq->idle_balance = idle_cpu(cpu);
-	if (rq->idle_balance) {
+	якщо (rq->idle_balance) {
 		rq->nohz_idle_balance = flags;
 		__raise_softirq_irqoff(SCHED_SOFTIRQ);
 	}
@@ -1424,35 +1424,35 @@ static void nohz_csd_func(void *info)
 #ifdef CONFIG_NO_HZ_FULL
 static inline bool __need_bw_check(struct rq *rq, struct task_struct *p)
 {
-	if (rq->nr_running != 1)
-		return false;
+	якщо (rq->nr_running != 1)
+		повернути false;
 
-	if (p->sched_class != &fair_sched_class)
-		return false;
+	якщо (p->sched_class != &fair_sched_class)
+		повернути false;
 
-	if (!task_on_rq_queued(p))
-		return false;
+	якщо (!task_on_rq_queued(p))
+		повернути false;
 
-	return true;
+	повернути true;
 }
 
 bool sched_can_stop_tick(struct rq *rq)
 {
-	int fifo_nr_running;
+	ціле fifo_nr_running;
 
 	/* Deadline tasks, even if single, need the tick */
-	if (rq->dl.dl_nr_running)
-		return false;
+	якщо (rq->dl.dl_nr_running)
+		повернути false;
 
 	/*
 	 * If there are more than one RR tasks, we need the tick to affect the
 	 * actual RR behaviour.
 	 */
-	if (rq->rt.rr_nr_running) {
-		if (rq->rt.rr_nr_running == 1)
-			return true;
-		else
-			return false;
+	якщо (rq->rt.rr_nr_running) {
+		якщо (rq->rt.rr_nr_running == 1)
+			повернути true;
+		інакше
+			повернути false;
 	}
 
 	/*
@@ -1460,19 +1460,19 @@ bool sched_can_stop_tick(struct rq *rq)
 	 * forced preemption between FIFO tasks.
 	 */
 	fifo_nr_running = rq->rt.rt_nr_running - rq->rt.rr_nr_running;
-	if (fifo_nr_running)
-		return true;
+	якщо (fifo_nr_running)
+		повернути true;
 
 	/*
 	 * If there are no DL,RR/FIFO tasks, there must only be CFS or SCX tasks
 	 * left. For CFS, if there's more than one we need the tick for
 	 * involuntary preemption. For SCX, ask.
 	 */
-	if (scx_enabled() && !scx_can_stop_tick(rq))
-		return false;
+	якщо (scx_enabled() && !scx_can_stop_tick(rq))
+		повернути false;
 
-	if (rq->cfs.h_nr_queued > 1)
-		return false;
+	якщо (rq->cfs.h_nr_queued > 1)
+		повернути false;
 
 	/*
 	 * If there is one task and it has CFS runtime bandwidth constraints
@@ -1481,33 +1481,33 @@ bool sched_can_stop_tick(struct rq *rq)
 	 * dequeued by migrating while the constrained task continues to run.
 	 * E.g. going from 2->1 without going through pick_next_task().
 	 */
-	if (__need_bw_check(rq, rq->curr)) {
-		if (cfs_task_bw_constrained(rq->curr))
-			return false;
+	якщо (__need_bw_check(rq, rq->curr)) {
+		якщо (cfs_task_bw_constrained(rq->curr))
+			повернути false;
 	}
 
-	return true;
+	повернути true;
 }
 #endif /* CONFIG_NO_HZ_FULL */
 
-#if defined(CONFIG_RT_GROUP_SCHED) || defined(CONFIG_FAIR_GROUP_SCHED)
+#якщо defined(CONFIG_RT_GROUP_SCHED) || defined(CONFIG_FAIR_GROUP_SCHED)
 /*
  * Iterate task_group tree rooted at *from, calling @down when first entering a
  * node and @up when leaving it for the final time.
  *
  * Caller must hold rcu_lock or sufficient equivalent.
  */
-int walk_tg_tree_from(struct task_group *from,
+ціле walk_tg_tree_from(struct task_group *from,
 			     tg_visitor down, tg_visitor up, void *data)
 {
 	struct task_group *parent, *child;
-	int ret;
+	ціле ret;
 
 	parent = from;
 
 down:
 	ret = (*down)(parent, data);
-	if (ret)
+	якщо (ret)
 		goto out;
 	list_for_each_entry_rcu(child, &parent->children, siblings) {
 		parent = child;
@@ -1517,32 +1517,32 @@ up:
 		continue;
 	}
 	ret = (*up)(parent, data);
-	if (ret || parent == from)
+	якщо (ret || parent == from)
 		goto out;
 
 	child = parent;
 	parent = parent->parent;
-	if (parent)
+	якщо (parent)
 		goto up;
 out:
-	return ret;
+	повернути ret;
 }
 
-int tg_nop(struct task_group *tg, void *data)
+ціле tg_nop(struct task_group *tg, void *data)
 {
-	return 0;
+	повернути 0;
 }
 #endif
 
 void set_load_weight(struct task_struct *p, bool update_load)
 {
-	int prio = p->static_prio - MAX_RT_PRIO;
+	ціле prio = p->static_prio - MAX_RT_PRIO;
 	struct load_weight lw;
 
-	if (task_has_idle_policy(p)) {
+	якщо (task_has_idle_policy(p)) {
 		lw.weight = scale_load(WEIGHT_IDLEPRIO);
 		lw.inv_weight = WMULT_IDLEPRIO;
-	} else {
+	} інакше {
 		lw.weight = scale_load(sched_prio_to_weight[prio]);
 		lw.inv_weight = sched_prio_to_wmult[prio];
 	}
@@ -1551,9 +1551,9 @@ void set_load_weight(struct task_struct *p, bool update_load)
 	 * SCHED_OTHER tasks have to update their load when changing their
 	 * weight
 	 */
-	if (update_load && p->sched_class->reweight_task)
+	якщо (update_load && p->sched_class->reweight_task)
 		p->sched_class->reweight_task(task_rq(p), p, &lw);
-	else
+	інакше
 		p->se.load = lw;
 }
 
@@ -1571,10 +1571,10 @@ void set_load_weight(struct task_struct *p, bool update_load)
 static __maybe_unused DEFINE_MUTEX(uclamp_mutex);
 
 /* Max allowed minimum utilization */
-static unsigned int __maybe_unused sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
+static unsigned ціле __maybe_unused sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
 
 /* Max allowed maximum utilization */
-static unsigned int __maybe_unused sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
+static unsigned ціле __maybe_unused sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
 
 /*
  * By default RT tasks run at the maximum performance point/capacity of the
@@ -1591,7 +1591,7 @@ static unsigned int __maybe_unused sysctl_sched_uclamp_util_max = SCHED_CAPACITY
  * This knob will not override the system default sched_util_clamp_min defined
  * above.
  */
-unsigned int sysctl_sched_uclamp_util_min_rt_default = SCHED_CAPACITY_SCALE;
+unsigned ціле sysctl_sched_uclamp_util_min_rt_default = SCHED_CAPACITY_SCALE;
 
 /* All clamps are required to be less or equal than these values */
 static struct uclamp_se uclamp_default[UCLAMP_CNT];
@@ -1616,57 +1616,57 @@ static struct uclamp_se uclamp_default[UCLAMP_CNT];
  */
 DEFINE_STATIC_KEY_FALSE(sched_uclamp_used);
 
-static inline unsigned int
+static inline unsigned ціле
 uclamp_idle_value(struct rq *rq, enum uclamp_id clamp_id,
-		  unsigned int clamp_value)
+		  unsigned ціле clamp_value)
 {
 	/*
 	 * Avoid blocked utilization pushing up the frequency when we go
 	 * idle (which drops the max-clamp) by retaining the last known
 	 * max-clamp.
 	 */
-	if (clamp_id == UCLAMP_MAX) {
+	якщо (clamp_id == UCLAMP_MAX) {
 		rq->uclamp_flags |= UCLAMP_FLAG_IDLE;
-		return clamp_value;
+		повернути clamp_value;
 	}
 
-	return uclamp_none(UCLAMP_MIN);
+	повернути uclamp_none(UCLAMP_MIN);
 }
 
 static inline void uclamp_idle_reset(struct rq *rq, enum uclamp_id clamp_id,
-				     unsigned int clamp_value)
+				     unsigned ціле clamp_value)
 {
 	/* Reset max-clamp retention only on idle exit */
-	if (!(rq->uclamp_flags & UCLAMP_FLAG_IDLE))
-		return;
+	якщо (!(rq->uclamp_flags & UCLAMP_FLAG_IDLE))
+		повернути;
 
 	uclamp_rq_set(rq, clamp_id, clamp_value);
 }
 
 static inline
-unsigned int uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
-				   unsigned int clamp_value)
+unsigned ціле uclamp_rq_max_value(struct rq *rq, enum uclamp_id clamp_id,
+				   unsigned ціле clamp_value)
 {
 	struct uclamp_bucket *bucket = rq->uclamp[clamp_id].bucket;
-	int bucket_id = UCLAMP_BUCKETS - 1;
+	ціле bucket_id = UCLAMP_BUCKETS - 1;
 
 	/*
 	 * Since both min and max clamps are max aggregated, find the
 	 * top most bucket with tasks in.
 	 */
-	for ( ; bucket_id >= 0; bucket_id--) {
-		if (!bucket[bucket_id].tasks)
+	для ( ; bucket_id >= 0; bucket_id--) {
+		якщо (!bucket[bucket_id].tasks)
 			continue;
-		return bucket[bucket_id].value;
+		повернути bucket[bucket_id].value;
 	}
 
 	/* No tasks -- default clamp values */
-	return uclamp_idle_value(rq, clamp_id, clamp_value);
+	повернути uclamp_idle_value(rq, clamp_id, clamp_value);
 }
 
 static void __uclamp_update_util_min_rt_default(struct task_struct *p)
 {
-	unsigned int default_util_min;
+	unsigned ціле default_util_min;
 	struct uclamp_se *uc_se;
 
 	lockdep_assert_held(&p->pi_lock);
@@ -1674,8 +1674,8 @@ static void __uclamp_update_util_min_rt_default(struct task_struct *p)
 	uc_se = &p->uclamp_req[UCLAMP_MIN];
 
 	/* Only sync if user didn't override the default */
-	if (uc_se->user_defined)
-		return;
+	якщо (uc_se->user_defined)
+		повернути;
 
 	default_util_min = sysctl_sched_uclamp_util_min_rt_default;
 	uclamp_se_set(uc_se, default_util_min, false);
@@ -1683,8 +1683,8 @@ static void __uclamp_update_util_min_rt_default(struct task_struct *p)
 
 static void uclamp_update_util_min_rt_default(struct task_struct *p)
 {
-	if (!rt_task(p))
-		return;
+	якщо (!rt_task(p))
+		повернути;
 
 	/* Protect updates to p->uclamp_* */
 	guard(task_rq_lock)(p);
@@ -1697,16 +1697,16 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
 	/* Copy by value as we could modify it */
 	struct uclamp_se uc_req = p->uclamp_req[clamp_id];
 #ifdef CONFIG_UCLAMP_TASK_GROUP
-	unsigned int tg_min, tg_max, value;
+	unsigned ціле tg_min, tg_max, value;
 
 	/*
 	 * Tasks in autogroups or root task group will be
 	 * restricted by system defaults.
 	 */
-	if (task_group_is_autogroup(task_group(p)))
-		return uc_req;
-	if (task_group(p) == &root_task_group)
-		return uc_req;
+	якщо (task_group_is_autogroup(task_group(p)))
+		повернути uc_req;
+	якщо (task_group(p) == &root_task_group)
+		повернути uc_req;
 
 	tg_min = task_group(p)->uclamp[UCLAMP_MIN].value;
 	tg_max = task_group(p)->uclamp[UCLAMP_MAX].value;
@@ -1715,7 +1715,7 @@ uclamp_tg_restrict(struct task_struct *p, enum uclamp_id clamp_id)
 	uclamp_se_set(&uc_req, value, false);
 #endif
 
-	return uc_req;
+	повернути uc_req;
 }
 
 /*
@@ -1733,10 +1733,10 @@ uclamp_eff_get(struct task_struct *p, enum uclamp_id clamp_id)
 	struct uclamp_se uc_max = uclamp_default[clamp_id];
 
 	/* System default restrictions always apply */
-	if (unlikely(uc_req.value > uc_max.value))
-		return uc_max;
+	якщо (unlikely(uc_req.value > uc_max.value))
+		повернути uc_max;
 
-	return uc_req;
+	повернути uc_req;
 }
 
 unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
@@ -1744,12 +1744,12 @@ unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
 	struct uclamp_se uc_eff;
 
 	/* Task currently refcounted: use back-annotated (effective) value */
-	if (p->uclamp[clamp_id].active)
-		return (unsigned long)p->uclamp[clamp_id].value;
+	якщо (p->uclamp[clamp_id].active)
+		повернути (unsigned long)p->uclamp[clamp_id].value;
 
 	uc_eff = uclamp_eff_get(p, clamp_id);
 
-	return (unsigned long)uc_eff.value;
+	повернути (unsigned long)uc_eff.value;
 }
 
 /*
@@ -1784,10 +1784,10 @@ static inline void uclamp_rq_inc_id(struct rq *rq, struct task_struct *p,
 	 * Local max aggregation: rq buckets always track the max
 	 * "requested" clamp value of its RUNNABLE tasks.
 	 */
-	if (bucket->tasks == 1 || uc_se->value > bucket->value)
+	якщо (bucket->tasks == 1 || uc_se->value > bucket->value)
 		bucket->value = uc_se->value;
 
-	if (uc_se->value > uclamp_rq_get(rq, clamp_id))
+	якщо (uc_se->value > uclamp_rq_get(rq, clamp_id))
 		uclamp_rq_set(rq, clamp_id, uc_se->value);
 }
 
@@ -1806,8 +1806,8 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
 	struct uclamp_rq *uc_rq = &rq->uclamp[clamp_id];
 	struct uclamp_se *uc_se = &p->uclamp[clamp_id];
 	struct uclamp_bucket *bucket;
-	unsigned int bkt_clamp;
-	unsigned int rq_clamp;
+	unsigned ціле bkt_clamp;
+	unsigned ціле rq_clamp;
 
 	lockdep_assert_rq_held(rq);
 
@@ -1834,13 +1834,13 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
 	 *
 	 * The following check here eliminates the possibility of such race.
 	 */
-	if (unlikely(!uc_se->active))
-		return;
+	якщо (unlikely(!uc_se->active))
+		повернути;
 
 	bucket = &uc_rq->bucket[uc_se->bucket_id];
 
 	WARN_ON_ONCE(!bucket->tasks);
-	if (likely(bucket->tasks))
+	якщо (likely(bucket->tasks))
 		bucket->tasks--;
 
 	uc_se->active = false;
@@ -1851,8 +1851,8 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
 	 * The rq clamp bucket value is reset to its base value whenever
 	 * there are no more RUNNABLE tasks refcounting it.
 	 */
-	if (likely(bucket->tasks))
-		return;
+	якщо (likely(bucket->tasks))
+		повернути;
 
 	rq_clamp = uclamp_rq_get(rq, clamp_id);
 	/*
@@ -1860,13 +1860,13 @@ static inline void uclamp_rq_dec_id(struct rq *rq, struct task_struct *p,
 	 * e.g. due to future modification, warn and fix up the expected value.
 	 */
 	WARN_ON_ONCE(bucket->value > rq_clamp);
-	if (bucket->value >= rq_clamp) {
+	якщо (bucket->value >= rq_clamp) {
 		bkt_clamp = uclamp_rq_max_value(rq, clamp_id, uc_se->value);
 		uclamp_rq_set(rq, clamp_id, bkt_clamp);
 	}
 }
 
-static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, int flags)
+static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, ціле flags)
 {
 	enum uclamp_id clamp_id;
 
@@ -1876,21 +1876,21 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, int flags
 	 * The condition is constructed such that a NOP is generated when
 	 * sched_uclamp_used is disabled.
 	 */
-	if (!uclamp_is_used())
-		return;
+	якщо (!uclamp_is_used())
+		повернути;
 
-	if (unlikely(!p->sched_class->uclamp_enabled))
-		return;
+	якщо (unlikely(!p->sched_class->uclamp_enabled))
+		повернути;
 
 	/* Only inc the delayed task which being woken up. */
-	if (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
-		return;
+	якщо (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
+		повернути;
 
 	for_each_clamp_id(clamp_id)
 		uclamp_rq_inc_id(rq, p, clamp_id);
 
 	/* Reset clamp idle holding when there is one RUNNABLE task */
-	if (rq->uclamp_flags & UCLAMP_FLAG_IDLE)
+	якщо (rq->uclamp_flags & UCLAMP_FLAG_IDLE)
 		rq->uclamp_flags &= ~UCLAMP_FLAG_IDLE;
 }
 
@@ -1904,14 +1904,14 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
 	 * The condition is constructed such that a NOP is generated when
 	 * sched_uclamp_used is disabled.
 	 */
-	if (!uclamp_is_used())
-		return;
+	якщо (!uclamp_is_used())
+		повернути;
 
-	if (unlikely(!p->sched_class->uclamp_enabled))
-		return;
+	якщо (unlikely(!p->sched_class->uclamp_enabled))
+		повернути;
 
-	if (p->se.sched_delayed)
-		return;
+	якщо (p->se.sched_delayed)
+		повернути;
 
 	for_each_clamp_id(clamp_id)
 		uclamp_rq_dec_id(rq, p, clamp_id);
@@ -1920,8 +1920,8 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
 static inline void uclamp_rq_reinc_id(struct rq *rq, struct task_struct *p,
 				      enum uclamp_id clamp_id)
 {
-	if (!p->uclamp[clamp_id].active)
-		return;
+	якщо (!p->uclamp[clamp_id].active)
+		повернути;
 
 	uclamp_rq_dec_id(rq, p, clamp_id);
 	uclamp_rq_inc_id(rq, p, clamp_id);
@@ -1930,7 +1930,7 @@ static inline void uclamp_rq_reinc_id(struct rq *rq, struct task_struct *p,
 	 * Make sure to clear the idle flag if we've transiently reached 0
 	 * active tasks on rq.
 	 */
-	if (clamp_id == UCLAMP_MAX && (rq->uclamp_flags & UCLAMP_FLAG_IDLE))
+	якщо (clamp_id == UCLAMP_MAX && (rq->uclamp_flags & UCLAMP_FLAG_IDLE))
 		rq->uclamp_flags &= ~UCLAMP_FLAG_IDLE;
 }
 
@@ -1971,7 +1971,7 @@ uclamp_update_active_tasks(struct cgroup_subsys_state *css)
 	struct task_struct *p;
 
 	css_task_iter_start(css, 0, &it);
-	while ((p = css_task_iter_next(&it)))
+	поки ((p = css_task_iter_next(&it)))
 		uclamp_update_active(p);
 	css_task_iter_end(&it);
 }
@@ -1993,7 +1993,7 @@ static void uclamp_update_root_tg(void)
 	guard(rcu)();
 	cpu_util_update_eff(&root_task_group.css);
 }
-#else
+#інакше
 static void uclamp_update_root_tg(void) { }
 #endif
 
@@ -2023,12 +2023,12 @@ static void uclamp_sync_util_min_rt_default(void)
 		uclamp_update_util_min_rt_default(p);
 }
 
-static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
+static ціле sysctl_sched_uclamp_handler(const struct ctl_table *table, ціле write,
 				void *buffer, size_t *lenp, loff_t *ppos)
 {
 	bool update_root_tg = false;
-	int old_min, old_max, old_min_rt;
-	int result;
+	ціле old_min, old_max, old_min_rt;
+	ціле result;
 
 	guard(mutex)(&uclamp_mutex);
 
@@ -2037,12 +2037,12 @@ static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
 	old_min_rt = sysctl_sched_uclamp_util_min_rt_default;
 
 	result = proc_dointvec(table, write, buffer, lenp, ppos);
-	if (result)
+	якщо (result)
 		goto undo;
-	if (!write)
-		return 0;
+	якщо (!write)
+		повернути 0;
 
-	if (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
+	якщо (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
 	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE	||
 	    sysctl_sched_uclamp_util_min_rt_default > SCHED_CAPACITY_SCALE) {
 
@@ -2050,23 +2050,23 @@ static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
 		goto undo;
 	}
 
-	if (old_min != sysctl_sched_uclamp_util_min) {
+	якщо (old_min != sysctl_sched_uclamp_util_min) {
 		uclamp_se_set(&uclamp_default[UCLAMP_MIN],
 			      sysctl_sched_uclamp_util_min, false);
 		update_root_tg = true;
 	}
-	if (old_max != sysctl_sched_uclamp_util_max) {
+	якщо (old_max != sysctl_sched_uclamp_util_max) {
 		uclamp_se_set(&uclamp_default[UCLAMP_MAX],
 			      sysctl_sched_uclamp_util_max, false);
 		update_root_tg = true;
 	}
 
-	if (update_root_tg) {
+	якщо (update_root_tg) {
 		sched_uclamp_enable();
 		uclamp_update_root_tg();
 	}
 
-	if (old_min_rt != sysctl_sched_uclamp_util_min_rt_default) {
+	якщо (old_min_rt != sysctl_sched_uclamp_util_min_rt_default) {
 		sched_uclamp_enable();
 		uclamp_sync_util_min_rt_default();
 	}
@@ -2076,13 +2076,13 @@ static int sysctl_sched_uclamp_handler(const struct ctl_table *table, int write,
 	 * Otherwise, keep it simple and do just a lazy update at each next
 	 * task enqueue time.
 	 */
-	return 0;
+	повернути 0;
 
 undo:
 	sysctl_sched_uclamp_util_min = old_min;
 	sysctl_sched_uclamp_util_max = old_max;
 	sysctl_sched_uclamp_util_min_rt_default = old_min_rt;
-	return result;
+	повернути result;
 }
 #endif /* CONFIG_SYSCTL */
 
@@ -2097,8 +2097,8 @@ static void uclamp_fork(struct task_struct *p)
 	for_each_clamp_id(clamp_id)
 		p->uclamp[clamp_id].active = false;
 
-	if (likely(!p->sched_reset_on_fork))
-		return;
+	якщо (likely(!p->sched_reset_on_fork))
+		повернути;
 
 	for_each_clamp_id(clamp_id) {
 		uclamp_se_set(&p->uclamp_req[clamp_id],
@@ -2129,7 +2129,7 @@ static void __init init_uclamp(void)
 {
 	struct uclamp_se uc_max = {};
 	enum uclamp_id clamp_id;
-	int cpu;
+	ціле cpu;
 
 	for_each_possible_cpu(cpu)
 		init_uclamp_rq(cpu_rq(cpu));
@@ -2150,8 +2150,8 @@ static void __init init_uclamp(void)
 	}
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
-static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, int flags) { }
+#інакше /* !CONFIG_UCLAMP_TASK: */
+static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, ціле flags) { }
 static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) { }
 static inline void uclamp_fork(struct task_struct *p) { }
 static inline void uclamp_post_fork(struct task_struct *p) { }
@@ -2160,31 +2160,31 @@ static inline void init_uclamp(void) { }
 
 bool sched_task_on_rq(struct task_struct *p)
 {
-	return task_on_rq_queued(p);
+	повернути task_on_rq_queued(p);
 }
 
 unsigned long get_wchan(struct task_struct *p)
 {
 	unsigned long ip = 0;
-	unsigned int state;
+	unsigned ціле state;
 
-	if (!p || p == current)
-		return 0;
+	якщо (!p || p == current)
+		повернути 0;
 
 	/* Only get wchan if task is blocked and we can keep it that way. */
 	raw_spin_lock_irq(&p->pi_lock);
 	state = READ_ONCE(p->__state);
 	smp_rmb(); /* see try_to_wake_up() */
-	if (state != TASK_RUNNING && state != TASK_WAKING && !p->on_rq)
+	якщо (state != TASK_RUNNING && state != TASK_WAKING && !p->on_rq)
 		ip = __get_wchan(p);
 	raw_spin_unlock_irq(&p->pi_lock);
 
-	return ip;
+	повернути ip;
 }
 
-void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+void enqueue_task(struct rq *rq, struct task_struct *p, ціле flags)
 {
-	if (!(flags & ENQUEUE_NOCLOCK))
+	якщо (!(flags & ENQUEUE_NOCLOCK))
 		update_rq_clock(rq);
 
 	/*
@@ -2198,25 +2198,25 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
 
 	psi_enqueue(p, flags);
 
-	if (!(flags & ENQUEUE_RESTORE))
+	якщо (!(flags & ENQUEUE_RESTORE))
 		sched_info_enqueue(rq, p);
 
-	if (sched_core_enabled(rq))
+	якщо (sched_core_enabled(rq))
 		sched_core_enqueue(rq, p);
 }
 
 /*
  * Must only return false when DEQUEUE_SLEEP.
  */
-inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+inline bool dequeue_task(struct rq *rq, struct task_struct *p, ціле flags)
 {
-	if (sched_core_enabled(rq))
+	якщо (sched_core_enabled(rq))
 		sched_core_dequeue(rq, p, flags);
 
-	if (!(flags & DEQUEUE_NOCLOCK))
+	якщо (!(flags & DEQUEUE_NOCLOCK))
 		update_rq_clock(rq);
 
-	if (!(flags & DEQUEUE_SAVE))
+	якщо (!(flags & DEQUEUE_SAVE))
 		sched_info_dequeue(rq, p);
 
 	psi_dequeue(p, flags);
@@ -2226,12 +2226,12 @@ inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
 	 * and mark the task ->sched_delayed.
 	 */
 	uclamp_rq_dec(rq, p);
-	return p->sched_class->dequeue_task(rq, p, flags);
+	повернути p->sched_class->dequeue_task(rq, p, flags);
 }
 
-void activate_task(struct rq *rq, struct task_struct *p, int flags)
+void activate_task(struct rq *rq, struct task_struct *p, ціле flags)
 {
-	if (task_on_rq_migrating(p))
+	якщо (task_on_rq_migrating(p))
 		flags |= ENQUEUE_MIGRATED;
 
 	enqueue_task(rq, p, flags);
@@ -2240,7 +2240,7 @@ void activate_task(struct rq *rq, struct task_struct *p, int flags)
 	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
 }
 
-void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
+void deactivate_task(struct rq *rq, struct task_struct *p, ціле flags)
 {
 	WARN_ON_ONCE(flags & DEQUEUE_SLEEP);
 
@@ -2258,14 +2258,14 @@ void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
 static bool dequeue_block_task(struct rq *rq, struct task_struct *p,
 			       unsigned long task_state)
 {
-	int flags = DEQUEUE_NOCLOCK;
+	ціле flags = DEQUEUE_NOCLOCK;
 
 	p->sched_contributes_to_load =
 		(task_state & TASK_UNINTERRUPTIBLE) &&
 		!(task_state & TASK_NOLOAD) &&
 		!(task_state & TASK_FROZEN);
 
-	if (unlikely(is_special_task_state(task_state)))
+	якщо (unlikely(is_special_task_state(task_state)))
 		flags |= DEQUEUE_SPECIAL;
 
 	/*
@@ -2280,12 +2280,12 @@ static bool dequeue_block_task(struct rq *rq, struct task_struct *p,
 	 * Once the caller invokes __block_task(), schedule() must not care about
 	 * p->state any more.
 	 */
-	return dequeue_task(rq, p, DEQUEUE_SLEEP | flags);
+	повернути dequeue_task(rq, p, DEQUEUE_SLEEP | flags);
 }
 
 static void block_task(struct rq *rq, struct task_struct *p, unsigned long task_state)
 {
-	if (dequeue_block_task(rq, p, task_state))
+	якщо (dequeue_block_task(rq, p, task_state))
 		__block_task(rq, p);
 }
 
@@ -2295,19 +2295,19 @@ static void block_task(struct rq *rq, struct task_struct *p, unsigned long task_
  *
  * Return: 1 if the task is currently executing. 0 otherwise.
  */
-inline int task_curr(const struct task_struct *p)
+inline ціле task_curr(const struct task_struct *p)
 {
-	return cpu_curr(task_cpu(p)) == p;
+	повернути cpu_curr(task_cpu(p)) == p;
 }
 
-void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
+void wakeup_preempt(struct rq *rq, struct task_struct *p, ціле flags)
 {
 	struct task_struct *donor = rq->donor;
 
-	if (p->sched_class == rq->next_class) {
+	якщо (p->sched_class == rq->next_class) {
 		rq->next_class->wakeup_preempt(rq, p, flags);
 
-	} else if (sched_class_above(p->sched_class, rq->next_class)) {
+	} інакше якщо (sched_class_above(p->sched_class, rq->next_class)) {
 		rq->next_class->wakeup_preempt(rq, p, flags);
 		resched_curr(rq);
 		rq->next_class = p->sched_class;
@@ -2317,31 +2317,31 @@ void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
 	 * A queue event has occurred, and we're going to schedule.  In
 	 * this case, we can save a useless back to back clock update.
 	 */
-	if (task_on_rq_queued(donor) && test_tsk_need_resched(rq->curr))
+	якщо (task_on_rq_queued(donor) && test_tsk_need_resched(rq->curr))
 		rq_clock_skip_update(rq);
 }
 
 static __always_inline
-int __task_state_match(struct task_struct *p, unsigned int state)
+ціле __task_state_match(struct task_struct *p, unsigned ціле state)
 {
-	if (READ_ONCE(p->__state) & state)
-		return 1;
+	якщо (READ_ONCE(p->__state) & state)
+		повернути 1;
 
-	if (READ_ONCE(p->saved_state) & state)
-		return -1;
+	якщо (READ_ONCE(p->saved_state) & state)
+		повернути -1;
 
-	return 0;
+	повернути 0;
 }
 
 static __always_inline
-int task_state_match(struct task_struct *p, unsigned int state)
+ціле task_state_match(struct task_struct *p, unsigned ціле state)
 {
 	/*
 	 * Serialize against current_save_and_set_rtlock_wait_state(),
 	 * current_restore_rtlock_saved_state(), and __refrigerator().
 	 */
 	guard(raw_spinlock_irq)(&p->pi_lock);
-	return __task_state_match(p, state);
+	повернути __task_state_match(p, state);
 }
 
 /*
@@ -2360,14 +2360,14 @@ int task_state_match(struct task_struct *p, unsigned int state)
  * smp_call_function() if an IPI is sent by the same process we are
  * waiting to become inactive.
  */
-unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state)
+unsigned long wait_task_inactive(struct task_struct *p, unsigned ціле match_state)
 {
-	int running, queued, match;
+	ціле running, queued, match;
 	struct rq_flags rf;
 	unsigned long ncsw;
 	struct rq *rq;
 
-	for (;;) {
+	для (;;) {
 		/*
 		 * We do the initial early heuristics without holding
 		 * any task-queue locks at all. We'll only try to get
@@ -2387,9 +2387,9 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 * return false if the runqueue has changed and p
 		 * is actually now running somewhere else!
 		 */
-		while (task_on_cpu(rq, p)) {
-			if (!task_state_match(p, match_state))
-				return 0;
+		поки (task_on_cpu(rq, p)) {
+			якщо (!task_state_match(p, match_state))
+				повернути 0;
 			cpu_relax();
 		}
 
@@ -2403,18 +2403,18 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 * If task is sched_delayed, force dequeue it, to avoid always
 		 * hitting the tick timeout in the queued case
 		 */
-		if (p->se.sched_delayed)
+		якщо (p->se.sched_delayed)
 			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
 		trace_sched_wait_task(p);
 		running = task_on_cpu(rq, p);
 		queued = task_on_rq_queued(p);
 		ncsw = 0;
-		if ((match = __task_state_match(p, match_state))) {
+		якщо ((match = __task_state_match(p, match_state))) {
 			/*
 			 * When matching on p->saved_state, consider this task
 			 * still queued so it will wait.
 			 */
-			if (match < 0)
+			якщо (match < 0)
 				queued = 1;
 			ncsw = p->nvcsw | LONG_MIN; /* sets MSB */
 		}
@@ -2423,7 +2423,7 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		/*
 		 * If it changed from the expected state, bail out now.
 		 */
-		if (unlikely(!ncsw))
+		якщо (unlikely(!ncsw))
 			break;
 
 		/*
@@ -2432,7 +2432,7 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 *
 		 * Oops. Go back and try again..
 		 */
-		if (unlikely(running)) {
+		якщо (unlikely(running)) {
 			cpu_relax();
 			continue;
 		}
@@ -2446,7 +2446,7 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		 * running right now), it's preempted, and we should
 		 * yield - it could be a while.
 		 */
-		if (unlikely(queued)) {
+		якщо (unlikely(queued)) {
 			ktime_t to = NSEC_PER_SEC / HZ;
 
 			set_current_state(TASK_UNINTERRUPTIBLE);
@@ -2462,7 +2462,7 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
 		break;
 	}
 
-	return ncsw;
+	повернути ncsw;
 }
 
 static void
@@ -2475,11 +2475,11 @@ static void migrate_disable_switch(struct rq *rq, struct task_struct *p)
 		.flags     = SCA_MIGRATE_DISABLE,
 	};
 
-	if (likely(!p->migration_disabled))
-		return;
+	якщо (likely(!p->migration_disabled))
+		повернути;
 
-	if (p->cpus_ptr != &p->cpus_mask)
-		return;
+	якщо (p->cpus_ptr != &p->cpus_mask)
+		повернути;
 
 	scoped_guard (task_rq_lock, p)
 		do_set_cpus_allowed(p, &ac);
@@ -2511,24 +2511,24 @@ EXPORT_SYMBOL_GPL(migrate_enable);
 
 static inline bool rq_has_pinned_tasks(struct rq *rq)
 {
-	return rq->nr_pinned;
+	повернути rq->nr_pinned;
 }
 
-static inline bool task_can_migrate_to_preferred(struct task_struct *p, int cpu)
+static inline bool task_can_migrate_to_preferred(struct task_struct *p, ціле cpu)
 {
 	/* No need to migrate from a preferred CPU */
-	if (cpu_preferred(cpu))
-		return false;
+	якщо (cpu_preferred(cpu))
+		повернути false;
 
 	/* Only FAIR tasks honor preferred CPU state */
-	if (unlikely(p->sched_class != &fair_sched_class))
-		return false;
+	якщо (unlikely(p->sched_class != &fair_sched_class))
+		повернути false;
 
 	/* Ignore preferred state if task affinity is changing */
-	if (unlikely(!cpumask_test_cpu(task_cpu(p), p->cpus_ptr)))
-		return false;
+	якщо (unlikely(!cpumask_test_cpu(task_cpu(p), p->cpus_ptr)))
+		повернути false;
 
-	return cpumask_intersects_and(p->cpus_ptr, cpu_preferred_mask,
+	повернути cpumask_intersects_and(p->cpus_ptr, cpu_preferred_mask,
 				      task_cpu_possible_mask(p));
 }
 
@@ -2536,38 +2536,38 @@ static inline bool task_can_migrate_to_preferred(struct task_struct *p, int cpu)
  * Per-CPU kthreads are allowed to run on !active && online CPUs, see
  * __set_cpus_allowed_ptr() and select_fallback_rq().
  */
-static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
+static inline bool is_cpu_allowed(struct task_struct *p, ціле cpu)
 {
 	/* When not in the task's cpumask, no point in looking further. */
-	if (!task_allowed_on_cpu(p, cpu))
-		return false;
+	якщо (!task_allowed_on_cpu(p, cpu))
+		повернути false;
 
 	/* migrate_disabled() must be allowed to finish. */
-	if (is_migration_disabled(p))
-		return cpu_online(cpu);
+	якщо (is_migration_disabled(p))
+		повернути cpu_online(cpu);
 
 	/* Non kernel threads are not allowed during either online or offline. */
-	if (!(p->flags & PF_KTHREAD)) {
+	якщо (!(p->flags & PF_KTHREAD)) {
 		/* Try to use preferred CPU if task's affinity allows */
-		if (task_can_migrate_to_preferred(p, cpu))
-			return false;
-		return cpu_active(cpu);
+		якщо (task_can_migrate_to_preferred(p, cpu))
+			повернути false;
+		повернути cpu_active(cpu);
 	}
 
 	/* KTHREAD_IS_PER_CPU is always allowed. */
-	if (kthread_is_per_cpu(p))
-		return cpu_online(cpu);
+	якщо (kthread_is_per_cpu(p))
+		повернути cpu_online(cpu);
 
 	/* Regular kernel threads don't get to stay during offline. */
-	if (cpu_dying(cpu))
-		return false;
+	якщо (cpu_dying(cpu))
+		повернути false;
 
 	/* Try to keep unbound kthreads on a preferred CPU if possible. */
-	if (task_can_migrate_to_preferred(p, cpu))
-		return false;
+	якщо (task_can_migrate_to_preferred(p, cpu))
+		повернути false;
 
 	/* Otherwise, they are allowed to run on online CPU. */
-	return cpu_online(cpu);
+	повернути cpu_online(cpu);
 }
 
 /*
@@ -2590,7 +2590,7 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
  * Returns (locked) new rq. Old rq's lock is released.
  */
 static struct rq *move_queued_task(struct rq *rq, struct rq_flags *rf,
-				   struct task_struct *p, int new_cpu)
+				   struct task_struct *p, ціле new_cpu)
 	__must_hold(__rq_lockp(rq))
 {
 	lockdep_assert_rq_held(rq);
@@ -2606,12 +2606,12 @@ static struct rq *move_queued_task(struct rq *rq, struct rq_flags *rf,
 	activate_task(rq, p, 0);
 	wakeup_preempt(rq, p, 0);
 
-	return rq;
+	повернути rq;
 }
 
 struct migration_arg {
 	struct task_struct		*task;
-	int				dest_cpu;
+	ціле				dest_cpu;
 	struct set_affinity_pending	*pending;
 };
 
@@ -2621,7 +2621,7 @@ struct migration_arg {
  */
 struct set_affinity_pending {
 	refcount_t		refs;
-	unsigned int		stop_pending;
+	unsigned ціле		stop_pending;
 	struct completion	done;
 	struct cpu_stop_work	stop_work;
 	struct migration_arg	arg;
@@ -2637,16 +2637,16 @@ struct set_affinity_pending {
  * as the task is no longer on this CPU.
  */
 static struct rq *__migrate_task(struct rq *rq, struct rq_flags *rf,
-				 struct task_struct *p, int dest_cpu)
+				 struct task_struct *p, ціле dest_cpu)
 	__must_hold(__rq_lockp(rq))
 {
 	/* Affinity changed (again). */
-	if (!is_cpu_allowed(p, dest_cpu))
-		return rq;
+	якщо (!is_cpu_allowed(p, dest_cpu))
+		повернути rq;
 
 	rq = move_queued_task(rq, rf, p, dest_cpu);
 
-	return rq;
+	повернути rq;
 }
 
 /*
@@ -2654,7 +2654,7 @@ static struct rq *__migrate_task(struct rq *rq, struct rq_flags *rf,
  * and performs thread migration by bumping thread off CPU then
  * 'pushing' onto another runqueue.
  */
-static int migration_cpu_stop(void *data)
+static ціле migration_cpu_stop(void *data)
 {
 	struct migration_arg *arg = data;
 	struct set_affinity_pending *pending = arg->pending;
@@ -2695,22 +2695,22 @@ static int migration_cpu_stop(void *data)
 	 * holding rq->lock, if p->on_rq == 0 it cannot get enqueued because
 	 * we're holding p->pi_lock.
 	 */
-	if (task_rq(p) == rq) {
-		if (is_migration_disabled(p))
+	якщо (task_rq(p) == rq) {
+		якщо (is_migration_disabled(p))
 			goto out;
 
-		if (pending) {
+		якщо (pending) {
 			p->migration_pending = NULL;
 			complete = true;
 
-			if (cpumask_test_cpu(task_cpu(p), &p->cpus_mask))
+			якщо (cpumask_test_cpu(task_cpu(p), &p->cpus_mask))
 				goto out;
 		}
 
-		if (task_on_rq_queued(p)) {
+		якщо (task_on_rq_queued(p)) {
 			update_rq_clock(rq);
 			rq = __migrate_task(rq, &rf, p, arg->dest_cpu);
-		} else {
+		} інакше {
 			p->wake_cpu = arg->dest_cpu;
 		}
 
@@ -2721,7 +2721,7 @@ static int migration_cpu_stop(void *data)
 		 * anyway, so it's probably not a big deal.
 		 */
 
-	} else if (pending) {
+	} інакше якщо (pending) {
 		/*
 		 * This happens when we get migrated between migrate_enable()'s
 		 * preempt_enable() and scheduling the stopper task. At that
@@ -2736,7 +2736,7 @@ static int migration_cpu_stop(void *data)
 		 * ->pi_lock, so the allowed mask is stable - if it got
 		 * somewhere allowed, we're done.
 		 */
-		if (cpumask_test_cpu(task_cpu(p), p->cpus_ptr)) {
+		якщо (cpumask_test_cpu(task_cpu(p), p->cpus_ptr)) {
 			p->migration_pending = NULL;
 			complete = true;
 			goto out;
@@ -2754,21 +2754,21 @@ static int migration_cpu_stop(void *data)
 		stop_one_cpu_nowait(task_cpu(p), migration_cpu_stop,
 				    &pending->arg, &pending->stop_work);
 		preempt_enable();
-		return 0;
+		повернути 0;
 	}
 out:
-	if (pending)
+	якщо (pending)
 		pending->stop_pending = false;
 	rq_unlock(rq, &rf);
 	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
 
-	if (complete)
+	якщо (complete)
 		complete_all(&pending->done);
 
-	return 0;
+	повернути 0;
 }
 
-int push_cpu_stop(void *arg)
+ціле push_cpu_stop(void *arg)
 {
 	struct rq *lowest_rq = NULL, *rq = this_rq();
 	struct task_struct *p = arg;
@@ -2776,26 +2776,26 @@ int push_cpu_stop(void *arg)
 	raw_spin_lock_irq(&p->pi_lock);
 	raw_spin_rq_lock(rq);
 
-	if (task_rq(p) != rq)
+	якщо (task_rq(p) != rq)
 		goto out_unlock;
 
-	if (is_migration_disabled(p)) {
+	якщо (is_migration_disabled(p)) {
 		p->migration_flags |= MDF_PUSH;
 		goto out_unlock;
 	}
 
 	p->migration_flags &= ~MDF_PUSH;
 
-	if (p->sched_class->find_lock_rq)
+	якщо (p->sched_class->find_lock_rq)
 		lowest_rq = p->sched_class->find_lock_rq(p, rq);
 
-	if (!lowest_rq)
+	якщо (!lowest_rq)
 		goto out_unlock;
 
 	lockdep_assert_rq_held(lowest_rq);
 
 	// XXX validate p is still the highest prio task
-	if (task_rq(p) == rq) {
+	якщо (task_rq(p) == rq) {
 		move_queued_task_locked(rq, lowest_rq, p);
 		resched_curr(lowest_rq);
 	}
@@ -2808,7 +2808,7 @@ out_unlock:
 	raw_spin_unlock_irq(&p->pi_lock);
 
 	put_task_struct(p);
-	return 0;
+	повернути 0;
 }
 
 static inline void mm_update_cpus_allowed(struct mm_struct *mm, const cpumask_t *affmask);
@@ -2819,9 +2819,9 @@ static inline void mm_update_cpus_allowed(struct mm_struct *mm, const cpumask_t 
  */
 void set_cpus_allowed_common(struct task_struct *p, struct affinity_context *ctx)
 {
-	if (ctx->flags & (SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) {
+	якщо (ctx->flags & (SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) {
 		p->cpus_ptr = ctx->new_mask;
-		return;
+		повернути;
 	}
 
 	cpumask_copy(&p->cpus_mask, ctx->new_mask);
@@ -2831,7 +2831,7 @@ void set_cpus_allowed_common(struct task_struct *p, struct affinity_context *ctx
 	/*
 	 * Swap in a new user_cpus_ptr if SCA_USER flag set
 	 */
-	if (ctx->flags & SCA_USER)
+	якщо (ctx->flags & SCA_USER)
 		swap(p->user_cpus_ptr, ctx->user_mask);
 }
 
@@ -2869,8 +2869,8 @@ void set_cpus_allowed_force(struct task_struct *p, const struct cpumask *new_mas
 	kfree_rcu((union cpumask_rcuhead *)ac.user_mask, rcu);
 }
 
-int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
-		      int node)
+ціле dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
+		      ціле node)
 {
 	cpumask_t *user_mask;
 	unsigned long flags;
@@ -2886,12 +2886,12 @@ int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
 	 * It is not worth the extra overhead of taking the pi_lock on
 	 * every fork/clone.
 	 */
-	if (data_race(!src->user_cpus_ptr))
-		return 0;
+	якщо (data_race(!src->user_cpus_ptr))
+		повернути 0;
 
 	user_mask = alloc_user_cpus_ptr(node);
-	if (!user_mask)
-		return -ENOMEM;
+	якщо (!user_mask)
+		повернути -ENOMEM;
 
 	/*
 	 * Use pi_lock to protect content of user_cpus_ptr
@@ -2900,16 +2900,16 @@ int dup_user_cpus_ptr(struct task_struct *dst, struct task_struct *src,
 	 * set_cpus_allowed_force().
 	 */
 	raw_spin_lock_irqsave(&src->pi_lock, flags);
-	if (src->user_cpus_ptr) {
+	якщо (src->user_cpus_ptr) {
 		swap(dst->user_cpus_ptr, user_mask);
 		cpumask_copy(dst->user_cpus_ptr, src->user_cpus_ptr);
 	}
 	raw_spin_unlock_irqrestore(&src->pi_lock, flags);
 
-	if (unlikely(user_mask))
+	якщо (unlikely(user_mask))
 		kfree(user_mask);
 
-	return 0;
+	повернути 0;
 }
 
 static inline struct cpumask *clear_user_cpus_ptr(struct task_struct *p)
@@ -2918,7 +2918,7 @@ static inline struct cpumask *clear_user_cpus_ptr(struct task_struct *p)
 
 	swap(p->user_cpus_ptr, user_mask);
 
-	return user_mask;
+	повернути user_mask;
 }
 
 void release_user_cpus_ptr(struct task_struct *p)
@@ -3002,8 +3002,8 @@ void release_user_cpus_ptr(struct task_struct *p)
  * pending affinity completion is preceded by an uninstallation of
  * p->migration_pending done with p->pi_lock held.
  */
-static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flags *rf,
-			    int dest_cpu, unsigned int flags)
+static ціле affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flags *rf,
+			    ціле dest_cpu, unsigned ціле flags)
 	__releases(__rq_lockp(rq), &p->pi_lock)
 {
 	struct set_affinity_pending my_pending = { }, *pending = NULL;
@@ -3016,11 +3016,11 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 	 * holding proxy, (and potentially has been migrated outside its
 	 * current or previous affinity mask)
 	 */
-	if (cpumask_test_cpu(task_cpu(p), &p->cpus_mask) ||
+	якщо (cpumask_test_cpu(task_cpu(p), &p->cpus_mask) ||
 	    (task_current_donor(rq, p) && !task_current(rq, p))) {
 		struct task_struct *push_task = NULL;
 
-		if ((flags & SCA_MIGRATE_ENABLE) &&
+		якщо ((flags & SCA_MIGRATE_ENABLE) &&
 		    (p->migration_flags & MDF_PUSH) && !rq->push_busy) {
 			rq->push_busy = true;
 			push_task = get_task_struct(p);
@@ -3031,28 +3031,28 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 		 * then complete now.
 		 */
 		pending = p->migration_pending;
-		if (pending && !pending->stop_pending) {
+		якщо (pending && !pending->stop_pending) {
 			p->migration_pending = NULL;
 			complete = true;
 		}
 
 		preempt_disable();
 		task_rq_unlock(rq, p, rf);
-		if (push_task) {
+		якщо (push_task) {
 			stop_one_cpu_nowait(rq->cpu, push_cpu_stop,
 					    p, &rq->push_work);
 		}
 		preempt_enable();
 
-		if (complete)
+		якщо (complete)
 			complete_all(&pending->done);
 
-		return 0;
+		повернути 0;
 	}
 
-	if (!(flags & SCA_MIGRATE_ENABLE)) {
+	якщо (!(flags & SCA_MIGRATE_ENABLE)) {
 		/* serialized by p->pi_lock */
-		if (!p->migration_pending) {
+		якщо (!p->migration_pending) {
 			/* Install the request */
 			refcount_set(&my_pending.refs, 1);
 			init_completion(&my_pending.done);
@@ -3063,7 +3063,7 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 			};
 
 			p->migration_pending = &my_pending;
-		} else {
+		} інакше {
 			pending = p->migration_pending;
 			refcount_inc(&pending->refs);
 			/*
@@ -3090,54 +3090,54 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 	 *
 	 * Either way, we really should have a @pending here.
 	 */
-	if (WARN_ON_ONCE(!pending)) {
+	якщо (WARN_ON_ONCE(!pending)) {
 		task_rq_unlock(rq, p, rf);
-		return -EINVAL;
+		повернути -EINVAL;
 	}
 
-	if (task_on_cpu(rq, p) || READ_ONCE(p->__state) == TASK_WAKING) {
+	якщо (task_on_cpu(rq, p) || READ_ONCE(p->__state) == TASK_WAKING) {
 		/*
 		 * MIGRATE_ENABLE gets here because 'p == current', but for
 		 * anything else we cannot do is_migration_disabled(), punt
 		 * and have the stopper function handle it all race-free.
 		 */
 		stop_pending = pending->stop_pending;
-		if (!stop_pending)
+		якщо (!stop_pending)
 			pending->stop_pending = true;
 
-		if (flags & SCA_MIGRATE_ENABLE)
+		якщо (flags & SCA_MIGRATE_ENABLE)
 			p->migration_flags &= ~MDF_PUSH;
 
 		preempt_disable();
 		task_rq_unlock(rq, p, rf);
-		if (!stop_pending) {
+		якщо (!stop_pending) {
 			stop_one_cpu_nowait(cpu_of(rq), migration_cpu_stop,
 					    &pending->arg, &pending->stop_work);
 		}
 		preempt_enable();
 
-		if (flags & SCA_MIGRATE_ENABLE)
-			return 0;
-	} else {
+		якщо (flags & SCA_MIGRATE_ENABLE)
+			повернути 0;
+	} інакше {
 
-		if (!is_migration_disabled(p)) {
-			if (task_on_rq_queued(p))
+		якщо (!is_migration_disabled(p)) {
+			якщо (task_on_rq_queued(p))
 				rq = move_queued_task(rq, rf, p, dest_cpu);
 
-			if (!pending->stop_pending) {
+			якщо (!pending->stop_pending) {
 				p->migration_pending = NULL;
 				complete = true;
 			}
 		}
 		task_rq_unlock(rq, p, rf);
 
-		if (complete)
+		якщо (complete)
 			complete_all(&pending->done);
 	}
 
 	wait_for_completion(&pending->done);
 
-	if (refcount_dec_and_test(&pending->refs))
+	якщо (refcount_dec_and_test(&pending->refs))
 		wake_up_var(&pending->refs); /* No UaF, just an address */
 
 	/*
@@ -3149,13 +3149,13 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
 	/* ARGH */
 	WARN_ON_ONCE(my_pending.stop_pending);
 
-	return 0;
+	повернути 0;
 }
 
 /*
  * Called with both p->pi_lock and rq->lock held; drops both before returning.
  */
-static int __set_cpus_allowed_ptr_locked(struct task_struct *p,
+static ціле __set_cpus_allowed_ptr_locked(struct task_struct *p,
 					 struct affinity_context *ctx,
 					 struct rq *rq,
 					 struct rq_flags *rf)
@@ -3164,10 +3164,10 @@ static int __set_cpus_allowed_ptr_locked(struct task_struct *p,
 	const struct cpumask *cpu_allowed_mask = task_cpu_possible_mask(p);
 	const struct cpumask *cpu_valid_mask = cpu_active_mask;
 	bool kthread = p->flags & PF_KTHREAD;
-	unsigned int dest_cpu;
-	int ret = 0;
+	unsigned ціле dest_cpu;
+	ціле ret = 0;
 
-	if (kthread || is_migration_disabled(p)) {
+	якщо (kthread || is_migration_disabled(p)) {
 		/*
 		 * Kernel threads are allowed on online && !active CPUs,
 		 * however, during cpu-hot-unplug, even these might get pushed
@@ -3181,7 +3181,7 @@ static int __set_cpus_allowed_ptr_locked(struct task_struct *p,
 		cpu_valid_mask = cpu_online_mask;
 	}
 
-	if (!kthread && !cpumask_subset(ctx->new_mask, cpu_allowed_mask)) {
+	якщо (!kthread && !cpumask_subset(ctx->new_mask, cpu_allowed_mask)) {
 		ret = -EINVAL;
 		goto out;
 	}
@@ -3190,19 +3190,19 @@ static int __set_cpus_allowed_ptr_locked(struct task_struct *p,
 	 * Must re-check here, to close a race against __kthread_bind(),
 	 * sched_setaffinity() is not guaranteed to observe the flag.
 	 */
-	if ((ctx->flags & SCA_CHECK) && (p->flags & PF_NO_SETAFFINITY)) {
+	якщо ((ctx->flags & SCA_CHECK) && (p->flags & PF_NO_SETAFFINITY)) {
 		ret = -EINVAL;
 		goto out;
 	}
 
-	if (!(ctx->flags & SCA_MIGRATE_ENABLE)) {
-		if (cpumask_equal(&p->cpus_mask, ctx->new_mask)) {
-			if (ctx->flags & SCA_USER)
+	якщо (!(ctx->flags & SCA_MIGRATE_ENABLE)) {
+		якщо (cpumask_equal(&p->cpus_mask, ctx->new_mask)) {
+			якщо (ctx->flags & SCA_USER)
 				swap(p->user_cpus_ptr, ctx->user_mask);
 			goto out;
 		}
 
-		if (WARN_ON_ONCE(p == current &&
+		якщо (WARN_ON_ONCE(p == current &&
 				 is_migration_disabled(p) &&
 				 !cpumask_test_cpu(task_cpu(p), ctx->new_mask))) {
 			ret = -EBUSY;
@@ -3216,19 +3216,19 @@ static int __set_cpus_allowed_ptr_locked(struct task_struct *p,
 	 * immediately required to distribute the tasks within their new mask.
 	 */
 	dest_cpu = cpumask_any_and_distribute(cpu_valid_mask, ctx->new_mask);
-	if (dest_cpu >= nr_cpu_ids) {
+	якщо (dest_cpu >= nr_cpu_ids) {
 		ret = -EINVAL;
 		goto out;
 	}
 
 	do_set_cpus_allowed(p, ctx);
 
-	return affine_move_task(rq, p, rf, dest_cpu, ctx->flags);
+	повернути affine_move_task(rq, p, rf, dest_cpu, ctx->flags);
 
 out:
 	task_rq_unlock(rq, p, rf);
 
-	return ret;
+	повернути ret;
 }
 
 /*
@@ -3240,7 +3240,7 @@ out:
  * task must not exit() & deallocate itself prematurely. The
  * call is not atomic; no spinlocks may be held.
  */
-int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx)
+ціле __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx)
 {
 	struct rq_flags rf;
 	struct rq *rq;
@@ -3250,22 +3250,22 @@ int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx)
 	 * Masking should be skipped if SCA_USER or any of the SCA_MIGRATE_*
 	 * flags are set.
 	 */
-	if (p->user_cpus_ptr &&
+	якщо (p->user_cpus_ptr &&
 	    !(ctx->flags & (SCA_USER | SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) &&
 	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr))
 		ctx->new_mask = rq->scratch_mask;
 
-	return __set_cpus_allowed_ptr_locked(p, ctx, rq, &rf);
+	повернути __set_cpus_allowed_ptr_locked(p, ctx, rq, &rf);
 }
 
-int set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask)
+ціле set_cpus_allowed_ptr(struct task_struct *p, const struct cpumask *new_mask)
 {
 	struct affinity_context ac = {
 		.new_mask  = new_mask,
 		.flags     = 0,
 	};
 
-	return __set_cpus_allowed_ptr(p, &ac);
+	повернути __set_cpus_allowed_ptr(p, &ac);
 }
 EXPORT_SYMBOL_GPL(set_cpus_allowed_ptr);
 
@@ -3278,7 +3278,7 @@ EXPORT_SYMBOL_GPL(set_cpus_allowed_ptr);
  * If the resulting mask is empty, leave the affinity unchanged and return
  * -EINVAL.
  */
-static int restrict_cpus_allowed_ptr(struct task_struct *p,
+static ціле restrict_cpus_allowed_ptr(struct task_struct *p,
 				     struct cpumask *new_mask,
 				     const struct cpumask *subset_mask)
 {
@@ -3288,7 +3288,7 @@ static int restrict_cpus_allowed_ptr(struct task_struct *p,
 	};
 	struct rq_flags rf;
 	struct rq *rq;
-	int err;
+	ціле err;
 
 	rq = task_rq_lock(p, &rf);
 
@@ -3297,21 +3297,21 @@ static int restrict_cpus_allowed_ptr(struct task_struct *p,
 	 * likely to cause problems, so fail and noisily override the
 	 * mask entirely.
 	 */
-	if (task_has_dl_policy(p) && dl_bandwidth_enabled()) {
+	якщо (task_has_dl_policy(p) && dl_bandwidth_enabled()) {
 		err = -EPERM;
 		goto err_unlock;
 	}
 
-	if (!cpumask_and(new_mask, task_user_cpus(p), subset_mask)) {
+	якщо (!cpumask_and(new_mask, task_user_cpus(p), subset_mask)) {
 		err = -EINVAL;
 		goto err_unlock;
 	}
 
-	return __set_cpus_allowed_ptr_locked(p, &ac, rq, &rf);
+	повернути __set_cpus_allowed_ptr_locked(p, &ac, rq, &rf);
 
 err_unlock:
 	task_rq_unlock(rq, p, &rf);
-	return err;
+	повернути err;
 }
 
 /*
@@ -3333,10 +3333,10 @@ void force_compatible_cpus_allowed_ptr(struct task_struct *p)
 	 * lock to ensure that the migration succeeds.
 	 */
 	cpus_read_lock();
-	if (!cpumask_available(new_mask))
+	якщо (!cpumask_available(new_mask))
 		goto out_set_mask;
 
-	if (!restrict_cpus_allowed_ptr(p, new_mask, override_mask))
+	якщо (!restrict_cpus_allowed_ptr(p, new_mask, override_mask))
 		goto out_free_mask;
 
 	/*
@@ -3347,7 +3347,7 @@ void force_compatible_cpus_allowed_ptr(struct task_struct *p)
 	override_mask = new_mask;
 
 out_set_mask:
-	if (printk_ratelimit()) {
+	якщо (printk_ratelimit()) {
 		printk_deferred("Overriding affinity for process %d (%s) to CPUs %*pbl\n",
 				task_pid_nr(p), p->comm,
 				cpumask_pr_args(override_mask));
@@ -3372,7 +3372,7 @@ void relax_compatible_cpus_allowed_ptr(struct task_struct *p)
 		.new_mask  = task_user_cpus(p),
 		.flags     = 0,
 	};
-	int ret;
+	ціле ret;
 
 	/*
 	 * Try to restore the old affinity mask with __sched_setaffinity().
@@ -3384,9 +3384,9 @@ void relax_compatible_cpus_allowed_ptr(struct task_struct *p)
 
 #ifdef CONFIG_SMP
 
-void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
+void set_task_cpu(struct task_struct *p, unsigned ціле new_cpu)
 {
-	unsigned int state = READ_ONCE(p->__state);
+	unsigned ціле state = READ_ONCE(p->__state);
 	bool proxy_migrated = sched_proxy_exec() && p->is_blocked &&
 			      task_cpu(p) != p->wake_cpu;
 
@@ -3433,8 +3433,8 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
 
 	trace_sched_migrate_task(p, new_cpu);
 
-	if (task_cpu(p) != new_cpu) {
-		if (p->sched_class->migrate_task_rq)
+	якщо (task_cpu(p) != new_cpu) {
+		якщо (p->sched_class->migrate_task_rq)
 			p->sched_class->migrate_task_rq(p, new_cpu);
 		p->se.nr_migrations++;
 		perf_event_task_migrate(p);
@@ -3445,9 +3445,9 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
 #endif /* CONFIG_SMP */
 
 #ifdef CONFIG_NUMA_BALANCING
-static void __migrate_swap_task(struct task_struct *p, int cpu)
+static void __migrate_swap_task(struct task_struct *p, ціле cpu)
 {
-	if (task_on_rq_queued(p)) {
+	якщо (task_on_rq_queued(p)) {
 		struct rq *src_rq, *dst_rq;
 		struct rq_flags srf, drf;
 
@@ -3463,7 +3463,7 @@ static void __migrate_swap_task(struct task_struct *p, int cpu)
 		rq_unpin_lock(dst_rq, &drf);
 		rq_unpin_lock(src_rq, &srf);
 
-	} else {
+	} інакше {
 		/*
 		 * Task isn't running anymore; make it appear like we migrated
 		 * it before it went to sleep. This means on wakeup we make the
@@ -3475,16 +3475,16 @@ static void __migrate_swap_task(struct task_struct *p, int cpu)
 
 struct migration_swap_arg {
 	struct task_struct *src_task, *dst_task;
-	int src_cpu, dst_cpu;
+	ціле src_cpu, dst_cpu;
 };
 
-static int migrate_swap_stop(void *data)
+static ціле migrate_swap_stop(void *data)
 {
 	struct migration_swap_arg *arg = data;
 	struct rq *src_rq, *dst_rq;
 
-	if (!cpu_active(arg->src_cpu) || !cpu_active(arg->dst_cpu))
-		return -EAGAIN;
+	якщо (!cpu_active(arg->src_cpu) || !cpu_active(arg->dst_cpu))
+		повернути -EAGAIN;
 
 	src_rq = cpu_rq(arg->src_cpu);
 	dst_rq = cpu_rq(arg->dst_cpu);
@@ -3492,32 +3492,32 @@ static int migrate_swap_stop(void *data)
 	guard(double_raw_spinlock)(&arg->src_task->pi_lock, &arg->dst_task->pi_lock);
 	guard(double_rq_lock)(src_rq, dst_rq);
 
-	if (task_cpu(arg->dst_task) != arg->dst_cpu)
-		return -EAGAIN;
+	якщо (task_cpu(arg->dst_task) != arg->dst_cpu)
+		повернути -EAGAIN;
 
-	if (task_cpu(arg->src_task) != arg->src_cpu)
-		return -EAGAIN;
+	якщо (task_cpu(arg->src_task) != arg->src_cpu)
+		повернути -EAGAIN;
 
-	if (!cpumask_test_cpu(arg->dst_cpu, arg->src_task->cpus_ptr))
-		return -EAGAIN;
+	якщо (!cpumask_test_cpu(arg->dst_cpu, arg->src_task->cpus_ptr))
+		повернути -EAGAIN;
 
-	if (!cpumask_test_cpu(arg->src_cpu, arg->dst_task->cpus_ptr))
-		return -EAGAIN;
+	якщо (!cpumask_test_cpu(arg->src_cpu, arg->dst_task->cpus_ptr))
+		повернути -EAGAIN;
 
 	__migrate_swap_task(arg->src_task, arg->dst_cpu);
 	__migrate_swap_task(arg->dst_task, arg->src_cpu);
 
-	return 0;
+	повернути 0;
 }
 
 /*
  * Cross migrate two tasks
  */
-int migrate_swap(struct task_struct *cur, struct task_struct *p,
-		int target_cpu, int curr_cpu)
+ціле migrate_swap(struct task_struct *cur, struct task_struct *p,
+		ціле target_cpu, ціле curr_cpu)
 {
 	struct migration_swap_arg arg;
-	int ret = -EINVAL;
+	ціле ret = -EINVAL;
 
 	arg = (struct migration_swap_arg){
 		.src_task = cur,
@@ -3526,27 +3526,27 @@ int migrate_swap(struct task_struct *cur, struct task_struct *p,
 		.dst_cpu = target_cpu,
 	};
 
-	if (arg.src_cpu == arg.dst_cpu)
+	якщо (arg.src_cpu == arg.dst_cpu)
 		goto out;
 
 	/*
 	 * These three tests are all lockless; this is OK since all of them
 	 * will be re-checked with proper locks held further down the line.
 	 */
-	if (!cpu_active(arg.src_cpu) || !cpu_active(arg.dst_cpu))
+	якщо (!cpu_active(arg.src_cpu) || !cpu_active(arg.dst_cpu))
 		goto out;
 
-	if (!cpumask_test_cpu(arg.dst_cpu, arg.src_task->cpus_ptr))
+	якщо (!cpumask_test_cpu(arg.dst_cpu, arg.src_task->cpus_ptr))
 		goto out;
 
-	if (!cpumask_test_cpu(arg.src_cpu, arg.dst_task->cpus_ptr))
+	якщо (!cpumask_test_cpu(arg.src_cpu, arg.dst_task->cpus_ptr))
 		goto out;
 
 	trace_sched_swap_numa(cur, arg.src_cpu, p, arg.dst_cpu);
 	ret = stop_two_cpus(arg.dst_cpu, arg.src_cpu, migrate_swap_stop, &arg);
 
 out:
-	return ret;
+	повернути ret;
 }
 #endif /* CONFIG_NUMA_BALANCING */
 
@@ -3566,9 +3566,9 @@ out:
 void kick_process(struct task_struct *p)
 {
 	guard(preempt)();
-	int cpu = task_cpu(p);
+	ціле cpu = task_cpu(p);
 
-	if ((cpu != smp_processor_id()) && task_curr(p))
+	якщо ((cpu != smp_processor_id()) && task_curr(p))
 		smp_send_reschedule(cpu);
 }
 EXPORT_SYMBOL_GPL(kick_process);
@@ -3595,32 +3595,32 @@ EXPORT_SYMBOL_GPL(kick_process);
  * select_task_rq() below may allow selection of !active CPUs in order
  * to satisfy the above rules.
  */
-static int select_fallback_rq(int cpu, struct task_struct *p)
+static ціле select_fallback_rq(ціле cpu, struct task_struct *p)
 {
-	int nid = cpu_to_node(cpu);
+	ціле nid = cpu_to_node(cpu);
 	const struct cpumask *nodemask = NULL;
 	enum { cpuset, possible, fail } state = cpuset;
-	int dest_cpu;
+	ціле dest_cpu;
 
 	/*
 	 * If the node that the CPU is on has been offlined, cpu_to_node()
 	 * will return -1. There is no CPU on the node, and we should
 	 * select the CPU on the other node.
 	 */
-	if (nid != -1) {
+	якщо (nid != -1) {
 		nodemask = cpumask_of_node(nid);
 
 		/* Look for allowed, online CPU in same node. */
 		for_each_cpu(dest_cpu, nodemask) {
-			if (is_cpu_allowed(p, dest_cpu))
-				return dest_cpu;
+			якщо (is_cpu_allowed(p, dest_cpu))
+				повернути dest_cpu;
 		}
 	}
 
-	for (;;) {
+	для (;;) {
 		/* Any allowed, online CPU? */
 		for_each_cpu(dest_cpu, p->cpus_ptr) {
-			if (!is_cpu_allowed(p, dest_cpu))
+			якщо (!is_cpu_allowed(p, dest_cpu))
 				continue;
 
 			goto out;
@@ -3629,7 +3629,7 @@ static int select_fallback_rq(int cpu, struct task_struct *p)
 		/* No more Mr. Nice Guy. */
 		switch (state) {
 		case cpuset:
-			if (cpuset_cpus_allowed_fallback(p)) {
+			якщо (cpuset_cpus_allowed_fallback(p)) {
 				state = possible;
 				break;
 			}
@@ -3645,33 +3645,33 @@ static int select_fallback_rq(int cpu, struct task_struct *p)
 	}
 
 out:
-	if (state != cpuset) {
+	якщо (state != cpuset) {
 		/*
 		 * Don't tell them about moving exiting tasks or
 		 * kernel threads (both mm NULL), since they never
 		 * leave kernel.
 		 */
-		if (p->mm && printk_ratelimit()) {
+		якщо (p->mm && printk_ratelimit()) {
 			printk_deferred("process %d (%s) no longer affine to cpu%d\n",
 					task_pid_nr(p), p->comm, cpu);
 		}
 	}
 
-	return dest_cpu;
+	повернути dest_cpu;
 }
 
 /*
  * The caller (fork, wakeup) owns p->pi_lock, ->cpus_ptr is stable.
  */
 static inline
-int select_task_rq(struct task_struct *p, int cpu, int *wake_flags)
+ціле select_task_rq(struct task_struct *p, ціле cpu, ціле *wake_flags)
 {
 	lockdep_assert_held(&p->pi_lock);
 
-	if (p->nr_cpus_allowed > 1 && !is_migration_disabled(p)) {
+	якщо (p->nr_cpus_allowed > 1 && !is_migration_disabled(p)) {
 		cpu = p->sched_class->select_task_rq(p, cpu, *wake_flags);
 		*wake_flags |= WF_RQ_SELECTED;
-	} else {
+	} інакше {
 		cpu = cpumask_any(p->cpus_ptr);
 	}
 
@@ -3685,19 +3685,19 @@ int select_task_rq(struct task_struct *p, int cpu, int *wake_flags)
 	 * [ this allows ->select_task() to simply return task_cpu(p) and
 	 *   not worry about this generic constraint ]
 	 */
-	if (unlikely(!is_cpu_allowed(p, cpu)))
+	якщо (unlikely(!is_cpu_allowed(p, cpu)))
 		cpu = select_fallback_rq(task_cpu(p), p);
 
-	return cpu;
+	повернути cpu;
 }
 
-void sched_set_stop_task(int cpu, struct task_struct *stop)
+void sched_set_stop_task(ціле cpu, struct task_struct *stop)
 {
 	static struct lock_class_key stop_pi_lock;
 	struct sched_param param = { .sched_priority = MAX_RT_PRIO - 1 };
 	struct task_struct *old_stop = cpu_rq(cpu)->stop;
 
-	if (stop) {
+	якщо (stop) {
 		/*
 		 * Make it appear like a SCHED_FIFO task, its something
 		 * userspace knows about and won't get confused about.
@@ -3727,7 +3727,7 @@ void sched_set_stop_task(int cpu, struct task_struct *stop)
 
 	cpu_rq(cpu)->stop = stop;
 
-	if (old_stop) {
+	якщо (old_stop) {
 		/*
 		 * Reset it back to a normal scheduling class so that
 		 * it can die in pieces.
@@ -3737,39 +3737,39 @@ void sched_set_stop_task(int cpu, struct task_struct *stop)
 }
 
 static void
-ttwu_stat(struct task_struct *p, int cpu, int wake_flags)
+ttwu_stat(struct task_struct *p, ціле cpu, ціле wake_flags)
 {
 	struct rq *rq;
 
-	if (!schedstat_enabled())
-		return;
+	якщо (!schedstat_enabled())
+		повернути;
 
 	rq = this_rq();
 
-	if (cpu == rq->cpu) {
+	якщо (cpu == rq->cpu) {
 		__schedstat_inc(rq->ttwu_local);
 		__schedstat_inc(p->stats.nr_wakeups_local);
-	} else {
+	} інакше {
 		struct sched_domain *sd;
 
 		__schedstat_inc(p->stats.nr_wakeups_remote);
 
 		guard(rcu)();
 		for_each_domain(rq->cpu, sd) {
-			if (cpumask_test_cpu(cpu, sched_domain_span(sd))) {
+			якщо (cpumask_test_cpu(cpu, sched_domain_span(sd))) {
 				__schedstat_inc(sd->ttwu_wake_remote);
 				break;
 			}
 		}
 	}
 
-	if (wake_flags & WF_MIGRATED)
+	якщо (wake_flags & WF_MIGRATED)
 		__schedstat_inc(p->stats.nr_wakeups_migrate);
 
 	__schedstat_inc(rq->ttwu_count);
 	__schedstat_inc(p->stats.nr_wakeups);
 
-	if (wake_flags & WF_SYNC)
+	якщо (wake_flags & WF_SYNC)
 		__schedstat_inc(p->stats.nr_wakeups_sync);
 }
 
@@ -3788,15 +3788,15 @@ void update_rq_avg_idle(struct rq *rq)
 	u64 idle_stamp = rq->idle_stamp;
 	u64 delta, max;
 
-	if (!idle_stamp)
-		return;
+	якщо (!idle_stamp)
+		повернути;
 
 	delta = rq_clock(rq) - idle_stamp;
 
 	update_avg(&rq->avg_idle, delta);
 
 	max = 2 * rq->max_idle_balance_cost;
-	if (rq->avg_idle > max)
+	якщо (rq->avg_idle > max)
 		rq->avg_idle = max;
 	rq->idle_stamp = 0;
 }
@@ -3838,16 +3838,16 @@ static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
 	 * will not apply. But if it did, this check is the safe way around
 	 * and would migrate.
 	 */
-	if (task_cpu(p) == p->wake_cpu)
-		return false;
+	якщо (task_cpu(p) == p->wake_cpu)
+		повернути false;
 
 	scoped_guard(raw_spinlock, &p->blocked_lock) {
 		/* Task is waking up; clear any blocked_on relationship */
 		__clear_task_blocked_on(p, NULL);
 
 		/* If already current, don't need to return migrate */
-		if (task_current(rq, p))
-			return false;
+		якщо (task_current(rq, p))
+			повернути false;
 	}
 
 	dequeued = dequeue_block_task(rq, p, TASK_WAKING);
@@ -3860,36 +3860,36 @@ static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
 	 *
 	 * Keep on_rq set until all donor references have been replaced.
 	 */
-	if (task_current_donor(rq, p))
+	якщо (task_current_donor(rq, p))
 		proxy_reset_donor(rq);
 
-	if (dequeued)
+	якщо (dequeued)
 		__block_task(rq, p);
-	return true;
+	повернути true;
 }
-#else /* !CONFIG_SCHED_PROXY_EXEC */
+#інакше /* !CONFIG_SCHED_PROXY_EXEC */
 static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
 {
-	return false;
+	повернути false;
 }
 #endif /* CONFIG_SCHED_PROXY_EXEC */
 
 static void
-ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
+ttwu_do_activate(struct rq *rq, struct task_struct *p, ціле wake_flags,
 		 struct rq_flags *rf)
 {
-	int en_flags = ENQUEUE_WAKEUP | ENQUEUE_NOCLOCK;
+	ціле en_flags = ENQUEUE_WAKEUP | ENQUEUE_NOCLOCK;
 
 	lockdep_assert_rq_held(rq);
 
-	if (p->sched_contributes_to_load)
+	якщо (p->sched_contributes_to_load)
 		rq->nr_uninterruptible--;
 
-	if (wake_flags & WF_RQ_SELECTED)
+	якщо (wake_flags & WF_RQ_SELECTED)
 		en_flags |= ENQUEUE_RQ_SELECTED;
-	if (wake_flags & WF_MIGRATED)
+	якщо (wake_flags & WF_MIGRATED)
 		en_flags |= ENQUEUE_MIGRATED;
-	else if (p->in_iowait) {
+	інакше якщо (p->in_iowait) {
 		delayacct_blkio_end(p);
 		atomic_dec(&task_rq(p)->nr_iowait);
 	}
@@ -3899,7 +3899,7 @@ ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
 
 	ttwu_do_wakeup(p);
 
-	if (p->sched_class->task_woken) {
+	якщо (p->sched_class->task_woken) {
 		/*
 		 * Our task @p is fully woken up and running; so it's safe to
 		 * drop the rq->lock, hereafter rq is only used for statistics.
@@ -3935,22 +3935,22 @@ ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
  * Returns: %true when the wakeup is done,
  *          %false otherwise.
  */
-static int ttwu_runnable(struct task_struct *p, int wake_flags)
+static ціле ttwu_runnable(struct task_struct *p, ціле wake_flags)
 {
 	ACQUIRE(__task_rq_lock, guard)(p);
 	struct rq *rq = guard.rq;
 
-	if (!task_on_rq_queued(p))
-		return 0;
+	якщо (!task_on_rq_queued(p))
+		повернути 0;
 
 	update_rq_clock(rq);
-	if (p->is_blocked) {
-		if (p->se.sched_delayed)
+	якщо (p->is_blocked) {
+		якщо (p->se.sched_delayed)
 			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
-		if (proxy_needs_return(rq, p))
-			return 0;
+		якщо (proxy_needs_return(rq, p))
+			повернути 0;
 	}
-	if (!task_on_cpu(rq, p)) {
+	якщо (!task_on_cpu(rq, p)) {
 		/*
 		 * When on_rq && !on_cpu the task is preempted, see if
 		 * it should preempt the task that is current now.
@@ -3958,7 +3958,7 @@ static int ttwu_runnable(struct task_struct *p, int wake_flags)
 		wakeup_preempt(rq, p, wake_flags | WF_TTWU_RQ);
 	}
 	ttwu_do_wakeup(p);
-	return 1;
+	повернути 1;
 }
 
 void sched_ttwu_pending(void *arg)
@@ -3968,17 +3968,17 @@ void sched_ttwu_pending(void *arg)
 	struct task_struct *p, *t;
 	struct rq_flags rf;
 
-	if (!llist)
-		return;
+	якщо (!llist)
+		повернути;
 
 	rq_lock_irqsave(rq, &rf);
 	update_rq_clock(rq);
 
 	llist_for_each_entry_safe(p, t, llist, wake_entry.llist) {
-		if (WARN_ON_ONCE(p->on_cpu))
+		якщо (WARN_ON_ONCE(p->on_cpu))
 			smp_cond_load_acquire(&p->on_cpu, !VAL);
 
-		if (WARN_ON_ONCE(task_cpu(p) != cpu_of(rq)))
+		якщо (WARN_ON_ONCE(task_cpu(p) != cpu_of(rq)))
 			set_task_cpu(p, cpu_of(rq));
 
 		ttwu_do_activate(rq, p, p->sched_remote_wakeup ? WF_MIGRATED : 0, &rf);
@@ -4004,14 +4004,14 @@ void sched_ttwu_pending(void *arg)
  * Returns true if the caller can proceed with sending the IPI.
  * Returns false otherwise.
  */
-bool call_function_single_prep_ipi(int cpu)
+bool call_function_single_prep_ipi(ціле cpu)
 {
-	if (set_nr_if_polling(cpu_rq(cpu)->idle)) {
+	якщо (set_nr_if_polling(cpu_rq(cpu)->idle)) {
 		trace_sched_wake_idle_without_ipi(cpu);
-		return false;
+		повернути false;
 	}
 
-	return true;
+	повернути true;
 }
 
 /*
@@ -4020,7 +4020,7 @@ bool call_function_single_prep_ipi(int cpu)
  * via sched_ttwu_wakeup() for activation so the wakee incurs the cost
  * of the wakeup instead of the waker.
  */
-static void __ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
+static void __ttwu_queue_wakelist(struct task_struct *p, ціле cpu, ціле wake_flags)
 {
 	struct rq *rq = cpu_rq(cpu);
 
@@ -4032,82 +4032,82 @@ static void __ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags
 #endif
 }
 
-void wake_up_if_idle(int cpu)
+void wake_up_if_idle(ціле cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 
 	guard(rcu)();
-	if (is_idle_task(rcu_dereference(rq->curr))) {
+	якщо (is_idle_task(rcu_dereference(rq->curr))) {
 		guard(rq_lock_irqsave)(rq);
-		if (is_idle_task(rq->curr))
+		якщо (is_idle_task(rq->curr))
 			resched_curr(rq);
 	}
 }
 
-bool cpus_equal_capacity(int this_cpu, int that_cpu)
+bool cpus_equal_capacity(ціле this_cpu, ціле that_cpu)
 {
-	if (!sched_asym_cpucap_active())
-		return true;
+	якщо (!sched_asym_cpucap_active())
+		повернути true;
 
-	if (this_cpu == that_cpu)
-		return true;
+	якщо (this_cpu == that_cpu)
+		повернути true;
 
-	return arch_scale_cpu_capacity(this_cpu) == arch_scale_cpu_capacity(that_cpu);
+	повернути arch_scale_cpu_capacity(this_cpu) == arch_scale_cpu_capacity(that_cpu);
 }
 
-bool cpus_share_cache(int this_cpu, int that_cpu)
+bool cpus_share_cache(ціле this_cpu, ціле that_cpu)
 {
-	if (this_cpu == that_cpu)
-		return true;
+	якщо (this_cpu == that_cpu)
+		повернути true;
 
-	return per_cpu(sd_llc_id, this_cpu) == per_cpu(sd_llc_id, that_cpu);
+	повернути per_cpu(sd_llc_id, this_cpu) == per_cpu(sd_llc_id, that_cpu);
 }
 
 /*
  * Whether CPUs are share cache resources, which means LLC on non-cluster
  * machines and LLC tag or L2 on machines with clusters.
  */
-bool cpus_share_resources(int this_cpu, int that_cpu)
+bool cpus_share_resources(ціле this_cpu, ціле that_cpu)
 {
-	if (this_cpu == that_cpu)
-		return true;
+	якщо (this_cpu == that_cpu)
+		повернути true;
 
-	return per_cpu(sd_share_id, this_cpu) == per_cpu(sd_share_id, that_cpu);
+	повернути per_cpu(sd_share_id, this_cpu) == per_cpu(sd_share_id, that_cpu);
 }
 
-static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
+static inline bool ttwu_queue_cond(struct task_struct *p, ціле cpu)
 {
-	int this_cpu = smp_processor_id();
+	ціле this_cpu = smp_processor_id();
 
 	/* See SCX_OPS_ALLOW_QUEUED_WAKEUP. */
-	if (!scx_allow_ttwu_queue(p))
-		return false;
+	якщо (!scx_allow_ttwu_queue(p))
+		повернути false;
 
 #ifdef CONFIG_SMP
-	if (p->sched_class == &stop_sched_class)
-		return false;
+	якщо (p->sched_class == &stop_sched_class)
+		повернути false;
 #endif
 
 	/*
 	 * Do not complicate things with the async wake_list while the CPU is
 	 * in hotplug state.
 	 */
-	if (!cpu_active(cpu))
-		return false;
+	якщо (!cpu_active(cpu))
+		повернути false;
 
 	/* Ensure the task will still be allowed to run on the CPU. */
-	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-		return false;
+	якщо (!cpumask_test_cpu(cpu, p->cpus_ptr))
+		повернути false;
 
 	/*
 	 * If the CPU does not share cache, then queue the task on the
 	 * remote rqs wakelist to avoid accessing remote data.
 	 */
-	if (!cpus_share_cache(this_cpu, cpu))
-		return true;
+	якщо (!cpus_share_cache(this_cpu, cpu))
+		повернути true;
 
-	if (cpu == this_cpu)
-		return false;
+	якщо (cpu == this_cpu)
+		повернути false;
 
 	/*
 	 * If the wakee cpu is idle, or the task is descheduling and the
@@ -4120,30 +4120,30 @@ static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
 	 * p->on_cpu can be whatever, we've done the dequeue, so
 	 * the wakee has been accounted out of ->nr_running.
 	 */
-	if (!cpu_rq(cpu)->nr_running)
-		return true;
+	якщо (!cpu_rq(cpu)->nr_running)
+		повернути true;
 
-	return false;
+	повернути false;
 }
 
-static bool ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
+static bool ttwu_queue_wakelist(struct task_struct *p, ціле cpu, ціле wake_flags)
 {
-	if (sched_feat(TTWU_QUEUE) && ttwu_queue_cond(p, cpu)) {
+	якщо (sched_feat(TTWU_QUEUE) && ttwu_queue_cond(p, cpu)) {
 		sched_clock_cpu(cpu); /* Sync clocks across CPUs */
 		__ttwu_queue_wakelist(p, cpu, wake_flags);
-		return true;
+		повернути true;
 	}
 
-	return false;
+	повернути false;
 }
 
-static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
+static void ttwu_queue(struct task_struct *p, ціле cpu, ціле wake_flags)
 {
 	struct rq *rq = cpu_rq(cpu);
 	struct rq_flags rf;
 
-	if (ttwu_queue_wakelist(p, cpu, wake_flags))
-		return;
+	якщо (ttwu_queue_wakelist(p, cpu, wake_flags))
+		повернути;
 
 	rq_lock(rq, &rf);
 	update_rq_clock(rq);
@@ -4170,11 +4170,11 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
  *   asymmetric ISA architectures (eg ARMv9).
  */
 static __always_inline
-bool ttwu_state_match(struct task_struct *p, unsigned int state, int *success)
+bool ttwu_state_match(struct task_struct *p, unsigned ціле state, ціле *success)
 {
-	int match;
+	ціле match;
 
-	if (IS_ENABLED(CONFIG_DEBUG_PREEMPT)) {
+	якщо (IS_ENABLED(CONFIG_DEBUG_PREEMPT)) {
 		WARN_ON_ONCE((state & TASK_RTLOCK_WAIT) &&
 			     state != TASK_RTLOCK_WAIT);
 	}
@@ -4195,10 +4195,10 @@ bool ttwu_state_match(struct task_struct *p, unsigned int state, int *success)
 	 * p::saved_state to TASK_RUNNING so any further tests will
 	 * not result in false positives vs. @success
 	 */
-	if (match < 0)
+	якщо (match < 0)
 		p->saved_state = TASK_RUNNING;
 
-	return match > 0;
+	повернути match > 0;
 }
 
 /*
@@ -4321,14 +4321,14 @@ bool ttwu_state_match(struct task_struct *p, unsigned int state, int *success)
  * Return: %true if @p->state changes (an actual wakeup was done),
  *	   %false otherwise.
  */
-int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ціле try_to_wake_up(struct task_struct *p, unsigned ціле state, ціле wake_flags)
 {
 	guard(preempt)();
-	int cpu, success = 0;
+	ціле cpu, success = 0;
 
 	wake_flags |= WF_TTWU;
 
-	if (p == current) {
+	якщо (p == current) {
 		/*
 		 * We're waking current, this means 'p->on_rq' and 'task_cpu(p)
 		 * == smp_processor_id()'. Together this means we can special
@@ -4348,7 +4348,7 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		WARN_ON_ONCE(p->is_blocked);
 		/* If p is current, we know we can run here, so clear blocked_on */
 		clear_task_blocked_on(p, NULL);
-		if (!ttwu_state_match(p, state, &success))
+		якщо (!ttwu_state_match(p, state, &success))
 			goto out;
 
 		trace_sched_waking(p);
@@ -4365,7 +4365,7 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
 		smp_mb__after_spinlock();
 
-		if (!ttwu_state_match(p, state, &success))
+		якщо (!ttwu_state_match(p, state, &success))
 			break;
 
 		trace_sched_waking(p);
@@ -4393,7 +4393,7 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		 * A similar smp_rmb() lives in __task_needs_rq_lock().
 		 */
 		smp_rmb();
-		if (READ_ONCE(p->on_rq) && ttwu_runnable(p, wake_flags))
+		якщо (READ_ONCE(p->on_rq) && ttwu_runnable(p, wake_flags))
 			break;
 
 		/*
@@ -4448,7 +4448,7 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		 * to ensure we observe the correct CPU on which the task is currently
 		 * scheduling.
 		 */
-		if (smp_load_acquire(&p->on_cpu) &&
+		якщо (smp_load_acquire(&p->on_cpu) &&
 		    ttwu_queue_wakelist(p, task_cpu(p), wake_flags))
 			break;
 
@@ -4464,8 +4464,8 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		smp_cond_load_acquire(&p->on_cpu, !VAL);
 
 		cpu = select_task_rq(p, p->wake_cpu, &wake_flags);
-		if (task_cpu(p) != cpu) {
-			if (p->in_iowait) {
+		якщо (task_cpu(p) != cpu) {
+			якщо (p->in_iowait) {
 				delayacct_blkio_end(p);
 				atomic_dec(&task_rq(p)->nr_iowait);
 			}
@@ -4473,7 +4473,7 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 			wake_flags |= WF_MIGRATED;
 			psi_ttwu_dequeue(p);
 			set_task_cpu(p, cpu);
-		} else if (cpu != p->wake_cpu) {
+		} інакше якщо (cpu != p->wake_cpu) {
 			/*
 			 * If we were proxy-migrated to cpu, then
 			 * select_task_rq() picks cpu instead of wake_cpu
@@ -4488,23 +4488,23 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		ttwu_queue(p, cpu, wake_flags);
 	}
 out:
-	if (success)
+	якщо (success)
 		ttwu_stat(p, task_cpu(p), wake_flags);
 
-	return success;
+	повернути success;
 }
 
 static bool __task_needs_rq_lock(struct task_struct *p)
 {
-	unsigned int state = READ_ONCE(p->__state);
+	unsigned ціле state = READ_ONCE(p->__state);
 
 	/*
 	 * Since pi->lock blocks try_to_wake_up(), we don't need rq->lock when
 	 * the task is blocked. Make sure to check @state since ttwu() can drop
 	 * locks at the end, see ttwu_queue_wakelist().
 	 */
-	if (state == TASK_RUNNING || state == TASK_WAKING)
-		return true;
+	якщо (state == TASK_RUNNING || state == TASK_WAKING)
+		повернути true;
 
 	/*
 	 * Ensure we load p->on_rq after p->__state, otherwise it would be
@@ -4513,8 +4513,8 @@ static bool __task_needs_rq_lock(struct task_struct *p)
 	 * See try_to_wake_up() for a longer comment.
 	 */
 	smp_rmb();
-	if (p->on_rq)
-		return true;
+	якщо (p->on_rq)
+		повернути true;
 
 	/*
 	 * Ensure the task has finished __schedule() and will not be referenced
@@ -4523,7 +4523,7 @@ static bool __task_needs_rq_lock(struct task_struct *p)
 	smp_rmb();
 	smp_cond_load_acquire(&p->on_cpu, !VAL);
 
-	return false;
+	повернути false;
 }
 
 /**
@@ -4541,14 +4541,14 @@ static bool __task_needs_rq_lock(struct task_struct *p)
  * Returns:
  *   Whatever @func returns
  */
-int task_call_func(struct task_struct *p, task_call_f func, void *arg)
+ціле task_call_func(struct task_struct *p, task_call_f func, void *arg)
 {
 	struct rq_flags rf;
-	int ret;
+	ціле ret;
 
 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
 
-	if (__task_needs_rq_lock(p)) {
+	якщо (__task_needs_rq_lock(p)) {
 		struct rq *rq = __task_rq_lock(p, &rf);
 
 		/*
@@ -4564,12 +4564,12 @@ int task_call_func(struct task_struct *p, task_call_f func, void *arg)
 		ret = func(p, arg);
 
 		__task_rq_unlock(rq, p, &rf);
-	} else {
+	} інакше {
 		ret = func(p, arg);
 	}
 
 	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
-	return ret;
+	повернути ret;
 }
 
 /**
@@ -4589,7 +4589,7 @@ int task_call_func(struct task_struct *p, task_call_f func, void *arg)
  * the pointer, which permits the caller to confine this function's fetch
  * with respect to the caller's accesses to other shared variables.
  */
-struct task_struct *cpu_curr_snapshot(int cpu)
+struct task_struct *cpu_curr_snapshot(ціле cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 	struct task_struct *t;
@@ -4601,7 +4601,7 @@ struct task_struct *cpu_curr_snapshot(int cpu)
 	rq_unlock_irqrestore(rq, &rf);
 	smp_mb(); /* Pairing determined by caller's synchronization design. */
 
-	return t;
+	повернути t;
 }
 
 /**
@@ -4615,15 +4615,15 @@ struct task_struct *cpu_curr_snapshot(int cpu)
  *
  * This function executes a full memory barrier before accessing the task state.
  */
-int wake_up_process(struct task_struct *p)
+ціле wake_up_process(struct task_struct *p)
 {
-	return try_to_wake_up(p, TASK_NORMAL, 0);
+	повернути try_to_wake_up(p, TASK_NORMAL, 0);
 }
 EXPORT_SYMBOL(wake_up_process);
 
-int wake_up_state(struct task_struct *p, unsigned int state)
+ціле wake_up_state(struct task_struct *p, unsigned ціле state)
 {
-	return try_to_wake_up(p, state, 0);
+	повернути try_to_wake_up(p, state, 0);
 }
 
 /*
@@ -4692,21 +4692,21 @@ DEFINE_STATIC_KEY_FALSE(sched_numa_balancing);
 
 #ifdef CONFIG_NUMA_BALANCING
 
-int sysctl_numa_balancing_mode;
+ціле sysctl_numa_balancing_mode;
 
 static void __set_numabalancing_state(bool enabled)
 {
-	if (enabled)
+	якщо (enabled)
 		static_branch_enable(&sched_numa_balancing);
-	else
+	інакше
 		static_branch_disable(&sched_numa_balancing);
 }
 
 void set_numabalancing_state(bool enabled)
 {
-	if (enabled)
+	якщо (enabled)
 		sysctl_numa_balancing_mode = NUMA_BALANCING_NORMAL;
-	else
+	інакше
 		sysctl_numa_balancing_mode = NUMA_BALANCING_DISABLED;
 	__set_numabalancing_state(enabled);
 }
@@ -4723,29 +4723,29 @@ static void reset_memory_tiering(void)
 	}
 }
 
-static int sysctl_numa_balancing(const struct ctl_table *table, int write,
+static ціле sysctl_numa_balancing(const struct ctl_table *table, ціле write,
 			  void *buffer, size_t *lenp, loff_t *ppos)
 {
 	struct ctl_table t;
-	int err;
-	int state = sysctl_numa_balancing_mode;
+	ціле err;
+	ціле state = sysctl_numa_balancing_mode;
 
-	if (write && !capable(CAP_SYS_ADMIN))
-		return -EPERM;
+	якщо (write && !capable(CAP_SYS_ADMIN))
+		повернути -EPERM;
 
 	t = *table;
 	t.data = &state;
 	err = proc_dointvec_minmax(&t, write, buffer, lenp, ppos);
-	if (err < 0)
-		return err;
-	if (write) {
-		if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
+	якщо (err < 0)
+		повернути err;
+	якщо (write) {
+		якщо (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
 		    (state & NUMA_BALANCING_MEMORY_TIERING))
 			reset_memory_tiering();
 		sysctl_numa_balancing_mode = state;
 		__set_numabalancing_state(state);
 	}
-	return err;
+	повернути err;
 }
 #endif /* CONFIG_SYSCTL */
 #endif /* CONFIG_NUMA_BALANCING */
@@ -4756,60 +4756,60 @@ DEFINE_STATIC_KEY_FALSE(sched_schedstats);
 
 static void set_schedstats(bool enabled)
 {
-	if (enabled)
+	якщо (enabled)
 		static_branch_enable(&sched_schedstats);
-	else
+	інакше
 		static_branch_disable(&sched_schedstats);
 }
 
 void force_schedstat_enabled(void)
 {
-	if (!schedstat_enabled()) {
+	якщо (!schedstat_enabled()) {
 		pr_info("kernel profiling enabled schedstats, disable via kernel.sched_schedstats.\n");
 		static_branch_enable(&sched_schedstats);
 	}
 }
 
-static int __init setup_schedstats(char *str)
+static ціле __init setup_schedstats(char *str)
 {
-	int ret = 0;
-	if (!str)
+	ціле ret = 0;
+	якщо (!str)
 		goto out;
 
-	if (!strcmp(str, "enable")) {
+	якщо (!strcmp(str, "enable")) {
 		set_schedstats(true);
 		ret = 1;
-	} else if (!strcmp(str, "disable")) {
+	} інакше якщо (!strcmp(str, "disable")) {
 		set_schedstats(false);
 		ret = 1;
 	}
 out:
-	if (!ret)
+	якщо (!ret)
 		pr_warn("Unable to parse schedstats=\n");
 
-	return ret;
+	повернути ret;
 }
 __setup("schedstats=", setup_schedstats);
 
 #ifdef CONFIG_SYSCTL
-static int sysctl_schedstats(const struct ctl_table *table, int write, void *buffer,
+static ціле sysctl_schedstats(const struct ctl_table *table, ціле write, void *buffer,
 		size_t *lenp, loff_t *ppos)
 {
 	struct ctl_table t;
-	int err;
-	int state = static_branch_likely(&sched_schedstats);
+	ціле err;
+	ціле state = static_branch_likely(&sched_schedstats);
 
-	if (write && !capable(CAP_SYS_ADMIN))
-		return -EPERM;
+	якщо (write && !capable(CAP_SYS_ADMIN))
+		повернути -EPERM;
 
 	t = *table;
 	t.data = &state;
 	err = proc_dointvec_minmax(&t, write, buffer, lenp, ppos);
-	if (err < 0)
-		return err;
-	if (write)
+	якщо (err < 0)
+		повернути err;
+	якщо (write)
 		set_schedstats(state);
-	return err;
+	повернути err;
 }
 #endif /* CONFIG_SYSCTL */
 #endif /* CONFIG_SCHEDSTATS */
@@ -4820,7 +4820,7 @@ static const struct ctl_table sched_core_sysctls[] = {
 	{
 		.procname       = "sched_schedstats",
 		.data           = NULL,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = sizeof(unsigned ціле),
 		.mode           = 0644,
 		.proc_handler   = sysctl_schedstats,
 		.extra1         = SYSCTL_ZERO,
@@ -4831,21 +4831,21 @@ static const struct ctl_table sched_core_sysctls[] = {
 	{
 		.procname       = "sched_util_clamp_min",
 		.data           = &sysctl_sched_uclamp_util_min,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = sizeof(unsigned ціле),
 		.mode           = 0644,
 		.proc_handler   = sysctl_sched_uclamp_handler,
 	},
 	{
 		.procname       = "sched_util_clamp_max",
 		.data           = &sysctl_sched_uclamp_util_max,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = sizeof(unsigned ціле),
 		.mode           = 0644,
 		.proc_handler   = sysctl_sched_uclamp_handler,
 	},
 	{
 		.procname       = "sched_util_clamp_min_rt_default",
 		.data           = &sysctl_sched_uclamp_util_min_rt_default,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = sizeof(unsigned ціле),
 		.mode           = 0644,
 		.proc_handler   = sysctl_sched_uclamp_handler,
 	},
@@ -4854,7 +4854,7 @@ static const struct ctl_table sched_core_sysctls[] = {
 	{
 		.procname	= "numa_balancing",
 		.data		= NULL, /* filled in by handler */
-		.maxlen		= sizeof(unsigned int),
+		.maxlen		= sizeof(unsigned ціле),
 		.mode		= 0644,
 		.proc_handler	= sysctl_numa_balancing,
 		.extra1		= SYSCTL_ZERO,
@@ -4862,10 +4862,10 @@ static const struct ctl_table sched_core_sysctls[] = {
 	},
 #endif /* CONFIG_NUMA_BALANCING */
 };
-static int __init sched_core_sysctl_init(void)
+static ціле __init sched_core_sysctl_init(void)
 {
 	register_sysctl_init("kernel", sched_core_sysctls);
-	return 0;
+	повернути 0;
 }
 late_initcall(sched_core_sysctl_init);
 #endif /* CONFIG_SYSCTL */
@@ -4873,7 +4873,7 @@ late_initcall(sched_core_sysctl_init);
 /*
  * fork()/clone()-time setup:
  */
-int sched_fork(u64 clone_flags, struct task_struct *p)
+ціле sched_fork(u64 clone_flags, struct task_struct *p)
 {
 	__sched_fork(clone_flags, p);
 	/*
@@ -4893,13 +4893,13 @@ int sched_fork(u64 clone_flags, struct task_struct *p)
 	/*
 	 * Revert to default priority/policy on fork if requested.
 	 */
-	if (unlikely(p->sched_reset_on_fork)) {
-		if (task_has_dl_policy(p) || task_has_rt_policy(p)) {
+	якщо (unlikely(p->sched_reset_on_fork)) {
+		якщо (task_has_dl_policy(p) || task_has_rt_policy(p)) {
 			p->policy = SCHED_NORMAL;
 			p->static_prio = NICE_TO_PRIO(0);
 			p->rt_priority = 0;
 			p->timer_slack_ns = p->default_timer_slack_ns;
-		} else if (PRIO_TO_NICE(p->static_prio) < 0)
+		} інакше якщо (PRIO_TO_NICE(p->static_prio) < 0)
 			p->static_prio = NICE_TO_PRIO(0);
 
 		p->prio = p->normal_prio = p->static_prio;
@@ -4914,18 +4914,18 @@ int sched_fork(u64 clone_flags, struct task_struct *p)
 		p->sched_reset_on_fork = 0;
 	}
 
-	if (dl_prio(p->prio))
-		return -EAGAIN;
+	якщо (dl_prio(p->prio))
+		повернути -EAGAIN;
 
 	scx_pre_fork(p);
 
-	if (rt_prio(p->prio)) {
+	якщо (rt_prio(p->prio)) {
 		p->sched_class = &rt_sched_class;
 #ifdef CONFIG_SCHED_CLASS_EXT
-	} else if (task_should_scx(p->policy)) {
+	} інакше якщо (task_should_scx(p->policy)) {
 		p->sched_class = &ext_sched_class;
 #endif
-	} else {
+	} інакше {
 		p->sched_class = &fair_sched_class;
 	}
 
@@ -4933,7 +4933,7 @@ int sched_fork(u64 clone_flags, struct task_struct *p)
 
 
 #ifdef CONFIG_SCHED_INFO
-	if (likely(sched_info_on()))
+	якщо (likely(sched_info_on()))
 		memset(&p->sched_info, 0, sizeof(p->sched_info));
 #endif
 	p->on_cpu = 0;
@@ -4941,10 +4941,10 @@ int sched_fork(u64 clone_flags, struct task_struct *p)
 	plist_node_init(&p->pushable_tasks, MAX_PRIO);
 	RB_CLEAR_NODE(&p->pushable_dl_tasks);
 
-	return 0;
+	повернути 0;
 }
 
-int sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs)
+ціле sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs)
 {
 	unsigned long flags;
 
@@ -4954,7 +4954,7 @@ int sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs)
 	 */
 	raw_spin_lock_irqsave(&p->pi_lock, flags);
 #ifdef CONFIG_CGROUP_SCHED
-	if (1) {
+	якщо (1) {
 		struct task_group *tg;
 		tg = container_of(kargs->cset->subsys[cpu_cgrp_id],
 				  struct task_group, css);
@@ -4967,11 +4967,11 @@ int sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs)
 	 * so use __set_task_cpu().
 	 */
 	__set_task_cpu(p, smp_processor_id());
-	if (p->sched_class->task_fork)
+	якщо (p->sched_class->task_fork)
 		p->sched_class->task_fork(p);
 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 
-	return scx_fork(p, kargs);
+	повернути scx_fork(p, kargs);
 }
 
 void sched_cancel_fork(struct task_struct *p)
@@ -4990,18 +4990,18 @@ void sched_post_fork(struct task_struct *p)
 
 u64 to_ratio(u64 period, u64 runtime)
 {
-	if (runtime == RUNTIME_INF)
-		return BW_UNIT;
+	якщо (runtime == RUNTIME_INF)
+		повернути BW_UNIT;
 
 	/*
 	 * Doing this here saves a lot of checks in all
 	 * the calling paths, and returning zero seems
 	 * safe for them anyway.
 	 */
-	if (period == 0)
-		return 0;
+	якщо (period == 0)
+		повернути 0;
 
-	return div64_u64(runtime << BW_SHIFT, period);
+	повернути div64_u64(runtime << BW_SHIFT, period);
 }
 
 /*
@@ -5015,7 +5015,7 @@ void wake_up_new_task(struct task_struct *p)
 {
 	struct rq_flags rf;
 	struct rq *rq;
-	int wake_flags = WF_FORK;
+	ціле wake_flags = WF_FORK;
 
 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
 	WRITE_ONCE(p->__state, TASK_RUNNING);
@@ -5036,7 +5036,7 @@ void wake_up_new_task(struct task_struct *p)
 	activate_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_INITIAL);
 	trace_sched_wakeup_new(p);
 	wakeup_preempt(rq, p, wake_flags);
-	if (p->sched_class->task_woken) {
+	якщо (p->sched_class->task_woken) {
 		/*
 		 * Nothing relies on rq->lock after this, so it's fine to
 		 * drop it.
@@ -5070,7 +5070,7 @@ EXPORT_SYMBOL_GPL(preempt_notifier_dec);
  */
 void preempt_notifier_register(struct preempt_notifier *notifier)
 {
-	if (!static_branch_unlikely(&preempt_notifier_key))
+	якщо (!static_branch_unlikely(&preempt_notifier_key))
 		WARN(1, "registering preempt_notifier while notifiers disabled\n");
 
 	hlist_add_head(&notifier->link, &current->preempt_notifiers);
@@ -5099,7 +5099,7 @@ static void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
 
 static __always_inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
 {
-	if (static_branch_unlikely(&preempt_notifier_key))
+	якщо (static_branch_unlikely(&preempt_notifier_key))
 		__fire_sched_in_preempt_notifiers(curr);
 }
 
@@ -5117,11 +5117,11 @@ static __always_inline void
 fire_sched_out_preempt_notifiers(struct task_struct *curr,
 				 struct task_struct *next)
 {
-	if (static_branch_unlikely(&preempt_notifier_key))
+	якщо (static_branch_unlikely(&preempt_notifier_key))
 		__fire_sched_out_preempt_notifiers(curr, next);
 }
 
-#else /* !CONFIG_PREEMPT_NOTIFIERS: */
+#інакше /* !CONFIG_PREEMPT_NOTIFIERS: */
 
 static inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
 {
@@ -5181,8 +5181,8 @@ static void zap_balance_callbacks(struct rq *rq)
 	lockdep_assert_rq_held(rq);
 
 	head = rq->balance_callback;
-	while (head) {
-		if (head == &balance_push_callback)
+	поки (head) {
+		якщо (head == &balance_push_callback)
 			found = true;
 		next = head->next;
 		head->next = NULL;
@@ -5198,7 +5198,7 @@ static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
 
 	lockdep_assert_rq_held(rq);
 
-	while (head) {
+	поки (head) {
 		func = head->func;
 		next = head->next;
 		head->next = NULL;
@@ -5231,8 +5231,8 @@ __splice_balance_callbacks(struct rq *rq, bool split)
 {
 	struct balance_callback *head = rq->balance_callback;
 
-	if (likely(!head))
-		return NULL;
+	якщо (likely(!head))
+		повернути NULL;
 
 	lockdep_assert_rq_held(rq);
 	/*
@@ -5243,25 +5243,25 @@ __splice_balance_callbacks(struct rq *rq, bool split)
 	 * In that case it would be possible for __schedule() to interleave
 	 * and observe the list empty.
 	 */
-	if (split && head == &balance_push_callback)
+	якщо (split && head == &balance_push_callback)
 		head = NULL;
-	else
+	інакше
 		rq->balance_callback = NULL;
 
-	return head;
+	повернути head;
 }
 
 struct balance_callback *splice_balance_callbacks(struct rq *rq)
 {
-	return __splice_balance_callbacks(rq, true);
+	повернути __splice_balance_callbacks(rq, true);
 }
 
 void __balance_callbacks(struct rq *rq, struct rq_flags *rf)
 {
-	if (rf)
+	якщо (rf)
 		rq_unpin_lock(rq, rf);
 	do_balance_callbacks(rq, __splice_balance_callbacks(rq, false));
-	if (rf)
+	якщо (rf)
 		rq_repin_lock(rq, rf);
 }
 
@@ -5269,7 +5269,7 @@ void balance_callbacks(struct rq *rq, struct balance_callback *head)
 {
 	unsigned long flags;
 
-	if (unlikely(head)) {
+	якщо (unlikely(head)) {
 		raw_spin_rq_lock_irqsave(rq, flags);
 		do_balance_callbacks(rq, head);
 		raw_spin_rq_unlock_irqrestore(rq, flags);
@@ -5319,17 +5319,17 @@ static inline void finish_lock_switch(struct rq *rq)
  */
 
 #ifndef prepare_arch_switch
-# define prepare_arch_switch(next)	do { } while (0)
+# define prepare_arch_switch(next)	do { } поки (0)
 #endif
 
 #ifndef finish_arch_post_lock_switch
-# define finish_arch_post_lock_switch()	do { } while (0)
+# define finish_arch_post_lock_switch()	do { } поки (0)
 #endif
 
 static inline void kmap_local_sched_out(void)
 {
 #ifdef CONFIG_KMAP_LOCAL
-	if (unlikely(current->kmap_ctrl.idx))
+	якщо (unlikely(current->kmap_ctrl.idx))
 		__kmap_local_sched_out();
 #endif
 }
@@ -5337,7 +5337,7 @@ static inline void kmap_local_sched_out(void)
 static inline void kmap_local_sched_in(void)
 {
 #ifdef CONFIG_KMAP_LOCAL
-	if (unlikely(current->kmap_ctrl.idx))
+	якщо (unlikely(current->kmap_ctrl.idx))
 		__kmap_local_sched_in();
 #endif
 }
@@ -5393,7 +5393,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 {
 	struct rq *rq = this_rq();
 	struct mm_struct *mm = rq->prev_mm;
-	unsigned int prev_state;
+	unsigned ціле prev_state;
 
 	/*
 	 * The previous task will have left us with a preempt_count of 2
@@ -5406,7 +5406,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	 *
 	 * Also, see FORK_PREEMPT_COUNT.
 	 */
-	if (WARN_ONCE(preempt_count() != 2*PREEMPT_DISABLE_OFFSET,
+	якщо (WARN_ONCE(preempt_count() != 2*PREEMPT_DISABLE_OFFSET,
 		      "corrupted preempt_count: %s/%d/0x%x\n",
 		      current->comm, current->pid, preempt_count()))
 		preempt_count_set(FORK_PREEMPT_COUNT);
@@ -5460,13 +5460,13 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	 *   provided by mmdrop_lazy_tlb(),
 	 * - a sync_core for SYNC_CORE.
 	 */
-	if (mm) {
+	якщо (mm) {
 		membarrier_mm_sync_core_before_usermode(mm);
 		mmdrop_lazy_tlb_sched(mm);
 	}
 
-	if (unlikely(prev_state == TASK_DEAD)) {
-		if (prev->sched_class->task_dead)
+	якщо (unlikely(prev_state == TASK_DEAD)) {
+		якщо (prev->sched_class->task_dead)
 			prev->sched_class->task_dead(prev);
 
 		/*
@@ -5483,7 +5483,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 		put_task_struct_rcu_user(prev);
 	}
 
-	return rq;
+	повернути rq;
 }
 
 /**
@@ -5511,7 +5511,7 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
 	trace_sched_exit_tp(true);
 	preempt_enable();
 
-	if (current->set_child_tid)
+	якщо (current->set_child_tid)
 		put_user(task_pid_vnr(current), current->set_child_tid);
 
 	calculate_sigpending();
@@ -5541,15 +5541,15 @@ context_switch(struct rq *rq, struct task_struct *prev,
 	 * kernel ->   user   switch + mmdrop_lazy_tlb() active
 	 *   user ->   user   switch
 	 */
-	if (!next->mm) {				// to kernel
+	якщо (!next->mm) {				// to kernel
 		enter_lazy_tlb(prev->active_mm, next);
 
 		next->active_mm = prev->active_mm;
-		if (prev->mm)				// from user
+		якщо (prev->mm)				// from user
 			mmgrab_lazy_tlb(prev->active_mm);
-		else
+		інакше
 			prev->active_mm = NULL;
-	} else {					// to user
+	} інакше {					// to user
 		membarrier_switch_mm(rq, prev->active_mm, next->mm);
 		/*
 		 * sys_membarrier() requires an smp_mb() between setting
@@ -5562,7 +5562,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
 		switch_mm_irqs_off(prev->active_mm, next->mm, next);
 		lru_gen_use_mm(next->mm);
 
-		if (!prev->mm) {			// from kernel
+		якщо (!prev->mm) {			// from kernel
 			/* will mmdrop_lazy_tlb() in finish_task_switch(). */
 			rq->prev_mm = prev->active_mm;
 			prev->active_mm = NULL;
@@ -5583,7 +5583,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
 	switch_to(prev, next, prev);
 	barrier();
 
-	return finish_task_switch(prev);
+	повернути finish_task_switch(prev);
 }
 
 /*
@@ -5592,14 +5592,14 @@ context_switch(struct rq *rq, struct task_struct *prev,
  * externally visible scheduler statistics: current number of runnable
  * threads, total number of context switches performed since bootup.
  */
-unsigned int nr_running(void)
+unsigned ціле nr_running(void)
 {
-	unsigned int i, sum = 0;
+	unsigned ціле i, sum = 0;
 
 	for_each_online_cpu(i)
 		sum += cpu_rq(i)->nr_running;
 
-	return sum;
+	повернути sum;
 }
 
 /*
@@ -5617,33 +5617,33 @@ unsigned int nr_running(void)
  */
 bool single_task_running(void)
 {
-	return raw_rq()->nr_running == 1;
+	повернути raw_rq()->nr_running == 1;
 }
 EXPORT_SYMBOL(single_task_running);
 
-unsigned long long nr_context_switches_cpu(int cpu)
+unsigned long long nr_context_switches_cpu(ціле cpu)
 {
-	return cpu_rq(cpu)->nr_switches;
+	повернути cpu_rq(cpu)->nr_switches;
 }
 
 unsigned long long nr_context_switches(void)
 {
-	int i;
+	ціле i;
 	unsigned long long sum = 0;
 
 	for_each_possible_cpu(i)
 		sum += cpu_rq(i)->nr_switches;
 
-	return sum;
+	повернути sum;
 }
 
 /*
  * Return whether any tasks are accounted as I/O waiters on this CPU.
  * They may wake up on a different CPU.
  */
-bool cpu_has_iowait(int cpu)
+bool cpu_has_iowait(ціле cpu)
 {
-	return atomic_read(&cpu_rq(cpu)->nr_iowait) != 0;
+	повернути atomic_read(&cpu_rq(cpu)->nr_iowait) != 0;
 }
 
 /*
@@ -5676,14 +5676,14 @@ bool cpu_has_iowait(int cpu)
  * Task CPU affinities can make all that even more 'interesting'.
  */
 
-unsigned int nr_iowait(void)
+unsigned ціле nr_iowait(void)
 {
-	unsigned int i, sum = 0;
+	unsigned ціле i, sum = 0;
 
 	for_each_possible_cpu(i)
 		sum += atomic_read(&cpu_rq(i)->nr_iowait);
 
-	return sum;
+	повернути sum;
 }
 
 /*
@@ -5694,15 +5694,15 @@ void sched_exec(void)
 {
 	struct task_struct *p = current;
 	struct migration_arg arg;
-	int dest_cpu;
+	ціле dest_cpu;
 
 	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
 		dest_cpu = p->sched_class->select_task_rq(p, task_cpu(p), WF_EXEC);
-		if (dest_cpu == smp_processor_id())
-			return;
+		якщо (dest_cpu == smp_processor_id())
+			повернути;
 
-		if (unlikely(!cpu_active(dest_cpu)))
-			return;
+		якщо (unlikely(!cpu_active(dest_cpu)))
+			повернути;
 
 		arg = (struct migration_arg){ p, dest_cpu };
 	}
@@ -5756,8 +5756,8 @@ unsigned long long task_sched_runtime(struct task_struct *p)
 	 * If we see ->on_cpu without ->on_rq, the task is leaving, and has
 	 * been accounted, so we're correct here as well.
 	 */
-	if (!p->on_cpu || !task_on_rq_queued(p))
-		return p->se.sum_exec_runtime;
+	якщо (!p->on_cpu || !task_on_rq_queued(p))
+		повернути p->se.sum_exec_runtime;
 #endif
 
 	rq = task_rq_lock(p, &rf);
@@ -5766,7 +5766,7 @@ unsigned long long task_sched_runtime(struct task_struct *p)
 	 * project cycles that may never be accounted to this
 	 * thread, breaking clock_gettime().
 	 */
-	if (task_current_donor(rq, p) && task_on_rq_queued(p)) {
+	якщо (task_current_donor(rq, p) && task_on_rq_queued(p)) {
 		prefetch_curr_exec_start(p);
 		update_rq_clock(rq);
 		p->sched_class->update_curr(rq);
@@ -5774,51 +5774,51 @@ unsigned long long task_sched_runtime(struct task_struct *p)
 	ns = p->se.sum_exec_runtime;
 	task_rq_unlock(rq, p, &rf);
 
-	return ns;
+	повернути ns;
 }
 
 static u64 cpu_resched_latency(struct rq *rq)
 {
-	int latency_warn_ms = READ_ONCE(sysctl_resched_latency_warn_ms);
+	ціле latency_warn_ms = READ_ONCE(sysctl_resched_latency_warn_ms);
 	u64 resched_latency, now = rq_clock(rq);
 	static bool warned_once;
 
-	if (sysctl_resched_latency_warn_once && warned_once)
-		return 0;
+	якщо (sysctl_resched_latency_warn_once && warned_once)
+		повернути 0;
 
-	if (!need_resched() || !latency_warn_ms)
-		return 0;
+	якщо (!need_resched() || !latency_warn_ms)
+		повернути 0;
 
-	if (system_state == SYSTEM_BOOTING)
-		return 0;
+	якщо (system_state == SYSTEM_BOOTING)
+		повернути 0;
 
-	if (!rq->last_seen_need_resched_ns) {
+	якщо (!rq->last_seen_need_resched_ns) {
 		rq->last_seen_need_resched_ns = now;
 		rq->ticks_without_resched = 0;
-		return 0;
+		повернути 0;
 	}
 
 	rq->ticks_without_resched++;
 	resched_latency = now - rq->last_seen_need_resched_ns;
-	if (resched_latency <= latency_warn_ms * NSEC_PER_MSEC)
-		return 0;
+	якщо (resched_latency <= latency_warn_ms * NSEC_PER_MSEC)
+		повернути 0;
 
 	warned_once = true;
 
-	return resched_latency;
+	повернути resched_latency;
 }
 
-static int __init setup_resched_latency_warn_ms(char *str)
+static ціле __init setup_resched_latency_warn_ms(char *str)
 {
 	long val;
 
-	if ((kstrtol(str, 0, &val))) {
+	якщо ((kstrtol(str, 0, &val))) {
 		pr_warn("Unable to set resched_latency_warn_ms\n");
-		return 1;
+		повернути 1;
 	}
 
 	sysctl_resched_latency_warn_ms = val;
-	return 1;
+	повернути 1;
 }
 __setup("resched_latency_warn_ms=", setup_resched_latency_warn_ms);
 
@@ -5828,7 +5828,7 @@ __setup("resched_latency_warn_ms=", setup_resched_latency_warn_ms);
  */
 void sched_tick(void)
 {
-	int cpu = smp_processor_id();
+	ціле cpu = smp_processor_id();
 	struct rq *rq = cpu_rq(cpu);
 	/* scheduler accounting goes to the donor task */
 	struct task_struct *curr, *donor;
@@ -5836,10 +5836,10 @@ void sched_tick(void)
 	unsigned long hw_pressure;
 	u64 resched_latency;
 
-	if (!cpu_preferred(cpu))
+	якщо (!cpu_preferred(cpu))
 		sched_push_current_non_preferred_cpu(rq);
 
-	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+	якщо (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
 		arch_scale_freq_tick();
 
 	sched_clock_tick();
@@ -5854,11 +5854,11 @@ void sched_tick(void)
 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
 	update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure);
 
-	if (dynamic_preempt_lazy() && tif_test_bit(TIF_NEED_RESCHED_LAZY))
+	якщо (dynamic_preempt_lazy() && tif_test_bit(TIF_NEED_RESCHED_LAZY))
 		resched_curr(rq);
 
 	donor->sched_class->task_tick(rq, donor, 0);
-	if (sched_feat(LATENCY_WARN))
+	якщо (sched_feat(LATENCY_WARN))
 		resched_latency = cpu_resched_latency(rq);
 	calc_global_load_tick(rq);
 	sched_core_tick(rq);
@@ -5866,15 +5866,15 @@ void sched_tick(void)
 
 	rq_unlock(rq, &rf);
 
-	if (sched_feat(LATENCY_WARN) && resched_latency)
+	якщо (sched_feat(LATENCY_WARN) && resched_latency)
 		resched_latency_warn(cpu, resched_latency);
 
 	perf_event_task_tick();
 
-	if (curr->flags & PF_WQ_WORKER)
+	якщо (curr->flags & PF_WQ_WORKER)
 		wq_worker_tick(curr);
 
-	if (!scx_switched_all()) {
+	якщо (!scx_switched_all()) {
 		rq->idle_balance = idle_cpu(cpu);
 		sched_balance_trigger(rq);
 	}
@@ -5883,7 +5883,7 @@ void sched_tick(void)
 #ifdef CONFIG_NO_HZ_FULL
 
 struct tick_work {
-	int			cpu;
+	ціле			cpu;
 	atomic_t		state;
 	struct delayed_work	work;
 };
@@ -5921,9 +5921,9 @@ static void sched_tick_remote(struct work_struct *work)
 {
 	struct delayed_work *dwork = to_delayed_work(work);
 	struct tick_work *twork = container_of(dwork, struct tick_work, work);
-	int cpu = twork->cpu;
+	ціле cpu = twork->cpu;
 	struct rq *rq = cpu_rq(cpu);
-	int os;
+	ціле os;
 
 	/*
 	 * Handle the tick only if it appears the remote CPU is running in full
@@ -5932,11 +5932,11 @@ static void sched_tick_remote(struct work_struct *work)
 	 * statistics and checks timeslices in a time-independent way, regardless
 	 * of when exactly it is running.
 	 */
-	if (tick_nohz_tick_stopped_cpu(cpu)) {
+	якщо (tick_nohz_tick_stopped_cpu(cpu)) {
 		guard(rq_lock_irq)(rq);
 		struct task_struct *curr = rq->curr;
 
-		if (cpu_online(cpu)) {
+		якщо (cpu_online(cpu)) {
 			/*
 			 * Since this is a remote tick for full dynticks mode,
 			 * we are always sure that there is no proxy (only a
@@ -5945,7 +5945,7 @@ static void sched_tick_remote(struct work_struct *work)
 			WARN_ON_ONCE(rq->curr != rq->donor);
 			update_rq_clock(rq);
 
-			if (!is_idle_task(curr)) {
+			якщо (!is_idle_task(curr)) {
 				/*
 				 * Make sure the next tick runs within a
 				 * reasonable amount of time.
@@ -5967,24 +5967,24 @@ static void sched_tick_remote(struct work_struct *work)
 	 */
 	os = atomic_fetch_add_unless(&twork->state, -1, TICK_SCHED_REMOTE_RUNNING);
 	WARN_ON_ONCE(os == TICK_SCHED_REMOTE_OFFLINE);
-	if (os == TICK_SCHED_REMOTE_RUNNING)
+	якщо (os == TICK_SCHED_REMOTE_RUNNING)
 		queue_delayed_work(system_dfl_wq, dwork, HZ);
 }
 
-static void sched_tick_start(int cpu)
+static void sched_tick_start(ціле cpu)
 {
-	int os;
+	ціле os;
 	struct tick_work *twork;
 
-	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
-		return;
+	якщо (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+		повернути;
 
 	WARN_ON_ONCE(!tick_work_cpu);
 
 	twork = per_cpu_ptr(tick_work_cpu, cpu);
 	os = atomic_xchg(&twork->state, TICK_SCHED_REMOTE_RUNNING);
 	WARN_ON_ONCE(os == TICK_SCHED_REMOTE_RUNNING);
-	if (os == TICK_SCHED_REMOTE_OFFLINE) {
+	якщо (os == TICK_SCHED_REMOTE_OFFLINE) {
 		twork->cpu = cpu;
 		INIT_DELAYED_WORK(&twork->work, sched_tick_remote);
 		queue_delayed_work(system_dfl_wq, &twork->work, HZ);
@@ -5992,13 +5992,13 @@ static void sched_tick_start(int cpu)
 }
 
 #ifdef CONFIG_HOTPLUG_CPU
-static void sched_tick_stop(int cpu)
+static void sched_tick_stop(ціле cpu)
 {
 	struct tick_work *twork;
-	int os;
+	ціле os;
 
-	if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
-		return;
+	якщо (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+		повернути;
 
 	WARN_ON_ONCE(!tick_work_cpu);
 
@@ -6010,27 +6010,27 @@ static void sched_tick_stop(int cpu)
 }
 #endif /* CONFIG_HOTPLUG_CPU */
 
-int __init sched_tick_offload_init(void)
+ціле __init sched_tick_offload_init(void)
 {
 	tick_work_cpu = alloc_percpu(struct tick_work);
 	BUG_ON(!tick_work_cpu);
-	return 0;
+	повернути 0;
 }
 
-#else /* !CONFIG_NO_HZ_FULL: */
-static inline void sched_tick_start(int cpu) { }
-static inline void sched_tick_stop(int cpu) { }
+#інакше /* !CONFIG_NO_HZ_FULL: */
+static inline void sched_tick_start(ціле cpu) { }
+static inline void sched_tick_stop(ціле cpu) { }
 #endif /* !CONFIG_NO_HZ_FULL */
 
-#if defined(CONFIG_PREEMPTION) && (defined(CONFIG_DEBUG_PREEMPT) || \
+#якщо defined(CONFIG_PREEMPTION) && (defined(CONFIG_DEBUG_PREEMPT) || \
 				defined(CONFIG_TRACE_PREEMPT_TOGGLE))
 /*
  * If the value passed in is equal to the current preempt count
  * then we just disabled preemption. Start timing the latency.
  */
-static inline void preempt_latency_start(int val)
+static inline void preempt_latency_start(ціле val)
 {
-	if (preempt_count() == val) {
+	якщо (preempt_count() == val) {
 		unsigned long ip = get_lock_parent_ip();
 #ifdef CONFIG_DEBUG_PREEMPT
 		current->preempt_disable_ip = ip;
@@ -6039,7 +6039,7 @@ static inline void preempt_latency_start(int val)
 	}
 }
 
-void preempt_count_add(int val)
+void preempt_count_add(ціле val)
 {
 #ifdef CONFIG_DEBUG_PREEMPT
 	/*
@@ -6049,9 +6049,9 @@ void preempt_count_add(int val)
 	 * if using HAS_SEPARATE_PREEMPT_RESCHED_BITS because preempt count takes all 32
 	 * bits.
 	 */
-	if (!IS_ENABLED(CONFIG_HAS_SEPARATE_PREEMPT_RESCHED_BITS) &&
+	якщо (!IS_ENABLED(CONFIG_HAS_SEPARATE_PREEMPT_RESCHED_BITS) &&
 	    DEBUG_LOCKS_WARN_ON((preempt_count() < 0)))
-		return;
+		повернути;
 #endif
 	__preempt_count_add(val);
 #ifdef CONFIG_DEBUG_PREEMPT
@@ -6070,29 +6070,29 @@ NOKPROBE_SYMBOL(preempt_count_add);
  * If the value passed in equals to the current preempt count
  * then we just enabled preemption. Stop timing the latency.
  */
-static inline void preempt_latency_stop(int val)
+static inline void preempt_latency_stop(ціле val)
 {
-	if (preempt_count() == val)
+	якщо (preempt_count() == val)
 		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
 }
 
-void preempt_count_sub(int val)
+void preempt_count_sub(ціле val)
 {
 #ifdef CONFIG_DEBUG_PREEMPT
 	/*
 	 * Underflow?
 	 */
-	unsigned int uval = val;
-	unsigned int pc = preempt_count();
+	unsigned ціле uval = val;
+	unsigned ціле pc = preempt_count();
 
-	if (DEBUG_LOCKS_WARN_ON(pc - uval > pc))
-		return;
+	якщо (DEBUG_LOCKS_WARN_ON(pc - uval > pc))
+		повернути;
 	/*
 	 * Is the spinlock portion underflowing?
 	 */
-	if (DEBUG_LOCKS_WARN_ON((val < PREEMPT_MASK) &&
+	якщо (DEBUG_LOCKS_WARN_ON((val < PREEMPT_MASK) &&
 			!(preempt_count() & PREEMPT_MASK)))
-		return;
+		повернути;
 #endif
 
 	preempt_latency_stop(val);
@@ -6101,17 +6101,17 @@ void preempt_count_sub(int val)
 EXPORT_SYMBOL(preempt_count_sub);
 NOKPROBE_SYMBOL(preempt_count_sub);
 
-#else
-static inline void preempt_latency_start(int val) { }
-static inline void preempt_latency_stop(int val) { }
+#інакше
+static inline void preempt_latency_start(ціле val) { }
+static inline void preempt_latency_stop(ціле val) { }
 #endif
 
 static inline unsigned long get_preempt_disable_ip(struct task_struct *p)
 {
 #ifdef CONFIG_DEBUG_PREEMPT
-	return p->preempt_disable_ip;
-#else
-	return 0;
+	повернути p->preempt_disable_ip;
+#інакше
+	повернути 0;
 #endif
 }
 
@@ -6123,17 +6123,17 @@ static noinline void __schedule_bug(struct task_struct *prev)
 	/* Save this before calling printk(), since that will clobber it */
 	unsigned long preempt_disable_ip = get_preempt_disable_ip(current);
 
-	if (oops_in_progress)
-		return;
+	якщо (oops_in_progress)
+		повернути;
 
 	printk(KERN_ERR "BUG: scheduling while atomic: %s/%d/0x%08x\n",
 		prev->comm, prev->pid, preempt_count());
 
 	debug_show_held_locks(prev);
 	print_modules();
-	if (irqs_disabled())
+	якщо (irqs_disabled())
 		print_irqtrace_events(prev);
-	if (IS_ENABLED(CONFIG_DEBUG_PREEMPT)) {
+	якщо (IS_ENABLED(CONFIG_DEBUG_PREEMPT)) {
 		pr_err("Preemption disabled at:");
 		print_ip_sym(KERN_ERR, preempt_disable_ip);
 	}
@@ -6149,15 +6149,15 @@ static noinline void __schedule_bug(struct task_struct *prev)
 static inline void schedule_debug(struct task_struct *prev, bool preempt)
 {
 #ifdef CONFIG_SCHED_STACK_END_CHECK
-	if (task_stack_end_corrupted(prev))
+	якщо (task_stack_end_corrupted(prev))
 		panic("corrupted stack end detected inside scheduler\n");
 
-	if (task_scs_end_corrupted(prev))
+	якщо (task_scs_end_corrupted(prev))
 		panic("corrupted shadow stack detected inside scheduler\n");
 #endif
 
 #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
-	if (!preempt && READ_ONCE(prev->__state) && prev->non_block_count) {
+	якщо (!preempt && READ_ONCE(prev->__state) && prev->non_block_count) {
 		printk(KERN_ERR "BUG: scheduling in a non-blocking section: %s/%d/%i\n",
 			prev->comm, prev->pid, prev->non_block_count);
 		dump_stack();
@@ -6165,7 +6165,7 @@ static inline void schedule_debug(struct task_struct *prev, bool preempt)
 	}
 #endif
 
-	if (unlikely(in_atomic_preempt_off())) {
+	якщо (unlikely(in_atomic_preempt_off())) {
 		__schedule_bug(prev);
 		preempt_count_set(PREEMPT_DISABLED);
 	}
@@ -6191,7 +6191,7 @@ static void prev_balance(struct rq *rq, struct rq_flags *rf)
 	 * a runnable task of @class priority or higher.
 	 */
 	for_active_class_range(class, start_class, &idle_sched_class) {
-		if (class->balance && class->balance(rq, rf))
+		якщо (class->balance && class->balance(rq, rf))
 			break;
 	}
 }
@@ -6208,7 +6208,7 @@ __pick_next_task(struct rq *rq, struct rq_flags *rf)
 
 	rq->dl_server = NULL;
 
-	if (scx_enabled())
+	якщо (scx_enabled())
 		goto restart;
 
 	/*
@@ -6217,19 +6217,19 @@ __pick_next_task(struct rq *rq, struct rq_flags *rf)
 	 * higher scheduling class, because otherwise those lose the
 	 * opportunity to pull in more work from other CPUs.
 	 */
-	if (likely(!sched_class_above(rq->donor->sched_class, &fair_sched_class) &&
+	якщо (likely(!sched_class_above(rq->donor->sched_class, &fair_sched_class) &&
 		   rq->nr_running == rq->cfs.h_nr_queued)) {
 
 		p = pick_task_fair(rq, rf);
-		if (unlikely(p == RETRY_TASK))
+		якщо (unlikely(p == RETRY_TASK))
 			goto restart;
 
 		/* Assume the next prioritized class is idle_sched_class */
-		if (!p)
+		якщо (!p)
 			p = pick_task_idle(rq, rf);
 
 		put_prev_set_next_task(rq, rq->donor, p);
-		return p;
+		повернути p;
 	}
 
 restart:
@@ -6237,11 +6237,11 @@ restart:
 
 	for_each_active_class(class) {
 		p = class->pick_task(rq, rf);
-		if (unlikely(p == RETRY_TASK))
+		якщо (unlikely(p == RETRY_TASK))
 			goto restart;
-		if (p) {
+		якщо (p) {
 			put_prev_set_next_task(rq, rq->donor, p);
-			return p;
+			повернути p;
 		}
 	}
 
@@ -6251,20 +6251,20 @@ restart:
 #ifdef CONFIG_SCHED_CORE
 static inline bool is_task_rq_idle(struct task_struct *t)
 {
-	return (task_rq(t)->idle == t);
+	повернути (task_rq(t)->idle == t);
 }
 
 static inline bool cookie_equals(struct task_struct *a, unsigned long cookie)
 {
-	return is_task_rq_idle(a) || (a->core_cookie == cookie);
+	повернути is_task_rq_idle(a) || (a->core_cookie == cookie);
 }
 
 static inline bool cookie_match(struct task_struct *a, struct task_struct *b)
 {
-	if (is_task_rq_idle(a) || is_task_rq_idle(b))
-		return true;
+	якщо (is_task_rq_idle(a) || is_task_rq_idle(b))
+		повернути true;
 
-	return a->core_cookie == b->core_cookie;
+	повернути a->core_cookie == b->core_cookie;
 }
 
 /*
@@ -6280,8 +6280,8 @@ static inline struct task_struct *pick_task(struct rq *rq, struct rq_flags *rf)
 
 	for_each_active_class(class) {
 		p = class->pick_task(rq, rf);
-		if (p)
-			return p;
+		якщо (p)
+			повернути p;
 	}
 
 	BUG(); /* The idle class should always have a runnable task. */
@@ -6300,17 +6300,17 @@ pick_next_task(struct rq *rq, struct rq_flags *rf)
 	bool fi_before = false;
 	bool core_clock_updated = (rq == rq->core);
 	unsigned long cookie;
-	int i, cpu, occ = 0;
+	ціле i, cpu, occ = 0;
 	struct rq *rq_i;
 	bool need_sync = false;
 
-	if (!sched_core_enabled(rq))
-		return __pick_next_task(rq, rf);
+	якщо (!sched_core_enabled(rq))
+		повернути __pick_next_task(rq, rf);
 
 	cpu = cpu_of(rq);
 
 	/* Stopper task is switching into idle, no need core-wide selection. */
-	if (cpu_is_offline(cpu)) {
+	якщо (cpu_is_offline(cpu)) {
 		/*
 		 * Reset core_pick so that we don't enter the fastpath when
 		 * coming online. core_pick would already be migrated to
@@ -6318,7 +6318,7 @@ pick_next_task(struct rq *rq, struct rq_flags *rf)
 		 */
 		rq->core_pick = NULL;
 		rq->core_dl_server = NULL;
-		return __pick_next_task(rq, rf);
+		повернути __pick_next_task(rq, rf);
 	}
 
 	rq->core->core_pick_in_flight++;
@@ -6332,7 +6332,7 @@ pick_next_task(struct rq *rq, struct rq_flags *rf)
 	 * it was either offline or went offline during a sibling's core-wide
 	 * selection. In this case, do a core-wide selection.
 	 */
-	if (rq->core->core_pick_seq == rq->core->core_task_seq &&
+	якщо (rq->core->core_pick_seq == rq->core->core_task_seq &&
 	    rq->core_pick) {
 		next = rq->core_pick;
 		rq->dl_server = rq->core_dl_server;
@@ -6350,8 +6350,8 @@ restart:
 
 	/* reset state */
 	rq->core->core_cookie = 0UL;
-	if (rq->core->core_forceidle_count) {
-		if (!core_clock_updated) {
+	якщо (rq->core->core_forceidle_count) {
+		якщо (!core_clock_updated) {
 			update_rq_clock(rq->core);
 			core_clock_updated = true;
 		}
@@ -6382,17 +6382,17 @@ restart:
 	 * Optimize for common case where this CPU has no cookies
 	 * and there are no cookied tasks running on siblings.
 	 */
-	if (!need_sync) {
+	якщо (!need_sync) {
 		next = pick_task(rq, rf);
-		if (unlikely(next == RETRY_TASK)) {
+		якщо (unlikely(next == RETRY_TASK)) {
 			/* rq lock may have been dropped, clocks invalidated */
 			core_clock_updated = false;
-			if (!(rq->clock_update_flags & RQCF_UPDATED))
+			якщо (!(rq->clock_update_flags & RQCF_UPDATED))
 				update_rq_clock(rq);
 			goto restart;
 		}
 
-		if (!next->core_cookie) {
+		якщо (!next->core_cookie) {
 			rq->core_pick = NULL;
 			rq->core_dl_server = NULL;
 			/*
@@ -6420,14 +6420,14 @@ restart:
 		 * pick_next_task(). If the current cpu is not the core,
 		 * the core may also have been updated above.
 		 */
-		if (i != cpu && (rq_i != rq->core || !core_clock_updated))
+		якщо (i != cpu && (rq_i != rq->core || !core_clock_updated))
 			update_rq_clock(rq_i);
 
 		p = pick_task(rq_i, rf);
-		if (unlikely(p == RETRY_TASK)) {
+		якщо (unlikely(p == RETRY_TASK)) {
 			/* rq lock may have been dropped, clocks invalidated */
 			core_clock_updated = false;
-			if (!(rq->clock_update_flags & RQCF_UPDATED))
+			якщо (!(rq->clock_update_flags & RQCF_UPDATED))
 				update_rq_clock(rq);
 			goto restart;
 		}
@@ -6435,7 +6435,7 @@ restart:
 		rq_i->core_pick = p;
 		rq_i->core_dl_server = rq_i->dl_server;
 
-		if (!max || prio_less(max, p, fi_before))
+		якщо (!max || prio_less(max, p, fi_before))
 			max = p;
 	}
 
@@ -6449,29 +6449,29 @@ restart:
 		rq_i = cpu_rq(i);
 		p = rq_i->core_pick;
 
-		if (!cookie_equals(p, cookie)) {
+		якщо (!cookie_equals(p, cookie)) {
 			p = NULL;
-			if (cookie)
+			якщо (cookie)
 				p = sched_core_find(rq_i, cookie);
-			if (!p)
+			якщо (!p)
 				p = idle_sched_class.pick_task(rq_i, rf);
 		}
 
 		rq_i->core_pick = p;
 		rq_i->core_dl_server = NULL;
 
-		if (p == rq_i->idle) {
-			if (rq_i->nr_running) {
+		якщо (p == rq_i->idle) {
+			якщо (rq_i->nr_running) {
 				rq->core->core_forceidle_count++;
-				if (!fi_before)
+				якщо (!fi_before)
 					rq->core->core_forceidle_seq++;
 			}
-		} else {
+		} інакше {
 			occ++;
 		}
 	}
 
-	if (schedstat_enabled() && rq->core->core_forceidle_count) {
+	якщо (schedstat_enabled() && rq->core->core_forceidle_count) {
 		rq->core->core_forceidle_start = rq_clock(rq->core);
 		rq->core->core_forceidle_occupation = occ;
 	}
@@ -6500,7 +6500,7 @@ restart:
 		 * picked for it.  That's Ok - it will pick tasks for itself,
 		 * so ignore it.
 		 */
-		if (!rq_i->core_pick)
+		якщо (!rq_i->core_pick)
 			continue;
 
 		/*
@@ -6511,12 +6511,12 @@ restart:
 		 *  1            0       1
 		 *  1            1       0
 		 */
-		if (!(fi_before && rq->core->core_forceidle_count))
+		якщо (!(fi_before && rq->core->core_forceidle_count))
 			task_vruntime_update(rq_i, rq_i->core_pick, !!rq->core->core_forceidle_count);
 
 		rq_i->core_pick->core_occupation = occ;
 
-		if (i == cpu) {
+		якщо (i == cpu) {
 			rq_i->core_pick = NULL;
 			rq_i->core_dl_server = NULL;
 			continue;
@@ -6525,7 +6525,7 @@ restart:
 		/* Did we break L1TF mitigation requirements? */
 		WARN_ON_ONCE(!cookie_match(next, rq_i->core_pick));
 
-		if (rq_i->curr == rq_i->core_pick) {
+		якщо (rq_i->curr == rq_i->core_pick) {
 			rq_i->core_pick = NULL;
 			rq_i->core_dl_server = NULL;
 			continue;
@@ -6537,13 +6537,13 @@ restart:
 out_set_next:
 	rq->core->core_pick_in_flight--;
 	put_prev_set_next_task(rq, rq->donor, next);
-	if (rq->core->core_forceidle_count && next == rq->idle)
+	якщо (rq->core->core_forceidle_count && next == rq->idle)
 		queue_core_balance(rq);
 
-	return next;
+	повернути next;
 }
 
-static bool try_steal_cookie(int this, int that)
+static bool try_steal_cookie(ціле this, ціле that)
 {
 	struct rq *dst = cpu_rq(this), *src = cpu_rq(that);
 	struct task_struct *p;
@@ -6554,27 +6554,27 @@ static bool try_steal_cookie(int this, int that)
 	guard(double_rq_lock)(dst, src);
 
 	cookie = dst->core->core_cookie;
-	if (!cookie)
-		return false;
+	якщо (!cookie)
+		повернути false;
 
-	if (dst->curr != dst->idle)
-		return false;
+	якщо (dst->curr != dst->idle)
+		повернути false;
 
 	p = sched_core_find(src, cookie);
-	if (!p)
-		return false;
+	якщо (!p)
+		повернути false;
 
 	do {
-		if (p == src->core_pick || p == src->curr || p == src->donor)
+		якщо (p == src->core_pick || p == src->curr || p == src->donor)
 			goto next;
 
-		if (task_is_blocked(p))
+		якщо (task_is_blocked(p))
 			goto next;
 
-		if (!is_cpu_allowed(p, this))
+		якщо (!is_cpu_allowed(p, this))
 			goto next;
 
-		if (p->core_occupation > dst->idle->core_occupation)
+		якщо (p->core_occupation > dst->idle->core_occupation)
 			goto next;
 		/*
 		 * sched_core_find() and sched_core_next() will ensure
@@ -6582,7 +6582,7 @@ static bool try_steal_cookie(int this, int that)
 		 * check whether the runqueue of the destination CPU is
 		 * being throttled.
 		 */
-		if (sched_task_is_throttled(p, this))
+		якщо (sched_task_is_throttled(p, this))
 			goto next;
 
 		move_queued_task_locked(src, dst, p);
@@ -6593,44 +6593,44 @@ static bool try_steal_cookie(int this, int that)
 
 next:
 		p = sched_core_next(p, cookie);
-	} while (p);
+	} поки (p);
 
-	return success;
+	повернути success;
 }
 
-static bool steal_cookie_task(int cpu, struct sched_domain *sd)
+static bool steal_cookie_task(ціле cpu, struct sched_domain *sd)
 {
-	int i;
+	ціле i;
 
 	for_each_cpu_wrap(i, sched_domain_span(sd), cpu + 1) {
-		if (i == cpu)
+		якщо (i == cpu)
 			continue;
 
-		if (need_resched())
+		якщо (need_resched())
 			break;
 
-		if (try_steal_cookie(cpu, i))
-			return true;
+		якщо (try_steal_cookie(cpu, i))
+			повернути true;
 	}
 
-	return false;
+	повернути false;
 }
 
 static void sched_core_balance(struct rq *rq)
 	__must_hold(__rq_lockp(rq))
 {
 	struct sched_domain *sd;
-	int cpu = cpu_of(rq);
+	ціле cpu = cpu_of(rq);
 
 	guard(preempt)();
 	guard(rcu)();
 
 	raw_spin_rq_unlock_irq(rq);
 	for_each_domain(cpu, sd) {
-		if (need_resched())
+		якщо (need_resched())
 			break;
 
-		if (steal_cookie_task(cpu, sd))
+		якщо (steal_cookie_task(cpu, sd))
 			break;
 	}
 	raw_spin_rq_lock_irq(rq);
@@ -6640,90 +6640,90 @@ static DEFINE_PER_CPU(struct balance_callback, core_balance_head);
 
 static void queue_core_balance(struct rq *rq)
 {
-	if (!sched_core_enabled(rq))
-		return;
+	якщо (!sched_core_enabled(rq))
+		повернути;
 
-	if (!rq->core->core_cookie)
-		return;
+	якщо (!rq->core->core_cookie)
+		повернути;
 
-	if (!rq->nr_running) /* not forced idle */
-		return;
+	якщо (!rq->nr_running) /* not forced idle */
+		повернути;
 
 	queue_balance_callback(rq, &per_cpu(core_balance_head, rq->cpu), sched_core_balance);
 }
 
-DEFINE_LOCK_GUARD_1(core_lock, int,
+DEFINE_LOCK_GUARD_1(core_lock, ціле,
 		    sched_core_lock(*_T->lock, &_T->flags),
 		    sched_core_unlock(*_T->lock, &_T->flags),
 		    unsigned long flags)
 
-static void sched_core_cpu_starting(unsigned int cpu)
+static void sched_core_cpu_starting(unsigned ціле cpu)
 {
 	const struct cpumask *smt_mask = cpu_smt_mask(cpu);
 	struct rq *rq = cpu_rq(cpu), *core_rq = NULL;
-	int t;
+	ціле t;
 
 	guard(core_lock)(&cpu);
 
 	WARN_ON_ONCE(rq->core != rq);
 
 	/* if we're the first, we'll be our own leader */
-	if (cpumask_weight(smt_mask) == 1)
-		return;
+	якщо (cpumask_weight(smt_mask) == 1)
+		повернути;
 
 	/* find the leader */
 	for_each_cpu(t, smt_mask) {
-		if (t == cpu)
+		якщо (t == cpu)
 			continue;
 		rq = cpu_rq(t);
-		if (rq->core == rq) {
+		якщо (rq->core == rq) {
 			core_rq = rq;
 			break;
 		}
 	}
 
-	if (WARN_ON_ONCE(!core_rq)) /* whoopsie */
-		return;
+	якщо (WARN_ON_ONCE(!core_rq)) /* whoopsie */
+		повернути;
 
 	/* install and validate core_rq */
 	for_each_cpu(t, smt_mask) {
 		rq = cpu_rq(t);
 
-		if (t == cpu)
+		якщо (t == cpu)
 			rq->core = core_rq;
 
 		WARN_ON_ONCE(rq->core != core_rq);
 	}
 }
 
-static void sched_core_cpu_deactivate(unsigned int cpu)
+static void sched_core_cpu_deactivate(unsigned ціле cpu)
 {
 	const struct cpumask *smt_mask = cpu_smt_mask(cpu);
 	struct rq *rq = cpu_rq(cpu), *core_rq = NULL;
-	int t;
+	ціле t;
 
 	guard(core_lock)(&cpu);
 
 	/* if we're the last man standing, nothing to do */
-	if (cpumask_weight(smt_mask) == 1) {
+	якщо (cpumask_weight(smt_mask) == 1) {
 		WARN_ON_ONCE(rq->core != rq);
-		return;
+		повернути;
 	}
 
 	/* if we're not the leader, nothing to do */
-	if (rq->core != rq)
-		return;
+	якщо (rq->core != rq)
+		повернути;
 
 	/* find a new leader */
 	for_each_cpu(t, smt_mask) {
-		if (t == cpu)
+		якщо (t == cpu)
 			continue;
 		core_rq = cpu_rq(t);
 		break;
 	}
 
-	if (WARN_ON_ONCE(!core_rq)) /* impossible */
-		return;
+	якщо (WARN_ON_ONCE(!core_rq)) /* impossible */
+		повернути;
 
 	/* copy the shared state to the new leader */
 	core_rq->core_task_seq             = rq->core_task_seq;
@@ -6754,25 +6754,25 @@ static void sched_core_cpu_deactivate(unsigned int cpu)
 	}
 }
 
-static inline void sched_core_cpu_dying(unsigned int cpu)
+static inline void sched_core_cpu_dying(unsigned ціле cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 
-	if (rq->core != rq)
+	якщо (rq->core != rq)
 		rq->core = rq;
 }
 
-#else /* !CONFIG_SCHED_CORE: */
+#інакше /* !CONFIG_SCHED_CORE: */
 
-static inline void sched_core_cpu_starting(unsigned int cpu) {}
-static inline void sched_core_cpu_deactivate(unsigned int cpu) {}
-static inline void sched_core_cpu_dying(unsigned int cpu) {}
+static inline void sched_core_cpu_starting(unsigned ціле cpu) {}
+static inline void sched_core_cpu_deactivate(unsigned ціле cpu) {}
+static inline void sched_core_cpu_dying(unsigned ціле cpu) {}
 
 static struct task_struct *
 pick_next_task(struct rq *rq, struct rq_flags *rf)
 	__must_hold(__rq_lockp(rq))
 {
-	return __pick_next_task(rq, rf);
+	повернути __pick_next_task(rq, rf);
 }
 
 #endif /* !CONFIG_SCHED_CORE */
@@ -6803,12 +6803,12 @@ static bool try_to_block_task(struct rq *rq, struct task_struct *p,
 
 	WARN_ON_ONCE(p->is_blocked);
 
-	if (signal_pending_state(task_state, p)) {
+	якщо (signal_pending_state(task_state, p)) {
 		WRITE_ONCE(p->__state, TASK_RUNNING);
 		*task_state_p = TASK_RUNNING;
 		clear_task_blocked_on(p, NULL);
 
-		return false;
+		повернути false;
 	}
 
 	p->is_blocked = 1;
@@ -6820,17 +6820,17 @@ static bool try_to_block_task(struct rq *rq, struct task_struct *p,
 	 * blocked on a mutex, and we want to keep it on the runqueue
 	 * to be selectable for proxy-execution.
 	 */
-	if (!should_block)
-		return false;
+	якщо (!should_block)
+		повернути false;
 
 	block_task(rq, p, task_state);
-	return true;
+	повернути true;
 }
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
-static inline void proxy_set_task_cpu(struct task_struct *p, int cpu)
+static inline void proxy_set_task_cpu(struct task_struct *p, ціле cpu)
 {
-	unsigned int wake_cpu;
+	unsigned ціле wake_cpu;
 
 	/*
 	 * Since we are enqueuing a blocked task on a cpu it may
@@ -6849,7 +6849,7 @@ static inline struct task_struct *proxy_resched_idle(struct rq *rq)
 	rq->next_class = &idle_sched_class;
 	rq_set_donor(rq, rq->idle);
 	set_tsk_need_resched(rq->idle);
-	return rq->idle;
+	повернути rq->idle;
 }
 
 static void proxy_deactivate(struct rq *rq, struct task_struct *donor)
@@ -6885,15 +6885,15 @@ void sched_proxy_block_task(struct rq *rq, struct task_struct *p)
 	lockdep_assert_held(&p->pi_lock);
 	lockdep_assert_rq_held(rq);
 
-	if (!p->is_blocked || !task_on_rq_queued(p))
-		return;
-	if (WARN_ON_ONCE(state == TASK_RUNNING))
-		return;
+	якщо (!p->is_blocked || !task_on_rq_queued(p))
+		повернути;
+	якщо (WARN_ON_ONCE(state == TASK_RUNNING))
+		повернути;
 
-	if (task_current_donor(rq, p))
+	якщо (task_current_donor(rq, p))
 		proxy_reset_donor(rq);
 
-	if (!p->se.sched_delayed)
+	якщо (!p->se.sched_delayed)
 		block_task(rq, p, state);
 
 	WARN_ON_ONCE(task_on_rq_queued(p) && !p->se.sched_delayed);
@@ -6940,7 +6940,7 @@ static inline void proxy_reacquire_rq_lock(struct rq *rq, struct rq_flags *rf)
  * and leave that CPU to sort things out.
  */
 static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
-			       struct task_struct *p, int target_cpu)
+			       struct task_struct *p, ціле target_cpu)
 	__must_hold(__rq_lockp(rq))
 {
 	struct rq *target_rq = cpu_rq(target_cpu);
@@ -6959,7 +6959,7 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
 	 * before we release the lock.
 	 */
 	proxy_resched_idle(rq);
-	for (; p; p = p->blocked_donor) {
+	для (; p; p = p->blocked_donor) {
 		WARN_ON(p == rq->curr);
 		deactivate_task(rq, p, DEQUEUE_NOCLOCK);
 		proxy_set_task_cpu(p, target_cpu);
@@ -7009,19 +7009,19 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 {
 	struct task_struct *owner = NULL;
 	bool curr_in_chain = false;
-	int this_cpu = cpu_of(rq);
+	ціле this_cpu = cpu_of(rq);
 	struct task_struct *p;
-	int owner_cpu;
+	ціле owner_cpu;
 
 	/* Follow blocked_on chain. */
-	for (p = donor; p->is_blocked; p = owner) {
+	для (p = donor; p->is_blocked; p = owner) {
 		/* if its PROXY_WAKING, do return migration or run if current */
 		struct mutex *mutex = p->blocked_on;
-		if (!mutex) {
+		якщо (!mutex) {
 			clear_task_blocked_on(p, mutex);
-			if (task_current(rq, p)) {
+			якщо (task_current(rq, p)) {
 				p->is_blocked = 0;
-				return p;
+				повернути p;
 			}
 			goto deactivate;
 		}
@@ -7034,54 +7034,54 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 		guard(raw_spinlock)(&p->blocked_lock);
 
 		/* Check again that p is blocked with blocked_lock held */
-		if (mutex != __get_task_blocked_on(p)) {
+		якщо (mutex != __get_task_blocked_on(p)) {
 			/*
 			 * Something changed in the blocked_on chain and
 			 * we don't know if only at this level. So, let's
 			 * just bail out completely and let __schedule()
 			 * figure things out (pick_again loop).
 			 */
-			return NULL;
+			повернути NULL;
 		}
 
-		if (task_current(rq, p))
+		якщо (task_current(rq, p))
 			curr_in_chain = true;
 
 		owner = __mutex_owner(mutex);
-		if (!owner) {
+		якщо (!owner) {
 			/*
 			 * If there is no owner, either clear blocked_on
 			 * and return p (if it is current and safe to
 			 * just run on this rq), or return-migrate the task.
 			 */
 			__clear_task_blocked_on(p, NULL);
-			if (task_current(rq, p)) {
+			якщо (task_current(rq, p)) {
 				p->is_blocked = 0;
-				return p;
+				повернути p;
 			}
 			goto deactivate;
 		}
 
-		if (!READ_ONCE(owner->on_rq) || owner->se.sched_delayed) {
+		якщо (!READ_ONCE(owner->on_rq) || owner->se.sched_delayed) {
 			/* XXX Don't handle blocked owners/delayed dequeue yet */
-			if (curr_in_chain)
+			якщо (curr_in_chain)
 				goto resched_idle;
 			__clear_task_blocked_on(p, NULL);
 			goto deactivate;
 		}
 
 		owner_cpu = task_cpu(owner);
-		if (owner_cpu != this_cpu) {
+		якщо (owner_cpu != this_cpu) {
 			/*
 			 * @owner can disappear, simply migrate to @owner_cpu
 			 * and leave that CPU to sort things out.
 			 */
-			if (curr_in_chain)
+			якщо (curr_in_chain)
 				goto resched_idle;
 			goto migrate_task;
 		}
 
-		if (task_on_rq_migrating(owner)) {
+		якщо (task_on_rq_migrating(owner)) {
 			/*
 			 * One of the chain of mutex owners is currently migrating to this
 			 * CPU, but has not yet been enqueued because we are holding the
@@ -7101,10 +7101,10 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 		 * we are still on this cpu and not migrating. If we get
 		 * inconsistent results, try again.
 		 */
-		if (!task_on_rq_queued(owner) || task_cpu(owner) != this_cpu)
-			return NULL;
+		якщо (!task_on_rq_queued(owner) || task_cpu(owner) != this_cpu)
+			повернути NULL;
 
-		if (owner == p) {
+		якщо (owner == p) {
 			/*
 			 * It's possible we interleave with mutex_unlock like:
 			 *
@@ -7138,30 +7138,30 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 	}
 	WARN_ON_ONCE(owner && !owner->on_rq);
 
-	if (owner && !sched_cpu_cookie_match(rq, owner)) {
-		if (curr_in_chain)
-			return proxy_resched_idle(rq);
+	якщо (owner && !sched_cpu_cookie_match(rq, owner)) {
+		якщо (curr_in_chain)
+			повернути proxy_resched_idle(rq);
 		p = donor; /* Deactivate the donor, not the runnable owner */
 		clear_task_blocked_on(p, NULL);
 		goto deactivate;
 	}
-	return owner;
+	повернути owner;
 
 resched_idle:
-	return proxy_resched_idle(rq);
+	повернути proxy_resched_idle(rq);
 deactivate:
 	proxy_deactivate(rq, p);
-	return NULL;
+	повернути NULL;
 migrate_task:
 	proxy_migrate_task(rq, rf, p, owner_cpu);
-	return NULL;
+	повернути NULL;
 }
-#else /* SCHED_PROXY_EXEC */
+#інакше /* SCHED_PROXY_EXEC */
 static struct task_struct *
 find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
 {
 	WARN_ONCE(1, "This should never be called in the !SCHED_PROXY_EXEC case\n");
-	return donor;
+	повернути donor;
 }
 #endif /* SCHED_PROXY_EXEC */
 
@@ -7204,7 +7204,7 @@ find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
  *
  * WARNING: must be called with preemption disabled!
  */
-static void __sched notrace __schedule(int sched_mode)
+static void __sched notrace __schedule(ціле sched_mode)
 {
 	struct task_struct *prev, *next;
 	/*
@@ -7217,7 +7217,7 @@ static void __sched notrace __schedule(int sched_mode)
 	unsigned long prev_state;
 	struct rq_flags rf;
 	struct rq *rq;
-	int cpu;
+	ціле cpu;
 
 	/* Trace preemptions consistently with task switches */
 	trace_sched_entry_tp(sched_mode == SM_PREEMPT);
@@ -7271,14 +7271,14 @@ static void __sched notrace __schedule(int sched_mode)
 	 * that we form a control dependency vs deactivate_task() below.
 	 */
 	prev_state = READ_ONCE(prev->__state);
-	if (sched_mode == SM_IDLE) {
+	якщо (sched_mode == SM_IDLE) {
 		/* SCX must consult the BPF scheduler to tell if rq is empty */
-		if (!rq->nr_running && !scx_enabled()) {
+		якщо (!rq->nr_running && !scx_enabled()) {
 			next = prev;
 			rq->next_class = &idle_sched_class;
 			goto picked;
 		}
-	} else if (!preempt && prev_state) {
+	} інакше якщо (!preempt && prev_state) {
 		/*
 		 * Keep mutex-blocked tasks on the runqueue for proxy execution
 		 * only when their scheduling class allows it. Without proxy
@@ -7293,24 +7293,24 @@ pick_again:
 	assert_balance_callbacks_empty(rq);
 	next = pick_next_task(rq, &rf);
 	rq->next_class = next->sched_class;
-	if (sched_proxy_exec()) {
+	якщо (sched_proxy_exec()) {
 		struct task_struct *prev_donor = rq->donor;
 
 		rq_set_donor(rq, next);
 		next->blocked_donor = NULL;
-		if (unlikely(next->is_blocked)) {
+		якщо (unlikely(next->is_blocked)) {
 			next = find_proxy_task(rq, next, &rf);
-			if (!next) {
+			якщо (!next) {
 				zap_balance_callbacks(rq);
 				goto pick_again;
 			}
-			if (next == rq->idle) {
+			якщо (next == rq->idle) {
 				zap_balance_callbacks(rq);
 				scx_proxy_reenqueue_retry(rq, next);
 				goto keep_resched;
 			}
 		}
-		if (rq->donor == prev_donor && prev != next) {
+		якщо (rq->donor == prev_donor && prev != next) {
 			struct task_struct *donor = rq->donor;
 			/*
 			 * When transitioning like:
@@ -7329,7 +7329,7 @@ pick_again:
 		}
 		scx_proxy_donor_start(rq);
 		scx_proxy_reenqueue_retry(rq, next);
-	} else {
+	} інакше {
 		rq_set_donor(rq, next);
 	}
 
@@ -7340,7 +7340,7 @@ keep_resched:
 	rq->last_seen_need_resched_ns = 0;
 
 	is_switch = prev != next;
-	if (likely(is_switch)) {
+	якщо (likely(is_switch)) {
 		rq->nr_switches++;
 		/*
 		 * RCU users of rcu_dereference(rq->curr) may not see
@@ -7380,7 +7380,7 @@ keep_resched:
 
 		/* Also unlocks the rq: */
 		rq = context_switch(rq, prev, next, &rf);
-	} else {
+	} інакше {
 		rq_unpin_lock(rq, &rf);
 		__balance_callbacks(rq, NULL);
 		hrtick_schedule_exit(rq);
@@ -7401,14 +7401,14 @@ void __noreturn do_task_dead(void)
 	BUG();
 
 	/* Avoid "noreturn function does return" - but don't continue if BUG() is a NOP: */
-	for (;;)
+	для (;;)
 		cpu_relax();
 }
 
 static inline void sched_submit_work(struct task_struct *tsk)
 {
 	static DEFINE_WAIT_OVERRIDE_MAP(sched_map, LD_WAIT_CONFIG);
-	unsigned int task_flags;
+	unsigned ціле task_flags;
 
 	/*
 	 * Establish LD_WAIT_CONFIG context to ensure none of the code called
@@ -7421,9 +7421,9 @@ static inline void sched_submit_work(struct task_struct *tsk)
 	 * If a worker goes to sleep, notify and ask workqueue whether it
 	 * wants to wake up a task to maintain concurrency.
 	 */
-	if (task_flags & PF_WQ_WORKER)
+	якщо (task_flags & PF_WQ_WORKER)
 		wq_worker_sleeping(tsk);
-	else if (task_flags & PF_IO_WORKER)
+	інакше якщо (task_flags & PF_IO_WORKER)
 		io_wq_worker_sleeping(tsk);
 
 	/*
@@ -7444,21 +7444,21 @@ static inline void sched_submit_work(struct task_struct *tsk)
 
 static void sched_update_worker(struct task_struct *tsk)
 {
-	if (tsk->flags & (PF_WQ_WORKER | PF_IO_WORKER)) {
-		if (tsk->flags & PF_WQ_WORKER)
+	якщо (tsk->flags & (PF_WQ_WORKER | PF_IO_WORKER)) {
+		якщо (tsk->flags & PF_WQ_WORKER)
 			wq_worker_running(tsk);
-		else
+		інакше
 			io_wq_worker_running(tsk);
 	}
 }
 
-static __always_inline void __schedule_loop(int sched_mode)
+static __always_inline void __schedule_loop(ціле sched_mode)
 {
 	do {
 		preempt_disable();
 		__schedule(sched_mode);
 		sched_preempt_enable_no_resched();
-	} while (need_resched());
+	} поки (need_resched());
 }
 
 asmlinkage __visible void __sched schedule(void)
@@ -7469,7 +7469,7 @@ asmlinkage __visible void __sched schedule(void)
 	lockdep_assert(!tsk->sched_rt_mutex);
 #endif
 
-	if (!task_is_running(tsk))
+	якщо (!task_is_running(tsk))
 		sched_submit_work(tsk);
 	__schedule_loop(SM_NONE);
 	sched_update_worker(tsk);
@@ -7498,10 +7498,10 @@ void __sched schedule_idle(void)
 	WARN_ON_ONCE(current->__state);
 	do {
 		__schedule(SM_IDLE);
-	} while (need_resched());
+	} поки (need_resched());
 }
 
-#if defined(CONFIG_CONTEXT_TRACKING_USER) && !defined(CONFIG_HAVE_CONTEXT_TRACKING_USER_OFFSTACK)
+#якщо defined(CONFIG_CONTEXT_TRACKING_USER) && !defined(CONFIG_HAVE_CONTEXT_TRACKING_USER_OFFSTACK)
 asmlinkage __visible void __sched schedule_user(void)
 {
 	/*
@@ -7566,7 +7566,7 @@ static void __sched notrace preempt_schedule_common(void)
 		 * Check again in case we missed a preemption opportunity
 		 * between schedule and now.
 		 */
-	} while (need_resched());
+	} поки (need_resched());
 }
 
 #ifdef CONFIG_PREEMPTION
@@ -7580,8 +7580,8 @@ asmlinkage __visible void __sched notrace preempt_schedule(void)
 	 * If there is a non-zero preempt_count or interrupts are disabled,
 	 * we do not want to preempt the current task. Just return..
 	 */
-	if (likely(!preemptible()))
-		return;
+	якщо (likely(!preemptible()))
+		повернути;
 	preempt_schedule_common();
 }
 NOKPROBE_SYMBOL(preempt_schedule);
@@ -7605,8 +7605,8 @@ asmlinkage __visible void __sched notrace preempt_schedule_notrace(void)
 {
 	enum ctx_state prev_ctx;
 
-	if (likely(!preemptible()))
-		return;
+	якщо (likely(!preemptible()))
+		повернути;
 
 	do {
 		/*
@@ -7635,7 +7635,7 @@ asmlinkage __visible void __sched notrace preempt_schedule_notrace(void)
 
 		preempt_latency_stop(1);
 		preempt_enable_no_resched_notrace();
-	} while (need_resched());
+	} поки (need_resched());
 }
 EXPORT_SYMBOL_GPL(preempt_schedule_notrace);
 
@@ -7662,33 +7662,33 @@ asmlinkage __visible void __sched preempt_schedule_irq(void)
 		__schedule(SM_PREEMPT);
 		local_irq_disable();
 		sched_preempt_enable_no_resched();
-	} while (need_resched());
+	} поки (need_resched());
 
 	exception_exit(prev_state);
 }
 
-int default_wake_function(wait_queue_entry_t *curr, unsigned mode, int wake_flags,
+ціле default_wake_function(wait_queue_entry_t *curr, unsigned mode, ціле wake_flags,
 			  void *key)
 {
 	WARN_ON_ONCE(wake_flags & ~(WF_SYNC|WF_CURRENT_CPU));
-	return try_to_wake_up(curr->private, mode, wake_flags);
+	повернути try_to_wake_up(curr->private, mode, wake_flags);
 }
 EXPORT_SYMBOL(default_wake_function);
 
-const struct sched_class *__setscheduler_class(int policy, int prio)
+const struct sched_class *__setscheduler_class(ціле policy, ціле prio)
 {
-	if (dl_prio(prio))
-		return &dl_sched_class;
+	якщо (dl_prio(prio))
+		повернути &dl_sched_class;
 
-	if (rt_prio(prio))
-		return &rt_sched_class;
+	якщо (rt_prio(prio))
+		повернути &rt_sched_class;
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (task_should_scx(policy))
-		return &ext_sched_class;
+	якщо (task_should_scx(policy))
+		повернути &ext_sched_class;
 #endif
 
-	return &fair_sched_class;
+	повернути &fair_sched_class;
 }
 
 #ifdef CONFIG_RT_MUTEXES
@@ -7699,7 +7699,7 @@ const struct sched_class *__setscheduler_class(int policy, int prio)
  * name such that if someone were to implement this function we get to compare
  * notes.
  */
-#define fetch_and_set(x, v) ({ int _x = (x); (x) = (v); _x; })
+#define fetch_and_set(x, v) ({ ціле _x = (x); (x) = (v); _x; })
 
 void rt_mutex_pre_schedule(void)
 {
@@ -7748,7 +7748,7 @@ void rt_mutex_futex_post_schedule(void)
  */
 void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 {
-	int prio, oldprio, queue_flag =
+	ціле prio, oldprio, queue_flag =
 		DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
 	const struct sched_class *prev_class, *next_class;
 	struct rq_flags rf;
@@ -7760,8 +7760,8 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 	/*
 	 * If nothing changed; bail early.
 	 */
-	if (p->pi_top_task == pi_task && prio == p->prio && !dl_prio(prio))
-		return;
+	якщо (p->pi_top_task == pi_task && prio == p->prio && !dl_prio(prio))
+		повернути;
 
 	rq = __task_rq_lock(p, &rf);
 	update_rq_clock(rq);
@@ -7780,7 +7780,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 	/*
 	 * For FIFO/RR we only need to set prio, if that matches we're done.
 	 */
-	if (prio == p->prio && !dl_prio(prio))
+	якщо (prio == p->prio && !dl_prio(prio))
 		goto out_unlock;
 
 	/*
@@ -7795,7 +7795,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 	 * protected section without being interrupted. So there is no
 	 * real need to boost.
 	 */
-	if (unlikely(p == rq->idle)) {
+	якщо (unlikely(p == rq->idle)) {
 		WARN_ON(p != rq->curr);
 		WARN_ON(p->pi_blocked_on);
 		goto out_unlock;
@@ -7804,13 +7804,13 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 	trace_sched_pi_setprio(p, pi_task);
 	oldprio = p->prio;
 
-	if (oldprio == prio && !dl_prio(prio))
+	якщо (oldprio == prio && !dl_prio(prio))
 		queue_flag &= ~DEQUEUE_MOVE;
 
 	prev_class = p->sched_class;
 	next_class = __setscheduler_class(p->policy, prio);
 
-	if (prev_class != next_class)
+	якщо (prev_class != next_class)
 		queue_flag |= DEQUEUE_CLASS;
 
 	scoped_guard (sched_change, p, queue_flag) {
@@ -7823,24 +7823,24 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 		 *      --> -dl task blocks on mutex A and could preempt the
 		 *          running task
 		 */
-		if (dl_prio(prio)) {
-			if (!dl_prio(p->normal_prio) ||
+		якщо (dl_prio(prio)) {
+			якщо (!dl_prio(p->normal_prio) ||
 			    (pi_task && dl_prio(pi_task->prio) &&
 			     dl_entity_preempt(&pi_task->dl, &p->dl))) {
 				p->dl.pi_se = pi_task->dl.pi_se;
 				scope->flags |= ENQUEUE_REPLENISH;
-			} else {
+			} інакше {
 				p->dl.pi_se = &p->dl;
 			}
-		} else if (rt_prio(prio)) {
-			if (dl_prio(oldprio))
+		} інакше якщо (rt_prio(prio)) {
+			якщо (dl_prio(oldprio))
 				p->dl.pi_se = &p->dl;
-			if (oldprio < prio)
+			якщо (oldprio < prio)
 				scope->flags |= ENQUEUE_HEAD;
-		} else {
-			if (dl_prio(oldprio))
+		} інакше {
+			якщо (dl_prio(oldprio))
 				p->dl.pi_se = &p->dl;
-			if (rt_prio(oldprio))
+			якщо (rt_prio(oldprio))
 				p->rt.timeout = 0;
 		}
 
@@ -7855,12 +7855,12 @@ out_unlock:
 }
 #endif /* CONFIG_RT_MUTEXES */
 
-#if !defined(CONFIG_PREEMPTION)
-int __sched __cond_resched(void)
+#якщо !defined(CONFIG_PREEMPTION)
+ціле __sched __cond_resched(void)
 {
-	if (should_resched(0) && !irqs_disabled()) {
+	якщо (should_resched(0) && !irqs_disabled()) {
 		preempt_schedule_common();
-		return 1;
+		повернути 1;
 	}
 	/*
 	 * In PREEMPT_RCU kernels, ->rcu_read_lock_nesting tells the tick
@@ -7878,7 +7878,7 @@ int __sched __cond_resched(void)
 #ifndef CONFIG_PREEMPT_RCU
 	rcu_all_qs();
 #endif
-	return 0;
+	повернути 0;
 }
 EXPORT_SYMBOL(__cond_resched);
 #endif
@@ -7891,57 +7891,57 @@ EXPORT_SYMBOL(__cond_resched);
  * operations here to prevent schedule() from being called twice (once via
  * spin_unlock(), once by hand).
  */
-int __cond_resched_lock(spinlock_t *lock)
+ціле __cond_resched_lock(spinlock_t *lock)
 {
-	int resched = should_resched(PREEMPT_LOCK_OFFSET);
-	int ret = 0;
+	ціле resched = should_resched(PREEMPT_LOCK_OFFSET);
+	ціле ret = 0;
 
 	lockdep_assert_held(lock);
 
-	if (spin_needbreak(lock) || resched) {
+	якщо (spin_needbreak(lock) || resched) {
 		spin_unlock(lock);
-		if (!_cond_resched())
+		якщо (!_cond_resched())
 			cpu_relax();
 		ret = 1;
 		spin_lock(lock);
 	}
-	return ret;
+	повернути ret;
 }
 EXPORT_SYMBOL(__cond_resched_lock);
 
-int __cond_resched_rwlock_read(rwlock_t *lock)
+ціле __cond_resched_rwlock_read(rwlock_t *lock)
 {
-	int resched = should_resched(PREEMPT_LOCK_OFFSET);
-	int ret = 0;
+	ціле resched = should_resched(PREEMPT_LOCK_OFFSET);
+	ціле ret = 0;
 
 	lockdep_assert_held_read(lock);
 
-	if (rwlock_needbreak(lock) || resched) {
+	якщо (rwlock_needbreak(lock) || resched) {
 		read_unlock(lock);
-		if (!_cond_resched())
+		якщо (!_cond_resched())
 			cpu_relax();
 		ret = 1;
 		read_lock(lock);
 	}
-	return ret;
+	повернути ret;
 }
 EXPORT_SYMBOL(__cond_resched_rwlock_read);
 
-int __cond_resched_rwlock_write(rwlock_t *lock)
+ціле __cond_resched_rwlock_write(rwlock_t *lock)
 {
-	int resched = should_resched(PREEMPT_LOCK_OFFSET);
-	int ret = 0;
+	ціле resched = should_resched(PREEMPT_LOCK_OFFSET);
+	ціле ret = 0;
 
 	lockdep_assert_held_write(lock);
 
-	if (rwlock_needbreak(lock) || resched) {
+	якщо (rwlock_needbreak(lock) || resched) {
 		write_unlock(lock);
-		if (!_cond_resched())
+		якщо (!_cond_resched())
 			cpu_relax();
 		ret = 1;
 		write_lock(lock);
 	}
-	return ret;
+	повернути ret;
 }
 EXPORT_SYMBOL(__cond_resched_rwlock_write);
 
@@ -7971,17 +7971,17 @@ enum {
 	preempt_dynamic_lazy,
 };
 
-int preempt_dynamic_mode = preempt_dynamic_undefined;
+ціле preempt_dynamic_mode = preempt_dynamic_undefined;
 
-int sched_dynamic_mode(const char *str)
+ціле sched_dynamic_mode(const char *str)
 {
-	if (!strcmp(str, "full"))
-		return preempt_dynamic_full;
+	якщо (!strcmp(str, "full"))
+		повернути preempt_dynamic_full;
 
-	if (!strcmp(str, "lazy"))
-		return preempt_dynamic_lazy;
+	якщо (!strcmp(str, "lazy"))
+		повернути preempt_dynamic_lazy;
 
-	return -EINVAL;
+	повернути -EINVAL;
 }
 
 # define preempt_dynamic_key_enable(f)	static_key_enable(&sk_dynamic_##f.key)
@@ -7989,18 +7989,18 @@ int sched_dynamic_mode(const char *str)
 
 static DEFINE_MUTEX(sched_dynamic_mutex);
 
-static void __sched_dynamic_update(int mode)
+static void __sched_dynamic_update(ціле mode)
 {
 	switch (mode) {
 	case preempt_dynamic_full:
 		preempt_dynamic_key_disable(preempt_lazy);
-		if (mode != preempt_dynamic_mode)
+		якщо (mode != preempt_dynamic_mode)
 			pr_info("Dynamic Preempt: full\n");
 		break;
 
 	case preempt_dynamic_lazy:
 		preempt_dynamic_key_enable(preempt_lazy);
-		if (mode != preempt_dynamic_mode)
+		якщо (mode != preempt_dynamic_mode)
 			pr_info("Dynamic Preempt: lazy\n");
 		break;
 	}
@@ -8008,32 +8008,32 @@ static void __sched_dynamic_update(int mode)
 	WRITE_ONCE(preempt_dynamic_mode, mode);
 }
 
-void sched_dynamic_update(int mode)
+void sched_dynamic_update(ціле mode)
 {
 	mutex_lock(&sched_dynamic_mutex);
 	__sched_dynamic_update(mode);
 	mutex_unlock(&sched_dynamic_mutex);
 }
 
-static int __init setup_preempt_mode(char *str)
+static ціле __init setup_preempt_mode(char *str)
 {
-	int mode = sched_dynamic_mode(str);
-	if (mode < 0) {
+	ціле mode = sched_dynamic_mode(str);
+	якщо (mode < 0) {
 		pr_warn("Dynamic Preempt: unsupported mode: %s\n", str);
-		return 0;
+		повернути 0;
 	}
 
 	sched_dynamic_update(mode);
-	return 1;
+	повернути 1;
 }
 __setup("preempt=", setup_preempt_mode);
 
 static void __init preempt_dynamic_init(void)
 {
-	if (preempt_dynamic_mode == preempt_dynamic_undefined) {
-		if (IS_ENABLED(CONFIG_PREEMPT_LAZY)) {
+	якщо (preempt_dynamic_mode == preempt_dynamic_undefined) {
+		якщо (IS_ENABLED(CONFIG_PREEMPT_LAZY)) {
 			sched_dynamic_update(preempt_dynamic_lazy);
-		} else {
+		} інакше {
 			/* Default static call setting, nothing to do */
 			WARN_ON_ONCE(!IS_ENABLED(CONFIG_PREEMPT));
 			preempt_dynamic_mode = preempt_dynamic_full;
@@ -8045,16 +8045,16 @@ static void __init preempt_dynamic_init(void)
 # define PREEMPT_MODEL_ACCESSOR(mode)					\
 	bool preempt_model_##mode(void)					\
 	{								\
-		int mode = READ_ONCE(preempt_dynamic_mode);		\
+		ціле mode = READ_ONCE(preempt_dynamic_mode);		\
 		WARN_ON_ONCE(mode == preempt_dynamic_undefined);	\
-		return mode == preempt_dynamic_##mode;			\
+		повернути mode == preempt_dynamic_##mode;			\
 	}								\
 	EXPORT_SYMBOL_GPL(preempt_model_##mode)
 
 PREEMPT_MODEL_ACCESSOR(full);
 PREEMPT_MODEL_ACCESSOR(lazy);
 
-#else /* !CONFIG_PREEMPT_DYNAMIC: */
+#інакше /* !CONFIG_PREEMPT_DYNAMIC: */
 
 #define preempt_dynamic_mode -1
 
@@ -8073,50 +8073,50 @@ const char *preempt_model_str(void)
 		 IS_ENABLED(CONFIG_PREEMPT_LAZY));
 	static char buf[128];
 
-	if (IS_ENABLED(CONFIG_PREEMPT_BUILD)) {
+	якщо (IS_ENABLED(CONFIG_PREEMPT_BUILD)) {
 		struct seq_buf s;
 
 		seq_buf_init(&s, buf, sizeof(buf));
 		seq_buf_puts(&s, "PREEMPT");
 
-		if (IS_ENABLED(CONFIG_PREEMPT_RT))
+		якщо (IS_ENABLED(CONFIG_PREEMPT_RT))
 			seq_buf_printf(&s, "%sRT%s",
 				       brace ? "_{" : "_",
 				       brace ? "," : "");
 
-		if (IS_ENABLED(CONFIG_PREEMPT_DYNAMIC)) {
+		якщо (IS_ENABLED(CONFIG_PREEMPT_DYNAMIC)) {
 			seq_buf_printf(&s, "(%s)%s",
 				       preempt_dynamic_mode >= 0 ?
 				       preempt_modes[preempt_dynamic_mode] : "undef",
 				       brace ? "}" : "");
-			return seq_buf_str(&s);
+			повернути seq_buf_str(&s);
 		}
 
-		if (IS_ENABLED(CONFIG_PREEMPT_LAZY)) {
+		якщо (IS_ENABLED(CONFIG_PREEMPT_LAZY)) {
 			seq_buf_printf(&s, "LAZY%s",
 				       brace ? "}" : "");
-			return seq_buf_str(&s);
+			повернути seq_buf_str(&s);
 		}
 
-		return seq_buf_str(&s);
+		повернути seq_buf_str(&s);
 	}
 
-	if (IS_ENABLED(CONFIG_PREEMPT_VOLUNTARY_BUILD))
-		return "VOLUNTARY";
+	якщо (IS_ENABLED(CONFIG_PREEMPT_VOLUNTARY_BUILD))
+		повернути "VOLUNTARY";
 
-	return "NONE";
+	повернути "NONE";
 }
 
-int io_schedule_prepare(void)
+ціле io_schedule_prepare(void)
 {
-	int old_iowait = current->in_iowait;
+	ціле old_iowait = current->in_iowait;
 
 	current->in_iowait = 1;
 	blk_flush_plug(current->plug, true);
-	return old_iowait;
+	повернути old_iowait;
 }
 
-void io_schedule_finish(int token)
+void io_schedule_finish(ціле token)
 {
 	current->in_iowait = token;
 }
@@ -8127,20 +8127,20 @@ void io_schedule_finish(int token)
  */
 long __sched io_schedule_timeout(long timeout)
 {
-	int token;
+	ціле token;
 	long ret;
 
 	token = io_schedule_prepare();
 	ret = schedule_timeout(timeout);
 	io_schedule_finish(token);
 
-	return ret;
+	повернути ret;
 }
 EXPORT_SYMBOL(io_schedule_timeout);
 
 void __sched io_schedule(void)
 {
-	int token;
+	ціле token;
 
 	token = io_schedule_prepare();
 	schedule();
@@ -8151,19 +8151,19 @@ EXPORT_SYMBOL(io_schedule);
 void sched_show_task(struct task_struct *p)
 {
 	unsigned long free;
-	int ppid;
+	ціле ppid;
 
-	if (!try_get_task_stack(p))
-		return;
+	якщо (!try_get_task_stack(p))
+		повернути;
 
 	pr_info("task:%-15.15s state:%c", p->comm, task_state_to_char(p));
 
-	if (task_is_running(p))
+	якщо (task_is_running(p))
 		pr_cont("  running task    ");
 	free = stack_not_used(p);
 	ppid = 0;
 	rcu_read_lock();
-	if (pid_alive(p))
+	якщо (pid_alive(p))
 		ppid = task_pid_nr(rcu_dereference(p->real_parent));
 	rcu_read_unlock();
 	pr_cont(" stack:%-5lu pid:%-5d tgid:%-5d ppid:%-6d task_flags:0x%04x flags:0x%08lx\n",
@@ -8181,28 +8181,28 @@ EXPORT_SYMBOL_GPL(sched_show_task);
 static inline bool
 state_filter_match(unsigned long state_filter, struct task_struct *p)
 {
-	unsigned int state = READ_ONCE(p->__state);
+	unsigned ціле state = READ_ONCE(p->__state);
 
 	/* no filter, everything matches */
-	if (!state_filter)
-		return true;
+	якщо (!state_filter)
+		повернути true;
 
 	/* filter, but doesn't match */
-	if (!(state & state_filter))
-		return false;
+	якщо (!(state & state_filter))
+		повернути false;
 
 	/*
 	 * When looking for TASK_UNINTERRUPTIBLE skip TASK_IDLE (allows
 	 * TASK_KILLABLE).
 	 */
-	if (state_filter == TASK_UNINTERRUPTIBLE && (state & TASK_NOLOAD))
-		return false;
+	якщо (state_filter == TASK_UNINTERRUPTIBLE && (state & TASK_NOLOAD))
+		повернути false;
 
-	return true;
+	повернути true;
 }
 
 
-void show_state_filter(unsigned int state_filter)
+void show_state_filter(unsigned ціле state_filter)
 {
 	struct task_struct *g, *p;
 
@@ -8217,18 +8217,18 @@ void show_state_filter(unsigned int state_filter)
 		 */
 		touch_nmi_watchdog();
 		touch_all_softlockup_watchdogs();
-		if (state_filter_match(state_filter, p))
+		якщо (state_filter_match(state_filter, p))
 			sched_show_task(p);
 	}
 
-	if (!state_filter)
+	якщо (!state_filter)
 		sysrq_sched_debug_show();
 
 	rcu_read_unlock();
 	/*
 	 * Only show locks if all tasks are dumped:
 	 */
-	if (!state_filter)
+	якщо (!state_filter)
 		debug_show_all_locks();
 }
 
@@ -8240,7 +8240,7 @@ void show_state_filter(unsigned int state_filter)
  * NOTE: this function does not set the idle thread's NEED_RESCHED
  * flag, to make booting more robust.
  */
-void __init init_idle(struct task_struct *idle, int cpu)
+void __init init_idle(struct task_struct *idle, ціле cpu)
 {
 	struct affinity_context ac = (struct affinity_context) {
 		.new_mask  = cpumask_of(cpu),
@@ -8300,22 +8300,22 @@ void __init init_idle(struct task_struct *idle, int cpu)
 	sprintf(idle->comm, "%s/%d", INIT_TASK_COMM, cpu);
 }
 
-int cpuset_cpumask_can_shrink(const struct cpumask *cur,
+ціле cpuset_cpumask_can_shrink(const struct cpumask *cur,
 			      const struct cpumask *trial)
 {
-	int ret = 1;
+	ціле ret = 1;
 
-	if (cpumask_empty(cur))
-		return ret;
+	якщо (cpumask_empty(cur))
+		повернути ret;
 
 	ret = dl_cpuset_cpumask_can_shrink(cur, trial);
 
-	return ret;
+	повернути ret;
 }
 
-int task_can_attach(struct task_struct *p)
+ціле task_can_attach(struct task_struct *p)
 {
-	int ret = 0;
+	ціле ret = 0;
 
 	/*
 	 * Kthreads which disallow setaffinity shouldn't be moved
@@ -8326,38 +8326,38 @@ int task_can_attach(struct task_struct *p)
 	 * success of set_cpus_allowed_ptr() on all attached tasks
 	 * before cpus_mask may be changed.
 	 */
-	if (p->flags & PF_NO_SETAFFINITY)
+	якщо (p->flags & PF_NO_SETAFFINITY)
 		ret = -EINVAL;
 
-	return ret;
+	повернути ret;
 }
 
 bool sched_smp_initialized __read_mostly;
 
 #ifdef CONFIG_NUMA_BALANCING
 /* Migrate current task p to target_cpu */
-int migrate_task_to(struct task_struct *p, int target_cpu)
+ціле migrate_task_to(struct task_struct *p, ціле target_cpu)
 {
 	struct migration_arg arg = { p, target_cpu };
-	int curr_cpu = task_cpu(p);
+	ціле curr_cpu = task_cpu(p);
 
-	if (curr_cpu == target_cpu)
-		return 0;
+	якщо (curr_cpu == target_cpu)
+		повернути 0;
 
-	if (!cpumask_test_cpu(target_cpu, p->cpus_ptr))
-		return -EINVAL;
+	якщо (!cpumask_test_cpu(target_cpu, p->cpus_ptr))
+		повернути -EINVAL;
 
 	/* TODO: This is not properly updating schedstats */
 
 	trace_sched_move_numa(p, curr_cpu, target_cpu);
-	return stop_one_cpu(curr_cpu, migration_cpu_stop, &arg);
+	повернути stop_one_cpu(curr_cpu, migration_cpu_stop, &arg);
 }
 
 /*
  * Requeue a task on a given node and accurately track the number of NUMA
  * tasks on the runqueues
  */
-void sched_setnuma(struct task_struct *p, int nid)
+void sched_setnuma(struct task_struct *p, ціле nid)
 {
 	guard(task_rq_lock)(p);
 	scoped_guard (sched_change, p, DEQUEUE_SAVE)
@@ -8379,7 +8379,7 @@ static void sched_force_init_mm(void)
 {
 	struct mm_struct *mm = current->active_mm;
 
-	if (mm != &init_mm) {
+	якщо (mm != &init_mm) {
 		mmgrab_lazy_tlb(&init_mm);
 		local_irq_disable();
 		current->active_mm = &init_mm;
@@ -8392,12 +8392,12 @@ static void sched_force_init_mm(void)
 	/* finish_cpu(), as ran on the BP, will clean up the active_mm state */
 }
 
-static int __balance_push_cpu_stop(void *arg)
+static ціле __balance_push_cpu_stop(void *arg)
 {
 	struct task_struct *p = arg;
 	struct rq *rq = this_rq();
 	struct rq_flags rf;
-	int cpu;
+	ціле cpu;
 
 	scoped_guard (raw_spinlock_irq, &p->pi_lock) {
 		/*
@@ -8410,14 +8410,14 @@ static int __balance_push_cpu_stop(void *arg)
 
 		rq_lock(rq, &rf);
 		update_rq_clock(rq);
-		if (task_rq(p) == rq && task_on_rq_queued(p))
+		якщо (task_rq(p) == rq && task_on_rq_queued(p))
 			rq = __migrate_task(rq, &rf, p, cpu);
 		rq_unlock(rq, &rf);
 	}
 
 	put_task_struct(p);
 
-	return 0;
+	повернути 0;
 }
 
 static DEFINE_PER_CPU(struct cpu_stop_work, push_work);
@@ -8444,14 +8444,14 @@ static void balance_push(struct rq *rq)
 	 * Only active while going offline and when invoked on the outgoing
 	 * CPU.
 	 */
-	if (!cpu_dying(rq->cpu) || rq != this_rq())
-		return;
+	якщо (!cpu_dying(rq->cpu) || rq != this_rq())
+		повернути;
 
 	/*
 	 * Both the cpu-hotplug and stop task are in this case and are
 	 * required to complete the hotplug process.
 	 */
-	if (kthread_is_per_cpu(push_task) ||
+	якщо (kthread_is_per_cpu(push_task) ||
 	    is_migration_disabled(push_task)) {
 
 		/*
@@ -8465,13 +8465,13 @@ static void balance_push(struct rq *rq)
 		 * pinned and scheduled out tasks on the runqueue. They
 		 * need to leave the migrate disabled section first.
 		 */
-		if (!rq->nr_running && !rq_has_pinned_tasks(rq) &&
+		якщо (!rq->nr_running && !rq_has_pinned_tasks(rq) &&
 		    rcuwait_active(&rq->hotplug_wait)) {
 			raw_spin_rq_unlock(rq);
 			rcuwait_wake_up(&rq->hotplug_wait);
 			raw_spin_rq_lock(rq);
 		}
-		return;
+		повернути;
 	}
 
 	get_task_struct(push_task);
@@ -8492,16 +8492,16 @@ static void balance_push(struct rq *rq)
 	raw_spin_rq_lock(rq);
 }
 
-static void balance_push_set(int cpu, bool on)
+static void balance_push_set(ціле cpu, bool on)
 {
 	struct rq *rq = cpu_rq(cpu);
 	struct rq_flags rf;
 
 	rq_lock_irqsave(rq, &rf);
-	if (on) {
+	якщо (on) {
 		WARN_ON_ONCE(rq->balance_callback);
 		rq->balance_callback = &balance_push_callback;
-	} else if (rq->balance_callback == &balance_push_callback) {
+	} інакше якщо (rq->balance_callback == &balance_push_callback) {
 		rq->balance_callback = NULL;
 	}
 	rq_unlock_irqrestore(rq, &rf);
@@ -8522,13 +8522,13 @@ static void balance_hotplug_wait(void)
 			   TASK_UNINTERRUPTIBLE);
 }
 
-#else /* !CONFIG_HOTPLUG_CPU: */
+#інакше /* !CONFIG_HOTPLUG_CPU: */
 
 static inline void balance_push(struct rq *rq)
 {
 }
 
-static inline void balance_push_set(int cpu, bool on)
+static inline void balance_push_set(ціле cpu, bool on)
 {
 }
 
@@ -8540,14 +8540,14 @@ static inline void balance_hotplug_wait(void)
 
 void set_rq_online(struct rq *rq)
 {
-	if (!rq->online) {
+	якщо (!rq->online) {
 		const struct sched_class *class;
 
 		cpumask_set_cpu(rq->cpu, rq->rd->online);
 		rq->online = 1;
 
 		for_each_class(class) {
-			if (class->rq_online)
+			якщо (class->rq_online)
 				class->rq_online(rq);
 		}
 	}
@@ -8555,12 +8555,12 @@ void set_rq_online(struct rq *rq)
 
 void set_rq_offline(struct rq *rq)
 {
-	if (rq->online) {
+	якщо (rq->online) {
 		const struct sched_class *class;
 
 		update_rq_clock(rq);
 		for_each_class(class) {
-			if (class->rq_offline)
+			якщо (class->rq_offline)
 				class->rq_offline(rq);
 		}
 
@@ -8569,24 +8569,24 @@ void set_rq_offline(struct rq *rq)
 	}
 }
 
-static inline void sched_set_rq_online(struct rq *rq, int cpu)
+static inline void sched_set_rq_online(struct rq *rq, ціле cpu)
 {
 	struct rq_flags rf;
 
 	rq_lock_irqsave(rq, &rf);
-	if (rq->rd) {
+	якщо (rq->rd) {
 		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
 		set_rq_online(rq);
 	}
 	rq_unlock_irqrestore(rq, &rf);
 }
 
-static inline void sched_set_rq_offline(struct rq *rq, int cpu)
+static inline void sched_set_rq_offline(struct rq *rq, ціле cpu)
 {
 	struct rq_flags rf;
 
 	rq_lock_irqsave(rq, &rf);
-	if (rq->rd) {
+	якщо (rq->rd) {
 		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
 		set_rq_offline(rq);
 	}
@@ -8596,7 +8596,7 @@ static inline void sched_set_rq_offline(struct rq *rq, int cpu)
 /*
  * used to mark begin/end of suspend/resume:
  */
-static int num_cpus_frozen;
+static ціле num_cpus_frozen;
 
 /*
  * Update cpusets according to cpu_active mask.  If cpusets are
@@ -8608,7 +8608,7 @@ static int num_cpus_frozen;
  */
 static void cpuset_cpu_active(void)
 {
-	if (cpuhp_tasks_frozen) {
+	якщо (cpuhp_tasks_frozen) {
 		/*
 		 * num_cpus_frozen tracks how many CPUs are involved in suspend
 		 * resume sequence. As long as this is not the last online
@@ -8616,8 +8616,8 @@ static void cpuset_cpu_active(void)
 		 * domain, ignoring cpusets.
 		 */
 		cpuset_reset_sched_domains();
-		if (--num_cpus_frozen)
-			return;
+		якщо (--num_cpus_frozen)
+			повернути;
 		/*
 		 * This is the last CPU online operation. So fall through and
 		 * restore the original sched domains by considering the
@@ -8628,29 +8628,29 @@ static void cpuset_cpu_active(void)
 	cpuset_update_active_cpus();
 }
 
-static void cpuset_cpu_inactive(unsigned int cpu)
+static void cpuset_cpu_inactive(unsigned ціле cpu)
 {
-	if (!cpuhp_tasks_frozen) {
+	якщо (!cpuhp_tasks_frozen) {
 		cpuset_update_active_cpus();
-	} else {
+	} інакше {
 		num_cpus_frozen++;
 		cpuset_reset_sched_domains();
 	}
 }
 
-static inline void sched_smt_present_inc(int cpu)
+static inline void sched_smt_present_inc(ціле cpu)
 {
-	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
+	якщо (cpumask_weight(cpu_smt_mask(cpu)) == 2)
 		static_branch_inc_cpuslocked(&sched_smt_present);
 }
 
-static inline void sched_smt_present_dec(int cpu)
+static inline void sched_smt_present_dec(ціле cpu)
 {
-	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
+	якщо (cpumask_weight(cpu_smt_mask(cpu)) == 2)
 		static_branch_dec_cpuslocked(&sched_smt_present);
 }
 
-int sched_cpu_activate(unsigned int cpu)
+ціле sched_cpu_activate(unsigned ціле cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 
@@ -8666,7 +8666,7 @@ int sched_cpu_activate(unsigned int cpu)
 	sched_smt_present_inc(cpu);
 	set_cpu_active(cpu, true);
 
-	if (sched_smp_initialized) {
+	якщо (sched_smp_initialized) {
 		sched_update_numa(cpu, true);
 		sched_domains_numa_masks_set(cpu);
 		cpuset_cpu_active();
@@ -8688,18 +8688,18 @@ int sched_cpu_activate(unsigned int cpu)
 	/* preferred is subset of active and follows its state */
 	set_cpu_preferred(cpu, true);
 
-	return 0;
+	повернути 0;
 }
 
-int sched_cpu_deactivate(unsigned int cpu)
+ціле sched_cpu_deactivate(unsigned ціле cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
-	int ret;
+	ціле ret;
 
 	ret = dl_bw_deactivate(cpu);
 
-	if (ret)
-		return ret;
+	якщо (ret)
+		повернути ret;
 
 	set_cpu_preferred(cpu, false);
 
@@ -8745,16 +8745,16 @@ int sched_cpu_deactivate(unsigned int cpu)
 
 	sched_core_cpu_deactivate(cpu);
 
-	if (!sched_smp_initialized)
-		return 0;
+	якщо (!sched_smp_initialized)
+		повернути 0;
 
 	sched_update_numa(cpu, false);
 	cpuset_cpu_inactive(cpu);
 	sched_domains_numa_masks_clear(cpu);
-	return 0;
+	повернути 0;
 }
 
-static void sched_rq_cpu_starting(unsigned int cpu)
+static void sched_rq_cpu_starting(unsigned ціле cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 
@@ -8762,12 +8762,12 @@ static void sched_rq_cpu_starting(unsigned int cpu)
 	update_max_interval();
 }
 
-int sched_cpu_starting(unsigned int cpu)
+ціле sched_cpu_starting(unsigned ціле cpu)
 {
 	sched_core_cpu_starting(cpu);
 	sched_rq_cpu_starting(cpu);
 	sched_tick_start(cpu);
-	return 0;
+	повернути 0;
 }
 
 #ifdef CONFIG_HOTPLUG_CPU
@@ -8783,11 +8783,11 @@ int sched_cpu_starting(unsigned int cpu)
  * responsible hotplug callback has failed to do it's job.
  * sched_cpu_dying() will catch it with the appropriate fireworks.
  */
-int sched_cpu_wait_empty(unsigned int cpu)
+ціле sched_cpu_wait_empty(unsigned ціле cpu)
 {
 	balance_hotplug_wait();
 	sched_force_init_mm();
-	return 0;
+	повернути 0;
 }
 
 /*
@@ -8803,30 +8803,30 @@ static void calc_load_migrate(struct rq *rq)
 {
 	long delta = calc_load_fold_active(rq, 1);
 
-	if (delta)
+	якщо (delta)
 		atomic_long_add(delta, &calc_load_tasks);
 }
 
 static void dump_rq_tasks(struct rq *rq, const char *loglvl)
 {
 	struct task_struct *g, *p;
-	int cpu = cpu_of(rq);
+	ціле cpu = cpu_of(rq);
 
 	lockdep_assert_rq_held(rq);
 
 	printk("%sCPU%d enqueued tasks (%u total):\n", loglvl, cpu, rq->nr_running);
 	for_each_process_thread(g, p) {
-		if (task_cpu(p) != cpu)
+		якщо (task_cpu(p) != cpu)
 			continue;
 
-		if (!task_on_rq_queued(p))
+		якщо (!task_on_rq_queued(p))
 			continue;
 
 		printk("%s\tpid: %d, name: %s\n", loglvl, p->pid, p->comm);
 	}
 }
 
-int sched_cpu_dying(unsigned int cpu)
+ціле sched_cpu_dying(unsigned ціле cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 	struct rq_flags rf;
@@ -8836,7 +8836,7 @@ int sched_cpu_dying(unsigned int cpu)
 
 	rq_lock_irqsave(rq, &rf);
 	update_rq_clock(rq);
-	if (rq->nr_running != 1 || rq_has_pinned_tasks(rq)) {
+	якщо (rq->nr_running != 1 || rq_has_pinned_tasks(rq)) {
 		WARN(true, "Dying CPU not properly vacated!");
 		dump_rq_tasks(rq, KERN_WARNING);
 	}
@@ -8850,7 +8850,7 @@ int sched_cpu_dying(unsigned int cpu)
 	update_max_interval();
 	hrtick_clear(rq);
 	sched_core_cpu_dying(cpu);
-	return 0;
+	повернути 0;
 }
 #endif /* CONFIG_HOTPLUG_CPU */
 
@@ -8870,7 +8870,7 @@ void __init sched_init_smp(void)
 	sched_domains_mutex_unlock();
 
 	/* Move init over to a non-isolated CPU */
-	if (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_TYPE_DOMAIN)) < 0)
+	якщо (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_TYPE_DOMAIN)) < 0)
 		BUG();
 	current->flags &= ~PF_NO_SETAFFINITY;
 	sched_init_granularity();
@@ -8883,16 +8883,16 @@ void __init sched_init_smp(void)
 	sched_smp_initialized = true;
 }
 
-static int __init migration_init(void)
+static ціле __init migration_init(void)
 {
 	sched_cpu_starting(smp_processor_id());
-	return 0;
+	повернути 0;
 }
 early_initcall(migration_init);
 
-int in_sched_functions(unsigned long addr)
+ціле in_sched_functions(unsigned long addr)
 {
-	return in_lock_functions(addr) ||
+	повернути in_lock_functions(addr) ||
 		(addr >= (unsigned long)__sched_text_start
 		&& addr < (unsigned long)__sched_text_end);
 }
@@ -8912,7 +8912,7 @@ static struct kmem_cache *task_group_cache __ro_after_init;
 void __init sched_init(void)
 {
 	unsigned long __maybe_unused ptr = 0;
-	int i;
+	ціле i;
 
 	/* Make sure the linker didn't screw up */
 	BUG_ON(!sched_class_above(&stop_sched_class, &dl_sched_class));
@@ -9107,9 +9107,9 @@ void __init sched_init(void)
 
 #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
 
-void __might_sleep(const char *file, int line)
+void __might_sleep(const char *file, ціле line)
 {
-	unsigned int state = get_current_state();
+	unsigned ціле state = get_current_state();
 	/*
 	 * Blocking primitives will set (and therefore destroy) current->state,
 	 * since we will exit with TASK_RUNNING make sure we enter with it,
@@ -9125,28 +9125,28 @@ void __might_sleep(const char *file, int line)
 }
 EXPORT_SYMBOL(__might_sleep);
 
-static void print_preempt_disable_ip(int preempt_offset, unsigned long ip)
+static void print_preempt_disable_ip(ціле preempt_offset, unsigned long ip)
 {
-	if (!IS_ENABLED(CONFIG_DEBUG_PREEMPT))
-		return;
+	якщо (!IS_ENABLED(CONFIG_DEBUG_PREEMPT))
+		повернути;
 
-	if (preempt_count() == preempt_offset)
-		return;
+	якщо (preempt_count() == preempt_offset)
+		повернути;
 
 	pr_err("Preemption disabled at:");
 	print_ip_sym(KERN_ERR, ip);
 }
 
-static inline bool resched_offsets_ok(unsigned int offsets)
+static inline bool resched_offsets_ok(unsigned ціле offsets)
 {
-	unsigned int nested = preempt_count();
+	unsigned ціле nested = preempt_count();
 
 	nested += rcu_preempt_depth() << MIGHT_RESCHED_RCU_SHIFT;
 
-	return nested == offsets;
+	повернути nested == offsets;
 }
 
-void __might_resched(const char *file, int line, unsigned int offsets)
+void __might_resched(const char *file, ціле line, unsigned ціле offsets)
 {
 	/* Ratelimiting timestamp: */
 	static unsigned long prev_jiffy;
@@ -9156,14 +9156,14 @@ void __might_resched(const char *file, int line, unsigned int offsets)
 	/* WARN_ON_ONCE() by default, no rate limit required: */
 	rcu_sleep_check();
 
-	if ((resched_offsets_ok(offsets) && !irqs_disabled() &&
+	якщо ((resched_offsets_ok(offsets) && !irqs_disabled() &&
 	     !is_idle_task(current) && !current->non_block_count) ||
 	    system_state == SYSTEM_BOOTING || system_state > SYSTEM_RUNNING ||
 	    oops_in_progress)
-		return;
+		повернути;
 
-	if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
-		return;
+	якщо (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
+		повернути;
 	prev_jiffy = jiffies;
 
 	/* Save this before calling printk(), since that will clobber it: */
@@ -9177,16 +9177,16 @@ void __might_resched(const char *file, int line, unsigned int offsets)
 	pr_err("preempt_count: %x, expected: %x\n", preempt_count(),
 	       offsets & MIGHT_RESCHED_PREEMPT_MASK);
 
-	if (IS_ENABLED(CONFIG_PREEMPT_RCU)) {
+	якщо (IS_ENABLED(CONFIG_PREEMPT_RCU)) {
 		pr_err("RCU nest depth: %d, expected: %u\n",
 		       rcu_preempt_depth(), offsets >> MIGHT_RESCHED_RCU_SHIFT);
 	}
 
-	if (task_stack_end_corrupted(current))
+	якщо (task_stack_end_corrupted(current))
 		pr_emerg("Thread overran stack, or stack corrupted\n");
 
 	debug_show_held_locks(current);
-	if (irqs_disabled())
+	якщо (irqs_disabled())
 		print_irqtrace_events(current);
 
 	print_preempt_disable_ip(offsets & MIGHT_RESCHED_PREEMPT_MASK,
@@ -9197,21 +9197,21 @@ void __might_resched(const char *file, int line, unsigned int offsets)
 }
 EXPORT_SYMBOL(__might_resched);
 
-void __cant_sleep(const char *file, int line)
+void __cant_sleep(const char *file, ціле line)
 {
 	static unsigned long prev_jiffy;
 
-	if (irqs_disabled())
-		return;
+	якщо (irqs_disabled())
+		повернути;
 
-	if (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
-		return;
+	якщо (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
+		повернути;
 
-	if (preempt_count())
-		return;
+	якщо (preempt_count())
+		повернути;
 
-	if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
-		return;
+	якщо (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
+		повернути;
 	prev_jiffy = jiffies;
 
 	printk(KERN_ERR "BUG: assuming atomic context at %s:%d\n", file, line);
@@ -9226,24 +9226,24 @@ void __cant_sleep(const char *file, int line)
 EXPORT_SYMBOL_GPL(__cant_sleep);
 
 # ifdef CONFIG_SMP
-void __cant_migrate(const char *file, int line)
+void __cant_migrate(const char *file, ціле line)
 {
 	static unsigned long prev_jiffy;
 
-	if (irqs_disabled())
-		return;
+	якщо (irqs_disabled())
+		повернути;
 
-	if (is_migration_disabled(current))
-		return;
+	якщо (is_migration_disabled(current))
+		повернути;
 
-	if (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
-		return;
+	якщо (!IS_ENABLED(CONFIG_PREEMPT_COUNT))
+		повернути;
 
-	if (preempt_count())
-		return;
+	якщо (preempt_count())
+		повернути;
 
-	if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
-		return;
+	якщо (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
+		повернути;
 	prev_jiffy = jiffies;
 
 	pr_err("BUG: assuming non migratable context at %s:%d\n", file, line);
@@ -9272,7 +9272,7 @@ void normalize_rt_tasks(void)
 		/*
 		 * Only normalize user tasks:
 		 */
-		if (p->flags & PF_KTHREAD)
+		якщо (p->flags & PF_KTHREAD)
 			continue;
 
 		p->se.exec_start = 0;
@@ -9280,12 +9280,12 @@ void normalize_rt_tasks(void)
 		schedstat_set(p->stats.sleep_start, 0);
 		schedstat_set(p->stats.block_start, 0);
 
-		if (!rt_or_dl_task(p)) {
+		якщо (!rt_or_dl_task(p)) {
 			/*
 			 * Renice negative nice level userspace
 			 * tasks back to 0:
 			 */
-			if (task_nice(p) < 0)
+			якщо (task_nice(p) < 0)
 				set_user_nice(p, 0);
 			continue;
 		}
@@ -9316,9 +9316,9 @@ void normalize_rt_tasks(void)
  *
  * Return: The current task for @cpu.
  */
-struct task_struct *curr_task(int cpu)
+struct task_struct *curr_task(ціле cpu)
 {
-	return cpu_curr(cpu);
+	повернути cpu_curr(cpu);
 }
 
 #endif /* CONFIG_KGDB_KDB */
@@ -9371,23 +9371,23 @@ struct task_group *sched_create_group(struct task_group *parent)
 	struct task_group *tg;
 
 	tg = kmem_cache_alloc(task_group_cache, GFP_KERNEL | __GFP_ZERO);
-	if (!tg)
-		return ERR_PTR(-ENOMEM);
+	якщо (!tg)
+		повернути ERR_PTR(-ENOMEM);
 
-	if (!alloc_fair_sched_group(tg, parent))
+	якщо (!alloc_fair_sched_group(tg, parent))
 		goto err;
 
-	if (!alloc_rt_sched_group(tg, parent))
+	якщо (!alloc_rt_sched_group(tg, parent))
 		goto err;
 
 	scx_tg_init(tg);
 	alloc_uclamp_sched_group(tg, parent);
 
-	return tg;
+	повернути tg;
 
 err:
 	sched_free_group(tg);
-	return ERR_PTR(-ENOMEM);
+	повернути ERR_PTR(-ENOMEM);
 }
 
 void sched_online_group(struct task_group *tg, struct task_group *parent)
@@ -9459,9 +9459,9 @@ static void sched_change_group(struct task_struct *tsk)
 	tsk->sched_task_group = tg;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	if (tsk->sched_class->task_change_group)
+	якщо (tsk->sched_class->task_change_group)
 		tsk->sched_class->task_change_group(tsk);
-	else
+	інакше
 #endif
 		set_task_rq(tsk, task_cpu(tsk));
 }
@@ -9475,7 +9475,7 @@ static void sched_change_group(struct task_struct *tsk)
  */
 void sched_move_task(struct task_struct *tsk, bool for_autogroup)
 {
-	unsigned int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
+	unsigned ціле queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
 	bool resched = false;
 	bool queued = false;
 	struct rq *rq;
@@ -9485,16 +9485,16 @@ void sched_move_task(struct task_struct *tsk, bool for_autogroup)
 
 	scoped_guard (sched_change, tsk, queue_flags) {
 		sched_change_group(tsk);
-		if (!for_autogroup)
+		якщо (!for_autogroup)
 			scx_cgroup_move_task(tsk);
-		if (scope->running)
+		якщо (scope->running)
 			resched = true;
 		queued = scope->queued;
 	}
 
-	if (resched)
+	якщо (resched)
 		resched_curr(rq);
-	else if (queued)
+	інакше якщо (queued)
 		wakeup_preempt(rq, tsk, 0);
 
 	__balance_callbacks(rq, &rq_guard.rf);
@@ -9506,30 +9506,30 @@ cpu_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
 	struct task_group *parent = css_tg(parent_css);
 	struct task_group *tg;
 
-	if (!parent) {
+	якщо (!parent) {
 		/* This is early initialization for the top cgroup */
-		return &root_task_group.css;
+		повернути &root_task_group.css;
 	}
 
 	tg = sched_create_group(parent);
-	if (IS_ERR(tg))
-		return ERR_PTR(-ENOMEM);
+	якщо (IS_ERR(tg))
+		повернути ERR_PTR(-ENOMEM);
 
-	return &tg->css;
+	повернути &tg->css;
 }
 
 /* Expose task group only after completing cgroup initialization */
-static int cpu_cgroup_css_online(struct cgroup_subsys_state *css)
+static ціле cpu_cgroup_css_online(struct cgroup_subsys_state *css)
 {
 	struct task_group *tg = css_tg(css);
 	struct task_group *parent = css_tg(css->parent);
-	int ret;
+	ціле ret;
 
 	ret = scx_tg_online(tg);
-	if (ret)
-		return ret;
+	якщо (ret)
+		повернути ret;
 
-	if (parent)
+	якщо (parent)
 		sched_online_group(tg, parent);
 
 #ifdef CONFIG_UCLAMP_TASK_GROUP
@@ -9539,7 +9539,7 @@ static int cpu_cgroup_css_online(struct cgroup_subsys_state *css)
 	cpu_util_update_eff(css);
 #endif
 
-	return 0;
+	повернути 0;
 }
 
 static void cpu_cgroup_css_offline(struct cgroup_subsys_state *css)
@@ -9566,22 +9566,22 @@ static void cpu_cgroup_css_free(struct cgroup_subsys_state *css)
 	sched_unregister_group(tg);
 }
 
-static int cpu_cgroup_can_attach(struct cgroup_taskset *tset)
+static ціле cpu_cgroup_can_attach(struct cgroup_taskset *tset)
 {
 #ifdef CONFIG_RT_GROUP_SCHED
 	struct task_struct *task;
 	struct cgroup_subsys_state *css;
 
-	if (!rt_group_sched_enabled())
+	якщо (!rt_group_sched_enabled())
 		goto scx_check;
 
 	cgroup_taskset_for_each(task, css, tset) {
-		if (!sched_rt_can_attach(css_tg(css), task))
-			return -EINVAL;
+		якщо (!sched_rt_can_attach(css_tg(css), task))
+			повернути -EINVAL;
 	}
 scx_check:
 #endif /* CONFIG_RT_GROUP_SCHED */
-	return scx_cgroup_can_attach(tset);
+	повернути scx_cgroup_can_attach(tset);
 }
 
 static void cpu_cgroup_attach(struct cgroup_taskset *tset)
@@ -9604,9 +9604,9 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
 	struct cgroup_subsys_state *top_css = css;
 	struct uclamp_se *uc_parent = NULL;
 	struct uclamp_se *uc_se = NULL;
-	unsigned int eff[UCLAMP_CNT];
+	unsigned ціле eff[UCLAMP_CNT];
 	enum uclamp_id clamp_id;
-	unsigned int clamps;
+	unsigned ціле clamps;
 
 	lockdep_assert_held(&uclamp_mutex);
 	WARN_ON_ONCE(!rcu_read_lock_held());
@@ -9619,7 +9619,7 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
 			/* Assume effective clamps matches requested clamps */
 			eff[clamp_id] = css_tg(css)->uclamp_req[clamp_id].value;
 			/* Cap effective clamps with parent's effective clamps */
-			if (uc_parent &&
+			якщо (uc_parent &&
 			    eff[clamp_id] > uc_parent[clamp_id].value) {
 				eff[clamp_id] = uc_parent[clamp_id].value;
 			}
@@ -9631,13 +9631,13 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
 		clamps = 0x0;
 		uc_se = css_tg(css)->uclamp;
 		for_each_clamp_id(clamp_id) {
-			if (eff[clamp_id] == uc_se[clamp_id].value)
+			якщо (eff[clamp_id] == uc_se[clamp_id].value)
 				continue;
 			uc_se[clamp_id].value = eff[clamp_id];
 			uc_se[clamp_id].bucket_id = uclamp_bucket_id(eff[clamp_id]);
 			clamps |= (0x1 << clamp_id);
 		}
-		if (!clamps) {
+		якщо (!clamps) {
 			css = css_rightmost_descendant(css);
 			continue;
 		}
@@ -9652,7 +9652,7 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
  * C expression. Since there is no way to convert a macro argument (N) into a
  * character constant, use two levels of macros.
  */
-#define _POW10(exp) ((unsigned int)1e##exp)
+#define _POW10(exp) ((unsigned ціле)1e##exp)
 #define POW10(exp) _POW10(exp)
 
 struct uclamp_request {
@@ -9660,7 +9660,7 @@ struct uclamp_request {
 #define UCLAMP_PERCENT_SCALE	(100 * POW10(UCLAMP_PERCENT_SHIFT))
 	s64 percent;
 	u64 util;
-	int ret;
+	ціле ret;
 };
 
 static inline struct uclamp_request
@@ -9673,21 +9673,21 @@ capacity_from_percent(char *buf)
 	};
 
 	buf = strim(buf);
-	if (strcmp(buf, "max")) {
+	якщо (strcmp(buf, "max")) {
 		req.ret = cgroup_parse_float(buf, UCLAMP_PERCENT_SHIFT,
 					     &req.percent);
-		if (req.ret)
-			return req;
-		if ((u64)req.percent > UCLAMP_PERCENT_SCALE) {
+		якщо (req.ret)
+			повернути req;
+		якщо ((u64)req.percent > UCLAMP_PERCENT_SCALE) {
 			req.ret = -ERANGE;
-			return req;
+			повернути req;
 		}
 
 		req.util = req.percent << SCHED_CAPACITY_SHIFT;
 		req.util = DIV_ROUND_CLOSEST_ULL(req.util, UCLAMP_PERCENT_SCALE);
 	}
 
-	return req;
+	повернути req;
 }
 
 static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
@@ -9698,8 +9698,8 @@ static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
 	struct task_group *tg;
 
 	req = capacity_from_percent(buf);
-	if (req.ret)
-		return req.ret;
+	якщо (req.ret)
+		повернути req.ret;
 
 	sched_uclamp_enable();
 
@@ -9707,7 +9707,7 @@ static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
 	guard(rcu)();
 
 	tg = css_tg(of_css(of));
-	if (tg->uclamp_req[clamp_id].value != req.util)
+	якщо (tg->uclamp_req[clamp_id].value != req.util)
 		uclamp_se_set(&tg->uclamp_req[clamp_id], req.util, false);
 
 	/*
@@ -9719,21 +9719,21 @@ static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
 	/* Update effective clamps to track the most restrictive value */
 	cpu_util_update_eff(of_css(of));
 
-	return nbytes;
+	повернути nbytes;
 }
 
 static ssize_t cpu_uclamp_min_write(struct kernfs_open_file *of,
 				    char *buf, size_t nbytes,
 				    loff_t off)
 {
-	return cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MIN);
+	повернути cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MIN);
 }
 
 static ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
 				    char *buf, size_t nbytes,
 				    loff_t off)
 {
-	return cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MAX);
+	повернути cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MAX);
 }
 
 static inline void cpu_uclamp_print(struct seq_file *sf,
@@ -9749,9 +9749,9 @@ static inline void cpu_uclamp_print(struct seq_file *sf,
 		util_clamp = tg->uclamp_req[clamp_id].value;
 	}
 
-	if (util_clamp == SCHED_CAPACITY_SCALE) {
+	якщо (util_clamp == SCHED_CAPACITY_SCALE) {
 		seq_puts(sf, "max\n");
-		return;
+		повернути;
 	}
 
 	percent = tg->uclamp_pct[clamp_id];
@@ -9759,16 +9759,16 @@ static inline void cpu_uclamp_print(struct seq_file *sf,
 	seq_printf(sf, "%llu.%0*u\n", percent, UCLAMP_PERCENT_SHIFT, rem);
 }
 
-static int cpu_uclamp_min_show(struct seq_file *sf, void *v)
+static ціле cpu_uclamp_min_show(struct seq_file *sf, void *v)
 {
 	cpu_uclamp_print(sf, UCLAMP_MIN);
-	return 0;
+	повернути 0;
 }
 
-static int cpu_uclamp_max_show(struct seq_file *sf, void *v)
+static ціле cpu_uclamp_max_show(struct seq_file *sf, void *v)
 {
 	cpu_uclamp_print(sf, UCLAMP_MAX);
-	return 0;
+	повернути 0;
 }
 #endif /* CONFIG_UCLAMP_TASK_GROUP */
 
@@ -9776,50 +9776,50 @@ static int cpu_uclamp_max_show(struct seq_file *sf, void *v)
 static unsigned long tg_weight(struct task_group *tg)
 {
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	return scale_load_down(tg->shares);
-#else
-	return sched_weight_from_cgroup(tg->scx.weight);
+	повернути scale_load_down(tg->shares);
+#інакше
+	повернути sched_weight_from_cgroup(tg->scx.weight);
 #endif
 }
 
-static int cpu_shares_write_u64(struct cgroup_subsys_state *css,
+static ціле cpu_shares_write_u64(struct cgroup_subsys_state *css,
 				struct cftype *cftype, u64 shareval)
 {
-	int ret;
+	ціле ret;
 
-	if (shareval > scale_load_down(ULONG_MAX))
+	якщо (shareval > scale_load_down(ULONG_MAX))
 		shareval = MAX_SHARES;
 	ret = sched_group_set_shares(css_tg(css), scale_load(shareval));
-	if (!ret)
+	якщо (!ret)
 		scx_group_set_weight(css_tg(css),
 				     sched_weight_to_cgroup(shareval));
-	return ret;
+	повернути ret;
 }
 
 static u64 cpu_shares_read_u64(struct cgroup_subsys_state *css,
 			       struct cftype *cft)
 {
-	return tg_weight(css_tg(css));
+	повернути tg_weight(css_tg(css));
 }
 #endif /* CONFIG_GROUP_SCHED_WEIGHT */
 
 #ifdef CONFIG_CFS_BANDWIDTH
 static DEFINE_MUTEX(cfs_constraints_mutex);
 
-static int __cfs_schedulable(struct task_group *tg, u64 period, u64 runtime);
+static ціле __cfs_schedulable(struct task_group *tg, u64 period, u64 runtime);
 
-static int tg_set_cfs_bandwidth(struct task_group *tg,
+static ціле tg_set_cfs_bandwidth(struct task_group *tg,
 				u64 period_us, u64 quota_us, u64 burst_us)
 {
-	int i, ret = 0, runtime_enabled, runtime_was_enabled;
+	ціле i, ret = 0, runtime_enabled, runtime_was_enabled;
 	struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
 	u64 period, quota, burst;
 
 	period = (u64)period_us * NSEC_PER_USEC;
 
-	if (quota_us == RUNTIME_INF)
+	якщо (quota_us == RUNTIME_INF)
 		quota = RUNTIME_INF;
-	else
+	інакше
 		quota = (u64)quota_us * NSEC_PER_USEC;
 
 	burst = (u64)burst_us * NSEC_PER_USEC;
@@ -9832,8 +9832,8 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
 	guard(mutex)(&cfs_constraints_mutex);
 
 	ret = __cfs_schedulable(tg, period, quota);
-	if (ret)
-		return ret;
+	якщо (ret)
+		повернути ret;
 
 	runtime_enabled = quota != RUNTIME_INF;
 	runtime_was_enabled = cfs_b->quota != RUNTIME_INF;
@@ -9841,7 +9841,7 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
 	 * If we need to toggle cfs_bandwidth_used, off->on must occur
 	 * before making related changes, and on->off must occur afterwards
 	 */
-	if (runtime_enabled && !runtime_was_enabled)
+	якщо (runtime_enabled && !runtime_was_enabled)
 		cfs_bandwidth_usage_inc();
 
 	scoped_guard (raw_spinlock_irq, &cfs_b->lock) {
@@ -9855,7 +9855,7 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
 		 * Restart the period timer (if active) to handle new
 		 * period expiry:
 		 */
-		if (runtime_enabled)
+		якщо (runtime_enabled)
 			start_cfs_bandwidth(cfs_b);
 	}
 
@@ -9868,16 +9868,16 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
 		cfs_rq->runtime_enabled = runtime_enabled;
 		cfs_rq->runtime_remaining = 1;
 
-		if (cfs_rq->throttled) {
+		якщо (cfs_rq->throttled) {
 			update_rq_clock(rq);
 			unthrottle_cfs_rq(cfs_rq);
 		}
 	}
 
-	if (runtime_was_enabled && !runtime_enabled)
+	якщо (runtime_was_enabled && !runtime_enabled)
 		cfs_bandwidth_usage_dec();
 
-	return 0;
+	повернути 0;
 }
 
 static u64 tg_get_cfs_period(struct task_group *tg)
@@ -9887,20 +9887,20 @@ static u64 tg_get_cfs_period(struct task_group *tg)
 	cfs_period_us = ktime_to_ns(tg->cfs_bandwidth.period);
 	do_div(cfs_period_us, NSEC_PER_USEC);
 
-	return cfs_period_us;
+	повернути cfs_period_us;
 }
 
 static u64 tg_get_cfs_quota(struct task_group *tg)
 {
 	u64 quota_us;
 
-	if (tg->cfs_bandwidth.quota == RUNTIME_INF)
-		return RUNTIME_INF;
+	якщо (tg->cfs_bandwidth.quota == RUNTIME_INF)
+		повернути RUNTIME_INF;
 
 	quota_us = tg->cfs_bandwidth.quota;
 	do_div(quota_us, NSEC_PER_USEC);
 
-	return quota_us;
+	повернути quota_us;
 }
 
 static u64 tg_get_cfs_burst(struct task_group *tg)
@@ -9910,7 +9910,7 @@ static u64 tg_get_cfs_burst(struct task_group *tg)
 	burst_us = tg->cfs_bandwidth.burst;
 	do_div(burst_us, NSEC_PER_USEC);
 
-	return burst_us;
+	повернути burst_us;
 }
 
 struct cfs_schedulable_data {
@@ -9927,30 +9927,30 @@ static u64 normalize_cfs_quota(struct task_group *tg,
 {
 	u64 quota, period;
 
-	if (tg == d->tg) {
+	якщо (tg == d->tg) {
 		period = d->period;
 		quota = d->quota;
-	} else {
+	} інакше {
 		period = tg_get_cfs_period(tg);
 		quota = tg_get_cfs_quota(tg);
 	}
 
 	/* note: these should typically be equivalent */
-	if (quota == RUNTIME_INF || quota == -1)
-		return RUNTIME_INF;
+	якщо (quota == RUNTIME_INF || quota == -1)
+		повернути RUNTIME_INF;
 
-	return to_ratio(period, quota);
+	повернути to_ratio(period, quota);
 }
 
-static int tg_cfs_schedulable_down(struct task_group *tg, void *data)
+static ціле tg_cfs_schedulable_down(struct task_group *tg, void *data)
 {
 	struct cfs_schedulable_data *d = data;
 	struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
 	s64 quota = 0, parent_quota = -1;
 
-	if (!tg->parent) {
+	якщо (!tg->parent) {
 		quota = RUNTIME_INF;
-	} else {
+	} інакше {
 		struct cfs_bandwidth *parent_b = &tg->parent->cfs_bandwidth;
 
 		quota = normalize_cfs_quota(tg, d);
@@ -9963,24 +9963,24 @@ static int tg_cfs_schedulable_down(struct task_group *tg, void *data)
 		 * by the scheduler to determine if a given CFS task has a
 		 * bandwidth constraint at some higher level.
 		 */
-		if (cgroup_subsys_on_dfl(cpu_cgrp_subsys)) {
-			if (quota == RUNTIME_INF)
+		якщо (cgroup_subsys_on_dfl(cpu_cgrp_subsys)) {
+			якщо (quota == RUNTIME_INF)
 				quota = parent_quota;
-			else if (parent_quota != RUNTIME_INF)
+			інакше якщо (parent_quota != RUNTIME_INF)
 				quota = min(quota, parent_quota);
-		} else {
-			if (quota == RUNTIME_INF)
+		} інакше {
+			якщо (quota == RUNTIME_INF)
 				quota = parent_quota;
-			else if (parent_quota != RUNTIME_INF && quota > parent_quota)
-				return -EINVAL;
+			інакше якщо (parent_quota != RUNTIME_INF && quota > parent_quota)
+				повернути -EINVAL;
 		}
 	}
 	cfs_b->hierarchical_quota = quota;
 
-	return 0;
+	повернути 0;
 }
 
-static int __cfs_schedulable(struct task_group *tg, u64 period, u64 quota)
+static ціле __cfs_schedulable(struct task_group *tg, u64 period, u64 quota)
 {
 	struct cfs_schedulable_data data = {
 		.tg = tg,
@@ -9988,16 +9988,16 @@ static int __cfs_schedulable(struct task_group *tg, u64 period, u64 quota)
 		.quota = quota,
 	};
 
-	if (quota != RUNTIME_INF) {
+	якщо (quota != RUNTIME_INF) {
 		do_div(data.period, NSEC_PER_USEC);
 		do_div(data.quota, NSEC_PER_USEC);
 	}
 
 	guard(rcu)();
-	return walk_tg_tree(tg_cfs_schedulable_down, tg_nop, &data);
+	повернути walk_tg_tree(tg_cfs_schedulable_down, tg_nop, &data);
 }
 
-static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
+static ціле cpu_cfs_stat_show(struct seq_file *sf, void *v)
 {
 	struct task_group *tg = css_tg(seq_css(sf));
 	struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
@@ -10006,10 +10006,10 @@ static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
 	seq_printf(sf, "nr_throttled %d\n", cfs_b->nr_throttled);
 	seq_printf(sf, "throttled_time %llu\n", cfs_b->throttled_time);
 
-	if (schedstat_enabled() && tg != &root_task_group) {
+	якщо (schedstat_enabled() && tg != &root_task_group) {
 		struct sched_statistics *stats;
 		u64 ws = 0;
-		int i;
+		ціле i;
 
 		for_each_possible_cpu(i) {
 			stats = __schedstats_from_se(tg_se(tg, i));
@@ -10022,28 +10022,28 @@ static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
 	seq_printf(sf, "nr_bursts %d\n", cfs_b->nr_burst);
 	seq_printf(sf, "burst_time %llu\n", cfs_b->burst_time);
 
-	return 0;
+	повернути 0;
 }
 
 static u64 throttled_time_self(struct task_group *tg)
 {
-	int i;
+	ціле i;
 	u64 total = 0;
 
 	for_each_possible_cpu(i) {
 		total += READ_ONCE(tg_cfs_rq(tg, i)->throttled_clock_self_time);
 	}
 
-	return total;
+	повернути total;
 }
 
-static int cpu_cfs_local_stat_show(struct seq_file *sf, void *v)
+static ціле cpu_cfs_local_stat_show(struct seq_file *sf, void *v)
 {
 	struct task_group *tg = css_tg(seq_css(sf));
 
 	seq_printf(sf, "throttled_time %llu\n", throttled_time_self(tg));
 
-	return 0;
+	повернути 0;
 }
 #endif /* CONFIG_CFS_BANDWIDTH */
 
@@ -10057,18 +10057,18 @@ static void tg_bandwidth(struct task_group *tg,
 			 u64 *period_us_p, u64 *quota_us_p, u64 *burst_us_p)
 {
 #ifdef CONFIG_CFS_BANDWIDTH
-	if (period_us_p)
+	якщо (period_us_p)
 		*period_us_p = tg_get_cfs_period(tg);
-	if (quota_us_p)
+	якщо (quota_us_p)
 		*quota_us_p = tg_get_cfs_quota(tg);
-	if (burst_us_p)
+	якщо (burst_us_p)
 		*burst_us_p = tg_get_cfs_burst(tg);
-#else /* !CONFIG_CFS_BANDWIDTH */
-	if (period_us_p)
+#інакше /* !CONFIG_CFS_BANDWIDTH */
+	якщо (period_us_p)
 		*period_us_p = tg->scx.bw_period_us;
-	if (quota_us_p)
+	якщо (quota_us_p)
 		*quota_us_p = tg->scx.bw_quota_us;
-	if (burst_us_p)
+	якщо (burst_us_p)
 		*burst_us_p = tg->scx.bw_burst_us;
 #endif /* CONFIG_CFS_BANDWIDTH */
 }
@@ -10079,57 +10079,57 @@ static u64 cpu_period_read_u64(struct cgroup_subsys_state *css,
 	u64 period_us;
 
 	tg_bandwidth(css_tg(css), &period_us, NULL, NULL);
-	return period_us;
+	повернути period_us;
 }
 
-static int tg_set_bandwidth(struct task_group *tg,
+static ціле tg_set_bandwidth(struct task_group *tg,
 			    u64 period_us, u64 quota_us, u64 burst_us)
 {
 	const u64 max_usec = U64_MAX / NSEC_PER_USEC;
-	int ret = 0;
+	ціле ret = 0;
 
-	if (tg == &root_task_group)
-		return -EINVAL;
+	якщо (tg == &root_task_group)
+		повернути -EINVAL;
 
 	/* Values should survive translation to nsec */
-	if (period_us > max_usec ||
+	якщо (period_us > max_usec ||
 	    (quota_us != RUNTIME_INF && quota_us > max_usec) ||
 	    burst_us > max_usec)
-		return -EINVAL;
+		повернути -EINVAL;
 
 	/*
 	 * Ensure we have some amount of bandwidth every period. This is to
 	 * prevent reaching a state of large arrears when throttled via
 	 * entity_tick() resulting in prolonged exit starvation.
 	 */
-	if (quota_us < min_bw_quota_period_us ||
+	якщо (quota_us < min_bw_quota_period_us ||
 	    period_us < min_bw_quota_period_us)
-		return -EINVAL;
+		повернути -EINVAL;
 
 	/*
 	 * Likewise, bound things on the other side by preventing insane quota
 	 * periods.  This also allows us to normalize in computing quota
 	 * feasibility.
 	 */
-	if (period_us > max_bw_quota_period_us)
-		return -EINVAL;
+	якщо (period_us > max_bw_quota_period_us)
+		повернути -EINVAL;
 
 	/*
 	 * Bound quota to defend quota against overflow during bandwidth shift.
 	 */
-	if (quota_us != RUNTIME_INF && quota_us > max_bw_runtime_us)
-		return -EINVAL;
+	якщо (quota_us != RUNTIME_INF && quota_us > max_bw_runtime_us)
+		повернути -EINVAL;
 
-	if (quota_us != RUNTIME_INF && (burst_us > quota_us ||
+	якщо (quota_us != RUNTIME_INF && (burst_us > quota_us ||
 					burst_us + quota_us > max_bw_runtime_us))
-		return -EINVAL;
+		повернути -EINVAL;
 
 #ifdef CONFIG_CFS_BANDWIDTH
 	ret = tg_set_cfs_bandwidth(tg, period_us, quota_us, burst_us);
 #endif /* CONFIG_CFS_BANDWIDTH */
-	if (!ret)
+	якщо (!ret)
 		scx_group_set_bandwidth(tg, period_us, quota_us, burst_us);
-	return ret;
+	повернути ret;
 }
 
 static s64 cpu_quota_read_s64(struct cgroup_subsys_state *css,
@@ -10138,7 +10138,7 @@ static s64 cpu_quota_read_s64(struct cgroup_subsys_state *css,
 	u64 quota_us;
 
 	tg_bandwidth(css_tg(css), NULL, &quota_us, NULL);
-	return quota_us;	/* (s64)RUNTIME_INF becomes -1 */
+	повернути quota_us;	/* (s64)RUNTIME_INF becomes -1 */
 }
 
 static u64 cpu_burst_read_u64(struct cgroup_subsys_state *css,
@@ -10147,66 +10147,66 @@ static u64 cpu_burst_read_u64(struct cgroup_subsys_state *css,
 	u64 burst_us;
 
 	tg_bandwidth(css_tg(css), NULL, NULL, &burst_us);
-	return burst_us;
+	повернути burst_us;
 }
 
-static int cpu_period_write_u64(struct cgroup_subsys_state *css,
+static ціле cpu_period_write_u64(struct cgroup_subsys_state *css,
 				struct cftype *cftype, u64 period_us)
 {
 	struct task_group *tg = css_tg(css);
 	u64 quota_us, burst_us;
 
 	tg_bandwidth(tg, NULL, &quota_us, &burst_us);
-	return tg_set_bandwidth(tg, period_us, quota_us, burst_us);
+	повернути tg_set_bandwidth(tg, period_us, quota_us, burst_us);
 }
 
-static int cpu_quota_write_s64(struct cgroup_subsys_state *css,
+static ціле cpu_quota_write_s64(struct cgroup_subsys_state *css,
 			       struct cftype *cftype, s64 quota_us)
 {
 	struct task_group *tg = css_tg(css);
 	u64 period_us, burst_us;
 
-	if (quota_us < 0)
+	якщо (quota_us < 0)
 		quota_us = RUNTIME_INF;
 
 	tg_bandwidth(tg, &period_us, NULL, &burst_us);
-	return tg_set_bandwidth(tg, period_us, quota_us, burst_us);
+	повернути tg_set_bandwidth(tg, period_us, quota_us, burst_us);
 }
 
-static int cpu_burst_write_u64(struct cgroup_subsys_state *css,
+static ціле cpu_burst_write_u64(struct cgroup_subsys_state *css,
 			       struct cftype *cftype, u64 burst_us)
 {
 	struct task_group *tg = css_tg(css);
 	u64 period_us, quota_us;
 
 	tg_bandwidth(tg, &period_us, &quota_us, NULL);
-	return tg_set_bandwidth(tg, period_us, quota_us, burst_us);
+	повернути tg_set_bandwidth(tg, period_us, quota_us, burst_us);
 }
 #endif /* CONFIG_GROUP_SCHED_BANDWIDTH */
 
 #ifdef CONFIG_RT_GROUP_SCHED
-static int cpu_rt_runtime_write(struct cgroup_subsys_state *css,
+static ціле cpu_rt_runtime_write(struct cgroup_subsys_state *css,
 				struct cftype *cft, s64 val)
 {
-	return sched_group_set_rt_runtime(css_tg(css), val);
+	повернути sched_group_set_rt_runtime(css_tg(css), val);
 }
 
 static s64 cpu_rt_runtime_read(struct cgroup_subsys_state *css,
 			       struct cftype *cft)
 {
-	return sched_group_rt_runtime(css_tg(css));
+	повернути sched_group_rt_runtime(css_tg(css));
 }
 
-static int cpu_rt_period_write_uint(struct cgroup_subsys_state *css,
+static ціле cpu_rt_period_write_uint(struct cgroup_subsys_state *css,
 				    struct cftype *cftype, u64 rt_period_us)
 {
-	return sched_group_set_rt_period(css_tg(css), rt_period_us);
+	повернути sched_group_set_rt_period(css_tg(css), rt_period_us);
 }
 
 static u64 cpu_rt_period_read_uint(struct cgroup_subsys_state *css,
 				   struct cftype *cft)
 {
-	return sched_group_rt_period(css_tg(css));
+	повернути sched_group_rt_period(css_tg(css));
 }
 #endif /* CONFIG_RT_GROUP_SCHED */
 
@@ -10214,18 +10214,18 @@ static u64 cpu_rt_period_read_uint(struct cgroup_subsys_state *css,
 static s64 cpu_idle_read_s64(struct cgroup_subsys_state *css,
 			       struct cftype *cft)
 {
-	return css_tg(css)->idle;
+	повернути css_tg(css)->idle;
 }
 
-static int cpu_idle_write_s64(struct cgroup_subsys_state *css,
+static ціле cpu_idle_write_s64(struct cgroup_subsys_state *css,
 				struct cftype *cft, s64 idle)
 {
-	int ret;
+	ціле ret;
 
 	ret = sched_group_set_idle(css_tg(css), idle);
-	if (!ret)
+	якщо (!ret)
 		scx_group_set_idle(css_tg(css), idle);
-	return ret;
+	повернути ret;
 }
 #endif /* CONFIG_GROUP_SCHED_WEIGHT */
 
@@ -10303,39 +10303,39 @@ static struct cftype rt_group_files[] = {
 
 # ifdef CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED
 DEFINE_STATIC_KEY_FALSE(rt_group_sched);
-# else
+# інакше
 DEFINE_STATIC_KEY_TRUE(rt_group_sched);
 # endif
 
-static int __init setup_rt_group_sched(char *str)
+static ціле __init setup_rt_group_sched(char *str)
 {
 	long val;
 
-	if (kstrtol(str, 0, &val) || val < 0 || val > 1) {
+	якщо (kstrtol(str, 0, &val) || val < 0 || val > 1) {
 		pr_warn("Unable to set rt_group_sched\n");
-		return 1;
+		повернути 1;
 	}
-	if (val)
+	якщо (val)
 		static_branch_enable(&rt_group_sched);
-	else
+	інакше
 		static_branch_disable(&rt_group_sched);
 
-	return 1;
+	повернути 1;
 }
 __setup("rt_group_sched=", setup_rt_group_sched);
 
-static int __init cpu_rt_group_init(void)
+static ціле __init cpu_rt_group_init(void)
 {
-	if (!rt_group_sched_enabled())
-		return 0;
+	якщо (!rt_group_sched_enabled())
+		повернути 0;
 
 	WARN_ON(cgroup_add_legacy_cftypes(&cpu_cgrp_subsys, rt_group_files));
-	return 0;
+	повернути 0;
 }
 subsys_initcall(cpu_rt_group_init);
 #endif /* CONFIG_RT_GROUP_SCHED */
 
-static int cpu_extra_stat_show(struct seq_file *sf,
+static ціле cpu_extra_stat_show(struct seq_file *sf,
 			       struct cgroup_subsys_state *css)
 {
 #ifdef CONFIG_CFS_BANDWIDTH
@@ -10358,10 +10358,10 @@ static int cpu_extra_stat_show(struct seq_file *sf,
 			   throttled_usec, cfs_b->nr_burst, burst_usec);
 	}
 #endif /* CONFIG_CFS_BANDWIDTH */
-	return 0;
+	повернути 0;
 }
 
-static int cpu_local_stat_show(struct seq_file *sf,
+static ціле cpu_local_stat_show(struct seq_file *sf,
 			       struct cgroup_subsys_state *css)
 {
 #ifdef CONFIG_CFS_BANDWIDTH
@@ -10376,7 +10376,7 @@ static int cpu_local_stat_show(struct seq_file *sf,
 			   throttled_self_usec);
 	}
 #endif
-	return 0;
+	повернути 0;
 }
 
 #ifdef CONFIG_GROUP_SCHED_WEIGHT
@@ -10384,104 +10384,104 @@ static int cpu_local_stat_show(struct seq_file *sf,
 static u64 cpu_weight_read_u64(struct cgroup_subsys_state *css,
 			       struct cftype *cft)
 {
-	return sched_weight_to_cgroup(tg_weight(css_tg(css)));
+	повернути sched_weight_to_cgroup(tg_weight(css_tg(css)));
 }
 
-static int cpu_weight_write_u64(struct cgroup_subsys_state *css,
+static ціле cpu_weight_write_u64(struct cgroup_subsys_state *css,
 				struct cftype *cft, u64 cgrp_weight)
 {
 	unsigned long weight;
-	int ret;
+	ціле ret;
 
-	if (cgrp_weight < CGROUP_WEIGHT_MIN || cgrp_weight > CGROUP_WEIGHT_MAX)
-		return -ERANGE;
+	якщо (cgrp_weight < CGROUP_WEIGHT_MIN || cgrp_weight > CGROUP_WEIGHT_MAX)
+		повернути -ERANGE;
 
 	weight = sched_weight_from_cgroup(cgrp_weight);
 
 	ret = sched_group_set_shares(css_tg(css), scale_load(weight));
-	if (!ret)
+	якщо (!ret)
 		scx_group_set_weight(css_tg(css), cgrp_weight);
-	return ret;
+	повернути ret;
 }
 
 static s64 cpu_weight_nice_read_s64(struct cgroup_subsys_state *css,
 				    struct cftype *cft)
 {
 	unsigned long weight = tg_weight(css_tg(css));
-	int last_delta = INT_MAX;
-	int prio, delta;
+	ціле last_delta = INT_MAX;
+	ціле prio, delta;
 
 	/* find the closest nice value to the current weight */
-	for (prio = 0; prio < ARRAY_SIZE(sched_prio_to_weight); prio++) {
+	для (prio = 0; prio < ARRAY_SIZE(sched_prio_to_weight); prio++) {
 		delta = abs(sched_prio_to_weight[prio] - weight);
-		if (delta >= last_delta)
+		якщо (delta >= last_delta)
 			break;
 		last_delta = delta;
 	}
 
-	return PRIO_TO_NICE(prio - 1 + MAX_RT_PRIO);
+	повернути PRIO_TO_NICE(prio - 1 + MAX_RT_PRIO);
 }
 
-static int cpu_weight_nice_write_s64(struct cgroup_subsys_state *css,
+static ціле cpu_weight_nice_write_s64(struct cgroup_subsys_state *css,
 				     struct cftype *cft, s64 nice)
 {
 	unsigned long weight;
-	int idx, ret;
+	ціле idx, ret;
 
-	if (nice < MIN_NICE || nice > MAX_NICE)
-		return -ERANGE;
+	якщо (nice < MIN_NICE || nice > MAX_NICE)
+		повернути -ERANGE;
 
 	idx = NICE_TO_PRIO(nice) - MAX_RT_PRIO;
 	idx = array_index_nospec(idx, 40);
 	weight = sched_prio_to_weight[idx];
 
 	ret = sched_group_set_shares(css_tg(css), scale_load(weight));
-	if (!ret)
+	якщо (!ret)
 		scx_group_set_weight(css_tg(css),
 				     sched_weight_to_cgroup(weight));
-	return ret;
+	повернути ret;
 }
 #endif /* CONFIG_GROUP_SCHED_WEIGHT */
 
 static void __maybe_unused cpu_period_quota_print(struct seq_file *sf,
 						  long period, long quota)
 {
-	if (quota < 0)
+	якщо (quota < 0)
 		seq_puts(sf, "max");
-	else
+	інакше
 		seq_printf(sf, "%ld", quota);
 
 	seq_printf(sf, " %ld\n", period);
 }
 
 /* caller should put the current value in *@periodp before calling */
-static int __maybe_unused cpu_period_quota_parse(char *buf, u64 *period_us_p,
+static ціле __maybe_unused cpu_period_quota_parse(char *buf, u64 *period_us_p,
 						 u64 *quota_us_p)
 {
 	char tok[21];	/* U64_MAX */
 
-	if (sscanf(buf, "%20s %llu", tok, period_us_p) < 1)
-		return -EINVAL;
+	якщо (sscanf(buf, "%20s %llu", tok, period_us_p) < 1)
+		повернути -EINVAL;
 
-	if (sscanf(tok, "%llu", quota_us_p) < 1) {
-		if (!strcmp(tok, "max"))
+	якщо (sscanf(tok, "%llu", quota_us_p) < 1) {
+		якщо (!strcmp(tok, "max"))
 			*quota_us_p = RUNTIME_INF;
-		else
-			return -EINVAL;
+		інакше
+			повернути -EINVAL;
 	}
 
-	return 0;
+	повернути 0;
 }
 
 #ifdef CONFIG_GROUP_SCHED_BANDWIDTH
-static int cpu_max_show(struct seq_file *sf, void *v)
+static ціле cpu_max_show(struct seq_file *sf, void *v)
 {
 	struct task_group *tg = css_tg(seq_css(sf));
 	u64 period_us, quota_us;
 
 	tg_bandwidth(tg, &period_us, &quota_us, NULL);
 	cpu_period_quota_print(sf, period_us, quota_us);
-	return 0;
+	повернути 0;
 }
 
 static ssize_t cpu_max_write(struct kernfs_open_file *of,
@@ -10489,13 +10489,13 @@ static ssize_t cpu_max_write(struct kernfs_open_file *of,
 {
 	struct task_group *tg = css_tg(of_css(of));
 	u64 period_us, quota_us, burst_us;
-	int ret;
+	ціле ret;
 
 	tg_bandwidth(tg, &period_us, NULL, &burst_us);
 	ret = cpu_period_quota_parse(buf, &period_us, &quota_us);
-	if (!ret)
+	якщо (!ret)
 		ret = tg_set_bandwidth(tg, period_us, quota_us, burst_us);
-	return ret ?: nbytes;
+	повернути ret ?: nbytes;
 }
 #endif /* CONFIG_CFS_BANDWIDTH */
 
@@ -10570,20 +10570,20 @@ struct cgroup_subsys cpu_cgrp_subsys = {
 
 #endif /* CONFIG_CGROUP_SCHED */
 
-void dump_cpu_task(int cpu)
+void dump_cpu_task(ціле cpu)
 {
-	if (in_hardirq() && cpu == smp_processor_id()) {
+	якщо (in_hardirq() && cpu == smp_processor_id()) {
 		struct pt_regs *regs;
 
 		regs = get_irq_regs();
-		if (regs) {
+		якщо (regs) {
 			show_regs(regs);
-			return;
+			повернути;
 		}
 	}
 
-	if (trigger_single_cpu_backtrace(cpu))
-		return;
+	якщо (trigger_single_cpu_backtrace(cpu))
+		повернути;
 
 	pr_info("Task dump for CPU %d:\n", cpu);
 	sched_show_task(cpu_curr(cpu));
@@ -10601,7 +10601,7 @@ void dump_cpu_task(int cpu)
  * If a task goes up by ~10% and another task goes down by ~10% then
  * the relative distance between them is ~25%.)
  */
-const int sched_prio_to_weight[40] = {
+const ціле sched_prio_to_weight[40] = {
  /* -20 */     88761,     71755,     56483,     46273,     36291,
  /* -15 */     29154,     23254,     18705,     14949,     11916,
  /* -10 */      9548,      7620,      6100,      4904,      3906,
@@ -10630,7 +10630,7 @@ const u32 sched_prio_to_wmult[40] = {
  /*  15 */ 119304647, 148102320, 186737708, 238609294, 286331153,
 };
 
-void call_trace_sched_update_nr_running(struct rq *rq, int count)
+void call_trace_sched_update_nr_running(struct rq *rq, ціле count)
 {
         trace_sched_update_nr_running_tp(rq, count);
 }
@@ -10771,7 +10771,7 @@ void call_trace_sched_update_nr_running(struct rq *rq, int count)
  */
 static void __mm_update_max_cids(struct mm_mm_cid *mc)
 {
-	unsigned int opt_cids, max_cids;
+	unsigned ціле opt_cids, max_cids;
 
 	/* Calculate the new optimal constraint */
 	opt_cids = min(mc->nr_cpus_allowed, mc->users);
@@ -10781,13 +10781,13 @@ static void __mm_update_max_cids(struct mm_mm_cid *mc)
 	WRITE_ONCE(mc->max_cids, max_cids);
 }
 
-static inline unsigned int mm_cid_calc_pcpu_thrs(struct mm_mm_cid *mc)
+static inline unsigned ціле mm_cid_calc_pcpu_thrs(struct mm_mm_cid *mc)
 {
-	unsigned int opt_cids;
+	unsigned ціле opt_cids;
 
 	opt_cids = min(mc->nr_cpus_allowed, mc->users);
 	/* Has to be at least 1 because 0 indicates PCPU mode off */
-	return max(min(opt_cids - opt_cids / 4, num_possible_cpus() / 2), 1);
+	повернути max(min(opt_cids - opt_cids / 4, num_possible_cpus() / 2), 1);
 }
 
 static bool mm_update_max_cids(struct mm_struct *mm)
@@ -10802,19 +10802,19 @@ static bool mm_update_max_cids(struct mm_struct *mm)
 	__mm_update_max_cids(mc);
 
 	/* Check whether owner mode must be changed */
-	if (!percpu) {
+	якщо (!percpu) {
 		/* Enable per CPU mode when the number of users is above max_cids */
-		if (mc->users > mc->max_cids)
+		якщо (mc->users > mc->max_cids)
 			mc->pcpu_thrs = mm_cid_calc_pcpu_thrs(mc);
-	} else {
+	} інакше {
 		/* Switch back to per task if user count under threshold */
-		if (mc->users < mc->pcpu_thrs)
+		якщо (mc->users < mc->pcpu_thrs)
 			mc->pcpu_thrs = 0;
 	}
 
 	/* Mode change required? */
-	if (percpu == !!mc->pcpu_thrs)
-		return false;
+	якщо (percpu == !!mc->pcpu_thrs)
+		повернути false;
 
 	/* Flip the mode and set the transition flag to bridge the transfer */
 	WRITE_ONCE(mc->mode, mc->mode ^ (MM_CID_TRANSIT | MM_CID_ONCPU));
@@ -10824,17 +10824,17 @@ static bool mm_update_max_cids(struct mm_struct *mm)
 	 * store.
 	 */
 	smp_mb();
-	return true;
+	повернути true;
 }
 
 static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpumask *affmsk)
 {
 	struct cpumask *mm_allowed;
 	struct mm_mm_cid *mc;
-	unsigned int weight;
+	unsigned ціле weight;
 
-	if (!mm || !READ_ONCE(mm->mm_cid.users))
-		return;
+	якщо (!mm || !READ_ONCE(mm->mm_cid.users))
+		повернути;
 	/*
 	 * mm::mm_cid::mm_cpus_allowed is the superset of each threads
 	 * allowed CPUs mask which means it can only grow.
@@ -10843,30 +10843,30 @@ static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpu
 	guard(raw_spinlock)(&mc->lock);
 	mm_allowed = mm_cpus_allowed(mm);
 	weight = cpumask_weighted_or(mm_allowed, mm_allowed, affmsk);
-	if (weight == mc->nr_cpus_allowed)
-		return;
+	якщо (weight == mc->nr_cpus_allowed)
+		повернути;
 
 	WRITE_ONCE(mc->nr_cpus_allowed, weight);
 	__mm_update_max_cids(mc);
-	if (!cid_on_cpu(mc->mode))
-		return;
+	якщо (!cid_on_cpu(mc->mode))
+		повернути;
 
 	/* Adjust the threshold to the wider set */
 	mc->pcpu_thrs = mm_cid_calc_pcpu_thrs(mc);
 	/* Switch back to per task mode? */
-	if (mc->users >= mc->pcpu_thrs)
-		return;
+	якщо (mc->users >= mc->pcpu_thrs)
+		повернути;
 
 	/* Don't queue twice */
-	if (mc->update_deferred)
-		return;
+	якщо (mc->update_deferred)
+		повернути;
 
 	/* Queue the irq work, which schedules the real work */
 	mc->update_deferred = true;
 	irq_work_queue(&mc->irq_work);
 }
 
-static inline void mm_cid_complete_transit(struct mm_struct *mm, unsigned int mode)
+static inline void mm_cid_complete_transit(struct mm_struct *mm, unsigned ціле mode)
 {
 	/*
 	 * Ensure that the store removing the TRANSIT bit cannot be
@@ -10878,8 +10878,8 @@ static inline void mm_cid_complete_transit(struct mm_struct *mm, unsigned int mo
 
 static inline void mm_cid_transit_to_task(struct task_struct *t, struct mm_cid_pcpu *pcp)
 {
-	if (cid_on_cpu(t->mm_cid.cid)) {
-		unsigned int cid = cpu_cid_to_cid(t->mm_cid.cid);
+	якщо (cid_on_cpu(t->mm_cid.cid)) {
+		unsigned ціле cid = cpu_cid_to_cid(t->mm_cid.cid);
 
 		t->mm_cid.cid = cid_to_transit_cid(cid);
 		pcp->cid = t->mm_cid.cid;
@@ -10888,7 +10888,7 @@ static inline void mm_cid_transit_to_task(struct task_struct *t, struct mm_cid_p
 
 static void mm_cid_fixup_cpus_to_tasks(struct mm_struct *mm)
 {
-	unsigned int cpu;
+	unsigned ціле cpu;
 
 	/* Walk the CPUs and fixup all stale CIDs */
 	for_each_possible_cpu(cpu) {
@@ -10898,18 +10898,18 @@ static void mm_cid_fixup_cpus_to_tasks(struct mm_struct *mm)
 		/* Remote access to mm::mm_cid::pcpu requires rq_lock */
 		guard(rq_lock_irq)(rq);
 		/* Is the CID still owned by the CPU? */
-		if (cid_on_cpu(pcp->cid)) {
+		якщо (cid_on_cpu(pcp->cid)) {
 			/*
 			 * If rq->curr has @mm, transfer it with the
 			 * transition bit set. Otherwise drop it.
 			 */
-			if (rq->curr->mm == mm && rq->curr->mm_cid.active)
+			якщо (rq->curr->mm == mm && rq->curr->mm_cid.active)
 				mm_cid_transit_to_task(rq->curr, pcp);
-			else
+			інакше
 				mm_drop_cid_on_cpu(mm, pcp);
 
-		} else if (rq->curr->mm == mm && rq->curr->mm_cid.active) {
-			unsigned int cid = rq->curr->mm_cid.cid;
+		} інакше якщо (rq->curr->mm == mm && rq->curr->mm_cid.active) {
+			unsigned ціле cid = rq->curr->mm_cid.cid;
 
 			/*
 			 * Set the transition bit only on a genuine task-owned
@@ -10923,7 +10923,7 @@ static void mm_cid_fixup_cpus_to_tasks(struct mm_struct *mm)
 			 * (MM_CID_ONCPU) CID is handled by the cid_on_cpu()
 			 * branch above and never reaches here.
 			 */
-			if (cid != MM_CID_UNSET && !cid_in_transit(cid)) {
+			якщо (cid != MM_CID_UNSET && !cid_in_transit(cid)) {
 				cid = cid_to_transit_cid(cid);
 				rq->curr->mm_cid.cid = cid;
 				pcp->cid = cid;
@@ -10935,7 +10935,7 @@ static void mm_cid_fixup_cpus_to_tasks(struct mm_struct *mm)
 
 static inline void mm_cid_transit_to_cpu(struct task_struct *t, struct mm_cid_pcpu *pcp)
 {
-	if (cid_on_task(t->mm_cid.cid)) {
+	якщо (cid_on_task(t->mm_cid.cid)) {
 		t->mm_cid.cid = cid_to_transit_cid(t->mm_cid.cid);
 		pcp->cid = t->mm_cid.cid;
 	}
@@ -10945,11 +10945,11 @@ static void mm_cid_fixup_task_to_cpu(struct task_struct *t, struct mm_struct *mm
 {
 	/* Remote access to mm::mm_cid::pcpu requires rq_lock */
 	guard(task_rq_lock)(t);
-	if (cid_on_task(t->mm_cid.cid)) {
+	якщо (cid_on_task(t->mm_cid.cid)) {
 		/* If running on the CPU, put the CID in transit mode, otherwise drop it */
-		if (task_rq(t)->curr == t)
+		якщо (task_rq(t)->curr == t)
 			mm_cid_transit_to_cpu(t, per_cpu_ptr(mm->mm_cid.pcpu, task_cpu(t)));
-		else
+		інакше
 			mm_unset_cid_on_task(t);
 	}
 }
@@ -10963,7 +10963,7 @@ static void mm_cid_fixup_tasks_to_cpus(void)
 
 	hlist_for_each_entry(t, &mm->mm_cid.user_list, mm_cid.node) {
 		/* Current has already transferred before invoking the fixup. */
-		if (t != current)
+		якщо (t != current)
 			mm_cid_fixup_task_to_cpu(t, mm);
 	}
 
@@ -10977,7 +10977,7 @@ static bool sched_mm_cid_add_user(struct task_struct *t, struct mm_struct *mm)
 	t->mm_cid.active = 1;
 	hlist_add_head(&t->mm_cid.node, &mm->mm_cid.user_list);
 	mm->mm_cid.users++;
-	return mm_update_max_cids(mm);
+	повернути mm_update_max_cids(mm);
 }
 
 static void sched_mm_cid_fork(struct task_struct *t)
@@ -10985,8 +10985,8 @@ static void sched_mm_cid_fork(struct task_struct *t)
 	struct mm_struct *mm = t->mm;
 	bool percpu;
 
-	if (!mm)
-		return;
+	якщо (!mm)
+		повернути;
 
 	WARN_ON_ONCE(t->mm_cid.cid != MM_CID_UNSET);
 
@@ -10995,31 +10995,31 @@ static void sched_mm_cid_fork(struct task_struct *t)
 		struct mm_cid_pcpu *pcp = this_cpu_ptr(mm->mm_cid.pcpu);
 
 		/* First user ? */
-		if (!mm->mm_cid.users) {
+		якщо (!mm->mm_cid.users) {
 			sched_mm_cid_add_user(t, mm);
 			t->mm_cid.cid = mm_get_cid(mm);
 			/* Required for execve() */
 			pcp->cid = t->mm_cid.cid;
-			return;
+			повернути;
 		}
 
-		if (!sched_mm_cid_add_user(t, mm)) {
-			if (!cid_on_cpu(mm->mm_cid.mode))
+		якщо (!sched_mm_cid_add_user(t, mm)) {
+			якщо (!cid_on_cpu(mm->mm_cid.mode))
 				t->mm_cid.cid = mm_get_cid(mm);
-			return;
+			повернути;
 		}
 
 		/* Handle the mode change and transfer current's CID */
 		percpu = cid_on_cpu(mm->mm_cid.mode);
-		if (!percpu)
+		якщо (!percpu)
 			mm_cid_transit_to_task(current, pcp);
-		else
+		інакше
 			mm_cid_transit_to_cpu(current, pcp);
 	}
 
-	if (percpu) {
+	якщо (percpu) {
 		mm_cid_fixup_tasks_to_cpus();
-	} else {
+	} інакше {
 		mm_cid_fixup_cpus_to_tasks(mm);
 		t->mm_cid.cid = mm_get_cid(mm);
 	}
@@ -11035,31 +11035,31 @@ static bool sched_mm_cid_remove_user(struct task_struct *t)
 	mm_unset_cid_on_task(t);
 	hlist_del_init(&t->mm_cid.node);
 	t->mm->mm_cid.users--;
-	return mm_update_max_cids(t->mm);
+	повернути mm_update_max_cids(t->mm);
 }
 
 static bool __sched_mm_cid_exit(struct task_struct *t)
 {
 	struct mm_struct *mm = t->mm;
 
-	if (!sched_mm_cid_remove_user(t))
-		return false;
+	якщо (!sched_mm_cid_remove_user(t))
+		повернути false;
 	/*
 	 * Contrary to fork() this only deals with a switch back to per
 	 * task mode either because the above decreased users or an
 	 * affinity change increased the number of allowed CPUs and the
 	 * deferred fixup did not run yet.
 	 */
-	if (WARN_ON_ONCE(cid_on_cpu(mm->mm_cid.mode)))
-		return false;
+	якщо (WARN_ON_ONCE(cid_on_cpu(mm->mm_cid.mode)))
+		повернути false;
 	/*
 	 * A failed fork(2) cleanup never gets here, so @current must have
 	 * the same MM as @t. That's true for exit() and the failed
 	 * pthread_create() cleanup case.
 	 */
-	if (WARN_ON_ONCE(current->mm != mm))
-		return false;
-	return true;
+	якщо (WARN_ON_ONCE(current->mm != mm))
+		повернути false;
+	повернути true;
 }
 
 /*
@@ -11070,8 +11070,8 @@ void sched_mm_cid_exit(struct task_struct *t)
 {
 	struct mm_struct *mm = t->mm;
 
-	if (!mm || !t->mm_cid.active)
-		return;
+	якщо (!mm || !t->mm_cid.active)
+		повернути;
 	/*
 	 * Ensure that only one instance is doing MM CID operations within
 	 * a MM. The common case is uncontended. The rare fixup case adds
@@ -11079,10 +11079,10 @@ void sched_mm_cid_exit(struct task_struct *t)
 	 */
 	scoped_guard(mutex, &mm->mm_cid.mutex) {
 		/* mm_cid::mutex is sufficient to protect mm_cid::users */
-		if (likely(mm->mm_cid.users > 1)) {
+		якщо (likely(mm->mm_cid.users > 1)) {
 			scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
-				if (!__sched_mm_cid_exit(t))
-					return;
+				якщо (!__sched_mm_cid_exit(t))
+					повернути;
 				/*
 				 * Mode change. The task has the CID unset
 				 * already and dealt with an eventually set
@@ -11092,12 +11092,12 @@ void sched_mm_cid_exit(struct task_struct *t)
 				mm_drop_cid_on_cpu(mm, this_cpu_ptr(mm->mm_cid.pcpu));
 			}
 			mm_cid_fixup_cpus_to_tasks(mm);
-			return;
+			повернути;
 		}
 		/* Last user */
 		scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
 			/* Required across execve() */
-			if (t == current)
+			якщо (t == current)
 				mm_cid_transit_to_task(t, this_cpu_ptr(mm->mm_cid.pcpu));
 			/* Ignore mode change. There is nothing to do. */
 			sched_mm_cid_remove_user(t);
@@ -11125,7 +11125,7 @@ void sched_mm_cid_before_execve(struct task_struct *t)
 /* Reactivate MM CID after execve() */
 void sched_mm_cid_after_execve(struct task_struct *t)
 {
-	if (t->mm)
+	якщо (t->mm)
 		sched_mm_cid_fork(t);
 }
 
@@ -11135,19 +11135,19 @@ static void mm_cid_work_fn(struct work_struct *work)
 
 	guard(mutex)(&mm->mm_cid.mutex);
 	/* Did the last user task exit already? */
-	if (!mm->mm_cid.users)
-		return;
+	якщо (!mm->mm_cid.users)
+		повернути;
 
 	scoped_guard(raw_spinlock_irq, &mm->mm_cid.lock) {
 		/* Have fork() or exit() handled it already? */
-		if (!mm->mm_cid.update_deferred)
-			return;
+		якщо (!mm->mm_cid.update_deferred)
+			повернути;
 		/* This clears mm_cid::update_deferred */
-		if (!mm_update_max_cids(mm))
-			return;
+		якщо (!mm_update_max_cids(mm))
+			повернути;
 		/* Affinity changes can only switch back to task mode */
-		if (WARN_ON_ONCE(cid_on_cpu(mm->mm_cid.mode)))
-			return;
+		якщо (WARN_ON_ONCE(cid_on_cpu(mm->mm_cid.mode)))
+			повернути;
 	}
 	mm_cid_fixup_cpus_to_tasks(mm);
 }
@@ -11180,14 +11180,14 @@ void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
 	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
 	bitmap_zero(mm_cidmask(mm), num_possible_cpus());
 }
-#else /* CONFIG_SCHED_MM_CID */
+#інакше /* CONFIG_SCHED_MM_CID */
 static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpumask *affmsk) { }
 static inline void sched_mm_cid_fork(struct task_struct *t) { }
 #endif /* !CONFIG_SCHED_MM_CID */
 
 static DEFINE_PER_CPU(struct sched_change_ctx, sched_change_ctx);
 
-struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags)
+struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned ціле flags)
 {
 	struct sched_change_ctx *ctx = this_cpu_ptr(&sched_change_ctx);
 	struct rq *rq = task_rq(p);
@@ -11200,12 +11200,12 @@ struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int 
 
 	lockdep_assert_rq_held(rq);
 
-	if (!(flags & DEQUEUE_NOCLOCK)) {
+	якщо (!(flags & DEQUEUE_NOCLOCK)) {
 		update_rq_clock(rq);
 		flags |= DEQUEUE_NOCLOCK;
 	}
 
-	if ((flags & DEQUEUE_CLASS) && p->sched_class->switching_from)
+	якщо ((flags & DEQUEUE_CLASS) && p->sched_class->switching_from)
 		p->sched_class->switching_from(rq, p);
 
 	*ctx = (struct sched_change_ctx){
@@ -11216,22 +11216,22 @@ struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int 
 		.running = task_current_donor(rq, p),
 	};
 
-	if (!(flags & DEQUEUE_CLASS)) {
-		if (p->sched_class->get_prio)
+	якщо (!(flags & DEQUEUE_CLASS)) {
+		якщо (p->sched_class->get_prio)
 			ctx->prio = p->sched_class->get_prio(rq, p);
-		else
+		інакше
 			ctx->prio = p->prio;
 	}
 
-	if (ctx->queued)
+	якщо (ctx->queued)
 		dequeue_task(rq, p, flags);
-	if (ctx->running)
+	якщо (ctx->running)
 		put_prev_task(rq, p);
 
-	if ((flags & DEQUEUE_CLASS) && p->sched_class->switched_from)
+	якщо ((flags & DEQUEUE_CLASS) && p->sched_class->switched_from)
 		p->sched_class->switched_from(rq, p);
 
-	return ctx;
+	повернути ctx;
 }
 
 void sched_change_end(struct sched_change_ctx *ctx)
@@ -11246,16 +11246,16 @@ void sched_change_end(struct sched_change_ctx *ctx)
 	 */
 	WARN_ON_ONCE(p->sched_class != ctx->class && !(ctx->flags & ENQUEUE_CLASS));
 
-	if ((ctx->flags & ENQUEUE_CLASS) && p->sched_class->switching_to)
+	якщо ((ctx->flags & ENQUEUE_CLASS) && p->sched_class->switching_to)
 		p->sched_class->switching_to(rq, p);
 
-	if (ctx->queued)
+	якщо (ctx->queued)
 		enqueue_task(rq, p, ctx->flags);
-	if (ctx->running)
+	якщо (ctx->running)
 		set_next_task(rq, p);
 
-	if (ctx->flags & ENQUEUE_CLASS) {
-		if (p->sched_class->switched_to)
+	якщо (ctx->flags & ENQUEUE_CLASS) {
+		якщо (p->sched_class->switched_to)
 			p->sched_class->switched_to(rq, p);
 
 		/*
@@ -11264,18 +11264,18 @@ void sched_change_end(struct sched_change_ctx *ctx)
 		 * know the new class and none of the switch*_to() methods know
 		 * the old class so we must resched here.
 		 */
-		if (ctx->queued)
+		якщо (ctx->queued)
 			wakeup_preempt(rq, p, 0);
 
-		if (ctx->running) {
+		якщо (ctx->running) {
 			/*
 			 * If this was a degradation in class; make sure to
 			 * reschedule.
 			 */
-			if (sched_class_above(ctx->class, p->sched_class))
+			якщо (sched_class_above(ctx->class, p->sched_class))
 				resched_curr(rq);
 		}
-	} else {
+	} інакше {
 		p->sched_class->prio_changed(rq, p, ctx->prio);
 	}
 }
@@ -11283,18 +11283,18 @@ void sched_change_end(struct sched_change_ctx *ctx)
 #ifdef CONFIG_PREFERRED_CPU
 static DEFINE_PER_CPU(struct cpu_stop_work, npc_push_task_work);
 
-static int sched_non_preferred_cpu_push_stop(void *arg)
+static ціле sched_non_preferred_cpu_push_stop(void *arg)
 {
 	struct task_struct *p = arg;
 	struct rq *rq = this_rq();
 	struct rq_flags rf;
-	int cpu;
+	ціле cpu;
 
-	if (cpu_preferred(rq->cpu)) {
+	якщо (cpu_preferred(rq->cpu)) {
 		scoped_guard(rq_lock_irqsave, rq)
 			rq->npc_push_work_pending = false;
 		put_task_struct(p);
-		return 0;
+		повернути 0;
 	}
 
 	scoped_guard (raw_spinlock_irq, &p->pi_lock) {
@@ -11311,10 +11311,10 @@ static int sched_non_preferred_cpu_push_stop(void *arg)
 		rq->npc_push_work_pending = false;
 		update_rq_clock(rq);
 
-		if (task_rq(p) == rq && task_on_rq_queued(p)) {
+		якщо (task_rq(p) == rq && task_on_rq_queued(p)) {
 			struct rq *dest_rq = __migrate_task(rq, &rf, p, cpu);
 
-			if (rq != dest_rq)
+			якщо (rq != dest_rq)
 				schedstat_inc(p->stats.nr_migrations_cpu_non_preferred);
 			rq = dest_rq;
 		}
@@ -11322,7 +11322,7 @@ static int sched_non_preferred_cpu_push_stop(void *arg)
 	}
 
 	put_task_struct(p);
-	return 0;
+	повернути 0;
 }
 
 /*
@@ -11345,15 +11345,15 @@ void sched_push_current_non_preferred_cpu(struct rq *rq)
 
 	scoped_guard(rq_lock, rq) {
 		/* Push the task if its explicit affinity allows */
-		if (!task_can_migrate_to_preferred(push_task, rq->cpu))
-			return;
+		якщо (!task_can_migrate_to_preferred(push_task, rq->cpu))
+			повернути;
 
 		/* There is already a stopper thread. Don't race with it. */
-		if (rq->npc_push_work_pending)
-			return;
+		якщо (rq->npc_push_work_pending)
+			повернути;
 
-		if (is_migration_disabled(push_task))
-			return;
+		якщо (is_migration_disabled(push_task))
+			повернути;
 
 		rq->npc_push_work_pending = true;
 	}

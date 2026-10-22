@@ -60,26 +60,26 @@ static DEFINE_PER_CPU(cpumask_var_t, local_numa_idle_cpumask);
  *
  * NUMA_NO_NODE identifies the global idle cpumask.
  */
-static struct scx_idle_cpus *idle_cpumask(int node)
+static struct scx_idle_cpus *idle_cpumask(ціле node)
 {
-	return node == NUMA_NO_NODE ? &scx_idle_global_masks : scx_idle_node_masks[node];
+	повернути node == NUMA_NO_NODE ? &scx_idle_global_masks : scx_idle_node_masks[node];
 }
 
 /*
  * Returns the NUMA node ID associated with a @cpu, or NUMA_NO_NODE if
  * per-node idle cpumasks are disabled.
  */
-static int scx_cpu_node_if_enabled(int cpu)
+static ціле scx_cpu_node_if_enabled(ціле cpu)
 {
-	if (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node))
-		return NUMA_NO_NODE;
+	якщо (!static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node))
+		повернути NUMA_NO_NODE;
 
-	return cpu_to_node(cpu);
+	повернути cpu_to_node(cpu);
 }
 
-static bool scx_idle_test_and_clear_cpu(int cpu)
+static bool scx_idle_test_and_clear_cpu(ціле cpu)
 {
-	int node = scx_cpu_node_if_enabled(cpu);
+	ціле node = scx_cpu_node_if_enabled(cpu);
 	struct cpumask *idle_cpus = idle_cpumask(node)->cpu;
 
 	/*
@@ -87,7 +87,7 @@ static bool scx_idle_test_and_clear_cpu(int cpu)
 	 * cluster is not wholly idle either way. This also prevents
 	 * scx_pick_idle_cpu() from getting caught in an infinite loop.
 	 */
-	if (sched_smt_active()) {
+	якщо (sched_smt_active()) {
 		const struct cpumask *smt = cpu_smt_mask(cpu);
 		struct cpumask *idle_smts = idle_cpumask(node)->smt;
 
@@ -101,40 +101,40 @@ static bool scx_idle_test_and_clear_cpu(int cpu)
 		 * reduce memory writes, which may help alleviate cache
 		 * coherence pressure.
 		 */
-		if (cpumask_intersects(smt, idle_smts))
+		якщо (cpumask_intersects(smt, idle_smts))
 			cpumask_andnot(idle_smts, idle_smts, smt);
-		else if (cpumask_test_cpu(cpu, idle_smts))
+		інакше якщо (cpumask_test_cpu(cpu, idle_smts))
 			__cpumask_clear_cpu(cpu, idle_smts);
 	}
 
-	return cpumask_test_and_clear_cpu(cpu, idle_cpus);
+	повернути cpumask_test_and_clear_cpu(cpu, idle_cpus);
 }
 
 /*
  * Pick an idle CPU in a specific NUMA node.
  */
-static s32 pick_idle_cpu_in_node(const struct cpumask *cpus_allowed, int node, u64 flags)
+static s32 pick_idle_cpu_in_node(const struct cpumask *cpus_allowed, ціле node, u64 flags)
 {
-	int cpu;
+	ціле cpu;
 
 retry:
-	if (sched_smt_active()) {
+	якщо (sched_smt_active()) {
 		cpu = cpumask_any_and_distribute(idle_cpumask(node)->smt, cpus_allowed);
-		if (cpu < nr_cpu_ids)
+		якщо (cpu < nr_cpu_ids)
 			goto found;
 
-		if (flags & SCX_PICK_IDLE_CORE)
-			return -EBUSY;
+		якщо (flags & SCX_PICK_IDLE_CORE)
+			повернути -EBUSY;
 	}
 
 	cpu = cpumask_any_and_distribute(idle_cpumask(node)->cpu, cpus_allowed);
-	if (cpu >= nr_cpu_ids)
-		return -EBUSY;
+	якщо (cpu >= nr_cpu_ids)
+		повернути -EBUSY;
 
 found:
-	if (scx_idle_test_and_clear_cpu(cpu))
-		return cpu;
-	else
+	якщо (scx_idle_test_and_clear_cpu(cpu))
+		повернути cpu;
+	інакше
 		goto retry;
 }
 
@@ -148,7 +148,7 @@ static DEFINE_PER_CPU(nodemask_t, per_cpu_unvisited);
 /*
  * Search for an idle CPU across all nodes, excluding @node.
  */
-static s32 pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, int node, u64 flags)
+static s32 pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, ціле node, u64 flags)
 {
 	nodemask_t *unvisited;
 	s32 cpu = -EBUSY;
@@ -180,25 +180,25 @@ static s32 pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, i
 	 */
 	for_each_node_numadist(node, *unvisited) {
 		cpu = pick_idle_cpu_in_node(cpus_allowed, node, flags);
-		if (cpu >= 0)
+		якщо (cpu >= 0)
 			break;
 	}
 	preempt_enable();
 
-	return cpu;
+	повернути cpu;
 }
-#else
+#інакше
 static inline s32
-pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, int node, u64 flags)
+pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, ціле node, u64 flags)
 {
-	return -EBUSY;
+	повернути -EBUSY;
 }
 #endif
 
 /*
  * Find an idle CPU in the system, starting from @node.
  */
-static s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, int node, u64 flags)
+static s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, ціле node, u64 flags)
 {
 	s32 cpu;
 
@@ -208,36 +208,36 @@ static s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, int node, u64 f
 	 * not limited to a single node).
 	 */
 	cpu = pick_idle_cpu_in_node(cpus_allowed, node, flags);
-	if (cpu >= 0)
-		return cpu;
+	якщо (cpu >= 0)
+		повернути cpu;
 
 	/*
 	 * Stop the search if we are using only a single global cpumask
 	 * (NUMA_NO_NODE) or if the search is restricted to the first node
 	 * only.
 	 */
-	if (node == NUMA_NO_NODE || flags & SCX_PICK_IDLE_IN_NODE)
-		return -EBUSY;
+	якщо (node == NUMA_NO_NODE || flags & SCX_PICK_IDLE_IN_NODE)
+		повернути -EBUSY;
 
 	/*
 	 * Extend the search to the other online nodes.
 	 */
-	return pick_idle_cpu_from_online_nodes(cpus_allowed, node, flags);
+	повернути pick_idle_cpu_from_online_nodes(cpus_allowed, node, flags);
 }
 
 /*
  * Return the amount of CPUs in the same LLC domain of @cpu (or zero if the LLC
  * domain is not defined).
  */
-static unsigned int llc_weight(s32 cpu)
+static unsigned ціле llc_weight(s32 cpu)
 {
 	struct sched_domain *sd;
 
 	sd = rcu_dereference(per_cpu(sd_llc, cpu));
-	if (!sd)
-		return 0;
+	якщо (!sd)
+		повернути 0;
 
-	return sd->span_weight;
+	повернути sd->span_weight;
 }
 
 /*
@@ -249,29 +249,29 @@ static struct cpumask *llc_span(s32 cpu)
 	struct sched_domain *sd;
 
 	sd = rcu_dereference(per_cpu(sd_llc, cpu));
-	if (!sd)
-		return NULL;
+	якщо (!sd)
+		повернути NULL;
 
-	return sched_domain_span(sd);
+	повернути sched_domain_span(sd);
 }
 
 /*
  * Return the amount of CPUs in the same NUMA domain of @cpu (or zero if the
  * NUMA domain is not defined).
  */
-static unsigned int numa_weight(s32 cpu)
+static unsigned ціле numa_weight(s32 cpu)
 {
 	struct sched_domain *sd;
 	struct sched_group *sg;
 
 	sd = rcu_dereference(per_cpu(sd_numa, cpu));
-	if (!sd)
-		return 0;
+	якщо (!sd)
+		повернути 0;
 	sg = sd->groups;
-	if (!sg)
-		return 0;
+	якщо (!sg)
+		повернути 0;
 
-	return sg->group_weight;
+	повернути sg->group_weight;
 }
 
 /*
@@ -284,13 +284,13 @@ static struct cpumask *numa_span(s32 cpu)
 	struct sched_group *sg;
 
 	sd = rcu_dereference(per_cpu(sd_numa, cpu));
-	if (!sd)
-		return NULL;
+	якщо (!sd)
+		повернути NULL;
 	sg = sd->groups;
-	if (!sg)
-		return NULL;
+	якщо (!sg)
+		повернути NULL;
 
-	return sched_group_span(sg);
+	повернути sched_group_span(sg);
 }
 
 /*
@@ -299,7 +299,7 @@ static struct cpumask *numa_span(s32 cpu)
  */
 static bool llc_numa_mismatch(void)
 {
-	int cpu;
+	ціле cpu;
 
 	/*
 	 * We need to scan all online CPUs to verify whether their scheduling
@@ -325,10 +325,10 @@ static bool llc_numa_mismatch(void)
 	 * domains).
 	 */
 	for_each_online_cpu(cpu)
-		if (llc_weight(cpu) != numa_weight(cpu))
-			return true;
+		якщо (llc_weight(cpu) != numa_weight(cpu))
+			повернути true;
 
-	return false;
+	повернути false;
 }
 
 /*
@@ -345,7 +345,7 @@ static bool llc_numa_mismatch(void)
 void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
 {
 	bool enable_llc = false, enable_numa = false;
-	unsigned int nr_cpus;
+	unsigned ціле nr_cpus;
 	s32 cpu = cpumask_first(cpu_online_mask);
 
 	/*
@@ -360,8 +360,8 @@ void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
 	 */
 	rcu_read_lock();
 	nr_cpus = llc_weight(cpu);
-	if (nr_cpus > 0) {
-		if (nr_cpus < num_online_cpus())
+	якщо (nr_cpus > 0) {
+		якщо (nr_cpus < num_online_cpus())
 			enable_llc = true;
 		pr_debug("sched_ext: LLC=%*pb weight=%u\n",
 			 cpumask_pr_args(llc_span(cpu)), llc_weight(cpu));
@@ -380,10 +380,10 @@ void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
 	 * optimization, as we would naturally select idle CPUs within
 	 * specific NUMA nodes querying the corresponding per-node cpumask.
 	 */
-	if (!(ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE)) {
+	якщо (!(ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE)) {
 		nr_cpus = numa_weight(cpu);
-		if (nr_cpus > 0) {
-			if (nr_cpus < num_online_cpus() && llc_numa_mismatch())
+		якщо (nr_cpus > 0) {
+			якщо (nr_cpus < num_online_cpus() && llc_numa_mismatch())
 				enable_numa = true;
 			pr_debug("sched_ext: NUMA=%*pb weight=%u\n",
 				 cpumask_pr_args(numa_span(cpu)), nr_cpus);
@@ -396,13 +396,13 @@ void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
 	pr_debug("sched_ext: NUMA idle selection %s\n",
 		 str_enabled_disabled(enable_numa));
 
-	if (enable_llc)
+	якщо (enable_llc)
 		static_branch_enable_cpuslocked(&scx_selcpu_topo_llc);
-	else
+	інакше
 		static_branch_disable_cpuslocked(&scx_selcpu_topo_llc);
-	if (enable_numa)
+	якщо (enable_numa)
 		static_branch_enable_cpuslocked(&scx_selcpu_topo_numa);
-	else
+	інакше
 		static_branch_disable_cpuslocked(&scx_selcpu_topo_numa);
 }
 
@@ -411,7 +411,7 @@ void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
  */
 static inline bool task_affinity_all(const struct task_struct *p)
 {
-	return p->nr_cpus_allowed >= num_possible_cpus();
+	повернути p->nr_cpus_allowed >= num_possible_cpus();
 }
 
 /*
@@ -460,7 +460,7 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 {
 	const struct cpumask *llc_cpus = NULL, *numa_cpus = NULL;
 	const struct cpumask *allowed = cpus_allowed ?: p->cpus_ptr;
-	int node = scx_cpu_node_if_enabled(prev_cpu);
+	ціле node = scx_cpu_node_if_enabled(prev_cpu);
 	bool is_prev_allowed;
 	s32 cpu;
 
@@ -469,14 +469,14 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	/*
 	 * Determine the subset of CPUs usable by @p within @cpus_allowed.
 	 */
-	if (allowed != p->cpus_ptr) {
+	якщо (allowed != p->cpus_ptr) {
 		struct cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_idle_cpumask);
 
-		if (task_affinity_all(p)) {
+		якщо (task_affinity_all(p)) {
 			allowed = cpus_allowed;
-		} else if (cpumask_and(local_cpus, cpus_allowed, p->cpus_ptr)) {
+		} інакше якщо (cpumask_and(local_cpus, cpus_allowed, p->cpus_ptr)) {
 			allowed = local_cpus;
-		} else {
+		} інакше {
 			cpu = -EBUSY;
 			goto out_enable;
 		}
@@ -500,38 +500,38 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	 * If the task can run on all CPUs, use the node and LLC cpumasks
 	 * directly.
 	 */
-	if (static_branch_maybe(CONFIG_NUMA, &scx_selcpu_topo_numa)) {
+	якщо (static_branch_maybe(CONFIG_NUMA, &scx_selcpu_topo_numa)) {
 		struct cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_numa_idle_cpumask);
 		const struct cpumask *cpus = numa_span(prev_cpu);
 
-		if (allowed == p->cpus_ptr && task_affinity_all(p))
+		якщо (allowed == p->cpus_ptr && task_affinity_all(p))
 			numa_cpus = cpus;
-		else if (cpus && cpumask_and(local_cpus, allowed, cpus))
+		інакше якщо (cpus && cpumask_and(local_cpus, allowed, cpus))
 			numa_cpus = local_cpus;
 	}
 
-	if (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc)) {
+	якщо (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc)) {
 		struct cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_llc_idle_cpumask);
 		const struct cpumask *cpus = llc_span(prev_cpu);
 
-		if (allowed == p->cpus_ptr && task_affinity_all(p))
+		якщо (allowed == p->cpus_ptr && task_affinity_all(p))
 			llc_cpus = cpus;
-		else if (cpus && cpumask_and(local_cpus, allowed, cpus))
+		інакше якщо (cpus && cpumask_and(local_cpus, allowed, cpus))
 			llc_cpus = local_cpus;
 	}
 
 	/*
 	 * If WAKE_SYNC, try to migrate the wakee to the waker's CPU.
 	 */
-	if (wake_flags & SCX_WAKE_SYNC) {
-		int waker_node;
+	якщо (wake_flags & SCX_WAKE_SYNC) {
+		ціле waker_node;
 
 		/*
 		 * If the waker's CPU is cache affine and prev_cpu is idle,
 		 * then avoid a migration.
 		 */
 		cpu = smp_processor_id();
-		if (is_prev_allowed && cpus_share_cache(cpu, prev_cpu) &&
+		якщо (is_prev_allowed && cpus_share_cache(cpu, prev_cpu) &&
 		    scx_idle_test_and_clear_cpu(prev_cpu)) {
 			cpu = prev_cpu;
 			goto out_unlock;
@@ -551,11 +551,11 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 		 * the system.
 		 */
 		waker_node = scx_cpu_node_if_enabled(cpu);
-		if (!(current->flags & PF_EXITING) &&
+		якщо (!(current->flags & PF_EXITING) &&
 		    cpu_rq(cpu)->scx.local_dsq.nr == 0 &&
 		    (!(flags & SCX_PICK_IDLE_IN_NODE) || (waker_node == node)) &&
 		    !cpumask_empty(idle_cpumask(waker_node)->cpu)) {
-			if (cpumask_test_cpu(cpu, allowed)) {
+			якщо (cpumask_test_cpu(cpu, allowed)) {
 				scx_idle_test_and_clear_cpu(cpu);
 				goto out_unlock;
 			}
@@ -566,11 +566,11 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	 * If CPU has SMT, any wholly idle CPU is likely a better pick than
 	 * partially idle @prev_cpu.
 	 */
-	if (sched_smt_active()) {
+	якщо (sched_smt_active()) {
 		/*
 		 * Keep using @prev_cpu if it's part of a fully idle core.
 		 */
-		if (is_prev_allowed &&
+		якщо (is_prev_allowed &&
 		    cpumask_test_cpu(prev_cpu, idle_cpumask(node)->smt) &&
 		    scx_idle_test_and_clear_cpu(prev_cpu)) {
 			cpu = prev_cpu;
@@ -580,18 +580,18 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 		/*
 		 * Search for any fully idle core in the same LLC domain.
 		 */
-		if (llc_cpus) {
+		якщо (llc_cpus) {
 			cpu = pick_idle_cpu_in_node(llc_cpus, node, SCX_PICK_IDLE_CORE);
-			if (cpu >= 0)
+			якщо (cpu >= 0)
 				goto out_unlock;
 		}
 
 		/*
 		 * Search for any fully idle core in the same NUMA node.
 		 */
-		if (numa_cpus) {
+		якщо (numa_cpus) {
 			cpu = pick_idle_cpu_in_node(numa_cpus, node, SCX_PICK_IDLE_CORE);
-			if (cpu >= 0)
+			якщо (cpu >= 0)
 				goto out_unlock;
 		}
 
@@ -604,14 +604,14 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 		 * order of increasing distance.
 		 */
 		cpu = scx_pick_idle_cpu(allowed, node, flags | SCX_PICK_IDLE_CORE);
-		if (cpu >= 0)
+		якщо (cpu >= 0)
 			goto out_unlock;
 
 		/*
 		 * Give up if we're strictly looking for a full-idle SMT
 		 * core.
 		 */
-		if (flags & SCX_PICK_IDLE_CORE) {
+		якщо (flags & SCX_PICK_IDLE_CORE) {
 			cpu = -EBUSY;
 			goto out_unlock;
 		}
@@ -620,7 +620,7 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	/*
 	 * Use @prev_cpu if it's idle.
 	 */
-	if (is_prev_allowed && scx_idle_test_and_clear_cpu(prev_cpu)) {
+	якщо (is_prev_allowed && scx_idle_test_and_clear_cpu(prev_cpu)) {
 		cpu = prev_cpu;
 		goto out_unlock;
 	}
@@ -628,11 +628,11 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	/*
 	 * Use @prev_cpu's sibling if it's idle.
 	 */
-	if (sched_smt_active()) {
+	якщо (sched_smt_active()) {
 		for_each_cpu_and(cpu, cpu_smt_mask(prev_cpu), allowed) {
-			if (cpu == prev_cpu)
+			якщо (cpu == prev_cpu)
 				continue;
-			if (scx_idle_test_and_clear_cpu(cpu))
+			якщо (scx_idle_test_and_clear_cpu(cpu))
 				goto out_unlock;
 		}
 	}
@@ -640,18 +640,18 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
 	/*
 	 * Search for any idle CPU in the same LLC domain.
 	 */
-	if (llc_cpus) {
+	якщо (llc_cpus) {
 		cpu = pick_idle_cpu_in_node(llc_cpus, node, 0);
-		if (cpu >= 0)
+		якщо (cpu >= 0)
 			goto out_unlock;
 	}
 
 	/*
 	 * Search for any idle CPU in the same NUMA node.
 	 */
-	if (numa_cpus) {
+	якщо (numa_cpus) {
 		cpu = pick_idle_cpu_in_node(numa_cpus, node, 0);
-		if (cpu >= 0)
+		якщо (cpu >= 0)
 			goto out_unlock;
 	}
 
@@ -670,7 +670,7 @@ out_unlock:
 out_enable:
 	preempt_enable();
 
-	return cpu;
+	повернути cpu;
 }
 
 /*
@@ -678,7 +678,7 @@ out_enable:
  */
 void scx_idle_init_masks(void)
 {
-	int i;
+	ціле i;
 
 	/* Allocate global idle cpumasks */
 	BUG_ON(!alloc_cpumask_var(&scx_idle_global_masks.cpu, GFP_KERNEL));
@@ -708,26 +708,26 @@ void scx_idle_init_masks(void)
 	}
 }
 
-static void update_builtin_idle(int cpu, bool idle)
+static void update_builtin_idle(ціле cpu, bool idle)
 {
-	int node = scx_cpu_node_if_enabled(cpu);
+	ціле node = scx_cpu_node_if_enabled(cpu);
 	struct cpumask *idle_cpus = idle_cpumask(node)->cpu;
 
 	assign_cpu(cpu, idle_cpus, idle);
 
-	if (sched_smt_active()) {
+	якщо (sched_smt_active()) {
 		const struct cpumask *smt = cpu_smt_mask(cpu);
 		struct cpumask *idle_smts = idle_cpumask(node)->smt;
 
-		if (idle) {
+		якщо (idle) {
 			/*
 			 * idle_smt handling is racy but that's fine as it's
 			 * only for optimization and self-correcting.
 			 */
-			if (!cpumask_subset(smt, idle_cpus))
-				return;
+			якщо (!cpumask_subset(smt, idle_cpus))
+				повернути;
 			cpumask_or(idle_smts, idle_smts, smt);
-		} else {
+		} інакше {
 			cpumask_andnot(idle_smts, idle_smts, smt);
 		}
 	}
@@ -750,32 +750,32 @@ static void scx_idle_notify(struct rq *rq, bool idle, bool do_notify, bool root_
 	lockdep_assert_rq_held(rq);
 
 	/* with no sub-sched, only the root can be owed a notification */
-	if (!scx_has_subs()) {
-		if ((do_notify || root_renotify) &&
+	якщо (!scx_has_subs()) {
+		якщо ((do_notify || root_renotify) &&
 		    SCX_HAS_OP(root, update_idle) && !scx_bypassing(root, cpu))
 			SCX_CALL_OP(root, update_idle, rq, cid, idle);
-		return;
+		повернути;
 	}
 
 	pos = scx_next_descendant_pre(NULL, root);
-	while (pos) {
+	поки (pos) {
 		bool forced = false;
 
-		if (unlikely(scx_missing_caps(pos, cpu, SCX_CAP_BASE))) {
+		якщо (unlikely(scx_missing_caps(pos, cpu, SCX_CAP_BASE))) {
 			pos = scx_skip_subtree_pre(pos, root);
 			continue;
 		}
 
-		if (!pos->level) {
+		якщо (!pos->level) {
 			forced = root_renotify;
 		}
 #ifdef CONFIG_EXT_SUB_SCHED
-		else if (per_cpu_ptr(pos->pcpu, cpu)->idle_renotify) {
+		інакше якщо (per_cpu_ptr(pos->pcpu, cpu)->idle_renotify) {
 			per_cpu_ptr(pos->pcpu, cpu)->idle_renotify = false;
 			forced = true;
 		}
 #endif
-		if ((do_notify || forced) && SCX_HAS_OP(pos, update_idle) &&
+		якщо ((do_notify || forced) && SCX_HAS_OP(pos, update_idle) &&
 		    !scx_bypassing(pos, cpu))
 			SCX_CALL_OP(pos, update_idle, rq, cid, idle);
 		pos = scx_next_descendant_pre(pos, root);
@@ -800,7 +800,7 @@ static void scx_idle_notify(struct rq *rq, bool idle, bool do_notify, bool root_
  */
 void __scx_update_idle(struct rq *rq, bool idle, bool do_notify)
 {
-	int cpu = cpu_of(rq);
+	ціле cpu = cpu_of(rq);
 
 	lockdep_assert_rq_held(rq);
 
@@ -809,7 +809,7 @@ void __scx_update_idle(struct rq *rq, bool idle, bool do_notify)
 	 * transitions call with @do_notify, so every reaching call updates the
 	 * masks.
 	 */
-	if (static_branch_likely(&scx_builtin_idle_enabled))
+	якщо (static_branch_likely(&scx_builtin_idle_enabled))
 		update_builtin_idle(cpu, idle);
 
 	/*
@@ -825,7 +825,7 @@ void __scx_update_idle(struct rq *rq, bool idle, bool do_notify)
 	 * either enqueue() sees the idle bit or update_idle() sees the task
 	 * that enqueue() queued.
 	 */
-	if (do_notify ||
+	якщо (do_notify ||
 	    (idle && (rq->scx.flags &
 		      (SCX_RQ_SUB_IDLE_RENOTIFY | SCX_RQ_ROOT_IDLE_RENOTIFY)))) {
 		bool root_renotify = rq->scx.flags & SCX_RQ_ROOT_IDLE_RENOTIFY;
@@ -837,7 +837,7 @@ void __scx_update_idle(struct rq *rq, bool idle, bool do_notify)
 
 static void reset_idle_masks(struct sched_ext_ops *ops)
 {
-	int node;
+	ціле node;
 
 	/*
 	 * Start with all CPUs marked busy. The idle masks are populated when
@@ -845,10 +845,10 @@ static void reset_idle_masks(struct sched_ext_ops *ops)
 	 * This may temporarily omit idle CPUs but never advertises a busy CPU as
 	 * idle.
 	 */
-	if (!(ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE)) {
+	якщо (!(ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE)) {
 		cpumask_clear(idle_cpumask(NUMA_NO_NODE)->cpu);
 		cpumask_clear(idle_cpumask(NUMA_NO_NODE)->smt);
-		return;
+		повернути;
 	}
 
 	for_each_node(node) {
@@ -859,14 +859,14 @@ static void reset_idle_masks(struct sched_ext_ops *ops)
 
 void scx_idle_enable(struct sched_ext_ops *ops)
 {
-	if (!ops->update_idle || (ops->flags & SCX_OPS_KEEP_BUILTIN_IDLE))
+	якщо (!ops->update_idle || (ops->flags & SCX_OPS_KEEP_BUILTIN_IDLE))
 		static_branch_enable_cpuslocked(&scx_builtin_idle_enabled);
-	else
+	інакше
 		static_branch_disable_cpuslocked(&scx_builtin_idle_enabled);
 
-	if (ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE)
+	якщо (ops->flags & SCX_OPS_BUILTIN_IDLE_PER_NODE)
 		static_branch_enable_cpuslocked(&scx_builtin_idle_per_node);
-	else
+	інакше
 		static_branch_disable_cpuslocked(&scx_builtin_idle_per_node);
 
 	reset_idle_masks(ops);
@@ -882,41 +882,41 @@ void scx_idle_disable(void)
  * Helpers that can be called from the BPF scheduler.
  */
 
-static int validate_node(struct scx_sched *sch, int node)
+static ціле validate_node(struct scx_sched *sch, ціле node)
 {
-	if (!static_branch_likely(&scx_builtin_idle_per_node)) {
+	якщо (!static_branch_likely(&scx_builtin_idle_per_node)) {
 		scx_error(sch, "per-node idle tracking is disabled");
-		return -EOPNOTSUPP;
+		повернути -EOPNOTSUPP;
 	}
 
 	/* Return no entry for NUMA_NO_NODE (not a critical scx error) */
-	if (node == NUMA_NO_NODE)
-		return -ENOENT;
+	якщо (node == NUMA_NO_NODE)
+		повернути -ENOENT;
 
 	/* Make sure node is in a valid range */
-	if (node < 0 || node >= nr_node_ids) {
+	якщо (node < 0 || node >= nr_node_ids) {
 		scx_error(sch, "invalid node %d", node);
-		return -EINVAL;
+		повернути -EINVAL;
 	}
 
 	/* Make sure the node is part of the set of possible nodes */
-	if (!node_possible(node)) {
+	якщо (!node_possible(node)) {
 		scx_error(sch, "unavailable node %d", node);
-		return -EINVAL;
+		повернути -EINVAL;
 	}
 
-	return node;
+	повернути node;
 }
 
 __bpf_kfunc_start_defs();
 
 static bool check_builtin_idle_enabled(struct scx_sched *sch)
 {
-	if (static_branch_likely(&scx_builtin_idle_enabled))
-		return true;
+	якщо (static_branch_likely(&scx_builtin_idle_enabled))
+		повернути true;
 
 	scx_error(sch, "built-in idle tracking is disabled");
-	return false;
+	повернути false;
 }
 
 /*
@@ -944,12 +944,12 @@ static bool check_builtin_idle_enabled(struct scx_sched *sch)
  */
 static bool is_bpf_migration_disabled(const struct task_struct *p)
 {
-	if (p->migration_disabled == 1) {
-		if (IS_ENABLED(CONFIG_PREEMPT_RCU))
-			return p != current;
-		return true;
+	якщо (p->migration_disabled == 1) {
+		якщо (IS_ENABLED(CONFIG_PREEMPT_RCU))
+			повернути p != current;
+		повернути true;
 	}
-	return p->migration_disabled;
+	повернути p->migration_disabled;
 }
 
 static s32 select_cpu_restricted(struct task_struct *p, s32 prev_cpu,
@@ -958,28 +958,28 @@ static s32 select_cpu_restricted(struct task_struct *p, s32 prev_cpu,
 {
 	s32 cpu;
 
-	if (migration_disabled)
+	якщо (migration_disabled)
 		cpu = task_cpu(p);
-	else
+	інакше
 		cpu = cpumask_first(p->cpus_ptr);
 
-	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-		return -EBUSY;
+	якщо (!cpumask_test_cpu(cpu, p->cpus_ptr))
+		повернути -EBUSY;
 
-	if (allowed && !cpumask_test_cpu(cpu, allowed))
-		return -EBUSY;
+	якщо (allowed && !cpumask_test_cpu(cpu, allowed))
+		повернути -EBUSY;
 
-	if (flags & SCX_PICK_IDLE_IN_NODE) {
-		int node = scx_cpu_node_if_enabled(prev_cpu);
+	якщо (flags & SCX_PICK_IDLE_IN_NODE) {
+		ціле node = scx_cpu_node_if_enabled(prev_cpu);
 
-		if (scx_cpu_node_if_enabled(cpu) != node)
-			return -EBUSY;
+		якщо (scx_cpu_node_if_enabled(cpu) != node)
+			повернути -EBUSY;
 	}
 
-	if (!scx_idle_test_and_clear_cpu(cpu))
-		return -EBUSY;
+	якщо (!scx_idle_test_and_clear_cpu(cpu))
+		повернути -EBUSY;
 
-	return cpu;
+	повернути cpu;
 }
 
 static s32 select_cpu_from_kfunc(struct scx_sched *sch, struct task_struct *p,
@@ -991,11 +991,11 @@ static s32 select_cpu_from_kfunc(struct scx_sched *sch, struct task_struct *p,
 	bool migration_disabled;
 	s32 cpu;
 
-	if (!scx_cpu_valid(sch, prev_cpu, NULL))
-		return -EINVAL;
+	якщо (!scx_cpu_valid(sch, prev_cpu, NULL))
+		повернути -EINVAL;
 
-	if (!check_builtin_idle_enabled(sch))
-		return -EBUSY;
+	якщо (!check_builtin_idle_enabled(sch))
+		повернути -EBUSY;
 
 	/*
 	 * Accessing p->cpus_ptr / p->nr_cpus_allowed needs either @p's rq
@@ -1011,14 +1011,14 @@ static s32 select_cpu_from_kfunc(struct scx_sched *sch, struct task_struct *p,
 	 * In the first two cases, BPF schedulers may pass an arbitrary task
 	 * that the held lock doesn't cover. Refuse those.
 	 */
-	if (this_rq()->scx.in_select_cpu) {
-		if (!scx_kf_arg_task_ok(sch, p))
-			return -EINVAL;
+	якщо (this_rq()->scx.in_select_cpu) {
+		якщо (!scx_kf_arg_task_ok(sch, p))
+			повернути -EINVAL;
 		lockdep_assert_held(&p->pi_lock);
-	} else if (scx_locked_rq()) {
-		if (task_rq(p) != scx_locked_rq())
+	} інакше якщо (scx_locked_rq()) {
+		якщо (task_rq(p) != scx_locked_rq())
 			goto cross_task;
-	} else {
+	} інакше {
 		raw_spin_lock_irqsave(&p->pi_lock, irq_flags);
 		we_locked = true;
 	}
@@ -1030,22 +1030,22 @@ static s32 select_cpu_from_kfunc(struct scx_sched *sch, struct task_struct *p,
 	 */
 	migration_disabled = is_bpf_migration_disabled(p);
 
-	if (p->nr_cpus_allowed == 1 || migration_disabled)
+	якщо (p->nr_cpus_allowed == 1 || migration_disabled)
 		cpu = select_cpu_restricted(p, prev_cpu, allowed, flags,
 					    migration_disabled);
-	else
+	інакше
 		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags,
 					 allowed ?: p->cpus_ptr, flags);
 
-	if (we_locked)
+	якщо (we_locked)
 		raw_spin_unlock_irqrestore(&p->pi_lock, irq_flags);
 
-	return cpu;
+	повернути cpu;
 
 cross_task:
 	scx_error(sch, "select_cpu kfunc called cross-task on %s[%d]",
 		  p->comm, p->pid);
-	return -EINVAL;
+	повернути -EINVAL;
 }
 
 /**
@@ -1061,9 +1061,9 @@ __bpf_kfunc s32 scx_bpf_cpu_node(s32 cpu, const struct bpf_prog_aux *aux)
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch) || !scx_cpu_valid(sch, cpu, NULL))
-		return NUMA_NO_NODE;
-	return cpu_to_node(cpu);
+	якщо (unlikely(!sch) || !scx_cpu_valid(sch, cpu, NULL))
+		повернути NUMA_NO_NODE;
+	повернути cpu_to_node(cpu);
 }
 
 /**
@@ -1092,16 +1092,16 @@ __bpf_kfunc s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	якщо (unlikely(!sch))
+		повернути -ENODEV;
 
 	cpu = select_cpu_from_kfunc(sch, p, prev_cpu, wake_flags, NULL, 0);
-	if (cpu >= 0) {
+	якщо (cpu >= 0) {
 		*is_idle = true;
-		return cpu;
+		повернути cpu;
 	}
 	*is_idle = false;
-	return prev_cpu;
+	повернути prev_cpu;
 }
 
 struct scx_bpf_select_cpu_and_args {
@@ -1146,10 +1146,10 @@ __scx_bpf_select_cpu_and(struct task_struct *p, const struct cpumask *cpus_allow
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	якщо (unlikely(!sch))
+		повернути -ENODEV;
 
-	return select_cpu_from_kfunc(sch, p, args->prev_cpu, args->wake_flags,
+	повернути select_cpu_from_kfunc(sch, p, args->prev_cpu, args->wake_flags,
 				     cpus_allowed, args->flags);
 }
 
@@ -1164,8 +1164,8 @@ __bpf_kfunc s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 
 	guard(rcu)();
 
 	sch = rcu_dereference(scx_root);
-	if (unlikely(!sch))
-		return -ENODEV;
+	якщо (unlikely(!sch))
+		повернути -ENODEV;
 
 #ifdef CONFIG_EXT_SUB_SCHED
 	/*
@@ -1176,16 +1176,16 @@ __bpf_kfunc s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 
 	 * scheduler can't be determined and there is nothing obviously wrong
 	 * to report; just refuse the call.
 	 */
-	if (unlikely(!list_empty(&sch->children))) {
+	якщо (unlikely(!list_empty(&sch->children))) {
 		struct scx_sched *tsch = scx_task_sched_rcu(p);
 
-		if (tsch)
+		якщо (tsch)
 			scx_error(tsch, "__scx_bpf_select_cpu_and() must be used");
-		return -EINVAL;
+		повернути -EINVAL;
 	}
 #endif
 
-	return select_cpu_from_kfunc(sch, p, prev_cpu, wake_flags,
+	повернути select_cpu_from_kfunc(sch, p, prev_cpu, wake_flags,
 				     cpus_allowed, flags);
 }
 
@@ -1207,14 +1207,14 @@ scx_bpf_get_idle_cpumask_node(s32 node, const struct bpf_prog_aux *aux)
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return cpu_none_mask;
+	якщо (unlikely(!sch))
+		повернути cpu_none_mask;
 
 	node = validate_node(sch, node);
-	if (node < 0)
-		return cpu_none_mask;
+	якщо (node < 0)
+		повернути cpu_none_mask;
 
-	return idle_cpumask(node)->cpu;
+	повернути idle_cpumask(node)->cpu;
 }
 
 /**
@@ -1232,18 +1232,18 @@ __bpf_kfunc const struct cpumask *scx_bpf_get_idle_cpumask(const struct bpf_prog
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return cpu_none_mask;
+	якщо (unlikely(!sch))
+		повернути cpu_none_mask;
 
-	if (static_branch_unlikely(&scx_builtin_idle_per_node)) {
+	якщо (static_branch_unlikely(&scx_builtin_idle_per_node)) {
 		scx_error(sch, "SCX_OPS_BUILTIN_IDLE_PER_NODE enabled");
-		return cpu_none_mask;
+		повернути cpu_none_mask;
 	}
 
-	if (!check_builtin_idle_enabled(sch))
-		return cpu_none_mask;
+	якщо (!check_builtin_idle_enabled(sch))
+		повернути cpu_none_mask;
 
-	return idle_cpumask(NUMA_NO_NODE)->cpu;
+	повернути idle_cpumask(NUMA_NO_NODE)->cpu;
 }
 
 /**
@@ -1265,17 +1265,17 @@ scx_bpf_get_idle_smtmask_node(s32 node, const struct bpf_prog_aux *aux)
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return cpu_none_mask;
+	якщо (unlikely(!sch))
+		повернути cpu_none_mask;
 
 	node = validate_node(sch, node);
-	if (node < 0)
-		return cpu_none_mask;
+	якщо (node < 0)
+		повернути cpu_none_mask;
 
-	if (sched_smt_active())
-		return idle_cpumask(node)->smt;
-	else
-		return idle_cpumask(node)->cpu;
+	якщо (sched_smt_active())
+		повернути idle_cpumask(node)->smt;
+	інакше
+		повернути idle_cpumask(node)->cpu;
 }
 
 /**
@@ -1294,21 +1294,21 @@ __bpf_kfunc const struct cpumask *scx_bpf_get_idle_smtmask(const struct bpf_prog
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return cpu_none_mask;
+	якщо (unlikely(!sch))
+		повернути cpu_none_mask;
 
-	if (static_branch_unlikely(&scx_builtin_idle_per_node)) {
+	якщо (static_branch_unlikely(&scx_builtin_idle_per_node)) {
 		scx_error(sch, "SCX_OPS_BUILTIN_IDLE_PER_NODE enabled");
-		return cpu_none_mask;
+		повернути cpu_none_mask;
 	}
 
-	if (!check_builtin_idle_enabled(sch))
-		return cpu_none_mask;
+	якщо (!check_builtin_idle_enabled(sch))
+		повернути cpu_none_mask;
 
-	if (sched_smt_active())
-		return idle_cpumask(NUMA_NO_NODE)->smt;
-	else
-		return idle_cpumask(NUMA_NO_NODE)->cpu;
+	якщо (sched_smt_active())
+		повернути idle_cpumask(NUMA_NO_NODE)->smt;
+	інакше
+		повернути idle_cpumask(NUMA_NO_NODE)->cpu;
 }
 
 /**
@@ -1344,16 +1344,16 @@ __bpf_kfunc bool scx_bpf_test_and_clear_cpu_idle(s32 cpu, const struct bpf_prog_
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return false;
+	якщо (unlikely(!sch))
+		повернути false;
 
-	if (!check_builtin_idle_enabled(sch))
-		return false;
+	якщо (!check_builtin_idle_enabled(sch))
+		повернути false;
 
-	if (!scx_cpu_valid(sch, cpu, NULL))
-		return false;
+	якщо (!scx_cpu_valid(sch, cpu, NULL))
+		повернути false;
 
-	return scx_idle_test_and_clear_cpu(cpu);
+	повернути scx_idle_test_and_clear_cpu(cpu);
 }
 
 /**
@@ -1385,14 +1385,14 @@ __bpf_kfunc s32 scx_bpf_pick_idle_cpu_node(const struct cpumask *cpus_allowed,
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	якщо (unlikely(!sch))
+		повернути -ENODEV;
 
 	node = validate_node(sch, node);
-	if (node < 0)
-		return node;
+	якщо (node < 0)
+		повернути node;
 
-	return scx_pick_idle_cpu(cpus_allowed, node, flags);
+	повернути scx_pick_idle_cpu(cpus_allowed, node, flags);
 }
 
 /**
@@ -1426,18 +1426,18 @@ __bpf_kfunc s32 scx_bpf_pick_idle_cpu(const struct cpumask *cpus_allowed,
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	якщо (unlikely(!sch))
+		повернути -ENODEV;
 
-	if (static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node)) {
+	якщо (static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node)) {
 		scx_error(sch, "per-node idle tracking is enabled");
-		return -EBUSY;
+		повернути -EBUSY;
 	}
 
-	if (!check_builtin_idle_enabled(sch))
-		return -EBUSY;
+	якщо (!check_builtin_idle_enabled(sch))
+		повернути -EBUSY;
 
-	return scx_pick_idle_cpu(cpus_allowed, NUMA_NO_NODE, flags);
+	повернути scx_pick_idle_cpu(cpus_allowed, NUMA_NO_NODE, flags);
 }
 
 /**
@@ -1472,25 +1472,25 @@ __bpf_kfunc s32 scx_bpf_pick_any_cpu_node(const struct cpumask *cpus_allowed,
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	якщо (unlikely(!sch))
+		повернути -ENODEV;
 
 	node = validate_node(sch, node);
-	if (node < 0)
-		return node;
+	якщо (node < 0)
+		повернути node;
 
 	cpu = scx_pick_idle_cpu(cpus_allowed, node, flags);
-	if (cpu >= 0)
-		return cpu;
+	якщо (cpu >= 0)
+		повернути cpu;
 
-	if (flags & SCX_PICK_IDLE_IN_NODE)
+	якщо (flags & SCX_PICK_IDLE_IN_NODE)
 		cpu = cpumask_any_and_distribute(cpumask_of_node(node), cpus_allowed);
-	else
+	інакше
 		cpu = cpumask_any_distribute(cpus_allowed);
-	if (cpu < nr_cpu_ids)
-		return cpu;
-	else
-		return -EBUSY;
+	якщо (cpu < nr_cpu_ids)
+		повернути cpu;
+	інакше
+		повернути -EBUSY;
 }
 
 /**
@@ -1520,25 +1520,25 @@ __bpf_kfunc s32 scx_bpf_pick_any_cpu(const struct cpumask *cpus_allowed,
 	guard(rcu)();
 
 	sch = scx_prog_sched(aux);
-	if (unlikely(!sch))
-		return -ENODEV;
+	якщо (unlikely(!sch))
+		повернути -ENODEV;
 
-	if (static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node)) {
+	якщо (static_branch_maybe(CONFIG_NUMA, &scx_builtin_idle_per_node)) {
 		scx_error(sch, "per-node idle tracking is enabled");
-		return -EBUSY;
+		повернути -EBUSY;
 	}
 
-	if (static_branch_likely(&scx_builtin_idle_enabled)) {
+	якщо (static_branch_likely(&scx_builtin_idle_enabled)) {
 		cpu = scx_pick_idle_cpu(cpus_allowed, NUMA_NO_NODE, flags);
-		if (cpu >= 0)
-			return cpu;
+		якщо (cpu >= 0)
+			повернути cpu;
 	}
 
 	cpu = cpumask_any_distribute(cpus_allowed);
-	if (cpu < nr_cpu_ids)
-		return cpu;
-	else
-		return -EBUSY;
+	якщо (cpu < nr_cpu_ids)
+		повернути cpu;
+	інакше
+		повернути -EBUSY;
 }
 
 __bpf_kfunc_end_defs();
@@ -1586,9 +1586,9 @@ static const struct btf_kfunc_id_set scx_kfunc_set_select_cpu = {
 	.filter			= scx_kfunc_context_filter,
 };
 
-int scx_idle_init(void)
+ціле scx_idle_init(void)
 {
-	return register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_idle) ?:
+	повернути register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_idle) ?:
 	       register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &scx_kfunc_set_idle) ?:
 	       register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &scx_kfunc_set_idle) ?:
 	       register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &scx_kfunc_set_select_cpu) ?:
