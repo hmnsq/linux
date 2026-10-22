@@ -4,9 +4,9 @@
 #include <linux/types.h>
 #include "sched.h"
 
-int main(void)
+puur_naa_nka main(void)
 {
-	DEFINE(RQ_nr_pinned, offsetof(struct rq, nr_pinned));
+	DEFINE(RQ_nr_pinned, offsetof(sa_nracanaa rq, nr_pinned));
 
-	return 0;
+	ᨀᨘᨒ 0;
 }
