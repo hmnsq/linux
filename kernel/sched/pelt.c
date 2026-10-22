@@ -23,18 +23,18 @@
  *  Move PELT related code from fair.c into this pelt.c file
  *  Author: Vincent Guittot <vincent.guittot@linaro.org>
  */
-#include "pelt.h"
+#ಅನ್ತರ್ಭಾವ "pelt.h"
 
 /*
  * Approximate:
  *   val * y^n,    where y^32 ~= 0.5 (~1 scheduling period)
  */
-static u64 decay_load(u64 val, u64 n)
+ಸ್ಥಿರ u64 decay_load(u64 val, u64 n)
 {
-	unsigned int local_n;
+	unsigned ಪೂರ್ಣಾಙ್ಕ local_n;
 
-	if (unlikely(n > LOAD_AVG_PERIOD * 63))
-		return 0;
+	ಯದಿ (unlikely(n > LOAD_AVG_PERIOD * 63))
+		ಪ್ರತ್ಯಾಗಮ 0;
 
 	/* after bounds checking we can collapse to 32-bit */
 	local_n = n;
@@ -46,16 +46,16 @@ static u64 decay_load(u64 val, u64 n)
 	 *
 	 * To achieve constant time decay_load.
 	 */
-	if (unlikely(local_n >= LOAD_AVG_PERIOD)) {
+	ಯದಿ (unlikely(local_n >= LOAD_AVG_PERIOD)) {
 		val >>= local_n / LOAD_AVG_PERIOD;
 		local_n %= LOAD_AVG_PERIOD;
 	}
 
 	val = mul_u64_u32_shr(val, runnable_avg_yN_inv[local_n], 32);
-	return val;
+	ಪ್ರತ್ಯಾಗಮ val;
 }
 
-static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
+ಸ್ಥಿರ u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
 {
 	u32 c1, c2, c3 = d3; /* y^0 == 1 */
 
@@ -75,7 +75,7 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
 	 */
 	c2 = LOAD_AVG_MAX - decay_load(LOAD_AVG_MAX, periods) - 1024;
 
-	return c1 + c2 + c3;
+	ಪ್ರತ್ಯಾಗಮ c1 + c2 + c3;
 }
 
 /*
@@ -99,9 +99,9 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
  *      d1 y^p + 1024 \Sum y^n + d3 y^0		(Step 2)
  *                     n=1
  */
-static __always_inline u32
-accumulate_sum(u64 delta, struct sched_avg *sa,
-	       unsigned long load, unsigned long runnable, int running)
+ಸ್ಥಿರ __always_inline u32
+accumulate_sum(u64 delta, ಸಂರಚನಾ sched_avg *sa,
+	       unsigned long load, unsigned long runnable, ಪೂರ್ಣಾಙ್ಕ running)
 {
 	u32 contrib = (u32)delta; /* p == 0 -> delta < 1024 */
 	u64 periods;
@@ -112,7 +112,7 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
 	/*
 	 * Step 1: decay old *_sum if we crossed period boundaries.
 	 */
-	if (periods) {
+	ಯದಿ (periods) {
 		sa->load_sum = decay_load(sa->load_sum, periods);
 		sa->runnable_sum =
 			decay_load(sa->runnable_sum, periods);
@@ -122,7 +122,7 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
 		 * Step 2
 		 */
 		delta %= 1024;
-		if (load) {
+		ಯದಿ (load) {
 			/*
 			 * This relies on the:
 			 *
@@ -139,14 +139,14 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
 	}
 	sa->period_contrib = delta;
 
-	if (load)
+	ಯದಿ (load)
 		sa->load_sum += load * contrib;
-	if (runnable)
+	ಯದಿ (runnable)
 		sa->runnable_sum += runnable * contrib << SCHED_CAPACITY_SHIFT;
-	if (running)
+	ಯದಿ (running)
 		sa->util_sum += contrib << SCHED_CAPACITY_SHIFT;
 
-	return periods;
+	ಪ್ರತ್ಯಾಗಮ periods;
 }
 
 /*
@@ -177,9 +177,9 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
  *   load_avg = u_0` + y*(u_0 + u_1*y + u_2*y^2 + ... )
  *            = u_0 + u_1*y + u_2*y^2 + ... [re-labeling u_i --> u_{i+1}]
  */
-static __always_inline int
-___update_load_sum(u64 now, struct sched_avg *sa,
-		  unsigned long load, unsigned long runnable, int running)
+ಸ್ಥಿರ __always_inline ಪೂರ್ಣಾಙ್ಕ
+___update_load_sum(u64 now, ಸಂರಚನಾ sched_avg *sa,
+		  unsigned long load, unsigned long runnable, ಪೂರ್ಣಾಙ್ಕ running)
 {
 	u64 delta;
 
@@ -188,9 +188,9 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 * This should only happen when time goes backwards, which it
 	 * unfortunately does during sched clock init when we swap over to TSC.
 	 */
-	if ((s64)delta < 0) {
+	ಯದಿ ((s64)delta < 0) {
 		sa->last_update_time = now;
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
 	/*
@@ -198,8 +198,8 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 * approximation of 1us and fast to compute.
 	 */
 	delta >>= 10;
-	if (!delta)
-		return 0;
+	ಯದಿ (!delta)
+		ಪ್ರತ್ಯಾಗಮ 0;
 
 	sa->last_update_time += delta << 10;
 
@@ -214,7 +214,7 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 *
 	 * Also see the comment in accumulate_sum().
 	 */
-	if (!load)
+	ಯದಿ (!load)
 		runnable = running = 0;
 
 	/*
@@ -224,10 +224,10 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 	 * Step 1: accumulate *_sum since last_update_time. If we haven't
 	 * crossed period boundaries, finish.
 	 */
-	if (!accumulate_sum(delta, sa, load, runnable, running))
-		return 0;
+	ಯದಿ (!accumulate_sum(delta, sa, load, runnable, running))
+		ಪ್ರತ್ಯಾಗಮ 0;
 
-	return 1;
+	ಪ್ರತ್ಯಾಗಮ 1;
 }
 
 /*
@@ -254,8 +254,8 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
  * the period_contrib of cfs_rq when updating the sched_avg of a sched_entity
  * if it's more convenient.
  */
-static __always_inline void
-___update_load_avg(struct sched_avg *sa, unsigned long load)
+ಸ್ಥಿರ __always_inline ಶೂನ್ಯ
+___update_load_avg(ಸಂರಚನಾ sched_avg *sa, unsigned long load)
 {
 	u32 divider = get_pelt_divider(sa);
 
@@ -293,44 +293,44 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load)
  *   load_avg = \Sum se->avg.load_avg
  */
 
-int __update_load_avg_blocked_se(u64 now, struct sched_entity *se)
+ಪೂರ್ಣಾಙ್ಕ __update_load_avg_blocked_se(u64 now, ಸಂರಚನಾ sched_entity *se)
 {
-	if (___update_load_sum(now, &se->avg, 0, 0, 0)) {
+	ಯದಿ (___update_load_sum(now, &se->avg, 0, 0, 0)) {
 		___update_load_avg(&se->avg, se_weight(se));
 		trace_pelt_se_tp(se);
-		return 1;
+		ಪ್ರತ್ಯಾಗಮ 1;
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se)
+ಪೂರ್ಣಾಙ್ಕ __update_load_avg_se(u64 now, ಸಂರಚನಾ cfs_rq *cfs_rq, ಸಂರಚನಾ sched_entity *se)
 {
-	if (___update_load_sum(now, &se->avg, !!se->on_rq, se_runnable(se),
+	ಯದಿ (___update_load_sum(now, &se->avg, !!se->on_rq, se_runnable(se),
 				cfs_rq->h_curr == se)) {
 
 		___update_load_avg(&se->avg, se_weight(se));
 		cfs_se_util_change(&se->avg);
 		trace_pelt_se_tp(se);
-		return 1;
+		ಪ್ರತ್ಯಾಗಮ 1;
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq)
+ಪೂರ್ಣಾಙ್ಕ __update_load_avg_cfs_rq(u64 now, ಸಂರಚನಾ cfs_rq *cfs_rq)
 {
-	if (___update_load_sum(now, &cfs_rq->avg,
+	ಯದಿ (___update_load_sum(now, &cfs_rq->avg,
 				scale_load_down(cfs_rq->load.weight),
 				cfs_rq->h_nr_runnable,
-				cfs_rq->h_curr != NULL)) {
+				cfs_rq->h_curr != ರಿಕ್ತ)) {
 
 		___update_load_avg(&cfs_rq->avg, 1);
 		trace_pelt_cfs_tp(cfs_rq);
-		return 1;
+		ಪ್ರತ್ಯಾಗಮ 1;
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
@@ -344,19 +344,19 @@ int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq)
  *
  */
 
-int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
+ಪೂರ್ಣಾಙ್ಕ update_rt_rq_load_avg(u64 now, ಸಂರಚನಾ rq *rq, ಪೂರ್ಣಾಙ್ಕ running)
 {
-	if (___update_load_sum(now, &rq->avg_rt,
+	ಯದಿ (___update_load_sum(now, &rq->avg_rt,
 				running,
 				running,
 				running)) {
 
 		___update_load_avg(&rq->avg_rt, 1);
 		trace_pelt_rt_tp(rq);
-		return 1;
+		ಪ್ರತ್ಯಾಗಮ 1;
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 /*
@@ -370,19 +370,19 @@ int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
  *
  */
 
-int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+ಪೂರ್ಣಾಙ್ಕ update_dl_rq_load_avg(u64 now, ಸಂರಚನಾ rq *rq, ಪೂರ್ಣಾಙ್ಕ running)
 {
-	if (___update_load_sum(now, &rq->avg_dl,
+	ಯದಿ (___update_load_sum(now, &rq->avg_dl,
 				running,
 				running,
 				running)) {
 
 		___update_load_avg(&rq->avg_dl, 1);
 		trace_pelt_dl_tp(rq);
-		return 1;
+		ಪ್ರತ್ಯಾಗಮ 1;
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 #ifdef CONFIG_SCHED_HW_PRESSURE
@@ -401,18 +401,18 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
  *			capped capacity a cpu due to a HW event.
  */
 
-int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+ಪೂರ್ಣಾಙ್ಕ update_hw_load_avg(u64 now, ಸಂರಚನಾ rq *rq, u64 capacity)
 {
-	if (___update_load_sum(now, &rq->avg_hw,
+	ಯದಿ (___update_load_sum(now, &rq->avg_hw,
 			       capacity,
 			       capacity,
 			       capacity)) {
 		___update_load_avg(&rq->avg_hw, 1);
 		trace_pelt_hw_tp(rq);
-		return 1;
+		ಪ್ರತ್ಯಾಗಮ 1;
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 #endif /* CONFIG_SCHED_HW_PRESSURE */
 
@@ -428,9 +428,9 @@ int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
  *
  */
 
-int update_irq_load_avg(struct rq *rq, u64 running)
+ಪೂರ್ಣಾಙ್ಕ update_irq_load_avg(ಸಂರಚನಾ rq *rq, u64 running)
 {
-	int ret = 0;
+	ಪೂರ್ಣಾಙ್ಕ ret = 0;
 
 	/*
 	 * We can't use clock_pelt because IRQ time is not accounted in
@@ -460,12 +460,12 @@ int update_irq_load_avg(struct rq *rq, u64 running)
 				1,
 				1);
 
-	if (ret) {
+	ಯದಿ (ret) {
 		___update_load_avg(&rq->avg_irq, 1);
 		trace_pelt_irq_tp(rq);
 	}
 
-	return ret;
+	ಪ್ರತ್ಯಾಗಮ ret;
 }
 #endif /* CONFIG_HAVE_SCHED_AVG_IRQ */
 
@@ -474,16 +474,16 @@ int update_irq_load_avg(struct rq *rq, u64 running)
  * consumption. This function updates the metrics for all subsystems except for
  * the fair class. @rq must be locked and have its clock updated.
  */
-bool update_other_load_avgs(struct rq *rq)
+bool update_other_load_avgs(ಸಂರಚನಾ rq *rq)
 {
 	u64 now = rq_clock_pelt(rq);
-	const struct sched_class *curr_class = rq->donor->sched_class;
+	ಧ್ರುವ ಸಂರಚನಾ sched_class *curr_class = rq->donor->sched_class;
 	unsigned long hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
 
 	lockdep_assert_rq_held(rq);
 
 	/* hw_pressure doesn't care about invariance */
-	return update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
+	ಪ್ರತ್ಯಾಗಮ update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
 		update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
 		update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure) |
 		update_irq_load_avg(rq, 0);

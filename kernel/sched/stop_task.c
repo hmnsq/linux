@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#ಅನ್ತರ್ಭಾವ "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+select_task_rq_stop(ಸಂರಚನಾ task_struct *p, ಪೂರ್ಣಾಙ್ಕ cpu, ಪೂರ್ಣಾಙ್ಕ flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	ಪ್ರತ್ಯಾಗಮ task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+balance_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	ಪ್ರತ್ಯಾಗಮ sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ
+wakeup_preempt_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ task_struct *p, ಪೂರ್ಣಾಙ್ಕ flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+ಸ್ಥಿರ ಶೂನ್ಯ set_next_task_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ task_struct *stop, ಗಣನಾ snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	ಯದಿ (type == SNT_REPICK)
+		ಪ್ರತ್ಯಾಗಮ;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+ಸ್ಥಿರ ಸಂರಚನಾ task_struct *pick_task_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	ಯದಿ (!sched_stop_runnable(rq))
+		ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
-	return rq->stop;
+	ಪ್ರತ್ಯಾಗಮ rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ಸ್ಥಿರ ಶೂನ್ಯ
+enqueue_task_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ task_struct *p, ಪೂರ್ಣಾಙ್ಕ flags)
 {
 	add_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+ಸ್ಥಿರ bool
+dequeue_task_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ task_struct *p, ಪೂರ್ಣಾಙ್ಕ flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	ಪ್ರತ್ಯಾಗಮ true;
 }
 
-static void yield_task_stop(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ yield_task_stop(ಸಂರಚನಾ rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ಸ್ಥಿರ ಶೂನ್ಯ put_prev_task_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ task_struct *prev, ಸಂರಚನಾ task_struct *next)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+ಸ್ಥಿರ ಶೂನ್ಯ task_tick_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ task_struct *curr, ಪೂರ್ಣಾಙ್ಕ queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+ಸ್ಥಿರ ಶೂನ್ಯ switching_to_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+ಸ್ಥಿರ ಶೂನ್ಯ
+prio_changed_stop(ಸಂರಚನಾ rq *rq, ಸಂರಚನಾ task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	ಯದಿ (p->prio == oldprio)
+		ಪ್ರತ್ಯಾಗಮ;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+ಸ್ಥಿರ ಶೂನ್ಯ update_curr_stop(ಸಂರಚನಾ rq *rq)
 {
 }
 

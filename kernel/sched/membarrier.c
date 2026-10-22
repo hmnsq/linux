@@ -4,8 +4,8 @@
  *
  * membarrier system call
  */
-#include <uapi/linux/membarrier.h>
-#include "sched.h"
+#ಅನ್ತರ್ಭಾವ <uapi/linux/membarrier.h>
+#ಅನ್ತರ್ಭಾವ "sched.h"
 
 /*
  * For documentation purposes, here are some membarrier ordering
@@ -143,7 +143,7 @@
 #define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK			\
 	(MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE			\
 	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE)
-#else
+#ಅನ್ಯಥಾ
 #define MEMBARRIER_PRIVATE_EXPEDITED_SYNC_CORE_BITMASK	0
 #endif
 
@@ -151,7 +151,7 @@
 #define MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK		\
 	(MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ			\
 	| MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ)
-#else
+#ಅನ್ಯಥಾ
 #define MEMBARRIER_PRIVATE_EXPEDITED_RSEQ_BITMASK	0
 #endif
 
@@ -169,28 +169,28 @@
  * Matches memory barriers before & after rq->curr modification in scheduler.
  */
 DEFINE_LOCK_GUARD_0(mb, smp_mb(), smp_mb())
-static DEFINE_MUTEX(membarrier_ipi_mutex);
-static DEFINE_PER_CPU(struct mutex, membarrier_cpu_mutexes);
+ಸ್ಥಿರ DEFINE_MUTEX(membarrier_ipi_mutex);
+ಸ್ಥಿರ DEFINE_PER_CPU(ಸಂರಚನಾ mutex, membarrier_cpu_mutexes);
 
 #define SERIALIZE_IPI() guard(mutex)(&membarrier_ipi_mutex)
 #define SERIALIZE_IPI_CPU(cpu_id) guard(mutex)(&per_cpu(membarrier_cpu_mutexes, cpu_id))
 
-static int __init membarrier_init(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ __init membarrier_init(ಶೂನ್ಯ)
 {
-	int i;
+	ಪೂರ್ಣಾಙ್ಕ i;
 
 	for_each_possible_cpu(i)
 		mutex_init(&per_cpu(membarrier_cpu_mutexes, i));
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 core_initcall(membarrier_init);
 
-static void ipi_mb(void *info)
+ಸ್ಥಿರ ಶೂನ್ಯ ipi_mb(ಶೂನ್ಯ *info)
 {
 	smp_mb();	/* IPIs should be serializing but paranoid. */
 }
 
-static void ipi_sync_core(void *info)
+ಸ್ಥಿರ ಶೂನ್ಯ ipi_sync_core(ಶೂನ್ಯ *info)
 {
 	/*
 	 * The smp_mb() in membarrier after all the IPIs is supposed to
@@ -207,7 +207,7 @@ static void ipi_sync_core(void *info)
 	sync_core_before_usermode();
 }
 
-static void ipi_rseq(void *info)
+ಸ್ಥಿರ ಶೂನ್ಯ ipi_rseq(ಶೂನ್ಯ *info)
 {
 	/*
 	 * Ensure that all stores done by the calling thread are visible
@@ -223,18 +223,18 @@ static void ipi_rseq(void *info)
 	 * only updated if they change as a consequence of preemption after
 	 * return from this IPI.
 	 */
-	if (rseq_v2(current))
+	ಯದಿ (rseq_v2(current))
 		rseq_sched_switch_event(current);
-	else
+	ಅನ್ಯಥಾ
 		rseq_force_update();
 }
 
-static void ipi_sync_rq_state(void *info)
+ಸ್ಥಿರ ಶೂನ್ಯ ipi_sync_rq_state(ಶೂನ್ಯ *info)
 {
-	struct mm_struct *mm = (struct mm_struct *) info;
+	ಸಂರಚನಾ mm_struct *mm = (ಸಂರಚನಾ mm_struct *) info;
 
-	if (current->mm != mm)
-		return;
+	ಯದಿ (current->mm != mm)
+		ಪ್ರತ್ಯಾಗಮ;
 	this_cpu_write(runqueues.membarrier_state,
 		       atomic_read(&mm->membarrier_state));
 	/*
@@ -246,7 +246,7 @@ static void ipi_sync_rq_state(void *info)
 	smp_mb();
 }
 
-void membarrier_exec_mmap(struct mm_struct *mm)
+ಶೂನ್ಯ membarrier_exec_mmap(ಸಂರಚನಾ mm_struct *mm)
 {
 	/*
 	 * Issue a memory barrier before clearing membarrier_state to
@@ -262,28 +262,28 @@ void membarrier_exec_mmap(struct mm_struct *mm)
 	this_cpu_write(runqueues.membarrier_state, 0);
 }
 
-void membarrier_update_current_mm(struct mm_struct *next_mm)
+ಶೂನ್ಯ membarrier_update_current_mm(ಸಂರಚನಾ mm_struct *next_mm)
 {
-	struct rq *rq = this_rq();
-	int membarrier_state = 0;
+	ಸಂರಚನಾ rq *rq = this_rq();
+	ಪೂರ್ಣಾಙ್ಕ membarrier_state = 0;
 
-	if (next_mm)
+	ಯದಿ (next_mm)
 		membarrier_state = atomic_read(&next_mm->membarrier_state);
-	if (READ_ONCE(rq->membarrier_state) == membarrier_state)
-		return;
+	ಯದಿ (READ_ONCE(rq->membarrier_state) == membarrier_state)
+		ಪ್ರತ್ಯಾಗಮ;
 	WRITE_ONCE(rq->membarrier_state, membarrier_state);
 }
 
-static int membarrier_global_expedited(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ membarrier_global_expedited(ಶೂನ್ಯ)
 {
 	cpumask_var_t __free(free_cpumask_var) tmpmask = CPUMASK_VAR_NULL;
-	int cpu;
+	ಪೂರ್ಣಾಙ್ಕ cpu;
 
-	if (num_online_cpus() == 1)
-		return 0;
+	ಯದಿ (ಅಂಕೆ_online_cpus() == 1)
+		ಪ್ರತ್ಯಾಗಮ 0;
 
-	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-		return -ENOMEM;
+	ಯದಿ (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+		ಪ್ರತ್ಯಾಗಮ -ENOMEM;
 
 	guard(mb)();
 	SERIALIZE_IPI();
@@ -291,7 +291,7 @@ static int membarrier_global_expedited(void)
 
 	rcu_read_lock();
 	for_each_online_cpu(cpu) {
-		struct task_struct *p;
+		ಸಂರಚನಾ task_struct *p;
 
 		/*
 		 * Skipping the current CPU is OK even through we can be
@@ -301,62 +301,62 @@ static int membarrier_global_expedited(void)
 		 * thread. Therefore, we can skip this CPU from the
 		 * iteration.
 		 */
-		if (cpu == raw_smp_processor_id())
-			continue;
+		ಯದಿ (cpu == raw_smp_processor_id())
+			ಅನುವರ್ತ;
 
-		if (!(READ_ONCE(cpu_rq(cpu)->membarrier_state) &
+		ಯದಿ (!(READ_ONCE(cpu_rq(cpu)->membarrier_state) &
 		    MEMBARRIER_STATE_GLOBAL_EXPEDITED))
-			continue;
+			ಅನುವರ್ತ;
 
 		/*
 		 * Skip the CPU if it runs a kernel thread which is not using
 		 * a task mm.
 		 */
 		p = rcu_dereference(cpu_rq(cpu)->curr);
-		if (!p->mm)
-			continue;
+		ಯದಿ (!p->mm)
+			ಅನುವರ್ತ;
 
 		__cpumask_set_cpu(cpu, tmpmask);
 	}
 	rcu_read_unlock();
 
 	preempt_disable();
-	smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
+	smp_call_function_many(tmpmask, ipi_mb, ರಿಕ್ತ, 1);
 	preempt_enable();
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int membarrier_private_expedited(int flags, int cpu_id)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ membarrier_private_expedited(ಪೂರ್ಣಾಙ್ಕ flags, ಪೂರ್ಣಾಙ್ಕ cpu_id)
 {
-	struct mm_struct *mm = current->mm;
+	ಸಂರಚನಾ mm_struct *mm = current->mm;
 	smp_call_func_t ipi_func = ipi_mb;
 
-	if (flags == MEMBARRIER_FLAG_SYNC_CORE) {
-		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
-			return -EINVAL;
-		if (!(atomic_read(&mm->membarrier_state) &
+	ಯದಿ (flags == MEMBARRIER_FLAG_SYNC_CORE) {
+		ಯದಿ (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
+			ಪ್ರತ್ಯಾಗಮ -EINVAL;
+		ಯದಿ (!(atomic_read(&mm->membarrier_state) &
 		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY))
-			return -EPERM;
+			ಪ್ರತ್ಯಾಗಮ -EPERM;
 		ipi_func = ipi_sync_core;
 		prepare_sync_core_cmd(mm);
-	} else if (flags == MEMBARRIER_FLAG_RSEQ) {
-		if (!IS_ENABLED(CONFIG_RSEQ))
-			return -EINVAL;
-		if (!(atomic_read(&mm->membarrier_state) &
+	} ಅನ್ಯಥಾ ಯದಿ (flags == MEMBARRIER_FLAG_RSEQ) {
+		ಯದಿ (!IS_ENABLED(CONFIG_RSEQ))
+			ಪ್ರತ್ಯಾಗಮ -EINVAL;
+		ಯದಿ (!(atomic_read(&mm->membarrier_state) &
 		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY))
-			return -EPERM;
+			ಪ್ರತ್ಯಾಗಮ -EPERM;
 		ipi_func = ipi_rseq;
-	} else {
+	} ಅನ್ಯಥಾ {
 		WARN_ON_ONCE(flags);
-		if (!(atomic_read(&mm->membarrier_state) &
+		ಯದಿ (!(atomic_read(&mm->membarrier_state) &
 		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY))
-			return -EPERM;
+			ಪ್ರತ್ಯಾಗಮ -EPERM;
 	}
 
-	if (flags != MEMBARRIER_FLAG_SYNC_CORE &&
-	    (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1))
-		return 0;
+	ಯದಿ (flags != MEMBARRIER_FLAG_SYNC_CORE &&
+	    (atomic_read(&mm->mm_users) == 1 || ಅಂಕೆ_online_cpus() == 1))
+		ಪ್ರತ್ಯಾಗಮ 0;
 
 	/*
 	 * Matches memory barriers after rq->curr modification in
@@ -371,45 +371,45 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 	 * rq->curr modification in scheduler.
 	 */
 	guard(mb)();
-	if (cpu_id >= 0) {
-		if (cpu_id >= nr_cpu_ids || !cpu_possible(cpu_id))
-			return 0;
+	ಯದಿ (cpu_id >= 0) {
+		ಯದಿ (cpu_id >= nr_cpu_ids || !cpu_possible(cpu_id))
+			ಪ್ರತ್ಯಾಗಮ 0;
 
 		SERIALIZE_IPI_CPU(cpu_id);
 		guard(cpus_read_lock)();
-		struct task_struct *p;
+		ಸಂರಚನಾ task_struct *p;
 
-		if (!cpu_online(cpu_id))
-			return 0;
+		ಯದಿ (!cpu_online(cpu_id))
+			ಪ್ರತ್ಯಾಗಮ 0;
 
 		rcu_read_lock();
 		p = rcu_dereference(cpu_rq(cpu_id)->curr);
-		if (!p || p->mm != mm) {
+		ಯದಿ (!p || p->mm != mm) {
 			rcu_read_unlock();
-			return 0;
+			ಪ್ರತ್ಯಾಗಮ 0;
 		}
 		rcu_read_unlock();
 		/*
 		 * smp_call_function_single() will call ipi_func() if cpu_id
 		 * is the calling CPU.
 		 */
-		smp_call_function_single(cpu_id, ipi_func, NULL, 1);
-	} else {
+		smp_call_function_single(cpu_id, ipi_func, ರಿಕ್ತ, 1);
+	} ಅನ್ಯಥಾ {
 		cpumask_var_t __free(free_cpumask_var) tmpmask = CPUMASK_VAR_NULL;
-		int cpu;
+		ಪೂರ್ಣಾಙ್ಕ cpu;
 
-		if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-			return -ENOMEM;
+		ಯದಿ (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+			ಪ್ರತ್ಯಾಗಮ -ENOMEM;
 
 		SERIALIZE_IPI();
 		guard(cpus_read_lock)();
 
 		rcu_read_lock();
 		for_each_online_cpu(cpu) {
-			struct task_struct *p;
+			ಸಂರಚನಾ task_struct *p;
 
 			p = rcu_dereference(cpu_rq(cpu)->curr);
-			if (p && p->mm == mm)
+			ಯದಿ (p && p->mm == mm)
 				__cpumask_set_cpu(cpu, tmpmask);
 		}
 		rcu_read_unlock();
@@ -430,25 +430,25 @@ static int membarrier_private_expedited(int flags, int cpu_id)
 		 * caller.  User code is not supposed to issue syscalls at
 		 * all from inside an rseq critical section.
 		 */
-		if (flags != MEMBARRIER_FLAG_SYNC_CORE) {
+		ಯದಿ (flags != MEMBARRIER_FLAG_SYNC_CORE) {
 			preempt_disable();
-			smp_call_function_many(tmpmask, ipi_func, NULL, true);
+			smp_call_function_many(tmpmask, ipi_func, ರಿಕ್ತ, true);
 			preempt_enable();
-		} else {
-			on_each_cpu_mask(tmpmask, ipi_func, NULL, true);
+		} ಅನ್ಯಥಾ {
+			on_each_cpu_mask(tmpmask, ipi_func, ರಿಕ್ತ, true);
 		}
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int sync_runqueues_membarrier_state(struct mm_struct *mm)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ sync_runqueues_membarrier_state(ಸಂರಚನಾ mm_struct *mm)
 {
-	int membarrier_state = atomic_read(&mm->membarrier_state);
+	ಪೂರ್ಣಾಙ್ಕ membarrier_state = atomic_read(&mm->membarrier_state);
 	cpumask_var_t tmpmask;
-	int cpu;
+	ಪೂರ್ಣಾಙ್ಕ cpu;
 
-	if (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1) {
+	ಯದಿ (atomic_read(&mm->mm_users) == 1 || ಅಂಕೆ_online_cpus() == 1) {
 		this_cpu_write(runqueues.membarrier_state, membarrier_state);
 
 		/*
@@ -459,11 +459,11 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 		 * registration.
 		 */
 		smp_mb();
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	}
 
-	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
-		return -ENOMEM;
+	ಯದಿ (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
+		ಪ್ರತ್ಯಾಗಮ -ENOMEM;
 
 	/*
 	 * For mm with multiple users, we need to ensure all future
@@ -483,11 +483,11 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 	cpus_read_lock();
 	rcu_read_lock();
 	for_each_online_cpu(cpu) {
-		struct rq *rq = cpu_rq(cpu);
-		struct task_struct *p;
+		ಸಂರಚನಾ rq *rq = cpu_rq(cpu);
+		ಸಂರಚನಾ task_struct *p;
 
 		p = rcu_dereference(rq->curr);
-		if (p && p->mm == mm)
+		ಯದಿ (p && p->mm == mm)
 			__cpumask_set_cpu(cpu, tmpmask);
 	}
 	rcu_read_unlock();
@@ -497,47 +497,47 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
 	free_cpumask_var(tmpmask);
 	cpus_read_unlock();
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int membarrier_register_global_expedited(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ membarrier_register_global_expedited(ಶೂನ್ಯ)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int ret;
+	ಸಂರಚನಾ task_struct *p = current;
+	ಸಂರಚನಾ mm_struct *mm = p->mm;
+	ಪೂರ್ಣಾಙ್ಕ ret;
 
-	if (atomic_read(&mm->membarrier_state) &
+	ಯದಿ (atomic_read(&mm->membarrier_state) &
 	    MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY)
-		return 0;
+		ಪ್ರತ್ಯಾಗಮ 0;
 	atomic_or(MEMBARRIER_STATE_GLOBAL_EXPEDITED, &mm->membarrier_state);
 	ret = sync_runqueues_membarrier_state(mm);
-	if (ret)
-		return ret;
+	ಯದಿ (ret)
+		ಪ್ರತ್ಯಾಗಮ ret;
 	atomic_or(MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY,
 		  &mm->membarrier_state);
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int membarrier_register_private_expedited(int flags)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ membarrier_register_private_expedited(ಪೂರ್ಣಾಙ್ಕ flags)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int ready_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY,
+	ಸಂರಚನಾ task_struct *p = current;
+	ಸಂರಚನಾ mm_struct *mm = p->mm;
+	ಪೂರ್ಣಾಙ್ಕ ready_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY,
 	    set_state = MEMBARRIER_STATE_PRIVATE_EXPEDITED,
 	    ret;
 
-	if (flags == MEMBARRIER_FLAG_SYNC_CORE) {
-		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
-			return -EINVAL;
+	ಯದಿ (flags == MEMBARRIER_FLAG_SYNC_CORE) {
+		ಯದಿ (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
+			ಪ್ರತ್ಯಾಗಮ -EINVAL;
 		ready_state =
 			MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY;
-	} else if (flags == MEMBARRIER_FLAG_RSEQ) {
-		if (!IS_ENABLED(CONFIG_RSEQ))
-			return -EINVAL;
+	} ಅನ್ಯಥಾ ಯದಿ (flags == MEMBARRIER_FLAG_RSEQ) {
+		ಯದಿ (!IS_ENABLED(CONFIG_RSEQ))
+			ಪ್ರತ್ಯಾಗಮ -EINVAL;
 		ready_state =
 			MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY;
-	} else {
+	} ಅನ್ಯಥಾ {
 		WARN_ON_ONCE(flags);
 	}
 
@@ -546,27 +546,27 @@ static int membarrier_register_private_expedited(int flags)
 	 * groups, which use the same mm. (CLONE_VM but not
 	 * CLONE_THREAD).
 	 */
-	if ((atomic_read(&mm->membarrier_state) & ready_state) == ready_state)
-		return 0;
-	if (flags & MEMBARRIER_FLAG_SYNC_CORE)
+	ಯದಿ ((atomic_read(&mm->membarrier_state) & ready_state) == ready_state)
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಯದಿ (flags & MEMBARRIER_FLAG_SYNC_CORE)
 		set_state |= MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE;
-	if (flags & MEMBARRIER_FLAG_RSEQ)
+	ಯದಿ (flags & MEMBARRIER_FLAG_RSEQ)
 		set_state |= MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ;
 	atomic_or(set_state, &mm->membarrier_state);
 	ret = sync_runqueues_membarrier_state(mm);
-	if (ret)
-		return ret;
+	ಯದಿ (ret)
+		ಪ್ರತ್ಯಾಗಮ ret;
 	atomic_or(ready_state, &mm->membarrier_state);
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int membarrier_get_registrations(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ membarrier_get_registrations(ಶೂನ್ಯ)
 {
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
-	int registrations_mask = 0, membarrier_state, i;
-	static const int states[] = {
+	ಸಂರಚನಾ task_struct *p = current;
+	ಸಂರಚನಾ mm_struct *mm = p->mm;
+	ಪೂರ್ಣಾಙ್ಕ registrations_mask = 0, membarrier_state, i;
+	ಸ್ಥಿರ ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ states[] = {
 		MEMBARRIER_STATE_GLOBAL_EXPEDITED |
 			MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY,
 		MEMBARRIER_STATE_PRIVATE_EXPEDITED |
@@ -576,7 +576,7 @@ static int membarrier_get_registrations(void)
 		MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ |
 			MEMBARRIER_STATE_PRIVATE_EXPEDITED_RSEQ_READY
 	};
-	static const int registration_cmds[] = {
+	ಸ್ಥಿರ ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ registration_cmds[] = {
 		MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
 		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED,
 		MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE,
@@ -585,14 +585,14 @@ static int membarrier_get_registrations(void)
 	BUILD_BUG_ON(ARRAY_SIZE(states) != ARRAY_SIZE(registration_cmds));
 
 	membarrier_state = atomic_read(&mm->membarrier_state);
-	for (i = 0; i < ARRAY_SIZE(states); ++i) {
-		if (membarrier_state & states[i]) {
+	ಪ್ರತಿ (i = 0; i < ARRAY_SIZE(states); ++i) {
+		ಯದಿ (membarrier_state & states[i]) {
 			registrations_mask |= registration_cmds[i];
 			membarrier_state &= ~states[i];
 		}
 	}
 	WARN_ON_ONCE(membarrier_state != 0);
-	return registrations_mask;
+	ಪ್ರತ್ಯಾಗಮ registrations_mask;
 }
 
 /**
@@ -631,56 +631,56 @@ static int membarrier_get_registrations(void)
  *        smp_mb()           X           O            O
  *        sys_membarrier()   O           O            O
  */
-SYSCALL_DEFINE3(membarrier, int, cmd, unsigned int, flags, int, cpu_id)
+SYSCALL_DEFINE3(membarrier, ಪೂರ್ಣಾಙ್ಕ, cmd, unsigned ಪೂರ್ಣಾಙ್ಕ, flags, ಪೂರ್ಣಾಙ್ಕ, cpu_id)
 {
-	switch (cmd) {
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
-		if (unlikely(flags && flags != MEMBARRIER_CMD_FLAG_CPU))
-			return -EINVAL;
-		break;
-	default:
-		if (unlikely(flags))
-			return -EINVAL;
+	ವಿಕಲ್ಪ (cmd) {
+	ಪಕ್ಷ MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
+		ಯದಿ (unlikely(flags && flags != MEMBARRIER_CMD_FLAG_CPU))
+			ಪ್ರತ್ಯಾಗಮ -EINVAL;
+		ಭಙ್ಗ;
+	ಸ್ವಭಾವ:
+		ಯದಿ (unlikely(flags))
+			ಪ್ರತ್ಯಾಗಮ -EINVAL;
 	}
 
-	if (!(flags & MEMBARRIER_CMD_FLAG_CPU))
+	ಯದಿ (!(flags & MEMBARRIER_CMD_FLAG_CPU))
 		cpu_id = -1;
 
-	switch (cmd) {
-	case MEMBARRIER_CMD_QUERY:
+	ವಿಕಲ್ಪ (cmd) {
+	ಪಕ್ಷ MEMBARRIER_CMD_QUERY:
 	{
-		int cmd_mask = MEMBARRIER_CMD_BITMASK;
+		ಪೂರ್ಣಾಙ್ಕ cmd_mask = MEMBARRIER_CMD_BITMASK;
 
-		if (tick_nohz_full_enabled())
+		ಯದಿ (tick_nohz_full_enabled())
 			cmd_mask &= ~MEMBARRIER_CMD_GLOBAL;
-		return cmd_mask;
+		ಪ್ರತ್ಯಾಗಮ cmd_mask;
 	}
-	case MEMBARRIER_CMD_GLOBAL:
+	ಪಕ್ಷ MEMBARRIER_CMD_GLOBAL:
 		/* MEMBARRIER_CMD_GLOBAL is not compatible with nohz_full. */
-		if (tick_nohz_full_enabled())
-			return -EINVAL;
-		if (num_online_cpus() > 1)
+		ಯದಿ (tick_nohz_full_enabled())
+			ಪ್ರತ್ಯಾಗಮ -EINVAL;
+		ಯದಿ (ಅಂಕೆ_online_cpus() > 1)
 			synchronize_rcu();
-		return 0;
-	case MEMBARRIER_CMD_GLOBAL_EXPEDITED:
-		return membarrier_global_expedited();
-	case MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED:
-		return membarrier_register_global_expedited();
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED:
-		return membarrier_private_expedited(0, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED:
-		return membarrier_register_private_expedited(0);
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE:
-		return membarrier_private_expedited(MEMBARRIER_FLAG_SYNC_CORE, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE:
-		return membarrier_register_private_expedited(MEMBARRIER_FLAG_SYNC_CORE);
-	case MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
-		return membarrier_private_expedited(MEMBARRIER_FLAG_RSEQ, cpu_id);
-	case MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ:
-		return membarrier_register_private_expedited(MEMBARRIER_FLAG_RSEQ);
-	case MEMBARRIER_CMD_GET_REGISTRATIONS:
-		return membarrier_get_registrations();
-	default:
-		return -EINVAL;
+		ಪ್ರತ್ಯಾಗಮ 0;
+	ಪಕ್ಷ MEMBARRIER_CMD_GLOBAL_EXPEDITED:
+		ಪ್ರತ್ಯಾಗಮ membarrier_global_expedited();
+	ಪಕ್ಷ MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED:
+		ಪ್ರತ್ಯಾಗಮ membarrier_register_global_expedited();
+	ಪಕ್ಷ MEMBARRIER_CMD_PRIVATE_EXPEDITED:
+		ಪ್ರತ್ಯಾಗಮ membarrier_private_expedited(0, cpu_id);
+	ಪಕ್ಷ MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED:
+		ಪ್ರತ್ಯಾಗಮ membarrier_register_private_expedited(0);
+	ಪಕ್ಷ MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE:
+		ಪ್ರತ್ಯಾಗಮ membarrier_private_expedited(MEMBARRIER_FLAG_SYNC_CORE, cpu_id);
+	ಪಕ್ಷ MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE:
+		ಪ್ರತ್ಯಾಗಮ membarrier_register_private_expedited(MEMBARRIER_FLAG_SYNC_CORE);
+	ಪಕ್ಷ MEMBARRIER_CMD_PRIVATE_EXPEDITED_RSEQ:
+		ಪ್ರತ್ಯಾಗಮ membarrier_private_expedited(MEMBARRIER_FLAG_RSEQ, cpu_id);
+	ಪಕ್ಷ MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_RSEQ:
+		ಪ್ರತ್ಯಾಗಮ membarrier_register_private_expedited(MEMBARRIER_FLAG_RSEQ);
+	ಪಕ್ಷ MEMBARRIER_CMD_GET_REGISTRATIONS:
+		ಪ್ರತ್ಯಾಗಮ membarrier_get_registrations();
+	ಸ್ವಭಾವ:
+		ಪ್ರತ್ಯಾಗಮ -EINVAL;
 	}
 }

@@ -2,65 +2,65 @@
 #ifndef _KERNEL_SCHED_AUTOGROUP_H
 #define _KERNEL_SCHED_AUTOGROUP_H
 
-#include "sched.h"
+#ಅನ್ತರ್ಭಾವ "sched.h"
 
 #ifdef CONFIG_SCHED_AUTOGROUP
 
-struct autogroup {
+ಸಂರಚನಾ autogroup {
 	/*
 	 * Reference doesn't mean how many threads attach to this
 	 * autogroup now. It just stands for the number of tasks
 	 * which could use this autogroup.
 	 */
-	struct kref		kref;
-	struct task_group	*tg;
-	struct rw_semaphore	lock;
+	ಸಂರಚನಾ kref		kref;
+	ಸಂರಚನಾ task_group	*tg;
+	ಸಂರಚನಾ rw_semaphore	lock;
 	unsigned long		id;
-	int			nice;
+	ಪೂರ್ಣಾಙ್ಕ			nice;
 };
 
-extern void autogroup_init(struct task_struct *init_task);
-extern void autogroup_free(struct task_group *tg);
+ಬಾಹ್ಯ ಶೂನ್ಯ autogroup_init(ಸಂರಚನಾ task_struct *init_task);
+ಬಾಹ್ಯ ಶೂನ್ಯ autogroup_free(ಸಂರಚನಾ task_group *tg);
 
-static inline bool task_group_is_autogroup(struct task_group *tg)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ bool task_group_is_autogroup(ಸಂರಚನಾ task_group *tg)
 {
-	return !!tg->autogroup;
+	ಪ್ರತ್ಯಾಗಮ !!tg->autogroup;
 }
 
-extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
+ಬಾಹ್ಯ bool task_wants_autogroup(ಸಂರಚನಾ task_struct *p, ಸಂರಚನಾ task_group *tg);
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಸಂರಚನಾ task_group *
+autogroup_task_group(ಸಂರಚನಾ task_struct *p, ಸಂರಚನಾ task_group *tg)
 {
-	extern unsigned int sysctl_sched_autogroup_enabled;
-	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+	ಬಾಹ್ಯ unsigned ಪೂರ್ಣಾಙ್ಕ sysctl_sched_autogroup_enabled;
+	ಪೂರ್ಣಾಙ್ಕ enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
 
-	if (enabled && task_wants_autogroup(p, tg))
-		return p->signal->autogroup->tg;
+	ಯದಿ (enabled && task_wants_autogroup(p, tg))
+		ಪ್ರತ್ಯಾಗಮ p->ಸಙ್ಕೇತ->autogroup->tg;
 
-	return tg;
+	ಪ್ರತ್ಯಾಗಮ tg;
 }
 
-extern int autogroup_path(struct task_group *tg, char *buf, int buflen);
+ಬಾಹ್ಯ ಪೂರ್ಣಾಙ್ಕ autogroup_path(ಸಂರಚನಾ task_group *tg, ವರ್ಣ *buf, ಪೂರ್ಣಾಙ್ಕ buflen);
 
-#else /* !CONFIG_SCHED_AUTOGROUP: */
+#ಅನ್ಯಥಾ /* !CONFIG_SCHED_AUTOGROUP: */
 
-static inline void autogroup_init(struct task_struct *init_task) {  }
-static inline void autogroup_free(struct task_group *tg) { }
-static inline bool task_group_is_autogroup(struct task_group *tg)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ autogroup_init(ಸಂರಚನಾ task_struct *init_task) {  }
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ autogroup_free(ಸಂರಚನಾ task_group *tg) { }
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ bool task_group_is_autogroup(ಸಂರಚನಾ task_group *tg)
 {
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಸಂರಚನಾ task_group *
+autogroup_task_group(ಸಂರಚನಾ task_struct *p, ಸಂರಚನಾ task_group *tg)
 {
-	return tg;
+	ಪ್ರತ್ಯಾಗಮ tg;
 }
 
-static inline int autogroup_path(struct task_group *tg, char *buf, int buflen)
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ autogroup_path(ಸಂರಚನಾ task_group *tg, ವರ್ಣ *buf, ಪೂರ್ಣಾಙ್ಕ buflen)
 {
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
 #endif /* !CONFIG_SCHED_AUTOGROUP */
