@@ -4,19 +4,19 @@
  *
  * (C) 2004 Nadia Yvette Chambers, Oracle
  */
-#include "sched.h"
-#include <linux/wait_bit.h>
+#अन्तर्भाव "sched.h"
+#अन्तर्भाव <linux/wait_bit.h>
 
-void __init_waitqueue_head(struct wait_queue_head *wq_head, const char *name, struct lock_class_key *key)
+शून्य __init_waitqueue_head(संरचना wait_queue_head *wq_head, ध्रुव वर्ण *name, संरचना lock_class_कुंजी *कुंजी)
 {
 	spin_lock_init(&wq_head->lock);
-	lockdep_set_class_and_name(&wq_head->lock, key, name);
+	lockdep_set_class_and_name(&wq_head->lock, कुंजी, name);
 	INIT_LIST_HEAD(&wq_head->head);
 }
 
-EXPORT_SYMBOL(__init_waitqueue_head);
+EXPORT_प्रतीक(__init_waitqueue_head);
 
-void add_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+शून्य add_wait_queue(संरचना wait_queue_head *wq_head, संरचना wait_queue_entry *wq_entry)
 {
 	unsigned long flags;
 
@@ -25,9 +25,9 @@ void add_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq
 	__add_wait_queue(wq_head, wq_entry);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL(add_wait_queue);
+EXPORT_प्रतीक(add_wait_queue);
 
-void add_wait_queue_exclusive(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+शून्य add_wait_queue_exclusive(संरचना wait_queue_head *wq_head, संरचना wait_queue_entry *wq_entry)
 {
 	unsigned long flags;
 
@@ -36,9 +36,9 @@ void add_wait_queue_exclusive(struct wait_queue_head *wq_head, struct wait_queue
 	__add_wait_queue_entry_tail(wq_head, wq_entry);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL(add_wait_queue_exclusive);
+EXPORT_प्रतीक(add_wait_queue_exclusive);
 
-void add_wait_queue_priority(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+शून्य add_wait_queue_priority(संरचना wait_queue_head *wq_head, संरचना wait_queue_entry *wq_entry)
 {
 	unsigned long flags;
 
@@ -47,26 +47,26 @@ void add_wait_queue_priority(struct wait_queue_head *wq_head, struct wait_queue_
 	__add_wait_queue(wq_head, wq_entry);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL_GPL(add_wait_queue_priority);
+EXPORT_प्रतीक_GPL(add_wait_queue_priority);
 
-int add_wait_queue_priority_exclusive(struct wait_queue_head *wq_head,
-				      struct wait_queue_entry *wq_entry)
+पूर्णाङ्क add_wait_queue_priority_exclusive(संरचना wait_queue_head *wq_head,
+				      संरचना wait_queue_entry *wq_entry)
 {
-	struct list_head *head = &wq_head->head;
+	संरचना list_head *head = &wq_head->head;
 
 	guard(spinlock_irqsave)(&wq_head->lock);
 
-	if (!list_empty(head) &&
+	यदि (!list_empty(head) &&
 	    (list_first_entry(head, typeof(*wq_entry), entry)->flags & WQ_FLAG_PRIORITY))
-		return -EBUSY;
+		प्रत्यागम -EBUSY;
 
 	wq_entry->flags |= WQ_FLAG_EXCLUSIVE | WQ_FLAG_PRIORITY;
 	list_add(&wq_entry->entry, head);
-	return 0;
+	प्रत्यागम 0;
 }
-EXPORT_SYMBOL_GPL(add_wait_queue_priority_exclusive);
+EXPORT_प्रतीक_GPL(add_wait_queue_priority_exclusive);
 
-void remove_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+शून्य remove_wait_queue(संरचना wait_queue_head *wq_head, संरचना wait_queue_entry *wq_entry)
 {
 	unsigned long flags;
 
@@ -74,7 +74,7 @@ void remove_wait_queue(struct wait_queue_head *wq_head, struct wait_queue_entry 
 	__remove_wait_queue(wq_head, wq_entry);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL(remove_wait_queue);
+EXPORT_प्रतीक(remove_wait_queue);
 
 /*
  * The core wakeup function. Non-exclusive wakeups (nr_exclusive == 0) just
@@ -89,8 +89,8 @@ EXPORT_SYMBOL(remove_wait_queue);
  * started to run but is not in state TASK_RUNNING. try_to_wake_up() returns
  * zero in this (rare) case, and we handle it by continuing to scan the queue.
  */
-static int __wake_up_common(struct wait_queue_head *wq_head, unsigned int mode,
-			int nr_exclusive, int wake_flags, void *key)
+स्थिर पूर्णाङ्क __wake_up_common(संरचना wait_queue_head *wq_head, unsigned पूर्णाङ्क mode,
+			पूर्णाङ्क nr_exclusive, पूर्णाङ्क wake_flags, शून्य *कुंजी)
 {
 	wait_queue_entry_t *curr, *next;
 
@@ -98,35 +98,35 @@ static int __wake_up_common(struct wait_queue_head *wq_head, unsigned int mode,
 
 	curr = list_first_entry(&wq_head->head, wait_queue_entry_t, entry);
 
-	if (&curr->entry == &wq_head->head)
-		return nr_exclusive;
+	यदि (&curr->entry == &wq_head->head)
+		प्रत्यागम nr_exclusive;
 
 	list_for_each_entry_safe_from(curr, next, &wq_head->head, entry) {
 		unsigned flags = curr->flags;
-		int ret;
+		पूर्णाङ्क ret;
 
-		ret = curr->func(curr, mode, wake_flags, key);
-		if (ret < 0)
-			break;
-		if (ret && (flags & WQ_FLAG_EXCLUSIVE) && !--nr_exclusive)
-			break;
+		ret = curr->func(curr, mode, wake_flags, कुंजी);
+		यदि (ret < 0)
+			भङ्ग;
+		यदि (ret && (flags & WQ_FLAG_EXCLUSIVE) && !--nr_exclusive)
+			भङ्ग;
 	}
 
-	return nr_exclusive;
+	प्रत्यागम nr_exclusive;
 }
 
-static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int mode,
-			int nr_exclusive, int wake_flags, void *key)
+स्थिर पूर्णाङ्क __wake_up_common_lock(संरचना wait_queue_head *wq_head, unsigned पूर्णाङ्क mode,
+			पूर्णाङ्क nr_exclusive, पूर्णाङ्क wake_flags, शून्य *कुंजी)
 {
 	unsigned long flags;
-	int remaining;
+	पूर्णाङ्क remaining;
 
 	spin_lock_irqsave(&wq_head->lock, flags);
 	remaining = __wake_up_common(wq_head, mode, nr_exclusive, wake_flags,
-			key);
+			कुंजी);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 
-	return nr_exclusive - remaining;
+	प्रत्यागम nr_exclusive - remaining;
 }
 
 /**
@@ -140,32 +140,32 @@ static int __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int m
  * before accessing the task state.  Returns the number of exclusive
  * tasks that were awaken.
  */
-int __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
-	      int nr_exclusive, void *key)
+पूर्णाङ्क __wake_up(संरचना wait_queue_head *wq_head, unsigned पूर्णाङ्क mode,
+	      पूर्णाङ्क nr_exclusive, शून्य *कुंजी)
 {
-	return __wake_up_common_lock(wq_head, mode, nr_exclusive, 0, key);
+	प्रत्यागम __wake_up_common_lock(wq_head, mode, nr_exclusive, 0, कुंजी);
 }
-EXPORT_SYMBOL(__wake_up);
+EXPORT_प्रतीक(__wake_up);
 
-void __wake_up_on_current_cpu(struct wait_queue_head *wq_head, unsigned int mode, void *key)
+शून्य __wake_up_on_current_cpu(संरचना wait_queue_head *wq_head, unsigned पूर्णाङ्क mode, शून्य *कुंजी)
 {
-	__wake_up_common_lock(wq_head, mode, 1, WF_CURRENT_CPU, key);
+	__wake_up_common_lock(wq_head, mode, 1, WF_CURRENT_CPU, कुंजी);
 }
 
 /*
  * Same as __wake_up but called with the spinlock in wait_queue_head_t held.
  */
-void __wake_up_locked(struct wait_queue_head *wq_head, unsigned int mode, int nr)
+शून्य __wake_up_locked(संरचना wait_queue_head *wq_head, unsigned पूर्णाङ्क mode, पूर्णाङ्क nr)
 {
-	__wake_up_common(wq_head, mode, nr, 0, NULL);
+	__wake_up_common(wq_head, mode, nr, 0, रिक्त);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked);
+EXPORT_प्रतीक_GPL(__wake_up_locked);
 
-void __wake_up_locked_key(struct wait_queue_head *wq_head, unsigned int mode, void *key)
+शून्य __wake_up_locked_key(संरचना wait_queue_head *wq_head, unsigned पूर्णाङ्क mode, शून्य *कुंजी)
 {
-	__wake_up_common(wq_head, mode, 1, 0, key);
+	__wake_up_common(wq_head, mode, 1, 0, कुंजी);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked_key);
+EXPORT_प्रतीक_GPL(__wake_up_locked_key);
 
 /**
  * __wake_up_sync_key - wake up threads blocked on a waitqueue.
@@ -179,15 +179,15 @@ EXPORT_SYMBOL_GPL(__wake_up_locked_key);
  * If this function wakes up a task, it executes a full memory barrier
  * before accessing the task state.
  */
-void __wake_up_sync_key(struct wait_queue_head *wq_head, unsigned int mode,
-			void *key)
+शून्य __wake_up_sync_key(संरचना wait_queue_head *wq_head, unsigned पूर्णाङ्क mode,
+			शून्य *कुंजी)
 {
-	if (unlikely(!wq_head))
-		return;
+	यदि (unlikely(!wq_head))
+		प्रत्यागम;
 
-	__wake_up_common_lock(wq_head, mode, 1, WF_SYNC, key);
+	__wake_up_common_lock(wq_head, mode, 1, WF_SYNC, कुंजी);
 }
-EXPORT_SYMBOL_GPL(__wake_up_sync_key);
+EXPORT_प्रतीक_GPL(__wake_up_sync_key);
 
 /**
  * __wake_up_locked_sync_key - wake up a thread blocked on a locked waitqueue.
@@ -197,25 +197,25 @@ EXPORT_SYMBOL_GPL(__wake_up_sync_key);
  *
  * Same as __wake_up_sync_key(), but called with @wq_head->lock held.
  */
-void __wake_up_locked_sync_key(struct wait_queue_head *wq_head,
-			       unsigned int mode, void *key)
+शून्य __wake_up_locked_sync_key(संरचना wait_queue_head *wq_head,
+			       unsigned पूर्णाङ्क mode, शून्य *कुंजी)
 {
-        __wake_up_common(wq_head, mode, 1, WF_SYNC, key);
+        __wake_up_common(wq_head, mode, 1, WF_SYNC, कुंजी);
 }
-EXPORT_SYMBOL_GPL(__wake_up_locked_sync_key);
+EXPORT_प्रतीक_GPL(__wake_up_locked_sync_key);
 
 /*
  * __wake_up_sync - see __wake_up_sync_key()
  */
-void __wake_up_sync(struct wait_queue_head *wq_head, unsigned int mode)
+शून्य __wake_up_sync(संरचना wait_queue_head *wq_head, unsigned पूर्णाङ्क mode)
 {
-	__wake_up_sync_key(wq_head, mode, NULL);
+	__wake_up_sync_key(wq_head, mode, रिक्त);
 }
-EXPORT_SYMBOL_GPL(__wake_up_sync);	/* For internal use only */
+EXPORT_प्रतीक_GPL(__wake_up_sync);	/* For internal use only */
 
-void __wake_up_pollfree(struct wait_queue_head *wq_head)
+शून्य __wake_up_pollfree(संरचना wait_queue_head *wq_head)
 {
-	__wake_up(wq_head, TASK_NORMAL, 0, poll_to_key(EPOLLHUP | POLLFREE));
+	__wake_up(wq_head, TASK_NORMAL, 0, poll_to_कुंजी(EPOLLHUP | POLLFREE));
 	/* POLLFREE must have cleared the queue. */
 	WARN_ON_ONCE(waitqueue_active(wq_head));
 }
@@ -232,55 +232,55 @@ void __wake_up_pollfree(struct wait_queue_head *wq_head)
  * stops them from bleeding out - it would still allow subsequent
  * loads to move into the critical region).
  */
-void
-prepare_to_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
+शून्य
+prepare_to_wait(संरचना wait_queue_head *wq_head, संरचना wait_queue_entry *wq_entry, पूर्णाङ्क state)
 {
 	unsigned long flags;
 
 	wq_entry->flags &= ~WQ_FLAG_EXCLUSIVE;
 	spin_lock_irqsave(&wq_head->lock, flags);
-	if (list_empty(&wq_entry->entry))
+	यदि (list_empty(&wq_entry->entry))
 		__add_wait_queue(wq_head, wq_entry);
 	set_current_state(state);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 }
-EXPORT_SYMBOL(prepare_to_wait);
+EXPORT_प्रतीक(prepare_to_wait);
 
 /* Returns true if we are the first waiter in the queue, false otherwise. */
 bool
-prepare_to_wait_exclusive(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
+prepare_to_wait_exclusive(संरचना wait_queue_head *wq_head, संरचना wait_queue_entry *wq_entry, पूर्णाङ्क state)
 {
 	unsigned long flags;
 	bool was_empty = false;
 
 	wq_entry->flags |= WQ_FLAG_EXCLUSIVE;
 	spin_lock_irqsave(&wq_head->lock, flags);
-	if (list_empty(&wq_entry->entry)) {
+	यदि (list_empty(&wq_entry->entry)) {
 		was_empty = list_empty(&wq_head->head);
 		__add_wait_queue_entry_tail(wq_head, wq_entry);
 	}
 	set_current_state(state);
 	spin_unlock_irqrestore(&wq_head->lock, flags);
-	return was_empty;
+	प्रत्यागम was_empty;
 }
-EXPORT_SYMBOL(prepare_to_wait_exclusive);
+EXPORT_प्रतीक(prepare_to_wait_exclusive);
 
-void init_wait_entry(struct wait_queue_entry *wq_entry, int flags)
+शून्य init_wait_entry(संरचना wait_queue_entry *wq_entry, पूर्णाङ्क flags)
 {
 	wq_entry->flags = flags;
-	wq_entry->private = current;
+	wq_entry->गुप्त = current;
 	wq_entry->func = autoremove_wake_function;
 	INIT_LIST_HEAD(&wq_entry->entry);
 }
-EXPORT_SYMBOL(init_wait_entry);
+EXPORT_प्रतीक(init_wait_entry);
 
-long prepare_to_wait_event(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry, int state)
+long prepare_to_wait_event(संरचना wait_queue_head *wq_head, संरचना wait_queue_entry *wq_entry, पूर्णाङ्क state)
 {
 	unsigned long flags;
 	long ret = 0;
 
 	spin_lock_irqsave(&wq_head->lock, flags);
-	if (signal_pending_state(state, current)) {
+	यदि (signal_pending_state(state, current)) {
 		/*
 		 * Exclusive waiter must not fail if it was selected by wakeup,
 		 * it should "consume" the condition we were waiting for.
@@ -295,20 +295,20 @@ long prepare_to_wait_event(struct wait_queue_head *wq_head, struct wait_queue_en
 		 */
 		list_del_init(&wq_entry->entry);
 		ret = -ERESTARTSYS;
-	} else {
-		if (list_empty(&wq_entry->entry)) {
-			if (wq_entry->flags & WQ_FLAG_EXCLUSIVE)
+	} अन्यथा {
+		यदि (list_empty(&wq_entry->entry)) {
+			यदि (wq_entry->flags & WQ_FLAG_EXCLUSIVE)
 				__add_wait_queue_entry_tail(wq_head, wq_entry);
-			else
+			अन्यथा
 				__add_wait_queue(wq_head, wq_entry);
 		}
 		set_current_state(state);
 	}
 	spin_unlock_irqrestore(&wq_head->lock, flags);
 
-	return ret;
+	प्रत्यागम ret;
 }
-EXPORT_SYMBOL(prepare_to_wait_event);
+EXPORT_प्रतीक(prepare_to_wait_event);
 
 /*
  * Note! These two wait functions are entered with the
@@ -317,39 +317,39 @@ EXPORT_SYMBOL(prepare_to_wait_event);
  * condition in the caller before they add the wait
  * entry to the wake queue.
  */
-int do_wait_intr(wait_queue_head_t *wq, wait_queue_entry_t *wait)
+पूर्णाङ्क do_wait_intr(wait_queue_head_t *wq, wait_queue_entry_t *wait)
 {
-	if (likely(list_empty(&wait->entry)))
+	यदि (likely(list_empty(&wait->entry)))
 		__add_wait_queue_entry_tail(wq, wait);
 
 	set_current_state(TASK_INTERRUPTIBLE);
-	if (signal_pending(current))
-		return -ERESTARTSYS;
+	यदि (signal_pending(current))
+		प्रत्यागम -ERESTARTSYS;
 
 	spin_unlock(&wq->lock);
 	schedule();
 	spin_lock(&wq->lock);
 
-	return 0;
+	प्रत्यागम 0;
 }
-EXPORT_SYMBOL(do_wait_intr);
+EXPORT_प्रतीक(do_wait_intr);
 
-int do_wait_intr_irq(wait_queue_head_t *wq, wait_queue_entry_t *wait)
+पूर्णाङ्क do_wait_intr_irq(wait_queue_head_t *wq, wait_queue_entry_t *wait)
 {
-	if (likely(list_empty(&wait->entry)))
+	यदि (likely(list_empty(&wait->entry)))
 		__add_wait_queue_entry_tail(wq, wait);
 
 	set_current_state(TASK_INTERRUPTIBLE);
-	if (signal_pending(current))
-		return -ERESTARTSYS;
+	यदि (signal_pending(current))
+		प्रत्यागम -ERESTARTSYS;
 
 	spin_unlock_irq(&wq->lock);
 	schedule();
 	spin_lock_irq(&wq->lock);
 
-	return 0;
+	प्रत्यागम 0;
 }
-EXPORT_SYMBOL(do_wait_intr_irq);
+EXPORT_प्रतीक(do_wait_intr_irq);
 
 /**
  * finish_wait - clean up after waiting in a queue
@@ -360,7 +360,7 @@ EXPORT_SYMBOL(do_wait_intr_irq);
  * the wait descriptor from the given waitqueue if still
  * queued.
  */
-void finish_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_entry)
+शून्य finish_wait(संरचना wait_queue_head *wq_head, संरचना wait_queue_entry *wq_entry)
 {
 	unsigned long flags;
 
@@ -378,24 +378,24 @@ void finish_wait(struct wait_queue_head *wq_head, struct wait_queue_entry *wq_en
 	 *    have _one_ other CPU that looks at or modifies
 	 *    the list).
 	 */
-	if (!list_empty_careful(&wq_entry->entry)) {
+	यदि (!list_empty_careful(&wq_entry->entry)) {
 		spin_lock_irqsave(&wq_head->lock, flags);
 		list_del_init(&wq_entry->entry);
 		spin_unlock_irqrestore(&wq_head->lock, flags);
 	}
 }
-EXPORT_SYMBOL(finish_wait);
+EXPORT_प्रतीक(finish_wait);
 
-int autoremove_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
+पूर्णाङ्क autoremove_wake_function(संरचना wait_queue_entry *wq_entry, unsigned mode, पूर्णाङ्क sync, शून्य *कुंजी)
 {
-	int ret = default_wake_function(wq_entry, mode, sync, key);
+	पूर्णाङ्क ret = default_wake_function(wq_entry, mode, sync, कुंजी);
 
-	if (ret)
+	यदि (ret)
 		list_del_init_careful(&wq_entry->entry);
 
-	return ret;
+	प्रत्यागम ret;
 }
-EXPORT_SYMBOL(autoremove_wake_function);
+EXPORT_प्रतीक(autoremove_wake_function);
 
 /*
  * DEFINE_WAIT_FUNC(wait, woken_wake_func);
@@ -417,7 +417,7 @@ EXPORT_SYMBOL(autoremove_wake_function);
  * }						smp_mb(); // C
  * remove_wait_queue(&wq_head, &wait);		wq_entry->flags |= WQ_FLAG_WOKEN;
  */
-long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
+long wait_woken(संरचना wait_queue_entry *wq_entry, unsigned mode, long timeout)
 {
 	/*
 	 * The below executes an smp_mb(), which matches with the full barrier
@@ -426,7 +426,7 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
 	 * or woken_wake_function() sees our store to current->state.
 	 */
 	set_current_state(mode); /* A */
-	if (!(wq_entry->flags & WQ_FLAG_WOKEN) && !kthread_should_stop_or_park())
+	यदि (!(wq_entry->flags & WQ_FLAG_WOKEN) && !kthread_should_stop_or_park())
 		timeout = schedule_timeout(timeout);
 	__set_current_state(TASK_RUNNING);
 
@@ -438,30 +438,30 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
 	 */
 	smp_store_mb(wq_entry->flags, wq_entry->flags & ~WQ_FLAG_WOKEN); /* B */
 
-	return timeout;
+	प्रत्यागम timeout;
 }
-EXPORT_SYMBOL(wait_woken);
+EXPORT_प्रतीक(wait_woken);
 
-int woken_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
+पूर्णाङ्क woken_wake_function(संरचना wait_queue_entry *wq_entry, unsigned mode, पूर्णाङ्क sync, शून्य *कुंजी)
 {
 	/* Pairs with the smp_store_mb() in wait_woken(). */
 	smp_mb(); /* C */
 	wq_entry->flags |= WQ_FLAG_WOKEN;
 
-	return default_wake_function(wq_entry, mode, sync, key);
+	प्रत्यागम default_wake_function(wq_entry, mode, sync, कुंजी);
 }
-EXPORT_SYMBOL(woken_wake_function);
+EXPORT_प्रतीक(woken_wake_function);
 
-int woken_wake_bit_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *arg)
+पूर्णाङ्क woken_wake_bit_function(संरचना wait_queue_entry *wq_entry, unsigned mode, पूर्णाङ्क sync, शून्य *arg)
 {
-	struct wait_bit_key *key = __var_wake_key(wq_entry, arg);
-	if (!key)
-		return 0;
+	संरचना wait_bit_कुंजी *कुंजी = __var_wake_key(wq_entry, arg);
+	यदि (!कुंजी)
+		प्रत्यागम 0;
 
 	/* Pairs with the smp_store_mb() in wait_woken(). */
 	smp_mb(); /* C */
 	wq_entry->flags |= WQ_FLAG_WOKEN;
 
-	return default_wake_function(wq_entry, mode, sync, key);
+	प्रत्यागम default_wake_function(wq_entry, mode, sync, कुंजी);
 }
-EXPORT_SYMBOL(woken_wake_bit_function);
+EXPORT_प्रतीक(woken_wake_bit_function);
