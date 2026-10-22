@@ -24,7 +24,7 @@
 #define scx_add_event(sch, name, cnt) do {					\
 	this_cpu_add((sch)->pcpu->event_stats.name, (cnt));			\
 	trace_sched_ext_event(#name, (cnt));					\
-} while(0)
+} пока(0)
 
 /**
  * __scx_add_event - Increase an event counter for 'name' by 'cnt'
@@ -37,7 +37,7 @@
 #define __scx_add_event(sch, name, cnt) do {					\
 	__this_cpu_add((sch)->pcpu->event_stats.name, (cnt));			\
 	trace_sched_ext_event(#name, cnt);					\
-} while(0)
+} пока(0)
 
 #define SCX_OP_IDX(op)		(offsetof(struct sched_ext_ops, op) / sizeof(void (*)(void)))
 #define SCX_MOFF_IDX(moff)	((moff) / sizeof(void (*)(void)))
@@ -1484,7 +1484,7 @@ enum scx_cap_flags {
 #ifdef CONFIG_EXT_SUB_SCHED
 /* iterate set bits in a u64 cap mask */
 #define scx_for_each_cap_bit(cap_bit, caps)				\
-	for (u64 __caps = (caps);					\
+	для (u64 __caps = (caps);					\
 	     __caps && ((cap_bit) = __ffs64(__caps), true);		\
 	     __caps &= __caps - 1)
 
@@ -1693,7 +1693,7 @@ struct scx_sched {
  */
 static inline void *scx_arena_to_kaddr(struct scx_sched *sch, const void *bpf_ptr)
 {
-	return (void *)(sch->arena_kern_base + (u32)(uintptr_t)bpf_ptr);
+	вернуть (void *)(sch->arena_kern_base + (u32)(uintptr_t)bpf_ptr);
 }
 
 /**
@@ -1706,7 +1706,7 @@ static inline void *scx_arena_to_kaddr(struct scx_sched *sch, const void *bpf_pt
  */
 static inline uintptr_t scx_kaddr_to_arena(struct scx_sched *sch, const void *kaddr)
 {
-	return (uintptr_t)kaddr - sch->arena_kern_base;
+	вернуть (uintptr_t)kaddr - sch->arena_kern_base;
 }
 
 enum scx_wake_flags {
@@ -2048,7 +2048,7 @@ struct scx_enable_cmd {
 	};
 	bool			is_cid_type;
 	struct bpf_map		*arena_map;	/* arena ref to transfer to sch */
-	int			ret;
+	целое			ret;
 };
 
 /* string formatting from BPF */
@@ -2088,7 +2088,7 @@ DECLARE_PER_CPU(struct rq *, scx_locked_rq_state);
  */
 DECLARE_STATIC_KEY_FALSE(__scx_is_cid_type);
 
-int scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id);
+целое scx_kfunc_context_filter(const struct bpf_prog *prog, u32 kfunc_id);
 
 bool scx_cpu_valid(struct scx_sched *sch, s32 cpu, const char *where);
 
@@ -2109,7 +2109,7 @@ void scx_task_slice_ended(struct rq *rq, struct task_struct *p);
 void scx_task_unlink_from_dsq(struct task_struct *p, struct scx_dispatch_q *dsq);
 void scx_dispatch_dequeue(struct rq *rq, struct task_struct *p);
 void scx_do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
-			 int sticky_cpu);
+			 целое sticky_cpu);
 void scx_move_local_task_to_local_dsq(struct scx_sched *sch, struct task_struct *p,
 				      u64 enq_flags, struct rq *dst_rq);
 bool scx_consume_dispatch_q(struct scx_sched *sch, struct rq *rq,
@@ -2124,13 +2124,13 @@ u64 __scx_bpf_now(struct rq *rq);
 void schedule_dsq_reenq(struct scx_sched *sch, struct scx_dispatch_q *dsq,
 			u64 reenq_flags, struct rq *locked_rq);
 void scx_wait_dispatching(struct task_struct *p);
-int __scx_init_task(struct scx_sched *sch, struct task_struct *p,
+целое __scx_init_task(struct scx_sched *sch, struct task_struct *p,
 		    struct cgroup *cgrp, bool fork);
 void scx_enable_task(struct scx_sched *sch, struct task_struct *p);
 void __scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p);
 void scx_sub_init_cancel_task(struct scx_sched *sch, struct task_struct *p);
 void scx_disable_and_exit_task(struct scx_sched *sch, struct task_struct *p);
-#if defined(CONFIG_EXT_GROUP_SCHED) || defined(CONFIG_EXT_SUB_SCHED)
+#если defined(CONFIG_EXT_GROUP_SCHED) || defined(CONFIG_EXT_SUB_SCHED)
 void scx_cgroup_lock(void);
 void scx_cgroup_unlock(void);
 #endif
@@ -2145,8 +2145,8 @@ void scx_flush_disable_work(struct scx_sched *sch);
 struct scx_sched *scx_alloc_and_add_sched(struct scx_enable_cmd *cmd,
 					  struct cgroup *cgrp,
 					  struct scx_sched *parent);
-int scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops);
-int scx_sched_sysfs_add(struct scx_sched *sch);
+целое scx_validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops);
+целое scx_sched_sysfs_add(struct scx_sched *sch);
 bool scx_is_descendant(struct scx_sched *sch, struct scx_sched *ancestor);
 __printf(5, 0) bool scx_exit_bstr(struct scx_sched *sch, enum scx_exit_kind kind,
 				  s64 exit_code, struct scx_sched *fmt_blame,
@@ -2178,7 +2178,7 @@ extern struct scx_sched *scx_enabling_sub_sched;
  */
 static inline struct scx_sched *scx_root_protected_live(void)
 {
-	return rcu_dereference_protected(scx_root, true);
+	вернуть rcu_dereference_protected(scx_root, true);
 }
 
 /**
@@ -2190,14 +2190,14 @@ static inline struct scx_sched *scx_root_protected_live(void)
  */
 static inline struct scx_sched *scx_root_protected(void)
 {
-	return rcu_dereference_protected(scx_root,
+	вернуть rcu_dereference_protected(scx_root,
 					 lockdep_is_cpus_held() ||
 					 lockdep_is_held(&scx_enable_mutex));
 }
 
 static inline struct scx_dispatch_q *scx_bypass_dsq(struct scx_sched *sch, s32 cpu)
 {
-	return &per_cpu_ptr(sch->pcpu, cpu)->bypass_dsq;
+	вернуть &per_cpu_ptr(sch->pcpu, cpu)->bypass_dsq;
 }
 
 /**
@@ -2217,7 +2217,7 @@ static inline struct scx_dispatch_q *scx_bypass_dsq(struct scx_sched *sch, s32 c
  */
 static inline bool scx_bypass_dsp_enabled(struct scx_sched *sch)
 {
-	return unlikely(atomic_read(&sch->bypass_dsp_enable_depth));
+	вернуть unlikely(atomic_read(&sch->bypass_dsp_enable_depth));
 }
 
 /**
@@ -2233,21 +2233,21 @@ static inline bool scx_bypass_dsp_enabled(struct scx_sched *sch)
  * value fails IS_ERR() test after being encoded with ERR_PTR() and then is
  * handled as a pointer.
  */
-static inline int scx_ops_sanitize_err(struct scx_sched *sch, const char *ops_name, s32 err)
+static inline целое scx_ops_sanitize_err(struct scx_sched *sch, const char *ops_name, s32 err)
 {
-	if (err < 0 && err >= -MAX_ERRNO)
-		return err;
+	если (err < 0 && err >= -MAX_ERRNO)
+		вернуть err;
 
 	scx_error(sch, "ops.%s() returned an invalid errno %d", ops_name, err);
-	return -EPROTO;
+	вернуть -EPROTO;
 }
 
 static inline void scx_schedule_reenq_local(struct rq *rq, u64 reenq_flags)
 {
 	struct scx_sched *root = rcu_dereference_sched(scx_root);
 
-	if (WARN_ON_ONCE(!root))
-		return;
+	если (WARN_ON_ONCE(!root))
+		вернуть;
 
 	schedule_dsq_reenq(root, &rq->scx.local_dsq, reenq_flags, rq);
 }
@@ -2258,7 +2258,7 @@ static inline void scx_schedule_reenq_local(struct rq *rq, u64 reenq_flags)
  */
 static inline struct rq *scx_locked_rq(void)
 {
-	return __this_cpu_read(scx_locked_rq_state);
+	вернуть __this_cpu_read(scx_locked_rq_state);
 }
 
 static inline void update_locked_rq(struct rq *rq)
@@ -2268,7 +2268,7 @@ static inline void update_locked_rq(struct rq *rq)
 	 * or incorrect assumptions about the context in which a kfunc or
 	 * callback is executed.
 	 */
-	if (rq)
+	если (rq)
 		lockdep_assert_rq_held(rq);
 	__this_cpu_write(scx_locked_rq_state, rq);
 }
@@ -2286,14 +2286,14 @@ static inline void update_locked_rq(struct rq *rq)
 do {										\
 	struct rq *__prev_locked_rq;						\
 										\
-	if (locked_rq) {							\
+	если (locked_rq) {							\
 		__prev_locked_rq = scx_locked_rq();				\
 		update_locked_rq(locked_rq);					\
 	}									\
 	(sch)->ops.op(args);							\
-	if (locked_rq)								\
+	если (locked_rq)								\
 		update_locked_rq(__prev_locked_rq);				\
-} while (0)
+} пока (0)
 
 #define SCX_CALL_OP(sch, op, locked_rq, args...)				\
 	__SCX_CALL_OP(sch, ops, op, locked_rq, ##args)
@@ -2303,12 +2303,12 @@ do {										\
 	struct rq *__prev_locked_rq;						\
 	__typeof__((sch)->ops.op(args)) __ret;					\
 										\
-	if (locked_rq) {							\
+	если (locked_rq) {							\
 		__prev_locked_rq = scx_locked_rq();				\
 		update_locked_rq(locked_rq);					\
 	}									\
 	__ret = (sch)->ops.op(args);						\
-	if (locked_rq)								\
+	если (locked_rq)								\
 		update_locked_rq(__prev_locked_rq);				\
 	__ret;									\
 })
@@ -2335,7 +2335,7 @@ do {										\
 	current->scx.kf_tasks[0] = task;					\
 	__SCX_CALL_OP((sch), ops, op, locked_rq, task, ##args);			\
 	current->scx.kf_tasks[0] = NULL;					\
-} while (0)
+} пока (0)
 
 /*
  * A per-task op runs on @task's owner - WARN if @sch isn't it. Sites that must
@@ -2345,7 +2345,7 @@ do {										\
 do {										\
 	WARN_ON_ONCE(scx_has_subs() && (sch) != scx_task_sched_rcu(task));	\
 	__SCX_CALL_OP_TASK((sch), ops, op, locked_rq, task, ##args);		\
-} while (0)
+} пока (0)
 
 /*
  * Dispatch a task op through the cid-form ops_cid table, for the ops whose
@@ -2382,18 +2382,18 @@ do {										\
 static __always_inline bool scx_kf_arg_task_ok(struct scx_sched *sch,
 					       struct task_struct *p)
 {
-	if (unlikely((p != current->scx.kf_tasks[0] &&
+	если (unlikely((p != current->scx.kf_tasks[0] &&
 		      p != current->scx.kf_tasks[1]))) {
 		scx_error(sch, "called on a task not being operated on");
-		return false;
+		вернуть false;
 	}
 
-	return true;
+	вернуть true;
 }
 
 static inline bool scx_bypassing(struct scx_sched *sch, s32 cpu)
 {
-	return unlikely(per_cpu_ptr(sch->pcpu, cpu)->flags &
+	вернуть unlikely(per_cpu_ptr(sch->pcpu, cpu)->flags &
 			SCX_SCHED_PCPU_BYPASSING);
 }
 
@@ -2408,7 +2408,7 @@ DECLARE_STATIC_KEY_FALSE(__scx_has_subs);
  */
 static inline bool scx_has_subs(void)
 {
-	return static_branch_unlikely(&__scx_has_subs);
+	вернуть static_branch_unlikely(&__scx_has_subs);
 }
 
 /**
@@ -2420,7 +2420,7 @@ static inline bool scx_has_subs(void)
  */
 static inline struct scx_sched *scx_task_sched(const struct task_struct *p)
 {
-	return rcu_dereference_protected(p->scx.sched,
+	вернуть rcu_dereference_protected(p->scx.sched,
 					 lockdep_is_held(&p->pi_lock) ||
 					 lockdep_is_held(__rq_lockp(task_rq(p))));
 }
@@ -2433,7 +2433,7 @@ static inline struct scx_sched *scx_task_sched(const struct task_struct *p)
  */
 static inline struct scx_sched *scx_task_sched_rcu(const struct task_struct *p)
 {
-	return rcu_dereference_all(p->scx.sched);
+	вернуть rcu_dereference_all(p->scx.sched);
 }
 
 /**
@@ -2446,7 +2446,7 @@ static inline struct scx_sched *scx_task_sched_rcu(const struct task_struct *p)
 static inline bool scx_task_on_sched(struct scx_sched *sch,
 				     const struct task_struct *p)
 {
-	return rcu_access_pointer(p->scx.sched) == sch;
+	вернуть rcu_access_pointer(p->scx.sched) == sch;
 }
 
 /**
@@ -2463,32 +2463,32 @@ static inline struct scx_sched *scx_prog_sched(const struct bpf_prog_aux *aux)
 	struct scx_sched *sch, *root;
 
 	ops = bpf_prog_get_assoc_struct_ops(aux);
-	if (likely(ops)) {
+	если (likely(ops)) {
 		sch = rcu_dereference_all(ops->priv);
-		if (sch && unlikely(READ_ONCE(sch->dead)))
-			return NULL;
-		return sch;
+		если (sch && unlikely(READ_ONCE(sch->dead)))
+			вернуть NULL;
+		вернуть sch;
 	}
 
 	root = rcu_dereference_all(scx_root);
-	if (root) {
-		if (unlikely(READ_ONCE(root->dead)))
-			return NULL;
+	если (root) {
+		если (unlikely(READ_ONCE(root->dead)))
+			вернуть NULL;
 		/*
 		 * COMPAT-v6.19: Schedulers built before sub-sched support was
 		 * introduced may have unassociated non-struct_ops programs.
 		 */
-		if (!root->ops.sub_attach)
-			return root;
+		если (!root->ops.sub_attach)
+			вернуть root;
 
-		if (!root->warned_unassoc_progs) {
+		если (!root->warned_unassoc_progs) {
 			printk_deferred(KERN_WARNING "sched_ext: Unassociated program %s (id %d)\n",
 					aux->name, aux->id);
 			root->warned_unassoc_progs = true;
 		}
 	}
 
-	return NULL;
+	вернуть NULL;
 }
 
 /**
@@ -2499,43 +2499,43 @@ static inline struct scx_sched *scx_prog_sched(const struct bpf_prog_aux *aux)
  */
 static inline struct scx_sched *scx_parent(struct scx_sched *sch)
 {
-	if (sch->level)
-		return sch->ancestors[sch->level - 1];
-	else
-		return NULL;
+	если (sch->level)
+		вернуть sch->ancestors[sch->level - 1];
+	иначе
+		вернуть NULL;
 }
 
-#else	/* CONFIG_EXT_SUB_SCHED */
-static inline bool scx_has_subs(void) { return false; }
+#иначе	/* CONFIG_EXT_SUB_SCHED */
+static inline bool scx_has_subs(void) { вернуть false; }
 
 static inline struct scx_sched *scx_task_sched(const struct task_struct *p)
 {
-	return rcu_dereference_protected(scx_root,
+	вернуть rcu_dereference_protected(scx_root,
 					 lockdep_is_held(&p->pi_lock) ||
 					 lockdep_is_held(__rq_lockp(task_rq(p))));
 }
 
 static inline struct scx_sched *scx_task_sched_rcu(const struct task_struct *p)
 {
-	return rcu_dereference_all(scx_root);
+	вернуть rcu_dereference_all(scx_root);
 }
 
 static inline bool scx_task_on_sched(struct scx_sched *sch,
 				     const struct task_struct *p)
 {
-	return true;
+	вернуть true;
 }
 
 static inline struct scx_sched *scx_prog_sched(const struct bpf_prog_aux *aux)
 {
 	struct scx_sched *root = rcu_dereference_all(scx_root);
 
-	if (root && unlikely(READ_ONCE(root->dead)))
-		return NULL;
-	return root;
+	если (root && unlikely(READ_ONCE(root->dead)))
+		вернуть NULL;
+	вернуть root;
 }
 
-static inline struct scx_sched *scx_parent(struct scx_sched *sch) { return NULL; }
+static inline struct scx_sched *scx_parent(struct scx_sched *sch) { вернуть NULL; }
 
 #endif	/* CONFIG_EXT_SUB_SCHED */
 

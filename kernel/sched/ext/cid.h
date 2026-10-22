@@ -81,7 +81,7 @@ bool scx_cmask_empty(const struct scx_cmask *m);
 s32 scx_cid_init(struct scx_sched *sch);
 void scx_cid_publish_tables(void);
 void scx_cid_retire_tables(void);
-int scx_cid_kfunc_init(void);
+целое scx_cid_kfunc_init(void);
 
 /**
  * cid_valid - Verify a cid value, to be used on ops input args
@@ -93,10 +93,10 @@ int scx_cid_kfunc_init(void);
  */
 static inline bool cid_valid(struct scx_sched *sch, s32 cid)
 {
-	if (likely(cid >= 0 && cid < num_possible_cpus()))
-		return true;
+	если (likely(cid >= 0 && cid < num_possible_cpus()))
+		вернуть true;
 	scx_error(sch, "invalid cid %d", cid);
-	return false;
+	вернуть false;
 }
 
 /**
@@ -108,7 +108,7 @@ static inline bool cid_valid(struct scx_sched *sch, s32 cid)
  */
 static inline s32 __scx_cid_to_cpu(s32 cid)
 {
-	return rcu_dereference_all(scx_cid_to_cpu_tbl)[cid];
+	вернуть rcu_dereference_all(scx_cid_to_cpu_tbl)[cid];
 }
 
 /**
@@ -119,7 +119,7 @@ static inline s32 __scx_cid_to_cpu(s32 cid)
  */
 static inline s32 __scx_cpu_to_cid(s32 cpu)
 {
-	return rcu_dereference_all(scx_cpu_to_cid_tbl)[cpu];
+	вернуть rcu_dereference_all(scx_cpu_to_cid_tbl)[cpu];
 }
 
 /**
@@ -138,9 +138,9 @@ static inline s32 scx_cid_to_cpu(struct scx_sched *sch, s32 cid)
 {
 	s16 *tbl = rcu_dereference_all(scx_cid_to_cpu_tbl);
 
-	if (!cid_valid(sch, cid) || unlikely(!tbl))
-		return -EINVAL;
-	return tbl[cid];
+	если (!cid_valid(sch, cid) || unlikely(!tbl))
+		вернуть -EINVAL;
+	вернуть tbl[cid];
 }
 
 /**
@@ -155,9 +155,9 @@ static inline s32 scx_cpu_to_cid(struct scx_sched *sch, s32 cpu)
 {
 	s16 *tbl = rcu_dereference_all(scx_cpu_to_cid_tbl);
 
-	if (!scx_cpu_valid(sch, cpu, NULL) || unlikely(!tbl))
-		return -EINVAL;
-	return tbl[cpu];
+	если (!scx_cpu_valid(sch, cpu, NULL) || unlikely(!tbl))
+		вернуть -EINVAL;
+	вернуть tbl[cpu];
 }
 
 /**
@@ -165,18 +165,18 @@ static inline s32 scx_cpu_to_cid(struct scx_sched *sch, s32 cpu)
  */
 static inline bool scx_is_cid_type(void)
 {
-	return static_branch_unlikely(&__scx_is_cid_type);
+	вернуть static_branch_unlikely(&__scx_is_cid_type);
 }
 
 static inline bool __scx_cmask_contains(u32 cid, const struct scx_cmask *m)
 {
-	return likely(cid >= m->base && cid < m->base + m->nr_cids);
+	вернуть likely(cid >= m->base && cid < m->base + m->nr_cids);
 }
 
 /* Word in bits[] covering @cid. @cid must satisfy __scx_cmask_contains(). */
 static inline u64 *__scx_cmask_word(u32 cid, const struct scx_cmask *m)
 {
-	return (u64 *)&m->bits[cid / 64 - m->base / 64];
+	вернуть (u64 *)&m->bits[cid / 64 - m->base / 64];
 }
 
 /**
@@ -192,7 +192,7 @@ static inline u64 *__scx_cmask_word(u32 cid, const struct scx_cmask *m)
 static inline void __scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids,
 				    u32 alloc_cids)
 {
-	if (WARN_ON_ONCE(alloc_cids < nr_cids))
+	если (WARN_ON_ONCE(alloc_cids < nr_cids))
 		nr_cids = alloc_cids;
 
 	m->base = base;
@@ -225,10 +225,10 @@ static inline void scx_cmask_init(struct scx_cmask *m, u32 base, u32 nr_cids)
  */
 static inline void scx_cmask_reframe(struct scx_cmask *m, u32 base, u32 nr_cids)
 {
-	if (WARN_ON_ONCE(SCX_CMASK_NR_WORDS(nr_cids) > m->alloc_words))
-		return;
+	если (WARN_ON_ONCE(SCX_CMASK_NR_WORDS(nr_cids) > m->alloc_words))
+		вернуть;
 
-	if (nr_cids) {
+	если (nr_cids) {
 		u32 last_word = ((base & 63) + nr_cids - 1) / 64;
 
 		m->bits[0] = 0;
@@ -241,8 +241,8 @@ static inline void scx_cmask_reframe(struct scx_cmask *m, u32 base, u32 nr_cids)
 
 static inline void __scx_cmask_set(u32 cid, struct scx_cmask *m)
 {
-	if (!__scx_cmask_contains(cid, m))
-		return;
+	если (!__scx_cmask_contains(cid, m))
+		вернуть;
 	*__scx_cmask_word(cid, m) |= BIT_U64(cid & 63);
 }
 
@@ -256,9 +256,9 @@ static inline void __scx_cmask_set(u32 cid, struct scx_cmask *m)
  */
 static inline bool scx_cmask_test(u32 cid, const struct scx_cmask *m)
 {
-	if (!__scx_cmask_contains(cid, m))
-		return false;
-	return READ_ONCE(*__scx_cmask_word(cid, m)) & BIT_U64(cid & 63);
+	если (!__scx_cmask_contains(cid, m))
+		вернуть false;
+	вернуть READ_ONCE(*__scx_cmask_word(cid, m)) & BIT_U64(cid & 63);
 }
 
 /*
@@ -267,9 +267,9 @@ static inline bool scx_cmask_test(u32 cid, const struct scx_cmask *m)
  */
 static inline u32 scx_cmask_nr_used_words(const struct scx_cmask *m)
 {
-	if (!m->nr_cids)
-		return 0;
-	return ((m->base & 63) + m->nr_cids - 1) / 64 + 1;
+	если (!m->nr_cids)
+		вернуть 0;
+	вернуть ((m->base & 63) + m->nr_cids - 1) / 64 + 1;
 }
 
 /**
@@ -282,10 +282,10 @@ static inline u32 scx_cmask_nr_used_words(const struct scx_cmask *m)
  * no per-cid range check is needed.
  */
 #define scx_cmask_for_each_cid(cid, m)						\
-	for (u64 __bs = (m)->base & ~63u, __wi = 0,				\
+	для (u64 __bs = (m)->base & ~63u, __wi = 0,				\
 		     __nw = scx_cmask_nr_used_words(m);				\
 	     __wi < __nw; __wi++)						\
-		for (u64 __w = READ_ONCE((m)->bits[__wi]);			\
+		для (u64 __w = READ_ONCE((m)->bits[__wi]);			\
 		     __w && ((cid) = __bs + __wi * 64 + __ffs64(__w), true);	\
 		     __w &= __w - 1)
 
@@ -298,19 +298,19 @@ static inline u32 scx_cmask_nr_used_words(const struct scx_cmask *m)
  */
 static inline s32 scx_cpu_arg(s32 cpu)
 {
-	if (scx_is_cid_type())
-		return __scx_cpu_to_cid(cpu);
-	return cpu;
+	если (scx_is_cid_type())
+		вернуть __scx_cpu_to_cid(cpu);
+	вернуть cpu;
 }
 
 static inline s32 scx_cpu_ret(struct scx_sched *sch, s32 cpu_or_cid)
 {
-	if (cpu_or_cid < 0 || !scx_is_cid_type())
-		return cpu_or_cid;
-	return scx_cid_to_cpu(sch, cpu_or_cid);
+	если (cpu_or_cid < 0 || !scx_is_cid_type())
+		вернуть cpu_or_cid;
+	вернуть scx_cid_to_cpu(sch, cpu_or_cid);
 }
 
-int scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
+целое scx_cmask_ref_init(struct scx_sched *sch, const struct scx_cmask *src,
 		       struct scx_cmask_ref *ref);
 void scx_cmask_ref_init_kern(struct scx_sched *sch, struct scx_cmask *m,
 			     u32 base, u32 nr_cids, struct scx_cmask_ref *ref);
