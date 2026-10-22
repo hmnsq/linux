@@ -20,47 +20,47 @@
  *  Adaptive scheduling granularity, math enhancements by Peter Zijlstra
  *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
  */
-#include <linux/energy_model.h>
-#include <linux/mmap_lock.h>
-#include <linux/hugetlb_inline.h>
-#include <linux/jiffies.h>
-#include <linux/math.h>
-#include <linux/mm_api.h>
-#include <linux/highmem.h>
-#include <linux/hrtimer.h>
-#include <linux/hrtimer_bases.h>
-#include <linux/spinlock_api.h>
-#include <linux/cpumask_api.h>
-#include <linux/lockdep_api.h>
-#include <linux/softirq.h>
-#include <linux/refcount_api.h>
-#include <linux/topology.h>
-#include <linux/sched/clock.h>
-#include <linux/sched/cond_resched.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/nohz.h>
-#include <linux/sched/prio.h>
-#include <linux/static_call.h>
+#ضمن <linux/energy_model.h>
+#ضمن <linux/mmap_lock.h>
+#ضمن <linux/hugetlb_inline.h>
+#ضمن <linux/jiffies.h>
+#ضمن <linux/math.h>
+#ضمن <linux/mm_api.h>
+#ضمن <linux/highmem.h>
+#ضمن <linux/hrtimer.h>
+#ضمن <linux/hrtimer_bases.h>
+#ضمن <linux/spinlock_api.h>
+#ضمن <linux/cpumask_api.h>
+#ضمن <linux/lockdep_api.h>
+#ضمن <linux/softirq.h>
+#ضمن <linux/refcount_api.h>
+#ضمن <linux/topology.h>
+#ضمن <linux/sched/clock.h>
+#ضمن <linux/sched/cond_resched.h>
+#ضمن <linux/sched/cputime.h>
+#ضمن <linux/sched/isolation.h>
+#ضمن <linux/sched/nohz.h>
+#ضمن <linux/sched/prio.h>
+#ضمن <linux/static_call.h>
 
-#include <linux/cpuidle.h>
-#include <linux/interrupt.h>
-#include <linux/memory-tiers.h>
-#include <linux/mempolicy.h>
-#include <linux/mutex_api.h>
-#include <linux/profile.h>
-#include <linux/psi.h>
-#include <linux/ratelimit.h>
-#include <linux/task_work.h>
-#include <linux/rbtree_augmented.h>
+#ضمن <linux/cpuidle.h>
+#ضمن <linux/interrupt.h>
+#ضمن <linux/memory-tiers.h>
+#ضمن <linux/mempolicy.h>
+#ضمن <linux/mutex_api.h>
+#ضمن <linux/profile.h>
+#ضمن <linux/psi.h>
+#ضمن <linux/ratelimit.h>
+#ضمن <linux/task_work.h>
+#ضمن <linux/rbtree_augmented.h>
 
-#include <asm/switch_to.h>
+#ضمن <asm/switch_to.h>
 
-#include <uapi/linux/sched/types.h>
+#ضمن <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "stats.h"
-#include "autogroup.h"
+#ضمن "sched.h"
+#ضمن "stats.h"
+#ضمن "autogroup.h"
 
 /*
  * The initial- and re-scaling of tunables is configurable
@@ -73,7 +73,7 @@
  *
  * (default SCHED_TUNABLESCALING_LOG = *(1+ilog(ncpus))
  */
-unsigned int sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_LOG;
+unsigned صحيح sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_LOG;
 
 /*
  * Default base time slice (request size r_i) for SCHED_NORMAL/SCHED_BATCH:
@@ -83,24 +83,24 @@ unsigned int sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_LOG;
  *
  * (default: 0.70 msec * (1 + ilog(ncpus)), units: nanoseconds)
  */
-unsigned int sysctl_sched_base_slice			= 700000ULL;
-static unsigned int normalized_sysctl_sched_base_slice	= 700000ULL;
+unsigned صحيح sysctl_sched_base_slice			= 700000ULL;
+ساكن unsigned صحيح normalized_sysctl_sched_base_slice	= 700000ULL;
 
-__read_mostly unsigned int sysctl_sched_migration_cost	= 500000UL;
+__read_mostly unsigned صحيح sysctl_sched_migration_cost	= 500000UL;
 
-static int __init setup_sched_thermal_decay_shift(char *str)
+ساكن صحيح __init setup_sched_thermal_decay_shift(حرف *str)
 {
 	pr_warn("Ignoring the deprecated sched_thermal_decay_shift= option\n");
-	return 1;
+	إرجاع 1;
 }
 __setup("sched_thermal_decay_shift=", setup_sched_thermal_decay_shift);
 
 /*
  * For asym packing, by default the lower numbered CPU has higher priority.
  */
-int __weak arch_asym_cpu_priority(int cpu)
+صحيح __weak arch_asym_cpu_priority(صحيح cpu)
 {
-	return -cpu;
+	إرجاع -cpu;
 }
 
 /*
@@ -129,21 +129,21 @@ int __weak arch_asym_cpu_priority(int cpu)
  *
  * (default: 5 msec, units: microseconds)
  */
-static unsigned int sysctl_sched_cfs_bandwidth_slice		= 5000UL;
+ساكن unsigned صحيح sysctl_sched_cfs_bandwidth_slice		= 5000UL;
 #endif
 
 #ifdef CONFIG_NUMA_BALANCING
 /* Restrict the NUMA promotion throughput (MB/s) for each target node. */
-static unsigned int sysctl_numa_balancing_promote_rate_limit = 65536;
+ساكن unsigned صحيح sysctl_numa_balancing_promote_rate_limit = 65536;
 #endif
 
 #ifdef CONFIG_SYSCTL
-static const struct ctl_table sched_fair_sysctls[] = {
+ساكن ثابت بنية ctl_table sched_fair_sysctls[] = {
 #ifdef CONFIG_CFS_BANDWIDTH
 	{
 		.procname       = "sched_cfs_bandwidth_slice_us",
 		.data           = &sysctl_sched_cfs_bandwidth_slice,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = حجم(unsigned صحيح),
 		.mode           = 0644,
 		.proc_handler   = proc_dointvec_minmax,
 		.extra1         = SYSCTL_ONE,
@@ -153,7 +153,7 @@ static const struct ctl_table sched_fair_sysctls[] = {
 	{
 		.procname	= "numa_balancing_promote_rate_limit_MBps",
 		.data		= &sysctl_numa_balancing_promote_rate_limit,
-		.maxlen		= sizeof(unsigned int),
+		.maxlen		= حجم(unsigned صحيح),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1		= SYSCTL_ZERO,
@@ -161,27 +161,27 @@ static const struct ctl_table sched_fair_sysctls[] = {
 #endif /* CONFIG_NUMA_BALANCING */
 };
 
-static int __init sched_fair_sysctl_init(void)
+ساكن صحيح __init sched_fair_sysctl_init(فراغ)
 {
 	register_sysctl_init("kernel", sched_fair_sysctls);
-	return 0;
+	إرجاع 0;
 }
 late_initcall(sched_fair_sysctl_init);
 #endif /* CONFIG_SYSCTL */
 
-static inline void update_load_add(struct load_weight *lw, unsigned long inc)
+ساكن مضمن فراغ update_load_add(بنية load_weight *lw, unsigned long inc)
 {
 	lw->weight += inc;
 	lw->inv_weight = 0;
 }
 
-static inline void update_load_sub(struct load_weight *lw, unsigned long dec)
+ساكن مضمن فراغ update_load_sub(بنية load_weight *lw, unsigned long dec)
 {
 	lw->weight -= dec;
 	lw->inv_weight = 0;
 }
 
-static inline void update_load_set(struct load_weight *lw, unsigned long w)
+ساكن مضمن فراغ update_load_set(بنية load_weight *lw, unsigned long w)
 {
 	lw->weight = w;
 	lw->inv_weight = 0;
@@ -196,30 +196,30 @@ static inline void update_load_set(struct load_weight *lw, unsigned long w)
  *
  * This idea comes from the SD scheduler of Con Kolivas:
  */
-static unsigned int get_update_sysctl_factor(void)
+ساكن unsigned صحيح get_update_sysctl_factor(فراغ)
 {
-	unsigned int cpus = min_t(unsigned int, num_online_cpus(), 8);
-	unsigned int factor;
+	unsigned صحيح cpus = min_t(unsigned صحيح, رقم_online_cpus(), 8);
+	unsigned صحيح factor;
 
-	switch (sysctl_sched_tunable_scaling) {
-	case SCHED_TUNABLESCALING_NONE:
+	بدل (sysctl_sched_tunable_scaling) {
+	حالة SCHED_TUNABLESCALING_NONE:
 		factor = 1;
-		break;
-	case SCHED_TUNABLESCALING_LINEAR:
+		اكسر;
+	حالة SCHED_TUNABLESCALING_LINEAR:
 		factor = cpus;
-		break;
-	case SCHED_TUNABLESCALING_LOG:
-	default:
+		اكسر;
+	حالة SCHED_TUNABLESCALING_LOG:
+	افتراضي:
 		factor = 1 + ilog2(cpus);
-		break;
+		اكسر;
 	}
 
-	return factor;
+	إرجاع factor;
 }
 
-static void update_sysctl(void)
+ساكن فراغ update_sysctl(فراغ)
 {
-	unsigned int factor = get_update_sysctl_factor();
+	unsigned صحيح factor = get_update_sysctl_factor();
 
 #define SET_SYSCTL(name) \
 	(sysctl_##name = (factor) * normalized_sysctl_##name)
@@ -227,7 +227,7 @@ static void update_sysctl(void)
 #undef SET_SYSCTL
 }
 
-void __init sched_init_granularity(void)
+فراغ __init sched_init_granularity(فراغ)
 {
 	update_sysctl();
 }
@@ -236,20 +236,20 @@ void __init sched_init_granularity(void)
 #define WMULT_CONST	(~0U)
 #define WMULT_SHIFT	32
 
-static void __update_inv_weight(struct load_weight *lw)
+ساكن فراغ __update_inv_weight(بنية load_weight *lw)
 {
 	unsigned long w;
 
-	if (likely(lw->inv_weight))
-		return;
+	إذا (likely(lw->inv_weight))
+		إرجاع;
 
 	w = scale_load_down(lw->weight);
 
-	if (BITS_PER_LONG > 32 && unlikely(w >= WMULT_CONST))
+	إذا (BITS_PER_LONG > 32 && unlikely(w >= WMULT_CONST))
 		lw->inv_weight = 1;
-	else if (unlikely(!w))
+	وإلا إذا (unlikely(!w))
 		lw->inv_weight = WMULT_CONST;
-	else
+	وإلا
 		lw->inv_weight = WMULT_CONST / w;
 }
 
@@ -265,16 +265,16 @@ static void __update_inv_weight(struct load_weight *lw)
  * Or, weight =< lw.weight (because lw.weight is the runqueue weight), thus
  * weight/lw.weight <= 1, and therefore our shift will also be positive.
  */
-static u64 __calc_delta(u64 delta_exec, unsigned long weight, struct load_weight *lw)
+ساكن u64 __calc_delta(u64 delta_exec, unsigned long weight, بنية load_weight *lw)
 {
 	u64 fact = scale_load_down(weight);
 	u32 fact_hi = (u32)(fact >> 32);
-	int shift = WMULT_SHIFT;
-	int fs;
+	صحيح shift = WMULT_SHIFT;
+	صحيح fs;
 
 	__update_inv_weight(lw);
 
-	if (unlikely(fact_hi)) {
+	إذا (unlikely(fact_hi)) {
 		fs = fls(fact_hi);
 		shift -= fs;
 		fact >>= fs;
@@ -283,33 +283,33 @@ static u64 __calc_delta(u64 delta_exec, unsigned long weight, struct load_weight
 	fact = mul_u32_u32(fact, lw->inv_weight);
 
 	fact_hi = (u32)(fact >> 32);
-	if (fact_hi) {
+	إذا (fact_hi) {
 		fs = fls(fact_hi);
 		shift -= fs;
 		fact >>= fs;
 	}
 
-	return mul_u64_u32_shr(delta_exec, fact, shift);
+	إرجاع mul_u64_u32_shr(delta_exec, fact, shift);
 }
-#else
-static u64 __calc_delta(u64 delta_exec, unsigned long weight, struct load_weight *lw)
+#وإلا
+ساكن u64 __calc_delta(u64 delta_exec, unsigned long weight, بنية load_weight *lw)
 {
-	return (delta_exec * weight) / lw->weight;
+	إرجاع (delta_exec * weight) / lw->weight;
 }
 #endif
 
 /*
  * delta /= w
  */
-static inline u64 calc_delta_fair(u64 delta, struct sched_entity *se)
+ساكن مضمن u64 calc_delta_fair(u64 delta, بنية sched_entity *se)
 {
-	if (se->h_load.weight != NICE_0_LOAD)
+	إذا (se->h_load.weight != NICE_0_LOAD)
 		delta = __calc_delta(delta, NICE_0_LOAD, &se->h_load);
 
-	return delta;
+	إرجاع delta;
 }
 
-const struct sched_class fair_sched_class;
+ثابت بنية sched_class fair_sched_class;
 
 /**************************************************************
  * CFS operations on generic schedulable entities:
@@ -319,15 +319,15 @@ const struct sched_class fair_sched_class;
 
 /* Walk up scheduling entities hierarchy */
 #define for_each_sched_entity(se) \
-		for (; se; se = se->parent)
+		لكل (; se; se = se->parent)
 
-static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ساكن مضمن bool list_add_leaf_cfs_rq(بنية cfs_rq *cfs_rq)
 {
-	struct rq *rq = rq_of(cfs_rq);
-	int cpu = cpu_of(rq);
+	بنية rq *rq = rq_of(cfs_rq);
+	صحيح cpu = cpu_of(rq);
 
-	if (cfs_rq->on_list)
-		return rq->tmp_alone_branch == &rq->leaf_cfs_rq_list;
+	إذا (cfs_rq->on_list)
+		إرجاع rq->tmp_alone_branch == &rq->leaf_cfs_rq_list;
 
 	cfs_rq->on_list = 1;
 
@@ -340,7 +340,7 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
 	 * tmp_alone_branch either when the branch is connected
 	 * to a tree or when we reach the top of the tree
 	 */
-	if (cfs_rq->tg->parent &&
+	إذا (cfs_rq->tg->parent &&
 	    tg_cfs_rq(cfs_rq->tg->parent, cpu)->on_list) {
 		/*
 		 * If parent is already on the list, we add the child
@@ -356,10 +356,10 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
 		 * list.
 		 */
 		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
-		return true;
+		إرجاع true;
 	}
 
-	if (!cfs_rq->tg->parent) {
+	إذا (!cfs_rq->tg->parent) {
 		/*
 		 * cfs rq without parent should be put
 		 * at the tail of the list.
@@ -371,7 +371,7 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
 		 * tmp_alone_branch to the beginning of the list.
 		 */
 		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
-		return true;
+		إرجاع true;
 	}
 
 	/*
@@ -386,13 +386,13 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
 	 * of the branch
 	 */
 	rq->tmp_alone_branch = &cfs_rq->leaf_cfs_rq_list;
-	return false;
+	إرجاع false;
 }
 
-static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ساكن مضمن فراغ list_del_leaf_cfs_rq(بنية cfs_rq *cfs_rq)
 {
-	if (cfs_rq->on_list) {
-		struct rq *rq = rq_of(cfs_rq);
+	إذا (cfs_rq->on_list) {
+		بنية rq *rq = rq_of(cfs_rq);
 
 		/*
 		 * With cfs_rq being unthrottled/throttled during an enqueue,
@@ -401,7 +401,7 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
 		 * to the prev element but it will point to rq->leaf_cfs_rq_list
 		 * at the end of the enqueue.
 		 */
-		if (rq->tmp_alone_branch == &cfs_rq->leaf_cfs_rq_list)
+		إذا (rq->tmp_alone_branch == &cfs_rq->leaf_cfs_rq_list)
 			rq->tmp_alone_branch = cfs_rq->leaf_cfs_rq_list.prev;
 
 		list_del_rcu(&cfs_rq->leaf_cfs_rq_list);
@@ -409,7 +409,7 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
 	}
 }
 
-static inline void assert_list_leaf_cfs_rq(struct rq *rq)
+ساكن مضمن فراغ assert_list_leaf_cfs_rq(بنية rq *rq)
 {
 	WARN_ON_ONCE(rq->tmp_alone_branch != &rq->leaf_cfs_rq_list);
 }
@@ -420,103 +420,103 @@ static inline void assert_list_leaf_cfs_rq(struct rq *rq)
 				 leaf_cfs_rq_list)
 
 /* Do the two (enqueued) entities belong to the same group ? */
-static inline struct cfs_rq *
-is_same_group(struct sched_entity *se, struct sched_entity *pse)
+ساكن مضمن بنية cfs_rq *
+is_same_group(بنية sched_entity *se, بنية sched_entity *pse)
 {
-	if (se->cfs_rq == pse->cfs_rq)
-		return se->cfs_rq;
+	إذا (se->cfs_rq == pse->cfs_rq)
+		إرجاع se->cfs_rq;
 
-	return NULL;
+	إرجاع عدم;
 }
 
-static inline struct sched_entity *parent_entity(const struct sched_entity *se)
+ساكن مضمن بنية sched_entity *parent_entity(ثابت بنية sched_entity *se)
 {
-	return se->parent;
+	إرجاع se->parent;
 }
 
-static int tg_is_idle(struct task_group *tg)
+ساكن صحيح tg_is_idle(بنية task_group *tg)
 {
-	return tg->idle > 0;
+	إرجاع tg->idle > 0;
 }
 
-static int cfs_rq_is_idle(struct cfs_rq *cfs_rq)
+ساكن صحيح cfs_rq_is_idle(بنية cfs_rq *cfs_rq)
 {
-	return cfs_rq->idle > 0;
+	إرجاع cfs_rq->idle > 0;
 }
 
-static int se_is_idle(struct sched_entity *se)
+ساكن صحيح se_is_idle(بنية sched_entity *se)
 {
-	if (entity_is_task(se))
-		return task_has_idle_policy(task_of(se));
-	return cfs_rq_is_idle(group_cfs_rq(se));
+	إذا (entity_is_task(se))
+		إرجاع task_has_idle_policy(task_of(se));
+	إرجاع cfs_rq_is_idle(group_cfs_rq(se));
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
 
 #define for_each_sched_entity(se) \
-		for (; se; se = NULL)
+		لكل (; se; se = عدم)
 
-static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ساكن مضمن bool list_add_leaf_cfs_rq(بنية cfs_rq *cfs_rq)
 {
-	return true;
+	إرجاع true;
 }
 
-static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ساكن مضمن فراغ list_del_leaf_cfs_rq(بنية cfs_rq *cfs_rq)
 {
 }
 
-static inline void assert_list_leaf_cfs_rq(struct rq *rq)
+ساكن مضمن فراغ assert_list_leaf_cfs_rq(بنية rq *rq)
 {
 }
 
 #define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)	\
-		for (cfs_rq = &rq->cfs, pos = NULL; cfs_rq; cfs_rq = pos)
+		لكل (cfs_rq = &rq->cfs, pos = عدم; cfs_rq; cfs_rq = pos)
 
-static inline struct sched_entity *parent_entity(struct sched_entity *se)
+ساكن مضمن بنية sched_entity *parent_entity(بنية sched_entity *se)
 {
-	return NULL;
+	إرجاع عدم;
 }
 
-static inline int tg_is_idle(struct task_group *tg)
+ساكن مضمن صحيح tg_is_idle(بنية task_group *tg)
 {
-	return 0;
+	إرجاع 0;
 }
 
-static int cfs_rq_is_idle(struct cfs_rq *cfs_rq)
+ساكن صحيح cfs_rq_is_idle(بنية cfs_rq *cfs_rq)
 {
-	return 0;
+	إرجاع 0;
 }
 
-static int se_is_idle(struct sched_entity *se)
+ساكن صحيح se_is_idle(بنية sched_entity *se)
 {
-	return task_has_idle_policy(task_of(se));
+	إرجاع task_has_idle_policy(task_of(se));
 }
 
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-static __always_inline
-bool account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec);
+ساكن __always_inline
+bool account_cfs_rq_runtime(بنية cfs_rq *cfs_rq, u64 delta_exec);
 
 /**************************************************************
  * Scheduling class tree data structure manipulation methods:
  */
 
-extern void __BUILD_BUG_vruntime_cmp(void);
+خارجي فراغ __BUILD_BUG_vruntime_cmp(فراغ);
 
 /* Use __builtin_strcmp() because of __HAVE_ARCH_STRCMP: */
 
 #define vruntime_cmp(A, CMP_STR, B) ({				\
-	int __res = 0;						\
+	صحيح __res = 0;						\
 								\
-	if (!__builtin_strcmp(CMP_STR, "<")) {			\
+	إذا (!__builtin_strcmp(CMP_STR, "<")) {			\
 		__res = ((s64)((A)-(B)) < 0);			\
-	} else if (!__builtin_strcmp(CMP_STR, "<=")) {		\
+	} وإلا إذا (!__builtin_strcmp(CMP_STR, "<=")) {		\
 		__res = ((s64)((A)-(B)) <= 0);			\
-	} else if (!__builtin_strcmp(CMP_STR, ">")) {		\
+	} وإلا إذا (!__builtin_strcmp(CMP_STR, ">")) {		\
 		__res = ((s64)((A)-(B)) > 0);			\
-	} else if (!__builtin_strcmp(CMP_STR, ">=")) {		\
+	} وإلا إذا (!__builtin_strcmp(CMP_STR, ">=")) {		\
 		__res = ((s64)((A)-(B)) >= 0);			\
-	} else {						\
+	} وإلا {						\
 		/* Unknown operator throws linker error: */	\
 		__BUILD_BUG_vruntime_cmp();			\
 	}							\
@@ -524,14 +524,14 @@ extern void __BUILD_BUG_vruntime_cmp(void);
 	__res;							\
 })
 
-extern void __BUILD_BUG_vruntime_op(void);
+خارجي فراغ __BUILD_BUG_vruntime_op(فراغ);
 
 #define vruntime_op(A, OP_STR, B) ({				\
 	s64 __res = 0;						\
 								\
-	if (!__builtin_strcmp(OP_STR, "-")) {			\
+	إذا (!__builtin_strcmp(OP_STR, "-")) {			\
 		__res = (s64)((A)-(B));				\
-	} else {						\
+	} وإلا {						\
 		/* Unknown operator throws linker error: */	\
 		__BUILD_BUG_vruntime_op();			\
 	}							\
@@ -540,30 +540,30 @@ extern void __BUILD_BUG_vruntime_op(void);
 })
 
 
-static inline __maybe_unused u64 max_vruntime(u64 max_vruntime, u64 vruntime)
+ساكن مضمن __maybe_unused u64 max_vruntime(u64 max_vruntime, u64 vruntime)
 {
-	if (vruntime_cmp(vruntime, ">", max_vruntime))
+	إذا (vruntime_cmp(vruntime, ">", max_vruntime))
 		max_vruntime = vruntime;
 
-	return max_vruntime;
+	إرجاع max_vruntime;
 }
 
-static inline __maybe_unused u64 min_vruntime(u64 min_vruntime, u64 vruntime)
+ساكن مضمن __maybe_unused u64 min_vruntime(u64 min_vruntime, u64 vruntime)
 {
-	if (vruntime_cmp(vruntime, "<", min_vruntime))
+	إذا (vruntime_cmp(vruntime, "<", min_vruntime))
 		min_vruntime = vruntime;
 
-	return min_vruntime;
+	إرجاع min_vruntime;
 }
 
-static inline bool entity_before(const struct sched_entity *a,
-				 const struct sched_entity *b)
+ساكن مضمن bool entity_before(ثابت بنية sched_entity *a,
+				 ثابت بنية sched_entity *b)
 {
 	/*
 	 * Tiebreak on vruntime seems unnecessary since it can
 	 * hardly happen.
 	 */
-	return vruntime_cmp(a->deadline, "<", b->deadline);
+	إرجاع vruntime_cmp(a->deadline, "<", b->deadline);
 }
 
 /*
@@ -581,13 +581,13 @@ static inline bool entity_before(const struct sched_entity *a,
  * weight of 2, which nicely cancels vs the fuzz in zero_vruntime not actually
  * being the zero-lag point).
  */
-static inline s64 entity_key(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن s64 entity_مفتاح(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
-	return vruntime_op(se->vruntime, "-", cfs_rq->zero_vruntime);
+	إرجاع vruntime_op(se->vruntime, "-", cfs_rq->zero_vruntime);
 }
 
-#define __node_2_se(node) \
-	rb_entry((node), struct sched_entity, run_node)
+#define __node_2_se(عقدة) \
+	rb_entry((عقدة), بنية sched_entity, run_عقدة)
 
 /*
  * Compute virtual time from the per-task service numbers:
@@ -643,47 +643,47 @@ static inline s64 entity_key(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * deltas: (v_i - v0), will be in the order of the maximal (virtual) lag
  * induced in the system due to quantisation.
  */
-static inline unsigned long avg_vruntime_weight(struct cfs_rq *cfs_rq, unsigned long w)
+ساكن مضمن unsigned long avg_vruntime_weight(بنية cfs_rq *cfs_rq, unsigned long w)
 {
 #ifdef CONFIG_64BIT
-	if (cfs_rq->sum_shift)
+	إذا (cfs_rq->sum_shift)
 		w = max(2UL, w >> cfs_rq->sum_shift);
 #endif
-	return w;
+	إرجاع w;
 }
 
-static inline void
-__sum_w_vruntime_add(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن فراغ
+__sum_w_vruntime_add(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	unsigned long weight = avg_vruntime_weight(cfs_rq, se->h_load.weight);
-	s64 w_vruntime, key = entity_key(cfs_rq, se);
+	s64 w_vruntime, مفتاح = entity_مفتاح(cfs_rq, se);
 
-	w_vruntime = key * weight;
+	w_vruntime = مفتاح * weight;
 	WARN_ON_ONCE((w_vruntime >> 63) != (w_vruntime >> 62));
 
 	cfs_rq->sum_w_vruntime += w_vruntime;
 	cfs_rq->sum_weight += weight;
 }
 
-static void
-sum_w_vruntime_add_paranoid(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ
+sum_w_vruntime_add_paranoid(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	unsigned long weight;
-	s64 key, tmp;
+	s64 مفتاح, tmp;
 
 again:
 	weight = avg_vruntime_weight(cfs_rq, se->h_load.weight);
-	key = entity_key(cfs_rq, se);
+	مفتاح = entity_مفتاح(cfs_rq, se);
 
-	if (check_mul_overflow(key, weight, &key))
-		goto overflow;
+	إذا (check_mul_overflow(مفتاح, weight, &مفتاح))
+		اذهب overflow;
 
-	if (check_add_overflow(cfs_rq->sum_w_vruntime, key, &tmp))
-		goto overflow;
+	إذا (check_add_overflow(cfs_rq->sum_w_vruntime, مفتاح, &tmp))
+		اذهب overflow;
 
 	cfs_rq->sum_w_vruntime = tmp;
 	cfs_rq->sum_weight += weight;
-	return;
+	إرجاع;
 
 overflow:
 	/*
@@ -699,34 +699,34 @@ overflow:
 	cfs_rq->sum_w_vruntime = 0;
 	cfs_rq->sum_weight = 0;
 
-	for (struct rb_node *node = cfs_rq->tasks_timeline.rb_leftmost;
-	     node; node = rb_next(node))
-		__sum_w_vruntime_add(cfs_rq, __node_2_se(node));
+	لكل (بنية rb_عقدة *عقدة = cfs_rq->tasks_timeline.rb_leftmost;
+	     عقدة; عقدة = rb_next(عقدة))
+		__sum_w_vruntime_add(cfs_rq, __node_2_se(عقدة));
 
-	goto again;
+	اذهب again;
 }
 
-static void
-sum_w_vruntime_add(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ
+sum_w_vruntime_add(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
-	if (sched_feat(PARANOID_AVG))
-		return sum_w_vruntime_add_paranoid(cfs_rq, se);
+	إذا (sched_feat(PARANOID_AVG))
+		إرجاع sum_w_vruntime_add_paranoid(cfs_rq, se);
 
 	__sum_w_vruntime_add(cfs_rq, se);
 }
 
-static void
-sum_w_vruntime_sub(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ
+sum_w_vruntime_sub(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	unsigned long weight = avg_vruntime_weight(cfs_rq, se->h_load.weight);
-	s64 key = entity_key(cfs_rq, se);
+	s64 مفتاح = entity_مفتاح(cfs_rq, se);
 
-	cfs_rq->sum_w_vruntime -= key * weight;
+	cfs_rq->sum_w_vruntime -= مفتاح * weight;
 	cfs_rq->sum_weight -= weight;
 }
 
-static inline
-void update_zero_vruntime(struct cfs_rq *cfs_rq, s64 delta)
+ساكن مضمن
+فراغ update_zero_vruntime(بنية cfs_rq *cfs_rq, s64 delta)
 {
 	/*
 	 * v' = v + d ==> sum_w_vruntime' = sum_w_vruntime - d*sum_weight
@@ -747,31 +747,31 @@ void update_zero_vruntime(struct cfs_rq *cfs_rq, s64 delta)
  * This means it is one entry 'behind' but that puts it close enough to where
  * the bound on entity_key() is at most two lag bounds.
  */
-u64 avg_vruntime(struct cfs_rq *cfs_rq)
+u64 avg_vruntime(بنية cfs_rq *cfs_rq)
 {
-	struct sched_entity *curr = cfs_rq->curr;
+	بنية sched_entity *curr = cfs_rq->curr;
 	long weight = cfs_rq->sum_weight;
 	s64 delta = 0;
 
-	if (curr && !curr->on_rq)
-		curr = NULL;
+	إذا (curr && !curr->on_rq)
+		curr = عدم;
 
-	if (weight) {
+	إذا (weight) {
 		s64 runtime = cfs_rq->sum_w_vruntime;
 
-		if (curr) {
+		إذا (curr) {
 			unsigned long w = avg_vruntime_weight(cfs_rq, curr->h_load.weight);
 
-			runtime += entity_key(cfs_rq, curr) * w;
+			runtime += entity_مفتاح(cfs_rq, curr) * w;
 			weight += w;
 		}
 
 		/* sign flips effective floor / ceiling */
-		if (runtime < 0)
+		إذا (runtime < 0)
 			runtime -= (weight - 1);
 
 		delta = div64_long(runtime, weight);
-	} else if (curr) {
+	} وإلا إذا (curr) {
 		/*
 		 * When there is but one element, it is the average.
 		 */
@@ -780,7 +780,7 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
 
 	update_zero_vruntime(cfs_rq, delta);
 
-	return cfs_rq->zero_vruntime;
+	إرجاع cfs_rq->zero_vruntime;
 }
 
 /*
@@ -812,16 +812,16 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
  * is cfs_rq->sum_w_runtime, and 'W - w_j' is cfs_rq->sum_weight, since curr
  * is not included in the sum.
  */
-static u64 ineligible_vruntime(struct cfs_rq *cfs_rq)
+ساكن u64 ineligible_vruntime(بنية cfs_rq *cfs_rq)
 {
-	struct sched_entity *curr = cfs_rq->curr;
+	بنية sched_entity *curr = cfs_rq->curr;
 	long weight = cfs_rq->sum_weight;
 	s64 delta = 0;
 
-	if (curr && !curr->on_rq)
-		curr = NULL;
+	إذا (curr && !curr->on_rq)
+		curr = عدم;
 
-	if (weight) {
+	إذا (weight) {
 		s64 runtime = cfs_rq->sum_w_vruntime;
 
 		/*
@@ -829,16 +829,16 @@ static u64 ineligible_vruntime(struct cfs_rq *cfs_rq)
 		 */
 
 		/* sign flips effective floor / ceiling */
-		if (runtime < 0)
+		إذا (runtime < 0)
 			runtime -= (weight - 1);
 
 		delta = div64_long(runtime, weight);
 	}
 
-	return cfs_rq->zero_vruntime + delta + 1;
+	إرجاع cfs_rq->zero_vruntime + delta + 1;
 }
 
-static inline u64 cfs_rq_max_slice(struct cfs_rq *cfs_rq);
+ساكن مضمن u64 cfs_rq_max_slice(بنية cfs_rq *cfs_rq);
 
 /*
  * lag_i = S - s_i = w_i * (V - v_i)
@@ -854,7 +854,7 @@ static inline u64 cfs_rq_max_slice(struct cfs_rq *cfs_rq);
  *
  *   -r_max < lag < max(r_max, q)
  */
-static s64 entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se, u64 avruntime)
+ساكن s64 entity_lag(بنية cfs_rq *cfs_rq, بنية sched_entity *se, u64 avruntime)
 {
 	u64 max_slice = cfs_rq_max_slice(cfs_rq) + TICK_NSEC;
 	s64 vlag, limit;
@@ -862,7 +862,7 @@ static s64 entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se, u64 avrunt
 	vlag = avruntime - se->vruntime;
 	limit = calc_delta_fair(max_slice, se);
 
-	return clamp(vlag, -limit, limit);
+	إرجاع clamp(vlag, -limit, limit);
 }
 
 /*
@@ -880,21 +880,21 @@ static s64 entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se, u64 avrunt
  * sched_delayed. Either way, when vlag is modified and the entity is
  * retained, the tree needs to be adjusted.
  */
-static __always_inline
-bool update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن __always_inline
+bool update_entity_lag(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	u64 avruntime = avg_vruntime(cfs_rq);
 	s64 vlag = entity_lag(cfs_rq, se, avruntime);
 
-	if (se->sched_delayed) {
+	إذا (se->sched_delayed) {
 		/* previous vlag < 0 otherwise se would not be delayed */
 		vlag = max(vlag, se->vlag);
-		if (sched_feat(DELAY_ZERO))
+		إذا (sched_feat(DELAY_ZERO))
 			vlag = min(vlag, 0);
 	}
 	se->vlag = vlag;
 
-	return avruntime - vlag != se->vruntime;
+	إرجاع avruntime - vlag != se->vruntime;
 }
 
 /*
@@ -914,20 +914,20 @@ bool update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * Note: using 'avg_vruntime() > se->vruntime' is inaccurate due
  *       to the loss in precision caused by the division.
  */
-static int vruntime_eligible(struct cfs_rq *cfs_rq, u64 vruntime)
+ساكن صحيح vruntime_eligible(بنية cfs_rq *cfs_rq, u64 vruntime)
 {
-	struct sched_entity *curr = cfs_rq->curr;
-	s64 key, avg = cfs_rq->sum_w_vruntime;
+	بنية sched_entity *curr = cfs_rq->curr;
+	s64 مفتاح, avg = cfs_rq->sum_w_vruntime;
 	long load = cfs_rq->sum_weight;
 
-	if (curr && curr->on_rq) {
+	إذا (curr && curr->on_rq) {
 		unsigned long weight = avg_vruntime_weight(cfs_rq, curr->h_load.weight);
 
-		avg += entity_key(cfs_rq, curr) * weight;
+		avg += entity_مفتاح(cfs_rq, curr) * weight;
 		load += weight;
 	}
 
-	key = vruntime_op(vruntime, "-", cfs_rq->zero_vruntime);
+	مفتاح = vruntime_op(vruntime, "-", cfs_rq->zero_vruntime);
 
 	/*
 	 * The worst case term for @key includes 'NSEC_TICK * NICE_0_LOAD'
@@ -941,72 +941,72 @@ static int vruntime_eligible(struct cfs_rq *cfs_rq, u64 vruntime)
 #ifdef CONFIG_64BIT
 #ifdef CONFIG_ARCH_SUPPORTS_INT128
 	/* This often results in simpler code than __builtin_mul_overflow(). */
-	return avg >= (__int128)key * load;
-#else
+	إرجاع avg >= (__int128)مفتاح * load;
+#وإلا
 	s64 rhs;
 	/*
 	 * On overflow, the sign of key tells us the correct answer: a large
 	 * positive key means vruntime >> V, so not eligible; a large negative
 	 * key means vruntime << V, so eligible.
 	 */
-	if (check_mul_overflow(key, load, &rhs))
-		return key <= 0;
+	إذا (check_mul_overflow(مفتاح, load, &rhs))
+		إرجاع مفتاح <= 0;
 
-	return avg >= rhs;
+	إرجاع avg >= rhs;
 #endif
-#else /* 32bit */
-	return avg >= key * load;
+#وإلا /* 32bit */
+	إرجاع avg >= مفتاح * load;
 #endif
 }
 
-int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se)
+صحيح entity_eligible(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
-	return vruntime_eligible(cfs_rq, se->vruntime);
+	إرجاع vruntime_eligible(cfs_rq, se->vruntime);
 }
 
-static inline u64 cfs_rq_min_slice(struct cfs_rq *cfs_rq)
+ساكن مضمن u64 cfs_rq_min_slice(بنية cfs_rq *cfs_rq)
 {
-	struct sched_entity *root = __pick_root_entity(cfs_rq);
-	struct sched_entity *curr = cfs_rq->curr;
+	بنية sched_entity *جذر = __pick_root_entity(cfs_rq);
+	بنية sched_entity *curr = cfs_rq->curr;
 	u64 min_slice = ~0ULL;
 
-	if (curr && curr->on_rq)
+	إذا (curr && curr->on_rq)
 		min_slice = curr->slice;
 
-	if (root)
-		min_slice = min(min_slice, root->min_slice);
+	إذا (جذر)
+		min_slice = min(min_slice, جذر->min_slice);
 
-	return min_slice;
+	إرجاع min_slice;
 }
 
-static inline u64 cfs_rq_max_slice(struct cfs_rq *cfs_rq)
+ساكن مضمن u64 cfs_rq_max_slice(بنية cfs_rq *cfs_rq)
 {
-	struct sched_entity *root = __pick_root_entity(cfs_rq);
-	struct sched_entity *curr = cfs_rq->curr;
+	بنية sched_entity *جذر = __pick_root_entity(cfs_rq);
+	بنية sched_entity *curr = cfs_rq->curr;
 	u64 max_slice = 0ULL;
 
-	if (curr && curr->on_rq)
+	إذا (curr && curr->on_rq)
 		max_slice = curr->slice;
 
-	if (root)
-		max_slice = max(max_slice, root->max_slice);
+	إذا (جذر)
+		max_slice = max(max_slice, جذر->max_slice);
 
-	return max_slice;
+	إرجاع max_slice;
 }
 
-static inline bool __entity_less(struct rb_node *a, const struct rb_node *b)
+ساكن مضمن bool __entity_less(بنية rb_عقدة *a, ثابت بنية rb_عقدة *b)
 {
-	return entity_before(__node_2_se(a), __node_2_se(b));
+	إرجاع entity_before(__node_2_se(a), __node_2_se(b));
 }
 
 /* min() for wrapping vruntimes */
-static inline u64 __min_vruntime(u64 a, u64 b)
+ساكن مضمن u64 __min_vruntime(u64 a, u64 b)
 {
-	return vruntime_cmp(a, "<", b) ? a : b;
+	إرجاع vruntime_cmp(a, "<", b) ? a : b;
 }
 
-RB_DECLARE_CALLBACKS(static, min_vruntime_cb,
-		     struct sched_entity, run_node,
+RB_DECLARE_CALLBACKS(ساكن, min_vruntime_cb,
+		     بنية sched_entity, run_عقدة,
 		     RB_AUG(vruntime, min_vruntime, __min_vruntime),
 		     RB_AUG(slice, min_slice, min),
 		     RB_AUG(slice, max_slice, max));
@@ -1014,7 +1014,7 @@ RB_DECLARE_CALLBACKS(static, min_vruntime_cb,
 /*
  * Enqueue an entity into the rb-tree:
  */
-static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ __enqueue_entity(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	WARN_ON_ONCE(&rq_of(cfs_rq)->cfs != cfs_rq);
 	WARN_ON_ONCE(!entity_is_task(se));
@@ -1024,38 +1024,38 @@ static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	se->min_slice = se->slice;
 	se->max_slice = se->slice;
 
-	rb_add_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
+	rb_add_augmented_cached(&se->run_عقدة, &cfs_rq->tasks_timeline,
 				__entity_less, &min_vruntime_cb);
 }
 
-static void __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ __dequeue_entity(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	WARN_ON_ONCE(&rq_of(cfs_rq)->cfs != cfs_rq);
 	WARN_ON_ONCE(!entity_is_task(se));
 
-	rb_erase_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
+	rb_erase_augmented_cached(&se->run_عقدة, &cfs_rq->tasks_timeline,
 				  &min_vruntime_cb);
 	sum_w_vruntime_sub(cfs_rq, se);
 }
 
-struct sched_entity *__pick_root_entity(struct cfs_rq *cfs_rq)
+بنية sched_entity *__pick_root_entity(بنية cfs_rq *cfs_rq)
 {
-	struct rb_node *root = cfs_rq->tasks_timeline.rb_root.rb_node;
+	بنية rb_عقدة *جذر = cfs_rq->tasks_timeline.rb_جذر.rb_عقدة;
 
-	if (!root)
-		return NULL;
+	إذا (!جذر)
+		إرجاع عدم;
 
-	return __node_2_se(root);
+	إرجاع __node_2_se(جذر);
 }
 
-struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
+بنية sched_entity *__pick_first_entity(بنية cfs_rq *cfs_rq)
 {
-	struct rb_node *left = rb_first_cached(&cfs_rq->tasks_timeline);
+	بنية rb_عقدة *يسار = rb_first_cached(&cfs_rq->tasks_timeline);
 
-	if (!left)
-		return NULL;
+	إذا (!يسار)
+		إرجاع عدم;
 
-	return __node_2_se(left);
+	إرجاع __node_2_se(يسار);
 }
 
 /*
@@ -1066,46 +1066,46 @@ struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
  * When run to parity is disabled, we give a minimum quantum to the running
  * entity to ensure progress.
  */
-static inline void set_protect_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن فراغ set_protect_slice(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	u64 slice = normalized_sysctl_sched_base_slice;
 	u64 vprot = se->deadline;
 
-	if (sched_feat(RUN_TO_PARITY))
+	إذا (sched_feat(RUN_TO_PARITY))
 		slice = cfs_rq_min_slice(cfs_rq);
 
 	slice = min(slice, se->slice);
 
 	/* If there are shorter slices than se's one */
-	if (slice != se->slice) {
+	إذا (slice != se->slice) {
 		vprot = min_vruntime(vprot, se->vruntime + calc_delta_fair(slice, se));
-		if (sched_feat(PREEMPT_SHORT))
+		إذا (sched_feat(PREEMPT_SHORT))
 			vprot = min_vruntime(vprot, ineligible_vruntime(cfs_rq));
 	}
 
 	se->vprot = vprot;
 }
 
-static inline void update_protect_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن فراغ update_protect_slice(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	u64 vruntime = min_vruntime(se->vruntime, avg_vruntime(cfs_rq));
 	u64 slice = cfs_rq_min_slice(cfs_rq);
 	u64 vprot = min_vruntime(se->vprot, vruntime + calc_delta_fair(slice, se));
 
-	if (sched_feat(PREEMPT_SHORT) && slice != se->slice)
+	إذا (sched_feat(PREEMPT_SHORT) && slice != se->slice)
 		vprot = min_vruntime(vprot, ineligible_vruntime(cfs_rq));
 
 	se->vprot = vprot;
 }
 
-static inline bool protect_slice(struct sched_entity *se)
+ساكن مضمن bool protect_slice(بنية sched_entity *se)
 {
-	return vruntime_cmp(se->vruntime, "<", se->vprot);
+	إرجاع vruntime_cmp(se->vruntime, "<", se->vprot);
 }
 
-static inline void cancel_protect_slice(struct sched_entity *se)
+ساكن مضمن فراغ cancel_protect_slice(بنية sched_entity *se)
 {
-	if (protect_slice(se))
+	إذا (protect_slice(se))
 		se->vprot = se->vruntime;
 }
 
@@ -1128,119 +1128,119 @@ static inline void cancel_protect_slice(struct sched_entity *se)
  *
  * Which allows tree pruning through eligibility.
  */
-static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq, bool protect)
+ساكن بنية sched_entity *pick_eevdf(بنية cfs_rq *cfs_rq, bool protect)
 {
-	struct rb_node *node = cfs_rq->tasks_timeline.rb_root.rb_node;
-	struct sched_entity *se = __pick_first_entity(cfs_rq);
-	struct sched_entity *curr = cfs_rq->curr;
-	struct sched_entity *best = NULL;
+	بنية rb_عقدة *عقدة = cfs_rq->tasks_timeline.rb_جذر.rb_عقدة;
+	بنية sched_entity *se = __pick_first_entity(cfs_rq);
+	بنية sched_entity *curr = cfs_rq->curr;
+	بنية sched_entity *best = عدم;
 
 	/*
 	 * We can safely skip eligibility check if there is only one entity
 	 * in this cfs_rq, saving some cycles.
 	 */
-	if (cfs_rq->h_nr_queued == 1)
-		return curr && curr->on_rq ? curr : se;
+	إذا (cfs_rq->h_nr_queued == 1)
+		إرجاع curr && curr->on_rq ? curr : se;
 
 	/*
 	 * Picking the ->next buddy will affect latency but not fairness.
 	 */
-	if (sched_feat(PICK_BUDDY) && protect &&
+	إذا (sched_feat(PICK_BUDDY) && protect &&
 	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next)) {
 		/* ->next will never be delayed */
 		WARN_ON_ONCE(cfs_rq->next->sched_delayed);
-		return cfs_rq->next;
+		إرجاع cfs_rq->next;
 	}
 
-	if (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
-		curr = NULL;
+	إذا (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
+		curr = عدم;
 
-	if (curr && protect && protect_slice(curr))
-		return curr;
+	إذا (curr && protect && protect_slice(curr))
+		إرجاع curr;
 
 	/* Pick the leftmost entity if it's eligible */
-	if (se && entity_eligible(cfs_rq, se)) {
+	إذا (se && entity_eligible(cfs_rq, se)) {
 		best = se;
-		goto found;
+		اذهب found;
 	}
 
 	/* Heap search for the EEVD entity */
-	while (node) {
-		struct rb_node *left = node->rb_left;
+	بينما (عقدة) {
+		بنية rb_عقدة *يسار = عقدة->rb_يسار;
 
 		/*
 		 * Eligible entities in left subtree are always better
 		 * choices, since they have earlier deadlines.
 		 */
-		if (left && vruntime_eligible(cfs_rq,
-					__node_2_se(left)->min_vruntime)) {
-			node = left;
-			continue;
+		إذا (يسار && vruntime_eligible(cfs_rq,
+					__node_2_se(يسار)->min_vruntime)) {
+			عقدة = يسار;
+			استمر;
 		}
 
-		se = __node_2_se(node);
+		se = __node_2_se(عقدة);
 
 		/*
 		 * The left subtree either is empty or has no eligible
 		 * entity, so check the current node since it is the one
 		 * with earliest deadline that might be eligible.
 		 */
-		if (entity_eligible(cfs_rq, se)) {
+		إذا (entity_eligible(cfs_rq, se)) {
 			best = se;
-			break;
+			اكسر;
 		}
 
-		node = node->rb_right;
+		عقدة = عقدة->rb_يمين;
 	}
 found:
-	if (!best || (curr && entity_before(curr, best)))
+	إذا (!best || (curr && entity_before(curr, best)))
 		best = curr;
 
-	return best;
+	إرجاع best;
 }
 
-struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
+بنية sched_entity *__pick_last_entity(بنية cfs_rq *cfs_rq)
 {
-	struct rb_node *last = rb_last(&cfs_rq->tasks_timeline.rb_root);
+	بنية rb_عقدة *last = rb_last(&cfs_rq->tasks_timeline.rb_جذر);
 
-	if (!last)
-		return NULL;
+	إذا (!last)
+		إرجاع عدم;
 
-	return __node_2_se(last);
+	إرجاع __node_2_se(last);
 }
 
 /**************************************************************
  * Scheduling class statistics methods:
  */
-int sched_update_scaling(void)
+صحيح sched_update_scaling(فراغ)
 {
-	unsigned int factor = get_update_sysctl_factor();
+	unsigned صحيح factor = get_update_sysctl_factor();
 
 #define WRT_SYSCTL(name) \
 	(normalized_sysctl_##name = sysctl_##name / (factor))
 	WRT_SYSCTL(sched_base_slice);
 #undef WRT_SYSCTL
 
-	return 0;
+	إرجاع 0;
 }
 
-static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se);
+ساكن فراغ clear_buddies(بنية cfs_rq *cfs_rq, بنية sched_entity *se);
 
 /*
  * XXX: strictly: vd_i += N*r_i/w_i such that: vd_i > ve_i
  * this is probably good enough.
  */
-static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن bool update_deadline(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
-	if (vruntime_cmp(se->vruntime, "<", se->deadline))
-		return false;
+	إذا (vruntime_cmp(se->vruntime, "<", se->deadline))
+		إرجاع false;
 
 	/*
 	 * For EEVDF the virtual time slope is determined by w_i (iow.
 	 * nice) while the request time r_i is determined by
 	 * sysctl_sched_base_slice.
 	 */
-	if (!se->custom_slice)
+	إذا (!se->custom_slice)
 		se->slice = sysctl_sched_base_slice;
 
 	/*
@@ -1252,21 +1252,21 @@ static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	/*
 	 * The task has consumed its request, reschedule.
 	 */
-	return true;
+	إرجاع true;
 }
 
-#include "pelt.h"
+#ضمن "pelt.h"
 
-static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
-static unsigned long task_h_load(struct task_struct *p);
-static unsigned long capacity_of(int cpu);
+ساكن صحيح select_idle_sibling(بنية task_struct *p, صحيح prev_cpu, صحيح cpu);
+ساكن unsigned long task_h_load(بنية task_struct *p);
+ساكن unsigned long capacity_of(صحيح cpu);
 
 /* Give new sched_entity start runnable values to heavy its load in infant time */
-void init_entity_runnable_average(struct sched_entity *se)
+فراغ init_entity_runnable_average(بنية sched_entity *se)
 {
-	struct sched_avg *sa = &se->avg;
+	بنية sched_avg *sa = &se->avg;
 
-	memset(sa, 0, sizeof(*sa));
+	memset(sa, 0, حجم(*sa));
 
 	/*
 	 * Tasks are initialized with full load to be seen as heavy tasks until
@@ -1274,7 +1274,7 @@ void init_entity_runnable_average(struct sched_entity *se)
 	 * Group entities are initialized with zero load to reflect the fact that
 	 * nothing has been attached to the task group yet.
 	 */
-	if (entity_is_task(se))
+	إذا (entity_is_task(se))
 		sa->load_avg = scale_load_down(se->load.weight);
 
 	/* when this task is enqueued, it will contribute to its cfs_rq's load_avg */
@@ -1307,15 +1307,15 @@ void init_entity_runnable_average(struct sched_entity *se)
  * Finally, that extrapolated util_avg is clamped to the cap (util_avg_cap)
  * if util_avg > util_avg_cap.
  */
-void post_init_entity_util_avg(struct task_struct *p)
+فراغ post_init_entity_util_avg(بنية task_struct *p)
 {
-	struct sched_entity *se = &p->se;
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-	struct sched_avg *sa = &se->avg;
+	بنية sched_entity *se = &p->se;
+	بنية cfs_rq *cfs_rq = cfs_rq_of(se);
+	بنية sched_avg *sa = &se->avg;
 	long cpu_scale = arch_scale_cpu_capacity(cpu_of(rq_of(cfs_rq)));
 	long cap = (long)(cpu_scale - cfs_rq->avg.util_avg) / 2;
 
-	if (p->sched_class != &fair_sched_class) {
+	إذا (p->sched_class != &fair_sched_class) {
 		/*
 		 * For !fair tasks do:
 		 *
@@ -1327,17 +1327,17 @@ void post_init_entity_util_avg(struct task_struct *p)
 		 * expected state.
 		 */
 		se->avg.last_update_time = cfs_rq_clock_pelt(cfs_rq);
-		return;
+		إرجاع;
 	}
 
-	if (cap > 0) {
-		if (cfs_rq->avg.util_avg != 0) {
+	إذا (cap > 0) {
+		إذا (cfs_rq->avg.util_avg != 0) {
 			sa->util_avg  = cfs_rq->avg.util_avg * se_weight(se);
 			sa->util_avg /= (cfs_rq->avg.load_avg + 1);
 
-			if (sa->util_avg > cap)
+			إذا (sa->util_avg > cap)
 				sa->util_avg = cap;
-		} else {
+		} وإلا {
 			sa->util_avg = cap;
 		}
 	}
@@ -1345,20 +1345,20 @@ void post_init_entity_util_avg(struct task_struct *p)
 	sa->runnable_avg = sa->util_avg;
 }
 
-static inline void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec);
+ساكن مضمن فراغ account_mm_sched(بنية rq *rq, بنية task_struct *p, s64 delta_exec);
 
-static s64 update_se(struct rq *rq, struct sched_entity *se)
+ساكن s64 update_se(بنية rq *rq, بنية sched_entity *se)
 {
 	u64 now = rq_clock_task(rq);
 	s64 delta_exec;
 
 	delta_exec = now - se->exec_start;
-	if (unlikely(delta_exec <= 0))
-		return delta_exec;
+	إذا (unlikely(delta_exec <= 0))
+		إرجاع delta_exec;
 
 	se->exec_start = now;
-	if (entity_is_task(se)) {
-		struct task_struct *running = rq->curr;
+	إذا (entity_is_task(se)) {
+		بنية task_struct *running = rq->curr;
 		/*
 		 * If se is a task, we account the time against the running
 		 * task, as w/ proxy-exec they may not be the same.
@@ -1371,20 +1371,20 @@ static s64 update_se(struct rq *rq, struct sched_entity *se)
 		account_mm_sched(rq, running, delta_exec);
 
 		cgroup_account_cputime(running, delta_exec);
-	} else {
+	} وإلا {
 		/* If not task, account the time against donor se  */
 		se->sum_exec_runtime += delta_exec;
 	}
 
-	if (schedstat_enabled()) {
-		struct sched_statistics *stats;
+	إذا (schedstat_enabled()) {
+		بنية sched_statistics *stats;
 
 		stats = __schedstats_from_se(se);
 		__schedstat_set(stats->exec_max,
 				max(delta_exec, stats->exec_max));
 	}
 
-	return delta_exec;
+	إرجاع delta_exec;
 }
 
 #ifdef CONFIG_SCHED_CACHE
@@ -1395,47 +1395,47 @@ static s64 update_se(struct rq *rq, struct sched_entity *se)
  */
 #define EPOCH_PERIOD	(HZ / 100)	/* 10 ms */
 #define EPOCH_LLC_AFFINITY_TIMEOUT	5	/* 50 ms */
-__read_mostly unsigned int llc_aggr_tolerance	= 1;
-__read_mostly unsigned int llc_epoch_period	= EPOCH_PERIOD;
-__read_mostly unsigned int llc_epoch_affinity_timeout = EPOCH_LLC_AFFINITY_TIMEOUT;
-__read_mostly unsigned int llc_imb_pct		= 20;
-__read_mostly unsigned int llc_overaggr_pct	= 50;
+__read_mostly unsigned صحيح llc_aggr_tolerance	= 1;
+__read_mostly unsigned صحيح llc_epoch_period	= EPOCH_PERIOD;
+__read_mostly unsigned صحيح llc_epoch_affinity_timeout = EPOCH_LLC_AFFINITY_TIMEOUT;
+__read_mostly unsigned صحيح llc_imb_pct		= 20;
+__read_mostly unsigned صحيح llc_overaggr_pct	= 50;
 
-static int llc_id(int cpu)
+ساكن صحيح llc_id(صحيح cpu)
 {
-	if (cpu < 0)
-		return -1;
+	إذا (cpu < 0)
+		إرجاع -1;
 
-	return per_cpu(sd_llc_id, cpu);
+	إرجاع per_cpu(sd_llc_id, cpu);
 }
 
-static inline int get_sched_cache_scale(int mul)
+ساكن مضمن صحيح get_sched_cache_scale(صحيح mul)
 {
-	unsigned int tol = READ_ONCE(llc_aggr_tolerance);
+	unsigned صحيح tol = READ_ONCE(llc_aggr_tolerance);
 
-	if (!tol)
-		return 0;
+	إذا (!tol)
+		إرجاع 0;
 
-	if (tol >= 100)
-		return INT_MAX;
+	إذا (tol >= 100)
+		إرجاع INT_MAX;
 
-	return (1 + (tol - 1) * mul);
+	إرجاع (1 + (tol - 1) * mul);
 }
 
-static bool exceed_llc_capacity(struct sched_cache_group *grp, int cpu)
+ساكن bool exceed_llc_capacity(بنية sched_cache_group *grp, صحيح cpu)
 {
 #ifdef CONFIG_NUMA_BALANCING
 	unsigned long llc, footprint;
-	struct sched_domain *sd;
-	int scale;
+	بنية sched_domain *sd;
+	صحيح scale;
 
 	guard(rcu)();
 
 	sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd);
-	if (!sd)
-		return true;
+	إذا (!sd)
+		إرجاع true;
 
-	if (static_branch_likely(&sched_numa_balancing)) {
+	إذا (static_branch_likely(&sched_numa_balancing)) {
 		/*
 		 * TBD: RDT exclusive LLC ways reserved should be
 		 * excluded.
@@ -1461,32 +1461,32 @@ static bool exceed_llc_capacity(struct sched_cache_group *grp, int cpu)
 		 * anyway.
 		 */
 		scale = get_sched_cache_scale(256);
-		if (scale == INT_MAX)
-			return false;
+		إذا (scale == INT_MAX)
+			إرجاع false;
 
-		return ((llc * (u64)scale) < (footprint * PAGE_SIZE));
+		إرجاع ((llc * (u64)scale) < (footprint * PAGE_SIZE));
 	}
 #endif
-	return false;
+	إرجاع false;
 }
 
-static bool invalid_llc_nr(struct sched_cache_group *grp, struct task_struct *p,
-			   int cpu)
+ساكن bool invalid_llc_nr(بنية sched_cache_group *grp, بنية task_struct *p,
+			   صحيح cpu)
 {
-	int scale;
+	صحيح scale;
 
-	if (get_nr_threads(p) <= 1)
-		return true;
+	إذا (get_nr_threads(p) <= 1)
+		إرجاع true;
 
 	/*
 	 * Scale the number of 'cores' in a LLC by llc_aggr_tolerance
 	 * and compare it to the task's active threads.
 	 */
 	scale = get_sched_cache_scale(1);
-	if (scale == INT_MAX)
-		return false;
+	إذا (scale == INT_MAX)
+		إرجاع false;
 
-	return !fits_capacity((READ_ONCE(grp->nr_running_avg) * cpu_smt_num_threads),
+	إرجاع !fits_capacity((READ_ONCE(grp->nr_running_avg) * cpu_smt_رقم_threads),
 			(scale * per_cpu(sd_llc_size, cpu)));
 }
 
@@ -1495,31 +1495,31 @@ static bool invalid_llc_nr(struct sched_cache_group *grp, struct task_struct *p,
  * LLC (pref_llc_queued) and runnable (!sched_delayed), keeping the counter in
  * the runnable domain so alb_break_llc() can compare it with h_nr_runnable.
  */
-static bool task_pref_llc_runnable(struct task_struct *p)
+ساكن bool task_pref_llc_runnable(بنية task_struct *p)
 {
-	return p->pref_llc_queued && !p->se.sched_delayed;
+	إرجاع p->pref_llc_queued && !p->se.sched_delayed;
 }
 
-static void pref_llc_running_inc(struct rq *rq, struct task_struct *p)
+ساكن فراغ pref_llc_running_inc(بنية rq *rq, بنية task_struct *p)
 {
-	if (task_pref_llc_runnable(p))
+	إذا (task_pref_llc_runnable(p))
 		rq->nr_pref_llc_running++;
 }
 
-static void pref_llc_running_dec(struct rq *rq, struct task_struct *p)
+ساكن فراغ pref_llc_running_dec(بنية rq *rq, بنية task_struct *p)
 {
-	if (task_pref_llc_runnable(p))
+	إذا (task_pref_llc_runnable(p))
 		rq->nr_pref_llc_running--;
 }
 
-static void account_llc_enqueue(struct rq *rq, struct task_struct *p)
+ساكن فراغ account_llc_enqueue(بنية rq *rq, بنية task_struct *p)
 {
-	int pref_llc, pref_llc_queued;
-	struct sched_domain *sd;
+	صحيح pref_llc, pref_llc_queued;
+	بنية sched_domain *sd;
 
 	pref_llc = p->preferred_llc;
-	if (pref_llc < 0)
-		return;
+	إذا (pref_llc < 0)
+		إرجاع;
 
 	pref_llc_queued = (pref_llc == task_llc(p));
 	rq->nr_llc_running++;
@@ -1544,21 +1544,21 @@ static void account_llc_enqueue(struct rq *rq, struct task_struct *p)
 	pref_llc_running_inc(rq, p);
 
 	sd = rcu_dereference_all(rq->sd);
-	if (sd && (unsigned int)pref_llc < sd->llc_max)
+	إذا (sd && (unsigned صحيح)pref_llc < sd->llc_max)
 		sd->llc_counts[pref_llc]++;
 }
 
-static void account_llc_dequeue(struct rq *rq, struct task_struct *p)
+ساكن فراغ account_llc_dequeue(بنية rq *rq, بنية task_struct *p)
 {
-	struct sched_domain *sd;
-	int pref_llc;
+	بنية sched_domain *sd;
+	صحيح pref_llc;
 
 	pref_llc = p->preferred_llc;
-	if (pref_llc < 0)
-		return;
+	إذا (pref_llc < 0)
+		إرجاع;
 
 	rq->nr_llc_running--;
-	if (p->pref_llc_queued) {
+	إذا (p->pref_llc_queued) {
 		/*
 		 * Skipped if still delayed (set_delayed() already removed it);
 		 * clearing pref_llc_queued below also stops clear_delayed()
@@ -1574,7 +1574,7 @@ static void account_llc_dequeue(struct rq *rq, struct task_struct *p)
 	}
 
 	sd = rcu_dereference_all(rq->sd);
-	if (sd && (unsigned int)pref_llc < sd->llc_max) {
+	إذا (sd && (unsigned صحيح)pref_llc < sd->llc_max) {
 		/*
 		 * There is a race condition between dequeue
 		 * and CPU hotplug. After a task has been enqueued
@@ -1587,28 +1587,28 @@ static void account_llc_dequeue(struct rq *rq, struct task_struct *p)
 		 * This undercount is temporary and accurate accounting
 		 * will resume once the rq has a chance to be idle.
 		 */
-		if (sd->llc_counts[pref_llc])
+		إذا (sd->llc_counts[pref_llc])
 			sd->llc_counts[pref_llc]--;
 	}
 }
 
-int mm_init_sched(struct mm_struct *mm,
-		  struct sched_cache_time __percpu *_pcpu_sched)
+صحيح mm_init_sched(بنية mm_struct *mm,
+		  بنية sched_cache_time __percpu *_pcpu_sched)
 {
-	struct sched_cache_group *grp;
+	بنية sched_cache_group *grp;
 	unsigned long epoch = 0;
-	int i;
+	صحيح i;
 
 	grp = kzalloc_obj(*grp);
-	if (!grp) {
+	إذا (!grp) {
 		free_percpu(_pcpu_sched);
-		mm->sched_cache_grp = NULL;
-		return -ENOMEM;
+		mm->sched_cache_grp = عدم;
+		إرجاع -ENOMEM;
 	}
 
 	for_each_possible_cpu(i) {
-		struct sched_cache_time *pcpu_sched = per_cpu_ptr(_pcpu_sched, i);
-		struct rq *rq = cpu_rq(i);
+		بنية sched_cache_time *pcpu_sched = per_cpu_ptr(_pcpu_sched, i);
+		بنية rq *rq = cpu_rq(i);
 
 		pcpu_sched->runtime = 0;
 		/* a slightly stale cpu epoch is acceptible */
@@ -1637,63 +1637,63 @@ int mm_init_sched(struct mm_struct *mm,
 	 * fully initialized.
 	 */
 	smp_store_release(&mm->sched_cache_grp, grp);
-	return 0;
+	إرجاع 0;
 }
 
-static void sched_cache_group_free_rcu(struct rcu_head *rcu)
+ساكن فراغ sched_cache_group_free_rcu(بنية rcu_head *rcu)
 {
-	struct sched_cache_group *grp =
-		container_of(rcu, struct sched_cache_group, rcu);
+	بنية sched_cache_group *grp =
+		container_of(rcu, بنية sched_cache_group, rcu);
 
 	free_percpu(grp->pcpu_sched);
 	kfree(grp);
 }
 
-static void sched_cache_group_put(struct sched_cache_group *grp)
+ساكن فراغ sched_cache_group_put(بنية sched_cache_group *grp)
 {
-	if (!grp || !refcount_dec_and_test(&grp->refcnt))
-		return;
+	إذا (!grp || !refcount_dec_and_test(&grp->refcnt))
+		إرجاع;
 
 	call_rcu(&grp->rcu, sched_cache_group_free_rcu);
 }
 
-DEFINE_FREE(sched_cache_group_put, struct sched_cache_group *,
+DEFINE_FREE(sched_cache_group_put, بنية sched_cache_group *,
 	    sched_cache_group_put(_T));
 
 #define rcu_deref_sched_cache_grp(tsk) \
 	rcu_dereference_check((tsk)->sched_cache_grp, (tsk) == current)
 
-static struct sched_cache_group *sched_cache_replace_grp(struct task_struct *p,
-							 struct sched_cache_group *new)
+ساكن بنية sched_cache_group *sched_cache_replace_grp(بنية task_struct *p,
+							 بنية sched_cache_group *new)
 {
-	struct sched_cache_group *old;
+	بنية sched_cache_group *old;
 
 	old = rcu_deref_sched_cache_grp(p);
 	rcu_assign_pointer(p->sched_cache_grp, new);
 
-	return old;
+	إرجاع old;
 }
 
-struct sched_cache_group *sched_cache_group_get(struct sched_cache_group *grp)
+بنية sched_cache_group *sched_cache_group_get(بنية sched_cache_group *grp)
 {
 	/*
 	 * refcount_inc_not_zero() is the acquire primitive for lockless
 	 * (RCU) lookups; plain refcount_inc() would scribble the count if
 	 * it already reached zero. Return NULL in that case.
 	 */
-	if (grp && !refcount_inc_not_zero(&grp->refcnt))
-		grp = NULL;
+	إذا (grp && !refcount_inc_not_zero(&grp->refcnt))
+		grp = عدم;
 
-	return grp;
+	إرجاع grp;
 }
 
-struct sched_cache_group *task_cache_group_get(struct task_struct *p)
+بنية sched_cache_group *task_cache_group_get(بنية task_struct *p)
 {
 	guard(rcu)();
-	return sched_cache_group_get(rcu_dereference(p->sched_cache_grp));
+	إرجاع sched_cache_group_get(rcu_dereference(p->sched_cache_grp));
 }
 
-void sched_cache_fork(struct task_struct *p)
+فراغ sched_cache_fork(بنية task_struct *p)
 {
 	/*
 	 * The child takes its own reference on the mm's cache group, separate
@@ -1704,7 +1704,7 @@ void sched_cache_fork(struct task_struct *p)
 			 sched_cache_group_get(p->mm->sched_cache_grp));
 }
 
-void sched_cache_fork_cleanup(struct task_struct *p)
+فراغ sched_cache_fork_cleanup(بنية task_struct *p)
 {
 	/*
 	 * A fork that fails after sched_cache_fork() never reaches exit_mm(),
@@ -1712,12 +1712,12 @@ void sched_cache_fork_cleanup(struct task_struct *p)
 	 * concurrent readers and the reference we hold keeps the group alive.
 	 */
 	sched_cache_group_put(rcu_access_pointer(p->sched_cache_grp));
-	RCU_INIT_POINTER(p->sched_cache_grp, NULL);
+	RCU_INIT_POINTER(p->sched_cache_grp, عدم);
 }
 
-void sched_cache_exec_mmap(struct task_struct *p, struct mm_struct *mm)
+فراغ sched_cache_exec_mmap(بنية task_struct *p, بنية mm_struct *mm)
 {
-	struct sched_cache_group *old;
+	بنية sched_cache_group *old;
 
 	/*
 	 * Acquire the new reference before publishing the pointer, then drop
@@ -1727,9 +1727,9 @@ void sched_cache_exec_mmap(struct task_struct *p, struct mm_struct *mm)
 	sched_cache_group_put(old);
 }
 
-void sched_cache_exit_mm(struct task_struct *p)
+فراغ sched_cache_exit_mm(بنية task_struct *p)
 {
-	struct sched_cache_group *grp = sched_cache_replace_grp(p, NULL);
+	بنية sched_cache_group *grp = sched_cache_replace_grp(p, عدم);
 
 #ifdef CONFIG_NUMA_BALANCING
 	/*
@@ -1737,7 +1737,7 @@ void sched_cache_exit_mm(struct task_struct *p)
 	 * reference, so the group footprint converges as its threads exit.
 	 * Unlocked for performance; clamp to avoid underflow.
 	 */
-	if (grp && p->total_numa_faults) {
+	إذا (grp && p->total_numa_faults) {
 		unsigned long fp = READ_ONCE(grp->footprint);
 		unsigned long sub = min(fp, p->total_numa_faults);
 
@@ -1747,32 +1747,32 @@ void sched_cache_exit_mm(struct task_struct *p)
 	sched_cache_group_put(grp);
 }
 
-void mm_destroy_sched(struct mm_struct *mm)
+فراغ mm_destroy_sched(بنية mm_struct *mm)
 {
 	sched_cache_group_put(mm->sched_cache_grp);
-	mm->sched_cache_grp = NULL;
+	mm->sched_cache_grp = عدم;
 }
 
 /* because why would C be fully specified */
-static __always_inline void __shr_u64(u64 *val, unsigned int n)
+ساكن __always_inline فراغ __shr_u64(u64 *val, unsigned صحيح n)
 {
-	if (n >= 64) {
+	إذا (n >= 64) {
 		*val = 0;
-		return;
+		إرجاع;
 	}
 	*val >>= n;
 }
 
-static inline void __update_mm_sched(struct rq *rq,
-				     struct sched_cache_time *pcpu_sched)
+ساكن مضمن فراغ __update_mm_sched(بنية rq *rq,
+				     بنية sched_cache_time *pcpu_sched)
 {
 	lockdep_assert_held(&rq->cpu_epoch_lock);
 
-	unsigned int period = max(READ_ONCE(llc_epoch_period), 1U);
+	unsigned صحيح period = max(READ_ONCE(llc_epoch_period), 1U);
 	unsigned long n, now = jiffies;
 	long delta = now - rq->cpu_epoch_next;
 
-	if (delta > 0) {
+	إذا (delta > 0) {
 		n = (delta + period - 1) / period;
 		rq->cpu_epoch += n;
 		rq->cpu_epoch_next += n * period;
@@ -1780,14 +1780,14 @@ static inline void __update_mm_sched(struct rq *rq,
 	}
 
 	n = rq->cpu_epoch - pcpu_sched->epoch;
-	if (n) {
+	إذا (n) {
 		pcpu_sched->epoch += n;
 		__shr_u64(&pcpu_sched->runtime, n);
 	}
 }
 
-static unsigned long fraction_mm_sched(struct rq *rq,
-				       struct sched_cache_time *pcpu_sched)
+ساكن unsigned long fraction_mm_sched(بنية rq *rq,
+				       بنية sched_cache_time *pcpu_sched)
 {
 	guard(raw_spinlock_irqsave)(&rq->cpu_epoch_lock);
 
@@ -1798,18 +1798,18 @@ static unsigned long fraction_mm_sched(struct rq *rq,
 	 * the accumulation period, this means the multiplcation here should
 	 * not overflow.
 	 */
-	return div64_u64(NICE_0_LOAD * pcpu_sched->runtime, rq->cpu_runtime + 1);
+	إرجاع div64_u64(NICE_0_LOAD * pcpu_sched->runtime, rq->cpu_runtime + 1);
 }
 
-static int get_pref_llc(struct task_struct *p, struct sched_cache_group *grp)
+ساكن صحيح get_pref_llc(بنية task_struct *p, بنية sched_cache_group *grp)
 {
-	int mm_sched_llc = -1, mm_sched_cpu;
+	صحيح mm_sched_llc = -1, mm_sched_cpu;
 
-	if (!grp)
-		return -1;
+	إذا (!grp)
+		إرجاع -1;
 
 	mm_sched_cpu = READ_ONCE(grp->cpu);
-	if (mm_sched_cpu != -1) {
+	إذا (mm_sched_cpu != -1) {
 		mm_sched_llc = llc_id(mm_sched_cpu);
 
 #ifdef CONFIG_NUMA_BALANCING
@@ -1823,31 +1823,31 @@ static int get_pref_llc(struct task_struct *p, struct sched_cache_group *grp)
 		 * than sched_setnuma() at least -- and thus the
 		 * conflict only exists for a short period of time.
 		 */
-		if (static_branch_likely(&sched_numa_balancing) &&
+		إذا (static_branch_likely(&sched_numa_balancing) &&
 		    p->numa_preferred_nid >= 0 &&
-		    cpu_to_node(mm_sched_cpu) != p->numa_preferred_nid)
+		    cpu_to_عقدة(mm_sched_cpu) != p->numa_preferred_nid)
 			mm_sched_llc = -1;
 #endif
 	}
 
-	return mm_sched_llc;
+	إرجاع mm_sched_llc;
 }
 
-static unsigned int task_running_on_cpu(int cpu, struct task_struct *p);
+ساكن unsigned صحيح task_running_on_cpu(صحيح cpu, بنية task_struct *p);
 
-static inline
-void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
+ساكن مضمن
+فراغ account_mm_sched(بنية rq *rq, بنية task_struct *p, s64 delta_exec)
 {
-	struct sched_cache_group *grp = rcu_dereference_all(p->sched_cache_grp);
-	struct sched_cache_time *pcpu_sched;
-	int mm_sched_llc = -1;
+	بنية sched_cache_group *grp = rcu_dereference_all(p->sched_cache_grp);
+	بنية sched_cache_time *pcpu_sched;
+	صحيح mm_sched_llc = -1;
 	unsigned long epoch;
 
-	if (!sched_cache_enabled())
-		return;
+	إذا (!sched_cache_enabled())
+		إرجاع;
 
-	if (p->sched_class != &fair_sched_class)
-		return;
+	إذا (p->sched_class != &fair_sched_class)
+		إرجاع;
 	/*
 	 * init_task, kthreads and user thread created
 	 * by user_mode_thread() don't have a cache group.
@@ -1858,8 +1858,8 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
 	 * here for safety reasons, to guard against future
 	 * modifications and to pair with task_tick_cache().
 	 */
-	if (p->flags & PF_KTHREAD || !grp || !grp->pcpu_sched)
-		return;
+	إذا (p->flags & PF_KTHREAD || !grp || !grp->pcpu_sched)
+		إرجاع;
 
 	pcpu_sched = per_cpu_ptr(grp->pcpu_sched, cpu_of(rq));
 
@@ -1874,17 +1874,17 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
 	 * If this process hasn't hit task_cache_work() for a while invalidate
 	 * its preferred state.
 	 */
-	if ((long)(epoch - READ_ONCE(grp->epoch)) > llc_epoch_affinity_timeout ||
+	إذا ((long)(epoch - READ_ONCE(grp->epoch)) > llc_epoch_affinity_timeout ||
 	    invalid_llc_nr(grp, p, cpu_of(rq)) ||
 	    exceed_llc_capacity(grp, cpu_of(rq))) {
-		if (READ_ONCE(grp->cpu) != -1)
+		إذا (READ_ONCE(grp->cpu) != -1)
 			WRITE_ONCE(grp->cpu, -1);
 	}
 
 	mm_sched_llc = get_pref_llc(p, grp);
 
 	/* task not on rq accounted later in account_entity_enqueue() */
-	if (task_running_on_cpu(rq->cpu, p) &&
+	إذا (task_running_on_cpu(rq->cpu, p) &&
 	    READ_ONCE(p->preferred_llc) != mm_sched_llc) {
 		account_llc_dequeue(rq, p);
 		WRITE_ONCE(p->preferred_llc, mm_sched_llc);
@@ -1892,44 +1892,44 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
 	}
 }
 
-static void task_tick_cache(struct rq *rq, struct task_struct *p)
+ساكن فراغ task_tick_cache(بنية rq *rq, بنية task_struct *p)
 {
-	struct sched_cache_group *grp = rcu_dereference_all(p->sched_cache_grp);
-	struct callback_head *work = &p->cache_work;
+	بنية sched_cache_group *grp = rcu_dereference_all(p->sched_cache_grp);
+	بنية callback_head *work = &p->cache_work;
 	unsigned long epoch;
 
-	if (!sched_cache_enabled())
-		return;
+	إذا (!sched_cache_enabled())
+		إرجاع;
 
-	if (!grp || p->flags & PF_KTHREAD ||
+	إذا (!grp || p->flags & PF_KTHREAD ||
 	    !grp->pcpu_sched)
-		return;
+		إرجاع;
 
 	epoch = rq->cpu_epoch;
 	/* avoid moving backwards */
-	if (time_after_eq(grp->epoch, epoch))
-		return;
+	إذا (time_after_eq(grp->epoch, epoch))
+		إرجاع;
 
 	guard(raw_spinlock)(&grp->lock);
 
-	if (work->next == work) {
+	إذا (work->next == work) {
 		task_work_add(p, work, TWA_RESUME);
 		WRITE_ONCE(grp->epoch, epoch);
 	}
 }
 
-static void get_scan_cpumasks(cpumask_var_t cpus, struct task_struct *p,
-			      struct sched_cache_group *grp)
+ساكن فراغ get_scan_cpumasks(cpumask_var_t cpus, بنية task_struct *p,
+			      بنية sched_cache_group *grp)
 {
 #ifdef CONFIG_NUMA_BALANCING
-	int cpu, curr_cpu, nid, pref_nid;
+	صحيح cpu, curr_cpu, nid, pref_nid;
 
-	if (!static_branch_likely(&sched_numa_balancing))
-		goto out;
+	إذا (!static_branch_likely(&sched_numa_balancing))
+		اذهب out;
 
 	cpu = READ_ONCE(grp->cpu);
-	if (cpu != -1)
-		nid = cpu_to_node(cpu);
+	إذا (cpu != -1)
+		nid = cpu_to_عقدة(cpu);
 	curr_cpu = task_cpu(p);
 
 	/*
@@ -1944,31 +1944,31 @@ static void get_scan_cpumasks(cpumask_var_t cpus, struct task_struct *p,
 	 */
 	pref_nid = p->numa_preferred_nid;
 	/* honor the task's preferred node */
-	if (pref_nid == NUMA_NO_NODE)
-		goto out;
+	إذا (pref_nid == NUMA_NO_عقدة)
+		اذهب out;
 
-	cpumask_or(cpus, cpus, cpumask_of_node(pref_nid));
+	cpumask_or(cpus, cpus, cpumask_of_عقدة(pref_nid));
 
 	/* honor the task's preferred LLC CPU */
-	if (cpu != -1 && !cpumask_test_cpu(cpu, cpus) && nid != NUMA_NO_NODE)
-		cpumask_or(cpus, cpus, cpumask_of_node(nid));
+	إذا (cpu != -1 && !cpumask_test_cpu(cpu, cpus) && nid != NUMA_NO_عقدة)
+		cpumask_or(cpus, cpus, cpumask_of_عقدة(nid));
 
 	/* make sure the task's current running node is included */
-	if (!cpumask_test_cpu(curr_cpu, cpus))
-		cpumask_or(cpus, cpus, cpumask_of_node(cpu_to_node(curr_cpu)));
+	إذا (!cpumask_test_cpu(curr_cpu, cpus))
+		cpumask_or(cpus, cpus, cpumask_of_عقدة(cpu_to_عقدة(curr_cpu)));
 
-	return;
+	إرجاع;
 
 out:
 #endif
 	cpumask_copy(cpus, cpu_online_mask);
 }
 
-static inline void update_avg_scale(u64 *avg, u64 sample)
+ساكن مضمن فراغ update_avg_scale(u64 *avg, u64 sample)
 {
-	int factor = per_cpu(sd_llc_size, raw_smp_processor_id());
+	صحيح factor = per_cpu(sd_llc_size, raw_smp_processor_id());
 	s64 diff = sample - *avg;
-	u32 divisor;
+	u32 قاسم;
 
 	/*
 	 * Scale the divisor based on the number of CPUs contained
@@ -1978,17 +1978,17 @@ static inline void update_avg_scale(u64 *avg, u64 sample)
 	 * at a maximum divisor of 8 which is the default smoothing
 	 * factor of EWMA in update_avg().
 	 */
-	divisor = clamp_t(u32, (factor >> 2), 2, 8);
-	*avg += div64_s64(diff, divisor);
+	قاسم = clamp_t(u32, (factor >> 2), 2, 8);
+	*avg += div64_s64(diff, قاسم);
 }
 
-static void task_cache_work(struct callback_head *work)
+ساكن فراغ task_cache_work(بنية callback_head *work)
 {
-	struct sched_cache_group *grp __free(sched_cache_group_put) = NULL;
+	بنية sched_cache_group *grp __free(sched_cache_group_put) = عدم;
 	cpumask_var_t cpus __free(free_cpumask_var) = CPUMASK_VAR_NULL;
-	int cpu, m_a_cpu = -1, nr_running = 0, curr_cpu;
+	صحيح cpu, m_a_cpu = -1, nr_running = 0, curr_cpu;
 	unsigned long next_scan, now = jiffies;
-	struct task_struct *p = current, *cur;
+	بنية task_struct *p = current, *cur;
 	unsigned long curr_m_a_occ = 0;
 	unsigned long m_a_occ = 0;
 
@@ -1996,8 +1996,8 @@ static void task_cache_work(struct callback_head *work)
 
 	work->next = work;
 
-	if (p->flags & PF_EXITING)
-		return;
+	إذا (p->flags & PF_EXITING)
+		إرجاع;
 
 	/*
 	 * A reference makes sure grp is not released by others. The rcu
@@ -2005,30 +2005,30 @@ static void task_cache_work(struct callback_head *work)
 	 * because the latter might sleep.
 	 */
 	grp = task_cache_group_get(p);
-	if (!grp)
-		return;
+	إذا (!grp)
+		إرجاع;
 
 	next_scan = READ_ONCE(grp->next_scan);
-	if (time_before(now, next_scan))
-		return;
+	إذا (time_before(now, next_scan))
+		إرجاع;
 
 	/* only 1 thread is allowed to scan */
-	if (!try_cmpxchg(&grp->next_scan, &next_scan,
+	إذا (!try_cmpxchg(&grp->next_scan, &next_scan,
 			 now + max_t(unsigned long,
 				     READ_ONCE(llc_epoch_period), 1)))
-		return;
+		إرجاع;
 
 	curr_cpu = task_cpu(p);
-	if (invalid_llc_nr(grp, p, curr_cpu) ||
+	إذا (invalid_llc_nr(grp, p, curr_cpu) ||
 	    exceed_llc_capacity(grp, curr_cpu)) {
-		if (READ_ONCE(grp->cpu) != -1)
+		إذا (READ_ONCE(grp->cpu) != -1)
 			WRITE_ONCE(grp->cpu, -1);
 
-		return;
+		إرجاع;
 	}
 
-	if (!zalloc_cpumask_var(&cpus, GFP_KERNEL))
-		return;
+	إذا (!zalloc_cpumask_var(&cpus, GFP_KERNEL))
+		إرجاع;
 
 	scoped_guard (cpus_read_lock) {
 		guard(rcu)();
@@ -2037,18 +2037,18 @@ static void task_cache_work(struct callback_head *work)
 
 		for_each_cpu(cpu, cpus) {
 			/* XXX sched_cluster_active */
-			struct sched_domain *sd = rcu_dereference_all(per_cpu(sd_llc, cpu));
+			بنية sched_domain *sd = rcu_dereference_all(per_cpu(sd_llc, cpu));
 			unsigned long occ, m_occ = 0, a_occ = 0;
-			int m_cpu = -1, i;
+			صحيح m_cpu = -1, i;
 
-			if (!sd)
-				continue;
+			إذا (!sd)
+				استمر;
 
 			for_each_cpu(i, sched_domain_span(sd)) {
 				occ = fraction_mm_sched(cpu_rq(i),
 							per_cpu_ptr(grp->pcpu_sched, i));
 				a_occ += occ;
-				if (occ > m_occ) {
+				إذا (occ > m_occ) {
 					m_occ = occ;
 					m_cpu = i;
 				}
@@ -2058,7 +2058,7 @@ static void task_cache_work(struct callback_head *work)
 				 * pointer is only compared, never dereferenced.
 				 */
 				cur = rcu_dereference_all(cpu_rq(i)->curr);
-				if (cur && !(cur->flags & (PF_EXITING | PF_KTHREAD)) &&
+				إذا (cur && !(cur->flags & (PF_EXITING | PF_KTHREAD)) &&
 				    rcu_access_pointer(cur->sched_cache_grp) == grp)
 					nr_running++;
 			}
@@ -2078,19 +2078,19 @@ static void task_cache_work(struct callback_head *work)
 			 * the average number of faults per CPU. This strategy is also
 			 * followed here.
 			 */
-			if (a_occ > m_a_occ) {
+			إذا (a_occ > m_a_occ) {
 				m_a_occ = a_occ;
 				m_a_cpu = m_cpu;
 			}
 
-			if (llc_id(cpu) == llc_id(READ_ONCE(grp->cpu)))
+			إذا (llc_id(cpu) == llc_id(READ_ONCE(grp->cpu)))
 				curr_m_a_occ = a_occ;
 
 			cpumask_andnot(cpus, cpus, sched_domain_span(sd));
 		}
 	}
 
-	if (m_a_occ > (2 * curr_m_a_occ)) {
+	إذا (m_a_occ > (2 * curr_m_a_occ)) {
 		/*
 		 * Avoid switching sched_cache_grp->cpu too fast.
 		 * The reason to choose 2X is because:
@@ -2107,9 +2107,9 @@ static void task_cache_work(struct callback_head *work)
 	update_avg_scale(&grp->nr_running_avg, nr_running);
 }
 
-void init_sched_mm(struct task_struct *p)
+فراغ init_sched_mm(بنية task_struct *p)
 {
-	struct callback_head *work = &p->cache_work;
+	بنية callback_head *work = &p->cache_work;
 
 	init_task_work(work, task_cache_work);
 	work->next = work;
@@ -2119,7 +2119,7 @@ void init_sched_mm(struct task_struct *p)
 	 * here - before copy_mm() runs - so the child never carries a
 	 * borrowed pointer that the fork error path would put.
 	 */
-	RCU_INIT_POINTER(p->sched_cache_grp, NULL);
+	RCU_INIT_POINTER(p->sched_cache_grp, عدم);
 	/*
 	 * Reset new task's preference to avoid
 	 * polluting account_llc_enqueue().
@@ -2128,43 +2128,43 @@ void init_sched_mm(struct task_struct *p)
 	p->pref_llc_queued = 0;
 }
 
-#else /* CONFIG_SCHED_CACHE */
+#وإلا /* CONFIG_SCHED_CACHE */
 
-static inline void account_mm_sched(struct rq *rq, struct task_struct *p,
+ساكن مضمن فراغ account_mm_sched(بنية rq *rq, بنية task_struct *p,
 				    s64 delta_exec) { }
 
-void init_sched_mm(struct task_struct *p) { }
+فراغ init_sched_mm(بنية task_struct *p) { }
 
-static void task_tick_cache(struct rq *rq, struct task_struct *p) { }
+ساكن فراغ task_tick_cache(بنية rq *rq, بنية task_struct *p) { }
 
-static inline int get_pref_llc(struct task_struct *p,
-			       struct mm_struct *mm)
+ساكن مضمن صحيح get_pref_llc(بنية task_struct *p,
+			       بنية mm_struct *mm)
 {
-	return -1;
+	إرجاع -1;
 }
 
-static void account_llc_enqueue(struct rq *rq, struct task_struct *p) {}
+ساكن فراغ account_llc_enqueue(بنية rq *rq, بنية task_struct *p) {}
 
-static void account_llc_dequeue(struct rq *rq, struct task_struct *p) {}
+ساكن فراغ account_llc_dequeue(بنية rq *rq, بنية task_struct *p) {}
 
-static void pref_llc_running_inc(struct rq *rq, struct task_struct *p) {}
+ساكن فراغ pref_llc_running_inc(بنية rq *rq, بنية task_struct *p) {}
 
-static void pref_llc_running_dec(struct rq *rq, struct task_struct *p) {}
+ساكن فراغ pref_llc_running_dec(بنية rq *rq, بنية task_struct *p) {}
 
 #endif /* CONFIG_SCHED_CACHE */
 
 /*
  * Used by other classes to account runtime.
  */
-s64 update_curr_common(struct rq *rq)
+s64 update_curr_common(بنية rq *rq)
 {
-	return update_se(rq, &rq->donor->se);
+	إرجاع update_se(rq, &rq->donor->se);
 }
 
 /*
  * Update the current task's runtime statistics.
  */
-static void update_curr(struct cfs_rq *cfs_rq)
+ساكن فراغ update_curr(بنية cfs_rq *cfs_rq)
 {
 	/*
 	 * Note: cfs_rq->curr corresponds to the task picked to
@@ -2172,22 +2172,22 @@ static void update_curr(struct cfs_rq *cfs_rq)
 	 * not necessarily be the actual task running
 	 * (rq->curr.se). This is easy to confuse!
 	 */
-	struct sched_entity *curr = cfs_rq->h_curr;
-	struct rq *rq = rq_of(cfs_rq);
+	بنية sched_entity *curr = cfs_rq->h_curr;
+	بنية rq *rq = rq_of(cfs_rq);
 	s64 delta_exec;
 	bool resched;
 
-	if (unlikely(!curr))
-		return;
+	إذا (unlikely(!curr))
+		إرجاع;
 
 	delta_exec = update_se(rq, curr);
-	if (unlikely(delta_exec <= 0))
-		return;
+	إذا (unlikely(delta_exec <= 0))
+		إرجاع;
 
 	account_cfs_rq_runtime(cfs_rq, delta_exec);
 
-	if (!entity_is_task(curr))
-		return;
+	إذا (!entity_is_task(curr))
+		إرجاع;
 
 	cfs_rq = &rq->cfs;
 
@@ -2206,48 +2206,48 @@ static void update_curr(struct cfs_rq *cfs_rq)
 	 */
 	dl_server_update(&rq->fair_server, delta_exec);
 
-	if (cfs_rq->h_nr_queued == 1)
-		return;
+	إذا (cfs_rq->h_nr_queued == 1)
+		إرجاع;
 
-	if (resched || !protect_slice(curr)) {
+	إذا (resched || !protect_slice(curr)) {
 		resched_curr_lazy(rq);
 		clear_buddies(cfs_rq, curr);
 	}
 }
 
-static void update_curr_fair(struct rq *rq)
+ساكن فراغ update_curr_fair(بنية rq *rq)
 {
-	struct sched_entity *se = &rq->donor->se;
+	بنية sched_entity *se = &rq->donor->se;
 
 	for_each_sched_entity(se)
 		update_curr(cfs_rq_of(se));
 }
 
-static inline void
-update_stats_wait_start_fair(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن فراغ
+update_stats_wait_start_fair(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
-	struct sched_statistics *stats;
-	struct task_struct *p = NULL;
+	بنية sched_statistics *stats;
+	بنية task_struct *p = عدم;
 
-	if (!schedstat_enabled())
-		return;
+	إذا (!schedstat_enabled())
+		إرجاع;
 
 	stats = __schedstats_from_se(se);
 
-	if (entity_is_task(se))
+	إذا (entity_is_task(se))
 		p = task_of(se);
 
 	__update_stats_wait_start(rq_of(cfs_rq), p, stats);
 }
 
-static inline void
-update_stats_wait_end_fair(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن فراغ
+update_stats_wait_end_fair(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
-	struct sched_statistics *stats;
-	struct task_struct *p = NULL;
+	بنية sched_statistics *stats;
+	بنية task_struct *p = عدم;
 
-	if (!schedstat_enabled())
-		return;
+	إذا (!schedstat_enabled())
+		إرجاع;
 
 	stats = __schedstats_from_se(se);
 
@@ -2257,27 +2257,27 @@ update_stats_wait_end_fair(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	 * will be 0.So it will let the delta wrong. We need to avoid this
 	 * scenario.
 	 */
-	if (unlikely(!schedstat_val(stats->wait_start)))
-		return;
+	إذا (unlikely(!schedstat_val(stats->wait_start)))
+		إرجاع;
 
-	if (entity_is_task(se))
+	إذا (entity_is_task(se))
 		p = task_of(se);
 
 	__update_stats_wait_end(rq_of(cfs_rq), p, stats);
 }
 
-static inline void
-update_stats_enqueue_sleeper_fair(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن فراغ
+update_stats_enqueue_sleeper_fair(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
-	struct sched_statistics *stats;
-	struct task_struct *tsk = NULL;
+	بنية sched_statistics *stats;
+	بنية task_struct *tsk = عدم;
 
-	if (!schedstat_enabled())
-		return;
+	إذا (!schedstat_enabled())
+		إرجاع;
 
 	stats = __schedstats_from_se(se);
 
-	if (entity_is_task(se))
+	إذا (entity_is_task(se))
 		tsk = task_of(se);
 
 	__update_stats_enqueue_sleeper(rq_of(cfs_rq), tsk, stats);
@@ -2286,47 +2286,47 @@ update_stats_enqueue_sleeper_fair(struct cfs_rq *cfs_rq, struct sched_entity *se
 /*
  * Task is being enqueued - update stats:
  */
-static inline void
-update_stats_enqueue_fair(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ساكن مضمن فراغ
+update_stats_enqueue_fair(بنية cfs_rq *cfs_rq, بنية sched_entity *se, صحيح flags)
 {
-	if (!schedstat_enabled())
-		return;
+	إذا (!schedstat_enabled())
+		إرجاع;
 
 	/*
 	 * Are we enqueueing a waiting task? (for current tasks
 	 * a dequeue/enqueue event is a NOP)
 	 */
-	if (se != cfs_rq->h_curr)
+	إذا (se != cfs_rq->h_curr)
 		update_stats_wait_start_fair(cfs_rq, se);
 
-	if (flags & ENQUEUE_WAKEUP)
+	إذا (flags & ENQUEUE_WAKEUP)
 		update_stats_enqueue_sleeper_fair(cfs_rq, se);
 }
 
-static inline void
-update_stats_dequeue_fair(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ساكن مضمن فراغ
+update_stats_dequeue_fair(بنية cfs_rq *cfs_rq, بنية sched_entity *se, صحيح flags)
 {
 
-	if (!schedstat_enabled())
-		return;
+	إذا (!schedstat_enabled())
+		إرجاع;
 
 	/*
 	 * Mark the end of the wait period if dequeueing a
 	 * waiting task:
 	 */
-	if (se != cfs_rq->h_curr)
+	إذا (se != cfs_rq->h_curr)
 		update_stats_wait_end_fair(cfs_rq, se);
 
-	if ((flags & DEQUEUE_SLEEP) && entity_is_task(se)) {
-		struct task_struct *tsk = task_of(se);
-		unsigned int state;
+	إذا ((flags & DEQUEUE_SLEEP) && entity_is_task(se)) {
+		بنية task_struct *tsk = task_of(se);
+		unsigned صحيح state;
 
 		/* XXX racy against TTWU */
 		state = READ_ONCE(tsk->__state);
-		if (state & TASK_INTERRUPTIBLE)
+		إذا (state & TASK_INTERRUPTIBLE)
 			__schedstat_set(tsk->stats.sleep_start,
 				      rq_clock(rq_of(cfs_rq)));
-		if (state & TASK_UNINTERRUPTIBLE)
+		إذا (state & TASK_UNINTERRUPTIBLE)
 			__schedstat_set(tsk->stats.block_start,
 				      rq_clock(rq_of(cfs_rq)));
 	}
@@ -2335,8 +2335,8 @@ update_stats_dequeue_fair(struct cfs_rq *cfs_rq, struct sched_entity *se, int fl
 /*
  * We are picking a new current task - update its stats:
  */
-static inline void
-update_stats_curr_start(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن فراغ
+update_stats_curr_start(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	/*
 	 * We are starting a new run period:
@@ -2345,26 +2345,26 @@ update_stats_curr_start(struct cfs_rq *cfs_rq, struct sched_entity *se)
 }
 
 /* Check sched_smt_active before calling this to avoid overheads in fastpaths */
-static inline bool is_core_idle(int cpu)
+ساكن مضمن bool is_core_idle(صحيح cpu)
 {
-	int sibling;
+	صحيح sibling;
 
 	for_each_cpu(sibling, cpu_smt_mask(cpu)) {
-		if (cpu == sibling)
-			continue;
+		إذا (cpu == sibling)
+			استمر;
 
-		if (!idle_cpu(sibling))
-			return false;
+		إذا (!idle_cpu(sibling))
+			إرجاع false;
 	}
 
-	return true;
+	إرجاع true;
 }
 
 #ifdef CONFIG_NUMA
 #define NUMA_IMBALANCE_MIN 2
 
-static inline long
-adjust_numa_imbalance(int imbalance, int dst_running, int imb_numa_nr)
+ساكن مضمن long
+adjust_numa_imbalance(صحيح imbalance, صحيح dst_running, صحيح imb_numa_nr)
 {
 	/*
 	 * Allow a NUMA imbalance if busy CPUs is less than the maximum
@@ -2373,17 +2373,17 @@ adjust_numa_imbalance(int imbalance, int dst_running, int imb_numa_nr)
 	 * approximation as the number of running tasks may not be related to
 	 * the number of busy CPUs due to sched_setaffinity.
 	 */
-	if (dst_running > imb_numa_nr)
-		return imbalance;
+	إذا (dst_running > imb_numa_nr)
+		إرجاع imbalance;
 
 	/*
 	 * Allow a small imbalance based on a simple pair of communicating
 	 * tasks that remain local when the destination is lightly loaded.
 	 */
-	if (imbalance <= NUMA_IMBALANCE_MIN)
-		return 0;
+	إذا (imbalance <= NUMA_IMBALANCE_MIN)
+		إرجاع 0;
 
-	return imbalance;
+	إرجاع imbalance;
 }
 #endif /* CONFIG_NUMA */
 
@@ -2393,27 +2393,27 @@ adjust_numa_imbalance(int imbalance, int dst_running, int imb_numa_nr)
  * calculated based on the tasks virtual memory size and
  * numa_balancing_scan_size.
  */
-unsigned int sysctl_numa_balancing_scan_period_min = 1000;
-unsigned int sysctl_numa_balancing_scan_period_max = 60000;
+unsigned صحيح sysctl_numa_balancing_scan_period_min = 1000;
+unsigned صحيح sysctl_numa_balancing_scan_period_max = 60000;
 
 /* Portion of address space to scan in MB */
-unsigned int sysctl_numa_balancing_scan_size = 256;
+unsigned صحيح sysctl_numa_balancing_scan_size = 256;
 
 /* Scan @scan_size MB every @scan_period after an initial @scan_delay in ms */
-unsigned int sysctl_numa_balancing_scan_delay = 1000;
+unsigned صحيح sysctl_numa_balancing_scan_delay = 1000;
 
 /* The page with hint page fault latency < threshold in ms is considered hot */
-unsigned int sysctl_numa_balancing_hot_threshold = MSEC_PER_SEC;
+unsigned صحيح sysctl_numa_balancing_hot_threshold = MSEC_PER_SEC;
 
-struct numa_group {
+بنية numa_group {
 	refcount_t refcount;
 
 	spinlock_t lock; /* nr_tasks, tasks */
-	int nr_tasks;
+	صحيح nr_tasks;
 	pid_t gid;
-	int active_nodes;
+	صحيح active_nodes;
 
-	struct rcu_head rcu;
+	بنية rcu_head rcu;
 	unsigned long total_faults;
 	unsigned long max_faults_cpu;
 	/*
@@ -2430,21 +2430,21 @@ struct numa_group {
  * For functions that can be called in multiple contexts that permit reading
  * ->numa_group (see struct task_struct for locking rules).
  */
-static struct numa_group *deref_task_numa_group(struct task_struct *p)
+ساكن بنية numa_group *deref_task_numa_group(بنية task_struct *p)
 {
-	return rcu_dereference_check(p->numa_group, p == current ||
+	إرجاع rcu_dereference_check(p->numa_group, p == current ||
 		(lockdep_is_held(__rq_lockp(task_rq(p))) && !READ_ONCE(p->on_cpu)));
 }
 
-static struct numa_group *deref_curr_numa_group(struct task_struct *p)
+ساكن بنية numa_group *deref_curr_numa_group(بنية task_struct *p)
 {
-	return rcu_dereference_protected(p->numa_group, p == current);
+	إرجاع rcu_dereference_protected(p->numa_group, p == current);
 }
 
-static inline unsigned long group_faults_priv(struct numa_group *ng);
-static inline unsigned long group_faults_shared(struct numa_group *ng);
+ساكن مضمن unsigned long group_faults_priv(بنية numa_group *ng);
+ساكن مضمن unsigned long group_faults_shared(بنية numa_group *ng);
 
-static unsigned int task_nr_scan_windows(struct task_struct *p)
+ساكن unsigned صحيح task_nr_scan_windows(بنية task_struct *p)
 {
 	unsigned long rss = 0;
 	unsigned long nr_scan_pages;
@@ -2456,88 +2456,88 @@ static unsigned int task_nr_scan_windows(struct task_struct *p)
 	 */
 	nr_scan_pages = MB_TO_PAGES(sysctl_numa_balancing_scan_size);
 	rss = get_mm_rss(p->mm);
-	if (!rss)
+	إذا (!rss)
 		rss = nr_scan_pages;
 
 	rss = round_up(rss, nr_scan_pages);
-	return rss / nr_scan_pages;
+	إرجاع rss / nr_scan_pages;
 }
 
 /* For sanity's sake, never scan more PTEs than MAX_SCAN_WINDOW MB/sec. */
 #define MAX_SCAN_WINDOW 2560
 
-static unsigned int task_scan_min(struct task_struct *p)
+ساكن unsigned صحيح task_scan_min(بنية task_struct *p)
 {
-	unsigned int scan_size = READ_ONCE(sysctl_numa_balancing_scan_size);
-	unsigned int scan, floor;
-	unsigned int windows = 1;
+	unsigned صحيح scan_size = READ_ONCE(sysctl_numa_balancing_scan_size);
+	unsigned صحيح scan, floor;
+	unsigned صحيح windows = 1;
 
-	if (scan_size < MAX_SCAN_WINDOW)
+	إذا (scan_size < MAX_SCAN_WINDOW)
 		windows = MAX_SCAN_WINDOW / scan_size;
 	floor = 1000 / windows;
 
 	scan = sysctl_numa_balancing_scan_period_min / task_nr_scan_windows(p);
-	return max_t(unsigned int, floor, scan);
+	إرجاع max_t(unsigned صحيح, floor, scan);
 }
 
-static unsigned int task_scan_start(struct task_struct *p)
+ساكن unsigned صحيح task_scan_start(بنية task_struct *p)
 {
 	unsigned long smin = task_scan_min(p);
 	unsigned long period = smin;
-	struct numa_group *ng;
+	بنية numa_group *ng;
 
 	/* Scale the maximum scan period with the amount of shared memory. */
 	rcu_read_lock();
 	ng = rcu_dereference_all(p->numa_group);
-	if (ng) {
+	إذا (ng) {
 		unsigned long shared = group_faults_shared(ng);
-		unsigned long private = group_faults_priv(ng);
+		unsigned long خاص = group_faults_priv(ng);
 
 		period *= refcount_read(&ng->refcount);
 		period *= shared + 1;
-		period /= private + shared + 1;
+		period /= خاص + shared + 1;
 	}
 	rcu_read_unlock();
 
-	return max(smin, period);
+	إرجاع max(smin, period);
 }
 
-static unsigned int task_scan_max(struct task_struct *p)
+ساكن unsigned صحيح task_scan_max(بنية task_struct *p)
 {
 	unsigned long smin = task_scan_min(p);
 	unsigned long smax;
-	struct numa_group *ng;
+	بنية numa_group *ng;
 
 	/* Watch for min being lower than max due to floor calculations */
 	smax = sysctl_numa_balancing_scan_period_max / task_nr_scan_windows(p);
 
 	/* Scale the maximum scan period with the amount of shared memory. */
 	ng = deref_curr_numa_group(p);
-	if (ng) {
+	إذا (ng) {
 		unsigned long shared = group_faults_shared(ng);
-		unsigned long private = group_faults_priv(ng);
+		unsigned long خاص = group_faults_priv(ng);
 		unsigned long period = smax;
 
 		period *= refcount_read(&ng->refcount);
 		period *= shared + 1;
-		period /= private + shared + 1;
+		period /= خاص + shared + 1;
 
 		smax = max(smax, period);
 	}
 
-	return max(smin, smax);
+	إرجاع max(smin, smax);
 }
 
-static void account_numa_enqueue(struct rq *rq, struct task_struct *p)
+ساكن فراغ account_numa_enqueue(بنية rq *rq, بنية task_struct *p)
 {
-	rq->nr_numa_running += (p->numa_preferred_nid != NUMA_NO_NODE);
-	rq->nr_preferred_running += (p->numa_preferred_nid == task_node(p));
+	rq->nr_numa_running += (p->numa_preferred_nid != NUMA_NO_عقدة);
+	rq->nr_preferred_running += (p->numa_preferred_nid == task_عقدة(p));
 }
 
-static void account_numa_dequeue(struct rq *rq, struct task_struct *p)
+ساكن فراغ account_numa_dequeue(بنية rq *rq, بنية task_struct *p)
 {
-	rq->nr_numa_running -= (p->numa_preferred_nid != NUMA_NO_NODE);
-	rq->nr_preferred_running -= (p->numa_preferred_nid == task_node(p));
+	rq->nr_numa_running -= (p->numa_preferred_nid != NUMA_NO_عقدة);
+	rq->nr_preferred_running -= (p->numa_preferred_nid == task_عقدة(p));
 }
 
 /* Shared or private faults. */
@@ -2549,18 +2549,18 @@ static void account_numa_dequeue(struct rq *rq, struct task_struct *p)
 /* Averaged statistics, and temporary buffers. */
 #define NR_NUMA_HINT_FAULT_BUCKETS (NR_NUMA_HINT_FAULT_STATS * 2)
 
-pid_t task_numa_group_id(struct task_struct *p)
+pid_t task_numa_group_id(بنية task_struct *p)
 {
-	struct numa_group *ng;
+	بنية numa_group *ng;
 	pid_t gid = 0;
 
 	rcu_read_lock();
 	ng = rcu_dereference_all(p->numa_group);
-	if (ng)
+	إذا (ng)
 		gid = ng->gid;
 	rcu_read_unlock();
 
-	return gid;
+	إرجاع gid;
 }
 
 /*
@@ -2569,59 +2569,59 @@ pid_t task_numa_group_id(struct task_struct *p)
  * array is for current counters, which are averaged into the
  * first set by task_numa_placement.
  */
-static inline int task_faults_idx(enum numa_faults_stats s, int nid, int priv)
+ساكن مضمن صحيح task_faults_idx(تعداد numa_faults_stats s, صحيح nid, صحيح priv)
 {
-	return NR_NUMA_HINT_FAULT_TYPES * (s * nr_node_ids + nid) + priv;
+	إرجاع NR_NUMA_HINT_FAULT_TYPES * (s * nr_عقدة_ids + nid) + priv;
 }
 
-static inline unsigned long task_faults(struct task_struct *p, int nid)
+ساكن مضمن unsigned long task_faults(بنية task_struct *p, صحيح nid)
 {
-	if (!p->numa_faults)
-		return 0;
+	إذا (!p->numa_faults)
+		إرجاع 0;
 
-	return p->numa_faults[task_faults_idx(NUMA_MEM, nid, 0)] +
+	إرجاع p->numa_faults[task_faults_idx(NUMA_MEM, nid, 0)] +
 		p->numa_faults[task_faults_idx(NUMA_MEM, nid, 1)];
 }
 
-static inline unsigned long group_faults(struct task_struct *p, int nid)
+ساكن مضمن unsigned long group_faults(بنية task_struct *p, صحيح nid)
 {
-	struct numa_group *ng = deref_task_numa_group(p);
+	بنية numa_group *ng = deref_task_numa_group(p);
 
-	if (!ng)
-		return 0;
+	إذا (!ng)
+		إرجاع 0;
 
-	return ng->faults[task_faults_idx(NUMA_MEM, nid, 0)] +
+	إرجاع ng->faults[task_faults_idx(NUMA_MEM, nid, 0)] +
 		ng->faults[task_faults_idx(NUMA_MEM, nid, 1)];
 }
 
-static inline unsigned long group_faults_cpu(struct numa_group *group, int nid)
+ساكن مضمن unsigned long group_faults_cpu(بنية numa_group *group, صحيح nid)
 {
-	return group->faults[task_faults_idx(NUMA_CPU, nid, 0)] +
+	إرجاع group->faults[task_faults_idx(NUMA_CPU, nid, 0)] +
 		group->faults[task_faults_idx(NUMA_CPU, nid, 1)];
 }
 
-static inline unsigned long group_faults_priv(struct numa_group *ng)
+ساكن مضمن unsigned long group_faults_priv(بنية numa_group *ng)
 {
 	unsigned long faults = 0;
-	int node;
+	صحيح عقدة;
 
-	for_each_online_node(node) {
-		faults += ng->faults[task_faults_idx(NUMA_MEM, node, 1)];
+	for_each_online_عقدة(عقدة) {
+		faults += ng->faults[task_faults_idx(NUMA_MEM, عقدة, 1)];
 	}
 
-	return faults;
+	إرجاع faults;
 }
 
-static inline unsigned long group_faults_shared(struct numa_group *ng)
+ساكن مضمن unsigned long group_faults_shared(بنية numa_group *ng)
 {
 	unsigned long faults = 0;
-	int node;
+	صحيح عقدة;
 
-	for_each_online_node(node) {
-		faults += ng->faults[task_faults_idx(NUMA_MEM, node, 0)];
+	for_each_online_عقدة(عقدة) {
+		faults += ng->faults[task_faults_idx(NUMA_MEM, عقدة, 0)];
 	}
 
-	return faults;
+	إرجاع faults;
 }
 
 /*
@@ -2629,26 +2629,26 @@ static inline unsigned long group_faults_shared(struct numa_group *ng)
  * considered part of a numa group's pseudo-interleaving set. Migrations
  * between these nodes are slowed down, to allow things to settle down.
  */
-#define ACTIVE_NODE_FRACTION 3
+#define ACTIVE_عقدة_FRACTION 3
 
-static bool numa_is_active_node(int nid, struct numa_group *ng)
+ساكن bool numa_is_active_عقدة(صحيح nid, بنية numa_group *ng)
 {
-	return group_faults_cpu(ng, nid) * ACTIVE_NODE_FRACTION > ng->max_faults_cpu;
+	إرجاع group_faults_cpu(ng, nid) * ACTIVE_عقدة_FRACTION > ng->max_faults_cpu;
 }
 
 /* Handle placement on systems where not all nodes are directly connected. */
-static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
-					int lim_dist, bool task)
+ساكن unsigned long score_nearby_nodes(بنية task_struct *p, صحيح nid,
+					صحيح lim_dist, bool task)
 {
 	unsigned long score = 0;
-	int node, max_dist;
+	صحيح عقدة, max_dist;
 
 	/*
 	 * All nodes are directly connected, and the same distance
 	 * from each other. No need for fancy placement algorithms.
 	 */
-	if (sched_numa_topology_type == NUMA_DIRECT)
-		return 0;
+	إذا (sched_numa_topology_type == NUMA_DIRECT)
+		إرجاع 0;
 
 	/* sched_max_numa_distance may be changed in parallel. */
 	max_dist = READ_ONCE(sched_max_numa_distance);
@@ -2656,16 +2656,16 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
 	 * This code is called for each node, introducing N^2 complexity,
 	 * which should be OK given the number of nodes rarely exceeds 8.
 	 */
-	for_each_online_node(node) {
+	for_each_online_عقدة(عقدة) {
 		unsigned long faults;
-		int dist = node_distance(nid, node);
+		صحيح dist = عقدة_distance(nid, عقدة);
 
 		/*
 		 * The furthest away nodes in the system are not interesting
 		 * for placement; nid was already counted.
 		 */
-		if (dist >= max_dist || node == nid)
-			continue;
+		إذا (dist >= max_dist || عقدة == nid)
+			استمر;
 
 		/*
 		 * On systems with a backplane NUMA topology, compare groups
@@ -2674,14 +2674,14 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
 		 * "hoplimit", only nodes closer by than "hoplimit" are part
 		 * of each group. Skip other nodes.
 		 */
-		if (sched_numa_topology_type == NUMA_BACKPLANE && dist >= lim_dist)
-			continue;
+		إذا (sched_numa_topology_type == NUMA_BACKPLANE && dist >= lim_dist)
+			استمر;
 
 		/* Add up the faults from nearby nodes. */
-		if (task)
-			faults = task_faults(p, node);
-		else
-			faults = group_faults(p, node);
+		إذا (task)
+			faults = task_faults(p, عقدة);
+		وإلا
+			faults = group_faults(p, عقدة);
 
 		/*
 		 * On systems with a glueless mesh NUMA topology, there are
@@ -2691,7 +2691,7 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
 		 * The further away a node is, the less the faults count.
 		 * This seems to result in good task placement.
 		 */
-		if (sched_numa_topology_type == NUMA_GLUELESS_MESH) {
+		إذا (sched_numa_topology_type == NUMA_GLUELESS_MESH) {
 			faults *= (max_dist - dist);
 			faults /= (max_dist - LOCAL_DISTANCE);
 		}
@@ -2699,7 +2699,7 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
 		score += faults;
 	}
 
-	return score;
+	إرجاع score;
 }
 
 /*
@@ -2708,43 +2708,43 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
  * larger multiplier, in order to group tasks together that are almost
  * evenly spread out between numa nodes.
  */
-static inline unsigned long task_weight(struct task_struct *p, int nid,
-					int dist)
+ساكن مضمن unsigned long task_weight(بنية task_struct *p, صحيح nid,
+					صحيح dist)
 {
 	unsigned long faults, total_faults;
 
-	if (!p->numa_faults)
-		return 0;
+	إذا (!p->numa_faults)
+		إرجاع 0;
 
 	total_faults = p->total_numa_faults;
 
-	if (!total_faults)
-		return 0;
+	إذا (!total_faults)
+		إرجاع 0;
 
 	faults = task_faults(p, nid);
 	faults += score_nearby_nodes(p, nid, dist, true);
 
-	return 1000 * faults / total_faults;
+	إرجاع 1000 * faults / total_faults;
 }
 
-static inline unsigned long group_weight(struct task_struct *p, int nid,
-					 int dist)
+ساكن مضمن unsigned long group_weight(بنية task_struct *p, صحيح nid,
+					 صحيح dist)
 {
-	struct numa_group *ng = deref_task_numa_group(p);
+	بنية numa_group *ng = deref_task_numa_group(p);
 	unsigned long faults, total_faults;
 
-	if (!ng)
-		return 0;
+	إذا (!ng)
+		إرجاع 0;
 
 	total_faults = ng->total_faults;
 
-	if (!total_faults)
-		return 0;
+	إذا (!total_faults)
+		إرجاع 0;
 
 	faults = group_faults(p, nid);
 	faults += score_nearby_nodes(p, nid, dist, false);
 
-	return 1000 * faults / total_faults;
+	إرجاع 1000 * faults / total_faults;
 }
 
 /*
@@ -2754,9 +2754,9 @@ static inline unsigned long group_weight(struct task_struct *p, int nid,
  * interpreted as CPU and PID.  So CPU needs to be checked to avoid to
  * access out of array bound.
  */
-static inline bool cpupid_valid(int cpupid)
+ساكن مضمن bool cpupid_valid(صحيح cpupid)
 {
-	return cpupid_to_cpu(cpupid) < nr_cpu_ids;
+	إرجاع cpupid_to_cpu(cpupid) < nr_cpu_ids;
 }
 
 /*
@@ -2766,25 +2766,25 @@ static inline bool cpupid_valid(int cpupid)
  * memory pages will be migrated to fast memory node without
  * considering hot threshold.
  */
-static bool pgdat_free_space_enough(struct pglist_data *pgdat)
+ساكن bool pgdat_free_space_enough(بنية pglist_data *pgdat)
 {
-	int z;
+	صحيح z;
 	unsigned long enough_wmark;
 
 	enough_wmark = max(1UL * 1024 * 1024 * 1024 >> PAGE_SHIFT,
-			   pgdat->node_present_pages >> 4);
-	for (z = pgdat->nr_zones - 1; z >= 0; z--) {
-		struct zone *zone = pgdat->node_zones + z;
+			   pgdat->عقدة_present_pages >> 4);
+	لكل (z = pgdat->nr_zones - 1; z >= 0; z--) {
+		بنية zone *zone = pgdat->عقدة_zones + z;
 
-		if (!populated_zone(zone))
-			continue;
+		إذا (!populated_zone(zone))
+			استمر;
 
-		if (zone_watermark_ok(zone, 0,
+		إذا (zone_watermark_ok(zone, 0,
 				      promo_wmark_pages(zone) + enough_wmark,
 				      ZONE_MOVABLE, 0))
-			return true;
+			إرجاع true;
 	}
-	return false;
+	إرجاع false;
 }
 
 /*
@@ -2799,14 +2799,14 @@ static bool pgdat_free_space_enough(struct pglist_data *pgdat)
  * The smaller the hint page fault latency, the higher the possibility
  * for the page to be hot.
  */
-static int numa_hint_fault_latency(struct folio *folio)
+ساكن صحيح numa_hint_fault_latency(بنية folio *folio)
 {
-	int last_time, time;
+	صحيح last_time, time;
 
 	time = jiffies_to_msecs(jiffies);
 	last_time = folio_xchg_access_time(folio, time);
 
-	return (time - last_time) & PAGE_ACCESS_TIME_MASK;
+	إرجاع (time - last_time) & PAGE_ACCESS_TIME_MASK;
 }
 
 /*
@@ -2814,82 +2814,82 @@ static int numa_hint_fault_latency(struct folio *folio)
  * hurt application latency.  So we provide a mechanism to rate limit
  * the number of pages that are tried to be promoted.
  */
-static bool numa_promotion_rate_limit(struct pglist_data *pgdat,
-				      unsigned long rate_limit, int nr)
+ساكن bool numa_promotion_rate_limit(بنية pglist_data *pgdat,
+				      unsigned long rate_limit, صحيح nr)
 {
 	unsigned long nr_cand;
-	unsigned int now, start;
+	unsigned صحيح now, start;
 
 	now = jiffies_to_msecs(jiffies);
-	mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE, nr);
-	nr_cand = node_page_state(pgdat, PGPROMOTE_CANDIDATE);
+	mod_عقدة_page_state(pgdat, PGPROMOTE_CANDIDATE, nr);
+	nr_cand = عقدة_page_state(pgdat, PGPROMOTE_CANDIDATE);
 	start = pgdat->nbp_rl_start;
-	if (now - start > MSEC_PER_SEC &&
+	إذا (now - start > MSEC_PER_SEC &&
 	    cmpxchg(&pgdat->nbp_rl_start, start, now) == start)
 		pgdat->nbp_rl_nr_cand = nr_cand;
-	if (nr_cand - pgdat->nbp_rl_nr_cand >= rate_limit)
-		return true;
-	return false;
+	إذا (nr_cand - pgdat->nbp_rl_nr_cand >= rate_limit)
+		إرجاع true;
+	إرجاع false;
 }
 
 #define NUMA_MIGRATION_ADJUST_STEPS	16
 
-static void numa_promotion_adjust_threshold(struct pglist_data *pgdat,
+ساكن فراغ numa_promotion_adjust_threshold(بنية pglist_data *pgdat,
 					    unsigned long rate_limit,
-					    unsigned int ref_th)
+					    unsigned صحيح ref_th)
 {
-	unsigned int now, start, th_period, unit_th, th;
+	unsigned صحيح now, start, th_period, unit_th, th;
 	unsigned long nr_cand, ref_cand, diff_cand;
 
 	now = jiffies_to_msecs(jiffies);
 	th_period = sysctl_numa_balancing_scan_period_max;
 	start = pgdat->nbp_th_start;
-	if (now - start > th_period &&
+	إذا (now - start > th_period &&
 	    cmpxchg(&pgdat->nbp_th_start, start, now) == start) {
 		ref_cand = rate_limit *
 			sysctl_numa_balancing_scan_period_max / MSEC_PER_SEC;
-		nr_cand = node_page_state(pgdat, PGPROMOTE_CANDIDATE);
+		nr_cand = عقدة_page_state(pgdat, PGPROMOTE_CANDIDATE);
 		diff_cand = nr_cand - pgdat->nbp_th_nr_cand;
 		unit_th = ref_th * 2 / NUMA_MIGRATION_ADJUST_STEPS;
 		th = pgdat->nbp_threshold ? : ref_th;
-		if (diff_cand > ref_cand * 11 / 10)
+		إذا (diff_cand > ref_cand * 11 / 10)
 			th = max(th - unit_th, unit_th);
-		else if (diff_cand < ref_cand * 9 / 10)
+		وإلا إذا (diff_cand < ref_cand * 9 / 10)
 			th = min(th + unit_th, ref_th * 2);
 		pgdat->nbp_th_nr_cand = nr_cand;
 		pgdat->nbp_threshold = th;
 	}
 }
 
-bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
-				int src_nid, int dst_cpu)
+bool should_numa_migrate_memory(بنية task_struct *p, بنية folio *folio,
+				صحيح src_nid, صحيح dst_cpu)
 {
-	struct numa_group *ng = deref_curr_numa_group(p);
-	int dst_nid = cpu_to_node(dst_cpu);
-	int last_cpupid, this_cpupid;
+	بنية numa_group *ng = deref_curr_numa_group(p);
+	صحيح dst_nid = cpu_to_عقدة(dst_cpu);
+	صحيح last_cpupid, this_cpupid;
 
 	/*
 	 * Cannot migrate to memoryless nodes.
 	 */
-	if (!node_state(dst_nid, N_MEMORY))
-		return false;
+	إذا (!عقدة_state(dst_nid, N_MEMORY))
+		إرجاع false;
 
 	/*
 	 * The pages in slow memory node should be migrated according
 	 * to hot/cold instead of private/shared.
 	 */
-	if (folio_use_access_time(folio)) {
-		struct pglist_data *pgdat;
+	إذا (folio_use_access_time(folio)) {
+		بنية pglist_data *pgdat;
 		unsigned long rate_limit;
-		unsigned int latency, th, def_th;
+		unsigned صحيح latency, th, def_th;
 		long nr = folio_nr_pages(folio);
 
-		pgdat = NODE_DATA(dst_nid);
-		if (pgdat_free_space_enough(pgdat)) {
+		pgdat = عقدة_DATA(dst_nid);
+		إذا (pgdat_free_space_enough(pgdat)) {
 			/* workload changed, reset hot threshold */
 			pgdat->nbp_threshold = 0;
-			mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE_NRL, nr);
-			return true;
+			mod_عقدة_page_state(pgdat, PGPROMOTE_CANDIDATE_NRL, nr);
+			إرجاع true;
 		}
 
 		def_th = sysctl_numa_balancing_hot_threshold;
@@ -2898,18 +2898,18 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
 
 		th = pgdat->nbp_threshold ? : def_th;
 		latency = numa_hint_fault_latency(folio);
-		if (latency >= th)
-			return false;
+		إذا (latency >= th)
+			إرجاع false;
 
-		return !numa_promotion_rate_limit(pgdat, rate_limit, nr);
+		إرجاع !numa_promotion_rate_limit(pgdat, rate_limit, nr);
 	}
 
 	this_cpupid = cpu_pid_to_cpupid(dst_cpu, current->pid);
 	last_cpupid = folio_xchg_last_cpupid(folio, this_cpupid);
 
-	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
-	    !node_is_toptier(src_nid) && !cpupid_valid(last_cpupid))
-		return false;
+	إذا (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
+	    !عقدة_is_toptier(src_nid) && !cpupid_valid(last_cpupid))
+		إرجاع false;
 
 	/*
 	 * Allow first faults or private faults to migrate immediately early in
@@ -2917,9 +2917,9 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
 	 * two full passes of the "multi-stage node selection" test that is
 	 * executed below.
 	 */
-	if ((p->numa_preferred_nid == NUMA_NO_NODE || p->numa_scan_seq <= 4) &&
+	إذا ((p->numa_preferred_nid == NUMA_NO_عقدة || p->numa_scan_seq <= 4) &&
 	    (cpupid_pid_unset(last_cpupid) || cpupid_match_pid(p, last_cpupid)))
-		return true;
+		إرجاع true;
 
 	/*
 	 * Multi-stage node selection is used in conjunction with a periodic
@@ -2938,25 +2938,25 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
 	 * This quadric squishes small probabilities, making it less likely we
 	 * act on an unlikely task<->page relation.
 	 */
-	if (!cpupid_pid_unset(last_cpupid) &&
+	إذا (!cpupid_pid_unset(last_cpupid) &&
 				cpupid_to_nid(last_cpupid) != dst_nid)
-		return false;
+		إرجاع false;
 
 	/* Always allow migrate on private faults */
-	if (cpupid_match_pid(p, last_cpupid))
-		return true;
+	إذا (cpupid_match_pid(p, last_cpupid))
+		إرجاع true;
 
 	/* A shared fault, but p->numa_group has not been set up yet. */
-	if (!ng)
-		return true;
+	إذا (!ng)
+		إرجاع true;
 
 	/*
 	 * Destination node is much more heavily used than the source
 	 * node? Allow migration.
 	 */
-	if (group_faults_cpu(ng, dst_nid) > group_faults_cpu(ng, src_nid) *
-					ACTIVE_NODE_FRACTION)
-		return true;
+	إذا (group_faults_cpu(ng, dst_nid) > group_faults_cpu(ng, src_nid) *
+					ACTIVE_عقدة_FRACTION)
+		إرجاع true;
 
 	/*
 	 * Distribute memory according to CPU & memory use on each node,
@@ -2966,94 +2966,94 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
 	 * --------------- * - > ---------------
 	 * faults_mem(dst)   4   faults_mem(src)
 	 */
-	return group_faults_cpu(ng, dst_nid) * group_faults(p, src_nid) * 3 >
+	إرجاع group_faults_cpu(ng, dst_nid) * group_faults(p, src_nid) * 3 >
 	       group_faults_cpu(ng, src_nid) * group_faults(p, dst_nid) * 4;
 }
 
 /*
  * 'numa_type' describes the node at the moment of load balancing.
  */
-enum numa_type {
+تعداد numa_type {
 	/* The node has spare capacity that can be used to run more tasks.  */
-	node_has_spare = 0,
+	عقدة_has_spare = 0,
 	/*
 	 * The node is fully used and the tasks don't compete for more CPU
 	 * cycles. Nevertheless, some tasks might wait before running.
 	 */
-	node_fully_busy,
+	عقدة_fully_busy,
 	/*
 	 * The node is overloaded and can't provide expected CPU cycles to all
 	 * tasks.
 	 */
-	node_overloaded
+	عقدة_overloaded
 };
 
 /* Cached statistics for all CPUs within a node */
-struct numa_stats {
+بنية numa_stats {
 	unsigned long load;
 	unsigned long runnable;
 	unsigned long util;
 	/* Total compute capacity of CPUs on a node */
 	unsigned long compute_capacity;
-	unsigned int nr_running;
-	unsigned int weight;
-	enum numa_type node_type;
-	int idle_cpu;
+	unsigned صحيح nr_running;
+	unsigned صحيح weight;
+	تعداد numa_type عقدة_type;
+	صحيح idle_cpu;
 };
 
-struct task_numa_env {
-	struct task_struct *p;
+بنية task_numa_env {
+	بنية task_struct *p;
 
-	int src_cpu, src_nid;
-	int dst_cpu, dst_nid;
-	int imb_numa_nr;
+	صحيح src_cpu, src_nid;
+	صحيح dst_cpu, dst_nid;
+	صحيح imb_numa_nr;
 
-	struct numa_stats src_stats, dst_stats;
+	بنية numa_stats src_stats, dst_stats;
 
-	int imbalance_pct;
-	int dist;
+	صحيح imbalance_pct;
+	صحيح dist;
 
-	struct task_struct *best_task;
+	بنية task_struct *best_task;
 	long best_imp;
-	int best_cpu;
+	صحيح best_cpu;
 };
 
-static unsigned long cpu_load(struct rq *rq);
-static unsigned long cpu_runnable(struct rq *rq);
+ساكن unsigned long cpu_load(بنية rq *rq);
+ساكن unsigned long cpu_runnable(بنية rq *rq);
 
-static inline enum
-numa_type numa_classify(unsigned int imbalance_pct,
-			 struct numa_stats *ns)
+ساكن مضمن تعداد
+numa_type numa_classify(unsigned صحيح imbalance_pct,
+			 بنية numa_stats *ns)
 {
-	if ((ns->nr_running > ns->weight) &&
+	إذا ((ns->nr_running > ns->weight) &&
 	    (((ns->compute_capacity * 100) < (ns->util * imbalance_pct)) ||
 	     ((ns->compute_capacity * imbalance_pct) < (ns->runnable * 100))))
-		return node_overloaded;
+		إرجاع عقدة_overloaded;
 
-	if ((ns->nr_running < ns->weight) ||
+	إذا ((ns->nr_running < ns->weight) ||
 	    (((ns->compute_capacity * 100) > (ns->util * imbalance_pct)) &&
 	     ((ns->compute_capacity * imbalance_pct) > (ns->runnable * 100))))
-		return node_has_spare;
+		إرجاع عقدة_has_spare;
 
-	return node_fully_busy;
+	إرجاع عقدة_fully_busy;
 }
 
 /* Forward declarations of select_idle_sibling helpers */
-static inline bool test_idle_cores(int cpu);
-static inline int numa_idle_core(int idle_core, int cpu)
+ساكن مضمن bool test_idle_cores(صحيح cpu);
+ساكن مضمن صحيح numa_idle_core(صحيح idle_core, صحيح cpu)
 {
-	if (!sched_smt_active() ||
+	إذا (!sched_smt_active() ||
 	    idle_core >= 0 || !test_idle_cores(cpu))
-		return idle_core;
+		إرجاع idle_core;
 
 	/*
 	 * Prefer cores instead of packing HT siblings
 	 * and triggering future load balancing.
 	 */
-	if (is_core_idle(cpu))
+	إذا (is_core_idle(cpu))
 		idle_core = cpu;
 
-	return idle_core;
+	إرجاع idle_core;
 }
 
 /*
@@ -3062,18 +3062,18 @@ static inline int numa_idle_core(int idle_core, int cpu)
  * borrows code and logic from update_sg_lb_stats but sharing a
  * common implementation is impractical.
  */
-static void update_numa_stats(struct task_numa_env *env,
-			      struct numa_stats *ns, int nid,
+ساكن فراغ update_numa_stats(بنية task_numa_env *env,
+			      بنية numa_stats *ns, صحيح nid,
 			      bool find_idle)
 {
-	int cpu, idle_core = -1;
+	صحيح cpu, idle_core = -1;
 
-	memset(ns, 0, sizeof(*ns));
+	memset(ns, 0, حجم(*ns));
 	ns->idle_cpu = -1;
 
 	rcu_read_lock();
-	for_each_cpu(cpu, cpumask_of_node(nid)) {
-		struct rq *rq = cpu_rq(cpu);
+	for_each_cpu(cpu, cpumask_of_عقدة(nid)) {
+		بنية rq *rq = cpu_rq(cpu);
 
 		ns->load += cpu_load(rq);
 		ns->runnable += cpu_runnable(rq);
@@ -3081,12 +3081,12 @@ static void update_numa_stats(struct task_numa_env *env,
 		ns->nr_running += rq->cfs.h_nr_runnable;
 		ns->compute_capacity += capacity_of(cpu);
 
-		if (find_idle && idle_core < 0 && !rq->nr_running && idle_cpu(cpu)) {
-			if (READ_ONCE(rq->numa_migrate_on) ||
+		إذا (find_idle && idle_core < 0 && !rq->nr_running && idle_cpu(cpu)) {
+			إذا (READ_ONCE(rq->numa_migrate_on) ||
 			    !cpumask_test_cpu(cpu, env->p->cpus_ptr))
-				continue;
+				استمر;
 
-			if (ns->idle_cpu == -1)
+			إذا (ns->idle_cpu == -1)
 				ns->idle_cpu = cpu;
 
 			idle_core = numa_idle_core(idle_core, cpu);
@@ -3094,39 +3094,39 @@ static void update_numa_stats(struct task_numa_env *env,
 	}
 	rcu_read_unlock();
 
-	ns->weight = cpumask_weight(cpumask_of_node(nid));
+	ns->weight = cpumask_weight(cpumask_of_عقدة(nid));
 
-	ns->node_type = numa_classify(env->imbalance_pct, ns);
+	ns->عقدة_type = numa_classify(env->imbalance_pct, ns);
 
-	if (idle_core >= 0)
+	إذا (idle_core >= 0)
 		ns->idle_cpu = idle_core;
 }
 
-static void task_numa_assign(struct task_numa_env *env,
-			     struct task_struct *p, long imp)
+ساكن فراغ task_numa_assign(بنية task_numa_env *env,
+			     بنية task_struct *p, long imp)
 {
-	struct rq *rq = cpu_rq(env->dst_cpu);
+	بنية rq *rq = cpu_rq(env->dst_cpu);
 
 	/* Check if run-queue part of active NUMA balance. */
-	if (env->best_cpu != env->dst_cpu && xchg(&rq->numa_migrate_on, 1)) {
-		int cpu;
-		int start = env->dst_cpu;
+	إذا (env->best_cpu != env->dst_cpu && xchg(&rq->numa_migrate_on, 1)) {
+		صحيح cpu;
+		صحيح start = env->dst_cpu;
 
 		/* Find alternative idle CPU. */
-		for_each_cpu_wrap(cpu, cpumask_of_node(env->dst_nid), start + 1) {
-			if (cpu == env->best_cpu || !idle_cpu(cpu) ||
+		for_each_cpu_wrap(cpu, cpumask_of_عقدة(env->dst_nid), start + 1) {
+			إذا (cpu == env->best_cpu || !idle_cpu(cpu) ||
 			    !cpumask_test_cpu(cpu, env->p->cpus_ptr)) {
-				continue;
+				استمر;
 			}
 
 			env->dst_cpu = cpu;
 			rq = cpu_rq(env->dst_cpu);
-			if (!xchg(&rq->numa_migrate_on, 1))
-				goto assign;
+			إذا (!xchg(&rq->numa_migrate_on, 1))
+				اذهب assign;
 		}
 
 		/* Failed to find an alternative idle CPU */
-		return;
+		إرجاع;
 	}
 
 assign:
@@ -3134,14 +3134,14 @@ assign:
 	 * Clear previous best_cpu/rq numa-migrate flag, since task now
 	 * found a better CPU to move/swap.
 	 */
-	if (env->best_cpu != -1 && env->best_cpu != env->dst_cpu) {
+	إذا (env->best_cpu != -1 && env->best_cpu != env->dst_cpu) {
 		rq = cpu_rq(env->best_cpu);
 		WRITE_ONCE(rq->numa_migrate_on, 0);
 	}
 
-	if (env->best_task)
+	إذا (env->best_task)
 		put_task_struct(env->best_task);
-	if (p)
+	إذا (p)
 		get_task_struct(p);
 
 	env->best_task = p;
@@ -3149,8 +3149,8 @@ assign:
 	env->best_cpu = env->dst_cpu;
 }
 
-static bool load_too_imbalanced(long src_load, long dst_load,
-				struct task_numa_env *env)
+ساكن bool load_too_imbalanced(long src_load, long dst_load,
+				بنية task_numa_env *env)
 {
 	long imb, old_imb;
 	long orig_src_load, orig_dst_load;
@@ -3174,7 +3174,7 @@ static bool load_too_imbalanced(long src_load, long dst_load,
 	old_imb = abs(orig_dst_load * src_capacity - orig_src_load * dst_capacity);
 
 	/* Would this change make things worse? */
-	return (imb > old_imb);
+	إرجاع (imb > old_imb);
 }
 
 /*
@@ -3190,56 +3190,56 @@ static bool load_too_imbalanced(long src_load, long dst_load,
  * into account that it might be best if task running on the dst_cpu should
  * be exchanged with the source task
  */
-static bool task_numa_compare(struct task_numa_env *env,
+ساكن bool task_numa_compare(بنية task_numa_env *env,
 			      long taskimp, long groupimp, bool maymove)
 {
-	struct numa_group *cur_ng, *p_ng = deref_curr_numa_group(env->p);
-	struct rq *dst_rq = cpu_rq(env->dst_cpu);
+	بنية numa_group *cur_ng, *p_ng = deref_curr_numa_group(env->p);
+	بنية rq *dst_rq = cpu_rq(env->dst_cpu);
 	long imp = p_ng ? groupimp : taskimp;
-	struct task_struct *cur;
+	بنية task_struct *cur;
 	long src_load, dst_load;
-	int dist = env->dist;
+	صحيح dist = env->dist;
 	long moveimp = imp;
 	long load;
 	bool stopsearch = false;
 
-	if (READ_ONCE(dst_rq->numa_migrate_on))
-		return false;
+	إذا (READ_ONCE(dst_rq->numa_migrate_on))
+		إرجاع false;
 
 	rcu_read_lock();
 	cur = rcu_dereference_all(dst_rq->curr);
-	if (cur && ((cur->flags & (PF_EXITING | PF_KTHREAD)) ||
+	إذا (cur && ((cur->flags & (PF_EXITING | PF_KTHREAD)) ||
 		    !cur->mm))
-		cur = NULL;
+		cur = عدم;
 
 	/*
 	 * Because we have preemption enabled we can get migrated around and
 	 * end try selecting ourselves (current == env->p) as a swap candidate.
 	 */
-	if (cur == env->p) {
+	إذا (cur == env->p) {
 		stopsearch = true;
-		goto unlock;
+		اذهب unlock;
 	}
 
-	if (!cur) {
-		if (maymove && moveimp >= env->best_imp)
-			goto assign;
-		else
-			goto unlock;
+	إذا (!cur) {
+		إذا (maymove && moveimp >= env->best_imp)
+			اذهب assign;
+		وإلا
+			اذهب unlock;
 	}
 
 	/* Skip this swap candidate if cannot move to the source cpu. */
-	if (!cpumask_test_cpu(env->src_cpu, cur->cpus_ptr))
-		goto unlock;
+	إذا (!cpumask_test_cpu(env->src_cpu, cur->cpus_ptr))
+		اذهب unlock;
 
 	/*
 	 * Skip this swap candidate if it is not moving to its preferred
 	 * node and the best task is.
 	 */
-	if (env->best_task &&
+	إذا (env->best_task &&
 	    env->best_task->numa_preferred_nid == env->src_nid &&
 	    cur->numa_preferred_nid != env->src_nid) {
-		goto unlock;
+		اذهب unlock;
 	}
 
 	/*
@@ -3253,15 +3253,15 @@ static bool task_numa_compare(struct task_numa_env *env,
 	 * in any group then look only at task weights.
 	 */
 	cur_ng = rcu_dereference_all(cur->numa_group);
-	if (cur_ng == p_ng) {
+	إذا (cur_ng == p_ng) {
 		/*
 		 * Do not swap within a group or between tasks that have
 		 * no group if there is spare capacity. Swapping does
 		 * not address the load imbalance and helps one task at
 		 * the cost of punishing another.
 		 */
-		if (env->dst_stats.node_type == node_has_spare)
-			goto unlock;
+		إذا (env->dst_stats.عقدة_type == عقدة_has_spare)
+			اذهب unlock;
 
 		imp = taskimp + task_weight(cur, env->src_nid, dist) -
 		      task_weight(cur, env->dst_nid, dist);
@@ -3269,23 +3269,23 @@ static bool task_numa_compare(struct task_numa_env *env,
 		 * Add some hysteresis to prevent swapping the
 		 * tasks within a group over tiny differences.
 		 */
-		if (cur_ng)
+		إذا (cur_ng)
 			imp -= imp / 16;
-	} else {
+	} وإلا {
 		/*
 		 * Compare the group weights. If a task is all by itself
 		 * (not part of a group), use the task weight instead.
 		 */
-		if (cur_ng && p_ng)
+		إذا (cur_ng && p_ng)
 			imp += group_weight(cur, env->src_nid, dist) -
 			       group_weight(cur, env->dst_nid, dist);
-		else
+		وإلا
 			imp += task_weight(cur, env->src_nid, dist) -
 			       task_weight(cur, env->dst_nid, dist);
 	}
 
 	/* Discourage picking a task already on its preferred node */
-	if (cur->numa_preferred_nid == env->dst_nid)
+	إذا (cur->numa_preferred_nid == env->dst_nid)
 		imp -= imp / 16;
 
 	/*
@@ -3294,22 +3294,22 @@ static bool task_numa_compare(struct task_numa_env *env,
 	 * 1998 (see SMALLIMP and task_weight for why) but in this
 	 * case, it does not matter.
 	 */
-	if (cur->numa_preferred_nid == env->src_nid)
+	إذا (cur->numa_preferred_nid == env->src_nid)
 		imp += imp / 8;
 
-	if (maymove && moveimp > imp && moveimp > env->best_imp) {
+	إذا (maymove && moveimp > imp && moveimp > env->best_imp) {
 		imp = moveimp;
-		cur = NULL;
-		goto assign;
+		cur = عدم;
+		اذهب assign;
 	}
 
 	/*
 	 * Prefer swapping with a task moving to its preferred node over a
 	 * task that is not.
 	 */
-	if (env->best_task && cur->numa_preferred_nid == env->src_nid &&
+	إذا (env->best_task && cur->numa_preferred_nid == env->src_nid &&
 	    env->best_task->numa_preferred_nid != env->src_nid) {
-		goto assign;
+		اذهب assign;
 	}
 
 	/*
@@ -3318,36 +3318,36 @@ static bool task_numa_compare(struct task_numa_env *env,
 	 * of tasks and also hurt performance due to cache
 	 * misses.
 	 */
-	if (imp < SMALLIMP || imp <= env->best_imp + SMALLIMP / 2)
-		goto unlock;
+	إذا (imp < SMALLIMP || imp <= env->best_imp + SMALLIMP / 2)
+		اذهب unlock;
 
 	/*
 	 * In the overloaded case, try and keep the load balanced.
 	 */
 	load = task_h_load(env->p) - task_h_load(cur);
-	if (!load)
-		goto assign;
+	إذا (!load)
+		اذهب assign;
 
 	dst_load = env->dst_stats.load + load;
 	src_load = env->src_stats.load - load;
 
-	if (load_too_imbalanced(src_load, dst_load, env))
-		goto unlock;
+	إذا (load_too_imbalanced(src_load, dst_load, env))
+		اذهب unlock;
 
 assign:
 	/* Evaluate an idle CPU for a task numa move. */
-	if (!cur) {
-		int cpu = env->dst_stats.idle_cpu;
+	إذا (!cur) {
+		صحيح cpu = env->dst_stats.idle_cpu;
 
 		/* Nothing cached so current CPU went idle since the search. */
-		if (cpu < 0)
+		إذا (cpu < 0)
 			cpu = env->dst_cpu;
 
 		/*
 		 * If the CPU is no longer truly idle and the previous best CPU
 		 * is, keep using it.
 		 */
-		if (!idle_cpu(cpu) && env->best_cpu >= 0 &&
+		إذا (!idle_cpu(cpu) && env->best_cpu >= 0 &&
 		    idle_cpu(env->best_cpu)) {
 			cpu = env->best_cpu;
 		}
@@ -3362,36 +3362,36 @@ assign:
 	 * balance improves then stop the search. While a better swap
 	 * candidate may exist, a search is not free.
 	 */
-	if (maymove && !cur && env->best_cpu >= 0 && idle_cpu(env->best_cpu))
+	إذا (maymove && !cur && env->best_cpu >= 0 && idle_cpu(env->best_cpu))
 		stopsearch = true;
 
 	/*
 	 * If a swap candidate must be identified and the current best task
 	 * moves its preferred node then stop the search.
 	 */
-	if (!maymove && env->best_task &&
+	إذا (!maymove && env->best_task &&
 	    env->best_task->numa_preferred_nid == env->src_nid) {
 		stopsearch = true;
 	}
 unlock:
 	rcu_read_unlock();
 
-	return stopsearch;
+	إرجاع stopsearch;
 }
 
-static void task_numa_find_cpu(struct task_numa_env *env,
+ساكن فراغ task_numa_find_cpu(بنية task_numa_env *env,
 				long taskimp, long groupimp)
 {
 	bool maymove = false;
-	int cpu;
+	صحيح cpu;
 
 	/*
 	 * If dst node has spare capacity, then check if there is an
 	 * imbalance that would be overruled by the load balancer.
 	 */
-	if (env->dst_stats.node_type == node_has_spare) {
-		unsigned int imbalance;
-		int src_running, dst_running;
+	إذا (env->dst_stats.عقدة_type == عقدة_has_spare) {
+		unsigned صحيح imbalance;
+		صحيح src_running, dst_running;
 
 		/*
 		 * Would movement cause an imbalance? Note that if src has
@@ -3406,15 +3406,15 @@ static void task_numa_find_cpu(struct task_numa_env *env,
 						  env->imb_numa_nr);
 
 		/* Use idle CPU if there is no imbalance */
-		if (!imbalance) {
+		إذا (!imbalance) {
 			maymove = true;
-			if (env->dst_stats.idle_cpu >= 0) {
+			إذا (env->dst_stats.idle_cpu >= 0) {
 				env->dst_cpu = env->dst_stats.idle_cpu;
-				task_numa_assign(env, NULL, 0);
-				return;
+				task_numa_assign(env, عدم, 0);
+				إرجاع;
 			}
 		}
-	} else {
+	} وإلا {
 		long src_load, dst_load, load;
 		/*
 		 * If the improvement from just moving env->p direction is better
@@ -3427,33 +3427,33 @@ static void task_numa_find_cpu(struct task_numa_env *env,
 	}
 
 	/* Skip CPUs if the source task cannot migrate */
-	for_each_cpu_and(cpu, cpumask_of_node(env->dst_nid), env->p->cpus_ptr) {
+	for_each_cpu_and(cpu, cpumask_of_عقدة(env->dst_nid), env->p->cpus_ptr) {
 		env->dst_cpu = cpu;
-		if (task_numa_compare(env, taskimp, groupimp, maymove))
-			break;
+		إذا (task_numa_compare(env, taskimp, groupimp, maymove))
+			اكسر;
 	}
 }
 
-static int task_numa_migrate(struct task_struct *p)
+ساكن صحيح task_numa_migrate(بنية task_struct *p)
 {
-	struct task_numa_env env = {
+	بنية task_numa_env env = {
 		.p = p,
 
 		.src_cpu = task_cpu(p),
-		.src_nid = task_node(p),
+		.src_nid = task_عقدة(p),
 
 		.imbalance_pct = 112,
 
-		.best_task = NULL,
+		.best_task = عدم,
 		.best_imp = 0,
 		.best_cpu = -1,
 	};
 	unsigned long taskweight, groupweight;
-	struct sched_domain *sd;
+	بنية sched_domain *sd;
 	long taskimp, groupimp;
-	struct numa_group *ng;
-	struct rq *best_rq;
-	int nid, ret, dist;
+	بنية numa_group *ng;
+	بنية rq *best_rq;
+	صحيح nid, ret, dist;
 
 	/*
 	 * Pick the lowest SD_NUMA domain, as that would have the smallest
@@ -3465,7 +3465,7 @@ static int task_numa_migrate(struct task_struct *p)
 	 */
 	rcu_read_lock();
 	sd = rcu_dereference_all(per_cpu(sd_numa, env.src_cpu));
-	if (sd) {
+	إذا (sd) {
 		env.imbalance_pct = 100 + (sd->imbalance_pct - 100) / 2;
 		env.imb_numa_nr = sd->imb_numa_nr;
 	}
@@ -3477,13 +3477,13 @@ static int task_numa_migrate(struct task_struct *p)
 	 * Tasks that are "trapped" in such domains cannot be migrated
 	 * elsewhere, so there is no point in (re)trying.
 	 */
-	if (unlikely(!sd)) {
-		sched_setnuma(p, task_node(p));
-		return -EINVAL;
+	إذا (unlikely(!sd)) {
+		sched_setnuma(p, task_عقدة(p));
+		إرجاع -EINVAL;
 	}
 
 	env.dst_nid = p->numa_preferred_nid;
-	dist = env.dist = node_distance(env.src_nid, env.dst_nid);
+	dist = env.dist = عقدة_distance(env.src_nid, env.dst_nid);
 	taskweight = task_weight(p, env.src_nid, dist);
 	groupweight = group_weight(p, env.src_nid, dist);
 	update_numa_stats(&env, &env.src_stats, env.src_nid, false);
@@ -3502,13 +3502,13 @@ static int task_numa_migrate(struct task_struct *p)
 	 *   we need to check other locations.
 	 */
 	ng = deref_curr_numa_group(p);
-	if (env.best_cpu == -1 || (ng && ng->active_nodes > 1)) {
-		for_each_node_state(nid, N_CPU) {
-			if (nid == env.src_nid || nid == p->numa_preferred_nid)
-				continue;
+	إذا (env.best_cpu == -1 || (ng && ng->active_nodes > 1)) {
+		for_each_عقدة_state(nid, N_CPU) {
+			إذا (nid == env.src_nid || nid == p->numa_preferred_nid)
+				استمر;
 
-			dist = node_distance(env.src_nid, env.dst_nid);
-			if (sched_numa_topology_type == NUMA_BACKPLANE &&
+			dist = عقدة_distance(env.src_nid, env.dst_nid);
+			إذا (sched_numa_topology_type == NUMA_BACKPLANE &&
 						dist != env.dist) {
 				taskweight = task_weight(p, env.src_nid, dist);
 				groupweight = group_weight(p, env.src_nid, dist);
@@ -3517,8 +3517,8 @@ static int task_numa_migrate(struct task_struct *p)
 			/* Only consider nodes where both task and groups benefit */
 			taskimp = task_weight(p, nid, dist) - taskweight;
 			groupimp = group_weight(p, nid, dist) - groupweight;
-			if (taskimp < 0 && groupimp < 0)
-				continue;
+			إذا (taskimp < 0 && groupimp < 0)
+				استمر;
 
 			env.dist = dist;
 			env.dst_nid = nid;
@@ -3535,56 +3535,56 @@ static int task_numa_migrate(struct task_struct *p)
 	 * A task that migrated to a second choice node will be better off
 	 * trying for a better one later. Do not set the preferred node here.
 	 */
-	if (ng) {
-		if (env.best_cpu == -1)
+	إذا (ng) {
+		إذا (env.best_cpu == -1)
 			nid = env.src_nid;
-		else
-			nid = cpu_to_node(env.best_cpu);
+		وإلا
+			nid = cpu_to_عقدة(env.best_cpu);
 
-		if (nid != p->numa_preferred_nid)
+		إذا (nid != p->numa_preferred_nid)
 			sched_setnuma(p, nid);
 	}
 
 	/* No better CPU than the current one was found. */
-	if (env.best_cpu == -1) {
-		trace_sched_stick_numa(p, env.src_cpu, NULL, -1);
-		return -EAGAIN;
+	إذا (env.best_cpu == -1) {
+		trace_sched_stick_numa(p, env.src_cpu, عدم, -1);
+		إرجاع -EAGAIN;
 	}
 
 	best_rq = cpu_rq(env.best_cpu);
-	if (env.best_task == NULL) {
+	إذا (env.best_task == عدم) {
 		ret = migrate_task_to(p, env.best_cpu);
 		WRITE_ONCE(best_rq->numa_migrate_on, 0);
-		if (ret != 0)
-			trace_sched_stick_numa(p, env.src_cpu, NULL, env.best_cpu);
-		return ret;
+		إذا (ret != 0)
+			trace_sched_stick_numa(p, env.src_cpu, عدم, env.best_cpu);
+		إرجاع ret;
 	}
 
 	ret = migrate_swap(p, env.best_task, env.best_cpu, env.src_cpu);
 	WRITE_ONCE(best_rq->numa_migrate_on, 0);
 
-	if (ret != 0)
+	إذا (ret != 0)
 		trace_sched_stick_numa(p, env.src_cpu, env.best_task, env.best_cpu);
 	put_task_struct(env.best_task);
-	return ret;
+	إرجاع ret;
 }
 
 /* Attempt to migrate a task to a CPU on the preferred node. */
-static void numa_migrate_preferred(struct task_struct *p)
+ساكن فراغ numa_migrate_preferred(بنية task_struct *p)
 {
 	unsigned long interval = HZ;
 
 	/* This task has no NUMA fault statistics yet */
-	if (unlikely(p->numa_preferred_nid == NUMA_NO_NODE || !p->numa_faults))
-		return;
+	إذا (unlikely(p->numa_preferred_nid == NUMA_NO_عقدة || !p->numa_faults))
+		إرجاع;
 
 	/* Periodically retry migrating the task to the preferred node */
 	interval = min(interval, msecs_to_jiffies(p->numa_scan_period) / 16);
 	p->numa_migrate_retry = jiffies + interval;
 
 	/* Success if task is already running on preferred CPU */
-	if (task_node(p) == p->numa_preferred_nid)
-		return;
+	إذا (task_عقدة(p) == p->numa_preferred_nid)
+		إرجاع;
 
 	/* Otherwise, try migrate to a CPU on the preferred node */
 	task_numa_migrate(p);
@@ -3596,20 +3596,20 @@ static void numa_migrate_preferred(struct task_struct *p)
  * be different from the set of nodes where the workload's memory is currently
  * located.
  */
-static void numa_group_count_active_nodes(struct numa_group *numa_group)
+ساكن فراغ numa_group_تعداد_active_nodes(بنية numa_group *numa_group)
 {
 	unsigned long faults, max_faults = 0;
-	int nid, active_nodes = 0;
+	صحيح nid, active_nodes = 0;
 
-	for_each_node_state(nid, N_CPU) {
+	for_each_عقدة_state(nid, N_CPU) {
 		faults = group_faults_cpu(numa_group, nid);
-		if (faults > max_faults)
+		إذا (faults > max_faults)
 			max_faults = faults;
 	}
 
-	for_each_node_state(nid, N_CPU) {
+	for_each_عقدة_state(nid, N_CPU) {
 		faults = group_faults_cpu(numa_group, nid);
-		if (faults * ACTIVE_NODE_FRACTION > max_faults)
+		إذا (faults * ACTIVE_عقدة_FRACTION > max_faults)
 			active_nodes++;
 	}
 
@@ -3633,12 +3633,12 @@ static void numa_group_count_active_nodes(struct numa_group *numa_group)
  * the page accesses are shared with other processes.
  * Otherwise, decrease the scan period.
  */
-static void update_task_scan_period(struct task_struct *p,
-			unsigned long shared, unsigned long private)
+ساكن فراغ update_task_scan_period(بنية task_struct *p,
+			unsigned long shared, unsigned long خاص)
 {
-	unsigned int period_slot;
-	int lr_ratio, ps_ratio;
-	int diff;
+	unsigned صحيح period_slot;
+	صحيح lr_ratio, ps_ratio;
+	صحيح diff;
 
 	unsigned long remote = p->numa_faults_locality[0];
 	unsigned long local = p->numa_faults_locality[1];
@@ -3650,14 +3650,14 @@ static void update_task_scan_period(struct task_struct *p,
 	 * migration then it implies we are migrating too quickly or the local
 	 * node is overloaded. In either case, scan slower
 	 */
-	if (local + shared == 0 || p->numa_faults_locality[2]) {
+	إذا (local + shared == 0 || p->numa_faults_locality[2]) {
 		p->numa_scan_period = min(p->numa_scan_period_max,
 			p->numa_scan_period << 1);
 
 		p->mm->numa_next_scan = jiffies +
 			msecs_to_jiffies(p->numa_scan_period);
 
-		goto out;
+		اذهب out;
 	}
 
 	/*
@@ -3668,34 +3668,34 @@ static void update_task_scan_period(struct task_struct *p,
 	 */
 	period_slot = DIV_ROUND_UP(p->numa_scan_period, NUMA_PERIOD_SLOTS);
 	lr_ratio = (local * NUMA_PERIOD_SLOTS) / (local + remote);
-	ps_ratio = (private * NUMA_PERIOD_SLOTS) / (private + shared);
+	ps_ratio = (خاص * NUMA_PERIOD_SLOTS) / (خاص + shared);
 
-	if (ps_ratio >= NUMA_PERIOD_THRESHOLD) {
+	إذا (ps_ratio >= NUMA_PERIOD_THRESHOLD) {
 		/*
 		 * Most memory accesses are local. There is no need to
 		 * do fast NUMA scanning, since memory is already local.
 		 */
-		int slot = ps_ratio - NUMA_PERIOD_THRESHOLD;
-		if (!slot)
+		صحيح slot = ps_ratio - NUMA_PERIOD_THRESHOLD;
+		إذا (!slot)
 			slot = 1;
 		diff = slot * period_slot;
-	} else if (lr_ratio >= NUMA_PERIOD_THRESHOLD) {
+	} وإلا إذا (lr_ratio >= NUMA_PERIOD_THRESHOLD) {
 		/*
 		 * Most memory accesses are shared with other tasks.
 		 * There is no point in continuing fast NUMA scanning,
 		 * since other tasks may just move the memory elsewhere.
 		 */
-		int slot = lr_ratio - NUMA_PERIOD_THRESHOLD;
-		if (!slot)
+		صحيح slot = lr_ratio - NUMA_PERIOD_THRESHOLD;
+		إذا (!slot)
 			slot = 1;
 		diff = slot * period_slot;
-	} else {
+	} وإلا {
 		/*
 		 * Private memory faults exceed (SLOTS-THRESHOLD)/SLOTS,
 		 * yet they are not on the local NUMA node. Speed up
 		 * NUMA scanning to get the memory moved over.
 		 */
-		int ratio = max(lr_ratio, ps_ratio);
+		صحيح ratio = max(lr_ratio, ps_ratio);
 		diff = -(NUMA_PERIOD_THRESHOLD - ratio) * period_slot;
 	}
 
@@ -3704,7 +3704,7 @@ static void update_task_scan_period(struct task_struct *p,
 
 out:
 	memset(p->numa_faults_locality, 0,
-	       sizeof(p->numa_faults_locality));
+	       حجم(p->numa_faults_locality));
 }
 
 /*
@@ -3714,21 +3714,21 @@ out:
  * from the dozens-of-seconds NUMA balancing period. Use the scheduler
  * stats only if the task is so new there are no NUMA statistics yet.
  */
-static u64 numa_get_avg_runtime(struct task_struct *p, u64 *period)
+ساكن u64 numa_get_avg_runtime(بنية task_struct *p, u64 *period)
 {
 	u64 runtime, delta, now;
 	/* Use the start of this time slice to avoid calculations. */
 	now = p->se.exec_start;
 	runtime = p->se.sum_exec_runtime;
 
-	if (p->last_task_numa_placement) {
+	إذا (p->last_task_numa_placement) {
 		delta = runtime - p->last_sum_exec_runtime;
 		*period = now - p->last_task_numa_placement;
 
 		/* Avoid time going backwards, prevent potential divide error: */
-		if (unlikely((s64)*period < 0))
+		إذا (unlikely((s64)*period < 0))
 			*period = 0;
-	} else {
+	} وإلا {
 		delta = p->se.avg.load_sum;
 		*period = LOAD_AVG_MAX;
 	}
@@ -3736,7 +3736,7 @@ static u64 numa_get_avg_runtime(struct task_struct *p, u64 *period)
 	p->last_sum_exec_runtime = runtime;
 	p->last_task_numa_placement = now;
 
-	return delta;
+	إرجاع delta;
 }
 
 /*
@@ -3744,34 +3744,34 @@ static u64 numa_get_avg_runtime(struct task_struct *p, u64 *period)
  * be done in a way that produces consistent results with group_weight,
  * otherwise workloads might not converge.
  */
-static int preferred_group_nid(struct task_struct *p, int nid)
+ساكن صحيح preferred_group_nid(بنية task_struct *p, صحيح nid)
 {
 	nodemask_t nodes;
-	int dist;
+	صحيح dist;
 
 	/* Direct connections between all NUMA nodes. */
-	if (sched_numa_topology_type == NUMA_DIRECT)
-		return nid;
+	إذا (sched_numa_topology_type == NUMA_DIRECT)
+		إرجاع nid;
 
 	/*
 	 * On a system with glueless mesh NUMA topology, group_weight
 	 * scores nodes according to the number of NUMA hinting faults on
 	 * both the node itself, and on nearby nodes.
 	 */
-	if (sched_numa_topology_type == NUMA_GLUELESS_MESH) {
+	إذا (sched_numa_topology_type == NUMA_GLUELESS_MESH) {
 		unsigned long score, max_score = 0;
-		int node, max_node = nid;
+		صحيح عقدة, max_عقدة = nid;
 
 		dist = sched_max_numa_distance;
 
-		for_each_node_state(node, N_CPU) {
-			score = group_weight(p, node, dist);
-			if (score > max_score) {
+		for_each_عقدة_state(عقدة, N_CPU) {
+			score = group_weight(p, عقدة, dist);
+			إذا (score > max_score) {
 				max_score = score;
-				max_node = node;
+				max_عقدة = عقدة;
 			}
 		}
-		return max_node;
+		إرجاع max_عقدة;
 	}
 
 	/*
@@ -3783,32 +3783,32 @@ static int preferred_group_nid(struct task_struct *p, int nid)
 	 * inside the highest scoring group of nodes. The nodemask tricks
 	 * keep the complexity of the search down.
 	 */
-	nodes = node_states[N_CPU];
-	for (dist = sched_max_numa_distance; dist > LOCAL_DISTANCE; dist--) {
+	nodes = عقدة_states[N_CPU];
+	لكل (dist = sched_max_numa_distance; dist > LOCAL_DISTANCE; dist--) {
 		unsigned long max_faults = 0;
-		nodemask_t max_group = NODE_MASK_NONE;
-		int a, b;
+		nodemask_t max_group = عقدة_MASK_NONE;
+		صحيح a, b;
 
 		/* Are there nodes at this distance from each other? */
-		if (!find_numa_distance(dist))
-			continue;
+		إذا (!find_numa_distance(dist))
+			استمر;
 
-		for_each_node_mask(a, nodes) {
+		for_each_عقدة_mask(a, nodes) {
 			unsigned long faults = 0;
 			nodemask_t this_group;
 			nodes_clear(this_group);
 
 			/* Sum group's NUMA faults; includes a==b case. */
-			for_each_node_mask(b, nodes) {
-				if (node_distance(a, b) < dist) {
+			for_each_عقدة_mask(b, nodes) {
+				إذا (عقدة_distance(a, b) < dist) {
 					faults += group_faults(p, b);
-					node_set(b, this_group);
-					node_clear(b, nodes);
+					عقدة_set(b, this_group);
+					عقدة_clear(b, nodes);
 				}
 			}
 
 			/* Remember the top group. */
-			if (faults > max_faults) {
+			إذا (faults > max_faults) {
 				max_faults = faults;
 				max_group = this_group;
 				/*
@@ -3820,25 +3820,25 @@ static int preferred_group_nid(struct task_struct *p, int nid)
 			}
 		}
 		/* Next round, evaluate the nodes within max_group. */
-		if (!max_faults)
-			break;
+		إذا (!max_faults)
+			اكسر;
 		nodes = max_group;
 	}
-	return nid;
+	إرجاع nid;
 }
 
-static void task_numa_placement(struct task_struct *p)
+ساكن فراغ task_numa_placement(بنية task_struct *p)
 	__context_unsafe(/* conditional locking */)
 {
-	struct sched_cache_group __maybe_unused *grp;
-	int seq, nid, max_nid = NUMA_NO_NODE;
+	بنية sched_cache_group __maybe_unused *grp;
+	صحيح seq, nid, max_nid = NUMA_NO_عقدة;
 	unsigned long max_faults = 0;
 	unsigned long fault_types[2] = { 0, 0 };
 	unsigned long total_faults;
 	u64 runtime, period;
-	spinlock_t *group_lock = NULL;
+	spinlock_t *group_lock = عدم;
 	long __maybe_unused new_fp;
-	struct numa_group *ng;
+	بنية numa_group *ng;
 
 	/*
 	 * The p->mm->numa_scan_seq field gets updated without
@@ -3846,8 +3846,8 @@ static void task_numa_placement(struct task_struct *p)
 	 * that the field is read in a single access:
 	 */
 	seq = READ_ONCE(p->mm->numa_scan_seq);
-	if (p->numa_scan_seq == seq)
-		return;
+	إذا (p->numa_scan_seq == seq)
+		إرجاع;
 	p->numa_scan_seq = seq;
 	p->numa_scan_period_max = task_scan_max(p);
 
@@ -3857,19 +3857,19 @@ static void task_numa_placement(struct task_struct *p)
 
 	/* If the task is part of a group prevent parallel updates to group stats */
 	ng = deref_curr_numa_group(p);
-	if (ng) {
+	إذا (ng) {
 		group_lock = &ng->lock;
 		spin_lock_irq(group_lock);
 	}
 
 	/* Find the node with the highest number of faults */
-	for_each_online_node(nid) {
+	for_each_online_عقدة(nid) {
 		/* Keep track of the offsets in numa_faults array */
-		int mem_idx, membuf_idx, cpu_idx, cpubuf_idx;
+		صحيح mem_idx, membuf_idx, cpu_idx, cpubuf_idx;
 		unsigned long faults = 0, group_faults = 0;
-		int priv;
+		صحيح priv;
 
-		for (priv = 0; priv < NR_NUMA_HINT_FAULT_TYPES; priv++) {
+		لكل (priv = 0; priv < NR_NUMA_HINT_FAULT_TYPES; priv++) {
 			long diff, f_diff, f_weight;
 
 			mem_idx = task_faults_idx(NUMA_MEM, nid, priv);
@@ -3899,7 +3899,7 @@ static void task_numa_placement(struct task_struct *p)
 			p->numa_faults[cpu_idx] += f_diff;
 			faults += p->numa_faults[mem_idx];
 			p->total_numa_faults += diff;
-			if (ng) {
+			إذا (ng) {
 				/*
 				 * safe because we can only change our own group
 				 *
@@ -3936,7 +3936,7 @@ static void task_numa_placement(struct task_struct *p)
 			scoped_guard(rcu) {
 				grp = rcu_dereference(p->sched_cache_grp);
 
-				if (grp) {
+				إذا (grp) {
 					new_fp = (long)READ_ONCE(grp->footprint) + diff;
 					WRITE_ONCE(grp->footprint, max(new_fp, 0L));
 				}
@@ -3944,63 +3944,63 @@ static void task_numa_placement(struct task_struct *p)
 #endif
 		}
 
-		if (!ng) {
-			if (faults > max_faults) {
+		إذا (!ng) {
+			إذا (faults > max_faults) {
 				max_faults = faults;
 				max_nid = nid;
 			}
-		} else if (group_faults > max_faults) {
+		} وإلا إذا (group_faults > max_faults) {
 			max_faults = group_faults;
 			max_nid = nid;
 		}
 	}
 
 	/* Cannot migrate task to CPU-less node */
-	max_nid = numa_nearest_node(max_nid, N_CPU);
+	max_nid = numa_nearest_عقدة(max_nid, N_CPU);
 
-	if (ng) {
-		numa_group_count_active_nodes(ng);
+	إذا (ng) {
+		numa_group_تعداد_active_nodes(ng);
 		spin_unlock_irq(group_lock);
 		max_nid = preferred_group_nid(p, max_nid);
 	}
 
-	if (max_faults) {
+	إذا (max_faults) {
 		/* Set the new preferred node */
-		if (max_nid != p->numa_preferred_nid)
+		إذا (max_nid != p->numa_preferred_nid)
 			sched_setnuma(p, max_nid);
 	}
 
 	update_task_scan_period(p, fault_types[0], fault_types[1]);
 }
 
-static inline int get_numa_group(struct numa_group *grp)
+ساكن مضمن صحيح get_numa_group(بنية numa_group *grp)
 {
-	return refcount_inc_not_zero(&grp->refcount);
+	إرجاع refcount_inc_not_zero(&grp->refcount);
 }
 
-static inline void put_numa_group(struct numa_group *grp)
+ساكن مضمن فراغ put_numa_group(بنية numa_group *grp)
 {
-	if (refcount_dec_and_test(&grp->refcount))
+	إذا (refcount_dec_and_test(&grp->refcount))
 		kfree_rcu(grp, rcu);
 }
 
-static void task_numa_group(struct task_struct *p, int cpupid, int flags,
-			int *priv)
+ساكن فراغ task_numa_group(بنية task_struct *p, صحيح cpupid, صحيح flags,
+			صحيح *priv)
 {
-	struct numa_group *grp, *my_grp;
-	struct task_struct *tsk;
+	بنية numa_group *grp, *my_grp;
+	بنية task_struct *tsk;
 	bool join = false;
-	int cpu = cpupid_to_cpu(cpupid);
-	int i;
+	صحيح cpu = cpupid_to_cpu(cpupid);
+	صحيح i;
 
-	if (unlikely(!deref_curr_numa_group(p))) {
-		unsigned int size = sizeof(struct numa_group) +
+	إذا (unlikely(!deref_curr_numa_group(p))) {
+		unsigned صحيح size = حجم(بنية numa_group) +
 				    NR_NUMA_HINT_FAULT_STATS *
-				    nr_node_ids * sizeof(unsigned long);
+				    nr_عقدة_ids * حجم(unsigned long);
 
 		grp = kzalloc(size, GFP_KERNEL | __GFP_NOWARN);
-		if (!grp)
-			return;
+		إذا (!grp)
+			إرجاع;
 
 		refcount_set(&grp->refcount, 1);
 		grp->active_nodes = 1;
@@ -4008,7 +4008,7 @@ static void task_numa_group(struct task_struct *p, int cpupid, int flags,
 		spin_lock_init(&grp->lock);
 		grp->gid = p->pid;
 
-		for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++)
+		لكل (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_عقدة_ids; i++)
 			grp->faults[i] = p->numa_faults[i];
 
 		grp->total_faults = p->total_numa_faults;
@@ -4020,53 +4020,53 @@ static void task_numa_group(struct task_struct *p, int cpupid, int flags,
 	rcu_read_lock();
 	tsk = READ_ONCE(cpu_rq(cpu)->curr);
 
-	if (!cpupid_match_pid(tsk, cpupid))
-		goto no_join;
+	إذا (!cpupid_match_pid(tsk, cpupid))
+		اذهب no_join;
 
 	grp = rcu_dereference_all(tsk->numa_group);
-	if (!grp)
-		goto no_join;
+	إذا (!grp)
+		اذهب no_join;
 
 	my_grp = deref_curr_numa_group(p);
-	if (grp == my_grp)
-		goto no_join;
+	إذا (grp == my_grp)
+		اذهب no_join;
 
 	/*
 	 * Only join the other group if its bigger; if we're the bigger group,
 	 * the other task will join us.
 	 */
-	if (my_grp->nr_tasks > grp->nr_tasks)
-		goto no_join;
+	إذا (my_grp->nr_tasks > grp->nr_tasks)
+		اذهب no_join;
 
 	/*
 	 * Tie-break on the grp address.
 	 */
-	if (my_grp->nr_tasks == grp->nr_tasks && my_grp > grp)
-		goto no_join;
+	إذا (my_grp->nr_tasks == grp->nr_tasks && my_grp > grp)
+		اذهب no_join;
 
 	/* Always join threads in the same process. */
-	if (tsk->mm == current->mm)
+	إذا (tsk->mm == current->mm)
 		join = true;
 
 	/* Simple filter to avoid false positives due to PID collisions */
-	if (flags & TNF_SHARED)
+	إذا (flags & TNF_SHARED)
 		join = true;
 
 	/* Update priv based on whether false sharing was detected */
 	*priv = !join;
 
-	if (join && !get_numa_group(grp))
-		goto no_join;
+	إذا (join && !get_numa_group(grp))
+		اذهب no_join;
 
 	rcu_read_unlock();
 
-	if (!join)
-		return;
+	إذا (!join)
+		إرجاع;
 
 	WARN_ON_ONCE(irqs_disabled());
 	double_lock_irq(&my_grp->lock, &grp->lock);
 
-	for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++) {
+	لكل (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_عقدة_ids; i++) {
 		my_grp->faults[i] -= p->numa_faults[i];
 		grp->faults[i] += p->numa_faults[i];
 	}
@@ -4082,11 +4082,11 @@ static void task_numa_group(struct task_struct *p, int cpupid, int flags,
 	rcu_assign_pointer(p->numa_group, grp);
 
 	put_numa_group(my_grp);
-	return;
+	إرجاع;
 
 no_join:
 	rcu_read_unlock();
-	return;
+	إرجاع;
 }
 
 /*
@@ -4096,35 +4096,35 @@ no_join:
  * concurrent reads from places like load balancing and procfs, and we should
  * reset the data back to default state without freeing ->numa_faults.
  */
-void task_numa_free(struct task_struct *p, bool final)
+فراغ task_numa_free(بنية task_struct *p, bool final)
 {
 	/* safe: p either is current or is being freed by current */
-	struct numa_group *grp = rcu_dereference_raw(p->numa_group);
+	بنية numa_group *grp = rcu_dereference_raw(p->numa_group);
 	unsigned long *numa_faults = p->numa_faults;
 	unsigned long flags;
-	int i;
+	صحيح i;
 
-	if (!numa_faults)
-		return;
+	إذا (!numa_faults)
+		إرجاع;
 
-	if (grp) {
+	إذا (grp) {
 		spin_lock_irqsave(&grp->lock, flags);
-		for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++)
+		لكل (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_عقدة_ids; i++)
 			grp->faults[i] -= p->numa_faults[i];
 		grp->total_faults -= p->total_numa_faults;
 
 		grp->nr_tasks--;
 		spin_unlock_irqrestore(&grp->lock, flags);
-		RCU_INIT_POINTER(p->numa_group, NULL);
+		RCU_INIT_POINTER(p->numa_group, عدم);
 		put_numa_group(grp);
 	}
 
-	if (final) {
-		p->numa_faults = NULL;
+	إذا (final) {
+		p->numa_faults = عدم;
 		kfree(numa_faults);
-	} else {
+	} وإلا {
 		p->total_numa_faults = 0;
-		for (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_node_ids; i++)
+		لكل (i = 0; i < NR_NUMA_HINT_FAULT_STATS * nr_عقدة_ids; i++)
 			numa_faults[i] = 0;
 	}
 }
@@ -4132,53 +4132,53 @@ void task_numa_free(struct task_struct *p, bool final)
 /*
  * Got a PROT_NONE fault for a page on @node.
  */
-void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
+فراغ task_numa_fault(صحيح last_cpupid, صحيح mem_عقدة, صحيح pages, صحيح flags)
 {
-	struct task_struct *p = current;
+	بنية task_struct *p = current;
 	bool migrated = flags & TNF_MIGRATED;
-	int cpu_node = task_node(current);
-	int local = !!(flags & TNF_FAULT_LOCAL);
-	struct numa_group *ng;
-	int priv;
+	صحيح cpu_عقدة = task_عقدة(current);
+	صحيح local = !!(flags & TNF_FAULT_LOCAL);
+	بنية numa_group *ng;
+	صحيح priv;
 
-	if (!static_branch_likely(&sched_numa_balancing))
-		return;
+	إذا (!static_branch_likely(&sched_numa_balancing))
+		إرجاع;
 
 	/* for example, ksmd faulting in a user's mm */
-	if (!p->mm)
-		return;
+	إذا (!p->mm)
+		إرجاع;
 
 	/*
 	 * NUMA faults statistics are unnecessary for the slow memory
 	 * node for memory tiering mode.
 	 */
-	if (!node_is_toptier(mem_node) &&
+	إذا (!عقدة_is_toptier(mem_عقدة) &&
 	    (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING ||
 	     !cpupid_valid(last_cpupid)))
-		return;
+		إرجاع;
 
 	/* Allocate buffer to track faults on a per-node basis */
-	if (unlikely(!p->numa_faults)) {
-		int size = sizeof(*p->numa_faults) *
-			   NR_NUMA_HINT_FAULT_BUCKETS * nr_node_ids;
+	إذا (unlikely(!p->numa_faults)) {
+		صحيح size = حجم(*p->numa_faults) *
+			   NR_NUMA_HINT_FAULT_BUCKETS * nr_عقدة_ids;
 
 		p->numa_faults = kzalloc(size, GFP_KERNEL|__GFP_NOWARN);
-		if (!p->numa_faults)
-			return;
+		إذا (!p->numa_faults)
+			إرجاع;
 
 		p->total_numa_faults = 0;
-		memset(p->numa_faults_locality, 0, sizeof(p->numa_faults_locality));
+		memset(p->numa_faults_locality, 0, حجم(p->numa_faults_locality));
 	}
 
 	/*
 	 * First accesses are treated as private, otherwise consider accesses
 	 * to be private if the accessing pid has not changed
 	 */
-	if (unlikely(last_cpupid == (-1 & LAST_CPUPID_MASK))) {
+	إذا (unlikely(last_cpupid == (-1 & LAST_CPUPID_MASK))) {
 		priv = 1;
-	} else {
+	} وإلا {
 		priv = cpupid_match_pid(p, last_cpupid);
-		if (!priv && !(flags & TNF_NO_GROUP))
+		إذا (!priv && !(flags & TNF_NO_GROUP))
 			task_numa_group(p, last_cpupid, flags, &priv);
 	}
 
@@ -4189,31 +4189,31 @@ void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
 	 * scan rate to slow down when a workload has settled down.
 	 */
 	ng = deref_curr_numa_group(p);
-	if (!priv && !local && ng && ng->active_nodes > 1 &&
-				numa_is_active_node(cpu_node, ng) &&
-				numa_is_active_node(mem_node, ng))
+	إذا (!priv && !local && ng && ng->active_nodes > 1 &&
+				numa_is_active_عقدة(cpu_عقدة, ng) &&
+				numa_is_active_عقدة(mem_عقدة, ng))
 		local = 1;
 
 	/*
 	 * Retry to migrate task to preferred node periodically, in case it
 	 * previously failed, or the scheduler moved us.
 	 */
-	if (time_after(jiffies, p->numa_migrate_retry)) {
+	إذا (time_after(jiffies, p->numa_migrate_retry)) {
 		task_numa_placement(p);
 		numa_migrate_preferred(p);
 	}
 
-	if (migrated)
+	إذا (migrated)
 		p->numa_pages_migrated += pages;
-	if (flags & TNF_MIGRATE_FAIL)
+	إذا (flags & TNF_MIGRATE_FAIL)
 		p->numa_faults_locality[2] += pages;
 
-	p->numa_faults[task_faults_idx(NUMA_MEMBUF, mem_node, priv)] += pages;
-	p->numa_faults[task_faults_idx(NUMA_CPUBUF, cpu_node, priv)] += pages;
+	p->numa_faults[task_faults_idx(NUMA_MEMBUF, mem_عقدة, priv)] += pages;
+	p->numa_faults[task_faults_idx(NUMA_CPUBUF, cpu_عقدة, priv)] += pages;
 	p->numa_faults_locality[local] += pages;
 }
 
-static void reset_ptenuma_scan(struct task_struct *p)
+ساكن فراغ reset_ptenuma_scan(بنية task_struct *p)
 {
 	/*
 	 * We only did a read acquisition of the mmap sem, so
@@ -4227,7 +4227,7 @@ static void reset_ptenuma_scan(struct task_struct *p)
 	p->mm->numa_scan_offset = 0;
 }
 
-static bool vma_is_accessed(struct mm_struct *mm, struct vm_area_struct *vma)
+ساكن bool vma_is_accessed(بنية mm_struct *mm, بنية vm_area_struct *vma)
 {
 	unsigned long pids;
 	/*
@@ -4236,20 +4236,20 @@ static bool vma_is_accessed(struct mm_struct *mm, struct vm_area_struct *vma)
 	 * This is also done to avoid any side effect of task scanning
 	 * amplifying the unfairness of disjoint set of VMAs' access.
 	 */
-	if ((READ_ONCE(current->mm->numa_scan_seq) - vma->numab_state->start_scan_seq) < 2)
-		return true;
+	إذا ((READ_ONCE(current->mm->numa_scan_seq) - vma->numab_state->start_scan_seq) < 2)
+		إرجاع true;
 
 	pids = vma->numab_state->pids_active[0] | vma->numab_state->pids_active[1];
-	if (test_bit(hash_32(current->pid, ilog2(BITS_PER_LONG)), &pids))
-		return true;
+	إذا (test_bit(hash_32(current->pid, ilog2(BITS_PER_LONG)), &pids))
+		إرجاع true;
 
 	/*
 	 * Complete a scan that has already started regardless of PID access, or
 	 * some VMAs may never be scanned in multi-threaded applications:
 	 */
-	if (mm->numa_scan_offset > vma->vm_start) {
+	إذا (mm->numa_scan_offset > vma->vm_start) {
 		trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_IGNORE_PID);
-		return true;
+		إرجاع true;
 	}
 
 	/*
@@ -4257,11 +4257,11 @@ static bool vma_is_accessed(struct mm_struct *mm, struct vm_area_struct *vma)
 	 * the threads in the same process is low, which means no other
 	 * threads can help scan this vma, force a vma scan.
 	 */
-	if (READ_ONCE(mm->numa_scan_seq) >
+	إذا (READ_ONCE(mm->numa_scan_seq) >
 	   (vma->numab_state->prev_scan_seq + get_nr_threads(current)))
-		return true;
+		إرجاع true;
 
-	return false;
+	إرجاع false;
 }
 
 #define VMA_PID_RESET_PERIOD (4 * sysctl_numa_balancing_scan_delay)
@@ -4270,21 +4270,21 @@ static bool vma_is_accessed(struct mm_struct *mm, struct vm_area_struct *vma)
  * The expensive part of numa migration is done from task_work context.
  * Triggered from task_tick_numa().
  */
-static void task_numa_work(struct callback_head *work)
+ساكن فراغ task_numa_work(بنية callback_head *work)
 {
 	unsigned long migrate, next_scan, now = jiffies;
-	struct task_struct *p = current;
-	struct mm_struct *mm = p->mm;
+	بنية task_struct *p = current;
+	بنية mm_struct *mm = p->mm;
 	u64 runtime = p->se.sum_exec_runtime;
-	struct vm_area_struct *vma;
+	بنية vm_area_struct *vma;
 	unsigned long start, end;
 	unsigned long nr_pte_updates = 0;
 	long pages, virtpages;
-	struct vma_iterator vmi;
+	بنية vma_iterator vmi;
 	bool vma_pids_skipped;
 	bool vma_pids_forced = false;
 
-	WARN_ON_ONCE(p != container_of(work, struct task_struct, numa_work));
+	WARN_ON_ONCE(p != container_of(work, بنية task_struct, numa_work));
 
 	work->next = work;
 	/*
@@ -4295,19 +4295,19 @@ static void task_numa_work(struct callback_head *work)
 	 * without p->mm even though we still had it when we enqueued this
 	 * work.
 	 */
-	if (p->flags & PF_EXITING)
-		return;
+	إذا (p->flags & PF_EXITING)
+		إرجاع;
 
 	/*
 	 * Memory is pinned to only one NUMA node via cpuset.mems, naturally
 	 * no page can be migrated.
 	 */
-	if (cpusets_enabled() && nodes_weight(cpuset_current_mems_allowed) == 1) {
+	إذا (cpusets_enabled() && nodes_weight(cpuset_current_mems_allowed) == 1) {
 		trace_sched_skip_cpuset_numa(current, &cpuset_current_mems_allowed);
-		return;
+		إرجاع;
 	}
 
-	if (!mm->numa_next_scan) {
+	إذا (!mm->numa_next_scan) {
 		mm->numa_next_scan = now +
 			msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
 	}
@@ -4316,33 +4316,33 @@ static void task_numa_work(struct callback_head *work)
 	 * Enforce maximal scan/migration frequency..
 	 */
 	migrate = mm->numa_next_scan;
-	if (time_before(now, migrate))
-		return;
+	إذا (time_before(now, migrate))
+		إرجاع;
 
-	if (p->numa_scan_period == 0) {
+	إذا (p->numa_scan_period == 0) {
 		p->numa_scan_period_max = task_scan_max(p);
 		p->numa_scan_period = task_scan_start(p);
 	}
 
 	next_scan = now + msecs_to_jiffies(p->numa_scan_period);
-	if (!try_cmpxchg(&mm->numa_next_scan, &migrate, next_scan))
-		return;
+	إذا (!try_cmpxchg(&mm->numa_next_scan, &migrate, next_scan))
+		إرجاع;
 
 	/*
 	 * Delay this task enough that another task of this mm will likely win
 	 * the next time around.
 	 */
-	p->node_stamp += 2 * TICK_NSEC;
+	p->عقدة_stamp += 2 * TICK_NSEC;
 
 	pages = sysctl_numa_balancing_scan_size;
 	pages <<= 20 - PAGE_SHIFT; /* MB in pages */
 	virtpages = pages * 8;	   /* Scan up to this much virtual space */
-	if (!pages)
-		return;
+	إذا (!pages)
+		إرجاع;
 
 
-	if (!mmap_read_trylock(mm))
-		return;
+	إذا (!mmap_read_trylock(mm))
+		إرجاع;
 
 	/*
 	 * VMAs are skipped if the current PID has not trapped a fault within
@@ -4355,18 +4355,18 @@ retry_pids:
 	start = mm->numa_scan_offset;
 	vma_iter_init(&vmi, mm, start);
 	vma = vma_next(&vmi);
-	if (!vma) {
+	إذا (!vma) {
 		reset_ptenuma_scan(p);
 		start = 0;
 		vma_iter_set(&vmi, start);
 		vma = vma_next(&vmi);
 	}
 
-	for (; vma; vma = vma_next(&vmi)) {
-		if (!vma_migratable(vma) || !vma_policy_mof(vma) ||
+	لكل (; vma; vma = vma_next(&vmi)) {
+		إذا (!vma_migratable(vma) || !vma_policy_mof(vma) ||
 			is_vm_hugetlb_page(vma) || (vma->vm_flags & VM_MIXEDMAP)) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_UNSUITABLE);
-			continue;
+			استمر;
 		}
 
 		/*
@@ -4375,32 +4375,32 @@ retry_pids:
 		 * hinting faults in read-only file-backed mappings or the vDSO
 		 * as migrating the pages will be of marginal benefit.
 		 */
-		if (!vma->vm_mm ||
+		إذا (!vma->vm_mm ||
 		    (vma->vm_file && (vma->vm_flags & (VM_READ|VM_WRITE)) == (VM_READ))) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SHARED_RO);
-			continue;
+			استمر;
 		}
 
 		/*
 		 * Skip inaccessible VMAs to avoid any confusion between
 		 * PROT_NONE and NUMA hinting PTEs
 		 */
-		if (!vma_is_accessible(vma)) {
+		إذا (!vma_is_accessible(vma)) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_INACCESSIBLE);
-			continue;
+			استمر;
 		}
 
 		/* Initialise new per-VMA NUMAB state. */
-		if (!vma->numab_state) {
-			struct vma_numab_state *ptr;
+		إذا (!vma->numab_state) {
+			بنية vma_numab_state *ptr;
 
 			ptr = kzalloc_obj(*ptr);
-			if (!ptr)
-				continue;
+			إذا (!ptr)
+				استمر;
 
-			if (cmpxchg(&vma->numab_state, NULL, ptr)) {
+			إذا (cmpxchg(&vma->numab_state, عدم, ptr)) {
 				kfree(ptr);
-				continue;
+				استمر;
 			}
 
 			vma->numab_state->start_scan_seq = mm->numa_scan_seq;
@@ -4424,14 +4424,14 @@ retry_pids:
 		 * Scanning the VMAs of short lived tasks add more overhead. So
 		 * delay the scan for new VMAs.
 		 */
-		if (mm->numa_scan_seq && time_before(jiffies,
+		إذا (mm->numa_scan_seq && time_before(jiffies,
 						vma->numab_state->next_scan)) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SCAN_DELAY);
-			continue;
+			استمر;
 		}
 
 		/* RESET access PIDs regularly for old VMAs. */
-		if (mm->numa_scan_seq &&
+		إذا (mm->numa_scan_seq &&
 				time_after(jiffies, vma->numab_state->pids_active_reset)) {
 			vma->numab_state->pids_active_reset = vma->numab_state->pids_active_reset +
 				msecs_to_jiffies(VMA_PID_RESET_PERIOD);
@@ -4440,23 +4440,23 @@ retry_pids:
 		}
 
 		/* Do not rescan VMAs twice within the same sequence. */
-		if (vma->numab_state->prev_scan_seq == mm->numa_scan_seq) {
+		إذا (vma->numab_state->prev_scan_seq == mm->numa_scan_seq) {
 			mm->numa_scan_offset = vma->vm_end;
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SEQ_COMPLETED);
-			continue;
+			استمر;
 		}
 
 		/*
 		 * Do not scan the VMA if task has not accessed it, unless no other
 		 * VMA candidate exists.
 		 */
-		if (!vma_pids_forced && !vma_is_accessed(mm, vma)) {
+		إذا (!vma_pids_forced && !vma_is_accessed(mm, vma)) {
 			vma_pids_skipped = true;
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_PID_INACTIVE);
-			continue;
+			استمر;
 		}
 
-		do {
+		افعل {
 			start = max(start, vma->vm_start);
 			end = ALIGN(start + (pages << PAGE_SHIFT), HPAGE_SIZE);
 			end = min(end, vma->vm_end);
@@ -4470,16 +4470,16 @@ retry_pids:
 			 * PTEs, scan up to virtpages, to skip through those
 			 * areas faster.
 			 */
-			if (nr_pte_updates)
+			إذا (nr_pte_updates)
 				pages -= (end - start) >> PAGE_SHIFT;
 			virtpages -= (end - start) >> PAGE_SHIFT;
 
 			start = end;
-			if (pages <= 0 || virtpages <= 0)
-				goto out;
+			إذا (pages <= 0 || virtpages <= 0)
+				اذهب out;
 
 			cond_resched();
-		} while (end != vma->vm_end);
+		} بينما (end != vma->vm_end);
 
 		/* VMA scan is complete, do not scan until next sequence. */
 		vma->numab_state->prev_scan_seq = mm->numa_scan_seq;
@@ -4488,8 +4488,8 @@ retry_pids:
 		 * Only force scan within one VMA at a time, to limit the
 		 * cost of scanning a potentially uninteresting VMA.
 		 */
-		if (vma_pids_forced)
-			break;
+		إذا (vma_pids_forced)
+			اكسر;
 	}
 
 	/*
@@ -4497,9 +4497,9 @@ retry_pids:
 	 * not accessing the VMA previously, then force a scan to ensure
 	 * forward progress:
 	 */
-	if (!vma && !vma_pids_forced && vma_pids_skipped) {
+	إذا (!vma && !vma_pids_forced && vma_pids_skipped) {
 		vma_pids_forced = true;
-		goto retry_pids;
+		اذهب retry_pids;
 	}
 
 out:
@@ -4509,9 +4509,9 @@ out:
 	 * would find the !migratable VMA on the next scan but not reset the
 	 * scanner to the start so check it now.
 	 */
-	if (vma)
+	إذا (vma)
 		mm->numa_scan_offset = start;
-	else
+	وإلا
 		reset_ptenuma_scan(p);
 	mmap_read_unlock(mm);
 
@@ -4521,72 +4521,72 @@ out:
 	 * Usually update_task_scan_period slows down scanning enough; on an
 	 * overloaded system we need to limit overhead on a per task basis.
 	 */
-	if (unlikely(p->se.sum_exec_runtime != runtime)) {
+	إذا (unlikely(p->se.sum_exec_runtime != runtime)) {
 		u64 diff = p->se.sum_exec_runtime - runtime;
-		p->node_stamp += 32 * diff;
+		p->عقدة_stamp += 32 * diff;
 	}
 }
 
-void init_numa_balancing(u64 clone_flags, struct task_struct *p)
+فراغ init_numa_balancing(u64 clone_flags, بنية task_struct *p)
 {
-	int mm_users = 0;
-	struct mm_struct *mm = p->mm;
+	صحيح mm_users = 0;
+	بنية mm_struct *mm = p->mm;
 
-	if (mm) {
+	إذا (mm) {
 		mm_users = atomic_read(&mm->mm_users);
-		if (mm_users == 1) {
+		إذا (mm_users == 1) {
 			mm->numa_next_scan = jiffies + msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
 			mm->numa_scan_seq = 0;
 		}
 	}
-	p->node_stamp			= 0;
+	p->عقدة_stamp			= 0;
 	p->numa_scan_seq		= mm ? mm->numa_scan_seq : 0;
 	p->numa_scan_period		= sysctl_numa_balancing_scan_delay;
 	p->numa_migrate_retry		= 0;
 	/* Protect against double add, see task_tick_numa and task_numa_work */
 	p->numa_work.next		= &p->numa_work;
-	p->numa_faults			= NULL;
+	p->numa_faults			= عدم;
 	p->numa_pages_migrated		= 0;
 	p->total_numa_faults		= 0;
-	RCU_INIT_POINTER(p->numa_group, NULL);
+	RCU_INIT_POINTER(p->numa_group, عدم);
 	p->last_task_numa_placement	= 0;
 	p->last_sum_exec_runtime	= 0;
 
 	init_task_work(&p->numa_work, task_numa_work);
 
 	/* New address space, reset the preferred nid */
-	if (!(clone_flags & CLONE_VM)) {
-		p->numa_preferred_nid = NUMA_NO_NODE;
-		return;
+	إذا (!(clone_flags & CLONE_VM)) {
+		p->numa_preferred_nid = NUMA_NO_عقدة;
+		إرجاع;
 	}
 
 	/*
 	 * New thread, keep existing numa_preferred_nid which should be copied
 	 * already by arch_dup_task_struct but stagger when scans start.
 	 */
-	if (mm) {
-		unsigned int delay;
+	إذا (mm) {
+		unsigned صحيح delay;
 
-		delay = min_t(unsigned int, task_scan_max(current),
+		delay = min_t(unsigned صحيح, task_scan_max(current),
 			current->numa_scan_period * mm_users * NSEC_PER_MSEC);
 		delay += 2 * TICK_NSEC;
-		p->node_stamp = delay;
+		p->عقدة_stamp = delay;
 	}
 }
 
 /*
  * Drive the periodic memory faults..
  */
-static void task_tick_numa(struct rq *rq, struct task_struct *curr)
+ساكن فراغ task_tick_numa(بنية rq *rq, بنية task_struct *curr)
 {
-	struct callback_head *work = &curr->numa_work;
+	بنية callback_head *work = &curr->numa_work;
 	u64 period, now;
 
 	/*
 	 * We don't care about NUMA placement if we don't have memory.
 	 */
-	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) || work->next != work)
-		return;
+	إذا (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) || work->next != work)
+		إرجاع;
 
 	/*
 	 * Using runtime rather than walltime has the dual advantage that
@@ -4597,98 +4597,98 @@ static void task_tick_numa(struct rq *rq, struct task_struct *curr)
 	now = curr->se.sum_exec_runtime;
 	period = (u64)curr->numa_scan_period * NSEC_PER_MSEC;
 
-	if (now > curr->node_stamp + period) {
-		if (!curr->node_stamp)
+	إذا (now > curr->عقدة_stamp + period) {
+		إذا (!curr->عقدة_stamp)
 			curr->numa_scan_period = task_scan_start(curr);
-		curr->node_stamp += period;
+		curr->عقدة_stamp += period;
 
-		if (!time_before(jiffies, curr->mm->numa_next_scan))
+		إذا (!time_before(jiffies, curr->mm->numa_next_scan))
 			task_work_add(curr, work, TWA_RESUME);
 	}
 }
 
-static void update_scan_period(struct task_struct *p, int new_cpu)
+ساكن فراغ update_scan_period(بنية task_struct *p, صحيح new_cpu)
 {
-	int src_nid = cpu_to_node(task_cpu(p));
-	int dst_nid = cpu_to_node(new_cpu);
+	صحيح src_nid = cpu_to_عقدة(task_cpu(p));
+	صحيح dst_nid = cpu_to_عقدة(new_cpu);
 
-	if (!static_branch_likely(&sched_numa_balancing))
-		return;
+	إذا (!static_branch_likely(&sched_numa_balancing))
+		إرجاع;
 
-	if (!p->mm || !p->numa_faults || (p->flags & PF_EXITING))
-		return;
+	إذا (!p->mm || !p->numa_faults || (p->flags & PF_EXITING))
+		إرجاع;
 
-	if (src_nid == dst_nid)
-		return;
+	إذا (src_nid == dst_nid)
+		إرجاع;
 
 	/*
 	 * Allow resets if faults have been trapped before one scan
 	 * has completed. This is most likely due to a new task that
 	 * is pulled cross-node due to wakeups or load balancing.
 	 */
-	if (p->numa_scan_seq) {
+	إذا (p->numa_scan_seq) {
 		/*
 		 * Avoid scan adjustments if moving to the preferred
 		 * node or if the task was not previously running on
 		 * the preferred node.
 		 */
-		if (dst_nid == p->numa_preferred_nid ||
-		    (p->numa_preferred_nid != NUMA_NO_NODE &&
+		إذا (dst_nid == p->numa_preferred_nid ||
+		    (p->numa_preferred_nid != NUMA_NO_عقدة &&
 			src_nid != p->numa_preferred_nid))
-			return;
+			إرجاع;
 	}
 
 	p->numa_scan_period = task_scan_start(p);
 }
 
-#else /* !CONFIG_NUMA_BALANCING: */
+#وإلا /* !CONFIG_NUMA_BALANCING: */
 
-static void task_tick_numa(struct rq *rq, struct task_struct *curr)
+ساكن فراغ task_tick_numa(بنية rq *rq, بنية task_struct *curr)
 {
 }
 
-static inline void account_numa_enqueue(struct rq *rq, struct task_struct *p)
+ساكن مضمن فراغ account_numa_enqueue(بنية rq *rq, بنية task_struct *p)
 {
 }
 
-static inline void account_numa_dequeue(struct rq *rq, struct task_struct *p)
+ساكن مضمن فراغ account_numa_dequeue(بنية rq *rq, بنية task_struct *p)
 {
 }
 
-static inline void update_scan_period(struct task_struct *p, int new_cpu)
+ساكن مضمن فراغ update_scan_period(بنية task_struct *p, صحيح new_cpu)
 {
 }
 
 #endif /* !CONFIG_NUMA_BALANCING */
 
-static void
-account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ
+account_entity_enqueue(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	WARN_ON_ONCE(cfs_rq != cfs_rq_of(se));
 	update_load_add(&cfs_rq->load, se->load.weight);
-	if (entity_is_task(se)) {
-		struct task_struct *p = task_of(se);
-		struct rq *rq = rq_of(cfs_rq);
+	إذا (entity_is_task(se)) {
+		بنية task_struct *p = task_of(se);
+		بنية rq *rq = rq_of(cfs_rq);
 
 		account_numa_enqueue(rq, p);
 		account_llc_enqueue(rq, p);
-		list_add(&se->group_node, &rq->cfs_tasks);
+		list_add(&se->group_عقدة, &rq->cfs_tasks);
 	}
 	cfs_rq->nr_queued++;
 }
 
-static void
-account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ
+account_entity_dequeue(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	WARN_ON_ONCE(cfs_rq != cfs_rq_of(se));
 	update_load_sub(&cfs_rq->load, se->load.weight);
-	if (entity_is_task(se)) {
-		struct task_struct *p = task_of(se);
-		struct rq *rq = rq_of(cfs_rq);
+	إذا (entity_is_task(se)) {
+		بنية task_struct *p = task_of(se);
+		بنية rq *rq = rq_of(cfs_rq);
 
 		account_numa_dequeue(rq, p);
 		account_llc_dequeue(rq, p);
-		list_del_init(&se->group_node);
+		list_del_init(&se->group_عقدة);
 	}
 	cfs_rq->nr_queued--;
 }
@@ -4700,18 +4700,18 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * memory. This allows lockless observations without ever seeing the negative
  * values.
  */
-#define add_positive(_ptr, _val) do {                           \
+#define add_positive(_ptr, _val) افعل {                           \
 	typeof(_ptr) ptr = (_ptr);                              \
 	__signed_scalar_typeof(*ptr) val = (_val);              \
 	typeof(*ptr) res, var = READ_ONCE(*ptr);                \
 								\
 	res = var + val;                                        \
 								\
-	if (val < 0 && res > var)                               \
+	إذا (val < 0 && res > var)                               \
 		res = 0;                                        \
 								\
 	WRITE_ONCE(*ptr, res);                                  \
-} while (0)
+} بينما (0)
 
 /*
  * Remove and clamp on negative, from a local variable.
@@ -4719,10 +4719,10 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * A variant of sub_positive(), which does not use explicit load-store
  * and is thus optimized for local variable updates.
  */
-#define lsub_positive(_ptr, _val) do {				\
+#define lsub_positive(_ptr, _val) افعل {				\
 	typeof(_ptr) ptr = (_ptr);				\
 	*ptr -= min_t(typeof(*ptr), *ptr, _val);		\
-} while (0)
+} بينما (0)
 
 
 /*
@@ -4737,30 +4737,30 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
  * sync, we are only sure that util_sum must be above or equal to
  *    util_avg * minimum possible divider
  */
-#define __update_sa(sa, name, delta_avg, delta_sum) do {	\
+#define __update_sa(sa, name, delta_avg, delta_sum) افعل {	\
 	add_positive(&(sa)->name##_avg, delta_avg);		\
 	add_positive(&(sa)->name##_sum, delta_sum);		\
 	(sa)->name##_sum = max_t(typeof((sa)->name##_sum),	\
 			       (sa)->name##_sum,		\
 			       (sa)->name##_avg * PELT_MIN_DIVIDER); \
-} while (0)
+} بينما (0)
 
-static inline void
-enqueue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن فراغ
+enqueue_load_avg(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	__update_sa(&cfs_rq->avg, load, se->avg.load_avg,
 		    se_weight(se) * se->avg.load_sum);
 }
 
-static inline void
-dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن مضمن فراغ
+dequeue_load_avg(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	__update_sa(&cfs_rq->avg, load, -se->avg.load_avg,
 		    se_weight(se) * -se->avg.load_sum);
 }
 
-static void
-rescale_entity(struct sched_entity *se, unsigned long weight, bool rel_vprot)
+ساكن فراغ
+rescale_entity(بنية sched_entity *se, unsigned long weight, bool rel_vprot)
 {
 	long old_weight = se->h_load.weight;
 
@@ -4855,35 +4855,35 @@ rescale_entity(struct sched_entity *se, unsigned long weight, bool rel_vprot)
 	 *	   = V  - (V - v)*w/w' + (d - v)*w/w'
 	 *	   = V  + (d - V)*w/w'
 	 */
-	if (se->rel_deadline)
+	إذا (se->rel_deadline)
 		se->deadline = div64_long(se->deadline * old_weight, weight);
 
-	if (rel_vprot)
+	إذا (rel_vprot)
 		se->vprot = div64_long(se->vprot * old_weight, weight);
 }
 
-static void reweight_eevdf(struct cfs_rq *cfs_rq, struct sched_entity *se,
+ساكن فراغ reweight_eevdf(بنية cfs_rq *cfs_rq, بنية sched_entity *se,
 			   unsigned long weight, bool on_rq)
 {
 	bool curr = cfs_rq->curr == se;
 	bool rel_vprot = false;
 	u64 avruntime = 0;
 
-	if (se->h_load.weight == weight)
-		return;
+	إذا (se->h_load.weight == weight)
+		إرجاع;
 
-	if (on_rq) {
+	إذا (on_rq) {
 		avruntime = avg_vruntime(cfs_rq);
 		se->vlag = entity_lag(cfs_rq, se, avruntime);
 		se->deadline -= avruntime;
 		se->rel_deadline = 1;
-		if (curr && protect_slice(se)) {
+		إذا (curr && protect_slice(se)) {
 			se->vprot -= avruntime;
 			rel_vprot = true;
 		}
 
 		cfs_rq->h_nr_queued--;
-		if (!curr)
+		إذا (!curr)
 			__dequeue_entity(cfs_rq, se);
 	}
 
@@ -4891,26 +4891,26 @@ static void reweight_eevdf(struct cfs_rq *cfs_rq, struct sched_entity *se,
 
 	update_load_set(&se->h_load, weight);
 
-	if (on_rq) {
-		if (rel_vprot)
+	إذا (on_rq) {
+		إذا (rel_vprot)
 			se->vprot += avruntime;
 		se->deadline += avruntime;
 		se->rel_deadline = 0;
 		se->vruntime = avruntime - se->vlag;
 
-		if (!curr)
+		إذا (!curr)
 			__enqueue_entity(cfs_rq, se);
 		cfs_rq->h_nr_queued++;
 	}
 }
 
-static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+ساكن فراغ reweight_entity(بنية cfs_rq *cfs_rq, بنية sched_entity *se,
 			    unsigned long weight)
 {
-	if (se->load.weight == weight)
-		return;
+	إذا (se->load.weight == weight)
+		إرجاع;
 
-	if (se->on_rq) {
+	إذا (se->on_rq) {
 		WARN_ON_ONCE(cfs_rq != cfs_rq_of(se));
 		update_load_sub(&cfs_rq->load, se->load.weight);
 	}
@@ -4918,14 +4918,14 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
 
 	update_load_set(&se->load, weight);
 
-	do {
+	افعل {
 		u32 divider = get_pelt_divider(&se->avg);
 		se->avg.load_avg = div_u64(se_weight(se) * se->avg.load_sum, divider);
-	} while (0);
+	} بينما (0);
 
 	enqueue_load_avg(cfs_rq, se);
 
-	if (se->on_rq)
+	إذا (se->on_rq)
 		update_load_add(&cfs_rq->load, se->load.weight);
 }
 
@@ -4934,33 +4934,33 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
  * for_each_entity_se(se)
  *   weight = __calc_prop_weight(cfs_rq_of(se), se, weight);
  */
-static __always_inline
-unsigned long __calc_prop_weight(struct cfs_rq *cfs_rq, struct sched_entity *se,
+ساكن __always_inline
+unsigned long __calc_prop_weight(بنية cfs_rq *cfs_rq, بنية sched_entity *se,
 				 unsigned long weight)
 {
 	weight *= se->load.weight;
-	if (parent_entity(se))
+	إذا (parent_entity(se))
 		weight /= cfs_rq->load.weight;
-	else
+	وإلا
 		weight /= NICE_0_LOAD;
 
-	return max(weight, MIN_SHARES);
+	إرجاع max(weight, MIN_SHARES);
 }
 
-static void reweight_task_fair(struct rq *rq, struct task_struct *p,
-			       const struct load_weight *lw)
+ساكن فراغ reweight_task_fair(بنية rq *rq, بنية task_struct *p,
+			       ثابت بنية load_weight *lw)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 	unsigned long weight = NICE_0_LOAD;
 
-	if (se->on_rq)
+	إذا (se->on_rq)
 		update_curr_fair(rq);
 
 	reweight_entity(cfs_rq_of(se), se, lw->weight);
 	se->load.inv_weight = lw->inv_weight;
 
-	if (!se->on_rq)
-		return;
+	إذا (!se->on_rq)
+		إرجاع;
 
 	for_each_sched_entity(se)
 		weight = __calc_prop_weight(cfs_rq_of(se), se, weight);
@@ -4968,7 +4968,7 @@ static void reweight_task_fair(struct rq *rq, struct task_struct *p,
 	reweight_eevdf(&rq->cfs, &p->se, weight, p->se.on_rq);
 }
 
-static inline int throttled_hierarchy(struct cfs_rq *cfs_rq);
+ساكن مضمن صحيح throttled_hierarchy(بنية cfs_rq *cfs_rq);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 /*
@@ -5044,9 +5044,9 @@ static inline int throttled_hierarchy(struct cfs_rq *cfs_rq);
  *
  * hence icky!
  */
-static long __calc_smp_shares(struct cfs_rq *cfs_rq, long tg_shares, long shares_max)
+ساكن long __calc_smp_shares(بنية cfs_rq *cfs_rq, long tg_shares, long shares_max)
 {
-	struct task_group *tg = cfs_rq->tg;
+	بنية task_group *tg = cfs_rq->tg;
 	long tg_weight, load, shares;
 
 	load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
@@ -5058,7 +5058,7 @@ static long __calc_smp_shares(struct cfs_rq *cfs_rq, long tg_shares, long shares
 	tg_weight += load;
 
 	shares = (tg_shares * load);
-	if (tg_weight)
+	إذا (tg_weight)
 		shares /= tg_weight;
 
 	/*
@@ -5073,17 +5073,17 @@ static long __calc_smp_shares(struct cfs_rq *cfs_rq, long tg_shares, long shares
 	 * case no task is runnable on a CPU MIN_SHARES=2 should be returned
 	 * instead of 0.
 	 */
-	return clamp_t(long, shares, MIN_SHARES, shares_max);
+	إرجاع clamp_t(long, shares, MIN_SHARES, shares_max);
 }
 
-static int tg_cpus(struct task_group *tg)
+ساكن صحيح tg_cpus(بنية task_group *tg)
 {
-	int nr = num_online_cpus();
+	صحيح nr = رقم_online_cpus();
 
-	if (cpusets_enabled()) {
-		struct cgroup *cgrp = tg->css.cgroup;
-		if (cgrp)
-			nr = cpuset_num_cpus(cgrp);
+	إذا (cpusets_enabled()) {
+		بنية cgroup *cgrp = tg->css.cgroup;
+		إذا (cgrp)
+			nr = cpuset_رقم_cpus(cgrp);
 	}
 
 	/*
@@ -5091,12 +5091,12 @@ static int tg_cpus(struct task_group *tg)
 	 * __calc_smp_shares(), where clamp() yields hi when hi < lo and so
 	 * defeats the MIN_SHARES floor. Match tg_tasks(), which floors at 1.
 	 */
-	return max(nr, 1);
+	إرجاع max(nr, 1);
 }
 
-static inline int tg_tasks(struct task_group *tg)
+ساكن مضمن صحيح tg_tasks(بنية task_group *tg)
 {
-	return max(1, atomic_long_read(&tg->runnable_avg) >> SCHED_CAPACITY_SHIFT);
+	إرجاع max(1, atomic_long_read(&tg->runnable_avg) >> SCHED_CAPACITY_SHIFT);
 }
 
 /*
@@ -5104,12 +5104,12 @@ static inline int tg_tasks(struct task_group *tg)
  *
  * Scale tg->shares by the number of tasks.
  */
-static long calc_tasks_shares(struct cfs_rq *cfs_rq)
+ساكن long calc_tasks_shares(بنية cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
-	int nr = tg_tasks(tg);
+	بنية task_group *tg = cfs_rq->tg;
+	صحيح nr = tg_tasks(tg);
 	long tg_shares = READ_ONCE(tg->shares);
-	return __calc_smp_shares(cfs_rq, nr * tg_shares, nr * tg_shares);
+	إرجاع __calc_smp_shares(cfs_rq, nr * tg_shares, nr * tg_shares);
 }
 
 /*
@@ -5119,13 +5119,13 @@ static long calc_tasks_shares(struct cfs_rq *cfs_rq)
  * nice -20, otherwise a single spinner on a 512 CPU machine would result in
  * 512*NICE_0_LOAD, which is also crazy.
  */
-static long calc_max_shares(struct cfs_rq *cfs_rq)
+ساكن long calc_max_shares(بنية cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
-	int nr = tg_cpus(tg);
+	بنية task_group *tg = cfs_rq->tg;
+	صحيح nr = tg_cpus(tg);
 	long tg_shares = READ_ONCE(tg->shares);
 	long max_shares = scale_load(sched_prio_to_weight[0]);
-	return __calc_smp_shares(cfs_rq, tg_shares * nr, max_shares);
+	إرجاع __calc_smp_shares(cfs_rq, tg_shares * nr, max_shares);
 }
 
 /*
@@ -5134,12 +5134,12 @@ static long calc_max_shares(struct cfs_rq *cfs_rq)
  * Scales between "smp" and "max" in a natural way. No longer needs clipping
  * since there are no unnatural inflations like with "max".
  */
-static long calc_concur_shares(struct cfs_rq *cfs_rq)
+ساكن long calc_concur_shares(بنية cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
-	int nr = min(tg_tasks(tg), tg_cpus(tg));
+	بنية task_group *tg = cfs_rq->tg;
+	صحيح nr = min(tg_tasks(tg), tg_cpus(tg));
 	long tg_shares = READ_ONCE(tg->shares);
-	return __calc_smp_shares(cfs_rq, nr * tg_shares, nr * tg_shares);
+	إرجاع __calc_smp_shares(cfs_rq, nr * tg_shares, nr * tg_shares);
 }
 
 /*
@@ -5147,44 +5147,44 @@ static long calc_concur_shares(struct cfs_rq *cfs_rq)
  *
  * This infamously results in tiny shares when you have many CPUs.
  */
-static long calc_smp_shares(struct cfs_rq *cfs_rq)
+ساكن long calc_smp_shares(بنية cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
+	بنية task_group *tg = cfs_rq->tg;
 	long tg_shares = READ_ONCE(tg->shares);
-	return __calc_smp_shares(cfs_rq, tg_shares, tg_shares);
+	إرجاع __calc_smp_shares(cfs_rq, tg_shares, tg_shares);
 }
 
 /*
  * Ignore this pesky SMP stuff, use (4).
  */
-static long calc_up_shares(struct cfs_rq *cfs_rq)
+ساكن long calc_up_shares(بنية cfs_rq *cfs_rq)
 {
-	struct task_group *tg = cfs_rq->tg;
-	return READ_ONCE(tg->shares);
+	بنية task_group *tg = cfs_rq->tg;
+	إرجاع READ_ONCE(tg->shares);
 }
 
 DEFINE_STATIC_CALL(calc_group_shares, calc_concur_shares);
 
-void __sched_cgroup_mode_update(int mode)
+فراغ __sched_cgroup_mode_update(صحيح mode)
 {
-	long (*func)(struct cfs_rq *);
-	switch (mode) {
-	case 0:
+	long (*func)(بنية cfs_rq *);
+	بدل (mode) {
+	حالة 0:
 		func = &calc_up_shares;
-		break;
-	case 1:
+		اكسر;
+	حالة 1:
 		func = &calc_smp_shares;
-		break;
-	case 2:
-	default:
+		اكسر;
+	حالة 2:
+	افتراضي:
 		func = &calc_concur_shares;
-		break;
-	case 3:
+		اكسر;
+	حالة 3:
 		func = &calc_max_shares;
-		break;
-	case 4:
+		اكسر;
+	حالة 4:
 		func = &calc_tasks_shares;
-		break;
+		اكسر;
 	}
 	static_call_update(calc_group_shares, func);
 }
@@ -5193,33 +5193,33 @@ void __sched_cgroup_mode_update(int mode)
  * Recomputes the group entity based on the current state of its group
  * runqueue.
  */
-static void update_cfs_group(struct sched_entity *se)
+ساكن فراغ update_cfs_group(بنية sched_entity *se)
 {
-	struct cfs_rq *gcfs_rq = group_cfs_rq(se);
+	بنية cfs_rq *gcfs_rq = group_cfs_rq(se);
 	long shares;
 
 	/*
 	 * When a group becomes empty, preserve its weight. This matters for
 	 * DELAY_DEQUEUE.
 	 */
-	if (!gcfs_rq || !gcfs_rq->load.weight)
-		return;
+	إذا (!gcfs_rq || !gcfs_rq->load.weight)
+		إرجاع;
 
 	shares = static_call(calc_group_shares)(gcfs_rq);
 	reweight_entity(cfs_rq_of(se), se, shares);
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline void update_cfs_group(struct sched_entity *se)
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
+ساكن مضمن فراغ update_cfs_group(بنية sched_entity *se)
 {
 }
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
+ساكن مضمن فراغ cfs_rq_util_change(بنية cfs_rq *cfs_rq, صحيح flags)
 {
-	struct rq *rq = rq_of(cfs_rq);
+	بنية rq *rq = rq_of(cfs_rq);
 
-	if (&rq->cfs == cfs_rq) {
+	إذا (&rq->cfs == cfs_rq) {
 		/*
 		 * There are a few boundary cases this might miss but it should
 		 * get called often enough that that should (hopefully) not be
@@ -5238,16 +5238,16 @@ static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
 	}
 }
 
-static inline bool load_avg_is_decayed(struct sched_avg *sa)
+ساكن مضمن bool load_avg_is_decayed(بنية sched_avg *sa)
 {
-	if (sa->load_sum)
-		return false;
+	إذا (sa->load_sum)
+		إرجاع false;
 
-	if (sa->util_sum)
-		return false;
+	إذا (sa->util_sum)
+		إرجاع false;
 
-	if (sa->runnable_sum)
-		return false;
+	إذا (sa->runnable_sum)
+		إرجاع false;
 
 	/*
 	 * _avg must be null when _sum are null because _avg = _sum / divider
@@ -5258,12 +5258,12 @@ static inline bool load_avg_is_decayed(struct sched_avg *sa)
 		      sa->util_avg ||
 		      sa->runnable_avg);
 
-	return true;
+	إرجاع true;
 }
 
-static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
+ساكن مضمن u64 cfs_rq_last_update_time(بنية cfs_rq *cfs_rq)
 {
-	return u64_u32_load_copy(cfs_rq->avg.last_update_time,
+	إرجاع u64_u32_load_copy(cfs_rq->avg.last_update_time,
 				 cfs_rq->last_update_time_copy);
 }
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -5275,41 +5275,41 @@ static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
  * If cfs_rq is not on the list, test whether a child needs its to be added to
  * connect a branch to the tree  * (see list_add_leaf_cfs_rq() for details).
  */
-static inline bool child_cfs_rq_on_list(struct cfs_rq *cfs_rq)
+ساكن مضمن bool child_cfs_rq_on_list(بنية cfs_rq *cfs_rq)
 {
-	struct cfs_rq *prev_cfs_rq;
-	struct list_head *prev;
-	struct rq *rq = rq_of(cfs_rq);
+	بنية cfs_rq *prev_cfs_rq;
+	بنية list_head *prev;
+	بنية rq *rq = rq_of(cfs_rq);
 
-	if (cfs_rq->on_list) {
+	إذا (cfs_rq->on_list) {
 		prev = cfs_rq->leaf_cfs_rq_list.prev;
-	} else {
+	} وإلا {
 		prev = rq->tmp_alone_branch;
 	}
 
-	if (prev == &rq->leaf_cfs_rq_list)
-		return false;
+	إذا (prev == &rq->leaf_cfs_rq_list)
+		إرجاع false;
 
-	prev_cfs_rq = container_of(prev, struct cfs_rq, leaf_cfs_rq_list);
+	prev_cfs_rq = container_of(prev, بنية cfs_rq, leaf_cfs_rq_list);
 
-	return (prev_cfs_rq->tg->parent == cfs_rq->tg);
+	إرجاع (prev_cfs_rq->tg->parent == cfs_rq->tg);
 }
 
-static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+ساكن مضمن bool cfs_rq_is_decayed(بنية cfs_rq *cfs_rq)
 {
-	if (cfs_rq->load.weight)
-		return false;
+	إذا (cfs_rq->load.weight)
+		إرجاع false;
 
-	if (!load_avg_is_decayed(&cfs_rq->avg))
-		return false;
+	إذا (!load_avg_is_decayed(&cfs_rq->avg))
+		إرجاع false;
 
-	if (child_cfs_rq_on_list(cfs_rq))
-		return false;
+	إذا (child_cfs_rq_on_list(cfs_rq))
+		إرجاع false;
 
-	if (cfs_rq->tg_load_avg_contrib)
-		return false;
+	إذا (cfs_rq->tg_load_avg_contrib)
+		إرجاع false;
 
-	return true;
+	إرجاع true;
 }
 
 /**
@@ -5326,7 +5326,7 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
  *
  * Updating tg's load_avg is necessary before update_cfs_group().
  */
-static inline void update_tg_load_avg(struct cfs_rq *cfs_rq)
+ساكن مضمن فراغ update_tg_load_avg(بنية cfs_rq *cfs_rq)
 {
 	long dl, dr;
 	u64 now;
@@ -5334,24 +5334,24 @@ static inline void update_tg_load_avg(struct cfs_rq *cfs_rq)
 	/*
 	 * No need to update load_avg for root_task_group as it is not used.
 	 */
-	if (cfs_rq->tg == &root_task_group)
-		return;
+	إذا (cfs_rq->tg == &جذر_task_group)
+		إرجاع;
 
 	/* rq has been offline and doesn't contribute to the share anymore: */
-	if (!cpu_active(cpu_of(rq_of(cfs_rq))))
-		return;
+	إذا (!cpu_active(cpu_of(rq_of(cfs_rq))))
+		إرجاع;
 
 	/*
 	 * For migration heavy workloads, access to tg->load_avg can be
 	 * unbound. Limit the update rate to at most once per ms.
 	 */
 	now = rq_clock(rq_of(cfs_rq));
-	if (now - cfs_rq->last_update_tg_load_avg < NSEC_PER_MSEC)
-		return;
+	إذا (now - cfs_rq->last_update_tg_load_avg < NSEC_PER_MSEC)
+		إرجاع;
 
 	dl = cfs_rq->avg.load_avg - cfs_rq->tg_load_avg_contrib;
 	dr = cfs_rq->avg.runnable_avg - cfs_rq->tg_runnable_avg_contrib;
-	if (abs(dl) > cfs_rq->tg_load_avg_contrib / 64 ||
+	إذا (abs(dl) > cfs_rq->tg_load_avg_contrib / 64 ||
 	    abs(dr) > cfs_rq->tg_runnable_avg_contrib / 64) {
 		atomic_long_add(dl, &cfs_rq->tg->load_avg);
 		atomic_long_add(dr, &cfs_rq->tg->runnable_avg);
@@ -5361,7 +5361,7 @@ static inline void update_tg_load_avg(struct cfs_rq *cfs_rq)
 	}
 }
 
-static inline void clear_tg_load_avg(struct cfs_rq *cfs_rq)
+ساكن مضمن فراغ clear_tg_load_avg(بنية cfs_rq *cfs_rq)
 {
 	long dl, dr;
 	u64 now;
@@ -5369,8 +5369,8 @@ static inline void clear_tg_load_avg(struct cfs_rq *cfs_rq)
 	/*
 	 * No need to update load_avg for root_task_group, as it is not used.
 	 */
-	if (cfs_rq->tg == &root_task_group)
-		return;
+	إذا (cfs_rq->tg == &جذر_task_group)
+		إرجاع;
 
 	now = rq_clock(rq_of(cfs_rq));
 	dl = 0 - cfs_rq->tg_load_avg_contrib;
@@ -5383,9 +5383,9 @@ static inline void clear_tg_load_avg(struct cfs_rq *cfs_rq)
 }
 
 /* CPU offline callback: */
-static void __maybe_unused clear_tg_offline_cfs_rqs(struct rq *rq)
+ساكن فراغ __maybe_unused clear_tg_offline_cfs_rqs(بنية rq *rq)
 {
-	struct task_group *tg;
+	بنية task_group *tg;
 
 	lockdep_assert_rq_held(rq);
 
@@ -5399,7 +5399,7 @@ static void __maybe_unused clear_tg_offline_cfs_rqs(struct rq *rq)
 	guard(rcu)();
 
 	list_for_each_entry_rcu(tg, &task_groups, list) {
-		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
+		بنية cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
 
 		clear_tg_load_avg(cfs_rq);
 	}
@@ -5412,14 +5412,14 @@ static void __maybe_unused clear_tg_offline_cfs_rqs(struct rq *rq)
  * caller only guarantees p->pi_lock is held; no other assumptions,
  * including the state of rq->lock, should be made.
  */
-void set_task_rq_fair(struct sched_entity *se,
-		      struct cfs_rq *prev, struct cfs_rq *next)
+فراغ set_task_rq_fair(بنية sched_entity *se,
+		      بنية cfs_rq *prev, بنية cfs_rq *next)
 {
 	u64 p_last_update_time;
 	u64 n_last_update_time;
 
-	if (!sched_feat(ATTACH_AGE_LOAD))
-		return;
+	إذا (!sched_feat(ATTACH_AGE_LOAD))
+		إرجاع;
 
 	/*
 	 * We are supposed to update the task to "current" time, then its up to
@@ -5428,8 +5428,8 @@ void set_task_rq_fair(struct sched_entity *se,
 	 * time. This will result in the wakee task is less decayed, but giving
 	 * the wakee more load sounds not bad.
 	 */
-	if (!(se->avg.last_update_time && prev))
-		return;
+	إذا (!(se->avg.last_update_time && prev))
+		إرجاع;
 
 	p_last_update_time = cfs_rq_last_update_time(prev);
 	n_last_update_time = cfs_rq_last_update_time(next);
@@ -5505,15 +5505,15 @@ void set_task_rq_fair(struct sched_entity *se,
  * XXX: only do this for the part of runnable > running ?
  *
  */
-static inline void
-update_tg_cfs_util(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq *gcfs_rq)
+ساكن مضمن فراغ
+update_tg_cfs_util(بنية cfs_rq *cfs_rq, بنية sched_entity *se, بنية cfs_rq *gcfs_rq)
 {
 	long delta_sum, delta_avg = gcfs_rq->avg.util_avg - se->avg.util_avg;
 	u32 new_sum, divider;
 
 	/* Nothing to update */
-	if (!delta_avg)
-		return;
+	إذا (!delta_avg)
+		إرجاع;
 
 	/*
 	 * cfs_rq->avg.period_contrib can be used for both cfs_rq and se.
@@ -5531,16 +5531,16 @@ update_tg_cfs_util(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq
 	__update_sa(&cfs_rq->avg, util, delta_avg, delta_sum);
 }
 
-static inline void
-update_tg_cfs_runnable(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq *gcfs_rq)
+ساكن مضمن فراغ
+update_tg_cfs_runnable(بنية cfs_rq *cfs_rq, بنية sched_entity *se, بنية cfs_rq *gcfs_rq)
 {
 	long delta_sum, delta_avg = gcfs_rq->avg.runnable_avg - se->avg.runnable_avg;
 	u64 new_sum;
 	u32 divider;
 
 	/* Nothing to update */
-	if (!delta_avg)
-		return;
+	إذا (!delta_avg)
+		إرجاع;
 
 	/*
 	 * cfs_rq->avg.period_contrib can be used for both cfs_rq and se.
@@ -5558,8 +5558,8 @@ update_tg_cfs_runnable(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cf
 	__update_sa(&cfs_rq->avg, runnable, delta_avg, delta_sum);
 }
 
-static inline void
-update_tg_cfs_load(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq *gcfs_rq)
+ساكن مضمن فراغ
+update_tg_cfs_load(بنية cfs_rq *cfs_rq, بنية sched_entity *se, بنية cfs_rq *gcfs_rq)
 {
 	long delta_avg, running_sum, runnable_sum = gcfs_rq->prop_runnable_sum;
 	unsigned long load_avg;
@@ -5567,8 +5567,8 @@ update_tg_cfs_load(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq
 	s64 delta_sum;
 	u32 divider;
 
-	if (!runnable_sum)
-		return;
+	إذا (!runnable_sum)
+		إرجاع;
 
 	gcfs_rq->prop_runnable_sum = 0;
 
@@ -5578,19 +5578,19 @@ update_tg_cfs_load(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq
 	 */
 	divider = get_pelt_divider(&cfs_rq->avg);
 
-	if (runnable_sum >= 0) {
+	إذا (runnable_sum >= 0) {
 		/*
 		 * Add runnable; clip at LOAD_AVG_MAX. Reflects that until
 		 * the CPU is saturated running == runnable.
 		 */
 		runnable_sum += se->avg.load_sum;
 		runnable_sum = min_t(long, runnable_sum, divider);
-	} else {
+	} وإلا {
 		/*
 		 * Estimate the new unweighted runnable_sum of the gcfs_rq by
 		 * assuming all tasks are equally runnable.
 		 */
-		if (scale_load_down(gcfs_rq->load.weight)) {
+		إذا (scale_load_down(gcfs_rq->load.weight)) {
 			load_sum = div_u64(gcfs_rq->avg.load_sum,
 				scale_load_down(gcfs_rq->load.weight));
 		}
@@ -5612,8 +5612,8 @@ update_tg_cfs_load(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq
 	load_avg = div_u64(load_sum, divider);
 
 	delta_avg = load_avg - se->avg.load_avg;
-	if (!delta_avg)
-		return;
+	إذا (!delta_avg)
+		إرجاع;
 
 	delta_sum = load_sum - (s64)se_weight(se) * se->avg.load_sum;
 
@@ -5622,23 +5622,23 @@ update_tg_cfs_load(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cfs_rq
 	__update_sa(&cfs_rq->avg, load, delta_avg, delta_sum);
 }
 
-static inline void add_tg_cfs_propagate(struct cfs_rq *cfs_rq, long runnable_sum)
+ساكن مضمن فراغ add_tg_cfs_propagate(بنية cfs_rq *cfs_rq, long runnable_sum)
 {
 	cfs_rq->propagate = 1;
 	cfs_rq->prop_runnable_sum += runnable_sum;
 }
 
 /* Update task and its cfs_rq load average */
-static inline int propagate_entity_load_avg(struct sched_entity *se)
+ساكن مضمن صحيح propagate_entity_load_avg(بنية sched_entity *se)
 {
-	struct cfs_rq *cfs_rq, *gcfs_rq;
+	بنية cfs_rq *cfs_rq, *gcfs_rq;
 
-	if (entity_is_task(se))
-		return 0;
+	إذا (entity_is_task(se))
+		إرجاع 0;
 
 	gcfs_rq = group_cfs_rq(se);
-	if (!gcfs_rq->propagate)
-		return 0;
+	إذا (!gcfs_rq->propagate)
+		إرجاع 0;
 
 	gcfs_rq->propagate = 0;
 
@@ -5653,64 +5653,64 @@ static inline int propagate_entity_load_avg(struct sched_entity *se)
 	trace_pelt_cfs_tp(cfs_rq);
 	trace_pelt_se_tp(se);
 
-	return 1;
+	إرجاع 1;
 }
 
 /*
  * Check if we need to update the load and the utilization of a blocked
  * group_entity:
  */
-static inline bool skip_blocked_update(struct sched_entity *se)
+ساكن مضمن bool skip_blocked_update(بنية sched_entity *se)
 {
-	struct cfs_rq *gcfs_rq = group_cfs_rq(se);
+	بنية cfs_rq *gcfs_rq = group_cfs_rq(se);
 
 	/*
 	 * If sched_entity still have not zero load or utilization, we have to
 	 * decay it:
 	 */
-	if (se->avg.load_avg || se->avg.util_avg)
-		return false;
+	إذا (se->avg.load_avg || se->avg.util_avg)
+		إرجاع false;
 
 	/*
 	 * If there is a pending propagation, we have to update the load and
 	 * the utilization of the sched_entity:
 	 */
-	if (gcfs_rq->propagate)
-		return false;
+	إذا (gcfs_rq->propagate)
+		إرجاع false;
 
 	/*
 	 * Otherwise, the load and the utilization of the sched_entity is
 	 * already zero and there is no pending propagation, so it will be a
 	 * waste of time to try to decay it:
 	 */
-	return true;
+	إرجاع true;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
 
-static inline void update_tg_load_avg(struct cfs_rq *cfs_rq) {}
+ساكن مضمن فراغ update_tg_load_avg(بنية cfs_rq *cfs_rq) {}
 
-static inline void clear_tg_offline_cfs_rqs(struct rq *rq) {}
+ساكن مضمن فراغ clear_tg_offline_cfs_rqs(بنية rq *rq) {}
 
-static inline int propagate_entity_load_avg(struct sched_entity *se)
+ساكن مضمن صحيح propagate_entity_load_avg(بنية sched_entity *se)
 {
-	return 0;
+	إرجاع 0;
 }
 
-static inline void add_tg_cfs_propagate(struct cfs_rq *cfs_rq, long runnable_sum) {}
+ساكن مضمن فراغ add_tg_cfs_propagate(بنية cfs_rq *cfs_rq, long runnable_sum) {}
 
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
 #ifdef CONFIG_NO_HZ_COMMON
-static inline void migrate_se_pelt_lag(struct sched_entity *se)
+ساكن مضمن فراغ migrate_se_pelt_lag(بنية sched_entity *se)
 {
 	u64 throttled = 0, now, lut;
-	struct cfs_rq *cfs_rq;
-	struct rq *rq;
+	بنية cfs_rq *cfs_rq;
+	بنية rq *rq;
 	bool is_idle;
 
-	if (load_avg_is_decayed(&se->avg))
-		return;
+	إذا (load_avg_is_decayed(&se->avg))
+		إرجاع;
 
 	cfs_rq = cfs_rq_of(se);
 	rq = rq_of(cfs_rq);
@@ -5724,8 +5724,8 @@ static inline void migrate_se_pelt_lag(struct sched_entity *se)
 	 * time. Hence, limiting to the case where the source CPU is idle and
 	 * we know we are at the greatest risk to have an outdated clock.
 	 */
-	if (!is_idle)
-		return;
+	إذا (!is_idle)
+		إرجاع;
 
 	/*
 	 * Estimated "now" is: last_update_time + cfs_idle_lag + rq_idle_lag, where:
@@ -5755,8 +5755,8 @@ static inline void migrate_se_pelt_lag(struct sched_entity *se)
 #ifdef CONFIG_CFS_BANDWIDTH
 	throttled = u64_u32_load(cfs_rq->throttled_pelt_idle);
 	/* The clock has been stopped for throttling */
-	if (throttled == U64_MAX)
-		return;
+	إذا (throttled == U64_MAX)
+		إرجاع;
 #endif
 	now = u64_u32_load(rq->clock_pelt_idle);
 	/*
@@ -5769,19 +5769,19 @@ static inline void migrate_se_pelt_lag(struct sched_entity *se)
 	lut = cfs_rq_last_update_time(cfs_rq);
 
 	now -= throttled;
-	if (now < lut)
+	إذا (now < lut)
 		/*
 		 * cfs_rq->avg.last_update_time is more recent than our
 		 * estimation, let's use it.
 		 */
 		now = lut;
-	else
+	وإلا
 		now += sched_clock_cpu(cpu_of(rq)) - u64_u32_load(rq->clock_idle);
 
 	__update_load_avg_blocked_se(now, se);
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
-static void migrate_se_pelt_lag(struct sched_entity *se) {}
+#وإلا /* !CONFIG_NO_HZ_COMMON: */
+ساكن فراغ migrate_se_pelt_lag(بنية sched_entity *se) {}
 #endif /* !CONFIG_NO_HZ_COMMON */
 
 /**
@@ -5799,14 +5799,14 @@ static void migrate_se_pelt_lag(struct sched_entity *se) {}
  * Since both these conditions indicate a changed cfs_rq->avg.load we should
  * call update_tg_load_avg() when this function returns true.
  */
-static inline int
-update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+ساكن مضمن صحيح
+update_cfs_rq_load_avg(u64 now, بنية cfs_rq *cfs_rq)
 {
 	unsigned long removed_load = 0, removed_util = 0, removed_runnable = 0;
-	struct sched_avg *sa = &cfs_rq->avg;
-	int decayed = 0;
+	بنية sched_avg *sa = &cfs_rq->avg;
+	صحيح decayed = 0;
 
-	if (cfs_rq->removed.nr) {
+	إذا (cfs_rq->removed.nr) {
 		unsigned long r;
 		u32 divider = get_pelt_divider(&cfs_rq->avg);
 
@@ -5840,7 +5840,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
 	u64_u32_store_copy(sa->last_update_time,
 			   cfs_rq->last_update_time_copy,
 			   sa->last_update_time);
-	return decayed;
+	إرجاع decayed;
 }
 
 /**
@@ -5851,7 +5851,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
  * Must call update_cfs_rq_load_avg() before this, since we rely on
  * cfs_rq->avg.last_update_time being current.
  */
-static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ attach_entity_load_avg(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	/*
 	 * cfs_rq->avg.period_contrib can be used for both cfs_rq and se.
@@ -5880,9 +5880,9 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
 	se->avg.runnable_sum = se->avg.runnable_avg * divider;
 
 	se->avg.load_sum = se->avg.load_avg * divider;
-	if (se_weight(se) < se->avg.load_sum)
+	إذا (se_weight(se) < se->avg.load_sum)
 		se->avg.load_sum = div_u64(se->avg.load_sum, se_weight(se));
-	else
+	وإلا
 		se->avg.load_sum = 1;
 
 	enqueue_load_avg(cfs_rq, se);
@@ -5906,7 +5906,7 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
  * Must call update_cfs_rq_load_avg() before this, since we rely on
  * cfs_rq->avg.last_update_time being current.
  */
-static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ detach_entity_load_avg(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	dequeue_load_avg(cfs_rq, se);
 	__update_sa(&cfs_rq->avg, util, -se->avg.util_avg, -se->avg.util_sum);
@@ -5921,12 +5921,12 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
 
 #define UTIL_EST_MARGIN (SCHED_CAPACITY_SCALE / 100)
 
-static inline void util_est_update(struct sched_entity *se)
+ساكن مضمن فراغ util_est_update(بنية sched_entity *se)
 {
-	unsigned int ewma, dequeued, last_ewma_diff;
+	unsigned صحيح ewma, dequeued, last_ewma_diff;
 
-	if (!sched_feat(UTIL_EST))
-		return;
+	إذا (!sched_feat(UTIL_EST))
+		إرجاع;
 
 	/* Get current estimate of utilization */
 	ewma = READ_ONCE(se->avg.util_est);
@@ -5935,8 +5935,8 @@ static inline void util_est_update(struct sched_entity *se)
 	 * If the PELT values haven't changed since enqueue time,
 	 * skip the util_est update.
 	 */
-	if (ewma & UTIL_AVG_UNCHANGED)
-		return;
+	إذا (ewma & UTIL_AVG_UNCHANGED)
+		إرجاع;
 
 	/* Get utilization at dequeue */
 	dequeued = READ_ONCE(se->avg.util_avg);
@@ -5945,9 +5945,9 @@ static inline void util_est_update(struct sched_entity *se)
 	 * Reset EWMA on utilization increases, the moving average is used only
 	 * to smooth utilization decreases.
 	 */
-	if (ewma <= dequeued) {
+	إذا (ewma <= dequeued) {
 		ewma = dequeued;
-		goto done;
+		اذهب done;
 	}
 
 	/*
@@ -5955,15 +5955,15 @@ static inline void util_est_update(struct sched_entity *se)
 	 * already ~1% close to its last activation value.
 	 */
 	last_ewma_diff = ewma - dequeued;
-	if (last_ewma_diff < UTIL_EST_MARGIN)
-		goto done;
+	إذا (last_ewma_diff < UTIL_EST_MARGIN)
+		اذهب done;
 
 	/*
 	 * To avoid underestimate of task utilization, skip updates of EWMA if
 	 * we cannot grant that thread got all CPU time it wanted.
 	 */
-	if ((dequeued + UTIL_EST_MARGIN) < READ_ONCE(se->avg.runnable_avg))
-		goto done;
+	إذا ((dequeued + UTIL_EST_MARGIN) < READ_ONCE(se->avg.runnable_avg))
+		اذهب done;
 
 	/*
 	 * Update Task's estimated utilization
@@ -6001,22 +6001,22 @@ done:
 #define UPDATE_UTIL_EST	0x10
 
 /* Update task and its cfs_rq load average */
-static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ساكن مضمن فراغ update_load_avg(بنية cfs_rq *cfs_rq, بنية sched_entity *se, صحيح flags)
 {
 	u64 now = cfs_rq_clock_pelt(cfs_rq);
-	int decayed;
+	صحيح decayed;
 
 	/*
 	 * Track task load average for carrying it to new CPU after migrated, and
 	 * track group sched_entity load average for task_h_load calculation in migration
 	 */
-	if (se->avg.last_update_time && !(flags & SKIP_AGE_LOAD))
+	إذا (se->avg.last_update_time && !(flags & SKIP_AGE_LOAD))
 		__update_load_avg_se(now, cfs_rq, se);
 
 	decayed  = update_cfs_rq_load_avg(now, cfs_rq);
 	decayed |= propagate_entity_load_avg(se);
 
-	if (!se->avg.last_update_time && (flags & DO_ATTACH)) {
+	إذا (!se->avg.last_update_time && (flags & DO_ATTACH)) {
 
 		/*
 		 * DO_ATTACH means we're here from enqueue_entity().
@@ -6028,21 +6028,21 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
 		attach_entity_load_avg(cfs_rq, se);
 		update_tg_load_avg(cfs_rq);
 
-	} else if (flags & DO_DETACH) {
+	} وإلا إذا (flags & DO_DETACH) {
 		/*
 		 * DO_DETACH means we're here from dequeue_entity()
 		 * and we are migrating task out of the CPU.
 		 */
 		detach_entity_load_avg(cfs_rq, se);
 		update_tg_load_avg(cfs_rq);
-	} else if (decayed) {
+	} وإلا إذا (decayed) {
 		cfs_rq_util_change(cfs_rq, 0);
 
-		if (flags & UPDATE_TG)
+		إذا (flags & UPDATE_TG)
 			update_tg_load_avg(cfs_rq);
 	}
 
-	if (flags & UPDATE_UTIL_EST)
+	إذا (flags & UPDATE_UTIL_EST)
 		util_est_update(se);
 }
 
@@ -6050,9 +6050,9 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
  * Synchronize entity load avg of dequeued entity without locking
  * the previous rq.
  */
-static void sync_entity_load_avg(struct sched_entity *se)
+ساكن فراغ sync_entity_load_avg(بنية sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+	بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 	u64 last_update_time;
 
 	last_update_time = cfs_rq_last_update_time(cfs_rq);
@@ -6063,9 +6063,9 @@ static void sync_entity_load_avg(struct sched_entity *se)
  * Task first catches up with cfs_rq, and then subtract
  * itself from the cfs_rq (task must be off the queue now).
  */
-static void remove_entity_load_avg(struct sched_entity *se)
+ساكن فراغ remove_entity_load_avg(بنية sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+	بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 	unsigned long flags;
 
 	/*
@@ -6084,41 +6084,41 @@ static void remove_entity_load_avg(struct sched_entity *se)
 	raw_spin_unlock_irqrestore(&cfs_rq->removed.lock, flags);
 }
 
-static inline unsigned long cfs_rq_runnable_avg(struct cfs_rq *cfs_rq)
+ساكن مضمن unsigned long cfs_rq_runnable_avg(بنية cfs_rq *cfs_rq)
 {
-	return cfs_rq->avg.runnable_avg;
+	إرجاع cfs_rq->avg.runnable_avg;
 }
 
-static inline unsigned long cfs_rq_load_avg(struct cfs_rq *cfs_rq)
+ساكن مضمن unsigned long cfs_rq_load_avg(بنية cfs_rq *cfs_rq)
 {
-	return cfs_rq->avg.load_avg;
+	إرجاع cfs_rq->avg.load_avg;
 }
 
-static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
+ساكن صحيح sched_balance_newidle(بنية rq *this_rq, بنية rq_flags *rf)
 	__must_hold(__rq_lockp(this_rq));
 
-static inline unsigned long task_util(struct task_struct *p)
+ساكن مضمن unsigned long task_util(بنية task_struct *p)
 {
-	return READ_ONCE(p->se.avg.util_avg);
+	إرجاع READ_ONCE(p->se.avg.util_avg);
 }
 
-static inline unsigned long _task_util_est(struct task_struct *p)
+ساكن مضمن unsigned long _task_util_est(بنية task_struct *p)
 {
-	return READ_ONCE(p->se.avg.util_est) & ~UTIL_AVG_UNCHANGED;
+	إرجاع READ_ONCE(p->se.avg.util_est) & ~UTIL_AVG_UNCHANGED;
 }
 
-static inline unsigned long task_util_est(struct task_struct *p)
+ساكن مضمن unsigned long task_util_est(بنية task_struct *p)
 {
-	return max(task_util(p), _task_util_est(p));
+	إرجاع max(task_util(p), _task_util_est(p));
 }
 
-static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
-				    struct task_struct *p)
+ساكن مضمن فراغ util_est_enqueue(بنية cfs_rq *cfs_rq,
+				    بنية task_struct *p)
 {
-	unsigned int enqueued;
+	unsigned صحيح enqueued;
 
-	if (!sched_feat(UTIL_EST))
-		return;
+	إذا (!sched_feat(UTIL_EST))
+		إرجاع;
 
 	/* Update root cfs_rq's estimated utilization */
 	enqueued  = cfs_rq->avg.util_est;
@@ -6128,35 +6128,35 @@ static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
 	trace_sched_util_est_cfs_tp(cfs_rq);
 }
 
-static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
-				    struct task_struct *p)
+ساكن مضمن فراغ util_est_dequeue(بنية cfs_rq *cfs_rq,
+				    بنية task_struct *p)
 {
-	unsigned int enqueued;
+	unsigned صحيح enqueued;
 
-	if (!sched_feat(UTIL_EST))
-		return;
+	إذا (!sched_feat(UTIL_EST))
+		إرجاع;
 
 	/* Update root cfs_rq's estimated utilization */
 	enqueued  = cfs_rq->avg.util_est;
-	enqueued -= min_t(unsigned int, enqueued, _task_util_est(p));
+	enqueued -= min_t(unsigned صحيح, enqueued, _task_util_est(p));
 	WRITE_ONCE(cfs_rq->avg.util_est, enqueued);
 
 	trace_sched_util_est_cfs_tp(cfs_rq);
 }
 
-static inline unsigned long get_actual_cpu_capacity(int cpu)
+ساكن مضمن unsigned long get_actual_cpu_capacity(صحيح cpu)
 {
 	unsigned long capacity = arch_scale_cpu_capacity(cpu);
 
 	capacity -= max(hw_load_avg(cpu_rq(cpu)), cpufreq_get_pressure(cpu));
 
-	return capacity;
+	إرجاع capacity;
 }
 
-static inline int util_fits_cpu(unsigned long util,
+ساكن مضمن صحيح util_fits_cpu(unsigned long util,
 				unsigned long uclamp_min,
 				unsigned long uclamp_max,
-				int cpu)
+				صحيح cpu)
 {
 	unsigned long capacity = capacity_of(cpu);
 	unsigned long capacity_orig;
@@ -6167,8 +6167,8 @@ static inline int util_fits_cpu(unsigned long util,
 	 */
 	fits = fits_capacity(util, capacity);
 
-	if (!uclamp_is_used())
-		return fits;
+	إذا (!uclamp_is_used())
+		إرجاع fits;
 
 	/*
 	 * We must use arch_scale_cpu_capacity() for comparing against uclamp_min and
@@ -6265,42 +6265,42 @@ static inline int util_fits_cpu(unsigned long util,
 	 * handle the case uclamp_min > uclamp_max.
 	 */
 	uclamp_min = min(uclamp_min, uclamp_max);
-	if (fits && (util < uclamp_min) &&
+	إذا (fits && (util < uclamp_min) &&
 	    (uclamp_min > get_actual_cpu_capacity(cpu)))
-		return -1;
+		إرجاع -1;
 
-	return fits;
+	إرجاع fits;
 }
 
-static inline int task_fits_cpu(struct task_struct *p, int cpu)
+ساكن مضمن صحيح task_fits_cpu(بنية task_struct *p, صحيح cpu)
 {
-	unsigned long uclamp_min = uclamp_eff_value(p, UCLAMP_MIN);
-	unsigned long uclamp_max = uclamp_eff_value(p, UCLAMP_MAX);
+	unsigned long uclamp_min = uclamp_eff_قيمة(p, UCLAMP_MIN);
+	unsigned long uclamp_max = uclamp_eff_قيمة(p, UCLAMP_MAX);
 	unsigned long util = task_util_est(p);
 	/*
 	 * Return true only if the cpu fully fits the task requirements, which
 	 * include the utilization but also the performance hints.
 	 */
-	return (util_fits_cpu(util, uclamp_min, uclamp_max, cpu) > 0);
+	إرجاع (util_fits_cpu(util, uclamp_min, uclamp_max, cpu) > 0);
 }
 
-static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
+ساكن مضمن فراغ update_misfit_status(بنية task_struct *p, بنية rq *rq)
 {
-	int cpu = cpu_of(rq);
+	صحيح cpu = cpu_of(rq);
 
-	if (!sched_asym_cpucap_active())
-		return;
+	إذا (!sched_asym_cpucap_active())
+		إرجاع;
 
 	/*
 	 * Affinity allows us to go somewhere higher?  Or are we on biggest
 	 * available CPU already? Or do we fit into this CPU ?
 	 */
-	if (!p || (p->nr_cpus_allowed == 1) ||
+	إذا (!p || (p->nr_cpus_allowed == 1) ||
 	    (arch_scale_cpu_capacity(cpu) == p->max_allowed_capacity) ||
 	    task_fits_cpu(p, cpu)) {
 
 		rq->misfit_task_load = 0;
-		return;
+		إرجاع;
 	}
 
 	/*
@@ -6310,35 +6310,35 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
 	rq->misfit_task_load = max_t(unsigned long, task_h_load(p), 1);
 }
 
-void __setparam_fair(struct task_struct *p, const struct sched_attr *attr)
+فراغ __setparam_fair(بنية task_struct *p, ثابت بنية sched_attr *attr)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 
 	p->static_prio = NICE_TO_PRIO(attr->sched_nice);
-	if (attr->sched_runtime) {
+	إذا (attr->sched_runtime) {
 		se->custom_slice = 1;
 		se->slice = clamp_t(u64, attr->sched_runtime,
 				      NSEC_PER_MSEC/10,   /* HZ=1000 * 10 */
 				      NSEC_PER_MSEC*100); /* HZ=100  / 10 */
-	} else {
+	} وإلا {
 		se->custom_slice = 0;
 		se->slice = sysctl_sched_base_slice;
 	}
 }
 
-static void
-place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ساكن فراغ
+place_entity(بنية cfs_rq *cfs_rq, بنية sched_entity *se, صحيح flags)
 {
 	u64 vslice, vruntime = avg_vruntime(cfs_rq);
-	unsigned int nr_queued = cfs_rq->h_nr_queued;
+	unsigned صحيح nr_queued = cfs_rq->h_nr_queued;
 	bool update_zero = false;
 	s64 lag = 0;
 
-	if (!se->custom_slice)
+	إذا (!se->custom_slice)
 		se->slice = sysctl_sched_base_slice;
 	vslice = calc_delta_fair(se->slice, se);
 
-	if (flags & ENQUEUE_QUEUED)
+	إذا (flags & ENQUEUE_QUEUED)
 		nr_queued -= 1;
 
 	/*
@@ -6349,8 +6349,8 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	 *
 	 * EEVDF: placement strategy #1 / #2
 	 */
-	if (sched_feat(PLACE_LAG) && nr_queued && se->vlag) {
-		struct sched_entity *curr = cfs_rq->curr;
+	إذا (sched_feat(PLACE_LAG) && nr_queued && se->vlag) {
+		بنية sched_entity *curr = cfs_rq->curr;
 		long load, weight;
 
 		lag = se->vlag;
@@ -6408,9 +6408,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 		 *   vl_i = (W + w_i)*vl'_i / W
 		 */
 		load = cfs_rq->sum_weight;
-		if (curr && curr->on_rq)
+		إذا (curr && curr->on_rq)
 			load += avg_vruntime_weight(cfs_rq, curr->h_load.weight);
-		if (WARN_ON_ONCE(!load))
+		إذا (WARN_ON_ONCE(!load))
 			load = 1;
 
 		weight = avg_vruntime_weight(cfs_rq, se->h_load.weight);
@@ -6445,19 +6445,19 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 		 * for the heavy entity the difference is small but the factor
 		 * is large. Avoiding the multiplication overflow.
 		 */
-		if (weight > load)
+		إذا (weight > load)
 			update_zero = true;
 	}
 
 	se->vruntime = vruntime - lag;
 
-	if (update_zero)
+	إذا (update_zero)
 		update_zero_vruntime(cfs_rq, -lag);
 
-	if (sched_feat(PLACE_REL_DEADLINE) && se->rel_deadline) {
+	إذا (sched_feat(PLACE_REL_DEADLINE) && se->rel_deadline) {
 		se->deadline += se->vruntime;
 		se->rel_deadline = 0;
-		return;
+		إرجاع;
 	}
 
 	/*
@@ -6465,7 +6465,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	 * on average, halfway through their slice, as such start tasks
 	 * off with half a slice to ease into the competition.
 	 */
-	if (sched_feat(PLACE_DEADLINE_INITIAL) && (flags & ENQUEUE_INITIAL))
+	إذا (sched_feat(PLACE_DEADLINE_INITIAL) && (flags & ENQUEUE_INITIAL))
 		vslice /= 2;
 
 	/*
@@ -6474,11 +6474,11 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	se->deadline = se->vruntime + vslice;
 }
 
-static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
-static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
+ساكن فراغ check_enqueue_throttle(بنية cfs_rq *cfs_rq);
+ساكن مضمن صحيح cfs_rq_throttled(بنية cfs_rq *cfs_rq);
 
-static void
-enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ساكن فراغ
+enqueue_entity(بنية cfs_rq *cfs_rq, بنية sched_entity *se, صحيح flags)
 {
 	/*
 	 * When enqueuing a sched_entity, we must:
@@ -6501,19 +6501,19 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	account_entity_enqueue(cfs_rq, se);
 
 	/* Entity has migrated, no longer consider this task hot */
-	if (flags & ENQUEUE_MIGRATED)
+	إذا (flags & ENQUEUE_MIGRATED)
 		se->exec_start = 0;
 
 	check_schedstat_required();
 	update_stats_enqueue_fair(cfs_rq, se, flags);
 	se->on_rq = 1;
 
-	if (cfs_rq->nr_queued == 1) {
+	إذا (cfs_rq->nr_queued == 1) {
 		check_enqueue_throttle(cfs_rq);
 		list_add_leaf_cfs_rq(cfs_rq);
 #ifdef CONFIG_CFS_BANDWIDTH
-		if (cfs_rq->pelt_clock_throttled) {
-			struct rq *rq = rq_of(cfs_rq);
+		إذا (cfs_rq->pelt_clock_throttled) {
+			بنية rq *rq = rq_of(cfs_rq);
 
 			cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
 				cfs_rq->throttled_clock_pelt;
@@ -6523,24 +6523,24 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	}
 }
 
-static void set_next_buddy(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ set_next_buddy(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
-	if (WARN_ON_ONCE(!se->on_rq || se->sched_delayed))
-		return;
-	if (se_is_idle(se))
-		return;
+	إذا (WARN_ON_ONCE(!se->on_rq || se->sched_delayed))
+		إرجاع;
+	إذا (se_is_idle(se))
+		إرجاع;
 	cfs_rq->next = se;
 }
 
-static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ clear_buddies(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
-	if (cfs_rq->next == se)
-		cfs_rq->next = NULL;
+	إذا (cfs_rq->next == se)
+		cfs_rq->next = عدم;
 }
 
-static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq);
+ساكن __always_inline فراغ return_cfs_rq_runtime(بنية cfs_rq *cfs_rq);
 
-static void set_delayed(struct sched_entity *se)
+ساكن فراغ set_delayed(بنية sched_entity *se)
 {
 	/*
 	 * Delayed se of cfs_rq have no tasks queued on them.
@@ -6551,9 +6551,9 @@ static void set_delayed(struct sched_entity *se)
 	 * patches get merged as only task can get delayed,
 	 * same for clear_delayed().
 	 */
-	if (!entity_is_task(se)) {
+	إذا (!entity_is_task(se)) {
 		se->sched_delayed = 1;
-		return;
+		إرجاع;
 	}
 
 	/*
@@ -6565,13 +6565,13 @@ static void set_delayed(struct sched_entity *se)
 	se->sched_delayed = 1;
 
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 
 		cfs_rq->h_nr_runnable--;
 	}
 }
 
-static void clear_delayed(struct sched_entity *se)
+ساكن فراغ clear_delayed(بنية sched_entity *se)
 {
 	se->sched_delayed = 0;
 
@@ -6581,8 +6581,8 @@ static void clear_delayed(struct sched_entity *se)
 	 * already accounted for it or an enqueue of a task
 	 * below it will account for it in enqueue_task_fair().
 	 */
-	if (!entity_is_task(se))
-		return;
+	إذا (!entity_is_task(se))
+		إرجاع;
 
 	/*
 	 * Re-add on wake, after sched_delayed is cleared. On a final delayed
@@ -6592,22 +6592,22 @@ static void clear_delayed(struct sched_entity *se)
 	pref_llc_running_inc(rq_of(cfs_rq_of(se)), task_of(se));
 
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 
 		cfs_rq->h_nr_runnable++;
 	}
 }
 
-static void
-dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ساكن فراغ
+dequeue_entity(بنية cfs_rq *cfs_rq, بنية sched_entity *se, صحيح flags)
 {
-	int action = UPDATE_TG;
+	صحيح action = UPDATE_TG;
 
-	if (entity_is_task(se)) {
-		if (task_on_rq_migrating(task_of(se)))
+	إذا (entity_is_task(se)) {
+		إذا (task_on_rq_migrating(task_of(se)))
 			action |= DO_DETACH;
 
-		if ((flags & DEQUEUE_SLEEP) && !(flags & DEQUEUE_DELAYED))
+		إذا ((flags & DEQUEUE_SLEEP) && !(flags & DEQUEUE_DELAYED))
 			action |= UPDATE_UTIL_EST;
 	}
 
@@ -6633,11 +6633,11 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 
 	update_cfs_group(se);
 
-	if (cfs_rq->nr_queued == 0) {
+	إذا (cfs_rq->nr_queued == 0) {
 		update_idle_cfs_rq_clock_pelt(cfs_rq);
 #ifdef CONFIG_CFS_BANDWIDTH
-		if (throttled_hierarchy(cfs_rq)) {
-			struct rq *rq = rq_of(cfs_rq);
+		إذا (throttled_hierarchy(cfs_rq)) {
+			بنية rq *rq = rq_of(cfs_rq);
 
 			list_del_leaf_cfs_rq(cfs_rq);
 			cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
@@ -6647,11 +6647,11 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 	}
 }
 
-static void
-set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ
+set_next_entity(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	/* 'current' is not kept within the tree. */
-	if (se->on_rq) {
+	إذا (se->on_rq) {
 		/*
 		 * Any task has to be enqueued before it get to execute on
 		 * a CPU. So account for the time it spent waiting on the
@@ -6670,9 +6670,9 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	 * least twice that of our own weight (i.e. don't track it
 	 * when there are only lesser-weight tasks around):
 	 */
-	if (schedstat_enabled() &&
+	إذا (schedstat_enabled() &&
 	    rq_of(cfs_rq)->cfs.load.weight >= 2*se->load.weight) {
-		struct sched_statistics *stats;
+		بنية sched_statistics *stats;
 
 		stats = __schedstats_from_se(se);
 		__schedstat_set(stats->slice_max,
@@ -6683,45 +6683,45 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	se->prev_sum_exec_runtime = se->sum_exec_runtime;
 }
 
-static bool __dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+ساكن bool __dequeue_task(بنية rq *rq, بنية task_struct *p, صحيح flags);
 
-static struct sched_entity *
-pick_next_entity(struct rq *rq, bool protect)
+ساكن بنية sched_entity *
+pick_next_entity(بنية rq *rq, bool protect)
 {
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	struct sched_entity *se;
+	بنية cfs_rq *cfs_rq = &rq->cfs;
+	بنية sched_entity *se;
 
 	se = pick_eevdf(cfs_rq, protect);
-	if (se->sched_delayed) {
+	إذا (se->sched_delayed) {
 		__dequeue_task(rq, task_of(se), DEQUEUE_SLEEP | DEQUEUE_DELAYED);
 		/*
 		 * Must not reference @se again, see __block_task().
 		 */
-		return NULL;
+		إرجاع عدم;
 	}
-	return se;
+	إرجاع se;
 }
 
-static void put_prev_entity(struct cfs_rq *cfs_rq, struct sched_entity *prev)
+ساكن فراغ put_prev_entity(بنية cfs_rq *cfs_rq, بنية sched_entity *prev)
 {
 	/*
 	 * If still on the runqueue then deactivate_task()
 	 * was not called and update_curr() has to be done:
 	 */
-	if (prev->on_rq)
+	إذا (prev->on_rq)
 		update_curr(cfs_rq);
 
-	if (prev->on_rq) {
+	إذا (prev->on_rq) {
 		update_stats_wait_start_fair(cfs_rq, prev);
 		/* in !on_rq case, update occurred at dequeue */
 		update_load_avg(cfs_rq, prev, 0);
 	}
 	WARN_ON_ONCE(cfs_rq->h_curr != prev);
-	cfs_rq->h_curr = NULL;
+	cfs_rq->h_curr = عدم;
 }
 
-static void
-entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+ساكن فراغ
+entity_tick(بنية cfs_rq *cfs_rq, بنية sched_entity *curr, صحيح queued)
 {
 	/*
 	 * Update run-time statistics of the 'current'.
@@ -6739,9 +6739,9 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
 	 * queued ticks are scheduled to match the slice, so don't bother
 	 * validating it and just reschedule.
 	 */
-	if (queued) {
+	إذا (queued) {
 		resched_curr(rq_of(cfs_rq));
-		return;
+		إرجاع;
 	}
 #endif
 }
@@ -6754,35 +6754,35 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
 #ifdef CONFIG_CFS_BANDWIDTH
 
 #ifdef CONFIG_JUMP_LABEL
-static struct static_key __cfs_bandwidth_used;
+ساكن بنية static_مفتاح __cfs_bandwidth_used;
 
-static inline bool cfs_bandwidth_used(void)
+ساكن مضمن bool cfs_bandwidth_used(فراغ)
 {
-	return static_key_false(&__cfs_bandwidth_used);
+	إرجاع static_مفتاح_false(&__cfs_bandwidth_used);
 }
 
-void cfs_bandwidth_usage_inc(void)
+فراغ cfs_bandwidth_usage_inc(فراغ)
 {
-	static_key_slow_inc_cpuslocked(&__cfs_bandwidth_used);
+	static_مفتاح_slow_inc_cpuslocked(&__cfs_bandwidth_used);
 }
 
-void cfs_bandwidth_usage_dec(void)
+فراغ cfs_bandwidth_usage_dec(فراغ)
 {
-	static_key_slow_dec_cpuslocked(&__cfs_bandwidth_used);
+	static_مفتاح_slow_dec_cpuslocked(&__cfs_bandwidth_used);
 }
-#else /* !CONFIG_JUMP_LABEL: */
-static bool cfs_bandwidth_used(void)
+#وإلا /* !CONFIG_JUMP_LABEL: */
+ساكن bool cfs_bandwidth_used(فراغ)
 {
-	return true;
+	إرجاع true;
 }
 
-void cfs_bandwidth_usage_inc(void) {}
-void cfs_bandwidth_usage_dec(void) {}
+فراغ cfs_bandwidth_usage_inc(فراغ) {}
+فراغ cfs_bandwidth_usage_dec(فراغ) {}
 #endif /* !CONFIG_JUMP_LABEL */
 
-static inline u64 sched_cfs_bandwidth_slice(void)
+ساكن مضمن u64 sched_cfs_bandwidth_slice(فراغ)
 {
-	return (u64)sysctl_sched_cfs_bandwidth_slice * NSEC_PER_USEC;
+	إرجاع (u64)sysctl_sched_cfs_bandwidth_slice * NSEC_PER_USEC;
 }
 
 /*
@@ -6792,16 +6792,16 @@ static inline u64 sched_cfs_bandwidth_slice(void)
  *
  * requires cfs_b->lock
  */
-void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
+فراغ __refill_cfs_bandwidth_runtime(بنية cfs_bandwidth *cfs_b)
 {
 	s64 runtime;
 
-	if (unlikely(cfs_b->quota == RUNTIME_INF))
-		return;
+	إذا (unlikely(cfs_b->quota == RUNTIME_INF))
+		إرجاع;
 
 	cfs_b->runtime += cfs_b->quota;
 	runtime = cfs_b->runtime_snap - cfs_b->runtime;
-	if (runtime > 0) {
+	إذا (runtime > 0) {
 		cfs_b->burst_time += runtime;
 		cfs_b->nr_burst++;
 	}
@@ -6810,14 +6810,14 @@ void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
 	cfs_b->runtime_snap = cfs_b->runtime;
 }
 
-static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
+ساكن مضمن بنية cfs_bandwidth *tg_cfs_bandwidth(بنية task_group *tg)
 {
-	return &tg->cfs_bandwidth;
+	إرجاع &tg->cfs_bandwidth;
 }
 
 /* returns 0 on failure to allocate runtime */
-static int __assign_cfs_rq_runtime(struct cfs_bandwidth *cfs_b,
-				   struct cfs_rq *cfs_rq, u64 target_runtime)
+ساكن صحيح __assign_cfs_rq_runtime(بنية cfs_bandwidth *cfs_b,
+				   بنية cfs_rq *cfs_rq, u64 target_runtime)
 {
 	u64 min_amount, amount = 0;
 
@@ -6826,12 +6826,12 @@ static int __assign_cfs_rq_runtime(struct cfs_bandwidth *cfs_b,
 	/* note: this is a positive sum as runtime_remaining <= 0 */
 	min_amount = target_runtime - cfs_rq->runtime_remaining;
 
-	if (cfs_b->quota == RUNTIME_INF)
+	إذا (cfs_b->quota == RUNTIME_INF)
 		amount = min_amount;
-	else {
+	وإلا {
 		start_cfs_bandwidth(cfs_b);
 
-		if (cfs_b->runtime > 0) {
+		إذا (cfs_b->runtime > 0) {
 			amount = min(cfs_b->runtime, min_amount);
 			cfs_b->runtime -= amount;
 			cfs_b->idle = 0;
@@ -6840,70 +6840,70 @@ static int __assign_cfs_rq_runtime(struct cfs_bandwidth *cfs_b,
 
 	cfs_rq->runtime_remaining += amount;
 
-	return cfs_rq->runtime_remaining > 0;
+	إرجاع cfs_rq->runtime_remaining > 0;
 }
 
-static bool throttle_cfs_rq(struct cfs_rq *cfs_rq);
+ساكن bool throttle_cfs_rq(بنية cfs_rq *cfs_rq);
 
-static bool __account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
+ساكن bool __account_cfs_rq_runtime(بنية cfs_rq *cfs_rq, u64 delta_exec)
 {
 	/* dock delta_exec before expiring quota (as it could span periods) */
 	cfs_rq->runtime_remaining -= delta_exec;
 
-	if (likely(cfs_rq->runtime_remaining > 0))
-		return false;
+	إذا (likely(cfs_rq->runtime_remaining > 0))
+		إرجاع false;
 
-	if (cfs_rq->throttled)
-		return true;
+	إذا (cfs_rq->throttled)
+		إرجاع true;
 	/*
 	 * throttle_cfs_rq() will try to extend the runtime first
 	 * before throttling the hierarchy.
 	 */
-	return throttle_cfs_rq(cfs_rq);
+	إرجاع throttle_cfs_rq(cfs_rq);
 }
 
-static __always_inline
-bool account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
+ساكن __always_inline
+bool account_cfs_rq_runtime(بنية cfs_rq *cfs_rq, u64 delta_exec)
 {
-	if (!cfs_bandwidth_used() || !cfs_rq->runtime_enabled)
-		return false;
+	إذا (!cfs_bandwidth_used() || !cfs_rq->runtime_enabled)
+		إرجاع false;
 
-	return __account_cfs_rq_runtime(cfs_rq, delta_exec);
+	إرجاع __account_cfs_rq_runtime(cfs_rq, delta_exec);
 }
 
-static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+ساكن مضمن صحيح cfs_rq_throttled(بنية cfs_rq *cfs_rq)
 {
-	return cfs_bandwidth_used() && cfs_rq->throttled;
+	إرجاع cfs_bandwidth_used() && cfs_rq->throttled;
 }
 
-static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
+ساكن مضمن bool cfs_rq_pelt_clock_throttled(بنية cfs_rq *cfs_rq)
 {
-	return cfs_bandwidth_used() && cfs_rq->pelt_clock_throttled;
+	إرجاع cfs_bandwidth_used() && cfs_rq->pelt_clock_throttled;
 }
 
 /* check whether cfs_rq, or any parent, is throttled */
-static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
+ساكن مضمن صحيح throttled_hierarchy(بنية cfs_rq *cfs_rq)
 {
-	return cfs_bandwidth_used() && cfs_rq->throttle_count;
+	إرجاع cfs_bandwidth_used() && cfs_rq->throttle_تعداد;
 }
 
-static inline int lb_throttled_hierarchy(struct task_struct *p, int dst_cpu)
+ساكن مضمن صحيح lb_throttled_hierarchy(بنية task_struct *p, صحيح dst_cpu)
 {
-	return throttled_hierarchy(tg_cfs_rq(task_group(p), dst_cpu));
+	إرجاع throttled_hierarchy(tg_cfs_rq(task_group(p), dst_cpu));
 }
 
-static inline bool task_is_throttled(struct task_struct *p)
+ساكن مضمن bool task_is_throttled(بنية task_struct *p)
 {
-	return cfs_bandwidth_used() && p->throttled;
+	إرجاع cfs_bandwidth_used() && p->throttled;
 }
 
-static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags);
-static void throttle_cfs_rq_work(struct callback_head *work)
+ساكن bool dequeue_task_fair(بنية rq *rq, بنية task_struct *p, صحيح flags);
+ساكن فراغ throttle_cfs_rq_work(بنية callback_head *work)
 {
-	struct task_struct *p = container_of(work, struct task_struct, sched_throttle_work);
-	struct sched_entity *se;
-	struct cfs_rq *cfs_rq;
-	struct rq *rq;
+	بنية task_struct *p = container_of(work, بنية task_struct, sched_throttle_work);
+	بنية sched_entity *se;
+	بنية cfs_rq *cfs_rq;
+	بنية rq *rq;
 
 	WARN_ON_ONCE(p != current);
 	p->sched_throttle_work.next = &p->sched_throttle_work;
@@ -6912,28 +6912,28 @@ static void throttle_cfs_rq_work(struct callback_head *work)
 	 * If task is exiting, then there won't be a return to userspace, so we
 	 * don't have to bother with any of this.
 	 */
-	if ((p->flags & PF_EXITING))
-		return;
+	إذا ((p->flags & PF_EXITING))
+		إرجاع;
 
 	scoped_guard(task_rq_lock, p) {
 		se = &p->se;
 		cfs_rq = cfs_rq_of(se);
 
 		/* Raced, forget */
-		if (p->sched_class != &fair_sched_class)
-			return;
+		إذا (p->sched_class != &fair_sched_class)
+			إرجاع;
 
 		/*
 		 * If not in limbo, then either replenish has happened or this
 		 * task got migrated out of the throttled cfs_rq, move along.
 		 */
-		if (!cfs_rq->throttle_count)
-			return;
+		إذا (!cfs_rq->throttle_تعداد)
+			إرجاع;
 		rq = scope.rq;
 		update_rq_clock(rq);
-		WARN_ON_ONCE(p->throttled || !list_empty(&p->throttle_node));
+		WARN_ON_ONCE(p->throttled || !list_empty(&p->throttle_عقدة));
 		dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_THROTTLE);
-		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+		list_add(&p->throttle_عقدة, &cfs_rq->throttled_limbo_list);
 		/*
 		 * Must not set throttled before dequeue or dequeue will
 		 * mistakenly regard this task as an already throttled one.
@@ -6943,12 +6943,12 @@ static void throttle_cfs_rq_work(struct callback_head *work)
 	}
 }
 
-void init_cfs_throttle_work(struct task_struct *p)
+فراغ init_cfs_throttle_work(بنية task_struct *p)
 {
 	init_task_work(&p->sched_throttle_work, throttle_cfs_rq_work);
 	/* Protect against double add, see throttle_cfs_rq() and throttle_cfs_rq_work() */
 	p->sched_throttle_work.next = &p->sched_throttle_work;
-	INIT_LIST_HEAD(&p->throttle_node);
+	INIT_LIST_HEAD(&p->throttle_عقدة);
 }
 
 /*
@@ -6959,32 +6959,32 @@ void init_cfs_throttle_work(struct task_struct *p)
  * or the task is blocked after throttled due to freezer etc.
  * and in these cases, DEQUEUE_SLEEP is set.
  */
-static void detach_task_cfs_rq(struct task_struct *p);
-static void dequeue_throttled_task(struct task_struct *p, int flags)
+ساكن فراغ detach_task_cfs_rq(بنية task_struct *p);
+ساكن فراغ dequeue_throttled_task(بنية task_struct *p, صحيح flags)
 {
 	WARN_ON_ONCE(p->se.on_rq);
-	list_del_init(&p->throttle_node);
+	list_del_init(&p->throttle_عقدة);
 
 	/* task blocked after throttled */
-	if (flags & DEQUEUE_SLEEP) {
+	إذا (flags & DEQUEUE_SLEEP) {
 		p->throttled = false;
-		return;
+		إرجاع;
 	}
 
 	/*
 	 * task is migrating off its old cfs_rq, detach
 	 * the task's load from its old cfs_rq.
 	 */
-	if (task_on_rq_migrating(p))
+	إذا (task_on_rq_migrating(p))
 		detach_task_cfs_rq(p);
 }
 
-static bool enqueue_throttled_task(struct task_struct *p)
+ساكن bool enqueue_throttled_task(بنية task_struct *p)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(&p->se);
+	بنية cfs_rq *cfs_rq = cfs_rq_of(&p->se);
 
 	/* @p should have gone through dequeue_throttled_task() first */
-	WARN_ON_ONCE(!list_empty(&p->throttle_node));
+	WARN_ON_ONCE(!list_empty(&p->throttle_عقدة));
 
 	/*
 	 * If the throttled task @p is enqueued to a throttled cfs_rq,
@@ -7020,23 +7020,23 @@ static bool enqueue_throttled_task(struct task_struct *p)
 	 * to a different group from the same rq, so we can use its current
 	 * cfs_rq to derive rq and test if the task is current.
 	 */
-	if (throttled_hierarchy(cfs_rq) &&
+	إذا (throttled_hierarchy(cfs_rq) &&
 	    !task_current_donor(rq_of(cfs_rq), p)) {
-		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
-		return true;
+		list_add(&p->throttle_عقدة, &cfs_rq->throttled_limbo_list);
+		إرجاع true;
 	}
 
 	/* we can't take the fast path, do an actual enqueue*/
 	p->throttled = false;
-	return false;
+	إرجاع false;
 }
 
-static void enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags);
-static int tg_unthrottle_up(struct task_group *tg, void *data)
+ساكن فراغ enqueue_task_fair(بنية rq *rq, بنية task_struct *p, صحيح flags);
+ساكن صحيح tg_unthrottle_up(بنية task_group *tg, فراغ *data)
 {
-	struct rq *rq = data;
-	struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
-	struct task_struct *p, *tmp;
+	بنية rq *rq = data;
+	بنية cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
+	بنية task_struct *p, *tmp;
 	LIST_HEAD(throttled_tasks);
 
 	/*
@@ -7048,21 +7048,21 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
 	 */
 	update_curr(cfs_rq);
 
-	if (--cfs_rq->throttle_count)
-		return 0;
+	إذا (--cfs_rq->throttle_تعداد)
+		إرجاع 0;
 
-	if (cfs_rq->pelt_clock_throttled) {
+	إذا (cfs_rq->pelt_clock_throttled) {
 		cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
 					     cfs_rq->throttled_clock_pelt;
 		cfs_rq->pelt_clock_throttled = 0;
 	}
 
-	if (cfs_rq->throttled_clock_self) {
+	إذا (cfs_rq->throttled_clock_self) {
 		u64 delta = rq_clock(rq) - cfs_rq->throttled_clock_self;
 
 		cfs_rq->throttled_clock_self = 0;
 
-		if (WARN_ON_ONCE((s64)delta < 0))
+		إذا (WARN_ON_ONCE((s64)delta < 0))
 			delta = 0;
 
 		cfs_rq->throttled_clock_self_time += delta;
@@ -7077,16 +7077,16 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
 	list_splice_init(&cfs_rq->throttled_limbo_list, &throttled_tasks);
 
 	/* Re-enqueue the tasks that have been throttled at this level. */
-	list_for_each_entry_safe(p, tmp, &throttled_tasks, throttle_node) {
+	list_for_each_entry_safe(p, tmp, &throttled_tasks, throttle_عقدة) {
 		/*
 		 * Back to being throttled! Break out and put the remaining
 		 * tasks back onto the limbo_list to prevent running them
 		 * unnecessarily.
 		 */
-		if (cfs_rq->throttle_count)
-			break;
+		إذا (cfs_rq->throttle_تعداد)
+			اكسر;
 
-		list_del_init(&p->throttle_node);
+		list_del_init(&p->throttle_عقدة);
 		p->throttled = false;
 		enqueue_task_fair(rq, p, ENQUEUE_WAKEUP);
 	}
@@ -7094,56 +7094,56 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
 	list_splice(&throttled_tasks, &cfs_rq->throttled_limbo_list);
 
 	/* Add cfs_rq with load or one or more already running entities to the list */
-	if (!cfs_rq_is_decayed(cfs_rq))
+	إذا (!cfs_rq_is_decayed(cfs_rq))
 		list_add_leaf_cfs_rq(cfs_rq);
 
-	return 0;
+	إرجاع 0;
 }
 
-static inline bool task_has_throttle_work(struct task_struct *p)
+ساكن مضمن bool task_has_throttle_work(بنية task_struct *p)
 {
-	return p->sched_throttle_work.next != &p->sched_throttle_work;
+	إرجاع p->sched_throttle_work.next != &p->sched_throttle_work;
 }
 
-static inline void task_throttle_setup_work(struct task_struct *p)
+ساكن مضمن فراغ task_throttle_setup_work(بنية task_struct *p)
 {
-	if (task_has_throttle_work(p))
-		return;
+	إذا (task_has_throttle_work(p))
+		إرجاع;
 
 	/*
 	 * Kthreads and exiting tasks don't return to userspace, so adding the
 	 * work is pointless
 	 */
-	if ((p->flags & (PF_EXITING | PF_KTHREAD)))
-		return;
+	إذا ((p->flags & (PF_EXITING | PF_KTHREAD)))
+		إرجاع;
 
 	task_work_add(p, &p->sched_throttle_work, TWA_RESUME);
 }
 
-static void record_throttle_clock(struct cfs_rq *cfs_rq)
+ساكن فراغ record_throttle_clock(بنية cfs_rq *cfs_rq)
 {
-	struct rq *rq = rq_of(cfs_rq);
+	بنية rq *rq = rq_of(cfs_rq);
 
-	if (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
+	إذا (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
 		cfs_rq->throttled_clock = rq_clock(rq);
 
-	if (!cfs_rq->throttled_clock_self)
+	إذا (!cfs_rq->throttled_clock_self)
 		cfs_rq->throttled_clock_self = rq_clock(rq);
 }
 
-static int tg_throttle_down(struct task_group *tg, void *data)
+ساكن صحيح tg_throttle_down(بنية task_group *tg, فراغ *data)
 {
-	struct rq *rq = data;
-	struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
+	بنية rq *rq = data;
+	بنية cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
 
-	if (cfs_rq->throttle_count++)
-		return 0;
+	إذا (cfs_rq->throttle_تعداد++)
+		إرجاع 0;
 
 	/*
 	 * For cfs_rqs that still have entities enqueued, PELT clock
 	 * stop happens at dequeue time when all entities are dequeued.
 	 */
-	if (!cfs_rq->nr_queued) {
+	إذا (!cfs_rq->nr_queued) {
 		list_del_leaf_cfs_rq(cfs_rq);
 		cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
 		cfs_rq->pelt_clock_throttled = 1;
@@ -7151,14 +7151,14 @@ static int tg_throttle_down(struct task_group *tg, void *data)
 
 	WARN_ON_ONCE(cfs_rq->throttled_clock_self);
 	WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_limbo_list));
-	return 0;
+	إرجاع 0;
 }
 
-static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ساكن bool throttle_cfs_rq(بنية cfs_rq *cfs_rq)
 {
-	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
-	struct sched_entity *curr = cfs_rq->h_curr;
-	struct rq *rq = rq_of(cfs_rq);
+	بنية cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+	بنية sched_entity *curr = cfs_rq->h_curr;
+	بنية rq *rq = rq_of(cfs_rq);
 
 	scoped_guard(raw_spinlock, &cfs_b->lock) {
 		u64 target_runtime = 1;
@@ -7171,7 +7171,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
 		 * If the curr is not runnable, just request enough bandwidth
 		 * to be runnable next time the pick selects this cfs_rq.
 		 */
-		if (curr && curr->on_rq)
+		إذا (curr && curr->on_rq)
 			target_runtime = sched_cfs_bandwidth_slice();
 
 		/*
@@ -7184,8 +7184,8 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
 		 *
 		 * This will start the period timer if necessary.
 		 */
-		if (__assign_cfs_rq_runtime(cfs_b, cfs_rq, target_runtime))
-			return false;
+		إذا (__assign_cfs_rq_runtime(cfs_b, cfs_rq, target_runtime))
+			إرجاع false;
 
 		/*
 		 * No bandwidth available; Add ourselves on the list to be
@@ -7197,7 +7197,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
 
 	/* freeze hierarchy runnable averages while throttled */
 	scoped_guard(rcu)
-		walk_tg_tree_from(cfs_rq->tg, tg_throttle_down, tg_nop, (void *)rq);
+		walk_tg_شجرة_from(cfs_rq->tg, tg_throttle_down, tg_nop, (فراغ *)rq);
 
 	/*
 	 * Note: distribution will already see us throttled via the
@@ -7213,17 +7213,17 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
 	 * and the rule of throttle deferral to only throttle the
 	 * throttled context at exit to userspace is still preserved.
 	 */
-	if (curr && curr->on_rq)
+	إذا (curr && curr->on_rq)
 		task_throttle_setup_work(rq->donor);
 
-	return true;
+	إرجاع true;
 }
 
-void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+فراغ unthrottle_cfs_rq(بنية cfs_rq *cfs_rq)
 {
-	struct rq *rq = rq_of(cfs_rq);
-	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
-	struct sched_entity *se = cfs_rq_se(cfs_rq);
+	بنية rq *rq = rq_of(cfs_rq);
+	بنية cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+	بنية sched_entity *se = cfs_rq_se(cfs_rq);
 
 	/*
 	 * It's possible we are called with runtime_remaining < 0 due to things
@@ -7238,48 +7238,48 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
 	 * checking runtime remaining.
 	 */
 	update_curr(cfs_rq);
-	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
-		return;
+	إذا (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
+		إرجاع;
 
 	cfs_rq->throttled = 0;
 
 	scoped_guard(raw_spinlock, &cfs_b->lock) {
 		list_del_rcu(&cfs_rq->throttled_list);
 
-		if (!cfs_rq->throttled_clock)
-			break;
+		إذا (!cfs_rq->throttled_clock)
+			اكسر;
 
 		cfs_b->throttled_time += rq_clock(rq) - cfs_rq->throttled_clock;
 		cfs_rq->throttled_clock = 0;
 	}
 
 	/* update hierarchical throttle state */
-	walk_tg_tree_from(cfs_rq->tg, tg_nop, tg_unthrottle_up, (void *)rq);
+	walk_tg_شجرة_from(cfs_rq->tg, tg_nop, tg_unthrottle_up, (فراغ *)rq);
 
-	if (!cfs_rq->load.weight) {
-		if (!cfs_rq->on_list)
-			return;
+	إذا (!cfs_rq->load.weight) {
+		إذا (!cfs_rq->on_list)
+			إرجاع;
 		/*
 		 * Nothing to run but something to decay (on_list)?
 		 * Complete the branch.
 		 */
 		for_each_sched_entity(se) {
-			if (list_add_leaf_cfs_rq(cfs_rq_of(se)))
-				break;
+			إذا (list_add_leaf_cfs_rq(cfs_rq_of(se)))
+				اكسر;
 		}
 	}
 
 	assert_list_leaf_cfs_rq(rq);
 
 	/* Determine whether we need to wake up potentially idle CPU: */
-	if (rq->curr == rq->idle && rq->cfs.h_nr_queued)
+	إذا (rq->curr == rq->idle && rq->cfs.h_nr_queued)
 		resched_curr(rq);
 }
 
-static void __cfsb_csd_unthrottle(void *arg)
+ساكن فراغ __cfsb_csd_unthrottle(فراغ *arg)
 {
-	struct cfs_rq *cursor, *tmp;
-	struct rq *rq = arg;
+	بنية cfs_rq *cursor, *tmp;
+	بنية rq *rq = arg;
 
 	guard(rq_lock)(rq);
 
@@ -7304,52 +7304,52 @@ static void __cfsb_csd_unthrottle(void *arg)
 				 throttled_csd_list) {
 		list_del_init(&cursor->throttled_csd_list);
 
-		if (cfs_rq_throttled(cursor))
+		إذا (cfs_rq_throttled(cursor))
 			unthrottle_cfs_rq(cursor);
 	}
 
 	rq_clock_stop_loop_update(rq);
 }
 
-static inline void __unthrottle_cfs_rq_async(struct cfs_rq *cfs_rq)
+ساكن مضمن فراغ __unthrottle_cfs_rq_async(بنية cfs_rq *cfs_rq)
 {
-	struct rq *rq = rq_of(cfs_rq);
+	بنية rq *rq = rq_of(cfs_rq);
 	bool first;
 
-	if (rq == this_rq()) {
+	إذا (rq == this_rq()) {
 		update_rq_clock(rq);
 		unthrottle_cfs_rq(cfs_rq);
-		return;
+		إرجاع;
 	}
 
 	/* Already enqueued */
-	if (WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_csd_list)))
-		return;
+	إذا (WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_csd_list)))
+		إرجاع;
 
 	first = list_empty(&rq->cfsb_csd_list);
 	list_add_tail(&cfs_rq->throttled_csd_list, &rq->cfsb_csd_list);
-	if (first)
+	إذا (first)
 		smp_call_function_single_async(cpu_of(rq), &rq->cfsb_csd);
 }
 
-static void unthrottle_cfs_rq_async(struct cfs_rq *cfs_rq)
+ساكن فراغ unthrottle_cfs_rq_async(بنية cfs_rq *cfs_rq)
 {
 	lockdep_assert_rq_held(rq_of(cfs_rq));
 
-	if (WARN_ON_ONCE(!cfs_rq_throttled(cfs_rq) ||
+	إذا (WARN_ON_ONCE(!cfs_rq_throttled(cfs_rq) ||
 	    cfs_rq->runtime_remaining <= 0))
-		return;
+		إرجاع;
 
 	__unthrottle_cfs_rq_async(cfs_rq);
 }
 
-static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
+ساكن bool distribute_cfs_runtime(بنية cfs_bandwidth *cfs_b)
 {
 	bool throttled = false, unthrottle_local = false;
-	int this_cpu = smp_processor_id();
+	صحيح this_cpu = smp_processor_id();
 	u64 runtime, remaining = 1;
-	struct cfs_rq *cfs_rq;
-	struct rq *rq;
+	بنية cfs_rq *cfs_rq;
+	بنية rq *rq;
 
 	guard(rcu)();
 
@@ -7357,21 +7357,21 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
 				throttled_list) {
 		rq = rq_of(cfs_rq);
 
-		if (!remaining) {
+		إذا (!remaining) {
 			throttled = true;
-			break;
+			اكسر;
 		}
 
 		guard(rq_lock_irqsave)(rq);
 
-		if (!cfs_rq_throttled(cfs_rq))
-			continue;
+		إذا (!cfs_rq_throttled(cfs_rq))
+			استمر;
 
 		/* Already queued for async unthrottle */
-		if (!list_empty(&cfs_rq->throttled_csd_list))
-			continue;
+		إذا (!list_empty(&cfs_rq->throttled_csd_list))
+			استمر;
 
-		if (cfs_rq->h_curr) {
+		إذا (cfs_rq->h_curr) {
 			update_rq_clock(rq);
 			update_curr(cfs_rq);
 		}
@@ -7381,7 +7381,7 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
 
 		scoped_guard(raw_spinlock, &cfs_b->lock) {
 			runtime = -cfs_rq->runtime_remaining + 1;
-			if (runtime > cfs_b->runtime)
+			إذا (runtime > cfs_b->runtime)
 				runtime = cfs_b->runtime;
 			cfs_b->runtime -= runtime;
 			remaining = cfs_b->runtime;
@@ -7393,15 +7393,15 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
 		 * Ran out of bandwidth during distribution!
 		 * Indicate throttled entities and break early.
 		 */
-		if (cfs_rq->runtime_remaining <= 0) {
+		إذا (cfs_rq->runtime_remaining <= 0) {
 			throttled = true;
-			break;
+			اكسر;
 		}
 
 		/* we check whether we're throttled above */
-		if (cpu_of(rq) != this_cpu) {
+		إذا (cpu_of(rq) != this_cpu) {
 			unthrottle_cfs_rq_async(cfs_rq);
-			continue;
+			استمر;
 		}
 
 		/*
@@ -7414,7 +7414,7 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
 		list_add_tail(&cfs_rq->throttled_csd_list, &rq->cfsb_csd_list);
 	}
 
-	if (unthrottle_local) {
+	إذا (unthrottle_local) {
 		/*
 		 * Protect against an IPI that is also trying to flush
 		 * the unthrottled cfs_rq(s) from this CPU's csd_list.
@@ -7423,7 +7423,7 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
 			__cfsb_csd_unthrottle(cpu_rq(this_cpu));
 	}
 
-	return throttled;
+	إرجاع throttled;
 }
 
 /*
@@ -7432,14 +7432,14 @@ static bool distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
  * period the timer is deactivated until scheduling resumes; cfs_b->idle is
  * used to track this state.
  */
-static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, unsigned long flags)
+ساكن صحيح do_sched_cfs_period_timer(بنية cfs_bandwidth *cfs_b, صحيح overrun, unsigned long flags)
 	__must_hold(&cfs_b->lock)
 {
-	int throttled;
+	صحيح throttled;
 
 	/* no need to continue the timer with no bandwidth constraint */
-	if (cfs_b->quota == RUNTIME_INF)
-		goto out_deactivate;
+	إذا (cfs_b->quota == RUNTIME_INF)
+		اذهب out_deactivate;
 
 	throttled = !list_empty(&cfs_b->throttled_cfs_rq);
 	cfs_b->nr_periods += overrun;
@@ -7451,13 +7451,13 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, u
 	 * idle depends on !throttled (for the case of a large deficit), and if
 	 * we're going inactive then everything else can be deferred
 	 */
-	if (cfs_b->idle && !throttled)
-		goto out_deactivate;
+	إذا (cfs_b->idle && !throttled)
+		اذهب out_deactivate;
 
-	if (!throttled) {
+	إذا (!throttled) {
 		/* mark as potentially idle for the upcoming period */
 		cfs_b->idle = 1;
-		return 0;
+		إرجاع 0;
 	}
 
 	/* account preceding periods in which throttling occurred */
@@ -7466,7 +7466,7 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, u
 	/*
 	 * This check is repeated as we release cfs_b->lock while we unthrottle.
 	 */
-	while (throttled && cfs_b->runtime > 0) {
+	بينما (throttled && cfs_b->runtime > 0) {
 		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
 		/* we can't nest cfs_b->lock while distributing bandwidth */
 		throttled = distribute_cfs_runtime(cfs_b);
@@ -7481,18 +7481,18 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, u
 	 */
 	cfs_b->idle = 0;
 
-	return 0;
+	إرجاع 0;
 
 out_deactivate:
-	return 1;
+	إرجاع 1;
 }
 
 /* a cfs_rq won't donate quota below this amount */
-static const u64 min_cfs_rq_runtime = 1 * NSEC_PER_MSEC;
+ساكن ثابت u64 min_cfs_rq_runtime = 1 * NSEC_PER_MSEC;
 /* minimum remaining period time to redistribute slack quota */
-static const u64 min_bandwidth_expiration = 2 * NSEC_PER_MSEC;
+ساكن ثابت u64 min_bandwidth_expiration = 2 * NSEC_PER_MSEC;
 /* how long we wait to gather additional slack before distributing */
-static const u64 cfs_bandwidth_slack_period = 5 * NSEC_PER_MSEC;
+ساكن ثابت u64 cfs_bandwidth_slack_period = 5 * NSEC_PER_MSEC;
 
 /*
  * Are we near the end of the current quota period?
@@ -7501,34 +7501,34 @@ static const u64 cfs_bandwidth_slack_period = 5 * NSEC_PER_MSEC;
  * hrtimer base being cleared by hrtimer_start. In the case of
  * migrate_hrtimers, base is never cleared, so we are fine.
  */
-static int runtime_refresh_within(struct cfs_bandwidth *cfs_b, u64 min_expire)
+ساكن صحيح runtime_refresh_within(بنية cfs_bandwidth *cfs_b, u64 min_expire)
 {
-	struct hrtimer *refresh_timer = &cfs_b->period_timer;
+	بنية hrtimer *refresh_timer = &cfs_b->period_timer;
 	s64 remaining;
 
 	/* if the call-back is running a quota refresh is already occurring */
-	if (hrtimer_callback_running(refresh_timer))
-		return 1;
+	إذا (hrtimer_callback_running(refresh_timer))
+		إرجاع 1;
 
 	/* is a quota refresh about to occur? */
 	remaining = ktime_to_ns(hrtimer_expires_remaining(refresh_timer));
-	if (remaining < (s64)min_expire)
-		return 1;
+	إذا (remaining < (s64)min_expire)
+		إرجاع 1;
 
-	return 0;
+	إرجاع 0;
 }
 
-static void start_cfs_slack_bandwidth(struct cfs_bandwidth *cfs_b)
+ساكن فراغ start_cfs_slack_bandwidth(بنية cfs_bandwidth *cfs_b)
 {
-	u64 min_left = cfs_bandwidth_slack_period + min_bandwidth_expiration;
+	u64 min_يسار = cfs_bandwidth_slack_period + min_bandwidth_expiration;
 
 	/* if there's a quota refresh soon don't bother with slack */
-	if (runtime_refresh_within(cfs_b, min_left))
-		return;
+	إذا (runtime_refresh_within(cfs_b, min_يسار))
+		إرجاع;
 
 	/* don't push forwards an existing deferred unthrottle */
-	if (cfs_b->slack_started)
-		return;
+	إذا (cfs_b->slack_started)
+		إرجاع;
 	cfs_b->slack_started = true;
 
 	hrtimer_start(&cfs_b->slack_timer,
@@ -7537,21 +7537,21 @@ static void start_cfs_slack_bandwidth(struct cfs_bandwidth *cfs_b)
 }
 
 /* we know any runtime found here is valid as update_curr() precedes return */
-static void __return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ساكن فراغ __return_cfs_rq_runtime(بنية cfs_rq *cfs_rq)
 {
-	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+	بنية cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
 	s64 slack_runtime = cfs_rq->runtime_remaining - min_cfs_rq_runtime;
 
-	if (slack_runtime <= 0)
-		return;
+	إذا (slack_runtime <= 0)
+		إرجاع;
 
 	guard(raw_spinlock)(&cfs_b->lock);
 
-	if (cfs_b->quota != RUNTIME_INF) {
+	إذا (cfs_b->quota != RUNTIME_INF) {
 		cfs_b->runtime += slack_runtime;
 
 		/* we are under rq->lock, defer unthrottling using a timer */
-		if (cfs_b->runtime > sched_cfs_bandwidth_slice() &&
+		إذا (cfs_b->runtime > sched_cfs_bandwidth_slice() &&
 		    !list_empty(&cfs_b->throttled_cfs_rq))
 			start_cfs_slack_bandwidth(cfs_b);
 	}
@@ -7560,13 +7560,13 @@ static void __return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
 	cfs_rq->runtime_remaining -= slack_runtime;
 }
 
-static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ساكن __always_inline فراغ return_cfs_rq_runtime(بنية cfs_rq *cfs_rq)
 {
-	if (!cfs_bandwidth_used())
-		return;
+	إذا (!cfs_bandwidth_used())
+		إرجاع;
 
-	if (!cfs_rq->runtime_enabled || cfs_rq->nr_queued)
-		return;
+	إذا (!cfs_rq->runtime_enabled || cfs_rq->nr_queued)
+		إرجاع;
 
 	__return_cfs_rq_runtime(cfs_rq);
 }
@@ -7575,7 +7575,7 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
  * This is done with a timer (instead of inline with bandwidth return) since
  * it's necessary to juggle rq->locks to unthrottle their respective cfs_rqs.
  */
-static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+ساكن فراغ do_sched_cfs_slack_timer(بنية cfs_bandwidth *cfs_b)
 {
 	/* confirm we're still not at a refresh boundary */
 	scoped_guard(raw_spinlock_irqsave, &cfs_b->lock) {
@@ -7583,14 +7583,14 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
 
 		cfs_b->slack_started = false;
 
-		if (runtime_refresh_within(cfs_b, min_bandwidth_expiration))
-			return;
+		إذا (runtime_refresh_within(cfs_b, min_bandwidth_expiration))
+			إرجاع;
 
-		if (cfs_b->quota != RUNTIME_INF && cfs_b->runtime > slice)
+		إذا (cfs_b->quota != RUNTIME_INF && cfs_b->runtime > slice)
 			runtime = cfs_b->runtime;
 
-		if (!runtime)
-			return;
+		إذا (!runtime)
+			إرجاع;
 	}
 
 	distribute_cfs_runtime(cfs_b);
@@ -7601,37 +7601,37 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
  * expired/exceeded, otherwise it may be allowed to steal additional ticks of
  * runtime as update_curr() throttling can not trigger until it's on-rq.
  */
-static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
+ساكن فراغ check_enqueue_throttle(بنية cfs_rq *cfs_rq)
 {
-	if (!cfs_bandwidth_used())
-		return;
+	إذا (!cfs_bandwidth_used())
+		إرجاع;
 
 	/* an active group must be handled by the update_curr() path */
-	if (!cfs_rq->runtime_enabled || cfs_rq->h_curr)
-		return;
+	إذا (!cfs_rq->runtime_enabled || cfs_rq->h_curr)
+		إرجاع;
 
 	/* ensure the group is not already throttled */
-	if (cfs_rq_throttled(cfs_rq))
-		return;
+	إذا (cfs_rq_throttled(cfs_rq))
+		إرجاع;
 
 	/* update runtime allocation */
 	account_cfs_rq_runtime(cfs_rq, 0);
 }
 
-static void sync_throttle(struct task_group *tg, int cpu)
+ساكن فراغ sync_throttle(بنية task_group *tg, صحيح cpu)
 {
-	struct cfs_rq *pcfs_rq, *cfs_rq;
+	بنية cfs_rq *pcfs_rq, *cfs_rq;
 
-	if (!cfs_bandwidth_used())
-		return;
+	إذا (!cfs_bandwidth_used())
+		إرجاع;
 
-	if (!tg->parent)
-		return;
+	إذا (!tg->parent)
+		إرجاع;
 
 	cfs_rq = tg_cfs_rq(tg, cpu);
 	pcfs_rq = tg_cfs_rq(tg->parent, cpu);
 
-	cfs_rq->throttle_count = pcfs_rq->throttle_count;
+	cfs_rq->throttle_تعداد = pcfs_rq->throttle_تعداد;
 	cfs_rq->throttled_clock_pelt = rq_clock_pelt(cpu_rq(cpu));
 
 	/*
@@ -7641,38 +7641,38 @@ static void sync_throttle(struct task_group *tg, int cpu)
 	 * and leaf it to the first enqueue, or distribution to
 	 * unthrottle the PELT clock.
 	 */
-	if (cfs_rq->throttle_count)
+	إذا (cfs_rq->throttle_تعداد)
 		cfs_rq->pelt_clock_throttled = 1;
 }
 
-static enum hrtimer_restart sched_cfs_slack_timer(struct hrtimer *timer)
+ساكن تعداد hrtimer_restart sched_cfs_slack_timer(بنية hrtimer *timer)
 {
-	struct cfs_bandwidth *cfs_b =
-		container_of(timer, struct cfs_bandwidth, slack_timer);
+	بنية cfs_bandwidth *cfs_b =
+		container_of(timer, بنية cfs_bandwidth, slack_timer);
 
 	do_sched_cfs_slack_timer(cfs_b);
 
-	return HRTIMER_NORESTART;
+	إرجاع HRTIMER_NORESTART;
 }
 
-static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
+ساكن تعداد hrtimer_restart sched_cfs_period_timer(بنية hrtimer *timer)
 {
-	struct cfs_bandwidth *cfs_b =
-		container_of(timer, struct cfs_bandwidth, period_timer);
-	int overrun;
-	int idle = 0;
-	int count = 0;
+	بنية cfs_bandwidth *cfs_b =
+		container_of(timer, بنية cfs_bandwidth, period_timer);
+	صحيح overrun;
+	صحيح idle = 0;
+	صحيح تعداد_2 = 0;
 
 	CLASS(raw_spinlock_irqsave, cfsb_guard)(&cfs_b->lock);
 
-	for (;;) {
+	لكل (;;) {
 		overrun = hrtimer_forward_now(timer, cfs_b->period);
-		if (!overrun)
-			break;
+		إذا (!overrun)
+			اكسر;
 
 		idle = do_sched_cfs_period_timer(cfs_b, overrun, cfsb_guard.flags);
 
-		if (++count > 3) {
+		إذا (++تعداد_2 > 3) {
 			u64 new, old = ktime_to_ns(cfs_b->period);
 
 			/*
@@ -7681,7 +7681,7 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
 			 * to fail.
 			 */
 			new = old * 2;
-			if (new < max_bw_quota_period_us * NSEC_PER_USEC) {
+			إذا (new < max_bw_quota_period_us * NSEC_PER_USEC) {
 				cfs_b->period = ns_to_ktime(new);
 				cfs_b->quota *= 2;
 				cfs_b->burst *= 2;
@@ -7691,7 +7691,7 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
 					smp_processor_id(),
 					div_u64(new, NSEC_PER_USEC),
 					div_u64(cfs_b->quota, NSEC_PER_USEC));
-			} else {
+			} وإلا {
 				pr_warn_ratelimited(
 	"cfs_period_timer[cpu%d]: period too short, but cannot scale up without losing precision (cfs_period_us = %lld, cfs_quota_us = %lld)\n",
 					smp_processor_id(),
@@ -7700,19 +7700,19 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
 			}
 
 			/* reset count so we don't come right back in here */
-			count = 0;
+			تعداد_2 = 0;
 		}
 	}
 
-	if (idle) {
+	إذا (idle) {
 		cfs_b->period_active = 0;
-		return HRTIMER_NORESTART;
+		إرجاع HRTIMER_NORESTART;
 	}
 
-	return HRTIMER_RESTART;
+	إرجاع HRTIMER_RESTART;
 }
 
-void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent)
+فراغ init_cfs_bandwidth(بنية cfs_bandwidth *cfs_b, بنية cfs_bandwidth *parent)
 {
 	raw_spin_lock_init(&cfs_b->lock);
 	cfs_b->runtime = 0;
@@ -7733,7 +7733,7 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *paren
 	cfs_b->slack_started = false;
 }
 
-static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ساكن فراغ init_cfs_rq_runtime(بنية cfs_rq *cfs_rq)
 {
 	cfs_rq->runtime_enabled = 0;
 	INIT_LIST_HEAD(&cfs_rq->throttled_list);
@@ -7741,25 +7741,25 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
 	INIT_LIST_HEAD(&cfs_rq->throttled_limbo_list);
 }
 
-void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+فراغ start_cfs_bandwidth(بنية cfs_bandwidth *cfs_b)
 {
 	lockdep_assert_held(&cfs_b->lock);
 
-	if (cfs_b->period_active)
-		return;
+	إذا (cfs_b->period_active)
+		إرجاع;
 
 	cfs_b->period_active = 1;
 	hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
 	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
 }
 
-static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+ساكن فراغ destroy_cfs_bandwidth(بنية cfs_bandwidth *cfs_b)
 {
-	int __maybe_unused i;
+	صحيح __maybe_unused i;
 
 	/* init_cfs_bandwidth() was not called */
-	if (!cfs_b->throttled_cfs_rq.next)
-		return;
+	إذا (!cfs_b->throttled_cfs_rq.next)
+		إرجاع;
 
 	hrtimer_cancel(&cfs_b->period_timer);
 	hrtimer_cancel(&cfs_b->slack_timer);
@@ -7775,10 +7775,10 @@ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
 	 * join a CSD list.
 	 */
 	for_each_possible_cpu(i) {
-		struct rq *rq = cpu_rq(i);
+		بنية rq *rq = cpu_rq(i);
 
-		if (list_empty(&rq->cfsb_csd_list))
-			continue;
+		إذا (list_empty(&rq->cfsb_csd_list))
+			استمر;
 
 		scoped_guard(irqsave)
 			__cfsb_csd_unthrottle(rq);
@@ -7793,17 +7793,17 @@ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
  */
 
 /* cpu online callback */
-static void __maybe_unused update_runtime_enabled(struct rq *rq)
+ساكن فراغ __maybe_unused update_runtime_enabled(بنية rq *rq)
 {
-	struct task_group *tg;
+	بنية task_group *tg;
 
 	lockdep_assert_rq_held(rq);
 
 	guard(rcu)();
 
 	list_for_each_entry_rcu(tg, &task_groups, list) {
-		struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
-		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
+		بنية cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
+		بنية cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
 
 		scoped_guard(raw_spinlock, &cfs_b->lock)
 			cfs_rq->runtime_enabled = cfs_b->quota != RUNTIME_INF;
@@ -7811,15 +7811,15 @@ static void __maybe_unused update_runtime_enabled(struct rq *rq)
 }
 
 /* cpu offline callback */
-static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
+ساكن فراغ __maybe_unused unthrottle_offline_cfs_rqs(بنية rq *rq)
 {
-	struct task_group *tg;
+	بنية task_group *tg;
 
 	lockdep_assert_rq_held(rq);
 
 	// Do not unthrottle for an active CPU
-	if (cpumask_test_cpu(cpu_of(rq), cpu_active_mask))
-		return;
+	إذا (cpumask_test_cpu(cpu_of(rq), cpu_active_mask))
+		إرجاع;
 
 	/*
 	 * The rq clock has already been updated in the
@@ -7831,10 +7831,10 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
 	guard(rcu)();
 
 	list_for_each_entry_rcu(tg, &task_groups, list) {
-		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
+		بنية cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
 
-		if (!cfs_rq->runtime_enabled)
-			continue;
+		إذا (!cfs_rq->runtime_enabled)
+			استمر;
 
 		/*
 		 * Offline rq is schedulable till CPU is completely disabled
@@ -7842,8 +7842,8 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
 		 */
 		cfs_rq->runtime_enabled = 0;
 
-		if (!cfs_rq_throttled(cfs_rq))
-			continue;
+		إذا (!cfs_rq_throttled(cfs_rq))
+			استمر;
 
 		/*
 		 * clock_task is not advancing so we just need to make sure
@@ -7856,34 +7856,34 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
 	rq_clock_stop_loop_update(rq);
 }
 
-bool cfs_task_bw_constrained(struct task_struct *p)
+bool cfs_task_bw_constrained(بنية task_struct *p)
 {
-	struct cfs_rq *cfs_rq = task_cfs_rq(p);
+	بنية cfs_rq *cfs_rq = task_cfs_rq(p);
 
-	if (!cfs_bandwidth_used())
-		return false;
+	إذا (!cfs_bandwidth_used())
+		إرجاع false;
 
-	if (cfs_rq->runtime_enabled ||
+	إذا (cfs_rq->runtime_enabled ||
 	    tg_cfs_bandwidth(cfs_rq->tg)->hierarchical_quota != RUNTIME_INF)
-		return true;
+		إرجاع true;
 
-	return false;
+	إرجاع false;
 }
 
 #ifdef CONFIG_NO_HZ_FULL
 /* called from pick_next_task_fair() */
-static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
+ساكن فراغ sched_fair_update_stop_tick(بنية rq *rq, بنية task_struct *p)
 {
-	int cpu = cpu_of(rq);
+	صحيح cpu = cpu_of(rq);
 
-	if (!cfs_bandwidth_used())
-		return;
+	إذا (!cfs_bandwidth_used())
+		إرجاع;
 
-	if (!tick_nohz_full_cpu(cpu))
-		return;
+	إذا (!tick_nohz_full_cpu(cpu))
+		إرجاع;
 
-	if (rq->nr_running != 1)
-		return;
+	إذا (rq->nr_running != 1)
+		إرجاع;
 
 	/*
 	 *  We know there is only one task runnable and we've just picked it. The
@@ -7891,65 +7891,65 @@ static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
 	 *  be otherwise able to stop the tick. Just need to check if we are using
 	 *  bandwidth control.
 	 */
-	if (cfs_task_bw_constrained(p))
+	إذا (cfs_task_bw_constrained(p))
 		tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
 }
 #endif /* CONFIG_NO_HZ_FULL */
 
-#else /* !CONFIG_CFS_BANDWIDTH: */
+#وإلا /* !CONFIG_CFS_BANDWIDTH: */
 
-static bool account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec) { return false; }
-static void check_enqueue_throttle(struct cfs_rq *cfs_rq) {}
-static inline void sync_throttle(struct task_group *tg, int cpu) {}
-static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
-static void task_throttle_setup_work(struct task_struct *p) {}
-static bool task_is_throttled(struct task_struct *p) { return false; }
-static void dequeue_throttled_task(struct task_struct *p, int flags) {}
-static bool enqueue_throttled_task(struct task_struct *p) { return false; }
-static void record_throttle_clock(struct cfs_rq *cfs_rq) {}
+ساكن bool account_cfs_rq_runtime(بنية cfs_rq *cfs_rq, u64 delta_exec) { إرجاع false; }
+ساكن فراغ check_enqueue_throttle(بنية cfs_rq *cfs_rq) {}
+ساكن مضمن فراغ sync_throttle(بنية task_group *tg, صحيح cpu) {}
+ساكن __always_inline فراغ return_cfs_rq_runtime(بنية cfs_rq *cfs_rq) {}
+ساكن فراغ task_throttle_setup_work(بنية task_struct *p) {}
+ساكن bool task_is_throttled(بنية task_struct *p) { إرجاع false; }
+ساكن فراغ dequeue_throttled_task(بنية task_struct *p, صحيح flags) {}
+ساكن bool enqueue_throttled_task(بنية task_struct *p) { إرجاع false; }
+ساكن فراغ record_throttle_clock(بنية cfs_rq *cfs_rq) {}
 
-static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+ساكن مضمن صحيح cfs_rq_throttled(بنية cfs_rq *cfs_rq)
 {
-	return 0;
+	إرجاع 0;
 }
 
-static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
+ساكن مضمن bool cfs_rq_pelt_clock_throttled(بنية cfs_rq *cfs_rq)
 {
-	return false;
+	إرجاع false;
 }
 
-static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
+ساكن مضمن صحيح throttled_hierarchy(بنية cfs_rq *cfs_rq)
 {
-	return 0;
+	إرجاع 0;
 }
 
-static inline int lb_throttled_hierarchy(struct task_struct *p, int dst_cpu)
+ساكن مضمن صحيح lb_throttled_hierarchy(بنية task_struct *p, صحيح dst_cpu)
 {
-	return 0;
+	إرجاع 0;
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent) {}
-static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
+فراغ init_cfs_bandwidth(بنية cfs_bandwidth *cfs_b, بنية cfs_bandwidth *parent) {}
+ساكن فراغ init_cfs_rq_runtime(بنية cfs_rq *cfs_rq) {}
 #endif
 
-static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
+ساكن مضمن بنية cfs_bandwidth *tg_cfs_bandwidth(بنية task_group *tg)
 {
-	return NULL;
+	إرجاع عدم;
 }
-static inline void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b) {}
-static inline void update_runtime_enabled(struct rq *rq) {}
-static inline void unthrottle_offline_cfs_rqs(struct rq *rq) {}
+ساكن مضمن فراغ destroy_cfs_bandwidth(بنية cfs_bandwidth *cfs_b) {}
+ساكن مضمن فراغ update_runtime_enabled(بنية rq *rq) {}
+ساكن مضمن فراغ unthrottle_offline_cfs_rqs(بنية rq *rq) {}
 #ifdef CONFIG_CGROUP_SCHED
-bool cfs_task_bw_constrained(struct task_struct *p)
+bool cfs_task_bw_constrained(بنية task_struct *p)
 {
-	return false;
+	إرجاع false;
 }
 #endif
 #endif /* !CONFIG_CFS_BANDWIDTH */
 
-#if !defined(CONFIG_CFS_BANDWIDTH) || !defined(CONFIG_NO_HZ_FULL)
-static inline void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p) {}
+#إذا !defined(CONFIG_CFS_BANDWIDTH) || !defined(CONFIG_NO_HZ_FULL)
+ساكن مضمن فراغ sched_fair_update_stop_tick(بنية rq *rq, بنية task_struct *p) {}
 #endif
 
 /**************************************************
@@ -7957,9 +7957,9 @@ static inline void sched_fair_update_stop_tick(struct rq *rq, struct task_struct
  */
 
 #ifdef CONFIG_SCHED_HRTICK
-static void hrtick_start_fair(struct rq *rq, struct task_struct *p)
+ساكن فراغ hrtick_start_fair(بنية rq *rq, بنية task_struct *p)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 	unsigned long scale = 1024;
 	unsigned long util = 0;
 	u64 vdelta;
@@ -7967,17 +7967,17 @@ static void hrtick_start_fair(struct rq *rq, struct task_struct *p)
 
 	WARN_ON_ONCE(task_rq(p) != rq);
 
-	if (rq->cfs.h_nr_queued <= 1)
-		return;
+	إذا (rq->cfs.h_nr_queued <= 1)
+		إرجاع;
 
 	/*
 	 * Compute time until virtual deadline
 	 */
 	vdelta = se->deadline - se->vruntime;
-	if ((s64)vdelta < 0) {
-		if (task_current_donor(rq, p))
+	إذا ((s64)vdelta < 0) {
+		إذا (task_current_donor(rq, p))
 			resched_curr(rq);
-		return;
+		إرجاع;
 	}
 	delta = (se->h_load.weight * vdelta) / NICE_0_LOAD;
 
@@ -7985,7 +7985,7 @@ static void hrtick_start_fair(struct rq *rq, struct task_struct *p)
 	 * Correct for instantaneous load of other classes.
 	 */
 	util += cpu_util_irq(rq);
-	if (util && util < 1024) {
+	إذا (util && util < 1024) {
 		scale *= 1024;
 		scale /= (1024 - util);
 	}
@@ -7996,90 +7996,90 @@ static void hrtick_start_fair(struct rq *rq, struct task_struct *p)
 /*
  * Called on enqueue to start the hrtick when h_nr_queued becomes more than 1.
  */
-static void hrtick_update(struct rq *rq)
+ساكن فراغ hrtick_update(بنية rq *rq)
 {
-	struct task_struct *donor = rq->donor;
+	بنية task_struct *donor = rq->donor;
 
-	if (!hrtick_enabled_fair(rq) || donor->sched_class != &fair_sched_class)
-		return;
+	إذا (!hrtick_enabled_fair(rq) || donor->sched_class != &fair_sched_class)
+		إرجاع;
 
-	if (hrtick_active(rq))
-		return;
+	إذا (hrtick_active(rq))
+		إرجاع;
 
 	hrtick_start_fair(rq, donor);
 }
-#else /* !CONFIG_SCHED_HRTICK: */
-static inline void
-hrtick_start_fair(struct rq *rq, struct task_struct *p)
+#وإلا /* !CONFIG_SCHED_HRTICK: */
+ساكن مضمن فراغ
+hrtick_start_fair(بنية rq *rq, بنية task_struct *p)
 {
 }
 
-static inline void hrtick_update(struct rq *rq)
+ساكن مضمن فراغ hrtick_update(بنية rq *rq)
 {
 }
 #endif /* !CONFIG_SCHED_HRTICK */
 
-static inline bool cpu_overutilized(int cpu)
+ساكن مضمن bool cpu_overutilized(صحيح cpu)
 {
 	unsigned long rq_util_max;
 
-	if (!sched_energy_enabled())
-		return false;
+	إذا (!sched_energy_enabled())
+		إرجاع false;
 
 	rq_util_max = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MAX);
 
 	/* Return true only if the utilization doesn't fit CPU's capacity */
-	return !util_fits_cpu(cpu_util_cfs(cpu), 0, rq_util_max, cpu);
+	إرجاع !util_fits_cpu(cpu_util_cfs(cpu), 0, rq_util_max, cpu);
 }
 
 /*
  * overutilized value make sense only if EAS is enabled
  */
-static inline bool is_rd_overutilized(struct root_domain *rd)
+ساكن مضمن bool is_rd_overutilized(بنية جذر_domain *rd)
 {
-	return !sched_energy_enabled() || READ_ONCE(rd->overutilized);
+	إرجاع !sched_energy_enabled() || READ_ONCE(rd->overutilized);
 }
 
-static inline void set_rd_overutilized(struct root_domain *rd, bool flag)
+ساكن مضمن فراغ set_rd_overutilized(بنية جذر_domain *rd, bool flag)
 {
-	if (!sched_energy_enabled())
-		return;
+	إذا (!sched_energy_enabled())
+		إرجاع;
 
 	WRITE_ONCE(rd->overutilized, flag);
 	trace_sched_overutilized_tp(rd, flag);
 }
 
-static inline void check_update_overutilized_status(struct rq *rq)
+ساكن مضمن فراغ check_update_overutilized_status(بنية rq *rq)
 {
 	/*
 	 * overutilized field is used for load balancing decisions only
 	 * if energy aware scheduler is being used
 	 */
 
-	if (!is_rd_overutilized(rq->rd) && cpu_overutilized(rq->cpu))
+	إذا (!is_rd_overutilized(rq->rd) && cpu_overutilized(rq->cpu))
 		set_rd_overutilized(rq->rd, 1);
 }
 
 /* Runqueue only has SCHED_IDLE tasks enqueued */
-static int sched_idle_rq(struct rq *rq)
+ساكن صحيح sched_idle_rq(بنية rq *rq)
 {
-	return unlikely(rq->nr_running == rq->cfs.h_nr_idle &&
+	إرجاع unlikely(rq->nr_running == rq->cfs.h_nr_idle &&
 			rq->nr_running);
 }
 
-static int choose_sched_idle_rq(struct rq *rq, struct task_struct *p)
+ساكن صحيح choose_sched_idle_rq(بنية rq *rq, بنية task_struct *p)
 {
-	return sched_idle_rq(rq) && !task_has_idle_policy(p);
+	إرجاع sched_idle_rq(rq) && !task_has_idle_policy(p);
 }
 
-static int choose_idle_cpu(int cpu, struct task_struct *p)
+ساكن صحيح choose_idle_cpu(صحيح cpu, بنية task_struct *p)
 {
-	return available_idle_cpu(cpu) ||
+	إرجاع available_idle_cpu(cpu) ||
 	       choose_sched_idle_rq(cpu_rq(cpu), p);
 }
 
-static void
-requeue_delayed_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ساكن فراغ
+requeue_delayed_entity(بنية cfs_rq *cfs_rq, بنية sched_entity *se)
 {
 	/*
 	 * se->sched_delayed should imply: se->on_rq == 1.
@@ -8089,12 +8089,12 @@ requeue_delayed_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	WARN_ON_ONCE(!se->sched_delayed);
 	WARN_ON_ONCE(!se->on_rq);
 
-	if (update_entity_lag(cfs_rq, se)) {
+	إذا (update_entity_lag(cfs_rq, se)) {
 		cfs_rq->h_nr_queued--;
-		if (se != cfs_rq->curr)
+		إذا (se != cfs_rq->curr)
 			__dequeue_entity(cfs_rq, se);
 		place_entity(cfs_rq, se, 0);
-		if (se != cfs_rq->curr)
+		إذا (se != cfs_rq->curr)
 			__enqueue_entity(cfs_rq, se);
 		cfs_rq->h_nr_queued++;
 	}
@@ -8103,25 +8103,25 @@ requeue_delayed_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	clear_delayed(se);
 }
 
-static unsigned long enqueue_hierarchy(struct task_struct *p, int flags)
+ساكن unsigned long enqueue_hierarchy(بنية task_struct *p, صحيح flags)
 {
 	unsigned long weight = NICE_0_LOAD;
-	int task_new = !(flags & ENQUEUE_WAKEUP);
-	struct sched_entity *se = &p->se;
-	int h_nr_idle = task_has_idle_policy(p);
-	int h_nr_runnable = 1;
+	صحيح task_new = !(flags & ENQUEUE_WAKEUP);
+	بنية sched_entity *se = &p->se;
+	صحيح h_nr_idle = task_has_idle_policy(p);
+	صحيح h_nr_runnable = 1;
 
-	if (task_new && se->sched_delayed)
+	إذا (task_new && se->sched_delayed)
 		h_nr_runnable = 0;
 
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 
 		update_curr(cfs_rq);
 
-		if (!se->on_rq) {
+		إذا (!se->on_rq) {
 			enqueue_entity(cfs_rq, se, flags);
-		} else {
+		} وإلا {
 			update_load_avg(cfs_rq, se, UPDATE_TG);
 			se_update_runnable(se);
 			update_cfs_group(se);
@@ -8131,7 +8131,7 @@ static unsigned long enqueue_hierarchy(struct task_struct *p, int flags)
 		cfs_rq->h_nr_queued++;
 		cfs_rq->h_nr_idle += h_nr_idle;
 
-		if (cfs_rq_is_idle(cfs_rq))
+		إذا (cfs_rq_is_idle(cfs_rq))
 			h_nr_idle = 1;
 
 		weight = __calc_prop_weight(cfs_rq, se, weight);
@@ -8139,14 +8139,14 @@ static unsigned long enqueue_hierarchy(struct task_struct *p, int flags)
 		flags = ENQUEUE_WAKEUP;
 	}
 
-	return weight;
+	إرجاع weight;
 }
 
 /* Update curr's vruntime before placing entity or updating lag */
-static inline void update_curr_eevdf(struct cfs_rq *cfs_rq)
+ساكن مضمن فراغ update_curr_eevdf(بنية cfs_rq *cfs_rq)
 {
-	if (!cfs_rq->curr)
-		return;
+	إذا (!cfs_rq->curr)
+		إرجاع;
 
 	update_curr(cfs_rq_of(cfs_rq->curr));
 }
@@ -8156,18 +8156,18 @@ static inline void update_curr_eevdf(struct cfs_rq *cfs_rq)
  * increased. Here we update the fair scheduling stats and
  * then put the task into the rbtree:
  */
-static void
-enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ساكن فراغ
+enqueue_task_fair(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
-	int rq_h_nr_queued = rq->cfs.h_nr_queued;
-	int task_new = !(flags & ENQUEUE_WAKEUP);
-	struct sched_entity *se = &p->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
+	صحيح rq_h_nr_queued = rq->cfs.h_nr_queued;
+	صحيح task_new = !(flags & ENQUEUE_WAKEUP);
+	بنية sched_entity *se = &p->se;
+	بنية cfs_rq *cfs_rq = &rq->cfs;
 	unsigned long weight;
 	bool curr;
 
-	if (task_is_throttled(p) && enqueue_throttled_task(p))
-		return;
+	إذا (task_is_throttled(p) && enqueue_throttled_task(p))
+		إرجاع;
 
 	/*
 	 * The code below (indirectly) updates schedutil which looks at
@@ -8175,14 +8175,14 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 * Let's add the task's estimated utilization to the cfs_rq's
 	 * estimated utilization, before we update schedutil.
 	 */
-	if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
+	إذا (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
 		util_est_enqueue(cfs_rq, p);
 
 	update_curr_eevdf(cfs_rq);
 
-	if (flags & ENQUEUE_DELAYED) {
+	إذا (flags & ENQUEUE_DELAYED) {
 		requeue_delayed_entity(cfs_rq, se);
-		return;
+		إرجاع;
 	}
 
 	/*
@@ -8190,7 +8190,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 * utilization updates, so do it here explicitly with the IOWAIT flag
 	 * passed.
 	 */
-	if (p->in_iowait)
+	إذا (p->in_iowait)
 		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
 
 	curr = (cfs_rq->curr == se);
@@ -8199,21 +8199,21 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 * and dequeued, unthrottled from another CPU and then enqueued again
 	 * before schedule().
 	 */
-	if (curr)
+	إذا (curr)
 		place_entity(cfs_rq, se, flags);
 
-	if (se->on_rq && se->sched_delayed)
+	إذا (se->on_rq && se->sched_delayed)
 		requeue_delayed_entity(cfs_rq, se);
 
 	weight = enqueue_hierarchy(p, flags);
 
-	if (!curr) {
+	إذا (!curr) {
 		reweight_eevdf(cfs_rq, se, weight, false);
 		place_entity(cfs_rq, se, flags | ENQUEUE_QUEUED);
 		__enqueue_entity(cfs_rq, se);
 	}
 
-	if (!rq_h_nr_queued && rq->cfs.h_nr_queued)
+	إذا (!rq_h_nr_queued && rq->cfs.h_nr_queued)
 		dl_server_start(&rq->fair_server);
 
 	/* At this point se is NULL and we are at root level*/
@@ -8233,7 +8233,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 * into account, but that is not straightforward to implement,
 	 * and the following generally works well enough in practice.
 	 */
-	if (!task_new)
+	إذا (!task_new)
 		check_update_overutilized_status(rq);
 
 	assert_list_leaf_cfs_rq(rq);
@@ -8241,30 +8241,30 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	hrtick_update(rq);
 }
 
-static void dequeue_hierarchy(struct task_struct *p, int flags)
+ساكن فراغ dequeue_hierarchy(بنية task_struct *p, صحيح flags)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 	bool task_sleep = flags & DEQUEUE_SLEEP;
 	bool task_delayed = flags & DEQUEUE_DELAYED;
 	bool task_throttled = flags & DEQUEUE_THROTTLE;
-	int h_nr_runnable = 0;
-	int h_nr_idle = task_has_idle_policy(p);
+	صحيح h_nr_runnable = 0;
+	صحيح h_nr_idle = task_has_idle_policy(p);
 	bool dequeue = true;
 
-	if (task_sleep || task_delayed || !se->sched_delayed)
+	إذا (task_sleep || task_delayed || !se->sched_delayed)
 		h_nr_runnable = 1;
 
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 
 		update_curr(cfs_rq);
 
-		if (dequeue) {
+		إذا (dequeue) {
 			dequeue_entity(cfs_rq, se, flags);
 			/* Don't dequeue parent if it has other entities besides us */
-			if (cfs_rq->load.weight)
+			إذا (cfs_rq->load.weight)
 				dequeue = false;
-		} else {
+		} وإلا {
 			update_load_avg(cfs_rq, se, UPDATE_TG);
 			se_update_runnable(se);
 			update_cfs_group(se);
@@ -8274,10 +8274,10 @@ static void dequeue_hierarchy(struct task_struct *p, int flags)
 		cfs_rq->h_nr_queued--;
 		cfs_rq->h_nr_idle -= h_nr_idle;
 
-		if (cfs_rq_is_idle(cfs_rq))
+		إذا (cfs_rq_is_idle(cfs_rq))
 			h_nr_idle = 1;
 
-		if (throttled_hierarchy(cfs_rq) && task_throttled)
+		إذا (throttled_hierarchy(cfs_rq) && task_throttled)
 			record_throttle_clock(cfs_rq);
 
 		flags |= DEQUEUE_SLEEP;
@@ -8292,10 +8292,10 @@ static void dequeue_hierarchy(struct task_struct *p, int flags)
  *   true  - dequeued
  *   false - delayed
  */
-static bool __dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+ساكن bool __dequeue_task(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
-	struct sched_entity *se = &p->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
+	بنية sched_entity *se = &p->se;
+	بنية cfs_rq *cfs_rq = &rq->cfs;
 	bool was_sched_idle = sched_idle_rq(rq);
 	bool task_sleep = flags & DEQUEUE_SLEEP;
 	bool task_delayed = flags & DEQUEUE_DELAYED;
@@ -8305,43 +8305,43 @@ static bool __dequeue_task(struct rq *rq, struct task_struct *p, int flags)
 	update_curr_eevdf(cfs_rq);
 	update_entity_lag(cfs_rq, se);
 
-	if (flags & DEQUEUE_DELAYED) {
+	إذا (flags & DEQUEUE_DELAYED) {
 		WARN_ON_ONCE(!se->sched_delayed);
-	} else {
+	} وإلا {
 		bool delay = task_sleep;
 		/*
 		 * DELAY_DEQUEUE relies on spurious wakeups, special task
 		 * states must not suffer spurious wakeups, excempt them.
 		 */
-		if (flags & (DEQUEUE_SPECIAL | DEQUEUE_THROTTLE))
+		إذا (flags & (DEQUEUE_SPECIAL | DEQUEUE_THROTTLE))
 			delay = false;
 
 		WARN_ON_ONCE(delay && se->sched_delayed);
 
-		if (sched_feat(DELAY_DEQUEUE) && delay &&
+		إذا (sched_feat(DELAY_DEQUEUE) && delay &&
 		    !entity_eligible(cfs_rq, se)) {
 			update_load_avg(cfs_rq_of(se), se, UPDATE_UTIL_EST);
 			set_delayed(se);
-			return false;
+			إرجاع false;
 		}
 	}
 
 	dequeue_hierarchy(p, flags);
 
-	if (sched_feat(PLACE_REL_DEADLINE) && !task_sleep) {
+	إذا (sched_feat(PLACE_REL_DEADLINE) && !task_sleep) {
 		se->deadline -= se->vruntime;
 		se->rel_deadline = 1;
 	}
-	if (se != cfs_rq->curr)
+	إذا (se != cfs_rq->curr)
 		__dequeue_entity(cfs_rq, se);
 
 	sub_nr_running(rq, 1);
 
 	/* balance early to pull high priority tasks */
-	if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
+	إذا (unlikely(!was_sched_idle && sched_idle_rq(rq)))
 		rq->next_balance = jiffies;
 
-	if (task_delayed) {
+	إذا (task_delayed) {
 		clear_delayed(se);
 
 		WARN_ON_ONCE(!task_sleep);
@@ -8355,7 +8355,7 @@ static bool __dequeue_task(struct rq *rq, struct task_struct *p, int flags)
 		__block_task(rq, p);
 	}
 
-	return true;
+	إرجاع true;
 }
 
 /*
@@ -8363,50 +8363,50 @@ static bool __dequeue_task(struct rq *rq, struct task_struct *p, int flags)
  * decreased. We remove the task from the rbtree and
  * update the fair scheduling stats:
  */
-static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ساكن bool dequeue_task_fair(بنية rq *rq, بنية task_struct *p, صحيح flags)
 {
-	if (task_is_throttled(p)) {
+	إذا (task_is_throttled(p)) {
 		dequeue_throttled_task(p, flags);
-		return true;
+		إرجاع true;
 	}
 
-	if (!p->se.sched_delayed)
+	إذا (!p->se.sched_delayed)
 		util_est_dequeue(&rq->cfs, p);
 
-	if (!__dequeue_task(rq, p, flags))
-		return false;
+	إذا (!__dequeue_task(rq, p, flags))
+		إرجاع false;
 
 	/*
 	 * Must not reference @p after __dequeue_task(DEQUEUE_DELAYED).
 	 */
-	return true;
+	إرجاع true;
 }
 
-static inline unsigned int cfs_h_nr_delayed(struct rq *rq)
+ساكن مضمن unsigned صحيح cfs_h_nr_delayed(بنية rq *rq)
 {
-	return (rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable);
+	إرجاع (rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable);
 }
 
 /* Working cpumask for: sched_balance_rq(), sched_balance_newidle(). */
-static DEFINE_PER_CPU(cpumask_var_t, load_balance_mask);
-static DEFINE_PER_CPU(cpumask_var_t, select_rq_mask);
-static DEFINE_PER_CPU(cpumask_var_t, should_we_balance_tmpmask);
+ساكن DEFINE_PER_CPU(cpumask_var_t, load_balance_mask);
+ساكن DEFINE_PER_CPU(cpumask_var_t, select_rq_mask);
+ساكن DEFINE_PER_CPU(cpumask_var_t, should_we_balance_tmpmask);
 
 #ifdef CONFIG_NO_HZ_COMMON
 
-static struct {
+ساكن بنية {
 	cpumask_var_t idle_cpus_mask;
-	int has_blocked_load;		/* Idle CPUS has blocked load */
-	int needs_update;		/* Newly idle CPUs need their next_balance collated */
+	صحيح has_blocked_load;		/* Idle CPUS has blocked load */
+	صحيح needs_update;		/* Newly idle CPUs need their next_balance collated */
 	unsigned long next_balance;     /* in jiffy units */
 	unsigned long next_blocked;	/* Next update of blocked load in jiffies */
 } nohz ____cacheline_aligned;
 
 #endif /* CONFIG_NO_HZ_COMMON */
 
-static unsigned long cpu_load(struct rq *rq)
+ساكن unsigned long cpu_load(بنية rq *rq)
 {
-	return cfs_rq_load_avg(&rq->cfs);
+	إرجاع cfs_rq_load_avg(&rq->cfs);
 }
 
 /*
@@ -8422,14 +8422,14 @@ static unsigned long cpu_load(struct rq *rq)
  * the specified task, whenever the task is currently contributing to the CPU
  * load.
  */
-static unsigned long cpu_load_without(struct rq *rq, struct task_struct *p)
+ساكن unsigned long cpu_load_without(بنية rq *rq, بنية task_struct *p)
 {
-	struct cfs_rq *cfs_rq;
-	unsigned int load;
+	بنية cfs_rq *cfs_rq;
+	unsigned صحيح load;
 
 	/* Task has no contribution or is new */
-	if (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-		return cpu_load(rq);
+	إذا (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
+		إرجاع cpu_load(rq);
 
 	cfs_rq = &rq->cfs;
 	load = READ_ONCE(cfs_rq->avg.load_avg);
@@ -8437,22 +8437,22 @@ static unsigned long cpu_load_without(struct rq *rq, struct task_struct *p)
 	/* Discount task's util from CPU's util */
 	lsub_positive(&load, task_h_load(p));
 
-	return load;
+	إرجاع load;
 }
 
-static unsigned long cpu_runnable(struct rq *rq)
+ساكن unsigned long cpu_runnable(بنية rq *rq)
 {
-	return cfs_rq_runnable_avg(&rq->cfs);
+	إرجاع cfs_rq_runnable_avg(&rq->cfs);
 }
 
-static unsigned long cpu_runnable_without(struct rq *rq, struct task_struct *p)
+ساكن unsigned long cpu_runnable_without(بنية rq *rq, بنية task_struct *p)
 {
-	struct cfs_rq *cfs_rq;
-	unsigned int runnable;
+	بنية cfs_rq *cfs_rq;
+	unsigned صحيح runnable;
 
 	/* Task has no contribution or is new */
-	if (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-		return cpu_runnable(rq);
+	إذا (cpu_of(rq) != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
+		إرجاع cpu_runnable(rq);
 
 	cfs_rq = &rq->cfs;
 	runnable = READ_ONCE(cfs_rq->avg.runnable_avg);
@@ -8460,26 +8460,26 @@ static unsigned long cpu_runnable_without(struct rq *rq, struct task_struct *p)
 	/* Discount task's runnable from CPU's runnable */
 	lsub_positive(&runnable, p->se.avg.runnable_avg);
 
-	return runnable;
+	إرجاع runnable;
 }
 
-static unsigned long capacity_of(int cpu)
+ساكن unsigned long capacity_of(صحيح cpu)
 {
-	return cpu_rq(cpu)->cpu_capacity;
+	إرجاع cpu_rq(cpu)->cpu_capacity;
 }
 
-static void record_wakee(struct task_struct *p)
+ساكن فراغ record_wakee(بنية task_struct *p)
 {
 	/*
 	 * Only decay a single time; tasks that have less then 1 wakeup per
 	 * jiffy will not have built up many flips.
 	 */
-	if (time_after(jiffies, current->wakee_flip_decay_ts + HZ)) {
+	إذا (time_after(jiffies, current->wakee_flip_decay_ts + HZ)) {
 		current->wakee_flips >>= 1;
 		current->wakee_flip_decay_ts = jiffies;
 	}
 
-	if (current->last_wakee != p) {
+	إذا (current->last_wakee != p) {
 		current->last_wakee = p;
 		current->wakee_flips++;
 	}
@@ -8502,17 +8502,17 @@ static void record_wakee(struct task_struct *p)
  * whatever is irrelevant, spread criteria is apparent partner count exceeds
  * socket size.
  */
-static int wake_wide(struct task_struct *p)
+ساكن صحيح wake_wide(بنية task_struct *p)
 {
-	unsigned int master = current->wakee_flips;
-	unsigned int slave = p->wakee_flips;
-	int factor = __this_cpu_read(sd_llc_size);
+	unsigned صحيح master = current->wakee_flips;
+	unsigned صحيح slave = p->wakee_flips;
+	صحيح factor = __this_cpu_read(sd_llc_size);
 
-	if (master < slave)
+	إذا (master < slave)
 		swap(master, slave);
-	if (slave < factor || master < slave * factor)
-		return 0;
-	return 1;
+	إذا (slave < factor || master < slave * factor)
+		إرجاع 0;
+	إرجاع 1;
 }
 
 /*
@@ -8527,8 +8527,8 @@ static int wake_wide(struct task_struct *p)
  *			  scheduling latency of the CPUs. This seems to work
  *			  for the overloaded case.
  */
-static int
-wake_affine_idle(int this_cpu, int prev_cpu, int sync)
+ساكن صحيح
+wake_affine_idle(صحيح this_cpu, صحيح prev_cpu, صحيح sync)
 {
 	/*
 	 * If this_cpu is idle, it implies the wakeup is from interrupt
@@ -8542,36 +8542,36 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
 	 * a cpufreq perspective, it's better to have higher utilisation
 	 * on one CPU.
 	 */
-	if (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
-		return available_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
+	إذا (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
+		إرجاع available_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
 
-	if (sync) {
-		struct rq *rq = cpu_rq(this_cpu);
+	إذا (sync) {
+		بنية rq *rq = cpu_rq(this_cpu);
 
-		if ((rq->nr_running - cfs_h_nr_delayed(rq)) == 1)
-			return this_cpu;
+		إذا ((rq->nr_running - cfs_h_nr_delayed(rq)) == 1)
+			إرجاع this_cpu;
 	}
 
-	if (available_idle_cpu(prev_cpu))
-		return prev_cpu;
+	إذا (available_idle_cpu(prev_cpu))
+		إرجاع prev_cpu;
 
-	return nr_cpumask_bits;
+	إرجاع nr_cpumask_bits;
 }
 
-static int
-wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
-		   int this_cpu, int prev_cpu, int sync)
+ساكن صحيح
+wake_affine_weight(بنية sched_domain *sd, بنية task_struct *p,
+		   صحيح this_cpu, صحيح prev_cpu, صحيح sync)
 {
 	s64 this_eff_load, prev_eff_load;
 	unsigned long task_load;
 
 	this_eff_load = cpu_load(cpu_rq(this_cpu));
 
-	if (sync) {
+	إذا (sync) {
 		unsigned long current_load = task_h_load(current);
 
-		if (current_load > this_eff_load)
-			return this_cpu;
+		إذا (current_load > this_eff_load)
+			إرجاع this_cpu;
 
 		this_eff_load -= current_load;
 	}
@@ -8579,13 +8579,13 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
 	task_load = task_h_load(p);
 
 	this_eff_load += task_load;
-	if (sched_feat(WA_BIAS))
+	إذا (sched_feat(WA_BIAS))
 		this_eff_load *= 100;
 	this_eff_load *= capacity_of(prev_cpu);
 
 	prev_eff_load = cpu_load(cpu_rq(prev_cpu));
 	prev_eff_load -= task_load;
-	if (sched_feat(WA_BIAS))
+	إذا (sched_feat(WA_BIAS))
 		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
 	prev_eff_load *= capacity_of(this_cpu);
 
@@ -8595,198 +8595,198 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
 	 * stacking the wakee on top of the waker if no other CPU is
 	 * idle.
 	 */
-	if (sync)
+	إذا (sync)
 		prev_eff_load += 1;
 
-	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
+	إرجاع this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
 }
 
-static int wake_affine(struct sched_domain *sd, struct task_struct *p,
-		       int this_cpu, int prev_cpu, int sync)
+ساكن صحيح wake_affine(بنية sched_domain *sd, بنية task_struct *p,
+		       صحيح this_cpu, صحيح prev_cpu, صحيح sync)
 {
-	int target = nr_cpumask_bits;
+	صحيح target = nr_cpumask_bits;
 
-	if (sched_feat(WA_IDLE))
+	إذا (sched_feat(WA_IDLE))
 		target = wake_affine_idle(this_cpu, prev_cpu, sync);
 
-	if (sched_feat(WA_WEIGHT) && target == nr_cpumask_bits)
+	إذا (sched_feat(WA_WEIGHT) && target == nr_cpumask_bits)
 		target = wake_affine_weight(sd, p, this_cpu, prev_cpu, sync);
 
 	schedstat_inc(p->stats.nr_wakeups_affine_attempts);
-	if (target != this_cpu)
-		return prev_cpu;
+	إذا (target != this_cpu)
+		إرجاع prev_cpu;
 
 	schedstat_inc(sd->ttwu_move_affine);
 	schedstat_inc(p->stats.nr_wakeups_affine);
-	return target;
+	إرجاع target;
 }
 
-static struct sched_group *
-sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int this_cpu);
+ساكن بنية sched_group *
+sched_balance_find_dst_group(بنية sched_domain *sd, بنية task_struct *p, صحيح this_cpu);
 
 /*
  * sched_balance_find_dst_group_cpu - find the idlest CPU among the CPUs in the group.
  */
-static int
-sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *p, int this_cpu)
+ساكن صحيح
+sched_balance_find_dst_group_cpu(بنية sched_group *group, بنية task_struct *p, صحيح this_cpu)
 {
 	unsigned long load, min_load = ULONG_MAX;
 	u64 min_exit_latency = U64_MAX;
-	unsigned int nr_candidates = 0;
-	int least_loaded_cpu = this_cpu;
-	int shallowest_idle_cpu = -1;
-	int i;
+	unsigned صحيح nr_candidates = 0;
+	صحيح least_loaded_cpu = this_cpu;
+	صحيح shallowest_idle_cpu = -1;
+	صحيح i;
 
 	/* Check if we have any choice: */
-	if (group->group_weight == 1)
-		return cpumask_first(sched_group_span(group));
+	إذا (group->group_weight == 1)
+		إرجاع cpumask_first(sched_group_span(group));
 
 	/* Traverse only the allowed CPUs */
 	for_each_cpu_and(i, sched_group_span(group), p->cpus_ptr) {
-		struct rq *rq = cpu_rq(i);
+		بنية rq *rq = cpu_rq(i);
 
-		if (!sched_core_cookie_match(rq, p))
-			continue;
+		إذا (!sched_core_cookie_match(rq, p))
+			استمر;
 
-		if (choose_sched_idle_rq(rq, p))
-			return i;
+		إذا (choose_sched_idle_rq(rq, p))
+			إرجاع i;
 
-		if (available_idle_cpu(i)) {
-			struct cpuidle_state *idle = idle_get_state(rq);
+		إذا (available_idle_cpu(i)) {
+			بنية cpuidle_state *idle = idle_get_state(rq);
 			u64 exit_latency = idle ? idle->exit_latency : U64_MAX;
 
-			if (shallowest_idle_cpu == -1 || exit_latency < min_exit_latency) {
+			إذا (shallowest_idle_cpu == -1 || exit_latency < min_exit_latency) {
 				min_exit_latency = exit_latency;
 				shallowest_idle_cpu = i;
 				nr_candidates = 1;
-			} else if (exit_latency == min_exit_latency) {
+			} وإلا إذا (exit_latency == min_exit_latency) {
 				nr_candidates++;
-				if (!reciprocal_scale(sched_rng(), nr_candidates))
+				إذا (!reciprocal_scale(sched_rng(), nr_candidates))
 					shallowest_idle_cpu = i;
 			}
-		} else if (shallowest_idle_cpu == -1) {
+		} وإلا إذا (shallowest_idle_cpu == -1) {
 			load = cpu_load(cpu_rq(i));
-			if (load < min_load) {
+			إذا (load < min_load) {
 				min_load = load;
 				least_loaded_cpu = i;
 			}
 		}
 	}
 
-	return shallowest_idle_cpu != -1 ? shallowest_idle_cpu : least_loaded_cpu;
+	إرجاع shallowest_idle_cpu != -1 ? shallowest_idle_cpu : least_loaded_cpu;
 }
 
-static inline int sched_balance_find_dst_cpu(struct sched_domain *sd, struct task_struct *p,
-				  int cpu, int prev_cpu, int sd_flag)
+ساكن مضمن صحيح sched_balance_find_dst_cpu(بنية sched_domain *sd, بنية task_struct *p,
+				  صحيح cpu, صحيح prev_cpu, صحيح sd_flag)
 {
-	int new_cpu = cpu;
+	صحيح new_cpu = cpu;
 
-	if (!cpumask_intersects(sched_domain_span(sd), p->cpus_ptr))
-		return prev_cpu;
+	إذا (!cpumask_intersects(sched_domain_span(sd), p->cpus_ptr))
+		إرجاع prev_cpu;
 
 	/*
 	 * We need task's util for cpu_util_without, sync it up to
 	 * prev_cpu's last_update_time.
 	 */
-	if (!(sd_flag & SD_BALANCE_FORK))
+	إذا (!(sd_flag & SD_BALANCE_FORK))
 		sync_entity_load_avg(&p->se);
 
-	while (sd) {
-		struct sched_group *group;
-		struct sched_domain *tmp;
-		int weight;
+	بينما (sd) {
+		بنية sched_group *group;
+		بنية sched_domain *tmp;
+		صحيح weight;
 
-		if (!(sd->flags & sd_flag)) {
+		إذا (!(sd->flags & sd_flag)) {
 			sd = sd->child;
-			continue;
+			استمر;
 		}
 
 		group = sched_balance_find_dst_group(sd, p, cpu);
-		if (!group) {
+		إذا (!group) {
 			sd = sd->child;
-			continue;
+			استمر;
 		}
 
 		new_cpu = sched_balance_find_dst_group_cpu(group, p, cpu);
-		if (new_cpu == cpu) {
+		إذا (new_cpu == cpu) {
 			/* Now try balancing at a lower domain level of 'cpu': */
 			sd = sd->child;
-			continue;
+			استمر;
 		}
 
 		/* Now try balancing at a lower domain level of 'new_cpu': */
 		cpu = new_cpu;
 		weight = sd->span_weight;
-		sd = NULL;
+		sd = عدم;
 		for_each_domain(cpu, tmp) {
-			if (weight <= tmp->span_weight)
-				break;
-			if (tmp->flags & sd_flag)
+			إذا (weight <= tmp->span_weight)
+				اكسر;
+			إذا (tmp->flags & sd_flag)
 				sd = tmp;
 		}
 	}
 
-	return new_cpu;
+	إرجاع new_cpu;
 }
 
-static inline int __select_idle_cpu(int cpu, struct task_struct *p)
+ساكن مضمن صحيح __select_idle_cpu(صحيح cpu, بنية task_struct *p)
 {
-	if (choose_idle_cpu(cpu, p) && sched_cpu_cookie_match(cpu_rq(cpu), p))
-		return cpu;
+	إذا (choose_idle_cpu(cpu, p) && sched_cpu_cookie_match(cpu_rq(cpu), p))
+		إرجاع cpu;
 
-	return -1;
+	إرجاع -1;
 }
 
-DEFINE_STATIC_KEY_FALSE(sched_smt_present);
-EXPORT_SYMBOL_GPL(sched_smt_present);
+DEFINE_STATIC_مفتاح_FALSE(sched_smt_present);
+EXPORT_رمز_GPL(sched_smt_present);
 
-static inline void set_idle_cores(int cpu, int val)
+ساكن مضمن فراغ set_idle_cores(صحيح cpu, صحيح val)
 {
-	struct sched_domain_shared *sds;
+	بنية sched_domain_shared *sds;
 
 	sds = rcu_dereference_all(per_cpu(sd_balance_shared, cpu));
-	if (sds)
+	إذا (sds)
 		WRITE_ONCE(sds->has_idle_cores, val);
 }
 
-static inline bool test_idle_cores(int cpu)
+ساكن مضمن bool test_idle_cores(صحيح cpu)
 {
-	struct sched_domain_shared *sds;
+	بنية sched_domain_shared *sds;
 
 	sds = rcu_dereference_all(per_cpu(sd_balance_shared, cpu));
-	if (sds)
-		return READ_ONCE(sds->has_idle_cores);
+	إذا (sds)
+		إرجاع READ_ONCE(sds->has_idle_cores);
 
-	return false;
+	إرجاع false;
 }
 
 /*
  * Redirect a CPU to a higher-priority available sibling in its SMT domain,
  * subject to task affinity.
  */
-static inline int select_idle_smt_cpu(struct task_struct *p, int cpu)
+ساكن مضمن صحيح select_idle_smt_cpu(بنية task_struct *p, صحيح cpu)
 {
-	struct sched_domain *sd;
-	int best = cpu;
-	int sibling;
+	بنية sched_domain *sd;
+	صحيح best = cpu;
+	صحيح sibling;
 
-	if (!sched_smt_active())
-		return cpu;
+	إذا (!sched_smt_active())
+		إرجاع cpu;
 
 	sd = rcu_dereference_all(cpu_rq(cpu)->sd);
-	if (!sd || !(sd->flags & SD_SHARE_CPUCAPACITY) ||
+	إذا (!sd || !(sd->flags & SD_SHARE_CPUCAPACITY) ||
 	    !(sd->flags & SD_ASYM_PACKING))
-		return cpu;
+		إرجاع cpu;
 
 	for_each_cpu_and(sibling, sched_domain_span(sd), p->cpus_ptr) {
-		if (sibling == best || !choose_idle_cpu(sibling, p))
-			continue;
+		إذا (sibling == best || !choose_idle_cpu(sibling, p))
+			استمر;
 
-		if (sched_asym_prefer(sibling, best))
+		إذا (sched_asym_prefer(sibling, best))
 			best = sibling;
 	}
 
-	return best;
+	إرجاع best;
 }
 
 /*
@@ -8796,21 +8796,21 @@ static inline int select_idle_smt_cpu(struct task_struct *p, int cpu)
  * Since SMT siblings share all cache levels, inspecting this limited remote
  * state should be fairly cheap.
  */
-void __update_idle_core(struct rq *rq)
+فراغ __update_idle_core(بنية rq *rq)
 {
-	int core = cpu_of(rq);
-	int cpu;
+	صحيح core = cpu_of(rq);
+	صحيح cpu;
 
 	rcu_read_lock();
-	if (test_idle_cores(core))
-		goto unlock;
+	إذا (test_idle_cores(core))
+		اذهب unlock;
 
 	for_each_cpu(cpu, cpu_smt_mask(core)) {
-		if (cpu == core)
-			continue;
+		إذا (cpu == core)
+			استمر;
 
-		if (!available_idle_cpu(cpu))
-			goto unlock;
+		إذا (!available_idle_cpu(cpu))
+			اذهب unlock;
 	}
 
 	set_idle_cores(core, 1);
@@ -8824,56 +8824,56 @@ unlock:
  * sd_balance_shared->has_idle_cores and enabled through update_idle_core()
  * above.
  */
-static int select_idle_core(struct task_struct *p, int core, struct cpumask *cpus, int *idle_cpu)
+ساكن صحيح select_idle_core(بنية task_struct *p, صحيح core, بنية cpumask *cpus, صحيح *idle_cpu)
 {
 	bool idle = true;
-	int cpu;
+	صحيح cpu;
 
 	for_each_cpu(cpu, cpu_smt_mask(core)) {
-		if (!available_idle_cpu(cpu)) {
+		إذا (!available_idle_cpu(cpu)) {
 			idle = false;
-			if (*idle_cpu == -1) {
-				if (choose_sched_idle_rq(cpu_rq(cpu), p) &&
+			إذا (*idle_cpu == -1) {
+				إذا (choose_sched_idle_rq(cpu_rq(cpu), p) &&
 				    cpumask_test_cpu(cpu, cpus)) {
 					*idle_cpu = cpu;
-					break;
+					اكسر;
 				}
-				continue;
+				استمر;
 			}
-			break;
+			اكسر;
 		}
-		if (*idle_cpu == -1 && cpumask_test_cpu(cpu, cpus))
+		إذا (*idle_cpu == -1 && cpumask_test_cpu(cpu, cpus))
 			*idle_cpu = cpu;
 	}
 
-	if (idle)
-		return core;
+	إذا (idle)
+		إرجاع core;
 
 	cpumask_andnot(cpus, cpus, cpu_smt_mask(core));
-	return -1;
+	إرجاع -1;
 }
 
 /*
  * Scan the local SMT mask for idle CPUs.
  */
-static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int target)
+ساكن صحيح select_idle_smt(بنية task_struct *p, بنية sched_domain *sd, صحيح target)
 {
-	int cpu;
+	صحيح cpu;
 
 	for_each_cpu_and(cpu, cpu_smt_mask(target), p->cpus_ptr) {
-		if (cpu == target)
-			continue;
+		إذا (cpu == target)
+			استمر;
 		/*
 		 * Check if the CPU is in the LLC scheduling domain of @target.
 		 * Due to isolcpus, there is no guarantee that all the siblings are in the domain.
 		 */
-		if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
-			continue;
-		if (choose_idle_cpu(cpu, p))
-			return cpu;
+		إذا (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
+			استمر;
+		إذا (choose_idle_cpu(cpu, p))
+			إرجاع cpu;
 	}
 
-	return -1;
+	إرجاع -1;
 }
 
 /*
@@ -8881,12 +8881,12 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
  * comparing the average scan cost (tracked in sd->avg_scan_cost) against the
  * average idle time for this rq (as found in rq->avg_idle).
  */
-static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool has_idle_core, int target)
+ساكن صحيح select_idle_cpu(بنية task_struct *p, بنية sched_domain *sd, bool has_idle_core, صحيح target)
 {
-	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
-	int i, cpu, idle_cpu = -1, nr = INT_MAX;
+	بنية cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
+	صحيح i, cpu, idle_cpu = -1, nr = INT_MAX;
 
-	if (sched_feat(SIS_UTIL) && sd->shared) {
+	إذا (sched_feat(SIS_UTIL) && sd->shared) {
 		/*
 		 * Increment because !--nr is the condition to stop scan.
 		 *
@@ -8898,31 +8898,31 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool 
 		 */
 		nr = READ_ONCE(sd->shared->nr_idle_scan) + 1;
 		/* overloaded LLC is unlikely to have idle cpu/core */
-		if (nr == 1)
-			return -1;
+		إذا (nr == 1)
+			إرجاع -1;
 	}
 
-	if (!cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr))
-		return -1;
+	إذا (!cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr))
+		إرجاع -1;
 
-	if (static_branch_unlikely(&sched_cluster_active)) {
-		struct sched_group *sg = sd->groups;
+	إذا (static_branch_unlikely(&sched_cluster_active)) {
+		بنية sched_group *sg = sd->groups;
 
-		if (sg->flags & SD_CLUSTER) {
+		إذا (sg->flags & SD_CLUSTER) {
 			for_each_cpu_wrap(cpu, sched_group_span(sg), target + 1) {
-				if (!cpumask_test_cpu(cpu, cpus))
-					continue;
+				إذا (!cpumask_test_cpu(cpu, cpus))
+					استمر;
 
-				if (has_idle_core) {
+				إذا (has_idle_core) {
 					i = select_idle_core(p, cpu, cpus, &idle_cpu);
-					if ((unsigned int)i < nr_cpumask_bits)
-						return i;
-				} else {
-					if (--nr <= 0)
-						return -1;
+					إذا ((unsigned صحيح)i < nr_cpumask_bits)
+						إرجاع i;
+				} وإلا {
+					إذا (--nr <= 0)
+						إرجاع -1;
 					idle_cpu = __select_idle_cpu(cpu, p);
-					if ((unsigned int)idle_cpu < nr_cpumask_bits)
-						return idle_cpu;
+					إذا ((unsigned صحيح)idle_cpu < nr_cpumask_bits)
+						إرجاع idle_cpu;
 				}
 			}
 			cpumask_andnot(cpus, cpus, sched_group_span(sg));
@@ -8930,24 +8930,24 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool 
 	}
 
 	for_each_cpu_wrap(cpu, cpus, target + 1) {
-		if (has_idle_core) {
+		إذا (has_idle_core) {
 			i = select_idle_core(p, cpu, cpus, &idle_cpu);
-			if ((unsigned int)i < nr_cpumask_bits)
-				return i;
+			إذا ((unsigned صحيح)i < nr_cpumask_bits)
+				إرجاع i;
 
-		} else {
-			if (--nr <= 0)
-				return -1;
+		} وإلا {
+			إذا (--nr <= 0)
+				إرجاع -1;
 			idle_cpu = __select_idle_cpu(cpu, p);
-			if ((unsigned int)idle_cpu < nr_cpumask_bits)
-				break;
+			إذا ((unsigned صحيح)idle_cpu < nr_cpumask_bits)
+				اكسر;
 		}
 	}
 
-	if (has_idle_core)
+	إذا (has_idle_core)
 		set_idle_cores(target, false);
 
-	return idle_cpu;
+	إرجاع idle_cpu;
 }
 
 /*
@@ -8987,7 +8987,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool 
  * ASYM_IDLE_THREAD_FITS (-2) is never rebased because a fully-fitting idle-core
  * candidate early-returns from select_idle_capacity().
  */
-enum asym_fits_state {
+تعداد asym_fits_state {
 	ASYM_IDLE_UCLAMP_MISFIT = -4,
 	ASYM_IDLE_COMPLETE_MISFIT,
 	ASYM_IDLE_THREAD_FITS,
@@ -9003,8 +9003,8 @@ enum asym_fits_state {
  * the task fits. If no CPU is big enough, but there are idle ones, try to
  * maximize capacity.
  */
-static int
-select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
+ساكن صحيح
+select_idle_capacity(بنية task_struct *p, بنية sched_domain *sd, صحيح target)
 {
 	/*
 	 * On !SMT systems, has_idle_core is always false and preferred_core
@@ -9013,27 +9013,27 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 	 */
 	bool has_idle_core = sched_smt_active() && test_idle_cores(target);
 	unsigned long task_util, util_min, util_max, best_cap = 0;
-	int fits, best_fits = ASYM_IDLE_THREAD_MISFIT;
-	int cpu, best_cpu = -1;
-	struct cpumask *cpus;
-	int nr = INT_MAX;
+	صحيح fits, best_fits = ASYM_IDLE_THREAD_MISFIT;
+	صحيح cpu, best_cpu = -1;
+	بنية cpumask *cpus;
+	صحيح nr = INT_MAX;
 
 	cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
 	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
 
 	task_util = task_util_est(p);
-	util_min = uclamp_eff_value(p, UCLAMP_MIN);
-	util_max = uclamp_eff_value(p, UCLAMP_MAX);
+	util_min = uclamp_eff_قيمة(p, UCLAMP_MIN);
+	util_max = uclamp_eff_قيمة(p, UCLAMP_MAX);
 
-	if (sched_feat(SIS_UTIL) && sd->shared) {
+	إذا (sched_feat(SIS_UTIL) && sd->shared) {
 		/*
 		 * Same nr_idle_scan hint as select_idle_cpu(), nr only limits
 		 * the scan when not preferring an idle core.
 		 */
 		nr = READ_ONCE(sd->shared->nr_idle_scan) + 1;
 		/* overloaded domain is unlikely to have idle cpu/core */
-		if (nr == 1)
-			return -1;
+		إذا (nr == 1)
+			إرجاع -1;
 	}
 
 	for_each_cpu_wrap(cpu, cpus, target) {
@@ -9044,11 +9044,11 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 		 * Stop when the nr_idle_scan is exhausted (mirrors
 		 * select_idle_cpu() logic).
 		 */
-		if (!has_idle_core && --nr <= 0)
-			return best_cpu;
+		إذا (!has_idle_core && --nr <= 0)
+			إرجاع best_cpu;
 
-		if (!choose_idle_cpu(cpu, p))
-			continue;
+		إذا (!choose_idle_cpu(cpu, p))
+			استمر;
 
 		fits = util_fits_cpu(task_util, util_min, util_max, cpu);
 
@@ -9059,13 +9059,13 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 		 * Short-circuit the rank-based selection and return
 		 * immediately.
 		 */
-		if (fits > 0 && preferred_core)
-			return cpu;
+		إذا (fits > 0 && preferred_core)
+			إرجاع cpu;
 		/*
 		 * Only the min performance hint (i.e. uclamp_min) doesn't fit.
 		 * Look for the CPU with best capacity.
 		 */
-		else if (fits < 0)
+		وإلا إذا (fits < 0)
 			cpu_cap = get_actual_cpu_capacity(cpu);
 		/*
 		 * fits > 0 implies we are not on a preferred core, but the util
@@ -9076,7 +9076,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 		 *    ASYM_IDLE_THREAD_UCLAMP_MISFIT - fits with the exception of UCLAMP_MIN
 		 *    ASYM_IDLE_THREAD_FITS - fits with the exception of preferred_core
 		 */
-		else if (fits > 0)
+		وإلا إذا (fits > 0)
 			fits = ASYM_IDLE_THREAD_FITS;
 
 		/*
@@ -9089,14 +9089,14 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 		 * A fully fitting idle core would have returned early and hence
 		 * fits > 0 for preferred_core need not be dealt with.
 		 */
-		if (preferred_core)
+		إذا (preferred_core)
 			fits += ASYM_IDLE_CORE_BIAS;
 
 		/*
 		 * First, select CPU which fits better (lower is more preferred).
 		 * Then, select the one with best capacity at same level.
 		 */
-		if ((fits < best_fits) ||
+		إذا ((fits < best_fits) ||
 		    ((fits == best_fits) && (cpu_cap > best_cap))) {
 			best_cap = cpu_cap;
 			best_cpu = cpu;
@@ -9114,18 +9114,18 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
 	 * select_idle_cpu() tail that clears idle cores must live here when the
 	 * idle-core preference did not win.
 	 */
-	if (has_idle_core && best_fits > ASYM_IDLE_COMPLETE_MISFIT)
+	إذا (has_idle_core && best_fits > ASYM_IDLE_COMPLETE_MISFIT)
 		set_idle_cores(target, false);
 
-	return best_cpu;
+	إرجاع best_cpu;
 }
 
-static inline bool asym_fits_cpu(unsigned long util,
+ساكن مضمن bool asym_fits_cpu(unsigned long util,
 				 unsigned long util_min,
 				 unsigned long util_max,
-				 int cpu)
+				 صحيح cpu)
 {
-	if (sched_asym_cpucap_active()) {
+	إذا (sched_asym_cpucap_active()) {
 		/*
 		 * Return true only if the cpu fully fits the task requirements
 		 * which include the utilization and the performance hints.
@@ -9138,32 +9138,32 @@ static inline bool asym_fits_cpu(unsigned long util,
 		 * recent_used_cpu) idle-core-aware on ASYM+SMT, which the
 		 * NO_ASYM path does not do.
 		 */
-		return (!sched_smt_active() || is_core_idle(cpu)) &&
+		إرجاع (!sched_smt_active() || is_core_idle(cpu)) &&
 		       (util_fits_cpu(util, util_min, util_max, cpu) > 0);
 	}
 
-	return true;
+	إرجاع true;
 }
 
 /*
  * Try and locate an idle core/thread in the LLC cache domain.
  */
-static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ساكن صحيح select_idle_sibling(بنية task_struct *p, صحيح prev, صحيح target)
 {
 	bool has_idle_core = false;
-	struct sched_domain *sd;
+	بنية sched_domain *sd;
 	unsigned long task_util, util_min, util_max;
-	int i, recent_used_cpu, prev_aff = -1;
+	صحيح i, recent_used_cpu, prev_aff = -1;
 
 	/*
 	 * On asymmetric system, update task utilization because we will check
 	 * that the task fits with CPU's capacity.
 	 */
-	if (sched_asym_cpucap_active()) {
+	إذا (sched_asym_cpucap_active()) {
 		sync_entity_load_avg(&p->se);
 		task_util = task_util_est(p);
-		util_min = uclamp_eff_value(p, UCLAMP_MIN);
-		util_max = uclamp_eff_value(p, UCLAMP_MAX);
+		util_min = uclamp_eff_قيمة(p, UCLAMP_MIN);
+		util_max = uclamp_eff_قيمة(p, UCLAMP_MAX);
 	}
 
 	/*
@@ -9171,21 +9171,21 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
 	 */
 	lockdep_assert_irqs_disabled();
 
-	if (choose_idle_cpu(target, p) &&
+	إذا (choose_idle_cpu(target, p) &&
 	    asym_fits_cpu(task_util, util_min, util_max, target))
-		goto select_smt_priority;
+		اذهب select_smt_priority;
 
 	/*
 	 * If the previous CPU is cache affine and idle, don't be stupid:
 	 */
-	if (prev != target && cpus_share_cache(prev, target) &&
+	إذا (prev != target && cpus_share_cache(prev, target) &&
 	    choose_idle_cpu(prev, p) &&
 	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
 
-		if (!static_branch_unlikely(&sched_cluster_active) ||
+		إذا (!static_branch_unlikely(&sched_cluster_active) ||
 		    cpus_share_resources(prev, target)) {
 			target = prev;
-			goto select_smt_priority;
+			اذهب select_smt_priority;
 		}
 
 		prev_aff = prev;
@@ -9199,32 +9199,32 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
 	 * essentially a sync wakeup. An obvious example of this
 	 * pattern is IO completions.
 	 */
-	if (is_per_cpu_kthread(current) &&
+	إذا (is_per_cpu_kthread(current) &&
 	    in_task() &&
 	    prev == smp_processor_id() &&
 	    this_rq()->nr_running <= 1 &&
 	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
 		target = prev;
-		goto select_smt_priority;
+		اذهب select_smt_priority;
 	}
 
 	/* Check a recently used CPU as a potential idle candidate: */
 	recent_used_cpu = p->recent_used_cpu;
 	p->recent_used_cpu = prev;
-	if (recent_used_cpu != prev &&
+	إذا (recent_used_cpu != prev &&
 	    recent_used_cpu != target &&
 	    cpus_share_cache(recent_used_cpu, target) &&
 	    choose_idle_cpu(recent_used_cpu, p) &&
 	    cpumask_test_cpu(recent_used_cpu, p->cpus_ptr) &&
 	    asym_fits_cpu(task_util, util_min, util_max, recent_used_cpu)) {
 
-		if (!static_branch_unlikely(&sched_cluster_active) ||
+		إذا (!static_branch_unlikely(&sched_cluster_active) ||
 		    cpus_share_resources(recent_used_cpu, target)) {
 			target = recent_used_cpu;
-			goto select_smt_priority;
+			اذهب select_smt_priority;
 		}
 
-	} else {
+	} وإلا {
 		recent_used_cpu = -1;
 	}
 
@@ -9232,7 +9232,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
 	 * For asymmetric CPU capacity systems, our domain of interest is
 	 * sd_asym_cpucapacity rather than sd_llc.
 	 */
-	if (sched_asym_cpucap_active()) {
+	إذا (sched_asym_cpucap_active()) {
 		sd = rcu_dereference_all(per_cpu(sd_asym_cpucapacity, target));
 		/*
 		 * On an asymmetric CPU capacity system where an exclusive
@@ -9242,36 +9242,36 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
 		 * SD_ASYM_CPUCAPACITY. These should follow the usual symmetric
 		 * capacity path.
 		 */
-		if (sd) {
+		إذا (sd) {
 			i = select_idle_capacity(p, sd, target);
-			if ((unsigned int)i < nr_cpumask_bits) {
+			إذا ((unsigned صحيح)i < nr_cpumask_bits) {
 				target = i;
-				goto select_smt_priority;
+				اذهب select_smt_priority;
 			}
-			return target;
+			إرجاع target;
 		}
 	}
 
 	sd = rcu_dereference_all(per_cpu(sd_llc, target));
-	if (!sd)
-		return target;
+	إذا (!sd)
+		إرجاع target;
 
-	if (sched_smt_active()) {
+	إذا (sched_smt_active()) {
 		has_idle_core = test_idle_cores(target);
 
-		if (!has_idle_core && cpus_share_cache(prev, target)) {
+		إذا (!has_idle_core && cpus_share_cache(prev, target)) {
 			i = select_idle_smt(p, sd, prev);
-			if ((unsigned int)i < nr_cpumask_bits) {
+			إذا ((unsigned صحيح)i < nr_cpumask_bits) {
 				target = i;
-				goto select_smt_priority;
+				اذهب select_smt_priority;
 			}
 		}
 	}
 
 	i = select_idle_cpu(p, sd, has_idle_core, target);
-	if ((unsigned int)i < nr_cpumask_bits) {
+	إذا ((unsigned صحيح)i < nr_cpumask_bits) {
 		target = i;
-		goto select_smt_priority;
+		اذهب select_smt_priority;
 	}
 
 	/*
@@ -9280,19 +9280,19 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
 	 * first. But prev_cpu or recent_used_cpu may also be a good candidate,
 	 * use them if possible when no idle CPU found in select_idle_cpu().
 	 */
-	if ((unsigned int)prev_aff < nr_cpumask_bits) {
+	إذا ((unsigned صحيح)prev_aff < nr_cpumask_bits) {
 		target = prev_aff;
-		goto select_smt_priority;
+		اذهب select_smt_priority;
 	}
-	if ((unsigned int)recent_used_cpu < nr_cpumask_bits) {
+	إذا ((unsigned صحيح)recent_used_cpu < nr_cpumask_bits) {
 		target = recent_used_cpu;
-		goto select_smt_priority;
+		اذهب select_smt_priority;
 	}
 
-	return target;
+	إرجاع target;
 
 select_smt_priority:
-	return select_idle_smt_cpu(p, target);
+	إرجاع select_idle_smt_cpu(p, target);
 }
 
 /**
@@ -9336,12 +9336,12 @@ select_smt_priority:
  *
  * Return: (Boosted) (estimated) utilization for the specified CPU.
  */
-static unsigned long
-cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
+ساكن unsigned long
+cpu_util(صحيح cpu, بنية task_struct *p, صحيح dst_cpu, صحيح boost)
 {
 	bool add_task = p && task_cpu(p) != cpu && dst_cpu == cpu;
 	bool sub_task = p && task_cpu(p) == cpu && dst_cpu != cpu;
-	struct cfs_rq *cfs_rq = &cpu_rq(cpu)->cfs;
+	بنية cfs_rq *cfs_rq = &cpu_rq(cpu)->cfs;
 	unsigned long util = READ_ONCE(cfs_rq->avg.util_avg);
 	unsigned long runnable;
 
@@ -9351,22 +9351,22 @@ cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
 	 * contribution. In all the other cases @cpu is not impacted by the
 	 * migration so its util_avg is already correct.
 	 */
-	if (add_task)
+	إذا (add_task)
 		util += task_util(p);
-	else if (sub_task)
+	وإلا إذا (sub_task)
 		lsub_positive(&util, task_util(p));
 
-	if (boost) {
+	إذا (boost) {
 		runnable = READ_ONCE(cfs_rq->avg.runnable_avg);
-		if (add_task)
+		إذا (add_task)
 			runnable += READ_ONCE(p->se.avg.runnable_avg);
-		else if (sub_task)
+		وإلا إذا (sub_task)
 			lsub_positive(&runnable,
 				      READ_ONCE(p->se.avg.runnable_avg));
 		util = max(util, runnable);
 	}
 
-	if (sched_feat(UTIL_EST)) {
+	إذا (sched_feat(UTIL_EST)) {
 		unsigned long util_est;
 
 		util_est = READ_ONCE(cfs_rq->avg.util_est);
@@ -9397,25 +9397,25 @@ cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
 		 * The additional check "current == p" is required to further
 		 * reduce the race window.
 		 */
-		if (dst_cpu == cpu)
+		إذا (dst_cpu == cpu)
 			util_est += _task_util_est(p);
-		else if (p && unlikely(task_on_rq_queued(p) || current == p))
+		وإلا إذا (p && unlikely(task_on_rq_queued(p) || current == p))
 			lsub_positive(&util_est, _task_util_est(p));
 
 		util = max(util, util_est);
 	}
 
-	return min(util, arch_scale_cpu_capacity(cpu));
+	إرجاع min(util, arch_scale_cpu_capacity(cpu));
 }
 
-unsigned long cpu_util_cfs(int cpu)
+unsigned long cpu_util_cfs(صحيح cpu)
 {
-	return cpu_util(cpu, NULL, -1, 0);
+	إرجاع cpu_util(cpu, عدم, -1, 0);
 }
 
-unsigned long cpu_util_cfs_boost(int cpu)
+unsigned long cpu_util_cfs_boost(صحيح cpu)
 {
-	return cpu_util(cpu, NULL, -1, 1);
+	إرجاع cpu_util(cpu, عدم, -1, 1);
 }
 
 /*
@@ -9431,13 +9431,13 @@ unsigned long cpu_util_cfs_boost(int cpu)
  * utilization of the specified task, whenever the task is currently
  * contributing to the CPU utilization.
  */
-static unsigned long cpu_util_without(int cpu, struct task_struct *p)
+ساكن unsigned long cpu_util_without(صحيح cpu, بنية task_struct *p)
 {
 	/* Task has no contribution or is new */
-	if (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-		p = NULL;
+	إذا (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
+		p = عدم;
 
-	return cpu_util(cpu, p, -1, 0);
+	إرجاع cpu_util(cpu, p, -1, 0);
 }
 
 /*
@@ -9460,12 +9460,12 @@ static unsigned long cpu_util_without(int cpu, struct task_struct *p)
  * based on the task model parameters and gives the minimal utilization
  * required to meet deadlines.
  */
-unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
+unsigned long effective_cpu_util(صحيح cpu, unsigned long util_cfs,
 				 unsigned long *min,
 				 unsigned long *max)
 {
 	unsigned long util, irq, scale;
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
 	scale = arch_scale_cpu_capacity(cpu);
 
@@ -9475,15 +9475,15 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
 	 * update_irq_load_avg().
 	 */
 	irq = cpu_util_irq(rq);
-	if (unlikely(irq >= scale)) {
-		if (min)
+	إذا (unlikely(irq >= scale)) {
+		إذا (min)
 			*min = scale;
-		if (max)
+		إذا (max)
 			*max = scale;
-		return scale;
+		إرجاع scale;
 	}
 
-	if (min) {
+	إذا (min) {
 		/*
 		 * The minimum utilization returns the highest level between:
 		 * - the computed DL bandwidth needed with the IRQ pressure which
@@ -9496,7 +9496,7 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
 		 * When an RT task is runnable and uclamp is not used, we must
 		 * ensure that the task will run at maximum compute capacity.
 		 */
-		if (!uclamp_is_used() && rt_rq_is_runnable(&rq->rt))
+		إذا (!uclamp_is_used() && rt_rq_is_runnable(&rq->rt))
 			*min = max(*min, scale);
 	}
 
@@ -9513,11 +9513,11 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
 	 * The maximum hint is a soft bandwidth requirement, which can be lower
 	 * than the actual utilization because of uclamp_max requirements.
 	 */
-	if (max)
+	إذا (max)
 		*max = min(scale, uclamp_rq_get(rq, UCLAMP_MAX));
 
-	if (util >= scale)
-		return scale;
+	إذا (util >= scale)
+		إرجاع scale;
 
 	/*
 	 * There is still idle time; further improve the number by using the
@@ -9531,12 +9531,12 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
 	util = scale_irq_capacity(util, irq, scale);
 	util += irq;
 
-	return min(scale, util);
+	إرجاع min(scale, util);
 }
 
-unsigned long sched_cpu_util(int cpu)
+unsigned long sched_cpu_util(صحيح cpu)
 {
-	return effective_cpu_util(cpu, cpu_util_cfs(cpu), NULL, NULL);
+	إرجاع effective_cpu_util(cpu, cpu_util_cfs(cpu), عدم, عدم);
 }
 
 /*
@@ -9548,7 +9548,7 @@ unsigned long sched_cpu_util(int cpu)
  * @cpu_cap:        Maximum CPU capacity for the perf domain.
  * @pd_cap:         Entire perf domain capacity. (pd->nr_cpus * cpu_cap).
  */
-struct energy_env {
+بنية energy_env {
 	unsigned long task_busy_time;
 	unsigned long pd_busy_time;
 	unsigned long cpu_cap;
@@ -9561,15 +9561,15 @@ struct energy_env {
  * The latter only makes sense with the most recent CPUs where the task has
  * run.
  */
-static inline void eenv_task_busy_time(struct energy_env *eenv,
-				       struct task_struct *p, int prev_cpu)
+ساكن مضمن فراغ eenv_task_busy_time(بنية energy_env *eenv,
+				       بنية task_struct *p, صحيح prev_cpu)
 {
 	unsigned long busy_time, max_cap = arch_scale_cpu_capacity(prev_cpu);
 	unsigned long irq = cpu_util_irq(cpu_rq(prev_cpu));
 
-	if (unlikely(irq >= max_cap))
+	إذا (unlikely(irq >= max_cap))
 		busy_time = max_cap;
-	else
+	وإلا
 		busy_time = scale_irq_capacity(task_util_est(p), irq, max_cap);
 
 	eenv->task_busy_time = busy_time;
@@ -9596,17 +9596,17 @@ static inline void eenv_task_busy_time(struct energy_env *eenv,
  * Set @eenv busy time for the PD that spans @pd_cpus. This busy time can't
  * exceed @eenv->pd_cap.
  */
-static inline void eenv_pd_busy_time(struct energy_env *eenv,
-				     struct cpumask *pd_cpus,
-				     struct task_struct *p)
+ساكن مضمن فراغ eenv_pd_busy_time(بنية energy_env *eenv,
+				     بنية cpumask *pd_cpus,
+				     بنية task_struct *p)
 {
 	unsigned long busy_time = 0;
-	int cpu;
+	صحيح cpu;
 
 	for_each_cpu(cpu, pd_cpus) {
 		unsigned long util = cpu_util(cpu, p, -1, 0);
 
-		busy_time += effective_cpu_util(cpu, util, NULL, NULL);
+		busy_time += effective_cpu_util(cpu, util, عدم, عدم);
 	}
 
 	eenv->pd_busy_time = min(eenv->pd_cap, busy_time);
@@ -9619,15 +9619,15 @@ static inline void eenv_pd_busy_time(struct energy_env *eenv,
  * Returns the maximum utilization among @eenv->cpus. This utilization can't
  * exceed @eenv->cpu_cap.
  */
-static inline unsigned long
-eenv_pd_max_util(struct energy_env *eenv, struct cpumask *pd_cpus,
-		 struct task_struct *p, int dst_cpu)
+ساكن مضمن unsigned long
+eenv_pd_max_util(بنية energy_env *eenv, بنية cpumask *pd_cpus,
+		 بنية task_struct *p, صحيح dst_cpu)
 {
 	unsigned long max_util = 0;
-	int cpu;
+	صحيح cpu;
 
 	for_each_cpu(cpu, pd_cpus) {
-		struct task_struct *tsk = (cpu == dst_cpu) ? p : NULL;
+		بنية task_struct *tsk = (cpu == dst_cpu) ? p : عدم;
 		unsigned long util = cpu_util(cpu, p, dst_cpu, 1);
 		unsigned long eff_util, min, max;
 
@@ -9641,24 +9641,24 @@ eenv_pd_max_util(struct energy_env *eenv, struct cpumask *pd_cpus,
 		eff_util = effective_cpu_util(cpu, util, &min, &max);
 
 		/* Task's uclamp can modify min and max value */
-		if (tsk && uclamp_is_used()) {
-			min = max(min, uclamp_eff_value(p, UCLAMP_MIN));
+		إذا (tsk && uclamp_is_used()) {
+			min = max(min, uclamp_eff_قيمة(p, UCLAMP_MIN));
 
 			/*
 			 * If there is no active max uclamp constraint,
 			 * directly use task's one, otherwise keep max.
 			 */
-			if (uclamp_rq_is_idle(cpu_rq(cpu)))
-				max = uclamp_eff_value(p, UCLAMP_MAX);
-			else
-				max = max(max, uclamp_eff_value(p, UCLAMP_MAX));
+			إذا (uclamp_rq_is_idle(cpu_rq(cpu)))
+				max = uclamp_eff_قيمة(p, UCLAMP_MAX);
+			وإلا
+				max = max(max, uclamp_eff_قيمة(p, UCLAMP_MAX));
 		}
 
 		eff_util = sugov_effective_cpu_perf(cpu, eff_util, min, max);
 		max_util = max(max_util, eff_util);
 	}
 
-	return min(max_util, eenv->cpu_cap);
+	إرجاع min(max_util, eenv->cpu_cap);
 }
 
 /*
@@ -9666,22 +9666,22 @@ eenv_pd_max_util(struct energy_env *eenv, struct cpumask *pd_cpus,
  * consume for a given utilization landscape @eenv. When @dst_cpu < 0, the task
  * contribution is ignored.
  */
-static inline unsigned long
-compute_energy(struct energy_env *eenv, struct perf_domain *pd,
-	       struct cpumask *pd_cpus, struct task_struct *p, int dst_cpu)
+ساكن مضمن unsigned long
+compute_energy(بنية energy_env *eenv, بنية perf_domain *pd,
+	       بنية cpumask *pd_cpus, بنية task_struct *p, صحيح dst_cpu)
 {
 	unsigned long max_util = eenv_pd_max_util(eenv, pd_cpus, p, dst_cpu);
 	unsigned long busy_time = eenv->pd_busy_time;
 	unsigned long energy;
 
-	if (dst_cpu >= 0)
+	إذا (dst_cpu >= 0)
 		busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
 
 	energy = em_cpu_energy(pd->em_pd, max_util, busy_time, eenv->cpu_cap);
 
 	trace_sched_compute_energy_tp(p, dst_cpu, energy, max_util, busy_time);
 
-	return energy;
+	إرجاع energy;
 }
 
 /*
@@ -9723,54 +9723,54 @@ compute_energy(struct energy_env *eenv, struct perf_domain *pd,
  * other use-cases too. So, until someone finds a better way to solve this,
  * let's keep things simple by re-using the existing slow path.
  */
-static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+ساكن صحيح find_energy_efficient_cpu(بنية task_struct *p, صحيح prev_cpu)
 {
-	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
+	بنية cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
 	unsigned long prev_delta = ULONG_MAX, best_delta = ULONG_MAX;
-	unsigned long p_util_min = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MIN) : 0;
-	unsigned long p_util_max = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MAX) : 1024;
-	struct root_domain *rd = this_rq()->rd;
-	int cpu, best_energy_cpu, target = -1;
-	int prev_fits = -1, best_fits = -1;
+	unsigned long p_util_min = uclamp_is_used() ? uclamp_eff_قيمة(p, UCLAMP_MIN) : 0;
+	unsigned long p_util_max = uclamp_is_used() ? uclamp_eff_قيمة(p, UCLAMP_MAX) : 1024;
+	بنية جذر_domain *rd = this_rq()->rd;
+	صحيح cpu, best_energy_cpu, target = -1;
+	صحيح prev_fits = -1, best_fits = -1;
 	unsigned long best_actual_cap = 0;
 	unsigned long prev_actual_cap = 0;
-	struct sched_domain *sd;
-	struct perf_domain *pd;
-	struct energy_env eenv;
+	بنية sched_domain *sd;
+	بنية perf_domain *pd;
+	بنية energy_env eenv;
 
 	pd = rcu_dereference_all(rd->pd);
-	if (!pd)
-		return target;
+	إذا (!pd)
+		إرجاع target;
 
 	/*
 	 * Energy-aware wake-up happens on the lowest sched_domain starting
 	 * from sd_asym_cpucapacity spanning over this_cpu and prev_cpu.
 	 */
 	sd = rcu_dereference_all(*this_cpu_ptr(&sd_asym_cpucapacity));
-	while (sd && !cpumask_test_cpu(prev_cpu, sched_domain_span(sd)))
+	بينما (sd && !cpumask_test_cpu(prev_cpu, sched_domain_span(sd)))
 		sd = sd->parent;
-	if (!sd)
-		return target;
+	إذا (!sd)
+		إرجاع target;
 
 	target = prev_cpu;
 
 	sync_entity_load_avg(&p->se);
-	if (!task_util_est(p) && p_util_min == 0)
-		return target;
+	إذا (!task_util_est(p) && p_util_min == 0)
+		إرجاع target;
 
 	eenv_task_busy_time(&eenv, p, prev_cpu);
 
-	for (; pd; pd = pd->next) {
+	لكل (; pd; pd = pd->next) {
 		unsigned long util_min = p_util_min, util_max = p_util_max;
 		unsigned long cpu_cap, cpu_actual_cap, util;
 		long prev_spare_cap = -1, max_spare_cap = -1;
 		unsigned long rq_util_min, rq_util_max;
 		unsigned long cur_delta, base_energy;
-		int max_spare_cap_cpu = -1;
-		int fits, max_fits = -1;
+		صحيح max_spare_cap_cpu = -1;
+		صحيح fits, max_fits = -1;
 
-		if (!cpumask_and(cpus, perf_domain_span(pd), cpu_online_mask))
-			continue;
+		إذا (!cpumask_and(cpus, perf_domain_span(pd), cpu_online_mask))
+			استمر;
 
 		/* Account external pressure for the energy estimation */
 		cpu = cpumask_first(cpus);
@@ -9780,15 +9780,15 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
 		eenv.pd_cap = 0;
 
 		for_each_cpu(cpu, cpus) {
-			struct rq *rq = cpu_rq(cpu);
+			بنية rq *rq = cpu_rq(cpu);
 
 			eenv.pd_cap += cpu_actual_cap;
 
-			if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
-				continue;
+			إذا (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
+				استمر;
 
-			if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-				continue;
+			إذا (!cpumask_test_cpu(cpu, p->cpus_ptr))
+				استمر;
 
 			util = cpu_util(cpu, p, cpu, 0);
 			cpu_cap = capacity_of(cpu);
@@ -9800,7 +9800,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
 			 * much capacity we can get out of the CPU; this is
 			 * aligned with sched_cpu_util().
 			 */
-			if (uclamp_is_used() && !uclamp_rq_is_idle(rq)) {
+			إذا (uclamp_is_used() && !uclamp_rq_is_idle(rq)) {
 				/*
 				 * Open code uclamp_rq_util_with() except for
 				 * the clamp() part. I.e.: apply max aggregation
@@ -9816,16 +9816,16 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
 			}
 
 			fits = util_fits_cpu(util, util_min, util_max, cpu);
-			if (!fits)
-				continue;
+			إذا (!fits)
+				استمر;
 
 			lsub_positive(&cpu_cap, util);
 
-			if (cpu == prev_cpu) {
+			إذا (cpu == prev_cpu) {
 				/* Always use prev_cpu as a candidate. */
 				prev_spare_cap = cpu_cap;
 				prev_fits = fits;
-			} else if ((fits > max_fits) ||
+			} وإلا إذا ((fits > max_fits) ||
 				   ((fits == max_fits) && ((long)cpu_cap > max_spare_cap))) {
 				/*
 				 * Find the CPU with the maximum spare capacity
@@ -9838,53 +9838,53 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
 			}
 		}
 
-		if (max_spare_cap_cpu < 0 && prev_spare_cap < 0)
-			continue;
+		إذا (max_spare_cap_cpu < 0 && prev_spare_cap < 0)
+			استمر;
 
 		eenv_pd_busy_time(&eenv, cpus, p);
 		/* Compute the 'base' energy of the pd, without @p */
 		base_energy = compute_energy(&eenv, pd, cpus, p, -1);
 
 		/* Evaluate the energy impact of using prev_cpu. */
-		if (prev_spare_cap > -1) {
+		إذا (prev_spare_cap > -1) {
 			prev_delta = compute_energy(&eenv, pd, cpus, p,
 						    prev_cpu);
 			/* CPU utilization has changed */
-			if (prev_delta < base_energy)
-				return target;
+			إذا (prev_delta < base_energy)
+				إرجاع target;
 			prev_delta -= base_energy;
 			prev_actual_cap = cpu_actual_cap;
 			best_delta = min(best_delta, prev_delta);
 		}
 
 		/* Evaluate the energy impact of using max_spare_cap_cpu. */
-		if (max_spare_cap_cpu >= 0 && max_spare_cap > prev_spare_cap) {
+		إذا (max_spare_cap_cpu >= 0 && max_spare_cap > prev_spare_cap) {
 			/* Current best energy cpu fits better */
-			if (max_fits < best_fits)
-				continue;
+			إذا (max_fits < best_fits)
+				استمر;
 
 			/*
 			 * Both don't fit performance hint (i.e. uclamp_min)
 			 * but best energy cpu has better capacity.
 			 */
-			if ((max_fits < 0) &&
+			إذا ((max_fits < 0) &&
 			    (cpu_actual_cap <= best_actual_cap))
-				continue;
+				استمر;
 
 			cur_delta = compute_energy(&eenv, pd, cpus, p,
 						   max_spare_cap_cpu);
 			/* CPU utilization has changed */
-			if (cur_delta < base_energy)
-				return target;
+			إذا (cur_delta < base_energy)
+				إرجاع target;
 			cur_delta -= base_energy;
 
 			/*
 			 * Both fit for the task but best energy cpu has lower
 			 * energy impact.
 			 */
-			if ((max_fits > 0) && (best_fits > 0) &&
+			إذا ((max_fits > 0) && (best_fits > 0) &&
 			    (cur_delta >= best_delta))
-				continue;
+				استمر;
 
 			best_delta = cur_delta;
 			best_energy_cpu = max_spare_cap_cpu;
@@ -9893,12 +9893,12 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
 		}
 	}
 
-	if ((best_fits > prev_fits) ||
+	إذا ((best_fits > prev_fits) ||
 	    ((best_fits > 0) && (best_delta < prev_delta)) ||
 	    ((best_fits < 0) && (best_actual_cap > prev_actual_cap)))
 		target = best_energy_cpu;
 
-	return target;
+	إرجاع target;
 }
 
 /*
@@ -9911,32 +9911,32 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
  *
  * Returns the target CPU number.
  */
-static int
-select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
+ساكن صحيح
+select_task_rq_fair(بنية task_struct *p, صحيح prev_cpu, صحيح wake_flags)
 {
-	int sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
-	struct sched_domain *tmp, *sd = NULL;
-	int cpu = smp_processor_id();
-	int new_cpu = prev_cpu;
-	int want_affine = 0;
+	صحيح sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
+	بنية sched_domain *tmp, *sd = عدم;
+	صحيح cpu = smp_processor_id();
+	صحيح new_cpu = prev_cpu;
+	صحيح want_affine = 0;
 	/* SD_flags and WF_flags share the first nibble */
-	int sd_flag = wake_flags & 0xF;
+	صحيح sd_flag = wake_flags & 0xF;
 
 	/*
 	 * required for stable ->cpus_allowed
 	 */
 	lockdep_assert_held(&p->pi_lock);
-	if (wake_flags & WF_TTWU) {
+	إذا (wake_flags & WF_TTWU) {
 		record_wakee(p);
 
-		if ((wake_flags & WF_CURRENT_CPU) &&
+		إذا ((wake_flags & WF_CURRENT_CPU) &&
 		    cpumask_test_cpu(cpu, p->cpus_ptr))
-			return cpu;
+			إرجاع cpu;
 
-		if (!is_rd_overutilized(this_rq()->rd)) {
+		إذا (!is_rd_overutilized(this_rq()->rd)) {
 			new_cpu = find_energy_efficient_cpu(p, prev_cpu);
-			if (new_cpu >= 0)
-				return new_cpu;
+			إذا (new_cpu >= 0)
+				إرجاع new_cpu;
 			new_cpu = prev_cpu;
 		}
 
@@ -9948,13 +9948,13 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
 		 * If both 'cpu' and 'prev_cpu' are part of this domain,
 		 * cpu is a valid SD_WAKE_AFFINE target.
 		 */
-		if (want_affine && (tmp->flags & SD_WAKE_AFFINE) &&
+		إذا (want_affine && (tmp->flags & SD_WAKE_AFFINE) &&
 		    cpumask_test_cpu(prev_cpu, sched_domain_span(tmp))) {
-			if (cpu != prev_cpu)
+			إذا (cpu != prev_cpu)
 				new_cpu = wake_affine(tmp, p, cpu, prev_cpu, sync);
 
-			sd = NULL; /* Prefer wake_affine over balance flags */
-			break;
+			sd = عدم; /* Prefer wake_affine over balance flags */
+			اكسر;
 		}
 
 		/*
@@ -9962,23 +9962,23 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
 		 * usually do not have SD_BALANCE_WAKE set. That means wakeup
 		 * will usually go to the fast path.
 		 */
-		if (tmp->flags & sd_flag)
+		إذا (tmp->flags & sd_flag)
 			sd = tmp;
-		else if (!want_affine)
-			break;
+		وإلا إذا (!want_affine)
+			اكسر;
 	}
 
 	/* Slow path */
-	if (unlikely(sd)) {
+	إذا (unlikely(sd)) {
 		new_cpu = sched_balance_find_dst_cpu(sd, p, cpu, prev_cpu, sd_flag);
-		return select_idle_smt_cpu(p, new_cpu);
+		إرجاع select_idle_smt_cpu(p, new_cpu);
 	}
 
 	/* Fast path */
-	if (wake_flags & WF_TTWU)
-		return select_idle_sibling(p, prev_cpu, new_cpu);
+	إذا (wake_flags & WF_TTWU)
+		إرجاع select_idle_sibling(p, prev_cpu, new_cpu);
 
-	return new_cpu;
+	إرجاع new_cpu;
 }
 
 /*
@@ -9986,11 +9986,11 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
  * cfs_rq_of(p) references at time of call are still valid and identify the
  * previous CPU. The caller guarantees p->pi_lock or task_rq(p)->lock is held.
  */
-static void migrate_task_rq_fair(struct task_struct *p, int new_cpu)
+ساكن فراغ migrate_task_rq_fair(بنية task_struct *p, صحيح new_cpu)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 
-	if (!task_on_rq_migrating(p)) {
+	إذا (!task_on_rq_migrating(p)) {
 		remove_entity_load_avg(se);
 
 		/*
@@ -10012,50 +10012,50 @@ static void migrate_task_rq_fair(struct task_struct *p, int new_cpu)
 	update_scan_period(p, new_cpu);
 }
 
-static void task_dead_fair(struct task_struct *p)
+ساكن فراغ task_dead_fair(بنية task_struct *p)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 	remove_entity_load_avg(se);
 }
 
 /*
  * Set the max capacity the task is allowed to run at for misfit detection.
  */
-static void set_task_max_allowed_capacity(struct task_struct *p)
+ساكن فراغ set_task_max_allowed_capacity(بنية task_struct *p)
 {
-	struct asym_cap_data *entry;
+	بنية asym_cap_data *entry;
 
-	if (!sched_asym_cpucap_active())
-		return;
+	إذا (!sched_asym_cpucap_active())
+		إرجاع;
 
 	rcu_read_lock();
 	list_for_each_entry_rcu(entry, &asym_cap_list, link) {
 		cpumask_t *cpumask;
 
 		cpumask = cpu_capacity_span(entry);
-		if (!cpumask_intersects(p->cpus_ptr, cpumask))
-			continue;
+		إذا (!cpumask_intersects(p->cpus_ptr, cpumask))
+			استمر;
 
 		p->max_allowed_capacity = entry->capacity;
-		break;
+		اكسر;
 	}
 	rcu_read_unlock();
 }
 
-static void set_cpus_allowed_fair(struct task_struct *p, struct affinity_context *ctx)
+ساكن فراغ set_cpus_allowed_fair(بنية task_struct *p, بنية affinity_context *ctx)
 {
 	set_cpus_allowed_common(p, ctx);
 	set_task_max_allowed_capacity(p);
 }
 
-enum preempt_wakeup_action {
+تعداد preempt_wakeup_action {
 	PREEMPT_WAKEUP_NONE,	/* No preemption. */
 	PREEMPT_WAKEUP_SHORT,	/* Ignore slice protection. */
 	PREEMPT_WAKEUP_PICK,	/* Let pick_eevdf() decide. */
 	PREEMPT_WAKEUP_RESCHED,	/* Force reschedule. */
 };
 
-static inline bool set_preempt_buddy(struct cfs_rq *cfs_rq, struct sched_entity *pse)
+ساكن مضمن bool set_preempt_buddy(بنية cfs_rq *cfs_rq, بنية sched_entity *pse)
 {
 	/*
 	 * Keep existing buddy if the deadline is sooner than pse.
@@ -10063,26 +10063,26 @@ static inline bool set_preempt_buddy(struct cfs_rq *cfs_rq, struct sched_entity 
 	 * to the current wakeup but that is unpredictable where as
 	 * obeying the deadline is more in line with EEVDF objectives.
 	 */
-	if (cfs_rq->next && entity_before(cfs_rq->next, pse))
-		return false;
+	إذا (cfs_rq->next && entity_before(cfs_rq->next, pse))
+		إرجاع false;
 
 	set_next_buddy(cfs_rq, pse);
-	return true;
+	إرجاع true;
 }
 
-static inline bool set_short_buddy(struct cfs_rq *cfs_rq, struct sched_entity *pse)
+ساكن مضمن bool set_short_buddy(بنية cfs_rq *cfs_rq, بنية sched_entity *pse)
 {
-	if (cfs_rq->next) {
-		if (cfs_rq->next->slice < pse->slice)
-			return false;
+	إذا (cfs_rq->next) {
+		إذا (cfs_rq->next->slice < pse->slice)
+			إرجاع false;
 
-		if (cfs_rq->next->slice == pse->slice &&
+		إذا (cfs_rq->next->slice == pse->slice &&
 		    entity_before(cfs_rq->next, pse))
-			return false;
+			إرجاع false;
 	}
 
 	set_next_buddy(cfs_rq, pse);
-	return true;
+	إرجاع true;
 }
 
 /*
@@ -10090,9 +10090,9 @@ static inline bool set_short_buddy(struct cfs_rq *cfs_rq, struct sched_entity *p
  * strictly enforced because the hint is either misunderstood or
  * multiple tasks must be woken up.
  */
-static inline enum preempt_wakeup_action
-preempt_sync(struct rq *rq, int wake_flags,
-	     struct sched_entity *pse, struct sched_entity *se)
+ساكن مضمن تعداد preempt_wakeup_action
+preempt_sync(بنية rq *rq, صحيح wake_flags,
+	     بنية sched_entity *pse, بنية sched_entity *se)
 {
 	u64 threshold, delta;
 
@@ -10104,7 +10104,7 @@ preempt_sync(struct rq *rq, int wake_flags,
 
 	threshold = sysctl_sched_migration_cost;
 	delta = rq_clock_task(rq) - se->exec_start;
-	if ((s64)delta < 0)
+	إذا ((s64)delta < 0)
 		delta = 0;
 
 	/*
@@ -10113,39 +10113,39 @@ preempt_sync(struct rq *rq, int wake_flags,
 	 * allowed to an arbitrary lower value as it is more likely (but not
 	 * guaranteed) the waker requires the wakee to finish.
 	 */
-	if (wake_flags & WF_RQ_SELECTED)
+	إذا (wake_flags & WF_RQ_SELECTED)
 		threshold >>= 2;
 
 	/*
 	 * As WF_SYNC is not strictly obeyed, allow some runtime for batch
 	 * wakeups to be issued.
 	 */
-	if (entity_before(pse, se) && delta >= threshold)
-		return PREEMPT_WAKEUP_RESCHED;
+	إذا (entity_before(pse, se) && delta >= threshold)
+		إرجاع PREEMPT_WAKEUP_RESCHED;
 
-	return PREEMPT_WAKEUP_NONE;
+	إرجاع PREEMPT_WAKEUP_NONE;
 }
 
 /*
  * Preempt the current task with a newly woken task if needed:
  */
-static void wakeup_preempt_fair(struct rq *rq, struct task_struct *p, int wake_flags)
+ساكن فراغ wakeup_preempt_fair(بنية rq *rq, بنية task_struct *p, صحيح wake_flags)
 {
-	enum preempt_wakeup_action preempt_action = PREEMPT_WAKEUP_PICK;
-	struct task_struct *donor = rq->donor;
-	struct sched_entity *nse, *se = &donor->se, *pse = &p->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	int cse_is_idle, pse_is_idle;
+	تعداد preempt_wakeup_action preempt_action = PREEMPT_WAKEUP_PICK;
+	بنية task_struct *donor = rq->donor;
+	بنية sched_entity *nse, *se = &donor->se, *pse = &p->se;
+	بنية cfs_rq *cfs_rq = &rq->cfs;
+	صحيح cse_is_idle, pse_is_idle;
 
 	/*
 	 * XXX Getting preempted by higher class, try and find idle CPU?
 	 */
-	if (p->sched_class != &fair_sched_class ||
+	إذا (p->sched_class != &fair_sched_class ||
 	    donor->sched_class != &fair_sched_class)
-		return;
+		إرجاع;
 
-	if (unlikely(se == pse))
-		return;
+	إذا (unlikely(se == pse))
+		إرجاع;
 
 	/*
 	 * This is possible from callers such as attach_tasks(), in which we
@@ -10153,8 +10153,8 @@ static void wakeup_preempt_fair(struct rq *rq, struct task_struct *p, int wake_f
 	 * lead to a throttle).  This both saves work and prevents false
 	 * next-buddy nomination below.
 	 */
-	if (task_is_throttled(p))
-		return;
+	إذا (task_is_throttled(p))
+		إرجاع;
 
 	/*
 	 * We can come here with TIF_NEED_RESCHED already set from new task
@@ -10166,11 +10166,11 @@ static void wakeup_preempt_fair(struct rq *rq, struct task_struct *p, int wake_f
 	 * prevents us from potentially nominating it as a false LAST_BUDDY
 	 * below.
 	 */
-	if (!sched_feat(PREEMPT_SHORT) && test_tsk_need_resched(rq->curr))
-		return;
+	إذا (!sched_feat(PREEMPT_SHORT) && test_tsk_need_resched(rq->curr))
+		إرجاع;
 
-	if (!sched_feat(WAKEUP_PREEMPTION))
-		return;
+	إذا (!sched_feat(WAKEUP_PREEMPTION))
+		إرجاع;
 
 	WARN_ON_ONCE(!pse);
 
@@ -10182,142 +10182,142 @@ static void wakeup_preempt_fair(struct rq *rq, struct task_struct *p, int wake_f
 	 * Preempt an idle entity in favor of a non-idle entity (and don't preempt
 	 * in the inverse case).
 	 */
-	if (cse_is_idle && !pse_is_idle)
-		goto preempt;
+	إذا (cse_is_idle && !pse_is_idle)
+		اذهب preempt;
 
 	update_curr_fair(rq);
 
-	if (cse_is_idle != pse_is_idle)
-		goto update;
+	إذا (cse_is_idle != pse_is_idle)
+		اذهب update;
 
 	/*
 	 * BATCH and IDLE tasks do not preempt others.
 	 */
-	if (unlikely(!normal_policy(p->policy)))
-		goto update;
+	إذا (unlikely(!normal_policy(p->policy)))
+		اذهب update;
 
 	/*
 	 * Do not preempt for tasks that are sched_delayed as it would violate
 	 * EEVDF to forcibly queue an ineligible task.
 	 */
-	if (pse->sched_delayed)
-		goto update;
+	إذا (pse->sched_delayed)
+		اذهب update;
 
 	/*
 	 * If @p has a shorter slice than current and @p is eligible, override
 	 * current's slice protection in order to allow preemption.
 	 */
-	if (sched_feat(PREEMPT_SHORT) && (pse->slice < se->slice)) {
+	إذا (sched_feat(PREEMPT_SHORT) && (pse->slice < se->slice)) {
 		preempt_action = PREEMPT_WAKEUP_SHORT;
-		goto pick;
+		اذهب pick;
 	}
 
 	/*
 	 * Ignore wakee preemption on WF_FORK as it is less likely that
 	 * there is shared data as exec often follow fork.
 	 */
-	if (wake_flags & WF_FORK)
-		goto update;
+	إذا (wake_flags & WF_FORK)
+		اذهب update;
 
 	/* Prefer picking wakee soon if appropriate. */
-	if (sched_feat(NEXT_BUDDY) && set_preempt_buddy(cfs_rq, pse)) {
+	إذا (sched_feat(NEXT_BUDDY) && set_preempt_buddy(cfs_rq, pse)) {
 		/*
 		 * Decide whether to obey WF_SYNC hint for a new buddy. Old
 		 * buddies are ignored as they may not be relevant to the
 		 * waker and less likely to be cache hot.
 		 */
-		if (wake_flags & WF_SYNC)
+		إذا (wake_flags & WF_SYNC)
 			preempt_action = preempt_sync(rq, wake_flags, pse, se);
 	}
 
-	switch (preempt_action) {
-	case PREEMPT_WAKEUP_NONE:
-		return;
-	case PREEMPT_WAKEUP_RESCHED:
-		goto preempt;
-	case PREEMPT_WAKEUP_SHORT:
+	بدل (preempt_action) {
+	حالة PREEMPT_WAKEUP_NONE:
+		إرجاع;
+	حالة PREEMPT_WAKEUP_RESCHED:
+		اذهب preempt;
+	حالة PREEMPT_WAKEUP_SHORT:
 		fallthrough;
-	case PREEMPT_WAKEUP_PICK:
-		break;
+	حالة PREEMPT_WAKEUP_PICK:
+		اكسر;
 	}
 
 pick:
-	if (cfs_rq->h_nr_queued) {
+	إذا (cfs_rq->h_nr_queued) {
 		nse = pick_next_entity(rq, preempt_action != PREEMPT_WAKEUP_SHORT);
-		if (unlikely(!nse))
-			goto pick;
+		إذا (unlikely(!nse))
+			اذهب pick;
 
 		/* If @p has become the most eligible task, force preemption */
-		if (nse == pse)
-			goto preempt;
+		إذا (nse == pse)
+			اذهب preempt;
 	}
 
 	/*
 	 * If @p is eligible but not the next task to run then cancel protection
 	 * to prevent large scheduling latency
 	 */
-	if (preempt_action == PREEMPT_WAKEUP_SHORT && entity_eligible(cfs_rq, pse))
-		goto preempt;
+	إذا (preempt_action == PREEMPT_WAKEUP_SHORT && entity_eligible(cfs_rq, pse))
+		اذهب preempt;
 update:
-	if (sched_feat(RUN_TO_PARITY))
+	إذا (sched_feat(RUN_TO_PARITY))
 		update_protect_slice(cfs_rq, se);
 
-	return;
+	إرجاع;
 
 preempt:
 	cancel_protect_slice(se);
 
-	if (preempt_action == PREEMPT_WAKEUP_SHORT)
+	إذا (preempt_action == PREEMPT_WAKEUP_SHORT)
 		set_short_buddy(cfs_rq, pse);
 
 	resched_curr_lazy(rq);
 }
 
-struct task_struct *pick_task_fair(struct rq *rq, struct rq_flags *rf)
+بنية task_struct *pick_task_fair(بنية rq *rq, بنية rq_flags *rf)
 	__must_hold(__rq_lockp(rq))
 {
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	struct sched_entity *se;
-	struct task_struct *p;
-	int new_tasks;
+	بنية cfs_rq *cfs_rq = &rq->cfs;
+	بنية sched_entity *se;
+	بنية task_struct *p;
+	صحيح new_tasks;
 
 again:
-	if (!cfs_rq->h_nr_queued)
-		goto idle;
+	إذا (!cfs_rq->h_nr_queued)
+		اذهب idle;
 
 	/* Might not have done put_prev_entity() */
-	if (cfs_rq->curr && cfs_rq->curr->on_rq)
+	إذا (cfs_rq->curr && cfs_rq->curr->on_rq)
 		update_curr_eevdf(cfs_rq);
 
 	se = pick_next_entity(rq, true);
-	if (!se)
-		goto again;
+	إذا (!se)
+		اذهب again;
 
 	p = task_of(se);
-	return p;
+	إرجاع p;
 
 idle:
-	if (sched_core_enabled(rq))
-		return NULL;
+	إذا (sched_core_enabled(rq))
+		إرجاع عدم;
 
 	new_tasks = sched_balance_newidle(rq, rf);
-	if (new_tasks < 0)
-		return RETRY_TASK;
-	if (new_tasks > 0)
-		goto again;
-	return NULL;
+	إذا (new_tasks < 0)
+		إرجاع RETRY_TASK;
+	إذا (new_tasks > 0)
+		اذهب again;
+	إرجاع عدم;
 }
 
-static struct task_struct *
-fair_server_pick_task(struct sched_dl_entity *dl_se, struct rq_flags *rf)
+ساكن بنية task_struct *
+fair_server_pick_task(بنية sched_dl_entity *dl_se, بنية rq_flags *rf)
 	__must_hold(__rq_lockp(dl_se->rq))
 {
-	return pick_task_fair(dl_se->rq, rf);
+	إرجاع pick_task_fair(dl_se->rq, rf);
 }
 
-void fair_server_init(struct rq *rq)
+فراغ fair_server_init(بنية rq *rq)
 {
-	struct sched_dl_entity *dl_se = &rq->fair_server;
+	بنية sched_dl_entity *dl_se = &rq->fair_server;
 
 	init_dl_entity(dl_se);
 
@@ -10327,33 +10327,33 @@ void fair_server_init(struct rq *rq)
 /*
  * Account for a descheduled task:
  */
-static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+ساكن فراغ put_prev_task_fair(بنية rq *rq, بنية task_struct *prev, بنية task_struct *next)
 {
-	struct sched_entity *se = &prev->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
-	struct sched_entity *nse = NULL;
+	بنية sched_entity *se = &prev->se;
+	بنية cfs_rq *cfs_rq = &rq->cfs;
+	بنية sched_entity *nse = عدم;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	if (next && next->sched_class == &fair_sched_class)
+	إذا (next && next->sched_class == &fair_sched_class)
 		nse = &next->se;
 #endif
 
-	while (se) {
+	بينما (se) {
 		cfs_rq = cfs_rq_of(se);
-		if (!nse || cfs_rq->h_curr)
+		إذا (!nse || cfs_rq->h_curr)
 			put_prev_entity(cfs_rq, se);
 #ifdef CONFIG_FAIR_GROUP_SCHED
-		if (nse) {
-			if (is_same_group(se, nse))
-				break;
+		إذا (nse) {
+			إذا (is_same_group(se, nse))
+				اكسر;
 
-			int d = nse->depth - se->depth;
-			if (d >= 0) {
+			صحيح d = nse->depth - se->depth;
+			إذا (d >= 0) {
 				/* nse has equal or greater depth, ascend */
 				nse = parent_entity(nse);
 				/* if nse is the deeper, do not ascend se */
-				if (d > 0)
-					continue;
+				إذا (d > 0)
+					استمر;
 			}
 		}
 #endif
@@ -10364,25 +10364,25 @@ static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct t
 	cfs_rq = &rq->cfs;
 	se = &prev->se;
 	WARN_ON_ONCE(cfs_rq->curr != se);
-	cfs_rq->curr = NULL;
-	if (se->on_rq)
+	cfs_rq->curr = عدم;
+	إذا (se->on_rq)
 		__enqueue_entity(cfs_rq, se);
 }
 
 /*
  * sched_yield() is very simple
  */
-static void yield_task_fair(struct rq *rq)
+ساكن فراغ yield_task_fair(بنية rq *rq)
 {
-	struct task_struct *curr = rq->donor;
-	struct sched_entity *se = &curr->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
+	بنية task_struct *curr = rq->donor;
+	بنية sched_entity *se = &curr->se;
+	بنية cfs_rq *cfs_rq = &rq->cfs;
 
 	/*
 	 * Are we the only task in the tree?
 	 */
-	if (unlikely(rq->nr_running == 1))
-		return;
+	إذا (unlikely(rq->nr_running == 1))
+		إرجاع;
 
 	clear_buddies(cfs_rq, se);
 
@@ -10406,26 +10406,26 @@ static void yield_task_fair(struct rq *rq)
 	 * which yields immediately again; without the condition the vruntime
 	 * ends up quickly running away.
 	 */
-	if (entity_eligible(cfs_rq, se)) {
+	إذا (entity_eligible(cfs_rq, se)) {
 		se->vruntime = se->deadline;
 		update_deadline(cfs_rq, se);
 	}
 }
 
-static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
+ساكن bool yield_to_task_fair(بنية rq *rq, بنية task_struct *p)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 
 	/* !se->on_rq also covers throttled task */
-	if (!se->on_rq || se->sched_delayed)
-		return false;
+	إذا (!se->on_rq || se->sched_delayed)
+		إرجاع false;
 
 	/* Tell the scheduler that we'd really like se to run next. */
 	set_next_buddy(&task_rq(p)->cfs, se);
 
 	yield_task_fair(rq);
 
-	return true;
+	إرجاع true;
 }
 
 /**************************************************
@@ -10546,9 +10546,9 @@ static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
  *      rewrite all of this once again.]
  */
 
-static unsigned long __read_mostly max_load_balance_interval = HZ/10;
+ساكن unsigned long __read_mostly max_load_balance_interval = HZ/10;
 
-enum fbq_type { regular, remote, all };
+تعداد fbq_type { regular, remote, all };
 
 /*
  * 'group_type' describes the group of CPUs at the moment of load balancing.
@@ -10557,7 +10557,7 @@ enum fbq_type { regular, remote, all };
  * first so the group_type can simply be compared when selecting the busiest
  * group. See update_sd_pick_busiest().
  */
-enum group_type {
+تعداد group_type {
 	/* The group has spare capacity that can be used to run more tasks.  */
 	group_has_spare = 0,
 	/*
@@ -10603,7 +10603,7 @@ enum group_type {
 	group_overloaded
 };
 
-enum migration_type {
+تعداد migration_type {
 	migrate_load = 0,
 	migrate_util,
 	migrate_task,
@@ -10619,76 +10619,76 @@ enum migration_type {
 #define LBF_LLC_PINNED	0x20
 #define LBF_ACTIVE_LB_LLC	0x40
 
-struct lb_env {
-	struct sched_domain	*sd;
+بنية lb_env {
+	بنية sched_domain	*sd;
 
-	struct rq		*src_rq;
-	int			src_cpu;
+	بنية rq		*src_rq;
+	صحيح			src_cpu;
 
-	int			dst_cpu;
-	struct rq		*dst_rq;
+	صحيح			dst_cpu;
+	بنية rq		*dst_rq;
 	bool			dst_core_idle;
 
-	struct cpumask		*dst_grpmask;
-	int			new_dst_cpu;
-	enum cpu_idle_type	idle;
+	بنية cpumask		*dst_grpmask;
+	صحيح			new_dst_cpu;
+	تعداد cpu_idle_type	idle;
 	long			imbalance;
 	/* The set of CPUs under consideration for load-balancing */
-	struct cpumask		*cpus;
+	بنية cpumask		*cpus;
 
-	unsigned int		flags;
+	unsigned صحيح		flags;
 
-	unsigned int		loop;
-	unsigned int		loop_break;
-	unsigned int		loop_max;
+	unsigned صحيح		loop;
+	unsigned صحيح		loop_break;
+	unsigned صحيح		loop_max;
 
-	enum fbq_type		fbq_type;
-	enum migration_type	migration_type;
-	struct list_head	tasks;
+	تعداد fbq_type		fbq_type;
+	تعداد migration_type	migration_type;
+	بنية list_head	tasks;
 };
 
 /*
  * Is this task likely cache-hot:
  */
-static int task_hot(struct task_struct *p, struct lb_env *env)
+ساكن صحيح task_hot(بنية task_struct *p, بنية lb_env *env)
 {
 	s64 delta;
 
 	lockdep_assert_rq_held(env->src_rq);
 
-	if (p->sched_class != &fair_sched_class)
-		return 0;
+	إذا (p->sched_class != &fair_sched_class)
+		إرجاع 0;
 
-	if (unlikely(task_has_idle_policy(p)))
-		return 0;
+	إذا (unlikely(task_has_idle_policy(p)))
+		إرجاع 0;
 
 	/* SMT siblings share cache */
-	if (env->sd->flags & SD_SHARE_CPUCAPACITY)
-		return 0;
+	إذا (env->sd->flags & SD_SHARE_CPUCAPACITY)
+		إرجاع 0;
 
 	/*
 	 * Buddy candidates are cache hot:
 	 */
-	if (sched_feat(CACHE_HOT_BUDDY) && env->dst_rq->nr_running &&
+	إذا (sched_feat(CACHE_HOT_BUDDY) && env->dst_rq->nr_running &&
 	    (&p->se == cfs_rq_of(&p->se)->next))
-		return 1;
+		إرجاع 1;
 
-	if (sysctl_sched_migration_cost == -1)
-		return 1;
+	إذا (sysctl_sched_migration_cost == -1)
+		إرجاع 1;
 
 	/*
 	 * Don't migrate task if the task's cookie does not match
 	 * with the destination CPU's core cookie.
 	 */
-	if (!sched_core_cookie_match(cpu_rq(env->dst_cpu), p))
-		return 1;
+	إذا (!sched_core_cookie_match(cpu_rq(env->dst_cpu), p))
+		إرجاع 1;
 
-	if (sysctl_sched_migration_cost == 0)
-		return 0;
+	إذا (sysctl_sched_migration_cost == 0)
+		إرجاع 0;
 
 	delta = rq_clock_task(env->src_rq) - p->se.exec_start;
 
-	return delta < (s64)sysctl_sched_migration_cost;
+	إرجاع delta < (s64)sysctl_sched_migration_cost;
 }
 
 #ifdef CONFIG_NUMA_BALANCING
@@ -10697,57 +10697,57 @@ static int task_hot(struct task_struct *p, struct lb_env *env)
  * Returns 0, if task migration is not affected by locality.
  * Returns a negative value, if task migration improves locality i.e migration preferred.
  */
-static long migrate_degrades_locality(struct task_struct *p, struct lb_env *env)
+ساكن long migrate_degrades_locality(بنية task_struct *p, بنية lb_env *env)
 {
-	struct numa_group *numa_group = rcu_dereference_all(p->numa_group);
+	بنية numa_group *numa_group = rcu_dereference_all(p->numa_group);
 	unsigned long src_weight, dst_weight;
-	int src_nid, dst_nid, dist;
+	صحيح src_nid, dst_nid, dist;
 
-	if (!static_branch_likely(&sched_numa_balancing))
-		return 0;
+	إذا (!static_branch_likely(&sched_numa_balancing))
+		إرجاع 0;
 
-	if (!p->numa_faults || !(env->sd->flags & SD_NUMA))
-		return 0;
+	إذا (!p->numa_faults || !(env->sd->flags & SD_NUMA))
+		إرجاع 0;
 
-	src_nid = cpu_to_node(env->src_cpu);
-	dst_nid = cpu_to_node(env->dst_cpu);
+	src_nid = cpu_to_عقدة(env->src_cpu);
+	dst_nid = cpu_to_عقدة(env->dst_cpu);
 
-	if (src_nid == dst_nid)
-		return 0;
+	إذا (src_nid == dst_nid)
+		إرجاع 0;
 
 	/* Migrating away from the preferred node is always bad. */
-	if (src_nid == p->numa_preferred_nid) {
-		if (env->src_rq->nr_running > env->src_rq->nr_preferred_running)
-			return 1;
-		else
-			return 0;
+	إذا (src_nid == p->numa_preferred_nid) {
+		إذا (env->src_rq->nr_running > env->src_rq->nr_preferred_running)
+			إرجاع 1;
+		وإلا
+			إرجاع 0;
 	}
 
 	/* Encourage migration to the preferred node. */
-	if (dst_nid == p->numa_preferred_nid)
-		return -1;
+	إذا (dst_nid == p->numa_preferred_nid)
+		إرجاع -1;
 
 	/* Leaving a core idle is often worse than degrading locality. */
-	if (env->idle == CPU_IDLE)
-		return 0;
+	إذا (env->idle == CPU_IDLE)
+		إرجاع 0;
 
-	dist = node_distance(src_nid, dst_nid);
-	if (numa_group) {
+	dist = عقدة_distance(src_nid, dst_nid);
+	إذا (numa_group) {
 		src_weight = group_weight(p, src_nid, dist);
 		dst_weight = group_weight(p, dst_nid, dist);
-	} else {
+	} وإلا {
 		src_weight = task_weight(p, src_nid, dist);
 		dst_weight = task_weight(p, dst_nid, dist);
 	}
 
-	return src_weight - dst_weight;
+	إرجاع src_weight - dst_weight;
 }
 
-#else /* !CONFIG_NUMA_BALANCING: */
-static inline long migrate_degrades_locality(struct task_struct *p,
-					     struct lb_env *env)
+#وإلا /* !CONFIG_NUMA_BALANCING: */
+ساكن مضمن long migrate_degrades_locality(بنية task_struct *p,
+					     بنية lb_env *env)
 {
-	return 0;
+	إرجاع 0;
 }
 #endif /* !CONFIG_NUMA_BALANCING */
 
@@ -10759,15 +10759,15 @@ static inline long migrate_degrades_locality(struct task_struct *p,
  * is ineligible, it will also be ineligible when
  * it is migrated to the destination cpu.
  */
-static inline int task_is_ineligible_on_dst_cpu(struct task_struct *p, int dest_cpu)
+ساكن مضمن صحيح task_is_ineligible_on_dst_cpu(بنية task_struct *p, صحيح dest_cpu)
 {
-	struct cfs_rq *dst_cfs_rq = &cpu_rq(dest_cpu)->cfs;
+	بنية cfs_rq *dst_cfs_rq = &cpu_rq(dest_cpu)->cfs;
 
-	if (sched_feat(PLACE_LAG) && dst_cfs_rq->h_nr_queued &&
+	إذا (sched_feat(PLACE_LAG) && dst_cfs_rq->h_nr_queued &&
 	    !entity_eligible(&task_rq(p)->cfs, &p->se))
-		return 1;
+		إرجاع 1;
 
-	return 0;
+	إرجاع 0;
 }
 
 #ifdef CONFIG_SCHED_CACHE
@@ -10779,7 +10779,7 @@ static inline int task_is_ineligible_on_dst_cpu(struct task_struct *p, int dest_
  *
  * (default: ~50%, tunable via debugfs)
  */
-static bool fits_llc_capacity(unsigned long util, unsigned long max)
+ساكن bool fits_llc_capacity(unsigned long util, unsigned long max)
 {
 	u32 aggr_pct = llc_overaggr_pct;
 
@@ -10787,10 +10787,10 @@ static bool fits_llc_capacity(unsigned long util, unsigned long max)
 	 * For single core systems, raise the aggregation
 	 * threshold to accommodate more tasks.
 	 */
-	if (cpu_smt_num_threads == 1)
+	إذا (cpu_smt_رقم_threads == 1)
 		aggr_pct = (aggr_pct * 3 / 2);
 
-	return util * 100 < max * aggr_pct;
+	إرجاع util * 100 < max * aggr_pct;
 }
 
 /*
@@ -10803,19 +10803,19 @@ static bool fits_llc_capacity(unsigned long util, unsigned long max)
 #define util_greater(util1, util2) \
 	((util1) * 100 > (util2) * (100 + llc_imb_pct))
 
-static __maybe_unused bool get_llc_stats(int cpu, unsigned long *util,
+ساكن __maybe_unused bool get_llc_stats(صحيح cpu, unsigned long *util,
 					 unsigned long *cap)
 {
-	struct sched_domain_shared *sd_share;
+	بنية sched_domain_shared *sd_share;
 
 	sd_share = rcu_dereference_all(per_cpu(sd_llc_shared, cpu));
-	if (!sd_share)
-		return false;
+	إذا (!sd_share)
+		إرجاع false;
 
 	*util = READ_ONCE(sd_share->util_avg);
 	*cap = READ_ONCE(sd_share->capacity);
 
-	return true;
+	إرجاع true;
 }
 
 /*
@@ -10868,7 +10868,7 @@ static __maybe_unused bool get_llc_stats(int cpu, unsigned long *util,
  */
 
 /* migration decision, 3 states are orthogonal. */
-enum llc_mig {
+تعداد llc_mig {
 	mig_forbid = 0,		/* N: Don't migrate task, respect LLC preference */
 	mig_llc,		/* Y: Do LLC preference based migration */
 	mig_unrestricted	/* G: Don't restrict generic load balance migration */
@@ -10880,34 +10880,34 @@ enum llc_mig {
  * src_cpu and dst_cpu are arbitrary CPUs within the source
  * and destination LLCs, respectively.
  */
-static enum llc_mig can_migrate_llc(int src_cpu, int dst_cpu,
+ساكن تعداد llc_mig can_migrate_llc(صحيح src_cpu, صحيح dst_cpu,
 				    unsigned long tsk_util,
 				    bool to_pref)
 {
 	unsigned long src_util, dst_util, src_cap, dst_cap;
 
-	if (!get_llc_stats(src_cpu, &src_util, &src_cap) ||
+	إذا (!get_llc_stats(src_cpu, &src_util, &src_cap) ||
 	    !get_llc_stats(dst_cpu, &dst_util, &dst_cap))
-		return mig_unrestricted;
+		إرجاع mig_unrestricted;
 
 	src_util = src_util < tsk_util ? 0 : src_util - tsk_util;
 	dst_util = dst_util + tsk_util;
 
-	if (!fits_llc_capacity(dst_util, dst_cap) &&
+	إذا (!fits_llc_capacity(dst_util, dst_cap) &&
 	    !fits_llc_capacity(src_util, src_cap))
-		return mig_unrestricted;
+		إرجاع mig_unrestricted;
 
-	if (to_pref) {
+	إذا (to_pref) {
 		/*
 		 * Don't migrate if we will get preferred LLC too
 		 * heavily loaded and if the dest is much busier
 		 * than the src, in which case migration will
 		 * increase the imbalance too much.
 		 */
-		if (!fits_llc_capacity(dst_util, dst_cap) &&
+		إذا (!fits_llc_capacity(dst_util, dst_cap) &&
 		    util_greater(dst_util, src_util))
-			return mig_forbid;
-	} else {
+			إرجاع mig_forbid;
+	} وإلا {
 		/*
 		 * Don't migrate if we will leave preferred LLC
 		 * too idle, or if this migration leads to the
@@ -10915,14 +10915,14 @@ static enum llc_mig can_migrate_llc(int src_cpu, int dst_cpu,
 		 * of preferred LLC, leading to migration again
 		 * back to preferred LLC.
 		 */
-		if (fits_llc_capacity(src_util, src_cap) ||
+		إذا (fits_llc_capacity(src_util, src_cap) ||
 		    !util_greater(src_util, dst_util))
-			return mig_forbid;
+			إرجاع mig_forbid;
 	}
-	return mig_llc;
+	إرجاع mig_llc;
 }
 
-static inline bool task_misfits_asym_cpu(struct lb_env *env, struct task_struct *p)
+ساكن مضمن bool task_misfits_asym_cpu(بنية lb_env *env, بنية task_struct *p)
 {
 	/*
 	 * On asymmetric CPU capacity domains, do not let cache-aware
@@ -10932,54 +10932,54 @@ static inline bool task_misfits_asym_cpu(struct lb_env *env, struct task_struct 
 	 * loss. If the task already does not fit its source CPU, the move
 	 * cannot make things worse, so let the LLC preference decide.
 	 */
-	if ((env->sd->flags & SD_ASYM_CPUCAPACITY) && p &&
+	إذا ((env->sd->flags & SD_ASYM_CPUCAPACITY) && p &&
 	    !task_fits_cpu(p, env->dst_cpu) &&
 	    task_fits_cpu(p, env->src_cpu))
-		return true;
+		إرجاع true;
 
-	return false;
+	إرجاع false;
 }
 
 /*
  * Check if task p can migrate from source LLC to
  * destination LLC in terms of cache aware load balance.
  */
-static enum llc_mig can_migrate_llc_task(struct lb_env *env,
-					 struct task_struct *p)
+ساكن تعداد llc_mig can_migrate_llc_task(بنية lb_env *env,
+					 بنية task_struct *p)
 {
-	struct sched_cache_group *grp;
+	بنية sched_cache_group *grp;
 	bool to_pref;
-	int cpu, src_cpu, dst_cpu;
+	صحيح cpu, src_cpu, dst_cpu;
 
-	if (task_misfits_asym_cpu(env, p))
-		return mig_forbid;
+	إذا (task_misfits_asym_cpu(env, p))
+		إرجاع mig_forbid;
 
 	src_cpu = env->src_cpu;
 	dst_cpu = env->dst_cpu;
 	grp = rcu_dereference_all(p->sched_cache_grp);
-	if (!grp)
-		return mig_unrestricted;
+	إذا (!grp)
+		إرجاع mig_unrestricted;
 
 	cpu = READ_ONCE(grp->cpu);
-	if (cpu < 0 || cpus_share_cache(src_cpu, dst_cpu))
-		return mig_unrestricted;
+	إذا (cpu < 0 || cpus_share_cache(src_cpu, dst_cpu))
+		إرجاع mig_unrestricted;
 
 	/* skip cache aware load balance for too many threads */
-	if (invalid_llc_nr(grp, p, dst_cpu) ||
+	إذا (invalid_llc_nr(grp, p, dst_cpu) ||
 	    exceed_llc_capacity(grp, dst_cpu)) {
-		if (READ_ONCE(grp->cpu) != -1)
+		إذا (READ_ONCE(grp->cpu) != -1)
 			WRITE_ONCE(grp->cpu, -1);
-		return mig_unrestricted;
+		إرجاع mig_unrestricted;
 	}
 
-	if (cpus_share_cache(dst_cpu, cpu))
+	إذا (cpus_share_cache(dst_cpu, cpu))
 		to_pref = true;
-	else if (cpus_share_cache(src_cpu, cpu))
+	وإلا إذا (cpus_share_cache(src_cpu, cpu))
 		to_pref = false;
-	else
-		return mig_unrestricted;
+	وإلا
+		إرجاع mig_unrestricted;
 
-	return can_migrate_llc(src_cpu, dst_cpu,
+	إرجاع can_migrate_llc(src_cpu, dst_cpu,
 			       task_util(p), to_pref);
 }
 
@@ -10991,14 +10991,14 @@ static enum llc_mig can_migrate_llc_task(struct lb_env *env,
  * LLC locality outweighs the power efficiency gained from
  * migrating the only runnable task away.
  */
-static inline bool
-alb_break_llc(struct lb_env *env)
+ساكن مضمن bool
+alb_break_llc(بنية lb_env *env)
 {
-	if (!sched_cache_enabled())
-		return false;
+	إذا (!sched_cache_enabled())
+		إرجاع false;
 
-	if (cpus_share_cache(env->src_cpu, env->dst_cpu))
-		return false;
+	إذا (cpus_share_cache(env->src_cpu, env->dst_cpu))
+		إرجاع false;
 	/*
 	 * All tasks prefer to stay on their current CPU.
 	 * Do not pull a task from its preferred CPU if:
@@ -11007,33 +11007,33 @@ alb_break_llc(struct lb_env *env)
 	 * 2. Migrating it away from its preferred LLC would violate
 	 *    the cache-aware scheduling policy.
 	 */
-	if (env->src_rq->nr_pref_llc_running &&
+	إذا (env->src_rq->nr_pref_llc_running &&
 	    env->src_rq->nr_pref_llc_running == env->src_rq->cfs.h_nr_runnable) {
 		unsigned long util = 0;
-		struct task_struct *cur;
+		بنية task_struct *cur;
 
 		/*
 		 * Migrating misfit tasks from current CPU
 		 * to CPU with a better fit.
 		 * Prioritize that over LLC preference.
 		 */
-		if (env->migration_type == migrate_misfit)
-			return false;
+		إذا (env->migration_type == migrate_misfit)
+			إرجاع false;
 
-		if (env->src_rq->nr_running <= 1)
-			return true;
+		إذا (env->src_rq->nr_running <= 1)
+			إرجاع true;
 
 		cur = rcu_dereference_all(env->src_rq->curr);
-		if (cur && cur->sched_class == &fair_sched_class)
+		إذا (cur && cur->sched_class == &fair_sched_class)
 			util = task_util(cur);
 
-		if (task_misfits_asym_cpu(env, cur) ||
+		إذا (task_misfits_asym_cpu(env, cur) ||
 		    can_migrate_llc(env->src_cpu, env->dst_cpu,
 				    util, false) == mig_forbid)
-			return true;
+			إرجاع true;
 	}
 
-	return false;
+	إرجاع false;
 }
 
 /*
@@ -11042,10 +11042,10 @@ alb_break_llc(struct lb_env *env)
  * in env->migration_type, while active LB carries LBF_ACTIVE_LB_LLC in
  * env->flags to avoid overwriting env->migration_type.
  */
-static inline bool
-migrate_llc_task_wrong_dst(struct task_struct *p, struct lb_env *env)
+ساكن مضمن bool
+migrate_llc_task_wrong_dst(بنية task_struct *p, بنية lb_env *env)
 {
-	return sched_cache_enabled() &&
+	إرجاع sched_cache_enabled() &&
 	       (env->migration_type == migrate_llc_task ||
 		env->flags & LBF_ACTIVE_LB_LLC) &&
 	       READ_ONCE(p->preferred_llc) != llc_id(env->dst_cpu);
@@ -11055,13 +11055,13 @@ migrate_llc_task_wrong_dst(struct task_struct *p, struct lb_env *env)
  * Check if migrating task p from env->src_cpu to
  * env->dst_cpu breaks LLC localiy.
  */
-static bool migrate_degrades_llc(struct task_struct *p, struct lb_env *env)
+ساكن bool migrate_degrades_llc(بنية task_struct *p, بنية lb_env *env)
 {
-	if (!sched_cache_enabled())
-		return false;
+	إذا (!sched_cache_enabled())
+		إرجاع false;
 
-	if (task_has_sched_core(p))
-		return false;
+	إذا (task_has_sched_core(p))
+		إرجاع false;
 	/*
 	 * Skip over tasks that would degrade LLC locality;
 	 * only when nr_balanced_failed is sufficiently high do we
@@ -11071,58 +11071,58 @@ static bool migrate_degrades_llc(struct task_struct *p, struct lb_env *env)
 	 * than nr_balance_failed to avoid excessive task
 	 * migration at the same time.
 	 */
-	if (env->sd->nr_balance_failed >= env->sd->cache_nice_tries + 1)
-		return false;
+	إذا (env->sd->nr_balance_failed >= env->sd->cache_nice_tries + 1)
+		إرجاع false;
 
 	/*
 	 * We know the env->src_cpu has some tasks prefer to
 	 * run on env->dst_cpu, skip the tasks do not prefer
 	 * env->dst_cpu, and find the one that prefers.
 	 */
-	if (migrate_llc_task_wrong_dst(p, env))
-		return true;
+	إذا (migrate_llc_task_wrong_dst(p, env))
+		إرجاع true;
 
-	if (can_migrate_llc_task(env, p) != mig_forbid)
-		return false;
+	إذا (can_migrate_llc_task(env, p) != mig_forbid)
+		إرجاع false;
 
-	return true;
+	إرجاع true;
 }
 
-#else
-static inline bool get_llc_stats(int cpu, unsigned long *util,
+#وإلا
+ساكن مضمن bool get_llc_stats(صحيح cpu, unsigned long *util,
 				 unsigned long *cap)
 {
-	return false;
+	إرجاع false;
 }
 
-static inline bool
-alb_break_llc(struct lb_env *env)
+ساكن مضمن bool
+alb_break_llc(بنية lb_env *env)
 {
-	return false;
+	إرجاع false;
 }
 
-static inline bool
-migrate_llc_task_wrong_dst(struct task_struct *p, struct lb_env *env)
+ساكن مضمن bool
+migrate_llc_task_wrong_dst(بنية task_struct *p, بنية lb_env *env)
 {
-	return false;
+	إرجاع false;
 }
 
-static inline bool
-migrate_degrades_llc(struct task_struct *p, struct lb_env *env)
+ساكن مضمن bool
+migrate_degrades_llc(بنية task_struct *p, بنية lb_env *env)
 {
-	return false;
+	إرجاع false;
 }
 #endif
 /*
  * can_migrate_task - may task p from runqueue rq be migrated to this_cpu?
  */
-static
-int can_migrate_task(struct task_struct *p, struct lb_env *env)
+ساكن
+صحيح can_migrate_task(بنية task_struct *p, بنية lb_env *env)
 {
 	long degrades, hot;
 
 	lockdep_assert_rq_held(env->src_rq);
-	if (p->sched_task_hot)
+	إذا (p->sched_task_hot)
 		p->sched_task_hot = 0;
 
 	/*
@@ -11134,11 +11134,11 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
 	 * 5) are cache-hot on their current CPU, or
 	 * 6) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
 	 */
-	if ((p->se.sched_delayed) && (env->migration_type != migrate_load))
-		return 0;
+	إذا ((p->se.sched_delayed) && (env->migration_type != migrate_load))
+		إرجاع 0;
 
-	if (lb_throttled_hierarchy(p, env->dst_cpu))
-		return 0;
+	إذا (lb_throttled_hierarchy(p, env->dst_cpu))
+		إرجاع 0;
 
 	/*
 	 * We want to prioritize the migration of eligible tasks.
@@ -11146,19 +11146,19 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
 	 * them to migrate when nr_balance_failed is non-zero to
 	 * avoid load-balancing trying very hard to balance the load.
 	 */
-	if (!env->sd->nr_balance_failed &&
+	إذا (!env->sd->nr_balance_failed &&
 	    task_is_ineligible_on_dst_cpu(p, env->dst_cpu))
-		return 0;
+		إرجاع 0;
 
 	/* Disregard percpu kthreads; they are where they need to be. */
-	if (kthread_is_per_cpu(p))
-		return 0;
+	إذا (kthread_is_per_cpu(p))
+		إرجاع 0;
 
-	if (task_is_blocked(p))
-		return 0;
+	إذا (task_is_blocked(p))
+		إرجاع 0;
 
-	if (!cpumask_test_cpu(env->dst_cpu, p->cpus_ptr)) {
-		int cpu;
+	إذا (!cpumask_test_cpu(env->dst_cpu, p->cpus_ptr)) {
+		صحيح cpu;
 
 		schedstat_inc(p->stats.nr_failed_migrations_affine);
 
@@ -11174,28 +11174,28 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
 		 * - if we have already computed one in current iteration
 		 * - if it's an active balance
 		 */
-		if (env->idle == CPU_NEWLY_IDLE ||
+		إذا (env->idle == CPU_NEWLY_IDLE ||
 		    env->flags & (LBF_DST_PINNED | LBF_ACTIVE_LB))
-			return 0;
+			إرجاع 0;
 
 		/* Prevent to re-select dst_cpu via env's CPUs: */
 		cpu = cpumask_first_and_and(env->dst_grpmask, env->cpus, p->cpus_ptr);
 
-		if (cpu < nr_cpu_ids) {
+		إذا (cpu < nr_cpu_ids) {
 			env->flags |= LBF_DST_PINNED;
 			env->new_dst_cpu = cpu;
 		}
 
-		return 0;
+		إرجاع 0;
 	}
 
 	/* Record that we found at least one task that could run on dst_cpu */
 	env->flags &= ~LBF_ALL_PINNED;
 
-	if (task_on_cpu(env->src_rq, p) ||
+	إذا (task_on_cpu(env->src_rq, p) ||
 	    task_current_donor(env->src_rq, p)) {
 		schedstat_inc(p->stats.nr_failed_migrations_running);
-		return 0;
+		إرجاع 0;
 	}
 
 	/*
@@ -11205,52 +11205,52 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
 	 * 3) task is cache cold, or
 	 * 4) too many balance attempts have failed.
 	 */
-	if (env->flags & LBF_ACTIVE_LB)
-		return !migrate_llc_task_wrong_dst(p, env);
+	إذا (env->flags & LBF_ACTIVE_LB)
+		إرجاع !migrate_llc_task_wrong_dst(p, env);
 
 	degrades = migrate_degrades_locality(p, env);
-	if (!degrades) {
+	إذا (!degrades) {
 		/*
 		 * If the NUMA locality is not broken,
 		 * further check if migration would hurt
 		 * LLC locality.
 		 */
-		if (migrate_degrades_llc(p, env)) {
+		إذا (migrate_degrades_llc(p, env)) {
 			/*
 			 * If regular load balancing fails to pull a task
 			 * due to LLC locality, this is expected behavior
 			 * and we set LBF_LLC_PINNED so we don't increase
 			 * nr_balance_failed unecessarily.
 			 */
-			if (env->migration_type != migrate_llc_task)
+			إذا (env->migration_type != migrate_llc_task)
 				env->flags |= LBF_LLC_PINNED;
 
-			return 0;
+			إرجاع 0;
 		}
 
 		hot = task_hot(p, env);
-	} else {
+	} وإلا {
 		hot = degrades > 0;
 	}
 
-	if (!hot || env->sd->nr_balance_failed > env->sd->cache_nice_tries) {
-		if (hot)
+	إذا (!hot || env->sd->nr_balance_failed > env->sd->cache_nice_tries) {
+		إذا (hot)
 			p->sched_task_hot = 1;
-		return 1;
+		إرجاع 1;
 	}
 
 	schedstat_inc(p->stats.nr_failed_migrations_hot);
-	return 0;
+	إرجاع 0;
 }
 
 /*
  * detach_task() -- detach the task for the migration specified in env
  */
-static void detach_task(struct task_struct *p, struct lb_env *env)
+ساكن فراغ detach_task(بنية task_struct *p, بنية lb_env *env)
 {
 	lockdep_assert_rq_held(env->src_rq);
 
-	if (p->sched_task_hot) {
+	إذا (p->sched_task_hot) {
 		p->sched_task_hot = 0;
 		schedstat_inc(env->sd->lb_hot_gained[env->idle]);
 		schedstat_inc(p->stats.nr_forced_migrations);
@@ -11269,16 +11269,16 @@ static void detach_task(struct task_struct *p, struct lb_env *env)
  *
  * Returns a task if successful and NULL otherwise.
  */
-static struct task_struct *detach_one_task(struct lb_env *env)
+ساكن بنية task_struct *detach_one_task(بنية lb_env *env)
 {
-	struct task_struct *p;
+	بنية task_struct *p;
 
 	lockdep_assert_rq_held(env->src_rq);
 
 	list_for_each_entry_reverse(p,
-			&env->src_rq->cfs_tasks, se.group_node) {
-		if (!can_migrate_task(p, env))
-			continue;
+			&env->src_rq->cfs_tasks, se.group_عقدة) {
+		إذا (!can_migrate_task(p, env))
+			استمر;
 
 		detach_task(p, env);
 
@@ -11289,9 +11289,9 @@ static struct task_struct *detach_one_task(struct lb_env *env)
 		 * inside detach_tasks().
 		 */
 		schedstat_inc(env->sd->lb_gained[env->idle]);
-		return p;
+		إرجاع p;
 	}
-	return NULL;
+	إرجاع عدم;
 }
 
 /*
@@ -11300,12 +11300,12 @@ static struct task_struct *detach_one_task(struct lb_env *env)
  *
  * Returns number of detached tasks if successful and 0 otherwise.
  */
-static int detach_tasks(struct lb_env *env)
+ساكن صحيح detach_tasks(بنية lb_env *env)
 {
-	struct list_head *tasks = &env->src_rq->cfs_tasks;
+	بنية list_head *tasks = &env->src_rq->cfs_tasks;
 	unsigned long util, load;
-	struct task_struct *p;
-	int detached = 0;
+	بنية task_struct *p;
+	صحيح detached = 0;
 
 	lockdep_assert_rq_held(env->src_rq);
 
@@ -11313,41 +11313,41 @@ static int detach_tasks(struct lb_env *env)
 	 * Source run queue has been emptied by another CPU, clear
 	 * LBF_ALL_PINNED flag as we will not test any task.
 	 */
-	if (env->src_rq->nr_running <= 1) {
+	إذا (env->src_rq->nr_running <= 1) {
 		env->flags &= ~LBF_ALL_PINNED;
-		return 0;
+		إرجاع 0;
 	}
 
-	if (env->imbalance <= 0)
-		return 0;
+	إذا (env->imbalance <= 0)
+		إرجاع 0;
 
-	while (!list_empty(tasks)) {
+	بينما (!list_empty(tasks)) {
 		/*
 		 * We don't want to steal all, otherwise we may be treated likewise,
 		 * which could at worst lead to a livelock crash.
 		 */
-		if (env->idle && env->src_rq->nr_running <= 1)
-			break;
+		إذا (env->idle && env->src_rq->nr_running <= 1)
+			اكسر;
 
 		env->loop++;
 		/* We've more or less seen every task there is, call it quits */
-		if (env->loop > env->loop_max)
-			break;
+		إذا (env->loop > env->loop_max)
+			اكسر;
 
 		/* take a breather every nr_migrate tasks */
-		if (env->loop > env->loop_break) {
+		إذا (env->loop > env->loop_break) {
 			env->loop_break += SCHED_NR_MIGRATE_BREAK;
 			env->flags |= LBF_NEED_BREAK;
-			break;
+			اكسر;
 		}
 
-		p = list_last_entry(tasks, struct task_struct, se.group_node);
+		p = list_last_entry(tasks, بنية task_struct, se.group_عقدة);
 
-		if (!can_migrate_task(p, env))
-			goto next;
+		إذا (!can_migrate_task(p, env))
+			اذهب next;
 
-		switch (env->migration_type) {
-		case migrate_load:
+		بدل (env->migration_type) {
+		حالة migrate_load:
 			/*
 			 * Depending of the number of CPUs and tasks and the
 			 * cgroup hierarchy, task_h_load() can return a null
@@ -11357,9 +11357,9 @@ static int detach_tasks(struct lb_env *env)
 			 */
 			load = max_t(unsigned long, task_h_load(p), 1);
 
-			if (sched_feat(LB_MIN) &&
+			إذا (sched_feat(LB_MIN) &&
 			    load < 16 && !env->sd->nr_balance_failed)
-				goto next;
+				اذهب next;
 
 			/*
 			 * Make sure that we don't migrate too much load.
@@ -11367,40 +11367,40 @@ static int detach_tasks(struct lb_env *env)
 			 * scheduler fails to find a good waiting task to
 			 * migrate.
 			 */
-			if (shr_bound(load, env->sd->nr_balance_failed) > env->imbalance)
-				goto next;
+			إذا (shr_bound(load, env->sd->nr_balance_failed) > env->imbalance)
+				اذهب next;
 
 			env->imbalance -= load;
-			break;
+			اكسر;
 
-		case migrate_util:
+		حالة migrate_util:
 			util = task_util_est(p);
 
-			if (shr_bound(util, env->sd->nr_balance_failed) > env->imbalance)
-				goto next;
+			إذا (shr_bound(util, env->sd->nr_balance_failed) > env->imbalance)
+				اذهب next;
 
 			env->imbalance -= util;
-			break;
+			اكسر;
 
-		case migrate_task:
+		حالة migrate_task:
 			env->imbalance--;
-			break;
+			اكسر;
 
-		case migrate_misfit:
+		حالة migrate_misfit:
 			/* This is not a misfit task */
-			if (task_fits_cpu(p, env->src_cpu))
-				goto next;
+			إذا (task_fits_cpu(p, env->src_cpu))
+				اذهب next;
 
 			env->imbalance = 0;
-			break;
+			اكسر;
 
-		case migrate_llc_task:
+		حالة migrate_llc_task:
 			env->imbalance--;
-			break;
+			اكسر;
 		}
 
 		detach_task(p, env);
-		list_add(&p->se.group_node, &env->tasks);
+		list_add(&p->se.group_عقدة, &env->tasks);
 
 		detached++;
 
@@ -11410,23 +11410,23 @@ static int detach_tasks(struct lb_env *env)
 		 * kernels will stop after the first task is detached to minimize
 		 * the critical section.
 		 */
-		if (env->idle == CPU_NEWLY_IDLE)
-			break;
+		إذا (env->idle == CPU_NEWLY_IDLE)
+			اكسر;
 #endif
 
 		/*
 		 * We only want to steal up to the prescribed amount of
 		 * load/util/tasks.
 		 */
-		if (env->imbalance <= 0)
-			break;
+		إذا (env->imbalance <= 0)
+			اكسر;
 
-		continue;
+		استمر;
 next:
-		if (p->sched_task_hot)
+		إذا (p->sched_task_hot)
 			schedstat_inc(p->stats.nr_failed_migrations_hot);
 
-		list_move(&p->se.group_node, tasks);
+		list_move(&p->se.group_عقدة, tasks);
 	}
 
 	/*
@@ -11436,65 +11436,65 @@ next:
 	 */
 	schedstat_add(env->sd->lb_gained[env->idle], detached);
 
-	return detached;
+	إرجاع detached;
 }
 
 /*
  * attach_tasks() -- attaches all tasks detached by detach_tasks() to their
  * new rq.
  */
-static void attach_tasks(struct lb_env *env)
+ساكن فراغ attach_tasks(بنية lb_env *env)
 {
 	__attach_tasks(env->dst_rq, &env->tasks);
 }
 
 #ifdef CONFIG_NO_HZ_COMMON
-static inline bool cfs_rq_has_blocked_load(struct cfs_rq *cfs_rq)
+ساكن مضمن bool cfs_rq_has_blocked_load(بنية cfs_rq *cfs_rq)
 {
-	if (cfs_rq->avg.load_avg)
-		return true;
+	إذا (cfs_rq->avg.load_avg)
+		إرجاع true;
 
-	if (cfs_rq->avg.util_avg)
-		return true;
+	إذا (cfs_rq->avg.util_avg)
+		إرجاع true;
 
-	return false;
+	إرجاع false;
 }
 
-static inline bool others_have_blocked(struct rq *rq)
+ساكن مضمن bool others_have_blocked(بنية rq *rq)
 {
-	if (cpu_util_rt(rq))
-		return true;
+	إذا (cpu_util_rt(rq))
+		إرجاع true;
 
-	if (cpu_util_dl(rq))
-		return true;
+	إذا (cpu_util_dl(rq))
+		إرجاع true;
 
-	if (hw_load_avg(rq))
-		return true;
+	إذا (hw_load_avg(rq))
+		إرجاع true;
 
-	if (cpu_util_irq(rq))
-		return true;
+	إذا (cpu_util_irq(rq))
+		إرجاع true;
 
-	return false;
+	إرجاع false;
 }
 
-static inline void update_blocked_load_tick(struct rq *rq)
+ساكن مضمن فراغ update_blocked_load_tick(بنية rq *rq)
 {
 	WRITE_ONCE(rq->last_blocked_load_update_tick, jiffies);
 }
 
-static inline void update_has_blocked_load_status(struct rq *rq, bool has_blocked_load)
+ساكن مضمن فراغ update_has_blocked_load_status(بنية rq *rq, bool has_blocked_load)
 {
-	if (!has_blocked_load)
+	إذا (!has_blocked_load)
 		rq->has_blocked_load = 0;
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline bool cfs_rq_has_blocked_load(struct cfs_rq *cfs_rq) { return false; }
-static inline bool others_have_blocked(struct rq *rq) { return false; }
-static inline void update_blocked_load_tick(struct rq *rq) {}
-static inline void update_has_blocked_load_status(struct rq *rq, bool has_blocked_load) {}
+#وإلا /* !CONFIG_NO_HZ_COMMON: */
+ساكن مضمن bool cfs_rq_has_blocked_load(بنية cfs_rq *cfs_rq) { إرجاع false; }
+ساكن مضمن bool others_have_blocked(بنية rq *rq) { إرجاع false; }
+ساكن مضمن فراغ update_blocked_load_tick(بنية rq *rq) {}
+ساكن مضمن فراغ update_has_blocked_load_status(بنية rq *rq, bool has_blocked_load) {}
 #endif /* !CONFIG_NO_HZ_COMMON */
 
-static bool __update_blocked_others(struct rq *rq, bool *done)
+ساكن bool __update_blocked_others(بنية rq *rq, bool *done)
 {
 	bool updated;
 
@@ -11504,17 +11504,17 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
 	 */
 	updated = update_other_load_avgs(rq);
 
-	if (others_have_blocked(rq))
+	إذا (others_have_blocked(rq))
 		*done = false;
 
-	return updated;
+	إرجاع updated;
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 
-static bool __update_blocked_fair(struct rq *rq, bool *done)
+ساكن bool __update_blocked_fair(بنية rq *rq, bool *done)
 {
-	struct cfs_rq *cfs_rq, *pos;
+	بنية cfs_rq *cfs_rq, *pos;
 	bool decayed = false;
 
 	/*
@@ -11522,36 +11522,36 @@ static bool __update_blocked_fair(struct rq *rq, bool *done)
 	 * list_add_leaf_cfs_rq() for details.
 	 */
 	for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos) {
-		struct sched_entity *se;
+		بنية sched_entity *se;
 
-		if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq)) {
+		إذا (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq)) {
 			update_tg_load_avg(cfs_rq);
 
-			if (cfs_rq->nr_queued == 0)
+			إذا (cfs_rq->nr_queued == 0)
 				update_idle_cfs_rq_clock_pelt(cfs_rq);
 
-			if (cfs_rq == &rq->cfs)
+			إذا (cfs_rq == &rq->cfs)
 				decayed = true;
 		}
 
 		/* Propagate pending load changes to the parent, if any: */
 		se = cfs_rq_se(cfs_rq);
-		if (se && !skip_blocked_update(se))
+		إذا (se && !skip_blocked_update(se))
 			update_load_avg(cfs_rq_of(se), se, UPDATE_TG);
 
 		/*
 		 * There can be a lot of idle CPU cgroups.  Don't let fully
 		 * decayed cfs_rqs linger on the list.
 		 */
-		if (cfs_rq_is_decayed(cfs_rq))
+		إذا (cfs_rq_is_decayed(cfs_rq))
 			list_del_leaf_cfs_rq(cfs_rq);
 
 		/* Don't need periodic decay once load/util_avg are null */
-		if (cfs_rq_has_blocked_load(cfs_rq))
+		إذا (cfs_rq_has_blocked_load(cfs_rq))
 			*done = false;
 	}
 
-	return decayed;
+	إرجاع decayed;
 }
 
 /*
@@ -11559,29 +11559,29 @@ static bool __update_blocked_fair(struct rq *rq, bool *done)
  * This needs to be done in a top-down fashion because the load of a child
  * group is a fraction of its parents load.
  */
-static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
+ساكن فراغ update_cfs_rq_h_load(بنية cfs_rq *cfs_rq)
 {
-	struct sched_entity *se = cfs_rq_se(cfs_rq);
+	بنية sched_entity *se = cfs_rq_se(cfs_rq);
 	unsigned long now = jiffies;
 	unsigned long load;
 
-	if (cfs_rq->last_h_load_update == now)
-		return;
+	إذا (cfs_rq->last_h_load_update == now)
+		إرجاع;
 
-	WRITE_ONCE(cfs_rq->h_load_next, NULL);
+	WRITE_ONCE(cfs_rq->h_load_next, عدم);
 	for_each_sched_entity(se) {
 		cfs_rq = cfs_rq_of(se);
 		WRITE_ONCE(cfs_rq->h_load_next, se);
-		if (cfs_rq->last_h_load_update == now)
-			break;
+		إذا (cfs_rq->last_h_load_update == now)
+			اكسر;
 	}
 
-	if (!se) {
+	إذا (!se) {
 		cfs_rq->h_load = cfs_rq_load_avg(cfs_rq);
 		cfs_rq->last_h_load_update = now;
 	}
 
-	while ((se = READ_ONCE(cfs_rq->h_load_next)) != NULL) {
+	بينما ((se = READ_ONCE(cfs_rq->h_load_next)) != عدم) {
 		load = cfs_rq->h_load;
 		load = div64_ul(load * se->avg.load_avg,
 				cfs_rq_load_avg(cfs_rq) + 1);
@@ -11591,34 +11591,34 @@ static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
 	}
 }
 
-static unsigned long task_h_load(struct task_struct *p)
+ساكن unsigned long task_h_load(بنية task_struct *p)
 {
-	struct cfs_rq *cfs_rq = task_cfs_rq(p);
+	بنية cfs_rq *cfs_rq = task_cfs_rq(p);
 
 	update_cfs_rq_h_load(cfs_rq);
-	return div64_ul(p->se.avg.load_avg * cfs_rq->h_load,
+	إرجاع div64_ul(p->se.avg.load_avg * cfs_rq->h_load,
 			cfs_rq_load_avg(cfs_rq) + 1);
 }
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static bool __update_blocked_fair(struct rq *rq, bool *done)
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
+ساكن bool __update_blocked_fair(بنية rq *rq, bool *done)
 {
-	struct cfs_rq *cfs_rq = &rq->cfs;
+	بنية cfs_rq *cfs_rq = &rq->cfs;
 	bool decayed;
 
 	decayed = update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq);
-	if (cfs_rq_has_blocked_load(cfs_rq))
+	إذا (cfs_rq_has_blocked_load(cfs_rq))
 		*done = false;
 
-	return decayed;
+	إرجاع decayed;
 }
 
-static unsigned long task_h_load(struct task_struct *p)
+ساكن unsigned long task_h_load(بنية task_struct *p)
 {
-	return p->se.avg.load_avg;
+	إرجاع p->se.avg.load_avg;
 }
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-static void __sched_balance_update_blocked_averages(struct rq *rq)
+ساكن فراغ __sched_balance_update_blocked_averages(بنية rq *rq)
 {
 	bool decayed = false, done = true;
 
@@ -11628,13 +11628,13 @@ static void __sched_balance_update_blocked_averages(struct rq *rq)
 	decayed |= __update_blocked_fair(rq, &done);
 
 	update_has_blocked_load_status(rq, !done);
-	if (decayed)
+	إذا (decayed)
 		cpufreq_update_util(rq, 0);
 }
 
-static void sched_balance_update_blocked_averages(int cpu)
+ساكن فراغ sched_balance_update_blocked_averages(صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
 	guard(rq_lock_irqsave)(rq);
 	update_rq_clock(rq);
@@ -11646,47 +11646,47 @@ static void sched_balance_update_blocked_averages(int cpu)
 /*
  * sg_lb_stats - stats of a sched_group required for load-balancing:
  */
-struct sg_lb_stats {
+بنية sg_lb_stats {
 	unsigned long avg_load;			/* Avg load            over the CPUs of the group */
 	unsigned long group_load;		/* Total load          over the CPUs of the group */
 	unsigned long group_capacity;		/* Capacity            over the CPUs of the group */
 	unsigned long group_util;		/* Total utilization   over the CPUs of the group */
 	unsigned long group_runnable;		/* Total runnable time over the CPUs of the group */
-	unsigned int sum_nr_running;		/* Nr of all tasks running in the group */
-	unsigned int sum_h_nr_running;		/* Nr of CFS tasks running in the group */
-	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
-	unsigned int group_weight;
-	enum group_type group_type;
-	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
-	unsigned int group_smt_balance;		/* Task on busy SMT be moved */
-	unsigned int group_llc_balance;		/* Tasks should be moved to preferred LLC */
+	unsigned صحيح sum_nr_running;		/* Nr of all tasks running in the group */
+	unsigned صحيح sum_h_nr_running;		/* Nr of CFS tasks running in the group */
+	unsigned صحيح idle_cpus;                 /* Nr of idle CPUs         in the group */
+	unsigned صحيح group_weight;
+	تعداد group_type group_type;
+	unsigned صحيح group_asym_packing;	/* Tasks should be moved to preferred CPU */
+	unsigned صحيح group_smt_balance;		/* Task on busy SMT be moved */
+	unsigned صحيح group_llc_balance;		/* Tasks should be moved to preferred LLC */
 	unsigned long group_misfit_task_load;	/* A CPU has a task too big for its capacity */
-	unsigned int group_overutilized;	/* At least one CPU is overutilized in the group */
+	unsigned صحيح group_overutilized;	/* At least one CPU is overutilized in the group */
 #ifdef CONFIG_NUMA_BALANCING
-	unsigned int nr_numa_running;
-	unsigned int nr_preferred_running;
+	unsigned صحيح nr_numa_running;
+	unsigned صحيح nr_preferred_running;
 #endif
 #ifdef CONFIG_SCHED_CACHE
-	unsigned int nr_pref_dst_llc;
+	unsigned صحيح nr_pref_dst_llc;
 #endif
 };
 
 /*
  * sd_lb_stats - stats of a sched_domain required for load-balancing:
  */
-struct sd_lb_stats {
-	struct sched_group *busiest;		/* Busiest group in this sd */
-	struct sched_group *local;		/* Local group in this sd */
+بنية sd_lb_stats {
+	بنية sched_group *busiest;		/* Busiest group in this sd */
+	بنية sched_group *local;		/* Local group in this sd */
 	unsigned long total_load;		/* Total load of all groups in sd */
 	unsigned long total_capacity;		/* Total capacity of all groups in sd */
 	unsigned long avg_load;			/* Average load across all groups in sd */
-	unsigned int prefer_sibling;		/* Tasks should go to sibling first */
+	unsigned صحيح prefer_sibling;		/* Tasks should go to sibling first */
 
-	struct sg_lb_stats busiest_stat;	/* Statistics of the busiest group */
-	struct sg_lb_stats local_stat;		/* Statistics of the local group */
+	بنية sg_lb_stats busiest_stat;	/* Statistics of the busiest group */
+	بنية sg_lb_stats local_stat;		/* Statistics of the local group */
 };
 
-static inline void init_sd_lb_stats(struct sd_lb_stats *sds)
+ساكن مضمن فراغ init_sd_lb_stats(بنية sd_lb_stats *sds)
 {
 	/*
 	 * Skimp on the clearing to avoid duplicate work. We can avoid clearing
@@ -11695,9 +11695,9 @@ static inline void init_sd_lb_stats(struct sd_lb_stats *sds)
 	 * busiest_stat::idle_cpus to the worst busiest group because
 	 * update_sd_pick_busiest() reads these before assignment.
 	 */
-	*sds = (struct sd_lb_stats){
-		.busiest = NULL,
-		.local = NULL,
+	*sds = (بنية sd_lb_stats){
+		.busiest = عدم,
+		.local = عدم,
 		.total_load = 0UL,
 		.total_capacity = 0UL,
 		.busiest_stat = {
@@ -11707,17 +11707,17 @@ static inline void init_sd_lb_stats(struct sd_lb_stats *sds)
 	};
 }
 
-static unsigned long scale_rt_capacity(int cpu)
+ساكن unsigned long scale_rt_capacity(صحيح cpu)
 {
 	unsigned long max = get_actual_cpu_capacity(cpu);
-	struct rq *rq = cpu_rq(cpu);
-	unsigned long used, free;
+	بنية rq *rq = cpu_rq(cpu);
+	unsigned long used, حرر;
 	unsigned long irq;
 
 	irq = cpu_util_irq(rq);
 
-	if (unlikely(irq >= max))
-		return 1;
+	إذا (unlikely(irq >= max))
+		إرجاع 1;
 
 	/*
 	 * avg_rt.util_avg and avg_dl.util_avg track binary signals
@@ -11726,20 +11726,20 @@ static unsigned long scale_rt_capacity(int cpu)
 	used = cpu_util_rt(rq);
 	used += cpu_util_dl(rq);
 
-	if (unlikely(used >= max))
-		return 1;
+	إذا (unlikely(used >= max))
+		إرجاع 1;
 
-	free = max - used;
+	حرر = max - used;
 
-	return scale_irq_capacity(free, irq, max);
+	إرجاع scale_irq_capacity(حرر, irq, max);
 }
 
-static void update_cpu_capacity(struct sched_domain *sd, int cpu)
+ساكن فراغ update_cpu_capacity(بنية sched_domain *sd, صحيح cpu)
 {
 	unsigned long capacity = scale_rt_capacity(cpu);
-	struct sched_group *sdg = sd->groups;
+	بنية sched_group *sdg = sd->groups;
 
-	if (!capacity)
+	إذا (!capacity)
 		capacity = 1;
 
 	cpu_rq(cpu)->cpu_capacity = capacity;
@@ -11750,10 +11750,10 @@ static void update_cpu_capacity(struct sched_domain *sd, int cpu)
 	sdg->sgc->max_capacity = capacity;
 }
 
-void update_group_capacity(struct sched_domain *sd, int cpu)
+فراغ update_group_capacity(بنية sched_domain *sd, صحيح cpu)
 {
-	struct sched_domain *child = sd->child;
-	struct sched_group *group, *sdg = sd->groups;
+	بنية sched_domain *child = sd->child;
+	بنية sched_group *group, *sdg = sd->groups;
 	unsigned long capacity, min_capacity, max_capacity;
 	unsigned long interval;
 
@@ -11761,16 +11761,16 @@ void update_group_capacity(struct sched_domain *sd, int cpu)
 	interval = clamp(interval, 1UL, max_load_balance_interval);
 	sdg->sgc->next_update = jiffies + interval;
 
-	if (!child) {
+	إذا (!child) {
 		update_cpu_capacity(sd, cpu);
-		return;
+		إرجاع;
 	}
 
 	capacity = 0;
 	min_capacity = ULONG_MAX;
 	max_capacity = 0;
 
-	if (child->flags & SD_NUMA) {
+	إذا (child->flags & SD_NUMA) {
 		/*
 		 * SD_NUMA domains cannot assume that child groups
 		 * span the current group.
@@ -11783,21 +11783,21 @@ void update_group_capacity(struct sched_domain *sd, int cpu)
 			min_capacity = min(cpu_cap, min_capacity);
 			max_capacity = max(cpu_cap, max_capacity);
 		}
-	} else  {
+	} وإلا  {
 		/*
 		 * !SD_NUMA domains can assume that child groups
 		 * span the current group.
 		 */
 
 		group = child->groups;
-		do {
-			struct sched_group_capacity *sgc = group->sgc;
+		افعل {
+			بنية sched_group_capacity *sgc = group->sgc;
 
 			capacity += sgc->capacity;
 			min_capacity = min(sgc->min_capacity, min_capacity);
 			max_capacity = max(sgc->max_capacity, max_capacity);
 			group = group->next;
-		} while (group != child->groups);
+		} بينما (group != child->groups);
 	}
 
 	sdg->sgc->capacity = capacity;
@@ -11810,17 +11810,17 @@ void update_group_capacity(struct sched_domain *sd, int cpu)
  * activity. The imbalance_pct is used for the threshold.
  * Return true is the capacity is reduced
  */
-static inline int
-check_cpu_capacity(struct rq *rq, struct sched_domain *sd)
+ساكن مضمن صحيح
+check_cpu_capacity(بنية rq *rq, بنية sched_domain *sd)
 {
-	return ((rq->cpu_capacity * sd->imbalance_pct) <
+	إرجاع ((rq->cpu_capacity * sd->imbalance_pct) <
 				(arch_scale_cpu_capacity(cpu_of(rq)) * 100));
 }
 
 /* Check if the rq has a misfit task */
-static inline bool check_misfit_status(struct rq *rq)
+ساكن مضمن bool check_misfit_status(بنية rq *rq)
 {
-	return rq->misfit_task_load;
+	إرجاع rq->misfit_task_load;
 }
 
 /*
@@ -11852,9 +11852,9 @@ static inline bool check_misfit_status(struct rq *rq)
  * subtle and fragile situation.
  */
 
-static inline int sg_imbalanced(struct sched_group *group)
+ساكن مضمن صحيح sg_imbalanced(بنية sched_group *group)
 {
-	return group->sgc->imbalance;
+	إرجاع group->sgc->imbalance;
 }
 
 /*
@@ -11869,21 +11869,21 @@ static inline int sg_imbalanced(struct sched_group *group)
  * As an example, an available capacity of 1% can appear but it doesn't make
  * any benefit for the load balance.
  */
-static inline bool
-group_has_capacity(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
+ساكن مضمن bool
+group_has_capacity(unsigned صحيح imbalance_pct, بنية sg_lb_stats *sgs)
 {
-	if (sgs->sum_nr_running < sgs->group_weight)
-		return true;
+	إذا (sgs->sum_nr_running < sgs->group_weight)
+		إرجاع true;
 
-	if ((sgs->group_capacity * imbalance_pct) <
+	إذا ((sgs->group_capacity * imbalance_pct) <
 			(sgs->group_runnable * 100))
-		return false;
+		إرجاع false;
 
-	if ((sgs->group_capacity * 100) >
+	إذا ((sgs->group_capacity * 100) >
 			(sgs->group_util * imbalance_pct))
-		return true;
+		إرجاع true;
 
-	return false;
+	إرجاع false;
 }
 
 /*
@@ -11894,57 +11894,57 @@ group_has_capacity(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
  *  overloaded so both group_has_capacity and group_is_overloaded return
  *  false.
  */
-static inline bool
-group_is_overloaded(unsigned int imbalance_pct, struct sg_lb_stats *sgs)
+ساكن مضمن bool
+group_is_overloaded(unsigned صحيح imbalance_pct, بنية sg_lb_stats *sgs)
 {
 	/*
 	 * With EAS and uclamp, 1 CPU in the group must be overutilized to
 	 * consider the group overloaded.
 	 */
-	if (sched_energy_enabled() && !sgs->group_overutilized)
-		return false;
+	إذا (sched_energy_enabled() && !sgs->group_overutilized)
+		إرجاع false;
 
-	if (sgs->sum_nr_running <= sgs->group_weight)
-		return false;
+	إذا (sgs->sum_nr_running <= sgs->group_weight)
+		إرجاع false;
 
-	if ((sgs->group_capacity * 100) <
+	إذا ((sgs->group_capacity * 100) <
 			(sgs->group_util * imbalance_pct))
-		return true;
+		إرجاع true;
 
-	if ((sgs->group_capacity * imbalance_pct) <
+	إذا ((sgs->group_capacity * imbalance_pct) <
 			(sgs->group_runnable * 100))
-		return true;
+		إرجاع true;
 
-	return false;
+	إرجاع false;
 }
 
-static inline enum
-group_type group_classify(unsigned int imbalance_pct,
-			  struct sched_group *group,
-			  struct sg_lb_stats *sgs)
+ساكن مضمن تعداد
+group_type group_classify(unsigned صحيح imbalance_pct,
+			  بنية sched_group *group,
+			  بنية sg_lb_stats *sgs)
 {
-	if (group_is_overloaded(imbalance_pct, sgs))
-		return group_overloaded;
+	إذا (group_is_overloaded(imbalance_pct, sgs))
+		إرجاع group_overloaded;
 
-	if (sgs->group_llc_balance)
-		return group_llc_balance;
+	إذا (sgs->group_llc_balance)
+		إرجاع group_llc_balance;
 
-	if (sg_imbalanced(group))
-		return group_imbalanced;
+	إذا (sg_imbalanced(group))
+		إرجاع group_imbalanced;
 
-	if (sgs->group_asym_packing)
-		return group_asym_packing;
+	إذا (sgs->group_asym_packing)
+		إرجاع group_asym_packing;
 
-	if (sgs->group_smt_balance)
-		return group_smt_balance;
+	إذا (sgs->group_smt_balance)
+		إرجاع group_smt_balance;
 
-	if (sgs->group_misfit_task_load)
-		return group_misfit_task;
+	إذا (sgs->group_misfit_task_load)
+		إرجاع group_misfit_task;
 
-	if (!group_has_capacity(imbalance_pct, sgs))
-		return group_fully_busy;
+	إذا (!group_has_capacity(imbalance_pct, sgs))
+		إرجاع group_fully_busy;
 
-	return group_has_spare;
+	إرجاع group_has_spare;
 }
 
 /**
@@ -11958,24 +11958,24 @@ group_type group_classify(unsigned int imbalance_pct,
  *
  * Returns: True if the priority of @cpu must be followed. False otherwise.
  */
-static bool sched_use_asym_prio(struct sched_domain *sd, int cpu)
+ساكن bool sched_use_asym_prio(بنية sched_domain *sd, صحيح cpu)
 {
-	if (!(sd->flags & SD_ASYM_PACKING))
-		return false;
+	إذا (!(sd->flags & SD_ASYM_PACKING))
+		إرجاع false;
 
-	if (!sched_smt_active())
-		return true;
+	إذا (!sched_smt_active())
+		إرجاع true;
 
-	return sd->flags & SD_SHARE_CPUCAPACITY || is_core_idle(cpu);
+	إرجاع sd->flags & SD_SHARE_CPUCAPACITY || is_core_idle(cpu);
 }
 
-static inline bool sched_asym(struct sched_domain *sd, int dst_cpu, int src_cpu)
+ساكن مضمن bool sched_asym(بنية sched_domain *sd, صحيح dst_cpu, صحيح src_cpu)
 {
 	/*
 	 * First check if @dst_cpu can do asym_packing load balance. Only do it
 	 * if it has higher priority than @src_cpu.
 	 */
-	return sched_use_asym_prio(sd, dst_cpu) &&
+	إرجاع sched_use_asym_prio(sd, dst_cpu) &&
 		sched_asym_prefer(dst_cpu, src_cpu);
 }
 
@@ -11991,36 +11991,36 @@ static inline bool sched_asym(struct sched_domain *sd, int dst_cpu, int src_cpu)
  * Return: true if @env::dst_cpu can do with asym_packing load balance. False
  * otherwise.
  */
-static inline bool
-sched_group_asym(struct lb_env *env, struct sg_lb_stats *sgs, struct sched_group *group)
+ساكن مضمن bool
+sched_group_asym(بنية lb_env *env, بنية sg_lb_stats *sgs, بنية sched_group *group)
 {
 	/*
 	 * CPU priorities do not make sense for SMT cores with more than one
 	 * busy sibling.
 	 */
-	if ((group->flags & SD_SHARE_CPUCAPACITY) &&
+	إذا ((group->flags & SD_SHARE_CPUCAPACITY) &&
 	    (sgs->group_weight - sgs->idle_cpus != 1))
-		return false;
+		إرجاع false;
 
-	return sched_asym(env->sd, env->dst_cpu, READ_ONCE(group->asym_prefer_cpu));
+	إرجاع sched_asym(env->sd, env->dst_cpu, READ_ONCE(group->asym_prefer_cpu));
 }
 
 /* One group has more than one SMT CPU while the other group does not */
-static inline bool smt_vs_nonsmt_groups(struct sched_group *sg1,
-				    struct sched_group *sg2)
+ساكن مضمن bool smt_vs_nonsmt_groups(بنية sched_group *sg1,
+				    بنية sched_group *sg2)
 {
-	if (!sg1 || !sg2)
-		return false;
+	إذا (!sg1 || !sg2)
+		إرجاع false;
 
-	return (sg1->flags & SD_SHARE_CPUCAPACITY) !=
+	إرجاع (sg1->flags & SD_SHARE_CPUCAPACITY) !=
 		(sg2->flags & SD_SHARE_CPUCAPACITY);
 }
 
-static inline bool smt_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-			       struct sched_group *group)
+ساكن مضمن bool smt_balance(بنية lb_env *env, بنية sg_lb_stats *sgs,
+			       بنية sched_group *group)
 {
-	if (!env->idle)
-		return false;
+	إذا (!env->idle)
+		إرجاع false;
 
 	/*
 	 * For SMT source group, it is better to move a task
@@ -12028,31 +12028,31 @@ static inline bool smt_balance(struct lb_env *env, struct sg_lb_stats *sgs,
 	 * Note that if a group has a single SMT, SD_SHARE_CPUCAPACITY
 	 * will not be on.
 	 */
-	if (group->flags & SD_SHARE_CPUCAPACITY &&
+	إذا (group->flags & SD_SHARE_CPUCAPACITY &&
 	    sgs->sum_h_nr_running > 1)
-		return true;
+		إرجاع true;
 
-	return false;
+	إرجاع false;
 }
 
-static inline long sibling_imbalance(struct lb_env *env,
-				    struct sd_lb_stats *sds,
-				    struct sg_lb_stats *busiest,
-				    struct sg_lb_stats *local)
+ساكن مضمن long sibling_imbalance(بنية lb_env *env,
+				    بنية sd_lb_stats *sds,
+				    بنية sg_lb_stats *busiest,
+				    بنية sg_lb_stats *local)
 {
-	int ncores_busiest, ncores_local;
+	صحيح ncores_busiest, ncores_local;
 	long imbalance;
 
-	if (!env->idle || !busiest->sum_nr_running)
-		return 0;
+	إذا (!env->idle || !busiest->sum_nr_running)
+		إرجاع 0;
 
 	ncores_busiest = sds->busiest->cores;
 	ncores_local = sds->local->cores;
 
-	if (ncores_busiest == ncores_local) {
+	إذا (ncores_busiest == ncores_local) {
 		imbalance = busiest->sum_nr_running;
 		lsub_positive(&imbalance, local->sum_nr_running);
-		return imbalance;
+		إرجاع imbalance;
 	}
 
 	/* Balance such that nr_running/ncores ratio are same on both groups */
@@ -12063,24 +12063,24 @@ static inline long sibling_imbalance(struct lb_env *env,
 	imbalance /= ncores_local + ncores_busiest;
 
 	/* Take advantage of resource in an empty sched group */
-	if (imbalance <= 1 && local->sum_nr_running == 0 &&
+	إذا (imbalance <= 1 && local->sum_nr_running == 0 &&
 	    busiest->sum_nr_running > 1)
 		imbalance = 2;
 
-	return imbalance;
+	إرجاع imbalance;
 }
 
-static inline bool
-sched_reduced_capacity(struct rq *rq, struct sched_domain *sd)
+ساكن مضمن bool
+sched_reduced_capacity(بنية rq *rq, بنية sched_domain *sd)
 {
 	/*
 	 * When there is more than 1 task, the group_overloaded case already
 	 * takes care of cpu with reduced capacity
 	 */
-	if (rq->cfs.h_nr_runnable != 1)
-		return false;
+	إذا (rq->cfs.h_nr_runnable != 1)
+		إرجاع false;
 
-	return check_cpu_capacity(rq, sd);
+	إرجاع check_cpu_capacity(rq, sd);
 }
 
 #ifdef CONFIG_SCHED_CACHE
@@ -12089,27 +12089,27 @@ sched_reduced_capacity(struct rq *rq, struct sched_domain *sd)
  * use. These values guide load balancing on aggregating tasks
  * to a LLC.
  */
-static void record_sg_llc_stats(struct lb_env *env,
-				struct sg_lb_stats *sgs,
-				struct sched_group *group)
+ساكن فراغ record_sg_llc_stats(بنية lb_env *env,
+				بنية sg_lb_stats *sgs,
+				بنية sched_group *group)
 {
-	struct sched_domain_shared *sd_share;
-	int cpu;
+	بنية sched_domain_shared *sd_share;
+	صحيح cpu;
 
-	if (!sched_cache_enabled() || env->idle == CPU_NEWLY_IDLE)
-		return;
+	إذا (!sched_cache_enabled() || env->idle == CPU_NEWLY_IDLE)
+		إرجاع;
 
 	/* Only care about sched domain spanning multiple LLCs */
-	if (env->sd->child != rcu_dereference_all(per_cpu(sd_llc, env->dst_cpu)))
-		return;
+	إذا (env->sd->child != rcu_dereference_all(per_cpu(sd_llc, env->dst_cpu)))
+		إرجاع;
 
 	/*
 	 * A redo repeats stats published on the first pass. Hotplug can
 	 * still leave env->cpus partial, so util would not match capacity.
 	 */
-	if ((env->flags & LBF_ALL_PINNED) ||
+	إذا ((env->flags & LBF_ALL_PINNED) ||
 	    !cpumask_subset(sched_group_span(group), env->cpus))
-		return;
+		إرجاع;
 
 	/*
 	 * At this point we know this group spans a LLC domain.
@@ -12122,13 +12122,13 @@ static void record_sg_llc_stats(struct lb_env *env,
 	 */
 	cpu = cpumask_first(sched_group_span(group));
 	sd_share = rcu_dereference_all(per_cpu(sd_llc_shared, cpu));
-	if (!sd_share)
-		return;
+	إذا (!sd_share)
+		إرجاع;
 
-	if (READ_ONCE(sd_share->util_avg) != sgs->group_util)
+	إذا (READ_ONCE(sd_share->util_avg) != sgs->group_util)
 		WRITE_ONCE(sd_share->util_avg, sgs->group_util);
 
-	if (unlikely(READ_ONCE(sd_share->capacity) != sgs->group_capacity))
+	إذا (unlikely(READ_ONCE(sd_share->capacity) != sgs->group_capacity))
 		WRITE_ONCE(sd_share->capacity, sgs->group_capacity);
 }
 
@@ -12136,66 +12136,66 @@ static void record_sg_llc_stats(struct lb_env *env,
  * Do LLC balance on sched group that contains LLC, and have tasks preferring
  * to run on LLC in idle dst_cpu.
  */
-static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-			       struct sched_group *group)
+ساكن مضمن bool llc_balance(بنية lb_env *env, بنية sg_lb_stats *sgs,
+			       بنية sched_group *group)
 {
-	if (!sched_cache_enabled())
-		return false;
+	إذا (!sched_cache_enabled())
+		إرجاع false;
 
-	if (env->sd->flags & SD_SHARE_LLC)
-		return false;
+	إذا (env->sd->flags & SD_SHARE_LLC)
+		إرجاع false;
 
 	/*
 	 * On asymmetric domains, group_misfit_task_load
 	 * should be prioritized to move tasks to CPU that fit them
 	 * over aggregating tasks to their preferred LLC.
 	 */
-	if ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
+	إذا ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
 	    sgs->group_misfit_task_load)
-		return false;
+		إرجاع false;
 
 	/*
 	 * Skip cache aware tagging if nr_balanced_failed is sufficiently high.
 	 * Threshold of cache_nice_tries is set to 1 higher than nr_balance_failed
 	 * to avoid excessive task migration at the same time.
 	 */
-	if (env->sd->nr_balance_failed >= env->sd->cache_nice_tries + 1)
-		return false;
+	إذا (env->sd->nr_balance_failed >= env->sd->cache_nice_tries + 1)
+		إرجاع false;
 
-	if (sgs->nr_pref_dst_llc &&
+	إذا (sgs->nr_pref_dst_llc &&
 	    can_migrate_llc(cpumask_first(sched_group_span(group)),
 			    env->dst_cpu, 0, true) == mig_llc)
-		return true;
+		إرجاع true;
 
-	return false;
+	إرجاع false;
 }
 
-static bool update_llc_busiest(struct lb_env *env,
-			       struct sg_lb_stats *busiest,
-			       struct sg_lb_stats *sgs)
+ساكن bool update_llc_busiest(بنية lb_env *env,
+			       بنية sg_lb_stats *busiest,
+			       بنية sg_lb_stats *sgs)
 {
 	/*
 	 * There are more tasks that want to run on dst_cpu's LLC.
 	 */
-	return sgs->nr_pref_dst_llc > busiest->nr_pref_dst_llc;
+	إرجاع sgs->nr_pref_dst_llc > busiest->nr_pref_dst_llc;
 }
-#else
-static inline void record_sg_llc_stats(struct lb_env *env, struct sg_lb_stats *sgs,
-				       struct sched_group *group)
+#وإلا
+ساكن مضمن فراغ record_sg_llc_stats(بنية lb_env *env, بنية sg_lb_stats *sgs,
+				       بنية sched_group *group)
 {
 }
 
-static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-			       struct sched_group *group)
+ساكن مضمن bool llc_balance(بنية lb_env *env, بنية sg_lb_stats *sgs,
+			       بنية sched_group *group)
 {
-	return false;
+	إرجاع false;
 }
 
-static bool update_llc_busiest(struct lb_env *env,
-			       struct sg_lb_stats *busiest,
-			       struct sg_lb_stats *sgs)
+ساكن bool update_llc_busiest(بنية lb_env *env,
+			       بنية sg_lb_stats *busiest,
+			       بنية sg_lb_stats *sgs)
 {
-	return false;
+	إرجاع false;
 }
 #endif
 
@@ -12207,21 +12207,21 @@ static bool update_llc_busiest(struct lb_env *env,
  * @sgs: variable to hold the statistics for this group.
  * @sg_overloaded: sched_group is overloaded
  */
-static inline void update_sg_lb_stats(struct lb_env *env,
-				      struct sd_lb_stats *sds,
-				      struct sched_group *group,
-				      struct sg_lb_stats *sgs,
+ساكن مضمن فراغ update_sg_lb_stats(بنية lb_env *env,
+				      بنية sd_lb_stats *sds,
+				      بنية sched_group *group,
+				      بنية sg_lb_stats *sgs,
 				      bool *sg_overloaded)
 {
-	int i, nr_running, local_group, sd_flags = env->sd->flags;
+	صحيح i, nr_running, local_group, sd_flags = env->sd->flags;
 	bool balancing_at_rd = !env->sd->parent;
 
-	memset(sgs, 0, sizeof(*sgs));
+	memset(sgs, 0, حجم(*sgs));
 
 	local_group = group == sds->local;
 
 	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
-		struct rq *rq = cpu_rq(i);
+		بنية rq *rq = cpu_rq(i);
 		unsigned long load = cpu_load(rq);
 
 		sgs->group_load += load;
@@ -12232,18 +12232,18 @@ static inline void update_sg_lb_stats(struct lb_env *env,
 		nr_running = rq->nr_running;
 		sgs->sum_nr_running += nr_running;
 
-		if (cpu_overutilized(i))
+		إذا (cpu_overutilized(i))
 			sgs->group_overutilized = 1;
 
 #ifdef CONFIG_SCHED_CACHE
-		if (sched_cache_enabled()) {
-			struct sched_domain *sd_tmp;
-			int dst_llc;
+		إذا (sched_cache_enabled()) {
+			بنية sched_domain *sd_tmp;
+			صحيح dst_llc;
 
 			dst_llc = llc_id(env->dst_cpu);
-			if (llc_id(i) != dst_llc) {
+			إذا (llc_id(i) != dst_llc) {
 				sd_tmp = rcu_dereference_all(rq->sd);
-				if (sd_tmp && (unsigned int)dst_llc < sd_tmp->llc_max)
+				إذا (sd_tmp && (unsigned صحيح)dst_llc < sd_tmp->llc_max)
 					sgs->nr_pref_dst_llc += sd_tmp->llc_counts[dst_llc];
 			}
 		}
@@ -12252,34 +12252,34 @@ static inline void update_sg_lb_stats(struct lb_env *env,
 		/*
 		 * No need to call idle_cpu() if nr_running is not 0
 		 */
-		if (!nr_running && idle_cpu(i)) {
+		إذا (!nr_running && idle_cpu(i)) {
 			sgs->idle_cpus++;
 			/* Idle cpu can't have misfit task */
-			continue;
+			استمر;
 		}
 
 		/* Overload indicator is only updated at root domain */
-		if (balancing_at_rd && nr_running > 1)
+		إذا (balancing_at_rd && nr_running > 1)
 			*sg_overloaded = 1;
 
 #ifdef CONFIG_NUMA_BALANCING
 		/* Only fbq_classify_group() uses this to classify NUMA groups */
-		if (sd_flags & SD_NUMA) {
+		إذا (sd_flags & SD_NUMA) {
 			sgs->nr_numa_running += rq->nr_numa_running;
 			sgs->nr_preferred_running += rq->nr_preferred_running;
 		}
 #endif
-		if (local_group)
-			continue;
+		إذا (local_group)
+			استمر;
 
-		if (sd_flags & SD_ASYM_CPUCAPACITY) {
-			if (rq->misfit_task_load) {
+		إذا (sd_flags & SD_ASYM_CPUCAPACITY) {
+			إذا (rq->misfit_task_load) {
 				/*
 				 * Always mark the root domain overloaded so big
 				 * CPUs can pick up misfit tasks via newly idle
 				 * balance.
 				 */
-				if (balancing_at_rd)
+				إذا (balancing_at_rd)
 					*sg_overloaded = 1;
 
 				/*
@@ -12288,14 +12288,14 @@ static inline void update_sg_lb_stats(struct lb_env *env,
 				 * as misfit_task and update_sd_pick_busiest()
 				 * will skip it.
 				 */
-				if (capacity_greater(capacity_of(env->dst_cpu),
+				إذا (capacity_greater(capacity_of(env->dst_cpu),
 						     group->sgc->max_capacity) &&
 				    (sgs->group_misfit_task_load < rq->misfit_task_load))
 					sgs->group_misfit_task_load = rq->misfit_task_load;
 			}
-		} else if (env->idle && sched_reduced_capacity(rq, env->sd)) {
+		} وإلا إذا (env->idle && sched_reduced_capacity(rq, env->sd)) {
 			/* Check for a task running on a CPU with reduced capacity */
-			if (sgs->group_misfit_task_load < load)
+			إذا (sgs->group_misfit_task_load < load)
 				sgs->group_misfit_task_load = load;
 		}
 	}
@@ -12304,18 +12304,18 @@ static inline void update_sg_lb_stats(struct lb_env *env,
 
 	sgs->group_weight = group->group_weight;
 
-	if (!local_group) {
+	إذا (!local_group) {
 		/* Check if dst CPU is idle and preferred to this group */
-		if (env->idle && sgs->sum_h_nr_running &&
+		إذا (env->idle && sgs->sum_h_nr_running &&
 		    sched_group_asym(env, sgs, group))
 			sgs->group_asym_packing = 1;
 
 		/* Check for loaded SMT group to be balanced to dst CPU */
-		if (smt_balance(env, sgs, group))
+		إذا (smt_balance(env, sgs, group))
 			sgs->group_smt_balance = 1;
 
 		/* Check for tasks in this group can be moved to their preferred LLC */
-		if (llc_balance(env, sgs, group))
+		إذا (llc_balance(env, sgs, group))
 			sgs->group_llc_balance = 1;
 	}
 
@@ -12323,7 +12323,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
 
 	record_sg_llc_stats(env, sgs, group);
 	/* Computing avg_load makes sense only when group is overloaded */
-	if (sgs->group_type == group_overloaded)
+	إذا (sgs->group_type == group_overloaded)
 		sgs->avg_load = (sgs->group_load * SCHED_CAPACITY_SCALE) /
 				sgs->group_capacity;
 }
@@ -12341,16 +12341,16 @@ static inline void update_sg_lb_stats(struct lb_env *env,
  * Return: %true if @sg is a busier group than the previously selected
  * busiest group. %false otherwise.
  */
-static bool update_sd_pick_busiest(struct lb_env *env,
-				   struct sd_lb_stats *sds,
-				   struct sched_group *sg,
-				   struct sg_lb_stats *sgs)
+ساكن bool update_sd_pick_busiest(بنية lb_env *env,
+				   بنية sd_lb_stats *sds,
+				   بنية sched_group *sg,
+				   بنية sg_lb_stats *sgs)
 {
-	struct sg_lb_stats *busiest = &sds->busiest_stat;
+	بنية sg_lb_stats *busiest = &sds->busiest_stat;
 
 	/* Make sure that there is at least one task to pull */
-	if (!sgs->sum_h_nr_running)
-		return false;
+	إذا (!sgs->sum_h_nr_running)
+		إرجاع false;
 
 	/*
 	 * Don't try to pull misfit tasks we can't help.
@@ -12363,12 +12363,12 @@ static bool update_sd_pick_busiest(struct lb_env *env,
 	 * reduced and we may not actually provide more capacity than the
 	 * source.
 	 */
-	if ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
+	إذا ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
 	    (sgs->group_type == group_misfit_task) &&
 	    (!env->dst_core_idle ||
 	     !capacity_greater(capacity_of(env->dst_cpu), sg->sgc->max_capacity) ||
 	     sds->local_stat.group_type != group_has_spare))
-		return false;
+		إرجاع false;
 
 	/*
 	 * Candidate sg has no more than one task per CPU and has higher
@@ -12376,61 +12376,61 @@ static bool update_sd_pick_busiest(struct lb_env *env,
 	 * throughput. Maximize throughput, power/energy consequences are not
 	 * considered.
 	 */
-	if ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
+	إذا ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
 	    (sgs->group_type <= group_fully_busy) &&
 	    (capacity_greater(sg->sgc->min_capacity, capacity_of(env->dst_cpu))))
-		return false;
+		إرجاع false;
 
-	if (sgs->group_type > busiest->group_type)
-		return true;
+	إذا (sgs->group_type > busiest->group_type)
+		إرجاع true;
 
-	if (sgs->group_type < busiest->group_type)
-		return false;
+	إذا (sgs->group_type < busiest->group_type)
+		إرجاع false;
 
 	/*
 	 * The candidate and the current busiest group are the same type of
 	 * group. Let check which one is the busiest according to the type.
 	 */
 
-	switch (sgs->group_type) {
-	case group_overloaded:
+	بدل (sgs->group_type) {
+	حالة group_overloaded:
 		/* Select the overloaded group with highest avg_load. */
-		return sgs->avg_load > busiest->avg_load;
+		إرجاع sgs->avg_load > busiest->avg_load;
 
-	case group_llc_balance:
+	حالة group_llc_balance:
 		/* Select the group with most tasks preferring dst LLC */
-		return update_llc_busiest(env, busiest, sgs);
+		إرجاع update_llc_busiest(env, busiest, sgs);
 
-	case group_imbalanced:
+	حالة group_imbalanced:
 		/*
 		 * Select the 1st imbalanced group as we don't have any way to
 		 * choose one more than another.
 		 */
-		return false;
+		إرجاع false;
 
-	case group_asym_packing:
+	حالة group_asym_packing:
 		/* Prefer to move from lowest priority CPU's work */
-		return sched_asym_prefer(READ_ONCE(sds->busiest->asym_prefer_cpu),
+		إرجاع sched_asym_prefer(READ_ONCE(sds->busiest->asym_prefer_cpu),
 					 READ_ONCE(sg->asym_prefer_cpu));
 
-	case group_misfit_task:
+	حالة group_misfit_task:
 		/*
 		 * If we have more than one misfit sg go with the biggest
 		 * misfit.
 		 */
-		return sgs->group_misfit_task_load > busiest->group_misfit_task_load;
+		إرجاع sgs->group_misfit_task_load > busiest->group_misfit_task_load;
 
-	case group_smt_balance:
+	حالة group_smt_balance:
 		/*
 		 * Check if we have spare CPUs on either SMT group to
 		 * choose has spare or fully busy handling.
 		 */
-		if (sgs->idle_cpus != 0 || busiest->idle_cpus != 0)
-			goto has_spare;
+		إذا (sgs->idle_cpus != 0 || busiest->idle_cpus != 0)
+			اذهب has_spare;
 
 		fallthrough;
 
-	case group_fully_busy:
+	حالة group_fully_busy:
 		/*
 		 * Select the fully busy group with highest avg_load. In
 		 * theory, there is no need to pull task from such kind of
@@ -12443,31 +12443,31 @@ static bool update_sd_pick_busiest(struct lb_env *env,
 		 * siblings.
 		 */
 
-		if (sgs->avg_load < busiest->avg_load)
-			return false;
+		إذا (sgs->avg_load < busiest->avg_load)
+			إرجاع false;
 
-		if (sgs->avg_load == busiest->avg_load) {
+		إذا (sgs->avg_load == busiest->avg_load) {
 			/*
 			 * SMT sched groups need more help than non-SMT groups.
 			 * If @sg happens to also be SMT, either choice is good.
 			 */
-			if (sds->busiest->flags & SD_SHARE_CPUCAPACITY)
-				return false;
+			إذا (sds->busiest->flags & SD_SHARE_CPUCAPACITY)
+				إرجاع false;
 		}
 
-		break;
+		اكسر;
 
-	case group_has_spare:
+	حالة group_has_spare:
 		/*
 		 * Do not pick sg with SMT CPUs over sg with pure CPUs,
 		 * as we do not want to pull task off SMT core with one task
 		 * and make the core idle.
 		 */
-		if (smt_vs_nonsmt_groups(sds->busiest, sg)) {
-			if (sg->flags & SD_SHARE_CPUCAPACITY && sgs->sum_h_nr_running <= 1)
-				return false;
-			else
-				return true;
+		إذا (smt_vs_nonsmt_groups(sds->busiest, sg)) {
+			إذا (sg->flags & SD_SHARE_CPUCAPACITY && sgs->sum_h_nr_running <= 1)
+				إرجاع false;
+			وإلا
+				إرجاع true;
 		}
 has_spare:
 
@@ -12478,65 +12478,65 @@ has_spare:
 		 * that the group has less spare capacity but finally more idle
 		 * CPUs which means less opportunity to pull tasks.
 		 */
-		if (sgs->idle_cpus > busiest->idle_cpus)
-			return false;
-		else if ((sgs->idle_cpus == busiest->idle_cpus) &&
+		إذا (sgs->idle_cpus > busiest->idle_cpus)
+			إرجاع false;
+		وإلا إذا ((sgs->idle_cpus == busiest->idle_cpus) &&
 			 (sgs->sum_nr_running <= busiest->sum_nr_running))
-			return false;
+			إرجاع false;
 
-		break;
+		اكسر;
 	}
 
-	return true;
+	إرجاع true;
 }
 
 #ifdef CONFIG_NUMA_BALANCING
-static inline enum fbq_type fbq_classify_group(struct sg_lb_stats *sgs)
+ساكن مضمن تعداد fbq_type fbq_classify_group(بنية sg_lb_stats *sgs)
 {
-	if (sgs->sum_h_nr_running > sgs->nr_numa_running)
-		return regular;
-	if (sgs->sum_h_nr_running > sgs->nr_preferred_running)
-		return remote;
-	return all;
+	إذا (sgs->sum_h_nr_running > sgs->nr_numa_running)
+		إرجاع regular;
+	إذا (sgs->sum_h_nr_running > sgs->nr_preferred_running)
+		إرجاع remote;
+	إرجاع all;
 }
 
-static inline enum fbq_type fbq_classify_rq(struct rq *rq)
+ساكن مضمن تعداد fbq_type fbq_classify_rq(بنية rq *rq)
 {
-	if (rq->nr_running > rq->nr_numa_running)
-		return regular;
-	if (rq->nr_running > rq->nr_preferred_running)
-		return remote;
-	return all;
+	إذا (rq->nr_running > rq->nr_numa_running)
+		إرجاع regular;
+	إذا (rq->nr_running > rq->nr_preferred_running)
+		إرجاع remote;
+	إرجاع all;
 }
-#else /* !CONFIG_NUMA_BALANCING: */
-static inline enum fbq_type fbq_classify_group(struct sg_lb_stats *sgs)
+#وإلا /* !CONFIG_NUMA_BALANCING: */
+ساكن مضمن تعداد fbq_type fbq_classify_group(بنية sg_lb_stats *sgs)
 {
-	return all;
+	إرجاع all;
 }
 
-static inline enum fbq_type fbq_classify_rq(struct rq *rq)
+ساكن مضمن تعداد fbq_type fbq_classify_rq(بنية rq *rq)
 {
-	return regular;
+	إرجاع regular;
 }
 #endif /* !CONFIG_NUMA_BALANCING */
 
 
-struct sg_lb_stats;
+بنية sg_lb_stats;
 
 /*
  * task_running_on_cpu - return 1 if @p is running on @cpu.
  */
 
-static unsigned int task_running_on_cpu(int cpu, struct task_struct *p)
+ساكن unsigned صحيح task_running_on_cpu(صحيح cpu, بنية task_struct *p)
 {
 	/* Task has no contribution or is new */
-	if (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-		return 0;
+	إذا (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
+		إرجاع 0;
 
-	if (task_on_rq_queued(p))
-		return 1;
+	إذا (task_on_rq_queued(p))
+		إرجاع 1;
 
-	return 0;
+	إرجاع 0;
 }
 
 /**
@@ -12546,12 +12546,12 @@ static unsigned int task_running_on_cpu(int cpu, struct task_struct *p)
  *
  * Return: 1 if the CPU would be idle. 0 otherwise.
  */
-static int idle_cpu_without(int cpu, struct task_struct *p)
+ساكن صحيح idle_cpu_without(صحيح cpu, بنية task_struct *p)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
-	if (rq->curr != rq->idle && rq->curr != p)
-		return 0;
+	إذا (rq->curr != rq->idle && rq->curr != p)
+		إرجاع 0;
 
 	/*
 	 * rq->nr_running can't be used but an updated version without the
@@ -12559,10 +12559,10 @@ static int idle_cpu_without(int cpu, struct task_struct *p)
 	 * be computed and tested before calling idle_cpu_without().
 	 */
 
-	if (rq->ttwu_pending)
-		return 0;
+	إذا (rq->ttwu_pending)
+		إرجاع 0;
 
-	return 1;
+	إرجاع 1;
 }
 
 /*
@@ -12572,22 +12572,22 @@ static int idle_cpu_without(int cpu, struct task_struct *p)
  * @sgs: variable to hold the statistics for this group.
  * @p: The task for which we look for the idlest group/CPU.
  */
-static inline void update_sg_wakeup_stats(struct sched_domain *sd,
-					  struct sched_group *group,
-					  struct sg_lb_stats *sgs,
-					  struct task_struct *p)
+ساكن مضمن فراغ update_sg_wakeup_stats(بنية sched_domain *sd,
+					  بنية sched_group *group,
+					  بنية sg_lb_stats *sgs,
+					  بنية task_struct *p)
 {
-	int i, nr_running;
+	صحيح i, nr_running;
 
-	memset(sgs, 0, sizeof(*sgs));
+	memset(sgs, 0, حجم(*sgs));
 
 	/* Assume that task can't fit any CPU of the group */
-	if (sd->flags & SD_ASYM_CPUCAPACITY)
+	إذا (sd->flags & SD_ASYM_CPUCAPACITY)
 		sgs->group_misfit_task_load = 1;
 
 	for_each_cpu_and(i, sched_group_span(group), p->cpus_ptr) {
-		struct rq *rq = cpu_rq(i);
-		unsigned int local;
+		بنية rq *rq = cpu_rq(i);
+		unsigned صحيح local;
 
 		sgs->group_load += cpu_load_without(rq, p);
 		sgs->group_util += cpu_util_without(i, p);
@@ -12601,11 +12601,11 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
 		/*
 		 * No need to call idle_cpu_without() if nr_running is not 0
 		 */
-		if (!nr_running && idle_cpu_without(i, p))
+		إذا (!nr_running && idle_cpu_without(i, p))
 			sgs->idle_cpus++;
 
 		/* Check if task fits in the CPU */
-		if (sd->flags & SD_ASYM_CPUCAPACITY &&
+		إذا (sd->flags & SD_ASYM_CPUCAPACITY &&
 		    sgs->group_misfit_task_load &&
 		    task_fits_cpu(p, i))
 			sgs->group_misfit_task_load = 0;
@@ -12622,63 +12622,63 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
 	 * Computing avg_load makes sense only when group is fully busy or
 	 * overloaded
 	 */
-	if (sgs->group_type == group_fully_busy ||
+	إذا (sgs->group_type == group_fully_busy ||
 		sgs->group_type == group_overloaded)
 		sgs->avg_load = (sgs->group_load * SCHED_CAPACITY_SCALE) /
 				sgs->group_capacity;
 }
 
-static bool update_pick_idlest(struct sched_group *idlest,
-			       struct sg_lb_stats *idlest_sgs,
-			       struct sched_group *group,
-			       struct sg_lb_stats *sgs)
+ساكن bool update_pick_idlest(بنية sched_group *idlest,
+			       بنية sg_lb_stats *idlest_sgs,
+			       بنية sched_group *group,
+			       بنية sg_lb_stats *sgs)
 {
-	if (sgs->group_type < idlest_sgs->group_type)
-		return true;
+	إذا (sgs->group_type < idlest_sgs->group_type)
+		إرجاع true;
 
-	if (sgs->group_type > idlest_sgs->group_type)
-		return false;
+	إذا (sgs->group_type > idlest_sgs->group_type)
+		إرجاع false;
 
 	/*
 	 * The candidate and the current idlest group are the same type of
 	 * group. Let check which one is the idlest according to the type.
 	 */
 
-	switch (sgs->group_type) {
-	case group_overloaded:
-	case group_fully_busy:
+	بدل (sgs->group_type) {
+	حالة group_overloaded:
+	حالة group_fully_busy:
 		/* Select the group with lowest avg_load. */
-		if (idlest_sgs->avg_load <= sgs->avg_load)
-			return false;
-		break;
+		إذا (idlest_sgs->avg_load <= sgs->avg_load)
+			إرجاع false;
+		اكسر;
 
-	case group_llc_balance:
-	case group_imbalanced:
-	case group_asym_packing:
-	case group_smt_balance:
+	حالة group_llc_balance:
+	حالة group_imbalanced:
+	حالة group_asym_packing:
+	حالة group_smt_balance:
 		/* Those types are not used in the slow wakeup path */
-		return false;
+		إرجاع false;
 
-	case group_misfit_task:
+	حالة group_misfit_task:
 		/* Select group with the highest max capacity */
-		if (idlest->sgc->max_capacity >= group->sgc->max_capacity)
-			return false;
-		break;
+		إذا (idlest->sgc->max_capacity >= group->sgc->max_capacity)
+			إرجاع false;
+		اكسر;
 
-	case group_has_spare:
+	حالة group_has_spare:
 		/* Select group with most idle CPUs */
-		if (idlest_sgs->idle_cpus > sgs->idle_cpus)
-			return false;
+		إذا (idlest_sgs->idle_cpus > sgs->idle_cpus)
+			إرجاع false;
 
 		/* Select group with lowest group_util */
-		if (idlest_sgs->idle_cpus == sgs->idle_cpus &&
+		إذا (idlest_sgs->idle_cpus == sgs->idle_cpus &&
 			idlest_sgs->group_util <= sgs->group_util)
-			return false;
+			إرجاع false;
 
-		break;
+		اكسر;
 	}
 
-	return true;
+	إرجاع true;
 }
 
 /*
@@ -12687,75 +12687,75 @@ static bool update_pick_idlest(struct sched_group *idlest,
  *
  * Assumes p is allowed on at least one CPU in sd.
  */
-static struct sched_group *
-sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int this_cpu)
+ساكن بنية sched_group *
+sched_balance_find_dst_group(بنية sched_domain *sd, بنية task_struct *p, صحيح this_cpu)
 {
-	struct sched_group *idlest = NULL, *local = NULL, *group = sd->groups;
-	struct sg_lb_stats local_sgs, tmp_sgs;
-	struct sg_lb_stats *sgs;
+	بنية sched_group *idlest = عدم, *local = عدم, *group = sd->groups;
+	بنية sg_lb_stats local_sgs, tmp_sgs;
+	بنية sg_lb_stats *sgs;
 	unsigned long imbalance;
-	struct sg_lb_stats idlest_sgs = {
+	بنية sg_lb_stats idlest_sgs = {
 			.avg_load = UINT_MAX,
 			.group_type = group_overloaded,
 	};
 
-	do {
-		int local_group;
+	افعل {
+		صحيح local_group;
 
 		/* Skip over this group if it has no CPUs allowed */
-		if (!cpumask_intersects(sched_group_span(group),
+		إذا (!cpumask_intersects(sched_group_span(group),
 					p->cpus_ptr))
-			continue;
+			استمر;
 
 		/* Skip over this group if no cookie matched */
-		if (!sched_group_cookie_match(cpu_rq(this_cpu), p, group))
-			continue;
+		إذا (!sched_group_cookie_match(cpu_rq(this_cpu), p, group))
+			استمر;
 
 		local_group = cpumask_test_cpu(this_cpu,
 					       sched_group_span(group));
 
-		if (local_group) {
+		إذا (local_group) {
 			sgs = &local_sgs;
 			local = group;
-		} else {
+		} وإلا {
 			sgs = &tmp_sgs;
 		}
 
 		update_sg_wakeup_stats(sd, group, sgs, p);
 
-		if (!local_group && update_pick_idlest(idlest, &idlest_sgs, group, sgs)) {
+		إذا (!local_group && update_pick_idlest(idlest, &idlest_sgs, group, sgs)) {
 			idlest = group;
 			idlest_sgs = *sgs;
 		}
 
-	} while (group = group->next, group != sd->groups);
+	} بينما (group = group->next, group != sd->groups);
 
 
 	/* There is no idlest group to push tasks to */
-	if (!idlest)
-		return NULL;
+	إذا (!idlest)
+		إرجاع عدم;
 
 	/* The local group has been skipped because of CPU affinity */
-	if (!local)
-		return idlest;
+	إذا (!local)
+		إرجاع idlest;
 
 	/*
 	 * If the local group is idler than the selected idlest group
 	 * don't try and push the task.
 	 */
-	if (local_sgs.group_type < idlest_sgs.group_type)
-		return NULL;
+	إذا (local_sgs.group_type < idlest_sgs.group_type)
+		إرجاع عدم;
 
 	/*
 	 * If the local group is busier than the selected idlest group
 	 * try and push the task.
 	 */
-	if (local_sgs.group_type > idlest_sgs.group_type)
-		return idlest;
+	إذا (local_sgs.group_type > idlest_sgs.group_type)
+		إرجاع idlest;
 
-	switch (local_sgs.group_type) {
-	case group_overloaded:
-	case group_fully_busy:
+	بدل (local_sgs.group_type) {
+	حالة group_overloaded:
+	حالة group_fully_busy:
 
 		/* Calculate allowed imbalance based on load */
 		imbalance = scale_load_down(NICE_0_LOAD) *
@@ -12770,50 +12770,50 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
 		 * and consider staying local.
 		 */
 
-		if ((sd->flags & SD_NUMA) &&
+		إذا ((sd->flags & SD_NUMA) &&
 		    ((idlest_sgs.avg_load + imbalance) >= local_sgs.avg_load))
-			return NULL;
+			إرجاع عدم;
 
 		/*
 		 * If the local group is less loaded than the selected
 		 * idlest group don't try and push any tasks.
 		 */
-		if (idlest_sgs.avg_load >= (local_sgs.avg_load + imbalance))
-			return NULL;
+		إذا (idlest_sgs.avg_load >= (local_sgs.avg_load + imbalance))
+			إرجاع عدم;
 
-		if (100 * local_sgs.avg_load <= sd->imbalance_pct * idlest_sgs.avg_load)
-			return NULL;
-		break;
+		إذا (100 * local_sgs.avg_load <= sd->imbalance_pct * idlest_sgs.avg_load)
+			إرجاع عدم;
+		اكسر;
 
-	case group_llc_balance:
-	case group_imbalanced:
-	case group_asym_packing:
-	case group_smt_balance:
+	حالة group_llc_balance:
+	حالة group_imbalanced:
+	حالة group_asym_packing:
+	حالة group_smt_balance:
 		/* Those type are not used in the slow wakeup path */
-		return NULL;
+		إرجاع عدم;
 
-	case group_misfit_task:
+	حالة group_misfit_task:
 		/* Select group with the highest max capacity */
-		if (local->sgc->max_capacity >= idlest->sgc->max_capacity)
-			return NULL;
-		break;
+		إذا (local->sgc->max_capacity >= idlest->sgc->max_capacity)
+			إرجاع عدم;
+		اكسر;
 
-	case group_has_spare:
+	حالة group_has_spare:
 #ifdef CONFIG_NUMA
-		if (sd->flags & SD_NUMA) {
-			int imb_numa_nr = sd->imb_numa_nr;
+		إذا (sd->flags & SD_NUMA) {
+			صحيح imb_numa_nr = sd->imb_numa_nr;
 #ifdef CONFIG_NUMA_BALANCING
-			int idlest_cpu;
+			صحيح idlest_cpu;
 			/*
 			 * If there is spare capacity at NUMA, try to select
 			 * the preferred node
 			 */
-			if (cpu_to_node(this_cpu) == p->numa_preferred_nid)
-				return NULL;
+			إذا (cpu_to_عقدة(this_cpu) == p->numa_preferred_nid)
+				إرجاع عدم;
 
 			idlest_cpu = cpumask_first(sched_group_span(idlest));
-			if (cpu_to_node(idlest_cpu) == p->numa_preferred_nid)
-				return idlest;
+			إذا (cpu_to_عقدة(idlest_cpu) == p->numa_preferred_nid)
+				إرجاع idlest;
 #endif /* CONFIG_NUMA_BALANCING */
 			/*
 			 * Otherwise, keep the task close to the wakeup source
@@ -12824,17 +12824,17 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
 			 * real need of migration, periodic load balance will
 			 * take care of it.
 			 */
-			if (p->nr_cpus_allowed != NR_CPUS) {
-				unsigned int w = cpumask_weight_and(p->cpus_ptr,
+			إذا (p->nr_cpus_allowed != NR_CPUS) {
+				unsigned صحيح w = cpumask_weight_and(p->cpus_ptr,
 								sched_group_span(local));
 				imb_numa_nr = min(w, sd->imb_numa_nr);
 			}
 
 			imbalance = abs(local_sgs.idle_cpus - idlest_sgs.idle_cpus);
-			if (!adjust_numa_imbalance(imbalance,
+			إذا (!adjust_numa_imbalance(imbalance,
 						   local_sgs.sum_nr_running + 1,
 						   imb_numa_nr)) {
-				return NULL;
+				إرجاع عدم;
 			}
 		}
 #endif /* CONFIG_NUMA */
@@ -12845,20 +12845,20 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
 		 * up that the group has less spare capacity but finally more
 		 * idle CPUs which means more opportunity to run task.
 		 */
-		if (local_sgs.idle_cpus >= idlest_sgs.idle_cpus)
-			return NULL;
-		break;
+		إذا (local_sgs.idle_cpus >= idlest_sgs.idle_cpus)
+			إرجاع عدم;
+		اكسر;
 	}
 
-	return idlest;
+	إرجاع idlest;
 }
 
-static void update_idle_cpu_scan(struct lb_env *env,
+ساكن فراغ update_idle_cpu_scan(بنية lb_env *env,
 				 unsigned long sum_util)
 {
-	struct sched_domain_shared *sd_share;
-	struct sched_domain *sd = env->sd;
-	int llc_weight, pct;
+	بنية sched_domain_shared *sd_share;
+	بنية sched_domain *sd = env->sd;
+	صحيح llc_weight, pct;
 	u64 x, y, tmp;
 	/*
 	 * Update the number of CPUs to scan in LLC domain, which could
@@ -12868,12 +12868,12 @@ static void update_idle_cpu_scan(struct lb_env *env,
 	 * balancing, rather than CPU_NEWLY_IDLE, because the latter
 	 * can fire way more frequently than the former.
 	 */
-	if (!sched_feat(SIS_UTIL) || env->idle == CPU_NEWLY_IDLE)
-		return;
+	إذا (!sched_feat(SIS_UTIL) || env->idle == CPU_NEWLY_IDLE)
+		إرجاع;
 
 	sd_share = sd->shared;
-	if (!sd_share)
-		return;
+	إذا (!sd_share)
+		إرجاع;
 
 	/*
 	 * The number of CPUs to search drops as sum_util increases, when
@@ -12918,8 +12918,8 @@ static void update_idle_cpu_scan(struct lb_env *env,
 	/* equation [2] */
 	y *= llc_weight;
 	do_div(y, SCHED_CAPACITY_SCALE);
-	if ((int)y != sd_share->nr_idle_scan)
-		WRITE_ONCE(sd_share->nr_idle_scan, (int)y);
+	إذا ((صحيح)y != sd_share->nr_idle_scan)
+		WRITE_ONCE(sd_share->nr_idle_scan, (صحيح)y);
 }
 
 /**
@@ -12928,33 +12928,33 @@ static void update_idle_cpu_scan(struct lb_env *env,
  * @sds: variable to hold the statistics for this sched_domain.
  */
 
-static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sds)
+ساكن مضمن فراغ update_sd_lb_stats(بنية lb_env *env, بنية sd_lb_stats *sds)
 {
-	struct sched_group *sg = env->sd->groups;
-	struct sg_lb_stats *local = &sds->local_stat;
-	struct sg_lb_stats tmp_sgs;
+	بنية sched_group *sg = env->sd->groups;
+	بنية sg_lb_stats *local = &sds->local_stat;
+	بنية sg_lb_stats tmp_sgs;
 	unsigned long sum_util = 0;
 	bool sg_overloaded = 0, sg_overutilized = 0;
 
 	env->dst_core_idle = !sched_smt_active() || is_core_idle(env->dst_cpu);
 
-	do {
-		struct sg_lb_stats *sgs = &tmp_sgs;
-		int local_group;
+	افعل {
+		بنية sg_lb_stats *sgs = &tmp_sgs;
+		صحيح local_group;
 
 		local_group = cpumask_test_cpu(env->dst_cpu, sched_group_span(sg));
-		if (local_group) {
+		إذا (local_group) {
 			sds->local = sg;
 			sgs = local;
 
-			if (env->idle != CPU_NEWLY_IDLE ||
+			إذا (env->idle != CPU_NEWLY_IDLE ||
 			    time_after_eq(jiffies, sg->sgc->next_update))
 				update_group_capacity(env->sd, env->dst_cpu);
 		}
 
 		update_sg_lb_stats(env, sds, sg, sgs, &sg_overloaded);
 
-		if (!local_group && update_sd_pick_busiest(env, sds, sg, sgs)) {
+		إذا (!local_group && update_sd_pick_busiest(env, sds, sg, sgs)) {
 			sds->busiest = sg;
 			sds->busiest_stat = *sgs;
 		}
@@ -12967,27 +12967,27 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
 
 		sum_util += sgs->group_util;
 		sg = sg->next;
-	} while (sg != env->sd->groups);
+	} بينما (sg != env->sd->groups);
 
 	/*
 	 * Indicate that the child domain of the busiest group prefers tasks
 	 * go to a child's sibling domains first. NB the flags of a sched group
 	 * are those of the child domain.
 	 */
-	if (sds->busiest)
+	إذا (sds->busiest)
 		sds->prefer_sibling = !!(sds->busiest->flags & SD_PREFER_SIBLING);
 
 
-	if (env->sd->flags & SD_NUMA)
+	إذا (env->sd->flags & SD_NUMA)
 		env->fbq_type = fbq_classify_group(&sds->busiest_stat);
 
-	if (!env->sd->parent) {
+	إذا (!env->sd->parent) {
 		/* update overload indicator if we are at root domain */
 		set_rd_overloaded(env->dst_rq->rd, sg_overloaded);
 
 		/* Update over-utilization (tipping point, U >= 0) indicator */
 		set_rd_overutilized(env->dst_rq->rd, sg_overutilized);
-	} else if (sg_overutilized) {
+	} وإلا إذا (sg_overutilized) {
 		set_rd_overutilized(env->dst_rq->rd, sg_overutilized);
 	}
 
@@ -13000,19 +13000,19 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
  * @env: load balance environment
  * @sds: statistics of the sched_domain whose imbalance is to be calculated.
  */
-static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *sds)
+ساكن مضمن فراغ calculate_imbalance(بنية lb_env *env, بنية sd_lb_stats *sds)
 {
-	struct sg_lb_stats *local, *busiest;
+	بنية sg_lb_stats *local, *busiest;
 
 	local = &sds->local_stat;
 	busiest = &sds->busiest_stat;
 
-	if (busiest->group_type == group_misfit_task) {
-		if (env->sd->flags & SD_ASYM_CPUCAPACITY) {
+	إذا (busiest->group_type == group_misfit_task) {
+		إذا (env->sd->flags & SD_ASYM_CPUCAPACITY) {
 			/* Set imbalance to allow misfit tasks to be balanced. */
 			env->migration_type = migrate_misfit;
 			env->imbalance = 1;
-		} else {
+		} وإلا {
 			/*
 			 * Set load imbalance to allow moving task from cpu
 			 * with reduced capacity.
@@ -13020,36 +13020,36 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 			env->migration_type = migrate_load;
 			env->imbalance = busiest->group_misfit_task_load;
 		}
-		return;
+		إرجاع;
 	}
 
-	if (busiest->group_type == group_asym_packing) {
+	إذا (busiest->group_type == group_asym_packing) {
 		/*
 		 * In case of asym capacity, we will try to migrate all load to
 		 * the preferred CPU.
 		 */
 		env->migration_type = migrate_task;
 		env->imbalance = busiest->sum_h_nr_running;
-		return;
+		إرجاع;
 	}
 
-	if (busiest->group_type == group_smt_balance) {
+	إذا (busiest->group_type == group_smt_balance) {
 		/* Reduce number of tasks sharing CPU capacity */
 		env->migration_type = migrate_task;
 		env->imbalance = 1;
-		return;
+		إرجاع;
 	}
 
 #ifdef CONFIG_SCHED_CACHE
-	if (busiest->group_type == group_llc_balance) {
+	إذا (busiest->group_type == group_llc_balance) {
 		/* Move a task that prefer local LLC */
 		env->migration_type = migrate_llc_task;
 		env->imbalance = 1;
-		return;
+		إرجاع;
 	}
 #endif
 
-	if (busiest->group_type == group_imbalanced) {
+	إذا (busiest->group_type == group_imbalanced) {
 		/*
 		 * In the group_imb case we cannot rely on group-wide averages
 		 * to ensure CPU-load equilibrium, try to move any task to fix
@@ -13058,15 +13058,15 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 		 */
 		env->migration_type = migrate_task;
 		env->imbalance = 1;
-		return;
+		إرجاع;
 	}
 
 	/*
 	 * Try to use spare capacity of local group without overloading it or
 	 * emptying busiest.
 	 */
-	if (local->group_type == group_has_spare) {
-		if ((busiest->group_type > group_fully_busy) &&
+	إذا (local->group_type == group_has_spare) {
+		إذا ((busiest->group_type > group_fully_busy) &&
 		    !(env->sd->flags & SD_SHARE_LLC)) {
 			/*
 			 * If busiest is overloaded, try to fill spare
@@ -13087,22 +13087,22 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 			 * waiting task in this overloaded busiest group. Let's
 			 * try to pull it.
 			 */
-			if (env->idle && env->imbalance == 0) {
+			إذا (env->idle && env->imbalance == 0) {
 				env->migration_type = migrate_task;
 				env->imbalance = 1;
 			}
 
-			return;
+			إرجاع;
 		}
 
-		if (busiest->group_weight == 1 || sds->prefer_sibling) {
+		إذا (busiest->group_weight == 1 || sds->prefer_sibling) {
 			/*
 			 * When prefer sibling, evenly spread running tasks on
 			 * groups.
 			 */
 			env->migration_type = migrate_task;
 			env->imbalance = sibling_imbalance(env, sds, busiest, local);
-		} else {
+		} وإلا {
 
 			/*
 			 * If there is no overload, we just want to even the number of
@@ -13115,7 +13115,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 
 #ifdef CONFIG_NUMA
 		/* Consider allowing a small imbalance between NUMA groups */
-		if (env->sd->flags & SD_NUMA) {
+		إذا (env->sd->flags & SD_NUMA) {
 			env->imbalance = adjust_numa_imbalance(env->imbalance,
 							       local->sum_nr_running + 1,
 							       env->sd->imb_numa_nr);
@@ -13125,14 +13125,14 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 		/* Number of tasks to move to restore balance */
 		env->imbalance >>= 1;
 
-		return;
+		إرجاع;
 	}
 
 	/*
 	 * Local is fully busy but has to take more load to relieve the
 	 * busiest group
 	 */
-	if (local->group_type < group_overloaded) {
+	إذا (local->group_type < group_overloaded) {
 		/*
 		 * Local will become overloaded so the avg_load metrics are
 		 * finally needed.
@@ -13145,9 +13145,9 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 		 * If the local group is more loaded than the selected
 		 * busiest group don't try to pull any tasks.
 		 */
-		if (local->avg_load >= busiest->avg_load) {
+		إذا (local->avg_load >= busiest->avg_load) {
 			env->imbalance = 0;
-			return;
+			إرجاع;
 		}
 
 		sds->avg_load = (sds->total_load * SCHED_CAPACITY_SCALE) /
@@ -13157,9 +13157,9 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 		 * If the local group is more loaded than the average system
 		 * load, don't try to pull any tasks.
 		 */
-		if (local->avg_load >= sds->avg_load) {
+		إذا (local->avg_load >= sds->avg_load) {
 			env->imbalance = 0;
-			return;
+			إرجاع;
 		}
 
 	}
@@ -13211,10 +13211,10 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
  *
  * Return:	- The busiest group if imbalance exists.
  */
-static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
+ساكن بنية sched_group *sched_balance_find_src_group(بنية lb_env *env)
 {
-	struct sg_lb_stats *local, *busiest;
-	struct sd_lb_stats sds;
+	بنية sg_lb_stats *local, *busiest;
+	بنية sd_lb_stats sds;
 
 	init_sd_lb_stats(&sds);
 
@@ -13225,50 +13225,50 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
 	update_sd_lb_stats(env, &sds);
 
 	/* There is no busy sibling group to pull tasks from */
-	if (!sds.busiest)
-		goto out_balanced;
+	إذا (!sds.busiest)
+		اذهب out_balanced;
 
 	busiest = &sds.busiest_stat;
 
 	/* Misfit tasks should be dealt with regardless of the avg load */
-	if (busiest->group_type == group_misfit_task)
-		goto force_balance;
+	إذا (busiest->group_type == group_misfit_task)
+		اذهب force_balance;
 
-	if (!is_rd_overutilized(env->dst_rq->rd) &&
+	إذا (!is_rd_overutilized(env->dst_rq->rd) &&
 	    rcu_dereference_all(env->dst_rq->rd->pd))
-		goto out_balanced;
+		اذهب out_balanced;
 
 	/* ASYM feature bypasses nice load balance check */
-	if (busiest->group_type == group_asym_packing)
-		goto force_balance;
+	إذا (busiest->group_type == group_asym_packing)
+		اذهب force_balance;
 
 	/*
 	 * If the busiest group is imbalanced the below checks don't
 	 * work because they assume all things are equal, which typically
 	 * isn't true due to cpus_ptr constraints and the like.
 	 */
-	if (busiest->group_type == group_imbalanced)
-		goto force_balance;
+	إذا (busiest->group_type == group_imbalanced)
+		اذهب force_balance;
 
 	local = &sds.local_stat;
 	/*
 	 * If the local group is busier than the selected busiest group
 	 * don't try and pull any tasks.
 	 */
-	if (local->group_type > busiest->group_type)
-		goto out_balanced;
+	إذا (local->group_type > busiest->group_type)
+		اذهب out_balanced;
 
 	/*
 	 * When groups are overloaded, use the avg_load to ensure fairness
 	 * between tasks.
 	 */
-	if (local->group_type == group_overloaded) {
+	إذا (local->group_type == group_overloaded) {
 		/*
 		 * If the local group is more loaded than the selected
 		 * busiest group don't try to pull any tasks.
 		 */
-		if (local->avg_load >= busiest->avg_load)
-			goto out_balanced;
+		إذا (local->avg_load >= busiest->avg_load)
+			اذهب out_balanced;
 
 		/* XXX broken for overlapping NUMA groups */
 		sds.avg_load = (sds.total_load * SCHED_CAPACITY_SCALE) /
@@ -13278,44 +13278,44 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
 		 * Don't pull any tasks if this group is already above the
 		 * domain average load.
 		 */
-		if (local->avg_load >= sds.avg_load)
-			goto out_balanced;
+		إذا (local->avg_load >= sds.avg_load)
+			اذهب out_balanced;
 
 		/*
 		 * If the busiest group is more loaded, use imbalance_pct to be
 		 * conservative.
 		 */
-		if (100 * busiest->avg_load <=
+		إذا (100 * busiest->avg_load <=
 				env->sd->imbalance_pct * local->avg_load)
-			goto out_balanced;
+			اذهب out_balanced;
 	}
 
 	/*
 	 * Try to move all excess tasks to a sibling domain of the busiest
 	 * group's child domain.
 	 */
-	if (sds.prefer_sibling && local->group_type == group_has_spare &&
+	إذا (sds.prefer_sibling && local->group_type == group_has_spare &&
 	    (busiest->group_type == group_llc_balance ||
 	    sibling_imbalance(env, &sds, busiest, local) > 1))
-		goto force_balance;
+		اذهب force_balance;
 
-	if (busiest->group_type != group_overloaded) {
-		if (!env->idle) {
+	إذا (busiest->group_type != group_overloaded) {
+		إذا (!env->idle) {
 			/*
 			 * If the busiest group is not overloaded (and as a
 			 * result the local one too) but this CPU is already
 			 * busy, let another idle CPU try to pull task.
 			 */
-			goto out_balanced;
+			اذهب out_balanced;
 		}
 
-		if (busiest->group_type == group_smt_balance &&
+		إذا (busiest->group_type == group_smt_balance &&
 		    smt_vs_nonsmt_groups(sds.local, sds.busiest)) {
 			/* Let non SMT CPU pull from SMT CPU sharing with sibling */
-			goto force_balance;
+			اذهب force_balance;
 		}
 
-		if (busiest->group_weight > 1 &&
+		إذا (busiest->group_weight > 1 &&
 		    local->idle_cpus <= (busiest->idle_cpus + 1)) {
 			/*
 			 * If the busiest group is not overloaded
@@ -13326,45 +13326,45 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
 			 * on another group. Of course this applies only if
 			 * there is more than 1 CPU per group.
 			 */
-			goto out_balanced;
+			اذهب out_balanced;
 		}
 
-		if (busiest->sum_h_nr_running == 1) {
+		إذا (busiest->sum_h_nr_running == 1) {
 			/*
 			 * busiest doesn't have any tasks waiting to run
 			 */
-			goto out_balanced;
+			اذهب out_balanced;
 		}
 	}
 
 force_balance:
 	/* Looks like there is an imbalance. Compute it */
 	calculate_imbalance(env, &sds);
-	return env->imbalance ? sds.busiest : NULL;
+	إرجاع env->imbalance ? sds.busiest : عدم;
 
 out_balanced:
 	env->imbalance = 0;
-	return NULL;
+	إرجاع عدم;
 }
 
 /*
  * sched_balance_find_src_rq - find the busiest runqueue among the CPUs in the group.
  */
-static struct rq *sched_balance_find_src_rq(struct lb_env *env,
-				     struct sched_group *group)
+ساكن بنية rq *sched_balance_find_src_rq(بنية lb_env *env,
+				     بنية sched_group *group)
 {
-	struct rq *busiest = NULL, *rq;
+	بنية rq *busiest = عدم, *rq;
 	unsigned long busiest_util = 0, busiest_load = 0, busiest_capacity = 1;
-	unsigned int __maybe_unused busiest_pref_llc = 0;
-	struct sched_domain __maybe_unused *sd_tmp;
-	unsigned int busiest_nr = 0;
-	int __maybe_unused dst_llc;
-	int i;
+	unsigned صحيح __maybe_unused busiest_pref_llc = 0;
+	بنية sched_domain __maybe_unused *sd_tmp;
+	unsigned صحيح busiest_nr = 0;
+	صحيح __maybe_unused dst_llc;
+	صحيح i;
 
 	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
 		unsigned long capacity, load, util;
-		unsigned int nr_running;
-		enum fbq_type rt;
+		unsigned صحيح nr_running;
+		تعداد fbq_type rt;
 
 		rq = cpu_rq(i);
 		rt = fbq_classify_rq(rq);
@@ -13388,12 +13388,12 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 		 *
 		 * Both cases only affect the total convergence complexity.
 		 */
-		if (rt > env->fbq_type)
-			continue;
+		إذا (rt > env->fbq_type)
+			استمر;
 
 		nr_running = rq->cfs.h_nr_runnable;
-		if (!nr_running)
-			continue;
+		إذا (!nr_running)
+			استمر;
 
 		capacity = capacity_of(i);
 
@@ -13403,7 +13403,7 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 		 * Higher per-CPU capacity is considered better than balancing
 		 * average load.
 		 */
-		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
+		إذا (env->sd->flags & SD_ASYM_CPUCAPACITY &&
 		    nr_running == 1) {
 			bool cluster_equal_cap = static_branch_unlikely(&sched_cluster_active) &&
 						 (get_actual_cpu_capacity(env->dst_cpu) ==
@@ -13418,9 +13418,9 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 			 * clusters of identical capacity, accounting for
 			 * hardware and cpufreq pressure.
 			 */
-			if (!smt_degraded_cap && !cluster_equal_cap &&
+			إذا (!smt_degraded_cap && !cluster_equal_cap &&
 			    !capacity_greater(capacity_of(env->dst_cpu), capacity))
-				continue;
+				استمر;
 		}
 
 		/*
@@ -13430,20 +13430,20 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 		 * If balancing between cores, let lower priority CPUs help
 		 * SMT cores with more than one busy sibling.
 		 */
-		if (sched_asym(env->sd, i, env->dst_cpu) && nr_running == 1)
-			continue;
+		إذا (sched_asym(env->sd, i, env->dst_cpu) && nr_running == 1)
+			استمر;
 
-		switch (env->migration_type) {
-		case migrate_load:
+		بدل (env->migration_type) {
+		حالة migrate_load:
 			/*
 			 * When comparing with load imbalance, use cpu_load()
 			 * which is not scaled with the CPU capacity.
 			 */
 			load = cpu_load(rq);
 
-			if (nr_running == 1 && load > env->imbalance &&
+			إذا (nr_running == 1 && load > env->imbalance &&
 			    !check_cpu_capacity(rq, env->sd))
-				break;
+				اكسر;
 
 			/*
 			 * For the load comparisons with the other CPUs,
@@ -13458,14 +13458,14 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 			 * load_i * capacity_j > load_j * capacity_i;
 			 * where j is our previous maximum.
 			 */
-			if (load * busiest_capacity > busiest_load * capacity) {
+			إذا (load * busiest_capacity > busiest_load * capacity) {
 				busiest_load = load;
 				busiest_capacity = capacity;
 				busiest = rq;
 			}
-			break;
+			اكسر;
 
-		case migrate_util:
+		حالة migrate_util:
 			util = cpu_util_cfs_boost(i);
 
 			/*
@@ -13473,55 +13473,55 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
 			 * running task. Whatever its utilization, we will fail
 			 * detach the task.
 			 */
-			if (nr_running <= 1)
-				continue;
+			إذا (nr_running <= 1)
+				استمر;
 
-			if (busiest_util < util) {
+			إذا (busiest_util < util) {
 				busiest_util = util;
 				busiest = rq;
 			}
-			break;
+			اكسر;
 
-		case migrate_task:
-			if (busiest_nr < nr_running) {
+		حالة migrate_task:
+			إذا (busiest_nr < nr_running) {
 				busiest_nr = nr_running;
 				busiest = rq;
 			}
-			break;
+			اكسر;
 
-		case migrate_misfit:
+		حالة migrate_misfit:
 			/*
 			 * For ASYM_CPUCAPACITY domains with misfit tasks we
 			 * simply seek the "biggest" misfit task.
 			 */
-			if (rq->misfit_task_load > busiest_load) {
+			إذا (rq->misfit_task_load > busiest_load) {
 				busiest_load = rq->misfit_task_load;
 				busiest = rq;
 			}
 
-			break;
+			اكسر;
 
-		case migrate_llc_task:
+		حالة migrate_llc_task:
 #ifdef CONFIG_SCHED_CACHE
 			sd_tmp = rcu_dereference_all(rq->sd);
 			dst_llc = llc_id(env->dst_cpu);
 
-			if (sd_tmp && (unsigned)dst_llc < sd_tmp->llc_max) {
-				unsigned int this_pref_llc =
+			إذا (sd_tmp && (unsigned)dst_llc < sd_tmp->llc_max) {
+				unsigned صحيح this_pref_llc =
 					sd_tmp->llc_counts[dst_llc];
 
-				if (busiest_pref_llc < this_pref_llc) {
+				إذا (busiest_pref_llc < this_pref_llc) {
 					busiest_pref_llc = this_pref_llc;
 					busiest = rq;
 				}
 			}
 #endif
-			break;
+			اكسر;
 
 		}
 	}
 
-	return busiest;
+	إرجاع busiest;
 }
 
 /*
@@ -13530,8 +13530,8 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
  */
 #define MAX_PINNED_INTERVAL	512
 
-static inline bool
-asym_active_balance(struct lb_env *env)
+ساكن مضمن bool
+asym_active_balance(بنية lb_env *env)
 {
 	/*
 	 * ASYM_PACKING needs to force migrate tasks from busy but lower
@@ -13543,40 +13543,40 @@ asym_active_balance(struct lb_env *env)
 	 * the lower priority @env::dst_cpu help it. Do not follow
 	 * CPU priority.
 	 */
-	return env->idle && sched_use_asym_prio(env->sd, env->dst_cpu) &&
+	إرجاع env->idle && sched_use_asym_prio(env->sd, env->dst_cpu) &&
 	       (sched_asym_prefer(env->dst_cpu, env->src_cpu) ||
 		!sched_use_asym_prio(env->sd, env->src_cpu));
 }
 
-static inline bool
-imbalanced_active_balance(struct lb_env *env)
+ساكن مضمن bool
+imbalanced_active_balance(بنية lb_env *env)
 {
-	struct sched_domain *sd = env->sd;
+	بنية sched_domain *sd = env->sd;
 
 	/*
 	 * The imbalanced case includes the case of pinned tasks preventing a fair
 	 * distribution of the load on the system but also the even distribution of the
 	 * threads on a system with spare capacity
 	 */
-	if ((env->migration_type == migrate_task) &&
+	إذا ((env->migration_type == migrate_task) &&
 	    (sd->nr_balance_failed > sd->cache_nice_tries+2))
-		return 1;
+		إرجاع 1;
 
-	return 0;
+	إرجاع 0;
 }
 
-static int need_active_balance(struct lb_env *env)
+ساكن صحيح need_active_balance(بنية lb_env *env)
 {
-	struct sched_domain *sd = env->sd;
+	بنية sched_domain *sd = env->sd;
 
-	if (alb_break_llc(env))
-		return 0;
+	إذا (alb_break_llc(env))
+		إرجاع 0;
 
-	if (asym_active_balance(env))
-		return 1;
+	إذا (asym_active_balance(env))
+		إرجاع 1;
 
-	if (imbalanced_active_balance(env))
-		return 1;
+	إذا (imbalanced_active_balance(env))
+		إرجاع 1;
 
 	/*
 	 * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
@@ -13584,48 +13584,48 @@ static int need_active_balance(struct lb_env *env)
 	 * because of other sched_class or IRQs if more capacity stays
 	 * available on dst_cpu.
 	 */
-	if (env->idle &&
+	إذا (env->idle &&
 	    (env->src_rq->cfs.h_nr_runnable == 1)) {
-		if ((check_cpu_capacity(env->src_rq, sd)) &&
+		إذا ((check_cpu_capacity(env->src_rq, sd)) &&
 		    (capacity_of(env->src_cpu)*sd->imbalance_pct < capacity_of(env->dst_cpu)*100))
-			return 1;
+			إرجاع 1;
 	}
 
-	if (env->migration_type == migrate_misfit ||
+	إذا (env->migration_type == migrate_misfit ||
 	    env->migration_type == migrate_llc_task)
-		return 1;
+		إرجاع 1;
 
-	return 0;
+	إرجاع 0;
 }
 
-static int active_load_balance_cpu_stop(void *data);
-static int active_load_balance_llc_cpu_stop(void *data);
+ساكن صحيح active_load_balance_cpu_stop(فراغ *data);
+ساكن صحيح active_load_balance_llc_cpu_stop(فراغ *data);
 
 /*
  * migration_type is checked elsewhere to decide migration policy, so
  * it shouldn't be repurposed just to flag an LLC-directed active
  * balance across the stopper. Pick the callback here instead.
  */
-static inline cpu_stop_fn_t alb_stop_fn(struct lb_env *env)
+ساكن مضمن cpu_stop_fn_t alb_stop_fn(بنية lb_env *env)
 {
-	if (env->migration_type == migrate_llc_task)
-		return active_load_balance_llc_cpu_stop;
+	إذا (env->migration_type == migrate_llc_task)
+		إرجاع active_load_balance_llc_cpu_stop;
 
-	return active_load_balance_cpu_stop;
+	إرجاع active_load_balance_cpu_stop;
 }
 
-static int should_we_balance(struct lb_env *env)
+ساكن صحيح should_we_balance(بنية lb_env *env)
 {
-	struct cpumask *swb_cpus = this_cpu_cpumask_var_ptr(should_we_balance_tmpmask);
-	struct sched_group *sg = env->sd->groups;
-	int cpu, idle_smt = -1;
+	بنية cpumask *swb_cpus = this_cpu_cpumask_var_ptr(should_we_balance_tmpmask);
+	بنية sched_group *sg = env->sd->groups;
+	صحيح cpu, idle_smt = -1;
 
 	/*
 	 * Ensure the balancing environment is consistent; can happen
 	 * when the softirq triggers 'during' hotplug.
 	 */
-	if (!cpumask_test_cpu(env->dst_cpu, env->cpus))
-		return 0;
+	إذا (!cpumask_test_cpu(env->dst_cpu, env->cpus))
+		إرجاع 0;
 
 	/*
 	 * In the newly idle case, we will allow all the CPUs
@@ -13634,27 +13634,27 @@ static int should_we_balance(struct lb_env *env)
 	 * However, we bail out if we already have tasks or a wakeup pending,
 	 * to optimize wakeup latency.
 	 */
-	if (env->idle == CPU_NEWLY_IDLE) {
-		if (env->dst_rq->nr_running > 0 || env->dst_rq->ttwu_pending)
-			return 0;
-		return 1;
+	إذا (env->idle == CPU_NEWLY_IDLE) {
+		إذا (env->dst_rq->nr_running > 0 || env->dst_rq->ttwu_pending)
+			إرجاع 0;
+		إرجاع 1;
 	}
 
 	cpumask_copy(swb_cpus, group_balance_mask(sg));
 	/* Try to find first idle CPU */
 	for_each_cpu_and(cpu, swb_cpus, env->cpus) {
-		if (!idle_cpu(cpu))
-			continue;
+		إذا (!idle_cpu(cpu))
+			استمر;
 
 		/*
 		 * Don't balance to idle SMT in busy core right away when
 		 * balancing cores, but remember the first idle SMT CPU for
 		 * later consideration.  Find CPU on an idle core first.
 		 */
-		if (sched_smt_active() &&
+		إذا (sched_smt_active() &&
 		    !(env->sd->flags & SD_SHARE_CPUCAPACITY) &&
 		    !is_core_idle(cpu)) {
-			if (idle_smt == -1)
+			إذا (idle_smt == -1)
 				idle_smt = cpu;
 			/*
 			 * If the core is not idle, and first SMT sibling which is
@@ -13662,45 +13662,45 @@ static int should_we_balance(struct lb_env *env)
 			 * SMT siblings for idleness:
 			 */
 			cpumask_andnot(swb_cpus, swb_cpus, cpu_smt_mask(cpu));
-			continue;
+			استمر;
 		}
 
 		/*
 		 * Are we the first idle core in a non-SMT domain or higher,
 		 * or the first idle CPU in a SMT domain?
 		 */
-		return cpu == env->dst_cpu;
+		إرجاع cpu == env->dst_cpu;
 	}
 
 	/* Are we the first idle CPU with busy siblings? */
-	if (idle_smt != -1)
-		return idle_smt == env->dst_cpu;
+	إذا (idle_smt != -1)
+		إرجاع idle_smt == env->dst_cpu;
 
 	/* Are we the first CPU of this group ? */
-	return group_balance_cpu(sg) == env->dst_cpu;
+	إرجاع group_balance_cpu(sg) == env->dst_cpu;
 }
 
-static void update_lb_imbalance_stat(struct lb_env *env, struct sched_domain *sd,
-				     enum cpu_idle_type idle)
+ساكن فراغ update_lb_imbalance_stat(بنية lb_env *env, بنية sched_domain *sd,
+				     تعداد cpu_idle_type idle)
 {
-	if (!schedstat_enabled())
-		return;
+	إذا (!schedstat_enabled())
+		إرجاع;
 
-	switch (env->migration_type) {
-	case migrate_load:
+	بدل (env->migration_type) {
+	حالة migrate_load:
 		__schedstat_add(sd->lb_imbalance_load[idle], env->imbalance);
-		break;
-	case migrate_util:
+		اكسر;
+	حالة migrate_util:
 		__schedstat_add(sd->lb_imbalance_util[idle], env->imbalance);
-		break;
-	case migrate_task:
+		اكسر;
+	حالة migrate_task:
 		__schedstat_add(sd->lb_imbalance_task[idle], env->imbalance);
-		break;
-	case migrate_misfit:
+		اكسر;
+	حالة migrate_misfit:
 		__schedstat_add(sd->lb_imbalance_misfit[idle], env->imbalance);
-		break;
-	case migrate_llc_task:
-		break;
+		اكسر;
+	حالة migrate_llc_task:
+		اكسر;
 	}
 }
 
@@ -13717,23 +13717,23 @@ static void update_lb_imbalance_stat(struct lb_env *env, struct sched_domain *sd
  *   execution, as non-SD_SERIALIZE domains will still be
  *   load-balanced in parallel.
  */
-static atomic_t sched_balance_running = ATOMIC_INIT(0);
+ساكن atomic_t sched_balance_running = ATOMIC_INIT(0);
 
 /*
  * Check this_cpu to ensure it is balanced within domain. Attempt to move
  * tasks if there is an imbalance.
  */
-static int sched_balance_rq(int this_cpu, struct rq *this_rq,
-			struct sched_domain *sd, enum cpu_idle_type idle,
-			int *continue_balancing)
+ساكن صحيح sched_balance_rq(صحيح this_cpu, بنية rq *this_rq,
+			بنية sched_domain *sd, تعداد cpu_idle_type idle,
+			صحيح *continue_balancing)
 {
-	int ld_moved, cur_ld_moved, active_balance = 0;
-	struct sched_domain *sd_parent = sd->parent;
-	struct sched_group *group;
-	struct rq *busiest;
-	struct rq_flags rf;
-	struct cpumask *cpus = this_cpu_cpumask_var_ptr(load_balance_mask);
-	struct lb_env env = {
+	صحيح ld_moved, cur_ld_moved, active_balance = 0;
+	بنية sched_domain *sd_parent = sd->parent;
+	بنية sched_group *group;
+	بنية rq *busiest;
+	بنية rq_flags rf;
+	بنية cpumask *cpus = this_cpu_cpumask_var_ptr(load_balance_mask);
+	بنية lb_env env = {
 		.sd		= sd,
 		.dst_cpu	= this_cpu,
 		.dst_rq		= this_rq,
@@ -13748,32 +13748,32 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
 
 	cpumask_and(cpus, sched_domain_span(sd), cpu_preferred_mask);
 
-	schedstat_inc(sd->lb_count[idle]);
+	schedstat_inc(sd->lb_تعداد[idle]);
 
 redo:
-	if (!should_we_balance(&env)) {
+	إذا (!should_we_balance(&env)) {
 		*continue_balancing = 0;
-		goto out_balanced;
+		اذهب out_balanced;
 	}
 
-	if (!need_unlock && (sd->flags & SD_SERIALIZE)) {
-		int zero = 0;
-		if (!atomic_try_cmpxchg_acquire(&sched_balance_running, &zero, 1))
-			goto out_balanced;
+	إذا (!need_unlock && (sd->flags & SD_SERIALIZE)) {
+		صحيح zero = 0;
+		إذا (!atomic_try_cmpxchg_acquire(&sched_balance_running, &zero, 1))
+			اذهب out_balanced;
 
 		need_unlock = true;
 	}
 
 	group = sched_balance_find_src_group(&env);
-	if (!group) {
+	إذا (!group) {
 		schedstat_inc(sd->lb_nobusyg[idle]);
-		goto out_balanced;
+		اذهب out_balanced;
 	}
 
 	busiest = sched_balance_find_src_rq(&env, group);
-	if (!busiest) {
+	إذا (!busiest) {
 		schedstat_inc(sd->lb_nobusyq[idle]);
-		goto out_balanced;
+		اذهب out_balanced;
 	}
 
 	WARN_ON_ONCE(busiest == env.dst_rq);
@@ -13786,7 +13786,7 @@ redo:
 	ld_moved = 0;
 	/* Clear this flag as soon as we find a pullable task */
 	env.flags |= LBF_ALL_PINNED;
-	if (busiest->nr_running > 1) {
+	إذا (busiest->nr_running > 1) {
 		/*
 		 * Attempt to move tasks. If sched_balance_find_src_group has found
 		 * an imbalance but busiest->nr_running <= 1, the group is
@@ -13815,16 +13815,16 @@ more_balance:
 
 		rq_unlock(busiest, &rf);
 
-		if (cur_ld_moved) {
+		إذا (cur_ld_moved) {
 			attach_tasks(&env);
 			ld_moved += cur_ld_moved;
 		}
 
 		local_irq_restore(rf.flags);
 
-		if (env.flags & LBF_NEED_BREAK) {
+		إذا (env.flags & LBF_NEED_BREAK) {
 			env.flags &= ~LBF_NEED_BREAK;
-			goto more_balance;
+			اذهب more_balance;
 		}
 
 		/*
@@ -13846,7 +13846,7 @@ more_balance:
 		 * moreover subsequent load balance cycles should correct the
 		 * excess load moved.
 		 */
-		if ((env.flags & LBF_DST_PINNED) && env.imbalance > 0) {
+		إذا ((env.flags & LBF_DST_PINNED) && env.imbalance > 0) {
 
 			/* Prevent to re-select dst_cpu via env's CPUs */
 			__cpumask_clear_cpu(env.dst_cpu, env.cpus);
@@ -13861,21 +13861,21 @@ more_balance:
 			 * Go back to "more_balance" rather than "redo" since we
 			 * need to continue with same src_cpu.
 			 */
-			goto more_balance;
+			اذهب more_balance;
 		}
 
 		/*
 		 * We failed to reach balance because of affinity.
 		 */
-		if (sd_parent) {
-			int *group_imbalance = &sd_parent->groups->sgc->imbalance;
+		إذا (sd_parent) {
+			صحيح *group_imbalance = &sd_parent->groups->sgc->imbalance;
 
-			if ((env.flags & LBF_SOME_PINNED) && env.imbalance > 0)
+			إذا ((env.flags & LBF_SOME_PINNED) && env.imbalance > 0)
 				*group_imbalance = 1;
 		}
 
 		/* All tasks on this runqueue were pinned by CPU affinity */
-		if (unlikely(env.flags & LBF_ALL_PINNED)) {
+		إذا (unlikely(env.flags & LBF_ALL_PINNED)) {
 			__cpumask_clear_cpu(cpu_of(busiest), cpus);
 			/*
 			 * Attempting to continue load balancing at the current
@@ -13885,18 +13885,18 @@ more_balance:
 			 * destination group that is receiving any migrated
 			 * load.
 			 */
-			if (!cpumask_subset(cpus, env.dst_grpmask)) {
+			إذا (!cpumask_subset(cpus, env.dst_grpmask)) {
 				env.loop = 0;
 				env.loop_break = SCHED_NR_MIGRATE_BREAK;
-				goto redo;
+				اذهب redo;
 			}
-			goto out_all_pinned;
+			اذهب out_all_pinned;
 		}
 	}
 
-	if (ld_moved) {
+	إذا (ld_moved) {
 		sd->nr_balance_failed = 0;
-		goto out_unbalanced;
+		اذهب out_unbalanced;
 	}
 
 	schedstat_inc(sd->lb_failed[idle]);
@@ -13915,13 +13915,13 @@ more_balance:
 	 * behavior and don't pollute nr_balance_failed.
 	 * See can_migrate_task().
 	 */
-	if (idle != CPU_NEWLY_IDLE &&
+	إذا (idle != CPU_NEWLY_IDLE &&
 	    env.migration_type != migrate_misfit &&
 	    !(env.flags & LBF_LLC_PINNED))
 		sd->nr_balance_failed++;
 
-	if (!need_active_balance(&env))
-		goto out_unbalanced;
+	إذا (!need_active_balance(&env))
+		اذهب out_unbalanced;
 
 	scoped_guard (raw_spin_rq_lock_irqsave, busiest) {
 		/*
@@ -13929,8 +13929,8 @@ more_balance:
 		 * if the curr task on busiest CPU can't be
 		 * moved to this_cpu:
 		 */
-		if (!cpumask_test_cpu(this_cpu, busiest->curr->cpus_ptr))
-			goto out_one_pinned;
+		إذا (!cpumask_test_cpu(this_cpu, busiest->curr->cpus_ptr))
+			اذهب out_one_pinned;
 
 		/* Record that we found at least one task that could run on this_cpu */
 		env.flags &= ~LBF_ALL_PINNED;
@@ -13940,23 +13940,23 @@ more_balance:
 		 * ->active_balance_work.  Once set, it's cleared
 		 * only after active load balance is finished.
 		 */
-		if (busiest->active_balance)
-			goto out_unbalanced;
+		إذا (busiest->active_balance)
+			اذهب out_unbalanced;
 
 		/*
 		 * @busiest dropped its rq_lock in the middle of
 		 * scheduling out its ->curr task (->on_rq := 0), no
 		 * need to forcefully punt it away with active balance.
 		 */
-		if (!busiest->curr->on_rq)
-			goto out_unbalanced;
+		إذا (!busiest->curr->on_rq)
+			اذهب out_unbalanced;
 
 		busiest->active_balance = 1;
-		busiest->push_cpu = this_cpu;
+		busiest->ادفع_cpu = this_cpu;
 		active_balance = 1;
 		preempt_disable();
 	}
-	if (active_balance) {
+	إذا (active_balance) {
 		stop_one_cpu_nowait(cpu_of(busiest),
 				    alb_stop_fn(&env), busiest,
 				    &busiest->active_balance_work);
@@ -13966,7 +13966,7 @@ more_balance:
 out_unbalanced:
 	/* We were unbalanced, so reset the balancing interval */
 	sd->balance_interval = sd->min_interval;
-	goto out;
+	اذهب out;
 
 out_balanced:
 	/*
@@ -13974,10 +13974,10 @@ out_balanced:
 	 * constraints. Clear the imbalance flag only if other tasks got
 	 * a chance to move and fix the imbalance.
 	 */
-	if (sd_parent && !(env.flags & LBF_ALL_PINNED)) {
-		int *group_imbalance = &sd_parent->groups->sgc->imbalance;
+	إذا (sd_parent && !(env.flags & LBF_ALL_PINNED)) {
+		صحيح *group_imbalance = &sd_parent->groups->sgc->imbalance;
 
-		if (*group_imbalance)
+		إذا (*group_imbalance)
 			*group_imbalance = 0;
 	}
 
@@ -14004,28 +14004,28 @@ out_one_pinned:
 	 * the system being busy and requires lb to backoff to let it settle
 	 * down.
 	 */
-	if (env.idle == CPU_NEWLY_IDLE ||
+	إذا (env.idle == CPU_NEWLY_IDLE ||
 	    env.migration_type == migrate_misfit)
-		goto out;
+		اذهب out;
 
 	/* tune up the balancing interval */
-	if ((env.flags & LBF_ALL_PINNED &&
+	إذا ((env.flags & LBF_ALL_PINNED &&
 	     sd->balance_interval < MAX_PINNED_INTERVAL) ||
 	    sd->balance_interval < sd->max_interval)
 		sd->balance_interval *= 2;
 out:
-	if (need_unlock)
+	إذا (need_unlock)
 		atomic_set_release(&sched_balance_running, 0);
 
-	return ld_moved;
+	إرجاع ld_moved;
 }
 
-static inline unsigned long
-get_sd_balance_interval(struct sched_domain *sd, int cpu_busy)
+ساكن مضمن unsigned long
+get_sd_balance_interval(بنية sched_domain *sd, صحيح cpu_busy)
 {
 	unsigned long interval = sd->balance_interval;
 
-	if (cpu_busy)
+	إذا (cpu_busy)
 		interval *= sd->busy_factor;
 
 	/* scale ms to jiffies */
@@ -14036,16 +14036,16 @@ get_sd_balance_interval(struct sched_domain *sd, int cpu_busy)
 	 * balancing at lower domains by preventing their balancing periods
 	 * from being multiples of each other.
 	 */
-	if (cpu_busy)
+	إذا (cpu_busy)
 		interval -= 1;
 
 	interval = clamp(interval, 1UL, max_load_balance_interval);
 
-	return interval;
+	إرجاع interval;
 }
 
-static inline void
-update_next_balance(struct sched_domain *sd, unsigned long *next_balance)
+ساكن مضمن فراغ
+update_next_balance(بنية sched_domain *sd, unsigned long *next_balance)
 {
 	unsigned long interval, next;
 
@@ -14053,7 +14053,7 @@ update_next_balance(struct sched_domain *sd, unsigned long *next_balance)
 	interval = get_sd_balance_interval(sd, 0);
 	next = sd->last_balance + interval;
 
-	if (time_after(*next_balance, next))
+	إذا (time_after(*next_balance, next))
 		*next_balance = next;
 }
 
@@ -14063,15 +14063,15 @@ update_next_balance(struct sched_domain *sd, unsigned long *next_balance)
  * least 1 task to be running on each physical CPU where possible, and
  * avoids physical / logical imbalances.
  */
-static int __active_load_balance_cpu_stop(void *data, unsigned int lb_flags)
+ساكن صحيح __active_load_balance_cpu_stop(فراغ *data, unsigned صحيح lb_flags)
 {
-	struct rq *busiest_rq = data;
-	int busiest_cpu = cpu_of(busiest_rq);
-	int target_cpu = busiest_rq->push_cpu;
-	struct rq *target_rq = cpu_rq(target_cpu);
-	struct sched_domain *sd;
-	struct task_struct *p = NULL;
-	struct rq_flags rf;
+	بنية rq *busiest_rq = data;
+	صحيح busiest_cpu = cpu_of(busiest_rq);
+	صحيح target_cpu = busiest_rq->ادفع_cpu;
+	بنية rq *target_rq = cpu_rq(target_cpu);
+	بنية sched_domain *sd;
+	بنية task_struct *p = عدم;
+	بنية rq_flags rf;
 
 	rq_lock_irq(busiest_rq, &rf);
 	/*
@@ -14079,17 +14079,17 @@ static int __active_load_balance_cpu_stop(void *data, unsigned int lb_flags)
 	 * CPUs can become inactive. We should not move tasks from or to
 	 * inactive CPUs.
 	 */
-	if (!cpu_active(busiest_cpu) || !cpu_active(target_cpu))
-		goto out_unlock;
+	إذا (!cpu_active(busiest_cpu) || !cpu_active(target_cpu))
+		اذهب out_unlock;
 
 	/* Make sure the requested CPU hasn't gone down in the meantime: */
-	if (unlikely(busiest_cpu != smp_processor_id() ||
+	إذا (unlikely(busiest_cpu != smp_processor_id() ||
 		     !busiest_rq->active_balance))
-		goto out_unlock;
+		اذهب out_unlock;
 
 	/* Is there any task to move? */
-	if (busiest_rq->nr_running <= 1)
-		goto out_unlock;
+	إذا (busiest_rq->nr_running <= 1)
+		اذهب out_unlock;
 
 	/*
 	 * This condition is "impossible", if it occurs
@@ -14101,12 +14101,12 @@ static int __active_load_balance_cpu_stop(void *data, unsigned int lb_flags)
 	/* Search for an sd spanning us and the target CPU. */
 	rcu_read_lock();
 	for_each_domain(target_cpu, sd) {
-		if (cpumask_test_cpu(busiest_cpu, sched_domain_span(sd)))
-			break;
+		إذا (cpumask_test_cpu(busiest_cpu, sched_domain_span(sd)))
+			اكسر;
 	}
 
-	if (likely(sd)) {
-		struct lb_env env = {
+	إذا (likely(sd)) {
+		بنية lb_env env = {
 			.sd		= sd,
 			.dst_cpu	= target_cpu,
 			.dst_rq		= target_rq,
@@ -14116,15 +14116,15 @@ static int __active_load_balance_cpu_stop(void *data, unsigned int lb_flags)
 			.flags		= LBF_ACTIVE_LB | lb_flags,
 		};
 
-		schedstat_inc(sd->alb_count);
+		schedstat_inc(sd->alb_تعداد);
 		update_rq_clock(busiest_rq);
 
 		p = detach_one_task(&env);
-		if (p) {
+		إذا (p) {
 			schedstat_inc(sd->alb_pushed);
 			/* Active balancing done, reset the failure counter. */
 			sd->nr_balance_failed = 0;
-		} else {
+		} وإلا {
 			schedstat_inc(sd->alb_failed);
 		}
 	}
@@ -14133,48 +14133,48 @@ out_unlock:
 	busiest_rq->active_balance = 0;
 	rq_unlock(busiest_rq, &rf);
 
-	if (p)
+	إذا (p)
 		attach_one_task(target_rq, p);
 
 	local_irq_enable();
 
-	return 0;
+	إرجاع 0;
 }
 
-static int active_load_balance_cpu_stop(void *data)
+ساكن صحيح active_load_balance_cpu_stop(فراغ *data)
 {
-	return __active_load_balance_cpu_stop(data, 0);
+	إرجاع __active_load_balance_cpu_stop(data, 0);
 }
 
-static int active_load_balance_llc_cpu_stop(void *data)
+ساكن صحيح active_load_balance_llc_cpu_stop(فراغ *data)
 {
-	return __active_load_balance_cpu_stop(data, LBF_ACTIVE_LB_LLC);
+	إرجاع __active_load_balance_cpu_stop(data, LBF_ACTIVE_LB_LLC);
 }
 
 /*
  * Scale the max sched_balance_rq interval with the number of CPUs in the system.
  * This trades load-balance latency on larger machines for less cross talk.
  */
-void update_max_interval(void)
+فراغ update_max_interval(فراغ)
 {
-	max_load_balance_interval = HZ*num_online_cpus()/10;
+	max_load_balance_interval = HZ*رقم_online_cpus()/10;
 }
 
-static inline void update_newidle_stats(struct sched_domain *sd, unsigned int success)
+ساكن مضمن فراغ update_newidle_stats(بنية sched_domain *sd, unsigned صحيح success)
 {
 	sd->newidle_call++;
 	sd->newidle_success += success;
 
-	if (sd->newidle_call >= 1024) {
+	إذا (sd->newidle_call >= 1024) {
 		u64 now = sched_clock();
 		s64 delta = now - sd->newidle_stamp;
 		sd->newidle_stamp = now;
-		int ratio = 0;
+		صحيح ratio = 0;
 
-		if (delta < 0)
+		إذا (delta < 0)
 			delta = 0;
 
-		if (sched_feat(NI_RATE)) {
+		إذا (sched_feat(NI_RATE)) {
 			/*
 			 * ratio  delta   freq
 			 *
@@ -14195,16 +14195,16 @@ static inline void update_newidle_stats(struct sched_domain *sd, unsigned int su
 	}
 }
 
-static inline bool
-update_newidle_cost(struct sched_domain *sd, u64 cost, unsigned int success)
+ساكن مضمن bool
+update_newidle_cost(بنية sched_domain *sd, u64 cost, unsigned صحيح success)
 {
 	unsigned long next_decay = sd->last_decay_max_lb_cost + HZ;
 	unsigned long now = jiffies;
 
-	if (cost)
+	إذا (cost)
 		update_newidle_stats(sd, success);
 
-	if (cost > sd->max_newidle_lb_cost) {
+	إذا (cost > sd->max_newidle_lb_cost) {
 		/*
 		 * Track max cost of a domain to make sure to not delay the
 		 * next wakeup on the CPU.
@@ -14212,7 +14212,7 @@ update_newidle_cost(struct sched_domain *sd, u64 cost, unsigned int success)
 		sd->max_newidle_lb_cost = cost;
 		sd->last_decay_max_lb_cost = now;
 
-	} else if (time_after(now, next_decay)) {
+	} وإلا إذا (time_after(now, next_decay)) {
 		/*
 		 * Decay the newidle max times by ~1% per second to ensure that
 		 * it is not outdated and the current max cost is actually
@@ -14220,10 +14220,10 @@ update_newidle_cost(struct sched_domain *sd, u64 cost, unsigned int success)
 		 */
 		sd->max_newidle_lb_cost = (sd->max_newidle_lb_cost * 253) / 256;
 		sd->last_decay_max_lb_cost = now;
-		return true;
+		إرجاع true;
 	}
 
-	return false;
+	إرجاع false;
 }
 
 /*
@@ -14232,17 +14232,17 @@ update_newidle_cost(struct sched_domain *sd, u64 cost, unsigned int success)
  *
  * Balancing parameters are set up in init_sched_domains.
  */
-static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ساكن فراغ sched_balance_domains(بنية rq *rq, تعداد cpu_idle_type idle)
 {
-	int continue_balancing = 1;
-	int cpu = rq->cpu;
-	int busy = idle != CPU_IDLE && !sched_idle_rq(rq);
+	صحيح continue_balancing = 1;
+	صحيح cpu = rq->cpu;
+	صحيح busy = idle != CPU_IDLE && !sched_idle_rq(rq);
 	unsigned long interval;
-	struct sched_domain *sd;
+	بنية sched_domain *sd;
 	/* Earliest time when we have to do rebalance again */
 	unsigned long next_balance = jiffies + 60*HZ;
-	int update_next_balance = 0;
-	int need_decay = 0;
+	صحيح update_next_balance = 0;
+	صحيح need_decay = 0;
 	u64 max_cost = 0;
 
 	rcu_read_lock();
@@ -14259,15 +14259,15 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
 		 * CPU in our sched group which is doing load balancing more
 		 * actively.
 		 */
-		if (!continue_balancing) {
-			if (need_decay)
-				continue;
-			break;
+		إذا (!continue_balancing) {
+			إذا (need_decay)
+				استمر;
+			اكسر;
 		}
 
 		interval = get_sd_balance_interval(sd, busy);
-		if (time_after_eq(jiffies, sd->last_balance + interval)) {
-			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+		إذا (time_after_eq(jiffies, sd->last_balance + interval)) {
+			إذا (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
 				/*
 				 * The LBF_DST_PINNED logic could have changed
 				 * env->dst_cpu, so we can't know our idle
@@ -14279,12 +14279,12 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
 			sd->last_balance = jiffies;
 			interval = get_sd_balance_interval(sd, busy);
 		}
-		if (time_after(next_balance, sd->last_balance + interval)) {
+		إذا (time_after(next_balance, sd->last_balance + interval)) {
 			next_balance = sd->last_balance + interval;
 			update_next_balance = 1;
 		}
 	}
-	if (need_decay) {
+	إذا (need_decay) {
 		/*
 		 * Ensure the rq-wide value also decays but keep it at a
 		 * reasonable floor to avoid funnies with rq->avg_idle.
@@ -14299,14 +14299,14 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
 	 * When the cpu is attached to null domain for ex, it will not be
 	 * updated.
 	 */
-	if (likely(update_next_balance))
+	إذا (likely(update_next_balance))
 		rq->next_balance = next_balance;
 
 }
 
-static inline int on_null_domain(struct rq *rq)
+ساكن مضمن صحيح on_null_domain(بنية rq *rq)
 {
-	return unlikely(!rcu_dereference_sched(rq->sd));
+	إرجاع unlikely(!rcu_dereference_sched(rq->sd));
 }
 
 #ifdef CONFIG_NO_HZ_COMMON
@@ -14317,10 +14317,10 @@ static inline int on_null_domain(struct rq *rq)
  *   needed, they will kick the idle load balancer, which then does idle
  *   load balancing for all the idle CPUs.
  */
-static inline int find_new_ilb(void)
+ساكن مضمن صحيح find_new_ilb(فراغ)
 {
-	struct cpumask *ilb_cpus;
-	int ilb_cpu, fallback = -1;
+	بنية cpumask *ilb_cpus;
+	صحيح ilb_cpu, fallback = -1;
 
 	lockdep_assert_irqs_disabled();
 
@@ -14333,14 +14333,14 @@ static inline int find_new_ilb(void)
 		    housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
 
 	for_each_cpu(ilb_cpu, ilb_cpus) {
-		if (!idle_cpu(ilb_cpu)) {
+		إذا (!idle_cpu(ilb_cpu)) {
 			/*
 			 * Once an idle fallback exists, a busy CPU proves that
 			 * this core cannot be fully idle. Skip its siblings.
 			 */
-			if (sched_smt_active() && fallback >= 0)
+			إذا (sched_smt_active() && fallback >= 0)
 				cpumask_andnot(ilb_cpus, ilb_cpus, cpu_smt_mask(ilb_cpu));
-			continue;
+			استمر;
 		}
 
 		/*
@@ -14350,8 +14350,8 @@ static inline int find_new_ilb(void)
 		 * a fallback so idle balancing can still make progress when no fully
 		 * idle core exists.
 		 */
-		if (sched_smt_active() && !is_core_idle(ilb_cpu)) {
-			if (fallback < 0)
+		إذا (sched_smt_active() && !is_core_idle(ilb_cpu)) {
+			إذا (fallback < 0)
 				fallback = ilb_cpu;
 
 			/*
@@ -14360,13 +14360,13 @@ static inline int find_new_ilb(void)
 			 */
 			cpumask_andnot(ilb_cpus, ilb_cpus,
 				       cpu_smt_mask(ilb_cpu));
-			continue;
+			استمر;
 		}
 
-		return ilb_cpu;
+		إرجاع ilb_cpu;
 	}
 
-	return fallback;
+	إرجاع fallback;
 }
 
 /*
@@ -14376,35 +14376,35 @@ static inline int find_new_ilb(void)
  * Prefer a CPU on a fully idle core in the HK_TYPE_KERNEL_NOISE housekeeping
  * set. Fall back to the first idle CPU when no fully idle core exists.
  */
-static void kick_ilb(unsigned int flags)
+ساكن فراغ kick_ilb(unsigned صحيح flags)
 {
-	int ilb_cpu;
+	صحيح ilb_cpu;
 
 	/*
 	 * Increase nohz.next_balance only when if full ilb is triggered but
 	 * not if we only update stats.
 	 */
-	if (flags & NOHZ_BALANCE_KICK)
+	إذا (flags & NOHZ_BALANCE_KICK)
 		nohz.next_balance = jiffies+1;
 
 	ilb_cpu = find_new_ilb();
-	if (ilb_cpu < 0)
-		return;
+	إذا (ilb_cpu < 0)
+		إرجاع;
 
 	/*
 	 * Don't bother if no new NOHZ balance work items for ilb_cpu,
 	 * i.e. all bits in flags are already set in ilb_cpu.
 	 */
-	if ((atomic_read(nohz_flags(ilb_cpu)) & flags) == flags)
-		return;
+	إذا ((atomic_read(nohz_flags(ilb_cpu)) & flags) == flags)
+		إرجاع;
 
 	/*
 	 * Access to rq::nohz_csd is serialized by NOHZ_KICK_MASK; he who sets
 	 * the first flag owns it; cleared by nohz_csd_func().
 	 */
 	flags = atomic_fetch_or(flags, nohz_flags(ilb_cpu));
-	if (flags & NOHZ_KICK_MASK)
-		return;
+	إذا (flags & NOHZ_KICK_MASK)
+		إرجاع;
 
 	/*
 	 * This way we generate an IPI on the target CPU which
@@ -14418,16 +14418,16 @@ static void kick_ilb(unsigned int flags)
  * Current decision point for kicking the idle load balancer in the presence
  * of idle CPUs in the system.
  */
-static void nohz_balancer_kick(struct rq *rq)
+ساكن فراغ nohz_balancer_kick(بنية rq *rq)
 {
 	unsigned long now = jiffies;
-	struct sched_domain_shared *sds;
-	struct sched_domain *sd;
-	int nr_busy, i, cpu = rq->cpu;
-	unsigned int flags = 0;
+	بنية sched_domain_shared *sds;
+	بنية sched_domain *sd;
+	صحيح nr_busy, i, cpu = rq->cpu;
+	unsigned صحيح flags = 0;
 
-	if (unlikely(rq->idle_balance))
-		return;
+	إذا (unlikely(rq->idle_balance))
+		إرجاع;
 
 	/*
 	 * We may be recently in ticked or tickless idle mode. At the first
@@ -14435,7 +14435,7 @@ static void nohz_balancer_kick(struct rq *rq)
 	 */
 	nohz_balance_exit_idle(rq);
 
-	if (READ_ONCE(nohz.has_blocked_load) &&
+	إذا (READ_ONCE(nohz.has_blocked_load) &&
 	    time_after(now, READ_ONCE(nohz.next_blocked)))
 		flags = NOHZ_STATS_KICK;
 
@@ -14448,35 +14448,35 @@ static void nohz_balancer_kick(struct rq *rq)
 	 * But idle load balancing is not done as find_new_ilb fails.
 	 * That's very rare. So read nohz.nr_cpus only if time is due.
 	 */
-	if (time_before(now, nohz.next_balance))
-		goto out;
+	إذا (time_before(now, nohz.next_balance))
+		اذهب out;
 
 	/*
 	 * None are in tickless mode and hence no need for NOHZ idle load
 	 * balancing
 	 */
-	if (unlikely(cpumask_empty(nohz.idle_cpus_mask)))
-		return;
+	إذا (unlikely(cpumask_empty(nohz.idle_cpus_mask)))
+		إرجاع;
 
-	if (rq->nr_running >= 2) {
+	إذا (rq->nr_running >= 2) {
 		flags = NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
-		goto out;
+		اذهب out;
 	}
 
 	sd = rcu_dereference_all(rq->sd);
-	if (sd) {
+	إذا (sd) {
 		/*
 		 * If there's a runnable CFS task and the current CPU has reduced
 		 * capacity, kick the ILB to see if there's a better CPU to run on:
 		 */
-		if (rq->cfs.h_nr_runnable >= 1 && check_cpu_capacity(rq, sd)) {
+		إذا (rq->cfs.h_nr_runnable >= 1 && check_cpu_capacity(rq, sd)) {
 			flags |= NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
-			goto out;
+			اذهب out;
 		}
 	}
 
 	sd = rcu_dereference_all(per_cpu(sd_asym_packing, cpu));
-	if (sd) {
+	إذا (sd) {
 		/*
 		 * When ASYM_PACKING; see if there's a more preferred CPU
 		 * currently idle; in which case, kick the ILB to move tasks
@@ -14486,20 +14486,20 @@ static void nohz_balancer_kick(struct rq *rq)
 		 * preferred CPU must be idle.
 		 */
 		for_each_cpu_and(i, sched_domain_span(sd), nohz.idle_cpus_mask) {
-			if (sched_asym(sd, i, cpu)) {
+			إذا (sched_asym(sd, i, cpu)) {
 				flags |= NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
-				goto out;
+				اذهب out;
 			}
 		}
 	}
 
 	sd = rcu_dereference_all(per_cpu(sd_asym_cpucapacity, cpu));
-	if (sd) {
+	إذا (sd) {
 		/*
 		 * When ASYM_CPUCAPACITY; see if there's a higher capacity CPU
 		 * to run the misfit task on.
 		 */
-		if (check_misfit_status(rq))
+		إذا (check_misfit_status(rq))
 			flags |= NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
 
 		/*
@@ -14509,11 +14509,11 @@ static void nohz_balancer_kick(struct rq *rq)
 		 *
 		 * Skip the LLC logic because it's not relevant in that case.
 		 */
-		goto out;
+		اذهب out;
 	}
 
 	sds = rcu_dereference_all(per_cpu(sd_balance_shared, cpu));
-	if (sds) {
+	إذا (sds) {
 		/*
 		 * If there is an imbalance between LLC domains (IOW we could
 		 * increase the overall cache utilization), we need a less-loaded LLC
@@ -14524,39 +14524,39 @@ static void nohz_balancer_kick(struct rq *rq)
 		 * like this LLC domain has tasks we could move.
 		 */
 		nr_busy = atomic_read(&sds->nr_busy_cpus);
-		if (nr_busy > 1)
+		إذا (nr_busy > 1)
 			flags |= NOHZ_STATS_KICK | NOHZ_BALANCE_KICK;
 	}
 out:
-	if (READ_ONCE(nohz.needs_update))
+	إذا (READ_ONCE(nohz.needs_update))
 		flags |= NOHZ_NEXT_KICK;
 
-	if (flags)
+	إذا (flags)
 		kick_ilb(flags);
 }
 
-static void set_cpu_sd_state_busy(int cpu)
+ساكن فراغ set_cpu_sd_state_busy(صحيح cpu)
 {
-	struct sched_domain *sd;
+	بنية sched_domain *sd;
 	sd = rcu_dereference_all(per_cpu(sd_llc, cpu));
 
 	/*
 	 * sd->nohz_idle only pairs with nr_busy_cpus on sd->shared; if this
 	 * domain has no shared object there is nothing to clear or account.
 	 */
-	if (!sd || !sd->shared || !sd->nohz_idle)
-		return;
+	إذا (!sd || !sd->shared || !sd->nohz_idle)
+		إرجاع;
 	sd->nohz_idle = 0;
 
 	atomic_inc(&sd->shared->nr_busy_cpus);
 }
 
-void nohz_balance_exit_idle(struct rq *rq)
+فراغ nohz_balance_exit_idle(بنية rq *rq)
 {
 	WARN_ON_ONCE(rq != this_rq());
 
-	if (likely(!rq->nohz_tick_stopped))
-		return;
+	إذا (likely(!rq->nohz_tick_stopped))
+		إرجاع;
 
 	rq->nohz_tick_stopped = 0;
 	cpumask_clear_cpu(rq->cpu, nohz.idle_cpus_mask);
@@ -14564,14 +14564,14 @@ void nohz_balance_exit_idle(struct rq *rq)
 	set_cpu_sd_state_busy(rq->cpu);
 }
 
-static void set_cpu_sd_state_idle(int cpu)
+ساكن فراغ set_cpu_sd_state_idle(صحيح cpu)
 {
-	struct sched_domain *sd;
+	بنية sched_domain *sd;
 	sd = rcu_dereference_all(per_cpu(sd_llc, cpu));
 
 	/* See set_cpu_sd_state_busy(): nohz_idle is only used with sd->shared. */
-	if (!sd || !sd->shared || sd->nohz_idle)
-		return;
+	إذا (!sd || !sd->shared || sd->nohz_idle)
+		إرجاع;
 	sd->nohz_idle = 1;
 
 	atomic_dec(&sd->shared->nr_busy_cpus);
@@ -14581,15 +14581,15 @@ static void set_cpu_sd_state_idle(int cpu)
  * This routine will record that the CPU is going idle with tick stopped.
  * This info will be used in performing idle load balancing in the future.
  */
-void nohz_balance_enter_idle(int cpu)
+فراغ nohz_balance_enter_idle(صحيح cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
 	WARN_ON_ONCE(cpu != smp_processor_id());
 
 	/* If this CPU is going down, then nothing needs to be done: */
-	if (!cpu_active(cpu))
-		return;
+	إذا (!cpu_active(cpu))
+		إرجاع;
 
 	/*
 	 * Can be set safely without rq->lock held
@@ -14604,12 +14604,12 @@ void nohz_balance_enter_idle(int cpu)
 	 * *_avg. The CPU is already part of nohz.idle_cpus_mask so the clear
 	 * of nohz.has_blocked_load can only happen after checking the new load
 	 */
-	if (rq->nohz_tick_stopped)
-		goto out;
+	إذا (rq->nohz_tick_stopped)
+		اذهب out;
 
 	/* If we're a completely isolated CPU, we don't play: */
-	if (on_null_domain(rq))
-		return;
+	إذا (on_null_domain(rq))
+		إرجاع;
 
 	rq->nohz_tick_stopped = 1;
 
@@ -14633,22 +14633,22 @@ out:
 	WRITE_ONCE(nohz.has_blocked_load, 1);
 }
 
-static bool update_nohz_stats(struct rq *rq)
+ساكن bool update_nohz_stats(بنية rq *rq)
 {
-	unsigned int cpu = rq->cpu;
+	unsigned صحيح cpu = rq->cpu;
 
-	if (!rq->has_blocked_load)
-		return false;
+	إذا (!rq->has_blocked_load)
+		إرجاع false;
 
-	if (!cpumask_test_cpu(cpu, nohz.idle_cpus_mask))
-		return false;
+	إذا (!cpumask_test_cpu(cpu, nohz.idle_cpus_mask))
+		إرجاع false;
 
-	if (!time_after(jiffies, READ_ONCE(rq->last_blocked_load_update_tick)))
-		return true;
+	إذا (!time_after(jiffies, READ_ONCE(rq->last_blocked_load_update_tick)))
+		إرجاع true;
 
 	sched_balance_update_blocked_averages(cpu);
 
-	return rq->has_blocked_load;
+	إرجاع rq->has_blocked_load;
 }
 
 /*
@@ -14656,16 +14656,16 @@ static bool update_nohz_stats(struct rq *rq)
  * can be a simple update of blocked load or a complete load balance with
  * tasks movement depending of flags.
  */
-static void _nohz_idle_balance(struct rq *this_rq, unsigned int flags)
+ساكن فراغ _nohz_idle_balance(بنية rq *this_rq, unsigned صحيح flags)
 {
 	/* Earliest time when we have to do rebalance again */
 	unsigned long now = jiffies;
 	unsigned long next_balance = now + 60*HZ;
 	bool has_blocked_load = false;
-	int update_next_balance = 0;
-	int this_cpu = this_rq->cpu;
-	int balance_cpu;
-	struct rq *rq;
+	صحيح update_next_balance = 0;
+	صحيح this_cpu = this_rq->cpu;
+	صحيح balance_cpu;
+	بنية rq *rq;
 
 	WARN_ON_ONCE((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
 
@@ -14679,9 +14679,9 @@ static void _nohz_idle_balance(struct rq *this_rq, unsigned int flags)
 	 *
 	 * Same applies to idle_cpus_mask vs needs_update.
 	 */
-	if (flags & NOHZ_STATS_KICK)
+	إذا (flags & NOHZ_STATS_KICK)
 		WRITE_ONCE(nohz.has_blocked_load, 0);
-	if (flags & NOHZ_NEXT_KICK)
+	إذا (flags & NOHZ_NEXT_KICK)
 		WRITE_ONCE(nohz.needs_update, 0);
 
 	/*
@@ -14695,43 +14695,43 @@ static void _nohz_idle_balance(struct rq *this_rq, unsigned int flags)
 	 * chance for other idle cpu to pull load.
 	 */
 	for_each_cpu_wrap(balance_cpu,  nohz.idle_cpus_mask, this_cpu+1) {
-		if (!idle_cpu(balance_cpu))
-			continue;
+		إذا (!idle_cpu(balance_cpu))
+			استمر;
 
 		/*
 		 * If this CPU gets work to do, stop the load balancing
 		 * work being done for other CPUs. Next load
 		 * balancing owner will pick it up.
 		 */
-		if (!idle_cpu(this_cpu) && need_resched()) {
-			if (flags & NOHZ_STATS_KICK)
+		إذا (!idle_cpu(this_cpu) && need_resched()) {
+			إذا (flags & NOHZ_STATS_KICK)
 				has_blocked_load = true;
-			if (flags & NOHZ_NEXT_KICK)
+			إذا (flags & NOHZ_NEXT_KICK)
 				WRITE_ONCE(nohz.needs_update, 1);
-			goto abort;
+			اذهب abort;
 		}
 
 		rq = cpu_rq(balance_cpu);
 
-		if (flags & NOHZ_STATS_KICK)
+		إذا (flags & NOHZ_STATS_KICK)
 			has_blocked_load |= update_nohz_stats(rq);
 
 		/*
 		 * If time for next balance is due,
 		 * do the balance.
 		 */
-		if (time_after_eq(jiffies, rq->next_balance)) {
-			struct rq_flags rf;
+		إذا (time_after_eq(jiffies, rq->next_balance)) {
+			بنية rq_flags rf;
 
 			rq_lock_irqsave(rq, &rf);
 			update_rq_clock(rq);
 			rq_unlock_irqrestore(rq, &rf);
 
-			if (flags & NOHZ_BALANCE_KICK)
+			إذا (flags & NOHZ_BALANCE_KICK)
 				sched_balance_domains(rq, CPU_IDLE);
 		}
 
-		if (time_after(next_balance, rq->next_balance)) {
+		إذا (time_after(next_balance, rq->next_balance)) {
 			next_balance = rq->next_balance;
 			update_next_balance = 1;
 		}
@@ -14742,16 +14742,16 @@ static void _nohz_idle_balance(struct rq *this_rq, unsigned int flags)
 	 * When the CPU is attached to null domain for ex, it will not be
 	 * updated.
 	 */
-	if (likely(update_next_balance))
+	إذا (likely(update_next_balance))
 		nohz.next_balance = next_balance;
 
-	if (flags & NOHZ_STATS_KICK)
+	إذا (flags & NOHZ_STATS_KICK)
 		WRITE_ONCE(nohz.next_blocked,
 			   now + msecs_to_jiffies(LOAD_AVG_PERIOD));
 
 abort:
 	/* There is still blocked load, enable periodic update */
-	if (has_blocked_load)
+	إذا (has_blocked_load)
 		WRITE_ONCE(nohz.has_blocked_load, 1);
 }
 
@@ -14759,21 +14759,21 @@ abort:
  * In CONFIG_NO_HZ_COMMON case, the idle balance kickee will do the
  * rebalancing for all the CPUs for whom scheduler ticks are stopped.
  */
-static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+ساكن bool nohz_idle_balance(بنية rq *this_rq, تعداد cpu_idle_type idle)
 {
-	unsigned int flags = this_rq->nohz_idle_balance;
+	unsigned صحيح flags = this_rq->nohz_idle_balance;
 
-	if (!flags)
-		return false;
+	إذا (!flags)
+		إرجاع false;
 
 	this_rq->nohz_idle_balance = 0;
 
-	if (idle != CPU_IDLE)
-		return false;
+	إذا (idle != CPU_IDLE)
+		إرجاع false;
 
 	_nohz_idle_balance(this_rq, flags);
 
-	return true;
+	إرجاع true;
 }
 
 /*
@@ -14791,9 +14791,9 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
  * those idle CPUs and outside the preempt disable / IRQ off phase of the local
  * cpu about to enter idle, because it can take a long time.
  */
-void nohz_run_idle_balance(int cpu)
+فراغ nohz_run_idle_balance(صحيح cpu)
 {
-	unsigned int flags;
+	unsigned صحيح flags;
 
 	flags = atomic_fetch_andnot(NOHZ_NEWILB_KICK, nohz_flags(cpu));
 
@@ -14801,22 +14801,22 @@ void nohz_run_idle_balance(int cpu)
 	 * Update the blocked load only if no SCHED_SOFTIRQ is about to happen
 	 * (i.e. NOHZ_STATS_KICK set) and will do the same.
 	 */
-	if ((flags == NOHZ_NEWILB_KICK) && !need_resched())
+	إذا ((flags == NOHZ_NEWILB_KICK) && !need_resched())
 		_nohz_idle_balance(cpu_rq(cpu), NOHZ_STATS_KICK);
 }
 
-static void nohz_newidle_balance(struct rq *this_rq)
+ساكن فراغ nohz_newidle_balance(بنية rq *this_rq)
 {
-	int this_cpu = this_rq->cpu;
+	صحيح this_cpu = this_rq->cpu;
 
 	/* Will wake up very soon. No time for doing anything else*/
-	if (this_rq->avg_idle < sysctl_sched_migration_cost)
-		return;
+	إذا (this_rq->avg_idle < sysctl_sched_migration_cost)
+		إرجاع;
 
 	/* Don't need to update blocked load of idle CPUs*/
-	if (!READ_ONCE(nohz.has_blocked_load) ||
+	إذا (!READ_ONCE(nohz.has_blocked_load) ||
 	    time_before(jiffies, READ_ONCE(nohz.next_blocked)))
-		return;
+		إرجاع;
 
 	/*
 	 * Set the need to trigger ILB in order to update blocked load
@@ -14825,15 +14825,15 @@ static void nohz_newidle_balance(struct rq *this_rq)
 	atomic_or(NOHZ_NEWILB_KICK, nohz_flags(this_cpu));
 }
 
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline void nohz_balancer_kick(struct rq *rq) { }
+#وإلا /* !CONFIG_NO_HZ_COMMON: */
+ساكن مضمن فراغ nohz_balancer_kick(بنية rq *rq) { }
 
-static inline bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+ساكن مضمن bool nohz_idle_balance(بنية rq *this_rq, تعداد cpu_idle_type idle)
 {
-	return false;
+	إرجاع false;
 }
 
-static inline void nohz_newidle_balance(struct rq *this_rq) { }
+ساكن مضمن فراغ nohz_newidle_balance(بنية rq *this_rq) { }
 #endif /* !CONFIG_NO_HZ_COMMON */
 
 /*
@@ -14845,24 +14845,24 @@ static inline void nohz_newidle_balance(struct rq *this_rq) { }
  *     0 - failed, no new tasks
  *   > 0 - success, new (fair) tasks present
  */
-static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
+ساكن صحيح sched_balance_newidle(بنية rq *this_rq, بنية rq_flags *rf)
 	__must_hold(__rq_lockp(this_rq))
 {
 	unsigned long next_balance = jiffies + HZ;
-	int this_cpu = this_rq->cpu;
-	int continue_balancing = 1;
+	صحيح this_cpu = this_rq->cpu;
+	صحيح continue_balancing = 1;
 	u64 t0, t1, curr_cost = 0;
-	struct sched_domain *sd;
-	int pulled_task = 0;
+	بنية sched_domain *sd;
+	صحيح pulled_task = 0;
 
-	update_misfit_status(NULL, this_rq);
+	update_misfit_status(عدم, this_rq);
 
 	/*
 	 * There is a task waiting to run. No need to search for one.
 	 * Return 0; the task will be enqueued when switching to idle.
 	 */
-	if (this_rq->ttwu_pending)
-		return 0;
+	إذا (this_rq->ttwu_pending)
+		إرجاع 0;
 
 	/*
 	 * We must set idle_stamp _before_ calling sched_balance_rq()
@@ -14872,8 +14872,8 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 	this_rq->idle_stamp = rq_clock(this_rq);
 
 	/* Do not pull tasks towards !preferred CPUs */
-	if (!cpu_preferred(this_cpu))
-		return 0;
+	إذا (!cpu_preferred(this_cpu))
+		إرجاع 0;
 
 	/*
 	 * This is OK, because current is on_cpu, which avoids it being picked
@@ -14884,14 +14884,14 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 	rq_unpin_lock(this_rq, rf);
 
 	sd = rcu_dereference_sched_domain(this_rq->sd);
-	if (!sd)
-		goto out;
+	إذا (!sd)
+		اذهب out;
 
-	if (!get_rd_overloaded(this_rq->rd) ||
+	إذا (!get_rd_overloaded(this_rq->rd) ||
 	    this_rq->avg_idle < sd->max_newidle_lb_cost) {
 
 		update_next_balance(sd, &next_balance);
-		goto out;
+		اذهب out;
 	}
 
 	/*
@@ -14910,13 +14910,13 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 
 		update_next_balance(sd, &next_balance);
 
-		if (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost)
-			break;
+		إذا (this_rq->avg_idle < curr_cost + sd->max_newidle_lb_cost)
+			اكسر;
 
-		if (sd->flags & SD_BALANCE_NEWIDLE) {
-			unsigned int weight = 1;
+		إذا (sd->flags & SD_BALANCE_NEWIDLE) {
+			unsigned صحيح weight = 1;
 
-			if (sched_feat(NI_RANDOM) && sd->newidle_ratio < 1024) {
+			إذا (sched_feat(NI_RANDOM) && sd->newidle_ratio < 1024) {
 				/*
 				 * Throw a 1k sided dice; and only run
 				 * newidle_balance according to the success
@@ -14924,9 +14924,9 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 				 */
 				u32 d1k = sched_rng() % 1024;
 				weight = 1 + sd->newidle_ratio;
-				if (d1k > weight) {
+				إذا (d1k > weight) {
 					update_newidle_stats(sd, 0);
-					continue;
+					استمر;
 				}
 				weight = (1024 + weight/2) / weight;
 			}
@@ -14951,13 +14951,13 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 		 * Stop searching for tasks to pull if there are
 		 * now runnable tasks on this rq.
 		 */
-		if (pulled_task || !continue_balancing)
-			break;
+		إذا (pulled_task || !continue_balancing)
+			اكسر;
 	}
 
 	raw_spin_rq_lock(this_rq);
 
-	if (curr_cost > this_rq->max_idle_balance_cost)
+	إذا (curr_cost > this_rq->max_idle_balance_cost)
 		this_rq->max_idle_balance_cost = curr_cost;
 
 	/*
@@ -14965,26 +14965,26 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
 	 * have been enqueued in the meantime. Since we're not going idle,
 	 * pretend we pulled a task.
 	 */
-	if (this_rq->cfs.h_nr_queued && !pulled_task)
+	إذا (this_rq->cfs.h_nr_queued && !pulled_task)
 		pulled_task = 1;
 
 	/* If a higher prio class was modified, restart the pick */
-	if (rq_modified_above(this_rq, &fair_sched_class))
+	إذا (rq_modified_above(this_rq, &fair_sched_class))
 		pulled_task = -1;
 
 out:
 	/* Move the next balance forward */
-	if (time_after(this_rq->next_balance, next_balance))
+	إذا (time_after(this_rq->next_balance, next_balance))
 		this_rq->next_balance = next_balance;
 
-	if (pulled_task)
+	إذا (pulled_task)
 		this_rq->idle_stamp = 0;
-	else
+	وإلا
 		nohz_newidle_balance(this_rq);
 
 	rq_repin_lock(this_rq, rf);
 
-	return pulled_task;
+	إرجاع pulled_task;
 }
 
 /*
@@ -14995,10 +14995,10 @@ out:
  * - indirectly from a remote sched_tick() for NOHZ idle balancing
  *   through the SMP cross-call nohz_csd_func()
  */
-static __latent_entropy void sched_balance_softirq(void)
+ساكن __latent_entropy فراغ sched_balance_softirq(فراغ)
 {
-	struct rq *this_rq = this_rq();
-	enum cpu_idle_type idle = this_rq->idle_balance;
+	بنية rq *this_rq = this_rq();
+	تعداد cpu_idle_type idle = this_rq->idle_balance;
 	/*
 	 * If this CPU has a pending NOHZ_BALANCE_KICK, then do the
 	 * balancing on behalf of the other idle CPUs whose ticks are
@@ -15007,8 +15007,8 @@ static __latent_entropy void sched_balance_softirq(void)
 	 * load balance only within the local sched_domain hierarchy
 	 * and abort nohz_idle_balance altogether if we pull some load.
 	 */
-	if (nohz_idle_balance(this_rq, idle))
-		return;
+	إذا (nohz_idle_balance(this_rq, idle))
+		إرجاع;
 
 	/* normal load balance */
 	sched_balance_update_blocked_averages(this_rq->cpu);
@@ -15018,29 +15018,29 @@ static __latent_entropy void sched_balance_softirq(void)
 /*
  * Trigger the SCHED_SOFTIRQ if it is time to do periodic load balancing.
  */
-void sched_balance_trigger(struct rq *rq)
+فراغ sched_balance_trigger(بنية rq *rq)
 {
 	/*
 	 * Don't need to rebalance while attached to NULL domain or
 	 * runqueue CPU is not active
 	 */
-	if (unlikely(on_null_domain(rq) || !cpu_active(cpu_of(rq))))
-		return;
+	إذا (unlikely(on_null_domain(rq) || !cpu_active(cpu_of(rq))))
+		إرجاع;
 
-	if (time_after_eq(jiffies, rq->next_balance))
+	إذا (time_after_eq(jiffies, rq->next_balance))
 		raise_softirq(SCHED_SOFTIRQ);
 
 	nohz_balancer_kick(rq);
 }
 
-static void rq_online_fair(struct rq *rq)
+ساكن فراغ rq_online_fair(بنية rq *rq)
 {
 	update_sysctl();
 
 	update_runtime_enabled(rq);
 }
 
-static void rq_offline_fair(struct rq *rq)
+ساكن فراغ rq_offline_fair(بنية rq *rq)
 {
 	update_sysctl();
 
@@ -15052,20 +15052,20 @@ static void rq_offline_fair(struct rq *rq)
 }
 
 #ifdef CONFIG_SCHED_CORE
-static inline bool
-__entity_slice_used(struct sched_entity *se, int min_nr_tasks)
+ساكن مضمن bool
+__entity_slice_used(بنية sched_entity *se, صحيح min_nr_tasks)
 {
 	u64 rtime = se->sum_exec_runtime - se->prev_sum_exec_runtime;
 	u64 slice = se->slice;
 
-	return (rtime * min_nr_tasks > slice);
+	إرجاع (rtime * min_nr_tasks > slice);
 }
 
 #define MIN_NR_TASKS_DURING_FORCEIDLE	2
-static inline void task_tick_core(struct rq *rq, struct task_struct *curr)
+ساكن مضمن فراغ task_tick_core(بنية rq *rq, بنية task_struct *curr)
 {
-	if (!sched_core_enabled(rq))
-		return;
+	إذا (!sched_core_enabled(rq))
+		إرجاع;
 
 	/*
 	 * If runqueue has only one task which used up its slice and
@@ -15081,7 +15081,7 @@ static inline void task_tick_core(struct rq *rq, struct task_struct *curr)
 	 * MIN_NR_TASKS_DURING_FORCEIDLE - 1 tasks and use that to check
 	 * if we need to give up the CPU.
 	 */
-	if (rq->core->core_forceidle_count && rq->cfs.h_nr_queued == 1 &&
+	إذا (rq->core->core_forceidle_تعداد && rq->cfs.h_nr_queued == 1 &&
 	    __entity_slice_used(&curr->se, MIN_NR_TASKS_DURING_FORCEIDLE))
 		resched_curr(rq);
 }
@@ -15252,15 +15252,15 @@ static inline void task_tick_core(struct rq *rq, struct task_struct *curr)
 /*
  * se_fi_update - Update the cfs_rq->zero_vruntime_fi in a CFS hierarchy if needed.
  */
-static void se_fi_update(const struct sched_entity *se, unsigned int fi_seq,
+ساكن فراغ se_fi_update(ثابت بنية sched_entity *se, unsigned صحيح fi_seq,
 			 bool forceidle)
 {
 	for_each_sched_entity(se) {
-		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+		بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 
-		if (forceidle) {
-			if (cfs_rq->forceidle_seq == fi_seq)
-				break;
+		إذا (forceidle) {
+			إذا (cfs_rq->forceidle_seq == fi_seq)
+				اكسر;
 			cfs_rq->forceidle_seq = fi_seq;
 		}
 
@@ -15268,24 +15268,24 @@ static void se_fi_update(const struct sched_entity *se, unsigned int fi_seq,
 	}
 }
 
-void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_fi)
+فراغ task_vruntime_update(بنية rq *rq, بنية task_struct *p, bool in_fi)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 
-	if (p->sched_class != &fair_sched_class)
-		return;
+	إذا (p->sched_class != &fair_sched_class)
+		إرجاع;
 
 	se_fi_update(se, rq->core->core_forceidle_seq, in_fi);
 }
 
-bool cfs_prio_less(const struct task_struct *a, const struct task_struct *b,
+bool cfs_prio_less(ثابت بنية task_struct *a, ثابت بنية task_struct *b,
 			bool in_fi)
 {
-	struct rq *rq = task_rq(a);
-	const struct sched_entity *sea = &a->se;
-	const struct sched_entity *seb = &b->se;
-	struct cfs_rq *cfs_rqa;
-	struct cfs_rq *cfs_rqb;
+	بنية rq *rq = task_rq(a);
+	ثابت بنية sched_entity *sea = &a->se;
+	ثابت بنية sched_entity *seb = &b->se;
+	بنية cfs_rq *cfs_rqa;
+	بنية cfs_rq *cfs_rqb;
 	s64 delta;
 
 	WARN_ON_ONCE(task_rq(b)->core != rq->core);
@@ -15301,22 +15301,22 @@ bool cfs_prio_less(const struct task_struct *a, const struct task_struct *b,
 	delta = vruntime_op(sea->vruntime, "-", seb->vruntime) +
 		vruntime_op(cfs_rqb->zero_vruntime_fi, "-", cfs_rqa->zero_vruntime_fi);
 
-	return delta > 0;
+	إرجاع delta > 0;
 }
 
-static int task_is_throttled_fair(struct task_struct *p, int cpu)
+ساكن صحيح task_is_throttled_fair(بنية task_struct *p, صحيح cpu)
 {
-	struct cfs_rq *cfs_rq;
+	بنية cfs_rq *cfs_rq;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	cfs_rq = tg_cfs_rq(task_group(p), cpu);
-#else
+#وإلا
 	cfs_rq = &cpu_rq(cpu)->cfs;
 #endif
-	return throttled_hierarchy(cfs_rq);
+	إرجاع throttled_hierarchy(cfs_rq);
 }
-#else /* !CONFIG_SCHED_CORE: */
-static inline void task_tick_core(struct rq *rq, struct task_struct *curr) {}
+#وإلا /* !CONFIG_SCHED_CORE: */
+ساكن مضمن فراغ task_tick_core(بنية rq *rq, بنية task_struct *curr) {}
 #endif /* !CONFIG_SCHED_CORE */
 
 /*
@@ -15327,13 +15327,13 @@ static inline void task_tick_core(struct rq *rq, struct task_struct *curr) {}
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ساكن فراغ task_tick_fair(بنية rq *rq, بنية task_struct *curr, صحيح queued)
 {
-	struct sched_entity *se = &curr->se;
+	بنية sched_entity *se = &curr->se;
 
-	if (se->on_rq) {
+	إذا (se->on_rq) {
 		unsigned long weight = NICE_0_LOAD;
-		struct cfs_rq *cfs_rq;
+		بنية cfs_rq *cfs_rq;
 
 		for_each_sched_entity(se) {
 			cfs_rq = cfs_rq_of(se);
@@ -15346,10 +15346,10 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
 		reweight_eevdf(cfs_rq, se, weight, se->on_rq);
 	}
 
-	if (queued)
-		return;
+	إذا (queued)
+		إرجاع;
 
-	if (static_branch_unlikely(&sched_numa_balancing))
+	إذا (static_branch_unlikely(&sched_numa_balancing))
 		task_tick_numa(rq, curr);
 
 	task_tick_cache(rq, curr);
@@ -15365,7 +15365,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
  *  - child not yet on the tasklist
  *  - preemption disabled
  */
-static void task_fork_fair(struct task_struct *p)
+ساكن فراغ task_fork_fair(بنية task_struct *p)
 {
 	set_task_max_allowed_capacity(p);
 }
@@ -15374,27 +15374,27 @@ static void task_fork_fair(struct task_struct *p)
  * Priority of the task has changed. Check to see if we preempt
  * the current task.
  */
-static void
-prio_changed_fair(struct rq *rq, struct task_struct *p, u64 oldprio)
+ساكن فراغ
+prio_changed_fair(بنية rq *rq, بنية task_struct *p, u64 oldprio)
 {
-	if (!task_on_rq_queued(p))
-		return;
+	إذا (!task_on_rq_queued(p))
+		إرجاع;
 
-	if (p->prio == oldprio)
-		return;
+	إذا (p->prio == oldprio)
+		إرجاع;
 
-	if (rq->cfs.h_nr_queued == 1)
-		return;
+	إذا (rq->cfs.h_nr_queued == 1)
+		إرجاع;
 
 	/*
 	 * Reschedule if we are currently running on this runqueue and
 	 * our priority decreased, or if we are not currently running on
 	 * this runqueue and our priority is higher than the current's
 	 */
-	if (task_current_donor(rq, p)) {
-		if (p->prio > oldprio)
+	إذا (task_current_donor(rq, p)) {
+		إذا (p->prio > oldprio)
 			resched_curr(rq);
-	} else {
+	} وإلا {
 		wakeup_preempt(rq, p, 0);
 	}
 }
@@ -15404,9 +15404,9 @@ prio_changed_fair(struct rq *rq, struct task_struct *p, u64 oldprio)
  * Propagate the changes of the sched_entity across the tg tree to make it
  * visible to the root
  */
-static void propagate_entity_cfs_rq(struct sched_entity *se)
+ساكن فراغ propagate_entity_cfs_rq(بنية sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+	بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 
 	/*
 	 * If a task gets attached to this cfs_rq and before being queued,
@@ -15414,7 +15414,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
 	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
 	 * that removed load decayed or it can cause faireness problem.
 	 */
-	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
+	إذا (!cfs_rq_pelt_clock_throttled(cfs_rq))
 		list_add_leaf_cfs_rq(cfs_rq);
 
 	/* Start to propagate at parent */
@@ -15425,19 +15425,19 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
 
 		update_load_avg(cfs_rq, se, UPDATE_TG);
 
-		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
+		إذا (!cfs_rq_pelt_clock_throttled(cfs_rq))
 			list_add_leaf_cfs_rq(cfs_rq);
 	}
 
 	assert_list_leaf_cfs_rq(rq_of(cfs_rq));
 }
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static void propagate_entity_cfs_rq(struct sched_entity *se) { }
+#وإلا /* !CONFIG_FAIR_GROUP_SCHED: */
+ساكن فراغ propagate_entity_cfs_rq(بنية sched_entity *se) { }
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-static void detach_entity_cfs_rq(struct sched_entity *se)
+ساكن فراغ detach_entity_cfs_rq(بنية sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+	بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 
 	/*
 	 * In case the task sched_avg hasn't been attached:
@@ -15445,8 +15445,8 @@ static void detach_entity_cfs_rq(struct sched_entity *se)
 	 * - A task which has been woken up by try_to_wake_up() but is
 	 *   waiting for actually being woken up by sched_ttwu_pending().
 	 */
-	if (!se->avg.last_update_time)
-		return;
+	إذا (!se->avg.last_update_time)
+		إرجاع;
 
 	/* Catch up with the cfs_rq and remove our load when we leave */
 	update_load_avg(cfs_rq, se, 0);
@@ -15455,9 +15455,9 @@ static void detach_entity_cfs_rq(struct sched_entity *se)
 	propagate_entity_cfs_rq(se);
 }
 
-static void attach_entity_cfs_rq(struct sched_entity *se)
+ساكن فراغ attach_entity_cfs_rq(بنية sched_entity *se)
 {
-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+	بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 
 	/* Synchronize entity with its cfs_rq */
 	update_load_avg(cfs_rq, se, sched_feat(ATTACH_AGE_LOAD) ? 0 : SKIP_AGE_LOAD);
@@ -15466,32 +15466,32 @@ static void attach_entity_cfs_rq(struct sched_entity *se)
 	propagate_entity_cfs_rq(se);
 }
 
-static void detach_task_cfs_rq(struct task_struct *p)
+ساكن فراغ detach_task_cfs_rq(بنية task_struct *p)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 
 	detach_entity_cfs_rq(se);
 }
 
-static void attach_task_cfs_rq(struct task_struct *p)
+ساكن فراغ attach_task_cfs_rq(بنية task_struct *p)
 {
-	struct sched_entity *se = &p->se;
+	بنية sched_entity *se = &p->se;
 
 	attach_entity_cfs_rq(se);
 }
 
-static void switching_from_fair(struct rq *rq, struct task_struct *p)
+ساكن فراغ switching_from_fair(بنية rq *rq, بنية task_struct *p)
 {
-	if (p->se.sched_delayed)
+	إذا (p->se.sched_delayed)
 		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
 }
 
-static void switched_from_fair(struct rq *rq, struct task_struct *p)
+ساكن فراغ switched_from_fair(بنية rq *rq, بنية task_struct *p)
 {
 	detach_task_cfs_rq(p);
 }
 
-static void switched_to_fair(struct rq *rq, struct task_struct *p)
+ساكن فراغ switched_to_fair(بنية rq *rq, بنية task_struct *p)
 {
 	WARN_ON_ONCE(p->se.sched_delayed);
 
@@ -15499,71 +15499,71 @@ static void switched_to_fair(struct rq *rq, struct task_struct *p)
 
 	set_task_max_allowed_capacity(p);
 
-	if (task_on_rq_queued(p)) {
+	إذا (task_on_rq_queued(p)) {
 		/*
 		 * We were most likely switched from sched_rt, so
 		 * kick off the schedule if running, otherwise just see
 		 * if we can still preempt the current task.
 		 */
-		if (task_current_donor(rq, p))
+		إذا (task_current_donor(rq, p))
 			resched_curr(rq);
-		else
+		وإلا
 			wakeup_preempt(rq, p, 0);
 	}
 }
 
-static void set_next_task_fair(struct rq *rq, struct task_struct *p, enum snt_e type)
+ساكن فراغ set_next_task_fair(بنية rq *rq, بنية task_struct *p, تعداد snt_e type)
 {
-	struct sched_entity *se = &p->se;
-	struct cfs_rq *cfs_rq = &rq->cfs;
+	بنية sched_entity *se = &p->se;
+	بنية cfs_rq *cfs_rq = &rq->cfs;
 	unsigned long weight = NICE_0_LOAD;
 	bool first = type == SNT_PICK;
 	bool throttled = false;
 	bool on_rq = se->on_rq;
 
-	if (type == SNT_REPICK)
-		goto repick;
+	إذا (type == SNT_REPICK)
+		اذهب repick;
 
 	clear_buddies(cfs_rq, se);
 
-	if (on_rq)
+	إذا (on_rq)
 		__dequeue_entity(cfs_rq, se);
 
 	for_each_sched_entity(se) {
 		cfs_rq = cfs_rq_of(se);
 
-		if (!IS_ENABLED(CONFIG_FAIR_GROUP_SCHED) ||
+		إذا (!IS_ENABLED(CONFIG_FAIR_GROUP_SCHED) ||
 		    !first || !cfs_rq->h_curr)
 			set_next_entity(cfs_rq, se);
 
 		/* ensure bandwidth has been allocated on our new cfs_rq */
 		throttled |= account_cfs_rq_runtime(cfs_rq, 0);
 
-		if (on_rq)
+		إذا (on_rq)
 			weight = __calc_prop_weight(cfs_rq, se, weight);
 	}
 
-	if (throttled)
+	إذا (throttled)
 		task_throttle_setup_work(p);
 
 	se = &p->se;
 	cfs_rq->curr = se;
 
-	if (on_rq) {
+	إذا (on_rq) {
 		reweight_eevdf(cfs_rq, se, weight, se->on_rq);
-		if (first)
+		إذا (first)
 			set_protect_slice(cfs_rq, se);
 	}
 
-	if (task_on_rq_queued(p)) {
+	إذا (task_on_rq_queued(p)) {
 		/*
 		 * Move the next running task to the front of the list, so our
 		 * cfs_tasks list becomes MRU one.
 		 */
-		list_move(&se->group_node, &rq->cfs_tasks);
+		list_move(&se->group_عقدة, &rq->cfs_tasks);
 	}
-	if (!first)
-		return;
+	إذا (!first)
+		إرجاع;
 
 	WARN_ON_ONCE(se->sched_delayed);
 
@@ -15577,26 +15577,26 @@ repick:
 	 * before selecting it again. rq->cfs.curr identifies that entity,
 	 * including with group scheduling.
 	 */
-	if (hrtick_enabled_fair(rq))
+	إذا (hrtick_enabled_fair(rq))
 		hrtick_start_fair(rq, p);
 }
 
-void init_cfs_rq(struct cfs_rq *cfs_rq)
+فراغ init_cfs_rq(بنية cfs_rq *cfs_rq)
 {
-	cfs_rq->tasks_timeline = RB_ROOT_CACHED;
+	cfs_rq->tasks_timeline = RB_جذر_CACHED;
 	cfs_rq->zero_vruntime = (u64)(-(1LL << 20));
 	raw_spin_lock_init(&cfs_rq->removed.lock);
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static void task_change_group_fair(struct task_struct *p)
+ساكن فراغ task_change_group_fair(بنية task_struct *p)
 {
 	/*
 	 * We couldn't detach or attach a forked task which
 	 * hasn't been woken up by wake_up_new_task().
 	 */
-	if (READ_ONCE(p->__state) == TASK_NEW)
-		return;
+	إذا (READ_ONCE(p->__state) == TASK_NEW)
+		إرجاع;
 
 	detach_task_cfs_rq(p);
 
@@ -15606,21 +15606,21 @@ static void task_change_group_fair(struct task_struct *p)
 	attach_task_cfs_rq(p);
 }
 
-void free_fair_sched_group(struct task_group *tg)
+فراغ free_fair_sched_group(بنية task_group *tg)
 {
 	free_percpu(tg->cfs_rq);
 }
 
-int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
+صحيح alloc_fair_sched_group(بنية task_group *tg, بنية task_group *parent)
 {
-	struct cfs_tg_state __percpu *state;
-	struct sched_entity *se;
-	struct cfs_rq *cfs_rq;
-	int i;
+	بنية cfs_tg_state __percpu *state;
+	بنية sched_entity *se;
+	بنية cfs_rq *cfs_rq;
+	صحيح i;
 
-	state = alloc_percpu_gfp(struct cfs_tg_state, GFP_KERNEL);
-	if (!state)
-		goto err;
+	state = alloc_percpu_gfp(بنية cfs_tg_state, GFP_KERNEL);
+	إذا (!state)
+		اذهب err;
 
 	tg->cfs_rq = &state->cfs_rq;
 	tg->shares = NICE_0_LOAD;
@@ -15629,8 +15629,8 @@ int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
 
 	for_each_possible_cpu(i) {
 		cfs_rq = tg_cfs_rq(tg, i);
-		if (!cfs_rq)
-			goto err;
+		إذا (!cfs_rq)
+			اذهب err;
 
 		se = tg_se(tg, i);
 		init_cfs_rq(cfs_rq);
@@ -15638,18 +15638,18 @@ int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
 		init_entity_runnable_average(se);
 	}
 
-	return 1;
+	إرجاع 1;
 
 err:
-	return 0;
+	إرجاع 0;
 }
 
-void online_fair_sched_group(struct task_group *tg)
+فراغ online_fair_sched_group(بنية task_group *tg)
 {
-	struct sched_entity *se;
-	struct rq_flags rf;
-	struct rq *rq;
-	int i;
+	بنية sched_entity *se;
+	بنية rq_flags rf;
+	بنية rq *rq;
+	صحيح i;
 
 	for_each_possible_cpu(i) {
 		rq = cpu_rq(i);
@@ -15662,49 +15662,49 @@ void online_fair_sched_group(struct task_group *tg)
 	}
 }
 
-void unregister_fair_sched_group(struct task_group *tg)
+فراغ unregister_fair_sched_group(بنية task_group *tg)
 {
-	int cpu;
+	صحيح cpu;
 
 	destroy_cfs_bandwidth(tg_cfs_bandwidth(tg));
 
 	for_each_possible_cpu(cpu) {
-		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu);
-		struct sched_entity *se = tg_se(tg, cpu);
-		struct rq *rq = cpu_rq(cpu);
+		بنية cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu);
+		بنية sched_entity *se = tg_se(tg, cpu);
+		بنية rq *rq = cpu_rq(cpu);
 
-		if (se)
+		إذا (se)
 			remove_entity_load_avg(se);
 
 		/*
 		 * Only empty task groups can be destroyed; so we can speculatively
 		 * check on_list without danger of it being re-added.
 		 */
-		if (cfs_rq->on_list) {
+		إذا (cfs_rq->on_list) {
 			guard(rq_lock_irqsave)(rq);
 			list_del_leaf_cfs_rq(cfs_rq);
 		}
 	}
 }
 
-void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
-			struct sched_entity *se, int cpu,
-			struct sched_entity *parent)
+فراغ init_tg_cfs_entry(بنية task_group *tg, بنية cfs_rq *cfs_rq,
+			بنية sched_entity *se, صحيح cpu,
+			بنية sched_entity *parent)
 {
-	struct rq *rq = cpu_rq(cpu);
+	بنية rq *rq = cpu_rq(cpu);
 
 	cfs_rq->tg = tg;
 	cfs_rq->rq = rq;
 	init_cfs_rq_runtime(cfs_rq);
 
 	/* se could be NULL for root_task_group */
-	if (!se)
-		return;
+	إذا (!se)
+		إرجاع;
 
-	if (!parent) {
+	إذا (!parent) {
 		se->cfs_rq = &rq->cfs;
 		se->depth = 0;
-	} else {
+	} وإلا {
 		se->cfs_rq = parent->my_q;
 		se->depth = parent->depth + 1;
 	}
@@ -15715,30 +15715,30 @@ void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
 	se->parent = parent;
 }
 
-static DEFINE_MUTEX(shares_mutex);
+ساكن DEFINE_MUTEX(shares_mutex);
 
-static int __sched_group_set_shares(struct task_group *tg, unsigned long shares)
+ساكن صحيح __sched_group_set_shares(بنية task_group *tg, unsigned long shares)
 {
-	int i;
+	صحيح i;
 
 	lockdep_assert_held(&shares_mutex);
 
 	/*
 	 * We can't change the weight of the root cgroup.
 	 */
-	if (is_root_task_group(tg))
-		return -EINVAL;
+	إذا (is_جذر_task_group(tg))
+		إرجاع -EINVAL;
 
 	shares = clamp(shares, scale_load(MIN_SHARES), scale_load(MAX_SHARES));
 
-	if (tg->shares == shares)
-		return 0;
+	إذا (tg->shares == shares)
+		إرجاع 0;
 
 	tg->shares = shares;
 	for_each_possible_cpu(i) {
-		struct rq *rq = cpu_rq(i);
-		struct sched_entity *se = tg_se(tg, i);
-		struct rq_flags rf;
+		بنية rq *rq = cpu_rq(i);
+		بنية sched_entity *se = tg_se(tg, i);
+		بنية rq_flags rf;
 
 		/* Propagate contribution to hierarchy */
 		rq_lock_irqsave(rq, &rf);
@@ -15750,72 +15750,72 @@ static int __sched_group_set_shares(struct task_group *tg, unsigned long shares)
 		rq_unlock_irqrestore(rq, &rf);
 	}
 
-	return 0;
+	إرجاع 0;
 }
 
-int sched_group_set_shares(struct task_group *tg, unsigned long shares)
+صحيح sched_group_set_shares(بنية task_group *tg, unsigned long shares)
 {
-	int ret;
+	صحيح ret;
 
 	mutex_lock(&shares_mutex);
-	if (tg_is_idle(tg))
+	إذا (tg_is_idle(tg))
 		ret = -EINVAL;
-	else
+	وإلا
 		ret = __sched_group_set_shares(tg, shares);
 	mutex_unlock(&shares_mutex);
 
-	return ret;
+	إرجاع ret;
 }
 
-int sched_group_set_idle(struct task_group *tg, long idle)
+صحيح sched_group_set_idle(بنية task_group *tg, long idle)
 {
-	int i;
+	صحيح i;
 
-	if (tg == &root_task_group)
-		return -EINVAL;
+	إذا (tg == &جذر_task_group)
+		إرجاع -EINVAL;
 
-	if (idle < 0 || idle > 1)
-		return -EINVAL;
+	إذا (idle < 0 || idle > 1)
+		إرجاع -EINVAL;
 
 	mutex_lock(&shares_mutex);
 
-	if (tg->idle == idle) {
+	إذا (tg->idle == idle) {
 		mutex_unlock(&shares_mutex);
-		return 0;
+		إرجاع 0;
 	}
 
 	tg->idle = idle;
 
 	for_each_possible_cpu(i) {
-		struct rq *rq = cpu_rq(i);
-		struct sched_entity *se = tg_se(tg, i);
-		struct cfs_rq *grp_cfs_rq = tg_cfs_rq(tg, i);
+		بنية rq *rq = cpu_rq(i);
+		بنية sched_entity *se = tg_se(tg, i);
+		بنية cfs_rq *grp_cfs_rq = tg_cfs_rq(tg, i);
 		bool was_idle = cfs_rq_is_idle(grp_cfs_rq);
 		long idle_task_delta;
-		struct rq_flags rf;
+		بنية rq_flags rf;
 
 		rq_lock_irqsave(rq, &rf);
 
 		grp_cfs_rq->idle = idle;
-		if (WARN_ON_ONCE(was_idle == cfs_rq_is_idle(grp_cfs_rq)))
-			goto next_cpu;
+		إذا (WARN_ON_ONCE(was_idle == cfs_rq_is_idle(grp_cfs_rq)))
+			اذهب next_cpu;
 
 		idle_task_delta = grp_cfs_rq->h_nr_queued -
 				  grp_cfs_rq->h_nr_idle;
-		if (!cfs_rq_is_idle(grp_cfs_rq))
+		إذا (!cfs_rq_is_idle(grp_cfs_rq))
 			idle_task_delta *= -1;
 
 		for_each_sched_entity(se) {
-			struct cfs_rq *cfs_rq = cfs_rq_of(se);
+			بنية cfs_rq *cfs_rq = cfs_rq_of(se);
 
-			if (!se->on_rq)
-				break;
+			إذا (!se->on_rq)
+				اكسر;
 
 			cfs_rq->h_nr_idle += idle_task_delta;
 
 			/* Already accounted at parent level and above. */
-			if (cfs_rq_is_idle(cfs_rq))
-				break;
+			إذا (cfs_rq_is_idle(cfs_rq))
+				اكسر;
 		}
 
 next_cpu:
@@ -15823,31 +15823,31 @@ next_cpu:
 	}
 
 	/* Idle groups have minimum weight. */
-	if (tg_is_idle(tg))
+	إذا (tg_is_idle(tg))
 		__sched_group_set_shares(tg, scale_load(WEIGHT_IDLEPRIO));
-	else
+	وإلا
 		__sched_group_set_shares(tg, NICE_0_LOAD);
 
 	mutex_unlock(&shares_mutex);
-	return 0;
+	إرجاع 0;
 }
 
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 
 
-static unsigned int get_rr_interval_fair(struct rq *rq, struct task_struct *task)
+ساكن unsigned صحيح get_rr_interval_fair(بنية rq *rq, بنية task_struct *task)
 {
-	struct sched_entity *se = &task->se;
-	unsigned int rr_interval = 0;
+	بنية sched_entity *se = &task->se;
+	unsigned صحيح rr_interval = 0;
 
 	/*
 	 * Time slice is 0 for SCHED_OTHER tasks that are on an otherwise
 	 * idle runqueue:
 	 */
-	if (rq->cfs.load.weight)
+	إذا (rq->cfs.load.weight)
 		rr_interval = NS_TO_JIFFIES(se->slice);
 
-	return rr_interval;
+	إرجاع rr_interval;
 }
 
 /*
@@ -15900,9 +15900,9 @@ DEFINE_SCHED_CLASS(fair) = {
 #endif
 };
 
-void print_cfs_stats(struct seq_file *m, int cpu)
+فراغ print_cfs_stats(بنية seq_file *m, صحيح cpu)
 {
-	struct cfs_rq *cfs_rq, *pos;
+	بنية cfs_rq *cfs_rq, *pos;
 
 	rcu_read_lock();
 	for_each_leaf_cfs_rq_safe(cpu_rq(cpu), cfs_rq, pos)
@@ -15911,38 +15911,38 @@ void print_cfs_stats(struct seq_file *m, int cpu)
 }
 
 #ifdef CONFIG_NUMA_BALANCING
-void show_numa_stats(struct task_struct *p, struct seq_file *m)
+فراغ show_numa_stats(بنية task_struct *p, بنية seq_file *m)
 {
-	int node;
+	صحيح عقدة;
 	unsigned long tsf = 0, tpf = 0, gsf = 0, gpf = 0;
-	struct numa_group *ng;
+	بنية numa_group *ng;
 
 	rcu_read_lock();
 	ng = rcu_dereference_all(p->numa_group);
-	for_each_online_node(node) {
-		if (p->numa_faults) {
-			tsf = p->numa_faults[task_faults_idx(NUMA_MEM, node, 0)];
-			tpf = p->numa_faults[task_faults_idx(NUMA_MEM, node, 1)];
+	for_each_online_عقدة(عقدة) {
+		إذا (p->numa_faults) {
+			tsf = p->numa_faults[task_faults_idx(NUMA_MEM, عقدة, 0)];
+			tpf = p->numa_faults[task_faults_idx(NUMA_MEM, عقدة, 1)];
 		}
-		if (ng) {
-			gsf = ng->faults[task_faults_idx(NUMA_MEM, node, 0)];
-			gpf = ng->faults[task_faults_idx(NUMA_MEM, node, 1)];
+		إذا (ng) {
+			gsf = ng->faults[task_faults_idx(NUMA_MEM, عقدة, 0)];
+			gpf = ng->faults[task_faults_idx(NUMA_MEM, عقدة, 1)];
 		}
-		print_numa_stats(m, node, tsf, tpf, gsf, gpf);
+		print_numa_stats(m, عقدة, tsf, tpf, gsf, gpf);
 	}
 	rcu_read_unlock();
 }
 #endif /* CONFIG_NUMA_BALANCING */
 
-__init void init_sched_fair_class(void)
+__init فراغ init_sched_fair_class(فراغ)
 {
-	int i;
+	صحيح i;
 
 	for_each_possible_cpu(i) {
-		zalloc_cpumask_var_node(&per_cpu(load_balance_mask, i), GFP_KERNEL, cpu_to_node(i));
-		zalloc_cpumask_var_node(&per_cpu(select_rq_mask,    i), GFP_KERNEL, cpu_to_node(i));
-		zalloc_cpumask_var_node(&per_cpu(should_we_balance_tmpmask, i),
-					GFP_KERNEL, cpu_to_node(i));
+		zalloc_cpumask_var_عقدة(&per_cpu(load_balance_mask, i), GFP_KERNEL, cpu_to_عقدة(i));
+		zalloc_cpumask_var_عقدة(&per_cpu(select_rq_mask,    i), GFP_KERNEL, cpu_to_عقدة(i));
+		zalloc_cpumask_var_عقدة(&per_cpu(should_we_balance_tmpmask, i),
+					GFP_KERNEL, cpu_to_عقدة(i));
 
 #ifdef CONFIG_CFS_BANDWIDTH
 		INIT_CSD(&cpu_rq(i)->cfsb_csd, __cfsb_csd_unthrottle, cpu_rq(i));
