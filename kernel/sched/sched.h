@@ -5,125 +5,125 @@
 #ifndef _KERNEL_SCHED_SCHED_H
 #define _KERNEL_SCHED_SCHED_H
 
-#include <linux/prandom.h>
-#include <linux/sched/affinity.h>
-#include <linux/sched/autogroup.h>
-#include <linux/sched/cpufreq.h>
-#include <linux/sched/deadline.h>
-#include <linux/sched.h>
-#include <linux/sched/loadavg.h>
-#include <linux/sched/mm.h>
-#include <linux/sched/rseq_api.h>
-#include <linux/sched/signal.h>
-#include <linux/sched/smt.h>
-#include <linux/sched/stat.h>
-#include <linux/sched/sysctl.h>
-#include <linux/sched/task_flags.h>
-#include <linux/sched/task.h>
-#include <linux/sched/topology.h>
-#include <linux/atomic.h>
-#include <linux/bitmap.h>
-#include <linux/bug.h>
-#include <linux/capability.h>
-#include <linux/cgroup_api.h>
-#include <linux/cgroup.h>
-#include <linux/context_tracking.h>
-#include <linux/cpufreq.h>
-#include <linux/cpumask_api.h>
-#include <linux/cpuset.h>
-#include <linux/ctype.h>
-#include <linux/file.h>
-#include <linux/fs_api.h>
-#include <linux/hrtimer_api.h>
-#include <linux/interrupt.h>
-#include <linux/irq_work.h>
-#include <linux/jiffies.h>
-#include <linux/kref_api.h>
-#include <linux/kthread.h>
-#include <linux/ktime_api.h>
-#include <linux/lockdep_api.h>
-#include <linux/lockdep.h>
-#include <linux/memblock.h>
-#include <linux/memcontrol.h>
-#include <linux/minmax.h>
-#include <linux/mm.h>
-#include <linux/module.h>
-#include <linux/mutex_api.h>
-#include <linux/plist.h>
-#include <linux/poll.h>
-#include <linux/proc_fs.h>
-#include <linux/profile.h>
-#include <linux/psi.h>
-#include <linux/rcupdate.h>
-#include <linux/seq_file.h>
-#include <linux/seqlock.h>
-#include <linux/softirq.h>
-#include <linux/spinlock_api.h>
-#include <linux/static_key.h>
-#include <linux/stop_machine.h>
-#include <linux/syscalls_api.h>
-#include <linux/syscalls.h>
-#include <linux/tick.h>
-#include <linux/topology.h>
-#include <linux/types.h>
-#include <linux/u64_stats_sync_api.h>
-#include <linux/uaccess.h>
-#include <linux/vmstat.h>
-#include <linux/wait_api.h>
-#include <linux/wait_bit.h>
-#include <linux/workqueue_api.h>
-#include <linux/delayacct.h>
-#include <linux/mmu_context.h>
+#അന്തര്ഭാവ <linux/prandom.h>
+#അന്തര്ഭാവ <linux/sched/affinity.h>
+#അന്തര്ഭാവ <linux/sched/autogroup.h>
+#അന്തര്ഭാവ <linux/sched/cpufreq.h>
+#അന്തര്ഭാവ <linux/sched/deadline.h>
+#അന്തര്ഭാവ <linux/sched.h>
+#അന്തര്ഭാവ <linux/sched/loadavg.h>
+#അന്തര്ഭാവ <linux/sched/mm.h>
+#അന്തര്ഭാവ <linux/sched/rseq_api.h>
+#അന്തര്ഭാവ <linux/sched/signal.h>
+#അന്തര്ഭാവ <linux/sched/smt.h>
+#അന്തര്ഭാവ <linux/sched/stat.h>
+#അന്തര്ഭാവ <linux/sched/sysctl.h>
+#അന്തര്ഭാവ <linux/sched/task_flags.h>
+#അന്തര്ഭാവ <linux/sched/task.h>
+#അന്തര്ഭാവ <linux/sched/topology.h>
+#അന്തര്ഭാവ <linux/atomic.h>
+#അന്തര്ഭാവ <linux/bitmap.h>
+#അന്തര്ഭാവ <linux/bug.h>
+#അന്തര്ഭാവ <linux/capability.h>
+#അന്തര്ഭാവ <linux/cgroup_api.h>
+#അന്തര്ഭാവ <linux/cgroup.h>
+#അന്തര്ഭാവ <linux/context_tracking.h>
+#അന്തര്ഭാവ <linux/cpufreq.h>
+#അന്തര്ഭാവ <linux/cpumask_api.h>
+#അന്തര്ഭാവ <linux/cpuset.h>
+#അന്തര്ഭാവ <linux/ctype.h>
+#അന്തര്ഭാവ <linux/file.h>
+#അന്തര്ഭാവ <linux/fs_api.h>
+#അന്തര്ഭാവ <linux/hrtimer_api.h>
+#അന്തര്ഭാവ <linux/interrupt.h>
+#അന്തര്ഭാവ <linux/irq_work.h>
+#അന്തര്ഭാവ <linux/jiffies.h>
+#അന്തര്ഭാവ <linux/kref_api.h>
+#അന്തര്ഭാവ <linux/kthread.h>
+#അന്തര്ഭാവ <linux/ktime_api.h>
+#അന്തര്ഭാവ <linux/lockdep_api.h>
+#അന്തര്ഭാവ <linux/lockdep.h>
+#അന്തര്ഭാവ <linux/memblock.h>
+#അന്തര്ഭാവ <linux/memcontrol.h>
+#അന്തര്ഭാവ <linux/minmax.h>
+#അന്തര്ഭാവ <linux/mm.h>
+#അന്തര്ഭാവ <linux/module.h>
+#അന്തര്ഭാവ <linux/mutex_api.h>
+#അന്തര്ഭാവ <linux/plist.h>
+#അന്തര്ഭാവ <linux/poll.h>
+#അന്തര്ഭാവ <linux/proc_fs.h>
+#അന്തര്ഭാവ <linux/profile.h>
+#അന്തര്ഭാവ <linux/psi.h>
+#അന്തര്ഭാവ <linux/rcupdate.h>
+#അന്തര്ഭാവ <linux/seq_file.h>
+#അന്തര്ഭാവ <linux/seqlock.h>
+#അന്തര്ഭാവ <linux/softirq.h>
+#അന്തര്ഭാവ <linux/spinlock_api.h>
+#അന്തര്ഭാവ <linux/static_key.h>
+#അന്തര്ഭാവ <linux/stop_machine.h>
+#അന്തര്ഭാവ <linux/syscalls_api.h>
+#അന്തര്ഭാവ <linux/syscalls.h>
+#അന്തര്ഭാവ <linux/tick.h>
+#അന്തര്ഭാവ <linux/topology.h>
+#അന്തര്ഭാവ <linux/types.h>
+#അന്തര്ഭാവ <linux/u64_stats_sync_api.h>
+#അന്തര്ഭാവ <linux/uaccess.h>
+#അന്തര്ഭാവ <linux/vmstat.h>
+#അന്തര്ഭാവ <linux/wait_api.h>
+#അന്തര്ഭാവ <linux/wait_bit.h>
+#അന്തര്ഭാവ <linux/workqueue_api.h>
+#അന്തര്ഭാവ <linux/delayacct.h>
+#അന്തര്ഭാവ <linux/mmu_context.h>
 
-#include <trace/events/power.h>
-#include <trace/events/sched.h>
+#അന്തര്ഭാവ <trace/events/power.h>
+#അന്തര്ഭാവ <trace/events/sched.h>
 
-#include "../workqueue_internal.h"
+#അന്തര്ഭാവ "../workqueue_internal.h"
 
-struct rq;
-struct cfs_rq;
-struct rt_rq;
-struct sched_group;
-struct cpuidle_state;
+ഘടന rq;
+ഘടന cfs_rq;
+ഘടന rt_rq;
+ഘടന sched_group;
+ഘടന cpuidle_state;
 
-#if defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
+#എങ്കിൽ defined(CONFIG_PARAVIRT) && !defined(CONFIG_HAVE_PV_STEAL_CLOCK_GEN)
 # include <asm/paravirt.h>
 #endif
 
-#include <asm/barrier.h>
+#അന്തര്ഭാവ <asm/barrier.h>
 
-#include "cpupri.h"
-#include "cpudeadline.h"
+#അന്തര്ഭാവ "cpupri.h"
+#അന്തര്ഭാവ "cpudeadline.h"
 
 /* task_struct::on_rq states: */
 #define TASK_ON_RQ_QUEUED	1
 #define TASK_ON_RQ_MIGRATING	2
 
-extern __read_mostly int scheduler_running;
+ബാഹ്യ __read_mostly പൂർണ്ണസംഖ്യ scheduler_running;
 
-extern unsigned long calc_load_update;
-extern atomic_long_t calc_load_tasks;
+ബാഹ്യ unsigned long calc_load_update;
+ബാഹ്യ atomic_long_t calc_load_tasks;
 
-extern void calc_global_load_tick(struct rq *this_rq);
-extern long calc_load_fold_active(struct rq *this_rq, long adjust);
+ബാഹ്യ ശൂന്യം calc_global_load_tick(ഘടന rq *this_rq);
+ബാഹ്യ long calc_load_fold_active(ഘടന rq *this_rq, long adjust);
 
-extern void call_trace_sched_update_nr_running(struct rq *rq, int count);
+ബാഹ്യ ശൂന്യം call_trace_sched_update_nr_running(ഘടന rq *rq, പൂർണ്ണസംഖ്യ എണ്ണം);
 
-extern int sysctl_sched_rt_period;
-extern int sysctl_sched_rt_runtime;
-extern int sched_rr_timeslice;
+ബാഹ്യ പൂർണ്ണസംഖ്യ sysctl_sched_rt_period;
+ബാഹ്യ പൂർണ്ണസംഖ്യ sysctl_sched_rt_runtime;
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_rr_timeslice;
 
 /*
  * Asymmetric CPU capacity bits
  */
-struct asym_cap_data {
-	struct list_head link;
-	struct rcu_head rcu;
+ഘടന asym_cap_data {
+	ഘടന list_head link;
+	ഘടന rcu_head rcu;
 	unsigned long capacity;
 	unsigned long cpus[];
 };
 
-extern struct list_head asym_cap_list;
+ബാഹ്യ ഘടന list_head asym_cap_list;
 
 #define cpu_capacity_span(asym_data) to_cpumask((asym_data)->cpus)
 
@@ -153,11 +153,11 @@ extern struct list_head asym_cap_list;
 ({								\
 	unsigned long __w = (w);				\
 								\
-	if (__w)						\
+	എങ്കിൽ (__w)						\
 		__w = max(2UL, __w >> SCHED_FIXEDPOINT_SHIFT);	\
 	__w;							\
 })
-#else
+#അല്ലെങ്കിൽ
 # define NICE_0_LOAD_SHIFT	(SCHED_FIXEDPOINT_SHIFT)
 # define scale_load(w)		(w)
 # define scale_load_down(w)	(w)
@@ -186,59 +186,59 @@ extern struct list_head asym_cap_list;
  */
 #define RUNTIME_INF		((u64)~0ULL)
 
-static inline int idle_policy(int policy)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ idle_policy(പൂർണ്ണസംഖ്യ policy)
 {
-	return policy == SCHED_IDLE;
+	തിരികെ policy == SCHED_IDLE;
 }
 
-static inline int normal_policy(int policy)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ normal_policy(പൂർണ്ണസംഖ്യ policy)
 {
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (policy == SCHED_EXT)
-		return true;
+	എങ്കിൽ (policy == SCHED_EXT)
+		തിരികെ true;
 #endif
-	return policy == SCHED_NORMAL;
+	തിരികെ policy == SCHED_NORMAL;
 }
 
-static inline int fair_policy(int policy)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ fair_policy(പൂർണ്ണസംഖ്യ policy)
 {
-	return normal_policy(policy) || policy == SCHED_BATCH;
+	തിരികെ normal_policy(policy) || policy == SCHED_BATCH;
 }
 
-static inline int rt_policy(int policy)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ rt_policy(പൂർണ്ണസംഖ്യ policy)
 {
-	return policy == SCHED_FIFO || policy == SCHED_RR;
+	തിരികെ policy == SCHED_FIFO || policy == SCHED_RR;
 }
 
-static inline int dl_policy(int policy)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ dl_policy(പൂർണ്ണസംഖ്യ policy)
 {
-	return policy == SCHED_DEADLINE;
+	തിരികെ policy == SCHED_DEADLINE;
 }
 
-static inline bool valid_policy(int policy)
+സ്ഥിതം വരിയിൽ bool valid_policy(പൂർണ്ണസംഖ്യ policy)
 {
-	return idle_policy(policy) || fair_policy(policy) ||
+	തിരികെ idle_policy(policy) || fair_policy(policy) ||
 		rt_policy(policy) || dl_policy(policy);
 }
 
-static inline int task_has_idle_policy(struct task_struct *p)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ task_has_idle_policy(ഘടന task_struct *p)
 {
-	return idle_policy(p->policy);
+	തിരികെ idle_policy(p->policy);
 }
 
-static inline int task_has_rt_policy(struct task_struct *p)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ task_has_rt_policy(ഘടന task_struct *p)
 {
-	return rt_policy(p->policy);
+	തിരികെ rt_policy(p->policy);
 }
 
-static inline int task_has_dl_policy(struct task_struct *p)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ task_has_dl_policy(ഘടന task_struct *p)
 {
-	return dl_policy(p->policy);
+	തിരികെ dl_policy(p->policy);
 }
 
 #define cap_scale(v, s)		((v)*(s) >> SCHED_CAPACITY_SHIFT)
 
-static inline void update_avg(u64 *avg, u64 sample)
+സ്ഥിതം വരിയിൽ ശൂന്യം update_avg(u64 *avg, u64 sample)
 {
 	s64 diff = sample - *avg;
 
@@ -258,14 +258,14 @@ static inline void update_avg(u64 *avg, u64 sample)
  * maps pretty well onto the shares value used by scheduler and the round-trip
  * conversions preserve the original value over the entire range.
  */
-static inline unsigned long sched_weight_from_cgroup(unsigned long cgrp_weight)
+സ്ഥിതം വരിയിൽ unsigned long sched_weight_from_cgroup(unsigned long cgrp_weight)
 {
-	return DIV_ROUND_CLOSEST_ULL(cgrp_weight * 1024, CGROUP_WEIGHT_DFL);
+	തിരികെ DIV_ROUND_CLOSEST_ULL(cgrp_weight * 1024, CGROUP_WEIGHT_DFL);
 }
 
-static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
+സ്ഥിതം വരിയിൽ unsigned long sched_weight_to_cgroup(unsigned long weight)
 {
-	return clamp_t(unsigned long,
+	തിരികെ clamp_t(unsigned long,
 		       DIV_ROUND_CLOSEST_ULL(weight * CGROUP_WEIGHT_DFL, 1024),
 		       CGROUP_WEIGHT_MIN, CGROUP_WEIGHT_MAX);
 }
@@ -286,45 +286,45 @@ static inline unsigned long sched_weight_to_cgroup(unsigned long weight)
 
 #define SCHED_DL_FLAGS		(SCHED_FLAG_RECLAIM | SCHED_FLAG_DL_OVERRUN | SCHED_FLAG_SUGOV)
 
-static inline bool dl_entity_is_special(const struct sched_dl_entity *dl_se)
+സ്ഥിതം വരിയിൽ bool dl_entity_is_special(സ്ഥിരം ഘടന sched_dl_entity *dl_se)
 {
 #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-	return unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
-#else
-	return false;
+	തിരികെ unlikely(dl_se->flags & SCHED_FLAG_SUGOV);
+#അല്ലെങ്കിൽ
+	തിരികെ false;
 #endif
 }
 
 /*
  * Tells if entity @a should preempt entity @b.
  */
-static inline bool dl_entity_preempt(const struct sched_dl_entity *a,
-				     const struct sched_dl_entity *b)
+സ്ഥിതം വരിയിൽ bool dl_entity_preempt(സ്ഥിരം ഘടന sched_dl_entity *a,
+				     സ്ഥിരം ഘടന sched_dl_entity *b)
 {
-	return dl_entity_is_special(a) ||
+	തിരികെ dl_entity_is_special(a) ||
 	       dl_time_before(a->deadline, b->deadline);
 }
 
 /*
  * This is the priority-queue data structure of the RT scheduling class:
  */
-struct rt_prio_array {
+ഘടന rt_prio_array {
 	DECLARE_BITMAP(bitmap, MAX_RT_PRIO+1); /* include 1 bit for delimiter */
-	struct list_head queue[MAX_RT_PRIO];
+	ഘടന list_head queue[MAX_RT_PRIO];
 };
 
-struct rt_bandwidth {
+ഘടന rt_bandwidth {
 	/* nests inside the rq lock: */
 	raw_spinlock_t		rt_runtime_lock;
 	ktime_t			rt_period;
 	u64			rt_runtime;
-	struct hrtimer		rt_period_timer;
-	unsigned int		rt_period_active;
+	ഘടന hrtimer		rt_period_timer;
+	unsigned പൂർണ്ണസംഖ്യ		rt_period_active;
 };
 
-static inline int dl_bandwidth_enabled(void)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ dl_bandwidth_enabled(ശൂന്യം)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	തിരികെ sysctl_sched_rt_runtime >= 0;
 }
 
 /*
@@ -345,23 +345,23 @@ static inline int dl_bandwidth_enabled(void)
  *  - bw (< 100%) is the deadline bandwidth of each CPU;
  *  - total_bw is the currently allocated bandwidth in each root domain;
  */
-struct dl_bw {
+ഘടന dl_bw {
 	raw_spinlock_t		lock;
 	u64			bw;
 	u64			total_bw;
 };
 
-extern void init_dl_bw(struct dl_bw *dl_b);
-extern int  sched_dl_global_validate(void);
-extern void sched_dl_do_global(void);
-extern int  sched_dl_overflow(struct task_struct *p, int policy, const struct sched_attr *attr);
-extern void __setparam_dl(struct task_struct *p, const struct sched_attr *attr);
-extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags);
-extern bool __checkparam_dl(const struct sched_attr *attr);
-extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
-extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
-extern int  dl_bw_deactivate(int cpu);
-extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec);
+ബാഹ്യ ശൂന്യം init_dl_bw(ഘടന dl_bw *dl_b);
+ബാഹ്യ പൂർണ്ണസംഖ്യ  sched_dl_global_validate(ശൂന്യം);
+ബാഹ്യ ശൂന്യം sched_dl_do_global(ശൂന്യം);
+ബാഹ്യ പൂർണ്ണസംഖ്യ  sched_dl_overflow(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ policy, സ്ഥിരം ഘടന sched_attr *attr);
+ബാഹ്യ ശൂന്യം __setparam_dl(ഘടന task_struct *p, സ്ഥിരം ഘടന sched_attr *attr);
+ബാഹ്യ ശൂന്യം __getparam_dl(ഘടന task_struct *p, ഘടന sched_attr *attr, unsigned പൂർണ്ണസംഖ്യ flags);
+ബാഹ്യ bool __checkparam_dl(സ്ഥിരം ഘടന sched_attr *attr);
+ബാഹ്യ bool dl_param_changed(ഘടന task_struct *p, സ്ഥിരം ഘടന sched_attr *attr);
+ബാഹ്യ പൂർണ്ണസംഖ്യ  dl_cpuset_cpumask_can_shrink(സ്ഥിരം ഘടന cpumask *cur, സ്ഥിരം ഘടന cpumask *trial);
+ബാഹ്യ പൂർണ്ണസംഖ്യ  dl_bw_deactivate(പൂർണ്ണസംഖ്യ cpu);
+ബാഹ്യ s64 dl_scaled_delta_exec(ഘടന rq *rq, ഘടന sched_dl_entity *dl_se, s64 delta_exec);
 /*
  * SCHED_DEADLINE supports servers (nested scheduling) with the following
  * interface:
@@ -408,47 +408,47 @@ extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s6
  * naturally thottled to once per period, avoiding high context switch
  * workloads from spamming the hrtimer program/cancel paths.
  */
-extern void dl_server_update_idle(struct sched_dl_entity *dl_se, s64 delta_exec);
-extern void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec);
-extern void dl_server_start(struct sched_dl_entity *dl_se);
-extern void dl_server_stop(struct sched_dl_entity *dl_se);
-extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ബാഹ്യ ശൂന്യം dl_server_update_idle(ഘടന sched_dl_entity *dl_se, s64 delta_exec);
+ബാഹ്യ ശൂന്യം dl_server_update(ഘടന sched_dl_entity *dl_se, s64 delta_exec);
+ബാഹ്യ ശൂന്യം dl_server_start(ഘടന sched_dl_entity *dl_se);
+ബാഹ്യ ശൂന്യം dl_server_stop(ഘടന sched_dl_entity *dl_se);
+ബാഹ്യ ശൂന്യം dl_server_init(ഘടന sched_dl_entity *dl_se, ഘടന rq *rq,
 		    dl_server_pick_f pick_task);
-extern void sched_init_dl_servers(void);
+ബാഹ്യ ശൂന്യം sched_init_dl_servers(ശൂന്യം);
 
-extern void fair_server_init(struct rq *rq);
-extern void ext_server_init(struct rq *rq);
-extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq);
-extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
+ബാഹ്യ ശൂന്യം fair_server_init(ഘടന rq *rq);
+ബാഹ്യ ശൂന്യം ext_server_init(ഘടന rq *rq);
+ബാഹ്യ ശൂന്യം __dl_server_attach_root(ഘടന sched_dl_entity *dl_se, ഘടന rq *rq);
+ബാഹ്യ പൂർണ്ണസംഖ്യ dl_server_apply_params(ഘടന sched_dl_entity *dl_se,
 		    u64 runtime, u64 period, bool init);
-extern int dl_server_attach_bw(struct sched_dl_entity *dl_se);
-extern void dl_server_detach_bw(struct sched_dl_entity *dl_se);
-extern int dl_server_swap_bw(struct sched_dl_entity *detach_se,
-			     struct sched_dl_entity *attach_se);
+ബാഹ്യ പൂർണ്ണസംഖ്യ dl_server_attach_bw(ഘടന sched_dl_entity *dl_se);
+ബാഹ്യ ശൂന്യം dl_server_detach_bw(ഘടന sched_dl_entity *dl_se);
+ബാഹ്യ പൂർണ്ണസംഖ്യ dl_server_swap_bw(ഘടന sched_dl_entity *detach_se,
+			     ഘടന sched_dl_entity *attach_se);
 
-static inline bool dl_server_active(struct sched_dl_entity *dl_se)
+സ്ഥിതം വരിയിൽ bool dl_server_active(ഘടന sched_dl_entity *dl_se)
 {
-	return dl_se->dl_server_active;
+	തിരികെ dl_se->dl_server_active;
 }
 
 #ifdef CONFIG_CGROUP_SCHED
 
-extern struct list_head task_groups;
+ബാഹ്യ ഘടന list_head task_groups;
 
 #ifdef CONFIG_GROUP_SCHED_BANDWIDTH
-extern const u64 max_bw_quota_period_us;
+ബാഹ്യ സ്ഥിരം u64 max_bw_quota_period_us;
 
 /*
  * default period for group bandwidth.
  * default: 0.1s, units: microseconds
  */
-static inline u64 default_bw_period_us(void)
+സ്ഥിതം വരിയിൽ u64 default_bw_period_us(ശൂന്യം)
 {
-	return 100000ULL;
+	തിരികെ 100000ULL;
 }
 #endif /* CONFIG_GROUP_SCHED_BANDWIDTH */
 
-struct cfs_bandwidth {
+ഘടന cfs_bandwidth {
 #ifdef CONFIG_CFS_BANDWIDTH
 	raw_spinlock_t		lock;
 	ktime_t			period;
@@ -461,31 +461,31 @@ struct cfs_bandwidth {
 	u8			idle;
 	u8			period_active;
 	u8			slack_started;
-	struct hrtimer		period_timer;
-	struct hrtimer		slack_timer;
-	struct list_head	throttled_cfs_rq;
+	ഘടന hrtimer		period_timer;
+	ഘടന hrtimer		slack_timer;
+	ഘടന list_head	throttled_cfs_rq;
 
 	/* Statistics: */
-	int			nr_periods;
-	int			nr_throttled;
-	int			nr_burst;
+	പൂർണ്ണസംഖ്യ			nr_periods;
+	പൂർണ്ണസംഖ്യ			nr_throttled;
+	പൂർണ്ണസംഖ്യ			nr_burst;
 	u64			throttled_time;
 	u64			burst_time;
 #endif /* CONFIG_CFS_BANDWIDTH */
 };
 
 /* Task group related information */
-struct task_group {
-	struct cgroup_subsys_state css;
+ഘടന task_group {
+	ഘടന cgroup_subsys_state css;
 
 #ifdef CONFIG_GROUP_SCHED_WEIGHT
 	/* A positive value indicates that this is a SCHED_IDLE group. */
-	int			idle;
+	പൂർണ്ണസംഖ്യ			idle;
 #endif
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	/* runqueue "owned" by this group on each CPU */
-	struct cfs_rq __percpu	*cfs_rq;
+	ഘടന cfs_rq __percpu	*cfs_rq;
 	unsigned long		shares;
 	/*
 	 * load_avg can be heavily contended at clock tick time, so put
@@ -498,44 +498,44 @@ struct task_group {
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 
 #ifdef CONFIG_RT_GROUP_SCHED
-	struct sched_rt_entity	**rt_se;
-	struct rt_rq		**rt_rq;
+	ഘടന sched_rt_entity	**rt_se;
+	ഘടന rt_rq		**rt_rq;
 
-	struct rt_bandwidth	rt_bandwidth;
+	ഘടന rt_bandwidth	rt_bandwidth;
 #endif
 
-	struct scx_task_group	scx;
+	ഘടന scx_task_group	scx;
 
-	struct rcu_head		rcu;
-	struct list_head	list;
+	ഘടന rcu_head		rcu;
+	ഘടന list_head	list;
 
-	struct task_group	*parent;
-	struct list_head	siblings;
-	struct list_head	children;
+	ഘടന task_group	*parent;
+	ഘടന list_head	siblings;
+	ഘടന list_head	children;
 
 #ifdef CONFIG_SCHED_AUTOGROUP
-	struct autogroup	*autogroup;
+	ഘടന autogroup	*autogroup;
 #endif
 
-	struct cfs_bandwidth	cfs_bandwidth;
+	ഘടന cfs_bandwidth	cfs_bandwidth;
 
 #ifdef CONFIG_UCLAMP_TASK_GROUP
 	/* The two decimal precision [%] value requested from user-space */
-	unsigned int		uclamp_pct[UCLAMP_CNT];
+	unsigned പൂർണ്ണസംഖ്യ		uclamp_pct[UCLAMP_CNT];
 	/* Clamp values requested for a task group */
-	struct uclamp_se	uclamp_req[UCLAMP_CNT];
+	ഘടന uclamp_se	uclamp_req[UCLAMP_CNT];
 	/* Effective clamp values used for a task group */
-	struct uclamp_se	uclamp[UCLAMP_CNT];
+	ഘടന uclamp_se	uclamp[UCLAMP_CNT];
 #endif
 
 };
 
-#define ROOT_TASK_GROUP_LOAD	NICE_0_LOAD
+#define വേര്_TASK_GROUP_LOAD	NICE_0_LOAD
 
-typedef int (*tg_visitor)(struct task_group *, void *);
+തരനിർവചനം പൂർണ്ണസംഖ്യ (*tg_visitor)(ഘടന task_group *, ശൂന്യം *);
 
-extern int walk_tg_tree_from(struct task_group *from,
-			     tg_visitor down, tg_visitor up, void *data);
+ബാഹ്യ പൂർണ്ണസംഖ്യ walk_tg_വൃക്ഷം_from(ഘടന task_group *from,
+			     tg_visitor down, tg_visitor up, ശൂന്യം *data);
 
 /*
  * Iterate the full tree, calling @down when first entering a node and @up when
@@ -543,78 +543,78 @@ extern int walk_tg_tree_from(struct task_group *from,
  *
  * Caller must hold rcu_lock or sufficient equivalent.
  */
-static inline int walk_tg_tree(tg_visitor down, tg_visitor up, void *data)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ walk_tg_വൃക്ഷം(tg_visitor down, tg_visitor up, ശൂന്യം *data)
 {
-	return walk_tg_tree_from(&root_task_group, down, up, data);
+	തിരികെ walk_tg_വൃക്ഷം_from(&വേര്_task_group, down, up, data);
 }
 
-static inline struct task_group *css_tg(struct cgroup_subsys_state *css)
+സ്ഥിതം വരിയിൽ ഘടന task_group *css_tg(ഘടന cgroup_subsys_state *css)
 {
-	return css ? container_of(css, struct task_group, css) : NULL;
+	തിരികെ css ? container_of(css, ഘടന task_group, css) : ശൂന്യ;
 }
 
-extern int tg_nop(struct task_group *tg, void *data);
+ബാഹ്യ പൂർണ്ണസംഖ്യ tg_nop(ഘടന task_group *tg, ശൂന്യം *data);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-extern void free_fair_sched_group(struct task_group *tg);
-extern int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent);
-extern void online_fair_sched_group(struct task_group *tg);
-extern void unregister_fair_sched_group(struct task_group *tg);
-extern void __sched_cgroup_mode_update(int mode);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline void free_fair_sched_group(struct task_group *tg) { }
-static inline int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
+ബാഹ്യ ശൂന്യം free_fair_sched_group(ഘടന task_group *tg);
+ബാഹ്യ പൂർണ്ണസംഖ്യ alloc_fair_sched_group(ഘടന task_group *tg, ഘടന task_group *parent);
+ബാഹ്യ ശൂന്യം online_fair_sched_group(ഘടന task_group *tg);
+ബാഹ്യ ശൂന്യം unregister_fair_sched_group(ഘടന task_group *tg);
+ബാഹ്യ ശൂന്യം __sched_cgroup_mode_update(പൂർണ്ണസംഖ്യ mode);
+#അല്ലെങ്കിൽ /* !CONFIG_FAIR_GROUP_SCHED: */
+സ്ഥിതം വരിയിൽ ശൂന്യം free_fair_sched_group(ഘടന task_group *tg) { }
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ alloc_fair_sched_group(ഘടന task_group *tg, ഘടന task_group *parent)
 {
-       return 1;
+       തിരികെ 1;
 }
-static inline void online_fair_sched_group(struct task_group *tg) { }
-static inline void unregister_fair_sched_group(struct task_group *tg) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം online_fair_sched_group(ഘടന task_group *tg) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം unregister_fair_sched_group(ഘടന task_group *tg) { }
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-extern void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
-			struct sched_entity *se, int cpu,
-			struct sched_entity *parent);
-extern void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent);
+ബാഹ്യ ശൂന്യം init_tg_cfs_entry(ഘടന task_group *tg, ഘടന cfs_rq *cfs_rq,
+			ഘടന sched_entity *se, പൂർണ്ണസംഖ്യ cpu,
+			ഘടന sched_entity *parent);
+ബാഹ്യ ശൂന്യം init_cfs_bandwidth(ഘടന cfs_bandwidth *cfs_b, ഘടന cfs_bandwidth *parent);
 
-extern void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b);
-extern void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b);
-extern void unthrottle_cfs_rq(struct cfs_rq *cfs_rq);
-extern bool cfs_task_bw_constrained(struct task_struct *p);
+ബാഹ്യ ശൂന്യം __refill_cfs_bandwidth_runtime(ഘടന cfs_bandwidth *cfs_b);
+ബാഹ്യ ശൂന്യം start_cfs_bandwidth(ഘടന cfs_bandwidth *cfs_b);
+ബാഹ്യ ശൂന്യം unthrottle_cfs_rq(ഘടന cfs_rq *cfs_rq);
+ബാഹ്യ bool cfs_task_bw_constrained(ഘടന task_struct *p);
 
-extern void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
-		struct sched_rt_entity *rt_se, int cpu,
-		struct sched_rt_entity *parent);
-extern int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us);
-extern int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us);
-extern long sched_group_rt_runtime(struct task_group *tg);
-extern long sched_group_rt_period(struct task_group *tg);
-extern int sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk);
+ബാഹ്യ ശൂന്യം init_tg_rt_entry(ഘടന task_group *tg, ഘടന rt_rq *rt_rq,
+		ഘടന sched_rt_entity *rt_se, പൂർണ്ണസംഖ്യ cpu,
+		ഘടന sched_rt_entity *parent);
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_group_set_rt_runtime(ഘടന task_group *tg, long rt_runtime_us);
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_group_set_rt_period(ഘടന task_group *tg, u64 rt_period_us);
+ബാഹ്യ long sched_group_rt_runtime(ഘടന task_group *tg);
+ബാഹ്യ long sched_group_rt_period(ഘടന task_group *tg);
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_rt_can_attach(ഘടന task_group *tg, ഘടന task_struct *tsk);
 
-extern struct task_group *sched_create_group(struct task_group *parent);
-extern void sched_online_group(struct task_group *tg,
-			       struct task_group *parent);
-extern void sched_destroy_group(struct task_group *tg);
-extern void sched_release_group(struct task_group *tg);
+ബാഹ്യ ഘടന task_group *sched_create_group(ഘടന task_group *parent);
+ബാഹ്യ ശൂന്യം sched_online_group(ഘടന task_group *tg,
+			       ഘടന task_group *parent);
+ബാഹ്യ ശൂന്യം sched_destroy_group(ഘടന task_group *tg);
+ബാഹ്യ ശൂന്യം sched_release_group(ഘടന task_group *tg);
 
-extern void sched_move_task(struct task_struct *tsk, bool for_autogroup);
+ബാഹ്യ ശൂന്യം sched_move_task(ഘടന task_struct *tsk, bool for_autogroup);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-extern int sched_group_set_shares(struct task_group *tg, unsigned long shares);
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_group_set_shares(ഘടന task_group *tg, unsigned long shares);
 
-extern int sched_group_set_idle(struct task_group *tg, long idle);
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_group_set_idle(ഘടന task_group *tg, long idle);
 
-extern void set_task_rq_fair(struct sched_entity *se,
-			     struct cfs_rq *prev, struct cfs_rq *next);
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
-static inline int sched_group_set_shares(struct task_group *tg, unsigned long shares) { return 0; }
-static inline int sched_group_set_idle(struct task_group *tg, long idle) { return 0; }
+ബാഹ്യ ശൂന്യം set_task_rq_fair(ഘടന sched_entity *se,
+			     ഘടന cfs_rq *prev, ഘടന cfs_rq *next);
+#അല്ലെങ്കിൽ /* !CONFIG_FAIR_GROUP_SCHED: */
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ sched_group_set_shares(ഘടന task_group *tg, unsigned long shares) { തിരികെ 0; }
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ sched_group_set_idle(ഘടന task_group *tg, long idle) { തിരികെ 0; }
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#അല്ലെങ്കിൽ /* !CONFIG_CGROUP_SCHED: */
 
-struct cfs_bandwidth { };
+ഘടന cfs_bandwidth { };
 
-static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false; }
+സ്ഥിതം വരിയിൽ bool cfs_task_bw_constrained(ഘടന task_struct *p) { തിരികെ false; }
 
 #endif /* !CONFIG_CGROUP_SCHED */
 
@@ -629,9 +629,9 @@ static inline bool cfs_task_bw_constrained(struct task_struct *p) { return false
 #define MIN_SHARES		(1UL <<  1)
 #define MAX_SHARES		(1UL << 18)
 
-extern void unregister_rt_sched_group(struct task_group *tg);
-extern void free_rt_sched_group(struct task_group *tg);
-extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent);
+ബാഹ്യ ശൂന്യം unregister_rt_sched_group(ഘടന task_group *tg);
+ബാഹ്യ ശൂന്യം free_rt_sched_group(ഘടന task_group *tg);
+ബാഹ്യ പൂർണ്ണസംഖ്യ alloc_rt_sched_group(ഘടന task_group *tg, ഘടന task_group *parent);
 
 /*
  * u64_u32_load/u64_u32_store
@@ -642,11 +642,11 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
 #ifdef CONFIG_64BIT
 # define u64_u32_load_copy(var, copy)		var
 # define u64_u32_store_copy(var, copy, val)	(var = val)
-#else
+#അല്ലെങ്കിൽ
 # define u64_u32_load_copy(var, copy)					\
 ({									\
 	u64 __val, __val_copy;						\
-	do {								\
+	ചെയ്യുക {								\
 		__val_copy = copy;					\
 		/*							\
 		 * paired with u64_u32_store_copy(), ordering access	\
@@ -654,11 +654,11 @@ extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent
 		 */							\
 		smp_rmb();						\
 		__val = var;						\
-	} while (__val != __val_copy);					\
+	} ആകുമ്പോൾ (__val != __val_copy);					\
 	__val;								\
 })
 # define u64_u32_store_copy(var, copy, val)				\
-do {									\
+ചെയ്യുക {									\
 	typeof(val) __val = (val);					\
 	var = __val;							\
 	/*								\
@@ -667,54 +667,54 @@ do {									\
 	 */								\
 	smp_wmb();							\
 	copy = __val;							\
-} while (0)
+} ആകുമ്പോൾ (0)
 #endif
 # define u64_u32_load(var)		u64_u32_load_copy(var, var##_copy)
 # define u64_u32_store(var, val)	u64_u32_store_copy(var, var##_copy, val)
 
-struct balance_callback {
-	struct balance_callback *next;
-	void (*func)(struct rq *rq);
+ഘടന balance_callback {
+	ഘടന balance_callback *next;
+	ശൂന്യം (*func)(ഘടന rq *rq);
 };
 
 /* Fair scheduling SCHED_{NORMAL,BATCH,IDLE} related fields in a runqueue: */
-struct cfs_rq {
-	struct load_weight	load;
-	unsigned int		nr_queued;
-	unsigned int		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
-	unsigned int		h_nr_idle;		/* SCHED_IDLE */
+ഘടന cfs_rq {
+	ഘടന load_weight	load;
+	unsigned പൂർണ്ണസംഖ്യ		nr_queued;
+	unsigned പൂർണ്ണസംഖ്യ		h_nr_queued;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	unsigned പൂർണ്ണസംഖ്യ		h_nr_runnable;		/* SCHED_{NORMAL,BATCH,IDLE} */
+	unsigned പൂർണ്ണസംഖ്യ		h_nr_idle;		/* SCHED_IDLE */
 
 	s64			sum_w_vruntime;
 	u64			sum_weight;
 	u64			zero_vruntime;
-	unsigned int		sum_shift;
+	unsigned പൂർണ്ണസംഖ്യ		sum_shift;
 
 #ifdef CONFIG_SCHED_CORE
-	unsigned int		forceidle_seq;
+	unsigned പൂർണ്ണസംഖ്യ		forceidle_seq;
 	u64			zero_vruntime_fi;
 #endif
 
-	struct rb_root_cached	tasks_timeline;
+	ഘടന rb_വേര്_cached	tasks_timeline;
 
 	/*
 	 * 'curr' points to the currently running entity on this cfs_rq.
 	 * It is set to NULL otherwise (i.e when none are currently running).
 	 */
-	struct sched_entity	*curr;
-	struct sched_entity	*next;
+	ഘടന sched_entity	*curr;
+	ഘടന sched_entity	*next;
 
 	/*
 	 * CFS load tracking
 	 */
-	struct sched_entity	*h_curr;
-	struct sched_avg	avg;
+	ഘടന sched_entity	*h_curr;
+	ഘടന sched_avg	avg;
 #ifndef CONFIG_64BIT
 	u64			last_update_time_copy;
 #endif
-	struct {
+	ഘടന {
 		raw_spinlock_t	lock ____cacheline_aligned;
-		int		nr;
+		പൂർണ്ണസംഖ്യ		nr;
 		unsigned long	load_avg;
 		unsigned long	util_avg;
 		unsigned long	runnable_avg;
@@ -735,9 +735,9 @@ struct cfs_rq {
 	 */
 	unsigned long		h_load;
 	u64			last_h_load_update;
-	struct sched_entity	*h_load_next;
+	ഘടന sched_entity	*h_load_next;
 
-	struct rq		*rq;	/* CPU runqueue to which this cfs_rq is attached */
+	ഘടന rq		*rq;	/* CPU runqueue to which this cfs_rq is attached */
 
 	/*
 	 * leaf cfs_rqs are those that hold tasks (lowest schedulable entity in
@@ -747,15 +747,15 @@ struct cfs_rq {
 	 * leaf_cfs_rq_list ties together list of leaf cfs_rq's in a CPU.
 	 * This list is used during load balance.
 	 */
-	int			on_list;
-	struct list_head	leaf_cfs_rq_list;
-	struct task_group	*tg;	/* Group that "owns" this runqueue */
+	പൂർണ്ണസംഖ്യ			on_list;
+	ഘടന list_head	leaf_cfs_rq_list;
+	ഘടന task_group	*tg;	/* Group that "owns" this runqueue */
 
 	/* Locally cached copy of our task_group's idle value */
-	int			idle;
+	പൂർണ്ണസംഖ്യ			idle;
 
 # ifdef CONFIG_CFS_BANDWIDTH
-	int			runtime_enabled;
+	പൂർണ്ണസംഖ്യ			runtime_enabled;
 	s64			runtime_remaining;
 
 	u64			throttled_pelt_idle;
@@ -769,17 +769,17 @@ struct cfs_rq {
 	u64			throttled_clock_self_time;
 	bool			throttled:1;
 	bool			pelt_clock_throttled:1;
-	int			throttle_count;
-	struct list_head	throttled_list;
-	struct list_head	throttled_csd_list;
-	struct list_head        throttled_limbo_list;
+	പൂർണ്ണസംഖ്യ			throttle_എണ്ണം;
+	ഘടന list_head	throttled_list;
+	ഘടന list_head	throttled_csd_list;
+	ഘടന list_head        throttled_limbo_list;
 # endif /* CONFIG_CFS_BANDWIDTH */
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 };
 
 #ifdef CONFIG_SCHED_CLASS_EXT
 /* scx_rq->flags, protected by the rq lock */
-enum scx_rq_flags {
+എണ്ണൽ scx_rq_flags {
 	/*
 	 * A hotplugged CPU starts scheduling before rq_online_scx(). Track
 	 * ops.cpu_on/offline() state so that ops.enqueue/dispatch() are called
@@ -790,35 +790,35 @@ enum scx_rq_flags {
 	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
 	SCX_RQ_BAL_CB_PENDING	= 1 << 6, /* must queue a cb after dispatching */
 	SCX_RQ_SUB_IDLE_RENOTIFY	= 1 << 7, /* sub-scheds are owed update_idle() */
-	SCX_RQ_ROOT_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
+	SCX_RQ_വേര്_IDLE_RENOTIFY	= 1 << 8, /* the root is owed update_idle() */
 
 	SCX_RQ_IN_WAKEUP	= 1 << 16,
 	SCX_RQ_IN_DISPATCH	= 1 << 17,
 };
 
 /* per-rq rescue execution state, see scx_rescue_timerfn() */
-struct scx_rq_rescue {
-	struct scx_dispatch_q	dsq;			/* stranded tasks awaiting rescue */
+ഘടന scx_rq_rescue {
+	ഘടന scx_dispatch_q	dsq;			/* stranded tasks awaiting rescue */
 	s64			budget;			/* execution token bucket, ns */
 	u64			clock;			/* last budget accrual timestamp */
-	struct task_struct	*curr;			/* task being rescued, one at a time */
+	ഘടന task_struct	*curr;			/* task being rescued, one at a time */
 	s64			slice;			/* curr's admitted slice */
 	u64			exec_snap;		/* sum_exec_runtime at admission */
-	struct timer_list	timer;			/* paces admission and escalation */
+	ഘടന timer_list	timer;			/* paces admission and escalation */
 	u64			kill_at;		/* last ejection, init before any */
 };
 
-struct scx_rq {
-	struct scx_dispatch_q	local_dsq;
+ഘടന scx_rq {
+	ഘടന scx_dispatch_q	local_dsq;
 #ifdef CONFIG_EXT_SUB_SCHED
-	struct scx_dispatch_q	reject_dsq;		/* staging for cap-rejected tasks */
-	struct scx_rq_rescue	rescue;
+	ഘടന scx_dispatch_q	reject_dsq;		/* staging for cap-rejected tasks */
+	ഘടന scx_rq_rescue	rescue;
 #endif
-	struct list_head	runnable_list;		/* runnable tasks on this rq */
-	struct list_head	ddsp_deferred_locals;	/* deferred ddsps from enq */
+	ഘടന list_head	runnable_list;		/* runnable tasks on this rq */
+	ഘടന list_head	ddsp_deferred_locals;	/* deferred ddsps from enq */
 	/* both stashed across the activate_task() in move_remote_task_to_local_dsq() */
 	u64			remote_activate_enq_flags;
-	struct scx_sched	*remote_activate_sch;
+	ഘടന scx_sched	*remote_activate_sch;
 	u32			nr_running;
 	u32			cpuperf_target;		/* [0, SCHED_CAPACITY_SCALE] */
 	bool			in_select_cpu;
@@ -830,76 +830,76 @@ struct scx_rq {
 #endif
 	u64			clock;			/* current per-rq clock -- see scx_bpf_now() */
 #ifdef CONFIG_EXT_SUB_SCHED
-	struct llist_head	ecaps_to_sync;		/* pending ecaps syncs */
-	struct task_struct	*sub_dispatch_prev;
+	ഘടന llist_head	ecaps_to_sync;		/* pending ecaps syncs */
+	ഘടന task_struct	*sub_dispatch_prev;
 #endif
 	cpumask_var_t		cpus_to_sync;
 	bool			kick_sync_pending;
 	unsigned long		kick_sync;
 
-	struct list_head	sched_pcpus_to_kick;	/* see kick_cpus_irq_workfn() */
+	ഘടന list_head	sched_pcpus_to_kick;	/* see kick_cpus_irq_workfn() */
 
 	raw_spinlock_t		deferred_reenq_lock;
-	struct list_head	deferred_reenq_locals;	/* scheds requesting reenq of local DSQ */
-	struct list_head	deferred_reenq_users;	/* user DSQs requesting reenq */
-	struct balance_callback	deferred_bal_cb;
-	struct balance_callback	kick_sync_bal_cb;
-	struct irq_work		deferred_irq_work;
-	struct irq_work		kick_cpus_irq_work;
+	ഘടന list_head	deferred_reenq_locals;	/* scheds requesting reenq of local DSQ */
+	ഘടന list_head	deferred_reenq_users;	/* user DSQs requesting reenq */
+	ഘടന balance_callback	deferred_bal_cb;
+	ഘടന balance_callback	kick_sync_bal_cb;
+	ഘടന irq_work		deferred_irq_work;
+	ഘടന irq_work		kick_cpus_irq_work;
 };
 #endif /* CONFIG_SCHED_CLASS_EXT */
 
-static inline int rt_bandwidth_enabled(void)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ rt_bandwidth_enabled(ശൂന്യം)
 {
-	return sysctl_sched_rt_runtime >= 0;
+	തിരികെ sysctl_sched_rt_runtime >= 0;
 }
 
 /* RT IPI pull logic requires IRQ_WORK */
-#if defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
-# define HAVE_RT_PUSH_IPI
+#എങ്കിൽ defined(CONFIG_IRQ_WORK) && defined(CONFIG_SMP)
+# define HAVE_RT_തള്ളുക_IPI
 #endif
 
 /* Real-Time classes' related field in a runqueue: */
-struct rt_rq {
-	struct rt_prio_array	active;
-	unsigned int		rt_nr_running;
-	unsigned int		rr_nr_running;
-	struct {
-		int		curr; /* highest queued rt task prio */
-		int		next; /* next highest */
+ഘടന rt_rq {
+	ഘടന rt_prio_array	active;
+	unsigned പൂർണ്ണസംഖ്യ		rt_nr_running;
+	unsigned പൂർണ്ണസംഖ്യ		rr_nr_running;
+	ഘടന {
+		പൂർണ്ണസംഖ്യ		curr; /* highest queued rt task prio */
+		പൂർണ്ണസംഖ്യ		next; /* next highest */
 	} highest_prio;
 	bool			overloaded;
-	struct plist_head	pushable_tasks;
+	ഘടന plist_head	pushable_tasks;
 
-	int			rt_queued;
+	പൂർണ്ണസംഖ്യ			rt_queued;
 
 #ifdef CONFIG_RT_GROUP_SCHED
-	int			rt_throttled;
+	പൂർണ്ണസംഖ്യ			rt_throttled;
 	u64			rt_time; /* consumed RT time, goes up in update_curr_rt */
 	u64			rt_runtime; /* allotted RT time, "slice" from rt_bandwidth, RT sharing/balancing */
 	/* Nests inside the rq lock: */
 	raw_spinlock_t		rt_runtime_lock;
 
-	unsigned int		rt_nr_boosted;
+	unsigned പൂർണ്ണസംഖ്യ		rt_nr_boosted;
 
-	struct rq		*rq; /* this is always top-level rq, cache? */
+	ഘടന rq		*rq; /* this is always top-level rq, cache? */
 #endif
 #ifdef CONFIG_CGROUP_SCHED
-	struct task_group	*tg; /* this tg has "this" rt_rq on given CPU for runnable entities */
+	ഘടന task_group	*tg; /* this tg has "this" rt_rq on given CPU for runnable entities */
 #endif
 };
 
-static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
+സ്ഥിതം വരിയിൽ bool rt_rq_is_runnable(ഘടന rt_rq *rt_rq)
 {
-	return rt_rq->rt_queued && rt_rq->rt_nr_running;
+	തിരികെ rt_rq->rt_queued && rt_rq->rt_nr_running;
 }
 
 /* Deadline class' related fields in a runqueue */
-struct dl_rq {
+ഘടന dl_rq {
 	/* runqueue is an rbtree, ordered by deadline */
-	struct rb_root_cached	root;
+	ഘടന rb_വേര്_cached	വേര്;
 
-	unsigned int		dl_nr_running;
+	unsigned പൂർണ്ണസംഖ്യ		dl_nr_running;
 
 	/*
 	 * Deadline values of the currently executing and the
@@ -907,20 +907,20 @@ struct dl_rq {
 	 * the decision whether or not a ready but not running task
 	 * should migrate somewhere else.
 	 */
-	struct {
+	ഘടന {
 		u64		curr;
 		u64		next;
 	} earliest_dl;
 
 	bool			overloaded;
 
-	struct sched_dl_entity	*curr;
+	ഘടന sched_dl_entity	*curr;
 	/*
 	 * Tasks on this rq that can be pushed away. They are kept in
 	 * an rb-tree, ordered by tasks' deadlines, with caching
 	 * of the leftmost (earliest deadline) element.
 	 */
-	struct rb_root_cached	pushable_dl_tasks_root;
+	ഘടന rb_വേര്_cached	pushable_dl_tasks_വേര്;
 
 	/*
 	 * "Active utilization" for this runqueue: increased when a
@@ -956,39 +956,39 @@ struct dl_rq {
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 /* Check whether a task group is root tg */
-#define is_root_task_group(tg) ((tg) == &root_task_group)
+#define is_വേര്_task_group(tg) ((tg) == &വേര്_task_group)
 /* An entity is a task if it doesn't "own" a runqueue */
 #define entity_is_task(se)	(!se->my_q)
 
-static inline void se_update_runnable(struct sched_entity *se)
+സ്ഥിതം വരിയിൽ ശൂന്യം se_update_runnable(ഘടന sched_entity *se)
 {
-	if (!entity_is_task(se))
+	എങ്കിൽ (!entity_is_task(se))
 		se->runnable_weight = se->my_q->h_nr_runnable;
 }
 
-static inline long se_runnable(struct sched_entity *se)
+സ്ഥിതം വരിയിൽ long se_runnable(ഘടന sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	എങ്കിൽ (se->sched_delayed)
+		തിരികെ false;
 
-	if (entity_is_task(se))
-		return !!se->on_rq;
-	else
-		return se->runnable_weight;
+	എങ്കിൽ (entity_is_task(se))
+		തിരികെ !!se->on_rq;
+	അല്ലെങ്കിൽ
+		തിരികെ se->runnable_weight;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#അല്ലെങ്കിൽ /* !CONFIG_FAIR_GROUP_SCHED: */
 
 #define entity_is_task(se)	1
 
-static inline void se_update_runnable(struct sched_entity *se) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം se_update_runnable(ഘടന sched_entity *se) { }
 
-static inline long se_runnable(struct sched_entity *se)
+സ്ഥിതം വരിയിൽ long se_runnable(ഘടന sched_entity *se)
 {
-	if (se->sched_delayed)
-		return false;
+	എങ്കിൽ (se->sched_delayed)
+		തിരികെ false;
 
-	return !!se->on_rq;
+	തിരികെ !!se->on_rq;
 }
 
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
@@ -996,21 +996,21 @@ static inline long se_runnable(struct sched_entity *se)
 /*
  * XXX we want to get rid of these helpers and use the full load resolution.
  */
-static inline long se_weight(struct sched_entity *se)
+സ്ഥിതം വരിയിൽ long se_weight(ഘടന sched_entity *se)
 {
-	return scale_load_down(se->load.weight);
+	തിരികെ scale_load_down(se->load.weight);
 }
 
 
-static inline bool sched_asym_prefer(int a, int b)
+സ്ഥിതം വരിയിൽ bool sched_asym_prefer(പൂർണ്ണസംഖ്യ a, പൂർണ്ണസംഖ്യ b)
 {
-	return arch_asym_cpu_priority(a) > arch_asym_cpu_priority(b);
+	തിരികെ arch_asym_cpu_priority(a) > arch_asym_cpu_priority(b);
 }
 
-struct perf_domain {
-	struct em_perf_domain *em_pd;
-	struct perf_domain *next;
-	struct rcu_head rcu;
+ഘടന perf_domain {
+	ഘടന em_perf_domain *em_pd;
+	ഘടന perf_domain *next;
+	ഘടന rcu_head rcu;
 };
 
 /*
@@ -1021,10 +1021,10 @@ struct perf_domain {
  * object.
  *
  */
-struct root_domain {
+ഘടന വേര്_domain {
 	atomic_t		refcount;
-	atomic_t		rto_count;
-	struct rcu_head		rcu;
+	atomic_t		rto_എണ്ണം;
+	ഘടന rcu_head		rcu;
 	cpumask_var_t		span;
 	cpumask_var_t		online;
 
@@ -1043,9 +1043,9 @@ struct root_domain {
 	 * than one runnable -deadline task (as it is below for RT tasks).
 	 */
 	cpumask_var_t		dlo_mask;
-	atomic_t		dlo_count;
-	struct dl_bw		dl_bw;
-	struct cpudl		cpudl;
+	atomic_t		dlo_എണ്ണം;
+	ഘടന dl_bw		dl_bw;
+	ഘടന cpudl		cpudl;
 
 	/*
 	 * Indicate whether a root_domain's dl_bw has been checked or
@@ -1056,15 +1056,15 @@ struct root_domain {
 	 */
 	u64 visit_cookie;
 
-#ifdef HAVE_RT_PUSH_IPI
+#ifdef HAVE_RT_തള്ളുക_IPI
 	/*
 	 * For IPI pull requests, loop across the rto_mask.
 	 */
-	struct irq_work		rto_push_work;
+	ഘടന irq_work		rto_തള്ളുക_work;
 	raw_spinlock_t		rto_lock;
 	/* These are only updated and read within rto_lock */
-	int			rto_loop;
-	int			rto_cpu;
+	പൂർണ്ണസംഖ്യ			rto_loop;
+	പൂർണ്ണസംഖ്യ			rto_cpu;
 	/* These atomics are updated outside of a lock */
 	atomic_t		rto_loop_next;
 	atomic_t		rto_loop_start;
@@ -1074,34 +1074,34 @@ struct root_domain {
 	 * one runnable RT task.
 	 */
 	cpumask_var_t		rto_mask;
-	struct cpupri		cpupri;
+	ഘടന cpupri		cpupri;
 
 	/*
 	 * NULL-terminated list of performance domains intersecting with the
 	 * CPUs of the rd. Protected by RCU.
 	 */
-	struct perf_domain __rcu *pd;
+	ഘടന perf_domain __rcu *pd;
 };
 
-extern void init_defrootdomain(void);
-extern int sched_init_domains(const struct cpumask *cpu_map);
-extern void rq_attach_root(struct rq *rq, struct root_domain *rd);
-extern void sched_get_rd(struct root_domain *rd);
-extern void sched_put_rd(struct root_domain *rd);
+ബാഹ്യ ശൂന്യം init_defrootdomain(ശൂന്യം);
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_init_domains(സ്ഥിരം ഘടന cpumask *cpu_map);
+ബാഹ്യ ശൂന്യം rq_attach_വേര്(ഘടന rq *rq, ഘടന വേര്_domain *rd);
+ബാഹ്യ ശൂന്യം sched_get_rd(ഘടന വേര്_domain *rd);
+ബാഹ്യ ശൂന്യം sched_put_rd(ഘടന വേര്_domain *rd);
 
-static inline int get_rd_overloaded(struct root_domain *rd)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ get_rd_overloaded(ഘടന വേര്_domain *rd)
 {
-	return READ_ONCE(rd->overloaded);
+	തിരികെ READ_ONCE(rd->overloaded);
 }
 
-static inline void set_rd_overloaded(struct root_domain *rd, int status)
+സ്ഥിതം വരിയിൽ ശൂന്യം set_rd_overloaded(ഘടന വേര്_domain *rd, പൂർണ്ണസംഖ്യ status)
 {
-	if (get_rd_overloaded(rd) != status)
+	എങ്കിൽ (get_rd_overloaded(rd) != status)
 		WRITE_ONCE(rd->overloaded, status);
 }
 
-#ifdef HAVE_RT_PUSH_IPI
-extern void rto_push_irq_work_func(struct irq_work *work);
+#ifdef HAVE_RT_തള്ളുക_IPI
+ബാഹ്യ ശൂന്യം rto_തള്ളുക_irq_work_func(ഘടന irq_work *work);
 #endif
 
 #ifdef CONFIG_UCLAMP_TASK
@@ -1113,8 +1113,8 @@ extern void rto_push_irq_work_func(struct irq_work *work);
  * Keep track of how many tasks are RUNNABLE for a given utilization
  * clamp value.
  */
-struct uclamp_bucket {
-	unsigned long value : bits_per(SCHED_CAPACITY_SCALE);
+ഘടന uclamp_bucket {
+	unsigned long മൂല്യം : bits_per(SCHED_CAPACITY_SCALE);
 	unsigned long tasks : BITS_PER_LONG - bits_per(SCHED_CAPACITY_SCALE);
 };
 
@@ -1140,12 +1140,12 @@ struct uclamp_bucket {
  * utilization clamp values (UCLAMP_BUCKETS), use a simple array to track
  * the metrics required to compute all the per-rq utilization clamp values.
  */
-struct uclamp_rq {
-	unsigned int value;
-	struct uclamp_bucket bucket[UCLAMP_BUCKETS];
+ഘടന uclamp_rq {
+	unsigned പൂർണ്ണസംഖ്യ മൂല്യം;
+	ഘടന uclamp_bucket bucket[UCLAMP_BUCKETS];
 };
 
-DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
+DECLARE_STATIC_താക്കോൽ_FALSE(sched_uclamp_used);
 #endif /* CONFIG_UCLAMP_TASK */
 
 /*
@@ -1155,7 +1155,7 @@ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
  * (such as the load balancing or the thread migration code), lock
  * acquire operations must be ordered by ascending &runqueue.
  */
-struct rq {
+ഘടന rq {
 	/*
 	 * The following members are loaded together, without holding the
 	 * rq->lock, in an extremely hot loop in update_sg_lb_stats()
@@ -1164,23 +1164,23 @@ struct rq {
 	 * line. Even though some of them are frequently modified, they are
 	 * loaded much more frequently than they are stored.
 	 */
-	unsigned int		nr_running;
+	unsigned പൂർണ്ണസംഖ്യ		nr_running;
 #ifdef CONFIG_NUMA_BALANCING
-	unsigned int		nr_numa_running;
-	unsigned int		nr_preferred_running;
+	unsigned പൂർണ്ണസംഖ്യ		nr_numa_running;
+	unsigned പൂർണ്ണസംഖ്യ		nr_preferred_running;
 #endif
-	unsigned int		ttwu_pending;
+	unsigned പൂർണ്ണസംഖ്യ		ttwu_pending;
 	unsigned long		cpu_capacity;
 #ifdef CONFIG_SCHED_PROXY_EXEC
-	struct task_struct __rcu	*donor;  /* Scheduling context */
-	struct task_struct __rcu	*curr;   /* Execution context */
-#else
-	union {
-		struct task_struct __rcu *donor; /* Scheduler context */
-		struct task_struct __rcu *curr;  /* Execution context */
+	ഘടന task_struct __rcu	*donor;  /* Scheduling context */
+	ഘടന task_struct __rcu	*curr;   /* Execution context */
+#അല്ലെങ്കിൽ
+	സംഘം {
+		ഘടന task_struct __rcu *donor; /* Scheduler context */
+		ഘടന task_struct __rcu *curr;  /* Execution context */
 	};
 #endif
-	struct task_struct	*idle;
+	ഘടന task_struct	*idle;
 	/* padding left here deliberately */
 
 	/*
@@ -1193,26 +1193,26 @@ struct rq {
 	raw_spinlock_t		__lock;
 
 #ifdef CONFIG_NO_HZ_COMMON
-	unsigned int		nohz_tick_stopped;
+	unsigned പൂർണ്ണസംഖ്യ		nohz_tick_stopped;
 	atomic_t		nohz_flags;
-	unsigned int		has_blocked_load;
+	unsigned പൂർണ്ണസംഖ്യ		has_blocked_load;
 	unsigned long		last_blocked_load_update_tick;
 	call_single_data_t	nohz_csd;
 #endif /* CONFIG_NO_HZ_COMMON */
 
 #ifdef CONFIG_UCLAMP_TASK
 	/* Utilization clamp values based on CPU's RUNNABLE tasks */
-	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
-	unsigned int		uclamp_flags;
+	ഘടന uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+	unsigned പൂർണ്ണസംഖ്യ		uclamp_flags;
 #define UCLAMP_FLAG_IDLE 0x01
 #endif
 
-	struct cfs_rq		cfs;
-	struct rt_rq		rt;
-	struct dl_rq		dl;
+	ഘടന cfs_rq		cfs;
+	ഘടന rt_rq		rt;
+	ഘടന dl_rq		dl;
 #ifdef CONFIG_SCHED_CLASS_EXT
-	struct scx_rq		scx;
-	struct sched_dl_entity	ext_server;
+	ഘടന scx_rq		scx;
+	ഘടന sched_dl_entity	ext_server;
 #endif
 #ifdef CONFIG_SCHED_CACHE
 	raw_spinlock_t		cpu_epoch_lock ____cacheline_aligned;
@@ -1221,21 +1221,21 @@ struct rq {
 	unsigned long		cpu_epoch_next;
 #endif
 
-	struct sched_dl_entity	fair_server;
+	ഘടന sched_dl_entity	fair_server;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	/* list of leaf cfs_rq on this CPU: */
-	struct list_head	leaf_cfs_rq_list;
-	struct list_head	*tmp_alone_branch;
+	ഘടന list_head	leaf_cfs_rq_list;
+	ഘടന list_head	*tmp_alone_branch;
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 
 #ifdef CONFIG_NUMA_BALANCING
-	unsigned int		numa_migrate_on;
+	unsigned പൂർണ്ണസംഖ്യ		numa_migrate_on;
 #endif
 
 #ifdef CONFIG_SCHED_CACHE
-	unsigned int		nr_pref_llc_running;
-	unsigned int		nr_llc_running;
+	unsigned പൂർണ്ണസംഖ്യ		nr_pref_llc_running;
+	unsigned പൂർണ്ണസംഖ്യ		nr_llc_running;
 #endif
 
 	/*
@@ -1246,11 +1246,11 @@ struct rq {
 	 */
 	unsigned long		nr_uninterruptible;
 
-	struct sched_dl_entity	*dl_server;
-	struct task_struct	*stop;
-	const struct sched_class *next_class;
+	ഘടന sched_dl_entity	*dl_server;
+	ഘടന task_struct	*stop;
+	സ്ഥിരം ഘടന sched_class *next_class;
 	unsigned long		next_balance;
-	struct mm_struct	*prev_mm;
+	ഘടന mm_struct	*prev_mm;
 
 	/*
 	 * The following fields of clock data are frequently referenced
@@ -1260,7 +1260,7 @@ struct rq {
 	u64			clock_pelt;
 	u64			clock;
 	unsigned long		lost_idle_time;
-	unsigned int		clock_update_flags;
+	unsigned പൂർണ്ണസംഖ്യ		clock_update_flags;
 	u64			clock_pelt_idle;
 	u64			clock_idle;
 
@@ -1270,40 +1270,40 @@ struct rq {
 #endif
 
 	u64 last_seen_need_resched_ns;
-	int ticks_without_resched;
+	പൂർണ്ണസംഖ്യ ticks_without_resched;
 
 #ifdef CONFIG_MEMBARRIER
-	int membarrier_state;
+	പൂർണ്ണസംഖ്യ membarrier_state;
 #endif
 
-	struct root_domain		*rd;
-	struct sched_domain __rcu	*sd;
+	ഘടന വേര്_domain		*rd;
+	ഘടന sched_domain __rcu	*sd;
 
-	struct balance_callback *balance_callback;
+	ഘടന balance_callback *balance_callback;
 
-	unsigned char		nohz_idle_balance;
-	unsigned char		idle_balance;
+	unsigned അക്ഷരം		nohz_idle_balance;
+	unsigned അക്ഷരം		idle_balance;
 
 	unsigned long		misfit_task_load;
 
 	/* For active balancing */
-	int			active_balance;
-	int			push_cpu;
-	struct cpu_stop_work	active_balance_work;
+	പൂർണ്ണസംഖ്യ			active_balance;
+	പൂർണ്ണസംഖ്യ			തള്ളുക_cpu;
+	ഘടന cpu_stop_work	active_balance_work;
 
 	/* CPU of this runqueue: */
-	int			cpu;
-	int			online;
+	പൂർണ്ണസംഖ്യ			cpu;
+	പൂർണ്ണസംഖ്യ			online;
 
-	struct list_head cfs_tasks;
+	ഘടന list_head cfs_tasks;
 
-	struct sched_avg	avg_rt;
-	struct sched_avg	avg_dl;
+	ഘടന sched_avg	avg_rt;
+	ഘടന sched_avg	avg_dl;
 #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-	struct sched_avg	avg_irq;
+	ഘടന sched_avg	avg_irq;
 #endif
 #ifdef CONFIG_SCHED_HW_PRESSURE
-	struct sched_avg	avg_hw;
+	ഘടന sched_avg	avg_hw;
 #endif
 	u64			idle_stamp;
 	u64			avg_idle;
@@ -1312,7 +1312,7 @@ struct rq {
 	u64			max_idle_balance_cost;
 
 #ifdef CONFIG_HOTPLUG_CPU
-	struct rcuwait		hotplug_wait;
+	ഘടന rcuwait		hotplug_wait;
 #endif
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
@@ -1326,7 +1326,7 @@ struct rq {
 	u64			prev_steal_time_rq;
 #endif
 #ifdef CONFIG_PREFERRED_CPU
-	bool			npc_push_work_pending;
+	bool			npc_തള്ളുക_work_pending;
 #endif
 
 	/* calc_load related fields */
@@ -1335,55 +1335,55 @@ struct rq {
 
 #ifdef CONFIG_SCHED_HRTICK
 	call_single_data_t	hrtick_csd;
-	struct hrtimer		hrtick_timer;
+	ഘടന hrtimer		hrtick_timer;
 	ktime_t			hrtick_time;
 	ktime_t			hrtick_delay;
-	unsigned int		hrtick_sched;
+	unsigned പൂർണ്ണസംഖ്യ		hrtick_sched;
 #endif
 
 #ifdef CONFIG_SCHEDSTATS
 	/* latency stats */
-	struct sched_info	rq_sched_info;
+	ഘടന sched_info	rq_sched_info;
 	unsigned long long	rq_cpu_time;
 
 	/* sys_sched_yield() stats */
-	unsigned int		yld_count;
+	unsigned പൂർണ്ണസംഖ്യ		yld_എണ്ണം;
 
 	/* schedule() stats */
-	unsigned int		sched_count;
-	unsigned int		sched_goidle;
+	unsigned പൂർണ്ണസംഖ്യ		sched_എണ്ണം;
+	unsigned പൂർണ്ണസംഖ്യ		sched_goidle;
 
 	/* try_to_wake_up() stats */
-	unsigned int		ttwu_count;
-	unsigned int		ttwu_local;
+	unsigned പൂർണ്ണസംഖ്യ		ttwu_എണ്ണം;
+	unsigned പൂർണ്ണസംഖ്യ		ttwu_local;
 #endif
 
 #ifdef CONFIG_CPU_IDLE
 	/* Must be inspected within a RCU lock section */
-	struct cpuidle_state	*idle_state;
+	ഘടന cpuidle_state	*idle_state;
 #endif
 
-	unsigned int		nr_pinned;
-	unsigned int		push_busy;
-	struct cpu_stop_work	push_work;
+	unsigned പൂർണ്ണസംഖ്യ		nr_pinned;
+	unsigned പൂർണ്ണസംഖ്യ		തള്ളുക_busy;
+	ഘടന cpu_stop_work	തള്ളുക_work;
 
 #ifdef CONFIG_SCHED_CORE
 	/* per rq */
-	struct rq		*core;
-	struct task_struct	*core_pick;
-	struct sched_dl_entity	*core_dl_server;
-	unsigned int		core_enabled;
-	struct rb_root		core_tree;
+	ഘടന rq		*core;
+	ഘടന task_struct	*core_pick;
+	ഘടന sched_dl_entity	*core_dl_server;
+	unsigned പൂർണ്ണസംഖ്യ		core_enabled;
+	ഘടന rb_വേര്		core_വൃക്ഷം;
 
 	/* shared state -- careful with sched_core_cpu_deactivate() */
-	unsigned int		core_task_seq;
-	unsigned int		core_pick_seq;
+	unsigned പൂർണ്ണസംഖ്യ		core_task_seq;
+	unsigned പൂർണ്ണസംഖ്യ		core_pick_seq;
 	unsigned long		core_cookie;
-	unsigned int		core_forceidle_count;
-	unsigned int		core_forceidle_seq;
-	unsigned int		core_forceidle_occupation;
+	unsigned പൂർണ്ണസംഖ്യ		core_forceidle_എണ്ണം;
+	unsigned പൂർണ്ണസംഖ്യ		core_forceidle_seq;
+	unsigned പൂർണ്ണസംഖ്യ		core_forceidle_occupation;
 	u64			core_forceidle_start;
-	unsigned int		core_pick_in_flight;
+	unsigned പൂർണ്ണസംഖ്യ		core_pick_in_flight;
 #endif /* CONFIG_SCHED_CORE */
 
 	/* Scratch cpumask to be temporarily used under rq_lock */
@@ -1391,7 +1391,7 @@ struct rq {
 
 #ifdef CONFIG_CFS_BANDWIDTH
 	call_single_data_t	cfsb_csd;
-	struct list_head	cfsb_csd_list;
+	ഘടന list_head	cfsb_csd_list;
 #endif
 
 	atomic_t		nr_iowait;
@@ -1400,42 +1400,42 @@ struct rq {
 #ifdef CONFIG_FAIR_GROUP_SCHED
 
 /* CPU runqueue to which this cfs_rq is attached */
-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+സ്ഥിതം വരിയിൽ ഘടന rq *rq_of(ഘടന cfs_rq *cfs_rq)
 {
-	return cfs_rq->rq;
+	തിരികെ cfs_rq->rq;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#അല്ലെങ്കിൽ /* !CONFIG_FAIR_GROUP_SCHED: */
 
-static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+സ്ഥിതം വരിയിൽ ഘടന rq *rq_of(ഘടന cfs_rq *cfs_rq)
 {
-	return container_of(cfs_rq, struct rq, cfs);
+	തിരികെ container_of(cfs_rq, ഘടന rq, cfs);
 }
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-static inline int cpu_of(struct rq *rq)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ cpu_of(ഘടന rq *rq)
 {
-	return rq->cpu;
+	തിരികെ rq->cpu;
 }
 
-#define MDF_PUSH		0x01
+#define MDF_തള്ളുക		0x01
 
-static inline bool is_migration_disabled(struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool is_migration_disabled(ഘടന task_struct *p)
 {
-	return p->migration_disabled;
+	തിരികെ p->migration_disabled;
 }
 
-DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
-DECLARE_PER_CPU(struct rnd_state, sched_rnd_state);
+DECLARE_PER_CPU_SHARED_ALIGNED(ഘടന rq, runqueues);
+DECLARE_PER_CPU(ഘടന rnd_state, sched_rnd_state);
 
-static inline u32 sched_rng(void)
+സ്ഥിതം വരിയിൽ u32 sched_rng(ശൂന്യം)
 {
-	return prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
+	തിരികെ prandom_u32_state(this_cpu_ptr(&sched_rnd_state));
 }
 
-static __always_inline struct rq *__this_rq(void)
+സ്ഥിതം __always_inline ഘടന rq *__this_rq(ശൂന്യം)
 {
-	return this_cpu_ptr(&runqueues);
+	തിരികെ this_cpu_ptr(&runqueues);
 }
 
 #define cpu_rq(cpu)		(&per_cpu(runqueues, (cpu)))
@@ -1444,9 +1444,9 @@ static __always_inline struct rq *__this_rq(void)
 #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
 #define raw_rq()		raw_cpu_ptr(&runqueues)
 
-static inline bool idle_rq(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool idle_rq(ഘടന rq *rq)
 {
-	return rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
+	തിരികെ rq->curr == rq->idle && !rq->nr_running && !rq->ttwu_pending;
 }
 
 /**
@@ -1455,69 +1455,69 @@ static inline bool idle_rq(struct rq *rq)
  *
  * Return: 1 if the CPU is currently idle. 0 otherwise.
  */
-static inline bool available_idle_cpu(int cpu)
+സ്ഥിതം വരിയിൽ bool available_idle_cpu(പൂർണ്ണസംഖ്യ cpu)
 {
-	if (!idle_rq(cpu_rq(cpu)))
-		return 0;
+	എങ്കിൽ (!idle_rq(cpu_rq(cpu)))
+		തിരികെ 0;
 
-	if (vcpu_is_preempted(cpu))
-		return 0;
+	എങ്കിൽ (vcpu_is_preempted(cpu))
+		തിരികെ 0;
 
-	return 1;
+	തിരികെ 1;
 }
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
-static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_set_donor(ഘടന rq *rq, ഘടന task_struct *t)
 {
 	rcu_assign_pointer(rq->donor, t);
 }
-#else
-static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+#അല്ലെങ്കിൽ
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_set_donor(ഘടന rq *rq, ഘടന task_struct *t)
 {
 	/* Do nothing */
 }
 #endif
 
 #ifdef CONFIG_SCHED_CORE
-static inline struct cpumask *sched_group_span(struct sched_group *sg);
+സ്ഥിതം വരിയിൽ ഘടന cpumask *sched_group_span(ഘടന sched_group *sg);
 
-DECLARE_STATIC_KEY_FALSE(__sched_core_enabled);
+DECLARE_STATIC_താക്കോൽ_FALSE(__sched_core_enabled);
 
-static inline bool sched_core_enabled(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool sched_core_enabled(ഘടന rq *rq)
 {
-	return static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
+	തിരികെ static_branch_unlikely(&__sched_core_enabled) && rq->core_enabled;
 }
 
-static inline bool sched_core_disabled(void)
+സ്ഥിതം വരിയിൽ bool sched_core_disabled(ശൂന്യം)
 {
-	return !static_branch_unlikely(&__sched_core_enabled);
+	തിരികെ !static_branch_unlikely(&__sched_core_enabled);
 }
 
 /*
  * Be careful with this function; not for general use. The return value isn't
  * stable unless you actually hold a relevant rq->__lock.
  */
-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+സ്ഥിതം വരിയിൽ raw_spinlock_t *rq_lockp(ഘടന rq *rq)
 {
-	if (sched_core_enabled(rq))
-		return &rq->core->__lock;
+	എങ്കിൽ (sched_core_enabled(rq))
+		തിരികെ &rq->core->__lock;
 
-	return &rq->__lock;
+	തിരികെ &rq->__lock;
 }
 
-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+സ്ഥിതം വരിയിൽ raw_spinlock_t *__rq_lockp(ഘടന rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	if (rq->core_enabled)
-		return &rq->core->__lock;
+	എങ്കിൽ (rq->core_enabled)
+		തിരികെ &rq->core->__lock;
 
-	return &rq->__lock;
+	തിരികെ &rq->__lock;
 }
 
-extern bool
-cfs_prio_less(const struct task_struct *a, const struct task_struct *b, bool fi);
+ബാഹ്യ bool
+cfs_prio_less(സ്ഥിരം ഘടന task_struct *a, സ്ഥിരം ഘടന task_struct *b, bool fi);
 
-extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_fi);
+ബാഹ്യ ശൂന്യം task_vruntime_update(ഘടന rq *rq, ഘടന task_struct *p, bool in_fi);
 
 /*
  * Helpers to check if the CPU's core cookie matches with the task's cookie
@@ -1525,31 +1525,31 @@ extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_f
  * A special case is that the task's cookie always matches with CPU's core
  * cookie if the CPU is in an idle core.
  */
-static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool sched_cpu_cookie_match(ഘടന rq *rq, ഘടന task_struct *p)
 {
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	എങ്കിൽ (!sched_core_enabled(rq))
+		തിരികെ true;
 
-	return rq->core->core_cookie == p->core_cookie;
+	തിരികെ rq->core->core_cookie == p->core_cookie;
 }
 
-static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool sched_core_cookie_match(ഘടന rq *rq, ഘടന task_struct *p)
 {
 	bool idle_core = true;
-	int cpu;
+	പൂർണ്ണസംഖ്യ cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	എങ്കിൽ (!sched_core_enabled(rq))
+		തിരികെ true;
 
-	if (rq->core->core_cookie == p->core_cookie)
-		return true;
+	എങ്കിൽ (rq->core->core_cookie == p->core_cookie)
+		തിരികെ true;
 
 	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
-		if (!available_idle_cpu(cpu)) {
+		എങ്കിൽ (!available_idle_cpu(cpu)) {
 			idle_core = false;
-			break;
+			നിർത്തുക;
 		}
 	}
 
@@ -1557,149 +1557,149 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
 	 * A CPU in an idle core is always the best choice for tasks with
 	 * cookies.
 	 */
-	return idle_core;
+	തിരികെ idle_core;
 }
 
-static inline bool sched_group_cookie_match(struct rq *rq,
-					    struct task_struct *p,
-					    struct sched_group *group)
+സ്ഥിതം വരിയിൽ bool sched_group_cookie_match(ഘടന rq *rq,
+					    ഘടന task_struct *p,
+					    ഘടന sched_group *group)
 {
-	int cpu;
+	പൂർണ്ണസംഖ്യ cpu;
 
 	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
-	if (!sched_core_enabled(rq))
-		return true;
+	എങ്കിൽ (!sched_core_enabled(rq))
+		തിരികെ true;
 
 	for_each_cpu_and(cpu, sched_group_span(group), p->cpus_ptr) {
-		if (sched_core_cookie_match(cpu_rq(cpu), p))
-			return true;
+		എങ്കിൽ (sched_core_cookie_match(cpu_rq(cpu), p))
+			തിരികെ true;
 	}
-	return false;
+	തിരികെ false;
 }
 
-static inline bool sched_core_enqueued(struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool sched_core_enqueued(ഘടന task_struct *p)
 {
-	return !RB_EMPTY_NODE(&p->core_node);
+	തിരികെ !RB_EMPTY_കണ്ണി(&p->core_കണ്ണി);
 }
 
-extern void sched_core_enqueue(struct rq *rq, struct task_struct *p);
-extern void sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags);
+ബാഹ്യ ശൂന്യം sched_core_enqueue(ഘടന rq *rq, ഘടന task_struct *p);
+ബാഹ്യ ശൂന്യം sched_core_dequeue(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags);
 
-extern void sched_core_get(void);
-extern void sched_core_put(void);
+ബാഹ്യ ശൂന്യം sched_core_get(ശൂന്യം);
+ബാഹ്യ ശൂന്യം sched_core_put(ശൂന്യം);
 
-static inline bool task_has_sched_core(struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool task_has_sched_core(ഘടന task_struct *p)
 {
-	if (sched_core_disabled())
-		return false;
+	എങ്കിൽ (sched_core_disabled())
+		തിരികെ false;
 
-	return !!p->core_cookie;
+	തിരികെ !!p->core_cookie;
 }
 
-#else /* !CONFIG_SCHED_CORE: */
+#അല്ലെങ്കിൽ /* !CONFIG_SCHED_CORE: */
 
-static inline bool sched_core_enabled(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool sched_core_enabled(ഘടന rq *rq)
 {
-	return false;
+	തിരികെ false;
 }
 
-static inline bool sched_core_disabled(void)
+സ്ഥിതം വരിയിൽ bool sched_core_disabled(ശൂന്യം)
 {
-	return true;
+	തിരികെ true;
 }
 
-static inline raw_spinlock_t *rq_lockp(struct rq *rq)
+സ്ഥിതം വരിയിൽ raw_spinlock_t *rq_lockp(ഘടന rq *rq)
 {
-	return &rq->__lock;
+	തിരികെ &rq->__lock;
 }
 
-static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
+സ്ഥിതം വരിയിൽ raw_spinlock_t *__rq_lockp(ഘടന rq *rq)
 	__returns_ctx_lock(rq_lockp(rq)) /* alias them */
 {
-	return &rq->__lock;
+	തിരികെ &rq->__lock;
 }
 
-static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool sched_cpu_cookie_match(ഘടന rq *rq, ഘടന task_struct *p)
 {
-	return true;
+	തിരികെ true;
 }
 
-static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool sched_core_cookie_match(ഘടന rq *rq, ഘടന task_struct *p)
 {
-	return true;
+	തിരികെ true;
 }
 
-static inline bool sched_group_cookie_match(struct rq *rq,
-					    struct task_struct *p,
-					    struct sched_group *group)
+സ്ഥിതം വരിയിൽ bool sched_group_cookie_match(ഘടന rq *rq,
+					    ഘടന task_struct *p,
+					    ഘടന sched_group *group)
 {
-	return true;
+	തിരികെ true;
 }
 
-static inline bool task_has_sched_core(struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool task_has_sched_core(ഘടന task_struct *p)
 {
-	return false;
+	തിരികെ false;
 }
 
 #endif /* !CONFIG_SCHED_CORE */
 
 #ifdef CONFIG_RT_GROUP_SCHED
 # ifdef CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED
-DECLARE_STATIC_KEY_FALSE(rt_group_sched);
-static inline bool rt_group_sched_enabled(void)
+DECLARE_STATIC_താക്കോൽ_FALSE(rt_group_sched);
+സ്ഥിതം വരിയിൽ bool rt_group_sched_enabled(ശൂന്യം)
 {
-	return static_branch_unlikely(&rt_group_sched);
+	തിരികെ static_branch_unlikely(&rt_group_sched);
 }
-# else /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
-DECLARE_STATIC_KEY_TRUE(rt_group_sched);
-static inline bool rt_group_sched_enabled(void)
+# അല്ലെങ്കിൽ /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED: */
+DECLARE_STATIC_താക്കോൽ_TRUE(rt_group_sched);
+സ്ഥിതം വരിയിൽ bool rt_group_sched_enabled(ശൂന്യം)
 {
-	return static_branch_likely(&rt_group_sched);
+	തിരികെ static_branch_likely(&rt_group_sched);
 }
 # endif /* !CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED */
-#else /* !CONFIG_RT_GROUP_SCHED: */
+#അല്ലെങ്കിൽ /* !CONFIG_RT_GROUP_SCHED: */
 # define rt_group_sched_enabled()	false
 #endif /* !CONFIG_RT_GROUP_SCHED */
 
-static inline void lockdep_assert_rq_held(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം lockdep_assert_rq_held(ഘടന rq *rq)
 	__assumes_ctx_lock(__rq_lockp(rq))
 {
 	lockdep_assert_held(__rq_lockp(rq));
 }
 
-extern void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
+ബാഹ്യ ശൂന്യം raw_spin_rq_lock_nested(ഘടന rq *rq, പൂർണ്ണസംഖ്യ subclass)
 	__acquires(__rq_lockp(rq));
 
-extern bool raw_spin_rq_trylock(struct rq *rq)
+ബാഹ്യ bool raw_spin_rq_trylock(ഘടന rq *rq)
 	__cond_acquires(true, __rq_lockp(rq));
 
-static inline void raw_spin_rq_lock(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം raw_spin_rq_lock(ഘടന rq *rq)
 	__acquires(__rq_lockp(rq))
 {
 	raw_spin_rq_lock_nested(rq, 0);
 }
 
-static inline void raw_spin_rq_unlock(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം raw_spin_rq_unlock(ഘടന rq *rq)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_unlock(rq_lockp(rq));
 }
 
-static inline void raw_spin_rq_lock_irq(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം raw_spin_rq_lock_irq(ഘടന rq *rq)
 	__acquires(__rq_lockp(rq))
 {
 	local_irq_disable();
 	raw_spin_rq_lock(rq);
 }
 
-static inline void raw_spin_rq_unlock_irq(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം raw_spin_rq_unlock_irq(ഘടന rq *rq)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_rq_unlock(rq);
 	local_irq_enable();
 }
 
-static inline unsigned long _raw_spin_rq_lock_irqsave(struct rq *rq)
+സ്ഥിതം വരിയിൽ unsigned long _raw_spin_rq_lock_irqsave(ഘടന rq *rq)
 	__acquires(__rq_lockp(rq))
 {
 	unsigned long flags;
@@ -1707,10 +1707,10 @@ static inline unsigned long _raw_spin_rq_lock_irqsave(struct rq *rq)
 	local_irq_save(flags);
 	raw_spin_rq_lock(rq);
 
-	return flags;
+	തിരികെ flags;
 }
 
-static inline void raw_spin_rq_unlock_irqrestore(struct rq *rq, unsigned long flags)
+സ്ഥിതം വരിയിൽ ശൂന്യം raw_spin_rq_unlock_irqrestore(ഘടന rq *rq, unsigned long flags)
 	__releases(__rq_lockp(rq))
 {
 	raw_spin_rq_unlock(rq);
@@ -1718,69 +1718,69 @@ static inline void raw_spin_rq_unlock_irqrestore(struct rq *rq, unsigned long fl
 }
 
 #define raw_spin_rq_lock_irqsave(rq, flags)	\
-do {						\
+ചെയ്യുക {						\
 	flags = _raw_spin_rq_lock_irqsave(rq);	\
-} while (0)
+} ആകുമ്പോൾ (0)
 
-extern void __update_idle_core(struct rq *rq);
+ബാഹ്യ ശൂന്യം __update_idle_core(ഘടന rq *rq);
 
-static inline void update_idle_core(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം update_idle_core(ഘടന rq *rq)
 {
-	if (sched_smt_active())
+	എങ്കിൽ (sched_smt_active())
 		__update_idle_core(rq);
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static inline struct task_struct *task_of(struct sched_entity *se)
+സ്ഥിതം വരിയിൽ ഘടന task_struct *task_of(ഘടന sched_entity *se)
 {
 	WARN_ON_ONCE(!entity_is_task(se));
-	return container_of(se, struct task_struct, se);
+	തിരികെ container_of(se, ഘടന task_struct, se);
 }
 
-static inline struct cfs_rq *task_cfs_rq(struct task_struct *p)
+സ്ഥിതം വരിയിൽ ഘടന cfs_rq *task_cfs_rq(ഘടന task_struct *p)
 {
-	return p->se.cfs_rq;
+	തിരികെ p->se.cfs_rq;
 }
 
 /* runqueue on which this entity is (to be) queued */
-static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
+സ്ഥിതം വരിയിൽ ഘടന cfs_rq *cfs_rq_of(സ്ഥിരം ഘടന sched_entity *se)
 {
-	return se->cfs_rq;
+	തിരികെ se->cfs_rq;
 }
 
 /* runqueue "owned" by this group */
-static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+സ്ഥിതം വരിയിൽ ഘടന cfs_rq *group_cfs_rq(ഘടന sched_entity *grp)
 {
-	return grp->my_q;
+	തിരികെ grp->my_q;
 }
 
-#else /* !CONFIG_FAIR_GROUP_SCHED: */
+#അല്ലെങ്കിൽ /* !CONFIG_FAIR_GROUP_SCHED: */
 
-#define task_of(_se)		container_of(_se, struct task_struct, se)
+#define task_of(_se)		container_of(_se, ഘടന task_struct, se)
 
-static inline struct cfs_rq *task_cfs_rq(const struct task_struct *p)
+സ്ഥിതം വരിയിൽ ഘടന cfs_rq *task_cfs_rq(സ്ഥിരം ഘടന task_struct *p)
 {
-	return &task_rq(p)->cfs;
+	തിരികെ &task_rq(p)->cfs;
 }
 
-static inline struct cfs_rq *cfs_rq_of(const struct sched_entity *se)
+സ്ഥിതം വരിയിൽ ഘടന cfs_rq *cfs_rq_of(സ്ഥിരം ഘടന sched_entity *se)
 {
-	const struct task_struct *p = task_of(se);
-	struct rq *rq = task_rq(p);
+	സ്ഥിരം ഘടന task_struct *p = task_of(se);
+	ഘടന rq *rq = task_rq(p);
 
-	return &rq->cfs;
+	തിരികെ &rq->cfs;
 }
 
 /* runqueue "owned" by this group */
-static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+സ്ഥിതം വരിയിൽ ഘടന cfs_rq *group_cfs_rq(ഘടന sched_entity *grp)
 {
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 #endif /* !CONFIG_FAIR_GROUP_SCHED */
 
-extern void update_rq_avg_idle(struct rq *rq);
-extern void update_rq_clock(struct rq *rq);
+ബാഹ്യ ശൂന്യം update_rq_avg_idle(ഘടന rq *rq);
+ബാഹ്യ ശൂന്യം update_rq_clock(ഘടന rq *rq);
 
 /*
  * rq::clock_update_flags bits
@@ -1809,7 +1809,7 @@ extern void update_rq_clock(struct rq *rq);
 #define RQCF_ACT_SKIP		0x02
 #define RQCF_UPDATED		0x04
 
-static inline void assert_clock_updated(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം assert_clock_updated(ഘടന rq *rq)
 {
 	/*
 	 * The only reason for not seeing a clock update since the
@@ -1818,23 +1818,23 @@ static inline void assert_clock_updated(struct rq *rq)
 	WARN_ON_ONCE(rq->clock_update_flags < RQCF_ACT_SKIP);
 }
 
-static inline u64 rq_clock(struct rq *rq)
+സ്ഥിതം വരിയിൽ u64 rq_clock(ഘടന rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock;
+	തിരികെ rq->clock;
 }
 
-static inline u64 rq_clock_task(struct rq *rq)
+സ്ഥിതം വരിയിൽ u64 rq_clock_task(ഘടന rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_task;
+	തിരികെ rq->clock_task;
 }
 
-static inline void rq_clock_skip_update(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_clock_skip_update(ഘടന rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags |= RQCF_REQ_SKIP;
@@ -1844,7 +1844,7 @@ static inline void rq_clock_skip_update(struct rq *rq)
  * See rt task throttling, which is the only time a skip
  * request is canceled.
  */
-static inline void rq_clock_cancel_skipupdate(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_clock_cancel_skipupdate(ഘടന rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags &= ~RQCF_REQ_SKIP;
@@ -1859,69 +1859,69 @@ static inline void rq_clock_cancel_skipupdate(struct rq *rq)
  * After the iterative traversal, we need to call rq_clock_stop_loop_update()
  * to clear RQCF_ACT_SKIP of rq->clock_update_flags.
  */
-static inline void rq_clock_start_loop_update(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_clock_start_loop_update(ഘടന rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	WARN_ON_ONCE(rq->clock_update_flags & RQCF_ACT_SKIP);
 	rq->clock_update_flags |= RQCF_ACT_SKIP;
 }
 
-static inline void rq_clock_stop_loop_update(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_clock_stop_loop_update(ഘടന rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	rq->clock_update_flags &= ~RQCF_ACT_SKIP;
 }
 
-struct rq_flags {
+ഘടന rq_flags {
 	unsigned long flags;
-	struct pin_cookie cookie;
+	ഘടന pin_cookie cookie;
 	/*
 	 * A copy of (rq::clock_update_flags & RQCF_UPDATED) for the
 	 * current pin context is stashed here in case it needs to be
 	 * restored in rq_repin_lock().
 	 */
-	unsigned int clock_update_flags;
+	unsigned പൂർണ്ണസംഖ്യ clock_update_flags;
 };
 
-extern struct balance_callback balance_push_callback;
+ബാഹ്യ ഘടന balance_callback balance_തള്ളുക_callback;
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-extern const struct sched_class ext_sched_class;
+ബാഹ്യ സ്ഥിരം ഘടന sched_class ext_sched_class;
 
-DECLARE_STATIC_KEY_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
-DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+DECLARE_STATIC_താക്കോൽ_FALSE(__scx_enabled);	/* SCX BPF scheduler loaded */
+DECLARE_STATIC_താക്കോൽ_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
 
 #define scx_enabled()		static_branch_unlikely(&__scx_enabled)
 #define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
 
-static inline void scx_rq_clock_update(struct rq *rq, u64 clock)
+സ്ഥിതം വരിയിൽ ശൂന്യം scx_rq_clock_update(ഘടന rq *rq, u64 clock)
 {
-	if (!scx_enabled())
-		return;
+	എങ്കിൽ (!scx_enabled())
+		തിരികെ;
 	WRITE_ONCE(rq->scx.clock, clock);
 	smp_store_release(&rq->scx.flags, rq->scx.flags | SCX_RQ_CLK_VALID);
 }
 
-static inline void scx_rq_clock_invalidate(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം scx_rq_clock_invalidate(ഘടന rq *rq)
 {
-	if (!scx_enabled())
-		return;
+	എങ്കിൽ (!scx_enabled())
+		തിരികെ;
 	WRITE_ONCE(rq->scx.flags, rq->scx.flags & ~SCX_RQ_CLK_VALID);
 }
 
-#else /* !CONFIG_SCHED_CLASS_EXT: */
+#അല്ലെങ്കിൽ /* !CONFIG_SCHED_CLASS_EXT: */
 #define scx_enabled()		false
 #define scx_switched_all()	false
 
-static inline void scx_rq_clock_update(struct rq *rq, u64 clock) {}
-static inline void scx_rq_clock_invalidate(struct rq *rq) {}
+സ്ഥിതം വരിയിൽ ശൂന്യം scx_rq_clock_update(ഘടന rq *rq, u64 clock) {}
+സ്ഥിതം വരിയിൽ ശൂന്യം scx_rq_clock_invalidate(ഘടന rq *rq) {}
 #endif /* !CONFIG_SCHED_CLASS_EXT */
 
-static inline void assert_balance_callbacks_empty(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം assert_balance_callbacks_empty(ഘടന rq *rq)
 {
 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_LOCKING) &&
 		     rq->balance_callback &&
-		     rq->balance_callback != &balance_push_callback);
+		     rq->balance_callback != &balance_തള്ളുക_callback);
 }
 
 /*
@@ -1934,7 +1934,7 @@ static inline void assert_balance_callbacks_empty(struct rq *rq)
  *
  * Also see Documentation/locking/lockdep-design.rst.
  */
-static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_pin_lock(ഘടന rq *rq, ഘടന rq_flags *rf)
 {
 	rf->cookie = lockdep_pin_lock(__rq_lockp(rq));
 
@@ -1943,16 +1943,16 @@ static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
 	assert_balance_callbacks_empty(rq);
 }
 
-static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_unpin_lock(ഘടന rq *rq, ഘടന rq_flags *rf)
 {
-	if (rq->clock_update_flags > RQCF_ACT_SKIP)
+	എങ്കിൽ (rq->clock_update_flags > RQCF_ACT_SKIP)
 		rf->clock_update_flags = RQCF_UPDATED;
 
 	scx_rq_clock_invalidate(rq);
 	lockdep_unpin_lock(__rq_lockp(rq), rf->cookie);
 }
 
-static inline void rq_repin_lock(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_repin_lock(ഘടന rq *rq, ഘടന rq_flags *rf)
 {
 	lockdep_repin_lock(__rq_lockp(rq), rf->cookie);
 
@@ -1963,158 +1963,158 @@ static inline void rq_repin_lock(struct rq *rq, struct rq_flags *rf)
 }
 
 #define __task_rq_lock(...) __acquire_ret(___task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
-extern struct rq *___task_rq_lock(struct task_struct *p, struct rq_flags *rf) __acquires_ret;
+ബാഹ്യ ഘടന rq *___task_rq_lock(ഘടന task_struct *p, ഘടന rq_flags *rf) __acquires_ret;
 
 #define task_rq_lock(...) __acquire_ret(_task_rq_lock(__VA_ARGS__), __rq_lockp(__ret))
-extern struct rq *_task_rq_lock(struct task_struct *p, struct rq_flags *rf)
+ബാഹ്യ ഘടന rq *_task_rq_lock(ഘടന task_struct *p, ഘടന rq_flags *rf)
 	__acquires(&p->pi_lock) __acquires_ret;
 
-static inline void
-__task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+__task_rq_unlock(ഘടന rq *rq, ഘടന task_struct *p, ഘടന rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
 	rq_unpin_lock(rq, rf);
 	raw_spin_rq_unlock(rq);
 }
 
-static inline void
-task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+task_rq_unlock(ഘടന rq *rq, ഘടന task_struct *p, ഘടന rq_flags *rf)
 	__releases(__rq_lockp(rq), &p->pi_lock)
 {
 	__task_rq_unlock(rq, p, rf);
 	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
 }
 
-DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
+DEFINE_LOCK_GUARD_1(task_rq_lock, ഘടന task_struct,
 		    _T->rq = task_rq_lock(_T->lock, &_T->rf),
 		    task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-		    struct rq *rq; struct rq_flags rf)
-DECLARE_LOCK_GUARD_1_ATTRS(task_rq_lock, __acquires(_T->pi_lock), __releases((*(struct task_struct **)_T)->pi_lock))
+		    ഘടന rq *rq; ഘടന rq_flags rf)
+DECLARE_LOCK_GUARD_1_ATTRS(task_rq_lock, __acquires(_T->pi_lock), __releases((*(ഘടന task_struct **)_T)->pi_lock))
 #define class_task_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(task_rq_lock, _T)
 
-DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
+DEFINE_LOCK_GUARD_1(__task_rq_lock, ഘടന task_struct,
 		    _T->rq = __task_rq_lock(_T->lock, &_T->rf),
 		    __task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-		    struct rq *rq; struct rq_flags rf)
+		    ഘടന rq *rq; ഘടന rq_flags rf)
 
-static inline void rq_lock_irqsave(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_lock_irqsave(ഘടന rq *rq, ഘടന rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
 	raw_spin_rq_lock_irqsave(rq, rf->flags);
 	rq_pin_lock(rq, rf);
 }
 
-static inline void rq_lock_irq(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_lock_irq(ഘടന rq *rq, ഘടന rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
 	raw_spin_rq_lock_irq(rq);
 	rq_pin_lock(rq, rf);
 }
 
-static inline void rq_lock(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_lock(ഘടന rq *rq, ഘടന rq_flags *rf)
 	__acquires(__rq_lockp(rq))
 {
 	raw_spin_rq_lock(rq);
 	rq_pin_lock(rq, rf);
 }
 
-static inline void rq_unlock_irqrestore(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_unlock_irqrestore(ഘടന rq *rq, ഘടന rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
 	rq_unpin_lock(rq, rf);
 	raw_spin_rq_unlock_irqrestore(rq, rf->flags);
 }
 
-static inline void rq_unlock_irq(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_unlock_irq(ഘടന rq *rq, ഘടന rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
 	rq_unpin_lock(rq, rf);
 	raw_spin_rq_unlock_irq(rq);
 }
 
-static inline void rq_unlock(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_unlock(ഘടന rq *rq, ഘടന rq_flags *rf)
 	__releases(__rq_lockp(rq))
 {
 	rq_unpin_lock(rq, rf);
 	raw_spin_rq_unlock(rq);
 }
 
-DEFINE_LOCK_GUARD_1(rq_lock, struct rq,
+DEFINE_LOCK_GUARD_1(rq_lock, ഘടന rq,
 		    rq_lock(_T->lock, &_T->rf),
 		    rq_unlock(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+		    ഘടന rq_flags rf)
 
 DECLARE_LOCK_GUARD_1_ATTRS(rq_lock, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
+			   __releases(__rq_lockp(*(ഘടന rq **)_T)));
 #define class_rq_lock_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock, _T)
 
-DEFINE_LOCK_GUARD_1(rq_lock_irq, struct rq,
+DEFINE_LOCK_GUARD_1(rq_lock_irq, ഘടന rq,
 		    rq_lock_irq(_T->lock, &_T->rf),
 		    rq_unlock_irq(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+		    ഘടന rq_flags rf)
 
 DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irq, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
+			   __releases(__rq_lockp(*(ഘടന rq **)_T)));
 #define class_rq_lock_irq_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irq, _T)
 
-DEFINE_LOCK_GUARD_1(rq_lock_irqsave, struct rq,
+DEFINE_LOCK_GUARD_1(rq_lock_irqsave, ഘടന rq,
 		    rq_lock_irqsave(_T->lock, &_T->rf),
 		    rq_unlock_irqrestore(_T->lock, &_T->rf),
-		    struct rq_flags rf)
+		    ഘടന rq_flags rf)
 
 DECLARE_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
+			   __releases(__rq_lockp(*(ഘടന rq **)_T)));
 #define class_rq_lock_irqsave_constructor(_T) WITH_LOCK_GUARD_1_ATTRS(rq_lock_irqsave, _T)
 
-DEFINE_LOCK_GUARD_1(raw_spin_rq_lock_irqsave, struct rq,
+DEFINE_LOCK_GUARD_1(raw_spin_rq_lock_irqsave, ഘടന rq,
 		    raw_spin_rq_lock_irqsave(_T->lock, _T->flags),
 		    raw_spin_rq_unlock_irqrestore(_T->lock, _T->flags),
 		    unsigned long flags)
 
 DECLARE_LOCK_GUARD_1_ATTRS(raw_spin_rq_lock_irqsave, __acquires(__rq_lockp(_T)),
-			   __releases(__rq_lockp(*(struct rq **)_T)));
+			   __releases(__rq_lockp(*(ഘടന rq **)_T)));
 #define class_raw_spin_rq_lock_irqsave_constructor(_T) \
 	WITH_LOCK_GUARD_1_ATTRS(raw_spin_rq_lock_irqsave, _T)
 
 #define this_rq_lock_irq(...) __acquire_ret(_this_rq_lock_irq(__VA_ARGS__), __rq_lockp(__ret))
-static inline struct rq *_this_rq_lock_irq(struct rq_flags *rf) __acquires_ret
+സ്ഥിതം വരിയിൽ ഘടന rq *_this_rq_lock_irq(ഘടന rq_flags *rf) __acquires_ret
 {
-	struct rq *rq;
+	ഘടന rq *rq;
 
 	local_irq_disable();
 	rq = this_rq();
 	rq_lock(rq, rf);
 
-	return rq;
+	തിരികെ rq;
 }
 
 #ifdef CONFIG_NUMA
 
-enum numa_topology_type {
+എണ്ണൽ numa_topology_type {
 	NUMA_DIRECT,
 	NUMA_GLUELESS_MESH,
 	NUMA_BACKPLANE,
 };
 
-extern enum numa_topology_type sched_numa_topology_type;
-extern int sched_max_numa_distance;
-extern bool find_numa_distance(int distance);
-extern void sched_init_numa(int offline_node);
-extern void sched_update_numa(int cpu, bool online);
-extern void sched_domains_numa_masks_set(unsigned int cpu);
-extern void sched_domains_numa_masks_clear(unsigned int cpu);
-extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
+ബാഹ്യ എണ്ണൽ numa_topology_type sched_numa_topology_type;
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_max_numa_distance;
+ബാഹ്യ bool find_numa_distance(പൂർണ്ണസംഖ്യ distance);
+ബാഹ്യ ശൂന്യം sched_init_numa(പൂർണ്ണസംഖ്യ offline_കണ്ണി);
+ബാഹ്യ ശൂന്യം sched_update_numa(പൂർണ്ണസംഖ്യ cpu, bool online);
+ബാഹ്യ ശൂന്യം sched_domains_numa_masks_set(unsigned പൂർണ്ണസംഖ്യ cpu);
+ബാഹ്യ ശൂന്യം sched_domains_numa_masks_clear(unsigned പൂർണ്ണസംഖ്യ cpu);
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_numa_find_closest(സ്ഥിരം ഘടന cpumask *cpus, പൂർണ്ണസംഖ്യ cpu);
 
-#else /* !CONFIG_NUMA: */
+#അല്ലെങ്കിൽ /* !CONFIG_NUMA: */
 
-static inline void sched_init_numa(int offline_node) { }
-static inline void sched_update_numa(int cpu, bool online) { }
-static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
-static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_init_numa(പൂർണ്ണസംഖ്യ offline_കണ്ണി) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_update_numa(പൂർണ്ണസംഖ്യ cpu, bool online) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_domains_numa_masks_set(unsigned പൂർണ്ണസംഖ്യ cpu) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_domains_numa_masks_clear(unsigned പൂർണ്ണസംഖ്യ cpu) { }
 
-static inline int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ sched_numa_find_closest(സ്ഥിരം ഘടന cpumask *cpus, പൂർണ്ണസംഖ്യ cpu)
 {
-	return nr_cpu_ids;
+	തിരികെ nr_cpu_ids;
 }
 
 #endif /* !CONFIG_NUMA */
@@ -2122,34 +2122,34 @@ static inline int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
 #ifdef CONFIG_NUMA_BALANCING
 
 /* The regions in numa_faults array from task_struct */
-enum numa_faults_stats {
+എണ്ണൽ numa_faults_stats {
 	NUMA_MEM = 0,
 	NUMA_CPU,
 	NUMA_MEMBUF,
 	NUMA_CPUBUF
 };
 
-extern void sched_setnuma(struct task_struct *p, int node);
-extern int migrate_task_to(struct task_struct *p, int cpu);
-extern int migrate_swap(struct task_struct *p, struct task_struct *t,
-			int cpu, int scpu);
-extern void init_numa_balancing(u64 clone_flags, struct task_struct *p);
+ബാഹ്യ ശൂന്യം sched_setnuma(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ കണ്ണി);
+ബാഹ്യ പൂർണ്ണസംഖ്യ migrate_task_to(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ cpu);
+ബാഹ്യ പൂർണ്ണസംഖ്യ migrate_swap(ഘടന task_struct *p, ഘടന task_struct *t,
+			പൂർണ്ണസംഖ്യ cpu, പൂർണ്ണസംഖ്യ scpu);
+ബാഹ്യ ശൂന്യം init_numa_balancing(u64 clone_flags, ഘടന task_struct *p);
 
-#else /* !CONFIG_NUMA_BALANCING: */
+#അല്ലെങ്കിൽ /* !CONFIG_NUMA_BALANCING: */
 
-static inline void
-init_numa_balancing(u64 clone_flags, struct task_struct *p)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+init_numa_balancing(u64 clone_flags, ഘടന task_struct *p)
 {
 }
 
 #endif /* !CONFIG_NUMA_BALANCING */
 
-int task_llc(const struct task_struct *p);
+പൂർണ്ണസംഖ്യ task_llc(സ്ഥിരം ഘടന task_struct *p);
 
-static inline void
-queue_balance_callback(struct rq *rq,
-		       struct balance_callback *head,
-		       void (*func)(struct rq *rq))
+സ്ഥിതം വരിയിൽ ശൂന്യം
+queue_balance_callback(ഘടന rq *rq,
+		       ഘടന balance_callback *head,
+		       ശൂന്യം (*func)(ഘടന rq *rq))
 {
 	lockdep_assert_rq_held(rq);
 
@@ -2158,8 +2158,8 @@ queue_balance_callback(struct rq *rq,
 	 * balance_push() is active, see the comment with
 	 * balance_push_callback.
 	 */
-	if (unlikely(head->next || rq->balance_callback == &balance_push_callback))
-		return;
+	എങ്കിൽ (unlikely(head->next || rq->balance_callback == &balance_തള്ളുക_callback))
+		തിരികെ;
 
 	head->func = func;
 	head->next = rq->balance_callback;
@@ -2177,13 +2177,13 @@ queue_balance_callback(struct rq *rq,
  * preempt-disabled sections.
  */
 #define for_each_domain(cpu, __sd) \
-	for (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
+	വേണ്ടി (__sd = rcu_dereference_sched_domain(cpu_rq(cpu)->sd); \
 			__sd; __sd = __sd->parent)
 
 /* A mask of all the SD flags that have the SDF_SHARED_CHILD metaflag */
 #define SD_FLAG(name, mflags) (name * !!((mflags) & SDF_SHARED_CHILD)) |
-static const unsigned int SD_SHARED_CHILD_MASK =
-#include <linux/sched/sd_flags.h>
+സ്ഥിതം സ്ഥിരം unsigned പൂർണ്ണസംഖ്യ SD_SHARED_CHILD_MASK =
+#അന്തര്ഭാവ <linux/sched/sd_flags.h>
 0;
 #undef SD_FLAG
 
@@ -2197,58 +2197,58 @@ static const unsigned int SD_SHARED_CHILD_MASK =
  * Returns the highest sched_domain of a CPU which contains @flag. If @flag has
  * the SDF_SHARED_CHILD metaflag, all the children domains also have @flag.
  */
-static inline struct sched_domain *highest_flag_domain(int cpu, int flag)
+സ്ഥിതം വരിയിൽ ഘടന sched_domain *highest_flag_domain(പൂർണ്ണസംഖ്യ cpu, പൂർണ്ണസംഖ്യ flag)
 {
-	struct sched_domain *sd, *hsd = NULL;
+	ഘടന sched_domain *sd, *hsd = ശൂന്യ;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag) {
+		എങ്കിൽ (sd->flags & flag) {
 			hsd = sd;
-			continue;
+			തുടരുക;
 		}
 
 		/*
 		 * Stop the search if @flag is known to be shared at lower
 		 * levels. It will not be found further up.
 		 */
-		if (flag & SD_SHARED_CHILD_MASK)
-			break;
+		എങ്കിൽ (flag & SD_SHARED_CHILD_MASK)
+			നിർത്തുക;
 	}
 
-	return hsd;
+	തിരികെ hsd;
 }
 
-static inline struct sched_domain *lowest_flag_domain(int cpu, int flag)
+സ്ഥിതം വരിയിൽ ഘടന sched_domain *lowest_flag_domain(പൂർണ്ണസംഖ്യ cpu, പൂർണ്ണസംഖ്യ flag)
 {
-	struct sched_domain *sd;
+	ഘടന sched_domain *sd;
 
 	for_each_domain(cpu, sd) {
-		if (sd->flags & flag)
-			break;
+		എങ്കിൽ (sd->flags & flag)
+			നിർത്തുക;
 	}
 
-	return sd;
+	തിരികെ sd;
 }
 
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_llc);
-DECLARE_PER_CPU(int, sd_llc_size);
-DECLARE_PER_CPU(int, sd_llc_id);
-DECLARE_PER_CPU(int, sd_share_id);
-DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
-DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_balance_shared);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
+DECLARE_PER_CPU(ഘടന sched_domain __rcu *, sd_llc);
+DECLARE_PER_CPU(പൂർണ്ണസംഖ്യ, sd_llc_size);
+DECLARE_PER_CPU(പൂർണ്ണസംഖ്യ, sd_llc_id);
+DECLARE_PER_CPU(പൂർണ്ണസംഖ്യ, sd_share_id);
+DECLARE_PER_CPU(ഘടന sched_domain_shared __rcu *, sd_llc_shared);
+DECLARE_PER_CPU(ഘടന sched_domain_shared __rcu *, sd_balance_shared);
+DECLARE_PER_CPU(ഘടന sched_domain __rcu *, sd_numa);
+DECLARE_PER_CPU(ഘടന sched_domain __rcu *, sd_asym_packing);
+DECLARE_PER_CPU(ഘടന sched_domain __rcu *, sd_asym_cpucapacity);
 
-extern struct static_key_false sched_asym_cpucapacity;
-extern struct static_key_false sched_cluster_active;
+ബാഹ്യ ഘടന static_താക്കോൽ_false sched_asym_cpucapacity;
+ബാഹ്യ ഘടന static_താക്കോൽ_false sched_cluster_active;
 
-static __always_inline bool sched_asym_cpucap_active(void)
+സ്ഥിതം __always_inline bool sched_asym_cpucap_active(ശൂന്യം)
 {
-	return static_branch_unlikely(&sched_asym_cpucapacity);
+	തിരികെ static_branch_unlikely(&sched_asym_cpucapacity);
 }
 
-struct sched_group_capacity {
+ഘടന sched_group_capacity {
 	atomic_t		ref;
 	/*
 	 * CPU capacity of this group, SCHED_CAPACITY_SCALE being max capacity
@@ -2258,22 +2258,22 @@ struct sched_group_capacity {
 	unsigned long		min_capacity;		/* Min per-CPU capacity in group */
 	unsigned long		max_capacity;		/* Max per-CPU capacity in group */
 	unsigned long		next_update;
-	int			imbalance;		/* XXX unrelated to capacity but shared group state */
+	പൂർണ്ണസംഖ്യ			imbalance;		/* XXX unrelated to capacity but shared group state */
 
-	int			id;
+	പൂർണ്ണസംഖ്യ			id;
 
 	unsigned long		cpumask[];		/* Balance mask */
 };
 
-struct sched_group {
-	struct sched_group	*next;			/* Must be a circular list */
+ഘടന sched_group {
+	ഘടന sched_group	*next;			/* Must be a circular list */
 	atomic_t		ref;
 
-	unsigned int		group_weight;
-	unsigned int		cores;
-	struct sched_group_capacity *sgc;
-	int			asym_prefer_cpu;	/* CPU of highest priority in group */
-	int			flags;
+	unsigned പൂർണ്ണസംഖ്യ		group_weight;
+	unsigned പൂർണ്ണസംഖ്യ		cores;
+	ഘടന sched_group_capacity *sgc;
+	പൂർണ്ണസംഖ്യ			asym_prefer_cpu;	/* CPU of highest priority in group */
+	പൂർണ്ണസംഖ്യ			flags;
 
 	/*
 	 * The CPUs this group covers.
@@ -2285,31 +2285,31 @@ struct sched_group {
 	unsigned long		cpumask[];
 };
 
-static inline struct cpumask *sched_group_span(struct sched_group *sg)
+സ്ഥിതം വരിയിൽ ഘടന cpumask *sched_group_span(ഘടന sched_group *sg)
 {
-	return to_cpumask(sg->cpumask);
+	തിരികെ to_cpumask(sg->cpumask);
 }
 
 /*
  * See build_balance_mask().
  */
-static inline struct cpumask *group_balance_mask(struct sched_group *sg)
+സ്ഥിതം വരിയിൽ ഘടന cpumask *group_balance_mask(ഘടന sched_group *sg)
 {
-	return to_cpumask(sg->sgc->cpumask);
+	തിരികെ to_cpumask(sg->sgc->cpumask);
 }
 
-extern int group_balance_cpu(struct sched_group *sg);
+ബാഹ്യ പൂർണ്ണസംഖ്യ group_balance_cpu(ഘടന sched_group *sg);
 
-extern void update_sched_domain_debugfs(void);
-extern void dirty_sched_domain_sysctl(int cpu);
+ബാഹ്യ ശൂന്യം update_sched_domain_debugfs(ശൂന്യം);
+ബാഹ്യ ശൂന്യം dirty_sched_domain_sysctl(പൂർണ്ണസംഖ്യ cpu);
 
-extern int sched_update_scaling(void);
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_update_scaling(ശൂന്യം);
 
-static inline const struct cpumask *task_user_cpus(struct task_struct *p)
+സ്ഥിതം വരിയിൽ സ്ഥിരം ഘടന cpumask *task_user_cpus(ഘടന task_struct *p)
 {
-	if (!p->user_cpus_ptr)
-		return cpu_possible_mask; /* &init_task.cpus_mask */
-	return p->user_cpus_ptr;
+	എങ്കിൽ (!p->user_cpus_ptr)
+		തിരികെ cpu_possible_mask; /* &init_task.cpus_mask */
+	തിരികെ p->user_cpus_ptr;
 }
 
 #ifdef CONFIG_CGROUP_SCHED
@@ -2327,9 +2327,9 @@ static inline const struct cpumask *task_user_cpus(struct task_struct *p)
  * Instead we use a 'copy' which is updated from sched_move_task() while
  * holding both task_struct::pi_lock and rq::lock.
  */
-static inline struct task_group *task_group(struct task_struct *p)
+സ്ഥിതം വരിയിൽ ഘടന task_group *task_group(ഘടന task_struct *p)
 {
-	return p->sched_task_group;
+	തിരികെ p->sched_task_group;
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -2337,46 +2337,46 @@ static inline struct task_group *task_group(struct task_struct *p)
  * Defined here to be available before stats.h is included, since
  * stats.h has dependencies on things defined later in this file.
  */
-struct cfs_tg_state {
-	struct cfs_rq		cfs_rq;
-	struct sched_entity	se;
-	struct sched_statistics	stats;
+ഘടന cfs_tg_state {
+	ഘടന cfs_rq		cfs_rq;
+	ഘടന sched_entity	se;
+	ഘടന sched_statistics	stats;
 } __no_randomize_layout;
 
 /* Access a specific CPU's cfs_rq from a task group */
-static inline struct cfs_rq *tg_cfs_rq(struct task_group *tg, int cpu)
+സ്ഥിതം വരിയിൽ ഘടന cfs_rq *tg_cfs_rq(ഘടന task_group *tg, പൂർണ്ണസംഖ്യ cpu)
 {
-	return per_cpu_ptr(tg->cfs_rq, cpu);
+	തിരികെ per_cpu_ptr(tg->cfs_rq, cpu);
 }
 
-static inline struct sched_entity *tg_se(struct task_group *tg, int cpu)
+സ്ഥിതം വരിയിൽ ഘടന sched_entity *tg_se(ഘടന task_group *tg, പൂർണ്ണസംഖ്യ cpu)
 {
-	struct cfs_tg_state *state;
+	ഘടന cfs_tg_state *state;
 
-	if (is_root_task_group(tg))
-		return NULL;
+	എങ്കിൽ (is_വേര്_task_group(tg))
+		തിരികെ ശൂന്യ;
 
-	state = container_of(tg_cfs_rq(tg, cpu), struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	state = container_of(tg_cfs_rq(tg, cpu), ഘടന cfs_tg_state, cfs_rq);
+	തിരികെ &state->se;
 }
 
-static inline struct sched_entity *cfs_rq_se(struct cfs_rq *cfs_rq)
+സ്ഥിതം വരിയിൽ ഘടന sched_entity *cfs_rq_se(ഘടന cfs_rq *cfs_rq)
 {
-	struct cfs_tg_state *state;
+	ഘടന cfs_tg_state *state;
 
-	if (is_root_task_group(cfs_rq->tg))
-		return NULL;
+	എങ്കിൽ (is_വേര്_task_group(cfs_rq->tg))
+		തിരികെ ശൂന്യ;
 
-	state = container_of(cfs_rq, struct cfs_tg_state, cfs_rq);
-	return &state->se;
+	state = container_of(cfs_rq, ഘടന cfs_tg_state, cfs_rq);
+	തിരികെ &state->se;
 }
 #endif
 
 /* Change a task's cfs_rq and parent entity if it moves across CPUs/groups */
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
+സ്ഥിതം വരിയിൽ ശൂന്യം set_task_rq(ഘടന task_struct *p, unsigned പൂർണ്ണസംഖ്യ cpu)
 {
-#if defined(CONFIG_FAIR_GROUP_SCHED) || defined(CONFIG_RT_GROUP_SCHED)
-	struct task_group *tg = task_group(p);
+#എങ്കിൽ defined(CONFIG_FAIR_GROUP_SCHED) || defined(CONFIG_RT_GROUP_SCHED)
+	ഘടന task_group *tg = task_group(p);
 #endif
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -2392,25 +2392,25 @@ static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
 	 * root_task_group's rt_rq than switching in rt_rq_of_se()
 	 * Clobbers tg(!)
 	 */
-	if (!rt_group_sched_enabled())
-		tg = &root_task_group;
+	എങ്കിൽ (!rt_group_sched_enabled())
+		tg = &വേര്_task_group;
 	p->rt.rt_rq  = tg->rt_rq[cpu];
 	p->rt.parent = tg->rt_se[cpu];
 #endif /* CONFIG_RT_GROUP_SCHED */
 }
 
-#else /* !CONFIG_CGROUP_SCHED: */
+#അല്ലെങ്കിൽ /* !CONFIG_CGROUP_SCHED: */
 
-static inline void set_task_rq(struct task_struct *p, unsigned int cpu) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം set_task_rq(ഘടന task_struct *p, unsigned പൂർണ്ണസംഖ്യ cpu) { }
 
-static inline struct task_group *task_group(struct task_struct *p)
+സ്ഥിതം വരിയിൽ ഘടന task_group *task_group(ഘടന task_struct *p)
 {
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 #endif /* !CONFIG_CGROUP_SCHED */
 
-static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
+സ്ഥിതം വരിയിൽ ശൂന്യം __set_task_cpu(ഘടന task_struct *p, unsigned പൂർണ്ണസംഖ്യ cpu)
 {
 	set_task_rq(p, cpu);
 #ifdef CONFIG_SMP
@@ -2433,8 +2433,8 @@ static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
 #define SCHED_FEAT(name, enabled)	\
 	__SCHED_FEAT_##name ,
 
-enum {
-#include "features.h"
+എണ്ണൽ {
+#അന്തര്ഭാവ "features.h"
 	__SCHED_FEAT_NR,
 };
 
@@ -2444,59 +2444,59 @@ enum {
  * To support run-time toggling of sched features, all the translation units
  * (but core.c) reference the sysctl_sched_features defined in core.c.
  */
-extern __read_mostly unsigned int sysctl_sched_features;
+ബാഹ്യ __read_mostly unsigned പൂർണ്ണസംഖ്യ sysctl_sched_features;
 
 #ifdef CONFIG_JUMP_LABEL
 
-union sched_feat_key {
-	struct static_key_true	key_true;
-	struct static_key_false	key_false;
+സംഘം sched_feat_താക്കോൽ {
+	ഘടന static_താക്കോൽ_true	താക്കോൽ_true;
+	ഘടന static_താക്കോൽ_false	താക്കോൽ_false;
 };
 
-#define sched_feat_branch_true(key)	static_branch_likely(&(key)->key_true)
-#define sched_feat_branch_false(key)	static_branch_unlikely(&(key)->key_false)
+#define sched_feat_branch_true(താക്കോൽ)	static_branch_likely(&(താക്കോൽ)->താക്കോൽ_true)
+#define sched_feat_branch_false(താക്കോൽ)	static_branch_unlikely(&(താക്കോൽ)->താക്കോൽ_false)
 
 #define SCHED_FEAT(name, enabled)			\
-static __always_inline bool				\
-static_branch_##name(union sched_feat_key *key) 	\
+സ്ഥിതം __always_inline bool				\
+static_branch_##name(സംഘം sched_feat_താക്കോൽ *താക്കോൽ) 	\
 {							\
-	return sched_feat_branch_##enabled(key);	\
+	തിരികെ sched_feat_branch_##enabled(താക്കോൽ);	\
 }
 
-#include "features.h"
+#അന്തര്ഭാവ "features.h"
 #undef SCHED_FEAT
 
-extern union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR];
-#define sched_feat(x) (static_branch_##x(&sched_feat_keys[__SCHED_FEAT_##x]))
+ബാഹ്യ സംഘം sched_feat_താക്കോൽ sched_feat_താക്കോലുകൾ[__SCHED_FEAT_NR];
+#define sched_feat(x) (static_branch_##x(&sched_feat_താക്കോലുകൾ[__SCHED_FEAT_##x]))
 
-#else /* !CONFIG_JUMP_LABEL: */
+#അല്ലെങ്കിൽ /* !CONFIG_JUMP_LABEL: */
 
 #define sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
 
 #endif /* !CONFIG_JUMP_LABEL */
 
-extern struct static_key_false sched_numa_balancing;
-extern struct static_key_false sched_schedstats;
+ബാഹ്യ ഘടന static_താക്കോൽ_false sched_numa_balancing;
+ബാഹ്യ ഘടന static_താക്കോൽ_false sched_schedstats;
 
-static inline u64 global_rt_period(void)
+സ്ഥിതം വരിയിൽ u64 global_rt_period(ശൂന്യം)
 {
-	return (u64)sysctl_sched_rt_period * NSEC_PER_USEC;
+	തിരികെ (u64)sysctl_sched_rt_period * NSEC_PER_USEC;
 }
 
-static inline u64 global_rt_runtime(void)
+സ്ഥിതം വരിയിൽ u64 global_rt_runtime(ശൂന്യം)
 {
-	if (sysctl_sched_rt_runtime < 0)
-		return RUNTIME_INF;
+	എങ്കിൽ (sysctl_sched_rt_runtime < 0)
+		തിരികെ RUNTIME_INF;
 
-	return (u64)sysctl_sched_rt_runtime * NSEC_PER_USEC;
+	തിരികെ (u64)sysctl_sched_rt_runtime * NSEC_PER_USEC;
 }
 
 /*
  * Is p the current execution context?
  */
-static inline int task_current(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ task_current(ഘടന rq *rq, ഘടന task_struct *p)
 {
-	return rq->curr == p;
+	തിരികെ rq->curr == p;
 }
 
 /*
@@ -2505,38 +2505,38 @@ static inline int task_current(struct rq *rq, struct task_struct *p)
  * Note that it might be the current execution context at the same time if
  * rq->curr == rq->donor == p.
  */
-static inline int task_current_donor(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ task_current_donor(ഘടന rq *rq, ഘടന task_struct *p)
 {
-	return rq->donor == p;
+	തിരികെ rq->donor == p;
 }
 
-static inline bool task_is_blocked(struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool task_is_blocked(ഘടന task_struct *p)
 {
-	if (!sched_proxy_exec())
-		return false;
+	എങ്കിൽ (!sched_proxy_exec())
+		തിരികെ false;
 
-	return !!p->blocked_on;
+	തിരികെ !!p->blocked_on;
 }
 
 #ifdef CONFIG_SCHED_PROXY_EXEC
-void sched_proxy_block_task(struct rq *rq, struct task_struct *p);
-#else
-static inline void sched_proxy_block_task(struct rq *rq, struct task_struct *p) {}
+ശൂന്യം sched_proxy_block_task(ഘടന rq *rq, ഘടന task_struct *p);
+#അല്ലെങ്കിൽ
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_proxy_block_task(ഘടന rq *rq, ഘടന task_struct *p) {}
 #endif
 
-static inline int task_on_cpu(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ task_on_cpu(ഘടന rq *rq, ഘടന task_struct *p)
 {
-	return p->on_cpu;
+	തിരികെ p->on_cpu;
 }
 
-static inline int task_on_rq_queued(struct task_struct *p)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ task_on_rq_queued(ഘടന task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
+	തിരികെ READ_ONCE(p->on_rq) == TASK_ON_RQ_QUEUED;
 }
 
-static inline int task_on_rq_migrating(struct task_struct *p)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ task_on_rq_migrating(ഘടന task_struct *p)
 {
-	return READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
+	തിരികെ READ_ONCE(p->on_rq) == TASK_ON_RQ_MIGRATING;
 }
 
 /* Wake flags. The first three directly map to some SD flag value */
@@ -2571,8 +2571,8 @@ static_assert(WF_TTWU == SD_BALANCE_WAKE);
 #define WEIGHT_IDLEPRIO		3
 #define WMULT_IDLEPRIO		1431655765
 
-extern const int		sched_prio_to_weight[40];
-extern const u32		sched_prio_to_wmult[40];
+ബാഹ്യ സ്ഥിരം പൂർണ്ണസംഖ്യ		sched_prio_to_weight[40];
+ബാഹ്യ സ്ഥിരം u32		sched_prio_to_wmult[40];
 
 /*
  * {de,en}queue flags:
@@ -2633,26 +2633,26 @@ extern const u32		sched_prio_to_wmult[40];
 #define ENQUEUE_RQ_SELECTED	0x00100000
 #define ENQUEUE_QUEUED		0x00200000
 
-#define RETRY_TASK		((void *)-1UL)
+#define RETRY_TASK		((ശൂന്യം *)-1UL)
 
-struct affinity_context {
-	const struct cpumask	*new_mask;
-	struct cpumask		*user_mask;
-	unsigned int		flags;
+ഘടന affinity_context {
+	സ്ഥിരം ഘടന cpumask	*new_mask;
+	ഘടന cpumask		*user_mask;
+	unsigned പൂർണ്ണസംഖ്യ		flags;
 };
 
-extern s64 update_curr_common(struct rq *rq);
+ബാഹ്യ s64 update_curr_common(ഘടന rq *rq);
 
-enum snt_e {
+എണ്ണൽ snt_e {
 	SNT_NORMAL,	/* set_next_task() */
 	SNT_PICK,	/* put_prev_set_next_task(): prev != next */
 	SNT_REPICK,	/* put_prev_set_next_task(): prev == next */
 };
 
-struct sched_class {
+ഘടന sched_class {
 
 #ifdef CONFIG_UCLAMP_TASK
-	int uclamp_enabled;
+	പൂർണ്ണസംഖ്യ uclamp_enabled;
 #endif
 
 	/*
@@ -2663,7 +2663,7 @@ struct sched_class {
 	 * proxy_task_current: rq->lock
 	 * sched_change_end
 	 */
-	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
+	ശൂന്യം (*enqueue_task) (ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags);
 	/*
 	 * move_queued_task/deactivate_task/dequeue_task: rq->lock
 	 * __schedule/block_task/dequeue_task: rq->lock
@@ -2671,16 +2671,16 @@ struct sched_class {
 	 * wait_task_inactive: task_rq_lock
 	 * sched_change_begin
 	 */
-	bool (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
+	bool (*dequeue_task) (ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags);
 
 	/*
 	 * do_sched_yield: rq->lock
 	 */
-	void (*yield_task)   (struct rq *rq);
+	ശൂന്യം (*yield_task)   (ഘടന rq *rq);
 	/*
 	 * yield_to: rq->lock (double)
 	 */
-	bool (*yield_to_task)(struct rq *rq, struct task_struct *p);
+	bool (*yield_to_task)(ഘടന rq *rq, ഘടന task_struct *p);
 
 	/*
 	 * move_queued_task: rq->lock
@@ -2689,107 +2689,107 @@ struct sched_class {
 	 * ttwu_runnable: task_rq_lock
 	 * wake_up_new_task: task_rq_lock
 	 */
-	void (*wakeup_preempt)(struct rq *rq, struct task_struct *p, int flags);
+	ശൂന്യം (*wakeup_preempt)(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags);
 
 	/*
 	 * schedule/pick_next_task/prev_balance: rq->lock
 	 */
-	int (*balance)(struct rq *rq, struct rq_flags *rf);
+	പൂർണ്ണസംഖ്യ (*balance)(ഘടന rq *rq, ഘടന rq_flags *rf);
 
 	/*
 	 * schedule/pick_next_task: rq->lock
 	 */
-	struct task_struct *(*pick_task)(struct rq *rq, struct rq_flags *rf);
+	ഘടന task_struct *(*pick_task)(ഘടന rq *rq, ഘടന rq_flags *rf);
 
 	/*
 	 * sched_change:
 	 * __schedule: rq->lock
 	 */
-	void (*put_prev_task)(struct rq *rq, struct task_struct *p, struct task_struct *next);
-	void (*set_next_task)(struct rq *rq, struct task_struct *p, enum snt_e type);
+	ശൂന്യം (*put_prev_task)(ഘടന rq *rq, ഘടന task_struct *p, ഘടന task_struct *next);
+	ശൂന്യം (*set_next_task)(ഘടന rq *rq, ഘടന task_struct *p, എണ്ണൽ snt_e type);
 
 	/*
 	 * select_task_rq: p->pi_lock
 	 * sched_exec: p->pi_lock
 	 */
-	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int flags);
+	പൂർണ്ണസംഖ്യ  (*select_task_rq)(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ task_cpu, പൂർണ്ണസംഖ്യ flags);
 
 	/*
 	 * set_task_cpu: p->pi_lock || rq->lock (ttwu like)
 	 */
-	void (*migrate_task_rq)(struct task_struct *p, int new_cpu);
+	ശൂന്യം (*migrate_task_rq)(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ new_cpu);
 
 	/*
 	 * ttwu_do_activate: rq->lock
 	 * wake_up_new_task: task_rq_lock
 	 */
-	void (*task_woken)(struct rq *this_rq, struct task_struct *task);
+	ശൂന്യം (*task_woken)(ഘടന rq *this_rq, ഘടന task_struct *task);
 
 	/*
 	 * do_set_cpus_allowed: task_rq_lock + sched_change
 	 */
-	void (*set_cpus_allowed)(struct task_struct *p, struct affinity_context *ctx);
+	ശൂന്യം (*set_cpus_allowed)(ഘടന task_struct *p, ഘടന affinity_context *ctx);
 
 	/*
 	 * sched_set_rq_{on,off}line: rq->lock
 	 */
-	void (*rq_online)(struct rq *rq);
-	void (*rq_offline)(struct rq *rq);
+	ശൂന്യം (*rq_online)(ഘടന rq *rq);
+	ശൂന്യം (*rq_offline)(ഘടന rq *rq);
 
 	/*
 	 * push_cpu_stop: p->pi_lock && rq->lock
 	 */
-	struct rq *(*find_lock_rq)(struct task_struct *p, struct rq *rq);
+	ഘടന rq *(*find_lock_rq)(ഘടന task_struct *p, ഘടന rq *rq);
 
 	/*
 	 * hrtick: rq->lock
 	 * sched_tick: rq->lock
 	 * sched_tick_remote: rq->lock
 	 */
-	void (*task_tick)(struct rq *rq, struct task_struct *p, int queued);
+	ശൂന്യം (*task_tick)(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ queued);
 	/*
 	 * sched_cgroup_fork: p->pi_lock
 	 */
-	void (*task_fork)(struct task_struct *p);
+	ശൂന്യം (*task_fork)(ഘടന task_struct *p);
 	/*
 	 * finish_task_switch: no locks
 	 */
-	void (*task_dead)(struct task_struct *p);
+	ശൂന്യം (*task_dead)(ഘടന task_struct *p);
 
 	/*
 	 * sched_change
 	 */
-	void (*switching_from)(struct rq *this_rq, struct task_struct *task);
-	void (*switched_from) (struct rq *this_rq, struct task_struct *task);
-	void (*switching_to)  (struct rq *this_rq, struct task_struct *task);
-	void (*switched_to)   (struct rq *this_rq, struct task_struct *task);
-	u64  (*get_prio)     (struct rq *this_rq, struct task_struct *task);
-	void (*prio_changed) (struct rq *this_rq, struct task_struct *task,
+	ശൂന്യം (*switching_from)(ഘടന rq *this_rq, ഘടന task_struct *task);
+	ശൂന്യം (*switched_from) (ഘടന rq *this_rq, ഘടന task_struct *task);
+	ശൂന്യം (*switching_to)  (ഘടന rq *this_rq, ഘടന task_struct *task);
+	ശൂന്യം (*switched_to)   (ഘടന rq *this_rq, ഘടന task_struct *task);
+	u64  (*get_prio)     (ഘടന rq *this_rq, ഘടന task_struct *task);
+	ശൂന്യം (*prio_changed) (ഘടന rq *this_rq, ഘടന task_struct *task,
 			      u64 oldprio);
 
 	/*
 	 * set_load_weight: task_rq_lock + sched_change
 	 * __setscheduler_parms: task_rq_lock + sched_change
 	 */
-	void (*reweight_task)(struct rq *this_rq, struct task_struct *task,
-			      const struct load_weight *lw);
+	ശൂന്യം (*reweight_task)(ഘടന rq *this_rq, ഘടന task_struct *task,
+			      സ്ഥിരം ഘടന load_weight *lw);
 
 	/*
 	 * sched_rr_get_interval: task_rq_lock
 	 */
-	unsigned int (*get_rr_interval)(struct rq *rq,
-					struct task_struct *task);
+	unsigned പൂർണ്ണസംഖ്യ (*get_rr_interval)(ഘടന rq *rq,
+					ഘടന task_struct *task);
 
 	/*
 	 * task_sched_runtime: task_rq_lock
 	 */
-	void (*update_curr)(struct rq *rq);
+	ശൂന്യം (*update_curr)(ഘടന rq *rq);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	/*
 	 * sched_change_group: task_rq_lock + sched_change
 	 */
-	void (*task_change_group)(struct task_struct *p);
+	ശൂന്യം (*task_change_group)(ഘടന task_struct *p);
 #endif
 
 #ifdef CONFIG_SCHED_CORE
@@ -2797,42 +2797,42 @@ struct sched_class {
 	 * pick_next_task: rq->lock
 	 * try_steal_cookie: rq->lock (double)
 	 */
-	int (*task_is_throttled)(struct task_struct *p, int cpu);
+	പൂർണ്ണസംഖ്യ (*task_is_throttled)(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ cpu);
 #endif
 };
 
-static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
+സ്ഥിതം വരിയിൽ ശൂന്യം put_prev_task(ഘടന rq *rq, ഘടന task_struct *prev)
 {
 	WARN_ON_ONCE(rq->donor != prev);
-	prev->sched_class->put_prev_task(rq, prev, NULL);
+	prev->sched_class->put_prev_task(rq, prev, ശൂന്യ);
 }
 
-static inline void set_next_task(struct rq *rq, struct task_struct *next)
+സ്ഥിതം വരിയിൽ ശൂന്യം set_next_task(ഘടന rq *rq, ഘടന task_struct *next)
 {
 	next->sched_class->set_next_task(rq, next, SNT_NORMAL);
 }
 
-static inline void
-__put_prev_set_next_dl_server(struct rq *rq,
-			      struct task_struct *prev,
-			      struct task_struct *next)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+__put_prev_set_next_dl_server(ഘടന rq *rq,
+			      ഘടന task_struct *prev,
+			      ഘടന task_struct *next)
 {
-	prev->dl_server = NULL;
+	prev->dl_server = ശൂന്യ;
 	next->dl_server = rq->dl_server;
-	rq->dl_server = NULL;
+	rq->dl_server = ശൂന്യ;
 }
 
-static inline void put_prev_set_next_task(struct rq *rq,
-					  struct task_struct *prev,
-					  struct task_struct *next)
+സ്ഥിതം വരിയിൽ ശൂന്യം put_prev_set_next_task(ഘടന rq *rq,
+					  ഘടന task_struct *prev,
+					  ഘടന task_struct *next)
 {
 	WARN_ON_ONCE(rq->donor != prev);
 
 	__put_prev_set_next_dl_server(rq, prev, next);
 
-	if (next == prev) {
+	എങ്കിൽ (next == prev) {
 		next->sched_class->set_next_task(rq, next, SNT_REPICK);
-		return;
+		തിരികെ;
 	}
 
 	prev->sched_class->put_prev_task(rq, prev, next);
@@ -2850,190 +2850,190 @@ static inline void put_prev_set_next_task(struct rq *rq,
  * Also enforce alignment on the instance, not the type, to guarantee layout.
  */
 #define DEFINE_SCHED_CLASS(name) \
-const struct sched_class name##_sched_class \
-	__aligned(__alignof__(struct sched_class)) \
+സ്ഥിരം ഘടന sched_class name##_sched_class \
+	__aligned(__alignof__(ഘടന sched_class)) \
 	__section("__" #name "_sched_class")
 
 /* Defined in include/asm-generic/vmlinux.lds.h */
-extern struct sched_class __sched_class_highest[];
-extern struct sched_class __sched_class_lowest[];
+ബാഹ്യ ഘടന sched_class __sched_class_highest[];
+ബാഹ്യ ഘടന sched_class __sched_class_lowest[];
 
-extern const struct sched_class stop_sched_class;
-extern const struct sched_class dl_sched_class;
-extern const struct sched_class rt_sched_class;
-extern const struct sched_class fair_sched_class;
-extern const struct sched_class idle_sched_class;
+ബാഹ്യ സ്ഥിരം ഘടന sched_class stop_sched_class;
+ബാഹ്യ സ്ഥിരം ഘടന sched_class dl_sched_class;
+ബാഹ്യ സ്ഥിരം ഘടന sched_class rt_sched_class;
+ബാഹ്യ സ്ഥിരം ഘടന sched_class fair_sched_class;
+ബാഹ്യ സ്ഥിരം ഘടന sched_class idle_sched_class;
 
 /*
  * Iterate only active classes. SCX can take over all fair tasks or be
  * completely disabled. If the former, skip fair. If the latter, skip SCX.
  */
-static inline const struct sched_class *next_active_class(const struct sched_class *class)
+സ്ഥിതം വരിയിൽ സ്ഥിരം ഘടന sched_class *next_active_class(സ്ഥിരം ഘടന sched_class *class)
 {
 	class++;
 #ifdef CONFIG_SCHED_CLASS_EXT
-	if (scx_switched_all() && class == &fair_sched_class)
+	എങ്കിൽ (scx_switched_all() && class == &fair_sched_class)
 		class++;
-	if (!scx_enabled() && class == &ext_sched_class)
+	എങ്കിൽ (!scx_enabled() && class == &ext_sched_class)
 		class++;
 #endif
-	return class;
+	തിരികെ class;
 }
 
 #define for_class_range(class, _from, _to) \
-	for (class = (_from); class < (_to); class++)
+	വേണ്ടി (class = (_from); class < (_to); class++)
 
 #define for_each_class(class) \
 	for_class_range(class, __sched_class_highest, __sched_class_lowest)
 
 #define for_active_class_range(class, _from, _to)				\
-	for (class = (_from); class != (_to); class = next_active_class(class))
+	വേണ്ടി (class = (_from); class != (_to); class = next_active_class(class))
 
 #define for_each_active_class(class)						\
 	for_active_class_range(class, __sched_class_highest, __sched_class_lowest)
 
 #define sched_class_above(_a, _b)	((_a) < (_b))
 
-static inline void rq_modified_begin(struct rq *rq, const struct sched_class *class)
+സ്ഥിതം വരിയിൽ ശൂന്യം rq_modified_begin(ഘടന rq *rq, സ്ഥിരം ഘടന sched_class *class)
 {
-	if (sched_class_above(rq->next_class, class))
+	എങ്കിൽ (sched_class_above(rq->next_class, class))
 		rq->next_class = class;
 }
 
-static inline bool rq_modified_above(struct rq *rq, const struct sched_class *class)
+സ്ഥിതം വരിയിൽ bool rq_modified_above(ഘടന rq *rq, സ്ഥിരം ഘടന sched_class *class)
 {
-	return sched_class_above(rq->next_class, class);
+	തിരികെ sched_class_above(rq->next_class, class);
 }
 
-static inline bool sched_stop_runnable(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool sched_stop_runnable(ഘടന rq *rq)
 {
-	return rq->stop && task_on_rq_queued(rq->stop);
+	തിരികെ rq->stop && task_on_rq_queued(rq->stop);
 }
 
-static inline bool sched_dl_runnable(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool sched_dl_runnable(ഘടന rq *rq)
 {
-	return rq->dl.dl_nr_running > 0;
+	തിരികെ rq->dl.dl_nr_running > 0;
 }
 
-static inline bool sched_rt_runnable(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool sched_rt_runnable(ഘടന rq *rq)
 {
-	return rq->rt.rt_queued > 0;
+	തിരികെ rq->rt.rt_queued > 0;
 }
 
-static inline bool sched_fair_runnable(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool sched_fair_runnable(ഘടന rq *rq)
 {
-	return rq->cfs.nr_queued > 0;
+	തിരികെ rq->cfs.nr_queued > 0;
 }
 
-extern struct task_struct *pick_task_fair(struct rq *rq, struct rq_flags *rf);
-extern struct task_struct *pick_task_idle(struct rq *rq, struct rq_flags *rf);
+ബാഹ്യ ഘടന task_struct *pick_task_fair(ഘടന rq *rq, ഘടന rq_flags *rf);
+ബാഹ്യ ഘടന task_struct *pick_task_idle(ഘടന rq *rq, ഘടന rq_flags *rf);
 
 #define SCA_CHECK		0x01
 #define SCA_MIGRATE_DISABLE	0x02
 #define SCA_MIGRATE_ENABLE	0x04
 #define SCA_USER		0x08
 
-extern void update_group_capacity(struct sched_domain *sd, int cpu);
+ബാഹ്യ ശൂന്യം update_group_capacity(ഘടന sched_domain *sd, പൂർണ്ണസംഖ്യ cpu);
 
-extern void sched_balance_trigger(struct rq *rq);
+ബാഹ്യ ശൂന്യം sched_balance_trigger(ഘടന rq *rq);
 
-extern int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx);
-extern void set_cpus_allowed_common(struct task_struct *p, struct affinity_context *ctx);
+ബാഹ്യ പൂർണ്ണസംഖ്യ __set_cpus_allowed_ptr(ഘടന task_struct *p, ഘടന affinity_context *ctx);
+ബാഹ്യ ശൂന്യം set_cpus_allowed_common(ഘടന task_struct *p, ഘടന affinity_context *ctx);
 
-static inline bool task_allowed_on_cpu(struct task_struct *p, int cpu)
+സ്ഥിതം വരിയിൽ bool task_allowed_on_cpu(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ cpu)
 {
 	/* When not in the task's cpumask, no point in looking further. */
-	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
-		return false;
+	എങ്കിൽ (!cpumask_test_cpu(cpu, p->cpus_ptr))
+		തിരികെ false;
 
 	/* Can @cpu run a user thread? */
-	if (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
-		return false;
+	എങ്കിൽ (!(p->flags & PF_KTHREAD) && !task_cpu_possible(cpu, p))
+		തിരികെ false;
 
-	return true;
+	തിരികെ true;
 }
 
-static inline cpumask_t *alloc_user_cpus_ptr(int node)
+സ്ഥിതം വരിയിൽ cpumask_t *alloc_user_cpus_ptr(പൂർണ്ണസംഖ്യ കണ്ണി)
 {
 	/*
 	 * See set_cpus_allowed_force() above for the rcu_head usage.
 	 */
-	int size = max_t(int, cpumask_size(), sizeof(struct rcu_head));
+	പൂർണ്ണസംഖ്യ size = max_t(പൂർണ്ണസംഖ്യ, cpumask_size(), വലുപ്പം(ഘടന rcu_head));
 
-	return kmalloc_node(size, GFP_KERNEL, node);
+	തിരികെ kmalloc_കണ്ണി(size, GFP_KERNEL, കണ്ണി);
 }
 
-static inline struct task_struct *get_push_task(struct rq *rq)
+സ്ഥിതം വരിയിൽ ഘടന task_struct *get_തള്ളുക_task(ഘടന rq *rq)
 {
-	struct task_struct *p = rq->donor;
+	ഘടന task_struct *p = rq->donor;
 
 	lockdep_assert_rq_held(rq);
 
-	if (rq->push_busy)
-		return NULL;
+	എങ്കിൽ (rq->തള്ളുക_busy)
+		തിരികെ ശൂന്യ;
 
-	if (p->nr_cpus_allowed == 1)
-		return NULL;
+	എങ്കിൽ (p->nr_cpus_allowed == 1)
+		തിരികെ ശൂന്യ;
 
-	if (p->migration_disabled)
-		return NULL;
+	എങ്കിൽ (p->migration_disabled)
+		തിരികെ ശൂന്യ;
 
-	rq->push_busy = true;
-	return get_task_struct(p);
+	rq->തള്ളുക_busy = true;
+	തിരികെ get_task_struct(p);
 }
 
-extern int push_cpu_stop(void *arg);
+ബാഹ്യ പൂർണ്ണസംഖ്യ തള്ളുക_cpu_stop(ശൂന്യം *arg);
 
 #ifdef CONFIG_CPU_IDLE
 
-static inline void idle_set_state(struct rq *rq,
-				  struct cpuidle_state *idle_state)
+സ്ഥിതം വരിയിൽ ശൂന്യം idle_set_state(ഘടന rq *rq,
+				  ഘടന cpuidle_state *idle_state)
 {
 	rq->idle_state = idle_state;
 }
 
-static inline struct cpuidle_state *idle_get_state(struct rq *rq)
+സ്ഥിതം വരിയിൽ ഘടന cpuidle_state *idle_get_state(ഘടന rq *rq)
 {
 	lockdep_assert(rcu_read_lock_any_held());
 
-	return rq->idle_state;
+	തിരികെ rq->idle_state;
 }
 
-#else /* !CONFIG_CPU_IDLE: */
+#അല്ലെങ്കിൽ /* !CONFIG_CPU_IDLE: */
 
-static inline void idle_set_state(struct rq *rq,
-				  struct cpuidle_state *idle_state)
+സ്ഥിതം വരിയിൽ ശൂന്യം idle_set_state(ഘടന rq *rq,
+				  ഘടന cpuidle_state *idle_state)
 {
 }
 
-static inline struct cpuidle_state *idle_get_state(struct rq *rq)
+സ്ഥിതം വരിയിൽ ഘടന cpuidle_state *idle_get_state(ഘടന rq *rq)
 {
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 #endif /* !CONFIG_CPU_IDLE */
 
-extern void schedule_idle(void);
-asmlinkage void schedule_user(void);
+ബാഹ്യ ശൂന്യം schedule_idle(ശൂന്യം);
+asmlinkage ശൂന്യം schedule_user(ശൂന്യം);
 
-extern void sysrq_sched_debug_show(void);
-extern void sched_init_granularity(void);
-extern void update_max_interval(void);
+ബാഹ്യ ശൂന്യം sysrq_sched_debug_show(ശൂന്യം);
+ബാഹ്യ ശൂന്യം sched_init_granularity(ശൂന്യം);
+ബാഹ്യ ശൂന്യം update_max_interval(ശൂന്യം);
 
-extern void init_sched_dl_class(void);
-extern void init_sched_rt_class(void);
-extern void init_sched_fair_class(void);
+ബാഹ്യ ശൂന്യം init_sched_dl_class(ശൂന്യം);
+ബാഹ്യ ശൂന്യം init_sched_rt_class(ശൂന്യം);
+ബാഹ്യ ശൂന്യം init_sched_fair_class(ശൂന്യം);
 
-extern void resched_curr(struct rq *rq);
-extern void resched_curr_lazy(struct rq *rq);
-extern void resched_cpu(int cpu);
+ബാഹ്യ ശൂന്യം resched_curr(ഘടന rq *rq);
+ബാഹ്യ ശൂന്യം resched_curr_lazy(ഘടന rq *rq);
+ബാഹ്യ ശൂന്യം resched_cpu(പൂർണ്ണസംഖ്യ cpu);
 
-extern void init_rt_bandwidth(struct rt_bandwidth *rt_b, u64 period, u64 runtime);
-extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
+ബാഹ്യ ശൂന്യം init_rt_bandwidth(ഘടന rt_bandwidth *rt_b, u64 period, u64 runtime);
+ബാഹ്യ bool sched_rt_bandwidth_account(ഘടന rt_rq *rt_rq);
 
-extern void init_dl_entity(struct sched_dl_entity *dl_se);
+ബാഹ്യ ശൂന്യം init_dl_entity(ഘടന sched_dl_entity *dl_se);
 
-extern void init_cfs_throttle_work(struct task_struct *p);
+ബാഹ്യ ശൂന്യം init_cfs_throttle_work(ഘടന task_struct *p);
 
 #define BW_SHIFT		20
 #define BW_UNIT			(1 << BW_SHIFT)
@@ -3041,69 +3041,69 @@ extern void init_cfs_throttle_work(struct task_struct *p);
 #define MAX_BW_BITS		(64 - BW_SHIFT)
 #define MAX_BW			((1ULL << MAX_BW_BITS) - 1)
 
-extern u64 to_ratio(u64 period, u64 runtime);
+ബാഹ്യ u64 to_ratio(u64 period, u64 runtime);
 
-extern void init_entity_runnable_average(struct sched_entity *se);
-extern void post_init_entity_util_avg(struct task_struct *p);
+ബാഹ്യ ശൂന്യം init_entity_runnable_average(ഘടന sched_entity *se);
+ബാഹ്യ ശൂന്യം post_init_entity_util_avg(ഘടന task_struct *p);
 
 #ifdef CONFIG_NO_HZ_FULL
-extern bool sched_can_stop_tick(struct rq *rq);
-extern int __init sched_tick_offload_init(void);
+ബാഹ്യ bool sched_can_stop_tick(ഘടന rq *rq);
+ബാഹ്യ പൂർണ്ണസംഖ്യ __init sched_tick_offload_init(ശൂന്യം);
 
 /*
  * Tick may be needed by tasks in the runqueue depending on their policy and
  * requirements. If tick is needed, lets send the target an IPI to kick it out of
  * nohz mode if necessary.
  */
-static inline void sched_update_tick_dependency(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_update_tick_dependency(ഘടന rq *rq)
 {
-	int cpu = cpu_of(rq);
+	പൂർണ്ണസംഖ്യ cpu = cpu_of(rq);
 
-	if (!tick_nohz_full_cpu(cpu))
-		return;
+	എങ്കിൽ (!tick_nohz_full_cpu(cpu))
+		തിരികെ;
 
-	if (sched_can_stop_tick(rq))
+	എങ്കിൽ (sched_can_stop_tick(rq))
 		tick_nohz_dep_clear_cpu(cpu, TICK_DEP_BIT_SCHED);
-	else
+	അല്ലെങ്കിൽ
 		tick_nohz_dep_set_cpu(cpu, TICK_DEP_BIT_SCHED);
 }
-#else /* !CONFIG_NO_HZ_FULL: */
-static inline int sched_tick_offload_init(void) { return 0; }
-static inline void sched_update_tick_dependency(struct rq *rq) { }
+#അല്ലെങ്കിൽ /* !CONFIG_NO_HZ_FULL: */
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ sched_tick_offload_init(ശൂന്യം) { തിരികെ 0; }
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_update_tick_dependency(ഘടന rq *rq) { }
 #endif /* !CONFIG_NO_HZ_FULL */
 
-static inline void add_nr_running(struct rq *rq, unsigned count)
+സ്ഥിതം വരിയിൽ ശൂന്യം add_nr_running(ഘടന rq *rq, unsigned എണ്ണം)
 {
 	unsigned prev_nr = rq->nr_running;
 
-	rq->nr_running = prev_nr + count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, count);
+	rq->nr_running = prev_nr + എണ്ണം;
+	എങ്കിൽ (trace_sched_update_nr_running_tp_enabled()) {
+		call_trace_sched_update_nr_running(rq, എണ്ണം);
 	}
 
-	if (prev_nr < 2 && rq->nr_running >= 2)
+	എങ്കിൽ (prev_nr < 2 && rq->nr_running >= 2)
 		set_rd_overloaded(rq->rd, 1);
 
 	sched_update_tick_dependency(rq);
 }
 
-static inline void sub_nr_running(struct rq *rq, unsigned count)
+സ്ഥിതം വരിയിൽ ശൂന്യം sub_nr_running(ഘടന rq *rq, unsigned എണ്ണം)
 {
-	rq->nr_running -= count;
-	if (trace_sched_update_nr_running_tp_enabled()) {
-		call_trace_sched_update_nr_running(rq, -count);
+	rq->nr_running -= എണ്ണം;
+	എങ്കിൽ (trace_sched_update_nr_running_tp_enabled()) {
+		call_trace_sched_update_nr_running(rq, -എണ്ണം);
 	}
 
 	/* Check if we still need preemption */
 	sched_update_tick_dependency(rq);
 }
 
-static inline void __block_task(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ ശൂന്യം __block_task(ഘടന rq *rq, ഘടന task_struct *p)
 {
-	if (p->sched_contributes_to_load)
+	എങ്കിൽ (p->sched_contributes_to_load)
 		rq->nr_uninterruptible++;
 
-	if (p->in_iowait) {
+	എങ്കിൽ (p->in_iowait) {
 		atomic_inc(&rq->nr_iowait);
 		delayacct_blkio_start();
 	}
@@ -3141,15 +3141,15 @@ static inline void __block_task(struct rq *rq, struct task_struct *p)
 	smp_store_release(&p->on_rq, 0);
 }
 
-extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
-extern void deactivate_task(struct rq *rq, struct task_struct *p, int flags);
+ബാഹ്യ ശൂന്യം activate_task(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags);
+ബാഹ്യ ശൂന്യം deactivate_task(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags);
 
-extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
+ബാഹ്യ ശൂന്യം wakeup_preempt(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags);
 
 /*
  * attach_task() -- attach the task detached by detach_task() to its new rq.
  */
-static inline void attach_task(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ ശൂന്യം attach_task(ഘടന rq *rq, ഘടന task_struct *p)
 {
 	lockdep_assert_rq_held(rq);
 
@@ -3162,7 +3162,7 @@ static inline void attach_task(struct rq *rq, struct task_struct *p)
  * attach_one_task() -- attaches the task returned from detach_one_task() to
  * its new rq.
  */
-static inline void attach_one_task(struct rq *rq, struct task_struct *p)
+സ്ഥിതം വരിയിൽ ശൂന്യം attach_one_task(ഘടന rq *rq, ഘടന task_struct *p)
 {
 	guard(rq_lock)(rq);
 	update_rq_clock(rq);
@@ -3173,16 +3173,16 @@ static inline void attach_one_task(struct rq *rq, struct task_struct *p)
  * __attach_tasks() - attaches a list of tasks (using se.group_node) to
  * the new rq
  */
-static inline void __attach_tasks(struct rq *rq, struct list_head *tasks)
+സ്ഥിതം വരിയിൽ ശൂന്യം __attach_tasks(ഘടന rq *rq, ഘടന list_head *tasks)
 {
 	guard(rq_lock)(rq);
 	update_rq_clock(rq);
 
-	while (!list_empty(tasks)) {
-		struct task_struct *p;
+	ആകുമ്പോൾ (!list_empty(tasks)) {
+		ഘടന task_struct *p;
 
-		p = list_first_entry(tasks, struct task_struct, se.group_node);
-		list_del_init(&p->se.group_node);
+		p = list_first_entry(tasks, ഘടന task_struct, se.group_കണ്ണി);
+		list_del_init(&p->se.group_കണ്ണി);
 
 		attach_task(rq, p);
 	}
@@ -3190,25 +3190,25 @@ static inline void __attach_tasks(struct rq *rq, struct list_head *tasks)
 
 #ifdef CONFIG_PREEMPT_RT
 # define SCHED_NR_MIGRATE_BREAK 8
-#else
+#അല്ലെങ്കിൽ
 # define SCHED_NR_MIGRATE_BREAK 32
 #endif
 
-extern __read_mostly unsigned int sysctl_sched_nr_migrate;
-extern __read_mostly unsigned int sysctl_sched_migration_cost;
+ബാഹ്യ __read_mostly unsigned പൂർണ്ണസംഖ്യ sysctl_sched_nr_migrate;
+ബാഹ്യ __read_mostly unsigned പൂർണ്ണസംഖ്യ sysctl_sched_migration_cost;
 
-extern unsigned int sysctl_sched_base_slice;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ sysctl_sched_base_slice;
 
-extern int sysctl_resched_latency_warn_ms;
-extern int sysctl_resched_latency_warn_once;
+ബാഹ്യ പൂർണ്ണസംഖ്യ sysctl_resched_latency_warn_ms;
+ബാഹ്യ പൂർണ്ണസംഖ്യ sysctl_resched_latency_warn_once;
 
-extern unsigned int sysctl_sched_tunable_scaling;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ sysctl_sched_tunable_scaling;
 
-extern unsigned int sysctl_numa_balancing_scan_delay;
-extern unsigned int sysctl_numa_balancing_scan_period_min;
-extern unsigned int sysctl_numa_balancing_scan_period_max;
-extern unsigned int sysctl_numa_balancing_scan_size;
-extern unsigned int sysctl_numa_balancing_hot_threshold;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ sysctl_numa_balancing_scan_delay;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ sysctl_numa_balancing_scan_period_min;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ sysctl_numa_balancing_scan_period_max;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ sysctl_numa_balancing_scan_size;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ sysctl_numa_balancing_hot_threshold;
 
 #ifdef CONFIG_SCHED_HRTICK
 
@@ -3217,35 +3217,35 @@ extern unsigned int sysctl_numa_balancing_hot_threshold;
  *  - enabled by features
  *  - hrtimer is actually high res
  */
-static inline bool hrtick_enabled(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool hrtick_enabled(ഘടന rq *rq)
 {
-	return cpu_active(cpu_of(rq)) && hrtimer_highres_enabled();
+	തിരികെ cpu_active(cpu_of(rq)) && hrtimer_highres_enabled();
 }
 
-static inline bool hrtick_enabled_fair(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool hrtick_enabled_fair(ഘടന rq *rq)
 {
-	return sched_feat(HRTICK) && hrtick_enabled(rq);
+	തിരികെ sched_feat(HRTICK) && hrtick_enabled(rq);
 }
 
-static inline bool hrtick_enabled_dl(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool hrtick_enabled_dl(ഘടന rq *rq)
 {
-	return sched_feat(HRTICK_DL) && hrtick_enabled(rq);
+	തിരികെ sched_feat(HRTICK_DL) && hrtick_enabled(rq);
 }
 
-extern void hrtick_start(struct rq *rq, u64 delay);
-static inline bool hrtick_active(struct rq *rq)
+ബാഹ്യ ശൂന്യം hrtick_start(ഘടന rq *rq, u64 delay);
+സ്ഥിതം വരിയിൽ bool hrtick_active(ഘടന rq *rq)
 {
-	return hrtimer_active(&rq->hrtick_timer);
+	തിരികെ hrtimer_active(&rq->hrtick_timer);
 }
 
-#else /* !CONFIG_SCHED_HRTICK: */
-static inline bool hrtick_enabled_fair(struct rq *rq) { return false; }
-static inline bool hrtick_enabled_dl(struct rq *rq) { return false; }
-static inline bool hrtick_enabled(struct rq *rq) { return false; }
+#അല്ലെങ്കിൽ /* !CONFIG_SCHED_HRTICK: */
+സ്ഥിതം വരിയിൽ bool hrtick_enabled_fair(ഘടന rq *rq) { തിരികെ false; }
+സ്ഥിതം വരിയിൽ bool hrtick_enabled_dl(ഘടന rq *rq) { തിരികെ false; }
+സ്ഥിതം വരിയിൽ bool hrtick_enabled(ഘടന rq *rq) { തിരികെ false; }
 #endif /* !CONFIG_SCHED_HRTICK */
 
 #ifndef arch_scale_freq_tick
-static __always_inline void arch_scale_freq_tick(void) { }
+സ്ഥിതം __always_inline ശൂന്യം arch_scale_freq_tick(ശൂന്യം) { }
 #endif
 
 #ifndef arch_scale_freq_capacity
@@ -3259,10 +3259,10 @@ static __always_inline void arch_scale_freq_tick(void) { }
  *     ------ * SCHED_CAPACITY_SCALE
  *     f_max
  */
-static __always_inline
-unsigned long arch_scale_freq_capacity(int cpu)
+സ്ഥിതം __always_inline
+unsigned long arch_scale_freq_capacity(പൂർണ്ണസംഖ്യ cpu)
 {
-	return SCHED_CAPACITY_SCALE;
+	തിരികെ SCHED_CAPACITY_SCALE;
 }
 #endif
 
@@ -3272,7 +3272,7 @@ unsigned long arch_scale_freq_capacity(int cpu)
  * we need to call double_rq_clock_clear_update() to clear RQCF_UPDATED of
  * rq->clock_update_flags to avoid the WARN_DOUBLE_CLOCK warning.
  */
-static inline void double_rq_clock_clear_update(struct rq *rq1, struct rq *rq2)
+സ്ഥിതം വരിയിൽ ശൂന്യം double_rq_clock_clear_update(ഘടന rq *rq1, ഘടന rq *rq2)
 {
 	rq1->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
 	rq2->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
@@ -3280,23 +3280,23 @@ static inline void double_rq_clock_clear_update(struct rq *rq1, struct rq *rq2)
 
 #define DEFINE_LOCK_GUARD_2(name, type, _lock, _unlock, ...)				\
 __DEFINE_UNLOCK_GUARD(name, type, _unlock, type *lock2; __VA_ARGS__)			\
-static inline class_##name##_t class_##name##_constructor(type *lock, type *lock2)	\
+സ്ഥിതം വരിയിൽ class_##name##_t class_##name##_constructor(type *lock, type *lock2)	\
 	__no_context_analysis								\
 { class_##name##_t _t = { .lock = lock, .lock2 = lock2 }, *_T = &_t;			\
-  _lock; return _t; }
+  _lock; തിരികെ _t; }
 #define DECLARE_LOCK_GUARD_2_ATTRS(_name, _lock, _unlock1, _unlock2)			\
-static inline class_##_name##_t class_##_name##_constructor(lock_##_name##_t *_T1,	\
+സ്ഥിതം വരിയിൽ class_##_name##_t class_##_name##_constructor(lock_##_name##_t *_T1,	\
 							    lock_##_name##_t *_T2) _lock; \
-static __always_inline void __class_##_name##_cleanup_ctx1(class_##_name##_t **_T1)	\
+സ്ഥിതം __always_inline ശൂന്യം __class_##_name##_cleanup_ctx1(class_##_name##_t **_T1)	\
 	__no_context_analysis _unlock1 { }						\
-static __always_inline void __class_##_name##_cleanup_ctx2(class_##_name##_t **_T2)	\
+സ്ഥിതം __always_inline ശൂന്യം __class_##_name##_cleanup_ctx2(class_##_name##_t **_T2)	\
 	__no_context_analysis _unlock2 { }
 #define WITH_LOCK_GUARD_2_ATTRS(_name, _T1, _T2)					\
 	class_##_name##_constructor(_T1, _T2),						\
-	*__UNIQUE_ID(unlock1) __cleanup(__class_##_name##_cleanup_ctx1) = (void *)(_T1),\
-	*__UNIQUE_ID(unlock2) __cleanup(__class_##_name##_cleanup_ctx2) = (void *)(_T2)
+	*__UNIQUE_ID(unlock1) __cleanup(__class_##_name##_cleanup_ctx1) = (ശൂന്യം *)(_T1),\
+	*__UNIQUE_ID(unlock2) __cleanup(__class_##_name##_cleanup_ctx2) = (ശൂന്യം *)(_T2)
 
-static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
+സ്ഥിതം വരിയിൽ bool rq_order_less(ഘടന rq *rq1, ഘടന rq *rq2)
 {
 #ifdef CONFIG_SCHED_CORE
 	/*
@@ -3310,19 +3310,19 @@ static inline bool rq_order_less(struct rq *rq1, struct rq *rq2)
 	 *
 	 * when only cpu-id is considered.
 	 */
-	if (rq1->core->cpu < rq2->core->cpu)
-		return true;
-	if (rq1->core->cpu > rq2->core->cpu)
-		return false;
+	എങ്കിൽ (rq1->core->cpu < rq2->core->cpu)
+		തിരികെ true;
+	എങ്കിൽ (rq1->core->cpu > rq2->core->cpu)
+		തിരികെ false;
 
 	/*
 	 * __sched_core_flip() relies on SMT having cpu-id lock order.
 	 */
 #endif /* CONFIG_SCHED_CORE */
-	return rq1->cpu < rq2->cpu;
+	തിരികെ rq1->cpu < rq2->cpu;
 }
 
-extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
+ബാഹ്യ ശൂന്യം double_rq_lock(ഘടന rq *rq1, ഘടന rq *rq2)
 	__acquires(__rq_lockp(rq1), __rq_lockp(rq2));
 
 #ifdef CONFIG_PREEMPTION
@@ -3335,17 +3335,17 @@ extern void double_rq_lock(struct rq *rq1, struct rq *rq2)
  * reduces latency compared to the unfair variant below.  However, it
  * also adds more overhead and therefore may reduce throughput.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ _double_lock_balance(ഘടന rq *this_rq, ഘടന rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	raw_spin_rq_unlock(this_rq);
 	double_rq_lock(this_rq, busiest);
 
-	return 1;
+	തിരികെ 1;
 }
 
-#else /* !CONFIG_PREEMPTION: */
+#അല്ലെങ്കിൽ /* !CONFIG_PREEMPTION: */
 /*
  * Unfair double_lock_balance: Optimizes throughput at the expense of
  * latency by eliminating extra atomic operations when the locks are
@@ -3353,31 +3353,31 @@ static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
  * grant the double lock to lower CPUs over higher ids under contention,
  * regardless of entry order into the function.
  */
-static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ _double_lock_balance(ഘടന rq *this_rq, ഘടന rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
+	എങ്കിൽ (__rq_lockp(this_rq) == __rq_lockp(busiest)) {
 		__acquire(__rq_lockp(busiest)); /* already held */
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		തിരികെ 0;
 	}
 
-	if (likely(raw_spin_rq_trylock(busiest))) {
+	എങ്കിൽ (likely(raw_spin_rq_trylock(busiest))) {
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		തിരികെ 0;
 	}
 
-	if (rq_order_less(this_rq, busiest)) {
+	എങ്കിൽ (rq_order_less(this_rq, busiest)) {
 		raw_spin_rq_lock_nested(busiest, SINGLE_DEPTH_NESTING);
 		double_rq_clock_clear_update(this_rq, busiest);
-		return 0;
+		തിരികെ 0;
 	}
 
 	raw_spin_rq_unlock(this_rq);
 	double_rq_lock(this_rq, busiest);
 
-	return 1;
+	തിരികെ 1;
 }
 
 #endif /* !CONFIG_PREEMPTION */
@@ -3385,56 +3385,56 @@ static inline int _double_lock_balance(struct rq *this_rq, struct rq *busiest)
 /*
  * double_lock_balance - lock the busiest runqueue, this_rq is locked already.
  */
-static inline int double_lock_balance(struct rq *this_rq, struct rq *busiest)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ double_lock_balance(ഘടന rq *this_rq, ഘടന rq *busiest)
 	__must_hold(__rq_lockp(this_rq))
 	__acquires(__rq_lockp(busiest))
 {
 	lockdep_assert_irqs_disabled();
 
-	return _double_lock_balance(this_rq, busiest);
+	തിരികെ _double_lock_balance(this_rq, busiest);
 }
 
-static inline void double_unlock_balance(struct rq *this_rq, struct rq *busiest)
+സ്ഥിതം വരിയിൽ ശൂന്യം double_unlock_balance(ഘടന rq *this_rq, ഘടന rq *busiest)
 	__releases(__rq_lockp(busiest))
 {
-	if (__rq_lockp(this_rq) != __rq_lockp(busiest))
+	എങ്കിൽ (__rq_lockp(this_rq) != __rq_lockp(busiest))
 		raw_spin_rq_unlock(busiest);
-	else
+	അല്ലെങ്കിൽ
 		__release(__rq_lockp(busiest)); /* fake release */
 	lock_set_subclass(&__rq_lockp(this_rq)->dep_map, 0, _RET_IP_);
 }
 
-static inline void double_lock(spinlock_t *l1, spinlock_t *l2)
+സ്ഥിതം വരിയിൽ ശൂന്യം double_lock(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
+	എങ്കിൽ (l1 > l2)
 		swap(l1, l2);
 
 	spin_lock(l1);
 	spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
 }
 
-static inline void double_lock_irq(spinlock_t *l1, spinlock_t *l2)
+സ്ഥിതം വരിയിൽ ശൂന്യം double_lock_irq(spinlock_t *l1, spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
+	എങ്കിൽ (l1 > l2)
 		swap(l1, l2);
 
 	spin_lock_irq(l1);
 	spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
 }
 
-static inline void double_raw_lock(raw_spinlock_t *l1, raw_spinlock_t *l2)
+സ്ഥിതം വരിയിൽ ശൂന്യം double_raw_lock(raw_spinlock_t *l1, raw_spinlock_t *l2)
 	__acquires(l1, l2)
 {
-	if (l1 > l2)
+	എങ്കിൽ (l1 > l2)
 		swap(l1, l2);
 
 	raw_spin_lock(l1);
 	raw_spin_lock_nested(l2, SINGLE_DEPTH_NESTING);
 }
 
-static inline void double_raw_unlock(raw_spinlock_t *l1, raw_spinlock_t *l2)
+സ്ഥിതം വരിയിൽ ശൂന്യം double_raw_unlock(raw_spinlock_t *l1, raw_spinlock_t *l2)
 	__releases(l1, l2)
 {
 	raw_spin_unlock(l1);
@@ -3458,53 +3458,53 @@ DECLARE_LOCK_GUARD_2_ATTRS(double_raw_spinlock,
  * Note this does not restore interrupts like task_rq_unlock,
  * you need to do so manually after calling.
  */
-static inline void double_rq_unlock(struct rq *rq1, struct rq *rq2)
+സ്ഥിതം വരിയിൽ ശൂന്യം double_rq_unlock(ഘടന rq *rq1, ഘടന rq *rq2)
 	__releases(__rq_lockp(rq1), __rq_lockp(rq2))
 {
-	if (__rq_lockp(rq1) != __rq_lockp(rq2))
+	എങ്കിൽ (__rq_lockp(rq1) != __rq_lockp(rq2))
 		raw_spin_rq_unlock(rq2);
-	else
+	അല്ലെങ്കിൽ
 		__release(__rq_lockp(rq2)); /* fake release */
 	raw_spin_rq_unlock(rq1);
 }
 
-extern void set_rq_online (struct rq *rq);
-extern void set_rq_offline(struct rq *rq);
+ബാഹ്യ ശൂന്യം set_rq_online (ഘടന rq *rq);
+ബാഹ്യ ശൂന്യം set_rq_offline(ഘടന rq *rq);
 
-extern bool sched_smp_initialized;
+ബാഹ്യ bool sched_smp_initialized;
 
-DEFINE_LOCK_GUARD_2(double_rq_lock, struct rq,
+DEFINE_LOCK_GUARD_2(double_rq_lock, ഘടന rq,
 		    double_rq_lock(_T->lock, _T->lock2),
 		    double_rq_unlock(_T->lock, _T->lock2))
 
-extern struct sched_entity *__pick_root_entity(struct cfs_rq *cfs_rq);
-extern struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq);
-extern struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq);
+ബാഹ്യ ഘടന sched_entity *__pick_root_entity(ഘടന cfs_rq *cfs_rq);
+ബാഹ്യ ഘടന sched_entity *__pick_first_entity(ഘടന cfs_rq *cfs_rq);
+ബാഹ്യ ഘടന sched_entity *__pick_last_entity(ഘടന cfs_rq *cfs_rq);
 
-extern bool sched_debug_verbose;
+ബാഹ്യ bool sched_debug_verbose;
 
-extern void print_cfs_stats(struct seq_file *m, int cpu);
-extern void print_rt_stats(struct seq_file *m, int cpu);
-extern void print_dl_stats(struct seq_file *m, int cpu);
-extern void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq);
-extern void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq);
-extern void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq);
+ബാഹ്യ ശൂന്യം print_cfs_stats(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu);
+ബാഹ്യ ശൂന്യം print_rt_stats(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu);
+ബാഹ്യ ശൂന്യം print_dl_stats(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu);
+ബാഹ്യ ശൂന്യം print_cfs_rq(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu, ഘടന cfs_rq *cfs_rq);
+ബാഹ്യ ശൂന്യം print_rt_rq(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu, ഘടന rt_rq *rt_rq);
+ബാഹ്യ ശൂന്യം print_dl_rq(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu, ഘടന dl_rq *dl_rq);
 
-extern void resched_latency_warn(int cpu, u64 latency);
+ബാഹ്യ ശൂന്യം resched_latency_warn(പൂർണ്ണസംഖ്യ cpu, u64 latency);
 
 #ifdef CONFIG_NUMA_BALANCING
-extern void show_numa_stats(struct task_struct *p, struct seq_file *m);
-extern void
-print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
+ബാഹ്യ ശൂന്യം show_numa_stats(ഘടന task_struct *p, ഘടന seq_file *m);
+ബാഹ്യ ശൂന്യം
+print_numa_stats(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ കണ്ണി, unsigned long tsf,
 		 unsigned long tpf, unsigned long gsf, unsigned long gpf);
 #endif /* CONFIG_NUMA_BALANCING */
 
-extern void init_cfs_rq(struct cfs_rq *cfs_rq);
-extern void init_rt_rq(struct rt_rq *rt_rq);
-extern void init_dl_rq(struct dl_rq *dl_rq);
+ബാഹ്യ ശൂന്യം init_cfs_rq(ഘടന cfs_rq *cfs_rq);
+ബാഹ്യ ശൂന്യം init_rt_rq(ഘടന rt_rq *rt_rq);
+ബാഹ്യ ശൂന്യം init_dl_rq(ഘടന dl_rq *dl_rq);
 
-extern void cfs_bandwidth_usage_inc(void);
-extern void cfs_bandwidth_usage_dec(void);
+ബാഹ്യ ശൂന്യം cfs_bandwidth_usage_inc(ശൂന്യം);
+ബാഹ്യ ശൂന്യം cfs_bandwidth_usage_dec(ശൂന്യം);
 
 #ifdef CONFIG_NO_HZ_COMMON
 
@@ -3526,60 +3526,60 @@ extern void cfs_bandwidth_usage_dec(void);
 
 #define nohz_flags(cpu)		(&cpu_rq(cpu)->nohz_flags)
 
-extern void nohz_balance_exit_idle(struct rq *rq);
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline void nohz_balance_exit_idle(struct rq *rq) { }
+ബാഹ്യ ശൂന്യം nohz_balance_exit_idle(ഘടന rq *rq);
+#അല്ലെങ്കിൽ /* !CONFIG_NO_HZ_COMMON: */
+സ്ഥിതം വരിയിൽ ശൂന്യം nohz_balance_exit_idle(ഘടന rq *rq) { }
 #endif /* !CONFIG_NO_HZ_COMMON */
 
 #ifdef CONFIG_NO_HZ_COMMON
-extern void nohz_run_idle_balance(int cpu);
-#else
-static inline void nohz_run_idle_balance(int cpu) { }
+ബാഹ്യ ശൂന്യം nohz_run_idle_balance(പൂർണ്ണസംഖ്യ cpu);
+#അല്ലെങ്കിൽ
+സ്ഥിതം വരിയിൽ ശൂന്യം nohz_run_idle_balance(പൂർണ്ണസംഖ്യ cpu) { }
 #endif
 
-#include "stats.h"
+#അന്തര്ഭാവ "stats.h"
 
-#if defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
+#എങ്കിൽ defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
 
-extern void __sched_core_account_forceidle(struct rq *rq);
+ബാഹ്യ ശൂന്യം __sched_core_account_forceidle(ഘടന rq *rq);
 
-static inline void sched_core_account_forceidle(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_core_account_forceidle(ഘടന rq *rq)
 {
-	if (schedstat_enabled())
+	എങ്കിൽ (schedstat_enabled())
 		__sched_core_account_forceidle(rq);
 }
 
-extern void __sched_core_tick(struct rq *rq);
+ബാഹ്യ ശൂന്യം __sched_core_tick(ഘടന rq *rq);
 
-static inline void sched_core_tick(struct rq *rq)
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_core_tick(ഘടന rq *rq)
 {
-	if (sched_core_enabled(rq) && schedstat_enabled())
+	എങ്കിൽ (sched_core_enabled(rq) && schedstat_enabled())
 		__sched_core_tick(rq);
 }
 
-#else /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
+#അല്ലെങ്കിൽ /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS): */
 
-static inline void sched_core_account_forceidle(struct rq *rq) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_core_account_forceidle(ഘടന rq *rq) { }
 
-static inline void sched_core_tick(struct rq *rq) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_core_tick(ഘടന rq *rq) { }
 
 #endif /* !(CONFIG_SCHED_CORE && CONFIG_SCHEDSTATS) */
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
 
-struct irqtime {
+ഘടന irqtime {
 	u64			total;
 	u64			tick_delta;
 	u64			irq_start_time;
-	struct u64_stats_sync	sync;
+	ഘടന u64_stats_sync	sync;
 };
 
-DECLARE_PER_CPU(struct irqtime, cpu_irqtime);
-DECLARE_STATIC_KEY_FALSE(sched_clock_irqtime);
+DECLARE_PER_CPU(ഘടന irqtime, cpu_irqtime);
+DECLARE_STATIC_താക്കോൽ_FALSE(sched_clock_irqtime);
 
-static inline int irqtime_enabled(void)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ irqtime_enabled(ശൂന്യം)
 {
-	return static_branch_likely(&sched_clock_irqtime);
+	തിരികെ static_branch_likely(&sched_clock_irqtime);
 }
 
 /*
@@ -3587,32 +3587,32 @@ static inline int irqtime_enabled(void)
  * Otherwise ksoftirqd's sum_exec_runtime is subtracted its own runtime
  * and never move forward.
  */
-static inline u64 irq_time_read(int cpu)
+സ്ഥിതം വരിയിൽ u64 irq_time_read(പൂർണ്ണസംഖ്യ cpu)
 {
-	struct irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
-	unsigned int seq;
+	ഘടന irqtime *irqtime = &per_cpu(cpu_irqtime, cpu);
+	unsigned പൂർണ്ണസംഖ്യ seq;
 	u64 total;
 
-	do {
+	ചെയ്യുക {
 		seq = __u64_stats_fetch_begin(&irqtime->sync);
 		total = irqtime->total;
-	} while (__u64_stats_fetch_retry(&irqtime->sync, seq));
+	} ആകുമ്പോൾ (__u64_stats_fetch_retry(&irqtime->sync, seq));
 
-	return total;
+	തിരികെ total;
 }
 
-#else /* !CONFIG_IRQ_TIME_ACCOUNTING: */
+#അല്ലെങ്കിൽ /* !CONFIG_IRQ_TIME_ACCOUNTING: */
 
-static inline int irqtime_enabled(void)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ irqtime_enabled(ശൂന്യം)
 {
-	return 0;
+	തിരികെ 0;
 }
 
 #endif /* !CONFIG_IRQ_TIME_ACCOUNTING */
 
 #ifdef CONFIG_CPU_FREQ
 
-DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
+DECLARE_PER_CPU(ഘടന update_util_data __rcu *, cpufreq_update_util_data);
 
 /**
  * cpufreq_update_util - Take a note about CPU utilization changes.
@@ -3636,32 +3636,32 @@ DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
  * but that really is a band-aid.  Going forward it should be replaced with
  * solutions targeted more specifically at RT tasks.
  */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags)
+സ്ഥിതം വരിയിൽ ശൂന്യം cpufreq_update_util(ഘടന rq *rq, unsigned പൂർണ്ണസംഖ്യ flags)
 {
-	struct update_util_data *data;
+	ഘടന update_util_data *data;
 
 	data = rcu_dereference_sched(*per_cpu_ptr(&cpufreq_update_util_data,
 						  cpu_of(rq)));
-	if (data)
+	എങ്കിൽ (data)
 		data->func(data, rq_clock(rq), flags);
 }
-#else /* !CONFIG_CPU_FREQ: */
-static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) { }
+#അല്ലെങ്കിൽ /* !CONFIG_CPU_FREQ: */
+സ്ഥിതം വരിയിൽ ശൂന്യം cpufreq_update_util(ഘടന rq *rq, unsigned പൂർണ്ണസംഖ്യ flags) { }
 #endif /* !CONFIG_CPU_FREQ */
 
 #ifdef arch_scale_freq_capacity
 # ifndef arch_scale_freq_invariant
 #  define arch_scale_freq_invariant()	true
 # endif
-#else
+#അല്ലെങ്കിൽ
 # define arch_scale_freq_invariant()	false
 #endif
 
-unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
+unsigned long effective_cpu_util(പൂർണ്ണസംഖ്യ cpu, unsigned long util_cfs,
 				 unsigned long *min,
 				 unsigned long *max);
 
-unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
+unsigned long sugov_effective_cpu_perf(പൂർണ്ണസംഖ്യ cpu, unsigned long actual,
 				 unsigned long min,
 				 unsigned long max);
 
@@ -3674,35 +3674,35 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
  * greater than or equal to task's deadline density right shifted by
  * (BW_SHIFT - SCHED_CAPACITY_SHIFT) and false otherwise.
  */
-static inline bool dl_task_fits_capacity(struct task_struct *p, int cpu)
+സ്ഥിതം വരിയിൽ bool dl_task_fits_capacity(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ cpu)
 {
 	unsigned long cap = arch_scale_cpu_capacity(cpu);
 
-	return cap >= p->dl.dl_density >> (BW_SHIFT - SCHED_CAPACITY_SHIFT);
+	തിരികെ cap >= p->dl.dl_density >> (BW_SHIFT - SCHED_CAPACITY_SHIFT);
 }
 
-static inline unsigned long cpu_bw_dl(struct rq *rq)
+സ്ഥിതം വരിയിൽ unsigned long cpu_bw_dl(ഘടന rq *rq)
 {
-	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+	തിരികെ (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
 }
 
-static inline unsigned long cpu_util_dl(struct rq *rq)
+സ്ഥിതം വരിയിൽ unsigned long cpu_util_dl(ഘടന rq *rq)
 {
-	return READ_ONCE(rq->avg_dl.util_avg);
+	തിരികെ READ_ONCE(rq->avg_dl.util_avg);
 }
 
 
-extern unsigned long cpu_util_cfs(int cpu);
-extern unsigned long cpu_util_cfs_boost(int cpu);
+ബാഹ്യ unsigned long cpu_util_cfs(പൂർണ്ണസംഖ്യ cpu);
+ബാഹ്യ unsigned long cpu_util_cfs_boost(പൂർണ്ണസംഖ്യ cpu);
 
-static inline unsigned long cpu_util_rt(struct rq *rq)
+സ്ഥിതം വരിയിൽ unsigned long cpu_util_rt(ഘടന rq *rq)
 {
-	return READ_ONCE(rq->avg_rt.util_avg);
+	തിരികെ READ_ONCE(rq->avg_rt.util_avg);
 }
 
 #ifdef CONFIG_UCLAMP_TASK
 
-unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
+unsigned long uclamp_eff_മൂല്യം(ഘടന task_struct *p, എണ്ണൽ uclamp_id clamp_id);
 
 /*
  * When uclamp is compiled in, the aggregation at rq level is 'turned off'
@@ -3712,9 +3712,9 @@ unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
  * Returns true if userspace opted-in to use uclamp and aggregation at rq level
  * hence is active.
  */
-static inline bool uclamp_is_used(void)
+സ്ഥിതം വരിയിൽ bool uclamp_is_used(ശൂന്യം)
 {
-	return static_branch_likely(&sched_uclamp_used);
+	തിരികെ static_branch_likely(&sched_uclamp_used);
 }
 
 /*
@@ -3723,164 +3723,164 @@ static inline bool uclamp_is_used(void)
  * calling cpus_read_lock(). Because we never disable this
  * static key once enable it.
  */
-static inline void sched_uclamp_enable(void)
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_uclamp_enable(ശൂന്യം)
 {
-	if (!uclamp_is_used())
+	എങ്കിൽ (!uclamp_is_used())
 		static_branch_enable(&sched_uclamp_used);
 }
 
-static inline unsigned long uclamp_rq_get(struct rq *rq,
-					  enum uclamp_id clamp_id)
+സ്ഥിതം വരിയിൽ unsigned long uclamp_rq_get(ഘടന rq *rq,
+					  എണ്ണൽ uclamp_id clamp_id)
 {
-	return READ_ONCE(rq->uclamp[clamp_id].value);
+	തിരികെ READ_ONCE(rq->uclamp[clamp_id].മൂല്യം);
 }
 
-static inline void uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id,
-				 unsigned int value)
+സ്ഥിതം വരിയിൽ ശൂന്യം uclamp_rq_set(ഘടന rq *rq, എണ്ണൽ uclamp_id clamp_id,
+				 unsigned പൂർണ്ണസംഖ്യ മൂല്യം)
 {
-	WRITE_ONCE(rq->uclamp[clamp_id].value, value);
+	WRITE_ONCE(rq->uclamp[clamp_id].മൂല്യം, മൂല്യം);
 }
 
-static inline bool uclamp_rq_is_idle(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool uclamp_rq_is_idle(ഘടന rq *rq)
 {
-	return rq->uclamp_flags & UCLAMP_FLAG_IDLE;
+	തിരികെ rq->uclamp_flags & UCLAMP_FLAG_IDLE;
 }
 
 /* Is the rq being capped/throttled by uclamp_max? */
-static inline bool uclamp_rq_is_capped(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool uclamp_rq_is_capped(ഘടന rq *rq)
 {
 	unsigned long rq_util;
 	unsigned long max_util;
 
-	if (!uclamp_is_used())
-		return false;
+	എങ്കിൽ (!uclamp_is_used())
+		തിരികെ false;
 
 	rq_util = cpu_util_cfs(cpu_of(rq)) + cpu_util_rt(rq);
-	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
+	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].മൂല്യം);
 
-	return max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
+	തിരികെ max_util != SCHED_CAPACITY_SCALE && rq_util >= max_util;
 }
 
 #define for_each_clamp_id(clamp_id) \
-	for ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
+	വേണ്ടി ((clamp_id) = 0; (clamp_id) < UCLAMP_CNT; (clamp_id)++)
 
-extern unsigned int sysctl_sched_uclamp_util_min_rt_default;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ sysctl_sched_uclamp_util_min_rt_default;
 
 
-static inline unsigned int uclamp_none(enum uclamp_id clamp_id)
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ uclamp_none(എണ്ണൽ uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
-	return SCHED_CAPACITY_SCALE;
+	എങ്കിൽ (clamp_id == UCLAMP_MIN)
+		തിരികെ 0;
+	തിരികെ SCHED_CAPACITY_SCALE;
 }
 
 /* Integer rounded range for each bucket */
 #define UCLAMP_BUCKET_DELTA DIV_ROUND_CLOSEST(SCHED_CAPACITY_SCALE, UCLAMP_BUCKETS)
 
-static inline unsigned int uclamp_bucket_id(unsigned int clamp_value)
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ uclamp_bucket_id(unsigned പൂർണ്ണസംഖ്യ clamp_മൂല്യം)
 {
-	return min_t(unsigned int, clamp_value / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
+	തിരികെ min_t(unsigned പൂർണ്ണസംഖ്യ, clamp_മൂല്യം / UCLAMP_BUCKET_DELTA, UCLAMP_BUCKETS - 1);
 }
 
-static inline void
-uclamp_se_set(struct uclamp_se *uc_se, unsigned int value, bool user_defined)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+uclamp_se_set(ഘടന uclamp_se *uc_se, unsigned പൂർണ്ണസംഖ്യ മൂല്യം, bool user_defined)
 {
-	uc_se->value = value;
-	uc_se->bucket_id = uclamp_bucket_id(value);
+	uc_se->മൂല്യം = മൂല്യം;
+	uc_se->bucket_id = uclamp_bucket_id(മൂല്യം);
 	uc_se->user_defined = user_defined;
 }
 
-#else /* !CONFIG_UCLAMP_TASK: */
+#അല്ലെങ്കിൽ /* !CONFIG_UCLAMP_TASK: */
 
-static inline unsigned long
-uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+സ്ഥിതം വരിയിൽ unsigned long
+uclamp_eff_മൂല്യം(ഘടന task_struct *p, എണ്ണൽ uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	എങ്കിൽ (clamp_id == UCLAMP_MIN)
+		തിരികെ 0;
 
-	return SCHED_CAPACITY_SCALE;
+	തിരികെ SCHED_CAPACITY_SCALE;
 }
 
-static inline bool uclamp_rq_is_capped(struct rq *rq) { return false; }
+സ്ഥിതം വരിയിൽ bool uclamp_rq_is_capped(ഘടന rq *rq) { തിരികെ false; }
 
-static inline bool uclamp_is_used(void)
+സ്ഥിതം വരിയിൽ bool uclamp_is_used(ശൂന്യം)
 {
-	return false;
+	തിരികെ false;
 }
 
-static inline void sched_uclamp_enable(void) {}
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_uclamp_enable(ശൂന്യം) {}
 
-static inline unsigned long
-uclamp_rq_get(struct rq *rq, enum uclamp_id clamp_id)
+സ്ഥിതം വരിയിൽ unsigned long
+uclamp_rq_get(ഘടന rq *rq, എണ്ണൽ uclamp_id clamp_id)
 {
-	if (clamp_id == UCLAMP_MIN)
-		return 0;
+	എങ്കിൽ (clamp_id == UCLAMP_MIN)
+		തിരികെ 0;
 
-	return SCHED_CAPACITY_SCALE;
+	തിരികെ SCHED_CAPACITY_SCALE;
 }
 
-static inline void
-uclamp_rq_set(struct rq *rq, enum uclamp_id clamp_id, unsigned int value)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+uclamp_rq_set(ഘടന rq *rq, എണ്ണൽ uclamp_id clamp_id, unsigned പൂർണ്ണസംഖ്യ മൂല്യം)
 {
 }
 
-static inline bool uclamp_rq_is_idle(struct rq *rq)
+സ്ഥിതം വരിയിൽ bool uclamp_rq_is_idle(ഘടന rq *rq)
 {
-	return false;
+	തിരികെ false;
 }
 
 #endif /* !CONFIG_UCLAMP_TASK */
 
 #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
 
-static inline unsigned long cpu_util_irq(struct rq *rq)
+സ്ഥിതം വരിയിൽ unsigned long cpu_util_irq(ഘടന rq *rq)
 {
-	return READ_ONCE(rq->avg_irq.util_avg);
+	തിരികെ READ_ONCE(rq->avg_irq.util_avg);
 }
 
-static inline
+സ്ഥിതം വരിയിൽ
 unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
 {
 	util *= (max - irq);
 	util /= max;
 
-	return util;
+	തിരികെ util;
 
 }
 
-#else /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
+#അല്ലെങ്കിൽ /* !CONFIG_HAVE_SCHED_AVG_IRQ: */
 
-static inline unsigned long cpu_util_irq(struct rq *rq)
+സ്ഥിതം വരിയിൽ unsigned long cpu_util_irq(ഘടന rq *rq)
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static inline
+സ്ഥിതം വരിയിൽ
 unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
 {
-	return util;
+	തിരികെ util;
 }
 
 #endif /* !CONFIG_HAVE_SCHED_AVG_IRQ */
 
-extern void __setparam_fair(struct task_struct *p, const struct sched_attr *attr);
+ബാഹ്യ ശൂന്യം __setparam_fair(ഘടന task_struct *p, സ്ഥിരം ഘടന sched_attr *attr);
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+#എങ്കിൽ defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
 
 #define perf_domain_span(pd) (to_cpumask(((pd)->em_pd->cpus)))
 
-DECLARE_STATIC_KEY_FALSE(sched_energy_present);
+DECLARE_STATIC_താക്കോൽ_FALSE(sched_energy_present);
 
-static inline bool sched_energy_enabled(void)
+സ്ഥിതം വരിയിൽ bool sched_energy_enabled(ശൂന്യം)
 {
-	return static_branch_unlikely(&sched_energy_present);
+	തിരികെ static_branch_unlikely(&sched_energy_present);
 }
 
-#else /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
+#അല്ലെങ്കിൽ /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL): */
 
-#define perf_domain_span(pd) NULL
+#define perf_domain_span(pd) ശൂന്യ
 
-static inline bool sched_energy_enabled(void) { return false; }
+സ്ഥിതം വരിയിൽ bool sched_energy_enabled(ശൂന്യം) { തിരികെ false; }
 
 #endif /* !(CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL) */
 
@@ -3892,230 +3892,230 @@ static inline bool sched_energy_enabled(void) { return false; }
  * - store to rq->membarrier_state and following user-space memory accesses.
  * In the same way it provides those guarantees around store to rq->curr.
  */
-static inline void membarrier_switch_mm(struct rq *rq,
-					struct mm_struct *prev_mm,
-					struct mm_struct *next_mm)
+സ്ഥിതം വരിയിൽ ശൂന്യം membarrier_switch_mm(ഘടന rq *rq,
+					ഘടന mm_struct *prev_mm,
+					ഘടന mm_struct *next_mm)
 {
-	int membarrier_state;
+	പൂർണ്ണസംഖ്യ membarrier_state;
 
-	if (prev_mm == next_mm)
-		return;
+	എങ്കിൽ (prev_mm == next_mm)
+		തിരികെ;
 
 	membarrier_state = atomic_read(&next_mm->membarrier_state);
-	if (READ_ONCE(rq->membarrier_state) == membarrier_state)
-		return;
+	എങ്കിൽ (READ_ONCE(rq->membarrier_state) == membarrier_state)
+		തിരികെ;
 
 	WRITE_ONCE(rq->membarrier_state, membarrier_state);
 }
 
-#else /* !CONFIG_MEMBARRIER: */
+#അല്ലെങ്കിൽ /* !CONFIG_MEMBARRIER: */
 
-static inline void membarrier_switch_mm(struct rq *rq,
-					struct mm_struct *prev_mm,
-					struct mm_struct *next_mm)
+സ്ഥിതം വരിയിൽ ശൂന്യം membarrier_switch_mm(ഘടന rq *rq,
+					ഘടന mm_struct *prev_mm,
+					ഘടന mm_struct *next_mm)
 {
 }
 
 #endif /* !CONFIG_MEMBARRIER */
 
-static inline bool is_per_cpu_kthread(struct task_struct *p)
+സ്ഥിതം വരിയിൽ bool is_per_cpu_kthread(ഘടന task_struct *p)
 {
-	if (!(p->flags & PF_KTHREAD))
-		return false;
+	എങ്കിൽ (!(p->flags & PF_KTHREAD))
+		തിരികെ false;
 
-	if (p->nr_cpus_allowed != 1)
-		return false;
+	എങ്കിൽ (p->nr_cpus_allowed != 1)
+		തിരികെ false;
 
-	return true;
+	തിരികെ true;
 }
 
-extern void swake_up_all_locked(struct swait_queue_head *q);
-extern void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait);
+ബാഹ്യ ശൂന്യം swake_up_all_locked(ഘടന swait_queue_head *q);
+ബാഹ്യ ശൂന്യം __prepare_to_swait(ഘടന swait_queue_head *q, ഘടന swait_queue *wait);
 
-extern int try_to_wake_up(struct task_struct *tsk, unsigned int state, int wake_flags);
+ബാഹ്യ പൂർണ്ണസംഖ്യ try_to_wake_up(ഘടന task_struct *tsk, unsigned പൂർണ്ണസംഖ്യ state, പൂർണ്ണസംഖ്യ wake_flags);
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
-extern int preempt_dynamic_mode;
-extern int sched_dynamic_mode(const char *str);
-extern void sched_dynamic_update(int mode);
+ബാഹ്യ പൂർണ്ണസംഖ്യ preempt_dynamic_mode;
+ബാഹ്യ പൂർണ്ണസംഖ്യ sched_dynamic_mode(സ്ഥിരം അക്ഷരം *str);
+ബാഹ്യ ശൂന്യം sched_dynamic_update(പൂർണ്ണസംഖ്യ mode);
 #endif
-extern const char *preempt_modes[];
+ബാഹ്യ സ്ഥിരം അക്ഷരം *preempt_modes[];
 
 #ifdef CONFIG_SCHED_MM_CID
 
-static __always_inline bool cid_on_cpu(unsigned int cid)
+സ്ഥിതം __always_inline bool cid_on_cpu(unsigned പൂർണ്ണസംഖ്യ cid)
 {
-	return cid & MM_CID_ONCPU;
+	തിരികെ cid & MM_CID_ONCPU;
 }
 
-static __always_inline bool cid_in_transit(unsigned int cid)
+സ്ഥിതം __always_inline bool cid_in_transit(unsigned പൂർണ്ണസംഖ്യ cid)
 {
-	return cid & MM_CID_TRANSIT;
+	തിരികെ cid & MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cpu_cid_to_cid(unsigned int cid)
+സ്ഥിതം __always_inline unsigned പൂർണ്ണസംഖ്യ cpu_cid_to_cid(unsigned പൂർണ്ണസംഖ്യ cid)
 {
-	return cid & ~MM_CID_ONCPU;
+	തിരികെ cid & ~MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_cpu_cid(unsigned int cid)
+സ്ഥിതം __always_inline unsigned പൂർണ്ണസംഖ്യ cid_to_cpu_cid(unsigned പൂർണ്ണസംഖ്യ cid)
 {
-	return cid | MM_CID_ONCPU;
+	തിരികെ cid | MM_CID_ONCPU;
 }
 
-static __always_inline unsigned int cid_to_transit_cid(unsigned int cid)
+സ്ഥിതം __always_inline unsigned പൂർണ്ണസംഖ്യ cid_to_transit_cid(unsigned പൂർണ്ണസംഖ്യ cid)
 {
-	return cid | MM_CID_TRANSIT;
+	തിരികെ cid | MM_CID_TRANSIT;
 }
 
-static __always_inline unsigned int cid_from_transit_cid(unsigned int cid)
+സ്ഥിതം __always_inline unsigned പൂർണ്ണസംഖ്യ cid_from_transit_cid(unsigned പൂർണ്ണസംഖ്യ cid)
 {
-	return cid & ~MM_CID_TRANSIT;
+	തിരികെ cid & ~MM_CID_TRANSIT;
 }
 
-static __always_inline bool cid_on_task(unsigned int cid)
+സ്ഥിതം __always_inline bool cid_on_task(unsigned പൂർണ്ണസംഖ്യ cid)
 {
 	/* True if none of the MM_CID_ONCPU, MM_CID_TRANSIT, MM_CID_UNSET bits is set */
-	return cid < MM_CID_TRANSIT;
+	തിരികെ cid < MM_CID_TRANSIT;
 }
 
-static __always_inline void mm_drop_cid(struct mm_struct *mm, unsigned int cid)
+സ്ഥിതം __always_inline ശൂന്യം mm_drop_cid(ഘടന mm_struct *mm, unsigned പൂർണ്ണസംഖ്യ cid)
 {
 	clear_bit(cid, mm_cidmask(mm));
 }
 
-static __always_inline void mm_unset_cid_on_task(struct task_struct *t)
+സ്ഥിതം __always_inline ശൂന്യം mm_unset_cid_on_task(ഘടന task_struct *t)
 {
-	unsigned int cid = t->mm_cid.cid;
+	unsigned പൂർണ്ണസംഖ്യ cid = t->mm_cid.cid;
 
 	t->mm_cid.cid = MM_CID_UNSET;
-	if (cid_on_task(cid))
+	എങ്കിൽ (cid_on_task(cid))
 		mm_drop_cid(t->mm, cid);
 }
 
-static __always_inline void mm_drop_cid_on_cpu(struct mm_struct *mm, struct mm_cid_pcpu *pcp)
+സ്ഥിതം __always_inline ശൂന്യം mm_drop_cid_on_cpu(ഘടന mm_struct *mm, ഘടന mm_cid_pcpu *pcp)
 {
 	/* Clear the ONCPU bit, but do not set UNSET in the per CPU storage */
-	if (cid_on_cpu(pcp->cid)) {
+	എങ്കിൽ (cid_on_cpu(pcp->cid)) {
 		pcp->cid = cpu_cid_to_cid(pcp->cid);
 		mm_drop_cid(mm, pcp->cid);
 	}
 }
 
-static inline unsigned int __mm_get_cid(struct mm_struct *mm, unsigned int max_cids)
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ __mm_get_cid(ഘടന mm_struct *mm, unsigned പൂർണ്ണസംഖ്യ max_cids)
 {
-	unsigned int cid = find_first_zero_bit(mm_cidmask(mm), max_cids);
+	unsigned പൂർണ്ണസംഖ്യ cid = find_first_zero_bit(mm_cidmask(mm), max_cids);
 
-	if (cid >= max_cids)
-		return MM_CID_UNSET;
-	if (test_and_set_bit(cid, mm_cidmask(mm)))
-		return MM_CID_UNSET;
-	return cid;
+	എങ്കിൽ (cid >= max_cids)
+		തിരികെ MM_CID_UNSET;
+	എങ്കിൽ (test_and_set_bit(cid, mm_cidmask(mm)))
+		തിരികെ MM_CID_UNSET;
+	തിരികെ cid;
 }
 
-static inline unsigned int mm_get_cid(struct mm_struct *mm)
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ mm_get_cid(ഘടന mm_struct *mm)
 {
-	unsigned int cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
+	unsigned പൂർണ്ണസംഖ്യ cid = __mm_get_cid(mm, READ_ONCE(mm->mm_cid.max_cids));
 
-	while (cid == MM_CID_UNSET) {
+	ആകുമ്പോൾ (cid == MM_CID_UNSET) {
 		cpu_relax();
-		cid = __mm_get_cid(mm, num_possible_cpus());
+		cid = __mm_get_cid(mm, അക്കം_possible_cpus());
 	}
-	return cid;
+	തിരികെ cid;
 }
 
-static inline unsigned int mm_cid_converge(struct mm_struct *mm, unsigned int orig_cid,
-					   unsigned int max_cids)
+സ്ഥിതം വരിയിൽ unsigned പൂർണ്ണസംഖ്യ mm_cid_converge(ഘടന mm_struct *mm, unsigned പൂർണ്ണസംഖ്യ orig_cid,
+					   unsigned പൂർണ്ണസംഖ്യ max_cids)
 {
-	unsigned int new_cid, cid = cpu_cid_to_cid(orig_cid);
+	unsigned പൂർണ്ണസംഖ്യ new_cid, cid = cpu_cid_to_cid(orig_cid);
 
 	/* Is it in the optimal CID space? */
-	if (likely(cid < max_cids))
-		return orig_cid;
+	എങ്കിൽ (likely(cid < max_cids))
+		തിരികെ orig_cid;
 
 	/* Try to find one in the optimal space. Otherwise keep the provided. */
 	new_cid = __mm_get_cid(mm, max_cids);
-	if (new_cid != MM_CID_UNSET) {
+	എങ്കിൽ (new_cid != MM_CID_UNSET) {
 		mm_drop_cid(mm, cid);
 		/* Preserve the ONCPU mode of the original CID */
-		return new_cid | (orig_cid & MM_CID_ONCPU);
+		തിരികെ new_cid | (orig_cid & MM_CID_ONCPU);
 	}
-	return orig_cid;
+	തിരികെ orig_cid;
 }
 
-static __always_inline void mm_cid_update_task_cid(struct task_struct *t, unsigned int cid)
+സ്ഥിതം __always_inline ശൂന്യം mm_cid_update_task_cid(ഘടന task_struct *t, unsigned പൂർണ്ണസംഖ്യ cid)
 {
-	if (t->mm_cid.cid != cid) {
+	എങ്കിൽ (t->mm_cid.cid != cid) {
 		t->mm_cid.cid = cid;
 		rseq_sched_set_ids_changed(t);
 	}
 }
 
-static __always_inline void mm_cid_update_pcpu_cid(struct mm_struct *mm, unsigned int cid)
+സ്ഥിതം __always_inline ശൂന്യം mm_cid_update_pcpu_cid(ഘടന mm_struct *mm, unsigned പൂർണ്ണസംഖ്യ cid)
 {
 	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
 }
 
-static __always_inline void mm_cid_from_cpu(struct task_struct *t, unsigned int cpu_cid,
-					    unsigned int mode)
+സ്ഥിതം __always_inline ശൂന്യം mm_cid_from_cpu(ഘടന task_struct *t, unsigned പൂർണ്ണസംഖ്യ cpu_cid,
+					    unsigned പൂർണ്ണസംഖ്യ mode)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
-	struct mm_struct *mm = t->mm;
+	unsigned പൂർണ്ണസംഖ്യ max_cids, tcid = t->mm_cid.cid;
+	ഘടന mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case where both have the ONCPU bit set */
-	if (likely(cid_on_cpu(cpu_cid & tcid))) {
-		if (likely(cpu_cid_to_cid(cpu_cid) < max_cids)) {
+	എങ്കിൽ (likely(cid_on_cpu(cpu_cid & tcid))) {
+		എങ്കിൽ (likely(cpu_cid_to_cid(cpu_cid) < max_cids)) {
 			mm_cid_update_task_cid(t, cpu_cid);
-			return;
+			തിരികെ;
 		}
 		/* Try to converge into the optimal CID space */
 		cpu_cid = mm_cid_converge(mm, cpu_cid, max_cids);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Hand over or drop the task owned CID */
-		if (cid_on_task(tcid)) {
-			if (cid_on_cpu(cpu_cid))
+		എങ്കിൽ (cid_on_task(tcid)) {
+			എങ്കിൽ (cid_on_cpu(cpu_cid))
 				mm_unset_cid_on_task(t);
-			else
+			അല്ലെങ്കിൽ
 				cpu_cid = cid_to_cpu_cid(tcid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_cpu(cpu_cid))
+		എങ്കിൽ (!cid_on_cpu(cpu_cid))
 			cpu_cid = cid_to_cpu_cid(mm_get_cid(mm));
 
 		/* Handle the transition mode flag if required */
-		if (mode & MM_CID_TRANSIT)
+		എങ്കിൽ (mode & MM_CID_TRANSIT)
 			cpu_cid = cpu_cid_to_cid(cpu_cid) | MM_CID_TRANSIT;
 	}
 	mm_cid_update_pcpu_cid(mm, cpu_cid);
 	mm_cid_update_task_cid(t, cpu_cid);
 }
 
-static __always_inline void mm_cid_from_task(struct task_struct *t, unsigned int cpu_cid,
-					     unsigned int mode)
+സ്ഥിതം __always_inline ശൂന്യം mm_cid_from_task(ഘടന task_struct *t, unsigned പൂർണ്ണസംഖ്യ cpu_cid,
+					     unsigned പൂർണ്ണസംഖ്യ mode)
 {
-	unsigned int max_cids, tcid = t->mm_cid.cid;
-	struct mm_struct *mm = t->mm;
+	unsigned പൂർണ്ണസംഖ്യ max_cids, tcid = t->mm_cid.cid;
+	ഘടന mm_struct *mm = t->mm;
 
 	max_cids = READ_ONCE(mm->mm_cid.max_cids);
 	/* Optimize for the common case, where both have the ONCPU bit clear */
-	if (likely(cid_on_task(tcid | cpu_cid))) {
-		if (likely(tcid < max_cids)) {
+	എങ്കിൽ (likely(cid_on_task(tcid | cpu_cid))) {
+		എങ്കിൽ (likely(tcid < max_cids)) {
 			mm_cid_update_pcpu_cid(mm, tcid);
-			return;
+			തിരികെ;
 		}
 		/* Try to converge into the optimal CID space */
 		tcid = mm_cid_converge(mm, tcid, max_cids);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Hand over or drop the CPU owned CID */
-		if (cid_on_cpu(cpu_cid)) {
-			if (cid_on_task(tcid))
+		എങ്കിൽ (cid_on_cpu(cpu_cid)) {
+			എങ്കിൽ (cid_on_task(tcid))
 				mm_drop_cid_on_cpu(mm, this_cpu_ptr(mm->mm_cid.pcpu));
-			else
+			അല്ലെങ്കിൽ
 				tcid = cpu_cid_to_cid(cpu_cid);
 		}
 		/* Still nothing, allocate a new one */
-		if (!cid_on_task(tcid))
+		എങ്കിൽ (!cid_on_task(tcid))
 			tcid = mm_get_cid(mm);
 		/* Set the transition mode flag if required */
 		tcid |= mode & MM_CID_TRANSIT;
@@ -4124,30 +4124,30 @@ static __always_inline void mm_cid_from_task(struct task_struct *t, unsigned int
 	mm_cid_update_task_cid(t, tcid);
 }
 
-static __always_inline void mm_cid_schedin(struct task_struct *next)
+സ്ഥിതം __always_inline ശൂന്യം mm_cid_schedin(ഘടന task_struct *next)
 {
-	struct mm_struct *mm = next->mm;
-	unsigned int cpu_cid, mode;
+	ഘടന mm_struct *mm = next->mm;
+	unsigned പൂർണ്ണസംഖ്യ cpu_cid, mode;
 
-	if (!next->mm_cid.active)
-		return;
+	എങ്കിൽ (!next->mm_cid.active)
+		തിരികെ;
 
 	cpu_cid = __this_cpu_read(mm->mm_cid.pcpu->cid);
 	mode = READ_ONCE(mm->mm_cid.mode);
-	if (likely(!cid_on_cpu(mode)))
+	എങ്കിൽ (likely(!cid_on_cpu(mode)))
 		mm_cid_from_task(next, cpu_cid, mode);
-	else
+	അല്ലെങ്കിൽ
 		mm_cid_from_cpu(next, cpu_cid, mode);
 }
 
-static __always_inline void mm_cid_schedout(struct task_struct *prev)
+സ്ഥിതം __always_inline ശൂന്യം mm_cid_schedout(ഘടന task_struct *prev)
 {
-	struct mm_struct *mm = prev->mm;
-	unsigned int mode, cid;
+	ഘടന mm_struct *mm = prev->mm;
+	unsigned പൂർണ്ണസംഖ്യ mode, cid;
 
 	/* During mode transitions CIDs are temporary and need to be dropped */
-	if (likely(!cid_in_transit(prev->mm_cid.cid)))
-		return;
+	എങ്കിൽ (likely(!cid_in_transit(prev->mm_cid.cid)))
+		തിരികെ;
 
 	mode = READ_ONCE(mm->mm_cid.mode);
 	cid = cid_from_transit_cid(prev->mm_cid.cid);
@@ -4156,56 +4156,56 @@ static __always_inline void mm_cid_schedout(struct task_struct *prev)
 	 * If transition mode is done, transfer ownership when the CID is
 	 * within the convergence range to optimize the next schedule in.
 	 */
-	if (!cid_in_transit(mode) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
-		if (cid_on_cpu(mode))
+	എങ്കിൽ (!cid_in_transit(mode) && cid < READ_ONCE(mm->mm_cid.max_cids)) {
+		എങ്കിൽ (cid_on_cpu(mode))
 			cid = cid_to_cpu_cid(cid);
 
 		/* Update both so that the next schedule in goes into the fast path */
 		mm_cid_update_pcpu_cid(mm, cid);
 		prev->mm_cid.cid = cid;
-	} else {
+	} അല്ലെങ്കിൽ {
 		mm_drop_cid(mm, cid);
 		prev->mm_cid.cid = MM_CID_UNSET;
 	}
 }
 
-static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next)
+സ്ഥിതം വരിയിൽ ശൂന്യം mm_cid_switch_to(ഘടന task_struct *prev, ഘടന task_struct *next)
 {
 	mm_cid_schedout(prev);
 	mm_cid_schedin(next);
 }
 
-#else /* !CONFIG_SCHED_MM_CID: */
-static inline void mm_cid_switch_to(struct task_struct *prev, struct task_struct *next) { }
+#അല്ലെങ്കിൽ /* !CONFIG_SCHED_MM_CID: */
+സ്ഥിതം വരിയിൽ ശൂന്യം mm_cid_switch_to(ഘടന task_struct *prev, ഘടന task_struct *next) { }
 #endif /* !CONFIG_SCHED_MM_CID */
 
 #ifdef CONFIG_SCHED_CACHE
-DECLARE_STATIC_KEY_FALSE(sched_cache_present);
-DECLARE_STATIC_KEY_FALSE(sched_cache_active);
-extern int sysctl_sched_cache_user;
-extern unsigned int llc_aggr_tolerance;
-extern unsigned int llc_epoch_period;
-extern unsigned int llc_epoch_affinity_timeout;
-extern unsigned int llc_imb_pct;
-extern unsigned int llc_overaggr_pct;
+DECLARE_STATIC_താക്കോൽ_FALSE(sched_cache_present);
+DECLARE_STATIC_താക്കോൽ_FALSE(sched_cache_active);
+ബാഹ്യ പൂർണ്ണസംഖ്യ sysctl_sched_cache_user;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ llc_aggr_tolerance;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ llc_epoch_period;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ llc_epoch_affinity_timeout;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ llc_imb_pct;
+ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ llc_overaggr_pct;
 
-static inline bool sched_cache_enabled(void)
+സ്ഥിതം വരിയിൽ bool sched_cache_enabled(ശൂന്യം)
 {
-	return static_branch_unlikely(&sched_cache_active);
+	തിരികെ static_branch_unlikely(&sched_cache_active);
 }
 
-extern void sched_cache_active_set(void);
+ബാഹ്യ ശൂന്യം sched_cache_active_set(ശൂന്യം);
 
 #endif
 
-void sched_domains_free_llc_id(int cpu);
+ശൂന്യം sched_domains_free_llc_id(പൂർണ്ണസംഖ്യ cpu);
 
-extern void init_sched_mm(struct task_struct *p);
+ബാഹ്യ ശൂന്യം init_sched_mm(ഘടന task_struct *p);
 
-extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
-extern int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se);
-static inline
-void move_queued_task_locked(struct rq *src_rq, struct rq *dst_rq, struct task_struct *task)
+ബാഹ്യ u64 avg_vruntime(ഘടന cfs_rq *cfs_rq);
+ബാഹ്യ പൂർണ്ണസംഖ്യ entity_eligible(ഘടന cfs_rq *cfs_rq, ഘടന sched_entity *se);
+സ്ഥിതം വരിയിൽ
+ശൂന്യം move_queued_task_locked(ഘടന rq *src_rq, ഘടന rq *dst_rq, ഘടന task_struct *task)
 {
 	lockdep_assert_rq_held(src_rq);
 	lockdep_assert_rq_held(dst_rq);
@@ -4216,53 +4216,53 @@ void move_queued_task_locked(struct rq *src_rq, struct rq *dst_rq, struct task_s
 	wakeup_preempt(dst_rq, task, 0);
 }
 
-static inline
-bool task_is_pushable(struct rq *rq, struct task_struct *p, int cpu)
+സ്ഥിതം വരിയിൽ
+bool task_is_pushable(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ cpu)
 {
-	if (!task_on_cpu(rq, p) &&
+	എങ്കിൽ (!task_on_cpu(rq, p) &&
 	    cpumask_test_cpu(cpu, &p->cpus_mask))
-		return true;
+		തിരികെ true;
 
-	return false;
+	തിരികെ false;
 }
 
 #ifdef CONFIG_RT_MUTEXES
 
-static inline int __rt_effective_prio(struct task_struct *pi_task, int prio)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ __rt_effective_prio(ഘടന task_struct *pi_task, പൂർണ്ണസംഖ്യ prio)
 {
-	if (pi_task)
+	എങ്കിൽ (pi_task)
 		prio = min(prio, pi_task->prio);
 
-	return prio;
+	തിരികെ prio;
 }
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ rt_effective_prio(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ prio)
 {
-	struct task_struct *pi_task = rt_mutex_get_top_task(p);
+	ഘടന task_struct *pi_task = rt_mutex_get_മുകൾ_task(p);
 
-	return __rt_effective_prio(pi_task, prio);
+	തിരികെ __rt_effective_prio(pi_task, prio);
 }
 
-#else /* !CONFIG_RT_MUTEXES: */
+#അല്ലെങ്കിൽ /* !CONFIG_RT_MUTEXES: */
 
-static inline int rt_effective_prio(struct task_struct *p, int prio)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ rt_effective_prio(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ prio)
 {
-	return prio;
+	തിരികെ prio;
 }
 
 #endif /* !CONFIG_RT_MUTEXES */
 
-extern int __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
-extern int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
-extern const struct sched_class *__setscheduler_class(int policy, int prio);
-extern void set_load_weight(struct task_struct *p, bool update_load);
-extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
-extern bool dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+ബാഹ്യ പൂർണ്ണസംഖ്യ __sched_setscheduler(ഘടന task_struct *p, സ്ഥിരം ഘടന sched_attr *attr, bool user, bool pi);
+ബാഹ്യ പൂർണ്ണസംഖ്യ __sched_setaffinity(ഘടന task_struct *p, ഘടന affinity_context *ctx);
+ബാഹ്യ സ്ഥിരം ഘടന sched_class *__setscheduler_class(പൂർണ്ണസംഖ്യ policy, പൂർണ്ണസംഖ്യ prio);
+ബാഹ്യ ശൂന്യം set_load_weight(ഘടന task_struct *p, bool update_load);
+ബാഹ്യ ശൂന്യം enqueue_task(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags);
+ബാഹ്യ bool dequeue_task(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags);
 
-extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
+ബാഹ്യ ഘടന balance_callback *splice_balance_callbacks(ഘടന rq *rq);
 
-extern void __balance_callbacks(struct rq *rq, struct rq_flags *rf);
-extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
+ബാഹ്യ ശൂന്യം __balance_callbacks(ഘടന rq *rq, ഘടന rq_flags *rf);
+ബാഹ്യ ശൂന്യം balance_callbacks(ഘടന rq *rq, ഘടന balance_callback *head);
 
 /*
  * The 'sched_change' pattern is the safe, easy and slow way of changing a
@@ -4281,31 +4281,31 @@ extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
  * of the task between sched_change_begin() and sched_change_end(). Ensuring
  * the task's queueing state is idempotent across the operation.
  */
-struct sched_change_ctx {
+ഘടന sched_change_ctx {
 	u64			prio;
-	struct task_struct	*p;
-	const struct sched_class *class;
-	int			flags;
+	ഘടന task_struct	*p;
+	സ്ഥിരം ഘടന sched_class *class;
+	പൂർണ്ണസംഖ്യ			flags;
 	bool			queued;
 	bool			running;
 };
 
-struct sched_change_ctx *sched_change_begin(struct task_struct *p, unsigned int flags);
-void sched_change_end(struct sched_change_ctx *ctx);
+ഘടന sched_change_ctx *sched_change_begin(ഘടന task_struct *p, unsigned പൂർണ്ണസംഖ്യ flags);
+ശൂന്യം sched_change_end(ഘടന sched_change_ctx *ctx);
 
-DEFINE_CLASS(sched_change, struct sched_change_ctx *,
+DEFINE_CLASS(sched_change, ഘടന sched_change_ctx *,
 	     sched_change_end(_T),
 	     sched_change_begin(p, flags),
-	     struct task_struct *p, unsigned int flags)
+	     ഘടന task_struct *p, unsigned പൂർണ്ണസംഖ്യ flags)
 
 DEFINE_CLASS_IS_UNCONDITIONAL(sched_change)
 
-#include "ext/ext.h"
+#അന്തര്ഭാവ "ext/ext.h"
 
 #ifdef CONFIG_PREFERRED_CPU
-void sched_push_current_non_preferred_cpu(struct rq *rq);
-#else	/* !CONFIG_PREFERRED_CPU */
-static inline void sched_push_current_non_preferred_cpu(struct rq *rq) { }
+ശൂന്യം sched_തള്ളുക_current_non_preferred_cpu(ഘടന rq *rq);
+#അല്ലെങ്കിൽ	/* !CONFIG_PREFERRED_CPU */
+സ്ഥിതം വരിയിൽ ശൂന്യം sched_തള്ളുക_current_non_preferred_cpu(ഘടന rq *rq) { }
 #endif
 
 #endif /* _KERNEL_SCHED_SCHED_H */

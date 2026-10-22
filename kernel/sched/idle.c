@@ -6,55 +6,55 @@
  * (NOTE: these are not related to SCHED_IDLE batch scheduled
  *        tasks which are handled in sched/fair.c )
  */
-#include <linux/cpuidle.h>
-#include <linux/suspend.h>
-#include <linux/livepatch.h>
-#include "sched.h"
-#include "smp.h"
+#അന്തര്ഭാവ <linux/cpuidle.h>
+#അന്തര്ഭാവ <linux/suspend.h>
+#അന്തര്ഭാവ <linux/livepatch.h>
+#അന്തര്ഭാവ "sched.h"
+#അന്തര്ഭാവ "smp.h"
 
 /* Linker adds these: start and end of __cpuidle functions */
-extern char __cpuidle_text_start[], __cpuidle_text_end[];
+ബാഹ്യ അക്ഷരം __cpuidle_text_start[], __cpuidle_text_end[];
 
 /**
  * sched_idle_set_state - Record idle state for the current CPU.
  * @idle_state: State to record.
  */
-void sched_idle_set_state(struct cpuidle_state *idle_state)
+ശൂന്യം sched_idle_set_state(ഘടന cpuidle_state *idle_state)
 {
 	idle_set_state(this_rq(), idle_state);
 }
 
-static int __read_mostly cpu_idle_force_poll;
+സ്ഥിതം പൂർണ്ണസംഖ്യ __read_mostly cpu_idle_force_poll;
 
-void cpu_idle_poll_ctrl(bool enable)
+ശൂന്യം cpu_idle_poll_ctrl(bool enable)
 {
-	if (enable) {
+	എങ്കിൽ (enable) {
 		cpu_idle_force_poll++;
-	} else {
+	} അല്ലെങ്കിൽ {
 		cpu_idle_force_poll--;
 		WARN_ON_ONCE(cpu_idle_force_poll < 0);
 	}
 }
 
 #ifdef CONFIG_GENERIC_IDLE_POLL_SETUP
-static int __init cpu_idle_poll_setup(char *__unused)
+സ്ഥിതം പൂർണ്ണസംഖ്യ __init cpu_idle_poll_setup(അക്ഷരം *__unused)
 {
 	cpu_idle_force_poll = 1;
 
-	return 1;
+	തിരികെ 1;
 }
 __setup("nohlt", cpu_idle_poll_setup);
 
-static int __init cpu_idle_nopoll_setup(char *__unused)
+സ്ഥിതം പൂർണ്ണസംഖ്യ __init cpu_idle_nopoll_setup(അക്ഷരം *__unused)
 {
 	cpu_idle_force_poll = 0;
 
-	return 1;
+	തിരികെ 1;
 }
 __setup("hlt", cpu_idle_nopoll_setup);
 #endif /* CONFIG_GENERIC_IDLE_POLL_SETUP */
 
-static noinline int __cpuidle cpu_idle_poll(void)
+സ്ഥിതം noinline പൂർണ്ണസംഖ്യ __cpuidle cpu_idle_poll(ശൂന്യം)
 {
 	instrumentation_begin();
 	trace_cpu_idle(0, smp_processor_id());
@@ -62,7 +62,7 @@ static noinline int __cpuidle cpu_idle_poll(void)
 	ct_cpuidle_enter();
 
 	raw_local_irq_enable();
-	while (!tif_need_resched() &&
+	ആകുമ്പോൾ (!tif_need_resched() &&
 	       (cpu_idle_force_poll || tick_check_broadcast_expired()))
 		cpu_relax();
 	raw_local_irq_disable();
@@ -73,36 +73,36 @@ static noinline int __cpuidle cpu_idle_poll(void)
 	local_irq_enable();
 	instrumentation_end();
 
-	return 1;
+	തിരികെ 1;
 }
 
 /* Weak implementations for optional arch specific functions */
-void __weak arch_cpu_idle_prepare(void) { }
-void __weak arch_cpu_idle_enter(void) { }
-void __weak arch_cpu_idle_exit(void) { }
-void __weak __noreturn arch_cpu_idle_dead(void) { while (1); }
-void __weak arch_cpu_idle(void)
+ശൂന്യം __weak arch_cpu_idle_prepare(ശൂന്യം) { }
+ശൂന്യം __weak arch_cpu_idle_enter(ശൂന്യം) { }
+ശൂന്യം __weak arch_cpu_idle_exit(ശൂന്യം) { }
+ശൂന്യം __weak __noreturn arch_cpu_idle_dead(ശൂന്യം) { ആകുമ്പോൾ (1); }
+ശൂന്യം __weak arch_cpu_idle(ശൂന്യം)
 {
 	cpu_idle_force_poll = 1;
 }
 
 #ifdef CONFIG_GENERIC_CLOCKEVENTS_BROADCAST_IDLE
-DEFINE_STATIC_KEY_FALSE(arch_needs_tick_broadcast);
+DEFINE_STATIC_താക്കോൽ_FALSE(arch_needs_tick_broadcast);
 
-static inline void cond_tick_broadcast_enter(void)
+സ്ഥിതം വരിയിൽ ശൂന്യം cond_tick_broadcast_enter(ശൂന്യം)
 {
-	if (static_branch_unlikely(&arch_needs_tick_broadcast))
+	എങ്കിൽ (static_branch_unlikely(&arch_needs_tick_broadcast))
 		tick_broadcast_enter();
 }
 
-static inline void cond_tick_broadcast_exit(void)
+സ്ഥിതം വരിയിൽ ശൂന്യം cond_tick_broadcast_exit(ശൂന്യം)
 {
-	if (static_branch_unlikely(&arch_needs_tick_broadcast))
+	എങ്കിൽ (static_branch_unlikely(&arch_needs_tick_broadcast))
 		tick_broadcast_exit();
 }
-#else /* !CONFIG_GENERIC_CLOCKEVENTS_BROADCAST_IDLE: */
-static inline void cond_tick_broadcast_enter(void) { }
-static inline void cond_tick_broadcast_exit(void) { }
+#അല്ലെങ്കിൽ /* !CONFIG_GENERIC_CLOCKEVENTS_BROADCAST_IDLE: */
+സ്ഥിതം വരിയിൽ ശൂന്യം cond_tick_broadcast_enter(ശൂന്യം) { }
+സ്ഥിതം വരിയിൽ ശൂന്യം cond_tick_broadcast_exit(ശൂന്യം) { }
 #endif /* !CONFIG_GENERIC_CLOCKEVENTS_BROADCAST_IDLE */
 
 /**
@@ -110,10 +110,10 @@ static inline void cond_tick_broadcast_exit(void) { }
  *
  * To use when the cpuidle framework cannot be used.
  */
-void __cpuidle default_idle_call(void)
+ശൂന്യം __cpuidle default_idle_call(ശൂന്യം)
 {
 	instrumentation_begin();
-	if (!current_clr_polling_and_test()) {
+	എങ്കിൽ (!current_clr_polling_and_test()) {
 		cond_tick_broadcast_enter();
 		trace_cpu_idle(1, smp_processor_id());
 		stop_critical_timings();
@@ -130,27 +130,27 @@ void __cpuidle default_idle_call(void)
 	instrumentation_end();
 }
 
-static int call_cpuidle_s2idle(struct cpuidle_driver *drv,
-			       struct cpuidle_device *dev,
+സ്ഥിതം പൂർണ്ണസംഖ്യ call_cpuidle_s2idle(ഘടന cpuidle_driver *drv,
+			       ഘടന cpuidle_device *dev,
 			       u64 max_latency_ns)
 {
-	if (current_clr_polling_and_test())
-		return -EBUSY;
+	എങ്കിൽ (current_clr_polling_and_test())
+		തിരികെ -EBUSY;
 
-	return cpuidle_enter_s2idle(drv, dev, max_latency_ns);
+	തിരികെ cpuidle_enter_s2idle(drv, dev, max_latency_ns);
 }
 
-static int call_cpuidle(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-		      int next_state)
+സ്ഥിതം പൂർണ്ണസംഖ്യ call_cpuidle(ഘടന cpuidle_driver *drv, ഘടന cpuidle_device *dev,
+		      പൂർണ്ണസംഖ്യ next_state)
 {
 	/*
 	 * The idle task must be scheduled, it is pointless to go to idle, just
 	 * update no idle residency and return.
 	 */
-	if (current_clr_polling_and_test()) {
+	എങ്കിൽ (current_clr_polling_and_test()) {
 		dev->last_residency_ns = 0;
 		local_irq_enable();
-		return -EBUSY;
+		തിരികെ -EBUSY;
 	}
 
 	/*
@@ -158,14 +158,14 @@ static int call_cpuidle(struct cpuidle_driver *drv, struct cpuidle_device *dev,
 	 * This function will block until an interrupt occurs and will take
 	 * care of re-enabling the local interrupts
 	 */
-	return cpuidle_enter(drv, dev, next_state);
+	തിരികെ cpuidle_enter(drv, dev, next_state);
 }
 
-static void idle_call_stop_or_retain_tick(bool stop_tick)
+സ്ഥിതം ശൂന്യം idle_call_stop_or_retain_tick(bool stop_tick)
 {
-	if (stop_tick || tick_nohz_tick_stopped())
+	എങ്കിൽ (stop_tick || tick_nohz_tick_stopped())
 		tick_nohz_idle_stop_tick();
-	else
+	അല്ലെങ്കിൽ
 		tick_nohz_idle_retain_tick();
 }
 
@@ -178,26 +178,26 @@ static void idle_call_stop_or_retain_tick(bool stop_tick)
  * set, and it returns with polling set.  If it ever stops polling, it
  * must clear the polling bit.
  */
-static void cpuidle_idle_call(bool stop_tick)
+സ്ഥിതം ശൂന്യം cpuidle_idle_call(bool stop_tick)
 {
-	struct cpuidle_device *dev = cpuidle_get_device();
-	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
-	int next_state, entered_state;
+	ഘടന cpuidle_device *dev = cpuidle_get_device();
+	ഘടന cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
+	പൂർണ്ണസംഖ്യ next_state, entered_state;
 
 	/*
 	 * Check if the idle task must be rescheduled. If it is the
 	 * case, exit the function after re-enabling the local IRQ.
 	 */
-	if (need_resched()) {
+	എങ്കിൽ (need_resched()) {
 		local_irq_enable();
-		return;
+		തിരികെ;
 	}
 
-	if (cpuidle_not_available(drv, dev)) {
+	എങ്കിൽ (cpuidle_not_available(drv, dev)) {
 		idle_call_stop_or_retain_tick(stop_tick);
 
 		default_idle_call();
-		goto exit_idle;
+		പോകുക exit_idle;
 	}
 
 	/*
@@ -210,18 +210,18 @@ static void cpuidle_idle_call(bool stop_tick)
 	 * until a proper wakeup interrupt happens.
 	 */
 
-	if (idle_should_enter_s2idle() || dev->forced_idle_latency_limit_ns) {
+	എങ്കിൽ (idle_should_enter_s2idle() || dev->forced_idle_latency_limit_ns) {
 		u64 max_latency_ns;
 
-		if (idle_should_enter_s2idle()) {
+		എങ്കിൽ (idle_should_enter_s2idle()) {
 			max_latency_ns = cpu_wakeup_latency_qos_limit() *
 					 NSEC_PER_USEC;
 
 			entered_state = call_cpuidle_s2idle(drv, dev,
 							    max_latency_ns);
-			if (entered_state > 0)
-				goto exit_idle;
-		} else {
+			എങ്കിൽ (entered_state > 0)
+				പോകുക exit_idle;
+		} അല്ലെങ്കിൽ {
 			max_latency_ns = dev->forced_idle_latency_limit_ns;
 		}
 
@@ -229,7 +229,7 @@ static void cpuidle_idle_call(bool stop_tick)
 
 		next_state = cpuidle_find_deepest_state(drv, dev, max_latency_ns);
 		call_cpuidle(drv, dev, next_state);
-	} else if (drv->state_count > 1) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (drv->state_എണ്ണം > 1) {
 		/*
 		 * stop_tick is expected to be true by default by cpuidle
 		 * governors, which allows them to select idle states with
@@ -249,7 +249,7 @@ static void cpuidle_idle_call(bool stop_tick)
 		 * Give the governor an opportunity to reflect on the outcome
 		 */
 		cpuidle_reflect(dev, entered_state);
-	} else {
+	} അല്ലെങ്കിൽ {
 		idle_call_stop_or_retain_tick(stop_tick);
 
 		/*
@@ -266,7 +266,7 @@ exit_idle:
 	/*
 	 * It is up to the idle functions to re-enable local interrupts
 	 */
-	if (WARN_ON_ONCE(irqs_disabled()))
+	എങ്കിൽ (WARN_ON_ONCE(irqs_disabled()))
 		local_irq_enable();
 }
 
@@ -275,12 +275,12 @@ exit_idle:
  *
  * Called with polling cleared.
  */
-static void do_idle(void)
+സ്ഥിതം ശൂന്യം do_idle(ശൂന്യം)
 {
-	int cpu = smp_processor_id();
+	പൂർണ്ണസംഖ്യ cpu = smp_processor_id();
 	bool got_tick = false;
 
-	if (cpu_is_offline(cpu)) {
+	എങ്കിൽ (cpu_is_offline(cpu)) {
 		local_irq_disable();
 		/* All per-CPU kernel threads should be done by now. */
 		WARN_ON_ONCE(need_resched());
@@ -305,7 +305,7 @@ static void do_idle(void)
 	__current_set_polling();
 	tick_nohz_idle_enter();
 
-	while (!need_resched()) {
+	ആകുമ്പോൾ (!need_resched()) {
 
 		/*
 		 * Interrupts shouldn't be re-enabled from that point on until
@@ -348,10 +348,10 @@ static void do_idle(void)
 		 * broadcast device expired for us, we don't want to go deep
 		 * idle as we know that the IPI is going to arrive right away.
 		 */
-		if (cpu_idle_force_poll || tick_check_broadcast_expired()) {
+		എങ്കിൽ (cpu_idle_force_poll || tick_check_broadcast_expired()) {
 			tick_nohz_idle_restart_tick();
 			cpu_idle_poll();
-		} else {
+		} അല്ലെങ്കിൽ {
 			cpuidle_idle_call(got_tick);
 		}
 		got_tick = tick_nohz_idle_got_tick();
@@ -383,34 +383,34 @@ static void do_idle(void)
 	flush_smp_call_function_queue();
 	schedule_idle();
 
-	if (unlikely(klp_patch_pending(current)))
+	എങ്കിൽ (unlikely(klp_patch_pending(current)))
 		klp_update_patch_state(current);
 }
 
 bool cpu_in_idle(unsigned long pc)
 {
-	return pc >= (unsigned long)__cpuidle_text_start &&
+	തിരികെ pc >= (unsigned long)__cpuidle_text_start &&
 		pc < (unsigned long)__cpuidle_text_end;
 }
 
-struct idle_timer {
-	struct hrtimer timer;
-	int done;
+ഘടന idle_timer {
+	ഘടന hrtimer timer;
+	പൂർണ്ണസംഖ്യ done;
 };
 
-static enum hrtimer_restart idle_inject_timer_fn(struct hrtimer *timer)
+സ്ഥിതം എണ്ണൽ hrtimer_restart idle_inject_timer_fn(ഘടന hrtimer *timer)
 {
-	struct idle_timer *it = container_of(timer, struct idle_timer, timer);
+	ഘടന idle_timer *it = container_of(timer, ഘടന idle_timer, timer);
 
 	WRITE_ONCE(it->done, 1);
 	set_tsk_need_resched(current);
 
-	return HRTIMER_NORESTART;
+	തിരികെ HRTIMER_NORESTART;
 }
 
-void play_idle_precise(u64 duration_ns, u64 latency_ns)
+ശൂന്യം play_idle_precise(u64 duration_ns, u64 latency_ns)
 {
-	struct idle_timer it;
+	ഘടന idle_timer it;
 
 	/*
 	 * Only FIFO tasks can disable the tick since they don't need the forced
@@ -429,12 +429,12 @@ void play_idle_precise(u64 duration_ns, u64 latency_ns)
 	cpuidle_use_deepest_state(latency_ns);
 
 	it.done = 0;
-	hrtimer_setup_on_stack(&it.timer, idle_inject_timer_fn, CLOCK_MONOTONIC,
+	hrtimer_setup_on_അട്ടി(&it.timer, idle_inject_timer_fn, CLOCK_MONOTONIC,
 			       HRTIMER_MODE_REL_HARD);
 	hrtimer_start(&it.timer, ns_to_ktime(duration_ns),
 		      HRTIMER_MODE_REL_PINNED_HARD);
 
-	while (!READ_ONCE(it.done))
+	ആകുമ്പോൾ (!READ_ONCE(it.done))
 		do_idle();
 
 	cpuidle_use_deepest_state(0);
@@ -443,14 +443,14 @@ void play_idle_precise(u64 duration_ns, u64 latency_ns)
 	preempt_fold_need_resched();
 	preempt_enable();
 }
-EXPORT_SYMBOL_GPL(play_idle_precise);
+EXPORT_ചിഹ്നം_GPL(play_idle_precise);
 
-void cpu_startup_entry(enum cpuhp_state state)
+ശൂന്യം cpu_startup_entry(എണ്ണൽ cpuhp_state state)
 {
 	current->flags |= PF_IDLE;
 	arch_cpu_idle_prepare();
 	cpuhp_online_idle(state);
-	while (1)
+	ആകുമ്പോൾ (1)
 		do_idle();
 }
 
@@ -458,39 +458,39 @@ void cpu_startup_entry(enum cpuhp_state state)
  * idle-task scheduling class.
  */
 
-static int
-select_task_rq_idle(struct task_struct *p, int cpu, int flags)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+select_task_rq_idle(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ cpu, പൂർണ്ണസംഖ്യ flags)
 {
-	return task_cpu(p); /* IDLE tasks as never migrated */
+	തിരികെ task_cpu(p); /* IDLE tasks as never migrated */
 }
 
-static int
-balance_idle(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+balance_idle(ഘടന rq *rq, ഘടന rq_flags *rf)
 {
-	return WARN_ON_ONCE(1);
+	തിരികെ WARN_ON_ONCE(1);
 }
 
 /*
  * Idle tasks are unconditionally rescheduled:
  */
-static void wakeup_preempt_idle(struct rq *rq, struct task_struct *p, int flags)
+സ്ഥിതം ശൂന്യം wakeup_preempt_idle(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags)
 {
 	resched_curr(rq);
 }
 
-static void update_curr_idle(struct rq *rq);
+സ്ഥിതം ശൂന്യം update_curr_idle(ഘടന rq *rq);
 
-static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+സ്ഥിതം ശൂന്യം put_prev_task_idle(ഘടന rq *rq, ഘടന task_struct *prev, ഘടന task_struct *next)
 {
 	update_curr_idle(rq);
 	scx_update_idle(rq, false, true);
 	update_rq_avg_idle(rq);
 }
 
-static void set_next_task_idle(struct rq *rq, struct task_struct *next, enum snt_e type)
+സ്ഥിതം ശൂന്യം set_next_task_idle(ഘടന rq *rq, ഘടന task_struct *next, എണ്ണൽ snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	എങ്കിൽ (type == SNT_REPICK)
+		തിരികെ;
 
 	update_idle_core(rq);
 	scx_update_idle(rq, true, true);
@@ -504,30 +504,30 @@ static void set_next_task_idle(struct rq *rq, struct task_struct *next, enum snt
 	update_idle_rq_clock_pelt(rq);
 }
 
-struct task_struct *pick_task_idle(struct rq *rq, struct rq_flags *rf)
+ഘടന task_struct *pick_task_idle(ഘടന rq *rq, ഘടന rq_flags *rf)
 {
 	/*
 	 * Notify scx only on an idle-to-idle re-pick (the cpu was already idle).
 	 * A real task->idle transition is delivered by set_next_task_idle(), so
 	 * calling here too would duplicate it.
 	 */
-	if (scx_enabled() && is_idle_task(rq->curr))
+	എങ്കിൽ (scx_enabled() && is_idle_task(rq->curr))
 		scx_update_idle(rq, true, false);
-	return rq->idle;
+	തിരികെ rq->idle;
 }
 
 /*
  * It is not legal to sleep in the idle task - print a warning
  * message if some code attempts to do it:
  */
-static bool
-dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
+സ്ഥിതം bool
+dequeue_task_idle(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags)
 {
 	raw_spin_rq_unlock_irq(rq);
 	printk(KERN_ERR "bad: scheduling from the idle thread!\n");
-	dump_stack();
+	dump_അട്ടി();
 	raw_spin_rq_lock_irq(rq);
-	return true;
+	തിരികെ true;
 }
 
 /*
@@ -538,34 +538,34 @@ dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_idle(struct rq *rq, struct task_struct *curr, int queued)
+സ്ഥിതം ശൂന്യം task_tick_idle(ഘടന rq *rq, ഘടന task_struct *curr, പൂർണ്ണസംഖ്യ queued)
 {
 	update_curr_idle(rq);
 }
 
-static void switching_to_idle(struct rq *rq, struct task_struct *p)
+സ്ഥിതം ശൂന്യം switching_to_idle(ഘടന rq *rq, ഘടന task_struct *p)
 {
 	BUG();
 }
 
-static void
-prio_changed_idle(struct rq *rq, struct task_struct *p, u64 oldprio)
+സ്ഥിതം ശൂന്യം
+prio_changed_idle(ഘടന rq *rq, ഘടന task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	എങ്കിൽ (p->prio == oldprio)
+		തിരികെ;
 
 	BUG();
 }
 
-static void update_curr_idle(struct rq *rq)
+സ്ഥിതം ശൂന്യം update_curr_idle(ഘടന rq *rq)
 {
-	struct sched_entity *se = &rq->idle->se;
+	ഘടന sched_entity *se = &rq->idle->se;
 	u64 now = rq_clock_task(rq);
 	s64 delta_exec;
 
 	delta_exec = now - se->exec_start;
-	if (unlikely(delta_exec <= 0))
-		return;
+	എങ്കിൽ (unlikely(delta_exec <= 0))
+		തിരികെ;
 
 	se->exec_start = now;
 

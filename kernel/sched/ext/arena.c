@@ -14,31 +14,31 @@
  * Copyright (c) 2026 Meta Platforms, Inc. and affiliates.
  * Copyright (c) 2026 Tejun Heo <tj@kernel.org>
  */
-#include <linux/genalloc.h>
+#അന്തര്ഭാവ <linux/genalloc.h>
 
-#include "internal.h"
-#include "arena.h"
+#അന്തര്ഭാവ "internal.h"
+#അന്തര്ഭാവ "arena.h"
 
-enum scx_arena_consts {
+എണ്ണൽ scx_arena_consts {
 	SCX_ARENA_MIN_ORDER		= 3,	/* 8-byte minimum sub-allocation */
 	SCX_ARENA_GROW_PAGES		= 4,	/* per growth */
 };
 
-s32 scx_arena_pool_init(struct scx_sched *sch)
+s32 scx_arena_pool_init(ഘടന scx_sched *sch)
 {
-	if (!sch->arena_map)
-		return 0;
+	എങ്കിൽ (!sch->arena_map)
+		തിരികെ 0;
 
-	sch->arena_pool = gen_pool_create(SCX_ARENA_MIN_ORDER, NUMA_NO_NODE);
-	if (!sch->arena_pool)
-		return -ENOMEM;
-	return 0;
+	sch->arena_pool = gen_pool_create(SCX_ARENA_MIN_ORDER, NUMA_NO_കണ്ണി);
+	എങ്കിൽ (!sch->arena_pool)
+		തിരികെ -ENOMEM;
+	തിരികെ 0;
 }
 
-static void scx_arena_clear_chunk(struct gen_pool *pool, struct gen_pool_chunk *chunk,
-				  void *data)
+സ്ഥിതം ശൂന്യം scx_arena_clear_chunk(ഘടന gen_pool *pool, ഘടന gen_pool_chunk *chunk,
+				  ശൂന്യം *data)
 {
-	int order = pool->min_alloc_order;
+	പൂർണ്ണസംഖ്യ order = pool->min_alloc_order;
 	size_t chunk_sz = chunk->end_addr - chunk->start_addr + 1;
 	unsigned long end_bit = chunk_sz >> order;
 	unsigned long b, e;
@@ -53,13 +53,13 @@ static void scx_arena_clear_chunk(struct gen_pool *pool, struct gen_pool_chunk *
  * scx_arena_clear_chunk() so gen_pool_destroy() doesn't BUG. The underlying
  * arena pages are released when the arena map itself is torn down.
  */
-void scx_arena_pool_destroy(struct scx_sched *sch)
+ശൂന്യം scx_arena_pool_destroy(ഘടന scx_sched *sch)
 {
-	if (!sch->arena_pool)
-		return;
-	gen_pool_for_each_chunk(sch->arena_pool, scx_arena_clear_chunk, NULL);
+	എങ്കിൽ (!sch->arena_pool)
+		തിരികെ;
+	gen_pool_for_each_chunk(sch->arena_pool, scx_arena_clear_chunk, ശൂന്യ);
 	gen_pool_destroy(sch->arena_pool);
-	sch->arena_pool = NULL;
+	sch->arena_pool = ശൂന്യ;
 }
 
 /*
@@ -67,27 +67,27 @@ void scx_arena_pool_destroy(struct scx_sched *sch)
  * gen_pool_add() (which calls vzalloc(GFP_KERNEL)) require a sleepable
  * context.
  */
-static int scx_arena_grow(struct scx_sched *sch, u32 page_cnt)
+സ്ഥിതം പൂർണ്ണസംഖ്യ scx_arena_grow(ഘടന scx_sched *sch, u32 page_cnt)
 {
-	void *p;
-	int ret;
+	ശൂന്യം *p;
+	പൂർണ്ണസംഖ്യ ret;
 
-	if (!sch->arena_map || !sch->arena_pool)
-		return -EINVAL;
+	എങ്കിൽ (!sch->arena_map || !sch->arena_pool)
+		തിരികെ -EINVAL;
 
-	p = bpf_arena_alloc_pages_sleepable(sch->arena_map, NULL,
-					    page_cnt, NUMA_NO_NODE, 0);
-	if (!p)
-		return -ENOMEM;
+	p = bpf_arena_alloc_pages_sleepable(sch->arena_map, ശൂന്യ,
+					    page_cnt, NUMA_NO_കണ്ണി, 0);
+	എങ്കിൽ (!p)
+		തിരികെ -ENOMEM;
 
 	ret = gen_pool_add(sch->arena_pool,
 			   (unsigned long)scx_arena_to_kaddr(sch, p),
-			   page_cnt * PAGE_SIZE, NUMA_NO_NODE);
-	if (ret) {
+			   page_cnt * PAGE_SIZE, NUMA_NO_കണ്ണി);
+	എങ്കിൽ (ret) {
 		bpf_arena_free_pages_non_sleepable(sch->arena_map, p, page_cnt);
-		return ret;
+		തിരികെ ret;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -95,31 +95,31 @@ static int scx_arena_grow(struct scx_sched *sch, u32 page_cnt)
  * on failure. May grow the pool via scx_arena_grow() which sleeps. Caller must
  * be in a GFP_KERNEL context.
  */
-void *scx_arena_alloc(struct scx_sched *sch, size_t size)
+ശൂന്യം *scx_arena_alloc(ഘടന scx_sched *sch, size_t size)
 {
 	unsigned long kern_va;
 	u32 page_cnt;
 
 	might_sleep();
 
-	if (!sch->arena_pool)
-		return NULL;
+	എങ്കിൽ (!sch->arena_pool)
+		തിരികെ ശൂന്യ;
 
-	while (true) {
+	ആകുമ്പോൾ (true) {
 		kern_va = gen_pool_alloc(sch->arena_pool, size);
-		if (kern_va)
-			break;
+		എങ്കിൽ (kern_va)
+			നിർത്തുക;
 		page_cnt = max_t(u32, SCX_ARENA_GROW_PAGES,
 				 (size + PAGE_SIZE - 1) >> PAGE_SHIFT);
-		if (scx_arena_grow(sch, page_cnt))
-			return NULL;
+		എങ്കിൽ (scx_arena_grow(sch, page_cnt))
+			തിരികെ ശൂന്യ;
 	}
 
-	return (void *)kern_va;
+	തിരികെ (ശൂന്യം *)kern_va;
 }
 
-void scx_arena_free(struct scx_sched *sch, void *kern_va, size_t size)
+ശൂന്യം scx_arena_free(ഘടന scx_sched *sch, ശൂന്യം *kern_va, size_t size)
 {
-	if (sch->arena_pool && kern_va)
+	എങ്കിൽ (sch->arena_pool && kern_va)
 		gen_pool_free(sch->arena_pool, (unsigned long)kern_va, size);
 }

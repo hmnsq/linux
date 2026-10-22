@@ -7,61 +7,61 @@
  *
  * See kernel/stop_machine.c
  */
-#include "sched.h"
+#അന്തര്ഭാവ "sched.h"
 
-static int
-select_task_rq_stop(struct task_struct *p, int cpu, int flags)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+select_task_rq_stop(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ cpu, പൂർണ്ണസംഖ്യ flags)
 {
-	return task_cpu(p); /* stop tasks as never migrate */
+	തിരികെ task_cpu(p); /* stop tasks as never migrate */
 }
 
-static int
-balance_stop(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+balance_stop(ഘടന rq *rq, ഘടന rq_flags *rf)
 {
-	return sched_stop_runnable(rq);
+	തിരികെ sched_stop_runnable(rq);
 }
 
-static void
-wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+സ്ഥിതം ശൂന്യം
+wakeup_preempt_stop(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags)
 {
 	/* we're never preempted */
 }
 
-static void set_next_task_stop(struct rq *rq, struct task_struct *stop, enum snt_e type)
+സ്ഥിതം ശൂന്യം set_next_task_stop(ഘടന rq *rq, ഘടന task_struct *stop, എണ്ണൽ snt_e type)
 {
-	if (type == SNT_REPICK)
-		return;
+	എങ്കിൽ (type == SNT_REPICK)
+		തിരികെ;
 
 	stop->se.exec_start = rq_clock_task(rq);
 }
 
-static struct task_struct *pick_task_stop(struct rq *rq, struct rq_flags *rf)
+സ്ഥിതം ഘടന task_struct *pick_task_stop(ഘടന rq *rq, ഘടന rq_flags *rf)
 {
-	if (!sched_stop_runnable(rq))
-		return NULL;
+	എങ്കിൽ (!sched_stop_runnable(rq))
+		തിരികെ ശൂന്യ;
 
-	return rq->stop;
+	തിരികെ rq->stop;
 }
 
-static void
-enqueue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+സ്ഥിതം ശൂന്യം
+enqueue_task_stop(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags)
 {
 	add_nr_running(rq, 1);
 }
 
-static bool
-dequeue_task_stop(struct rq *rq, struct task_struct *p, int flags)
+സ്ഥിതം bool
+dequeue_task_stop(ഘടന rq *rq, ഘടന task_struct *p, പൂർണ്ണസംഖ്യ flags)
 {
 	sub_nr_running(rq, 1);
-	return true;
+	തിരികെ true;
 }
 
-static void yield_task_stop(struct rq *rq)
+സ്ഥിതം ശൂന്യം yield_task_stop(ഘടന rq *rq)
 {
 	BUG(); /* the stop task should never yield, its pointless. */
 }
 
-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct task_struct *next)
+സ്ഥിതം ശൂന്യം put_prev_task_stop(ഘടന rq *rq, ഘടന task_struct *prev, ഘടന task_struct *next)
 {
 	update_curr_common(rq);
 }
@@ -74,25 +74,25 @@ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct t
  * and everything must be accessed through the @rq and @curr passed in
  * parameters.
  */
-static void task_tick_stop(struct rq *rq, struct task_struct *curr, int queued)
+സ്ഥിതം ശൂന്യം task_tick_stop(ഘടന rq *rq, ഘടന task_struct *curr, പൂർണ്ണസംഖ്യ queued)
 {
 }
 
-static void switching_to_stop(struct rq *rq, struct task_struct *p)
+സ്ഥിതം ശൂന്യം switching_to_stop(ഘടന rq *rq, ഘടന task_struct *p)
 {
 	BUG(); /* its impossible to change to this class */
 }
 
-static void
-prio_changed_stop(struct rq *rq, struct task_struct *p, u64 oldprio)
+സ്ഥിതം ശൂന്യം
+prio_changed_stop(ഘടന rq *rq, ഘടന task_struct *p, u64 oldprio)
 {
-	if (p->prio == oldprio)
-		return;
+	എങ്കിൽ (p->prio == oldprio)
+		തിരികെ;
 
 	BUG(); /* how!?, what priority? */
 }
 
-static void update_curr_stop(struct rq *rq)
+സ്ഥിതം ശൂന്യം update_curr_stop(ഘടന rq *rq)
 {
 }
 

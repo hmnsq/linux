@@ -2,65 +2,65 @@
 #ifndef _KERNEL_SCHED_AUTOGROUP_H
 #define _KERNEL_SCHED_AUTOGROUP_H
 
-#include "sched.h"
+#അന്തര്ഭാവ "sched.h"
 
 #ifdef CONFIG_SCHED_AUTOGROUP
 
-struct autogroup {
+ഘടന autogroup {
 	/*
 	 * Reference doesn't mean how many threads attach to this
 	 * autogroup now. It just stands for the number of tasks
 	 * which could use this autogroup.
 	 */
-	struct kref		kref;
-	struct task_group	*tg;
-	struct rw_semaphore	lock;
+	ഘടന kref		kref;
+	ഘടന task_group	*tg;
+	ഘടന rw_semaphore	lock;
 	unsigned long		id;
-	int			nice;
+	പൂർണ്ണസംഖ്യ			nice;
 };
 
-extern void autogroup_init(struct task_struct *init_task);
-extern void autogroup_free(struct task_group *tg);
+ബാഹ്യ ശൂന്യം autogroup_init(ഘടന task_struct *init_task);
+ബാഹ്യ ശൂന്യം autogroup_free(ഘടന task_group *tg);
 
-static inline bool task_group_is_autogroup(struct task_group *tg)
+സ്ഥിതം വരിയിൽ bool task_group_is_autogroup(ഘടന task_group *tg)
 {
-	return !!tg->autogroup;
+	തിരികെ !!tg->autogroup;
 }
 
-extern bool task_wants_autogroup(struct task_struct *p, struct task_group *tg);
+ബാഹ്യ bool task_wants_autogroup(ഘടന task_struct *p, ഘടന task_group *tg);
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+സ്ഥിതം വരിയിൽ ഘടന task_group *
+autogroup_task_group(ഘടന task_struct *p, ഘടന task_group *tg)
 {
-	extern unsigned int sysctl_sched_autogroup_enabled;
-	int enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
+	ബാഹ്യ unsigned പൂർണ്ണസംഖ്യ sysctl_sched_autogroup_enabled;
+	പൂർണ്ണസംഖ്യ enabled = READ_ONCE(sysctl_sched_autogroup_enabled);
 
-	if (enabled && task_wants_autogroup(p, tg))
-		return p->signal->autogroup->tg;
+	എങ്കിൽ (enabled && task_wants_autogroup(p, tg))
+		തിരികെ p->സൂചന->autogroup->tg;
 
-	return tg;
+	തിരികെ tg;
 }
 
-extern int autogroup_path(struct task_group *tg, char *buf, int buflen);
+ബാഹ്യ പൂർണ്ണസംഖ്യ autogroup_path(ഘടന task_group *tg, അക്ഷരം *buf, പൂർണ്ണസംഖ്യ buflen);
 
-#else /* !CONFIG_SCHED_AUTOGROUP: */
+#അല്ലെങ്കിൽ /* !CONFIG_SCHED_AUTOGROUP: */
 
-static inline void autogroup_init(struct task_struct *init_task) {  }
-static inline void autogroup_free(struct task_group *tg) { }
-static inline bool task_group_is_autogroup(struct task_group *tg)
+സ്ഥിതം വരിയിൽ ശൂന്യം autogroup_init(ഘടന task_struct *init_task) {  }
+സ്ഥിതം വരിയിൽ ശൂന്യം autogroup_free(ഘടന task_group *tg) { }
+സ്ഥിതം വരിയിൽ bool task_group_is_autogroup(ഘടന task_group *tg)
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static inline struct task_group *
-autogroup_task_group(struct task_struct *p, struct task_group *tg)
+സ്ഥിതം വരിയിൽ ഘടന task_group *
+autogroup_task_group(ഘടന task_struct *p, ഘടന task_group *tg)
 {
-	return tg;
+	തിരികെ tg;
 }
 
-static inline int autogroup_path(struct task_group *tg, char *buf, int buflen)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ autogroup_path(ഘടന task_group *tg, അക്ഷരം *buf, പൂർണ്ണസംഖ്യ buflen)
 {
-	return 0;
+	തിരികെ 0;
 }
 
 #endif /* !CONFIG_SCHED_AUTOGROUP */

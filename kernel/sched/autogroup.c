@@ -4,19 +4,19 @@
  * Auto-group scheduling implementation:
  */
 
-#include "autogroup.h"
-#include "sched.h"
+#അന്തര്ഭാവ "autogroup.h"
+#അന്തര്ഭാവ "sched.h"
 
-unsigned int __read_mostly sysctl_sched_autogroup_enabled = 1;
-static struct autogroup autogroup_default;
-static atomic_t autogroup_seq_nr;
+unsigned പൂർണ്ണസംഖ്യ __read_mostly sysctl_sched_autogroup_enabled = 1;
+സ്ഥിതം ഘടന autogroup autogroup_default;
+സ്ഥിതം atomic_t autogroup_seq_nr;
 
 #ifdef CONFIG_SYSCTL
-static const struct ctl_table sched_autogroup_sysctls[] = {
+സ്ഥിതം സ്ഥിരം ഘടന ctl_table sched_autogroup_sysctls[] = {
 	{
 		.procname       = "sched_autogroup_enabled",
 		.data           = &sysctl_sched_autogroup_enabled,
-		.maxlen         = sizeof(unsigned int),
+		.maxlen         = വലുപ്പം(unsigned പൂർണ്ണസംഖ്യ),
 		.mode           = 0644,
 		.proc_handler   = proc_dointvec_minmax,
 		.extra1         = SYSCTL_ZERO,
@@ -24,77 +24,77 @@ static const struct ctl_table sched_autogroup_sysctls[] = {
 	},
 };
 
-static void __init sched_autogroup_sysctl_init(void)
+സ്ഥിതം ശൂന്യം __init sched_autogroup_sysctl_init(ശൂന്യം)
 {
 	register_sysctl_init("kernel", sched_autogroup_sysctls);
 }
-#else /* !CONFIG_SYSCTL: */
-#define sched_autogroup_sysctl_init() do { } while (0)
+#അല്ലെങ്കിൽ /* !CONFIG_SYSCTL: */
+#define sched_autogroup_sysctl_init() ചെയ്യുക { } ആകുമ്പോൾ (0)
 #endif /* !CONFIG_SYSCTL */
 
-void __init autogroup_init(struct task_struct *init_task)
+ശൂന്യം __init autogroup_init(ഘടന task_struct *init_task)
 {
-	autogroup_default.tg = &root_task_group;
+	autogroup_default.tg = &വേര്_task_group;
 	kref_init(&autogroup_default.kref);
 	init_rwsem(&autogroup_default.lock);
-	init_task->signal->autogroup = &autogroup_default;
+	init_task->സൂചന->autogroup = &autogroup_default;
 	sched_autogroup_sysctl_init();
 }
 
-void autogroup_free(struct task_group *tg)
+ശൂന്യം autogroup_free(ഘടന task_group *tg)
 {
 	kfree(tg->autogroup);
 }
 
-static inline void autogroup_destroy(struct kref *kref)
+സ്ഥിതം വരിയിൽ ശൂന്യം autogroup_destroy(ഘടന kref *kref)
 {
-	struct autogroup *ag = container_of(kref, struct autogroup, kref);
+	ഘടന autogroup *ag = container_of(kref, ഘടന autogroup, kref);
 
 #ifdef CONFIG_RT_GROUP_SCHED
 	/* We've redirected RT tasks to the root task group... */
-	ag->tg->rt_se = NULL;
-	ag->tg->rt_rq = NULL;
+	ag->tg->rt_se = ശൂന്യ;
+	ag->tg->rt_rq = ശൂന്യ;
 #endif
 	sched_release_group(ag->tg);
 	sched_destroy_group(ag->tg);
 }
 
-static inline void autogroup_kref_put(struct autogroup *ag)
+സ്ഥിതം വരിയിൽ ശൂന്യം autogroup_kref_put(ഘടന autogroup *ag)
 {
 	kref_put(&ag->kref, autogroup_destroy);
 }
 
-static inline struct autogroup *autogroup_kref_get(struct autogroup *ag)
+സ്ഥിതം വരിയിൽ ഘടന autogroup *autogroup_kref_get(ഘടന autogroup *ag)
 {
 	kref_get(&ag->kref);
-	return ag;
+	തിരികെ ag;
 }
 
-static inline struct autogroup *autogroup_task_get(struct task_struct *p)
+സ്ഥിതം വരിയിൽ ഘടന autogroup *autogroup_task_get(ഘടന task_struct *p)
 {
-	struct autogroup *ag;
+	ഘടന autogroup *ag;
 	unsigned long flags;
 
-	if (!lock_task_sighand(p, &flags))
-		return autogroup_kref_get(&autogroup_default);
+	എങ്കിൽ (!lock_task_sighand(p, &flags))
+		തിരികെ autogroup_kref_get(&autogroup_default);
 
-	ag = autogroup_kref_get(p->signal->autogroup);
+	ag = autogroup_kref_get(p->സൂചന->autogroup);
 	unlock_task_sighand(p, &flags);
 
-	return ag;
+	തിരികെ ag;
 }
 
-static inline struct autogroup *autogroup_create(void)
+സ്ഥിതം വരിയിൽ ഘടന autogroup *autogroup_create(ശൂന്യം)
 {
-	struct autogroup *ag = kzalloc_obj(*ag);
-	struct task_group *tg;
+	ഘടന autogroup *ag = kzalloc_obj(*ag);
+	ഘടന task_group *tg;
 
-	if (!ag)
-		goto out_fail;
+	എങ്കിൽ (!ag)
+		പോകുക out_fail;
 
-	tg = sched_create_group(&root_task_group);
-	if (IS_ERR(tg))
-		goto out_free;
+	tg = sched_create_group(&വേര്_task_group);
+	എങ്കിൽ (IS_ERR(tg))
+		പോകുക out_free;
 
 	kref_init(&ag->kref);
 	init_rwsem(&ag->lock);
@@ -109,29 +109,29 @@ static inline struct autogroup *autogroup_create(void)
 	 * the policy change to proceed.
 	 */
 	free_rt_sched_group(tg);
-	tg->rt_se = root_task_group.rt_se;
-	tg->rt_rq = root_task_group.rt_rq;
+	tg->rt_se = വേര്_task_group.rt_se;
+	tg->rt_rq = വേര്_task_group.rt_rq;
 #endif /* CONFIG_RT_GROUP_SCHED */
 	tg->autogroup = ag;
 
-	sched_online_group(tg, &root_task_group);
-	return ag;
+	sched_online_group(tg, &വേര്_task_group);
+	തിരികെ ag;
 
 out_free:
 	kfree(ag);
 out_fail:
-	if (printk_ratelimit()) {
+	എങ്കിൽ (printk_ratelimit()) {
 		printk(KERN_WARNING "autogroup_create: %s failure.\n",
 			ag ? "sched_create_group()" : "kzalloc()");
 	}
 
-	return autogroup_kref_get(&autogroup_default);
+	തിരികെ autogroup_kref_get(&autogroup_default);
 }
 
-bool task_wants_autogroup(struct task_struct *p, struct task_group *tg)
+bool task_wants_autogroup(ഘടന task_struct *p, ഘടന task_group *tg)
 {
-	if (tg != &root_task_group)
-		return false;
+	എങ്കിൽ (tg != &വേര്_task_group)
+		തിരികെ false;
 	/*
 	 * If we race with autogroup_move_group() the caller can use the old
 	 * value of signal->autogroup but in this case sched_move_task() will
@@ -140,13 +140,13 @@ bool task_wants_autogroup(struct task_struct *p, struct task_group *tg)
 	 * However, there is no way sched_autogroup_exit_task() could tell us
 	 * to avoid autogroup->tg, so we abuse PF_EXITING flag for this case.
 	 */
-	if (p->flags & PF_EXITING)
-		return false;
+	എങ്കിൽ (p->flags & PF_EXITING)
+		തിരികെ false;
 
-	return true;
+	തിരികെ true;
 }
 
-void sched_autogroup_exit_task(struct task_struct *p)
+ശൂന്യം sched_autogroup_exit_task(ഘടന task_struct *p)
 {
 	/*
 	 * We are going to call exit_notify() and autogroup_move_group() can't
@@ -156,23 +156,23 @@ void sched_autogroup_exit_task(struct task_struct *p)
 	sched_move_task(p, true);
 }
 
-static void
-autogroup_move_group(struct task_struct *p, struct autogroup *ag)
+സ്ഥിതം ശൂന്യം
+autogroup_move_group(ഘടന task_struct *p, ഘടന autogroup *ag)
 {
-	struct autogroup *prev;
-	struct task_struct *t;
+	ഘടന autogroup *prev;
+	ഘടന task_struct *t;
 	unsigned long flags;
 
-	if (WARN_ON_ONCE(!lock_task_sighand(p, &flags)))
-		return;
+	എങ്കിൽ (WARN_ON_ONCE(!lock_task_sighand(p, &flags)))
+		തിരികെ;
 
-	prev = p->signal->autogroup;
-	if (prev == ag) {
+	prev = p->സൂചന->autogroup;
+	എങ്കിൽ (prev == ag) {
 		unlock_task_sighand(p, &flags);
-		return;
+		തിരികെ;
 	}
 
-	p->signal->autogroup = autogroup_kref_get(ag);
+	p->സൂചന->autogroup = autogroup_kref_get(ag);
 	/*
 	 * We can't avoid sched_move_task() after we changed signal->autogroup,
 	 * this process can already run with task_group() == prev->tg or we can
@@ -192,64 +192,64 @@ autogroup_move_group(struct task_struct *p, struct autogroup *ag)
 }
 
 /* Allocates GFP_KERNEL, cannot be called under any spinlock: */
-void sched_autogroup_create_attach(struct task_struct *p)
+ശൂന്യം sched_autogroup_create_attach(ഘടന task_struct *p)
 {
-	struct autogroup *ag = autogroup_create();
+	ഘടന autogroup *ag = autogroup_create();
 
 	autogroup_move_group(p, ag);
 
 	/* Drop extra reference added by autogroup_create(): */
 	autogroup_kref_put(ag);
 }
-EXPORT_SYMBOL(sched_autogroup_create_attach);
+EXPORT_ചിഹ്നം(sched_autogroup_create_attach);
 
 /* Cannot be called under siglock. Currently has no users: */
-void sched_autogroup_detach(struct task_struct *p)
+ശൂന്യം sched_autogroup_detach(ഘടന task_struct *p)
 {
 	autogroup_move_group(p, &autogroup_default);
 }
-EXPORT_SYMBOL(sched_autogroup_detach);
+EXPORT_ചിഹ്നം(sched_autogroup_detach);
 
-void sched_autogroup_fork(struct signal_struct *sig)
+ശൂന്യം sched_autogroup_fork(ഘടന signal_struct *sig)
 {
 	sig->autogroup = autogroup_task_get(current);
 }
 
-void sched_autogroup_exit(struct signal_struct *sig)
+ശൂന്യം sched_autogroup_exit(ഘടന signal_struct *sig)
 {
 	autogroup_kref_put(sig->autogroup);
 }
 
-static int __init setup_autogroup(char *str)
+സ്ഥിതം പൂർണ്ണസംഖ്യ __init setup_autogroup(അക്ഷരം *str)
 {
 	sysctl_sched_autogroup_enabled = 0;
 
-	return 1;
+	തിരികെ 1;
 }
 __setup("noautogroup", setup_autogroup);
 
 #ifdef CONFIG_PROC_FS
 
-int proc_sched_autogroup_set_nice(struct task_struct *p, int nice)
+പൂർണ്ണസംഖ്യ proc_sched_autogroup_set_nice(ഘടന task_struct *p, പൂർണ്ണസംഖ്യ nice)
 {
-	static unsigned long next = INITIAL_JIFFIES;
-	struct autogroup *ag;
+	സ്ഥിതം unsigned long next = INITIAL_JIFFIES;
+	ഘടന autogroup *ag;
 	unsigned long shares;
-	int err, idx;
+	പൂർണ്ണസംഖ്യ err, idx;
 
-	if (nice < MIN_NICE || nice > MAX_NICE)
-		return -EINVAL;
+	എങ്കിൽ (nice < MIN_NICE || nice > MAX_NICE)
+		തിരികെ -EINVAL;
 
 	err = security_task_setnice(current, nice);
-	if (err)
-		return err;
+	എങ്കിൽ (err)
+		തിരികെ err;
 
-	if (nice < 0 && !can_nice(current, nice))
-		return -EPERM;
+	എങ്കിൽ (nice < 0 && !can_nice(current, nice))
+		തിരികെ -EPERM;
 
 	/* This is a heavy operation, taking global locks.. */
-	if (!capable(CAP_SYS_ADMIN) && time_before(jiffies, next))
-		return -EAGAIN;
+	എങ്കിൽ (!capable(CAP_SYS_ADMIN) && time_before(jiffies, next))
+		തിരികെ -EAGAIN;
 
 	next = HZ / 10 + jiffies;
 	ag = autogroup_task_get(p);
@@ -259,21 +259,21 @@ int proc_sched_autogroup_set_nice(struct task_struct *p, int nice)
 
 	down_write(&ag->lock);
 	err = sched_group_set_shares(ag->tg, shares);
-	if (!err)
+	എങ്കിൽ (!err)
 		ag->nice = nice;
 	up_write(&ag->lock);
 
 	autogroup_kref_put(ag);
 
-	return err;
+	തിരികെ err;
 }
 
-void proc_sched_autogroup_show_task(struct task_struct *p, struct seq_file *m)
+ശൂന്യം proc_sched_autogroup_show_task(ഘടന task_struct *p, ഘടന seq_file *m)
 {
-	struct autogroup *ag = autogroup_task_get(p);
+	ഘടന autogroup *ag = autogroup_task_get(p);
 
-	if (!task_group_is_autogroup(ag->tg))
-		goto out;
+	എങ്കിൽ (!task_group_is_autogroup(ag->tg))
+		പോകുക out;
 
 	down_read(&ag->lock);
 	seq_printf(m, "/autogroup-%ld nice %d\n", ag->id, ag->nice);
@@ -284,10 +284,10 @@ out:
 }
 #endif /* CONFIG_PROC_FS */
 
-int autogroup_path(struct task_group *tg, char *buf, int buflen)
+പൂർണ്ണസംഖ്യ autogroup_path(ഘടന task_group *tg, അക്ഷരം *buf, പൂർണ്ണസംഖ്യ buflen)
 {
-	if (!task_group_is_autogroup(tg))
-		return 0;
+	എങ്കിൽ (!task_group_is_autogroup(tg))
+		തിരികെ 0;
 
-	return snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
+	തിരികെ snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
 }

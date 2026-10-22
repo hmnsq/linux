@@ -6,138 +6,138 @@
  *
  * Copyright(C) 2007, Red Hat, Inc., Ingo Molnar
  */
-#include <linux/debugfs.h>
-#include <linux/nmi.h>
-#include <linux/log2.h>
-#include "sched.h"
+#അന്തര്ഭാവ <linux/debugfs.h>
+#അന്തര്ഭാവ <linux/nmi.h>
+#അന്തര്ഭാവ <linux/log2.h>
+#അന്തര്ഭാവ "sched.h"
 
 /*
  * This allows printing both to /sys/kernel/debug/sched/debug and
  * to the console
  */
 #define SEQ_printf(m, x...)			\
- do {						\
-	if (m)					\
+ ചെയ്യുക {						\
+	എങ്കിൽ (m)					\
 		seq_printf(m, x);		\
-	else					\
+	അല്ലെങ്കിൽ					\
 		pr_cont(x);			\
- } while (0)
+ } ആകുമ്പോൾ (0)
 
 /*
  * Ease the printing of nsec fields:
  */
-static long long nsec_high(unsigned long long nsec)
+സ്ഥിതം long long nsec_മുകളിലെ(unsigned long long nsec)
 {
-	if ((long long)nsec < 0) {
+	എങ്കിൽ ((long long)nsec < 0) {
 		nsec = -nsec;
 		do_div(nsec, 1000000);
-		return -nsec;
+		തിരികെ -nsec;
 	}
 	do_div(nsec, 1000000);
 
-	return nsec;
+	തിരികെ nsec;
 }
 
-static unsigned long nsec_low(unsigned long long nsec)
+സ്ഥിതം unsigned long nsec_താഴെയുള്ള(unsigned long long nsec)
 {
-	if ((long long)nsec < 0)
+	എങ്കിൽ ((long long)nsec < 0)
 		nsec = -nsec;
 
-	return do_div(nsec, 1000000);
+	തിരികെ do_div(nsec, 1000000);
 }
 
-#define SPLIT_NS(x) nsec_high(x), nsec_low(x)
+#define SPLIT_NS(x) nsec_മുകളിലെ(x), nsec_താഴെയുള്ള(x)
 
 #define SCHED_FEAT(name, enabled)	\
 	#name ,
 
-static const char * const sched_feat_names[] = {
-#include "features.h"
+സ്ഥിതം സ്ഥിരം അക്ഷരം * സ്ഥിരം sched_feat_names[] = {
+#അന്തര്ഭാവ "features.h"
 };
 
 #undef SCHED_FEAT
 
-static int sched_feat_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_feat_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
-	for (i = 0; i < __SCHED_FEAT_NR; i++) {
-		if (!(sysctl_sched_features & (1UL << i)))
+	വേണ്ടി (i = 0; i < __SCHED_FEAT_NR; i++) {
+		എങ്കിൽ (!(sysctl_sched_features & (1UL << i)))
 			seq_puts(m, "NO_");
 		seq_printf(m, "%s ", sched_feat_names[i]);
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	തിരികെ 0;
 }
 
 #ifdef CONFIG_JUMP_LABEL
 
-#define jump_label_key__true  { .key_true  = STATIC_KEY_TRUE_INIT  }
-#define jump_label_key__false { .key_false = STATIC_KEY_FALSE_INIT }
+#define jump_label_താക്കോൽ_true  { .താക്കോൽ_true  = STATIC_താക്കോൽ_TRUE_INIT  }
+#define jump_label_താക്കോൽ_false { .താക്കോൽ_false = STATIC_താക്കോൽ_FALSE_INIT }
 
 #define SCHED_FEAT(name, enabled)	\
-	jump_label_key__##enabled ,
+	jump_label_താക്കോൽ##enabled ,
 
-union sched_feat_key sched_feat_keys[__SCHED_FEAT_NR] = {
-#include "features.h"
+സംഘം sched_feat_താക്കോൽ sched_feat_താക്കോലുകൾ[__SCHED_FEAT_NR] = {
+#അന്തര്ഭാവ "features.h"
 };
 
 #undef SCHED_FEAT
 
-static void sched_feat_disable(int i)
+സ്ഥിതം ശൂന്യം sched_feat_disable(പൂർണ്ണസംഖ്യ i)
 {
-	static_branch_disable_cpuslocked(&sched_feat_keys[i].key_true);
+	static_branch_disable_cpuslocked(&sched_feat_താക്കോലുകൾ[i].താക്കോൽ_true);
 }
 
-static void sched_feat_enable(int i)
+സ്ഥിതം ശൂന്യം sched_feat_enable(പൂർണ്ണസംഖ്യ i)
 {
-	static_branch_enable_cpuslocked(&sched_feat_keys[i].key_false);
+	static_branch_enable_cpuslocked(&sched_feat_താക്കോലുകൾ[i].താക്കോൽ_false);
 }
-#else /* !CONFIG_JUMP_LABEL: */
-static void sched_feat_disable(int i) { };
-static void sched_feat_enable(int i) { };
+#അല്ലെങ്കിൽ /* !CONFIG_JUMP_LABEL: */
+സ്ഥിതം ശൂന്യം sched_feat_disable(പൂർണ്ണസംഖ്യ i) { };
+സ്ഥിതം ശൂന്യം sched_feat_enable(പൂർണ്ണസംഖ്യ i) { };
 #endif /* !CONFIG_JUMP_LABEL */
 
-static int sched_feat_set(char *cmp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_feat_set(അക്ഷരം *cmp)
 {
-	int i;
-	int neg = 0;
+	പൂർണ്ണസംഖ്യ i;
+	പൂർണ്ണസംഖ്യ neg = 0;
 
-	if (strncmp(cmp, "NO_", 3) == 0) {
+	എങ്കിൽ (strncmp(cmp, "NO_", 3) == 0) {
 		neg = 1;
 		cmp += 3;
 	}
 
 	i = match_string(sched_feat_names, __SCHED_FEAT_NR, cmp);
-	if (i < 0)
-		return i;
+	എങ്കിൽ (i < 0)
+		തിരികെ i;
 
-	if (neg) {
+	എങ്കിൽ (neg) {
 		sysctl_sched_features &= ~(1UL << i);
 		sched_feat_disable(i);
-	} else {
+	} അല്ലെങ്കിൽ {
 		sysctl_sched_features |= (1UL << i);
 		sched_feat_enable(i);
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-static ssize_t
-sched_feat_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t
+sched_feat_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 		size_t cnt, loff_t *ppos)
 {
-	char buf[64];
-	char *cmp;
-	int ret;
-	struct inode *inode;
+	അക്ഷരം buf[64];
+	അക്ഷരം *cmp;
+	പൂർണ്ണസംഖ്യ ret;
+	ഘടന inode *inode;
 
-	if (cnt > 63)
+	എങ്കിൽ (cnt > 63)
 		cnt = 63;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	എങ്കിൽ (copy_from_user(buf, ubuf, cnt))
+		തിരികെ -EFAULT;
 
 	buf[cnt] = 0;
 	cmp = strstrip(buf);
@@ -149,78 +149,78 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
 	ret = sched_feat_set(cmp);
 	inode_unlock(inode);
 	cpus_read_unlock();
-	if (ret < 0)
-		return ret;
+	എങ്കിൽ (ret < 0)
+		തിരികെ ret;
 
 	*ppos += cnt;
 
-	return cnt;
+	തിരികെ cnt;
 }
 
-static int sched_feat_open(struct inode *inode, struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_feat_open(ഘടന inode *inode, ഘടന file *filp)
 {
-	return single_open(filp, sched_feat_show, NULL);
+	തിരികെ single_open(filp, sched_feat_show, ശൂന്യ);
 }
 
-static const struct file_operations sched_feat_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations sched_feat_fops = {
 	.open		= sched_feat_open,
-	.write		= sched_feat_write,
-	.read		= seq_read,
+	.ലിഖ		= sched_feat_write,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static ssize_t sched_scaling_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t sched_scaling_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	unsigned int scaling;
-	int ret;
+	unsigned പൂർണ്ണസംഖ്യ scaling;
+	പൂർണ്ണസംഖ്യ ret;
 
 	ret = kstrtouint_from_user(ubuf, cnt, 10, &scaling);
-	if (ret)
-		return ret;
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 
-	if (scaling >= SCHED_TUNABLESCALING_END)
-		return -EINVAL;
+	എങ്കിൽ (scaling >= SCHED_TUNABLESCALING_END)
+		തിരികെ -EINVAL;
 
 	sysctl_sched_tunable_scaling = scaling;
-	if (sched_update_scaling())
-		return -EINVAL;
+	എങ്കിൽ (sched_update_scaling())
+		തിരികെ -EINVAL;
 
 	*ppos += cnt;
-	return cnt;
+	തിരികെ cnt;
 }
 
-static int sched_scaling_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_scaling_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_tunable_scaling);
-	return 0;
+	തിരികെ 0;
 }
 
-static int sched_scaling_open(struct inode *inode, struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_scaling_open(ഘടന inode *inode, ഘടന file *filp)
 {
-	return single_open(filp, sched_scaling_show, NULL);
+	തിരികെ single_open(filp, sched_scaling_show, ശൂന്യ);
 }
 
-static const struct file_operations sched_scaling_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations sched_scaling_fops = {
 	.open		= sched_scaling_open,
-	.write		= sched_scaling_write,
-	.read		= seq_read,
+	.ലിഖ		= sched_scaling_write,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
 #ifdef CONFIG_SCHED_CACHE
-static ssize_t
-sched_cache_enable_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t
+sched_cache_enable_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 			 size_t cnt, loff_t *ppos)
 {
 	bool val;
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
 	ret = kstrtobool_from_user(ubuf, cnt, &val);
-	if (ret)
-		return ret;
+	എങ്കിൽ (ret)
+		തിരികെ ret;
 
 	sysctl_sched_cache_user = val;
 
@@ -228,25 +228,25 @@ sched_cache_enable_write(struct file *filp, const char __user *ubuf,
 
 	*ppos += cnt;
 
-	return cnt;
+	തിരികെ cnt;
 }
 
-static int sched_cache_enable_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_cache_enable_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
 	seq_printf(m, "%d\n", sysctl_sched_cache_user);
-	return 0;
+	തിരികെ 0;
 }
 
-static int sched_cache_enable_open(struct inode *inode,
-				   struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_cache_enable_open(ഘടന inode *inode,
+				   ഘടന file *filp)
 {
-	return single_open(filp, sched_cache_enable_show, NULL);
+	തിരികെ single_open(filp, sched_cache_enable_show, ശൂന്യ);
 }
 
-static const struct file_operations sched_cache_enable_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations sched_cache_enable_fops = {
 	.open           = sched_cache_enable_open,
-	.write          = sched_cache_enable_write,
-	.read           = seq_read,
+	.ലിഖ          = sched_cache_enable_write,
+	.പഠ           = seq_read,
 	.llseek         = seq_lseek,
 	.release        = single_release,
 };
@@ -254,58 +254,58 @@ static const struct file_operations sched_cache_enable_fops = {
 
 #ifdef CONFIG_PREEMPT_DYNAMIC
 
-static ssize_t sched_dynamic_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t sched_dynamic_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	അക്ഷരം buf[16];
+	പൂർണ്ണസംഖ്യ mode;
 
-	if (cnt > 15)
+	എങ്കിൽ (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	എങ്കിൽ (copy_from_user(buf, ubuf, cnt))
+		തിരികെ -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_dynamic_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	എങ്കിൽ (mode < 0)
+		തിരികെ mode;
 
 	sched_dynamic_update(mode);
 
 	*ppos += cnt;
 
-	return cnt;
+	തിരികെ cnt;
 }
 
-static int sched_dynamic_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_dynamic_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
-	int mode = READ_ONCE(preempt_dynamic_mode);
+	പൂർണ്ണസംഖ്യ mode = READ_ONCE(preempt_dynamic_mode);
 
 	/* Stop at NULL terminator */
-	for (int i = 0; preempt_modes[i]; i++) {
-		if (mode == i)
+	വേണ്ടി (പൂർണ്ണസംഖ്യ i = 0; preempt_modes[i]; i++) {
+		എങ്കിൽ (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, preempt_modes[i]);
-		if (mode == i)
+		എങ്കിൽ (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 
 	seq_puts(m, "\n");
-	return 0;
+	തിരികെ 0;
 }
 
-static int sched_dynamic_open(struct inode *inode, struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_dynamic_open(ഘടന inode *inode, ഘടന file *filp)
 {
-	return single_open(filp, sched_dynamic_show, NULL);
+	തിരികെ single_open(filp, sched_dynamic_show, ശൂന്യ);
 }
 
-static const struct file_operations sched_dynamic_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations sched_dynamic_fops = {
 	.open		= sched_dynamic_open,
-	.write		= sched_dynamic_write,
-	.read		= seq_read,
+	.ലിഖ		= sched_dynamic_write,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
@@ -314,10 +314,10 @@ static const struct file_operations sched_dynamic_fops = {
 
 __read_mostly bool sched_debug_verbose;
 
-static struct dentry           *sd_dentry;
+സ്ഥിതം ഘടന dentry           *sd_dentry;
 
 
-static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t sched_verbose_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 				  size_t cnt, loff_t *ppos)
 {
 	ssize_t result;
@@ -329,100 +329,100 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
 	orig = sched_debug_verbose;
 	result = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
 
-	if (sched_debug_verbose && !orig)
+	എങ്കിൽ (sched_debug_verbose && !orig)
 		update_sched_domain_debugfs();
-	else if (!sched_debug_verbose && orig) {
+	അല്ലെങ്കിൽ എങ്കിൽ (!sched_debug_verbose && orig) {
 		debugfs_remove(sd_dentry);
-		sd_dentry = NULL;
+		sd_dentry = ശൂന്യ;
 	}
 
 	sched_domains_mutex_unlock();
 	cpus_read_unlock();
 
-	return result;
+	തിരികെ result;
 }
 
-static const struct file_operations sched_verbose_fops = {
-	.read =         debugfs_read_file_bool,
-	.write =        sched_verbose_write,
+സ്ഥിതം സ്ഥിരം ഘടന file_operations sched_verbose_fops = {
+	.പഠ =         debugfs_read_file_bool,
+	.ലിഖ =        sched_verbose_write,
 	.open =         simple_open,
 	.llseek =       default_llseek,
 };
 
-static const struct seq_operations sched_debug_sops;
+സ്ഥിതം സ്ഥിരം ഘടന seq_operations sched_debug_sops;
 
-static int sched_debug_open(struct inode *inode, struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_debug_open(ഘടന inode *inode, ഘടന file *filp)
 {
-	return seq_open(filp, &sched_debug_sops);
+	തിരികെ seq_open(filp, &sched_debug_sops);
 }
 
-static const struct file_operations sched_debug_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations sched_debug_fops = {
 	.open		= sched_debug_open,
-	.read		= seq_read,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= seq_release,
 };
 
-enum dl_param {
+എണ്ണൽ dl_param {
 	DL_RUNTIME = 0,
 	DL_PERIOD,
 };
 
-static unsigned long dl_server_period_max = (1UL << 22) * NSEC_PER_USEC; /* ~4 seconds */
-static unsigned long dl_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
+സ്ഥിതം unsigned long dl_server_period_max = (1UL << 22) * NSEC_PER_USEC; /* ~4 seconds */
+സ്ഥിതം unsigned long dl_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
 
-static ssize_t sched_server_write_common(struct file *filp, const char __user *ubuf,
-					 size_t cnt, loff_t *ppos, enum dl_param param,
-					 void *server)
+സ്ഥിതം ssize_t sched_server_write_common(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
+					 size_t cnt, loff_t *ppos, എണ്ണൽ dl_param param,
+					 ശൂന്യം *server)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
+	long cpu = (long) ((ഘടന seq_file *) filp->private_data)->സ്വകാര്യ;
+	ഘടന sched_dl_entity *dl_se = (ഘടന sched_dl_entity *)server;
 	u64 old_runtime, runtime, period;
-	struct rq *rq = cpu_rq(cpu);
-	int retval = 0;
+	ഘടന rq *rq = cpu_rq(cpu);
+	പൂർണ്ണസംഖ്യ retval = 0;
 	size_t err;
-	u64 value;
+	u64 മൂല്യം;
 
-	err = kstrtoull_from_user(ubuf, cnt, 10, &value);
-	if (err)
-		return err;
+	err = kstrtoull_from_user(ubuf, cnt, 10, &മൂല്യം);
+	എങ്കിൽ (err)
+		തിരികെ err;
 
 	scoped_guard (rq_lock_irqsave, rq) {
 		old_runtime = runtime = dl_se->dl_runtime;
 		period = dl_se->dl_period;
 
-		switch (param) {
-		case DL_RUNTIME:
-			if (runtime == value)
-				break;
-			runtime = value;
-			break;
-		case DL_PERIOD:
-			if (value == period)
-				break;
-			period = value;
-			break;
+		തിരഞ്ഞെടുപ്പ് (param) {
+		അവസ്ഥ DL_RUNTIME:
+			എങ്കിൽ (runtime == മൂല്യം)
+				നിർത്തുക;
+			runtime = മൂല്യം;
+			നിർത്തുക;
+		അവസ്ഥ DL_PERIOD:
+			എങ്കിൽ (മൂല്യം == period)
+				നിർത്തുക;
+			period = മൂല്യം;
+			നിർത്തുക;
 		}
 
-		if (runtime > period ||
+		എങ്കിൽ (runtime > period ||
 		    period > dl_server_period_max ||
 		    period < dl_server_period_min) {
-			return  -EINVAL;
+			തിരികെ  -EINVAL;
 		}
 
-		if (!cpu_online(cpu_of(rq)))
-			return -EBUSY;
+		എങ്കിൽ (!cpu_online(cpu_of(rq)))
+			തിരികെ -EBUSY;
 
 		update_rq_clock(rq);
 		dl_server_stop(dl_se);
 		retval = dl_server_apply_params(dl_se, runtime, period, 0);
 		dl_server_start(dl_se);
 
-		if (retval < 0)
-			return retval;
+		എങ്കിൽ (retval < 0)
+			തിരികെ retval;
 	}
 
-	if (!!old_runtime ^ !!runtime) {
+	എങ്കിൽ (!!old_runtime ^ !!runtime) {
 		pr_info("%s server %sabled on CPU %d%s.\n",
 			server == &rq->fair_server ? "Fair" : "Ext",
 			runtime ? "en" : "dis",
@@ -431,207 +431,207 @@ static ssize_t sched_server_write_common(struct file *filp, const char __user *u
 	}
 
 	*ppos += cnt;
-	return cnt;
+	തിരികെ cnt;
 }
 
-static size_t sched_server_show_common(struct seq_file *m, void *v, enum dl_param param,
-				       void *server)
+സ്ഥിതം size_t sched_server_show_common(ഘടന seq_file *m, ശൂന്യം *v, എണ്ണൽ dl_param param,
+				       ശൂന്യം *server)
 {
-	struct sched_dl_entity *dl_se = (struct sched_dl_entity *)server;
-	u64 value;
+	ഘടന sched_dl_entity *dl_se = (ഘടന sched_dl_entity *)server;
+	u64 മൂല്യം;
 
-	switch (param) {
-	case DL_RUNTIME:
-		value = dl_se->dl_runtime;
-		break;
-	case DL_PERIOD:
-		value = dl_se->dl_period;
-		break;
+	തിരഞ്ഞെടുപ്പ് (param) {
+	അവസ്ഥ DL_RUNTIME:
+		മൂല്യം = dl_se->dl_runtime;
+		നിർത്തുക;
+	അവസ്ഥ DL_PERIOD:
+		മൂല്യം = dl_se->dl_period;
+		നിർത്തുക;
 	}
 
-	seq_printf(m, "%llu\n", value);
-	return 0;
+	seq_printf(m, "%llu\n", മൂല്യം);
+	തിരികെ 0;
 }
 
-static ssize_t
-sched_fair_server_runtime_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t
+sched_fair_server_runtime_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 				size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((ഘടന seq_file *) filp->private_data)->സ്വകാര്യ;
+	ഘടന rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	തിരികെ sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_runtime_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_fair_server_runtime_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->സ്വകാര്യ;
+	ഘടന rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
+	തിരികെ sched_server_show_common(m, v, DL_RUNTIME, &rq->fair_server);
 }
 
-static int sched_fair_server_runtime_open(struct inode *inode, struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_fair_server_runtime_open(ഘടന inode *inode, ഘടന file *filp)
 {
-	return single_open(filp, sched_fair_server_runtime_show, inode->i_private);
+	തിരികെ single_open(filp, sched_fair_server_runtime_show, inode->i_private);
 }
 
-static const struct file_operations fair_server_runtime_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations fair_server_runtime_fops = {
 	.open		= sched_fair_server_runtime_open,
-	.write		= sched_fair_server_runtime_write,
-	.read		= seq_read,
+	.ലിഖ		= sched_fair_server_runtime_write,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static struct dentry *debugfs_sched;
+സ്ഥിതം ഘടന dentry *debugfs_sched;
 
 #ifdef CONFIG_SCHED_CLASS_EXT
-static ssize_t
-sched_ext_server_runtime_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t
+sched_ext_server_runtime_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 			       size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((ഘടന seq_file *) filp->private_data)->സ്വകാര്യ;
+	ഘടന rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
+	തിരികെ sched_server_write_common(filp, ubuf, cnt, ppos, DL_RUNTIME,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_runtime_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_ext_server_runtime_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->സ്വകാര്യ;
+	ഘടന rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
+	തിരികെ sched_server_show_common(m, v, DL_RUNTIME, &rq->ext_server);
 }
 
-static int sched_ext_server_runtime_open(struct inode *inode, struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_ext_server_runtime_open(ഘടന inode *inode, ഘടന file *filp)
 {
-	return single_open(filp, sched_ext_server_runtime_show, inode->i_private);
+	തിരികെ single_open(filp, sched_ext_server_runtime_show, inode->i_private);
 }
 
-static const struct file_operations ext_server_runtime_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations ext_server_runtime_fops = {
 	.open		= sched_ext_server_runtime_open,
-	.write		= sched_ext_server_runtime_write,
-	.read		= seq_read,
+	.ലിഖ		= sched_ext_server_runtime_write,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static ssize_t
-sched_ext_server_period_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t
+sched_ext_server_period_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 			      size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((ഘടന seq_file *) filp->private_data)->സ്വകാര്യ;
+	ഘടന rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	തിരികെ sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->ext_server);
 }
 
-static int sched_ext_server_period_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_ext_server_period_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->സ്വകാര്യ;
+	ഘടന rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
+	തിരികെ sched_server_show_common(m, v, DL_PERIOD, &rq->ext_server);
 }
 
-static int sched_ext_server_period_open(struct inode *inode, struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_ext_server_period_open(ഘടന inode *inode, ഘടന file *filp)
 {
-	return single_open(filp, sched_ext_server_period_show, inode->i_private);
+	തിരികെ single_open(filp, sched_ext_server_period_show, inode->i_private);
 }
 
-static const struct file_operations ext_server_period_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations ext_server_period_fops = {
 	.open		= sched_ext_server_period_open,
-	.write		= sched_ext_server_period_write,
-	.read		= seq_read,
+	.ലിഖ		= sched_ext_server_period_write,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void debugfs_ext_server_init(void)
+സ്ഥിതം ശൂന്യം debugfs_ext_server_init(ശൂന്യം)
 {
-	struct dentry *d_ext;
+	ഘടന dentry *d_ext;
 	unsigned long cpu;
 
 	d_ext = debugfs_create_dir("ext_server", debugfs_sched);
-	if (!d_ext)
-		return;
+	എങ്കിൽ (!d_ext)
+		തിരികെ;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		ഘടന dentry *d_cpu;
+		അക്ഷരം buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, വലുപ്പം(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_ext);
 
-		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &ext_server_runtime_fops);
-		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &ext_server_period_fops);
+		debugfs_create_file("runtime", 0644, d_cpu, (ശൂന്യം *) cpu, &ext_server_runtime_fops);
+		debugfs_create_file("period", 0644, d_cpu, (ശൂന്യം *) cpu, &ext_server_period_fops);
 	}
 }
 #endif /* CONFIG_SCHED_CLASS_EXT */
 
-static ssize_t
-sched_fair_server_period_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t
+sched_fair_server_period_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 			       size_t cnt, loff_t *ppos)
 {
-	long cpu = (long) ((struct seq_file *) filp->private_data)->private;
-	struct rq *rq = cpu_rq(cpu);
+	long cpu = (long) ((ഘടന seq_file *) filp->private_data)->സ്വകാര്യ;
+	ഘടന rq *rq = cpu_rq(cpu);
 
-	return sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
+	തിരികെ sched_server_write_common(filp, ubuf, cnt, ppos, DL_PERIOD,
 					&rq->fair_server);
 }
 
-static int sched_fair_server_period_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_fair_server_period_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
-	unsigned long cpu = (unsigned long) m->private;
-	struct rq *rq = cpu_rq(cpu);
+	unsigned long cpu = (unsigned long) m->സ്വകാര്യ;
+	ഘടന rq *rq = cpu_rq(cpu);
 
-	return sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
+	തിരികെ sched_server_show_common(m, v, DL_PERIOD, &rq->fair_server);
 }
 
-static int sched_fair_server_period_open(struct inode *inode, struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_fair_server_period_open(ഘടന inode *inode, ഘടന file *filp)
 {
-	return single_open(filp, sched_fair_server_period_show, inode->i_private);
+	തിരികെ single_open(filp, sched_fair_server_period_show, inode->i_private);
 }
 
-static const struct file_operations fair_server_period_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations fair_server_period_fops = {
 	.open		= sched_fair_server_period_open,
-	.write		= sched_fair_server_period_write,
-	.read		= seq_read,
+	.ലിഖ		= sched_fair_server_period_write,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void debugfs_fair_server_init(void)
+സ്ഥിതം ശൂന്യം debugfs_fair_server_init(ശൂന്യം)
 {
-	struct dentry *d_fair;
+	ഘടന dentry *d_fair;
 	unsigned long cpu;
 
 	d_fair = debugfs_create_dir("fair_server", debugfs_sched);
-	if (!d_fair)
-		return;
+	എങ്കിൽ (!d_fair)
+		തിരികെ;
 
 	for_each_possible_cpu(cpu) {
-		struct dentry *d_cpu;
-		char buf[32];
+		ഘടന dentry *d_cpu;
+		അക്ഷരം buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%lu", cpu);
+		snprintf(buf, വലുപ്പം(buf), "cpu%lu", cpu);
 		d_cpu = debugfs_create_dir(buf, d_fair);
 
-		debugfs_create_file("runtime", 0644, d_cpu, (void *) cpu, &fair_server_runtime_fops);
-		debugfs_create_file("period", 0644, d_cpu, (void *) cpu, &fair_server_period_fops);
+		debugfs_create_file("runtime", 0644, d_cpu, (ശൂന്യം *) cpu, &fair_server_runtime_fops);
+		debugfs_create_file("period", 0644, d_cpu, (ശൂന്യം *) cpu, &fair_server_period_fops);
 	}
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static int cgroup_mode = 2;
+സ്ഥിതം പൂർണ്ണസംഖ്യ cgroup_mode = 2;
 
 /* See __sched_cgroup_mode_update(). */
-static const char *cgroup_mode_str[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *cgroup_mode_str[] = {
 	"up",
 	"smp",
 	"concur",
@@ -639,80 +639,80 @@ static const char *cgroup_mode_str[] = {
 	"tasks",
 };
 
-static int sched_cgroup_mode(const char *str)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_cgroup_mode(സ്ഥിരം അക്ഷരം *str)
 {
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (!strcmp(str, cgroup_mode_str[i]))
-			return i;
+	വേണ്ടി (പൂർണ്ണസംഖ്യ i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		എങ്കിൽ (!strcmp(str, cgroup_mode_str[i]))
+			തിരികെ i;
 	}
-	return -EINVAL;
+	തിരികെ -EINVAL;
 }
 
-static ssize_t sched_cgroup_write(struct file *filp, const char __user *ubuf,
+സ്ഥിതം ssize_t sched_cgroup_write(ഘടന file *filp, സ്ഥിരം അക്ഷരം __user *ubuf,
 				   size_t cnt, loff_t *ppos)
 {
-	char buf[16];
-	int mode;
+	അക്ഷരം buf[16];
+	പൂർണ്ണസംഖ്യ mode;
 
-	if (cnt > 15)
+	എങ്കിൽ (cnt > 15)
 		cnt = 15;
 
-	if (copy_from_user(buf, ubuf, cnt))
-		return -EFAULT;
+	എങ്കിൽ (copy_from_user(buf, ubuf, cnt))
+		തിരികെ -EFAULT;
 
 	buf[cnt] = 0;
 	mode = sched_cgroup_mode(strstrip(buf));
-	if (mode < 0)
-		return mode;
+	എങ്കിൽ (mode < 0)
+		തിരികെ mode;
 
 	__sched_cgroup_mode_update(mode);
 	WRITE_ONCE(cgroup_mode, mode);
 
 	*ppos += cnt;
-	return cnt;
+	തിരികെ cnt;
 }
 
-static int sched_cgroup_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_cgroup_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
-	int mode = READ_ONCE(cgroup_mode);
+	പൂർണ്ണസംഖ്യ mode = READ_ONCE(cgroup_mode);
 
-	for (int i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
-		if (mode == i)
+	വേണ്ടി (പൂർണ്ണസംഖ്യ i = 0; i < ARRAY_SIZE(cgroup_mode_str); i++) {
+		എങ്കിൽ (mode == i)
 			seq_puts(m, "(");
 		seq_puts(m, cgroup_mode_str[i]);
-		if (mode == i)
+		എങ്കിൽ (mode == i)
 			seq_puts(m, ")");
 
 		seq_puts(m, " ");
 	}
 	seq_puts(m, "\n");
-	return 0;
+	തിരികെ 0;
 }
 
-static int sched_cgroup_open(struct inode *inode, struct file *filp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_cgroup_open(ഘടന inode *inode, ഘടന file *filp)
 {
-	return single_open(filp, sched_cgroup_show, NULL);
+	തിരികെ single_open(filp, sched_cgroup_show, ശൂന്യ);
 }
 
-static const struct file_operations sched_cgroup_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations sched_cgroup_fops = {
 	.open		= sched_cgroup_open,
-	.write		= sched_cgroup_write,
-	.read		= seq_read,
+	.ലിഖ		= sched_cgroup_write,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 #endif
 
-static __init int sched_init_debug(void)
+സ്ഥിതം __init പൂർണ്ണസംഖ്യ sched_init_debug(ശൂന്യം)
 {
-	struct dentry __maybe_unused *numa, *llc;
+	ഘടന dentry __maybe_unused *numa, *llc;
 
-	debugfs_sched = debugfs_create_dir("sched", NULL);
+	debugfs_sched = debugfs_create_dir("sched", ശൂന്യ);
 
-	debugfs_create_file("features", 0644, debugfs_sched, NULL, &sched_feat_fops);
+	debugfs_create_file("features", 0644, debugfs_sched, ശൂന്യ, &sched_feat_fops);
 	debugfs_create_file_unsafe("verbose", 0644, debugfs_sched, &sched_debug_verbose, &sched_verbose_fops);
 #ifdef CONFIG_PREEMPT_DYNAMIC
-	debugfs_create_file("preempt", 0644, debugfs_sched, NULL, &sched_dynamic_fops);
+	debugfs_create_file("preempt", 0644, debugfs_sched, ശൂന്യ, &sched_dynamic_fops);
 #endif
 
 	debugfs_create_u32("base_slice_ns", 0644, debugfs_sched, &sysctl_sched_base_slice);
@@ -720,7 +720,7 @@ static __init int sched_init_debug(void)
 	debugfs_create_u32("latency_warn_ms", 0644, debugfs_sched, &sysctl_resched_latency_warn_ms);
 	debugfs_create_u32("latency_warn_once", 0644, debugfs_sched, &sysctl_resched_latency_warn_once);
 
-	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, NULL, &sched_scaling_fops);
+	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, ശൂന്യ, &sched_scaling_fops);
 	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
 	debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
 
@@ -740,7 +740,7 @@ static __init int sched_init_debug(void)
 
 #ifdef CONFIG_SCHED_CACHE
 	llc = debugfs_create_dir("llc_balancing", debugfs_sched);
-	debugfs_create_file("enabled", 0644, llc, NULL,
+	debugfs_create_file("enabled", 0644, llc, ശൂന്യ,
 			    &sched_cache_enable_fops);
 	debugfs_create_u32("aggr_tolerance", 0644, llc,
 			   &llc_aggr_tolerance);
@@ -754,10 +754,10 @@ static __init int sched_init_debug(void)
 			   &llc_imb_pct);
 #endif
 
-	debugfs_create_file("debug", 0444, debugfs_sched, NULL, &sched_debug_fops);
+	debugfs_create_file("debug", 0444, debugfs_sched, ശൂന്യ, &sched_debug_fops);
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	debugfs_create_file("cgroup_mode", 0644, debugfs_sched, NULL, &sched_cgroup_fops);
+	debugfs_create_file("cgroup_mode", 0644, debugfs_sched, ശൂന്യ, &sched_cgroup_fops);
 #endif
 
 	debugfs_fair_server_init();
@@ -765,16 +765,16 @@ static __init int sched_init_debug(void)
 	debugfs_ext_server_init();
 #endif
 
-	return 0;
+	തിരികെ 0;
 }
 late_initcall(sched_init_debug);
 
-static cpumask_var_t		sd_sysctl_cpus;
+സ്ഥിതം cpumask_var_t		sd_sysctl_cpus;
 
-static int sd_flags_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sd_flags_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
-	unsigned long flags = *(unsigned int *)m->private;
-	int idx;
+	unsigned long flags = *(unsigned പൂർണ്ണസംഖ്യ *)m->സ്വകാര്യ;
+	പൂർണ്ണസംഖ്യ idx;
 
 	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
 		seq_puts(m, sd_flag_debug[idx].name);
@@ -782,22 +782,22 @@ static int sd_flags_show(struct seq_file *m, void *v)
 	}
 	seq_puts(m, "\n");
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int sd_flags_open(struct inode *inode, struct file *file)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sd_flags_open(ഘടന inode *inode, ഘടന file *file)
 {
-	return single_open(file, sd_flags_show, inode->i_private);
+	തിരികെ single_open(file, sd_flags_show, inode->i_private);
 }
 
-static const struct file_operations sd_flags_fops = {
+സ്ഥിതം സ്ഥിരം ഘടന file_operations sd_flags_fops = {
 	.open		= sd_flags_open,
-	.read		= seq_read,
+	.പഠ		= seq_read,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
-static void register_sd(struct sched_domain *sd, struct dentry *parent)
+സ്ഥിതം ശൂന്യം register_sd(ഘടന sched_domain *sd, ഘടന dentry *parent)
 {
 #define SDM(type, mode, member)	\
 	debugfs_create_##type(#member, mode, parent, &sd->member)
@@ -816,53 +816,53 @@ static void register_sd(struct sched_domain *sd, struct dentry *parent)
 	debugfs_create_file("groups_flags", 0444, parent, &sd->groups->flags, &sd_flags_fops);
 	debugfs_create_u32("level", 0444, parent, (u32 *)&sd->level);
 
-	if (sd->flags & SD_ASYM_PACKING)
+	എങ്കിൽ (sd->flags & SD_ASYM_PACKING)
 		debugfs_create_u32("group_asym_prefer_cpu", 0444, parent,
 				   (u32 *)&sd->groups->asym_prefer_cpu);
 }
 
-void update_sched_domain_debugfs(void)
+ശൂന്യം update_sched_domain_debugfs(ശൂന്യം)
 {
-	int cpu, i;
+	പൂർണ്ണസംഖ്യ cpu, i;
 
 	/*
 	 * This can unfortunately be invoked before sched_debug_init() creates
 	 * the debug directory. Don't touch sd_sysctl_cpus until then.
 	 */
-	if (!debugfs_sched)
-		return;
+	എങ്കിൽ (!debugfs_sched)
+		തിരികെ;
 
-	if (!sched_debug_verbose)
-		return;
+	എങ്കിൽ (!sched_debug_verbose)
+		തിരികെ;
 
-	if (!cpumask_available(sd_sysctl_cpus)) {
-		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
-			return;
+	എങ്കിൽ (!cpumask_available(sd_sysctl_cpus)) {
+		എങ്കിൽ (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
+			തിരികെ;
 		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
 	}
 
-	if (!sd_dentry) {
+	എങ്കിൽ (!sd_dentry) {
 		sd_dentry = debugfs_create_dir("domains", debugfs_sched);
 
 		/* rebuild sd_sysctl_cpus if empty since it gets cleared below */
-		if (cpumask_empty(sd_sysctl_cpus))
+		എങ്കിൽ (cpumask_empty(sd_sysctl_cpus))
 			cpumask_copy(sd_sysctl_cpus, cpu_online_mask);
 	}
 
 	for_each_cpu(cpu, sd_sysctl_cpus) {
-		struct sched_domain *sd;
-		struct dentry *d_cpu;
-		char buf[32];
+		ഘടന sched_domain *sd;
+		ഘടന dentry *d_cpu;
+		അക്ഷരം buf[32];
 
-		snprintf(buf, sizeof(buf), "cpu%d", cpu);
+		snprintf(buf, വലുപ്പം(buf), "cpu%d", cpu);
 		debugfs_lookup_and_remove(buf, sd_dentry);
 		d_cpu = debugfs_create_dir(buf, sd_dentry);
 
 		i = 0;
 		for_each_domain(cpu, sd) {
-			struct dentry *d_sd;
+			ഘടന dentry *d_sd;
 
-			snprintf(buf, sizeof(buf), "domain%d", i);
+			snprintf(buf, വലുപ്പം(buf), "domain%d", i);
 			d_sd = debugfs_create_dir(buf, d_cpu);
 
 			register_sd(sd, d_sd);
@@ -873,16 +873,16 @@ void update_sched_domain_debugfs(void)
 	}
 }
 
-void dirty_sched_domain_sysctl(int cpu)
+ശൂന്യം dirty_sched_domain_sysctl(പൂർണ്ണസംഖ്യ cpu)
 {
-	if (cpumask_available(sd_sysctl_cpus))
+	എങ്കിൽ (cpumask_available(sd_sysctl_cpus))
 		__cpumask_set_cpu(cpu, sd_sysctl_cpus);
 }
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
-static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group *tg)
+സ്ഥിതം ശൂന്യം print_cfs_group_stats(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu, ഘടന task_group *tg)
 {
-	struct sched_entity *se = tg_se(tg, cpu);
+	ഘടന sched_entity *se = tg_se(tg, cpu);
 
 #define P(F)		SEQ_printf(m, "  .%-30s: %lld\n",	#F, (long long)F)
 #define P_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld\n",	\
@@ -891,15 +891,15 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 #define PN_SCHEDSTAT(F)	SEQ_printf(m, "  .%-30s: %lld.%06ld\n", \
 		#F, SPLIT_NS((long long)schedstat_val(stats->F)))
 
-	if (!se)
-		return;
+	എങ്കിൽ (!se)
+		തിരികെ;
 
 	PN(se->exec_start);
 	PN(se->vruntime);
 	PN(se->sum_exec_runtime);
 
-	if (schedstat_enabled()) {
-		struct sched_statistics *stats;
+	എങ്കിൽ (schedstat_enabled()) {
+		ഘടന sched_statistics *stats;
 		stats = __schedstats_from_se(se);
 
 		PN_SCHEDSTAT(wait_start);
@@ -911,7 +911,7 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 		PN_SCHEDSTAT(slice_max);
 		PN_SCHEDSTAT(wait_max);
 		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
+		P_SCHEDSTAT(wait_എണ്ണം);
 	}
 
 	P(se->load.weight);
@@ -927,13 +927,13 @@ static void print_cfs_group_stats(struct seq_file *m, int cpu, struct task_group
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 
 #ifdef CONFIG_CGROUP_SCHED
-static DEFINE_SPINLOCK(sched_debug_lock);
-static char group_path[PATH_MAX];
+സ്ഥിതം DEFINE_SPINLOCK(sched_debug_lock);
+സ്ഥിതം അക്ഷരം group_path[PATH_MAX];
 
-static void task_group_path(struct task_group *tg, char *path, int plen)
+സ്ഥിതം ശൂന്യം task_group_path(ഘടന task_group *tg, അക്ഷരം *path, പൂർണ്ണസംഖ്യ plen)
 {
-	if (autogroup_path(tg, path, plen))
-		return;
+	എങ്കിൽ (autogroup_path(tg, path, plen))
+		തിരികെ;
 
 	cgroup_path(tg->css.cgroup, path, plen);
 }
@@ -947,13 +947,13 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
  */
 #define SEQ_printf_task_group_path(m, tg, fmt...)			\
 {									\
-	if (spin_trylock(&sched_debug_lock)) {				\
-		task_group_path(tg, group_path, sizeof(group_path));	\
+	എങ്കിൽ (spin_trylock(&sched_debug_lock)) {				\
+		task_group_path(tg, group_path, വലുപ്പം(group_path));	\
 		SEQ_printf(m, fmt, group_path);				\
 		spin_unlock(&sched_debug_lock);				\
-	} else {							\
-		char buf[128];						\
-		char *bufend = buf + sizeof(buf) - 3;			\
+	} അല്ലെങ്കിൽ {							\
+		അക്ഷരം buf[128];						\
+		അക്ഷരം *bufend = buf + വലുപ്പം(buf) - 3;			\
 		task_group_path(tg, buf, bufend - buf);			\
 		strcpy(bufend - 1, "...");				\
 		SEQ_printf(m, fmt, buf);				\
@@ -961,12 +961,12 @@ static void task_group_path(struct task_group *tg, char *path, int plen)
 }
 #endif
 
-static void
-print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
+സ്ഥിതം ശൂന്യം
+print_task(ഘടന seq_file *m, ഘടന rq *rq, ഘടന task_struct *p)
 {
-	if (task_current(rq, p))
+	എങ്കിൽ (task_current(rq, p))
 		SEQ_printf(m, ">R");
-	else
+	അല്ലെങ്കിൽ
 		SEQ_printf(m, " %c", task_state_to_char(p));
 
 	SEQ_printf(m, " %15s %5d %10ld %9Ld.%06ld   %c   %9Ld.%06ld %c %9Ld.%06ld %9Ld.%06ld %9Ld   %5d ",
@@ -987,7 +987,7 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_block_runtime)));
 
 #ifdef CONFIG_NUMA_BALANCING
-	SEQ_printf(m, "   %d      %d", task_node(p), task_numa_group_id(p));
+	SEQ_printf(m, "   %d      %d", task_കണ്ണി(p), task_numa_group_id(p));
 #endif
 #ifdef CONFIG_CGROUP_SCHED
 	SEQ_printf_task_group_path(m, task_group(p), "        %s")
@@ -996,9 +996,9 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 	SEQ_printf(m, "\n");
 }
 
-static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
+സ്ഥിതം ശൂന്യം print_rq(ഘടന seq_file *m, ഘടന rq *rq, പൂർണ്ണസംഖ്യ rq_cpu)
 {
-	struct task_struct *g, *p;
+	ഘടന task_struct *g, *p;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "runnable tasks:\n");
@@ -1025,43 +1025,43 @@ static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
 
 	rcu_read_lock();
 	for_each_process_thread(g, p) {
-		if (task_cpu(p) != rq_cpu)
-			continue;
+		എങ്കിൽ (task_cpu(p) != rq_cpu)
+			തുടരുക;
 
 		print_task(m, rq, p);
 	}
 	rcu_read_unlock();
 }
 
-void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+ശൂന്യം print_cfs_rq(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu, ഘടന cfs_rq *cfs_rq)
 {
-	s64 left_vruntime = -1, right_vruntime = -1, left_deadline = -1, spread;
+	s64 ഇടത്_vruntime = -1, വലത്_vruntime = -1, ഇടത്_deadline = -1, spread;
 	s64 zero_vruntime = -1, sum_w_vruntime = -1;
 	u64 avruntime;
-	struct sched_entity *last, *first, *root;
-	struct rq *rq = cpu_rq(cpu);
-	unsigned int sum_shift;
+	ഘടന sched_entity *last, *first, *വേര്;
+	ഘടന rq *rq = cpu_rq(cpu);
+	unsigned പൂർണ്ണസംഖ്യ sum_shift;
 	unsigned long flags;
 	u64 sum_weight;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, cfs_rq->tg, "cfs_rq[%d]:%s\n", cpu);
-#else
+#അല്ലെങ്കിൽ
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
 #endif
 
 	raw_spin_rq_lock_irqsave(rq, flags);
-	root = __pick_root_entity(cfs_rq);
-	if (root)
-		left_vruntime = root->min_vruntime;
+	വേര് = __pick_root_entity(cfs_rq);
+	എങ്കിൽ (വേര്)
+		ഇടത്_vruntime = വേര്->min_vruntime;
 	first = __pick_first_entity(cfs_rq);
-	if (first)
-		left_deadline = first->deadline;
+	എങ്കിൽ (first)
+		ഇടത്_deadline = first->deadline;
 	last = __pick_last_entity(cfs_rq);
-	if (last)
-		right_vruntime = last->vruntime;
+	എങ്കിൽ (last)
+		വലത്_vruntime = last->vruntime;
 	zero_vruntime = cfs_rq->zero_vruntime;
 	sum_w_vruntime = cfs_rq->sum_w_vruntime;
 	sum_weight = cfs_rq->sum_weight;
@@ -1070,9 +1070,9 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	raw_spin_rq_unlock_irqrestore(rq, flags);
 
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_deadline",
-			SPLIT_NS(left_deadline));
+			SPLIT_NS(ഇടത്_deadline));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_vruntime",
-			SPLIT_NS(left_vruntime));
+			SPLIT_NS(ഇടത്_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "zero_vruntime",
 			SPLIT_NS(zero_vruntime));
 	SEQ_printf(m, "  .%-30s: %Ld (%d bits)\n", "sum_w_vruntime",
@@ -1083,8 +1083,8 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "avg_vruntime",
 			SPLIT_NS(avruntime));
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "right_vruntime",
-			SPLIT_NS(right_vruntime));
-	spread = right_vruntime - left_vruntime;
+			SPLIT_NS(വലത്_vruntime));
+	spread = വലത്_vruntime - ഇടത്_vruntime;
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
 	SEQ_printf(m, "  .%-30s: %d\n", "nr_queued", cfs_rq->nr_queued);
 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_runnable", cfs_rq->h_nr_runnable);
@@ -1117,7 +1117,7 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 	SEQ_printf(m, "  .%-30s: %d\n", "throttled",
 			cfs_rq->throttled);
 	SEQ_printf(m, "  .%-30s: %d\n", "throttle_count",
-			cfs_rq->throttle_count);
+			cfs_rq->throttle_എണ്ണം);
 #endif
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -1125,12 +1125,12 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
 #endif
 }
 
-void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
+ശൂന്യം print_rt_rq(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu, ഘടന rt_rq *rt_rq)
 {
 #ifdef CONFIG_RT_GROUP_SCHED
 	SEQ_printf(m, "\n");
 	SEQ_printf_task_group_path(m, rt_rq->tg, "rt_rq[%d]:%s\n", cpu);
-#else
+#അല്ലെങ്കിൽ
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "rt_rq[%d]:\n", cpu);
 #endif
@@ -1155,9 +1155,9 @@ void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
 #undef P
 }
 
-void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
+ശൂന്യം print_dl_rq(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu, ഘടന dl_rq *dl_rq)
 {
-	struct dl_bw *dl_bw;
+	ഘടന dl_bw *dl_bw;
 
 	SEQ_printf(m, "\n");
 	SEQ_printf(m, "dl_rq[%d]:\n", cpu);
@@ -1173,28 +1173,28 @@ void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
 #undef PU
 }
 
-static void print_cpu(struct seq_file *m, int cpu)
+സ്ഥിതം ശൂന്യം print_cpu(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ cpu)
 {
-	struct rq *rq = cpu_rq(cpu);
+	ഘടന rq *rq = cpu_rq(cpu);
 
 #ifdef CONFIG_X86
 	{
-		unsigned int freq = cpu_khz ? : 1;
+		unsigned പൂർണ്ണസംഖ്യ freq = cpu_khz ? : 1;
 
 		SEQ_printf(m, "cpu#%d, %u.%03u MHz\n",
 			   cpu, freq / 1000, (freq % 1000));
 	}
-#else /* !CONFIG_X86: */
+#അല്ലെങ്കിൽ /* !CONFIG_X86: */
 	SEQ_printf(m, "cpu#%d\n", cpu);
 #endif /* !CONFIG_X86 */
 
 #define P(x)								\
-do {									\
-	if (sizeof(rq->x) == 4)						\
-		SEQ_printf(m, "  .%-30s: %d\n", #x, (int)(rq->x));	\
-	else								\
+ചെയ്യുക {									\
+	എങ്കിൽ (വലുപ്പം(rq->x) == 4)						\
+		SEQ_printf(m, "  .%-30s: %d\n", #x, (പൂർണ്ണസംഖ്യ)(rq->x));	\
+	അല്ലെങ്കിൽ								\
 		SEQ_printf(m, "  .%-30s: %Ld\n", #x, (long long)(rq->x));\
-} while (0)
+} ആകുമ്പോൾ (0)
 
 #define PN(x) \
 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", #x, SPLIT_NS(rq->x))
@@ -1215,11 +1215,11 @@ do {									\
 #undef P64
 
 #define P(n) SEQ_printf(m, "  .%-30s: %d\n", #n, schedstat_val(rq->n));
-	if (schedstat_enabled()) {
-		P(yld_count);
-		P(sched_count);
+	എങ്കിൽ (schedstat_enabled()) {
+		P(yld_എണ്ണം);
+		P(sched_എണ്ണം);
 		P(sched_goidle);
-		P(ttwu_count);
+		P(ttwu_എണ്ണം);
 		P(ttwu_local);
 	}
 #undef P
@@ -1232,13 +1232,13 @@ do {									\
 	SEQ_printf(m, "\n");
 }
 
-static const char *sched_tunable_scaling_names[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം *sched_tunable_scaling_names[] = {
 	"none",
 	"logarithmic",
 	"linear"
 };
 
-static void sched_debug_header(struct seq_file *m)
+സ്ഥിതം ശൂന്യം sched_debug_header(ഘടന seq_file *m)
 {
 	u64 ktime, sched_clk, cpu_clk;
 	unsigned long flags;
@@ -1251,7 +1251,7 @@ static void sched_debug_header(struct seq_file *m)
 
 	SEQ_printf(m, "Sched Debug Version: v0.11, %s %.*s\n",
 		init_utsname()->release,
-		(int)strcspn(init_utsname()->version, " "),
+		(പൂർണ്ണസംഖ്യ)strcspn(init_utsname()->version, " "),
 		init_utsname()->version);
 
 #define P(x) \
@@ -1287,23 +1287,23 @@ static void sched_debug_header(struct seq_file *m)
 	SEQ_printf(m, "\n");
 }
 
-static int sched_debug_show(struct seq_file *m, void *v)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sched_debug_show(ഘടന seq_file *m, ശൂന്യം *v)
 {
-	int cpu = (unsigned long)(v - 2);
+	പൂർണ്ണസംഖ്യ cpu = (unsigned long)(v - 2);
 
-	if (cpu != -1)
+	എങ്കിൽ (cpu != -1)
 		print_cpu(m, cpu);
-	else
+	അല്ലെങ്കിൽ
 		sched_debug_header(m);
 
-	return 0;
+	തിരികെ 0;
 }
 
-void sysrq_sched_debug_show(void)
+ശൂന്യം sysrq_sched_debug_show(ശൂന്യം)
 {
-	int cpu;
+	പൂർണ്ണസംഖ്യ cpu;
 
-	sched_debug_header(NULL);
+	sched_debug_header(ശൂന്യ);
 	for_each_online_cpu(cpu) {
 		/*
 		 * Need to reset softlockup watchdogs on all CPUs, because
@@ -1312,7 +1312,7 @@ void sysrq_sched_debug_show(void)
 		 */
 		touch_nmi_watchdog();
 		touch_all_softlockup_watchdogs();
-		print_cpu(NULL, cpu);
+		print_cpu(ശൂന്യ, cpu);
 	}
 }
 
@@ -1323,39 +1323,39 @@ void sysrq_sched_debug_show(void)
  * In a hotplugged system some CPUs, including CPU 0, may be missing so we have
  * to use cpumask_* to iterate over the CPUs.
  */
-static void *sched_debug_start(struct seq_file *file, loff_t *offset)
+സ്ഥിതം ശൂന്യം *sched_debug_start(ഘടന seq_file *file, loff_t *offset)
 {
 	unsigned long n = *offset;
 
-	if (n == 0)
-		return (void *) 1;
+	എങ്കിൽ (n == 0)
+		തിരികെ (ശൂന്യം *) 1;
 
 	n--;
 
-	if (n > 0)
+	എങ്കിൽ (n > 0)
 		n = cpumask_next(n - 1, cpu_online_mask);
-	else
+	അല്ലെങ്കിൽ
 		n = cpumask_first(cpu_online_mask);
 
 	*offset = n + 1;
 
-	if (n < nr_cpu_ids)
-		return (void *)(unsigned long)(n + 2);
+	എങ്കിൽ (n < nr_cpu_ids)
+		തിരികെ (ശൂന്യം *)(unsigned long)(n + 2);
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-static void *sched_debug_next(struct seq_file *file, void *data, loff_t *offset)
+സ്ഥിതം ശൂന്യം *sched_debug_next(ഘടന seq_file *file, ശൂന്യം *data, loff_t *offset)
 {
 	(*offset)++;
-	return sched_debug_start(file, offset);
+	തിരികെ sched_debug_start(file, offset);
 }
 
-static void sched_debug_stop(struct seq_file *file, void *data)
+സ്ഥിതം ശൂന്യം sched_debug_stop(ഘടന seq_file *file, ശൂന്യം *data)
 {
 }
 
-static const struct seq_operations sched_debug_sops = {
+സ്ഥിതം സ്ഥിരം ഘടന seq_operations sched_debug_sops = {
 	.start		= sched_debug_start,
 	.next		= sched_debug_next,
 	.stop		= sched_debug_stop,
@@ -1372,33 +1372,33 @@ static const struct seq_operations sched_debug_sops = {
 
 
 #ifdef CONFIG_NUMA_BALANCING
-void print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
+ശൂന്യം print_numa_stats(ഘടന seq_file *m, പൂർണ്ണസംഖ്യ കണ്ണി, unsigned long tsf,
 		unsigned long tpf, unsigned long gsf, unsigned long gpf)
 {
-	SEQ_printf(m, "numa_faults node=%d ", node);
+	SEQ_printf(m, "numa_faults node=%d ", കണ്ണി);
 	SEQ_printf(m, "task_private=%lu task_shared=%lu ", tpf, tsf);
 	SEQ_printf(m, "group_private=%lu group_shared=%lu\n", gpf, gsf);
 }
 #endif
 
 
-static void sched_show_numa(struct task_struct *p, struct seq_file *m)
+സ്ഥിതം ശൂന്യം sched_show_numa(ഘടന task_struct *p, ഘടന seq_file *m)
 {
 #ifdef CONFIG_NUMA_BALANCING
-	if (p->mm)
+	എങ്കിൽ (p->mm)
 		P(mm->numa_scan_seq);
 
 	P(numa_pages_migrated);
 	P(numa_preferred_nid);
 	P(total_numa_faults);
 	SEQ_printf(m, "current_node=%d, numa_group_id=%d\n",
-			task_node(p), task_numa_group_id(p));
+			task_കണ്ണി(p), task_numa_group_id(p));
 	show_numa_stats(p, m);
 #endif /* CONFIG_NUMA_BALANCING */
 }
 
-void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
-						  struct seq_file *m)
+ശൂന്യം proc_sched_show_task(ഘടന task_struct *p, ഘടന pid_namespace *ns,
+						  ഘടന seq_file *m)
 {
 	unsigned long nr_switches;
 
@@ -1419,7 +1419,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 
 	P(se.nr_migrations);
 
-	if (schedstat_enabled()) {
+	എങ്കിൽ (schedstat_enabled()) {
 		u64 avg_atom, avg_per_cpu;
 
 		PN_SCHEDSTAT(sum_sleep_runtime);
@@ -1433,9 +1433,9 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		PN_SCHEDSTAT(slice_max);
 		PN_SCHEDSTAT(wait_max);
 		PN_SCHEDSTAT(wait_sum);
-		P_SCHEDSTAT(wait_count);
+		P_SCHEDSTAT(wait_എണ്ണം);
 		PN_SCHEDSTAT(iowait_sum);
-		P_SCHEDSTAT(iowait_count);
+		P_SCHEDSTAT(iowait_എണ്ണം);
 		P_SCHEDSTAT(nr_failed_migrations_affine);
 		P_SCHEDSTAT(nr_failed_migrations_running);
 		P_SCHEDSTAT(nr_failed_migrations_hot);
@@ -1450,16 +1450,16 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 		P_SCHEDSTAT(nr_wakeups_affine_attempts);
 
 		avg_atom = p->se.sum_exec_runtime;
-		if (nr_switches)
+		എങ്കിൽ (nr_switches)
 			avg_atom = div64_ul(avg_atom, nr_switches);
-		else
+		അല്ലെങ്കിൽ
 			avg_atom = -1LL;
 
 		avg_per_cpu = p->se.sum_exec_runtime;
-		if (p->se.nr_migrations) {
+		എങ്കിൽ (p->se.nr_migrations) {
 			avg_per_cpu = div64_u64(avg_per_cpu,
 						p->se.nr_migrations);
-		} else {
+		} അല്ലെങ്കിൽ {
 			avg_per_cpu = -1LL;
 		}
 
@@ -1485,17 +1485,17 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	P(se.avg.last_update_time);
 	PM(se.avg.util_est, ~UTIL_AVG_UNCHANGED);
 #ifdef CONFIG_UCLAMP_TASK
-	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].value);
-	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].value);
-	__PS("effective uclamp.min", uclamp_eff_value(p, UCLAMP_MIN));
-	__PS("effective uclamp.max", uclamp_eff_value(p, UCLAMP_MAX));
+	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].മൂല്യം);
+	__PS("uclamp.max", p->uclamp_req[UCLAMP_MAX].മൂല്യം);
+	__PS("effective uclamp.min", uclamp_eff_മൂല്യം(p, UCLAMP_MIN));
+	__PS("effective uclamp.max", uclamp_eff_മൂല്യം(p, UCLAMP_MAX));
 #endif /* CONFIG_UCLAMP_TASK */
 	P(policy);
 	P(prio);
-	if (task_has_dl_policy(p)) {
+	എങ്കിൽ (task_has_dl_policy(p)) {
 		P(dl.runtime);
 		P(dl.deadline);
-	} else if (fair_policy(p->policy)) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (fair_policy(p->policy)) {
 		P(se.slice);
 	}
 #ifdef CONFIG_SCHED_CLASS_EXT
@@ -1505,7 +1505,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 #undef P_SCHEDSTAT
 
 	{
-		unsigned int this_cpu = raw_smp_processor_id();
+		unsigned പൂർണ്ണസംഖ്യ this_cpu = raw_smp_processor_id();
 		u64 t0, t1;
 
 		t0 = cpu_clock(this_cpu);
@@ -1516,21 +1516,21 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	sched_show_numa(p, m);
 }
 
-void proc_sched_set_task(struct task_struct *p)
+ശൂന്യം proc_sched_set_task(ഘടന task_struct *p)
 {
 #ifdef CONFIG_SCHEDSTATS
-	memset(&p->stats, 0, sizeof(p->stats));
+	memset(&p->stats, 0, വലുപ്പം(p->stats));
 #endif
 }
 
-void resched_latency_warn(int cpu, u64 latency)
+ശൂന്യം resched_latency_warn(പൂർണ്ണസംഖ്യ cpu, u64 latency)
 {
-	static DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
+	സ്ഥിതം DEFINE_RATELIMIT_STATE(latency_check_ratelimit, 60 * 60 * HZ, 1);
 
-	if (likely(!__ratelimit(&latency_check_ratelimit)))
-		return;
+	എങ്കിൽ (likely(!__ratelimit(&latency_check_ratelimit)))
+		തിരികെ;
 
 	pr_err("sched: CPU %d need_resched set for > %llu ns (%d ticks) without schedule\n",
 	       cpu, latency, cpu_rq(cpu)->ticks_without_resched);
-	dump_stack();
+	dump_അട്ടി();
 }

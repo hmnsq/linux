@@ -5,47 +5,47 @@
  * Copyright (C) 2016, Intel Corporation
  * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
  */
-#include <uapi/linux/sched/types.h>
-#include "sched.h"
+#അന്തര്ഭാവ <uapi/linux/sched/types.h>
+#അന്തര്ഭാവ "sched.h"
 
 #define IOWAIT_BOOST_MIN	(SCHED_CAPACITY_SCALE / 8)
 
-struct sugov_tunables {
-	struct gov_attr_set	attr_set;
-	unsigned int		rate_limit_us;
+ഘടന sugov_tunables {
+	ഘടന gov_attr_set	attr_set;
+	unsigned പൂർണ്ണസംഖ്യ		rate_limit_us;
 };
 
-struct sugov_policy {
-	struct cpufreq_policy	*policy;
+ഘടന sugov_policy {
+	ഘടന cpufreq_policy	*policy;
 
-	struct sugov_tunables	*tunables;
-	struct list_head	tunables_hook;
+	ഘടന sugov_tunables	*tunables;
+	ഘടന list_head	tunables_hook;
 
 	raw_spinlock_t		update_lock;
 	u64			last_freq_update_time;
 	s64			freq_update_delay_ns;
-	unsigned int		next_freq;
-	unsigned int		cached_raw_freq;
+	unsigned പൂർണ്ണസംഖ്യ		next_freq;
+	unsigned പൂർണ്ണസംഖ്യ		cached_raw_freq;
 
 	/* The next fields are only needed if fast switch cannot be used: */
-	struct			irq_work irq_work;
-	struct			kthread_work work;
-	struct			mutex work_lock;
-	struct			kthread_worker worker;
-	struct task_struct	*thread;
+	ഘടന			irq_work irq_work;
+	ഘടന			kthread_work work;
+	ഘടന			mutex work_lock;
+	ഘടന			kthread_worker worker;
+	ഘടന task_struct	*thread;
 	bool			work_in_progress;
 
 	bool			limits_changed;
 	bool			need_freq_update;
 };
 
-struct sugov_cpu {
-	struct update_util_data	update_util;
-	struct sugov_policy	*sg_policy;
-	unsigned int		cpu;
+ഘടന sugov_cpu {
+	ഘടന update_util_data	update_util;
+	ഘടന sugov_policy	*sg_policy;
+	unsigned പൂർണ്ണസംഖ്യ		cpu;
 
 	bool			iowait_boost_pending;
-	unsigned int		iowait_boost;
+	unsigned പൂർണ്ണസംഖ്യ		iowait_boost;
 	u64			last_update;
 
 	unsigned long		util;
@@ -58,11 +58,11 @@ struct sugov_cpu {
 #endif
 };
 
-static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
+സ്ഥിതം DEFINE_PER_CPU(ഘടന sugov_cpu, sugov_cpu);
 
 /************************ Governor internals ***********************/
 
-static void sugov_update_rate_limit_us(struct sugov_policy *sg_policy)
+സ്ഥിതം ശൂന്യം sugov_update_rate_limit_us(ഘടന sugov_policy *sg_policy)
 {
 	/*
 	 * Cast rate_limit_us before multiplication to force 64-bit arithmetic.
@@ -73,7 +73,7 @@ static void sugov_update_rate_limit_us(struct sugov_policy *sg_policy)
 		(s64)sg_policy->tunables->rate_limit_us * NSEC_PER_USEC;
 }
 
-static void sugov_update_rate_limit_us_sync(struct sugov_policy *sg_policy)
+സ്ഥിതം ശൂന്യം sugov_update_rate_limit_us_sync(ഘടന sugov_policy *sg_policy)
 {
 	/*
 	 * Serialize with rate_limit_us_store() to prevent this path from using
@@ -85,7 +85,7 @@ static void sugov_update_rate_limit_us_sync(struct sugov_policy *sg_policy)
 	sugov_update_rate_limit_us(sg_policy);
 }
 
-static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+സ്ഥിതം bool sugov_should_update_freq(ഘടന sugov_policy *sg_policy, u64 time)
 {
 	s64 delta_ns;
 
@@ -104,10 +104,10 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
 	 * This is needed on the slow switching platforms too to prevent CPUs
 	 * going offline from leaving stale IRQ work items behind.
 	 */
-	if (!cpufreq_this_cpu_can_update(sg_policy->policy))
-		return false;
+	എങ്കിൽ (!cpufreq_this_cpu_can_update(sg_policy->policy))
+		തിരികെ false;
 
-	if (unlikely(READ_ONCE(sg_policy->limits_changed))) {
+	എങ്കിൽ (unlikely(READ_ONCE(sg_policy->limits_changed))) {
 		WRITE_ONCE(sg_policy->limits_changed, false);
 		sg_policy->need_freq_update = true;
 
@@ -121,21 +121,21 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
 		 */
 		smp_mb();
 
-		return true;
-	} else if (sg_policy->need_freq_update) {
+		തിരികെ true;
+	} അല്ലെങ്കിൽ എങ്കിൽ (sg_policy->need_freq_update) {
 		/* ignore_dl_rate_limit() wants a new frequency to be found. */
-		return true;
+		തിരികെ true;
 	}
 
 	delta_ns = time - sg_policy->last_freq_update_time;
 
-	return delta_ns >= sg_policy->freq_update_delay_ns;
+	തിരികെ delta_ns >= sg_policy->freq_update_delay_ns;
 }
 
-static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
-				   unsigned int next_freq)
+സ്ഥിതം bool sugov_update_next_freq(ഘടന sugov_policy *sg_policy, u64 time,
+				   unsigned പൂർണ്ണസംഖ്യ next_freq)
 {
-	if (sg_policy->need_freq_update) {
+	എങ്കിൽ (sg_policy->need_freq_update) {
 		sg_policy->need_freq_update = false;
 		/*
 		 * The policy limits have changed, but if the return value of
@@ -145,22 +145,22 @@ static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
 		 * specifically wants that to happen on every update of the
 		 * policy limits.
 		 */
-		if (sg_policy->next_freq == next_freq &&
+		എങ്കിൽ (sg_policy->next_freq == next_freq &&
 		    !cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS))
-			return false;
-	} else if (sg_policy->next_freq == next_freq) {
-		return false;
+			തിരികെ false;
+	} അല്ലെങ്കിൽ എങ്കിൽ (sg_policy->next_freq == next_freq) {
+		തിരികെ false;
 	}
 
 	sg_policy->next_freq = next_freq;
 	sg_policy->last_freq_update_time = time;
 
-	return true;
+	തിരികെ true;
 }
 
-static void sugov_deferred_update(struct sugov_policy *sg_policy)
+സ്ഥിതം ശൂന്യം sugov_deferred_update(ഘടന sugov_policy *sg_policy)
 {
-	if (!sg_policy->work_in_progress) {
+	എങ്കിൽ (!sg_policy->work_in_progress) {
 		sg_policy->work_in_progress = true;
 		irq_work_queue(&sg_policy->irq_work);
 	}
@@ -174,22 +174,22 @@ static void sugov_deferred_update(struct sugov_policy *sg_policy)
  *
  * Return: the reference CPU frequency to compute a capacity.
  */
-static __always_inline
-unsigned long get_capacity_ref_freq(struct cpufreq_policy *policy)
+സ്ഥിതം __always_inline
+unsigned long get_capacity_ref_freq(ഘടന cpufreq_policy *policy)
 {
-	unsigned int freq = arch_scale_freq_ref(policy->cpu);
+	unsigned പൂർണ്ണസംഖ്യ freq = arch_scale_freq_ref(policy->cpu);
 
-	if (freq)
-		return freq;
+	എങ്കിൽ (freq)
+		തിരികെ freq;
 
-	if (arch_scale_freq_invariant())
-		return policy->cpuinfo.max_freq;
+	എങ്കിൽ (arch_scale_freq_invariant())
+		തിരികെ policy->cpuinfo.max_freq;
 
 	/*
 	 * Apply a 25% margin so that we select a higher frequency than
 	 * the current one before the CPU is fully busy:
 	 */
-	return policy->cur + (policy->cur >> 2);
+	തിരികെ policy->cur + (policy->cur >> 2);
 }
 
 /**
@@ -214,44 +214,44 @@ unsigned long get_capacity_ref_freq(struct cpufreq_policy *policy)
  * next_freq (as calculated above) is returned, subject to policy min/max and
  * cpufreq driver limitations.
  */
-static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+സ്ഥിതം unsigned പൂർണ്ണസംഖ്യ get_next_freq(ഘടന sugov_policy *sg_policy,
 				  unsigned long util, unsigned long max)
 {
-	struct cpufreq_policy *policy = sg_policy->policy;
-	unsigned int freq;
+	ഘടന cpufreq_policy *policy = sg_policy->policy;
+	unsigned പൂർണ്ണസംഖ്യ freq;
 
 	freq = get_capacity_ref_freq(policy);
 	freq = map_util_freq(util, freq, max);
 
-	if (freq == sg_policy->cached_raw_freq && !sg_policy->need_freq_update)
-		return sg_policy->next_freq;
+	എങ്കിൽ (freq == sg_policy->cached_raw_freq && !sg_policy->need_freq_update)
+		തിരികെ sg_policy->next_freq;
 
 	sg_policy->cached_raw_freq = freq;
-	return cpufreq_driver_resolve_freq(policy, freq);
+	തിരികെ cpufreq_driver_resolve_freq(policy, freq);
 }
 
-unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
+unsigned long sugov_effective_cpu_perf(പൂർണ്ണസംഖ്യ cpu, unsigned long actual,
 				 unsigned long min,
 				 unsigned long max)
 {
 	/* Add dvfs headroom to actual utilization */
 	actual = map_util_perf(actual);
 	/* Actually we don't need to target the max performance */
-	if (actual < max)
+	എങ്കിൽ (actual < max)
 		max = actual;
 
 	/*
 	 * Ensure at least minimum performance while providing more compute
 	 * capacity when possible.
 	 */
-	return max(min, max);
+	തിരികെ max(min, max);
 }
 
-static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
+സ്ഥിതം ശൂന്യം sugov_get_util(ഘടന sugov_cpu *sg_cpu, unsigned long boost)
 {
 	unsigned long min, max, util = scx_cpuperf_target(sg_cpu->cpu);
 
-	if (!scx_switched_all())
+	എങ്കിൽ (!scx_switched_all())
 		util += cpu_util_cfs_boost(sg_cpu->cpu);
 	util = effective_cpu_util(sg_cpu->cpu, util, &min, &max);
 	util = max(util, boost);
@@ -271,19 +271,19 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
  * we enable the boost starting from IOWAIT_BOOST_MIN, which improves energy
  * efficiency by ignoring sporadic wakeups from IO.
  */
-static bool sugov_iowait_reset(struct sugov_cpu *sg_cpu, u64 time,
+സ്ഥിതം bool sugov_iowait_reset(ഘടന sugov_cpu *sg_cpu, u64 time,
 			       bool set_iowait_boost)
 {
 	s64 delta_ns = time - sg_cpu->last_update;
 
 	/* Reset boost only if a tick has elapsed since last request */
-	if (delta_ns <= TICK_NSEC)
-		return false;
+	എങ്കിൽ (delta_ns <= TICK_NSEC)
+		തിരികെ false;
 
 	sg_cpu->iowait_boost = set_iowait_boost ? IOWAIT_BOOST_MIN : 0;
 	sg_cpu->iowait_boost_pending = set_iowait_boost;
 
-	return true;
+	തിരികെ true;
 }
 
 /**
@@ -300,30 +300,30 @@ static bool sugov_iowait_reset(struct sugov_cpu *sg_cpu, u64 time,
  * To keep doubling, an IO boost has to be requested at least once per tick,
  * otherwise we restart from the utilization of the minimum OPP.
  */
-static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
-			       unsigned int flags)
+സ്ഥിതം ശൂന്യം sugov_iowait_boost(ഘടന sugov_cpu *sg_cpu, u64 time,
+			       unsigned പൂർണ്ണസംഖ്യ flags)
 {
 	bool set_iowait_boost = flags & SCHED_CPUFREQ_IOWAIT;
 
 	/* Reset boost if the CPU appears to have been idle enough */
-	if (sg_cpu->iowait_boost &&
+	എങ്കിൽ (sg_cpu->iowait_boost &&
 	    sugov_iowait_reset(sg_cpu, time, set_iowait_boost))
-		return;
+		തിരികെ;
 
 	/* Boost only tasks waking up after IO */
-	if (!set_iowait_boost)
-		return;
+	എങ്കിൽ (!set_iowait_boost)
+		തിരികെ;
 
 	/* Ensure boost doubles only one time at each request */
-	if (sg_cpu->iowait_boost_pending)
-		return;
+	എങ്കിൽ (sg_cpu->iowait_boost_pending)
+		തിരികെ;
 	sg_cpu->iowait_boost_pending = true;
 
 	/* Double the boost at each request */
-	if (sg_cpu->iowait_boost) {
+	എങ്കിൽ (sg_cpu->iowait_boost) {
 		sg_cpu->iowait_boost =
-			min_t(unsigned int, sg_cpu->iowait_boost << 1, SCHED_CAPACITY_SCALE);
-		return;
+			min_t(unsigned പൂർണ്ണസംഖ്യ, sg_cpu->iowait_boost << 1, SCHED_CAPACITY_SCALE);
+		തിരികെ;
 	}
 
 	/* First wakeup after IO: start with minimum boost */
@@ -348,25 +348,25 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
  * This mechanism is designed to boost high frequently IO waiting tasks, while
  * being more conservative on tasks which does sporadic IO operations.
  */
-static unsigned long sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
+സ്ഥിതം unsigned long sugov_iowait_apply(ഘടന sugov_cpu *sg_cpu, u64 time,
 			       unsigned long max_cap)
 {
 	/* No boost currently required */
-	if (!sg_cpu->iowait_boost)
-		return 0;
+	എങ്കിൽ (!sg_cpu->iowait_boost)
+		തിരികെ 0;
 
 	/* Reset boost if the CPU appears to have been idle enough */
-	if (sugov_iowait_reset(sg_cpu, time, false))
-		return 0;
+	എങ്കിൽ (sugov_iowait_reset(sg_cpu, time, false))
+		തിരികെ 0;
 
-	if (!sg_cpu->iowait_boost_pending) {
+	എങ്കിൽ (!sg_cpu->iowait_boost_pending) {
 		/*
 		 * No boost pending; reduce the boost value.
 		 */
 		sg_cpu->iowait_boost >>= 1;
-		if (sg_cpu->iowait_boost < IOWAIT_BOOST_MIN) {
+		എങ്കിൽ (sg_cpu->iowait_boost < IOWAIT_BOOST_MIN) {
 			sg_cpu->iowait_boost = 0;
-			return 0;
+			തിരികെ 0;
 		}
 	}
 
@@ -376,11 +376,11 @@ static unsigned long sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
 	 * sg_cpu->util is already in capacity scale; convert iowait_boost
 	 * into the same scale so we can compare.
 	 */
-	return (sg_cpu->iowait_boost * max_cap) >> SCHED_CAPACITY_SHIFT;
+	തിരികെ (sg_cpu->iowait_boost * max_cap) >> SCHED_CAPACITY_SHIFT;
 }
 
 #ifdef CONFIG_NO_HZ_COMMON
-static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
+സ്ഥിതം bool sugov_hold_freq(ഘടന sugov_cpu *sg_cpu)
 {
 	unsigned long idle_calls;
 	bool ret;
@@ -390,12 +390,12 @@ static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
 	 * performance target comes directly from the BPF scheduler. Let's just
 	 * follow it.
 	 */
-	if (scx_switched_all())
-		return false;
+	എങ്കിൽ (scx_switched_all())
+		തിരികെ false;
 
 	/* if capped by uclamp_max, always update to be in compliance */
-	if (uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)))
-		return false;
+	എങ്കിൽ (uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)))
+		തിരികെ false;
 
 	/*
 	 * Maintain the frequency if the CPU has not been idle recently, as
@@ -405,25 +405,25 @@ static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
 	ret = idle_calls == sg_cpu->saved_idle_calls;
 
 	sg_cpu->saved_idle_calls = idle_calls;
-	return ret;
+	തിരികെ ret;
 }
-#else /* !CONFIG_NO_HZ_COMMON: */
-static inline bool sugov_hold_freq(struct sugov_cpu *sg_cpu) { return false; }
+#അല്ലെങ്കിൽ /* !CONFIG_NO_HZ_COMMON: */
+സ്ഥിതം വരിയിൽ bool sugov_hold_freq(ഘടന sugov_cpu *sg_cpu) { തിരികെ false; }
 #endif /* !CONFIG_NO_HZ_COMMON */
 
 /*
  * Make sugov_should_update_freq() ignore the rate limit when DL
  * has increased the utilization.
  */
-static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu)
+സ്ഥിതം വരിയിൽ ശൂന്യം ignore_dl_rate_limit(ഘടന sugov_cpu *sg_cpu)
 {
-	if (cpu_bw_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->bw_min)
+	എങ്കിൽ (cpu_bw_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->bw_min)
 		sg_cpu->sg_policy->need_freq_update = true;
 }
 
-static inline bool sugov_update_single_common(struct sugov_cpu *sg_cpu,
+സ്ഥിതം വരിയിൽ bool sugov_update_single_common(ഘടന sugov_cpu *sg_cpu,
 					      u64 time, unsigned long max_cap,
-					      unsigned int flags)
+					      unsigned പൂർണ്ണസംഖ്യ flags)
 {
 	unsigned long boost;
 
@@ -432,32 +432,32 @@ static inline bool sugov_update_single_common(struct sugov_cpu *sg_cpu,
 
 	ignore_dl_rate_limit(sg_cpu);
 
-	if (!sugov_should_update_freq(sg_cpu->sg_policy, time))
-		return false;
+	എങ്കിൽ (!sugov_should_update_freq(sg_cpu->sg_policy, time))
+		തിരികെ false;
 
 	boost = sugov_iowait_apply(sg_cpu, time, max_cap);
 	sugov_get_util(sg_cpu, boost);
 
-	return true;
+	തിരികെ true;
 }
 
-static void sugov_update_single_freq(struct update_util_data *hook, u64 time,
-				     unsigned int flags)
+സ്ഥിതം ശൂന്യം sugov_update_single_freq(ഘടന update_util_data *hook, u64 time,
+				     unsigned പൂർണ്ണസംഖ്യ flags)
 {
-	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
-	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
-	unsigned int cached_freq = sg_policy->cached_raw_freq;
+	ഘടന sugov_cpu *sg_cpu = container_of(hook, ഘടന sugov_cpu, update_util);
+	ഘടന sugov_policy *sg_policy = sg_cpu->sg_policy;
+	unsigned പൂർണ്ണസംഖ്യ cached_freq = sg_policy->cached_raw_freq;
 	unsigned long max_cap;
-	unsigned int next_f;
+	unsigned പൂർണ്ണസംഖ്യ next_f;
 
 	max_cap = arch_scale_cpu_capacity(sg_cpu->cpu);
 
-	if (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
-		return;
+	എങ്കിൽ (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
+		തിരികെ;
 
 	next_f = get_next_freq(sg_policy, sg_cpu->util, max_cap);
 
-	if (sugov_hold_freq(sg_cpu) && next_f < sg_policy->next_freq &&
+	എങ്കിൽ (sugov_hold_freq(sg_cpu) && next_f < sg_policy->next_freq &&
 	    !sg_policy->need_freq_update) {
 		next_f = sg_policy->next_freq;
 
@@ -465,28 +465,28 @@ static void sugov_update_single_freq(struct update_util_data *hook, u64 time,
 		sg_policy->cached_raw_freq = cached_freq;
 	}
 
-	if (!sugov_update_next_freq(sg_policy, time, next_f))
-		return;
+	എങ്കിൽ (!sugov_update_next_freq(sg_policy, time, next_f))
+		തിരികെ;
 
 	/*
 	 * This code runs under rq->lock for the target CPU, so it won't run
 	 * concurrently on two different CPUs for the same target and it is not
 	 * necessary to acquire the lock in the fast switch case.
 	 */
-	if (sg_policy->policy->fast_switch_enabled) {
+	എങ്കിൽ (sg_policy->policy->fast_switch_enabled) {
 		cpufreq_driver_fast_switch(sg_policy->policy, next_f);
-	} else {
+	} അല്ലെങ്കിൽ {
 		raw_spin_lock(&sg_policy->update_lock);
 		sugov_deferred_update(sg_policy);
 		raw_spin_unlock(&sg_policy->update_lock);
 	}
 }
 
-static void sugov_update_single_perf(struct update_util_data *hook, u64 time,
-				     unsigned int flags)
+സ്ഥിതം ശൂന്യം sugov_update_single_perf(ഘടന update_util_data *hook, u64 time,
+				     unsigned പൂർണ്ണസംഖ്യ flags)
 {
-	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
-	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
+	ഘടന sugov_cpu *sg_cpu = container_of(hook, ഘടന sugov_cpu, update_util);
+	ഘടന sugov_policy *sg_policy = sg_cpu->sg_policy;
 	unsigned long prev_util = sg_cpu->util;
 	unsigned long max_cap;
 
@@ -495,17 +495,17 @@ static void sugov_update_single_perf(struct update_util_data *hook, u64 time,
 	 * supported, because the direct mapping between the utilization and
 	 * the performance levels depends on the frequency invariance.
 	 */
-	if (!arch_scale_freq_invariant()) {
+	എങ്കിൽ (!arch_scale_freq_invariant()) {
 		sugov_update_single_freq(hook, time, flags);
-		return;
+		തിരികെ;
 	}
 
 	max_cap = arch_scale_cpu_capacity(sg_cpu->cpu);
 
-	if (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
-		return;
+	എങ്കിൽ (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
+		തിരികെ;
 
-	if (sugov_hold_freq(sg_cpu) && sg_cpu->util < prev_util)
+	എങ്കിൽ (sugov_hold_freq(sg_cpu) && sg_cpu->util < prev_util)
 		sg_cpu->util = prev_util;
 
 	cpufreq_driver_adjust_perf(sg_policy->policy, sg_cpu->bw_min,
@@ -515,17 +515,17 @@ static void sugov_update_single_perf(struct update_util_data *hook, u64 time,
 	sg_policy->last_freq_update_time = time;
 }
 
-static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
+സ്ഥിതം unsigned പൂർണ്ണസംഖ്യ sugov_next_freq_shared(ഘടന sugov_cpu *sg_cpu, u64 time)
 {
-	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
-	struct cpufreq_policy *policy = sg_policy->policy;
+	ഘടന sugov_policy *sg_policy = sg_cpu->sg_policy;
+	ഘടന cpufreq_policy *policy = sg_policy->policy;
 	unsigned long util = 0, max_cap;
-	unsigned int j;
+	unsigned പൂർണ്ണസംഖ്യ j;
 
 	max_cap = arch_scale_cpu_capacity(sg_cpu->cpu);
 
 	for_each_cpu(j, policy->cpus) {
-		struct sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
+		ഘടന sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
 		unsigned long boost;
 
 		boost = sugov_iowait_apply(j_sg_cpu, time, max_cap);
@@ -534,15 +534,15 @@ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
 		util = max(j_sg_cpu->util, util);
 	}
 
-	return get_next_freq(sg_policy, util, max_cap);
+	തിരികെ get_next_freq(sg_policy, util, max_cap);
 }
 
-static void
-sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+സ്ഥിതം ശൂന്യം
+sugov_update_shared(ഘടന update_util_data *hook, u64 time, unsigned പൂർണ്ണസംഖ്യ flags)
 {
-	struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
-	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
-	unsigned int next_f;
+	ഘടന sugov_cpu *sg_cpu = container_of(hook, ഘടന sugov_cpu, update_util);
+	ഘടന sugov_policy *sg_policy = sg_cpu->sg_policy;
+	unsigned പൂർണ്ണസംഖ്യ next_f;
 
 	raw_spin_lock(&sg_policy->update_lock);
 
@@ -551,25 +551,25 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
 
 	ignore_dl_rate_limit(sg_cpu);
 
-	if (sugov_should_update_freq(sg_policy, time)) {
+	എങ്കിൽ (sugov_should_update_freq(sg_policy, time)) {
 		next_f = sugov_next_freq_shared(sg_cpu, time);
 
-		if (!sugov_update_next_freq(sg_policy, time, next_f))
-			goto unlock;
+		എങ്കിൽ (!sugov_update_next_freq(sg_policy, time, next_f))
+			പോകുക unlock;
 
-		if (sg_policy->policy->fast_switch_enabled)
+		എങ്കിൽ (sg_policy->policy->fast_switch_enabled)
 			cpufreq_driver_fast_switch(sg_policy->policy, next_f);
-		else
+		അല്ലെങ്കിൽ
 			sugov_deferred_update(sg_policy);
 	}
 unlock:
 	raw_spin_unlock(&sg_policy->update_lock);
 }
 
-static void sugov_work(struct kthread_work *work)
+സ്ഥിതം ശൂന്യം sugov_work(ഘടന kthread_work *work)
 {
-	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-	unsigned int freq;
+	ഘടന sugov_policy *sg_policy = container_of(work, ഘടന sugov_policy, work);
+	unsigned പൂർണ്ണസംഖ്യ freq;
 	unsigned long flags;
 
 	/*
@@ -592,66 +592,66 @@ static void sugov_work(struct kthread_work *work)
 	mutex_unlock(&sg_policy->work_lock);
 }
 
-static void sugov_irq_work(struct irq_work *irq_work)
+സ്ഥിതം ശൂന്യം sugov_irq_work(ഘടന irq_work *irq_work)
 {
-	struct sugov_policy *sg_policy;
+	ഘടന sugov_policy *sg_policy;
 
-	sg_policy = container_of(irq_work, struct sugov_policy, irq_work);
+	sg_policy = container_of(irq_work, ഘടന sugov_policy, irq_work);
 
 	kthread_queue_work(&sg_policy->worker, &sg_policy->work);
 }
 
 /************************** sysfs interface ************************/
 
-static struct sugov_tunables *global_tunables;
-static DEFINE_MUTEX(global_tunables_lock);
+സ്ഥിതം ഘടന sugov_tunables *global_tunables;
+സ്ഥിതം DEFINE_MUTEX(global_tunables_lock);
 
-static inline struct sugov_tunables *to_sugov_tunables(struct gov_attr_set *attr_set)
+സ്ഥിതം വരിയിൽ ഘടന sugov_tunables *to_sugov_tunables(ഘടന gov_attr_set *attr_set)
 {
-	return container_of(attr_set, struct sugov_tunables, attr_set);
+	തിരികെ container_of(attr_set, ഘടന sugov_tunables, attr_set);
 }
 
-static ssize_t rate_limit_us_show(struct gov_attr_set *attr_set, char *buf)
+സ്ഥിതം ssize_t rate_limit_us_show(ഘടന gov_attr_set *attr_set, അക്ഷരം *buf)
 {
-	struct sugov_tunables *tunables = to_sugov_tunables(attr_set);
+	ഘടന sugov_tunables *tunables = to_sugov_tunables(attr_set);
 
-	return sysfs_emit(buf, "%u\n", tunables->rate_limit_us);
+	തിരികെ sysfs_emit(buf, "%u\n", tunables->rate_limit_us);
 }
 
-static ssize_t
-rate_limit_us_store(struct gov_attr_set *attr_set, const char *buf, size_t count)
+സ്ഥിതം ssize_t
+rate_limit_us_store(ഘടന gov_attr_set *attr_set, സ്ഥിരം അക്ഷരം *buf, size_t എണ്ണം)
 {
-	struct sugov_tunables *tunables = to_sugov_tunables(attr_set);
-	struct sugov_policy *sg_policy;
-	unsigned int rate_limit_us;
+	ഘടന sugov_tunables *tunables = to_sugov_tunables(attr_set);
+	ഘടന sugov_policy *sg_policy;
+	unsigned പൂർണ്ണസംഖ്യ rate_limit_us;
 
-	if (kstrtouint(buf, 10, &rate_limit_us))
-		return -EINVAL;
+	എങ്കിൽ (kstrtouint(buf, 10, &rate_limit_us))
+		തിരികെ -EINVAL;
 
 	tunables->rate_limit_us = rate_limit_us;
 
 	list_for_each_entry(sg_policy, &attr_set->policy_list, tunables_hook)
 		sugov_update_rate_limit_us(sg_policy);
 
-	return count;
+	തിരികെ എണ്ണം;
 }
 
-static struct governor_attr rate_limit_us = __ATTR_RW(rate_limit_us);
+സ്ഥിതം ഘടന governor_attr rate_limit_us = __ATTR_RW(rate_limit_us);
 
-static struct attribute *sugov_attrs[] = {
+സ്ഥിതം ഘടന attribute *sugov_attrs[] = {
 	&rate_limit_us.attr,
-	NULL
+	ശൂന്യ
 };
 ATTRIBUTE_GROUPS(sugov);
 
-static void sugov_tunables_free(struct kobject *kobj)
+സ്ഥിതം ശൂന്യം sugov_tunables_free(ഘടന kobject *kobj)
 {
-	struct gov_attr_set *attr_set = to_gov_attr_set(kobj);
+	ഘടന gov_attr_set *attr_set = to_gov_attr_set(kobj);
 
 	kfree(to_sugov_tunables(attr_set));
 }
 
-static const struct kobj_type sugov_tunables_ktype = {
+സ്ഥിതം സ്ഥിരം ഘടന kobj_type sugov_tunables_ktype = {
 	.default_groups = sugov_groups,
 	.sysfs_ops = &governor_sysfs_ops,
 	.release = &sugov_tunables_free,
@@ -659,31 +659,31 @@ static const struct kobj_type sugov_tunables_ktype = {
 
 /********************** cpufreq governor interface *********************/
 
-static struct cpufreq_governor schedutil_gov;
+സ്ഥിതം ഘടന cpufreq_governor schedutil_gov;
 
-static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
+സ്ഥിതം ഘടന sugov_policy *sugov_policy_alloc(ഘടന cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy;
+	ഘടന sugov_policy *sg_policy;
 
 	sg_policy = kzalloc_obj(*sg_policy);
-	if (!sg_policy)
-		return NULL;
+	എങ്കിൽ (!sg_policy)
+		തിരികെ ശൂന്യ;
 
 	sg_policy->policy = policy;
 	raw_spin_lock_init(&sg_policy->update_lock);
-	return sg_policy;
+	തിരികെ sg_policy;
 }
 
-static void sugov_policy_free(struct sugov_policy *sg_policy)
+സ്ഥിതം ശൂന്യം sugov_policy_free(ഘടന sugov_policy *sg_policy)
 {
 	kfree(sg_policy);
 }
 
-static int sugov_kthread_create(struct sugov_policy *sg_policy)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sugov_kthread_create(ഘടന sugov_policy *sg_policy)
 {
-	struct task_struct *thread;
-	struct sched_attr attr = {
-		.size		= sizeof(struct sched_attr),
+	ഘടന task_struct *thread;
+	ഘടന sched_attr attr = {
+		.size		= വലുപ്പം(ഘടന sched_attr),
 		.sched_policy	= SCHED_DEADLINE,
 		.sched_flags	= SCHED_FLAG_SUGOV,
 		.sched_nice	= 0,
@@ -696,34 +696,34 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
 		.sched_deadline = 10 * NSEC_PER_MSEC,
 		.sched_period	= 10 * NSEC_PER_MSEC,
 	};
-	struct cpufreq_policy *policy = sg_policy->policy;
-	int ret;
+	ഘടന cpufreq_policy *policy = sg_policy->policy;
+	പൂർണ്ണസംഖ്യ ret;
 
 	/* kthread only required for slow path */
-	if (policy->fast_switch_enabled)
-		return 0;
+	എങ്കിൽ (policy->fast_switch_enabled)
+		തിരികെ 0;
 
 	kthread_init_work(&sg_policy->work, sugov_work);
 	kthread_init_worker(&sg_policy->worker);
 	thread = kthread_create(kthread_worker_fn, &sg_policy->worker,
 				"sugov:%d",
 				cpumask_first(policy->related_cpus));
-	if (IS_ERR(thread)) {
+	എങ്കിൽ (IS_ERR(thread)) {
 		pr_err("failed to create sugov thread: %pe\n", thread);
-		return PTR_ERR(thread);
+		തിരികെ PTR_ERR(thread);
 	}
 
 	ret = sched_setattr_nocheck(thread, &attr);
-	if (ret) {
+	എങ്കിൽ (ret) {
 		kthread_stop(thread);
 		pr_warn("%s: failed to set SCHED_DEADLINE\n", __func__);
-		return ret;
+		തിരികെ ret;
 	}
 
 	sg_policy->thread = thread;
-	if (policy->dvfs_possible_from_any_cpu)
+	എങ്കിൽ (policy->dvfs_possible_from_any_cpu)
 		set_cpus_allowed_ptr(thread, policy->related_cpus);
-	else
+	അല്ലെങ്കിൽ
 		kthread_bind_mask(thread, policy->related_cpus);
 
 	init_irq_work(&sg_policy->irq_work, sugov_irq_work);
@@ -731,79 +731,79 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
 
 	wake_up_process(thread);
 
-	return 0;
+	തിരികെ 0;
 }
 
-static void sugov_kthread_stop(struct sugov_policy *sg_policy)
+സ്ഥിതം ശൂന്യം sugov_kthread_stop(ഘടന sugov_policy *sg_policy)
 {
 	/* kthread only required for slow path */
-	if (sg_policy->policy->fast_switch_enabled)
-		return;
+	എങ്കിൽ (sg_policy->policy->fast_switch_enabled)
+		തിരികെ;
 
 	kthread_flush_worker(&sg_policy->worker);
 	kthread_stop(sg_policy->thread);
 	mutex_destroy(&sg_policy->work_lock);
 }
 
-static struct sugov_tunables *sugov_tunables_alloc(struct sugov_policy *sg_policy)
+സ്ഥിതം ഘടന sugov_tunables *sugov_tunables_alloc(ഘടന sugov_policy *sg_policy)
 {
-	struct sugov_tunables *tunables;
+	ഘടന sugov_tunables *tunables;
 
 	tunables = kzalloc_obj(*tunables);
-	if (tunables) {
+	എങ്കിൽ (tunables) {
 		gov_attr_set_init(&tunables->attr_set, &sg_policy->tunables_hook);
-		if (!have_governor_per_policy())
+		എങ്കിൽ (!have_governor_per_policy())
 			global_tunables = tunables;
 	}
-	return tunables;
+	തിരികെ tunables;
 }
 
-static void sugov_clear_global_tunables(void)
+സ്ഥിതം ശൂന്യം sugov_clear_global_tunables(ശൂന്യം)
 {
-	if (!have_governor_per_policy())
-		global_tunables = NULL;
+	എങ്കിൽ (!have_governor_per_policy())
+		global_tunables = ശൂന്യ;
 }
 
-static int sugov_init(struct cpufreq_policy *policy)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sugov_init(ഘടന cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy;
-	struct sugov_tunables *tunables;
-	int ret = 0;
+	ഘടന sugov_policy *sg_policy;
+	ഘടന sugov_tunables *tunables;
+	പൂർണ്ണസംഖ്യ ret = 0;
 
 	/* State should be equivalent to EXIT */
-	if (policy->governor_data)
-		return -EBUSY;
+	എങ്കിൽ (policy->governor_data)
+		തിരികെ -EBUSY;
 
 	cpufreq_enable_fast_switch(policy);
 
 	sg_policy = sugov_policy_alloc(policy);
-	if (!sg_policy) {
+	എങ്കിൽ (!sg_policy) {
 		ret = -ENOMEM;
-		goto disable_fast_switch;
+		പോകുക disable_fast_switch;
 	}
 
 	ret = sugov_kthread_create(sg_policy);
-	if (ret)
-		goto free_sg_policy;
+	എങ്കിൽ (ret)
+		പോകുക free_sg_policy;
 
 	mutex_lock(&global_tunables_lock);
 
-	if (global_tunables) {
-		if (WARN_ON(have_governor_per_policy())) {
+	എങ്കിൽ (global_tunables) {
+		എങ്കിൽ (WARN_ON(have_governor_per_policy())) {
 			ret = -EINVAL;
-			goto stop_kthread;
+			പോകുക stop_kthread;
 		}
 		policy->governor_data = sg_policy;
 		sg_policy->tunables = global_tunables;
 
 		gov_attr_set_get(&global_tunables->attr_set, &sg_policy->tunables_hook);
-		goto out;
+		പോകുക out;
 	}
 
 	tunables = sugov_tunables_alloc(sg_policy);
-	if (!tunables) {
+	എങ്കിൽ (!tunables) {
 		ret = -ENOMEM;
-		goto stop_kthread;
+		പോകുക stop_kthread;
 	}
 
 	tunables->rate_limit_us = cpufreq_policy_transition_delay_us(policy);
@@ -814,8 +814,8 @@ static int sugov_init(struct cpufreq_policy *policy)
 	ret = kobject_init_and_add(&tunables->attr_set.kobj, &sugov_tunables_ktype,
 				   get_governor_parent_kobj(policy), "%s",
 				   schedutil_gov.name);
-	if (ret)
-		goto fail;
+	എങ്കിൽ (ret)
+		പോകുക fail;
 
 out:
 	/*
@@ -824,11 +824,11 @@ out:
 	 */
 	em_rebuild_sched_domains();
 	mutex_unlock(&global_tunables_lock);
-	return 0;
+	തിരികെ 0;
 
 fail:
 	kobject_put(&tunables->attr_set.kobj);
-	policy->governor_data = NULL;
+	policy->governor_data = ശൂന്യ;
 	sugov_clear_global_tunables();
 
 stop_kthread:
@@ -842,20 +842,20 @@ disable_fast_switch:
 	cpufreq_disable_fast_switch(policy);
 
 	pr_err("initialization failed (error %d)\n", ret);
-	return ret;
+	തിരികെ ret;
 }
 
-static void sugov_exit(struct cpufreq_policy *policy)
+സ്ഥിതം ശൂന്യം sugov_exit(ഘടന cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy = policy->governor_data;
-	struct sugov_tunables *tunables = sg_policy->tunables;
-	unsigned int count;
+	ഘടന sugov_policy *sg_policy = policy->governor_data;
+	ഘടന sugov_tunables *tunables = sg_policy->tunables;
+	unsigned പൂർണ്ണസംഖ്യ എണ്ണം;
 
 	mutex_lock(&global_tunables_lock);
 
-	count = gov_attr_set_put(&tunables->attr_set, &sg_policy->tunables_hook);
-	policy->governor_data = NULL;
-	if (!count)
+	എണ്ണം = gov_attr_set_put(&tunables->attr_set, &sg_policy->tunables_hook);
+	policy->governor_data = ശൂന്യ;
+	എങ്കിൽ (!എണ്ണം)
 		sugov_clear_global_tunables();
 
 	mutex_unlock(&global_tunables_lock);
@@ -867,11 +867,11 @@ static void sugov_exit(struct cpufreq_policy *policy)
 	em_rebuild_sched_domains();
 }
 
-static int sugov_start(struct cpufreq_policy *policy)
+സ്ഥിതം പൂർണ്ണസംഖ്യ sugov_start(ഘടന cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy = policy->governor_data;
-	void (*uu)(struct update_util_data *data, u64 time, unsigned int flags);
-	unsigned int cpu;
+	ഘടന sugov_policy *sg_policy = policy->governor_data;
+	ശൂന്യം (*uu)(ഘടന update_util_data *data, u64 time, unsigned പൂർണ്ണസംഖ്യ flags);
+	unsigned പൂർണ്ണസംഖ്യ cpu;
 
 	sugov_update_rate_limit_us_sync(sg_policy);
 	sg_policy->last_freq_update_time	= 0;
@@ -882,17 +882,17 @@ static int sugov_start(struct cpufreq_policy *policy)
 
 	sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
 
-	if (policy_is_shared(policy))
+	എങ്കിൽ (policy_is_shared(policy))
 		uu = sugov_update_shared;
-	else if (policy->fast_switch_enabled && cpufreq_driver_has_adjust_perf())
+	അല്ലെങ്കിൽ എങ്കിൽ (policy->fast_switch_enabled && cpufreq_driver_has_adjust_perf())
 		uu = sugov_update_single_perf;
-	else
+	അല്ലെങ്കിൽ
 		uu = sugov_update_single_freq;
 
 	for_each_cpu(cpu, policy->cpus) {
-		struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
+		ഘടന sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
 
-		memset(sg_cpu, 0, sizeof(*sg_cpu));
+		memset(sg_cpu, 0, വലുപ്പം(*sg_cpu));
 		sg_cpu->cpu = cpu;
 		sg_cpu->sg_policy = sg_policy;
 	}
@@ -903,35 +903,35 @@ static int sugov_start(struct cpufreq_policy *policy)
 	 * sibling sugov_cpu.
 	 */
 	for_each_cpu(cpu, policy->cpus) {
-		struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
+		ഘടന sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
 
 		cpufreq_add_update_util_hook(cpu, &sg_cpu->update_util, uu);
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-static void sugov_stop(struct cpufreq_policy *policy)
+സ്ഥിതം ശൂന്യം sugov_stop(ഘടന cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy = policy->governor_data;
-	unsigned int cpu;
+	ഘടന sugov_policy *sg_policy = policy->governor_data;
+	unsigned പൂർണ്ണസംഖ്യ cpu;
 
 	for_each_cpu(cpu, policy->cpus)
 		cpufreq_remove_update_util_hook(cpu);
 
 	synchronize_rcu();
 
-	if (!policy->fast_switch_enabled) {
+	എങ്കിൽ (!policy->fast_switch_enabled) {
 		irq_work_sync(&sg_policy->irq_work);
 		kthread_cancel_work_sync(&sg_policy->work);
 	}
 }
 
-static void sugov_limits(struct cpufreq_policy *policy)
+സ്ഥിതം ശൂന്യം sugov_limits(ഘടന cpufreq_policy *policy)
 {
-	struct sugov_policy *sg_policy = policy->governor_data;
+	ഘടന sugov_policy *sg_policy = policy->governor_data;
 
-	if (!policy->fast_switch_enabled) {
+	എങ്കിൽ (!policy->fast_switch_enabled) {
 		mutex_lock(&sg_policy->work_lock);
 		cpufreq_policy_apply_limits(policy);
 		mutex_unlock(&sg_policy->work_lock);
@@ -949,7 +949,7 @@ static void sugov_limits(struct cpufreq_policy *policy)
 	WRITE_ONCE(sg_policy->limits_changed, true);
 }
 
-static struct cpufreq_governor schedutil_gov = {
+സ്ഥിതം ഘടന cpufreq_governor schedutil_gov = {
 	.name			= "schedutil",
 	.owner			= THIS_MODULE,
 	.flags			= CPUFREQ_GOV_DYNAMIC_SWITCHING,
@@ -961,15 +961,15 @@ static struct cpufreq_governor schedutil_gov = {
 };
 
 #ifdef CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
-struct cpufreq_governor *cpufreq_default_governor(void)
+ഘടന cpufreq_governor *cpufreq_default_governor(ശൂന്യം)
 {
-	return &schedutil_gov;
+	തിരികെ &schedutil_gov;
 }
 #endif
 
-bool sugov_is_governor(struct cpufreq_policy *policy)
+bool sugov_is_governor(ഘടന cpufreq_policy *policy)
 {
-	return policy->governor == &schedutil_gov;
+	തിരികെ policy->governor == &schedutil_gov;
 }
 
 cpufreq_governor_init(schedutil_gov);

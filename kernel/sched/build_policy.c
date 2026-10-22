@@ -13,49 +13,49 @@
  */
 
 /* Headers: */
-#include <linux/sched/clock.h>
-#include <linux/sched/cputime.h>
-#include <linux/sched/hotplug.h>
-#include <linux/sched/isolation.h>
-#include <linux/sched/posix-timers.h>
-#include <linux/sched/rt.h>
+#അന്തര്ഭാവ <linux/sched/clock.h>
+#അന്തര്ഭാവ <linux/sched/cputime.h>
+#അന്തര്ഭാവ <linux/sched/hotplug.h>
+#അന്തര്ഭാവ <linux/sched/isolation.h>
+#അന്തര്ഭാവ <linux/sched/posix-timers.h>
+#അന്തര്ഭാവ <linux/sched/rt.h>
 
-#include <linux/cpuidle.h>
-#include <linux/jiffies.h>
-#include <linux/kobject.h>
-#include <linux/livepatch.h>
-#include <linux/pm.h>
-#include <linux/psi.h>
-#include <linux/rhashtable.h>
-#include <linux/seq_buf.h>
-#include <linux/seqlock_api.h>
-#include <linux/slab.h>
-#include <linux/suspend.h>
-#include <linux/tsacct_kern.h>
-#include <linux/vtime.h>
-#include <linux/sysrq.h>
-#include <linux/percpu-rwsem.h>
+#അന്തര്ഭാവ <linux/cpuidle.h>
+#അന്തര്ഭാവ <linux/jiffies.h>
+#അന്തര്ഭാവ <linux/kobject.h>
+#അന്തര്ഭാവ <linux/livepatch.h>
+#അന്തര്ഭാവ <linux/pm.h>
+#അന്തര്ഭാവ <linux/psi.h>
+#അന്തര്ഭാവ <linux/rhashtable.h>
+#അന്തര്ഭാവ <linux/seq_buf.h>
+#അന്തര്ഭാവ <linux/seqlock_api.h>
+#അന്തര്ഭാവ <linux/slab.h>
+#അന്തര്ഭാവ <linux/suspend.h>
+#അന്തര്ഭാവ <linux/tsacct_kern.h>
+#അന്തര്ഭാവ <linux/vtime.h>
+#അന്തര്ഭാവ <linux/sysrq.h>
+#അന്തര്ഭാവ <linux/percpu-rwsem.h>
 
-#include <uapi/linux/sched/types.h>
+#അന്തര്ഭാവ <uapi/linux/sched/types.h>
 
-#include "sched.h"
-#include "smp.h"
+#അന്തര്ഭാവ "sched.h"
+#അന്തര്ഭാവ "smp.h"
 
-#include "autogroup.h"
-#include "stats.h"
-#include "pelt.h"
+#അന്തര്ഭാവ "autogroup.h"
+#അന്തര്ഭാവ "stats.h"
+#അന്തര്ഭാവ "pelt.h"
 
 /* Source code modules: */
 
-#include "idle.c"
+#അന്തര്ഭാവ "idle.c"
 
-#include "rt.c"
-#include "cpudeadline.c"
+#അന്തര്ഭാവ "rt.c"
+#അന്തര്ഭാവ "cpudeadline.c"
 
-#include "pelt.c"
+#അന്തര്ഭാവ "pelt.c"
 
-#include "cputime.c"
-#include "deadline.c"
+#അന്തര്ഭാവ "cputime.c"
+#അന്തര്ഭാവ "deadline.c"
 
 #ifdef CONFIG_SCHED_CLASS_EXT
 # include <linux/btf_ids.h>
@@ -75,4 +75,4 @@
 # include "ext/sub.c"
 #endif
 
-#include "syscalls.c"
+#അന്തര്ഭാവ "syscalls.c"
