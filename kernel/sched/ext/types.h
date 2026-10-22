@@ -8,13 +8,13 @@
 #ifndef _KERNEL_SCHED_EXT_TYPES_H
 #define _KERNEL_SCHED_EXT_TYPES_H
 
-#include <linux/types.h>
-#include <linux/jiffies.h>
-#include <linux/overflow.h>
-#include <linux/time64.h>
-#include <linux/sched/topology.h>
+#ضمن <linux/types.h>
+#ضمن <linux/jiffies.h>
+#ضمن <linux/overflow.h>
+#ضمن <linux/time64.h>
+#ضمن <linux/sched/topology.h>
 
-enum scx_consts {
+تعداد scx_consts {
 	SCX_DSP_DFL_MAX_BATCH		= 32,
 	SCX_DSP_MAX_LOOPS		= 32,
 	SCX_WATCHDOG_MAX_TIMEOUT	= 30 * HZ,
@@ -83,7 +83,7 @@ enum scx_consts {
  * @shard_cid: first cid of this cid's shard
  * @shard_idx: global index of that shard, in [0, scx_nr_cid_shards)
  */
-struct scx_cid_topo {
+بنية scx_cid_topo {
 	s32 core_cid;
 	s32 core_idx;
 	s32 llc_cid;
@@ -94,7 +94,7 @@ struct scx_cid_topo {
 	s32 shard_idx;
 };
 
-enum scx_cid_consts {
+تعداد scx_cid_consts {
 	SCX_CID_SHARD_SIZE_DFL		= 24,
 	SCX_CID_SHARD_MAX_CPUS		= 512,
 };
@@ -105,7 +105,7 @@ enum scx_cid_consts {
  * @base_cid: first cid of the shard
  * @nr_cids: number of cids in the shard
  */
-struct scx_cid_shard {
+بنية scx_cid_shard {
 	s32			base_cid;
 	s32			nr_cids;
 };
@@ -128,7 +128,7 @@ struct scx_cid_shard {
  *
  * with no bit-shifting, regardless of how the two bases relate mod 64.
  */
-struct scx_cmask {
+بنية scx_cmask {
 	u32 base;
 	u32 nr_cids;
 	u32 alloc_words;
@@ -157,7 +157,7 @@ struct scx_cmask {
  * @ALLOC_CIDS.
  */
 #define __SCX_CMASK_DEFINE(NAME, BASE, NR_CIDS, ALLOC_CIDS)			\
-	_DEFINE_FLEX(struct scx_cmask, NAME, bits, SCX_CMASK_NR_WORDS(ALLOC_CIDS), \
+	_DEFINE_FLEX(بنية scx_cmask, NAME, bits, SCX_CMASK_NR_WORDS(ALLOC_CIDS), \
 		     = { .base = (BASE),					\
 			 .nr_cids = (NR_CIDS),					\
 			 .alloc_words = SCX_CMASK_NR_WORDS(ALLOC_CIDS) })
@@ -216,9 +216,9 @@ struct scx_cmask {
  *		... use idx and shard ...
  *	}
  */
-struct scx_cmask_ref {
-	struct scx_sched	*sch;
-	struct scx_cmask	*src;
+بنية scx_cmask_ref {
+	بنية scx_sched	*sch;
+	بنية scx_cmask	*src;
 	u32			base;
 	u32			nr_cids;
 	s32			shard_first;

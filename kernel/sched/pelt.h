@@ -1,81 +1,81 @@
 // SPDX-License-Identifier: GPL-2.0
 #ifndef _KERNEL_SCHED_PELT_H
 #define _KERNEL_SCHED_PELT_H
-#include "sched.h"
+#ضمن "sched.h"
 
-#include "sched-pelt.h"
+#ضمن "sched-pelt.h"
 
-int __update_load_avg_blocked_se(u64 now, struct sched_entity *se);
-int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se);
-int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
-int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
-int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
-bool update_other_load_avgs(struct rq *rq);
+صحيح __update_load_avg_blocked_se(u64 now, بنية sched_entity *se);
+صحيح __update_load_avg_se(u64 now, بنية cfs_rq *cfs_rq, بنية sched_entity *se);
+صحيح __update_load_avg_cfs_rq(u64 now, بنية cfs_rq *cfs_rq);
+صحيح update_rt_rq_load_avg(u64 now, بنية rq *rq, صحيح running);
+صحيح update_dl_rq_load_avg(u64 now, بنية rq *rq, صحيح running);
+bool update_other_load_avgs(بنية rq *rq);
 
 #ifdef CONFIG_SCHED_HW_PRESSURE
-int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity);
+صحيح update_hw_load_avg(u64 now, بنية rq *rq, u64 capacity);
 
-static inline u64 hw_load_avg(struct rq *rq)
+ساكن مضمن u64 hw_load_avg(بنية rq *rq)
 {
-	return READ_ONCE(rq->avg_hw.load_avg);
+	أرجع READ_ONCE(rq->avg_hw.load_avg);
 }
-#else /* !CONFIG_SCHED_HW_PRESSURE: */
-static inline int
-update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+#وإلا /* !CONFIG_SCHED_HW_PRESSURE: */
+ساكن مضمن صحيح
+update_hw_load_avg(u64 now, بنية rq *rq, u64 capacity)
 {
-	return 0;
+	أرجع 0;
 }
 
-static inline u64 hw_load_avg(struct rq *rq)
+ساكن مضمن u64 hw_load_avg(بنية rq *rq)
 {
-	return 0;
+	أرجع 0;
 }
 #endif /* !CONFIG_SCHED_HW_PRESSURE */
 
 #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-int update_irq_load_avg(struct rq *rq, u64 running);
-#else
-static inline int
-update_irq_load_avg(struct rq *rq, u64 running)
+صحيح update_irq_load_avg(بنية rq *rq, u64 running);
+#وإلا
+ساكن مضمن صحيح
+update_irq_load_avg(بنية rq *rq, u64 running)
 {
-	return 0;
+	أرجع 0;
 }
 #endif
 
 #define PELT_MIN_DIVIDER	(LOAD_AVG_MAX - 1024)
 
-static inline u32 get_pelt_divider(struct sched_avg *avg)
+ساكن مضمن u32 get_pelt_divider(بنية sched_avg *avg)
 {
-	return PELT_MIN_DIVIDER + avg->period_contrib;
+	أرجع PELT_MIN_DIVIDER + avg->period_contrib;
 }
 
-static inline void cfs_se_util_change(struct sched_avg *avg)
+ساكن مضمن فراغ cfs_se_util_change(بنية sched_avg *avg)
 {
-	unsigned int enqueued;
+	unsigned صحيح enqueued;
 
-	if (!sched_feat(UTIL_EST))
-		return;
+	𐡄𐡍 (!sched_feat(UTIL_EST))
+		أرجع;
 
 	/* Avoid store if the flag has been already reset */
 	enqueued = avg->util_est;
-	if (!(enqueued & UTIL_AVG_UNCHANGED))
-		return;
+	𐡄𐡍 (!(enqueued & UTIL_AVG_UNCHANGED))
+		أرجع;
 
 	/* Reset flag to report util_avg has been updated */
 	enqueued &= ~UTIL_AVG_UNCHANGED;
 	WRITE_ONCE(avg->util_est, enqueued);
 }
 
-static inline u64 rq_clock_pelt(struct rq *rq)
+ساكن مضمن u64 rq_clock_pelt(بنية rq *rq)
 {
 	lockdep_assert_rq_held(rq);
 	assert_clock_updated(rq);
 
-	return rq->clock_pelt - rq->lost_idle_time;
+	أرجع rq->clock_pelt - rq->lost_idle_time;
 }
 
 /* The rq is idle, we can sync to clock_task */
-static inline void _update_idle_rq_clock_pelt(struct rq *rq)
+ساكن مضمن فراغ _update_idle_rq_clock_pelt(بنية rq *rq)
 {
 	rq->clock_pelt  = rq_clock_task(rq);
 
@@ -97,11 +97,11 @@ static inline void _update_idle_rq_clock_pelt(struct rq *rq)
  * clock pelt      | 1| 2|    3|    4| 7| 8| 9|   10|   11|14|15|16
  *
  */
-static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
+ساكن مضمن فراغ update_rq_clock_pelt(بنية rq *rq, s64 delta)
 {
-	if (unlikely(is_idle_task(rq->curr))) {
+	𐡄𐡍 (unlikely(is_idle_task(rq->curr))) {
 		_update_idle_rq_clock_pelt(rq);
-		return;
+		أرجع;
 	}
 
 	/*
@@ -135,7 +135,7 @@ static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
  * the position in the current window (period_contrib) and we use the higher
  * bound of util_sum to decide.
  */
-static inline void update_idle_rq_clock_pelt(struct rq *rq)
+ساكن مضمن فراغ update_idle_rq_clock_pelt(بنية rq *rq)
 {
 	u32 divider = ((LOAD_AVG_MAX - 1024) << SCHED_CAPACITY_SHIFT) - LOAD_AVG_MAX;
 	u32 util_sum = rq->cfs.avg.util_sum;
@@ -151,38 +151,38 @@ static inline void update_idle_rq_clock_pelt(struct rq *rq)
 	 * this case. We keep track of this lost idle time compare to
 	 * rq's clock_task.
 	 */
-	if (util_sum >= divider)
+	𐡄𐡍 (util_sum >= divider)
 		rq->lost_idle_time += rq_clock_task(rq) - rq->clock_pelt;
 
 	_update_idle_rq_clock_pelt(rq);
 }
 
 #ifdef CONFIG_CFS_BANDWIDTH
-static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+ساكن مضمن فراغ update_idle_cfs_rq_clock_pelt(بنية cfs_rq *cfs_rq)
 {
 	u64 throttled;
 
-	if (unlikely(cfs_rq->pelt_clock_throttled))
+	𐡄𐡍 (unlikely(cfs_rq->pelt_clock_throttled))
 		throttled = U64_MAX;
-	else
+	وإلا
 		throttled = cfs_rq->throttled_clock_pelt_time;
 
 	u64_u32_store(cfs_rq->throttled_pelt_idle, throttled);
 }
 
 /* rq->task_clock normalized against any time this cfs_rq has spent throttled */
-static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+ساكن مضمن u64 cfs_rq_clock_pelt(بنية cfs_rq *cfs_rq)
 {
-	if (unlikely(cfs_rq->pelt_clock_throttled))
-		return cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_time;
+	𐡄𐡍 (unlikely(cfs_rq->pelt_clock_throttled))
+		أرجع cfs_rq->throttled_clock_pelt - cfs_rq->throttled_clock_pelt_time;
 
-	return rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
+	أرجع rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_pelt_time;
 }
-#else /* !CONFIG_CFS_BANDWIDTH: */
-static inline void update_idle_cfs_rq_clock_pelt(struct cfs_rq *cfs_rq) { }
-static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
+#وإلا /* !CONFIG_CFS_BANDWIDTH: */
+ساكن مضمن فراغ update_idle_cfs_rq_clock_pelt(بنية cfs_rq *cfs_rq) { }
+ساكن مضمن u64 cfs_rq_clock_pelt(بنية cfs_rq *cfs_rq)
 {
-	return rq_clock_pelt(rq_of(cfs_rq));
+	أرجع rq_clock_pelt(rq_of(cfs_rq));
 }
 #endif /* !CONFIG_CFS_BANDWIDTH */
 
